@@ -55,6 +55,7 @@ const NGC_RESOURCE_TYPES = [
 ];
 /** Commands whose first argument may be an image reference. */
 const PULL_COMMANDS = ['docker', 'podman', 'nerdctl'];
+
 const OTHER_COMMANDS = [
   'helm',
   'kubectl',
@@ -65,6 +66,56 @@ const OTHER_COMMANDS = [
   'singularity',
   'apptainer',
 ];
+
+/**
+ * `pull` options that consume the NEXT token as their value, so the token
+ * after them is not the reference. Anything else starting with `-` is a
+ * boolean flag, and `--opt=value` carries its own value.
+ */
+const SHARED_VALUE_TAKING_OPTIONS = [
+  '--platform',
+  '--arch',
+  '--os',
+  '--variant',
+  '--authfile',
+  '--creds',
+  '--cert-dir',
+  '--retry',
+  '--retry-delay',
+  '--decryption-key',
+  '--signature-policy',
+  '--cosign-key',
+  '--verify',
+  '--snapshotter',
+  '--namespace',
+  '-n',
+];
+
+/** Keyed per client because `-a` is nerdctl's `--address` but docker's
+ *  boolean `--all-tags`. */
+const VALUE_TAKING_PULL_OPTIONS: Record<string, ReadonlyArray<string>> = {
+  docker: SHARED_VALUE_TAKING_OPTIONS,
+  podman: SHARED_VALUE_TAKING_OPTIONS,
+  nerdctl: [...SHARED_VALUE_TAKING_OPTIONS, '--address', '-a'],
+};
+
+/** The first positional token after `pull`, skipping options and their values. */
+const positionalPullArgument = (
+  client: string,
+  tokens: ReadonlyArray<string>,
+): string | undefined => {
+  const valueTaking = VALUE_TAKING_PULL_OPTIONS[client] ?? [];
+  for (let index = 0; index < tokens.length; index++) {
+    const token = tokens[index];
+    if (!token.startsWith('-')) {
+      return token;
+    }
+    if (!token.includes('=') && valueTaking.includes(token)) {
+      index++;
+    }
+  }
+  return undefined;
+};
 
 /** `rx_slug` from the manager's `common/docker.py`; uppercase is allowed. */
 const TAG_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9-._]*[A-Za-z0-9])?$/;
@@ -251,7 +302,7 @@ export function parseImageReferenceLine(line: string): ParsedReference {
   if (PULL_COMMANDS.includes(head) || OTHER_COMMANDS.includes(head)) {
     const reference =
       PULL_COMMANDS.includes(head) && tail[0] === 'pull'
-        ? tail.slice(1).find((token) => !token.startsWith('-'))
+        ? positionalPullArgument(head, tail.slice(1))
         : undefined;
     return reference
       ? parseCanonical(reference, 'pull-command')

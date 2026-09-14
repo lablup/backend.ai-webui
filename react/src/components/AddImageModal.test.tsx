@@ -217,6 +217,10 @@ const addButton = () => screen.getByRole('button', { name: 'button.Add' });
 const retryButton = () =>
   screen.getByRole('button', { name: 'environment.AddImageRetryFailed' });
 const architectureSelect = () => screen.getByTestId('mock-architecture-select');
+/** The dialog header's X. Astryx names it from its own English catalogue. */
+const closeButton = () => screen.queryByRole('button', { name: 'Close' });
+const cancelButton = () =>
+  screen.getByRole('button', { name: 'button.Cancel' });
 
 describe('AddImageModal (FR-3940 review round)', () => {
   beforeEach(() => {
@@ -342,6 +346,43 @@ describe('AddImageModal (FR-3940 review round)', () => {
     expect(
       screen.queryByTestId('add-image-added-list'),
     ).not.toBeInTheDocument();
+  });
+
+  it('blocks every dismissal affordance while a scan request is in flight', async () => {
+    const user = userEvent.setup();
+    let rejectScan: (error: unknown) => void = () => {};
+    mockScanRequest.mockImplementation(
+      () =>
+        new Promise((_resolve, reject) => {
+          rejectScan = reject;
+        }),
+    );
+    const { onRequestClose } = renderModal();
+    await typeReferences(PYTHON);
+
+    await user.click(addButton());
+    await waitFor(() => expect(mockScanRequest).toHaveBeenCalled());
+
+    // `BAIUnmountAfterClose` in `ImageList` unmounts this tree on close, so a
+    // dismissal here would abandon the sequential loop mid-run.
+    expect(closeButton()).not.toBeInTheDocument();
+    expect(cancelButton()).toBeDisabled();
+    await user.keyboard('{Escape}');
+    expect(onRequestClose).not.toHaveBeenCalled();
+
+    // The line fails, so the modal stays open — and dismissal comes back.
+    rejectScan({ statusCode: 403 });
+    await waitFor(() =>
+      expect(
+        screen.getByText('environment.AddImageRequiresSuperadmin'),
+      ).toBeInTheDocument(),
+    );
+    expect(onRequestClose).not.toHaveBeenCalled();
+
+    await user.keyboard('{Escape}');
+    expect(onRequestClose).toHaveBeenCalledTimes(1);
+    await user.click(closeButton() as HTMLElement);
+    expect(onRequestClose).toHaveBeenCalledTimes(2);
   });
 
   it('recognises a bodiless 500 through the empty Blob the client stores', async () => {
