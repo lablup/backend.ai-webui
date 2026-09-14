@@ -366,10 +366,10 @@ const ContainerRegistryList: React.FC<{
       key: 'allowed_groups',
       title: t('registry.AllowedProjects'),
       render: (_value, record) => {
-        // A global registry is open to every project, so there is no
-        // allow-list to render for it.
+        // A global registry has no allow-list; the server answers this field
+        // with every project, which is noise rather than information.
         if (record.is_global) {
-          return '-';
+          return t('environment.AllProjects');
         }
         const groups = filterOutNullAndUndefined(
           _.map(record.allowed_groups?.edges, (edge) => edge?.node),
