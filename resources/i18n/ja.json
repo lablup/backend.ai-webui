@@ -3511,6 +3511,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "テーマ設定がスキーマに準拠していません。ファイルを確認してください。",
+    "ConvertedV1ThemeConfig": "以前(v1)の形式のテーマファイルを現在の形式に変換しました。適用する前に確認してください。",
     "FailedToReadFile": "ファイルの読み取りに失敗しました。",
     "InvalidJsonFileAlert": "無効なJSON形式です。ファイルの内容を確認してください。",
     "JsonConfigAppliedSuccessfully": "テーマ設定が正常に適用されました。",

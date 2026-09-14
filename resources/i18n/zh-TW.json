@@ -3513,6 +3513,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "主題設定不符合 schema，請檢查檔案。",
+    "ConvertedV1ThemeConfig": "已將舊版 (v1) 主題檔案轉換為目前格式。套用前請確認。",
     "FailedToReadFile": "無法讀取檔案。",
     "InvalidJsonFileAlert": "JSON 格式無效。請檢查檔案內容。",
     "JsonConfigAppliedSuccessfully": "主題設定已成功套用。",

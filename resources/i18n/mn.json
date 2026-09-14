@@ -3511,6 +3511,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Сэдвийн тохиргоо схемд нийцэхгүй байна. Файлыг шалгана уу.",
+    "ConvertedV1ThemeConfig": "Хуучин (v1) загварын файлыг одоогийн хэлбэрт хөрвүүллээ. Хэрэглэхээсээ өмнө шалгана уу.",
     "FailedToReadFile": "Файлыг уншиж чадсангүй.",
     "InvalidJsonFileAlert": "JSON формат буруу байна. Файлын агуулгыг шалгана уу.",
     "JsonConfigAppliedSuccessfully": "Сэдвийн тохиргоог амжилттай хэрэгжүүллээ.",

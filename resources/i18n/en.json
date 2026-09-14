@@ -3496,6 +3496,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "Theme settings do not match the schema. Please check the file.",
+    "ConvertedV1ThemeConfig": "Converted the legacy (v1) theme file to the current format. Please review it before applying.",
     "FailedToReadFile": "Failed to read the file.",
     "InvalidJsonFileAlert": "Invalid JSON format. Please check the file contents.",
     "JsonConfigAppliedSuccessfully": "Theme settings have been successfully applied.",

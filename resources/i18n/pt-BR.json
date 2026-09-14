@@ -3509,6 +3509,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "As configurações do tema não correspondem ao esquema. Por favor, verifique o arquivo.",
+    "ConvertedV1ThemeConfig": "O arquivo de tema antigo (v1) foi convertido para o formato atual. Verifique-o antes de aplicar.",
     "FailedToReadFile": "Falha ao ler o arquivo.",
     "InvalidJsonFileAlert": "Formato JSON inválido. Verifique o conteúdo do arquivo.",
     "JsonConfigAppliedSuccessfully": "As configurações do tema foram aplicadas com sucesso.",

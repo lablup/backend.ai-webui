@@ -3512,6 +3512,7 @@
   },
   "theme": {
     "CannotApplyInvalidJsonConfig": "테마 설정이 스키마와 일치하지 않습니다. 파일을 확인해 주세요.",
+    "ConvertedV1ThemeConfig": "이전(v1) 형식의 테마 파일을 현재 형식으로 변환했습니다. 적용하기 전에 확인해 주세요.",
     "FailedToReadFile": "파일을 읽을 수 없습니다.",
     "InvalidJsonFileAlert": "JSON 형식이 유요하지 않습니다. 파일 내용을 확인해주세요.",
     "JsonConfigAppliedSuccessfully": "테마 설정이 적용되었습니다.",
