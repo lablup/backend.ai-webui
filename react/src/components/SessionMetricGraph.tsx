@@ -143,20 +143,12 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
       },
     );
 
-  const convertMetricFunction: Record<
-    string,
-    (value: string) => number | string
-  > = {
-    cpu_util: (value: string) => _.toNumber(value) / 10,
-  };
-
   const metricData = getMetricData(
     capacity_metric?.metrics ?? [],
     current_metric?.metrics ?? [],
     startDate,
     endDate,
     dayDiff < 7 ? '5m' : dayDiff < 30 ? '1h' : '1d',
-    convertMetricFunction[metricName] ?? undefined,
   );
 
   const resourceSlotKey = useMemo(() => {
@@ -263,7 +255,6 @@ const getMetricData = (
   start: string,
   end: string,
   step: string,
-  convertValueFunction?: (value: string) => number | string,
 ) => {
   // orders by capacity, current
   const transformedData = _.zip(
@@ -273,12 +264,8 @@ const getMetricData = (
   ).map(([capacity, current]) => {
     return {
       timestamp: current?.timestamp,
-      capacity: convertValueFunction
-        ? convertValueFunction(capacity?.value)
-        : capacity?.value,
-      used: convertValueFunction
-        ? convertValueFunction(current?.value)
-        : current?.value,
+      capacity: capacity?.value,
+      used: current?.value,
     };
   });
 
@@ -308,7 +295,7 @@ const getMetricData = (
   return filledData;
 };
 
-const convertMetricUnit = (
+export const convertMetricUnit = (
   value: string | undefined | null,
   metricName: string | undefined | null,
 ) => {
@@ -322,7 +309,10 @@ const convertMetricUnit = (
     };
 
   if (_.includes(metricName.toLowerCase(), 'util')) {
-    number = Number(toFixedFloorWithoutTrailingZeros(value ?? 0, 1));
+    // cpu_util arrives in tenths of a percent; the other *_util metrics in percent.
+    const percent =
+      metricName === 'cpu_util' ? _.toNumber(value ?? 0) / 10 : (value ?? 0);
+    number = Number(toFixedFloorWithoutTrailingZeros(percent, 1));
     numberUnit = '%';
   } else if (_.includes(metricName.toLowerCase(), 'used')) {
     number = Number((Number(value) / 1000).toFixed(1));
