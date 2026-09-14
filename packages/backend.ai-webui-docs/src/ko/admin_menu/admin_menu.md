@@ -898,6 +898,10 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 
 각 단계에서 다음과 같은 공통 기능을 사용할 수 있습니다:
 
+- **필터**: 테이블 위의 속성 필터로 행을 좁힐 수 있습니다. 자원 그룹 단계에서는 **이름**, **설명**,
+  **활성 상태**, **공개 상태**를 기준으로, 도메인 및 프로젝트 단계에서는 **이름**과 **활성 상태**를
+  기준으로 필터링할 수 있습니다. 조건 조합을 지원하지 않는 매니저에서는 **이름**만 제공되며 한 번에
+  하나의 조건만 적용할 수 있습니다.
 - **페이지네이션**: 페이지 크기를 설정하여 결과를 탐색할 수 있습니다.
 
 ### 자원 그룹
@@ -905,6 +909,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 자원 그룹 단계에서는 모든 자원 그룹과 Fair Share 설정 정보가 테이블로 표시됩니다.
 
 ![](../images/fair_share_resource_group_page.png)
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Resource Group step) — capture must show the property filter in the toolbar and the Status / Created At columns. Not captured: the screenshot backend was unavailable. -->
 
 테이블에는 다음과 같은 컬럼이 포함됩니다:
 
@@ -916,6 +921,8 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 - **집계 단위**: 사용량을 집계하는 기간(일 단위)입니다.
 - **반감기**: 과거 사용량의 반영 비율이 절반으로 줄어드는 기간(일 단위)입니다.
 - **집계 기간**: Fair Share 계산에 반영되는 사용량 기록의 조회 범위(일 단위)입니다.
+- **상태**: 자원 그룹이 **활성**인지 **비활성**인지 표시합니다.
+- **생성일**: 생성 시각입니다.
 
 ### 자원 그룹 Fair Share 설정
 
@@ -943,6 +950,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 사용량을 테이블로 확인할 수 있습니다.
 
 ![](../images/fair_share_domain_page.png)
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Domain step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
 
 테이블에는 다음과 같은 컬럼이 포함됩니다:
 
@@ -951,6 +959,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 - **가중치**: 현재 가중치 값입니다. 기본 가중치를 사용하는 경우 "기본값"으로 표시됩니다.
 - **우선 순위 계수**: Fair Share 스케줄러에 의해 계산된 스케줄링 우선순위입니다. 값이 높을수록 높은 우선순위를 갖습니다.
 - **자원 할당**: 자원 타입별 일 평균 감쇠 자원 사용량입니다 (CPU, Memory, GPU / Day).
+- **상태**: 도메인이 **활성**인지 **비활성**인지 표시합니다.
 - **수정일**: 마지막 수정 시각입니다.
 - **생성일**: 생성 시각입니다.
 
@@ -966,6 +975,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 테이블이 표시됩니다. 프로젝트 이름을 클릭하면 사용자 단계로 이동합니다.
 
 ![](../images/fair_share_project_page.png)
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
 
 행을 선택하면 동일한 일괄 작업(사용량 그래프 및 일괄 편집)을 사용할 수 있습니다.
 
@@ -1257,6 +1267,14 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 특정 에이전트를 특정 자원 그룹에 추가하는 것은 현재 WebUI에서 처리되지 않으며, 설치 위치에서 에이전트 config 파일을 편집하고 에이전트 데몬을 재시작하여 수행할 수 있습니다. 자원 그룹의 관리는 `자원` 페이지의 자원 그룹 탭에서 가능합니다.
 
 ![](../images/resource_group_page.png)
+<!-- TODO(screenshot): refresh /agent?tab=resourceGroup — capture must show the property filter in the toolbar and the Default / Created At columns (no Driver column). Not captured: the screenshot backend was unavailable. -->
+
+목록 위의 **활성**, **비활성** 버튼으로 표시할 자원 그룹을 선택할 수 있으며, 그 옆의 속성 필터로 **이름**,
+**설명**, **공개**, **기본** 기준으로 목록을 좁힐 수 있습니다. 조건 조합을 지원하지 않는 매니저에서는 한 번에
+하나의 조건만 적용할 수 있습니다.
+
+**기본** 열은 기본 자원 그룹을 표시합니다. 기본 자원 그룹은 동시에 하나만 존재하며, 자원 그룹 이름을 확인할 수
+없는 상태로 등록된 에이전트는 이 자원 그룹에 속하게 됩니다.
 
 <a id="scheduling-methods"></a>
 
@@ -1569,6 +1587,16 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 
 슈퍼 관리자는 프로젝트 페이지에서 클러스터의 모든 프로젝트를 확인하고 생성, 수정, 비활성화, 활성화, 영구
 삭제할 수 있습니다. 각 행에는 프로젝트 관리자 권한을 부여할 수 있는 바로 가기도 제공됩니다.
+
+<!-- TODO(screenshot): capture /project as images/projects_page.png — must show the Active/Inactive buttons, the property filter, the column-settings gear at the right of the table header, and the project table with the Status and Modified At columns enabled. Not captured: the screenshot backend was unavailable. -->
+
+목록 위의 **활성**, **비활성** 버튼으로 표시할 프로젝트를 선택할 수 있으며, 그 옆의 속성 필터로 **이름**,
+**도메인**, **자원 정책**, **프로젝트 ID**, **생성일**, **수정일** 기준으로 목록을 좁힐 수 있습니다.
+**프로젝트 ID**에는 완전한 UUID를 입력해야 하며, **생성일**과 **수정일**에는 날짜와 시각을 입력합니다.
+
+**수정 시각**과 **상태** 열은 기본적으로 숨겨져 있으며, 테이블 헤더 오른쪽의 열 설정(⚙) 버튼으로 표시할 수
+있습니다. **상태** 열에는 프로젝트가 **활성**인지 **비활성**인지 표시됩니다. 선택한 열 구성은 브라우저별로
+세션 간에 유지됩니다.
 
 <a id="set-project-admin"></a>
 
