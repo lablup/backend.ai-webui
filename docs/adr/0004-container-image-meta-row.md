@@ -8,13 +8,14 @@
 - `variant` prop이 surface를 가른다. `full`은 tag chip까지 그리고, `compact`는 chip을 뺀 행을 그리고, `path`는 같은 reference를 monospace 한 줄로 그린다.
 - tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 같은 module의 `imageNodeTagFacts`가 정한다. FR-3544가 host의 `react/src/components/ImageTags.tsx`에 만든 규칙을 옮긴 것이고, chip 색을 호출자가 고르는 prop은 없앴다.
 - 구분선과 chip은 별도 component가 아니라 이 module 안의 지역 component다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 `BAIFlex` 안에서 높이가 0으로 접히므로, 그 metric을 이 module이 고정한다.
-- v2 `ImageV2`는 이 component가 직접 읽는다. v1 `ImageNode`는 `BAIImageNodeSimpleTag`가 읽어 문자열로 넘기고, tag 열만 그리는 `AliasedImageDoubleTags`가 셋째다. fragment가 없는 call site는 `imageFrgmt` 대신 `fullName`과 `variant`를 넘긴다.
+- schema가 둘이므로 component도 둘이다. v2 `ImageV2`는 `BAIImageNodeSimpleTagV2`가, v1 `ImageNode`는 `BAIImageNodeSimpleTag`가 각자 읽고 각자 같은 행을 그린다. 둘이 공유하는 것은 chip 판정을 하는 `imageNodeTagFacts` 하나뿐이다.
+- fragment가 없는 call site는 `BAIImageNodeSimpleTagV2`에 `imageFrgmt` 대신 `fullName`과 `variant`를 넘긴다.
 - 이 저장소가 지원하는 가장 낮은 manager는 26.4.x이고 [extended image info](#용어)는 24.12.0부터 켜지므로, 그 이전 manager를 위한 image 표현은 모두 지웠다.
 - 범위 밖: 화면 세 곳은 이 component를 쓰지 않는다. 환경 선택 dropdown의 환경 목록, session launcher가 손으로 입력받은 image 문자열, 그리고 session template 표의 축약 label이다.
 
 ## Context
 
-- **What the component is**: `BAIImageNodeSimpleTagV2`는 image 한 개의 표현을 그리는 component다. v2 `ImageV2` fragment를 직접 읽거나, 호출자가 이미 가진 문자열을 받는다. v1 schema를 읽는 일은 adapter가 맡고, 이 component는 그 결과만 받는다.
+- **What the components are**: `BAIImageNodeSimpleTagV2`는 v2 `ImageV2` fragment를 읽거나 호출자가 이미 가진 문자열을 받아 image 한 개의 표현을 그린다. `BAIImageNodeSimpleTag`는 v1 `ImageNode` fragment를 읽어 같은 행을 그린다. 한쪽이 다른 쪽을 부르지 않는다.
 - **Why a decision is needed**: 같은 image reference `cr.backend.ai/stable/python-tensorflow:2.15-py39-cuda12.4-ubuntu20.04@x86_64`가 화면마다 다르게 보였다. 아래 여섯 곳이 그 image를 각자 그리고 있었다.
 
 | 위치 | 그린 방식 |
@@ -118,18 +119,17 @@ flowchart TB
 - **Not exported**: 구분선과 tag chip은 `BAIImageNodeSimpleTagV2.tsx` 안에만 있고 barrel이 내보내지 않는다. 둘을 따로 쓰던 두 surface는 `version`과 `tags` variant로 같은 component를 부른다.
 - **Fixed metrics**: 구분선은 `alignSelf: center`, `height: 0.9em`, `marginInline: token.marginXXS`로 고정한 `Divider`다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 flex row 안에서 높이가 0으로 접힌다.
 
-### 6. Relay fragment는 adapter가 읽는다
+### 6. schema마다 fragment를 읽는 component가 하나씩 있다
 
-| adapter | fragment | 넘기는 것 |
+| component | fragment | reference를 만드는 법 |
 |---|---|---|
-| `BAIImageNodeSimpleTag` | `BAIImageNodeSimpleTagFragment on ImageNode` | `registry`, `namespace ?? name`, `tag`, `architecture`로 조립한 `fullName`과 server의 `base_image_name`, `version` |
-| `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | 스스로 읽는다. `identity.canonicalName`과 `identity.architecture`를 `@`로 이어 붙여 reference를 만든다 |
-| `AliasedImageDoubleTags` | `AliasedImageDoubleTagsFragment on ImageNode` | fact만. `variant="tags"`로 chip만 그리는 표의 Tags 열용이다 |
+| `BAIImageNodeSimpleTag` | `BAIImageNodeSimpleTagFragment on ImageNode` | `registry`, `namespace`, `tag`를 이어 붙이고 `architecture`가 있으면 `@`를 붙인다 |
+| `BAIImageNodeSimpleTagV2` | `BAIImageNodeSimpleTagV2Fragment on ImageV2` | `identity.canonicalName`과 `identity.architecture`를 `@`로 이어 붙인다 |
+| `AliasedImageDoubleTags` | `AliasedImageDoubleTagsFragment on ImageNode` | reference를 만들지 않는다. fact만 만들어 `variant="tags"`로 chip만 그린다 |
 
-- **`fullName` is the full reference**: adapter는 row에 registry부터 `@architecture`까지 다 붙은 문자열을 넘긴다. row의 copy control이 그 값을 그대로 복사하므로, 짧은 문자열을 넘기면 화면에 보이는 image와 복사되는 image가 달라진다. v1의 `namespace`는 `@since(version: "24.12.0")`이라 그 이전 manager에서는 deprecated된 `name`이 그 자리를 채우고, v2의 `identity.canonicalName`에는 architecture가 들어 있지 않다.
-
-- **Adapter prop surface**: 두 image node adapter는 `variant` 대신 `withoutTag`와 `copyable`을 받아 `withoutTag`를 `compact`로 옮긴다. 이 이름은 antd 시절부터 call site가 쓰던 것이고, `.claude/rules/component-props-extension.md`가 그 어휘를 바꾸지 말라고 정한다.
-- **Why adapters survive**: fragment spread는 call site의 query가 해야 하므로, v1 schema와 tag 열에는 fragment를 읽는 component가 따로 필요하다. 두 adapter는 fragment를 읽어 `BAIImageNodeSimpleTagV2`에 넘기는 일만 한다.
+- **`fullName` is the full reference**: copy control이 그 문자열을 그대로 복사하므로, registry부터 `@architecture`까지 다 붙여야 화면에 보이는 image와 복사되는 image가 같아진다. v2의 `identity.canonicalName`에는 architecture가 들어 있지 않아 따로 이어 붙인다.
+- **Prop surface**: 두 image node component는 `variant` 대신 `withoutTag`와 `copyable`을 받는다. 이 이름은 antd 시절부터 call site가 쓰던 것이고, `.claude/rules/component-props-extension.md`가 그 어휘를 바꾸지 말라고 정한다.
+- **What the two share**: chip 판정을 하는 `imageNodeTagFacts` 하나뿐이다. 한쪽이 다른 쪽을 부르면 v1 화면이 v2 component의 prop 변화에 묶이므로, 행 markup은 각자 가진다.
 
 ### 7. 공용 component는 BUI에 산다
 

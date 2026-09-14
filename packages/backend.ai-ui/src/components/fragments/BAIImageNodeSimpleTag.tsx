@@ -1,8 +1,16 @@
 import { BAIImageNodeSimpleTagFragment$key } from '../../__generated__/BAIImageNodeSimpleTagFragment.graphql';
+import { badgeVariantForTagColor } from '../../helper';
+import { theme } from '../../theme-shim';
+import BAIDoubleTag from '../BAIDoubleTag';
+import BAIFlex from '../BAIFlex';
+import BAIImageMetaIcon from '../BAIImageMetaIcon';
+import BAIText from '../BAIText';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
-import BAIImageNodeSimpleTagV2, {
-  imageNodeTagFacts,
-} from './BAIImageNodeSimpleTagV2';
+import { imageNodeTagFacts } from './BAIImageNodeSimpleTagV2';
+import { Badge } from '@astryxdesign/core/Badge';
+import { Divider } from '@astryxdesign/core/Divider';
+import { Text } from '@astryxdesign/core/Text';
+import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -14,9 +22,29 @@ export interface BAIImageNodeSimpleTagProps {
 }
 
 /**
- * `ImageNode` adapter over {@link BAIImageNodeSimpleTagV2}: it reads the v1
- * fragment and hands that component its plain facts, so both schemas render
- * the identical row (ADR 0004).
+ * Astryx's vertical `Divider` is `height: 100%`, which a centered flex row
+ * collapses to 0; these are antd's metrics.
+ */
+const MetaDivider: React.FC = () => {
+  'use memo';
+  const { token } = theme.useToken();
+  return (
+    <Divider
+      orientation="vertical"
+      style={{
+        alignSelf: 'center',
+        height: '0.9em',
+        marginInline: token.marginXXS,
+      }}
+    />
+  );
+};
+
+/**
+ * One-line identity of a v1 `ImageNode`: the meta icon, the aliased base name,
+ * the base version and the architecture, followed by the tag chips and a copy
+ * control for the full reference (ADR 0004). `BAIImageNodeSimpleTagV2` draws
+ * the same row from the v2 schema.
  */
 const BAIImageNodeSimpleTag: React.FC<BAIImageNodeSimpleTagProps> = ({
   imageFrgmt,
@@ -49,22 +77,54 @@ const BAIImageNodeSimpleTag: React.FC<BAIImageNodeSimpleTagProps> = ({
 
   if (!image) return null;
 
-  // `architecture` is nullable and the row copies this string, so the suffix
-  // is conditional.
-  const reference = `${image.registry}/${image.namespace}:${image.tag}`;
+  // `architecture` is nullable and the copy control emits this string, so the
+  // suffix is conditional.
+  const base = `${image.registry}/${image.namespace}:${image.tag}`;
+  const fullName = image.architecture ? `${base}@${image.architecture}` : base;
+  const facts = imageNodeTagFacts(image.tags, image.labels, tagAlias);
 
   return (
-    <BAIImageNodeSimpleTagV2
-      fullName={
-        image.architecture ? `${reference}@${image.architecture}` : reference
-      }
-      variant={withoutTag ? 'compact' : 'full'}
-      name={tagAlias(image.base_image_name || '')}
-      version={image.version}
-      architecture={image.architecture}
-      tags={imageNodeTagFacts(image.tags, image.labels, tagAlias)}
-      copyable={copyable}
-    />
+    <BAIFlex direction="row" wrap="wrap" gap="xxs">
+      <BAIImageMetaIcon image={fullName} />
+      <Text>{tagAlias(image.base_image_name || '')}</Text>
+      <MetaDivider />
+      <Text>{image.version}</Text>
+      <MetaDivider />
+      <Text>{image.architecture}</Text>
+      {!withoutTag && !_.isEmpty(facts) ? (
+        <>
+          <MetaDivider />
+          <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
+            {_.map(facts, (fact, index) =>
+              fact.isDouble ? (
+                <BAIDoubleTag
+                  key={`${fact.key}-${index}`}
+                  values={[
+                    {
+                      label: fact.keyAlias ?? '',
+                      color: fact.isCustomized ? 'cyan' : 'blue',
+                    },
+                    {
+                      label: fact.value ?? '',
+                      color: fact.isCustomized ? 'cyan' : 'blue',
+                    },
+                  ]}
+                />
+              ) : (
+                <Badge
+                  key={`${fact.key}-${index}`}
+                  variant={badgeVariantForTagColor(
+                    fact.isCustomized ? 'cyan' : 'blue',
+                  )}
+                  label={fact.aliasedTag}
+                />
+              ),
+            )}
+          </BAIFlex>
+        </>
+      ) : null}
+      {copyable ? <BAIText copyable={{ text: fullName }} /> : null}
+    </BAIFlex>
   );
 };
 
