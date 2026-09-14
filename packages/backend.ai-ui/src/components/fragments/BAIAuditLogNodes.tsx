@@ -90,7 +90,7 @@ const BAIAuditLogNodes = ({
         entityType
         entityId
         triggeredBy
-        clientIp
+        clientIp @since(version: "26.9.0")
         user {
           id
           basicInfo {

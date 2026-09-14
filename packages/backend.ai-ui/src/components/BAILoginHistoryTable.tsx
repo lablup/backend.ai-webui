@@ -124,7 +124,7 @@ const BAILoginHistoryTable = ({
         id
         result
         domainName
-        clientIp
+        clientIp @since(version: "26.9.0")
         failReason
         createdAt
       }

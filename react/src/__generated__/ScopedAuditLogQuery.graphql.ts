@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3a51e24c915f0800c687052cdf58e8b8>>
+ * @generated SignedSource<<432b78430a6ccb9a89333a912e8f3730>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -383,12 +383,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "757e3cbfc1c559ef1f01ec559e8d9f94",
+    "cacheID": "a683abe05a2f7bb62f8c45cccd816fdf",
     "id": null,
     "metadata": {},
     "name": "ScopedAuditLogQuery",
     "operationKind": "query",
-    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();
