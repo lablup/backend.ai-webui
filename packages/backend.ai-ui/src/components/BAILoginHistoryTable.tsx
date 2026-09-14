@@ -124,6 +124,7 @@ const BAILoginHistoryTable = ({
         id
         result
         domainName
+        clientIp
         failReason
         createdAt
       }
@@ -153,6 +154,14 @@ const BAILoginHistoryTable = ({
         dataIndex: 'domainName',
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.domainName || '-',
+      },
+      {
+        key: 'clientIp',
+        title: t('comp:BAILoginHistoryTable.ClientIp'),
+        dataIndex: 'clientIp',
+        // Shown exactly as the server returns it: the manager already applies
+        // the client IP masking policy, so the value may be masked or null.
+        render: (__, record) => record.clientIp || '-',
       },
       {
         key: 'createdAt',

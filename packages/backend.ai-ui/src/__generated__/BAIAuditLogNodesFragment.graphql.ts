@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<46be6c5c96a4dc01a9efcad4bde0338b>>
+ * @generated SignedSource<<0f870f6a3623862e40efab0f34689159>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,7 @@ export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNO
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
+  readonly clientIp: string | null | undefined;
   readonly createdAt: string;
   readonly description: string;
   readonly duration: string | null | undefined;
@@ -126,6 +127,13 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "clientIp",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "UserV2",
       "kind": "LinkedField",
       "name": "user",
@@ -159,6 +167,6 @@ return {
 };
 })();
 
-(node as any).hash = "f2d26f682eb8305a97c2b876d27bbdd4";
+(node as any).hash = "edfb7b13796a87eaa34ac5ef18f86e5e";
 
 export default node;

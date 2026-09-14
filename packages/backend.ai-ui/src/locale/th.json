@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "รหัสการดำเนินการ",
     "Actor": "ผู้ดำเนินการ",
+    "ClientIp": "IP ของไคลเอ็นต์",
     "Description": "คำอธิบาย",
     "Duration": "ระยะเวลา",
     "EntityId": "รหัสเอนทิตี",
@@ -265,6 +266,7 @@
     "SelectKeypair": "เลือกคู่คีย์"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP ของไคลเอ็นต์",
     "Domain": "โดเมน",
     "FailReason": "สาเหตุที่ล้มเหลว",
     "LoginTime": "เวลาเข้าสู่ระบบ",

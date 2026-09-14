@@ -465,6 +465,9 @@ The table includes the following columns:
   can sort by this column.
 - **Domain**: The domain the login attempt was made against. You can sort by
   this column.
+- **Client IP**: The IP address the login attempt came from, shown exactly as
+  the server reports it. Depending on the administrator's client IP masking
+  policy the address may be partially masked, or `-` when it was not recorded.
 - **Login Time**: When the login attempt was recorded. You can sort by this
   column.
 - **Failure Reason**: Additional detail reported for a failed attempt. Shows `-`
