@@ -57,6 +57,7 @@ import {
 import React, {
   Suspense,
   useDeferredValue,
+  useEffect,
   useState,
   useTransition,
 } from 'react';
@@ -90,7 +91,7 @@ const ResourceGroupInfoModalWithQuery: React.FC<{
   resourceGroupName: string;
   open: boolean;
   onRequestClose: () => void;
-}> = ({ resourceGroupName, ...modalProps }) => {
+}> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
   'use memo';
   const { scaling_group } = useLazyLoadQuery<ResourceGroupListInfoModalQuery>(
     graphql`
@@ -104,16 +105,28 @@ const ResourceGroupInfoModalWithQuery: React.FC<{
     { fetchPolicy: 'store-and-network' },
   );
 
-  return (
-    <ResourceGroupInfoModal resourceGroupFrgmt={scaling_group} {...modalProps} />
-  );
+  // A row deleted between the list query and this lookup comes back null;
+  // rendering it would show an all-blank modal, so close instead.
+  useEffect(() => {
+    if (!scaling_group) {
+      onRequestClose();
+    }
+  }, [scaling_group, onRequestClose]);
+
+  return scaling_group ? (
+    <ResourceGroupInfoModal
+      resourceGroupFrgmt={scaling_group}
+      onRequestClose={onRequestClose}
+      {...modalProps}
+    />
+  ) : null;
 };
 
 const ResourceGroupSettingModalWithQuery: React.FC<{
   resourceGroupName: string;
   open: boolean;
   onRequestClose: (success: boolean) => void;
-}> = ({ resourceGroupName, ...modalProps }) => {
+}> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
   'use memo';
   const { scaling_group } = useLazyLoadQuery<ResourceGroupListSettingModalQuery>(
     graphql`
@@ -130,12 +143,22 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
     { fetchPolicy: 'network-only' },
   );
 
-  return (
+  // `ResourceGroupSettingModal` reads a null fragment as "create mode", so a
+  // row deleted between the list query and this lookup would turn Edit into a
+  // blank Create form. Close instead.
+  useEffect(() => {
+    if (!scaling_group) {
+      onRequestClose(false);
+    }
+  }, [scaling_group, onRequestClose]);
+
+  return scaling_group ? (
     <ResourceGroupSettingModal
       resourceGroupFrgmt={scaling_group}
+      onRequestClose={onRequestClose}
       {...modalProps}
     />
-  );
+  ) : null;
 };
 
 const ResourceGroupList: React.FC = () => {
