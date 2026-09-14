@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cff50d43035c68183e3a2f97871ae4f1>>
+ * @generated SignedSource<<b1c9240c0e272186c1c61a6223868a88>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,7 +32,7 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
     readonly resourcePolicy: string;
     readonly role: UserRoleV2 | null | undefined;
   };
-  readonly projects: {
+  readonly projects?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly basicInfo: {
@@ -77,6 +77,11 @@ return {
     {
       "kind": "RootArgument",
       "name": "isNotSupportTotp"
+    },
+    {
+      "defaultValue": false,
+      "kind": "LocalArgument",
+      "name": "withProjects"
     }
   ],
   "kind": "Fragment",
@@ -176,43 +181,51 @@ return {
       "storageKey": null
     },
     {
-      "alias": null,
-      "args": null,
-      "concreteType": "ProjectV2Connection",
-      "kind": "LinkedField",
-      "name": "projects",
-      "plural": false,
+      "condition": "withProjects",
+      "kind": "Condition",
+      "passingValue": true,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "concreteType": "ProjectV2Edge",
+          "concreteType": "ProjectV2Connection",
           "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
+          "name": "projects",
+          "plural": false,
           "selections": [
             {
               "alias": null,
               "args": null,
-              "concreteType": "ProjectV2",
+              "concreteType": "ProjectV2Edge",
               "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
+              "name": "edges",
+              "plural": true,
               "selections": [
-                (v0/*: any*/),
                 {
                   "alias": null,
                   "args": null,
-                  "concreteType": "ProjectBasicInfo",
+                  "concreteType": "ProjectV2",
                   "kind": "LinkedField",
-                  "name": "basicInfo",
+                  "name": "node",
                   "plural": false,
                   "selections": [
+                    (v0/*: any*/),
                     {
                       "alias": null,
                       "args": null,
-                      "kind": "ScalarField",
-                      "name": "name",
+                      "concreteType": "ProjectBasicInfo",
+                      "kind": "LinkedField",
+                      "name": "basicInfo",
+                      "plural": false,
+                      "selections": [
+                        {
+                          "alias": null,
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "name",
+                          "storageKey": null
+                        }
+                      ],
                       "storageKey": null
                     }
                   ],
@@ -224,8 +237,7 @@ return {
           ],
           "storageKey": null
         }
-      ],
-      "storageKey": null
+      ]
     },
     {
       "alias": null,
@@ -368,6 +380,6 @@ return {
 };
 })();
 
-(node as any).hash = "6d8325dfe4b721cbb05a01e0a350ab94";
+(node as any).hash = "039268ec2b3d7a0c99464d2d860344a0";
 
 export default node;

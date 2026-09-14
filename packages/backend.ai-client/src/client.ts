@@ -896,9 +896,6 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
-      // `UserV2Filter.integrationName` was added in 26.4.2; older managers
-      // reject the unknown input field, failing the whole `adminUsersV2` query.
-      this._features['user-v2-integration-name-filter'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;

@@ -83,7 +83,7 @@ export const AdminUserManagementQuery = graphql`
           basicInfo {
             email
           }
-          ...BAIAdminUserV2TableFragment
+          ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
           ...PurgeUsersModalFragment
           ...UpdateUsersModalFragment
           ...UserInfoModalFragment
@@ -393,14 +393,11 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       propertyLabel: t('credential.DomainIsActive'),
       type: 'boolean',
     },
-    // `UserV2Filter.integrationName` only exists from manager 26.4.2.
-    bailClient.supports('user-v2-integration-name-filter')
-      ? {
-          key: 'integrationName',
-          propertyLabel: t('credential.IntegrationName'),
-          type: 'string',
-        }
-      : null,
+    {
+      key: 'integrationName',
+      propertyLabel: t('credential.IntegrationName'),
+      type: 'string',
+    },
     {
       key: 'createdAt',
       propertyLabel: t('general.CreatedAt'),
@@ -579,6 +576,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         usersFrgmt={filterOutNullAndUndefined(
           _.map(adminUsersV2?.edges, 'node'),
         )}
+        withProjects
         customizeColumns={(baseColumns) => {
           // The TOTP columns are meaningless when the manager has no TOTP
           // plugin (their data is skipped via @skipOnClient), so hide them.
