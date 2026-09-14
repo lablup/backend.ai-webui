@@ -83,8 +83,18 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   // One icon for all three render paths below, so they cannot drift apart. The
   // ring is determinate only where `getSessionKernelProgress` can trust the
   // fraction; elsewhere it spins like the glyph it replaces.
+  const progressPercent = getSessionKernelProgress(session).percent;
   const statusIcon = isTransitionalSessionStatus(session.status) ? (
-    <BAIProgressRing percent={getSessionKernelProgress(session).percent} />
+    <BAIProgressRing
+      percent={progressPercent}
+      // Only the determinate ring is a `progressbar`, and a progressbar needs
+      // a name; naming the indeterminate one would announce a decoration.
+      aria-label={
+        progressPercent === undefined
+          ? undefined
+          : (session.status ?? undefined)
+      }
+    />
   ) : undefined;
 
   const statusBadge = (

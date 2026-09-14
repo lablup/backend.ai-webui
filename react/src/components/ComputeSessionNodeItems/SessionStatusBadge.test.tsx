@@ -43,6 +43,7 @@ vi.mock('../../hooks', async (importOriginal) => {
 });
 
 const TestRenderer: React.FC = () => {
+  'use memo';
   const data = useLazyLoadQuery<SessionStatusBadgeTestQuery>(
     graphql`
       query SessionStatusBadgeTestQuery($id: GlobalIDField!)
@@ -106,6 +107,10 @@ describe('SessionStatusBadge kernel progress ring (FR-3923)', () => {
       'aria-valuenow',
       '99',
     );
+    // A `progressbar` with no accessible name is announced as a bare number.
+    expect(
+      screen.getByRole('progressbar', { name: 'TERMINATING' }),
+    ).toBeInTheDocument();
   });
 
   it('keeps the ring indeterminate for a single-node TERMINATING session', async () => {
