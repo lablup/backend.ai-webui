@@ -430,6 +430,30 @@ describe('token <-> condition value mapping', () => {
     ).toEqual({ role: { equals: 'ADMIN' } });
   });
 
+  // Deduplicating into an object would keep the newest condition at the
+  // *oldest* slot, so the tail-slice below would drop it for a stale sibling.
+  it('keeps the newest condition when `singleCondition` and `maxConditions` combine', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      {
+        AND: [
+          { email: { contains: 'old' } },
+          { role: { equals: 'ADMIN' } },
+          { email: { contains: 'new' } },
+        ],
+      },
+      filterProperties,
+    );
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        true,
+        1,
+      ),
+    ).toEqual({ email: { contains: 'new' } });
+  });
+
   it('keeps the newest `maxConditions` conditions', () => {
     const filters = graphQLFilterToPowerSearchFilters(
       {
@@ -456,10 +480,7 @@ describe('token <-> condition value mapping', () => {
     const filter: GraphQLFilter = {
       AND: [{ email: { contains: 'a' } }, { role: { equals: 'ADMIN' } }],
     };
-    const filters = graphQLFilterToPowerSearchFilters(
-      filter,
-      filterProperties,
-    );
+    const filters = graphQLFilterToPowerSearchFilters(filter, filterProperties);
     expect(
       powerSearchFiltersToGraphQLFilter(
         filters,
