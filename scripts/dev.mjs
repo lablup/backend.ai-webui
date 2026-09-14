@@ -9,6 +9,7 @@
 // When this box has joined the team dev gateway, the shareable URL is printed
 // at startup and exposed as VITE_DEV_SHARE_URL.
 import { spawn, spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -140,11 +141,25 @@ function writeCachedPr(cacheFile, text) {
   return pr;
 }
 
+// The background refresh, held so the shutdown paths below can reap it.
+let prRefresh = null;
+const stopPrRefresh = () => {
+  if (prRefresh && prRefresh.exitCode === null && prRefresh.signalCode === null) {
+    prRefresh.kill('SIGTERM');
+  }
+};
+
 function lookupPr(branchName) {
   if (!branchName || process.env.PORTLESS_SKIP_PR_LOOKUP) return null;
+  // The readable stem is lossy — `feature/foo` and `feature-foo` both reduce to
+  // `feature-foo`. That only ever cost a stale *fallback* while the lookup ran
+  // first; cache-first returns it, so a collision would put another branch's PR
+  // number in this boot's URL. The digest of the exact name makes the filename
+  // injective while the stem keeps it recognisable by eye.
   const cacheFile = join(
     homedir(), '.cache', 'backend.ai-webui',
-    `pr-${branchName.replace(/[^A-Za-z0-9]+/g, '-')}.json`,
+    `pr-${branchName.replace(/[^A-Za-z0-9]+/g, '-')}-` +
+      `${createHash('sha256').update(branchName).digest('hex').slice(0, 8)}.json`,
   );
   // A cached answer ends the boot's wait here. Refreshing it in the background
   // keeps the cache current for the next boot without spending ~0.6s (up to the
@@ -152,20 +167,23 @@ function lookupPr(branchName) {
   // is the descriptive word trailing a PR retitle — the number never changes.
   const cached = readCachedPr(cacheFile);
   if (cached) {
-    // Not detached: this stays in dev.mjs's own process group so a Ctrl+C
-    // reaches it too, and `unref` is what lets dev.mjs exit without waiting.
-    const refresh = spawn(
+    // Not detached, so it stays in dev.mjs's own process group; `unref` is what
+    // lets dev.mjs exit without waiting on it. Neither of those reaps a *hung*
+    // gh, so it carries the synchronous path's 4s timeout and is retained in
+    // `prRefresh` for the shutdown paths to kill — nothing dev.mjs spawns may
+    // outlive it (FR-3214).
+    prRefresh = spawn(
       'gh',
       ['pr', 'view', branchName, '--json', 'number,title'],
-      { stdio: ['ignore', 'pipe', 'ignore'] },
+      { stdio: ['ignore', 'pipe', 'ignore'], timeout: 4000 },
     );
     let out = '';
-    refresh.stdout?.on('data', (chunk) => (out += chunk));
-    refresh.on('error', () => {}); // no gh on PATH — the cache already answered
-    refresh.on('close', (code) => {
+    prRefresh.stdout?.on('data', (chunk) => (out += chunk));
+    prRefresh.on('error', () => {}); // no gh on PATH — the cache already answered
+    prRefresh.on('close', (code) => {
       if (code === 0) writeCachedPr(cacheFile, out);
     });
-    refresh.unref();
+    prRefresh.unref();
     return cached;
   }
 
@@ -294,6 +312,7 @@ const escalate = async () => {
 };
 const shutdown = (sig) => {
   stopSearchIndex();
+  stopPrRefresh();
   signalTree(sig); // repeated Ctrl+C re-signals; the escalation only starts once
   return (escalation ??= escalate());
 };
@@ -304,7 +323,9 @@ process.on('SIGHUP', () => shutdown('SIGHUP')); // terminal close no longer HUPs
 child.on('exit', async (code, signal) => {
   // concurrently is gone; anything still alive in its group is an orphan
   // (leaked grandchild mid-shutdown). Sweep it before exiting.
-  stopSearchIndex(); // treeAlive() only covers concurrently's group, not this
+  // treeAlive() only covers concurrently's group; neither child is in it.
+  stopSearchIndex();
+  stopPrRefresh();
   if (treeAlive()) await shutdown('SIGTERM');
   process.exit(signal ? 1 : (code ?? 0));
 });

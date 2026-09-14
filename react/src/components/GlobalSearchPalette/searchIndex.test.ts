@@ -159,4 +159,24 @@ describe('generated search index', () => {
       fs.rmSync(dir, { recursive: true, force: true });
     }
   }, 30_000);
+
+  // `pnpm run dev` rebuilds this on every boot, in the background (FR-3925).
+  // Rewriting identical bytes would still bump mtime, which Vite reads as a
+  // change and turns into a full page reload — so the no-op run must not write.
+  it('leaves the file untouched when the bytes have not changed', () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-index-'));
+    try {
+      const out = path.join(dir, 'index.json');
+
+      const first = runExtractor(['--out', out]);
+      expect(first).not.toContain('(unchanged)'); // it did not exist yet
+      const written = fs.statSync(out).mtimeMs;
+
+      const second = runExtractor(['--out', out]);
+      expect(second).toContain('(unchanged)');
+      expect(fs.statSync(out).mtimeMs).toBe(written);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  }, 30_000);
 });
