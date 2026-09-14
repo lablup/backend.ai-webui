@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Uç Nokta",
     "FailedToLoadCellData": "Veriler yüklenemedi.",
+    "LostAt": "Kayıp Zamanı",
     "NoAvailableLiveStat": "Canlı istatistik yok",
     "Region": "Bölge",
     "ResourceGroup": "Kaynak Grubu",
@@ -13,7 +14,8 @@
     "Schedulable": "Zamanlanabilir",
     "Starts": "Başlangıçlar",
     "Status": "Durum",
-    "Utilization": "Kullanım"
+    "Utilization": "Kullanım",
+    "Version": "Sürüm"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "İzin verildi",

@@ -6,6 +6,7 @@
     "DiskPerc": "디스크 %",
     "Endpoint": "엔드포인트",
     "FailedToLoadCellData": "데이터를 불러오는데 실패했습니다.",
+    "LostAt": "연결 유실 시각",
     "NoAvailableLiveStat": "표시할 사용량 없음",
     "Region": "지역",
     "ResourceGroup": "자원 그룹",
@@ -13,7 +14,8 @@
     "Schedulable": "스케줄링 가능",
     "Starts": "시작",
     "Status": "상태",
-    "Utilization": "사용량"
+    "Utilization": "사용량",
+    "Version": "버전"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "허용",
