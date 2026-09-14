@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "Ressourcengruppe erstellen",
     "Deactivate": "Deaktivieren",
     "DeactivateResourceGroup": "Deaktivierung der Ressourcengruppe",
+    "Default": "Standard",
     "DeleteResourceGroup": "Ressourcengruppe löschen",
     "Description": "Beschreibung",
     "Domain": "Bereich",
@@ -2552,8 +2553,7 @@
     "SelectScheduler": "Wählen Sie Planer",
     "TimeoutSeconds": "Sekunden",
     "TypeResourceGroupNameToDelete": "Geben Sie den Namen der zu löschenden Ressourcengruppe ein",
-    "UpdateResourceGroups": "Ressourcengruppen aktualisieren",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Ressourcengruppen aktualisieren"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Sie sind im Begriff, diese Ressourcenrichtlinie zu löschen:",

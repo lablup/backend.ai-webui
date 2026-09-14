@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Luo resurssiryhmä",
     "Deactivate": "Deaktivoida",
     "DeactivateResourceGroup": "Deaktivoi resurssiryhmä",
+    "Default": "Oletus",
     "DeleteResourceGroup": "Poista resurssiryhmä",
     "Description": "Kuvaus",
     "Domain": "Verkkotunnus",
@@ -2550,8 +2551,7 @@
     "SelectScheduler": "Valitse Ajastin",
     "TimeoutSeconds": "Sekuntia",
     "TypeResourceGroupNameToDelete": "Kirjoita poistettavan resurssiryhmän nimi",
-    "UpdateResourceGroups": "Päivitä resurssiryhmät",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Päivitä resurssiryhmät"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Olet poistamassa tätä resurssikäytäntöä:",

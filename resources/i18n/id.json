@@ -2520,6 +2520,7 @@
     "CreateResourceGroup": "Buat Grup Sumber Daya",
     "Deactivate": "Menonaktifkan",
     "DeactivateResourceGroup": "Nonaktifkan Grup Sumber Daya",
+    "Default": "Bawaan",
     "DeleteResourceGroup": "Hapus Grup Sumber Daya",
     "Description": "Deskripsi",
     "Domain": "Domain",
@@ -2553,8 +2554,7 @@
     "SelectScheduler": "Pilih Penjadwal",
     "TimeoutSeconds": "Detik",
     "TypeResourceGroupNameToDelete": "Ketik nama grup sumber daya yang akan dihapus",
-    "UpdateResourceGroups": "Perbarui Grup Sumber Daya",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Perbarui Grup Sumber Daya"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",

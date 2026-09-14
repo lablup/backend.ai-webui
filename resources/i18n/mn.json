@@ -2518,6 +2518,7 @@
     "CreateResourceGroup": "Нөөцийн бүлэг үүсгэх",
     "Deactivate": "Идэвхгүй болгох",
     "DeactivateResourceGroup": "Нөөцийн бүлгийг идэвхгүй болгох",
+    "Default": "Өгөгдмөл",
     "DeleteResourceGroup": "Нөөцийн бүлгийг устгах",
     "Description": "Тодорхойлолт",
     "Domain": "Домэйн",
@@ -2551,8 +2552,7 @@
     "SelectScheduler": "Цагийн хуваарийг сонгоно уу",
     "TimeoutSeconds": "Секунд",
     "TypeResourceGroupNameToDelete": "Устгахын тулд нөөцийн бүлгийн нэрийг бичнэ үү",
-    "UpdateResourceGroups": "Нөөцийн бүлгүүдийг шинэчлэх",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Нөөцийн бүлгүүдийг шинэчлэх"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",

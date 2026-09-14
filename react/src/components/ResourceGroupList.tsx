@@ -124,7 +124,10 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
       }
     `,
     { name: resourceGroupName },
-    { fetchPolicy: 'store-and-network' },
+    // `modify_scaling_group` returns only `ok`/`msg`, so the cached
+    // `ScalingGroup` keeps its pre-edit values; the form reads
+    // `initialValues` once at mount, so a cached first render would stick.
+    { fetchPolicy: 'network-only' },
   );
 
   return (
@@ -145,8 +148,12 @@ const ResourceGroupList: React.FC = () => {
   // capability; older ones reject them, so restrict to a single condition.
   const supportsSubFilter = baiClient.supports('sub-filter');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
-  const [openCreateModal, { toggle: toggleOpenCreateModal }] = useToggle(false);
-  const [openInfoModal, { toggle: toggleOpenInfoModal }] = useToggle(false);
+  const [
+    openCreateModal,
+    { setRight: openSettingModal, setLeft: hideSettingModal },
+  ] = useToggle(false);
+  const [openInfoModal, { setRight: showInfoModal, setLeft: hideInfoModal }] =
+    useToggle(false);
   const [openSFTPModal, setOpenSFTPModal] = useState(false);
   const [infoModalName, setInfoModalName] = useState<string>();
   const [settingModalName, setSettingModalName] = useState<string>();
@@ -283,7 +290,7 @@ const ResourceGroupList: React.FC = () => {
     );
 
   const closeSettingModal = (success: boolean) => {
-    toggleOpenCreateModal();
+    hideSettingModal();
     setSettingModalName(undefined);
     if (success) {
       startRefetchTransition(() => {
@@ -309,7 +316,7 @@ const ResourceGroupList: React.FC = () => {
               icon: <Info size="1em" />,
               onClick: () => {
                 setInfoModalName(record.name);
-                toggleOpenInfoModal();
+                showInfoModal();
               },
             },
             {
@@ -318,7 +325,7 @@ const ResourceGroupList: React.FC = () => {
               icon: <SquarePenIcon />,
               onClick: () => {
                 setSettingModalName(record.name);
-                toggleOpenCreateModal();
+                openSettingModal();
               },
             },
             {
@@ -554,7 +561,7 @@ const ResourceGroupList: React.FC = () => {
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
-            onClick={() => toggleOpenCreateModal()}
+            onClick={() => openSettingModal()}
           >
             {t('resourceGroup.CreateResourceGroup')}
           </BAIButton>
@@ -655,7 +662,7 @@ const ResourceGroupList: React.FC = () => {
             resourceGroupName={infoModalName}
             open={openInfoModal}
             onRequestClose={() => {
-              toggleOpenInfoModal();
+              hideInfoModal();
               setInfoModalName(undefined);
             }}
           />

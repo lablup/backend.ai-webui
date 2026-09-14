@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "สร้างกลุ่มทรัพยากร",
     "Deactivate": "ปิดใช้งาน",
     "DeactivateResourceGroup": "ปิดการใช้งานกลุ่มทรัพยากร",
+    "Default": "ค่าเริ่มต้น",
     "DeleteResourceGroup": "ลบกลุ่มทรัพยากร",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",

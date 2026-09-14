@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "创建资源组",
     "Deactivate": "停用",
     "DeactivateResourceGroup": "停用资源组",
+    "Default": "默认",
     "DeleteResourceGroup": "删除资源组",
     "Description": "描述",
     "Domain": "域名",
@@ -2552,8 +2553,7 @@
     "SelectScheduler": "选择调度程序",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "输入要删除的资源组名称",
-    "UpdateResourceGroups": "更新资源组",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "更新资源组"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "您即将删除此资源策略：",

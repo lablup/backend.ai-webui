@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "Utwórz grupę zasobów",
     "Deactivate": "Dezaktywować",
     "DeactivateResourceGroup": "Dezaktywna grupa zasobów",
+    "Default": "Domyślny",
     "DeleteResourceGroup": "Usuń grupę zasobów",
     "Description": "Opis",
     "Domain": "Domena",
@@ -2552,8 +2553,7 @@
     "SelectScheduler": "Wybierz harmonogram",
     "TimeoutSeconds": "sekundy",
     "TypeResourceGroupNameToDelete": "Wpisz nazwę grupy zasobów do usunięcia",
-    "UpdateResourceGroups": "Aktualizuj grupy zasobów",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Aktualizuj grupy zasobów"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Zamierzasz usunąć tę zasadę dotyczącą zasobów:",

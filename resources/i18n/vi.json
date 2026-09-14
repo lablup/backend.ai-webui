@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "Tạo nhóm tài nguyên",
     "Deactivate": "Vô hiệu hóa",
     "DeactivateResourceGroup": "Vô hiệu hóa nhóm tài nguyên",
+    "Default": "Mặc định",
     "DeleteResourceGroup": "Xóa nhóm tài nguyên",
     "Description": "Sự miêu tả",
     "Domain": "Lãnh địa",
@@ -2552,8 +2553,7 @@
     "SelectScheduler": "Chọn bộ lập lịch",
     "TimeoutSeconds": "Giây",
     "TypeResourceGroupNameToDelete": "Nhập tên nhóm tài nguyên để xóa",
-    "UpdateResourceGroups": "Cập nhật nhóm tài nguyên",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Cập nhật nhóm tài nguyên"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Bạn sắp xóa chính sách tài nguyên này:",

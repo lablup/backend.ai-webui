@@ -2519,6 +2519,7 @@
     "CreateResourceGroup": "リソースグループの作成",
     "Deactivate": "無効にします",
     "DeactivateResourceGroup": "リソースグループを無効にします",
+    "Default": "デフォルト",
     "DeleteResourceGroup": "リソースグループを削除します",
     "Description": "説明",
     "Domain": "ドメイン",
@@ -2552,8 +2553,7 @@
     "SelectScheduler": "スケジューラを選択",
     "TimeoutSeconds": "秒",
     "TypeResourceGroupNameToDelete": "削除するリソースグループ名を入力します",
-    "UpdateResourceGroups": "リソースグループを更新",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "リソースグループを更新"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "このリソースポリシーを削除しようとしています。",

@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Criar Grupo de Recursos",
     "Deactivate": "Desativar",
     "DeactivateResourceGroup": "Grupo de Recursos Desativados",
+    "Default": "Padrão",
     "DeleteResourceGroup": "Excluir Grupo de Recursos",
     "Description": "Descrição",
     "Domain": "Domínio",
@@ -2550,8 +2551,7 @@
     "SelectScheduler": "Selecione o Agendador",
     "TimeoutSeconds": "Segundos",
     "TypeResourceGroupNameToDelete": "Digite o nome do grupo de recursos para excluir",
-    "UpdateResourceGroups": "Atualizar Grupos de Recursos",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Atualizar Grupos de Recursos"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Você está prestes a excluir esta política de recursos:",

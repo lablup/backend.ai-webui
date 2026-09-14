@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Создать группу ресурсов",
     "Deactivate": "Деактивировать",
     "DeactivateResourceGroup": "Деактивировать ресурсную группу",
+    "Default": "По умолчанию",
     "DeleteResourceGroup": "Удалить ресурсную группу",
     "Description": "Описание",
     "Domain": "Домен",
@@ -2550,8 +2551,7 @@
     "SelectScheduler": "Выберите планировщик",
     "TimeoutSeconds": "Секунды",
     "TypeResourceGroupNameToDelete": "Введите имя группы ресурсов для удаления",
-    "UpdateResourceGroups": "Обновить группы ресурсов",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Обновить группы ресурсов"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",

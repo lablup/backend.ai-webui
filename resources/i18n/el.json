@@ -2517,6 +2517,7 @@
     "CreateResourceGroup": "Δημιουργία ομάδας πόρων",
     "Deactivate": "Απενεργοποιούμαι",
     "DeactivateResourceGroup": "Απενεργοποίηση ομάδας πόρων",
+    "Default": "Προεπιλογή",
     "DeleteResourceGroup": "Διαγραφή ομάδας πόρων",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
@@ -2550,8 +2551,7 @@
     "SelectScheduler": "Επιλέξτε Προγραμματιστής",
     "TimeoutSeconds": "δευτερόλεπτα",
     "TypeResourceGroupNameToDelete": "Πληκτρολογήστε όνομα ομάδας πόρων για διαγραφή",
-    "UpdateResourceGroups": "Ενημέρωση ομάδων πόρων",
-    "Default": "__NOT_TRANSLATED__"
+    "UpdateResourceGroups": "Ενημέρωση ομάδων πόρων"
   },
   "resourcePolicy": {
     "AboutToDeleteResourcePolicy": "Πρόκειται να διαγράψετε αυτήν την πολιτική πόρων:",
