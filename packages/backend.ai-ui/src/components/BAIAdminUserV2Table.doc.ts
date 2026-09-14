@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The presentational table over a plural `UserV2` Relay fragment, used by the admin user-management surfaces. It reads every user field the admin views need — email, local user id, username, full name, domain, integration name, role, resource policy, main access key, sudo and TOTP flags, allowed client IPs, status and status info, password-change flag, description, container UID/GID, and the created/modified timestamps — and renders them through BAIText, BooleanTag, BAITagList and BAIQuestionIconWithTooltip. Sorting is enabled only on the columns the server can order by (email, username, status, domainName, createdAt, modifiedAt), and it emits that choice as an order string rather than sorting locally. Filtering, pagination, query orchestration and row actions belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
+      'The presentational table over a plural `UserV2` Relay fragment, used by the admin user-management surfaces. It reads every user field the admin views need — email, local user id, username, full name, domain, project memberships, integration name, role, resource policy, main access key, sudo and TOTP flags, allowed client IPs, status and status info, password-change flag, description, container UID/GID, and the created/modified timestamps — and renders them through BAIText, BooleanTag, BAITagList and BAIQuestionIconWithTooltip. Sorting is enabled only on the columns the server can order by (email, username, status, domainName, projectName, createdAt, modifiedAt), and it emits that choice as an order string rather than sorting locally. The Projects column carries the `projectName` sort key and is `defaultHidden`, so a surface that passes `tableSettings` keeps it out of the default column set while leaving it available in the column picker. Filtering, pagination, query orchestration and row actions belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Sort on a column outside the six server-sortable keys — the remaining columns are deliberately non-sortable because the backend cannot order by them.',
+          'Sort on a column outside the seven server-sortable keys — the remaining columns are deliberately non-sortable because the backend cannot order by them.',
       },
       {
         guidance: false,
