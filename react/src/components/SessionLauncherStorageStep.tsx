@@ -13,7 +13,7 @@ import type { ProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import {
   BAIVFolderMountConfigInput,
-  convertToUUID,
+  safeDecodeUuid,
   type BAIVFolderMountConfigInputRef,
   type LegacyVFolder,
   useVFolderMountConfigFormRule,
@@ -80,7 +80,9 @@ const SessionLauncherStorageStep: React.FC<{
           // The select can only offer the new folder once its own
           // `GET /folders` query has seen it.
           await mountConfigInputRef.current?.refetch();
-          const vfolderId = convertToUUID(response.id);
+          // The create mutation answers with a Relay global id.
+          const vfolderId = safeDecodeUuid(response.id);
+          if (!vfolderId) return;
           const mounts = form.getFieldValue('vfolderMounts') ?? [];
           if (_.some(mounts, (mount) => mount.vfolderId === vfolderId)) return;
           form.setFieldValue('vfolderMounts', [
