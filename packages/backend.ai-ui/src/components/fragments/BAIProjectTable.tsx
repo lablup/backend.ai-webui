@@ -129,16 +129,19 @@ const BAIProjectTable = ({
       key: 'is_active',
       title: t('comp:BAIProjectTable.Status'),
       dataIndex: 'is_active',
-      render: (value) => (
-        <BAIBadge
-          color={value ? 'success' : 'default'}
-          text={
-            value
-              ? t('comp:BAIProjectTable.Active')
-              : t('comp:BAIProjectTable.Inactive')
-          }
-        />
-      ),
+      render: (value) =>
+        _.isNil(value) ? (
+          '-'
+        ) : (
+          <BAIBadge
+            color={value ? 'success' : 'default'}
+            text={
+              value
+                ? t('comp:BAIProjectTable.Active')
+                : t('comp:BAIProjectTable.Inactive')
+            }
+          />
+        ),
       sorter: isEnableSorter('is_active'),
       defaultHidden: true,
     },
