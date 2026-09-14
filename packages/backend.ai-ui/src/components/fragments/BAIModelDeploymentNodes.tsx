@@ -41,7 +41,7 @@ export type ModelDeploymentNodeInList = NonNullable<
  * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
  * intentionally omitted because the server enum does not include it.
  */
-const availableDeploymentSorterKeys = [
+export const availableDeploymentSorterKeys = [
   'name',
   'createdAt',
   'domain',
@@ -49,6 +49,8 @@ const availableDeploymentSorterKeys = [
   'resourceGroup',
   'tag',
 ] as const;
+
+export type DeploymentSorterKey = (typeof availableDeploymentSorterKeys)[number];
 
 export const availableDeploymentSorterValues = [
   ...availableDeploymentSorterKeys,
@@ -58,9 +60,6 @@ export const availableDeploymentSorterValues = [
 export type DeploymentOrderValue =
   (typeof availableDeploymentSorterValues)[number];
 
-const isEnableSorter = (key: string) => {
-  return _.includes(availableDeploymentSorterKeys, key);
-};
 
 export interface BAIModelDeploymentNodesProps extends Omit<
   BAITableProps<ModelDeploymentNodeInList>,
@@ -71,6 +70,12 @@ export interface BAIModelDeploymentNodesProps extends Omit<
     baseColumns: BAIColumnsType<ModelDeploymentNodeInList>,
   ) => BAIColumnsType<ModelDeploymentNodeInList>;
   disableSorter?: boolean;
+  /**
+   * Which columns may be sorted. Defaults to every key the current server enum
+   * has; a caller on an older manager narrows it (`DOMAIN`/`PROJECT`/
+   * `RESOURCE_GROUP`/`TAG` only exist from 26.4.3).
+   */
+  sortableKeys?: ReadonlyArray<DeploymentSorterKey>;
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
@@ -80,11 +85,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   deploymentsFrgmt,
   customizeColumns,
   disableSorter,
+  sortableKeys = availableDeploymentSorterKeys,
   onChangeOrder,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+
+  const isEnableSorter = (key: string) => _.includes(sortableKeys, key);
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`

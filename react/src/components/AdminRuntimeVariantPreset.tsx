@@ -24,6 +24,7 @@ import {
   type RuntimeVariantPresetNodeInList,
   type BAITableSettings,
   BAIUnmountAfterClose,
+  filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
   toLocalId,
@@ -112,6 +113,11 @@ const AdminRuntimeVariantPreset = ({
   // capability (Strawberry V2). On older managers, restrict the property
   // filter to a single condition so it emits a flat filter the backend accepts.
   const supportsSubFilter = baiClient.supports('sub-filter');
+  // BA-5918 (26.4.4rc3) turned `runtimeVariantId` into a UUIDFilter; the
+  // control only emits the wrapper shape.
+  const supportsFilterWrapperInputs = baiClient.supports(
+    'v2-filter-wrapper-inputs',
+  );
 
   const [deletingPreset, setDeletingPreset] =
     useState<RuntimeVariantPresetNodeInList | null>(null);
@@ -164,18 +170,18 @@ const AdminRuntimeVariantPreset = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<RuntimeVariantPresetFilter>
-            singleCondition={!supportsSubFilter}
-            filterProperties={[
+            maxConditions={supportsSubFilter ? undefined : 1}
+            filterProperties={filterOutEmpty([
               {
                 key: 'name',
                 propertyLabel: t('adminRuntimeVariantPreset.Name'),
                 type: 'string',
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'runtimeVariantId',
                 propertyLabel: t('adminRuntimeVariantPreset.Runtime'),
-                type: 'uuid',
-                fixedOperator: 'equals',
+                type: 'uuid' as const,
+                fixedOperator: 'equals' as const,
                 rule: uuidRule,
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIRuntimeVariantSelect
@@ -189,7 +195,7 @@ const AdminRuntimeVariantPreset = ({
                   />
                 ),
               },
-            ]}
+            ])}
             value={filter}
             onChange={(next) => {
               onReload(

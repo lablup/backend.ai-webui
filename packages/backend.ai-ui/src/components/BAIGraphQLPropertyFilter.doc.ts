@@ -96,6 +96,12 @@ export const docs = {
       default: 'false',
     },
     {
+      name: 'maxConditions',
+      type: 'number',
+      description:
+        'Caps how many conditions the emitted filter carries in total, across every property. `1` never emits AND/OR, which is how a manager without sub-filter support is kept from receiving combinators. The newest conditions win.',
+    },
+    {
       name: 'loading',
       type: 'boolean',
       description:
