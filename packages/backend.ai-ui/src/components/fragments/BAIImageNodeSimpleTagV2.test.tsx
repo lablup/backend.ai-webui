@@ -1,8 +1,9 @@
 import { preserveDotStartCase } from '../../helper';
-import { imageNodeTagFacts } from '../BAIImageTagBadges';
 import { BAIMetaDataProvider } from '../provider';
 import type { ImageMetaData } from '../provider';
-import BAIImageNodeSimpleTagV2 from './BAIImageNodeSimpleTagV2';
+import BAIImageNodeSimpleTagV2, {
+  imageNodeTagFacts,
+} from './BAIImageNodeSimpleTagV2';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 

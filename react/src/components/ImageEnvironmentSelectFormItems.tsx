@@ -29,9 +29,8 @@ import {
   badgeVariantForTagColor,
   BAIDoubleTag,
   BAIFlex,
-  BAIImageMetaDivider,
   BAIImageMetaIcon,
-  BAIImageTagBadges,
+  BAIImageNodeSimpleTagV2,
   imageNodeTagFacts,
   BAISelect,
   // BAISelect still accepts antd's children option API via BUI's render-null
@@ -824,20 +823,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             ...extraFilterValues,
                           ].join('\t')}
                         >
-                          <BAIFlex direction="row">
-                            <TextHighlighter keyword={versionSearch}>
-                              {image?.version}
-                            </TextHighlighter>
-                            <BAIImageMetaDivider />
-                            <TextHighlighter keyword={versionSearch}>
-                              {image?.architecture}
-                            </TextHighlighter>
-                            <BAIImageMetaDivider />
-                            <BAIImageTagBadges
-                              facts={tagFacts}
-                              highlightKeyword={versionSearch}
-                            />
-                          </BAIFlex>
+                          <BAIImageNodeSimpleTagV2
+                            variant="version"
+                            version={image?.version}
+                            architecture={image?.architecture}
+                            tags={tagFacts}
+                            highlightKeyword={versionSearch}
+                          />
                         </SelectOption>
                       );
                     },

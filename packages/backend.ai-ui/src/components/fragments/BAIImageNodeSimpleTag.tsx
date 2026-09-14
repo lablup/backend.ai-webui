@@ -1,7 +1,8 @@
 import { BAIImageNodeSimpleTagFragment$key } from '../../__generated__/BAIImageNodeSimpleTagFragment.graphql';
-import { imageNodeTagFacts } from '../BAIImageTagBadges';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
-import BAIImageNodeSimpleTagV2 from './BAIImageNodeSimpleTagV2';
+import BAIImageNodeSimpleTagV2, {
+  imageNodeTagFacts,
+} from './BAIImageNodeSimpleTagV2';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 

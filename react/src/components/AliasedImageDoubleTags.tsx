@@ -4,7 +4,7 @@
  */
 import { AliasedImageDoubleTagsFragment$key } from '../__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import { BAIImageTagBadges, imageNodeTagFacts } from 'backend.ai-ui';
+import { BAIImageNodeSimpleTagV2, imageNodeTagFacts } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -40,8 +40,9 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
   const [, { tagAlias }] = useBackendAIImageMetaData();
 
   return (
-    <BAIImageTagBadges
-      facts={imageNodeTagFacts(image?.tags, image?.labels, tagAlias)}
+    <BAIImageNodeSimpleTagV2
+      variant="tags"
+      tags={imageNodeTagFacts(image?.tags, image?.labels, tagAlias)}
       highlightKeyword={highlightKeyword}
     />
   );
