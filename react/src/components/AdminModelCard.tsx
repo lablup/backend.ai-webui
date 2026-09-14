@@ -113,8 +113,15 @@ export const AdminModelCardQuery = graphql`
           }
           domainName
           projectId
+          project @since(version: "26.4.3") {
+            id
+            basicInfo {
+              name
+            }
+          }
           accessLevel
           createdAt
+          updatedAt
           metadata {
             title
             category
@@ -328,15 +335,27 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       sorter: supportsSearchAxes,
-      render: (projectId) => (
-        <BAIText
-          copyable
-          ellipsis={{ tooltip: true }}
-          style={{ maxWidth: 150 }}
-        >
-          {projectId}
-        </BAIText>
-      ),
+      // `project` is @since(26.4.3); fall back to the raw UUID on older
+      // managers, which is all this column used to show.
+      render: (projectId, record) => {
+        const projectName = record.project?.basicInfo?.name;
+        if (!projectName) {
+          return (
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              style={{ maxWidth: 150 }}
+            >
+              {projectId}
+            </BAIText>
+          );
+        }
+        return (
+          <BAIText ellipsis={{ tooltip: projectName }} style={{ maxWidth: 150 }}>
+            {projectName}
+          </BAIText>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -345,6 +364,14 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       sorter: true,
       render: (createdAt) =>
         createdAt ? dayjs(createdAt).format('YYYY-MM-DD HH:mm') : '-',
+    },
+    {
+      key: 'updatedAt',
+      title: t('general.ModifiedAt'),
+      dataIndex: 'updatedAt',
+      defaultHidden: true,
+      render: (updatedAt) =>
+        updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
     },
   ]);
 
