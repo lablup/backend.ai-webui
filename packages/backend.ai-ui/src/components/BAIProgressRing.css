@@ -1,0 +1,81 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIProgressRing> (FR-3923), imported by the component
+ itself (P17). The ring is an ICON: it is handed to `Badge`'s `icon` slot, so
+ every value here is either geometry (resolved in the SVG user space, not CSS)
+ or motion timing.
+
+ The three durations are literals on purpose. `--duration-*` tops out at
+ 1300ms, so neither the 1s indeterminate spin — which must stay pixel-identical
+ to the `.bai-icon-spin` glyph this replaces, and that rule is a literal `1s`
+ in this same package — nor the 2.4s determinate turn has a token to name it.
+ The dash transition does have one and uses it.
+*/
+
+/* `@keyframes` never participates in the cascade layer, so the name is
+   BUI-scoped to avoid colliding with the host's own rotations. */
+@keyframes bai-progress-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@layer components {
+  .bai-progress-ring {
+    display: inline-block;
+  }
+
+  .bai-progress-ring-track {
+    stroke: currentcolor;
+    stroke-opacity: 0.25;
+  }
+
+  .bai-progress-ring-arc {
+    stroke: currentcolor;
+    stroke-linecap: round;
+    /* Start the arc at 12 o'clock. `fill-box` is the circle's own geometry
+       box, whose centre is the circle's centre whatever the viewBox is. */
+    transform: rotate(-90deg);
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: stroke-dashoffset var(--duration-medium-min)
+      var(--ease-standard);
+  }
+
+  .bai-progress-ring-spin,
+  .bai-progress-ring-indeterminate {
+    animation-name: bai-progress-ring-spin;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* One slow turn, so a determinate ring still reads as "in progress" between
+     two kernel state changes that can be minutes apart. */
+  .bai-progress-ring-spin {
+    animation-duration: 2.4s;
+  }
+
+  .bai-progress-ring-indeterminate {
+    animation-duration: 1s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* The arc already carries the value, so the determinate ring simply stops.
+       The indeterminate one carries nothing else, so it slows rather than
+       freezing — a frozen spinner reads as broken, which is what Astryx's own
+       `Spinner` decided (3s under reduced motion). */
+    .bai-progress-ring-spin {
+      animation: none;
+    }
+
+    .bai-progress-ring-indeterminate {
+      animation-duration: 3s;
+    }
+
+    .bai-progress-ring-arc {
+      transition: none;
+    }
+  }
+}
