@@ -991,8 +991,6 @@ which the session will be created once sufficient resources become available.
 
 ![](../images/scheduler_page.png)
 
-<!-- TODO(screenshot): /admin/session?tab=pending-sessions — Pending Sessions tab with the Resource Group selector (dropdown open) above the pending session list. Not recaptured on this run: the capture environment was unavailable. -->
-
 Use the **Resource Group** selector above the list to choose which group's pending queue is shown. It
 is searchable and lists every active resource group in the cluster, sorted by name, regardless of the
 project selected in the top bar. Your choice is kept in the page URL as a `resourceGroup` query

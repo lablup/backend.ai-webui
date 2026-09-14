@@ -939,8 +939,6 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 
 ![](../images/scheduler_page.png)
 
-<!-- TODO(screenshot): /admin/session?tab=pending-sessions — Pending Sessions tab with the Resource Group selector (dropdown open) above the pending session list. Not recaptured on this run: the capture environment was unavailable. -->
-
 一覧の上にある **リソースグループ** セレクターで、どのリソースグループのキューを表示するかを選択します。このセレクターは
 検索に対応しており、上部バーで選択しているプロジェクトに関係なく、クラスター内のすべての有効なリソースグループを
 名前順に表示します。選択した値はページURLの `resourceGroup` クエリパラメータとして保持されるため、タブを

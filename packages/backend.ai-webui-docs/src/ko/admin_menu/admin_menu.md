@@ -817,8 +817,6 @@ Backend.AI는 프로젝트 자원 정책 관리를 지원합니다. 프로젝트
 
 ![](../images/scheduler_page.png)
 
-<!-- TODO(screenshot): /admin/session?tab=pending-sessions — Pending Sessions tab with the Resource Group selector (dropdown open) above the pending session list. Not recaptured on this run: the capture environment was unavailable. -->
-
 목록 위의 **자원 그룹** 선택기로 어떤 자원 그룹의 대기열을 표시할지 선택합니다. 이 선택기는 검색이 가능하며, 상단 바에서
 선택한 프로젝트와 관계없이 클러스터의 모든 활성 자원 그룹을 이름순으로 나열합니다. 선택한 값은 페이지 URL에
 `resourceGroup` 쿼리 파라미터로 유지되므로, 탭을 북마크하거나 공유해 같은 자원 그룹으로 다시 돌아올 수 있습니다. URL에
