@@ -1,4 +1,5 @@
 import { API_VERSION, main, parsePins, parseResult } from './cli.js';
+import { withNote } from './client/anchor.js';
 import { buildBlockFromCapture, buildSetText } from './client/block.js';
 import { encodeAnchor } from './client/codec.js';
 import { pinSetUrl } from './client/deeplink.js';
@@ -369,6 +370,30 @@ describe('parse — a pin set in one link', () => {
     expect(parsed.map((pin) => pin.id)).toEqual(pins.map((pin) => pin.id));
     // The escaped copy carries only the first pin, so the whole set wins.
     expect(parsed.map((pin) => pin.url)).toEqual([url, url, url]);
+  });
+
+  // Editing a note re-keys the pin, and the block it writes has to prove the
+  // NEW id — the marker and the anchor are re-stamped together.
+  it('proves the id an edited note gave the pin', async () => {
+    const at = '2026-09-04T00:00:00Z';
+    const edited = withNote(anchor, 'the note, rewritten');
+    const anchorB64 = await encodeAnchor(edited);
+    const pin = setPin({
+      id: pinId(9400, anchorB64, at),
+      anchor: edited,
+      anchorB64,
+      note: 'the note, rewritten',
+      at,
+    });
+
+    const parsed = await parsePins(buildSetText([pin]));
+
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0]).toMatchObject({
+      id: pin.id,
+      note: 'the note, rewritten',
+      idVerified: true,
+    });
   });
 
   it('reads back the blocks the set producer wrote', async () => {

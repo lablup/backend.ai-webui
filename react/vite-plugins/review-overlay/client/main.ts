@@ -41,7 +41,11 @@ import { createSetDock, whereItWas, type PinPlace } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
-import { createPinLayer, type DeepLinkPinTarget } from './pin.js';
+import {
+  createPinLayer,
+  LINK_NOT_EDITABLE,
+  type DeepLinkPinTarget,
+} from './pin.js';
 import { fetchServerState, readEmbeddedState } from './state.js';
 import type {
   AnchorComponent,
@@ -75,7 +79,8 @@ function boot() {
    * while the reviewer types, and only the anchor has to be re-encoded.
    */
   let pick: {
-    target: Element;
+    /** Which composer open this belongs to; an edit has no picked element. */
+    epoch: number;
     anchor: AnchorV3;
     stack: string[];
     component?: AnchorComponent;
@@ -87,7 +92,7 @@ function boot() {
    * origin and it needs the user activation still to be live, so nothing may
    * be awaited between the gesture and the write.
    */
-  let capture: { target: Element; note: string; value: AnchorCapture } | null =
+  let capture: { epoch: number; note: string; value: AnchorCapture } | null =
     null;
   /** Typing faster than `encodeAnchor` resolves; only the last one counts. */
   let encodeSeq = 0;
@@ -97,6 +102,10 @@ function boot() {
 
   const store = createDraftStore();
   let draft: SetPin[] = store.pins();
+  /** Only a picked pin can be re-keyed: a link's pin carries no `at`/`pr`. */
+  type EditablePin = Extract<SetPin, { origin: 'pick' }>;
+  /** The pin the composer is rewriting the note of, while it is open. */
+  let editing: EditablePin | null = null;
   /** The waiting ids the dock's rows were last built from. */
   let drawn = '';
   /** True while `redraw()` is resolving pins, so the dock is built once. */
@@ -106,10 +115,11 @@ function boot() {
 
   /**
    * Drawn chrome sits over the app, so the next pick would land on it. The
-   * markers are click-through already; the cards and the dock fold away.
+   * markers are click-through already; the cards and the dock fold away. An
+   * editor picks nothing, so the row it was opened from stays where it is.
    */
   function syncCollapse() {
-    const busy = pickActive || ui.getComposeTarget() !== null;
+    const busy = pickActive || (ui.isComposeOpen() && !ui.isEditing());
     pins.setCollapsed(busy);
     dock.setCollapsed(busy);
   }
@@ -128,8 +138,7 @@ function boot() {
 
   const ui = createOverlayUI({
     onBuildBlock: (text) => {
-      const target = ui.getComposeTarget();
-      if (!target || capture?.target !== target || capture.note !== text)
+      if (capture?.epoch !== ui.composeSession() || capture.note !== text)
         return null;
       if (store.isFull())
         return {
@@ -151,10 +160,44 @@ function boot() {
         },
       };
     },
+    onSaveNote: (text) => {
+      if (!editing) return { refused: 'That pin is no longer being edited' };
+      if (capture?.epoch !== ui.composeSession() || capture.note !== text)
+        return { refused: 'Still encoding that note — press ⌘⏎ again' };
+      // The stored pin, not the one the editor opened on: its card can be
+      // hidden or shown while the editor is up, and that must survive the save.
+      const index = draft.findIndex((held) => held.id === editing?.id);
+      const pin = draft[index];
+      if (!pin || pin.origin !== 'pick')
+        return { refused: 'That pin is no longer in the set' };
+      // Same text, same anchor, same id: there is nothing to re-key.
+      if (text === (pin.note ?? pin.anchor.n ?? '').trim())
+        return { toast: 'Note unchanged' };
+      const size = draft.length;
+      const next: SetPin = {
+        ...pin,
+        anchor: capture.value.anchor,
+        anchorB64: capture.value.anchorB64,
+        // `at` is kept, so typing the old note back restores the old id.
+        id: pinId(pin.pr, capture.value.anchorB64, pin.at),
+        note: text,
+      };
+      if (!store.replace(pin.id, next)) return { refused: 'Already pinned' };
+      stacks.delete(pin.id);
+      syncDraft();
+      redraw();
+      // Only the capped copy rides in the anchor: an edit past `NOTE_MAX` keeps
+      // the id, and the toast must not claim one it did not give.
+      const renamed = next.id === pin.id ? '' : ` (now ${next.id})`;
+      return {
+        toast: `Updated pin ${index + 1} of ${size}${renamed} — Copy all to replace your paste`,
+      };
+    },
     onNoteChanged: (text) => void encodeFor(text),
     onComposeClosed: () => {
       capture = null;
       pick = null;
+      editing = null;
       picker.stop();
       syncCollapse();
     },
@@ -172,7 +215,7 @@ function boot() {
       // way the reviewer saw it.
       const anchor = captureAnchorSignals(element, undefined, region);
       ui.setComposeLabel(landmarkLabel(currentRouteLabel(), anchor));
-      void prepare(element, anchor);
+      void prepare(ui.composeSession(), element, anchor);
     },
     onModeChange: (active) => {
       pickActive = active;
@@ -201,15 +244,15 @@ function boot() {
         serverState = state;
       });
 
-  async function prepare(element: Element, anchor: AnchorV3) {
+  async function prepare(epoch: number, element: Element, anchor: AnchorV3) {
     await stateReady;
-    if (ui.getComposeTarget() !== element) return;
+    if (ui.composeSession() !== epoch) return;
     const [stack, component] = await Promise.all([
       picker.getStack(element),
       picker.getComponent(element),
     ]);
-    if (ui.getComposeTarget() !== element) return;
-    pick = { target: element, anchor, stack, component };
+    if (ui.composeSession() !== epoch) return;
+    pick = { epoch, anchor, stack, component };
     // Whatever they have typed while the fiber walk ran, not the empty note
     // this pick started with.
     await encodeFor(ui.currentNote());
@@ -235,8 +278,8 @@ function boot() {
       state.component,
     );
     if (seq !== encodeSeq || pick !== state) return;
-    if (ui.getComposeTarget() !== state.target) return;
-    capture = { target: state.target, note, value: prepared };
+    if (ui.composeSession() !== state.epoch) return;
+    capture = { epoch: state.epoch, note, value: prepared };
     ui.setComposeReady(true, note);
   }
 
@@ -388,6 +431,7 @@ function boot() {
       void readPinStack(target, element);
     },
     onHide: (target) => setHidden(target.id, true),
+    onEdit: (target) => startEdit(target.id),
     // The ladder ended with these still unresolved. Only the set knows that
     // this is a closed modal rather than a missed page, so it does the talking.
     onGiveUp: (ids) => ui.showToast(waitingLine(ids)),
@@ -412,6 +456,7 @@ function boot() {
     },
     onRemove: removeFromSet,
     onMove: moveInSet,
+    onEdit: startEdit,
     onUnhide: revealPin,
     onToggleCards: toggleCards,
     onGo: (id) => {
@@ -433,6 +478,7 @@ function boot() {
     anchorB64: pin.anchorB64,
     label: pin.label,
     index,
+    editable: pin.origin === 'pick',
   });
 
   /**
@@ -504,6 +550,32 @@ function boot() {
       ui.showToast(
         `Moved pin ${from + 1} → ${to + 1} — Copy all to replace your paste`,
       );
+  }
+
+  /**
+   * The card's ✏️ and the row's: the note goes back in the composer, over the
+   * element when it is on this page and over its own row when it is not.
+   */
+  function startEdit(id: string) {
+    const pin = draft.find((held) => held.id === id);
+    if (!pin) return;
+    if (pin.origin !== 'pick') return ui.showToast(LINK_NOT_EDITABLE);
+    const at = pins.locatedElement(id) ?? dock.rowRect(id);
+    if (!at) return;
+    const note = (pin.note ?? pin.anchor.n ?? '').trim();
+    ui.openEditor({ note, at });
+    ui.setComposeLabel(pin.label);
+    editing = pin;
+    // The same state a pick leaves, so `encodeFor` re-encodes this anchor
+    // around every note the reviewer tries.
+    pick = {
+      epoch: ui.composeSession(),
+      anchor: pin.anchor,
+      stack: pin.stack,
+      component: pin.anchor.c,
+    };
+    syncCollapse();
+    void encodeFor(note);
   }
 
   /** The store, the stacks and the layer, one pin shorter. */

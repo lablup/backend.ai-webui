@@ -106,6 +106,21 @@ export function movePin(set: DraftSet, id: string, delta: number): DraftSet {
 }
 
 /**
+ * One pin swapped for another at the same index — what editing a note does: a
+ * new id in the old place. An unknown `id`, or a `next` the set already holds
+ * somewhere else, leaves the set exactly as it was.
+ */
+export function replacePin(set: DraftSet, id: string, next: SetPin): DraftSet {
+  const at = set.pins.findIndex((pin) => pin.id === id);
+  if (at < 0) return set;
+  if (set.pins.some((pin, index) => index !== at && pin.id === next.id))
+    return set;
+  const pins = [...set.pins];
+  pins[at] = next;
+  return { ...set, pins };
+}
+
+/**
  * A card hidden. The pin keeps its place, its note and its identity — only its
  * card goes, and the flag is stored so a reload does not bring it back.
  */
@@ -201,6 +216,8 @@ export interface DraftStore {
   remove(id: string): void;
   /** Reorders one pin by `delta` positions, clamped to the ends. */
   move(id: string, delta: number): void;
+  /** One pin swapped for another in its place. False when nothing was written. */
+  replace(id: string, next: SetPin): boolean;
   clear(): void;
   merge(pins: SetPin[]): MergeResult;
   /** Hide or show one card. */
@@ -254,6 +271,12 @@ export function createDraftStore(
     },
     move(id, delta) {
       write(movePin(current, id, delta));
+    },
+    replace(id, next) {
+      const set = replacePin(current, id, next);
+      if (set === current) return false;
+      write(set);
+      return true;
     },
     clear() {
       write(emptyDraft());

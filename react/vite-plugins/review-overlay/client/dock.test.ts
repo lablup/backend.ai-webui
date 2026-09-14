@@ -22,6 +22,7 @@ let removed: string[];
 let unhidden: string[];
 let went: string[];
 let moved: Array<[string, number]>;
+let edited: string[];
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -85,6 +86,7 @@ beforeEach(() => {
   unhidden = [];
   went = [];
   moved = [];
+  edited = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
@@ -95,6 +97,7 @@ beforeEach(() => {
     onLocate: (id) => located.push(id),
     onRemove: (id) => removed.push(id),
     onMove: (id, delta) => moved.push([id, delta]),
+    onEdit: (id) => edited.push(id),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
     onGo: (id) => went.push(id),
@@ -230,6 +233,42 @@ describe('createSetDock', () => {
       expect(rows()[0].querySelector('.down')?.getAttribute('aria-label')).toBe(
         'Move this pin down',
       );
+    });
+  });
+
+  // Editing re-keys the pin, and only a picked one carries the `at`/`pr` the
+  // new id would hash from.
+  describe('editing a row’s note', () => {
+    const linked = (id: string, label: string): SetPin => ({
+      ...pin(id, label),
+      origin: 'link',
+      at: undefined,
+      pr: undefined,
+    });
+
+    it('draws the ✏️ before the ▲/▼ and hands back the id', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      expect(
+        Array.from(rows()[0].querySelectorAll('.act')).map(
+          (act) => act.className,
+        ),
+      ).toEqual(['act edit', 'act up', 'act down', 'act remove']);
+
+      rows()[1].querySelector<HTMLButtonElement>('.edit')?.click();
+
+      expect(edited).toEqual(['c_b']);
+    });
+
+    it('disables it on a link’s pin, and says why', () => {
+      dock.render([linked('c_a', 'a')]);
+
+      const edit = rows()[0].querySelector<HTMLButtonElement>('.edit');
+      expect(edit?.disabled).toBe(true);
+      expect(edit?.getAttribute('aria-label')).toBe(
+        'This pin came from a link — pick the element again to write your own note',
+      );
+      expect(edited).toEqual([]);
     });
   });
 
@@ -678,6 +717,7 @@ describe('createSetDock', () => {
         onLocate: (id) => located.push(id),
         onRemove: (id) => removed.push(id),
         onMove: (id, delta) => moved.push([id, delta]),
+        onEdit: (id) => edited.push(id),
         onUnhide: (id) => unhidden.push(id),
         onToggleCards: () => toggled++,
       });
@@ -706,6 +746,7 @@ describe('createSetDock', () => {
           onLocate: (id) => located.push(id),
           onRemove: (id) => removed.push(id),
           onMove: (id, delta) => moved.push([id, delta]),
+          onEdit: (id) => edited.push(id),
           onUnhide: (id) => unhidden.push(id),
           onToggleCards: () => toggled++,
         });

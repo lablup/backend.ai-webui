@@ -9,12 +9,17 @@ element again.
 
 **Pin**:
 One reviewer remark tied to one element: an anchor, an optional note, and an
-id. A pin is self-contained — its link alone is enough to show it again.
+id. A pin is self-contained — its link alone is enough to show it again. Its id
+is a fingerprint of its content — the anchor, with the capped note it carries,
+pr and when it was made — so an edit that changes the carried note makes a
+different pin, and restoring that note restores the pin.
 _Avoid_: comment (the channel's word), marker (the drawn glyph only), pick
 
 **Pin set**:
 The ordered list of pins a reviewer makes in one sitting and hands over
-together, as one comment and one link. A single pin is a pin set of one.
+together, as one comment and one link. A single pin is a pin set of one. Set
+order fixes the marker numbers, the block order, and the page the set link opens
+on — the first pin's.
 _Avoid_: batch, session, group, thread
 
 **Draft set**:
