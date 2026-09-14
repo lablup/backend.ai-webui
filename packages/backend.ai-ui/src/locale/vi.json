@@ -355,18 +355,22 @@
     "UpdateProject": "Cập nhật dự án"
   },
   "comp:BAIProjectTable": {
+    "Active": "Tích cực",
     "ContainerRegistry": "Kho lưu trữ container",
     "ContainerRegistryProject": "Dự án kho lưu trữ container",
     "CreatedAt": "Ngày tạo",
     "Description": "Mô tả",
     "Domain": "Miền",
+    "Inactive": "Không hoạt động",
     "IntegrationID": "ID tích hợp",
+    "ModifiedAt": "Sửa lúc",
     "Name": "Tên",
     "Project": "Dự án",
     "ProjectID": "ID dự án",
     "Registry": "Kho chứa",
     "ResourcePolicy": "Chính sách tài nguyên",
     "ScalingGroups": "Nhóm tài nguyên",
+    "Status": "Trạng thái",
     "StorageNodes": "Nút lưu trữ",
     "TotalResourceSlots": "Tổng số khe tài nguyên",
     "Type": "Loại"

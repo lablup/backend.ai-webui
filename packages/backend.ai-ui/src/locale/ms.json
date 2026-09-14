@@ -355,18 +355,22 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Registri Kontena",
     "ContainerRegistryProject": "Projek Registri Kontena",
     "CreatedAt": "Dicipta pada",
     "Description": "Keterangan",
     "Domain": "Domain",
+    "Inactive": "Tidak aktif",
     "IntegrationID": "ID Integrasi",
+    "ModifiedAt": "Diubahsuai Pada",
     "Name": "Nama",
     "Project": "Projek",
     "ProjectID": "ID Projek",
     "Registry": "Registri",
     "ResourcePolicy": "Dasar Sumber",
     "ScalingGroups": "Kumpulan Sumber",
+    "Status": "Status",
     "StorageNodes": "Nod Storan",
     "TotalResourceSlots": "Jumlah Slot Sumber",
     "Type": "Jenis"

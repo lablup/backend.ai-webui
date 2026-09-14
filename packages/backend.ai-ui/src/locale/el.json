@@ -355,18 +355,22 @@
     "UpdateProject": "Ενημέρωση έργου"
   },
   "comp:BAIProjectTable": {
+    "Active": "Ενεργός",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
     "ContainerRegistryProject": "Έργο αποθετηρίου κοντέινερ",
     "CreatedAt": "Δημιουργήθηκε στις",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
+    "Inactive": "Αδρανής",
     "IntegrationID": "ID ενσωμάτωσης",
+    "ModifiedAt": "Τροποποιήθηκε στις",
     "Name": "Όνομα",
     "Project": "Έργο",
     "ProjectID": "ID Έργου",
     "Registry": "Μητρώο",
     "ResourcePolicy": "Πολιτική πόρων",
     "ScalingGroups": "Ομάδες πόρων",
+    "Status": "Κατάσταση",
     "StorageNodes": "Κόμβοι Αποθήκευσης",
     "TotalResourceSlots": "Συνολικές θέσεις πόρων",
     "Type": "Τύπος"

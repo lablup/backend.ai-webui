@@ -355,18 +355,22 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
     "ContainerRegistryProject": "Konteyner Kayıt Deposu Projesi",
     "CreatedAt": "Oluşturulma Tarihi",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
+    "Inactive": "Aktif olmayan",
     "IntegrationID": "Entegrasyon Kimliği",
+    "ModifiedAt": "Değiştirilme",
     "Name": "Ad",
     "Project": "Proje",
     "ProjectID": "Proje Kimliği",
     "Registry": "Kayıt Deposu",
     "ResourcePolicy": "Kaynak Politikası",
     "ScalingGroups": "Kaynak Grupları",
+    "Status": "Durum",
     "StorageNodes": "Depolama Düğümleri",
     "TotalResourceSlots": "Toplam Kaynak Slotları",
     "Type": "Tür"

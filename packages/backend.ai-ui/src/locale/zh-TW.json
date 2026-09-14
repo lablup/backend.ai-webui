@@ -355,18 +355,22 @@
     "UpdateProject": "更新專案"
   },
   "comp:BAIProjectTable": {
+    "Active": "積極的",
     "ContainerRegistry": "容器映像庫",
     "ContainerRegistryProject": "容器映像庫專案",
     "CreatedAt": "建立時間",
     "Description": "描述",
     "Domain": "網域",
+    "Inactive": "不活動",
     "IntegrationID": "整合識別碼",
+    "ModifiedAt": "修改時間",
     "Name": "名稱",
     "Project": "專案",
     "ProjectID": "專案ID",
     "Registry": "映像註冊表",
     "ResourcePolicy": "資源策略",
     "ScalingGroups": "資源群組",
+    "Status": "狀態",
     "StorageNodes": "儲存節點",
     "TotalResourceSlots": "資源總槽位",
     "Type": "類型"

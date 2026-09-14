@@ -355,18 +355,22 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
+    "Active": "คล่องแคล่ว",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "ContainerRegistryProject": "โปรเจ็กต์รีจิสทรีคอนเทนเนอร์",
     "CreatedAt": "สร้างเมื่อ",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
+    "Inactive": "ไม่ทำงาน",
     "IntegrationID": "รหัสการผสานระบบ",
+    "ModifiedAt": "แก้ไขเมื่อ",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",
     "ProjectID": "รหัสโครงการ",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
     "ScalingGroups": "กลุ่มทรัพยากร",
+    "Status": "สถานะ",
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
