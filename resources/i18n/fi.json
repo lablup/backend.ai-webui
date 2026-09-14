@@ -226,6 +226,7 @@
     "DiskPerc": "Levy %",
     "ElapsedTime": "Kulunut aika",
     "Endpoint": "Loppupiste",
+    "LostAt": "Menetetty",
     "Maintaining": "ylläpito",
     "NoAgentToDisplay": "Ei näytettäviä agentteja",
     "NoAvailableLiveStat": "Ei saatavilla live stat",
@@ -242,8 +243,10 @@
     "StartsAt": "Aloitusaika",
     "Status": "Tila",
     "StatusChanged": "Muutettu",
+    "StatusChangedAt": "Tila muuttui",
     "Terminated": "Lopetettu",
     "Utilization": "Käyttö",
+    "Version": "Versio",
     "WatcherActionFailed": "Agentin hallinta epäonnistui.",
     "WatcherActionWarning": "Tässä agentissa käynnissä oleviin istuntoihin voi vaikuttaa.",
     "WatcherRestart": "Käynnistä agentti uudelleen",
@@ -256,6 +259,7 @@
   "agentStats": {
     "AgentStats": "Agenttitilastot",
     "AgentStatsDescription": "Tämä paneeli näyttää kaikki käytetyt resurssit kaikissa järjestelmän agenteissa. \nArvot edustavat kaikkien aktiivisten istuntojen käytettyjä resursseja.",
+    "SchedulableAgents": "Ajoitettavat agentit",
     "UsedResources": "Käytetyt resurssit"
   },
   "aiAgent": {

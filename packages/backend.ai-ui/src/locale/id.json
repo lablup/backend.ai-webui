@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Gagal memuat data.",
+    "LostAt": "Hilang Pada",
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Grup Sumber Daya",
@@ -13,7 +14,8 @@
     "Schedulable": "Dapat dijadwalkan",
     "Starts": "Mulai",
     "Status": "Status",
-    "Utilization": "Utilisasi"
+    "Utilization": "Utilisasi",
+    "Version": "Versi"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Diizinkan",

@@ -46,11 +46,16 @@ export type AgentNodeInList = NonNullable<
   NonNullable<BAIAgentTableFragment$data>[number]
 >;
 
+// Mirrors `_queryorder_colmap` of the graphene `agent_nodes` resolver.
 export const availableAgentSorterKeys = [
+  'id',
   'first_contact',
   'scaling_group',
   'status',
   'schedulable',
+  'region',
+  'version',
+  'lost_at',
 ] as const;
 
 export const availableAgentSorterValues = [
@@ -617,6 +622,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         compute_plugins
         version
         schedulable
+        lost_at
       }
     `,
     agentsFragment,
@@ -647,7 +653,9 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
           </BAIFlex>
         );
       },
-      sorter: isEnableSorter('row_id'),
+      // The column shows `row_id`, but the server orders this entity by `id`.
+      sortKey: 'id',
+      sorter: isEnableSorter('id'),
     },
     {
       title: t('comp:AgentTable.Region'),
@@ -660,6 +668,15 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       key: 'architecture',
       dataIndex: 'architecture',
       sorter: isEnableSorter('architecture'),
+    },
+    {
+      title: t('comp:AgentTable.Version'),
+      key: 'version',
+      dataIndex: 'version',
+      // The status cell already prints the version; this column exists so the
+      // server-side `version` ordering is reachable.
+      defaultHidden: true,
+      sorter: isEnableSorter('version'),
     },
     {
       title: t('comp:AgentTable.Starts'),
@@ -689,6 +706,16 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         );
       },
       sorter: isEnableSorter('first_contact'),
+    },
+    {
+      title: t('comp:AgentTable.LostAt'),
+      key: 'lost_at',
+      dataIndex: 'lost_at',
+      defaultHidden: true,
+      render: (value) => (
+        <Text>{value ? dayjs(value).format('ll LTS') : '-'}</Text>
+      ),
+      sorter: isEnableSorter('lost_at'),
     },
     {
       title: t('comp:AgentTable.Allocation'),

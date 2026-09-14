@@ -146,6 +146,7 @@ const AgentList: React.FC<AgentListProps> = ({
     title: t('agent.Region'),
     key: 'region',
     dataIndex: 'region',
+    sorter: true,
     render: (value) => {
       const platformData: {
         [key: string]: { color: string; icon: string };
@@ -265,6 +266,36 @@ const AgentList: React.FC<AgentListProps> = ({
                   },
                 ],
               },
+              {
+                key: 'scaling_group',
+                propertyLabel: t('agent.ResourceGroup'),
+                type: 'string',
+              },
+              {
+                key: 'region',
+                propertyLabel: t('agent.Region'),
+                type: 'string',
+              },
+              {
+                key: 'version',
+                propertyLabel: t('agent.Version'),
+                type: 'string',
+              },
+              {
+                key: 'first_contact',
+                propertyLabel: t('agent.StartsAt'),
+                type: 'datetime',
+              },
+              {
+                key: 'status_changed',
+                propertyLabel: t('agent.StatusChangedAt'),
+                type: 'datetime',
+              },
+              {
+                key: 'lost_at',
+                propertyLabel: t('agent.LostAt'),
+                type: 'datetime',
+              },
             ]}
             value={queryParams.filter || undefined}
             onChange={(value) => {
@@ -303,11 +334,11 @@ const AgentList: React.FC<AgentListProps> = ({
           )?.node;
           setCurrentAgentInfo(targetAgent || null);
         }}
-        customizeColumns={(baseColumns) => [
-          baseColumns[0],
-          regionColumn,
-          ...baseColumns.slice(3),
-        ]}
+        customizeColumns={(baseColumns) =>
+          _.map(baseColumns, (column) =>
+            column.key === 'region' ? regionColumn : column,
+          )
+        }
         pagination={{
           pageSize: tablePaginationOption.pageSize,
           total: agent_nodes?.count || 0,

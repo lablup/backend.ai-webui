@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Failed to load data.",
+    "LostAt": "Lost At",
     "NoAvailableLiveStat": "No available live stat",
     "Region": "Region",
     "ResourceGroup": "Resource Group",
@@ -13,7 +14,8 @@
     "Schedulable": "Schedulable",
     "Starts": "Starts",
     "Status": "Status",
-    "Utilization": "Utilization"
+    "Utilization": "Utilization",
+    "Version": "Version"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Allowed",
