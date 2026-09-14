@@ -574,7 +574,7 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 - **Options**: The optional **Filter Labels** and **Group Labels** that consumers can apply on top of the preset.
 - **Created At** / **Updated At**: Timestamps maintained automatically by the server.
 
-You can search and narrow the list with the property filter above the table, and click any column header to change the sort order. The **Category** property is picked from a dropdown of the categories defined on this cluster instead of being typed as a category ID, and the filter tag shows the category name.
+You can search and narrow the list with the property filter above the table, and click any column header to change the sort order. The **Category** property can be selected from the categories defined on this cluster instead of typing a category ID.
 
 <a id="prometheus-preset-column-settings"></a>
 
