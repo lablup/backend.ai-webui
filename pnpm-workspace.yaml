@@ -180,4 +180,5 @@ overrides:
 patchedDependencies:
   "@astryxdesign/lab@0.3.0-canary.12db2a1": react/patches/@astryxdesign__lab@0.3.0-canary.12db2a1.patch
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
+  portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch
