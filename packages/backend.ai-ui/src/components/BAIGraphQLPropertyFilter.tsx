@@ -43,6 +43,7 @@
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
+  baiPowerSearchComponents,
   toEnumItems,
   toSearchSource,
   useRenderInputEditors,
@@ -778,6 +779,7 @@ const BAIGraphQLPropertyFilter = <
   return (
     <PowerSearch
       config={config}
+      components={baiPowerSearchComponents}
       filters={filters}
       startIcon={SearchIcon}
       label={label ?? t('comp:BAIPropertyFilter.SearchLabel')}

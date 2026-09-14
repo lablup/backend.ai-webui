@@ -49,6 +49,7 @@ import { filterOutEmpty } from '../helper';
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
+  baiPowerSearchComponents,
   toEnumItems,
   toSearchSource,
   useRenderInputEditors,
@@ -583,6 +584,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   return (
     <PowerSearch
       config={config}
+      components={baiPowerSearchComponents}
       filters={filters}
       startIcon={SearchIcon}
       label={label ?? t('comp:BAIPropertyFilter.SearchLabel')}

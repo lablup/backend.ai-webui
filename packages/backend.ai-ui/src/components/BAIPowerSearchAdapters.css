@@ -1,0 +1,17 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for `BAIPowerSearchEditor`, the editor popover content both
+ property filters hand to PowerSearch through `components.Editor`.
+*/
+
+@layer components {
+  /* Astryx wraps the field / operator / value row only below its 400px popover
+     floor, so at the floor a 180px-minimum date input plus a long operator
+     label squeeze the field selector to a few characters and push the value
+     editor out of the clipped popover (FR-3931). Wrap on content instead. */
+  .bai-power-search-editor .astryx-stack.horizontal {
+    flex-wrap: wrap;
+  }
+}
