@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-14T15:15:31.877Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 0,
+        "changes": 0,
+        "added": 0,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": []
+    },
+    "ja": {
+      "totals": {
+        "pages": 0,
+        "changes": 0,
+        "added": 0,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": []
+    },
+    "ko": {
+      "totals": {
+        "pages": 0,
+        "changes": 0,
+        "added": 0,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": []
+    },
+    "th": {
+      "totals": {
+        "pages": 0,
+        "changes": 0,
+        "added": 0,
+        "modified": 0,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": []
+    }
+  }
+}
