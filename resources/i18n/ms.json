@@ -744,7 +744,11 @@
       "PleaseEnterUniqueNumbers": "Sila masukkan nombor yang unik",
       "PleaseEnterValidNumber": "Sila masukkan nombor yang sah",
       "PleaseSelectDomain": "Sila pilih domain terlebih dahulu."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Edit",

@@ -744,7 +744,11 @@
       "PleaseEnterUniqueNumbers": "Veuillez entrer des nombres uniques",
       "PleaseEnterValidNumber": "Veuillez entrer un nombre valide",
       "PleaseSelectDomain": "Veuillez d'abord sélectionner un domaine."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Éditer",

@@ -744,7 +744,11 @@
       "PleaseEnterUniqueNumbers": "重複しない数値を入力してください",
       "PleaseEnterValidNumber": "有効な数値を入力してください",
       "PleaseSelectDomain": "先にドメインを選択してください。"
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "編集",

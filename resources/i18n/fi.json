@@ -744,7 +744,11 @@
       "PleaseEnterUniqueNumbers": "Syötä yksilöllisiä numeroita",
       "PleaseEnterValidNumber": "Syötä kelvollinen numero",
       "PleaseSelectDomain": "Valitse ensin toimialue."
-    }
+    },
+    "ProjectIsActive": "__NOT_TRANSLATED__",
+    "DomainIsActive": "__NOT_TRANSLATED__",
+    "IntegrationName": "__NOT_TRANSLATED__",
+    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
   },
   "dashboard": {
     "Edit": "Muokkaa",
