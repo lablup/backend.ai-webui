@@ -102,11 +102,15 @@ const ALL_IMAGE_STATUSES = [
   'PURGE_ERROR',
 ] as const;
 
+// Values in the minilang are double-quoted and carry no escapes, so a quoted
+// span can hold anything — `status` included. Blank them before matching.
+const stripQuotedValues = (filter: string) => filter.replace(/"[^"]*"/g, '""');
+
 // A `status` condition in the queryfilter is ANDed with `filter_by_statuses`,
 // whose default is `[ALIVE]` — so it can never match anything else unless the
 // query widens that argument too.
 const hasStatusCondition = (filter: string) =>
-  /(?:^|[&|(])\s*status\s/.test(filter);
+  /(?:^|[&|(])\s*status\s/.test(stripQuotedValues(filter));
 
 interface ImageListProps {
   /**
