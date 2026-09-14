@@ -2,9 +2,21 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import BAIProgressRing from './BAIProgressRing';
+import BAIProgressRing, {
+  BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT,
+  BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT,
+} from './BAIProgressRing';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+
+const CIRCUMFERENCE = 2 * Math.PI * 6;
+const dashOffsetFor = (percent: number) => CIRCUMFERENCE * (1 - percent / 100);
+const arcDashOffset = (container: HTMLElement) =>
+  Number(
+    container
+      .querySelector('.bai-progress-ring-arc')
+      ?.getAttribute('stroke-dashoffset'),
+  );
 
 // FR-3923: the ring replaces a bare spinning glyph, so the value it carries
 // has to reach assistive technology — and the "value unknown" case has to stay
@@ -55,21 +67,45 @@ describe('BAIProgressRing', () => {
     expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
   });
 
-  it('empties the arc at 0% and closes it at 100%', () => {
+  it('keeps a visible arc and a visible gap at 0% and 100%', () => {
     const { container, rerender } = render(<BAIProgressRing percent={0} />);
-    const arcAtZero = container.querySelector('.bai-progress-ring-arc');
-    const circumference = 2 * Math.PI * 6;
-    expect(Number(arcAtZero?.getAttribute('stroke-dashoffset'))).toBeCloseTo(
-      circumference,
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
+    expect(arcDashOffset(container)).toBeCloseTo(
+      dashOffsetFor(BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT),
       5,
     );
 
     rerender(<BAIProgressRing percent={100} />);
-    const arcAtFull = container.querySelector('.bai-progress-ring-arc');
-    expect(Number(arcAtFull?.getAttribute('stroke-dashoffset'))).toBeCloseTo(
-      0,
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuenow',
+      '100',
+    );
+    expect(screen.getByRole('progressbar')).toHaveAttribute(
+      'aria-valuetext',
+      '100%',
+    );
+    expect(arcDashOffset(container)).toBeCloseTo(
+      dashOffsetFor(BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT),
       5,
     );
+  });
+
+  it('draws the true value between the two bounds', () => {
+    const { container } = render(<BAIProgressRing percent={50} />);
+
+    expect(arcDashOffset(container)).toBeCloseTo(dashOffsetFor(50), 5);
+  });
+
+  // `stroke-linecap: round` adds strokeWidth / 2 past each end of the dash, so
+  // the drawn gap is shorter than the undrawn dash by a whole strokeWidth.
+  it('leaves the round caps a gap to not swallow at the top of the range', () => {
+    const drawn = (CIRCUMFERENCE * BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT) / 100;
+    const strokeWidth = 2;
+
+    expect(CIRCUMFERENCE - drawn - strokeWidth).toBeGreaterThanOrEqual(3);
   });
 
   it('drops the slow rotation when rotate is false', () => {

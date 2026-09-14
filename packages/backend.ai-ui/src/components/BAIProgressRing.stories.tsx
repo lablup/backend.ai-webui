@@ -17,6 +17,8 @@ const meta: Meta<typeof BAIProgressRing> = {
 
 Both circles are stroked with \`currentColor\` and the default size is \`1em\`, so the ring takes the colour and the scale of whatever carries it.
 
+The **drawn** arc is pinned to 8..86% (\`BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT\` / \`BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT\`): at 0% it is a short arc rather than a bare track, and at 100% a gap survives the round line caps, so the slow rotation stays perceptible at both extremes. Everything in between is drawn honestly, and \`aria-valuenow\` always carries the true percent.
+
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | \`percent\` | \`number\` | \`undefined\` | Completion, clamped to 0..100. Omitted renders the indeterminate ring. |
@@ -51,9 +53,17 @@ export const Default: Story = {
 
 export const Determinate: Story = {
   name: 'Determinate steps',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The 0% and 100% rings still show an arc and a gap — the clamp on the drawn arc is what keeps the slow rotation visible at the extremes.',
+      },
+    },
+  },
   render: () => (
     <BAIFlex gap="lg" align="center">
-      {[0, 25, 50, 75, 99, 100].map((percent) => (
+      {[0, 1, 25, 50, 75, 99, 100].map((percent) => (
         <BAIFlex key={percent} direction="column" gap="xs" align="center">
           <BAIProgressRing percent={percent} size="2rem" />
           <Text type="supporting">{percent}%</Text>

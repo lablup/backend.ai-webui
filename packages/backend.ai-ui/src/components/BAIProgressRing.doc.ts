@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A progress ring small enough to be an icon. Astryx has a Spinner, which is always indeterminate, and a ProgressBar, which is a full-width horizontal bar — neither fits the `icon` slot of a Badge, which is where a session status has to show how far along it is. This draws a two-circle SVG in a 16-unit box: a track at 25% opacity and an arc whose dash offset carries `percent`, both stroked with `currentColor` so the ring takes the colour of the badge variant around it, and sized `1em` so it scales with the text. Without a `percent` it falls back to a short arc spinning at the same 1s as the `.bai-icon-spin` glyph it replaces, so a value that is not known yet looks exactly like the old spinner. The determinate ring also keeps turning slowly (2.4s per turn) so it still reads as "in progress" between two updates that may be minutes apart.',
+      'A progress ring small enough to be an icon. Astryx has a Spinner, which is always indeterminate, and a ProgressBar, which is a full-width horizontal bar — neither fits the `icon` slot of a Badge, which is where a session status has to show how far along it is. This draws a two-circle SVG in a 16-unit box: a track at 25% opacity and an arc whose dash offset carries `percent`, both stroked with `currentColor` so the ring takes the colour of the badge variant around it, and sized `1em` so it scales with the text. Without a `percent` it falls back to a short arc spinning at the same 1s as the `.bai-icon-spin` glyph it replaces, so a value that is not known yet looks exactly like the old spinner. The determinate ring also keeps turning slowly (2.4s per turn) so it still reads as "in progress" between two updates that may be minutes apart. For that rotation to be perceptible the arc has to have two ends, so the DRAWN arc is pinned to 8..86% (`BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT` / `BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT`) — never a bare track, never a closed circle, and never so long that the round line caps swallow the gap. Only the extremes are pinned; 50% still draws half, and `aria-valuenow` always carries the true percent.',
     bestPractices: [
       {
         guidance: true,
@@ -55,7 +55,7 @@ export const docs = {
       name: 'percent',
       type: 'number',
       description:
-        'Completion in percent, clamped to 0..100. Omitted, or non-finite, renders the indeterminate ring.',
+        'Completion in percent, clamped to 0..100. Omitted, or non-finite, renders the indeterminate ring. The reported value is the true one; the drawn arc is additionally pinned to 8..86% so it never reaches empty or full and the slow rotation stays perceptible.',
     },
     {
       name: 'size',
@@ -103,6 +103,11 @@ export const docs = {
     {
       label: 'Indeterminate, for a single-node session',
       code: `<Badge variant="warning" icon={<BAIProgressRing />} label="TERMINATING" />`,
+    },
+    {
+      label: 'The extremes still spin — a short arc at 0, an open one at 100',
+      code: `<BAIProgressRing percent={0} />
+<BAIProgressRing percent={100} />`,
     },
   ],
 } satisfies ComponentDoc;
