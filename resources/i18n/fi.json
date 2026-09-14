@@ -1271,7 +1271,10 @@
       "OpenToPublic": "Julkinen",
       "ResourceGroup": "Resurssiryhmä",
       "Status": "Tila",
-      "Tags": "Tunnisteet"
+      "Tags": "Tunnisteet",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "Seuraava",

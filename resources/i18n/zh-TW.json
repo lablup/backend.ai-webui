@@ -1272,7 +1272,10 @@
       "OpenToPublic": "公開",
       "ResourceGroup": "資源群組",
       "Status": "狀態",
-      "Tags": "標籤"
+      "Tags": "標籤",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "下一步",

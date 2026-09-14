@@ -1271,7 +1271,10 @@
       "OpenToPublic": "Herkese Açık",
       "ResourceGroup": "Kaynak Grubu",
       "Status": "Durum",
-      "Tags": "Etiketler"
+      "Tags": "Etiketler",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "İleri",

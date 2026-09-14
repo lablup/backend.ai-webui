@@ -8,6 +8,7 @@ import type {
 } from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
 import {
   BAIColumnType,
+  BAIFlex,
   BAINameActionCell,
   BAISessionClusterMode,
   BAITable,
@@ -17,9 +18,11 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
+import { Text } from '@astryxdesign/core/Text';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, SquarePenIcon } from 'lucide-react';
+import { CircleHelp, Trash2, SquarePenIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -74,6 +77,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         id @required(action: NONE)
         name @required(action: NONE)
         description
+        rank
         runtimeVariantId
         runtimeVariant {
           id
@@ -150,6 +154,23 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         key: 'runtime',
         title: t('adminDeploymentPreset.Runtime'),
         render: (__, record) => record.runtimeVariant?.name ?? '-',
+      },
+      {
+        key: 'rank',
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('adminDeploymentPreset.Rank')}
+            <Tooltip content={t('adminDeploymentPreset.RankTooltip')}>
+              <Text color="placeholder" style={{ cursor: 'help' }}>
+                <CircleHelp size="1em" />
+              </Text>
+            </Tooltip>
+          </BAIFlex>
+        ),
+        dataIndex: 'rank',
+        sorter: isEnableSorter('rank'),
+        render: (rank: number | null | undefined) =>
+          _.isNumber(rank) ? rank : '-',
       },
       {
         key: 'image',

@@ -1271,7 +1271,10 @@
       "OpenToPublic": "Công khai",
       "ResourceGroup": "Nhóm tài nguyên",
       "Status": "Trạng thái",
-      "Tags": "Thẻ"
+      "Tags": "Thẻ",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "Tiếp theo",
