@@ -124,7 +124,10 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
    * stands down.
    */
   const withStatusOverlay = (
-    badge: React.ReactElement,
+    badge: React.ReactElement<{
+      tabIndex?: number;
+      style?: React.CSSProperties;
+    }>,
     tooltipContent?: React.ReactNode,
   ) => {
     if (kernelBreakdownPhase) {
@@ -145,7 +148,13 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
             </BAIFlex>
           }
         >
-          {badge}
+          {/* `Badge` is a bare <span>, and HoverCard's `focusTrigger="auto"`
+              only attaches to a naturally focusable element — without this the
+              breakdown is unreachable by keyboard (as in `BAITagList`). */}
+          {React.cloneElement(badge, {
+            tabIndex: 0,
+            style: { cursor: 'help', ...badge.props.style },
+          })}
         </HoverCard>
       );
     }

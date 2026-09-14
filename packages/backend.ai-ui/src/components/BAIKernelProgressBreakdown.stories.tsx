@@ -37,8 +37,15 @@ It is purely presentational — the caller groups the kernel statuses into bucke
 export default meta;
 type Story = StoryObj<typeof BAIKernelProgressBreakdown>;
 
-export const Creating: Story = {
-  name: 'Creating, mixed statuses',
+export const Default: Story = {
+  name: 'Basic',
+  parameters: {
+    docs: {
+      description: {
+        story: 'A creating session whose kernels are spread over four buckets.',
+      },
+    },
+  },
   args: {
     phase: 'creating',
     total: 16,
