@@ -587,18 +587,15 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 >
                   {name}
                 </BAIText>
-                {/* Nameless Form.Item: a controlled feedback wrapper (no Form
-                    ancestor / no `rules`). `help` shows errors, `extra` the
-                    always-on mount-destination hint. */}
+                {/* Nameless Form.Item: `help` and `extra` render together,
+                    so the path stays visible while the alias is fixed. */}
                 <Form.Item
                   validateStatus={aliasErrorMessage ? 'error' : undefined}
                   help={aliasErrorMessage}
                   extra={
-                    aliasErrorMessage ? undefined : (
-                      <BAIText type="secondary" ellipsis>
-                        {effectiveDestination}
-                      </BAIText>
-                    )
+                    <BAIText type="secondary" ellipsis>
+                      {effectiveDestination}
+                    </BAIText>
                   }
                   style={{ flex: 1, marginBottom: 0 }}
                 >
