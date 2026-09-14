@@ -59,6 +59,7 @@ import type {
   PowerSearchField,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
+import classNames from 'classnames';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -789,7 +790,7 @@ const BAIGraphQLPropertyFilter = <
       isDisabled={isDisabled || loading}
       size={size}
       style={style}
-      className={className}
+      className={classNames('bai-power-search', className)}
       data-testid={dataTestId}
       status={
         ruleViolation ? { type: 'error', message: ruleViolation } : undefined

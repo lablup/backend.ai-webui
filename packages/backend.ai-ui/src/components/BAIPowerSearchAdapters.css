@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Co-located styles for `BAIPowerSearchEditor`, the editor popover content both
- property filters hand to PowerSearch through `components.Editor`.
+ Co-located styles for the PowerSearch chrome both property filters share:
+ `.bai-power-search` on the control's root and `.bai-power-search-editor`
+ around the editor popover content handed over through `components.Editor`.
 */
 
 @layer components {
@@ -13,5 +14,19 @@
      editor out of the clipped popover (FR-3931). Wrap on content instead. */
   .bai-power-search-editor .astryx-stack.horizontal {
     flex-wrap: wrap;
+  }
+
+  /* Tokenizer wraps each token in a non-shrinking span sized to its content,
+     so a long token runs past the search box; `Token`'s own `max-width: 100%`
+     resolves against that span (FR-3931). */
+  .bai-power-search .astryx-tokenizer > :has(> .astryx-token) {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* `Token`'s click target is `all: unset`, which inlines the label and so
+     disables its `text-overflow: ellipsis`; a block label truncates. */
+  .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
+    display: block;
   }
 }
