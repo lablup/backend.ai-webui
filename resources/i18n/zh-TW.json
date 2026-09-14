@@ -605,6 +605,7 @@
     "DescRequirePasswordChange": "需要更改密碼",
     "Description": "描述",
     "Domain": "領域",
+    "DomainIsActive": "領域已啟用",
     "DownloadCSV": "下載 CSV",
     "DownloadCSVTemplate": "下載 CSV 範本",
     "EmailPrefix": "電子郵件前綴（@ 之前）",
@@ -632,6 +633,7 @@
     "InactivateTheFollowingUsers": "停用以下用户。",
     "InactiveIncludeKeypair": "非活動（含金鑰對）",
     "Information": "信息",
+    "IntegrationName": "整合名稱",
     "InvalidIP": "無效的IP",
     "InvalidRateLimitValue": "输入有效的速率限值。",
     "IssueNewKeypair": "簽發新密鑰對",
@@ -671,6 +673,7 @@
     "PolicyGroup": "策略組",
     "PreviewAndValidation": "預覽和驗證",
     "ProjectAndGroup": "項目和團體",
+    "ProjectIsActive": "專案已啟用",
     "Projects": "專案",
     "PurgeUsersWarningAlertTitle": "使用者的虛擬資料夾、kernel 歷史與相關金鑰對也將被刪除。此操作無法復原。",
     "Queries": "查詢",
@@ -699,6 +702,7 @@
     "SetAsMain": "設為主要金鑰",
     "SetAsMainConfirm": "確定要將此金鑰對設定為主存取金鑰嗎？",
     "SignoutSuccessfullyFinished": "签出已顺利完成",
+    "SomeFiltersAreNotAppliedToCSVExport": "CSV 匯出不支援部分篩選條件，因此匯出的檔案可能包含比表格更多的列。",
     "SourceFile": "來源檔案",
     "SourceFileHint": "上傳要匯入的 CSV 檔案。檔案中的每一行將建立為一個使用者帳號。",
     "Status": "现状",
@@ -743,11 +747,7 @@
       "PleaseEnterUniqueNumbers": "請輸入不重複的數字",
       "PleaseEnterValidNumber": "請輸入有效的數字",
       "PleaseSelectDomain": "請先選擇網域。"
-    },
-    "ProjectIsActive": "__NOT_TRANSLATED__",
-    "DomainIsActive": "__NOT_TRANSLATED__",
-    "IntegrationName": "__NOT_TRANSLATED__",
-    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
+    }
   },
   "dashboard": {
     "Edit": "編輯",

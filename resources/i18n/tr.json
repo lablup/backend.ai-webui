@@ -605,6 +605,7 @@
     "DescRequirePasswordChange": "Şifre değişikliği gerekli",
     "Description": "Açıklama",
     "Domain": "Alan adı",
+    "DomainIsActive": "Alan adı aktif",
     "DownloadCSV": "CSV indir",
     "DownloadCSVTemplate": "CSV Şablonunu İndir",
     "EmailPrefix": "E-posta ön eki (@ öncesi)",
@@ -632,6 +633,7 @@
     "InactivateTheFollowingUsers": "Aşağıdaki kullanıcıları devre dışı bırakın.",
     "InactiveIncludeKeypair": "Etkin değil (keypair dahil)",
     "Information": "Bilgi",
+    "IntegrationName": "Entegrasyon adı",
     "InvalidIP": "Geçersiz IP",
     "InvalidRateLimitValue": "Geçerli bir Oran Sınırı değeri girin.",
     "IssueNewKeypair": "Yeni anahtar çifti oluştur",
@@ -671,6 +673,7 @@
     "PolicyGroup": "İlke Grubu",
     "PreviewAndValidation": "Önizleme ve doğrulama",
     "ProjectAndGroup": "Projeler ve Gruplar",
+    "ProjectIsActive": "Proje aktif",
     "Projects": "Projeler",
     "PurgeUsersWarningAlertTitle": "Kullanıcının sanal klasörleri, kernel geçmişi ve ilgili anahtar çiftleri de silinecektir. Bu işlem geri alınamaz.",
     "Queries": "Sorgular",
@@ -699,6 +702,7 @@
     "SetAsMain": "Ana olarak ayarla",
     "SetAsMainConfirm": "Bu anahtar çiftini ana erişim anahtarı olarak ayarlamak istediğinizden emin misiniz?",
     "SignoutSuccessfullyFinished": "Çıkış işlemi başarıyla tamamlandı",
+    "SomeFiltersAreNotAppliedToCSVExport": "Bazı filtreler CSV dışa aktarma tarafından desteklenmiyor; bu nedenle dışa aktarılan dosya tablodan daha fazla satır içerebilir.",
     "SourceFile": "Kaynak dosya",
     "SourceFileHint": "İçe aktarılacak CSV dosyasını yükleyin. Dosyadaki her satır bir kullanıcı hesabı olarak oluşturulur.",
     "Status": "Durum",
@@ -743,11 +747,7 @@
       "PleaseEnterUniqueNumbers": "Lütfen benzersiz sayılar girin",
       "PleaseEnterValidNumber": "Lütfen geçerli bir sayı girin",
       "PleaseSelectDomain": "Lütfen önce bir domain seçin."
-    },
-    "ProjectIsActive": "__NOT_TRANSLATED__",
-    "DomainIsActive": "__NOT_TRANSLATED__",
-    "IntegrationName": "__NOT_TRANSLATED__",
-    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
+    }
   },
   "dashboard": {
     "Edit": "Düzenle",

@@ -605,6 +605,7 @@
     "DescRequirePasswordChange": "Требуется смена пароля",
     "Description": "Описание",
     "Domain": "Домен",
+    "DomainIsActive": "Домен активен",
     "DownloadCSV": "Скачать CSV",
     "DownloadCSVTemplate": "Скачать шаблон CSV",
     "EmailPrefix": "Префикс электронной почты (до @)",
@@ -632,6 +633,7 @@
     "InactivateTheFollowingUsers": "Деактивируйте следующих пользователей.",
     "InactiveIncludeKeypair": "Неактивный (включая ключевую пару)",
     "Information": "Информация",
+    "IntegrationName": "Имя интеграции",
     "InvalidIP": "Недействительный IP",
     "InvalidRateLimitValue": "Введите действительное значение Rate Limit.",
     "IssueNewKeypair": "Выпустить новую пару ключей",
@@ -671,6 +673,7 @@
     "PolicyGroup": "Группа политик",
     "PreviewAndValidation": "Предпросмотр и проверка",
     "ProjectAndGroup": "Проекты и группы",
+    "ProjectIsActive": "Проект активен",
     "Projects": "Проекты",
     "PurgeUsersWarningAlertTitle": "Виртуальные папки пользователя, история ядер и связанные ключевые пары также будут удалены. Это действие необратимо.",
     "Queries": "Запросы",
@@ -699,6 +702,7 @@
     "SetAsMain": "Установить как основной",
     "SetAsMainConfirm": "Вы уверены, что хотите установить эту пару ключей в качестве главного ключа доступа?",
     "SignoutSuccessfullyFinished": "Выход из системы завершен",
+    "SomeFiltersAreNotAppliedToCSVExport": "Экспорт в CSV не поддерживает некоторые фильтры, поэтому в выгруженном файле может быть больше строк, чем в таблице.",
     "SourceFile": "Исходный файл",
     "SourceFileHint": "Загрузите CSV-файл для импорта. Каждая строка в файле создаётся как одна учётная запись пользователя.",
     "Status": "Статус",
@@ -743,11 +747,7 @@
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",
       "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число",
       "PleaseSelectDomain": "Пожалуйста, сначала выберите домен."
-    },
-    "ProjectIsActive": "__NOT_TRANSLATED__",
-    "DomainIsActive": "__NOT_TRANSLATED__",
-    "IntegrationName": "__NOT_TRANSLATED__",
-    "SomeFiltersAreNotAppliedToCSVExport": "__NOT_TRANSLATED__"
+    }
   },
   "dashboard": {
     "Edit": "Редактировать",
