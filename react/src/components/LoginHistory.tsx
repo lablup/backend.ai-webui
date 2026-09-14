@@ -86,8 +86,7 @@ const LoginHistory = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const isClientIpSupported =
-    baiClient.isManagerVersionCompatibleWith('26.9.0');
+  const isClientIpSupported = baiClient.supports('client-ip');
 
   const filter = queryRef.variables.filter ?? undefined;
   const orderBy = queryRef.variables.orderBy?.[0];

@@ -1009,6 +1009,8 @@ export class Client {
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.
       this._features['runtime-variant-preset-ui-metadata'] = true;
+      // LoginHistoryV2 / AuditLogV2 gained `clientIp`. FR-3661.
+      this._features['client-ip'] = true;
     }
   }
 
