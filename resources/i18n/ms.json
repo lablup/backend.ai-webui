@@ -31,6 +31,7 @@
     "MultiNode": "Berbilang Nod",
     "MultiNodeNotConfiguredWarning": "Jika berbilang nod tidak dikonfigurasikan pada kluster, sesi yang dicipta daripada pratetap ini akan gagal dimulakan.",
     "Name": "Nama",
+    "NameCannotContainWhitespace": "Nama tidak boleh mengandungi ruang kosong.",
     "NamePlaceholder": "cth. vLLM-GPU-Large",
     "NameRequired": "Nama diperlukan",
     "NotSupported": "Pengurusan praset penggunaan tidak disokong oleh versi backend semasa.",

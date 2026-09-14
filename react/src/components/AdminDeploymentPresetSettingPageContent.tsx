@@ -849,6 +849,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   required: true,
                   message: t('adminDeploymentPreset.NameRequired'),
                 },
+                {
+                  pattern: /^\S+$/,
+                  message: t(
+                    'adminDeploymentPreset.NameCannotContainWhitespace',
+                  ),
+                },
               ]}
             >
               <AstryxFormTextInput

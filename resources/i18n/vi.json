@@ -31,6 +31,7 @@
     "MultiNode": "Đa nút",
     "MultiNodeNotConfiguredWarning": "Nếu đa nút chưa được cấu hình trên cụm, các phiên được tạo từ cài đặt sẵn này sẽ không khởi động được.",
     "Name": "Tên",
+    "NameCannotContainWhitespace": "Tên không được chứa khoảng trắng.",
     "NamePlaceholder": "vd: vLLM-GPU-Large",
     "NameRequired": "Tên là bắt buộc",
     "NotSupported": "Quản lý cài đặt sẵn triển khai không được hỗ trợ bởi phiên bản backend hiện tại.",

@@ -31,6 +31,7 @@
     "MultiNode": "多节点",
     "MultiNodeNotConfiguredWarning": "如果集群未配置多节点，使用此预设创建的会话将无法启动。",
     "Name": "名称",
+    "NameCannotContainWhitespace": "名称不能包含空格。",
     "NamePlaceholder": "例如：vLLM-GPU-Large",
     "NameRequired": "名称为必填项。",
     "NotSupported": "当前后端版本不支持部署预设管理。",
