@@ -992,8 +992,7 @@ which the session will be created once sufficient resources become available.
 ![](../images/scheduler_page.png)
 
 Use the **Resource Group** selector above the list to choose which group's pending queue is shown. It
-is searchable and lists every active resource group in the cluster, sorted by name, regardless of the
-project selected in the top bar. Your choice is kept in the page URL as a `resourceGroup` query
+is searchable and lists every active resource group in the cluster, sorted by name. Your choice is kept in the page URL as a `resourceGroup` query
 parameter, so you can bookmark or share the tab and come back to the same group; if the URL names a
 group that no longer exists or is no longer active, the first active resource group is shown instead.
 
