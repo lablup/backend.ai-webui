@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-14T15:55:00.259Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 5,
+        "modified": 0,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 1,
+            "total": 5
+          },
+          "fingerprints": [
+            "da298291685b",
+            "08a03cec0c1e",
+            "c646f31c9a48",
+            "0ac519ec182c",
+            "915aa6cdd4fc"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 5,
+        "modified": 0,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 1,
+            "total": 5
+          },
+          "fingerprints": [
+            "bc9e893f7efa",
+            "bb2ab112cd1c",
+            "c646f31c9a48",
+            "a688979a57ac",
+            "0cf87723610c"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 5,
+        "modified": 0,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 1,
+            "total": 5
+          },
+          "fingerprints": [
+            "a5b2970c68d4",
+            "9d3880c32a11",
+            "c646f31c9a48",
+            "9a828ba228d6",
+            "54818c870fea"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 5,
+        "modified": 0,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 5,
+            "modified": 0,
+            "removed": 0,
+            "images": 1,
+            "total": 5
+          },
+          "fingerprints": [
+            "357257235d90",
+            "2f23718188d6",
+            "c646f31c9a48",
+            "adfc86f88b20",
+            "5ffca4cdae51"
+          ]
+        }
+      ]
+    }
+  }
+}
