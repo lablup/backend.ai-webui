@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Public",
       "ResourceGroup": "Groupe de ressources",
       "Status": "Statut",
-      "Tags": "Étiquettes"
+      "Tags": "Étiquettes",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "Suivant",

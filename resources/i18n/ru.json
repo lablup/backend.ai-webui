@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Публичное",
       "ResourceGroup": "Группа ресурсов",
       "Status": "Статус",
-      "Tags": "Теги"
+      "Tags": "Теги",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "Далее",

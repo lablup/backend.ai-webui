@@ -1262,7 +1262,10 @@
       "OpenToPublic": "公開",
       "ResourceGroup": "リソースグループ",
       "Status": "状態",
-      "Tags": "タグ"
+      "Tags": "タグ",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "次へ",

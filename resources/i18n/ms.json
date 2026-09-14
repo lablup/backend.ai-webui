@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Awam",
       "ResourceGroup": "Kumpulan Sumber",
       "Status": "Status",
-      "Tags": "Tag"
+      "Tags": "Tag",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "Seterusnya",

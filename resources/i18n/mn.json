@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Нийтэд нээлттэй",
       "ResourceGroup": "Нөөцийн бүлэг",
       "Status": "Төлөв",
-      "Tags": "Шошго"
+      "Tags": "Шошго",
+      "ReplicaStatus": "__NOT_TRANSLATED__",
+      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
+      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
     },
     "nav": {
       "Next": "Дараах",
