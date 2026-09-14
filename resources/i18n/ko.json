@@ -241,7 +241,7 @@
     "Schedulable": "스케줄링 가능",
     "Settings": "설정",
     "Starts": "시작",
-    "StartsAt": "생성일",
+    "StartsAt": "시작 시각",
     "Status": "상태",
     "StatusChanged": "변경일",
     "StatusChangedAt": "상태 변경 시각",
