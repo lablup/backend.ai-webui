@@ -393,6 +393,24 @@ want to connect via SSH to your container. Please refer to
 [managing user's SSH keypair](#user-ssh-keypair-management).
 :::
 
+### When the SFTP session cannot be created
+
+If the SFTP session cannot be started, a `Failed to create SFTP session` dialog
+appears instead of the SSH / SFTP connection dialog. It shows the reason reported by
+the server, followed by the HTTP status and the error code in parentheses (for
+example, `... (HTTP 500, BAI_E0001)`), so that you can report the failure to your
+administrator. Below the reason, a hint explains that closing unused upload sessions
+may free up resources on the SFTP host.
+
+The dialog offers two buttons:
+
+- `Go to upload sessions`: Opens the Sessions page filtered to the `Upload Sessions`
+  type, where you can terminate the upload sessions you no longer need.
+- `Close`: Closes the dialog without any further action.
+
+The most common cause of this failure is that you have already reached the maximum
+number of concurrent upload (SFTP) sessions allowed by your keypair resource policy.
+
 ## Pipeline folders
 
 This tab shows the list of folders that are automatically created when executing a
