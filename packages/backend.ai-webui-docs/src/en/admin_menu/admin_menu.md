@@ -1449,8 +1449,6 @@ mode** control next to the refresh button that switches between **Table** and **
 replaces the session table with one cell per session on this agent, colored by that session's live
 resource utilization, and follows the current **Running** / **Finished** selection. For a description
 of the grid's own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
-Unlike the Sessions pages, the drawer's view mode is not kept in the URL and returns to **Table** each
-time you reopen the drawer.
 
 ![](../images/agent_info_sessions_view_mode.png)
 
