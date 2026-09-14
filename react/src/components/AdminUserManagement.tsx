@@ -393,11 +393,14 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       propertyLabel: t('credential.DomainIsActive'),
       type: 'boolean',
     },
-    {
-      key: 'integrationName',
-      propertyLabel: t('credential.IntegrationName'),
-      type: 'string',
-    },
+    // `UserV2Filter.integrationName` only exists from manager 26.4.2.
+    bailClient.supports('user-v2-integration-name-filter')
+      ? {
+          key: 'integrationName',
+          propertyLabel: t('credential.IntegrationName'),
+          type: 'string',
+        }
+      : null,
     {
       key: 'createdAt',
       propertyLabel: t('general.CreatedAt'),
