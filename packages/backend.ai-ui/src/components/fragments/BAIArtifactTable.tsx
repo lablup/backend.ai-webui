@@ -122,6 +122,7 @@ const BAIArtifactTable = ({
   onChangeOrder,
   ...tableProps
 }: BAIArtifactTableProps) => {
+  'use memo';
   const { t } = useBAIi18n();
 
   const artifact = useFragment<BAIArtifactTableArtifactFragment$key>(
