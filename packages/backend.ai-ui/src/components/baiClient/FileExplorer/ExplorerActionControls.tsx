@@ -15,6 +15,7 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
+import { useDownloadErrorMessage } from './hooks';
 import type { RcFile } from './hooks';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -82,6 +83,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { lg } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const getDownloadErrorMessage = useDownloadErrorMessage();
   const { targetVFolderId, targetVFolderName, currentPath } =
     use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -149,11 +151,10 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }),
       );
     },
-    onError: (err: any) => {
-      if (err && err.message) {
-        message.error(err.message);
-      } else if (err && err.title) {
-        message.error(err.title);
+    onError: (err: unknown) => {
+      const text = getDownloadErrorMessage(err);
+      if (text) {
+        message.error(text);
       }
     },
   });
@@ -198,6 +199,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               >
                 <BAIButton
                   disabled={!enableDownload}
+                  aria-label={t('comp:FileExplorer.DownloadSelected')}
                   icon={
                     <DownloadIcon
                       style={{
