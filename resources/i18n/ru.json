@@ -1089,7 +1089,7 @@
     "AddAccessToken": "Добавить токен доступа",
     "AddNewRevisionFromThis": "Новая Revision на основе этой",
     "AddRevision": "Добавить Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Переключитесь на проект этого развёртывания, чтобы добавить ревизию.",
     "AdditionalMounts": "Дополнительные монтирования",
     "AnotherDeploymentInProgress": "Другое обновление развёртывания уже выполняется. Пожалуйста, дождитесь его завершения перед повторной попыткой.",
     "Apply": "Развернуть",
@@ -1188,7 +1188,7 @@
     "NotAccessibleOrDeleted": "Это развертывание было удалено или у вас нет прав доступа к нему.",
     "NotInProject": "Это развертывание принадлежит другому проекту.",
     "NumberOfReplicas": "Количество реплик",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Управлять этим развёртыванием может только его владелец.",
     "OpenCreateDeploymentModal": "Открыть модальное окно создания развёртывания",
     "OpenToPublic": "Публичное",
     "OpenToPublicCannotBeChanged": "Параметр публичного доступа, выбранный при создании, нельзя изменить.",
@@ -1272,9 +1272,9 @@
       "ResourceGroup": "Группа ресурсов",
       "Status": "Статус",
       "Tags": "Теги",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Жизненный цикл реплики",
+      "ReplicaHealthStatus": "Состояние здоровья реплики",
+      "ReplicaTrafficStatus": "Состояние трафика реплики"
     },
     "nav": {
       "Next": "Далее",

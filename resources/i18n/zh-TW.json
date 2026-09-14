@@ -1090,7 +1090,7 @@
     "AddAccessToken": "新增存取令牌",
     "AddNewRevisionFromThis": "基於此新增 Revision",
     "AddRevision": "新增 Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "請切換到此部署所屬的專案以新增修訂版本。",
     "AdditionalMounts": "附加掛載",
     "AnotherDeploymentInProgress": "另一個部署更新已在進行中。請等待完成後再重試。",
     "Apply": "部署",
@@ -1189,7 +1189,7 @@
     "NotAccessibleOrDeleted": "此部署已被刪除，或您沒有存取權限。",
     "NotInProject": "此部署屬於其他專案。",
     "NumberOfReplicas": "副本數量",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "只有部署擁有者才能管理此部署。",
     "OpenCreateDeploymentModal": "開啟建立部署視窗",
     "OpenToPublic": "公開",
     "OpenToPublicCannotBeChanged": "建立時選擇的公開存取設定無法變更。",
@@ -1273,9 +1273,9 @@
       "ResourceGroup": "資源群組",
       "Status": "狀態",
       "Tags": "標籤",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "副本生命週期",
+      "ReplicaHealthStatus": "副本健康狀態",
+      "ReplicaTrafficStatus": "副本流量狀態"
     },
     "nav": {
       "Next": "下一步",

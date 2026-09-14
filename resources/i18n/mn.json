@@ -1089,7 +1089,7 @@
     "AddAccessToken": "Хандалтын токен нэмэх",
     "AddNewRevisionFromThis": "Энэ дээр суурилсан шинэ Revision",
     "AddRevision": "Revision нэмэх",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Ревиз нэмэхийн тулд энэ байршуулалтын төсөл рүү шилжинэ үү.",
     "AdditionalMounts": "Нэмэлт холболтууд",
     "AnotherDeploymentInProgress": "Өөр байршуулалтын шинэчлэлт аль хэдийн явагдаж байна. Дахин оролдохоос өмнө дуусахыг хүлээнэ үү.",
     "Apply": "Байршуулах",
@@ -1188,7 +1188,7 @@
     "NotAccessibleOrDeleted": "Энэ байршуулалтыг устгасан эсвэл хандах эрх танд байхгүй байна.",
     "NotInProject": "Энэ байршуулалт өөр төсөлд хамаарна.",
     "NumberOfReplicas": "Репликийн тоо",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Зөвхөн байршуулалтын эзэмшигч энэ байршуулалтыг удирдах боломжтой.",
     "OpenCreateDeploymentModal": "Байршуулалт үүсгэх цонхыг нээх",
     "OpenToPublic": "Нийтэд нээлттэй",
     "OpenToPublicCannotBeChanged": "Үүсгэх үед сонгосон нийтэд нээлттэй тохиргоог өөрчлөх боломжгүй.",
@@ -1272,9 +1272,9 @@
       "ResourceGroup": "Нөөцийн бүлэг",
       "Status": "Төлөв",
       "Tags": "Шошго",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Хуулбарын амьдралын мөчлөг",
+      "ReplicaHealthStatus": "Хуулбарын эрүүл мэндийн төлөв",
+      "ReplicaTrafficStatus": "Хуулбарын урсгалын төлөв"
     },
     "nav": {
       "Next": "Дараах",
