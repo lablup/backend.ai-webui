@@ -14,6 +14,8 @@ export type IconNode = [string, Record<string, string>];
 
 export const ICON_NODES = {
   check: [['path', { d: 'M20 6 9 17l-5-5', key: '1gmf2c' }]],
+  'chevron-down': [['path', { d: 'm6 9 6 6 6-6', key: 'qrunsl' }]],
+  'chevron-up': [['path', { d: 'm18 15-6-6-6 6', key: '153udz' }]],
   clipboard: [
     [
       'rect',

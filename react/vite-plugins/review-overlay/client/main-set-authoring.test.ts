@@ -533,6 +533,70 @@ describe('the set the tab was left with', () => {
     expect(all('.setdock .idx').map((idx) => idx.textContent)).toEqual(['1']);
   });
 
+  describe('reordering the set', () => {
+    it('moves a pin up, renumbers the rows and re-targets the set link', async () => {
+      seed([
+        storedPin('c_oneaaaa', 'create', 'Start › create'),
+        {
+          ...storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+          anchor: {
+            v: 3,
+            s: '[data-testid="cancel"]',
+            p: '/elsewhere',
+            tag: 'button',
+          },
+        },
+      ]);
+      await bootOverlay();
+      await ticks(2);
+      const written = stubExecCommand();
+
+      node<HTMLButtonElement>(
+        '.setdock .row[data-pin-id="c_twoaaaa"] .up',
+      ).click();
+
+      expect(dockRows().map((row) => row.dataset.pinId)).toEqual([
+        'c_twoaaaa',
+        'c_oneaaaa',
+      ]);
+      expect(all('.setdock .idx').map((idx) => idx.textContent)).toEqual([
+        '1',
+        '2',
+      ]);
+      // Order changed; identity did not — same two ids, just reshuffled.
+      expect(storedIds().slice().sort()).toEqual(['c_oneaaaa', 'c_twoaaaa']);
+      expect(toast()).toBe('Moved pin 2 → 1 — Copy all to replace your paste');
+
+      node<HTMLButtonElement>('.setdock .copyall').click();
+      const urls = [...written['text/plain'].matchAll(/\(http[^)]+\)/g)].map(
+        (m) => m[0],
+      );
+      // The set link is built from the FIRST pin, now `c_twoaaaa`.
+      expect(
+        urls[urls.length - 1].startsWith(`(${location.origin}/elsewhere#`),
+      ).toBe(true);
+    });
+
+    it('does nothing, and toasts nothing, when the row is already at that end', async () => {
+      seed([
+        storedPin('c_oneaaaa', 'create', 'Start › create'),
+        storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+      ]);
+      await bootOverlay();
+      await ticks(2);
+
+      node<HTMLButtonElement>(
+        '.setdock .row[data-pin-id="c_oneaaaa"] .up',
+      ).click();
+
+      expect(dockRows().map((row) => row.dataset.pinId)).toEqual([
+        'c_oneaaaa',
+        'c_twoaaaa',
+      ]);
+      expect(toast()).toBe('');
+    });
+  });
+
   // The marker is the only thing that says which of them is meant.
   it('scrolls to the pin the row names and beats its marker again', async () => {
     seed([storedPin('c_oneaaaa', 'create', 'Start › create')]);

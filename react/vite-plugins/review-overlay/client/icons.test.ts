@@ -6,6 +6,8 @@
  */
 import { ICON_NODES, icon, type IconName } from './icons.js';
 import { __iconNode as check } from 'lucide-react/dist/esm/icons/check.mjs';
+import { __iconNode as chevronDown } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
+import { __iconNode as chevronUp } from 'lucide-react/dist/esm/icons/chevron-up.mjs';
 import { __iconNode as clipboard } from 'lucide-react/dist/esm/icons/clipboard.mjs';
 import { __iconNode as copy } from 'lucide-react/dist/esm/icons/copy.mjs';
 import { __iconNode as crosshair } from 'lucide-react/dist/esm/icons/crosshair.mjs';
@@ -21,6 +23,8 @@ import { describe, expect, it } from 'vitest';
 
 const UPSTREAM: Record<IconName, unknown> = {
   check,
+  'chevron-down': chevronDown,
+  'chevron-up': chevronUp,
   clipboard,
   copy,
   crosshair,

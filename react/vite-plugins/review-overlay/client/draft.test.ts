@@ -10,6 +10,7 @@ import {
   emptyDraft,
   MAX_SET_PINS,
   mergePins,
+  movePin,
   parseDraft,
   removePin,
 } from './draft.js';
@@ -86,6 +87,65 @@ describe('the set as a value', () => {
       'c_aaaaaaa',
       'c_ccccccc',
     ]);
+  });
+
+  describe('reordering it', () => {
+    const set = () =>
+      addPin(
+        addPin(addPin(emptyDraft(), pin('c_aaaaaaa')), pin('c_bbbbbbb')),
+        pin('c_ccccccc'),
+      );
+
+    it('moves a pin up one position', () => {
+      expect(movePin(set(), 'c_bbbbbbb', -1).pins.map((p) => p.id)).toEqual([
+        'c_bbbbbbb',
+        'c_aaaaaaa',
+        'c_ccccccc',
+      ]);
+    });
+
+    it('moves a pin down one position', () => {
+      expect(movePin(set(), 'c_bbbbbbb', 1).pins.map((p) => p.id)).toEqual([
+        'c_aaaaaaa',
+        'c_ccccccc',
+        'c_bbbbbbb',
+      ]);
+    });
+
+    it('clamps at the top', () => {
+      expect(movePin(set(), 'c_aaaaaaa', -1).pins.map((p) => p.id)).toEqual([
+        'c_aaaaaaa',
+        'c_bbbbbbb',
+        'c_ccccccc',
+      ]);
+    });
+
+    it('clamps at the bottom', () => {
+      expect(movePin(set(), 'c_ccccccc', 1).pins.map((p) => p.id)).toEqual([
+        'c_aaaaaaa',
+        'c_bbbbbbb',
+        'c_ccccccc',
+      ]);
+    });
+
+    it('leaves an unknown id alone', () => {
+      expect(movePin(set(), 'c_nope000', -1).pins.map((p) => p.id)).toEqual([
+        'c_aaaaaaa',
+        'c_bbbbbbb',
+        'c_ccccccc',
+      ]);
+    });
+
+    it('persists the new order to sessionStorage', () => {
+      const store = createDraftStore();
+      store.add(pin('c_aaaaaaa'));
+      store.add(pin('c_bbbbbbb'));
+
+      store.move('c_bbbbbbb', -1);
+
+      expect(store.pins().map((p) => p.id)).toEqual(['c_bbbbbbb', 'c_aaaaaaa']);
+      expect(stored().map((p) => p.id)).toEqual(['c_bbbbbbb', 'c_aaaaaaa']);
+    });
   });
 
   describe('merging a link into it', () => {

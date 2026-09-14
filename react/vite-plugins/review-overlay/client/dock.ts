@@ -148,6 +148,8 @@ const STYLE = `
     display: inline-flex; align-items: center; gap: 4px;
   }
   .setdock .act:hover { color: var(--bai-review-text); }
+  .setdock .act:disabled { opacity: 0.35; cursor: default; }
+  .setdock .act:disabled:hover { color: var(--bai-review-text-dim); }
   .setdock .confirm { display: none; align-items: center; gap: 4px; }
   .setdock.confirming .confirm { display: flex; }
   .setdock.confirming .clear { display: none; }
@@ -196,6 +198,8 @@ export interface SetDockOptions {
   onLocate: (id: string) => void;
   /** A row's remove button: that pin leaves the set. No confirm — it is one pin. */
   onRemove: (id: string) => void;
+  /** A row's ▲/▼: reorder by one position. Order only — the id does not move. */
+  onMove: (id: string, delta: -1 | 1) => void;
   /** Its card comes back: the row's eye button, or the row itself. */
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
@@ -592,13 +596,19 @@ export function createSetDock(options: SetDockOptions) {
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);
         }
+        const up = button('up', 'chevron-up', 'Move this pin up');
+        up.disabled = index === 0;
+        up.addEventListener('click', () => options.onMove(pin.id, -1));
+        const down = button('down', 'chevron-down', 'Move this pin down');
+        down.disabled = index === pins.length - 1;
+        down.addEventListener('click', () => options.onMove(pin.id, 1));
         const remove = button(
           'remove',
           'trash-2',
           'Remove this pin from the set',
         );
         remove.addEventListener('click', () => options.onRemove(pin.id));
-        row.append(remove);
+        row.append(up, down, remove);
         return row;
       }),
     );

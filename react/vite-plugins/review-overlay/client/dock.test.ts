@@ -21,6 +21,7 @@ let located: string[];
 let removed: string[];
 let unhidden: string[];
 let went: string[];
+let moved: Array<[string, number]>;
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -83,6 +84,7 @@ beforeEach(() => {
   removed = [];
   unhidden = [];
   went = [];
+  moved = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
@@ -92,6 +94,7 @@ beforeEach(() => {
     onClear: () => cleared++,
     onLocate: (id) => located.push(id),
     onRemove: (id) => removed.push(id),
+    onMove: (id, delta) => moved.push([id, delta]),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
     onGo: (id) => went.push(id),
@@ -146,6 +149,69 @@ describe('createSetDock', () => {
 
     expect(removed).toEqual(['c_a']);
     expect(located).toEqual([]);
+  });
+
+  describe('reordering rows', () => {
+    it('draws ▲/▼ on every row, disabled at the ends', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b'), pin('c_c', 'c')]);
+
+      expect(rows()[0].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        true,
+      );
+      expect(
+        rows()[0].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(false);
+      expect(rows()[1].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        false,
+      );
+      expect(
+        rows()[1].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(false);
+      expect(rows()[2].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        false,
+      );
+      expect(
+        rows()[2].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(true);
+    });
+
+    it('disables both ends of a single-pin set', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      expect(rows()[0].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        true,
+      );
+      expect(
+        rows()[0].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(true);
+    });
+
+    it('hands back the id and the direction of the ▲ that was pressed', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      rows()[1].querySelector<HTMLButtonElement>('.up')?.click();
+
+      expect(moved).toEqual([['c_b', -1]]);
+    });
+
+    it('hands back the id and the direction of the ▼ that was pressed', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      rows()[0].querySelector<HTMLButtonElement>('.down')?.click();
+
+      expect(moved).toEqual([['c_a', 1]]);
+    });
+
+    it('names the action, not the state (R8.1)', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      expect(rows()[0].querySelector('.up')?.getAttribute('aria-label')).toBe(
+        'Move this pin up',
+      );
+      expect(rows()[0].querySelector('.down')?.getAttribute('aria-label')).toBe(
+        'Move this pin down',
+      );
+    });
   });
 
   /**
@@ -592,6 +658,7 @@ describe('createSetDock', () => {
         onClear: () => cleared++,
         onLocate: (id) => located.push(id),
         onRemove: (id) => removed.push(id),
+        onMove: (id, delta) => moved.push([id, delta]),
         onUnhide: (id) => unhidden.push(id),
         onToggleCards: () => toggled++,
       });
@@ -619,6 +686,7 @@ describe('createSetDock', () => {
           onClear: () => cleared++,
           onLocate: (id) => located.push(id),
           onRemove: (id) => removed.push(id),
+          onMove: (id, delta) => moved.push([id, delta]),
           onUnhide: (id) => unhidden.push(id),
           onToggleCards: () => toggled++,
         });

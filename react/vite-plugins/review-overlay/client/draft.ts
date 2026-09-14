@@ -90,6 +90,22 @@ export function removePin(set: DraftSet, id: string): DraftSet {
 }
 
 /**
+ * Reorders one pin by `delta` positions, clamped to the array's ends. Order
+ * only — the pin keeps its id. An unknown id, or a delta that nets to no
+ * movement, returns the set unchanged.
+ */
+export function movePin(set: DraftSet, id: string, delta: number): DraftSet {
+  const from = set.pins.findIndex((pin) => pin.id === id);
+  if (from < 0) return set;
+  const to = Math.min(Math.max(from + delta, 0), set.pins.length - 1);
+  if (to === from) return set;
+  const pins = [...set.pins];
+  const [moved] = pins.splice(from, 1);
+  pins.splice(to, 0, moved);
+  return { ...set, pins };
+}
+
+/**
  * A card hidden. The pin keeps its place, its note and its identity — only its
  * card goes, and the flag is stored so a reload does not bring it back.
  */
@@ -183,6 +199,8 @@ export interface DraftStore {
   isFull(): boolean;
   add(pin: SetPin): AddResult;
   remove(id: string): void;
+  /** Reorders one pin by `delta` positions, clamped to the ends. */
+  move(id: string, delta: number): void;
   clear(): void;
   merge(pins: SetPin[]): MergeResult;
   /** Hide or show one card. */
@@ -233,6 +251,9 @@ export function createDraftStore(
     },
     remove(id) {
       write(removePin(current, id));
+    },
+    move(id, delta) {
+      write(movePin(current, id, delta));
     },
     clear() {
       write(emptyDraft());
