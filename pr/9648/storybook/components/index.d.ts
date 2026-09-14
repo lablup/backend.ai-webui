@@ -118,7 +118,7 @@ export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
 export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
 export { default as BAIProgressRing } from './BAIProgressRing';
-export { BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT, BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT, } from './BAIProgressRing';
+export { getVisibleArcRange } from './BAIProgressRing';
 export type { BAIProgressRingProps } from './BAIProgressRing';
 export { default as BAIKernelProgressBreakdown } from './BAIKernelProgressBreakdown';
 export type { BAIKernelProgressBreakdownProps, BAIKernelProgressSegment, } from './BAIKernelProgressBreakdown';
