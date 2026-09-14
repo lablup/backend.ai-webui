@@ -13,6 +13,7 @@ import {
   movePin,
   parseDraft,
   removePin,
+  replacePin,
 } from './draft.js';
 import type { SetPin } from './types.js';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -145,6 +146,62 @@ describe('the set as a value', () => {
 
       expect(store.pins().map((p) => p.id)).toEqual(['c_bbbbbbb', 'c_aaaaaaa']);
       expect(stored().map((p) => p.id)).toEqual(['c_bbbbbbb', 'c_aaaaaaa']);
+    });
+  });
+
+  // Editing a note re-keys the pin: a new id has to land in the old place.
+  describe('replacing a pin in place', () => {
+    const set = () =>
+      addPin(
+        addPin(addPin(emptyDraft(), pin('c_aaaaaaa')), pin('c_bbbbbbb')),
+        pin('c_ccccccc'),
+      );
+
+    it('keeps the index and carries the flags the pin was stored with', () => {
+      const start = set();
+      start.pins[1] = { ...start.pins[1], hidden: true } as SetPin;
+
+      const next = replacePin(start, 'c_bbbbbbb', {
+        ...start.pins[1],
+        id: 'c_edited2',
+        note: 'rewritten',
+      });
+
+      expect(next.pins.map((p) => p.id)).toEqual([
+        'c_aaaaaaa',
+        'c_edited2',
+        'c_ccccccc',
+      ]);
+      expect(next.pins[1].hidden).toBe(true);
+      expect(next.pins[1].note).toBe('rewritten');
+    });
+
+    it('leaves an unknown id alone', () => {
+      const start = set();
+
+      expect(
+        replacePin(start, 'c_nope000', pin('c_edited2')).pins.map((p) => p.id),
+      ).toEqual(['c_aaaaaaa', 'c_bbbbbbb', 'c_ccccccc']);
+    });
+
+    // Edited back into a pin the set already holds: two rows, one identity.
+    it('refuses a replacement the set already holds elsewhere', () => {
+      const start = set();
+
+      const next = replacePin(start, 'c_bbbbbbb', pin('c_ccccccc'));
+
+      expect(next).toBe(start);
+    });
+
+    it('persists the replacement, and says whether it wrote', () => {
+      const store = createDraftStore();
+      store.add(pin('c_aaaaaaa'));
+      store.add(pin('c_bbbbbbb'));
+
+      expect(store.replace('c_aaaaaaa', pin('c_edited2'))).toBe(true);
+      expect(store.replace('c_nope000', pin('c_other22'))).toBe(false);
+
+      expect(stored().map((p) => p.id)).toEqual(['c_edited2', 'c_bbbbbbb']);
     });
   });
 

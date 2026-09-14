@@ -3,11 +3,13 @@
  * pick near the bottom of the viewport pushed its Cancel / Copy row off-screen
  * — the label and the ⚛️ stack are appended AFTER the box opens.
  */
-import { createOverlayUI, type OverlayUI } from './ui.js';
+import { createOverlayUI, EDIT_WARNING, type OverlayUI } from './ui.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 let ui: OverlayUI;
 const noteChanges: string[] = [];
+const saved: string[] = [];
+const built: string[] = [];
 
 const compose = () => ui.root.querySelector('.compose') as HTMLElement;
 
@@ -41,8 +43,17 @@ beforeEach(() => {
     configurable: true,
   });
   noteChanges.length = 0;
+  saved.length = 0;
+  built.length = 0;
   ui = createOverlayUI({
-    onBuildBlock: () => null,
+    onBuildBlock: (text) => {
+      built.push(text);
+      return null;
+    },
+    onSaveNote: (text) => {
+      saved.push(text);
+      return { toast: `saved ${text}` };
+    },
     onNoteChanged: (text) => noteChanges.push(text),
     onComposeClosed: () => undefined,
     onEscape: () => undefined,
@@ -375,5 +386,92 @@ describe('the pin accent', () => {
   // "Copy block" label. #0a1317 on it is 5.78:1.
   it('carries a dark on-accent so the primary button label passes AA', () => {
     expect(css()).toContain('--bai-review-on-accent: #0a1317');
+  });
+});
+
+/**
+ * FR-3930. The composer is also the editor: the same box over a pin that
+ * already exists, with the note prefilled and no clipboard anywhere near it.
+ */
+describe('the composer in edit mode', () => {
+  const textarea = () =>
+    compose().querySelector('textarea') as HTMLTextAreaElement;
+  const copyButton = () =>
+    compose().querySelector('[data-act="copy"]') as HTMLButtonElement;
+  const warn = () => compose().querySelector('.warn') as HTMLElement;
+  const pressSave = () =>
+    textarea().dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        metaKey: true,
+        bubbles: true,
+      }),
+    );
+
+  const openEditor = (note: string) => {
+    setHeight(160);
+    ui.openEditor({
+      note,
+      at: { left: 40, top: 200, width: 260, height: 24 },
+    });
+    ui.setComposeReady(true, note);
+  };
+
+  it('opens over a rect with the note prefilled and a save label', () => {
+    openEditor('the label is cut off');
+
+    expect(ui.isComposeOpen()).toBe(true);
+    expect(textarea().value).toBe('the label is cut off');
+    expect(copyButton().textContent).toBe('Save note');
+    expect(compose().style.top).toBe('234px');
+  });
+
+  it('warns, every time, that saving retires the id already pasted', () => {
+    openEditor('a note');
+
+    expect(compose().classList.contains('editing')).toBe(true);
+    expect(warn().textContent).toBe(
+      'Saving gives this pin a new id — a comment you already pasted keeps the old one. Copy all and paste again.',
+    );
+    expect(warn().textContent).toBe(EDIT_WARNING);
+  });
+
+  it('shows no warning line in pick mode', () => {
+    const target = mountSized({ top: 100, bottom: 300 }, 160);
+    ui.openCompose(target, 40, 306);
+
+    expect(compose().classList.contains('editing')).toBe(false);
+    expect(copyButton().textContent).toBe('Copy block');
+  });
+
+  it('saves on ⌘⏎ and builds no block at all', () => {
+    openEditor('a note');
+
+    pressSave();
+
+    expect(saved).toEqual(['a note']);
+    expect(built).toEqual([]);
+    expect(ui.isComposeOpen()).toBe(false);
+    expect(ui.root.querySelector('.toast')?.textContent).toBe('saved a note');
+  });
+
+  it('closes on Escape without saving', () => {
+    openEditor('a note');
+
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }),
+    );
+
+    expect(saved).toEqual([]);
+    expect(ui.isComposeOpen()).toBe(false);
+  });
+
+  // A full set has nothing to do with rewriting a note on a pin already in it.
+  it('keeps saving enabled while the set is full', () => {
+    ui.setDraftSize(10, true);
+    openEditor('a note');
+
+    expect(copyButton().disabled).toBe(false);
+    expect(copyButton().textContent).toBe('Save note');
   });
 });
