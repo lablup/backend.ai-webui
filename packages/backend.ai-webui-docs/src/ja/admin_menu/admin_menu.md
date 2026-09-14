@@ -1353,6 +1353,8 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 **実行中** / **終了セッション** のセレクターで、まだノードのリソースを占有しているセッションと、すでに終了した
 セッションを切り替えて表示でき、セッション名をクリックするとそのセッションの詳細が表示されます。
 
+![](../images/detailed_agent_node_usage_information.png)
+
 ユーザー設定で実験的機能の **Session resource grid view** を有効にすると（[実験的特徴](#experimental-features)
 セクションを参照）、**セッション** タブの更新ボタンの横に、**Table** と **Grid** を切り替える **View mode**
 コントロールも表示されます。グリッドはセッションテーブルの代わりに、このエージェント上のセッションごとに1つのセルを
@@ -1361,9 +1363,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 [セッションリストの表示](#session-list-view-and-refresh) セクションを参照してください。セッションページとは異なり、
 このドロワーの表示モードはURLに保存されないため、ドロワーを開き直すたびに **Table** に戻ります。
 
-![](../images/detailed_agent_node_usage_information.png)
-
-<!-- TODO(screenshot): /admin/agent — Agent Info drawer, Sessions tab, with Session resource grid view enabled, showing the Running / Finished selector and the Table / Grid View mode control. Not recaptured on this run: the capture environment was unavailable. -->
+![](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 

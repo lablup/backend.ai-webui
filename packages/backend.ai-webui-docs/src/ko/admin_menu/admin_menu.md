@@ -1208,6 +1208,8 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 **실행 중** / **종료됨** 선택기로 아직 노드의 자원을 점유하고 있는 세션과 이미 종료된 세션을 전환하며 볼 수 있으며,
 세션 이름을 클릭하면 해당 세션의 상세 정보가 표시됩니다.
 
+![](../images/detailed_agent_node_usage_information.png)
+
 사용자 설정에서 실험적 기능인 **세션 리소스 그리드 뷰**를 활성화하면([실험적 기능](#experimental-features) 섹션 참고)
 **세션** 탭의 새로고침 버튼 옆에 **테이블**과 **그리드**를 전환하는 **보기 모드** 컨트롤도 함께 표시됩니다. 그리드는
 세션 테이블 대신 이 에이전트의 세션마다 하나의 셀을 표시하며, 각 셀은 해당 세션의 실시간 자원 사용률에 따라 색상이
@@ -1215,9 +1217,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 [세션 목록 보기](#session-list-view-and-refresh) 섹션을 참고하세요. 세션 페이지와 달리 이 패널의 보기 모드는 URL에
 저장되지 않으므로, 패널을 다시 열 때마다 **테이블**로 되돌아갑니다.
 
-![](../images/detailed_agent_node_usage_information.png)
-
-<!-- TODO(screenshot): /admin/agent — Agent Info drawer, Sessions tab, with Session resource grid view enabled, showing the Running / Finished selector and the Table / Grid View mode control. Not recaptured on this run: the capture environment was unavailable. -->
+![](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 

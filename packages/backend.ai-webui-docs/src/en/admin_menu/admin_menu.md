@@ -1444,6 +1444,8 @@ the node before stopping or restarting it. On the **Sessions** tab, use the **Ru
 selector to switch between sessions that still occupy the node's resources and sessions that have
 already finished, and click a session name to show that session's details.
 
+![](../images/detailed_agent_node_usage_information.png)
+
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab also shows a **View
 mode** control next to the refresh button that switches between **Table** and **Grid**. The grid
@@ -1453,9 +1455,7 @@ of the grid's own controls, refer to the [Session List View](#session-list-view-
 Unlike the Sessions pages, the drawer's view mode is not kept in the URL and returns to **Table** each
 time you reopen the drawer.
 
-![](../images/detailed_agent_node_usage_information.png)
-
-<!-- TODO(screenshot): /admin/agent — Agent Info drawer, Sessions tab, with Session resource grid view enabled, showing the Running / Finished selector and the Table / Grid View mode control. Not recaptured on this run: the capture environment was unavailable. -->
+![](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 
