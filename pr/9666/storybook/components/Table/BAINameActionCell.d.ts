@@ -108,10 +108,12 @@ export interface BAINameActionCellProps {
     /** Minimum number of action buttons to keep visible before overflow. Default: 0 */
     minVisibleActions?: number;
     /**
-     * Width (px) the title keeps for itself before an action may claim space;
-     * actions that no longer fit fold into the more menu. The default suits an
-     * identifier a few characters of which already identify the row — raise it
-     * where the title is long and the cell is narrow (FR-3926).
+     * Width (px) the title keeps before an action may claim space; actions that
+     * no longer fit fold into the more menu. `showActions="always"` only —
+     * hover mode collapses its actions to zero width at rest, so nothing
+     * competes for the title there. The default suits an identifier a few
+     * characters of which already identify the row; raise it where the title is
+     * long and the cell narrow (FR-3926).
      */
     minTitleWidth?: number;
     /** Disable the overflow More (…) button. Individual menu items remain visible. */
