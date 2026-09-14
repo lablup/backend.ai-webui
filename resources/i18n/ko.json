@@ -1512,7 +1512,7 @@
     "AddImageTagNotFoundInRegistry": "레지스트리에서 해당 태그나 매니페스트를 찾지 못했습니다.",
     "AddImageTagRequired": "태그를 입력하세요. 기본 태그는 없습니다.",
     "AddImageUnreadableCatalogUrl": "NGC 카탈로그의 컨테이너 페이지 주소가 아닙니다.",
-    "AddImageUnsupportedCommand": "docker pull 또는 podman pull 줄만 인식합니다.",
+    "AddImageUnsupportedCommand": "docker pull, podman pull, nerdctl pull 줄만 인식합니다.",
     "Aliases": "별칭",
     "AllProjects": "전체 프로젝트",
     "AlreadyInstalledImage": "이미 설치된 이미지입니다.",
