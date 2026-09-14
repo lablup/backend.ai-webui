@@ -9,7 +9,9 @@ import {
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import FairShareStepToolbar from './FairShareStepToolbar';
+import FairShareStepToolbar, {
+  flattenUnsupportedSubFilter,
+} from './FairShareStepToolbar';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ProjectFairShareTable, {
   availableProjectFairShareSorterValues,
@@ -80,11 +82,17 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
     },
   );
 
+  // A URL written before this gate (or on a newer manager) can still carry
+  // an AND/OR/NOT combinator the filter control can no longer produce here.
+  const effectiveFilter = supportsSubFilter
+    ? queryParams.filter
+    : flattenUnsupportedSubFilter(queryParams.filter);
+
   const queryVariables = {
     resourceGroupName,
     domainName,
     filter: {
-      ...(queryParams.filter || {}),
+      ...(effectiveFilter || {}),
     },
     order: convertToOrderBy<ProjectFairShareOrderBy>(
       queryParams.order,
@@ -173,7 +181,7 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
               ] as const)
             : []),
         ]}
-        filterValue={queryParams.filter || {}}
+        filterValue={effectiveFilter || {}}
         onChangeFilter={(filter) => {
           setQueryParams({
             filter: filter || null,
