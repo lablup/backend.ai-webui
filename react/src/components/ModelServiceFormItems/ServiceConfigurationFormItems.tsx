@@ -171,13 +171,19 @@ const ServiceConfigurationFormItems: React.FC<
               // The hint states how the command will be run.
               // Managers without the command/shell path still
               // receive a tokenized `startCommand`, so they keep the
-              // original shell-syntax hint (FR-3166).
+              // original shell-syntax hint (FR-3166). Single-quoted JSON
+              // survives all three paths (bash -c, shlex.split, tokenizer).
               extra={
-                !supportsCommandShell
-                  ? t('modelService.StartCommandHelperShell')
-                  : isExec
-                    ? t('modelService.CommandExecHelper')
-                    : t('modelService.CommandShellHelper')
+                <BAIFlex direction="column" align="start">
+                  <span>
+                    {!supportsCommandShell
+                      ? t('modelService.StartCommandHelperShell')
+                      : isExec
+                        ? t('modelService.CommandExecHelper')
+                        : t('modelService.CommandShellHelper')}
+                  </span>
+                  <span>{t('modelService.CommandJsonArgumentHelper')}</span>
+                </BAIFlex>
               }
               // The command is sent to the server as the raw string
               // the user typed; the WebUI does not pre-validate shell
