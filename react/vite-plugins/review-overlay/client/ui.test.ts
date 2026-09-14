@@ -417,6 +417,21 @@ describe('the composer in edit mode', () => {
     ui.setComposeReady(true, note);
   };
 
+  it('drops the outline of the pin an earlier editor was open on', () => {
+    const element = document.createElement('button');
+    document.body.append(element);
+    setHeight(160);
+    ui.openEditor({ note: 'on the page', at: element });
+    const hoverbox = (compose().parentNode as ShadowRoot).querySelector(
+      '.hoverbox',
+    ) as HTMLElement;
+    expect(hoverbox.style.display).not.toBe('none');
+
+    openEditor('off the page');
+
+    expect(hoverbox.style.display).toBe('none');
+  });
+
   it('opens over a rect with the note prefilled and a save label', () => {
     openEditor('the label is cut off');
 

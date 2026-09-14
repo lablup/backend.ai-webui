@@ -10,8 +10,9 @@ element again.
 **Pin**:
 One reviewer remark tied to one element: an anchor, an optional note, and an
 id. A pin is self-contained — its link alone is enough to show it again. Its id
-is a fingerprint of its content — anchor, note, pr and when it was made — so
-editing the note makes a different pin, and restoring the note restores the pin.
+is a fingerprint of its content — the anchor, with the capped note it carries,
+pr and when it was made — so an edit that changes the carried note makes a
+different pin, and restoring that note restores the pin.
 _Avoid_: comment (the channel's word), marker (the drawn glyph only), pick
 
 **Pin set**:

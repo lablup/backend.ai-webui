@@ -114,7 +114,7 @@ const STYLE = `
   /* The reviewer's own words lead. An anchor from before the note travelled
      carries none, and :empty leaves no gap where it would have been. */
   .card .note {
-    white-space: pre-wrap; word-break: break-word; padding-right: 62px;
+    white-space: pre-wrap; word-break: break-word; padding-right: 82px;
     margin-bottom: 6px;
   }
   .card .note:empty { display: none; }

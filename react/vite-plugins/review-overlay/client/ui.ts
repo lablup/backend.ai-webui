@@ -47,8 +47,10 @@ export const COPIED_ONE =
   'Copied — paste it into the PR comment, the Teams thread, or Claude';
 
 /**
- * Every save re-keys the pin, so the reviewer is told before they press it —
- * a comment already pasted names the id this save is about to retire.
+ * A save re-keys the pin whenever the note the anchor carries changes, so the
+ * reviewer is told before they press it — a comment already pasted names the
+ * id this save may retire. Said every time: the cap makes the exception rare
+ * and not worth a second wording.
  */
 export const EDIT_WARNING =
   'Saving gives this pin a new id — a comment you already pasted keeps the old one. Copy all and paste again.';
@@ -409,6 +411,9 @@ ${ICON_STYLE}
     const box = at instanceof Element ? at.getBoundingClientRect() : at;
     pickTarget = at instanceof Element ? at : null;
     pickRegion = null;
+    // A row's editor outlines nothing; an outline left by the editor it
+    // replaces would otherwise stay on that other pin's element.
+    if (!pickTarget) setHoverRect(null);
     composeAnchor = {
       left: box.left,
       top: box.top,
