@@ -882,6 +882,10 @@ export class Client {
       this._features['deployment-scheduling-history'] = true;
       this._features['route-scheduling-history'] = true;
       this._features['download-archive'] = true;
+      // `POST /admin/images/rescan` (canonical + architecture) exists since
+      // 26.3.0, but registering an image the DB does not already know needs
+      // lablup/backend.ai#14612 — bump this version when that ships.
+      this._features['scan-image-by-canonical'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.0')) {
       this._features['update-user-v2'] = true;
