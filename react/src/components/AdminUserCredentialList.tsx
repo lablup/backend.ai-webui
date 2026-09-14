@@ -330,11 +330,6 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                 propertyLabel: t('credential.CreatedAt'),
                 type: 'datetime',
               },
-              {
-                key: 'last_used',
-                propertyLabel: t('credential.LastUsed'),
-                type: 'datetime',
-              },
             ]}
             value={variables.filter ?? undefined}
             onChange={(value) => {
@@ -626,7 +621,10 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             key: 'lastUsed',
             title: t('credential.LastUsed'),
             dataIndex: 'last_used',
-            sorter: true,
+            // Not sortable / filterable on purpose: this cell comes from
+            // Valkey (`KeyPair.resolve_last_used`) while the server's
+            // `last_used` order and filter read the `keypairs.last_used`
+            // column, which the manager leaves empty.
             render: (lastUsed) => (lastUsed ? dayjs(lastUsed).format('lll') : '-'),
           },
           {
