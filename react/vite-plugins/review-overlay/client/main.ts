@@ -411,6 +411,7 @@ function boot() {
       pins.pulse(id);
     },
     onRemove: removeFromSet,
+    onMove: moveInSet,
     onUnhide: revealPin,
     onToggleCards: toggleCards,
     onGo: (id) => {
@@ -489,6 +490,20 @@ function boot() {
     const size = draft.length;
     removePin(id);
     ui.showToast(`Removed pin ${index + 1} of ${size}`);
+  }
+
+  /** The dock row's ▲/▼ — order only; the pin's identity does not move. */
+  function moveInSet(id: string, delta: -1 | 1) {
+    const from = draft.findIndex((pin) => pin.id === id);
+    if (from < 0) return;
+    store.move(id, delta);
+    syncDraft();
+    redraw();
+    const to = draft.findIndex((pin) => pin.id === id);
+    if (to !== from)
+      ui.showToast(
+        `Moved pin ${from + 1} → ${to + 1} — Copy all to replace your paste`,
+      );
   }
 
   /** The store, the stacks and the layer, one pin shorter. */
