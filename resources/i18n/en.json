@@ -1493,7 +1493,7 @@
     "AddImageTagNotFoundInRegistry": "The tag or its manifest was not found in the registry.",
     "AddImageTagRequired": "Enter a tag. There is no default tag.",
     "AddImageUnreadableCatalogUrl": "This NGC catalog address does not point at a container page.",
-    "AddImageUnsupportedCommand": "Only a docker pull or podman pull line is read.",
+    "AddImageUnsupportedCommand": "Only a docker pull, podman pull or nerdctl pull line is read.",
     "AllProjects": "All projects",
     "AlreadyInstalledImage": "Already installed image",
     "AppInfoDeleted": "Deleted App information.",
