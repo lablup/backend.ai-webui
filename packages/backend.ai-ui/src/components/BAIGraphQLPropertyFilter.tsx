@@ -651,16 +651,11 @@ export function powerSearchFiltersToGraphQLFilter(
   maxConditions?: number,
 ): GraphQLFilter | undefined {
   const byKey = _.keyBy(filterProperties, 'key');
-  // `singleCondition` keeps at most one condition per property — the LAST one
-  // wins, matching the antd behaviour where committing overrode.
+  // `singleCondition` keeps the LAST condition per property (the antd
+  // committing-overrides behaviour) *at* its last position, so the tail-slice
+  // below keeps it rather than an older sibling.
   const deduped = singleCondition
-    ? _.values(
-        _.reduce(
-          filters,
-          (acc, filter) => ({ ...acc, [filter.field]: filter }),
-          {} as Record<string, PowerSearchFilter>,
-        ),
-      )
+    ? _.uniqBy([...filters].reverse(), 'field').reverse()
     : [...filters];
   // `maxConditions` then caps the total, keeping the newest ones.
   const kept =
