@@ -141,7 +141,7 @@ export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';
 export type {
   BAIAdminUserV2SelectProps,
   BAIAdminUserV2SelectFilter,
-  AstryxAdminUserV2Node,
+  AdminUserV2Node,
   BAIAdminUserV2SelectRef,
 } from './BAIAdminUserV2Select';
 export { default as BAIProjectSelect } from './BAIProjectSelect';

@@ -31,7 +31,7 @@ export type BAIAdminUserV2SelectFilter = NonNullable<
   BAIAdminUserV2SelectPaginatedQuery['variables']['filter']
 >;
 
-export type AstryxAdminUserV2Node = NonNullable<
+export type AdminUserV2Node = NonNullable<
   NonNullable<
     BAIAdminUserV2SelectPaginatedQuery['response']['adminUsersV2']
   >['edges'][number]
@@ -153,10 +153,7 @@ const BAIAdminUserV2Select: React.FC<BAIAdminUserV2SelectProps> = ({
     );
 
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<
-      BAIAdminUserV2SelectPaginatedQuery,
-      AstryxAdminUserV2Node
-    >(
+    useLazyPaginatedQuery<BAIAdminUserV2SelectPaginatedQuery, AdminUserV2Node>(
       graphql`
         query BAIAdminUserV2SelectPaginatedQuery(
           $offset: Int!
