@@ -105,6 +105,7 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - **ADR**: `adr-writing` skill (file conventions, section skeleton, writing rules, landing checks; when a change needs one is `.claude/rules/adr.md`)
 - **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 - **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
+- **WebUI theme from a brand**: `theme-builder` skill (brand extraction from a URL / hex colours, the v2 appearance document field map, contrast-checked light/dark seeds, schema validation, and the dev-server / Branding-page preview steps)
 
 Component-authoring patterns (Relay tables, selects, modals, forms, layout) have no
 dedicated skills: read `react.instructions.md` for the project deltas, then copy the
