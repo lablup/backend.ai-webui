@@ -15,18 +15,47 @@ const CENTER = VIEWBOX_SIZE / 2;
 const INDETERMINATE_ARC_FRACTION = 0.25;
 
 /**
- * Shortest arc the determinate ring ever draws, in percent. An empty ring is
- * a bare track, which hides the rotation that says the work is still moving.
+ * Shortest the drawn arc may ever look, in user units of the viewBox. An empty
+ * ring is a bare track, which hides the rotation that says work is still
+ * moving. `stroke-linecap: round` adds `strokeWidth / 2` past each end of the
+ * dash, so the dash itself only has to make up what the two caps do not.
  */
-export const BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT = 8;
+const MIN_VISIBLE_ARC = 5;
 
 /**
- * Longest arc the determinate ring ever draws, in percent. The bound is
- * geometry, not taste: `stroke-linecap: round` grows the arc by
- * `strokeWidth / 2` at each end, so at the default stroke 86% leaves
- * `37.7 - 0.86 * 37.7 - 2` = 3.3 user units open — a gap, not a seam.
+ * Shortest the gap left by the drawn arc may ever look, in user units. Below
+ * this the ring reads as a closed circle and the rotation stops being
+ * perceptible. The two round caps eat `strokeWidth` out of the gap.
  */
-export const BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT = 86;
+const MIN_VISIBLE_GAP = 3;
+
+const ringRadius = (strokeWidth: number) => Math.max(0.5, CENTER - strokeWidth);
+
+/**
+ * The percent range the determinate ring is allowed to DRAW. Both bounds fall
+ * out of the geometry `strokeWidth` fixes — the radius, hence the
+ * circumference, and the `strokeWidth` the two round caps add to the arc and
+ * take out of the gap — so they hold at any stroke: 7.96%..86.74% at the
+ * default 2, 0%..57.6% at 5. Only the drawn arc is bounded; `aria-valuenow`
+ * always carries the true percent.
+ */
+export const getVisibleArcRange = (
+  strokeWidth: number,
+): { min: number; max: number } => {
+  const circumference = 2 * Math.PI * ringRadius(strokeWidth);
+  const asPercent = (dash: number) => (dash / circumference) * 100;
+
+  const max = Math.min(
+    100,
+    asPercent(Math.max(0, circumference - strokeWidth - MIN_VISIBLE_GAP)),
+  );
+  const min = Math.min(
+    asPercent(Math.max(0, MIN_VISIBLE_ARC - strokeWidth)),
+    max,
+  );
+
+  return { min, max };
+};
 
 // `rotate` is Omitted because it is redefined: SVG has a `rotate` presentation
 // attribute of its own (`string | number`), which this boolean replaces.
@@ -40,10 +69,9 @@ export interface BAIProgressRingProps extends Omit<
    * the same 1s as the `.bai-icon-spin` glyph.
    *
    * The value reported to assistive technology is this one. The arc that gets
-   * DRAWN is additionally pinned into
-   * `BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT..BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT`,
-   * so it never reaches empty or full and the slow rotation stays visible at
-   * both ends; everything between the two bounds is drawn honestly.
+   * DRAWN is additionally pinned into `getVisibleArcRange(strokeWidth)`, so it
+   * never reaches empty or full and the slow rotation stays visible at both
+   * ends; everything between the two bounds is drawn honestly.
    */
   percent?: number;
   /**
@@ -79,8 +107,9 @@ export interface BAIProgressRingProps extends Omit<
  *
  * With a `percent` it is a `progressbar` to assistive technology; without one
  * it is decorative (`aria-hidden`) unless an `aria-label` names it. The
- * reported value is the true one; the drawn arc never reaches empty or full,
- * so the ring keeps reading as "in progress" at 0% and at 100%.
+ * reported value is the true one; the drawn arc never reaches empty or full —
+ * `getVisibleArcRange` derives both bounds from `strokeWidth` — so the ring
+ * keeps reading as "in progress" at 0% and at 100%, at any stroke.
  */
 const BAIProgressRing: React.FC<BAIProgressRingProps> = ({
   percent,
@@ -92,16 +121,17 @@ const BAIProgressRing: React.FC<BAIProgressRingProps> = ({
   ...svgProps
 }) => {
   'use memo';
-  const radius = Math.max(0.5, CENTER - strokeWidth);
+  const radius = ringRadius(strokeWidth);
   const circumference = 2 * Math.PI * radius;
 
   const isDeterminate = typeof percent === 'number' && Number.isFinite(percent);
   const value = isDeterminate ? Math.min(100, Math.max(0, percent)) : undefined;
   // Only the extremes are pinned; 50% still draws half.
+  const visibleArcRange = getVisibleArcRange(strokeWidth);
   const drawnPercent = isDeterminate
     ? Math.min(
-        BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT,
-        Math.max(BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT, value as number),
+        visibleArcRange.max,
+        Math.max(visibleArcRange.min, value as number),
       )
     : undefined;
 
