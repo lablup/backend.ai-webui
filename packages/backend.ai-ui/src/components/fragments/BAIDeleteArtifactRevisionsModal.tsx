@@ -1,4 +1,3 @@
-import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import { BAIDeleteArtifactRevisionsModalArtifactFragment$key } from '../../__generated__/BAIDeleteArtifactRevisionsModalArtifactFragment.graphql';
 import {
   BAIDeleteArtifactRevisionsModalArtifactRevisionFragment$data,
@@ -13,14 +12,15 @@ import {
   toLocalId,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIAlert from '../BAIAlert';
 import BAIFlex from '../BAIFlex';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
+import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import { BAIColumnsType, BAITable } from '../Table';
 import BAIArtifactDescriptions from './BAIArtifactDescriptions';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
@@ -51,7 +51,7 @@ const BAIDeleteArtifactRevisionsModal = ({
   ...modalProps
 }: BAIDeleteArtifactRevisionsModalProps) => {
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [cleanupVersion, isInflightCleanupVersion] =
     useMutation<BAIDeleteArtifactRevisionsModalCleanupVersionMutation>(graphql`
@@ -187,8 +187,8 @@ const BAIDeleteArtifactRevisionsModal = ({
                   title={t(
                     'comp:BAIDeleteArtifactModal.OnlyVersionsNotInPULLINGOrSCANNED',
                   )}
-                  iconProps={{ style: { color: token.colorInfo } }}
-                  style={{ marginRight: token.marginXS }}
+                  iconProps={{ style: { color: token('--color-info') } }}
+                  style={{ marginRight: token('--spacing-2') }}
                 />
               }
               showIcon

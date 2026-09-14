@@ -18,7 +18,7 @@
  and focus ring. This grows the hit box from the bare 16px glyph to the `sm`
  control box; accepted, the a11y affordance is the point.
 
- The `color: token.colorTextSecondary` tint goes with the theme-shim
+ The `color: token('--color-text-secondary')` tint goes with the theme-shim
  `useToken()` call: `IconButton`'s ghost variant is already the muted treatment
  and Astryx exposes no `color` slot (P5).
 */

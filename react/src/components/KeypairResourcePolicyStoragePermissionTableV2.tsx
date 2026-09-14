@@ -13,9 +13,9 @@ import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
-import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAlertIconWithTooltip,
   BAIFlex,
@@ -62,7 +62,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
 > = ({ storageVolumeFrgmt, policiesFrgmt, selectedUserId, ...tableProps }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const storageVolume = useFragment(
     graphql`
       fragment KeypairResourcePolicyStoragePermissionTableV2_storageVolumeFrgmt on StorageVolume {
@@ -295,8 +295,8 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                         <BAITag
                           icon={<Info size="1em" />}
                           style={{
-                            color: token.colorPrimary,
-                            borderColor: token.colorPrimary,
+                            color: token('--color-accent'),
+                            borderColor: token('--color-accent'),
                           }}
                         >
                           {kp.accessKey}
@@ -328,12 +328,12 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                 );
                 return enabled.has(permKey) ? (
                   <CircleCheck
-                    style={{ color: token.colorSuccess }}
+                    style={{ color: token('--color-success') }}
                     size="1em"
                   />
                 ) : (
                   <CircleX
-                    style={{ color: token.colorTextDisabled }}
+                    style={{ color: token('--color-text-disabled') }}
                     size="1em"
                   />
                 );

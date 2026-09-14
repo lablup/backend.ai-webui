@@ -36,11 +36,16 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   const { getDefaultThemeValue, updateDefaultTheme } = useDefaultTheme();
   const logoThemeKey = getLogoThemeKey(mode);
   const fallbackKey = getLogoFallbackKey(mode);
-  const currentLogoPath =
-    getDefaultThemeValue<string>(`logo.${logoThemeKey}`) ??
-    (fallbackKey
-      ? getDefaultThemeValue<string>(`logo.${fallbackKey}`)
-      : undefined);
+  const logoPath = `branding.logo.${logoThemeKey}`;
+  // Only this item's own key is edited and previewed; an unset login/About
+  // key shows which sider logo the page borrows instead of a preview.
+  const logoSrc = getDefaultThemeValue<string>(logoPath);
+  const pathLabel = `${t('userSettings.logo.ImagePath')}:`;
+
+  const commitLogoSrc = (value: string) => {
+    // An emptied path removes the key so the page falls back again.
+    updateDefaultTheme(logoPath, value.trim() === '' ? undefined : value);
+  };
 
   const handlePickedFile = (file: File | undefined) => {
     if (!file) return;
@@ -51,7 +56,7 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const base64 = e.target?.result as string;
-      updateDefaultTheme(`logo.${logoThemeKey}`, base64);
+      updateDefaultTheme(logoPath, base64);
     };
     reader.onerror = () => {
       message.error(t('userSettings.logo.FailedToReadFile'));
@@ -60,26 +65,15 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
   };
 
   return (
-    <BAIFlex gap="sm" align="stretch" direction="column">
+    <BAIFlex align="stretch" direction="column">
       <BAIFlex gap="sm">
-        <Text color="secondary">{t('userSettings.logo.ImagePath')}:</Text>
-        {/* PILOT-DECISION: antd `Space.Compact` fused the text input and the
-            upload trigger into one bordered unit (MAPPING §4: Space.Compact
-            -> ButtonGroup, but these are two DIFFERENT field types, not a
-            button group) — laid out side by side with a small gap instead.
-            `Upload` (`beforeUpload` + `showUploadList={false}`, a picker not
-            a transport, MAPPING §3.12) has no icon-only-trigger equivalent
-            (`FileInput` renders a full field, not a button) — self-built as
-            a hidden native `<input type="file">` opened by an `IconButton`,
-            which is exactly what antd's `Upload type="select"` does
-            internally. `onRemove` list-management has no counterpart here
-            either, dropped — the setting item's own Reset action already
-            clears this field. */}
+        <Text color="secondary">{pathLabel}</Text>
+        {/* PILOT-DECISION: the path field and the picker are two different
+            field types, so they sit side by side rather than fused; the
+            picker is a hidden native file input behind an IconButton. */}
         <BAIUncontrolledInput
-          defaultValue={currentLogoPath}
-          onCommit={(value) => {
-            updateDefaultTheme(`logo.${logoThemeKey}`, value);
-          }}
+          defaultValue={logoSrc ?? ''}
+          onCommit={commitLogoSrc}
           style={{ flex: 1 }}
         />
         <input
@@ -99,31 +93,54 @@ const LogoPreviewer: React.FC<LogoPreviewerProps> = ({ mode }) => {
           onClick={() => fileInputRef.current?.click()}
         />
       </BAIFlex>
-      <BAIFlex
-        style={{
-          background:
-            'repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px',
-        }}
-        align="center"
-        justify="center"
-      >
-        {/* PILOT-DECISION: antd `Image` (COMPOSITION -> Thumbnail/Lightbox/
-            AspectRatio) doesn't fit — `Thumbnail` forces a square cover-fit
-            crop, which would distort a wide logo. A plain `<img>` preserves
-            the arbitrary aspect ratio antd's `Image` also allowed here; the
-            broken-image `fallback` becomes a native `onError` swap. */}
-        <img
-          height={100}
-          style={{ width: 'auto', maxWidth: 250 }}
-          src={currentLogoPath}
-          alt={t('userSettings.logo.ImagePath')}
-          onError={(e) => {
-            // empty image placeholder 1x1 pixel gif
-            e.currentTarget.src =
-              'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+      {logoSrc ? (
+        <BAIFlex
+          style={{
+            marginTop: 'var(--spacing-3)',
+            background:
+              'repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px',
           }}
-        />
-      </BAIFlex>
+          align="center"
+          justify="center"
+        >
+          {/* PILOT-DECISION: a plain <img> keeps the logo's arbitrary aspect
+              ratio (Thumbnail would square-crop it); a broken path swaps in
+              a 1x1 placeholder via onError. */}
+          <img
+            height={100}
+            style={{ width: 'auto', maxWidth: 250 }}
+            src={logoSrc}
+            alt={t('userSettings.logo.ImagePath')}
+            onError={(e) => {
+              e.currentTarget.src =
+                'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+            }}
+          />
+        </BAIFlex>
+      ) : (
+        fallbackKey && (
+          <BAIFlex
+            gap="sm"
+            align="start"
+            style={{ marginTop: 'var(--spacing-0-5)' }}
+          >
+            {/* Invisible copy of the row label so the hint starts under the
+                input, like a form item's explain row. */}
+            <Text color="secondary" style={{ visibility: 'hidden' }}>
+              {pathLabel}
+            </Text>
+            <Text color="secondary" data-testid="logo-fallback-hint">
+              {t('userSettings.logo.FallbackFollowsItem', {
+                item: t(
+                  fallbackKey === 'src'
+                    ? 'userSettings.logo.LightModeLogo'
+                    : 'userSettings.logo.DarkModeLogo',
+                ),
+              })}
+            </Text>
+          </BAIFlex>
+        )
+      )}
     </BAIFlex>
   );
 };
@@ -151,8 +168,8 @@ export const getLogoThemeKey = (mode: LogoPreviewerMode) => {
   }
 };
 
-/** Returns the fallback theme key for modes that fall back to src/srcDark (inverted). */
-const getLogoFallbackKey = (mode: LogoPreviewerMode): string | undefined => {
+/** The sider key an unset login/About logo borrows: the opposite scheme's. */
+const getLogoFallbackKey = (mode: LogoPreviewerMode) => {
   switch (mode) {
     case 'loginLight':
     case 'aboutLight':

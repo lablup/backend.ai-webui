@@ -6,12 +6,14 @@
  reason inside the flag that disables it — the two cannot drift apart, and a
  silent disable is only reachable by writing `true` on purpose.
 */
-import { theme } from '../../theme-shim';
+import { buildBaiCustomTokens } from '../../theme/baiCustomTokens';
 import BAINameActionCell from './BAINameActionCell';
 import type { BAINameActionCellAction } from './BAINameActionCell';
+import { Theme, defineTheme, useTheme } from '@astryxdesign/core/theme';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { ReactElement } from 'react';
 
 // jsdom reports every element as 0px wide, which would collapse each action
 // into the overflow menu. Give the container room so the visible-button path
@@ -23,8 +25,25 @@ beforeAll(() => {
   });
 });
 
-const renderAction = (action: Partial<BAINameActionCellAction>) =>
+// Astryx's base token values live in its CSS, which jsdom never loads, so
+// `useTheme().token()` is empty unless a runtime theme defines the token.
+// `--color-info` is a BUI custom token, declared the way the app theme does.
+const testTheme = defineTheme({
+  name: 'bai-nac-test',
+  tokens: {
+    ...buildBaiCustomTokens({ info: { light: '#028DF2', dark: '#028DF2' } }),
+  },
+});
+
+const renderWithTheme = (ui: ReactElement) =>
   render(
+    <Theme theme={testTheme} mode="light">
+      {ui}
+    </Theme>,
+  );
+
+const renderAction = (action: Partial<BAINameActionCellAction>) =>
+  renderWithTheme(
     <BAINameActionCell
       title="row-name"
       showActions="always"
@@ -119,10 +138,10 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
   const expectedMenuIconTint = () => {
     let value = '';
     const Probe = () => {
-      value = theme.useToken().token.colorInfo;
+      value = useTheme().token('--color-info');
       return null;
     };
-    render(<Probe />);
+    renderWithTheme(<Probe />);
     const probe = document.createElement('span');
     probe.style.color = value;
     return probe.style.color;

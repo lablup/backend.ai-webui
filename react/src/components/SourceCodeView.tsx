@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import CopyButton from './Chat/CopyButton';
 import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
 import './SourceCodeView.css';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 
 interface SourceCodeViewProps {
@@ -22,14 +22,14 @@ const CodeHead = ({
   extra?: React.ReactNode;
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <BAIFlex
       style={{
         margin: 0,
         minHeight: 38,
-        padding: `0 ${token.paddingSM}px`,
+        padding: `0 ${token('--spacing-3')}`,
         background: 'rgba(0, 0, 0, 0.02)',
         width: '100%',
       }}
@@ -58,15 +58,15 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
   style,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <div
       style={{
-        border: `1px solid ${token.colorBorderSecondary}`,
+        border: `1px solid ${token('--color-border')}`,
         margin: 0,
         padding: 0,
-        borderRadius: token.borderRadiusLG,
+        borderRadius: token('--radius-element'),
         overflow: 'hidden',
         flex: 1,
         minWidth: 0,
@@ -88,7 +88,7 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
         className="source-code-view-block"
         style={{
           paddingTop: 0,
-          borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
+          borderRadius: `0 0 ${token('--radius-element')} ${token('--radius-element')}`,
           overflow: 'auto',
         }}
       >

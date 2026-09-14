@@ -5,11 +5,11 @@
 import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageTagsUNSAFELazySessionImageTagQuery.graphql';
 import { preserveDotStartCase } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
-import { theme } from '../theme-shim';
 import ImageMetaIcon from './ImageMetaIcon';
 import TextHighlighter from './TextHighlighter';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIDoubleTag,
   BAIFlex,
@@ -178,14 +178,14 @@ export const imageNodeTagFacts = (
  */
 export const ImageMetaDivider: React.FC = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   return (
     <Divider
       orientation="vertical"
       style={{
         alignSelf: 'center',
         height: '0.9em',
-        marginInline: token.marginXXS,
+        marginInline: token('--spacing-1'),
       }}
     />
   );
@@ -261,7 +261,7 @@ interface UNSAFELazySessionImageTagProps {
 export const UNSAFELazySessionImageTag: React.FC<
   UNSAFELazySessionImageTagProps
 > = ({ sessionId }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { compute_session } =
     useLazyLoadQuery<ImageTagsUNSAFELazySessionImageTagQuery>(
       graphql`
@@ -290,7 +290,7 @@ export const UNSAFELazySessionImageTag: React.FC<
     <BAIFlex gap={['xs', 0]} wrap="wrap">
       <ImageMetaIcon
         image={imageFullName}
-        style={{ marginRight: token.marginXS }}
+        style={{ marginRight: token('--spacing-2') }}
       />
       <SessionKernelTags image={imageFullName} />
     </BAIFlex>

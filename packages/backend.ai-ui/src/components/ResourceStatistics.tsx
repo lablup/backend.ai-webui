@@ -1,10 +1,10 @@
 import { convertToBinaryUnit, getDisplayUnitToInputSizeUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { useTheme } from '@astryxdesign/core/theme';
 import React from 'react';
 
 interface ResourceData {
@@ -61,7 +61,7 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
   precision = 2,
 }) => {
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const hasResources =
     resourceData.cpu ||
@@ -93,7 +93,8 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
             progressSteps={progressSteps}
             precision={precision}
             style={{
-              color: displayType === 'free' ? token.colorSuccess : undefined,
+              color:
+                displayType === 'free' ? token('--color-success') : undefined,
             }}
           />
         )}
@@ -107,7 +108,8 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
             progressSteps={progressSteps}
             precision={precision}
             style={{
-              color: displayType === 'free' ? token.colorSuccess : undefined,
+              color:
+                displayType === 'free' ? token('--color-success') : undefined,
             }}
           />
         )}
@@ -115,11 +117,11 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
 
       {resourceData.accelerators.length > 0 && (
         <BAIRowWrapWithDividers
-          dividerColor={token.colorBorder}
+          dividerColor={token('--color-border-emphasized')}
           style={{
-            backgroundColor: token.colorBgLayout,
-            borderRadius: token.borderRadiusLG,
-            padding: token.padding,
+            backgroundColor: token('--color-background-body'),
+            borderRadius: token('--radius-element'),
+            padding: token('--spacing-4'),
           }}
         >
           {resourceData.accelerators.map((acc) => (
@@ -133,7 +135,8 @@ const ResourceStatistics: React.FC<ResourceStatisticsProps> = ({
               progressSteps={progressSteps}
               precision={precision}
               style={{
-                color: displayType === 'free' ? token.colorSuccess : undefined,
+                color:
+                  displayType === 'free' ? token('--color-success') : undefined,
               }}
             />
           ))}

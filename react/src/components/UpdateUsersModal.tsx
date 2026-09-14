@@ -11,7 +11,6 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { useTOTPSupported } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
 import UserResourcePolicySelect from './UserResourcePolicySelect';
@@ -19,6 +18,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
 } from './astryxFormControls';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIDomainSelect,
   BAIFlex,
@@ -65,7 +65,7 @@ const UpdateUsersModal = ({
 }: UpdateUsersModalProps) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const { isTOTPSupported, isLoading: isTOTPSupportLoading } =
@@ -154,7 +154,7 @@ const UpdateUsersModal = ({
       {...modalProps}
       okButtonProps={{
         ...modalProps.okButtonProps,
-        disabled: users.length === 0
+        disabled: users.length === 0,
       }}
       onOk={(e) => {
         formRef.current
@@ -241,7 +241,7 @@ const UpdateUsersModal = ({
             key: user.id,
             content: user.basicInfo.email,
           }))}
-          style={{ marginBottom: token.marginSM }}
+          style={{ marginBottom: token('--spacing-3') }}
         />
         {/* TODO: We need to create a Form.Item component that can distinguish between keeping the default value and clearing the value. */}
         <Form ref={formRef} layout="vertical" preserve={false}>

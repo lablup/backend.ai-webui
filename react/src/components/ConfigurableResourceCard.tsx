@@ -6,7 +6,6 @@ import { ConfigurableResourceCardQuery } from '../__generated__/ConfigurableReso
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import MyResource from './MyResource';
 import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
@@ -14,6 +13,7 @@ import TotalResourceWithinResourceGroup, {
 } from './TotalResourceWithinResourceGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   filterOutEmpty,
@@ -39,7 +39,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
   fetchKey,
   ...props
 }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const [selectedPanelType, setSelectedPanelType] = useBAISettingUserState(
     'resource_panel_type',
@@ -180,7 +180,7 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
     >
       <Suspense
         fallback={
-          <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+          <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
         }
       >
         {renderResourcePanel()}
