@@ -98,3 +98,79 @@ export const getSessionKernelProgress = (
 
   return { phase, done, total, percent };
 };
+
+export interface SessionKernelBucket {
+  /** Bucket label — a kernel status, or the status the bucket collapses into. */
+  status: string;
+  count: number;
+}
+
+/**
+ * Kernel statuses the breakdown collapses, per phase, and the order the
+ * buckets are shown in. The phase's own buckets always appear, at zero if
+ * nothing is in them: "RUNNING 0" during a teardown is what says the session
+ * is one kernel away from gone.
+ */
+const CREATING_BUCKET_ORDER: ReadonlyArray<string> = [
+  'RUNNING',
+  'CREATING',
+  'PULLING',
+  'PENDING',
+];
+
+const CREATING_BUCKET_OF: Readonly<Record<string, string>> = {
+  RUNNING: 'RUNNING',
+  PREPARING: 'CREATING',
+  PREPARED: 'CREATING',
+  CREATING: 'CREATING',
+  PULLING: 'PULLING',
+  PENDING: 'PENDING',
+  SCHEDULED: 'PENDING',
+};
+
+const TERMINATING_BUCKET_ORDER: ReadonlyArray<string> = [
+  'TERMINATED',
+  'TERMINATING',
+  'RUNNING',
+];
+
+const TERMINATING_BUCKET_OF: Readonly<Record<string, string>> = {
+  TERMINATED: 'TERMINATED',
+  TERMINATING: 'TERMINATING',
+  RUNNING: 'RUNNING',
+};
+
+/**
+ * Where the session's kernels currently are, as buckets ready to be drawn as a
+ * stacked bar: the phase's own buckets first, in progress order, then any
+ * status the phase does not name (ERROR, CANCELLED, …) under its own label.
+ *
+ * Returns `[]` for a settled session — there is no phase to group by.
+ */
+export const getSessionKernelBreakdown = (
+  session: SessionKernelProgressInput,
+): Array<SessionKernelBucket> => {
+  const { phase } = getSessionKernelProgress(session);
+  if (phase === null) {
+    return [];
+  }
+
+  const [order, collapse] =
+    phase === 'terminating'
+      ? [TERMINATING_BUCKET_ORDER, TERMINATING_BUCKET_OF]
+      : [CREATING_BUCKET_ORDER, CREATING_BUCKET_OF];
+
+  // A Map keeps the phase's buckets ahead of the unexpected ones, which land
+  // in the order the kernels report them.
+  const counts = new Map<string, number>(order.map((bucket) => [bucket, 0]));
+  for (const edge of session.kernel_nodes?.edges ?? []) {
+    const status = edge?.node?.status;
+    if (!status) {
+      continue;
+    }
+    const bucket = collapse[status] ?? status;
+    counts.set(bucket, (counts.get(bucket) ?? 0) + 1);
+  }
+
+  return Array.from(counts, ([status, count]) => ({ status, count }));
+};

@@ -227,6 +227,11 @@ export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
 export { default as BAIProgressRing } from './BAIProgressRing';
 export { getVisibleArcRange } from './BAIProgressRing';
 export type { BAIProgressRingProps } from './BAIProgressRing';
+export { default as BAIKernelProgressBreakdown } from './BAIKernelProgressBreakdown';
+export type {
+  BAIKernelProgressBreakdownProps,
+  BAIKernelProgressSegment,
+} from './BAIKernelProgressBreakdown';
 export { default as BAISchedulingResultBadge } from './BAISchedulingResultBadge';
 export type {
   BAISchedulingResultBadgeProps,

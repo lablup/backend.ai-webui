@@ -8,6 +8,7 @@ import type { SessionStatusBadgeTestQuery } from '../../__generated__/SessionSta
 import SessionStatusBadge from './SessionStatusBadge';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -136,5 +137,55 @@ describe('SessionStatusBadge kernel progress ring (FR-3923)', () => {
     expect(
       document.querySelector('.bai-progress-ring'),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('SessionStatusTag kernel breakdown popover (FR-3924)', () => {
+  // The react-i18next mock above also feeds BUI's `useBAIi18n`, so the
+  // breakdown's title comes back as its key here; the numbers are what this
+  // wiring is about anyway.
+  const breakdown = () =>
+    document.querySelector('.bai-kernel-progress-breakdown');
+
+  it('opens a per-kernel breakdown on hover for a cluster session', async () => {
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelStatuses: [...repeat('TERMINATED', 119), 'TERMINATING'],
+    });
+
+    await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(await screen.findByText('119 / 120')).toBeInTheDocument();
+    expect(screen.getByText('TERMINATED')).toBeInTheDocument();
+    expect(screen.getByText('119')).toBeInTheDocument();
+    expect(screen.getAllByText('TERMINATING').length).toBeGreaterThan(1);
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('RUNNING')).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
+
+  it('gives a single-node session no breakdown trigger', async () => {
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 1,
+      kernelStatuses: ['RUNNING'],
+    });
+
+    await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(breakdown()).toBeNull();
+  });
+
+  it('gives a settled session no breakdown trigger', async () => {
+    renderTag({
+      status: 'RUNNING',
+      cluster_size: 120,
+      kernelStatuses: repeat('RUNNING', 120),
+    });
+
+    await userEvent.hover(await screen.findByText('RUNNING'));
+
+    expect(breakdown()).toBeNull();
   });
 });
