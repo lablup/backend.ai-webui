@@ -95,7 +95,7 @@ const DEFAULT_HIDDEN_IMAGE_COLUMN_KEYS = [
 ];
 
 /** Every `ImageStatus` the manager knows, i.e. "do not narrow by status". */
-const ALL_IMAGE_STATUSES = [
+export const ALL_IMAGE_STATUSES = [
   'ALIVE',
   'DELETED',
   'PURGING',
@@ -106,11 +106,17 @@ const ALL_IMAGE_STATUSES = [
 // span can hold anything — `status` included. Blank them before matching.
 const stripQuotedValues = (filter: string) => filter.replace(/"[^"]*"/g, '""');
 
-// A `status` condition in the queryfilter is ANDed with `filter_by_statuses`,
-// whose default is `[ALIVE]` — so it can never match anything else unless the
-// query widens that argument too.
 const hasStatusCondition = (filter: string) =>
   /(?:^|[&|(])\s*status\s/.test(stripQuotedValues(filter));
+
+/**
+ * The `filter_by_statuses` argument a given queryfilter needs. A `status`
+ * condition is ANDed with it, and its server default is `[ALIVE]`, so such a
+ * condition can never match anything else unless the argument widens too.
+ * `undefined` leaves the default alone — the list stays live-only.
+ */
+export const filterByStatusesFor = (filter: string) =>
+  hasStatusCondition(filter) ? [...ALL_IMAGE_STATUSES] : undefined;
 
 interface ImageListProps {
   /**
@@ -256,9 +262,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
     order: queryParams.order || undefined,
-    filterByStatuses: hasStatusCondition(imageFilter)
-      ? [...ALL_IMAGE_STATUSES]
-      : undefined,
+    filterByStatuses: filterByStatusesFor(imageFilter),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
