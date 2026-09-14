@@ -125,6 +125,31 @@ export const statusCategoryFilterFor = (
     : { status: { in: runningStatuses } };
 };
 
+/**
+ * DOMAIN / PROJECT / RESOURCE_GROUP / TAG joined `DeploymentOrderField` in
+ * 26.4.3, together with the filters behind the same flag. Shared with
+ * `AdminDeploymentPage`, which sanitizes URL-supplied `order` against it
+ * before the tab's first query runs.
+ */
+export const deploymentSorterKeysFor = (
+  supportsExtendedFilter: boolean,
+): ReadonlyArray<DeploymentSorterKey> =>
+  supportsExtendedFilter
+    ? availableDeploymentSorterKeys
+    : (['name', 'createdAt'] as const);
+
+/** `order` is `[-]<camelCaseKey>`; a key this manager cannot sort by is dropped. */
+export const sanitizeDeploymentOrder = (
+  order: string | null | undefined,
+  supportsExtendedFilter: boolean,
+): string | null => {
+  if (!order) return null;
+  const key = order.startsWith('-') ? order.slice(1) : order;
+  return _.includes(deploymentSorterKeysFor(supportsExtendedFilter), key)
+    ? order
+    : null;
+};
+
 const AdminDeployment = ({
   queryRef,
   onReload,
@@ -204,11 +229,7 @@ const AdminDeployment = ({
     validate: (value: string) => isValidUUID(value.toLowerCase()),
   };
 
-  // DOMAIN / PROJECT / RESOURCE_GROUP / TAG joined DeploymentOrderField in
-  // 26.4.3, together with the filters behind the same flag.
-  const sortableKeys: ReadonlyArray<DeploymentSorterKey> = supportsExtendedFilter
-    ? availableDeploymentSorterKeys
-    : (['name', 'createdAt'] as const);
+  const sortableKeys = deploymentSorterKeysFor(supportsExtendedFilter);
 
   const filterProperties: Array<BAIGraphQLFilterProperty> = filterOutEmpty([
     {
