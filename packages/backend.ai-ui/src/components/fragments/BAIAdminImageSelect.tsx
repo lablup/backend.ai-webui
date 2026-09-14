@@ -44,6 +44,7 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
+import BAIImageNodeSimpleTagV2 from './BAIImageNodeSimpleTagV2';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,
@@ -180,6 +181,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
                   canonicalName
                   architecture
                 }
+                ...BAIImageNodeSimpleTagV2Fragment
               }
             }
           }
@@ -226,10 +228,21 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
     architecture: string;
   }) => (identity ? `${identity.canonicalName}@${identity.architecture}` : '');
 
+  // The option row is the project-wide image row (ADR 0004), so the picker
+  // reads like the session launcher. `label` stays the canonical reference:
+  // it is the trigger text, the accessible name and the filter chip's text.
   const options = _.compact(
     _.map(paginationData, (item) => {
       const key = item?.id ? toLocalId(item.id) : undefined;
-      return key ? { value: key, label: getImageLabel(item?.identity) } : null;
+      return key
+        ? {
+            value: key,
+            label: getImageLabel(item?.identity),
+            description: item ? (
+              <BAIImageNodeSimpleTagV2 imageFrgmt={item} copyable={false} />
+            ) : undefined,
+          }
+        : null;
     }),
   );
 
