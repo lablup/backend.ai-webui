@@ -355,18 +355,22 @@
     "UpdateProject": "プロジェクトの更新"
   },
   "comp:BAIProjectTable": {
+    "Active": "アクティブ",
     "ContainerRegistry": "コンテナレジストリ",
     "ContainerRegistryProject": "コンテナレジストリプロジェクト",
     "CreatedAt": "作成日時",
     "Description": "説明",
     "Domain": "ドメイン",
+    "Inactive": "非アクティブ",
     "IntegrationID": "連携ID",
+    "ModifiedAt": "更新日時",
     "Name": "名前",
     "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
     "Registry": "レジストリ",
     "ResourcePolicy": "リソースポリシー",
     "ScalingGroups": "リソースグループ",
+    "Status": "ステータス",
     "StorageNodes": "ストレージノード",
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"

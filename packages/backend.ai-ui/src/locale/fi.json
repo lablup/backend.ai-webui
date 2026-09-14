@@ -355,18 +355,22 @@
     "UpdateProject": "Päivitä projekti"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktiivinen",
     "ContainerRegistry": "Säiliörekisteri",
     "ContainerRegistryProject": "Säiliörekisteriprojekti",
     "CreatedAt": "Luotu",
     "Description": "Kuvaus",
     "Domain": "Toimialue",
+    "Inactive": "Passiivinen",
     "IntegrationID": "Integraation tunnus",
+    "ModifiedAt": "Muokattu",
     "Name": "Nimi",
     "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
     "Registry": "Rekisteri",
     "ResourcePolicy": "Resurssipolitiikka",
     "ScalingGroups": "Resurssiryhmät",
+    "Status": "Tila",
     "StorageNodes": "Tallennussolmut",
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"

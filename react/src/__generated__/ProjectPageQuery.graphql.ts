@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<481598a16127815b4de5ce1c7abccda4>>
+ * @generated SignedSource<<bd2b9975f360f87e3d7f7ba056fec66d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -321,6 +321,13 @@ return {
                     "kind": "ScalarField",
                     "name": "created_at",
                     "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "modified_at",
+                    "storageKey": null
                   }
                 ],
                 "storageKey": null
@@ -334,12 +341,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e035cd6b2e387b363e2df7e89735fc53",
+    "cacheID": "5af238f38bfdfddae44d97be66aa3d1f",
     "id": null,
     "metadata": {},
     "name": "ProjectPageQuery",
     "operationKind": "query",
-    "text": "query ProjectPageQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  group_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    count\n    edges {\n      node {\n        id\n        ...BAIProjectSettingModalFragment\n        ...BAIProjectTableFragment\n        ...BAIProjectBulkEditModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {\n  allowed_vfolder_hosts\n}\n\nfragment BAIProjectBulkEditModalFragment on GroupNode {\n  name\n  row_id\n}\n\nfragment BAIProjectSettingModalFragment on GroupNode {\n  id\n  row_id\n  name\n  description\n  is_active\n  domain_name\n  total_resource_slots\n  allowed_vfolder_hosts\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n}\n\nfragment BAIProjectTableFragment on GroupNode {\n  id\n  row_id\n  name\n  domain_name\n  description\n  is_active\n  created_at\n  total_resource_slots\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n  ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment\n}\n"
+    "text": "query ProjectPageQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  group_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    count\n    edges {\n      node {\n        id\n        ...BAIProjectSettingModalFragment\n        ...BAIProjectTableFragment\n        ...BAIProjectBulkEditModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {\n  allowed_vfolder_hosts\n}\n\nfragment BAIProjectBulkEditModalFragment on GroupNode {\n  name\n  row_id\n}\n\nfragment BAIProjectSettingModalFragment on GroupNode {\n  id\n  row_id\n  name\n  description\n  is_active\n  domain_name\n  total_resource_slots\n  allowed_vfolder_hosts\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n}\n\nfragment BAIProjectTableFragment on GroupNode {\n  id\n  row_id\n  name\n  domain_name\n  description\n  is_active\n  created_at\n  modified_at\n  total_resource_slots\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n  ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment\n}\n"
   }
 };
 })();

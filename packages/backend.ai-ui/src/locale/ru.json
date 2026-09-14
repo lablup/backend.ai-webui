@@ -355,18 +355,22 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
+    "Active": "Активный",
     "ContainerRegistry": "Реестр контейнеров",
     "ContainerRegistryProject": "Проект реестра контейнеров",
     "CreatedAt": "Создано",
     "Description": "Описание",
     "Domain": "Домен",
+    "Inactive": "Неактивный",
     "IntegrationID": "ID интеграции",
+    "ModifiedAt": "Изменено",
     "Name": "Имя",
     "Project": "Проект",
     "ProjectID": "ID проекта",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
     "ScalingGroups": "Группы ресурсов",
+    "Status": "Статус",
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"

@@ -355,18 +355,22 @@
     "UpdateProject": "Actualizar proyecto"
   },
   "comp:BAIProjectTable": {
+    "Active": "Activo",
     "ContainerRegistry": "Registro de contenedores",
     "ContainerRegistryProject": "Proyecto del registro de contenedores",
     "CreatedAt": "Creado el",
     "Description": "Descripción",
     "Domain": "Dominio",
+    "Inactive": "Inactivo",
     "IntegrationID": "ID de integración",
+    "ModifiedAt": "Modificado el",
     "Name": "Nombre",
     "Project": "Proyecto",
     "ProjectID": "ID del proyecto",
     "Registry": "Registro",
     "ResourcePolicy": "Política de recursos",
     "ScalingGroups": "Grupos de recursos",
+    "Status": "Estado",
     "StorageNodes": "Nodos de almacenamiento",
     "TotalResourceSlots": "Total de ranuras de recursos",
     "Type": "Tipo"

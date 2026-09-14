@@ -355,18 +355,22 @@
     "UpdateProject": "Төслийг шинэчлэх"
   },
   "comp:BAIProjectTable": {
+    "Active": "Идэвхтэй",
     "ContainerRegistry": "Контейнерийн бүртгэл",
     "ContainerRegistryProject": "Контейнерийн бүртгэлийн төсөл",
     "CreatedAt": "Үүсгэсэн огноо",
     "Description": "Тайлбар",
     "Domain": "Домен",
+    "Inactive": "Идэвхгүй",
     "IntegrationID": "Интеграцийн ID",
+    "ModifiedAt": "Өөрчилсөн",
     "Name": "Нэр",
     "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
     "Registry": "Регистри",
     "ResourcePolicy": "Ресурсын бодлого",
     "ScalingGroups": "Нөөцийн бүлгүүд",
+    "Status": "Төлөв",
     "StorageNodes": "Хадгалах зангилаанууд",
     "TotalResourceSlots": "Нийт нөөцийн слотууд",
     "Type": "Төрөл"
