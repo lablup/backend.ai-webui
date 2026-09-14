@@ -355,18 +355,22 @@
     "UpdateProject": "프로젝트 수정"
   },
   "comp:BAIProjectTable": {
+    "Active": "활성",
     "ContainerRegistry": "컨테이너 레지스트리",
     "ContainerRegistryProject": "컨테이너 레지스트리 프로젝트",
     "CreatedAt": "생성 시각",
     "Description": "설명",
     "Domain": "도메인",
+    "Inactive": "비활성",
     "IntegrationID": "통합 ID",
+    "ModifiedAt": "수정 시각",
     "Name": "이름",
     "Project": "프로젝트",
     "ProjectID": "프로젝트 ID",
     "Registry": "레지스트리",
     "ResourcePolicy": "자원 정책",
     "ScalingGroups": "자원 그룹",
+    "Status": "상태",
     "StorageNodes": "저장소 노드",
     "TotalResourceSlots": "총 리소스 슬롯",
     "Type": "타입"
