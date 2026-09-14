@@ -1052,3 +1052,123 @@ describe('resolveImageReference registry matching', () => {
     expect(resolved.submittable).toBe(true);
   });
 });
+
+describe('pull command options', () => {
+  // A `pull` line carries flags before the reference, and the first non-`-`
+  // token used to win — `--platform linux/amd64` was read as the image and
+  // rejected as `host_required`.
+  const optionVectors: Array<{
+    id: string;
+    input: string;
+    expected: Expected;
+  }> = [
+    {
+      id: 'P01',
+      input:
+        'docker pull --platform linux/amd64 nvcr.io/nvidia/pytorch:25.01-py3',
+      expected: {
+        kind: 'pull-command',
+        registryHost: 'nvcr.io',
+        project: 'nvidia',
+        imageName: 'pytorch',
+        tag: '25.01-py3',
+        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
+        submittable: true,
+        reason: null,
+      },
+    },
+    {
+      id: 'P02',
+      input:
+        'docker pull --platform=linux/arm64 nvcr.io/nvidia/pytorch:25.01-py3',
+      expected: {
+        kind: 'pull-command',
+        registryHost: 'nvcr.io',
+        project: 'nvidia',
+        imageName: 'pytorch',
+        tag: '25.01-py3',
+        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
+        submittable: true,
+        reason: null,
+      },
+    },
+    {
+      id: 'P03',
+      input:
+        'podman pull --arch arm64 --os linux nvcr.io/nvidia/clara/monai-toolkit:2.4',
+      expected: {
+        kind: 'pull-command',
+        registryHost: 'nvcr.io',
+        project: 'nvidia',
+        imageName: 'clara/monai-toolkit',
+        tag: '2.4',
+        canonical: 'nvcr.io/nvidia/clara/monai-toolkit:2.4',
+        submittable: true,
+        reason: null,
+      },
+    },
+    {
+      id: 'P04',
+      input: 'docker pull -q nvcr.io/nvidia/pytorch:25.01-py3',
+      expected: {
+        kind: 'pull-command',
+        registryHost: 'nvcr.io',
+        project: 'nvidia',
+        imageName: 'pytorch',
+        tag: '25.01-py3',
+        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
+        submittable: true,
+        reason: null,
+      },
+    },
+    {
+      // `-a` is docker's boolean `--all-tags`, so the next token is still the
+      // reference — unlike nerdctl's `-a` (`--address`), covered by P06.
+      id: 'P05',
+      input: 'docker pull -a nvcr.io/nvidia/pytorch:25.01-py3',
+      expected: {
+        kind: 'pull-command',
+        registryHost: 'nvcr.io',
+        project: 'nvidia',
+        imageName: 'pytorch',
+        tag: '25.01-py3',
+        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
+        submittable: true,
+        reason: null,
+      },
+    },
+    {
+      id: 'P06',
+      input:
+        'nerdctl pull -a /run/containerd.sock --namespace k8s.io nvcr.io/nvidia/pytorch:25.01-py3',
+      expected: {
+        kind: 'pull-command',
+        registryHost: 'nvcr.io',
+        project: 'nvidia',
+        imageName: 'pytorch',
+        tag: '25.01-py3',
+        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
+        submittable: true,
+        reason: null,
+      },
+    },
+    {
+      id: 'P07',
+      input: 'docker pull --platform linux/amd64',
+      expected: {
+        kind: 'pull-command',
+        registryHost: null,
+        project: null,
+        imageName: null,
+        tag: null,
+        canonical: null,
+        submittable: false,
+        reason: 'unsupported_command',
+      },
+    },
+  ];
+
+  it.each(optionVectors)('$id $input', ({ input, expected }) => {
+    expect(run(input, DEFAULT_REGISTRIES)).toEqual(expected);
+  });
+});

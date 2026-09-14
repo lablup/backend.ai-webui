@@ -159,7 +159,9 @@ const ngcTagsUrl = (remotePath: string | null) => {
 const AddImageModalContent: React.FC<{
   onRequestClose: () => void;
   onAdded?: (added: Array<string>) => void;
-}> = ({ onRequestClose, onAdded }) => {
+  isSubmitting: boolean;
+  onSubmittingChange: (isSubmitting: boolean) => void;
+}> = ({ onRequestClose, onAdded, isSubmitting, onSubmittingChange }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -171,7 +173,6 @@ const AddImageModalContent: React.FC<{
   const [outcomes, setOutcomes] = useState<Record<string, LineOutcome>>({});
   /** Every canonical the manager accepted, across the first run and retries. */
   const [addedCanonicals, setAddedCanonicals] = useState<Array<string>>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [prefilledRegistry, setPrefilledRegistry] = useState<{
     registry_name: string;
     project?: string;
@@ -291,7 +292,7 @@ const AddImageModalContent: React.FC<{
   };
 
   const handleAdd = async () => {
-    setIsSubmitting(true);
+    onSubmittingChange(true);
     setOutcomes({});
     const runOutcomes: Record<string, LineOutcome> = {};
     const addedInThisRun: Array<string> = [];
@@ -327,7 +328,7 @@ const AddImageModalContent: React.FC<{
       }
       setOutcomes({ ...runOutcomes });
     }
-    setIsSubmitting(false);
+    onSubmittingChange(false);
 
     // Succeeded lines are locked: out of the editable text and into the list
     // below, with the architecture frozen because it applies to the whole
@@ -491,14 +492,19 @@ const AddImageModalContent: React.FC<{
           isDisabled={isSubmitting}
           onClick={onRequestClose}
         />
+        {/* `onClick`, not `clickAction`: the latter runs the handler inside a
+            `startTransition`, which holds every state update it makes — the
+            submitting flag included — until the whole loop settles. */}
         <Button
           variant="primary"
-          isDisabled={!canSubmit}
+          isDisabled={!canSubmit || isSubmitting}
           isLoading={isSubmitting}
           label={
             hasFailure ? t('environment.AddImageRetryFailed') : t('button.Add')
           }
-          clickAction={handleAdd}
+          onClick={() => {
+            void handleAdd();
+          }}
         />
       </BAIFlex>
       <BAIUnmountAfterClose>
@@ -531,6 +537,9 @@ const AddImageModal: React.FC<AddImageModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  // Owned here, not in the content: a dismissal mid-run unmounts the content
+  // through `BAIUnmountAfterClose` while its request loop is still going.
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
     <BAIModal
@@ -538,7 +547,14 @@ const AddImageModal: React.FC<AddImageModalProps> = ({
       title={t('environment.AddImage')}
       width={720}
       footer={null}
-      onCancel={onRequestClose}
+      maskClosable={false}
+      // While the scan loop runs, drop every dismissal affordance: no close
+      // icon, and `onCancel` short-circuits so Escape cannot sneak one past.
+      closable={!isSubmitting}
+      onCancel={() => {
+        if (isSubmitting) return;
+        onRequestClose();
+      }}
     >
       {/* The registry query lives in the content so the header stays on
           screen while it loads. */}
@@ -546,6 +562,8 @@ const AddImageModal: React.FC<AddImageModalProps> = ({
         <AddImageModalContent
           onRequestClose={onRequestClose}
           onAdded={onAdded}
+          isSubmitting={isSubmitting}
+          onSubmittingChange={setIsSubmitting}
         />
       </Suspense>
     </BAIModal>
