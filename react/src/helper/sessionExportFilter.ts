@@ -6,7 +6,7 @@
  `POST /export/sessions/csv` filter body, so the CSV matches the table
  instead of being a superset of it (FR-3915).
  */
-import { splitTopLevelAnd } from './adminSessionProjectLift';
+import { hasTopLevelOr, splitTopLevelAnd } from './adminSessionProjectLift';
 import * as _ from 'lodash-es';
 
 /** `StringFilter` keys of the export DTO this mapper can emit. */
@@ -32,14 +32,16 @@ export type SessionExportFilter = {
 };
 
 /** Minilang property -> export filter field. Anything absent is dropped. */
-const STRING_FIELD_MAP: Record<string, 'name' | 'domain_name' | 'access_key'> = {
-  name: 'name',
-  domain_name: 'domain_name',
-  access_key: 'access_key',
-};
+const STRING_FIELD_MAP: Record<string, 'name' | 'domain_name' | 'access_key'> =
+  {
+    name: 'name',
+    domain_name: 'domain_name',
+    access_key: 'access_key',
+  };
 
 // `(prop) (op) (value)`, value either double-quoted or bare.
-const CONDITION = /^\(*\s*([a-z_]+)\s*(==|!=|>=|<=|ilike|like)\s*(?:"([^"]*)"|([^\s")]+))\s*\)*$/;
+const CONDITION =
+  /^\(*\s*([a-z_]+)\s*(==|!=|>=|<=|ilike|like)\s*(?:"([^"]*)"|([^\s")]+))\s*\)*$/;
 
 const toStringFilter = (
   operator: string,
@@ -66,15 +68,18 @@ const toStringFilter = (
  * Build the export filter for the conditions the export endpoint accepts.
  * Conditions it cannot express (`id`, `project_id`, `group_name`, `agent_ids`,
  * `full_name`, `status_info`, `result`, `cluster_mode`, `priority`, `images`)
- * and any filter containing a top-level `|` are left out: the CSV is then a
- * superset of the table, never a subset.
+ * are left out: the CSV is then a superset of the table, never a subset.
+ *
+ * A filter with a top-level `|` is dropped whole. The manager's grammar gives
+ * `&` and `|` the same precedence and groups to the right, so `A | B & D`
+ * means `A | (B & D)` — keeping `D` alone would lose rows that match only `A`.
  */
 export const buildSessionExportFilter = (
   filter: string | undefined | null,
   { supportsUserFilter }: { supportsUserFilter: boolean },
 ): SessionExportFilter => {
   const result: SessionExportFilter = {};
-  if (!filter) return result;
+  if (!filter || hasTopLevelOr(filter)) return result;
 
   _.forEach(splitTopLevelAnd(filter), (segment) => {
     const matched = CONDITION.exec(segment);

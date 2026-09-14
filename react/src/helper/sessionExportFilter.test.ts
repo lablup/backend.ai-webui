@@ -61,12 +61,25 @@ describe('buildSessionExportFilter', () => {
     expect(buildSessionExportFilter('name ilike "train%"', opts)).toEqual({});
   });
 
-  it('keeps the conditions around a top-level OR segment it cannot split', () => {
-    // A top-level `|` makes the whole segment unparseable, so nothing from it
-    // reaches the export filter — the CSV stays a superset.
+  it('drops the whole filter when a top-level OR is present', () => {
+    // The manager groups `A | B & D` as `A | (B & D)`, so exporting `D` alone
+    // would drop rows matching only `A`. Emit nothing and stay a superset.
     expect(
       buildSessionExportFilter(
         'name == "a" | name == "b" & domain_name == "default"',
+        opts,
+      ),
+    ).toEqual({});
+    expect(
+      buildSessionExportFilter('(name == "a")|(name == "b")', opts),
+    ).toEqual({});
+  });
+
+  it('still reads a parenthesized OR nested under a top-level AND', () => {
+    // `D & (A | B)` is narrower than `D`, so keeping `D` stays a superset.
+    expect(
+      buildSessionExportFilter(
+        'domain_name == "default" & (name == "a" | name == "b")',
         opts,
       ),
     ).toEqual({ domain_name: { equals: 'default' } });
