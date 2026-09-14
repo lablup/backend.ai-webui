@@ -39,16 +39,32 @@ type RegistryFormInput = {
   allowed_group_ids?: string[];
 };
 
+export type ContainerRegistryEditorModalResult = {
+  id: string;
+  row_id?: string | null;
+  registry_name: string;
+  project?: string | null;
+  url?: string;
+  type?: string;
+};
+
 interface ContainerRegistryEditorModalProps extends Omit<
   BAIModalProps,
   'onOk'
 > {
-  onOk: (type: 'create' | 'modify') => void;
+  onOk: (
+    type: 'create' | 'modify',
+    registry?: ContainerRegistryEditorModalResult,
+  ) => void;
   containerRegistryFrgmt?: ContainerRegistryEditorModalFragment$key | null;
+  /** Create mode only; ignored when `containerRegistryFrgmt` is given. */
+  initialValues?: Partial<
+    Pick<RegistryFormInput, 'registry_name' | 'url' | 'project' | 'type'>
+  >;
 }
 const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
-> = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
+> = ({ containerRegistryFrgmt = null, onOk, initialValues, ...modalProps }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message, modal } = App.useApp();
@@ -94,6 +110,11 @@ const ContainerRegistryEditorModal: React.FC<
         create_container_registry_node_v2(props: $props) {
           container_registry {
             id
+            row_id
+            registry_name
+            project
+            url
+            type
           }
         }
       }
@@ -194,7 +215,12 @@ const ContainerRegistryEditorModal: React.FC<
                   message.error(error);
                 }
               } else {
-                onOk && onOk('modify');
+                onOk &&
+                  onOk(
+                    'modify',
+                    res.modify_container_registry_node_v2?.container_registry ??
+                      undefined,
+                  );
               }
             },
             onError: () => {
@@ -224,7 +250,12 @@ const ContainerRegistryEditorModal: React.FC<
                   message.error(error);
                 }
               } else {
-                onOk && onOk('create');
+                onOk &&
+                  onOk(
+                    'create',
+                    res.create_container_registry_node_v2?.container_registry ??
+                      undefined,
+                  );
               }
             },
             onError() {
@@ -292,7 +323,7 @@ const ContainerRegistryEditorModal: React.FC<
                     ?.map((edge) => edge?.node?.row_id)
                     .filter(Boolean) ?? [],
               }
-            : { is_global: true, ssl_verify: true }
+            : { is_global: true, ssl_verify: true, ...initialValues }
         }
         preserve={false}
       >
