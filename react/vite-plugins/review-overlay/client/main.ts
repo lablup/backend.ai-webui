@@ -102,7 +102,7 @@ function boot() {
 
   const store = createDraftStore();
   let draft: SetPin[] = store.pins();
-  /** Only a picked pin can be re-keyed: a link's carries no `at`/`pr`. */
+  /** Only a picked pin can be re-keyed: a link's pin carries no `at`/`pr`. */
   type EditablePin = Extract<SetPin, { origin: 'pick' }>;
   /** The pin the composer is rewriting the note of, while it is open. */
   let editing: EditablePin | null = null;
@@ -161,12 +161,15 @@ function boot() {
       };
     },
     onSaveNote: (text) => {
-      const pin = editing;
-      if (!pin) return { refused: 'That pin is no longer being edited' };
+      if (!editing) return { refused: 'That pin is no longer being edited' };
       if (capture?.epoch !== ui.composeSession() || capture.note !== text)
         return { refused: 'Still encoding that note — press ⌘⏎ again' };
-      const index = draft.findIndex((held) => held.id === pin.id);
-      if (index < 0) return { refused: 'That pin is no longer in the set' };
+      // The stored pin, not the one the editor opened on: its card can be
+      // hidden or shown while the editor is up, and that must survive the save.
+      const index = draft.findIndex((held) => held.id === editing?.id);
+      const pin = draft[index];
+      if (!pin || pin.origin !== 'pick')
+        return { refused: 'That pin is no longer in the set' };
       // Same text, same anchor, same id: there is nothing to re-key.
       if (text === (pin.note ?? pin.anchor.n ?? '').trim())
         return { toast: 'Note unchanged' };
@@ -183,8 +186,11 @@ function boot() {
       stacks.delete(pin.id);
       syncDraft();
       redraw();
+      // Only the capped copy rides in the anchor: an edit past `NOTE_MAX` keeps
+      // the id, and the toast must not claim one it did not give.
+      const renamed = next.id === pin.id ? '' : ` (now ${next.id})`;
       return {
-        toast: `Updated pin ${index + 1} of ${size} (now ${next.id}) — Copy all to replace your paste`,
+        toast: `Updated pin ${index + 1} of ${size}${renamed} — Copy all to replace your paste`,
       };
     },
     onNoteChanged: (text) => void encodeFor(text),

@@ -956,6 +956,43 @@ describe('editing a pin’s note', () => {
     expect(hiddenCard(pins[0].id)).toBe(true);
   });
 
+  it('keeps a card hidden while the editor was open', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    const [id] = storedIds();
+    editRow(id).click();
+    await ticks(6, 100);
+
+    // The chrome stays up during an edit, so the card's ✕ is still a click away.
+    node<HTMLButtonElement>(`.card[data-pin-id="${id}"] .close`).click();
+    textarea().value = 'rewritten';
+    textarea().dispatchEvent(new Event('input'));
+    await ticks(6, 100);
+    pressCopy();
+    await ticks(2);
+
+    expect(storedPins()[0].note).toBe('rewritten');
+    expect(storedPins()[0].hidden).toBe(true);
+    expect(hiddenCard(storedPins()[0].id)).toBe(true);
+  });
+
+  // Only the first `NOTE_MAX` chars ride in the anchor, so an edit beyond
+  // them changes the block and not the id — and the toast says only that.
+  it('keeps the id when only the part past the cap changed', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    const long = 'x'.repeat(400);
+    await pickAndCopy('create', long);
+    const [id] = storedIds();
+
+    await editFrom(editRow(id), `${long} and a tail`);
+
+    expect(storedIds()).toEqual([id]);
+    expect(storedPins()[0].note).toBe(`${long} and a tail`);
+    expect(toast()).toBe('Updated pin 1 of 1 — Copy all to replace your paste');
+  });
+
   // The link carries the capped copy; the block the set writes keeps the rest.
   it('caps what the new anchor carries and says the note was cut', async () => {
     await bootOverlay();
