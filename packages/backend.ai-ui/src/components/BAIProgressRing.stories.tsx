@@ -17,7 +17,7 @@ const meta: Meta<typeof BAIProgressRing> = {
 
 Both circles are stroked with \`currentColor\` and the default size is \`1em\`, so the ring takes the colour and the scale of whatever carries it.
 
-The **drawn** arc is pinned to 8..86% (\`BAI_PROGRESS_RING_MIN_VISIBLE_PERCENT\` / \`BAI_PROGRESS_RING_MAX_VISIBLE_PERCENT\`): at 0% it is a short arc rather than a bare track, and at 100% a gap survives the round line caps, so the slow rotation stays perceptible at both extremes. Everything in between is drawn honestly, and \`aria-valuenow\` always carries the true percent.
+The **drawn** arc is pinned to the range \`getVisibleArcRange(strokeWidth)\` returns: at 0% it is a short arc rather than a bare track, and at 100% a gap survives the round line caps, so the slow rotation stays perceptible at both extremes. Both bounds come from the ring’s geometry rather than two fixed percents, so they follow \`strokeWidth\` — 7.96..86.74% at the default 2, 0..57.6% at 5 — and always leave a 5-unit arc and a 3-unit gap. Everything in between is drawn honestly, and \`aria-valuenow\` always carries the true percent.
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
