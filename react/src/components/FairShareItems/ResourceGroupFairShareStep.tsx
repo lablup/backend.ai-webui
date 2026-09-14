@@ -59,7 +59,7 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
     order: convertToOrderBy<ResourceGroupOrderBy>(
       queryParams.order,
       resourceGroupOrderFieldMap,
-    ) || [{ field: 'NAME', direction: 'DESC' }],
+    ) || [{ field: 'NAME', direction: 'ASC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
@@ -108,6 +108,21 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
             key: 'name',
             propertyLabel: t('fairShare.Name'),
             type: 'string',
+          },
+          {
+            key: 'description',
+            propertyLabel: t('resourceGroup.Description'),
+            type: 'string',
+          },
+          {
+            key: 'isActive',
+            propertyLabel: t('resourceGroup.ActiveStatus'),
+            type: 'boolean',
+          },
+          {
+            key: 'isPublic',
+            propertyLabel: t('resourceGroup.PublicStatus'),
+            type: 'boolean',
           },
         ]}
         filterValue={queryParams.filter || {}}

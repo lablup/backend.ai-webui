@@ -153,6 +153,11 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
             propertyLabel: t('fairShare.Name'),
             type: 'string',
           },
+          {
+            key: 'project.isActive',
+            propertyLabel: t('fairShare.ActiveStatus'),
+            type: 'boolean',
+          },
         ]}
         filterValue={queryParams.filter || {}}
         onChangeFilter={(filter) => {

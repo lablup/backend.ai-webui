@@ -77,7 +77,7 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
     order: convertToOrderBy<DomainFairShareOrderBy>(
       queryParams.order,
       domainFairShareOrderFieldMap,
-    ) || [{ field: 'DOMAIN_NAME', direction: 'DESC' }],
+    ) || [{ field: 'DOMAIN_NAME', direction: 'ASC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
@@ -145,6 +145,11 @@ const DomainFairShareStep: React.FC<DomainFairShareStepProps> = ({
             key: 'domainName',
             propertyLabel: t('fairShare.Name'),
             type: 'string',
+          },
+          {
+            key: 'domain.isActive',
+            propertyLabel: t('fairShare.ActiveStatus'),
+            type: 'boolean',
           },
         ]}
         filterValue={queryParams.filter || {}}
