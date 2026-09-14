@@ -3,8 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  Translates the admin session list's queryfilter minilang string into the
- `POST /export/sessions/csv` filter body, so the CSV matches the table
- instead of being a superset of it (FR-3915).
+ `POST /export/sessions/csv` filter body, so the CSV narrows to the table's
+ own conditions wherever the export endpoint can express them (FR-3915).
+ Whatever it cannot express is dropped, leaving the CSV a superset — see
+ `buildSessionExportFilter` for the conditions that keeps.
  */
 import { hasTopLevelOr, splitTopLevelAnd } from './adminSessionProjectLift';
 import * as _ from 'lodash-es';
