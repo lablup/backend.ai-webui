@@ -109,6 +109,35 @@ describe('BAIKernelProgressBreakdown', () => {
     ).toBeInTheDocument();
   });
 
+  it('keeps the bar inside the track when the buckets outgrow the cluster size', () => {
+    // A kernel set larger than `cluster_size` (restart, stale size) used to sum
+    // past 100%, and `overflow: hidden` then dropped the trailing bucket.
+    const { container } = render(
+      <BAIKernelProgressBreakdown
+        phase="creating"
+        total={2}
+        done={1}
+        segments={[
+          { status: 'RUNNING', count: 1 },
+          { status: 'CREATING', count: 1 },
+          { status: 'PENDING', count: 1 },
+        ]}
+      />,
+    );
+
+    const segments = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        '.bai-kernel-progress-breakdown-segment',
+      ),
+    );
+    expect(segments).toHaveLength(3);
+
+    const widths = segments.map((segment) =>
+      Number.parseFloat(segment.style.width),
+    );
+    expect(widths.reduce((sum, width) => sum + width, 0)).toBeCloseTo(100);
+  });
+
   it('keeps every segment inside the track when the buckets do not fill the cluster', () => {
     const { container } = render(
       <BAIKernelProgressBreakdown

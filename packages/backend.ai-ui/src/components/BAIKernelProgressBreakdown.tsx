@@ -41,6 +41,21 @@ const widthPercent = (count: number, total: number) =>
   total > 0 ? Math.max(0, Math.min(100, (count / total) * 100)) : 0;
 
 /**
+ * `total` is `cluster_size`, which the kernel set can outgrow (a restart adds
+ * kernels; a stale size undercounts). Clamping each segment on its own would
+ * then sum past 100% and `overflow: hidden` would drop the trailing buckets,
+ * so the bar divides by whichever is larger.
+ */
+const barDenominator = (
+  total: number,
+  segments: ReadonlyArray<BAIKernelProgressSegment>,
+) =>
+  Math.max(
+    total,
+    segments.reduce((sum, segment) => sum + Math.max(0, segment.count), 0),
+  );
+
+/**
  * The per-kernel reading behind a session's progress ring: how many kernels
  * have arrived, a stacked bar of where the rest are, and a legend naming each
  * colour. Purely presentational — the caller groups, orders and counts.
@@ -68,6 +83,7 @@ const BAIKernelProgressBreakdown: React.FC<BAIKernelProgressBreakdownProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const denominator = barDenominator(total, segments);
 
   const title =
     phase === 'terminating'
@@ -99,7 +115,7 @@ const BAIKernelProgressBreakdown: React.FC<BAIKernelProgressBreakdownProps> = ({
               className="bai-kernel-progress-breakdown-segment"
               data-variant={variantOf(segment.status)}
               data-testid={`kernel-progress-segment-${segment.status}`}
-              style={{ width: `${widthPercent(segment.count, total)}%` }}
+              style={{ width: `${widthPercent(segment.count, denominator)}%` }}
             />
           ))}
       </div>
