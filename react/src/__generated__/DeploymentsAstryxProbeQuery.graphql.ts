@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e11b628846c3129824b8f8ef97578b59>>
+ * @generated SignedSource<<e7e850bc8205d91c4fd4e338ac4dc4ac>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -60,17 +60,24 @@ v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "vfolderId",
+  "name": "key",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "mountDestination",
+  "name": "vfolderId",
   "storageKey": null
 },
 v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "mountDestination",
+  "storageKey": null
+},
+v8 = {
   "alias": null,
   "args": null,
   "concreteType": "VirtualFolderNode",
@@ -89,7 +96,11 @@ v7 = {
     }
   ],
   "storageKey": null
-};
+},
+v9 = [
+  (v5/*: any*/),
+  (v3/*: any*/)
+];
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -345,13 +356,7 @@ return {
                             "name": "targetSpec",
                             "plural": false,
                             "selections": [
-                              {
-                                "alias": null,
-                                "args": null,
-                                "kind": "ScalarField",
-                                "name": "key",
-                                "storageKey": null
-                              }
+                              (v5/*: any*/)
                             ],
                             "storageKey": null
                           },
@@ -373,8 +378,8 @@ return {
                 "name": "modelMountConfig",
                 "plural": false,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -389,7 +394,7 @@ return {
                     "name": "subpath",
                     "storageKey": null
                   },
-                  (v7/*: any*/)
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -401,8 +406,8 @@ return {
                 "name": "extraMounts",
                 "plural": true,
                 "selections": [
-                  (v5/*: any*/),
                   (v6/*: any*/),
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -410,7 +415,7 @@ return {
                     "name": "mountPerm",
                     "storageKey": null
                   },
-                  (v7/*: any*/)
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -443,6 +448,44 @@ return {
                         "args": null,
                         "kind": "ScalarField",
                         "name": "architecture",
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "namespace",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ImageV2MetadataInfo",
+                    "kind": "LinkedField",
+                    "name": "metadata",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2TagEntry",
+                        "kind": "LinkedField",
+                        "name": "tags",
+                        "plural": true,
+                        "selections": (v9/*: any*/),
+                        "storageKey": null
+                      },
+                      {
+                        "alias": null,
+                        "args": null,
+                        "concreteType": "ImageV2LabelEntry",
+                        "kind": "LinkedField",
+                        "name": "labels",
+                        "plural": true,
+                        "selections": (v9/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -608,12 +651,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d056573bc13c82003afa9f5ab6f0448a",
+    "cacheID": "d605722cb9ffe34cb6a69c4482ca613e",
     "id": null,
     "metadata": {},
     "name": "DeploymentsAstryxProbeQuery",
     "operationKind": "query",
-    "text": "query DeploymentsAstryxProbeQuery {\n  revision: node(id: \"probe-revision\") {\n    __typename\n    ... on ModelRevision {\n      ...DeploymentRevisionDetail_revision\n    }\n    id\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
+    "text": "query DeploymentsAstryxProbeQuery {\n  revision: node(id: \"probe-revision\") {\n    __typename\n    ... on ModelRevision {\n      ...DeploymentRevisionDetail_revision\n    }\n    id\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    namespace\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment DeploymentRevisionDetail_revision on ModelRevision {\n  id\n  revisionNumber\n  createdAt\n  clusterConfig {\n    mode\n    size\n  }\n  resourceSlots @since(version: \"26.4.2\") {\n    slotName\n    quantity\n  }\n  resourceConfig {\n    resourceOpts {\n      entries {\n        name\n        value\n      }\n    }\n  }\n  modelRuntimeConfig {\n    runtimeVariant {\n      name\n      id\n    }\n    inferenceRuntimeConfig\n    environ {\n      entries {\n        name\n        value\n      }\n    }\n    runtimeVariantPresetValues @since(version: \"26.4.4rc9\") {\n      presetId\n      value\n      preset {\n        name\n        displayName\n        targetSpec {\n          key\n        }\n        id\n      }\n    }\n  }\n  modelMountConfig {\n    vfolderId\n    mountDestination\n    definitionPath\n    subpath @since(version: \"26.4.4\")\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  extraMounts {\n    vfolderId\n    mountDestination\n    mountPerm\n    vfolder {\n      id\n      name\n      ...FolderLink_vfolderNode\n    }\n  }\n  imageV2 @since(version: \"26.4.3\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n    ...BAIImageNodeSimpleTagV2Fragment\n  }\n  modelDefinition {\n    models {\n      name\n      modelPath\n      service {\n        command @since(version: \"26.7.0\")\n        startCommand\n        shell\n        port\n        preStartActions {\n          action\n          args\n        }\n        healthCheck {\n          path\n          initialDelay\n          maxRetries\n          interval\n          maxWaitTime\n          expectedStatusCode\n        }\n      }\n    }\n  }\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n"
   }
 };
 })();

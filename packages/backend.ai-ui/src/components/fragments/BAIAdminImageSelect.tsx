@@ -229,8 +229,9 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
   }) => (identity ? `${identity.canonicalName}@${identity.architecture}` : '');
 
   // The option row is the project-wide image row (ADR 0004), so the picker
-  // reads like the session launcher. `label` stays the canonical reference:
-  // it is the trigger text, the accessible name and the filter chip's text.
+  // reads like the session launcher. `label` stays the canonical reference —
+  // the trigger text, the accessible name and the filter chip's text — while
+  // the popup draws the row in its place.
   const options = _.compact(
     _.map(paginationData, (item) => {
       const key = item?.id ? toLocalId(item.id) : undefined;
@@ -238,7 +239,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
         ? {
             value: key,
             label: getImageLabel(item?.identity),
-            description: item ? (
+            labelContent: item ? (
               <BAIImageNodeSimpleTagV2 imageFrgmt={item} copyable={false} />
             ) : undefined,
           }
