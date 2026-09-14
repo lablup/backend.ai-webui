@@ -168,11 +168,14 @@ describe('BAINameActionCell — the overflow row keeps its action colour (FR-372
 describe('BAINameActionCell — minTitleWidth reserves width for the title', () => {
   const NARROW_CELL_WIDTH = 200;
 
-  const renderTwoActions = (minTitleWidth?: number) =>
+  const renderTwoActions = (
+    minTitleWidth?: number,
+    showActions: 'hover' | 'always' = 'always',
+  ) =>
     render(
       <BAINameActionCell
         title="a-very-long-file-name.tar.gz"
-        showActions="always"
+        showActions={showActions}
         minTitleWidth={minTitleWidth}
         actions={[
           { key: 'download', title: 'Download' },
@@ -206,5 +209,14 @@ describe('BAINameActionCell — minTitleWidth reserves width for the title', () 
     expect(screen.queryByRole('button', { name: /Delete/ })).toBeNull();
     // Both are still reachable — the more button is what the cell keeps.
     expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('does not fold them in hover mode, where the actions cost the title nothing at rest', () => {
+    renderTwoActions(NARROW_CELL_WIDTH, 'hover');
+
+    expect(
+      screen.getByRole('button', { name: /Download/ }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Delete/ })).toBeInTheDocument();
   });
 });
