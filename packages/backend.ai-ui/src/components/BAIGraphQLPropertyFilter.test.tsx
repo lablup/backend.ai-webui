@@ -203,30 +203,14 @@ const PAGE_FIXTURES: Array<{
         fixedOperator: 'contains',
       },
       { key: 'maxVfolderCount', propertyLabel: 'Max folders', type: 'number' },
-      {
-        // A `number` property that ALSO has a custom editor: the editor wins,
-        // so this must not restore as a `float` token (FR-3912).
-        key: 'maxQuotaScopeSize',
-        propertyLabel: 'Max folder size',
-        type: 'number',
-        defaultOperator: 'greaterThanOrEqual',
-        renderInput: () => null,
-      },
     ],
     filters: [
       { name: { contains: 'default' } },
       { maxVfolderCount: { greaterThanOrEqual: 10 } },
-      { maxQuotaScopeSize: { greaterThanOrEqual: 2000000000 } },
       {
         AND: [
           { name: { contains: 'gpu' } },
           { maxVfolderCount: { lessThan: 100 } },
-        ],
-      },
-      {
-        AND: [
-          { name: { contains: 'gpu' } },
-          { maxQuotaScopeSize: { lessThanOrEqual: 0 } },
         ],
       },
     ],
@@ -412,25 +396,6 @@ describe('token <-> condition value mapping', () => {
       type: 'date_absolute',
       unixSeconds: Math.floor(Date.parse('2026-01-02T03:04:05.000Z') / 1000),
     });
-  });
-
-  it('restores a `number` property with a custom editor as a custom token', () => {
-    // `operatorValueFor` picks the `custom` editor whenever `renderInput` is
-    // set, so the restored token must match it rather than the type (FR-3912).
-    const properties: Array<FilterProperty> = [
-      {
-        key: 'maxQuotaScopeSize',
-        propertyLabel: 'Max folder size',
-        type: 'number',
-        defaultOperator: 'greaterThanOrEqual',
-        renderInput: () => null,
-      },
-    ];
-    const [token] = graphQLFilterToPowerSearchFilters(
-      { maxQuotaScopeSize: { greaterThanOrEqual: 2000000000 } },
-      properties,
-    );
-    expect(token.value).toEqual({ type: 'custom', value: '2000000000' });
   });
 
   it('keeps at most one condition per property when `singleCondition` is set', () => {

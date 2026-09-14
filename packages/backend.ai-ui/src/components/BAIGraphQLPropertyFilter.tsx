@@ -569,11 +569,6 @@ export function conditionToTokenValue(
       ? { type: 'enum_list', value: values }
       : { type: 'string_list', value: values };
   }
-  // `custom` wins over the type-derived editors, exactly as `operatorValueFor`
-  // resolves it — a `renderInput` on a `number` property must not restore as a float.
-  if (property?.renderInput) {
-    return { type: 'custom', value: _.toString(raw) };
-  }
   if (property?.type === 'datetime') {
     const parsed = dayjs(_.toString(raw));
     return {
@@ -583,6 +578,9 @@ export function conditionToTokenValue(
   }
   if (property?.type === 'number') {
     return { type: 'float', value: Number(raw) };
+  }
+  if (property?.renderInput) {
+    return { type: 'custom', value: _.toString(raw) };
   }
   if (
     property &&
