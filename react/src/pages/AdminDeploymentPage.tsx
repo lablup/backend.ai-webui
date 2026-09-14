@@ -26,6 +26,7 @@ import type {
 } from '../__generated__/AdminRuntimeVariantPresetQuery.graphql';
 import AdminDeployment, {
   AdminDeploymentQuery,
+  sanitizeDeploymentOrder,
   statusCategoryFilterFor,
 } from '../components/AdminDeployment';
 import AdminDeploymentPreset, {
@@ -69,7 +70,6 @@ type TabKey = (typeof TAB_KEYS)[number];
 
 const tabParser = parseAsStringLiteral(TAB_KEYS).withDefault('deployments');
 
-
 // Per-tab default order. Tabs not listed default to no sort; the presets tabs
 // default to newest-first. Because all tabs now share a single `order` URL key
 // (see below), these defaults are applied explicitly on tab switch and on the
@@ -100,9 +100,12 @@ const AdminDeploymentPage: React.FC = () => {
   // `status` is never a user-settable filter property, so the deployments tab
   // owns it entirely via its running/finished toggle. On first load (no
   // persisted filter) we fall back to "running".
+  const supportsDeploymentExtendedFilter = baiClient.supports(
+    'model-deployment-extended-filter',
+  );
   const deploymentRunningFilter = statusCategoryFilterFor(
     'running',
-    baiClient.supports('model-deployment-extended-filter'),
+    supportsDeploymentExtendedFilter,
   );
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
@@ -300,7 +303,15 @@ const AdminDeploymentPage: React.FC = () => {
               filter:
                 (params.filter as DeploymentFilter | null) ??
                 deploymentRunningFilter,
-              orderBy: convertToOrderBy<DeploymentOrderBy>(params.order),
+              // A URL bookmarked on a newer manager can name a sorter this
+              // one lacks; `loadTab` runs before the tab (and its
+              // `sortableKeys`) mounts, so it is gated here too.
+              orderBy: convertToOrderBy<DeploymentOrderBy>(
+                sanitizeDeploymentOrder(
+                  params.order,
+                  supportsDeploymentExtendedFilter,
+                ),
+              ),
               limit,
               offset,
             },
