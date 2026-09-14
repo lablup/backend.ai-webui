@@ -1,0 +1,80 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIKernelProgressBreakdown> (FR-3924), imported by the
+ component itself (P17). Astryx has no segmented bar — `ProgressBar` carries a
+ single value — so the stacked track and the legend swatches are drawn here.
+
+ The five `data-variant` values are everything `badgeVariantForStatus('session',
+ …)` can return; there is no `--color-info`, so `info` resolves to the declared
+ blue icon token, the same substitution BAIBadgeCount.css makes.
+*/
+
+@layer components {
+  .bai-kernel-progress-breakdown {
+    /* A readable width for the "TITLE … done / total" row. The spacing ramp
+       stops at --spacing-12, so there is no token to name this (P19). */
+    min-width: 15rem;
+  }
+
+  .bai-kernel-progress-breakdown-bar {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    height: var(--spacing-2);
+    border-radius: var(--radius-full);
+    background: var(--color-track);
+  }
+
+  .bai-kernel-progress-breakdown-segment {
+    height: 100%;
+    transition: width var(--duration-medium-min) var(--ease-standard);
+  }
+
+  .bai-kernel-progress-breakdown-swatch {
+    flex: none;
+    width: var(--spacing-2);
+    height: var(--spacing-2);
+    border-radius: var(--radius-full);
+  }
+
+  .bai-kernel-progress-breakdown-segment[data-variant='neutral'],
+  .bai-kernel-progress-breakdown-swatch[data-variant='neutral'] {
+    background: var(--color-neutral);
+  }
+
+  .bai-kernel-progress-breakdown-segment[data-variant='info'],
+  .bai-kernel-progress-breakdown-swatch[data-variant='info'] {
+    background: var(--color-icon-blue);
+  }
+
+  .bai-kernel-progress-breakdown-segment[data-variant='success'],
+  .bai-kernel-progress-breakdown-swatch[data-variant='success'] {
+    background: var(--color-success);
+  }
+
+  .bai-kernel-progress-breakdown-segment[data-variant='warning'],
+  .bai-kernel-progress-breakdown-swatch[data-variant='warning'] {
+    background: var(--color-warning);
+  }
+
+  .bai-kernel-progress-breakdown-segment[data-variant='error'],
+  .bai-kernel-progress-breakdown-swatch[data-variant='error'] {
+    background: var(--color-error);
+  }
+
+  /* An empty bucket keeps its row so the reader can see it is empty; the
+     swatch drops to an outline so it does not read as a share of the bar.
+     Last, so it beats the equally specific variant rules above. */
+  .bai-kernel-progress-breakdown-swatch[data-empty='true'] {
+    background: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bai-kernel-progress-breakdown-segment {
+      transition: none;
+    }
+  }
+}
