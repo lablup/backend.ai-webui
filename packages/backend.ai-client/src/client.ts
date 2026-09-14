@@ -893,6 +893,12 @@ export class Client {
       this._features['my-roles'] = true;
       this._features['prometheus-auto-scaling-rule'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.1')) {
+      // ModelCardV2Filter gained the AND/OR/NOT sub-filter combinators
+      // (backend ab705371, fix(BA-5672)). Older managers reject them, so the
+      // model-store filter is restricted to a single condition below 26.4.1.
+      this._features['model-card-v2-sub-filter'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
@@ -908,6 +914,19 @@ export class Client {
       // its root. Older managers reject the unknown input field, so the key is
       // omitted from the mutation entirely on them.
       this._features['model-mount-subpath'] = true;
+      // QueryDefinitionFilter gained `categoryId: UUIDFilter` and the
+      // AND/OR/NOT sub-filter combinators in 26.4.4, while the tab itself is
+      // gated on `prometheus-query-preset` (26.4.2).
+      this._features['prometheus-query-preset-extended-filter'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
+      // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
+      // fields in their *Filter inputs: ModelCardV2Filter.domainName
+      // String -> StringFilter / .projectId UUID -> UUIDFilter, and
+      // RuntimeVariantPresetFilter / DeploymentRevisionPresetFilter
+      // .runtimeVariantId UUID -> UUIDFilter. `BAIGraphQLPropertyFilter` only
+      // emits the wrapper shape, so those properties are hidden below this.
+      this._features['v2-filter-wrapper-inputs'] = true;
     }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole

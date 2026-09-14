@@ -26,6 +26,7 @@ import type {
 } from '../__generated__/AdminRuntimeVariantPresetQuery.graphql';
 import AdminDeployment, {
   AdminDeploymentQuery,
+  statusCategoryFilterFor,
 } from '../components/AdminDeployment';
 import AdminDeploymentPreset, {
   AdminDeploymentPresetQuery,
@@ -68,13 +69,6 @@ type TabKey = (typeof TAB_KEYS)[number];
 
 const tabParser = parseAsStringLiteral(TAB_KEYS).withDefault('deployments');
 
-// Default status scope for the deployments tab: hide terminated deployments.
-// `status` is never a user-settable filter property, so the deployments tab
-// owns it entirely via its running/finished toggle. On first load (no
-// persisted filter) we fall back to "running".
-const DEPLOYMENT_RUNNING_FILTER: DeploymentFilter = {
-  status: { notIn: ['STOPPED'] },
-};
 
 // Per-tab default order. Tabs not listed default to no sort; the presets tabs
 // default to newest-first. Because all tabs now share a single `order` URL key
@@ -101,6 +95,15 @@ const AdminDeploymentPage: React.FC = () => {
     'prometheus-query-preset',
   );
   const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
+
+  // Default status scope for the deployments tab: hide terminated deployments.
+  // `status` is never a user-settable filter property, so the deployments tab
+  // owns it entirely via its running/finished toggle. On first load (no
+  // persisted filter) we fall back to "running".
+  const deploymentRunningFilter = statusCategoryFilterFor(
+    'running',
+    baiClient.supports('model-deployment-extended-filter'),
+  );
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
   // single pagination state. Only the active tab's values are ever present in
@@ -296,7 +299,7 @@ const AdminDeploymentPage: React.FC = () => {
             {
               filter:
                 (params.filter as DeploymentFilter | null) ??
-                DEPLOYMENT_RUNNING_FILTER,
+                deploymentRunningFilter,
               orderBy: convertToOrderBy<DeploymentOrderBy>(params.order),
               limit,
               offset,

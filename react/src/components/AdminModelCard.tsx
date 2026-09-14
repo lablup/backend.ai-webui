@@ -156,6 +156,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
   const supportsSearchAxes = baiClient.supports('model-card-search-axes');
+  // BA-5918 (26.4.4rc3) turned `domainName` into a StringFilter and
+  // `projectId` into a UUIDFilter; the control only emits the wrapper shape.
+  const supportsFilterWrapperInputs = baiClient.supports(
+    'v2-filter-wrapper-inputs',
+  );
+  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -347,6 +353,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
+            maxConditions={supportsSubFilter ? undefined : 1}
             filterProperties={filterOutEmpty([
               {
                 key: 'name',
@@ -368,15 +375,15 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 propertyLabel: t('modelStore.Task'),
                 type: 'string',
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'domainName',
                 propertyLabel: t('adminModelCard.Domain'),
-                type: 'string',
+                type: 'string' as const,
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'projectId',
                 propertyLabel: t('adminModelCard.Project'),
-                type: 'uuid',
+                type: 'uuid' as const,
                 rule: {
                   message: t('project.ProjectIDFilterRuleMessage'),
                   validate: (value) => isValidUUID(value),
