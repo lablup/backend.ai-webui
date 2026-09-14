@@ -102,45 +102,83 @@ delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it
 // PORTLESS_APP_NAME_EXACT=1 opts out entirely, for a caller that owns the hostname.
 const branch = spawnSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).stdout?.trim() || '';
 
-// One `gh` call per boot (~0.65s, and it returns number and title together). It is
-// allowed to fail: no gh, not logged in, no PR yet, or offline all just mean the
-// name loses its `prNNNN` part. The last good answer is cached so an offline boot
-// keeps the URL it had rather than silently renaming the dev server.
+// One `gh` call, and only when the cache cannot answer (it returns number and
+// title together). It is allowed to fail: no gh, not logged in, no PR yet, or
+// offline all just mean the name loses its `prNNNN` part. The last good answer
+// is cached so an offline boot keeps the URL it had rather than silently
+// renaming the dev server.
+//
+// The cache holds gh's own `{number,title}` JSON, so reading it is how both the
+// fast path and the offline fallback answer. Malformed or partial content reads
+// as a miss, which costs a lookup rather than a wrong dev-server name.
+function readCachedPr(cacheFile) {
+  try {
+    const pr = JSON.parse(readFileSync(cacheFile, 'utf8'));
+    return pr?.number ? pr : null;
+  } catch {
+    return null;
+  }
+}
+
+// Returns the PR it cached, so the synchronous path can both persist and answer
+// from one call. Persisting is an optimization for the next boot, so a
+// read-only ~/.cache or an over-long filename must not throw away the answer.
+function writeCachedPr(cacheFile, text) {
+  let pr = null;
+  try {
+    pr = JSON.parse(text);
+  } catch {
+    return null; // unparseable output — keep whatever the cache already holds
+  }
+  if (!pr?.number) return null;
+  try {
+    mkdirSync(dirname(cacheFile), { recursive: true });
+    writeFileSync(cacheFile, JSON.stringify(pr));
+  } catch {
+    // Best-effort; a read-only ~/.cache only costs the next boot a lookup.
+  }
+  return pr;
+}
+
 function lookupPr(branchName) {
   if (!branchName || process.env.PORTLESS_SKIP_PR_LOOKUP) return null;
   const cacheFile = join(
     homedir(), '.cache', 'backend.ai-webui',
     `pr-${branchName.replace(/[^A-Za-z0-9]+/g, '-')}.json`,
   );
+  // A cached answer ends the boot's wait here. Refreshing it in the background
+  // keeps the cache current for the next boot without spending ~0.6s (up to the
+  // 4s timeout offline) on this one (FR-3925). The cost of being one boot stale
+  // is the descriptive word trailing a PR retitle — the number never changes.
+  const cached = readCachedPr(cacheFile);
+  if (cached) {
+    // Not detached: this stays in dev.mjs's own process group so a Ctrl+C
+    // reaches it too, and `unref` is what lets dev.mjs exit without waiting.
+    const refresh = spawn(
+      'gh',
+      ['pr', 'view', branchName, '--json', 'number,title'],
+      { stdio: ['ignore', 'pipe', 'ignore'] },
+    );
+    let out = '';
+    refresh.stdout?.on('data', (chunk) => (out += chunk));
+    refresh.on('error', () => {}); // no gh on PATH — the cache already answered
+    refresh.on('close', (code) => {
+      if (code === 0) writeCachedPr(cacheFile, out);
+    });
+    refresh.unref();
+    return cached;
+  }
+
   const probe = spawnSync(
     'gh',
     ['pr', 'view', branchName, '--json', 'number,title'],
     { encoding: 'utf8', timeout: 4000, stdio: ['ignore', 'pipe', 'ignore'] },
   );
   if (probe.status === 0 && probe.stdout) {
-    let pr = null;
-    try {
-      pr = JSON.parse(probe.stdout);
-    } catch {
-      pr = null; // unparseable output — fall through to the cache
-    }
-    if (pr?.number) {
-      // Persisting is an optimization for the next offline boot, so a read-only
-      // ~/.cache or an over-long filename must not throw away the answer we have.
-      try {
-        mkdirSync(dirname(cacheFile), { recursive: true });
-        writeFileSync(cacheFile, JSON.stringify(pr));
-      } catch {
-        // Best-effort; the fresh lookup below is still good.
-      }
-      return pr;
-    }
+    const pr = writeCachedPr(cacheFile, probe.stdout);
+    if (pr) return pr;
   }
-  try {
-    return JSON.parse(readFileSync(cacheFile, 'utf8'));
-  } catch {
-    return null;
-  }
+  return readCachedPr(cacheFile);
 }
 
 // Exact mode discards every identifier, so it must not pay for the lookup that
