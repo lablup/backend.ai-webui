@@ -63,7 +63,8 @@ const TestRenderer: React.FC = () => {
 const renderTag = (session: {
   status: string;
   cluster_size: number;
-  kernelStatuses: Array<string>;
+  kernelStatuses?: Array<string>;
+  kernelEdges?: Array<unknown>;
 }) => {
   const environment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
@@ -76,9 +77,11 @@ const renderTag = (session: {
         queue_position: null,
         cluster_size: session.cluster_size,
         kernel_nodes: {
-          edges: session.kernelStatuses.map((status, index) => ({
-            node: { id: `kernel-${index}`, status },
-          })),
+          edges:
+            session.kernelEdges ??
+            (session.kernelStatuses ?? []).map((status, index) => ({
+              node: { id: `kernel-${index}`, status },
+            })),
         },
       }),
     }),
@@ -140,7 +143,7 @@ describe('SessionStatusBadge kernel progress ring (FR-3923)', () => {
   });
 });
 
-describe('SessionStatusTag kernel breakdown popover (FR-3924)', () => {
+describe('SessionStatusBadge kernel breakdown popover (FR-3924)', () => {
   // The react-i18next mock above also feeds BUI's `useBAIi18n`, so the
   // breakdown's title comes back as its key here; the numbers are what this
   // wiring is about anyway.
@@ -188,6 +191,20 @@ describe('SessionStatusTag kernel breakdown popover (FR-3924)', () => {
       status: 'TERMINATING',
       cluster_size: 1,
       kernelStatuses: ['RUNNING'],
+    });
+
+    await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(breakdown()).toBeNull();
+  });
+
+  it('gives a connection of empty edges no breakdown trigger', async () => {
+    // Relay permits null edges and nodes; the edge COUNT alone used to open a
+    // hover card reporting every bucket as zero.
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelEdges: [null, { node: null }],
     });
 
     await userEvent.hover(await screen.findByText('TERMINATING'));
