@@ -306,7 +306,7 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 ### 선점 관련 상태
 
-Backend.AI Manager가 26.8.0 이상 버전인 경우, 세션이 `RESERVED`, `PREEMPTED`, `RESCHEDULING` 상태로도 표시될 수 있습니다. 스케줄러가 우선순위가 높은 작업을 위해 자원을 확보해야 할 때 사용하는 상태입니다.
+세션이 `RESERVED`, `PREEMPTED`, `RESCHEDULING` 상태로도 표시될 수 있습니다. 스케줄러가 우선순위가 높은 작업을 위해 자원을 확보해야 할 때 사용하는 상태입니다.
 
 - `RESERVED`: 자원 예약을 보유한 채, 필요한 자원이 확보되기를 기다리는 세션입니다.
 - `PREEMPTED`: 우선순위가 높은 작업이 자원을 사용할 수 있도록 선점 대상으로 선택된 세션입니다.
@@ -323,9 +323,6 @@ Backend.AI Manager가 26.8.0 이상 버전인 경우, 세션이 `RESERVED`, `PRE
 | `preemption-reservation` | 자원 예약을 보유한 채 자원이 확보되기를 기다리는 세션입니다. |
 | `RESCHEDULED` | 선점되어 대기열로 돌아간 세션으로, 자동으로 다시 스케줄됩니다. |
 
-:::note
-이 상태들과 사유 설명은 Backend.AI Manager가 26.8.0 이상 버전일 때만 표시됩니다. 이전 버전의 매니저에서는 세션 상태 태그에 원본 상태 정보 값이 그대로 표시됩니다.
-:::
 
 <a id="session-scheduling-history"></a>
 

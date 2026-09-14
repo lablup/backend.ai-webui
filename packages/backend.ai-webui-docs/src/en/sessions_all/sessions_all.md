@@ -412,9 +412,9 @@ the [Session Scheduling History](#session-scheduling-history) section.
 
 ### Preemption statuses
 
-On a Backend.AI Manager of version 26.8.0 or later, a session can also appear in
-the `RESERVED`, `PREEMPTED`, and `RESCHEDULING` statuses. The scheduler uses them
-when it has to free resources for a higher-priority job:
+A session can also appear in the `RESERVED`, `PREEMPTED`, and `RESCHEDULING`
+statuses. The scheduler uses them when it has to free resources for a
+higher-priority job:
 
 - `RESERVED`: The session holds a resource reservation and is waiting for the
   resources it needs to be freed.
@@ -437,11 +437,6 @@ internal value:
 | `preemption-reservation` | This session holds a resource reservation and is waiting for the resources to be freed. |
 | `RESCHEDULED` | This session was preempted and returned to the queue; it will be scheduled again automatically. |
 
-:::note
-These statuses and their reason descriptions are shown only when the Backend.AI
-Manager is version 26.8.0 or later. On an older server the session status tag keeps
-showing the raw status information value.
-:::
 
 <a id="session-scheduling-history"></a>
 
