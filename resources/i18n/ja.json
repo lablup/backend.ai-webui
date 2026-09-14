@@ -1081,7 +1081,7 @@
     "AddAccessToken": "アクセストークンを追加",
     "AddNewRevisionFromThis": "この Revision を基に Revision を作成",
     "AddRevision": "Revision を追加",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "リビジョンを追加するには、このデプロイメントのプロジェクトに切り替えてください。",
     "AdditionalMounts": "追加マウント",
     "AnotherDeploymentInProgress": "別のデプロイ更新が既に進行中です。再試行する前に完了するまでお待ちください。",
     "Apply": "デプロイ",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "このデプロイは削除されたか、アクセスする権限がありません。",
     "NotInProject": "このデプロイは別のプロジェクトに属しています。",
     "NumberOfReplicas": "レプリカ数",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "このデプロイメントを管理できるのはデプロイメント所有者のみです。",
     "OpenCreateDeploymentModal": "デプロイ作成モーダルを開く",
     "OpenToPublic": "公開",
     "OpenToPublicCannotBeChanged": "作成時に選択した公開設定は変更できません。",
@@ -1263,9 +1263,9 @@
       "ResourceGroup": "リソースグループ",
       "Status": "状態",
       "Tags": "タグ",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "レプリカのライフサイクル",
+      "ReplicaHealthStatus": "レプリカのヘルスステータス",
+      "ReplicaTrafficStatus": "レプリカのトラフィックステータス"
     },
     "nav": {
       "Next": "次へ",

@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Lisää käyttöoikeustunnus",
     "AddNewRevisionFromThis": "Uusi Revision tämän pohjalta",
     "AddRevision": "Lisää Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Vaihda tämän käyttöönoton projektiin lisätäksesi revision.",
     "AdditionalMounts": "Lisäliitokset",
     "AnotherDeploymentInProgress": "Toinen käyttöönoton päivitys on jo käynnissä. Odota sen valmistumista ennen kuin yrität uudelleen.",
     "Apply": "Ota käyttöön",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Tämä käyttöönotto on poistettu tai sinulla ei ole oikeutta käyttää sitä.",
     "NotInProject": "Tämä käyttöönotto kuuluu toiseen projektiin.",
     "NumberOfReplicas": "Replikoiden määrä",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Vain käyttöönoton omistaja voi hallita tätä käyttöönottoa.",
     "OpenCreateDeploymentModal": "Avaa käyttöönoton luontimodaali",
     "OpenToPublic": "Julkinen",
     "OpenToPublicCannotBeChanged": "Luonnin yhteydessä valittua julkisen käytön asetusta ei voi muuttaa.",
@@ -1263,9 +1263,9 @@
       "ResourceGroup": "Resurssiryhmä",
       "Status": "Tila",
       "Tags": "Tunnisteet",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Replikan elinkaari",
+      "ReplicaHealthStatus": "Replikan terveystila",
+      "ReplicaTrafficStatus": "Replikan liikennetila"
     },
     "nav": {
       "Next": "Seuraava",

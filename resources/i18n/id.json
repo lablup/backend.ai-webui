@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Tambah Token Akses",
     "AddNewRevisionFromThis": "Revision baru berdasarkan ini",
     "AddRevision": "Tambah Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Beralih ke proyek deployment ini untuk menambahkan revisi.",
     "AdditionalMounts": "Pemasangan Tambahan",
     "AnotherDeploymentInProgress": "Pembaruan deployment lain sedang berlangsung. Harap tunggu hingga selesai sebelum mencoba lagi.",
     "Apply": "Terapkan",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Penerapan ini telah dihapus atau Anda tidak memiliki izin untuk mengaksesnya.",
     "NotInProject": "Penerapan ini termasuk dalam proyek lain.",
     "NumberOfReplicas": "Jumlah Replika",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Hanya pemilik deployment yang dapat mengelola deployment ini.",
     "OpenCreateDeploymentModal": "Buka modal buat penerapan",
     "OpenToPublic": "Terbuka untuk Publik",
     "OpenToPublicCannotBeChanged": "Pengaturan akses publik yang dipilih saat pembuatan tidak dapat diubah.",
@@ -1263,9 +1263,9 @@
       "ResourceGroup": "Grup Sumber Daya",
       "Status": "Status",
       "Tags": "Tag",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Siklus hidup replika",
+      "ReplicaHealthStatus": "Status kesehatan replika",
+      "ReplicaTrafficStatus": "Status lalu lintas replika"
     },
     "nav": {
       "Next": "Berikutnya",

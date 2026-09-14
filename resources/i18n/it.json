@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Aggiungi Token di Accesso",
     "AddNewRevisionFromThis": "Nuova Revision basata su questa",
     "AddRevision": "Aggiungi Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Passa al progetto di questo deployment per aggiungere una revisione.",
     "AdditionalMounts": "Montaggio aggiuntivo",
     "AnotherDeploymentInProgress": "Un altro aggiornamento del deployment è già in corso. Attendere il completamento prima di riprovare.",
     "Apply": "Distribuisci",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Questa distribuzione è stata eliminata o non disponi dei permessi per accedervi.",
     "NotInProject": "Questa distribuzione appartiene a un altro progetto.",
     "NumberOfReplicas": "Numero di repliche",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Solo il proprietario del deployment può gestire questo deployment.",
     "OpenCreateDeploymentModal": "Apri modale di creazione distribuzione",
     "OpenToPublic": "Pubblico",
     "OpenToPublicCannotBeChanged": "L'impostazione di accesso pubblico selezionata alla creazione non può essere modificata.",
@@ -1263,9 +1263,9 @@
       "ResourceGroup": "Gruppo di risorse",
       "Status": "Stato",
       "Tags": "Tag",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Ciclo di vita della replica",
+      "ReplicaHealthStatus": "Stato di salute della replica",
+      "ReplicaTrafficStatus": "Stato del traffico della replica"
     },
     "nav": {
       "Next": "Avanti",

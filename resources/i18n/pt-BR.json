@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Adicionar Token de Acesso",
     "AddNewRevisionFromThis": "Nova Revision baseada nesta",
     "AddRevision": "Adicionar Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Mude para o projeto desta implantação para adicionar uma revisão.",
     "AdditionalMounts": "Montagens adicionais",
     "AnotherDeploymentInProgress": "Outra atualização de implantação já está em andamento. Aguarde a conclusão antes de tentar novamente.",
     "Apply": "Implantar",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Esta implantação foi excluída ou você não tem permissão para acessá-la.",
     "NotInProject": "Esta implantação pertence a outro projeto.",
     "NumberOfReplicas": "Número de réplicas",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Apenas o proprietário da implantação pode gerenciar esta implantação.",
     "OpenCreateDeploymentModal": "Abrir modal de criação de implantação",
     "OpenToPublic": "Público",
     "OpenToPublicCannotBeChanged": "A configuração de acesso público selecionada na criação não pode ser alterada.",
@@ -1263,9 +1263,9 @@
       "ResourceGroup": "Grupo de Recursos",
       "Status": "Status",
       "Tags": "Tags",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Ciclo de vida da réplica",
+      "ReplicaHealthStatus": "Status de saúde da réplica",
+      "ReplicaTrafficStatus": "Status de tráfego da réplica"
     },
     "nav": {
       "Next": "Próximo",

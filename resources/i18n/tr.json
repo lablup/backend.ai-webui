@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Erişim Tokenı Ekle",
     "AddNewRevisionFromThis": "Bunu temel alan yeni Revision",
     "AddRevision": "Revision Ekle",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Revizyon eklemek için bu dağıtımın projesine geçin.",
     "AdditionalMounts": "Ek Bağlama Noktaları",
     "AnotherDeploymentInProgress": "Başka bir dağıtım güncellemesi zaten devam ediyor. Tekrar denemeden önce tamamlanmasını bekleyin.",
     "Apply": "Dağıt",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Bu dağıtım silinmiş veya erişim izniniz yok.",
     "NotInProject": "Bu dağıtım başka bir projeye aittir.",
     "NumberOfReplicas": "Replika Sayısı",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Bu dağıtımı yalnızca dağıtım sahibi yönetebilir.",
     "OpenCreateDeploymentModal": "Dağıtım oluşturma modalını aç",
     "OpenToPublic": "Herkese Açık",
     "OpenToPublicCannotBeChanged": "Oluşturma sırasında seçilen herkese açık erişim ayarı değiştirilemez.",
@@ -1263,9 +1263,9 @@
       "ResourceGroup": "Kaynak Grubu",
       "Status": "Durum",
       "Tags": "Etiketler",
-      "ReplicaStatus": "__NOT_TRANSLATED__",
-      "ReplicaHealthStatus": "__NOT_TRANSLATED__",
-      "ReplicaTrafficStatus": "__NOT_TRANSLATED__"
+      "ReplicaStatus": "Replika yaşam döngüsü",
+      "ReplicaHealthStatus": "Replika sağlık durumu",
+      "ReplicaTrafficStatus": "Replika trafik durumu"
     },
     "nav": {
       "Next": "İleri",
