@@ -551,14 +551,21 @@ describe('the set the tab was left with', () => {
       await ticks(2);
       const written = stubExecCommand();
 
-      node<HTMLButtonElement>(
+      const up = node<HTMLButtonElement>(
         '.setdock .row[data-pin-id="c_twoaaaa"] .up',
-      ).click();
+      );
+      up.focus();
+      up.click();
 
       expect(dockRows().map((row) => row.dataset.pinId)).toEqual([
         'c_twoaaaa',
         'c_oneaaaa',
       ]);
+      // The rows were rebuilt under the keyboard; the pin is at the top now,
+      // so its ▲ is disabled and the ▼ beside it holds the focus.
+      expect(shadow().activeElement).toBe(
+        node('.setdock .row[data-pin-id="c_twoaaaa"] .down'),
+      );
       expect(all('.setdock .idx').map((idx) => idx.textContent)).toEqual([
         '1',
         '2',

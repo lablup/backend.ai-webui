@@ -202,6 +202,25 @@ describe('createSetDock', () => {
       expect(moved).toEqual([['c_a', 1]]);
     });
 
+    it('keeps focus on the moved pin’s ▲ once the rows are rebuilt', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b'), pin('c_c', 'c')]);
+      rows()[2].querySelector<HTMLButtonElement>('.up')?.focus();
+
+      // The owner moved c_c up one and rendered the new order.
+      dock.render([pin('c_a', 'a'), pin('c_c', 'c'), pin('c_b', 'b')]);
+
+      expect(root.activeElement).toBe(rows()[1].querySelector('.up'));
+    });
+
+    it('hands focus to the other direction when the pin reaches an end', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+      rows()[1].querySelector<HTMLButtonElement>('.up')?.focus();
+
+      dock.render([pin('c_b', 'b'), pin('c_a', 'a')]);
+
+      expect(root.activeElement).toBe(rows()[0].querySelector('.down'));
+    });
+
     it('names the action, not the state (R8.1)', () => {
       dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
 
