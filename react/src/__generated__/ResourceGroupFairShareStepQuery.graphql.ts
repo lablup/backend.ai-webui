@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f36718bbeb5c936b8c3c9851f0302023>>
+ * @generated SignedSource<<ae361310f7a00ba6c356debead7fff91>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -255,6 +255,42 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "concreteType": "ResourceGroupStatus",
+                    "kind": "LinkedField",
+                    "name": "status",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "isActive",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "ResourceGroupMetadata",
+                    "kind": "LinkedField",
+                    "name": "metadata",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "createdAt",
+                        "storageKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "FairShareScalingGroupSpec",
                     "kind": "LinkedField",
                     "name": "fairShareSpec",
@@ -360,12 +396,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "dd1b15ec2594c7946cc54cb876d0a224",
+    "cacheID": "c359efd4e122e6a20b12ace96aed80f7",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupFairShareStepQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupFairShareStepQuery(\n  $filter: ResourceGroupFilter\n  $order: [ResourceGroupOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  resourceGroups: adminResourceGroups(filter: $filter, orderBy: $order, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...ResourceGroupFairShareTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment ResourceGroupFairShareSettingModalFragment on ResourceGroup {\n  name\n  fairShareSpec {\n    decayUnitDays\n    halfLifeDays\n    lookbackDays\n    defaultWeight\n    resourceWeights {\n      resourceType\n      weight\n      usesDefault\n    }\n  }\n}\n\nfragment ResourceGroupFairShareTableFragment on ResourceGroup {\n  id\n  name\n  fairShareSpec {\n    halfLifeDays\n    lookbackDays\n    decayUnitDays\n    defaultWeight\n    resourceWeights {\n      resourceType\n      weight\n      usesDefault\n    }\n  }\n  resourceInfo {\n    capacity {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n    used {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  ...ResourceGroupFairShareSettingModalFragment\n}\n"
+    "text": "query ResourceGroupFairShareStepQuery(\n  $filter: ResourceGroupFilter\n  $order: [ResourceGroupOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  resourceGroups: adminResourceGroups(filter: $filter, orderBy: $order, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...ResourceGroupFairShareTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment ResourceGroupFairShareSettingModalFragment on ResourceGroup {\n  name\n  fairShareSpec {\n    decayUnitDays\n    halfLifeDays\n    lookbackDays\n    defaultWeight\n    resourceWeights {\n      resourceType\n      weight\n      usesDefault\n    }\n  }\n}\n\nfragment ResourceGroupFairShareTableFragment on ResourceGroup {\n  id\n  name\n  status {\n    isActive\n  }\n  metadata {\n    createdAt\n  }\n  fairShareSpec {\n    halfLifeDays\n    lookbackDays\n    decayUnitDays\n    defaultWeight\n    resourceWeights {\n      resourceType\n      weight\n      usesDefault\n    }\n  }\n  resourceInfo {\n    capacity {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n    used {\n      entries {\n        resourceType\n        quantity\n      }\n    }\n  }\n  ...ResourceGroupFairShareSettingModalFragment\n}\n"
   }
 };
 })();
