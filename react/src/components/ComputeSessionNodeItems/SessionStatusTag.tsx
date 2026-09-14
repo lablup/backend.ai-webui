@@ -114,11 +114,14 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
 
   const { phase } = progress;
   // The breakdown only says something a cluster session's badge does not: one
-  // kernel has no distribution, and a settled one is not moving.
+  // kernel has no distribution, and a settled one is not moving. Edge COUNT is
+  // not proof of data — Relay permits null edges and nodes, which the helper
+  // skips — so the buckets themselves decide.
+  const kernelBreakdown = getSessionKernelBreakdown(session);
   const kernelBreakdownPhase =
     phase !== null &&
     progress.total > 1 &&
-    (session.kernel_nodes?.edges?.length ?? 0) > 0
+    kernelBreakdown.some((bucket) => bucket.count > 0)
       ? phase
       : null;
 
@@ -149,7 +152,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
                 phase={kernelBreakdownPhase}
                 done={progress.done}
                 total={progress.total}
-                segments={getSessionKernelBreakdown(session)}
+                segments={kernelBreakdown}
               />
             </BAIFlex>
           }
