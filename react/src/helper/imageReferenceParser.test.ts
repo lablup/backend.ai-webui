@@ -454,105 +454,6 @@ const vectors: Array<{
     },
   },
   {
-    id: 'V27',
-    input: 'docker pull nvcr.io/nvidia/pytorch:25.01-py3',
-    expected: {
-      kind: 'pull-command',
-      registryHost: 'nvcr.io',
-      project: 'nvidia',
-      imageName: 'pytorch',
-      tag: '25.01-py3',
-      canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-      submittable: true,
-      reason: null,
-    },
-  },
-  {
-    id: 'V28',
-    input: '$ docker pull nvcr.io/nvidia/pytorch:25.01-py3',
-    expected: {
-      kind: 'pull-command',
-      registryHost: 'nvcr.io',
-      project: 'nvidia',
-      imageName: 'pytorch',
-      tag: '25.01-py3',
-      canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-      submittable: true,
-      reason: null,
-    },
-  },
-  {
-    id: 'V29',
-    input: '$ sudo docker pull   nvcr.io/nvidia/pytorch:25.01-py3   ',
-    expected: {
-      kind: 'pull-command',
-      registryHost: 'nvcr.io',
-      project: 'nvidia',
-      imageName: 'pytorch',
-      tag: '25.01-py3',
-      canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-      submittable: true,
-      reason: null,
-    },
-  },
-  {
-    id: 'V30',
-    input: 'podman pull nvcr.io/nvidia/clara/monai-toolkit:2.4',
-    expected: {
-      kind: 'pull-command',
-      registryHost: 'nvcr.io',
-      project: 'nvidia',
-      imageName: 'clara/monai-toolkit',
-      tag: '2.4',
-      canonical: 'nvcr.io/nvidia/clara/monai-toolkit:2.4',
-      submittable: true,
-      reason: null,
-    },
-  },
-  {
-    id: 'V31',
-    input: 'docker pull nvcr.io/nvidia/pytorch',
-    expected: {
-      kind: 'pull-command',
-      registryHost: 'nvcr.io',
-      project: 'nvidia',
-      imageName: 'pytorch',
-      tag: null,
-      canonical: null,
-      submittable: false,
-      reason: 'tag_required',
-    },
-  },
-  {
-    id: 'V32',
-    input:
-      'docker pull nvcr.io/nvidia/pytorch@sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
-    expected: {
-      kind: 'pull-command',
-      registryHost: 'nvcr.io',
-      project: 'nvidia',
-      imageName: 'pytorch',
-      tag: null,
-      canonical: null,
-      submittable: false,
-      reason: 'digest_unsupported',
-    },
-  },
-  {
-    id: 'V33',
-    input: 'docker run --gpus all -it nvcr.io/nvidia/pytorch:25.01-py3',
-    expected: {
-      kind: 'pull-command',
-      registryHost: null,
-      project: null,
-      imageName: null,
-      tag: null,
-      canonical: null,
-      submittable: false,
-      reason: 'unsupported_command',
-    },
-  },
-  {
     id: 'V34',
     input: 'nvcr.io/nvidia/pytorch:25.01-py3',
     expected: {
@@ -996,6 +897,22 @@ const vectors: Array<{
       reason: null,
     },
   },
+  {
+    // Not from the note: a pasted command line is no longer read, and a
+    // reference never carries whitespace, so it rejects before any parsing.
+    id: 'V64',
+    input: 'docker pull nvcr.io/nvidia/pytorch:25.01-py3',
+    expected: {
+      kind: 'canonical',
+      registryHost: null,
+      project: null,
+      imageName: null,
+      tag: null,
+      canonical: null,
+      submittable: false,
+      reason: 'invalid_reference',
+    },
+  },
 ];
 
 describe('parseImageReferenceLine + resolveImageReference', () => {
@@ -1003,8 +920,8 @@ describe('parseImageReferenceLine + resolveImageReference', () => {
     expect(run(input, registries ?? DEFAULT_REGISTRIES)).toEqual(expected);
   });
 
-  it('covers every vector of the grammar note', () => {
-    expect(vectors).toHaveLength(63);
+  it('covers the grammar note vectors the accepted forms admit', () => {
+    expect(vectors).toHaveLength(57);
   });
 });
 
@@ -1050,125 +967,5 @@ describe('resolveImageReference registry matching', () => {
     expect(resolved.project).toBeNull();
     expect(resolved.imageName).toBe('nvidia/clara/monai-toolkit');
     expect(resolved.submittable).toBe(true);
-  });
-});
-
-describe('pull command options', () => {
-  // A `pull` line carries flags before the reference, and the first non-`-`
-  // token used to win — `--platform linux/amd64` was read as the image and
-  // rejected as `host_required`.
-  const optionVectors: Array<{
-    id: string;
-    input: string;
-    expected: Expected;
-  }> = [
-    {
-      id: 'P01',
-      input:
-        'docker pull --platform linux/amd64 nvcr.io/nvidia/pytorch:25.01-py3',
-      expected: {
-        kind: 'pull-command',
-        registryHost: 'nvcr.io',
-        project: 'nvidia',
-        imageName: 'pytorch',
-        tag: '25.01-py3',
-        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-        submittable: true,
-        reason: null,
-      },
-    },
-    {
-      id: 'P02',
-      input:
-        'docker pull --platform=linux/arm64 nvcr.io/nvidia/pytorch:25.01-py3',
-      expected: {
-        kind: 'pull-command',
-        registryHost: 'nvcr.io',
-        project: 'nvidia',
-        imageName: 'pytorch',
-        tag: '25.01-py3',
-        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-        submittable: true,
-        reason: null,
-      },
-    },
-    {
-      id: 'P03',
-      input:
-        'podman pull --arch arm64 --os linux nvcr.io/nvidia/clara/monai-toolkit:2.4',
-      expected: {
-        kind: 'pull-command',
-        registryHost: 'nvcr.io',
-        project: 'nvidia',
-        imageName: 'clara/monai-toolkit',
-        tag: '2.4',
-        canonical: 'nvcr.io/nvidia/clara/monai-toolkit:2.4',
-        submittable: true,
-        reason: null,
-      },
-    },
-    {
-      id: 'P04',
-      input: 'docker pull -q nvcr.io/nvidia/pytorch:25.01-py3',
-      expected: {
-        kind: 'pull-command',
-        registryHost: 'nvcr.io',
-        project: 'nvidia',
-        imageName: 'pytorch',
-        tag: '25.01-py3',
-        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-        submittable: true,
-        reason: null,
-      },
-    },
-    {
-      // `-a` is docker's boolean `--all-tags`, so the next token is still the
-      // reference — unlike nerdctl's `-a` (`--address`), covered by P06.
-      id: 'P05',
-      input: 'docker pull -a nvcr.io/nvidia/pytorch:25.01-py3',
-      expected: {
-        kind: 'pull-command',
-        registryHost: 'nvcr.io',
-        project: 'nvidia',
-        imageName: 'pytorch',
-        tag: '25.01-py3',
-        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-        submittable: true,
-        reason: null,
-      },
-    },
-    {
-      id: 'P06',
-      input:
-        'nerdctl pull -a /run/containerd.sock --namespace k8s.io nvcr.io/nvidia/pytorch:25.01-py3',
-      expected: {
-        kind: 'pull-command',
-        registryHost: 'nvcr.io',
-        project: 'nvidia',
-        imageName: 'pytorch',
-        tag: '25.01-py3',
-        canonical: 'nvcr.io/nvidia/pytorch:25.01-py3',
-        submittable: true,
-        reason: null,
-      },
-    },
-    {
-      id: 'P07',
-      input: 'docker pull --platform linux/amd64',
-      expected: {
-        kind: 'pull-command',
-        registryHost: null,
-        project: null,
-        imageName: null,
-        tag: null,
-        canonical: null,
-        submittable: false,
-        reason: 'unsupported_command',
-      },
-    },
-  ];
-
-  it.each(optionVectors)('$id $input', ({ input, expected }) => {
-    expect(run(input, DEFAULT_REGISTRIES)).toEqual(expected);
   });
 });

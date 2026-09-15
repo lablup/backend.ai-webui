@@ -299,7 +299,6 @@ const ImportImageModalContent: React.FC<{
       empty_image_name: t('environment.ImportImageEmptyImageName'),
       ngc_not_a_container: t('environment.ImportImageNotAContainer'),
       ngc_url_unparseable: t('environment.ImportImageUnreadableCatalogUrl'),
-      unsupported_command: t('environment.ImportImageUnsupportedCommand'),
     };
     return resolved.reason ? reasons[resolved.reason] : null;
   };
