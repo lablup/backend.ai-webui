@@ -250,8 +250,9 @@ optional `head` field를 얻는다 — checkout의 `git rev-parse HEAD`, checkou
 ### 12. Comment export는 stop field를 제거해 보통의 pin으로 다시 쓴다
 
 `✎ Copy N comments`(하나에 대해서는 `Copy ref`)는 comment가 달린 stop마다
-보통의 reviewer pin으로 다시 쓴다: anchor에서 stop 전용 field(`ch`, `ck`,
-`old`, `new`, `type`, `kind`, `code`, `via`, `dlg`)를 제거하므로, 내보내진
+보통의 reviewer pin으로 다시 쓴다: anchor에서 stop 전용 field 11개 전부
+(`ch`, `ck`, `old`, `new`, `type`, `kind`, `code`, `sha`, `pr`, `via`,
+`dlg`)를 제거하므로, 내보내진
 anchor는 `ck`를 갖지 않고 stop이 아니라 보통의 pin으로 읽힌다; reviewer
 자신의 comment는 그 pin의 note가 된다. 내보낸 block마다 기존의
 reviewer-pin 형식을 쓰며 `re: stop k · <id>` 줄이 붙고, 뒤따르는 set
@@ -270,7 +271,8 @@ workflow 마지막 단계로 — PR의 dev server가 부팅되고 advertise된 �
 부를 수 있다. `dev-server` 자신의 skill은 바뀌지 않는다; minting은
 booting의 새 side effect가 아니라 그것을 부르는 쪽이다. 공유 `dw`/`fw`
 plugin의 변경은 없고, notification도 없다: 마지막 chat message에
-`Walkthrough:` 줄 하나가 더해질 뿐, Teams에는 아무것도 올라가지 않는다.
+`[Walkthrough](<set link>) · N stops` 형태의 줄 하나가 더해질 뿐, Teams에는
+아무것도 올라가지 않는다.
 
 이는 spec R3.1의 "no ✅ What to check comment" 결정(2026-09-01, driver
 Jongeun Lee, FR-3814 Not Planned)을 좁게 재검토한 것이다 — spec R3.1이
