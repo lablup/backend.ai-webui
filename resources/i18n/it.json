@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Digita il nuovo nome della cartella",
       "TypeToConfirmDeleteForever": "Digita la parola qui sotto per eliminare definitivamente",
       "View": "Visualizza",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Creatore"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Impossibile accettare l'invito",

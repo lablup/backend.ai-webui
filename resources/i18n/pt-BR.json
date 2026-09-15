@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Digite o nome da nova pasta",
       "TypeToConfirmDeleteForever": "Digite a palavra abaixo para excluir permanentemente",
       "View": "Visualizar",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Criador"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Falhou em aceitar convite",

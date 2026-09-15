@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
       "TypeToConfirmDeleteForever": "Kirjoita alla oleva sana pysyvää poistoa varten",
       "View": "Näytä",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Luoja"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Kutsu epäonnistui",

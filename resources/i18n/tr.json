@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Yeni klasör adını yazın",
       "TypeToConfirmDeleteForever": "Kalıcı olarak silmek için aşağıdaki kelimeyi yazın",
       "View": "Görünüm",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Oluşturan"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Davetiyeyi kabul edemedi",

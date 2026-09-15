@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Введите новое имя папки",
       "TypeToConfirmDeleteForever": "Введите слово ниже для безвозвратного удаления",
       "View": "Вид",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Создатель"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Не удалось принять приглашение",

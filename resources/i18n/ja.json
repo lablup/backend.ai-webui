@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "新しいフォルダ名を入力します",
       "TypeToConfirmDeleteForever": "完全に削除するには、以下の単語を入力してください",
       "View": "見る",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "作成者"
     },
     "invitation": {
       "FailedToAcceptInvitation": "招待状を受け入れなかった",

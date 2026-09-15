@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Nhập tên thư mục mới",
       "TypeToConfirmDeleteForever": "Nhập từ bên dưới để xóa vĩnh viễn",
       "View": "Lượt xem",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Người tạo"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Không chấp nhận lời mời",

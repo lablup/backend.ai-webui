@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Geben Sie einen neuen Ordnernamen ein",
       "TypeToConfirmDeleteForever": "Geben Sie das folgende Wort ein, um dauerhaft zu löschen",
       "View": "Aussicht",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Ersteller"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Die Einladung nicht akzeptiert",

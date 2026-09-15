@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "Tapez un nouveau nom de dossier",
       "TypeToConfirmDeleteForever": "Saisissez le mot ci-dessous pour supprimer définitivement",
       "View": "Vue",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "Créateur"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Échec de l'acceptation de l'invitation",

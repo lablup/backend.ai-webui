@@ -1004,7 +1004,7 @@
       "TypeNewFolderName": "输入新文件夹名称",
       "TypeToConfirmDeleteForever": "请输入下方的词语以永久删除",
       "View": "看法",
-      "Creator": "__NOT_TRANSLATED__"
+      "Creator": "创建者"
     },
     "invitation": {
       "FailedToAcceptInvitation": "未能接受邀请",
