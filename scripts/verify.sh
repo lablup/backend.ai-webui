@@ -3,11 +3,13 @@
 # Run from project root: bash scripts/verify.sh
 # Agents should check for "=== ALL PASS ===" in the output.
 #
-# Relay runs first and alone (TypeScript and the drift check read
-# __generated__). Every other check is a lane: lanes run in parallel, each
+# Stage 0 rebuilds the committed generated artifacts (Relay, search index)
+# and waits — TypeScript reads __generated__ and the Vitest lane reads the
+# search index. Every other check is a lane: lanes run in parallel, each
 # writing its own log under $LOG_DIR, and are reported in a fixed order once
-# all have finished — PASS is one line, FAIL prints the tail of that lane's
-# log. Wall time is Relay + the slowest lane (Lint), instead of the sum.
+# all have finished — PASS prints one line plus the lane's `>>` scope notes,
+# FAIL prints the tail of the lane's log. Wall time is stage 0 + the slowest
+# lane instead of the sum.
 #
 # Lint (react, backend.ai-ui), Format and the Vitest lanes look only at what
 # this branch changed relative to main; without a main to compare against
@@ -27,12 +29,19 @@ cd "$(dirname "$0")/.."
 
 LOG_DIR="${VERIFY_LOG_DIR:-node_modules/.cache/verify}"
 TAIL="${VERIFY_TAIL:-60}"
-rm -rf "$LOG_DIR" && mkdir -p "$LOG_DIR"
+if ! { rm -rf "$LOG_DIR" && mkdir -p "$LOG_DIR"; }; then
+  echo "cannot create lane log dir $LOG_DIR"
+  exit 1
+fi
 
 FAIL=0
 LANE_KINDS=()
 LANE_NAMES=()
 LANE_SLUGS=()
+
+# Scope note: shown even when the lane passes, so the output says what was
+# actually checked (changed files vs full tree, fallbacks, skipped parts).
+note() { echo ">> $*"; }
 
 # Run a package-local binary directly: `pnpm exec` costs ~1.5s of start-up per
 # call, and the packages pin different TypeScript majors, so the binary must be
@@ -69,12 +78,15 @@ start_lane() {
 report_lane() { # report_lane <index>
   local kind="${LANE_KINDS[$1]}" name="${LANE_NAMES[$1]}" slug="${LANE_SLUGS[$1]}"
   local rc=1 secs=0
-  read -r rc secs < "$LOG_DIR/$slug.rc" 2>/dev/null || true
+  if [ -s "$LOG_DIR/$slug.rc" ]; then
+    read -r rc secs < "$LOG_DIR/$slug.rc" || { rc=1; secs=0; }
+  fi
   echo "=== $name ==="
   if [ "$kind" = report ]; then
     cat "$LOG_DIR/$slug.log"
     echo "--- $name: REPORT (${secs}s) ---"
-  elif [ "$rc" -eq 0 ]; then
+  elif [ "$rc" -eq 0 ] 2>/dev/null; then
+    grep '^>> ' "$LOG_DIR/$slug.log" || true
     echo "--- $name: PASS (${secs}s) ---"
   else
     tail -n "$TAIL" "$LOG_DIR/$slug.log"
@@ -83,23 +95,6 @@ report_lane() { # report_lane <index>
     FAIL=1
   fi
   echo ""
-}
-
-check_relay_drift() {
-  # Generated artifacts are committed. `git status` rather than `git diff` so a
-  # brand-new artifact (an added fragment) counts as drift too.
-  bin . relay-compiler || return 1
-  local dirty
-  dirty=$(git status --porcelain -- \
-    'react/src/__generated__' \
-    'packages/backend.ai-ui/src/__generated__')
-  if [ -n "$dirty" ]; then
-    echo "$dirty"
-    echo "Relay generated artifacts are out of sync."
-    echo "Run \`pnpm relay\` and commit the changes under __generated__."
-    return 1
-  fi
-  return 0
 }
 
 # Sets CHANGED_BASE (merge-base with main) and CHANGED_FILES (paths this branch
@@ -117,20 +112,36 @@ changed_since_main() {
   return 0
 }
 
+check_relay_drift() {
+  # Relay generated artifacts are committed (see relay.dev production setup);
+  # compiling and finding __generated__ dirty means a missing `pnpm relay` run.
+  bin . relay-compiler || return 1
+  bash scripts/check-generated-drift.sh Relay "pnpm relay" \
+    react/src/__generated__ \
+    packages/backend.ai-ui/src/__generated__
+}
+
+check_search_index_drift() {
+  # The committed index is what ships — see docs/adr/0003-committed-search-index-artifact.md.
+  pnpm --prefix ./react run search-index || return 1
+  bash scripts/check-generated-drift.sh "Search index" "pnpm run search-index" \
+    react/src/generated/searchIndex.json
+}
+
 # lint_changed <package dir> <path regex>: the package's `lint:files` on the
 # changed files under it. Nothing to lint is a pass — an untouched file's
 # result cannot differ from main's, which CI linted in full.
 lint_changed() {
   local dir="$1" list
   list=$(printf '%s\n' "$CHANGED_FILES" \
-    | grep -E "^$2.*\.(js|jsx|ts|tsx|json)$" \
+    | grep -E "^$2.*\.(js|jsx|mjs|cjs|ts|tsx|json|snap)$" \
     | grep -vE '/__generated__/|\.graphql\.' \
     | sed "s#^$dir/##")
   if [ -z "$list" ]; then
-    echo "$dir: no changed files"
+    note "$dir: no changed files"
     return 0
   fi
-  echo "$dir: $(printf '%s\n' "$list" | wc -l | tr -d ' ') changed file(s)"
+  note "$dir: $(printf '%s\n' "$list" | wc -l | tr -d ' ') changed file(s)"
   printf '%s\n' "$list" | xargs pnpm --prefix "$dir" run lint:files
 }
 
@@ -142,13 +153,13 @@ check_lint() {
   # backend.ai-agent-cli stay full: their type-aware no-floating-promises rule
   # can flag a caller whose own content is unchanged.
   if ! changed_since_main; then
-    echo "(no merge-base with main — full lint)"
+    note "no merge-base with main — full lint"
     pnpm -r --stream lint:ci
     return
   fi
   if printf '%s\n' "$CHANGED_FILES" \
     | grep -qE '(^|/)(eslint\.config\.[cm]?js|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|i18n\.schema\.json)$|^packages/eslint-config-bai/'; then
-    echo "(lint config or dependencies changed — full lint)"
+    note "lint config or dependencies changed — full lint"
     pnpm -r --stream lint:ci
     return
   fi
@@ -167,17 +178,18 @@ check_format() {
   local rc=0
   pnpm run format || rc=1
   if ! changed_since_main; then
-    echo "(no merge-base with main — changed-file format check skipped)"
+    note "no merge-base with main — changed-file format check skipped"
     return $rc
   fi
   local files
   files=$(printf '%s\n' "$CHANGED_FILES" \
-    | grep -E '^(react/(src|vite-plugins)|packages/backend\.ai-ui/src|e2e)/.*\.(js|jsx|ts|tsx|json|css|scss|md)$|^resources/i18n/[^/]+\.json$' \
+    | grep -E '^(react/(src|vite-plugins)|packages/backend\.ai-ui/src|e2e)/.*\.(js|jsx|mjs|cjs|ts|tsx|json|css|scss|md)$|^resources/i18n/[^/]+\.json$' \
     | grep -vE '/__generated__/|^react/src/astryx-theme/built/')
   if [ -z "$files" ]; then
-    echo "no changed files under react/, packages/backend.ai-ui/, e2e/, resources/i18n/"
+    note "no changed files under react/, packages/backend.ai-ui/, e2e/, resources/i18n/"
     return $rc
   fi
+  note "$(printf '%s\n' "$files" | wc -l | tr -d ' ') changed file(s) checked with prettier"
   printf '%s\n' "$files" | xargs node_modules/.bin/prettier --check || rc=1
   return $rc
 }
@@ -187,7 +199,10 @@ check_format() {
 vitest_lane() {
   local dir="$1" args="--passWithNoTests"
   if changed_since_main; then
+    note "tests related to files changed since ${CHANGED_BASE:0:10}"
     args="$args --changed $CHANGED_BASE"
+  else
+    note "no merge-base with main — whole suite"
   fi
   if [ -n "${2:-}" ]; then
     # shellcheck disable=SC2086
@@ -255,8 +270,8 @@ check_stylex_injection() {
 
   local assets=react/build/assets
   if [ ! -d "$assets" ]; then
-    echo "(no production build present — config gate only; run" \
-      "\`pnpm run build:react-only\` for the full sentinel check)"
+    note "no production build present — config gate only; run" \
+      "\`pnpm run build:react-only\` for the full sentinel check"
     return 0
   fi
 
@@ -287,7 +302,7 @@ check_astryx_theme_built() {
   # The theme source imports `backend.ai-ui`, which resolves to its dist, so a
   # fresh worktree needs that package built once.
   if [ ! -f packages/backend.ai-ui/dist/backend.ai-ui.js ]; then
-    echo "backend.ai-ui dist missing — building it first (once per checkout)"
+    note "backend.ai-ui dist missing — built it first (once per checkout)"
     pnpm --filter backend.ai-ui run build > /dev/null || return 1
   fi
   bin react astryx theme build -c \
@@ -310,6 +325,22 @@ check_agent_mappings() {
   node packages/backend.ai-agent-cli/dist/cli.js doctor --mappings
 }
 
+check_help_anchors() {
+  # The header's "?" button opens a manual page#anchor from the hand-curated
+  # react/src/helper/helpAnchors.json; a renamed heading turns it into a no-op
+  # scroll with nothing failing. Resolves every target against the English
+  # manual sources (FR-3773).
+  node scripts/check-help-anchors.mjs
+}
+
+check_layer_order() {
+  # The @layer order statement decides whether the brand theme outranks
+  # Astryx's defaults, and both drift and misplacement are invisible at
+  # runtime. Same reason as the ladder gate below: index.html-only PRs run no
+  # vitest job, so the check lives here too.
+  node scripts/migration-gates/layer-order-gate.mjs
+}
+
 check_token_gate_report() {
   # Undeclared `var(--name)` produces no compiler, lint or runtime error. The
   # gate has pre-existing findings, so it is report-only here and the bar is
@@ -320,9 +351,12 @@ check_token_gate_report() {
   return 0
 }
 
+# Stage 0: the generated artifacts other lanes read.
 start_lane gate "Relay" check_relay_drift
+start_lane gate "Search index" check_search_index_drift
 wait
 report_lane 0
+report_lane 1
 
 # The coverage gate fails when a package defines `lint` without `lint:ci`,
 # because the full-lint fallback (`pnpm -r lint:ci`) silently skips it.
@@ -337,10 +371,12 @@ start_lane gate "Vite warmup paths" check_warmup_paths
 start_lane gate "StyleX cssInjectionTarget" check_stylex_injection
 start_lane gate "Astryx theme build" check_astryx_theme_built
 start_lane gate "Astryx integration (backend.ai-ui)" check_astryx_integration
+start_lane gate "Cascade-layer order" check_layer_order
 # vitest.yml's path filter never fires for an index.html-only PR, so the
 # ladder mirrors are checked here, always.
 start_lane gate "z-index ladder mirrors" node scripts/migration-gates/z-index-ladder-gate.mjs
 start_lane gate "Agent mappings" check_agent_mappings
+start_lane gate "Help anchors (user manual)" check_help_anchors
 start_lane gate "Terminology" check_terminology_drift
 # Gates the non-English avoid-row DATA, a separate axis from CHECK 1 above; the
 # hard gate is terminology-selftest.yml (FR-3051).
@@ -356,11 +392,11 @@ if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (root)" vitest_lane .
 fi
 
-echo "... ${#LANE_NAMES[@]} lanes running$([ -n "${VERIFY_SERIAL:-}" ] && echo ' serially' || echo ' in parallel'); logs in $LOG_DIR/"
+echo "... $((${#LANE_NAMES[@]} - 2)) lanes running$([ -n "${VERIFY_SERIAL:-}" ] && echo ' serially' || echo ' in parallel'); logs in $LOG_DIR/"
 echo ""
 wait
 
-i=1
+i=2
 while [ "$i" -lt "${#LANE_NAMES[@]}" ]; do
   report_lane "$i"
   i=$((i + 1))
