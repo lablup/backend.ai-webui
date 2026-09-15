@@ -1516,7 +1516,7 @@
     "Image": "Obraz",
     "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Obrazy",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "Zaimportowano obrazy: {{count}}.",
     "ImportImage": "Importuj obraz",
     "ImportImageAdded": "Zaimportowano",
     "ImportImageDesc": "Odczytuje metadane obrazu z jego rejestru i rejestruje go na tej liście. Jedno odwołanie w wierszu: pełne odwołanie do obrazu albo adres strony katalogu NGC. Aby pobrać obraz na agentów, po zaimportowaniu użyj opcji „Zainstaluj obraz”.",

@@ -1516,7 +1516,7 @@
     "Image": "Imej",
     "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Gambar",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "{{count}} Imej berjaya diimport.",
     "ImportImage": "Import Imej",
     "ImportImageAdded": "Diimport",
     "ImportImageDesc": "Membaca metadata imej daripada pendaftarannya dan mendaftarkannya dalam senarai ini. Satu rujukan setiap baris: rujukan imej penuh atau alamat halaman katalog NGC. Untuk memuat turunnya ke ejen, gunakan Pasang Imej selepas mengimport.",

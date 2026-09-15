@@ -1516,7 +1516,7 @@
     "Image": "Kuva",
     "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Kuvat",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "Kuvia tuotu onnistuneesti: {{count}}.",
     "ImportImage": "Tuo kuva",
     "ImportImageAdded": "Tuotu",
     "ImportImageDesc": "Lukee kuvan metatiedot sen rekisteristä ja rekisteröi kuvan tähän luetteloon. Yksi viittaus riviä kohden: täydellinen kuvaviittaus tai NGC-katalogisivun osoite. Lataa kuva agenteille tuonnin jälkeen toiminnolla Asenna kuva.",

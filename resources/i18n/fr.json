@@ -1516,7 +1516,7 @@
     "Image": "Image",
     "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Images",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "{{count}} image(s) importée(s) avec succès.",
     "ImportImage": "Importer une image",
     "ImportImageAdded": "Importée",
     "ImportImageDesc": "Lit les métadonnées de l'image depuis son registre et l'enregistre dans cette liste. Une référence par ligne : une référence d'image complète ou l'adresse d'une page du catalogue NGC. Pour la télécharger sur les agents, utilisez « Installer l'image » après l'import.",
