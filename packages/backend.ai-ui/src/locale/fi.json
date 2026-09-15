@@ -245,6 +245,10 @@
       "Title": "Backend.AI-kirjautuminen ei onnistunut"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Ytimien käynnistyksen edistyminen",
+    "KernelTerminationProgress": "Ytimien lopetuksen edistyminen"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Klusterin koko",
     "Concurrency": "Samanaikaiset istunnot",

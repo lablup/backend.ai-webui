@@ -245,6 +245,10 @@
       "Title": "Could not sign in with Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Kernel startup progress",
+    "KernelTerminationProgress": "Kernel termination progress"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Cluster Size",
     "Concurrency": "Concurrent Sessions",
