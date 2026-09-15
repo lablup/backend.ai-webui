@@ -48,7 +48,8 @@ const SessionLauncherStorageStep: React.FC<{
 
   return (
     <>
-      <Form.Item name="vfolderMounts" rules={[mountConfigRule]}>
+      {/* The rule still blocks submit; each row already shows its own error. */}
+      <Form.Item name="vfolderMounts" rules={[mountConfigRule]} noStyle>
         <BAIVFolderMountConfigInput
           ref={mountConfigInputRef}
           currentProjectId={project.id}
