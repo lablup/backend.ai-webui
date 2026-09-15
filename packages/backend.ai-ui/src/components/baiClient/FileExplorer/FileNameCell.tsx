@@ -10,6 +10,7 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import EditableFileName from './EditableFileName';
+import { useDownloadErrorMessage } from './hooks';
 import { Trash2, DownloadIcon, EditIcon } from 'lucide-react';
 import { use } from 'react';
 
@@ -48,19 +49,24 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
   const { message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
+  const getDownloadErrorMessage = useDownloadErrorMessage();
 
   const downloadFileMutation = useTanMutation({
     mutationFn: async ({
+      filePath,
       fileName,
       currentFolder,
       archive = false,
     }: {
+      // Path inside the vfolder, which the token request needs; `fileName` is
+      // the bare name the user sees in the toast and the saved file.
+      filePath: string;
       fileName: string;
       currentFolder: string;
       archive?: boolean;
     }): Promise<{ success: boolean; fileName: string }> => {
       const tokenResponse = await baiClient.vfolder.request_download_token(
-        fileName,
+        filePath,
         currentFolder,
         archive,
       );
@@ -76,11 +82,10 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
     onSuccess: ({ fileName }) => {
       message.success(t('comp:FileExplorer.DownloadStarted', { fileName }));
     },
-    onError: (err: any) => {
-      if (err && err.message) {
-        message.error(err.message);
-      } else if (err && err.title) {
-        message.error(err.title);
+    onError: (err: unknown) => {
+      const text = getDownloadErrorMessage(err);
+      if (text) {
+        message.error(text);
       }
     },
   });
@@ -96,7 +101,8 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
       disabled: !enableDownload,
       action: async () => {
         await downloadFileMutation.mutateAsync({
-          fileName: `${currentPath}/${selectedItem.name}`,
+          filePath: `${currentPath}/${selectedItem.name}`,
+          fileName: selectedItem.name,
           currentFolder: targetVFolderId,
           archive: isDirectory,
         });
