@@ -13,14 +13,15 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment } from 'relay-test-utils';
 
 /**
- * Behavioural tests for the Copilot review round of FR-3940: the registry list
- * is paged to exhaustion, a bodiless 500 is recognised through the empty Blob
- * `client.ts` stores, a partially successful batch locks what succeeded, and
- * the closing toast counts the whole batch — retries included.
+ * Behavioural tests for FR-3940: the registry list is paged to exhaustion, a
+ * partially successful batch locks what succeeded, the closing toast counts the
+ * whole batch — retries included — and, from the hang report, every failure
+ * clears the loading flag and reaches the row with a readable message.
  */
 
 const mockScanRequest = vi.fn();
 const mockMessageSuccess = vi.fn();
+const mockMessageError = vi.fn();
 
 vi.mock('react-i18next', async () => {
   const React = await import('react');
@@ -58,12 +59,22 @@ vi.mock('../hooks', async (importOriginal) => {
   };
 });
 
+// Identity by default; one test flips the switch to run the real hook, which
+// is the one that throws on a missing `globalThis.backendaiwebui` (FR-3953).
+let isPainKillerStubbed = true;
+
 vi.mock('../hooks/usePainKiller', async (importOriginal) => {
   const originalModule =
     await importOriginal<typeof import('../hooks/usePainKiller')>();
   return {
     ...originalModule,
-    usePainKiller: () => ({ relieve: (title: string) => title }),
+    usePainKiller: () => {
+      const original = originalModule.usePainKiller();
+      return {
+        relieve: (title: string) =>
+          isPainKillerStubbed ? title : original.relieve(title),
+      };
+    },
   };
 });
 
@@ -75,7 +86,7 @@ vi.mock('../app-shim', async (importOriginal) => {
       useApp: () => ({
         message: {
           success: mockMessageSuccess,
-          error: vi.fn(),
+          error: mockMessageError,
           info: vi.fn(),
           warning: vi.fn(),
           loading: vi.fn(),
@@ -216,6 +227,9 @@ describe('ImportImageModal (FR-3940 review round)', () => {
   beforeEach(() => {
     mockScanRequest.mockReset();
     mockMessageSuccess.mockReset();
+    mockMessageError.mockReset();
+    isPainKillerStubbed = true;
+    (globalThis as any).backendaiwebui = { debug: false };
   });
 
   it('matches against registries from every page of the connection', async () => {
@@ -393,8 +407,124 @@ describe('ImportImageModal (FR-3940 review round)', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText('environment.ImportImageTagNotFoundInRegistry'),
+        screen.getByText('environment.ImportImageScanFailedOnServer'),
       ).toBeInTheDocument(),
     );
+  });
+
+  it('reports a 500 that carries a text body — the reported case', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockRejectedValue({
+      isError: true,
+      statusCode: 500,
+      statusText: 'Internal Server Error',
+      // aiohttp answers `text/plain`, which `client.ts` reads with
+      // `resp.text()` — so `response` is a non-empty string, not a Blob.
+      response: '500 Internal Server Error\n\nServer got itself in trouble',
+      title: '500 Internal Server Error - undefined',
+      message:
+        'server responded failure: 500 Internal Server Error - undefined',
+    });
+    renderModal();
+    await typeReferences(PYTHON);
+
+    await user.click(importButton());
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('environment.ImportImageScanFailedOnServer'),
+      ).toBeInTheDocument(),
+    );
+    expect(retryButton()).not.toHaveAttribute('aria-busy');
+    expect(cancelButton()).toBeEnabled();
+  });
+
+  it('reports the client-side timeout as a scan that may still be running', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockRejectedValue({
+      isError: true,
+      statusCode: 408,
+      statusText: 'Timeout exceeded',
+      title: 'Request timeout',
+      message: 'No response returned within timeout',
+    });
+    renderModal();
+    await typeReferences(PYTHON);
+
+    await user.click(importButton());
+
+    await waitFor(() =>
+      expect(
+        screen.getByText('environment.ImportImageScanTimedOut'),
+      ).toBeInTheDocument(),
+    );
+    expect(retryButton()).not.toHaveAttribute('aria-busy');
+  });
+
+  it('clears the loading flag even when the error description itself throws', async () => {
+    const user = userEvent.setup();
+    // The real `relieve` reads `globalThis.backendaiwebui.debug`; without the
+    // global it throws from inside the `catch`, which used to escape
+    // `handleAdd` and strand the button loading forever (FR-3953).
+    isPainKillerStubbed = false;
+    delete (globalThis as any).backendaiwebui;
+    // A 400 is the one status no branch classifies, so painKiller runs.
+    mockScanRequest.mockRejectedValue({
+      statusCode: 400,
+      title: 'bad request',
+    });
+    const { onRequestClose } = renderModal();
+    await typeReferences(PYTHON);
+
+    await user.click(importButton());
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageFailed/),
+      ).toBeInTheDocument(),
+    );
+    expect(retryButton()).not.toHaveAttribute('aria-busy');
+    expect(retryButton()).toBeEnabled();
+    expect(cancelButton()).toBeEnabled();
+    // The row still carries a message rather than staying silent.
+    expect(screen.getByText('bad request')).toBeInTheDocument();
+    expect(onRequestClose).not.toHaveBeenCalled();
+  });
+
+  it('marks the line in flight and the rest queued, and clears both once they settle', async () => {
+    const user = userEvent.setup();
+    let resolveFirstScan: (value: unknown) => void = () => {};
+    mockScanRequest
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveFirstScan = resolve;
+          }),
+      )
+      .mockResolvedValue(scanOk());
+    const { onRequestClose } = renderModal();
+    await typeReferences(`${PYTHON}\n${PYTORCH}`);
+
+    await user.click(importButton());
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageScanning/),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByText(/environment\.ImportImageQueued/),
+    ).toBeInTheDocument();
+    expect(importButton()).toHaveAttribute('aria-busy', 'true');
+
+    resolveFirstScan(scanOk());
+
+    await waitFor(() => expect(onRequestClose).toHaveBeenCalled());
+    expect(
+      screen.queryByText(/environment\.ImportImageScanning/),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/environment\.ImportImageQueued/),
+    ).not.toBeInTheDocument();
   });
 });

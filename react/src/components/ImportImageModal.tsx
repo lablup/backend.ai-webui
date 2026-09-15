@@ -65,7 +65,17 @@ interface ScanImageResponse {
   errors: Array<string>;
 }
 
-type LineOutcome = { status: 'success' | 'error'; message?: string };
+type LineOutcome = {
+  status: 'queued' | 'pending' | 'success' | 'error';
+  message?: string;
+};
+
+/** One dot language for every row; the word carries what colour cannot. */
+type LineStatus = {
+  variant: React.ComponentProps<typeof StatusDot>['variant'];
+  label: string;
+  isPulsing?: boolean;
+};
 
 const registriesQuery = graphql`
   query ImportImageModalRegistriesQuery($first: Int, $after: String) {
@@ -130,20 +140,6 @@ const fetchAllRegistries = async (
     after = connection.pageInfo.endCursor;
   }
   return nodes;
-};
-
-/**
- * `client.ts` stores an empty `Blob` in `response` when the manager answers
- * without a body, so `!error.response` is never true for a bodiless failure.
- */
-export const isEmptyResponse = (error: any) => {
-  const response = error?.response;
-  if (response === null || response === undefined) return true;
-  if (typeof response === 'string') return response.length === 0;
-  if (typeof Blob !== 'undefined' && response instanceof Blob) {
-    return response.size === 0;
-  }
-  return false;
 };
 
 export interface ImportImageModalProps extends Omit<BAIModalProps, 'onOk'> {
@@ -303,92 +299,127 @@ const ImportImageModalContent: React.FC<{
     return resolved.reason ? reasons[resolved.reason] : null;
   };
 
-  // A 404 `image_read_not-found` is today's behaviour for a canonical the
-  // manager's DB does not already carry (lablup/backend.ai#14612), and a bodiless
-  // 500 is how a missing manifest surfaces until the same ticket lands.
+  // Called from a `catch`, so it must never throw and must always return
+  // something the reader can act on. A 404 `image_read_not-found` is today's
+  // behaviour for a canonical the manager's DB does not already carry, and a
+  // 5xx is how a missing tag or manifest surfaces (lablup/backend.ai#14612).
   const describeError = (error: any) => {
-    if (
-      error?.statusCode === 404 &&
-      error?.error_code === 'image_read_not-found'
-    ) {
+    const statusCode = error?.statusCode;
+    if (statusCode === 404 && error?.error_code === 'image_read_not-found') {
       return t('environment.ImportImageManagerCannotRegisterNewImages');
     }
-    if (error?.statusCode === 500 && isEmptyResponse(error)) {
-      return t('environment.ImportImageTagNotFoundInRegistry');
-    }
-    if (error?.statusCode === 403) {
+    if (statusCode === 403) {
       return t('environment.ImportImageRequiresSuperadmin');
     }
-    return painKiller.relieve(error?.title) || error?.message || String(error);
+    // `client.ts` stamps 408 on both its own 30s deadline and a user abort;
+    // the manager keeps scanning either way, so a retry is safe.
+    if (statusCode === 408) {
+      return t('environment.ImportImageScanTimedOut');
+    }
+    if (_.isNumber(statusCode) && statusCode >= 500 && statusCode <= 599) {
+      return t('environment.ImportImageScanFailedOnServer');
+    }
+    const title = _.isString(error?.title) ? error.title : undefined;
+    let relieved: string | undefined;
+    try {
+      // `usePainKiller().relieve` reads `globalThis.backendaiwebui.debug`
+      // unguarded and throws when config.toml never loaded; guarded here
+      // rather than in the hook, which every error path shares (FR-3953).
+      relieved = title ? painKiller.relieve(title) : undefined;
+    } catch {
+      relieved = undefined;
+    }
+    return (
+      relieved ||
+      title ||
+      (error?.isError ? error?.message : undefined) ||
+      t('error.UnexpectedError')
+    );
   };
 
+  // The `finally` is the whole point: anything that throws past the per-line
+  // `catch` — `describeError`, `onAdded`, a toast — would otherwise leave the
+  // button loading and the modal undismissable forever (FR-3940).
   const handleAdd = async () => {
     onSubmittingChange(true);
-    setOutcomes({});
-    const runOutcomes: Record<string, LineOutcome> = {};
-    const addedInThisRun: Array<string> = [];
-    const remainingRawLines: Array<string> = [];
+    try {
+      const runOutcomes: Record<string, LineOutcome> = {};
+      const addedInThisRun: Array<string> = [];
+      const remainingRawLines: Array<string> = [];
 
-    for (const { raw, resolved } of lines) {
-      const canonical = resolved.canonical;
-      if (!resolved.submittable || !canonical) {
-        remainingRawLines.push(raw);
-        continue;
-      }
-      let failure: string | null = null;
-      try {
-        const response = await scanImage.mutateAsync({
-          canonical,
-          architecture,
-        });
-        // A 200 only says the rescan ran; a per-image failure comes back in
-        // `errors`, and such an image was not registered.
-        const errors = _.compact(response?.errors);
-        if (errors.length > 0) {
-          failure = errors.join('\n');
+      // The whole batch is marked before the first request, so a reader can
+      // see what is still coming during a scan that takes tens of seconds.
+      for (const { resolved } of lines) {
+        if (resolved.submittable && resolved.canonical) {
+          runOutcomes[resolved.canonical] = { status: 'queued' };
         }
-      } catch (error) {
-        failure = describeError(error);
-      }
-      if (failure === null) {
-        runOutcomes[canonical] = { status: 'success' };
-        addedInThisRun.push(canonical);
-      } else {
-        runOutcomes[canonical] = { status: 'error', message: failure };
-        remainingRawLines.push(raw);
       }
       setOutcomes({ ...runOutcomes });
-    }
-    onSubmittingChange(false);
 
-    // Succeeded lines are locked: out of the editable text and into the list
-    // below, with the architecture frozen because it applies to the whole
-    // batch. A retry therefore submits only what is left.
-    const cumulative = [...addedCanonicals, ...addedInThisRun];
-    setAddedCanonicals(cumulative);
-    setText(remainingRawLines.join('\n'));
-    setOutcomes(_.pickBy(runOutcomes, (outcome) => outcome.status === 'error'));
+      for (const { raw, resolved } of lines) {
+        const canonical = resolved.canonical;
+        if (!resolved.submittable || !canonical) {
+          remainingRawLines.push(raw);
+          continue;
+        }
+        runOutcomes[canonical] = { status: 'pending' };
+        setOutcomes({ ...runOutcomes });
+        let failure: string | null = null;
+        try {
+          const response = await scanImage.mutateAsync({
+            canonical,
+            architecture,
+          });
+          // A 200 only says the rescan ran; a per-image failure comes back in
+          // `errors`, and such an image was not registered.
+          const errors = _.compact(response?.errors);
+          if (errors.length > 0) {
+            failure = errors.join('\n');
+          }
+        } catch (error) {
+          failure = describeError(error);
+        }
+        if (failure === null) {
+          runOutcomes[canonical] = { status: 'success' };
+          addedInThisRun.push(canonical);
+        } else {
+          runOutcomes[canonical] = { status: 'error', message: failure };
+          remainingRawLines.push(raw);
+        }
+        setOutcomes({ ...runOutcomes });
+      }
 
-    if (addedInThisRun.length > 0) {
-      onAdded?.(addedInThisRun);
-    }
-    if (!_.some(remainingRawLines, (raw) => raw.trim().length > 0)) {
-      message.success({
-        key: 'images-added',
-        content: t('environment.ImagesSuccessfullyAdded', {
-          count: cumulative.length,
-        }),
-      });
-      onRequestClose();
+      // Succeeded lines are locked: out of the editable text and into the list
+      // below, with the architecture frozen because it applies to the whole
+      // batch. A retry therefore submits only what is left.
+      const cumulative = [...addedCanonicals, ...addedInThisRun];
+      setAddedCanonicals(cumulative);
+      setText(remainingRawLines.join('\n'));
+      setOutcomes(
+        _.pickBy(runOutcomes, (outcome) => outcome.status === 'error'),
+      );
+
+      if (addedInThisRun.length > 0) {
+        onAdded?.(addedInThisRun);
+      }
+      if (!_.some(remainingRawLines, (raw) => raw.trim().length > 0)) {
+        message.success({
+          key: 'images-added',
+          content: t('environment.ImagesSuccessfullyAdded', {
+            count: cumulative.length,
+          }),
+        });
+        onRequestClose();
+      }
+    } finally {
+      onSubmittingChange(false);
     }
   };
 
-  // One dot language for both halves of the list. The status word rides in
-  // the description so colour is never the only carrier.
   const describeStatus = (
     outcome: LineOutcome | undefined,
     submittable: boolean,
-  ) => {
+  ): LineStatus => {
     if (outcome?.status === 'success') {
       return {
         variant: 'success' as const,
@@ -401,6 +432,19 @@ const ImportImageModalContent: React.FC<{
         label: t('environment.ImportImageFailed'),
       };
     }
+    if (outcome?.status === 'pending') {
+      return {
+        variant: 'accent' as const,
+        label: t('environment.ImportImageScanning'),
+        isPulsing: true,
+      };
+    }
+    if (outcome?.status === 'queued') {
+      return {
+        variant: 'neutral' as const,
+        label: t('environment.ImportImageQueued'),
+      };
+    }
     return submittable
       ? { variant: 'accent' as const, label: t('environment.ImportImageReady') }
       : {
@@ -409,9 +453,13 @@ const ImportImageModalContent: React.FC<{
         };
   };
 
-  const renderMarker = (status: ReturnType<typeof describeStatus>) => (
+  const renderMarker = (status: LineStatus) => (
     <Center isInline xstyle={styles.marker}>
-      <StatusDot variant={status.variant} label={status.label} />
+      <StatusDot
+        variant={status.variant}
+        label={status.label}
+        isPulsing={status.isPulsing}
+      />
     </Center>
   );
 
@@ -565,7 +613,15 @@ const ImportImageModalContent: React.FC<{
               : t('environment.ImportImage')
           }
           onClick={() => {
-            void handleAdd();
+            // `handleAdd` describes every per-line failure itself, so a
+            // rejection here is the loop breaking; a bare `void` would swallow
+            // it and the user would be left with no word at all.
+            handleAdd().catch((error) => {
+              message.error({
+                key: 'import-image-failed',
+                content: describeError(error),
+              });
+            });
           }}
         />
       </BAIFlex>
