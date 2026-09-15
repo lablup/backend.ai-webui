@@ -12,7 +12,7 @@
   "scripts": {
     "lint": "eslint src --quiet; exit 0",
     "lint-fix": "eslint src --quiet --fix; exit 0",
-    "format": "prettier --check 'src/**/*.{js, ts}'",
+    "format": "prettier --check 'src/**/*.{js,ts}'",
     "format-fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:all": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}' 'react/src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
     "format-fix:i18n": "prettier --write 'resources/i18n/*.json'",
