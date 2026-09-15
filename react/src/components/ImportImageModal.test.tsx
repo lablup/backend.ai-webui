@@ -226,7 +226,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText('environment.ImportImageReady'),
+        screen.getByText(/environment\.ImportImageReady/),
       ).toBeInTheDocument(),
     );
     expect(
@@ -267,13 +267,13 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     await user.click(importButton());
 
     await waitFor(() =>
-      expect(screen.getByTestId('import-image-added-list')).toBeInTheDocument(),
+      expect(screen.getByTestId('import-image-added-row')).toBeInTheDocument(),
     );
     expect(onRequestClose).not.toHaveBeenCalled();
     expect(mockMessageSuccess).not.toHaveBeenCalled();
 
-    // The succeeded canonical moved into the read-only list…
-    expect(screen.getByTestId('import-image-added-list')).toHaveTextContent(
+    // The succeeded canonical moved into the read-only row…
+    expect(screen.getByTestId('import-image-added-row')).toHaveTextContent(
       PYTHON,
     );
     // …and out of the editable text, which keeps only the failure.
@@ -297,7 +297,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
 
     await user.click(importButton());
     await waitFor(() =>
-      expect(screen.getByTestId('import-image-added-list')).toBeInTheDocument(),
+      expect(screen.getByTestId('import-image-added-row')).toBeInTheDocument(),
     );
 
     mockScanRequest.mockResolvedValue(scanOk());
@@ -327,7 +327,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText('environment.ImportImageFailed'),
+        screen.getByText(/environment\.ImportImageFailed/),
       ).toBeInTheDocument(),
     );
     expect(onRequestClose).not.toHaveBeenCalled();
@@ -336,7 +336,7 @@ describe('ImportImageModal (FR-3940 review round)', () => {
       screen.getByText('manifest unknown rescan aborted'),
     ).toBeInTheDocument();
     expect(
-      screen.queryByTestId('import-image-added-list'),
+      screen.queryByTestId('import-image-added-row'),
     ).not.toBeInTheDocument();
   });
 

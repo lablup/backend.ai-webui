@@ -17,13 +17,21 @@ import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import './ImportImageModal.css';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
+import { Center } from '@astryxdesign/core/Center';
+import { Link } from '@astryxdesign/core/Link';
+import { List, ListItem } from '@astryxdesign/core/List';
+import { HStack } from '@astryxdesign/core/Stack';
+import { StatusDot } from '@astryxdesign/core/StatusDot';
 import { Text } from '@astryxdesign/core/Text';
 import { TextArea } from '@astryxdesign/core/TextArea';
 import {
+  borderVars,
+  typeScaleVars,
+} from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
+import {
   BAIFlex,
-  BAILink,
   BAIModal,
   BAIModalProps,
   BAISelect,
@@ -154,6 +162,28 @@ const ngcTagsUrl = (remotePath: string | null) => {
   const name = rest.pop();
   return `https://catalog.ngc.nvidia.com/orgs/${org}/${rest[0] ?? '-'}/containers/${name}/-/tags`;
 };
+
+const styles = stylex.create({
+  row: {
+    // Astryx ListItem's :last-child divider suppression is a shorthand that
+    // loses to its own longhands in StyleX -- re-suppress it here (FR-3893).
+    alignItems: 'flex-start',
+    borderBlockEndWidth: {
+      default: borderVars['--border-width'],
+      ':last-child': 0,
+    },
+  },
+  // Centres the 8px dot on the label's first line, however far the
+  // description below it wraps.
+  marker: {
+    minHeight: `calc(${typeScaleVars['--text-body-size']} * ${typeScaleVars['--text-body-leading']})`,
+  },
+  // A canonical has no break opportunity of its own, so without this it
+  // overruns the row and collides with the end-aligned actions.
+  canonical: {
+    overflowWrap: 'anywhere',
+  },
+});
 
 const ImportImageModalContent: React.FC<{
   onRequestClose: () => void;
@@ -354,6 +384,40 @@ const ImportImageModalContent: React.FC<{
     }
   };
 
+  // One dot language for both halves of the list. The status word rides in
+  // the description so colour is never the only carrier.
+  const describeStatus = (
+    outcome: LineOutcome | undefined,
+    submittable: boolean,
+  ) => {
+    if (outcome?.status === 'success') {
+      return {
+        variant: 'success' as const,
+        label: t('environment.ImportImageAdded'),
+      };
+    }
+    if (outcome?.status === 'error') {
+      return {
+        variant: 'error' as const,
+        label: t('environment.ImportImageFailed'),
+      };
+    }
+    return submittable
+      ? { variant: 'accent' as const, label: t('environment.ImportImageReady') }
+      : {
+          variant: 'warning' as const,
+          label: t('environment.ImportImageNeedsAttention'),
+        };
+  };
+
+  const renderMarker = (status: ReturnType<typeof describeStatus>) => (
+    <Center isInline xstyle={styles.marker}>
+      <StatusDot variant={status.variant} label={status.label} />
+    </Center>
+  );
+
+  const importedStatus = describeStatus({ status: 'success' }, true);
+
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <TextArea
@@ -374,116 +438,113 @@ const ImportImageModalContent: React.FC<{
         onChange={(value) => setArchitecture(value)}
         options={ARCHITECTURES.map((value) => ({ label: value, value }))}
       />
-      {addedCanonicals.length > 0 ? (
-        <BAIFlex
-          data-testid="import-image-added-list"
-          direction="column"
-          align="stretch"
-          gap="xxs"
-        >
-          <Text type="supporting">{t('environment.ImportImageAdded')}</Text>
+      {addedCanonicals.length > 0 || previewLines.length > 0 ? (
+        // Imported lines and pending ones share one row idiom and one scroll
+        // box, so a line stays in the single place the reader already looked.
+        <List className="import-image-preview" density="compact" hasDividers>
           {addedCanonicals.map((canonical) => (
-            <BAIFlex key={canonical} gap="xs" align="center" wrap="wrap">
-              <Badge
-                variant="success"
-                label={t('environment.ImportImageAdded')}
-              />
-              <Text type="code">{canonical}</Text>
-            </BAIFlex>
+            <ListItem
+              key={`added-${canonical}`}
+              data-testid="import-image-added-row"
+              xstyle={styles.row}
+              startContent={renderMarker(importedStatus)}
+              label={
+                <Text type="code" hasStrikethrough xstyle={styles.canonical}>
+                  {canonical}
+                </Text>
+              }
+              description={
+                <Text type="supporting">{importedStatus.label}</Text>
+              }
+            />
           ))}
-        </BAIFlex>
-      ) : null}
-      {previewLines.length > 0 ? (
-        <BAIFlex
-          className="import-image-preview"
-          direction="column"
-          align="stretch"
-          gap="sm"
-        >
           {previewLines.map(({ key, raw, resolved }) => {
             const outcome = resolved.canonical
               ? outcomes[resolved.canonical]
               : undefined;
-            const reasonText = describeReason(resolved);
+            const status = describeStatus(outcome, resolved.submittable);
+            const metaText = resolved.imageName
+              ? [
+                  resolved.project ?? t('environment.ImportImageNoProject'),
+                  resolved.imageName,
+                  resolved.tag || t('environment.ImportImageNoTag'),
+                ].join(' · ')
+              : null;
+            // The server's word is the newer fact, so it displaces the
+            // client-side reason rather than stacking under it.
+            const detailText = outcome?.message ?? describeReason(resolved);
             const tagsUrl =
               resolved.reason === 'tag_required' && resolved.kind === 'ngc-url'
                 ? ngcTagsUrl(resolved.remotePath)
                 : null;
+            const unregisteredHost =
+              resolved.reason === 'registry_not_registered'
+                ? resolved.registryHost
+                : null;
             return (
-              <BAIFlex key={key} direction="column" align="start" gap="xxs">
-                <BAIFlex gap="xs" align="center" wrap="wrap">
-                  <Badge
-                    variant={
-                      outcome?.status === 'success'
-                        ? 'success'
-                        : outcome?.status === 'error'
-                          ? 'error'
-                          : resolved.submittable
-                            ? 'info'
-                            : 'warning'
-                    }
-                    label={
-                      outcome?.status === 'success'
-                        ? t('environment.ImportImageAdded')
-                        : outcome?.status === 'error'
-                          ? t('environment.ImportImageFailed')
-                          : resolved.submittable
-                            ? t('environment.ImportImageReady')
-                            : t('environment.ImportImageNeedsAttention')
-                    }
-                  />
+              <ListItem
+                key={key}
+                xstyle={styles.row}
+                startContent={renderMarker(status)}
+                label={
                   <Text
                     type="code"
                     hasStrikethrough={outcome?.status === 'success'}
+                    xstyle={styles.canonical}
                   >
                     {resolved.canonical ?? raw.trim()}
                   </Text>
-                </BAIFlex>
-                {resolved.imageName ? (
+                }
+                description={
                   <Text type="supporting">
-                    {[
-                      resolved.project ?? t('environment.ImportImageNoProject'),
-                      resolved.imageName,
-                      resolved.tag || t('environment.ImportImageNoTag'),
-                    ].join(' · ')}
+                    {status.label}
+                    {metaText ? ` · ${metaText}` : null}
+                    {detailText ? (
+                      <>
+                        {' · '}
+                        <Text type="supporting" color="primary">
+                          {detailText}
+                        </Text>
+                      </>
+                    ) : null}
                   </Text>
-                ) : null}
-                {reasonText ? (
-                  <Text type="supporting" color="primary">
-                    {reasonText}
-                  </Text>
-                ) : null}
-                {outcome?.message ? (
-                  <Text type="supporting" color="primary">
-                    {outcome.message}
-                  </Text>
-                ) : null}
-                {tagsUrl ? (
-                  <BAILink to={tagsUrl} target="_blank">
-                    {t('environment.ImportImageOpenCatalogTags')}
-                  </BAILink>
-                ) : null}
-                {resolved.reason === 'registry_not_registered' &&
-                resolved.registryHost ? (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    icon={<PlusIcon size="1em" />}
-                    label={t('registry.AddRegistry')}
-                    onClick={() =>
-                      setPrefilledRegistry(
-                        prefillForHost(
-                          resolved.registryHost as string,
-                          resolved.remotePath?.split('/')[0],
-                        ),
-                      )
-                    }
-                  />
-                ) : null}
-              </BAIFlex>
+                }
+                endContent={
+                  tagsUrl || unregisteredHost ? (
+                    <HStack gap={2} align="center">
+                      {tagsUrl ? (
+                        <Link
+                          href={tagsUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          size="sm"
+                        >
+                          {t('environment.ImportImageOpenCatalogTags')}
+                        </Link>
+                      ) : null}
+                      {unregisteredHost ? (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          icon={<PlusIcon size="1em" />}
+                          label={t('registry.AddRegistry')}
+                          onClick={() =>
+                            setPrefilledRegistry(
+                              prefillForHost(
+                                unregisteredHost,
+                                resolved.remotePath?.split('/')[0],
+                              ),
+                            )
+                          }
+                        />
+                      ) : null}
+                    </HStack>
+                  ) : null
+                }
+              />
             );
           })}
-        </BAIFlex>
+        </List>
       ) : null}
       <BAIFlex justify="end" gap="xs">
         <Button
