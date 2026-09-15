@@ -1,0 +1,596 @@
+#!/usr/bin/env node
+/**
+ * Mint a PR's walkthrough stops headless, then verify they resolve.
+ *
+ * Reads the stop manifest the implementing session wrote and the dev server's
+ * boot record, logs in with the box's e2e admin account, replays each stop's
+ * `via`, mints the `#bai=v3` anchor with the overlay's OWN in-page modules
+ * (`/__review/{anchor,codec,id,stop-guard}.js`), builds the set link and opens
+ * it in a fresh page to check every stop really lands on its element.
+ *
+ *   mint.mjs --manifest <path> [--app <name>] [--endpoint <url>] [--sha <sha>]
+ *            [--pr <n>] [--env-file <path>] [--report <path>] [--settle <ms>]
+ *            [--dry-run]
+ *
+ * Exit: 0 a set link · 2 usage / bad manifest · 3 preflight (no walkthrough).
+ */
+import { parseManifest, projectBasePath, stopLabel } from './manifest.mjs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, resolve } from 'node:path';
+import process from 'node:process';
+import { fileURLToPath } from 'node:url';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = resolve(HERE, '../../../..');
+const STATE_DIR =
+  process.env.BAI_DEV_SERVER_STATE_DIR ??
+  resolve(homedir(), '.local/state/fw/dev-servers');
+/** The overlay's ladder retries while the SPA renders; 12 s is its whole budget. */
+const RESOLVE_TIMEOUT_MS = 12_000;
+/** How long a lazy route gets to render the element a stop names. */
+const FIND_TIMEOUT_MS = 20_000;
+
+const fail = (code, message) => {
+  process.stderr.write(`walkthrough: ${message}\n`);
+  process.exit(code);
+};
+
+// ---------------------------------------------------------------------------
+// inputs
+// ---------------------------------------------------------------------------
+
+function parseArgs(argv) {
+  const flags = {
+    manifest: '',
+    app: '',
+    endpoint: '',
+    sha: '',
+    pr: '',
+    envFile: '',
+    report: '',
+    settle: '',
+    dryRun: false,
+  };
+  const names = {
+    '--manifest': 'manifest',
+    '--app': 'app',
+    '--endpoint': 'endpoint',
+    '--sha': 'sha',
+    '--pr': 'pr',
+    '--env-file': 'envFile',
+    '--report': 'report',
+    '--settle': 'settle',
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i];
+    if (arg === '--dry-run') {
+      flags.dryRun = true;
+      continue;
+    }
+    const name = names[arg];
+    if (!name) fail(2, `unknown argument '${arg}'`);
+    const value = argv[i + 1];
+    if (value === undefined) fail(2, `${arg} needs a value`);
+    flags[name] = value;
+    i += 1;
+  }
+  if (!flags.manifest) fail(2, '--manifest <path> is required');
+  return flags;
+}
+
+const git = (...args) => {
+  try {
+    return execFileSync('git', args, {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+    }).trim();
+  } catch {
+    return '';
+  }
+};
+
+/** `KEY=value` lines, quotes stripped — the `.env.playwright` dialect. */
+function readEnvFile(file) {
+  const out = {};
+  for (const line of readFileSync(file, 'utf8').split('\n')) {
+    const match = /^\s*([A-Z0-9_]+)\s*=\s*(.*)$/.exec(line);
+    if (match) out[match[1]] = match[2].trim().replace(/^["']|["']$/g, '');
+  }
+  return out;
+}
+
+/**
+ * The endpoint the dev server was booted with. Read from the running process,
+ * never from the boot record — the record is as public as the PR comment.
+ */
+function endpointFromProcess(pid) {
+  if (!pid) return '';
+  try {
+    const environ = readFileSync(`/proc/${pid}/environ`, 'utf8').split('\0');
+    for (const entry of environ) {
+      if (entry.startsWith('VITE_DEFAULT_API_ENDPOINT='))
+        return entry.slice('VITE_DEFAULT_API_ENDPOINT='.length);
+    }
+  } catch {
+    // Another user's process, or a server that outlived its /proc entry.
+  }
+  return '';
+}
+
+async function resolveApp(flags) {
+  if (flags.app) return flags.app;
+  const branch = git('branch', '--show-current');
+  let pr = null;
+  try {
+    pr = JSON.parse(
+      execFileSync('gh', ['pr', 'view', branch, '--json', 'number,title'], {
+        encoding: 'utf8',
+        timeout: 8000,
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }),
+    );
+  } catch {
+    // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
+  }
+  const mod = await import(resolve(REPO_ROOT, 'scripts/portless-app-name.mjs'));
+  const name = mod.resolveAppName({
+    envName: process.env.PORTLESS_APP_NAME,
+    branch,
+    pr,
+    exact: !!(process.env.PORTLESS_APP_NAME_EXACT ?? '').trim(),
+  });
+  if (!name) fail(3, `no app name for branch '${branch}' — pass --app <name>`);
+  return name;
+}
+
+function readBootRecord(app) {
+  const file = resolve(STATE_DIR, `${app}.json`);
+  if (!existsSync(file))
+    fail(3, `no boot record at ${file} — is the dev server advertised?`);
+  try {
+    return { file, record: JSON.parse(readFileSync(file, 'utf8')) };
+  } catch (error) {
+    return fail(3, `${file} is not readable JSON (${error.message})`);
+  }
+}
+
+function prFromRecord(record) {
+  const served = Array.isArray(record.served) ? record.served : [];
+  const mine = served.find((entry) => entry.branch === record.branch);
+  return (mine ?? served[served.length - 1])?.pr ?? null;
+}
+
+/** A Portless route answers a 2xx AND `X-Portless: 1`; the header alone is a 404. */
+async function probePortless(url) {
+  try {
+    const response = await fetch(url, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(10_000),
+    });
+    return response.status < 300 && response.headers.get('x-portless') === '1';
+  } catch {
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// in-page helpers (serialized into the browser)
+// ---------------------------------------------------------------------------
+
+/** Find a stop's element by testid, or by exact visible text on a control. */
+const FIND_JS = `(f) => {
+  const visible = (el) => !!el && el.getBoundingClientRect().width > 0;
+  if (f.testid) {
+    const byTid = [...document.querySelectorAll('[data-testid="' + f.testid + '"]')];
+    return byTid.find(visible) ?? byTid[0] ?? null;
+  }
+  if (f.text) {
+    const controls = document.querySelectorAll('button, a, [role="button"], label, th');
+    return [...controls].find((el) => visible(el) && el.innerText.trim() === f.text) ?? null;
+  }
+  return null;
+}`;
+
+const OVERLAY_ROOT_JS = `() => {
+  const host = document.querySelector('[data-bai-review-overlay]');
+  return host ? (host.shadowRoot ?? host) : null;
+}`;
+
+async function mintInPage(page, find, fields) {
+  return page.evaluate(
+    async ([find, findJs, fields]) => {
+      const [anchorMod, codecMod, idMod] = await Promise.all(
+        ['anchor', 'codec', 'id'].map(
+          (name) => import(/* @vite-ignore */ `/__review/${name}.js`),
+        ),
+      );
+      // A server older than FR-3949 serves no stop-guard; the fields still
+      // travel, and that server's decoder is the one that ignores them.
+      const guard = await import(
+        /* @vite-ignore */ '/__review/stop-guard.js'
+      ).catch(() => null);
+      const el = (0, eval)(findJs)(find);
+      if (!el) return { error: 'element not found on the page' };
+      el.scrollIntoView({ block: 'center' });
+      // `stripInvalidStopFields` is the decoder's own gate: a field it would
+      // drop on read must never leave here in the first place.
+      const raw = { ...anchorMod.captureAnchorSignals(el), ...fields };
+      const anchor = guard ? guard.stripInvalidStopFields(raw) : raw;
+      const b64 = await codecMod.encodeAnchor(anchor);
+      return {
+        b64,
+        id: idMod.pinId(fields.pr, b64, fields.at),
+        anchor: {
+          p: anchor.p,
+          q: anchor.q ?? '',
+          tid: anchor.tid ?? '',
+          tag: anchor.tag ?? '',
+          txt: anchor.txt ?? '',
+          dlg: anchor.dlg ?? 0,
+        },
+        guarded: !!guard,
+        dropped: Object.keys(fields).filter((k) => anchor[k] === undefined),
+      };
+    },
+    [find, FIND_JS, fields],
+  );
+}
+
+const waitForOverlay = (page) =>
+  page.waitForFunction(() => window.__baiReviewOverlay === true, null, {
+    timeout: 30_000,
+  });
+
+async function replayVia(page, via, settleMs) {
+  for (const step of via ?? []) {
+    const { text, tid } = step.click;
+    const target = tid
+      ? page.getByTestId(tid).first()
+      : page.getByText(text, { exact: true }).first();
+    await target.click({ timeout: 15_000 });
+    await page.waitForTimeout(settleMs);
+  }
+}
+
+/**
+ * Did the stop draw? The mark carries `data-pin-id` whatever class the overlay
+ * gives it (FR-3950 renames it); a dock `.row` with the same id is not it.
+ */
+async function markState(page, id) {
+  return page.evaluate(
+    ([id, rootJs]) => {
+      const root = (0, eval)(rootJs)();
+      if (!root) return { drawn: false, under: '' };
+      const mark = [...root.querySelectorAll(`[data-pin-id="${id}"]`)].find(
+        (el) =>
+          !el.classList.contains('row') &&
+          !el.closest('.row') &&
+          el.getBoundingClientRect().width > 0,
+      );
+      if (!mark) return { drawn: false, under: '' };
+      const box = mark.getBoundingClientRect();
+      const host = document.querySelector('[data-bai-review-overlay]');
+      const previous = host.style.pointerEvents;
+      host.style.pointerEvents = 'none';
+      const below = document.elementFromPoint(
+        box.left + box.width / 2,
+        box.top + box.height / 2,
+      );
+      host.style.pointerEvents = previous;
+      const landmark = below?.closest('[data-testid]');
+      return {
+        drawn: true,
+        under: landmark?.getAttribute('data-testid') ?? '',
+      };
+    },
+    [id, OVERLAY_ROOT_JS],
+  );
+}
+
+async function waitForMark(page, id, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+  let state = { drawn: false, under: '' };
+  for (;;) {
+    state = await markState(page, id);
+    if (state.drawn || Date.now() > deadline) return state;
+    await page.waitForTimeout(500);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// run
+// ---------------------------------------------------------------------------
+
+async function main() {
+  const flags = parseArgs(process.argv.slice(2));
+  const settleMs = Number.parseInt(flags.settle || '2000', 10);
+
+  let stops;
+  try {
+    stops = parseManifest(readFileSync(resolve(flags.manifest), 'utf8'));
+  } catch (error) {
+    return fail(2, error.message);
+  }
+
+  const app = await resolveApp(flags);
+  const { file, record } = readBootRecord(app);
+  if (record.stoppedAt)
+    fail(
+      3,
+      `${file} says the server stopped at ${record.stoppedAt} — boot it first`,
+    );
+  const pr = Number.parseInt(
+    flags.pr || String(prFromRecord(record) ?? ''),
+    10,
+  );
+  if (!Number.isInteger(pr))
+    fail(3, `no PR for '${app}' in ${file} — pass --pr <n>`);
+  const sha = flags.sha || git('rev-parse', 'HEAD');
+  if (!/^[0-9a-f]{40}$/.test(sha))
+    fail(3, `'${sha}' is not a 40-char commit sha`);
+
+  const shared = await probePortless(record.url);
+  const base = shared ? record.url : record.localUrl;
+  if (!base) fail(3, `${file} carries neither a gateway URL nor a local one`);
+
+  const envFile =
+    flags.envFile ||
+    [record.worktree, REPO_ROOT]
+      .filter(Boolean)
+      .map((root) => resolve(root, 'e2e/envs/.env.playwright'))
+      .find(existsSync) ||
+    '';
+  if (!envFile)
+    fail(3, 'no e2e/envs/.env.playwright on this box — pass --env-file <path>');
+  const env = readEnvFile(envFile);
+  const endpoint =
+    flags.endpoint ||
+    endpointFromProcess(record.pid) ||
+    env.E2E_WEBSERVER_ENDPOINT;
+  if (!endpoint) fail(3, 'no backend endpoint — pass --endpoint <url>');
+  if (!env.E2E_ADMIN_EMAIL || !env.E2E_ADMIN_PASSWORD)
+    fail(3, `${envFile} has no E2E_ADMIN_EMAIL / E2E_ADMIN_PASSWORD`);
+
+  if (flags.dryRun) {
+    process.stdout.write(
+      `${JSON.stringify({ app, pr, sha, url: base, shared, stops: stops.length }, null, 2)}\n`,
+    );
+    process.stderr.write(
+      `walkthrough: dry run — ${stops.length} stops for PR #${pr} on ${base}\n`,
+    );
+    return;
+  }
+
+  const { chromium } = await import(
+    resolve(REPO_ROOT, 'node_modules/@playwright/test/index.mjs')
+  );
+  const browser = await chromium.launch();
+  const context = await browser.newContext({
+    ignoreHTTPSErrors: true,
+    viewport: { width: 1440, height: 900 },
+  });
+  const page = await context.newPage();
+  try {
+    await login(page, base, endpoint, env);
+    const origin = new URL(page.url()).origin;
+    const projectBase = projectBasePath(new URL(page.url()).pathname);
+
+    const at = new Date().toISOString();
+    const minted = [];
+    const couldNotPin = [];
+    for (const stop of stops) {
+      const label = stop.label ?? '';
+      try {
+        const result = await mintStop(page, {
+          stop,
+          origin,
+          projectBase,
+          settleMs,
+          fields: stopFields(stop, { sha, pr, at }),
+        });
+        if (result.error) {
+          couldNotPin.push({
+            label: label || describeStop(stop),
+            ck: stop.ck,
+            reason: result.error,
+          });
+          continue;
+        }
+        minted.push({ stop, ...result, label: stopLabel(stop, result.anchor) });
+      } catch (error) {
+        couldNotPin.push({
+          label: label || describeStop(stop),
+          ck: stop.ck,
+          reason: shortMessage(error),
+        });
+      }
+    }
+    if (!minted.length) {
+      process.stdout.write(
+        `${JSON.stringify({ setLink: '', sha, pr, app, url: base, stops: [], couldNotPin }, null, 2)}\n`,
+      );
+      fail(
+        3,
+        `no stop could be minted — ${couldNotPin.map((c) => `${c.label}: ${c.reason}`).join('; ')}`,
+      );
+    }
+
+    const first = minted[0].anchor;
+    const fragment = minted.map((m) => `bai=v3.${m.id}.${m.b64}`).join('&');
+    const setLink = `${origin}${first.p}${first.q ? `?${first.q}` : ''}#${fragment}`;
+
+    const verified = await verify(context, {
+      minted,
+      origin,
+      fragment,
+      settleMs,
+    });
+    for (const entry of verified.failures) couldNotPin.push(entry);
+
+    const report = {
+      setLink,
+      sha,
+      pr,
+      app,
+      url: base,
+      // The comment renders off this alone, so each stop carries its wording.
+      stops: minted.map((m) => ({
+        id: m.id,
+        label: m.label,
+        ok: !verified.failures.some((f) => f.id === m.id),
+        ...stopWording(m.stop),
+      })),
+      couldNotPin: couldNotPin.map(({ label, ck, reason }) => ({
+        label,
+        ck,
+        reason,
+      })),
+    };
+    const json = `${JSON.stringify(report, null, 2)}\n`;
+    if (flags.report) {
+      mkdirSync(dirname(resolve(flags.report)), { recursive: true });
+      writeFileSync(resolve(flags.report), json);
+    }
+    process.stdout.write(json);
+    const unpinned = couldNotPin.length
+      ? ` (${couldNotPin.length} could not be pinned)`
+      : '';
+    process.stderr.write(
+      `walkthrough: ${report.stops.filter((s) => s.ok).length}/${stops.length} stops resolved${unpinned} · ${setLink.length} chars\n`,
+    );
+  } finally {
+    await browser.close();
+  }
+}
+
+const shortMessage = (error) =>
+  String(error?.message ?? error)
+    .split('\n')[0]
+    .slice(0, 160);
+
+/** What the PR comment prints for a stop; `via`/`find`/`route` stay internal. */
+function stopWording(stop) {
+  const out = { ch: stop.ch, ck: stop.ck };
+  for (const key of ['type', 'kind', 'old', 'new', 'code']) {
+    if (stop[key] !== undefined) out[key] = stop[key];
+  }
+  return out;
+}
+
+const describeStop = (stop) =>
+  `${stop.route} › ${stop.find.testid ?? `"${stop.find.text}"`}`;
+
+/** The FR-3949 stop fields, minus the ones the manifest left out. */
+function stopFields(stop, { sha, pr, at }) {
+  const fields = { ch: stop.ch, ck: stop.ck, sha, pr, at };
+  for (const key of ['old', 'new', 'type', 'kind', 'code', 'via']) {
+    if (stop[key] !== undefined) fields[key] = stop[key];
+  }
+  return fields;
+}
+
+async function login(page, base, endpoint, env) {
+  await page.goto(base, { waitUntil: 'domcontentloaded' });
+  await page.getByLabel('Email or Username').fill(env.E2E_ADMIN_EMAIL);
+  await page.getByLabel('Password').fill(env.E2E_ADMIN_PASSWORD);
+  const endpointInput = page.getByRole('textbox', {
+    name: 'Endpoint',
+    exact: true,
+  });
+  if (!(await endpointInput.isVisible({ timeout: 1000 }).catch(() => false)))
+    await page.getByText('Advanced').click();
+  await endpointInput.fill(endpoint);
+  await page.getByRole('button', { name: 'Login', exact: true }).click();
+  try {
+    await page.waitForSelector('[data-testid="user-dropdown-button"]', {
+      timeout: 90_000,
+    });
+  } catch {
+    const crashed = await page
+      .getByText('An error has occurred')
+      .first()
+      .isVisible()
+      .catch(() => false);
+    fail(
+      3,
+      crashed
+        ? 'the app shell dies after login on this backend — no walkthrough (try another endpoint)'
+        : 'login did not reach the app shell — no walkthrough',
+    );
+  }
+}
+
+async function mintStop(page, { stop, origin, projectBase, settleMs, fields }) {
+  await page.goto(`${origin}${projectBase}${stop.route}`, {
+    waitUntil: 'domcontentloaded',
+  });
+  await waitForOverlay(page);
+  await page.waitForTimeout(settleMs);
+  await replayVia(page, stop.via, settleMs);
+  // A lazy route renders long after `domcontentloaded`, so wait for the
+  // element itself rather than guessing how long the page needs.
+  await page
+    .waitForFunction(
+      ([find, findJs]) => !!(0, eval)(findJs)(find),
+      [stop.find, FIND_JS],
+      { timeout: FIND_TIMEOUT_MS },
+    )
+    .catch(() => {});
+  return mintInPage(page, stop.find, fields);
+}
+
+/**
+ * A reviewer's pass: open the set link, then walk to each stop's own page and
+ * replay its `via`. A mark that draws over the wrong landmark is a failure —
+ * a wrong mark under a stop is worse than a missing one.
+ */
+async function verify(context, { minted, origin, fragment, settleMs }) {
+  const page = await context.newPage();
+  const failures = [];
+  const landing = minted[0].anchor;
+  let landed = false;
+  for (const stop of minted) {
+    const samePage =
+      stop.anchor.p === landing.p &&
+      stop.anchor.q === landing.q &&
+      !stop.stop.via?.length;
+    if (!samePage || !landed) {
+      const query = stop.anchor.q ? `?${stop.anchor.q}` : '';
+      await page.goto(
+        `${origin}${samePage ? landing.p : stop.anchor.p}${query}#${fragment}`,
+        {
+          waitUntil: 'domcontentloaded',
+        },
+      );
+      await waitForOverlay(page);
+      await page.waitForTimeout(settleMs);
+      landed = samePage;
+      if (!samePage)
+        await replayVia(page, stop.stop.via, settleMs).catch(() => {});
+    }
+    const state = await waitForMark(page, stop.id, RESOLVE_TIMEOUT_MS);
+    if (!state.drawn) {
+      failures.push({
+        id: stop.id,
+        label: stop.label,
+        ck: stop.stop.ck,
+        reason: 'did not resolve within 12s',
+      });
+      continue;
+    }
+    if (stop.anchor.tid && state.under && state.under !== stop.anchor.tid) {
+      failures.push({
+        id: stop.id,
+        label: stop.label,
+        ck: stop.stop.ck,
+        reason: `resolved onto '${state.under}', not '${stop.anchor.tid}'`,
+      });
+    }
+  }
+  await page.close();
+  return { failures };
+}
+
+await main();
