@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-15T00:33:48.911Z",
+  "generatedAt": "2026-09-15T15:44:33.906Z",
   "languages": [
     "en",
     "ja",
@@ -36,17 +36,17 @@
             "total": 13
           },
           "fingerprints": [
-            "657d5a2ac4b7",
+            "5208e6defa0f",
             "f2017a269f2e",
-            "657d5a2ac4b7-2",
+            "5208e6defa0f-2",
             "61245fda09ab",
             "deeacbd256fe",
-            "f50043080c55",
+            "30ebeb5759af",
             "5be5e0ef6270",
             "71e686efbef1",
             "9dda95b1d818",
             "045b63df70ae",
-            "205f89da64d3",
+            "c24664155d4f",
             "c2cedee3238d",
             "44404bfa7a79"
           ]
@@ -79,17 +79,17 @@
             "total": 13
           },
           "fingerprints": [
-            "f4f9145fc824",
+            "2e0db6f8b22f",
             "be2555509291",
-            "f4f9145fc824-2",
+            "2e0db6f8b22f-2",
             "8fca861d194e",
             "bd586f713287",
-            "9ae37e87154b",
+            "6f4df2f684ed",
             "e7be083f7ae7",
             "3cf609fb160a",
             "7c4a4a3e82d4",
             "7b83eb1f7f3f",
-            "65af8613ccff",
+            "8c9a590329a3",
             "e5c161da6533",
             "5d886352a680"
           ]
@@ -122,17 +122,17 @@
             "total": 13
           },
           "fingerprints": [
-            "afa3d256b251",
+            "6b38650ca6d5",
             "f7ddb76ee36f",
-            "afa3d256b251-2",
+            "6b38650ca6d5-2",
             "3c5db7e7fab1",
             "79f598a7aff5",
-            "01c80d3bc110",
+            "4bb89f8374c9",
             "7b76227ca0e3",
             "fd1199f53fcc",
             "7668b949a046",
             "53862b71bcd3",
-            "633aad01dcf5",
+            "c56461b5136f",
             "43bf900e7ace",
             "c63ecc865987"
           ]
@@ -165,17 +165,17 @@
             "total": 13
           },
           "fingerprints": [
-            "da58704a7064",
+            "8694d0d10afe",
             "0fd131ebb61c",
-            "da58704a7064-2",
+            "8694d0d10afe-2",
             "24b69f9a851a",
             "4025a67e4bec",
-            "5587d35e2cc5",
+            "67492092eca8",
             "73f7d37c09db",
             "f680b58e4441",
             "2038beea833d",
             "0d239cb76561",
-            "f1d6c4182185",
+            "80380ef08e53",
             "2a31ef1246db",
             "835a9b3677b4"
           ]
