@@ -20,6 +20,8 @@ import {
   BAIKeypairResourcePolicyV2Table,
   type BAIKeypairResourcePolicyV2TableProps,
   BAINameActionCell,
+  BAISkeleton,
+  BAIUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -201,6 +203,38 @@ const KeypairResourcePolicyV2 = ({
               propertyLabel: t('resourcePolicy.MaxPendingSessionCount'),
               type: 'number',
               defaultOperator: 'greaterThanOrEqual',
+            },
+            {
+              // Added in manager 26.4.4; this V2 list only renders on >= 26.7.0,
+              // so it needs no `baiClient.supports()` gate of its own.
+              key: 'keypair.userId',
+              propertyLabel: t('resourcePolicy.User'),
+              type: 'uuid',
+              fixedOperator: 'equals',
+              renderInput: ({ onAddCondition, value, isDisabled }) => (
+                <Suspense
+                  fallback={<BAISkeleton variant="input" width={200} />}
+                >
+                  <BAIUserSelect
+                    valuePropName="id"
+                    value={value}
+                    isDisabled={isDisabled}
+                    label={t('resourcePolicy.User')}
+                    isLabelHidden
+                    onChange={(next, option) =>
+                      // The picker emits the user UUID; forward the option label
+                      // (email) so the condition tag stays readable.
+                      onAddCondition(
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
+                      )
+                    }
+                    width={200}
+                  />
+                </Suspense>
+              ),
             },
           ]}
         />

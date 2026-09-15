@@ -2044,6 +2044,7 @@
         "resourcePolicy.UpdateKeypairResourcePolicy",
         "resourcePolicy.UpdateProjectResourcePolicy",
         "resourcePolicy.UpdateUserResourcePolicy",
+        "resourcePolicy.User",
         "session.MaxSessionLifetime",
         "storageHost.BeCarefulToSetProjectResourcePolicy",
         "storageHost.BeCarefulToSetUserResourcePolicy",
