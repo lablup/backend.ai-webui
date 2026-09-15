@@ -26,6 +26,7 @@ import {
   BAINameActionCell,
   BAIPropertyFilter,
   BAITable,
+  BAITagList,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
   filterOutNullAndUndefined,
@@ -136,6 +137,15 @@ const ContainerRegistryList: React.FC<{
                 username
                 password
                 ssl_verify
+                is_global @since(version: "24.09.0")
+                allowed_groups @since(version: "25.3.0") {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
               }
             }
             count
@@ -335,6 +345,24 @@ const ContainerRegistryList: React.FC<{
           />
         ) : null;
       },
+    },
+    {
+      key: 'allowed_groups',
+      title: t('registry.AllowedProjects'),
+      render: (_value, record) =>
+        // `is_global` and `allowed_groups` are stripped by managers older than
+        // 24.09.0 / 25.3.0, so both branches must tolerate `undefined`.
+        record.is_global ? (
+          t('environment.AllProjects')
+        ) : (
+          <BAITagList
+            variant="text"
+            maxInline={1}
+            items={_.compact(
+              _.map(record.allowed_groups?.edges, (edge) => edge?.node?.name),
+            )}
+          />
+        ),
     },
     {
       key: 'username',
