@@ -3,7 +3,7 @@
  * do it — a React `useId` never survives a reload and an nth-of-type path
  * never survives a refactor — so every other signal is tried in turn.
  */
-import { TAG_RE } from './anchor-guard.js';
+import { isStop, TAG_RE } from './anchor-guard.js';
 import { normText } from './anchor.js';
 import type { AnchorV3 } from './types.js';
 
@@ -65,6 +65,14 @@ const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
   const name = displayName(element);
   return name !== null && name !== dn;
 };
+
+/**
+ * A stop resolves strictly (FR-3949): a text match counts only inside its
+ * landmark, a stale selector hit never counts, and a `dlg` stop only inside
+ * an open dialog — a waiting stop beats a look-alike outside the modal.
+ */
+const inScope = (element: Element, anchor: AnchorV3): boolean =>
+  !(isStop(anchor) && anchor.dlg) || !!element.closest('[role="dialog"]');
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
   !!element &&
@@ -145,15 +153,17 @@ export function quickFindTarget(
 ): Element | null {
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
+  const strict = isStop(anchor);
   const bySelector = querySafe(doc, anchor.s, options.ignore);
   if (
     bySelector &&
     textMatches(bySelector, anchor.txt) &&
-    !componentConflicts(bySelector, anchor)
+    !componentConflicts(bySelector, anchor) &&
+    inScope(bySelector, anchor)
   )
     return bySelector;
   const landmark = uniqueLandmark(anchor, doc, options.ignore);
-  if (landmark) {
+  if (landmark && inScope(landmark, anchor)) {
     const projected = rectProjectedTarget(
       landmark,
       anchor,
@@ -166,6 +176,8 @@ export function quickFindTarget(
       !componentConflicts(projected, anchor)
     )
       return projected;
+    // A stop never settles for the frame its element lives in.
+    if (strict && anchor.rect) return null;
     // A landmark that is a different component is the corner-stacking answer
     // R3.6's component signal exists to refuse.
     return componentConflicts(landmark, anchor) ? null : landmark;
@@ -180,11 +192,13 @@ export function findAnchorTarget(
 ): Element | null {
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
+  const strict = isStop(anchor);
   const bySelector = querySafe(doc, anchor.s, options.ignore);
   if (
     bySelector &&
     textMatches(bySelector, anchor.txt) &&
-    !componentConflicts(bySelector, anchor)
+    !componentConflicts(bySelector, anchor) &&
+    inScope(bySelector, anchor)
   )
     return bySelector;
 
@@ -197,6 +211,7 @@ export function findAnchorTarget(
       const candidate = candidates[i];
       if (isOurs(candidate, options.ignore)) continue;
       if (!elementText(candidate).includes(anchor.txt)) continue;
+      if (!inScope(candidate, anchor)) continue;
       // The component name breaks the tie two controls with the same words
       // inside one card would otherwise lose; deeper wins within a tier,
       // because the outer wrappers all contain the same words.
@@ -218,7 +233,7 @@ export function findAnchorTarget(
   };
 
   const landmark = uniqueLandmark(anchor, doc, options.ignore);
-  if (landmark) {
+  if (landmark && inScope(landmark, anchor)) {
     const inner = scan(landmark);
     if (inner) return inner;
     const projected = rectProjectedTarget(
@@ -235,10 +250,14 @@ export function findAnchorTarget(
       return projected;
     if (
       textMatches(landmark, anchor.txt) &&
-      !componentConflicts(landmark, anchor)
+      !componentConflicts(landmark, anchor) &&
+      !(strict && anchor.rect)
     )
       return landmark;
   }
+  // A stop with a landmark matches nothing outside it, and takes no stale
+  // selector hit either: unresolved is the honest answer until it appears.
+  if (strict) return anchor.tid ? null : scan(doc);
   // The weak answer both ladders agree on: `quickFindTarget` returns null for
   // a conflicting selector hit, so this must not hand it back either.
   const weak =

@@ -274,3 +274,81 @@ describe('the landmark’s rect projection', () => {
     expect(findAnchorTarget(noText)).toBe(iconOnly);
   });
 });
+
+// A stop is a pin the implementing session authored; a wrong element under
+// its mark is worse than a waiting one, so it resolves strictly.
+describe('walkthrough stops resolve strictly (FR-3949)', () => {
+  const stop = (over: Partial<AnchorV3> = {}): AnchorV3 =>
+    anchor({ ck: 'The Models choice is visible', ...over });
+
+  it('takes no text look-alike while its landmark is absent', () => {
+    // The modal is closed: only the page's own "Models" filter is on screen.
+    mount('<button data-testid="filter-models">Models</button>');
+    const modalRadio = {
+      s: '[data-testid="model-usage-mode"]',
+      tid: 'model-usage-mode',
+      txt: 'Models',
+    };
+    expect(findAnchorTarget(anchor(modalRadio))?.textContent).toBe('Models');
+    expect(findAnchorTarget(stop(modalRadio))).toBeNull();
+    expect(quickFindTarget(stop(modalRadio))).toBeNull();
+  });
+
+  it('is found once its landmark is on the page', () => {
+    mount(
+      '<button data-testid="filter-models">Models</button><div role="dialog"><label data-testid="model-usage-mode">Models</label></div>',
+    );
+    const found = findAnchorTarget(
+      stop({
+        s: '[data-testid="model-usage-mode"]',
+        tid: 'model-usage-mode',
+        txt: 'Models',
+        tag: 'label',
+      }),
+    );
+    expect(found?.tagName).toBe('LABEL');
+  });
+
+  it('takes no stale selector hit', () => {
+    mount('<button>Cancel</button>');
+    expect(findAnchorTarget(anchor())?.textContent).toBe('Cancel');
+    expect(findAnchorTarget(stop())).toBeNull();
+  });
+
+  it('scans the page only when it has no landmark to match', () => {
+    mount('<section><button>Login</button></section>');
+    expect(
+      findAnchorTarget(stop({ s: '#gone', tid: undefined }))?.textContent,
+    ).toBe('Login');
+  });
+
+  it('never settles for the frame its element lives in', () => {
+    mount('<div data-testid="panel"><button>Other</button></div>');
+    const framed = {
+      s: '#_r_gone_',
+      tid: 'panel',
+      rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+      txt: 'Save',
+    };
+    expect(quickFindTarget(anchor(framed))?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+    expect(quickFindTarget(stop(framed))).toBeNull();
+    expect(findAnchorTarget(stop(framed))).toBeNull();
+  });
+
+  it('with dlg, counts only an element inside an open dialog', () => {
+    mount('<button data-testid="ok">OK</button>');
+    const dialogStop = stop({
+      s: '[data-testid="ok"]',
+      tid: 'ok',
+      txt: 'OK',
+      dlg: 1,
+    });
+    expect(findAnchorTarget(dialogStop)).toBeNull();
+    expect(quickFindTarget(dialogStop)).toBeNull();
+    mount('<div role="dialog"><button data-testid="ok">OK</button></div>');
+    expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
+    expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
+  });
+});

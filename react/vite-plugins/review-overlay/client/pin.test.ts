@@ -620,6 +620,33 @@ describe('createDeepLinkPin', () => {
       expect(scans).toBeLessThanOrEqual(3);
     });
 
+    // A stop's element is behind a modal or a step; that opening changes no
+    // URL, so the scan must still be running when it happens (FR-3949).
+    it('keeps scanning for a stop after the budget is spent', async () => {
+      show({
+        s: '#_r_gone_',
+        tid: 'confirm',
+        txt: 'Confirm',
+        ck: 'The confirm button is visible',
+      });
+      expect(pin.locate()).toBe(false);
+      const app = document.querySelector('#app') as HTMLElement;
+      for (let i = 0; i < 5; i++) {
+        app.append(document.createElement('i'));
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      expect(pin.locatedElement()).toBeNull();
+
+      app.insertAdjacentHTML(
+        'beforeend',
+        '<div role="dialog"><button data-testid="confirm">Confirm</button></div>',
+      );
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()?.textContent).toBe('Confirm');
+      expect(marker().classList.contains('found')).toBe(true);
+    });
+
     it('escalates when the cheap ladder comes back empty', async () => {
       stale();
       expect(pin.locate()).toBe(true);

@@ -419,3 +419,23 @@ describe('parse — a pin set in one link', () => {
     expect(parsed.map((pin) => pin.idVerified)).toEqual([true, true, null]);
   });
 });
+
+describe('walkthrough stop fields (FR-3949)', () => {
+  it('surfaces a stop’s fields on the parsed anchor', async () => {
+    const stop: AnchorV3 = {
+      ...anchor,
+      ck: 'The button is visible',
+      code: [{ path: 'react/src/pages/VFolderListPage.tsx', line: 120 }],
+      pr: 9605,
+    };
+    const b64 = await encodeAnchor(stop);
+    const id = pinId(9605, b64, '2026-09-15T00:00:00Z');
+    const pins = await parsePins(
+      `http://dev.example/project/default/session/start?tab=general#bai=v3.${id}.${b64}`,
+    );
+    expect(pins).toHaveLength(1);
+    expect(pins[0].anchor?.ck).toBe('The button is visible');
+    expect(pins[0].anchor?.code).toEqual(stop.code);
+    expect(pins[0].anchor?.pr).toBe(9605);
+  });
+});

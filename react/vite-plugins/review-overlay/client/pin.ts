@@ -11,6 +11,7 @@
  * a React re-render that replaces the anchored node re-draws it over the new
  * one rather than leaving it on a detached element.
  */
+import { isStop } from './anchor-guard.js';
 import { retryUntil } from './deeplink.js';
 import { icon, ICON_STYLE } from './icons.js';
 import {
@@ -617,11 +618,10 @@ function createPinView(deps: ViewDeps): PinView {
         : null;
     if (held) missedScans = 0;
     let next = held ?? quickFindTarget(target.anchor, { ignore: host });
-    if (
-      !held &&
-      missedScans < MAX_MISSED_SCANS &&
-      (!next || isLandmarkFallback(next))
-    ) {
+    // A stop keeps scanning on every settle: the element it waits for is
+    // behind a modal or a step, and that opening changes no URL (FR-3949).
+    const budgeted = missedScans < MAX_MISSED_SCANS || isStop(target.anchor);
+    if (!held && budgeted && (!next || isLandmarkFallback(next))) {
       const full = findAnchorTarget(target.anchor, { ignore: host });
       missedScans = full ? 0 : missedScans + 1;
       next = full ?? next;
