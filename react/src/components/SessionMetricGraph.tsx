@@ -18,6 +18,7 @@ import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   LineChart,
@@ -74,6 +75,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   fetchKey,
   tooltip,
 }) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyle();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -143,20 +145,12 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
       },
     );
 
-  const convertMetricFunction: Record<
-    string,
-    (value: string) => number | string
-  > = {
-    cpu_util: (value: string) => _.toNumber(value) / 10,
-  };
-
   const metricData = getMetricData(
     capacity_metric?.metrics ?? [],
     current_metric?.metrics ?? [],
     startDate,
     endDate,
     dayDiff < 7 ? '5m' : dayDiff < 30 ? '1h' : '1d',
-    convertMetricFunction[metricName] ?? undefined,
   );
 
   const resourceSlotKey = useMemo(() => {
@@ -188,6 +182,12 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
     }
   };
 
+  // cpu_util is per core and can exceed 100 %, so "%" alone would mislead.
+  const axisUnit =
+    metricName === 'cpu_util'
+      ? t('statistics.unit.PercentPerCore')
+      : convertMetricUnit(undefined, metricName).numberUnit;
+
   return (
     <BAIFlex
       direction="column"
@@ -212,10 +212,17 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
         />
       ) : (
         <ResponsiveContainer style={{ paddingRight: token.marginXL }}>
-          <LineChart data={metricData} className={styles.recharts}>
+          <LineChart
+            data={metricData}
+            className={styles.recharts}
+            margin={{ top: 24, right: 5, bottom: 5, left: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
-            <YAxis domain={[0, 'dataMax']} />
+            <YAxis
+              domain={[0, 'dataMax']}
+              label={{ value: axisUnit, position: 'top', offset: 12 }}
+            />
             <ChartTooltip
               formatter={(value) => {
                 return `${value}${convertMetricUnit(undefined, metricName).numberUnit}`;
@@ -263,7 +270,6 @@ const getMetricData = (
   start: string,
   end: string,
   step: string,
-  convertValueFunction?: (value: string) => number | string,
 ) => {
   // orders by capacity, current
   const transformedData = _.zip(
@@ -273,12 +279,8 @@ const getMetricData = (
   ).map(([capacity, current]) => {
     return {
       timestamp: current?.timestamp,
-      capacity: convertValueFunction
-        ? convertValueFunction(capacity?.value)
-        : capacity?.value,
-      used: convertValueFunction
-        ? convertValueFunction(current?.value)
-        : current?.value,
+      capacity: capacity?.value,
+      used: current?.value,
     };
   });
 
@@ -308,7 +310,7 @@ const getMetricData = (
   return filledData;
 };
 
-const convertMetricUnit = (
+export const convertMetricUnit = (
   value: string | undefined | null,
   metricName: string | undefined | null,
 ) => {
@@ -322,7 +324,11 @@ const convertMetricUnit = (
     };
 
   if (_.includes(metricName.toLowerCase(), 'util')) {
-    number = Number(toFixedFloorWithoutTrailingZeros(value ?? 0, 1));
+    // cpu_util arrives as msec of CPU per second (1000 per core); other *_util are percent.
+    // TODO(needs-backend): BA-7900 — drop the /10 once the API serves pct.
+    const percent =
+      metricName === 'cpu_util' ? _.toNumber(value ?? 0) / 10 : (value ?? 0);
+    number = Number(toFixedFloorWithoutTrailingZeros(percent, 1));
     numberUnit = '%';
   } else if (_.includes(metricName.toLowerCase(), 'used')) {
     number = Number((Number(value) / 1000).toFixed(1));

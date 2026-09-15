@@ -2650,6 +2650,9 @@
       "LastDay": "Son 1 Gün",
       "LastHour": "Son 1 Saat",
       "Today": "Bugün"
+    },
+    "unit": {
+      "PercentPerCore": "çekirdek başına %"
     }
   },
   "storageHost": {

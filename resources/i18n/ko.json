@@ -2663,6 +2663,9 @@
       "LastDay": "최근 1일",
       "LastHour": "최근 1시간",
       "Today": "오늘"
+    },
+    "unit": {
+      "PercentPerCore": "코어당 %"
     }
   },
   "storageHost": {

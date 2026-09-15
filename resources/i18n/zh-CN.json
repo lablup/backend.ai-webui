@@ -2652,6 +2652,9 @@
       "LastDay": "最后一天",
       "LastHour": "最后1小时",
       "Today": "今天"
+    },
+    "unit": {
+      "PercentPerCore": "%/核心"
     }
   },
   "storageHost": {

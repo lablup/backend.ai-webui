@@ -2652,6 +2652,9 @@
       "LastDay": "1 ngày trước",
       "LastHour": "1 giờ cuối cùng",
       "Today": "Hôm nay"
+    },
+    "unit": {
+      "PercentPerCore": "% mỗi lõi"
     }
   },
   "storageHost": {
