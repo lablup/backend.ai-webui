@@ -2,10 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  SessionStatusTagFragment$data,
-  SessionStatusTagFragment$key,
-} from '../../__generated__/SessionStatusTagFragment.graphql';
+import { SessionStatusTagFragment$key } from '../../__generated__/SessionStatusTagFragment.graphql';
+import { isTransitionalSessionStatus } from '../../helper/sessionStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -31,22 +29,6 @@ interface SessionStatusTagProps {
   showQueuePosition?: boolean;
   showTooltip?: boolean;
 }
-
-const isTransitional = (session: SessionStatusTagFragment$data) => {
-  return [
-    'RESERVED',
-    'PREEMPTED',
-    'RESCHEDULING',
-    'SCHEDULED',
-    'RESTARTING',
-    'TERMINATING',
-    'PENDING',
-    'PREPARING',
-    'PREPARED',
-    'CREATING',
-    'PULLING',
-  ].includes(session?.status || '');
-};
 
 // PILOT-DECISION (ticket 17): antd `Tag color` (per-file blue/green/red map)
 // -> Astryx `Badge` variants via the repo-global `badgeVariantForStatus`
@@ -93,14 +75,15 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
     <Badge
       variant={badgeVariantForStatus('session', session.status)}
       icon={
-        isTransitional(session) ? (
+        isTransitionalSessionStatus(session.status) ? (
           <LoaderCircle className="bai-icon-spin" size="1em" />
         ) : undefined
       }
       label={
         <>
           {session.status || ' '}
-          {session.status_info && isTransitional(session) ? (
+          {session.status_info &&
+          isTransitionalSessionStatus(session.status) ? (
             <CircleAlertIcon
               size="1em"
               style={{
@@ -126,7 +109,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
       <Badge
         variant={badgeVariantForStatus('session', session.status)}
         icon={
-          isTransitional(session) ? (
+          isTransitionalSessionStatus(session.status) ? (
             <LoaderCircle className="bai-icon-spin" size="1em" />
           ) : undefined
         }
@@ -174,7 +157,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         <Badge
           variant={badgeVariantForStatus('session', session.status)}
           icon={
-            isTransitional(session) ? (
+            isTransitionalSessionStatus(session.status) ? (
               <LoaderCircle className="bai-icon-spin" size="1em" />
             ) : undefined
           }
