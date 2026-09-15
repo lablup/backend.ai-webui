@@ -144,25 +144,28 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
          in our accent, so every surface of this tool is the one colour. */
       --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
       --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
-      /* The docs PR-preview palette, verbatim from
-         packages/backend.ai-docs-toolkit/templates/assets/pr-preview.css:
-         guided mode is that grammar ported onto the app (FR-3950). */
+      /* The docs PR-preview palette (FR-3950), split by what it paints.
+         MARKS keep the docs grammar literally — a change is green or amber
+         wherever it is read. CHROME binds to the app's own tokens, so guided
+         mode follows the theme toggle in the header; the palette used to
+         hard-code its surfaces and flip them on prefers-color-scheme, which
+         turned the popover dark under a light app on a dark OS. */
       --bai-add: #16a34a; --bai-add-bg: rgba(34, 197, 94, .18);
       --bai-mod: #ca8a04; --bai-mod-bg: rgba(250, 204, 21, .32);
       --bai-del: #dc2626;
-      --bai-pop-bg: #fff; --bai-pop-fg: #111827; --bai-pop-border: #d1d5db;
       --bai-focus: #2563eb; --bai-accent: #ff7a00;
-      --bai-viewed-badge: #6b7280; --bai-row-hover: rgba(37, 99, 235, .08);
-    }
-    @media (prefers-color-scheme: dark) {
-      :host {
-        --bai-add-bg: rgba(34, 197, 94, .22);
-        --bai-mod-bg: rgba(250, 204, 21, .22);
-        --bai-pop-bg: #1f2937; --bai-pop-fg: #f3f4f6;
-        --bai-pop-border: #4b5563;
-        --bai-row-hover: rgba(96, 165, 250, .16);
-      }
-    }
+      --bai-viewed-badge: #6b7280;
+      --bai-pop-bg: var(--bai-review-surface);
+      --bai-pop-fg: var(--bai-review-text);
+      --bai-pop-border: var(--bai-review-border);
+      --bai-row-hover: var(--color-overlay-hover, rgba(5, 54, 89, .05));
+      /* The same three hues as INK on that surface. The docs literals are
+         mixed for white and drop to ~2.5:1 on the app's dark surface, so text
+         takes the app's own on-surface colours and the marks keep the docs
+         ones. Each is ≥4.5:1 in both themes. */
+      --bai-focus-text: var(--color-text-accent, #0064e0);
+      --bai-mod-text: var(--color-text-orange, #6b2203);
+      --bai-add-text: var(--color-text-green, #09441f);
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {
       border: 1px solid var(--bai-review-border);

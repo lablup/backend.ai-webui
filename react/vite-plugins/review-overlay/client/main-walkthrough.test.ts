@@ -302,6 +302,41 @@ const seedDraftPin = () => {
   sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 1, pins: [pin] }));
 };
 
+/** Every stylesheet the overlay mounted, as one string. */
+const overlayCss = () =>
+  Array.from(shadow()?.querySelectorAll('style') ?? [])
+    .map((sheet) => sheet.textContent)
+    .join('\n');
+
+describe('guided mode’s colours', () => {
+  it('binds its surfaces to the app theme, never to the OS preference', async () => {
+    await bootOn(
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+    );
+    const css = overlayCss();
+
+    expect(css).toContain('--bai-pop-bg: var(--bai-review-surface)');
+    expect(css).toContain('--bai-pop-fg: var(--bai-review-text)');
+    expect(css).toContain('--bai-pop-border: var(--bai-review-border)');
+    // The app owns the theme toggle; reading the OS behind its back turned the
+    // popover dark under a light app.
+    // The at-rule, not the word: the comment beside the tokens names it.
+    expect(css).not.toMatch(/@media[^{]*prefers-color-scheme/);
+    // The marks keep the docs grammar literally.
+    expect(css).toContain('--bai-accent: #ff7a00');
+  });
+
+  it('leaves a disabled control legible instead of half-faded', async () => {
+    await bootOn(
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+    );
+
+    // No comments yet, so the copy button is the disabled one.
+    expect(act('copyall')?.disabled).toBe(true);
+    expect(overlayCss()).toMatch(/button:disabled[^{]*\{[^}]*opacity: 1/);
+  });
+});
+
 describe('the pill and the set dock', () => {
   it('steps out of the corner the dock is in, and back when it empties', async () => {
     seedDraftPin();

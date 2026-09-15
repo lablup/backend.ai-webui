@@ -23,17 +23,30 @@ const STYLE = `
   .bai-nav .sep { width: 1px; height: 18px; background: var(--bai-pop-border); }
   .bai-nav .n { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .bai-nav .n b { font-weight: 700; }
-  .bai-nav .waiting { color: var(--bai-mod); font-weight: 600; }
+  .bai-nav .waiting { color: var(--bai-mod-text); font-weight: 600; }
   .bai-nav button {
     border: 1px solid var(--bai-pop-border); background: transparent;
     color: inherit; border-radius: 999px; padding: 3px 9px; cursor: pointer;
     font: inherit; font-size: 13px;
   }
-  .bai-nav button:disabled { opacity: .5; cursor: default; }
   .bai-nav button.copy {
-    border-color: var(--bai-focus); color: var(--bai-focus); font-weight: 600;
+    border-color: var(--bai-focus-text); color: var(--bai-focus-text);
+    font-weight: 600;
+  }
+  .bai-nav button.copy:not(:disabled):hover {
+    background: var(--bai-focus); color: #fff; border-color: var(--bai-focus);
   }
   .bai-nav button.on { background: var(--bai-row-hover); }
+  /*
+   * A disabled control is quiet, not faded. A half-opacity blue on the pill
+   * was all but invisible; full opacity and the app's own secondary ink give
+   * it the contrast every other label in here has.
+   */
+  .bai-nav button:disabled, .bai-panel button:disabled {
+    opacity: 1; cursor: default; font-weight: 400; background: transparent;
+    color: var(--bai-review-text-dim);
+    border-color: var(--bai-review-border);
+  }
   .bai-panel {
     position: fixed; right: 16px; bottom: 62px; z-index: 2147483003;
     width: 380px; max-width: calc(100vw - 32px); max-height: 60vh;
@@ -56,7 +69,7 @@ const STYLE = `
   }
   .bai-panel .pg {
     padding: 6px 12px 2px; font-size: 11px; text-transform: uppercase;
-    letter-spacing: .06em; color: var(--bai-viewed-badge);
+    letter-spacing: .06em; color: var(--bai-review-text-dim);
   }
   .bai-panel .it {
     display: grid; grid-template-columns: 30px 1fr auto; gap: 8px;
@@ -67,17 +80,17 @@ const STYLE = `
   .bai-panel .it:hover, .bai-panel .it.cur { background: var(--bai-row-hover); }
   .bai-panel .it .k {
     font-size: 10px; font-weight: 700; text-transform: uppercase;
-    color: var(--bai-mod);
+    color: var(--bai-mod-text);
   }
-  .bai-panel .it .k.added { color: var(--bai-add); }
+  .bai-panel .it .k.added { color: var(--bai-add-text); }
   .bai-panel .it .t {
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .bai-panel .it .s {
     font-size: 10px; font-weight: 700; text-transform: uppercase;
-    color: var(--bai-viewed-badge);
+    color: var(--bai-review-text-dim);
   }
-  .bai-panel .it .s.c { color: var(--bai-focus); }
+  .bai-panel .it .s.c { color: var(--bai-focus-text); }
 `;
 
 export interface NavigatorItem {

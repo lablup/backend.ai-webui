@@ -32,18 +32,22 @@ const STYLE = `
     background: var(--bai-mod);
   }
   .bai-popover .type.added { background: var(--bai-add); }
-  .bai-popover .kind { color: var(--bai-viewed-badge); }
+  .bai-popover .kind { color: var(--bai-review-text-dim); }
   .bai-popover .spacer { flex: 1; }
   .bai-popover button {
     border: 1px solid var(--bai-pop-border); background: transparent;
     color: inherit; border-radius: 6px; padding: 2px 8px; cursor: pointer;
     font: inherit; font-size: 12px;
   }
+  .bai-popover button:disabled {
+    opacity: 1; cursor: default; color: var(--bai-review-text-dim);
+    border-color: var(--bai-review-border);
+  }
   .bai-popover label { display: flex; align-items: center; gap: 4px; }
   .bai-popover .body { padding: 10px 12px; display: grid; gap: 8px; }
   .bai-popover .lbl {
     font-size: 10px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: .06em; color: var(--bai-viewed-badge);
+    letter-spacing: .06em; color: var(--bai-review-text-dim);
   }
   .bai-popover p { margin: 0; }
   .bai-popover .diff {
@@ -51,20 +55,20 @@ const STYLE = `
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .bai-popover .diff .del {
-    background: rgba(239, 68, 68, .14); color: var(--bai-del);
+    background: rgba(239, 68, 68, .14); color: var(--color-text-red, #7b0210);
     text-decoration: line-through; border-radius: 2px;
   }
   .bai-popover .diff .ins {
-    background: rgba(34, 197, 94, .22); color: var(--bai-add);
+    background: rgba(34, 197, 94, .22); color: var(--bai-add-text);
     text-decoration: underline; border-radius: 2px;
   }
   .bai-popover .via {
     padding: 6px 10px; border-left: 3px solid var(--bai-mod);
     background: var(--bai-row-hover); border-radius: 0 4px 4px 0;
   }
-  .bai-popover .via.away { border-left-color: var(--bai-viewed-badge); }
+  .bai-popover .via.away { border-left-color: var(--bai-review-text-dim); }
   .bai-popover .code a {
-    display: block; text-decoration: none; color: var(--bai-focus);
+    display: block; text-decoration: none; color: var(--bai-focus-text);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .bai-popover textarea {
@@ -76,7 +80,7 @@ const STYLE = `
   .bai-popover .foot {
     display: flex; align-items: center; gap: 10px; padding: 6px 10px;
     border-top: 1px solid var(--bai-pop-border); font-size: 11px;
-    color: var(--bai-viewed-badge);
+    color: var(--bai-review-text-dim);
   }
   .bai-popover .foot kbd {
     font: inherit; padding: 0 4px; border: 1px solid var(--bai-pop-border);
