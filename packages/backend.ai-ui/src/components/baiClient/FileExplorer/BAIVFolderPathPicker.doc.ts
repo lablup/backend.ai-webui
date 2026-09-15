@@ -91,7 +91,7 @@ export const docs = {
       name: 'style',
       type: 'React.CSSProperties',
       description:
-        'Inline style forwarded to the trigger, typically to set its width.',
+        'Inline style forwarded to the trigger. Width has its own `width` prop; reach for this only for something `width` and `size` cannot express.',
     },
     {
       name: 'label',
