@@ -1006,7 +1006,8 @@
       "TypeFolderNameToLeave": "输入要离开的文件夹名称",
       "TypeNewFolderName": "输入新文件夹名称",
       "TypeToConfirmDeleteForever": "请输入下方的词语以永久删除",
-      "View": "看法"
+      "View": "看法",
+      "Creator": "创建者"
     },
     "invitation": {
       "FailedToAcceptInvitation": "未能接受邀请",

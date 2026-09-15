@@ -918,6 +918,7 @@
       "Control": "제어",
       "CreateModelFolderOnlyInExclusiveProject": "모델 스토어 전용 프로젝트에서만 모델용 프로젝트 폴더 생성이 가능합니다.",
       "CreatedAt": "생성 시간",
+      "Creator": "생성자",
       "Delete": "삭제",
       "DeleteAFolder": "폴더 삭제",
       "DeleteFailureDescription": "폴더 {{total}}개 중 {{failed}}개를 삭제하지 못했습니다. 아래에서 폴더별 사유를 확인하세요.",

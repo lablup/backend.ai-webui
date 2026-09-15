@@ -1006,7 +1006,8 @@
       "TypeFolderNameToLeave": "Tapez le nom du dossier à quitter",
       "TypeNewFolderName": "Tapez un nouveau nom de dossier",
       "TypeToConfirmDeleteForever": "Saisissez le mot ci-dessous pour supprimer définitivement",
-      "View": "Vue"
+      "View": "Vue",
+      "Creator": "Créateur"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Échec de l'acceptation de l'invitation",

@@ -1006,7 +1006,8 @@
       "TypeFolderNameToLeave": "Πληκτρολογήστε το όνομα του φακέλου για αποχώρηση",
       "TypeNewFolderName": "Πληκτρολογήστε νέο όνομα φακέλου",
       "TypeToConfirmDeleteForever": "Πληκτρολογήστε τη λέξη παρακάτω για μόνιμη διαγραφή",
-      "View": "Θέα"
+      "View": "Θέα",
+      "Creator": "Δημιουργός"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Αποτυχία αποδοχής πρόσκλησης",

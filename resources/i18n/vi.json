@@ -1006,7 +1006,8 @@
       "TypeFolderNameToLeave": "Nhập tên thư mục để rời khỏi",
       "TypeNewFolderName": "Nhập tên thư mục mới",
       "TypeToConfirmDeleteForever": "Nhập từ bên dưới để xóa vĩnh viễn",
-      "View": "Lượt xem"
+      "View": "Lượt xem",
+      "Creator": "Người tạo"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Không chấp nhận lời mời",
