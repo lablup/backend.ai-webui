@@ -371,12 +371,12 @@ test.describe(
       await concurrentModal.getByRole('button', { name: 'Login' }).click();
 
       // Step 3: TOTP input appears
-      await expect(page.getByPlaceholder('One-time password')).toBeVisible({
+      await expect(page.getByLabel('One-time password')).toBeVisible({
         timeout: 5_000,
       });
 
       // Step 4: Enter OTP and submit
-      await page.getByPlaceholder('One-time password').fill('123456');
+      await page.getByLabel('One-time password').fill('123456');
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Wait for the 3rd login call to be captured
