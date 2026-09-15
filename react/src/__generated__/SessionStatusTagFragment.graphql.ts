@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce0c03510ae52c4848158164afe3de85>>
+ * @generated SignedSource<<fc48f9f3a0f19f9a0d43773cb4bca8a3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,16 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type SessionStatusTagFragment$data = {
+  readonly cluster_size: number | null | undefined;
   readonly id: string;
+  readonly kernel_nodes: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly status: string | null | undefined;
+      } | null | undefined;
+    } | null | undefined>;
+  } | null | undefined;
   readonly queue_position: number | null | undefined;
   readonly status: string | null | undefined;
   readonly status_data: string | null | undefined;
@@ -23,26 +32,29 @@ export type SessionStatusTagFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"SessionStatusTagFragment">;
 };
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
   "name": "SessionStatusTagFragment",
   "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "status",
-      "storageKey": null
-    },
+    (v0/*: any*/),
+    (v1/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -63,12 +75,55 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "queue_position",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "cluster_size",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "KernelConnection",
+      "kind": "LinkedField",
+      "name": "kernel_nodes",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "KernelEdge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "KernelNode",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                (v1/*: any*/)
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "c3d20b190bc6eae04a56b944246b93fb";
+(node as any).hash = "4e9121ceb23c0fd026d4afb3893b82d5";
 
 export default node;
