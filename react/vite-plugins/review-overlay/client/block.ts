@@ -11,6 +11,7 @@
 import { captureAnchorSignals, withNote } from './anchor.js';
 import { encodeAnchor } from './codec.js';
 import { dedupeById, pinSetUrl, pinUrl, readablePath } from './deeplink.js';
+import { esc } from './escape-html.js';
 import { pinId } from './id.js';
 import type { AnchorComponent, AnchorV3, SetPin } from './types.js';
 
@@ -133,14 +134,6 @@ export function buildBlockText(input: BlockInput): string {
   if (input.marker !== false) out.push(marker(input));
   return out.join('\n');
 }
-
-/** Everything reaching the HTML flavour is page text or reviewer text. */
-const esc = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 
 /** HTML collapses leading spaces; the stack frames only read as a tree with them. */
 const escIndented = (value: string) => {

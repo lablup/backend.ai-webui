@@ -9,7 +9,9 @@
  * far as one comment behind one link. Opening that link on this server is the
  * read side (FR-3859): the hash carries every pin's whole anchor, so they are
  * MERGED into the draft set and pinned with no lookup at all — the ones on
- * this page as cards, the rest as rows in the dock.
+ * this page as cards, the rest as rows in the dock. A link whose parts are all
+ * STOPS is the implementing session's walkthrough instead, and opens in GUIDED
+ * MODE (FR-3950) — a separate read-only set that never touches the draft.
  */
 import { isAnchorV3 } from './anchor-guard.js';
 import { captureAnchorSignals, withNote } from './anchor.js';
@@ -39,6 +41,7 @@ import {
 } from './deeplink.js';
 import { createSetDock, whereItWas, type PinPlace } from './dock.js';
 import { createDraftStore, MAX_SET_PINS } from './draft.js';
+import { startGuidedMode, type GuidedMode } from './guided.js';
 import { pinId } from './id.js';
 import { createPicker, isEditable, isMac } from './picker.js';
 import {
@@ -47,6 +50,7 @@ import {
   type DeepLinkPinTarget,
 } from './pin.js';
 import { fetchServerState, readEmbeddedState } from './state.js';
+import { isStop } from './stop-guard.js';
 import type {
   AnchorComponent,
   AnchorV3,
@@ -55,6 +59,7 @@ import type {
   SetPin,
 } from './types.js';
 import { COPIED_ONE, createOverlayUI } from './ui.js';
+import { createWalkthroughStore, type WalkthroughStop } from './walkthrough.js';
 
 /** The SPA's own `<Navigate replace>` redirects drop the fragment on login. */
 const BOOT_HASH = location.hash;
@@ -472,6 +477,66 @@ function boot() {
   picker.watchForReactGrab();
   const guard = createNavigationGuard();
 
+  // ------------------------------------------------- guided mode (FR-3950)
+
+  const walkthroughs = createWalkthroughStore();
+  /**
+   * Read ONCE per document, before any entry: the reload that a `›` started
+   * carries the whole set in its hash, so boot resumes the stored walkthrough
+   * and the link then re-enters the same one. A handover consumed by the first
+   * of those two would leave the second on the wrong stop.
+   */
+  let requestedStop = walkthroughs.takeFocus();
+  let guided: GuidedMode | null = null;
+
+  /**
+   * The walkthrough set is its own set: it is stored under its own key, the
+   * dock never sees it, and `copy all` never carries it. Re-entering replaces
+   * whatever was being walked — progress lives in `localStorage` under the
+   * head the stops were minted for, so nothing is lost.
+   */
+  function enterGuided(stops: WalkthroughStop[], unreadable = 0) {
+    guided?.destroy();
+    walkthroughs.save(stops, unreadable);
+    guided = startGuidedMode({
+      root: ui.root,
+      host: ui.host,
+      stops,
+      unreadable,
+      // Read late: the state fetch can still be in flight when a link lands.
+      serverState: () => serverState,
+      copyWithToast: ui.copyWithToast,
+      showToast: ui.showToast,
+      // The dock owns the bottom-right corner whenever it has a pin to list.
+      dockShown: () => draft.length > 0,
+      rememberStop: (id) => walkthroughs.setFocus(id),
+      // A set that does not hold it is a different walkthrough, and falls
+      // through to the first stop on this page.
+      takeRememberedStop: () => requestedStop,
+      onExit: () => {
+        guided = null;
+        walkthroughs.clear();
+        // Spent: re-opening the same link in this document is a fresh arrival,
+        // not the reload that once asked for a stop.
+        requestedStop = null;
+        ui.showToast('Left the walkthrough — your own pins are untouched');
+      },
+    });
+  }
+
+  /** A stop as the walkthrough set holds it; the wire carries no label. */
+  const walkthroughStop = (
+    part: { id: string; anchorB64: string },
+    anchor: AnchorV3,
+    appHash: string,
+  ): WalkthroughStop => ({
+    id: part.id,
+    anchor,
+    anchorB64: part.anchorB64,
+    label: landmarkLabel(anchorRouteLabel(anchor), anchor),
+    appHash,
+  });
+
   const targetOf = (pin: SetPin, index: number): DeepLinkPinTarget => ({
     id: pin.id,
     anchor: pin.anchor,
@@ -702,6 +767,8 @@ function boot() {
     draft = store.pins();
     renderDock();
     ui.setDraftSize(draft.length, store.isFull());
+    // A dock that just appeared — or emptied — moves the walkthrough's pill.
+    guided?.onDraftChange();
   }
 
   /** The whole set, from a click; nothing may be awaited before the write. */
@@ -713,14 +780,11 @@ function boot() {
       ui.showToast('Still reading a pin — try again');
       return;
     }
-    const count = draft.length;
-    const copied = ui.copyText(buildSetText(draft), buildSetHtml(draft));
-    const done = (ok: boolean) =>
-      ui.showToast(
-        ok ? copiedToast(count) : 'Could not reach the clipboard — try again',
-      );
-    if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
+    ui.copyWithToast({
+      text: buildSetText(draft),
+      html: buildSetHtml(draft),
+      toast: copiedToast(draft.length),
+    });
   }
 
   /** The route the pin was made on, not the one the reader happens to be on. */
@@ -813,6 +877,27 @@ function boot() {
     // The link is a stranger's: `decodeAnchor` checks `v`, `s` and `p`, the
     // rest of the payload reaches `querySelector` and the DOM unchecked. A
     // part that fails costs only itself.
+    // Stops make this the implementing session's walkthrough, not a reviewer's
+    // set: it opens in guided mode and the draft is left alone. One READABLE
+    // part that is not a stop, and the whole link merges as it always did.
+    const stops = parts.flatMap((part, index) => {
+      const anchor = decoded[index];
+      return anchor && isAnchorV3(anchor) && isStop(anchor)
+        ? [walkthroughStop(part, anchor, appHash)]
+        : [];
+    });
+    // A part nobody can decode does NOT veto the mode. Chat clients truncate a
+    // long link, and the part they cut is the last one — vetoing on it dropped
+    // the reader into the pin path and cost them the notes, the navigator and
+    // the banner, for a link whose surviving parts are all stops.
+    const readable = decoded.filter(
+      (anchor) => anchor && isAnchorV3(anchor),
+    ).length;
+    if (stops.length && stops.length === readable) {
+      scrubPinParts();
+      enterGuided(stops, parts.length - readable);
+      return;
+    }
     const opened = parts.flatMap((part, index) => {
       const anchor = decoded[index];
       return anchor && isAnchorV3(anchor)
@@ -895,6 +980,8 @@ function boot() {
     routeKey = key;
     syncDraft();
     redraw();
+    // A stop's page arrived; its element has not yet, so the ladder restarts.
+    guided?.onRoute();
     // A re-partition moves pins between views and rows; what is now off this
     // page is only reachable from the list.
     sayElsewhere();
@@ -902,5 +989,8 @@ function boot() {
 
   syncDraft();
   if (draft.length) redraw();
+  // A reload mid-walkthrough resumes it; a link in the hash replaces it.
+  const walking = walkthroughs.stops();
+  if (walking.length) enterGuided(walking, walkthroughs.unreadable());
   void applyFragment(BOOT_HASH);
 }

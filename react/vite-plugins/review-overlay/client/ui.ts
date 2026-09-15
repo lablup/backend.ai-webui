@@ -46,6 +46,26 @@ export interface RefusedCopy {
 export const COPIED_ONE =
   'Copied — paste it into the PR comment, the Teams thread, or Claude';
 
+/** Said whenever the write did not land; the gesture is worth repeating. */
+export const COPY_FAILED = 'Could not reach the clipboard — try again';
+
+/**
+ * One clipboard write and the one line it says. `copyText` answers
+ * synchronously on the `execCommand` path and with a promise on the async
+ * one, and every caller owed the same three lines of branching.
+ */
+export function copyWithToast(
+  copy: (text: string, html?: string) => boolean | Promise<boolean>,
+  toast: (message: string) => void,
+  payload: { text: string; html?: string; toast?: string },
+): void {
+  const done = (ok: boolean) =>
+    toast(ok ? (payload.toast ?? COPIED_ONE) : COPY_FAILED);
+  const copied = copy(payload.text, payload.html);
+  if (typeof copied === 'boolean') done(copied);
+  else void copied.then(done);
+}
+
 /**
  * A save re-keys the pin whenever the note the anchor carries changes, so the
  * reviewer is told before they press it — a comment already pasted names the
@@ -106,6 +126,10 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   style.textContent = `
     :host {
       all: initial;
+      /* all:initial resets color-scheme too, and the app's tokens are
+         light-dark() pairs — without this a dark app resolves to the light
+         half and the popover comes back white. */
+      color-scheme: inherit;
       --bai-review-surface: var(--color-background-popover, #fff);
       --bai-review-text: var(--color-text-primary, #0a1317);
       --bai-review-text-dim: var(--color-text-secondary, #4e606f);
@@ -124,6 +148,29 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
          in our accent, so every surface of this tool is the one colour. */
       --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
       --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
+      /* The docs PR-preview palette (FR-3950), split by what it paints.
+         MARKS keep the docs grammar literally — a change is green or amber
+         wherever it is read. CHROME binds to the app's own tokens, so guided
+         mode follows the theme toggle in the header; the palette used to
+         hard-code its surfaces and flip them on prefers-color-scheme, which
+         turned the popover dark under a light app on a dark OS. */
+      --bai-add: #16a34a; --bai-add-bg: rgba(34, 197, 94, .18);
+      --bai-mod: #ca8a04; --bai-mod-bg: rgba(250, 204, 21, .32);
+      --bai-del: #dc2626;
+      --bai-focus: #2563eb; --bai-accent: #ff7a00;
+      --bai-viewed-badge: #6b7280;
+      --bai-pop-bg: var(--bai-review-surface);
+      --bai-pop-fg: var(--bai-review-text);
+      --bai-pop-border: var(--bai-review-border);
+      --bai-row-hover: var(--color-overlay-hover, rgba(5, 54, 89, .05));
+      /* The same three hues as INK on that surface. The docs literals are
+         mixed for white and drop to ~2.5:1 on the app's dark surface, so text
+         takes the app's own on-surface colours and the marks keep the docs
+         ones. Each is ≥4.5:1 in both themes. */
+      --bai-focus-text: var(--color-text-accent, #0064e0);
+      --bai-mod-text: var(--color-text-orange, #6b2203);
+      --bai-add-text: var(--color-text-green, #09441f);
+      --bai-del-text: var(--color-text-red, #7b0210);
     }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {
@@ -708,6 +755,9 @@ ${ICON_STYLE}
     setPickActive,
     placeCompose,
     copyText,
+    /** `copyText` plus the line it says; the composer's own copy says more. */
+    copyWithToast: (payload: { text: string; html?: string; toast?: string }) =>
+      copyWithToast(copyText, showToast, payload),
     isOwnEvent,
   };
 }

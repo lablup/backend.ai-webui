@@ -23,6 +23,7 @@ import {
 import { projectFraction } from './selection.js';
 import { isStop } from './stop-guard.js';
 import type { AnchorV3, PinCopyPayload } from './types.js';
+import { copyWithToast } from './ui.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
 /** Long enough for a `behavior: 'smooth'` scroll and its momentum to stop. */
@@ -649,15 +650,8 @@ function createPinView(deps: ViewDeps): PinView {
     deps.onHide?.(target);
   });
 
-  function write(text: string, html: string | undefined, ok: string) {
-    const done = (written: boolean) =>
-      deps.showToast(
-        written ? ok : 'Could not reach the clipboard — try again',
-      );
-    const copied = deps.copyText(text, html);
-    if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
-  }
+  const write = (text: string, html: string | undefined, ok: string) =>
+    copyWithToast(deps.copyText, deps.showToast, { text, html, toast: ok });
 
   /**
    * The bare id, not the `#bai=v3.` link: what the reader pastes into the PR
