@@ -1194,8 +1194,8 @@ async function main(argv) {
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   // Rewriting identical bytes still bumps mtime, which Vite reads as a change
-  // and turns into a full page reload. `pnpm run dev` now builds this in the
-  // background on every boot (FR-3925), so the no-op case must not touch it.
+  // and turns into a full page reload. `scripts/verify.sh` and CI rebuild this
+  // every run, so a verify next to a live dev server must not reload the page.
   let unchanged = false;
   try {
     unchanged = fs.readFileSync(outFile, 'utf8') === text;

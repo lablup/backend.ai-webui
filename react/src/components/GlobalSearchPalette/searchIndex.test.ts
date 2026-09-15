@@ -160,9 +160,9 @@ describe('generated search index', () => {
     }
   }, 30_000);
 
-  // `pnpm run dev` rebuilds this on every boot, in the background (FR-3925).
-  // Rewriting identical bytes would still bump mtime, which Vite reads as a
-  // change and turns into a full page reload — so the no-op run must not write.
+  // `scripts/verify.sh` and CI rebuild this on every run. Rewriting identical
+  // bytes would still bump mtime, which Vite reads as a change and turns into a
+  // full page reload — so a verify next to a live dev server must not write.
   it('leaves the file untouched when the bytes have not changed', () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'search-index-'));
     try {

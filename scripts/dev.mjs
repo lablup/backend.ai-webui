@@ -61,35 +61,6 @@ if (!process.env.PORTLESS_PORT?.trim()) {
 }
 spawnSync('portless', proxyArgs, { stdio: 'inherit' });
 
-// Refresh the global search palette's index in the background. It walks the
-// transitive import graph from routes.tsx, so it costs ~3 s and grows with the
-// codebase — a third of the time to `ready` when this ran with spawnSync
-// (FR-3925). The artifact is committed and verify.sh gates its staleness, so a
-// stale one only means stale search results — never block the dev server.
-// The extractor rewrites the file only when the bytes change, so the common
-// no-op boot cannot bump its mtime into an HMR reload.
-const searchIndex = spawn(
-  'node',
-  ['scripts/build-search-index.mjs'],
-  { stdio: 'inherit', cwd: new URL('../react/', import.meta.url) },
-);
-const warnSearchIndex = () =>
-  console.warn(
-    '[dev] search index build failed — the palette will use the committed index.',
-  );
-searchIndex.on('error', warnSearchIndex); // no `node` on PATH — spawn throws if unhandled
-// A signal exit here is our own shutdown reaping it, not a failure.
-searchIndex.on('exit', (code) => {
-  if (code) warnSearchIndex();
-});
-// Nothing spawned by this script may outlive it (see the process-group note
-// below); the build is short, but Ctrl+C during it must still reap it.
-const stopSearchIndex = () => {
-  if (searchIndex.exitCode === null && searchIndex.signalCode === null) {
-    searchIndex.kill('SIGTERM');
-  }
-};
-
 // Optional fixed port via `PORT=9081 pnpm run dev`. If unset, Portless picks a free port.
 const portFlag = process.env.PORT ? `--app-port ${process.env.PORT} ` : '';
 delete env.PORT; // Avoid leaking to portless / CRA before Portless reassigns it.
@@ -311,7 +282,6 @@ const escalate = async () => {
   if (treeAlive()) signalTree('SIGKILL');
 };
 const shutdown = (sig) => {
-  stopSearchIndex();
   stopPrRefresh();
   signalTree(sig); // repeated Ctrl+C re-signals; the escalation only starts once
   return (escalation ??= escalate());
@@ -323,8 +293,7 @@ process.on('SIGHUP', () => shutdown('SIGHUP')); // terminal close no longer HUPs
 child.on('exit', async (code, signal) => {
   // concurrently is gone; anything still alive in its group is an orphan
   // (leaked grandchild mid-shutdown). Sweep it before exiting.
-  // treeAlive() only covers concurrently's group; neither child is in it.
-  stopSearchIndex();
+  // treeAlive() only covers concurrently's group; the PR refresh is not in it.
   stopPrRefresh();
   if (treeAlive()) await shutdown('SIGTERM');
   process.exit(signal ? 1 : (code ?? 0));
