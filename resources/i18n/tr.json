@@ -3169,7 +3169,9 @@
       "SessionNameTooLong64": "Lütfen 64 veya daha az karakter girin.",
       "SessionNameTooShort": "Lütfen en az 4 karakter giriniz.",
       "SluggedStrings": "Kesikli dizeler (>3 karakter)"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max Desteği",

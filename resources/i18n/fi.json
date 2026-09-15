@@ -3169,7 +3169,9 @@
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
       "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max -tuki",

@@ -3171,7 +3171,9 @@
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
       "SessionNameTooShort": "Дор хаяж 4 тэмдэгт оруулна уу.",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Атомын хамгийн их дэмжлэг",

@@ -3171,7 +3171,9 @@
       "SessionNameTooLong64": "64文字以下で入力してください。",
       "SessionNameTooShort": "4文字以上入力してください。",
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Atom Maxサポート",

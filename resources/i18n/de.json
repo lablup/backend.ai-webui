@@ -3171,7 +3171,9 @@
       "SessionNameTooLong64": "Bitte geben Sie maximal 64 Zeichen ein.",
       "SessionNameTooShort": "Bitte geben Sie mindestens 4 Zeichen ein.",
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)"
-    }
+    },
+    "Domain": "__NOT_TRANSLATED__",
+    "ProjectName": "__NOT_TRANSLATED__"
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max -Unterstützung",
