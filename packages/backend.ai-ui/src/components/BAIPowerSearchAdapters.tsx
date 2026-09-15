@@ -28,9 +28,14 @@
  through a ref that is refreshed on each render. The component identity is
  stable; the behaviour is current.
 */
+import './BAIPowerSearchAdapters.css';
+import { PowerSearchFilterEditor } from '@astryxdesign/core/PowerSearch';
 import type {
   CustomOperatorValue,
   EnumItem,
+  OperatorValue,
+  PowerSearchComponentOverride,
+  PowerSearchEditorProps,
 } from '@astryxdesign/core/PowerSearch';
 import type { SearchSource } from '@astryxdesign/core/Typeahead';
 import * as _ from 'lodash-es';
@@ -229,3 +234,46 @@ export interface BAIPowerSearchChromeProps {
   className?: string;
   'data-testid'?: string;
 }
+
+/**
+ * Astryx's default editor popover content, wrapped in the class hook
+ * `BAIPowerSearchAdapters.css` styles against.
+ */
+export const BAIPowerSearchEditor = (props: PowerSearchEditorProps) => {
+  'use memo';
+
+  return (
+    <div className="bai-power-search-editor">
+      <PowerSearchFilterEditor {...props} />
+    </div>
+  );
+};
+
+const BAI_EDITOR_OVERRIDE: PowerSearchComponentOverride = {
+  Editor: BAIPowerSearchEditor,
+};
+
+/**
+ * `components` for both filters' PowerSearch. PowerSearch picks the override
+ * by the operator value type the popover opens on, so every type maps to the
+ * same editor; the full `Record` makes a new Astryx type a compile error.
+ */
+export const baiPowerSearchComponents: Record<
+  OperatorValue['type'],
+  PowerSearchComponentOverride
+> = {
+  empty: BAI_EDITOR_OVERRIDE,
+  string: BAI_EDITOR_OVERRIDE,
+  string_list: BAI_EDITOR_OVERRIDE,
+  integer: BAI_EDITOR_OVERRIDE,
+  float: BAI_EDITOR_OVERRIDE,
+  time: BAI_EDITOR_OVERRIDE,
+  date_absolute: BAI_EDITOR_OVERRIDE,
+  date_relative: BAI_EDITOR_OVERRIDE,
+  date_range: BAI_EDITOR_OVERRIDE,
+  enum: BAI_EDITOR_OVERRIDE,
+  enum_list: BAI_EDITOR_OVERRIDE,
+  entity_list: BAI_EDITOR_OVERRIDE,
+  custom: BAI_EDITOR_OVERRIDE,
+  nested: BAI_EDITOR_OVERRIDE,
+};
