@@ -25,22 +25,17 @@ _Avoid_: tour, review set, session
 
 **Stop**:
 One pin in a walkthrough: what changed, what to check, and its code
-references. A stop resolves strictly against its element — its landmark
-must match — so it locates the right one or stays unresolved, never a
-look-alike.
+references.
 _Avoid_: step, waypoint, checkpoint
 
 **Mark**:
-The tint, dashed outline and ordinal badge guided mode overlays on a
-located stop's element, in place of the reviewer pin glyph, plus its
-`✓ viewed` / `✎ comment` badges. The badge is the mark's own click target
-and keeps the walkthrough's own order.
+The tinted display guided mode places over a located stop's element, in
+place of the reviewer pin glyph.
 _Avoid_: highlight, annotation, marker (the reviewer-pin glyph)
 
 **Navigator**:
-The pill fixed at the bottom-right of the screen that walks a walkthrough's
-stops — its size and current position, prev/next, comment export, and the
-☰ panel that opens the per-page change list.
+The fixed control that walks a walkthrough's stops in order and shows how
+many are viewed.
 _Avoid_: toolbar, control bar, progress bar
 
 **Pin set**:

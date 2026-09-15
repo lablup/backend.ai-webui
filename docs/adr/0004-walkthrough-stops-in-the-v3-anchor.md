@@ -2,6 +2,8 @@
 
 ## Summary
 
+> Unfamiliar terms are collected at the bottom under [Glossary](#glossary).
+
 - A **Stop** — one pin an implementing session leaves to say what changed and
   what to check — is an additive set of optional fields on the existing v3
   anchor (ADR 0002). There is no v4 envelope: it measures three times
@@ -35,12 +37,13 @@ stops= server= -->` marker and no `<!-- bai-review -->` markers, so
 ## Context
 
 The review overlay's pin set (ADR 0002) carries one reviewer's remarks. This
-decision extends the same anchor to also carry a **Stop**: a pin the
-_implementing_ session authors, not a reviewer, to say what it changed and
-what the requester should check. An ordered set of Stops is a **Walkthrough**.
-Both terms, plus **Mark** (the tinted element guided mode draws in place of a
-pin glyph) and **Navigator** (the bottom-right pill that walks the stops),
-are defined in `react/vite-plugins/review-overlay/CONTEXT.md`.
+decision extends the same anchor to also carry a [**Stop**](#glossary): a pin
+the _implementing_ session authors, not a reviewer, to say what it changed
+and what the requester should check. An ordered set of Stops is a
+[**Walkthrough**](#glossary). These terms, plus [**Mark**](#glossary) (the
+tinted element guided mode draws in place of a pin glyph) and
+[**Navigator**](#glossary) (the bottom-right pill that walks the stops), are
+also defined in `react/vite-plugins/review-overlay/CONTEXT.md`.
 
 A Stop has to fit the anchor's existing budget, resolve reliably against a
 DOM that renders behind tabs and dialogs, and reach the PR as a comment that
@@ -56,7 +59,7 @@ mechanism, and leaves R3.9 in force.
 flowchart LR
   session[Implementing session]
   skill[".claude/skills/walkthrough<br/>scripts/mint.mjs"]
-  server[Booted dev server<br/>overlay's __review js modules]
+  server["Booted dev server<br/>overlay's __review js modules"]
   anchor["Stop fields in AnchorV3<br/>ch, ck, code, sha, pr, via, dlg"]
   comment["PR comment<br/>bai-walkthrough marker"]
   resolver[pr-review-thread-resolver]
@@ -78,18 +81,27 @@ flowchart LR
 ### 1. Additive stop fields, no v4 envelope
 
 A Stop adds optional keys to `AnchorV3`
-(`react/vite-plugins/review-overlay/client/types.ts`): `ch` (what changed,
-≤280 chars), `ck` (what to check, ≤280 chars, phrased as an expected
-outcome), `old` / `new` (≤40 chars each, for the popover's diff line),
-`type` (`'added' | 'modified'`), `kind` (a short element kind), `code`
-(1–3 entries of `{path, line, to?}`), `sha` (the full 40-hex head the stop
-was made for), `pr` (always present, so a static build with no boot record
-can still build a code link), and `via` (a replayable click-step list,
-rendered by the overlay as a sentence and never auto-clicked). `decodeAnchor`
-drops an ill-typed optional field rather than rejecting the anchor;
-`isStop(anchor)` is `ck` being a string. Today's `decodeAnchor` and the
-`review-pins` CLI already accept and preserve these keys unchanged, so this
-is ADR 0002's "no version bump" case.
+(`react/vite-plugins/review-overlay/client/types.ts`), each capped in
+`client/stop-guard.ts`:
+
+| field         | meaning                                                                                                       | cap              |
+| ------------- | ------------------------------------------------------------------------------------------------------------- | ---------------- |
+| `ch`          | what changed                                                                                                  | ≤280 chars       |
+| `ck`          | what to check, phrased as an expected outcome                                                                 | ≤280 chars       |
+| `old` / `new` | the popover's diff line                                                                                       | ≤40 chars each   |
+| `type`        | `'added'` or `'modified'`                                                                                     | fixed enum       |
+| `kind`        | a short element kind                                                                                          | ≤64 chars        |
+| `code`        | 1–3 `{path, line, to?}` code references                                                                       | 1–3 entries      |
+| `sha`         | the full head the stop was made for                                                                           | 40-hex           |
+| `pr`          | the PR the stop was minted for                                                                                | positive integer |
+| `via`         | a replayable `{click: {text?, tid?}}` step list, rendered by the overlay as a sentence and never auto-clicked | ≤8 entries       |
+| `dlg`         | picked inside an open dialog                                                                                  | literal `1`      |
+
+`pr` is always present, so a static build with no boot record can still
+build a code link. `decodeAnchor` drops an ill-typed optional field rather
+than rejecting the anchor; `isStop(anchor)` is `ck` being a string. Today's
+`decodeAnchor` and the `review-pins` CLI already accept and preserve these
+keys unchanged, so this is ADR 0002's "no version bump" case.
 
 | variant                                         | worst case, chars                                  |
 | ----------------------------------------------- | -------------------------------------------------- |
@@ -107,18 +119,25 @@ needed.
 
 `resolve.ts` accepts a text-scan candidate for a Stop only when the
 candidate's landmark `data-testid` matches the stop's; a stop carrying
-`dlg: 1` accepts a candidate only while it sits inside an open
-`[role=dialog]`. This followed a measured false positive: a stop for a modal
-"located" onto the Data page's Active button while the modal was closed,
-because the text fallback matched a look-alike with no landmark check, and
-opening the modal never moved the mark onto the real element. An unresolved
-stop stays "waiting" rather than pinning the wrong element.
+`dlg: 1` accepts a candidate only while it sits inside `DIALOG_SELECTOR`
+(`dialog, [role="dialog"], [role="alertdialog"]` — Astryx's own native
+`<dialog>` and `BAIDialog`'s `alertdialog` both count). This followed a
+measured false positive: a stop for a modal "located" onto the Data page's
+Active button while the modal was closed, because the text fallback matched
+a look-alike with no landmark check, and opening the modal never moved the
+mark onto the real element. An unresolved stop stays "waiting" rather than
+pinning the wrong element.
 
-The overlay's anchor capture (`anchor-guard.ts`) also gains a shared,
-codec-owned denylist of volatile query parameters — `formValues` first —
-dropped from every anchor's `q`, reviewer pins included. The session
-launcher's `formValues` JSON had produced a 1,047-character anchor on its
-own.
+`client/stop-guard.ts` owns a shared, codec-owned denylist of volatile
+query parameters (`VOLATILE_QUERY_PARAMS`, `formValues` first) and the
+`stripVolatileQuery` helper that drops them from a query string.
+`client/anchor.ts` strips them at capture; `deeplink.ts`'s
+`pathNeedsChange` and `cli.ts`'s link ranking both strip them from the
+anchor's query _and_ the live URL before comparing, so every comparison
+point agrees, reviewer pins included. The session launcher's `formValues`
+JSON had produced a 1,047-character anchor on its own, and rewrites it on
+every keystroke — comparing the raw query alone had flipped a fresh pin to
+"away" the moment it was made.
 
 While a walkthrough stop is current and unresolved, `pin.ts` re-arms
 resolution on DOM mutation outside the overlay host, not only on the
@@ -135,6 +154,8 @@ roughly 62K, close enough to the limit to fail on a heavier stop. A
 walkthrough is therefore capped at 20 stops, separate from the reviewer
 pin set's 30-pin cap (ADR 0002).
 
+### 4. The code-link format and the sha-drift warning
+
 A stop's code link needs no commit SHA to resolve: it is rendered as
 `https://github.com/lablup/backend.ai-webui/pull/<pr>/files#diff-<sha256(path)>R<line>[-R<to>]`,
 which the PR's Files tab answers regardless of the current head. Line drift
@@ -142,7 +163,7 @@ after a rebase is accepted; the stop's own `sha` field is what lets the
 overlay warn when the server serves a different commit than the one the
 stop was made for.
 
-### 4. The `bai-walkthrough` marker, kept apart from `bai-review`
+### 5. The `bai-walkthrough` marker, kept apart from `bai-review`
 
 One PR comment per PR carries exactly one marker,
 `<!-- bai-walkthrough v1 pr=<pr> sha=<sha> stops=<n> server=<app> -->`,
@@ -154,7 +175,7 @@ A reviewer comment made inside the walkthrough's guided-mode popover still
 exports as an ordinary `bai-review` block (with a `re: stop k · <id>` line),
 so the resolver keeps reading those as it always has.
 
-### 5. Guided mode as the docs PR preview's grammar, ported as design
+### 6. Guided mode as the docs PR preview's grammar, ported as design
 
 The overlay's guided mode — tinted Marks with a dashed outline and an
 ordinal badge, the bottom-right Navigator pill, the per-stop popover, the
@@ -167,7 +188,7 @@ overlay is Shadow-DOM modules bound to `#bai=v3`. Converging the two
 implementations into one module is a later effort, out of this decision's
 scope.
 
-### 6. A link opens guided mode only when every part is a stop
+### 7. A link opens guided mode only when every part is a stop
 
 `applyFragment` (`main.ts`) decodes each part of a `#bai=v3` link and checks
 `isStop` on every one of them; guided mode opens only when the part count
@@ -178,7 +199,7 @@ becomes when every anchor in it carries `ck`. A stop that loses `ck` (a hand
 edit, or a decode that drops an ill-typed field) reopens its link as an
 ordinary pin set rather than a broken walkthrough.
 
-### 7. The walkthrough set stays apart from the draft set
+### 8. The walkthrough set stays apart from the draft set
 
 A walkthrough lives in its own `sessionStorage` key, distinct from the
 reviewer's draft set, and is never merged into it and never included in the
@@ -195,7 +216,7 @@ only — `Escape` closes just the popover and the panel — and clears the
 session-scoped set and every mark; the `localStorage` progress survives, so
 reopening the same link restores what was already viewed.
 
-### 8. Marks are a tracking overlay, not element styling
+### 9. Marks are a tracking overlay, not element styling
 
 Guided mode draws each mark as its own box inside the overlay's Shadow
 root, positioned to track the target element's rect, beneath the reviewer's
@@ -207,7 +228,7 @@ carry them — `role` and `aria-label`; which of those were added is recorded
 so that exiting removes exactly what guided mode added and leaves whatever
 the app itself supplied untouched.
 
-### 9. Cross-page navigation prefers the host's own router
+### 10. Cross-page navigation prefers the host's own router
 
 The host publishes a `navigate` function on the same `window.__BAI_REVIEW__`
 object it already uses to publish the route label
@@ -217,7 +238,7 @@ back to a full-page `location.assign` on the stop's own set link — which
 still reopens guided mode on arrival, because that link carries the whole
 walkthrough.
 
-### 10. `/__review/state` reports the serving head
+### 11. `/__review/state` reports the serving head
 
 The page banner can only warn that a walkthrough was made for a different
 commit if it knows which commit the server is currently serving.
@@ -226,22 +247,23 @@ commit if it knows which commit the server is currently serving.
 into a warning only when `head` is present, the walkthrough carries a real
 `sha`, and no stop's `sha` matches `head`.
 
-### 11. Comment export reuses the existing block format, with no set link
+### 12. Comment export reuses the existing block format, with no set link
 
 `✎ Copy N comments` emits one existing-format reviewer-pin block per
 commented stop, each carrying that stop's own anchor and a
-`re: stop k · <id>` trailer, and **no trailing set link** — the export is N
-separate remarks, not one set, so `pr-review-thread-resolver`, the CLI and
-the Claude-side skill read each comment as its own finding with no new
-parsing.
+`re: stop k · <id>` trailer. It adds **no trailing set link** — the export
+is N separate remarks, not one set, so `pr-review-thread-resolver`, the
+CLI and the Claude-side skill read each comment as its own finding with no
+new parsing.
 
-### 12. Trigger: a webui-owned skill, not dw/fw plugins
+### 13. Trigger: a webui-owned skill, not dw/fw plugins
 
 A Walkthrough is minted by `.claude/skills/walkthrough/`, a skill owned by
-this repository, invoked by the implementing session as the last step of
+this repository. The implementing session invokes it as the last step of
 its own workflow — after the PR's dev server is booted and advertised — and
-also invocable on demand for any PR with a live server. `dev-server`'s own
-skill is unchanged; minting is a caller, not a new side effect of booting.
+it is also invocable on demand for any PR with a live server. `dev-server`'s
+own skill is unchanged; minting is a caller, not a new side effect of
+booting.
 No shared `dw`/`fw` plugin changes, and no notification: the final chat
 message gains one `Walkthrough:` line, and nothing is posted to Teams.
 
@@ -309,7 +331,7 @@ silently.
 ## Consequences
 
 - `react/vite-plugins/review-overlay/client/types.ts`, `resolve.ts`,
-  `anchor-guard.ts` and `pin.ts` gain the Stop-specific fields, resolution
+  `stop-guard.ts` and `pin.ts` gain the Stop-specific fields, resolution
   rule and denylist; the reviewer-pin path is unaffected except for the
   shared denylist.
 - `.claude/skills/walkthrough/` becomes a new caller of the overlay's
@@ -344,7 +366,9 @@ silently.
 - FR-3947 — flags the R3.1 revisit to the previous driver.
 - FR-3950 — the guided-mode implementation (marks, navigator, popover,
   storage split, host-router navigation, comment export, `/__review/state`),
-  decisions 6–11 above.
+  decisions 7–12 above.
+- FR-3949 — the volatile-query denylist applied at every comparison point
+  and the widened `DIALOG_SELECTOR`, decision 2 above (commit `3c4507c74`).
 - Prototype: branch `proto/FR-3944-guided-mode`,
   `walkthrough-guided-mode.html` variant D. Visual tokens ported from
   `packages/backend.ai-docs-toolkit/templates/assets/pr-preview.css`.
