@@ -318,7 +318,7 @@ export const OverlappingPaths: Story = {
     docs: {
       description: {
         story:
-          'Two folders use the same alias (`shared`), so both resolve to `/home/work/shared` and are flagged with the overlap error. The third row types an alias the format check rejects. `isVFolderMountConfigValid` returns `false` for this value.',
+          'Two folders use the same alias (`shared`), so both resolve to `/home/work/shared` and are flagged with the overlap error. The third row types an alias the format check rejects. `useVFolderMountConfigFormRule` rejects this value.',
       },
     },
   },
@@ -468,6 +468,37 @@ export const NoMountableHost: Story = {
     },
   },
   render: (args) => <ControlledDemo {...args} mountableHosts={[]} />,
+};
+
+export const PrunesUnmountableSelection: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A value restored from a template can name a folder this owner cannot mount. With `mountableHosts={[]}` nothing passes the host gate, so the prefilled entries are dropped from the value on mount and a warning toast explains the shrinking selection — the emitted `onChange` payload below goes straight to `[]`.',
+      },
+    },
+  },
+  render: (args) => (
+    <ControlledDemo
+      {...args}
+      mountableHosts={[]}
+      initialValue={[
+        {
+          vfolderId: folderId(0),
+          name: folderName(0),
+          mountDestination: '',
+          subpath: '',
+        },
+        {
+          vfolderId: folderId(1),
+          name: folderName(1),
+          mountDestination: 'shared',
+          subpath: '',
+        },
+      ]}
+    />
+  ),
 };
 
 export const Disabled: Story = {
