@@ -1094,7 +1094,6 @@ At each step, the following common features are available:
 The Resource Group step displays a table of all resource groups with their fair share configuration.
 
 ![](../images/fair_share_resource_group_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Resource Group step) — capture must show the property filter in the toolbar and the Status / Created At columns. Not captured: the screenshot backend was unavailable. -->
 
 The table includes the following columns:
 
@@ -1135,7 +1134,6 @@ After selecting a resource group, the Domain step displays a table of domains wi
 fair share weights and usage within that resource group.
 
 ![](../images/fair_share_domain_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Domain step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
 
 The table includes the following columns:
 
@@ -1160,7 +1158,7 @@ After selecting a domain, the Project step displays a table of projects with the
 column structure as the Domain step. Click a project name to drill into the User step.
 
 ![](../images/fair_share_project_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
@@ -1515,7 +1513,6 @@ location and restart the agent daemon. Management of the resource groups is
 possible in Resource Group tab of the Resource page.
 
 ![](../images/resource_group_page.png)
-<!-- TODO(screenshot): refresh /agent?tab=resourceGroup — capture must show the property filter in the toolbar and the Default / Created At columns (no Driver column). Not captured: the screenshot backend was unavailable. -->
 
 The **Active** and **Inactive** buttons above the list choose which resource groups are listed, and the
 property filter next to them narrows the list by **Name**, **Description**, **Public**, or **Default**.
@@ -1913,7 +1910,7 @@ This page is only for showing current information.
 Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
 
-<!-- TODO(screenshot): capture /project as images/projects_page.png — must show the Active/Inactive buttons, the property filter, the column-settings gear at the right of the table header, and the project table with the Status and Modified At columns enabled. Not captured: the screenshot backend was unavailable. -->
+![](../images/projects_page.png)
 
 The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
 filter next to them narrows the list by **Name**, **Domain**, **Resource Policy**, **Project ID**,
@@ -1921,7 +1918,7 @@ filter next to them narrows the list by **Name**, **Domain**, **Resource Policy*
 **Modified At** take a date and time.
 
 The **Modified At** and **Status** columns are hidden by default and can be shown using the
-column-settings gear button (⚙) at the right of the table header. **Status** shows whether a project is
+column-settings gear button (⚙) below the table, next to the pagination controls. **Status** shows whether a project is
 **Active** or **Inactive**. Your column choices are persisted per browser across sessions.
 
 <a id="set-project-admin"></a>

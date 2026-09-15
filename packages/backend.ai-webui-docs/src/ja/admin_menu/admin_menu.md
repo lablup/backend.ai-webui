@@ -1039,7 +1039,6 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 表示されます。
 
 ![](../images/fair_share_resource_group_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Resource Group step) — capture must show the property filter in the toolbar and the Status / Created At columns. Not captured: the screenshot backend was unavailable. -->
 
 テーブルには以下のカラムが含まれます：
 
@@ -1080,7 +1079,6 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 フェアシェア重みと使用量がテーブルで表示されます。
 
 ![](../images/fair_share_domain_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Domain step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
 
 テーブルには以下のカラムが含まれます：
 
@@ -1106,7 +1104,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 ドリルダウンします。
 
 ![](../images/fair_share_project_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 行を選択した場合、同じ一括操作（利用グラフおよび一括編集）が利用可能です。
 
@@ -1413,7 +1411,6 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 特定のエージェントを特定のリソースグループに追加する操作は、現在WebUIでは処理されていません。インストール場所からエージェントのconfigファイルを編集し、エージェントデーモンを再起動して行えます。リソースグループの管理は、リソース管理ページのリソースグループタブで可能です。
 
 ![](../images/resource_group_page.png)
-<!-- TODO(screenshot): refresh /agent?tab=resourceGroup — capture must show the property filter in the toolbar and the Default / Created At columns (no Driver column). Not captured: the screenshot backend was unavailable. -->
 
 一覧の上にある **アクティブ**、**非アクティブ** ボタンで表示するリソースグループを切り替えられます。その隣の
 プロパティフィルターでは、**名前**、**説明**、**公開**、**デフォルト** で一覧を絞り込めます。条件の組み合わせに
@@ -1791,14 +1788,14 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
 スーパー管理者はプロジェクトページでクラスター内のすべてのプロジェクトを確認し、作成、編集、無効化、有効化、
 完全削除を行えます。各行には、プロジェクト管理者権限を付与するためのショートカットもあります。
 
-<!-- TODO(screenshot): capture /project as images/projects_page.png — must show the Active/Inactive buttons, the property filter, the column-settings gear at the right of the table header, and the project table with the Status and Modified At columns enabled. Not captured: the screenshot backend was unavailable. -->
+![](../images/projects_page.png)
 
 一覧の上にある **アクティブ**、**非アクティブ** ボタンで表示するプロジェクトを切り替えられます。その隣の
 プロパティフィルターでは、**名前**、**ドメイン**、**リソースポリシー**、**プロジェクトID**、**作成日**、
 **更新日** で一覧を絞り込めます。**プロジェクトID** には完全なUUIDを入力する必要があり、**作成日** と
 **更新日** には日付と時刻を指定します。
 
-**更新日時** と **ステータス** 列は既定で非表示になっており、テーブルヘッダー右側の列設定（⚙）ボタンで表示
+**更新日時** と **ステータス** 列は既定で非表示になっており、テーブル下部のページ送りコントロールの横にある列設定（⚙）ボタンで表示
 できます。**ステータス** 列にはプロジェクトが **アクティブ** か **非アクティブ** かが表示されます。選択した列
 構成はブラウザごとにセッションをまたいで保持されます。
 

@@ -998,7 +998,6 @@ Fair Share Scheduler จะพร้อมใช้งานเฉพาะเ�
 Fair Share
 
 ![](../images/fair_share_resource_group_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Resource Group step) — capture must show the property filter in the toolbar and the Status / Created At columns. Not captured: the screenshot backend was unavailable. -->
 
 ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
 
@@ -1039,7 +1038,6 @@ modal ประกอบด้วยฟิลด์ต่อไปนี้:
 Fair Share และการใช้งานภายในกลุ่มทรัพยากรนั้น
 
 ![](../images/fair_share_domain_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Domain step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
 
 ตารางประกอบด้วยคอลัมน์ต่อไปนี้:
 
@@ -1065,7 +1063,7 @@ Fair Share และการใช้งานภายในกลุ่มท
 ขั้นตอนผู้ใช้
 
 ![](../images/fair_share_project_page.png)
-<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not captured: the screenshot backend was unavailable. -->
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 การดำเนินการเป็นกลุ่มเดียวกัน (กราฟการใช้งานและแก้ไขเป็นกลุ่ม) จะพร้อมใช้งานเมื่อเลือกแถว
 
@@ -1344,7 +1342,6 @@ Superadmin สามารถดูรายการโหนดเอเจน
 การเพิ่มเอเจนต์เฉพาะเข้ากลุ่มทรัพยากรเฉพาะยังไม่ได้จัดการใน WebUI ในปัจจุบัน สามารถทำได้โดยแก้ไขไฟล์ config ของเอเจนต์จากตำแหน่งที่ติดตั้งและรีสตาร์ท agent daemon การจัดการกลุ่มทรัพยากรสามารถทำได้ในแท็บกลุ่มทรัพยากรของหน้าทรัพยากร
 
 ![](../images/resource_group_page.png)
-<!-- TODO(screenshot): refresh /agent?tab=resourceGroup — capture must show the property filter in the toolbar and the Default / Created At columns (no Driver column). Not captured: the screenshot backend was unavailable. -->
 
 ปุ่ม **คล่องแคล่ว** และ **ไม่ทำงาน** เหนือรายการใช้เลือกว่าจะแสดงกลุ่มทรัพยากรชุดใด และตัวกรองคุณสมบัติที่อยู่ถัดไปช่วยจำกัดรายการด้วย **ชื่อ**, **คำอธิบาย**, **สาธารณะ** หรือ **ค่าเริ่มต้น** บนแมเนเจอร์ที่ไม่รองรับการรวมเงื่อนไข จะใช้ได้ครั้งละหนึ่งเงื่อนไขเท่านั้น
 
@@ -1696,11 +1693,11 @@ Superadmin สามารถเผยแพร่ข้อความสั้
 
 Superadmin สามารถดูโปรเจกต์ทั้งหมดในคลัสเตอร์ได้จากหน้าโปรเจกต์ และสร้าง แก้ไข ปิดการใช้งาน เปิดใช้งาน และลบโปรเจกต์เหล่านั้นอย่างถาวรได้ แต่ละแถวยังมีทางลัดสำหรับการให้สิทธิ์ผู้ดูแลโปรเจกต์ด้วย
 
-<!-- TODO(screenshot): capture /project as images/projects_page.png — must show the Active/Inactive buttons, the property filter, the column-settings gear at the right of the table header, and the project table with the Status and Modified At columns enabled. Not captured: the screenshot backend was unavailable. -->
+![](../images/projects_page.png)
 
 ปุ่ม **คล่องแคล่ว** และ **ไม่ทำงาน** เหนือรายการใช้เลือกว่าจะแสดงโปรเจกต์ชุดใด และตัวกรองคุณสมบัติที่อยู่ถัดไปช่วยจำกัดรายการด้วย **ชื่อ**, **โดเมน**, **นโยบายทรัพยากร**, **รหัสโครงการ**, **วันที่สร้าง** หรือ **วันที่แก้ไข** โดย **รหัสโครงการ** ต้องเป็น UUID แบบเต็ม ส่วน **วันที่สร้าง** และ **วันที่แก้ไข** รับค่าเป็นวันที่และเวลา
 
-คอลัมน์ **แก้ไขเมื่อ** และ **สถานะ** ถูกซ่อนไว้โดยค่าเริ่มต้น และแสดงได้ด้วยปุ่มตั้งค่าคอลัมน์ (⚙) ทางด้านขวาของส่วนหัวตาราง คอลัมน์ **สถานะ** แสดงว่าโปรเจกต์ **คล่องแคล่ว** หรือ **ไม่ทำงาน** ตัวเลือกคอลัมน์ของคุณจะถูกบันทึกไว้ต่อเบราว์เซอร์และคงอยู่ข้ามเซสชัน
+คอลัมน์ **แก้ไขเมื่อ** และ **สถานะ** ถูกซ่อนไว้โดยค่าเริ่มต้น และแสดงได้ด้วยปุ่มตั้งค่าคอลัมน์ (⚙) ที่อยู่ใต้ตาราง ถัดจากตัวควบคุมการแบ่งหน้า คอลัมน์ **สถานะ** แสดงว่าโปรเจกต์ **คล่องแคล่ว** หรือ **ไม่ทำงาน** ตัวเลือกคอลัมน์ของคุณจะถูกบันทึกไว้ต่อเบราว์เซอร์และคงอยู่ข้ามเซสชัน
 
 <a id="set-project-admin"></a>
 
