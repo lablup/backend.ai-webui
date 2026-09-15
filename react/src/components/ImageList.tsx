@@ -8,11 +8,7 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
-import {
-  getImageCanonical,
-  getImageFullName,
-  isPrivateImage,
-} from '../helper';
+import { getImageCanonical, getImageFullName, isPrivateImage } from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -635,10 +631,10 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                   updateFetchKey();
                 } catch (error) {
                   message.error(
-                    describeScanError(
-                      error,
-                      t('environment.RescanImageNotFound'),
-                    ),
+                    describeScanError(error, {
+                      notFound: t('environment.RescanImageNotFound'),
+                      forbidden: t('environment.RescanImageRequiresSuperadmin'),
+                    }),
                   );
                 }
               }}
