@@ -68,6 +68,8 @@ const SessionLauncherStorageStep: React.FC<{
           // The select can only offer the new folder once its own
           // `GET /folders` query has seen it.
           await mountConfigInputRef.current?.refetch();
+          // A dotfile folder is auto-mounted by the session, never selected.
+          if (response.metadata.name.startsWith('.')) return;
           // The create mutation answers with a Relay global id.
           const vfolderId = safeDecodeUuid(response.id);
           if (!vfolderId) return;
