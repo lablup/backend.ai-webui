@@ -10,6 +10,7 @@ export type KeypairResourcePolicyV2Filter = {
     maxConcurrentSftpSessions?: IntFilter | null | undefined;
     maxContainersPerSession?: IntFilter | null | undefined;
     maxPendingSessionCount?: IntFilter | null | undefined;
+    maxPriority?: IntFilter | null | undefined;
     maxSessionLifetime?: IntFilter | null | undefined;
     name?: StringFilter | null | undefined;
 };

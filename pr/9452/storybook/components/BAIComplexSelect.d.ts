@@ -44,7 +44,8 @@ export interface BAIComplexSelectProps {
     /** antd `onSearch` — fires on every keystroke; debounce upstream. */
     onSearch?: (value: string) => void;
     searchPlaceholder?: string;
-    /** antd `loading` — spinner on the trigger. */
+    /** antd `loading` — spinner on the trigger, and a loading row in an
+     * otherwise empty popup instead of "No results". */
     isLoading?: boolean;
     isDisabled?: boolean;
     isRequired?: boolean;
@@ -71,7 +72,7 @@ export interface BAIComplexSelectProps {
     header?: React.ReactNode;
     /** antd `BAISelect.footer` (rendered below the option list). */
     footer?: React.ReactNode;
-    /** antd `notFoundContent`. */
+    /** antd `notFoundContent`. Overrides the loading row too. */
     emptyContent?: React.ReactNode;
     /**
      * Reports popup open/close. `BAIUserSelect` and friends use this to flip

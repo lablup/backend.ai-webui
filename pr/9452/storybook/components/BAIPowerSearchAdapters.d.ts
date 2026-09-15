@@ -1,4 +1,4 @@
-import { CustomOperatorValue, EnumItem } from '@astryxdesign/core/PowerSearch';
+import { CustomOperatorValue, EnumItem, OperatorValue, PowerSearchComponentOverride, PowerSearchEditorProps } from '@astryxdesign/core/PowerSearch';
 import { SearchSource } from '@astryxdesign/core/Typeahead';
 import { default as React, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /**
@@ -13,7 +13,12 @@ export type FilterPropertyOption = {
 };
 /** The `renderInput` escape hatch shared by both filters (FR-3011 / FR-3258). */
 export type FilterRenderInput = (props: {
+    /** Stages a value; the edit popover's Apply button commits it. */
     onAddCondition: (value: string | undefined, label?: string) => void;
+    /** The staged (or committed) value — feed it back so the pick stays visible. */
+    value: string | null;
+    /** The popover's disabled state. */
+    isDisabled?: boolean;
 }) => ReactNode;
 /** Only string-ish labels survive into a token; anything else falls back. */
 export declare const optionLabelToString: (label: ReactNode, fallback: string) => string;
@@ -40,11 +45,7 @@ export interface RenderInputEditors {
 }
 /**
  * Builds (and caches) one `custom` operator value per `renderInput` property.
- *
- * PILOT-DECISION: the antd filter committed a condition the instant the
- * control emitted a value. PowerSearch owns the commit (its popover has an
- * Apply button), so the control now stages the value and the user confirms.
- * One extra click; the alternative was reimplementing the popover.
+ * The control stages a value; the popover's Apply button commits it.
  */
 export declare function useRenderInputEditors({ recordLabel, resolveLabel, }: RenderInputEditorsOptions): RenderInputEditors;
 /**
@@ -80,3 +81,14 @@ export interface BAIPowerSearchChromeProps {
     className?: string;
     'data-testid'?: string;
 }
+/**
+ * Astryx's default editor popover content, wrapped in the class hook
+ * `BAIPowerSearchAdapters.css` styles against.
+ */
+export declare const BAIPowerSearchEditor: (props: PowerSearchEditorProps) => React.JSX.Element;
+/**
+ * `components` for both filters' PowerSearch. PowerSearch picks the override
+ * by the operator value type the popover opens on, so every type maps to the
+ * same editor; the full `Record` makes a new Astryx type a compile error.
+ */
+export declare const baiPowerSearchComponents: Record<OperatorValue['type'], PowerSearchComponentOverride>;
