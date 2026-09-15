@@ -126,6 +126,10 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   style.textContent = `
     :host {
       all: initial;
+      /* all:initial resets color-scheme too, and the app's tokens are
+         light-dark() pairs — without this a dark app resolves to the light
+         half and the popover comes back white. */
+      color-scheme: inherit;
       --bai-review-surface: var(--color-background-popover, #fff);
       --bai-review-text: var(--color-text-primary, #0a1317);
       --bai-review-text-dim: var(--color-text-secondary, #4e606f);
@@ -166,6 +170,8 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-focus-text: var(--color-text-accent, #0064e0);
       --bai-mod-text: var(--color-text-orange, #6b2203);
       --bai-add-text: var(--color-text-green, #09441f);
+      --bai-del-text: var(--color-text-red, #7b0210);
+    }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {
       border: 1px solid var(--bai-review-border);

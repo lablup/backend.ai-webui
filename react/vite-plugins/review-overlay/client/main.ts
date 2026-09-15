@@ -486,7 +486,7 @@ function boot() {
    * and the link then re-enters the same one. A handover consumed by the first
    * of those two would leave the second on the wrong stop.
    */
-  const requestedStop = walkthroughs.takeFocus();
+  let requestedStop = walkthroughs.takeFocus();
   let guided: GuidedMode | null = null;
 
   /**
@@ -515,6 +515,9 @@ function boot() {
       onExit: () => {
         guided = null;
         walkthroughs.clear();
+        // Spent: re-opening the same link in this document is a fresh arrival,
+        // not the reload that once asked for a stop.
+        requestedStop = null;
         ui.showToast('Left the walkthrough — your own pins are untouched');
       },
     });

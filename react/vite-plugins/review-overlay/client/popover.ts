@@ -28,7 +28,10 @@ const STYLE = `
   }
   .bai-popover .type {
     font-weight: 700; text-transform: uppercase; font-size: 11px;
-    padding: 1px 7px; border-radius: 999px; color: #fff;
+    padding: 1px 7px; border-radius: 999px;
+    /* White measures 2.75:1 on the docs amber at 11px bold; the dark ink
+       already declared for the pin's accent clears AA on both fills. */
+    color: var(--bai-review-on-accent);
     background: var(--bai-mod);
   }
   .bai-popover .type.added { background: var(--bai-add); }
@@ -55,7 +58,7 @@ const STYLE = `
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   .bai-popover .diff .del {
-    background: rgba(239, 68, 68, .14); color: var(--color-text-red, #7b0210);
+    background: rgba(239, 68, 68, .14); color: var(--bai-del-text);
     text-decoration: line-through; border-radius: 2px;
   }
   .bai-popover .diff .ins {

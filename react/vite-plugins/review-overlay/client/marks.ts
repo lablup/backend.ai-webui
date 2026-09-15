@@ -36,6 +36,9 @@ const STYLE = `
   }
   .wt-badge.comment { background: var(--bai-focus); }
   .wt-badge.num {
+    /* White is 2.49:1 on the docs orange at 10px bold; the dark ink clears AA
+       and keeps the fill the docs colour. */
+    color: var(--bai-review-on-accent);
     background: var(--bai-accent); min-width: 18px; text-align: center;
     font-variant-numeric: tabular-nums; cursor: pointer; pointer-events: auto;
     border: 0; font-family: inherit;

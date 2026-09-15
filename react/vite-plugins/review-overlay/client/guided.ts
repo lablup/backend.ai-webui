@@ -25,7 +25,7 @@ import {
   type PopoverPlace,
 } from './popover.js';
 import { findAnchorTarget } from './resolve.js';
-import type { ReviewServerState, SetPin } from './types.js';
+import type { ReviewServerState } from './types.js';
 import {
   buildCommentCopy,
   codeHref,
@@ -127,7 +127,12 @@ export function startGuidedMode(options: GuidedModeOptions) {
    * the stop fields come off it.
    */
   const prepared = new Map<string, PreparedComment>();
-  let exportTimer = 0;
+  /**
+   * One timer PER STOP. A single shared one meant that moving from stop A to
+   * stop B within the debounce cancelled A's re-encode outright, and the loss
+   * only surfaced as a refused copy much later.
+   */
+  const exportTimers = new Map<string, number>();
 
   async function prepareExport(stop: WalkthroughStop) {
     const comment = progress.comment(stop.id);
@@ -139,12 +144,25 @@ export function startGuidedMode(options: GuidedModeOptions) {
   }
 
   const prepareSoon = (stop: WalkthroughStop) => {
-    clearTimeout(exportTimer);
-    exportTimer = window.setTimeout(
-      () => void prepareExport(stop),
-      EXPORT_DEBOUNCE_MS,
+    clearTimeout(exportTimers.get(stop.id));
+    exportTimers.set(
+      stop.id,
+      window.setTimeout(() => {
+        exportTimers.delete(stop.id);
+        void prepareExport(stop);
+      }, EXPORT_DEBOUNCE_MS),
     );
   };
+
+  /** The payload this stop is waiting on, now — a copy cannot wait 250 ms. */
+  const flushPrepare = (stop: WalkthroughStop) => {
+    const timer = exportTimers.get(stop.id);
+    if (timer === undefined) return;
+    clearTimeout(timer);
+    exportTimers.delete(stop.id);
+    void prepareExport(stop);
+  };
+
   const stopType = (stop: WalkthroughStop): 'added' | 'modified' =>
     stop.anchor.type === 'added' ? 'added' : 'modified';
 
@@ -374,6 +392,10 @@ export function startGuidedMode(options: GuidedModeOptions) {
   function go(index: number, follow = true): void {
     const stop = stops[index];
     if (!stop) return;
+    if (index !== current) {
+      const leaving = stops[current];
+      if (leaving) flushPrepare(leaving);
+    }
     current = index;
     popOpen = true;
     const where = place(stop);
@@ -395,6 +417,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (!stop) return;
     const ready = prepared.get(stop.id);
     if (!ready || ready.note !== progress.comment(stop.id).trim()) {
+      flushPrepare(stop);
       void prepareExport(stop);
       return options.showToast(STILL_ENCODING);
     }
@@ -411,15 +434,28 @@ export function startGuidedMode(options: GuidedModeOptions) {
       progress.comment(stop.id).trim() ? [{ stop, index }] : [],
     );
     if (!wanted.length) return options.showToast('No comments to copy yet');
-    const pins: SetPin[] = [];
-    for (const { stop, index } of wanted) {
+    const stale = wanted.filter(({ stop }) => {
       const ready = prepared.get(stop.id);
-      if (!ready || ready.note !== progress.comment(stop.id).trim()) {
+      return !ready || ready.note !== progress.comment(stop.id).trim();
+    });
+    // Every one of them, not just the first: a second press that still refuses
+    // because stop 4 was never started is the same bug one press later.
+    if (stale.length) {
+      for (const { stop } of stale) {
+        flushPrepare(stop);
         void prepareExport(stop);
-        return options.showToast(STILL_ENCODING);
       }
-      pins.push(commentPin(stop, index, ready, servedPr(), stamp));
+      return options.showToast(STILL_ENCODING);
     }
+    const pins = wanted.map(({ stop, index }) =>
+      commentPin(
+        stop,
+        index,
+        prepared.get(stop.id) as PreparedComment,
+        servedPr(),
+        stamp,
+      ),
+    );
     options.copyWithToast(buildCommentCopy(pins));
   }
 
@@ -532,7 +568,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   function destroy() {
     progress.flush();
-    clearTimeout(exportTimer);
+    for (const timer of exportTimers.values()) clearTimeout(timer);
+    exportTimers.clear();
     cancelLadder();
     clearTimeout(settleTimer);
     observer.disconnect();
