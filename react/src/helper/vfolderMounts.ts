@@ -5,14 +5,15 @@
 import {
   convertToUUID,
   mountDestinationToInput,
+  type LegacyVFolder,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 
 /**
- * The pre-`vfolderMounts` launcher mount fields. They still arrive from
- * `?formValues=`, the recent-session history, and the FileBrowser / SFTP
- * buttons, which keep writing `mount_ids` as 32-hex ids.
+ * The pre-`vfolderMounts` launcher mount fields, carrying `mount_ids` as
+ * 32-hex ids. They still arrive from `?formValues=` URLs and the stored
+ * recent-session history.
  */
 interface LegacyMountFormFields {
   mount_ids?: Array<string>;
@@ -79,3 +80,35 @@ export const ownerEmailFromOwner = (
     _.every(_.omit(owner, 'enabled'), (field) => field !== undefined);
   return isComplete ? owner?.email : undefined;
 };
+
+interface AutoMountedFolderScope {
+  /** Only a folder of this project is auto-mounted with the session. */
+  currentProjectId: string;
+  /**
+   * Hosts granting `mount-in-session`. Omit it where the caller has no
+   * host-permission context; the host gate is then skipped.
+   */
+  mountableHosts?: Array<string>;
+}
+
+/**
+ * The folders a session mounts on its own — ready dotfile folders — picked out
+ * of a `GET /folders` list the same way VFolderTable did it.
+ */
+export const autoMountedFolderNamesFrom = (
+  folders: Array<LegacyVFolder>,
+  { currentProjectId, mountableHosts }: AutoMountedFolderScope,
+): Array<string> =>
+  _.map(
+    _.filter(
+      folders,
+      (folder) =>
+        folder.status === 'ready' &&
+        folder.name.startsWith('.') &&
+        (folder.ownership_type === 'user' ||
+          !folder.group ||
+          folder.group === currentProjectId) &&
+        (!mountableHosts || _.includes(mountableHosts, folder.host)),
+    ),
+    (folder) => folder.name,
+  );

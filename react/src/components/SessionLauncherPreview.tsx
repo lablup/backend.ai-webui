@@ -7,11 +7,13 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
+import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
 import {
   SessionLauncherFormValue,
@@ -101,8 +103,14 @@ const SessionLauncherPreview: React.FC<{
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
-  const autoMountedFolderNames =
-    useSuspendedAutoMountedFolderNames(currentProjectId);
+  // `preserve` reads the raw store: `owner` has no registered Form.Item.
+  const owner = Form.useWatch('owner', { form, preserve: true });
+  const mountableHosts = useMountableStorageHosts(currentProjectId);
+  const autoMountedFolderNames = useSuspendedAutoMountedFolderNames({
+    ownerEmail: ownerEmailFromOwner(owner),
+    currentProjectId,
+    mountableHosts,
+  });
 
   const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
   const hasAnySubpath = _.some(mountRows, (row) => !!row.subpath);

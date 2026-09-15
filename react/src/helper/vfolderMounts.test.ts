@@ -3,9 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  autoMountedFolderNamesFrom,
   normalizeLegacyMountFields,
   ownerEmailFromOwner,
 } from './vfolderMounts';
+import type { LegacyVFolder } from 'backend.ai-ui';
 
 const HEX_ID = '2f9d4a1b6c7e4f0aa1b2c3d4e5f60718';
 const UUID_ID = '2f9d4a1b-6c7e-4f0a-a1b2-c3d4e5f60718';
@@ -109,5 +111,82 @@ describe('ownerEmailFromOwner', () => {
         domainName: 'default',
       }),
     ).toBe('owner@lablup.com');
+  });
+});
+
+describe('autoMountedFolderNamesFrom', () => {
+  const PROJECT_ID = 'c2b0a4de-0d1e-4f5a-9b6c-7d8e9f001122';
+
+  const folder = (overrides: Partial<LegacyVFolder>): LegacyVFolder =>
+    ({
+      name: '.bashrc',
+      host: 'local:volume1',
+      status: 'ready',
+      group: null,
+      ownership_type: 'user',
+      ...overrides,
+    }) as LegacyVFolder;
+
+  it("picks the ready dotfile folders out of the owner's list", () => {
+    expect(
+      autoMountedFolderNamesFrom(
+        [
+          folder({ name: '.bashrc' }),
+          folder({ name: 'owner-data' }),
+          folder({ name: '.local' }),
+        ],
+        { currentProjectId: PROJECT_ID, mountableHosts: ['local:volume1'] },
+      ),
+    ).toEqual(['.bashrc', '.local']);
+  });
+
+  it('excludes a dotfile folder that is not ready', () => {
+    expect(
+      autoMountedFolderNamesFrom(
+        [folder({ name: '.deleted', status: 'delete-pending' })],
+        { currentProjectId: PROJECT_ID, mountableHosts: ['local:volume1'] },
+      ),
+    ).toEqual([]);
+  });
+
+  it('excludes a dotfile folder on a host that does not allow mounting', () => {
+    expect(
+      autoMountedFolderNamesFrom(
+        [
+          folder({ name: '.bashrc', host: 'local:volume1' }),
+          folder({ name: '.ssh', host: 'local:no-mount' }),
+        ],
+        { currentProjectId: PROJECT_ID, mountableHosts: ['local:volume1'] },
+      ),
+    ).toEqual(['.bashrc']);
+  });
+
+  it('keeps every host when no mountable host list is given', () => {
+    expect(
+      autoMountedFolderNamesFrom(
+        [folder({ name: '.ssh', host: 'local:no-mount' })],
+        { currentProjectId: PROJECT_ID },
+      ),
+    ).toEqual(['.ssh']);
+  });
+
+  it('excludes a project folder owned by another project', () => {
+    expect(
+      autoMountedFolderNamesFrom(
+        [
+          folder({
+            name: '.shared',
+            ownership_type: 'group',
+            group: PROJECT_ID,
+          }),
+          folder({
+            name: '.elsewhere',
+            ownership_type: 'group',
+            group: 'ffffffff-0000-0000-0000-000000000000',
+          }),
+        ],
+        { currentProjectId: PROJECT_ID },
+      ),
+    ).toEqual(['.shared']);
   });
 });

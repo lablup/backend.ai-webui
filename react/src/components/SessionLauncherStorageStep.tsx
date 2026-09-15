@@ -3,10 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form, type FormInstance } from '../form-engine';
-import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { ownerEmailFromOwner } from '../helper/vfolderMounts';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
-import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
+import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
@@ -21,8 +19,7 @@ import {
 import * as _ from 'lodash-es';
 import React, { useRef, useState } from 'react';
 
-// The auto-mount query is capped at 100 names, so exclude dotfiles here too
-// rather than relying on that list being complete.
+// Dotfile folders are mounted by the session itself, so they are never offered.
 const isSelectableFolder = (folder: LegacyVFolder) =>
   folder.status === 'ready' && !folder.name.startsWith('.');
 
@@ -31,8 +28,6 @@ const SessionLauncherStorageStep: React.FC<{
   project: ProjectContext;
 }> = ({ form, project }) => {
   'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const currentDomain = useCurrentDomainValue();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const mountConfigInputRef = useRef<BAIVFolderMountConfigInputRef>(null);
 
@@ -41,19 +36,12 @@ const SessionLauncherStorageStep: React.FC<{
   const owner = Form.useWatch('owner', { form, preserve: true });
   const ownerEmail = ownerEmailFromOwner(owner);
 
-  const { unitedAllowedPermissionByVolume } =
-    useMergedAllowedStorageHostPermission(
-      currentDomain,
-      project.id,
-      baiClient?._config?.accessKey,
-    );
-  const mountableHosts = _.keys(
-    _.pickBy(unitedAllowedPermissionByVolume, (permissions) =>
-      _.includes(permissions, MOUNT_IN_SESSION_PERMISSION),
-    ),
-  );
-
-  const autoMountedFolderNames = useSuspendedAutoMountedFolderNames(project.id);
+  const mountableHosts = useMountableStorageHosts(project.id);
+  const autoMountedFolderNames = useSuspendedAutoMountedFolderNames({
+    ownerEmail,
+    currentProjectId: project.id,
+    mountableHosts,
+  });
   const mountConfigRule = useVFolderMountConfigFormRule({
     autoMountedFolderNames,
   });
