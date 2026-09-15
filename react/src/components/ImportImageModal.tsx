@@ -4,7 +4,6 @@
  */
 import { ImportImageModalRegistriesQuery } from '../__generated__/ImportImageModalRegistriesQuery.graphql';
 import { App } from '../app-shim';
-import { baiSignedRequestWithPromise } from '../helper';
 import {
   parseImageReferenceLine,
   resolveImageReference,
@@ -12,9 +11,11 @@ import {
   type RegistryRow,
   type ResolvedReference,
 } from '../helper/imageReferenceParser';
-import { useSuspendedBackendaiClient } from '../hooks';
-import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
-import { usePainKiller } from '../hooks/usePainKiller';
+import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
+import {
+  useDescribeScanImageError,
+  useScanImage,
+} from '../hooks/useScanImage';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import './ImportImageModal.css';
 import { Button } from '@astryxdesign/core/Button';
@@ -46,24 +47,6 @@ import { Suspense, useDeferredValue, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 import type { IEnvironment } from 'relay-runtime';
-
-/**
- * `RescanImagesResponse` / `ImageDTO` from
- * `ai.backend.common.dto.manager.image.response`. Only the fields this modal
- * reads are declared; the client package cannot host it while `@ts-nocheck`
- * stands on its resource files.
- */
-interface ScanImageResponse {
-  item: {
-    id: string;
-    name: string;
-    registry: string;
-    project: string | null;
-    tag: string | null;
-    architecture: string;
-  };
-  errors: Array<string>;
-}
 
 type LineOutcome = {
   status: 'queued' | 'pending' | 'success' | 'error';
@@ -190,8 +173,6 @@ const ImportImageModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
-  const painKiller = usePainKiller();
 
   const [text, setText] = useState('');
   const [architecture, setArchitecture] = useState<string>(ARCHITECTURES[0]);
@@ -260,19 +241,8 @@ const ImportImageModalContent: React.FC<{
   const hasFailure = _.some(outcomes, (outcome) => outcome.status === 'error');
   const canSubmit = pendingLines.length > 0 && !hasBlockedLine;
 
-  const scanImage = useTanMutation<
-    ScanImageResponse,
-    unknown,
-    { canonical: string; architecture: string }
-  >({
-    mutationFn: (values) =>
-      baiSignedRequestWithPromise<ScanImageResponse>({
-        method: 'POST',
-        url: '/admin/images/rescan',
-        body: values,
-        client: baiClient,
-      }),
-  });
+  const scanImage = useScanImage();
+  const describeScanError = useDescribeScanImageError();
 
   const describeReason = (resolved: ResolvedReference) => {
     const reasons: Record<ImageReferenceReason, string> = {
@@ -302,47 +272,9 @@ const ImportImageModalContent: React.FC<{
     return resolved.reason ? reasons[resolved.reason] : null;
   };
 
-  // Called from a `catch`, so it must never throw and must always return
-  // something the reader can act on. A 404 `image_read_not-found` is today's
-  // behaviour for a canonical the manager's DB does not already carry, and a
-  // 5xx is how a missing tag or manifest surfaces (lablup/backend.ai#14612).
-  const describeError = (error: any) => {
-    const statusCode = error?.statusCode;
-    if (statusCode === 404 && error?.error_code === 'image_read_not-found') {
-      return t('environment.ImportImageManagerCannotRegisterNewImages');
-    }
-    if (statusCode === 403) {
-      return t('environment.ImportImageRequiresSuperadmin');
-    }
-    // `client.ts` stamps 408 on both its own 30s deadline and a user abort;
-    // the manager keeps scanning either way, so a retry is safe.
-    if (statusCode === 408) {
-      return t('environment.ImportImageScanTimedOut');
-    }
-    if (_.isNumber(statusCode) && statusCode >= 500 && statusCode <= 599) {
-      return t('environment.ImportImageScanFailedOnServer');
-    }
-    const title = _.isString(error?.title) ? error.title : undefined;
-    let relieved: string | undefined;
-    try {
-      // `usePainKiller().relieve` reads `globalThis.backendaiwebui.debug`
-      // unguarded and throws when config.toml never loaded; guarded here
-      // rather than in the hook, which every error path shares (FR-3953).
-      relieved = title ? painKiller.relieve(title) : undefined;
-    } catch {
-      relieved = undefined;
-    }
-    return (
-      relieved ||
-      title ||
-      (error?.isError ? error?.message : undefined) ||
-      t('error.UnexpectedError')
-    );
-  };
-
   // The `finally` is the whole point: anything that throws past the per-line
-  // `catch` — `describeError`, `onAdded`, a toast — would otherwise leave the
-  // button loading and the modal undismissable forever (FR-3940).
+  // `catch` — `describeScanError`, `onAdded`, a toast — would otherwise leave
+  // the button loading and the modal undismissable forever (FR-3940).
   const handleAdd = async () => {
     onSubmittingChange(true);
     try {
@@ -383,7 +315,10 @@ const ImportImageModalContent: React.FC<{
             failure = errors.join('\n');
           }
         } catch (error) {
-          failure = describeError(error);
+          failure = describeScanError(
+            error,
+            t('environment.ImportImageManagerCannotRegisterNewImages'),
+          );
         }
         if (failure === null) {
           runOutcomes[key] = { status: 'success' };
@@ -626,7 +561,10 @@ const ImportImageModalContent: React.FC<{
             handleAdd().catch((error) => {
               message.error({
                 key: 'import-image-failed',
-                content: describeError(error),
+                content: describeScanError(
+                  error,
+                  t('environment.ImportImageManagerCannotRegisterNewImages'),
+                ),
               });
             });
           }}

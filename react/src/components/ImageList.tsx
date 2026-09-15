@@ -8,13 +8,21 @@ import {
   ImageListQuery$variables,
 } from '../__generated__/ImageListQuery.graphql';
 import { App } from '../app-shim';
-import { getImageFullName, isPrivateImage } from '../helper';
+import {
+  getImageCanonical,
+  getImageFullName,
+  isPrivateImage,
+} from '../helper';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import {
+  useDescribeScanImageError,
+  useScanImage,
+} from '../hooks/useScanImage';
 import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
@@ -55,6 +63,7 @@ import {
   Settings,
   ArrowDownToLine,
   Import,
+  ScanSearch,
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -242,6 +251,8 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
   const [isPendingRefreshTransition, startRefreshTransition] = useTransition();
+  const scanImage = useScanImage();
+  const describeScanError = useDescribeScanImageError();
 
   // Selected rows belong to one scope. Reset during render rather than
   // remounting on a `key`, which would discard the deferred scope transition
@@ -587,6 +598,44 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               setManagingApp(row);
             }}
           />
+          {/* `POST /admin/images/rescan` is `superadmin_required`, like the
+              import button above. */}
+          {baiClient.is_superadmin ? (
+            <IconButton
+              className="bai-action-accent"
+              variant="ghost"
+              icon={<ScanSearch size="1em" />}
+              label={t('environment.RescanImage')}
+              tooltip={t('environment.RescanImage')}
+              clickAction={async () => {
+                const canonical = getImageCanonical(row) ?? '';
+                try {
+                  const response = await scanImage.mutateAsync({
+                    canonical,
+                    architecture: row.architecture ?? '',
+                  });
+                  // A 200 only says the rescan ran; a per-image failure comes
+                  // back in `errors`.
+                  const errors = _.compact(response?.errors);
+                  if (errors.length > 0) {
+                    message.error(errors.join('\n'));
+                    return;
+                  }
+                  message.success(
+                    t('environment.RescanImageSuccess', { name: canonical }),
+                  );
+                  updateFetchKey();
+                } catch (error) {
+                  message.error(
+                    describeScanError(
+                      error,
+                      t('environment.RescanImageNotFound'),
+                    ),
+                  );
+                }
+              }}
+            />
+          ) : null}
         </BAIFlex>
       ),
     },
