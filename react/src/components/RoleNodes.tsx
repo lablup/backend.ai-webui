@@ -6,6 +6,7 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -15,7 +16,6 @@ import { Text } from '@astryxdesign/core/Text';
 import {
   BAIColumnType,
   BAIDoubleTag,
-  BAIFlex,
   BAIId,
   BAITable,
   BAITableProps,
@@ -82,29 +82,22 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
-        scopes(first: 3) {
-          count
-          edges {
-            node {
-              scopeType
-              scopeId
-              scope {
-                ... on ProjectV2 {
-                  basicInfo {
-                    projectName: name
-                  }
-                }
-                ... on DomainV2 {
-                  basicInfo {
-                    domainName: name
-                  }
-                }
-                ... on UserV2 {
-                  basicInfo {
-                    userEmail: email
-                  }
-                }
-              }
+        scopeType
+        scopeId
+        scope {
+          ... on ProjectV2 {
+            basicInfo {
+              projectName: name
+            }
+          }
+          ... on DomainV2 {
+            basicInfo {
+              domainName: name
+            }
+          }
+          ... on UserV2 {
+            basicInfo {
+              userEmail: email
             }
           }
         }
@@ -139,57 +132,30 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'scope',
       title: t('rbac.ScopeType'),
       render: (_, record: RoleNodeInList) => {
-        const scopeNodes =
-          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
-        const totalCount = record.scopes?.count ?? 0;
-        if (scopeNodes.length === 0) return '-';
-        const first = scopeNodes[0];
-        const scopeTypeLabel = t(`rbac.types.${first?.scopeType}`, {
-          defaultValue: first?.scopeType,
+        if (!record.scopeType) return '-';
+        const scopeTypeLabel = t(rbacTypeI18nKey(record.scopeType), {
+          defaultValue: record.scopeType,
         });
         const scopeName =
-          first?.scope?.basicInfo?.projectName ??
-          first?.scope?.basicInfo?.domainName ??
-          first?.scope?.basicInfo?.userEmail ??
-          first?.scopeId;
+          record.scope?.basicInfo?.projectName ??
+          record.scope?.basicInfo?.domainName ??
+          record.scope?.basicInfo?.userEmail ??
+          record.scopeId;
         return (
-          <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIDoubleTag
-              values={[
-                { label: scopeTypeLabel, color: 'blue' },
-                { label: scopeName, color: 'default' },
-              ]}
-            />
-            {totalCount > 1 && (
-              <Badge
-                variant={badgeVariantForTagColor('default')}
-                label={`+${totalCount - 1}`}
-              />
-            )}
-          </BAIFlex>
+          <BAIDoubleTag
+            values={[
+              { label: scopeTypeLabel, color: 'blue' },
+              { label: scopeName, color: 'default' },
+            ]}
+          />
         );
       },
     },
     {
       key: 'scopeId',
       title: t('rbac.ScopeRawId'),
-      render: (_, record: RoleNodeInList) => {
-        const scopeNodes =
-          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
-        const totalCount = record.scopes?.count ?? 0;
-        if (scopeNodes.length === 0) return '-';
-        return (
-          <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIId uuid={scopeNodes[0]?.scopeId} />
-            {totalCount > 1 && (
-              <Badge
-                variant={badgeVariantForTagColor('default')}
-                label={`+${totalCount - 1}`}
-              />
-            )}
-          </BAIFlex>
-        );
-      },
+      render: (_, record: RoleNodeInList) =>
+        record.scopeId ? <BAIId uuid={record.scopeId} /> : '-',
     },
     {
       key: 'source',
