@@ -99,7 +99,7 @@
     "serve": "^14.2.6",
     "tslib": "^2.8.1",
     "typescript": "~5.5.4",
-    "vitest": "^4.1.4",
+    "vitest": "^4.1.11",
     "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "workbox-expiration": "^7.4.0",
