@@ -17,6 +17,7 @@ import {
   findAnchorTarget,
   hasLandmark,
   quickFindTarget,
+  stopInScope,
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
@@ -612,8 +613,12 @@ function createPinView(deps: ViewDeps): PinView {
     const landmark = hasLandmark(target.anchor);
     if (landmark && !hadLandmark) missedScans = 0;
     hadLandmark = landmark;
+    // A dialog that closed without unmounting (BAIDialog drops its role) must
+    // release the element it held, or a dlg stop stays located behind nothing.
     const held =
-      located?.isConnected && textMatches(located, target.anchor.txt)
+      located?.isConnected &&
+      textMatches(located, target.anchor.txt) &&
+      stopInScope(located, target.anchor)
         ? located
         : null;
     if (held) missedScans = 0;
@@ -998,7 +1003,13 @@ export function createPinLayer(options: PinLayerOptions) {
     if (records.every((record) => host.contains(record.target as Node))) return;
     schedule();
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // `open` / `role` flip when a dialog closes in place, with no childList record.
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['open', 'role'],
+  });
   window.addEventListener('resize', placeSoon);
   // Viewport coordinates, so a scroll moves the pin — including a scroll in an
   // overflow ancestor, which a document-coordinate layer would miss.

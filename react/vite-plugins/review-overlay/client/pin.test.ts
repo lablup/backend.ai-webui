@@ -647,6 +647,30 @@ describe('createDeepLinkPin', () => {
       expect(marker().classList.contains('found')).toBe(true);
     });
 
+    // BAIDialog closes by dropping its `role` and keeps its subtree mounted,
+    // so the held element must be re-checked against the dialog scope.
+    it('releases a dlg stop when its dialog closes in place', async () => {
+      const app = document.querySelector('#app') as HTMLElement;
+      app.insertAdjacentHTML(
+        'beforeend',
+        '<div id="dlg" role="dialog"><button data-testid="confirm">Confirm</button></div>',
+      );
+      show({
+        s: '[data-testid="confirm"]',
+        tid: 'confirm',
+        txt: 'Confirm',
+        ck: 'The confirm button is visible',
+        dlg: 1,
+      });
+      expect(pin.locate()).toBe(true);
+
+      document.querySelector('#dlg')?.removeAttribute('role');
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()).toBeNull();
+      expect(marker().classList.contains('found')).toBe(false);
+    });
+
     it('escalates when the cheap ladder comes back empty', async () => {
       stale();
       expect(pin.locate()).toBe(true);

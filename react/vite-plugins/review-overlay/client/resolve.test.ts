@@ -377,4 +377,41 @@ describe('walkthrough stops resolve strictly (FR-3949)', () => {
     expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
     expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
   });
+
+  // A closed native <dialog> keeps its subtree in the DOM, so "inside a
+  // dialog" is not enough: it has to be an OPEN one.
+  it('with dlg, ignores an element inside a closed native dialog', () => {
+    mount('<dialog><button data-testid="ok">OK</button></dialog>');
+    const dialogStop = stop({
+      s: '[data-testid="ok"]',
+      tid: 'ok',
+      txt: 'OK',
+      dlg: 1,
+    });
+    expect(findAnchorTarget(dialogStop)).toBeNull();
+    expect(quickFindTarget(dialogStop)).toBeNull();
+    document.querySelector('dialog')?.setAttribute('open', '');
+    expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
+    expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
+  });
+
+  // A recycled selector can hit a same-text control outside the landmark; a
+  // stop takes the selector only where the text scan would take it.
+  it('takes a selector hit only inside its landmark', () => {
+    mount(
+      '<button class="primary">Save</button><div data-testid="panel"><button>Save</button></div>',
+    );
+    const outside = { s: 'button.primary', tid: 'panel', txt: 'Save' };
+    const panel = () => document.querySelector('[data-testid="panel"]');
+    expect(quickFindTarget(anchor(outside))?.className).toBe('primary');
+    const quick = quickFindTarget(stop(outside));
+    expect(quick?.className).not.toBe('primary');
+    expect(panel()?.contains(quick)).toBe(true);
+    const full = findAnchorTarget(stop(outside));
+    expect(full?.tagName).toBe('BUTTON');
+    expect(panel()?.contains(full)).toBe(true);
+    mount('<button class="primary">Save</button>');
+    expect(quickFindTarget(stop(outside))).toBeNull();
+    expect(findAnchorTarget(stop(outside))).toBeNull();
+  });
 });
