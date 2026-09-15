@@ -309,7 +309,8 @@ export const convertMetricUnit = (
     };
 
   if (_.includes(metricName.toLowerCase(), 'util')) {
-    // cpu_util arrives in tenths of a percent; the other *_util metrics in percent.
+    // cpu_util arrives as msec of CPU per second (1000 per core); other *_util are percent.
+    // TODO(needs-backend): BA-7900 — drop the /10 once the API serves pct.
     const percent =
       metricName === 'cpu_util' ? _.toNumber(value ?? 0) / 10 : (value ?? 0);
     number = Number(toFixedFloorWithoutTrailingZeros(percent, 1));
