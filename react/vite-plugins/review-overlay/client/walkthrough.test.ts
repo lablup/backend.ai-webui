@@ -4,6 +4,7 @@
  * own parser, which is what a Claude session reads the paste with.
  */
 import { parsePins } from '../cli.js';
+import { isStop, STOP_FIELD_NAMES } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 import {
   buildCommentCopy,
@@ -15,6 +16,7 @@ import {
   pageCount,
   pageSummaryText,
   parseWalkthrough,
+  prepareComment,
   repoUrl,
   sha256Hex,
   stopPage,
@@ -220,7 +222,7 @@ describe('the stop’s own prose and links', () => {
 });
 
 describe('the comment export', () => {
-  it('parses back as one reviewer pin per comment', async () => {
+  it('parses back as one ORDINARY reviewer pin per comment', async () => {
     const { encodeAnchor } = await import('./codec.js');
     const first = stop('c_aaaaaaa');
     const second = stop('c_bbbbbbb', { p: '/session/start' });
@@ -229,8 +231,20 @@ describe('the comment export', () => {
     second.anchorB64 = await encodeAnchor(second.anchor);
     const at = '2026-09-15T09:00:00Z';
     const pins = [
-      commentPin(first, 0, 'the label is wrong', 9690, at),
-      commentPin(second, 1, 'this one is fine, but slow', 9690, at),
+      commentPin(
+        first,
+        0,
+        await prepareComment(first, 'the label is wrong'),
+        9690,
+        at,
+      ),
+      commentPin(
+        second,
+        1,
+        await prepareComment(second, 'this one is fine, but slow'),
+        9690,
+        at,
+      ),
     ];
 
     const copy = buildCommentCopy(pins);
@@ -241,11 +255,52 @@ describe('the comment export', () => {
     expect(parsed[0].note).toContain('the label is wrong');
     expect(parsed[0].note).toContain(`re: stop 1 · ${first.id}`);
     expect(parsed[1].note).toContain(`re: stop 2 · ${second.id}`);
-    // Every block carries the stop's own anchor, so each opens on its page.
+    // Each block points at the same element the stop did, on its own page.
     expect(parsed.map((pin) => pin.anchor?.p)).toEqual([
       '/data',
       '/session/start',
     ]);
     expect(copy.toast).toBe('Copied 2 comments — paste them into the PR');
+
+    // …and NOT as stops: `review-pins parse` leaves stops out of its findings
+    // by default, so a reviewer's remark must not look like one.
+    for (const pin of parsed) {
+      expect(isStop(pin.anchor)).toBe(false);
+      for (const field of STOP_FIELD_NAMES) {
+        expect(pin.anchor).not.toHaveProperty(field);
+      }
+    }
+    // The element signals survive — this is the same element, not a new pin.
+    expect(parsed[0].anchor?.s).toBe(first.anchor.s);
+    expect(parsed[0].anchor?.tag).toBe('button');
+    // The capped comment rides in the anchor, as it does for any note.
+    expect(parsed[0].anchor?.n).toBe('the label is wrong');
+  });
+
+  it('strips every stop field and keeps every element signal', async () => {
+    const source = stop('c_aaaaaaa', {
+      q: 'tab=models',
+      txt: 'Upload',
+      tid: 'folder-list',
+      rect: { x: 0.1, y: 0.2, w: 0.3, h: 0.4 },
+      c: { name: 'UploadButton' },
+    });
+
+    const ready = await prepareComment(source, '  needs a tooltip  ');
+
+    expect(isStop(ready.anchor)).toBe(false);
+    expect(ready.note).toBe('needs a tooltip');
+    expect(ready.anchor).toEqual({
+      v: 3,
+      s: source.anchor.s,
+      p: '/data',
+      q: 'tab=models',
+      tag: 'button',
+      txt: 'Upload',
+      tid: 'folder-list',
+      rect: { x: 0.1, y: 0.2, w: 0.3, h: 0.4 },
+      c: { name: 'UploadButton' },
+      n: 'needs a tooltip',
+    });
   });
 });

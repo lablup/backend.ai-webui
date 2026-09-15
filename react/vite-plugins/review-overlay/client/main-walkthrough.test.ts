@@ -476,11 +476,16 @@ describe('what the reader gives back', () => {
     await ticks(2);
 
     const { parsePins } = await import('../cli.js');
+    const { isStop } = await import('./stop-guard.js');
     const parsed = await parsePins(written['text/plain']);
     expect(parsed).toHaveLength(1);
     expect(parsed[0].note).toContain('the label is cut off');
     expect(parsed[0].note).toContain(`re: stop 1 · ${A}`);
     expect(parsed[0].idVerified).toBe(true);
+    // An ordinary finding, not a stop: `review-pins parse` skips stops by
+    // default, and the reviewer's remark is theirs to answer.
+    expect(isStop(parsed[0].anchor)).toBe(false);
+    expect(parsed[0].anchor?.s).toBe('[data-testid="upload"]');
   });
 
   it('answers the walkthrough keys by code, and ignores them while typing', async () => {

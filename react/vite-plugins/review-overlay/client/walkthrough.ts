@@ -8,10 +8,11 @@
  * stops were minted for, so a re-minted walkthrough starts clean.
  */
 import { isAnchorV3 } from './anchor-guard.js';
+import { withNote } from './anchor.js';
 import { buildSetHtml, buildSetText } from './block.js';
-import { PIN_BODY_SRC } from './codec.js';
+import { encodeAnchor, PIN_BODY_SRC } from './codec.js';
 import { pinId, sha256Bytes } from './id.js';
-import { isStop } from './stop-guard.js';
+import { isStop, stripStopFields } from './stop-guard.js';
 import type {
   AnchorCodeRef,
   AnchorV3,
@@ -311,27 +312,50 @@ export const reLine = (stop: WalkthroughStop, index: number): string =>
   `re: stop ${index + 1} · ${stop.id}`;
 
 /**
- * One reviewer pin per comment, over the STOP's own anchor: the block is an
- * ordinary `bai-review` block the resolver already reads, and its id hashes
- * from the served `pr`, that anchor and `at` — so `review-pins parse` verifies
- * it the same way it verifies a picked pin.
+ * A stop's anchor as an ORDINARY pin would carry it: stop fields stripped, the
+ * reviewer's comment in `n`, re-encoded. Async by nature (`encodeAnchor` is a
+ * `CompressionStream` round-trip), so guided mode prepares it ahead of the
+ * copy gesture — `execCommand('copy')` needs the user activation still live.
+ */
+export async function prepareComment(
+  stop: WalkthroughStop,
+  comment: string,
+): Promise<PreparedComment> {
+  const note = comment.trim();
+  const anchor = withNote(stripStopFields(stop.anchor), note);
+  return { note, anchor, anchorB64: await encodeAnchor(anchor) };
+}
+
+/** What `prepareComment` leaves ready for the next copy of that stop. */
+export interface PreparedComment {
+  /** The comment as typed, trimmed; `anchor.n` is the capped copy. */
+  note: string;
+  anchor: AnchorV3;
+  anchorB64: string;
+}
+
+/**
+ * One reviewer pin per comment. The pin is the reviewer's OWN — the stop
+ * fields are gone, so `review-pins parse` counts it among the findings it
+ * answers rather than skipping it as a walkthrough stop. The `re:` line in the
+ * block is what still names the stop it answers.
  */
 export function commentPin(
   stop: WalkthroughStop,
   index: number,
-  comment: string,
+  prepared: PreparedComment,
   pr: number,
   at: string,
 ): SetPin {
   return {
-    id: pinId(pr, stop.anchorB64, at),
+    id: pinId(pr, prepared.anchorB64, at),
     origin: 'pick',
-    anchor: stop.anchor,
-    anchorB64: stop.anchorB64,
+    anchor: prepared.anchor,
+    anchorB64: prepared.anchorB64,
     label: stop.label,
     appHash: stop.appHash,
     stack: [],
-    note: [comment.trim(), reLine(stop, index)].filter(Boolean).join('\n'),
+    note: [prepared.note, reLine(stop, index)].filter(Boolean).join('\n'),
     at,
     pr,
   };

@@ -25,13 +25,15 @@ import {
   type PopoverPlace,
 } from './popover.js';
 import { findAnchorTarget } from './resolve.js';
-import type { ReviewServerState } from './types.js';
+import type { ReviewServerState, SetPin } from './types.js';
 import {
   buildCommentCopy,
   codeHref,
   codeText,
   commentPin,
   createWalkthroughProgress,
+  prepareComment,
+  type PreparedComment,
   pageCount,
   pageSummaryText,
   repoUrl,
@@ -46,6 +48,8 @@ import {
 const LADDER_TRIES = 34;
 const LADDER_EVERY_MS = 300;
 const SETTLE_MS = 150;
+/** One re-encode per typing pause, the beat the composer's note uses. */
+const EXPORT_DEBOUNCE_MS = 250;
 
 const BANNER_STYLE = `
   .bai-banner {
@@ -116,6 +120,31 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   const servedPr = () => options.serverState()?.pr ?? 0;
   const flushProgress = () => progress.flush();
+
+  /**
+   * Each stop's comment as an ordinary pin's payload, kept ready: the copy
+   * gesture may not await anything, and the anchor has to be re-encoded once
+   * the stop fields come off it.
+   */
+  const prepared = new Map<string, PreparedComment>();
+  let exportTimer = 0;
+
+  async function prepareExport(stop: WalkthroughStop) {
+    const comment = progress.comment(stop.id);
+    if (prepared.get(stop.id)?.note === comment.trim()) return;
+    const ready = await prepareComment(stop, comment);
+    // The reviewer typed on while this encoded; a later pass owns the entry.
+    if (progress.comment(stop.id).trim() !== ready.note) return;
+    prepared.set(stop.id, ready);
+  }
+
+  const prepareSoon = (stop: WalkthroughStop) => {
+    clearTimeout(exportTimer);
+    exportTimer = window.setTimeout(
+      () => void prepareExport(stop),
+      EXPORT_DEBOUNCE_MS,
+    );
+  };
   const stopType = (stop: WalkthroughStop): 'added' | 'modified' =>
     stop.anchor.type === 'added' ? 'added' : 'modified';
 
@@ -151,6 +180,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       if (!stop) return;
       const before = progress.commented(ids).length;
       progress.setComment(stop.id, text);
+      prepareSoon(stop);
       // Every keystroke, and nothing on screen says the text — only whether
       // there IS text. Re-render on the flip, not on the typing. Never the
       // popover: the reader has the caret in it.
@@ -357,16 +387,18 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   // ---------------------------------------------------------------- copy
 
+  /** The gate every copy shares: nothing may be awaited inside the gesture. */
+  const STILL_ENCODING = 'Still reading that comment — try again';
+
   function copyRef() {
     const stop = stops[current];
     if (!stop) return;
-    const pin = commentPin(
-      stop,
-      current,
-      progress.comment(stop.id),
-      servedPr(),
-      blockStamp(),
-    );
+    const ready = prepared.get(stop.id);
+    if (!ready || ready.note !== progress.comment(stop.id).trim()) {
+      void prepareExport(stop);
+      return options.showToast(STILL_ENCODING);
+    }
+    const pin = commentPin(stop, current, ready, servedPr(), blockStamp());
     options.copyWithToast({
       ...buildCommentCopy([pin]),
       toast: `Copied the ref for stop ${current + 1}`,
@@ -375,13 +407,19 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   function copyComments() {
     const stamp = blockStamp();
-    const pins = stops.flatMap((stop, index) => {
-      const comment = progress.comment(stop.id).trim();
-      return comment
-        ? [commentPin(stop, index, comment, servedPr(), stamp)]
-        : [];
-    });
-    if (!pins.length) return options.showToast('No comments to copy yet');
+    const wanted = stops.flatMap((stop, index) =>
+      progress.comment(stop.id).trim() ? [{ stop, index }] : [],
+    );
+    if (!wanted.length) return options.showToast('No comments to copy yet');
+    const pins: SetPin[] = [];
+    for (const { stop, index } of wanted) {
+      const ready = prepared.get(stop.id);
+      if (!ready || ready.note !== progress.comment(stop.id).trim()) {
+        void prepareExport(stop);
+        return options.showToast(STILL_ENCODING);
+      }
+      pins.push(commentPin(stop, index, ready, servedPr(), stamp));
+    }
     options.copyWithToast(buildCommentCopy(pins));
   }
 
@@ -494,6 +532,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   function destroy() {
     progress.flush();
+    clearTimeout(exportTimer);
     cancelLadder();
     clearTimeout(settleTimer);
     observer.disconnect();
@@ -524,6 +563,9 @@ export function startGuidedMode(options: GuidedModeOptions) {
   current = landed < 0 ? 0 : landed;
   refresh();
   ladder();
+  // Ready before the first gesture: `Copy ref` works on a stop with no
+  // comment too, so every stop gets a payload, not only the answered ones.
+  for (const stop of stops) void prepareExport(stop);
 
   return {
     /** The route changed under us: re-resolve every stop from scratch. */
