@@ -316,7 +316,7 @@
         <div class="code"><div class="lbl">Code</div>${stop.code.map(c => `<a class="mono" href="${codeHref(c)}" target="_blank" rel="noopener">${codeText(c)} ↗</a>`).join('')}</div>
         <div><div class="lbl">Comment <span style="font-weight:400;text-transform:none;letter-spacing:0">(m)</span></div><textarea data-pact="comment" placeholder="Something off? Write it here — Copy N comments gathers every one with its ref.">${esc(state.comments[stop.id] || '')}</textarea></div>
       </div>
-      <div class="foot"><span>#${i + 1} · <span class="mono">${codeText(stop.code[0])}</span> · ${stop.label.split(' › ')[0]}</span><span class="spacer"></span><span><kbd>n</kbd>/<kbd>p</kbd> next/prev · <kbd>v</kbd> viewed · <kbd>m</kbd> comment · <kbd>c</kbd> ref · <kbd>Esc</kbd></span></div>`;
+      <div class="foot"><span>#${i + 1} · ${stop.label.split(' › ')[0]} · <span class="mono">${stop.id}</span></span><span class="spacer"></span><span style="white-space:nowrap"><kbd>n</kbd>/<kbd>p</kbd> · <kbd>v</kbd> viewed · <kbd>m</kbd> comment · <kbd>c</kbd> ref · <kbd>Esc</kbd></span></div>`;
     const r = place.kind === 'located' ? place.el.getBoundingClientRect() : null;
     if (!r) { pop.style.left = '50%'; pop.style.top = '46%'; pop.style.transform = 'translate(-50%,-50%)'; }
     else { pop.style.transform = ''; const w = Math.min(560, innerWidth * .92); pop.style.left = Math.min(Math.max(12, r.left), innerWidth - w - 12) + 'px'; const h = pop.offsetHeight || 300; pop.style.top = (r.bottom + 14 + h < innerHeight - 70 ? r.bottom + 14 : Math.max(60, r.top - h - 14)) + 'px'; }
