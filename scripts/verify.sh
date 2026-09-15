@@ -29,6 +29,7 @@ cd "$(dirname "$0")/.."
 
 LOG_DIR="${VERIFY_LOG_DIR:-node_modules/.cache/verify}"
 TAIL="${VERIFY_TAIL:-60}"
+case "$TAIL" in '' | *[!0-9]*) TAIL=60 ;; esac
 if ! { rm -rf "$LOG_DIR" && mkdir -p "$LOG_DIR"; }; then
   echo "cannot create lane log dir $LOG_DIR"
   exit 1
