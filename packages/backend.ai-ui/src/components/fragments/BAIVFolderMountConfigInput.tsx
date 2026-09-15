@@ -7,6 +7,7 @@ import {
   isMountableLegacyVFolder,
   useSuspendedLegacyVFolders,
   type LegacyVFolder,
+  type LegacyVFolderMountScope,
 } from '../../hooks/useSuspendedLegacyVFolders';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
@@ -306,6 +307,20 @@ export const useVFolderMountConfigFormRule = (
   };
 };
 
+// Called before any value-derived line so the compiler caches this on the list
+// alone; the uuid is derived once per folder and read back by both callers.
+const useMountableLegacyFolders = (
+  allFolderList: Array<LegacyVFolder>,
+  scope: LegacyVFolderMountScope,
+) => {
+  'use memo';
+  const mountableFolders = allFolderList
+    .filter((folder) => isMountableLegacyVFolder(folder, scope))
+    .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
+  const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
+  return { mountableFolders, mountableIdSet };
+};
+
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
@@ -346,6 +361,11 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
+  const { mountableFolders, mountableIdSet } = useMountableLegacyFolders(
+    allFolderList,
+    { currentProjectId, mountableHosts },
+  );
+
   const mountConfigs = value ?? [];
   // The select is `labelInValue`-shaped, so the folder name travels with the
   // selection and no separate name lookup is needed.
@@ -356,13 +376,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const selectedIdSet = new Set(mountConfigs.map((e) => e.vfolderId));
 
   const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
-  const mountScope = { currentProjectId, mountableHosts };
-  // The uuid is derived once per folder here and read back below, rather than
-  // re-converting in each of the id comparisons.
-  const mountableFolders = allFolderList
-    .filter((folder) => isMountableLegacyVFolder(folder, mountScope))
-    .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
-  const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
 
   // Offering an auto-mounted folder is noise: the session mounts it anyway, so
   // picking it could only produce a duplicate mount path. It narrows the
