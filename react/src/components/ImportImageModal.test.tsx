@@ -4,7 +4,7 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
-import AddImageModal from './AddImageModal';
+import ImportImageModal from './ImportImageModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -102,21 +102,6 @@ vi.mock('./ContainerRegistryEditorModal', async () => {
   };
 });
 
-// Astryx keeps a closed `Collapsible`'s content out of the DOM; the
-// architecture selector inside it is an assertion surface here.
-vi.mock('@astryxdesign/core/Collapsible', async () => {
-  const React = await import('react');
-  return {
-    Collapsible: ({ trigger, children }: any) =>
-      React.createElement(
-        'div',
-        null,
-        React.createElement('span', null, trigger),
-        children,
-      ),
-  };
-});
-
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
@@ -198,7 +183,11 @@ const renderModal = (
   render(
     <QueryClientProvider client={queryClient}>
       <RelayEnvironmentProvider environment={environment}>
-        <AddImageModal open onRequestClose={onRequestClose} onAdded={onAdded} />
+        <ImportImageModal
+          open
+          onRequestClose={onRequestClose}
+          onAdded={onAdded}
+        />
       </RelayEnvironmentProvider>
     </QueryClientProvider>,
   );
@@ -207,22 +196,23 @@ const renderModal = (
 
 const typeReferences = async (value: string) => {
   const textArea = await screen.findByLabelText(
-    'environment.AddImageReferences',
+    'environment.ImportImageReferences',
   );
   fireEvent.change(textArea, { target: { value } });
   return textArea as HTMLTextAreaElement;
 };
 
-const addButton = () => screen.getByRole('button', { name: 'button.Add' });
+const importButton = () =>
+  screen.getByRole('button', { name: 'environment.ImportImage' });
 const retryButton = () =>
-  screen.getByRole('button', { name: 'environment.AddImageRetryFailed' });
+  screen.getByRole('button', { name: 'environment.ImportImageRetryFailed' });
 const architectureSelect = () => screen.getByTestId('mock-architecture-select');
 /** The dialog header's X. Astryx names it from its own English catalogue. */
 const closeButton = () => screen.queryByRole('button', { name: 'Close' });
 const cancelButton = () =>
   screen.getByRole('button', { name: 'button.Cancel' });
 
-describe('AddImageModal (FR-3940 review round)', () => {
+describe('ImportImageModal (FR-3940 review round)', () => {
   beforeEach(() => {
     mockScanRequest.mockReset();
     mockMessageSuccess.mockReset();
@@ -235,12 +225,14 @@ describe('AddImageModal (FR-3940 review round)', () => {
     await typeReferences(PYTORCH);
 
     await waitFor(() =>
-      expect(screen.getByText('environment.AddImageReady')).toBeInTheDocument(),
+      expect(
+        screen.getByText('environment.ImportImageReady'),
+      ).toBeInTheDocument(),
     );
     expect(
-      screen.queryByText('environment.AddImageRegistryNotRegistered'),
+      screen.queryByText('environment.ImportImageRegistryNotRegistered'),
     ).not.toBeInTheDocument();
-    expect(addButton()).toBeEnabled();
+    expect(importButton()).toBeEnabled();
   });
 
   it('reports the whole batch, calls onAdded and closes when every line succeeds', async () => {
@@ -249,7 +241,7 @@ describe('AddImageModal (FR-3940 review round)', () => {
     const { onRequestClose, onAdded } = renderModal();
     await typeReferences(`${PYTHON}\n${PYTORCH}`);
 
-    await user.click(addButton());
+    await user.click(importButton());
 
     await waitFor(() => expect(onRequestClose).toHaveBeenCalled());
     expect(mockScanRequest).toHaveBeenCalledTimes(2);
@@ -272,22 +264,22 @@ describe('AddImageModal (FR-3940 review round)', () => {
     const textArea = await typeReferences(`${PYTHON}\n${PYTORCH}`);
 
     expect(architectureSelect()).toHaveAttribute('data-disabled', 'false');
-    await user.click(addButton());
+    await user.click(importButton());
 
     await waitFor(() =>
-      expect(screen.getByTestId('add-image-added-list')).toBeInTheDocument(),
+      expect(screen.getByTestId('import-image-added-list')).toBeInTheDocument(),
     );
     expect(onRequestClose).not.toHaveBeenCalled();
     expect(mockMessageSuccess).not.toHaveBeenCalled();
 
     // The succeeded canonical moved into the read-only list…
-    expect(screen.getByTestId('add-image-added-list')).toHaveTextContent(
+    expect(screen.getByTestId('import-image-added-list')).toHaveTextContent(
       PYTHON,
     );
     // …and out of the editable text, which keeps only the failure.
     expect(textArea).toHaveValue(PYTORCH);
     expect(
-      screen.getByText('environment.AddImageRequiresSuperadmin'),
+      screen.getByText('environment.ImportImageRequiresSuperadmin'),
     ).toBeInTheDocument();
     // The architecture applies to the whole batch, so it is frozen now.
     expect(architectureSelect()).toHaveAttribute('data-disabled', 'true');
@@ -303,9 +295,9 @@ describe('AddImageModal (FR-3940 review round)', () => {
     const { onRequestClose, onAdded } = renderModal();
     await typeReferences(`${PYTHON}\n${PYTORCH}`);
 
-    await user.click(addButton());
+    await user.click(importButton());
     await waitFor(() =>
-      expect(screen.getByTestId('add-image-added-list')).toBeInTheDocument(),
+      expect(screen.getByTestId('import-image-added-list')).toBeInTheDocument(),
     );
 
     mockScanRequest.mockResolvedValue(scanOk());
@@ -331,11 +323,11 @@ describe('AddImageModal (FR-3940 review round)', () => {
     const { onRequestClose } = renderModal();
     await typeReferences(PYTHON);
 
-    await user.click(addButton());
+    await user.click(importButton());
 
     await waitFor(() =>
       expect(
-        screen.getByText('environment.AddImageFailed'),
+        screen.getByText('environment.ImportImageFailed'),
       ).toBeInTheDocument(),
     );
     expect(onRequestClose).not.toHaveBeenCalled();
@@ -344,7 +336,7 @@ describe('AddImageModal (FR-3940 review round)', () => {
       screen.getByText('manifest unknown rescan aborted'),
     ).toBeInTheDocument();
     expect(
-      screen.queryByTestId('add-image-added-list'),
+      screen.queryByTestId('import-image-added-list'),
     ).not.toBeInTheDocument();
   });
 
@@ -360,7 +352,7 @@ describe('AddImageModal (FR-3940 review round)', () => {
     const { onRequestClose } = renderModal();
     await typeReferences(PYTHON);
 
-    await user.click(addButton());
+    await user.click(importButton());
     await waitFor(() => expect(mockScanRequest).toHaveBeenCalled());
 
     // `BAIUnmountAfterClose` in `ImageList` unmounts this tree on close, so a
@@ -374,7 +366,7 @@ describe('AddImageModal (FR-3940 review round)', () => {
     rejectScan({ statusCode: 403 });
     await waitFor(() =>
       expect(
-        screen.getByText('environment.AddImageRequiresSuperadmin'),
+        screen.getByText('environment.ImportImageRequiresSuperadmin'),
       ).toBeInTheDocument(),
     );
     expect(onRequestClose).not.toHaveBeenCalled();
@@ -397,11 +389,11 @@ describe('AddImageModal (FR-3940 review round)', () => {
     renderModal();
     await typeReferences(PYTHON);
 
-    await user.click(addButton());
+    await user.click(importButton());
 
     await waitFor(() =>
       expect(
-        screen.getByText('environment.AddImageTagNotFoundInRegistry'),
+        screen.getByText('environment.ImportImageTagNotFoundInRegistry'),
       ).toBeInTheDocument(),
     );
   });

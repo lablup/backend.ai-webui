@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<195ab82b9d2a48d42d9ef0e0c142ab3d>>
+ * @generated SignedSource<<f11f683ebcf5d67b601c20af7fac3844>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,11 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type AddImageModalRegistriesQuery$variables = {
+export type ImportImageModalRegistriesQuery$variables = {
   after?: string | null | undefined;
   first?: number | null | undefined;
 };
-export type AddImageModalRegistriesQuery$data = {
+export type ImportImageModalRegistriesQuery$data = {
   readonly container_registry_nodes: {
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -30,9 +30,9 @@ export type AddImageModalRegistriesQuery$data = {
     };
   } | null | undefined;
 };
-export type AddImageModalRegistriesQuery = {
-  response: AddImageModalRegistriesQuery$data;
-  variables: AddImageModalRegistriesQuery$variables;
+export type ImportImageModalRegistriesQuery = {
+  response: ImportImageModalRegistriesQuery$data;
+  variables: ImportImageModalRegistriesQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -160,7 +160,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AddImageModalRegistriesQuery",
+    "name": "ImportImageModalRegistriesQuery",
     "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -172,20 +172,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AddImageModalRegistriesQuery",
+    "name": "ImportImageModalRegistriesQuery",
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "595999c864d88a45b52ffa26a7a5c191",
+    "cacheID": "e444659b41cf29cb46f656d23197cbbf",
     "id": null,
     "metadata": {},
-    "name": "AddImageModalRegistriesQuery",
+    "name": "ImportImageModalRegistriesQuery",
     "operationKind": "query",
-    "text": "query AddImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n) {\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
+    "text": "query ImportImageModalRegistriesQuery(\n  $first: Int\n  $after: String\n) {\n  container_registry_nodes(first: $first, after: $after) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        id\n        registry_name\n        project\n        url\n        type\n      }\n    }\n    pageInfo {\n      hasNextPage\n      endCursor\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "04c71460ccddfa1109043c6b1dc23ef5";
+(node as any).hash = "d4070796ffbaf73ca688e4eed76d0418";
 
 export default node;
