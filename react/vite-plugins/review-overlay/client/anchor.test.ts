@@ -247,8 +247,8 @@ describe('walkthrough stops at capture (FR-3949)', () => {
     history.replaceState({}, '', '/');
   });
 
-  it('leaves a query without volatile params byte-identical', () => {
-    history.replaceState({}, '', '/data?tab=a%20b&x=1');
+  it('leaves the surviving params byte-identical (no re-encoding)', () => {
+    history.replaceState({}, '', '/data?tab=a%20b&formValues=%7B%7D&x=1');
     mount('<button data-testid="skip">Skip</button>');
     const anchor = captureAnchorSignals(
       document.querySelector('[data-testid="skip"]') as Element,
@@ -269,6 +269,19 @@ describe('walkthrough stops at capture (FR-3949)', () => {
     );
     expect(inside.dlg).toBe(1);
     expect(outside).not.toHaveProperty('dlg');
+  });
+
+  // BAIDialog renders role="alertdialog"; Astryx's own is a native <dialog>.
+  it('records a pick inside an alertdialog or a native dialog as dlg', () => {
+    mount(
+      '<div role="alertdialog"><button data-testid="a">A</button></div><dialog open><button data-testid="b">B</button></dialog>',
+    );
+    for (const tid of ['a', 'b']) {
+      const anchor = captureAnchorSignals(
+        document.querySelector(`[data-testid="${tid}"]`) as Element,
+      );
+      expect(anchor.dlg).toBe(1);
+    }
   });
 
   it('guards the stop fields like every other field', () => {

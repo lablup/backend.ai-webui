@@ -7,14 +7,6 @@ import { isSafePath } from './codec.js';
 import { hasValidStopFields } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 
-export {
-  isStop,
-  STOP_LITERAL_MAX,
-  STOP_TEXT_MAX,
-  stripVolatileQuery,
-  VOLATILE_QUERY_PARAMS,
-} from './stop-guard.js';
-
 /** Every string is bounded: the payload comes off a public PR comment. */
 export const SELECTOR_MAX = 1024;
 const NAME_MAX = 256;

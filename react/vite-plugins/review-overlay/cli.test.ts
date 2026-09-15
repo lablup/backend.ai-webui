@@ -439,3 +439,15 @@ describe('walkthrough stop fields (FR-3949)', () => {
     expect(pins[0].anchor?.pr).toBe(9605);
   });
 });
+
+describe('link ranking ignores volatile query params (FR-3949)', () => {
+  it('ranks a launcher link with formValues as the anchor’s own page', async () => {
+    const b64 = await encodeAnchor({ ...anchor, q: undefined });
+    const id = pinId(9330, b64, '2026-09-15T00:00:00Z');
+    const own = `http://dev.example/project/default/session/start?formValues=%7B%7D#bai=v3.${id}.${b64}`;
+    const other = `http://dev.example/other#bai=v3.${id}.${b64}`;
+    const pins = await parsePins(`${other}\n${own}`);
+    expect(pins).toHaveLength(1);
+    expect(pins[0].url).toBe(own);
+  });
+});

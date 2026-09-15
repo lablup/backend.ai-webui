@@ -5,8 +5,9 @@
  * payload carries redundant signals (testid landmark + fractional rect + tag +
  * text). Resolving them back to an element is the READ side's job (FR-3813).
  */
-import { NOTE_MAX, SELECTOR_MAX, stripVolatileQuery } from './anchor-guard.js';
+import { NOTE_MAX, SELECTOR_MAX } from './anchor-guard.js';
 import { fractionWithin, type Box } from './selection.js';
+import { DIALOG_SELECTOR, stripVolatileQuery } from './stop-guard.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
 const esc = (v: string) => (window.CSS && CSS.escape ? CSS.escape(v) : v);
@@ -115,7 +116,7 @@ export function captureAnchorSignals(
     if (sel) anchor.sel = sel;
   }
   if (component) anchor.c = component;
-  if (target.closest('[role="dialog"]')) anchor.dlg = 1;
+  if (target.closest(DIALOG_SELECTOR)) anchor.dlg = 1;
   return anchor;
 }
 

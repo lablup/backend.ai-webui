@@ -3,8 +3,9 @@
  * do it — a React `useId` never survives a reload and an nth-of-type path
  * never survives a refactor — so every other signal is tried in turn.
  */
-import { isStop, TAG_RE } from './anchor-guard.js';
+import { TAG_RE } from './anchor-guard.js';
 import { normText } from './anchor.js';
+import { DIALOG_SELECTOR, isStop } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 
 /** How many candidates a text scan will look at before giving up. */
@@ -67,12 +68,19 @@ const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
 };
 
 /**
- * A stop resolves strictly (FR-3949): a text match counts only inside its
- * landmark, a stale selector hit never counts, and a `dlg` stop only inside
- * an open dialog — a waiting stop beats a look-alike outside the modal.
+ * A stop (a pin the implementing session authored, FR-3949) resolves
+ * strictly: a text match counts only inside its landmark, a stale selector
+ * hit never counts, the frame its element lives in counts only when there is
+ * no text to tell them apart, and a `dlg` stop counts only inside an open
+ * dialog. A waiting stop beats a look-alike outside the modal — the measured
+ * failure was a modal stop drawn on the page's own "Models" button.
  */
 const inScope = (element: Element, anchor: AnchorV3): boolean =>
-  !(isStop(anchor) && anchor.dlg) || !!element.closest('[role="dialog"]');
+  !(isStop(anchor) && anchor.dlg) || !!element.closest(DIALOG_SELECTOR);
+
+/** The landmark alone: a wrapper stands in for its element only without text. */
+const frameSuffices = (strict: boolean, anchor: AnchorV3): boolean =>
+  !(strict && anchor.rect && anchor.txt);
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
   !!element &&
@@ -176,8 +184,7 @@ export function quickFindTarget(
       !componentConflicts(projected, anchor)
     )
       return projected;
-    // A stop never settles for the frame its element lives in.
-    if (strict && anchor.rect) return null;
+    if (!frameSuffices(strict, anchor)) return null;
     // A landmark that is a different component is the corner-stacking answer
     // R3.6's component signal exists to refuse.
     return componentConflicts(landmark, anchor) ? null : landmark;
@@ -251,12 +258,10 @@ export function findAnchorTarget(
     if (
       textMatches(landmark, anchor.txt) &&
       !componentConflicts(landmark, anchor) &&
-      !(strict && anchor.rect)
+      frameSuffices(strict, anchor)
     )
       return landmark;
   }
-  // A stop with a landmark matches nothing outside it, and takes no stale
-  // selector hit either: unresolved is the honest answer until it appears.
   if (strict) return anchor.tid ? null : scan(doc);
   // The weak answer both ladders agree on: `quickFindTarget` returns null for
   // a conflicting selector hit, so this must not hand it back either.

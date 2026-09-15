@@ -337,6 +337,32 @@ describe('walkthrough stops resolve strictly (FR-3949)', () => {
     expect(findAnchorTarget(stop(framed))).toBeNull();
   });
 
+  it('with dlg, counts an element inside an alertdialog too', () => {
+    mount('<div role="alertdialog"><button data-testid="ok">OK</button></div>');
+    const found = findAnchorTarget(
+      stop({ s: '[data-testid="ok"]', tid: 'ok', txt: 'OK', dlg: 1 }),
+    );
+    expect(found?.textContent).toBe('OK');
+  });
+
+  // An icon-only pick has no text to tell the frame from the element, and
+  // the projection needs layout; the landmark is the honest best answer.
+  it('settles for the landmark when the stop carries no text', () => {
+    mount('<div data-testid="panel"><button aria-label="x"></button></div>');
+    const iconOnly = stop({
+      s: '#_r_gone_',
+      tid: 'panel',
+      rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+      txt: undefined,
+    });
+    expect(quickFindTarget(iconOnly)?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+    expect(findAnchorTarget(iconOnly)?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+  });
+
   it('with dlg, counts only an element inside an open dialog', () => {
     mount('<button data-testid="ok">OK</button>');
     const dialogStop = stop({

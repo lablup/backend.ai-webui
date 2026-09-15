@@ -22,6 +22,9 @@ const SHA_RE = /^[0-9a-f]{40}$/;
  */
 export const VOLATILE_QUERY_PARAMS = ['formValues'];
 
+/** Where a `dlg` pick lives: Astryx's native `<dialog>`, or an ARIA dialog. */
+export const DIALOG_SELECTOR = 'dialog, [role="dialog"], [role="alertdialog"]';
+
 /** A stop is any anchor that says what to check. */
 export const isStop = (anchor: AnchorV3 | null | undefined): boolean =>
   typeof anchor?.ck === 'string';
@@ -73,8 +76,6 @@ const STOP_FIELDS: Record<string, Check> = {
   dlg: (v) => v === 1,
 };
 
-export const STOP_FIELD_NAMES = Object.keys(STOP_FIELDS);
-
 /**
  * The decoder's answer to a stop field it does not like: drop that field and
  * keep the pin. A link is pasted by a stranger, but a bad `code` list must
@@ -98,16 +99,24 @@ export const hasValidStopFields = (anchor: Record<string, unknown>): boolean =>
     ([field, ok]) => anchor[field] === undefined || ok(anchor[field]),
   );
 
-/** `location.search` minus the params that never survive a reload. */
+const keyOf = (pair: string): string => {
+  const key = pair.split('=')[0];
+  try {
+    return decodeURIComponent(key);
+  } catch {
+    return key;
+  }
+};
+
+/**
+ * `location.search` minus the params that never survive a reload. Textual on
+ * purpose: `URLSearchParams` would re-encode `a%20b` as `a+b` on the way out.
+ */
 export function stripVolatileQuery(search: string): string {
   const raw = search.replace(/^\?/, '');
   if (!raw) return '';
-  const params = new URLSearchParams(raw);
-  let touched = false;
-  for (const key of VOLATILE_QUERY_PARAMS) {
-    if (!params.has(key)) continue;
-    params.delete(key);
-    touched = true;
-  }
-  return touched ? params.toString() : raw;
+  return raw
+    .split('&')
+    .filter((pair) => !VOLATILE_QUERY_PARAMS.includes(keyOf(pair)))
+    .join('&');
 }

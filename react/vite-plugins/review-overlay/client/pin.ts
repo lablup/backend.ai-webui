@@ -11,7 +11,6 @@
  * a React re-render that replaces the anchored node re-draws it over the new
  * one rather than leaving it on a detached element.
  */
-import { isStop } from './anchor-guard.js';
 import { retryUntil } from './deeplink.js';
 import { icon, ICON_STYLE } from './icons.js';
 import {
@@ -21,6 +20,7 @@ import {
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
+import { isStop } from './stop-guard.js';
 import type { AnchorV3, PinCopyPayload } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
@@ -618,8 +618,8 @@ function createPinView(deps: ViewDeps): PinView {
         : null;
     if (held) missedScans = 0;
     let next = held ?? quickFindTarget(target.anchor, { ignore: host });
-    // A stop keeps scanning on every settle: the element it waits for is
-    // behind a modal or a step, and that opening changes no URL (FR-3949).
+    // A stop's element appears with no URL change (a modal, a step), so it
+    // is exempt from the budget the route watcher would otherwise re-arm.
     const budgeted = missedScans < MAX_MISSED_SCANS || isStop(target.anchor);
     if (!held && budgeted && (!next || isLandmarkFallback(next))) {
       const full = findAnchorTarget(target.anchor, { ignore: host });

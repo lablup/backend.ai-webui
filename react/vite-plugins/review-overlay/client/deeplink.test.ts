@@ -539,3 +539,32 @@ describe('watchRoute', () => {
     stopSecond();
   });
 });
+
+describe('pathNeedsChange ignores volatile query params (FR-3949)', () => {
+  it('counts the launcher URL as the pin’s page while formValues churns', () => {
+    const anchor = {
+      v: 3 as const,
+      s: 'button',
+      p: '/session/start',
+      q: 'tab=general',
+    };
+    expect(
+      pathNeedsChange(anchor, {
+        pathname: '/session/start',
+        search: '?tab=general&formValues=%7B%22name%22%3A%22exp%22%7D',
+      }),
+    ).toBe(false);
+    expect(
+      pathNeedsChange(
+        { ...anchor, q: 'formValues=%7B%7D&tab=general' },
+        { pathname: '/session/start', search: '?tab=general' },
+      ),
+    ).toBe(false);
+    expect(
+      pathNeedsChange(anchor, {
+        pathname: '/session/start',
+        search: '?tab=other&formValues=%7B%7D',
+      }),
+    ).toBe(true);
+  });
+});

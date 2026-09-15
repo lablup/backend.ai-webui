@@ -40,9 +40,9 @@ export interface AnchorVia {
 }
 
 /**
- * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url, so every
- * key is one or two characters: it travels inside a URL fragment that people
- * paste into PR comments and chat.
+ * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url and kept
+ * terse: it travels inside a URL fragment that people paste into PR comments
+ * and chat.
  */
 export interface AnchorV3 {
   v: 3;
@@ -93,7 +93,7 @@ export interface AnchorV3 {
   pr?: number;
   /** How to reach the element when it is not on screen at landing. */
   via?: AnchorVia[];
-  /** Picked inside a `[role=dialog]`; a stop resolves only inside one. */
+  /** Picked inside a dialog (`DIALOG_SELECTOR`). */
   dlg?: 1;
 }
 

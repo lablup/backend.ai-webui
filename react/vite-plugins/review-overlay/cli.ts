@@ -9,6 +9,7 @@
 import { LINK_LABEL } from './client/block.js';
 import { PIN_BODY_SRC, decodeAnchor } from './client/codec.js';
 import { pinId } from './client/id.js';
+import { stripVolatileQuery } from './client/stop-guard.js';
 import type { AnchorV3 } from './client/types.js';
 import { readFileSync, realpathSync } from 'node:fs';
 import process from 'node:process';
@@ -329,7 +330,9 @@ async function linkRank(link: string): Promise<[tier: number, pins: number]> {
   if (!anchor) return [1, pins];
   const [path, query = ''] = beforeHash(link).split('?');
   const pathname = path.replace(/^[a-zA-Z][\w+.-]*:\/\/[^/]*/, '');
-  const same = pathname === anchor.p && query === (anchor.q ?? '');
+  const same =
+    pathname === anchor.p &&
+    stripVolatileQuery(query) === stripVolatileQuery(anchor.q ?? '');
   return [same ? 2 : 1, pins];
 }
 
