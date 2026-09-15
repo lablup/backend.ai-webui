@@ -226,6 +226,7 @@
     "DiskPerc": "Đĩa %",
     "ElapsedTime": "Thời gian đã trôi qua",
     "Endpoint": "Điểm cuối",
+    "LostAt": "Mất lúc",
     "Maintaining": "Đang bảo trì",
     "NoAgentToDisplay": "Không có đại lý để hiển thị",
     "NoAvailableLiveStat": "Không có số liệu thống kê trực tiếp",
@@ -242,8 +243,10 @@
     "StartsAt": "Bắt đầu lúc",
     "Status": "Trạng thái",
     "StatusChanged": "Đã thay đổi",
+    "StatusChangedAt": "Trạng thái đổi lúc",
     "Terminated": "Đã chấm dứt",
     "Utilization": "Sử dụng",
+    "Version": "Phiên bản",
     "WatcherActionFailed": "Không thể điều khiển đại lý.",
     "WatcherActionWarning": "Các phiên đang chạy trên đại lý này có thể bị ảnh hưởng.",
     "WatcherRestart": "Khởi động lại Đại lý",
@@ -256,6 +259,7 @@
   "agentStats": {
     "AgentStats": "Thống kê đại lý",
     "AgentStatsDescription": "Bảng này hiển thị tất cả các tài nguyên được sử dụng trên tất cả các tổng đài viên trong hệ thống. \nCác giá trị đại diện cho tổng tài nguyên được sử dụng bởi tất cả các phiên hoạt động.",
+    "SchedulableAgents": "Agent có thể lên lịch",
     "UsedResources": "Tài nguyên đã sử dụng"
   },
   "aiAgent": {

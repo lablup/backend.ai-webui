@@ -226,6 +226,7 @@
     "DiskPerc": "磁盘 %",
     "ElapsedTime": "已用时间",
     "Endpoint": "端点",
+    "LostAt": "失联时间",
     "Maintaining": "维护",
     "NoAgentToDisplay": "无代理显示",
     "NoAvailableLiveStat": "没有可用的实时统计数据",
@@ -242,8 +243,10 @@
     "StartsAt": "启动时间",
     "Status": "地位",
     "StatusChanged": "已更改",
+    "StatusChangedAt": "状态变更时间",
     "Terminated": "已终止",
     "Utilization": "利用率",
+    "Version": "版本",
     "WatcherActionFailed": "控制代理失败。",
     "WatcherActionWarning": "此代理上正在运行的会话可能会受到影响。",
     "WatcherRestart": "重启代理",
@@ -256,6 +259,7 @@
   "agentStats": {
     "AgentStats": "代理统计",
     "AgentStatsDescription": "此面板显示系统中所有代理的所有已使用资源。\n这些值表示所有活动会话使用的总资源。",
+    "SchedulableAgents": "可调度代理",
     "UsedResources": "已使用资源"
   },
   "aiAgent": {

@@ -6,6 +6,7 @@
     "DiskPerc": "Levy %",
     "Endpoint": "Päätepiste",
     "FailedToLoadCellData": "Tietojen lataaminen epäonnistui.",
+    "LostAt": "Menetetty",
     "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
     "Region": "Alue",
     "ResourceGroup": "Resurssiryhmä",
@@ -13,7 +14,8 @@
     "Schedulable": "Ajastettava",
     "Starts": "Käynnistykset",
     "Status": "Tila",
-    "Utilization": "Käyttöaste"
+    "Utilization": "Käyttöaste",
+    "Version": "Versio"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Sallittu",

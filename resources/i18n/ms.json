@@ -226,6 +226,7 @@
     "DiskPerc": "Cakera %",
     "ElapsedTime": "Masa berlalu",
     "Endpoint": "Titik Akhir",
+    "LostAt": "Hilang Pada",
     "Maintaining": "Mengekalkan",
     "NoAgentToDisplay": "Tiada Ejen untuk dipaparkan",
     "NoAvailableLiveStat": "Tiada statistik langsung tersedia",
@@ -242,8 +243,10 @@
     "StartsAt": "Mula pada",
     "Status": "Status",
     "StatusChanged": "Diubah",
+    "StatusChangedAt": "Status Berubah Pada",
     "Terminated": "Ditamatkan",
     "Utilization": "Penggunaan",
+    "Version": "Versi",
     "WatcherActionFailed": "Gagal mengawal ejen.",
     "WatcherActionWarning": "Sesi yang sedang berjalan pada ejen ini mungkin terjejas.",
     "WatcherRestart": "Mulakan Semula Ejen",
@@ -256,6 +259,7 @@
   "agentStats": {
     "AgentStats": "Statistik Ejen",
     "AgentStatsDescription": "Panel ini menunjukkan semua sumber yang digunakan di semua ejen dalam sistem. \nNilai mewakili jumlah sumber yang digunakan oleh semua sesi aktif.",
+    "SchedulableAgents": "Ejen Boleh Dijadualkan",
     "UsedResources": "Sumber Terpakai"
   },
   "aiAgent": {

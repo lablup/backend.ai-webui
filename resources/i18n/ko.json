@@ -226,6 +226,7 @@
     "DiskPerc": "디스크 %",
     "ElapsedTime": "경과 시간",
     "Endpoint": "엔드포인트",
+    "LostAt": "연결 유실 시각",
     "Maintaining": "보수중",
     "NoAgentToDisplay": "에이전트 정보가 없습니다.",
     "NoAvailableLiveStat": "표시할 사용량 없음",
@@ -239,11 +240,13 @@
     "Schedulable": "스케줄링 가능",
     "Settings": "설정",
     "Starts": "시작",
-    "StartsAt": "생성일",
+    "StartsAt": "시작 시각",
     "Status": "상태",
     "StatusChanged": "변경일",
+    "StatusChangedAt": "상태 변경 시각",
     "Terminated": "종료됨",
     "Utilization": "사용량",
+    "Version": "버전",
     "WatcherActionFailed": "에이전트 제어에 실패했습니다.",
     "WatcherActionWarning": "이 에이전트에서 실행 중인 세션이 영향을 받을 수 있습니다.",
     "WatcherRestart": "에이전트 재시작",
@@ -256,6 +259,7 @@
   "agentStats": {
     "AgentStats": "에이전트 통계",
     "AgentStatsDescription": "이 패널은 시스템 내 모든 에이전트가 사용 중인 전체 자원을 보여줍니다. 값은 모든 활성 세션에서 사용 중인 자원의 총합을 나타냅니다.",
+    "SchedulableAgents": "스케줄링 가능 에이전트",
     "UsedResources": "사용된 리소스"
   },
   "aiAgent": {
