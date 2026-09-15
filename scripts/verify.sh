@@ -9,9 +9,16 @@
 # all have finished — PASS is one line, FAIL prints the tail of that lane's
 # log. Wall time is Relay + the slowest lane (Lint), instead of the sum.
 #
+# Lint (react, backend.ai-ui), Format and the Vitest lanes look only at what
+# this branch changed relative to main; without a main to compare against
+# they fall back to the whole tree.
+#
+#   VERIFY_BASE=<ref> compare against this ref instead of the merge-base with
+#                     main (a stack parent, or HEAD for uncommitted work only)
 #   VERIFY_SERIAL=1   run lanes one at a time (debugging, small machines)
 #   VERIFY_TESTS=1    add the Vitest suites CI runs (react, backend.ai-ui,
-#                     agent-cli, root); roughly +45s
+#                     agent-cli, root), limited to tests that import a
+#                     changed file
 #   VERIFY_TAIL=60    lines of a failed lane's log to print
 #   VERIFY_LOG_DIR    lane logs, default node_modules/.cache/verify
 
@@ -95,33 +102,100 @@ check_relay_drift() {
   return 0
 }
 
+# Sets CHANGED_BASE (merge-base with main) and CHANGED_FILES (paths this branch
+# touched relative to it, committed or not, plus untracked; deleted ones
+# dropped). Returns 1 when there is no main to compare against.
+changed_since_main() {
+  CHANGED_BASE=$(git rev-parse --verify --quiet "${VERIFY_BASE:-}^{commit}" 2>/dev/null \
+    || git merge-base HEAD origin/main 2>/dev/null \
+    || git merge-base HEAD main 2>/dev/null || true)
+  [ -n "$CHANGED_BASE" ] || return 1
+  CHANGED_FILES=$({ git diff --name-only --diff-filter=ACMR "$CHANGED_BASE" --
+                    git ls-files --others --exclude-standard; } \
+    | sort -u \
+    | while IFS= read -r f; do [ -f "$f" ] && echo "$f"; done)
+  return 0
+}
+
+# lint_changed <package dir> <path regex>: the package's `lint:files` on the
+# changed files under it. Nothing to lint is a pass — an untouched file's
+# result cannot differ from main's, which CI linted in full.
+lint_changed() {
+  local dir="$1" list
+  list=$(printf '%s\n' "$CHANGED_FILES" \
+    | grep -E "^$2.*\.(js|jsx|ts|tsx|json)$" \
+    | grep -vE '/__generated__/|\.graphql\.' \
+    | sed "s#^$dir/##")
+  if [ -z "$list" ]; then
+    echo "$dir: no changed files"
+    return 0
+  fi
+  echo "$dir: $(printf '%s\n' "$list" | wc -l | tr -d ' ') changed file(s)"
+  printf '%s\n' "$list" | xargs pnpm --prefix "$dir" run lint:files
+}
+
+check_lint() {
+  # react and backend.ai-ui: every rule is per-file, so linting only the files
+  # this branch changed is as exact as `lint:ci`'s content cache — and the
+  # cache does not exist in a fresh worktree. A lint-config or dependency
+  # change invalidates every file, hence the full run. backend.ai-client and
+  # backend.ai-agent-cli stay full: their type-aware no-floating-promises rule
+  # can flag a caller whose own content is unchanged.
+  if ! changed_since_main; then
+    echo "(no merge-base with main — full lint)"
+    pnpm -r --stream lint:ci
+    return
+  fi
+  if printf '%s\n' "$CHANGED_FILES" \
+    | grep -qE '(^|/)(eslint\.config\.[cm]?js|package\.json|pnpm-lock\.yaml|pnpm-workspace\.yaml|i18n\.schema\.json)$|^packages/eslint-config-bai/'; then
+    echo "(lint config or dependencies changed — full lint)"
+    pnpm -r --stream lint:ci
+    return
+  fi
+  local rc=0
+  lint_changed react 'react/(src|vite-plugins)/' || rc=1
+  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/src/' || rc=1
+  pnpm -r --stream --filter backend.ai-client --filter backend.ai-agent-cli lint:ci || rc=1
+  return $rc
+}
+
 check_format() {
   # Root legacy sources: whole tree (small). React / BUI / e2e / i18n: only the
-  # files this branch touched relative to main plus untracked ones — the same
-  # set lint-staged formats at commit time, so a `--no-verify` commit cannot
-  # slip past. A full-tree check needs the pre-existing drift fixed first.
+  # files this branch touched — the same set lint-staged formats at commit
+  # time, so a `--no-verify` commit cannot slip past. A full-tree check needs
+  # the pre-existing drift fixed first.
   local rc=0
   pnpm run format || rc=1
-  local base
-  base=$(git merge-base HEAD origin/main 2>/dev/null \
-    || git merge-base HEAD main 2>/dev/null || true)
-  if [ -z "$base" ]; then
+  if ! changed_since_main; then
     echo "(no merge-base with main — changed-file format check skipped)"
     return $rc
   fi
   local files
-  files=$({ git diff --name-only --diff-filter=ACMR "$base" --
-            git ls-files --others --exclude-standard; } \
+  files=$(printf '%s\n' "$CHANGED_FILES" \
     | grep -E '^(react/(src|vite-plugins)|packages/backend\.ai-ui/src|e2e)/.*\.(js|jsx|ts|tsx|json|css|scss|md)$|^resources/i18n/[^/]+\.json$' \
-    | grep -vE '/__generated__/|^react/src/astryx-theme/built/' \
-    | sort -u \
-    | while IFS= read -r f; do [ -f "$f" ] && echo "$f"; done)
+    | grep -vE '/__generated__/|^react/src/astryx-theme/built/')
   if [ -z "$files" ]; then
     echo "no changed files under react/, packages/backend.ai-ui/, e2e/, resources/i18n/"
     return $rc
   fi
-  echo "$files" | xargs node_modules/.bin/prettier --check || rc=1
+  printf '%s\n' "$files" | xargs node_modules/.bin/prettier --check || rc=1
   return $rc
+}
+
+# vitest_lane <package dir> [pnpm filter]: only the tests that import a file
+# this branch changed (`--changed <merge-base>`); the whole suite without main.
+vitest_lane() {
+  local dir="$1" args="--passWithNoTests"
+  if changed_since_main; then
+    args="$args --changed $CHANGED_BASE"
+  fi
+  if [ -n "${2:-}" ]; then
+    # shellcheck disable=SC2086
+    pnpm --filter "$2" run test $args
+  else
+    # shellcheck disable=SC2086
+    bin "$dir" vitest run $args
+  fi
 }
 
 check_warmup_paths() {
@@ -250,13 +324,10 @@ start_lane gate "Relay" check_relay_drift
 wait
 report_lane 0
 
-# lint:ci = the cached eslint variant CI runs (content-hash cache; changed
-# files are always re-linted). backend.ai-client and backend.ai-agent-cli keep
-# it uncached: their type-aware no-floating-promises rule can flag a caller
-# whose own content is unchanged. The coverage gate fails when a package
-# defines `lint` without `lint:ci`, because `pnpm -r` silently skips it.
+# The coverage gate fails when a package defines `lint` without `lint:ci`,
+# because the full-lint fallback (`pnpm -r lint:ci`) silently skips it.
 start_lane gate "Lint script coverage" node scripts/lint-ci-coverage-gate.mjs
-start_lane gate "Lint" pnpm -r --stream lint:ci
+start_lane gate "Lint" check_lint
 start_lane gate "Format" check_format
 start_lane gate "TypeScript" bin react tsc --noEmit --incremental
 # The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
@@ -279,10 +350,10 @@ start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
   check_token_gate_report
 
 if [ -n "${VERIFY_TESTS:-}" ]; then
-  start_lane gate "Vitest (react)" bin react vitest run
-  start_lane gate "Vitest (backend.ai-ui)" bin packages/backend.ai-ui vitest run
-  start_lane gate "Vitest (agent-cli)" pnpm --filter backend.ai-agent-cli run test
-  start_lane gate "Vitest (root)" bin . vitest run
+  start_lane gate "Vitest (react)" vitest_lane react
+  start_lane gate "Vitest (backend.ai-ui)" vitest_lane packages/backend.ai-ui
+  start_lane gate "Vitest (agent-cli)" vitest_lane packages/backend.ai-agent-cli backend.ai-agent-cli
+  start_lane gate "Vitest (root)" vitest_lane .
 fi
 
 echo "... ${#LANE_NAMES[@]} lanes running$([ -n "${VERIFY_SERIAL:-}" ] && echo ' serially' || echo ' in parallel'); logs in $LOG_DIR/"
