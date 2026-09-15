@@ -495,13 +495,14 @@ function boot() {
    * whatever was being walked — progress lives in `localStorage` under the
    * head the stops were minted for, so nothing is lost.
    */
-  function enterGuided(stops: WalkthroughStop[]) {
+  function enterGuided(stops: WalkthroughStop[], unreadable = 0) {
     guided?.destroy();
-    walkthroughs.save(stops);
+    walkthroughs.save(stops, unreadable);
     guided = startGuidedMode({
       root: ui.root,
       host: ui.host,
       stops,
+      unreadable,
       // Read late: the state fetch can still be in flight when a link lands.
       serverState: () => serverState,
       copyWithToast: ui.copyWithToast,
@@ -876,18 +877,25 @@ function boot() {
     // The link is a stranger's: `decodeAnchor` checks `v`, `s` and `p`, the
     // rest of the payload reaches `querySelector` and the DOM unchecked. A
     // part that fails costs only itself.
-    // Every part a stop makes this the implementing session's walkthrough, not
-    // a reviewer's set: it opens in guided mode and the draft is left alone.
-    // One part that is not a stop, and the whole link merges as it always did.
+    // Stops make this the implementing session's walkthrough, not a reviewer's
+    // set: it opens in guided mode and the draft is left alone. One READABLE
+    // part that is not a stop, and the whole link merges as it always did.
     const stops = parts.flatMap((part, index) => {
       const anchor = decoded[index];
       return anchor && isAnchorV3(anchor) && isStop(anchor)
         ? [walkthroughStop(part, anchor, appHash)]
         : [];
     });
-    if (stops.length === parts.length) {
+    // A part nobody can decode does NOT veto the mode. Chat clients truncate a
+    // long link, and the part they cut is the last one — vetoing on it dropped
+    // the reader into the pin path and cost them the notes, the navigator and
+    // the banner, for a link whose surviving parts are all stops.
+    const readable = decoded.filter(
+      (anchor) => anchor && isAnchorV3(anchor),
+    ).length;
+    if (stops.length && stops.length === readable) {
       scrubPinParts();
-      enterGuided(stops);
+      enterGuided(stops, parts.length - readable);
       return;
     }
     const opened = parts.flatMap((part, index) => {
@@ -983,6 +991,6 @@ function boot() {
   if (draft.length) redraw();
   // A reload mid-walkthrough resumes it; a link in the hash replaces it.
   const walking = walkthroughs.stops();
-  if (walking.length) enterGuided(walking);
+  if (walking.length) enterGuided(walking, walkthroughs.unreadable());
   void applyFragment(BOOT_HASH);
 }

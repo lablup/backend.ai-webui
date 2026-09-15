@@ -45,6 +45,12 @@ export interface WalkthroughStop {
 export interface WalkthroughSet {
   v: 1;
   stops: WalkthroughStop[];
+  /**
+   * Parts of the link that no decoder could read. A link pasted through chat
+   * arrives truncated often enough that silence about it reads as "the
+   * walkthrough was only ever this long".
+   */
+  unreadable?: number;
 }
 
 const PIN_BODY_RE = new RegExp(`^${PIN_BODY_SRC}$`);
@@ -61,14 +67,19 @@ export function isWalkthroughStop(value: unknown): value is WalkthroughStop {
   return isAnchorV3(stop.anchor) && isStop(stop.anchor);
 }
 
-export function parseWalkthrough(raw: string | null): WalkthroughStop[] {
-  if (!raw) return [];
+export function parseWalkthrough(raw: string | null): WalkthroughSet {
+  const empty: WalkthroughSet = { v: 1, stops: [] };
+  if (!raw) return empty;
   try {
     const value = JSON.parse(raw) as Record<string, unknown>;
-    if (!value || value.v !== 1 || !Array.isArray(value.stops)) return [];
-    return value.stops.filter(isWalkthroughStop);
+    if (!value || value.v !== 1 || !Array.isArray(value.stops)) return empty;
+    const unreadable =
+      typeof value.unreadable === 'number' && value.unreadable > 0
+        ? Math.floor(value.unreadable)
+        : 0;
+    return { v: 1, stops: value.stops.filter(isWalkthroughStop), unreadable };
   } catch {
-    return [];
+    return empty;
   }
 }
 
@@ -90,7 +101,9 @@ const safeLocal = (): Storage | null => {
 
 export interface WalkthroughStore {
   stops(): WalkthroughStop[];
-  save(stops: WalkthroughStop[]): void;
+  /** How many parts of the link that opened this set could not be read. */
+  unreadable(): number;
+  save(stops: WalkthroughStop[], unreadable?: number): void;
   clear(): void;
   /**
    * The stop the reader was sent to, read once. A full reload cannot carry the
@@ -107,14 +120,28 @@ export function createWalkthroughStore(
   return {
     stops() {
       try {
-        return parseWalkthrough(storage?.getItem(WALKTHROUGH_KEY) ?? null);
+        return parseWalkthrough(storage?.getItem(WALKTHROUGH_KEY) ?? null)
+          .stops;
       } catch {
         return [];
       }
     },
-    save(stops) {
+    unreadable() {
       try {
-        storage?.setItem(WALKTHROUGH_KEY, JSON.stringify({ v: 1, stops }));
+        return (
+          parseWalkthrough(storage?.getItem(WALKTHROUGH_KEY) ?? null)
+            .unreadable ?? 0
+        );
+      } catch {
+        return 0;
+      }
+    },
+    save(stops, unreadable = 0) {
+      try {
+        storage?.setItem(
+          WALKTHROUGH_KEY,
+          JSON.stringify({ v: 1, stops, unreadable }),
+        );
       } catch {
         // A tab with storage off still walks; only a reload forgets.
       }

@@ -83,6 +83,19 @@ describe('the walkthrough set', () => {
     expect(createWalkthroughStore(storage).stops()).toEqual([]);
   });
 
+  it('remembers how much of the link could not be read', () => {
+    const storage = memoryStorage();
+    createWalkthroughStore(storage).save([stop('c_aaaaaaa')], 2);
+
+    // A reload keeps telling the truth about a truncated paste.
+    const reopened = createWalkthroughStore(storage);
+    expect(reopened.stops()).toHaveLength(1);
+    expect(reopened.unreadable()).toBe(2);
+
+    createWalkthroughStore(storage).save([stop('c_aaaaaaa')]);
+    expect(createWalkthroughStore(storage).unreadable()).toBe(0);
+  });
+
   it('keeps only the members that are still stops', () => {
     const notAStop = stop('c_ccccccc');
     delete notAStop.anchor.ck;
@@ -91,8 +104,8 @@ describe('the walkthrough set', () => {
       stops: [stop('c_aaaaaaa'), notAStop, { id: 'nope' }],
     });
 
-    expect(parseWalkthrough(raw).map((s) => s.id)).toEqual(['c_aaaaaaa']);
-    expect(parseWalkthrough('not json')).toEqual([]);
+    expect(parseWalkthrough(raw).stops.map((s) => s.id)).toEqual(['c_aaaaaaa']);
+    expect(parseWalkthrough('not json').stops).toEqual([]);
   });
 
   it('counts pages by path AND query', () => {

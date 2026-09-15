@@ -67,6 +67,10 @@ const STYLE = `
     color: inherit; border-radius: 6px; padding: 2px 8px; cursor: pointer;
     font: inherit; font-size: 11px;
   }
+  .bai-panel .cut {
+    padding: 6px 12px; font-size: 11px; color: var(--bai-mod-text);
+    border-bottom: 1px solid var(--bai-pop-border);
+  }
   .bai-panel .pg {
     padding: 6px 12px 2px; font-size: 11px; text-transform: uppercase;
     letter-spacing: .06em; color: var(--bai-review-text-dim);
@@ -112,6 +116,8 @@ export interface NavigatorGroup {
 export interface NavigatorModel {
   /** The set dock is up, so the pill steps out of the bottom-right corner. */
   dodge: boolean;
+  /** Empty, or the sentence saying the link arrived cut off. */
+  truncated: string;
   pages: number;
   total: number;
   /** Zero-based position of the current stop. */
@@ -188,7 +194,9 @@ export function createNavigator(root: ShadowRoot, on: NavigatorCallbacks) {
   function renderPanel(model: NavigatorModel) {
     panel.classList.toggle('shown', model.panelOpen);
     if (!model.panelOpen) return;
-    const head = `<div class="ph">Changes${model.pr ? ` in PR #${model.pr}` : ''}<span class="spacer"></span><button data-act="summary">Copy page summary</button><button data-act="exit">Exit</button></div>`;
+    const head =
+      `<div class="ph">Changes${model.pr ? ` in PR #${model.pr}` : ''}<span class="spacer"></span><button data-act="summary">Copy page summary</button><button data-act="exit">Exit</button></div>` +
+      (model.truncated ? `<div class="cut">${esc(model.truncated)}</div>` : '');
     panel.innerHTML =
       head +
       model.groups

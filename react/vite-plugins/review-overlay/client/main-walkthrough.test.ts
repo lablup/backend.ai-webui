@@ -337,6 +337,83 @@ describe('guided mode’s colours', () => {
   });
 });
 
+describe('a link that arrived truncated', () => {
+  /** What a chat client does to a long link: it cuts the tail off. */
+  const cut = (hash: string, chars: number) => hash.slice(0, -chars);
+
+  it('opens on the stops it can still read, and says what it lost', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({ id: B, testid: 'create', check: 'Still there' }),
+      await part({ id: C, testid: 'confirm', check: 'The confirm is primary' }),
+    ].join('&');
+
+    await bootOn(cut(hash, 20));
+
+    // Guided mode, on the two whole stops — not the pin path.
+    expect(pill()).not.toBeNull();
+    expect(marks()).toHaveLength(2);
+    expect(pillText()).toContain('2 changes');
+    expect(all('.setdock .row')).toHaveLength(0);
+
+    const banner = node('.bai-banner')?.textContent ?? '';
+    expect(banner).toContain('1 stop could not be read');
+    expect(banner).toContain('truncated when it was copied');
+
+    // And the ☰ panel says it too, for a reader who dismissed the banner.
+    act('panel')?.click();
+    expect(node('.bai-panel .cut')?.textContent).toContain(
+      '1 stop could not be read',
+    );
+  });
+
+  it('keeps the note across the reload that resumes the walkthrough', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({ id: B, testid: 'create', check: 'Still there' }),
+    ].join('&');
+    await bootOn(cut(hash, 20));
+    expect(marks()).toHaveLength(1);
+
+    exitGuidedKeepingSet();
+    document.querySelector('[data-bai-review-overlay]')?.remove();
+    await bootOn('');
+
+    expect(node('.bai-banner')?.textContent).toContain(
+      '1 stop could not be read',
+    );
+  });
+
+  it('leaves a link whose only part is unreadable exactly as it was', async () => {
+    const hash = cut(
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      20,
+    );
+
+    await bootOn(hash);
+
+    expect(pill()).toBeNull();
+    expect(marks()).toHaveLength(0);
+    expect(sessionStorage.getItem(WALKTHROUGH_KEY)).toBeNull();
+    expect(toast()).toContain('Could not read the anchor in that link');
+  });
+
+  it('still merges a link that carries a readable reviewer pin', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      // A reviewer's own pin: readable, and not a stop.
+      await part({ id: B, testid: 'create' }),
+      await part({ id: C, testid: 'confirm', check: 'The confirm is primary' }),
+    ].join('&');
+
+    await bootOn(cut(hash, 20));
+
+    expect(pill()).toBeNull();
+    expect(marks()).toHaveLength(0);
+    expect(all('.setdock .row')).toHaveLength(2);
+  });
+});
+
 describe('the pill and the set dock', () => {
   it('steps out of the corner the dock is in, and back when it empties', async () => {
     seedDraftPin();

@@ -12,6 +12,7 @@
  */
 import { blockStamp } from './block.js';
 import { pathNeedsChange, pinSetUrlAt, retryUntil } from './deeplink.js';
+import { esc } from './escape-html.js';
 import { createMarkLayer, type MarkSpec } from './marks.js';
 import {
   createNavigator,
@@ -85,6 +86,8 @@ export interface GuidedModeOptions {
   showToast: (message: string) => void;
   /** True while the set dock occupies the bottom-right corner. */
   dockShown: () => boolean;
+  /** Parts of the link no decoder could read — a truncated paste. */
+  unreadable?: number;
   /** Hand the stop a full reload is about to jump to across that reload. */
   rememberStop: (id: string) => void;
   /** Read once, at entry: the stop the reload that brought us here asked for. */
@@ -266,6 +269,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
   function navModel(where: Place[]): NavigatorModel {
     return {
       dodge: options.dockShown(),
+      truncated: truncatedNote(),
       pages: pageCount(stops),
       total: stops.length,
       index: current,
@@ -321,9 +325,20 @@ export function startGuidedMode(options: GuidedModeOptions) {
   }
 
   /** N on THIS page, and the head the walkthrough was minted for. */
+  /**
+   * A link pasted through chat arrives cut off, and the part that is cut is the
+   * last one. Saying nothing would read as "the walkthrough was this long".
+   */
+  const truncatedNote = (): string => {
+    const lost = options.unreadable ?? 0;
+    if (!lost) return '';
+    return `${lost} stop${lost === 1 ? '' : 's'} could not be read — the link may have been truncated when it was copied`;
+  };
+
   function renderBanner(where: Place[]) {
     const here = stops.filter((_, index) => where[index].kind !== 'away');
-    if (!here.length) return banner.classList.remove('shown');
+    const lost = truncatedNote();
+    if (!here.length && !lost) return banner.classList.remove('shown');
     const viewed = progress.viewedCount(here.map((stop) => stop.id));
     const sha = walkthroughSha(stops);
     const head = options.serverState()?.head ?? null;
@@ -333,10 +348,11 @@ export function startGuidedMode(options: GuidedModeOptions) {
       stops.every((stop) => stop.anchor.sha !== head);
     const made =
       sha === 'nosha' ? '' : ` · made for <code>${sha.slice(0, 7)}</code>`;
-    banner.innerHTML = stale
+    const said = stale
       ? `Walkthrough made for <code>${sha.slice(0, 7)}</code>, but this server serves <code>${head.slice(0, 7)}</code> — marks and code lines may have moved.`
       : `<b>${here.length} change${here.length === 1 ? '' : 's'}</b> on this page · ${viewed} viewed${made}`;
-    banner.classList.toggle('warn', stale);
+    banner.innerHTML = lost ? `${said}<br><b>${esc(lost)}</b>` : said;
+    banner.classList.toggle('warn', stale || !!lost);
     banner.classList.add('shown');
   }
 
