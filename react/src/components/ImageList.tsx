@@ -16,9 +16,9 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { ProjectContextOrNull } from '../types/projectContext';
-import AddImageModal from './AddImageModal';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
+import ImportImageModal from './ImportImageModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -53,7 +53,7 @@ import {
   RotateCw,
   Settings,
   ArrowDownToLine,
-  Plus,
+  Import,
   SquarePenIcon,
 } from 'lucide-react';
 import { parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -230,7 +230,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
   const [isOpenInstallModal, setIsOpenInstallModal] = useState<boolean>(false);
-  const [isOpenAddImageModal, setIsOpenAddImageModal] =
+  const [isOpenImportImageModal, setIsOpenImportImageModal] =
     useState<boolean>(false);
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [, startTransition] = useTransition();
@@ -739,9 +739,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             {baiClient.is_superadmin ? (
               <Button
                 variant="secondary"
-                icon={<Plus size="1em" />}
-                label={t('environment.AddImage')}
-                onClick={() => setIsOpenAddImageModal(true)}
+                icon={<Import size="1em" />}
+                label={t('environment.ImportImage')}
+                onClick={() => setIsOpenImportImageModal(true)}
               />
             ) : null}
             {/* PILOT-DECISION: the hand-painted primary button
@@ -848,9 +848,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         imageFrgmt={managingApp}
       />
       <BAIUnmountAfterClose>
-        <AddImageModal
-          open={isOpenAddImageModal}
-          onRequestClose={() => setIsOpenAddImageModal(false)}
+        <ImportImageModal
+          open={isOpenImportImageModal}
+          onRequestClose={() => setIsOpenImportImageModal(false)}
           onAdded={() => {
             startTransition(() => {
               updateFetchKey();
