@@ -5,6 +5,7 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ImageList from './ImageList';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -32,11 +33,20 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * External behavior only: props in → query variables and callbacks out.
  */
 
+/** The superadmin-only row actions read this; flipped per test. */
+let mockIsSuperadmin = true;
+const mockScanRequest = vi.fn();
+const mockMessageSuccess = vi.fn();
+const mockMessageError = vi.fn();
+
 vi.mock('react-i18next', async () => {
   const React = await import('react');
   return {
     useTranslation: () => ({
-      t: (key: string) => key,
+      // `name` is interpolated so the rescan toast can be asserted to carry
+      // the canonical; every other key stays bare.
+      t: (key: string, options?: Record<string, any>) =>
+        options && 'name' in options ? `${key}:${options.name}` : key,
       i18n: { language: 'en', changeLanguage: () => new Promise(() => {}) },
       ready: true,
     }),
@@ -55,7 +65,49 @@ vi.mock('../hooks', async (importOriginal) => {
     ],
     useSuspendedBackendaiClient: () => ({
       _config: { domainName: 'default' },
+      get is_superadmin() {
+        return mockIsSuperadmin;
+      },
     }),
+  };
+});
+
+vi.mock('../helper', async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import('../helper')>();
+  return {
+    ...originalModule,
+    baiSignedRequestWithPromise: (...args: Array<any>) =>
+      mockScanRequest(...args),
+  };
+});
+
+vi.mock('../hooks/usePainKiller', async (importOriginal) => {
+  const originalModule =
+    await importOriginal<typeof import('../hooks/usePainKiller')>();
+  return {
+    ...originalModule,
+    usePainKiller: () => ({ relieve: (title: string) => title }),
+  };
+});
+
+vi.mock('../app-shim', async (importOriginal) => {
+  const originalModule = await importOriginal<typeof import('../app-shim')>();
+  return {
+    ...originalModule,
+    App: {
+      useApp: () => ({
+        message: {
+          success: mockMessageSuccess,
+          error: mockMessageError,
+          info: vi.fn(),
+          warning: vi.fn(),
+          loading: vi.fn(),
+          open: vi.fn(),
+          destroy: vi.fn(),
+        },
+        modal: { confirm: vi.fn() },
+      }),
+    },
   };
 });
 
@@ -78,6 +130,7 @@ vi.mock('../hooks/useCurrentProject', async (importOriginal) => {
 vi.mock('./ManageImageResourceLimitModal', () => ({ default: () => null }));
 vi.mock('./ManageAppsModal', () => ({ default: () => null }));
 vi.mock('./ImageInstallModal', () => ({ default: () => null }));
+vi.mock('./ImportImageModal', () => ({ default: () => null }));
 vi.mock('./TableColumnsSettingModal', () => ({ default: () => null }));
 
 // The selector is reduced to two buttons driving the same `onSelectProject`
@@ -123,6 +176,22 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
   };
 });
 
+/** The rescan row action is a react-query mutation, so every tree needs one. */
+const withQueryClient = (children: React.ReactNode) => (
+  <QueryClientProvider
+    client={
+      new QueryClient({
+        defaultOptions: {
+          queries: { retry: false, refetchOnWindowFocus: false },
+          mutations: { retry: false },
+        },
+      })
+    }
+  >
+    {children}
+  </QueryClientProvider>
+);
+
 const renderList = (
   project: { id: string; name: string } | null,
   onChangeProject = vi.fn(),
@@ -135,15 +204,17 @@ const renderList = (
     );
   }
   render(
-    <RelayEnvironmentProvider environment={environment}>
-      <NuqsTestingAdapter searchParams="">
-        <>
-          <Suspense fallback={null}>
-            <ImageList project={project} onChangeProject={onChangeProject} />
-          </Suspense>
-        </>
-      </NuqsTestingAdapter>
-    </RelayEnvironmentProvider>,
+    withQueryClient(
+      <RelayEnvironmentProvider environment={environment}>
+        <NuqsTestingAdapter searchParams="">
+          <>
+            <Suspense fallback={null}>
+              <ImageList project={project} onChangeProject={onChangeProject} />
+            </Suspense>
+          </>
+        </NuqsTestingAdapter>
+      </RelayEnvironmentProvider>,
+    ),
   );
   return { environment, onChangeProject };
 };
@@ -275,15 +346,17 @@ describe('ImageList project scope contract (ADR-0001, FR-3415)', () => {
     };
     const user = userEvent.setup();
     render(
-      <RelayEnvironmentProvider environment={environment}>
-        <NuqsTestingAdapter searchParams="">
-          <>
-            <Suspense fallback={null}>
-              <Harness />
-            </Suspense>
-          </>
-        </NuqsTestingAdapter>
-      </RelayEnvironmentProvider>,
+      withQueryClient(
+        <RelayEnvironmentProvider environment={environment}>
+          <NuqsTestingAdapter searchParams="">
+            <>
+              <Suspense fallback={null}>
+                <Harness />
+              </Suspense>
+            </>
+          </NuqsTestingAdapter>
+        </RelayEnvironmentProvider>,
+      ),
     );
 
     await waitFor(() => {
@@ -329,13 +402,15 @@ describe('ImageList private marker (FR-70)', () => {
       }),
     );
     render(
-      <RelayEnvironmentProvider environment={environment}>
-        <NuqsTestingAdapter searchParams="">
-          <Suspense fallback={null}>
-            <ImageList project={null} onChangeProject={vi.fn()} />
-          </Suspense>
-        </NuqsTestingAdapter>
-      </RelayEnvironmentProvider>,
+      withQueryClient(
+        <RelayEnvironmentProvider environment={environment}>
+          <NuqsTestingAdapter searchParams="">
+            <Suspense fallback={null}>
+              <ImageList project={null} onChangeProject={vi.fn()} />
+            </Suspense>
+          </NuqsTestingAdapter>
+        </RelayEnvironmentProvider>,
+      ),
     );
   };
 
@@ -353,7 +428,9 @@ describe('ImageList private marker (FR-70)', () => {
   it('leaves an image without the label unmarked', async () => {
     renderWithImages([{ id: 'img-public', installed: true }]);
 
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
   });
 
@@ -362,7 +439,9 @@ describe('ImageList private marker (FR-70)', () => {
       { id: 'img-private', installed: true, features: 'private' },
     ]);
 
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.getByText('environment.Private')).toBeInTheDocument();
   });
 
@@ -373,7 +452,158 @@ describe('ImageList private marker (FR-70)', () => {
 
     // Await the row's own badge first — asserting absence while the list is
     // still suspended would pass without ever rendering the fixture.
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * Per-image rescan (FR-3948).
+ *
+ * `POST /admin/images/rescan` is `superadmin_required` and keyed by the
+ * manager's own canonical — `<registry>/<namespace>:<tag>` — with the
+ * architecture sent alongside it. `ImageNode.name` is NOT that canonical: it
+ * resolves to `row.image`, the namespace.
+ */
+describe('ImageList rescan row action (FR-3948)', () => {
+  const IMAGE = {
+    id: 'img-rescan',
+    row_id: 'img-rescan',
+    registry: 'cr.backend.ai',
+    namespace: 'stable/python',
+    name: 'stable/python',
+    tag: '3.9-ubuntu20.04',
+    architecture: 'x86_64',
+    installed: false,
+    labels: [],
+  };
+  const CANONICAL = 'cr.backend.ai/stable/python:3.9-ubuntu20.04';
+
+  const scanOk = () => ({
+    item: {
+      id: 'img-rescan',
+      name: 'stable/python',
+      registry: 'cr.backend.ai',
+      project: 'stable',
+      tag: '3.9-ubuntu20.04',
+      architecture: 'x86_64',
+    },
+    errors: [],
+  });
+
+  const renderOneImage = () => {
+    const environment: RelayMockEnvironment = createMockEnvironment();
+    // A queued resolver is consumed by ONE operation, so queue several and
+    // count how many list fetches actually ran.
+    let fetchCount = 0;
+    Array.from({ length: 4 }).forEach(() => {
+      environment.mock.queueOperationResolver((operation) => {
+        fetchCount += 1;
+        return MockPayloadGenerator.generate(operation, {
+          ImageConnection: () => ({ count: 1, edges: [{ node: IMAGE }] }),
+        });
+      });
+    });
+    render(
+      withQueryClient(
+        <RelayEnvironmentProvider environment={environment}>
+          <NuqsTestingAdapter searchParams="">
+            <Suspense fallback={null}>
+              <ImageList project={null} onChangeProject={vi.fn()} />
+            </Suspense>
+          </NuqsTestingAdapter>
+        </RelayEnvironmentProvider>,
+      ),
+    );
+    return { getFetchCount: () => fetchCount };
+  };
+
+  const rescanButton = () =>
+    screen.findByRole('button', { name: 'environment.RescanImage' });
+
+  beforeEach(() => {
+    mockIsSuperadmin = true;
+    mockScanRequest.mockReset();
+    mockMessageSuccess.mockReset();
+    mockMessageError.mockReset();
+  });
+
+  it('posts the row canonical and architecture, toasts and refetches the list', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockResolvedValue(scanOk());
+    const { getFetchCount } = renderOneImage();
+
+    await user.click(await rescanButton());
+
+    await waitFor(() => expect(mockScanRequest).toHaveBeenCalledTimes(1));
+    expect(mockScanRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        method: 'POST',
+        url: '/admin/images/rescan',
+        body: { canonical: CANONICAL, architecture: 'x86_64' },
+      }),
+    );
+    await waitFor(() =>
+      expect(mockMessageSuccess).toHaveBeenCalledWith(
+        `environment.RescanImageSuccess:${CANONICAL}`,
+      ),
+    );
+    // The fetch key is bumped on success, so the list re-runs its query.
+    await waitFor(() => expect(getFetchCount()).toBeGreaterThan(1));
+    expect(mockMessageError).not.toHaveBeenCalled();
+  });
+
+  it('reads a bodiless 500 as a scan that failed on the server', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockRejectedValue({
+      statusCode: 500,
+      // `client.ts` reads a bodiless response as `resp.blob()`, so `response`
+      // is an empty Blob rather than null.
+      response: new Blob([]),
+      title: 'internal server error',
+    });
+    renderOneImage();
+
+    await user.click(await rescanButton());
+
+    await waitFor(() =>
+      expect(mockMessageError).toHaveBeenCalledWith(
+        'environment.ImportImageScanFailedOnServer',
+      ),
+    );
+    expect(mockMessageSuccess).not.toHaveBeenCalled();
+  });
+
+  it('reports a 404 as the row having gone, not as a manager limitation', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockRejectedValue({
+      statusCode: 404,
+      error_code: 'image_read_not-found',
+    });
+    renderOneImage();
+
+    await user.click(await rescanButton());
+
+    await waitFor(() =>
+      expect(mockMessageError).toHaveBeenCalledWith(
+        'environment.RescanImageNotFound',
+      ),
+    );
+  });
+
+  it('hides the action from a non-superadmin', async () => {
+    mockIsSuperadmin = false;
+    renderOneImage();
+
+    // Await a sibling row action first — asserting absence while the list is
+    // still suspended would pass without ever rendering the row.
+    expect(
+      await screen.findByRole('button', { name: 'environment.ManageApps' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'environment.RescanImage' }),
+    ).not.toBeInTheDocument();
   });
 });
