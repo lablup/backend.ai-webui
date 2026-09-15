@@ -495,10 +495,38 @@ describe('parse — walkthrough stops are not findings', () => {
     ]);
   });
 
-  it('finds nothing in a stop-only comment', async () => {
+  it('finds nothing in a stop-only comment, and says what it hid', async () => {
     const text = `📍 **Walkthrough · 2 stops** — [Open](${await link(stops)})`;
     expect(await parsePins(text)).toEqual([]);
-    expect((await parseResult(text)).pins).toEqual([]);
+    const result = await parseResult(text);
+    expect(result.pins).toEqual([]);
+    expect(result.stopsHidden).toBe(2);
+    expect((await parseResult(text, { includeStops: true })).stopsHidden).toBe(
+      0,
+    );
+
+    const file = join(tmpdir(), `review-pins-hidden-${process.pid}.md`);
+    writeFileSync(file, text);
+    const errors: string[] = [];
+    const write = vi
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => true);
+    const stderr = vi
+      .spyOn(process.stderr, 'write')
+      .mockImplementation((chunk) => {
+        errors.push(String(chunk));
+        return true;
+      });
+    try {
+      await expect(main(['parse', file])).resolves.toBe(5);
+      expect(errors.join('')).toContain(
+        '2 walkthrough stop(s) hidden; pass --include-stops to see them',
+      );
+    } finally {
+      write.mockRestore();
+      stderr.mockRestore();
+      rmSync(file, { force: true });
+    }
   });
 
   it('takes --include-stops on the command line', async () => {

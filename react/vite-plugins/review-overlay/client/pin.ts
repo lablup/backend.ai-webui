@@ -16,8 +16,8 @@ import { icon, ICON_STYLE } from './icons.js';
 import {
   findAnchorTarget,
   hasLandmark,
+  inScope,
   quickFindTarget,
-  stopInScope,
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
@@ -618,7 +618,7 @@ function createPinView(deps: ViewDeps): PinView {
     const held =
       located?.isConnected &&
       textMatches(located, target.anchor.txt) &&
-      stopInScope(located, target.anchor)
+      inScope(located, target.anchor)
         ? located
         : null;
     if (held) missedScans = 0;

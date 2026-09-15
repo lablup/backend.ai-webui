@@ -35,6 +35,8 @@ export interface CliPin {
 export interface ParseResult {
   apiVersion: string;
   pins: CliPin[];
+  /** Walkthrough stops the default filter left out. */
+  stopsHidden: number;
 }
 
 /**
@@ -374,17 +376,28 @@ export async function parsePins(
   text: string,
   options: ParseOptions = {},
 ): Promise<CliPin[]> {
+  return (await collectPins(text, options)).pins;
+}
+
+async function collectPins(
+  text: string,
+  options: ParseOptions,
+): Promise<{ pins: CliPin[]; stopsHidden: number }> {
   const blocks = new Map<string, ParsedBlock>();
   for (const block of parseBlocks(text)) {
     if (!blocks.has(block.id)) blocks.set(block.id, block);
   }
   const pins: CliPin[] = [];
+  const hidden = new Set<string>();
   for (const ref of findPinRefs(text)) {
     const block = blocks.get(ref.id) ?? null;
     const idVerified = verifyId(ref, block);
     if (idVerified === false) continue;
     const anchor = await decodeAnchor(ref.anchorB64);
-    if (anchor && isStop(anchor) && !options.includeStops) continue;
+    if (anchor && isStop(anchor) && !options.includeStops) {
+      hidden.add(ref.id);
+      continue;
+    }
     pins.push({
       id: ref.id,
       anchor,
@@ -399,7 +412,7 @@ export async function parsePins(
       url: await betterLink(block?.link ?? '', ref.url),
     });
   }
-  return mergePins(pins);
+  return { pins: await mergePins(pins), stopsHidden: hidden.size };
 }
 
 export const parseResult = async (
@@ -407,7 +420,7 @@ export const parseResult = async (
   options: ParseOptions = {},
 ): Promise<ParseResult> => ({
   apiVersion: API_VERSION,
-  pins: await parsePins(text, options),
+  ...(await collectPins(text, options)),
 });
 
 // --------------------------------------------------------------------------
@@ -492,6 +505,10 @@ export async function main(argv: string[]): Promise<number> {
     return 2;
   }
   const result = await parseResult(text, { includeStops });
+  if (!result.pins.length && result.stopsHidden)
+    process.stderr.write(
+      `${result.stopsHidden} walkthrough stop(s) hidden; pass --include-stops to see them\n`,
+    );
   process.stdout.write(
     json ? `${JSON.stringify(result, null, 2)}\n` : `${renderText(result)}\n`,
   );

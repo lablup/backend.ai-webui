@@ -75,7 +75,7 @@ const componentConflicts = (element: Element, anchor: AnchorV3): boolean => {
  * dialog. A waiting stop beats a look-alike outside the modal — the measured
  * failure was a modal stop drawn on the page's own "Models" button.
  */
-const inScope = (element: Element, anchor: AnchorV3): boolean => {
+export const inScope = (element: Element, anchor: AnchorV3): boolean => {
   if (!(isStop(anchor) && anchor.dlg)) return true;
   const dialog = element.closest(DIALOG_SELECTOR);
   // A closed native <dialog> keeps its descendants in the DOM; only `open` counts.
@@ -84,16 +84,15 @@ const inScope = (element: Element, anchor: AnchorV3): boolean => {
   );
 };
 
-/** Whether an element a stop already holds still satisfies the stop's scope. */
-export const stopInScope = inScope;
-
-/** A strict stop with a landmark accepts a selector hit only inside that landmark. */
+/** A strict stop with a landmark accepts a selector hit only inside one. */
 const withinLandmark = (
   element: Element,
   anchor: AnchorV3,
   strict: boolean,
-  landmark: Element | null,
-): boolean => !strict || !anchor.tid || !!landmark?.contains(element);
+): boolean =>
+  !strict ||
+  !anchor.tid ||
+  !!element.closest(`[data-testid="${esc(anchor.tid)}"]`);
 
 /** The landmark alone: a wrapper stands in for its element only without text. */
 const frameSuffices = (strict: boolean, anchor: AnchorV3): boolean =>
@@ -179,16 +178,16 @@ export function quickFindTarget(
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const strict = isStop(anchor);
-  const landmark = uniqueLandmark(anchor, doc, options.ignore);
   const bySelector = querySafe(doc, anchor.s, options.ignore);
   if (
     bySelector &&
     textMatches(bySelector, anchor.txt) &&
     !componentConflicts(bySelector, anchor) &&
     inScope(bySelector, anchor) &&
-    withinLandmark(bySelector, anchor, strict, landmark)
+    withinLandmark(bySelector, anchor, strict)
   )
     return bySelector;
+  const landmark = uniqueLandmark(anchor, doc, options.ignore);
   if (landmark && inScope(landmark, anchor)) {
     const projected = rectProjectedTarget(
       landmark,
@@ -218,14 +217,13 @@ export function findAnchorTarget(
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const strict = isStop(anchor);
-  const landmark = uniqueLandmark(anchor, doc, options.ignore);
   const bySelector = querySafe(doc, anchor.s, options.ignore);
   if (
     bySelector &&
     textMatches(bySelector, anchor.txt) &&
     !componentConflicts(bySelector, anchor) &&
     inScope(bySelector, anchor) &&
-    withinLandmark(bySelector, anchor, strict, landmark)
+    withinLandmark(bySelector, anchor, strict)
   )
     return bySelector;
 
@@ -259,6 +257,7 @@ export function findAnchorTarget(
     return best;
   };
 
+  const landmark = uniqueLandmark(anchor, doc, options.ignore);
   if (landmark && inScope(landmark, anchor)) {
     const inner = scan(landmark);
     if (inner) return inner;

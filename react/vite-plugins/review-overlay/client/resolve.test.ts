@@ -414,4 +414,18 @@ describe('walkthrough stops resolve strictly (FR-3949)', () => {
     expect(quickFindTarget(stop(outside))).toBeNull();
     expect(findAnchorTarget(stop(outside))).toBeNull();
   });
+
+  // Two tabs render the same row component, so the landmark testid is not
+  // unique; the selector hit still counts when it sits inside one of them.
+  it('resolves through a duplicated landmark by its selector hit', () => {
+    mount(
+      '<div data-testid="row"><button>Save</button></div><div data-testid="row"><button id="right">Save</button></div><button id="loose">Save</button>',
+    );
+    const inside = stop({ s: '#right', tid: 'row', txt: 'Save' });
+    expect(quickFindTarget(inside)?.id).toBe('right');
+    expect(findAnchorTarget(inside)?.id).toBe('right');
+    const loose = stop({ s: '#loose', tid: 'row', txt: 'Save' });
+    expect(quickFindTarget(loose)).toBeNull();
+    expect(findAnchorTarget(loose)).toBeNull();
+  });
 });
