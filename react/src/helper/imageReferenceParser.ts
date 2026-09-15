@@ -4,8 +4,7 @@
  */
 
 /** How the line was recognised. `blank` is a whitespace-only line. */
-export type ImageReferenceKind =
-  'ngc-url' | 'pull-command' | 'canonical' | 'blank';
+export type ImageReferenceKind = 'ngc-url' | 'canonical' | 'blank';
 
 /** Machine code for why a line cannot be submitted. `null` means it can. */
 export type ImageReferenceReason =
@@ -19,8 +18,7 @@ export type ImageReferenceReason =
   | 'invalid_reference'
   | 'empty_image_name'
   | 'ngc_not_a_container'
-  | 'ngc_url_unparseable'
-  | 'unsupported_command';
+  | 'ngc_url_unparseable';
 
 export interface ParsedReference {
   kind: ImageReferenceKind;
@@ -53,70 +51,6 @@ const NGC_RESOURCE_TYPES = [
   'resources',
   'helm-charts',
 ];
-/** Commands whose first argument may be an image reference. */
-const PULL_COMMANDS = ['docker', 'podman', 'nerdctl'];
-
-const OTHER_COMMANDS = [
-  'helm',
-  'kubectl',
-  'ctr',
-  'crictl',
-  'buildah',
-  'skopeo',
-  'singularity',
-  'apptainer',
-];
-
-/**
- * `pull` options that consume the NEXT token as their value, so the token
- * after them is not the reference. Anything else starting with `-` is a
- * boolean flag, and `--opt=value` carries its own value.
- */
-const SHARED_VALUE_TAKING_OPTIONS = [
-  '--platform',
-  '--arch',
-  '--os',
-  '--variant',
-  '--authfile',
-  '--creds',
-  '--cert-dir',
-  '--retry',
-  '--retry-delay',
-  '--decryption-key',
-  '--signature-policy',
-  '--cosign-key',
-  '--verify',
-  '--snapshotter',
-  '--namespace',
-  '-n',
-];
-
-/** Keyed per client because `-a` is nerdctl's `--address` but docker's
- *  boolean `--all-tags`. */
-const VALUE_TAKING_PULL_OPTIONS: Record<string, ReadonlyArray<string>> = {
-  docker: SHARED_VALUE_TAKING_OPTIONS,
-  podman: SHARED_VALUE_TAKING_OPTIONS,
-  nerdctl: [...SHARED_VALUE_TAKING_OPTIONS, '--address', '-a'],
-};
-
-/** The first positional token after `pull`, skipping options and their values. */
-const positionalPullArgument = (
-  client: string,
-  tokens: ReadonlyArray<string>,
-): string | undefined => {
-  const valueTaking = VALUE_TAKING_PULL_OPTIONS[client] ?? [];
-  for (let index = 0; index < tokens.length; index++) {
-    const token = tokens[index];
-    if (!token.startsWith('-')) {
-      return token;
-    }
-    if (!token.includes('=') && valueTaking.includes(token)) {
-      index++;
-    }
-  }
-  return undefined;
-};
-
 /** `rx_slug` from the manager's `common/docker.py`; uppercase is allowed. */
 const TAG_PATTERN = /^[A-Za-z0-9](?:[A-Za-z0-9-._]*[A-Za-z0-9])?$/;
 const MAX_TAG_LENGTH = 128;
@@ -283,7 +217,8 @@ function parseCanonical(
 
 /**
  * Normalise one pasted line into a registry host, a remote path and a tag.
- * The project/name split and the submittable decision belong to
+ * The accepted forms are a bare canonical and an NGC catalog URL. The
+ * project/name split and the submittable decision belong to
  * `resolveImageReference`, which needs the registered registries.
  */
 export function parseImageReferenceLine(line: string): ParsedReference {
@@ -292,21 +227,10 @@ export function parseImageReferenceLine(line: string): ParsedReference {
     return blank();
   }
 
-  const command = trimmed
-    .replace(/^\$\s*/, '')
-    .replace(/^sudo\s+/, '')
-    .trim();
-  const tokens = command.split(/\s+/);
-  const [head, ...tail] = tokens;
-
-  if (PULL_COMMANDS.includes(head) || OTHER_COMMANDS.includes(head)) {
-    const reference =
-      PULL_COMMANDS.includes(head) && tail[0] === 'pull'
-        ? positionalPullArgument(head, tail.slice(1))
-        : undefined;
-    return reference
-      ? parseCanonical(reference, 'pull-command')
-      : rejected('pull-command', 'unsupported_command');
+  // Only a catalog URL or a bare canonical is read, and neither carries a
+  // space -- a `docker pull ...` line rejects here rather than half-parsing.
+  if (/\s/.test(trimmed)) {
+    return rejected('canonical', 'invalid_reference');
   }
 
   if (NGC_HOSTS.includes(hostOf(trimmed))) {
