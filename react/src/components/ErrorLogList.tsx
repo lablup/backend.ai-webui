@@ -56,93 +56,118 @@ const ErrorLogList: React.FC<{
       title: t('logs.TimeStamp'),
       dataIndex: 'formattedTimeStamp',
       key: 'timeStamp',
-      render: (value) =>
-        _.isUndefined(value) ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isUndefined(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
+      fixed: 'left',
     },
     {
       title: t('logs.Status'),
       dataIndex: 'statusCode',
       key: 'status',
-      render: (value, record) =>
-        _.isUndefined(value) ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>
-            {value + ' ' + record.statusText}
-          </TextHighlighter>
-        ),
+      render: (value, record) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isUndefined(value) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>
+              {value + ' ' + record.statusText}
+            </TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorTitle'),
       dataIndex: 'title',
       key: 'errorTitle',
-      render: (value) =>
-        _.isNil(value) || (_.isObject(value) && _.isEmpty(value)) ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>
-            {_.isObject(value) ? JSON.stringify(value) : _.toString(value)}
-          </TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 50 }}>
+          {_.isNil(value) || (_.isObject(value) && _.isEmpty(value)) ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>
+              {_.isObject(value) ? JSON.stringify(value) : _.toString(value)}
+            </TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorMessage'),
       dataIndex: 'message',
       key: 'errorMessage',
-      render: (value) =>
-        !value ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 70 }}>
+          {!value ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.ErrorType'),
       dataIndex: 'type',
       key: 'errorType',
-      render: (value) =>
-        !value ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {!value ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.Method'),
       dataIndex: 'requestMethod',
       key: 'method',
-      render: (value) =>
-        !value ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {!value ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.RequestUrl'),
       dataIndex: 'requestUrl',
       key: 'requestUrl',
-      render: (value) =>
-        !value ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 60 }}>
+          {!value ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
     {
       title: t('logs.Parameters'),
       dataIndex: 'requestParameters',
       key: 'requestParameter',
-      render: (value) =>
-        !value ? (
-          '-'
-        ) : (
-          <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
-        ),
+      render: (value) => (
+        <div style={{ minWidth: 100 }}>
+          {!value ? (
+            '-'
+          ) : (
+            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -230,6 +255,7 @@ const ErrorLogList: React.FC<{
       </BAIFlex>
       <BAITable
         scroll={{
+          x: 'max-content',
           y:
             _.filter(filteredLogData, (log) => log.isError).length === 0
               ? undefined
