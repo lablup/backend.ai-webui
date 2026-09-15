@@ -6,7 +6,8 @@ import { pinSetUrl } from './client/deeplink.js';
 import { pinId } from './client/id.js';
 import type { AnchorV3, SetPin } from './client/types.js';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -432,6 +433,7 @@ describe('walkthrough stop fields (FR-3949)', () => {
     const id = pinId(9605, b64, '2026-09-15T00:00:00Z');
     const pins = await parsePins(
       `http://dev.example/project/default/session/start?tab=general#bai=v3.${id}.${b64}`,
+      { includeStops: true },
     );
     expect(pins).toHaveLength(1);
     expect(pins[0].anchor?.ck).toBe('The button is visible');
@@ -449,5 +451,75 @@ describe('link ranking ignores volatile query params (FR-3949)', () => {
     const pins = await parsePins(`${other}\n${own}`);
     expect(pins).toHaveLength(1);
     expect(pins[0].url).toBe(own);
+  });
+});
+
+// A walkthrough comment's header carries a set link of stops; the review
+// skill reads every `#bai=v3` link as findings, so stops stay out by default.
+describe('parse — walkthrough stops are not findings', () => {
+  const at = '2026-09-15T00:00:00Z';
+  const link = async (anchors: AnchorV3[]): Promise<string> => {
+    const pins: SetPin[] = [];
+    for (const each of anchors) {
+      const anchorB64 = await encodeAnchor(each);
+      pins.push({
+        id: pinId(9605, anchorB64, at),
+        origin: 'pick',
+        anchor: each,
+        anchorB64,
+        label: 'Data › page-data › button',
+        appHash: '',
+        stack: [],
+        at,
+        pr: 9605,
+      });
+    }
+    return `http://x${pinSetUrl(pins)}`;
+  };
+  const stops: AnchorV3[] = [
+    { ...anchor, ch: 'moved', ck: 'The Upload button is in the header' },
+    { ...anchor, s: '#second', ch: 'renamed', ck: 'It says Upload 3 items' },
+  ];
+  const reviewer: AnchorV3 = { ...anchor, s: '#third', n: 'looks off' };
+
+  it('leaves stops out of a mixed set link unless asked', async () => {
+    const text = await link([...stops, reviewer]);
+    const byDefault = await parsePins(text);
+    expect(byDefault.map((pin) => pin.note)).toEqual(['looks off']);
+    const all = await parsePins(text, { includeStops: true });
+    expect(all).toHaveLength(3);
+    expect(all.map((pin) => pin.anchor?.ck ?? '')).toEqual([
+      'The Upload button is in the header',
+      'It says Upload 3 items',
+      '',
+    ]);
+  });
+
+  it('finds nothing in a stop-only comment', async () => {
+    const text = `📍 **Walkthrough · 2 stops** — [Open](${await link(stops)})`;
+    expect(await parsePins(text)).toEqual([]);
+    expect((await parseResult(text)).pins).toEqual([]);
+  });
+
+  it('takes --include-stops on the command line', async () => {
+    const file = join(tmpdir(), `review-pins-stops-${process.pid}.md`);
+    writeFileSync(file, await link(stops));
+    const out: string[] = [];
+    const write = vi
+      .spyOn(process.stdout, 'write')
+      .mockImplementation((chunk) => {
+        out.push(String(chunk));
+        return true;
+      });
+    try {
+      await expect(main(['parse', '--json', file])).resolves.toBe(5);
+      await expect(
+        main(['parse', '--json', '--include-stops', file]),
+      ).resolves.toBe(0);
+      expect(JSON.parse(out.at(-1) ?? '{}').pins).toHaveLength(2);
+    } finally {
+      write.mockRestore();
+      rmSync(file, { force: true });
+    }
   });
 });
