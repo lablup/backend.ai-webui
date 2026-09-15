@@ -199,3 +199,4 @@ export {
   StorageHostFetchError,
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
+export { useSuspendedLegacyVFolders } from './useSuspendedLegacyVFolders';

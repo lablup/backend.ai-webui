@@ -1,12 +1,12 @@
 import { App } from '../../app-shim';
 import { Form, type RuleObject } from '../../form-engine';
 import { convertToUUID } from '../../helper';
-import { useSuspenseTanQuery } from '../../helper/reactQueryAlias';
-import {
-  useBAISignedRequestWithPromise,
-  useControllableValue,
-} from '../../hooks';
+import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import {
+  useSuspendedLegacyVFolders,
+  type LegacyVFolder,
+} from '../../hooks/useSuspendedLegacyVFolders';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIComplexSelect, {
@@ -30,33 +30,9 @@ import React, {
   useState,
 } from 'react';
 
-/**
- * A folder as the REST `GET /folders` endpoint returns it. Distinct from the
- * GraphQL `vfolder_nodes` shape: `id` is the 32-hex local id (no dashes) and
- * `group` is the owning project's UUID or `null` for a user folder.
- */
-export interface LegacyVFolder {
-  name: string;
-  id: string;
-  quota_scope_id: string;
-  host: string;
-  status: string;
-  usage_mode: string;
-  created_at: string;
-  is_owner: boolean;
-  permission: string;
-  user: string | null;
-  group: string | null;
-  creator: string;
-  user_email: string | null;
-  group_name: string | null;
-  ownership_type: string;
-  type: string;
-  cloneable: boolean;
-  max_files: number;
-  max_size: null | number;
-  cur_size: number;
-}
+// Lives with the query that returns it; re-exported here because this module
+// is where the rest of the mount vocabulary is published from.
+export type { LegacyVFolder };
 
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
@@ -369,7 +345,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const { t } = useBAIi18n();
   const { message } = App.useApp();
   const { token } = theme.useToken();
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
   const [value, setValue] = useControllableValue<VFolderMountConfigValue[]>(
     props,
     { defaultValue: [] },
@@ -385,23 +360,10 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const selectedIdSet = new Set(_.map(mountConfigs, (e) => e.vfolderId));
 
   const {
-    data: allFolderList,
+    folders: allFolderList,
     refetch,
     isFetching,
-  } = useSuspenseTanQuery<Array<LegacyVFolder>>({
-    // The request carries no project scope — that gate is applied client-side.
-    queryKey: ['BAIVFolderMountConfigInputFolders', ownerEmail ?? ''],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      if (ownerEmail) search.set('owner_user_email', ownerEmail);
-      const query = search.toString();
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders${query ? `?${query}` : ''}`,
-      }) as Promise<Array<LegacyVFolder>>;
-    },
-    staleTime: 30 * 1000,
-  });
+  } = useSuspendedLegacyVFolders(ownerEmail);
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
@@ -411,7 +373,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   // re-converting in each of the id comparisons.
   const mountableFolders = _.map(
     _.filter(
-      allFolderList ?? [],
+      allFolderList,
       (folder) =>
         mountableHostSet.has(folder.host) &&
         (folder.ownership_type === 'user' ||
