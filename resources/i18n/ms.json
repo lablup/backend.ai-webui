@@ -918,6 +918,7 @@
       "Control": "Kawal",
       "CreateModelFolderOnlyInExclusiveProject": "Folder projek model hanya boleh dibuat dalam projek eksklusif kedai model.",
       "CreatedAt": "Dicipta di",
+      "Creator": "Pencipta",
       "Delete": "Padam",
       "DeleteAFolder": "Padamkan folder",
       "DeleteFailureDescription": "{{failed}} daripada {{total}} folder tidak dapat dipadam. Semak sebab untuk setiap folder di bawah.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Taipkan nama folder untuk ditinggalkan",
       "TypeNewFolderName": "Taipkan nama folder baru",
       "TypeToConfirmDeleteForever": "Taip perkataan di bawah untuk memadam secara kekal",
-      "View": "Pandangan",
-      "Creator": "Pencipta"
+      "View": "Pandangan"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Gagal menerima jemputan",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Digantungi oleh",
     "DependsOn": "Bergantung pada",
     "DescCommitSession": "Anda akan melakukan kontena yang sepadan dengan sesi di bawah:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Memuat turun fail CSV ...",
     "DownloadingSessionLogs": "Memuat turun log sesi.",
     "ElapsedTime": "Masa berlalu",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Menyiapkan sesi ...",
     "Priority": "Keutamaan",
     "PrioritySuccessfullyUpdated": "Keutamaan sesi telah berjaya dikemaskini.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Kurangkan membaca",
     "ReadMore": "Baca Lagi...",
     "RecentlyCreatedSessions": "Sesi yang baru dibuat",
@@ -2996,6 +2998,7 @@
       "FolderAliasInvalid": "Hanya aksara abjad angka, garis bawah (_), garis miring (/), titik (.), dan sempang (-) dibenarkan.",
       "FolderAliasOverlapping": "Alias bertindih dengan nama lain yang sudah wujud",
       "FolderAliasOverlappingToAutoMount": "Folder auto-lekap dengan nama yang sama wujud.",
+      "FolderSubpath": "Sublaluan",
       "FolderToMount": "Folder untuk dipasang",
       "FolderToMountList": "Folder untuk dipasang",
       "GPUSlot": "Slot",
@@ -3170,9 +3173,7 @@
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
       "SessionNameTooShort": "Sila masukkan sekurang-kurangnya 4 aksara.",
       "SluggedStrings": "Rentetan slugged (>3 aksara)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Sokongan Atom Max",

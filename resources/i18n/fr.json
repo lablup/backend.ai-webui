@@ -918,6 +918,7 @@
       "Control": "Contrôler",
       "CreateModelFolderOnlyInExclusiveProject": "Les dossiers de projets modèles ne peuvent être créés que dans des projets exclusifs en magasin de modèles.",
       "CreatedAt": "Créé à",
+      "Creator": "Créateur",
       "Delete": "Effacer",
       "DeleteAFolder": "Supprimer un dossier",
       "DeleteFailureDescription": "{{failed}} dossier(s) sur {{total}} n'ont pas pu être supprimés. Vérifiez la raison de chaque dossier ci-dessous.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Tapez le nom du dossier à quitter",
       "TypeNewFolderName": "Tapez un nouveau nom de dossier",
       "TypeToConfirmDeleteForever": "Saisissez le mot ci-dessous pour supprimer définitivement",
-      "View": "Vue",
-      "Creator": "Créateur"
+      "View": "Vue"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Échec de l'acceptation de l'invitation",
@@ -2753,6 +2753,7 @@
     "DependedByOthers": "Dépendances inverses",
     "DependsOn": "Dépend de",
     "DescCommitSession": "Vous êtes sur le point d'engager le conteneur correspondant à la session ci-dessous :",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Téléchargement du fichier CSV...",
     "DownloadingSessionLogs": "Téléchargement des journaux de session.",
     "ElapsedTime": "Temps écoulé",
@@ -2825,6 +2826,7 @@
     "Preset": "Preset",
     "Priority": "Priorité",
     "PrioritySuccessfullyUpdated": "La priorité de la session a été mise à jour avec succès.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Lire moins",
     "ReadMore": "Lire la suite...",
     "RecentlyCreatedSessions": "Sessions récemment créées",
@@ -2999,6 +3001,7 @@
       "FolderAliasInvalid": "Seuls les caractères alphanumériques, le trait de soulignement (_), la barre oblique (/), le point (.) et le tiret (-) sont autorisés.",
       "FolderAliasOverlapping": "Les alias font double emploi avec d'autres noms déjà existants",
       "FolderAliasOverlappingToAutoMount": "Il existe un dossier de montage automatique portant le même nom.",
+      "FolderSubpath": "Sous-chemin",
       "FolderToMount": "Dossier à monter",
       "FolderToMountList": "Dossier à monter",
       "GPUSlot": "Slot",
@@ -3173,9 +3176,7 @@
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
       "SessionNameTooShort": "Veuillez saisir au moins 4 caractères.",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "ATOM MAX SOUTIEN",

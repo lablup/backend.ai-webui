@@ -918,6 +918,7 @@
       "Control": "Điều khiển",
       "CreateModelFolderOnlyInExclusiveProject": "Các thư mục mô hình dự án chỉ có thể được tạo trong các dự án độc quyền của mô hình lưu trữ.",
       "CreatedAt": "Được tạo ra tại",
+      "Creator": "Người tạo",
       "Delete": "Xóa bỏ",
       "DeleteAFolder": "Xóa một thư mục",
       "DeleteFailureDescription": "{{failed}} trong số {{total}} thư mục không thể xóa. Kiểm tra lý do cho từng thư mục bên dưới.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Nhập tên thư mục để rời khỏi",
       "TypeNewFolderName": "Nhập tên thư mục mới",
       "TypeToConfirmDeleteForever": "Nhập từ bên dưới để xóa vĩnh viễn",
-      "View": "Lượt xem",
-      "Creator": "Người tạo"
+      "View": "Lượt xem"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Không chấp nhận lời mời",
@@ -2753,6 +2753,7 @@
     "DependedByOthers": "Được phụ thuộc bởi",
     "DependsOn": "Phụ thuộc vào",
     "DescCommitSession": "Bạn sắp cam kết vùng chứa tương ứng với phiên bên dưới:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Đang tải xuống tệp CSV ...",
     "DownloadingSessionLogs": "Đang tải xuống nhật ký phiên.",
     "ElapsedTime": "Thời gian đã trôi qua",
@@ -2824,6 +2825,7 @@
     "PreparingSession": "Đang chuẩn bị phiên",
     "Priority": "Mức ưu tiên",
     "PrioritySuccessfullyUpdated": "Mức ưu tiên phiên đã được cập nhật thành công.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Đọc ít hơn",
     "ReadMore": "Đọc thêm...",
     "RecentlyCreatedSessions": "Phiên được tạo gần đây",
@@ -2998,6 +3000,7 @@
       "FolderAliasInvalid": "Chỉ cho phép các ký tự chữ và số, dấu gạch dưới (_), dấu gạch chéo (/), dấu chấm (.) và dấu gạch ngang (-).",
       "FolderAliasOverlapping": "Bí danh trùng lặp với các tên khác đã tồn tại",
       "FolderAliasOverlappingToAutoMount": "Đã tồn tại một thư mục tự động gắn kết có cùng tên.",
+      "FolderSubpath": "Đường dẫn con",
       "FolderToMount": "Thư mục để gắn kết",
       "FolderToMountList": "Thư mục để gắn kết",
       "GPUSlot": "Chỗ",
@@ -3172,9 +3175,7 @@
       "SessionNameTooLong64": "Vui lòng nhập 64 ký tự trở xuống.",
       "SessionNameTooShort": "Vui lòng nhập ít nhất 4 ký tự.",
       "SluggedStrings": "Chuỗi bị trượt (>3 ký tự)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Hỗ trợ Atom Max",

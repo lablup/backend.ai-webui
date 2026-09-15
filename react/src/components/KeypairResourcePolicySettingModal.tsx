@@ -15,6 +15,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
@@ -201,7 +202,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   'create-vfolder',
                   'modify-vfolder',
                   'delete-vfolder',
-                  'mount-in-session',
+                  MOUNT_IN_SESSION_PERMISSION,
                   'upload-file',
                   'download-file',
                   'invite-others',
