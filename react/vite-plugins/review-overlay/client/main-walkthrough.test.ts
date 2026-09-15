@@ -6,7 +6,7 @@
  */
 import { encodeAnchor } from './codec.js';
 import { DRAFT_KEY } from './draft.js';
-import type { AnchorV3 } from './types.js';
+import type { AnchorV3, SetPin } from './types.js';
 import { WALKTHROUGH_KEY, WALKTHROUGH_STATE_PREFIX } from './walkthrough.js';
 import type { Plugin, ReactGrabAPI } from 'react-grab';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -279,6 +279,97 @@ describe('the navigator', () => {
   });
 });
 
+/** One pin the reviewer already had in this tab, as the draft store holds it. */
+const seedDraftPin = () => {
+  const pin: SetPin = {
+    id: 'c_zzzzzzz',
+    origin: 'pick',
+    anchor: { v: 3, s: '[data-testid="create"]', p: '/', tag: 'button' },
+    anchorB64: 'PAYLOAD_own',
+    label: 'Start › create',
+    appHash: '',
+    stack: [],
+    note: 'my own pin',
+    at: '2026-09-15T09:00:00Z',
+    pr: 9690,
+  };
+  sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ v: 1, pins: [pin] }));
+};
+
+describe('the pill and the set dock', () => {
+  it('steps out of the corner the dock is in, and back when it empties', async () => {
+    seedDraftPin();
+    const hash = await part({
+      id: A,
+      testid: 'upload',
+      check: 'Upload is renamed',
+    });
+
+    await bootOn(hash);
+
+    expect(all('.setdock .row')).toHaveLength(1);
+    expect(pill()?.className).toContain('dodge');
+
+    // The reviewer clears their set; the corner is free again.
+    node<HTMLButtonElement>('.setdock .row .remove')?.click();
+
+    expect(all('.setdock .row')).toHaveLength(0);
+    expect(pill()?.className).not.toContain('dodge');
+  });
+
+  it('keeps the corner when the reviewer has no pins of their own', async () => {
+    await bootOn(
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+    );
+
+    expect(pill()?.className).not.toContain('dodge');
+  });
+});
+
+describe('landing on the requested stop', () => {
+  it('starts at the first stop that belongs to this page', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'start',
+        path: '/session/start',
+        check: 'The step list gained one',
+      }),
+      await part({ id: C, testid: 'create', check: 'Still there' }),
+    ].join('&');
+
+    // What the `location.assign(pinSetUrlAt(...))` fallback produces: the
+    // whole set, reloaded on stop 2's page. Nothing is mounted yet at boot,
+    // so every stop here reads as waiting — only `away` is decidable.
+    await bootOn(hash, '/session/start');
+
+    expect(pillText()).toContain('2 / 3');
+    expect(node('.bai-popover .foot')?.textContent).toContain('#2');
+  });
+
+  it('falls back to the head of the set when no stop is on this page', async () => {
+    const hash = [
+      await part({
+        id: A,
+        testid: 'upload',
+        path: '/data',
+        check: 'Upload is renamed',
+      }),
+      await part({
+        id: B,
+        testid: 'create',
+        path: '/data',
+        check: 'Still there',
+      }),
+    ].join('&');
+
+    await bootOn(hash, '/session/start');
+
+    expect(pillText()).toContain('1 / 2');
+  });
+});
+
 describe('what the reader gives back', () => {
   it('keeps a comment across a reload and copies it as one reviewer pin', async () => {
     const written = stubExecCommand();
@@ -364,5 +455,28 @@ describe('a stop behind a dialog', () => {
 
     expect(marks()).toHaveLength(2);
     expect(pillText()).not.toContain('waiting');
+  });
+
+  it('keeps its popover open while the reader follows the via sentence', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'confirm',
+        check: 'The confirm button is primary',
+        dlg: true,
+        via: 'Upload',
+      }),
+    ].join('&');
+    await bootOn(hash);
+    act('next')?.click();
+    expect(node('.bai-popover')?.className).toContain('shown');
+
+    // The click the via sentence asks for lands outside the popover.
+    document
+      .querySelector('[data-testid="upload"]')
+      ?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+
+    expect(node('.bai-popover')?.className).toContain('shown');
   });
 });

@@ -25,7 +25,7 @@ import {
   type PopoverPlace,
 } from './popover.js';
 import { findAnchorTarget } from './resolve.js';
-import type { CopyPayload, ReviewServerState } from './types.js';
+import type { ReviewServerState } from './types.js';
 import {
   buildCommentCopy,
   codeHref,
@@ -73,8 +73,14 @@ export interface GuidedModeOptions {
   stops: WalkthroughStop[];
   /** Read late: the state fetch may still have been in flight at entry. */
   serverState: () => ReviewServerState | null;
-  copyText: (text: string, html?: string) => boolean | Promise<boolean>;
+  copyWithToast: (payload: {
+    text: string;
+    html?: string;
+    toast?: string;
+  }) => void;
   showToast: (message: string) => void;
+  /** True while the set dock occupies the bottom-right corner. */
+  dockShown: () => boolean;
   /** The reader left the walkthrough; `main.ts` forgets the set. */
   onExit: () => void;
 }
@@ -93,11 +99,19 @@ export function startGuidedMode(options: GuidedModeOptions) {
   let popOpen = true;
   let panelOpen = false;
   let settleTimer = 0;
+  let frame = 0;
   let cancelLadder: () => void = () => undefined;
+
+  /** Called, never aliased: a detached `requestAnimationFrame` throws. */
+  const raf = (callback: FrameRequestCallback): number =>
+    typeof requestAnimationFrame === 'function'
+      ? requestAnimationFrame(callback)
+      : window.setTimeout(() => callback(0), 16);
   /** What the last resolution found, so a scroll re-places without re-resolving. */
   let found: Place[] = [];
 
   const servedPr = () => options.serverState()?.pr ?? 0;
+  const flushProgress = () => progress.flush();
   const stopType = (stop: WalkthroughStop): 'added' | 'modified' =>
     stop.anchor.type === 'added' ? 'added' : 'modified';
 
@@ -129,8 +143,14 @@ export function startGuidedMode(options: GuidedModeOptions) {
       refresh();
     },
     onComment: (text) => {
-      progress.setComment(stops[current].id, text);
-      // Not the popover: the reader is typing into it right now.
+      const stop = stops[current];
+      if (!stop) return;
+      const before = progress.commented(ids).length;
+      progress.setComment(stop.id, text);
+      // Every keystroke, and nothing on screen says the text — only whether
+      // there IS text. Re-render on the flip, not on the typing. Never the
+      // popover: the reader has the caret in it.
+      if (before === progress.commented(ids).length) return;
       renderMarks(found);
       nav.render(navModel(found));
     },
@@ -193,6 +213,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   function navModel(where: Place[]): NavigatorModel {
     return {
+      dodge: options.dockShown(),
       pages: pageCount(stops),
       total: stops.length,
       index: current,
@@ -329,18 +350,6 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   // ---------------------------------------------------------------- copy
 
-  function write(payload: CopyPayload) {
-    const copied = options.copyText(payload.text, payload.html);
-    const done = (ok: boolean) =>
-      options.showToast(
-        ok
-          ? (payload.toast ?? 'Copied')
-          : 'Could not reach the clipboard — try again',
-      );
-    if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
-  }
-
   function copyRef() {
     const stop = stops[current];
     if (!stop) return;
@@ -351,7 +360,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       servedPr(),
       blockStamp(),
     );
-    write({
+    options.copyWithToast({
       ...buildCommentCopy([pin]),
       toast: `Copied the ref for stop ${current + 1}`,
     });
@@ -366,12 +375,14 @@ export function startGuidedMode(options: GuidedModeOptions) {
         : [];
     });
     if (!pins.length) return options.showToast('No comments to copy yet');
-    write(buildCommentCopy(pins));
+    options.copyWithToast(buildCommentCopy(pins));
   }
 
   function copySummary() {
-    const text = pageSummaryText(stops, progress);
-    write({ text, html: '', toast: 'Copied the page summary' });
+    options.copyWithToast({
+      text: pageSummaryText(stops, progress),
+      toast: 'Copied the page summary',
+    });
   }
 
   // -------------------------------------------------------------- events
@@ -416,14 +427,19 @@ export function startGuidedMode(options: GuidedModeOptions) {
     evt.preventDefault();
   }
 
-  /** A click outside the walkthrough's own chrome tidies it away. */
+  /**
+   * A click outside the walkthrough's own chrome tidies it away — except while
+   * the current stop is waiting: its `via` sentence asks for a click outside
+   * the popover, and closing on that takes the instruction away at the moment
+   * it is followed.
+   */
   function onPointerDown(evt: Event) {
     if (!popOpen && !panelOpen) return;
     const path = evt.composedPath();
     if (path.some((node) => node instanceof Node && nav.contains(node))) return;
     if (path.some((node) => node instanceof Node && pop.contains(node))) return;
-    popOpen = false;
     panelOpen = false;
+    if (found[current]?.kind !== 'waiting') popOpen = false;
     refresh();
   }
 
@@ -432,9 +448,19 @@ export function startGuidedMode(options: GuidedModeOptions) {
     settleTimer = window.setTimeout(refresh, SETTLE_MS);
   }
 
-  function onMove() {
-    marks.reposition();
-    pop.render(popModel(found));
+  /**
+   * One layout pass per frame, however many scrollers report a scroll — the
+   * shape `pin.ts` uses. The popover is re-placed, not re-rendered: rebuilding
+   * its model hashes every code path's file name, and that is not scroll work.
+   */
+  function placeSoon() {
+    if (frame) return;
+    frame = raf(() => {
+      frame = 0;
+      marks.reposition();
+      const stop = stops[current];
+      if (stop) pop.reposition(popPlace(found[current], stop));
+    });
   }
 
   const observer = new MutationObserver((records) => {
@@ -443,10 +469,16 @@ export function startGuidedMode(options: GuidedModeOptions) {
     onSettle();
   });
   observer.observe(document.body, { childList: true, subtree: true });
+  // A reload beats the debounce by ~400 ms otherwise, and the comment the
+  // reader had just typed is the one thing they cannot retype from the page.
+  window.addEventListener('pagehide', flushProgress);
   document.addEventListener('keydown', onKeydown);
   document.addEventListener('mousedown', onPointerDown, true);
-  window.addEventListener('resize', onMove);
-  window.addEventListener('scroll', onMove, { capture: true, passive: true });
+  window.addEventListener('resize', placeSoon);
+  window.addEventListener('scroll', placeSoon, {
+    capture: true,
+    passive: true,
+  });
 
   function exit() {
     destroy();
@@ -454,13 +486,15 @@ export function startGuidedMode(options: GuidedModeOptions) {
   }
 
   function destroy() {
+    progress.flush();
     cancelLadder();
     clearTimeout(settleTimer);
     observer.disconnect();
+    window.removeEventListener('pagehide', flushProgress);
     document.removeEventListener('keydown', onKeydown);
     document.removeEventListener('mousedown', onPointerDown, true);
-    window.removeEventListener('resize', onMove);
-    window.removeEventListener('scroll', onMove, true);
+    window.removeEventListener('resize', placeSoon);
+    window.removeEventListener('scroll', placeSoon, true);
     marks.destroy();
     nav.destroy();
     pop.destroy();
@@ -468,9 +502,11 @@ export function startGuidedMode(options: GuidedModeOptions) {
     style.remove();
   }
 
-  // The stop the reader lands on: the first one this page can draw, so a link
-  // opened on page 2 does not start by pointing at page 1.
-  const landed = places().findIndex((where) => where.kind === 'located');
+  // The stop the reader lands on: the first one that belongs to THIS page, so
+  // a link opened on page 2 does not start by pointing at page 1. `away` is
+  // the only verdict that is final at t=0 — React has not mounted yet, so
+  // every stop here still reads as `waiting`.
+  const landed = places().findIndex((where) => where.kind !== 'away');
   current = landed < 0 ? 0 : landed;
   refresh();
   ladder();
@@ -480,6 +516,13 @@ export function startGuidedMode(options: GuidedModeOptions) {
     onRoute() {
       refresh();
       ladder();
+    },
+    /**
+     * The reviewer's own set grew or emptied. Nothing about the stops moved —
+     * only which corner the dock is occupying — so only the pill is redrawn.
+     */
+    onDraftChange() {
+      nav.render(navModel(found));
     },
     destroy,
   };

@@ -5,6 +5,7 @@ import {
   reviewOverlayTags,
 } from './build-inject.js';
 import type { ReviewServerState } from './client/types.js';
+import { createHeadCache } from './served-head.js';
 import { execFile } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -73,20 +74,6 @@ async function repoRoot(): Promise<string | null> {
   }
 }
 
-/**
- * The commit this server is serving. A walkthrough carries the head it was
- * minted for, and the banner says so when the two differ (FR-3950); the boot
- * record carries no sha, so git is asked directly.
- */
-async function headSha(): Promise<string | null> {
-  try {
-    const { stdout } = await pexecFile('git', ['rev-parse', 'HEAD']);
-    return /^[0-9a-f]{40}$/.test(stdout.trim()) ? stdout.trim() : null;
-  } catch {
-    return null;
-  }
-}
-
 async function currentBranch(): Promise<string | null> {
   try {
     const { stdout } = await pexecFile('git', [
@@ -148,14 +135,10 @@ async function discoverPrState(): Promise<ReviewServerState> {
   }
 }
 
-/** The root and the head ride along on every answer, failures included. */
+/** The root rides along on every answer, including the failure ones. */
 async function discoverState(): Promise<ReviewServerState> {
-  const [state, root, head] = await Promise.all([
-    discoverPrState(),
-    repoRoot(),
-    headSha(),
-  ]);
-  return { ...state, root, head };
+  const [state, root] = await Promise.all([discoverPrState(), repoRoot()]);
+  return { ...state, root };
 }
 
 // -------------------------------------------------------------------- plugin
@@ -167,13 +150,19 @@ export function devReviewOverlayPlugin(): Plugin {
 
   let cached: { state: ReviewServerState; at: number } | null = null;
   let inFlight: Promise<ReviewServerState> | null = null;
+  /**
+   * The head is NOT part of `cached`: that record is kept for the life of the
+   * server once a PR is known, and HEAD moves under a running server.
+   */
+  const servedHead = createHeadCache();
   /** Transpiled client modules, keyed by path and invalidated by mtime+size. */
   const transformed = new Map<
     string,
     { mtimeMs: number; size: number; code: string }
   >();
 
-  function reviewState(): Promise<ReviewServerState> {
+  /** The PR half: discovered once, then kept for the life of the server. */
+  function prState(): Promise<ReviewServerState> {
     const now = Date.now();
     if (
       cached &&
@@ -188,6 +177,12 @@ export function devReviewOverlayPlugin(): Plugin {
     });
     return inFlight;
   }
+
+  const reviewState = (): Promise<ReviewServerState> =>
+    Promise.all([prState(), servedHead()]).then(([state, head]) => ({
+      ...state,
+      head,
+    }));
 
   async function clientModule(file: string): Promise<string> {
     const info = await stat(file);

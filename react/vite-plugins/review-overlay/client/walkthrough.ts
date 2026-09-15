@@ -123,9 +123,8 @@ export function createWalkthroughStore(
 export const walkthroughSha = (stops: WalkthroughStop[]): string =>
   stops.find((stop) => stop.anchor.sha)?.anchor.sha ?? 'nosha';
 
-/** The PR the stops name, which outranks the server's own for code links. */
-export const walkthroughPr = (stops: WalkthroughStop[]): number | null =>
-  stops.find((stop) => typeof stop.anchor.pr === 'number')?.anchor.pr ?? null;
+/** A comment is typed; a tick is one gesture. Only the typing is debounced. */
+export const COMMENT_WRITE_MS = 400;
 
 export interface WalkthroughProgress {
   isViewed(id: string): boolean;
@@ -135,6 +134,8 @@ export interface WalkthroughProgress {
   /** Every stop with a non-empty comment, in the order given. */
   commented(ids: string[]): string[];
   viewedCount(ids: string[]): number;
+  /** Write a debounced comment out now — the page is going away. */
+  flush(): void;
 }
 
 interface StoredProgress {
@@ -173,19 +174,37 @@ export function createWalkthroughProgress(
       // Progress stays in memory for this page; the walkthrough still works.
     }
   };
+  // The maps above are the truth; storage is a mirror, so a typist can write
+  // to it once per pause instead of once per keystroke.
+  let pending = 0;
+  const writeSoon = () => {
+    if (pending) return;
+    pending = setTimeout(() => {
+      pending = 0;
+      write();
+    }, COMMENT_WRITE_MS) as unknown as number;
+  };
+  const flush = () => {
+    if (!pending) return;
+    clearTimeout(pending);
+    pending = 0;
+    write();
+  };
   return {
     isViewed: (id) => viewed.has(id),
     setViewed(id, on) {
       if (on) viewed.add(id);
       else viewed.delete(id);
+      flush();
       write();
     },
     comment: (id) => comments[id] ?? '',
     setComment(id, text) {
       if (text) comments[id] = text;
       else delete comments[id];
-      write();
+      writeSoon();
     },
+    flush,
     commented: (ids) => ids.filter((id) => (comments[id] ?? '').trim()),
     viewedCount: (ids) => ids.filter((id) => viewed.has(id)).length,
   };

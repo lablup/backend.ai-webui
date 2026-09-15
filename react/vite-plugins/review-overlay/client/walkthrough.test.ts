@@ -117,6 +117,15 @@ describe('progress', () => {
     const progress = createWalkthroughProgress(SHA, storage);
     progress.setViewed('c_aaaaaaa', true);
     progress.setComment('c_bbbbbbb', 'the label is wrong');
+    // A tick is one gesture and lands at once; typing is debounced, so the
+    // page going away is what flushes it.
+    expect(createWalkthroughProgress(SHA, storage).isViewed('c_aaaaaaa')).toBe(
+      true,
+    );
+    expect(createWalkthroughProgress(SHA, storage).comment('c_bbbbbbb')).toBe(
+      '',
+    );
+    progress.flush();
 
     // A reload: a fresh reader over the same storage.
     const reopened = createWalkthroughProgress(SHA, storage);
@@ -137,6 +146,7 @@ describe('progress', () => {
     const progress = createWalkthroughProgress(SHA, storage);
     progress.setComment('c_aaaaaaa', 'something');
     progress.setComment('c_aaaaaaa', '');
+    progress.flush();
     expect(createWalkthroughProgress(SHA, storage).comment('c_aaaaaaa')).toBe(
       '',
     );

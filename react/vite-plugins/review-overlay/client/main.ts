@@ -497,8 +497,10 @@ function boot() {
       stops,
       // Read late: the state fetch can still be in flight when a link lands.
       serverState: () => serverState,
-      copyText: ui.copyText,
+      copyWithToast: ui.copyWithToast,
       showToast: ui.showToast,
+      // The dock owns the bottom-right corner whenever it has a pin to list.
+      dockShown: () => draft.length > 0,
       onExit: () => {
         guided = null;
         walkthroughs.clear();
@@ -750,6 +752,8 @@ function boot() {
     draft = store.pins();
     renderDock();
     ui.setDraftSize(draft.length, store.isFull());
+    // A dock that just appeared — or emptied — moves the walkthrough's pill.
+    guided?.onDraftChange();
   }
 
   /** The whole set, from a click; nothing may be awaited before the write. */
@@ -761,14 +765,11 @@ function boot() {
       ui.showToast('Still reading a pin — try again');
       return;
     }
-    const count = draft.length;
-    const copied = ui.copyText(buildSetText(draft), buildSetHtml(draft));
-    const done = (ok: boolean) =>
-      ui.showToast(
-        ok ? copiedToast(count) : 'Could not reach the clipboard — try again',
-      );
-    if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
+    ui.copyWithToast({
+      text: buildSetText(draft),
+      html: buildSetHtml(draft),
+      toast: copiedToast(draft.length),
+    });
   }
 
   /** The route the pin was made on, not the one the reader happens to be on. */

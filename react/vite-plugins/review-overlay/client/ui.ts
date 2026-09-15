@@ -46,6 +46,26 @@ export interface RefusedCopy {
 export const COPIED_ONE =
   'Copied — paste it into the PR comment, the Teams thread, or Claude';
 
+/** Said whenever the write did not land; the gesture is worth repeating. */
+export const COPY_FAILED = 'Could not reach the clipboard — try again';
+
+/**
+ * One clipboard write and the one line it says. `copyText` answers
+ * synchronously on the `execCommand` path and with a promise on the async
+ * one, and every caller owed the same three lines of branching.
+ */
+export function copyWithToast(
+  copy: (text: string, html?: string) => boolean | Promise<boolean>,
+  toast: (message: string) => void,
+  payload: { text: string; html?: string; toast?: string },
+): void {
+  const done = (ok: boolean) =>
+    toast(ok ? (payload.toast ?? COPIED_ONE) : COPY_FAILED);
+  const copied = copy(payload.text, payload.html);
+  if (typeof copied === 'boolean') done(copied);
+  else void copied.then(done);
+}
+
 /**
  * A save re-keys the pin whenever the note the anchor carries changes, so the
  * reviewer is told before they press it — a comment already pasted names the
@@ -726,6 +746,9 @@ ${ICON_STYLE}
     setPickActive,
     placeCompose,
     copyText,
+    /** `copyText` plus the line it says; the composer's own copy says more. */
+    copyWithToast: (payload: { text: string; html?: string; toast?: string }) =>
+      copyWithToast(copyText, showToast, payload),
     isOwnEvent,
   };
 }

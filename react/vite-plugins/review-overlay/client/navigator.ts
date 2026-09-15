@@ -6,6 +6,7 @@
  * Above the set dock, which shares the corner: a walkthrough is what the
  * reader is doing right now, and the dock is theirs to open when they are not.
  */
+import { esc } from './escape-html.js';
 
 const STYLE = `
   .bai-nav {
@@ -17,6 +18,8 @@ const STYLE = `
     pointer-events: auto;
   }
   .bai-nav.shown { display: flex; }
+  /* The set dock owns the bottom-right corner while it is up. */
+  .bai-nav.dodge, .bai-panel.dodge { right: auto; left: 16px; }
   .bai-nav .sep { width: 1px; height: 18px; background: var(--bai-pop-border); }
   .bai-nav .n { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .bai-nav .n b { font-weight: 700; }
@@ -94,6 +97,8 @@ export interface NavigatorGroup {
 }
 
 export interface NavigatorModel {
+  /** The set dock is up, so the pill steps out of the bottom-right corner. */
+  dodge: boolean;
   pages: number;
   total: number;
   /** Zero-based position of the current stop. */
@@ -115,13 +120,6 @@ export interface NavigatorCallbacks {
   onGo: (index: number) => void;
   onExit: () => void;
 }
-
-const esc = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
 
 export function createNavigator(root: ShadowRoot, on: NavigatorCallbacks) {
   const style = document.createElement('style');
@@ -156,6 +154,8 @@ export function createNavigator(root: ShadowRoot, on: NavigatorCallbacks) {
 
   function renderPill(model: NavigatorModel) {
     const comments = model.comments;
+    pill.classList.toggle('dodge', model.dodge);
+    panel.classList.toggle('dodge', model.dodge);
     const copyLabel = comments
       ? `✎ Copy ${comments} comment${comments === 1 ? '' : 's'}`
       : '✎ Copy comments';

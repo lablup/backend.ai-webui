@@ -7,6 +7,7 @@
  * the mark layer and the navigator re-render around it, and rewriting its
  * markup would take the caret with it.
  */
+import { esc } from './escape-html.js';
 
 const WIDTH = 560;
 const PAD = 12;
@@ -115,13 +116,6 @@ export interface PopoverCallbacks {
   onClose: () => void;
 }
 
-const esc = (value: string) =>
-  value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-
 const whereLine = (model: PopoverModel): string => {
   if (model.place.kind === 'waiting')
     return model.place.via
@@ -201,8 +195,8 @@ export function createPopover(root: ShadowRoot, on: PopoverCallbacks) {
   }
 
   /** Under the mark when it fits, above it when it does not, centred when away. */
-  function place(model: PopoverModel) {
-    if (model.place.kind !== 'located') {
+  function place(where: PopoverPlace) {
+    if (where.kind !== 'located') {
       Object.assign(pop.style, {
         left: '50%',
         top: '46%',
@@ -210,7 +204,7 @@ export function createPopover(root: ShadowRoot, on: PopoverCallbacks) {
       });
       return;
     }
-    const rect = model.place.rect;
+    const rect = where.rect;
     const width = Math.min(WIDTH, window.innerWidth * 0.92);
     const height = pop.offsetHeight || 300;
     const left = Math.min(
@@ -245,7 +239,15 @@ export function createPopover(root: ShadowRoot, on: PopoverCallbacks) {
       const tick = pop.querySelector<HTMLInputElement>('[data-pact="viewed"]');
       if (tick) tick.checked = model.viewed;
       pop.classList.add('shown');
-      place(model);
+      place(model.place);
+    },
+    /**
+     * A scroll or a resize moved the mark. The model is unchanged — only the
+     * box it hangs from — so nothing is rebuilt.
+     */
+    reposition(where: PopoverPlace) {
+      if (!pop.classList.contains('shown')) return;
+      place(where);
     },
     focusComment() {
       const area = textarea();
