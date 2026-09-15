@@ -2057,6 +2057,7 @@
     "Command": "Perintah",
     "CommandArgvLabel": "Perintah (argv)",
     "CommandExecHelper": "Dijalankan langsung sebagai argumen, tanpa shell — operator (; && | $VAR, pengalihan, dll.) diperlakukan sebagai teks literal. Pisahkan argumen dengan spasi; apit argumen yang mengandung spasi dengan tanda kutip (mis. --name \"my model\").",
+    "CommandJsonArgumentHelper": "Untuk meneruskan string JSON sebagai satu argumen, apit seluruh JSON dengan tanda kutip tunggal dan biarkan tanda kutip ganda di dalamnya apa adanya (mis. --override-generation-config '{\"temperature\": 0.7}').",
     "CommandShellHelper": "Dijalankan melalui shell (mis. bash -c \"...\"), sehingga operator shell (; && | $VAR, pengalihan, dll.) dapat digunakan.",
     "Controls": "Kontrol",
     "CreateNewDeploymentWithPreset": "Buat Deployment Baru dengan Preset",

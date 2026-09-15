@@ -2054,6 +2054,7 @@
     "Command": "Comando",
     "CommandArgvLabel": "Comando (argv)",
     "CommandExecHelper": "Viene eseguito direttamente come argomenti, senza shell — gli operatori (; && | $VAR, reindirizzamento, ecc.) vengono trattati come testo letterale. Separa gli argomenti con spazi; racchiudi tra virgolette quelli contenenti spazi (ad es. --name \"my model\").",
+    "CommandJsonArgumentHelper": "Per passare una stringa JSON come singolo argomento, racchiudi l'intero JSON tra apici singoli e lascia invariate le virgolette doppie al suo interno (es. --override-generation-config '{\"temperature\": 0.7}').",
     "CommandShellHelper": "Viene eseguito tramite la shell (ad es. bash -c \"...\"), quindi gli operatori shell (; && | $VAR, reindirizzamento, ecc.) funzionano.",
     "Controls": "Controlli",
     "CreateNewDeploymentWithPreset": "Crea nuova distribuzione con preset",
