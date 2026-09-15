@@ -4,6 +4,7 @@
  */
 import { SFTPServerButtonV2Fragment$key } from '../__generated__/SFTPServerButtonV2Fragment.graphql';
 import { App } from '../app-shim';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -152,10 +153,10 @@ const SFTPServerButtonWithProject: React.FC<
   const sftpScalingGroupsByProject =
     vhostInfo?.volume_info[vfolderNode?.host || '']?.sftp_scaling_groups;
   // Verify that the passed project has access to the volumes in the folder.
-  // Check the user has 'mount-in-session' permission united by domain, project, and keypair resource policy.
+  // Check the user has the mount-in-session permission united by domain, project, and keypair resource policy.
   const hasAccessPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
-    'mount-in-session',
+    MOUNT_IN_SESSION_PERMISSION,
   );
 
   const getTooltipTitle = () => {

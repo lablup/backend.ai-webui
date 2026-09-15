@@ -5,7 +5,6 @@
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
 import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useMergedAllowedStorageHostPermission } from './useMergedAllowedStorageHostPermission';
-import * as _ from 'lodash-es';
 
 /**
  * Hosts a session in this project may mount folders from: those granting
@@ -26,9 +25,12 @@ export const useMountableStorageHosts = (
       baiClient?._config?.accessKey,
     );
 
-  return _.keys(
-    _.pickBy(unitedAllowedPermissionByVolume, (permissions) =>
-      _.includes(permissions, MOUNT_IN_SESSION_PERMISSION),
-    ),
-  );
+  // The merged map is built with `Object.assign`, so it reaches us as `{}`.
+  return Object.entries(
+    unitedAllowedPermissionByVolume as Record<string, Array<string>>,
+  )
+    .filter(([, permissions]) =>
+      permissions.includes(MOUNT_IN_SESSION_PERMISSION),
+    )
+    .map(([host]) => host);
 };

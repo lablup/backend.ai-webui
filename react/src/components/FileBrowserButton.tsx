@@ -4,6 +4,7 @@
  */
 import { FileBrowserButtonFragment$key } from '../__generated__/FileBrowserButtonFragment.graphql';
 import { App } from '../app-shim';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -84,7 +85,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
 
   const hasAccessPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolder?.host ?? ''],
-    'mount-in-session',
+    MOUNT_IN_SESSION_PERMISSION,
   );
 
   const getTooltipTitle = () => {

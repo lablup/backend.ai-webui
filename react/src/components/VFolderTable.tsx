@@ -5,6 +5,7 @@
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { Form } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
@@ -239,9 +240,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       allowedVFolderHostsByGroup,
       allowedVFolderHostsByKeypairResourcePolicy,
     );
-    // only allow mount if volume permission has 'mount-in-session'
+    // only allow mount if the volume permission grants mount-in-session
     return Object.keys(mergedVFolderPermissions).filter((volume) =>
-      mergedVFolderPermissions[volume].includes('mount-in-session'),
+      mergedVFolderPermissions[volume].includes(MOUNT_IN_SESSION_PERMISSION),
     );
   }, [domain, group, keypair_resource_policy]);
 
