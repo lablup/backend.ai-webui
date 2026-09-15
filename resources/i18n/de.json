@@ -2652,6 +2652,9 @@
       "LastDay": "Letzte 1 Tag",
       "LastHour": "Letzte 1 Stunde",
       "Today": "Heute"
+    },
+    "unit": {
+      "PercentPerCore": "% pro Kern"
     }
   },
   "storageHost": {

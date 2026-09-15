@@ -18,6 +18,7 @@ import { useResourceSlotsDetails, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import {
   LineChart,
@@ -74,6 +75,7 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
   fetchKey,
   tooltip,
 }) => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { styles } = useStyle();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -180,6 +182,12 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
     }
   };
 
+  // cpu_util is per core and can exceed 100 %, so "%" alone would mislead.
+  const axisUnit =
+    metricName === 'cpu_util'
+      ? t('statistics.unit.PercentPerCore')
+      : convertMetricUnit(undefined, metricName).numberUnit;
+
   return (
     <BAIFlex
       direction="column"
@@ -204,10 +212,17 @@ const SessionMetricGraph: React.FC<PrometheusMetricGraphProps> = ({
         />
       ) : (
         <ResponsiveContainer style={{ paddingRight: token.marginXL }}>
-          <LineChart data={metricData} className={styles.recharts}>
+          <LineChart
+            data={metricData}
+            className={styles.recharts}
+            margin={{ top: 24, right: 5, bottom: 5, left: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
-            <YAxis domain={[0, 'dataMax']} />
+            <YAxis
+              domain={[0, 'dataMax']}
+              label={{ value: axisUnit, position: 'top', offset: 12 }}
+            />
             <ChartTooltip
               formatter={(value) => {
                 return `${value}${convertMetricUnit(undefined, metricName).numberUnit}`;
