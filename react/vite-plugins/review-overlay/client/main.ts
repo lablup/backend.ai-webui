@@ -480,6 +480,13 @@ function boot() {
   // ------------------------------------------------- guided mode (FR-3950)
 
   const walkthroughs = createWalkthroughStore();
+  /**
+   * Read ONCE per document, before any entry: the reload that a `›` started
+   * carries the whole set in its hash, so boot resumes the stored walkthrough
+   * and the link then re-enters the same one. A handover consumed by the first
+   * of those two would leave the second on the wrong stop.
+   */
+  const requestedStop = walkthroughs.takeFocus();
   let guided: GuidedMode | null = null;
 
   /**
@@ -501,6 +508,10 @@ function boot() {
       showToast: ui.showToast,
       // The dock owns the bottom-right corner whenever it has a pin to list.
       dockShown: () => draft.length > 0,
+      rememberStop: (id) => walkthroughs.setFocus(id),
+      // A set that does not hold it is a different walkthrough, and falls
+      // through to the first stop on this page.
+      takeRememberedStop: () => requestedStop,
       onExit: () => {
         guided = null;
         walkthroughs.clear();

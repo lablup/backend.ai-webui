@@ -7,7 +7,11 @@
 import { encodeAnchor } from './codec.js';
 import { DRAFT_KEY } from './draft.js';
 import type { AnchorV3, SetPin } from './types.js';
-import { WALKTHROUGH_KEY, WALKTHROUGH_STATE_PREFIX } from './walkthrough.js';
+import {
+  WALKTHROUGH_FOCUS_KEY,
+  WALKTHROUGH_KEY,
+  WALKTHROUGH_STATE_PREFIX,
+} from './walkthrough.js';
 import type { Plugin, ReactGrabAPI } from 'react-grab';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -62,8 +66,10 @@ function exitGuided() {
 /** The same teardown, with the stored set left alone so the reload finds it. */
 function exitGuidedKeepingSet() {
   const held = sessionStorage.getItem(WALKTHROUGH_KEY);
+  const focus = sessionStorage.getItem(WALKTHROUGH_FOCUS_KEY);
   exitGuided();
   if (held) sessionStorage.setItem(WALKTHROUGH_KEY, held);
+  if (focus) sessionStorage.setItem(WALKTHROUGH_FOCUS_KEY, focus);
 }
 
 const press = (code: string) =>
@@ -346,6 +352,43 @@ describe('landing on the requested stop', () => {
 
     expect(pillText()).toContain('2 / 3');
     expect(node('.bai-popover .foot')?.textContent).toContain('#2');
+  });
+
+  it('resumes on the stop the full-reload fallback was sent to', async () => {
+    // No `navigate` published, so `›` across a page goes through
+    // `location.assign` — and the destination page holds TWO stops.
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'start',
+        path: '/session/start',
+        check: 'The step list gained one',
+      }),
+      await part({
+        id: C,
+        testid: 'confirm',
+        path: '/session/start',
+        check: 'The confirm button is primary',
+      }),
+    ].join('&');
+    await bootOn(hash);
+
+    // Stop 3, straight from the ☰ panel: another page, so it reloads.
+    act('panel')?.click();
+    all('.bai-panel .it')[2]?.click();
+    expect(sessionStorage.getItem(WALKTHROUGH_FOCUS_KEY)).toBe(C);
+
+    // The reload `location.assign` would have caused. Its URL carries the
+    // WHOLE set, so boot resumes the stored walkthrough and the link then
+    // re-enters the same one — both have to land on stop 3.
+    exitGuidedKeepingSet();
+    document.querySelector('[data-bai-review-overlay]')?.remove();
+    await bootOn(hash, '/session/start');
+
+    expect(pillText()).toContain('3 / 3');
+    // One-shot: the next reload takes the first stop on the page again.
+    expect(sessionStorage.getItem(WALKTHROUGH_FOCUS_KEY)).toBeNull();
   });
 
   it('falls back to the head of the set when no stop is on this page', async () => {

@@ -23,6 +23,8 @@ import type {
 
 /** The walkthrough set a tab is walking, as `sessionStorage` holds it. */
 export const WALKTHROUGH_KEY = 'bai-review:walkthrough';
+/** The stop a full-reload navigation asked for, handed to the next document. */
+export const WALKTHROUGH_FOCUS_KEY = 'bai-review:walkthrough-focus';
 /** Progress outlives the tab, so it is `localStorage` and keyed by `sha`. */
 export const WALKTHROUGH_STATE_PREFIX = 'bai-review:walkthrough-state:';
 /** Where a stop's code links point when the server names no repository. */
@@ -89,6 +91,13 @@ export interface WalkthroughStore {
   stops(): WalkthroughStop[];
   save(stops: WalkthroughStop[]): void;
   clear(): void;
+  /**
+   * The stop the reader was sent to, read once. A full reload cannot carry the
+   * index in the URL — the set link lists every stop in set order — so the id
+   * travels beside the set and the next document consumes it.
+   */
+  takeFocus(): string | null;
+  setFocus(id: string): void;
 }
 
 export function createWalkthroughStore(
@@ -112,7 +121,25 @@ export function createWalkthroughStore(
     clear() {
       try {
         storage?.removeItem(WALKTHROUGH_KEY);
+        storage?.removeItem(WALKTHROUGH_FOCUS_KEY);
       } catch {
+        return;
+      }
+    },
+    takeFocus() {
+      try {
+        const id = storage?.getItem(WALKTHROUGH_FOCUS_KEY) ?? null;
+        storage?.removeItem(WALKTHROUGH_FOCUS_KEY);
+        return id;
+      } catch {
+        return null;
+      }
+    },
+    setFocus(id) {
+      try {
+        storage?.setItem(WALKTHROUGH_FOCUS_KEY, id);
+      } catch {
+        // The reload still lands on the right page; only the stop moves.
         return;
       }
     },

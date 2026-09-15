@@ -81,6 +81,10 @@ export interface GuidedModeOptions {
   showToast: (message: string) => void;
   /** True while the set dock occupies the bottom-right corner. */
   dockShown: () => boolean;
+  /** Hand the stop a full reload is about to jump to across that reload. */
+  rememberStop: (id: string) => void;
+  /** Read once, at entry: the stop the reload that brought us here asked for. */
+  takeRememberedStop: () => string | null;
   /** The reader left the walkthrough; `main.ts` forgets the set. */
   onExit: () => void;
 }
@@ -331,6 +335,9 @@ export function startGuidedMode(options: GuidedModeOptions) {
         // The app's router refused; the reload below still gets there.
       }
     }
+    // The set link lists every stop in set order, so the URL alone cannot say
+    // WHICH one was asked for — the id goes beside the set instead.
+    options.rememberStop(stop.id);
     location.assign(pinSetUrlAt(stops, stop.id));
   }
 
@@ -502,11 +509,18 @@ export function startGuidedMode(options: GuidedModeOptions) {
     style.remove();
   }
 
-  // The stop the reader lands on: the first one that belongs to THIS page, so
-  // a link opened on page 2 does not start by pointing at page 1. `away` is
+  // The stop the reader lands on. A reload that a `›` started names the one it
+  // was sent to; anything else takes the first stop that belongs to THIS page,
+  // so a link opened on page 2 does not start by pointing at page 1. `away` is
   // the only verdict that is final at t=0 — React has not mounted yet, so
   // every stop here still reads as `waiting`.
-  const landed = places().findIndex((where) => where.kind !== 'away');
+  const here = places();
+  const asked = options.takeRememberedStop();
+  const requested = asked ? stops.findIndex((stop) => stop.id === asked) : -1;
+  const landed =
+    requested >= 0 && here[requested].kind !== 'away'
+      ? requested
+      : here.findIndex((where) => where.kind !== 'away');
   current = landed < 0 ? 0 : landed;
   refresh();
   ladder();
