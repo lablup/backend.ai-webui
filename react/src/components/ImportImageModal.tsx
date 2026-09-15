@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { AddImageModalRegistriesQuery } from '../__generated__/AddImageModalRegistriesQuery.graphql';
+import { ImportImageModalRegistriesQuery } from '../__generated__/ImportImageModalRegistriesQuery.graphql';
 import { App } from '../app-shim';
 import { baiSignedRequestWithPromise } from '../helper';
 import {
@@ -15,11 +15,10 @@ import {
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { usePainKiller } from '../hooks/usePainKiller';
-import './AddImageModal.css';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
+import './ImportImageModal.css';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
 import { Text } from '@astryxdesign/core/Text';
 import { TextArea } from '@astryxdesign/core/TextArea';
 import {
@@ -61,7 +60,7 @@ interface ScanImageResponse {
 type LineOutcome = { status: 'success' | 'error'; message?: string };
 
 const registriesQuery = graphql`
-  query AddImageModalRegistriesQuery($first: Int, $after: String) {
+  query ImportImageModalRegistriesQuery($first: Int, $after: String) {
     container_registry_nodes(first: $first, after: $after)
       @since(version: "24.09.0") {
       edges {
@@ -82,7 +81,7 @@ const registriesQuery = graphql`
 `;
 
 type RegistryConnection = NonNullable<
-  AddImageModalRegistriesQuery['response']['container_registry_nodes']
+  ImportImageModalRegistriesQuery['response']['container_registry_nodes']
 >;
 type RegistryNode = NonNullable<RegistryConnection['edges']>[number];
 
@@ -104,8 +103,8 @@ const fetchAllRegistries = async (
   for (let page = 0; page < REGISTRY_PAGE_LIMIT; page++) {
     // Annotated: `after` is written from this very result, so an inferred
     // type would be circular (TS7022).
-    const data: AddImageModalRegistriesQuery['response'] | undefined =
-      await fetchQuery<AddImageModalRegistriesQuery>(
+    const data: ImportImageModalRegistriesQuery['response'] | undefined =
+      await fetchQuery<ImportImageModalRegistriesQuery>(
         environment,
         registriesQuery,
         { first: REGISTRY_PAGE_SIZE, after },
@@ -139,7 +138,7 @@ export const isEmptyResponse = (error: any) => {
   return false;
 };
 
-export interface AddImageModalProps extends Omit<BAIModalProps, 'onOk'> {
+export interface ImportImageModalProps extends Omit<BAIModalProps, 'onOk'> {
   onRequestClose: () => void;
   /** Canonicals the manager accepted, in submission order. */
   onAdded?: (added: Array<string>) => void;
@@ -156,7 +155,7 @@ const ngcTagsUrl = (remotePath: string | null) => {
   return `https://catalog.ngc.nvidia.com/orgs/${org}/${rest[0] ?? '-'}/containers/${name}/-/tags`;
 };
 
-const AddImageModalContent: React.FC<{
+const ImportImageModalContent: React.FC<{
   onRequestClose: () => void;
   onAdded?: (added: Array<string>) => void;
   isSubmitting: boolean;
@@ -188,7 +187,7 @@ const AddImageModalContent: React.FC<{
   // The fetch key is part of the cache key, so a refresh is a new entry
   // rather than react-query staleness; nothing else may re-run the page loop.
   const { data: registryEdges } = useSuspenseTanQuery({
-    queryKey: ['AddImageModalRegistries', deferredRegistryFetchKey],
+    queryKey: ['ImportImageModalRegistries', deferredRegistryFetchKey],
     queryFn: () => fetchAllRegistries(relayEnvironment),
     staleTime: Infinity,
   });
@@ -248,26 +247,29 @@ const AddImageModalContent: React.FC<{
 
   const describeReason = (resolved: ResolvedReference) => {
     const reasons: Record<ImageReferenceReason, string> = {
-      tag_required: t('environment.AddImageTagRequired'),
-      digest_unsupported: t('environment.AddImageDigestUnsupported'),
-      scheme_in_canonical: t('environment.AddImageSchemeNotAllowed'),
-      host_required: t('environment.AddImageHostRequired'),
-      registry_not_registered: t('environment.AddImageRegistryNotRegistered', {
-        registry: resolved.registryHost ?? '',
-      }),
-      registry_ambiguous: t('environment.AddImageRegistryAmbiguous', {
+      tag_required: t('environment.ImportImageTagRequired'),
+      digest_unsupported: t('environment.ImportImageDigestUnsupported'),
+      scheme_in_canonical: t('environment.ImportImageSchemeNotAllowed'),
+      host_required: t('environment.ImportImageHostRequired'),
+      registry_not_registered: t(
+        'environment.ImportImageRegistryNotRegistered',
+        {
+          registry: resolved.registryHost ?? '',
+        },
+      ),
+      registry_ambiguous: t('environment.ImportImageRegistryAmbiguous', {
         registries: resolved.matchedRegistries
           .map((row) =>
             [row.registry_name, row.project].filter(Boolean).join('/'),
           )
           .join(', '),
       }),
-      invalid_tag: t('environment.AddImageInvalidTag'),
-      invalid_reference: t('environment.AddImageInvalidReference'),
-      empty_image_name: t('environment.AddImageEmptyImageName'),
-      ngc_not_a_container: t('environment.AddImageNotAContainer'),
-      ngc_url_unparseable: t('environment.AddImageUnreadableCatalogUrl'),
-      unsupported_command: t('environment.AddImageUnsupportedCommand'),
+      invalid_tag: t('environment.ImportImageInvalidTag'),
+      invalid_reference: t('environment.ImportImageInvalidReference'),
+      empty_image_name: t('environment.ImportImageEmptyImageName'),
+      ngc_not_a_container: t('environment.ImportImageNotAContainer'),
+      ngc_url_unparseable: t('environment.ImportImageUnreadableCatalogUrl'),
+      unsupported_command: t('environment.ImportImageUnsupportedCommand'),
     };
     return resolved.reason ? reasons[resolved.reason] : null;
   };
@@ -280,13 +282,13 @@ const AddImageModalContent: React.FC<{
       error?.statusCode === 404 &&
       error?.error_code === 'image_read_not-found'
     ) {
-      return t('environment.AddImageManagerCannotRegisterNewImages');
+      return t('environment.ImportImageManagerCannotRegisterNewImages');
     }
     if (error?.statusCode === 500 && isEmptyResponse(error)) {
-      return t('environment.AddImageTagNotFoundInRegistry');
+      return t('environment.ImportImageTagNotFoundInRegistry');
     }
     if (error?.statusCode === 403) {
-      return t('environment.AddImageRequiresSuperadmin');
+      return t('environment.ImportImageRequiresSuperadmin');
     }
     return painKiller.relieve(error?.title) || error?.message || String(error);
   };
@@ -355,25 +357,37 @@ const AddImageModalContent: React.FC<{
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <TextArea
-        label={t('environment.AddImageReferences')}
-        description={t('environment.AddImageDesc')}
-        placeholder={t('environment.AddImagePlaceholder')}
+        label={t('environment.ImportImageReferences')}
+        description={t('environment.ImportImageDesc')}
+        placeholder={t('environment.ImportImagePlaceholder')}
         rows={5}
         value={text}
         isDisabled={isSubmitting}
         onChange={(value) => setText(value)}
       />
+      <BAISelect
+        label={t('environment.Architecture')}
+        value={architecture}
+        // One architecture is sent with every line, so it cannot change once
+        // part of the batch is registered.
+        disabled={isSubmitting || addedCanonicals.length > 0}
+        onChange={(value) => setArchitecture(value)}
+        options={ARCHITECTURES.map((value) => ({ label: value, value }))}
+      />
       {addedCanonicals.length > 0 ? (
         <BAIFlex
-          data-testid="add-image-added-list"
+          data-testid="import-image-added-list"
           direction="column"
           align="stretch"
           gap="xxs"
         >
-          <Text type="supporting">{t('environment.AddImageAdded')}</Text>
+          <Text type="supporting">{t('environment.ImportImageAdded')}</Text>
           {addedCanonicals.map((canonical) => (
             <BAIFlex key={canonical} gap="xs" align="center" wrap="wrap">
-              <Badge variant="success" label={t('environment.AddImageAdded')} />
+              <Badge
+                variant="success"
+                label={t('environment.ImportImageAdded')}
+              />
               <Text type="code">{canonical}</Text>
             </BAIFlex>
           ))}
@@ -381,7 +395,7 @@ const AddImageModalContent: React.FC<{
       ) : null}
       {previewLines.length > 0 ? (
         <BAIFlex
-          className="add-image-preview"
+          className="import-image-preview"
           direction="column"
           align="stretch"
           gap="sm"
@@ -410,12 +424,12 @@ const AddImageModalContent: React.FC<{
                     }
                     label={
                       outcome?.status === 'success'
-                        ? t('environment.AddImageAdded')
+                        ? t('environment.ImportImageAdded')
                         : outcome?.status === 'error'
-                          ? t('environment.AddImageFailed')
+                          ? t('environment.ImportImageFailed')
                           : resolved.submittable
-                            ? t('environment.AddImageReady')
-                            : t('environment.AddImageNeedsAttention')
+                            ? t('environment.ImportImageReady')
+                            : t('environment.ImportImageNeedsAttention')
                     }
                   />
                   <Text
@@ -428,9 +442,9 @@ const AddImageModalContent: React.FC<{
                 {resolved.imageName ? (
                   <Text type="supporting">
                     {[
-                      resolved.project ?? t('environment.AddImageNoProject'),
+                      resolved.project ?? t('environment.ImportImageNoProject'),
                       resolved.imageName,
-                      resolved.tag || t('environment.AddImageNoTag'),
+                      resolved.tag || t('environment.ImportImageNoTag'),
                     ].join(' · ')}
                   </Text>
                 ) : null}
@@ -446,7 +460,7 @@ const AddImageModalContent: React.FC<{
                 ) : null}
                 {tagsUrl ? (
                   <BAILink to={tagsUrl} target="_blank">
-                    {t('environment.AddImageOpenCatalogTags')}
+                    {t('environment.ImportImageOpenCatalogTags')}
                   </BAILink>
                 ) : null}
                 {resolved.reason === 'registry_not_registered' &&
@@ -471,20 +485,6 @@ const AddImageModalContent: React.FC<{
           })}
         </BAIFlex>
       ) : null}
-      <Collapsible
-        defaultIsOpen={false}
-        trigger={t('environment.AddImageAdvanced')}
-      >
-        <BAISelect
-          label={t('environment.Architecture')}
-          value={architecture}
-          // One architecture is sent with every line, so it cannot change once
-          // part of the batch is registered.
-          disabled={isSubmitting || addedCanonicals.length > 0}
-          onChange={(value) => setArchitecture(value)}
-          options={ARCHITECTURES.map((value) => ({ label: value, value }))}
-        />
-      </Collapsible>
       <BAIFlex justify="end" gap="xs">
         <Button
           variant="secondary"
@@ -500,7 +500,9 @@ const AddImageModalContent: React.FC<{
           isDisabled={!canSubmit || isSubmitting}
           isLoading={isSubmitting}
           label={
-            hasFailure ? t('environment.AddImageRetryFailed') : t('button.Add')
+            hasFailure
+              ? t('environment.ImportImageRetryFailed')
+              : t('environment.ImportImage')
           }
           onClick={() => {
             void handleAdd();
@@ -530,7 +532,7 @@ const AddImageModalContent: React.FC<{
   );
 };
 
-const AddImageModal: React.FC<AddImageModalProps> = ({
+const ImportImageModal: React.FC<ImportImageModalProps> = ({
   onRequestClose,
   onAdded,
   ...baiModalProps
@@ -544,7 +546,7 @@ const AddImageModal: React.FC<AddImageModalProps> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      title={t('environment.AddImage')}
+      title={t('environment.ImportImageFromRegistry')}
       width={720}
       footer={null}
       maskClosable={false}
@@ -559,7 +561,7 @@ const AddImageModal: React.FC<AddImageModalProps> = ({
       {/* The registry query lives in the content so the header stays on
           screen while it loads. */}
       <Suspense fallback={<BAISkeleton rows={5} />}>
-        <AddImageModalContent
+        <ImportImageModalContent
           onRequestClose={onRequestClose}
           onAdded={onAdded}
           isSubmitting={isSubmitting}
@@ -570,4 +572,4 @@ const AddImageModal: React.FC<AddImageModalProps> = ({
   );
 };
 
-export default AddImageModal;
+export default ImportImageModal;
