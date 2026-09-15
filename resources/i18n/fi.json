@@ -1570,6 +1570,7 @@
     "Registry": "Rekisteri",
     "RescanImage": "Skannaa uudelleen",
     "RescanImageNotFound": "Tätä kuvaa ei löytynyt. Se on saatettu jo poistaa luettelosta.",
+    "RescanImageRequiresSuperadmin": "Vain superadmin-käyttäjä voi skannata kuvan uudelleen.",
     "RescanImageSuccess": "{{name}} skannattiin uudelleen.",
     "ResourceLimit": "Resurssirajoitus",
     "ResourceLimitAppliesToNewSessionsOnly": "Vähimmäisresurssirajoitus koskee vain uusia istuntoja eikä vaikuta jo käynnissä oleviin istuntoihin.",

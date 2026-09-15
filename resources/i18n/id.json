@@ -1571,6 +1571,7 @@
     "Registry": "Registri",
     "RescanImage": "Pindai Ulang",
     "RescanImageNotFound": "Image ini tidak ditemukan. Mungkin sudah dihapus dari daftar.",
+    "RescanImageRequiresSuperadmin": "Hanya superadmin yang dapat memindai ulang image.",
     "RescanImageSuccess": "{{name}} telah dipindai ulang.",
     "ResourceLimit": "Batasan sumber daya",
     "ResourceLimitAppliesToNewSessionsOnly": "Batas minimum sumber daya hanya berlaku untuk sesi yang baru dibuat dan tidak memengaruhi sesi yang sudah berjalan.",

@@ -593,6 +593,24 @@ describe('ImageList rescan row action (FR-3948)', () => {
     );
   });
 
+  it('reports a 403 as a refused rescan, not as a refused registration', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockRejectedValue({ statusCode: 403 });
+    renderOneImage();
+
+    await user.click(await rescanButton());
+
+    await waitFor(() =>
+      expect(mockMessageError).toHaveBeenCalledWith(
+        'environment.RescanImageRequiresSuperadmin',
+      ),
+    );
+    // The row action registers nothing, so the import copy must not leak here.
+    expect(mockMessageError).not.toHaveBeenCalledWith(
+      'environment.ImportImageRequiresSuperadmin',
+    );
+  });
+
   it('hides the action from a non-superadmin', async () => {
     mockIsSuperadmin = false;
     renderOneImage();

@@ -1570,6 +1570,7 @@
     "Registry": "Registrierung",
     "RescanImage": "Erneut scannen",
     "RescanImageNotFound": "Dieses Image wurde nicht gefunden. Möglicherweise wurde es bereits aus der Liste entfernt.",
+    "RescanImageRequiresSuperadmin": "Nur ein Superadmin kann ein Image erneut scannen.",
     "RescanImageSuccess": "{{name}} wurde erneut gescannt.",
     "ResourceLimit": "Ressourcenlimit",
     "ResourceLimitAppliesToNewSessionsOnly": "Das minimale Ressourcenlimit gilt nur für neu erstellte Sitzungen und hat keinen Einfluss auf bereits laufende Sitzungen.",

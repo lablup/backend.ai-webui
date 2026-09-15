@@ -1594,6 +1594,7 @@
         "environment.Registry",
         "environment.RescanImage",
         "environment.RescanImageNotFound",
+        "environment.RescanImageRequiresSuperadmin",
         "environment.RescanImageSuccess",
         "environment.ResourceLimit",
         "environment.ResourceLimitAppliesToNewSessionsOnly",

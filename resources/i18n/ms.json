@@ -1570,6 +1570,7 @@
     "Registry": "Pendaftaran",
     "RescanImage": "Imbas Semula",
     "RescanImageNotFound": "Imej ini tidak ditemui. Ia mungkin telah dibuang daripada senarai.",
+    "RescanImageRequiresSuperadmin": "Hanya superadmin boleh mengimbas semula imej.",
     "RescanImageSuccess": "{{name}} telah diimbas semula.",
     "ResourceLimit": "Had sumber",
     "ResourceLimitAppliesToNewSessionsOnly": "Had sumber minimum hanya terpakai untuk sesi yang baru dicipta dan tidak menjejaskan sesi yang sedang berjalan.",

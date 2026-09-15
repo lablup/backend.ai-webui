@@ -1570,6 +1570,7 @@
     "Registry": "Registro",
     "RescanImage": "Volver a escanear",
     "RescanImageNotFound": "No se ha encontrado esta imagen. Puede que ya se haya eliminado de la lista.",
+    "RescanImageRequiresSuperadmin": "Solo un superadministrador puede volver a escanear una imagen.",
     "RescanImageSuccess": "Se ha vuelto a escanear {{name}}.",
     "ResourceLimit": "Límite de recursos",
     "ResourceLimitAppliesToNewSessionsOnly": "El límite mínimo de recursos se aplica únicamente a las sesiones recién creadas y no afecta a las sesiones que ya están en ejecución.",

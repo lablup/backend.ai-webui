@@ -1570,6 +1570,7 @@
     "Registry": "Cơ quan đăng ký",
     "RescanImage": "Quét lại",
     "RescanImageNotFound": "Không tìm thấy ảnh này. Có thể ảnh đã bị xóa khỏi danh sách.",
+    "RescanImageRequiresSuperadmin": "Chỉ siêu quản trị viên mới có thể quét lại ảnh.",
     "RescanImageSuccess": "Đã quét lại {{name}}.",
     "ResourceLimit": "Giới hạn tài nguyên",
     "ResourceLimitAppliesToNewSessionsOnly": "Giới hạn tài nguyên tối thiểu chỉ áp dụng cho các phiên mới được tạo và không ảnh hưởng đến các phiên đang chạy.",
