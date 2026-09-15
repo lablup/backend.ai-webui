@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  type CreatePermissionInput,
   type OperationType,
   type RBACElementType,
   RoleScopePermissionEditModalBulkAddMutation,
@@ -362,8 +363,12 @@ const RoleScopePermissionEditModal: React.FC<
     .filter((entity) => entity.actions.length > 0)
     .map((entity) => ({
       entityType: entity.entityType,
+      // 26.8 answers an OperationType here; the drawer follow-up (FR-3905)
+      // moves this grid onto the 26.9 PermissionBit.
       supportedOperations: new Set(
-        entity.actions.map((action) => action.requiredPermission),
+        entity.actions.map(
+          (action) => action.requiredPermission as OperationType,
+        ),
       ),
     }));
 
@@ -539,7 +544,9 @@ const RoleScopePermissionEditModal: React.FC<
       // (FR-6 / spec Risks).
       const [addResult, removeResult] = await Promise.allSettled([
         createInputs.length > 0
-          ? bulkAddPermissions({ input: { permissions: createInputs } })
+          ? bulkAddPermissions({
+              input: { permissions: createInputs as CreatePermissionInput[] },
+            })
           : Promise.resolve(null),
         deleteIds.length > 0
           ? bulkRemovePermissions({ input: { permissionIds: deleteIds } })

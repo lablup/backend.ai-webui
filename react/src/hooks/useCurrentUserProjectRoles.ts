@@ -6,7 +6,6 @@ import { useSuspendedBackendaiClient } from '.';
 import {
   useCurrentUserProjectRolesQuery,
   PermissionNestedFilter,
-  RBACElementType,
 } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
@@ -18,9 +17,9 @@ export interface CurrentUserProjectRolesResult {
   /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
   domainAdminDomains: string[];
   /**
-   * Project UUIDs the user has project-admin rights over. Sourced from each
-   * role's `scopes` connection, narrowed to `scopeType === 'PROJECT'`.
-   * Match directly against `useCurrentProject().id` via `Array.includes`.
+   * Project UUIDs the user has project-admin rights over: the project scopes
+   * of the roles carrying the admin permission. Match directly against
+   * `useCurrentProject().id` via `Array.includes`.
    */
   projectAdminIds: string[];
 }
@@ -41,12 +40,18 @@ export interface CurrentUserProjectRolesResult {
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
 
-  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE' satisfies RBACElementType;
+  // Managers >= 26.9.0 name the admin permission `scope_admin` and read the
+  // scope off the role itself; older ones name it `PROJECT_ADMIN_PAGE` and
+  // answer the role's scopes as a connection.
+  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
+  const adminEntityType = isSingleScopeRole
+    ? 'scope_admin'
+    : 'PROJECT_ADMIN_PAGE';
   const permissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
     entityType: (baiClient.supports('rbac-filter-wrapper')
-      ? { equals: PROJECT_ADMIN_PAGE }
-      : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
+      ? { equals: adminEntityType }
+      : adminEntityType) as PermissionNestedFilter['entityType'],
   };
 
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
@@ -63,7 +68,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
               id
               role {
                 id
-                scopes(first: 1) {
+                scopes(first: 1) @deprecatedSince(version: "26.9.0") {
                   edges {
                     node {
                       scopeId
@@ -71,6 +76,8 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
                     }
                   }
                 }
+                scopeType @since(version: "26.9.0")
+                scopeId @since(version: "26.9.0")
               }
             }
           }
@@ -89,9 +96,12 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const ids = new Set<string>();
   if (data.myRolesResult?.ok === true) {
     for (const assignmentEdge of data.myRolesResult.value?.edges ?? []) {
-      for (const scopeEdge of assignmentEdge?.node?.role?.scopes?.edges ?? []) {
-        const scope = scopeEdge?.node;
-        if (scope?.scopeType === 'PROJECT' && scope.scopeId) {
+      const role = assignmentEdge?.node?.role;
+      const scopes = role?.scopeType
+        ? [{ scopeType: role.scopeType, scopeId: role.scopeId }]
+        : (role?.scopes?.edges ?? []).map((scopeEdge) => scopeEdge?.node);
+      for (const scope of scopes) {
+        if (scope?.scopeType?.toUpperCase() === 'PROJECT' && scope.scopeId) {
           ids.add(scope.scopeId);
         }
       }

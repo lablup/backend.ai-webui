@@ -327,7 +327,10 @@ const RBACManagementPage: React.FC = () => {
                 baiClient?.supports('role-mapped-scope-filter') && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
-                  type: 'string',
+                  // `equals` is the one operator both the 26.8 StringFilter
+                  // and the 26.9 UUIDFilter accept.
+                  type: 'uuid',
+                  fixedOperator: 'equals',
                 },
               ])}
               value={queryParams.filter ?? undefined}
