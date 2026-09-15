@@ -68,7 +68,7 @@ export const docs = {
       name: 'onChange',
       type: '(selectedSubPath?: string) => void',
       description:
-        'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing.',
+        'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing. The parameter is optional so a clear action can emit `undefined` (nothing picked); treat it as "back to unset" or, where the root is the meaningful default, as `\'\'`.',
     },
     {
       name: 'disabled',
@@ -77,10 +77,21 @@ export const docs = {
         'Disables the trigger and blocks the picker from opening, on top of the block that a missing `vfolderUuid` already imposes.',
     },
     {
+      name: 'size',
+      type: 'ComplexSelectorSize',
+      description: 'Control height, in the Astryx size vocabulary.',
+    },
+    {
+      name: 'width',
+      type: 'SizeValue',
+      description: 'Field width, forwarded to ComplexSelector.',
+      default: "'100%'",
+    },
+    {
       name: 'style',
       type: 'React.CSSProperties',
       description:
-        'Inline style forwarded to the trigger, typically to set its width.',
+        'Inline style forwarded to the trigger. Width has its own `width` prop; reach for this only for something `width` and `size` cannot express.',
     },
     {
       name: 'label',
@@ -113,7 +124,6 @@ export const docs = {
       code: `<BAIVFolderPathPicker
   vfolderUuid={vfolderUuid}
   onChange={setSelectedSubPath}
-  style={{ width: '100%' }}
 />`,
     },
   ],
