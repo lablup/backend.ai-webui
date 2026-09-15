@@ -128,7 +128,6 @@ in the directory.
 When an item you upload — with the **Upload** button or by drag-and-drop — has the same name as an item already in the current directory, the **Overwrite Confirmation** dialog opens before the transfer starts. A folder is matched by its top-level folder name, not by the individual files inside it.
 
 ![](../images/vfolder_upload_overwrite_modal.png)
-<!-- TODO(screenshot): /data -> open a folder -> upload a file that already exists together with a new one; capture the Overwrite Confirmation dialog (Name / Existing / Uploading columns, one checked row, the "other item(s)" line) -->
 
 Each conflicting item appears as one row, showing its **Name** together with the size and modification time of the **Existing** item and of the **Uploading** one. Every row is selected by default: keep a row selected to overwrite that item, or clear it to keep the existing item and skip that upload. Click **Upload** to start the transfer.
 

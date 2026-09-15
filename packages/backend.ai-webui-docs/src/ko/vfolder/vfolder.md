@@ -112,7 +112,6 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 **업로드** 버튼이나 드래그 앤 드롭으로 업로드하는 항목의 이름이 현재 디렉토리에 이미 있는 항목과 같으면, 전송이 시작되기 전에 **덮어쓰기 확인** 대화 상자가 열립니다. 폴더는 폴더 안의 개별 파일이 아니라 최상위 폴더 이름을 기준으로 비교합니다.
 
 ![](../images/vfolder_upload_overwrite_modal.png)
-<!-- TODO(screenshot): /data -> open a folder -> upload a file that already exists together with a new one; capture the Overwrite Confirmation dialog (Name / Existing / Uploading columns, one checked row, the "other item(s)" line) -->
 
 이름이 겹치는 항목은 각각 한 행으로 표시되며, **이름**과 함께 **기존 항목**과 **업로드할 항목**의 크기 및 수정 시각을 확인할 수 있습니다. 모든 행은 기본적으로 선택되어 있습니다. 선택된 상태로 두면 해당 항목을 덮어쓰고, 선택을 해제하면 기존 항목을 그대로 두고 그 항목은 업로드하지 않습니다. **업로드**를 클릭하면 전송이 시작됩니다.
 

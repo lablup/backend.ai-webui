@@ -113,7 +113,6 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 **アップロード**ボタンやドラッグアンドドロップでアップロードする項目の名前が、現在のディレクトリにすでにある項目と同じ場合、転送が始まる前に**確認の上書き**ダイアログが開きます。フォルダーは中にある個々のファイルではなく、最上位のフォルダー名で比較されます。
 
 ![](../images/vfolder_upload_overwrite_modal.png)
-<!-- TODO(screenshot): /data -> open a folder -> upload a file that already exists together with a new one; capture the Overwrite Confirmation dialog (Name / Existing / Uploading columns, one checked row, the "other item(s)" line) -->
 
 名前が重複する項目は1行ずつ表示され、**名前**に加えて**既存**の項目と**アップロード**する項目のサイズおよび更新日時を確認できます。すべての行は既定で選択されています。選択したままにするとその項目を上書きし、選択を解除すると既存の項目を残してその項目はアップロードしません。**アップロード**をクリックすると転送が始まります。
 
