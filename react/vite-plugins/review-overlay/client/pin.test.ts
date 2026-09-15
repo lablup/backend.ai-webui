@@ -620,6 +620,57 @@ describe('createDeepLinkPin', () => {
       expect(scans).toBeLessThanOrEqual(3);
     });
 
+    // A stop's element is behind a modal or a step; that opening changes no
+    // URL, so the scan must still be running when it happens (FR-3949).
+    it('keeps scanning for a stop after the budget is spent', async () => {
+      show({
+        s: '#_r_gone_',
+        tid: 'confirm',
+        txt: 'Confirm',
+        ck: 'The confirm button is visible',
+      });
+      expect(pin.locate()).toBe(false);
+      const app = document.querySelector('#app') as HTMLElement;
+      for (let i = 0; i < 5; i++) {
+        app.append(document.createElement('i'));
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      expect(pin.locatedElement()).toBeNull();
+
+      app.insertAdjacentHTML(
+        'beforeend',
+        '<div role="dialog"><button data-testid="confirm">Confirm</button></div>',
+      );
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()?.textContent).toBe('Confirm');
+      expect(marker().classList.contains('found')).toBe(true);
+    });
+
+    // BAIDialog closes by dropping its `role` and keeps its subtree mounted,
+    // so the held element must be re-checked against the dialog scope.
+    it('releases a dlg stop when its dialog closes in place', async () => {
+      const app = document.querySelector('#app') as HTMLElement;
+      app.insertAdjacentHTML(
+        'beforeend',
+        '<div id="dlg" role="dialog"><button data-testid="confirm">Confirm</button></div>',
+      );
+      show({
+        s: '[data-testid="confirm"]',
+        tid: 'confirm',
+        txt: 'Confirm',
+        ck: 'The confirm button is visible',
+        dlg: 1,
+      });
+      expect(pin.locate()).toBe(true);
+
+      document.querySelector('#dlg')?.removeAttribute('role');
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()).toBeNull();
+      expect(marker().classList.contains('found')).toBe(false);
+    });
+
     it('escalates when the cheap ladder comes back empty', async () => {
       stale();
       expect(pin.locate()).toBe(true);

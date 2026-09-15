@@ -25,10 +25,24 @@ export interface AnchorComponent {
   dn?: string;
 }
 
+/** A GitHub "Files changed" reference a stop points at (FR-3949). */
+export interface AnchorCodeRef {
+  /** Repository-relative path. */
+  path: string;
+  line: number;
+  /** Last line of a range, when the stop covers more than one. */
+  to?: number;
+}
+
+/** One replayable step on the way to a stop's element. */
+export interface AnchorVia {
+  click: { text?: string; tid?: string };
+}
+
 /**
- * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url, so every
- * key is one or two characters: it travels inside a URL fragment that people
- * paste into PR comments and chat.
+ * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url and kept
+ * terse: it travels inside a URL fragment that people paste into PR comments
+ * and chat.
  */
 export interface AnchorV3 {
   v: 3;
@@ -61,6 +75,26 @@ export interface AnchorV3 {
   n?: string;
   /** The note was longer than the cap, so `n` ends in an ellipsis. */
   nt?: 1;
+  // ---- walkthrough stop fields (FR-3949): present on a pin the implementing
+  // session authored; `ck` alone makes an anchor a stop. Caps in stop-guard.ts.
+  /** What changed. */
+  ch?: string;
+  /** What to check — the expected outcome the reader verifies. */
+  ck?: string;
+  /** Short literals for the `old → new` line. */
+  old?: string;
+  new?: string;
+  type?: 'added' | 'modified';
+  /** Short element kind, e.g. `button`, `table column`. */
+  kind?: string;
+  code?: AnchorCodeRef[];
+  /** The 40-hex head the stop was minted for. */
+  sha?: string;
+  pr?: number;
+  /** How to reach the element when it is not on screen at landing. */
+  via?: AnchorVia[];
+  /** Picked inside a dialog (`DIALOG_SELECTOR`). */
+  dlg?: 1;
 }
 
 /**

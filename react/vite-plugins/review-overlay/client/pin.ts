@@ -16,10 +16,12 @@ import { icon, ICON_STYLE } from './icons.js';
 import {
   findAnchorTarget,
   hasLandmark,
+  inScope,
   quickFindTarget,
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
+import { isStop } from './stop-guard.js';
 import type { AnchorV3, PinCopyPayload } from './types.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
@@ -611,17 +613,20 @@ function createPinView(deps: ViewDeps): PinView {
     const landmark = hasLandmark(target.anchor);
     if (landmark && !hadLandmark) missedScans = 0;
     hadLandmark = landmark;
+    // A dialog that closed without unmounting (BAIDialog drops its role) must
+    // release the element it held, or a dlg stop stays located behind nothing.
     const held =
-      located?.isConnected && textMatches(located, target.anchor.txt)
+      located?.isConnected &&
+      textMatches(located, target.anchor.txt) &&
+      inScope(located, target.anchor)
         ? located
         : null;
     if (held) missedScans = 0;
     let next = held ?? quickFindTarget(target.anchor, { ignore: host });
-    if (
-      !held &&
-      missedScans < MAX_MISSED_SCANS &&
-      (!next || isLandmarkFallback(next))
-    ) {
+    // A stop's element appears with no URL change (a modal, a step), so it
+    // is exempt from the budget the route watcher would otherwise re-arm.
+    const budgeted = missedScans < MAX_MISSED_SCANS || isStop(target.anchor);
+    if (!held && budgeted && (!next || isLandmarkFallback(next))) {
       const full = findAnchorTarget(target.anchor, { ignore: host });
       missedScans = full ? 0 : missedScans + 1;
       next = full ?? next;
@@ -998,7 +1003,13 @@ export function createPinLayer(options: PinLayerOptions) {
     if (records.every((record) => host.contains(record.target as Node))) return;
     schedule();
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // `open` / `role` flip when a dialog closes in place, with no childList record.
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['open', 'role'],
+  });
   window.addEventListener('resize', placeSoon);
   // Viewport coordinates, so a scroll moves the pin — including a scroll in an
   // overflow ancestor, which a document-coordinate layer would miss.
