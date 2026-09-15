@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Thêm Token Truy Cập",
     "AddNewRevisionFromThis": "Revision mới dựa trên cái này",
     "AddRevision": "Thêm Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Chuyển sang dự án của triển khai này để thêm phiên bản sửa đổi.",
     "AdditionalMounts": "Gắn Kết Bổ Sung",
     "AnotherDeploymentInProgress": "Một bản cập nhật triển khai khác đang được thực hiện. Vui lòng chờ cho đến khi hoàn thành trước khi thử lại.",
     "Apply": "Triển khai",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Triển khai này đã bị xóa hoặc bạn không có quyền truy cập.",
     "NotInProject": "Triển khai này thuộc về một dự án khác.",
     "NumberOfReplicas": "Số lượng bản sao",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Chỉ chủ sở hữu triển khai mới có thể quản lý triển khai này.",
     "OpenCreateDeploymentModal": "Mở hộp thoại tạo triển khai",
     "OpenToPublic": "Công khai",
     "OpenToPublicCannotBeChanged": "Không thể thay đổi cài đặt truy cập công khai đã chọn khi tạo.",
@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Công khai",
       "ResourceGroup": "Nhóm tài nguyên",
       "Status": "Trạng thái",
-      "Tags": "Thẻ"
+      "Tags": "Thẻ",
+      "ReplicaStatus": "Vòng đời bản sao",
+      "ReplicaHealthStatus": "Trạng thái sức khỏe bản sao",
+      "ReplicaTrafficStatus": "Trạng thái lưu lượng bản sao"
     },
     "nav": {
       "Next": "Tiếp theo",

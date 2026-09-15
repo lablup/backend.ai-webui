@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Dodaj Token Dostępu",
     "AddNewRevisionFromThis": "Nowa Revision na podstawie tej",
     "AddRevision": "Dodaj Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Przełącz się na projekt tego wdrożenia, aby dodać rewizję.",
     "AdditionalMounts": "Dodatkowe Montowania",
     "AnotherDeploymentInProgress": "Inna aktualizacja wdrożenia jest już w toku. Poczekaj na jej zakończenie przed ponowną próbą.",
     "Apply": "Wdróż",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "To wdrożenie zostało usunięte lub nie masz uprawnień, aby uzyskać do niego dostęp.",
     "NotInProject": "To wdrożenie należy do innego projektu.",
     "NumberOfReplicas": "Liczba replik",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Tylko właściciel wdrożenia może zarządzać tym wdrożeniem.",
     "OpenCreateDeploymentModal": "Otwórz modal tworzenia wdrożenia",
     "OpenToPublic": "Publiczne",
     "OpenToPublicCannotBeChanged": "Ustawienia dostępu publicznego wybrane podczas tworzenia nie mogą zostać zmienione.",
@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Publiczne",
       "ResourceGroup": "Grupa zasobów",
       "Status": "Status",
-      "Tags": "Tagi"
+      "Tags": "Tagi",
+      "ReplicaStatus": "Cykl życia repliki",
+      "ReplicaHealthStatus": "Stan zdrowia repliki",
+      "ReplicaTrafficStatus": "Stan ruchu repliki"
     },
     "nav": {
       "Next": "Dalej",

@@ -1081,7 +1081,7 @@
     "AddAccessToken": "Agregar Token de Acceso",
     "AddNewRevisionFromThis": "Nueva Revision basada en esta",
     "AddRevision": "Agregar Revisión",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Cambia al proyecto de esta implementación para añadir una revisión.",
     "AdditionalMounts": "Montajes adicionales",
     "AnotherDeploymentInProgress": "Ya hay otra actualización de despliegue en curso. Por favor, espere a que se complete antes de intentarlo de nuevo.",
     "Apply": "Desplegar",
@@ -1180,7 +1180,7 @@
     "NotAccessibleOrDeleted": "Este despliegue se ha eliminado o no tiene permiso para acceder a él.",
     "NotInProject": "Este despliegue pertenece a otro proyecto.",
     "NumberOfReplicas": "Número de réplicas",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Solo el propietario de la implementación puede administrar esta implementación.",
     "OpenCreateDeploymentModal": "Abrir modal de creación de despliegue",
     "OpenToPublic": "Público",
     "OpenToPublicCannotBeChanged": "La configuración de acceso público seleccionada en la creación no se puede cambiar.",
@@ -1262,7 +1262,10 @@
       "OpenToPublic": "Público",
       "ResourceGroup": "Grupo de recursos",
       "Status": "Estado",
-      "Tags": "Etiquetas"
+      "Tags": "Etiquetas",
+      "ReplicaStatus": "Ciclo de vida de la réplica",
+      "ReplicaHealthStatus": "Estado de salud de la réplica",
+      "ReplicaTrafficStatus": "Estado de tráfico de la réplica"
     },
     "nav": {
       "Next": "Siguiente",
