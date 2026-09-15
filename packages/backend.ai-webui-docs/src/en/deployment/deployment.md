@@ -590,6 +590,8 @@ The **Revision History** tab lists all revisions added to the deployment, sorted
 
 ![](../images/revision_history_tab.png)
 
+Above the table sit a property filter bar and a refresh button. You can narrow the list by **Revision Number**, **Created At**, **Cluster Mode**, **Image**, and **Model Folder**. The **Image** and **Model Folder** values are picked from dropdowns instead of being typed as identifiers, and the resulting filter tag shows the name you selected. The **Model Folder** dropdown is scoped to the deployment's own project and lists only model-usage folders, excluding deleted ones — the same scope as the folder picker in the Add Revision modal.
+
 The table includes the following columns:
 
 - **Revision (ID)**: The revision number and its UUID. The revision number is an incrementing integer; lower numbers are older revisions. Click the revision number to open the revision detail drawer.

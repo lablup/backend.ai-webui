@@ -420,5 +420,11 @@ describe('BAIGraphQLPropertyFilter render', () => {
       />,
     );
     expect(screen.getByTestId('graphql-property-filter')).toBeInTheDocument();
+    // The root class hook `BAIPowerSearchAdapters.css` styles against.
+    expect(
+      screen
+        .getByTestId('graphql-property-filter')
+        .closest('.bai-power-search'),
+    ).not.toBeNull();
   });
 });

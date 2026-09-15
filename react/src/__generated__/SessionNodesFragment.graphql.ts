@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1f92fdc3aef78d2af06be12c7ac6a405>>
+ * @generated SignedSource<<03107147ca5707a621edb3741c5d0158>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -31,6 +31,7 @@ export type SessionNodesFragment$data = ReadonlyArray<{
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
+  readonly domain_name: string | null | undefined;
   readonly id: string;
   readonly kernel_nodes: {
     readonly edges: ReadonlyArray<{
@@ -47,10 +48,13 @@ export type SessionNodesFragment$data = ReadonlyArray<{
   } | null | undefined;
   readonly priority: number | null | undefined;
   readonly project_id: string | null | undefined;
+  readonly result: string | null | undefined;
   readonly row_id: string;
   readonly scaling_group: string | null | undefined;
   readonly service_ports: string | null | undefined;
   readonly status: string | null | undefined;
+  readonly status_info: string | null | undefined;
+  readonly terminated_at: string | null | undefined;
   readonly type: string | null | undefined;
   readonly user_id: string | null | undefined;
   readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "EditSessionPriorityModalFragment" | "SessionAccessKeyFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
@@ -301,6 +305,34 @@ return {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "terminated_at",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "status_info",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "result",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "domain_name",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "scaling_group",
       "storageKey": null
     },
@@ -355,6 +387,6 @@ return {
 };
 })();
 
-(node as any).hash = "312220476c77c2e3ac2f38e661c5ac48";
+(node as any).hash = "2485a16dab716580189a67cf09fa09a4";
 
 export default node;

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The project list on the admin Projects page. It reads the plural `BAIProjectTableFragment` on `GroupNode`, so the caller spreads that fragment on every group node in its own query and passes the array as `projectFragment`. Thirteen columns are built internally — name, domain, description, created at, type badge, total resource slots rendered as resource chips, resource policy, storage nodes (through the allowed-vfolder-hosts fragment the row already carries), scaling groups, container registry and registry project, copyable project ID, and integration ID. Sorting is enabled only on name, domain, created at, resource policy and ID. The component holds no row actions of its own: the page composes edit / deactivate / activate / purge by overriding the `name` column's `render` through `customizeColumns`. Rows are keyed by node `id`, and everything except `dataSource`, `columns`, `rowKey` and `onChangeOrder` passes through to BAITable.",
+      "The project list on the admin Projects page. It reads the plural `BAIProjectTableFragment` on `GroupNode`, so the caller spreads that fragment on every group node in its own query and passes the array as `projectFragment`. Fifteen columns are built internally — name, domain, description, created at, modified at, status badge, type badge, total resource slots rendered as resource chips, resource policy, storage nodes (through the allowed-vfolder-hosts fragment the row already carries), scaling groups, container registry and registry project, copyable project ID, and integration ID. Modified at and status are `defaultHidden`, so they only appear once the caller passes `tableSettings` and the user turns them on. Sorting is enabled on name, domain, created at, modified at, status, resource policy and ID. The component holds no row actions of its own: the page composes edit / deactivate / activate / purge by overriding the `name` column's `render` through `customizeColumns`. Rows are keyed by node `id`, and everything except `dataSource`, `columns`, `rowKey` and `onChangeOrder` passes through to BAITable.",
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Expect a sort handle on every column; only name, domain, created at, resource policy and ID declare one, even though `is_active` is a valid server order key.',
+          'Expect a sort handle on every column; only name, domain, created at, modified at, status, resource policy and ID declare one.',
       },
       {
         guidance: false,
@@ -61,7 +61,7 @@ export const docs = {
     },
     {
       name: 'onChangeOrder',
-      type: "(order: 'name' | 'id' | 'domain_name' | 'created_at' | 'is_active' | 'resource_policy' | '-name' | '-id' | '-domain_name' | '-created_at' | '-is_active' | '-resource_policy' | null) => void",
+      type: "(order: 'name' | 'id' | 'domain_name' | 'created_at' | 'modified_at' | 'is_active' | 'resource_policy' | '-name' | '-id' | '-domain_name' | '-created_at' | '-modified_at' | '-is_active' | '-resource_policy' | null) => void",
       description:
         'Called with the new order string when the user sorts, or `null` when the sort is cleared. Only the columns that declare a sorter can produce a value.',
     },

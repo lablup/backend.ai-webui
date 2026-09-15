@@ -15,6 +15,7 @@ let host: HTMLElement;
 let layer: PinLayer;
 let toasts: string[];
 let hidden: string[];
+let editRequests: string[];
 let scrolled: string[];
 let pending: string[][];
 
@@ -84,6 +85,7 @@ beforeEach(() => {
   document.body.innerHTML = '';
   toasts = [];
   hidden = [];
+  editRequests = [];
   scrolled = [];
   pending = [];
   host = document.createElement('div');
@@ -108,6 +110,7 @@ beforeEach(() => {
       toast: 'Copied 1 pin',
     }),
     onHide: (pin) => hidden.push(pin.id),
+    onEdit: (pin) => editRequests.push(pin.id),
   });
 });
 
@@ -325,6 +328,26 @@ describe('createPinLayer', () => {
       expect(hidden).toEqual(['c_b']);
       expect(layer.ids()).toEqual(['c_a', 'c_b']);
       expect(markerOf('c_b').classList.contains('found')).toBe(true);
+    });
+
+    // FR-3930: the card's ✏️ hands the pin back, and a link's cannot be
+    // re-keyed — its own note is all it ever carried.
+    it('hands the whole target back from the card’s ✏️', () => {
+      layer.show([{ ...target('c_a', 'one'), editable: true }]);
+
+      cardOf('c_a').querySelector<HTMLButtonElement>('.edit')?.click();
+
+      expect(editRequests).toEqual(['c_a']);
+    });
+
+    it('disables ✏️ on a pin no note of ours can re-key', () => {
+      const edit = cardOf('c_b').querySelector<HTMLButtonElement>('.edit');
+
+      expect(edit?.disabled).toBe(true);
+      expect(edit?.getAttribute('aria-label')).toBe(
+        'This pin came from a link — pick the element again to write your own note',
+      );
+      expect(editRequests).toEqual([]);
     });
 
     it('renumbers what is left, so the heads still count the set', () => {

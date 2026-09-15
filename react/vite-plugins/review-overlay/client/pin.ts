@@ -114,7 +114,7 @@ const STYLE = `
   /* The reviewer's own words lead. An anchor from before the note travelled
      carries none, and :empty leaves no gap where it would have been. */
   .card .note {
-    white-space: pre-wrap; word-break: break-word; padding-right: 62px;
+    white-space: pre-wrap; word-break: break-word; padding-right: 82px;
     margin-bottom: 6px;
   }
   .card .note:empty { display: none; }
@@ -124,7 +124,7 @@ const STYLE = `
   }
   .card .trunc.shown { display: block; }
   .card .label {
-    font-weight: 600; word-break: break-word; padding-right: 62px;
+    font-weight: 600; word-break: break-word; padding-right: 82px;
   }
   .card .sub {
     color: var(--bai-review-text-dim); font-size: 13px; margin-top: 3px;
@@ -142,7 +142,7 @@ const STYLE = `
     color: var(--bai-review-text-dim); vertical-align: -3px;
   }
   .card .idcopy:hover { color: var(--bai-review-text); }
-  .card .close, .card .locate, .card .copyall {
+  .card .close, .card .locate, .card .copyall, .card .edit {
     position: absolute; top: 4px; cursor: pointer; border: 0; padding: 0;
     background: none; color: var(--bai-review-text-dim);
     display: flex; align-items: center; justify-content: center;
@@ -151,8 +151,12 @@ const STYLE = `
   .card .close { right: 4px; }
   .card .locate { right: 24px; }
   .card .copyall { right: 44px; }
+  .card .edit { right: 64px; }
+  .card .edit:disabled { cursor: default; opacity: 0.4; }
   .card .close:hover, .card .locate:hover,
-  .card .copyall:hover { color: var(--bai-review-text); }
+  .card .copyall:hover, .card .edit:not(:disabled):hover {
+    color: var(--bai-review-text);
+  }
 ${ICON_STYLE}
   /* The pick box's own style, so arriving on a link looks like the pick that
      made it: a thin stroke over a light fill, on our layer — never the app's. */
@@ -163,6 +167,13 @@ ${ICON_STYLE}
   }
   .markbox.found { display: block; }
 `;
+
+/** The card's ✏️ and the dock row's are one control in two places. */
+export const EDIT_LABEL = 'Edit this pin’s note';
+
+/** Why that control is dead on a link's pin — it re-keys nothing it owns. */
+export const LINK_NOT_EDITABLE =
+  'This pin came from a link — pick the element again to write your own note';
 
 export interface PinLayerOptions {
   root: ShadowRoot;
@@ -192,6 +203,8 @@ export interface PinLayerOptions {
    * persists that and hides the card — the marker and the box stay drawn.
    */
   onHide?: (target: DeepLinkPinTarget) => void;
+  /** The card's ✏️: the reviewer wants that pin's note back in the composer. */
+  onEdit?: (target: DeepLinkPinTarget) => void;
   /**
    * The ladder ran out with these still unresolved; they stay pending (R7.2).
    * Without it the layer keeps its own line.
@@ -215,6 +228,11 @@ export interface DeepLinkPinTarget {
    * has to say 3.
    */
   index?: number;
+  /**
+   * Its note can be rewritten. A link's pin carries no `at`/`pr`, so nothing
+   * could re-key it, and its ✏️ says so instead of doing nothing.
+   */
+  editable?: boolean;
 }
 
 interface ViewDeps {
@@ -224,6 +242,7 @@ interface ViewDeps {
   buildComment: PinLayerOptions['buildComment'];
   onLocated?: PinLayerOptions['onLocated'];
   onHide?: PinLayerOptions['onHide'];
+  onEdit?: PinLayerOptions['onEdit'];
   /** One layout read per frame, however many views ask for one. */
   placeSoon: () => void;
   /** A smooth scroll ends after `locate()` returns; follow it to its stop. */
@@ -323,10 +342,14 @@ function createPinView(deps: ViewDeps): PinView {
   commentCopy.append(icon('copy'));
   commentCopy.title = 'Copy this pin';
   commentCopy.setAttribute('aria-label', 'Copy this pin');
+  const editButton = document.createElement('button');
+  editButton.className = 'edit';
+  editButton.append(icon('pencil'));
   card.append(
     close,
     locateButton,
     commentCopy,
+    editButton,
     count,
     away,
     note,
@@ -642,6 +665,11 @@ function createPinView(deps: ViewDeps): PinView {
     write(id, undefined, `Copied ${id}`);
   });
 
+  /** The note back in the composer, for the pin this card belongs to. */
+  editButton.addEventListener('click', () => {
+    if (target) deps.onEdit?.(target);
+  });
+
   /**
    * The comment itself, in the shape the composer wrote it — so opening a pin
    * and forwarding it costs one click instead of retyping the note.
@@ -686,6 +714,10 @@ function createPinView(deps: ViewDeps): PinView {
       noteText.textContent = next.anchor.n ?? '';
       note.replaceChildren(...(next.anchor.n ? [noteText] : []));
       trunc.classList.toggle('shown', next.anchor.nt === 1 && !!next.anchor.n);
+      editButton.disabled = next.editable !== true;
+      const editLabel = editButton.disabled ? LINK_NOT_EDITABLE : EDIT_LABEL;
+      editButton.title = editLabel;
+      editButton.setAttribute('aria-label', editLabel);
       labelText.textContent = next.label;
       idText.textContent = next.id;
       const component = next.anchor.c;
@@ -852,6 +884,7 @@ export function createPinLayer(options: PinLayerOptions) {
     buildComment: options.buildComment,
     onLocated: options.onLocated,
     onHide: options.onHide,
+    onEdit: options.onEdit,
     placeSoon,
     followScroll,
   };
