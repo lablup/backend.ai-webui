@@ -45,18 +45,18 @@ cp e2e/envs/.env.playwright.sample e2e/envs/.env.playwright
 
 Variables it defines (all consumed in `e2e/utils/test-util.ts`, each with a fallback default):
 
-| Variable | Purpose |
-|---|---|
-| `E2E_WEBUI_ENDPOINT` | WebUI under test (default `http://127.0.0.1:9081`) → `webuiEndpoint` |
-| `E2E_WEBSERVER_ENDPOINT` | Backend.AI webserver (default `http://127.0.0.1:8090`) → `webServerEndpoint` |
-| `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` | superadmin account |
-| `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` | regular user |
-| `E2E_USER2_EMAIL` / `E2E_USER2_PASSWORD` | second regular user (sharing/invitation flows) |
-| `E2E_MONITOR_EMAIL` / `E2E_MONITOR_PASSWORD` | monitor account |
-| `E2E_DOMAIN_ADMIN_EMAIL` / `E2E_DOMAIN_ADMIN_PASSWORD` | domain admin |
-| `E2E_ADMIN_EMAIL_FOR_VISUAL` / `E2E_USER_EMAIL_FOR_VISUAL` (+ `_PASSWORD`) | visual-regression accounts; fall back to the normal admin/user pair |
-| `E2E_DEFAULT_IMAGE` | container image used by session-creation specs |
-| `SCREENSHOT_PATH` | output directory for screenshot specs |
+| Variable                                                                   | Purpose                                                                      |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `E2E_WEBUI_ENDPOINT`                                                       | WebUI under test (default `http://127.0.0.1:9081`) → `webuiEndpoint`         |
+| `E2E_WEBSERVER_ENDPOINT`                                                   | Backend.AI webserver (default `http://127.0.0.1:8090`) → `webServerEndpoint` |
+| `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD`                                   | superadmin account                                                           |
+| `E2E_USER_EMAIL` / `E2E_USER_PASSWORD`                                     | regular user                                                                 |
+| `E2E_USER2_EMAIL` / `E2E_USER2_PASSWORD`                                   | second regular user (sharing/invitation flows)                               |
+| `E2E_MONITOR_EMAIL` / `E2E_MONITOR_PASSWORD`                               | monitor account                                                              |
+| `E2E_DOMAIN_ADMIN_EMAIL` / `E2E_DOMAIN_ADMIN_PASSWORD`                     | domain admin                                                                 |
+| `E2E_ADMIN_EMAIL_FOR_VISUAL` / `E2E_USER_EMAIL_FOR_VISUAL` (+ `_PASSWORD`) | visual-regression accounts; fall back to the normal admin/user pair          |
+| `E2E_DEFAULT_IMAGE`                                                        | container image used by session-creation specs                               |
+| `SCREENSHOT_PATH`                                                          | output directory for screenshot specs                                        |
 
 `webuiEndpoint` also drives `isLocalEnvironment`; config-modification tests only run reliably
 against `127.0.0.1` / `localhost` because remote deployments may cache `config.toml` before
@@ -115,6 +115,14 @@ Naming (full rules in `e2e/E2E-TEST-NAMING-GUIDELINES.md`):
   `'user can create an interactive session with a mounted folder'`.
 - Tag every describe block: priority (`@smoke` / `@critical` / `@regression`), feature
   (`@vfolder`, `@session`, …) and type (`@functional`, `@visual`, `@integration`).
+- `@smoke` carries a role suffix for the post-install smoke run
+  (`e2e/playwright.smoke.config.ts`, `pnpm e2e:smoke`): a test with **only** `@smoke` must perform
+  no login, `@smoke @smoke-admin` needs `loginAsAdmin`, `@smoke @smoke-user` needs
+  `loginAsUser`. The role tag must match the login helper the test actually calls —
+  a smoke run has one role's credentials only. A describe that mixes both helpers
+  cannot carry a role tag; tag the individual tests instead. `--grep @smoke --list`
+  shows the union of both roles; the smoke config does the partition. Full rules:
+  `e2e/E2E-TEST-NAMING-GUIDELINES.md` → "Smoke tags".
 - POM classes go in `e2e/utils/classes/{feature}/`, extending `BasePage` / `BaseModal`.
 
 ---
@@ -125,12 +133,12 @@ Never hand-roll the login form. `e2e/utils/test-util.ts` exports role-specific h
 taking `(page, request)`:
 
 ```typescript
-import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
+import { loginAsAdmin, loginAsUser, navigateTo } from "../utils/test-util";
 
 test.beforeEach(async ({ page, request }) => {
-  await loginAsAdmin(page, request);   // or loginAsUser / loginAsUser2 /
-  await navigateTo(page, 'data');      // loginAsDomainAdmin / loginAsMonitor /
-});                                    // loginAsCreatedAccount / loginAsVisualRegression*
+  await loginAsAdmin(page, request); // or loginAsUser / loginAsUser2 /
+  await navigateTo(page, "data"); // loginAsDomainAdmin / loginAsMonitor /
+}); // loginAsCreatedAccount / loginAsVisualRegression*
 ```
 
 What `login()` actually does, so you can reason about failures:
@@ -163,19 +171,19 @@ point for generated flows; do not turn it into a real test.
    `<tbody>`, selectors are `combobox` + `option`.
 
    ```typescript
-   page.getByRole('button', { name: 'Create Folder' });
-   page.getByRole('dialog', { name: 'Create a new storage folder' });
-   page.getByRole('row', { name: `VFolder Identicon ${folderName}` });
-   page.getByRole('columnheader', { name: 'Status' });
-   page.getByRole('tab', { name: 'Trash' });
-   page.getByRole('option', { name: 'Python 3.11', exact: true });
+   page.getByRole("button", { name: "Create Folder" });
+   page.getByRole("dialog", { name: "Create a new storage folder" });
+   page.getByRole("row", { name: `VFolder Identicon ${folderName}` });
+   page.getByRole("columnheader", { name: "Status" });
+   page.getByRole("tab", { name: "Trash" });
+   page.getByRole("option", { name: "Python 3.11", exact: true });
    ```
 
 2. **Label / accessible-name lookups** for form controls and icon buttons.
 
    ```typescript
-   page.getByLabel('Email or Username');
-   folderRow.getByRole('button', { name: 'Move to trash bin' }); // action title, not icon name
+   page.getByLabel("Email or Username");
+   folderRow.getByRole("button", { name: "Move to trash bin" }); // action title, not icon name
    ```
 
    Icon-only buttons take their accessible name from the action's title or an explicit
@@ -191,14 +199,14 @@ point for generated flows; do not turn it into a real test.
 4. **`data-bai-*` structural hooks** — the form engine's presentational shell exposes a stable
    attribute at every level (`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`):
 
-   | Attribute | Meaning |
-   |---|---|
-   | `[data-bai-form-item]` | the form item root |
-   | `[data-bai-form-item-label]` | the `<label>` |
-   | `[data-bai-form-item-required]` | present when the item is required |
-   | `[data-bai-form-item-control]` / `[data-bai-form-item-control-input]` | the control column / input wrapper |
-   | `[data-bai-form-item-explain]`, `…-explain-error`, `…-explain-warning` | validation messages |
-   | `[data-bai-form-item-extra]` | the `extra` slot |
+   | Attribute                                                              | Meaning                            |
+   | ---------------------------------------------------------------------- | ---------------------------------- |
+   | `[data-bai-form-item]`                                                 | the form item root                 |
+   | `[data-bai-form-item-label]`                                           | the `<label>`                      |
+   | `[data-bai-form-item-required]`                                        | present when the item is required  |
+   | `[data-bai-form-item-control]` / `[data-bai-form-item-control-input]`  | the control column / input wrapper |
+   | `[data-bai-form-item-explain]`, `…-explain-error`, `…-explain-warning` | validation messages                |
+   | `[data-bai-form-item-extra]`                                           | the `extra` slot                   |
 
    The notification stack exposes `[data-testid="bai-notification-stack"]` with one
    `[data-notification-key]` per notice.
@@ -211,24 +219,24 @@ point for generated flows; do not turn it into a real test.
 
 ### What replaced what
 
-| Dead locator | Use instead |
-|---|---|
-| `.ant-modal`, `.ant-modal-content`, `.ant-modal-confirm` | `page.getByRole('dialog')`, narrowed with `{ name }` or `.filter({ hasText })` |
-| `.ant-modal-title`, `.ant-modal-confirm-title` | `dialog.getByRole('heading')` |
-| `.ant-drawer`, `.ant-drawer-content-wrapper` | `page.getByRole('dialog')` (drawers are dialogs too) |
-| `.ant-table`, `.ant-table-content`, `.ant-table-tbody` | `page.getByRole('table')`, or scope through the surrounding card/testid |
-| `.ant-table-row`, `tr:not(.ant-table-measure-row)` | `page.getByRole('row', { name })`, or `tbody tr` when counting |
-| `.ant-table-cell` | `row.getByRole('cell')` |
-| `.ant-table-thead th` | `page.getByRole('columnheader', { name })` |
-| `.ant-select`, `.ant-select-dropdown` | `page.getByRole('combobox')` → the listbox opens as `option` roles |
-| `.ant-select-item-option` | `page.getByRole('option', { name, exact: true })` |
-| `.ant-form-item-row`, `.ant-form-item-control` | `getFormItemControlByLabel(page, 'Label')` / `[data-bai-form-item]` |
-| `.ant-tabs-tab-active` | `page.getByRole('tab', { selected: true })` or assert `aria-selected` |
-| `.ant-popover`, `.ant-popconfirm` | the confirm button by name: `page.getByRole('button', { name: 'Confirm' })` |
+| Dead locator                                              | Use instead                                                                                    |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `.ant-modal`, `.ant-modal-content`, `.ant-modal-confirm`  | `page.getByRole('dialog')`, narrowed with `{ name }` or `.filter({ hasText })`                 |
+| `.ant-modal-title`, `.ant-modal-confirm-title`            | `dialog.getByRole('heading')`                                                                  |
+| `.ant-drawer`, `.ant-drawer-content-wrapper`              | `page.getByRole('dialog')` (drawers are dialogs too)                                           |
+| `.ant-table`, `.ant-table-content`, `.ant-table-tbody`    | `page.getByRole('table')`, or scope through the surrounding card/testid                        |
+| `.ant-table-row`, `tr:not(.ant-table-measure-row)`        | `page.getByRole('row', { name })`, or `tbody tr` when counting                                 |
+| `.ant-table-cell`                                         | `row.getByRole('cell')`                                                                        |
+| `.ant-table-thead th`                                     | `page.getByRole('columnheader', { name })`                                                     |
+| `.ant-select`, `.ant-select-dropdown`                     | `page.getByRole('combobox')` → the listbox opens as `option` roles                             |
+| `.ant-select-item-option`                                 | `page.getByRole('option', { name, exact: true })`                                              |
+| `.ant-form-item-row`, `.ant-form-item-control`            | `getFormItemControlByLabel(page, 'Label')` / `[data-bai-form-item]`                            |
+| `.ant-tabs-tab-active`                                    | `page.getByRole('tab', { selected: true })` or assert `aria-selected`                          |
+| `.ant-popover`, `.ant-popconfirm`                         | the confirm button by name: `page.getByRole('button', { name: 'Confirm' })`                    |
 | `.ant-message-notice-wrapper`, `.ant-notification-notice` | `[data-testid="bai-notification-stack"] [data-notification-key]`, or `page.getByRole('alert')` |
-| `.anticon-*`, `svg[data-icon="…"]` | the button's accessible name (`getByRole('button', { name })`) |
-| `.ant-card`, `.ant-card-head-title` | `page.getByRole('heading', { name })` plus a scoping testid |
-| `.ant-list-item` | `page.getByRole('listitem')`, filtered by text |
+| `.anticon-*`, `svg[data-icon="…"]`                        | the button's accessible name (`getByRole('button', { name })`)                                 |
+| `.ant-card`, `.ant-card-head-title`                       | `page.getByRole('heading', { name })` plus a scoping testid                                    |
+| `.ant-list-item`                                          | `page.getByRole('listitem')`, filtered by text                                                 |
 
 ---
 
@@ -237,26 +245,30 @@ point for generated flows; do not turn it into a real test.
 ### Dialogs (modals and drawers)
 
 ```typescript
-const modal = page.getByRole('dialog').filter({ hasText: 'Create a new storage folder' });
+const modal = page
+  .getByRole("dialog")
+  .filter({ hasText: "Create a new storage folder" });
 await expect(modal).toBeVisible();
 // Scope by form item when the control's own accessible name is not wired to the label.
 await modal
-  .locator('[data-bai-form-item]')
-  .filter({ has: page.locator('[data-bai-form-item-label]', { hasText: 'Folder Name' }) })
-  .getByRole('textbox')
-  .fill('e2e-my-folder');
-await modal.getByRole('button', { name: 'Create' }).click();
+  .locator("[data-bai-form-item]")
+  .filter({
+    has: page.locator("[data-bai-form-item-label]", { hasText: "Folder Name" }),
+  })
+  .getByRole("textbox")
+  .fill("e2e-my-folder");
+await modal.getByRole("button", { name: "Create" }).click();
 await expect(modal).toBeHidden({ timeout: 30000 });
 ```
 
 ### Form items
 
 ```typescript
-import { getFormItemControlByLabel } from '../utils/test-util-antd';
+import { getFormItemControlByLabel } from "../utils/test-util-antd";
 
-const location = getFormItemControlByLabel(page, 'Location');
-await location.getByRole('combobox').click();
-await page.getByRole('option', { name: 'local:volume1', exact: true }).click();
+const location = getFormItemControlByLabel(page, "Location");
+await location.getByRole("combobox").click();
+await page.getByRole("option", { name: "local:volume1", exact: true }).click();
 ```
 
 `getFormItemControlByLabel` is `[data-bai-form-item]` filtered by its
@@ -268,24 +280,32 @@ fallback remains in it.
 ```typescript
 // Prefer the accessible name when the control exposes one; otherwise scope through the
 // form item (or a testid) and take the single combobox inside it.
-const selector = getFormItemControlByLabel(page, 'Environments / Version').getByRole('combobox');
+const selector = getFormItemControlByLabel(
+  page,
+  "Environments / Version",
+).getByRole("combobox");
 await selector.click();
-await selector.fill('python');                       // typeahead filtering
-await page.getByRole('option', { name: /python/ }).first().click();
+await selector.fill("python"); // typeahead filtering
+await page
+  .getByRole("option", { name: /python/ })
+  .first()
+  .click();
 ```
 
 ### Tables
 
 ```typescript
-const row = page.getByRole('row', { name: `VFolder Identicon ${folderName}` });
+const row = page.getByRole("row", { name: `VFolder Identicon ${folderName}` });
 await expect(row).toBeVisible();
-await row.getByRole('button', { name: 'Move to trash bin' }).click();
+await row.getByRole("button", { name: "Move to trash bin" }).click();
 
 // Sorting / column lookup
-await page.getByRole('columnheader', { name: 'Status' }).click();
+await page.getByRole("columnheader", { name: "Status" }).click();
 
 // Emptiness / counting
-await expect(page.locator('tbody tr').filter({ hasText: folderName })).toHaveCount(0);
+await expect(
+  page.locator("tbody tr").filter({ hasText: folderName }),
+).toHaveCount(0);
 ```
 
 ### Notifications and toasts
@@ -294,8 +314,10 @@ await expect(page.locator('tbody tr').filter({ hasText: folderName })).toHaveCou
 const notice = page
   .locator('[data-testid="bai-notification-stack"] [data-notification-key]')
   .first();
-await expect(notice.getByTestId('notification-title')).toContainText('Folder created');
-await notice.getByRole('button', { name: 'Dismiss' }).click();  // Astryx Banner's dismiss
+await expect(notice.getByTestId("notification-title")).toContainText(
+  "Folder created",
+);
+await notice.getByRole("button", { name: "Dismiss" }).click(); // Astryx Banner's dismiss
 ```
 
 Dismiss stray notices before clicking anything they overlap — the stack intercepts pointer
@@ -323,7 +345,9 @@ raising a timeout to 30 s.
 ### Config and theme interception
 
 ```typescript
-await modifyConfigToml(page, request, { environments: { showNonInstalledImages: true } });
+await modifyConfigToml(page, request, {
+  environments: { showNonInstalledImages: true },
+});
 await page.reload();
 ```
 
@@ -348,7 +372,7 @@ are only reliable when `isLocalEnvironment` is true.
    still call it — remove it when you touch them.
 4. **Visibility checks with fallback branches.** `if (await x.isVisible()) … else <other path>`
    and `try { click } catch { continue }` hide real regressions. Let the test fail fast. (The
-   deliberate exceptions are the best-effort cleanup sweeps, which are *supposed* to skip
+   deliberate exceptions are the best-effort cleanup sweeps, which are _supposed_ to skip
    unavailable resources.)
 5. **Hardcoded URLs.** Use `navigateTo(page, 'data')` or a POM's `goto()`.
 6. **Positional selectors** — `div:nth-child(4) > …`, `.nth(1)` on an action button. Row action
@@ -392,14 +416,14 @@ are only reliable when `isLocalEnvironment` is true.
 
 `e2e/utils/test-util-antd.ts` — the filename is historical; treat it as "shared DOM helpers".
 
-| Helper | State |
-|---|---|
-| `getFormItemControlByLabel(page, label)` | current — `[data-bai-form-item]` based |
-| `getNotificationMessageBox(page)` / `getNotificationDescriptionBox(page)` | current — testid based |
-| `getMenuItem(page, name)` | current — `getByRole('link', { exact: true })` |
-| `checkActiveTab(tabs, name)` | **stale** (`.ant-tabs-tab-active`) — use `getByRole('tab', { selected: true })` |
-| `getTableHeaders(locator)` / `findColumnIndex(table, title)` | **stale** (`.ant-table-thead th`) — use `getByRole('columnheader')` |
-| `getCardItemByCardTitle(page, title)` | **stale** (`.ant-card`) — scope by heading or testid |
+| Helper                                                                    | State                                                                           |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `getFormItemControlByLabel(page, label)`                                  | current — `[data-bai-form-item]` based                                          |
+| `getNotificationMessageBox(page)` / `getNotificationDescriptionBox(page)` | current — testid based                                                          |
+| `getMenuItem(page, name)`                                                 | current — `getByRole('link', { exact: true })`                                  |
+| `checkActiveTab(tabs, name)`                                              | **stale** (`.ant-tabs-tab-active`) — use `getByRole('tab', { selected: true })` |
+| `getTableHeaders(locator)` / `findColumnIndex(table, title)`              | **stale** (`.ant-table-thead th`) — use `getByRole('columnheader')`             |
+| `getCardItemByCardTitle(page, title)`                                     | **stale** (`.ant-card`) — scope by heading or testid                            |
 
 Fix a stale helper (and its call sites) when your change depends on it; do not build new tests
 on one.
@@ -417,8 +441,8 @@ pnpm exec playwright show-trace <trace>   # traces are captured on first retry
 ```
 
 ```typescript
-page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
-page.on('pageerror', (error) => console.log('PAGE ERROR:', error));
+page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
+page.on("pageerror", (error) => console.log("PAGE ERROR:", error));
 ```
 
 When a locator times out, check whether it is a dead `.ant-*` selector **before** suspecting a
