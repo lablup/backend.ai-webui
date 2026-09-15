@@ -141,6 +141,15 @@ every problem at once; the caps mirror the overlay's `stop-guard.ts`.
   replaced.
 - **Language** — the requester's chat language, and UI labels quoted
   **verbatim** in the language the UI shows them in.
+- **Write for the person looking at the screen, not for the code.** Name
+  what they see — the red line, the dotted line, the button's label, the
+  panel's title — and what it does now versus before. No function or
+  variable names, no file names, no "series", "scale", "convert", "÷10",
+  no internal terms; the `code` links carry that. A reader who has never
+  opened the source must be able to check the stop from `ck` alone. Say
+  "the dotted average line now sits at the real average; before it was ten
+  times too high", not "the reference line now goes through
+  `convertMetricUnit` like the plotted series".
 
 ## 6. Run it
 
