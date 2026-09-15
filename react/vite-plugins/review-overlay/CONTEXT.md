@@ -24,8 +24,8 @@ never merges the two.
 _Avoid_: tour, review set, session
 
 **Stop**:
-One pin in a walkthrough: what changed, what to check, and its code
-references.
+One pin in a walkthrough: what changed and what to check, with an optional
+code reference.
 _Avoid_: step, waypoint, checkpoint
 
 **Mark**:

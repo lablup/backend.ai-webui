@@ -118,8 +118,12 @@ needed.
 ### 2. Strict resolution and the volatile-query denylist
 
 `resolve.ts` accepts a text-scan candidate for a Stop only when the
-candidate's landmark `data-testid` matches the stop's; a stop carrying
-`dlg: 1` accepts a candidate only while it sits inside `DIALOG_SELECTOR`
+candidate's landmark `data-testid` matches the stop's. `tid` is an optional
+base-anchor field (ADR 0002), not a Stop-specific one; a stop with no `tid`
+at all therefore has no landmark to check against, so it falls back to an
+unrestricted, document-wide text scan instead of failing closed. A stop
+carrying `dlg: 1` accepts a candidate only while it sits inside
+`DIALOG_SELECTOR`
 (`dialog, [role="dialog"], [role="alertdialog"]` — Astryx's own native
 `<dialog>` and `BAIDialog`'s `alertdialog` both count). This followed a
 measured false positive: a stop for a modal "located" onto the Data page's
@@ -157,11 +161,14 @@ pin set's 30-pin cap (ADR 0002).
 ### 4. The code-link format and the sha-drift warning
 
 A stop's code link needs no commit SHA to resolve: it is rendered as
-`https://github.com/lablup/backend.ai-webui/pull/<pr>/files#diff-<sha256(path)>R<line>[-R<to>]`,
-which the PR's Files tab answers regardless of the current head. Line drift
-after a rebase is accepted; the stop's own `sha` field is what lets the
-overlay warn when the server serves a different commit than the one the
-stop was made for.
+`<repo>/pull/<pr>/files#diff-<sha256(path)>R<line>[-R<to>]`, which the PR's
+Files tab answers regardless of the current head. `<repo>` is
+`ReviewServerState.repo` (`/__review/state`), turned into a GitHub URL by
+`repoUrl()`; it falls back to `https://github.com/lablup/backend.ai-webui`
+only when the state carries no `repo` at all, never as a hardcoded
+constant. Line drift after a rebase is accepted; the stop's own `sha` field
+is what lets the overlay warn when the server serves a different commit
+than the one the stop was made for.
 
 ### 5. The `bai-walkthrough` marker, kept apart from `bai-review`
 
@@ -315,8 +322,10 @@ silently.
 - **Painting marks by injecting global CSS into the reviewed document.** The
   shortest path, and what the earliest prototype did. Rejected: it leaks the
   overlay's styling onto the page under review, and leaves no way to prove
-  every trace was removed on exit — a Shadow-root tracking box never touches
-  the app's own DOM or stylesheets.
+  every trace was removed on exit — a Shadow-root tracking box paints
+  nothing onto the app's own elements or stylesheets. Only the semantic
+  attributes decision 9 names touch the app's DOM, and those come off on
+  exit.
 - **A comment-only export format** (the prototype's plain
   `[walkthrough] …` text block). More readable pasted on its own. Rejected:
   neither `pr-review-thread-resolver`, the `review-pins` CLI, nor the
@@ -359,10 +368,14 @@ silently.
 
 ## Sources
 
-- FR-3941 (wayfinder map) and its resolved decisions FR-3942 (payload and
-  budget), FR-3943 (headless minting and strict resolution), FR-3944
-  (guided mode), FR-3945 (the walkthrough skill), FR-3946 (the PR comment).
-  Decided 2026-09-15.
+- [FR-3941](https://lablup.atlassian.net/browse/FR-3941) (wayfinder map) and
+  its resolved decisions [FR-3942](https://lablup.atlassian.net/browse/FR-3942)
+  (payload and budget),
+  [FR-3943](https://lablup.atlassian.net/browse/FR-3943) (headless minting
+  and strict resolution), [FR-3944](https://lablup.atlassian.net/browse/FR-3944)
+  (guided mode), [FR-3945](https://lablup.atlassian.net/browse/FR-3945) (the
+  walkthrough skill), [FR-3946](https://lablup.atlassian.net/browse/FR-3946)
+  (the PR comment). Decided 2026-09-15.
 - FR-3947 — flags the R3.1 revisit to the previous driver.
 - FR-3950 — the guided-mode implementation (marks, navigator, popover,
   storage split, host-router navigation, comment export, `/__review/state`),
