@@ -151,9 +151,18 @@ export async function login(
     exact: true,
   });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
+    // Older login UIs hide the input behind an 'Advanced' toggle.
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) {
+      await advanced.click();
+    }
   }
-  await endpointInput.fill(endpoint);
+  // A server whose config.toml pre-configures `apiEndpoint` — the typical
+  // customer install the smoke CLI targets (FR-2871) — renders no endpoint
+  // input at all. Nothing to fill; proceed straight to the submit.
+  if (await endpointInput.isVisible().catch(() => false)) {
+    await endpointInput.fill(endpoint);
+  }
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login
   // information mismatch"). Retry the submit a couple of times, with a fixed

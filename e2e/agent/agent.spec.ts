@@ -21,7 +21,9 @@ test.beforeEach(async ({ page, request }) => {
 
 test.describe(
   'Agent list',
-  { tag: ['@regression', '@agent', '@functional'] },
+  {
+    tag: ['@regression', '@agent', '@functional', '@smoke', '@smoke-admin'],
+  },
   () => {
     test('should have at least one connected agent', async ({ page }) => {
       // The active tab is marked with `aria-current="true"`, not an antd
