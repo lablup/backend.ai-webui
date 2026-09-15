@@ -21,6 +21,11 @@ stops= server= -->` marker and no `<!-- bai-review -->` markers, so
   (`packages/backend.ai-docs-toolkit/templates/assets/pr-preview.{js,css}`)
   as design. Sharing its implementation with the Web UI overlay is out of
   scope.
+- A link opens guided mode only when **every** part is a stop; the
+  walkthrough it opens is a separate, read-only set that never merges into
+  the reviewer's draft set. Marks are drawn by a Shadow-root tracking box,
+  not by styling the reviewed element, and cross-page `›` prefers the host
+  app's own router over a full reload.
 - The trigger is a webui-owned skill (`.claude/skills/walkthrough/`), run by
   the implementing session itself — not a change to the shared `dw`/`fw`
   plugins, and not a notification. This narrows spec R3.1's "no ✅ What to
@@ -162,7 +167,75 @@ overlay is Shadow-DOM modules bound to `#bai=v3`. Converging the two
 implementations into one module is a later effort, out of this decision's
 scope.
 
-### 6. Trigger: a webui-owned skill, not dw/fw plugins
+### 6. A link opens guided mode only when every part is a stop
+
+`applyFragment` (`main.ts`) decodes each part of a `#bai=v3` link and checks
+`isStop` on every one of them; guided mode opens only when the part count
+and the stop count match. A single part that is not a stop sends the whole
+link through the existing merge-into-draft-set path unchanged — a
+walkthrough is never a mode a caller chooses with a flag, it is what a link
+becomes when every anchor in it carries `ck`. A stop that loses `ck` (a hand
+edit, or a decode that drops an ill-typed field) reopens its link as an
+ordinary pin set rather than a broken walkthrough.
+
+### 7. The walkthrough set stays apart from the draft set
+
+A walkthrough lives in its own `sessionStorage` key, distinct from the
+reviewer's draft set, and is never merged into it and never included in the
+dock's "Copy all". Its progress — which stops are viewed, and any typed
+comments — lives separately, in `localStorage` keyed by the walkthrough's
+`sha` (or a fixed fallback key when no stop carries one), so re-minting a
+walkthrough for a new push starts viewed state over rather than inheriting
+a previous run's. A page reload keeps a walkthrough open: the stored set is
+read back before an incoming hash is applied, and a hash that itself carries
+a walkthrough replaces the stored one. Every storage read and write is
+wrapped so a tab with storage disabled can still walk a walkthrough, only
+without persistence across reloads. Exiting is the ☰ panel's `Exit` action
+only — `Escape` closes just the popover and the panel — and clears the
+session-scoped set and every mark; the `localStorage` progress survives, so
+reopening the same link restores what was already viewed.
+
+### 8. Marks are a tracking overlay, not element styling
+
+Guided mode draws each mark as its own box inside the overlay's Shadow
+root, positioned to track the target element's rect, beneath the reviewer's
+own pin layer so a reviewer's pins stay visible while a walkthrough is open.
+The box takes no pointer events; the mark's only clickable part is its
+ordinal badge, never the underlying element. The element itself gains only
+`data-bai-change`, `data-bai-type`, and — only when it does not already
+carry them — `role` and `aria-label`; which of those were added is recorded
+so that exiting removes exactly what guided mode added and leaves whatever
+the app itself supplied untouched.
+
+### 9. Cross-page navigation prefers the host's own router
+
+The host publishes a `navigate` function on the same `window.__BAI_REVIEW__`
+object it already uses to publish the route label
+(`DevReviewRouteLabel.tsx`, via `useWebUINavigate`). Guided mode's `›` calls
+that function first; only when it is absent or throws does guided mode fall
+back to a full-page `location.assign` on the stop's own set link — which
+still reopens guided mode on arrival, because that link carries the whole
+walkthrough.
+
+### 10. `/__review/state` reports the serving head
+
+The page banner can only warn that a walkthrough was made for a different
+commit if it knows which commit the server is currently serving.
+`/__review/state` gains an optional `head` field — the checkout's
+`git rev-parse HEAD`, or `null` outside a checkout — and the banner turns
+into a warning only when `head` is present, the walkthrough carries a real
+`sha`, and no stop's `sha` matches `head`.
+
+### 11. Comment export reuses the existing block format, with no set link
+
+`✎ Copy N comments` emits one existing-format reviewer-pin block per
+commented stop, each carrying that stop's own anchor and a
+`re: stop k · <id>` trailer, and **no trailing set link** — the export is N
+separate remarks, not one set, so `pr-review-thread-resolver`, the CLI and
+the Claude-side skill read each comment as its own finding with no new
+parsing.
+
+### 12. Trigger: a webui-owned skill, not dw/fw plugins
 
 A Walkthrough is minted by `.claude/skills/walkthrough/`, a skill owned by
 this repository, invoked by the implementing session as the last step of
@@ -211,6 +284,27 @@ silently.
   trigger is repository-owned rather than the shared orchestrator. Rejected:
   R3.9 stays dropped, and a Walkthrough's only delivery is the PR comment
   and the final chat message.
+- **Merging stops into the draft set and drawing them as ordinary pin
+  cards.** Needs no new set, storage key or mode switch. Rejected: opening
+  someone else's walkthrough would silently grow the reviewer's own draft
+  set, and "Copy all" would ship it into a PR comment the reviewer never
+  wrote. A walkthrough has to be read-only by construction, not by
+  convention.
+- **Painting marks by injecting global CSS into the reviewed document.** The
+  shortest path, and what the earliest prototype did. Rejected: it leaks the
+  overlay's styling onto the page under review, and leaves no way to prove
+  every trace was removed on exit — a Shadow-root tracking box never touches
+  the app's own DOM or stylesheets.
+- **A comment-only export format** (the prototype's plain
+  `[walkthrough] …` text block). More readable pasted on its own. Rejected:
+  neither `pr-review-thread-resolver`, the `review-pins` CLI, nor the
+  Claude-side skill can read it, while all three already read the existing
+  block format.
+- **Always navigating cross-page with `location.assign`.** Needs no
+  cooperation from the host app. Rejected: a full reload on every `›` drops
+  the resolution ladder a stop hidden behind a modal depends on, and
+  re-mounts the whole app on every step; preferring the host's own router
+  avoids both.
 
 ## Consequences
 
@@ -229,6 +323,17 @@ silently.
   a resolver-side skip list.
 - Guided mode's visual language now has to be kept in step with the docs PR
   preview by hand, since nothing shares code between them.
+- A reviewer keeps pinning and copying from the dock as usual while a
+  walkthrough is open; the two sets never interact.
+- The authoring skill needs no explicit mode flag: giving every stop a `ck`
+  is what makes a link open as a walkthrough, and one stop losing it reopens
+  the whole link as a pin set.
+- Guided mode runs a mutation observer alongside its resolution ladder,
+  because a stop behind a modal or a launcher step never changes the route
+  the way the ladder alone expects.
+- An element that already carries `role`/`aria-label` keeps only its own
+  semantics for a screen reader; a mark's ordinal position is not read
+  aloud on such an element.
 
 ## Sources
 
@@ -237,6 +342,12 @@ silently.
   (guided mode), FR-3945 (the walkthrough skill), FR-3946 (the PR comment).
   Decided 2026-09-15.
 - FR-3947 — flags the R3.1 revisit to the previous driver.
+- FR-3950 — the guided-mode implementation (marks, navigator, popover,
+  storage split, host-router navigation, comment export, `/__review/state`),
+  decisions 6–11 above.
+- Prototype: branch `proto/FR-3944-guided-mode`,
+  `walkthrough-guided-mode.html` variant D. Visual tokens ported from
+  `packages/backend.ai-docs-toolkit/templates/assets/pr-preview.css`.
 - Related: ADR 0002 (the v3 anchor and pin-set grammar this decision
   extends); spec `pr-devserver-review.md` Revision 3 (R3.1, R3.8, R3.9) and
   Revision 4, `lablup/frontend-board`.

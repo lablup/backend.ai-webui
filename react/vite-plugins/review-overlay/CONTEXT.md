@@ -31,13 +31,16 @@ look-alike.
 _Avoid_: step, waypoint, checkpoint
 
 **Mark**:
-The tinted, outlined element guided mode draws for a located stop, in place
-of the reviewer pin glyph. Its badge keeps the walkthrough's own order.
+The tint, dashed outline and ordinal badge guided mode overlays on a
+located stop's element, in place of the reviewer pin glyph, plus its
+`✓ viewed` / `✎ comment` badges. The badge is the mark's own click target
+and keeps the walkthrough's own order.
 _Avoid_: highlight, annotation, marker (the reviewer-pin glyph)
 
 **Navigator**:
-The bottom-right pill that walks a walkthrough's stops — page and stop
-counts, viewed count, prev/next, and the change list.
+The pill fixed at the bottom-right of the screen that walks a walkthrough's
+stops — its size and current position, prev/next, comment export, and the
+☰ panel that opens the per-page change list.
 _Avoid_: toolbar, control bar, progress bar
 
 **Pin set**:
