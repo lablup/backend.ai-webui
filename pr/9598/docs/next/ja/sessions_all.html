@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="コンピュートセッション" />
   <meta name="twitter:description" content="本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッション","inLanguage":"ja","description":"本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。","dateModified":"2026-09-09T03:12:33.000Z","url":"https://webui.docs.backend.ai/next/ja/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"コンピュートセッション","inLanguage":"ja","description":"本ドキュメントでは、「セッション」ページでコンテナベースのコンピュートセッションを照会・作成し、各種Webアプリケーションを活用する方法について説明します。","dateModified":"2026-09-14T02:30:06.000Z","url":"https://webui.docs.backend.ai/next/ja/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (77169da)">v26.9.0-alpha.0 (77169da)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (2e1cd15)">v26.9.0-alpha.0 (2e1cd15)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -559,243 +559,277 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <p data-bai-block="115">セッション詳細パネルのセッションステータスタグの横に時計アイコンボタンが表示されます。このアイコンをクリックすると、セッションのスケジュール履歴モーダルが開き、そのセッションに対してシステムが行ったすべてのスケジューリング決定の詳細ログを確認できます。詳細については、<a href="#session-scheduling-history">セッションのスケジュール履歴</a>セクションを参照してください。</p>
 <p><figure data-bai-block="116" class="doc-figure"><img src="./images/session_scheduling_history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="752" height="676" /><figcaption>図 10.28</figcaption></figure>
 </p>
-<p><a id="session-scheduling-history"></a></p>
-<h3 data-bai-block="117" id="sessions_all-セッションのスケジュール履歴">セッションのスケジュール履歴<a class="hash-link" href="#sessions_all-セッションのスケジュール履歴" aria-label="Direct link to セッションのスケジュール履歴">#</a></h3>
-<p data-bai-block="118">セッションのスケジュール履歴モーダルは、コンピュートセッションの内部スケジューリングライフサイクルを透明に表示します。セッションが経たすべてのスケジューリングフェーズの詳細な記録を表示し、ステータス遷移、結果、リトライ回数、発生したエラーなどの情報を含みます。この機能は、セッションが遅延している理由、<code>PENDING</code>状態に留まっている理由、または開始に失敗した理由を理解するのに特に役立ちます。</p>
-<p><figure data-bai-block="119" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>図 10.29</figcaption></figure>
-</p>
-<h4 data-bai-block="120" id="sessions_all-フィルターバー">フィルターバー<a class="hash-link" href="#sessions_all-フィルターバー" aria-label="Direct link to フィルターバー">#</a></h4>
-<p data-bai-block="121">モーダル上部のフィルターバーを使用して、スケジュール履歴レコードを絞り込むことができます。以下のプロパティでフィルタリングできます：</p>
+<p><a id="preemption-statuses"></a></p>
+<h3 data-bai-block="117" id="sessions_all-プリエンプション関連のステータス">プリエンプション関連のステータス<a class="hash-link" href="#sessions_all-プリエンプション関連のステータス" aria-label="Direct link to プリエンプション関連のステータス">#</a></h3>
+<p data-bai-block="118">セッションは<code>RESERVED</code>、<code>PREEMPTED</code>、<code>RESCHEDULING</code>のステータスでも表示されることがあります。これらは、スケジューラーが優先度の高いジョブのためにリソースを解放する必要があるときに使用されます。</p>
 <ul>
-<li data-bai-block="122"><strong>ID</strong>: 履歴レコードID（UUID、完全一致）でフィルタリング</li>
-<li data-bai-block="123"><strong>フェーズ</strong>: スケジューリングフェーズ名でフィルタリング</li>
-<li data-bai-block="124"><strong>結果</strong>: 結果タイプ（SUCCESS、FAILURE、STALE、NEED_RETRY、EXPIRED、GIVE_UP、SKIPPED）でフィルタリング</li>
-<li data-bai-block="125"><strong>遷移元ステータス</strong>: スケジューリングステップ前のセッションステータスでフィルタリング</li>
-<li data-bai-block="126"><strong>遷移先ステータス</strong>: スケジューリングステップ後のセッションステータスでフィルタリング</li>
-<li data-bai-block="127"><strong>エラーコード</strong>: エラーコードでフィルタリング</li>
-<li data-bai-block="128"><strong>メッセージ</strong>: メッセージ内容でフィルタリング</li>
-<li data-bai-block="129"><strong>作成日時</strong>: レコードの作成日時でフィルタリング</li>
-<li data-bai-block="130"><strong>更新日時</strong>: レコードの更新日時でフィルタリング</li>
+<li data-bai-block="119"><code>RESERVED</code>: リソースの予約を保持し、必要なリソースが解放されるのを待っているセッションです。</li>
+<li data-bai-block="120"><code>PREEMPTED</code>: 優先度の高いジョブがリソースを使用できるように、プリエンプションの対象として選択されたセッションです。</li>
+<li data-bai-block="121"><code>RESCHEDULING</code>: プリエンプションによりキューに戻されたセッションで、自動的に再スケジュールされます。</li>
 </ul>
-<p data-bai-block="131">フィルターバーの横にあるリフレッシュボタンを使用して、スケジュール履歴データを再読み込みできます。</p>
-<h4 data-bai-block="132" id="sessions_all-履歴テーブル">履歴テーブル<a class="hash-link" href="#sessions_all-履歴テーブル" aria-label="Direct link to 履歴テーブル">#</a></h4>
-<p data-bai-block="133">スケジュール履歴テーブルには、以下のカラムが表示されます：</p>
-<ul>
-<li data-bai-block="134"><strong>更新日時</strong>: このレコードが最後に更新された日時</li>
-<li data-bai-block="135"><strong>作成日時</strong>: このレコードが作成された日時</li>
-<li data-bai-block="136"><strong>フェーズ</strong>: スケジューリングフェーズの名前</li>
-<li data-bai-block="137"><strong>結果</strong>: このスケジューリングステップの結果で、色分けされたバッジで表示されます</li>
-<li data-bai-block="138"><strong>遷移元ステータス</strong>: このスケジューリングステップ前のセッションステータス</li>
-<li data-bai-block="139"><strong>遷移先ステータス</strong>: このスケジューリングステップ後のセッションステータス</li>
-<li data-bai-block="140"><strong>試行回数</strong>: このスケジューリングステップが試行された回数</li>
-<li data-bai-block="141"><strong>メッセージ</strong>: このスケジューリングステップの概要メッセージ</li>
-</ul>
-<p data-bai-block="142"><strong>作成日時</strong>または<strong>更新日時</strong>カラムでテーブルをソートして、お好みの順序でレコードを表示できます。</p>
-<h4 data-bai-block="143" id="sessions_all-履歴テーブルのページネーション">履歴テーブルのページネーション<a class="hash-link" href="#sessions_all-履歴テーブルのページネーション" aria-label="Direct link to 履歴テーブルのページネーション">#</a></h4>
-<p data-bai-block="144">スケジュール履歴テーブルはオフセットベースのページネーションを使用しており、既定のページサイズは1ページあたり10件です。フィルターまたはソート順を変更すると、表示は自動的に1ページ目にリセットされます。</p>
-<h4 data-bai-block="145" id="sessions_all-展開可能なサブステップ">展開可能なサブステップ<a class="hash-link" href="#sessions_all-展開可能なサブステップ" aria-label="Direct link to 展開可能なサブステップ">#</a></h4>
-<p data-bai-block="146">一部の履歴レコードには詳細なサブステップが含まれています。サブステップがある場合、行の左側に展開矢印が表示されます。クリックすると、そのスケジューリングフェーズの個別のサブステップを表示するネストされたテーブルが表示されます。</p>
-<p><figure data-bai-block="147" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>図 10.30</figcaption></figure>
-</p>
-<p data-bai-block="148">サブステップテーブルには、以下のカラムが含まれます：</p>
-<ul>
-<li data-bai-block="149"><strong>ステップ</strong>: サブステップの名前</li>
-<li data-bai-block="150"><strong>結果</strong>: サブステップの結果で、色分けされたバッジで表示されます</li>
-<li data-bai-block="151"><strong>エラーコード</strong>: ステップが失敗した場合の特定のエラーコード</li>
-<li data-bai-block="152"><strong>メッセージ</strong>: 詳細情報またはエラーの説明</li>
-<li data-bai-block="153"><strong>開始日時</strong>: サブステップが開始された日時</li>
-<li data-bai-block="154"><strong>終了日時</strong>: サブステップが完了した日時</li>
-</ul>
-<h4 data-bai-block="155" id="sessions_all-結果バッジの色">結果バッジの色<a class="hash-link" href="#sessions_all-結果バッジの色" aria-label="Direct link to 結果バッジの色">#</a></h4>
-<p data-bai-block="156">各スケジューリングステップとサブステップには、結果を示す色分けされたバッジが表示されます：</p>
+<p data-bai-block="122">これら3つのステータスのセッションはいずれもリソースを占有しているため、<strong>終了セッション</strong> ではなく <strong>実行中</strong> の一覧に表示されます。</p>
+<p data-bai-block="123">スケジューラーがセッションにプリエンプションの理由を記録している場合、セッションステータスタグにマウスを合わせると、内部の値ではなく次のような説明が表示されます。</p>
 <table>
 <thead>
-<tr data-bai-block="157">
+<tr data-bai-block="124">
+<th>理由</th>
+<th>説明</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="125">
+<td><code>PREEMPTED_BY_SCHEDULER</code></td>
+<td>このセッションは、優先度の高いジョブのためにリソースを解放する目的で、スケジューラーによって終了されました。</td>
+</tr>
+<tr data-bai-block="126">
+<td><code>preempted-by-reservation</code></td>
+<td>このセッションは、優先度の高いジョブのためにリソースを解放する目的で、プリエンプション対象として選択されました。</td>
+</tr>
+<tr data-bai-block="127">
+<td><code>preemption-reservation</code></td>
+<td>このセッションはリソースの予約を保持しており、リソースが解放されるのを待っています。</td>
+</tr>
+<tr data-bai-block="128">
+<td><code>RESCHEDULED</code></td>
+<td>このセッションはプリエンプションによりキューに戻されました。自動的に再スケジュールされます。</td>
+</tr>
+</tbody></table>
+<p><a id="session-scheduling-history"></a></p>
+<h3 data-bai-block="129" id="sessions_all-セッションのスケジュール履歴">セッションのスケジュール履歴<a class="hash-link" href="#sessions_all-セッションのスケジュール履歴" aria-label="Direct link to セッションのスケジュール履歴">#</a></h3>
+<p data-bai-block="130">セッションのスケジュール履歴モーダルは、コンピュートセッションの内部スケジューリングライフサイクルを透明に表示します。セッションが経たすべてのスケジューリングフェーズの詳細な記録を表示し、ステータス遷移、結果、リトライ回数、発生したエラーなどの情報を含みます。この機能は、セッションが遅延している理由、<code>PENDING</code>状態に留まっている理由、または開始に失敗した理由を理解するのに特に役立ちます。</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>図 10.29</figcaption></figure>
+</p>
+<h4 data-bai-block="132" id="sessions_all-フィルターバー">フィルターバー<a class="hash-link" href="#sessions_all-フィルターバー" aria-label="Direct link to フィルターバー">#</a></h4>
+<p data-bai-block="133">モーダル上部のフィルターバーを使用して、スケジュール履歴レコードを絞り込むことができます。以下のプロパティでフィルタリングできます：</p>
+<ul>
+<li data-bai-block="134"><strong>ID</strong>: 履歴レコードID（UUID、完全一致）でフィルタリング</li>
+<li data-bai-block="135"><strong>フェーズ</strong>: スケジューリングフェーズ名でフィルタリング</li>
+<li data-bai-block="136"><strong>結果</strong>: 結果タイプ（SUCCESS、FAILURE、STALE、NEED_RETRY、EXPIRED、GIVE_UP、SKIPPED）でフィルタリング</li>
+<li data-bai-block="137"><strong>遷移元ステータス</strong>: スケジューリングステップ前のセッションステータスでフィルタリング</li>
+<li data-bai-block="138"><strong>遷移先ステータス</strong>: スケジューリングステップ後のセッションステータスでフィルタリング</li>
+<li data-bai-block="139"><strong>エラーコード</strong>: エラーコードでフィルタリング</li>
+<li data-bai-block="140"><strong>メッセージ</strong>: メッセージ内容でフィルタリング</li>
+<li data-bai-block="141"><strong>作成日時</strong>: レコードの作成日時でフィルタリング</li>
+<li data-bai-block="142"><strong>更新日時</strong>: レコードの更新日時でフィルタリング</li>
+</ul>
+<p data-bai-block="143">フィルターバーの横にあるリフレッシュボタンを使用して、スケジュール履歴データを再読み込みできます。</p>
+<h4 data-bai-block="144" id="sessions_all-履歴テーブル">履歴テーブル<a class="hash-link" href="#sessions_all-履歴テーブル" aria-label="Direct link to 履歴テーブル">#</a></h4>
+<p data-bai-block="145">スケジュール履歴テーブルには、以下のカラムが表示されます：</p>
+<ul>
+<li data-bai-block="146"><strong>更新日時</strong>: このレコードが最後に更新された日時</li>
+<li data-bai-block="147"><strong>作成日時</strong>: このレコードが作成された日時</li>
+<li data-bai-block="148"><strong>フェーズ</strong>: スケジューリングフェーズの名前</li>
+<li data-bai-block="149"><strong>結果</strong>: このスケジューリングステップの結果で、色分けされたバッジで表示されます</li>
+<li data-bai-block="150"><strong>遷移元ステータス</strong>: このスケジューリングステップ前のセッションステータス</li>
+<li data-bai-block="151"><strong>遷移先ステータス</strong>: このスケジューリングステップ後のセッションステータス</li>
+<li data-bai-block="152"><strong>試行回数</strong>: このスケジューリングステップが試行された回数</li>
+<li data-bai-block="153"><strong>メッセージ</strong>: このスケジューリングステップの概要メッセージ</li>
+</ul>
+<p data-bai-block="154"><strong>作成日時</strong>または<strong>更新日時</strong>カラムでテーブルをソートして、お好みの順序でレコードを表示できます。</p>
+<h4 data-bai-block="155" id="sessions_all-履歴テーブルのページネーション">履歴テーブルのページネーション<a class="hash-link" href="#sessions_all-履歴テーブルのページネーション" aria-label="Direct link to 履歴テーブルのページネーション">#</a></h4>
+<p data-bai-block="156">スケジュール履歴テーブルはオフセットベースのページネーションを使用しており、既定のページサイズは1ページあたり10件です。フィルターまたはソート順を変更すると、表示は自動的に1ページ目にリセットされます。</p>
+<h4 data-bai-block="157" id="sessions_all-展開可能なサブステップ">展開可能なサブステップ<a class="hash-link" href="#sessions_all-展開可能なサブステップ" aria-label="Direct link to 展開可能なサブステップ">#</a></h4>
+<p data-bai-block="158">一部の履歴レコードには詳細なサブステップが含まれています。サブステップがある場合、行の左側に展開矢印が表示されます。クリックすると、そのスケジューリングフェーズの個別のサブステップを表示するネストされたテーブルが表示されます。</p>
+<p><figure data-bai-block="159" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>図 10.30</figcaption></figure>
+</p>
+<p data-bai-block="160">サブステップテーブルには、以下のカラムが含まれます：</p>
+<ul>
+<li data-bai-block="161"><strong>ステップ</strong>: サブステップの名前</li>
+<li data-bai-block="162"><strong>結果</strong>: サブステップの結果で、色分けされたバッジで表示されます</li>
+<li data-bai-block="163"><strong>エラーコード</strong>: ステップが失敗した場合の特定のエラーコード</li>
+<li data-bai-block="164"><strong>メッセージ</strong>: 詳細情報またはエラーの説明</li>
+<li data-bai-block="165"><strong>開始日時</strong>: サブステップが開始された日時</li>
+<li data-bai-block="166"><strong>終了日時</strong>: サブステップが完了した日時</li>
+</ul>
+<h4 data-bai-block="167" id="sessions_all-結果バッジの色">結果バッジの色<a class="hash-link" href="#sessions_all-結果バッジの色" aria-label="Direct link to 結果バッジの色">#</a></h4>
+<p data-bai-block="168">各スケジューリングステップとサブステップには、結果を示す色分けされたバッジが表示されます：</p>
+<table>
+<thead>
+<tr data-bai-block="169">
 <th>結果</th>
 <th>色</th>
 <th>意味</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="158">
+<tbody><tr data-bai-block="170">
 <td>SUCCESS</td>
 <td>緑</td>
 <td>ステップが正常に完了しました</td>
 </tr>
-<tr data-bai-block="159">
+<tr data-bai-block="171">
 <td>FAILURE</td>
 <td>赤</td>
 <td>ステップが失敗しました</td>
 </tr>
-<tr data-bai-block="160">
+<tr data-bai-block="172">
 <td>STALE</td>
 <td>グレー</td>
 <td>レコードが古くなっているか最新ではありません</td>
 </tr>
-<tr data-bai-block="161">
+<tr data-bai-block="173">
 <td>NEED_RETRY</td>
 <td>黄</td>
 <td>ステップの再試行が必要です</td>
 </tr>
-<tr data-bai-block="162">
+<tr data-bai-block="174">
 <td>EXPIRED</td>
 <td>赤</td>
 <td>スケジューリングの試行が期限切れになりました</td>
 </tr>
-<tr data-bai-block="163">
+<tr data-bai-block="175">
 <td>GIVE_UP</td>
 <td>赤</td>
 <td>システムがスケジューリングを断念しました</td>
 </tr>
-<tr data-bai-block="164">
+<tr data-bai-block="176">
 <td>SKIPPED</td>
 <td>グレー</td>
 <td>ステップがスキップされました</td>
 </tr>
 </tbody></table>
 <p><a id="session-audit-log"></a></p>
-<h3 data-bai-block="165" id="sessions_all-セッション監査ログ">セッション監査ログ<a class="hash-link" href="#sessions_all-セッション監査ログ" aria-label="Direct link to セッション監査ログ">#</a></h3>
-<p data-bai-block="166"><strong>監査ログ</strong>タブは、セッション詳細パネルの下部に<strong>カーネル</strong>タブと並んで表示されます。セッションに対して実行されたすべてのアクション（ステータス変更、リソース変更、管理操作など）の時系列記録と、各アクションを誰がいつ実行したかを提供します。</p>
-<p><figure data-bai-block="167" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>図 10.31</figcaption></figure>
+<h3 data-bai-block="177" id="sessions_all-セッション監査ログ">セッション監査ログ<a class="hash-link" href="#sessions_all-セッション監査ログ" aria-label="Direct link to セッション監査ログ">#</a></h3>
+<p data-bai-block="178"><strong>監査ログ</strong>タブは、セッション詳細パネルの下部に<strong>カーネル</strong>タブと並んで表示されます。セッションに対して実行されたすべてのアクション（ステータス変更、リソース変更、管理操作など）の時系列記録と、各アクションを誰がいつ実行したかを提供します。</p>
+<p><figure data-bai-block="179" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>図 10.31</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="168" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="180" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="169">監査ログはバックエンドによって管理されており、スーパー管理者のみに表示される場合があります。一般ユーザーは、タブにアクセスできる場合でも空の結果が表示されることがあります。</p>
+<p data-bai-block="181">監査ログはバックエンドによって管理されており、スーパー管理者のみに表示される場合があります。一般ユーザーは、タブにアクセスできる場合でも空の結果が表示されることがあります。</p>
 </div></div>
 
 
-<h4 data-bai-block="170" id="sessions_all-監査ログのカラム">監査ログのカラム<a class="hash-link" href="#sessions_all-監査ログのカラム" aria-label="Direct link to 監査ログのカラム">#</a></h4>
-<p data-bai-block="171">監査ログテーブルには以下のカラムが含まれます：</p>
+<h4 data-bai-block="182" id="sessions_all-監査ログのカラム">監査ログのカラム<a class="hash-link" href="#sessions_all-監査ログのカラム" aria-label="Direct link to 監査ログのカラム">#</a></h4>
+<p data-bai-block="183">監査ログテーブルには以下のカラムが含まれます：</p>
 <ul>
-<li data-bai-block="172"><strong>トリガー元</strong>: アクションを開始したアクターのメールアドレスとアカウントID</li>
-<li data-bai-block="173"><strong>操作</strong>: 実行されたアクションの種類（例：セッション作成、終了、リソース変更）</li>
-<li data-bai-block="174"><strong>ステータス</strong>: アクションの結果（<code>SUCCESS</code>、<code>ERROR</code>、<code>RUNNING</code>、または<code>UNKNOWN</code>）</li>
-<li data-bai-block="175"><strong>時刻</strong>: アクションが発生した日時</li>
+<li data-bai-block="184"><strong>トリガー元</strong>: アクションを開始したアクターのメールアドレスとアカウントID</li>
+<li data-bai-block="185"><strong>操作</strong>: 実行されたアクションの種類（例：セッション作成、終了、リソース変更）</li>
+<li data-bai-block="186"><strong>ステータス</strong>: アクションの結果（<code>SUCCESS</code>、<code>ERROR</code>、<code>RUNNING</code>、<code>DENIED</code>、または<code>UNKNOWN</code>）。<code>DENIED</code>は、エラーで失敗したのではなく、ポリシーによって意図的に拒否されたことを意味します</li>
+<li data-bai-block="187"><strong>時刻</strong>: アクションが発生した日時</li>
 </ul>
-<h4 data-bai-block="176" id="sessions_all-監査ログのフィルター">監査ログのフィルター<a class="hash-link" href="#sessions_all-監査ログのフィルター" aria-label="Direct link to 監査ログのフィルター">#</a></h4>
-<p data-bai-block="177">テーブル上部のフィルターバーを使用して、ログエントリを絞り込むことができます：</p>
+<h4 data-bai-block="188" id="sessions_all-監査ログのフィルター">監査ログのフィルター<a class="hash-link" href="#sessions_all-監査ログのフィルター" aria-label="Direct link to 監査ログのフィルター">#</a></h4>
+<p data-bai-block="189">テーブル上部のフィルターバーを使用して、ログエントリを絞り込むことができます：</p>
 <ul>
-<li data-bai-block="178"><strong>ステータス</strong>: アクションの結果でフィルタリング（<code>SUCCESS</code>、<code>ERROR</code>、<code>RUNNING</code>、<code>UNKNOWN</code>）</li>
-<li data-bai-block="179"><strong>操作</strong>: 操作名またはキーワードで検索</li>
-<li data-bai-block="180"><strong>トリガー元</strong>: アクターIDで検索</li>
-<li data-bai-block="181"><strong>時刻</strong>: 日付範囲ピッカーでフィルタリング</li>
+<li data-bai-block="190"><strong>ステータス</strong>: アクションの結果でフィルタリング（<code>SUCCESS</code>、<code>ERROR</code>、<code>RUNNING</code>、<code>UNKNOWN</code>）</li>
+<li data-bai-block="191"><strong>操作</strong>: 操作名またはキーワードで検索</li>
+<li data-bai-block="192"><strong>トリガー元</strong>: アクターIDで検索</li>
+<li data-bai-block="193"><strong>時刻</strong>: 日付範囲ピッカーでフィルタリング</li>
 </ul>
-<p data-bai-block="182"><strong>更新</strong>ボタンでログを再読み込みできます。監査ログのクエリは遅延実行され、<strong>監査ログ</strong>タブを初めてアクティブにしたときにのみ送信されます。</p>
+<p data-bai-block="194"><strong>更新</strong>ボタンでログを再読み込みできます。監査ログのクエリは遅延実行され、<strong>監査ログ</strong>タブを初めてアクティブにしたときにのみ送信されます。</p>
 <p><a id="use_session"></a></p>
-<h2 data-bai-block="183" id="sessions_all-jupyter-notebookを使う">Jupyter Notebookを使う<a class="hash-link" href="#sessions_all-jupyter-notebookを使う" aria-label="Direct link to Jupyter Notebookを使う">#</a></h2>
-<p data-bai-block="184">既に実行中のコンピュートセッションを使用および管理する方法を見てみましょう。
+<h2 data-bai-block="195" id="sessions_all-jupyter-notebookを使う">Jupyter Notebookを使う<a class="hash-link" href="#sessions_all-jupyter-notebookを使う" aria-label="Direct link to Jupyter Notebookを使う">#</a></h2>
+<p data-bai-block="196">既に実行中のコンピュートセッションを使用および管理する方法を見てみましょう。
 セッション詳細パネル右上の最初のアイコンをクリックすると、アプリランチャーが開き、
 そのセッションで利用可能なアプリサービスが表示されます。</p>
-<p><figure data-bai-block="185" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>図 10.32</figcaption></figure>
+<p><figure data-bai-block="197" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>図 10.32</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="186" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="198" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="187">アプリアイコンの下には2つのチェックオプションがあります。それぞれを選択した状態でアプリを開くと、
+<p data-bai-block="199">アプリアイコンの下には2つのチェックオプションがあります。それぞれを選択した状態でアプリを開くと、
 次の機能が適用されます。</p>
 <p><a id="open-app-to-public"></a></p>
 <ul>
-<li data-bai-block="188">アプリを外部に公開: アプリを外部に公開します。基本的に、ターミナルやJupyter Notebookサービスなどの
+<li data-bai-block="200">アプリを外部に公開: アプリを外部に公開します。基本的に、ターミナルやJupyter Notebookサービスなどの
 Webサービスは未認証と見なされるため、サービスURLを知っていても他のユーザーはアクセスできません。
 ただし、このオプションをチェックすると、サービスURL（およびポート番号）を知っている人なら
 誰でもアクセスして使用できるようになります。
 もちろん、ユーザーはサービスにアクセスするためのネットワーク経路を持っている必要があります。</li>
-<li data-bai-block="189">優先ポートを試す: このオプションをチェックしない場合、WebサービスのポートはBackend.AIが事前に準備した
+<li data-bai-block="201">優先ポートを試す: このオプションをチェックしない場合、WebサービスのポートはBackend.AIが事前に準備した
 ポートプールからランダムに割り当てられます。
 このオプションをチェックして特定のポート番号を入力すると、入力したポート番号が最初に試行されます。
 ただし、ポートがポートプールにまったく存在しない、または他のサービスが既にそのポートを使用している
 可能性があるため、常に希望のポートが割り当てられる保証はありません。
 この場合、ポート番号はランダムに割り当てられます。</li>
 </ul>
-<p data-bai-block="190">システム構成によっては、これらのオプションが表示されない場合があります。</p>
+<p data-bai-block="202">システム構成によっては、これらのオプションが表示されない場合があります。</p>
 </div></div>
 
 
-<p data-bai-block="191">Jupyter Notebookをクリックしてみましょう。</p>
-<p><figure data-bai-block="192" class="doc-figure"><img src="./images/jupyter_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2420" height="582" /><figcaption>図 10.33</figcaption></figure>
+<p data-bai-block="203">Jupyter Notebookをクリックしてみましょう。</p>
+<p><figure data-bai-block="204" class="doc-figure"><img src="./images/jupyter_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2420" height="582" /><figcaption>図 10.33</figcaption></figure>
 </p>
-<p data-bai-block="193">新しいウィンドウが開き、Jupyter Notebookが実行されていることが確認できます。
+<p data-bai-block="205">新しいウィンドウが開き、Jupyter Notebookが実行されていることが確認できます。
 このNotebookは実行中のコンピュートセッション内で作成されており、ボタンをクリックするだけで簡単に使用できます。
 また、コンピュートセッションが提供する言語環境とライブラリをそのまま使用できるため、
 別途パッケージをインストールする必要はありません。
 Jupyter Notebookの詳しい使い方については、Jupyter Notebookの公式ドキュメントを参照してください。</p>
-<p data-bai-block="194">Notebookのファイルエクスプローラーにある<code>id_container</code>ファイルには、SSHの秘密鍵が含まれています。
+<p data-bai-block="206">Notebookのファイルエクスプローラーにある<code>id_container</code>ファイルには、SSHの秘密鍵が含まれています。
 必要に応じて、ユーザーはこれをダウンロードし、コンテナへのSSH/SFTP接続に使用できます。</p>
-<p data-bai-block="195">右上の「NEW」ボタンをクリックして「Notebook for Backend.AI」を選択すると、
+<p data-bai-block="207">右上の「NEW」ボタンをクリックして「Notebook for Backend.AI」を選択すると、
 ユーザーがコードを入力できるipynbウィンドウが表示されます。</p>
-<p><figure data-bai-block="196" class="doc-figure"><img src="./images/backendai_notebook_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="807" height="544" /><figcaption>図 10.34</figcaption></figure>
+<p><figure data-bai-block="208" class="doc-figure"><img src="./images/backendai_notebook_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="807" height="544" /><figcaption>図 10.34</figcaption></figure>
 </p>
-<p data-bai-block="197">このウィンドウでは、ユーザーはセッションが提供する環境を使用して、任意のコードを入力して実行できます。
+<p data-bai-block="209">このウィンドウでは、ユーザーはセッションが提供する環境を使用して、任意のコードを入力して実行できます。
 コードは、コンピュートセッションが実際に作成されているBackend.AIのノードで実行され、
 ローカルマシン上に別途環境を構成する必要はありません。</p>
-<p><figure data-bai-block="198" class="doc-figure"><img src="./images/notebook_code_execution.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2336" height="1178" /><figcaption>図 10.35</figcaption></figure>
+<p><figure data-bai-block="210" class="doc-figure"><img src="./images/notebook_code_execution.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2336" height="1178" /><figcaption>図 10.35</figcaption></figure>
 </p>
-<p data-bai-block="199">ウィンドウを閉じると、Notebookファイルエクスプローラーで<code>Untitled.ipynb</code>ファイルを確認できます。
+<p data-bai-block="211">ウィンドウを閉じると、Notebookファイルエクスプローラーで<code>Untitled.ipynb</code>ファイルを確認できます。
 ここで作成されたファイルは、セッションが終了すると削除される点に注意してください。
 セッションが終了した後もファイルを保存する方法については、データとストレージフォルダセクションで説明しています。</p>
-<p><figure data-bai-block="200" class="doc-figure"><img src="./images/untitled_ipynb_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="652" /><figcaption>図 10.36</figcaption></figure>
+<p><figure data-bai-block="212" class="doc-figure"><img src="./images/untitled_ipynb_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="652" /><figcaption>図 10.36</figcaption></figure>
 </p>
-<h2 data-bai-block="201" id="sessions_all-ウェブターミナルを使う">ウェブターミナルを使う<a class="hash-link" href="#sessions_all-ウェブターミナルを使う" aria-label="Direct link to ウェブターミナルを使う">#</a></h2>
-<p data-bai-block="202">このセクションでは、ウェブターミナルの使用方法について説明します。
+<h2 data-bai-block="213" id="sessions_all-ウェブターミナルを使う">ウェブターミナルを使う<a class="hash-link" href="#sessions_all-ウェブターミナルを使う" aria-label="Direct link to ウェブターミナルを使う">#</a></h2>
+<p data-bai-block="214">このセクションでは、ウェブターミナルの使用方法について説明します。
 ターミナルアイコン（2番目のボタン）をクリックすると、コンテナのttydアプリを使用できます。
 新しいウィンドウにターミナルが表示され、次の図のようにシェルコマンドを実行してコンピュートセッションにアクセスできます。
 コマンドに慣れている場合は、さまざまなLinuxコマンドを簡単に実行できます。
 Jupyter Notebookで作成した<code>Untitled.ipynb</code>ファイルが、<code>ls</code>コマンドでも一覧に表示されていることが確認できます。
 これは、両方のアプリが同じコンテナ環境で実行されていることを示しています。</p>
-<p><figure data-bai-block="203" class="doc-figure"><img src="./images/session_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2182" height="1062" /><figcaption>図 10.37</figcaption></figure>
+<p><figure data-bai-block="215" class="doc-figure"><img src="./images/session_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2182" height="1062" /><figcaption>図 10.37</figcaption></figure>
 </p>
-<p data-bai-block="204">ここで作成したファイルは、Jupyter Notebookでもすぐに確認できます。逆に、Jupyter Notebookで
+<p data-bai-block="216">ここで作成したファイルは、Jupyter Notebookでもすぐに確認できます。逆に、Jupyter Notebookで
 ファイルに加えた変更も、ターミナルからすぐに確認できます。これは、同じコンピュートセッション内で
 同じファイルを使用しているためです。</p>
-<p data-bai-block="205">このほかにも、コンピュートセッションが提供する実行環境の種類に応じて、
+<p data-bai-block="217">このほかにも、コンピュートセッションが提供する実行環境の種類に応じて、
 TensorBoardやJupyter LabなどのWebベースのサービスを利用できます。</p>
-<h2 data-bai-block="206" id="sessions_all-コンピュートセッションのログを照会する">コンピュートセッションのログを照会する<a class="hash-link" href="#sessions_all-コンピュートセッションのログを照会する" aria-label="Direct link to コンピュートセッションのログを照会する">#</a></h2>
-<p data-bai-block="207">セッション詳細パネルで<code>コンテナログを見る</code>アイコンをクリックすると、
+<h2 data-bai-block="218" id="sessions_all-コンピュートセッションのログを照会する">コンピュートセッションのログを照会する<a class="hash-link" href="#sessions_all-コンピュートセッションのログを照会する" aria-label="Direct link to コンピュートセッションのログを照会する">#</a></h2>
+<p data-bai-block="219">セッション詳細パネルで<code>コンテナログを見る</code>アイコンをクリックすると、
 コンピュートセッションのログを確認できます。</p>
-<p><figure data-bai-block="208" class="doc-figure"><img src="./images/session_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2816" height="1740" /><figcaption>図 10.38</figcaption></figure>
+<p><figure data-bai-block="220" class="doc-figure"><img src="./images/session_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2816" height="1740" /><figcaption>図 10.38</figcaption></figure>
 </p>
-<p data-bai-block="209">ログウィンドウのログ表示領域の上には、次のコントロールが用意されています。</p>
+<p data-bai-block="221">ログウィンドウのログ表示領域の上には、次のコントロールが用意されています。</p>
 <ul>
-<li data-bai-block="210"><strong>カーネルセレクター</strong>: ログを確認するセッションのカーネルを選択します。単一コンテナの
+<li data-bai-block="222"><strong>カーネルセレクター</strong>: ログを確認するセッションのカーネルを選択します。単一コンテナの
 セッションでは項目は1つだけですが、クラスターセッションでは各コンテナがホスト名とIDの
 先頭数文字とともに一覧表示されます。</li>
-<li data-bai-block="211"><strong>ダウンロード</strong>: 現在表示されているログをテキストファイルとして保存します。</li>
+<li data-bai-block="223"><strong>ダウンロード</strong>: 現在表示されているログをテキストファイルとして保存します。</li>
 </ul>
-<p data-bai-block="212">ログ表示に組み込まれた検索ボックスを使って、表示中のログ内を検索することもできます。</p>
+<p data-bai-block="224">ログ表示に組み込まれた検索ボックスを使って、表示中のログ内を検索することもできます。</p>
 <p><a id="rename-running-session"></a></p>
-<h2 data-bai-block="213" id="sessions_all-実行中のセッションの名前を変更する">実行中のセッションの名前を変更する<a class="hash-link" href="#sessions_all-実行中のセッションの名前を変更する" aria-label="Direct link to 実行中のセッションの名前を変更する">#</a></h2>
-<p data-bai-block="214">実行中のセッションの名前を変更できます。セッション詳細パネルで<strong>編集</strong>ボタンをクリックして、
+<h2 data-bai-block="225" id="sessions_all-実行中のセッションの名前を変更する">実行中のセッションの名前を変更する<a class="hash-link" href="#sessions_all-実行中のセッションの名前を変更する" aria-label="Direct link to 実行中のセッションの名前を変更する">#</a></h2>
+<p data-bai-block="226">実行中のセッションの名前を変更できます。セッション詳細パネルで<strong>編集</strong>ボタンをクリックして、
 セッション名を変更します。
 新しいセッション名も<a href="#session-naming-rule">セッション名の命名規則</a>に従う必要があります。</p>
-<p><figure data-bai-block="215" class="doc-figure"><img src="./images/session_renaming.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="160" /><figcaption>図 10.39</figcaption></figure>
+<p><figure data-bai-block="227" class="doc-figure"><img src="./images/session_renaming.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="160" /><figcaption>図 10.39</figcaption></figure>
 </p>
 <p><a id="delete_session"></a></p>
-<h2 data-bai-block="216" id="sessions_all-コンピュートセッションを削除する">コンピュートセッションを削除する<a class="hash-link" href="#sessions_all-コンピュートセッションを削除する" aria-label="Direct link to コンピュートセッションを削除する">#</a></h2>
-<p data-bai-block="217">特定のセッションを終了するには、赤い電源ボタンをクリックし、ダイアログで「終了する」ボタンをクリックします。
+<h2 data-bai-block="228" id="sessions_all-コンピュートセッションを削除する">コンピュートセッションを削除する<a class="hash-link" href="#sessions_all-コンピュートセッションを削除する" aria-label="Direct link to コンピュートセッションを削除する">#</a></h2>
+<p data-bai-block="229">特定のセッションを終了するには、赤い電源ボタンをクリックし、ダイアログで「終了する」ボタンをクリックします。
 コンピュートセッションが終了すると同時にセッション内のフォルダのデータは削除されるため、
 データはマウントされたフォルダに移動するか、最初からマウントされたフォルダにアップロードすることをお勧めします。</p>
-<p><figure data-bai-block="218" class="doc-figure"><img src="./images/session_destroy_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="248" /><figcaption>図 10.40</figcaption></figure>
+<p><figure data-bai-block="230" class="doc-figure"><img src="./images/session_destroy_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="248" /><figcaption>図 10.40</figcaption></figure>
 </p>
 <p><a id="idleness-checks"></a></p>
-<h2 data-bai-block="219" id="sessions_all-アイドル状態チェック">アイドル状態チェック<a class="hash-link" href="#sessions_all-アイドル状態チェック" aria-label="Direct link to アイドル状態チェック">#</a></h2>
-<p data-bai-block="220">Backend.AIは、コンピュートセッションの自動ガベージコレクションのために、
+<h2 data-bai-block="231" id="sessions_all-アイドル状態チェック">アイドル状態チェック<a class="hash-link" href="#sessions_all-アイドル状態チェック" aria-label="Direct link to アイドル状態チェック">#</a></h2>
+<p data-bai-block="232">Backend.AIは、コンピュートセッションの自動ガベージコレクションのために、
 3種類の非アクティブ（アイドル）基準をサポートしています。
 最大セッション寿命、ネットワークアイドルタイムアウト、利用率チェッカーです。</p>
-<p data-bai-block="221">実行中のセッションに適用される基準は、セッション詳細パネルの <strong>リクレイム状態</strong> 項目に、
+<p data-bai-block="233">実行中のセッションに適用される基準は、セッション詳細パネルの <strong>リクレイム状態</strong> 項目に、
 それぞれの基準がセッションを終了するまでの残り時間とともに表示されます。この項目は、
 セッションが実行中で、いずれかのアイドルチェックに残り時間が表示されているときに現れます。
 残り時間が数日でも数分でも同じように表示されます。</p>
-<p><figure data-bai-block="222" class="doc-figure"><img src="./images/idle_checks_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1436" height="324" /><figcaption>図 10.41</figcaption></figure>
+<p><figure data-bai-block="234" class="doc-figure"><img src="./images/idle_checks_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1436" height="324" /><figcaption>図 10.41</figcaption></figure>
 </p>
-<p data-bai-block="223">各アイドルチェッカーの意味は次のとおりです。<strong>リクレイム状態</strong> ラベルの横にある疑問符（<code>?</code>）
+<p data-bai-block="235">各アイドルチェッカーの意味は次のとおりです。<strong>リクレイム状態</strong> ラベルの横にある疑問符（<code>?</code>）
 アイコンをクリックすると、各項目の詳細な説明が記載されたダイアログが開きます。</p>
 <ul>
-<li data-bai-block="224"><p>最大セッション寿命: 作成からこの時間が経過したセッションを強制終了します。
+<li data-bai-block="236"><p>最大セッション寿命: 作成からこの時間が経過したセッションを強制終了します。
 これにより、セッションが無限に実行されることを防ぎます。</p>
 </li>
-<li data-bai-block="225"><p>ネットワークアイドルタイムアウト: この時間の間、ユーザー（ブラウザまたはWebアプリ）と
+<li data-bai-block="237"><p>ネットワークアイドルタイムアウト: この時間の間、ユーザー（ブラウザまたはWebアプリ）と
 データのやり取りがないセッションを強制終了します。
 ユーザーとコンピュートセッション間のトラフィックは、ユーザーがターミナルやJupyterなどのアプリと
 キーボード入力やJupyterセル作成などで対話する際に継続的に発生します。
@@ -803,17 +837,17 @@ TensorBoardやJupyter LabなどのWebベースのサービスを利用できま�
 コンピュートセッション内でジョブを実行しているプロセスがあっても、
 ユーザーの対話がなければ終了の対象となります。</p>
 </li>
-<li data-bai-block="226"><p>利用率チェッカー: コンピュートセッションに割り当てられたリソースは、
+<li data-bai-block="238"><p>利用率チェッカー: コンピュートセッションに割り当てられたリソースは、
 そのリソースの使用状況に基づいて回収されます。
 削除の判断は、次の2つの要素に基づいて行われます。</p>
 <ul>
-<li data-bai-block="227">猶予期間: 利用率アイドルチェッカーが非アクティブな期間です。
+<li data-bai-block="239">猶予期間: 利用率アイドルチェッカーが非アクティブな期間です。
 使用率が低くても、この期間中はコンピュートセッションは終了されません。
 ただし、猶予期間が終了すると、設定されたアイドルタイムアウト期間中の平均利用率が
 しきい値を下回った場合、システムはいつでもセッションを終了できます。
 猶予期間は、単に終了が発生しないことが保証される期間に過ぎません。
 これは主に、使用率の低いGPUリソースを効率的に管理するための措置です。</li>
-<li data-bai-block="228">利用率しきい値: コンピュートセッションのリソース利用率が一定期間（アイドルタイムアウト）内に
+<li data-bai-block="240">利用率しきい値: コンピュートセッションのリソース利用率が一定期間（アイドルタイムアウト）内に
 設定されたしきい値を超えない場合、そのセッションは自動的に終了されます。
 たとえば、アクセラレータ利用率のしきい値が1%に設定されていて、アイドルタイムアウト期間中の
 コンピュートセッションの利用率が1%未満であれば、終了の対象となります。
@@ -822,219 +856,219 @@ TensorBoardやJupyter LabなどのWebベースのサービスを利用できま�
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="229" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="241" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="230">猶予期間が経過した後は、利用率が低い状態が続く場合、いつでもセッションが終了される可能性があります。
+<p data-bai-block="242">猶予期間が経過した後は、利用率が低い状態が続く場合、いつでもセッションが終了される可能性があります。
 リソースを短時間使用しても、猶予期間は延長されません。
 直近のアイドルタイムアウト期間における平均利用率のみが考慮されます。</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="231" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="243" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="232">環境設定によっては、適用されるアイドルチェッカーや、使用量ベースの資源回収に表示される
+<p data-bai-block="244">環境設定によっては、適用されるアイドルチェッカーや、使用量ベースの資源回収に表示される
 リソース種別が異なる場合があります。</p>
 </div></div>
 
 
 <p><a id="reclamation-status"></a></p>
-<h3 data-bai-block="233" id="sessions_all-リクレイム状態">リクレイム状態<a class="hash-link" href="#sessions_all-リクレイム状態" aria-label="Direct link to リクレイム状態">#</a></h3>
-<p data-bai-block="234">セッションリストには、各セッションが使用量ベースの資源回収の対象にどれだけ近づいているかを
+<h3 data-bai-block="245" id="sessions_all-リクレイム状態">リクレイム状態<a class="hash-link" href="#sessions_all-リクレイム状態" aria-label="Direct link to リクレイム状態">#</a></h3>
+<p data-bai-block="246">セッションリストには、各セッションが使用量ベースの資源回収の対象にどれだけ近づいているかを
 一目で把握できる <strong>リクレイム状態</strong> カラムがあります。セッション詳細パネルの
 <strong>リクレイム状態</strong> 項目でも、使用量ベースの資源回収の項目名に代わって同じバッジが表示されます。</p>
-<p data-bai-block="235">バッジには次の3つのレベルがあり、ポップオーバーの凡例にも同じ説明が表示されます。</p>
+<p data-bai-block="247">バッジには次の3つのレベルがあり、ポップオーバーの凡例にも同じ説明が表示されます。</p>
 <ul>
-<li data-bai-block="236"><strong>安全</strong>: 現在の平均使用率がしきい値を十分に上回っています。</li>
-<li data-bai-block="237"><strong>警告</strong>: 現在の平均使用率はしきい値を上回っていますが、しきい値に近づいています。</li>
-<li data-bai-block="238"><strong>リスクあり</strong>: 現在の平均使用率がしきい値を下回っています。</li>
+<li data-bai-block="248"><strong>安全</strong>: 現在の平均使用率がしきい値を十分に上回っています。</li>
+<li data-bai-block="249"><strong>警告</strong>: 現在の平均使用率はしきい値を上回っていますが、しきい値に近づいています。</li>
+<li data-bai-block="250"><strong>リスクあり</strong>: 現在の平均使用率がしきい値を下回っています。</li>
 </ul>
-<p data-bai-block="239">バッジは、平均使用率が実際にしきい値を下回る前にレベルが上がるため、現在の平均使用率が
+<p data-bai-block="251">バッジは、平均使用率が実際にしきい値を下回る前にレベルが上がるため、現在の平均使用率が
 まだしきい値を上回っている状態でも <strong>リスクあり</strong> と表示されることがあります。しきい値を
 超えたことを知らせる表示ではなく、対応する時間を残して前もって知らせる警告と考えてください。</p>
-<p data-bai-block="240">使用量ベースの資源回収が適用されないセッションや、まだ測定値がないセッションでは、カラムに
+<p data-bai-block="252">使用量ベースの資源回収が適用されないセッションや、まだ測定値がないセッションでは、カラムに
 <code>-</code> が表示されます。セッション詳細パネルでは、最初のリクレイム判定がまだ行われていない項目に、
 残り時間のタグの代わりに <strong>回収するかどうかを確認中</strong> と表示されます。</p>
-<p data-bai-block="241">バッジの横にある情報（i）アイコンにマウスを合わせると、レベル判定の根拠を示すポップオーバーが
+<p data-bai-block="253">バッジの横にある情報（i）アイコンにマウスを合わせると、レベル判定の根拠を示すポップオーバーが
 開きます。</p>
 <ul>
-<li data-bai-block="242">列挙された条件の <strong>いずれか</strong> がリスクあり状態のままのときにリソースが回収されるのか、
+<li data-bai-block="254">列挙された条件の <strong>いずれか</strong> がリスクあり状態のままのときにリソースが回収されるのか、
 それとも <strong>すべて</strong> がリスクあり状態のときにのみ回収されるのかを示す条件文。どちらの文が
 表示されるかは、管理者がチェッカーをどう設定したかによって異なります。</li>
-<li data-bai-block="243">測定されたリソースごとの行。各行にはそのリソースのレベルバッジと、現在の平均使用率および
+<li data-bai-block="255">測定されたリソースごとの行。各行にはそのリソースのレベルバッジと、現在の平均使用率および
 設定されたしきい値が <code>(現在 12% | 閾値 5%)</code> の形式で表示されます。</li>
-<li data-bai-block="244">3つのレベルそれぞれの判定基準を説明する凡例。</li>
+<li data-bai-block="256">3つのレベルそれぞれの判定基準を説明する凡例。</li>
 </ul>
-<p data-bai-block="245">測定値のないリソースはダッシュで表示され、全体のレベル判定には影響しません。</p>
-<p data-bai-block="246">使用量ベースの資源回収の項目は、残り時間が少なくなると、その横に表示される残り時間のタグが
+<p data-bai-block="257">測定値のないリソースはダッシュで表示され、全体のレベル判定には影響しません。</p>
+<p data-bai-block="258">使用量ベースの資源回収の項目は、残り時間が少なくなると、その横に表示される残り時間のタグが
 バッジと同じ色になります。残り時間のタグが赤いセッションが、まさに回収の対象です。一方、残り時間に十分な余裕がある間は、バッジがすでにリスクのある
 レベルを示していてもタグには色が付きません。</p>
-<p><figure data-bai-block="247" class="doc-figure"><img src="./images/session_reclamation_status_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2224" height="340" /><figcaption>図 10.42</figcaption></figure>
+<p><figure data-bai-block="259" class="doc-figure"><img src="./images/session_reclamation_status_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2224" height="340" /><figcaption>図 10.42</figcaption></figure>
 </p>
-<p><figure data-bai-block="248" class="doc-figure"><img src="./images/session_reclamation_status_popover.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1366" height="434" /><figcaption>図 10.43</figcaption></figure>
+<p><figure data-bai-block="260" class="doc-figure"><img src="./images/session_reclamation_status_popover.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1366" height="434" /><figcaption>図 10.43</figcaption></figure>
 </p>
 <p><a id="how-to-add-environment-variable-before-creating-a-session"></a></p>
-<h2 data-bai-block="249" id="sessions_all-セッション作成前に環境変数を追加する方法">セッション作成前に環境変数を追加する方法<a class="hash-link" href="#sessions_all-セッション作成前に環境変数を追加する方法" aria-label="Direct link to セッション作成前に環境変数を追加する方法">#</a></h2>
-<p data-bai-block="250">より便利な作業環境をユーザーに提供するために、Backend.AIはセッション起動時の環境変数設定をサポートしています。
+<h2 data-bai-block="261" id="sessions_all-セッション作成前に環境変数を追加する方法">セッション作成前に環境変数を追加する方法<a class="hash-link" href="#sessions_all-セッション作成前に環境変数を追加する方法" aria-label="Direct link to セッション作成前に環境変数を追加する方法">#</a></h2>
+<p data-bai-block="262">より便利な作業環境をユーザーに提供するために、Backend.AIはセッション起動時の環境変数設定をサポートしています。
 この機能では、環境変数設定ダイアログに変数名と値を入力することで、
 ユーザーは<code>PATH</code>などの任意の環境変数を追加できます。</p>
-<p data-bai-block="251">環境変数を追加するには、「＋ 環境変数を追加」ボタンをクリックするだけです。
+<p data-bai-block="263">環境変数を追加するには、「＋ 環境変数を追加」ボタンをクリックするだけです。
 また、削除したい行の「-」ボタンをクリックすることで、環境変数を削除できます。</p>
-<p><figure data-bai-block="252" class="doc-figure"><img src="./images/launch_session_env.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="594" /><figcaption>図 10.44</figcaption></figure>
+<p><figure data-bai-block="264" class="doc-figure"><img src="./images/launch_session_env.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="594" /><figcaption>図 10.44</figcaption></figure>
 </p>
-<p data-bai-block="253">入力フィールドの同じ行に変数名と値を記述できます。</p>
+<p data-bai-block="265">入力フィールドの同じ行に変数名と値を記述できます。</p>
 <p><a id="set-preopen-ports"></a></p>
-<h2 data-bai-block="254" id="sessions_all-セッション作成前に事前オープンポートを追加する方法">セッション作成前に事前オープンポートを追加する方法<a class="hash-link" href="#sessions_all-セッション作成前に事前オープンポートを追加する方法" aria-label="Direct link to セッション作成前に事前オープンポートを追加する方法">#</a></h2>
-<p data-bai-block="255">Backend.AIは、コンテナ起動時の事前開放ポート設定をサポートしています。
+<h2 data-bai-block="266" id="sessions_all-セッション作成前に事前オープンポートを追加する方法">セッション作成前に事前オープンポートを追加する方法<a class="hash-link" href="#sessions_all-セッション作成前に事前オープンポートを追加する方法" aria-label="Direct link to セッション作成前に事前オープンポートを追加する方法">#</a></h2>
+<p data-bai-block="267">Backend.AIは、コンテナ起動時の事前開放ポート設定をサポートしています。
 この機能を使用すると、サービングポートを公開したい場合に別途イメージをビルドする必要はありません。</p>
-<p data-bai-block="256">事前開放ポートを追加するには、カンマ（,）またはスペースで区切って複数の値を入力するだけです。</p>
-<p><figure data-bai-block="257" class="doc-figure"><img src="./images/preopen-ports-config.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>図 10.45</figcaption></figure>
+<p data-bai-block="268">事前開放ポートを追加するには、カンマ（,）またはスペースで区切って複数の値を入力するだけです。</p>
+<p><figure data-bai-block="269" class="doc-figure"><img src="./images/preopen-ports-config.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>図 10.45</figcaption></figure>
 </p>
-<p data-bai-block="258">セッション作成ページの4ページ目では、ユーザーは記述した事前開放ポートを追加、更新、削除できます。
+<p data-bai-block="270">セッション作成ページの4ページ目では、ユーザーは記述した事前開放ポートを追加、更新、削除できます。
 詳細については、「案内(ヘルプ)」ボタン（?）をクリックしてください。</p>
-<p data-bai-block="259">入力フィールドに1024～65535のポート番号を入力し、「Enter」を押します。
+<p data-bai-block="271">入力フィールドに1024～65535のポート番号を入力し、「Enter」を押します。
 ユーザーは複数のポートをカンマ（,）で区切って指定できます。
 設定した事前開放ポートは、セッションのアプリランチャーで確認できます。</p>
-<p><figure data-bai-block="260" class="doc-figure"><img src="./images/session_app_launcher.png" alt="" class="doc-image" loading="lazy" decoding="async" width="450" height="722" /><figcaption>図 10.46</figcaption></figure>
+<p><figure data-bai-block="272" class="doc-figure"><img src="./images/session_app_launcher.png" alt="" class="doc-image" loading="lazy" decoding="async" width="450" height="722" /><figcaption>図 10.46</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="261" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="273" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="262">事前開放ポートは<strong>コンテナ内部のポート</strong>です。したがって、他のアプリとは異なり、
+<p data-bai-block="274">事前開放ポートは<strong>コンテナ内部のポート</strong>です。したがって、他のアプリとは異なり、
 ユーザーがセッションのアプリランチャーで事前開放ポートをクリックすると、空白のページが表示されます。
 使用する前に、各ポートにサーバーをバインドしてください。</p>
 </div></div>
 
 
 <p><a id="save-session-commit"></a></p>
-<h2 data-bai-block="263" id="sessions_all-セッションコミットを保存する">セッションコミットを保存する<a class="hash-link" href="#sessions_all-セッションコミットを保存する" aria-label="Direct link to セッションコミットを保存する">#</a></h2>
-<p data-bai-block="264">Backend.AIは「セッションをイメージに変換」機能をサポートしています。
+<h2 data-bai-block="275" id="sessions_all-セッションコミットを保存する">セッションコミットを保存する<a class="hash-link" href="#sessions_all-セッションコミットを保存する" aria-label="Direct link to セッションコミットを保存する">#</a></h2>
+<p data-bai-block="276">Backend.AIは「セッションをイメージに変換」機能をサポートしています。
 <code>RUNNING</code>状態のセッションをコミットすると、セッションの現在の状態が新しいイメージとして保存されます。
 セッション詳細パネルで「コミットする」ボタン（4番目のアイコン）をクリックすると、
 セッション情報が表示されたダイアログが開きます。
 セッション名を入力すると、ユーザーはセッションを新しいイメージに変換できます。
 セッション名は4～32文字で、英数字、ハイフン（<code>-</code>）、アンダースコア（<code>_</code>）のみ使用できます。</p>
-<p><figure data-bai-block="265" class="doc-figure"><img src="./images/push_session_to_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="422" /><figcaption>図 10.47</figcaption></figure>
+<p><figure data-bai-block="277" class="doc-figure"><img src="./images/push_session_to_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="422" /><figcaption>図 10.47</figcaption></figure>
 </p>
-<p data-bai-block="266">入力フィールドにセッション名を入力した後、「PUSH SESSION TO CUSTOMIZED IMAGE」ボタンをクリックします。
+<p data-bai-block="278">入力フィールドにセッション名を入力した後、「PUSH SESSION TO CUSTOMIZED IMAGE」ボタンをクリックします。
 この方法で作成したカスタマイズイメージは、今後のセッション作成時に使用できます。
 ただし、イメージコミットのためにコンテナにマウントされたディレクトリは外部リソースと見なされ、
 最終イメージには含まれません。<code>/home/work</code>はマウントフォルダ（スクラッチディレクトリ）であるため、
 含まれない点に注意してください。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="267" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="279" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="268">現在、Backend.AIはセッションが<code>INTERACTIVE</code>モードの場合にのみ「セッションをイメージに変換」機能をサポートしています。
+<p data-bai-block="280">現在、Backend.AIはセッションが<code>INTERACTIVE</code>モードの場合にのみ「セッションをイメージに変換」機能をサポートしています。
 予期しないエラーを防ぐため、コミット処理中はセッションを終了できない場合があります。
 進行中の処理を停止するには、該当セッションを確認して強制終了してください。</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="269" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="281" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="270">「セッションをイメージに変換」の回数は、ユーザーリソースポリシーによって制限される場合があります。
+<p data-bai-block="282">「セッションをイメージに変換」の回数は、ユーザーリソースポリシーによって制限される場合があります。
 この場合、<a href="./my_environments.html#delete-customized-image">既存のカスタマイズイメージを削除</a>してから再度お試しください。
 それでも問題が解決しない場合は、管理者にお問い合わせください。</p>
 </div></div>
 
 
 
-<h2 data-bai-block="271" id="sessions_all-進行中のセッションの変換済みイメージを活用する">進行中のセッションの変換済みイメージを活用する<a class="hash-link" href="#sessions_all-進行中のセッションの変換済みイメージを活用する" aria-label="Direct link to 進行中のセッションの変換済みイメージを活用する">#</a></h2>
-<p data-bai-block="272">進行中のセッションをイメージに変換すると、新しいセッションを作成する際に、
+<h2 data-bai-block="283" id="sessions_all-進行中のセッションの変換済みイメージを活用する">進行中のセッションの変換済みイメージを活用する<a class="hash-link" href="#sessions_all-進行中のセッションの変換済みイメージを活用する" aria-label="Direct link to 進行中のセッションの変換済みイメージを活用する">#</a></h2>
+<p data-bai-block="284">進行中のセッションをイメージに変換すると、新しいセッションを作成する際に、
 セッションランチャーの実行環境からこのイメージを選択できます。
 このイメージは他のユーザーには公開されず、現在のセッションの状態をそのまま引き続き使用したい場合に便利です。
 変換されたイメージには<code>Customized&lt;セッション名&gt;</code>というタグが付けられます。</p>
-<p><figure data-bai-block="273" class="doc-figure"><img src="./images/select_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1348" height="240" /><figcaption>図 10.48</figcaption></figure>
+<p><figure data-bai-block="285" class="doc-figure"><img src="./images/select_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1348" height="240" /><figcaption>図 10.48</figcaption></figure>
 </p>
-<p data-bai-block="274">今後のセッション作成のために実行環境名を手動で入力するには、コピーアイコンをクリックしてください。</p>
-<p><figure data-bai-block="275" class="doc-figure"><img src="./images/copy_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1024" height="64" /><figcaption>図 10.49</figcaption></figure>
+<p data-bai-block="286">今後のセッション作成のために実行環境名を手動で入力するには、コピーアイコンをクリックしてください。</p>
+<p><figure data-bai-block="287" class="doc-figure"><img src="./images/copy_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1024" height="64" /><figcaption>図 10.49</figcaption></figure>
 </p>
-<h2 data-bai-block="276" id="sessions_all-ウェブターミナルの高度な使い方">ウェブターミナルの高度な使い方<a class="hash-link" href="#sessions_all-ウェブターミナルの高度な使い方" aria-label="Direct link to ウェブターミナルの高度な使い方">#</a></h2>
-<p data-bai-block="277">ウェブベースのターミナルには、内部的に<a href="https://github.com/tmux/tmux/wiki">tmux</a>というユーティリティが組み込まれています。
+<h2 data-bai-block="288" id="sessions_all-ウェブターミナルの高度な使い方">ウェブターミナルの高度な使い方<a class="hash-link" href="#sessions_all-ウェブターミナルの高度な使い方" aria-label="Direct link to ウェブターミナルの高度な使い方">#</a></h2>
+<p data-bai-block="289">ウェブベースのターミナルには、内部的に<a href="https://github.com/tmux/tmux/wiki">tmux</a>というユーティリティが組み込まれています。
 tmuxは、1つのシェル内で複数のシェルウィンドウを開くことをサポートするターミナルマルチプレクサーで、
 複数のプログラムをフォアグラウンドで同時に実行できるようにします。
 tmuxのより強力な機能を活用したい場合は、tmuxの公式ドキュメントや、インターネット上のさまざまな使用例を参照してください。</p>
-<p data-bai-block="278">ここでは、いくつかのシンプルで便利な機能を紹介します。</p>
-<h3 data-bai-block="279" id="sessions_all-ターミナルの内容をコピーする">ターミナルの内容をコピーする<a class="hash-link" href="#sessions_all-ターミナルの内容をコピーする" aria-label="Direct link to ターミナルの内容をコピーする">#</a></h3>
-<p data-bai-block="280">tmuxには多くの便利な機能がありますが、初めて使用するユーザーにとっては少し戸惑うかもしれません。
+<p data-bai-block="290">ここでは、いくつかのシンプルで便利な機能を紹介します。</p>
+<h3 data-bai-block="291" id="sessions_all-ターミナルの内容をコピーする">ターミナルの内容をコピーする<a class="hash-link" href="#sessions_all-ターミナルの内容をコピーする" aria-label="Direct link to ターミナルの内容をコピーする">#</a></h3>
+<p data-bai-block="292">tmuxには多くの便利な機能がありますが、初めて使用するユーザーにとっては少し戸惑うかもしれません。
 特に、tmuxは独自のクリップボードバッファを持っているため、ターミナルの内容をコピーする際、
 既定ではtmux内でしか貼り付けできないという問題が発生する場合があります。
 さらに、Webブラウザ内のtmuxにユーザーのシステムクリップボードを公開するのは難しく、
 ターミナルの内容をユーザーのコンピュータ上の他のプログラムにコピー＆ペーストすることはできません。
 いわゆる<code>Ctrl-C</code> / <code>Ctrl-V</code>はtmuxでは動作しません。</p>
-<p data-bai-block="281">ターミナルの内容をシステムのクリップボードにコピー＆ペーストする必要がある場合、
+<p data-bai-block="293">ターミナルの内容をシステムのクリップボードにコピー＆ペーストする必要がある場合、
 ユーザーは一時的にtmuxのマウスサポートをオフにすることができます。
 まず、<code>Ctrl-B</code>キーを押してtmux制御モードに入ります。次に、<code>:set -g mouse off</code>と入力して
 <code>Enter</code>キーを押します（先頭のコロンも入力することに注意してください）。
 画面下部のステータスバーで、入力内容を確認できます。
 その後、ターミナルから必要なテキストをマウスでドラッグし、<code>Ctrl-C</code>または<code>Cmd-C</code>（マックの場合）を押して、
 ユーザーのコンピュータのクリップボードにコピーします。</p>
-<p data-bai-block="282">マウスサポートをオフにすると、マウスホイールでターミナルの前のページの内容をスクロールできません。
+<p data-bai-block="294">マウスサポートをオフにすると、マウスホイールでターミナルの前のページの内容をスクロールできません。
 この場合、ユーザーはマウスサポートを再度オンにすることができます。
 <code>Ctrl-B</code>を押し、今度は<code>:set -g mouse on</code>と入力します。これで、マウスホイールでスクロールして
 前のページの内容を確認できるようになります。</p>
-<p data-bai-block="283"><code>Ctrl-B</code>の後に<code>:set -g mouse off</code>または<code>:set -g mouse on</code>を覚えておくと、
+<p data-bai-block="295"><code>Ctrl-B</code>の後に<code>:set -g mouse off</code>または<code>:set -g mouse on</code>を覚えておくと、
 ウェブターミナルをより便利に使用できます。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="284" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="296" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="285"><code>Ctrl-B</code>はtmuxの既定の制御モードキーです。ユーザーのホームディレクトリにある<code>.tmux.conf</code>を修正して
+<p data-bai-block="297"><code>Ctrl-B</code>はtmuxの既定の制御モードキーです。ユーザーのホームディレクトリにある<code>.tmux.conf</code>を修正して
 別の制御キーを設定している場合は、<code>Ctrl-B</code>の代わりに設定したキーの組み合わせを押してください。</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="286" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="298" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="287">ウィンドウズ環境では、次のショートカットを参照してください。</p>
+<p data-bai-block="299">ウィンドウズ環境では、次のショートカットを参照してください。</p>
 <ul>
-<li data-bai-block="288">コピー: <code>Shift</code>を押しながら、マウスの右ボタンをクリックしてドラッグします。</li>
-<li data-bai-block="289">ペースト: <code>Ctrl-Shift-V</code>を押します。</li>
+<li data-bai-block="300">コピー: <code>Shift</code>を押しながら、マウスの右ボタンをクリックしてドラッグします。</li>
+<li data-bai-block="301">ペースト: <code>Ctrl-Shift-V</code>を押します。</li>
 </ul>
 </div></div>
 
 
-<h3 data-bai-block="290" id="sessions_all-キーボードを使ってターミナルの履歴を確認する">キーボードを使ってターミナルの履歴を確認する<a class="hash-link" href="#sessions_all-キーボードを使ってターミナルの履歴を確認する" aria-label="Direct link to キーボードを使ってターミナルの履歴を確認する">#</a></h3>
-<p data-bai-block="291">ターミナルの内容をコピーしながら、同時にターミナルの以前の内容を確認する方法もあります。
+<h3 data-bai-block="302" id="sessions_all-キーボードを使ってターミナルの履歴を確認する">キーボードを使ってターミナルの履歴を確認する<a class="hash-link" href="#sessions_all-キーボードを使ってターミナルの履歴を確認する" aria-label="Direct link to キーボードを使ってターミナルの履歴を確認する">#</a></h3>
+<p data-bai-block="303">ターミナルの内容をコピーしながら、同時にターミナルの以前の内容を確認する方法もあります。
 キーボードを使って以前の内容を確認する方法です。
 まず<code>Ctrl-B</code>をクリックし、次に<code>Page Up</code>および/または<code>Page Down</code>キーを押します。
 検索モードを終了するには、<code>q</code>キーを押すだけです。
 この方法を使うと、マウスサポートがオフになっている場合でも、ターミナルの履歴内容を確認できます。</p>
 <p><a id="tmux_guide"></a></p>
-<h3 data-bai-block="292" id="sessions_all-複数のシェルを起動する">複数のシェルを起動する<a class="hash-link" href="#sessions_all-複数のシェルを起動する" aria-label="Direct link to 複数のシェルを起動する">#</a></h3>
-<p data-bai-block="293">tmuxの主な利点は、1つのターミナルウィンドウで複数のシェルを起動して使用できることです。
+<h3 data-bai-block="304" id="sessions_all-複数のシェルを起動する">複数のシェルを起動する<a class="hash-link" href="#sessions_all-複数のシェルを起動する" aria-label="Direct link to 複数のシェルを起動する">#</a></h3>
+<p data-bai-block="305">tmuxの主な利点は、1つのターミナルウィンドウで複数のシェルを起動して使用できることです。
 <code>Ctrl-B</code>キーを押してから<code>c</code>を押すと、新しいシェル環境が表示されます。
 この時点で前のウィンドウは表示されなくなりますが、終了したわけではありません。
 <code>Ctrl-B</code>を押してから<code>w</code>を押します。現在tmuxで開いているシェルのリストが表示されます。
 <code>0:</code>で始まるシェルが最初のシェル環境で、<code>1:</code>で始まるシェルは今作成したシェルです。
 ユーザーは上下キーでシェル間を移動できます。カーソルを<code>0:</code>のシェルに置き、
 Enterキーを押して選択します。</p>
-<p><figure data-bai-block="294" class="doc-figure"><img src="./images/tmux_multi_session_pane.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2784" height="2164" /><figcaption>図 10.50</figcaption></figure>
+<p><figure data-bai-block="306" class="doc-figure"><img src="./images/tmux_multi_session_pane.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2784" height="2164" /><figcaption>図 10.50</figcaption></figure>
 </p>
-<p data-bai-block="295">このように、ユーザーはウェブターミナル内で複数のシェル環境を使用できます。
+<p data-bai-block="307">このように、ユーザーはウェブターミナル内で複数のシェル環境を使用できます。
 現在のシェルを終了するには、<code>exit</code>コマンドを入力するか、
 <code>Ctrl-B x</code>キーを押してから<code>y</code>と入力します。</p>
-<p data-bai-block="296">まとめると次のとおりです。</p>
+<p data-bai-block="308">まとめると次のとおりです。</p>
 <ul>
-<li data-bai-block="297"><code>Ctrl-B c</code>: 新しいtmuxシェルを作成する</li>
-<li data-bai-block="298"><code>Ctrl-B w</code>: 現在のtmuxシェルを照会して移動する</li>
-<li data-bai-block="299"><code>exit</code>または<code>Ctrl-B x</code>: 現在のシェルを終了する</li>
+<li data-bai-block="309"><code>Ctrl-B c</code>: 新しいtmuxシェルを作成する</li>
+<li data-bai-block="310"><code>Ctrl-B w</code>: 現在のtmuxシェルを照会して移動する</li>
+<li data-bai-block="311"><code>exit</code>または<code>Ctrl-B x</code>: 現在のシェルを終了する</li>
 </ul>
-<p data-bai-block="300">上記のコマンドを組み合わせることで、ユーザーは複数のシェル上でさまざまなタスクを同時に実行できます。</p>
+<p data-bai-block="312">上記のコマンドを組み合わせることで、ユーザーは複数のシェル上でさまざまなタスクを同時に実行できます。</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月9日</span>
+  <span class="last-updated">最終更新日 2026年9月14日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./session_page.html">
@@ -1066,6 +1100,7 @@ Enterキーを押して選択します。</p>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%AA%E3%82%B9%E3%83%88%E3%81%AE%E8%A1%A8%E7%A4%BA" data-toc-target="sessions_all-セッションリストの表示">セッションリストの表示</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E3%83%AA%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B0%E3%83%AA%E3%83%83%E3%83%89%E8%A1%A8%E7%A4%BA" data-toc-target="sessions_all-リソースグリッド表示">リソースグリッド表示</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E8%A9%B3%E7%B4%B0%E3%83%91%E3%83%8D%E3%83%AB" data-toc-target="sessions_all-セッション詳細パネル">セッション詳細パネル</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E3%83%97%E3%83%AA%E3%82%A8%E3%83%B3%E3%83%97%E3%82%B7%E3%83%A7%E3%83%B3%E9%96%A2%E9%80%A3%E3%81%AE%E3%82%B9%E3%83%86%E3%83%BC%E3%82%BF%E3%82%B9" data-toc-target="sessions_all-プリエンプション関連のステータス">プリエンプション関連のステータス</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E3%82%B9%E3%82%B1%E3%82%B8%E3%83%A5%E3%83%BC%E3%83%AB%E5%B1%A5%E6%AD%B4" data-toc-target="sessions_all-セッションのスケジュール履歴">セッションのスケジュール履歴</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E7%9B%A3%E6%9F%BB%E3%83%AD%E3%82%B0" data-toc-target="sessions_all-セッション監査ログ">セッション監査ログ</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-jupyter-notebook%E3%82%92%E4%BD%BF%E3%81%86" data-toc-target="sessions_all-jupyter-notebookを使う">Jupyter Notebookを使う</a></li>

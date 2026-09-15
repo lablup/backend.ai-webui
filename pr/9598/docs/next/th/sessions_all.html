@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="เซสชันการคำนวณ" />
   <meta name="twitter:description" content="เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันการคำนวณ","inLanguage":"th","description":"เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'","dateModified":"2026-09-09T03:12:33.000Z","url":"https://webui.docs.backend.ai/next/th/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันการคำนวณ","inLanguage":"th","description":"เอกสารนี้จะครอบคลุมวิธีการค้นหาและสร้างเซสชันการคำนวณที่ใช้คอนเทนเนอร์ รวมถึงการใช้งานแอปพลิเคชันเว็บต่าง ๆ ในหน้า 'เซสชัน'","dateModified":"2026-09-14T02:30:06.000Z","url":"https://webui.docs.backend.ai/next/th/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (77169da)">v26.9.0-alpha.0 (77169da)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (2e1cd15)">v26.9.0-alpha.0 (2e1cd15)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -555,238 +555,272 @@ ID เซสชัน ID ผู้ใช้ สถานะ ประเภท �
 <p data-bai-block="115">ปุ่มไอคอนนาฬิกาจะปรากฏข้างแท็กสถานะเซสชันในแผงรายละเอียดเซสชัน การคลิกไอคอนนี้จะเปิดโมดัลประวัติการจัดตารางเซสชัน ซึ่งแสดงบันทึกรายละเอียดของการตัดสินใจในการจัดตารางทั้งหมดที่ระบบได้ทำสำหรับเซสชันนั้น สำหรับข้อมูลเพิ่มเติม โปรดดูที่ส่วน<a href="#session-scheduling-history">ประวัติการจัดตารางเซสชัน</a></p>
 <p><figure data-bai-block="116" class="doc-figure"><img src="./images/session_scheduling_history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="752" height="615" /><figcaption>รูปที่ 10.28</figcaption></figure>
 </p>
-<p><a id="session-scheduling-history"></a></p>
-<h3 data-bai-block="117" id="sessions_all-ประวตการจดตารางเซสชน">ประวัติการจัดตารางเซสชัน<a class="hash-link" href="#sessions_all-ประวตการจดตารางเซสชน" aria-label="Direct link to ประวัติการจัดตารางเซสชัน">#</a></h3>
-<p data-bai-block="118">โมดัลประวัติการจัดตารางเซสชันช่วยให้มองเห็นวงจรชีวิตการจัดตารางภายในของเซสชันการคำนวณได้อย่างโปร่งใส โดยแสดงบันทึกรายละเอียดของทุกระยะการจัดตารางที่เซสชันได้ผ่าน รวมถึงการเปลี่ยนสถานะ ผลลัพธ์ จำนวนครั้งที่ลองใหม่ และข้อผิดพลาดที่พบ ฟีเจอร์นี้มีประโยชน์อย่างยิ่งสำหรับการทำความเข้าใจว่าทำไมเซสชันจึงล่าช้า ค้างอยู่ในสถานะ <code>PENDING</code> หรือไม่สามารถเริ่มต้นได้</p>
-<p><figure data-bai-block="119" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>รูปที่ 10.29</figcaption></figure>
-</p>
-<h4 data-bai-block="120" id="sessions_all-แถบตวกรอง">แถบตัวกรอง<a class="hash-link" href="#sessions_all-แถบตวกรอง" aria-label="Direct link to แถบตัวกรอง">#</a></h4>
-<p data-bai-block="121">ที่ด้านบนของโมดัล แถบตัวกรองช่วยให้คุณจำกัดบันทึกประวัติการจัดตารางได้ คุณสามารถกรองตามคุณสมบัติต่อไปนี้:</p>
+<p><a id="preemption-statuses"></a></p>
+<h3 data-bai-block="117" id="sessions_all-สถานะทเกยวของกบการเบยดออก">สถานะที่เกี่ยวข้องกับการเบียดออก<a class="hash-link" href="#sessions_all-สถานะทเกยวของกบการเบยดออก" aria-label="Direct link to สถานะที่เกี่ยวข้องกับการเบียดออก">#</a></h3>
+<p data-bai-block="118">เซสชันอาจปรากฏในสถานะ <code>RESERVED</code>, <code>PREEMPTED</code> และ <code>RESCHEDULING</code> ได้ด้วย ตัวจัดกำหนดการจะใช้สถานะเหล่านี้เมื่อจำเป็นต้องปลดปล่อยทรัพยากรให้กับงานที่มีลำดับความสำคัญสูงกว่า</p>
 <ul>
-<li data-bai-block="122"><strong>ID</strong>: กรองตาม ID ของบันทึกประวัติ (UUID, ตรงกันทั้งหมด)</li>
-<li data-bai-block="123"><strong>ขั้นตอน</strong>: กรองตามชื่อระยะการจัดตาราง</li>
-<li data-bai-block="124"><strong>ผลลัพธ์</strong>: กรองตามประเภทผลลัพธ์ (SUCCESS, FAILURE, STALE, NEED_RETRY, EXPIRED, GIVE_UP, SKIPPED)</li>
-<li data-bai-block="125"><strong>สถานะต้นทาง</strong>: กรองตามสถานะเซสชันก่อนขั้นตอนการจัดตาราง</li>
-<li data-bai-block="126"><strong>สถานะปลายทาง</strong>: กรองตามสถานะเซสชันหลังขั้นตอนการจัดตาราง</li>
-<li data-bai-block="127"><strong>รหัสข้อผิดพลาด</strong>: กรองตามรหัสข้อผิดพลาด</li>
-<li data-bai-block="128"><strong>ข้อความ</strong>: กรองตามเนื้อหาข้อความ</li>
-<li data-bai-block="129"><strong>สร้างเมื่อ</strong>: กรองตามเวลาที่สร้างบันทึก</li>
-<li data-bai-block="130"><strong>อัปเดตเมื่อ</strong>: กรองตามเวลาที่อัปเดตบันทึก</li>
+<li data-bai-block="119"><code>RESERVED</code>: เซสชันถือครองการจองทรัพยากรและกำลังรอให้ทรัพยากรที่ต้องการถูกปลดปล่อย</li>
+<li data-bai-block="120"><code>PREEMPTED</code>: เซสชันถูกเลือกให้ถูกเบียดออก เพื่อให้งานที่มีลำดับความสำคัญสูงกว่าใช้ทรัพยากรได้</li>
+<li data-bai-block="121"><code>RESCHEDULING</code>: เซสชันถูกเบียดออกและถูกส่งกลับเข้าคิว โดยจะถูกจัดตารางใหม่โดยอัตโนมัติ</li>
 </ul>
-<p data-bai-block="131">ปุ่มรีเฟรชอยู่ข้างแถบตัวกรองเพื่อโหลดข้อมูลประวัติการจัดตารางใหม่</p>
-<h4 data-bai-block="132" id="sessions_all-ตารางประวต">ตารางประวัติ<a class="hash-link" href="#sessions_all-ตารางประวต" aria-label="Direct link to ตารางประวัติ">#</a></h4>
-<p data-bai-block="133">ตารางประวัติการจัดตารางแสดงบันทึกพร้อมคอลัมน์ต่อไปนี้:</p>
-<ul>
-<li data-bai-block="134"><strong>อัปเดตเมื่อ</strong>: เวลาที่บันทึกนี้ได้รับการอัปเดตล่าสุด</li>
-<li data-bai-block="135"><strong>สร้างเมื่อ</strong>: เวลาที่บันทึกนี้ถูกสร้างขึ้น</li>
-<li data-bai-block="136"><strong>ระยะ</strong>: ชื่อของระยะการจัดตาราง</li>
-<li data-bai-block="137"><strong>ผลลัพธ์</strong>: ผลลัพธ์ของขั้นตอนการจัดตารางนี้ แสดงเป็นป้ายที่มีรหัสสี</li>
-<li data-bai-block="138"><strong>สถานะต้นทาง</strong>: สถานะเซสชันก่อนขั้นตอนการจัดตารางนี้</li>
-<li data-bai-block="139"><strong>สถานะปลายทาง</strong>: สถานะเซสชันหลังขั้นตอนการจัดตารางนี้</li>
-<li data-bai-block="140"><strong>จำนวนครั้งที่ลอง</strong>: จำนวนครั้งที่ขั้นตอนการจัดตารางนี้ถูกลอง</li>
-<li data-bai-block="141"><strong>ข้อความ</strong>: ข้อความสรุปสำหรับขั้นตอนการจัดตารางนี้</li>
-</ul>
-<p data-bai-block="142">คุณสามารถเรียงลำดับตารางตามคอลัมน์<strong>สร้างเมื่อ</strong>หรือ<strong>อัปเดตเมื่อ</strong>เพื่อดูบันทึกในลำดับที่ต้องการ</p>
-<h4 data-bai-block="143" id="sessions_all-การแบงหนาตารางประวต">การแบ่งหน้าตารางประวัติ<a class="hash-link" href="#sessions_all-การแบงหนาตารางประวต" aria-label="Direct link to การแบ่งหน้าตารางประวัติ">#</a></h4>
-<p data-bai-block="144">ตารางประวัติการจัดตารางใช้การแบ่งหน้าแบบ offset โดยมีขนาดหน้าเริ่มต้น 10 รายการต่อหน้า การเปลี่ยนตัวกรองหรือลำดับการเรียงจะรีเซ็ตมุมมองกลับไปที่หน้า 1 โดยอัตโนมัติ</p>
-<h4 data-bai-block="145" id="sessions_all-ขนตอนยอยทขยายได">ขั้นตอนย่อยที่ขยายได้<a class="hash-link" href="#sessions_all-ขนตอนยอยทขยายได" aria-label="Direct link to ขั้นตอนย่อยที่ขยายได้">#</a></h4>
-<p data-bai-block="146">บันทึกประวัติบางรายการมีขั้นตอนย่อยอย่างละเอียด เมื่อมีขั้นตอนย่อย ลูกศรขยายจะปรากฏที่ด้านซ้ายของแถว คลิกเพื่อแสดงตารางซ้อนที่แสดงขั้นตอนย่อยแต่ละขั้นตอนของระยะการจัดตารางนั้น</p>
-<p><figure data-bai-block="147" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>รูปที่ 10.30</figcaption></figure>
-</p>
-<p data-bai-block="148">ตารางขั้นตอนย่อยประกอบด้วยคอลัมน์ต่อไปนี้:</p>
-<ul>
-<li data-bai-block="149"><strong>ขั้นตอน</strong>: ชื่อของขั้นตอนย่อย</li>
-<li data-bai-block="150"><strong>ผลลัพธ์</strong>: ผลลัพธ์ของขั้นตอนย่อย แสดงเป็นป้ายที่มีรหัสสี</li>
-<li data-bai-block="151"><strong>รหัสข้อผิดพลาด</strong>: รหัสข้อผิดพลาดเฉพาะหากขั้นตอนล้มเหลว</li>
-<li data-bai-block="152"><strong>ข้อความ</strong>: ข้อมูลรายละเอียดหรือคำอธิบายข้อผิดพลาด</li>
-<li data-bai-block="153"><strong>เริ่มเมื่อ</strong>: เวลาที่ขั้นตอนย่อยเริ่มต้น</li>
-<li data-bai-block="154"><strong>สิ้นสุดเมื่อ</strong>: เวลาที่ขั้นตอนย่อยเสร็จสิ้น</li>
-</ul>
-<h4 data-bai-block="155" id="sessions_all-สของปายผลลพธ">สีของป้ายผลลัพธ์<a class="hash-link" href="#sessions_all-สของปายผลลพธ" aria-label="Direct link to สีของป้ายผลลัพธ์">#</a></h4>
-<p data-bai-block="156">แต่ละขั้นตอนการจัดตารางและขั้นตอนย่อยจะแสดงป้ายผลลัพธ์ที่มีรหัสสีระบุผลลัพธ์:</p>
+<p data-bai-block="122">เซสชันในทั้งสามสถานะนี้ยังคงใช้ทรัพยากรอยู่ จึงแสดงอยู่ภายใต้ <strong>กำลังทำงาน</strong> ไม่ใช่ <strong>เสร็จสิ้น</strong></p>
+<p data-bai-block="123">เมื่อตัวจัดกำหนดการบันทึกเหตุผลของการเบียดออกไว้กับเซสชัน การวางเมาส์เหนือแท็กสถานะเซสชันจะแสดงเหตุผลนั้นเป็นคำอธิบายแทนค่าภายในแบบดิบ</p>
 <table>
 <thead>
-<tr data-bai-block="157">
+<tr data-bai-block="124">
+<th>เหตุผล</th>
+<th>คำอธิบาย</th>
+</tr>
+</thead>
+<tbody><tr data-bai-block="125">
+<td><code>PREEMPTED_BY_SCHEDULER</code></td>
+<td>เซสชันนี้ถูกยุติโดยตัวจัดกำหนดการเพื่อปลดปล่อยทรัพยากรให้กับงานที่มีลำดับความสำคัญสูงกว่า</td>
+</tr>
+<tr data-bai-block="126">
+<td><code>preempted-by-reservation</code></td>
+<td>เซสชันนี้ถูกเลือกให้ถูกเบียดออกเพื่อปลดปล่อยทรัพยากรให้กับงานที่มีลำดับความสำคัญสูงกว่า</td>
+</tr>
+<tr data-bai-block="127">
+<td><code>preemption-reservation</code></td>
+<td>เซสชันนี้ถือครองการจองทรัพยากรและกำลังรอให้ทรัพยากรถูกปลดปล่อย</td>
+</tr>
+<tr data-bai-block="128">
+<td><code>RESCHEDULED</code></td>
+<td>เซสชันนี้ถูกเบียดออกและถูกส่งกลับเข้าคิว โดยจะถูกจัดตารางใหม่โดยอัตโนมัติ</td>
+</tr>
+</tbody></table>
+<p><a id="session-scheduling-history"></a></p>
+<h3 data-bai-block="129" id="sessions_all-ประวตการจดตารางเซสชน">ประวัติการจัดตารางเซสชัน<a class="hash-link" href="#sessions_all-ประวตการจดตารางเซสชน" aria-label="Direct link to ประวัติการจัดตารางเซสชัน">#</a></h3>
+<p data-bai-block="130">โมดัลประวัติการจัดตารางเซสชันช่วยให้มองเห็นวงจรชีวิตการจัดตารางภายในของเซสชันการคำนวณได้อย่างโปร่งใส โดยแสดงบันทึกรายละเอียดของทุกระยะการจัดตารางที่เซสชันได้ผ่าน รวมถึงการเปลี่ยนสถานะ ผลลัพธ์ จำนวนครั้งที่ลองใหม่ และข้อผิดพลาดที่พบ ฟีเจอร์นี้มีประโยชน์อย่างยิ่งสำหรับการทำความเข้าใจว่าทำไมเซสชันจึงล่าช้า ค้างอยู่ในสถานะ <code>PENDING</code> หรือไม่สามารถเริ่มต้นได้</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>รูปที่ 10.29</figcaption></figure>
+</p>
+<h4 data-bai-block="132" id="sessions_all-แถบตวกรอง">แถบตัวกรอง<a class="hash-link" href="#sessions_all-แถบตวกรอง" aria-label="Direct link to แถบตัวกรอง">#</a></h4>
+<p data-bai-block="133">ที่ด้านบนของโมดัล แถบตัวกรองช่วยให้คุณจำกัดบันทึกประวัติการจัดตารางได้ คุณสามารถกรองตามคุณสมบัติต่อไปนี้:</p>
+<ul>
+<li data-bai-block="134"><strong>ID</strong>: กรองตาม ID ของบันทึกประวัติ (UUID, ตรงกันทั้งหมด)</li>
+<li data-bai-block="135"><strong>ขั้นตอน</strong>: กรองตามชื่อระยะการจัดตาราง</li>
+<li data-bai-block="136"><strong>ผลลัพธ์</strong>: กรองตามประเภทผลลัพธ์ (SUCCESS, FAILURE, STALE, NEED_RETRY, EXPIRED, GIVE_UP, SKIPPED)</li>
+<li data-bai-block="137"><strong>สถานะต้นทาง</strong>: กรองตามสถานะเซสชันก่อนขั้นตอนการจัดตาราง</li>
+<li data-bai-block="138"><strong>สถานะปลายทาง</strong>: กรองตามสถานะเซสชันหลังขั้นตอนการจัดตาราง</li>
+<li data-bai-block="139"><strong>รหัสข้อผิดพลาด</strong>: กรองตามรหัสข้อผิดพลาด</li>
+<li data-bai-block="140"><strong>ข้อความ</strong>: กรองตามเนื้อหาข้อความ</li>
+<li data-bai-block="141"><strong>สร้างเมื่อ</strong>: กรองตามเวลาที่สร้างบันทึก</li>
+<li data-bai-block="142"><strong>อัปเดตเมื่อ</strong>: กรองตามเวลาที่อัปเดตบันทึก</li>
+</ul>
+<p data-bai-block="143">ปุ่มรีเฟรชอยู่ข้างแถบตัวกรองเพื่อโหลดข้อมูลประวัติการจัดตารางใหม่</p>
+<h4 data-bai-block="144" id="sessions_all-ตารางประวต">ตารางประวัติ<a class="hash-link" href="#sessions_all-ตารางประวต" aria-label="Direct link to ตารางประวัติ">#</a></h4>
+<p data-bai-block="145">ตารางประวัติการจัดตารางแสดงบันทึกพร้อมคอลัมน์ต่อไปนี้:</p>
+<ul>
+<li data-bai-block="146"><strong>อัปเดตเมื่อ</strong>: เวลาที่บันทึกนี้ได้รับการอัปเดตล่าสุด</li>
+<li data-bai-block="147"><strong>สร้างเมื่อ</strong>: เวลาที่บันทึกนี้ถูกสร้างขึ้น</li>
+<li data-bai-block="148"><strong>ระยะ</strong>: ชื่อของระยะการจัดตาราง</li>
+<li data-bai-block="149"><strong>ผลลัพธ์</strong>: ผลลัพธ์ของขั้นตอนการจัดตารางนี้ แสดงเป็นป้ายที่มีรหัสสี</li>
+<li data-bai-block="150"><strong>สถานะต้นทาง</strong>: สถานะเซสชันก่อนขั้นตอนการจัดตารางนี้</li>
+<li data-bai-block="151"><strong>สถานะปลายทาง</strong>: สถานะเซสชันหลังขั้นตอนการจัดตารางนี้</li>
+<li data-bai-block="152"><strong>จำนวนครั้งที่ลอง</strong>: จำนวนครั้งที่ขั้นตอนการจัดตารางนี้ถูกลอง</li>
+<li data-bai-block="153"><strong>ข้อความ</strong>: ข้อความสรุปสำหรับขั้นตอนการจัดตารางนี้</li>
+</ul>
+<p data-bai-block="154">คุณสามารถเรียงลำดับตารางตามคอลัมน์<strong>สร้างเมื่อ</strong>หรือ<strong>อัปเดตเมื่อ</strong>เพื่อดูบันทึกในลำดับที่ต้องการ</p>
+<h4 data-bai-block="155" id="sessions_all-การแบงหนาตารางประวต">การแบ่งหน้าตารางประวัติ<a class="hash-link" href="#sessions_all-การแบงหนาตารางประวต" aria-label="Direct link to การแบ่งหน้าตารางประวัติ">#</a></h4>
+<p data-bai-block="156">ตารางประวัติการจัดตารางใช้การแบ่งหน้าแบบ offset โดยมีขนาดหน้าเริ่มต้น 10 รายการต่อหน้า การเปลี่ยนตัวกรองหรือลำดับการเรียงจะรีเซ็ตมุมมองกลับไปที่หน้า 1 โดยอัตโนมัติ</p>
+<h4 data-bai-block="157" id="sessions_all-ขนตอนยอยทขยายได">ขั้นตอนย่อยที่ขยายได้<a class="hash-link" href="#sessions_all-ขนตอนยอยทขยายได" aria-label="Direct link to ขั้นตอนย่อยที่ขยายได้">#</a></h4>
+<p data-bai-block="158">บันทึกประวัติบางรายการมีขั้นตอนย่อยอย่างละเอียด เมื่อมีขั้นตอนย่อย ลูกศรขยายจะปรากฏที่ด้านซ้ายของแถว คลิกเพื่อแสดงตารางซ้อนที่แสดงขั้นตอนย่อยแต่ละขั้นตอนของระยะการจัดตารางนั้น</p>
+<p><figure data-bai-block="159" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>รูปที่ 10.30</figcaption></figure>
+</p>
+<p data-bai-block="160">ตารางขั้นตอนย่อยประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<ul>
+<li data-bai-block="161"><strong>ขั้นตอน</strong>: ชื่อของขั้นตอนย่อย</li>
+<li data-bai-block="162"><strong>ผลลัพธ์</strong>: ผลลัพธ์ของขั้นตอนย่อย แสดงเป็นป้ายที่มีรหัสสี</li>
+<li data-bai-block="163"><strong>รหัสข้อผิดพลาด</strong>: รหัสข้อผิดพลาดเฉพาะหากขั้นตอนล้มเหลว</li>
+<li data-bai-block="164"><strong>ข้อความ</strong>: ข้อมูลรายละเอียดหรือคำอธิบายข้อผิดพลาด</li>
+<li data-bai-block="165"><strong>เริ่มเมื่อ</strong>: เวลาที่ขั้นตอนย่อยเริ่มต้น</li>
+<li data-bai-block="166"><strong>สิ้นสุดเมื่อ</strong>: เวลาที่ขั้นตอนย่อยเสร็จสิ้น</li>
+</ul>
+<h4 data-bai-block="167" id="sessions_all-สของปายผลลพธ">สีของป้ายผลลัพธ์<a class="hash-link" href="#sessions_all-สของปายผลลพธ" aria-label="Direct link to สีของป้ายผลลัพธ์">#</a></h4>
+<p data-bai-block="168">แต่ละขั้นตอนการจัดตารางและขั้นตอนย่อยจะแสดงป้ายผลลัพธ์ที่มีรหัสสีระบุผลลัพธ์:</p>
+<table>
+<thead>
+<tr data-bai-block="169">
 <th>ผลลัพธ์</th>
 <th>สี</th>
 <th>ความหมาย</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="158">
+<tbody><tr data-bai-block="170">
 <td>SUCCESS</td>
 <td>เขียว</td>
 <td>ขั้นตอนเสร็จสมบูรณ์สำเร็จ</td>
 </tr>
-<tr data-bai-block="159">
+<tr data-bai-block="171">
 <td>FAILURE</td>
 <td>แดง</td>
 <td>ขั้นตอนล้มเหลว</td>
 </tr>
-<tr data-bai-block="160">
+<tr data-bai-block="172">
 <td>STALE</td>
 <td>เทา</td>
 <td>บันทึกเก่าหรือไม่เป็นปัจจุบัน</td>
 </tr>
-<tr data-bai-block="161">
+<tr data-bai-block="173">
 <td>NEED_RETRY</td>
 <td>เหลือง</td>
 <td>ขั้นตอนต้องลองใหม่</td>
 </tr>
-<tr data-bai-block="162">
+<tr data-bai-block="174">
 <td>EXPIRED</td>
 <td>แดง</td>
 <td>การลองจัดตารางหมดอายุ</td>
 </tr>
-<tr data-bai-block="163">
+<tr data-bai-block="175">
 <td>GIVE_UP</td>
 <td>แดง</td>
 <td>ระบบยกเลิกการจัดตาราง</td>
 </tr>
-<tr data-bai-block="164">
+<tr data-bai-block="176">
 <td>SKIPPED</td>
 <td>เทา</td>
 <td>ขั้นตอนถูกข้าม</td>
 </tr>
 </tbody></table>
 <p><a id="session-audit-log"></a></p>
-<h3 data-bai-block="165" id="sessions_all-บนทกการตรวจสอบเซสชน">บันทึกการตรวจสอบเซสชัน<a class="hash-link" href="#sessions_all-บนทกการตรวจสอบเซสชน" aria-label="Direct link to บันทึกการตรวจสอบเซสชัน">#</a></h3>
-<p data-bai-block="166">แท็บ <strong>Audit Log</strong> จะปรากฏที่ด้านล่างของแผงรายละเอียดเซสชันควบคู่กับแท็บ <strong>Kernels</strong> แท็บนี้ให้บันทึกตามลำดับเวลาของทุกการกระทำที่ดำเนินการกับเซสชัน เช่น การเปลี่ยนแปลงสถานะ การแก้ไขทรัพยากร และการดำเนินการทางการดูแลระบบ พร้อมด้วยข้อมูลว่าใครเป็นผู้ดำเนินการและเมื่อใด</p>
-<p><figure data-bai-block="167" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>รูปที่ 10.31</figcaption></figure>
+<h3 data-bai-block="177" id="sessions_all-บนทกการตรวจสอบเซสชน">บันทึกการตรวจสอบเซสชัน<a class="hash-link" href="#sessions_all-บนทกการตรวจสอบเซสชน" aria-label="Direct link to บันทึกการตรวจสอบเซสชัน">#</a></h3>
+<p data-bai-block="178">แท็บ <strong>Audit Log</strong> จะปรากฏที่ด้านล่างของแผงรายละเอียดเซสชันควบคู่กับแท็บ <strong>Kernels</strong> แท็บนี้ให้บันทึกตามลำดับเวลาของทุกการกระทำที่ดำเนินการกับเซสชัน เช่น การเปลี่ยนแปลงสถานะ การแก้ไขทรัพยากร และการดำเนินการทางการดูแลระบบ พร้อมด้วยข้อมูลว่าใครเป็นผู้ดำเนินการและเมื่อใด</p>
+<p><figure data-bai-block="179" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>รูปที่ 10.31</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="168" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="180" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="169">Audit Log ถูกควบคุมโดย backend และอาจมองเห็นได้เฉพาะ superadmin เท่านั้น ผู้ใช้ทั่วไปอาจเห็นผลลัพธ์ว่างเปล่าแม้ว่าแท็บจะสามารถเข้าถึงได้</p>
+<p data-bai-block="181">Audit Log ถูกควบคุมโดย backend และอาจมองเห็นได้เฉพาะ superadmin เท่านั้น ผู้ใช้ทั่วไปอาจเห็นผลลัพธ์ว่างเปล่าแม้ว่าแท็บจะสามารถเข้าถึงได้</p>
 </div></div>
 
 
-<h4 data-bai-block="170" id="sessions_all-คอลมน-audit-log">คอลัมน์ Audit Log<a class="hash-link" href="#sessions_all-คอลมน-audit-log" aria-label="Direct link to คอลัมน์ Audit Log">#</a></h4>
-<p data-bai-block="171">ตาราง Audit Log ประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<h4 data-bai-block="182" id="sessions_all-คอลมน-audit-log">คอลัมน์ Audit Log<a class="hash-link" href="#sessions_all-คอลมน-audit-log" aria-label="Direct link to คอลัมน์ Audit Log">#</a></h4>
+<p data-bai-block="183">ตาราง Audit Log ประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="172"><strong>Triggered By</strong>: ที่อยู่อีเมลและ ID บัญชีของผู้ดำเนินการที่เริ่มต้นการกระทำ</li>
-<li data-bai-block="173"><strong>Operation</strong>: ประเภทของการกระทำที่ดำเนินการ (ตัวอย่างเช่น การสร้างเซสชัน การยุติ หรือการเปลี่ยนแปลงทรัพยากร)</li>
-<li data-bai-block="174"><strong>Status</strong>: ผลลัพธ์ของการกระทำ (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code> หรือ <code>UNKNOWN</code>)</li>
-<li data-bai-block="175"><strong>Time</strong>: เวลาที่เกิดการกระทำ</li>
+<li data-bai-block="184"><strong>Triggered By</strong>: ที่อยู่อีเมลและ ID บัญชีของผู้ดำเนินการที่เริ่มต้นการกระทำ</li>
+<li data-bai-block="185"><strong>Operation</strong>: ประเภทของการกระทำที่ดำเนินการ (ตัวอย่างเช่น การสร้างเซสชัน การยุติ หรือการเปลี่ยนแปลงทรัพยากร)</li>
+<li data-bai-block="186"><strong>Status</strong>: ผลลัพธ์ของการกระทำ (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>DENIED</code> หรือ <code>UNKNOWN</code>) โดย <code>DENIED</code> หมายถึงการกระทำถูกปฏิเสธโดยเจตนาตามนโยบาย ไม่ใช่ความล้มเหลวจากข้อผิดพลาด</li>
+<li data-bai-block="187"><strong>Time</strong>: เวลาที่เกิดการกระทำ</li>
 </ul>
-<h4 data-bai-block="176" id="sessions_all-ตวกรอง-audit-log">ตัวกรอง Audit Log<a class="hash-link" href="#sessions_all-ตวกรอง-audit-log" aria-label="Direct link to ตัวกรอง Audit Log">#</a></h4>
-<p data-bai-block="177">ใช้แถบตัวกรองด้านบนตารางเพื่อจำกัดรายการบันทึก:</p>
+<h4 data-bai-block="188" id="sessions_all-ตวกรอง-audit-log">ตัวกรอง Audit Log<a class="hash-link" href="#sessions_all-ตวกรอง-audit-log" aria-label="Direct link to ตัวกรอง Audit Log">#</a></h4>
+<p data-bai-block="189">ใช้แถบตัวกรองด้านบนตารางเพื่อจำกัดรายการบันทึก:</p>
 <ul>
-<li data-bai-block="178"><strong>Status</strong>: กรองตามผลลัพธ์ของการกระทำ (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>UNKNOWN</code>)</li>
-<li data-bai-block="179"><strong>Operation</strong>: ค้นหาตามชื่อหรือคำสำคัญของการดำเนินการ</li>
-<li data-bai-block="180"><strong>Triggered By</strong>: ค้นหาตาม ID ของผู้ดำเนินการ</li>
-<li data-bai-block="181"><strong>Time</strong>: กรองด้วยตัวเลือกช่วงวันที่</li>
+<li data-bai-block="190"><strong>Status</strong>: กรองตามผลลัพธ์ของการกระทำ (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>UNKNOWN</code>)</li>
+<li data-bai-block="191"><strong>Operation</strong>: ค้นหาตามชื่อหรือคำสำคัญของการดำเนินการ</li>
+<li data-bai-block="192"><strong>Triggered By</strong>: ค้นหาตาม ID ของผู้ดำเนินการ</li>
+<li data-bai-block="193"><strong>Time</strong>: กรองด้วยตัวเลือกช่วงวันที่</li>
 </ul>
-<p data-bai-block="182">ปุ่ม <strong>Refresh</strong> จะโหลดบันทึกใหม่ การค้นหา Audit Log จะถูกเลื่อนออกไปและส่งเฉพาะครั้งแรกที่คุณเปิดใช้งานแท็บ <strong>Audit Log</strong></p>
+<p data-bai-block="194">ปุ่ม <strong>Refresh</strong> จะโหลดบันทึกใหม่ การค้นหา Audit Log จะถูกเลื่อนออกไปและส่งเฉพาะครั้งแรกที่คุณเปิดใช้งานแท็บ <strong>Audit Log</strong></p>
 <p><a id="use_session"></a></p>
-<h2 data-bai-block="183" id="sessions_all-ใช-jupyter-notebook">ใช้ Jupyter Notebook<a class="hash-link" href="#sessions_all-ใช-jupyter-notebook" aria-label="Direct link to ใช้ Jupyter Notebook">#</a></h2>
-<p data-bai-block="184">มาดูวิธีการใช้และจัดการเซสชันการคำนวณที่กำลังทำงานอยู่แล้วกัน
+<h2 data-bai-block="195" id="sessions_all-ใช-jupyter-notebook">ใช้ Jupyter Notebook<a class="hash-link" href="#sessions_all-ใช-jupyter-notebook" aria-label="Direct link to ใช้ Jupyter Notebook">#</a></h2>
+<p data-bai-block="196">มาดูวิธีการใช้และจัดการเซสชันการคำนวณที่กำลังทำงานอยู่แล้วกัน
 คลิกไอคอนแรกที่มุมขวาบนของแผงรายละเอียดเซสชันเพื่อเปิดตัวเปิดแอป ซึ่งจะแสดง
 บริการแอปที่พร้อมใช้งานสำหรับเซสชันนั้น</p>
-<p><figure data-bai-block="185" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>รูปที่ 10.32</figcaption></figure>
+<p><figure data-bai-block="197" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>รูปที่ 10.32</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="186" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="198" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="187">มีตัวเลือกตรวจสอบสองตัวเลือกใต้ไอคอนแอป การเปิดแอปด้วยแต่ละรายการที่เลือกจะใช้คุณลักษณะต่อไปนี้ตามลำดับ:</p>
+<p data-bai-block="199">มีตัวเลือกตรวจสอบสองตัวเลือกใต้ไอคอนแอป การเปิดแอปด้วยแต่ละรายการที่เลือกจะใช้คุณลักษณะต่อไปนี้ตามลำดับ:</p>
 <p><a id="open-app-to-public"></a></p>
 <ul>
-<li data-bai-block="188">เปิดแอปให้กับสาธารณะ: เปิดแอปให้กับสาธารณะ โดยพื้นฐานแล้ว บริการเว็บเช่น Terminal และ Jupyter Notebook จะไม่สามารถเข้าถึงได้โดยผู้ใช้รายอื่น แม้ว่าผู้ใช้จะทราบ URL ของบริการก็ตาม เนื่องจากถือว่าไม่มีการตรวจสอบสิทธิ์ อย่างไรก็ตาม การตรวจสอบตัวเลือกนี้ทำให้ใครก็ตามที่ทราบ URL ของบริการ (และหมายเลขพอร์ต) สามารถเข้าถึงและใช้งานได้ แน่นอนว่าผู้ใช้ต้องมีเส้นทางเครือข่ายเพื่อเข้าถึงบริการนั้น</li>
-<li data-bai-block="189">ลองพอร์ตที่ต้องการ: หากไม่เลือกตัวเลือกนี้ หมายเลขพอร์ตสำหรับบริการเว็บจะถูกกำหนดแบบสุ่มจากกลุ่มพอร์ตที่เตรียมไว้ล่วงหน้าโดย Backend.AI หากคุณเลือกจุดนี้และป้อนหมายเลขพอร์ตเฉพาะ หมายเลขพอร์ตที่ป้อนจะถูกลองใช้ก่อน อย่างไรก็ตาม ไม่มีการรับประกันว่าพอร์ตที่ต้องการจะถูกกำหนดเสมอไป เนื่องจากพอร์ตอาจไม่มีอยู่ในกลุ่มพอร์ตเลยหรือบริการอื่นอาจใช้พอร์ตนั้นอยู่แล้ว ในกรณีนี้ หมายเลขพอร์ตจะถูกกำหนดแบบสุ่ม</li>
+<li data-bai-block="200">เปิดแอปให้กับสาธารณะ: เปิดแอปให้กับสาธารณะ โดยพื้นฐานแล้ว บริการเว็บเช่น Terminal และ Jupyter Notebook จะไม่สามารถเข้าถึงได้โดยผู้ใช้รายอื่น แม้ว่าผู้ใช้จะทราบ URL ของบริการก็ตาม เนื่องจากถือว่าไม่มีการตรวจสอบสิทธิ์ อย่างไรก็ตาม การตรวจสอบตัวเลือกนี้ทำให้ใครก็ตามที่ทราบ URL ของบริการ (และหมายเลขพอร์ต) สามารถเข้าถึงและใช้งานได้ แน่นอนว่าผู้ใช้ต้องมีเส้นทางเครือข่ายเพื่อเข้าถึงบริการนั้น</li>
+<li data-bai-block="201">ลองพอร์ตที่ต้องการ: หากไม่เลือกตัวเลือกนี้ หมายเลขพอร์ตสำหรับบริการเว็บจะถูกกำหนดแบบสุ่มจากกลุ่มพอร์ตที่เตรียมไว้ล่วงหน้าโดย Backend.AI หากคุณเลือกจุดนี้และป้อนหมายเลขพอร์ตเฉพาะ หมายเลขพอร์ตที่ป้อนจะถูกลองใช้ก่อน อย่างไรก็ตาม ไม่มีการรับประกันว่าพอร์ตที่ต้องการจะถูกกำหนดเสมอไป เนื่องจากพอร์ตอาจไม่มีอยู่ในกลุ่มพอร์ตเลยหรือบริการอื่นอาจใช้พอร์ตนั้นอยู่แล้ว ในกรณีนี้ หมายเลขพอร์ตจะถูกกำหนดแบบสุ่ม</li>
 </ul>
-<p data-bai-block="190">ขึ้นอยู่กับการตั้งค่าของระบบ ตัวเลือกเหล่านี้อาจไม่แสดงออกมา</p>
+<p data-bai-block="202">ขึ้นอยู่กับการตั้งค่าของระบบ ตัวเลือกเหล่านี้อาจไม่แสดงออกมา</p>
 </div></div>
 
 
-<p data-bai-block="191">ให้คลิกที่ Jupyter Notebook</p>
-<p><figure data-bai-block="192" class="doc-figure"><img src="./images/jupyter_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2420" height="582" /><figcaption>รูปที่ 10.33</figcaption></figure>
+<p data-bai-block="203">ให้คลิกที่ Jupyter Notebook</p>
+<p><figure data-bai-block="204" class="doc-figure"><img src="./images/jupyter_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2420" height="582" /><figcaption>รูปที่ 10.33</figcaption></figure>
 </p>
-<p data-bai-block="193">หน้าต่างป๊อปอัปจะแสดงว่า Jupyter Notebook กำลังทำงาน
+<p data-bai-block="205">หน้าต่างป๊อปอัปจะแสดงว่า Jupyter Notebook กำลังทำงาน
 โน้ตบุ๊กนี้ถูกสร้างขึ้นภายในเซสชันการคำนวณที่กำลังทำงานอยู่ และสามารถใช้งานได้อย่างง่ายดาย
 ด้วยการคลิกปุ่มเพียงครั้งเดียว นอกจากนี้ ไม่จำเป็นต้องมีขั้นตอนการติดตั้งแพ็กเกจแยกต่างหาก เนื่องจากสภาพแวดล้อมภาษาและ
 ไลบรารีที่เซสชันการคำนวณจัดเตรียมไว้สามารถใช้งานได้เลย สำหรับคำแนะนำ
 โดยละเอียดเกี่ยวกับวิธีการใช้ Jupyter Notebook โปรดดูเอกสารอย่างเป็นทางการของ Jupyter Notebook</p>
-<p data-bai-block="194">ไฟล์ <code>id_container</code> ในตัวสำรวจไฟล์ของโน้ตบุ๊กประกอบด้วยคีย์ส่วนตัว
+<p data-bai-block="206">ไฟล์ <code>id_container</code> ในตัวสำรวจไฟล์ของโน้ตบุ๊กประกอบด้วยคีย์ส่วนตัว
 SSH หากจำเป็น ผู้ใช้สามารถดาวน์โหลดและใช้งานเพื่อการเข้าถึง SSH / SFTP ไปยัง
 คอนเทนเนอร์ได้</p>
-<p data-bai-block="195">คลิกปุ่ม &#39;NEW&#39; ที่มุมขวาบนและเลือก Notebook สำหรับ Backend.AI
+<p data-bai-block="207">คลิกปุ่ม &#39;NEW&#39; ที่มุมขวาบนและเลือก Notebook สำหรับ Backend.AI
 จากนั้นหน้าต่าง ipynb จะปรากฏขึ้นซึ่งผู้ใช้สามารถป้อนโค้ดของตนเองได้</p>
-<p><figure data-bai-block="196" class="doc-figure"><img src="./images/backendai_notebook_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="807" height="544" /><figcaption>รูปที่ 10.34</figcaption></figure>
+<p><figure data-bai-block="208" class="doc-figure"><img src="./images/backendai_notebook_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="807" height="544" /><figcaption>รูปที่ 10.34</figcaption></figure>
 </p>
-<p data-bai-block="197">ในหน้าต่างนี้ ผู้ใช้สามารถป้อนและดำเนินการโค้ดใด ๆ ที่ต้องการโดยใช้
+<p data-bai-block="209">ในหน้าต่างนี้ ผู้ใช้สามารถป้อนและดำเนินการโค้ดใด ๆ ที่ต้องการโดยใช้
 สภาพแวดล้อมที่เซสชันจัดเตรียมไว้ โค้ดจะถูกดำเนินการบนหนึ่งใน
 โหนด Backend.AI ที่เซสชันการคำนวณถูกสร้างขึ้นจริง และไม่จำเป็นต้อง
 กำหนดค่าสภาพแวดล้อมแยกต่างหากบนเครื่องในพื้นที่</p>
-<p><figure data-bai-block="198" class="doc-figure"><img src="./images/notebook_code_execution.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2336" height="1178" /><figcaption>รูปที่ 10.35</figcaption></figure>
+<p><figure data-bai-block="210" class="doc-figure"><img src="./images/notebook_code_execution.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2336" height="1178" /><figcaption>รูปที่ 10.35</figcaption></figure>
 </p>
-<p data-bai-block="199">เมื่อปิดหน้าต่าง สามารถพบไฟล์ <code>Untitled.ipynb</code> ได้ในตัวสำรวจไฟล์ของโน้ตบุ๊ก
+<p data-bai-block="211">เมื่อปิดหน้าต่าง สามารถพบไฟล์ <code>Untitled.ipynb</code> ได้ในตัวสำรวจไฟล์ของโน้ตบุ๊ก
 โปรดทราบว่าไฟล์ที่สร้างที่นี่จะถูกลบเมื่อเซสชันสิ้นสุดลง วิธีการรักษาไฟล์เหล่านั้นแม้
 หลังจากเซสชันสิ้นสุดลงจะอธิบายไว้ในส่วนโฟลเดอร์ข้อมูลและการจัดเก็บ</p>
-<p><figure data-bai-block="200" class="doc-figure"><img src="./images/untitled_ipynb_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="652" /><figcaption>รูปที่ 10.36</figcaption></figure>
+<p><figure data-bai-block="212" class="doc-figure"><img src="./images/untitled_ipynb_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="652" /><figcaption>รูปที่ 10.36</figcaption></figure>
 </p>
-<h2 data-bai-block="201" id="sessions_all-ใชเทอรมนลเวบ">ใช้เทอร์มินัลเว็บ<a class="hash-link" href="#sessions_all-ใชเทอรมนลเวบ" aria-label="Direct link to ใช้เทอร์มินัลเว็บ">#</a></h2>
-<p data-bai-block="202">ส่วนนี้จะอธิบายวิธีการใช้งานเทอร์มินัลเว็บ คลิก
+<h2 data-bai-block="213" id="sessions_all-ใชเทอรมนลเวบ">ใช้เทอร์มินัลเว็บ<a class="hash-link" href="#sessions_all-ใชเทอรมนลเวบ" aria-label="Direct link to ใช้เทอร์มินัลเว็บ">#</a></h2>
+<p data-bai-block="214">ส่วนนี้จะอธิบายวิธีการใช้งานเทอร์มินัลเว็บ คลิก
 ไอคอนเทอร์มินัล (ปุ่มที่สอง) เพื่อใช้แอป ttyd ของคอนเทนเนอร์ เทอร์มินัลจะปรากฏในหน้าต่างใหม่
 และผู้ใช้สามารถเรียกใช้คำสั่งเชลล์เพื่อเข้าถึงเซสชันการคำนวณได้ดังแสดงในรูปต่อไปนี้
 หากคุ้นเคยกับคำสั่ง ผู้ใช้สามารถเรียกใช้คำสั่ง Linux ต่าง ๆ ได้อย่างง่ายดาย ไฟล์ <code>Untitled.ipynb</code>
 สามารถพบได้ใน Jupyter Notebook ซึ่งแสดงด้วยคำสั่ง <code>ls</code> นี่แสดงให้เห็นว่าทั้งสองแอป
 กำลังทำงานในสภาพแวดล้อมคอนเทนเนอร์เดียวกัน</p>
-<p><figure data-bai-block="203" class="doc-figure"><img src="./images/session_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2182" height="1062" /><figcaption>รูปที่ 10.37</figcaption></figure>
+<p><figure data-bai-block="215" class="doc-figure"><img src="./images/session_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2182" height="1062" /><figcaption>รูปที่ 10.37</figcaption></figure>
 </p>
-<p data-bai-block="204">ไฟล์ที่สร้างที่นี่ยังสามารถเห็นได้ทันทีใน Jupyter Notebook ด้วย ในทางกลับกัน การเปลี่ยนแปลงที่ทำกับไฟล์ใน Jupyter
+<p data-bai-block="216">ไฟล์ที่สร้างที่นี่ยังสามารถเห็นได้ทันทีใน Jupyter Notebook ด้วย ในทางกลับกัน การเปลี่ยนแปลงที่ทำกับไฟล์ใน Jupyter
 Notebook ก็สามารถตรวจสอบได้จากเทอร์มินัลทันที นี่เป็นเพราะทั้งสองแอปใช้ไฟล์เดียวกันในเซสชันการคำนวณเดียวกัน</p>
-<p data-bai-block="205">นอกจากนี้ ผู้ใช้ยังสามารถใช้บริการที่ใช้เว็บ เช่น TensorBoard, Jupyter
+<p data-bai-block="217">นอกจากนี้ ผู้ใช้ยังสามารถใช้บริการที่ใช้เว็บ เช่น TensorBoard, Jupyter
 Lab เป็นต้น ขึ้นอยู่กับประเภทของสภาพแวดล้อมที่เซสชันการคำนวณจัดเตรียมไว้</p>
-<h2 data-bai-block="206" id="sessions_all-คนหาบนทกของเซสชนการคำนวณ">ค้นหาบันทึกของเซสชันการคำนวณ<a class="hash-link" href="#sessions_all-คนหาบนทกของเซสชนการคำนวณ" aria-label="Direct link to ค้นหาบันทึกของเซสชันการคำนวณ">#</a></h2>
-<p data-bai-block="207">ผู้ใช้สามารถดูบันทึกของเซสชันการคำนวณได้โดยคลิกไอคอน <code>ดูบันทึกคอนเทนเนอร์</code>
+<h2 data-bai-block="218" id="sessions_all-คนหาบนทกของเซสชนการคำนวณ">ค้นหาบันทึกของเซสชันการคำนวณ<a class="hash-link" href="#sessions_all-คนหาบนทกของเซสชนการคำนวณ" aria-label="Direct link to ค้นหาบันทึกของเซสชันการคำนวณ">#</a></h2>
+<p data-bai-block="219">ผู้ใช้สามารถดูบันทึกของเซสชันการคำนวณได้โดยคลิกไอคอน <code>ดูบันทึกคอนเทนเนอร์</code>
 ในแผงรายละเอียดเซสชัน</p>
-<p><figure data-bai-block="208" class="doc-figure"><img src="./images/session_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2816" height="1740" /><figcaption>รูปที่ 10.38</figcaption></figure>
+<p><figure data-bai-block="220" class="doc-figure"><img src="./images/session_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2816" height="1740" /><figcaption>รูปที่ 10.38</figcaption></figure>
 </p>
-<p data-bai-block="209">หน้าต่างบันทึกมีตัวควบคุมต่อไปนี้อยู่เหนือพื้นที่แสดงบันทึก:</p>
+<p data-bai-block="221">หน้าต่างบันทึกมีตัวควบคุมต่อไปนี้อยู่เหนือพื้นที่แสดงบันทึก:</p>
 <ul>
-<li data-bai-block="210"><strong>ตัวเลือกเคอร์เนล</strong>: เลือกเคอร์เนลของเซสชันที่ต้องการอ่านบันทึก สำหรับเซสชันคอนเทนเนอร์เดียว
+<li data-bai-block="222"><strong>ตัวเลือกเคอร์เนล</strong>: เลือกเคอร์เนลของเซสชันที่ต้องการอ่านบันทึก สำหรับเซสชันคอนเทนเนอร์เดียว
 จะมีเพียงรายการเดียว ส่วนเซสชันแบบคลัสเตอร์จะแสดงแต่ละคอนเทนเนอร์ตามชื่อโฮสต์
 พร้อมอักขระตัวแรก ๆ ของ ID</li>
-<li data-bai-block="211"><strong>ดาวน์โหลด</strong>: บันทึกล็อกที่แสดงอยู่ในขณะนั้นเป็นไฟล์ข้อความ</li>
+<li data-bai-block="223"><strong>ดาวน์โหลด</strong>: บันทึกล็อกที่แสดงอยู่ในขณะนั้นเป็นไฟล์ข้อความ</li>
 </ul>
-<p data-bai-block="212">คุณยังสามารถค้นหาภายในบันทึกที่แสดงอยู่ได้โดยใช้ช่องค้นหาที่มีอยู่ในมุมมองบันทึก</p>
+<p data-bai-block="224">คุณยังสามารถค้นหาภายในบันทึกที่แสดงอยู่ได้โดยใช้ช่องค้นหาที่มีอยู่ในมุมมองบันทึก</p>
 <p><a id="rename-running-session"></a></p>
-<h2 data-bai-block="213" id="sessions_all-เปลยนชอเซสชนทกำลงรน">เปลี่ยนชื่อเซสชันที่กำลังรัน<a class="hash-link" href="#sessions_all-เปลยนชอเซสชนทกำลงรน" aria-label="Direct link to เปลี่ยนชื่อเซสชันที่กำลังรัน">#</a></h2>
-<p data-bai-block="214">สามารถเปลี่ยนชื่อของเซสชันที่กำลังทำงานอยู่ได้ คลิกปุ่ม &#39;Edit&#39; ในแผงรายละเอียดเซสชัน
+<h2 data-bai-block="225" id="sessions_all-เปลยนชอเซสชนทกำลงรน">เปลี่ยนชื่อเซสชันที่กำลังรัน<a class="hash-link" href="#sessions_all-เปลยนชอเซสชนทกำลงรน" aria-label="Direct link to เปลี่ยนชื่อเซสชันที่กำลังรัน">#</a></h2>
+<p data-bai-block="226">สามารถเปลี่ยนชื่อของเซสชันที่กำลังทำงานอยู่ได้ คลิกปุ่ม &#39;Edit&#39; ในแผงรายละเอียดเซสชัน
 เพื่อเปลี่ยนชื่อเซสชัน
 ชื่อเซสชันใหม่ควรเป็นไปตาม<a href="#session-naming-rule">กฎการตั้งชื่อ</a> ด้วย</p>
-<p><figure data-bai-block="215" class="doc-figure"><img src="./images/session_renaming.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="160" /><figcaption>รูปที่ 10.39</figcaption></figure>
+<p><figure data-bai-block="227" class="doc-figure"><img src="./images/session_renaming.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="160" /><figcaption>รูปที่ 10.39</figcaption></figure>
 </p>
 <p><a id="delete_session"></a></p>
-<h2 data-bai-block="216" id="sessions_all-ลบเซสชนการคำนวณ">ลบเซสชันการคำนวณ<a class="hash-link" href="#sessions_all-ลบเซสชนการคำนวณ" aria-label="Direct link to ลบเซสชันการคำนวณ">#</a></h2>
-<p data-bai-block="217">หากต้องการยุติเซสชันที่ระบุ เพียงคลิกที่ปุ่มเปิดปิดสีแดงและคลิก
+<h2 data-bai-block="228" id="sessions_all-ลบเซสชนการคำนวณ">ลบเซสชันการคำนวณ<a class="hash-link" href="#sessions_all-ลบเซสชนการคำนวณ" aria-label="Direct link to ลบเซสชันการคำนวณ">#</a></h2>
+<p data-bai-block="229">หากต้องการยุติเซสชันที่ระบุ เพียงคลิกที่ปุ่มเปิดปิดสีแดงและคลิก
 ปุ่ม &#39;Terminate&#39; ในกล่องโต้ตอบ เนื่องจากข้อมูลในโฟลเดอร์ภายในเซสชันการคำนวณ
 จะถูกลบทันทีที่เซสชันการคำนวณสิ้นสุดลง จึงแนะนำให้
 ย้ายข้อมูลไปยังโฟลเดอร์ที่ถูกเมานต์หรืออัปโหลดไปยังโฟลเดอร์ที่ถูกเมานต์ตั้งแต่
 เริ่มต้น</p>
-<p><figure data-bai-block="218" class="doc-figure"><img src="./images/session_destroy_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="248" /><figcaption>รูปที่ 10.40</figcaption></figure>
+<p><figure data-bai-block="230" class="doc-figure"><img src="./images/session_destroy_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="248" /><figcaption>รูปที่ 10.40</figcaption></figure>
 </p>
 <p><a id="idleness-checks"></a></p>
-<h2 data-bai-block="219" id="sessions_all-การตรวจสอบสถานะไมใชงาน">การตรวจสอบสถานะไม่ใช้งาน<a class="hash-link" href="#sessions_all-การตรวจสอบสถานะไมใชงาน" aria-label="Direct link to การตรวจสอบสถานะไม่ใช้งาน">#</a></h2>
-<p data-bai-block="220">Backend.AI รองรับเกณฑ์การไร้กิจกรรม (ความเฉยเมย) สําหรับการเก็บขยะอัตโนมัติของเซสชันการคำนวณสามประเภท: อายุขัยสูงสุดของเซสชัน, เวลาเงียบสงบของเครือข่าย, และการตรวจสอบการใช้ทรัพยากร.</p>
-<p data-bai-block="221">เกณฑ์ที่ใช้กับเซสชันที่กำลังทำงานจะแสดงอยู่ในแถว <strong>สถานะการเรียกคืน</strong> ของแผงรายละเอียดเซสชัน
+<h2 data-bai-block="231" id="sessions_all-การตรวจสอบสถานะไมใชงาน">การตรวจสอบสถานะไม่ใช้งาน<a class="hash-link" href="#sessions_all-การตรวจสอบสถานะไมใชงาน" aria-label="Direct link to การตรวจสอบสถานะไม่ใช้งาน">#</a></h2>
+<p data-bai-block="232">Backend.AI รองรับเกณฑ์การไร้กิจกรรม (ความเฉยเมย) สําหรับการเก็บขยะอัตโนมัติของเซสชันการคำนวณสามประเภท: อายุขัยสูงสุดของเซสชัน, เวลาเงียบสงบของเครือข่าย, และการตรวจสอบการใช้ทรัพยากร.</p>
+<p data-bai-block="233">เกณฑ์ที่ใช้กับเซสชันที่กำลังทำงานจะแสดงอยู่ในแถว <strong>สถานะการเรียกคืน</strong> ของแผงรายละเอียดเซสชัน
 พร้อมกับเวลาที่เหลือก่อนที่แต่ละเกณฑ์จะยุติเซสชัน แถวนี้จะปรากฏขึ้นขณะที่เซสชันกำลังทำงาน
 และมีการตรวจสอบสถานะไม่ใช้งานอย่างน้อยหนึ่งรายการที่แสดงเวลาที่เหลือ
 ไม่ว่าจะเหลืออีกหลายวันหรือเพียงไม่กี่นาทีก็ตาม</p>
-<p><figure data-bai-block="222" class="doc-figure"><img src="./images/idle_checks_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1436" height="324" /><figcaption>รูปที่ 10.41</figcaption></figure>
+<p><figure data-bai-block="234" class="doc-figure"><img src="./images/idle_checks_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1436" height="324" /><figcaption>รูปที่ 10.41</figcaption></figure>
 </p>
-<p data-bai-block="223">ความหมายของตัวตรวจสอบสถานะไม่ใช้งานมีดังต่อไปนี้ คลิกไอคอนเครื่องหมายคำถาม (<code>?</code>)
+<p data-bai-block="235">ความหมายของตัวตรวจสอบสถานะไม่ใช้งานมีดังต่อไปนี้ คลิกไอคอนเครื่องหมายคำถาม (<code>?</code>)
 ถัดจากป้ายกำกับ <strong>สถานะการเรียกคืน</strong> เพื่อเปิดกล่องโต้ตอบที่มีคำอธิบายโดยละเอียดของแต่ละรายการ</p>
 <ul>
-<li data-bai-block="224"><p>อายุการใช้งานเซสชันสูงสุด: บังคับยุติเซสชันหลังจากเวลานี้นับตั้งแต่การสร้าง มาตรการนี้ป้องกันไม่ให้เซสชันทำงานต่อไปไม่มีที่สิ้นสุด</p>
+<li data-bai-block="236"><p>อายุการใช้งานเซสชันสูงสุด: บังคับยุติเซสชันหลังจากเวลานี้นับตั้งแต่การสร้าง มาตรการนี้ป้องกันไม่ให้เซสชันทำงานต่อไปไม่มีที่สิ้นสุด</p>
 </li>
-<li data-bai-block="225"><p>การหมดเวลาขณะว่างในการเชื่อมต่อเครือข่าย: บังคับยกเลิกเซสชันที่ไม่ได้แลกเปลี่ยนข้อมูลกับผู้ใช้ (เบราว์เซอร์หรือแอปเว็บ) หลังจากเวลานี้ การรับส่งข้อมูลระหว่างผู้ใช้และเซสชันการคำนวณจะเกิดขึ้นอย่างต่อเนื่องเมื่อผู้ใช้โต้ตอบกับแอป เช่น เทอร์มินัลหรือ Jupyter โดยการพิมพ์จากแป้นพิมพ์ การสร้างเซลล์ Jupyter ฯลฯ การสร้างเซลล์ Jupyter ฯลฯ หากไม่มีการโต้ตอบเป็นระยะเวลาหนึ่ง สภาวะการเก็บขยะจะถูกตอบสนอง แม้ว่าจะมีการประมวลผลที่กำลังดำเนินการงานในเซสชันการคำนวณ แต่ก็จะต้องถูกยกเลิกหากไม่มีการโต้ตอบจากผู้ใช้</p>
+<li data-bai-block="237"><p>การหมดเวลาขณะว่างในการเชื่อมต่อเครือข่าย: บังคับยกเลิกเซสชันที่ไม่ได้แลกเปลี่ยนข้อมูลกับผู้ใช้ (เบราว์เซอร์หรือแอปเว็บ) หลังจากเวลานี้ การรับส่งข้อมูลระหว่างผู้ใช้และเซสชันการคำนวณจะเกิดขึ้นอย่างต่อเนื่องเมื่อผู้ใช้โต้ตอบกับแอป เช่น เทอร์มินัลหรือ Jupyter โดยการพิมพ์จากแป้นพิมพ์ การสร้างเซลล์ Jupyter ฯลฯ การสร้างเซลล์ Jupyter ฯลฯ หากไม่มีการโต้ตอบเป็นระยะเวลาหนึ่ง สภาวะการเก็บขยะจะถูกตอบสนอง แม้ว่าจะมีการประมวลผลที่กำลังดำเนินการงานในเซสชันการคำนวณ แต่ก็จะต้องถูกยกเลิกหากไม่มีการโต้ตอบจากผู้ใช้</p>
 </li>
-<li data-bai-block="226"><p>Utilization Checker: ทรัพยากรที่ถูกจัดสรรให้กับเซสชันการคำนวณจะถูกเรียกคืนตามการใช้ทรัพยากรเหล่านั้น การตัดสินใจในการลบขึ้นอยู่กับสองปัจจัยดังต่อไปนี้:</p>
+<li data-bai-block="238"><p>Utilization Checker: ทรัพยากรที่ถูกจัดสรรให้กับเซสชันการคำนวณจะถูกเรียกคืนตามการใช้ทรัพยากรเหล่านั้น การตัดสินใจในการลบขึ้นอยู่กับสองปัจจัยดังต่อไปนี้:</p>
 <ul>
-<li data-bai-block="227">ระยะเวลาผ่อนผัน: ช่วงเวลาที่ตัวตรวจสอบการใช้งานที่ไม่ได้ใช้งานจะไม่ทำงาน แม้ว่าจะมีการใช้งานต่ำ เซสชันการคำนวณจะไม่ถูกยุติในระยะเวลานี้ อย่างไรก็ตาม เมื่อตัวระยะเวลาผ่อนผันสิ้นสุดลง หากการใช้งานเฉลี่ยยังคงต่ำกว่าค่ากำหนดในช่วงเวลารอที่ตั้งไว้ ระบบสามารถยุติเซสชันได้ตลอดเวลา ระยะเวลาผ่อนผันเป็นช่วงเวลาที่รับประกันเท่านั้นที่การยุติจะไม่เกิดขึ้น มาตรการนี้มีจุดประสงค์หลักเพื่อการจัดการทรัพยากร GPU ที่มีการใช้งานต่ำอย่างมีประสิทธิภาพ</li>
-<li data-bai-block="228">เกณฑ์การใช้งาน (Utilization Threshold): หากการใช้ทรัพยากรของเซสชันการคำนวณ
+<li data-bai-block="239">ระยะเวลาผ่อนผัน: ช่วงเวลาที่ตัวตรวจสอบการใช้งานที่ไม่ได้ใช้งานจะไม่ทำงาน แม้ว่าจะมีการใช้งานต่ำ เซสชันการคำนวณจะไม่ถูกยุติในระยะเวลานี้ อย่างไรก็ตาม เมื่อตัวระยะเวลาผ่อนผันสิ้นสุดลง หากการใช้งานเฉลี่ยยังคงต่ำกว่าค่ากำหนดในช่วงเวลารอที่ตั้งไว้ ระบบสามารถยุติเซสชันได้ตลอดเวลา ระยะเวลาผ่อนผันเป็นช่วงเวลาที่รับประกันเท่านั้นที่การยุติจะไม่เกิดขึ้น มาตรการนี้มีจุดประสงค์หลักเพื่อการจัดการทรัพยากร GPU ที่มีการใช้งานต่ำอย่างมีประสิทธิภาพ</li>
+<li data-bai-block="240">เกณฑ์การใช้งาน (Utilization Threshold): หากการใช้ทรัพยากรของเซสชันการคำนวณ
 ไม่เกินเกณฑ์ที่กำหนดในระยะเวลาที่กำหนด (idle timeout) เซสชันนั้น
 จะถูกยุติโดยอัตโนมัติ ตัวอย่างเช่น หากเกณฑ์การใช้งานตัวเร่งความเร็ว
 ถูกตั้งค่าเป็น 1% และเซสชันการคำนวณแสดง
@@ -796,187 +830,187 @@ Lab เป็นต้น ขึ้นอยู่กับประเภทข
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="229" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="241" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="230">หลังจากช่วงเวลาให้อภัย เซสชันสามารถถูกยกเลิกได้ทุกเมื่อหากการใช้งานยังคงต่ำ การใช้ทรัพยากรอย่างสั้นๆ จะไม่ขยายช่วงเวลาให้อภัย จะพิจารณาเฉพาะการใช้งานเฉลี่ยในช่วงเวลาไม่ใช้งานล่าสุดเท่านั้น</p>
+<p data-bai-block="242">หลังจากช่วงเวลาให้อภัย เซสชันสามารถถูกยกเลิกได้ทุกเมื่อหากการใช้งานยังคงต่ำ การใช้ทรัพยากรอย่างสั้นๆ จะไม่ขยายช่วงเวลาให้อภัย จะพิจารณาเฉพาะการใช้งานเฉลี่ยในช่วงเวลาไม่ใช้งานล่าสุดเท่านั้น</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="231" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="243" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="232">ขึ้นอยู่กับการตั้งค่าของสภาพแวดล้อม ตัวตรวจสอบที่ไม่ทำงานและประเภทของทรัพยากรที่แสดงในตัวตรวจสอบการใช้งานอาจแตกต่างกันได้</p>
+<p data-bai-block="244">ขึ้นอยู่กับการตั้งค่าของสภาพแวดล้อม ตัวตรวจสอบที่ไม่ทำงานและประเภทของทรัพยากรที่แสดงในตัวตรวจสอบการใช้งานอาจแตกต่างกันได้</p>
 </div></div>
 
 
 <p><a id="reclamation-status"></a></p>
-<h3 data-bai-block="233" id="sessions_all-สถานะการเรยกคน">สถานะการเรียกคืน<a class="hash-link" href="#sessions_all-สถานะการเรยกคน" aria-label="Direct link to สถานะการเรียกคืน">#</a></h3>
-<p data-bai-block="234">รายการเซสชันมีคอลัมน์ <strong>สถานะการเรียกคืน</strong> ที่บอกให้คุณทราบได้ในทันทีว่าแต่ละเซสชัน
+<h3 data-bai-block="245" id="sessions_all-สถานะการเรยกคน">สถานะการเรียกคืน<a class="hash-link" href="#sessions_all-สถานะการเรยกคน" aria-label="Direct link to สถานะการเรียกคืน">#</a></h3>
+<p data-bai-block="246">รายการเซสชันมีคอลัมน์ <strong>สถานะการเรียกคืน</strong> ที่บอกให้คุณทราบได้ในทันทีว่าแต่ละเซสชัน
 ใกล้จะถูกเรียกคืนโดยตัวตรวจสอบการใช้งานมากเพียงใด ป้ายเดียวกันนี้ยังแทนที่ชื่อของรายการ
 ตัวตรวจสอบการใช้งานในแถว <strong>สถานะการเรียกคืน</strong> ของแผงรายละเอียดเซสชันด้วย</p>
-<p data-bai-block="235">ป้ายมีสามระดับ ตามที่ระบุไว้ในคำอธิบายสัญลักษณ์ของป๊อปโอเวอร์:</p>
+<p data-bai-block="247">ป้ายมีสามระดับ ตามที่ระบุไว้ในคำอธิบายสัญลักษณ์ของป๊อปโอเวอร์:</p>
 <ul>
-<li data-bai-block="236"><strong>ปลอดภัย</strong>: การใช้งานเฉลี่ยในปัจจุบันสูงกว่าเกณฑ์อย่างเพียงพอ</li>
-<li data-bai-block="237"><strong>คำเตือน</strong>: การใช้งานเฉลี่ยในปัจจุบันสูงกว่าเกณฑ์ แต่ใกล้เคียงกับเกณฑ์</li>
-<li data-bai-block="238"><strong>มีความเสี่ยง</strong>: การใช้งานเฉลี่ยในปัจจุบันต่ำกว่าเกณฑ์</li>
+<li data-bai-block="248"><strong>ปลอดภัย</strong>: การใช้งานเฉลี่ยในปัจจุบันสูงกว่าเกณฑ์อย่างเพียงพอ</li>
+<li data-bai-block="249"><strong>คำเตือน</strong>: การใช้งานเฉลี่ยในปัจจุบันสูงกว่าเกณฑ์ แต่ใกล้เคียงกับเกณฑ์</li>
+<li data-bai-block="250"><strong>มีความเสี่ยง</strong>: การใช้งานเฉลี่ยในปัจจุบันต่ำกว่าเกณฑ์</li>
 </ul>
-<p data-bai-block="239">เนื่องจากป้ายจะเปลี่ยนระดับก่อนที่ค่าเฉลี่ยจะลดลงต่ำกว่าเกณฑ์จริง ๆ เซสชันจึงอาจแสดงเป็น
+<p data-bai-block="251">เนื่องจากป้ายจะเปลี่ยนระดับก่อนที่ค่าเฉลี่ยจะลดลงต่ำกว่าเกณฑ์จริง ๆ เซสชันจึงอาจแสดงเป็น
 <strong>มีความเสี่ยง</strong> ได้ทั้งที่ค่าเฉลี่ยปัจจุบันยังสูงกว่าเกณฑ์อยู่ ให้ถือว่าเป็นคำเตือนล่วงหน้า
 ที่เผื่อเวลาให้คุณรับมือ ไม่ใช่การแจ้งว่าค่าเฉลี่ยข้ามเกณฑ์ไปแล้ว</p>
-<p data-bai-block="240">เซสชันที่ตัวตรวจสอบการใช้งานไม่มีผลบังคับใช้ และเซสชันที่ยังไม่มีค่าที่วัดได้ จะแสดง <code>-</code>
+<p data-bai-block="252">เซสชันที่ตัวตรวจสอบการใช้งานไม่มีผลบังคับใช้ และเซสชันที่ยังไม่มีค่าที่วัดได้ จะแสดง <code>-</code>
 ในคอลัมน์นี้ ส่วนในแผงรายละเอียดเซสชัน รายการที่ยังไม่มีการตัดสินใจเรียกคืนครั้งแรกจะแสดงข้อความ
 <strong>กำลังตรวจสอบการเรียกคืน</strong> แทนแท็กเวลาที่เหลือ</p>
-<p data-bai-block="241">วางเมาส์เหนือไอคอนข้อมูล (i) ถัดจากป้ายเพื่อเปิดป๊อปโอเวอร์ที่แสดงรายละเอียดเบื้องหลังระดับนั้น:</p>
+<p data-bai-block="253">วางเมาส์เหนือไอคอนข้อมูล (i) ถัดจากป้ายเพื่อเปิดป๊อปโอเวอร์ที่แสดงรายละเอียดเบื้องหลังระดับนั้น:</p>
 <ul>
-<li data-bai-block="242">ประโยคเงื่อนไขที่ระบุว่าทรัพยากรจะถูกเรียกคืนเมื่อเงื่อนไข <strong>ใดเงื่อนไขหนึ่ง</strong> ที่แสดงไว้
+<li data-bai-block="254">ประโยคเงื่อนไขที่ระบุว่าทรัพยากรจะถูกเรียกคืนเมื่อเงื่อนไข <strong>ใดเงื่อนไขหนึ่ง</strong> ที่แสดงไว้
 คงอยู่ในระดับที่มีความเสี่ยง หรือเมื่อเงื่อนไข <strong>ทั้งหมด</strong> อยู่ในระดับนั้นเท่านั้น
 ประโยคที่ปรากฏขึ้นอยู่กับว่าผู้ดูแลระบบตั้งค่าตัวตรวจสอบไว้อย่างไร</li>
-<li data-bai-block="243">หนึ่งแถวต่อหนึ่งทรัพยากรที่วัดได้ แต่ละแถวมีป้ายระดับของตนเอง พร้อมค่าเฉลี่ยปัจจุบันเทียบกับ
+<li data-bai-block="255">หนึ่งแถวต่อหนึ่งทรัพยากรที่วัดได้ แต่ละแถวมีป้ายระดับของตนเอง พร้อมค่าเฉลี่ยปัจจุบันเทียบกับ
 เกณฑ์ที่กำหนดไว้ ในรูปแบบ <code>(ปัจจุบัน 12% | เกณฑ์ 5%)</code></li>
-<li data-bai-block="244">คำอธิบายสัญลักษณ์ที่ระบุเกณฑ์ของแต่ละระดับทั้งสาม</li>
+<li data-bai-block="256">คำอธิบายสัญลักษณ์ที่ระบุเกณฑ์ของแต่ละระดับทั้งสาม</li>
 </ul>
-<p data-bai-block="245">ทรัพยากรที่ไม่มีค่าที่วัดได้จะแสดงด้วยเครื่องหมายขีดและไม่มีผลต่อการตัดสินระดับโดยรวม</p>
-<p data-bai-block="246">เมื่อเวลาที่เหลือของรายการตัวตรวจสอบการใช้งานใกล้จะหมดลง แท็กเวลาที่เหลือถัดจากรายการนั้น
+<p data-bai-block="257">ทรัพยากรที่ไม่มีค่าที่วัดได้จะแสดงด้วยเครื่องหมายขีดและไม่มีผลต่อการตัดสินระดับโดยรวม</p>
+<p data-bai-block="258">เมื่อเวลาที่เหลือของรายการตัวตรวจสอบการใช้งานใกล้จะหมดลง แท็กเวลาที่เหลือถัดจากรายการนั้น
 จะใช้สีเดียวกับป้าย เซสชันที่การนับถอยหลังเปลี่ยนเป็นสีแดงจึงเป็นเซสชันที่ใกล้จะถูกเรียกคืน
 ในทางกลับกัน ขณะที่ยังเหลือเวลาอีกมาก แท็กจะไม่มีสีแม้ว่าป้ายจะแสดงระดับความเสี่ยงแล้วก็ตาม</p>
-<p><figure data-bai-block="247" class="doc-figure"><img src="./images/session_reclamation_status_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2224" height="340" /><figcaption>รูปที่ 10.42</figcaption></figure>
+<p><figure data-bai-block="259" class="doc-figure"><img src="./images/session_reclamation_status_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2224" height="340" /><figcaption>รูปที่ 10.42</figcaption></figure>
 </p>
-<p><figure data-bai-block="248" class="doc-figure"><img src="./images/session_reclamation_status_popover.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1186" height="434" /><figcaption>รูปที่ 10.43</figcaption></figure>
+<p><figure data-bai-block="260" class="doc-figure"><img src="./images/session_reclamation_status_popover.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1186" height="434" /><figcaption>รูปที่ 10.43</figcaption></figure>
 </p>
 <p><a id="how-to-add-environment-variable-before-creating-a-session"></a></p>
-<h2 data-bai-block="249" id="sessions_all-วธการเพมตวแปรสภาพแวดลอมกอนทจะสรางเซสชน">วิธีการเพิ่มตัวแปรสภาพแวดล้อมก่อนที่จะสร้างเซสชัน<a class="hash-link" href="#sessions_all-วธการเพมตวแปรสภาพแวดลอมกอนทจะสรางเซสชน" aria-label="Direct link to วิธีการเพิ่มตัวแปรสภาพแวดล้อมก่อนที่จะสร้างเซสชัน">#</a></h2>
-<p data-bai-block="250">เพื่อให้พื้นที่ทำงานที่สะดวกยิ่งขึ้นสำหรับผู้ใช้ Backend.AI รองรับการตั้งค่าตัวแปรสภาพแวดล้อม
+<h2 data-bai-block="261" id="sessions_all-วธการเพมตวแปรสภาพแวดลอมกอนทจะสรางเซสชน">วิธีการเพิ่มตัวแปรสภาพแวดล้อมก่อนที่จะสร้างเซสชัน<a class="hash-link" href="#sessions_all-วธการเพมตวแปรสภาพแวดลอมกอนทจะสรางเซสชน" aria-label="Direct link to วิธีการเพิ่มตัวแปรสภาพแวดล้อมก่อนที่จะสร้างเซสชัน">#</a></h2>
+<p data-bai-block="262">เพื่อให้พื้นที่ทำงานที่สะดวกยิ่งขึ้นสำหรับผู้ใช้ Backend.AI รองรับการตั้งค่าตัวแปรสภาพแวดล้อม
 ในการเริ่มต้นเซสชัน ในฟีเจอร์นี้ ผู้ใช้สามารถเพิ่มตัวแปรสภาพแวดล้อมใด ๆ เช่น <code>PATH</code> ได้โดยการกรอก
 ชื่อตัวแปรและค่าในกล่องโต้ตอบการกำหนดค่าสภาพแวดล้อม</p>
-<p data-bai-block="251">หากต้องการเพิ่มตัวแปรสภาพแวดล้อม เพียงคลิกปุ่ม &#39;+ Add environment variables&#39; ของตัวแปร
+<p data-bai-block="263">หากต้องการเพิ่มตัวแปรสภาพแวดล้อม เพียงคลิกปุ่ม &#39;+ Add environment variables&#39; ของตัวแปร
 นอกจากนี้ คุณยังสามารถลบตัวแปรได้โดยการคลิกปุ่ม &#39;-&#39; ของแถวที่คุณต้องการลบออก</p>
-<p><figure data-bai-block="252" class="doc-figure"><img src="./images/launch_session_env.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="594" /><figcaption>รูปที่ 10.44</figcaption></figure>
+<p><figure data-bai-block="264" class="doc-figure"><img src="./images/launch_session_env.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="594" /><figcaption>รูปที่ 10.44</figcaption></figure>
 </p>
-<p data-bai-block="253">คุณสามารถเขียนชื่อตัวแปรและค่าในบรรทัดเดียวกันของช่องป้อนข้อมูลได้</p>
+<p data-bai-block="265">คุณสามารถเขียนชื่อตัวแปรและค่าในบรรทัดเดียวกันของช่องป้อนข้อมูลได้</p>
 <p><a id="set-preopen-ports"></a></p>
-<h2 data-bai-block="254" id="sessions_all-วธการเพมพอรตทเปดกอนทจะสรางเซสชน">วิธีการเพิ่มพอร์ตที่เปิดก่อนที่จะสร้างเซสชัน<a class="hash-link" href="#sessions_all-วธการเพมพอรตทเปดกอนทจะสรางเซสชน" aria-label="Direct link to วิธีการเพิ่มพอร์ตที่เปิดก่อนที่จะสร้างเซสชัน">#</a></h2>
-<p data-bai-block="255">Backend.AI รองรับการตั้งค่าพอร์ตที่เปิดใช้งานล่วงหน้าเมื่อเริ่มต้นคอนเทนเนอร์ เมื่อใช้ฟีเจอร์นี้ จะไม่จำเป็นต้องสร้างอิมเมจแยกต่างหากเมื่อคุณต้องการเปิดเผยพอร์ตการบริการ</p>
-<p data-bai-block="256">เพื่อเพิ่มพอร์ตที่เปิดล่วงหน้า เพียงป้อนค่าหลายค่าโดยแยกด้วยเครื่องหมายจุลภาค (,) หรือช่องว่าง</p>
-<p><figure data-bai-block="257" class="doc-figure"><img src="./images/preopen-ports-config.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>รูปที่ 10.45</figcaption></figure>
+<h2 data-bai-block="266" id="sessions_all-วธการเพมพอรตทเปดกอนทจะสรางเซสชน">วิธีการเพิ่มพอร์ตที่เปิดก่อนที่จะสร้างเซสชัน<a class="hash-link" href="#sessions_all-วธการเพมพอรตทเปดกอนทจะสรางเซสชน" aria-label="Direct link to วิธีการเพิ่มพอร์ตที่เปิดก่อนที่จะสร้างเซสชัน">#</a></h2>
+<p data-bai-block="267">Backend.AI รองรับการตั้งค่าพอร์ตที่เปิดใช้งานล่วงหน้าเมื่อเริ่มต้นคอนเทนเนอร์ เมื่อใช้ฟีเจอร์นี้ จะไม่จำเป็นต้องสร้างอิมเมจแยกต่างหากเมื่อคุณต้องการเปิดเผยพอร์ตการบริการ</p>
+<p data-bai-block="268">เพื่อเพิ่มพอร์ตที่เปิดล่วงหน้า เพียงป้อนค่าหลายค่าโดยแยกด้วยเครื่องหมายจุลภาค (,) หรือช่องว่าง</p>
+<p><figure data-bai-block="269" class="doc-figure"><img src="./images/preopen-ports-config.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>รูปที่ 10.45</figcaption></figure>
 </p>
-<p data-bai-block="258">ในหน้าที่สี่ของหน้าการสร้างเซสชัน ผู้ใช้สามารถเพิ่ม อัปเดต และลบพอร์ตที่เปิดล่วงหน้าที่เขียนไว้ได้ หากต้องการดูข้อมูลโดยละเอียด
+<p data-bai-block="270">ในหน้าที่สี่ของหน้าการสร้างเซสชัน ผู้ใช้สามารถเพิ่ม อัปเดต และลบพอร์ตที่เปิดล่วงหน้าที่เขียนไว้ได้ หากต้องการดูข้อมูลโดยละเอียด
 เพิ่มเติม โปรดคลิกปุ่ม &#39;Help (?)&#39;</p>
-<p data-bai-block="259">ผู้ใช้สามารถใส่หมายเลขพอร์ตระหว่าง 1024 ~ 65535 ในช่องป้อนข้อมูล จากนั้นกด &#39;Enter&#39; ผู้ใช้สามารถระบุพอร์ตได้หลายพอร์ตโดยคั่นด้วยเครื่องหมายจุลภาค (,)
+<p data-bai-block="271">ผู้ใช้สามารถใส่หมายเลขพอร์ตระหว่าง 1024 ~ 65535 ในช่องป้อนข้อมูล จากนั้นกด &#39;Enter&#39; ผู้ใช้สามารถระบุพอร์ตได้หลายพอร์ตโดยคั่นด้วยเครื่องหมายจุลภาค (,)
 ผู้ใช้สามารถตรวจสอบพอร์ตที่เปิดล่วงหน้าที่กำหนดค่าไว้ได้ในตัวเปิดแอปเซสชัน</p>
-<p><figure data-bai-block="260" class="doc-figure"><img src="./images/session_app_launcher.png" alt="" class="doc-image" loading="lazy" decoding="async" width="450" height="722" /><figcaption>รูปที่ 10.46</figcaption></figure>
+<p><figure data-bai-block="272" class="doc-figure"><img src="./images/session_app_launcher.png" alt="" class="doc-image" loading="lazy" decoding="async" width="450" height="722" /><figcaption>รูปที่ 10.46</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="261" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="273" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="262">พอร์ตที่เปิดล่วงหน้าคือ <strong>พอร์ตภายในคอนเทนเนอร์</strong> ดังนั้น ต่างจากแอปอื่น เมื่อผู้ใช้คลิกพอร์ตที่เปิดล่วงหน้าในตัวเปิดแอปเซสชัน จะมีหน้าว่างปรากฏขึ้น กรุณาผูกเซิร์ฟเวอร์กับพอร์ตที่เกี่ยวข้องก่อนใช้งาน</p>
+<p data-bai-block="274">พอร์ตที่เปิดล่วงหน้าคือ <strong>พอร์ตภายในคอนเทนเนอร์</strong> ดังนั้น ต่างจากแอปอื่น เมื่อผู้ใช้คลิกพอร์ตที่เปิดล่วงหน้าในตัวเปิดแอปเซสชัน จะมีหน้าว่างปรากฏขึ้น กรุณาผูกเซิร์ฟเวอร์กับพอร์ตที่เกี่ยวข้องก่อนใช้งาน</p>
 </div></div>
 
 
 <p><a id="save-session-commit"></a></p>
-<h2 data-bai-block="263" id="sessions_all-บนทกการคอมมตเซสชน">บันทึกการคอมมิตเซสชัน<a class="hash-link" href="#sessions_all-บนทกการคอมมตเซสชน" aria-label="Direct link to บันทึกการคอมมิตเซสชัน">#</a></h2>
-<p data-bai-block="264">Backend.AI รองรับฟีเจอร์ &quot;Convert Session to Image&quot; การคอมมิตเซสชันที่อยู่ในสถานะ <code>RUNNING</code> จะบันทึก
+<h2 data-bai-block="275" id="sessions_all-บนทกการคอมมตเซสชน">บันทึกการคอมมิตเซสชัน<a class="hash-link" href="#sessions_all-บนทกการคอมมตเซสชน" aria-label="Direct link to บันทึกการคอมมิตเซสชัน">#</a></h2>
+<p data-bai-block="276">Backend.AI รองรับฟีเจอร์ &quot;Convert Session to Image&quot; การคอมมิตเซสชันที่อยู่ในสถานะ <code>RUNNING</code> จะบันทึก
 สถานะปัจจุบันของเซสชันเป็นอิมเมจใหม่ คลิกปุ่ม &#39;Commit&#39; (ไอคอนที่สี่) ในแผงรายละเอียดเซสชัน
 เพื่อเปิดกล่องโต้ตอบที่แสดงข้อมูลเซสชัน หลังจากป้อนชื่อเซสชัน ผู้ใช้สามารถแปลงเซสชันเป็น
 อิมเมจใหม่ได้ ชื่อเซสชันต้องมีความยาว 4 ถึง 32 ตัวอักษร และสามารถประกอบด้วยตัวอักษรและตัวเลข เครื่องหมายยัติภังค์ (<code>-</code>)
 หรือเครื่องหมายขีดล่าง (<code>_</code>) เท่านั้น</p>
-<p><figure data-bai-block="265" class="doc-figure"><img src="./images/push_session_to_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="422" /><figcaption>รูปที่ 10.47</figcaption></figure>
+<p><figure data-bai-block="277" class="doc-figure"><img src="./images/push_session_to_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="422" /><figcaption>รูปที่ 10.47</figcaption></figure>
 </p>
-<p data-bai-block="266">หลังจากกรอกชื่อเซสชันในช่องป้อนข้อมูลแล้ว ให้คลิกปุ่ม &#39;PUSH SESSION TO CUSTOMIZED IMAGE&#39;
+<p data-bai-block="278">หลังจากกรอกชื่อเซสชันในช่องป้อนข้อมูลแล้ว ให้คลิกปุ่ม &#39;PUSH SESSION TO CUSTOMIZED IMAGE&#39;
 อิมเมจแบบกำหนดเองที่สร้างขึ้นด้วยวิธีนี้สามารถใช้ในการสร้างเซสชันในอนาคตได้ อย่างไรก็ตาม ไดเรกทอรี
 ที่เมานต์ไปยังคอนเทนเนอร์สำหรับการคอมมิตอิมเมจจะถือเป็นทรัพยากรภายนอกและจะไม่รวมอยู่ใน
 อิมเมจสุดท้าย โปรดจำไว้ว่า <code>/home/work</code> เป็นโฟลเดอร์เมานต์ (scratch directory) ดังนั้นจึงไม่รวมอยู่ด้วย</p>
 <div class="admonition admonition-note">
-<div data-bai-block="267" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="279" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="268">ปัจจุบัน Backend.AI รองรับ &quot;Convert Session to Image&quot; เฉพาะเมื่อเซสชันอยู่ในโหมด <code>INTERACTIVE</code> เท่านั้น
+<p data-bai-block="280">ปัจจุบัน Backend.AI รองรับ &quot;Convert Session to Image&quot; เฉพาะเมื่อเซสชันอยู่ในโหมด <code>INTERACTIVE</code> เท่านั้น
 เพื่อป้องกันข้อผิดพลาดที่ไม่คาดคิด ผู้ใช้อาจไม่สามารถยุติเซสชันในระหว่างขั้นตอนการคอมมิตได้
 หากต้องการหยุดขั้นตอนที่กำลังดำเนินการ ให้เลือกเซสชันและบังคับยุติ</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="269" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="281" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="270">จำนวนครั้งในการทำ &quot;Convert Session to Image&quot; อาจถูกจำกัดโดยนโยบายทรัพยากรของผู้ใช้ ในกรณีนี้
+<p data-bai-block="282">จำนวนครั้งในการทำ &quot;Convert Session to Image&quot; อาจถูกจำกัดโดยนโยบายทรัพยากรของผู้ใช้ ในกรณีนี้
 ให้<a href="./my_environments.html#delete-customized-image">ลบอิมเมจแบบกำหนดเองที่มีอยู่</a> และลองอีกครั้ง หากยังไม่สามารถแก้ไข
 ปัญหาได้ โปรดติดต่อผู้ดูแลระบบ</p>
 </div></div>
 
 
 
-<h2 data-bai-block="271" id="sessions_all-การใชงานอมเมจทถกแปลงจากเซสชนทกำลงดำเนนอย">การใช้งานอิมเมจที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่<a class="hash-link" href="#sessions_all-การใชงานอมเมจทถกแปลงจากเซสชนทกำลงดำเนนอย" aria-label="Direct link to การใช้งานอิมเมจที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่">#</a></h2>
-<p data-bai-block="272">การแปลงเซสชันที่กำลังดำเนินอยู่ให้เป็นอิมเมจช่วยให้ผู้ใช้สามารถเลือกอิมเมจนี้ได้จากสภาพแวดล้อมในตัวเปิดเซสชัน
+<h2 data-bai-block="283" id="sessions_all-การใชงานอมเมจทถกแปลงจากเซสชนทกำลงดำเนนอย">การใช้งานอิมเมจที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่<a class="hash-link" href="#sessions_all-การใชงานอมเมจทถกแปลงจากเซสชนทกำลงดำเนนอย" aria-label="Direct link to การใช้งานอิมเมจที่ถูกแปลงจากเซสชันที่กำลังดำเนินอยู่">#</a></h2>
+<p data-bai-block="284">การแปลงเซสชันที่กำลังดำเนินอยู่ให้เป็นอิมเมจช่วยให้ผู้ใช้สามารถเลือกอิมเมจนี้ได้จากสภาพแวดล้อมในตัวเปิดเซสชัน
 เมื่อสร้างเซสชันใหม่ อิมเมจนี้จะไม่ถูกเปิดเผยต่อผู้ใช้คนอื่น และมีประโยชน์สำหรับการใช้งานสถานะเซสชันปัจจุบัน
 ต่อไปตามเดิม อิมเมจที่แปลงแล้วจะถูกติดแท็กด้วย <code>Customized&lt;session name&gt;</code></p>
-<p><figure data-bai-block="273" class="doc-figure"><img src="./images/select_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1348" height="240" /><figcaption>รูปที่ 10.48</figcaption></figure>
+<p><figure data-bai-block="285" class="doc-figure"><img src="./images/select_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1348" height="240" /><figcaption>รูปที่ 10.48</figcaption></figure>
 </p>
-<p data-bai-block="274">ในการป้อนชื่อสภาพแวดล้อมด้วยตนเองเพื่อสร้างเซสชันในอนาคต โปรดคลิกที่ไอคอนคัดลอก</p>
-<p><figure data-bai-block="275" class="doc-figure"><img src="./images/copy_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1024" height="64" /><figcaption>รูปที่ 10.49</figcaption></figure>
+<p data-bai-block="286">ในการป้อนชื่อสภาพแวดล้อมด้วยตนเองเพื่อสร้างเซสชันในอนาคต โปรดคลิกที่ไอคอนคัดลอก</p>
+<p><figure data-bai-block="287" class="doc-figure"><img src="./images/copy_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1024" height="64" /><figcaption>รูปที่ 10.49</figcaption></figure>
 </p>
-<h2 data-bai-block="276" id="sessions_all-การใชงานเทอรมนลเวบขนสง">การใช้งานเทอร์มินัลเว็บขั้นสูง<a class="hash-link" href="#sessions_all-การใชงานเทอรมนลเวบขนสง" aria-label="Direct link to การใช้งานเทอร์มินัลเว็บขั้นสูง">#</a></h2>
-<p data-bai-block="277">เทอร์มินัลที่ใช้เว็บจะฝังยูทิลิตี้ที่เรียกว่า
+<h2 data-bai-block="288" id="sessions_all-การใชงานเทอรมนลเวบขนสง">การใช้งานเทอร์มินัลเว็บขั้นสูง<a class="hash-link" href="#sessions_all-การใชงานเทอรมนลเวบขนสง" aria-label="Direct link to การใช้งานเทอร์มินัลเว็บขั้นสูง">#</a></h2>
+<p data-bai-block="289">เทอร์มินัลที่ใช้เว็บจะฝังยูทิลิตี้ที่เรียกว่า
 <a href="https://github.com/tmux/tmux/wiki">tmux</a> ไว้ภายใน tmux เป็น terminal multiplexer ที่
 รองรับการเปิดหน้าต่างเชลล์หลายหน้าต่างภายในเชลล์เดียว เพื่อให้
 โปรแกรมหลายโปรแกรมสามารถทำงานในเบื้องหน้าพร้อมกันได้ หากผู้ใช้ต้องการใช้ประโยชน์
 จากฟีเจอร์ tmux ที่ทรงพลังยิ่งขึ้น สามารถดูเอกสารอย่างเป็นทางการของ tmux
 และตัวอย่างการใช้งานอื่น ๆ บนอินเทอร์เน็ตได้</p>
-<p data-bai-block="278">ที่นี่เรากำลังแนะนำฟีเจอร์ที่ง่ายแต่มีประโยชน์บางอย่าง</p>
-<h3 data-bai-block="279" id="sessions_all-คดลอกเนอหาของเทอรมนล">คัดลอกเนื้อหาของเทอร์มินัล<a class="hash-link" href="#sessions_all-คดลอกเนอหาของเทอรมนล" aria-label="Direct link to คัดลอกเนื้อหาของเทอร์มินัล">#</a></h3>
-<p data-bai-block="280">tmux มีฟีเจอร์ที่มีประโยชน์จำนวนมาก แต่ค่อนข้างสับสนสำหรับ
+<p data-bai-block="290">ที่นี่เรากำลังแนะนำฟีเจอร์ที่ง่ายแต่มีประโยชน์บางอย่าง</p>
+<h3 data-bai-block="291" id="sessions_all-คดลอกเนอหาของเทอรมนล">คัดลอกเนื้อหาของเทอร์มินัล<a class="hash-link" href="#sessions_all-คดลอกเนอหาของเทอรมนล" aria-label="Direct link to คัดลอกเนื้อหาของเทอร์มินัล">#</a></h3>
+<p data-bai-block="292">tmux มีฟีเจอร์ที่มีประโยชน์จำนวนมาก แต่ค่อนข้างสับสนสำหรับ
 ผู้ใช้ครั้งแรก โดยเฉพาะอย่างยิ่ง tmux มีบัฟเฟอร์คลิปบอร์ดของตัวเอง ดังนั้นเมื่อคัดลอก
 เนื้อหาของเทอร์มินัล ผู้ใช้อาจประสบปัญหาที่สามารถวางได้เฉพาะภายใน tmux
 เท่านั้นตามค่าเริ่มต้น ยิ่งไปกว่านั้น ยากที่จะเปิดเผยคลิปบอร์ดของระบบผู้ใช้
 ให้กับ tmux ภายในเว็บเบราว์เซอร์ ดังนั้นเนื้อหาเทอร์มินัล
 จึงไม่สามารถคัดลอกและวางไปยังโปรแกรมอื่นของคอมพิวเตอร์ผู้ใช้ได้ สิ่งที่เรียกว่า
 <code>Ctrl-C</code> / <code>Ctrl-V</code> ไม่ทำงานกับ tmux</p>
-<p data-bai-block="281">หากจำเป็นต้องคัดลอกและวางเนื้อหาเทอร์มินัลไปยังคลิปบอร์ดของระบบ
+<p data-bai-block="293">หากจำเป็นต้องคัดลอกและวางเนื้อหาเทอร์มินัลไปยังคลิปบอร์ดของระบบ
 ผู้ใช้สามารถปิดการรองรับเมาส์ของ tmux ชั่วคราวได้ ก่อนอื่น ให้กดปุ่ม <code>Ctrl-B</code>
 เพื่อเข้าสู่โหมดควบคุม tmux จากนั้นพิมพ์ <code>:set -g mouse off</code> แล้วกด <code>Enter</code>
 (โปรดสังเกตว่าต้องพิมพ์เครื่องหมายทวิภาคแรกด้วย) ผู้ใช้สามารถตรวจสอบสิ่งที่กำลัง
 พิมพ์ได้ในแถบสถานะที่ด้านล่างของหน้าจอ จากนั้นลากข้อความที่ต้องการ
 จากเทอร์มินัลด้วยเมาส์และกด <code>Ctrl-C</code> หรือ <code>Cmd-C</code> (ใน Mac)
 เพื่อคัดลอกไปยังคลิปบอร์ดของคอมพิวเตอร์ผู้ใช้</p>
-<p data-bai-block="282">เมื่อปิดการรองรับเมาส์ จะไม่สามารถเลื่อนดูผ่านล้อเมาส์เพื่อดู
+<p data-bai-block="294">เมื่อปิดการรองรับเมาส์ จะไม่สามารถเลื่อนดูผ่านล้อเมาส์เพื่อดู
 เนื้อหาของหน้าก่อนหน้าจากเทอร์มินัลได้ ในกรณีนี้ ผู้ใช้สามารถเปิด
 การรองรับเมาส์ได้ กด <code>Ctrl-B</code> และในครั้งนี้ พิมพ์ <code>:set -g mouse on</code> ตอนนี้การเลื่อนผ่านล้อเมาส์พร้อมใช้งานเพื่อดูเนื้อหาของหน้าก่อนหน้า</p>
-<p data-bai-block="283">หากคุณจำ <code>:set -g mouse off</code> หรือ <code>:set -g mouse on</code> หลังจาก <code>Ctrl-B</code> ได้
+<p data-bai-block="295">หากคุณจำ <code>:set -g mouse off</code> หรือ <code>:set -g mouse on</code> หลังจาก <code>Ctrl-B</code> ได้
 คุณจะสามารถใช้เทอร์มินัลเว็บได้อย่างสะดวกยิ่งขึ้น</p>
 <div class="admonition admonition-note">
-<div data-bai-block="284" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="296" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="285"><code>Ctrl-B</code> เป็นคีย์โหมดควบคุมเริ่มต้นของ tmux หากผู้ใช้ตั้งค่าคีย์ควบคุมอื่น
+<p data-bai-block="297"><code>Ctrl-B</code> เป็นคีย์โหมดควบคุมเริ่มต้นของ tmux หากผู้ใช้ตั้งค่าคีย์ควบคุมอื่น
 โดยการแก้ไข <code>.tmux.conf</code> ในไดเรกทอรีโฮมของผู้ใช้ ผู้ใช้ควรกด
 ชุดคีย์ที่ตั้งไว้แทน <code>Ctrl-B</code></p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="286" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="298" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="287">ในสภาพแวดล้อม Windows ให้ดูที่ทางลัดต่อไปนี้</p>
+<p data-bai-block="299">ในสภาพแวดล้อม Windows ให้ดูที่ทางลัดต่อไปนี้</p>
 <ul>
-<li data-bai-block="288">คัดลอก: กด <code>Shift</code> ค้างไว้ คลิกขวา แล้วลาก</li>
-<li data-bai-block="289">วาง: กด <code>Ctrl-Shift-V</code></li>
+<li data-bai-block="300">คัดลอก: กด <code>Shift</code> ค้างไว้ คลิกขวา แล้วลาก</li>
+<li data-bai-block="301">วาง: กด <code>Ctrl-Shift-V</code></li>
 </ul>
 </div></div>
 
 
-<h3 data-bai-block="290" id="sessions_all-ตรวจสอบประวตเทอรมนลโดยใชแปนพมพ">ตรวจสอบประวัติเทอร์มินัลโดยใช้แป้นพิมพ์<a class="hash-link" href="#sessions_all-ตรวจสอบประวตเทอรมนลโดยใชแปนพมพ" aria-label="Direct link to ตรวจสอบประวัติเทอร์มินัลโดยใช้แป้นพิมพ์">#</a></h3>
-<p data-bai-block="291">ยังมีอีกวิธีหนึ่งในการคัดลอกเนื้อหาเทอร์มินัลและตรวจสอบเนื้อหา
+<h3 data-bai-block="302" id="sessions_all-ตรวจสอบประวตเทอรมนลโดยใชแปนพมพ">ตรวจสอบประวัติเทอร์มินัลโดยใช้แป้นพิมพ์<a class="hash-link" href="#sessions_all-ตรวจสอบประวตเทอรมนลโดยใชแปนพมพ" aria-label="Direct link to ตรวจสอบประวัติเทอร์มินัลโดยใช้แป้นพิมพ์">#</a></h3>
+<p data-bai-block="303">ยังมีอีกวิธีหนึ่งในการคัดลอกเนื้อหาเทอร์มินัลและตรวจสอบเนื้อหา
 ก่อนหน้าของเทอร์มินัลพร้อมกัน นั่นคือการตรวจสอบเนื้อหาก่อนหน้า
 โดยใช้แป้นพิมพ์ คลิก <code>Ctrl-B</code> ก่อน แล้วจึงกดปุ่ม <code>Page Up</code> และ/หรือ <code>Page Down</code> หากต้องการออกจากโหมดค้นหา เพียงกดปุ่ม <code>q</code>
 ด้วยวิธีนี้ ผู้ใช้สามารถตรวจสอบเนื้อหาประวัติเทอร์มินัลได้แม้
 เมื่อปิดการรองรับเมาส์</p>
 <p><a id="tmux_guide"></a></p>
-<h3 data-bai-block="292" id="sessions_all-สรางเชลลหลายตว">สร้างเชลล์หลายตัว<a class="hash-link" href="#sessions_all-สรางเชลลหลายตว" aria-label="Direct link to สร้างเชลล์หลายตัว">#</a></h3>
-<p data-bai-block="293">ข้อได้เปรียบหลักของ tmux คือการเปิดและใช้งานเชลล์หลายตัวในหน้าต่าง
+<h3 data-bai-block="304" id="sessions_all-สรางเชลลหลายตว">สร้างเชลล์หลายตัว<a class="hash-link" href="#sessions_all-สรางเชลลหลายตว" aria-label="Direct link to สร้างเชลล์หลายตัว">#</a></h3>
+<p data-bai-block="305">ข้อได้เปรียบหลักของ tmux คือการเปิดและใช้งานเชลล์หลายตัวในหน้าต่าง
 เทอร์มินัลเดียว การกดปุ่ม <code>Ctrl-B</code> และ <code>c</code> จะแสดงสภาพแวดล้อมเชลล์ใหม่
 หน้าต่างก่อนหน้าจะมองไม่เห็นในตอนนี้ แต่ยังไม่ถูกยุติ
 กด <code>Ctrl-B</code> และ <code>w</code> รายการของเชลล์ที่เปิดอยู่บน tmux จะแสดงขึ้น
@@ -984,25 +1018,25 @@ Lab เป็นต้น ขึ้นอยู่กับประเภทข
 ที่ขึ้นต้นด้วย <code>1:</code> คือเชลล์ที่เพิ่งสร้างขึ้น ผู้ใช้สามารถเคลื่อนย้ายระหว่างเชลล์
 โดยใช้ปุ่มขึ้น/ลง วางเคอร์เซอร์บนเชลล์ <code>0:</code> และกดปุ่ม Enter
 เพื่อเลือก</p>
-<p><figure data-bai-block="294" class="doc-figure"><img src="./images/tmux_multi_session_pane.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2784" height="2164" /><figcaption>รูปที่ 10.50</figcaption></figure>
+<p><figure data-bai-block="306" class="doc-figure"><img src="./images/tmux_multi_session_pane.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2784" height="2164" /><figcaption>รูปที่ 10.50</figcaption></figure>
 </p>
-<p data-bai-block="295">ด้วยวิธีนี้ ผู้ใช้สามารถใช้สภาพแวดล้อมเชลล์หลายตัวภายในเทอร์มินัลเว็บได้ หากต้องการออกหรือยุติ
+<p data-bai-block="307">ด้วยวิธีนี้ ผู้ใช้สามารถใช้สภาพแวดล้อมเชลล์หลายตัวภายในเทอร์มินัลเว็บได้ หากต้องการออกหรือยุติ
 เชลล์ปัจจุบัน เพียงป้อนคำสั่ง <code>exit</code> หรือกดปุ่ม <code>Ctrl-B x</code> จากนั้น
 พิมพ์ <code>y</code></p>
-<p data-bai-block="296">โดยสรุป:</p>
+<p data-bai-block="308">โดยสรุป:</p>
 <ul>
-<li data-bai-block="297"><code>Ctrl-B c</code>: สร้างเชลล์ tmux ใหม่</li>
-<li data-bai-block="298"><code>Ctrl-B w</code>: ค้นหาเชลล์ tmux ปัจจุบันและย้ายไปมาระหว่างเชลล์เหล่านั้น</li>
-<li data-bai-block="299"><code>exit</code> หรือ <code>Ctrl-B x</code>: ยุติเชลล์ปัจจุบัน</li>
+<li data-bai-block="309"><code>Ctrl-B c</code>: สร้างเชลล์ tmux ใหม่</li>
+<li data-bai-block="310"><code>Ctrl-B w</code>: ค้นหาเชลล์ tmux ปัจจุบันและย้ายไปมาระหว่างเชลล์เหล่านั้น</li>
+<li data-bai-block="311"><code>exit</code> หรือ <code>Ctrl-B x</code>: ยุติเชลล์ปัจจุบัน</li>
 </ul>
-<p data-bai-block="300">การรวมคำสั่งข้างต้นช่วยให้ผู้ใช้สามารถทำงานต่าง ๆ พร้อมกัน
+<p data-bai-block="312">การรวมคำสั่งข้างต้นช่วยให้ผู้ใช้สามารถทำงานต่าง ๆ พร้อมกัน
 บนเชลล์หลายตัวได้</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 9 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 14 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./session_page.html">
@@ -1034,6 +1068,7 @@ Lab เป็นต้น ขึ้นอยู่กับประเภทข
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%81%E0%B8%AA%E0%B8%94%E0%B8%87%E0%B8%9C%E0%B8%A5%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%8B%E0%B8%AA%E0%B8%8A%E0%B8%99" data-toc-target="sessions_all-การแสดงผลรายการเซสชน">การแสดงผลรายการเซสชัน</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E0%B8%A1%E0%B8%A1%E0%B8%A1%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%A3%E0%B8%94%E0%B8%97%E0%B8%A3%E0%B8%9E%E0%B8%A2%E0%B8%B2%E0%B8%81%E0%B8%A3" data-toc-target="sessions_all-มมมองกรดทรพยากร">มุมมองกริดทรัพยากร</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%E0%B9%81%E0%B8%9C%E0%B8%87%E0%B8%A3%E0%B8%B2%E0%B8%A2%E0%B8%A5%E0%B8%B0%E0%B9%80%E0%B8%AD%E0%B8%A2%E0%B8%94%E0%B9%80%E0%B8%8B%E0%B8%AA%E0%B8%8A%E0%B8%99" data-toc-target="sessions_all-แผงรายละเอยดเซสชน">แผงรายละเอียดเซสชัน</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E0%B8%AA%E0%B8%96%E0%B8%B2%E0%B8%99%E0%B8%B0%E0%B8%97%E0%B9%80%E0%B8%81%E0%B8%A2%E0%B8%A7%E0%B8%82%E0%B8%AD%E0%B8%87%E0%B8%81%E0%B8%9A%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B9%80%E0%B8%9A%E0%B8%A2%E0%B8%94%E0%B8%AD%E0%B8%AD%E0%B8%81" data-toc-target="sessions_all-สถานะทเกยวของกบการเบยดออก">สถานะที่เกี่ยวข้องกับการเบียดออก</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%A7%E0%B8%95%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%88%E0%B8%94%E0%B8%95%E0%B8%B2%E0%B8%A3%E0%B8%B2%E0%B8%87%E0%B9%80%E0%B8%8B%E0%B8%AA%E0%B8%8A%E0%B8%99" data-toc-target="sessions_all-ประวตการจดตารางเซสชน">ประวัติการจัดตารางเซสชัน</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#sessions_all-%E0%B8%9A%E0%B8%99%E0%B8%97%E0%B8%81%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%95%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%AA%E0%B8%AD%E0%B8%9A%E0%B9%80%E0%B8%8B%E0%B8%AA%E0%B8%8A%E0%B8%99" data-toc-target="sessions_all-บนทกการตรวจสอบเซสชน">บันทึกการตรวจสอบเซสชัน</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#sessions_all-%E0%B9%83%E0%B8%8A-jupyter-notebook" data-toc-target="sessions_all-ใช-jupyter-notebook">ใช้ Jupyter Notebook</a></li>
