@@ -1580,6 +1580,7 @@
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Riscansiona",
     "RescanImageNotFound": "Questa immagine non è stata trovata. Potrebbe essere già stata rimossa dall'elenco.",
+    "RescanImageRequiresSuperadmin": "Solo un superamministratore può riscansionare un'immagine.",
     "RescanImageSuccess": "{{name}} è stata riscansionata.",
     "ResourceLimit": "Limite delle risorse",
     "ResourceLimitAppliesToNewSessionsOnly": "Il limite minimo delle risorse si applica solo alle sessioni appena create e non influisce sulle sessioni già in esecuzione.",

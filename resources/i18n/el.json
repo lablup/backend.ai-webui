@@ -1580,6 +1580,7 @@
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Νέα σάρωση",
     "RescanImageNotFound": "Αυτή η εικόνα δεν βρέθηκε. Ενδέχεται να έχει ήδη αφαιρεθεί από τη λίστα.",
+    "RescanImageRequiresSuperadmin": "Μόνο ένας υπερδιαχειριστής μπορεί να κάνει νέα σάρωση μιας εικόνας.",
     "RescanImageSuccess": "Έγινε νέα σάρωση της {{name}}.",
     "ResourceLimit": "Όριο πόρων",
     "ResourceLimitAppliesToNewSessionsOnly": "Το ελάχιστο όριο πόρων ισχύει μόνο για νέες συνεδρίες και δεν επηρεάζει τις ήδη εκτελούμενες συνεδρίες.",

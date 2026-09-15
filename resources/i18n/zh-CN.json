@@ -1580,6 +1580,7 @@
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "重新扫描",
     "RescanImageNotFound": "未找到该镜像，它可能已从列表中移除。",
+    "RescanImageRequiresSuperadmin": "只有超级管理员才能重新扫描镜像。",
     "RescanImageSuccess": "已重新扫描 {{name}}。",
     "ResourceLimit": "资源限制",
     "ResourceLimitAppliesToNewSessionsOnly": "最低资源限制仅适用于新建会话，不影响已在运行的会话。",

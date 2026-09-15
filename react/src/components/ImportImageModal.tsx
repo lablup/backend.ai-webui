@@ -12,10 +12,7 @@ import {
   type ResolvedReference,
 } from '../helper/imageReferenceParser';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import {
-  useDescribeScanImageError,
-  useScanImage,
-} from '../hooks/useScanImage';
+import { useDescribeScanImageError, useScanImage } from '../hooks/useScanImage';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import './ImportImageModal.css';
 import { Button } from '@astryxdesign/core/Button';
@@ -315,10 +312,12 @@ const ImportImageModalContent: React.FC<{
             failure = errors.join('\n');
           }
         } catch (error) {
-          failure = describeScanError(
-            error,
-            t('environment.ImportImageManagerCannotRegisterNewImages'),
-          );
+          failure = describeScanError(error, {
+            notFound: t(
+              'environment.ImportImageManagerCannotRegisterNewImages',
+            ),
+            forbidden: t('environment.ImportImageRequiresSuperadmin'),
+          });
         }
         if (failure === null) {
           runOutcomes[key] = { status: 'success' };
@@ -561,10 +560,12 @@ const ImportImageModalContent: React.FC<{
             handleAdd().catch((error) => {
               message.error({
                 key: 'import-image-failed',
-                content: describeScanError(
-                  error,
-                  t('environment.ImportImageManagerCannotRegisterNewImages'),
-                ),
+                content: describeScanError(error, {
+                  notFound: t(
+                    'environment.ImportImageManagerCannotRegisterNewImages',
+                  ),
+                  forbidden: t('environment.ImportImageRequiresSuperadmin'),
+                }),
               });
             });
           }}

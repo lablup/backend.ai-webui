@@ -1567,6 +1567,7 @@
     "RegistryProject": "Registry Project",
     "RescanImage": "Rescan",
     "RescanImageNotFound": "This image was not found. It may have already been removed from the list.",
+    "RescanImageRequiresSuperadmin": "Only a superadmin can rescan an image.",
     "RescanImageSuccess": "{{name}} was rescanned.",
     "ResourceLimit": "Resource limit",
     "ResourceLimitAppliesToNewSessionsOnly": "The minimum resource limit applies to newly created sessions only and does not affect sessions that are already running.",

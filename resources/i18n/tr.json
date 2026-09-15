@@ -1580,6 +1580,7 @@
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Yeniden Tara",
     "RescanImageNotFound": "Bu imaj bulunamadı. Listeden çoktan kaldırılmış olabilir.",
+    "RescanImageRequiresSuperadmin": "Yalnızca bir süper yönetici imajı yeniden tarayabilir.",
     "RescanImageSuccess": "{{name}} yeniden tarandı.",
     "ResourceLimit": "Kaynak sınırı",
     "ResourceLimitAppliesToNewSessionsOnly": "Minimum kaynak sınırı yalnızca yeni oluşturulan oturumlara uygulanır ve halihazırda çalışan oturumları etkilemez.",

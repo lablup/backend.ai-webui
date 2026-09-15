@@ -1581,6 +1581,7 @@
     "RegistryProject": "__NOT_TRANSLATED__",
     "RescanImage": "Réanalyser",
     "RescanImageNotFound": "Cette image est introuvable. Elle a peut-être déjà été retirée de la liste.",
+    "RescanImageRequiresSuperadmin": "Seul un superadministrateur peut réanalyser une image.",
     "RescanImageSuccess": "{{name}} a été réanalysée.",
     "ResourceLimit": "Limite de ressources",
     "ResourceLimitAppliesToNewSessionsOnly": "La limite de ressources minimale s'applique uniquement aux sessions nouvellement créées et n'affecte pas les sessions déjà en cours d'exécution.",
