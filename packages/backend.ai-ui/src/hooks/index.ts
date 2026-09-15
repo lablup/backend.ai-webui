@@ -199,4 +199,8 @@ export {
   StorageHostFetchError,
 } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
-export { useSuspendedLegacyVFolders } from './useSuspendedLegacyVFolders';
+export {
+  isMountableLegacyVFolder,
+  useSuspendedLegacyVFolders,
+} from './useSuspendedLegacyVFolders';
+export type { LegacyVFolderMountScope } from './useSuspendedLegacyVFolders';

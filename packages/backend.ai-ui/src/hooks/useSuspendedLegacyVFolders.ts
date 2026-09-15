@@ -58,3 +58,22 @@ export const useSuspendedLegacyVFolders = (ownerEmail?: string) => {
 
   return { folders: data, refetch, isFetching };
 };
+
+export interface LegacyVFolderMountScope {
+  currentProjectId?: string;
+  /** Hosts granting `mount-in-session`; omitted skips the host gate. */
+  mountableHosts?: ReadonlyArray<string>;
+}
+
+/**
+ * The gate `mount_ids` must pass server side: a host allowing
+ * mount-in-session, and a folder of this project or the user's own.
+ */
+export const isMountableLegacyVFolder = (
+  folder: LegacyVFolder,
+  { currentProjectId, mountableHosts }: LegacyVFolderMountScope,
+): boolean =>
+  (!mountableHosts || mountableHosts.includes(folder.host)) &&
+  (folder.ownership_type === 'user' ||
+    !folder.group ||
+    folder.group === currentProjectId);

@@ -4,6 +4,7 @@ import { convertToUUID } from '../../helper';
 import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
+  isMountableLegacyVFolder,
   useSuspendedLegacyVFolders,
   type LegacyVFolder,
 } from '../../hooks/useSuspendedLegacyVFolders';
@@ -367,18 +368,13 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
-  const mountableHostSet = new Set(mountableHosts);
   const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
+  const mountScope = { currentProjectId, mountableHosts };
   // The uuid is derived once per folder here and read back below, rather than
   // re-converting in each of the id comparisons.
   const mountableFolders = _.map(
-    _.filter(
-      allFolderList,
-      (folder) =>
-        mountableHostSet.has(folder.host) &&
-        (folder.ownership_type === 'user' ||
-          !folder.group ||
-          folder.group === currentProjectId),
+    _.filter(allFolderList, (folder) =>
+      isMountableLegacyVFolder(folder, mountScope),
     ),
     (folder) => ({ folder, uuid: convertToUUID(folder.id) }),
   );
