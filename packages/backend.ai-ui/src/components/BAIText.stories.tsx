@@ -446,7 +446,7 @@ export const ExpandableEllipsis: Story = {
     docs: {
       description: {
         story:
-          'Expandable ellipsis allows users to toggle between truncated and full text views. Click the "Expand" link to show full content and "Collapse" to hide it. Works with both single and multi-line ellipsis.',
+          'Expandable ellipsis allows users to toggle between truncated and full text views. The "Expand" link ends the text itself: after the `…` on the last clamped line (a multi-line clamp is measured in JS so the link fits on that line, as antd did) and after the last word once expanded, where it reads "Collapse". A single-line clamp clips in CSS and keeps the link right after the clipped box.',
       },
     },
   },
