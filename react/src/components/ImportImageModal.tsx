@@ -238,8 +238,11 @@ const ImportImageModalContent: React.FC<{
     };
   };
 
+  // Position *and* text: the canonical alone collides when the same reference
+  // is pasted twice, so two rows would share one outcome; the position alone
+  // would hand a stale outcome to whatever line slides into that index.
   const lines = text.split('\n').map((raw, index) => ({
-    key: `${index}`,
+    key: `${index}:${raw}`,
     raw,
     resolved: resolveImageReference(parseImageReferenceLine(raw), registries),
   }));
@@ -346,23 +349,26 @@ const ImportImageModalContent: React.FC<{
       const runOutcomes: Record<string, LineOutcome> = {};
       const addedInThisRun: Array<string> = [];
       const remainingRawLines: Array<string> = [];
+      // Failures re-keyed to the keys the rebuilt text area will produce:
+      // dropping the succeeded lines renumbers everything below them.
+      const nextOutcomes: Record<string, LineOutcome> = {};
 
       // The whole batch is marked before the first request, so a reader can
       // see what is still coming during a scan that takes tens of seconds.
-      for (const { resolved } of lines) {
+      for (const { key, resolved } of lines) {
         if (resolved.submittable && resolved.canonical) {
-          runOutcomes[resolved.canonical] = { status: 'queued' };
+          runOutcomes[key] = { status: 'queued' };
         }
       }
       setOutcomes({ ...runOutcomes });
 
-      for (const { raw, resolved } of lines) {
+      for (const { key, raw, resolved } of lines) {
         const canonical = resolved.canonical;
         if (!resolved.submittable || !canonical) {
           remainingRawLines.push(raw);
           continue;
         }
-        runOutcomes[canonical] = { status: 'pending' };
+        runOutcomes[key] = { status: 'pending' };
         setOutcomes({ ...runOutcomes });
         let failure: string | null = null;
         try {
@@ -380,10 +386,14 @@ const ImportImageModalContent: React.FC<{
           failure = describeError(error);
         }
         if (failure === null) {
-          runOutcomes[canonical] = { status: 'success' };
+          runOutcomes[key] = { status: 'success' };
           addedInThisRun.push(canonical);
         } else {
-          runOutcomes[canonical] = { status: 'error', message: failure };
+          runOutcomes[key] = { status: 'error', message: failure };
+          nextOutcomes[`${remainingRawLines.length}:${raw}`] = {
+            status: 'error',
+            message: failure,
+          };
           remainingRawLines.push(raw);
         }
         setOutcomes({ ...runOutcomes });
@@ -391,16 +401,15 @@ const ImportImageModalContent: React.FC<{
 
       // Succeeded lines are locked: out of the editable text and into the list
       // below, with the architecture frozen because it applies to the whole
-      // batch. A retry therefore submits only what is left.
-      const cumulative = [...addedCanonicals, ...addedInThisRun];
+      // batch. A retry therefore submits only what is left. The locked list is
+      // a set of images, so a reference pasted twice locks once.
+      const cumulative = _.union(addedCanonicals, addedInThisRun);
       setAddedCanonicals(cumulative);
       setText(remainingRawLines.join('\n'));
-      setOutcomes(
-        _.pickBy(runOutcomes, (outcome) => outcome.status === 'error'),
-      );
+      setOutcomes(nextOutcomes);
 
       if (addedInThisRun.length > 0) {
-        onAdded?.(addedInThisRun);
+        onAdded?.(_.uniq(addedInThisRun));
       }
       if (!_.some(remainingRawLines, (raw) => raw.trim().length > 0)) {
         message.success({
@@ -506,9 +515,7 @@ const ImportImageModalContent: React.FC<{
             />
           ))}
           {previewLines.map(({ key, raw, resolved }) => {
-            const outcome = resolved.canonical
-              ? outcomes[resolved.canonical]
-              : undefined;
+            const outcome = outcomes[key];
             const status = describeStatus(outcome, resolved.submittable);
             const metaText = resolved.imageName
               ? [
