@@ -462,6 +462,7 @@
     "Yes": "Kyllä"
   },
   "chatui": {
+    "AttachmentNotStored": "Liitettä ei tallennettu selaimen tallennusrajan vuoksi",
     "Attachments": "Liitteet",
     "CannotFindModel": "LLM-malleja ei löydy. Tarkista peruspolku ja tokenin yhteensopivuus OpenAI:n kanssa ja paina sitten 'Päivitä mallit'.",
     "ChatTitle": "Keskustelun otsikko",
@@ -474,6 +475,9 @@
     "DeploymentModels": "{{name}}:n mallit",
     "DropFileHere": "Pudota tiedosto tähän",
     "History": "Historia",
+    "HistoryAttachmentsNotStored": "Selaimen tallennustila on täynnä. Liitteitä ei enää tallenneta keskusteluhistoriaan.",
+    "HistoryNotStored": "Selaimen tallennustila on täynnä. Tämän keskustelun viimeisimmät muutokset katoavat sivun uudelleenlatauksen jälkeen.",
+    "HistoryOlderChatsNotStored": "Selaimen tallennustila on täynnä. Vanhempia keskusteluja ei enää tallenneta, ja ne katoavat sivun uudelleenlatauksen jälkeen.",
     "NewChat": "Uusi keskustelu",
     "NoDesiredReplicas": "Tämän käyttöönoton haluttu replikoiden määrä on 0, joten se ei voi vastata. Aseta haluttu replikoiden määrä arvoon 1 tai enemmän käyttääksesi sitä.",
     "ScrollToBottom": "Vieritä alas",

@@ -449,6 +449,7 @@
     "Yes": "Yes"
   },
   "chatui": {
+    "AttachmentNotStored": "Attachment not stored due to the browser storage limit",
     "Attachments": "Attachments",
     "CannotFindModel": "LLM models not found. Verify the base path and token compatibility with OpenAI, then press 'Refresh Model Information'",
     "ChatTitle": "Chat title",
@@ -461,6 +462,9 @@
     "DeploymentModels": "{{name}}'s Models",
     "DropFileHere": "Drop file here",
     "History": "History",
+    "HistoryAttachmentsNotStored": "Browser storage is full. Attachments are no longer saved with your chat history.",
+    "HistoryNotStored": "Browser storage is full. Recent changes to this chat will be gone after a reload.",
+    "HistoryOlderChatsNotStored": "Browser storage is full. Older chats are no longer saved and will be gone after a reload.",
     "NewChat": "New Chat",
     "NoDesiredReplicas": "The desired replica count for this deployment is 0, so it cannot respond. Set the desired replica count to 1 or more to use it.",
     "ScrollToBottom": "Scroll to bottom",

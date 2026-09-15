@@ -462,6 +462,7 @@
     "Yes": "Đúng"
   },
   "chatui": {
+    "AttachmentNotStored": "Tệp đính kèm không được lưu do giới hạn bộ nhớ của trình duyệt",
     "Attachments": "Tệp đính kèm",
     "CannotFindModel": "Các mô hình LLM không tìm thấy. \nXác minh đường dẫn cơ sở và khả năng tương thích mã thông báo với OpenAI, sau đó nhấn 'Làm mới các mô hình'",
     "ChatTitle": "Tiêu đề trò chuyện",
@@ -474,6 +475,9 @@
     "DeploymentModels": "Các mô hình của {{name}}",
     "DropFileHere": "Thả tập tin ở đây",
     "History": "Lịch sử",
+    "HistoryAttachmentsNotStored": "Bộ nhớ trình duyệt đã đầy. Tệp đính kèm sẽ không còn được lưu trong lịch sử trò chuyện.",
+    "HistoryNotStored": "Bộ nhớ trình duyệt đã đầy. Các thay đổi gần đây trong cuộc trò chuyện này sẽ mất sau khi tải lại.",
+    "HistoryOlderChatsNotStored": "Bộ nhớ trình duyệt đã đầy. Các cuộc trò chuyện cũ sẽ không còn được lưu và sẽ mất sau khi tải lại.",
     "NewChat": "Cuộc trò truyện mới",
     "NoDesiredReplicas": "Số lượng bản sao mong muốn cho triển khai này là 0, do đó không thể phản hồi. Đặt số lượng bản sao mong muốn thành 1 trở lên để sử dụng.",
     "ScrollToBottom": "Cuộn xuống dưới",
