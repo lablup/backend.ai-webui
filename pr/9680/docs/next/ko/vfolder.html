@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="스토리지 폴더" />
   <meta name="twitter:description" content="Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더","inLanguage":"ko","description":"Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다.","dateModified":"2026-09-14T15:53:50.000Z","url":"https://webui.docs.backend.ai/next/ko/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더","inLanguage":"ko","description":"Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용 저장소를 제공합니다. 연산 세션이 종료되면 세션 내에서 생성된 모든 파일과 디렉터리가 삭제되므로, 중요한 데이터는 반드시 스토리지 폴더에 저장하는 것이 좋습니다.","dateModified":"2026-09-15T00:32:39.000Z","url":"https://webui.docs.backend.ai/next/ko/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (cbeea5f)">v26.9.0-alpha.0 (cbeea5f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (d162af8)">v26.9.0-alpha.0 (d162af8)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -309,10 +309,8 @@
 
 <h3 data-bai-block="44" id="vfolder-기존-파일-덮어쓰기">기존 파일 덮어쓰기<a class="hash-link" href="#vfolder-기존-파일-덮어쓰기" aria-label="Direct link to 기존 파일 덮어쓰기">#</a></h3>
 <p data-bai-block="45"><strong>업로드</strong> 버튼이나 드래그 앤 드롭으로 업로드하는 항목의 이름이 현재 디렉토리에 이미 있는 항목과 같으면, 전송이 시작되기 전에 <strong>덮어쓰기 확인</strong> 대화 상자가 열립니다. 폴더는 폴더 안의 개별 파일이 아니라 최상위 폴더 이름을 기준으로 비교합니다.</p>
-<p><figure data-bai-block="46" class="doc-figure"><img src="./images/vfolder_upload_overwrite_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>그림 15.8</figcaption></figure>
+<p><figure data-bai-block="46" class="doc-figure"><img src="./images/vfolder_upload_overwrite_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="622" /><figcaption>그림 15.8</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /data -> open a folder -> upload a file that already exists together with a new one; capture the Overwrite Confirmation dialog (Name / Existing / Uploading columns, one checked row, the "other item(s)" line) -->
-
 <p data-bai-block="47">이름이 겹치는 항목은 각각 한 행으로 표시되며, <strong>이름</strong>과 함께 <strong>기존 항목</strong>과 <strong>업로드할 항목</strong>의 크기 및 수정 시각을 확인할 수 있습니다. 모든 행은 기본적으로 선택되어 있습니다. 선택된 상태로 두면 해당 항목을 덮어쓰고, 선택을 해제하면 기존 항목을 그대로 두고 그 항목은 업로드하지 않습니다. <strong>업로드</strong>를 클릭하면 전송이 시작됩니다.</p>
 <p data-bai-block="48">같은 업로드에 포함된 항목 중 이름이 겹치지 않는 항목은 선택 여부와 관계없이 업로드되며, 그 개수는 표 아래에 표시됩니다.</p>
 <h3 data-bai-block="49" id="vfolder-텍스트-파일-편집">텍스트 파일 편집<a class="hash-link" href="#vfolder-텍스트-파일-편집" aria-label="Direct link to 텍스트 파일 편집">#</a></h3>
@@ -539,7 +537,7 @@ FileBrowser 연산 세션의 애플리케이션 버튼을 클릭하면 됩니다
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 14일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 15일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="โฟลเดอร์จัดเก็บ" />
   <meta name="twitter:description" content="Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-09-14T15:53:50.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีพื้นที่จัดเก็บเฉพาะเพื่อเก็บไฟล์ของผู้ใช้ให้คงอยู่ เนื่องจากไฟล์และไดเรกทอรีของเซสชันการคำนวณจะถูกลบเมื่อเซสชันสิ้นสุดลง…","dateModified":"2026-09-15T00:32:39.000Z","url":"https://webui.docs.backend.ai/next/th/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (cbeea5f)">v26.9.0-alpha.0 (cbeea5f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (d162af8)">v26.9.0-alpha.0 (d162af8)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -309,10 +309,8 @@ storage host นั้น คุณจะสามารถอัปโหลด
 
 <h3 data-bai-block="44" id="vfolder-การเขยนทบไฟลทมอย">การเขียนทับไฟล์ที่มีอยู่<a class="hash-link" href="#vfolder-การเขยนทบไฟลทมอย" aria-label="Direct link to การเขียนทับไฟล์ที่มีอยู่">#</a></h3>
 <p data-bai-block="45">เมื่อรายการที่คุณอัปโหลดด้วยปุ่ม <strong>อัพโหลด</strong> หรือด้วยการลากและวาง มีชื่อซ้ำกับรายการที่มีอยู่แล้วในไดเรกทอรีปัจจุบัน กล่องโต้ตอบ <strong>การยืนยันการเขียนทับ</strong> จะเปิดขึ้นก่อนเริ่มการถ่ายโอน โฟลเดอร์จะถูกเปรียบเทียบด้วยชื่อโฟลเดอร์ระดับบนสุด ไม่ใช่ไฟล์แต่ละไฟล์ภายในโฟลเดอร์</p>
-<p><figure data-bai-block="46" class="doc-figure"><img src="./images/vfolder_upload_overwrite_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>รูปที่ 15.8</figcaption></figure>
+<p><figure data-bai-block="46" class="doc-figure"><img src="./images/vfolder_upload_overwrite_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="578" /><figcaption>รูปที่ 15.8</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /data -> open a folder -> upload a file that already exists together with a new one; capture the Overwrite Confirmation dialog (Name / Existing / Uploading columns, one checked row, the "other item(s)" line) -->
-
 <p data-bai-block="47">รายการที่ชื่อซ้ำจะแสดงหนึ่งแถวต่อหนึ่งรายการ พร้อมคอลัมน์ <strong>ชื่อ</strong> และขนาดกับเวลาที่แก้ไขล่าสุดของรายการ <strong>ที่มีอยู่</strong> และรายการ <strong>ที่จะอัปโหลด</strong> ทุกแถวถูกเลือกไว้ตั้งแต่แรก หากปล่อยให้เลือกไว้ รายการนั้นจะถูกเขียนทับ หากยกเลิกการเลือก รายการเดิมจะยังคงอยู่และรายการนั้นจะไม่ถูกอัปโหลด คลิก <strong>อัพโหลด</strong> เพื่อเริ่มการถ่ายโอน</p>
 <p data-bai-block="48">รายการในการอัปโหลดเดียวกันที่ชื่อยังไม่ซ้ำจะถูกอัปโหลดไม่ว่าจะถูกเลือกไว้หรือไม่ และจำนวนของรายการเหล่านั้นจะแสดงอยู่ใต้ตาราง</p>
 <h3 data-bai-block="49" id="vfolder-แกไขไฟลขอความ">แก้ไขไฟล์ข้อความ<a class="hash-link" href="#vfolder-แกไขไฟลขอความ" aria-label="Direct link to แก้ไขไฟล์ข้อความ">#</a></h3>
@@ -538,7 +536,7 @@ storage host นั้น คุณจะสามารถอัปโหลด
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 14 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 15 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">

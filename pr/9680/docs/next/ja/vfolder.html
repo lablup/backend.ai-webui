@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-14T15:53:50.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-15T00:32:39.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (cbeea5f)">v26.9.0-alpha.0 (cbeea5f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (d162af8)">v26.9.0-alpha.0 (d162af8)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -310,10 +310,8 @@
 
 <h3 data-bai-block="44" id="vfolder-既存ファイルの上書き">既存ファイルの上書き<a class="hash-link" href="#vfolder-既存ファイルの上書き" aria-label="Direct link to 既存ファイルの上書き">#</a></h3>
 <p data-bai-block="45"><strong>アップロード</strong>ボタンやドラッグアンドドロップでアップロードする項目の名前が、現在のディレクトリにすでにある項目と同じ場合、転送が始まる前に<strong>確認の上書き</strong>ダイアログが開きます。フォルダーは中にある個々のファイルではなく、最上位のフォルダー名で比較されます。</p>
-<p><figure data-bai-block="46" class="doc-figure"><img src="./images/vfolder_upload_overwrite_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" /><figcaption>図 15.8</figcaption></figure>
+<p><figure data-bai-block="46" class="doc-figure"><img src="./images/vfolder_upload_overwrite_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1280" height="622" /><figcaption>図 15.8</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /data -> open a folder -> upload a file that already exists together with a new one; capture the Overwrite Confirmation dialog (Name / Existing / Uploading columns, one checked row, the "other item(s)" line) -->
-
 <p data-bai-block="47">名前が重複する項目は1行ずつ表示され、<strong>名前</strong>に加えて<strong>既存</strong>の項目と<strong>アップロード</strong>する項目のサイズおよび更新日時を確認できます。すべての行は既定で選択されています。選択したままにするとその項目を上書きし、選択を解除すると既存の項目を残してその項目はアップロードしません。<strong>アップロード</strong>をクリックすると転送が始まります。</p>
 <p data-bai-block="48">同じアップロードに含まれる項目のうち名前が重複しないものは、選択状態に関係なくアップロードされ、その件数は表の下に表示されます。</p>
 <h3 data-bai-block="49" id="vfolder-テキストファイルを編集">テキストファイルを編集<a class="hash-link" href="#vfolder-テキストファイルを編集" aria-label="Direct link to テキストファイルを編集">#</a></h3>
@@ -534,7 +532,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月14日</span>
+  <span class="last-updated">最終更新日 2026年9月15日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">
