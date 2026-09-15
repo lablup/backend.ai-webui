@@ -27,7 +27,10 @@ const REPO_ROOT = resolve(HERE, "../../../..");
 const STATE_DIR =
   process.env.BAI_DEV_SERVER_STATE_DIR ??
   resolve(homedir(), ".local/state/fw/dev-servers");
-/** The overlay's ladder retries while the SPA renders; 12 s is its whole budget. */
+/**
+ * The overlay's ladder retries while the SPA renders, and guided mode may
+ * fetch before it renders: 30 s is the whole budget a stop gets.
+ */
 const RESOLVE_TIMEOUT_MS = 30_000;
 /** How long a lazy route gets to render the element a stop names. */
 const FIND_TIMEOUT_MS = 20_000;
@@ -185,7 +188,8 @@ async function probePortless(url) {
 const FIND_JS = `(f) => {
   const visible = (el) => !!el && el.getBoundingClientRect().width > 0;
   if (f.testid) {
-    const byTid = [...document.querySelectorAll('[data-testid="' + f.testid + '"]')];
+    let byTid = [];
+    try { byTid = [...document.querySelectorAll('[data-testid="' + f.testid + '"]')]; } catch { return null; }
     return byTid.find(visible) ?? byTid[0] ?? null;
   }
   if (f.selector) {
@@ -340,6 +344,8 @@ async function waitForMark(page, id, expectedTid, timeoutMs) {
 async function main() {
   const flags = parseArgs(process.argv.slice(2));
   const settleMs = Number.parseInt(flags.settle || "2000", 10);
+  if (!Number.isInteger(settleMs) || settleMs < 0)
+    fail(2, `--settle takes whole milliseconds, not '${flags.settle}'`);
 
   let stops;
   try {
@@ -510,6 +516,13 @@ async function main() {
     const unpinned = couldNotPin.length
       ? ` (${couldNotPin.length} could not be pinned)`
       : "";
+    // Validation should make this unreachable; say so rather than let the
+    // comment quietly disagree with the link.
+    for (const m of minted)
+      if (m.dropped.length)
+        process.stderr.write(
+          `walkthrough: ${m.label} — the guard dropped ${m.dropped.join(", ")}\n`,
+        );
     process.stderr.write(
       `walkthrough: ${report.stops.filter((s) => s.ok).length}/${stops.length} stops resolved${unpinned} · ${setLink.length} chars\n`,
     );
@@ -538,7 +551,7 @@ function stopWording(kept, dropped) {
 }
 
 const describeStop = (stop) =>
-  `${stop.route} › ${stop.find.testid ?? `"${stop.find.text}"`}`;
+  `${stop.route} › ${stop.find.testid ?? stop.find.selector ?? `"${stop.find.text}"`}`;
 
 /** The FR-3949 stop fields, minus the ones the manifest left out. */
 function stopFields(stop, { sha, pr }) {
@@ -555,10 +568,27 @@ async function login(page, base, endpoint, env) {
   // straight on the app shell, so the form is not the only good outcome.
   const form = page.getByLabel("Email or Username");
   const shell = page.locator('[data-testid="user-dropdown-button"]');
-  await Promise.race([
+  // `any`, not `race`: it settles on the first of the two that appears AND
+  // handles the loser's eventual timeout, which as a bare race would surface
+  // 120 s later as an unhandled rejection.
+  await Promise.any([
     form.waitFor({ timeout: 120_000 }),
     shell.waitFor({ timeout: 120_000 }),
-  ]);
+  ]).catch(async () => {
+    // Neither appeared: on a backend the build is ahead of, the shell throws
+    // before it ever renders the form, so both sides only ever reject.
+    const crashed = await page
+      .getByText("An error has occurred")
+      .first()
+      .isVisible()
+      .catch(() => false);
+    fail(
+      3,
+      crashed
+        ? "the app shell dies on this backend — no walkthrough (try another endpoint)"
+        : "neither the login form nor the app shell appeared — no walkthrough",
+    );
+  });
   if (await shell.isVisible().catch(() => false)) return;
   await form.fill(env.E2E_ADMIN_EMAIL);
   await page.getByLabel("Password").fill(env.E2E_ADMIN_PASSWORD);

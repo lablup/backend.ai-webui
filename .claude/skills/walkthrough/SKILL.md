@@ -159,9 +159,10 @@ everything and launches no browser.
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and
-checks each stop draws its `.markbox` within 12 s **over the landmark it was
-captured on** — a mark that lands on another testid, or on none, is a failure
-and goes to `couldNotPin[]` with its `ck`. Exit **0** with a link, **2** on a
+checks each stop marks its element within 30 s **over the landmark it was
+captured on** — the element is stamped `data-bai-change` (guided mode) or a
+`.markbox` is drawn for it (the reviewer overlay). A mark that lands on another
+testid, or on none, is a failure and goes to `couldNotPin[]` with its `ck`. Exit **0** with a link, **2** on a
 bad manifest, **3** on preflight.
 
 The report's `stops[]` carries each stop's wording read back off the _stripped_
@@ -183,25 +184,26 @@ bash .claude/skills/walkthrough/scripts/comment.sh describe \
 `<!-- bai-walkthrough v1 pr=<n> … -->` and edited in place on a re-mint. It
 numbers and counts only the stops that **resolved**; the rest appear under
 "Could not pin" alone. It carries the set link once — no
-per-stop dev links, no `<!-- bai-review -->` marker, no `> 📍` quote block, so
-the review-pin resolver never reads a stop as a finding.
+per-stop dev links, no `<!-- bai-review -->` marker, no `> 📍` quote block. A
+stop is not a review finding, and `review-pins parse` leaves one out of its
+findings unless asked with `--include-stops` (FR-3949).
 
-`describe` upserts a `## Walkthrough` section in the PR description holding the
-comment's URL and the "Not shown in the walkthrough" list. It rewrites that
-section and nothing else.
+`describe` upserts a `## Walkthrough` section in the PR description holding
+`- [Walkthrough](<comment url>)` and the "Not shown in the walkthrough" list. It
+rewrites that section and nothing else.
 
 ## 8. Report to the user
 
 After today's two dev-server URL lines, add:
 
 ```
-Walkthrough: <set link> · 6 stops
+[Walkthrough](<set link>) · 6 stops
 ```
 
 and, when some stop did not pin:
 
 ```
-Walkthrough: <set link> · 6 stops (2 could not be pinned)
+[Walkthrough](<set link>) · 6 stops (2 could not be pinned)
 - Session start › resource slider — check: 2단계에 GPU 슬라이더가 보여야 합니다.
 - Data › 정렬 표시 — check: Name 헤더에 정렬 화살표가 보여야 합니다.
 ```

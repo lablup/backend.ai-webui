@@ -22,7 +22,10 @@ TMP=$(mktemp -d)
 trap 'rm -rf "$TMP"' EXIT
 
 SHA=c61efbf21a4d9e0b7f3c2d8e5a6b1c0d9e8f7a6b
-LINK='http://fr-9605.box.example/project/default/data#bai=v3.c_abcdefg.SGVsbG9Xb3JsZDEyMw&bai=v3.c_hijklmn.QW5vdGhlckFuY2hvcjQ1'
+# Two REAL stop anchors, encoded with the overlay's own codec and keyed with
+# its own pinId — a fake payload would decode to null, `isStop` would be false,
+# and the exclusion assertion below would pass for the wrong reason.
+LINK='http://fr-9605.box.example/project/default/data#bai=v3.c_kntruwm.TYzBSgJRFIZf5fKvRwvEwAM9hivHxdURkyIHvUoQLUSFcBKEknExLgZGUBEXNkGCvlDnzDvEhcCW38f__c_ogwoOuiBUPG10zjS6puXduvB1s5GzykUVDnwQrizCgdFNEGo9Y9qPFp8MCGX_oa09iy0PdMnhoH4PAm83HC-VRCMli4RX37I9KxkOOFhLOFPu34ELxYdRNjnJMlX8mUq4k_lJZfMNB68cJHn7dweChGOOI36P_u3lmFqRhQlPPziOlCz2P4e1xG8y-br0fgdUurkuvvwC&bai=v3.c_tfjjpa5.bczNasJAFAXgVxnOemIVUeiFPoJPYLoYMmMaGokkUymIIK7EbAIaBHHpQiULoT8rn8gZ30GHFty4u-dwvjvCENTkyEDoSqGFp1WmI_nio5fEUqVekCqhlddPpIh9vIJjAMKT24JDixAEGQ3d_alB6CRSxZmLkQQ9-gKO4B2Ej0yEivVve7sqmP8vfZyPE2a-vu2qsuWJXcq9yWcm39acewPBHHYmr5z5E8xOK7veM9cvNk7b3-X5ODFFYec_dzxIQc_teotDxiGoMb4C'
 cat >"$TMP/report.json" <<JSON
 {"setLink":"$LINK","sha":"$SHA","pr":9605,"app":"fr-9605-pr9605-decide-overwrite",
  "url":"http://fr-9605.box.example",
@@ -35,7 +38,7 @@ cat >"$TMP/report.json" <<JSON
    "ch":"모달에 Models 사용 모드가 추가됐습니다.","ck":"usage mode에 \"Models\"가 보여야 합니다.",
    "type":"added","kind":"radio",
    "code":[{"path":"react/src/components/FolderCreateModal.tsx","line":88,"to":104}]}],
- "couldNotPin":[{"label":"Session start › skip button","ck":"1단계 하단에 버튼이 보여야 합니다.","reason":"did not resolve within 12s"}]}
+ "couldNotPin":[{"label":"Session start › skip button","ck":"1단계 하단에 버튼이 보여야 합니다.","reason":"did not resolve within 30s"}]}
 JSON
 REPORT=$(jq -c . "$TMP/report.json")
 BODY=$(comment_body "$REPORT" lablup/backend.ai-webui)
@@ -84,13 +87,21 @@ check 'a stop that did not resolve keeps its check' \
 check 'no bai-review marker' 0 "$(grep -c 'bai-review' <<<"$BODY")"
 check 'no 📍 quote block' 0 "$(grep -c '^>' <<<"$BODY")"
 check 'no per-stop dev link' 0 "$(grep -c '^   \[Open' <<<"$BODY")"
-# The header link IS a `#bai=v3` set link — it has to be, or it opens nothing —
-# so `review-pins parse` sees its parts. What must be zero is what the resolver
-# acts on: a pin backed by a 📍 block, which is what carries a finding.
+# The header link IS a `#bai=v3` set link — it has to be, or it opens nothing.
+# `parse` leaves a stop out of its findings (FR-3949): the review skill must
+# never set out to "fix" a stop a session left to be checked. The pair of counts
+# is self-proving — a payload that did not decode to a stop would be counted by
+# the default run too.
 if command -v pnpm >/dev/null 2>&1; then
-  PINS=$(cd "$REPO_ROOT" && pnpm run --silent review-pins parse --json "$TMP/body.md" 2>/dev/null)
-  check 'review-pins finds no block-backed pin (nothing to resolve)' 0 \
-    "$(jq '[.pins[] | select(.label != "" or .note != "" or .pr != null or .at != null)] | length' <<<"$PINS")"
+  # `parse` exits 5 when it finds no pin, which is exactly the passing case.
+  PINS=$(cd "$REPO_ROOT" && pnpm run --silent review-pins parse --json "$TMP/body.md" 2>/dev/null || true)
+  check 'review-pins reports no finding for a walkthrough comment' 0 \
+    "$(jq '.pins | length' <<<"$PINS")"
+  STOPS=$(cd "$REPO_ROOT" && pnpm run --silent review-pins parse --json --include-stops "$TMP/body.md" 2>/dev/null || true)
+  check '--include-stops sees both stops, so the payload really is a stop' 2 \
+    "$(jq '.pins | length' <<<"$STOPS")"
+  check 'every pin it then sees carries a check sentence' 2 \
+    "$(jq '[.pins[] | select(.anchor.ck != null)] | length' <<<"$STOPS")"
 else
   printf 'skip review-pins (no pnpm)\n'
 fi
@@ -99,7 +110,7 @@ fi
 jq '{setLink, sha, pr, app, url,
      stops: [range(0;6) as $i | {id: "c_aaaaaa\($i)", label: "stop \($i)",
              ok: ($i != 2 and $i != 4), ch: "moved", ck: "check \($i)"}],
-     couldNotPin: [{label: "stop 2", ck: "check 2", reason: "did not resolve within 12s"},
+     couldNotPin: [{label: "stop 2", ck: "check 2", reason: "did not resolve within 30s"},
                    {label: "stop 4", ck: "check 4", reason: "resolved onto \u0027other\u0027"}]}' \
   "$TMP/report.json" >"$TMP/partial.json"
 PARTIAL=$(comment_body "$(jq -c . "$TMP/partial.json")" o/r)
@@ -143,7 +154,8 @@ check 're-mint creates no second comment' 0 "$(grep -c -- '-X POST' "$BAI_GH_LOG
 # ── the PR description's section ──────────────────────────────────────────────
 SECTION=$(walkthrough_section 'https://github.com/o/r/pull/9605#issuecomment-55' /dev/null)
 ORIGINAL=$'Resolves #1 (FR-1)\n\n## Summary\n\nwhy\n\n## Verification\n\nall pass'
-check 'a body without the section gets one appended' 'https://github.com/o/r/pull/9605#issuecomment-55' \
+check 'a body without the section gets one appended, as a short link' \
+  '- [Walkthrough](https://github.com/o/r/pull/9605#issuecomment-55)' \
   "$(describe_body "$ORIGINAL" "$SECTION" | tail -1)"
 check 'appending touches nothing above it' "$ORIGINAL" \
   "$(describe_body "$ORIGINAL" "$SECTION" | head -9)"

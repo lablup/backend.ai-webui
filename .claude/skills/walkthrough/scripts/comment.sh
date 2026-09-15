@@ -121,7 +121,7 @@ describe_body() {
 walkthrough_section() {
   local url=$1 file=${2:-} line
   printf '## Walkthrough\n\n'
-  printf '%s\n' "$url"
+  printf -- '- [Walkthrough](%s)\n' "$url"
   if [ -n "$file" ] && [ -s "$file" ]; then
     printf '\nNot shown in the walkthrough:\n\n'
     while IFS= read -r line; do
