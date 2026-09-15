@@ -51,6 +51,13 @@ const DIALOG_INSET_BLOCK = 'var(--spacing-12)';
 const DIALOG_HEIGHT_VALUE = `calc(100dvh - ${DIALOG_INSET_BLOCK} * 2)`;
 const DIALOG_HEIGHT: CSSProperties = { height: DIALOG_HEIGHT_VALUE };
 const BODY_FILL: CSSProperties = { height: '100%', minHeight: 0 };
+// The dialog publishes its inline padding as `--container-padding-inline-*`, which
+// an Astryx `Table` bleeds out to; this pane is not that padded box, so the table
+// would overhang it. Zeroing the pair is Astryx's own `overlayPaddingReset` idiom.
+const PANE_NO_CONTAINER_BLEED = {
+  '--container-padding-inline-start': '0px',
+  '--container-padding-inline-end': '0px',
+} as CSSProperties;
 
 // 1100 matches `MyKeypairManagementModal`, the widest dialog opened from here,
 // so a child never overhangs its parent. Minus the rail it still leaves the
@@ -260,6 +267,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           isScrollable
           paddingInlineStart={isNarrow ? 0 : 4}
           paddingBlockEnd={2}
+          style={PANE_NO_CONTAINER_BLEED}
         >
           {showNavOnly ? (
             categoryNav
