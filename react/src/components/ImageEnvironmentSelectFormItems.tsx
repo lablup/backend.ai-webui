@@ -180,8 +180,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
     _.map(
       _.groupBy(
         _.filter(images, (image) => {
+          // A customized image can carry `ai.backend.features: private`;
+          // dropping the already-selected one would silently swap the pick.
+          const isSelected =
+            !!environments?.version &&
+            getImageFullName(image) === environments.version;
           return (
-            (showPrivate ? true : !isPrivateImage(image)) &&
+            (showPrivate || !isPrivateImage(image) || isSelected) &&
             (filter ? filter(image) : true)
           );
         }),
