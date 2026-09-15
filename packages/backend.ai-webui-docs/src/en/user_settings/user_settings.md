@@ -458,6 +458,7 @@ successful sign-ins, failed attempts, and login session events such as logout or
 expiry. This tab is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 The table includes the following columns:
 
@@ -465,6 +466,9 @@ The table includes the following columns:
   can sort by this column.
 - **Domain**: The domain the login attempt was made against. You can sort by
   this column.
+- **Client IP**: The IP address the login attempt came from, shown exactly as
+  the server reports it. Depending on the administrator's client IP masking
+  policy the address may be partially masked, or `-` when it was not recorded.
 - **Login Time**: When the login attempt was recorded. You can sort by this
   column.
 - **Failure Reason**: Additional detail reported for a failed attempt. Shows `-`

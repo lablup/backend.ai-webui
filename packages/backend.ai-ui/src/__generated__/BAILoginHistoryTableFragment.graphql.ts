@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b46502ce6db2a4e97c42f8343a01d795>>
+ * @generated SignedSource<<19dee1840fd91e1794d9cc40ab50cdfe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ReaderFragment } from 'relay-runtime';
 export type LoginAttemptResult = "EVICTED" | "EXPIRED" | "FAILED_BLOCKED" | "FAILED_INVALID_CREDENTIALS" | "FAILED_PASSWORD_EXPIRED" | "FAILED_REJECTED_BY_HOOK" | "FAILED_SESSION_ALREADY_EXISTS" | "FAILED_USER_INACTIVE" | "LOGOUT" | "REVOKED_BY_ADMIN" | "REVOKED_BY_USER" | "SUCCESS" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAILoginHistoryTableFragment$data = ReadonlyArray<{
+  readonly clientIp: string | null | undefined;
   readonly createdAt: string;
   readonly domainName: string;
   readonly failReason: string | null | undefined;
@@ -57,6 +58,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "clientIp",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "failReason",
       "storageKey": null
     },
@@ -72,6 +80,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "7e66ffc2186bbcd9be2f6196b9467f1c";
+(node as any).hash = "3ad233c4e0c43bde52bebecf7cc9617e";
 
 export default node;

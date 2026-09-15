@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Toiminnon ID",
     "Actor": "Suorittaja",
+    "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",
     "Duration": "Kesto",
     "EntityId": "Entiteetin ID",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Valitse avainpari"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Asiakkaan IP",
     "Domain": "Toimialue",
     "FailReason": "Epäonnistumisen syy",
     "LoginTime": "Kirjautumisaika",

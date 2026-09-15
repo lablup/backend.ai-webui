@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID Tindakan",
     "Actor": "Pelaku",
+    "ClientIp": "IP Klien",
     "Description": "Deskripsi",
     "Duration": "Durasi",
     "EntityId": "ID Entitas",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Pilih Keypair"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP Klien",
     "Domain": "Domain",
     "FailReason": "Alasan Kegagalan",
     "LoginTime": "Waktu Login",

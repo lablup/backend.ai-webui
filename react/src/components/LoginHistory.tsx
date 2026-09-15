@@ -7,6 +7,7 @@ import type {
   LoginHistoryQuery as LoginHistoryQueryType,
 } from '../__generated__/LoginHistoryQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import {
   BAIFlex,
@@ -84,6 +85,8 @@ const LoginHistory = ({
 }: LoginHistoryProps) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const isClientIpSupported = baiClient.supports('client-ip');
 
   const filter = queryRef.variables.filter ?? undefined;
   const orderBy = queryRef.variables.orderBy?.[0];
@@ -147,6 +150,9 @@ const LoginHistory = ({
       </BAIFlex>
       <BAILoginHistoryTable
         resizable
+        customizeColumns={(columns) =>
+          isClientIpSupported ? columns : _.reject(columns, { key: 'clientIp' })
+        }
         loading={isRefetching}
         order={order}
         onChangeOrder={(nextOrder) => {

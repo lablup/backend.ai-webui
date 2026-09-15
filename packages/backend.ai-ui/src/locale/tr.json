@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Eylem ID",
     "Actor": "Aktör",
+    "ClientIp": "İstemci IP'si",
     "Description": "Açıklama",
     "Duration": "Süre",
     "EntityId": "Varlık ID",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Anahtar Çifti Seçin"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "İstemci IP'si",
     "Domain": "Alan Adı",
     "FailReason": "Hata Nedeni",
     "LoginTime": "Oturum Açma Zamanı",

@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "操作 ID",
     "Actor": "執行者",
+    "ClientIp": "用戶端 IP",
     "Description": "描述",
     "Duration": "持續時間",
     "EntityId": "實體 ID",
@@ -265,6 +266,7 @@
     "SelectKeypair": "選擇金鑰對"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "用戶端 IP",
     "Domain": "網域",
     "FailReason": "失敗原因",
     "LoginTime": "登入時間",

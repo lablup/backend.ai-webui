@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID akcji",
     "Actor": "Aktor",
+    "ClientIp": "IP klienta",
     "Description": "Opis",
     "Duration": "Czas trwania",
     "EntityId": "ID encji",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Wybierz parę kluczy"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP klienta",
     "Domain": "Domena",
     "FailReason": "Przyczyna błędu",
     "LoginTime": "Czas logowania",

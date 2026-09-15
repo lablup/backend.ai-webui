@@ -90,6 +90,7 @@ const BAIAuditLogNodes = ({
         entityType
         entityId
         triggeredBy
+        clientIp @since(version: "26.9.0")
         user {
           id
           basicInfo {
@@ -171,6 +172,14 @@ const BAIAuditLogNodes = ({
             <BAIId globalId={record.user.id} />
           );
         },
+      },
+      {
+        key: 'clientIp',
+        title: t('comp:BAIAuditLogNodes.ClientIp'),
+        dataIndex: 'clientIp',
+        // Shown exactly as the server returns it: the manager already applies
+        // the client IP masking policy, so the value may be masked or null.
+        render: (__, record) => record.clientIp || '-',
       },
       {
         key: 'entityType',

@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "액션 ID",
     "Actor": "수행자",
+    "ClientIp": "클라이언트 IP",
     "Description": "설명",
     "Duration": "소요 시간",
     "EntityId": "엔티티 ID",
@@ -265,6 +266,7 @@
     "SelectKeypair": "키페어를 선택해주세요"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "클라이언트 IP",
     "Domain": "도메인",
     "FailReason": "실패 사유",
     "LoginTime": "로그인 시각",

@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['audit', 'log', 'history', 'activity', 'event', 'table', 'trail'],
   usage: {
     description:
-      'The shared audit-log table used by the session, vfolder and model-deployment detail surfaces. It reads the plural Relay fragment `BAIAuditLogNodesFragment` on `AuditLogV2`, so the caller spreads that fragment on each audit-log node in its own query and passes the array as `auditLogFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Ten columns are built internally — time, operation, status (a BAIAuditLogStatusTag), description, duration and triggered-by are visible by default, while entity type, entity id, request id and action id ship as `defaultHidden`. Filtering, pagination and refetch stay in the consuming surface; the component renders BAITable with resizing on and size "small", and every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
+      'The shared audit-log table used by the session, vfolder and model-deployment detail surfaces. It reads the plural Relay fragment `BAIAuditLogNodesFragment` on `AuditLogV2`, so the caller spreads that fragment on each audit-log node in its own query and passes the array as `auditLogFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Eleven columns are built internally — time, operation, status (a BAIAuditLogStatusTag), description, duration, triggered-by and client IP are visible by default, while entity type, entity id, request id and action id ship as `defaultHidden`. The client IP is shown exactly as the manager returns it: the server applies the client IP masking policy, so the cell may hold a masked address or `-` when the policy records none. Filtering, pagination and refetch stay in the consuming surface; the component renders BAITable with resizing on and size "small", and every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
     bestPractices: [
       {
         guidance: true,
@@ -55,7 +55,7 @@ export const docs = {
       name: 'customizeColumns',
       type: '(baseColumns: BAIColumnsType<AuditLogNodeInList>) => BAIColumnsType<AuditLogNodeInList>',
       description:
-        'Transforms the ten base columns into the final column set — reorder, drop, or splice in a column. Left unset, the base columns are used as-is.',
+        'Transforms the eleven base columns into the final column set — reorder, drop, or splice in a column. Left unset, the base columns are used as-is.',
     },
     {
       name: 'onChangeOrder',
