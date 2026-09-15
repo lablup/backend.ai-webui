@@ -1,6 +1,7 @@
 import { BAIDirectoryPickerQuery } from '../components/baiClient/FileExplorer/BAIDirectoryPickerModal';
+import type { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClientProvider } from '../components/provider/BAIClientProvider';
-import { toGlobalId, toLocalId } from '../helper';
+import { convertToUUID, toGlobalId, toLocalId } from '../helper';
 import {
   createMockVFolderFileClient,
   type MockVFolderFileTrees,
@@ -21,8 +22,10 @@ export interface MockVFolder {
 }
 
 export interface MockVFolderFileProvidersProps {
-  vfolders: Array<MockVFolder>;
-  trees: MockVFolderFileTrees | (() => MockVFolderFileTrees);
+  vfolders?: Array<MockVFolder>;
+  trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
+  /** Rows the mocked REST `GET /folders` request answers with. */
+  folders?: Array<LegacyVFolder>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
   children?: React.ReactNode;
@@ -31,11 +34,18 @@ export interface MockVFolderFileProvidersProps {
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
  * Relay environment answering `vfolder_nodes` / `vfolder_node` from
- * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`.
+ * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`
+ * and whose signed `GET /folders` request answers `folders`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
-  vfolders,
-  trees,
+  folders,
+  // A REST-fed story still needs the path picker's `vfolder_node` answered,
+  // so the Relay folders default to the REST rows.
+  vfolders = (folders ?? []).map((folder): MockVFolder => ({
+    name: folder.name,
+    row_id: convertToUUID(folder.id),
+  })),
+  trees = {},
   suspenseFallback,
   children,
 }) => {
@@ -46,6 +56,7 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
     Promise.resolve(
       createMockVFolderFileClient(
         typeof trees === 'function' ? trees() : trees,
+        folders,
       ),
     ),
   );
@@ -83,10 +94,12 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
             vfolder_nodes: { count: edges.length, edges },
-            vfolder_node: {
-              name: requested.name,
-              permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
-            },
+            vfolder_node: requested
+              ? {
+                  name: requested.name,
+                  permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
+                }
+              : undefined,
           }),
         });
       });

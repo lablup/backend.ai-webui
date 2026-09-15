@@ -465,7 +465,7 @@ export const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
 };
 
 export const convertToUUID = (id: string): string => {
-  if (isValidUUID(id) && /^[0-9a-fA-F]{36}$/.test(id)) {
+  if (isValidUUID(id)) {
     return id;
   }
   return id.replace(
