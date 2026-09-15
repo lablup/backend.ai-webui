@@ -2,47 +2,35 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedAutoMountedFolderNamesQuery } from '../__generated__/useSuspendedAutoMountedFolderNamesQuery.graphql';
-import * as _ from 'lodash-es';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { autoMountedFolderNamesFrom } from '../helper/vfolderMounts';
+import { useSuspendedLegacyVFolders } from 'backend.ai-ui';
+
+interface AutoMountedFolderNamesOptions {
+  /**
+   * The user the session is launched for. Their folders are what the session
+   * auto-mounts, so an admin launching on someone else's behalf must pass it;
+   * the caller's own folders are listed when it is unset.
+   */
+  ownerEmail?: string;
+  currentProjectId: string;
+  /** Hosts granting `mount-in-session`; omitted skips the host gate. */
+  mountableHosts?: Array<string>;
+}
 
 /**
- * Names of the ready dotfile folders a session in this project mounts on its
- * own. Same filter VFolderTable and VFolderNodeListPage use. Suspends.
+ * Names of the ready dotfile folders a session mounts on its own, read off the
+ * same owner-scoped `GET /folders` list the mount select uses. Suspends.
  */
-export const useSuspendedAutoMountedFolderNames = (
-  currentProjectId: string,
-): Array<string> => {
+export const useSuspendedAutoMountedFolderNames = ({
+  ownerEmail,
+  currentProjectId,
+  mountableHosts,
+}: AutoMountedFolderNamesOptions): Array<string> => {
   'use memo';
-  const { vfolder_nodes } =
-    useLazyLoadQuery<useSuspendedAutoMountedFolderNamesQuery>(
-      graphql`
-        query useSuspendedAutoMountedFolderNamesQuery(
-          $scopeId: ScopeField
-          $filter: String
-        ) {
-          # first bounds correctness, not just the page size: a name missing from
-          # this list is a folder the launcher offers for mounting even though
-          # the session already mounts it.
-          vfolder_nodes(
-            scope_id: $scopeId
-            filter: $filter
-            first: 100
-            permission: "read_attribute"
-          ) {
-            edges {
-              node {
-                name
-              }
-            }
-          }
-        }
-      `,
-      {
-        scopeId: `project:${currentProjectId}`,
-        filter: 'name ilike ".%" & status == "ready"',
-      },
-    );
+  const { folders } = useSuspendedLegacyVFolders(ownerEmail);
 
-  return _.compact(_.map(vfolder_nodes?.edges, (edge) => edge?.node?.name));
+  return autoMountedFolderNamesFrom(folders, {
+    currentProjectId,
+    mountableHosts,
+  });
 };

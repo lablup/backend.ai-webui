@@ -324,7 +324,9 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   'use memo';
   const { t } = useTranslation();
 
-  const autoMountNames = useSuspendedAutoMountedFolderNames(currentProjectId);
+  const autoMountNames = useSuspendedAutoMountedFolderNames({
+    currentProjectId,
+  });
 
   if (autoMountNames.length === 0) return null;
 
