@@ -97,8 +97,16 @@ const definitionSchemaMap: Record<string, SchemaMapping> = {
     schemaUrl: '/resources/model-definition.schema.json',
     type: 'yaml',
   },
+  // No `.yml` twin: the manager's candidate list names only
+  // `deployment-config.yaml` (manager repository.py:122).
+  'deployment-config.yaml': {
+    schemaUrl: '/resources/deployment-config.schema.json',
+    type: 'yaml',
+  },
+  // Deprecated fallback — the manager parses it into the same payload as
+  // `deployment-config.yaml`, so it shares that schema.
   'service-definition.toml': {
-    schemaUrl: '/resources/service-definition.schema.json',
+    schemaUrl: '/resources/deployment-config.schema.json',
     type: 'toml',
   },
 };
