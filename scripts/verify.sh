@@ -182,6 +182,12 @@ check_format() {
     note "no merge-base with main — changed-file format check skipped"
     return $rc
   fi
+  # No full-tree fallback on a config change (unlike Lint): it would fail on
+  # the pre-existing drift, so the note is the signal to check the tree by hand.
+  if printf '%s\n' "$CHANGED_FILES" \
+    | grep -qE '(^|/)(\.prettierrc[^/]*|\.prettierignore|package\.json)$'; then
+    note "prettier config or dependencies changed — still only changed files checked; run prettier --check on the tree yourself"
+  fi
   local files
   files=$(printf '%s\n' "$CHANGED_FILES" \
     | grep -E '^(react/(src|vite-plugins)|packages/backend\.ai-ui/src|e2e)/.*\.(js|jsx|mjs|cjs|ts|tsx|json|css|scss|md)$|^resources/i18n/[^/]+\.json$' \
@@ -195,8 +201,8 @@ check_format() {
   return $rc
 }
 
-# vitest_lane <package dir> [pnpm filter]: only the tests that import a file
-# this branch changed (`--changed <merge-base>`); the whole suite without main.
+# vitest_lane <package dir>: only the tests that import a file this branch
+# changed (`--changed <merge-base>`); the whole suite without main.
 vitest_lane() {
   local dir="$1" args="--passWithNoTests"
   if changed_since_main; then
@@ -205,13 +211,8 @@ vitest_lane() {
   else
     note "no merge-base with main — whole suite"
   fi
-  if [ -n "${2:-}" ]; then
-    # shellcheck disable=SC2086
-    pnpm --filter "$2" run test $args
-  else
-    # shellcheck disable=SC2086
-    bin "$dir" vitest run $args
-  fi
+  # shellcheck disable=SC2086
+  bin "$dir" vitest run $args
 }
 
 check_warmup_paths() {
@@ -389,7 +390,7 @@ start_lane report "Astryx token gate (report-only; bar is no NEW findings)" \
 if [ -n "${VERIFY_TESTS:-}" ]; then
   start_lane gate "Vitest (react)" vitest_lane react
   start_lane gate "Vitest (backend.ai-ui)" vitest_lane packages/backend.ai-ui
-  start_lane gate "Vitest (agent-cli)" vitest_lane packages/backend.ai-agent-cli backend.ai-agent-cli
+  start_lane gate "Vitest (agent-cli)" vitest_lane packages/backend.ai-agent-cli
   start_lane gate "Vitest (root)" vitest_lane .
 fi
 
