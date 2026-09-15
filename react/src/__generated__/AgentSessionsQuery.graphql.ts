@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<362e42957771bbe9c6415b9227d63657>>
+ * @generated SignedSource<<a6ce7c7c36067b2b21594260277a30ec>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -582,13 +582,6 @@ return {
                                                 "alias": null,
                                                 "args": null,
                                                 "kind": "ScalarField",
-                                                "name": "namespace",
-                                                "storageKey": null
-                                              },
-                                              {
-                                                "alias": null,
-                                                "args": null,
-                                                "kind": "ScalarField",
                                                 "name": "architecture",
                                                 "storageKey": null
                                               }
@@ -686,12 +679,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1830cdd518a935e8e5bb1fd1ae0df969",
+    "cacheID": "ee30959dceb32ca6c6c825bd6e9940ad",
     "id": null,
     "metadata": {},
     "name": "AgentSessionsQuery",
     "operationKind": "query",
-    "text": "query AgentSessionsQuery(\n  $agentFilter: AgentFilter\n  $sessionFilter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  agentsV2(filter: $agentFilter, limit: 1) {\n    edges {\n      node {\n        id\n        sessions(filter: $sessionFilter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              ...BAISessionNodesV2Fragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    namespace\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTagV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTagV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
+    "text": "query AgentSessionsQuery(\n  $agentFilter: AgentFilter\n  $sessionFilter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  agentsV2(filter: $agentFilter, limit: 1) {\n    edges {\n      node {\n        id\n        sessions(filter: $sessionFilter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              ...BAISessionNodesV2Fragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTagV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTagV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
   }
 };
 })();

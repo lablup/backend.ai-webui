@@ -2,8 +2,8 @@ import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
 export const docs = {
   type: 'component',
-  name: 'BAIImageNodeSimpleTagV2',
-  displayName: 'BAI Image Node Simple Tag V2',
+  name: 'BAIImageNodeSimpleTag',
+  displayName: 'BAI Image Node Simple Tag',
   category: 'Content',
   keywords: [
     'image',
@@ -16,12 +16,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'One-line identity of a v2 `ImageV2` (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control for the full reference. It reads `BAIImageNodeSimpleTagV2Fragment` on `ImageV2` (`identity.canonicalName`, `identity.architecture`, `metadata.tags`, `metadata.labels`), so the caller spreads that fragment on the `ImageV2` node in its query and passes the node to `imageFrgmt`; a null reference renders nothing. Every part is derived from the node: the base name and version come from the canonical name through `useBAIImageMetaData`, the architecture from `identity.architecture`, the chips from `imageNodeTagFacts`, and the copy control emits `canonicalName@architecture`. It must sit under `BAIMetaDataProvider`. `BAIImageNodeSimpleTag` draws the same row from the v1 `ImageNode` schema; the two share the `imageNodeTagFacts` builder that decides double tag versus single badge, and nothing else. A surface with no image node draws its own row instead of feeding this component strings.',
+      'One-line identity of a v1 `ImageNode` (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control for the full reference. It reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`), so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. It must sit under `BAIMetaDataProvider`, because the icon and the tag aliases come from `useBAIImageMetaData`. `BAIImageNodeSimpleTagV2` draws the same row from the v2 schema; the two share the `imageNodeTagFacts` builder that decides double tag versus single badge, and nothing else.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Spread `...BAIImageNodeSimpleTagV2Fragment` on the `ImageV2` node in the parent query and pass that node straight through, rather than reshaping the image into a plain object.',
+          'Spread `...BAIImageNodeSimpleTagFragment` on the `ImageNode` in the parent query and pass that node straight through, rather than reshaping the image into a plain object.',
       },
       {
         guidance: true,
@@ -31,12 +31,12 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Set `copyable={false}` in a dense table cell — BAISessionNodesV2 does exactly that, so a copy button is not repeated on every row.',
+          'Set `copyable={false}` in a dense table cell — the session list does exactly that, so a copy button is not repeated on every row.',
       },
       {
         guidance: false,
         description:
-          'Feed it a v1 `ImageNode` reference; the fragment is declared on `ImageV2`, and only that schema exposes the `identity` / `metadata` shape it selects.',
+          'Feed it a v2 `ImageV2` reference; the fragment is declared on `ImageNode`, and only that schema exposes the flat `registry` / `namespace` / `tag` shape it selects.',
       },
       {
         guidance: false,
@@ -48,7 +48,7 @@ export const docs = {
   props: [
     {
       name: 'imageFrgmt',
-      type: 'BAIImageNodeSimpleTagV2Fragment$key | null',
+      type: 'BAIImageNodeSimpleTagFragment$key | null',
       description:
         'Fragment reference for the image to describe. The component renders null when the reference is null or the fragment resolves to nothing, so the surrounding cell stays empty instead of showing placeholders. A tag whose key contains `customized_` takes its value from the `ai.backend.customized-image.name` label and is tinted cyan; each tag renders as a two-part BAIDoubleTag only when the metadata provider has no alias for it, and as a single Badge carrying the alias otherwise.',
       required: true,
@@ -64,18 +64,18 @@ export const docs = {
       name: 'copyable',
       type: 'boolean',
       description:
-        'Appends a copy control that copies the full canonical name. It is a ghost icon button coloured by the theme, not a tinted link.',
+        'Appends a copy control that copies the full image reference. It is a ghost icon button coloured by the theme, not a tinted link.',
       default: 'true',
     },
   ],
   examples: [
     {
       label: 'Full image identity with tags',
-      code: '<BAIImageNodeSimpleTagV2 imageFrgmt={image} />',
+      code: '<BAIImageNodeSimpleTag imageFrgmt={image} />',
     },
     {
       label: 'Compact form for a table cell',
-      code: `<BAIImageNodeSimpleTagV2
+      code: `<BAIImageNodeSimpleTag
   imageFrgmt={firstImage}
   copyable={false}
   withoutTag

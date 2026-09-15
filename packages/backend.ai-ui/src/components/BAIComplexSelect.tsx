@@ -127,6 +127,12 @@ export interface BAIComplexSelectOption {
   value: string;
   /** MUST be a string (P26-3) — it is the trigger text and accessible name. */
   label: string;
+  /**
+   * Drawn in the popup in place of `label`, for an option whose row is richer
+   * than a string. `label` still carries the trigger text and the accessible
+   * name, so P26-3 holds.
+   */
+  labelContent?: React.ReactNode;
   /** Secondary line under the label (antd `optionRender` subtitle shape). */
   description?: React.ReactNode;
   /** Trailing rich content (badges, tags, meta) — the other half of P26-3. */
@@ -672,7 +678,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                     >
                       <span className="bai-complex-select__option-content">
                         <SelectorOption
-                          label={option.label}
+                          label={option.labelContent ?? option.label}
                           description={option.description}
                           endContent={option.extra}
                         />

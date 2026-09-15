@@ -17,7 +17,6 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
-import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
@@ -26,6 +25,7 @@ import {
   BAIColumnType,
   BAIFlex,
   BAIId,
+  BAIImageNodeSimpleTag,
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
@@ -132,7 +132,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           edges {
             node {
               image {
-                ...ImageNodeSimpleTagFragment
+                ...BAIImageNodeSimpleTagFragment
               }
             }
           }
@@ -327,7 +327,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         exportKey: 'main_kernel_image',
         render: (__, session) => {
           return session.kernel_nodes?.edges?.[0]?.node?.image ? (
-            <ImageNodeSimpleTag
+            <BAIImageNodeSimpleTag
               imageFrgmt={session.kernel_nodes.edges[0].node.image}
               copyable={false}
               withoutTag
