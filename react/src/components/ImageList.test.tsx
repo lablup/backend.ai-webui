@@ -611,6 +611,27 @@ describe('ImageList rescan row action (FR-3948)', () => {
     );
   });
 
+  it('treats a 200 carrying scan errors as a failure, not a rescan', async () => {
+    const user = userEvent.setup();
+    mockScanRequest.mockResolvedValue({
+      ...scanOk(),
+      errors: ['tag not found in the registry'],
+    });
+    const { getFetchCount } = renderOneImage();
+    const fetchesBeforeClick = getFetchCount();
+
+    await user.click(await rescanButton());
+
+    await waitFor(() =>
+      expect(mockMessageError).toHaveBeenCalledWith(
+        'tag not found in the registry',
+      ),
+    );
+    expect(mockMessageSuccess).not.toHaveBeenCalled();
+    // The image was not rescanned, so the list must not be refetched either.
+    expect(getFetchCount()).toBe(fetchesBeforeClick);
+  });
+
   it('hides the action from a non-superadmin', async () => {
     mockIsSuperadmin = false;
     renderOneImage();
