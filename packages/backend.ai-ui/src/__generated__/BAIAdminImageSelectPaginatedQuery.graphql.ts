@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<708da003d8db349dba3bf07882948d16>>
+ * @generated SignedSource<<36ef39912ca61483d93d8270721c3c97>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -151,18 +151,29 @@ v5 = {
 v6 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "canonicalName",
+  "concreteType": "ImageV2IdentityInfo",
+  "kind": "LinkedField",
+  "name": "identity",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "canonicalName",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "architecture",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 },
-v7 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "architecture",
-  "storageKey": null
-},
-v8 = [
+v7 = [
   {
     "alias": null,
     "args": null,
@@ -215,19 +226,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ImageV2IdentityInfo",
-                    "kind": "LinkedField",
-                    "name": "identity",
-                    "plural": false,
-                    "selections": [
-                      (v6/*: any*/),
-                      (v7/*: any*/)
-                    ],
-                    "storageKey": null
-                  },
+                  (v6/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -282,26 +281,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v5/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ImageV2IdentityInfo",
-                    "kind": "LinkedField",
-                    "name": "identity",
-                    "plural": false,
-                    "selections": [
-                      (v6/*: any*/),
-                      (v7/*: any*/),
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "namespace",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
+                  (v6/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -317,7 +297,7 @@ return {
                         "kind": "LinkedField",
                         "name": "tags",
                         "plural": true,
-                        "selections": (v8/*: any*/),
+                        "selections": (v7/*: any*/),
                         "storageKey": null
                       },
                       {
@@ -327,7 +307,7 @@ return {
                         "kind": "LinkedField",
                         "name": "labels",
                         "plural": true,
-                        "selections": (v8/*: any*/),
+                        "selections": (v7/*: any*/),
                         "storageKey": null
                       }
                     ],
@@ -345,12 +325,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a364728306ef2c92bf378950afec532c",
+    "cacheID": "0a4b672009422bedc14d4dc93ab0bd18",
     "id": null,
     "metadata": {},
     "name": "BAIAdminImageSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n) {\n  adminImagesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    namespace\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
+    "text": "query BAIAdminImageSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ImageV2Filter\n) {\n  adminImagesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        identity {\n          canonicalName\n          architecture\n        }\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n"
   }
 };
 })();

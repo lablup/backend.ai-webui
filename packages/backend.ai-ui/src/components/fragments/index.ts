@@ -11,10 +11,7 @@ export {
   default as BAIImageNodeSimpleTagV2,
   imageNodeTagFacts,
 } from './BAIImageNodeSimpleTagV2';
-export type {
-  BAIImageNodeSimpleTagV2Variant,
-  BAIImageTagFact,
-} from './BAIImageNodeSimpleTagV2';
+export type { BAIImageTagFact } from './BAIImageNodeSimpleTagV2';
 export type { BAIImageNodeSimpleTagV2Props } from './BAIImageNodeSimpleTagV2';
 export { default as BAIArtifactRevisionTable } from './BAIArtifactRevisionTable';
 export type {

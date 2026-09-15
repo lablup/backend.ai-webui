@@ -4,7 +4,8 @@
  */
 import { AliasedImageDoubleTagsFragment$key } from '../__generated__/AliasedImageDoubleTagsFragment.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import { BAIImageNodeSimpleTagV2, imageNodeTagFacts } from 'backend.ai-ui';
+import { ImageTagBadges } from './ImageTags';
+import { imageNodeTagFacts } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -14,8 +15,8 @@ interface AliasedImageDoubleTagsProps {
 }
 
 /**
- * `ImageNode` adapter for the tag chips of an image, for the table columns that
- * show the tags on their own rather than as part of an image row (ADR 0004).
+ * The tag chips of a v1 `ImageNode`, for the table columns that show the tags
+ * on their own rather than as part of an image row.
  */
 const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
   imageFrgmt,
@@ -40,9 +41,8 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
   const [, { tagAlias }] = useBackendAIImageMetaData();
 
   return (
-    <BAIImageNodeSimpleTagV2
-      variant="tags"
-      tags={imageNodeTagFacts(image?.tags, image?.labels, tagAlias)}
+    <ImageTagBadges
+      facts={imageNodeTagFacts(image?.tags, image?.labels, tagAlias)}
       highlightKeyword={highlightKeyword}
     />
   );

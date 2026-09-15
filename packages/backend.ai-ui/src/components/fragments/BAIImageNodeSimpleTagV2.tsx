@@ -1,19 +1,16 @@
 /**
- * The one way this project shows a container image (ADR 0004).
- *
- * It reads either an `ImageV2` fragment or the plain strings a caller already
- * has, so the v1 adapter, the session launcher form values and a bare
- * `compute_session.image` string all reach the same markup.
+ * One-line identity of a v2 `ImageV2` (ADR 0004): the meta icon, the aliased
+ * base name, the base version and the architecture, then the tag chips and a
+ * copy control for the full reference. `BAIImageNodeSimpleTag` draws the same
+ * row from the v1 schema; the two share only `imageNodeTagFacts`.
  */
 import { BAIImageNodeSimpleTagV2Fragment$key } from '../../__generated__/BAIImageNodeSimpleTagV2Fragment.graphql';
 import { badgeVariantForTagColor, preserveDotStartCase } from '../../helper';
-import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
 import BAIImageMetaIcon from '../BAIImageMetaIcon';
 import BAIText from '../BAIText';
-import BAITextHighlighter from '../BAITextHighlighter';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
@@ -105,212 +102,25 @@ const MetaDivider: React.FC = () => {
   );
 };
 
-const TagBadges: React.FC<{
-  facts: Array<BAIImageTagFact>;
-  highlightKeyword?: string;
-}> = ({ facts, highlightKeyword }) => {
-  'use memo';
-  return (
-    <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
-      {_.map(facts, (fact, index) =>
-        fact.isDouble ? (
-          <BAIDoubleTag
-            key={`${fact.key}-${index}`}
-            highlightKeyword={highlightKeyword}
-            values={[
-              {
-                label: fact.keyAlias ?? '',
-                color: fact.isCustomized ? 'cyan' : 'blue',
-              },
-              {
-                label: fact.value ?? '',
-                color: fact.isCustomized ? 'cyan' : 'blue',
-              },
-            ]}
-          />
-        ) : (
-          <Badge
-            key={`${fact.key}-${index}`}
-            variant={badgeVariantForTagColor(
-              fact.isCustomized ? 'cyan' : 'blue',
-            )}
-            label={
-              <BAITextHighlighter keyword={highlightKeyword}>
-                {fact.aliasedTag}
-              </BAITextHighlighter>
-            }
-          />
-        ),
-      )}
-    </BAIFlex>
-  );
-};
-
-export type BAIImageNodeSimpleTagV2Variant =
-  'full' | 'compact' | 'path' | 'version' | 'tags';
-
-export interface BAIImageNodeSimpleTagV2Props extends Omit<
-  React.HTMLAttributes<HTMLElement>,
-  'children'
-> {
-  /** v2 `ImageV2` fragment. Omit it and pass `fullName` instead. */
-  imageFrgmt?: BAIImageNodeSimpleTagV2Fragment$key | null;
-  /**
-   * `registry/namespace:tag@architecture`, for a caller with no `ImageV2`
-   * node. Drives the icon, the copy value and every part not overridden.
-   */
-  fullName?: string | null;
-  /**
-   * `full` is the whole row; `compact` drops the tag chips; `path` shows the
-   * raw reference as monospace text; `version` drops the icon and the name,
-   * for a picker whose rows differ only by version; `tags` is the chips alone.
-   */
-  variant?: BAIImageNodeSimpleTagV2Variant;
-  /** Shorthand for `variant="compact"`, kept for the table call sites. */
+export interface BAIImageNodeSimpleTagV2Props {
+  /** v2 `ImageV2` fragment. */
+  imageFrgmt: BAIImageNodeSimpleTagV2Fragment$key | null;
   withoutTag?: boolean;
-  /** Base image name; empty or absent derives from the reference. */
-  name?: string | null;
-  /** Base version; empty or absent derives from the reference. */
-  version?: string | null;
-  /** Architecture; empty or absent derives from the reference. */
-  architecture?: string | null;
-  /** Tag chips, from {@link imageNodeTagFacts}. Read by `full` only. */
-  tags?: Array<BAIImageTagFact>;
   copyable?: boolean;
-  /** Tooltip on the copy control; defaults to BUI's generic "Copy". */
-  copyLabel?: string;
-  highlightKeyword?: string;
 }
 
-/**
- * The markup. Split from the fragment read only so that `useFragment` is not
- * called for a caller that has no image node — a table cell showing a path
- * would otherwise need a `RelayEnvironmentProvider` to render a string.
- */
-const ImageRow: React.FC<
-  Omit<BAIImageNodeSimpleTagV2Props, 'imageFrgmt' | 'withoutTag'> & {
-    variant: BAIImageNodeSimpleTagV2Variant;
-  }
-> = ({
-  fullName,
-  variant,
-  name,
-  version,
-  architecture,
-  tags,
+const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
+  imageFrgmt,
+  withoutTag = false,
   copyable = true,
-  copyLabel,
-  highlightKeyword,
-  ...rest
 }) => {
   'use memo';
   const [, { tagAlias, getBaseImage, getBaseVersion }] = useBAIImageMetaData();
-  const { t } = useBAIi18n();
-  const reference = fullName ?? '';
-
-  // `tooltips` is a `[resting, copied]` tuple; a bare string leaves the copied
-  // state with no tooltip at all.
-  const copyConfig = copyable
-    ? {
-        text: reference,
-        ...(copyLabel
-          ? {
-              tooltips: [copyLabel, t('general.button.Copied')] as [
-                string,
-                string,
-              ],
-            }
-          : {}),
-      }
-    : undefined;
-
-  if (variant === 'tags') {
-    return <TagBadges facts={tags ?? []} highlightKeyword={highlightKeyword} />;
-  }
-
-  if (variant === 'path') {
-    return (
-      <BAIText
-        monospace
-        // The table cell is `white-space: nowrap; overflow: hidden`, so an
-        // untruncated path is clipped rather than wrapped; one line plus the
-        // truncation tooltip keeps the whole value reachable.
-        ellipsis={{ tooltip: true }}
-        copyable={copyConfig}
-        {...rest}
-      >
-        <BAITextHighlighter keyword={highlightKeyword}>
-          {reference}
-        </BAITextHighlighter>
-      </BAIText>
-    );
-  }
-
-  // An override the server left empty must not blank the part out: the image
-  // fields are nullable and the adapters pass them straight through.
-  const displayName = _.isEmpty(name)
-    ? tagAlias(getBaseImage(reference))
-    : (name as string);
-  const displayVersion = _.isEmpty(version)
-    ? getBaseVersion(reference)
-    : (version as string);
-  const displayArchitecture = _.isEmpty(architecture)
-    ? (_.nth(_.split(reference, '@'), 1) ?? '')
-    : (architecture as string);
-
-  // A version picker's rows differ only after the name, so it drops the icon
-  // and the name rather than repeating them on every row.
-  const showsIdentity = variant !== 'version';
-
-  return (
-    <BAIFlex direction="row" wrap="wrap" gap="xxs" {...rest}>
-      {showsIdentity ? (
-        <>
-          <BAIImageMetaIcon image={reference} />
-          <Text>
-            <BAITextHighlighter keyword={highlightKeyword}>
-              {displayName}
-            </BAITextHighlighter>
-          </Text>
-          <MetaDivider />
-        </>
-      ) : null}
-      <Text>
-        <BAITextHighlighter keyword={highlightKeyword}>
-          {displayVersion}
-        </BAITextHighlighter>
-      </Text>
-      <MetaDivider />
-      <Text>
-        <BAITextHighlighter keyword={highlightKeyword}>
-          {displayArchitecture}
-        </BAITextHighlighter>
-      </Text>
-      {variant !== 'compact' && !_.isEmpty(tags) ? (
-        <>
-          <MetaDivider />
-          <TagBadges facts={tags ?? []} highlightKeyword={highlightKeyword} />
-        </>
-      ) : null}
-      {copyable && showsIdentity ? <BAIText copyable={copyConfig} /> : null}
-    </BAIFlex>
-  );
-};
-
-const FragmentImageRow: React.FC<
-  BAIImageNodeSimpleTagV2Props & {
-    imageFrgmt: BAIImageNodeSimpleTagV2Fragment$key;
-    variant: BAIImageNodeSimpleTagV2Variant;
-  }
-> = ({ imageFrgmt, tags, architecture, ...rest }) => {
-  'use memo';
-  const [, { tagAlias }] = useBAIImageMetaData();
   const image = useFragment(
     graphql`
       fragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {
         identity {
           canonicalName
-          namespace
           architecture
         }
         metadata {
@@ -330,48 +140,61 @@ const FragmentImageRow: React.FC<
 
   if (!image) return null;
 
-  // `canonicalName` carries no architecture, so the copy control would emit a
-  // shorter reference than the row displays.
-  const nodeArchitecture = image.identity?.architecture;
-  const canonicalName = image.identity?.canonicalName;
+  // `canonicalName` carries no architecture, and the copy control emits this
+  // string, so the suffix is appended when the nullable field is set.
+  const canonicalName = image.identity?.canonicalName ?? '';
+  const architecture = image.identity?.architecture;
+  const fullName = architecture
+    ? `${canonicalName}@${architecture}`
+    : canonicalName;
+  const facts = imageNodeTagFacts(
+    image.metadata?.tags,
+    image.metadata?.labels,
+    tagAlias,
+  );
 
   return (
-    <ImageRow
-      {...rest}
-      fullName={
-        canonicalName && nodeArchitecture
-          ? `${canonicalName}@${nodeArchitecture}`
-          : canonicalName
-      }
-      architecture={architecture ?? nodeArchitecture}
-      tags={
-        tags ??
-        imageNodeTagFacts(
-          image.metadata?.tags,
-          image.metadata?.labels,
-          tagAlias,
-        )
-      }
-    />
-  );
-};
-
-const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
-  imageFrgmt,
-  variant,
-  withoutTag = false,
-  ...rest
-}) => {
-  'use memo';
-  const resolvedVariant = variant ?? (withoutTag ? 'compact' : 'full');
-  return imageFrgmt ? (
-    <FragmentImageRow
-      {...rest}
-      imageFrgmt={imageFrgmt}
-      variant={resolvedVariant}
-    />
-  ) : (
-    <ImageRow {...rest} variant={resolvedVariant} />
+    <BAIFlex direction="row" wrap="wrap" gap="xxs">
+      <BAIImageMetaIcon image={fullName} />
+      <Text>{tagAlias(getBaseImage(fullName))}</Text>
+      <MetaDivider />
+      <Text>{getBaseVersion(fullName)}</Text>
+      <MetaDivider />
+      <Text>{architecture}</Text>
+      {!withoutTag && !_.isEmpty(facts) ? (
+        <>
+          <MetaDivider />
+          <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
+            {_.map(facts, (fact, index) =>
+              fact.isDouble ? (
+                <BAIDoubleTag
+                  key={`${fact.key}-${index}`}
+                  values={[
+                    {
+                      label: fact.keyAlias ?? '',
+                      color: fact.isCustomized ? 'cyan' : 'blue',
+                    },
+                    {
+                      label: fact.value ?? '',
+                      color: fact.isCustomized ? 'cyan' : 'blue',
+                    },
+                  ]}
+                />
+              ) : (
+                <Badge
+                  key={`${fact.key}-${index}`}
+                  variant={badgeVariantForTagColor(
+                    fact.isCustomized ? 'cyan' : 'blue',
+                  )}
+                  label={fact.aliasedTag}
+                />
+              ),
+            )}
+          </BAIFlex>
+        </>
+      ) : null}
+      {copyable ? <BAIText copyable={{ text: fullName }} /> : null}
+    </BAIFlex>
   );
 };
 

@@ -1,102 +1,25 @@
 import { preserveDotStartCase } from '../../helper';
-import { BAIMetaDataProvider } from '../provider';
-import type { ImageMetaData } from '../provider';
-import BAIImageNodeSimpleTagV2, {
-  imageNodeTagFacts,
-} from './BAIImageNodeSimpleTagV2';
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { imageNodeTagFacts } from './BAIImageNodeSimpleTagV2';
 
-const FULL_NAME =
-  'cr.backend.ai/stable/python-tensorflow:2.15-py39-cuda12.4-ubuntu20.04@x86_64';
-
-const imageMetaData: ImageMetaData = {
-  imageInfo: {
-    'python-tensorflow': {
-      name: 'TensorFlow',
-      description: '',
-      group: '',
-      tags: [],
-      icon: 'tensorflow.svg',
-    },
-  },
-  tagAlias: { 'python-tensorflow': 'TensorFlow', py3: 'Python' },
-  tagReplace: {},
+const aliases: Record<string, string> = {
+  'python-tensorflow': 'TensorFlow',
+  py3: 'Python',
 };
+const tagAlias = (tag: string) => aliases[tag] ?? preserveDotStartCase(tag);
 
-const tagAlias = (tag: string) =>
-  imageMetaData.tagAlias[tag] ?? preserveDotStartCase(tag);
-
-const renderRow = (ui: React.ReactNode) =>
-  render(
-    <BAIMetaDataProvider imageMetaData={imageMetaData} imagePath="icons">
-      {ui}
-    </BAIMetaDataProvider>,
-  );
-
-describe('BAIImageNodeSimpleTagV2', () => {
-  it('derives name, version and architecture from fullName alone', () => {
-    renderRow(<BAIImageNodeSimpleTagV2 fullName={FULL_NAME} />);
-
-    expect(screen.getByText('TensorFlow')).toBeInTheDocument();
-    expect(screen.getByText('2.15')).toBeInTheDocument();
-    expect(screen.getByText('x86_64')).toBeInTheDocument();
-  });
-
-  it('prefers the parts the caller passes over the derived ones', () => {
-    renderRow(
-      <BAIImageNodeSimpleTagV2
-        fullName={FULL_NAME}
-        name="Ngc Pytorch"
-        version="26.03"
-        architecture="aarch64"
-      />,
+describe('imageNodeTagFacts', () => {
+  // `py3` has its own alias but `py39` does not, so the chip stays a two-part
+  // double tag rather than collapsing into one badge.
+  it('keeps a tag as a double tag when only its key has an alias', () => {
+    const [fact] = imageNodeTagFacts(
+      [{ key: 'py3', value: '9' }],
+      [],
+      tagAlias,
     );
 
-    expect(screen.getByText('Ngc Pytorch')).toBeInTheDocument();
-    expect(screen.getByText('26.03')).toBeInTheDocument();
-    expect(screen.getByText('aarch64')).toBeInTheDocument();
-    expect(screen.queryByText('x86_64')).not.toBeInTheDocument();
-  });
-
-  // The image fields are `@since(version: "24.12.0")` and arrive null on an
-  // older manager, so an empty override must not blank the part out.
-  it('falls back to the derived part when an override is empty', () => {
-    renderRow(
-      <BAIImageNodeSimpleTagV2
-        fullName={FULL_NAME}
-        name=""
-        version=""
-        architecture=""
-      />,
-    );
-
-    expect(screen.getByText('TensorFlow')).toBeInTheDocument();
-    expect(screen.getByText('2.15')).toBeInTheDocument();
-    expect(screen.getByText('x86_64')).toBeInTheDocument();
-  });
-
-  it('renders the tag chips only for the full variant', () => {
-    // `py3` has its own alias but `py39` does not, so the chip stays a
-    // two-part double tag rather than collapsing into one badge.
-    const tags = imageNodeTagFacts([{ key: 'py3', value: '9' }], [], tagAlias);
-
-    const { unmount } = renderRow(
-      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} tags={tags} />,
-    );
-    expect(screen.getByText('Python')).toBeInTheDocument();
-    expect(screen.getByText('9')).toBeInTheDocument();
-    unmount();
-
-    renderRow(
-      <BAIImageNodeSimpleTagV2
-        fullName={FULL_NAME}
-        variant="compact"
-        tags={tags}
-      />,
-    );
-    expect(screen.queryByText('Python')).not.toBeInTheDocument();
-    expect(screen.queryByText('9')).not.toBeInTheDocument();
+    expect(fact.isDouble).toBe(true);
+    expect(fact.keyAlias).toBe('Python');
+    expect(fact.value).toBe('9');
   });
 
   // A v1 tag value is nullable; `key + undefined` would look up
@@ -105,7 +28,7 @@ describe('BAIImageNodeSimpleTagV2', () => {
     const [fact] = imageNodeTagFacts(
       [{ key: 'py3', value: null }],
       [],
-      (tag) => (tag === 'py3' ? 'Python' : preserveDotStartCase(tag)),
+      tagAlias,
     );
 
     expect(fact.aliasedTag).toBe('Python');
@@ -113,38 +36,20 @@ describe('BAIImageNodeSimpleTagV2', () => {
   });
 
   it('takes a customized image name from the labels', () => {
-    const tags = imageNodeTagFacts(
+    const [fact] = imageNodeTagFacts(
       [{ key: 'customized_abc', value: 'deadbeef' }],
       [{ key: 'ai.backend.customized-image.name', value: 'my-image' }],
       tagAlias,
     );
 
-    renderRow(<BAIImageNodeSimpleTagV2 fullName={FULL_NAME} tags={tags} />);
-
-    expect(screen.getByText('my-image')).toBeInTheDocument();
-    expect(screen.queryByText('deadbeef')).not.toBeInTheDocument();
+    expect(fact.isCustomized).toBe(true);
+    expect(fact.isDouble).toBe(true);
+    expect(fact.value).toBe('my-image');
   });
 
-  it('renders the path variant as the raw reference in monospace', () => {
-    const { container } = renderRow(
-      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} variant="path" />,
-    );
-
-    expect(screen.getByText(FULL_NAME)).toBeInTheDocument();
-    expect(container.querySelector('img')).not.toBeInTheDocument();
-    expect(screen.queryByText('TensorFlow')).not.toBeInTheDocument();
-  });
-
-  it('drops the copy control when copyable is false', () => {
-    const { unmount } = renderRow(
-      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} />,
-    );
-    const withCopy = screen.getAllByRole('button').length;
-    unmount();
-
-    renderRow(
-      <BAIImageNodeSimpleTagV2 fullName={FULL_NAME} copyable={false} />,
-    );
-    expect(screen.queryAllByRole('button')).toHaveLength(withCopy - 1);
+  it('drops a tag with no key', () => {
+    expect(
+      imageNodeTagFacts([{ key: '', value: 'x' }, null], [], tagAlias),
+    ).toHaveLength(0);
   });
 });

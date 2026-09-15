@@ -21,6 +21,7 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
+import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Badge } from '@astryxdesign/core/Badge';
@@ -30,7 +31,6 @@ import {
   BAIDoubleTag,
   BAIFlex,
   BAIImageMetaIcon,
-  BAIImageNodeSimpleTagV2,
   imageNodeTagFacts,
   BAISelect,
   // BAISelect still accepts antd's children option API via BUI's render-null
@@ -823,13 +823,24 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             ...extraFilterValues,
                           ].join('\t')}
                         >
-                          <BAIImageNodeSimpleTagV2
-                            variant="version"
-                            version={image?.version}
-                            architecture={image?.architecture}
-                            tags={tagFacts}
-                            highlightKeyword={versionSearch}
-                          />
+                          <BAIFlex direction="row" wrap="wrap" gap="xxs">
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.version}
+                            </TextHighlighter>
+                            <ImageMetaDivider />
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.architecture}
+                            </TextHighlighter>
+                            {!_.isEmpty(tagFacts) ? (
+                              <>
+                                <ImageMetaDivider />
+                                <ImageTagBadges
+                                  facts={tagFacts}
+                                  highlightKeyword={versionSearch}
+                                />
+                              </>
+                            ) : null}
+                          </BAIFlex>
                         </SelectOption>
                       );
                     },

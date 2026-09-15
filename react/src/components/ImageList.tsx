@@ -30,11 +30,11 @@ import { Text } from '@astryxdesign/core/Text';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
-  BAIImageNodeSimpleTagV2,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
   BAITable,
+  BAIText,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
@@ -333,10 +333,11 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
-        <BAIImageNodeSimpleTagV2
-          fullName={getImageFullName(row)}
-          variant="path"
-        />
+        // The table cell is `white-space: nowrap; overflow: hidden`, so an
+        // untruncated path is clipped rather than wrapped.
+        <BAIText monospace copyable ellipsis={{ tooltip: true }}>
+          {getImageFullName(row) || ''}
+        </BAIText>
       ),
       // Computed (`getImageFullName`) — not orderable on the server.
       width: token.screenXS,

@@ -17,6 +17,7 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
+import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
@@ -31,7 +32,6 @@ import {
   BAICard,
   BAIFlex,
   BAIImageMetaIcon,
-  BAIImageNodeSimpleTagV2,
   BAIMetadataList,
   BAITable,
   BAIText,
@@ -43,12 +43,11 @@ import { useTranslation } from 'react-i18next';
 
 /**
  * The review step's image row. A manually typed image has no parts to
- * decompose, so it stays a copyable code string; everything else renders
- * through the shared image row (ADR 0004).
+ * decompose, so it stays a copyable code string; a picked image is a legacy
+ * `Image` form value with no fragment, so the row is drawn here (ADR 0004).
  */
 const SessionLauncherImageRow: React.FC = () => {
   'use memo';
-  const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
   const [, { tagAlias }] = useBackendAIImageMetaData();
 
@@ -66,15 +65,25 @@ const SessionLauncherImageRow: React.FC = () => {
     );
   }
 
+  const fullName = getImageFullName(image) || environments?.version;
+  const facts = imageNodeTagFacts(image?.tags, image?.labels, tagAlias);
+
   return (
-    <BAIImageNodeSimpleTagV2
-      fullName={getImageFullName(image) || environments?.version}
-      name={tagAlias(image?.base_image_name)}
-      version={image?.version}
-      architecture={image?.architecture}
-      tags={imageNodeTagFacts(image?.tags, image?.labels, tagAlias)}
-      copyLabel={t('button.CopySomething', { name: t('general.Image') })}
-    />
+    <BAIFlex direction="row" wrap="wrap" gap="xxs">
+      <BAIImageMetaIcon image={fullName} />
+      <Text>{tagAlias(image?.base_image_name)}</Text>
+      <ImageMetaDivider />
+      <Text>{image?.version}</Text>
+      <ImageMetaDivider />
+      <Text>{image?.architecture}</Text>
+      {!_.isEmpty(facts) ? (
+        <>
+          <ImageMetaDivider />
+          <ImageTagBadges facts={facts} />
+        </>
+      ) : null}
+      <BAIText copyable={{ text: fullName }} />
+    </BAIFlex>
   );
 };
 

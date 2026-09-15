@@ -22,8 +22,8 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,
-  BAIImageNodeSimpleTagV2,
   BAITable,
+  BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
   type BAIColumnType,
@@ -175,11 +175,15 @@ const CustomizedImageList: React.FC = () => {
       // Computed column (no `dataIndex`), so the record comes from `render`'s
       // SECOND argument — see `ImageList`'s matching column.
       render: (_value, row) => (
-        <BAIImageNodeSimpleTagV2
-          fullName={getImageFullName(row)}
-          variant="path"
-          highlightKeyword={imageSearch}
-        />
+        <BAIText
+          monospace
+          ellipsis={{ tooltip: true }}
+          copyable={{ text: getImageFullName(row) || '' }}
+        >
+          <TextHighlighter keyword={imageSearch}>
+            {getImageFullName(row) || ''}
+          </TextHighlighter>
+        </BAIText>
       ),
       sorter: (a, b) => localeCompare(getImageFullName(a), getImageFullName(b)),
       width: token.screenXS,
