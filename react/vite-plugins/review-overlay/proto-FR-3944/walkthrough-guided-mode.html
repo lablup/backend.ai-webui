@@ -1,0 +1,338 @@
+<title>Walkthrough Guided Mode</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* PROTOTYPE — FR-3944. Three structurally different guided-mode chromes over a mock of the Web UI,
+     switchable with ?variant=A|B|C or the switcher bottom-left. Throwaway. */
+  :root {
+    --ground: #f2f4f7; --surface: #ffffff; --surface-2: #f7f8fa; --text: #0a1317; --dim: #4e606f;
+    --border: #ccd3db; --border-soft: #e3e8ee; --accent: #ff0de7; --accent-rgb: 255, 13, 231; --on-accent: #0a1317;
+    --ok: #1f8f4e; --wait: #b8730a; --link: #0b5fbf; --shadow: 0 8px 28px rgba(10, 19, 23, .14);
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --ground: #0f1418; --surface: #171d23; --surface-2: #1d252c; --text: #e8edf1; --dim: #98a6b2;
+    --border: #2d3841; --border-soft: #232c34; --on-accent: #0a1317; --ok: #3fbf78; --wait: #e0a03a; --link: #7db3f0;
+    --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+  } }
+  :root[data-theme="dark"] {
+    --ground: #0f1418; --surface: #171d23; --surface-2: #1d252c; --text: #e8edf1; --dim: #98a6b2;
+    --border: #2d3841; --border-soft: #232c34; --on-accent: #0a1317; --ok: #3fbf78; --wait: #e0a03a; --link: #7db3f0;
+    --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--text); font: 14px/1.45 "IBM Plex Sans", system-ui, sans-serif; height: 100vh; overflow: hidden; }
+  code, .mono { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 12px; }
+  button { font: inherit; color: inherit; background: none; border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button.primary { background: #ff7a1a; border-color: #ff7a1a; color: #fff; }
+  a { color: var(--link); }
+
+  /* ---- mock app */
+  .app { display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 48px 1fr; height: 100vh; }
+  .hdr { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 0 16px; background: var(--surface); border-bottom: 1px solid var(--border-soft); }
+  .hdr .brand { font-weight: 600; letter-spacing: .02em; }
+  .hdr .proj { border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; color: var(--dim); }
+  .hdr .spacer { flex: 1; }
+  .side { background: var(--surface); border-right: 1px solid var(--border-soft); padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
+  .side a { display: block; padding: 7px 10px; border-radius: 6px; color: var(--text); text-decoration: none; }
+  .side a.on { background: var(--surface-2); font-weight: 500; }
+  .main { padding: 20px 24px; overflow: auto; }
+  .card { background: var(--surface); border: 1px solid var(--border-soft); border-radius: 8px; }
+  .card .head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
+  .card .head h2 { margin: 0; font-size: 15px; font-weight: 600; }
+  .card .head .spacer { flex: 1; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .seg button { border: 0; border-radius: 0; padding: 4px 10px; }
+  .seg button.on { background: var(--surface-2); font-weight: 500; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 9px 16px; border-bottom: 1px solid var(--border-soft); }
+  th { color: var(--dim); font-weight: 500; font-size: 12px; }
+  td .tok { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--surface-2); border: 1px solid var(--border-soft); }
+  .steps { display: flex; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-soft); }
+  .steps button { border-radius: 999px; }
+  .steps button.on { border-color: var(--text); font-weight: 500; }
+  .form { padding: 16px; display: grid; gap: 12px; max-width: 640px; }
+  .field label { display: block; color: var(--dim); font-size: 12px; margin-bottom: 4px; }
+  .field .input { border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; background: var(--surface); }
+  .slider { position: relative; height: 26px; margin: 6px 4px; }
+  .slider .track { position: absolute; left: 0; right: 0; top: 11px; height: 4px; background: var(--border); border-radius: 2px; }
+  .slider .mark { position: absolute; top: 4px; width: 18px; height: 18px; border-radius: 50%; background: var(--surface); border: 2px solid var(--text); }
+  .modal-bg { position: fixed; inset: 0; background: rgba(10, 19, 23, .35); display: none; align-items: center; justify-content: center; }
+  .modal-bg.open { display: flex; }
+  .modal { width: 520px; background: var(--surface); border-radius: 10px; box-shadow: var(--shadow); }
+  .modal .head { padding: 14px 18px; font-weight: 600; border-bottom: 1px solid var(--border-soft); }
+  .modal .body { padding: 16px 18px; display: grid; gap: 12px; }
+  .modal .foot { padding: 12px 18px; display: flex; justify-content: flex-end; gap: 8px; border-top: 1px solid var(--border-soft); }
+  .radios { display: flex; gap: 6px; }
+  .radios button.on { border-color: var(--text); }
+
+  /* ---- overlay: pins */
+  .pinlayer { position: fixed; inset: 0; pointer-events: none; z-index: 20; }
+  .pin { position: absolute; transform: translate(-50%, -50%); width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font-weight: 600; font-size: 12px; display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .25); pointer-events: auto; cursor: pointer; }
+  .pin.dimmed { opacity: .45; }
+  .pin.cur { box-shadow: 0 0 0 5px rgba(var(--accent-rgb), .35); }
+  .pin.done { background: var(--ok); color: #fff; }
+  .outline { position: absolute; border: 2px solid var(--accent); border-radius: 6px; box-shadow: inset 0 0 0 999px rgba(var(--accent-rgb), .06); }
+
+  /* ---- shared stop content block */
+  .stopbody { display: grid; gap: 8px; }
+  .stopbody .kicker { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+  .stopbody .state { padding: 1px 8px; border-radius: 999px; font-size: 11px; letter-spacing: 0; text-transform: none; border: 1px solid var(--border); }
+  .stopbody .state.wait { color: var(--wait); border-color: var(--wait); }
+  .stopbody .state.ok { color: var(--ok); border-color: var(--ok); }
+  .stopbody .state.away { color: var(--dim); }
+  .stopbody h3 { margin: 0; font-size: 14px; font-weight: 600; }
+  .stopbody .lbl { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 2px; }
+  .stopbody p { margin: 0; }
+  .stopbody .via { padding: 8px 10px; border-left: 3px solid var(--wait); background: var(--surface-2); border-radius: 0 6px 6px 0; }
+  .stopbody .code a { display: block; text-decoration: none; }
+  .stopbody .code a:hover { text-decoration: underline; }
+  .acts { display: flex; gap: 6px; align-items: center; }
+  .acts .ok { border-color: var(--ok); color: var(--ok); }
+  .acts .ok.on { background: var(--ok); color: #fff; }
+  .acts .no { border-color: var(--accent); color: var(--accent); }
+  .acts .spacer { flex: 1; }
+
+  /* ---- variant A: bottom bar */
+  .vA .bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 10px; padding: 8px 10px 8px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  .vA .bar .prog { display: flex; gap: 3px; }
+  .vA .bar .prog i { width: 14px; height: 6px; border-radius: 3px; background: var(--border); }
+  .vA .bar .prog i.done { background: var(--ok); }
+  .vA .bar .prog i.cur { background: var(--accent); }
+  .vA .bar .n { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .vA .bar .title { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--dim); }
+  .vA .float { position: fixed; z-index: 25; width: 360px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+  .vA .float .stopbody { gap: 8px; }
+
+  /* ---- variant B: side panel */
+  .vB .panel { position: fixed; top: 60px; right: 16px; bottom: 16px; width: 360px; z-index: 30; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  .vB .panel .top { padding: 12px 14px; border-bottom: 1px solid var(--border-soft); display: grid; gap: 8px; }
+  .vB .panel .top .row1 { display: flex; align-items: center; gap: 8px; }
+  .vB .panel .top .row1 strong { flex: 1; }
+  .vB .panel .meter { height: 4px; background: var(--border-soft); border-radius: 2px; overflow: hidden; }
+  .vB .panel .meter i { display: block; height: 100%; background: var(--ok); }
+  .vB .panel .list { flex: 1; overflow: auto; }
+  .vB .item { display: grid; grid-template-columns: 26px 1fr; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border-soft); cursor: pointer; }
+  .vB .item .num { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border); display: grid; place-items: center; font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .vB .item.done .num { background: var(--ok); border-color: var(--ok); color: #fff; }
+  .vB .item.cur { background: var(--surface-2); }
+  .vB .item.cur .num { border-color: var(--accent); color: var(--accent); }
+  .vB .item .t { font-weight: 500; }
+  .vB .item .sub { color: var(--dim); font-size: 12px; }
+  .vB .item .stopbody { margin-top: 8px; }
+
+  /* ---- variant C: inline card */
+  .vC .cardpin { position: fixed; z-index: 25; width: 380px; background: var(--surface); border: 1.5px solid var(--accent); border-radius: 10px; box-shadow: var(--shadow); }
+  .vC .cardpin .nav { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--border-soft); }
+  .vC .cardpin .nav .n { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .vC .cardpin .nav .spacer { flex: 1; }
+  .vC .cardpin .stopbody { padding: 12px 14px; }
+  .vC .chip { position: fixed; top: 58px; right: 16px; z-index: 30; padding: 6px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; box-shadow: var(--shadow); }
+  .vC .chip b { font-variant-numeric: tabular-nums; }
+
+  /* ---- shared: warning banner, compose, toast, switcher */
+  .warn { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); z-index: 31; padding: 8px 14px; background: var(--surface); border: 1px solid var(--wait); color: var(--text); border-radius: 8px; box-shadow: var(--shadow); font-size: 13px; display: none; }
+  .warn.show { display: block; }
+  .compose { position: fixed; z-index: 35; width: 340px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); padding: 10px 12px; display: none; }
+  .compose.show { display: grid; gap: 8px; }
+  .compose .anchored { font-size: 12px; color: var(--dim); }
+  .compose textarea { width: 100%; min-height: 64px; font: inherit; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; background: var(--surface); color: var(--text); resize: vertical; }
+  .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 40; padding: 8px 14px; background: var(--text); color: var(--ground); border-radius: 8px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+  .switcher { position: fixed; left: 14px; bottom: 14px; z-index: 50; display: flex; align-items: center; gap: 6px; padding: 6px 8px; background: var(--surface); border: 1px dashed var(--accent); border-radius: 10px; font-size: 12px; }
+  .switcher .tag { color: var(--accent); font-weight: 600; letter-spacing: .04em; }
+  .switcher button.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .switcher label { display: flex; align-items: center; gap: 4px; color: var(--dim); }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+
+<div class="app" id="app">
+  <div class="hdr"><span class="brand">Backend.AI</span><span class="proj">a한국어가능_cde ▾</span><span class="spacer"></span><span class="mono" style="color:var(--dim)">fr-9605-pr9605-decide-overwrite</span></div>
+  <nav class="side">
+    <a href="#" data-nav="start">Start</a><a href="#" data-nav="session">Sessions</a><a href="#" data-nav="data" class="on">Data</a><a href="#" data-nav="x">Model Service</a><a href="#" data-nav="x">My Environments</a><a href="#" data-nav="x">Agents</a>
+  </nav>
+  <main class="main" id="main"></main>
+</div>
+
+<div class="modal-bg" id="modalbg"><div class="modal" role="dialog">
+  <div class="head">Upload — 3 items already exist</div>
+  <div class="body">
+    <div class="field"><label>Decide per item</label>
+      <table id="dup-table"><tr><th>File</th><th>Existing</th><th></th></tr>
+        <tr><td>report.csv</td><td>1.2 MB · 2026-09-10</td><td><div class="radios"><button class="on" data-testid="overwrite-keep-0">Keep</button><button data-testid="overwrite-replace-0">Overwrite</button></div></td></tr>
+        <tr><td>notes.md</td><td>4 KB · 2026-09-12</td><td><div class="radios"><button class="on">Keep</button><button>Overwrite</button></div></td></tr>
+        <tr><td>model.bin</td><td>2.1 GB · 2026-08-30</td><td><div class="radios"><button class="on">Keep</button><button>Overwrite</button></div></td></tr>
+      </table></div>
+  </div>
+  <div class="foot"><button id="modal-cancel">Cancel</button><button class="primary" id="upload-confirm" data-testid="upload-confirm">Upload 3 items</button></div>
+</div></div>
+
+<div class="pinlayer" id="pins"></div>
+<div class="warn" id="warn">This walkthrough was made for <code>c61efbf</code>. The server now serves <code>8a91f02</code> — lines and elements may have moved.</div>
+<div class="compose" id="compose"><div class="anchored" id="compose-anchor"></div><textarea placeholder="What is wrong here?"></textarea><div class="acts"><span class="spacer"></span><button id="compose-cancel">Cancel</button><button class="primary" id="compose-copy">Copy block ⌘⏎</button></div></div>
+<div class="toast" id="toast"></div>
+<div id="chrome"></div>
+
+<div class="switcher"><span class="tag">PROTOTYPE</span>
+  <button data-v="A">A bottom bar</button><button data-v="B">B side panel</button><button data-v="C">C inline card</button>
+  <label><input type="checkbox" id="shaMismatch"> server at another commit</label>
+  <button id="resetChecks" title="clear ✔ state">reset ✔</button>
+</div>
+
+<script>
+(() => {
+  const SHA = 'c61efbf21a4d9e0b7f3c2d8e5a6b1c0d9e8f7a6b';
+  const PR = 9605;
+  const REPO = 'https://github.com/lablup/backend.ai-webui';
+  // A stop = anchor fields the real payload would carry. `find` is this mock's locator.
+  const STOPS = [
+    { id: 'c_42mtds5', page: 'data', find: '[data-testid="folder-upload"]', label: 'Data › page-data › button "Upload"',
+      ch: '업로드 버튼이 폴더별 액션에서 카드 헤더의 extra 슬롯으로 옮겨졌습니다.', ck: '목록 위 오른쪽 상단에 "Upload" 버튼이 보여야 합니다.',
+      code: [{ path: 'react/src/pages/VFolderListPage.tsx', line: 120 }] },
+    { id: 'c_je7pody', page: 'data', via: [{ click: { text: 'Upload' } }], find: '[data-testid="overwrite-replace-0"]', label: 'Data › upload-conflict-modal › button "Overwrite"', dlg: true,
+      ch: '중복 항목마다 Keep / Overwrite를 고르는 열이 생겼습니다. 이전에는 전체를 한 번에 덮어썼습니다.', ck: '3개 행 각각에 Keep / Overwrite 선택이 보이고, 기본값은 Keep이어야 합니다.',
+      code: [{ path: 'react/src/components/FolderExplorer/UploadConflictModal.tsx', line: 88, to: 131 }, { path: 'react/src/hooks/useFolderUpload.tsx', line: 42 }] },
+    { id: 'c_k2p9qwe', page: 'data', via: [{ click: { text: 'Upload' } }], find: '[data-testid="upload-confirm"]', label: 'Data › upload-conflict-modal › button "Upload 3 items"', dlg: true,
+      ch: '확인 버튼 문구가 선택한 항목 수를 셉니다.', ck: '"Upload 3 items"처럼 개수가 들어간 문구여야 합니다.',
+      code: [{ path: 'react/src/components/FolderExplorer/UploadConflictModal.tsx', line: 140 }] },
+    { id: 'c_oei5q53', page: 'session', find: '[data-testid="skip-to-review"]', label: 'Session start › page-session › button "Skip to review"',
+      ch: '세션 시작 1단계에 리뷰로 건너뛰기 버튼이 생겼습니다.', ck: '1단계 하단에 "Skip to review" 버튼이 보여야 합니다.',
+      code: [{ path: 'react/src/pages/SessionLauncherPage.tsx', line: 310 }] },
+    { id: 'c_t6jlay5', page: 'session', via: [{ click: { text: 'Environments & Resource Allocation' } }], find: '[data-testid="slider-mark"]', label: 'Session start › page-session › slider mark',
+      ch: 'CPU 슬라이더에 프리셋 눈금이 추가됐습니다.', ck: '2단계 CPU 슬라이더에 눈금이 보여야 합니다.',
+      code: [{ path: 'react/src/components/SessionLauncher/ResourceStep.tsx', line: 42, to: 61 }] },
+    { id: 'c_9fh3mzq', page: 'data', find: '[data-testid="vfolder-filter"]', label: 'Data › page-data › segmented "All / General / Auto Mount / Models"',
+      ch: '필터가 탭에서 세그먼트 컨트롤로 바뀌었습니다.', ck: '표 위에 All / General / Auto Mount / Models 네 개가 한 줄로 보여야 합니다.',
+      code: [{ path: 'react/src/pages/VFolderListPage.tsx', line: 74 }] },
+  ];
+  const KEY = 'bai-walkthrough:' + SHA.slice(0, 12);
+  const params = new URLSearchParams(location.search);
+  const state = { variant: params.get('variant') || 'A', page: 'data', modal: false, step: 1, cur: 0, checks: {}, composeFor: null };
+  try { state.checks = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state.checks = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state.checks)); } catch (e) {} };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const main = $('#main'), pins = $('#pins'), chrome = $('#chrome'), compose = $('#compose'), toast = $('#toast');
+  const sha256Hex = async (s) => { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); };
+  const codeHrefs = {}; // path -> hash, filled async; before that, link to the files tab
+  Promise.all(STOPS.flatMap(s => s.code.map(async c => { codeHrefs[c.path] = await sha256Hex(c.path); }))).then(render);
+  const codeHref = (c) => `${REPO}/pull/${PR}/files` + (codeHrefs[c.path] ? `#diff-${codeHrefs[c.path]}R${c.line}${c.to ? '-R' + c.to : ''}` : '');
+
+  function say(t) { toast.textContent = t; toast.classList.add('show'); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove('show'), 1800); }
+
+  // ---- mock pages
+  function renderPage() {
+    if (state.page === 'data') main.innerHTML = `
+      <div class="card"><div class="head"><h2>Folders</h2><span class="seg" data-testid="vfolder-filter"><button class="on">All</button><button>General</button><button>Auto Mount</button><button>Models</button></span><span class="spacer"></span><button data-testid="folder-upload" id="open-upload">Upload</button><button class="primary">Create Folder</button></div>
+      <table><tr><th>Name</th><th>Status</th><th>Location</th><th>Type</th></tr>
+      <tr><td>datasets</td><td><span class="tok">ready</span></td><td>local:volume1</td><td>General</td></tr>
+      <tr><td>llama-weights</td><td><span class="tok">ready</span></td><td>local:volume1</td><td>Models</td></tr>
+      <tr><td>notebooks</td><td><span class="tok">ready</span></td><td>local:volume1</td><td>General</td></tr>
+      <tr><td>scratch</td><td><span class="tok">mounting</span></td><td>local:volume2</td><td>Auto Mount</td></tr></table></div>`;
+    else if (state.page === 'session') main.innerHTML = `
+      <div class="card"><div class="steps">${['Session Type', 'Environments & Resource Allocation', 'Data & Storage', 'Network', 'Review'].map((t, i) => `<button data-step="${i + 1}" class="${state.step === i + 1 ? 'on' : ''}">${i + 1} ${t}</button>`).join('')}</div>
+      ${state.step === 1 ? `<div class="form"><div class="field"><label>Session type</label><div class="input">Interactive</div></div><div class="field"><label>Session name</label><div class="input">exp-0915</div></div><div class="acts"><button class="primary" id="next-step">Next</button><button data-testid="skip-to-review">Skip to review</button></div></div>`
+      : state.step === 2 ? `<div class="form"><div class="field"><label>Environment</label><div class="input">cr.backend.ai/stable/python:3.12-ubuntu24.04</div></div><div class="field"><label>CPU</label><div class="slider"><div class="track"></div><div class="mark" data-testid="slider-mark" style="left:31%"></div><div class="mark" style="left:62%;border-color:var(--border)"></div></div></div><div class="acts"><button>Back</button><button class="primary">Next</button></div></div>`
+      : `<div class="form"><p style="color:var(--dim)">(step ${state.step} — not part of this walkthrough)</p></div>`}</div>`;
+    else main.innerHTML = `<div class="card"><div class="head"><h2>Not in this walkthrough</h2></div><div class="form"><p style="color:var(--dim)">Nothing pinned here. Use next / prev to return.</p></div></div>`;
+    $('#modalbg').classList.toggle('open', state.modal);
+    document.querySelectorAll('.side a').forEach(a => a.classList.toggle('on', a.dataset.nav === state.page));
+  }
+
+  // ---- resolution (strict: the element must exist; dialog stops only while the dialog is open)
+  function locate(stop) {
+    if (stop.page !== state.page) return { kind: 'away' };
+    if (stop.dlg && !state.modal) return { kind: 'waiting' };
+    const el = document.querySelector(stop.find);
+    if (!el || el.getBoundingClientRect().width === 0) return { kind: 'waiting' };
+    return { kind: 'located', el };
+  }
+  const viaSentence = (stop) => stop.via ? stop.via.map(v => `Click “${v.click.text}”`).join(', then ') : '';
+
+  // ---- stop content (shared by every variant)
+  function stopBody(stop, i, place) {
+    const done = !!state.checks[stop.id];
+    const st = place.kind === 'located' ? '<span class="state ok">on this page</span>' : place.kind === 'waiting' ? '<span class="state wait">waiting</span>' : '<span class="state away">another page</span>';
+    return `<div class="stopbody">
+      <div class="kicker"><span>Stop ${i + 1} of ${STOPS.length}</span>${st}<span class="mono" style="letter-spacing:0;text-transform:none">${stop.id}</span></div>
+      <h3>${stop.label}</h3>
+      ${place.kind === 'waiting' && stop.via ? `<div class="via">${viaSentence(stop)} — the pin lands when it appears.</div>` : place.kind === 'away' ? `<div class="via" style="border-color:var(--dim)">Next takes you to that page.</div>` : ''}
+      <div><div class="lbl">What changed</div><p>${stop.ch}</p></div>
+      <div><div class="lbl">What to check</div><p>${stop.ck}</p></div>
+      <div class="code"><div class="lbl">Code</div>${stop.code.map(c => `<a class="mono" href="${codeHref(c)}" target="_blank" rel="noopener">${c.path}:${c.line}${c.to ? '–' + c.to : ''} ↗</a>`).join('')}</div>
+      <div class="acts"><button class="ok ${done ? 'on' : ''}" data-act="ok">${done ? '✔ Checked' : '✔ Looks right'}</button><button class="no" data-act="no">✗ Something's off</button><span class="spacer"></span><button data-act="prev" ${i === 0 ? 'disabled' : ''}>‹ Prev</button><button data-act="next" ${i === STOPS.length - 1 ? 'disabled' : ''}>Next ›</button></div>
+    </div>`;
+  }
+
+  // ---- pins
+  function renderPins() {
+    pins.innerHTML = '';
+    STOPS.forEach((stop, i) => {
+      const place = locate(stop);
+      if (place.kind !== 'located') return;
+      const r = place.el.getBoundingClientRect();
+      const cur = i === state.cur;
+      if (cur) { const o = document.createElement('div'); o.className = 'outline'; o.style.cssText = `left:${r.left - 4}px;top:${r.top - 4}px;width:${r.width + 8}px;height:${r.height + 8}px`; pins.appendChild(o); }
+      const p = document.createElement('div'); p.className = 'pin' + (cur ? ' cur' : ' dimmed') + (state.checks[stop.id] ? ' done' : ''); p.textContent = i + 1;
+      p.style.left = (r.left - 6) + 'px'; p.style.top = (r.top - 6) + 'px'; p.title = stop.label; p.onclick = () => go(i, false); pins.appendChild(p);
+    });
+  }
+  const anchorRect = (stop) => { const p = locate(stop); return p.kind === 'located' ? p.el.getBoundingClientRect() : null; };
+  function placeNear(node, r, w) {
+    if (!r) { node.style.left = '50%'; node.style.top = '50%'; node.style.transform = 'translate(-50%,-50%)'; return; }
+    node.style.transform = '';
+    const left = Math.min(Math.max(12, r.left), innerWidth - w - 12);
+    const below = r.bottom + 12; const h = node.offsetHeight || 260;
+    node.style.left = left + 'px'; node.style.top = (below + h < innerHeight - 90 ? below : Math.max(60, r.top - h - 12)) + 'px';
+  }
+
+  // ---- variants
+  function renderChrome() {
+    const stop = STOPS[state.cur], place = locate(stop), i = state.cur;
+    const doneN = STOPS.filter(s => state.checks[s.id]).length;
+    document.body.className = 'v' + state.variant;
+    if (state.variant === 'A') {
+      chrome.innerHTML = `<div class="bar"><span class="prog">${STOPS.map((s, k) => `<i class="${state.checks[s.id] ? 'done' : ''} ${k === i ? 'cur' : ''}"></i>`).join('')}</span><span class="n">${i + 1}/${STOPS.length}</span><span class="title">${stop.label}</span><button data-act="prev" ${i === 0 ? 'disabled' : ''}>‹</button><button data-act="next" ${i === STOPS.length - 1 ? 'disabled' : ''}>›</button><button data-act="ok" class="${state.checks[stop.id] ? 'ok on' : 'ok'}">✔</button><button data-act="no" class="no">✗</button></div><div class="float">${stopBody(stop, i, place)}</div>`;
+      placeNear($('.float', chrome), anchorRect(stop), 360);
+    } else if (state.variant === 'B') {
+      chrome.innerHTML = `<div class="panel"><div class="top"><div class="row1"><strong>Walkthrough · PR #${PR}</strong><span class="mono" style="color:var(--dim)">${SHA.slice(0, 7)}</span><button data-act="prev" ${i === 0 ? 'disabled' : ''}>‹</button><button data-act="next" ${i === STOPS.length - 1 ? 'disabled' : ''}>›</button></div><div class="meter"><i style="width:${(doneN / STOPS.length) * 100}%"></i></div><div style="font-size:12px;color:var(--dim)">${doneN} of ${STOPS.length} checked</div></div><div class="list">${STOPS.map((s, k) => { const pl = locate(s); return `<div class="item ${k === i ? 'cur' : ''} ${state.checks[s.id] ? 'done' : ''}" data-go="${k}"><span class="num">${state.checks[s.id] ? '✔' : k + 1}</span><div><div class="t">${s.label.split(' › ').pop()}</div><div class="sub">${s.label.split(' › ')[0]}${pl.kind === 'waiting' ? ' · waiting' : pl.kind === 'away' ? ' · another page' : ''}</div>${k === i ? stopBody(s, k, pl) : ''}</div></div>`; }).join('')}</div></div>`;
+    } else {
+      const r = anchorRect(stop);
+      chrome.innerHTML = `<div class="chip"><b>${doneN}/${STOPS.length}</b> checked · stop <b>${i + 1}</b></div><div class="cardpin"><div class="nav"><span class="n">${i + 1} / ${STOPS.length}</span><span class="spacer"></span><button data-act="prev" ${i === 0 ? 'disabled' : ''}>‹ Prev</button><button data-act="next" ${i === STOPS.length - 1 ? 'disabled' : ''}>Next ›</button></div>${stopBody(stop, i, place)}</div>`;
+      placeNear($('.cardpin', chrome), r, 380);
+    }
+    $('#warn').classList.toggle('show', $('#shaMismatch').checked);
+    document.querySelectorAll('.switcher [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === state.variant));
+    if (state.composeFor !== null) { compose.classList.add('show'); $('#compose-anchor').textContent = '📍 ' + STOPS[state.composeFor].label; placeNear(compose, anchorRect(STOPS[state.composeFor]), 340); } else compose.classList.remove('show');
+  }
+  function render() { renderPage(); renderPins(); renderChrome(); }
+
+  // ---- navigation: a stop on another page switches page (closes the modal, resets the launcher step)
+  function go(i, follow = true) {
+    const stop = STOPS[i]; state.cur = i; state.composeFor = null;
+    if (follow && stop.page !== state.page) { state.page = stop.page; state.modal = false; state.step = 1; }
+    render();
+  }
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-act], [data-go], [data-nav], [data-step], [data-v], #open-upload, #modal-cancel, #upload-confirm, #compose-cancel, #compose-copy, #resetChecks, #next-step');
+    if (!t) return;
+    if (t.dataset.act) { const a = t.dataset.act; const s = STOPS[state.cur];
+      if (a === 'next') go(state.cur + 1); else if (a === 'prev') go(state.cur - 1);
+      else if (a === 'ok') { state.checks[s.id] = !state.checks[s.id]; save(); render(); if (state.checks[s.id] && state.cur < STOPS.length - 1) setTimeout(() => go(state.cur + 1), 350); }
+      else if (a === 'no') { state.composeFor = state.cur; render(); }
+      return; }
+    if (t.dataset.go) return go(+t.dataset.go);
+    if (t.dataset.nav) { e.preventDefault(); state.page = t.dataset.nav; state.modal = false; state.step = 1; return render(); }
+    if (t.dataset.step) { state.step = +t.dataset.step; return render(); }
+    if (t.dataset.v) { state.variant = t.dataset.v; history.replaceState(null, '', '?variant=' + state.variant); return render(); }
+    if (t.id === 'open-upload') { state.modal = true; return render(); }
+    if (t.id === 'next-step') { state.step = 2; return render(); }
+    if (t.id === 'modal-cancel' || t.id === 'upload-confirm') { state.modal = false; return render(); }
+    if (t.id === 'compose-cancel') { state.composeFor = null; return render(); }
+    if (t.id === 'compose-copy') { state.composeFor = null; render(); return say('Block copied — paste it into the PR (this is a mock)'); }
+    if (t.id === 'resetChecks') { state.checks = {}; save(); return render(); }
+  });
+  $('#shaMismatch').addEventListener('change', render);
+  addEventListener('resize', () => { renderPins(); renderChrome(); });
+  render();
+})();
+</script>
