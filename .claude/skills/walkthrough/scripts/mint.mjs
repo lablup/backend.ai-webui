@@ -33,7 +33,7 @@ const STATE_DIR =
  */
 const RESOLVE_TIMEOUT_MS = 30_000;
 /** How long a lazy route gets to render the element a stop names. */
-const FIND_TIMEOUT_MS = 20_000;
+const FIND_TIMEOUT_MS = 45_000;
 /** `PIN_BODY_SRC` in codec.ts: `parseFragments` silently drops a longer part. */
 const MAX_PART_B64 = 2048;
 
