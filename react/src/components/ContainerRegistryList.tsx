@@ -26,6 +26,7 @@ import {
   BAINameActionCell,
   BAIPropertyFilter,
   BAITable,
+  BooleanTag,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
   filterOutNullAndUndefined,
@@ -136,6 +137,15 @@ const ContainerRegistryList: React.FC<{
                 username
                 password
                 ssl_verify
+                is_global @since(version: "24.09.0")
+                allowed_groups @since(version: "25.3.0") {
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
               }
             }
             count
@@ -345,6 +355,39 @@ const ContainerRegistryList: React.FC<{
       key: 'password',
       title: t('registry.Password'),
       dataIndex: 'password',
+    },
+    {
+      key: 'is_global',
+      title: t('registry.Global'),
+      dataIndex: 'is_global',
+      render: (value) => <BooleanTag value={value} />,
+    },
+    {
+      key: 'allowed_groups',
+      title: t('registry.AllowedProjects'),
+      render: (_value, record) => {
+        // A global registry has no allow-list; the server answers this field
+        // with every project, which is noise rather than information.
+        if (record.is_global) {
+          return t('environment.AllProjects');
+        }
+        const groups = filterOutNullAndUndefined(
+          _.map(record.allowed_groups?.edges, (edge) => edge?.node),
+        );
+        return _.isEmpty(groups) ? (
+          '-'
+        ) : (
+          <BAIFlex direction="row" gap="xxs" wrap="wrap">
+            {_.map(groups, (group) => (
+              <Badge
+                key={group.id}
+                variant={badgeVariantForTagColor(undefined)}
+                label={group.name ?? ''}
+              />
+            ))}
+          </BAIFlex>
+        );
+      },
     },
     {
       key: 'enabled',
