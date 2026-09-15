@@ -218,6 +218,14 @@ export interface BAIGraphQLPropertyFilterProps<
   // for that property instead of appending another — applied to every
   // property.
   singleCondition?: boolean;
+  /**
+   * Hard cap on how many conditions the emitted filter may carry IN TOTAL,
+   * across every property. Unlike `singleCondition` (at most one per
+   * property) this is what bounds the AND/OR combinators: `maxConditions={1}`
+   * never emits `AND`, so it is the gate for managers whose filter input has
+   * no sub-filter fields. The LAST conditions win.
+   */
+  maxConditions?: number;
 }
 
 interface FilterCondition {
@@ -640,19 +648,22 @@ export function powerSearchFiltersToGraphQLFilter(
   filterProperties: Array<FilterProperty>,
   combinationMode: 'AND' | 'OR' = 'AND',
   singleCondition: boolean = false,
+  maxConditions?: number,
 ): GraphQLFilter | undefined {
   const byKey = _.keyBy(filterProperties, 'key');
-  // `singleCondition` keeps at most one condition per property — the LAST one
-  // wins, matching the antd behaviour where committing overrode.
-  const kept = singleCondition
-    ? _.values(
-        _.reduce(
-          filters,
-          (acc, filter) => ({ ...acc, [filter.field]: filter }),
-          {} as Record<string, PowerSearchFilter>,
-        ),
-      )
+  // `singleCondition` keeps the LAST condition per property (the antd
+  // committing-overrides behaviour) *at* its last position, so the tail-slice
+  // below keeps it rather than an older sibling.
+  const deduped = singleCondition
+    ? _.uniqBy([...filters].reverse(), 'field').reverse()
     : [...filters];
+  // `maxConditions` then caps the total, keeping the newest ones.
+  const kept =
+    _.isNumber(maxConditions) && deduped.length > maxConditions
+      ? maxConditions <= 0
+        ? []
+        : deduped.slice(-maxConditions)
+      : deduped;
 
   const conditions: Array<FilterCondition> = _.map(kept, (filter) => {
     const property = byKey[filter.field];
@@ -682,6 +693,7 @@ const BAIGraphQLPropertyFilter = <
   defaultValue,
   combinationMode = 'AND',
   singleCondition = false,
+  maxConditions,
   label,
   placeholder,
   applyLabel,
@@ -771,6 +783,7 @@ const BAIGraphQLPropertyFilter = <
         filterProperties,
         combinationMode,
         singleCondition,
+        maxConditions,
       ) as TFilter | undefined,
     );
   };

@@ -407,6 +407,90 @@ describe('token <-> condition value mapping', () => {
       powerSearchFiltersToGraphQLFilter(filters, filterProperties, 'AND', true),
     ).toEqual({ email: { contains: 'b' } });
   });
+
+  // `maxConditions` is what gates the AND/OR combinators on managers whose
+  // filter input has no sub-filter fields (FR-3913).
+  it('never emits a combinator when `maxConditions` is 1, even across properties', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      { AND: [{ email: { contains: 'a' } }, { role: { equals: 'ADMIN' } }] },
+      filterProperties,
+    );
+    // `singleCondition` alone is per-property, so it still emits AND here.
+    expect(
+      powerSearchFiltersToGraphQLFilter(filters, filterProperties, 'AND', true),
+    ).toHaveProperty('AND');
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        false,
+        1,
+      ),
+    ).toEqual({ role: { equals: 'ADMIN' } });
+  });
+
+  // Deduplicating into an object would keep the newest condition at the
+  // *oldest* slot, so the tail-slice below would drop it for a stale sibling.
+  it('keeps the newest condition when `singleCondition` and `maxConditions` combine', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      {
+        AND: [
+          { email: { contains: 'old' } },
+          { role: { equals: 'ADMIN' } },
+          { email: { contains: 'new' } },
+        ],
+      },
+      filterProperties,
+    );
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        true,
+        1,
+      ),
+    ).toEqual({ email: { contains: 'new' } });
+  });
+
+  it('keeps the newest `maxConditions` conditions', () => {
+    const filters = graphQLFilterToPowerSearchFilters(
+      {
+        AND: [
+          { email: { contains: 'a' } },
+          { role: { equals: 'ADMIN' } },
+          { isActive: true },
+        ],
+      },
+      filterProperties,
+    );
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        false,
+        2,
+      ),
+    ).toEqual({ AND: [{ role: { equals: 'ADMIN' } }, { isActive: true }] });
+  });
+
+  it('leaves the filter untouched when `maxConditions` is not reached', () => {
+    const filter: GraphQLFilter = {
+      AND: [{ email: { contains: 'a' } }, { role: { equals: 'ADMIN' } }],
+    };
+    const filters = graphQLFilterToPowerSearchFilters(filter, filterProperties);
+    expect(
+      powerSearchFiltersToGraphQLFilter(
+        filters,
+        filterProperties,
+        'AND',
+        false,
+        5,
+      ),
+    ).toEqual(filter);
+  });
 });
 
 describe('BAIGraphQLPropertyFilter render', () => {
