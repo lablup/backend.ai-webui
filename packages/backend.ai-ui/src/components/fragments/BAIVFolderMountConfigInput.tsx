@@ -97,7 +97,7 @@ export interface BAIVFolderMountConfigInputProps {
 export const vFolderAliasNameRegExp = /^[a-zA-Z0-9_/.-]*$/;
 
 /** Container path a folder mounts under when its alias is left empty. */
-export const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
+const DEFAULT_ALIAS_BASE_PATH = '/home/work/';
 
 /**
  * Convert a user-entered alias input into the resolved mount destination,
@@ -158,8 +158,8 @@ export interface VFolderMountConfigEntryStatus {
 /**
  * Compute, per entry, its resolved mount destination and any alias/subpath
  * error — the single source of truth behind the component's inline feedback.
- * Exported so a consumer can gate a form on validity (see
- * {@link isVFolderMountConfigValid}) or translate the error kinds itself.
+ * Exported so a consumer can gate a form on validity or translate the error
+ * kinds itself.
  */
 export const getVFolderMountConfigStatuses = (
   value: VFolderMountConfigValue[] | undefined,
@@ -257,34 +257,21 @@ export const toMountCreationConfig = (
   value: VFolderMountConfigValue[] | undefined,
   options?: VFolderMountConfigStatusOptions,
 ): VFolderMountCreationConfig => {
-  const mounts = _.map(resolveVFolderMounts(value, options), (mount) => ({
-    ...mount,
-    id: convertToUUID(mount.vfolderId),
-  }));
-  const mountOptions = _.fromPairs(
-    _.map(
-      _.filter(mounts, (mount) => !!mount.subpath),
-      (mount) => [mount.id, { subpath: mount.subpath }],
-    ),
+  const mounts = resolveVFolderMounts(value, options);
+  const mountOptions = Object.fromEntries(
+    mounts
+      .filter((mount) => !!mount.subpath)
+      .map((mount) => [mount.vfolderId, { subpath: mount.subpath }]),
   );
 
   return {
-    mount_ids: _.map(mounts, (mount) => mount.id),
-    mount_id_map: _.fromPairs(
-      _.map(mounts, (mount) => [mount.id, mount.mountDestination]),
+    mount_ids: mounts.map((mount) => mount.vfolderId),
+    mount_id_map: Object.fromEntries(
+      mounts.map((mount) => [mount.vfolderId, mount.mountDestination]),
     ),
     ...(_.isEmpty(mountOptions) ? {} : { mount_options: mountOptions }),
   };
 };
-
-/** True when every entry's alias and subpath are valid. */
-export const isVFolderMountConfigValid = (
-  value: VFolderMountConfigValue[] | undefined,
-  options?: VFolderMountConfigStatusOptions,
-): boolean =>
-  Object.values(getVFolderMountConfigStatuses(value, options)).every(
-    (status) => !status.aliasError && !status.subpathError,
-  );
 
 /**
  * A `Form.Item` `rules` entry gating the launch on the mount configuration,
@@ -351,15 +338,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     { defaultValue: [] },
   );
   const [searchStr, setSearchStr] = useState('');
-  const mountConfigs = value ?? [];
-  // The select is `labelInValue`-shaped, so the folder name travels with the
-  // selection and no separate name lookup is needed.
-  const selectedFolders: BAILabeledValue[] = mountConfigs.map((entry) => ({
-    value: entry.vfolderId,
-    label: entry.name || entry.vfolderId,
-  }));
-  const selectedIdSet = new Set(_.map(mountConfigs, (e) => e.vfolderId));
-
   const {
     folders: allFolderList,
     refetch,
@@ -368,26 +346,55 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
+  const mountConfigs = value ?? [];
+  // The select is `labelInValue`-shaped, so the folder name travels with the
+  // selection and no separate name lookup is needed.
+  const selectedFolders: BAILabeledValue[] = mountConfigs.map((entry) => ({
+    value: entry.vfolderId,
+    label: entry.name || entry.vfolderId,
+  }));
+  const selectedIdSet = new Set(mountConfigs.map((e) => e.vfolderId));
+
   const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
   const mountScope = { currentProjectId, mountableHosts };
   // The uuid is derived once per folder here and read back below, rather than
   // re-converting in each of the id comparisons.
-  const mountableFolders = _.map(
-    _.filter(allFolderList, (folder) =>
-      isMountableLegacyVFolder(folder, mountScope),
-    ),
-    (folder) => ({ folder, uuid: convertToUUID(folder.id) }),
-  );
-  const mountableIdSet = new Set(
-    _.map(mountableFolders, (entry) => entry.uuid),
-  );
+  const mountableFolders = allFolderList
+    .filter((folder) => isMountableLegacyVFolder(folder, mountScope))
+    .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
+  const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
+
+  // Offering an auto-mounted folder is noise: the session mounts it anyway, so
+  // picking it could only produce a duplicate mount path. It narrows the
+  // options only — a stored entry that became auto-mounted is still mountable,
+  // so the prune below must not see this gate.
+  const displayingFolders = mountableFolders.filter(({ folder, uuid }) => {
+    if (selectedIdSet.has(uuid)) return true;
+    if (autoMountedNameSet.has(folder.name)) return false;
+    if (filter && !filter(folder)) return false;
+    return !searchStr || folder.name.includes(searchStr);
+  });
+  const folderOptions = displayingFolders.map(({ folder, uuid }) => ({
+    value: uuid,
+    label: folder.name,
+    description: folder.host,
+  }));
+
+  // Resolve each entry's mount destination + validity once via the same
+  // exported helper a consumer uses to gate the form, then read per row below.
+  const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
+    aliasBasePath,
+    autoMountedFolderNames,
+  });
 
   // A value restored from a template or a URL can name a folder this owner and
   // project cannot mount. Drop it rather than letting the launch fail server
   // side, and say so — a selection shrinking on its own is otherwise silent.
   // The early return is also what keeps the emitted value from looping back in.
+  // Keep this pair last: a hook call between the derivations above splits the
+  // compiler's cache block, and `mountableFolders` then changes every render.
   const pruneUnmountableEntries = useEffectEvent(() => {
-    const kept = _.filter(mountConfigs, (entry) =>
+    const kept = mountConfigs.filter((entry) =>
       mountableIdSet.has(entry.vfolderId),
     );
     if (kept.length === mountConfigs.length) return;
@@ -400,33 +407,14 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     pruneUnmountableEntries();
   }, [mountableFolders]);
 
-  // Offering an auto-mounted folder is noise: the session mounts it anyway, so
-  // picking it could only produce a duplicate mount path. It narrows the
-  // options only — a stored entry that became auto-mounted is still mountable,
-  // so the prune above must not see this gate.
-  const displayingFolders = _.filter(mountableFolders, ({ folder, uuid }) => {
-    if (selectedIdSet.has(uuid)) return true;
-    if (autoMountedNameSet.has(folder.name)) return false;
-    if (filter && !filter(folder)) return false;
-    return !searchStr || _.includes(folder.name, searchStr);
-  });
-
-  // Resolve each entry's mount destination + validity once via the same
-  // exported helper a consumer uses to gate the form, then read per row below.
-  const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
-    aliasBasePath,
-    autoMountedFolderNames,
-  });
-
   // The select's value carries the folder name, so a new entry is named on the
   // spot and no backfill pass is needed.
   const handleSelectionChange = (next: BAIComplexSelectValue) => {
     const selected =
       next === null || next === undefined ? [] : _.castArray(next);
     setValue(
-      _.map(selected, (item) => {
-        const existing = _.find(
-          mountConfigs,
+      selected.map((item) => {
+        const existing = mountConfigs.find(
           (entry) => entry.vfolderId === item.value,
         );
         if (existing) return { ...existing, name: item.label };
@@ -452,11 +440,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           isDisabled={disabled}
           placeholder={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
           total={displayingFolders.length}
-          options={_.map(displayingFolders, ({ folder, uuid }) => ({
-            value: uuid,
-            label: folder.name,
-            description: folder.host,
-          }))}
+          options={folderOptions}
           value={selectedFolders}
           onChange={handleSelectionChange}
           searchValue={searchStr}

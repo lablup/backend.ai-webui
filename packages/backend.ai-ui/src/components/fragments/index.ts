@@ -110,11 +110,9 @@ export type {
 } from './BAIVFolderSelect';
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
-  DEFAULT_ALIAS_BASE_PATH,
   inputToMountDestination,
   mountDestinationToInput,
   getVFolderMountConfigStatuses,
-  isVFolderMountConfigValid,
   resolveVFolderMounts,
   toMountCreationConfig,
   useVFolderMountConfigFormRule,
