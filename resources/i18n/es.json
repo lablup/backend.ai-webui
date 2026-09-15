@@ -3335,6 +3335,9 @@
       "LastDay": "Último 1 día",
       "LastHour": "Última 1 hora",
       "Today": "Hoy"
+    },
+    "unit": {
+      "PercentPerCore": "% por núcleo"
     }
   },
   "storageHost": {

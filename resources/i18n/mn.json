@@ -3337,6 +3337,9 @@
       "LastDay": "Стүүлийн 1 1 өдөр",
       "LastHour": "Сүүлийн 1 цаг",
       "Today": "Оноо"
+    },
+    "unit": {
+      "PercentPerCore": "цөм тутамд %"
     }
   },
   "storageHost": {

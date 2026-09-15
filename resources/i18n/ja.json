@@ -3337,6 +3337,9 @@
       "LastDay": "最後の1日",
       "LastHour": "最後の1時間",
       "Today": "今日"
+    },
+    "unit": {
+      "PercentPerCore": "コアあたり%"
     }
   },
   "storageHost": {

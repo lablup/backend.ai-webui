@@ -3339,6 +3339,9 @@
       "LastDay": "1 hari terakhir",
       "LastHour": "1 jam terakhir",
       "Today": "Hari ini"
+    },
+    "unit": {
+      "PercentPerCore": "% per inti"
     }
   },
   "storageHost": {

@@ -3335,6 +3335,9 @@
       "LastDay": "1 päivä",
       "LastHour": "1 tunti",
       "Today": "Tänään"
+    },
+    "unit": {
+      "PercentPerCore": "% / ydin"
     }
   },
   "storageHost": {

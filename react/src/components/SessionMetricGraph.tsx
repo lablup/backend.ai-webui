@@ -210,6 +210,12 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
     dayDiff < 7 ? '5m' : dayDiff < 30 ? '1h' : '1d',
   );
 
+  // cpu_util is per core and can exceed 100 %, so "%" alone would mislead.
+  const axisUnit =
+    metricName === 'cpu_util'
+      ? t('statistics.unit.PercentPerCore')
+      : convertMetricUnit(undefined, metricName).numberUnit;
+
   return (
     <>
       {_.isEmpty(capacity_metric?.metrics) &&
@@ -220,10 +226,14 @@ const SessionMetricGraphBody: React.FC<PrometheusMetricGraphProps> = ({
           <LineChart
             data={metricData}
             className="session-metric-graph-recharts"
+            margin={{ top: 24, right: 5, bottom: 5, left: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="timestamp" minTickGap={token.marginMD} />
-            <YAxis domain={[0, 'dataMax']} />
+            <YAxis
+              domain={[0, 'dataMax']}
+              label={{ value: axisUnit, position: 'top', offset: 12 }}
+            />
             <ChartTooltip
               formatter={(value) => {
                 return `${value}${convertMetricUnit(undefined, metricName).numberUnit}`;

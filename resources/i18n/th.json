@@ -3335,6 +3335,9 @@
       "LastDay": "1 วันสุดท้าย",
       "LastHour": "1 ชั่วโมงสุดท้าย",
       "Today": "วันนี้"
+    },
+    "unit": {
+      "PercentPerCore": "% ต่อคอร์"
     }
   },
   "storageHost": {

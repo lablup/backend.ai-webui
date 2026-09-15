@@ -3335,6 +3335,9 @@
       "LastDay": "Последний 1 день",
       "LastHour": "Последний 1 час",
       "Today": "Сегодня"
+    },
+    "unit": {
+      "PercentPerCore": "% на ядро"
     }
   },
   "storageHost": {

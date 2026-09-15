@@ -5026,7 +5026,8 @@
         "statistics.prometheus.NoMetricsToDisplay",
         "statistics.timeRange.Last7Days",
         "statistics.timeRange.LastDay",
-        "statistics.timeRange.Today"
+        "statistics.timeRange.Today",
+        "statistics.unit.PercentPerCore"
       ]
     },
     {

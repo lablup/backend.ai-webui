@@ -3335,6 +3335,9 @@
       "LastDay": "Τελευταία 1 ημέρα",
       "LastHour": "Τελευταία 1 ώρα",
       "Today": "Σήμερα"
+    },
+    "unit": {
+      "PercentPerCore": "% ανά πυρήνα"
     }
   },
   "storageHost": {
