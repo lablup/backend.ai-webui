@@ -125,15 +125,15 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 
 ### Verification Harness
 
-Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript. Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually.
+Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript (plus the Astryx, agent-CLI and terminology gates). Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually. Relay runs first; every other check is a parallel lane with its own log under `node_modules/.cache/verify/`, so a cold worktree finishes in ~20s and a warm checkout in well under that. Formatting is checked on the files the branch changed relative to `main` (the set lint-staged formats at commit), not the whole tree. `VERIFY_TESTS=1` adds the Vitest suites CI runs (~+45s) — run it before opening a PR; `VERIFY_SERIAL=1` runs the lanes one at a time.
 
-**`verify.sh` does not run the Astryx token gate.** Run it yourself after touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike:
+**The Astryx token gate is report-only in `verify.sh`**: it prints the counts and the undeclared usages but never affects `=== ALL PASS ===`, because it has pre-existing findings. The bar is **no new findings** — the list must not grow relative to `main`. After touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike — run the full gate for the fix hints:
 
 ```bash
 node scripts/migration-gates/astryx-token-gate.mjs --strict
 ```
 
-It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name. It currently reports pre-existing findings, so the bar is **no new findings**, not zero.
+It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name.
 
 ### PR Review Checklist
 

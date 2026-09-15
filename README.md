@@ -231,7 +231,7 @@ If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-X
 | `pnpm run lint-fix`         | Auto-fix ESLint issues                                         |
 | `pnpm run format`           | Prettier format check                                          |
 | `pnpm run format-fix`       | Auto-fix formatting                                            |
-| `bash scripts/verify.sh`    | Run Relay + Lint + Format + TypeScript checks                  |
+| `bash scripts/verify.sh`    | Run Relay + Lint + Format + TypeScript checks (parallel lanes; `VERIFY_TESTS=1` adds Vitest) |
 | `pnpm run electron:d`       | Run Electron in dev mode                                       |
 | `pnpm run electron:d:hmr`   | Run Electron in dev mode with HMR (live debug)                 |
 | `pnpm run test`             | Jest unit tests (root: scripts/, src/)                         |
