@@ -1,0 +1,22 @@
+set link length [33m3300[39m
+S2 pin sits on: BUTTON "Active
+13" testid=page-data inDialog=false | modal radio in DOM: [33mfalse[39m
+S2 pin sits on (modal open): DIV "" testid=undefined inDialog=false
+S3 row actions: [
+  [32m'This pin came from a link — pick the element again to write your own note'[39m,
+  [32m'Move this pin up'[39m,
+  [32m'Move this pin down'[39m,
+  [32m'Remove this pin from the set'[39m
+]
+row label click navigated to /session/start?formValues={%22sessionTyp
+S3 pin sits on: DIV "Session Type
+Session" testid=page-session inDialog=false
+S4 pin sits on: DIV "[FR-3612 미리보기] Astry" testid=page-session inDialog=false
+┌─────────┬───────────────────────────┬────────────────────────────────┬───────────────┬─────────────────┬───────────────┬──────────────────┐
+│ (index) │ label                     │ url                            │ S1 visible    │ S2 behind modal │ S3 other page │ S4 behind a step │
+├─────────┼───────────────────────────┼────────────────────────────────┼───────────────┼─────────────────┼───────────────┼──────────────────┤
+│ 0       │ [32m'landing +12s'[39m            │ [32m'/data'[39m                        │ [32m'PIN/located'[39m │ [32m'PIN/located'[39m   │ [32m'—/away'[39m      │ [32m'—/away'[39m         │
+│ 1       │ [32m'modal opened +5s'[39m        │ [32m'/data'[39m                        │ [32m'PIN/located'[39m │ [32m'PIN/located'[39m   │ [32m'—/away'[39m      │ [32m'—/away'[39m         │
+│ 2       │ [32m'after S3 row click +12s'[39m │ [32m'/session/start?formValues={%'[39m │ [32m'—/away'[39m      │ [32m'—/away'[39m        │ [32m'PIN/located'[39m │ [32m'—/away'[39m         │
+│ 3       │ [32m'step 2 opened +6s'[39m       │ [32m'/session/start?formValues={%'[39m │ [32m'—/away'[39m      │ [32m'—/away'[39m        │ [32m'—/away'[39m      │ [32m'—/located'[39m      │
+└─────────┴───────────────────────────┴────────────────────────────────┴───────────────┴─────────────────┴───────────────┴──────────────────┘
