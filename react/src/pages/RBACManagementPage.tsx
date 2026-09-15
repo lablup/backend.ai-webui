@@ -10,6 +10,7 @@ import {
   RoleFilter,
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
+import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
@@ -19,7 +20,7 @@ import RoleNodes, {
   availableRoleSorterValues,
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
-import { ALL_RBAC_ELEMENT_TYPES } from '../helper/rbacElementTypes';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import {
@@ -125,6 +126,26 @@ const RBACManagementPage: React.FC = () => {
       fetchKey: deferredFetchKey,
     },
   );
+
+  // The scope-capable types straight from the manager: since 26.9.0 they are
+  // lowercase names, not an enum the client could enumerate.
+  const scopeTypesRef = useLazyLoadQuery<RBACManagementPageScopeTypesQuery>(
+    graphql`
+      query RBACManagementPageScopeTypesQuery {
+        rbacScopeEntityCombinations {
+          scopeType
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  const scopeTypeOptions = (
+    scopeTypesRef.rbacScopeEntityCombinations ?? []
+  ).map(({ scopeType }) => ({
+    label: t(rbacTypeI18nKey(scopeType), { defaultValue: scopeType }),
+    value: scopeType,
+  }));
 
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -300,18 +321,16 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
                   fixedOperator: 'equals',
-                  // The whole enum, not RoleFormModal's scope-id-picker
-                  // whitelist: the server filters on any element type.
-                  options: ALL_RBAC_ELEMENT_TYPES.map((type) => ({
-                    label: t(`rbac.types.${type}`, { defaultValue: type }),
-                    value: type,
-                  })),
+                  options: scopeTypeOptions,
                   strictSelection: true,
                 },
                 baiClient?.supports('role-mapped-scope-filter') && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
-                  type: 'string',
+                  // `equals` is the one operator both the 26.8 StringFilter
+                  // and the 26.9 UUIDFilter accept.
+                  type: 'uuid',
+                  fixedOperator: 'equals',
                 },
               ])}
               value={queryParams.filter ?? undefined}

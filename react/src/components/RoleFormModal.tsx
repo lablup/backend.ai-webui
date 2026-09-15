@@ -2,16 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  RBACElementType,
-  RoleFormModalCreateMutation,
-} from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   AstryxFormCheckbox,
@@ -19,14 +17,12 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIAdminContainerRegistrySelect,
   BAIAdminModelServiceSelect,
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
-  BAIButton,
   BAIDomainSelect,
   BAIDomainSelectV2,
   BAIFlex,
@@ -40,7 +36,7 @@ import {
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
-import { Trash, PlusIcon } from 'lucide-react';
+import _ from 'lodash';
 import React, { Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -50,10 +46,9 @@ import {
   useMutation,
 } from 'react-relay';
 
-// Scope types that have a UI-side scopeId selector implemented.
-// Used as the whitelist for role scope selection, intersected with
-// rbacPermissionMatrix at usage time.
-export const RBAC_ELEMENT_TYPES: ReadonlyArray<RBACElementType> = [
+// Scope types with a scope-id picker, in the uppercase spelling of the retired
+// `RBACElementType` enum; managers >= 26.9.0 report them lowercase.
+export const RBAC_ELEMENT_TYPES: ReadonlyArray<string> = [
   // Scope ID select implemented
   'DOMAIN',
   'PROJECT',
@@ -122,12 +117,13 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
 };
 
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
-  scopeType,
+  scopeType: rawScopeType,
   ...selectProps
 }) => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const scopeType = rawScopeType?.toUpperCase();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
   const branchProps: ScopeIdBranchProps = {
@@ -242,99 +238,6 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   );
 };
 
-interface ScopeRowProps {
-  name: number;
-  availableScopeTypes: ReadonlyArray<RBACElementType>;
-  canRemove: boolean;
-  onRemove: () => void;
-}
-
-const ScopeRow: React.FC<ScopeRowProps> = ({
-  name,
-  availableScopeTypes,
-  canRemove,
-  onRemove,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  const form = Form.useFormInstance();
-  const scopeType = Form.useWatch(['scopes', name, 'scopeType'], form) as
-    RBACElementType | undefined;
-
-  return (
-    <BAIFlex direction="row" gap="xs" align="start" style={{ width: '100%' }}>
-      <Form.Item
-        name={[name, 'scopeType']}
-        style={{ flex: 1, marginBottom: 0 }}
-        rules={[
-          {
-            required: true,
-            message: t('general.ValueRequired', {
-              name: t('rbac.ScopeType'),
-            }),
-          },
-        ]}
-      >
-        <BAISelect
-          showSearch
-          placeholder={t('rbac.ScopeType')}
-          options={availableScopeTypes.map((type) => ({
-            value: type,
-            label: t(`rbac.types.${type}`, { defaultValue: type }),
-          }))}
-          onChange={() => {
-            const scopes = form.getFieldValue('scopes') ?? [];
-            const next = [...scopes];
-            next[name] = { ...next[name], scopeId: undefined };
-            form.setFieldsValue({ scopes: next });
-          }}
-        />
-      </Form.Item>
-      <Form.Item
-        name={[name, 'scopeId']}
-        style={{ flex: 1, marginBottom: 0 }}
-        rules={[
-          {
-            required: true,
-            message: t('general.ValueRequired', {
-              name: t('rbac.ScopeId'),
-            }),
-          },
-          ({ getFieldValue }) => ({
-            validator(_rule, value) {
-              if (!value) return Promise.resolve();
-              const scopes: Array<{ scopeType?: string; scopeId?: string }> =
-                getFieldValue('scopes') ?? [];
-              const hasDuplicate = scopes.some(
-                (s, idx) =>
-                  idx !== name &&
-                  s?.scopeType === scopeType &&
-                  s?.scopeId === value,
-              );
-              if (hasDuplicate) {
-                return Promise.reject(new Error(t('rbac.DuplicateScope')));
-              }
-              return Promise.resolve();
-            },
-          }),
-        ]}
-      >
-        <ScopeIdSelect scopeType={scopeType} placeholder={t('rbac.ScopeId')} />
-      </Form.Item>
-      {/* MAPPING §3.3: icon-only + `danger` -> `IconButton
-          variant="destructive"`; the ad-hoc `aria-label` becomes the
-          component's required `label`. */}
-      <IconButton
-        variant="destructive"
-        icon={<Trash size="1em" />}
-        isDisabled={!canRemove}
-        onClick={onRemove}
-        label={t('button.Delete')}
-      />
-    </BAIFlex>
-  );
-};
-
 interface RoleFormModalProps extends BAIModalProps {
   roleNodeFrgmt?: RoleFormModalFragment$key | null;
   onRequestClose: (success: boolean) => void;
@@ -354,6 +257,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
   // and the mutation input so older managers never receive the unknown field.
   const supportsAutoAssign = baiClient.supports('role-auto-assign');
+  // Managers >= 26.9.0 take the one scope as `scope`; older ones as `scopes`.
+  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
+  const scopeType = Form.useWatch('scopeType', form) as string | undefined;
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(
@@ -373,14 +279,21 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // Scope types available for a new role: intersection of UI-supported types
-  // (RBAC_ELEMENT_TYPES) and backend-reported scope types that have at least
-  // one entity with at least one action.
-  const availableScopeTypes = RBAC_ELEMENT_TYPES.filter((type) => {
-    const entry = rbacPermissionMatrix?.find((c) => c.scopeType === type);
-    if (!entry) return false;
-    return entry.entities.some((e) => e.actions.length > 0);
-  });
+  // The scope types a role may be created in, in the manager's own spelling:
+  // the reported ones that have a scope-id picker and an actionable entity.
+  const scopeTypeOptions = _.uniqBy(
+    (rbacPermissionMatrix ?? []).filter(
+      (combination) =>
+        RBAC_ELEMENT_TYPES.includes(combination.scopeType.toUpperCase()) &&
+        combination.entities.some((entity) => entity.actions.length > 0),
+    ),
+    (combination) => combination.scopeType.toUpperCase(),
+  ).map((combination) => ({
+    value: combination.scopeType,
+    label: t(rbacTypeI18nKey(combination.scopeType), {
+      defaultValue: combination.scopeType,
+    }),
+  }));
 
   const editingRole = useFragment(
     graphql`
@@ -510,15 +423,21 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
                 ...(supportsAutoAssign
                   ? { autoAssign: values.autoAssign }
                   : {}),
-                scopes: (
-                  values.scopes as Array<{
-                    scopeType: RBACElementType;
-                    scopeId: string;
-                  }>
-                ).map((s) => ({
-                  scopeType: s.scopeType,
-                  scopeId: s.scopeId,
-                })),
+                ...(isSingleScopeRole
+                  ? {
+                      scope: {
+                        scopeType: values.scopeType,
+                        scopeId: values.scopeId,
+                      },
+                    }
+                  : {
+                      scopes: [
+                        {
+                          scopeType: values.scopeType,
+                          scopeId: values.scopeId,
+                        },
+                      ],
+                    }),
               },
             },
             onCompleted: (_data, errors) => {
@@ -576,7 +495,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           name: editingRole?.name ?? '',
           description: editingRole?.description ?? '',
           autoAssign: editingRole?.autoAssign ?? false,
-          scopes: [{}],
         }}
       >
         <Form.Item
@@ -607,50 +525,46 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
           </Form.Item>
         )}
         {!isEditMode && (
-          <Form.Item label={t('rbac.ScopeTypeAndId')} required>
-            <Form.List
-              name="scopes"
+          <BAIFlex direction="row" gap="xs" align="start">
+            <Form.Item
+              name="scopeType"
+              label={t('rbac.ScopeType')}
+              style={{ flex: 1 }}
               rules={[
                 {
-                  validator: async (_rule, scopes) => {
-                    if (!scopes || scopes.length === 0) {
-                      return Promise.reject(
-                        new Error(t('rbac.AtLeastOneScopeRequired')),
-                      );
-                    }
-                  },
+                  required: true,
+                  message: t('general.ValueRequired', {
+                    name: t('rbac.ScopeType'),
+                  }),
                 },
               ]}
             >
-              {(fields, { add, remove }, { errors }) => (
-                <BAIFlex
-                  direction="column"
-                  gap="xs"
-                  align="stretch"
-                  style={{ width: '100%' }}
-                >
-                  {fields.map(({ key, name }) => (
-                    <ScopeRow
-                      key={key}
-                      name={name}
-                      availableScopeTypes={availableScopeTypes}
-                      canRemove={fields.length > 1}
-                      onRemove={() => remove(name)}
-                    />
-                  ))}
-                  <BAIButton
-                    type="dashed"
-                    block
-                    icon={<PlusIcon />}
-                    onClick={() => add({})}
-                  >
-                    {t('button.Add')}
-                  </BAIButton>
-                  <Form.ErrorList errors={errors} />
-                </BAIFlex>
-              )}
-            </Form.List>
-          </Form.Item>
+              <BAISelect
+                showSearch
+                placeholder={t('rbac.ScopeType')}
+                options={scopeTypeOptions}
+                onChange={() => form.setFieldsValue({ scopeId: undefined })}
+              />
+            </Form.Item>
+            <Form.Item
+              name="scopeId"
+              label={t('rbac.ScopeId')}
+              style={{ flex: 1 }}
+              rules={[
+                {
+                  required: true,
+                  message: t('general.ValueRequired', {
+                    name: t('rbac.ScopeId'),
+                  }),
+                },
+              ]}
+            >
+              <ScopeIdSelect
+                scopeType={scopeType}
+                placeholder={t('rbac.ScopeId')}
+              />
+            </Form.Item>
+          </BAIFlex>
         )}
       </Form>
     </BAIModal>

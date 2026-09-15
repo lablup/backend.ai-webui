@@ -464,4 +464,34 @@ fragment FragmentWithMixedFields on Node {
   field1
 }`);
   });
+
+  it('keeps one side of a version-gated field pair per manager version', () => {
+    // A 26.9 manager answers a role's one scope as `scopeType`/`scopeId`;
+    // older managers answer a `scopes` connection (FR-3905).
+    const query = `
+      fragment RoleFragment on Role {
+        scopes(first: 1) @deprecatedSince(version: "26.9.0") {
+          edges { node { scopeType } }
+        }
+        scopeType @since(version: "26.9.0")
+        scopeId @since(version: "26.9.0")
+      }
+      query RoleQuery { adminRoles { edges { node { ...RoleFragment } } } }
+    `;
+    const on = (managerVersion: string) =>
+      manipulateGraphQLQueryWithClientDirectives(query, {}, (version) =>
+        Array.isArray(version) ? false : managerVersion < version,
+      );
+
+    const onNew = on('26.9.0');
+    expect(onNew).not.toContain('scopes(');
+    expect(onNew.match(/scopeType/g)).toHaveLength(1);
+    expect(onNew).toContain('scopeId');
+
+    // The one `scopeType` left is the legacy connection's own.
+    const onOld = on('26.8.3');
+    expect(onOld).toContain('scopes(first: 1)');
+    expect(onOld.match(/scopeType/g)).toHaveLength(1);
+    expect(onOld).not.toContain('scopeId');
+  });
 });

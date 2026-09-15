@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2398201d3eb88285bfed50519b6432c2>>
+ * @generated SignedSource<<ec8967d512d8b84160471f1d7b2ed2ad>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -54,7 +54,7 @@ export type PermissionFilter = {
   NOT?: ReadonlyArray<PermissionFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
@@ -84,7 +84,7 @@ export type ScopedRolePermissionCardQuery$data = {
     readonly permissions: {
       readonly edges: ReadonlyArray<{
         readonly node: {
-          readonly entityType: RBACElementType;
+          readonly entityType: string;
           readonly operation: OperationType;
           readonly scopeId: string;
           readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_permissionsFragment">;
