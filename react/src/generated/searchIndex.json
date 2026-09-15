@@ -1566,7 +1566,6 @@
         "environment.ImportImageTagNotFoundInRegistry",
         "environment.ImportImageTagRequired",
         "environment.ImportImageUnreadableCatalogUrl",
-        "environment.ImportImageUnsupportedCommand",
         "environment.Install",
         "environment.InstallImage",
         "environment.InstallSessionProject",
