@@ -95,6 +95,25 @@ else
   printf 'skip review-pins (no pnpm)\n'
 fi
 
+# ── a partly-resolved run counts and numbers only what resolved ────────────────
+jq '{setLink, sha, pr, app, url,
+     stops: [range(0;6) as $i | {id: "c_aaaaaa\($i)", label: "stop \($i)",
+             ok: ($i != 2 and $i != 4), ch: "moved", ck: "check \($i)"}],
+     couldNotPin: [{label: "stop 2", ck: "check 2", reason: "did not resolve within 12s"},
+                   {label: "stop 4", ck: "check 4", reason: "resolved onto \u0027other\u0027"}]}' \
+  "$TMP/report.json" >"$TMP/partial.json"
+PARTIAL=$(comment_body "$(jq -c . "$TMP/partial.json")" o/r)
+check 'the header counts only the stops that resolved' 'ok' \
+  "$(grep -q '📍 \*\*Walkthrough · 4 stops · ' <<<"$PARTIAL" && echo ok || echo wrong)"
+check 'the marker counts only the stops that resolved' 'ok' \
+  "$(grep -q 'stops=4 ' <<<"$PARTIAL" && echo ok || echo wrong)"
+check 'four numbered items, ending at 4' 4 "$(grep -c '^[0-9]\. \*\*' <<<"$PARTIAL")"
+check 'an unresolved stop is not numbered' 0 "$(grep -c '^[0-9]\. \*\*stop 2\*\*' <<<"$PARTIAL")"
+check 'both unresolved stops are listed under Could not pin' 2 \
+  "$(sed -n '/^Could not pin/,$p' <<<"$PARTIAL" | grep -c '^- stop ')"
+check 'their checks survive' 'ok' \
+  "$(grep -q '^- stop 4 — check: check 4$' <<<"$PARTIAL" && echo ok || echo missing)"
+
 # ── upsert against a fake gh ──────────────────────────────────────────────────
 mkdir -p "$TMP/bin"
 cat >"$TMP/bin/gh" <<'GH'

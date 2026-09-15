@@ -83,7 +83,9 @@ comment_body() {
   sha=$(jq -r '.sha' <<<"$report")
   server=$(jq -r '.app' <<<"$report")
   link=$(jq -r '.setLink' <<<"$report")
-  stops=$(jq -r '.stops | length' <<<"$report")
+  # A stop that did not resolve has no mark to walk to: it is counted and
+  # listed under "Could not pin", never numbered in the walkthrough.
+  stops=$(jq -r '[.stops[] | select(.ok)] | length' <<<"$report")
   printf '%s\n' "$(marker "$pr" "$sha" "$stops" "$server")"
   printf '📍 **Walkthrough · %s stops · %s** — [Open the walkthrough](%s)\n' \
     "$stops" "${sha:0:7}" "$link"
@@ -93,7 +95,7 @@ comment_body() {
     [ -n "$stop" ] || continue
     stop_item "$n" "$stop" "$repo" "$pr"
     n=$((n + 1))
-  done < <(jq -c '.stops[]' <<<"$report")
+  done < <(jq -c '.stops[] | select(.ok)' <<<"$report")
   if [ "$(jq -r '.couldNotPin | length' <<<"$report")" != 0 ]; then
     printf '\nCould not pin (check by hand):\n'
     jq -r '.couldNotPin[] | "- \(.label) — check: \(.ck)"' <<<"$report"

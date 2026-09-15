@@ -31,6 +31,8 @@ const STATE_DIR =
 const RESOLVE_TIMEOUT_MS = 12_000;
 /** How long a lazy route gets to render the element a stop names. */
 const FIND_TIMEOUT_MS = 20_000;
+/** `PIN_BODY_SRC` in codec.ts: `parseFragments` silently drops a longer part. */
+const MAX_PART_B64 = 2048;
 
 const fail = (code, message) => {
   process.stderr.write(`walkthrough: ${message}\n`);
@@ -198,9 +200,9 @@ const OVERLAY_ROOT_JS = `() => {
   return host ? (host.shadowRoot ?? host) : null;
 }`;
 
-async function mintInPage(page, find, fields) {
+async function mintInPage(page, find, fields, at) {
   return page.evaluate(
-    async ([find, findJs, fields]) => {
+    async ([find, findJs, fields, at, maxPart]) => {
       const [anchorMod, codecMod, idMod] = await Promise.all(
         ['anchor', 'codec', 'id'].map(
           (name) => import(/* @vite-ignore */ `/__review/${name}.js`),
@@ -215,13 +217,24 @@ async function mintInPage(page, find, fields) {
       if (!el) return { error: 'element not found on the page' };
       el.scrollIntoView({ block: 'center' });
       // `stripInvalidStopFields` is the decoder's own gate: a field it would
-      // drop on read must never leave here in the first place.
+      // drop on read must never leave here in the first place. `at` is not an
+      // anchor field — it only seasons the id.
       const raw = { ...anchorMod.captureAnchorSignals(el), ...fields };
       const anchor = guard ? guard.stripInvalidStopFields(raw) : raw;
       const b64 = await codecMod.encodeAnchor(anchor);
+      if (b64.length > maxPart)
+        return {
+          error: `anchor is ${b64.length} chars; a link part caps at ${maxPart} — shorten ch/ck or drop via/code`,
+        };
+      const kept = {};
+      const dropped = [];
+      for (const key of Object.keys(fields)) {
+        if (anchor[key] === undefined) dropped.push(key);
+        else kept[key] = anchor[key];
+      }
       return {
         b64,
-        id: idMod.pinId(fields.pr, b64, fields.at),
+        id: idMod.pinId(fields.pr, b64, at),
         anchor: {
           p: anchor.p,
           q: anchor.q ?? '',
@@ -230,11 +243,11 @@ async function mintInPage(page, find, fields) {
           txt: anchor.txt ?? '',
           dlg: anchor.dlg ?? 0,
         },
-        guarded: !!guard,
-        dropped: Object.keys(fields).filter((k) => anchor[k] === undefined),
+        kept,
+        dropped,
       };
     },
-    [find, FIND_JS, fields],
+    [find, FIND_JS, fields, at, MAX_PART_B64],
   );
 }
 
@@ -255,21 +268,18 @@ async function replayVia(page, via, settleMs) {
 }
 
 /**
- * Did the stop draw? The mark carries `data-pin-id` whatever class the overlay
- * gives it (FR-3950 renames it); a dock `.row` with the same id is not it.
+ * Did the stop draw ON its element? Three nodes carry `data-pin-id` — the
+ * marker, the card and the box — and `placeAway` moves `.found` to the docked
+ * card when the element scrolls out of sight. Only `.markbox.found` is the
+ * element-shaped one, so only it can be measured against the landmark.
  */
 async function markState(page, id) {
   return page.evaluate(
     ([id, rootJs]) => {
       const root = (0, eval)(rootJs)();
-      if (!root) return { drawn: false, under: '' };
-      const mark = [...root.querySelectorAll(`[data-pin-id="${id}"]`)].find(
-        (el) =>
-          !el.classList.contains('row') &&
-          !el.closest('.row') &&
-          el.getBoundingClientRect().width > 0,
-      );
-      if (!mark) return { drawn: false, under: '' };
+      const mark = root?.querySelector(`.markbox.found[data-pin-id="${id}"]`);
+      if (!mark || mark.getBoundingClientRect().width === 0)
+        return { drawn: false, under: '' };
       const box = mark.getBoundingClientRect();
       const host = document.querySelector('[data-bai-review-overlay]');
       const previous = host.style.pointerEvents;
@@ -289,12 +299,20 @@ async function markState(page, id) {
   );
 }
 
-async function waitForMark(page, id, timeoutMs) {
+/**
+ * Poll until the mark draws over the landmark it was captured on. The overlay
+ * re-measures on its own schedule, so a read taken right after a scroll can
+ * still carry the pre-scroll rect; settling on the expected landmark is what
+ * tells a stale read from a wrong one.
+ */
+async function waitForMark(page, id, expectedTid, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   let state = { drawn: false, under: '' };
   for (;;) {
     state = await markState(page, id);
-    if (state.drawn || Date.now() > deadline) return state;
+    const settled =
+      state.drawn && (!expectedTid || state.under === expectedTid);
+    if (settled || Date.now() > deadline) return state;
     await page.waitForTimeout(500);
   }
 }
@@ -331,9 +349,12 @@ async function main() {
   if (!/^[0-9a-f]{40}$/.test(sha))
     fail(3, `'${sha}' is not a 40-char commit sha`);
 
-  const shared = await probePortless(record.url);
-  const base = shared ? record.url : record.localUrl;
-  if (!base) fail(3, `${file} carries neither a gateway URL nor a local one`);
+  // advertise.sh refuses an unroutable server rather than publish a
+  // `.localhost` URL; a set link goes in the same public comment.
+  const base = record.url;
+  if (!base) fail(3, `${file} carries no gateway URL — is the box joined?`);
+  if (!(await probePortless(base)))
+    fail(3, `${base} is not a routable Portless 2xx — no walkthrough`);
 
   const envFile =
     flags.envFile ||
@@ -355,7 +376,7 @@ async function main() {
 
   if (flags.dryRun) {
     process.stdout.write(
-      `${JSON.stringify({ app, pr, sha, url: base, shared, stops: stops.length }, null, 2)}\n`,
+      `${JSON.stringify({ app, pr, sha, url: base, stops: stops.length }, null, 2)}\n`,
     );
     process.stderr.write(
       `walkthrough: dry run — ${stops.length} stops for PR #${pr} on ${base}\n`,
@@ -388,7 +409,8 @@ async function main() {
           origin,
           projectBase,
           settleMs,
-          fields: stopFields(stop, { sha, pr, at }),
+          fields: stopFields(stop, { sha, pr }),
+          at,
         });
         if (result.error) {
           couldNotPin.push({
@@ -417,17 +439,32 @@ async function main() {
       );
     }
 
-    const first = minted[0].anchor;
-    const fragment = minted.map((m) => `bai=v3.${m.id}.${m.b64}`).join('&');
-    const setLink = `${origin}${first.p}${first.q ? `?${first.q}` : ''}#${fragment}`;
+    // `deeplink.ts`'s grammar: the whole set rides in the fragment, opened on
+    // the first pin's page.
+    const link = (pins) => {
+      const head = pins[0].anchor;
+      const parts = pins.map((m) => `bai=v3.${m.id}.${m.b64}`).join('&');
+      return `${origin}${head.p}${head.q ? `?${head.q}` : ''}#${parts}`;
+    };
 
     const verified = await verify(context, {
       minted,
       origin,
-      fragment,
+      fragment: minted.map((m) => `bai=v3.${m.id}.${m.b64}`).join('&'),
       settleMs,
     });
     for (const entry of verified.failures) couldNotPin.push(entry);
+
+    // A stop that did not resolve is not in the walkthrough, so it is not in
+    // the link either: the count, the numbered list and the navigator agree.
+    const failed = new Set(verified.failures.map((f) => f.id));
+    const resolved = minted.filter((m) => !failed.has(m.id));
+    if (!resolved.length)
+      fail(
+        3,
+        `no stop resolved — ${couldNotPin.map((c) => `${c.label}: ${c.reason}`).join('; ')}`,
+      );
+    const setLink = link(resolved);
 
     const report = {
       setLink,
@@ -439,8 +476,8 @@ async function main() {
       stops: minted.map((m) => ({
         id: m.id,
         label: m.label,
-        ok: !verified.failures.some((f) => f.id === m.id),
-        ...stopWording(m.stop),
+        ok: !failed.has(m.id),
+        ...stopWording(m.kept, m.dropped),
       })),
       couldNotPin: couldNotPin.map(({ label, ck, reason }) => ({
         label,
@@ -470,12 +507,17 @@ const shortMessage = (error) =>
     .split('\n')[0]
     .slice(0, 160);
 
-/** What the PR comment prints for a stop; `via`/`find`/`route` stay internal. */
-function stopWording(stop) {
-  const out = { ch: stop.ch, ck: stop.ck };
-  for (const key of ['type', 'kind', 'old', 'new', 'code']) {
-    if (stop[key] !== undefined) out[key] = stop[key];
+/**
+ * What the PR comment prints for a stop — read back off the STRIPPED anchor,
+ * so the comment says exactly what the link carries. `dropped` names anything
+ * the guard refused; `manifest.mjs` means it should always be empty.
+ */
+function stopWording(kept, dropped) {
+  const out = {};
+  for (const key of ['ch', 'ck', 'type', 'kind', 'old', 'new', 'code']) {
+    if (kept[key] !== undefined) out[key] = kept[key];
   }
+  if (dropped.length) out.dropped = dropped;
   return out;
 }
 
@@ -483,8 +525,8 @@ const describeStop = (stop) =>
   `${stop.route} › ${stop.find.testid ?? `"${stop.find.text}"`}`;
 
 /** The FR-3949 stop fields, minus the ones the manifest left out. */
-function stopFields(stop, { sha, pr, at }) {
-  const fields = { ch: stop.ch, ck: stop.ck, sha, pr, at };
+function stopFields(stop, { sha, pr }) {
+  const fields = { ch: stop.ch, ck: stop.ck, sha, pr };
   for (const key of ['old', 'new', 'type', 'kind', 'code', 'via']) {
     if (stop[key] !== undefined) fields[key] = stop[key];
   }
@@ -522,7 +564,10 @@ async function login(page, base, endpoint, env) {
   }
 }
 
-async function mintStop(page, { stop, origin, projectBase, settleMs, fields }) {
+async function mintStop(
+  page,
+  { stop, origin, projectBase, settleMs, fields, at },
+) {
   await page.goto(`${origin}${projectBase}${stop.route}`, {
     waitUntil: 'domcontentloaded',
   });
@@ -538,13 +583,14 @@ async function mintStop(page, { stop, origin, projectBase, settleMs, fields }) {
       { timeout: FIND_TIMEOUT_MS },
     )
     .catch(() => {});
-  return mintInPage(page, stop.find, fields);
+  return mintInPage(page, stop.find, fields, at);
 }
 
 /**
  * A reviewer's pass: open the set link, then walk to each stop's own page and
  * replay its `via`. A mark that draws over the wrong landmark is a failure —
- * a wrong mark under a stop is worse than a missing one.
+ * a wrong mark under a stop is worse than a missing one — and so is a mark
+ * that draws over no landmark at all.
  */
 async function verify(context, { minted, origin, fragment, settleMs }) {
   const page = await context.newPage();
@@ -560,9 +606,7 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       const query = stop.anchor.q ? `?${stop.anchor.q}` : '';
       await page.goto(
         `${origin}${samePage ? landing.p : stop.anchor.p}${query}#${fragment}`,
-        {
-          waitUntil: 'domcontentloaded',
-        },
+        { waitUntil: 'domcontentloaded' },
       );
       await waitForOverlay(page);
       await page.waitForTimeout(settleMs);
@@ -570,7 +614,22 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       if (!samePage)
         await replayVia(page, stop.stop.via, settleMs).catch(() => {});
     }
-    const state = await waitForMark(page, stop.id, RESOLVE_TIMEOUT_MS);
+    // Only the focus pin is scrolled to; every other stop of a same-page set
+    // would be measured docked-away rather than on its element.
+    await page
+      .evaluate(
+        ([find, findJs]) =>
+          (0, eval)(findJs)(find)?.scrollIntoView({ block: 'center' }),
+        [stop.stop.find, FIND_JS],
+      )
+      .catch(() => {});
+    await page.waitForTimeout(500);
+    const state = await waitForMark(
+      page,
+      stop.id,
+      stop.anchor.tid,
+      RESOLVE_TIMEOUT_MS,
+    );
     if (!state.drawn) {
       failures.push({
         id: stop.id,
@@ -580,12 +639,12 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       });
       continue;
     }
-    if (stop.anchor.tid && state.under && state.under !== stop.anchor.tid) {
+    if (stop.anchor.tid && state.under !== stop.anchor.tid) {
       failures.push({
         id: stop.id,
         label: stop.label,
         ck: stop.stop.ck,
-        reason: `resolved onto '${state.under}', not '${stop.anchor.tid}'`,
+        reason: `resolved onto '${state.under || 'no landmark'}', not '${stop.anchor.tid}'`,
       });
     }
   }

@@ -41,17 +41,26 @@ in, replay, mint, verify, link) and `scripts/comment.sh` posts it.
 Stop and say why, in one line, if any of these does not hold. A preflight
 failure produces **no comment and no walkthrough**, not a partial one.
 
-| Check                              | How                                                                        |
-| ---------------------------------- | -------------------------------------------------------------------------- |
-| The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                                          |
-| A boot record for this branch      | `~/.local/state/fw/dev-servers/<app>.json`, `stoppedAt: null`              |
-| The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`, else its `localUrl` |
-| The app shell survives login       | `mint.mjs` checks it and exits 3                                           |
+| Check                              | How                                                           |
+| ---------------------------------- | ------------------------------------------------------------- |
+| The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                             |
+| A boot record for this branch      | `~/.local/state/fw/dev-servers/<app>.json`, `stoppedAt: null` |
+| The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`         |
+| The app shell survives login       | `mint.mjs` checks it and exits 3                              |
 
-The last one is the one that actually bites: today's default backend fails in
-the app shell with `Cannot query field "scopes" on type "Role"`, and there is
-no walkthrough to mint against a shell that dies. `http://10.82.0.130:8090`
-works — pass it as `--endpoint`.
+The set link goes in a public PR comment, so an unroutable server is a
+preflight failure, not a reason to fall back to the record's `localUrl` — the
+same refusal `advertise.sh` makes.
+
+The last check is the one that actually bites, and it is about the **backend**,
+not the server. Resolve the endpoint the way the `dev-server` skill does
+(its §2c: the PR description's named test server, then the shell/`.env` value,
+then `config.toml`) and pass it as `--endpoint`; then verify the app shell
+survives login — `mint.mjs` does, and exits 3 with one line when it does not.
+A shell that dies leaves nothing to mint against. The symptom to recognize is
+a backend whose schema the build is ahead of: the shell renders
+`An error has occurred` and the console carries
+`Cannot query field "scopes" on type "Role"`.
 
 ## 3. Write the stop manifest
 
@@ -148,8 +157,16 @@ everything and launches no browser.
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and
-checks each stop draws its mark within 12 s over the landmark it was captured
-on. Exit **0** with a link, **2** on a bad manifest, **3** on preflight.
+checks each stop draws its `.markbox` within 12 s **over the landmark it was
+captured on** — a mark that lands on another testid, or on none, is a failure
+and goes to `couldNotPin[]` with its `ck`. Exit **0** with a link, **2** on a
+bad manifest, **3** on preflight.
+
+The report's `stops[]` carries each stop's wording read back off the _stripped_
+anchor, so the comment says exactly what the link carries; a `dropped` list
+appears when the guard refused a field, which validation means should never
+happen. A stop whose anchor exceeds 2048 chars is refused rather than minted —
+`parseFragments` would drop that part of the link silently.
 
 ## 7. Post it
 
@@ -162,7 +179,8 @@ bash .claude/skills/walkthrough/scripts/comment.sh describe \
 
 `upsert` writes **one comment per PR**, found by
 `<!-- bai-walkthrough v1 pr=<n> … -->` and edited in place on a re-mint. It
-carries the set link once, a numbered list, and the "Could not pin" list — no
+numbers and counts only the stops that **resolved**; the rest appear under
+"Could not pin" alone. It carries the set link once — no
 per-stop dev links, no `<!-- bai-review -->` marker, no `> 📍` quote block, so
 the review-pin resolver never reads a stop as a finding.
 

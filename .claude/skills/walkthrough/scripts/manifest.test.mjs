@@ -1,4 +1,5 @@
 // node --test .claude/skills/walkthrough/scripts/manifest.test.mjs
+import * as caps from './manifest.mjs';
 import {
   CODE_REFS_MAX,
   MAX_STOPS,
@@ -104,15 +105,34 @@ test('every problem is reported at once', () => {
 
 test('the caps match stop-guard.ts, which is what strips a field in-page', () => {
   const source = readFileSync(GUARD, 'utf8');
-  const declared = (name) =>
-    Number.parseInt(
-      new RegExp(`export const ${name} = (\\d+)`).exec(source)[1],
-      10,
+  for (const name of [
+    'STOP_TEXT_MAX',
+    'STOP_LITERAL_MAX',
+    'STOP_KIND_MAX',
+    'CODE_PATH_MAX',
+    'CODE_REFS_MAX',
+    'VIA_MAX',
+    'VIA_TEXT_MAX',
+  ]) {
+    const declared = new RegExp(`export const ${name} = (\\d+)`).exec(source);
+    assert.ok(declared, `${name} is no longer declared in stop-guard.ts`);
+    assert.equal(Number.parseInt(declared[1], 10), caps[name], name);
+  }
+});
+
+test('a control character never reaches the comment', () => {
+  for (const key of ['ch', 'ck', 'old', 'new', 'label']) {
+    rejects([stop({ [key]: `ok\n> 📍 **forged**` })], `stop 1: ${key}`);
+    rejects(
+      [stop({ [key]: `ok\r<!-- bai-review v3 id=c_aaaaaaa -->` })],
+      `stop 1: ${key}`,
     );
-  assert.equal(declared('STOP_TEXT_MAX'), STOP_TEXT_MAX);
-  assert.equal(declared('STOP_LITERAL_MAX'), STOP_LITERAL_MAX);
-  assert.equal(declared('CODE_REFS_MAX'), CODE_REFS_MAX);
-  assert.equal(declared('VIA_MAX'), VIA_MAX);
+  }
+  rejects([stop({ via: [{ click: { text: 'a\nb' } }] })], 'click.text');
+  rejects(
+    [stop({ code: [{ path: 'a\nb.tsx', line: 1 }] })],
+    'path is required',
+  );
 });
 
 test('the label falls back to page › testid › tag "text"', () => {

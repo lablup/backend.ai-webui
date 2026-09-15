@@ -17,7 +17,14 @@ export const VIA_TEXT_MAX = 120;
 export const MAX_STOPS = 20;
 
 const isInt = (v) => typeof v === 'number' && Number.isInteger(v) && v > 0;
-const isText = (v, max) => typeof v === 'string' && !!v && v.length <= max;
+/**
+ * No control character survives: `ch`/`ck`/`old`/`new`/`label` are rendered
+ * straight into a PR comment, and a newline in one of them could forge a
+ * `> 📍` block or a `<!-- bai-review` marker the resolver would act on.
+ */
+const CONTROL_RE = /[\u0000-\u001f\u007f]/;
+const isText = (v, max) =>
+  typeof v === 'string' && !!v && v.length <= max && !CONTROL_RE.test(v);
 
 function checkCode(refs, where, errors) {
   if (!Array.isArray(refs) || refs.length === 0)
