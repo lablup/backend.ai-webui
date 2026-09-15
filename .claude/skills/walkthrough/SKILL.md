@@ -105,7 +105,9 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
 - `via` — the clicks that reveal the element, replayed in order; `{"click":
 {"text": "…"}}` matches exact visible text, `{"click": {"tid": "…"}}` a
   testid. At most 8.
-- `find` — `{"testid": "…"}` (preferred) or `{"text": "…"}` on a control.
+- `find` — `{"testid": "…"}` (preferred), `{"text": "…"}` on a control, or
+  `{"selector": "…"}` (a CSS selector, optionally with `"text"` to pick the
+  node whose text matches — an SVG label, a table cell).
 - `label` — optional; without it the comment's head is
   `Page › testid › tag "text"`, derived from the anchor.
 - Capture inside a `[role=dialog]` sets `dlg: 1` on its own — do not write it.

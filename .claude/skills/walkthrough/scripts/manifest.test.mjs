@@ -48,7 +48,7 @@ test('route must be an origin-relative path', () => {
 });
 
 test('a stop needs a way to find its element and both sentences', () => {
-  rejects([stop({ find: {} })], 'testid or a text');
+  rejects([stop({ find: {} })], 'testid, a selector or a text');
   rejects([stop({ ch: '' })], 'ch is required');
   rejects([stop({ ck: undefined })], 'ck is required');
 });
