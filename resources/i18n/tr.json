@@ -1508,7 +1508,7 @@
     "ID": "ID",
     "Image": "İmaj",
     "Images": "Görüntüler",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "{{count}} imaj başarıyla içe aktarıldı.",
     "ImportImage": "İmajı İçe Aktar",
     "ImportImageAdded": "İçe aktarıldı",
     "ImportImageDesc": "İmajın meta verilerini kayıt defterinden okur ve bu listeye kaydeder. Satır başına bir referans: tam bir imaj referansı ya da bir NGC kataloğu sayfa adresi. İmajı ajanlara indirmek için içe aktardıktan sonra imaj yükleme işlemini kullanın.",

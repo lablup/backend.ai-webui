@@ -1508,7 +1508,7 @@
     "ID": "ID",
     "Image": "イメージ",
     "Images": "イメージ",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "{{count}} 件のイメージをインポートしました。",
     "ImportImage": "イメージをインポート",
     "ImportImageAdded": "インポート済み",
     "ImportImageDesc": "レジストリからイメージのメタデータを読み取り、この一覧に登録します。1 行につき 1 件、完全なイメージ参照または NGC カタログのページアドレスを入力します。エージェントにダウンロードするには、インポート後に「イメージをインストール」を使用します。",

@@ -1509,7 +1509,7 @@
     "ID": "識別碼",
     "Image": "映像檔",
     "Images": "圖片",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "已成功匯入 {{count}} 個映像檔。",
     "ImportImage": "匯入映像檔",
     "ImportImageAdded": "已匯入",
     "ImportImageDesc": "從註冊表讀取映像檔中繼資料，並將其登錄到這份清單中。每行一筆參照：完整的映像檔參照，或 NGC 目錄頁面網址。若要下載到代理節點，請在匯入後使用「安裝映像」。",

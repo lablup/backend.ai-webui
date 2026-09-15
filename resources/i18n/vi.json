@@ -1508,7 +1508,7 @@
     "ID": "ID",
     "Image": "Ảnh",
     "Images": "Hình ảnh",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "Đã nhập thành công {{count}} ảnh.",
     "ImportImage": "Nhập ảnh",
     "ImportImageAdded": "Đã nhập",
     "ImportImageDesc": "Đọc siêu dữ liệu của ảnh từ sổ đăng ký của nó và đăng ký ảnh vào danh sách này. Mỗi dòng một tham chiếu: một tham chiếu ảnh đầy đủ hoặc địa chỉ trang danh mục NGC. Để tải ảnh về các agent, hãy dùng chức năng cài đặt ảnh sau khi nhập.",

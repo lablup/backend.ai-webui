@@ -1508,7 +1508,7 @@
     "ID": "ID",
     "Image": "镜像",
     "Images": "图片",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "已成功导入 {{count}} 个镜像。",
     "ImportImage": "导入镜像",
     "ImportImageAdded": "已导入",
     "ImportImageDesc": "从注册表读取镜像元数据，并将其登记到此列表中。每行一条引用：完整的镜像引用，或 NGC 目录页面地址。若要下载到代理节点，请在导入后使用“安装镜像”。",

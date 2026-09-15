@@ -99,17 +99,35 @@ vi.mock('../app-shim', async (importOriginal) => {
   };
 });
 
-// The registry editor has its own Relay/i18n surface and is only reachable
-// from the "registry not registered" branch, which these tests do not take.
+// The registry editor has its own Relay/i18n surface, so it is stubbed — but
+// the stub records the props it was handed and can fire `onOk`, which is the
+// whole contract the "registry not registered" branch depends on.
+const mockRegistryEditorRender = vi.fn();
+
 vi.mock('./ContainerRegistryEditorModal', async () => {
   const React = await import('react');
   return {
-    default: (props: any) =>
-      props.open
-        ? React.createElement('div', {
-            'data-testid': 'mock-registry-editor-modal',
-          })
-        : null,
+    default: (props: any) => {
+      mockRegistryEditorRender(props);
+      return props.open
+        ? React.createElement(
+            'button',
+            {
+              type: 'button',
+              'data-testid': 'mock-registry-editor-modal',
+              onClick: () =>
+                props.onOk('create', {
+                  id: 'registry-created',
+                  registry_name: props.initialValues?.registry_name,
+                  project: props.initialValues?.project,
+                  url: props.initialValues?.url,
+                  type: props.initialValues?.type,
+                }),
+            },
+            'create',
+          )
+        : null;
+    },
   };
 });
 
@@ -151,8 +169,29 @@ const NGC_REGISTRY: RegistryNodeShape = {
   type: 'docker',
 };
 
+/**
+ * The host is registered, but only under `team-a`. Its URL is deliberately not
+ * `https://{host}`, so the prefill assertions can tell the sibling row's URL
+ * apart from the value `prefillForHost` invents when there is no sibling.
+ */
+const MIRROR_REGISTRY: RegistryNodeShape = {
+  id: 'registry-3',
+  registry_name: 'mirror.example.com',
+  project: 'team-a',
+  url: 'https://mirror.example.com:5000/v2',
+  type: 'harbor2',
+};
+
+/** Same host as `MIRROR_REGISTRY`, the project the pasted line names. */
+const MIRROR_TEAM_B_REGISTRY: RegistryNodeShape = {
+  ...MIRROR_REGISTRY,
+  id: 'registry-4',
+  project: 'team-b',
+};
+
 const PYTHON = 'cr.backend.ai/stable/python:3.9-ubuntu20.04';
 const PYTORCH = 'nvcr.io/nvidia/pytorch:25.01-py3';
+const MIRRORED = 'mirror.example.com/team-b/python:3.12';
 
 const scanOk = () => ({
   item: {
@@ -166,24 +205,41 @@ const scanOk = () => ({
   errors: [],
 });
 
+/** Every page the registry query has actually resolved, across refetches. */
+let registryPageFetchCount = 0;
+
+/**
+ * Queue one round of the paged registry query. Call it again to stage the
+ * round a refetch will consume.
+ */
+const queueRegistryPages = (
+  environment: ReturnType<typeof createMockEnvironment>,
+  registryPages: Array<Array<RegistryNodeShape>>,
+) => {
+  registryPages.forEach((nodes, index) => {
+    const hasNextPage = index < registryPages.length - 1;
+    environment.mock.queueOperationResolver(() => {
+      registryPageFetchCount += 1;
+      return {
+        data: {
+          container_registry_nodes: {
+            edges: nodes.map((node) => ({ node })),
+            pageInfo: {
+              hasNextPage,
+              endCursor: hasNextPage ? `cursor-${index}` : null,
+            },
+          },
+        },
+      };
+    });
+  });
+};
+
 const renderModal = (
   registryPages: Array<Array<RegistryNodeShape>> = [[REGISTRY, NGC_REGISTRY]],
 ) => {
   const environment = createMockEnvironment();
-  registryPages.forEach((nodes, index) => {
-    const hasNextPage = index < registryPages.length - 1;
-    environment.mock.queueOperationResolver(() => ({
-      data: {
-        container_registry_nodes: {
-          edges: nodes.map((node) => ({ node })),
-          pageInfo: {
-            hasNextPage,
-            endCursor: hasNextPage ? `cursor-${index}` : null,
-          },
-        },
-      },
-    }));
-  });
+  queueRegistryPages(environment, registryPages);
   const onRequestClose = vi.fn();
   const onAdded = vi.fn();
   const queryClient = new QueryClient({
@@ -222,12 +278,23 @@ const architectureSelect = () => screen.getByTestId('mock-architecture-select');
 const closeButton = () => screen.queryByRole('button', { name: 'Close' });
 const cancelButton = () =>
   screen.getByRole('button', { name: 'button.Cancel' });
+const addRegistryButton = () =>
+  screen.getByRole('button', { name: 'registry.AddRegistry' });
+/** The props of the last render in which the editor was actually open. */
+const lastOpenEditorProps = () => {
+  const openCalls = mockRegistryEditorRender.mock.calls.filter(
+    ([props]) => props.open,
+  );
+  return openCalls[openCalls.length - 1]?.[0];
+};
 
 describe('ImportImageModal (FR-3940 review round)', () => {
   beforeEach(() => {
     mockScanRequest.mockReset();
     mockMessageSuccess.mockReset();
     mockMessageError.mockReset();
+    mockRegistryEditorRender.mockReset();
+    registryPageFetchCount = 0;
     isPainKillerStubbed = true;
     (globalThis as any).backendaiwebui = { debug: false };
   });
@@ -297,6 +364,119 @@ describe('ImportImageModal (FR-3940 review round)', () => {
     ).toBeInTheDocument();
     // The architecture applies to the whole batch, so it is frozen now.
     expect(architectureSelect()).toHaveAttribute('data-disabled', 'true');
+  });
+
+  it('keeps two identical lines apart when one fails and the other succeeds', async () => {
+    const user = userEvent.setup();
+    let rejectFirstScan: (error: unknown) => void = () => {};
+    mockScanRequest
+      .mockImplementationOnce(
+        () =>
+          new Promise((_resolve, reject) => {
+            rejectFirstScan = reject;
+          }),
+      )
+      .mockResolvedValue(scanOk());
+    const { onRequestClose, onAdded } = renderModal();
+    const textArea = await typeReferences(`${PYTHON}\n${PYTHON}`);
+
+    await user.click(importButton());
+
+    // Keyed by canonical, both rows would have read the first line's outcome
+    // and shown "Scanning" together; `getByText` would then find two.
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageScanning/),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByText(/environment\.ImportImageQueued/),
+    ).toBeInTheDocument();
+
+    rejectFirstScan({ statusCode: 403 });
+
+    await waitFor(() =>
+      expect(screen.getByTestId('import-image-added-row')).toBeInTheDocument(),
+    );
+    // Each line was submitted on its own…
+    expect(mockScanRequest).toHaveBeenCalledTimes(2);
+    // …the success did not overwrite the failure…
+    expect(
+      screen.getByText('environment.ImportImageRequiresSuperadmin'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/environment\.ImportImageFailed/),
+    ).toBeInTheDocument();
+    // …and the locked list holds the image once, not twice.
+    expect(screen.getAllByTestId('import-image-added-row')).toHaveLength(1);
+    expect(screen.getByTestId('import-image-added-row')).toHaveTextContent(
+      PYTHON,
+    );
+    expect(onAdded).toHaveBeenCalledWith([PYTHON]);
+    // Exactly one line is left to retry: the one that failed.
+    expect(textArea).toHaveValue(PYTHON);
+    expect(onRequestClose).not.toHaveBeenCalled();
+    expect(mockMessageSuccess).not.toHaveBeenCalled();
+  });
+
+  it('prefills the registry editor from the sibling row and re-resolves the line once the registry exists', async () => {
+    const user = userEvent.setup();
+    const { environment } = renderModal([
+      [REGISTRY, NGC_REGISTRY, MIRROR_REGISTRY],
+    ]);
+    // The host is registered, the project is not, so the line is blocked.
+    await typeReferences(MIRRORED);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageRegistryNotRegistered/),
+      ).toBeInTheDocument(),
+    );
+    expect(importButton()).toBeDisabled();
+
+    await user.click(addRegistryButton());
+
+    await waitFor(() =>
+      expect(
+        screen.getByTestId('mock-registry-editor-modal'),
+      ).toBeInTheDocument(),
+    );
+    // The project comes from the pasted line; the URL and the type come from
+    // the sibling row for the same host rather than from `https://{host}`.
+    expect(lastOpenEditorProps().initialValues).toEqual({
+      registry_name: MIRROR_REGISTRY.registry_name,
+      project: 'team-b',
+      url: MIRROR_REGISTRY.url,
+      type: MIRROR_REGISTRY.type,
+    });
+
+    // Stage the round the refetch will consume, now carrying the new row.
+    queueRegistryPages(environment, [
+      [REGISTRY, NGC_REGISTRY, MIRROR_REGISTRY, MIRROR_TEAM_B_REGISTRY],
+    ]);
+    expect(registryPageFetchCount).toBe(1);
+
+    await user.click(screen.getByTestId('mock-registry-editor-modal'));
+
+    await waitFor(() => expect(registryPageFetchCount).toBe(2));
+    expect(mockMessageSuccess).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: 'registry.RegistrySuccessfullyAdded',
+      }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText(/environment\.ImportImageReady/),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByText(/environment\.ImportImageRegistryNotRegistered/),
+    ).not.toBeInTheDocument();
+    expect(importButton()).toBeEnabled();
+    // The editor closed itself on OK rather than being left open.
+    expect(
+      screen.queryByTestId('mock-registry-editor-modal'),
+    ).not.toBeInTheDocument();
   });
 
   it('counts the images added across the first run and the retry', async () => {

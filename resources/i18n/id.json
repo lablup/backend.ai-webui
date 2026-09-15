@@ -1508,7 +1508,7 @@
     "ID": "ID",
     "Image": "Image",
     "Images": "Image",
-    "ImagesSuccessfullyAdded": "__NOT_TRANSLATED__",
+    "ImagesSuccessfullyAdded": "{{count}} Image berhasil diimpor.",
     "ImportImage": "Impor Image",
     "ImportImageAdded": "Diimpor",
     "ImportImageDesc": "Membaca metadata image dari registrinya dan mendaftarkannya ke dalam daftar ini. Satu referensi per baris: referensi image lengkap atau alamat halaman katalog NGC. Untuk mengunduhnya ke agen, gunakan Instal Image setelah mengimpor.",
