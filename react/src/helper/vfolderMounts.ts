@@ -4,8 +4,10 @@
  */
 import {
   convertToUUID,
+  isMountableLegacyVFolder,
   mountDestinationToInput,
   type LegacyVFolder,
+  type LegacyVFolderMountScope,
   type VFolderMountConfigValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -81,23 +83,13 @@ export const ownerEmailFromOwner = (
   return isComplete ? owner?.email : undefined;
 };
 
-interface AutoMountedFolderScope {
-  /** Only a folder of this project is auto-mounted with the session. */
-  currentProjectId: string;
-  /**
-   * Hosts granting `mount-in-session`. Omit it where the caller has no
-   * host-permission context; the host gate is then skipped.
-   */
-  mountableHosts?: Array<string>;
-}
-
 /**
  * The folders a session mounts on its own — ready dotfile folders — picked out
  * of a `GET /folders` list the same way VFolderTable did it.
  */
 export const autoMountedFolderNamesFrom = (
   folders: Array<LegacyVFolder>,
-  { currentProjectId, mountableHosts }: AutoMountedFolderScope,
+  scope: LegacyVFolderMountScope,
 ): Array<string> =>
   _.map(
     _.filter(
@@ -105,10 +97,7 @@ export const autoMountedFolderNamesFrom = (
       (folder) =>
         folder.status === 'ready' &&
         folder.name.startsWith('.') &&
-        (folder.ownership_type === 'user' ||
-          !folder.group ||
-          folder.group === currentProjectId) &&
-        (!mountableHosts || _.includes(mountableHosts, folder.host)),
+        isMountableLegacyVFolder(folder, scope),
     ),
     (folder) => folder.name,
   );
