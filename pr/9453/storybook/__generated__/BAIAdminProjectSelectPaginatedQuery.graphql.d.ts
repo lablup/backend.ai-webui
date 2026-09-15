@@ -1,5 +1,5 @@
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "%future added value";
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type ProjectV2Filter = {
     AND?: ReadonlyArray<ProjectV2Filter> | null | undefined;
     NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;

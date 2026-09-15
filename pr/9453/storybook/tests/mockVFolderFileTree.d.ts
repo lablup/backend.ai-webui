@@ -1,4 +1,4 @@
-import { LegacyVFolder } from '../components/baiClient/BAILegacyVFolderSelect';
+import { LegacyVFolder } from '../components/fragments/BAIVFolderMountConfigInput';
 import { BAIClient, VFolderFile } from '../components/provider/BAIClientProvider/types';
 /**
  * Directory trees keyed by vfolder UUID, then by the same path notation
@@ -12,13 +12,12 @@ export declare const mockVFolderFile: (name: string, type: VFolderFile["type"], 
  */
 export declare const mockLegacyVFolder: (folder: Pick<LegacyVFolder, "id" | "name"> & Partial<LegacyVFolder>) => LegacyVFolder;
 export declare const MOCK_LEGACY_PROJECT_ID = "99999999-9999-9999-9999-999999999999";
-export declare const MOCK_LEGACY_OTHER_PROJECT_ID = "88888888-8888-8888-8888-888888888888";
 /** Only `local:volume1` grants `mount-in-session`, so `archive:cold` is gated out. */
-export declare const MOCK_ALLOWED_VFOLDER_HOSTS: Record<string, Array<string>>;
+export declare const MOCK_MOUNTABLE_HOSTS: Array<string>;
 /**
  * The shared REST folder fixture: two mountable folders, one auto-mounted
  * dotfile, one on a host without `mount-in-session`, and one owned by another
- * project — so a story exercises every gate BAILegacyVFolderSelect applies.
+ * project — so a story exercises every gate the mount config input applies.
  */
 export declare const mockLegacyVFolders: Array<LegacyVFolder>;
 /**

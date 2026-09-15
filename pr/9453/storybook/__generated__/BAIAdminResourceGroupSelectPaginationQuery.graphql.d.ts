@@ -5,6 +5,7 @@ export type ResourceGroupFilter = {
     OR?: ReadonlyArray<ResourceGroupFilter> | null | undefined;
     description?: StringFilter | null | undefined;
     isActive?: boolean | null | undefined;
+    isDefault?: boolean | null | undefined;
     isPublic?: boolean | null | undefined;
     name?: StringFilter | null | undefined;
 };

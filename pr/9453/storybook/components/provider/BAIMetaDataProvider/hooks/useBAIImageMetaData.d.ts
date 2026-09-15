@@ -23,6 +23,11 @@ declare const useBAIImageMetaData: () => readonly [import('..').ImageMetaData | 
      * package never resolves an app asset path on its own.
      */
     getImageIcon: (imageName?: string | null) => string | undefined;
+    /**
+     * Whether the metadata declares a vendor icon for the image, i.e.
+     * `getImageIcon` does not resolve to the generic `default.png` fallback.
+     */
+    hasImageIcon: (imageName?: string | null) => boolean;
     getBaseVersion: (imageName: string) => string;
     getBaseImage: (imageName: string) => string;
     tagAlias: (tag: string) => string;

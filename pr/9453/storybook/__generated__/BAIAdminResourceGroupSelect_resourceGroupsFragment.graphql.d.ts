@@ -1,6 +1,6 @@
 import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type BAIAdminResourceGroupSelect_resourceGroupsFragment$data = {
-    readonly resourceGroups: {
+    readonly adminResourceGroups: {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {

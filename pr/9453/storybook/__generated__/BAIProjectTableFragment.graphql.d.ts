@@ -7,6 +7,7 @@ export type BAIProjectTableFragment$data = ReadonlyArray<{
     readonly id: string;
     readonly integration_id: string | null | undefined;
     readonly is_active: boolean | null | undefined;
+    readonly modified_at: string | null | undefined;
     readonly name: string | null | undefined;
     readonly resource_policy: string | null | undefined;
     readonly row_id: string | null | undefined;
