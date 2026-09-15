@@ -180,6 +180,22 @@ async function probePortless(url) {
   }
 }
 
+/** Guided mode ships as `/__review/guided.js`; an older overlay answers 404. */
+async function servesGuidedMode(url) {
+  try {
+    const response = await fetch(
+      `${url.replace(/\/$/, "")}/__review/guided.js`,
+      {
+        redirect: "manual",
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    return response.status === 200;
+  } catch {
+    return false;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // in-page helpers (serialized into the browser)
 // ---------------------------------------------------------------------------
@@ -377,6 +393,13 @@ async function main() {
   if (!base) fail(3, `${file} carries no gateway URL — is the box joined?`);
   if (!(await probePortless(base)))
     fail(3, `${base} is not a routable Portless 2xx — no walkthrough`);
+  // An overlay without guided mode draws a stop as a bare pin and drops its
+  // notes (a branch that predates FR-3950): a walkthrough there misleads.
+  if (!(await servesGuidedMode(base)))
+    fail(
+      3,
+      `${base} serves an overlay without guided mode (no /__review/guided.js) — rebase the branch onto a main that includes FR-3950, then re-run; no walkthrough`,
+    );
 
   const envFile =
     flags.envFile ||

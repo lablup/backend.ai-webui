@@ -41,12 +41,13 @@ in, replay, mint, verify, link) and `scripts/comment.sh` posts it.
 Stop and say why, in one line, if any of these does not hold. A preflight
 failure produces **no comment and no walkthrough**, not a partial one.
 
-| Check                              | How                                                           |
-| ---------------------------------- | ------------------------------------------------------------- |
-| The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                             |
-| A boot record for this branch      | `~/.local/state/fw/dev-servers/<app>.json`, `stoppedAt: null` |
-| The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`         |
-| The app shell survives login       | `mint.mjs` checks it and exits 3                              |
+| Check                              | How                                                                                                                                                                                                      |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                                                                                                                                                                        |
+| A boot record for this branch      | `~/.local/state/fw/dev-servers/<app>.json`, `stoppedAt: null`                                                                                                                                            |
+| The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
+| The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
+| The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
 
 The set link goes in a public PR comment, so an unroutable server is a
 preflight failure, not a reason to fall back to the record's `localUrl` — the
