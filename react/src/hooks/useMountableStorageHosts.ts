@@ -25,10 +25,7 @@ export const useMountableStorageHosts = (
       baiClient?._config?.accessKey,
     );
 
-  // The merged map is built with `Object.assign`, so it reaches us as `{}`.
-  return Object.entries(
-    unitedAllowedPermissionByVolume as Record<string, Array<string>>,
-  )
+  return Object.entries(unitedAllowedPermissionByVolume)
     .filter(([, permissions]) =>
       permissions.includes(MOUNT_IN_SESSION_PERMISSION),
     )
