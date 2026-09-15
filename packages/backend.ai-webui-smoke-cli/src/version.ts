@@ -10,11 +10,11 @@
  *     when the package is run inside a checkout → `'unknown'` otherwise.
  *     A proper build-time injection ships with FR-2881.
  */
-import { execSync } from 'node:child_process';
-import { createRequire } from 'node:module';
+import { execSync } from "node:child_process";
+import { createRequire } from "node:module";
 
 const nodeRequire = createRequire(import.meta.url);
-const pkg = nodeRequire('../package.json') as {
+const pkg = nodeRequire("../package.json") as {
   name: string;
   version: string;
 };
@@ -27,24 +27,24 @@ export const WEBUI_SHA: string = resolveWebuiSha();
 
 function resolvePlaywrightVersion(): string {
   try {
-    const pwPkg = nodeRequire('@playwright/test/package.json') as {
+    const pwPkg = nodeRequire("@playwright/test/package.json") as {
       version: string;
     };
     return pwPkg.version;
   } catch {
-    return 'not-bundled';
+    return "not-bundled";
   }
 }
 
 function resolveWebuiSha(): string {
   if (process.env.BAI_SMOKE_WEBUI_SHA) return process.env.BAI_SMOKE_WEBUI_SHA;
   try {
-    return execSync('git rev-parse HEAD', {
-      stdio: ['ignore', 'pipe', 'ignore'],
+    return execSync("git rev-parse HEAD", {
+      stdio: ["ignore", "pipe", "ignore"],
     })
       .toString()
       .trim();
   } catch {
-    return 'unknown';
+    return "unknown";
   }
 }

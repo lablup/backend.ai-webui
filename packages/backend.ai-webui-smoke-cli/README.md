@@ -49,8 +49,17 @@ bai-smoke run \
   fails leaves the operator password inside `trace.zip` (and the failure
   video). Treat `smoke-report-*/` as a credential-bearing artifact: do not
   attach one to a ticket or hand it to a customer without scrubbing it.
+- **2FA is not supported.** The shared `login()` helper has no OTP step, so
+  a run against a cluster with two-factor login enabled fails at sign-in.
+- **The run deletes nothing it did not create.** The repository's global
+  `e2e-*` cleanup sweep is deliberately not wired into the smoke config —
+  it is unscoped and would delete-forever any customer folder whose name
+  contains `e2e-`. Each smoke spec removes its own artifacts; if a run is
+  killed mid-test, the artifacts it was using may remain and carry an
+  `e2e-` prefix.
 - Must be run from a `backend.ai-webui` monorepo checkout — the e2e
-  specs are not bundled yet. Tarball / single-binary distribution is
+  specs are not bundled yet. Build once before the first run:
+  `pnpm --filter backend.ai-webui-smoke-cli build`. Tarball / single-binary distribution is
   tracked in FR-2881.
 - Air-gap binary, `doctor` command, and rich diagnostic reports → Phase 2.
 - `--also-include` widens the smoke set; to narrow it, use `--pages`

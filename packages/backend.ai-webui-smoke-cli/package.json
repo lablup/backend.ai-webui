@@ -5,7 +5,8 @@
   "description": "Post-install smoke test CLI for Backend.AI WebUI. Runs a curated @smoke subset of the e2e suite against a customer endpoint and emits a self-contained HTML report.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lablup/backend.ai-webui/tree/main/packages/backend.ai-webui-smoke-cli"
+    "url": "https://github.com/lablup/backend.ai-webui.git",
+    "directory": "packages/backend.ai-webui-smoke-cli"
   },
   "bugs": {
     "url": "https://github.com/lablup/backend.ai-webui/issues"

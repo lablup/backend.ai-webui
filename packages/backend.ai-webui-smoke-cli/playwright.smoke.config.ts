@@ -1,7 +1,7 @@
-import { defineConfig, devices } from '@playwright/test';
-import { existsSync } from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { defineConfig, devices } from "@playwright/test";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * Playwright configuration for the `bai-smoke` runner.
@@ -42,7 +42,7 @@ import { fileURLToPath } from 'node:url';
 // File layout: <repo>/packages/backend.ai-webui-smoke-cli/playwright.smoke.config.ts
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const E2E_DIR = path.resolve(__dirname, '..', '..', 'e2e');
+const E2E_DIR = path.resolve(__dirname, "..", "..", "e2e");
 
 // FR-2877 MVP limitation: the smoke runner discovers specs from the
 // monorepo's e2e/ tree. The packaged distribution that bundles the e2e
@@ -56,7 +56,9 @@ if (!existsSync(E2E_DIR)) {
   );
 }
 
-const reportDir = process.env.BAI_SMOKE_REPORT_DIR ?? path.resolve(process.cwd(), 'smoke-report');
+const reportDir =
+  process.env.BAI_SMOKE_REPORT_DIR ??
+  path.resolve(process.cwd(), "smoke-report");
 
 const workersEnv = process.env.BAI_SMOKE_WORKERS;
 const workers = workersEnv ? Number.parseInt(workersEnv, 10) : undefined;
@@ -72,7 +74,7 @@ const grepInvertSource = process.env.BAI_SMOKE_GREP_INVERT;
 const pagesEnv = process.env.BAI_SMOKE_PAGES;
 const pages = pagesEnv
   ? pagesEnv
-      .split(',')
+      .split(",")
       .map((p) => p.trim())
       .filter(Boolean)
   : undefined;
@@ -80,9 +82,11 @@ const pages = pagesEnv
 // tests; a bare `**/${p}/**` would load them and Playwright would report
 // "no tests found" for the file.
 const testMatch =
-  pages && pages.length > 0 ? pages.map((p) => `**/${p}/**/*.spec.ts`) : undefined;
+  pages && pages.length > 0
+    ? pages.map((p) => `**/${p}/**/*.spec.ts`)
+    : undefined;
 
-const headed = process.env.BAI_SMOKE_HEADED === '1';
+const headed = process.env.BAI_SMOKE_HEADED === "1";
 
 export default defineConfig({
   testDir: E2E_DIR,
@@ -90,24 +94,25 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
-  workers: workers && Number.isFinite(workers) && workers > 0 ? workers : undefined,
+  workers:
+    workers && Number.isFinite(workers) && workers > 0 ? workers : undefined,
   timeout: Number.isFinite(timeout) && timeout > 0 ? timeout : 180000,
   grep: grepSource ? new RegExp(grepSource) : undefined,
   grepInvert: grepInvertSource ? new RegExp(grepInvertSource) : undefined,
   reporter: [
-    ['html', { outputFolder: path.join(reportDir, 'html'), open: 'never' }],
-    ['json', { outputFile: path.join(reportDir, 'results.json') }],
-    ['list'],
+    ["html", { outputFolder: path.join(reportDir, "html"), open: "never" }],
+    ["json", { outputFile: path.join(reportDir, "results.json") }],
+    ["list"],
   ],
   snapshotPathTemplate: `${E2E_DIR}/{testFileDir}/snapshot/{arg}{ext}`,
   use: {
-    trace: 'retain-on-failure',
-    video: 'retain-on-failure',
+    trace: "retain-on-failure",
+    video: "retain-on-failure",
     headless: !headed,
-    ignoreHTTPSErrors: process.env.BAI_SMOKE_INSECURE_TLS === '1',
+    ignoreHTTPSErrors: process.env.BAI_SMOKE_INSECURE_TLS === "1",
     // Dev-server / WebUI pages talk to the manager over the local network;
     // without this grant Chromium blocks those requests outright.
-    permissions: ['local-network-access'],
+    permissions: ["local-network-access"],
     /*
      * Bound every action so a single stuck action cannot consume the whole
      * per-test budget and hang the cleanup sweep below (FR-3090 — kept in
@@ -119,22 +124,14 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'], locale: 'en-US' },
-      // The global cleanup runs as a dedicated teardown project, not as a
-      // regular test in the suite.
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], locale: "en-US" },
+      // The root config's `cleanup` teardown is deliberately NOT wired here:
+      // its sweep matches every vfolder containing "e2e-" (unanchored) on
+      // whatever the operator's account can see, and delete-forevers it — on a
+      // customer cluster that is data loss, not hygiene. Each smoke spec
+      // reaps its own artifacts in its afterAll/afterEach instead.
       testIgnore: /global-cleanup\.teardown\.ts/,
-      teardown: 'cleanup',
-    },
-
-    // Best-effort global cleanup (FR-3090): sweeps leftover e2e-* vfolders and
-    // services after the run finishes, regardless of pass/fail. A smoke run
-    // happens against a customer cluster, so leaving artifacts behind is worse
-    // here than in CI — the sweep always runs.
-    {
-      name: 'cleanup',
-      testMatch: /global-cleanup\.teardown\.ts/,
-      use: { ...devices['Desktop Chrome'], locale: 'en-US' },
     },
   ],
 });

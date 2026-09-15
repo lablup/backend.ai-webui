@@ -13,7 +13,7 @@ import { expect, test } from '@playwright/test';
  * OWN codec, so it exercises the real `#bai=v3` round trip rather than a
  * hand-written fixture that can drift from the encoder.
  */
-test.describe('@smoke @review-overlay @integration Review overlay - deep link', () => {
+test.describe('@review-overlay @integration Review overlay - deep link', () => {
   test.beforeEach(() => {
     test.skip(
       !!process.env.CI || !process.env.E2E_REVIEW_OVERLAY_SMOKE,
@@ -21,7 +21,7 @@ test.describe('@smoke @review-overlay @integration Review overlay - deep link', 
     );
   });
 
-  test('@smoke a self-contained link pins the element and names it', async ({
+  test('a self-contained link pins the element and names it', async ({
     page,
   }) => {
     await page.goto(webuiEndpoint, { waitUntil: 'domcontentloaded' });

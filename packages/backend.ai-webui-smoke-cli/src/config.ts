@@ -6,8 +6,8 @@
  * the env / grep mapping without booting Playwright.
  */
 
-export type SmokeRoleSelection = 'auto' | 'admin' | 'user';
-export type EffectiveRole = 'admin' | 'user';
+export type SmokeRoleSelection = "auto" | "admin" | "user";
+export type EffectiveRole = "admin" | "user";
 
 export interface SmokeRunOptions {
   /** Backend.AI WebUI endpoint (`--endpoint`). */
@@ -81,19 +81,19 @@ export function buildGrepExpression(
   const includeAlt = (opts.include ?? [])
     .map((t) => escapeTagLiteral(t.trim()))
     .filter(Boolean)
-    .join('|');
+    .join("|");
 
-  const alternatives = [baseAlt, roleAlt, includeAlt].filter(Boolean).join('|');
+  const alternatives = [baseAlt, roleAlt, includeAlt].filter(Boolean).join("|");
   const grep = `(${alternatives})`;
 
   const oppositeRole: EffectiveRole =
-    effectiveRole === 'admin' ? 'user' : 'admin';
+    effectiveRole === "admin" ? "user" : "admin";
   const invertAlternatives = [
     `@smoke-${oppositeRole}(?![\\w-])`,
     ...(opts.exclude ?? [])
       .map((t) => escapeTagLiteral(t.trim()))
       .filter(Boolean),
-  ].join('|');
+  ].join("|");
   const grepInvert = `(${invertAlternatives})`;
 
   return { grep, grepInvert };
@@ -107,7 +107,7 @@ export function buildGrepExpression(
  * Tags are comma-separated literals, not regex patterns.
  */
 function escapeTagLiteral(tag: string): string {
-  if (!tag) return '';
+  if (!tag) return "";
   const escaped = escapeRegex(tag);
   // Only append the boundary lookahead when the tag ends in a word char;
   // arbitrary literals ending in punctuation stay as-is.
@@ -132,7 +132,7 @@ export function buildPlaywrightEnv(
 
   // Single-account auth: we always populate the matching role slot only.
   // Specs that need cross-user credentials are not tagged for smoke.
-  if (effectiveRole === 'admin') {
+  if (effectiveRole === "admin") {
     env.E2E_ADMIN_EMAIL = opts.email;
     env.E2E_ADMIN_PASSWORD = opts.password;
   } else {
@@ -145,16 +145,16 @@ export function buildPlaywrightEnv(
   // doesn't burn CI time where no agent exists. Under smoke we force-enable
   // it: a freshly installed cluster that cannot schedule a session is a
   // FAILED install and must show up RED in the report — not as a skip.
-  env.BACKEND_AI_AGENTS_AVAILABLE = 'true';
+  env.BACKEND_AI_AGENTS_AVAILABLE = "true";
 
   // BAI_SMOKE_* — picked up by playwright.smoke.config.ts.
   env.BAI_SMOKE_REPORT_DIR = opts.outputDir;
   if (opts.workers != null) env.BAI_SMOKE_WORKERS = String(opts.workers);
   if (opts.timeoutMs != null) env.BAI_SMOKE_TIMEOUT_MS = String(opts.timeoutMs);
   if (opts.pages && opts.pages.length > 0) {
-    env.BAI_SMOKE_PAGES = opts.pages.join(',');
+    env.BAI_SMOKE_PAGES = opts.pages.join(",");
   }
-  if (opts.headed) env.BAI_SMOKE_HEADED = '1';
+  if (opts.headed) env.BAI_SMOKE_HEADED = "1";
 
   const { grep, grepInvert } = buildGrepExpression(opts, effectiveRole);
   if (grep) env.BAI_SMOKE_GREP = grep;
@@ -164,16 +164,16 @@ export function buildPlaywrightEnv(
     // Forward to both the runner's spawned children and any fetches
     // inside the test harness. Only set on the spawned child env — we
     // intentionally do NOT mutate process.env in the host runner.
-    env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
     // Gate Playwright's `ignoreHTTPSErrors` in playwright.smoke.config.ts.
-    env.BAI_SMOKE_INSECURE_TLS = '1';
+    env.BAI_SMOKE_INSECURE_TLS = "1";
   }
 
   return env;
 }
 
 function escapeRegex(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 /**
@@ -191,13 +191,13 @@ export function parseDuration(input: string): number {
     );
   }
   const value = Number.parseInt(match[1]!, 10);
-  const unit = match[2] ?? 'ms';
+  const unit = match[2] ?? "ms";
   switch (unit) {
-    case 'ms':
+    case "ms":
       return value;
-    case 's':
+    case "s":
       return value * 1000;
-    case 'm':
+    case "m":
       return value * 60 * 1000;
     default:
       // Unreachable due to regex, but keeps TS exhaustive-check happy.
@@ -210,11 +210,13 @@ export function parseDuration(input: string): number {
  * as either a single comma-joined string or as a variadic `string[]`
  * depending on how the option was declared. Normalise to a trimmed array.
  */
-export function splitCsvArg(input: string[] | string | undefined): string[] | undefined {
+export function splitCsvArg(
+  input: string[] | string | undefined,
+): string[] | undefined {
   if (input == null) return undefined;
-  const raw = Array.isArray(input) ? input.join(',') : input;
+  const raw = Array.isArray(input) ? input.join(",") : input;
   const parts = raw
-    .split(',')
+    .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
   return parts.length > 0 ? parts : undefined;

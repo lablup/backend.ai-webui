@@ -21,53 +21,53 @@ export interface SmokeCategory {
 
 export const SMOKE_CATALOG: ReadonlyArray<SmokeCategory> = [
   {
-    category: 'auth',
+    category: "auth",
     description:
-      'Login form rendering and the forgot-password entry points (no login; run under every role), plus a successful admin sign-in.',
-    tags: ['@smoke', '@smoke-admin'],
-    specs: ['e2e/auth/login.spec.ts', 'e2e/auth/forgot-password.spec.ts'],
+      "Login form rendering and the forgot-password entry points (bare @smoke: no login, run under every role), plus a successful admin sign-in (@smoke-admin).",
+    tags: ["@smoke", "@smoke-admin"],
+    specs: ["e2e/auth/login.spec.ts", "e2e/auth/forgot-password.spec.ts"],
   },
   {
-    category: 'dashboard',
+    category: "dashboard",
     description:
-      'Admin: the dashboard widgets render after login. The regular-user widget checks share the same describe and stay out of the smoke set.',
-    tags: ['@smoke', '@smoke-admin'],
-    specs: ['e2e/dashboard/dashboard.spec.ts'],
+      "Admin: the dashboard widgets render after login. The regular-user widget checks share the same describe and stay out of the smoke set.",
+    tags: ["@smoke", "@smoke-admin"],
+    specs: ["e2e/dashboard/dashboard.spec.ts"],
   },
   {
-    category: 'session',
+    category: "session",
     description:
-      'Admin: core session lifecycle (create → RUNNING → terminate) and the session launcher cluster-mode sanity check.',
-    tags: ['@smoke', '@smoke-admin'],
+      "Admin: core session lifecycle (create → RUNNING → terminate) and the session launcher cluster-mode sanity check.",
+    tags: ["@smoke", "@smoke-admin"],
     specs: [
-      'e2e/session/session-lifecycle.spec.ts',
-      'e2e/session/session-cluster-mode.spec.ts',
+      "e2e/session/session-lifecycle.spec.ts",
+      "e2e/session/session-cluster-mode.spec.ts",
     ],
   },
   {
-    category: 'vfolder',
+    category: "vfolder",
     description:
-      'Regular user: creating a file inside the folder explorer (happy path only).',
-    tags: ['@smoke', '@smoke-user'],
-    specs: ['e2e/vfolder/file-create.spec.ts'],
+      "Regular user: creating a file inside the folder explorer (happy path only).",
+    tags: ["@smoke", "@smoke-user"],
+    specs: ["e2e/vfolder/file-create.spec.ts"],
   },
   {
-    category: 'agent',
-    description: 'Admin: agent list page renders with at least one agent row.',
-    tags: ['@smoke', '@smoke-admin'],
-    specs: ['e2e/agent/agent.spec.ts'],
+    category: "agent",
+    description: "Admin: agent list page renders with at least one agent row.",
+    tags: ["@smoke", "@smoke-admin"],
+    specs: ["e2e/agent/agent.spec.ts"],
   },
   {
-    category: 'user',
-    description: 'Admin: bulk user creation modal opens from the dropdown.',
-    tags: ['@smoke', '@smoke-admin'],
-    specs: ['e2e/user/bulk-user-creation.spec.ts'],
+    category: "user",
+    description: "Admin: bulk user creation modal opens from the dropdown.",
+    tags: ["@smoke", "@smoke-admin"],
+    specs: ["e2e/user/bulk-user-creation.spec.ts"],
   },
   {
-    category: 'serving',
+    category: "serving",
     description:
-      'Admin: the deployment list renders with its expected columns and controls.',
-    tags: ['@smoke', '@smoke-admin'],
-    specs: ['e2e/serving/deployment-lifecycle.spec.ts'],
+      "Admin: the deployment list renders with its expected columns and controls.",
+    tags: ["@smoke", "@smoke-admin"],
+    specs: ["e2e/serving/deployment-lifecycle.spec.ts"],
   },
 ];

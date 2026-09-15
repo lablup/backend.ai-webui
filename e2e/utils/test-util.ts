@@ -157,11 +157,15 @@ export async function login(
       await advanced.click();
     }
   }
-  // A server whose config.toml pre-configures `apiEndpoint` — the typical
-  // customer install the smoke CLI targets (FR-2871) — renders no endpoint
-  // input at all. Nothing to fill; proceed straight to the submit.
-  if (await endpointInput.isVisible().catch(() => false)) {
+  // No endpoint input means the server pins `apiEndpoint` (the config.toml
+  // intercept above did not take, e.g. a customer install the smoke CLI
+  // targets). Wait for it briefly rather than probing once — `isVisible()`
+  // does not auto-wait, and a slow render must not submit an empty endpoint.
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
     await endpointInput.fill(endpoint);
+  } catch {
+    // server-pinned endpoint: nothing to fill
   }
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login

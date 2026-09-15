@@ -3,20 +3,20 @@
  * next to the html report. Diagnostic enrichment is out of scope for FR-2877
  * and lands in FR-2879 (Phase 2).
  */
-import { spawn } from 'node:child_process';
-import { createRequire } from 'node:module';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { Agent } from 'undici';
+import { spawn } from "node:child_process";
+import { createRequire } from "node:module";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { Agent } from "undici";
 
 import {
   buildGrepExpression,
   buildPlaywrightEnv,
   type EffectiveRole,
   type SmokeRunOptions,
-} from './config.js';
-import { CLI_VERSION, PLAYWRIGHT_VERSION, WEBUI_SHA } from './version.js';
+} from "./config.js";
+import { CLI_VERSION, PLAYWRIGHT_VERSION, WEBUI_SHA } from "./version.js";
 
 const nodeRequire = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,14 +25,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function smokeConfigPath(): string {
   // dist/runner.js → ../playwright.smoke.config.ts
   // src/runner.ts (dev) → ../playwright.smoke.config.ts
-  return path.resolve(__dirname, '..', 'playwright.smoke.config.ts');
+  return path.resolve(__dirname, "..", "playwright.smoke.config.ts");
 }
 
 export interface SmokeSummary {
   endpoint: string;
   webserver: string;
   role: EffectiveRole;
-  roleSelection: SmokeRunOptions['role'];
+  roleSelection: SmokeRunOptions["role"];
   /** Tags OR-ed onto the smoke selection via `--also-include`. */
   alsoInclude?: string[];
   exclude?: string[];
@@ -68,8 +68,10 @@ export interface SmokeSummary {
  * proper signed-request based detection — using the post-login
  * `/func/auth/role` endpoint — is tracked in TODO(FR-2878).
  */
-export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> {
-  const url = `${opts.webserver.replace(/\/$/, '')}/server/login`;
+export async function detectRole(
+  opts: SmokeRunOptions,
+): Promise<EffectiveRole> {
+  const url = `${opts.webserver.replace(/\/$/, "")}/server/login`;
   // Honour --insecure-tls for the detection call so self-signed certs
   // don't crash detection before we even reach Playwright.
   //
@@ -86,8 +88,8 @@ export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> 
     let res: Response;
     try {
       const init: RequestInit = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         // TODO(FR-2878): switch to signed-request /func/auth/role for a
         // proper detection. This naive form matches what the SESSION-mode
         // browser fixture submits to /server/login and works against the
@@ -100,7 +102,7 @@ export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> 
         // two structurally-divergent declarations — cast rather than pull a
         // second undici-types copy into the program.
         init.dispatcher = dispatcher as unknown as NonNullable<
-          RequestInit['dispatcher']
+          RequestInit["dispatcher"]
         >;
       }
       res = await fetch(url, init);
@@ -117,12 +119,10 @@ export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> 
           `Pass --role admin or --role user explicitly and retry.`,
       );
     }
-    const json = (await res.json().catch(() => null)) as
-      | {
-          authenticated?: boolean;
-          data?: { role?: string; is_admin?: boolean };
-        }
-      | null;
+    const json = (await res.json().catch(() => null)) as {
+      authenticated?: boolean;
+      data?: { role?: string; is_admin?: boolean };
+    } | null;
     if (!json || json.authenticated !== true) {
       throw new Error(
         `Failed to auto-detect role for ${opts.email} against ${opts.webserver}: ` +
@@ -132,12 +132,14 @@ export async function detectRole(opts: SmokeRunOptions): Promise<EffectiveRole> 
     }
     const role = json.data?.role;
     const isAdmin = json.data?.is_admin === true;
-    if (role === 'admin' || role === 'superadmin' || isAdmin) {
-      return 'admin';
+    if (role === "admin" || role === "superadmin" || isAdmin) {
+      return "admin";
     }
-    return 'user';
+    return "user";
   } finally {
-    await dispatcher?.close();
+    // `close()` waits for in-flight bodies, and the non-2xx paths above throw
+    // without reading theirs — `destroy()` tears the sockets down instead.
+    await dispatcher?.destroy();
   }
 }
 
@@ -154,10 +156,10 @@ export interface SmokeRunResult {
 function resolvePlaywrightCli(): string {
   // `@playwright/test`'s package.json `bin.playwright` points at the
   // launcher we want to spawn.
-  const pkgPath = nodeRequire.resolve('@playwright/test/package.json');
+  const pkgPath = nodeRequire.resolve("@playwright/test/package.json");
   const pkg = nodeRequire(pkgPath) as { bin?: Record<string, string> | string };
   const binEntry =
-    typeof pkg.bin === 'string' ? pkg.bin : pkg.bin?.playwright ?? './cli.js';
+    typeof pkg.bin === "string" ? pkg.bin : (pkg.bin?.playwright ?? "./cli.js");
   return path.resolve(path.dirname(pkgPath), binEntry);
 }
 
@@ -166,14 +168,14 @@ export async function runSmoke(opts: SmokeRunOptions): Promise<SmokeRunResult> {
   fs.mkdirSync(opts.outputDir, { recursive: true });
 
   const effectiveRole: EffectiveRole =
-    opts.role === 'auto' ? await detectRole(opts) : opts.role;
+    opts.role === "auto" ? await detectRole(opts) : opts.role;
 
   const env = buildPlaywrightEnv(opts, effectiveRole);
   const { grep, grepInvert } = buildGrepExpression(opts, effectiveRole);
 
   const cliJs = resolvePlaywrightCli();
-  const args: string[] = ['test', '--config', smokeConfigPath()];
-  if (opts.headed) args.push('--headed');
+  const args: string[] = ["test", "--config", smokeConfigPath()];
+  if (opts.headed) args.push("--headed");
 
   process.stdout.write(
     `[bai-smoke] starting playwright (role=${effectiveRole}, output=${opts.outputDir})\n`,
@@ -182,18 +184,22 @@ export async function runSmoke(opts: SmokeRunOptions): Promise<SmokeRunResult> {
   const exitCode: number = await new Promise((resolve) => {
     const child = spawn(process.execPath, [cliJs, ...args], {
       env,
-      stdio: 'inherit',
+      stdio: "inherit",
     });
-    child.on('exit', (code, signal) => {
+    child.on("exit", (code, signal) => {
       if (signal) {
-        process.stderr.write(`[bai-smoke] playwright terminated by signal ${signal}\n`);
+        process.stderr.write(
+          `[bai-smoke] playwright terminated by signal ${signal}\n`,
+        );
         resolve(1);
       } else {
         resolve(code ?? 1);
       }
     });
-    child.on('error', (err) => {
-      process.stderr.write(`[bai-smoke] failed to spawn playwright: ${err.message}\n`);
+    child.on("error", (err) => {
+      process.stderr.write(
+        `[bai-smoke] failed to spawn playwright: ${err.message}\n`,
+      );
       resolve(1);
     });
   });
@@ -215,26 +221,26 @@ export async function runSmoke(opts: SmokeRunOptions): Promise<SmokeRunResult> {
     cliVersion: CLI_VERSION,
     webuiSha: WEBUI_SHA,
     playwrightVersion: PLAYWRIGHT_VERSION,
-    results: parseResults(path.join(opts.outputDir, 'results.json')),
+    results: parseResults(path.join(opts.outputDir, "results.json")),
   };
 
   fs.writeFileSync(
-    path.join(opts.outputDir, 'summary.json'),
+    path.join(opts.outputDir, "summary.json"),
     `${JSON.stringify(summary, null, 2)}\n`,
-    'utf8',
+    "utf8",
   );
 
   return {
     exitCode,
-    reportPath: path.join(opts.outputDir, 'html', 'index.html'),
+    reportPath: path.join(opts.outputDir, "html", "index.html"),
     summary,
   };
 }
 
-function parseResults(jsonPath: string): SmokeSummary['results'] | undefined {
+function parseResults(jsonPath: string): SmokeSummary["results"] | undefined {
   if (!fs.existsSync(jsonPath)) return undefined;
   try {
-    const raw = fs.readFileSync(jsonPath, 'utf8');
+    const raw = fs.readFileSync(jsonPath, "utf8");
     const data = JSON.parse(raw) as {
       stats?: {
         expected?: number;

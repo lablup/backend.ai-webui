@@ -21,7 +21,11 @@
   "createdAt": "2026-05-12T00:00:00Z",
   "verification": {
     "verifiedAt": "2026-06-11T02:40:00Z",
-    "againstPRs": [7391, 7392],
+    "againstPRs": [9712],
+    "inheritedFrom": {
+      "prs": [7391, 7392],
+      "note": "The live runs and the 17/7 partition below were recorded against the superseded stack. On the re-cut (PR #9712, current main) the partition is admin 10 / user 4 (playwright --list through the smoke config, zero cross-role selection; the global cleanup teardown is not part of a smoke run); no live cluster run has been performed yet."
+    },
     "results": {
       "FR-A": "PASS",
       "FR-B": "PASS",
@@ -36,6 +40,6 @@
       "admin": { "passed": 14, "failed": 1, "skipped": 2, "note": "session lifecycle (create→RUNNING→terminate) PASSED; 1 failure + later 5 user-run failures are cross-version UI skew vs the older staging, expected to pass against a version-matched install (doctor in FR-2878 will warn on mismatch); 2 skips are documented version-gated Agent Stats widget guards" },
       "user": { "passed": 2, "failed": 5, "skipped": 0, "note": "role auto-detection resolved 'user'; failures are the vfolder explorer cross-version skew" }
     },
-    "notes": "FR-C is PARTIAL because storage-state reuse, doctor command, and rich diagnostic block are intentionally deferred to Phase 2 (FR-2878 / FR-2879). The @smoke-any tag from FR-A was dropped — see spec FR-A NOTE. verify.sh ALL PASS (Relay/Lint/Format/TypeScript/Vite). Role-exclusive grep partition verified via playwright --list (admin 17 / user 7, zero cross-role contamination) and 13 regex unit cases."
+    "notes": "FR-C is PARTIAL because storage-state reuse, doctor command, and rich diagnostic block are intentionally deferred to Phase 2 (FR-2878 / FR-2879). The @smoke-any tag from FR-A was dropped — see spec FR-A NOTE. verify.sh ALL PASS (Relay/Lint/Format/TypeScript/Vite). Role-exclusive grep partition verified via playwright --list (admin 10 / user 4 on PR #9712, zero cross-role contamination) and 13 regex unit cases."
   }
 }

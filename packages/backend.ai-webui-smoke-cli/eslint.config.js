@@ -1,18 +1,21 @@
-import { base } from 'eslint-config-bai';
+import { base } from "eslint-config-bai";
 
 export default [
   ...base,
 
   {
-    ignores: ['dist/**'],
+    ignores: ["dist/**"],
   },
 
   {
     rules: {
-      '@typescript-eslint/consistent-type-imports': 'error',
-      '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      "@typescript-eslint/consistent-type-imports": "error",
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" },
+      ],
     },
     languageOptions: {
       parserOptions: {

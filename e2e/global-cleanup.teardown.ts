@@ -120,55 +120,46 @@ test.describe('Global e2e cleanup', () => {
   // out mid-sweep.
   test.describe.configure({ timeout: 600_000 });
 
-  // Role-tagged so the smoke runner's grep does not filter the teardown out:
-  // its `grep` selects bare `@smoke` + `@smoke-<role>` across every project,
-  // the teardown project included. Each sweep carries the role of the login
-  // helper it calls, so a run sweeps exactly what its one account can reach.
-  test(
-    'sweep leftover e2e vfolders (user)',
-    { tag: ['@smoke', '@smoke-user'] },
-    async ({ page, request }) => {
-      await loginAsUser(page, request);
-      await safeSweep(
-        'user /data',
-        (p) => sweepVFolders(p, E2E_VFOLDER_PATTERN, 'data'),
-        page,
-      );
-    },
-  );
+  test('sweep leftover e2e vfolders (user)', async ({ page, request }) => {
+    await loginAsUser(page, request);
+    await safeSweep(
+      'user /data',
+      (p) => sweepVFolders(p, E2E_VFOLDER_PATTERN, 'data'),
+      page,
+    );
+  });
 
-  test(
-    'sweep leftover e2e vfolders and services (admin)',
-    { tag: ['@smoke', '@smoke-admin'] },
-    async ({ page, request }) => {
-      await loginAsAdmin(page, request);
-      // /admin-data (AdminVFolderNodeListPage) lists every vfolder visible to an
-      // admin — project folders (only deletable here, not on /project-data) plus
-      // any folder another sweep missed — using the same table component as /data.
-      await safeSweep(
-        'admin /admin-data',
-        (p) => sweepVFolders(p, E2E_VFOLDER_PATTERN, 'admin-data'),
-        page,
+  test('sweep leftover e2e vfolders and services (admin)', async ({
+    page,
+    request,
+  }) => {
+    await loginAsAdmin(page, request);
+    // /admin-data (AdminVFolderNodeListPage) lists every vfolder visible to an
+    // admin — project folders (only deletable here, not on /project-data) plus
+    // any folder another sweep missed — using the same table component as /data.
+    await safeSweep(
+      'admin /admin-data',
+      (p) => sweepVFolders(p, E2E_VFOLDER_PATTERN, 'admin-data'),
+      page,
+    );
+    await safeSweep('admin services', (p) => sweepServices(p), page);
+    // Purge any e2e-* fixture user a per-spec afterAll failed to reap. API-based,
+    // so it does not use `page`; guard it directly so a failure never reds the run.
+    try {
+      await sweepLeftoverE2EUsers();
+    } catch (error) {
+      console.warn('[global-cleanup] user sweep failed (ignored):', error);
+    }
+    // Purge any e2e-plan-*/e2e-token-* deployment a per-spec afterEach failed
+    // to reap. API-based, so it does not use `page`; guard it directly so a
+    // failure never reds the run.
+    try {
+      await sweepLeftoverDeployments();
+    } catch (error) {
+      console.warn(
+        '[global-cleanup] deployment sweep failed (ignored):',
+        error,
       );
-      await safeSweep('admin services', (p) => sweepServices(p), page);
-      // Purge any e2e-* fixture user a per-spec afterAll failed to reap. API-based,
-      // so it does not use `page`; guard it directly so a failure never reds the run.
-      try {
-        await sweepLeftoverE2EUsers();
-      } catch (error) {
-        console.warn('[global-cleanup] user sweep failed (ignored):', error);
-      }
-      // Purge any e2e-plan-*/e2e-token-* deployment a per-spec afterEach failed
-      // to reap. API-based, so it does not use `page`; guard it directly so a
-      // failure never reds the run.
-      try {
-        await sweepLeftoverDeployments();
-      } catch (error) {
-        console.warn(
-          '[global-cleanup] deployment sweep failed (ignored):',
-          error,
-        );
-      }
-    },
-  );
+    }
+  });
 });

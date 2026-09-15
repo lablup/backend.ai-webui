@@ -543,11 +543,12 @@ following:
    account, then tag only the role-uniform half. This keeps rule 1
    ("single account") consistent with the role tags.
 7. **OTP-robust selectors.** Many customer clusters enable 2FA, which adds a
-   `One-time password` input to the login form. Selectors that touch login
-   fields must use exact matching (`getByLabel('Password', { exact: true })`)
-   so they don't strict-mode-collide with the OTP field. The shared `login()`
-   helper in `e2e/utils/test-util.ts` already does this; spec-local selectors
-   must follow suit.
+   `One-time password` input to the login form. Spec-local selectors that
+   touch login fields must use exact matching
+   (`getByLabel('Password', { exact: true })`) so they don't strict-mode-
+   collide with the OTP field. The shared `login()` helper in
+   `e2e/utils/test-util.ts` does not handle OTP at all today, so a
+   2FA-enabled cluster cannot be smoked yet (see the smoke CLI README).
 8. **No ad-hoc environment-conditional skips in smoke.** In-body
    `test.skip(featureNotAvailable)` probes give a false-green smoke report.
    Version/environment dependencies must instead use the declarative
@@ -635,11 +636,11 @@ login, which is exactly what the bare tag means.
 Pick **quality over quantity**: do not tag every spec in a folder. The smoke
 suite's value is its short runtime and high signal-to-noise ratio.
 
-The global cleanup teardown (`e2e/global-cleanup.teardown.ts`) is role-tagged
-too: its user sweep carries `@smoke @smoke-user` and its admin sweep
-`@smoke @smoke-admin`. The runner's `grep` applies to every project, teardown
-included, so without those tags a smoke run would silently skip the sweep that
-leaves a customer cluster clean.
+The global cleanup teardown (`e2e/global-cleanup.teardown.ts`) is **not**
+part of a smoke run: its sweep matches every vfolder containing `e2e-` on
+whatever the account can see and delete-forevers it, which is acceptable on
+the shared test server it was written for and data loss on a customer
+cluster. Smoke specs reap their own artifacts (rule 2).
 
 ### Listing the smoke set
 
