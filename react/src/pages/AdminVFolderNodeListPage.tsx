@@ -60,6 +60,8 @@ const VFOLDER_STATUSES = [
   'DELETE_ERROR',
 ];
 
+const DEFAULT_ORDER = '-created_at';
+
 const FILTER_BY_STATUS_CATEGORY = {
   active:
     'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
@@ -96,7 +98,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsString.withDefault('-created_at'),
+      order: parseAsString,
       filter: parseAsString,
       statusCategory: parseAsString.withDefault('active'),
       mode: parseAsString.withDefault('all'),
@@ -150,7 +152,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       queryParams.filter,
       usageModeFilter,
     ]),
-    order: queryParams.order,
+    order: queryParams.order || DEFAULT_ORDER,
     permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],

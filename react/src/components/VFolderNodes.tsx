@@ -590,7 +590,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             defaultHidden: true,
             sorter: isEnableSorter('permission'),
             render: (value: string) =>
-              value ? <BAIText code>{_.toUpper(value)}</BAIText> : '-',
+              value ? <VFolderPermissionCell permission={value} /> : '-',
           },
           {
             key: 'ownership_type',
