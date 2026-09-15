@@ -138,21 +138,17 @@ export async function login(
       if (overlay) overlay.remove();
     })
     .catch(() => {});
-  await page.getByLabel('Email or Username').fill(username);
+  await page.getByLabel('Email').fill(username);
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // Expand the endpoint section if it's not already visible.
-  // `getByLabel('Endpoint')` matches on substring, so it also picks up the
-  // "Endpoint History" trigger and the "About Endpoint" button — three
-  // elements, so it throws. `exact` pins the role lookup to the input alone.
+  // Must be the role locator: getByLabel('Endpoint') also matches the
+  // endpoint field's companion controls (help glyph, history rows), and
+  // `exact` keeps "Endpoint History" / "About Endpoint" out of the match.
   const endpointInput = page.getByRole('textbox', {
     name: 'Endpoint',
     exact: true,
   });
-  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
-  }
   await endpointInput.fill(endpoint);
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login
