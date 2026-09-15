@@ -230,7 +230,6 @@ run_check "TypeScript" pnpm --prefix ./react exec tsc --noEmit --incremental
 # The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
 # but nothing pulls in the agent CLI, so it gets its own lane.
 run_check "TypeScript (agent-cli)" pnpm --filter backend.ai-agent-cli exec tsc --noEmit
-run_check "TypeScript (smoke-cli)" pnpm --filter backend.ai-webui-smoke-cli exec tsc --noEmit
 run_check "Vite warmup paths" check_warmup_paths
 run_check "StyleX cssInjectionTarget" check_stylex_injection
 run_check "Astryx theme build" check_astryx_theme_built

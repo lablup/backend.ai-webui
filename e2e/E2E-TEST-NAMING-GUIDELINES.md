@@ -488,7 +488,8 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 ## Smoke tags
 
 The **`@smoke`** family identifies specs that are part of the post-install smoke
-suite run by the `backend.ai-webui-smoke-cli` tool (Epic FR-2871). Smoke specs
+suite run through `e2e/playwright.smoke.config.ts` (`pnpm e2e:smoke`, Epic
+FR-2871). Smoke specs
 are a curated subset of the full e2e suite that a Field-Ops engineer can run
 against a freshly installed Backend.AI cluster to verify the WebUI is
 functional — within 5–10 minutes, using only one account, against an endpoint
@@ -500,17 +501,17 @@ that may be air-gapped.
 |-----|---------|
 | `@smoke` | Base smoke marker. A spec carrying ONLY `@smoke` (no role tag) must perform **no login at all** — it is included in every run regardless of role. |
 | `@smoke` + `@smoke-admin` | Requires admin credentials (`loginAsAdmin`). Excluded from user-role runs. |
-| `@smoke` + `@smoke-user` | Requires user credentials (`loginAsUser`). Excluded from admin-role runs — the runner injects only ONE role's credentials, so `loginAsUser` under an admin run would fall back to dev-default credentials and fail on customer clusters. |
+| `@smoke` + `@smoke-user` | Requires user credentials (`loginAsUser`). Excluded from admin-role runs — a smoke run has only ONE role's credentials, so `loginAsUser` under an admin run would fall back to dev-default credentials and fail on customer clusters. |
 
 Role selection is **exclusive**: the role tag must match the login helper the
-spec actually calls. The smoke runner selects `@smoke` (bare) + `@smoke-<role>`
+spec actually calls. The smoke config selects `@smoke` (bare) + `@smoke-<role>`
 and explicitly excludes the opposite role's tag via `grepInvert`.
 
 > `@smoke-any` and `@smoke-extended` are intentionally **not** part of the
 > MVP taxonomy. The first turned out unworkable in practice (every e2e
 > helper hard-codes a role via `loginAsAdmin` / `loginAsUser`, so no
 > describe is genuinely role-agnostic at the helper level), and the second
-> requires a `--profile` flag the CLI does not implement yet.
+> has no selection mechanism behind it.
 
 These are **additive metadata** — existing tags (`@critical`, `@regression`,
 `@functional`, etc.) are preserved. Existing CI jobs that grep by other tags
@@ -548,7 +549,7 @@ following:
    (`getByLabel('Password', { exact: true })`) so they don't strict-mode-
    collide with the OTP field. The shared `login()` helper in
    `e2e/utils/test-util.ts` does not handle OTP at all today, so a
-   2FA-enabled cluster cannot be smoked yet (see the smoke CLI README).
+   2FA-enabled cluster cannot be smoked yet (see `e2e/README.md`).
 8. **No ad-hoc environment-conditional skips in smoke.** In-body
    `test.skip(featureNotAvailable)` probes give a false-green smoke report.
    Version/environment dependencies must instead use the declarative
@@ -557,14 +558,14 @@ following:
    an auditable reason on incapable targets and *fails* (not skips) when
    the UI is unexpectedly missing on capable ones.
 
-   Interaction with the smoke runner:
+   Interaction with the smoke run:
    - A smoke-tagged test that also carries `@requires-*` (e.g. the dashboard
      Agent Stats tests, `@requires-manager-v25.15`) is still selected by the
-     smoke runner; on an incapable target it reports an **auditable skip**
+     smoke config; on an incapable target it reports an **auditable skip**
      in the smoke report — acceptable, but keep such tests to a minimum
      since every skip reduces the report's install-verification signal.
    - The session-lifecycle agent guard is deliberately NOT a `@requires-*`
-     gate: the smoke runner force-enables it via
+     gate: `e2e/playwright.smoke.config.ts` force-enables it via
      `BACKEND_AI_AGENTS_AVAILABLE=true` so a session-incapable cluster
      shows up RED, not skipped — being able to run sessions is the point
      of the install.
@@ -642,31 +643,29 @@ whatever the account can see and delete-forevers it, which is acceptable on
 the shared test server it was written for and data loss on a customer
 cluster. Smoke specs reap their own artifacts (rule 2).
 
-### Listing the smoke set
+### Listing and running the smoke set
 
 `pnpm exec playwright test --grep @smoke --list` from the repository root
 lists the **union** of both roles — every bare-`@smoke` test plus every
 `@smoke-admin` and `@smoke-user` test — because `@smoke` is a substring of
 the role-suffixed tags and nothing in the tag itself says which role a test
-needs. The role partition is applied by the **runner**, not by the tags: the
-smoke CLI composes `grep` = bare `@smoke` OR `@smoke-<role>` and
-`grepInvert` = `@smoke-<opposite role>` (see `buildGrepExpression` in
-`packages/backend.ai-webui-smoke-cli/src/config.ts`). To list what a single
-role actually runs, use the smoke config instead:
+needs. The role partition lives in `e2e/playwright.smoke.config.ts`, which
+reads `SMOKE_ROLE` and sets `grep` = bare `@smoke` OR `@smoke-<role>` and
+`grepInvert` = `@smoke-<opposite role>`. To list what one role actually runs:
 
 ```bash
-BAI_SMOKE_GREP='(@smoke(?![\w-])|@smoke-admin(?![\w-]))' \
-BAI_SMOKE_GREP_INVERT='(@smoke-user(?![\w-]))' \
-  pnpm exec playwright test \
-    --config packages/backend.ai-webui-smoke-cli/playwright.smoke.config.ts --list
+SMOKE_ROLE=admin pnpm e2e:smoke --list
+SMOKE_ROLE=user  pnpm e2e:smoke --list
 ```
+
+Running it against an installed cluster is documented in `e2e/README.md`
+("Smoke run against an installed cluster").
 
 ## References
 
 - Playwright Best Practices: https://playwright.dev/docs/best-practices
 - BDD (Behavior-Driven Development) naming conventions
 - User Story format: "As a [role], I can [action] so that [benefit]"
-- WebUI Smoke CLI spec: `.specs/FR-2871-webui-smoke-cli/spec.md`
 
 ---
 

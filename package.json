@@ -10,6 +10,7 @@
   },
   "packageManager": "pnpm@12.4.0",
   "scripts": {
+    "e2e:smoke": "playwright test -c e2e/playwright.smoke.config.ts",
     "lint": "eslint src --quiet; exit 0",
     "lint-fix": "eslint src --quiet --fix; exit 0",
     "format": "prettier --check 'src/**/*.{js, ts}'",

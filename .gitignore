@@ -183,9 +183,5 @@ e2e/recordings/
 # .specs/FR-3482-astryx-migration/ in FR-3488).
 .scratch/
 
-# bai-smoke CLI artifacts: playwright test-results land next to the smoke
-# config (package dir), and default report dirs are timestamped in cwd
-packages/backend.ai-webui-smoke-cli/test-results/
-packages/backend.ai-webui-smoke-cli/smoke-report-*/
-smoke-report-*/
-smoke-report/
+# smoke run reports (e2e/playwright.smoke.config.ts)
+e2e/smoke-report/

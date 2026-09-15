@@ -18,7 +18,6 @@ on:
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
       - "packages/backend.ai-agent-cli/**"
-      - "packages/backend.ai-webui-smoke-cli/**"
       - "packages/backend.ai-docs-toolkit/**"
       - "src/**"
       - "tsconfig.json"
@@ -38,7 +37,6 @@ on:
       - "packages/backend.ai-ui/**"
       - "packages/backend.ai-client/**"
       - "packages/backend.ai-agent-cli/**"
-      - "packages/backend.ai-webui-smoke-cli/**"
       - "packages/backend.ai-docs-toolkit/**"
       - "src/**"
       - "tsconfig.json"
@@ -85,8 +83,7 @@ jobs:
       #                app. Excludes BUI's tests/stories (the backend.ai-ui
       #                lane covers those).
       #   backend.ai-ui / backend.ai-client / backend.ai-agent-cli /
-      #   backend.ai-webui-smoke-cli / backend.ai-docs-toolkit — each
-      #                package's own tsconfig.
+      #   backend.ai-docs-toolkit — each package's own tsconfig.
       #   client-*   — the backend.ai-client package checks that used to live
       #                in backend-ai-client-ci.yml. The agent-cli's matching
       #                lint/build/test trio lives in vitest-agent-cli.yml,
@@ -96,14 +93,13 @@ jobs:
       - name: Typecheck and package checks (parallel)
         run: |
           set +e
-          names=(root react backend.ai-ui backend.ai-client backend.ai-agent-cli backend.ai-webui-smoke-cli backend.ai-docs-toolkit client-lint client-test client-build)
+          names=(root react backend.ai-ui backend.ai-client backend.ai-agent-cli backend.ai-docs-toolkit client-lint client-test client-build)
           cmds=(
             "pnpm exec tsc --noEmit -p tsconfig.json"
             "pnpm --prefix ./react exec tsc --noEmit"
             "pnpm --filter backend.ai-ui exec tsc --noEmit"
             "pnpm --filter backend.ai-client exec tsc --noEmit"
             "pnpm --filter backend.ai-agent-cli exec tsc --noEmit"
-            "pnpm --filter backend.ai-webui-smoke-cli exec tsc --noEmit"
             "pnpm --filter backend.ai-docs-toolkit exec tsc --noEmit"
             "pnpm --filter backend.ai-client run lint"
             "pnpm --filter backend.ai-client run test"
