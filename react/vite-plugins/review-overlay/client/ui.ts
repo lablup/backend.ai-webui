@@ -124,6 +124,24 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
          in our accent, so every surface of this tool is the one colour. */
       --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
       --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
+      /* The docs PR-preview palette, verbatim from
+         packages/backend.ai-docs-toolkit/templates/assets/pr-preview.css:
+         guided mode is that grammar ported onto the app (FR-3950). */
+      --bai-add: #16a34a; --bai-add-bg: rgba(34, 197, 94, .18);
+      --bai-mod: #ca8a04; --bai-mod-bg: rgba(250, 204, 21, .32);
+      --bai-del: #dc2626;
+      --bai-pop-bg: #fff; --bai-pop-fg: #111827; --bai-pop-border: #d1d5db;
+      --bai-focus: #2563eb; --bai-accent: #ff7a00;
+      --bai-viewed-badge: #6b7280; --bai-row-hover: rgba(37, 99, 235, .08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :host {
+        --bai-add-bg: rgba(34, 197, 94, .22);
+        --bai-mod-bg: rgba(250, 204, 21, .22);
+        --bai-pop-bg: #1f2937; --bai-pop-fg: #f3f4f6;
+        --bai-pop-border: #4b5563;
+        --bai-row-hover: rgba(96, 165, 250, .16);
+      }
     }
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {

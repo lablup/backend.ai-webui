@@ -159,6 +159,12 @@ declare global {
      */
     __BAI_REVIEW__?: {
       routeLabel?: string;
+      /**
+       * The app's router, so guided mode can cross pages without a reload
+       * (FR-3950). Absent outside a Router, and the overlay falls back to
+       * `location.assign` then.
+       */
+      navigate?: (to: string) => void;
     };
   }
 }
@@ -184,6 +190,11 @@ export interface ReviewServerState {
   source: 'boot-record' | 'gh' | 'none';
   /** Absolute repository root, so the client can relativize source paths. */
   root?: string | null;
+  /**
+   * The head this server is serving (`git rev-parse HEAD`), so a walkthrough
+   * minted for another one can say so (FR-3950). Absent outside a checkout.
+   */
+  head?: string | null;
   /**
    * `serve` (the default) — a dev server answered, and react-grab loads with
    * the app. `static` — the state was embedded in a built document (FR-3880),

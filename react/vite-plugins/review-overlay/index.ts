@@ -73,6 +73,20 @@ async function repoRoot(): Promise<string | null> {
   }
 }
 
+/**
+ * The commit this server is serving. A walkthrough carries the head it was
+ * minted for, and the banner says so when the two differ (FR-3950); the boot
+ * record carries no sha, so git is asked directly.
+ */
+async function headSha(): Promise<string | null> {
+  try {
+    const { stdout } = await pexecFile('git', ['rev-parse', 'HEAD']);
+    return /^[0-9a-f]{40}$/.test(stdout.trim()) ? stdout.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
 async function currentBranch(): Promise<string | null> {
   try {
     const { stdout } = await pexecFile('git', [
@@ -134,10 +148,14 @@ async function discoverPrState(): Promise<ReviewServerState> {
   }
 }
 
-/** The root rides along on every answer, including the failure ones. */
+/** The root and the head ride along on every answer, failures included. */
 async function discoverState(): Promise<ReviewServerState> {
-  const [state, root] = await Promise.all([discoverPrState(), repoRoot()]);
-  return { ...state, root };
+  const [state, root, head] = await Promise.all([
+    discoverPrState(),
+    repoRoot(),
+    headSha(),
+  ]);
+  return { ...state, root, head };
 }
 
 // -------------------------------------------------------------------- plugin
