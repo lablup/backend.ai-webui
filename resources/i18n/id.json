@@ -31,6 +31,7 @@
     "MultiNode": "Multi-Node",
     "MultiNodeNotConfiguredWarning": "Jika multi-node tidak dikonfigurasi pada kluster, sesi yang dibuat dari preset ini akan gagal dijalankan.",
     "Name": "Nama",
+    "NameCannotContainWhitespace": "Nama tidak boleh mengandung spasi.",
     "NamePlaceholder": "mis. vLLM-GPU-Large",
     "NameRequired": "Nama wajib diisi",
     "NotSupported": "Manajemen preset deployment tidak didukung oleh versi backend saat ini.",

@@ -31,6 +31,7 @@
     "MultiNode": "Multi-nœud",
     "MultiNodeNotConfiguredWarning": "Si le multi-nœud n'est pas configuré sur le cluster, les sessions créées à partir de ce préréglage ne démarreront pas.",
     "Name": "Nom",
+    "NameCannotContainWhitespace": "Le nom ne peut pas contenir d'espaces.",
     "NamePlaceholder": "ex. vLLM-GPU-Large",
     "NameRequired": "Le nom est obligatoire",
     "NotSupported": "La gestion des préréglages de déploiement n'est pas prise en charge par la version actuelle du backend.",

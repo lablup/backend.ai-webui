@@ -31,6 +31,7 @@
     "MultiNode": "Multi-nó",
     "MultiNodeNotConfiguredWarning": "Se o multi-nó não estiver configurado no cluster, as sessões criadas a partir desta predefinição não serão iniciadas.",
     "Name": "Nome",
+    "NameCannotContainWhitespace": "O nome não pode conter espaços em branco.",
     "NamePlaceholder": "ex. vLLM-GPU-Large",
     "NameRequired": "O nome é obrigatório",
     "NotSupported": "A gestão de predefinições de implementação não é suportada pela versão atual do backend.",

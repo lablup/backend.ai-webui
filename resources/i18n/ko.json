@@ -31,6 +31,7 @@
     "MultiNode": "멀티 노드",
     "MultiNodeNotConfiguredWarning": "멀티 노드 설정이 안 되어 있으면 해당 프리셋으로 만든 추론 세션 생성이 실패합니다.",
     "Name": "이름",
+    "NameCannotContainWhitespace": "이름에는 공백을 포함할 수 없습니다",
     "NamePlaceholder": "예: vLLM-GPU-Large",
     "NameRequired": "이름은 필수입니다",
     "NotSupported": "현재 백엔드 버전에서는 배포 프리셋 관리를 지원하지 않습니다.",

@@ -31,6 +31,7 @@
     "MultiNode": "Wielowęzłowy",
     "MultiNodeNotConfiguredWarning": "Jeśli tryb wielowęzłowy nie jest skonfigurowany w klastrze, sesje utworzone z tego ustawienia wstępnego nie uruchomią się.",
     "Name": "Nazwa",
+    "NameCannotContainWhitespace": "Nazwa nie może zawierać spacji.",
     "NamePlaceholder": "np. vLLM-GPU-Large",
     "NameRequired": "Nazwa jest wymagana",
     "NotSupported": "Zarządzanie ustawieniami wstępnymi wdrożenia nie jest obsługiwane przez bieżącą wersję backendu.",
