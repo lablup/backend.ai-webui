@@ -331,4 +331,51 @@ describe('wsproxy Manager security (FR-3227)', () => {
       expect(manager._nextPooledPort()).toBe(10000);
     });
   });
+
+  describe('a configured pool that parsed to nothing', () => {
+    const configured = (env?: string) => Manager.hasConfiguredPortPool(env);
+
+    it('is distinguished from an unset variable', () => {
+      expect(configured(undefined)).toBe(false);
+      expect(configured('')).toBe(false);
+      expect(configured(' , ')).toBe(false);
+      // Wholly invalid, but the operator did ask for a pool.
+      expect(configured('abc')).toBe(true);
+      expect(configured('10000-10100')).toBe(true);
+    });
+  });
+
+  /**
+   * The pool only constrains the deployment if it also constrains the
+   * caller-supplied `?port=` the app launcher sends for a user-selected
+   * preferred port. Both branches answer before any gateway is constructed,
+   * so they are reachable without the gateway build artifacts.
+   */
+  describe('/add port pool enforcement', () => {
+    it('rejects an explicit port outside the configured pool', async () => {
+      const token = await configure();
+      manager.portPool = [10000, 10001];
+      manager.portPoolConfigured = true;
+
+      const res = await fetch(
+        `${baseURL}/proxy/${token}/sess-pool/add?app=jupyter&port=20022`,
+      );
+
+      expect((await json(res)).code).toBe(500);
+      expect(manager.proxies.hasOwnProperty('sess-pool|jupyter')).toBe(false);
+    });
+
+    it('fails instead of binding outside a pool that parsed to nothing', async () => {
+      const token = await configure();
+      manager.portPool = [];
+      manager.portPoolConfigured = true;
+
+      const res = await fetch(
+        `${baseURL}/proxy/${token}/sess-empty/add?app=jupyter`,
+      );
+
+      expect((await json(res)).code).toBe(500);
+      expect(manager.proxies.hasOwnProperty('sess-empty|jupyter')).toBe(false);
+    });
+  });
 });

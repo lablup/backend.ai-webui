@@ -105,6 +105,17 @@ function parseConfiguredPortPool(env) {
   return ports;
 }
 
+// Whether the operator set WSPROXY_PORT_POOL at all, independent of whether
+// any entry survived parsing. A wholly invalid value ("abc") must not be
+// treated as "no pool": that would bind an OS-assigned port outside the
+// firewall range exactly when the configuration is wrong.
+function hasConfiguredPortPool(env) {
+  if (!env) return false;
+  return String(env)
+    .split(',')
+    .some((entry) => entry.trim() !== '');
+}
+
 // A loopback page (the WebUI dev server, the proxy itself, or any localhost
 // origin) is considered trusted: the proxy only binds to 127.0.0.1, so a
 // loopback origin is already inside the trust boundary. `*.localhost`
@@ -169,8 +180,15 @@ class Manager extends EventEmitter {
     this.aiclient = undefined;
     this.proxies = {};
     this.portPool = parseConfiguredPortPool(process.env.WSPROXY_PORT_POOL);
+    this.portPoolConfigured = hasConfiguredPortPool(
+      process.env.WSPROXY_PORT_POOL,
+    );
     if (this.portPool.length > 0) {
       logger.info(`Proxying port pool: ${this.portPool.length} port(s)`);
+    } else if (this.portPoolConfigured) {
+      logger.warn(
+        'WSPROXY_PORT_POOL is set but has no valid entry; every app request will fail',
+      );
     }
     this.baseURL = undefined;
     // Per-instance secret returned by PUT /conf and required by every
@@ -363,14 +381,26 @@ class Manager extends EventEmitter {
           // With a pool configured the proxy must stay inside it, so an
           // exhausted pool is an error rather than a fallback to an
           // OS-assigned port the deployment's firewall would not expect.
-          const pooled = this.portPool.length > 0;
+          // The same holds for the caller-supplied `?port=` the app launcher
+          // sends for a user-selected preferred port: honour it only when it
+          // is a pool member, otherwise the app binds outside the range.
+          const pooled = this.portPoolConfigured;
           const triedPorts = new Set();
-          if (pooled && port === undefined) {
-            port = this._nextPooledPort();
-            if (port === undefined) {
-              logger.warn('No free port left in the configured port pool');
+          if (pooled) {
+            if (port !== undefined && !this.portPool.includes(port)) {
+              logger.warn(
+                `Requested port ${port} is outside the configured port pool`,
+              );
               res.send({ code: 500 });
               return;
+            }
+            if (port === undefined) {
+              port = this._nextPooledPort();
+              if (port === undefined) {
+                logger.warn('No free port left in the configured port pool');
+                res.send({ code: 500 });
+                return;
+              }
             }
           }
 
@@ -688,5 +718,6 @@ class Manager extends EventEmitter {
 // unavailable in a source-only checkout).
 Manager.isGatewayAlive = isGatewayAlive;
 Manager.parseConfiguredPortPool = parseConfiguredPortPool;
+Manager.hasConfiguredPortPool = hasConfiguredPortPool;
 
 module.exports = Manager;

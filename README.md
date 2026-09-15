@@ -536,10 +536,13 @@ $ export WSPROXY_PORT_POOL="10000-10010,20022,23389"
 ```
 
 Ports are handed out in the listed order, skipping the ones already taken by a
-running app. Invalid entries are logged and ignored; when the whole pool is in
-use, a new app request fails with `500` instead of silently falling back to an
-OS-assigned port outside the pool. Leaving the variable unset keeps the default
-behaviour. Like `WSPROXY_CORS_ORIGINS`, this is an environment variable of the
+running app. Invalid entries are logged and ignored, but the pool stays in
+force: when the whole pool is in use — or when the value was set yet no entry
+survived parsing — a new app request fails with `500` instead of silently
+falling back to an OS-assigned port outside the pool. A preferred port picked
+in the app launcher is honoured only when it is a member of the pool;
+otherwise that request fails with `500` too. Leaving the variable unset keeps
+the default behaviour. Like `WSPROXY_CORS_ORIGINS`, this is an environment variable of the
 proxy **process** and can be put in the repository-root `.env` instead of being
 exported.
 
