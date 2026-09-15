@@ -103,6 +103,8 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
 
 - `route` — origin-relative, **below** the project scope (`/data`, not
   `/project/<name>/data`). `mint.mjs` prepends the base the app lands on.
+  A page outside the project scope — the admin pages under `/admin/…` —
+  says `"scope": "app"` and is opened as written.
 - `via` — the clicks that reveal the element, replayed in order; `{"click":
 {"text": "…"}}` matches exact visible text, `{"click": {"tid": "…"}}` a
   testid. At most 8.

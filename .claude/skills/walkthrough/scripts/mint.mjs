@@ -646,7 +646,9 @@ async function mintStop(
   page,
   { stop, origin, projectBase, settleMs, fields, at },
 ) {
-  await page.goto(`${origin}${projectBase}${stop.route}`, {
+  // Admin pages live outside `/project/<name>`; a stop says so with scope: "app".
+  const prefix = stop.scope === "app" ? "" : projectBase;
+  await page.goto(`${origin}${prefix}${stop.route}`, {
     waitUntil: "domcontentloaded",
   });
   await waitForOverlay(page);

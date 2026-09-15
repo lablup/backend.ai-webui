@@ -67,6 +67,12 @@ function checkStop(stop, index, errors) {
     return errors.push(`${where}: not an object`);
   if (typeof stop.route !== "string" || !/^\/(?![/\\])/.test(stop.route))
     errors.push(`${where}: route must be an origin-relative path like "/data"`);
+  if (
+    stop.scope !== undefined &&
+    stop.scope !== "project" &&
+    stop.scope !== "app"
+  )
+    errors.push(`${where}: scope must be "project" (default) or "app"`);
   const find = stop.find;
   if (!find || typeof find !== "object")
     errors.push(`${where}: find is required`);
