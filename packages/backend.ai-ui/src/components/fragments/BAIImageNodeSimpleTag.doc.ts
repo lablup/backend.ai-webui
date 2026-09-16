@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'One-line identity of a v1 `ImageNode` (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control for the full reference. It reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`), so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. It must sit under `BAIMetaDataProvider`, because the icon and the tag aliases come from `useBAIImageMetaData`. `BAIImageNodeSimpleTagV2` draws the same row from the v2 schema; the two share the `imageNodeTagFacts` builder that decides double tag versus single badge, and nothing else.',
+      'One-line identity of a v1 `ImageNode` (ADR 0004) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control for the full reference. It reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`), so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. It must sit under `BAIMetaDataProvider`, because the icon and the tag aliases come from `useBAIImageMetaData`. `BAIImageNodeSimpleTagV2` draws the same row from the v2 schema; the two share the `imageNodeTagFacts` builder that decides double tag versus single badge and the row markup itself, an internal `ImageNodeSimpleTag` the barrel does not export.',
     bestPractices: [
       {
         guidance: true,

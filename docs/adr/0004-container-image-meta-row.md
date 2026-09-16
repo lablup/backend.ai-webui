@@ -9,14 +9,14 @@
 - v2 component는 v2 query를 쓰는 곳에서만 쓰고, v1 query를 쓰는 곳은 v1 component를 쓴다. fragment가 필요하면 query에 spread한다.
 - image node가 없는 화면은 host가 각자 같은 모양의 행을 그린다. session launcher 리뷰 단계의 form value, session 상세의 `compute_session.image` 문자열, 환경 선택 dropdown의 legacy `Image` 객체가 그렇다. 구분선과 chip은 `react/src/components/ImageTags.tsx`가 export하는 `ImageMetaDivider`와 `ImageTagBadges`를 쓴다.
 - tag chip을 [double tag](#용어)로 그릴지 badge 하나로 그릴지는 BUI의 `imageNodeTagFacts` 하나가 정한다. v1, v2, host 세 곳이 같은 fact로 chip을 그리고, chip 색을 호출자가 고르는 prop은 없다.
-- 구분선과 chip은 BUI가 따로 export하지 않는다. 두 component 안의 지역 component다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 `BAIFlex` 안에서 높이가 0으로 접히므로, 그 metric을 각 module이 고정한다.
+- 구분선과 chip은 BUI가 따로 export하지 않는다. 두 component가 함께 쓰는 `ImageNodeSimpleTag` module의 지역 component이고, 그 module도 export하지 않는다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 `BAIFlex` 안에서 높이가 0으로 접히므로, 그 metric을 그 module이 고정한다.
 - Full image path 열은 행이 아니라 reference 문자열이다. `BAIText monospace copyable ellipsis`로 그린다.
 - 이 저장소가 지원하는 가장 낮은 manager는 26.4.x이고 [extended image info](#용어)는 24.12.0부터 켜지므로, 그 이전 manager를 위한 image 표현은 모두 지웠다.
 - 범위 밖: 화면 세 곳은 image 행을 그리지 않는다. 환경 선택 dropdown의 환경 목록, session launcher가 손으로 입력받은 image 문자열, 그리고 session template 표의 축약 label이다.
 
 ## Context
 
-- **What the components are**: `BAIImageNodeSimpleTagV2`는 v2 `ImageV2` fragment를 읽어 image 한 개의 행을 그린다. `BAIImageNodeSimpleTag`는 v1 `ImageNode` fragment를 읽어 같은 행을 그린다. 한쪽이 다른 쪽을 부르지 않는다.
+- **What the components are**: `BAIImageNodeSimpleTagV2`는 v2 `ImageV2` fragment를 읽어 image 한 개의 행을 그린다. `BAIImageNodeSimpleTag`는 v1 `ImageNode` fragment를 읽어 같은 행을 그린다. 한쪽이 다른 쪽을 부르지 않는다. 행의 markup은 같은 폴더의 `ImageNodeSimpleTag`가 문자열과 chip fact를 prop으로 받아 그리고, 둘 다 그것을 부른다. `ImageNodeSimpleTag`는 barrel이 export하지 않는다.
 - **Why a decision is needed**: 같은 image reference `cr.backend.ai/stable/python-tensorflow:2.15-py39-cuda12.4-ubuntu20.04@x86_64`가 화면마다 다르게 보였다. 아래 여섯 곳이 그 image를 각자 그리고 있었다.
 
 | 위치 | 그린 방식 |
@@ -57,6 +57,7 @@ flowchart TB
     envSelect["ImageEnvironmentSelectFormItems<br/>legacy Image, version 옵션"]
     tagsOnly["AliasedImageDoubleTags<br/>ImageNode fragment, chip만"]
   end
+  row["ImageNodeSimpleTag<br/>BUI, export 안 함"]
   facts["imageNodeTagFacts<br/>BUI, BAIImageNodeSimpleTagV2.tsx"]
   parts["ImageMetaDivider / ImageTagBadges<br/>host, ImageTags.tsx"]
   icon["BAIImageMetaIcon"]
@@ -65,9 +66,10 @@ flowchart TB
   sessionsV2 & adminPicker & revision -- "imageFrgmt" --> v2
   sessions & detail -- "imageFrgmt" --> v1
   v2 & v1 -- "tags, labels" --> facts
+  v2 & v1 -- "fullName, name, version, architecture, facts" --> row
   launcher & envSelect & tagsOnly -- "tags, labels" --> facts
   launcher & lazy & envSelect & tagsOnly --> parts
-  v2 & v1 & launcher & lazy --> icon
+  row & launcher & lazy --> icon
   v2 & v1 & lazy -- "tagAlias, getBaseImage, getBaseVersion" --> meta
   icon -- "getImageIcon, hasImageIcon" --> meta
 ```
@@ -123,7 +125,7 @@ flowchart TB
 
 ### 5. 구분선과 chip은 BUI가 export하지 않는다
 
-- **Module-local in BUI**: `BAIImageNodeSimpleTag`와 `BAIImageNodeSimpleTagV2`는 각자 module 안에 구분선과 chip 행을 지역 component로 가진다. barrel이 export하는 image component는 그 둘과 `imageNodeTagFacts`, `BAIImageTagFact`뿐이다.
+- **Module-local in BUI**: 구분선과 chip 행은 `packages/backend.ai-ui/src/components/fragments/ImageNodeSimpleTag.tsx`의 지역 component다. `BAIImageNodeSimpleTag`와 `BAIImageNodeSimpleTagV2`는 fragment에서 파생한 `fullName`, `name`, `version`, `architecture`, `facts`를 그 module의 `ImageNodeSimpleTag`에 넘겨 행을 그린다. barrel이 export하는 image component는 그 둘과 `imageNodeTagFacts`, `BAIImageTagFact`뿐이고, `ImageNodeSimpleTag`는 export하지 않는다.
 - **Host parts in host**: node 없이 행을 그리는 host 화면은 `ImageTags.tsx`의 `ImageMetaDivider`와 `ImageTagBadges`를 쓴다.
 - **Fixed metrics**: 구분선은 `alignSelf: center`, `height: 0.9em`, `marginInline: token.marginXXS`로 고정한 `Divider`다. Astryx `Divider`를 `orientation="vertical"`로 직접 쓰면 flex row 안에서 높이가 0으로 접힌다.
 
@@ -149,7 +151,7 @@ flowchart TB
 
 ## 대안과 기각 사유
 
-- **One row component that also takes strings**: `BAIImageNodeSimpleTagV2`가 `imageFrgmt` 대신 `fullName`, `name`, `version`, `architecture`, `tags`, `variant`를 받아 v1 adapter, launcher form value, `compute_session.image` 문자열까지 한 markup으로 그리는 형태다. 행 markup이 한 벌인 것이 장점이다. 기각한 이유는 v2 component의 prop 표면이 v1과 달라져 같은 일을 하는 두 component가 다른 계약을 갖게 되고, fragment를 spread하면 되는 곳에서도 문자열을 조립해 넘기는 adapter가 생기기 때문이다. v2 component에 새 prop이 필요해지면 별도 이슈로 다룬다.
+- **One row component that also takes strings**: `BAIImageNodeSimpleTagV2`가 `imageFrgmt` 대신 `fullName`, `name`, `version`, `architecture`, `tags`, `variant`를 받아 v1 adapter, launcher form value, `compute_session.image` 문자열까지 한 markup으로 그리는 형태다. 행 markup이 한 벌인 것이 장점이다. 기각한 이유는 v2 component의 prop 표면이 v1과 달라져 같은 일을 하는 두 component가 다른 계약을 갖게 되고, fragment를 spread하면 되는 곳에서도 문자열을 조립해 넘기는 adapter가 생기기 때문이다. 문자열을 받는 행은 export하지 않는 `ImageNodeSimpleTag`로만 두어, 그 markup을 한 벌로 유지하면서도 call site는 fragment만 넘긴다. v2 component에 새 prop이 필요해지면 별도 이슈로 다룬다.
 - **One fragment-reading component for both schemas**: 공용 component 하나가 v1과 v2를 모두 읽는 형태다. 기각한 이유는 Relay fragment가 한 type에만 선언되기 때문이다. v1 `ImageNode`와 v2 `ImageV2`는 schema가 다르다.
 - **Keep the shared component in the host app**: v1 화면이 모두 host에 있으니 이동 거리가 짧은 것이 장점이다. 기각한 이유는 BUI의 `BAISessionNodesV2`와 `BAIAdminImageSelect`가 같은 행을 쓰는데 BUI가 host를 import할 수 없고, `.claude/rules/bui-component-home.md`가 재사용 component의 집을 BUI로 정해 두었기 때문이다.
 - **The chips and the divider as exported BUI components**: 둘을 각각 component로 두고 barrel이 export해 host도 그것을 쓰는 형태다. host의 `ImageMetaDivider`와 `ImageTagBadges`가 없어지는 것이 장점이다. 기각한 이유는 부품 셋을 따로 export하면 행을 조립하는 hop이 늘고, 두 image component가 부품에 묶이기 때문이다. host의 두 부품은 FR-3544가 만든 자리에 그대로 둔다.
