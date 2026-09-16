@@ -922,6 +922,7 @@
       "Control": "Steuerung",
       "CreateModelFolderOnlyInExclusiveProject": "Modellprojektordner können nur in Model Store -Exclusive -Projekten erstellt werden.",
       "CreatedAt": "Erstellt at",
+      "Creator": "Ersteller",
       "Delete": "Löschen",
       "DeleteAFolder": "Einen Ordner löschen",
       "DeleteFailureDescription": "{{failed}} von {{total}} Ordnern konnten nicht gelöscht werden. Überprüfen Sie unten den Grund für jeden Ordner.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Geben Sie den Ordnernamen ein, um ihn zu verlassen",
       "TypeNewFolderName": "Geben Sie einen neuen Ordnernamen ein",
       "TypeToConfirmDeleteForever": "Geben Sie das folgende Wort ein, um dauerhaft zu löschen",
-      "View": "Aussicht",
-      "Creator": "Ersteller"
+      "View": "Aussicht"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Die Einladung nicht akzeptiert",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Aktion",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Alle Projekte",
     "AlreadyInstalledImage": "Bereits installiertes Bild",
     "AppInfoDeleted": "App-Informationen erfolgreich gelöscht.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Vollständiger Bildpfad",
     "ID": "ID",
     "Image": "Image",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Bilder",
     "Install": "Installieren",
     "InstallImage": "Bild installieren",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Protokoll muss 'http', 'tcp', 'preopen' und 'pty' sein",
     "Registries": "Register",
     "Registry": "Registrierung",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Ressourcenlimit",
     "ResourceLimitAppliesToNewSessionsOnly": "Das minimale Ressourcenlimit gilt nur für neu erstellte Sitzungen und hat keinen Einfluss auf bereits laufende Sitzungen.",
     "ResourcePresets": "Ressourcenvoreinstellungen",
     "SearchImages": "Bilder suchen",
     "SelectedImagesAlreadyInstalled": "Ausgewählte Bilder sind bereits installiert oder Keine. Bitte überprüfen Sie noch einmal.",
     "SelectedImagesNotInstalled": "Ausgewählte Bilder werden nicht installiert. Bitte überprüfen Sie noch einmal.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Status",
     "SuccessfullyCreated": "Erfolgreich erstellt",
     "SuccessfullyModified": "Erfolgreich geändert",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Schlagworte",
     "Version": "Ausführung"
   },
@@ -2441,6 +2447,7 @@
     "DescURLStartString": "URL beginnt mit http:// oder https://",
     "ExtraInformation": "Zusätzliche Informationen",
     "ForHarborOnly": "Nur für Hafen!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Hafenprojekt",
     "Hostname": "Hostname",
     "IsGlobal": "Als globales Registry festlegen",
@@ -2758,6 +2765,7 @@
     "DependedByOthers": "Abhängig davon",
     "DependsOn": "Abhängig von",
     "DescCommitSession": "Sie sind im Begriff, einen Container zu übertragen, der der folgenden Sitzung entspricht:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSV-Datei wird heruntergeladen...",
     "DownloadingSessionLogs": "Herunterladen von Sitzungsprotokollen.",
     "ElapsedTime": "Verstrichene Zeit",
@@ -2829,6 +2837,7 @@
     "PreparingSession": "Sitzung vorbereiten...",
     "Priority": "Priorität",
     "PrioritySuccessfullyUpdated": "Die Sitzungspriorität wurde erfolgreich aktualisiert.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Weniger lesen",
     "ReadMore": "Mehr lesen...",
     "RecentlyCreatedSessions": "Kürzlich erstellte Sitzungen",
@@ -3177,9 +3186,7 @@
       "SessionNameTooLong64": "Bitte geben Sie maximal 64 Zeichen ein.",
       "SessionNameTooShort": "Bitte geben Sie mindestens 4 Zeichen ein.",
       "SluggedStrings": "Geschliffene Zeichenfolgen (>3 Zeichen)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max -Unterstützung",

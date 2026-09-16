@@ -922,6 +922,7 @@
       "Control": "Controllo",
       "CreateModelFolderOnlyInExclusiveProject": "Le cartelle del progetto di modello possono essere create solo in progetti esclusivi del negozio di modelli.",
       "CreatedAt": "Creato a",
+      "Creator": "Creatore",
       "Delete": "Elimina",
       "DeleteAFolder": "Elimina una cartella",
       "DeleteFailureDescription": "Impossibile eliminare {{failed}} cartelle su {{total}}. Controlla il motivo per ciascuna cartella qui sotto.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Digita il nome della cartella da lasciare",
       "TypeNewFolderName": "Digita il nuovo nome della cartella",
       "TypeToConfirmDeleteForever": "Digita la parola qui sotto per eliminare definitivamente",
-      "View": "Visualizza",
-      "Creator": "Creatore"
+      "View": "Visualizza"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Impossibile accettare l'invito",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Azione",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Tutti i progetti",
     "AlreadyInstalledImage": "Immagine già installata",
     "AppInfoDeleted": "Informazioni sull'app eliminate con successo.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Percorso completo dell'immagine",
     "ID": "ID",
     "Image": "Immagine",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "immagini",
     "Install": "Installare",
     "InstallImage": "Installa immagine",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Il protocollo deve essere uno tra \"http\", \"tcp\", \"preopen\" e \"pty\"",
     "Registries": "Registri",
     "Registry": "Registro di sistema",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Limite delle risorse",
     "ResourceLimitAppliesToNewSessionsOnly": "Il limite minimo delle risorse si applica solo alle sessioni appena create e non influisce sulle sessioni già in esecuzione.",
     "ResourcePresets": "Preimpostazioni delle risorse",
     "SearchImages": "Ricerca immagini",
     "SelectedImagesAlreadyInstalled": "Le immagini selezionate sono già installate o Nessuna. Si prega di controllare di nuovo.",
     "SelectedImagesNotInstalled": "Le immagini selezionate non sono installate. Si prega di controllare di nuovo.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Stato",
     "SuccessfullyCreated": "Creato con successo",
     "SuccessfullyModified": "Modificato con successo",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Tag",
     "Version": "Versione"
   },
@@ -2439,6 +2445,7 @@
     "DescURLStartString": "L'URL inizia con http:// o https://",
     "ExtraInformation": "Informazioni aggiuntive",
     "ForHarborOnly": "Solo per porto!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Progetto del porto",
     "Hostname": "Nome host",
     "IsGlobal": "Imposta come registro globale",
@@ -2756,6 +2763,7 @@
     "DependedByOthers": "Dipeso da",
     "DependsOn": "Dipende da",
     "DescCommitSession": "Si sta per impegnare il contenitore corrispondente alla sessione sottostante:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Download del file CSV in corso...",
     "DownloadingSessionLogs": "Scaricare i registri di sessione.",
     "ElapsedTime": "Tempo trascorso",
@@ -2827,6 +2835,7 @@
     "PreparingSession": "Preparazione della sessione",
     "Priority": "Priorità",
     "PrioritySuccessfullyUpdated": "La priorità della sessione è stata aggiornata correttamente.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Leggi di più",
     "ReadMore": "Per saperne di più...",
     "RecentlyCreatedSessions": "Sessioni create di recente",
@@ -3175,9 +3184,7 @@
       "SessionNameTooLong64": "Inserisci 64 caratteri o meno.",
       "SessionNameTooShort": "Inserire almeno 4 caratteri.",
       "SluggedStrings": "Stringhe con slugged (>3 caratteri)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max Support",

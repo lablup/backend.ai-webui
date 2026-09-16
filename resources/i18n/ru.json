@@ -922,6 +922,7 @@
       "Control": "Контроль",
       "CreateModelFolderOnlyInExclusiveProject": "Папки моделей проектов могут быть созданы только в эксклюзивных проектах Model Store.",
       "CreatedAt": "Создан в",
+      "Creator": "Создатель",
       "Delete": "Удалить",
       "DeleteAFolder": "Удалить папку",
       "DeleteFailureDescription": "Не удалось удалить {{failed}} из {{total}} папок. Проверьте причину для каждой папки ниже.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Введите имя папки, чтобы оставить",
       "TypeNewFolderName": "Введите новое имя папки",
       "TypeToConfirmDeleteForever": "Введите слово ниже для безвозвратного удаления",
-      "View": "Вид",
-      "Creator": "Создатель"
+      "View": "Вид"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Не удалось принять приглашение",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Действие",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Все проекты",
     "AlreadyInstalledImage": "Уже установленный образ",
     "AppInfoDeleted": "Информация о приложении успешно удалена.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Полный путь к изображению",
     "ID": "Идентификатор",
     "Image": "Образ",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Изображений",
     "Install": "Установить",
     "InstallImage": "Установить образ",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Протокол должен быть одним из http, tcp, preopen и pty.",
     "Registries": "Реестры",
     "Registry": "Реестр",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Лимит ресурсов",
     "ResourceLimitAppliesToNewSessionsOnly": "Минимальный лимит ресурсов применяется только к вновь создаваемым сессиям и не влияет на уже запущенные сессии.",
     "ResourcePresets": "Предустановки ресурсов",
     "SearchImages": "Поисковые изображения",
     "SelectedImagesAlreadyInstalled": "Выбранные образы уже установлены или отсутствуют. Пожалуйста, проверьте еще раз.",
     "SelectedImagesNotInstalled": "Выбранные образы не устанавливаются. Пожалуйста, проверьте еще раз.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Статус",
     "SuccessfullyCreated": "Успешно создано",
     "SuccessfullyModified": "Успешно изменено",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Теги",
     "Version": "Версия"
   },
@@ -2439,6 +2445,7 @@
     "DescURLStartString": "URL-адрес начинается с http: // или https: //",
     "ExtraInformation": "Дополнительная информация",
     "ForHarborOnly": "Только для Harbor!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Проект Harbor",
     "Hostname": "Имя хоста",
     "IsGlobal": "Установить как глобальный реестр",
@@ -2756,6 +2763,7 @@
     "DependedByOthers": "Зависимые сеансы",
     "DependsOn": "Зависит от",
     "DescCommitSession": "Вы собираетесь зафиксировать контейнер, соответствующий приведенной ниже сессии:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Скачивание файла CSV ...",
     "DownloadingSessionLogs": "Загрузка журналов сеансов.",
     "ElapsedTime": "Прошедшее время",
@@ -2827,6 +2835,7 @@
     "PreparingSession": "Подготовка сеанса",
     "Priority": "Приоритет",
     "PrioritySuccessfullyUpdated": "Приоритет сеанса успешно обновлён.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Читать далее",
     "ReadMore": "Читать далее...",
     "RecentlyCreatedSessions": "Недавно создал сессии",
@@ -3175,9 +3184,7 @@
       "SessionNameTooLong64": "Введите не более 64 символов.",
       "SessionNameTooShort": "Пожалуйста, введите не менее 4 символов.",
       "SluggedStrings": "Строки с засечками (>3 символов)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max поддержка",

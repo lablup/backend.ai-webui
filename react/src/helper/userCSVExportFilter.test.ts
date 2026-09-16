@@ -42,8 +42,9 @@ describe('buildUserCSVExportFilter', () => {
   });
 
   it('converts role to a lowercased IN list', () => {
-    expect(buildUserCSVExportFilter({ role: { equals: 'SUPERADMIN' } }).filter)
-      .toEqual({ role: ['superadmin'] });
+    expect(
+      buildUserCSVExportFilter({ role: { equals: 'SUPERADMIN' } }).filter,
+    ).toEqual({ role: ['superadmin'] });
     expect(
       buildUserCSVExportFilter({ role: { in: ['ADMIN', 'MONITOR'] } }).filter,
     ).toEqual({ role: ['admin', 'monitor'] });

@@ -922,6 +922,7 @@
       "Control": "Ελεγχος",
       "CreateModelFolderOnlyInExclusiveProject": "Οι φακέλοι έργων μοντέλων μπορούν να δημιουργηθούν μόνο σε αποκλειστικά έργα Model Store.",
       "CreatedAt": "Δημιουργήθηκε στο",
+      "Creator": "Δημιουργός",
       "Delete": "Διαγράφω",
       "DeleteAFolder": "Διαγραφή φακέλου",
       "DeleteFailureDescription": "Δεν ήταν δυνατή η διαγραφή {{failed}} από {{total}} φακέλους. Ελέγξτε τον λόγο για κάθε φάκελο παρακάτω.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Πληκτρολογήστε το όνομα του φακέλου για αποχώρηση",
       "TypeNewFolderName": "Πληκτρολογήστε νέο όνομα φακέλου",
       "TypeToConfirmDeleteForever": "Πληκτρολογήστε τη λέξη παρακάτω για μόνιμη διαγραφή",
-      "View": "Θέα",
-      "Creator": "Δημιουργός"
+      "View": "Θέα"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Αποτυχία αποδοχής πρόσκλησης",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Δράση",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Όλα τα έργα",
     "AlreadyInstalledImage": "Ήδη εγκατεστημένη εικόνα",
     "AppInfoDeleted": "Οι πληροφορίες της εφαρμογής διαγράφηκαν με επιτυχία.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Πλήρης διαδρομή εικόνας",
     "ID": "Αναγνωριστικό",
     "Image": "Εικόνα",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Εικόνες",
     "Install": "Εγκαθιστώ",
     "InstallImage": "Εγκατάσταση εικόνας",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Το πρωτόκολλο πρέπει να είναι ένα από τα \"http\", \"tcp\", \"preopen\" και \"pty\"",
     "Registries": "Μητρώα",
     "Registry": "Αρχείο",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Όριο πόρων",
     "ResourceLimitAppliesToNewSessionsOnly": "Το ελάχιστο όριο πόρων ισχύει μόνο για νέες συνεδρίες και δεν επηρεάζει τις ήδη εκτελούμενες συνεδρίες.",
     "ResourcePresets": "Προεπιλογές πόρων",
     "SearchImages": "Αναζήτηση εικόνων",
     "SelectedImagesAlreadyInstalled": "Οι επιλεγμένες εικόνες είναι ήδη εγκατεστημένες ή Καμία. Παρακαλώ ξαναελέγξτε.",
     "SelectedImagesNotInstalled": "Οι επιλεγμένες εικόνες δεν είναι εγκατεστημένες. Παρακαλώ ξαναελέγξτε.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Κατάσταση",
     "SuccessfullyCreated": "Δημιουργήθηκε με επιτυχία",
     "SuccessfullyModified": "Τροποποιήθηκε με επιτυχία",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Ετικέτες",
     "Version": "Εκδοχή"
   },
@@ -2439,6 +2445,7 @@
     "DescURLStartString": "Η διεύθυνση URL ξεκινά με http: // ή https: //",
     "ExtraInformation": "Επιπλέον Πληροφορίες",
     "ForHarborOnly": "Μόνο για λιμάνι!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Πρόγραμμα Harbour",
     "Hostname": "Όνομα κεντρικού υπολογιστή",
     "IsGlobal": "Ορισμός ως παγκόσμιο μητρώο",
@@ -2756,6 +2763,7 @@
     "DependedByOthers": "Εξαρτώμενες",
     "DependsOn": "Εξαρτάται από",
     "DescCommitSession": "Πρόκειται να δεσμεύσετε το δοχείο που αντιστοιχεί στην παρακάτω συνεδρία:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Λήψη αρχείου CSV ...",
     "DownloadingSessionLogs": "Λήψη αρχείων καταγραφής συνεδριών.",
     "ElapsedTime": "Χρόνος που παρήλθε",
@@ -2827,6 +2835,7 @@
     "PreparingSession": "Προετοιμασία συνεδρίας",
     "Priority": "Προτεραιότητα",
     "PrioritySuccessfullyUpdated": "Η προτεραιότητα της συνεδρίας ενημερώθηκε επιτυχώς.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Διαβάστε λιγότερα",
     "ReadMore": "Διαβάστε Περισσότερα...",
     "RecentlyCreatedSessions": "Πρόσφατα δημιουργήθηκαν συνεδρίες",
@@ -3175,9 +3184,7 @@
       "SessionNameTooLong64": "Εισαγάγετε 64 χαρακτήρες ή λιγότερους.",
       "SessionNameTooShort": "Παρακαλούμε εισάγετε τουλάχιστον 4 χαρακτήρες.",
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max Υποστήριξη",

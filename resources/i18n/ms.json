@@ -922,6 +922,7 @@
       "Control": "Kawal",
       "CreateModelFolderOnlyInExclusiveProject": "Folder projek model hanya boleh dibuat dalam projek eksklusif kedai model.",
       "CreatedAt": "Dicipta di",
+      "Creator": "Pencipta",
       "Delete": "Padam",
       "DeleteAFolder": "Padamkan folder",
       "DeleteFailureDescription": "{{failed}} daripada {{total}} folder tidak dapat dipadam. Semak sebab untuk setiap folder di bawah.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Taipkan nama folder untuk ditinggalkan",
       "TypeNewFolderName": "Taipkan nama folder baru",
       "TypeToConfirmDeleteForever": "Taip perkataan di bawah untuk memadam secara kekal",
-      "View": "Pandangan",
-      "Creator": "Pencipta"
+      "View": "Pandangan"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Gagal menerima jemputan",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Tindakan",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Semua projek",
     "AlreadyInstalledImage": "Imej sudah dipasang",
     "AppInfoDeleted": "Maklumat aplikasi berjaya dipadamkan.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Laluan imej penuh",
     "ID": "ID",
     "Image": "Imej",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Gambar",
     "Install": "Pasang",
     "InstallImage": "Pasang imej",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Protokol mestilah salah satu dari 'http', 'tcp', 'preopen' dan 'pty'",
     "Registries": "Pendaftaran",
     "Registry": "Pendaftaran",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Had sumber",
     "ResourceLimitAppliesToNewSessionsOnly": "Had sumber minimum hanya terpakai untuk sesi yang baru dicipta dan tidak menjejaskan sesi yang sedang berjalan.",
     "ResourcePresets": "Pratetap Sumber",
     "SearchImages": "Cari imej",
     "SelectedImagesAlreadyInstalled": "Gambar Terpilih sudah dipasang atau Tiada. Sila semak semula.",
     "SelectedImagesNotInstalled": "Gambar yang dipilih tidak dipasang. Sila semak semula.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Status",
     "SuccessfullyCreated": "Berjaya dibuat",
     "SuccessfullyModified": "Berjaya diubah suai",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Tag",
     "Version": "Versi"
   },
@@ -2439,6 +2445,7 @@
     "DescURLStartString": "URL Bermula dengan http: // atau https: //",
     "ExtraInformation": "Maklumat Tambahan",
     "ForHarborOnly": "Untuk pelabuhan sahaja!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Projek Pelabuhan",
     "Hostname": "Nama Hos",
     "IsGlobal": "Tetapkan sebagai Registry Global",
@@ -2756,6 +2763,7 @@
     "DependedByOthers": "Digantungi oleh",
     "DependsOn": "Bergantung pada",
     "DescCommitSession": "Anda akan melakukan kontena yang sepadan dengan sesi di bawah:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Memuat turun fail CSV ...",
     "DownloadingSessionLogs": "Memuat turun log sesi.",
     "ElapsedTime": "Masa berlalu",
@@ -2827,6 +2835,7 @@
     "PreparingSession": "Menyiapkan sesi ...",
     "Priority": "Keutamaan",
     "PrioritySuccessfullyUpdated": "Keutamaan sesi telah berjaya dikemaskini.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Kurangkan membaca",
     "ReadMore": "Baca Lagi...",
     "RecentlyCreatedSessions": "Sesi yang baru dibuat",
@@ -3175,9 +3184,7 @@
       "SessionNameTooLong64": "Sila masukkan 64 aksara atau kurang.",
       "SessionNameTooShort": "Sila masukkan sekurang-kurangnya 4 aksara.",
       "SluggedStrings": "Rentetan slugged (>3 aksara)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Sokongan Atom Max",

@@ -922,6 +922,7 @@
       "Control": "控制",
       "CreateModelFolderOnlyInExclusiveProject": "模型项目文件夹只能在模型商店的独家项目中创建。",
       "CreatedAt": "创建在",
+      "Creator": "创建者",
       "Delete": "删除",
       "DeleteAFolder": "删除文件夹",
       "DeleteFailureDescription": "{{total}} 个文件夹中有 {{failed}} 个无法删除。请在下方查看每个文件夹的失败原因。",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "输入要离开的文件夹名称",
       "TypeNewFolderName": "输入新文件夹名称",
       "TypeToConfirmDeleteForever": "请输入下方的词语以永久删除",
-      "View": "看法",
-      "Creator": "创建者"
+      "View": "看法"
     },
     "invitation": {
       "FailedToAcceptInvitation": "未能接受邀请",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "行动",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "全部项目",
     "AlreadyInstalledImage": "已安装的图像",
     "AppInfoDeleted": "应用信息删除成功。",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "完整图像路径",
     "ID": "ID",
     "Image": "镜像",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "图片",
     "Install": "安装",
     "InstallImage": "安装图像",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "协议必须是“http”、“tcp”、“preopen”和“pty”之一",
     "Registries": "登记处",
     "Registry": "注册表",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "资源限制",
     "ResourceLimitAppliesToNewSessionsOnly": "最低资源限制仅适用于新建会话，不影响已在运行的会话。",
     "ResourcePresets": "资源预设",
     "SearchImages": "搜索图片",
     "SelectedImagesAlreadyInstalled": "选定的图像已安装或无。请再次检查。",
     "SelectedImagesNotInstalled": "未安装选定的图像。请再次检查。",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "地位",
     "SuccessfullyCreated": "创建成功",
     "SuccessfullyModified": "修改成功",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "标签",
     "Version": "版本"
   },
@@ -2441,6 +2447,7 @@
     "DescURLStartString": "URL 以 http:// 或 https:// 开头",
     "ExtraInformation": "额外信息",
     "ForHarborOnly": "只限港口！",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "海港工程",
     "Hostname": "主机名",
     "IsGlobal": "设为全局注册表",
@@ -2758,6 +2765,7 @@
     "DependedByOthers": "被依赖",
     "DependsOn": "依赖于",
     "DescCommitSession": "您即将提交与下面会话相对应的容器：",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "正在下载 CSV 文件...",
     "DownloadingSessionLogs": "下载会话日志。",
     "ElapsedTime": "所用时间",
@@ -2829,6 +2837,7 @@
     "PreparingSession": "正在准备会议...",
     "Priority": "优先级",
     "PrioritySuccessfullyUpdated": "会话优先级已成功更新。",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "更多信息",
     "ReadMore": "阅读全文...",
     "RecentlyCreatedSessions": "最近创建了会议",
@@ -3177,9 +3186,7 @@
       "SessionNameTooLong64": "请输入不超过 64 个字符。",
       "SessionNameTooShort": "请输入至少 4 个字符。",
       "SluggedStrings": "多字符串（>3 字符）"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "原子最大支持",

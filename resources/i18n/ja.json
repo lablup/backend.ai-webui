@@ -922,6 +922,7 @@
       "Control": "コントロール",
       "CreateModelFolderOnlyInExclusiveProject": "モデルプロジェクトフォルダーは、モデルストアと独占プロジェクトでのみ作成できます。",
       "CreatedAt": "で作成されました",
+      "Creator": "作成者",
       "Delete": "削除",
       "DeleteAFolder": "フォルダを削除する",
       "DeleteFailureDescription": "{{total}}件中{{failed}}件のフォルダを削除できませんでした。以下で各フォルダの理由を確認してください。",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "残すフォルダ名を入力します",
       "TypeNewFolderName": "新しいフォルダ名を入力します",
       "TypeToConfirmDeleteForever": "完全に削除するには、以下の単語を入力してください",
-      "View": "見る",
-      "Creator": "作成者"
+      "View": "見る"
     },
     "invitation": {
       "FailedToAcceptInvitation": "招待状を受け入れなかった",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "アクション",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "すべてのプロジェクト",
     "AlreadyInstalledImage": "すでにインストールされているイメージ",
     "AppInfoDeleted": "アプリ情報が正常に削除されました。",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "ベースイメージ名",
     "ID": "ID",
     "Image": "イメージ",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "イメージ",
     "Install": "インストール",
     "InstallImage": "イメージをインストール",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "プロトコルは、「http」、「tcp」、「preopen」、「pty」のいずれかである必要があります",
     "Registries": "レジストリ",
     "Registry": "レジストリ",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "リソース制限",
     "ResourceLimitAppliesToNewSessionsOnly": "最小リソース制限は新しく作成されるセッションにのみ適用され、すでに実行中のセッションには影響しません。",
     "ResourcePresets": "リソースプリセット",
     "SearchImages": "イメージ検索",
     "SelectedImagesAlreadyInstalled": "選択したイメージはすでにインストールされているか、[なし]です。再度確認してください。",
     "SelectedImagesNotInstalled": "選択したイメージはインストールされません。再度確認してください。",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "状態",
     "SuccessfullyCreated": "正常に作成されました",
     "SuccessfullyModified": "正常に変更されました",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "タグ",
     "Version": "バージョン"
   },
@@ -2441,6 +2447,7 @@
     "DescURLStartString": "URLはhttp：//またはhttps：//で始まります",
     "ExtraInformation": "追加情報",
     "ForHarborOnly": "港のみ！",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "ハーバープロジェクト",
     "Hostname": "ホスト名",
     "IsGlobal": "グローバルレジストリとして設定",
@@ -2758,6 +2765,7 @@
     "DependedByOthers": "被依存",
     "DependsOn": "依存先",
     "DescCommitSession": "次のセッションに対応するコンテナをコミットします：",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSVファイルをダウンロードしています...",
     "DownloadingSessionLogs": "セッションログをダウンロードします。",
     "ElapsedTime": "経過時間",
@@ -2829,6 +2837,7 @@
     "PreparingSession": "セッションの準備...",
     "Priority": "優先度",
     "PrioritySuccessfullyUpdated": "セッションの優先度が正常に更新されました。",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "内容折りたたみ",
     "ReadMore": "もっと詳しく...",
     "RecentlyCreatedSessions": "最近作成されたセッション",
@@ -3177,9 +3186,7 @@
       "SessionNameTooLong64": "64文字以下で入力してください。",
       "SessionNameTooShort": "4文字以上入力してください。",
       "SluggedStrings": "最低4文字以上の固有の文字列で入力してください。"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Maxサポート",

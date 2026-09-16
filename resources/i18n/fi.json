@@ -922,6 +922,7 @@
       "Control": "Valvonta",
       "CreateModelFolderOnlyInExclusiveProject": "Malliprojektin kansiot voidaan luoda vain Model Store - Exclusive -projekteihin.",
       "CreatedAt": "Luotu jhk",
+      "Creator": "Luoja",
       "Delete": "Poista",
       "DeleteAFolder": "Poista kansio",
       "DeleteFailureDescription": "{{failed}}/{{total}} kansiota ei voitu poistaa. Tarkista alla kunkin kansion syy.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Kirjoita poistuvan kansion nimi",
       "TypeNewFolderName": "Kirjoita uuden kansion nimi",
       "TypeToConfirmDeleteForever": "Kirjoita alla oleva sana pysyvää poistoa varten",
-      "View": "Näytä",
-      "Creator": "Luoja"
+      "View": "Näytä"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Kutsu epäonnistui",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Toiminta",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Kaikki projektit",
     "AlreadyInstalledImage": "Jo asennettu kuva",
     "AppInfoDeleted": "Sovelluksen tiedot onnistuneesti poistettu.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Koko kuvan polku",
     "ID": "Tunnus",
     "Image": "Kuva",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Kuvat",
     "Install": "Asenna",
     "InstallImage": "Asenna kuva",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Protokollan on oltava jokin seuraavista: 'http', 'tcp', 'preopen' ja 'pty'.",
     "Registries": "Rekisterit",
     "Registry": "Rekisteri",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Resurssirajoitus",
     "ResourceLimitAppliesToNewSessionsOnly": "Vähimmäisresurssirajoitus koskee vain uusia istuntoja eikä vaikuta jo käynnissä oleviin istuntoihin.",
     "ResourcePresets": "Resurssien esiasetukset",
     "SearchImages": "Etsi kuvia",
     "SelectedImagesAlreadyInstalled": "Valittu kuva (valitut kuvat) on jo asennettu tai Ei mitään. Tarkista uudelleen.",
     "SelectedImagesNotInstalled": "Valittuja kuvia ei ole asennettu. Tarkista uudelleen.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Tila",
     "SuccessfullyCreated": "Luotu onnistuneesti",
     "SuccessfullyModified": "Muutettu onnistuneesti",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Tunnisteet",
     "Version": "Versio"
   },
@@ -2439,6 +2445,7 @@
     "DescURLStartString": "URL-osoite alkaa kirjaimella http:// tai https://",
     "ExtraInformation": "Lisätiedot",
     "ForHarborOnly": "Vain satamaan!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Satamahanke",
     "Hostname": "Isäntänimi",
     "IsGlobal": "Aseta globaaliksi rekisteriksi",
@@ -2756,6 +2763,7 @@
     "DependedByOthers": "Riippuvainen tästä",
     "DependsOn": "Riippuu",
     "DescCommitSession": "Olet aikeissa sitouttaa alla olevaa istuntoa vastaavan kontin:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSV-tiedoston lataaminen...",
     "DownloadingSessionLogs": "Istuntolokien lataaminen.",
     "ElapsedTime": "Kulunut aika",
@@ -2827,6 +2835,7 @@
     "PreparingSession": "Istunnon valmistelu...",
     "Priority": "Prioriteetti",
     "PrioritySuccessfullyUpdated": "Istunnon prioriteetti on päivitetty onnistuneesti.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Lue vähemmän",
     "ReadMore": "Lue lisää...",
     "RecentlyCreatedSessions": "Äskettäin loivat istunnot",
@@ -3175,9 +3184,7 @@
       "SessionNameTooLong64": "Anna enintään 64 merkkiä.",
       "SessionNameTooShort": "Kirjoita vähintään 4 merkkiä.",
       "SluggedStrings": "Slugged-merkkijonot (>3 merkkiä)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max -tuki",

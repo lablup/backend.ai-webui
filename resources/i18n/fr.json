@@ -922,6 +922,7 @@
       "Control": "Contrôler",
       "CreateModelFolderOnlyInExclusiveProject": "Les dossiers de projets modèles ne peuvent être créés que dans des projets exclusifs en magasin de modèles.",
       "CreatedAt": "Créé à",
+      "Creator": "Créateur",
       "Delete": "Effacer",
       "DeleteAFolder": "Supprimer un dossier",
       "DeleteFailureDescription": "{{failed}} dossier(s) sur {{total}} n'ont pas pu être supprimés. Vérifiez la raison de chaque dossier ci-dessous.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Tapez le nom du dossier à quitter",
       "TypeNewFolderName": "Tapez un nouveau nom de dossier",
       "TypeToConfirmDeleteForever": "Saisissez le mot ci-dessous pour supprimer définitivement",
-      "View": "Vue",
-      "Creator": "Créateur"
+      "View": "Vue"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Échec de l'acceptation de l'invitation",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "action",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Tous les projets",
     "AlreadyInstalledImage": "Image déjà installée",
     "AppInfoDeleted": "Informations sur l'application supprimées avec succès.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Chemin d'accès complet à l'image",
     "ID": "Identifiant",
     "Image": "Image",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Images",
     "Install": "Installer",
     "InstallImage": "Installer l'image",
@@ -1543,15 +1545,19 @@
     "ProtocolMustBeOneOfSupported": "Le protocole doit être l'un des 'http', 'tcp', 'preopen' et 'pty'",
     "Registries": "Registres",
     "Registry": "Enregistrement",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Limite de ressources",
     "ResourceLimitAppliesToNewSessionsOnly": "La limite de ressources minimale s'applique uniquement aux sessions nouvellement créées et n'affecte pas les sessions déjà en cours d'exécution.",
     "ResourcePresets": "Préréglages de ressources",
     "SearchImages": "Recherche d'images",
     "SelectedImagesAlreadyInstalled": "Les images sélectionnées sont déjà installées ou Aucune. Veuillez vérifier à nouveau.",
     "SelectedImagesNotInstalled": "Les images sélectionnées ne sont pas installées. Veuillez vérifier à nouveau.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Statut",
     "SuccessfullyCreated": "Création réussie",
     "SuccessfullyModified": "Modifié avec succès",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Balises",
     "Version": "Version"
   },
@@ -2441,6 +2447,7 @@
     "DescURLStartString": "L'URL commence par http:// ou https://",
     "ExtraInformation": "Informations supplémentaires",
     "ForHarborOnly": "Pour le port seulement !",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Projet Portuaire",
     "Hostname": "Nom d'hôte",
     "IsGlobal": "Définir comme registre global",
@@ -2758,6 +2765,7 @@
     "DependedByOthers": "Dépendances inverses",
     "DependsOn": "Dépend de",
     "DescCommitSession": "Vous êtes sur le point d'engager le conteneur correspondant à la session ci-dessous :",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Téléchargement du fichier CSV...",
     "DownloadingSessionLogs": "Téléchargement des journaux de session.",
     "ElapsedTime": "Temps écoulé",
@@ -2830,6 +2838,7 @@
     "Preset": "Preset",
     "Priority": "Priorité",
     "PrioritySuccessfullyUpdated": "La priorité de la session a été mise à jour avec succès.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Lire moins",
     "ReadMore": "Lire la suite...",
     "RecentlyCreatedSessions": "Sessions récemment créées",
@@ -3178,9 +3187,7 @@
       "SessionNameTooLong64": "Veuillez saisir 64 caractères ou moins.",
       "SessionNameTooShort": "Veuillez saisir au moins 4 caractères.",
       "SluggedStrings": "Chaînes de caractères tronquées (>3 chars)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "ATOM MAX SOUTIEN",

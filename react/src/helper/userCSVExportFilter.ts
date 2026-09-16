@@ -62,8 +62,7 @@ export interface UserCSVExportFilterResult {
 const firstOperator = (value: unknown): [string, unknown] | undefined => {
   if (!_.isPlainObject(value)) return undefined;
   return _.first(_.toPairs(_.omitBy(value as object, _.isNil))) as
-    | [string, unknown]
-    | undefined;
+    [string, unknown] | undefined;
 };
 
 const toExportRoles = (value: unknown): Array<string> | undefined => {

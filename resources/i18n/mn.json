@@ -922,6 +922,7 @@
       "Control": "Хяналт",
       "CreateModelFolderOnlyInExclusiveProject": "Загвар төслийн фолдеруудыг зөвхөн загвар дэлгүүрийн онцгой төсөлд бий болгож болно.",
       "CreatedAt": "Бүтэмж дээр бүтсэн",
+      "Creator": "Үүсгэгч",
       "Delete": "Устгах",
       "DeleteAFolder": "Фолдер устгах",
       "DeleteFailureDescription": "{{total}} фолдероос {{failed}}-ыг устгаж чадаагүй. Доор фолдер бүрийн шалтгааныг шалгана уу.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Орхихын тулд хавтасныхаа нэрийг оруулна уу",
       "TypeNewFolderName": "Шинэ хавтасны нэрийг оруулна уу",
       "TypeToConfirmDeleteForever": "Бүрмөсөн устгахын тулд доорх үгийг бичнэ үү",
-      "View": "Харах",
-      "Creator": "Үүсгэгч"
+      "View": "Харах"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Урилга хүлээж авч чадсангүй",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Үйлдэл",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Бүх төсөл",
     "AlreadyInstalledImage": "Аль хэдийн суулгасан зураг",
     "AppInfoDeleted": "Аппын мэдээллийг амжилттай устгалаа.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Зургийн бүрэн зам",
     "ID": "ID",
     "Image": "Имаж",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Image",
     "Install": "Суулгах",
     "InstallImage": "Зураг суулгах",
@@ -1542,15 +1544,19 @@
     "ProtocolMustBeOneOfSupported": "Протокол нь 'http', 'tcp', 'preopen' ба 'pty' -ийн нэг байх ёстой.",
     "Registries": "Бүртгэл",
     "Registry": "Бүртгэл",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Нөөцийн хязгаар",
     "ResourceLimitAppliesToNewSessionsOnly": "Хамгийн бага нөөцийн хязгаар нь зөвхөн шинээр үүсгэсэн сессүүдэд хамаарах бөгөөд аль хэдийн ажиллаж байгаа сессүүдэд нөлөөлөхгүй.",
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
     "SearchImages": "Зураг хайх",
     "SelectedImagesAlreadyInstalled": "Сонгосон image аль хэдийн суулгасан эсвэл Байхгүй байна. Дахин шалгана уу.",
     "SelectedImagesNotInstalled": "Сонгосон image суулгагдаагүй байна. Дахин шалгана уу.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Статус",
     "SuccessfullyCreated": "Амжилттай үүсгэсэн",
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Шошго",
     "Version": "Хувилбар"
   },
@@ -2440,6 +2446,7 @@
     "DescURLStartString": "URL http: // эсвэл https: // -ээр эхэлнэ",
     "ExtraInformation": "Нэмэлт мэдээлэл",
     "ForHarborOnly": "Зөвхөн боомтын хувьд!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Боомтын төсөл",
     "Hostname": "Хостын нэр",
     "IsGlobal": "Глобал регистр болгох",
@@ -2757,6 +2764,7 @@
     "DependedByOthers": "Хамааралтай",
     "DependsOn": "Хамаарал",
     "DescCommitSession": "Та доорх сессэд тохирох контейнерийг хийх гэж байна:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "CSV файлыг татаж авч байна ...",
     "DownloadingSessionLogs": "Сеансын бүртгэлийг татаж байна.",
     "ElapsedTime": "Зарцуулсан цаг хугацаа",
@@ -2828,6 +2836,7 @@
     "PreparingSession": "Session бэлтгэж байна",
     "Priority": "Эрэмбэ",
     "PrioritySuccessfullyUpdated": "Сессийн эрэмбэ амжилттай шинэчлэгдлээ.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Бага унш",
     "ReadMore": "Цааш унших...",
     "RecentlyCreatedSessions": "Саяхан бүтээсэн хуралдаанууд",
@@ -3177,9 +3186,7 @@
       "SessionNameTooLong64": "64 ба түүнээс бага тэмдэгт оруулна уу.",
       "SessionNameTooShort": "Дор хаяж 4 тэмдэгт оруулна уу.",
       "SluggedStrings": "Залгисан мөрүүд (>3 тэмдэгт)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Атомын хамгийн их дэмжлэг",

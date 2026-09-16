@@ -922,6 +922,7 @@
       "Control": "Kontrola",
       "CreateModelFolderOnlyInExclusiveProject": "Modelowe foldery projektu można tworzyć tylko w projektach ekskluzywnych w magazynie modeli.",
       "CreatedAt": "Utworzony w",
+      "Creator": "Twórca",
       "Delete": "Kasować",
       "DeleteAFolder": "Usuń folder",
       "DeleteFailureDescription": "Nie udało się usunąć {{failed}} z {{total}} folderów. Sprawdź poniżej powód dla każdego folderu.",
@@ -1010,8 +1011,7 @@
       "TypeFolderNameToLeave": "Wpisz nazwę folderu do opuszczenia",
       "TypeNewFolderName": "Wpisz nową nazwę folderu",
       "TypeToConfirmDeleteForever": "Wpisz poniższe słowo, aby trwale usunąć",
-      "View": "Widok",
-      "Creator": "Twórca"
+      "View": "Widok"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Nie przyjął zaproszenia",
@@ -1484,6 +1484,7 @@
   },
   "environment": {
     "Action": "Akcja",
+    "Aliases": "__NOT_TRANSLATED__",
     "AllProjects": "Wszystkie projekty",
     "AlreadyInstalledImage": "Już zainstalowany obraz",
     "AppInfoDeleted": "Informacje o aplikacji zostały pomyślnie usunięte.",
@@ -1512,6 +1513,7 @@
     "FullImagePath": "Pełna ścieżka obrazu",
     "ID": "ID",
     "Image": "Obraz",
+    "ImageStatus": "__NOT_TRANSLATED__",
     "Images": "Obrazy",
     "Install": "zainstalować",
     "InstallImage": "Zainstaluj obraz",
@@ -1543,15 +1545,19 @@
     "ProtocolMustBeOneOfSupported": "Protokół musi być jednym z „http”, „tcp”, „preopen” i „pty”",
     "Registries": "Rejestry",
     "Registry": "Rejestr",
+    "RegistryID": "__NOT_TRANSLATED__",
+    "RegistryProject": "__NOT_TRANSLATED__",
     "ResourceLimit": "Limit zasobów",
     "ResourceLimitAppliesToNewSessionsOnly": "Minimalny limit zasobów dotyczy tylko nowo tworzonych sesji i nie ma wpływu na sesje już uruchomione.",
     "ResourcePresets": "Predefiniowane ustawienia zasobów",
     "SearchImages": "Wyszukiwanie obrazów",
     "SelectedImagesAlreadyInstalled": "Wybrane obrazy są już zainstalowane lub Brak. Prosze Sprawdź ponownie.",
     "SelectedImagesNotInstalled": "Wybrane obrazy nie są zainstalowane. Prosze Sprawdź ponownie.",
+    "Size": "__NOT_TRANSLATED__",
     "Status": "Status",
     "SuccessfullyCreated": "Pomyślnie utworzono",
     "SuccessfullyModified": "Pomyślnie zmodyfikowano",
+    "SupportedAccelerators": "__NOT_TRANSLATED__",
     "Tags": "Tagi",
     "Version": "Wersja"
   },
@@ -2441,6 +2447,7 @@
     "DescURLStartString": "URL zaczyna się od http:// lub https://",
     "ExtraInformation": "Dodatkowe informacje",
     "ForHarborOnly": "Tylko do portu!",
+    "Global": "__NOT_TRANSLATED__",
     "HarborProject": "Projekt Portowy",
     "Hostname": "Nazwa hosta",
     "IsGlobal": "Ustaw jako rejestr globalny",
@@ -2758,6 +2765,7 @@
     "DependedByOthers": "Zależne od tej sesji",
     "DependsOn": "Zależy od",
     "DescCommitSession": "Za chwilę zatwierdzisz kontener odpowiadający poniższej sesji:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Pobieranie pliku CSV...",
     "DownloadingSessionLogs": "Pobieranie dzienników sesji.",
     "ElapsedTime": "Upływający czas",
@@ -2830,6 +2838,7 @@
     "Preset": "Preset",
     "Priority": "Priorytet",
     "PrioritySuccessfullyUpdated": "Priorytet sesji został pomyślnie zaktualizowany.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Czytaj mniej",
     "ReadMore": "Czytaj więcej...",
     "RecentlyCreatedSessions": "Niedawno utworzone sesje",
@@ -3178,9 +3187,7 @@
       "SessionNameTooLong64": "Wprowadź maksymalnie 64 znaki.",
       "SessionNameTooShort": "Wprowadź co najmniej 4 znaki.",
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Wsparcie Atom Max",
