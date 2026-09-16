@@ -4,7 +4,6 @@ import type {
   ScopedAuditLogQuery as ScopedAuditLogQueryType,
 } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import {
   BAIAuditLogNodes,
@@ -80,13 +79,10 @@ export interface ScopedAuditLogProps extends Omit<
 const ScopedAuditLog = ({
   queryRef,
   onReload,
-  customizeColumns,
   ...tableProps
 }: ScopedAuditLogProps) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const isClientIpSupported = baiClient.supports('client-ip');
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const filter = queryRef.variables.filter ?? undefined;
@@ -163,14 +159,6 @@ const ScopedAuditLog = ({
       </BAIFlex>
       <BAIAuditLogNodes
         resizable
-        customizeColumns={(columns) => {
-          const supportedColumns = isClientIpSupported
-            ? columns
-            : _.reject(columns, { key: 'clientIp' });
-          return customizeColumns
-            ? customizeColumns(supportedColumns)
-            : supportedColumns;
-        }}
         loading={isRefetching}
         order={order}
         onChangeOrder={(nextOrder) => {
