@@ -70,6 +70,12 @@ interface SettingPageProps {
   primaryButton?: ReactNode;
   extraButton?: ReactNode;
   onReset?: () => void;
+  /**
+   * Drop the group nav column and render every group stacked. For hosts that
+   * already own a category rail — the user-settings modal — where a second
+   * `LayoutPanel` would be a nav inside a nav and a `Layout` inside a `Layout`.
+   */
+  hideGroupNav?: boolean;
 }
 
 const GroupSettingItems: React.FC<
@@ -129,6 +135,7 @@ const SettingList: React.FC<SettingPageProps> = ({
   primaryButton,
   extraButton,
   onReset,
+  hideGroupNav = false,
 }) => {
   'use memo';
 
@@ -189,8 +196,10 @@ const SettingList: React.FC<SettingPageProps> = ({
 
   // `?setting=` arrival only fires for an item that is actually on screen: the
   // nav view below `md` and a selected group both hide items the filter kept.
-  const renderedSettingItems =
-    isNarrow && narrowView === 'nav'
+  // `hideGroupNav` has neither — every group is stacked at every width.
+  const renderedSettingItems = hideGroupNav
+    ? _.flatMap(filteredSettingGroups, 'settingItems')
+    : isNarrow && narrowView === 'nav'
       ? []
       : activeTabKey === ALL_NAV_KEY
         ? _.flatMap(filteredSettingGroups, 'settingItems')
@@ -239,23 +248,26 @@ const SettingList: React.FC<SettingPageProps> = ({
     </BAIFlex>
   );
 
+  const allGroupsPane =
+    totalItemCount > 0 ? (
+      <BAIFlex direction="column" align="stretch" gap={'xl'}>
+        {_.map(filteredSettingGroups, (group) => (
+          <GroupSettingItems
+            data-testid={group?.['data-testid']}
+            key={group.title}
+            group={group}
+            hideEmpty
+            arrivalTitle={arrivalTitle}
+          />
+        ))}
+      </BAIFlex>
+    ) : (
+      <EmptyState title={t('settings.NoChangesToDisplay')} isCompact />
+    );
+
   const settingsPane =
     activeTabKey === ALL_NAV_KEY ? (
-      totalItemCount > 0 ? (
-        <BAIFlex direction="column" align="stretch" gap={'xl'}>
-          {_.map(filteredSettingGroups, (group) => (
-            <GroupSettingItems
-              data-testid={group?.['data-testid']}
-              key={group.title}
-              group={group}
-              hideEmpty
-              arrivalTitle={arrivalTitle}
-            />
-          ))}
-        </BAIFlex>
-      ) : (
-        <EmptyState title={t('settings.NoChangesToDisplay')} isCompact />
-      )
+      allGroupsPane
     ) : activeGroup && activeGroup.settingItems.length > 0 ? (
       <BAIFlex direction="column" align="stretch" gap={'xl'}>
         <GroupSettingItems
@@ -272,24 +284,29 @@ const SettingList: React.FC<SettingPageProps> = ({
   return (
     <>
       <BAIFlex direction="column" gap={'md'} align="stretch">
-        <BAIFlex justify="start" gap={'xs'}>
+        <BAIFlex justify="start" gap={'xs'} wrap="nowrap">
           {!!showSearchBar && (
-            <TextInput
-              label={t('settings.SearchPlaceholder')}
-              isLabelHidden
-              startIcon={Search}
-              placeholder={t('settings.SearchPlaceholder')}
-              onChange={(nextValue) => setSearchValue(nextValue)}
-              value={searchValue}
-              // POLISH-3 item 5 — the search box fills the rest of the row,
-              // as legacy did. antd `Input` carries `width: 100%`, so as a
-              // flex item it claimed the row and shrank to leave room for the
-              // filter checkbox and the buttons beside it; Astryx `TextInput`
-              // sizes to its own content box instead (measured 252px against
-              // a 1262px row). `width` is TextInput's own prop for this and
-              // sizes the whole field (label + control + status) together.
-              width="100%"
-            />
+            // The flex item is the field's OUTER box, which `TextInput` does
+            // not expose (its `style` lands on the inner control), so the
+            // "take the remainder" basis has to be set from a wrapper.
+            <BAIFlex style={{ flex: 1, minWidth: 0 }}>
+              <TextInput
+                label={t('settings.SearchPlaceholder')}
+                isLabelHidden
+                startIcon={Search}
+                placeholder={t('settings.SearchPlaceholder')}
+                onChange={(nextValue) => setSearchValue(nextValue)}
+                value={searchValue}
+                // POLISH-3 item 5 — the search box fills the rest of the row,
+                // as legacy did. antd `Input` carries `width: 100%`, so as a
+                // flex item it claimed the row and shrank to leave room for the
+                // filter checkbox and the buttons beside it; Astryx `TextInput`
+                // sizes to its own content box instead (measured 252px against
+                // a 1262px row). `width` is TextInput's own prop for this and
+                // sizes the whole field (label + control + status) together.
+                width="100%"
+              />
+            </BAIFlex>
           )}
           {!!showChangedOptionFilter && (
             <CheckboxInput
@@ -310,7 +327,9 @@ const SettingList: React.FC<SettingPageProps> = ({
           )}
           {primaryButton}
         </BAIFlex>
-        {isNarrow && narrowView === 'nav' ? (
+        {hideGroupNav ? (
+          allGroupsPane
+        ) : isNarrow && narrowView === 'nav' ? (
           navList
         ) : (
           <Layout
