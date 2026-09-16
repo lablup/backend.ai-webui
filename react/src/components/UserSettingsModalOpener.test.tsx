@@ -6,10 +6,14 @@
  the nuqs adapter's hands, so it is pinned here rather than left to a manual
  pass: opening pushes (Back closes), switching category and closing replace.
 */
-import { forgetNonSettingsLocation } from '../helper/userSettingsModal';
+import {
+  forgetNonSettingsLocation,
+  isUserSettingsPath,
+} from '../helper/userSettingsModal';
 import UserSettingsModalOpener, {
   useUserSettingsModal,
 } from './UserSettingsModalOpener';
+import UserSettingsRouteRedirect from './UserSettingsRouteRedirect';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { NuqsAdapter } from 'nuqs/adapters/react-router/v6';
@@ -65,6 +69,15 @@ const OpenButton = () => {
   return <button onClick={() => open('general')}>open settings</button>;
 };
 
+// `/usersettings` keeps its route element in the real app; the catch-all below
+// stands in for the whole tree, so the shim is gated on the path by hand.
+const ShimRoute = () => {
+  const location = useLocation();
+  return isUserSettingsPath(location.pathname) ? (
+    <UserSettingsRouteRedirect />
+  ) : null;
+};
+
 // A browser router over jsdom's own history, so push / replace / Back behave as
 // they do in the app — `createMemoryRouter` keeps a private stack the nuqs
 // adapter does not pop from.
@@ -77,6 +90,7 @@ const renderApp = () => {
         <>
           <LocationProbe />
           <OpenButton />
+          <ShimRoute />
           <UserSettingsModalOpener />
         </>
       ),
@@ -151,6 +165,30 @@ describe('UserSettingsModalOpener history contract', () => {
     renderApp();
     await user.click(screen.getByText('open settings'));
     await screen.findByTestId('modal');
+    await user.click(screen.getByText('close'));
+
+    await vi.waitFor(() => {
+      expect(screen.queryByTestId('modal')).toBeNull();
+    });
+    expect(screen.getByTestId('location')).toHaveTextContent(
+      '/session?tab=running',
+    );
+  });
+
+  // A palette hit lands on `/usersettings` already carrying `?settings=`. A
+  // shim that stops there leaves close falling through to `defaultMenuPath`,
+  // which is the reported "closing settings throws me onto Start".
+  it('closes back onto the page a palette deep link was opened from', async () => {
+    const user = userEvent.setup();
+    const { router } = renderApp();
+
+    await router.navigate('/usersettings?settings=logs');
+
+    expect(await screen.findByTestId('modal')).toBeInTheDocument();
+    expect(screen.getByTestId('location')).toHaveTextContent(
+      '/session?tab=running&settings=logs',
+    );
+
     await user.click(screen.getByText('close'));
 
     await vi.waitFor(() => {
