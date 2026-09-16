@@ -3,19 +3,18 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { useCurrentUserProjectRolesProjectsQuery } from '../__generated__/useCurrentUserProjectRolesProjectsQuery.graphql';
 import {
   useCurrentUserProjectRolesQuery,
   PermissionNestedFilter,
   PermissionTarget,
 } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
-import { useAccessibleProjects } from './useAccessibleProjects';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 // `myAtomicBulkScopePermissions` refuses more than this many targets
-// (backend MAX_SCOPE_PERMISSION_TARGETS); the header lists projects in the
-// same order, so the ones past the cap are the ones it shows last.
+// (backend MAX_SCOPE_PERMISSION_TARGETS).
 const MAX_SCOPE_PERMISSION_TARGETS = 100;
 
 export interface CurrentUserProjectRolesResult {
@@ -32,10 +31,10 @@ export interface CurrentUserProjectRolesResult {
 }
 
 /**
- * Hook that reports which of the user's accessible projects they administer.
+ * Hook that reports which of the user's projects they administer.
  *
- * Managers >= 26.9.0 answer `myAtomicBulkScopePermissions` for every
- * accessible project: the bits the caller actually holds on `scope_admin`
+ * Managers >= 26.9.0 answer `myAtomicBulkScopePermissions` for every project
+ * the user belongs to: the bits the caller actually holds on `scope_admin`
  * within that project, read through every scope that governs it. Older
  * managers answer `myRoles` (assignments) filtered on the retired
  * `PROJECT_ADMIN_PAGE` entity, with the project read off each role's `scopes`
@@ -49,10 +48,28 @@ export interface CurrentUserProjectRolesResult {
  */
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
-  const { accessibleProjects } = useAccessibleProjects();
+  // Only the 26.9 root field below consumes the project list, so older
+  // managers read it from the store without a request of their own.
+  const supportsHeldPermissions = baiClient.supports('rbac-single-scope-role');
 
-  const targets: Array<PermissionTarget> = (accessibleProjects ?? [])
-    .flatMap((project) => (project?.id ? [project.id] : []))
+  const projects = useLazyLoadQuery<useCurrentUserProjectRolesProjectsQuery>(
+    graphql`
+      query useCurrentUserProjectRolesProjectsQuery($email: String) {
+        user(email: $email) {
+          groups {
+            id
+          }
+        }
+      }
+    `,
+    { email: baiClient.email },
+    {
+      fetchPolicy: supportsHeldPermissions ? 'store-or-network' : 'store-only',
+    },
+  );
+
+  const targets: Array<PermissionTarget> = (projects.user?.groups ?? [])
+    .flatMap((group) => (group?.id ? [group.id] : []))
     .slice(0, MAX_SCOPE_PERMISSION_TARGETS)
     .map((scopeId) => ({
       scopeType: 'project',
