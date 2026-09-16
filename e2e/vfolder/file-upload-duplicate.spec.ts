@@ -29,12 +29,32 @@ const openFolderExplorer = async (
   return modal;
 };
 
+const OVERWRITE_PROMPT =
+  'These items already exist here. Select the ones to overwrite; unselected items are skipped.';
+
+/** Picks files through the explorer's upload menu and returns the confirm dialog. */
+const uploadFiles = async (
+  page: Page,
+  modal: FolderExplorerModal,
+  filePaths: Array<string>,
+) => {
+  const uploadButton = await modal.getUploadButton();
+  await uploadButton.click();
+  const [fileChooser] = await Promise.all([
+    page.waitForEvent('filechooser'),
+    page.getByRole('menuitem', { name: 'Upload Files' }).click(),
+  ]);
+  await fileChooser.setFiles(filePaths);
+  return page.getByRole('dialog').last();
+};
+
 // Not serial: the shared vfolder AND its baseline file are provisioned once in
-// beforeAll (fresh context). Both overwrite-confirmation tests then act on that
-// pre-existing duplicate independently — neither removes the baseline file
-// (one overwrites it, the other cancels), so they are order-independent and a
-// failure in one does not cascade-skip the other. mode: 'default' keeps them
-// sequential on one worker to limit backend load. See FR-3117.
+// beforeAll (fresh context). The overwrite-confirmation tests then act on that
+// pre-existing duplicate independently — none of them removes the baseline file
+// (one overwrites it, one cancels, one deselects it), so they are
+// order-independent and a failure in one does not cascade-skip the others.
+// mode: 'default' keeps them sequential on one worker to limit backend load.
+// See FR-3117.
 test.describe(
   'Duplicate File Upload',
   { tag: ['@critical', '@vfolder', '@functional'] },
@@ -43,6 +63,9 @@ test.describe(
     const testFolderName = 'e2e-test-dup-upload-' + Date.now();
     let tmpDir: string;
     let testFilePath: string;
+    // Never uploaded in beforeAll: the mixed-pick test needs one name that is
+    // still free in the shared folder.
+    let freshFilePath: string;
 
     test.beforeAll(async ({ browser, request }) => {
       // Create temporary directory and test file
@@ -52,6 +75,12 @@ test.describe(
       fs.writeFileSync(
         testFilePath,
         'This is test file for e2e duplicate upload testing',
+      );
+
+      freshFilePath = path.join(tmpDir, 'test-new-file.txt');
+      fs.writeFileSync(
+        freshFilePath,
+        'This is test file for e2e mixed duplicate upload testing',
       );
 
       // Provision the shared vfolder and upload the baseline file once, in a
@@ -73,13 +102,8 @@ test.describe(
 
         // openFolderExplorer already calls verifyFileExplorerLoaded().
         const modal = await openFolderExplorer(page, testFolderName);
-        const uploadButton = await modal.getUploadButton();
-        await uploadButton.click();
-        const [fileChooser] = await Promise.all([
-          page.waitForEvent('filechooser'),
-          page.getByRole('menuitem', { name: 'Upload Files' }).click(),
-        ]);
-        await fileChooser.setFiles([testFilePath]);
+        // The folder is empty, so nothing collides and no confirmation opens.
+        await uploadFiles(page, modal, [testFilePath]);
         await modal.verifyFileVisible(path.basename(testFilePath));
         await modal.close();
       } finally {
@@ -114,7 +138,7 @@ test.describe(
       }
     });
 
-    test('User sees duplicate confirmation when uploading existing file', async ({
+    test('User sees the colliding file listed and can overwrite it', async ({
       page,
     }) => {
       const fileName = path.basename(testFilePath);
@@ -126,27 +150,18 @@ test.describe(
       await modal.verifyFileVisible(fileName);
 
       // 3. Upload the SAME file again to trigger the overwrite confirmation
-      const uploadButton = await modal.getUploadButton();
-      await uploadButton.click();
+      const confirmModal = await uploadFiles(page, modal, [testFilePath]);
 
-      const [fileChooser] = await Promise.all([
-        page.waitForEvent('filechooser'),
-        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
-      ]);
-
-      await fileChooser.setFiles([testFilePath]);
-
-      // 4. Verify a confirmation modal appears with the overwrite prompt
-      const confirmModal = page.getByRole('dialog').last();
+      // 4. The confirmation names the colliding file rather than asking once
+      //    for the whole pick
       await expect(confirmModal).toBeVisible();
+      await expect(confirmModal.getByText(OVERWRITE_PROMPT)).toBeVisible();
       await expect(
-        confirmModal.getByText(
-          'The file or folder with the same name already exists. Do you want to overwrite?',
-        ),
+        confirmModal.getByRole('row').filter({ hasText: fileName }),
       ).toBeVisible();
 
-      // 5. Click "OK" to confirm overwrite
-      await page.getByRole('button', { name: 'OK' }).click();
+      // 5. Confirm with the row left checked, which overwrites it
+      await confirmModal.getByRole('button', { name: 'Upload' }).click();
 
       // 6. Verify the file still exists in the file table (overwritten)
       await modal.verifyFileVisible(fileName);
@@ -163,32 +178,60 @@ test.describe(
       const fileName = path.basename(testFilePath);
       await modal.verifyFileVisible(fileName);
 
-      // 3. Click "Upload" button
-      const uploadButton = await modal.getUploadButton();
-      await uploadButton.click();
+      // 3. Upload the same file again
+      const confirmModal = await uploadFiles(page, modal, [testFilePath]);
 
-      // 4. Upload the same file again
-      const [fileChooser] = await Promise.all([
-        page.waitForEvent('filechooser'),
-        page.getByRole('menuitem', { name: 'Upload Files' }).click(),
-      ]);
-
-      await fileChooser.setFiles([testFilePath]);
-
-      // 5. Verify the duplicate confirmation modal appears ("Overwrite Confirmation")
-      const confirmModal = page.getByRole('dialog').last();
+      // 4. Verify the duplicate confirmation modal appears
       await expect(confirmModal).toBeVisible();
+      await expect(confirmModal.getByText(OVERWRITE_PROMPT)).toBeVisible();
+
+      // 5. Click "Cancel" to reject overwrite
+      await confirmModal.getByRole('button', { name: 'Cancel' }).click();
+
+      // 6. Verify the original file still exists in the file table
+      await modal.verifyFileVisible(fileName);
+
+      // Close modal
+      await modal.close();
+    });
+
+    test('User keeps a deselected file and still uploads the rest of the pick', async ({
+      page,
+    }) => {
+      const duplicateName = path.basename(testFilePath);
+      const freshName = path.basename(freshFilePath);
+
+      // 1. Open the shared VFolder
+      const modal = await openFolderExplorer(page, testFolderName);
+      await modal.verifyFileVisible(duplicateName);
+
+      // 2. Pick the colliding file together with one whose name is free
+      const confirmModal = await uploadFiles(page, modal, [
+        testFilePath,
+        freshFilePath,
+      ]);
+      await expect(confirmModal).toBeVisible();
+
+      // 3. Only the collision is listed; the free one is reported as a count
+      const duplicateRow = confirmModal
+        .getByRole('row')
+        .filter({ hasText: duplicateName });
+      await expect(duplicateRow).toBeVisible();
       await expect(
-        confirmModal.getByText(
-          'The file or folder with the same name already exists. Do you want to overwrite?',
-        ),
+        confirmModal.getByRole('row').filter({ hasText: freshName }),
+      ).toHaveCount(0);
+      await expect(
+        confirmModal.getByText('1 other item(s) will be uploaded as well.'),
       ).toBeVisible();
 
-      // 6. Click "Cancel" to reject overwrite
-      await page.getByRole('button', { name: 'Cancel' }).click();
+      // 4. Deselect the collision, so only the free file should be uploaded
+      await duplicateRow.getByRole('checkbox').uncheck();
+      await confirmModal.getByRole('button', { name: 'Upload' }).click();
 
-      // 7. Verify the original file still exists in the file table
-      await modal.verifyFileVisible(fileName);
+      // 5. Both files are in the folder: the new one arrived, the deselected
+      //    one was left as it was
+      await modal.verifyFileVisible(freshName);
+      await modal.verifyFileVisible(duplicateName);
 
       // Close modal
       await modal.close();

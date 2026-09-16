@@ -3,28 +3,24 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleModalBulkAssignMutation.graphql';
-import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
 import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIAdminUserV2Select,
   BAIBulkErrorModal,
   type BAIColumnsType,
-  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAISelect,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useDeferredValue, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql } from 'react-relay';
 
 interface AssignRoleModalProps extends BAIModalProps {
   roleId: string;
@@ -60,11 +56,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-  const [search, setSearch] = useState('');
-  const deferredSearch = useDeferredValue(search);
-  // Starts false so a fresh mount (BAIUnmountAfterClose) fetches in a deferred
-  // render: the tab around the modal keeps its content instead of suspending.
-  const deferredOpen = useDeferredValue(baiModalProps.open, false);
   const [isAssigning, setIsAssigning] = useState(false);
   // One row per user the server rejected on the last save; the error modal
   // is open while non-empty.
@@ -81,31 +72,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   // list only holds the current search results, so failed users may no
   // longer be in it when the failure arrives.
   const userLabelsRef = useRef(new Map<string, string>());
-
-  const data = useLazyLoadQuery<AssignRoleModalQuery>(
-    graphql`
-      query AssignRoleModalQuery($filter: UserV2Filter, $first: Int) {
-        adminUsersV2(filter: $filter, first: $first) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      filter: deferredSearch ? { email: { contains: deferredSearch } } : null,
-      first: 50,
-    },
-    {
-      fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
-    },
-  );
 
   const bulkAssignRole =
     useMutationWithPromise<AssignRoleModalBulkAssignMutation>(graphql`
@@ -124,8 +90,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         }
       }
     `);
-
-  const users = data.adminUsersV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const userLabelOf = (userId: string) =>
     userLabelsRef.current.get(userId) ?? userId;
@@ -245,69 +209,21 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           label={t('credential.Users')}
           rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
-          <BAISelect
-            mode="multiple"
-            style={{ width: '100%' }}
+          <BAIAdminUserV2Select
+            multiple
+            valuePropName="id"
+            label={t('credential.Users')}
+            isLabelHidden
             placeholder={t('rbac.SelectUsers')}
-            onChange={(value: string[], options) => {
-              _.castArray(options ?? []).forEach((option: any) => {
-                if (option?.value !== undefined) {
-                  userLabelsRef.current.set(
-                    String(option.value),
-                    String(option.label ?? option.value),
-                  );
-                }
+            onChange={(value, option) => {
+              _.castArray(option ?? []).forEach((o) => {
+                userLabelsRef.current.set(
+                  String(o.value),
+                  String(o.label ?? o.value),
+                );
               });
-              setSelectedUserIds(value);
-              setSearch('');
+              setSelectedUserIds(_.castArray(value ?? []));
             }}
-            loading={
-              deferredSearch !== search || deferredOpen !== baiModalProps.open
-            }
-            maxTagCount="responsive"
-            allowClear
-            maxTagPlaceholder={(omittedValues) => (
-              <Tooltip
-                content={
-                  <BAIFlex direction="column" align="start" gap="xxs">
-                    {omittedValues.map((v) => (
-                      <Text key={v.value} color="inherit">
-                        {v.label}
-                      </Text>
-                    ))}
-                  </BAIFlex>
-                }
-              >
-                <span>+{omittedValues.length} ...</span>
-              </Tooltip>
-            )}
-            showSearch={{
-              searchValue: search,
-              onSearch: (v) => setSearch(v),
-              filterOption: false,
-            }}
-            options={users.map((user) => ({
-              value: user?.id ? toLocalId(user.id) : undefined,
-              label: user?.basicInfo?.email || user?.id,
-              description: user?.basicInfo?.fullName,
-            }))}
-            optionRender={(option) => (
-              <div>
-                <div>{option.label}</div>
-                {option.data?.description && (
-                  // Mode-blind hardcode fixed (sweep #4): `#999` was antd's
-                  // secondary/description text gray, identical in both modes.
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {option.data.description}
-                  </div>
-                )}
-              </div>
-            )}
           />
         </Form.Item>
       </Form>

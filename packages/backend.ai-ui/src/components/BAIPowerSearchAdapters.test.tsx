@@ -3,10 +3,14 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 */
 import {
+  BAIPowerSearchEditor,
+  baiPowerSearchComponents,
   useRenderInputEditors,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
-import { render, renderHook } from '@testing-library/react';
+import type { PowerSearchConfig } from '@astryxdesign/core/PowerSearch';
+import { render, renderHook, screen } from '@testing-library/react';
+import * as _ from 'lodash-es';
 import { describe, expect, it, vi } from 'vitest';
 
 const editorFor = (renderInput: FilterRenderInput) => {
@@ -44,5 +48,45 @@ describe('useRenderInputEditors', () => {
 
     expect(recordLabel).toHaveBeenCalledWith('owner', 'u-2', 'bob');
     expect(onChange).toHaveBeenCalledWith('u-2');
+  });
+});
+
+describe('BAIPowerSearchEditor', () => {
+  const config: PowerSearchConfig = {
+    name: 'test',
+    fields: [
+      {
+        key: 'createdAt',
+        label: 'Created At',
+        operators: [
+          { key: 'after', label: 'after', value: { type: 'date_absolute' } },
+        ],
+      },
+    ],
+  };
+
+  it('wraps the Astryx editor in the class hook its stylesheet targets', () => {
+    const { container } = render(
+      <BAIPowerSearchEditor
+        config={config}
+        filter={{ field: 'createdAt', operator: 'after' }}
+        mode="create"
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    );
+
+    const hook = container.querySelector('.bai-power-search-editor');
+    expect(hook).not.toBeNull();
+    expect(hook).toContainElement(screen.getByLabelText('Field'));
+  });
+
+  it('registers that editor for every operator value type', () => {
+    expect(
+      _.every(
+        _.values(baiPowerSearchComponents),
+        (override) => override.Editor === BAIPowerSearchEditor,
+      ),
+    ).toBe(true);
   });
 });

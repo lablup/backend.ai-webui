@@ -30,6 +30,7 @@ const availableUserV2SorterKeys = [
   'username',
   'status',
   'domainName',
+  'projectName',
   'createdAt',
   'modifiedAt',
 ] as const;
@@ -52,6 +53,12 @@ interface BAIAdminUserV2TableProps extends Omit<
     baseColumns: BAIColumnType<UserV2InList>[],
   ) => BAIColumnType<UserV2InList>[];
   disableSorter?: boolean;
+  /**
+   * Mirrors the fragment's `withProjects` argument. Both must be set together:
+   * the argument decides whether the memberships are fetched, this decides
+   * whether the column exists, and a project-scoped surface leaves both off.
+   */
+  withProjects?: boolean;
   onChangeOrder?: (
     order: (typeof availableUserV2SorterValues)[number] | null,
   ) => void;
@@ -61,6 +68,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
   usersFrgmt,
   customizeColumns,
   disableSorter,
+  withProjects,
   onChangeOrder,
   ...tableProps
 }) => {
@@ -69,7 +77,11 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
 
   const users = useFragment(
     graphql`
-      fragment BAIAdminUserV2TableFragment on UserV2 @relay(plural: true) {
+      fragment BAIAdminUserV2TableFragment on UserV2
+      @argumentDefinitions(
+        withProjects: { type: "Boolean", defaultValue: false }
+      )
+      @relay(plural: true) {
         id @required(action: NONE)
         basicInfo {
           email
@@ -83,6 +95,20 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           role
           resourcePolicy
           mainAccessKey
+        }
+        # Unpaginated: Relay requires identical arguments across fragments on
+        # one parent, and the modals spread alongside this one take none.
+        # Opt-in so a project-scoped surface never fetches a member's
+        # memberships of OTHER projects.
+        projects @include(if: $withProjects) {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+              }
+            }
+          }
         }
         security {
           # @skipOnClient strips the field from the request text; the standard
@@ -165,6 +191,25 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         exportKey: 'domain_name',
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.organization?.domainName || '-',
+      },
+      withProjects && {
+        key: 'projects',
+        title: t('comp:UserNodes.Projects'),
+        sortKey: 'projectName',
+        sorter: isEnableSorter('projectName'),
+        defaultHidden: true,
+        render: (__, record) => (
+          <BAITagList
+            variant="text"
+            maxInline={2}
+            items={_.compact(
+              _.map(
+                record.projects?.edges,
+                (edge) => edge?.node?.basicInfo?.name,
+              ),
+            )}
+          />
+        ),
       },
       {
         key: 'integration_name',

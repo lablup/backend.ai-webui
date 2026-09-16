@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9bbd20cf605ac00c7f126328a108b3a5>>
+ * @generated SignedSource<<03107147ca5707a621edb3741c5d0158>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -31,12 +31,13 @@ export type SessionNodesFragment$data = ReadonlyArray<{
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
+  readonly domain_name: string | null | undefined;
   readonly id: string;
   readonly kernel_nodes: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly image: {
-          readonly " $fragmentSpreads": FragmentRefs<"ImageNodeSimpleTagFragment">;
+          readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagFragment">;
         } | null | undefined;
       } | null | undefined;
     } | null | undefined>;
@@ -47,10 +48,13 @@ export type SessionNodesFragment$data = ReadonlyArray<{
   } | null | undefined;
   readonly priority: number | null | undefined;
   readonly project_id: string | null | undefined;
+  readonly result: string | null | undefined;
   readonly row_id: string;
   readonly scaling_group: string | null | undefined;
   readonly service_ports: string | null | undefined;
   readonly status: string | null | undefined;
+  readonly status_info: string | null | undefined;
+  readonly terminated_at: string | null | undefined;
   readonly type: string | null | undefined;
   readonly user_id: string | null | undefined;
   readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "EditSessionPriorityModalFragment" | "SessionAccessKeyFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
@@ -276,7 +280,7 @@ return {
                     {
                       "args": null,
                       "kind": "FragmentSpread",
-                      "name": "ImageNodeSimpleTagFragment"
+                      "name": "BAIImageNodeSimpleTagFragment"
                     }
                   ],
                   "storageKey": null
@@ -295,6 +299,34 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "created_at",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "terminated_at",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "status_info",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "result",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "domain_name",
       "storageKey": null
     },
     {
@@ -355,6 +387,6 @@ return {
 };
 })();
 
-(node as any).hash = "d22ff290df261fe92f0cc7edc6f11713";
+(node as any).hash = "2485a16dab716580189a67cf09fa09a4";
 
 export default node;

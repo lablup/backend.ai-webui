@@ -6,6 +6,8 @@
  */
 import { ICON_NODES, icon, type IconName } from './icons.js';
 import { __iconNode as check } from 'lucide-react/dist/esm/icons/check.mjs';
+import { __iconNode as chevronDown } from 'lucide-react/dist/esm/icons/chevron-down.mjs';
+import { __iconNode as chevronUp } from 'lucide-react/dist/esm/icons/chevron-up.mjs';
 import { __iconNode as clipboard } from 'lucide-react/dist/esm/icons/clipboard.mjs';
 import { __iconNode as copy } from 'lucide-react/dist/esm/icons/copy.mjs';
 import { __iconNode as crosshair } from 'lucide-react/dist/esm/icons/crosshair.mjs';
@@ -15,12 +17,15 @@ import { __iconNode as eye } from 'lucide-react/dist/esm/icons/eye.mjs';
 import { __iconNode as files } from 'lucide-react/dist/esm/icons/files.mjs';
 import { __iconNode as gripVertical } from 'lucide-react/dist/esm/icons/grip-vertical.mjs';
 import { __iconNode as mapPin } from 'lucide-react/dist/esm/icons/map-pin.mjs';
+import { __iconNode as pencil } from 'lucide-react/dist/esm/icons/pencil.mjs';
 import { __iconNode as trash2 } from 'lucide-react/dist/esm/icons/trash-2.mjs';
 import { __iconNode as x } from 'lucide-react/dist/esm/icons/x.mjs';
 import { describe, expect, it } from 'vitest';
 
 const UPSTREAM: Record<IconName, unknown> = {
   check,
+  'chevron-down': chevronDown,
+  'chevron-up': chevronUp,
   clipboard,
   copy,
   crosshair,
@@ -30,6 +35,7 @@ const UPSTREAM: Record<IconName, unknown> = {
   files,
   'grip-vertical': gripVertical,
   'map-pin': mapPin,
+  pencil,
   'trash-2': trash2,
   x,
 };

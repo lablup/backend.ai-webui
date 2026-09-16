@@ -29,7 +29,6 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
-import ImageNodeSimpleTag from './ImageNodeSimpleTag';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -47,6 +46,7 @@ import {
   BAICard,
   BAIFlex,
   BAIIconWithTooltip,
+  BAIImageNodeSimpleTag,
   BAILink,
   BAIMetadataList,
   BAISessionAgentIds,
@@ -220,7 +220,7 @@ const SessionDetailContent: React.FC<{
           edges {
             node {
               image {
-                ...ImageNodeSimpleTagFragment
+                ...BAIImageNodeSimpleTagFragment
               }
               ...ConnectedKernelListFragment
             }
@@ -483,7 +483,7 @@ const SessionDetailContent: React.FC<{
             </MetadataListItem>
             <MetadataListItem label={t('session.launcher.Environments')}>
               {session.kernel_nodes?.edges[0]?.node?.image ? (
-                <ImageNodeSimpleTag
+                <BAIImageNodeSimpleTag
                   imageFrgmt={
                     session.kernel_nodes?.edges[0]?.node?.image || null
                   }

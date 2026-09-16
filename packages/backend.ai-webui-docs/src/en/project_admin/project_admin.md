@@ -155,7 +155,7 @@ The **Sessions** page lists the compute sessions owned by users in the currently
 The page provides the following controls:
 
 - **Running / Finished** segmented control: Toggle between currently running sessions and sessions that have already finished.
-- **Property filter and sorting**: Filter the list by ID, Session Name, or Owner UUID. Click a sortable column header to sort the table.
+- **Property filter and sorting**: Filter the list by ID, Session Name, or Owner. The Owner value is picked from a searchable dropdown of user accounts rather than typed as a UUID, and the resulting filter tag shows the account's email address. Click a sortable column header to sort the table.
 
 ### Terminate sessions
 

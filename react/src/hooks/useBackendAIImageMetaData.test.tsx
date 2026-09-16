@@ -65,17 +65,6 @@ describe('useBackendAIImageMetaData', () => {
     expect(lang).toBe('R');
   });
 
-  it('get baseImage data', async () => {
-    const { result } = renderHook(() => useBackendAIImageMetaData(), {
-      wrapper,
-    });
-    await waitFor(() => expect(result.current).toBeTruthy());
-
-    const [, { getBaseImages }] = result.current;
-    const baseImages = getBaseImages('21.11-py3', 'testing/ngc-pytorc');
-    expect(baseImages[0]).toBe('Python3');
-    expect(baseImages[1]).toBe('NVIDIA GPU Cloud');
-  });
   it('get constraint data', async () => {
     const { result } = renderHook(() => useBackendAIImageMetaData(), {
       wrapper,

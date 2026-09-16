@@ -83,6 +83,7 @@ const STATUS_FILTER_DELETED = {
   status: { in: VISIBLE_DELETED_STATUSES },
 } as const;
 
+const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
@@ -141,9 +142,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableVFolderSorterValues).withDefault(
-        '-created_at',
-      ),
+      order: parseAsStringLiteral(availableVFolderSorterValues),
       filter: parseAsJson<VFolderFilter>((value) => value as VFolderFilter),
       statusCategory:
         parseAsStringLiteral(statusCategoryValues).withDefault('active'),
@@ -192,7 +191,9 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.first,
     filter: combinedFilter,
-    orderBy: convertToOrderBy<VFolderOrderBy>(queryParams.order),
+    orderBy: convertToOrderBy<VFolderOrderBy>(
+      queryParams.order || DEFAULT_ORDER,
+    ),
     filterForActiveCount: STATUS_FILTER_ACTIVE,
     filterForDeletedCount: STATUS_FILTER_DELETED,
   };

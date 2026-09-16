@@ -35,15 +35,15 @@ import {
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
   BAITable,
+  BAIText,
   BooleanTag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   badgeVariantForTagColor,
+  convertToBinaryUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
   type BAIColumnType,
-  BAIText,
-  convertToBinaryUnit,
   useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
@@ -387,12 +387,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
-        // `maxLines={1}` for the same reason as the Digest column below:
-        // Astryx's table cell is `white-space: nowrap; overflow: hidden`, so an
-        // untruncated path is CLIPPED rather than wrapped as it was under antd.
-        // One line plus Astryx's built-in truncation tooltip keeps the whole
-        // value reachable and keeps the copy control inside the cell.
-        <BAIText copyable ellipsis={{ tooltip: true }}>
+        // The table cell is `white-space: nowrap; overflow: hidden`, so an
+        // untruncated path is clipped rather than wrapped.
+        <BAIText monospace copyable ellipsis={{ tooltip: true }}>
           {getImageFullName(row) || ''}
         </BAIText>
       ),
@@ -439,9 +436,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // The backend orders by the raw `tag` column, not the parsed KV list.
       sorter: isEnableSorter('tag'),
       sortKey: 'tag',
-      render: (_text, row) => (
-        <AliasedImageDoubleTags label="" color="blue" imageFrgmt={row} />
-      ),
+      render: (_text, row) => <AliasedImageDoubleTags imageFrgmt={row} />,
     },
     {
       title: t('environment.ImageStatus'),

@@ -19,8 +19,15 @@
  inline `marginBottom` (author `!important` beats a non-important inline
  style), so the collapse-to-zero behaviour is unchanged.
 */
+
+/* The button shares the name cell with the row actions (FR-3670), so hiding it
+   has to give the width back too — `opacity: 0` alone left an invisible 28px
+   box holding half of what the name had left (FR-3926). Same collapse the
+   action group itself uses in `BAINameActionCell.css`. */
 .bai-editable-file-name-hover-edit .bai-editable-file-name-edit-button {
   opacity: 0;
+  max-width: 0;
+  overflow: hidden;
   transition: opacity 0.2s;
 }
 
@@ -28,6 +35,8 @@
 .bai-editable-file-name-hover-edit:focus-within
   .bai-editable-file-name-edit-button {
   opacity: 1;
+  max-width: none;
+  overflow: visible;
 }
 
 .bai-editable-file-name-form [data-bai-form-item] {

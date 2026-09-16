@@ -533,6 +533,77 @@ describe('the set the tab was left with', () => {
     expect(all('.setdock .idx').map((idx) => idx.textContent)).toEqual(['1']);
   });
 
+  describe('reordering the set', () => {
+    it('moves a pin up, renumbers the rows and re-targets the set link', async () => {
+      seed([
+        storedPin('c_oneaaaa', 'create', 'Start › create'),
+        {
+          ...storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+          anchor: {
+            v: 3,
+            s: '[data-testid="cancel"]',
+            p: '/elsewhere',
+            tag: 'button',
+          },
+        },
+      ]);
+      await bootOverlay();
+      await ticks(2);
+      const written = stubExecCommand();
+
+      const up = node<HTMLButtonElement>(
+        '.setdock .row[data-pin-id="c_twoaaaa"] .up',
+      );
+      up.focus();
+      up.click();
+
+      expect(dockRows().map((row) => row.dataset.pinId)).toEqual([
+        'c_twoaaaa',
+        'c_oneaaaa',
+      ]);
+      // The rows were rebuilt under the keyboard; the pin is at the top now,
+      // so its ▲ is disabled and the ▼ beside it holds the focus.
+      expect(shadow().activeElement).toBe(
+        node('.setdock .row[data-pin-id="c_twoaaaa"] .down'),
+      );
+      expect(all('.setdock .idx').map((idx) => idx.textContent)).toEqual([
+        '1',
+        '2',
+      ]);
+      // Order changed; identity did not — same two ids, just reshuffled.
+      expect(storedIds().slice().sort()).toEqual(['c_oneaaaa', 'c_twoaaaa']);
+      expect(toast()).toBe('Moved pin 2 → 1 — Copy all to replace your paste');
+
+      node<HTMLButtonElement>('.setdock .copyall').click();
+      const urls = [...written['text/plain'].matchAll(/\(http[^)]+\)/g)].map(
+        (m) => m[0],
+      );
+      // The set link is built from the FIRST pin, now `c_twoaaaa`.
+      expect(
+        urls[urls.length - 1].startsWith(`(${location.origin}/elsewhere#`),
+      ).toBe(true);
+    });
+
+    it('does nothing, and toasts nothing, when the row is already at that end', async () => {
+      seed([
+        storedPin('c_oneaaaa', 'create', 'Start › create'),
+        storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+      ]);
+      await bootOverlay();
+      await ticks(2);
+
+      node<HTMLButtonElement>(
+        '.setdock .row[data-pin-id="c_oneaaaa"] .up',
+      ).click();
+
+      expect(dockRows().map((row) => row.dataset.pinId)).toEqual([
+        'c_oneaaaa',
+        'c_twoaaaa',
+      ]);
+      expect(toast()).toBe('');
+    });
+  });
+
   // The marker is the only thing that says which of them is meant.
   it('scrolls to the pin the row names and beats its marker again', async () => {
     seed([storedPin('c_oneaaaa', 'create', 'Start › create')]);
@@ -804,5 +875,219 @@ describe('the cards switch as show-all', () => {
     cardsSwitch().click();
 
     expect(storedPins()[0].hidden).toBe(true);
+  });
+});
+
+/**
+ * FR-3930: the note is part of the anchor, so rewriting it makes a different
+ * pin. The set keeps the pin's place; the id is what moves.
+ */
+describe('editing a pin’s note', () => {
+  const editRow = (id: string) =>
+    node<HTMLButtonElement>(`.setdock .row[data-pin-id="${id}"] .edit`);
+  const editCard = (id: string) =>
+    node<HTMLButtonElement>(`.card[data-pin-id="${id}"] .edit`);
+
+  /** Open the editor on that control, optionally rewrite the note, save. */
+  async function editFrom(button: HTMLButtonElement, note?: string) {
+    button.click();
+    await ticks(6, 100);
+    if (note !== undefined) {
+      textarea().value = note;
+      textarea().dispatchEvent(new Event('input'));
+      await ticks(6, 100);
+    }
+    pressCopy();
+    await ticks(2);
+  }
+
+  it('opens with the note it is about to change', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+
+    editRow(storedIds()[0]).click();
+    await ticks(4);
+
+    expect(composeOpen()).toBe(true);
+    expect(textarea().value).toBe('first note');
+    expect(copyButton().textContent).toBe('Save note');
+    // An editor picks nothing, so the row it was opened from stays in view.
+    expect(node('.setdock').classList.contains('folded')).toBe(false);
+    pressEscape();
+  });
+
+  it('re-keys the pin in place and names the id the paste no longer has', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    await pickAndCopy('cancel', 'second note');
+    const [first, second] = storedIds();
+
+    await editFrom(editRow(first), 'rewritten');
+
+    const [edited, kept] = storedIds();
+    expect(kept).toBe(second);
+    expect(edited).not.toBe(first);
+    expect(storedPins()[0].note).toBe('rewritten');
+    expect(storedPins()[0].anchor.n).toBe('rewritten');
+    expect(toast()).toBe(
+      `Updated pin 1 of 2 (now ${edited}) — Copy all to replace your paste`,
+    );
+    expect(composeOpen()).toBe(false);
+    // The row leads with the note, so it is the first thing that changed.
+    expect(node('.setdock .row .rowlabel').textContent).toBe('rewritten');
+  });
+
+  it('keeps the pin’s place in the set and its hidden card', async () => {
+    seed([
+      { ...storedPin('c_oneaaaa', 'create', 'Start › create'), hidden: true },
+      storedPin('c_twoaaaa', 'cancel', 'Start › cancel'),
+    ]);
+    await bootOverlay();
+    await ticks(2);
+
+    await editFrom(editRow('c_oneaaaa'), 'rewritten');
+
+    const pins = storedPins();
+    expect(pins[1].id).toBe('c_twoaaaa');
+    expect(pins[0].id).not.toBe('c_oneaaaa');
+    expect(pins[0].hidden).toBe(true);
+    expect(hiddenCard(pins[0].id)).toBe(true);
+  });
+
+  it('keeps a card hidden while the editor was open', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    const [id] = storedIds();
+    editRow(id).click();
+    await ticks(6, 100);
+
+    // The chrome stays up during an edit, so the card's ✕ is still a click away.
+    node<HTMLButtonElement>(`.card[data-pin-id="${id}"] .close`).click();
+    textarea().value = 'rewritten';
+    textarea().dispatchEvent(new Event('input'));
+    await ticks(6, 100);
+    pressCopy();
+    await ticks(2);
+
+    expect(storedPins()[0].note).toBe('rewritten');
+    expect(storedPins()[0].hidden).toBe(true);
+    expect(hiddenCard(storedPins()[0].id)).toBe(true);
+  });
+
+  // Only the first `NOTE_MAX` chars ride in the anchor, so an edit beyond
+  // them changes the block and not the id — and the toast says only that.
+  it('keeps the id when only the part past the cap changed', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    const long = 'x'.repeat(400);
+    await pickAndCopy('create', long);
+    const [id] = storedIds();
+
+    await editFrom(editRow(id), `${long} and a tail`);
+
+    expect(storedIds()).toEqual([id]);
+    expect(storedPins()[0].note).toBe(`${long} and a tail`);
+    expect(toast()).toBe('Updated pin 1 of 1 — Copy all to replace your paste');
+  });
+
+  // The link carries the capped copy; the block the set writes keeps the rest.
+  it('caps what the new anchor carries and says the note was cut', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'short');
+    const long = 'x'.repeat(400);
+
+    await editFrom(editRow(storedIds()[0]), long);
+
+    const pin = storedPins()[0];
+    expect(pin.note).toBe(long);
+    expect(pin.anchor.n).toHaveLength(280);
+    expect(pin.anchor.nt).toBe(1);
+  });
+
+  // `at` is kept, so the id is a pure function of the note again.
+  it('gives the pin its old id back when the old note comes back', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    const original = storedIds()[0];
+
+    await editFrom(editRow(original), 'rewritten');
+    const rewritten = storedIds()[0];
+    await editFrom(editRow(rewritten), 'first note');
+
+    expect(rewritten).not.toBe(original);
+    expect(storedIds()).toEqual([original]);
+  });
+
+  it('writes nothing when the note comes back unchanged', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    const [id] = storedIds();
+
+    await editFrom(editRow(id));
+
+    expect(storedIds()).toEqual([id]);
+    expect(toast()).toBe('Note unchanged');
+    expect(composeOpen()).toBe(false);
+  });
+
+  it('copies the whole set behind the new note and the new id', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    const original = storedIds()[0];
+    await editFrom(editRow(original), 'rewritten');
+    const written = stubExecCommand();
+
+    node<HTMLButtonElement>('.setdock .copyall').click();
+
+    const text = written['text/plain'];
+    expect(text).toContain('rewritten');
+    expect(text).not.toContain('first note');
+    expect(text).toContain(storedIds()[0]);
+    expect(text).not.toContain(original);
+  });
+
+  it('edits from the card of a pin that is on this page', async () => {
+    await bootOverlay();
+    stubExecCommand();
+    await pickAndCopy('create', 'first note');
+    const [id] = storedIds();
+
+    await editFrom(editCard(id), 'from the card');
+
+    expect(storedPins()[0].note).toBe('from the card');
+    expect(storedPins()[0].id).not.toBe(id);
+  });
+
+  // A link's pin carries no `at`/`pr`, so no note of ours could re-key it.
+  it('refuses a link’s pin, at the button and behind it', async () => {
+    seed([
+      {
+        ...storedPin('c_oneaaaa', 'create', 'Start › create'),
+        origin: 'link',
+        at: undefined,
+        pr: undefined,
+      } as SetPin,
+    ]);
+    await bootOverlay();
+    await ticks(2);
+
+    expect(editRow('c_oneaaaa').disabled).toBe(true);
+    expect(editCard('c_oneaaaa').disabled).toBe(true);
+    editRow('c_oneaaaa').disabled = false;
+    editRow('c_oneaaaa').click();
+    await ticks(2);
+
+    expect(composeOpen()).toBe(false);
+    expect(toast()).toBe(
+      'This pin came from a link — pick the element again to write your own note',
+    );
+    expect(storedIds()).toEqual(['c_oneaaaa']);
   });
 });

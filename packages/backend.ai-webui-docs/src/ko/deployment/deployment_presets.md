@@ -174,7 +174,7 @@
 ![](../images/runtime_variant_preset_list.png)
 <!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
-표 위에는 속성 필터(**이름**, **런타임 ID**)와 새로 고침 버튼, **파라미터 생성** 버튼이 있습니다. 기본으로 표시되는 컬럼은 다음과 같습니다.
+표 위에는 속성 필터(**이름**, **런타임**)와 새로 고침 버튼, **파라미터 생성** 버튼이 있습니다. **런타임** 값은 ID를 직접 입력하는 대신 이 서버에 정의된 런타임 목록에서 선택하며, 적용된 필터 태그에는 런타임 이름이 표시됩니다. 기본으로 표시되는 컬럼은 다음과 같습니다.
 
 - **이름**: 파라미터의 이름입니다. 이 컬럼에는 행별 편집/삭제 버튼도 함께 표시됩니다.
 - **런타임 (ID)**: 파라미터가 속한 런타임입니다. 런타임 이름 뒤에 괄호로 ID가 함께 표시되며, ID 옆에는 복사 버튼이 있습니다. 런타임 이름을 제공하지 않는 서버에서는 컬럼 제목이 **런타임 ID** 로 표시되고 ID만 나타납니다.

@@ -6,28 +6,31 @@ navTitle: User Settings
 
 # User Settings
 
-The User Settings page allows you to customize your Backend.AI WebUI experience.
-You can access it by clicking the person icon at the top right and selecting
-the Preferences menu. From here, you can configure preferences such as theme mode,
+The User Settings dialog allows you to customize your Backend.AI WebUI
+experience. You can open it by clicking the person icon at the top right and
+selecting the Preferences menu; it opens over the page you are on, so closing
+it puts you back where you were. From here, you can configure preferences such as theme mode,
 language, desktop notifications, SSH keypair management, shell scripts, and
 experimental features. You can also review the client-side logs, the login
 sessions currently signed in to your account, and your login history.
 
 ![](../images/preferences.png)
 
-The page is organized into four tabs: **General**, **Logs**, **Login Sessions**,
-and **Login History**.
+The dialog is organized into four categories, listed down its left side:
+**General**, **Logs**, **Login Sessions**, and **Login History**. On a narrow
+screen the list fills the dialog and selecting a category opens it, with a back
+button to return to the list.
 
 <a id="general-tab"></a>
 
-## General tab
+## General
 
 ![](../images/user_settings_page.png)
 
-The General tab contains all preference settings organized into groups:
-**Preferences**, **Shell Environments**, and **Experimental features**. The list
-on the left lets you jump to a single group, or select **All** to see every
-setting at once.
+The General category contains all preference settings organized into groups:
+**Preferences**, **Shell Environments**, and **Experimental features**. Every
+group is listed one after another; use the search bar to narrow the list down
+to the setting you are looking for.
 
 ### Searching and filtering settings
 
@@ -366,18 +369,19 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   Hugging Face directly into a model folder. The tab appears only when model
   deployment is also available in your installation.
 - **Session resource grid view**: Adds a **View mode** toggle -- **Table** or
-  **Grid** -- above the session list on the Sessions page and on the Admin
-  Session page. **Grid** replaces the table with one cell per session, colored
-  by the session's live resource utilization. The toggle appears only while
-  this feature is enabled; for the grid's own controls, see
+  **Grid** -- above the session list on the Sessions page, on the Admin
+  Session page, and on the **Sessions** tab of the **Agent Info** drawer on
+  the Resources page. **Grid** replaces the table with one cell per session,
+  colored by the session's live resource utilization. The toggle appears only
+  while this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
 
 <a id="logs-tab"></a>
 
-## Logs tab
+## Logs
 
-Displays detailed information of various logs recorded on the client side. You
-can visit this page to find out more about errors that occurred.
+Displays detailed information of various logs recorded on the client side. Open
+this category to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
 clicking the **Clear Logs** button at the top right.
 
@@ -385,11 +389,10 @@ clicking the **Clear Logs** button at the top right.
 
 :::note
 If you only have one page logged in, clicking the **Refresh** button may not
-seem to work properly. The Logs page is a collection of requests to the server
-and responses from the server. If the current page is the Logs page, it will
-not send any requests to the server except when explicitly refreshing the page.
-To check that logs are being stacked properly, open another page and click
-the **Refresh** button.
+seem to work properly. The log is a collection of requests to the server and
+responses from the server, and the page behind this dialog sends none while
+you are reading them. To check that logs are being stacked properly, close the
+dialog, do something on another page, and open **Logs** again.
 :::
 
 If you want to hide or show certain columns, click the gear icon at the bottom
@@ -400,9 +403,9 @@ want to see.
 
 <a id="login-sessions-tab"></a>
 
-## Login Sessions tab
+## Login Sessions
 
-The Login Sessions tab lists the login sessions currently associated with your
+The Login Sessions category lists the login sessions currently associated with your
 account — one entry for every place where you are signed in to Backend.AI. Use
 it to review where your account is in use and to sign out a session you no
 longer need.
@@ -450,11 +453,11 @@ session you are currently using, you have to log in again.
 
 <a id="login-history-tab"></a>
 
-## Login History tab
+## Login History
 
-The Login History tab shows the login attempts recorded for your account —
+The Login History category shows the login attempts recorded for your account —
 successful sign-ins, failed attempts, and login session events such as logout or
-expiry. This tab is read-only; there are no actions on the rows.
+expiry. This category is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
 

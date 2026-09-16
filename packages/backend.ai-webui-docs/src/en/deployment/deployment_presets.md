@@ -175,7 +175,7 @@ The **Runtime Parameters** tab on the Admin Deployments page (`/admin/deployment
 ![](../images/runtime_variant_preset_list.png)
 <!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
-Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refresh button, and the **Create Parameter** button. The following columns are shown by default:
+Above the table sit a property filter (**Name**, **Runtime**), a refresh button, and the **Create Parameter** button. The **Runtime** value is chosen from a dropdown of the runtimes defined on this server instead of being typed as an ID, and the resulting filter tag shows the runtime's name. The following columns are shown by default:
 
 - **Name**: The parameter's name. This column also carries the per-row edit and delete buttons.
 - **Runtime Variant (ID)**: The runtime the parameter belongs to, shown as the runtime's name followed by its ID in parentheses. The ID has a copy button next to it. On a server that does not serve the runtime variant name, the column is titled **Runtime Variant ID** and shows the ID on its own.

@@ -1,0 +1,49 @@
+diff --git a/dist/chunk-SLEZT6EJ.js b/dist/chunk-SLEZT6EJ.js
+index 76791c619bf72a8c5b99eb2f086e150b3cef9466..5e088b6d2cd545876f77206fd2c7cede5f02a6d9 100644
+--- a/dist/chunk-SLEZT6EJ.js
++++ b/dist/chunk-SLEZT6EJ.js
+@@ -404,6 +404,20 @@ function findRoute(routes, host, strict) {
+   const hostname = authority.split(":")[0];
+   return routes.find((r) => r.hostname.toLowerCase() === hostname) || routes.find((r) => tailscaleAuthority(r.tailscaleUrl) === authority) || routes.find((r) => tailscaleAuthority(r.tailscaleUrl)?.split(":")[0] === hostname) || (strict ? void 0 : routes.find((r) => hostname.endsWith("." + r.hostname.toLowerCase())));
+ }
++function isServersRequest(url) {
++  const path = (url || "/").split("?")[0];
++  return path === "/servers" || path === "/servers/";
++}
++function serversJson(routes, proxyPort, tls) {
++  return JSON.stringify(
++    routes.map((r) => ({
++      hostname: r.hostname,
++      port: r.port,
++      pid: r.pid,
++      url: formatUrl(r.hostname, proxyPort, tls)
++    }))
++  );
++}
+ function createProxyServer(options) {
+   const {
+     getRoutes,
+@@ -449,6 +463,11 @@ function createProxyServer(options) {
+     }
+     const route = findRoute(routes, rawHost, strict);
+     if (!route) {
++      if (isServersRequest(req.url)) {
++        res.writeHead(200, { "Content-Type": "application/json" });
++        res.end(serversJson(routes, proxyPort, reqTls));
++        return;
++      }
+       const safeHost = escapeHtml(host);
+       const matchedSuffix = tldSuffixes.filter((suffix) => host.endsWith(suffix)).sort((a, b) => b.length - a.length)[0];
+       const strippedHost = matchedSuffix && matchedSuffix.length < host.length ? host.slice(0, -matchedSuffix.length) : host;
+@@ -653,6 +672,11 @@ function createProxyServer(options) {
+     }
+     const route = findRoute(getRoutes(), getRequestHost(compatReq), strict);
+     if (!route) {
++      if (isServersRequest(compatReq.url)) {
++        res.writeHead(200, { "content-type": "application/json" });
++        res.end(serversJson(getRoutes(), proxyPort, true));
++        return;
++      }
+       res.writeHead(404, { "content-type": "text/plain" });
+       res.end(`No app registered for ${getRequestHost(compatReq)}
+ `);
