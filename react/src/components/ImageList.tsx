@@ -484,10 +484,13 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       key: 'size_bytes',
       dataIndex: 'size_bytes',
       render: (value) => {
-        if (_.isNil(value)) {
+        // `convertToBinaryUnit` throws on anything it cannot parse, which
+        // would take the whole table down with it.
+        const bytes = _.toNumber(value);
+        if (_.isNil(value) || !_.isFinite(bytes)) {
           return '-';
         }
-        const size = convertToBinaryUnit(_.toString(value), 'auto', 2, true);
+        const size = convertToBinaryUnit(_.toString(bytes), 'auto', 2, true);
         return size ? `${size.numberFixed} ${size.displayUnit}` : '-';
       },
     },
