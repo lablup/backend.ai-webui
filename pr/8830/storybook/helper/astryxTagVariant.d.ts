@@ -77,6 +77,7 @@ export declare const STATUS_BADGE_VARIANT: {
     /** ComputeSession(V2) status — unifies SessionStatusTag + BAISessionNodesV2. */
     readonly session: {
         readonly PENDING: "neutral";
+        readonly RESERVED: "info";
         readonly SCHEDULED: "info";
         readonly RESTARTING: "info";
         readonly PREPARING: "info";
@@ -85,6 +86,8 @@ export declare const STATUS_BADGE_VARIANT: {
         readonly PULLING: "info";
         readonly RUNNING: "success";
         readonly DEPRIORITIZING: "warning";
+        readonly PREEMPTED: "warning";
+        readonly RESCHEDULING: "warning";
         readonly TERMINATING: "warning";
         readonly TERMINATED: "neutral";
         readonly CANCELLED: "error";
@@ -98,6 +101,7 @@ export declare const STATUS_BADGE_VARIANT: {
         readonly PREPARED: "info";
         readonly CREATING: "info";
         readonly PENDING: "success";
+        readonly RESERVED: "success";
         readonly SCHEDULED: "success";
         readonly RUNNING: "success";
         readonly RESTARTING: "success";
@@ -115,6 +119,10 @@ export declare const STATUS_BADGE_VARIANT: {
         readonly scheduled: "success";
         readonly 'self-terminated': "success";
         readonly 'failed-to-start': "error";
+        readonly PREEMPTED_BY_SCHEDULER: "warning";
+        readonly RESCHEDULED: "info";
+        readonly 'preemption-reservation': "info";
+        readonly 'preempted-by-reservation': "warning";
         readonly 'creation-failed': "error";
         readonly 'no-available-instances': "error";
     };
