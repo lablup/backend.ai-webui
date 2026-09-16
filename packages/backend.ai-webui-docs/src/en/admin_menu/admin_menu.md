@@ -301,6 +301,9 @@ options:
 ![](../images/purge_users_modal.png)
 <!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
+If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
+user's email together with the error message, while the remaining users are purged normally.
+
 :::danger
 Purging a user is **irreversible**. The user's virtual folders, kernel history,
 and related keypairs are also deleted. Make sure you have selected the correct
@@ -1011,8 +1014,13 @@ The **Priority** column and the priority editing actions are shown only when the
 version 26.4.0 or later.
 :::
 
-On the **Sessions** tab, you can use the property filter to narrow the list, including by **Session ID**
-when needed.
+On the **Sessions** tab, you can use the property filter to narrow the list — by **Session ID** when
+needed, by the session's owner (email or full name), by its project or domain, and by session
+attributes such as result, cluster mode, priority, and creation or termination time.
+
+Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
+list first and export only the sessions you need. Filter conditions the export does not support are
+ignored, so the exported file may contain more sessions than the table shows, never fewer.
 
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
