@@ -625,7 +625,8 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             // Valkey (`KeyPair.resolve_last_used`) while the server's
             // `last_used` order and filter read the `keypairs.last_used`
             // column, which the manager leaves empty.
-            render: (lastUsed) => (lastUsed ? dayjs(lastUsed).format('lll') : '-'),
+            render: (lastUsed) =>
+              lastUsed ? dayjs(lastUsed).format('lll') : '-',
           },
           {
             key: 'resourcePolicy',
@@ -693,6 +694,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           });
           setSelectedKeypairs([]);
         }}
+        order={variables.order}
       />
       <KeypairInfoModal
         keypairInfoModalFrgmt={keypairInfoModalFrgmt}
