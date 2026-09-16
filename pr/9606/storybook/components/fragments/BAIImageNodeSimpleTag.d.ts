@@ -7,10 +7,9 @@ export interface BAIImageNodeSimpleTagProps {
     copyable?: boolean;
 }
 /**
- * One-line identity of a v1 `ImageNode`: the meta icon, the aliased base name,
- * the base version and the architecture, followed by the tag chips and a copy
- * control for the full reference (ADR 0004). `BAIImageNodeSimpleTagV2` draws
- * the same row from the v2 schema.
+ * One-line identity of a v1 `ImageNode` (ADR 0004), drawn by the shared
+ * `ImageNodeSimpleTag` row. `BAIImageNodeSimpleTagV2` reads the v2 schema
+ * into the same row.
  */
 declare const BAIImageNodeSimpleTag: React.FC<BAIImageNodeSimpleTagProps>;
 export default BAIImageNodeSimpleTag;
