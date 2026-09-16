@@ -136,10 +136,11 @@ describe('buildHits', () => {
     expect(hit?.label).toBe('User Session History');
   });
 
-  it('targets a setting item through ?settings=&setting=', () => {
+  it("targets a setting item through its page's tab param and ?setting=", () => {
     const hit = _.find(build(), {
       id: 'setting:/usersettings#userSettings.AutoLogout',
     });
+    // The settings modal's categories are `?settings=`, not `?tab=` (FR-3903).
     expect(hit?.target).toEqual({
       path: '/usersettings',
       search: { settings: 'general', setting: 'userSettings.AutoLogout' },
