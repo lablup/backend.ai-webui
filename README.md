@@ -633,11 +633,18 @@ $ make mac_arm64
 - `BAI_APP_SIGN_KEYCHAIN_PASSWORD="<Import password of exported p12 file>"`
   Signing Identity is equivalent to the name of signing certificate added on Keychain Access.
 
-#### Linux x86-64 version
+#### Linux version (x86-64 / arm64)
 
 ```console
 $ make linux
 ```
+
+Each Linux build produces a ZIP archive and, when `dpkg-deb` is available on
+the build host (`apt install dpkg` on Debian/Ubuntu, `brew install dpkg` on
+macOS), a Debian package (`backend.ai-desktop-<version>-linux-<arch>.deb`) as
+well. Without it the `.deb` step is skipped with a warning; set `DEB_REQUIRED=1`
+(as the release workflow does) to make the missing tool a build error instead.
+The package metadata (name, desktop entry, icons) lives in `deb-installer.json`.
 
 ### Packaging as zip files
 
