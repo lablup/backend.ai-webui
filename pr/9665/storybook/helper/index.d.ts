@@ -1,5 +1,6 @@
 import { default as Big } from 'big.js';
 export * from './astryxTagVariant';
+export * from './combineFilters';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 export declare function parseValueWithUnit(str: string): [number, string | undefined];
@@ -194,7 +195,7 @@ export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 export type SemanticColor = 'success' | 'info' | 'warning' | 'error' | 'default';
 export declare const useSemanticColorMap: () => Record<SemanticColor, string>;
-export type DownloadFailureReason = 'unreachable' | 'rejected' | 'popup-blocked';
+export type DownloadFailureReason = 'insecure' | 'unreachable' | 'rejected' | 'popup-blocked';
 /**
  * Thrown when a download never reached the browser's download manager.
  *
