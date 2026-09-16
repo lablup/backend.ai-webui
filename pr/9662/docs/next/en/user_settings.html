@@ -9,20 +9,20 @@
   <link rel="icon" href="../../favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="../../apple-touch-icon.png" />
   <link rel="manifest" href="../../site.webmanifest" />
-  <meta name="description" content="The User Settings page allows you to customize your Backend.AI WebUI experience." />
+  <meta name="description" content="The User Settings dialog allows you to customize your Backend.AI WebUI experience." />
   <link rel="canonical" href="https://webui.docs.backend.ai/26.8/en/user_settings.html" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="User Settings" />
-  <meta property="og:description" content="The User Settings page allows you to customize your Backend.AI WebUI experience." />
+  <meta property="og:description" content="The User Settings dialog allows you to customize your Backend.AI WebUI experience." />
   <meta property="og:url" content="https://webui.docs.backend.ai/next/en/user_settings.html" />
   <meta property="og:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
   <meta property="og:site_name" content="Backend.AI WebUI User Guide" />
   <meta property="og:locale" content="en" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="User Settings" />
-  <meta name="twitter:description" content="The User Settings page allows you to customize your Backend.AI WebUI experience." />
+  <meta name="twitter:description" content="The User Settings dialog allows you to customize your Backend.AI WebUI experience." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"User Settings","inLanguage":"en","description":"The User Settings page allows you to customize your Backend.AI WebUI experience.","dateModified":"2026-09-14T08:54:01.000Z","url":"https://webui.docs.backend.ai/next/en/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"User Settings","inLanguage":"en","description":"The User Settings dialog allows you to customize your Backend.AI WebUI experience.","dateModified":"2026-09-16T05:28:16.000Z","url":"https://webui.docs.backend.ai/next/en/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (581f712)">v26.9.0-alpha.0 (581f712)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (185e2c4)">v26.9.0-alpha.0 (185e2c4)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -210,24 +210,27 @@
     <section class="chapter" id="chapter-user_settings">
 <p><a id="user-settings"></a></p>
 <h1 data-bai-block="0" id="user_settings-user-settings">User Settings<a class="hash-link" href="#user_settings-user-settings" aria-label="Direct link to User Settings">#</a></h1>
-<p data-bai-block="1">The User Settings page allows you to customize your Backend.AI WebUI experience.
-You can access it by clicking the person icon at the top right and selecting
-the Preferences menu. From here, you can configure preferences such as theme mode,
+<p data-bai-block="1">The User Settings dialog allows you to customize your Backend.AI WebUI
+experience. You can open it by clicking the person icon at the top right and
+selecting the Preferences menu; it opens over the page you are on, so closing
+it puts you back where you were. From here, you can configure preferences such as theme mode,
 language, desktop notifications, SSH keypair management, shell scripts, and
 experimental features. You can also review the client-side logs, the login
 sessions currently signed in to your account, and your login history.</p>
 <p><figure data-bai-block="2" class="doc-figure"><img src="./images/preferences.png" alt="" class="doc-image" loading="lazy" decoding="async" width="205" height="314" /><figcaption>Figure 19.1</figcaption></figure>
 </p>
-<p data-bai-block="3">The page is organized into four tabs: <strong>General</strong>, <strong>Logs</strong>, <strong>Login Sessions</strong>,
-and <strong>Login History</strong>.</p>
+<p data-bai-block="3">The dialog is organized into four categories, listed down its left side:
+<strong>General</strong>, <strong>Logs</strong>, <strong>Login Sessions</strong>, and <strong>Login History</strong>. On a narrow
+screen the list fills the dialog and selecting a category opens it, with a back
+button to return to the list.</p>
 <p><a id="general-tab"></a></p>
-<h2 data-bai-block="4" id="user_settings-general-tab">General tab<a class="hash-link" href="#user_settings-general-tab" aria-label="Direct link to General tab">#</a></h2>
+<h2 data-bai-block="4" id="user_settings-general">General<a class="hash-link" href="#user_settings-general" aria-label="Direct link to General">#</a></h2>
 <p><figure data-bai-block="5" class="doc-figure"><img src="./images/user_settings_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.2</figcaption></figure>
 </p>
-<p data-bai-block="6">The General tab contains all preference settings organized into groups:
-<strong>Preferences</strong>, <strong>Shell Environments</strong>, and <strong>Experimental features</strong>. The list
-on the left lets you jump to a single group, or select <strong>All</strong> to see every
-setting at once.</p>
+<p data-bai-block="6">The General category contains all preference settings organized into groups:
+<strong>Preferences</strong>, <strong>Shell Environments</strong>, and <strong>Experimental features</strong>. Every
+group is listed one after another; use the search bar to narrow the list down
+to the setting you are looking for.</p>
 <h3 data-bai-block="7" id="user_settings-searching-and-filtering-settings">Searching and filtering settings<a class="hash-link" href="#user_settings-searching-and-filtering-settings" aria-label="Direct link to Searching and filtering settings">#</a></h3>
 <p data-bai-block="8">At the top of the settings area, you can use the <strong>search bar</strong> to quickly find
 a specific setting by name. Type a keyword, and only matching settings will be
@@ -563,9 +566,9 @@ while this feature is enabled; for the grid&#39;s own controls, see
 <a href="./sessions_all.html#session-list-view-and-refresh">Session List View</a>.</li>
 </ul>
 <p><a id="logs-tab"></a></p>
-<h2 data-bai-block="123" id="user_settings-logs-tab">Logs tab<a class="hash-link" href="#user_settings-logs-tab" aria-label="Direct link to Logs tab">#</a></h2>
-<p data-bai-block="124">Displays detailed information of various logs recorded on the client side. You
-can visit this page to find out more about errors that occurred.
+<h2 data-bai-block="123" id="user_settings-logs">Logs<a class="hash-link" href="#user_settings-logs" aria-label="Direct link to Logs">#</a></h2>
+<p data-bai-block="124">Displays detailed information of various logs recorded on the client side. Open
+this category to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
 clicking the <strong>Clear Logs</strong> button at the top right.</p>
 <p><figure data-bai-block="125" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.14</figcaption></figure>
@@ -575,11 +578,10 @@ clicking the <strong>Clear Logs</strong> button at the top right.</p>
 <div class="admonition-content">
 
 <p data-bai-block="127">If you only have one page logged in, clicking the <strong>Refresh</strong> button may not
-seem to work properly. The Logs page is a collection of requests to the server
-and responses from the server. If the current page is the Logs page, it will
-not send any requests to the server except when explicitly refreshing the page.
-To check that logs are being stacked properly, open another page and click
-the <strong>Refresh</strong> button.</p>
+seem to work properly. The log is a collection of requests to the server and
+responses from the server, and the page behind this dialog sends none while
+you are reading them. To check that logs are being stacked properly, close the
+dialog, do something on another page, and open <strong>Logs</strong> again.</p>
 </div></div>
 
 
@@ -589,8 +591,8 @@ want to see.</p>
 <p><figure data-bai-block="129" class="doc-figure"><img src="./images/logs_table_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="484" /><figcaption>Figure 19.15</figcaption></figure>
 </p>
 <p><a id="login-sessions-tab"></a></p>
-<h2 data-bai-block="130" id="user_settings-login-sessions-tab">Login Sessions tab<a class="hash-link" href="#user_settings-login-sessions-tab" aria-label="Direct link to Login Sessions tab">#</a></h2>
-<p data-bai-block="131">The Login Sessions tab lists the login sessions currently associated with your
+<h2 data-bai-block="130" id="user_settings-login-sessions">Login Sessions<a class="hash-link" href="#user_settings-login-sessions" aria-label="Direct link to Login Sessions">#</a></h2>
+<p data-bai-block="131">The Login Sessions category lists the login sessions currently associated with your
 account — one entry for every place where you are signed in to Backend.AI. Use
 it to review where your account is in use and to sign out a session you no
 longer need.</p>
@@ -636,10 +638,10 @@ session you are currently using, you have to log in again.</p>
 
 
 <p><a id="login-history-tab"></a></p>
-<h2 data-bai-block="150" id="user_settings-login-history-tab">Login History tab<a class="hash-link" href="#user_settings-login-history-tab" aria-label="Direct link to Login History tab">#</a></h2>
-<p data-bai-block="151">The Login History tab shows the login attempts recorded for your account —
+<h2 data-bai-block="150" id="user_settings-login-history">Login History<a class="hash-link" href="#user_settings-login-history" aria-label="Direct link to Login History">#</a></h2>
+<p data-bai-block="151">The Login History category shows the login attempts recorded for your account —
 successful sign-ins, failed attempts, and login session events such as logout or
-expiry. This tab is read-only; there are no actions on the rows.</p>
+expiry. This category is read-only; there are no actions on the rows.</p>
 <p><figure data-bai-block="152" class="doc-figure"><img src="./images/login_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 19.17</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
@@ -753,7 +755,7 @@ how many rows are shown per page.</p>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 14, 2026</span>
+  <span class="last-updated">Last updated on Sep 16, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./sftp_to_container.html">
@@ -773,7 +775,7 @@ how many rows are shown per page.</p>
   <aside class="doc-toc" aria-labelledby="doc-toc-heading">
   <div class="doc-toc__heading" id="doc-toc-heading">On this page</div>
   <ul class="doc-toc__list">
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-general-tab" data-toc-target="user_settings-general-tab">General tab</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-general" data-toc-target="user_settings-general">General</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-searching-and-filtering-settings" data-toc-target="user_settings-searching-and-filtering-settings">Searching and filtering settings</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-resetting-settings-to-default" data-toc-target="user_settings-resetting-settings-to-default">Resetting settings to default</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-theme-mode" data-toc-target="user_settings-theme-mode">Theme mode</a></li>
@@ -791,11 +793,11 @@ how many rows are shown per page.</p>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-edit-bootstrap-script" data-toc-target="user_settings-edit-bootstrap-script">Edit bootstrap script</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-edit-user-config-script" data-toc-target="user_settings-edit-user-config-script">Edit user config script</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-experimental-features" data-toc-target="user_settings-experimental-features">Experimental features</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-logs-tab" data-toc-target="user_settings-logs-tab">Logs tab</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-login-sessions-tab" data-toc-target="user_settings-login-sessions-tab">Login Sessions tab</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-logs" data-toc-target="user_settings-logs">Logs</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-login-sessions" data-toc-target="user_settings-login-sessions">Login Sessions</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-filtering-login-sessions" data-toc-target="user_settings-filtering-login-sessions">Filtering login sessions</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-revoking-a-login-session" data-toc-target="user_settings-revoking-a-login-session">Revoking a login session</a></li>
-      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-login-history-tab" data-toc-target="user_settings-login-history-tab">Login History tab</a></li>
+      <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#user_settings-login-history" data-toc-target="user_settings-login-history">Login History</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-result-values" data-toc-target="user_settings-result-values">Result values</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#user_settings-filtering-login-history" data-toc-target="user_settings-filtering-login-history">Filtering login history</a></li>
   </ul>

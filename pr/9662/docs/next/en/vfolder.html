@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Storage Folders" />
   <meta name="twitter:description" content="Backend.AI supports dedicated storage to preserve user's files." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-09-14T08:54:01.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Storage Folders","inLanguage":"en","description":"Backend.AI supports dedicated storage to preserve user's files.","dateModified":"2026-09-16T05:28:16.000Z","url":"https://webui.docs.backend.ai/next/en/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (581f712)">v26.9.0-alpha.0 (581f712)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (185e2c4)">v26.9.0-alpha.0 (185e2c4)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -284,9 +284,9 @@ directory will not be deleted when the compute session is terminated.
 </li>
 </ul>
 <p data-bai-block="31">On wide (xl) screens a draggable divider separates the two panels so you can resize them to suit your workflow. On narrow screens the panels stack vertically.</p>
-<p><figure data-bai-block="32" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3456" height="1084" /><figcaption>Figure 15.5</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.5</figcaption></figure>
 </p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/split_panel_folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2016" height="1648" /><figcaption>Figure 15.6</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/split_panel_folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1980" height="1712" /><figcaption>Figure 15.6</figcaption></figure>
 </p>
 <h3 data-bai-block="34" id="vfolder-file-operations">File operations<a class="hash-link" href="#vfolder-file-operations" aria-label="Direct link to File operations">#</a></h3>
 <p data-bai-block="35">Inside the left panel you can see all directories and files in the folder. Click a directory name in the <strong>Name</strong> column to navigate into it. The actions for each row sit in the <strong>Name</strong> column, next to the item&#39;s name: click <strong>Download</strong> to download a file or directory, <strong>Delete</strong> to delete it, or the pencil (<strong>Rename</strong>) button beside the name to rename it in place. When the column is too narrow to show every button, the remaining actions move into the <strong>More actions</strong> (⋮) menu on the same row. For more detailed file operations, you can mount this folder when creating a compute session and then use a service like Terminal or Jupyter Notebook.</p>
@@ -310,7 +310,7 @@ drawer.</p>
 </div></div>
 
 
-<p><figure data-bai-block="40" class="doc-figure"><img src="./images/vfolder_upload_disabled.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1152" height="615" /><figcaption>Figure 15.7</figcaption></figure>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/vfolder_upload_disabled.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.7</figcaption></figure>
 </p>
 <p data-bai-block="41">The maximum length of a file or directory name inside a folder depends on the host file system, but it usually cannot exceed 255 characters.</p>
 <div class="admonition admonition-note">
@@ -326,7 +326,7 @@ in the directory.</p>
 
 <h3 data-bai-block="44" id="vfolder-edit-text-files">Edit text files<a class="hash-link" href="#vfolder-edit-text-files" aria-label="Direct link to Edit text files">#</a></h3>
 <p data-bai-block="45">You can edit text files directly in the folder explorer. Click the folder name to open the file explorer, then open the <strong>More actions</strong> (⋮) menu on the text file&#39;s row in the <strong>Name</strong> column and select <strong>Edit File</strong>.</p>
-<p><figure data-bai-block="46" class="doc-figure"><img src="./images/folder_explorer_edit_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1620" height="519" /><figcaption>Figure 15.8</figcaption></figure>
+<p><figure data-bai-block="46" class="doc-figure"><img src="./images/folder_explorer_edit_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.8</figcaption></figure>
 </p>
 <p data-bai-block="47">The text file editor opens in a modal with a code editor interface. The editor automatically detects the file type based on the file extension and applies appropriate syntax highlighting (e.g., Python, JavaScript, Markdown). The modal title displays the file name and size.</p>
 <p><figure data-bai-block="48" class="doc-figure"><img src="./images/text_file_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2496" height="1332" /><figcaption>Figure 15.9</figcaption></figure>
@@ -380,19 +380,22 @@ them in an alert titled <em>&quot;The following folder(s) without delete permiss
 be excluded.&quot;</em> Check the list before proceeding with the deletion: only the
 remaining folders move to the Trash tab, and the confirmation message below the
 alert counts just the folders that are actually moved.</p>
-<h3 data-bai-block="74" id="vfolder-restore-or-permanently-delete">Restore or permanently delete<a class="hash-link" href="#vfolder-restore-or-permanently-delete" aria-label="Direct link to Restore or permanently delete">#</a></h3>
-<p data-bai-block="75">In this status, you can restore the folder by clicking the restore button on the folder&#39;s row in the <strong>Name</strong> column. If you want to permanently delete the folder,
+<p data-bai-block="74">If some of the selected folders still cannot be deleted, the folders that can be
+deleted are moved to the Trash tab as usual, and a failure dialog lists each
+folder that failed with the reason in the <strong>Error Message</strong> column.</p>
+<h3 data-bai-block="75" id="vfolder-restore-or-permanently-delete">Restore or permanently delete<a class="hash-link" href="#vfolder-restore-or-permanently-delete" aria-label="Direct link to Restore or permanently delete">#</a></h3>
+<p data-bai-block="76">In this status, you can restore the folder by clicking the restore button on the folder&#39;s row in the <strong>Name</strong> column. If you want to permanently delete the folder,
 please click the <code>trash bin</code> button on the same row. Once permanent deletion has actually started, the folder can no longer be restored or deleted again: both buttons on its row become unavailable and report <em>&quot;Deletion has already started for this folder.&quot;</em> The <code>trash bin</code> button on a row is also unavailable when you do not have delete permission on that folder — for example, a shared or project folder you are not allowed to delete — and reports <em>&quot;No delete permission&quot;</em> instead.</p>
-<p><figure data-bai-block="76" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 15.14</figcaption></figure>
+<p><figure data-bai-block="77" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 15.14</figcaption></figure>
 </p>
-<p data-bai-block="77">A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the <strong>Delete forever</strong> button becomes active. Click it to permanently delete the folder.</p>
-<p><figure data-bai-block="78" class="doc-figure"><img src="./images/vfolder_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="346" /><figcaption>Figure 15.15</figcaption></figure>
+<p data-bai-block="78">A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the <strong>Delete forever</strong> button becomes active. Click it to permanently delete the folder.</p>
+<p><figure data-bai-block="79" class="doc-figure"><img src="./images/vfolder_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="346" /><figcaption>Figure 15.15</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="79" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>Cascading model card deletion</div>
+<div data-bai-block="80" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>Cascading model card deletion</div>
 <div class="admonition-content">
 
-<p data-bai-block="80">If the folder you are deleting is associated with a <strong>model card</strong>, the
+<p data-bai-block="81">If the folder you are deleting is associated with a <strong>model card</strong>, the
 confirmation modal additionally surfaces the option <em>&quot;Also delete the
 associated model folder&quot;</em> with the warning <em>&quot;Deleting the associated model
 folder will also delete every model card that uses it.&quot;</em> Proceeding with the
@@ -402,185 +405,185 @@ this action cannot be undone.</p>
 </div></div>
 
 
-<p><figure data-bai-block="81" class="doc-figure"><img src="./images/vfolder_cascading_delete_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="414" /><figcaption>Figure 15.16</figcaption></figure>
+<p><figure data-bai-block="82" class="doc-figure"><img src="./images/vfolder_cascading_delete_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="414" /><figcaption>Figure 15.16</figcaption></figure>
 </p>
-<h2 data-bai-block="82" id="vfolder-using-filebrowser">Using FileBrowser<a class="hash-link" href="#vfolder-using-filebrowser" aria-label="Direct link to Using FileBrowser">#</a></h2>
-<p data-bai-block="83">Backend.AI supports <a href="https://filebrowser.org">FileBrowser</a>. FileBrowser is a program that helps you manage files on a remote server
+<h2 data-bai-block="83" id="vfolder-using-filebrowser">Using FileBrowser<a class="hash-link" href="#vfolder-using-filebrowser" aria-label="Direct link to Using FileBrowser">#</a></h2>
+<p data-bai-block="84">Backend.AI supports <a href="https://filebrowser.org">FileBrowser</a>. FileBrowser is a program that helps you manage files on a remote server
 through a web browser. This is especially useful when uploading a directory from
 the user&#39;s local machine.</p>
-<p data-bai-block="84">Currently, Backend.AI provides a FileBrowser as an application of a compute
+<p data-bai-block="85">Currently, Backend.AI provides a FileBrowser as an application of a compute
 session. Therefore, the following conditions are required to launch it.</p>
 <ul>
-<li data-bai-block="85">User can create at least one compute session.</li>
-<li data-bai-block="86">User can allocated at least 1 core of CPU and 512 MB of memory.</li>
-<li data-bai-block="87">Image that supports FileBrowser must be installed.</li>
+<li data-bai-block="86">User can create at least one compute session.</li>
+<li data-bai-block="87">User can allocated at least 1 core of CPU and 512 MB of memory.</li>
+<li data-bai-block="88">Image that supports FileBrowser must be installed.</li>
 </ul>
-<p data-bai-block="88">You can access FileBrowser in two ways.</p>
+<p data-bai-block="89">You can access FileBrowser in two ways.</p>
 <ul>
-<li data-bai-block="89">Execute FileBrowser from file explorer dialog of a storage folder.</li>
-<li data-bai-block="90">Launch a compute session directly from a FileBrowser image on Sessions page.</li>
+<li data-bai-block="90">Execute FileBrowser from file explorer dialog of a storage folder.</li>
+<li data-bai-block="91">Launch a compute session directly from a FileBrowser image on Sessions page.</li>
 </ul>
-<h3 data-bai-block="91" id="vfolder-execute-filebrowser-from-folder-explorer-dialog">Execute FileBrowser from folder explorer dialog<a class="hash-link" href="#vfolder-execute-filebrowser-from-folder-explorer-dialog" aria-label="Direct link to Execute FileBrowser from folder explorer dialog">#</a></h3>
-<p data-bai-block="92">Go to the Data page and open the file explorer dialog of target
+<h3 data-bai-block="92" id="vfolder-execute-filebrowser-from-folder-explorer-dialog">Execute FileBrowser from folder explorer dialog<a class="hash-link" href="#vfolder-execute-filebrowser-from-folder-explorer-dialog" aria-label="Direct link to Execute FileBrowser from folder explorer dialog">#</a></h3>
+<p data-bai-block="93">Go to the Data page and open the file explorer dialog of target
 storage folder. Click the folder name to open the file explorer.</p>
-<p><figure data-bai-block="93" class="doc-figure"><img src="./images/click_folder_name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2298" height="830" /><figcaption>Figure 15.17</figcaption></figure>
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/click_folder_name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2298" height="830" /><figcaption>Figure 15.17</figcaption></figure>
 </p>
-<p data-bai-block="94">Click <code>Execute filebrowser</code> button in the upper-right corner of the explorer.</p>
-<p><figure data-bai-block="95" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3456" height="1084" /><figcaption>Figure 15.18</figcaption></figure>
+<p data-bai-block="95">Click <code>Execute filebrowser</code> button in the upper-right corner of the explorer.</p>
+<p><figure data-bai-block="96" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.18</figcaption></figure>
 </p>
-<p data-bai-block="96">You can see the FileBrowser is opened in a new window. You can also see that the
+<p data-bai-block="97">You can see the FileBrowser is opened in a new window. You can also see that the
 storage folder you opened the explorer dialog becomes the root directory. From the
 FileBrowser window, you can freely upload, modify, and delete any directories
 and files.</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/filebrowser_with_new_window.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2836" height="620" /><figcaption>Figure 15.19</figcaption></figure>
+<p><figure data-bai-block="98" class="doc-figure"><img src="./images/filebrowser_with_new_window.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2836" height="620" /><figcaption>Figure 15.19</figcaption></figure>
 </p>
-<p data-bai-block="98">When user clicks <code>Execute filebrowser</code> button, Backend.AI automatically creates a
+<p data-bai-block="99">When user clicks <code>Execute filebrowser</code> button, Backend.AI automatically creates a
 dedicated compute session for the app. So, in the Sessions page, you should see
 FileBrowser compute session. It is user&#39;s responsibility to delete this compute
 session.</p>
-<p><figure data-bai-block="99" class="doc-figure"><img src="./images/filebrowser_in_session_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3459" height="592" /><figcaption>Figure 15.20</figcaption></figure>
+<p><figure data-bai-block="100" class="doc-figure"><img src="./images/filebrowser_in_session_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3459" height="592" /><figcaption>Figure 15.20</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="100" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="101" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="101">If you accidentally close the FileBrowser window and want to reopen it, just
+<p data-bai-block="102">If you accidentally close the FileBrowser window and want to reopen it, just
 go to Sessions page and click the FileBrowser application button of the
 FileBrowser compute session.</p>
-<p><figure data-bai-block="102" class="doc-figure"><img src="./images/app_dialog_with_filebrowser.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1266" /><figcaption>Figure 15.21</figcaption></figure>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/app_dialog_with_filebrowser.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1266" /><figcaption>Figure 15.21</figcaption></figure>
 </p>
-<p data-bai-block="103">When you click <code>Execute filebrowser</code> button again in the storage folder
+<p data-bai-block="104">When you click <code>Execute filebrowser</code> button again in the storage folder
 explorer, a new compute session will be created and a total of two
 FileBrowser sessions will appear.</p>
 </div></div>
 
 
-<h3 data-bai-block="104" id="vfolder-create-a-compute-session-with-filebrowser-image">Create a compute session with FileBrowser image<a class="hash-link" href="#vfolder-create-a-compute-session-with-filebrowser-image" aria-label="Direct link to Create a compute session with FileBrowser image">#</a></h3>
-<p data-bai-block="105">You can directly create a compute session with FileBrowser supported images.
+<h3 data-bai-block="105" id="vfolder-create-a-compute-session-with-filebrowser-image">Create a compute session with FileBrowser image<a class="hash-link" href="#vfolder-create-a-compute-session-with-filebrowser-image" aria-label="Direct link to Create a compute session with FileBrowser image">#</a></h3>
+<p data-bai-block="106">You can directly create a compute session with FileBrowser supported images.
 You need to mount at least one or more storage folders to access them. You can use
 FileBrowser without a problem even if you do not mount any storage folder, but
 every uploaded/updated files will be lost after the session is terminated.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="106" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="107" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="107">The root directory of FileBrowser will be <code>/home/work</code>. Therefore, you
+<p data-bai-block="108">The root directory of FileBrowser will be <code>/home/work</code>. Therefore, you
 can access any mounted storage folders for the compute session.</p>
 </div></div>
 
 
-<h3 data-bai-block="108" id="vfolder-basic-usage-examples-of-filebrowser">Basic usage examples of FileBrowser<a class="hash-link" href="#vfolder-basic-usage-examples-of-filebrowser" aria-label="Direct link to Basic usage examples of FileBrowser">#</a></h3>
-<p data-bai-block="109">Here, we present some basic usage examples of FileBrowser in Backend.AI. Most
+<h3 data-bai-block="109" id="vfolder-basic-usage-examples-of-filebrowser">Basic usage examples of FileBrowser<a class="hash-link" href="#vfolder-basic-usage-examples-of-filebrowser" aria-label="Direct link to Basic usage examples of FileBrowser">#</a></h3>
+<p data-bai-block="110">Here, we present some basic usage examples of FileBrowser in Backend.AI. Most
 of the FileBrowser operations are intuitive, but if you need more detailed
 guide, please refer to the
 <a href="https://filebrowser.org">FileBrowser documentation</a>.</p>
-<p data-bai-block="110"><strong>Upload local directory using FileBrowser</strong></p>
-<p data-bai-block="111">FileBrowser supports uploading one or more local directories while maintaining
+<p data-bai-block="111"><strong>Upload local directory using FileBrowser</strong></p>
+<p data-bai-block="112">FileBrowser supports uploading one or more local directories while maintaining
 the tree structure. Click the upload button in the upper right corner of the
 window, and click Folder button. Then, local file explorer dialog will appear
 and you can select any directory you want to upload.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="112" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="113" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="113">If you try to upload a file to a read-only folder, FileBrowser will raise a
+<p data-bai-block="114">If you try to upload a file to a read-only folder, FileBrowser will raise a
 server error.</p>
 </div></div>
 
 
-<p><figure data-bai-block="114" class="doc-figure"><img src="./images/filebrowser_upload.png" alt="" class="doc-image" loading="lazy" decoding="async" width="612" height="789" /><figcaption>Figure 15.22</figcaption></figure>
+<p><figure data-bai-block="115" class="doc-figure"><img src="./images/filebrowser_upload.png" alt="" class="doc-image" loading="lazy" decoding="async" width="612" height="789" /><figcaption>Figure 15.22</figcaption></figure>
 </p>
-<p data-bai-block="115">Let&#39;s upload a directory with the following structure.</p>
-<div data-bai-block="116" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">foo</span></span>
+<p data-bai-block="116">Let&#39;s upload a directory with the following structure.</p>
+<div data-bai-block="117" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">foo</span></span>
 <span class="line"><span style="color:#B392F0">+--</span><span style="color:#9ECBFF"> test</span></span>
 <span class="line"><span style="color:#F97583">|</span><span style="color:#B392F0">   +--</span><span style="color:#9ECBFF"> test2.txt</span></span>
 <span class="line"><span style="color:#B392F0">+--</span><span style="color:#9ECBFF"> test.txt</span></span></code></pre></div>
-<p data-bai-block="117">After selecting <code>foo</code> directory, you can see the directory just uploaded
+<p data-bai-block="118">After selecting <code>foo</code> directory, you can see the directory just uploaded
 successfully.</p>
-<p><figure data-bai-block="118" class="doc-figure"><img src="./images/filebrowser_upload_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1593" height="618" /><figcaption>Figure 15.23</figcaption></figure>
+<p><figure data-bai-block="119" class="doc-figure"><img src="./images/filebrowser_upload_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1593" height="618" /><figcaption>Figure 15.23</figcaption></figure>
 </p>
-<p data-bai-block="119">You can also upload local files and directories by drag and drop.</p>
-<p data-bai-block="120"><strong>Move files or directories to another directory</strong></p>
-<p data-bai-block="121">Moving files or directories in storage folder is also possible from FileBrowser.
+<p data-bai-block="120">You can also upload local files and directories by drag and drop.</p>
+<p data-bai-block="121"><strong>Move files or directories to another directory</strong></p>
+<p data-bai-block="122">Moving files or directories in storage folder is also possible from FileBrowser.
 You can move files or directories by following steps below.</p>
 <ol>
-<li data-bai-block="122">Select directories or files from FileBrowser.</li>
+<li data-bai-block="123">Select directories or files from FileBrowser.</li>
 </ol>
-<p><figure data-bai-block="123" class="doc-figure"><img src="./images/select_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1389" height="835" /><figcaption>Figure 15.24</figcaption></figure>
+<p><figure data-bai-block="124" class="doc-figure"><img src="./images/select_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1389" height="835" /><figcaption>Figure 15.24</figcaption></figure>
 </p>
 <ol start="2">
-<li data-bai-block="124">Click the <code>arrow</code> button in the upper right corner of FileBrowser</li>
+<li data-bai-block="125">Click the <code>arrow</code> button in the upper right corner of FileBrowser</li>
 </ol>
-<p><figure data-bai-block="125" class="doc-figure"><img src="./images/click_arrow_icon.png" alt="" class="doc-image" loading="lazy" decoding="async" width="516" height="82" /><figcaption>Figure 15.25</figcaption></figure>
+<p><figure data-bai-block="126" class="doc-figure"><img src="./images/click_arrow_icon.png" alt="" class="doc-image" loading="lazy" decoding="async" width="516" height="82" /><figcaption>Figure 15.25</figcaption></figure>
 </p>
 <ol start="3">
-<li data-bai-block="126">Select the destination</li>
+<li data-bai-block="127">Select the destination</li>
 </ol>
-<p><figure data-bai-block="127" class="doc-figure"><img src="./images/select_the_destination.png" alt="" class="doc-image" loading="lazy" decoding="async" width="531" height="428" /><figcaption>Figure 15.26</figcaption></figure>
+<p><figure data-bai-block="128" class="doc-figure"><img src="./images/select_the_destination.png" alt="" class="doc-image" loading="lazy" decoding="async" width="531" height="428" /><figcaption>Figure 15.26</figcaption></figure>
 </p>
 <ol start="4">
-<li data-bai-block="128">Click <code>Move</code> button</li>
+<li data-bai-block="129">Click <code>Move</code> button</li>
 </ol>
-<p data-bai-block="129">You will see that moving operation is successfully finished.</p>
-<p><figure data-bai-block="130" class="doc-figure"><img src="./images/moving_operation_in_filebrowser_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1415" height="549" /><figcaption>Figure 15.27</figcaption></figure>
+<p data-bai-block="130">You will see that moving operation is successfully finished.</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/moving_operation_in_filebrowser_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1415" height="549" /><figcaption>Figure 15.27</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="131" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="132" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="132">FileBrowser is provided via application inside a compute session currently.
+<p data-bai-block="133">FileBrowser is provided via application inside a compute session currently.
 We are planning to update FileBrowser so that it can run independently
 without creating a session.</p>
 </div></div>
 
 
-<h2 data-bai-block="133" id="vfolder-using-sftp-server">Using SFTP server<a class="hash-link" href="#vfolder-using-sftp-server" aria-label="Direct link to Using SFTP server">#</a></h2>
-<p data-bai-block="134">Backend.AI supports SSH / SFTP file upload from both desktop app and
+<h2 data-bai-block="134" id="vfolder-using-sftp-server">Using SFTP server<a class="hash-link" href="#vfolder-using-sftp-server" aria-label="Direct link to Using SFTP server">#</a></h2>
+<p data-bai-block="135">Backend.AI supports SSH / SFTP file upload from both desktop app and
 web-based WebUI. The SFTP server allows you to upload files quickly through reliable
 data streams.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="135" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="136" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="136">Depending on the system settings, running SFTP server from the file dialog may not
+<p data-bai-block="137">Depending on the system settings, running SFTP server from the file dialog may not
 be allowed.</p>
 </div></div>
 
 
-<h3 data-bai-block="137" id="vfolder-execute-sftp-server-from-folder-explorer-dialog-in-data-page">Execute SFTP server from folder explorer dialog in Data page<a class="hash-link" href="#vfolder-execute-sftp-server-from-folder-explorer-dialog-in-data-page" aria-label="Direct link to Execute SFTP server from folder explorer dialog in Data page">#</a></h3>
-<p data-bai-block="138">Go to the Data page and open the file explorer dialog of target storage folder.
+<h3 data-bai-block="138" id="vfolder-execute-sftp-server-from-folder-explorer-dialog-in-data-page">Execute SFTP server from folder explorer dialog in Data page<a class="hash-link" href="#vfolder-execute-sftp-server-from-folder-explorer-dialog-in-data-page" aria-label="Direct link to Execute SFTP server from folder explorer dialog in Data page">#</a></h3>
+<p data-bai-block="139">Go to the Data page and open the file explorer dialog of target storage folder.
 Click the folder button or the folder name to open the file explorer.</p>
-<p data-bai-block="139">Click <code>Run SFTP server</code> button in the upper-right corner of the explorer.</p>
-<p><figure data-bai-block="140" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3456" height="1084" /><figcaption>Figure 15.28</figcaption></figure>
+<p data-bai-block="140">Click <code>Run SFTP server</code> button in the upper-right corner of the explorer.</p>
+<p><figure data-bai-block="141" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 15.28</figcaption></figure>
 </p>
-<p data-bai-block="141">You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
+<p data-bai-block="142">You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
 automatically. (This session will not affect resource occupancy.)</p>
-<p><figure data-bai-block="142" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1696" /><figcaption>Figure 15.29</figcaption></figure>
+<p><figure data-bai-block="143" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1696" /><figcaption>Figure 15.29</figcaption></figure>
 </p>
-<p data-bai-block="143">For the connection, click <code>Download SSH Key</code> button to download the SSH private key
+<p data-bai-block="144">For the connection, click <code>Download SSH Key</code> button to download the SSH private key
 (<code>id_container</code>). Also, remember the host and port number. Then, you can copy your
 files to the session using the Connection Example code written in the dialog, or
 referring to the following guide: <a href="./sftp_to_container.html#ssh-sftp-container">SFTP Connection Guide</a>.
 To preserve the files, you need to transfer the files to the storage folder. Also,
 the session will be terminated when there is no transfer for some time.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="144" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="145" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="145">If you upload your SSH keypair, the <code>id_container</code> will be set with your
+<p data-bai-block="146">If you upload your SSH keypair, the <code>id_container</code> will be set with your
 own SSH private key. So, you don&#39;t need to download it every time you
 want to connect via SSH to your container. Please refer to
 <a href="./user_settings.html#user-ssh-keypair-management">managing user&#39;s SSH keypair</a>.</p>
 </div></div>
 
 
-<h2 data-bai-block="146" id="vfolder-pipeline-folders">Pipeline folders<a class="hash-link" href="#vfolder-pipeline-folders" aria-label="Direct link to Pipeline folders">#</a></h2>
-<p data-bai-block="147">This tab shows the list of folders that are automatically created when executing a
+<h2 data-bai-block="147" id="vfolder-pipeline-folders">Pipeline folders<a class="hash-link" href="#vfolder-pipeline-folders" aria-label="Direct link to Pipeline folders">#</a></h2>
+<p data-bai-block="148">This tab shows the list of folders that are automatically created when executing a
 pipeline in FastTrack. When a pipeline is created, a new folder is created and mounted
 under <code>/pipeline</code> for each instance of work (computing session).</p>
 <p><a id="automount-folder"></a></p>
-<h2 data-bai-block="148" id="vfolder-automount-folders">Automount folders<a class="hash-link" href="#vfolder-automount-folders" aria-label="Direct link to Automount folders">#</a></h2>
-<p data-bai-block="149">Data page has an Automount Folders tab. Click this tab to see a
+<h2 data-bai-block="149" id="vfolder-automount-folders">Automount folders<a class="hash-link" href="#vfolder-automount-folders" aria-label="Direct link to Automount folders">#</a></h2>
+<p data-bai-block="150">Data page has an Automount Folders tab. Click this tab to see a
 list of folders whose names prefixed with a dot (<code>.</code>). When you create a folder,
 if you specify a name that starts with a dot (<code>.</code>), it is added to the Automount
 Folders tab, not the Folders tab. Automount Folders are special folders that are
@@ -589,22 +592,22 @@ manually when creating a compute session. By using this feature, creating and
 using Storage folders such as <code>.local</code>, <code>.linuxbrew</code>, <code>.pyenv</code>, etc.,
 you can configure a certain user packages or environments that do not change
 with different kinds of compute session.</p>
-<p data-bai-block="150">For more detailed information on the usage of Automount folders, refer to
+<p data-bai-block="151">For more detailed information on the usage of Automount folders, refer to
 <a href="./mount_vfolder.html#using-automount-folder">examples of using automount folders</a>.</p>
-<p><figure data-bai-block="151" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>Figure 15.30</figcaption></figure>
+<p><figure data-bai-block="152" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>Figure 15.30</figcaption></figure>
 </p>
 <p><a id="models"></a></p>
-<h2 data-bai-block="152" id="vfolder-models">Models<a class="hash-link" href="#vfolder-models" aria-label="Direct link to Models">#</a></h2>
-<p data-bai-block="153">The Models tab facilitates straightforward model serving.
+<h2 data-bai-block="153" id="vfolder-models">Models<a class="hash-link" href="#vfolder-models" aria-label="Direct link to Models">#</a></h2>
+<p data-bai-block="154">The Models tab facilitates straightforward model serving.
 You can store the necessary data, including input data for <a href="./deployment.html#model-serving">model serving</a> and training data, in the model folder.</p>
-<p><figure data-bai-block="154" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>Figure 15.31</figcaption></figure>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>Figure 15.31</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 14, 2026</span>
+  <span class="last-updated">Last updated on Sep 16, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダ" />
   <meta name="twitter:description" content="Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-14T08:54:01.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダ","inLanguage":"ja","description":"Backend.AIは、ユーザーのファイルを安全に保管するための専用ストレージを提供しています。コンピュートセッションのファイルやディレクトリはセッション終了時に削除されるため、ストレージフォルダに保存することを推奨します。ストレージフォルダの一覧は、サイドバーのデータページを選択すると確認できます。","dateModified":"2026-09-16T05:28:16.000Z","url":"https://webui.docs.backend.ai/next/ja/vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (581f712)">v26.9.0-alpha.0 (581f712)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (185e2c4)">v26.9.0-alpha.0 (185e2c4)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -273,9 +273,9 @@
 </li>
 </ul>
 <p data-bai-block="31">幅の広い（xl）画面では、2つのパネルの間にドラッグ可能な区切り線が表示され、ワークフローに合わせてサイズを調整できます。幅の狭い画面では、パネルが縦に積み重なって表示されます。</p>
-<p><figure data-bai-block="32" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3456" height="1196" /><figcaption>図 15.5</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>図 15.5</figcaption></figure>
 </p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/split_panel_folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2016" height="1648" /><figcaption>図 15.6</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/split_panel_folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1980" height="1712" /><figcaption>図 15.6</figcaption></figure>
 </p>
 <h3 data-bai-block="34" id="vfolder-ファイル操作">ファイル操作<a class="hash-link" href="#vfolder-ファイル操作" aria-label="Direct link to ファイル操作">#</a></h3>
 <p data-bai-block="35">左パネル内ではフォルダ内のすべてのディレクトリとファイルを確認できます。<strong>名前</strong>列でディレクトリ名をクリックすると、そのディレクトリに移動します。各行の操作ボタンは、<strong>名前</strong>列の項目名の隣にあります。<strong>ダウンロード</strong>をクリックするとファイルやディレクトリをダウンロードし、<strong>消去</strong>をクリックすると削除し、名前の隣にある鉛筆（<strong>名前を変更</strong>）ボタンをクリックするとその場で名前を変更できます。列の幅が狭くすべてのボタンを表示できない場合、残りの操作は同じ行の<strong>その他の操作</strong>（⋮）メニューに移動します。より詳細なファイル操作については、コンピュートセッションを作成する際にこのフォルダをマウントし、TerminalやJupyter Notebookなどのサービスを使用して行うことができます。</p>
@@ -297,7 +297,7 @@
 </div></div>
 
 
-<p><figure data-bai-block="40" class="doc-figure"><img src="./images/vfolder_upload_disabled.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1152" height="615" /><figcaption>図 15.7</figcaption></figure>
+<p><figure data-bai-block="40" class="doc-figure"><img src="./images/vfolder_upload_disabled.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>図 15.7</figcaption></figure>
 </p>
 <p data-bai-block="41">フォルダ内のファイルまたはディレクトリの最大長は、ホストファイルシステムに依存することがあります。しかし、通常は255文字を超えることはできません。</p>
 <div class="admonition admonition-note">
@@ -310,7 +310,7 @@
 
 <h3 data-bai-block="44" id="vfolder-テキストファイルを編集">テキストファイルを編集<a class="hash-link" href="#vfolder-テキストファイルを編集" aria-label="Direct link to テキストファイルを編集">#</a></h3>
 <p data-bai-block="45">フォルダーエクスプローラーでテキストファイルを直接編集できます。フォルダー名をクリックしてファイルエクスプローラーを開き、<strong>名前</strong>列にあるテキストファイルの行で<strong>その他の操作</strong>（⋮）メニューを開き、<strong>ファイルを編集</strong>を選択します。</p>
-<p><figure data-bai-block="46" class="doc-figure"><img src="./images/folder_explorer_edit_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1620" height="519" /><figcaption>図 15.8</figcaption></figure>
+<p><figure data-bai-block="46" class="doc-figure"><img src="./images/folder_explorer_edit_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>図 15.8</figcaption></figure>
 </p>
 <p data-bai-block="47">テキストファイルエディタがコードエディタインターフェースとともにモーダルで開きます。エディタはファイル拡張子に基づいてファイルタイプを自動検出し、適切な構文ハイライトを適用します(例: Python、JavaScript、Markdown)。モーダルのタイトルにはファイル名とサイズが表示されます。</p>
 <p><figure data-bai-block="48" class="doc-figure"><img src="./images/text_file_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2496" height="1332" /><figcaption>図 15.9</figcaption></figure>
@@ -360,18 +360,21 @@
 該当するフォルダ名が一覧されます。削除を進める前にこの一覧を確認してください。権限の
 ないフォルダを除いた残りのフォルダだけがゴミ箱タブに移動し、アラートの下の確認
 メッセージにも実際に移動するフォルダの数のみが表示されます。</p>
-<h3 data-bai-block="74" id="vfolder-フォルダの復元と完全削除">フォルダの復元と完全削除<a class="hash-link" href="#vfolder-フォルダの復元と完全削除" aria-label="Direct link to フォルダの復元と完全削除">#</a></h3>
-<p data-bai-block="75">この状態では、<strong>名前</strong>列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。完全削除が実際に開始された後は、フォルダを復元することも再度削除することもできず、その行の両方のボタンは <em>「このフォルダの削除は既に開始されています。」</em> という理由とともに無効になります。フォルダに対する削除権限がない場合も、その行の「ゴミ箱」ボタンは使用できません。たとえば削除が許可されていない共有フォルダやプロジェクトフォルダがこれに当たり、この場合ボタンには <em>「削除許可なし」</em> という理由が表示されます。</p>
-<p><figure data-bai-block="76" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 15.14</figcaption></figure>
+<p data-bai-block="74">選択したフォルダの一部を削除できなかった場合、削除できたフォルダはそのままゴミ箱タブ
+に移動し、失敗したフォルダは <strong>エラーメッセージ</strong> 列に理由を添えて失敗ダイアログに
+一覧表示されます。</p>
+<h3 data-bai-block="75" id="vfolder-フォルダの復元と完全削除">フォルダの復元と完全削除<a class="hash-link" href="#vfolder-フォルダの復元と完全削除" aria-label="Direct link to フォルダの復元と完全削除">#</a></h3>
+<p data-bai-block="76">この状態では、<strong>名前</strong>列にある該当フォルダの行の復元ボタンをクリックしてフォルダを復元できます。フォルダを完全に削除する場合は、同じ行の「ゴミ箱」ボタンをクリックしてください。完全削除が実際に開始された後は、フォルダを復元することも再度削除することもできず、その行の両方のボタンは <em>「このフォルダの削除は既に開始されています。」</em> という理由とともに無効になります。フォルダに対する削除権限がない場合も、その行の「ゴミ箱」ボタンは使用できません。たとえば削除が許可されていない共有フォルダやプロジェクトフォルダがこれに当たり、この場合ボタンには <em>「削除許可なし」</em> という理由が表示されます。</p>
+<p><figure data-bai-block="77" class="doc-figure"><img src="./images/vfolder_trash_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 15.14</figcaption></figure>
 </p>
-<p data-bai-block="77">フォルダ名の入力を求める確認モーダルが表示されます。フォルダ名を正確に入力すると <strong>永久に削除</strong> ボタンが有効になり、クリックしてフォルダを完全に削除できます。</p>
-<p><figure data-bai-block="78" class="doc-figure"><img src="./images/vfolder_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="346" /><figcaption>図 15.15</figcaption></figure>
+<p data-bai-block="78">フォルダ名の入力を求める確認モーダルが表示されます。フォルダ名を正確に入力すると <strong>永久に削除</strong> ボタンが有効になり、クリックしてフォルダを完全に削除できます。</p>
+<p><figure data-bai-block="79" class="doc-figure"><img src="./images/vfolder_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="346" /><figcaption>図 15.15</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="79" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>モデルカードの連鎖削除</div>
+<div data-bai-block="80" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>モデルカードの連鎖削除</div>
 <div class="admonition-content">
 
-<p data-bai-block="80">削除対象のフォルダが <strong>モデルカード</strong> に関連付けられている場合、確認モーダルには
+<p data-bai-block="81">削除対象のフォルダが <strong>モデルカード</strong> に関連付けられている場合、確認モーダルには
 <em>「関連するモデルフォルダも削除する」</em> オプションと <em>「関連するモデルフォルダを削除すると、
 そのフォルダを使用しているすべてのモデルカードも削除されます。」</em> という警告メッセージが
 追加で表示されます。このまま削除を実行すると、このストレージフォルダを基盤とする
@@ -381,155 +384,155 @@
 </div></div>
 
 
-<p><figure data-bai-block="81" class="doc-figure"><img src="./images/vfolder_cascading_delete_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="414" /><figcaption>図 15.16</figcaption></figure>
+<p><figure data-bai-block="82" class="doc-figure"><img src="./images/vfolder_cascading_delete_warning.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="414" /><figcaption>図 15.16</figcaption></figure>
 </p>
-<h2 data-bai-block="82" id="vfolder-ファイルブラウザの使用">ファイルブラウザの使用<a class="hash-link" href="#vfolder-ファイルブラウザの使用" aria-label="Direct link to ファイルブラウザの使用">#</a></h2>
-<p data-bai-block="83">Backend.AIは<a href="https://filebrowser.org">FileBrowser</a>をサポートしています。FileBrowserは、Webブラウザを通じてリモートサーバー上のファイルを管理できるプログラムです。ユーザーのローカルマシンからディレクトリをアップロードする際に特に便利です。</p>
-<p data-bai-block="84">現在、Backend.AIは計算セッションのアプリケーションとしてFileBrowserを提供しています。したがって、それを起動するためには以下の条件が必要です。</p>
+<h2 data-bai-block="83" id="vfolder-ファイルブラウザの使用">ファイルブラウザの使用<a class="hash-link" href="#vfolder-ファイルブラウザの使用" aria-label="Direct link to ファイルブラウザの使用">#</a></h2>
+<p data-bai-block="84">Backend.AIは<a href="https://filebrowser.org">FileBrowser</a>をサポートしています。FileBrowserは、Webブラウザを通じてリモートサーバー上のファイルを管理できるプログラムです。ユーザーのローカルマシンからディレクトリをアップロードする際に特に便利です。</p>
+<p data-bai-block="85">現在、Backend.AIは計算セッションのアプリケーションとしてFileBrowserを提供しています。したがって、それを起動するためには以下の条件が必要です。</p>
 <ul>
-<li data-bai-block="85">ユーザーは、少なくとも1つのコンピュートセッションを作成できます。</li>
-<li data-bai-block="86">ユーザーは少なくとも1コアのCPUと512 MBのメモリを割り当てることができる。</li>
-<li data-bai-block="87">FileBrowser をサポートするイメージをインストールする必要があります。</li>
+<li data-bai-block="86">ユーザーは、少なくとも1つのコンピュートセッションを作成できます。</li>
+<li data-bai-block="87">ユーザーは少なくとも1コアのCPUと512 MBのメモリを割り当てることができる。</li>
+<li data-bai-block="88">FileBrowser をサポートするイメージをインストールする必要があります。</li>
 </ul>
-<p data-bai-block="88">ファイルブラウザには2つの方法でアクセスできます。</p>
+<p data-bai-block="89">ファイルブラウザには2つの方法でアクセスできます。</p>
 <ul>
-<li data-bai-block="89">ストレージフォルダのファイルエクスプローラダイアログからFileBrowserを実行します。</li>
-<li data-bai-block="90">セッションページのFileBrowserイメージから直接コンピュートセッションを起動します。</li>
+<li data-bai-block="90">ストレージフォルダのファイルエクスプローラダイアログからFileBrowserを実行します。</li>
+<li data-bai-block="91">セッションページのFileBrowserイメージから直接コンピュートセッションを起動します。</li>
 </ul>
-<h3 data-bai-block="91" id="vfolder-フォルダエクスプローラダイアログからfilebrowserを実行する">フォルダエクスプローラダイアログからFileBrowserを実行する<a class="hash-link" href="#vfolder-フォルダエクスプローラダイアログからfilebrowserを実行する" aria-label="Direct link to フォルダエクスプローラダイアログからFileBrowserを実行する">#</a></h3>
-<p data-bai-block="92">データページに移動し、対象のストレージフォルダのファイルエクスプローラダイアログを開きます。フォルダ名をクリックしてファイルエクスプローラを開きます。</p>
-<p><figure data-bai-block="93" class="doc-figure"><img src="./images/click_folder_name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2298" height="830" /><figcaption>図 15.17</figcaption></figure>
+<h3 data-bai-block="92" id="vfolder-フォルダエクスプローラダイアログからfilebrowserを実行する">フォルダエクスプローラダイアログからFileBrowserを実行する<a class="hash-link" href="#vfolder-フォルダエクスプローラダイアログからfilebrowserを実行する" aria-label="Direct link to フォルダエクスプローラダイアログからFileBrowserを実行する">#</a></h3>
+<p data-bai-block="93">データページに移動し、対象のストレージフォルダのファイルエクスプローラダイアログを開きます。フォルダ名をクリックしてファイルエクスプローラを開きます。</p>
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/click_folder_name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2298" height="830" /><figcaption>図 15.17</figcaption></figure>
 </p>
-<p data-bai-block="94">エクスプローラー右上の「ファイルブラウザーを実行」ボタンをクリックします。</p>
-<p><figure data-bai-block="95" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3456" height="1196" /><figcaption>図 15.18</figcaption></figure>
+<p data-bai-block="95">エクスプローラー右上の「ファイルブラウザーを実行」ボタンをクリックします。</p>
+<p><figure data-bai-block="96" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>図 15.18</figcaption></figure>
 </p>
-<p data-bai-block="96">FileBrowserが新しいウィンドウで開かれているのがわかります。また、エクスプローラーダイアログで開いたストレージフォルダがルートディレクトリになっているのがわかります。FileBrowserウィンドウから、ディレクトリやファイルを自由にアップロード、変更、削除することができます。</p>
-<p><figure data-bai-block="97" class="doc-figure"><img src="./images/filebrowser_with_new_window.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2836" height="620" /><figcaption>図 15.19</figcaption></figure>
+<p data-bai-block="97">FileBrowserが新しいウィンドウで開かれているのがわかります。また、エクスプローラーダイアログで開いたストレージフォルダがルートディレクトリになっているのがわかります。FileBrowserウィンドウから、ディレクトリやファイルを自由にアップロード、変更、削除することができます。</p>
+<p><figure data-bai-block="98" class="doc-figure"><img src="./images/filebrowser_with_new_window.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2836" height="620" /><figcaption>図 15.19</figcaption></figure>
 </p>
-<p data-bai-block="98">ユーザーが <code>ファイルブラウザを実行する</code> ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。</p>
-<p><figure data-bai-block="99" class="doc-figure"><img src="./images/filebrowser_in_session_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3459" height="592" /><figcaption>図 15.20</figcaption></figure>
+<p data-bai-block="99">ユーザーが <code>ファイルブラウザを実行する</code> ボタンをクリックすると、Backend.AI はそのアプリ専用のコンピュートセッションを自動で作成します。したがって、セッションページで FileBrowser のコンピュートセッションが表示されるはずです。このコンピュートセッションを削除するかどうかはユーザーの責任です。</p>
+<p><figure data-bai-block="100" class="doc-figure"><img src="./images/filebrowser_in_session_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3459" height="592" /><figcaption>図 15.20</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="100" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="101" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="101">誤ってFileBrowserウィンドウを閉じてしまい、再度開きたい場合は、セッションページに移動してFileBrowserコンピュートセッションのFileBrowserアプリケーションボタンをクリックします。</p>
-<p><figure data-bai-block="102" class="doc-figure"><img src="./images/app_dialog_with_filebrowser.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1266" /><figcaption>図 15.21</figcaption></figure>
+<p data-bai-block="102">誤ってFileBrowserウィンドウを閉じてしまい、再度開きたい場合は、セッションページに移動してFileBrowserコンピュートセッションのFileBrowserアプリケーションボタンをクリックします。</p>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/app_dialog_with_filebrowser.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1266" /><figcaption>図 15.21</figcaption></figure>
 </p>
-<p data-bai-block="103">ストレージフォルダーエクスプローラーで <code>ファイルブラウザを実行する</code> ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。</p>
+<p data-bai-block="104">ストレージフォルダーエクスプローラーで <code>ファイルブラウザを実行する</code> ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。</p>
 </div></div>
 
 
-<h3 data-bai-block="104" id="vfolder-filebrowserイメージでコンピュートセッションを作成する">FileBrowserイメージでコンピュートセッションを作成する<a class="hash-link" href="#vfolder-filebrowserイメージでコンピュートセッションを作成する" aria-label="Direct link to FileBrowserイメージでコンピュートセッションを作成する">#</a></h3>
-<p data-bai-block="105">FileBrowser対応のイメージを使用して直接コンピュートセッションを作成できます。アクセスするには、1つ以上のストレージフォルダをマウントする必要があります。どのストレージフォルダもマウントしなくても問題なくFileBrowserを使用できますが、セッション終了後にアップロード/更新されたファイルはすべて失われます。</p>
+<h3 data-bai-block="105" id="vfolder-filebrowserイメージでコンピュートセッションを作成する">FileBrowserイメージでコンピュートセッションを作成する<a class="hash-link" href="#vfolder-filebrowserイメージでコンピュートセッションを作成する" aria-label="Direct link to FileBrowserイメージでコンピュートセッションを作成する">#</a></h3>
+<p data-bai-block="106">FileBrowser対応のイメージを使用して直接コンピュートセッションを作成できます。アクセスするには、1つ以上のストレージフォルダをマウントする必要があります。どのストレージフォルダもマウントしなくても問題なくFileBrowserを使用できますが、セッション終了後にアップロード/更新されたファイルはすべて失われます。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="106" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="107" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="107">FileBrowserのルートディレクトリは <code>/home/work</code> になります。したがって、コンピュートセッションにマウントされたあらゆるストレージフォルダにアクセスできます。</p>
+<p data-bai-block="108">FileBrowserのルートディレクトリは <code>/home/work</code> になります。したがって、コンピュートセッションにマウントされたあらゆるストレージフォルダにアクセスできます。</p>
 </div></div>
 
 
-<h3 data-bai-block="108" id="vfolder-filebrowserの基本的な使用例">FileBrowserの基本的な使用例<a class="hash-link" href="#vfolder-filebrowserの基本的な使用例" aria-label="Direct link to FileBrowserの基本的な使用例">#</a></h3>
-<p data-bai-block="109">ここでは、Backend.AIにおけるFileBrowserの基本的な使用例をいくつか紹介します。FileBrowserの操作のほとんどは直感的ですが、より詳細なガイドが必要な場合は、<a href="https://filebrowser.org">FileBrowserのドキュメント</a>を参照してください。</p>
-<p data-bai-block="110"><strong>FileBrowserを使用してローカルディレクトリをアップロード</strong></p>
-<p data-bai-block="111">FileBrowserは、ツリー構造を維持したまま、1つ以上のローカルディレクトリのアップロードをサポートしています。ウィンドウの右上隅にあるアップロードボタンをクリックし、フォルダボタンをクリックします。すると、ローカルファイルエクスプローラのダイアログが表示され、アップロードしたいディレクトリを選択できます。</p>
+<h3 data-bai-block="109" id="vfolder-filebrowserの基本的な使用例">FileBrowserの基本的な使用例<a class="hash-link" href="#vfolder-filebrowserの基本的な使用例" aria-label="Direct link to FileBrowserの基本的な使用例">#</a></h3>
+<p data-bai-block="110">ここでは、Backend.AIにおけるFileBrowserの基本的な使用例をいくつか紹介します。FileBrowserの操作のほとんどは直感的ですが、より詳細なガイドが必要な場合は、<a href="https://filebrowser.org">FileBrowserのドキュメント</a>を参照してください。</p>
+<p data-bai-block="111"><strong>FileBrowserを使用してローカルディレクトリをアップロード</strong></p>
+<p data-bai-block="112">FileBrowserは、ツリー構造を維持したまま、1つ以上のローカルディレクトリのアップロードをサポートしています。ウィンドウの右上隅にあるアップロードボタンをクリックし、フォルダボタンをクリックします。すると、ローカルファイルエクスプローラのダイアログが表示され、アップロードしたいディレクトリを選択できます。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="112" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="113" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="113">読み取り専用フォルダーにファイルをアップロードしようとすると、FileBrowser がサーバーエラーを発生させます。</p>
+<p data-bai-block="114">読み取り専用フォルダーにファイルをアップロードしようとすると、FileBrowser がサーバーエラーを発生させます。</p>
 </div></div>
 
 
-<p><figure data-bai-block="114" class="doc-figure"><img src="./images/filebrowser_upload.png" alt="" class="doc-image" loading="lazy" decoding="async" width="612" height="789" /><figcaption>図 15.22</figcaption></figure>
+<p><figure data-bai-block="115" class="doc-figure"><img src="./images/filebrowser_upload.png" alt="" class="doc-image" loading="lazy" decoding="async" width="612" height="789" /><figcaption>図 15.22</figcaption></figure>
 </p>
-<p data-bai-block="115">次の構造を持つディレクトリをアップロードしましょう。</p>
-<div data-bai-block="116" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">foo</span></span>
+<p data-bai-block="116">次の構造を持つディレクトリをアップロードしましょう。</p>
+<div data-bai-block="117" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">foo</span></span>
 <span class="line"><span style="color:#B392F0">+--</span><span style="color:#9ECBFF"> test</span></span>
 <span class="line"><span style="color:#F97583">|</span><span style="color:#B392F0">   +--</span><span style="color:#9ECBFF"> test2.txt</span></span>
 <span class="line"><span style="color:#B392F0">+--</span><span style="color:#9ECBFF"> test.txt</span></span></code></pre></div>
-<p data-bai-block="117"><code>foo</code> ディレクトリを選択すると、ディレクトリが正常にアップロードされたことを確認できます。</p>
-<p><figure data-bai-block="118" class="doc-figure"><img src="./images/filebrowser_upload_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1593" height="618" /><figcaption>図 15.23</figcaption></figure>
+<p data-bai-block="118"><code>foo</code> ディレクトリを選択すると、ディレクトリが正常にアップロードされたことを確認できます。</p>
+<p><figure data-bai-block="119" class="doc-figure"><img src="./images/filebrowser_upload_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1593" height="618" /><figcaption>図 15.23</figcaption></figure>
 </p>
-<p data-bai-block="119">ドラッグ＆ドロップでローカルファイルやディレクトリをアップロードすることもできます。</p>
-<p data-bai-block="120"><strong>ファイルやディレクトリを別のディレクトリに移動する</strong></p>
-<p data-bai-block="121">FileBrowserからストレージフォルダ内のファイルやディレクトリを移動することもできます。以下の手順でファイルやディレクトリを移動できます。</p>
+<p data-bai-block="120">ドラッグ＆ドロップでローカルファイルやディレクトリをアップロードすることもできます。</p>
+<p data-bai-block="121"><strong>ファイルやディレクトリを別のディレクトリに移動する</strong></p>
+<p data-bai-block="122">FileBrowserからストレージフォルダ内のファイルやディレクトリを移動することもできます。以下の手順でファイルやディレクトリを移動できます。</p>
 <ol>
-<li data-bai-block="122">FileBrowserからディレクトリまたはファイルを選択します。</li>
+<li data-bai-block="123">FileBrowserからディレクトリまたはファイルを選択します。</li>
 </ol>
-<p><figure data-bai-block="123" class="doc-figure"><img src="./images/select_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1389" height="835" /><figcaption>図 15.24</figcaption></figure>
+<p><figure data-bai-block="124" class="doc-figure"><img src="./images/select_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1389" height="835" /><figcaption>図 15.24</figcaption></figure>
 </p>
 <ol start="2">
-<li data-bai-block="124">FileBrowser右上の「矢印」ボタンをクリックします。</li>
+<li data-bai-block="125">FileBrowser右上の「矢印」ボタンをクリックします。</li>
 </ol>
-<p><figure data-bai-block="125" class="doc-figure"><img src="./images/click_arrow_icon.png" alt="" class="doc-image" loading="lazy" decoding="async" width="516" height="82" /><figcaption>図 15.25</figcaption></figure>
+<p><figure data-bai-block="126" class="doc-figure"><img src="./images/click_arrow_icon.png" alt="" class="doc-image" loading="lazy" decoding="async" width="516" height="82" /><figcaption>図 15.25</figcaption></figure>
 </p>
 <ol start="3">
-<li data-bai-block="126">移動先を選択します。</li>
+<li data-bai-block="127">移動先を選択します。</li>
 </ol>
-<p><figure data-bai-block="127" class="doc-figure"><img src="./images/select_the_destination.png" alt="" class="doc-image" loading="lazy" decoding="async" width="531" height="428" /><figcaption>図 15.26</figcaption></figure>
+<p><figure data-bai-block="128" class="doc-figure"><img src="./images/select_the_destination.png" alt="" class="doc-image" loading="lazy" decoding="async" width="531" height="428" /><figcaption>図 15.26</figcaption></figure>
 </p>
 <ol start="4">
-<li data-bai-block="128">「MOVE」ボタンをクリックします。</li>
+<li data-bai-block="129">「MOVE」ボタンをクリックします。</li>
 </ol>
-<p data-bai-block="129">移動操作が正常に完了したことを確認できます。</p>
-<p><figure data-bai-block="130" class="doc-figure"><img src="./images/moving_operation_in_filebrowser_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1415" height="549" /><figcaption>図 15.27</figcaption></figure>
+<p data-bai-block="130">移動操作が正常に完了したことを確認できます。</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/moving_operation_in_filebrowser_finished.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1415" height="549" /><figcaption>図 15.27</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="131" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="132" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="132">現在、FileBrowserはコンピュートセッション内のアプリケーションとして提供されています。セッションを作成せずに独立して実行できるように、FileBrowserを更新する予定です。</p>
+<p data-bai-block="133">現在、FileBrowserはコンピュートセッション内のアプリケーションとして提供されています。セッションを作成せずに独立して実行できるように、FileBrowserを更新する予定です。</p>
 </div></div>
 
 
-<h2 data-bai-block="133" id="vfolder-sftpサーバーの使用">SFTPサーバーの使用<a class="hash-link" href="#vfolder-sftpサーバーの使用" aria-label="Direct link to SFTPサーバーの使用">#</a></h2>
-<p data-bai-block="134">Backend.AIはデスクトップアプリとWebベースのWebUIの両方からSSH / SFTPファイルアップロードをサポートしています。SFTPサーバーを使用すると、信頼性の高いデータストリームを通じてファイルをすばやくアップロードできます。</p>
+<h2 data-bai-block="134" id="vfolder-sftpサーバーの使用">SFTPサーバーの使用<a class="hash-link" href="#vfolder-sftpサーバーの使用" aria-label="Direct link to SFTPサーバーの使用">#</a></h2>
+<p data-bai-block="135">Backend.AIはデスクトップアプリとWebベースのWebUIの両方からSSH / SFTPファイルアップロードをサポートしています。SFTPサーバーを使用すると、信頼性の高いデータストリームを通じてファイルをすばやくアップロードできます。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="135" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="136" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="136">システム設定によっては、ファイルダイアログからSFTPサーバーを実行できない場合があります。</p>
+<p data-bai-block="137">システム設定によっては、ファイルダイアログからSFTPサーバーを実行できない場合があります。</p>
 </div></div>
 
 
-<h3 data-bai-block="137" id="vfolder-データページのフォルダエクスプローラダイアログからsftpサーバーを実行する">データページのフォルダエクスプローラダイアログからSFTPサーバーを実行する<a class="hash-link" href="#vfolder-データページのフォルダエクスプローラダイアログからsftpサーバーを実行する" aria-label="Direct link to データページのフォルダエクスプローラダイアログからSFTPサーバーを実行する">#</a></h3>
-<p data-bai-block="138">データページに移動し、対象のストレージフォルダのファイルエクスプローラーダイアログを開きます。フォルダボタンまたはフォルダ名をクリックしてファイルエクスプローラーを開きます。</p>
-<p data-bai-block="139">エクスプローラー右上の「SFTPサーバーを実行」ボタンをクリックします。</p>
-<p><figure data-bai-block="140" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3456" height="1196" /><figcaption>図 15.28</figcaption></figure>
+<h3 data-bai-block="138" id="vfolder-データページのフォルダエクスプローラダイアログからsftpサーバーを実行する">データページのフォルダエクスプローラダイアログからSFTPサーバーを実行する<a class="hash-link" href="#vfolder-データページのフォルダエクスプローラダイアログからsftpサーバーを実行する" aria-label="Direct link to データページのフォルダエクスプローラダイアログからSFTPサーバーを実行する">#</a></h3>
+<p data-bai-block="139">データページに移動し、対象のストレージフォルダのファイルエクスプローラーダイアログを開きます。フォルダボタンまたはフォルダ名をクリックしてファイルエクスプローラーを開きます。</p>
+<p data-bai-block="140">エクスプローラー右上の「SFTPサーバーを実行」ボタンをクリックします。</p>
+<p><figure data-bai-block="141" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>図 15.28</figcaption></figure>
 </p>
-<p data-bai-block="141">SSH / SFTP接続ダイアログが表示されます。新しいSFTPセッションが自動的に作成されます。（このセッションはリソース占有には影響しません。）</p>
-<p><figure data-bai-block="142" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1740" /><figcaption>図 15.29</figcaption></figure>
+<p data-bai-block="142">SSH / SFTP接続ダイアログが表示されます。新しいSFTPセッションが自動的に作成されます。（このセッションはリソース占有には影響しません。）</p>
+<p><figure data-bai-block="143" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1740" /><figcaption>図 15.29</figcaption></figure>
 </p>
-<p data-bai-block="143">接続のために、「SSHキーをダウンロード」ボタンをクリックしてSSH秘密鍵（<code>id_container</code>）をダウンロードします。また、ホスト名とポート番号を控えておいてください。その後、ダイアログに記載された接続例のコードを使用して、または以下のガイドを参照してファイルをセッションにコピーできます: <a href="./sftp_to_container.html#ssh-sftp-container">SFTP接続ガイド</a>。ファイルを保持するには、ストレージフォルダにファイルを転送する必要があります。また、一定時間転送がない場合、セッションは終了します。</p>
+<p data-bai-block="144">接続のために、「SSHキーをダウンロード」ボタンをクリックしてSSH秘密鍵（<code>id_container</code>）をダウンロードします。また、ホスト名とポート番号を控えておいてください。その後、ダイアログに記載された接続例のコードを使用して、または以下のガイドを参照してファイルをセッションにコピーできます: <a href="./sftp_to_container.html#ssh-sftp-container">SFTP接続ガイド</a>。ファイルを保持するには、ストレージフォルダにファイルを転送する必要があります。また、一定時間転送がない場合、セッションは終了します。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="144" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="145" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="145">SSHキーペアをアップロードすると、<code>id_container</code> はユーザー自身のSSH秘密鍵に設定されます。そのため、SSHでコンテナに接続するたびにダウンロードする必要はありません。詳細は<a href="./user_settings.html#user-ssh-keypair-management">ユーザーのSSHキーペア管理</a>を参照してください。</p>
+<p data-bai-block="146">SSHキーペアをアップロードすると、<code>id_container</code> はユーザー自身のSSH秘密鍵に設定されます。そのため、SSHでコンテナに接続するたびにダウンロードする必要はありません。詳細は<a href="./user_settings.html#user-ssh-keypair-management">ユーザーのSSHキーペア管理</a>を参照してください。</p>
 </div></div>
 
 
-<h2 data-bai-block="146" id="vfolder-パイプラインフォルダ">パイプラインフォルダ<a class="hash-link" href="#vfolder-パイプラインフォルダ" aria-label="Direct link to パイプラインフォルダ">#</a></h2>
-<p data-bai-block="147">このタブには、FastTrackでパイプラインを実行する際に自動的に作成されるフォルダの一覧が表示されます。パイプラインが作成されると、作業の各インスタンス（コンピュートセッション）ごとに新しいフォルダが作成され、<code>/pipeline</code> 配下にマウントされます。</p>
+<h2 data-bai-block="147" id="vfolder-パイプラインフォルダ">パイプラインフォルダ<a class="hash-link" href="#vfolder-パイプラインフォルダ" aria-label="Direct link to パイプラインフォルダ">#</a></h2>
+<p data-bai-block="148">このタブには、FastTrackでパイプラインを実行する際に自動的に作成されるフォルダの一覧が表示されます。パイプラインが作成されると、作業の各インスタンス（コンピュートセッション）ごとに新しいフォルダが作成され、<code>/pipeline</code> 配下にマウントされます。</p>
 <p><a id="automount-folder"></a></p>
-<h2 data-bai-block="148" id="vfolder-自動マウントフォルダ">自動マウントフォルダ<a class="hash-link" href="#vfolder-自動マウントフォルダ" aria-label="Direct link to 自動マウントフォルダ">#</a></h2>
-<p data-bai-block="149">データページには自動マウントフォルダタブがあります。このタブをクリックすると、名前がドット（<code>.</code>）で始まるフォルダの一覧が表示されます。フォルダを作成する際にドット（<code>.</code>）で始まる名前を指定すると、フォルダタブではなく自動マウントフォルダタブに追加されます。自動マウントフォルダは、コンピュートセッション作成時に手動でマウントしなくても、自動的にホームディレクトリにマウントされる特別なフォルダです。この機能を利用して、<code>.local</code>、<code>.linuxbrew</code>、<code>.pyenv</code> などのストレージフォルダを作成・使用することで、異なる種類のコンピュートセッションでも変わらないユーザーパッケージや環境を構成できます。</p>
-<p data-bai-block="150">自動マウントフォルダの使用方法の詳細については、<a href="./mount_vfolder.html#using-automount-folder">自動マウントフォルダの使用例</a>を参照してください。</p>
-<p><figure data-bai-block="151" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>図 15.30</figcaption></figure>
+<h2 data-bai-block="149" id="vfolder-自動マウントフォルダ">自動マウントフォルダ<a class="hash-link" href="#vfolder-自動マウントフォルダ" aria-label="Direct link to 自動マウントフォルダ">#</a></h2>
+<p data-bai-block="150">データページには自動マウントフォルダタブがあります。このタブをクリックすると、名前がドット（<code>.</code>）で始まるフォルダの一覧が表示されます。フォルダを作成する際にドット（<code>.</code>）で始まる名前を指定すると、フォルダタブではなく自動マウントフォルダタブに追加されます。自動マウントフォルダは、コンピュートセッション作成時に手動でマウントしなくても、自動的にホームディレクトリにマウントされる特別なフォルダです。この機能を利用して、<code>.local</code>、<code>.linuxbrew</code>、<code>.pyenv</code> などのストレージフォルダを作成・使用することで、異なる種類のコンピュートセッションでも変わらないユーザーパッケージや環境を構成できます。</p>
+<p data-bai-block="151">自動マウントフォルダの使用方法の詳細については、<a href="./mount_vfolder.html#using-automount-folder">自動マウントフォルダの使用例</a>を参照してください。</p>
+<p><figure data-bai-block="152" class="doc-figure"><img src="./images/vfolder_automount_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="584" /><figcaption>図 15.30</figcaption></figure>
 </p>
 <p><a id="models"></a></p>
-<h2 data-bai-block="152" id="vfolder-モデル">モデル<a class="hash-link" href="#vfolder-モデル" aria-label="Direct link to モデル">#</a></h2>
-<p data-bai-block="153">モデルタブは、シンプルなモデルサービングを実現します。<a href="./deployment.html#model-serving">モデルサービング</a>用の入力データやトレーニングデータなど、必要なデータをモデルフォルダに保存できます。</p>
-<p><figure data-bai-block="154" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>図 15.31</figcaption></figure>
+<h2 data-bai-block="153" id="vfolder-モデル">モデル<a class="hash-link" href="#vfolder-モデル" aria-label="Direct link to モデル">#</a></h2>
+<p data-bai-block="154">モデルタブは、シンプルなモデルサービングを実現します。<a href="./deployment.html#model-serving">モデルサービング</a>用の入力データやトレーニングデータなど、必要なデータをモデルフォルダに保存できます。</p>
+<p><figure data-bai-block="155" class="doc-figure"><img src="./images/models.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="650" /><figcaption>図 15.31</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月14日</span>
+  <span class="last-updated">最終更新日 2026年9月16日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./my_environments.html">
