@@ -213,6 +213,7 @@ export declare class DownloadFailedError extends Error {
         originalError?: unknown;
     });
 }
+export declare const DOWNLOAD_PROBE_TIMEOUT_MS = 15000;
 /**
  * Initiate a file download from a URL with a custom filename.
  * Handles iOS Safari separately by opening a new window.
