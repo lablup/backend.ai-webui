@@ -284,31 +284,29 @@ const SettingList: React.FC<SettingPageProps> = ({
   return (
     <>
       <BAIFlex direction="column" gap={'md'} align="stretch">
-        {/* Wrapping only where the row is narrow (the settings modal's pane);
-            the full-width admin pages keep the single-row layout the search
-            field's `width="100%"` was sized against. */}
-        <BAIFlex
-          justify="start"
-          gap={'xs'}
-          wrap={hideGroupNav ? 'wrap' : 'nowrap'}
-        >
+        <BAIFlex justify="start" gap={'xs'} wrap="nowrap">
           {!!showSearchBar && (
-            <TextInput
-              label={t('settings.SearchPlaceholder')}
-              isLabelHidden
-              startIcon={Search}
-              placeholder={t('settings.SearchPlaceholder')}
-              onChange={(nextValue) => setSearchValue(nextValue)}
-              value={searchValue}
-              // POLISH-3 item 5 — the search box fills the rest of the row,
-              // as legacy did. antd `Input` carries `width: 100%`, so as a
-              // flex item it claimed the row and shrank to leave room for the
-              // filter checkbox and the buttons beside it; Astryx `TextInput`
-              // sizes to its own content box instead (measured 252px against
-              // a 1262px row). `width` is TextInput's own prop for this and
-              // sizes the whole field (label + control + status) together.
-              width="100%"
-            />
+            // The flex item is the field's OUTER box, which `TextInput` does
+            // not expose (its `style` lands on the inner control), so the
+            // "take the remainder" basis has to be set from a wrapper.
+            <BAIFlex style={{ flex: 1, minWidth: 0 }}>
+              <TextInput
+                label={t('settings.SearchPlaceholder')}
+                isLabelHidden
+                startIcon={Search}
+                placeholder={t('settings.SearchPlaceholder')}
+                onChange={(nextValue) => setSearchValue(nextValue)}
+                value={searchValue}
+                // POLISH-3 item 5 — the search box fills the rest of the row,
+                // as legacy did. antd `Input` carries `width: 100%`, so as a
+                // flex item it claimed the row and shrank to leave room for the
+                // filter checkbox and the buttons beside it; Astryx `TextInput`
+                // sizes to its own content box instead (measured 252px against
+                // a 1262px row). `width` is TextInput's own prop for this and
+                // sizes the whole field (label + control + status) together.
+                width="100%"
+              />
+            </BAIFlex>
           )}
           {!!showChangedOptionFilter && (
             <CheckboxInput

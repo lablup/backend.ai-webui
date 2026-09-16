@@ -1237,10 +1237,20 @@ async function main(argv) {
   }
 
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  fs.writeFileSync(outFile, text);
+  // Rewriting identical bytes still bumps mtime, which Vite reads as a change
+  // and turns into a full page reload. `scripts/verify.sh` and CI rebuild this
+  // every run, so a verify next to a live dev server must not reload the page.
+  let unchanged = false;
+  try {
+    unchanged = fs.readFileSync(outFile, 'utf8') === text;
+  } catch {
+    unchanged = false; // absent or unreadable — write it
+  }
+  if (!unchanged) fs.writeFileSync(outFile, text);
   console.log(
     `${rel(outFile)}: ${index.entries.length} entries, ` +
-      `${Buffer.byteLength(text)} B, ${Date.now() - t0} ms`,
+      `${Buffer.byteLength(text)} B, ${Date.now() - t0} ms` +
+      (unchanged ? ' (unchanged)' : ''),
   );
   if (argv.includes('--verbose')) reportOn(built, index);
   return 0;

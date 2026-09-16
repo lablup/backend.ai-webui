@@ -33,7 +33,9 @@ import { graphql, useFragment } from 'react-relay';
 
 export type RoleNodeInList = NonNullable<RoleNodesFragment$data[number]>;
 
-const availableRoleSorterKeys = ['name', 'created_at', 'updated_at'] as const;
+// The camelCase spellings the columns' `dataIndex` already emits;
+// `convertToOrderBy` snake-cases + uppercases them into RoleOrderField.
+const availableRoleSorterKeys = ['name', 'createdAt', 'updatedAt'] as const;
 
 export const availableRoleSorterValues = [
   ...availableRoleSorterKeys,

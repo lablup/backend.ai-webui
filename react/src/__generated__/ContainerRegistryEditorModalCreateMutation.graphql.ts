@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<632e4d43bd3bb23b54dda193337a5fea>>
+ * @generated SignedSource<<b7eda5015e06cd0a24cacd82c1ef7233>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,6 +32,11 @@ export type ContainerRegistryEditorModalCreateMutation$data = {
   readonly create_container_registry_node_v2: {
     readonly container_registry: {
       readonly id: string;
+      readonly project: string | null | undefined;
+      readonly registry_name: string;
+      readonly row_id: string | null | undefined;
+      readonly type: any;
+      readonly url: string;
     } | null | undefined;
   } | null | undefined;
 };
@@ -77,6 +82,41 @@ v1 = [
             "kind": "ScalarField",
             "name": "id",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "row_id",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "registry_name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "project",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "url",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "type",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -103,16 +143,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "4df9116bd277ca16eb13281d543cbe04",
+    "cacheID": "ef83ff98ec72022e76de025269ed5c1c",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryEditorModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation ContainerRegistryEditorModalCreateMutation(\n  $props: CreateContainerRegistryNodeInputV2!\n) {\n  create_container_registry_node_v2(props: $props) {\n    container_registry {\n      id\n    }\n  }\n}\n"
+    "text": "mutation ContainerRegistryEditorModalCreateMutation(\n  $props: CreateContainerRegistryNodeInputV2!\n) {\n  create_container_registry_node_v2(props: $props) {\n    container_registry {\n      id\n      row_id\n      registry_name\n      project\n      url\n      type\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6c83e8833822dff8f1b0fa55b80d0b19";
+(node as any).hash = "fb42a8e6eef11fff6d88df4c2c6eac60";
 
 export default node;

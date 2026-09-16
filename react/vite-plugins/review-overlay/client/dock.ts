@@ -10,6 +10,7 @@
  */
 import { icon, ICON_STYLE, type IconName } from './icons.js';
 import { isMac } from './picker.js';
+import { EDIT_LABEL, LINK_NOT_EDITABLE } from './pin.js';
 import type { SetPin } from './types.js';
 
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
@@ -148,6 +149,8 @@ const STYLE = `
     display: inline-flex; align-items: center; gap: 4px;
   }
   .setdock .act:hover { color: var(--bai-review-text); }
+  .setdock .act:disabled { opacity: 0.35; cursor: default; }
+  .setdock .act:disabled:hover { color: var(--bai-review-text-dim); }
   .setdock .confirm { display: none; align-items: center; gap: 4px; }
   .setdock.confirming .confirm { display: flex; }
   .setdock.confirming .clear { display: none; }
@@ -196,6 +199,10 @@ export interface SetDockOptions {
   onLocate: (id: string) => void;
   /** A row's remove button: that pin leaves the set. No confirm — it is one pin. */
   onRemove: (id: string) => void;
+  /** A row's ▲/▼: reorder by one position. Order only — the id does not move. */
+  onMove: (id: string, delta: -1 | 1) => void;
+  /** A row's ✏️: that pin's note goes back in the composer. */
+  onEdit: (id: string) => void;
   /** Its card comes back: the row's eye button, or the row itself. */
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
@@ -492,6 +499,32 @@ export function createSetDock(options: SetDockOptions) {
   /** The set the rows were last built from, as ids: what a re-render compares. */
   let listed = '';
 
+  /** The row control holding focus, so a rebuild of the rows can hand it back. */
+  function focusedRowAction(): { id: string; act: string } | null {
+    const active = options.root.activeElement;
+    const control =
+      active instanceof HTMLElement
+        ? active.closest<HTMLElement>('.row .act')
+        : null;
+    const id = control?.closest<HTMLElement>('.row')?.dataset.pinId;
+    const act = control && [...control.classList].find((c) => c !== 'act');
+    return id && act ? { id, act } : null;
+  }
+
+  /**
+   * The same control on the same pin; a ▲ that just reached the top (or a ▼
+   * the bottom) is disabled now, so the other direction takes the focus.
+   */
+  function refocusRowAction({ id, act }: { id: string; act: string }) {
+    const row = rows.querySelector<HTMLElement>(`.row[data-pin-id="${id}"]`);
+    if (!row) return;
+    const other = act === 'up' ? 'down' : act === 'down' ? 'up' : null;
+    for (const name of other ? [act, other] : [act]) {
+      const control = row.querySelector<HTMLButtonElement>(`.${name}`);
+      if (control && !control.disabled) return control.focus();
+    }
+  }
+
   copyAll.addEventListener('click', () => options.onCopyAll());
   cards.addEventListener('click', () => options.onToggleCards());
   clear.addEventListener('click', () => setConfirming(true));
@@ -527,6 +560,9 @@ export function createSetDock(options: SetDockOptions) {
     // own contradiction — "Show every card, pressed" while they are hidden.
     setIcon(cards, cardsHidden ? 'eye' : 'eye-off');
     setLabel(cards, cardsHidden ? SHOW_CARDS_LABEL : HIDE_CARDS_LABEL);
+    // A row action re-renders every row, which would drop the focus it was
+    // pressed with — a keyboard user repeating ▲ must not tab back each time.
+    const focused = focusedRowAction();
     rows.replaceChildren(
       ...pins.map((pin, index) => {
         const row = document.createElement('div');
@@ -592,16 +628,31 @@ export function createSetDock(options: SetDockOptions) {
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);
         }
+        // Before the ▲/▼: what a row says is its note, and this is what
+        // changes it. A link's pin has no `at`/`pr` to re-key it with.
+        const edit = button('edit', 'pencil', EDIT_LABEL);
+        if (pin.origin !== 'pick') {
+          edit.disabled = true;
+          setLabel(edit, LINK_NOT_EDITABLE);
+        }
+        edit.addEventListener('click', () => options.onEdit(pin.id));
+        const up = button('up', 'chevron-up', 'Move this pin up');
+        up.disabled = index === 0;
+        up.addEventListener('click', () => options.onMove(pin.id, -1));
+        const down = button('down', 'chevron-down', 'Move this pin down');
+        down.disabled = index === pins.length - 1;
+        down.addEventListener('click', () => options.onMove(pin.id, 1));
         const remove = button(
           'remove',
           'trash-2',
           'Remove this pin from the set',
         );
         remove.addEventListener('click', () => options.onRemove(pin.id));
-        row.append(remove);
+        row.append(edit, up, down, remove);
         return row;
       }),
     );
+    if (focused) refocusRowAction(focused);
     // The restore clamped against the stand-in height, with the dock still
     // `display: none`; shown and filled, it has a real box to clamp against.
     reclamp();
@@ -609,6 +660,11 @@ export function createSetDock(options: SetDockOptions) {
 
   return {
     render,
+    /** Where a row is right now, so an editor can hang its box under it. */
+    rowRect(id: string): DOMRect | null {
+      const row = rows.querySelector<HTMLElement>(`.row[data-pin-id="${id}"]`);
+      return row?.getBoundingClientRect() ?? null;
+    },
     /**
      * Mid-pick the dock is 260px of the page the reviewer cannot pick through,
      * the same way the cards are — so it folds away with them. Adding a pin

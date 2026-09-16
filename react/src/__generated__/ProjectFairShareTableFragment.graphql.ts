@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aa6640e620a580bd3a7ae054e4e7ae75>>
+ * @generated SignedSource<<fe88e6b4c2210d8646c05b36a4e63397>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -26,6 +26,9 @@ export type ProjectFairShareTableFragment$data = ReadonlyArray<{
   readonly project: {
     readonly basicInfo: {
       readonly name: string;
+    };
+    readonly lifecycle: {
+      readonly isActive: boolean | null | undefined;
     };
   } | null | undefined;
   readonly projectId: string;
@@ -72,6 +75,24 @@ const node: ReaderFragment = {
               "args": null,
               "kind": "ScalarField",
               "name": "name",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectLifecycleInfo",
+          "kind": "LinkedField",
+          "name": "lifecycle",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "isActive",
               "storageKey": null
             }
           ],
@@ -221,6 +242,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "02f75dcf0aeba0150e990a13b01ba3f3";
+(node as any).hash = "258d4eedce67971cb181a4b045e63353";
 
 export default node;
