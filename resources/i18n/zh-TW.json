@@ -918,6 +918,7 @@
       "Control": "控制",
       "CreateModelFolderOnlyInExclusiveProject": "模型項目文件夾只能在模型商店的獨家項目中創建。",
       "CreatedAt": "創建在",
+      "Creator": "建立者",
       "Delete": "刪除",
       "DeleteAFolder": "刪除文件夾",
       "DeleteFailureDescription": "{{total}} 個資料夾中有 {{failed}} 個無法刪除。請在下方查看每個資料夾的失敗原因。",
@@ -1007,8 +1008,7 @@
       "TypeFolderNameToLeave": "輸入要離開的文件夾名稱",
       "TypeNewFolderName": "輸入新文件夾名稱",
       "TypeToConfirmDeleteForever": "請輸入下方的詞語以永久刪除",
-      "View": "看法",
-      "Creator": "建立者"
+      "View": "看法"
     },
     "invitation": {
       "FailedToAcceptInvitation": "未能接受邀請",
@@ -2755,6 +2755,7 @@
     "DependedByOthers": "被依賴",
     "DependsOn": "相依於",
     "DescCommitSession": "您即将提交与下面会话相对应的容器：",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "正在下載 CSV 文件...",
     "DownloadingSessionLogs": "下载会话日志。",
     "ElapsedTime": "所用时间",
@@ -2826,6 +2827,7 @@
     "PreparingSession": "正在準備會議...",
     "Priority": "優先級",
     "PrioritySuccessfullyUpdated": "工作階段優先級已成功更新。",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "更多信息",
     "ReadMore": "阅读全文...",
     "RecentlyCreatedSessions": "最近創建了會議",
@@ -3174,9 +3176,7 @@
       "SessionNameTooLong64": "請輸入不超過 64 個字元。",
       "SessionNameTooShort": "请输入至少 4 个字符。",
       "SluggedStrings": "多字符串（>3 字符）"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "原子最大支持",

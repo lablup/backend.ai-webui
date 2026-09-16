@@ -97,7 +97,7 @@ const TotalResourceWithinResourceGroup: React.FC<
           }
           total_count
         }
-        agent_nodes(filter: $agentNodeFilter, first: 100)
+        agent_nodes(filter: $agentNodeFilter, first: 1000)
           @since(version: "24.12.0")
           @include(if: $isSuperAdmin) {
           edges {
@@ -186,11 +186,16 @@ const TotalResourceWithinResourceGroup: React.FC<
             total: convertToNumber(totalAvailableSlots['cpu'] || 0),
           },
           free: {
-            current: convertToNumber(
-              subNumberWithUnits(
-                _.toString(totalAvailableSlots['cpu'] || 0),
-                _.toString(totalOccupiedSlots['cpu'] || 0),
-                '',
+            // Occupied can exceed available when an agent re-registers with
+            // shrunken capacity while its kernels keep running — clamp at 0.
+            current: Math.max(
+              0,
+              convertToNumber(
+                subNumberWithUnits(
+                  _.toString(totalAvailableSlots['cpu'] || 0),
+                  _.toString(totalOccupiedSlots['cpu'] || 0),
+                  '',
+                ),
               ),
             ),
             total: convertToNumber(totalAvailableSlots['cpu'] || 0),
@@ -215,13 +220,16 @@ const TotalResourceWithinResourceGroup: React.FC<
             ),
           },
           free: {
-            current: processMemoryValue(
-              subNumberWithUnits(
-                _.toString(totalAvailableSlots['mem'] || 0),
-                _.toString(totalOccupiedSlots['mem'] || 0),
-                '',
+            current: Math.max(
+              0,
+              processMemoryValue(
+                subNumberWithUnits(
+                  _.toString(totalAvailableSlots['mem'] || 0),
+                  _.toString(totalOccupiedSlots['mem'] || 0),
+                  '',
+                ),
+                memSlot.display_unit,
               ),
-              memSlot.display_unit,
             ),
             total: processMemoryValue(
               totalAvailableSlots['mem'] || 0,
@@ -261,7 +269,7 @@ const TotalResourceWithinResourceGroup: React.FC<
                 total: processAcceleratorValue(available),
               },
               free: {
-                current: processAcceleratorValue(remaining),
+                current: Math.max(0, processAcceleratorValue(remaining)),
                 total: processAcceleratorValue(available),
               },
               metadata: {

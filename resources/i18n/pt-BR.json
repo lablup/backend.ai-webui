@@ -918,6 +918,7 @@
       "Control": "Ao controle",
       "CreateModelFolderOnlyInExclusiveProject": "As pastas de projeto modelo só podem ser criadas em projetos exclusivos da loja de modelos.",
       "CreatedAt": "Criado em",
+      "Creator": "Criador",
       "Delete": "Excluir",
       "DeleteAFolder": "Excluir uma pasta",
       "DeleteFailureDescription": "{{failed}} de {{total}} pastas não puderam ser excluídas. Verifique o motivo de cada pasta abaixo.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Digite o nome da pasta para sair",
       "TypeNewFolderName": "Digite o nome da nova pasta",
       "TypeToConfirmDeleteForever": "Digite a palavra abaixo para excluir permanentemente",
-      "View": "Visualizar",
-      "Creator": "Criador"
+      "View": "Visualizar"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Falhou em aceitar convite",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Dependido por",
     "DependsOn": "Depende de",
     "DescCommitSession": "Está prestes a submeter o contentor correspondente à sessão abaixo:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Baixando arquivo CSV ...",
     "DownloadingSessionLogs": "Descarregar registos de sessão.",
     "ElapsedTime": "Tempo decorrido",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Preparando sessão",
     "Priority": "Prioridade",
     "PrioritySuccessfullyUpdated": "A prioridade da sessão foi atualizada com sucesso.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Ler menos",
     "ReadMore": "Ler mais...",
     "RecentlyCreatedSessions": "Sessões criadas recentemente",
@@ -3170,9 +3172,7 @@
       "SessionNameTooLong64": "Insira 64 caracteres ou menos.",
       "SessionNameTooShort": "Introduza pelo menos 4 caracteres.",
       "SluggedStrings": "Cadeias de caracteres com slugged (>3 caracteres)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Suporte Atom Max",

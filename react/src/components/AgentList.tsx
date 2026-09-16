@@ -66,13 +66,21 @@ const AgentList: React.FC<AgentListProps> = ({
     order: parseAsString,
   });
 
+  // Callers (e.g. ActiveAgents) may override display options like pageSize,
+  // but the server-paging keys (total/current/onChange) must stay ours —
+  // merged below instead of letting a whole-object spread clobber them.
+  const paginationOverride =
+    typeof tableProps?.pagination === 'object'
+      ? tableProps.pagination
+      : undefined;
+
   const {
     baiPaginationOption,
     tablePaginationOption,
     setTablePaginationOption,
   } = useBAIPaginationOptionStateOnSearchParam({
     current: 1,
-    pageSize: 10,
+    pageSize: paginationOverride?.pageSize ?? 10,
   });
 
   const [fetchKey, setFetchKey] = useControllableValue(otherProps, {
@@ -308,19 +316,24 @@ const AgentList: React.FC<AgentListProps> = ({
           regionColumn,
           ...baseColumns.slice(3),
         ]}
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          total: agent_nodes?.count || 0,
-          current: tablePaginationOption.current,
-          onChange: (current, pageSize) => {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({
-                current,
-                pageSize,
-              });
-            }
-          },
-        }}
+        pagination={
+          tableProps?.pagination === false
+            ? false
+            : {
+                ...paginationOverride,
+                pageSize: tablePaginationOption.pageSize,
+                total: agent_nodes?.count || 0,
+                current: tablePaginationOption.current,
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({
+                      current,
+                      pageSize,
+                    });
+                  }
+                },
+              }
+        }
         order={queryParams.order}
         onChangeOrder={(order) => {
           setQueryParams({ order });
@@ -333,7 +346,7 @@ const AgentList: React.FC<AgentListProps> = ({
           columnOverrides: columnOverrides,
           onColumnOverridesChange: setColumnOverrides,
         }}
-        {...tableProps}
+        {..._.omit(tableProps, 'pagination')}
       />
       <BAIUnmountAfterClose>
         <AgentDetailDrawer

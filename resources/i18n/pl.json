@@ -918,6 +918,7 @@
       "Control": "Kontrola",
       "CreateModelFolderOnlyInExclusiveProject": "Modelowe foldery projektu można tworzyć tylko w projektach ekskluzywnych w magazynie modeli.",
       "CreatedAt": "Utworzony w",
+      "Creator": "Twórca",
       "Delete": "Kasować",
       "DeleteAFolder": "Usuń folder",
       "DeleteFailureDescription": "Nie udało się usunąć {{failed}} z {{total}} folderów. Sprawdź poniżej powód dla każdego folderu.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Wpisz nazwę folderu do opuszczenia",
       "TypeNewFolderName": "Wpisz nową nazwę folderu",
       "TypeToConfirmDeleteForever": "Wpisz poniższe słowo, aby trwale usunąć",
-      "View": "Widok",
-      "Creator": "Twórca"
+      "View": "Widok"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Nie przyjął zaproszenia",
@@ -2753,6 +2753,7 @@
     "DependedByOthers": "Zależne od tej sesji",
     "DependsOn": "Zależy od",
     "DescCommitSession": "Za chwilę zatwierdzisz kontener odpowiadający poniższej sesji:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Pobieranie pliku CSV...",
     "DownloadingSessionLogs": "Pobieranie dzienników sesji.",
     "ElapsedTime": "Upływający czas",
@@ -2825,6 +2826,7 @@
     "Preset": "Preset",
     "Priority": "Priorytet",
     "PrioritySuccessfullyUpdated": "Priorytet sesji został pomyślnie zaktualizowany.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Czytaj mniej",
     "ReadMore": "Czytaj więcej...",
     "RecentlyCreatedSessions": "Niedawno utworzone sesje",
@@ -3173,9 +3175,7 @@
       "SessionNameTooLong64": "Wprowadź maksymalnie 64 znaki.",
       "SessionNameTooShort": "Wprowadź co najmniej 4 znaki.",
       "SluggedStrings": "Ucięte ciągi znaków (>3 znaki)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Wsparcie Atom Max",

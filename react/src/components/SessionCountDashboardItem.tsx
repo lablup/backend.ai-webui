@@ -38,32 +38,36 @@ const SessionCountDashboardItem: React.FC<SessionCountDashboardItemProps> = ({
         fragment  SessionCountDashboardItemFragment on Query
         @argumentDefinitions(
           scopeId: { type: "ScopeField" }
-        ) 
+          interactiveFilter: { type: "String", defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\"" }
+          batchFilter: { type: "String", defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\"" }
+          inferenceFilter: { type: "String", defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\"" }
+          systemFilter: { type: "String", defaultValue: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\"" }
+        )
         @refetchable(queryName: "SessionCountDashboardItemRefetchQuery") {
           myInteractive: compute_session_nodes(
             first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
+            filter: $interactiveFilter
             scope_id: $scopeId
           ) {
             count
           }
           myBatch: compute_session_nodes(
             first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
+            filter: $batchFilter
             scope_id: $scopeId
           ) {
             count
           }
           myInference: compute_session_nodes(
             first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
+            filter: $inferenceFilter
             scope_id: $scopeId
           ) {
             count
           }
           myUpload: compute_session_nodes(
             first: 0
-            filter: "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
+            filter: $systemFilter
             scope_id: $scopeId
           ) {
             count

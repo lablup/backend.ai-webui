@@ -918,6 +918,7 @@
       "Control": "Ελεγχος",
       "CreateModelFolderOnlyInExclusiveProject": "Οι φακέλοι έργων μοντέλων μπορούν να δημιουργηθούν μόνο σε αποκλειστικά έργα Model Store.",
       "CreatedAt": "Δημιουργήθηκε στο",
+      "Creator": "Δημιουργός",
       "Delete": "Διαγράφω",
       "DeleteAFolder": "Διαγραφή φακέλου",
       "DeleteFailureDescription": "Δεν ήταν δυνατή η διαγραφή {{failed}} από {{total}} φακέλους. Ελέγξτε τον λόγο για κάθε φάκελο παρακάτω.",
@@ -1006,8 +1007,7 @@
       "TypeFolderNameToLeave": "Πληκτρολογήστε το όνομα του φακέλου για αποχώρηση",
       "TypeNewFolderName": "Πληκτρολογήστε νέο όνομα φακέλου",
       "TypeToConfirmDeleteForever": "Πληκτρολογήστε τη λέξη παρακάτω για μόνιμη διαγραφή",
-      "View": "Θέα",
-      "Creator": "Δημιουργός"
+      "View": "Θέα"
     },
     "invitation": {
       "FailedToAcceptInvitation": "Αποτυχία αποδοχής πρόσκλησης",
@@ -2751,6 +2751,7 @@
     "DependedByOthers": "Εξαρτώμενες",
     "DependsOn": "Εξαρτάται από",
     "DescCommitSession": "Πρόκειται να δεσμεύσετε το δοχείο που αντιστοιχεί στην παρακάτω συνεδρία:",
+    "Domain": "__NOT_TRANSLATED__",
     "DownloadingCSVFile": "Λήψη αρχείου CSV ...",
     "DownloadingSessionLogs": "Λήψη αρχείων καταγραφής συνεδριών.",
     "ElapsedTime": "Χρόνος που παρήλθε",
@@ -2822,6 +2823,7 @@
     "PreparingSession": "Προετοιμασία συνεδρίας",
     "Priority": "Προτεραιότητα",
     "PrioritySuccessfullyUpdated": "Η προτεραιότητα της συνεδρίας ενημερώθηκε επιτυχώς.",
+    "ProjectName": "__NOT_TRANSLATED__",
     "ReadLess": "Διαβάστε λιγότερα",
     "ReadMore": "Διαβάστε Περισσότερα...",
     "RecentlyCreatedSessions": "Πρόσφατα δημιουργήθηκαν συνεδρίες",
@@ -3170,9 +3172,7 @@
       "SessionNameTooLong64": "Εισαγάγετε 64 χαρακτήρες ή λιγότερους.",
       "SessionNameTooShort": "Παρακαλούμε εισάγετε τουλάχιστον 4 χαρακτήρες.",
       "SluggedStrings": "Στιγμιότυπα αλφαριθμητικά (>3 χαρακτήρες)"
-    },
-    "Domain": "__NOT_TRANSLATED__",
-    "ProjectName": "__NOT_TRANSLATED__"
+    }
   },
   "settings": {
     "ATOMMaxSupport": "Atom Max Υποστήριξη",
