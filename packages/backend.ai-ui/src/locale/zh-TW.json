@@ -643,7 +643,6 @@
     "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
     "DeleteSelectedItemsDialog": "刪除確認",
     "Download": "下載",
-    "DownloadInsecure": "此頁面透過 HTTPS 提供，而 {{origin}} 的儲存代理僅使用 HTTP，瀏覽器因此封鎖了下載，下載未開始。",
     "DownloadPopupBlocked": "瀏覽器封鎖了下載視窗。請允許本網站的彈出視窗後再試一次。",
     "DownloadRejected": "儲存代理拒絕了此次下載（HTTP {{status}}），下載未開始。",
     "DownloadSelected": "下載",

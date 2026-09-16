@@ -643,7 +643,6 @@
     "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
     "DeleteSelectedItemsDialog": "Bestätigung löschen",
     "Download": "Herunterladen",
-    "DownloadInsecure": "Der Browser hat den Download blockiert, weil diese Seite über HTTPS bereitgestellt wird, der Storage-Proxy unter {{origin}} aber nur HTTP verwendet. Der Download wurde nicht gestartet.",
     "DownloadPopupBlocked": "Der Browser hat das Download-Fenster blockiert. Erlauben Sie Pop-ups für diese Website und versuchen Sie es erneut.",
     "DownloadRejected": "Der Storage-Proxy hat den Download abgelehnt (HTTP {{status}}). Der Download wurde nicht gestartet.",
     "DownloadSelected": "Herunterladen",

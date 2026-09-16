@@ -643,7 +643,6 @@
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
     "Download": "Lataa",
-    "DownloadInsecure": "Selain esti latauksen, koska tämä sivu tarjotaan HTTPS-yhteydellä, mutta storage proxy -palvelin osoitteessa {{origin}} käyttää vain HTTP-yhteyttä. Lataus ei käynnistynyt.",
     "DownloadPopupBlocked": "Selain esti latausikkunan. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
     "DownloadRejected": "Storage proxy hylkäsi latauksen (HTTP {{status}}). Lataus ei käynnistynyt.",
     "DownloadSelected": "Lataa",

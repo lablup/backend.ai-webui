@@ -492,7 +492,7 @@ export const useSemanticColorMap = (): Record<SemanticColor, string> => {
 };
 
 export type DownloadFailureReason =
-  'insecure' | 'unreachable' | 'rejected' | 'popup-blocked';
+  'unreachable' | 'rejected' | 'popup-blocked';
 
 /**
  * Thrown when a download never reached the browser's download manager.
@@ -532,6 +532,10 @@ const originOf = (url: string): string => {
   }
 };
 
+// A proxy that never answers (a firewalled or wrong port) would otherwise hold
+// the button's pending state for the browser's own connect timeout.
+export const DOWNLOAD_PROBE_TIMEOUT_MS = 15_000;
+
 /**
  * Ask the storage proxy for the download before the browser is told to save
  * it, so an unreachable proxy, a blocked insecure download or a refused token
@@ -543,27 +547,7 @@ const originOf = (url: string): string => {
  * soon as the status line arrives, and the token still works for the real
  * transfer. It does not support `HEAD` (405).
  */
-// An `http:` subresource on an `https:` page is refused before any request
-// leaves the browser, and the resulting TypeError looks like a network failure.
-const isBlockedMixedContent = (downloadURL: string): boolean => {
-  if (globalThis.location?.protocol !== 'https:') {
-    return false;
-  }
-  try {
-    return new URL(downloadURL, globalThis.location.href).protocol === 'http:';
-  } catch {
-    return false;
-  }
-};
-
-// A proxy that never answers (a firewalled or wrong port) would otherwise hold
-// the button's pending state for the browser's own connect timeout.
-export const DOWNLOAD_PROBE_TIMEOUT_MS = 15_000;
-
 const verifyDownloadURL = async (downloadURL: string): Promise<void> => {
-  if (isBlockedMixedContent(downloadURL)) {
-    throw new DownloadFailedError(downloadURL, 'insecure');
-  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), DOWNLOAD_PROBE_TIMEOUT_MS);
   let response: Response;

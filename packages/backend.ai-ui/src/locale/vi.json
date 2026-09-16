@@ -643,7 +643,6 @@
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
     "Download": "Tải xuống",
-    "DownloadInsecure": "Trình duyệt đã chặn tải xuống vì trang này được phục vụ qua HTTPS nhưng storage proxy tại {{origin}} chỉ dùng HTTP. Quá trình tải xuống chưa bắt đầu.",
     "DownloadPopupBlocked": "Trình duyệt đã chặn cửa sổ tải xuống. Hãy cho phép cửa sổ bật lên cho trang này rồi thử lại.",
     "DownloadRejected": "Storage proxy đã từ chối yêu cầu tải xuống (HTTP {{status}}). Quá trình tải xuống chưa bắt đầu.",
     "DownloadSelected": "Tải xuống",

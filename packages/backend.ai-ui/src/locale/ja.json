@@ -643,7 +643,6 @@
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
     "Download": "ダウンロード",
-    "DownloadInsecure": "このページは HTTPS で提供されていますが、{{origin}} のストレージプロキシは HTTP のみを使用するため、ブラウザーがダウンロードをブロックしました。ダウンロードは開始されませんでした。",
     "DownloadPopupBlocked": "ブラウザーがダウンロードウィンドウをブロックしました。このサイトのポップアップを許可してからもう一度お試しください。",
     "DownloadRejected": "ストレージプロキシがダウンロードを拒否しました (HTTP {{status}})。ダウンロードは開始されませんでした。",
     "DownloadSelected": "ダウンロード",
