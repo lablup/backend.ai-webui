@@ -4,7 +4,7 @@ BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev 
 BUILD_NUMBER := $(shell git rev-list --count HEAD)
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),main)
-DEB_TOOLS := $(shell command -v dpkg-deb >/dev/null 2>&1 && command -v fakeroot >/dev/null 2>&1 && echo yes)
+DEB_TOOLS := $(shell command -v dpkg-deb >/dev/null 2>&1 && echo yes)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -184,6 +184,7 @@ compile_localproxy:
 package_zip:
 	@printf "$(GREEN)Packaging as ZIP archive...$(NC)"
 	@cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	@node -e 'const fs=require("fs"),f="./build/electron-app/package.json",p=JSON.parse(fs.readFileSync(f));p.version=process.argv[1];fs.writeFileSync(f,JSON.stringify(p,null,2)+"\n")' $(BUILD_VERSION)
 	@node ./app-packager.js $(os) $(arch)
 	@cd app; zip -r -6 ./backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip "./Backend.AI Desktop-$(os_api)-$(arch)"
 ifeq ($(site),main)
@@ -193,22 +194,26 @@ else
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
 # Debian package built from the packager output `package_zip` leaves behind.
-# Needs `dpkg-deb` and `fakeroot` (`apt install dpkg fakeroot` / `brew install
-# dpkg fakeroot`); when either is missing the step is skipped with a warning
-# so the ZIP build still succeeds on hosts without them.
+# Needs `dpkg-deb` (`apt install dpkg` / `brew install dpkg`); without it the
+# step is skipped with a warning, or fails when DEB_REQUIRED=1 (set in CI).
+# The installer turns the app dir's LICENSE into the package's copyright file,
+# so the repository LICENSE replaces Electron's own copy first.
 package_deb:
 ifeq ($(DEB_TOOLS),yes)
 	@printf "$(GREEN)Packaging as Debian package...$(NC)"
 	@rm -f ./app/backend.ai-desktop_*_$(deb_arch).deb
-	@npx electron-installer-debian@4.0.0 --src "./app/Backend.AI Desktop-$(os_api)-$(arch)" --dest ./app --arch $(deb_arch) --config ./deb-installer.json
+	@cp ./LICENSE "./app/Backend.AI Desktop-$(os_api)-$(arch)/LICENSE"
+	@npx --yes electron-installer-debian@4.0.0 --src "./app/Backend.AI Desktop-$(os_api)-$(arch)" --dest ./app --arch $(deb_arch) --config ./deb-installer.json
 ifeq ($(site),main)
 	@mv ./app/backend.ai-desktop_*_$(deb_arch).deb ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).deb
 else
 	@mv ./app/backend.ai-desktop_*_$(deb_arch).deb ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_VERSION)-$(site).deb
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
+else ifeq ($(DEB_REQUIRED),1)
+	$(error dpkg-deb not found and DEB_REQUIRED=1)
 else
-	@printf "$(YELLOW)dpkg-deb / fakeroot not found, skipping Debian package$(NC)\n"
+	@printf "$(YELLOW)dpkg-deb not found, skipping Debian package$(NC)\n"
 endif
 package_dmg:
 	@printf "$(GREEN)Packaging as DMG file...$(NC)"

@@ -639,12 +639,12 @@ $ make mac_arm64
 $ make linux
 ```
 
-Each Linux build produces a ZIP archive and, when `dpkg-deb` and `fakeroot` are
-available on the build host (`apt install dpkg fakeroot` on Debian/Ubuntu,
-`brew install dpkg fakeroot` on macOS), a Debian package
-(`backend.ai-desktop-<version>-linux-<arch>.deb`) as well. Without those tools
-the `.deb` step is skipped with a warning. The package metadata (name, desktop
-entry, icons) lives in `deb-installer.json`.
+Each Linux build produces a ZIP archive and, when `dpkg-deb` is available on
+the build host (`apt install dpkg` on Debian/Ubuntu, `brew install dpkg` on
+macOS), a Debian package (`backend.ai-desktop-<version>-linux-<arch>.deb`) as
+well. Without it the `.deb` step is skipped with a warning; set `DEB_REQUIRED=1`
+(as the release workflow does) to make the missing tool a build error instead.
+The package metadata (name, desktop entry, icons) lives in `deb-installer.json`.
 
 ### Packaging as zip files
 

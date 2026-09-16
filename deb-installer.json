@@ -8,7 +8,7 @@
   "homepage": "https://www.backend.ai",
   "maintainer": "Lablup Inc. <contact@lablup.com>",
   "section": "misc",
-  "categories": ["Development", "Utility"],
+  "categories": ["Development"],
   "icon": {
     "16x16": "manifest/backend-ai.iconset/icon_16x16@1x.png",
     "32x32": "manifest/backend-ai.iconset/icon_32x32@1x.png",
