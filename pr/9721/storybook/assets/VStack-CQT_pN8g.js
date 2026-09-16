@@ -1,0 +1,1 @@
+import{j as s,S as c}from"./iframe-BUfce0sW.js";function o({ref:t,justify:a,align:i,hAlign:r,vAlign:e,...n}){return s.jsx(c,{...n,direction:"vertical",hAlign:r??i,vAlign:e??a,ref:t})}o.displayName="VStack";export{o as V};
