@@ -4286,7 +4286,6 @@
         "credential.TypePermanentlyDelete",
         "dialog.title.DeleteSomething",
         "environment.Architecture",
-        "environment.Base",
         "environment.BaseImageName",
         "environment.CustomizedImageSuccessfullyDeleted",
         "environment.Digest",
@@ -4628,7 +4627,6 @@
       "tabs": [],
       "settings": [],
       "keys": [
-        "button.CopySomething",
         "button.Next",
         "button.Previous",
         "button.Reset",

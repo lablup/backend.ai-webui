@@ -11,6 +11,7 @@
 | [0002 — Pin set link grammar and a single codec](adr/0002-pin-set-link-grammar-and-single-codec.md) | review overlay의 pin 여러 개는 `#bai=v3` part를 `&`로 이어 붙인 링크 하나로 나른다. 읽는 쪽은 overlay의 codec 하나뿐이고 `pnpm run review-pins` CLI로 노출되며, Claude 쪽 review skill과 Teams transport는 그 CLI를 부른다. |
 | [0003 — Committed search index artifact](adr/0003-committed-search-index-artifact.md) | 전역 검색 palette의 인덱스 `react/src/generated/searchIndex.json`은 source에서 생성해 git에 커밋하고, production build는 그 커밋본을 그대로 번들한다. drift는 `scripts/verify.sh`와 `.github/workflows/typecheck.yml`이 다시 만든 뒤 `git status`로 잡고, conflict는 손으로 합치지 않고 다시 만든다. |
 | [0004 — Walkthrough stops in the v3 anchor](adr/0004-walkthrough-stops-in-the-v3-anchor.md) | A Stop (한 pin이 무엇이 바뀌었고 무엇을 확인해야 하는지 담는 것)은 v3 anchor에 추가된 optional field 묶음이며 버전은 올리지 않는다. strict resolution, codec 소유의 volatile-query denylist, GitHub 댓글 65,536자 제한이 만드는 20-stop cap, 댓글을 구분하고 idempotent하게 만드는 `bai-walkthrough` marker와 `review-pins parse`의 stop 제외 규칙(resolver가 stop을 finding으로 읽지 않게 만드는 실제 보장), guided mode의 docs PR preview grammar 차용, 그리고 webui 소유 skill이라는 trigger를 정한다. |
+| [0005 — Container image meta row](adr/0005-container-image-meta-row.md) | container image 한 개의 identity는 image node의 schema에 맞는 BUI component가 그린다. v2 `ImageV2`는 `BAIImageNodeSimpleTagV2`, v1 `ImageNode`는 `BAIImageNodeSimpleTag`이고, 둘 다 `imageFrgmt`·`withoutTag`·`copyable`만 받아 나머지를 node에서 파생한다. image node가 없는 host 화면은 `ImageTags.tsx`의 `ImageMetaDivider`·`ImageTagBadges`로 같은 행을 각자 그리고, tag chip 판정은 BUI의 `imageNodeTagFacts` 하나다. |
 
 ## 새 ADR을 적는 방법
 

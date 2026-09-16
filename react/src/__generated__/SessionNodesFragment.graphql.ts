@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a2c41af7f24309da3f372de92decd0a1>>
+ * @generated SignedSource<<03107147ca5707a621edb3741c5d0158>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,7 +37,7 @@ export type SessionNodesFragment$data = ReadonlyArray<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly image: {
-          readonly " $fragmentSpreads": FragmentRefs<"ImageNodeSimpleTagFragment">;
+          readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagFragment">;
         } | null | undefined;
       } | null | undefined;
     } | null | undefined>;
@@ -280,7 +280,7 @@ return {
                     {
                       "args": null,
                       "kind": "FragmentSpread",
-                      "name": "ImageNodeSimpleTagFragment"
+                      "name": "BAIImageNodeSimpleTagFragment"
                     }
                   ],
                   "storageKey": null
@@ -387,6 +387,6 @@ return {
 };
 })();
 
-(node as any).hash = "6f573e15143b05e4b432d23b5e111557";
+(node as any).hash = "2485a16dab716580189a67cf09fa09a4";
 
 export default node;

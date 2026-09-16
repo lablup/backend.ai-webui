@@ -1,16 +1,68 @@
+/**
+ * One-line identity of a v2 `ImageV2` (ADR 0005), drawn by the shared
+ * `ImageNodeSimpleTag` row. `BAIImageNodeSimpleTag` reads the v1 schema into
+ * the same row; both take their chips from `imageNodeTagFacts`.
+ */
 import { BAIImageNodeSimpleTagV2Fragment$key } from '../../__generated__/BAIImageNodeSimpleTagV2Fragment.graphql';
-import { badgeVariantForTagColor, preserveDotStartCase } from '../../helper';
-import BAIDoubleTag from '../BAIDoubleTag';
-import BAIFlex from '../BAIFlex';
-import BAIImageMetaIcon from '../BAIImageMetaIcon';
-import BAIText from '../BAIText';
+import { preserveDotStartCase } from '../../helper';
 import { useBAIImageMetaData } from '../provider/BAIMetaDataProvider';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import ImageNodeSimpleTag, { type BAIImageTagFact } from './ImageNodeSimpleTag';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
+
+export type { BAIImageTagFact };
+
+type TagAlias = (tag: string) => string;
+/** A tag as the v1 `ImageNode` and v2 `ImageV2` schemas expose it. */
+type RawTag = { key?: string | null; value?: string | null } | null | undefined;
+type KeyedTag = { key: string; value?: string | null };
+
+/** A tag with no key has nothing to alias, so it is not a chip. */
+const keyedTags = (tags: ReadonlyArray<RawTag> | null | undefined) =>
+  _.filter(
+    _.compact(tags ?? []),
+    (tag): tag is KeyedTag => !_.isEmpty(tag.key),
+  );
+
+const toFact = (
+  key: string,
+  value: string | undefined,
+  isCustomized: boolean,
+  tagAlias: TagAlias,
+): BAIImageTagFact => {
+  // A tag's value is nullable on the v1 schema, and `key + undefined` would
+  // alias `tensorflow` as `tensorflowundefined` and flip it to a double tag.
+  const lookup = key + (value ?? '');
+  const aliasedTag = tagAlias(lookup);
+  const isDouble =
+    _.isEqual(aliasedTag, preserveDotStartCase(lookup)) || isCustomized;
+  return {
+    key,
+    value,
+    isCustomized,
+    aliasedTag,
+    isDouble,
+    keyAlias: isDouble ? tagAlias(key) : undefined,
+  };
+};
+
+/** Display facts for an image node's own `tags`, read with its `labels`. */
+export const imageNodeTagFacts = (
+  tags: ReadonlyArray<RawTag> | null | undefined,
+  labels: ReadonlyArray<RawTag> | null | undefined,
+  tagAlias: TagAlias,
+): Array<BAIImageTagFact> =>
+  _.map(keyedTags(tags), (tag) => {
+    const isCustomized = _.includes(tag.key, 'customized_');
+    // A customized tag's value is a hash; the readable name is in the labels.
+    const value = isCustomized
+      ? _.find(keyedTags(labels), {
+          key: 'ai.backend.customized-image.name',
+        })?.value
+      : tag.value;
+    return toFact(tag.key, value ?? undefined, isCustomized, tagAlias);
+  });
 
 export interface BAIImageNodeSimpleTagV2Props {
   /** v2 `ImageV2` fragment. */
@@ -19,12 +71,6 @@ export interface BAIImageNodeSimpleTagV2Props {
   copyable?: boolean;
 }
 
-/**
- * v2 counterpart of the React app's `ImageNodeSimpleTag`. Renders the image
- * icon, base name, version and architecture in the same format as the v1
- * session list, resolving icons and tag aliases from the image metadata
- * provided via `BAIMetaDataProvider`.
- */
 const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
   imageFrgmt,
   withoutTag = false,
@@ -37,7 +83,6 @@ const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
       fragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {
         identity {
           canonicalName
-          namespace
           architecture
         }
         metadata {
@@ -52,80 +97,33 @@ const BAIImageNodeSimpleTagV2: React.FC<BAIImageNodeSimpleTagV2Props> = ({
         }
       }
     `,
-    imageFrgmt ?? null,
+    imageFrgmt,
   );
 
   if (!image) return null;
 
-  const fullName = image.identity?.canonicalName ?? '';
-  const architecture = image.identity?.architecture ?? '';
+  // `canonicalName` carries no architecture, and the copy control emits this
+  // string, so the suffix is appended when the nullable field is set.
+  const canonicalName = image.identity?.canonicalName ?? '';
+  const architecture = image.identity?.architecture;
+  const fullName = architecture
+    ? `${canonicalName}@${architecture}`
+    : canonicalName;
 
   return (
-    <BAIFlex direction="row" gap={'xs'} wrap="wrap">
-      <BAIImageMetaIcon image={fullName} />
-      <Text>{tagAlias(getBaseImage(fullName))}</Text>
-      <Divider orientation="vertical" style={{ marginInline: 0 }} />
-      <Text>{getBaseVersion(fullName)}</Text>
-      <Divider orientation="vertical" style={{ marginInline: 0 }} />
-      <Text>{architecture}</Text>
-      {withoutTag ? null : (
-        <>
-          <Divider orientation="vertical" style={{ marginInline: 0 }} />
-          {_.map(image.metadata?.tags, (tag, index) => {
-            if (!tag) return null;
-            const isCustomized = tag.key && _.includes(tag.key, 'customized_');
-            const tagValue =
-              (isCustomized
-                ? _.find(image?.metadata?.labels, {
-                    key: 'ai.backend.customized-image.name',
-                  })?.value
-                : tag?.value) || '';
-            const aliasedTag = tag?.key
-              ? tagAlias(tag.key + tagValue)
-              : undefined;
-            return tag?.key &&
-              _.isEqual(
-                aliasedTag,
-                preserveDotStartCase(tag.key + tagValue),
-              ) ? (
-              <BAIDoubleTag
-                key={`${tag.key}-${index}`}
-                values={[
-                  {
-                    label: tagAlias(tag.key),
-                    color: isCustomized ? 'cyan' : undefined,
-                  },
-                  {
-                    label: tagValue,
-                    color: isCustomized ? 'cyan' : undefined,
-                  },
-                ]}
-              />
-            ) : (
-              <Badge
-                key={`${tag.key}-${index}`}
-                variant={badgeVariantForTagColor(isCustomized ? 'cyan' : null)}
-                label={aliasedTag}
-              />
-            );
-          })}
-        </>
+    <ImageNodeSimpleTag
+      fullName={fullName}
+      name={tagAlias(getBaseImage(fullName))}
+      version={getBaseVersion(fullName)}
+      architecture={architecture}
+      facts={imageNodeTagFacts(
+        image.metadata?.tags,
+        image.metadata?.labels,
+        tagAlias,
       )}
-      {copyable && (
-        // PILOT-DECISION (to-astryx W2-D): the copy affordance loses its
-        // `color: token.colorLink` tint. `BAIText`'s rebuilt copy control is a
-        // ghost `IconButton` that takes its colour from the theme, and Astryx
-        // `Text` has no arbitrary colour slot (P5) — the closed enum is
-        // `primary|secondary|disabled|placeholder|accent|inherit` plus the
-        // three status colours the theme adds. Defaults-first: the control now
-        // looks like every other icon action in the app.
-        <BAIText
-          copyable={{
-            text: fullName,
-          }}
-        />
-      )}
-    </BAIFlex>
+      withoutTag={withoutTag}
+      copyable={copyable}
+    />
   );
 };
 
