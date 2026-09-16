@@ -140,8 +140,13 @@ E2E_WEBUI_ENDPOINT=https://webui.example.com \
 E2E_ADMIN_EMAIL=admin@example.com E2E_ADMIN_PASSWORD='…' \
   pnpm e2e:smoke
 # user role: SMOKE_ROLE=user + E2E_USER_EMAIL / E2E_USER_PASSWORD
+# the config refuses to start when the role's endpoint or credentials are
+# missing — otherwise the helpers would fall back to the dev-box defaults
+# E2E_WEBSERVER_ENDPOINT: what the login form's endpoint field is filled
+#   with; defaults to E2E_WEBUI_ENDPOINT (same host serves both)
 # self-signed certificate: SMOKE_INSECURE_TLS=1
 # reports: e2e/smoke-report/{html,results.json} (SMOKE_REPORT_DIR overrides)
+# runs with a single worker: one account, one live cluster
 ```
 
 Limitations: no OTP step in `login()`, so 2FA-enabled clusters are not

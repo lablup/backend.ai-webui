@@ -158,9 +158,10 @@ export async function login(
     }
   }
   // No endpoint input means the server pins `apiEndpoint` (the config.toml
-  // intercept above did not take, e.g. a customer install the smoke CLI
-  // targets). Wait for it briefly rather than probing once — `isVisible()`
-  // does not auto-wait, and a slow render must not submit an empty endpoint.
+  // intercept above did not take — an installed cluster under
+  // `playwright.smoke.config.ts`). Wait briefly rather than probing once:
+  // `isVisible()` does not auto-wait, and a slow render must not submit an
+  // empty endpoint.
   try {
     await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
     await endpointInput.fill(endpoint);

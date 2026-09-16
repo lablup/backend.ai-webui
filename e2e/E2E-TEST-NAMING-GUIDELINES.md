@@ -669,5 +669,5 @@ Running it against an installed cluster is documented in `e2e/README.md`
 
 ---
 
-**Last Updated**: 2026-05-12
+**Last Updated**: 2026-09-16
 **Applies to**: All E2E tests in `/e2e` directory, especially AI-generated tests using Playwright MCP server

@@ -9,6 +9,10 @@ import path from 'node:path';
  * would clobber the operator's E2E_* credentials.
  *
  *   SMOKE_ROLE=admin|user   which role's credentials the run has (required)
+ *   E2E_WEBUI_ENDPOINT      the installed WebUI (required)
+ *   E2E_<ROLE>_EMAIL / _PASSWORD   that role's account (required)
+ *   E2E_WEBSERVER_ENDPOINT  what the login form's endpoint field is filled
+ *                           with (default: E2E_WEBUI_ENDPOINT)
  *   SMOKE_REPORT_DIR        report output (default e2e/smoke-report)
  *   SMOKE_INSECURE_TLS=1    accept self-signed certificates
  *   SMOKE_HEADED=1          headed browser
@@ -24,6 +28,20 @@ if (role !== 'admin' && role !== 'user') {
   );
 }
 const otherRole = role === 'admin' ? 'user' : 'admin';
+
+// Without these the helpers fall back to the dev-box defaults
+// (127.0.0.1:8090, admin@lablup.com) and every login fails slowly.
+const rolePrefix = role.toUpperCase();
+for (const name of [
+  'E2E_WEBUI_ENDPOINT',
+  `E2E_${rolePrefix}_EMAIL`,
+  `E2E_${rolePrefix}_PASSWORD`,
+]) {
+  if (!process.env[name]) {
+    throw new Error(`${name} must be set for a SMOKE_ROLE=${role} smoke run.`);
+  }
+}
+process.env.E2E_WEBSERVER_ENDPOINT ??= process.env.E2E_WEBUI_ENDPOINT;
 // `(?![\w-])` and not `\b`: `@smoke\b` matches inside `@smoke-user`.
 const grep = new RegExp(`(@smoke(?![\\w-])|@smoke-${role}(?![\\w-]))`);
 const grepInvert = new RegExp(`@smoke-${otherRole}(?![\\w-])`);
@@ -38,6 +56,8 @@ process.env.BACKEND_AI_AGENTS_AVAILABLE ??= 'true';
 export default defineConfig({
   testDir: __dirname,
   fullyParallel: true,
+  // One account on a live cluster: no concurrent session/vfolder creation.
+  workers: 1,
   retries: 0,
   timeout: 180_000,
   grep,
