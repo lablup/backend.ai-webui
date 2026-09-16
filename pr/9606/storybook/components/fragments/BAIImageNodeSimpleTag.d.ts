@@ -7,7 +7,7 @@ export interface BAIImageNodeSimpleTagProps {
     copyable?: boolean;
 }
 /**
- * One-line identity of a v1 `ImageNode` (ADR 0004), drawn by the shared
+ * One-line identity of a v1 `ImageNode` (ADR 0005), drawn by the shared
  * `ImageNodeSimpleTag` row. `BAIImageNodeSimpleTagV2` reads the v2 schema
  * into the same row.
  */
