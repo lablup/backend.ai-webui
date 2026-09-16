@@ -138,7 +138,7 @@ const ContainerRegistryList: React.FC<{
             order: $order
             first: $first
             offset: $offset
-          ) @since(version: "24.09.0") {
+          ) {
             edges {
               node {
                 ...ContainerRegistryEditorModalFragment
@@ -152,10 +152,10 @@ const ContainerRegistryList: React.FC<{
                 username
                 password
                 ssl_verify
-                is_global @since(version: "24.09.0")
+                is_global
                 allowed_groups_preview: allowed_groups(
                   first: $allowedProjectPreviewCount
-                ) @since(version: "25.3.0") {
+                ) {
                   count
                   edges {
                     node {
@@ -261,14 +261,8 @@ const ContainerRegistryList: React.FC<{
         );
       }
     };
-    const isSupportImageRescanByProject = baiClient.supports(
-      'image_rescan_by_project',
-    );
     baiClient.maintenance
-      .rescan_images(
-        registry_name,
-        isSupportImageRescanByProject ? (project ?? undefined) : undefined,
-      )
+      .rescan_images(registry_name, project ?? undefined)
       .then(({ rescan_images }: any) => {
         if (rescan_images.ok) {
           upsertNotification({

@@ -311,19 +311,19 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 min
                 max
               }
-              namespace @since(version: "24.12.0")
-              base_image_name @since(version: "24.12.0")
-              tags @since(version: "24.12.0") {
+              namespace
+              base_image_name
+              tags {
                 key
                 value
               }
-              version @since(version: "24.12.0")
+              version
               size_bytes
               is_local
               supported_accelerators
-              status @since(version: "25.4.0")
-              type @since(version: "25.12.0")
-              aliases @since(version: "24.03.4")
+              status
+              type
+              aliases
               ...AliasedImageDoubleTagsFragment
               ...ManageImageResourceLimitModal_image
               ...ManageAppsModal_image

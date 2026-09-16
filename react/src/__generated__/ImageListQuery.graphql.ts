@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c5ee083edb800ed160e98dcaf1c874a0>>
+ * @generated SignedSource<<83cdc56233962d6d9df4a6d627ff733b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -472,7 +472,9 @@ return {
                   (v25/*: any*/),
                   (v26/*: any*/),
                   (v27/*: any*/),
-                  (v28/*: any*/)
+                  (v28/*: any*/),
+                  (v21/*: any*/),
+                  (v19/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -486,16 +488,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "072f7e00d3c1e43fdca63f33a829ea94",
+    "cacheID": "50b55236fe496973684f06099be07c68",
     "id": null,
     "metadata": {},
     "name": "ImageListQuery",
     "operationKind": "query",
-    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace @since(version: \"24.12.0\")\n        base_image_name @since(version: \"24.12.0\")\n        tags @since(version: \"24.12.0\") {\n          key\n          value\n        }\n        version @since(version: \"24.12.0\")\n        size_bytes\n        is_local\n        supported_accelerators\n        status @since(version: \"25.4.0\")\n        type @since(version: \"25.12.0\")\n        aliases @since(version: \"24.03.4\")\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n"
+    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0a9ee1e39a2e394686fec139cd4dce00";
+(node as any).hash = "2bf0431c6359bef2d43f98c8eaa14462";
 
 export default node;
