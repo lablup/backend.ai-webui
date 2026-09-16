@@ -83,6 +83,9 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "프리셋을 선택해주세요"
   },
+  "comp:BAIBadgeList": {
+    "AndMore": "외 {{rest}}개"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
   },

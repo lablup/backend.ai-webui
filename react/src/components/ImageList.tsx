@@ -29,6 +29,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
+  BAIBadgeList,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
@@ -87,9 +88,15 @@ const availableImageSorterValues = [
 const isEnableSorter = (key: string) =>
   _.includes(availableImageSorterKeys, key);
 
-/** Columns that carry detail rather than identity: off until asked for. */
+/**
+ * Columns that carry detail rather than identity: off until asked for.
+ * `status` is in here because the list is live-only unless the user adds a
+ * status condition, so the column would read ALIVE on every row by default.
+ */
 const DEFAULT_HIDDEN_IMAGE_COLUMN_KEYS = [
-  'size_bytes',
+  'status',
+  'type',
+  'is_local',
   'aliases',
   'supported_accelerators',
 ];
@@ -488,20 +495,14 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       title: t('environment.Aliases'),
       key: 'aliases',
       dataIndex: 'aliases',
-      render: (_text, row) =>
-        _.isEmpty(row.aliases) ? (
-          '-'
-        ) : (
-          <BAIFlex direction="row" gap="xxs" wrap="wrap">
-            {_.map(_.compact(row.aliases), (alias) => (
-              <Badge
-                key={alias}
-                variant={badgeVariantForTagColor(undefined)}
-                label={alias}
-              />
-            ))}
-          </BAIFlex>
-        ),
+      render: (_text, row) => (
+        <BAIBadgeList
+          items={_.map(_.compact(row.aliases), (alias) => ({
+            key: alias,
+            label: alias,
+          }))}
+        />
+      ),
     },
     {
       title: t('environment.SupportedAccelerators'),

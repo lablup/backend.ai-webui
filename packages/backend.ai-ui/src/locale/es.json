@@ -83,6 +83,9 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Seleccionar preset"
   },
+  "comp:BAIBadgeList": {
+    "AndMore": "y {{rest}} más"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Se produjo un error inesperado. Inténtelo de nuevo más tarde o contacte con el soporte si el problema persiste."
   },

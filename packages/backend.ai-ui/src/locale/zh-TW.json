@@ -83,6 +83,9 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "選擇預設"
   },
+  "comp:BAIBadgeList": {
+    "AndMore": "另有 {{rest}} 項"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },

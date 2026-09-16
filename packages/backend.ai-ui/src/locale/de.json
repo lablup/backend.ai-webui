@@ -83,6 +83,9 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Voreinstellung auswählen"
   },
+  "comp:BAIBadgeList": {
+    "AndMore": "und {{rest}} weitere"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
   },
