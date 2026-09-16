@@ -253,3 +253,59 @@ export async function sweepLeftoverDeploymentsViaApi(
   }
   return deleted;
 }
+
+/**
+ * Creates a vfolder over the REST API and returns its id. Pass `projectId` for
+ * a project-owned folder; omit it for a folder owned by the admin. Setup
+ * through the API keeps a spec independent of the folder-creation UI and of
+ * whatever folders the cluster happens to hold.
+ */
+export async function createVFolderViaApi(
+  api: APIRequestContext,
+  options: { name: string; projectId?: string },
+): Promise<string> {
+  const hostsRes = await api.get('/func/folders/_/hosts');
+  const hosts = await hostsRes.json().catch(() => ({}));
+  if (!hostsRes.ok() || !hosts?.default) {
+    throw new Error(`No default vfolder host (status=${hostsRes.status()})`);
+  }
+  const res = await api.post('/func/folders', {
+    data: {
+      name: options.name,
+      host: hosts.default,
+      usage_mode: 'general',
+      permission: 'rw',
+      ...(options.projectId ? { group: options.projectId } : {}),
+    },
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok() || !body?.id) {
+    throw new Error(
+      `Could not create vfolder "${options.name}" (status=${res.status()})`,
+    );
+  }
+  return body.id as string;
+}
+
+/**
+ * Permanently removes a vfolder: move to trash, then delete from the trash
+ * bin. Defensive, like the other teardown helpers here: returns `false` and
+ * warns instead of throwing, so cleanup never masks the real test result.
+ */
+export async function purgeVFolderViaApi(
+  api: APIRequestContext,
+  vfolderId: string,
+): Promise<boolean> {
+  const data = { vfolder_id: vfolderId };
+  const trashed = await api.delete('/func/folders', { data });
+  const purged = await api.post('/func/folders/delete-from-trash-bin', {
+    data,
+  });
+  const ok = trashed.ok() && purged.ok();
+  if (!ok) {
+    console.warn(
+      `[admin-api] could not purge vfolder id=${vfolderId} (trash=${trashed.status()}, purge=${purged.status()})`,
+    );
+  }
+  return ok;
+}
