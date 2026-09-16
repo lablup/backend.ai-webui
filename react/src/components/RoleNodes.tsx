@@ -6,6 +6,7 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
@@ -84,7 +85,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
-        scopes(first: 3) {
+        scopes(first: 3) @deprecatedSince(version: "26.9.0") {
           count
           edges {
             node {
@@ -110,10 +111,44 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
             }
           }
         }
+        scopeType @since(version: "26.9.0")
+        scopeId @since(version: "26.9.0")
+        scope @since(version: "26.9.0") {
+          ... on ProjectV2 {
+            basicInfo {
+              projectName: name
+            }
+          }
+          ... on DomainV2 {
+            basicInfo {
+              domainName: name
+            }
+          }
+          ... on UserV2 {
+            basicInfo {
+              userEmail: email
+            }
+          }
+        }
       }
     `,
     rolesFrgmt,
   );
+
+  // Managers >= 26.9.0 answer the one scope a role belongs to; older ones
+  // answer a scopes connection, of which the first is shown and the rest counted.
+  const readRoleScope = (record: RoleNodeInList) => {
+    if (record.scopeType) {
+      return { ...record, extraCount: 0 };
+    }
+    const first = record.scopes?.edges?.[0]?.node;
+    return {
+      scopeType: first?.scopeType,
+      scopeId: first?.scopeId,
+      scope: first?.scope,
+      extraCount: Math.max((record.scopes?.count ?? 0) - 1, 0),
+    };
+  };
 
   const columns: BAIColumnType<RoleNodeInList>[] = filterOutEmpty([
     {
@@ -141,19 +176,17 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'scope',
       title: t('rbac.ScopeType'),
       render: (_, record: RoleNodeInList) => {
-        const scopeNodes =
-          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
-        const totalCount = record.scopes?.count ?? 0;
-        if (scopeNodes.length === 0) return '-';
-        const first = scopeNodes[0];
-        const scopeTypeLabel = t(`rbac.types.${first?.scopeType}`, {
-          defaultValue: first?.scopeType,
+        const { scopeType, scopeId, scope, extraCount } = readRoleScope(record);
+        if (!scopeType) return '-';
+        const scopeTypeLabel = t(rbacTypeI18nKey(scopeType), {
+          defaultValue: scopeType,
         });
         const scopeName =
-          first?.scope?.basicInfo?.projectName ??
-          first?.scope?.basicInfo?.domainName ??
-          first?.scope?.basicInfo?.userEmail ??
-          first?.scopeId;
+          scope?.basicInfo?.projectName ??
+          scope?.basicInfo?.domainName ??
+          scope?.basicInfo?.userEmail ??
+          scopeId ??
+          '-';
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
             <BAIDoubleToken
@@ -162,10 +195,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
                 { label: scopeName, color: 'default' },
               ]}
             />
-            {totalCount > 1 && (
+            {extraCount > 0 && (
               <Badge
                 variant={badgeVariantForTagColor('default')}
-                label={`+${totalCount - 1}`}
+                label={`+${extraCount}`}
               />
             )}
           </BAIFlex>
@@ -176,21 +209,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'scopeId',
       title: t('rbac.ScopeRawId'),
       render: (_, record: RoleNodeInList) => {
-        const scopeNodes =
-          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
-        const totalCount = record.scopes?.count ?? 0;
-        if (scopeNodes.length === 0) return '-';
-        return (
-          <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIId uuid={scopeNodes[0]?.scopeId} />
-            {totalCount > 1 && (
-              <Badge
-                variant={badgeVariantForTagColor('default')}
-                label={`+${totalCount - 1}`}
-              />
-            )}
-          </BAIFlex>
-        );
+        const { scopeId } = readRoleScope(record);
+        return scopeId ? <BAIId uuid={scopeId} /> : '-';
       },
     },
     {
