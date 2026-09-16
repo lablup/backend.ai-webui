@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
     "DeleteSelectedItemsDialog": "삭제 확인",
     "Download": "다운로드",
+    "DownloadInsecure": "이 페이지는 HTTPS로 제공되지만 {{origin}} 스토리지 프록시는 HTTP만 사용하므로 브라우저가 다운로드를 차단했습니다. 다운로드가 시작되지 않았습니다.",
     "DownloadPopupBlocked": "브라우저가 다운로드 창을 차단했습니다. 이 사이트의 팝업을 허용한 후 다시 시도하세요.",
     "DownloadRejected": "스토리지 프록시가 다운로드를 거부했습니다 (HTTP {{status}}). 다운로드가 시작되지 않았습니다.",
     "DownloadSelected": "다운로드",

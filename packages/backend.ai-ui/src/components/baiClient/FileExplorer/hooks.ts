@@ -183,6 +183,10 @@ export const useDownloadErrorMessage = () => {
   return (error: unknown): string | undefined => {
     if (error instanceof DownloadFailedError) {
       switch (error.reason) {
+        case 'insecure':
+          return t('comp:FileExplorer.DownloadInsecure', {
+            origin: error.origin,
+          });
         case 'rejected':
           return t('comp:FileExplorer.DownloadRejected', {
             status: error.status,

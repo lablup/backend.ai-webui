@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
     "DeleteSelectedItemsDialog": "Padam pengesahan",
     "Download": "Muat turun",
+    "DownloadInsecure": "Pelayar menyekat muat turun kerana halaman ini disajikan melalui HTTPS, tetapi storage proxy di {{origin}} hanya menggunakan HTTP. Muat turun tidak bermula.",
     "DownloadPopupBlocked": "Pelayar menyekat tetingkap muat turun. Benarkan pop timbul untuk tapak ini dan cuba lagi.",
     "DownloadRejected": "Storage proxy menolak muat turun (HTTP {{status}}). Muat turun tidak bermula.",
     "DownloadSelected": "Muat turun",

@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
     "Download": "Скачать",
+    "DownloadInsecure": "Браузер заблокировал загрузку, поскольку эта страница открыта по HTTPS, а storage proxy по адресу {{origin}} использует только HTTP. Загрузка не началась.",
     "DownloadPopupBlocked": "Браузер заблокировал окно загрузки. Разрешите всплывающие окна для этого сайта и повторите попытку.",
     "DownloadRejected": "Storage proxy отклонил загрузку (HTTP {{status}}). Загрузка не началась.",
     "DownloadSelected": "Скачать",

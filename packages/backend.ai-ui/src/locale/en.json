@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
     "DeleteSelectedItemsDialog": "Delete Confirmation",
     "Download": "Download",
+    "DownloadInsecure": "The browser blocked the download because this page is served over HTTPS but the storage proxy at {{origin}} uses plain HTTP. The download did not start.",
     "DownloadPopupBlocked": "The browser blocked the download window. Allow pop-ups for this site and try again.",
     "DownloadRejected": "The storage proxy refused the download (HTTP {{status}}). The download did not start.",
     "DownloadSelected": "Download",

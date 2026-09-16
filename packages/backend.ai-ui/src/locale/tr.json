@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
     "Download": "İndir",
+    "DownloadInsecure": "Bu sayfa HTTPS üzerinden sunulurken {{origin}} adresindeki storage proxy sunucusu yalnızca HTTP kullandığı için tarayıcı indirmeyi engelledi. İndirme başlatılmadı.",
     "DownloadPopupBlocked": "Tarayıcı indirme penceresini engelledi. Bu site için açılır pencerelere izin verip yeniden deneyin.",
     "DownloadRejected": "Storage proxy indirmeyi reddetti (HTTP {{status}}). İndirme başlatılmadı.",
     "DownloadSelected": "İndir",

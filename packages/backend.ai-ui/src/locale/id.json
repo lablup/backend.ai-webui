@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
     "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
     "Download": "Unduh",
+    "DownloadInsecure": "Browser memblokir unduhan karena halaman ini disajikan melalui HTTPS, tetapi storage proxy di {{origin}} hanya menggunakan HTTP. Unduhan tidak dimulai.",
     "DownloadPopupBlocked": "Peramban memblokir jendela unduhan. Izinkan pop-up untuk situs ini lalu coba lagi.",
     "DownloadRejected": "Storage proxy menolak unduhan (HTTP {{status}}). Unduhan tidak dimulai.",
     "DownloadSelected": "Unduh",

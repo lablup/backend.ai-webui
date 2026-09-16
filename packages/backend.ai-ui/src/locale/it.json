@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
     "DeleteSelectedItemsDialog": "Elimina la conferma",
     "Download": "Scarica",
+    "DownloadInsecure": "Il browser ha bloccato il download perché questa pagina è servita tramite HTTPS, ma lo storage proxy su {{origin}} usa solo HTTP. Il download non è stato avviato.",
     "DownloadPopupBlocked": "Il browser ha bloccato la finestra di download. Consenti i pop-up per questo sito e riprova.",
     "DownloadRejected": "Lo storage proxy ha rifiutato il download (HTTP {{status}}). Il download non è stato avviato.",
     "DownloadSelected": "Scarica",

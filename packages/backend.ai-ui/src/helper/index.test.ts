@@ -445,6 +445,34 @@ describe('initiateDownload', () => {
     expect(document.querySelector('a[download]')).toBeNull();
   });
 
+  it('reports a mixed-content block instead of a network failure', async () => {
+    vi.stubGlobal('location', new URL('https://webui.example.com/data'));
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const error = await initiateDownload(DOWNLOAD_URL, 'notes.txt').catch(
+      (e) => e,
+    );
+
+    expect(error).toBeInstanceOf(DownloadFailedError);
+    expect(error.reason).toBe('insecure');
+    expect(error.origin).toBe('http://10.0.0.1:6021');
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(clickSpy).not.toHaveBeenCalled();
+  });
+
+  it('still probes an https proxy from an https page', async () => {
+    vi.stubGlobal('location', new URL('https://webui.example.com/data'));
+    const fetchMock = vi.fn().mockResolvedValue(okResponse());
+    vi.stubGlobal('fetch', fetchMock);
+    const secureURL = 'https://10.0.0.1:6021/download?token=jwt';
+
+    await initiateDownload(secureURL, 'notes.txt');
+
+    expect(fetchMock).toHaveBeenCalledWith(secureURL);
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('reports an unreachable proxy instead of starting a download', async () => {
     const cause = new TypeError('Failed to fetch');
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(cause));

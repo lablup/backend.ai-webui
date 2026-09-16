@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
     "Download": "Татаж авах",
+    "DownloadInsecure": "Энэ хуудас HTTPS-ээр үйлчилдэг боловч {{origin}} дэх storage proxy зөвхөн HTTP ашигладаг тул хөтөч татаж авахыг хориглосон. Татаж авах эхлээгүй.",
     "DownloadPopupBlocked": "Хөтөч татах цонхыг блоклолоо. Энэ сайтын попап цонхыг зөвшөөрөөд дахин оролдоно уу.",
     "DownloadRejected": "Storage proxy татахыг татгалзлаа (HTTP {{status}}). Татаж авах эхлээгүй.",
     "DownloadSelected": "Татаж авах",

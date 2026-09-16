@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
     "Download": "ดาวน์โหลด",
+    "DownloadInsecure": "เบราว์เซอร์บล็อกการดาวน์โหลด เนื่องจากหน้านี้ให้บริการผ่าน HTTPS แต่ storage proxy ที่ {{origin}} ใช้เพียง HTTP การดาวน์โหลดไม่ได้เริ่มต้น",
     "DownloadPopupBlocked": "เบราว์เซอร์บล็อกหน้าต่างดาวน์โหลด โปรดอนุญาตป๊อปอัปสำหรับเว็บไซต์นี้แล้วลองอีกครั้ง",
     "DownloadRejected": "storage proxy ปฏิเสธการดาวน์โหลด (HTTP {{status}}) การดาวน์โหลดไม่ได้เริ่มต้น",
     "DownloadSelected": "ดาวน์โหลด",

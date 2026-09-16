@@ -492,7 +492,7 @@ export const useSemanticColorMap = (): Record<SemanticColor, string> => {
 };
 
 export type DownloadFailureReason =
-  'unreachable' | 'rejected' | 'popup-blocked';
+  'insecure' | 'unreachable' | 'rejected' | 'popup-blocked';
 
 /**
  * Thrown when a download never reached the browser's download manager.
@@ -543,7 +543,23 @@ const originOf = (url: string): string => {
  * soon as the status line arrives, and the token still works for the real
  * transfer. It does not support `HEAD` (405).
  */
+// An `http:` subresource on an `https:` page is refused before any request
+// leaves the browser, and the resulting TypeError looks like a network failure.
+const isBlockedMixedContent = (downloadURL: string): boolean => {
+  if (globalThis.location?.protocol !== 'https:') {
+    return false;
+  }
+  try {
+    return new URL(downloadURL, globalThis.location.href).protocol === 'http:';
+  } catch {
+    return false;
+  }
+};
+
 const verifyDownloadURL = async (downloadURL: string): Promise<void> => {
+  if (isBlockedMixedContent(downloadURL)) {
+    throw new DownloadFailedError(downloadURL, 'insecure');
+  }
   let response: Response;
   try {
     response = await fetch(downloadURL);

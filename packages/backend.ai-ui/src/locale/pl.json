@@ -643,6 +643,7 @@
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
     "Download": "Pobierz",
+    "DownloadInsecure": "Przeglądarka zablokowała pobieranie, ponieważ ta strona jest udostępniana przez HTTPS, a storage proxy pod adresem {{origin}} używa tylko HTTP. Pobieranie nie zostało rozpoczęte.",
     "DownloadPopupBlocked": "Przeglądarka zablokowała okno pobierania. Zezwól na wyskakujące okienka dla tej witryny i spróbuj ponownie.",
     "DownloadRejected": "Storage proxy odrzucił pobieranie (HTTP {{status}}). Pobieranie nie zostało rozpoczęte.",
     "DownloadSelected": "Pobierz",
