@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="사용자 설정" />
   <meta name="twitter:description" content="사용자 설정 대화 상자에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하면 보고 있던 페이지 위에 열리므로, 닫으면 하던 작업으로 그대로 돌아갑니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"사용자 설정","inLanguage":"ko","description":"사용자 설정 대화 상자에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하면 보고 있던 페이지 위에 열리므로, 닫으면 하던 작업으로 그대로 돌아갑니다.","dateModified":"2026-09-11T04:15:46.000Z","url":"https://webui.docs.backend.ai/next/ko/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"사용자 설정","inLanguage":"ko","description":"사용자 설정 대화 상자에서는 Backend.AI WebUI 환경을 사용자 정의할 수 있습니다. 우측 상단의 사람 아이콘을 클릭한 후 설정 메뉴를 선택하면 보고 있던 페이지 위에 열리므로, 닫으면 하던 작업으로 그대로 돌아갑니다.","dateModified":"2026-09-16T02:35:10.000Z","url":"https://webui.docs.backend.ai/next/ko/user_settings.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/user_settings.html" />
   <link rel="alternate" hreflang="en" href="../en/user_settings.html" />
   <link rel="alternate" hreflang="ja" href="../ja/user_settings.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (2e1cd15)">v26.9.0-alpha.0 (2e1cd15)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b3ded09)">v26.9.0-alpha.0 (b3ded09)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -534,7 +534,8 @@ WebUI에 <strong>재로그인 필요</strong> 알림과 함께 <em>&quot;기본 
 <strong>Hugging Face 모델 가져오기</strong> 탭을 추가하여, Hugging Face의 모델을 모델
 폴더로 바로 가져올 수 있습니다. 이 탭은 설치 환경에서 모델 배포 기능을 함께
 사용할 수 있는 경우에만 표시됩니다.</li>
-<li data-bai-block="122"><strong>세션 리소스 그리드 뷰</strong>: 세션 페이지와 관리자용 세션 페이지의 세션 목록
+<li data-bai-block="122"><strong>세션 리소스 그리드 뷰</strong>: 세션 페이지, 관리자용 세션 페이지, 그리고
+<code>자원</code> 페이지의 <strong>에이전트 정보</strong> 패널 <strong>세션</strong> 탭에 있는 세션 목록
 위에 <strong>보기 모드</strong> 전환(<strong>테이블</strong> 또는 <strong>그리드</strong>)을 추가합니다.
 <strong>그리드</strong>를 선택하면 테이블 대신 세션마다 셀이 하나씩 표시되며, 셀의 색은
 해당 세션의 실시간 자원 사용률을 나타냅니다. 이 전환 버튼은 해당 기능을
@@ -544,8 +545,8 @@ WebUI에 <strong>재로그인 필요</strong> 알림과 함께 <em>&quot;기본 
 <p><a id="logs-tab"></a></p>
 <h2 data-bai-block="123" id="user_settings-로그">로그<a class="hash-link" href="#user_settings-로그" aria-label="Direct link to 로그">#</a></h2>
 <p data-bai-block="124">클라이언트 측에서 기록된 각종 로그의 상세 정보를 출력합니다. 요청 오류가
-발생했을 때 자세한 내용을 확인하고 싶다면 이 범주를 여십시오. 로그를
-검색하거나 에러 메시지를 필터링하고, 로그를 새로고침하거나 우측 상단의
+발생했을 때 자세한 내용을 확인하고 싶다면 이 범주를 살펴볼 수 있습니다.
+로그를 검색하거나 에러 메시지를 필터링하고, 로그를 새로고침하거나 우측 상단의
 <strong>로그 삭제</strong> 버튼을 클릭해서 모든 로그를 지울 수 있습니다.</p>
 <p><figure data-bai-block="125" class="doc-figure"><img src="./images/user_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 19.14</figcaption></figure>
 </p>
@@ -719,7 +720,7 @@ WebUI에 <strong>재로그인 필요</strong> 알림과 함께 <em>&quot;기본 
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 11일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 16일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./sftp_to_container.html">

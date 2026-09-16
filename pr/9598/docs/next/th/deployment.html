@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การปรับใช้" />
   <meta name="twitter:description" content="Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-09-10T06:37:15.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-09-14T05:21:25.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (2e1cd15)">v26.9.0-alpha.0 (2e1cd15)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b3ded09)">v26.9.0-alpha.0 (b3ded09)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -733,302 +733,303 @@
 <p data-bai-block="282">แท็บ <strong>ประวัติ Revision</strong> แสดงรายการ Revision ทั้งหมดที่เพิ่มในการปรับใช้ เรียงจากใหม่ไปเก่าตามค่าเริ่มต้น</p>
 <p><figure data-bai-block="283" class="doc-figure"><img src="./images/revision_history_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>รูปที่ 12.17</figcaption></figure>
 </p>
-<p data-bai-block="284">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
+<p data-bai-block="284">เหนือตารางมีแถบตัวกรองคุณสมบัติและปุ่มรีเฟรช คุณสามารถกรองรายการตาม <strong>หมายเลข Revision</strong>, <strong>วันที่สร้าง</strong>, <strong>โหมดคลัสเตอร์</strong>, <strong>อิมเมจ</strong> และ <strong>โฟลเดอร์โมเดล</strong> ได้ ค่าของ <strong>อิมเมจ</strong> และ <strong>โฟลเดอร์โมเดล</strong> จะเลือกจากรายการแบบเลื่อนลงแทนการพิมพ์ตัวระบุ และแท็กตัวกรองที่ได้จะแสดงชื่อที่คุณเลือก รายการแบบเลื่อนลงของ <strong>โฟลเดอร์โมเดล</strong> จำกัดขอบเขตอยู่ที่โปรเจกต์ของการปรับใช้นี้เอง และแสดงเฉพาะโฟลเดอร์ที่ใช้งานแบบโมเดลโดยไม่รวมโฟลเดอร์ที่ถูกลบแล้ว ซึ่งเป็นขอบเขตเดียวกับตัวเลือกโฟลเดอร์ในหน้าต่างเพิ่ม Revision</p>
+<p data-bai-block="285">ตารางประกอบด้วยคอลัมน์ต่อไปนี้:</p>
 <ul>
-<li data-bai-block="285"><strong>Revision (ID)</strong>: หมายเลข Revision และ UUID ของมัน หมายเลข Revision เป็นจำนวนเต็มที่เพิ่มขึ้น ตัวเลขที่น้อยกว่าคือ Revision ที่เก่ากว่า คลิกหมายเลข Revision เพื่อเปิด drawer รายละเอียด Revision</li>
-<li data-bai-block="286"><strong>สร้างเมื่อ</strong></li>
-<li data-bai-block="287"><strong>Runtime</strong>: รันไทม์การให้บริการที่ใช้สำหรับ Revision นี้ (เช่น <code>vLLM</code>, <code>SGLang</code>, หรือ <code>Custom</code>)</li>
-<li data-bai-block="288"><strong>โหมดคลัสเตอร์</strong>: รูปแบบการจัดกลุ่มในรูปแบบ &quot;โหมด / ขนาด&quot; วางเมาส์เหนือส่วนหัวคอลัมน์เพื่อดูคำอธิบาย</li>
+<li data-bai-block="286"><strong>Revision (ID)</strong>: หมายเลข Revision และ UUID ของมัน หมายเลข Revision เป็นจำนวนเต็มที่เพิ่มขึ้น ตัวเลขที่น้อยกว่าคือ Revision ที่เก่ากว่า คลิกหมายเลข Revision เพื่อเปิด drawer รายละเอียด Revision</li>
+<li data-bai-block="287"><strong>สร้างเมื่อ</strong></li>
+<li data-bai-block="288"><strong>Runtime</strong>: รันไทม์การให้บริการที่ใช้สำหรับ Revision นี้ (เช่น <code>vLLM</code>, <code>SGLang</code>, หรือ <code>Custom</code>)</li>
+<li data-bai-block="289"><strong>โหมดคลัสเตอร์</strong>: รูปแบบการจัดกลุ่มในรูปแบบ &quot;โหมด / ขนาด&quot; วางเมาส์เหนือส่วนหัวคอลัมน์เพื่อดูคำอธิบาย</li>
 </ul>
-<p data-bai-block="289">คอลัมน์ที่ซ่อนตามค่าเริ่มต้น แต่สามารถเปิดใช้งานได้จากการตั้งค่าคอลัมน์:</p>
+<p data-bai-block="290">คอลัมน์ที่ซ่อนตามค่าเริ่มต้น แต่สามารถเปิดใช้งานได้จากการตั้งค่าคอลัมน์:</p>
 <ul>
-<li data-bai-block="290"><strong>ชื่อโมเดล</strong>, <strong>อิมเมจ</strong>, <strong>โฟลเดอร์โมเดล</strong></li>
+<li data-bai-block="291"><strong>ชื่อโมเดล</strong>, <strong>อิมเมจ</strong>, <strong>โฟลเดอร์โมเดล</strong></li>
 </ul>
-<p data-bai-block="291"><strong>การปรับใช้ Revision และการกระทำอื่น ๆ</strong></p>
-<p data-bai-block="292">แต่ละแถวมีปุ่ม <strong>ปรับใช้</strong> และเมนูเพิ่มเติม</p>
+<p data-bai-block="292"><strong>การปรับใช้ Revision และการกระทำอื่น ๆ</strong></p>
+<p data-bai-block="293">แต่ละแถวมีปุ่ม <strong>ปรับใช้</strong> และเมนูเพิ่มเติม</p>
 <ul>
-<li data-bai-block="293"><p><strong>ปรับใช้</strong>: คลิกเพื่อเปิดกล่องโต้ตอบยืนยัน เมื่อยืนยัน Revision ที่เลือกจะกลายเป็น Revision ปัจจุบันและการปรับใช้จะเริ่มให้บริการทราฟฟิกด้วยการกำหนดค่าใหม่ Revision ก่อนหน้าจะถูกเก็บไว้ในประวัติ</p>
+<li data-bai-block="294"><p><strong>ปรับใช้</strong>: คลิกเพื่อเปิดกล่องโต้ตอบยืนยัน เมื่อยืนยัน Revision ที่เลือกจะกลายเป็น Revision ปัจจุบันและการปรับใช้จะเริ่มให้บริการทราฟฟิกด้วยการกำหนดค่าใหม่ Revision ก่อนหน้าจะถูกเก็บไว้ในประวัติ</p>
 </li>
-<li data-bai-block="294"><p><strong>สร้าง Revision ใหม่จากนี้</strong>: เลือกได้จากเมนูเพิ่มเติม จะเปิดหน้าต่างเพิ่ม Revision โดยกรอกการกำหนดค่าของ Revision นั้นไว้ล่วงหน้า เพื่อให้คุณแก้ไขและปรับใช้ใหม่ได้อย่างรวดเร็ว</p>
+<li data-bai-block="295"><p><strong>สร้าง Revision ใหม่จากนี้</strong>: เลือกได้จากเมนูเพิ่มเติม จะเปิดหน้าต่างเพิ่ม Revision โดยกรอกการกำหนดค่าของ Revision นั้นไว้ล่วงหน้า เพื่อให้คุณแก้ไขและปรับใช้ใหม่ได้อย่างรวดเร็ว</p>
 </li>
-<li data-bai-block="295"><p>แท็กสีเขียว <strong>ปัจจุบัน</strong> ทำเครื่องหมาย Revision ที่ใช้งานอยู่ในปัจจุบัน</p>
+<li data-bai-block="296"><p>แท็กสีเขียว <strong>ปัจจุบัน</strong> ทำเครื่องหมาย Revision ที่ใช้งานอยู่ในปัจจุบัน</p>
 </li>
-<li data-bai-block="296"><p>แท็กสีเหลือง <strong>กำลังปรับใช้</strong> (พร้อมตัวหมุนโหลด) ทำเครื่องหมาย Revision ที่กำลังถูกปรับใช้</p>
+<li data-bai-block="297"><p>แท็กสีเหลือง <strong>กำลังปรับใช้</strong> (พร้อมตัวหมุนโหลด) ทำเครื่องหมาย Revision ที่กำลังถูกปรับใช้</p>
 </li>
-<li data-bai-block="297"><p>ปุ่ม <strong>ปรับใช้</strong> ถูกปิดใช้งานสำหรับ Revision ที่ใช้งานอยู่และ Revision ที่กำลังถูกปรับใช้ และยังใช้งานไม่ได้ขณะที่การปรับใช้หยุดอยู่ หรือขณะที่การปรับใช้หรือการย้อนกลับกำลังดำเนินการอยู่แล้ว</p>
+<li data-bai-block="298"><p>ปุ่ม <strong>ปรับใช้</strong> ถูกปิดใช้งานสำหรับ Revision ที่ใช้งานอยู่และ Revision ที่กำลังถูกปรับใช้ และยังใช้งานไม่ได้ขณะที่การปรับใช้หยุดอยู่ หรือขณะที่การปรับใช้หรือการย้อนกลับกำลังดำเนินการอยู่แล้ว</p>
 </li>
 </ul>
-<p data-bai-block="298">การคลิกหมายเลข Revision ในแถวใด ๆ จะเปิด drawer รายละเอียด Revision ที่แสดงการกำหนดค่าทั้งหมดของ Revision นั้น Drawer ยังมีปุ่ม <strong>ปรับใช้</strong> และปุ่ม <strong>สร้าง Revision ใหม่จากนี้</strong> ด้วย โดยปุ่ม <strong>ปรับใช้</strong> จะถูกปิดใช้งานภายใต้เงื่อนไขเดียวกับในตาราง</p>
+<p data-bai-block="299">การคลิกหมายเลข Revision ในแถวใด ๆ จะเปิด drawer รายละเอียด Revision ที่แสดงการกำหนดค่าทั้งหมดของ Revision นั้น Drawer ยังมีปุ่ม <strong>ปรับใช้</strong> และปุ่ม <strong>สร้าง Revision ใหม่จากนี้</strong> ด้วย โดยปุ่ม <strong>ปรับใช้</strong> จะถูกปิดใช้งานภายใต้เงื่อนไขเดียวกับในตาราง</p>
 <div class="admonition admonition-note">
-<div data-bai-block="299" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="300" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="300">ฟิลด์ <strong>พารามิเตอร์ Runtime</strong> ยังปรากฏใน drawer รายละเอียด Revision สำหรับ Revision <code>vLLM</code> และ <code>SGLang</code> ด้วย โดยแสดงค่าพารามิเตอร์ preset เดียวกันกับแท็บ Revision ปัจจุบัน</p>
+<p data-bai-block="301">ฟิลด์ <strong>พารามิเตอร์ Runtime</strong> ยังปรากฏใน drawer รายละเอียด Revision สำหรับ Revision <code>vLLM</code> และ <code>SGLang</code> ด้วย โดยแสดงค่าพารามิเตอร์ preset เดียวกันกับแท็บ Revision ปัจจุบัน</p>
 </div></div>
 
 
-<h4 data-bai-block="301" id="deployment-แทบบนทกการตรวจสอบ">แท็บบันทึกการตรวจสอบ<a class="hash-link" href="#deployment-แทบบนทกการตรวจสอบ" aria-label="Direct link to แท็บบันทึกการตรวจสอบ">#</a></h4>
-<p data-bai-block="302">แท็บ <strong>บันทึกการตรวจสอบ (Audit Log)</strong> แสดงบันทึกตามลำดับเวลาของการดำเนินการทั้งหมดที่เกิดขึ้นกับการปรับใช้นี้ ใช้เพื่อติดตามว่าใครเปลี่ยนแปลงการปรับใช้และเมื่อใด</p>
-<p><figure data-bai-block="303" class="doc-figure"><img src="./images/audit_log_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="578" /><figcaption>รูปที่ 12.18</figcaption></figure>
+<h4 data-bai-block="302" id="deployment-แทบบนทกการตรวจสอบ">แท็บบันทึกการตรวจสอบ<a class="hash-link" href="#deployment-แทบบนทกการตรวจสอบ" aria-label="Direct link to แท็บบันทึกการตรวจสอบ">#</a></h4>
+<p data-bai-block="303">แท็บ <strong>บันทึกการตรวจสอบ (Audit Log)</strong> แสดงบันทึกตามลำดับเวลาของการดำเนินการทั้งหมดที่เกิดขึ้นกับการปรับใช้นี้ ใช้เพื่อติดตามว่าใครเปลี่ยนแปลงการปรับใช้และเมื่อใด</p>
+<p><figure data-bai-block="304" class="doc-figure"><img src="./images/audit_log_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="578" /><figcaption>รูปที่ 12.18</figcaption></figure>
 </p>
-<h3 data-bai-block="304" id="deployment-เรพลกา">เรพลิกา<a class="hash-link" href="#deployment-เรพลกา" aria-label="Direct link to เรพลิกา">#</a></h3>
-<p data-bai-block="305">แท็บเรพลิกาแสดง routing node ที่ประกอบกันเป็นการปรับใช้ รายการเรพลิกาจะถูกกรองด้วยตัวควบคุมแบบ radio <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong> ที่ด้านบนของแท็บ</p>
-<p><figure data-bai-block="306" class="doc-figure"><img src="./images/replica_status_filter.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>รูปที่ 12.19</figcaption></figure>
+<h3 data-bai-block="305" id="deployment-เรพลกา">เรพลิกา<a class="hash-link" href="#deployment-เรพลกา" aria-label="Direct link to เรพลิกา">#</a></h3>
+<p data-bai-block="306">แท็บเรพลิกาแสดง routing node ที่ประกอบกันเป็นการปรับใช้ รายการเรพลิกาจะถูกกรองด้วยตัวควบคุมแบบ radio <strong>กำลังทำงาน / สิ้นสุดแล้ว</strong> ที่ด้านบนของแท็บ</p>
+<p><figure data-bai-block="307" class="doc-figure"><img src="./images/replica_status_filter.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="502" /><figcaption>รูปที่ 12.19</figcaption></figure>
 </p>
 <ul>
-<li data-bai-block="307"><strong>กำลังทำงาน</strong>: แสดงเรพลิกาที่กำลังเตรียม กำลังทำงาน หรืออยู่ในสถานะใช้งานอื่น ๆ</li>
-<li data-bai-block="308"><strong>สิ้นสุดแล้ว</strong>: แสดงเรพลิกาที่สิ้นสุด lifecycle แล้ว</li>
+<li data-bai-block="308"><strong>กำลังทำงาน</strong>: แสดงเรพลิกาที่กำลังเตรียม กำลังทำงาน หรืออยู่ในสถานะใช้งานอื่น ๆ</li>
+<li data-bai-block="309"><strong>สิ้นสุดแล้ว</strong>: แสดงเรพลิกาที่สิ้นสุด lifecycle แล้ว</li>
 </ul>
-<p data-bai-block="309">แต่ละแถวของเรพลิกามีฟิลด์สถานะที่<strong>เป็นอิสระต่อกัน</strong>สามฟิลด์ ฟิลด์เหล่านี้แสดงมิติที่แตกต่างกันและควรอ่านร่วมกัน ตัวอย่างเช่น เรพลิกาอาจอยู่ในสถานะ Lifecycle <em>กำลังทำงาน</em> ในขณะที่สถานะสุขภาพยัง <em>ยังไม่ตรวจสอบ</em> อยู่</p>
+<p data-bai-block="310">แต่ละแถวของเรพลิกามีฟิลด์สถานะที่<strong>เป็นอิสระต่อกัน</strong>สามฟิลด์ ฟิลด์เหล่านี้แสดงมิติที่แตกต่างกันและควรอ่านร่วมกัน ตัวอย่างเช่น เรพลิกาอาจอยู่ในสถานะ Lifecycle <em>กำลังทำงาน</em> ในขณะที่สถานะสุขภาพยัง <em>ยังไม่ตรวจสอบ</em> อยู่</p>
 <ul>
-<li data-bai-block="310"><strong>สถานะ Lifecycle</strong>: ตำแหน่งของเรพลิกาใน lifecycle (เช่น <em>กำลังจัดเตรียม</em>, <em>กำลังอุ่นเครื่อง</em>, <em>กำลังทำงาน</em>, <em>กำลังสิ้นสุด</em>, <em>สิ้นสุดแล้ว</em>) ในระหว่าง <strong>กำลังอุ่นเครื่อง</strong> เรพลิกาจะอยู่ภายในระยะผ่อนผันการเริ่มต้น นั่นคือกำลังเริ่มต้นและรอการตรวจสอบสุขภาพครั้งแรกที่สำเร็จ ในช่วงนี้การตรวจสอบสุขภาพที่ล้มเหลวจะได้รับการยอมรับ เรพลิกาจะเปลี่ยนเป็น <em>กำลังทำงาน</em> เมื่อสำเร็จครั้งแรก และจะถูกสิ้นสุดหากไม่สำเร็จเลยจนกว่าช่วงเวลาจะสิ้นสุด หัวคอลัมน์จะแสดงเป็น <strong>วงจรชีวิต</strong></li>
-<li data-bai-block="311"><strong>สถานะสุขภาพ</strong>: สถานะสุขภาพปัจจุบันของกระบวนการเรพลิกา (<em>ปกติ</em>, <em>ผิดปกติ</em>, <em>เสื่อมสภาพ</em>, <em>ยังไม่ตรวจสอบ</em>)<ul>
-<li data-bai-block="312"><strong>ยังไม่ตรวจสอบ</strong> หมายความว่าการตรวจสอบสุขภาพครั้งแรกยังไม่เสร็จสมบูรณ์ โดยปกติเรพลิกายังอยู่ในช่วงผ่อนผัน <strong>กำลังอุ่นเครื่อง</strong> โดยตัวมันเองไม่ใช่ข้อผิดพลาด ให้ดู <strong>สถานะ Lifecycle</strong> เพื่อดูว่าเรพลิกาอยู่ในขั้นตอนใด</li>
+<li data-bai-block="311"><strong>สถานะ Lifecycle</strong>: ตำแหน่งของเรพลิกาใน lifecycle (เช่น <em>กำลังจัดเตรียม</em>, <em>กำลังอุ่นเครื่อง</em>, <em>กำลังทำงาน</em>, <em>กำลังสิ้นสุด</em>, <em>สิ้นสุดแล้ว</em>) ในระหว่าง <strong>กำลังอุ่นเครื่อง</strong> เรพลิกาจะอยู่ภายในระยะผ่อนผันการเริ่มต้น นั่นคือกำลังเริ่มต้นและรอการตรวจสอบสุขภาพครั้งแรกที่สำเร็จ ในช่วงนี้การตรวจสอบสุขภาพที่ล้มเหลวจะได้รับการยอมรับ เรพลิกาจะเปลี่ยนเป็น <em>กำลังทำงาน</em> เมื่อสำเร็จครั้งแรก และจะถูกสิ้นสุดหากไม่สำเร็จเลยจนกว่าช่วงเวลาจะสิ้นสุด หัวคอลัมน์จะแสดงเป็น <strong>วงจรชีวิต</strong></li>
+<li data-bai-block="312"><strong>สถานะสุขภาพ</strong>: สถานะสุขภาพปัจจุบันของกระบวนการเรพลิกา (<em>ปกติ</em>, <em>ผิดปกติ</em>, <em>เสื่อมสภาพ</em>, <em>ยังไม่ตรวจสอบ</em>)<ul>
+<li data-bai-block="313"><strong>ยังไม่ตรวจสอบ</strong> หมายความว่าการตรวจสอบสุขภาพครั้งแรกยังไม่เสร็จสมบูรณ์ โดยปกติเรพลิกายังอยู่ในช่วงผ่อนผัน <strong>กำลังอุ่นเครื่อง</strong> โดยตัวมันเองไม่ใช่ข้อผิดพลาด ให้ดู <strong>สถานะ Lifecycle</strong> เพื่อดูว่าเรพลิกาอยู่ในขั้นตอนใด</li>
 </ul>
 </li>
-<li data-bai-block="313"><strong>สถานะ Traffic</strong>: เรพลิกากำลังให้บริการคำขออยู่หรือไม่ เรพลิกาสามารถถูกนำออกจาก traffic โดยไม่ขึ้นกับสถานะสุขภาพ (เช่น เมื่อถูกปิดใช้งานด้วยตนเอง) จึงแสดง traffic เป็นสถานะแยกต่างหากแทนที่จะรวมเข้ากับสถานะสุขภาพ</li>
+<li data-bai-block="314"><strong>สถานะ Traffic</strong>: เรพลิกากำลังให้บริการคำขออยู่หรือไม่ เรพลิกาสามารถถูกนำออกจาก traffic โดยไม่ขึ้นกับสถานะสุขภาพ (เช่น เมื่อถูกปิดใช้งานด้วยตนเอง) จึงแสดง traffic เป็นสถานะแยกต่างหากแทนที่จะรวมเข้ากับสถานะสุขภาพ</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="314" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="315" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="315">สถานะทั้งสามเป็นมิติที่เป็นอิสระต่อกัน ในระหว่างขั้นตอน Lifecycle <strong>กำลังอุ่นเครื่อง</strong> เรพลิกาจะอยู่ภายในระยะผ่อนผันการเริ่มต้น และ <strong>สถานะสุขภาพ</strong> มักจะแสดงเป็น <em>ยังไม่ตรวจสอบ</em> จนกว่าการตรวจสอบครั้งแรกจะเสร็จสมบูรณ์ ซึ่งไม่ได้บ่งชี้ถึงปัญหาด้วยตัวมันเอง</p>
+<p data-bai-block="316">สถานะทั้งสามเป็นมิติที่เป็นอิสระต่อกัน ในระหว่างขั้นตอน Lifecycle <strong>กำลังอุ่นเครื่อง</strong> เรพลิกาจะอยู่ภายในระยะผ่อนผันการเริ่มต้น และ <strong>สถานะสุขภาพ</strong> มักจะแสดงเป็น <em>ยังไม่ตรวจสอบ</em> จนกว่าการตรวจสอบครั้งแรกจะเสร็จสมบูรณ์ ซึ่งไม่ได้บ่งชี้ถึงปัญหาด้วยตัวมันเอง</p>
 </div></div>
 
 
-<p data-bai-block="316">คลิกชื่อเซสชันในคอลัมน์ <strong>เซสชัน</strong> เพื่อเปิด drawer รายละเอียดเซสชัน คลิกหมายเลข Revision ในคอลัมน์ <strong>Revision (ID)</strong> เพื่อเปิด drawer รายละเอียด Revision</p>
+<p data-bai-block="317">คลิกชื่อเซสชันในคอลัมน์ <strong>เซสชัน</strong> เพื่อเปิด drawer รายละเอียดเซสชัน คลิกหมายเลข Revision ในคอลัมน์ <strong>Revision (ID)</strong> เพื่อเปิด drawer รายละเอียด Revision</p>
 <p><a id="replicas-tab-history"></a></p>
-<p data-bai-block="317">ถัดจากแท็กสถานะในคอลัมน์ <strong>วงจรชีวิต</strong> จะมีปุ่มไอคอนประวัติ เมื่อคลิกจะเปิดโมดอล <strong>ประวัติการจัดตารางเวลาของ Replica</strong> ของเรพลิกานั้น ซึ่งคุณสามารถกรองประวัติเหตุการณ์การจัดตารางของเรพลิกาได้ตามช่วงวันที่ สถานะ และอื่น ๆ</p>
-<p><figure data-bai-block="318" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.20</figcaption></figure>
+<p data-bai-block="318">ถัดจากแท็กสถานะในคอลัมน์ <strong>วงจรชีวิต</strong> จะมีปุ่มไอคอนประวัติ เมื่อคลิกจะเปิดโมดอล <strong>ประวัติการจัดตารางเวลาของ Replica</strong> ของเรพลิกานั้น ซึ่งคุณสามารถกรองประวัติเหตุการณ์การจัดตารางของเรพลิกาได้ตามช่วงวันที่ สถานะ และอื่น ๆ</p>
+<p><figure data-bai-block="319" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.20</figcaption></figure>
 </p>
-<p data-bai-block="319">หากเรพลิกาพบข้อผิดพลาด คลิกที่ตัวบ่งชี้ข้อผิดพลาดในแถวเพื่อเปิดหน้าต่าง JSON viewer ที่แสดงข้อมูลข้อผิดพลาดดิบ ซึ่งมีประโยชน์ในการวินิจฉัยปัญหาของเรพลิกาแต่ละตัว</p>
-<p><figure data-bai-block="320" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>รูปที่ 12.21</figcaption></figure>
+<p data-bai-block="320">หากเรพลิกาพบข้อผิดพลาด คลิกที่ตัวบ่งชี้ข้อผิดพลาดในแถวเพื่อเปิดหน้าต่าง JSON viewer ที่แสดงข้อมูลข้อผิดพลาดดิบ ซึ่งมีประโยชน์ในการวินิจฉัยปัญหาของเรพลิกาแต่ละตัว</p>
+<p><figure data-bai-block="321" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>รูปที่ 12.21</figcaption></figure>
 </p>
-<h3 data-bai-block="321" id="deployment-กฎการปรบขนาดอตโนมต">กฎการปรับขนาดอัตโนมัติ<a class="hash-link" href="#deployment-กฎการปรบขนาดอตโนมต" aria-label="Direct link to กฎการปรับขนาดอัตโนมัติ">#</a></h3>
-<p data-bai-block="322">กฎการปรับขนาดอัตโนมัติ (Auto Scaling Rules) จะเพิ่มหรือลดจำนวนเรพลิกาของบริการโมเดลโดยอัตโนมัติตามเมตริกสด ช่วยประหยัดทรัพยากรในช่วงการใช้งานต่ำ และป้องกันความล่าช้าหรือความล้มเหลวของคำขอในช่วงการใช้งานสูง</p>
-<p><figure data-bai-block="323" class="doc-figure"><img src="./images/auto_scaling_rules.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="576" /><figcaption>รูปที่ 12.22</figcaption></figure>
+<h3 data-bai-block="322" id="deployment-กฎการปรบขนาดอตโนมต">กฎการปรับขนาดอัตโนมัติ<a class="hash-link" href="#deployment-กฎการปรบขนาดอตโนมต" aria-label="Direct link to กฎการปรับขนาดอัตโนมัติ">#</a></h3>
+<p data-bai-block="323">กฎการปรับขนาดอัตโนมัติ (Auto Scaling Rules) จะเพิ่มหรือลดจำนวนเรพลิกาของบริการโมเดลโดยอัตโนมัติตามเมตริกสด ช่วยประหยัดทรัพยากรในช่วงการใช้งานต่ำ และป้องกันความล่าช้าหรือความล้มเหลวของคำขอในช่วงการใช้งานสูง</p>
+<p><figure data-bai-block="324" class="doc-figure"><img src="./images/auto_scaling_rules.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="576" /><figcaption>รูปที่ 12.22</figcaption></figure>
 </p>
-<p data-bai-block="324">รายการกฎให้บริการดังนี้:</p>
+<p data-bai-block="325">รายการกฎให้บริการดังนี้:</p>
 <ul>
-<li data-bai-block="325">แถบตัวกรองคุณสมบัติสำหรับกรองกฎตามช่วงวันเวลาของ สร้างเวลา (Created At) และ ทริกเกอร์ครั้งสุดท้าย (Last Triggered)</li>
-<li data-bai-block="326">การแบ่งหน้าที่ฝั่งเซิร์ฟเวอร์</li>
-<li data-bai-block="327">คอลัมน์ต่อไปนี้: แหล่งวัด (Metric Source), เงื่อนไข (Condition), ระยะ Cooldown (Cooldown Sec.), ขนาดขั้นตอน (Step Size), เรพลิกาขั้นต่ำ / สูงสุด (Min / Max Replicas), สร้างเวลา (Created At), ทริกเกอร์ครั้งสุดท้าย (Last Triggered) คอลัมน์ขนาดขั้นตอนจะแสดง <code>+</code>, <code>−</code>, หรือ <code>±</code> โดยอัตโนมัติตามทิศทางที่ได้จากเกณฑ์ที่คุณตั้งไว้</li>
-<li data-bai-block="328">ไอคอนแก้ไขและลบต่อแถว แสดงถัดจากสรุปเงื่อนไขในแต่ละแถว</li>
+<li data-bai-block="326">แถบตัวกรองคุณสมบัติสำหรับกรองกฎตามช่วงวันเวลาของ สร้างเวลา (Created At) และ ทริกเกอร์ครั้งสุดท้าย (Last Triggered)</li>
+<li data-bai-block="327">การแบ่งหน้าที่ฝั่งเซิร์ฟเวอร์</li>
+<li data-bai-block="328">คอลัมน์ต่อไปนี้: แหล่งวัด (Metric Source), เงื่อนไข (Condition), ระยะ Cooldown (Cooldown Sec.), ขนาดขั้นตอน (Step Size), เรพลิกาขั้นต่ำ / สูงสุด (Min / Max Replicas), สร้างเวลา (Created At), ทริกเกอร์ครั้งสุดท้าย (Last Triggered) คอลัมน์ขนาดขั้นตอนจะแสดง <code>+</code>, <code>−</code>, หรือ <code>±</code> โดยอัตโนมัติตามทิศทางที่ได้จากเกณฑ์ที่คุณตั้งไว้</li>
+<li data-bai-block="329">ไอคอนแก้ไขและลบต่อแถว แสดงถัดจากสรุปเงื่อนไขในแต่ละแถว</li>
 </ul>
-<p data-bai-block="329">คลิกปุ่ม <code>เพิ่มกฎ</code> เพื่อเปิดตัวแก้ไข <strong>เพิ่มกฎการปรับขนาดอัตโนมัติ</strong></p>
-<p data-bai-block="330">หากต้องการแก้ไขกฎที่มีอยู่ ให้คลิกไอคอนแก้ไขในแถวนั้น ตัวแก้ไข <strong>แก้ไขกฎการปรับขนาดอัตโนมัติ</strong> จะเปิดขึ้นโดยมีค่าของกฎที่กรอกไว้ล่วงหน้า ตัวแก้ไขประกอบด้วยฟิลด์ต่อไปนี้ตามลำดับ:</p>
+<p data-bai-block="330">คลิกปุ่ม <code>เพิ่มกฎ</code> เพื่อเปิดตัวแก้ไข <strong>เพิ่มกฎการปรับขนาดอัตโนมัติ</strong></p>
+<p data-bai-block="331">หากต้องการแก้ไขกฎที่มีอยู่ ให้คลิกไอคอนแก้ไขในแถวนั้น ตัวแก้ไข <strong>แก้ไขกฎการปรับขนาดอัตโนมัติ</strong> จะเปิดขึ้นโดยมีค่าของกฎที่กรอกไว้ล่วงหน้า ตัวแก้ไขประกอบด้วยฟิลด์ต่อไปนี้ตามลำดับ:</p>
 <ul>
-<li data-bai-block="331"><p><strong>แหล่งวัด (Metric Source)</strong>: เลือก <code>Kernel</code> หรือ <code>Prometheus</code></p>
+<li data-bai-block="332"><p><strong>แหล่งวัด (Metric Source)</strong>: เลือก <code>Kernel</code> หรือ <code>Prometheus</code></p>
 </li>
-<li data-bai-block="332"><p><strong>ชื่อเมตริก (Metric Name)</strong>: สำหรับ <code>Kernel</code> ให้ใส่ชื่อเมตริก เมตริกทั่วไป เช่น <code>cpu_util</code>, <code>mem</code>, <code>net_rx</code> และ <code>net_tx</code> เป็นคำแนะนำให้เติมอัตโนมัติ และคุณยังสามารถพิมพ์ชื่อที่กำหนดเองได้อย่างอิสระ</p>
+<li data-bai-block="333"><p><strong>ชื่อเมตริก (Metric Name)</strong>: สำหรับ <code>Kernel</code> ให้ใส่ชื่อเมตริก เมตริกทั่วไป เช่น <code>cpu_util</code>, <code>mem</code>, <code>net_rx</code> และ <code>net_tx</code> เป็นคำแนะนำให้เติมอัตโนมัติ และคุณยังสามารถพิมพ์ชื่อที่กำหนดเองได้อย่างอิสระ</p>
 </li>
-<li data-bai-block="333"><p><strong>ชื่อเมตริกแบบ Preset (Metric Name (Prometheus Preset))</strong>: แสดงเฉพาะเมื่อแหล่งวัดเป็น <code>Prometheus</code> เลือก preset จากดรอปดาวน์ ชื่อเมตริก เทมเพลตคิวรี และ (เมื่อกำหนดไว้) ระยะ Cooldown (Cooldown Sec.) ของ preset จะถูกกรอกโดยอัตโนมัติ</p>
+<li data-bai-block="334"><p><strong>ชื่อเมตริกแบบ Preset (Metric Name (Prometheus Preset))</strong>: แสดงเฉพาะเมื่อแหล่งวัดเป็น <code>Prometheus</code> เลือก preset จากดรอปดาวน์ ชื่อเมตริก เทมเพลตคิวรี และ (เมื่อกำหนดไว้) ระยะ Cooldown (Cooldown Sec.) ของ preset จะถูกกรอกโดยอัตโนมัติ</p>
 </li>
-<li data-bai-block="334"><p><strong>เงื่อนไข (Condition)</strong>: ตัวควบคุมแบบแบ่งส่วนสำหรับเลือกทิศทางการปรับขนาด มีสามตัวเลือก</p>
+<li data-bai-block="335"><p><strong>เงื่อนไข (Condition)</strong>: ตัวควบคุมแบบแบ่งส่วนสำหรับเลือกทิศทางการปรับขนาด มีสามตัวเลือก</p>
 <ul>
-<li data-bai-block="335"><strong>ย่อขนาด</strong>: ลดจำนวนเรพลิกาเมื่อเมตริกต่ำกว่าเกณฑ์ กำหนดเงื่อนไข <code>Metric &lt; [เกณฑ์]</code></li>
-<li data-bai-block="336"><strong>ขยายแนวนอน</strong>: เพิ่มจำนวนเรพลิกาเมื่อเมตริกสูงกว่าเกณฑ์ กำหนดเงื่อนไข <code>Metric &gt; [เกณฑ์]</code></li>
-<li data-bai-block="337"><strong>ขยายและย่อขนาด</strong>: ปรับขยายหรือลดขนาดโดยอัตโนมัติตามด้านที่เมตริกข้ามออกจากช่วงที่กำหนด กำหนดเงื่อนไข <code>Metric &lt; Min Threshold</code> หรือ <code>Metric &gt; Max Threshold</code></li>
+<li data-bai-block="336"><strong>ย่อขนาด</strong>: ลดจำนวนเรพลิกาเมื่อเมตริกต่ำกว่าเกณฑ์ กำหนดเงื่อนไข <code>Metric &lt; [เกณฑ์]</code></li>
+<li data-bai-block="337"><strong>ขยายแนวนอน</strong>: เพิ่มจำนวนเรพลิกาเมื่อเมตริกสูงกว่าเกณฑ์ กำหนดเงื่อนไข <code>Metric &gt; [เกณฑ์]</code></li>
+<li data-bai-block="338"><strong>ขยายและย่อขนาด</strong>: ปรับขยายหรือลดขนาดโดยอัตโนมัติตามด้านที่เมตริกข้ามออกจากช่วงที่กำหนด กำหนดเงื่อนไข <code>Metric &lt; Min Threshold</code> หรือ <code>Metric &gt; Max Threshold</code></li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="338" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>รูปที่ 12.23</figcaption></figure>
+<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>รูปที่ 12.23</figcaption></figure>
 </p>
 <ul>
-<li data-bai-block="339"><p><strong>ขนาดขั้นตอน (Step Size)</strong>: จำนวนเต็มบวกที่ระบุจำนวนเรพลิกาที่จะเพิ่มหรือลบต่อเหตุการณ์การปรับขนาด เครื่องหมาย <code>-</code>, <code>+</code>, หรือ <code>±</code> จะแสดงโดยอัตโนมัติตามเงื่อนไขที่เลือก (ย่อขนาด / ขยายแนวนอน / ขยายและย่อขนาด)</p>
+<li data-bai-block="340"><p><strong>ขนาดขั้นตอน (Step Size)</strong>: จำนวนเต็มบวกที่ระบุจำนวนเรพลิกาที่จะเพิ่มหรือลบต่อเหตุการณ์การปรับขนาด เครื่องหมาย <code>-</code>, <code>+</code>, หรือ <code>±</code> จะแสดงโดยอัตโนมัติตามเงื่อนไขที่เลือก (ย่อขนาด / ขยายแนวนอน / ขยายและย่อขนาด)</p>
 <ul>
-<li data-bai-block="340">ตั้งเฉพาะเกณฑ์ต่ำสุด: <code>[metric] &lt; [minThreshold]</code> จะทริกเกอร์ <strong>ย่อขนาด</strong> (เรพลิกาลดลงเมื่อเมตริกต่ำกว่าเกณฑ์)</li>
-<li data-bai-block="341">ตั้งเฉพาะเกณฑ์สูงสุด: <code>[metric] &gt; [maxThreshold]</code> จะทริกเกอร์ <strong>ขยายแนวนอน</strong> (เรพลิกาเพิ่มขึ้นเมื่อเมตริกสูงกว่าเกณฑ์)</li>
-<li data-bai-block="342">ตั้งทั้งสองเกณฑ์: หาก <code>[metric] &lt; [minThreshold]</code> เรพลิกาจะ <strong>ย่อขนาด</strong>; หาก <code>[metric] &gt; [maxThreshold]</code> เรพลิกาจะ <strong>ขยายแนวนอน</strong></li>
+<li data-bai-block="341">ตั้งเฉพาะเกณฑ์ต่ำสุด: <code>[metric] &lt; [minThreshold]</code> จะทริกเกอร์ <strong>ย่อขนาด</strong> (เรพลิกาลดลงเมื่อเมตริกต่ำกว่าเกณฑ์)</li>
+<li data-bai-block="342">ตั้งเฉพาะเกณฑ์สูงสุด: <code>[metric] &gt; [maxThreshold]</code> จะทริกเกอร์ <strong>ขยายแนวนอน</strong> (เรพลิกาเพิ่มขึ้นเมื่อเมตริกสูงกว่าเกณฑ์)</li>
+<li data-bai-block="343">ตั้งทั้งสองเกณฑ์: หาก <code>[metric] &lt; [minThreshold]</code> เรพลิกาจะ <strong>ย่อขนาด</strong>; หาก <code>[metric] &gt; [maxThreshold]</code> เรพลิกาจะ <strong>ขยายแนวนอน</strong></li>
 </ul>
 </li>
-<li data-bai-block="343"><p><strong>ระยะ Cooldown (Cooldown Sec.)</strong>: เวลาเป็นวินาทีที่รอหลังจากเหตุการณ์การปรับขนาดก่อนการประเมินครั้งถัดไป</p>
+<li data-bai-block="344"><p><strong>ระยะ Cooldown (Cooldown Sec.)</strong>: เวลาเป็นวินาทีที่รอหลังจากเหตุการณ์การปรับขนาดก่อนการประเมินครั้งถัดไป</p>
 </li>
-<li data-bai-block="344"><p><strong>เรพลิกาขั้นต่ำ (Min Replicas) และเรพลิกาสูงสุด (Max Replicas)</strong>: ขอบเขตล่างและบนที่การปรับขนาดอัตโนมัติบังคับใช้กับจำนวนเรพลิกา การปรับขนาดอัตโนมัติจะไม่ลดจำนวนเรพลิกาต่ำกว่าเรพลิกาขั้นต่ำ หรือเพิ่มให้มากกว่าเรพลิกาสูงสุด</p>
+<li data-bai-block="345"><p><strong>เรพลิกาขั้นต่ำ (Min Replicas) และเรพลิกาสูงสุด (Max Replicas)</strong>: ขอบเขตล่างและบนที่การปรับขนาดอัตโนมัติบังคับใช้กับจำนวนเรพลิกา การปรับขนาดอัตโนมัติจะไม่ลดจำนวนเรพลิกาต่ำกว่าเรพลิกาขั้นต่ำ หรือเพิ่มให้มากกว่าเรพลิกาสูงสุด</p>
 </li>
 </ul>
-<p><figure data-bai-block="345" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>รูปที่ 12.24</figcaption></figure>
+<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>รูปที่ 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
-<h3 data-bai-block="346" id="deployment-การสรางโทเคน">การสร้างโทเค็น<a class="hash-link" href="#deployment-การสรางโทเคน" aria-label="Direct link to การสร้างโทเค็น">#</a></h3>
-<p data-bai-block="347">เมื่อสถานะการปรับใช้เป็น <code>HEALTHY</code> ให้คลิกชื่อการปรับใช้ในรายการการปรับใช้เพื่อเปิดหน้าข้อมูลรายละเอียดการปรับใช้ คุณสามารถตรวจสอบ URL <strong>Service Endpoint</strong> ได้ในการ์ดข้อมูลบริการ หาก <strong>เปิดสาธารณะ</strong> เปิดใช้งาน ผู้ใช้ปลายทางสามารถเข้าถึงการปรับใช้ได้โดยไม่ต้องใช้โทเค็น หากปิดใช้งาน ให้สร้างโทเค็นตามคำอธิบายด้านล่าง</p>
-<p data-bai-block="348">โทเค็นการเข้าถึงจัดการได้จากการ์ด <strong>โทเค็นการเข้าถึง</strong> ที่ด้านล่างของหน้าข้อมูลรายละเอียดการปรับใช้ วางเมาส์เหนือไอคอน ⓘ ถัดจากชื่อการ์ดเพื่อดูคำอธิบาย: <em>&quot;จัดการโทเค็นการเข้าถึงสำหรับการยืนยันตัวตนคำขอ API ไปยังเอนด์พอยต์ของการปรับใช้นี้&quot;</em></p>
-<p><figure data-bai-block="349" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>รูปที่ 12.25</figcaption></figure>
+<h3 data-bai-block="347" id="deployment-การสรางโทเคน">การสร้างโทเค็น<a class="hash-link" href="#deployment-การสรางโทเคน" aria-label="Direct link to การสร้างโทเค็น">#</a></h3>
+<p data-bai-block="348">เมื่อสถานะการปรับใช้เป็น <code>HEALTHY</code> ให้คลิกชื่อการปรับใช้ในรายการการปรับใช้เพื่อเปิดหน้าข้อมูลรายละเอียดการปรับใช้ คุณสามารถตรวจสอบ URL <strong>Service Endpoint</strong> ได้ในการ์ดข้อมูลบริการ หาก <strong>เปิดสาธารณะ</strong> เปิดใช้งาน ผู้ใช้ปลายทางสามารถเข้าถึงการปรับใช้ได้โดยไม่ต้องใช้โทเค็น หากปิดใช้งาน ให้สร้างโทเค็นตามคำอธิบายด้านล่าง</p>
+<p data-bai-block="349">โทเค็นการเข้าถึงจัดการได้จากการ์ด <strong>โทเค็นการเข้าถึง</strong> ที่ด้านล่างของหน้าข้อมูลรายละเอียดการปรับใช้ วางเมาส์เหนือไอคอน ⓘ ถัดจากชื่อการ์ดเพื่อดูคำอธิบาย: <em>&quot;จัดการโทเค็นการเข้าถึงสำหรับการยืนยันตัวตนคำขอ API ไปยังเอนด์พอยต์ของการปรับใช้นี้&quot;</em></p>
+<p><figure data-bai-block="350" class="doc-figure"><img src="./images/generate_token.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="410" /><figcaption>รูปที่ 12.25</figcaption></figure>
 </p>
-<h4 data-bai-block="350" id="deployment-การสรางโทเคนการเขาถง">การสร้างโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-การสรางโทเคนการเขาถง" aria-label="Direct link to การสร้างโทเค็นการเข้าถึง">#</a></h4>
+<h4 data-bai-block="351" id="deployment-การสรางโทเคนการเขาถง">การสร้างโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-การสรางโทเคนการเขาถง" aria-label="Direct link to การสร้างโทเค็นการเข้าถึง">#</a></h4>
 <ol>
-<li data-bai-block="351">คลิกปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> ในส่วนหัวของการ์ด หรือคลิก <strong>เพิ่มโทเค็นการเข้าถึง</strong> ในแบนเนอร์ <strong>การปรับใช้แบบส่วนตัว</strong> ที่ด้านบนของหน้า ซึ่งจะเปิดหน้าต่างเดียวกัน</li>
-<li data-bai-block="352">เลือก <strong>วันหมดอายุ</strong> ของโทเค็น<ul>
-<li data-bai-block="353"><code>7 วัน</code>, <code>30 วัน</code> หรือ <code>90 วัน</code>: โทเค็นจะหมดอายุตามจำนวนวันดังกล่าวนับจากตอนนี้ ค่าเริ่มต้นคือ <code>7 วัน</code></li>
-<li data-bai-block="354"><strong>วันหมดอายุที่กำหนดเอง</strong>: จะแสดงตัวเลือกวันและเวลาเพื่อกำหนดเวลาหมดอายุเอง เวลาที่เลือกต้องอยู่ในอนาคต</li>
-<li data-bai-block="355"><strong>ไม่มีวันหมดอายุ</strong>: ตั้งวันหมดอายุเป็นวันที่ในอนาคตไกล ๆ (<code>31 ธันวาคม 2099</code>) ทำให้โทเค็นแทบไม่หมดอายุในทางปฏิบัติ หลังจากนี้ หน้าต่างโทเค็น รายการโทเค็น และตัวเลือกโทเค็นในหน้าแชท จะแสดงวันที่นี้แทนคำว่า &quot;ไม่มีวันหมดอายุ&quot;</li>
+<li data-bai-block="352">คลิกปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> ในส่วนหัวของการ์ด หรือคลิก <strong>เพิ่มโทเค็นการเข้าถึง</strong> ในแบนเนอร์ <strong>การปรับใช้แบบส่วนตัว</strong> ที่ด้านบนของหน้า ซึ่งจะเปิดหน้าต่างเดียวกัน</li>
+<li data-bai-block="353">เลือก <strong>วันหมดอายุ</strong> ของโทเค็น<ul>
+<li data-bai-block="354"><code>7 วัน</code>, <code>30 วัน</code> หรือ <code>90 วัน</code>: โทเค็นจะหมดอายุตามจำนวนวันดังกล่าวนับจากตอนนี้ ค่าเริ่มต้นคือ <code>7 วัน</code></li>
+<li data-bai-block="355"><strong>วันหมดอายุที่กำหนดเอง</strong>: จะแสดงตัวเลือกวันและเวลาเพื่อกำหนดเวลาหมดอายุเอง เวลาที่เลือกต้องอยู่ในอนาคต</li>
+<li data-bai-block="356"><strong>ไม่มีวันหมดอายุ</strong>: ตั้งวันหมดอายุเป็นวันที่ในอนาคตไกล ๆ (<code>31 ธันวาคม 2099</code>) ทำให้โทเค็นแทบไม่หมดอายุในทางปฏิบัติ หลังจากนี้ หน้าต่างโทเค็น รายการโทเค็น และตัวเลือกโทเค็นในหน้าแชท จะแสดงวันที่นี้แทนคำว่า &quot;ไม่มีวันหมดอายุ&quot;</li>
 </ul>
 </li>
-<li data-bai-block="356">คลิก <code>สร้างโทเค็นการเข้าถึง</code> เพื่อออกโทเค็น</li>
+<li data-bai-block="357">คลิก <code>สร้างโทเค็นการเข้าถึง</code> เพื่อออกโทเค็น</li>
 </ol>
-<p><figure data-bai-block="357" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>รูปที่ 12.26</figcaption></figure>
+<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>รูปที่ 12.26</figcaption></figure>
 </p>
 <blockquote>
-<p data-bai-block="358">ปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> จะถูกปิดใช้งานจนกว่า manager จะออก endpoint ของเครือข่ายให้การปรับใช้นี้ ระหว่างที่ปิดใช้งาน คำแนะนำของปุ่มจะระบุว่า <em>&quot;ยังไม่ได้ออก endpoint ของเครือข่าย&quot;</em> ปุ่มนี้ยังถูกปิดใช้งานสำหรับการปรับใช้ที่คุณไม่ได้เป็นเจ้าของ (<em>&quot;เฉพาะเจ้าของการปรับใช้เท่านั้นที่สามารถจัดการโทเค็นการเข้าถึงได้&quot;</em>) และการปรับใช้ที่กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป (<em>&quot;การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป&quot;</em>) สองเงื่อนไขหลังนี้ทำให้การลบโทเค็นถูกปิดใช้งานด้วยเช่นกัน</p>
+<p data-bai-block="359">ปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> จะถูกปิดใช้งานจนกว่า manager จะออก endpoint ของเครือข่ายให้การปรับใช้นี้ ระหว่างที่ปิดใช้งาน คำแนะนำของปุ่มจะระบุว่า <em>&quot;ยังไม่ได้ออก endpoint ของเครือข่าย&quot;</em> ปุ่มนี้ยังถูกปิดใช้งานสำหรับการปรับใช้ที่คุณไม่ได้เป็นเจ้าของ (<em>&quot;เฉพาะเจ้าของการปรับใช้เท่านั้นที่สามารถจัดการโทเค็นการเข้าถึงได้&quot;</em>) และการปรับใช้ที่กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป (<em>&quot;การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป&quot;</em>) สองเงื่อนไขหลังนี้ทำให้การลบโทเค็นถูกปิดใช้งานด้วยเช่นกัน</p>
 </blockquote>
-<p data-bai-block="359">เมื่อออกโทเค็นแล้ว หน้าต่าง <strong>โทเค็น</strong> จะแสดงค่าโทเค็นเพียงครั้งเดียว พร้อมปุ่มคัดลอกและวันหมดอายุที่คุณเลือก คัดลอกโทเค็นจากหน้าต่างนี้ หรือคัดลอกจากตารางในภายหลังก็ได้</p>
-<h4 data-bai-block="360" id="deployment-รายการโทเคนการเขาถง">รายการโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-รายการโทเคนการเขาถง" aria-label="Direct link to รายการโทเค็นการเข้าถึง">#</a></h4>
-<p data-bai-block="361">การ์ดนี้แสดงโทเค็นการเข้าถึงทุกรายการที่ออกให้การปรับใช้นี้ โดยเรียงจากใหม่ไปเก่า</p>
+<p data-bai-block="360">เมื่อออกโทเค็นแล้ว หน้าต่าง <strong>โทเค็น</strong> จะแสดงค่าโทเค็นเพียงครั้งเดียว พร้อมปุ่มคัดลอกและวันหมดอายุที่คุณเลือก คัดลอกโทเค็นจากหน้าต่างนี้ หรือคัดลอกจากตารางในภายหลังก็ได้</p>
+<h4 data-bai-block="361" id="deployment-รายการโทเคนการเขาถง">รายการโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-รายการโทเคนการเขาถง" aria-label="Direct link to รายการโทเค็นการเข้าถึง">#</a></h4>
+<p data-bai-block="362">การ์ดนี้แสดงโทเค็นการเข้าถึงทุกรายการที่ออกให้การปรับใช้นี้ โดยเรียงจากใหม่ไปเก่า</p>
 <ul>
-<li data-bai-block="362"><strong>โทเค็น</strong>: ค่าของโทเค็น แสดงแบบย่อพร้อมปุ่มคัดลอก ไอคอนลบในเซลล์เดียวกันใช้ลบโทเค็นได้</li>
-<li data-bai-block="363"><strong>สร้างเมื่อ</strong>: เวลาที่ออกโทเค็น</li>
-<li data-bai-block="364"><strong>วันหมดอายุ</strong>: เวลาที่โทเค็นจะหมดอายุ โทเค็นที่สร้างด้วย <strong>ไม่มีวันหมดอายุ</strong> จะแสดงเป็น <code>31 ธันวาคม 2099</code></li>
+<li data-bai-block="363"><strong>โทเค็น</strong>: ค่าของโทเค็น แสดงแบบย่อพร้อมปุ่มคัดลอก ไอคอนลบในเซลล์เดียวกันใช้ลบโทเค็นได้</li>
+<li data-bai-block="364"><strong>สร้างเมื่อ</strong>: เวลาที่ออกโทเค็น</li>
+<li data-bai-block="365"><strong>วันหมดอายุ</strong>: เวลาที่โทเค็นจะหมดอายุ โทเค็นที่สร้างด้วย <strong>ไม่มีวันหมดอายุ</strong> จะแสดงเป็น <code>31 ธันวาคม 2099</code></li>
 </ul>
-<p><figure data-bai-block="365" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>รูปที่ 12.27</figcaption></figure>
+<p><figure data-bai-block="366" class="doc-figure"><img src="./images/generated_token_copy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="384" /><figcaption>รูปที่ 12.27</figcaption></figure>
 </p>
-<p data-bai-block="366">ส่งโทเค็นไปในส่วนหัวคำขอ <code>Authorization</code></p>
+<p data-bai-block="367">ส่งโทเค็นไปในส่วนหัวคำขอ <code>Authorization</code></p>
 <table>
 <thead>
-<tr data-bai-block="367">
+<tr data-bai-block="368">
 <th>Key</th>
 <th>Value</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="368">
+<tbody><tr data-bai-block="369">
 <td>Content-Type</td>
 <td>application/json</td>
 </tr>
-<tr data-bai-block="369">
+<tr data-bai-block="370">
 <td>Authorization</td>
 <td>BackendAI <code>&lt;token&gt;</code></td>
 </tr>
 </tbody></table>
-<h4 data-bai-block="370" id="deployment-การลบโทเคนการเขาถง">การลบโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-การลบโทเคนการเขาถง" aria-label="Direct link to การลบโทเค็นการเข้าถึง">#</a></h4>
-<p data-bai-block="371">คลิกไอคอนลบในแถวของโทเค็น หน้าต่าง <strong>ลบโทเค็นการเข้าถึง</strong> จะขอให้คุณพิมพ์ <code>ลบ</code> เพื่อยืนยัน และปุ่มตกลงจะยังถูกปิดใช้งานจนกว่าข้อความที่พิมพ์จะตรงกัน</p>
+<h4 data-bai-block="371" id="deployment-การลบโทเคนการเขาถง">การลบโทเค็นการเข้าถึง<a class="hash-link" href="#deployment-การลบโทเคนการเขาถง" aria-label="Direct link to การลบโทเค็นการเข้าถึง">#</a></h4>
+<p data-bai-block="372">คลิกไอคอนลบในแถวของโทเค็น หน้าต่าง <strong>ลบโทเค็นการเข้าถึง</strong> จะขอให้คุณพิมพ์ <code>ลบ</code> เพื่อยืนยัน และปุ่มตกลงจะยังถูกปิดใช้งานจนกว่าข้อความที่พิมพ์จะตรงกัน</p>
 <div class="admonition admonition-danger">
-<div data-bai-block="372" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>อันตราย</div>
+<div data-bai-block="373" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>อันตราย</div>
 <div class="admonition-content">
 
-<p data-bai-block="373">การลบโทเค็นการเข้าถึง <strong>ไม่สามารถย้อนกลับได้</strong> และมีผลทันที ไคลเอนต์ที่ยังส่งโทเค็นนั้นอยู่จะเริ่มได้รับข้อผิดพลาดในการยืนยันตัวตน</p>
+<p data-bai-block="374">การลบโทเค็นการเข้าถึง <strong>ไม่สามารถย้อนกลับได้</strong> และมีผลทันที ไคลเอนต์ที่ยังส่งโทเค็นนั้นอยู่จะเริ่มได้รับข้อผิดพลาดในการยืนยันตัวตน</p>
 </div></div>
 
 
-<h3 data-bai-block="374" id="deployment-การยตการปรบใช">การยุติการปรับใช้<a class="hash-link" href="#deployment-การยตการปรบใช" aria-label="Direct link to การยุติการปรับใช้">#</a></h3>
-<p data-bai-block="375">หากไม่จำเป็นต้องใช้การปรับใช้แล้ว แนะนำให้ยุติการปรับใช้นั้น หากต้องการยุติการปรับใช้ ให้เปิดเมนู <strong>เพิ่มเติม</strong> บนการ์ดข้อมูลบริการ และเลือก <strong>ลบการปรับใช้</strong> หน้าต่างยืนยันแบบพิมพ์จะปรากฏขึ้น — พิมพ์ชื่อการปรับใช้เพื่อเปิดใช้งานปุ่ม <strong>ลบถาวร</strong> การปรับใช้ที่ยุติแล้วจะปรากฏในมุมมองตัวกรอง <strong>ถูกทำลาย</strong></p>
-<p><figure data-bai-block="376" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>รูปที่ 12.28</figcaption></figure>
+<h3 data-bai-block="375" id="deployment-การยตการปรบใช">การยุติการปรับใช้<a class="hash-link" href="#deployment-การยตการปรบใช" aria-label="Direct link to การยุติการปรับใช้">#</a></h3>
+<p data-bai-block="376">หากไม่จำเป็นต้องใช้การปรับใช้แล้ว แนะนำให้ยุติการปรับใช้นั้น หากต้องการยุติการปรับใช้ ให้เปิดเมนู <strong>เพิ่มเติม</strong> บนการ์ดข้อมูลบริการ และเลือก <strong>ลบการปรับใช้</strong> หน้าต่างยืนยันแบบพิมพ์จะปรากฏขึ้น — พิมพ์ชื่อการปรับใช้เพื่อเปิดใช้งานปุ่ม <strong>ลบถาวร</strong> การปรับใช้ที่ยุติแล้วจะปรากฏในมุมมองตัวกรอง <strong>ถูกทำลาย</strong></p>
+<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>รูปที่ 12.28</figcaption></figure>
 </p>
-<h2 data-bai-block="377" id="deployment-การเขาถงการปรบใชของคณ">การเข้าถึงการปรับใช้ของคุณ<a class="hash-link" href="#deployment-การเขาถงการปรบใชของคณ" aria-label="Direct link to การเข้าถึงการปรับใช้ของคุณ">#</a></h2>
-<h3 data-bai-block="378" id="deployment-การสงคำขอ-api">การส่งคำขอ API<a class="hash-link" href="#deployment-การสงคำขอ-api" aria-label="Direct link to การส่งคำขอ API">#</a></h3>
-<p data-bai-block="379">หากต้องการให้ผู้ใช้ปลายทางเรียกใช้การปรับใช้ของคุณ ให้แบ่งปัน URL การปรับใช้กับพวกเขา หาก <strong>เปิดสาธารณะ</strong> เปิดใช้งาน คุณสามารถแบ่งปัน URL <strong>Service Endpoint</strong> จากหน้าข้อมูลรายละเอียดการปรับใช้ได้โดยตรง สำหรับการปรับใช้แบบส่วนตัว ให้แบ่งปัน URL พร้อมกับ access token ด้วย</p>
-<p data-bai-block="380">นี่คือคำสั่ง <code>curl</code> ง่ายๆ เพื่อตรวจสอบว่าการส่งคำขอไปยัง URL การปรับใช้ทำงานอย่างถูกต้องหรือไม่:</p>
-<div data-bai-block="381" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
+<h2 data-bai-block="378" id="deployment-การเขาถงการปรบใชของคณ">การเข้าถึงการปรับใช้ของคุณ<a class="hash-link" href="#deployment-การเขาถงการปรบใชของคณ" aria-label="Direct link to การเข้าถึงการปรับใช้ของคุณ">#</a></h2>
+<h3 data-bai-block="379" id="deployment-การสงคำขอ-api">การส่งคำขอ API<a class="hash-link" href="#deployment-การสงคำขอ-api" aria-label="Direct link to การส่งคำขอ API">#</a></h3>
+<p data-bai-block="380">หากต้องการให้ผู้ใช้ปลายทางเรียกใช้การปรับใช้ของคุณ ให้แบ่งปัน URL การปรับใช้กับพวกเขา หาก <strong>เปิดสาธารณะ</strong> เปิดใช้งาน คุณสามารถแบ่งปัน URL <strong>Service Endpoint</strong> จากหน้าข้อมูลรายละเอียดการปรับใช้ได้โดยตรง สำหรับการปรับใช้แบบส่วนตัว ให้แบ่งปัน URL พร้อมกับ access token ด้วย</p>
+<p data-bai-block="381">นี่คือคำสั่ง <code>curl</code> ง่ายๆ เพื่อตรวจสอบว่าการส่งคำขอไปยัง URL การปรับใช้ทำงานอย่างถูกต้องหรือไม่:</p>
+<div data-bai-block="382" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> API_TOKEN</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;token>"</span></span>
 <span class="line"><span style="color:#F97583">export</span><span style="color:#E1E4E8"> MODEL_SERVICE_ENDPOINT</span><span style="color:#F97583">=</span><span style="color:#9ECBFF">"&#x3C;model-service-endpoint>"</span></span>
 <span class="line"><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -H</span><span style="color:#9ECBFF"> "Content-Type: application/json"</span><span style="color:#79B8FF"> -X</span><span style="color:#9ECBFF"> GET</span><span style="color:#79B8FF">    -H</span><span style="color:#9ECBFF"> "Authorization: BackendAI </span><span style="color:#E1E4E8">$API_TOKEN</span><span style="color:#9ECBFF">"</span><span style="color:#9ECBFF">    "</span><span style="color:#E1E4E8">$MODEL_SERVICE_ENDPOINT</span><span style="color:#9ECBFF">"</span></span></code></pre></div>
 <div class="admonition admonition-warning">
-<div data-bai-block="382" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
+<div data-bai-block="383" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>คำเตือน</div>
 <div class="admonition-content">
 
-<p data-bai-block="383">โดยค่าเริ่มต้น ผู้ใช้ปลายทางต้องอยู่ในเครือข่ายที่สามารถเข้าถึง
+<p data-bai-block="384">โดยค่าเริ่มต้น ผู้ใช้ปลายทางต้องอยู่ในเครือข่ายที่สามารถเข้าถึง
 endpoint ได้ หากบริการถูกสร้างในเครือข่ายปิด เฉพาะผู้ใช้ปลายทาง
 ที่มีการเข้าถึงภายในเครือข่ายปิดนั้นเท่านั้นที่สามารถเข้าถึงบริการได้</p>
 </div></div>
 
 
-<h3 data-bai-block="384" id="deployment-การทดสอบ-llm-chat">การทดสอบ LLM Chat<a class="hash-link" href="#deployment-การทดสอบ-llm-chat" aria-label="Direct link to การทดสอบ LLM Chat">#</a></h3>
-<p data-bai-block="385">หากคุณสร้างบริการ Large Language Model (LLM) คุณสามารถทดสอบ LLM แบบเรียลไทม์
+<h3 data-bai-block="385" id="deployment-การทดสอบ-llm-chat">การทดสอบ LLM Chat<a class="hash-link" href="#deployment-การทดสอบ-llm-chat" aria-label="Direct link to การทดสอบ LLM Chat">#</a></h3>
+<p data-bai-block="386">หากคุณสร้างบริการ Large Language Model (LLM) คุณสามารถทดสอบ LLM แบบเรียลไทม์
 เมื่อการปรับใช้พร้อมแล้ว ปุ่ม <code>ทดสอบในแชท</code> จะปรากฏในแบนเนอร์ <strong>การปรับใช้พร้อมแล้ว</strong> ที่ด้านบนของหน้าข้อมูลรายละเอียดการปรับใช้ คลิกปุ่มดังกล่าวเพื่อเริ่มการทดสอบ</p>
-<p><figure data-bai-block="386" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>รูปที่ 12.29</figcaption></figure>
+<p><figure data-bai-block="387" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>รูปที่ 12.29</figcaption></figure>
 </p>
-<p data-bai-block="387">คุณจะถูกเปลี่ยนเส้นทางไปยังหน้า Chat ซึ่งโมเดลที่คุณสร้างจะถูกเลือกโดยอัตโนมัติ
+<p data-bai-block="388">คุณจะถูกเปลี่ยนเส้นทางไปยังหน้า Chat ซึ่งโมเดลที่คุณสร้างจะถูกเลือกโดยอัตโนมัติ
 โดยใช้อินเทอร์เฟซแชทที่ให้บริการในหน้า Chat คุณสามารถทดสอบโมเดล LLM
 สำหรับข้อมูลเพิ่มเติมเกี่ยวกับฟีเจอร์แชท โปรดดู <a href="./chat.html#chat-page">หน้าแชท</a></p>
-<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>รูปที่ 12.30</figcaption></figure>
+<p><figure data-bai-block="389" class="doc-figure"><img src="./images/LLM_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>รูปที่ 12.30</figcaption></figure>
 </p>
-<h4 data-bai-block="389" id="deployment-การเลอกโทเคนในหนา-chat">การเลือกโทเค็นในหน้า Chat<a class="hash-link" href="#deployment-การเลอกโทเคนในหนา-chat" aria-label="Direct link to การเลือกโทเค็นในหน้า Chat">#</a></h4>
-<p data-bai-block="390">เมื่อหน้า Chat เชื่อมต่อกับการปรับใช้ของ Backend.AI ช่องโทเค็นจะไม่ใช่ช่องข้อความธรรมดา แต่เป็นตัวเลือกที่แสดงรายการโทเค็นการเข้าถึงของการปรับใช้นั้น</p>
+<h4 data-bai-block="390" id="deployment-การเลอกโทเคนในหนา-chat">การเลือกโทเค็นในหน้า Chat<a class="hash-link" href="#deployment-การเลอกโทเคนในหนา-chat" aria-label="Direct link to การเลือกโทเค็นในหน้า Chat">#</a></h4>
+<p data-bai-block="391">เมื่อหน้า Chat เชื่อมต่อกับการปรับใช้ของ Backend.AI ช่องโทเค็นจะไม่ใช่ช่องข้อความธรรมดา แต่เป็นตัวเลือกที่แสดงรายการโทเค็นการเข้าถึงของการปรับใช้นั้น</p>
 <ul>
-<li data-bai-block="391">แต่ละตัวเลือกจะแสดง <strong>อักขระ 6 ตัวสุดท้าย</strong> ของโทเค็นในรูปแบบโค้ด พร้อมวันหมดอายุ (เช่น <code>~ 26 ส.ค. 2026</code> หรือ <code>~ 31 ธ.ค. 2099</code> สำหรับโทเค็นที่สร้างด้วย <strong>ไม่มีวันหมดอายุ</strong>) เนื่องจากโทเค็นทุกตัวขึ้นต้นด้วยส่วนหัว JWT เหมือนกัน ส่วนท้ายจึงเป็นสิ่งที่ใช้แยกความแตกต่างได้จริง วางเมาส์เหนือตัวเลือกเพื่อดูเวลาที่ออกโทเค็น → เวลาหมดอายุแบบเต็ม</li>
-<li data-bai-block="392"><strong>โทเค็นที่หมดอายุแล้วจะไม่ถูกแสดง</strong> รายการจะมีเฉพาะโทเค็นที่ยังใช้ได้เท่านั้น</li>
-<li data-bai-block="393">เมื่อช่องยังว่าง ระบบจะเลือก <strong>โทเค็นที่ใช้ได้ซึ่งสร้างล่าสุด</strong> ให้โดยอัตโนมัติ หากคุณล้างการเลือกเอง ระบบจะไม่เลือกให้ใหม่อีก</li>
-<li data-bai-block="394">ไอคอนรูปเฟืองถัดจากช่อง (<strong>การตั้งค่าโทเค็นการเข้าถึง</strong>) จะพาไปยังส่วนโทเค็นการเข้าถึงของการปรับใช้นั้น เพื่อให้คุณออกโทเค็นใหม่ได้โดยไม่เสียบริบทเดิม เมื่อกลับมา รายการจะถูกโหลดใหม่ คุณจึงเลือกโทเค็นที่เพิ่งสร้างได้ทันที</li>
+<li data-bai-block="392">แต่ละตัวเลือกจะแสดง <strong>อักขระ 6 ตัวสุดท้าย</strong> ของโทเค็นในรูปแบบโค้ด พร้อมวันหมดอายุ (เช่น <code>~ 26 ส.ค. 2026</code> หรือ <code>~ 31 ธ.ค. 2099</code> สำหรับโทเค็นที่สร้างด้วย <strong>ไม่มีวันหมดอายุ</strong>) เนื่องจากโทเค็นทุกตัวขึ้นต้นด้วยส่วนหัว JWT เหมือนกัน ส่วนท้ายจึงเป็นสิ่งที่ใช้แยกความแตกต่างได้จริง วางเมาส์เหนือตัวเลือกเพื่อดูเวลาที่ออกโทเค็น → เวลาหมดอายุแบบเต็ม</li>
+<li data-bai-block="393"><strong>โทเค็นที่หมดอายุแล้วจะไม่ถูกแสดง</strong> รายการจะมีเฉพาะโทเค็นที่ยังใช้ได้เท่านั้น</li>
+<li data-bai-block="394">เมื่อช่องยังว่าง ระบบจะเลือก <strong>โทเค็นที่ใช้ได้ซึ่งสร้างล่าสุด</strong> ให้โดยอัตโนมัติ หากคุณล้างการเลือกเอง ระบบจะไม่เลือกให้ใหม่อีก</li>
+<li data-bai-block="395">ไอคอนรูปเฟืองถัดจากช่อง (<strong>การตั้งค่าโทเค็นการเข้าถึง</strong>) จะพาไปยังส่วนโทเค็นการเข้าถึงของการปรับใช้นั้น เพื่อให้คุณออกโทเค็นใหม่ได้โดยไม่เสียบริบทเดิม เมื่อกลับมา รายการจะถูกโหลดใหม่ คุณจึงเลือกโทเค็นที่เพิ่งสร้างได้ทันที</li>
 </ul>
-<p data-bai-block="395">หากการปรับใช้ไม่มีโทเค็นที่ใช้ได้เลย ตัวเลือกจะว่างเปล่า ให้สร้างโทเค็นก่อนตามที่อธิบายไว้ใน <a href="#generating-tokens">การสร้างโทเค็น</a></p>
-<p><figure data-bai-block="396" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>รูปที่ 12.31</figcaption></figure>
+<p data-bai-block="396">หากการปรับใช้ไม่มีโทเค็นที่ใช้ได้เลย ตัวเลือกจะว่างเปล่า ให้สร้างโทเค็นก่อนตามที่อธิบายไว้ใน <a href="#generating-tokens">การสร้างโทเค็น</a></p>
+<p><figure data-bai-block="397" class="doc-figure"><img src="./images/chat_deployment_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2184" height="454" /><figcaption>รูปที่ 12.31</figcaption></figure>
 </p>
-<p data-bai-block="397">หากคุณพบปัญหาในการเชื่อมต่อกับ API หน้าแชทจะแสดงตัวเลือกที่ให้คุณกำหนดค่าการตั้งค่าโมเดลด้วยตนเอง
+<p data-bai-block="398">หากคุณพบปัญหาในการเชื่อมต่อกับ API หน้าแชทจะแสดงตัวเลือกที่ให้คุณกำหนดค่าการตั้งค่าโมเดลด้วยตนเอง
 ในการใช้โมเดล คุณจะต้องมีข้อมูลต่อไปนี้:</p>
 <ul>
-<li data-bai-block="398"><strong>เส้นทางฐาน</strong> (ไม่บังคับ): Base URL ของเซิร์ฟเวอร์ที่โมเดลตั้งอยู่
+<li data-bai-block="399"><strong>เส้นทางฐาน</strong> (ไม่บังคับ): Base URL ของเซิร์ฟเวอร์ที่โมเดลตั้งอยู่
 ตรวจสอบให้แน่ใจว่าได้รวมข้อมูลเวอร์ชัน
 เช่น เมื่อใช้ OpenAI API คุณควรใส่ <a href="https://api.openai.com/v1">https://api.openai.com/v1</a></li>
-<li data-bai-block="399"><strong>โทเค็น</strong> (ไม่บังคับ): คีย์การรับรองความถูกต้องเพื่อเข้าถึงบริการโมเดล โทเค็นสามารถ
+<li data-bai-block="400"><strong>โทเค็น</strong> (ไม่บังคับ): คีย์การรับรองความถูกต้องเพื่อเข้าถึงบริการโมเดล โทเค็นสามารถ
 สร้างได้จากบริการต่างๆ ไม่ใช่แค่ Backend.AI เท่านั้น รูปแบบและกระบวนการสร้าง
 อาจแตกต่างกันไปขึ้นอยู่กับบริการ ควรอ้างถึงคู่มือของบริการเฉพาะสำหรับรายละเอียด
 เช่น เมื่อใช้บริการที่สร้างโดย Backend.AI โปรดดู
 <a href="#generating-tokens">การสร้างโทเค็น</a> สำหรับคำแนะนำเกี่ยวกับวิธีสร้างโทเค็น</li>
 </ul>
-<p><figure data-bai-block="400" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>รูปที่ 12.32</figcaption></figure>
+<p><figure data-bai-block="401" class="doc-figure"><img src="./images/LLM_chat_custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1460" height="900" /><figcaption>รูปที่ 12.32</figcaption></figure>
 </p>
 <p><a id="model-store"></a></p>
-<h2 data-bai-block="401" id="deployment-คลงโมเดล">คลังโมเดล<a class="hash-link" href="#deployment-คลงโมเดล" aria-label="Direct link to คลังโมเดล">#</a></h2>
-<p data-bai-block="402">คลังโมเดล (Model Store) ให้บริการแกลเลอรีแบบการ์ดของโมเดลที่กำหนดค่าไว้ล่วงหน้าซึ่งคุณสามารถเรียกดู ค้นหา และ deploy ได้ คุณสามารถเข้าถึงคลังโมเดลได้จากเมนูด้านข้าง</p>
-<p><figure data-bai-block="403" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>รูปที่ 12.33</figcaption></figure>
+<h2 data-bai-block="402" id="deployment-คลงโมเดล">คลังโมเดล<a class="hash-link" href="#deployment-คลงโมเดล" aria-label="Direct link to คลังโมเดล">#</a></h2>
+<p data-bai-block="403">คลังโมเดล (Model Store) ให้บริการแกลเลอรีแบบการ์ดของโมเดลที่กำหนดค่าไว้ล่วงหน้าซึ่งคุณสามารถเรียกดู ค้นหา และ deploy ได้ คุณสามารถเข้าถึงคลังโมเดลได้จากเมนูด้านข้าง</p>
+<p><figure data-bai-block="404" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>รูปที่ 12.33</figcaption></figure>
 </p>
-<h3 data-bai-block="404" id="deployment-การเรยกดและคนหาโมเดล">การเรียกดูและค้นหาโมเดล<a class="hash-link" href="#deployment-การเรยกดและคนหาโมเดล" aria-label="Direct link to การเรียกดูและค้นหาโมเดล">#</a></h3>
-<p data-bai-block="405">ส่วนบนของหน้าใช้รูปแบบตัวกรองและเรียงลำดับ:</p>
+<h3 data-bai-block="405" id="deployment-การเรยกดและคนหาโมเดล">การเรียกดูและค้นหาโมเดล<a class="hash-link" href="#deployment-การเรยกดและคนหาโมเดล" aria-label="Direct link to การเรียกดูและค้นหาโมเดล">#</a></h3>
+<p data-bai-block="406">ส่วนบนของหน้าใช้รูปแบบตัวกรองและเรียงลำดับ:</p>
 <ul>
-<li data-bai-block="406"><p><strong>แถบตัวกรองคุณสมบัติ</strong>: เพิ่มเงื่อนไขหนึ่งข้อขึ้นไปเพื่อจำกัดรายการการ์ด มีคุณสมบัติให้ใช้สองรายการ</p>
+<li data-bai-block="407"><p><strong>แถบตัวกรองคุณสมบัติ</strong>: เพิ่มเงื่อนไขหนึ่งข้อขึ้นไปเพื่อจำกัดรายการการ์ด มีคุณสมบัติให้ใช้สองรายการ</p>
 <ul>
-<li data-bai-block="407"><strong>ชื่อโมเดล</strong>: ค้นหาการ์ดโมเดลตามชื่อ</li>
-<li data-bai-block="408"><strong>โฮสต์ที่เก็บข้อมูล</strong>: กรองการ์ดตาม storage host ที่โฟลเดอร์โมเดลตั้งอยู่ แทนที่จะพิมพ์ชื่อโฮสต์ ให้เลือกจากดรอปดาวน์ของ storage host ที่ลงทะเบียนไว้บนเซิร์ฟเวอร์ ค่าที่เลือกจะถูกเพิ่มเป็นเงื่อนไขตัวกรองทันที ใช้ตัวดำเนินการ <code>equals</code> เพื่อแสดงเฉพาะโฮสต์นั้น หรือ <code>not equals</code> เพื่อยกเว้นโฮสต์นั้น</li>
+<li data-bai-block="408"><strong>ชื่อโมเดล</strong>: ค้นหาการ์ดโมเดลตามชื่อ</li>
+<li data-bai-block="409"><strong>โฮสต์ที่เก็บข้อมูล</strong>: กรองการ์ดตาม storage host ที่โฟลเดอร์โมเดลตั้งอยู่ แทนที่จะพิมพ์ชื่อโฮสต์ ให้เลือกจากดรอปดาวน์ของ storage host ที่ลงทะเบียนไว้บนเซิร์ฟเวอร์ ค่าที่เลือกจะถูกเพิ่มเป็นเงื่อนไขตัวกรองทันที ใช้ตัวดำเนินการ <code>equals</code> เพื่อแสดงเฉพาะโฮสต์นั้น หรือ <code>not equals</code> เพื่อยกเว้นโฮสต์นั้น</li>
 </ul>
 </li>
-<li data-bai-block="409"><p><strong>เรียงลำดับ (Sort)</strong>: เลือกวิธีการเรียงลำดับผลลัพธ์ ตัวเลือกที่ใช้งานได้คือ <code>ชื่อ (A→Z)</code>, <code>ชื่อ (Z→A)</code>, <code>เก่าสุดก่อน</code> และ <code>ใหม่สุดก่อน</code></p>
+<li data-bai-block="410"><p><strong>เรียงลำดับ (Sort)</strong>: เลือกวิธีการเรียงลำดับผลลัพธ์ ตัวเลือกที่ใช้งานได้คือ <code>ชื่อ (A→Z)</code>, <code>ชื่อ (Z→A)</code>, <code>เก่าสุดก่อน</code> และ <code>ใหม่สุดก่อน</code></p>
 </li>
-<li data-bai-block="410"><p><strong>รีเฟรช (Refresh)</strong>: คลิกปุ่มรีเฟรชเพื่อโหลดรายการการ์ดใหม่</p>
+<li data-bai-block="411"><p><strong>รีเฟรช (Refresh)</strong>: คลิกปุ่มรีเฟรชเพื่อโหลดรายการการ์ดใหม่</p>
 <p> เนื่องจากเลือกโฮสต์จากรายการแทนการพิมพ์เอง การพิมพ์ชื่อโฮสต์ผิดจึงไม่ทำให้ได้ผลลัพธ์ว่างเปล่าโดยไม่รู้ตัว เงื่อนไขจะถูกรวมกันด้วย <code>AND</code> คุณจึงใช้เงื่อนไขชื่อร่วมกับเงื่อนไข storage host ได้</p>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="411" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="412" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="412">รายการโมเดลจะถูกกำหนดขอบเขตโดยอัตโนมัติให้เฉพาะโปรเจกต์ MODEL_STORE ของโดเมนปัจจุบัน โดยไม่มีตัวกรองโดเมนแยกต่างหาก การ์ดทั้งหมดที่มองเห็นได้ในหน้านี้เป็นของโดเมนของคุณอยู่แล้ว</p>
+<p data-bai-block="413">รายการโมเดลจะถูกกำหนดขอบเขตโดยอัตโนมัติให้เฉพาะโปรเจกต์ MODEL_STORE ของโดเมนปัจจุบัน โดยไม่มีตัวกรองโดเมนแยกต่างหาก การ์ดทั้งหมดที่มองเห็นได้ในหน้านี้เป็นของโดเมนของคุณอยู่แล้ว</p>
 </div></div>
 
 
-<p data-bai-block="413">การ์ดแต่ละใบจะแสดงไอคอนแบรนด์ของโมเดล ชื่อเรื่อง (หรือชื่อเมื่อไม่มีการตั้งชื่อเรื่อง) แท็กงาน เวลาสร้างแบบสัมพัทธ์ และผู้เขียน (Author) พร้อมไอคอน การ์ดที่ <strong>ไม่มี preset ที่เข้ากันได้</strong> สำหรับโปรเจกต์ปัจจุบันจะถูกแสดงที่ความโปร่งใส 50 % คุณสามารถเปิดการ์ดดังกล่าวเพื่อดูรายละเอียดได้ แต่ปุ่ม <code>Deploy</code> จะถูกปิดใช้งานและมีการแจ้งเตือนข้อผิดพลาด <strong>ไม่มี preset ที่เข้ากันได้ ไม่สามารถ deploy โมเดลนี้ได้</strong> แสดงใน Drawer</p>
-<p data-bai-block="414">หากไม่ได้ตั้งค่าโปรเจกต์ <code>MODEL_STORE</code> บนเซิร์ฟเวอร์ หน้าจะแสดงข้อความ <em>ไม่พบโปรเจกต์ Model Store</em> พร้อมคำแนะนำให้ติดต่อผู้ดูแลระบบ หากไม่มีการ์ดโมเดลใดที่ตรงกับตัวกรองของคุณ หน้าจะแสดง <em>ไม่พบโมเดล</em></p>
-<p data-bai-block="415">รายการจะถูกแบ่งหน้าที่ด้านล่าง คุณสามารถเปลี่ยนขนาดหน้าระหว่าง <code>10</code>, <code>20</code> และ <code>50</code> รายการได้</p>
-<h3 data-bai-block="416" id="deployment-รายละเอยดการดโมเดล">รายละเอียดการ์ดโมเดล<a class="hash-link" href="#deployment-รายละเอยดการดโมเดล" aria-label="Direct link to รายละเอียดการ์ดโมเดล">#</a></h3>
-<p data-bai-block="417">คลิกการ์ดเพื่อเปิด Drawer การ์ดโมเดลทางด้านขวาของหน้า Drawer จะแสดงชื่อเรื่องและคำอธิบายโมเดลที่ด้านบน ตามด้วยแท็กงาน หมวดหมู่ ป้ายกำกับ และใบอนุญาต จากนั้นจะเป็นรายการรายละเอียดที่มีรายการต่อไปนี้:</p>
+<p data-bai-block="414">การ์ดแต่ละใบจะแสดงไอคอนแบรนด์ของโมเดล ชื่อเรื่อง (หรือชื่อเมื่อไม่มีการตั้งชื่อเรื่อง) แท็กงาน เวลาสร้างแบบสัมพัทธ์ และผู้เขียน (Author) พร้อมไอคอน การ์ดที่ <strong>ไม่มี preset ที่เข้ากันได้</strong> สำหรับโปรเจกต์ปัจจุบันจะถูกแสดงที่ความโปร่งใส 50 % คุณสามารถเปิดการ์ดดังกล่าวเพื่อดูรายละเอียดได้ แต่ปุ่ม <code>Deploy</code> จะถูกปิดใช้งานและมีการแจ้งเตือนข้อผิดพลาด <strong>ไม่มี preset ที่เข้ากันได้ ไม่สามารถ deploy โมเดลนี้ได้</strong> แสดงใน Drawer</p>
+<p data-bai-block="415">หากไม่ได้ตั้งค่าโปรเจกต์ <code>MODEL_STORE</code> บนเซิร์ฟเวอร์ หน้าจะแสดงข้อความ <em>ไม่พบโปรเจกต์ Model Store</em> พร้อมคำแนะนำให้ติดต่อผู้ดูแลระบบ หากไม่มีการ์ดโมเดลใดที่ตรงกับตัวกรองของคุณ หน้าจะแสดง <em>ไม่พบโมเดล</em></p>
+<p data-bai-block="416">รายการจะถูกแบ่งหน้าที่ด้านล่าง คุณสามารถเปลี่ยนขนาดหน้าระหว่าง <code>10</code>, <code>20</code> และ <code>50</code> รายการได้</p>
+<h3 data-bai-block="417" id="deployment-รายละเอยดการดโมเดล">รายละเอียดการ์ดโมเดล<a class="hash-link" href="#deployment-รายละเอยดการดโมเดล" aria-label="Direct link to รายละเอียดการ์ดโมเดล">#</a></h3>
+<p data-bai-block="418">คลิกการ์ดเพื่อเปิด Drawer การ์ดโมเดลทางด้านขวาของหน้า Drawer จะแสดงชื่อเรื่องและคำอธิบายโมเดลที่ด้านบน ตามด้วยแท็กงาน หมวดหมู่ ป้ายกำกับ และใบอนุญาต จากนั้นจะเป็นรายการรายละเอียดที่มีรายการต่อไปนี้:</p>
 <ul>
-<li data-bai-block="418"><strong>ผู้เขียน (Author)</strong></li>
-<li data-bai-block="419"><strong>สถาปัตยกรรม (Architecture)</strong></li>
-<li data-bai-block="420"><strong>เฟรมเวิร์ก (Framework)</strong> (เฟรมเวิร์กแต่ละตัวจะแสดงพร้อมไอคอน)</li>
-<li data-bai-block="421"><strong>เวอร์ชัน (Version)</strong></li>
-<li data-bai-block="422"><strong>สร้างเมื่อ (Created) และแก้ไขล่าสุด (Last Modified)</strong> เวลาประทับ</li>
-<li data-bai-block="423"><strong>โฟลเดอร์โมเดล (Model Folder)</strong>: ลิงก์ที่คลิกได้ซึ่งเปิดตัวสำรวจโฟลเดอร์สำหรับโฟลเดอร์จัดเก็บโมเดล</li>
-<li data-bai-block="424"><strong>ทรัพยากรขั้นต่ำ (Min Resource)</strong>: ข้อกำหนดทรัพยากรขั้นต่ำ (CPU, หน่วยความจำ, GPU)</li>
+<li data-bai-block="419"><strong>ผู้เขียน (Author)</strong></li>
+<li data-bai-block="420"><strong>สถาปัตยกรรม (Architecture)</strong></li>
+<li data-bai-block="421"><strong>เฟรมเวิร์ก (Framework)</strong> (เฟรมเวิร์กแต่ละตัวจะแสดงพร้อมไอคอน)</li>
+<li data-bai-block="422"><strong>เวอร์ชัน (Version)</strong></li>
+<li data-bai-block="423"><strong>สร้างเมื่อ (Created) และแก้ไขล่าสุด (Last Modified)</strong> เวลาประทับ</li>
+<li data-bai-block="424"><strong>โฟลเดอร์โมเดล (Model Folder)</strong>: ลิงก์ที่คลิกได้ซึ่งเปิดตัวสำรวจโฟลเดอร์สำหรับโฟลเดอร์จัดเก็บโมเดล</li>
+<li data-bai-block="425"><strong>ทรัพยากรขั้นต่ำ (Min Resource)</strong>: ข้อกำหนดทรัพยากรขั้นต่ำ (CPU, หน่วยความจำ, GPU)</li>
 </ul>
-<p data-bai-block="425">หากการ์ดโมเดลมี README จะถูกเรนเดอร์เป็นการ์ด <code>README.md</code> ที่ด้านล่างของ Drawer</p>
-<p><figure data-bai-block="426" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>รูปที่ 12.34</figcaption></figure>
+<p data-bai-block="426">หากการ์ดโมเดลมี README จะถูกเรนเดอร์เป็นการ์ด <code>README.md</code> ที่ด้านล่างของ Drawer</p>
+<p><figure data-bai-block="427" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>รูปที่ 12.34</figcaption></figure>
 </p>
-<h3 data-bai-block="427" id="deployment-การ-deploy-โมเดล">การ Deploy โมเดล<a class="hash-link" href="#deployment-การ-deploy-โมเดล" aria-label="Direct link to การ Deploy โมเดล">#</a></h3>
-<p data-bai-block="428">คลิกปุ่ม <code>Deploy</code> ในส่วนหัวของ Drawer เพื่อ deploy โมเดลเป็นบริการ ขั้นตอนการ deploy ทำงานได้ด้วยหนึ่งในสองรูปแบบ:</p>
+<h3 data-bai-block="428" id="deployment-การ-deploy-โมเดล">การ Deploy โมเดล<a class="hash-link" href="#deployment-การ-deploy-โมเดล" aria-label="Direct link to การ Deploy โมเดล">#</a></h3>
+<p data-bai-block="429">คลิกปุ่ม <code>Deploy</code> ในส่วนหัวของ Drawer เพื่อ deploy โมเดลเป็นบริการ ขั้นตอนการ deploy ทำงานได้ด้วยหนึ่งในสองรูปแบบ:</p>
 <ul>
-<li data-bai-block="429"><p><strong>Deploy อัตโนมัติ</strong>: หากโมเดลมี preset ที่ใช้งานได้เพียงหนึ่งรายการ และโปรเจกต์ปัจจุบันมีกลุ่มทรัพยากรที่เข้าถึงได้เพียงหนึ่งรายการ การ deploy จะถูกสร้างขึ้นอย่างเงียบ ๆ โดยไม่มีโมดอลแสดงขึ้น หลังจาก endpoint พร้อมให้สืบค้นแล้ว คุณจะถูกนำไปยังหน้าข้อมูลรายละเอียดการปรับใช้</p>
+<li data-bai-block="430"><p><strong>Deploy อัตโนมัติ</strong>: หากโมเดลมี preset ที่ใช้งานได้เพียงหนึ่งรายการ และโปรเจกต์ปัจจุบันมีกลุ่มทรัพยากรที่เข้าถึงได้เพียงหนึ่งรายการ การ deploy จะถูกสร้างขึ้นอย่างเงียบ ๆ โดยไม่มีโมดอลแสดงขึ้น หลังจาก endpoint พร้อมให้สืบค้นแล้ว คุณจะถูกนำไปยังหน้าข้อมูลรายละเอียดการปรับใช้</p>
 </li>
-<li data-bai-block="430"><p><strong>โมดอล Deploy Model</strong>: มิฉะนั้น โมดอล Deploy Model จะเปิดขึ้นพร้อมด้วยฟิลด์ที่จำเป็นต่อไปนี้</p>
+<li data-bai-block="431"><p><strong>โมดอล Deploy Model</strong>: มิฉะนั้น โมดอล Deploy Model จะเปิดขึ้นพร้อมด้วยฟิลด์ที่จำเป็นต่อไปนี้</p>
 <ul>
-<li data-bai-block="431"><strong>Preset</strong>: ดรอปดาวน์ที่จัดกลุ่มของ preset ทรัพยากรที่ใช้งานได้ เมื่อ preset ครอบคลุมตัวแปร runtime หลายตัว ตัวเลือกจะถูกจัดกลุ่มตามชื่อตัวแปร runtime มิฉะนั้น ตัวเลือกจะถูกแสดงเป็นรายการแบบแบน</li>
-<li data-bai-block="432"><strong>Resource Group</strong>: กลุ่มทรัพยากรที่บริการจะทำงาน</li>
+<li data-bai-block="432"><strong>Preset</strong>: ดรอปดาวน์ที่จัดกลุ่มของ preset ทรัพยากรที่ใช้งานได้ เมื่อ preset ครอบคลุมตัวแปร runtime หลายตัว ตัวเลือกจะถูกจัดกลุ่มตามชื่อตัวแปร runtime มิฉะนั้น ตัวเลือกจะถูกแสดงเป็นรายการแบบแบน</li>
+<li data-bai-block="433"><strong>Resource Group</strong>: กลุ่มทรัพยากรที่บริการจะทำงาน</li>
 </ul>
 <p> คลิกปุ่ม <code>Deploy</code> ในโมดอลเพื่อเริ่มการ deploy จะมีการแสดง toast แสดงความสำเร็จที่ยืนยันว่าโมเดลได้รับการ deploy แล้ว และคุณจะถูกนำไปยังหน้าข้อมูลรายละเอียดการปรับใช้</p>
 </li>
 </ul>
-<p><figure data-bai-block="433" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>รูปที่ 12.35</figcaption></figure>
+<p><figure data-bai-block="434" class="doc-figure"><img src="./images/model_card_deploy_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="314" /><figcaption>รูปที่ 12.35</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="434" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="435" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="435">หากโมเดลที่เลือกไม่มี preset ที่เข้ากันได้สำหรับโปรเจกต์ปัจจุบัน ปุ่ม <code>Deploy</code> ใน Drawer
+<p data-bai-block="436">หากโมเดลที่เลือกไม่มี preset ที่เข้ากันได้สำหรับโปรเจกต์ปัจจุบัน ปุ่ม <code>Deploy</code> ใน Drawer
 จะถูกปิดใช้งาน และการ deploy จะถูกปิดกั้นจนกว่าจะมี preset ที่เข้ากันได้</p>
 </div></div>
 
@@ -1037,7 +1038,7 @@ endpoint ได้ หากบริการถูกสร้างในเ�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 10 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 14 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">
