@@ -1577,7 +1577,6 @@
         "environment.Version",
         "general.ContainerRegistry",
         "general.Control",
-        "general.CreatedAt",
         "general.General",
         "general.MaxValueNotification",
         "general.Project",
