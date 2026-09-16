@@ -541,6 +541,13 @@ export const useBackendAIImageMetaData = () => {
             : 'default.png')
         );
       },
+      /** Whether the metadata declares a vendor icon, i.e. `getImageIcon` does
+       * not resolve to the generic `default.png` fallback. */
+      hasImageIcon: (imageName?: string | null) => {
+        if (!imageName) return false;
+        const { key } = getImageMeta(imageName);
+        return metadata?.imageInfo[key]?.icon !== undefined;
+      },
       getNamespace: (imageName: string) => {
         const names = imageName.split('/');
         return names.length < 2 ? names[0] : names[1] || '';

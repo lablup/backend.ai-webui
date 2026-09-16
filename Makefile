@@ -98,6 +98,13 @@ dep_web:
 # Prepare the Electron app directory. Requires dep_web to have run first.
 # Uses publicPath patching instead of a full second React build (~4-8 min savings).
 #
+# The `cp -r electron-app/*` below also carries `electron-app/pnpm-workspace.yaml`.
+# That marker is load-bearing: it makes the staged directory its own pnpm
+# workspace root. Without it, `--ignore-workspace` is not enough on pnpm >= 12 —
+# the hoisted node linker walks up to the repo's workspace root and installs the
+# Electron dependencies into the REPO ROOT `node_modules/`, leaving
+# `build/electron-app/node_modules/` empty and shipping an app.asar with no deps.
+#
 # Idempotent: skips when `build/electron-app/app/index.html` already carries
 # the patched `es6://assets/` marker. This mirrors the original
 # Makefile's skip semantics so downstream targets that re-declare `dep` as a

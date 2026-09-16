@@ -18,21 +18,17 @@ const sampleManyResourceGroups = Array.from({ length: 15 }, (_, i) => ({
   name: `resource-group-${i + 1}`,
 }));
 
-const sampleWithDuplicates = [
-  { name: 'default' },
-  { name: 'gpu-cluster' },
-  { name: 'default' }, // duplicate
-  { name: 'cpu-only' },
-  { name: 'gpu-cluster' }, // duplicate
-];
+const asConnection = (groups: Array<{ name: string }>) => ({
+  edges: groups.map((group) => ({ node: { id: group.name, ...group } })),
+});
 
 /**
  * BAIResourceGroupSelect is a specialized Select component that fetches and displays
- * resource groups (scaling groups) using GraphQL.
+ * resource groups at admin scope through the `adminResourceGroups` query.
  *
  * Key features:
- * - Automatic data fetching via GraphQL query
- * - Duplicate resource group names are automatically filtered
+ * - Automatic data fetching via GraphQL query (manager 26.2.0+, admin only)
+ * - Optional server-side `filter` (`isActive`, `isPublic`)
  * - Built-in search functionality
  * - Internationalized placeholder text
  *
@@ -47,20 +43,30 @@ const meta: Meta<typeof BAIResourceGroupSelect> = {
     docs: {
       description: {
         component: `
-**BAIResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups (scaling groups).
+**BAIResourceGroupSelect** extends [BAISelect](/?path=/docs/components-input-baiselect--docs) to fetch and display resource groups at admin scope.
 
 ## Features
-- Fetches scaling groups from GraphQL query \`BAIResourceGroupSelectQuery\`
-- Automatically removes duplicate resource group names using \`_.uniqBy\`
+- Fetches resource groups from GraphQL query \`BAIResourceGroupSelectQuery\` (\`adminResourceGroups\`, manager 26.2.0+)
+- Optional \`filter\` prop narrows the list server-side (\`isActive\`, \`isPublic\`)
+- Ordered by name, capped at 100 groups
 - Built-in search functionality enabled by default
 - Internationalized placeholder using \`comp:BAIResourceGroupSelect.SelectResourceGroup\`
 - Uses resource group \`name\` as both label and value
+- \`useResourceGroupNames(filter)\` exposes the same list to a parent that needs it during render
 
 ## GraphQL Query
 \`\`\`graphql
-query BAIResourceGroupSelectQuery {
-  scaling_groups {
-    name
+query BAIResourceGroupSelectQuery($filter: ResourceGroupFilter) {
+  adminResourceGroups(
+    filter: $filter
+    orderBy: [{ field: NAME, direction: ASC }]
+    limit: 100
+  ) {
+    edges {
+      node {
+        name
+      }
+    }
   }
 }
 \`\`\`
@@ -132,7 +138,7 @@ export const Default: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          scaling_groups: sampleResourceGroups,
+          adminResourceGroups: asConnection(sampleResourceGroups),
         }),
       }}
     >
@@ -158,34 +164,7 @@ export const Empty: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          scaling_groups: [],
-        }),
-      }}
-    >
-      <BAIResourceGroupSelect {...args} style={{ width: '300px' }} />
-    </RelayResolver>
-  ),
-};
-
-/**
- * Automatic deduplication of resource groups by name.
- */
-export const WithDuplicates: Story = {
-  name: 'AutomaticDeduplication',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Demonstrates automatic deduplication when the API returns duplicate resource group names. Only unique names are shown (3 unique groups from 5 total).',
-      },
-    },
-  },
-  args: {},
-  render: (args) => (
-    <RelayResolver
-      mockResolvers={{
-        Query: () => ({
-          scaling_groups: sampleWithDuplicates,
+          adminResourceGroups: asConnection([]),
         }),
       }}
     >
@@ -214,7 +193,7 @@ export const Disabled: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          scaling_groups: sampleResourceGroups,
+          adminResourceGroups: asConnection(sampleResourceGroups),
         }),
       }}
     >
@@ -243,7 +222,7 @@ export const WithClearButton: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          scaling_groups: sampleResourceGroups,
+          adminResourceGroups: asConnection(sampleResourceGroups),
         }),
       }}
     >
@@ -272,7 +251,7 @@ export const WithCustomPlaceholder: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          scaling_groups: sampleResourceGroups,
+          adminResourceGroups: asConnection(sampleResourceGroups),
         }),
       }}
     >
@@ -301,7 +280,7 @@ export const ManyResourceGroups: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          scaling_groups: sampleManyResourceGroups,
+          adminResourceGroups: asConnection(sampleManyResourceGroups),
         }),
       }}
     >

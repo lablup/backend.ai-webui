@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
     "Version": "รุ่น"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "กำลังตรวจสอบเซสชัน Backend.AI ของคุณ…",
+    "SignInWithBackendAI": "เข้าสู่ระบบด้วย Backend.AI",
+    "failure": {
+      "CorsOrMixed": "เบราว์เซอร์บล็อกคำขอไปยังเว็บเซิร์ฟเวอร์ Backend.AI โดยทั่วไปเกิดจากข้อจำกัด CORS หรือเนื้อหาแบบผสม",
+      "HttpError": "เว็บเซิร์ฟเวอร์ Backend.AI ส่งคืนข้อผิดพลาด ({{status}})",
+      "InvalidCallback": "ที่อยู่สำหรับกลับหลังลงชื่อเข้าใช้ที่ตั้งค่าไว้สำหรับ {{appName}} ไม่ใช่ที่อยู่เว็บที่ถูกต้อง",
+      "InvalidResponse": "เว็บเซิร์ฟเวอร์ Backend.AI ส่งคืนการตอบสนองที่ไม่คาดคิด",
+      "NoEndpoint": "ยังไม่ได้กำหนดที่อยู่เว็บเซิร์ฟเวอร์ Backend.AI สำหรับ {{appName}}",
+      "NoSessionId": "คุณเข้าสู่ระบบ Backend.AI แล้ว แต่เว็บเซิร์ฟเวอร์ไม่ได้ส่งคืนรหัสเซสชัน",
+      "NoSessionOverHttp": "คุณยังไม่ได้เข้าสู่ระบบ Backend.AI หากคุณเข้าสู่ระบบแล้ว เนื่องจาก {{appName}} ให้บริการผ่าน HTTP เบราว์เซอร์อาจปฏิเสธคุกกี้เซสชันแบบปลอดภัยของเว็บเซิร์ฟเวอร์ ลองเปิด {{appName}} ผ่าน HTTPS",
+      "NoSessionOverHttps": "คุณยังไม่ได้เข้าสู่ระบบ Backend.AI หากคุณเข้าสู่ระบบแล้ว {{appName}} กับเว็บเซิร์ฟเวอร์ Backend.AI อาจเป็นคนละไซต์ เบราว์เซอร์จึงไม่ส่งคุกกี้เซสชัน",
+      "RelayFailed": "คุณเข้าสู่ระบบ Backend.AI แล้ว แต่ {{appName}} ไม่สามารถดำเนินการเข้าสู่ระบบให้เสร็จสิ้นได้",
+      "Timeout": "เว็บเซิร์ฟเวอร์ Backend.AI ไม่ตอบสนองภายในเวลาที่กำหนด",
+      "Title": "ไม่สามารถเข้าสู่ระบบด้วย Backend.AI ได้"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "ขนาดคลัสเตอร์",
     "Concurrency": "เซสชันที่ทำงานพร้อมกัน",
@@ -338,18 +355,22 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
+    "Active": "คล่องแคล่ว",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "ContainerRegistryProject": "โปรเจ็กต์รีจิสทรีคอนเทนเนอร์",
     "CreatedAt": "สร้างเมื่อ",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
+    "Inactive": "ไม่ทำงาน",
     "IntegrationID": "รหัสการผสานระบบ",
+    "ModifiedAt": "แก้ไขเมื่อ",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",
     "ProjectID": "รหัสโครงการ",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
     "ScalingGroups": "กลุ่มทรัพยากร",
+    "Status": "สถานะ",
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "การยืนยันการเขียนทับ",
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
     "EditFile": "แก้ไขไฟล์",
+    "ExistingItem": "ที่มีอยู่",
     "FileCreatedSuccessfully": "ไฟล์สร้างสำเร็จ",
     "FileName": "ชื่อไฟล์",
     "FileNamePlaceholder": "เช่น model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "ดัดแปลงที่",
     "Name": "ชื่อ",
     "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
+    "OtherItemsWillBeUploaded": "รายการอื่นอีก {{count}} รายการจะถูกอัปโหลดด้วย",
     "Path": "เส้นทาง",
     "PleaseEnterAFileName": "กรุณากรอกชื่อไฟล์",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
     "RenameFile": "เปลี่ยนชื่อ",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
+    "SelectItemsToOverwrite": "รายการเหล่านี้มีอยู่แล้วที่นี่ เลือกรายการที่ต้องการเขียนทับ รายการที่ไม่ได้เลือกจะถูกข้าม",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
     "TypeDeleteToConfirm": "พิมพ์ 'ลบ' เพื่อยืนยัน",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "รูปแบบไฟล์นี้ไม่รองรับการแก้ไข",
     "UploadFiles": "อัปโหลดไฟล์",
     "UploadFolder": "โฟลเดอร์อัปโหลด",
+    "UploadingItem": "ที่จะอัปโหลด",
     "error": {
       "DuplicatedName": "ชื่อนี้มีการใช้งานแล้ว \nกรุณากรอกชื่ออื่น",
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
@@ -762,6 +787,7 @@
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
     "Increase": "เพิ่ม",
+    "Loading": "กำลังโหลด...",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",

@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Successfully requested pull for {{count}} versions.",
     "Version": "Version"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Checking your Backend.AI session…",
+    "SignInWithBackendAI": "Sign in with Backend.AI",
+    "failure": {
+      "CorsOrMixed": "The browser blocked the request to the Backend.AI webserver. This is usually a CORS or mixed-content restriction.",
+      "HttpError": "The Backend.AI webserver returned an error ({{status}}).",
+      "InvalidCallback": "The sign-in return address configured for {{appName}} is not a valid web address.",
+      "InvalidResponse": "The Backend.AI webserver returned an unexpected response.",
+      "NoEndpoint": "No Backend.AI webserver address is configured for {{appName}}.",
+      "NoSessionId": "You are signed in to Backend.AI, but the webserver did not return a session ID.",
+      "NoSessionOverHttp": "You are not signed in to Backend.AI yet. If you have already signed in, {{appName}} is served over HTTP, so the browser may be rejecting the webserver's secure session cookie. Try opening {{appName}} over HTTPS.",
+      "NoSessionOverHttps": "You are not signed in to Backend.AI yet. If you have already signed in, {{appName}} and the Backend.AI webserver may be different sites, so the browser is withholding the session cookie.",
+      "RelayFailed": "You are signed in to Backend.AI, but {{appName}} could not complete the sign-in.",
+      "Timeout": "The Backend.AI webserver did not respond in time.",
+      "Title": "Could not sign in with Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Cluster Size",
     "Concurrency": "Concurrent Sessions",
@@ -338,18 +355,22 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
+    "Active": "Active",
     "ContainerRegistry": "Container Registry",
     "ContainerRegistryProject": "Container Registry Project",
     "CreatedAt": "Created At",
     "Description": "Description",
     "Domain": "Domain",
+    "Inactive": "Inactive",
     "IntegrationID": "Integration ID",
+    "ModifiedAt": "Modified At",
     "Name": "Name",
     "Project": "Project",
     "ProjectID": "Project ID",
     "Registry": "Registry",
     "ResourcePolicy": "Resource Policy",
     "ScalingGroups": "Resource Groups",
+    "Status": "Status",
     "StorageNodes": "Storage Nodes",
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Overwrite Confirmation",
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
     "EditFile": "Edit File",
+    "ExistingItem": "Existing",
     "FileCreatedSuccessfully": "File created successfully.",
     "FileName": "File Name",
     "FileNamePlaceholder": "e.g. model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Modified At",
     "Name": "Name",
     "NoUploadPermissionForHost": "You don't have upload permission for this host.",
+    "OtherItemsWillBeUploaded": "{{count}} other item(s) will be uploaded as well.",
     "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
     "RenameFile": "Rename",
     "RenameSuccess": "The name has been successfully changed.",
+    "SelectItemsToOverwrite": "These items already exist here. Select the ones to overwrite; unselected items are skipped.",
     "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
     "Size": "Size",
     "TypeDeleteToConfirm": "Type 'Delete' to confirm.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "This file format does not support editing.",
     "UploadFiles": "Upload Files",
     "UploadFolder": "Upload Folder",
+    "UploadingItem": "Uploading",
     "error": {
       "DuplicatedName": "This name is already in use. Please enter a different name.",
       "FileNameRequired": "Please enter a file or folder name."
@@ -762,6 +787,7 @@
     "DeselectAll": "Deselect all",
     "File": "File",
     "Increase": "Increase",
+    "Loading": "Loading...",
     "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",

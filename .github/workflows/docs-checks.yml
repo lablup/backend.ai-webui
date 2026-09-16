@@ -53,6 +53,14 @@ jobs:
       - name: Nav labels relate to page H1s
         run: pnpm --filter backend.ai-webui-docs run check:nav-titles
 
+      # The header's "?" button opens a manual page#anchor from the curated
+      # react/src/helper/helpAnchors.json, so a renamed heading here turns it
+      # into a no-op scroll (FR-3773). Dependency-free native Node, like the
+      # terminology checker below. The other direction — an edit to the JSON
+      # itself — is gated by check-help-anchors.test.ts under vitest-root.yml.
+      - name: Help anchors resolve against the manual
+        run: node scripts/check-help-anchors.mjs
+
       # Same checker, same termbase, same severity model as scripts/verify.sh:
       # a bare-English `avoid[]` term blocks; non-English and context-qualified
       # rows warn. Dependency-free (native Node), so it needs no extra install.

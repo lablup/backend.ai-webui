@@ -5,8 +5,12 @@
    to 0/black in the preview iframe. The `@layer` order statement MUST come
    first so Astryx's prebuilt layered sheets slot deterministically; do NOT
    add any unlayered global reset here (it would outrank every Astryx layer).
-   KEEP IN SYNC with `src/styles/backend.ai-ui.css` and `react/src/index.css`
-   (identical layer list; two identical statements are idempotent). */
+   KEEP IN SYNC with the repo-root `index.html`, `src/styles/backend.ai-ui.css`
+   and `react/src/index.css` (identical layer list; identical statements are
+   idempotent, divergent ones silently hand the order to whichever loads
+   first). Storybook never loads `react/src/index.css` — this file is its only
+   entry point, which is why it needs its own copy.
+   `scripts/migration-gates/layer-order-gate.mjs` fails on drift. */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
 @import '@astryxdesign/core/reset.css';

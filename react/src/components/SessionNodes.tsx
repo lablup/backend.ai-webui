@@ -25,6 +25,7 @@ import {
   filterOutNullAndUndefined,
   BAIColumnType,
   BAIFlex,
+  BAIId,
   BAITable,
   BAITableProps,
   BAISessionAgentIds,
@@ -50,6 +51,13 @@ const availableSessionSorterKeys = [
   'cluster_mode',
   'created_at',
   'agent_ids',
+  'status',
+  'status_info',
+  'result',
+  'domain_name',
+  'project_id',
+  'access_key',
+  'terminated_at',
 ] as const;
 
 export const availableSessionSorterValues = [
@@ -130,6 +138,10 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           }
         }
         created_at
+        terminated_at
+        status_info
+        result
+        domain_name
         scaling_group
         project_id
         owner @since(version: "25.13.0") {
@@ -222,13 +234,39 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         fixed: 'left',
       },
       {
+        // The filter supports searching by session `id`, so the ID is
+        // available as a column too. Hidden by default; surfaced via column
+        // settings / `defaultColumnOverrides`. Mirrors BAISessionNodesV2.
+        key: 'sessionId',
+        title: t('session.SessionId'),
+        defaultHidden: true,
+        render: (__, session) => <BAIId globalId={session.id} />,
+      },
+      {
         key: 'status',
         title: t('session.Status'),
         dataIndex: 'status',
+        sorter: isEnableSorter('status'),
         render: (__, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
           return <SessionStatusTag sessionFrgmt={session} />;
         },
+      },
+      {
+        key: 'status_info',
+        dataIndex: 'status_info',
+        title: t('session.StatusInfo'),
+        defaultHidden: true,
+        sorter: isEnableSorter('status_info'),
+        render: (status_info: string | null) => status_info || '-',
+      },
+      {
+        key: 'result',
+        dataIndex: 'result',
+        title: t('session.Result'),
+        defaultHidden: true,
+        sorter: isEnableSorter('result'),
+        render: (result: string | null) => result || '-',
       },
       enablePriorityColumn && {
         key: 'priority',
@@ -373,11 +411,29 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         render: (created_at: string) => dayjs(created_at).format('LLL') || '-',
       },
       {
+        key: 'terminated_at',
+        dataIndex: 'terminated_at',
+        title: t('session.TerminatedAt'),
+        defaultHidden: true,
+        sorter: isEnableSorter('terminated_at'),
+        render: (terminated_at: string | null) =>
+          terminated_at ? dayjs(terminated_at).format('LLL') : '-',
+      },
+      {
         key: 'access_key',
         title: t('general.AccessKey'),
         defaultHidden: true,
         exportKey: 'access_key',
+        sorter: isEnableSorter('access_key'),
         render: (__, session) => <SessionAccessKey sessionFrgmt={session} />,
+      },
+      {
+        key: 'domain_name',
+        dataIndex: 'domain_name',
+        title: t('session.Domain'),
+        defaultHidden: true,
+        sorter: isEnableSorter('domain_name'),
+        render: (domain_name: string | null) => domain_name || '-',
       },
       // The method of directly fetching project name is currently not possible through GraphQL's query. Until backend work is completed, id will be displayed.
       {
@@ -385,6 +441,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         dataIndex: 'project_id',
         title: t('data.Project'),
         defaultHidden: true,
+        sorter: isEnableSorter('project_id'),
         render: (project_id: string) => project_id || '-',
       },
       (userRole === 'superadmin' || !baiClient._config.hideAgents) && {

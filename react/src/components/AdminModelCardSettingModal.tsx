@@ -28,9 +28,9 @@ import {
   BAIFlex,
   BAIModal,
   type BAIModalProps,
-  BAIVFolderSelect,
-  BAIVFolderSelectRef,
-  toGlobalId,
+  BAIProjectVfolderSelect,
+  type BAIProjectVfolderSelectRef,
+  convertToUUID,
   toLocalId,
   useBAILogger,
 } from 'backend.ai-ui';
@@ -78,7 +78,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<FormInputType>>(null);
-  const vfolderSelectRef = useRef<BAIVFolderSelectRef>(null);
+  const vfolderSelectRef = useRef<BAIProjectVfolderSelectRef>(null);
   const [isOpenCreateFolderModal, setIsOpenCreateFolderModal] = useState(false);
 
   const currentDomain = useCurrentDomainValue();
@@ -257,7 +257,9 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           commitCreateModelCard({
             variables: {
               input: {
-                vfolderId: toLocalId(values.vfolderId),
+                // `BAIProjectVfolderSelect` emits the folder's local id;
+                // `vfolderId` is a `UUID!`.
+                vfolderId: convertToUUID(values.vfolderId),
                 // The model card must be created in the MODEL_STORE project —
                 // the same project that backs the VFolder selector above.
                 // TODO: model cards in the model-store project are slated to
@@ -305,7 +307,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
             !isModelStoreProjectResolved || modalProps.okButtonProps?.disabled,
         }}
       >
-        {!isModelStoreProjectResolved ? (
+        {!modelStoreProjectContext ? (
           <Banner
             status="error"
             title={t('modelStore.ProjectNotFound')}
@@ -370,13 +372,12 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
                         },
                       ]}
                     >
-                      <BAIVFolderSelect
+                      <BAIProjectVfolderSelect
                         ref={vfolderSelectRef}
                         label={t('adminModelCard.ModelStorageFolder')}
                         isLabelHidden
                         excludeDeleted
-                        filter='ownership_type == "group"'
-                        currentProjectId={modelStoreProject?.id ?? undefined}
+                        projectId={modelStoreProjectContext.id}
                       />
                     </BAIFormItem>
                   </Suspense>
@@ -562,7 +563,7 @@ const AdminModelCardSettingModal: React.FC<AdminModelCardSettingModalProps> = ({
           setIsOpenCreateFolderModal(false);
           if (result) {
             formRef.current?.setFieldsValue({
-              vfolderId: toGlobalId('VirtualFolderNode', toLocalId(result.id)),
+              vfolderId: toLocalId(result.id),
             });
             vfolderSelectRef.current?.refetch();
           }

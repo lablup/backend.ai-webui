@@ -161,6 +161,8 @@ export interface BAIFormItemVisualProps {
   status?: FormItemStatus;
   hasFeedback?: boolean;
   fieldId?: string;
+  /** Same handle as the control's `data-bai-field-id`, for a child that forwards nothing to the DOM. */
+  fieldHandle?: string;
   htmlFor?: string;
   className?: string;
   style?: React.CSSProperties;
@@ -230,6 +232,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
   status,
   hasFeedback,
   fieldId,
+  fieldHandle,
   htmlFor,
   className,
   style,
@@ -475,6 +478,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
       ref={itemRef}
       className={className}
       data-bai-form-item=""
+      data-bai-field-item={fieldHandle}
       data-layout={layout}
       data-size={size}
       data-status={status || undefined}

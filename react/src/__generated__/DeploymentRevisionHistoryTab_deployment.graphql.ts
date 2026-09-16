@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<070209edea69829fc5a199ff491eead2>>
+ * @generated SignedSource<<8c20d1b2db8a649b29ae2a86f9cb4cb7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,7 @@ import { FragmentRefs } from "relay-runtime";
 export type DeploymentRevisionHistoryTab_deployment$data = {
   readonly id: string;
   readonly metadata: {
+    readonly projectId: string;
     readonly status: DeploymentStatus;
   };
   readonly " $fragmentSpreads": FragmentRefs<"DeploymentAddRevisionModal_deployment">;
@@ -51,6 +52,13 @@ const node: ReaderFragment = {
           "kind": "ScalarField",
           "name": "status",
           "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "projectId",
+          "storageKey": null
         }
       ],
       "storageKey": null
@@ -65,6 +73,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "6d00d8056ec0eba0eea404e554242adf";
+(node as any).hash = "a1e5f132d3a4459291ec51c9c42471b4";
 
 export default node;

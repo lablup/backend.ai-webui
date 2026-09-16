@@ -6,14 +6,15 @@ import { getSessionV2StatusBuckets } from './sessionStatusBuckets';
 import { describe, expect, it } from 'vitest';
 
 describe('getSessionV2StatusBuckets', () => {
-  it('includes PREEMPTED / RESCHEDULING on a manager that defines them', () => {
+  it('includes RESERVED / PREEMPTED / RESCHEDULING on a manager that defines them', () => {
     const { running } = getSessionV2StatusBuckets(true);
 
+    expect(running).toContain('RESERVED');
     expect(running).toContain('PREEMPTED');
     expect(running).toContain('RESCHEDULING');
   });
 
-  it('drops PREEMPTED / RESCHEDULING when the client lacks the flag', () => {
+  it('drops all preemption statuses when the client lacks the flag', () => {
     expect(getSessionV2StatusBuckets(false).running).toEqual([
       'PENDING',
       'SCHEDULED',

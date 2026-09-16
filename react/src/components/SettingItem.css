@@ -1,0 +1,19 @@
+/* Transient arrival highlight for `?setting=` deep links (useSettingArrival).
+   The box-shadow spread pads the wash without changing layout. */
+.bai-setting-item {
+  border-radius: var(--radius-inner);
+  transition:
+    background-color var(--duration-medium) var(--ease-standard),
+    box-shadow var(--duration-medium) var(--ease-standard);
+}
+
+.bai-setting-item[data-arrival='true'] {
+  background-color: var(--color-accent-muted);
+  box-shadow: 0 0 0 var(--spacing-2) var(--color-accent-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bai-setting-item {
+    transition: none;
+  }
+}

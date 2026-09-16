@@ -32,12 +32,18 @@ export interface PickerCallbacks {
   showHint: (message: string) => void;
   /** Repository root from `/__review/state`; null until it answers. */
   sourceRoot: () => string | null | undefined;
+  /**
+   * `false` when react-grab cannot arrive — a static build, where the app's
+   * dev-only import of it never runs (FR-3880). The fallback chord then binds
+   * straight away instead of after 20 s of polling for it.
+   */
+  expectReactGrab?: boolean;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
 
 /** react-grab reads `navigator.platform` first and falls back to the UA. */
-const isMac = (): boolean =>
+export const isMac = (): boolean =>
   typeof navigator !== 'undefined' &&
   /Mac|iPhone|iPad|iPod/i.test(navigator.platform || navigator.userAgent);
 
@@ -52,7 +58,7 @@ export function isReactGrabChord(evt: KeyboardEvent): boolean {
 }
 
 /** react-grab does not activate inside a field either; ⌘C there is copy. */
-const isEditable = (node: EventTarget | null): boolean =>
+export const isEditable = (node: EventTarget | null): boolean =>
   node instanceof HTMLElement &&
   (node.isContentEditable ||
     node instanceof HTMLInputElement ||
@@ -257,6 +263,10 @@ export function createPicker(callbacks: PickerCallbacks) {
    */
   function watchForReactGrab() {
     if (ensureGrabPlugin()) return;
+    if (callbacks.expectReactGrab === false) {
+      armHotkey();
+      return;
+    }
     let tries = 0;
     const timer = setInterval(() => {
       if (ensureGrabPlugin()) {

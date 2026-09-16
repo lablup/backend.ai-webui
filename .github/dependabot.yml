@@ -2,8 +2,6 @@ updates:
 - allow:
   - dependency-name: "actions/*"
   directory: /
-  ignore:
-  - dependency-name: "github/gh-aw-actions/**" # Managed by gh aw compile. Version-locked to the gh-aw compiler; do not bump.
   package-ecosystem: github-actions
   schedule:
     day: saturday

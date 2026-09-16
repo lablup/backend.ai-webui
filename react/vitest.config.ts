@@ -36,6 +36,9 @@ export default defineConfig({
       // Workspace package alias (dev-source path, matching the Jest
       // moduleNameMapper entry for `backend.ai-ui`).
       { find: /^backend\.ai-ui\/dist(\/|$)/, replacement: buiSrc + '$1' },
+      // The `./locale/*` subpath export points at `dist/`, which CI never
+      // builds before running this suite — resolve it to source instead.
+      { find: /^backend\.ai-ui\/locale\//, replacement: buiSrc + '/locale/' },
       { find: /^backend\.ai-ui$/, replacement: buiSrc },
       // `backend.ai-client` is mocked in tests (see __test__/backendAiClient.mock.js).
       // The Jest moduleNameMapper handled this explicitly; we use an alias instead.
@@ -55,11 +58,6 @@ export default defineConfig({
       {
         find: /^.+\.(css|less|scss|sass)(\?raw)?$/,
         replacement: resolve(__dirname, '__test__/rawCss.mock.js'),
-      },
-      // `bui-language` helper was mocked by Jest. Replicate the mapping.
-      {
-        find: /^.*\/helper\/bui-language$/,
-        replacement: resolve(__dirname, '__test__/buiLanguage.mock.js'),
       },
     ],
   },

@@ -372,7 +372,8 @@ The controls above the grid decide what a single cell stands for:
 - **Memory unit** (Resource mode, memory resources only): How much memory a
   single cell stands for — 1, 2, 4, or 8 GiB.
 - **Metric** (Kernel mode only): The live statistic used to color the kernel
-  cells.
+  cells. When none of the listed sessions reports live metrics, the selector is
+  disabled and shows **No live metrics**.
 - **Layout**: **Serpentine** runs every other row in the opposite direction, so
   the cells of a session that wraps stay connected; **Word-wrap** starts every
   row at the left edge instead.
@@ -406,6 +407,36 @@ a detailed log of all scheduling decisions the system made for the session. For 
 the [Session Scheduling History](#session-scheduling-history) section.
 
 ![](../images/session_scheduling_history_button.png)
+
+<a id="preemption-statuses"></a>
+
+### Preemption statuses
+
+A session can also appear in the `RESERVED`, `PREEMPTED`, and `RESCHEDULING`
+statuses. The scheduler uses them when it has to free resources for a
+higher-priority job:
+
+- `RESERVED`: The session holds a resource reservation and is waiting for the
+  resources it needs to be freed.
+- `PREEMPTED`: The session was selected for preemption so that a higher-priority
+  job can use its resources.
+- `RESCHEDULING`: The session was preempted and returned to the queue, and will be
+  scheduled again automatically.
+
+A session in any of these three statuses still occupies resources, so it is listed
+under **Running**, not **Finished**.
+
+When the scheduler records one of its preemption reasons on a session, hovering
+the session status tag shows that reason in plain language instead of the raw
+internal value:
+
+| Reason | Description |
+|--------|-------------|
+| `PREEMPTED_BY_SCHEDULER` | This session was terminated by the scheduler to free resources for a higher-priority job. |
+| `preempted-by-reservation` | This session was selected for preemption to free resources for a higher-priority job. |
+| `preemption-reservation` | This session holds a resource reservation and is waiting for the resources to be freed. |
+| `RESCHEDULED` | This session was preempted and returned to the queue; it will be scheduled again automatically. |
+
 
 <a id="session-scheduling-history"></a>
 
@@ -510,7 +541,9 @@ The Audit Log table includes the following columns:
 - **Triggered By**: The email address and account ID of the actor who initiated the action
 - **Operation**: The type of action performed (for example, session creation, termination, or
   resource change)
-- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
+- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED`, or
+  `UNKNOWN`). `DENIED` means the action was deliberately rejected by policy rather than
+  having failed with an error
 - **Time**: When the action occurred
 
 #### Audit log filters

@@ -242,6 +242,10 @@ const BAIAdminSessionSelect: React.FC<BAIAdminSessionSelectProps> = ({
       multiple={multiple}
       isLoading={
         isLoading ||
+        // The open-driven `network-only` refetch is a deferred update and
+        // raises no pending flag of its own (FR-3724). Only the opening
+        // half counts; closing would flash the spinner for nothing.
+        (!!controllableOpen && !deferredOpen) ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch

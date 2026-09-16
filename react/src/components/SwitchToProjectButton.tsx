@@ -16,42 +16,29 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 interface SwitchToProjectButtonProps extends Omit<BAIButtonProps, 'onClick'> {
   projectId: string;
+  /**
+   * Project name the caller already resolved (e.g. from
+   * `ModelDeploymentMetadata.projectV2`). When omitted, the name is looked up
+   * with an extra `group_node` round-trip.
+   */
+  projectName?: string | null;
 }
 
-const SwitchToProjectButtonContent: React.FC<SwitchToProjectButtonProps> = ({
-  projectId,
-  ...buttonProps
-}) => {
+const SwitchToProjectButtonView: React.FC<
+  Omit<SwitchToProjectButtonProps, 'projectId' | 'projectName'> & {
+    projectId?: string | null;
+    projectName?: string | null;
+  }
+> = ({ projectId, projectName, ...buttonProps }) => {
   'use memo';
   const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const switchProject = useSwitchProject();
 
-  const { group_node } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
-    graphql`
-      query SwitchToProjectButtonQuery($projectId: String!) {
-        group_node(id: $projectId) @since(version: "24.03.0") {
-          id
-          name
-        }
-      }
-    `,
-    { projectId: toGlobalId('GroupNode', projectId) },
-  );
-
   const handleClick = () => {
-    const id = toLocalId(group_node?.id || '');
-    const name = group_node?.name;
-    if (id && name) {
+    if (projectId && projectName) {
       startTransition(() => {
-        // `useSwitchProject` applies the canonical scope rule (FR-3428): on
-        // project / project-admin scope it rewrites the `:projectName` URL
-        // segment (the URL owns the project since FR-3055); elsewhere it
-        // updates the atom directly.
-        switchProject({
-          projectId: id,
-          projectName: name,
-        });
+        switchProject({ projectId, projectName });
       });
     }
   };
@@ -64,15 +51,49 @@ const SwitchToProjectButtonContent: React.FC<SwitchToProjectButtonProps> = ({
       onClick={handleClick}
       {...buttonProps}
     >
-      {t('modelService.SwitchToProject', { projectName: group_node?.name })}
+      {t('modelService.SwitchToProject', { projectName })}
     </BAIButton>
   );
 };
 
-const SwitchToProjectButton: React.FC<SwitchToProjectButtonProps> = (props) => {
+// Fallback for callers that cannot supply the name themselves — including
+// managers older than 26.4.3, where `projectV2` is stripped from the query.
+const SwitchToProjectButtonWithQuery: React.FC<
+  Omit<SwitchToProjectButtonProps, 'projectName'>
+> = ({ projectId, ...buttonProps }) => {
+  'use memo';
+  const { group_node } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
+    graphql`
+      query SwitchToProjectButtonQuery($projectId: String!) {
+        group_node(id: $projectId) @since(version: "24.03.0") {
+          id
+          name
+        }
+      }
+    `,
+    { projectId: toGlobalId('GroupNode', projectId) },
+  );
+
+  return (
+    <SwitchToProjectButtonView
+      projectId={toLocalId(group_node?.id || '')}
+      projectName={group_node?.name}
+      {...buttonProps}
+    />
+  );
+};
+
+const SwitchToProjectButton: React.FC<SwitchToProjectButtonProps> = ({
+  projectName,
+  ...props
+}) => {
+  'use memo';
+  if (projectName) {
+    return <SwitchToProjectButtonView projectName={projectName} {...props} />;
+  }
   return (
     <Suspense fallback={<BAIButton type="link" size="small" loading />}>
-      <SwitchToProjectButtonContent {...props} />
+      <SwitchToProjectButtonWithQuery {...props} />
     </Suspense>
   );
 };

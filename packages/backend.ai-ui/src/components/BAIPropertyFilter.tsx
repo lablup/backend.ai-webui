@@ -49,6 +49,7 @@ import { filterOutEmpty } from '../helper';
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import {
+  baiPowerSearchComponents,
   toEnumItems,
   toSearchSource,
   useRenderInputEditors,
@@ -63,6 +64,7 @@ import type {
   PowerSearchField,
   PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
+import classNames from 'classnames';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -94,10 +96,7 @@ export type FilterProperty = {
   };
   /**
    * Replaces the built-in value editor with a controlled control (e.g.
-   * `BAIUserSelect`). Call `onAddCondition(value, label?)` to stage the value;
-   * the popover's Apply button commits it. Pass the human-readable `label`
-   * when the committed value is opaque (e.g. a UUID) so the token shows the
-   * label while the raw value still serializes unchanged.
+   * `BAIUserSelect`); see `FilterRenderInput` for the stage/Apply contract.
    */
   renderInput?: FilterRenderInput;
 };
@@ -586,6 +585,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
   return (
     <PowerSearch
       config={config}
+      components={baiPowerSearchComponents}
       filters={filters}
       startIcon={SearchIcon}
       label={label ?? t('comp:BAIPropertyFilter.SearchLabel')}
@@ -595,7 +595,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
       isDisabled={isDisabled || loading}
       size={size}
       style={style}
-      className={className}
+      className={classNames('bai-power-search', className)}
       data-testid={dataTestId}
       status={
         ruleViolation ? { type: 'error', message: ruleViolation } : undefined

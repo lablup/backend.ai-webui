@@ -4,6 +4,8 @@ navTitle: 統計
 
 # 統計ページ
 
+<a id="allocation-history"></a>
+
 ## 割り当て履歴
 
 統計ページの割り当て履歴タブでは、コンピュートセッションの使用に関する簡単な統計をグラフで
@@ -26,6 +28,8 @@ navTitle: 統計
 :::
 
 ![](../images/usage_panel.png)
+
+<a id="user-session-history"></a>
 
 ## ユーザーセッション履歴
 

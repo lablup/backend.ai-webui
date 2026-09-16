@@ -355,7 +355,7 @@ function syncedSchemaTag(options: AlignmentGateOptions): string | undefined {
 }
 
 /**
- * The gate `whoami`, `schema show` — and later `query` / `explain` — run.
+ * The gate `whoami`, `schema show`, `query` and `explain` run.
  *
  * Without a stored session it does nothing and touches the network zero times.
  * With one it reads the manager version, warns once on stderr by default, and

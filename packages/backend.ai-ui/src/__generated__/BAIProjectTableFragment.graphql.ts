@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<92a2e1525cdbceb5ce84c683439e15c0>>
+ * @generated SignedSource<<e6c8821233515738e831b87badb3dc2c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type BAIProjectTableFragment$data = ReadonlyArray<{
   readonly id: string;
   readonly integration_id: string | null | undefined;
   readonly is_active: boolean | null | undefined;
+  readonly modified_at: string | null | undefined;
   readonly name: string | null | undefined;
   readonly resource_policy: string | null | undefined;
   readonly row_id: string | null | undefined;
@@ -93,6 +94,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "modified_at",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "total_resource_slots",
       "storageKey": null
     },
@@ -141,6 +149,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "3070a49b7c4a45559d4a93f1bde80b62";
+(node as any).hash = "905358d20279571d7fd58d6db1a3cd38";
 
 export default node;

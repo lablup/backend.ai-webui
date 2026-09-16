@@ -5,6 +5,7 @@
 import { AppLauncherModalFragment$key } from '../../__generated__/AppLauncherModalFragment.graphql';
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
+import { isValidIPOrCidr } from '../../helper';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
   ServicePort,
@@ -12,6 +13,7 @@ import {
   useSuspendedFilteredAppTemplate,
 } from '../../hooks/useAppTemplate';
 import {
+  normalizeAllowedClientIps,
   TCP_APPS,
   useBackendAIAppLauncher,
 } from '../../hooks/useBackendAIAppLauncher';
@@ -46,7 +48,7 @@ import {
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -89,6 +91,12 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
 
+  // The client-IP rule only applies while the field is enabled, so toggling
+  // it must raise or clear the error instead of leaving a stale one behind.
+  useEffect(() => {
+    formRef.current?.validateFields(['clientIps']).catch(() => undefined);
+  }, [openToPublic]);
+
   const session = useFragment(
     graphql`
       fragment AppLauncherModalFragment on ComputeSessionNode {
@@ -123,9 +131,14 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
     if (!app?.name) return;
 
     try {
-      const values = await formRef.current?.validateFields().catch(() => {
+      let values;
+      try {
+        values = await formRef.current?.validateFields();
+      } catch {
+        // Invalid input (e.g. a malformed client IP) must block the launch,
+        // not silently drop the restriction the user asked for.
         return;
-      });
+      }
       const allowedClientIps = openToPublic ? values?.clientIps : undefined;
       const preferredPort = tryPreferredPort
         ? values?.preferredPort
@@ -442,6 +455,26 @@ const AppLauncherModal: React.FC<AppLauncherModalProps> = ({
                     />
                   </BAIFlex>
                 }
+                rules={[
+                  {
+                    validator: async (_rule, value) => {
+                      // Inert while the field is disabled, so a stale chip
+                      // cannot block a launch that sends no IP restriction.
+                      if (!openToPublic) return;
+                      const invalidIps = _.reject(
+                        normalizeAllowedClientIps(
+                          value as Array<string> | undefined,
+                        ),
+                        isValidIPOrCidr,
+                      );
+                      if (invalidIps.length > 0) {
+                        throw new Error(
+                          `${t('credential.InvalidIP')}: ${invalidIps.join(', ')}`,
+                        );
+                      }
+                    },
+                  },
+                ]}
               >
                 <AstryxFormTagsInput
                   tokenSeparators={[',', ' ']}

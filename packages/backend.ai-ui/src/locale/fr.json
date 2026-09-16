@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Pull demandé avec succès pour les versions {{count}}.",
     "Version": "Version"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Vérification de votre session Backend.AI…",
+    "SignInWithBackendAI": "Se connecter avec Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Le navigateur a bloqué la requête vers le serveur web Backend.AI. Il s'agit généralement d'une restriction CORS ou de contenu mixte.",
+      "HttpError": "Le serveur web Backend.AI a renvoyé une erreur ({{status}}).",
+      "InvalidCallback": "L'adresse de retour de connexion configurée pour {{appName}} n'est pas une adresse web valide.",
+      "InvalidResponse": "Le serveur web Backend.AI a renvoyé une réponse inattendue.",
+      "NoEndpoint": "Aucune adresse de serveur web Backend.AI n'est configurée pour {{appName}}.",
+      "NoSessionId": "Vous êtes connecté à Backend.AI, mais le serveur web n'a pas renvoyé d'identifiant de session.",
+      "NoSessionOverHttp": "Vous n'êtes pas encore connecté à Backend.AI. Si vous l'êtes déjà, {{appName}} est servi en HTTP, le navigateur rejette donc peut-être le cookie de session sécurisé du serveur web. Essayez d'ouvrir {{appName}} en HTTPS.",
+      "NoSessionOverHttps": "Vous n'êtes pas encore connecté à Backend.AI. Si vous l'êtes déjà, {{appName}} et le serveur web Backend.AI sont peut-être des sites différents, et le navigateur n'envoie donc pas le cookie de session.",
+      "RelayFailed": "Vous êtes connecté à Backend.AI, mais {{appName}} n'a pas pu finaliser la connexion.",
+      "Timeout": "Le serveur web Backend.AI n'a pas répondu à temps.",
+      "Title": "Impossible de se connecter avec Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Taille de cluster",
     "Concurrency": "Sessions simultanées",
@@ -338,18 +355,22 @@
     "UpdateProject": "Mettre à jour le projet"
   },
   "comp:BAIProjectTable": {
+    "Active": "actif",
     "ContainerRegistry": "Registre de conteneurs",
     "ContainerRegistryProject": "Projet du registre de conteneurs",
     "CreatedAt": "Créé le",
     "Description": "Description",
     "Domain": "Domaine",
+    "Inactive": "Inactif",
     "IntegrationID": "ID d'intégration",
+    "ModifiedAt": "Modifié le",
     "Name": "Nom",
     "Project": "Projet",
     "ProjectID": "ID du projet",
     "Registry": "Registre",
     "ResourcePolicy": "Politique des ressources",
     "ScalingGroups": "Groupes de ressources",
+    "Status": "Statut",
     "StorageNodes": "Nœuds de stockage",
     "TotalResourceSlots": "Nombre total de créneaux de ressources",
     "Type": "Type"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Écran de confirmation",
     "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
     "EditFile": "Modifier le fichier",
+    "ExistingItem": "Existant",
     "FileCreatedSuccessfully": "Fichier créé avec succès.",
     "FileName": "Nom du fichier",
     "FileNamePlaceholder": "p. ex. model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Modifié à",
     "Name": "Nom",
     "NoUploadPermissionForHost": "Vous n'avez pas la permission de téléverser sur cet hôte.",
+    "OtherItemsWillBeUploaded": "{{count}} autre(s) élément(s) seront également téléversés.",
     "Path": "Chemin",
     "PleaseEnterAFileName": "Veuillez saisir le nom du fichier.",
     "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
     "RenameFile": "Renommer",
     "RenameSuccess": "Le nom a été modifié avec succès.",
+    "SelectItemsToOverwrite": "Ces éléments existent déjà ici. Sélectionnez ceux à écraser ; les éléments non sélectionnés seront ignorés.",
     "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
     "Size": "Taille",
     "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "Ce format de fichier ne prend pas en charge l'édition.",
     "UploadFiles": "Télécharger des fichiers",
     "UploadFolder": "Dossier de téléchargement",
+    "UploadingItem": "À téléverser",
     "error": {
       "DuplicatedName": "Ce nom est déjà utilisé. \nVeuillez saisir un autre nom.",
       "FileNameRequired": "Veuillez saisir un fichier ou un nom de dossier."
@@ -762,6 +787,7 @@
     "DeselectAll": "Tout désélectionner",
     "File": "Fichier",
     "Increase": "Augmenter",
+    "Loading": "Chargement...",
     "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
     "Project": "Projet",

@@ -98,13 +98,6 @@ export class BulkCreateUserModal {
     return this.modal.getByRole('button', { name: 'Close' });
   }
 
-  /**
-   * Get the Decrease Value button on the user count spinner
-   */
-  getDecreaseValueButton(): Locator {
-    return this.modal.getByRole('button', { name: 'Decrease Value' });
-  }
-
   // =====================
   // Form Field Actions
   // =====================

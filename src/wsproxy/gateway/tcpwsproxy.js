@@ -1,11 +1,14 @@
 const Server = require('../lib/backend.ai-ws-appproxy.js');
 
 module.exports = proxy = class Proxy {
-  constructor(env) {
+  // `extProxyURL` is passed separately because API mode's `env` is a
+  // ClientConfig, which has no place to carry it (SESSION mode's `cf` does).
+  constructor(env, extProxyURL) {
     this.env = env;
+    this.extProxyURL = extProxyURL;
   }
   async start_proxy(kernelId, app, ip, port, envs = {}, args = {}) {
-    this.c = new Server(this.env);
+    this.c = new Server(this.env, this.extProxyURL);
     return this.c.start(kernelId, app, ip, port, envs, args);
   }
 

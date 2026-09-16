@@ -1,0 +1,26 @@
+/*
+ * MainLayout.css caps every webkit scrollbar app-wide at `max-width: 2px`,
+ * too thin to notice on a scrollable key box. Same override as
+ * `.bai-sider > div` in BAISider.css: `max-width` is restated because it
+ * beats a larger `width` regardless of specificity.
+ */
+.ssh-key-block::-webkit-scrollbar {
+  width: 6px;
+  max-width: 6px;
+  background-color: transparent;
+}
+
+.ssh-key-block::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ssh-key-block::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-emphasized);
+  border-radius: var(--radius-full);
+}
+
+/* Firefox takes the two standard properties instead of the pseudo-elements. */
+.ssh-key-block {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-emphasized) transparent;
+}

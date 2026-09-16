@@ -69,7 +69,12 @@ export interface BAIAdminImageSelectProps extends Omit<
 > {
   /** Plain key(s), as the antd `BAIAdminImageSelect` exposes. */
   value?: string | Array<string> | null;
-  onChange?: (value: string | Array<string> | undefined) => void;
+  /** The second argument is the picked option, so a `renderInput` filter can
+   * label its token with the image name while the UUID serializes. */
+  onChange?: (
+    value: string | Array<string> | undefined,
+    option?: BAILabeledValue | Array<BAILabeledValue>,
+  ) => void;
   /** Additional GraphQL filter to narrow the image list. */
   filter?: ImageV2Filter;
   open?: boolean;
@@ -257,8 +262,12 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
-        setControllableValue(multiple ? keys : keys[0], undefined);
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

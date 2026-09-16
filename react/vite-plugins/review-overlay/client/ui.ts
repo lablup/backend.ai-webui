@@ -13,6 +13,7 @@
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
  * its select mode is on, so the composer stays clickable mid-pick.
  */
+import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
 import type { AnchorRect, CopyPayload } from './types.js';
 
@@ -27,13 +28,56 @@ const NOTE_DEBOUNCE_MS = 250;
 const COMPOSE_GAP = 10;
 const VIEWPORT_PAD = 8;
 
+/** What the composer copies, and what to run once it has. */
+export interface ComposedCopy extends CopyPayload {
+  /**
+   * Runs only when THIS copy landed on the clipboard; closing the composer
+   * mid-write does not cancel it, so a write that failed adds nothing.
+   */
+  commit?: () => void;
+}
+
+/** Nothing is copied and the composer stays open; the toast says why. */
+export interface RefusedCopy {
+  refused: string;
+}
+
+/** The composer's success line for a single pin; a set writes its own. */
+export const COPIED_ONE =
+  'Copied — paste it into the PR comment, the Teams thread, or Claude';
+
+/**
+ * A save re-keys the pin whenever the note the anchor carries changes, so the
+ * reviewer is told before they press it — a comment already pasted names the
+ * id this save may retire. Said every time: the cap makes the exception rare
+ * and not worth a second wording.
+ */
+export const EDIT_WARNING =
+  'Saving gives this pin a new id — a comment you already pasted keeps the old one. Copy all and paste again.';
+
+/** Nothing was written and the composer stays open, or it closes with a line. */
+export type SaveResult = RefusedCopy | { toast: string };
+
+/** Where an editor hangs from when its pin has no element on this page. */
+export interface EditorOpen {
+  /** Prefilled, and empty is allowed — the same as a pick. */
+  note: string;
+  /** The pin's own element, or a box to hang under (its dock row's). */
+  at: Element | RectLike;
+}
+
 export interface OverlayUICallbacks {
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
    * at pick time. `null` means the capture is not ready, which the composer
    * prevents by keeping the copy button disabled until it is.
    */
-  onBuildBlock: (text: string) => CopyPayload | null;
+  onBuildBlock: (text: string) => ComposedCopy | RefusedCopy | null;
+  /**
+   * Edit mode's ⌘⏎: no clipboard at all — the owner re-keys the pin and says
+   * what happened. Synchronous, like `onBuildBlock`.
+   */
+  onSaveNote: (text: string) => SaveResult;
   /** Debounced: the note rides in the anchor, so it has to be re-encoded. */
   onNoteChanged: (text: string) => void;
   onComposeClosed: () => void;
@@ -124,16 +168,26 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     .compose .actions {
       display: flex; justify-content: flex-end; gap: 6px; margin-top: 6px;
     }
+    .compose .btn.primary {
+      display: inline-flex; align-items: center; gap: 5px;
+    }
     .compose .err {
       color: var(--bai-review-error); font-size: 11px; margin-top: 4px;
       display: none;
     }
+    /* Said every time, not once: the id it retires is the one already pasted. */
+    .compose .warn {
+      color: var(--bai-review-text-dim); font-size: 11px; margin-top: 6px;
+      display: none;
+    }
+    .compose.editing .warn { display: block; }
     .toast {
       position: fixed; z-index: 2147483002; left: 50%; bottom: 64px;
       transform: translateX(-50%); background: var(--bai-review-inverted);
       color: var(--bai-review-on-inverted); font-size: 14px; padding: 8px 14px;
       border-radius: 16px; display: none; max-width: 70vw;
     }
+${ICON_STYLE}
   `;
   root.appendChild(style);
 
@@ -143,9 +197,10 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     <div class="pathlabel"></div>
     <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to copy the block; may be empty)"></textarea>
     <div class="err"></div>
+    <div class="warn"></div>
     <div class="actions">
       <button class="btn" data-act="cancel">Cancel</button>
-      <button class="btn primary" data-act="copy">📋 Copy block</button>
+      <button class="btn primary" data-act="copy"><span class="lbl"></span></button>
     </div>
   `;
   const toast = el('div', 'toast');
@@ -157,8 +212,13 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   const copyButton = compose.querySelector(
     '[data-act="copy"]',
   ) as HTMLButtonElement;
+  const copyLabel = copyButton.querySelector('.lbl') as HTMLElement;
+  copyButton.prepend(icon('copy'));
+  (compose.querySelector('.warn') as HTMLElement).textContent = EDIT_WARNING;
 
   let pickActive = false;
+  /** `edit` re-keys an existing pin and writes no clipboard at all. */
+  let mode: 'pick' | 'edit' = 'pick';
   let pickTarget: Element | null = null;
   /**
    * A box select's region as a fraction of `pickTarget`, so a scroll or a
@@ -225,10 +285,34 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
    */
   let readyNote: string | null = null;
   let noteTimer = 0;
+  /** A second ⌘⏎ over an unresolved write would build a second pin. */
+  let copyInFlight = false;
+  /** Bumped by every open: a settled copy may only close the composer it ran from. */
+  let composeEpoch = 0;
+  let draftFull = false;
+  let draftSize = 0;
 
   function syncCopyEnabled() {
     copyButton.disabled =
-      readyNote === null || composeText.value.trim() !== readyNote;
+      (mode === 'pick' && draftFull) ||
+      copyInFlight ||
+      readyNote === null ||
+      composeText.value.trim() !== readyNote;
+  }
+
+  /** The button says what ⌘⏎ does here; an edit only ever saves one note. */
+  function syncCopyLabel() {
+    copyButton
+      .querySelector('svg')
+      ?.replaceWith(icon(mode === 'edit' ? 'check' : 'copy'));
+    copyLabel.textContent =
+      mode === 'edit'
+        ? 'Save note'
+        : draftFull
+          ? `Set is full (${draftSize})`
+          : draftSize > 0
+            ? `Add & copy all (${draftSize + 1})`
+            : 'Copy block';
   }
 
   function setComposeReady(ready: boolean, note = '') {
@@ -270,18 +354,35 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     compose.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
   }
 
+  /** What both modes reset, before either says where the box hangs from. */
+  function beginCompose(next: 'pick' | 'edit', note: string) {
+    composeEpoch += 1;
+    mode = next;
+    compose.classList.toggle('editing', next === 'edit');
+    composeErr.style.display = 'none';
+    composeText.value = note;
+    clearTimeout(noteTimer);
+    setComposeReady(false);
+    syncCopyLabel();
+    compose.style.display = 'block';
+  }
+
+  /** Placement reads the box, so it runs once the box is displayed. */
+  function finishOpen() {
+    placeCompose();
+    syncPickHighlight();
+    focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
+    composeText.focus();
+  }
+
   function openCompose(
     target: Element,
     x: number,
     y: number,
     region?: Box | null,
   ) {
+    beginCompose('pick', '');
     pickTarget = target;
-    composeErr.style.display = 'none';
-    composeText.value = '';
-    clearTimeout(noteTimer);
-    setComposeReady(false);
-    compose.style.display = 'block';
     const frame = target.getBoundingClientRect();
     pickRegion = region ? fractionWithin(region, frame) : null;
     // The composer follows what is outlined, so a box select opens under the
@@ -297,10 +398,28 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       top: measured ? box.top : y,
       bottom: measured ? box.bottom : y,
     };
-    placeCompose();
-    syncPickHighlight();
-    focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
-    composeText.focus();
+    finishOpen();
+  }
+
+  /**
+   * The same box over a pin that already exists: its note comes back prefilled
+   * and ⌘⏎ saves instead of copying. An off-page pin has no element to outline,
+   * so its dock row's rect is what the box hangs from.
+   */
+  function openEditor({ note, at }: EditorOpen) {
+    beginCompose('edit', note);
+    const box = at instanceof Element ? at.getBoundingClientRect() : at;
+    pickTarget = at instanceof Element ? at : null;
+    pickRegion = null;
+    // A row's editor outlines nothing; an outline left by the editor it
+    // replaces would otherwise stay on that other pin's element.
+    if (!pickTarget) setHoverRect(null);
+    composeAnchor = {
+      left: box.left,
+      top: box.top,
+      bottom: box.top + box.height,
+    };
+    finishOpen();
   }
 
   // A drag on the textarea's resize handle changes the height too, and it goes
@@ -338,6 +457,9 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     if (!isComposeOpen()) return;
     clearTimeout(noteTimer);
     compose.style.display = 'none';
+    mode = 'pick';
+    compose.classList.remove('editing');
+    syncCopyLabel();
     pickTarget = null;
     pickRegion = null;
     composeAnchor = null;
@@ -356,13 +478,30 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     placeCompose();
   }
 
-  function getComposeTarget() {
-    return pickTarget;
+  /**
+   * Which open the composer is on, or 0 while it is closed. What was picked is
+   * not the identity — an edit opened from a dock row has no element at all.
+   */
+  function composeSession() {
+    return isComposeOpen() ? composeEpoch : 0;
   }
 
   function setPickActive(active: boolean) {
     pickActive = active;
   }
+
+  /**
+   * With a set already going, the pick joins it; a full set says so instead of
+   * promising a copy it would refuse. An editor keeps its own label.
+   */
+  function setDraftSize(size: number, full = false) {
+    draftFull = full;
+    draftSize = size;
+    syncCopyLabel();
+    syncCopyEnabled();
+  }
+  // The label the button carries before any set exists.
+  syncCopyLabel();
 
   // ------------------------------------------------------------- clipboard
 
@@ -432,6 +571,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   // ---------------------------------------------------------------- events
 
   function runCopy() {
+    if (copyInFlight) return;
     // Empty text is allowed — the block still carries label, stack and link.
     const note = composeText.value.trim();
     // ⌘⏎ can beat the debounce, and the note is part of the anchor now: start
@@ -442,39 +582,73 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       composeErr.style.display = 'block';
       return;
     }
-    let block: CopyPayload | null;
+    // Editing writes no clipboard: the pin is re-keyed in place, and the set's
+    // own "Copy all" is what replaces a paste that names the retired id.
+    if (mode === 'edit') {
+      const saved = callbacks.onSaveNote(note);
+      if ('refused' in saved) {
+        showToast(saved.refused);
+        return;
+      }
+      closeCompose();
+      showToast(saved.toast);
+      return;
+    }
+    let built: ComposedCopy | RefusedCopy | null;
     try {
-      block = callbacks.onBuildBlock(note);
+      built = callbacks.onBuildBlock(note);
     } catch (e) {
       composeErr.textContent = `Could not build the block: ${e}`;
       composeErr.style.display = 'block';
       return;
     }
-    if (!block) {
+    // A full set is not a broken composer: it is a set-level answer, and it
+    // leaves the note where the reviewer typed it.
+    if (built && 'refused' in built) {
+      showToast(built.refused);
+      return;
+    }
+    if (!built) {
       composeErr.textContent = 'Still reading the element — try again.';
       composeErr.style.display = 'block';
       return;
     }
+    const block = built;
+    const epoch = composeEpoch;
     const copied = copyText(block.text, block.html);
     // Close only on success. A failed copy tells the reviewer to press ⌘⏎
     // again, so the composer and the note they typed have to still be there.
     const done = (ok: boolean) => {
+      copyInFlight = false;
+      // Bound to this block, not to whatever the composer holds by now: the
+      // reviewer can close it while an async write is still in flight.
+      if (ok) block.commit?.();
+      syncCopyEnabled();
       showToast(
         ok
-          ? 'Copied — paste it into the PR comment, the Teams thread, or Claude 📋'
+          ? (block.toast ?? COPIED_ONE)
           : 'Could not reach the clipboard — press ⌘⏎ again',
       );
-      if (ok) closeCompose();
+      // Only the composer this copy ran from: an async write that settles after
+      // the reviewer moved on must not close the pick they are typing into now.
+      if (ok && epoch === composeEpoch) closeCompose();
     };
     if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
+    else {
+      copyInFlight = true;
+      syncCopyEnabled();
+      void copied.then(done);
+    }
   }
 
   compose.addEventListener('click', (evt) => {
-    const button = evt.target;
-    if (!(button instanceof HTMLButtonElement)) return;
-    if (button.dataset.act === 'cancel') closeCompose();
-    if (button.dataset.act === 'copy') runCopy();
+    // `closest`, not the target: the copy button holds an icon and a label
+    // span, so a click on the words never reaches the button itself (R5.2).
+    const target = evt.target instanceof Element ? evt.target : null;
+    const act =
+      target?.closest<HTMLButtonElement>('button[data-act]')?.dataset.act;
+    if (act === 'cancel') closeCompose();
+    if (act === 'copy') runCopy();
   });
 
   composeText.addEventListener('keydown', (evt) => {
@@ -518,12 +692,18 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     showToast,
     setHoverRect,
     openCompose,
+    openEditor,
     closeCompose,
     isComposeOpen,
     setComposeLabel,
     appendComposeLabel,
     setComposeReady,
-    getComposeTarget,
+    setDraftSize,
+    composeSession,
+    /** An editor, not a pick: nothing is about to be clicked through. */
+    isEditing: () => isComposeOpen() && mode === 'edit',
+    /** The reviewer is typing a note; a bare-letter chord is not for us. */
+    isTyping: () => root.activeElement === composeText,
     currentNote: () => composeText.value.trim(),
     setPickActive,
     placeCompose,

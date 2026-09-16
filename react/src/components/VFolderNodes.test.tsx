@@ -399,3 +399,44 @@ describe('VFolderNodes trash-bin row actions name why they are blocked (FR-3722)
     ).toHaveLength(2);
   }, 10000);
 });
+
+/**
+ * FR-2911: a read-only invitee's shared folder carries no `delete_vfolder`
+ * permission, so the trash bin's permanent delete must be blocked for the
+ * same reason "Move to trash" already is.
+ */
+describe('VFolderNodes trash-bin permanent delete requires delete permission (FR-2911)', () => {
+  beforeEach(() => {
+    mockObservedWidth = 600;
+    mockBaiClient.vfolder.delete_from_trash_bin.mockClear();
+  });
+
+  it('disables Delete with the no-permission reason when delete_vfolder is missing', async () => {
+    const user = userEvent.setup();
+    renderTable(undefined, null, {
+      status: 'delete-pending',
+      permissions: ['read_attribute', 'read_content', 'mount_ro'],
+    });
+
+    const deleteButton = await screen.findByRole('button', {
+      name: 'data.folders.Delete',
+    });
+    expect(deleteButton).toHaveAttribute('aria-disabled', 'true');
+
+    await user.hover(deleteButton);
+    expect(
+      await screen.findByText('data.folders.NoDeletePermission'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(deleteButton);
+    expect(mockBaiClient.vfolder.delete_from_trash_bin).not.toHaveBeenCalled();
+  }, 10000);
+
+  it('keeps Delete enabled when delete_vfolder is granted', async () => {
+    renderTable(undefined, null, { status: 'delete-pending' });
+
+    expect(
+      await screen.findByRole('button', { name: 'data.folders.Delete' }),
+    ).toBeEnabled();
+  }, 10000);
+});

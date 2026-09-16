@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ad95c6bade27aae5a1da84eea3633438>>
+ * @generated SignedSource<<46be6c5c96a4dc01a9efcad4bde0338b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type AuditLogStatus = "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
+export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly actionId: string;
@@ -17,7 +17,7 @@ export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
   readonly description: string;
   readonly duration: string | null | undefined;
   readonly entityId: string | null | undefined;
-  readonly entityType: string;
+  readonly entityType: string | null | undefined;
   readonly id: string;
   readonly operation: string;
   readonly requestId: string | null | undefined;

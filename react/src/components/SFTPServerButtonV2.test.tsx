@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BAIAppProvider } from 'backend.ai-ui';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -257,14 +258,16 @@ const renderButton = (
   render(
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
-        <>
+        {/* Mounts the app-shim modal host, which the SFTP failure modal
+            renders into. */}
+        <BAIAppProvider>
           <Suspense fallback={null}>
             <TestRenderer
               project={project}
               noProjectTooltip={noProjectTooltip}
             />
           </Suspense>
-        </>
+        </BAIAppProvider>
       </QueryClientProvider>
     </RelayEnvironmentProvider>,
   );
@@ -364,5 +367,44 @@ describe('SFTPServerButtonV2 project prop contract (ADR-0001, FR-3412)', () => {
       new URLSearchParams(target.search).get('formValues')!,
     );
     expect(formValues.projectName).toBe('passed-project-name');
+  });
+
+  it("opens the failure modal on a rejected session and sends its recovery CTA to the passed project's session list", async () => {
+    const user = userEvent.setup();
+    mockCreateIfNotExists.mockRejectedValueOnce(
+      Object.assign(new Error('Failed to start session'), { statusCode: 500 }),
+    );
+    renderButton({
+      id: 'passed-project-id',
+      name: 'passed-project-name',
+    });
+
+    const launchButton = await screen.findByRole('button', {
+      name: /RunSSH\/SFTPserver/,
+    });
+    await waitFor(() => expect(launchButton).toBeEnabled());
+    await user.click(launchButton);
+
+    expect(
+      await screen.findByText('data.explorer.SFTPSessionCreationFailed'),
+    ).toBeInTheDocument();
+    // The hint that points at lingering upload sessions as a likely cause.
+    expect(
+      screen.getByText('data.explorer.SFTPSessionFailureHint'),
+    ).toBeInTheDocument();
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'session.GoToUploadSessionList',
+      }),
+    );
+
+    await waitFor(() => expect(mockWebUINavigate).toHaveBeenCalled());
+    const target = mockWebUINavigate.mock.calls[0][0];
+    // Must not fall back to bare `/session`, which resolves the AMBIENT
+    // project, nor keep the ambient projectAdmin scope.
+    expect(target.pathname).toBe('/project/passed-project-name/session');
+    expect(target.pathname).not.toContain('/admin/');
+    expect(target.search).toBe('?type=system');
   });
 });

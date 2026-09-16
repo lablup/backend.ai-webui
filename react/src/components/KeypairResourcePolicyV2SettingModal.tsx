@@ -314,7 +314,9 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
 
   return (
     <BAIModal
-      width={800}
+      // The widest cell holds a number input plus a unit selector; 800px left
+      // it colliding with the next column at the 3-column track width.
+      width={960}
       title={
         keypairResourcePolicy === null
           ? t('resourcePolicy.CreateKeypairResourcePolicy')
@@ -388,7 +390,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
         </BAIFormItem>
         <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
           <Card padding={4}>
-            <Grid columns={{ minWidth: 220, max: 3 }} gap={6}>
+            <Grid columns={{ minWidth: 240, max: 3 }} columnGap={8} rowGap={6}>
               {_.map(_.keys(resourceSlots), (resourceSlotKey) => (
                 <FormItemWithUnlimited
                   key={resourceSlotKey}
@@ -421,7 +423,10 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                   ]}
                 >
                   {_.includes(resourceSlotKey, 'mem') ? (
-                    <BAIDynamicUnitInputNumber defaultUnit="g" />
+                    <BAIDynamicUnitInputNumber
+                      defaultUnit="g"
+                      style={{ width: '100%' }}
+                    />
                   ) : (
                     <AstryxFormNumberInput
                       label={
@@ -444,7 +449,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
         </BAIFormItem>
         <BAIFormItem label={t('resourcePolicy.Sessions')}>
           <Card padding={4}>
-            <Grid columns={{ minWidth: 220, max: 3 }} gap={6}>
+            <Grid columns={{ minWidth: 240, max: 3 }} columnGap={8} rowGap={6}>
               <FormItemWithUnlimited
                 label={t('resourcePolicy.ClusterSize')}
                 name="max_containers_per_session"

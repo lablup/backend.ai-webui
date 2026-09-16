@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<73b8f97d0c5a1f7c792c4fef6ab2ce0c>>
+ * @generated SignedSource<<362e42957771bbe9c6415b9227d63657>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,12 +13,13 @@ import { FragmentRefs } from "relay-runtime";
 export type AgentStatusEnum = "ALIVE" | "LOST" | "RESTARTING" | "TERMINATED" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type SessionV2OrderField = "CREATED_AT" | "ID" | "NAME" | "STATUS" | "TERMINATED_AT" | "%future added value";
-export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type AgentFilter = {
   AND?: ReadonlyArray<AgentFilter> | null | undefined;
   NOT?: ReadonlyArray<AgentFilter> | null | undefined;
   OR?: ReadonlyArray<AgentFilter> | null | undefined;
   id?: StringFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   scalingGroup?: StringFilter | null | undefined;
   schedulable?: boolean | null | undefined;
   status?: AgentStatusFilter | null | undefined;
@@ -49,22 +50,37 @@ export type AgentStatusFilter = {
   equals?: AgentStatusEnum | null | undefined;
   in?: ReadonlyArray<AgentStatusEnum> | null | undefined;
 };
-export type SessionV2Filter = {
-  AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
-  NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;
-  OR?: ReadonlyArray<SessionV2Filter> | null | undefined;
-  domainName?: StringFilter | null | undefined;
-  id?: UUIDFilter | null | undefined;
-  name?: StringFilter | null | undefined;
-  projectId?: UUIDFilter | null | undefined;
-  status?: SessionV2StatusFilter | null | undefined;
-  userUuid?: UUIDFilter | null | undefined;
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type UUIDFilter = {
   equals?: string | null | undefined;
   in?: ReadonlyArray<string> | null | undefined;
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type SessionV2Filter = {
+  AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  OR?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  domainName?: StringFilter | null | undefined;
+  id?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
+  name?: StringFilter | null | undefined;
+  projectId?: UUIDFilter | null | undefined;
+  status?: SessionV2StatusFilter | null | undefined;
+  userUuid?: UUIDFilter | null | undefined;
 };
 export type SessionV2StatusFilter = {
   equals?: SessionV2Status | null | undefined;

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The status cell of an audit log table. It wraps BAIBadge and adds the one thing that component does not know: the mapping from the backend's `AuditLogStatus` enum to a semantic color — `SUCCESS` to success, `ERROR` to error, `RUNNING` to info plus the processing ripple, and `UNKNOWN` (or `null`) to an outline-only dot for an indeterminate state. The status string itself is the visible label, and the badge never wraps onto a second line. Presentational only, with no Relay dependency; every other prop passes through to BAIBadge, whose `text`, `color` and `processing` this component owns and therefore does not accept.",
+      "The status cell of an audit log table. It wraps BAIBadge and adds the one thing that component does not know: the mapping from the backend's `AuditLogStatus` enum to a semantic color — `SUCCESS` to success, `ERROR` to error, `RUNNING` to info plus the processing ripple, `DENIED` to warning, and `UNKNOWN` (or `null`) to an outline-only dot for an indeterminate state. The status string itself is the visible label, and the badge never wraps onto a second line. Presentational only, with no Relay dependency; every other prop passes through to BAIBadge, whose `text`, `color` and `processing` this component owns and therefore does not accept.",
     bestPractices: [
       {
         guidance: true,

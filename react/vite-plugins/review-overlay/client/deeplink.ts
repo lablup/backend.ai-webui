@@ -7,20 +7,46 @@
  * a link without an anchor is plain text now — never an error.
  */
 import { isSafePath, PIN_BODY_SRC } from './codec.js';
-import type { AnchorV3 } from './types.js';
+import type { AnchorV3, SetPin } from './types.js';
 
 /** `[#&]` because the pin can ride inside a fragment the app already uses. */
-const HASH_RE = new RegExp(`[#&]bai=v3\\.${PIN_BODY_SRC}`);
+const HASH_RE_SRC = `[#&]bai=v3\\.${PIN_BODY_SRC}`;
 /** v1/v2 links are not carried forward — recognised only to say so. */
 const LEGACY_RE = /[#&]bai-review=/;
 
 export type Fragment =
   { kind: 'v3'; id: string; anchorB64: string } | { kind: 'legacy' } | null;
 
+/** How many pins a set may hold; the reader bounds a pasted hash by it too. */
+export const MAX_SET_PINS = 30;
+
+/**
+ * Every pin the fragment carries, in link order — a set is the same part
+ * repeated after `&`, which the anchor alphabet excludes. Fresh regex per
+ * call: a `g` regex carries `lastIndex` between them.
+ */
+export function parseFragments(hash: string): Array<{
+  id: string;
+  anchorB64: string;
+}> {
+  const re = new RegExp(HASH_RE_SRC, 'g');
+  const text = hash || '';
+  const parts: Array<{ id: string; anchorB64: string }> = [];
+  for (let m = re.exec(text); m; m = re.exec(text)) {
+    // Each part costs a decode and a drawn view, and a hash is untrusted.
+    if (parts.length >= MAX_SET_PINS) break;
+    parts.push({ id: m[1], anchorB64: m[2] });
+  }
+  return parts;
+}
+
+export const hasLegacyFragment = (hash: string): boolean =>
+  LEGACY_RE.test(hash || '');
+
 export function parseFragment(hash: string): Fragment {
-  const match = HASH_RE.exec(hash || '');
-  if (match) return { kind: 'v3', id: match[1], anchorB64: match[2] };
-  return LEGACY_RE.test(hash || '') ? { kind: 'legacy' } : null;
+  const [first] = parseFragments(hash);
+  if (first) return { kind: 'v3', ...first };
+  return hasLegacyFragment(hash) ? { kind: 'legacy' } : null;
 }
 
 /** Path AND query, so a filtered list or a tab reproduces (R3.3). */
@@ -44,15 +70,86 @@ export function otherFragment(hash: string): string {
     .join('&');
 }
 
+/** The scrub a merged link leaves behind: the app's own parts only (D4). */
+export const stripPinParts = otherFragment;
+
+/**
+ * First-seen wins, in set order. The link and the blocks render off the same
+ * list, or a pin added twice would be one part and two blocks.
+ */
+export function dedupeById<T extends { id: string }>(pins: T[]): T[] {
+  const seen = new Set<string>();
+  return pins.filter((pin) => {
+    if (seen.has(pin.id)) return false;
+    seen.add(pin.id);
+    return true;
+  });
+}
+
+/** The pin parts of a set's fragment, de-duplicated by id, in set order. */
+export function pinSetFragment(
+  pins: Array<{ id: string; anchorB64: string }>,
+): string {
+  return dedupeById(pins)
+    .map((pin) => `bai=v3.${pin.id}.${pin.anchorB64}`)
+    .join('&');
+}
+
+/** Everything of a pin a URL reads; the rest of `SetPin` never reaches one. */
+type UrlPin = Pick<SetPin, 'id' | 'anchorB64' | 'anchor' | 'appHash'>;
+
+/**
+ * The set's one link, opened on the page of ONE of its pins — the whole set
+ * still rides in the fragment, and the app's own fragment is THAT pin's, so
+ * the set reopens on the tab it was made on. An id the set no longer holds
+ * falls back to the first pin, so a stale "go" opens the link rather than
+ * nothing.
+ */
+export function pinSetUrlAt(
+  pins: UrlPin[],
+  id: string,
+  appHash?: string,
+): string {
+  const at = pins.find((pin) => pin.id === id) ?? pins[0];
+  if (!at) return '';
+  const query = at.anchor.q ? `?${at.anchor.q}` : '';
+  const fragment = appHash ?? at.appHash;
+  return `${at.anchor.p}${query}#${fragment ? `${fragment}&` : ''}${pinSetFragment(pins)}`;
+}
+
+/**
+ * The one link a pin set has, origin-relative. Path, query and the app's own
+ * fragment come from the FIRST pin — the set may span pages, and that is the
+ * page the link opens on.
+ */
+export function pinSetUrl(pins: UrlPin[]): string {
+  const first = pins[0];
+  return first ? pinSetUrlAt(pins, first.id) : '';
+}
+
+/**
+ * The one pin that navigates, scrolls and pulses (D2): the id a dock "go"
+ * handed over if the set still holds it, else the first pin this page can
+ * draw, else the head of the set.
+ */
+export function focusPinId(
+  pins: Array<{ id: string; anchor: AnchorV3 }>,
+  location: { pathname: string; search: string },
+  stored: string | null = null,
+): string | null {
+  if (stored && pins.some((pin) => pin.id === stored)) return stored;
+  const here = pins.find((pin) => !pathNeedsChange(pin.anchor, location));
+  return here?.id ?? pins[0]?.id ?? null;
+}
+
+/** A pin set of one. */
 export function pinUrl(
   anchor: AnchorV3,
   id: string,
   anchorB64: string,
   hash = '',
 ): string {
-  const query = anchor.q ? `?${anchor.q}` : '';
-  const rest = otherFragment(hash);
-  return `${anchor.p}${query}#${rest ? `${rest}&` : ''}bai=v3.${id}.${anchorB64}`;
+  return pinSetUrl([{ id, anchor, anchorB64, appHash: otherFragment(hash) }]);
 }
 
 /** A path is shown to a human here, so `%ED%95%9C` is not the answer. */
@@ -125,6 +222,88 @@ export function createNavigationGuard(
     reset() {
       navigatedHere = false;
     },
+  };
+}
+
+/** The focus pin a "go" hands to the document `location.assign` starts (D2). */
+const FOCUS_KEY = 'bai-review:focus';
+/** The merge sentence a link computed before it navigated to the set's page. */
+const NOTE_KEY = 'bai-review:note';
+
+export interface FocusStore {
+  /** One-shot: the value is cleared as it is read, so a reload does not repeat it. */
+  take(): string | null;
+  set(value: string): void;
+}
+
+function createHandover(key: string, storage: Storage | null): FocusStore {
+  return {
+    take() {
+      try {
+        const value = storage?.getItem(key) ?? null;
+        storage?.removeItem(key);
+        return value;
+      } catch {
+        return null;
+      }
+    },
+    set(value) {
+      try {
+        storage?.setItem(key, value);
+      } catch {
+        // The set still opens on that pin's page; only the pulse moves.
+        return;
+      }
+    },
+  };
+}
+
+export const createFocusStore = (
+  storage: Storage | null = safeStorage(),
+): FocusStore => createHandover(FOCUS_KEY, storage);
+
+/**
+ * What the open that navigated found, carried to the page it navigated to:
+ * that page re-merges the very pins it was just handed, and would otherwise
+ * report them as duplicates of themselves.
+ */
+export const createNoteStore = (
+  storage: Storage | null = safeStorage(),
+): FocusStore => createHandover(NOTE_KEY, storage);
+
+/** Dispatched by the patched `history`, so every listener hears one navigation. */
+const ROUTE_EVENT = 'bai-review:route';
+
+/**
+ * React Router owns the history and changes route without a reload, so a
+ * `popstate` listener alone misses every in-app navigation. Patched once per
+ * document: a second overlay boot adds a listener, not another wrapper.
+ */
+function patchHistory(): void {
+  const patched = history as History & { __baiReviewRouted?: true };
+  if (patched.__baiReviewRouted) return;
+  patched.__baiReviewRouted = true;
+  for (const name of ['pushState', 'replaceState'] as const) {
+    const original = history[name];
+    history[name] = function (
+      this: History,
+      ...args: Parameters<History['pushState']>
+    ) {
+      const result = original.apply(this, args);
+      window.dispatchEvent(new Event(ROUTE_EVENT));
+      return result;
+    };
+  }
+}
+
+/** Every SPA navigation, so the set can re-partition into views and rows. */
+export function watchRoute(onChange: () => void): () => void {
+  patchHistory();
+  window.addEventListener(ROUTE_EVENT, onChange);
+  window.addEventListener('popstate', onChange);
+  return () => {
+    window.removeEventListener(ROUTE_EVENT, onChange);
+    window.removeEventListener('popstate', onChange);
   };
 }
 

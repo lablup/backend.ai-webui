@@ -90,8 +90,18 @@ export const BAIMetadataListItem: React.FC<BAIMetadataListItemProps> = ({
   ...metadataListItemProps
 }) => {
   'use memo';
+  // The marker keeps the icon-slot rule in BAIMetadataList.css off a node label.
+  const markedLabel =
+    typeof label === 'string' ? (
+      label
+    ) : (
+      <span className="bai-metadata-list-item__label">{label}</span>
+    );
   return (
-    <MetadataListItem {...metadataListItemProps} label={label as string} />
+    <MetadataListItem
+      {...metadataListItemProps}
+      label={markedLabel as string}
+    />
   );
 };
 

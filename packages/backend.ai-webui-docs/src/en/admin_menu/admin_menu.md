@@ -411,13 +411,13 @@ Depending on the system settings, project folders may not be allowed.
 :::
 
 First, log in with an admin account and create a project folder. After moving to
-the Data page, click `Create Folder` to open the folder creation dialog.
-Enter the folder name, set the Type to Project. When the type is set to Project,
-it will be automatically assigned to the project selected in the project selector in the header.
-Permission is set to Read-Only.
+the admin Data page, click `Create Folder` to open the folder creation dialog.
+Because the admin Data page can create only project folders, the dialog does not show a folder type
+selector.
+In the **Target Project** field at the top of the dialog, choose the project that will own the
+folder, then enter the folder name and set **Mount Permission**.
 
 ![](../images/group_folder_creation.png)
-<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
@@ -442,7 +442,7 @@ Administrators and superadmins can access the Admin Deployments page at `/admin/
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Displays the deployment list across all projects, with the same lifecycle and property filters as the user-facing Deployments page.
+- **Deployments**: Displays the deployment list across all projects and provides the same lifecycle and property filters as the user-facing Deployments page. This cross-project view additionally offers a **Project** filter property.
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
@@ -495,7 +495,7 @@ You can narrow the list using the property filter bar at the top, which supports
 
 - **Name**: Filter by the model card's name (string match).
 - **Domain**: Filter by the owning domain (string match).
-- **Project**: Filter by the owning project's UUID. The value is checked before the filter is applied, so a malformed identifier is rejected with a message instead of returning an empty list.
+- **Project**: Filter by the owning project. Instead of typing a project identifier, you can pick from a searchable dropdown of the Model Store projects.
 - **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
 Edit and delete action icons are shown directly in the **Name** cell of each row.
@@ -574,7 +574,7 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 - **Options**: The optional **Filter Labels** and **Group Labels** that consumers can apply on top of the preset.
 - **Created At** / **Updated At**: Timestamps maintained automatically by the server.
 
-You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
+You can search and narrow the list with the property filter above the table, and click any column header to change the sort order. The **Category** property can be selected from the categories defined on this cluster instead of typing a category ID.
 
 <a id="prometheus-preset-column-settings"></a>
 
@@ -991,6 +991,11 @@ which the session will be created once sufficient resources become available.
 
 ![](../images/scheduler_page.png)
 
+Use the **Resource Group** selector above the list to choose which group's pending queue is shown. It
+is searchable and lists every active resource group in the cluster, sorted by name. Your choice is kept in the page URL as a `resourceGroup` query
+parameter, so you can bookmark or share the tab and come back to the same group; if the URL names a
+group that no longer exists or is no longer active, the first active resource group is shown instead.
+
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
@@ -1006,18 +1011,16 @@ The **Priority** column and the priority editing actions are shown only when the
 version 26.4.0 or later.
 :::
 
-On the **Sessions** tab, the property filter offers the following conditions:
-
-- **Project**: Choose the project from a searchable dropdown of the projects on this cluster. Because the
-  project is picked from the list, you do not have to look up its identifier; the resulting filter tag
-  shows the project's name.
-- **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
+On the **Sessions** tab, you can use the property filter to narrow the list, including by **Session ID**
+when needed.
 
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
 control next to the refresh button that switches between **Table** and **Grid**. The grid displays one
 cell per session, colored by that session's live resource utilization. For a description of the grid's
 own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
+
+<a id="fair-share-scheduler"></a>
 
 ## Fair share scheduler
 
@@ -1436,9 +1439,18 @@ node. The drawer has two tabs: **Resources**, which breaks the usage down per re
 **Sessions**, which lists the compute sessions assigned to this agent so you can see what is running on
 the node before stopping or restarting it. On the **Sessions** tab, use the **Running** / **Finished**
 selector to switch between sessions that still occupy the node's resources and sessions that have
-already finished, and click a session name to open its detail view on the Admin Session page.
+already finished, and click a session name to show that session's details.
 
 ![](../images/detailed_agent_node_usage_information.png)
+
+When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
+[Experimental features](#experimental-features) section), the **Sessions** tab also shows a **View
+mode** control next to the refresh button that switches between **Table** and **Grid**. The grid
+replaces the session table with one cell per session on this agent, colored by that session's live
+resource utilization, and follows the current **Running** / **Finished** selection. For a description
+of the grid's own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
+
+![](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 
@@ -1925,6 +1937,8 @@ RBAC (Role-Based Access Control) Management allows superadmins to define roles w
 For detailed information about managing roles, permissions, and user assignments, refer to the dedicated [RBAC Management](#rbac-management) page.
 
 
+<a id="diagnostics"></a>
+
 ## Diagnostics
 
 Superadmins can open the **Diagnostics** page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.
@@ -1956,6 +1970,8 @@ placeholder reading `No failed items. All diagnostics passed.`, so a clean resul
 :::tip
 When troubleshooting a connection problem, enable **Show only failed items** and click `Re-run Diagnostics` first — it surfaces just the checks that need attention.
 :::
+
+<a id="branding"></a>
 
 ## Branding
 

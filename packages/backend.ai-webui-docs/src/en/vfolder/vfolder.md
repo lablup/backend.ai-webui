@@ -48,18 +48,20 @@ the creation dialog as follows:
 
 The meaning of each field in the creation dialog is as follows.
 
+- **Folder name**: The name of the folder (up to 64 characters).
 - **Usage Mode**: Set the purpose of the folder.
 
    * General: Defines a folder for storing various data in a general-purpose manner.
    * Models: Defines a folder specialized for model serving and management. If this mode is selected, it is also possible to toggle the folder's copy availability.
    * Auto Mount: Folders automatically mounted when a session is created. If selected, the folder name must start with a dot ('.').
 
-- **Folder name**: The name of the folder (up to 64 characters).
 - **Location**: Select the storage host where the folder will be created. If there are multiple hosts, choose one. An indicator will show if there is enough available space.
-- **Type**: Determines the type of folder to be created. It can be set as User or Project. The User folder is a folder that users can create and use alone and the Project folder is a folder created by admin and shared by users in the project.
-- **Project**: Shown only when you select Project type. The folder belongs to the project currently selected in the top bar — there is no separate project selector, and a confirmation message indicates which project will own the folder. This field has no effect when creating a User folder.
-- **Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it. This applies to both User and Project folders; for a Project folder it governs access for all project members.
+- **Mount Permission**: The mount permission applied when the folder is mounted into a compute session. **Read & Write** allows writing to the folder inside sessions; **Read only** prevents it.
 - **Cloneable**: Shown only when you select usage mode to "Model". Select whether the vfolder you are creating should be cloneable.
+
+:::note
+Folders created from the Data page are always **User folders**. **Project folders** are created by administrators from the admin Data pages.
+:::
 
 The folders created here can be [mounted](#session-mounts) when creating a compute session. Folders are mounted
 under the user's default working directory, `/home/work/`, and the file stored in the mounted
@@ -190,7 +192,7 @@ alert counts just the folders that are actually moved.
 ### Restore or permanently delete
 
 In this status, you can restore the folder by clicking the restore button on the folder's row in the **Name** column. If you want to permanently delete the folder,
-please click the `trash bin` button on the same row. Once permanent deletion has actually started, the folder can no longer be restored or deleted again: both buttons on its row become unavailable and report *"Deletion has already started for this folder."*
+please click the `trash bin` button on the same row. Once permanent deletion has actually started, the folder can no longer be restored or deleted again: both buttons on its row become unavailable and report *"Deletion has already started for this folder."* The `trash bin` button on a row is also unavailable when you do not have delete permission on that folder — for example, a shared or project folder you are not allowed to delete — and reports *"No delete permission"* instead.
 
 ![](../images/vfolder_trash_list.png)
 

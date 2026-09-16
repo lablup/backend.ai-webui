@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Ζήτησε με επιτυχία την έλξη {{count}}}.",
     "Version": "Εκδοχή"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Έλεγχος της συνεδρίας Backend.AI…",
+    "SignInWithBackendAI": "Σύνδεση με Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Το πρόγραμμα περιήγησης απέκλεισε το αίτημα προς τον διακομιστή ιστού Backend.AI. Συνήθως οφείλεται σε περιορισμό CORS ή μεικτού περιεχομένου.",
+      "HttpError": "Ο διακομιστής ιστού Backend.AI επέστρεψε σφάλμα ({{status}}).",
+      "InvalidCallback": "Η διεύθυνση επιστροφής σύνδεσης που έχει ρυθμιστεί για το {{appName}} δεν είναι έγκυρη διεύθυνση web.",
+      "InvalidResponse": "Ο διακομιστής ιστού Backend.AI επέστρεψε μη αναμενόμενη απόκριση.",
+      "NoEndpoint": "Δεν έχει ρυθμιστεί διεύθυνση διακομιστή ιστού Backend.AI για το {{appName}}.",
+      "NoSessionId": "Έχετε συνδεθεί στο Backend.AI, αλλά ο διακομιστής ιστού δεν επέστρεψε αναγνωριστικό συνεδρίας.",
+      "NoSessionOverHttp": "Δεν έχετε συνδεθεί ακόμη στο Backend.AI. Αν έχετε ήδη συνδεθεί, το {{appName}} παρέχεται μέσω HTTP, οπότε το πρόγραμμα περιήγησης ενδέχεται να απορρίπτει το ασφαλές cookie συνεδρίας του διακομιστή ιστού. Δοκιμάστε να ανοίξετε το {{appName}} μέσω HTTPS.",
+      "NoSessionOverHttps": "Δεν έχετε συνδεθεί ακόμη στο Backend.AI. Αν έχετε ήδη συνδεθεί, το {{appName}} και ο διακομιστής ιστού Backend.AI ενδέχεται να είναι διαφορετικοί ιστότοποι, οπότε το πρόγραμμα περιήγησης δεν στέλνει το cookie συνεδρίας.",
+      "RelayFailed": "Έχετε συνδεθεί στο Backend.AI, αλλά το {{appName}} δεν μπόρεσε να ολοκληρώσει τη σύνδεση.",
+      "Timeout": "Ο διακομιστής ιστού Backend.AI δεν απάντησε εγκαίρως.",
+      "Title": "Δεν ήταν δυνατή η σύνδεση με Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Μέγεθος συμπλέγματος",
     "Concurrency": "Ταυτόχρονες συνεδρίες",
@@ -338,18 +355,22 @@
     "UpdateProject": "Ενημέρωση έργου"
   },
   "comp:BAIProjectTable": {
+    "Active": "Ενεργός",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
     "ContainerRegistryProject": "Έργο αποθετηρίου κοντέινερ",
     "CreatedAt": "Δημιουργήθηκε στις",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
+    "Inactive": "Αδρανής",
     "IntegrationID": "ID ενσωμάτωσης",
+    "ModifiedAt": "Τροποποιήθηκε στις",
     "Name": "Όνομα",
     "Project": "Έργο",
     "ProjectID": "ID Έργου",
     "Registry": "Μητρώο",
     "ResourcePolicy": "Πολιτική πόρων",
     "ScalingGroups": "Ομάδες πόρων",
+    "Status": "Κατάσταση",
     "StorageNodes": "Κόμβοι Αποθήκευσης",
     "TotalResourceSlots": "Συνολικές θέσεις πόρων",
     "Type": "Τύπος"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",
     "EditFile": "Επεξεργασία αρχείου",
+    "ExistingItem": "Υπάρχον",
     "FileCreatedSuccessfully": "Το αρχείο δημιουργήθηκε επιτυχώς.",
     "FileName": "Όνομα αρχείου",
     "FileNamePlaceholder": "π.χ. model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Τροποποιημένος",
     "Name": "Ονομα",
     "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
+    "OtherItemsWillBeUploaded": "{{count}} ακόμη στοιχείο(-α) θα μεταφορτωθούν επίσης.",
     "Path": "Διαδρομή",
     "PleaseEnterAFileName": "Εισαγάγετε το όνομα του αρχείου.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
     "RenameFile": "Μετονομασία",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",
+    "SelectItemsToOverwrite": "Αυτά τα στοιχεία υπάρχουν ήδη εδώ. Επιλέξτε αυτά που θα αντικατασταθούν· τα μη επιλεγμένα παραλείπονται.",
     "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
     "Size": "Μέγεθος",
     "TypeDeleteToConfirm": "Πληκτρολογήστε «Διαγράφω» για επιβεβαίωση.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "Αυτή η μορφή αρχείου δεν υποστηρίζει επεξεργασία.",
     "UploadFiles": "Μεταφόρτωση αρχείων",
     "UploadFolder": "Μεταφορτωμένος φάκελος",
+    "UploadingItem": "Προς μεταφόρτωση",
     "error": {
       "DuplicatedName": "Αυτό το όνομα χρησιμοποιείται ήδη. \nΕισαγάγετε ένα διαφορετικό όνομα.",
       "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
@@ -762,6 +787,7 @@
     "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
     "Increase": "Αύξηση",
+    "Loading": "Φόρτωση...",
     "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",

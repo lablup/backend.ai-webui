@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "{{count} хувилбарыг амжилттай хийхийг хүсч байна.",
     "Version": "Таамаглал"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI сессийг шалгаж байна…",
+    "SignInWithBackendAI": "Backend.AI-аар нэвтрэх",
+    "failure": {
+      "CorsOrMixed": "Хөтөч Backend.AI вэб сервер рүү илгээсэн хүсэлтийг хаалаа. Ихэвчлэн CORS эсвэл холимог агуулгын хязгаарлалтаас болдог.",
+      "HttpError": "Backend.AI вэб сервер алдаа буцаалаа ({{status}}).",
+      "InvalidCallback": "{{appName}}-д тохируулсан нэвтрэлтийн буцах хаяг нь хүчинтэй веб хаяг биш байна.",
+      "InvalidResponse": "Backend.AI вэб сервер хүлээгдээгүй хариу буцаалаа.",
+      "NoEndpoint": "{{appName}}-д Backend.AI вэб серверийн хаяг тохируулаагүй байна.",
+      "NoSessionId": "Та Backend.AI-д нэвтэрсэн боловч вэб сервер сессийн ID буцаасангүй.",
+      "NoSessionOverHttp": "Та Backend.AI-д хараахан нэвтрээгүй байна. Хэрэв та аль хэдийн нэвтэрсэн бол {{appName}} нь HTTP-ээр дамжуулагдаж байгаа тул хөтөч вэб серверийн аюулгүй сессийн күүкиг татгалзаж байж магадгүй. {{appName}}-г HTTPS-ээр нээж үзнэ үү.",
+      "NoSessionOverHttps": "Та Backend.AI-д хараахан нэвтрээгүй байна. Хэрэв та аль хэдийн нэвтэрсэн бол {{appName}} болон Backend.AI вэб сервер өөр өөр сайт байж магадгүй тул хөтөч сессийн күүкиг илгээхгүй байна.",
+      "RelayFailed": "Та Backend.AI-д нэвтэрсэн боловч {{appName}} нэвтрэлтийг дуусгаж чадсангүй.",
+      "Timeout": "Backend.AI вэб сервер хугацаанд нь хариу өгсөнгүй.",
+      "Title": "Backend.AI-аар нэвтэрч чадсангүй"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Кластерийн хэмжээ",
     "Concurrency": "Зэрэгцээ сессүүд",
@@ -338,18 +355,22 @@
     "UpdateProject": "Төслийг шинэчлэх"
   },
   "comp:BAIProjectTable": {
+    "Active": "Идэвхтэй",
     "ContainerRegistry": "Контейнерийн бүртгэл",
     "ContainerRegistryProject": "Контейнерийн бүртгэлийн төсөл",
     "CreatedAt": "Үүсгэсэн огноо",
     "Description": "Тайлбар",
     "Domain": "Домен",
+    "Inactive": "Идэвхгүй",
     "IntegrationID": "Интеграцийн ID",
+    "ModifiedAt": "Өөрчилсөн",
     "Name": "Нэр",
     "Project": "Төсөл",
     "ProjectID": "Төслийн ID",
     "Registry": "Регистри",
     "ResourcePolicy": "Ресурсын бодлого",
     "ScalingGroups": "Нөөцийн бүлгүүд",
+    "Status": "Төлөв",
     "StorageNodes": "Хадгалах зангилаанууд",
     "TotalResourceSlots": "Нийт нөөцийн слотууд",
     "Type": "Төрөл"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
     "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",
     "EditFile": "Файлыг засах",
+    "ExistingItem": "Одоо байгаа",
     "FileCreatedSuccessfully": "Файл амжилттай үүслээ.",
     "FileName": "Файлын нэр",
     "FileNamePlaceholder": "жишээ нь model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Өөрчлөгдсөн",
     "Name": "Нэр",
     "NoUploadPermissionForHost": "Энэ хостод байршуулах эрх байхгүй байна.",
+    "OtherItemsWillBeUploaded": "Өөр {{count}} зүйлийг мөн байршуулна.",
     "Path": "Зам",
     "PleaseEnterAFileName": "Файлын нэрийг оруулна уу.",
     "PleaseEnterAFolderName": "Фолдерын нэрийг оруулна уу.",
     "RenameFile": "Нэр өөрчлөх",
     "RenameSuccess": "Энэ нэр амжилттай өөрчлөгдсөн байна.",
+    "SelectItemsToOverwrite": "Эдгээр зүйл энд аль хэдийн байна. Дарж бичих зүйлээ сонгоно уу; сонгоогүй зүйлсийг алгасна.",
     "SelectedItemsDeletedSuccessfully": "Сонгосон файлууд болон хавтасыг амжилттай устгасан байна.",
     "Size": "Хэмжээ",
     "TypeDeleteToConfirm": "Баталгаажуулахын тулд 'Эдгээх' гэж бичнэ үү.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "Энэ файлын формат засварлахыг дэмждэггүй.",
     "UploadFiles": "Файл байршуулах",
     "UploadFolder": "Фолдерыг байршуулах",
+    "UploadingItem": "Байршуулах",
     "error": {
       "DuplicatedName": "Энэ нэр аль хэдийн ашиглагдаж байна. \nӨөр нэр оруулна уу.",
       "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу."
@@ -762,6 +787,7 @@
     "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
     "Increase": "Нэмэх",
+    "Loading": "Ачаалж байна...",
     "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",

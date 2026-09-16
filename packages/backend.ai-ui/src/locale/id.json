@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
     "Version": "Versi"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Memeriksa sesi Backend.AI Anda…",
+    "SignInWithBackendAI": "Masuk dengan Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Peramban memblokir permintaan ke server web Backend.AI. Biasanya hal ini disebabkan oleh pembatasan CORS atau konten campuran.",
+      "HttpError": "Server web Backend.AI mengembalikan kesalahan ({{status}}).",
+      "InvalidCallback": "Alamat kembali masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang valid.",
+      "InvalidResponse": "Server web Backend.AI mengembalikan respons yang tidak terduga.",
+      "NoEndpoint": "Tidak ada alamat server web Backend.AI yang dikonfigurasi untuk {{appName}}.",
+      "NoSessionId": "Anda sudah masuk ke Backend.AI, tetapi server web tidak mengembalikan ID sesi.",
+      "NoSessionOverHttp": "Anda belum masuk ke Backend.AI. Jika Anda sudah masuk, {{appName}} disajikan melalui HTTP sehingga peramban mungkin menolak cookie sesi aman dari server web. Coba buka {{appName}} melalui HTTPS.",
+      "NoSessionOverHttps": "Anda belum masuk ke Backend.AI. Jika Anda sudah masuk, {{appName}} dan server web Backend.AI mungkin merupakan situs yang berbeda sehingga peramban tidak mengirim cookie sesi.",
+      "RelayFailed": "Anda sudah masuk ke Backend.AI, tetapi {{appName}} tidak dapat menyelesaikan proses masuk.",
+      "Timeout": "Server web Backend.AI tidak merespons tepat waktu.",
+      "Title": "Tidak dapat masuk dengan Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Ukuran Klaster",
     "Concurrency": "Sesi Serentak",
@@ -338,18 +355,22 @@
     "UpdateProject": "Perbarui Proyek"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Registri Kontainer",
     "ContainerRegistryProject": "Proyek Registri Kontainer",
     "CreatedAt": "Dibuat pada",
     "Description": "Deskripsi",
     "Domain": "Domain",
+    "Inactive": "Tidak aktif",
     "IntegrationID": "ID Integrasi",
+    "ModifiedAt": "Dimodifikasi pada",
     "Name": "Nama",
     "Project": "Proyek",
     "ProjectID": "ID Proyek",
     "Registry": "Registri",
     "ResourcePolicy": "Kebijakan Sumber Daya",
     "ScalingGroups": "Grup Sumber Daya",
+    "Status": "Status",
     "StorageNodes": "Node Penyimpanan",
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Timpa konfirmasi",
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
     "EditFile": "Edit File",
+    "ExistingItem": "Yang Ada",
     "FileCreatedSuccessfully": "File berhasil dibuat.",
     "FileName": "Nama File",
     "FileNamePlaceholder": "mis. model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Dimodifikasi di",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "OtherItemsWillBeUploaded": "{{count}} item lainnya juga akan diunggah.",
     "Path": "Jalur",
     "PleaseEnterAFileName": "Harap masukkan nama file.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
     "RenameFile": "Ganti nama",
     "RenameSuccess": "Namanya telah berhasil diubah.",
+    "SelectItemsToOverwrite": "Item berikut sudah ada di sini. Pilih item yang akan ditimpa; item yang tidak dipilih akan dilewati.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
     "TypeDeleteToConfirm": "Ketik 'Menghapus' untuk mengonfirmasi.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "Format file ini tidak mendukung pengeditan.",
     "UploadFiles": "Unggah file",
     "UploadFolder": "Unggah folder",
+    "UploadingItem": "Akan Diunggah",
     "error": {
       "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
       "FileNameRequired": "Harap masukkan file atau nama folder."
@@ -762,6 +787,7 @@
     "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
     "Increase": "Tambah",
+    "Loading": "Memuat...",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",

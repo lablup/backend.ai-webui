@@ -6,7 +6,7 @@ import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import DeploymentDetailPage from './DeploymentDetailPage';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -121,7 +121,8 @@ vi.mock('../components/DeploymentRevisionCard', async () => {
     default: (props: any) =>
       React.createElement('div', {
         'data-testid': 'mock-revision-card',
-        'data-add-revision-disabled': String(props.isAddRevisionDisabled),
+        'data-add-revision-disabled-reason':
+          props.addRevisionDisabledReason ?? '',
       }),
   };
 });
@@ -173,7 +174,7 @@ vi.mock('../components/SwitchToProjectButton', async () => {
   };
 });
 
-const renderPage = () => {
+const renderPage = (deploymentOverrides: Record<string, any> = {}) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation: any) =>
     MockPayloadGenerator.generate(operation, {
@@ -194,6 +195,7 @@ const renderPage = () => {
         currentRevision: { id: 'revision-1' },
         deployingRevision: { id: 'revision-1' },
         creator: { basicInfo: { email: 'me@backend.ai' } },
+        ...deploymentOverrides,
       }),
     }),
   );
@@ -234,8 +236,8 @@ describe('DeploymentDetailPage project context (ADR-0001, FR-3413)', () => {
       screen.queryByTestId('mock-switch-to-project-button'),
     ).not.toBeInTheDocument();
     expect(screen.getByTestId('mock-revision-card')).toHaveAttribute(
-      'data-add-revision-disabled',
-      'false',
+      'data-add-revision-disabled-reason',
+      '',
     );
     // The replica drawer gets `null` too — no mismatch alert inside it.
     expect(screen.getByTestId('mock-replicas-card')).toHaveAttribute(
@@ -253,13 +255,51 @@ describe('DeploymentDetailPage project context (ADR-0001, FR-3413)', () => {
     expect(
       screen.getByTestId('mock-switch-to-project-button'),
     ).toBeInTheDocument();
+    // Disabled AND told why — not just disabled (FR-3737).
     expect(screen.getByTestId('mock-revision-card')).toHaveAttribute(
-      'data-add-revision-disabled',
-      'true',
+      'data-add-revision-disabled-reason',
+      'deployment.AddRevisionDisabledProjectMismatch',
     );
     expect(screen.getByTestId('mock-replicas-card')).toHaveAttribute(
       'data-project-id',
       'ambient-project-id',
     );
+  });
+});
+
+describe('DeploymentDetailPage private-deployment banner (FR-3737)', () => {
+  const PRIVATE_DEPLOYMENT_WITHOUT_TOKENS = {
+    networkAccess: {
+      openToPublic: false,
+      endpointUrl: 'https://endpoint.example',
+    },
+    accessTokens: { count: 0 },
+  };
+  const addAccessTokenButton = () =>
+    screen.getByRole('button', { name: /deployment\.AddAccessToken/ });
+
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = true;
+  });
+
+  it("names the ownership reason, matching the Access Tokens card's guard", async () => {
+    renderPage({
+      ...PRIVATE_DEPLOYMENT_WITHOUT_TOKENS,
+      creator: { basicInfo: { email: 'someone-else@backend.ai' } },
+    });
+
+    const button = await waitFor(addAccessTokenButton);
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    expect(
+      screen.getByText('deployment.accessToken.OnlyOwnerCanManage'),
+    ).toBeInTheDocument();
+  });
+
+  it('carries no reason for the deployment owner', async () => {
+    renderPage(PRIVATE_DEPLOYMENT_WITHOUT_TOKENS);
+
+    const button = await waitFor(addAccessTokenButton);
+    expect(button).not.toHaveAttribute('aria-disabled');
+    expect(button).not.toBeDisabled();
   });
 });

@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
     "Version": "バージョン"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI セッションを確認しています…",
+    "SignInWithBackendAI": "Backend.AI アカウントでログイン",
+    "failure": {
+      "CorsOrMixed": "ブラウザーが Backend.AI ウェブサーバーへのリクエストをブロックしました。通常は CORS または混在コンテンツの制限が原因です。",
+      "HttpError": "Backend.AI ウェブサーバーがエラーを返しました ({{status}})。",
+      "InvalidCallback": "{{appName}} に設定されたログイン後の戻り先アドレスが有効なウェブアドレスではありません。",
+      "InvalidResponse": "Backend.AI ウェブサーバーが予期しない応答を返しました。",
+      "NoEndpoint": "{{appName}} に Backend.AI ウェブサーバーのアドレスが設定されていません。",
+      "NoSessionId": "Backend.AI にログインしていますが、ウェブサーバーがセッション ID を返しませんでした。",
+      "NoSessionOverHttp": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} が HTTP で配信されているため、ブラウザーがウェブサーバーのセキュアなセッションクッキーを拒否している可能性があります。{{appName}} を HTTPS で開いてみてください。",
+      "NoSessionOverHttps": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} と Backend.AI ウェブサーバーが異なるサイトのため、ブラウザーがセッションクッキーを送信していない可能性があります。",
+      "RelayFailed": "Backend.AI にログインしていますが、{{appName}} でログインを完了できませんでした。",
+      "Timeout": "Backend.AI ウェブサーバーが時間内に応答しませんでした。",
+      "Title": "Backend.AI アカウントでログインできませんでした"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "クラスターサイズ",
     "Concurrency": "同時実行セッション数",
@@ -338,18 +355,22 @@
     "UpdateProject": "プロジェクトの更新"
   },
   "comp:BAIProjectTable": {
+    "Active": "アクティブ",
     "ContainerRegistry": "コンテナレジストリ",
     "ContainerRegistryProject": "コンテナレジストリプロジェクト",
     "CreatedAt": "作成日時",
     "Description": "説明",
     "Domain": "ドメイン",
+    "Inactive": "非アクティブ",
     "IntegrationID": "連携ID",
+    "ModifiedAt": "更新日時",
     "Name": "名前",
     "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
     "Registry": "レジストリ",
     "ResourcePolicy": "リソースポリシー",
     "ScalingGroups": "リソースグループ",
+    "Status": "ステータス",
     "StorageNodes": "ストレージノード",
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "確認の上書き",
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
     "EditFile": "ファイルを編集",
+    "ExistingItem": "既存",
     "FileCreatedSuccessfully": "ファイルは正常に作成されました。",
     "FileName": "ファイル名",
     "FileNamePlaceholder": "例: model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "で変更されました",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
+    "OtherItemsWillBeUploaded": "他の {{count}} 件の項目も一緒にアップロードされます。",
     "Path": "パス",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
     "RenameFile": "名前を変更",
     "RenameSuccess": "名前は正常に変更されました。",
+    "SelectItemsToOverwrite": "以下の項目はすでに存在します。上書きする項目を選択してください。選択しなかった項目はアップロードされません。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
     "TypeDeleteToConfirm": "「消去」と入力して確認します。",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "このファイル形式は編集をサポートしていません。",
     "UploadFiles": "ファイルをアップロードします",
     "UploadFolder": "フォルダーをアップロードします",
+    "UploadingItem": "アップロード",
     "error": {
       "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。",
       "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
@@ -762,6 +787,7 @@
     "DeselectAll": "すべて選択解除",
     "File": "ファイル",
     "Increase": "増やす",
+    "Loading": "読み込み中...",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",

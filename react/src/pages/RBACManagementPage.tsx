@@ -13,12 +13,13 @@ import {
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
-import RoleFormModal, { RBAC_ELEMENT_TYPES } from '../components/RoleFormModal';
+import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
+import { ALL_RBAC_ELEMENT_TYPES } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import {
@@ -273,10 +274,11 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
                   fixedOperator: 'equals',
-                  renderInput: ({ onAddCondition }) => (
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIUserSelect
                       valuePropName="id"
-                      value={null}
+                      value={value}
+                      isDisabled={isDisabled}
                       label={t('rbac.AssignedUser')}
                       isLabelHidden
                       onChange={(value, option) =>
@@ -290,7 +292,6 @@ const RBACManagementPage: React.FC = () => {
                             : option?.label,
                         )
                       }
-                      width={200}
                     />
                   ),
                 },
@@ -299,7 +300,9 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
                   fixedOperator: 'equals',
-                  options: RBAC_ELEMENT_TYPES.map((type) => ({
+                  // The whole enum, not RoleFormModal's scope-id-picker
+                  // whitelist: the server filters on any element type.
+                  options: ALL_RBAC_ELEMENT_TYPES.map((type) => ({
                     label: t(`rbac.types.${type}`, { defaultValue: type }),
                     value: type,
                   })),

@@ -142,10 +142,14 @@ export async function login(
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // Expand the endpoint section if it's not already visible. Must be the role
-  // locator: getByLabel('Endpoint') also matches the 'Endpoint History' /
-  // 'About Endpoint' controls once the section is open.
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
+  // Expand the endpoint section if it's not already visible.
+  // `getByLabel('Endpoint')` matches on substring, so it also picks up the
+  // "Endpoint History" trigger and the "About Endpoint" button — three
+  // elements, so it throws. `exact` pins the role lookup to the input alone.
+  const endpointInput = page.getByRole('textbox', {
+    name: 'Endpoint',
+    exact: true,
+  });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
@@ -630,11 +634,12 @@ export async function createVFolderAndVerify(
     await (await modal.getModelUsageModeRadio()).click();
   }
 
-  // Select type
-  if (type === 'user') {
-    await (await modal.getUserTypeRadio()).click();
-  } else if (type === 'project') {
-    await (await modal.getProjectTypeRadio()).click();
+  // Ownership is page-derived since FR-3441 (no in-form Type radio); this
+  // helper drives the user Data page, which creates user folders only.
+  if (type === 'project') {
+    throw new Error(
+      'createVFolderAndVerify drives the user Data page, which creates user folders only (FR-3441); drive the Project Admin Data page for project folders.',
+    );
   }
 
   // Select permission

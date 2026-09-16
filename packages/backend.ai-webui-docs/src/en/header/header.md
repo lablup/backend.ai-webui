@@ -62,6 +62,43 @@ The login session timer is only visible when the server supports login session
 extension and it has been enabled in the system configuration.
 :::
 
+<a id="search"></a>
+
+## Search
+
+The magnifier button opens the search palette, which lets you jump to any page,
+page tab, or setting item without leaving the keyboard.
+
+:::note
+The search palette is an experimental feature and is turned off by default. The
+**Search** button appears in the top bar, and its shortcut works, only while the
+**Command palette** item under **Experimental features** on the User Settings
+page is enabled.
+:::
+
+Click the button, or press `Ctrl-K` (`Cmd-K` on macOS), to open the palette. The
+shortcut works even while the cursor is in an input field.
+
+![](../images/global_search_palette.png)
+
+Type in the search field, whose placeholder reads `Search pages, tabs, and
+settings`, to look up pages, page tabs, and setting items at once. A result that
+matched the description of an item rather than its name shows a `Found in ...`
+line naming where the word was found, and a result that belongs to the
+administration menus carries an `Administration` or `Project administration`
+tag. When nothing matches what you typed, `No results` is shown.
+
+The palette also offers quick actions in three groups.
+
+- `Create`: Start a new session, create a storage folder, or create a deployment.
+- `Appearance`: Switch to dark or light mode, use the system theme, or change the
+  UI language.
+- `Panels & help`: Open user settings, open notifications, toggle the sidebar, or
+  open the manual for the current page.
+
+Before you type anything, the results you opened most recently are listed at the
+top under `Recent`.
+
 <a id="notification"></a>
 
 ## Notification

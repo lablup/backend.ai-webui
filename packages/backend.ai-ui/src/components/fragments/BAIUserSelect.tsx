@@ -26,9 +26,8 @@
     survives — `BAIComplexSelect.onOpenChange` re-exposes the open state that
     `ComplexSelector` otherwise keeps private.
   - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
-    is dropped: `emptyContent` takes a ReactNode but a skeleton row inside an
-    Astryx popup adds an antd dependency back into a migrated surface. The
-    empty state is the shared "No results" text (simplicity policy).
+    stays dropped, but the empty popup is no longer unconditionally "No
+    results": `BAIComplexSelect` draws a spinner row while `isLoading` (FR-3724).
 */
 import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
 import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
@@ -291,6 +290,10 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       multiple={multiple}
       isLoading={
         isLoading ||
+        // The open-driven `network-only` refetch is a deferred update and
+        // raises no pending flag of its own (FR-3724). Only the opening
+        // half counts; closing would flash the spinner for nothing.
+        (!!controllableOpen && !deferredOpen) ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch

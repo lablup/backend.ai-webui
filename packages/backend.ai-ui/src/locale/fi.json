@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
     "Version": "Versio"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Tarkistetaan Backend.AI-istuntoasi…",
+    "SignInWithBackendAI": "Kirjaudu sisään Backend.AI-tunnuksella",
+    "failure": {
+      "CorsOrMixed": "Selain esti pyynnön Backend.AI-verkkopalvelimelle. Syynä on yleensä CORS- tai sekasisältörajoitus.",
+      "HttpError": "Backend.AI-verkkopalvelin palautti virheen ({{status}}).",
+      "InvalidCallback": "Sovellukselle {{appName}} määritetty kirjautumisen paluuosoite ei ole kelvollinen verkko-osoite.",
+      "InvalidResponse": "Backend.AI-verkkopalvelin palautti odottamattoman vastauksen.",
+      "NoEndpoint": "Sovellukselle {{appName}} ei ole määritetty Backend.AI-verkkopalvelimen osoitetta.",
+      "NoSessionId": "Olet kirjautunut Backend.AI:hin, mutta verkkopalvelin ei palauttanut istuntotunnusta.",
+      "NoSessionOverHttp": "Et ole vielä kirjautunut Backend.AI:hin. Jos olet jo kirjautunut, {{appName}} tarjoillaan HTTP:n kautta, joten selain saattaa hylätä verkkopalvelimen suojatun istuntoevästeen. Avaa {{appName}} HTTPS:n kautta.",
+      "NoSessionOverHttps": "Et ole vielä kirjautunut Backend.AI:hin. Jos olet jo kirjautunut, {{appName}} ja Backend.AI-verkkopalvelin voivat olla eri sivustoja, jolloin selain ei lähetä istuntoevästettä.",
+      "RelayFailed": "Olet kirjautunut Backend.AI:hin, mutta {{appName}} ei voinut viimeistellä kirjautumista.",
+      "Timeout": "Backend.AI-verkkopalvelin ei vastannut ajoissa.",
+      "Title": "Backend.AI-kirjautuminen ei onnistunut"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Klusterin koko",
     "Concurrency": "Samanaikaiset istunnot",
@@ -338,18 +355,22 @@
     "UpdateProject": "Päivitä projekti"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktiivinen",
     "ContainerRegistry": "Säiliörekisteri",
     "ContainerRegistryProject": "Säiliörekisteriprojekti",
     "CreatedAt": "Luotu",
     "Description": "Kuvaus",
     "Domain": "Toimialue",
+    "Inactive": "Passiivinen",
     "IntegrationID": "Integraation tunnus",
+    "ModifiedAt": "Muokattu",
     "Name": "Nimi",
     "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
     "Registry": "Rekisteri",
     "ResourcePolicy": "Resurssipolitiikka",
     "ScalingGroups": "Resurssiryhmät",
+    "Status": "Tila",
     "StorageNodes": "Tallennussolmut",
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
     "EditFile": "Muokkaa tiedostoa",
+    "ExistingItem": "Nykyinen",
     "FileCreatedSuccessfully": "Tiedosto luotiin onnistuneesti.",
     "FileName": "Tiedoston nimi",
     "FileNamePlaceholder": "esim. model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Muutettu",
     "Name": "Nimi",
     "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
+    "OtherItemsWillBeUploaded": "Myös {{count}} muuta kohdetta ladataan.",
     "Path": "Polku",
     "PleaseEnterAFileName": "Anna tiedoston nimi.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
     "RenameFile": "Nimeä uudelleen",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
+    "SelectItemsToOverwrite": "Nämä kohteet ovat jo täällä. Valitse korvattavat kohteet; valitsemattomat ohitetaan.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
     "TypeDeleteToConfirm": "Kirjoita 'Poistaa' vahvistaaksesi.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "Tämä tiedostomuoto ei tue muokkaamista.",
     "UploadFiles": "Lähetä tiedostot",
     "UploadFolder": "Lataa kansio",
+    "UploadingItem": "Ladattava",
     "error": {
       "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi.",
       "FileNameRequired": "Anna tiedoston tai kansionimi."
@@ -762,6 +787,7 @@
     "DeselectAll": "Poista kaikki valinnat",
     "File": "Tiedosto",
     "Increase": "Lisää",
+    "Loading": "Ladataan...",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",

@@ -92,11 +92,17 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 - Use Jotai for global state, Relay for GraphQL state.
 - Comment only what the code cannot say — ≤2 lines by default; the reasoning behind a change goes in the commit body and the PR, not the source file (`.claude/rules/comment-density.md`). The long justification blocks already in the tree are migration-era history: trim a file's blocks when you edit it, don't sweep.
 
+### Architecture Decision Records (detail: `.claude/rules/adr.md`, auto-loaded)
+
+- Architecture-level decisions live in `docs/adr/`, indexed by `docs/ARCHITECTURE.md`. A decision on `main` is in force: read the ADRs covering an area before changing it, and never implement against one.
+- A change that makes a new decision other code must follow records an ADR in the same PR and proceeds; the PR is where a human reviews it. A reversal of an ADR in force is flagged to a human before landing.
+
 ### On-Demand Skills (loaded only when needed)
 
 - **Storybook**: `storybook-patterns` skill (fw plugin; CSF 3, meta config, story patterns, checklists)
 - **i18n**: `i18n-patterns` skill (fw plugin; translation keys, casing rules, language-specific guidelines)
 - **Documentation**: `docs-writing-guide` skill (fw plugin; user manual structure, terminology, multilingual rules)
+- **ADR**: `adr-writing` skill (file conventions, section skeleton, writing rules, landing checks; when a change needs one is `.claude/rules/adr.md`)
 - **Backend.AI live data, field meanings, GraphQL**: `bai-agent` skill (preflight/login, the `search` -> `docs show`/`schema show`/`explain` -> `query` loop, and pointing the user at the `webui_url` the query result already carries). It ships with the CLI (`packages/backend.ai-agent-cli/skill/`), not as a repository skill: install it per user with `pnpm run bai-agent init --skill --no-login`. Its workflow contract is the generated `BAI-AGENT` block at the bottom of this file.
 - **Relay mutations**: `relay-mutation-store-updates` skill (when a mutation can skip the refetch — update mutations must return their changed fields so Relay patches the normalized store; refetch only when list membership changes)
 
@@ -115,18 +121,19 @@ When terms disagree, precedence is: (1) the live UI i18n label in `resources/i18
 - `i18n.instructions.md` → `resources/i18n/**/*.json,packages/backend.ai-ui/src/locale/**/*.json` (use `i18n-patterns` skill for tsx/ts context)
 - `e2e.instructions.md` → `e2e/**/*.ts`
 - `docs.instructions.md` → `packages/backend.ai-webui-docs/**/*.md`
+- `adr.instructions.md` → `docs/adr/**/*.md,docs/ARCHITECTURE.md`
 
 ### Verification Harness
 
-Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript. Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually.
+Run `bash scripts/verify.sh` from project root to check Relay, Lint, Format, and TypeScript (plus the Astryx, agent-CLI and terminology gates). Output ends with `=== ALL PASS ===` on success. Agents should use this script instead of running checks individually. Relay and the search index rebuild first; every other check is a parallel lane with its own log under `node_modules/.cache/verify/`, so a cold worktree finishes in ~10s (~20s when the branch touches lint config or `package.json`, which forces the full lint) and a warm checkout in ~6s. A passing lane prints its `>>` scope notes, so the output says whether Lint ran on changed files or fell back to the full tree. Lint (react, backend.ai-ui), Format and the Vitest lanes look only at what the branch changed relative to `main` — the same set lint-staged formats at commit — and fall back to the whole tree when there is no `main` to compare against or the lint config / dependencies changed; `VERIFY_BASE=<ref>` compares against a stack parent instead. `VERIFY_TESTS=1` adds the Vitest suites CI runs, limited to tests that import a changed file — worth running when you touched code that has tests; `VERIFY_SERIAL=1` runs the lanes one at a time.
 
-**`verify.sh` does not run the Astryx token gate.** Run it yourself after touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike:
+**The Astryx token gate is report-only in `verify.sh`**: it prints the counts and the undeclared usages but never affects `=== ALL PASS ===`, because it has pre-existing findings. The bar is **no new findings** — the list must not grow relative to `main`. After touching CSS, theme tokens, or any `var(--…)` — anywhere in the repository, `react/src` and `packages/backend.ai-ui/src` alike — run the full gate for the fix hints:
 
 ```bash
 node scripts/migration-gates/astryx-token-gate.mjs --strict
 ```
 
-It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name. It currently reports pre-existing findings, so the bar is **no new findings**, not zero.
+It catches a failure mode nothing else reports: an **undeclared** `var(--name)` produces no compiler, lint or runtime error. With a fallback (`var(--radius-md, 6px)`) the literal wins forever and the token never participates in theming; without one the whole declaration is invalid at computed-value time. The declared set is not guessable — there is no `--color-text-tertiary` and no `--color-text-error` (the semantic error token is the solid `--color-error`) — so run the gate rather than assuming a name.
 
 ### PR Review Checklist
 
@@ -140,7 +147,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- ASTRYX:START -->
-Astryx v0.5.2 · 163 components
+Astryx v0.5.4 · 163 components
 CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`).
 
 SETUP (once, in your app entry e.g. main.tsx) — without these, components render unstyled:
@@ -160,7 +167,7 @@ RULES:
 - Tokens for every value (`astryx docs tokens`). Brand/accent belongs in the theme (`astryx theme list` / `theme add <slug>`, or `astryx theme template` for a custom one) — never override --color-* in :root.
 - SELF-CHECK before you finish: re-read the file and replace any className=, style={{…}}, raw <div>/<span> layout, imported .css/@apply, or hardcoded #hex/px with the component or the xstyle prop + a token. If unsure a component/prop exists, run `astryx component <Name>` / `astryx search "<thing>"`; don't hand-roll CSS.
 - MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `theme.useToken()` reads. Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine.
-- BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `astryx component`, `astryx search` and `astryx component --list` cover the `BAI*` wrappers next to core's primitives, and `astryx docs backend-ai-ui` explains the layer. The `component --list` count in the generated line below is core's own — `astryx init` counts only what core discovers — so the live catalog is larger than the number printed there; run the command to see it. When a `BAI*` component and a core primitive both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui` (the Import line `astryx component` prints for it names core — an upstream CLI bug, still present in 0.5.2). A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source.
+- BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `astryx component`, `astryx search` and `astryx component --list` cover the `BAI*` wrappers next to core's primitives, and `astryx docs backend-ai-ui` explains the layer. The `component --list` count in the generated line below is core's own — `astryx init` counts only what core discovers — so the live catalog is larger than the number printed there; run the command to see it. When a `BAI*` component and a core primitive both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui` (the Import line `astryx component` prints for it names core — an upstream CLI bug, still present in 0.5.4). A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source.
 
 MORE CLI:
   search "<query>"   find any component / hook / doc / template / block

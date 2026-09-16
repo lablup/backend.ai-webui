@@ -228,6 +228,23 @@
     "SuccessFullyPulled": "Berjaya meminta tarik untuk {{count}} versi.",
     "Version": "Versi"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Memeriksa sesi Backend.AI anda…",
+    "SignInWithBackendAI": "Log masuk dengan Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Pelayar menyekat permintaan ke pelayan web Backend.AI. Ini biasanya disebabkan oleh sekatan CORS atau kandungan campuran.",
+      "HttpError": "Pelayan web Backend.AI mengembalikan ralat ({{status}}).",
+      "InvalidCallback": "Alamat kembali log masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang sah.",
+      "InvalidResponse": "Pelayan web Backend.AI mengembalikan respons yang tidak dijangka.",
+      "NoEndpoint": "Tiada alamat pelayan web Backend.AI dikonfigurasikan untuk {{appName}}.",
+      "NoSessionId": "Anda telah log masuk ke Backend.AI, tetapi pelayan web tidak mengembalikan ID sesi.",
+      "NoSessionOverHttp": "Anda belum log masuk ke Backend.AI. Jika anda sudah log masuk, {{appName}} disajikan melalui HTTP jadi pelayar mungkin menolak kuki sesi selamat pelayan web. Cuba buka {{appName}} melalui HTTPS.",
+      "NoSessionOverHttps": "Anda belum log masuk ke Backend.AI. Jika anda sudah log masuk, {{appName}} dan pelayan web Backend.AI mungkin tapak yang berbeza jadi pelayar tidak menghantar kuki sesi.",
+      "RelayFailed": "Anda telah log masuk ke Backend.AI, tetapi {{appName}} tidak dapat melengkapkan proses log masuk.",
+      "Timeout": "Pelayan web Backend.AI tidak membalas dalam masa yang ditetapkan.",
+      "Title": "Tidak dapat log masuk dengan Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Saiz Kluster",
     "Concurrency": "Sesi Serentak",
@@ -338,18 +355,22 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Registri Kontena",
     "ContainerRegistryProject": "Projek Registri Kontena",
     "CreatedAt": "Dicipta pada",
     "Description": "Keterangan",
     "Domain": "Domain",
+    "Inactive": "Tidak aktif",
     "IntegrationID": "ID Integrasi",
+    "ModifiedAt": "Diubahsuai Pada",
     "Name": "Nama",
     "Project": "Projek",
     "ProjectID": "ID Projek",
     "Registry": "Registri",
     "ResourcePolicy": "Dasar Sumber",
     "ScalingGroups": "Kumpulan Sumber",
+    "Status": "Status",
     "StorageNodes": "Nod Storan",
     "TotalResourceSlots": "Jumlah Slot Sumber",
     "Type": "Jenis"
@@ -628,6 +649,7 @@
     "DuplicatedFiles": "Pengesahan Pengesahan",
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
     "EditFile": "Edit Fail",
+    "ExistingItem": "Sedia Ada",
     "FileCreatedSuccessfully": "Fail berjaya dicipta.",
     "FileName": "Nama Fail",
     "FileNamePlaceholder": "cth. model-definition.yaml",
@@ -640,11 +662,13 @@
     "ModifiedAt": "Diubahsuai di",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak mempunyai kebenaran muat naik untuk hos ini.",
+    "OtherItemsWillBeUploaded": "{{count}} item lain juga akan dimuat naik.",
     "Path": "Laluan",
     "PleaseEnterAFileName": "Sila masukkan nama fail.",
     "PleaseEnterAFolderName": "Sila masukkan nama folder.",
     "RenameFile": "Namakan semula",
     "RenameSuccess": "Nama telah berjaya diubah.",
+    "SelectItemsToOverwrite": "Item ini sudah wujud di sini. Pilih item yang hendak ditimpa; item yang tidak dipilih akan dilangkau.",
     "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
     "Size": "Saiz",
     "TypeDeleteToConfirm": "Taipkan 'Padam' untuk mengesahkan.",
@@ -652,6 +676,7 @@
     "UnsupportedFileFormat": "Format fail ini tidak menyokong penyuntingan.",
     "UploadFiles": "Memuat naik fail",
     "UploadFolder": "Muat naik folder",
+    "UploadingItem": "Akan Dimuat Naik",
     "error": {
       "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza.",
       "FileNameRequired": "Sila masukkan fail atau nama folder."
@@ -762,6 +787,7 @@
     "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
     "Increase": "Tambah",
+    "Loading": "Memuatkan...",
     "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",

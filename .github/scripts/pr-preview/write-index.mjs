@@ -5,7 +5,7 @@
 //
 // Usage: node write-index.mjs --root <gh-pages checkout>
 
-import { existsSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const getArg = (name) => {
@@ -20,19 +20,52 @@ if (!root) {
 }
 
 const prRoot = join(root, "pr");
-const previews = existsSync(prRoot)
+const isDir = (path) => existsSync(path) && statSync(path).isDirectory();
+
+// `next/` has no index of its own, so the docs link points at a language
+// directory — whichever ones this PR built, English first when it is there.
+const docsEntry = (n) => {
+  const docsDir = join(prRoot, String(n), "docs");
+  if (!isDir(docsDir)) return null;
+  const langs = isDir(join(docsDir, "next"))
+    ? readdirSync(join(docsDir, "next"))
+        .filter((name) => /^[a-z]{2}(-[a-z0-9]+)?$/.test(name))
+        .filter((name) => isDir(join(docsDir, "next", name)))
+        .sort((a, b) => (a === "en" ? -1 : b === "en" ? 1 : a.localeCompare(b)))
+    : [];
+  return langs.length > 0
+    ? `./pr/${n}/docs/next/${langs[0]}/`
+    : `./pr/${n}/docs/`;
+};
+
+const previews = isDir(prRoot)
   ? readdirSync(prRoot)
       .filter((name) => /^\d+$/.test(name))
       .map(Number)
       .sort((a, b) => b - a)
+      .map((n) => ({
+        n,
+        storybook: isDir(join(prRoot, String(n), "storybook"))
+          ? `./pr/${n}/storybook/`
+          : null,
+        docs: docsEntry(n),
+      }))
+      .filter((entry) => entry.storybook || entry.docs)
   : [];
 
 const items = previews
-  .map(
-    (n) =>
-      `      <li><a href="./pr/${n}/storybook/">PR #${n}</a> ` +
-      `<a class="src" href="https://github.com/lablup/backend.ai-webui/pull/${n}">source ↗</a></li>`,
-  )
+  .map(({ n, storybook, docs }) => {
+    const links = [
+      storybook && `<a href="${storybook}">Storybook</a>`,
+      docs && `<a href="${docs}">Docs</a>`,
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    return (
+      `      <li>PR #${n} — ${links} ` +
+      `<a class="src" href="https://github.com/lablup/backend.ai-webui/pull/${n}">source ↗</a></li>`
+    );
+  })
   .join("\n");
 
 const html = `<!doctype html>
@@ -56,10 +89,11 @@ const html = `<!doctype html>
     </style>
   </head>
   <body>
-    <h1>Backend.AI WebUI — Storybook previews</h1>
+    <h1>Backend.AI WebUI — PR previews</h1>
     <p>
-      One build of <code>packages/backend.ai-ui</code> per open pull request.
-      Previews are removed when their PR is merged or closed.
+      One build of <code>packages/backend.ai-ui</code> and of the user manual
+      per open pull request, whichever the PR changed. Previews are removed when
+      their PR is merged or closed.
     </p>
 ${previews.length > 0 ? `    <ul>\n${items}\n    </ul>` : "    <p>No live previews right now.</p>"}
   </body>
