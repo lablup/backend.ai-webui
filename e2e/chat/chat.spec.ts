@@ -22,255 +22,251 @@ import { test, expect } from '@playwright/test';
 // 1. Basic Chat Flow (Single Pane)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test.describe(
-  'Basic Chat Flow',
-  { tag: ['@chat', '@functional', '@smoke'] },
-  () => {
-    test.beforeEach(async ({ page }) => {
-      // Use addInitScript so localStorage is cleared before the page loads.
-      // page.evaluate on about:blank would throw a SecurityError.
-      await page.addInitScript(() => {
-        localStorage.removeItem('backendaiwebui.cache.chat_history');
+test.describe('Basic Chat Flow', { tag: ['@chat', '@functional'] }, () => {
+  test.beforeEach(async ({ page }) => {
+    // Use addInitScript so localStorage is cleared before the page loads.
+    // page.evaluate on about:blank would throw a SecurityError.
+    await page.addInitScript(() => {
+      localStorage.removeItem('backendaiwebui.cache.chat_history');
+    });
+  });
+
+  test('User can see the chat page with endpoint and model selectors', async ({
+    page,
+    request,
+  }) => {
+    // Setup: login, install mocks, navigate to /chat
+    await setupChatPage(page, request);
+
+    // Verify the endpoint selector is visible in the chat card header
+    await expect(page.getByText('mock-endpoint').first()).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Verify the model selector is visible
+    await expect(page.getByText(MOCK_MODEL_ID).first()).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Verify the composer input (accessible name "Type your message here...") is visible
+    await expect(page.getByLabel('Type your message here...')).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Verify the model gpt-mock-model is offered as an option (loaded from
+    // mock) — open the selector and assert the option itself, so an
+    // options-loading regression cannot pass on the trigger's label alone.
+    await page.getByText(MOCK_MODEL_ID).first().click();
+    await expect(
+      page.getByRole('option', { name: MOCK_MODEL_ID, exact: true }),
+    ).toBeVisible({ timeout: 10000 });
+    await page.keyboard.press('Escape');
+  });
+
+  test('User can send a message and receive a streaming response', async ({
+    page,
+    request,
+  }) => {
+    // Setup: login, install mocks, navigate to /chat
+    await setupChatPage(page, request);
+
+    // Wait for the chat input to be ready
+    const chatInput = page.getByLabel('Type your message here...');
+    await expect(chatInput).toBeVisible({ timeout: 10000 });
+
+    // Type and send the message
+    await chatInput.click();
+    await chatInput.fill('What is Backend.AI?');
+    await chatInput.press('Enter');
+
+    // Verify the user message appears in the message thread
+    await expect(page.getByText('What is Backend.AI?').first()).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Wait for the assistant reply to appear
+    await expect(page.getByText('Hello from mock!').first()).toBeVisible({
+      timeout: 15000,
+    });
+
+    // Input should be cleared after sending
+    await expect(chatInput).toHaveText('');
+  });
+
+  test('User can send a follow-up message in the same conversation (multi-turn)', async ({
+    page,
+    request,
+  }) => {
+    // Setup: login, install mocks, navigate to /chat
+    await setupChatPage(page, request);
+
+    const chatInput = page.getByLabel('Type your message here...');
+    await expect(chatInput).toBeVisible({ timeout: 10000 });
+
+    // First turn: type and send "What is Backend.AI?"
+    await chatInput.fill('What is Backend.AI?');
+    await chatInput.press('Enter');
+    await expect(page.getByText('Hello from mock!').first()).toBeVisible({
+      timeout: 15000,
+    });
+
+    // Override the completions mock for the second response
+    await page.unroute('**/v1/chat/completions');
+    await page.route('**/v1/chat/completions', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/event-stream',
+        body: makeSseResponse('Second response from mock!'),
       });
     });
 
-    test('User can see the chat page with endpoint and model selectors', async ({
-      page,
-      request,
-    }) => {
-      // Setup: login, install mocks, navigate to /chat
-      await setupChatPage(page, request);
+    // Second turn: type and send "Tell me more."
+    await chatInput.fill('Tell me more.');
+    await chatInput.press('Enter');
 
-      // Verify the endpoint selector is visible in the chat card header
-      await expect(page.getByText('mock-endpoint').first()).toBeVisible({
-        timeout: 10000,
-      });
-
-      // Verify the model selector is visible
-      await expect(page.getByText(MOCK_MODEL_ID).first()).toBeVisible({
-        timeout: 10000,
-      });
-
-      // Verify the composer input (accessible name "Type your message here...") is visible
-      await expect(page.getByLabel('Type your message here...')).toBeVisible({
-        timeout: 10000,
-      });
-
-      // Verify the model gpt-mock-model is offered as an option (loaded from
-      // mock) — open the selector and assert the option itself, so an
-      // options-loading regression cannot pass on the trigger's label alone.
-      await page.getByText(MOCK_MODEL_ID).first().click();
-      await expect(
-        page.getByRole('option', { name: MOCK_MODEL_ID, exact: true }),
-      ).toBeVisible({ timeout: 10000 });
-      await page.keyboard.press('Escape');
+    // Verify the second user message appears after the first exchange
+    await expect(page.getByText('Tell me more.').first()).toBeVisible({
+      timeout: 10000,
     });
 
-    test('User can send a message and receive a streaming response', async ({
-      page,
-      request,
-    }) => {
-      // Setup: login, install mocks, navigate to /chat
-      await setupChatPage(page, request);
+    // Wait for the second assistant reply
+    await expect(
+      page.getByText('Second response from mock!').first(),
+    ).toBeVisible({ timeout: 15000 });
 
-      // Wait for the chat input to be ready
-      const chatInput = page.getByLabel('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
+    // Both turns should be visible in the thread
+    await expect(page.getByText('What is Backend.AI?').first()).toBeVisible();
+    await expect(page.getByText('Hello from mock!').first()).toBeVisible();
+  });
 
-      // Type and send the message
-      await chatInput.click();
-      await chatInput.fill('What is Backend.AI?');
-      await chatInput.press('Enter');
-
-      // Verify the user message appears in the message thread
-      await expect(page.getByText('What is Backend.AI?').first()).toBeVisible({
-        timeout: 10000,
-      });
-
-      // Wait for the assistant reply to appear
-      await expect(page.getByText('Hello from mock!').first()).toBeVisible({
-        timeout: 15000,
-      });
-
-      // Input should be cleared after sending
-      await expect(chatInput).toHaveText('');
+  test.fixme('User can stop a streaming response mid-generation', async ({
+    page,
+    request,
+  }) => {
+    // FIXME: The stop button never becomes visible because the mock SSE response
+    // completes synchronously before the Astryx ChatComposer can switch
+    // to the loading/stop state. A real slow streaming endpoint would be needed to
+    // test this behavior reliably.
+    // Setup with a slow streaming response
+    await loginAsAdmin(page, request);
+    await page.evaluate(() => {
+      localStorage.removeItem('backendaiwebui.cache.chat_history');
     });
 
-    test('User can send a follow-up message in the same conversation (multi-turn)', async ({
-      page,
-      request,
-    }) => {
-      // Setup: login, install mocks, navigate to /chat
-      await setupChatPage(page, request);
-
-      const chatInput = page.getByLabel('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
-
-      // First turn: type and send "What is Backend.AI?"
-      await chatInput.fill('What is Backend.AI?');
-      await chatInput.press('Enter');
-      await expect(page.getByText('Hello from mock!').first()).toBeVisible({
-        timeout: 15000,
-      });
-
-      // Override the completions mock for the second response
-      await page.unroute('**/v1/chat/completions');
-      await page.route('**/v1/chat/completions', async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'text/event-stream',
-          body: makeSseResponse('Second response from mock!'),
-        });
-      });
-
-      // Second turn: type and send "Tell me more."
-      await chatInput.fill('Tell me more.');
-      await chatInput.press('Enter');
-
-      // Verify the second user message appears after the first exchange
-      await expect(page.getByText('Tell me more.').first()).toBeVisible({
-        timeout: 10000,
-      });
-
-      // Wait for the second assistant reply
-      await expect(
-        page.getByText('Second response from mock!').first(),
-      ).toBeVisible({ timeout: 15000 });
-
-      // Both turns should be visible in the thread
-      await expect(page.getByText('What is Backend.AI?').first()).toBeVisible();
-      await expect(page.getByText('Hello from mock!').first()).toBeVisible();
+    await setupGraphQLMocks(page, {
+      ChatPageQuery: () => chatPageQueryMockResponse(),
+      ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
+      DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
+      DeploymentSelectValueQuery: (vars) =>
+        deploymentSelectValueQueryMockResponse(vars.deploymentId),
+      DeploymentTokenSelectQuery: (vars) =>
+        deploymentTokenSelectQueryMockResponse(vars.deploymentId),
     });
 
-    test.fixme('User can stop a streaming response mid-generation', async ({
-      page,
-      request,
-    }) => {
-      // FIXME: The stop button never becomes visible because the mock SSE response
-      // completes synchronously before the Astryx ChatComposer can switch
-      // to the loading/stop state. A real slow streaming endpoint would be needed to
-      // test this behavior reliably.
-      // Setup with a slow streaming response
-      await loginAsAdmin(page, request);
-      await page.evaluate(() => {
-        localStorage.removeItem('backendaiwebui.cache.chat_history');
+    await page.route('**/v1/models', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(modelsApiMockResponse(MOCK_MODEL_ID)),
       });
-
-      await setupGraphQLMocks(page, {
-        ChatPageQuery: () => chatPageQueryMockResponse(),
-        ChatCardQuery: (vars) => chatCardQueryMockResponse(vars.deploymentId),
-        DeploymentSelectQuery: () => deploymentSelectQueryMockResponse(),
-        DeploymentSelectValueQuery: (vars) =>
-          deploymentSelectValueQueryMockResponse(vars.deploymentId),
-        DeploymentTokenSelectQuery: (vars) =>
-          deploymentTokenSelectQueryMockResponse(vars.deploymentId),
-      });
-
-      await page.route('**/v1/models', async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(modelsApiMockResponse(MOCK_MODEL_ID)),
-        });
-      });
-
-      // Slow chunked response — uses a delay between chunks to allow stop
-      await page.route('**/v1/chat/completions', async (route) => {
-        // Fulfill with a response body that streams slowly
-        const chunks =
-          `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: 'Starting...' }, index: 0, finish_reason: null }] })}\n\n` +
-          `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: ' still going...' }, index: 0, finish_reason: null }] })}\n\n`;
-        await route.fulfill({
-          status: 200,
-          contentType: 'text/event-stream',
-          body: chunks,
-          // Note: no [DONE] so streaming stays open until aborted
-        });
-      });
-
-      await navigateTo(page, 'chat');
-
-      const chatInput = page.getByLabel('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
-
-      // Type and send a message to trigger streaming
-      await chatInput.fill('Generate a long response.');
-      await chatInput.press('Enter');
-
-      // Verify the user message appears
-      await expect(
-        page.getByText('Generate a long response.').first(),
-      ).toBeVisible({ timeout: 10000 });
-
-      // Wait for streaming state to begin — a stop/cancel button should appear
-      // The stop button is typically rendered while the response is streaming
-      const stopButton = page
-        .getByRole('button', { name: /stop|cancel/i })
-        .or(
-          page.locator(
-            'button[aria-label*="stop" i], button[aria-label*="cancel" i]',
-          ),
-        );
-      await expect(stopButton.first()).toBeVisible({ timeout: 10000 });
-
-      // Click the stop/cancel button
-      await stopButton.first().click();
-
-      // The streaming indicator should disappear
-      await expect(stopButton.first()).not.toBeVisible({ timeout: 10000 });
-
-      // The input area should become editable again. The Astryx composer input
-      // is a contenteditable div, not a form control, so its enabled/disabled
-      // state lives in the `contenteditable` attribute rather than anywhere
-      // `toBeEnabled` can read.
-      await expect(chatInput).toHaveAttribute('contenteditable', 'true', {
-        timeout: 10000,
-      });
-
-      // No error alert should be visible
-      await expect(
-        page.locator('[role="alert"][class*="error"]'),
-      ).not.toBeVisible();
     });
 
-    test('User can clear the conversation history in a chat pane', async ({
-      page,
-      request,
-    }) => {
-      // Setup: login, install mocks, navigate to /chat
-      await setupChatPage(page, request);
-
-      const chatInput = page.getByLabel('Type your message here...');
-      await expect(chatInput).toBeVisible({ timeout: 10000 });
-
-      // Send a message and wait for the reply
-      await chatInput.fill('What is Backend.AI?');
-      await chatInput.press('Enter');
-      await expect(page.getByText('Hello from mock!').first()).toBeVisible({
-        timeout: 15000,
+    // Slow chunked response — uses a delay between chunks to allow stop
+    await page.route('**/v1/chat/completions', async (route) => {
+      // Fulfill with a response body that streams slowly
+      const chunks =
+        `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: 'Starting...' }, index: 0, finish_reason: null }] })}\n\n` +
+        `data: ${JSON.stringify({ id: 'chatcmpl-slow', object: 'chat.completion.chunk', choices: [{ delta: { content: ' still going...' }, index: 0, finish_reason: null }] })}\n\n`;
+      await route.fulfill({
+        status: 200,
+        contentType: 'text/event-stream',
+        body: chunks,
+        // Note: no [DONE] so streaming stays open until aborted
       });
-
-      // Click the "More" (three-dot) menu button in the chat card header
-      const moreButton = page.getByRole('button', { name: 'more' });
-      await moreButton.first().click();
-
-      // Click "Clear Chat" in the dropdown menu (chatui.DeleteChatHistory = "Clear Chat")
-      await page
-        .getByRole('menuitem', { name: /clear chat/i })
-        .first()
-        .click();
-
-      // The message thread should now be empty
-      await expect(page.getByText('What is Backend.AI?')).not.toBeVisible({
-        timeout: 10000,
-      });
-      await expect(page.getByText('Hello from mock!')).not.toBeVisible();
-
-      // Input area is still enabled
-      await expect(chatInput).toHaveAttribute('contenteditable', 'true');
     });
-  },
-);
+
+    await navigateTo(page, 'chat');
+
+    const chatInput = page.getByLabel('Type your message here...');
+    await expect(chatInput).toBeVisible({ timeout: 10000 });
+
+    // Type and send a message to trigger streaming
+    await chatInput.fill('Generate a long response.');
+    await chatInput.press('Enter');
+
+    // Verify the user message appears
+    await expect(
+      page.getByText('Generate a long response.').first(),
+    ).toBeVisible({ timeout: 10000 });
+
+    // Wait for streaming state to begin — a stop/cancel button should appear
+    // The stop button is typically rendered while the response is streaming
+    const stopButton = page
+      .getByRole('button', { name: /stop|cancel/i })
+      .or(
+        page.locator(
+          'button[aria-label*="stop" i], button[aria-label*="cancel" i]',
+        ),
+      );
+    await expect(stopButton.first()).toBeVisible({ timeout: 10000 });
+
+    // Click the stop/cancel button
+    await stopButton.first().click();
+
+    // The streaming indicator should disappear
+    await expect(stopButton.first()).not.toBeVisible({ timeout: 10000 });
+
+    // The input area should become editable again. The Astryx composer input
+    // is a contenteditable div, not a form control, so its enabled/disabled
+    // state lives in the `contenteditable` attribute rather than anywhere
+    // `toBeEnabled` can read.
+    await expect(chatInput).toHaveAttribute('contenteditable', 'true', {
+      timeout: 10000,
+    });
+
+    // No error alert should be visible
+    await expect(
+      page.locator('[role="alert"][class*="error"]'),
+    ).not.toBeVisible();
+  });
+
+  test('User can clear the conversation history in a chat pane', async ({
+    page,
+    request,
+  }) => {
+    // Setup: login, install mocks, navigate to /chat
+    await setupChatPage(page, request);
+
+    const chatInput = page.getByLabel('Type your message here...');
+    await expect(chatInput).toBeVisible({ timeout: 10000 });
+
+    // Send a message and wait for the reply
+    await chatInput.fill('What is Backend.AI?');
+    await chatInput.press('Enter');
+    await expect(page.getByText('Hello from mock!').first()).toBeVisible({
+      timeout: 15000,
+    });
+
+    // Click the "More" (three-dot) menu button in the chat card header
+    const moreButton = page.getByRole('button', { name: 'more' });
+    await moreButton.first().click();
+
+    // Click "Clear Chat" in the dropdown menu (chatui.DeleteChatHistory = "Clear Chat")
+    await page
+      .getByRole('menuitem', { name: /clear chat/i })
+      .first()
+      .click();
+
+    // The message thread should now be empty
+    await expect(page.getByText('What is Backend.AI?')).not.toBeVisible({
+      timeout: 10000,
+    });
+    await expect(page.getByText('Hello from mock!')).not.toBeVisible();
+
+    // Input area is still enabled
+    await expect(chatInput).toHaveAttribute('contenteditable', 'true');
+  });
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. Chat History Persistence
