@@ -11,6 +11,7 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
@@ -82,7 +83,7 @@ export const AdminUserManagementQuery = graphql`
           basicInfo {
             email
           }
-          ...BAIAdminUserV2TableFragment
+          ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
           ...PurgeUsersModalFragment
           ...UpdateUsersModalFragment
           ...UserInfoModalFragment
@@ -378,6 +379,32 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       type: 'string',
     },
     {
+      key: 'project.isActive',
+      propertyLabel: t('credential.ProjectIsActive'),
+      type: 'boolean',
+    },
+    {
+      key: 'domainName',
+      propertyLabel: t('credential.Domain'),
+      type: 'string',
+    },
+    {
+      key: 'domain.isActive',
+      propertyLabel: t('credential.DomainIsActive'),
+      type: 'boolean',
+    },
+    {
+      key: 'integrationName',
+      propertyLabel: t('credential.IntegrationName'),
+      type: 'string',
+    },
+    {
+      key: 'createdAt',
+      propertyLabel: t('general.CreatedAt'),
+      type: 'datetime',
+      defaultOperator: 'after',
+    },
+    {
       key: 'role',
       propertyLabel: t('credential.Role'),
       type: 'enum',
@@ -388,8 +415,16 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           value: 'SUPERADMIN',
         },
         {
+          label: 'admin',
+          value: 'ADMIN',
+        },
+        {
           label: 'user',
           value: 'USER',
+        },
+        {
+          label: 'monitor',
+          value: 'MONITOR',
         },
       ],
     },
@@ -541,6 +576,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         usersFrgmt={filterOutNullAndUndefined(
           _.map(adminUsersV2?.edges, 'node'),
         )}
+        withProjects
         customizeColumns={(baseColumns) => {
           // The TOTP columns are meaningless when the manager has no TOTP
           // plugin (their data is skipped via @skipOnClient), so hide them.
@@ -606,7 +642,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             ? {
                 supportedFields,
                 onExport: async (selectedExportKeys) => {
+                  const { filter: exportFilter, unsupportedKeys } =
+                    buildUserCSVExportFilter(propertyFilterValue);
+                  if (unsupportedKeys.length > 0) {
+                    message.warning(
+                      t('credential.SomeFiltersAreNotAppliedToCSVExport'),
+                    );
+                  }
                   await exportCSV(selectedExportKeys, {
+                    ...exportFilter,
                     status: [_.toLower(statusValue)],
                   }).catch((err) => {
                     message.error(t('general.ErrorOccurred'));

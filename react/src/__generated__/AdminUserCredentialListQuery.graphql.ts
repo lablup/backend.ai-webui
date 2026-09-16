@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dfa52f4caeae7214538e84b9fc2d853b>>
+ * @generated SignedSource<<1ed0f4c7c3583c904088fd68e80ae273>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,8 +25,10 @@ export type AdminUserCredentialListQuery$data = {
       readonly access_key: string | null | undefined;
       readonly concurrency_used: number | null | undefined;
       readonly created_at: string | null | undefined;
+      readonly full_name: string | null | undefined;
       readonly id: string | null | undefined;
       readonly is_admin: boolean | null | undefined;
+      readonly last_used: string | null | undefined;
       readonly num_queries: number | null | undefined;
       readonly rate_limit: number | null | undefined;
       readonly resource_policy: string | null | undefined;
@@ -132,52 +134,66 @@ v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "access_key",
+  "name": "full_name",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "is_admin",
+  "name": "access_key",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "resource_policy",
+  "name": "is_admin",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "created_at",
+  "name": "resource_policy",
   "storageKey": null
 },
 v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rate_limit",
+  "name": "created_at",
   "storageKey": null
 },
 v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "num_queries",
+  "name": "last_used",
   "storageKey": null
 },
 v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "concurrency_used",
+  "name": "rate_limit",
   "storageKey": null
 },
 v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "num_queries",
+  "storageKey": null
+},
+v18 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "concurrency_used",
+  "storageKey": null
+},
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -224,6 +240,8 @@ return {
               (v14/*: any*/),
               (v15/*: any*/),
               (v16/*: any*/),
+              (v17/*: any*/),
+              (v18/*: any*/),
               {
                 "args": null,
                 "kind": "FragmentSpread",
@@ -237,7 +255,7 @@ return {
             ],
             "storageKey": null
           },
-          (v17/*: any*/)
+          (v19/*: any*/)
         ],
         "storageKey": null
       }
@@ -284,40 +302,35 @@ return {
               (v14/*: any*/),
               (v15/*: any*/),
               (v16/*: any*/),
+              (v17/*: any*/),
+              (v18/*: any*/),
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
                 "name": "secret_key",
                 "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "last_used",
-                "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v17/*: any*/)
+          (v19/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "9b0b09e3aec9f280a70e92c7c588fe99",
+    "cacheID": "62091db6b06c21e064f9d3efbd98e367",
     "id": null,
     "metadata": {},
     "name": "AdminUserCredentialListQuery",
     "operationKind": "query",
-    "text": "query AdminUserCredentialListQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $domain_name: String\n  $email: String\n  $is_active: Boolean\n) {\n  keypair_list(limit: $limit, offset: $offset, filter: $filter, order: $order, domain_name: $domain_name, email: $email, is_active: $is_active) {\n    items {\n      id\n      user_id\n      access_key\n      is_admin\n      resource_policy\n      created_at\n      rate_limit\n      num_queries\n      concurrency_used @since(version: \"24.09.0\")\n      ...KeypairSettingModalFragment\n      ...KeypairInfoModalFragment\n    }\n    total_count\n  }\n}\n\nfragment KeypairInfoModalFragment on KeyPair {\n  user_id\n  access_key\n  secret_key\n  is_admin\n  created_at\n  last_used\n  resource_policy\n  num_queries\n  rate_limit\n  concurrency_used @since(version: \"24.09.0\")\n}\n\nfragment KeypairSettingModalFragment on KeyPair {\n  rate_limit\n  access_key\n  resource_policy\n}\n"
+    "text": "query AdminUserCredentialListQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $domain_name: String\n  $email: String\n  $is_active: Boolean\n) {\n  keypair_list(limit: $limit, offset: $offset, filter: $filter, order: $order, domain_name: $domain_name, email: $email, is_active: $is_active) {\n    items {\n      id\n      user_id\n      full_name\n      access_key\n      is_admin\n      resource_policy\n      created_at\n      last_used\n      rate_limit\n      num_queries\n      concurrency_used @since(version: \"24.09.0\")\n      ...KeypairSettingModalFragment\n      ...KeypairInfoModalFragment\n    }\n    total_count\n  }\n}\n\nfragment KeypairInfoModalFragment on KeyPair {\n  user_id\n  access_key\n  secret_key\n  is_admin\n  created_at\n  last_used\n  resource_policy\n  num_queries\n  rate_limit\n  concurrency_used @since(version: \"24.09.0\")\n}\n\nfragment KeypairSettingModalFragment on KeyPair {\n  rate_limit\n  access_key\n  resource_policy\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fbddc986c4cbe89b00791f105de1772b";
+(node as any).hash = "5a923585acaafaadf35e35bb071e1ac5";
 
 export default node;
