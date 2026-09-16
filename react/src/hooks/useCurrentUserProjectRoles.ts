@@ -6,7 +6,6 @@ import { useSuspendedBackendaiClient } from '.';
 import {
   useCurrentUserProjectRolesQuery,
   PermissionNestedFilter,
-  RBACElementType,
 } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
@@ -18,21 +17,24 @@ export interface CurrentUserProjectRolesResult {
   /** Domain names the user has domain-admin rights over (derived from baiClient for now). */
   domainAdminDomains: string[];
   /**
-   * Project UUIDs the user has project-admin rights over. Sourced from each
-   * role's `scopes` connection, narrowed to `scopeType === 'PROJECT'`.
-   * Match directly against `useCurrentProject().id` via `Array.includes`.
+   * Project UUIDs the user has project-admin rights over: the project scopes
+   * of the roles carrying the admin permission. Match directly against
+   * `useCurrentProject().id` via `Array.includes`.
    */
   projectAdminIds: string[];
 }
 
 /**
- * Hook that inspects the current user's RBAC role assignments and reports which
- * projects they have project-admin scope over.
+ * Hook that inspects the current user's RBAC roles and reports which projects
+ * they have project-admin scope over.
  *
- * Uses the `myRoles` query (added in core 26.3.0). On older cores that do not
- * implement it, `@catch(to: RESULT)` makes the field resolve to `{ ok: false }`
- * and the hook returns empty admin arrays instead of throwing — so general
- * pages continue to render.
+ * Managers >= 26.9.0 answer `myRolesV2` filtered to the roles that carry the
+ * `scope_admin` permission in a project scope. Older managers answer `myRoles`
+ * (assignments) filtered on the retired `PROJECT_ADMIN_PAGE` entity, with the
+ * project read off each role's `scopes` connection. The request transformer
+ * strips whichever root field the connected manager does not know, and
+ * `@catch(to: RESULT)` makes a manager without either resolve to `{ ok: false }`
+ * so general pages continue to render.
  *
  * Super-admin / domain-admin detection is sourced from the backendaiclient
  * (the legacy signals the existing codebase already relies on), since those
@@ -41,8 +43,8 @@ export interface CurrentUserProjectRolesResult {
 export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const baiClient = useSuspendedBackendaiClient();
 
-  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE' satisfies RBACElementType;
-  const permissionFilter: PermissionNestedFilter = {
+  const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
+  const legacyPermissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
     entityType: (baiClient.supports('rbac-filter-wrapper')
       ? { equals: PROJECT_ADMIN_PAGE }
@@ -52,12 +54,27 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const data = useLazyLoadQuery<useCurrentUserProjectRolesQuery>(
     graphql`
       query useCurrentUserProjectRolesQuery(
-        $permissionFilter: PermissionNestedFilter
+        $legacyPermissionFilter: PermissionNestedFilter
       ) {
-        myRolesResult: myRoles(
+        adminRoles: myRolesV2(
           first: 100
-          filter: { permission: $permissionFilter }
-        ) @catch(to: RESULT) {
+          filter: {
+            status: { equals: ACTIVE }
+            permission: { entityType: { equals: "scope_admin" } }
+            mappedScope: { scopeType: { equals: "project" } }
+          }
+        ) @since(version: "26.9.0") @catch(to: RESULT) {
+          edges {
+            node {
+              id
+              scopeId
+            }
+          }
+        }
+        legacyRoles: myRoles(
+          first: 100
+          filter: { permission: $legacyPermissionFilter }
+        ) @deprecatedSince(version: "26.9.0") @catch(to: RESULT) {
           edges {
             node {
               id
@@ -77,7 +94,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
         }
       }
     `,
-    { permissionFilter },
+    { legacyPermissionFilter },
     {
       // store-or-network keeps the result cached across pages for the session.
       fetchPolicy: baiClient.supports('my-roles')
@@ -87,11 +104,18 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   );
 
   const ids = new Set<string>();
-  if (data.myRolesResult?.ok === true) {
-    for (const assignmentEdge of data.myRolesResult.value?.edges ?? []) {
+  if (data.adminRoles?.ok === true) {
+    for (const edge of data.adminRoles.value?.edges ?? []) {
+      if (edge?.node?.scopeId) {
+        ids.add(edge.node.scopeId);
+      }
+    }
+  }
+  if (data.legacyRoles?.ok === true) {
+    for (const assignmentEdge of data.legacyRoles.value?.edges ?? []) {
       for (const scopeEdge of assignmentEdge?.node?.role?.scopes?.edges ?? []) {
         const scope = scopeEdge?.node;
-        if (scope?.scopeType === 'PROJECT' && scope.scopeId) {
+        if (scope?.scopeType?.toUpperCase() === 'PROJECT' && scope.scopeId) {
           ids.add(scope.scopeId);
         }
       }

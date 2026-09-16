@@ -4,6 +4,7 @@
  */
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
+import { type RBACElementType } from '../__generated__/RoleScopePermissionEditModalBulkAddMutation.graphql';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAISkeleton, BAICard, BAIFlex } from 'backend.ai-ui';
@@ -84,7 +85,8 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
             key={scopeType}
             roleNodeFrgmt={role}
             rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
-            scopeType={scopeType}
+            // 26.8 enum spelling; the drawer follow-up (FR-3957) retires it.
+            scopeType={scopeType as RBACElementType}
           />
         ))}
       </Suspense>

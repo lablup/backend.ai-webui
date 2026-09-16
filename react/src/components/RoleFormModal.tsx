@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  RBACElementType,
-  RoleFormModalCreateMutation,
-} from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -49,6 +46,10 @@ import {
   useLazyLoadQuery,
   useMutation,
 } from 'react-relay';
+
+// Managers >= 26.9.0 spell scope types as plain strings; the enum is gone.
+// The modal itself moves onto the single-scope input in FR-3956.
+type RBACElementType = string;
 
 // Scope types that have a UI-side scopeId selector implemented.
 // Used as the whitelist for role scope selection, intersected with
