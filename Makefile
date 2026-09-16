@@ -4,6 +4,8 @@ BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev 
 BUILD_NUMBER := $(shell git rev-list --count HEAD)
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),main)
+# Targets list their steps as ordered prerequisites (dep -> package_zip -> package_deb).
+.NOTPARALLEL:
 DEB_TOOLS := $(shell command -v dpkg-deb >/dev/null 2>&1 && echo yes)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
@@ -197,12 +199,12 @@ endif
 # Needs `dpkg-deb` (`apt install dpkg` / `brew install dpkg`); without it the
 # step is skipped with a warning, or fails when DEB_REQUIRED=1 (set in CI).
 # The installer turns the app dir's LICENSE into the package's copyright file,
-# so the repository LICENSE replaces Electron's own copy first.
+# so it is rebuilt as the repository LICENSE followed by Electron's own.
 package_deb:
 ifeq ($(DEB_TOOLS),yes)
 	@printf "$(GREEN)Packaging as Debian package...$(NC)"
 	@rm -f ./app/backend.ai-desktop_*_$(deb_arch).deb
-	@cp ./LICENSE "./app/Backend.AI Desktop-$(os_api)-$(arch)/LICENSE"
+	@cat ./LICENSE ./node_modules/electron/LICENSE > "./app/Backend.AI Desktop-$(os_api)-$(arch)/LICENSE"
 	@npx --yes electron-installer-debian@4.0.0 --src "./app/Backend.AI Desktop-$(os_api)-$(arch)" --dest ./app --arch $(deb_arch) --config ./deb-installer.json
 ifeq ($(site),main)
 	@mv ./app/backend.ai-desktop_*_$(deb_arch).deb ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).deb
