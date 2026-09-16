@@ -195,11 +195,8 @@ else
 	@mv ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_VERSION)-$(site).zip
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
-# Debian package built from the packager output `package_zip` leaves behind.
-# Needs `dpkg-deb` (`apt install dpkg` / `brew install dpkg`); without it the
-# step is skipped with a warning, or fails when DEB_REQUIRED=1 (set in CI).
-# The installer turns the app dir's LICENSE into the package's copyright file,
-# so it is rebuilt as the repository LICENSE followed by Electron's own.
+# Debian package from the packager output `package_zip` leaves behind; skipped
+# without dpkg-deb, fatal when DEB_REQUIRED=1 (see README). LICENSE becomes the copyright file.
 package_deb:
 ifeq ($(DEB_TOOLS),yes)
 	@printf "$(GREEN)Packaging as Debian package...$(NC)"

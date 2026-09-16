@@ -1,7 +1,7 @@
 {
   "name": "backend.ai-desktop",
   "productName": "Backend.AI Desktop",
-  "genericName": "Backend.AI client",
+  "genericName": "AI platform client",
   "description": "Desktop client for Backend.AI",
   "productDescription": "Backend.AI Desktop is the desktop client for the Backend.AI AI/ML infrastructure platform. It bundles the Backend.AI Web UI together with its websocket proxy so that compute sessions, folders and models can be reached from the desktop.",
   "bin": "Backend.AI Desktop",

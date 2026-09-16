@@ -59,7 +59,7 @@ const getUploadURL = async (releaseId) => {
 
 const main = async () => {
     if (process.argv.length !== 3) {
-        console.error('usage: node upload-release.js <folder containing DMG/ZIP/PDF files>')
+        console.error('usage: node upload-release.js <folder containing DMG/ZIP/DEB/PDF files>')
         process.exit(1)
     }
     const folder = process.argv[2]
