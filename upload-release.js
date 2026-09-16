@@ -65,7 +65,7 @@ const main = async () => {
     const folder = process.argv[2]
     let assets = []
     try {
-        assets = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip') || s.endsWith('.pdf')))
+        assets = (await fs.promises.readdir(folder)).filter((s) => !s.startsWith('.') && (s.endsWith('.dmg') || s.endsWith('.zip') || s.endsWith('.deb') || s.endsWith('.pdf')))
     } catch (e) {
         console.error(e.message)
         process.exit(1)

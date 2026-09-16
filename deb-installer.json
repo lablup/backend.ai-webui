@@ -1,0 +1,21 @@
+{
+  "name": "backend.ai-desktop",
+  "productName": "Backend.AI Desktop",
+  "genericName": "Backend.AI client",
+  "description": "Desktop client for Backend.AI",
+  "productDescription": "Backend.AI Desktop is the desktop client for the Backend.AI AI/ML infrastructure platform. It bundles the Backend.AI Web UI together with its websocket proxy so that compute sessions, folders and models can be reached from the desktop.",
+  "bin": "Backend.AI Desktop",
+  "homepage": "https://www.backend.ai",
+  "maintainer": "Lablup Inc. <contact@lablup.com>",
+  "section": "misc",
+  "categories": ["Development", "Utility"],
+  "icon": {
+    "16x16": "manifest/backend-ai.iconset/icon_16x16@1x.png",
+    "32x32": "manifest/backend-ai.iconset/icon_32x32@1x.png",
+    "64x64": "manifest/backend-ai.iconset/icon_32x32@2x.png",
+    "128x128": "manifest/backend-ai.iconset/icon_128x128@1x.png",
+    "256x256": "manifest/backend-ai.iconset/icon_256x256@1x.png",
+    "512x512": "manifest/backend-ai.iconset/icon_512x512@1x.png"
+  },
+  "lintianOverrides": ["changelog-file-missing-in-native-package"]
+}
