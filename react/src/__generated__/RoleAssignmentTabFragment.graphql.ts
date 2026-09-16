@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb2b6eeef22b0f76c52504a68f35b44c>>
+ * @generated SignedSource<<9967e7970e43894b8fd21394ad38d1c6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,8 @@ export type RoleAssignmentTabFragment$data = {
   } | null | undefined;
   readonly id: string;
   readonly name: string;
+  readonly scopeId: string;
+  readonly scopeType: string;
   readonly source: RoleSource;
   readonly users: {
     readonly count: number;
@@ -56,6 +58,20 @@ var v0 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
   "storageKey": null
 };
 return {
@@ -142,20 +158,8 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeType",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeId",
-                  "storageKey": null
-                }
+                (v1/*: any*/),
+                (v2/*: any*/)
               ],
               "storageKey": null
             }
@@ -165,6 +169,8 @@ return {
       ],
       "storageKey": "scopes(first:1)"
     },
+    (v1/*: any*/),
+    (v2/*: any*/),
     {
       "alias": null,
       "args": [
@@ -291,6 +297,6 @@ return {
 };
 })();
 
-(node as any).hash = "1686ca5dcae81b1949d2704e9d05ec20";
+(node as any).hash = "676c78d26ad688220e9451861c65d203";
 
 export default node;
