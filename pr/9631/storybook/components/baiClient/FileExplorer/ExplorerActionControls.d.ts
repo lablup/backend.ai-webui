@@ -4,7 +4,8 @@ import { RcFile } from './hooks';
 interface ExplorerActionControlsProps {
     selectedFiles: Array<VFolderFile>;
     onRequestClose: (success: boolean, modifiedItems?: Array<VFolderFile>) => void;
-    onUpload: (files: Array<RcFile>, currentPath: string) => void;
+    /** Hands the pick to the explorer's duplicate-aware upload path. */
+    onUpload: (files: Array<RcFile>) => void;
     onDeleteFilesInBackground: DeleteSelectedItemsModalProps['onDeleteFilesInBackground'];
     onClearSelection?: () => void;
     enableDownload?: boolean;

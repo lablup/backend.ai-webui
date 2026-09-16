@@ -1,4 +1,4 @@
-import { CustomOperatorValue, EnumItem } from '@astryxdesign/core/PowerSearch';
+import { CustomOperatorValue, EnumItem, OperatorValue, PowerSearchComponentOverride, PowerSearchEditorProps } from '@astryxdesign/core/PowerSearch';
 import { SearchSource } from '@astryxdesign/core/Typeahead';
 import { default as React, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /**
@@ -81,3 +81,14 @@ export interface BAIPowerSearchChromeProps {
     className?: string;
     'data-testid'?: string;
 }
+/**
+ * Astryx's default editor popover content, wrapped in the class hook
+ * `BAIPowerSearchAdapters.css` styles against.
+ */
+export declare const BAIPowerSearchEditor: (props: PowerSearchEditorProps) => React.JSX.Element;
+/**
+ * `components` for both filters' PowerSearch. PowerSearch picks the override
+ * by the operator value type the popover opens on, so every type maps to the
+ * same editor; the full `Record` makes a new Astryx type a compile error.
+ */
+export declare const baiPowerSearchComponents: Record<OperatorValue['type'], PowerSearchComponentOverride>;
