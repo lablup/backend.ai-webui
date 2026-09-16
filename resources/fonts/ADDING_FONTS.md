@@ -190,6 +190,32 @@ resources/fonts/my-custom-font/
 
 ---
 
+## Case 3: Google Fonts Family (Sliced by `unicode-range`)
+
+Use this for large scripts (CJK, Thai, …) where a single font file would be
+several megabytes. Google Fonts serves such families as ~100 small woff2
+slices, each with a `unicode-range`, so the browser downloads only the
+slices a page actually uses — and nothing at all on a Latin-only page.
+
+`scripts/vendor-google-font.mjs` fetches the CSS Google serves to Chromium,
+downloads every slice into `resources/fonts/{normalized-name}/`, and rewrites
+the CSS to relative `url()`s:
+
+```bash
+node scripts/vendor-google-font.mjs "Noto Sans KR" --axis "wght@100..900"
+```
+
+- `--axis` follows the Google Fonts `css2` syntax; a variable range such as
+  `wght@100..900` yields one slice set that serves every weight.
+- The generated `{normalized-name}.css` is a build artifact — re-run the
+  script instead of editing it. Place the family's license file (e.g.
+  `OFL.txt`) in the same directory by hand; the script leaves it alone.
+- The slices carry no `local()` source on purpose: a host-installed copy of
+  the family may be a different version, and the point of vendoring is that
+  the rendering does not depend on the host.
+
+---
+
 ## Applying in theme.json
 
 After placing font files and CSS, add the font name to `fontFamily` in `resources/theme.json`.
@@ -226,7 +252,18 @@ After placing font files and CSS, add the font name to `fontFamily` in `resource
 
 ## Currently Registered Fonts
 
-| Directory       | CSS Entry            | Notes                          |
-|-----------------|----------------------|--------------------------------|
-| `roboto/`       | `roboto.css`         | woff2/woff, CSS included       |
-| `ubuntu/`       | `ubuntu.css`         | woff2/woff, CSS included       |
+| Directory         | CSS Entry            | Notes                                                    |
+|-------------------|----------------------|----------------------------------------------------------|
+| `roboto/`         | `roboto.css`         | woff2/woff, CSS included; Latin only                     |
+| `ubuntu/`         | `ubuntu.css`         | woff2/woff, CSS included; Latin only                     |
+| `noto-sans-jp/`   | `noto-sans-jp.css`   | Case 3, variable weight, 124 slices; Kana + Kanji        |
+| `noto-sans-kr/`   | `noto-sans-kr.css`   | Case 3, variable weight, 124 slices; Hangul (+ Hanja)    |
+| `noto-sans-thai/` | `noto-sans-thai.css` | Case 3, variable weight, 3 slices; Thai                  |
+
+The shipped stack is `'Ubuntu', Roboto, 'Noto Sans JP', 'Noto Sans KR',
+'Noto Sans Thai', sans-serif`. Ubuntu and Roboto are Latin-only, so every
+non-Latin code point falls through to the first Noto family that covers it.
+**Keep `Noto Sans JP` ahead of `Noto Sans KR`**: the KR subset also carries
+Kana and a Korean Hanja set, so with KR first, Japanese Kanji that happen to
+be in that set would render in their Korean glyph forms. The JP subset has no
+Hangul, so Korean text is unaffected by the order.

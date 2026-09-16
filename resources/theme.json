@@ -1,6 +1,6 @@
 {
   "$schema": "./theme.schema.json",
-  "fontFamily": "'Ubuntu', Roboto, sans-serif",
+  "fontFamily": "'Ubuntu', Roboto, 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans Thai', sans-serif",
   "light": {
     "token": {
       "colorPrimary": "#FF7A00",
