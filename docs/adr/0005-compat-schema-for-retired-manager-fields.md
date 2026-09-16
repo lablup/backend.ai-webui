@@ -24,7 +24,7 @@
 | `PermissionNestedFilter.entityType: RBACElementTypeFilter`, admin 권한의 entity `PROJECT_ADMIN_PAGE` | `StringFilter`, entity `scope_admin` |
 | `RoleMappedScopeNestedFilter.scopeId: StringFilter` | `UUIDFilter` |
 
-- **First failure site**: `useCurrentUserProjectRoles`가 `PROJECT_ADMIN_PAGE` entity로 거른 `myRoles`를 select한다. 이 hook을 `useRouteAccess`, `useWebUIMenuItems`, `WebUIHeaderProjectSelect`와 folder component 네 곳(`ProjectSelect`, `VFolderNodes`, `EditableVFolderNameV2`, `VFolderNodeDescriptionV2`)이 부른다. 26.9 매니저는 그 entity를 모르므로 빈 결과를 답하고, 프로젝트 관리자 메뉴와 route가 사라진다. 26.9의 답은 `myRolesV2`와 `RoleFilter.permission`(backend BA-7924, #14678)인데, 26.8 매니저는 그 root field를 모르고 모르는 field가 하나만 있어도 요청 전체를 거부한다.
+- **First failure site**: `useCurrentUserProjectRoles`가 `PROJECT_ADMIN_PAGE` entity로 거른 `myRoles`를 select한다. 이 hook을 `useRouteAccess`, `useWebUIMenuItems`, `WebUIHeaderProjectSelect`와 folder component 네 곳(`ProjectSelect`, `VFolderNodes`, `EditableVFolderNameV2`, `VFolderNodeDescriptionV2`)이 부른다. 26.9 매니저는 그 entity를 모르므로 빈 결과를 답하고, 프로젝트 관리자 메뉴와 route가 사라진다. 26.9의 답은 `myAtomicBulkScopePermissions`(backend BA-7924, #14678)로, 호출자가 각 프로젝트의 `scope_admin`에 실제로 가진 비트를 답한다. 26.8 매니저는 그 root field를 모르고, 모르는 field가 하나만 있어도 요청 전체를 거부한다.
 - **Existing mechanism**: `data/client-directives.graphql`이 `@since`와 `@deprecatedSince`를 `on FIELD`로 선언한다. `react/src/RelayEnvironment.ts`의 fetch가 `manipulateGraphQLQueryWithClientDirectives`에 요청 문서와 `isNotCompatibleWithVersion`을 넘기고, 그 함수가 directive가 가리키는 field를 지운다. `packages/backend.ai-client/src/client.ts`의 `isManagerVersionCompatibleWith` block이 feature flag를 켜고 component는 `baiClient.supports(flag)`로 읽는다.
 - **Compiler constraint**: relay-compiler는 schema에 없는 field를 select한 document를 컴파일하지 않는다. 옛 field를 `@deprecatedSince`로 select하려면 그 정의가 schema에 있어야 하는데, supergraph 복사본에는 더 이상 없다.
 
@@ -71,10 +71,10 @@ flowchart LR
 
 ### 3. document는 두 shape를 모두 select하고 directive로 가른다
 
-- **Directive pair**: 옛 field에는 `@deprecatedSince(version: V)`, 새 field에는 `@since(version: V)`를 단다. V는 매니저가 그 field를 지우거나 더한 버전이다. root field도 같다. `useCurrentUserProjectRoles`는 한 query에 `myRoles @deprecatedSince(version: "26.9.0")`와 `myRolesV2 @since(version: "26.9.0")`를 나란히 두고, transformer가 한쪽과 그쪽만 쓰는 변수를 지운다.
+- **Directive pair**: 옛 field에는 `@deprecatedSince(version: V)`, 새 field에는 `@since(version: V)`를 단다. V는 매니저가 그 field를 지우거나 더한 버전이다. root field도 같다. `useCurrentUserProjectRoles`는 한 query에 `myRoles @deprecatedSince(version: "26.9.0")`와 `myAtomicBulkScopePermissions @since(version: "26.9.0")`를 나란히 두고, transformer가 한쪽과 그쪽만 쓰는 변수를 지운다.
 - **Version boundary**: `graphql-transformer.ts`는 연결된 매니저가 V 이상이면 `@since` field를 남기고 `@deprecatedSince` field를 지우며, V 미만이면 반대로 한다. 26.9.0 매니저는 `scopeType`을 받고 `scopes`를 받지 않는다.
 - **Alias**: 같은 field를 argument만 다르게 두 번 select하는 document는 alias를 쓴다. `RoleAssignmentTab`의 `firstScope: scopes(first: 1)`이 그 예다.
-- **Reading**: component는 자기 fragment 안에서 새 field 값이 있으면 그것을, 없으면 옛 field를 읽는다. 공유 helper는 없다. `useCurrentUserProjectRoles`가 `myRolesV2`의 답이 있으면 그 `scopeId`를, 없으면 `myRoles`의 `scopes.edges[0]`를 읽는다.
+- **Reading**: component는 자기 fragment 안에서 새 field 값이 있으면 그것을, 없으면 옛 field를 읽는다. 공유 helper는 없다. `useCurrentUserProjectRoles`가 `myAtomicBulkScopePermissions`의 답이 있으면 READ 비트가 있는 `scopeId`를, 없으면 `myRoles`의 `scopes.edges[0]`를 읽는다.
 - **Fallback type**: generated type은 compat 파일의 enum을 쓰는 옛 field를 `RBACElementType` union으로, 새 field를 `string`으로 만든다. 두 값을 합치는 표현식은 `string`으로 다룬다.
 - **Value spelling**: 매니저가 준 값은 그 매니저에게 그대로 되돌려 보낸다. 옛 매니저는 enum 대문자(`PROJECT`), 새 매니저는 소문자(`project`)를 쓰므로, 비교와 i18n key는 `toUpperCase()`로 맞춘다. `rbacTypeI18nKey`가 그 예다.
 
@@ -105,13 +105,14 @@ flowchart LR
 - **One build, two managers**: 같은 빌드가 26.8 매니저와 26.9 매니저에 모두 붙는다.
 - **Nullability gap**: `@since` field는 generated type에서 non-null이지만 옛 매니저에서는 `undefined`다. component가 fallback 없이 그 값을 쓰면 TypeScript는 잡지 못한다.
 - **Required input fields**: 26.9가 required field를 더한 input은 compat 파일이 완화하지 못한다. `CreatePermissionInput.permission`이 그 예이고, 옛 shape로 보내는 `LegacyCreatePermissionModal`과 `RoleScopePermissionEditModal`은 `as CreatePermissionInput` cast를 달고 있다.
+- **Bulk target cap**: `myAtomicBulkScopePermissions`는 target 100개까지 받으므로 `useCurrentUserProjectRoles`는 접근 가능한 프로젝트 중 앞 100개만 묻는다. 그 뒤의 프로젝트는 관리자여도 배지와 관리자 판정에서 빠진다.
 - **Two schemas to read**: reviewer는 compat 파일을 supergraph 복사본과 함께 읽어야 한다. `data/merged_schema.graphql`은 gitignore라 diff에 나오지 않는다.
 - **Ungated permission tab**: drawer의 permission tab(`LegacyRolePermissionTab`, `ScopedRolePermissionCard`)이 자기 query로 select하는 `Permission.scopeType`, `scopeId`, `operation`은 gate되지 않았다. 26.9 매니저는 그 query를 거부하고, tab 안에 error boundary가 없어 `RoleDetailDrawer` 밖의 boundary가 그 오류를 받는다. 목록 query가 select하는 `Role.scopes`는 26.9.0에 `@deprecated`로 남아 있어 열린다. 이 tab을 26.9 permission 모델로 옮기는 일은 FR-3957과 FR-3959다.
 
 ## 출처
 
 - Jira: FR-3905 (Epic FR-3906). 호환 정책은 FR-3962에서 정했다. 후속은 FR-3957 권한 탭, FR-3958 할당 탭, FR-3959 Legacy 탭이다.
-- backend.ai: BA-7796 (#14478) scope-entity association table 제거, BA-7885 (#14628) role, permission, assignment를 scope로 읽기, BA-7919 (#14669) `Role.scopes`를 deprecated로 복구, BA-7924 (#14678) `myRolesV2`용 `RoleFilter.permission`과 `myScopePermissions`(머지 전, supergraph는 그 PR head에서 복사).
+- backend.ai: BA-7796 (#14478) scope-entity association table 제거, BA-7885 (#14628) role, permission, assignment를 scope로 읽기, BA-7919 (#14669) `Role.scopes`를 deprecated로 복구, BA-7924 (#14678) `myScopePermissions`·`myAtomicBulkScopePermissions`와 `RoleFilter.permission`(머지 전, supergraph는 그 PR head에서 복사).
 - 결정일: 2026-09-15.
 - 관련: `data/client-directives.graphql`, `react/src/helper/graphql-transformer.ts`, `react/src/helper/graphql-transformer.test.ts`의 version-gated field pair 테스트.
 
