@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { ManageImageResourceLimitModalClearMutation } from '../__generated__/ManageImageResourceLimitModalClearMutation.graphql';
 import {
   ManageImageResourceLimitModalMutation,
   ResourceLimitInput,
@@ -10,18 +11,22 @@ import { ManageImageResourceLimitModal_image$key } from '../__generated__/Manage
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { compareNumberWithUnits } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormNumberInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
+import { Button } from '@astryxdesign/core/Button';
 import { Grid } from '@astryxdesign/core/Grid';
 import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIDynamicUnitInputNumber,
+  BAIPopconfirm,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { RotateCcwIcon } from 'lucide-react';
 import React, { useRef, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
@@ -43,6 +48,7 @@ const ManageImageResourceLimitModal: React.FC<
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
   const { mergedResourceSlots } = useResourceSlotsDetails();
+  const baiClient = useSuspendedBackendaiClient();
 
   const image = useFragment(
     graphql`
@@ -80,6 +86,61 @@ const ManageImageResourceLimitModal: React.FC<
       }
     `);
 
+  const [commitClearResourceLimit, isInFlightClearResourceLimit] =
+    useMutation<ManageImageResourceLimitModalClearMutation>(graphql`
+      mutation ManageImageResourceLimitModalClearMutation(
+        $imageCanonical: String!
+        $architecture: String
+      ) {
+        clear_image_custom_resource_limit(
+          key: { image_canonical: $imageCanonical, architecture: $architecture }
+        ) {
+          image_node {
+            id
+            resource_limits {
+              key
+              min
+              max
+            }
+          }
+        }
+      }
+    `);
+
+  // The clear mutation is keyed on the image canonical string, not the node id,
+  // so every part of that key has to be present before it can be called.
+  const imageCanonical = `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`;
+  const canResetResourceLimit =
+    !!image?.registry && !!(image?.name ?? image?.namespace) && !!image?.tag;
+  const supportsResetResourceLimit =
+    baiClient.isManagerVersionCompatibleWith('25.6.0');
+
+  const handleResetResourceLimit = () =>
+    new Promise<void>((resolve, reject) => {
+      commitClearResourceLimit({
+        variables: {
+          imageCanonical,
+          architecture: image?.architecture,
+        },
+        onCompleted: (_res, errors) => {
+          // The payload carries only `image_node`, so a failure can only show
+          // up as a GraphQL error - there is no ok/msg pair to inspect.
+          if (errors?.length) {
+            _.forEach(errors, (error) => message.error(error.message));
+            reject(new Error(errors[0].message));
+            return;
+          }
+          message.success(t('environment.DescImageResourceLimitReset'));
+          onRequestClose(true);
+          resolve();
+        },
+        onError: (error) => {
+          message.error(t('dialog.ErrorOccurred'));
+          reject(error);
+        },
+      });
+    });
+
   const handleOnClick = async () => {
     const isValid = await formRef.current?.validateFields().catch(() => false);
     if (!isValid) {
@@ -101,7 +162,7 @@ const ManageImageResourceLimitModal: React.FC<
     // sessions immediately without any image reinstall.
     commitModifyImageInput({
       variables: {
-        target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
+        target: imageCanonical,
         architecture: image?.architecture,
         props: {
           resource_limits,
@@ -133,12 +194,43 @@ const ManageImageResourceLimitModal: React.FC<
       onOk={handleOnClick}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
+      // Mirror of the reset trigger's own guard: the two mutations write the
+      // same resource_limits, so neither may start while the other is in flight.
+      okButtonProps={{ disabled: isInFlightClearResourceLimit }}
       centered
       // 520px default overflows the 2-column NumberInput grid (min-content
       // ~513px) and forces a horizontal scrollbar (FR-3887).
       width={640}
       title={t('environment.ModifyMinimumImageResourceLimit')}
       okText={t('button.Save')}
+      footer={(originNode) => (
+        <BAIFlex
+          direction="row"
+          align="center"
+          gap="sm"
+          justify={supportsResetResourceLimit ? 'between' : 'end'}
+        >
+          {supportsResetResourceLimit ? (
+            <BAIPopconfirm
+              title={t('environment.ResetImageResourceLimit')}
+              description={t('environment.DescResetImageResourceLimit')}
+              okText={t('button.Reset')}
+              onConfirm={handleResetResourceLimit}
+            >
+              <Button
+                variant="ghost"
+                icon={<RotateCcwIcon size="1em" />}
+                label={t('environment.ResetImageResourceLimit')}
+                isDisabled={
+                  !canResetResourceLimit || isInFlightModifyImageInput
+                }
+                isLoading={isInFlightClearResourceLimit}
+              />
+            </BAIPopconfirm>
+          ) : null}
+          {originNode}
+        </BAIFlex>
+      )}
       {...BAIModalProps}
     >
       {/* antd Alert type="info" -> Astryx Banner status="info"; `showIcon`
