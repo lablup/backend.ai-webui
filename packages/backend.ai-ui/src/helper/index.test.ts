@@ -6,6 +6,7 @@ import {
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  DOWNLOAD_PROBE_TIMEOUT_MS,
   initiateDownload,
   omitNullAndUndefinedFields,
   parseValueWithUnit,
@@ -437,7 +438,9 @@ describe('initiateDownload', () => {
 
     await initiateDownload(DOWNLOAD_URL, 'notes.txt');
 
-    expect(fetchMock).toHaveBeenCalledWith(DOWNLOAD_URL);
+    expect(fetchMock).toHaveBeenCalledWith(DOWNLOAD_URL, {
+      signal: expect.any(AbortSignal),
+    });
     expect(clickSpy).toHaveBeenCalledTimes(1);
     // The probe wanted the status line only, so the body is dropped rather
     // than streaming the file a second time.
@@ -469,7 +472,9 @@ describe('initiateDownload', () => {
 
     await initiateDownload(secureURL, 'notes.txt');
 
-    expect(fetchMock).toHaveBeenCalledWith(secureURL);
+    expect(fetchMock).toHaveBeenCalledWith(secureURL, {
+      signal: expect.any(AbortSignal),
+    });
     expect(clickSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -486,6 +491,38 @@ describe('initiateDownload', () => {
     expect(error.origin).toBe('http://10.0.0.1:6021');
     expect(error.originalError).toBe(cause);
     expect(clickSpy).not.toHaveBeenCalled();
+  });
+
+  it('gives up on a proxy that never answers', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchMock = vi.fn(
+        (_url: string, { signal }: { signal: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            signal.addEventListener('abort', () =>
+              reject(
+                new DOMException('The operation was aborted.', 'AbortError'),
+              ),
+            );
+          }),
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      const pending = initiateDownload(DOWNLOAD_URL, 'notes.txt').catch(
+        (e) => e,
+      );
+      await vi.advanceTimersByTimeAsync(DOWNLOAD_PROBE_TIMEOUT_MS - 1);
+      expect(fetchMock.mock.calls[0][1].signal.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
+
+      const error = await pending;
+      expect(error).toBeInstanceOf(DownloadFailedError);
+      expect(error.reason).toBe('unreachable');
+      expect(error.originalError).toBeInstanceOf(DOMException);
+      expect(clickSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('reports the status when the proxy refuses the token', async () => {

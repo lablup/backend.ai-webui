@@ -100,12 +100,16 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
       icon: <DownloadIcon size="1em" />,
       disabled: !enableDownload,
       action: async () => {
-        await downloadFileMutation.mutateAsync({
-          filePath: `${currentPath}/${selectedItem.name}`,
-          fileName: selectedItem.name,
-          currentFolder: targetVFolderId,
-          archive: isDirectory,
-        });
+        // onError already toasted; an escaping rejection would hit the
+        // page's error boundary and unmount the modal.
+        await downloadFileMutation
+          .mutateAsync({
+            filePath: `${currentPath}/${selectedItem.name}`,
+            fileName: selectedItem.name,
+            currentFolder: targetVFolderId,
+            archive: isDirectory,
+          })
+          .catch(() => {});
       },
     },
     {

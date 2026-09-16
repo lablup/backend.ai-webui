@@ -556,17 +556,25 @@ const isBlockedMixedContent = (downloadURL: string): boolean => {
   }
 };
 
+// A proxy that never answers (a firewalled or wrong port) would otherwise hold
+// the button's pending state for the browser's own connect timeout.
+export const DOWNLOAD_PROBE_TIMEOUT_MS = 15_000;
+
 const verifyDownloadURL = async (downloadURL: string): Promise<void> => {
   if (isBlockedMixedContent(downloadURL)) {
     throw new DownloadFailedError(downloadURL, 'insecure');
   }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), DOWNLOAD_PROBE_TIMEOUT_MS);
   let response: Response;
   try {
-    response = await fetch(downloadURL);
+    response = await fetch(downloadURL, { signal: controller.signal });
   } catch (error) {
     throw new DownloadFailedError(downloadURL, 'unreachable', {
       originalError: error,
     });
+  } finally {
+    clearTimeout(timer);
   }
   // Only the status line was wanted; cancelling ends the probe transfer rather
   // than streaming the whole file a second time.

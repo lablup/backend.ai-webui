@@ -215,7 +215,11 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                         ? file.name
                         : `${currentPath}/${file.name}`,
                     );
-                    await downloadArchiveMutation.mutateAsync(filePaths);
+                    // onError already toasted; an escaping rejection would
+                    // hit the page's error boundary and unmount the modal.
+                    await downloadArchiveMutation
+                      .mutateAsync(filePaths)
+                      .catch(() => {});
                   }}
                 />
               </Tooltip>
