@@ -333,6 +333,22 @@ test.describe(
     );
 
     test(
+      'Regular user cannot see the Admin Settings entry in the sidebar',
+      { tag: ['@permission'] },
+      async ({ page, request }) => {
+        // 1. Login as regular user (not admin/superadmin)
+        await loginAsUser(page, request);
+
+        // 2. The sidebar has rendered its general menu. Checked first, so the
+        // absence below cannot pass on a sidebar that has not loaded yet.
+        await expect(getSideNavItem(page, 'Data')).toBeVisible();
+
+        // 3. The Admin Settings entry is not rendered at all, not merely disabled
+        await expect(getSideNavItem(page, 'Admin Settings')).toHaveCount(0);
+      },
+    );
+
+    test(
       'Superadmin user can access all pages without 401 error',
       { tag: ['@401', '@permission'] },
       async ({ page, request }) => {
