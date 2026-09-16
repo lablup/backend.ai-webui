@@ -69,7 +69,6 @@
         "general.Active",
         "general.BulkEdit",
         "general.Control",
-        "general.CreatedAt",
         "general.Disabled",
         "general.Inactive",
         "kernel.AgentId",
@@ -100,6 +99,7 @@
         "resourceGroup.PendingTimeout",
         "resourceGroup.PendingTimeoutDesc",
         "resourceGroup.Public",
+        "resourceGroup.PublicDesc",
         "resourceGroup.ResourceGroupCreated",
         "resourceGroup.ResourceGroupDeleted",
         "resourceGroup.ResourceGroupDetail",
@@ -1209,7 +1209,6 @@
         "explorer.UploadFailed",
         "explorer.UploadingFiles",
         "explorer.VFolder",
-        "general.CreatedAt",
         "general.ErrorOccurred",
         "general.General",
         "general.InvalidUUID",
@@ -1794,7 +1793,6 @@
         "general.Active",
         "general.Add",
         "general.Control",
-        "general.CreatedAt",
         "general.E-Mail",
         "general.ErrorOccurred",
         "general.FailedToExportCSV",
@@ -1848,7 +1846,6 @@
         "credential.Users",
         "general.Active",
         "general.All",
-        "general.CreatedAt",
         "general.Enable",
         "general.ErrorOccurred",
         "general.ID",
@@ -2134,7 +2131,6 @@
         "general.Active",
         "general.Auto",
         "general.BulkEdit",
-        "general.CreatedAt",
         "general.Days",
         "general.Inactive",
         "general.Manual",
@@ -2787,6 +2783,7 @@
         "credential.DescRequirePasswordChange",
         "credential.Description",
         "credential.Domain",
+        "credential.DomainIsActive",
         "credential.DownloadCSVTemplate",
         "credential.EmailPrefix",
         "credential.EmailSuffix",
@@ -2806,6 +2803,7 @@
         "credential.GlobalDefaultsHint",
         "credential.InactiveIncludeKeypair",
         "credential.Information",
+        "credential.IntegrationName",
         "credential.InvalidIP",
         "credential.IssuesFound",
         "credential.KeyAge",
@@ -2827,6 +2825,7 @@
         "credential.Permission",
         "credential.PreviewAndValidation",
         "credential.ProjectAndGroup",
+        "credential.ProjectIsActive",
         "credential.Projects",
         "credential.PurgeUsersPartialFailureDescription",
         "credential.Queries",
@@ -2846,6 +2845,7 @@
         "credential.SelectPolicy",
         "credential.SelectUser",
         "credential.Sessions",
+        "credential.SomeFiltersAreNotAppliedToCSVExport",
         "credential.SourceFile",
         "credential.SourceFileHint",
         "credential.Status",
@@ -3280,7 +3280,6 @@
         "deployment.filter.Name",
         "deployment.filter.OpenToPublic",
         "deployment.filter.Tags",
-        "general.CreatedAt",
         "modelService.ExpectedStatusCode",
         "modelService.HealthCheck",
         "modelService.InitialDelay",
@@ -3348,7 +3347,6 @@
       "keys": [
         "credential.Role",
         "general.Active",
-        "general.CreatedAt",
         "general.E-Mail",
         "general.Inactive",
         "general.Username"
@@ -3605,7 +3603,6 @@
         "general.AccessKey",
         "general.Auto",
         "general.Control",
-        "general.CreatedAt",
         "general.Disabled",
         "general.Image",
         "general.InvalidUUID",
@@ -4133,7 +4130,6 @@
         "deployment.filter.Name",
         "deployment.filter.OpenToPublic",
         "deployment.filter.Tags",
-        "general.CreatedAt",
         "modelService.ExpectedStatusCode",
         "modelService.HealthCheck",
         "modelService.InitialDelay",
@@ -5052,22 +5048,22 @@
       "labelKey": "webui.menu.Settings&Logs",
       "tabs": [
         {
-          "param": "tab",
+          "param": "settings",
           "key": "general",
           "labelKey": "userSettings.General"
         },
         {
-          "param": "tab",
+          "param": "settings",
           "key": "login-history",
           "labelKey": "userSettings.LoginHistory"
         },
         {
-          "param": "tab",
+          "param": "settings",
           "key": "login-sessions",
           "labelKey": "userSettings.LoginSessions"
         },
         {
-          "param": "tab",
+          "param": "settings",
           "key": "logs",
           "labelKey": "userSettings.Logs"
         }
@@ -5383,6 +5379,7 @@
         "userSettings.SSHKeypairGenerationWarning",
         "userSettings.UserConfigScript",
         "webui.menu.GoBack",
+        "webui.menu.Help",
         "webui.menu.Settings"
       ]
     }

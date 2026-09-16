@@ -1,5 +1,5 @@
 /**
- * One-line identity of a v2 `ImageV2` (ADR 0004), drawn by the shared
+ * One-line identity of a v2 `ImageV2` (ADR 0005), drawn by the shared
  * `ImageNodeSimpleTag` row. `BAIImageNodeSimpleTag` reads the v1 schema into
  * the same row; both take their chips from `imageNodeTagFacts`.
  */

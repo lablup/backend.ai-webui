@@ -228,7 +228,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
     architecture: string;
   }) => (identity ? `${identity.canonicalName}@${identity.architecture}` : '');
 
-  // The option row is the project-wide image row (ADR 0004), so the picker
+  // The option row is the project-wide image row (ADR 0005), so the picker
   // reads like the session launcher. `label` stays the canonical reference —
   // the trigger text, the accessible name and the filter chip's text — while
   // the popup draws the row in its place.

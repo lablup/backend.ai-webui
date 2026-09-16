@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<de8c6a24cb28fe80252cab09ee7029d9>>
+ * @generated SignedSource<<d48b77f64f280add8028edc232870c5b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -103,104 +103,108 @@ export type UserProjectNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
 };
-export type AssignRoleModalQuery$variables = {
-  filter?: UserV2Filter | null | undefined;
-  first?: number | null | undefined;
+export type BAIAdminUserV2SelectValueQuery$variables = {
+  limit: number;
+  selectedFilter?: UserV2Filter | null | undefined;
+  skipSelected: boolean;
 };
-export type AssignRoleModalQuery$data = {
-  readonly adminUsersV2: {
+export type BAIAdminUserV2SelectValueQuery$data = {
+  readonly adminUsersV2?: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly basicInfo: {
           readonly email: string;
-          readonly fullName: string | null | undefined;
         };
         readonly id: string;
       };
     }>;
   } | null | undefined;
 };
-export type AssignRoleModalQuery = {
-  response: AssignRoleModalQuery$data;
-  variables: AssignRoleModalQuery$variables;
+export type BAIAdminUserV2SelectValueQuery = {
+  response: BAIAdminUserV2SelectValueQuery$data;
+  variables: BAIAdminUserV2SelectValueQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "selectedFilter"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "skipSelected"
+},
+v3 = [
   {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "filter"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "first"
-  }
-],
-v1 = [
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "filter",
-        "variableName": "filter"
-      },
-      {
-        "kind": "Variable",
-        "name": "first",
-        "variableName": "first"
-      }
-    ],
-    "concreteType": "UserV2Connection",
-    "kind": "LinkedField",
-    "name": "adminUsersV2",
-    "plural": false,
+    "condition": "skipSelected",
+    "kind": "Condition",
+    "passingValue": false,
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "UserV2Edge",
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "filter",
+            "variableName": "selectedFilter"
+          },
+          {
+            "kind": "Variable",
+            "name": "limit",
+            "variableName": "limit"
+          }
+        ],
+        "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "edges",
-        "plural": true,
+        "name": "adminUsersV2",
+        "plural": false,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "UserV2",
+            "concreteType": "UserV2Edge",
             "kind": "LinkedField",
-            "name": "node",
-            "plural": false,
+            "name": "edges",
+            "plural": true,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              },
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "UserV2BasicInfo",
+                "concreteType": "UserV2",
                 "kind": "LinkedField",
-                "name": "basicInfo",
+                "name": "node",
                 "plural": false,
                 "selections": [
                   {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
-                    "name": "email",
+                    "name": "id",
                     "storageKey": null
                   },
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "fullName",
+                    "concreteType": "UserV2BasicInfo",
+                    "kind": "LinkedField",
+                    "name": "basicInfo",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "email",
+                        "storageKey": null
+                      }
+                    ],
                     "storageKey": null
                   }
                 ],
@@ -212,38 +216,45 @@ v1 = [
         ],
         "storageKey": null
       }
-    ],
-    "storageKey": null
+    ]
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AssignRoleModalQuery",
-    "selections": (v1/*: any*/),
+    "name": "BAIAdminUserV2SelectValueQuery",
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Operation",
-    "name": "AssignRoleModalQuery",
-    "selections": (v1/*: any*/)
+    "name": "BAIAdminUserV2SelectValueQuery",
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "87008b0d957fc6b96793937dcc1543b3",
+    "cacheID": "0a609f6f54a1625212fe62168903b81c",
     "id": null,
     "metadata": {},
-    "name": "AssignRoleModalQuery",
+    "name": "BAIAdminUserV2SelectValueQuery",
     "operationKind": "query",
-    "text": "query AssignRoleModalQuery(\n  $filter: UserV2Filter\n  $first: Int\n) {\n  adminUsersV2(filter: $filter, first: $first) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminUserV2SelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $skipSelected: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @skip(if: $skipSelected) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "be25e30a73e4c0954c229336007f6985";
+(node as any).hash = "77a6ea8cc05760ecebb6a139b466b99f";
 
 export default node;

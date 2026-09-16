@@ -1,6 +1,6 @@
 /**
  * The image row `BAIImageNodeSimpleTag` and `BAIImageNodeSimpleTagV2` draw
- * once their fragment is read (ADR 0004): meta icon, aliased base name, base
+ * once their fragment is read (ADR 0005): meta icon, aliased base name, base
  * version and architecture, then the tag chips and a copy control for the full
  * reference. Internal — the barrel exports the two fragment readers, not this.
  */

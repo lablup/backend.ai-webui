@@ -94,7 +94,7 @@ const KEY_WITH_DEFAULT_RE =
 const DYN_KEY_RE = /(?:^|[^A-Za-z0-9_$])t\(\s*`([^`\n]*\$\{[^`\n]*)`/g;
 
 /** URL params that behave like a page-level tab strip (FR-3267 patterns A-i/A-ii). */
-const TAB_PARAMS = ['tab'];
+const TAB_PARAMS = ['tab', 'settings'];
 const TAB_LIKE_PARAMS = ['type', 'statusCategory', 'mode'];
 
 /** A one-entry tab strip is the page itself — never a separate hit. */
@@ -111,7 +111,40 @@ const SCOPE_PARAMS = ['projectName'];
  * labels built by `_.map` over an object — no enum to read statically, while
  * its two admin twins use enum parsers and are detected normally.
  */
+/**
+ * The settings surface is a modal driven by `?settings=` over any page, so the
+ * `/usersettings` route element is only a redirect shim. Point the crawl at the
+ * modal so the palette still finds the settings it owns.
+ */
+const ROUTE_COMPONENT_OVERRIDES = {
+  '/usersettings': ['react/src/components/UserSettingsModal.tsx'],
+};
+
+/**
+ * Tab a route's settings belong to, when the tab strip and `<SettingList>` sit
+ * in different files so `settingTabKeyOf` cannot pair them. The settings modal
+ * splits them: the category rail lives in `UserSettingsModal`, the groups in
+ * `UserSettingsGeneralPane`.
+ */
+const SETTING_TAB_OVERRIDES = {
+  '/usersettings': 'general',
+};
+
 const TAB_OVERRIDES = {
+  '/usersettings': [
+    { param: 'settings', key: 'general', labelKey: 'userSettings.General' },
+    { param: 'settings', key: 'logs', labelKey: 'userSettings.Logs' },
+    {
+      param: 'settings',
+      key: 'login-sessions',
+      labelKey: 'userSettings.LoginSessions',
+    },
+    {
+      param: 'settings',
+      key: 'login-history',
+      labelKey: 'userSettings.LoginHistory',
+    },
+  ],
   '/project/:projectName/data': [
     { param: 'statusCategory', key: 'active', labelKey: 'data.Active' },
     {
@@ -716,7 +749,12 @@ export function parseRoutes() {
       }
 
       const elNode = propOf(obj, 'element') ?? propOf(obj, 'Component');
-      const comps = elNode ? collectComponents(elNode, compFile) : [];
+      const override = ROUTE_COMPONENT_OVERRIDES[indexed];
+      const comps = override
+        ? override.map((r) => path.join(ROOT, r))
+        : elNode
+          ? collectComponents(elNode, compFile)
+          : [];
 
       if (handle.menuKey || handle.labelKey || handle.title) {
         const isShim =
@@ -934,7 +972,7 @@ export async function buildEntries() {
       labelKey: e.labelKey,
       component: e.components.map(rel),
       tabs: applyTabOverrides(e.path, dedupeTabs(tabs)),
-      settings: dedupeSettings(settings),
+      settings: applySettingTabOverride(e.path, dedupeSettings(settings)),
       keyMap,
       dynamicKeys: [...dynamicKeys].sort(byString),
     });
@@ -966,6 +1004,12 @@ function dedupeSettings(settings) {
     (a, b) =>
       byString(a.key, b.key) || byString(a.groupId ?? '', b.groupId ?? ''),
   );
+}
+
+function applySettingTabOverride(routePath, settings) {
+  const tab = SETTING_TAB_OVERRIDES[routePath];
+  if (!tab) return settings;
+  return settings.map((s) => (s.tab === null ? { ...s, tab } : s));
 }
 
 function applyTabOverrides(routePath, tabs) {

@@ -44,7 +44,7 @@ import { useTranslation } from 'react-i18next';
 /**
  * The review step's image row. A manually typed image has no parts to
  * decompose, so it stays a copyable code string; a picked image is a legacy
- * `Image` form value with no fragment, so the row is drawn here (ADR 0004).
+ * `Image` form value with no fragment, so the row is drawn here (ADR 0005).
  */
 const SessionLauncherImageRow: React.FC = () => {
   'use memo';

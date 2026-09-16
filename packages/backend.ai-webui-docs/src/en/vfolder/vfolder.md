@@ -189,6 +189,10 @@ be excluded."* Check the list before proceeding with the deletion: only the
 remaining folders move to the Trash tab, and the confirmation message below the
 alert counts just the folders that are actually moved.
 
+If some of the selected folders still cannot be deleted, the folders that can be
+deleted are moved to the Trash tab as usual, and a failure dialog lists each
+folder that failed with the reason in the **Error Message** column.
+
 ### Restore or permanently delete
 
 In this status, you can restore the folder by clicking the restore button on the folder's row in the **Name** column. If you want to permanently delete the folder,
