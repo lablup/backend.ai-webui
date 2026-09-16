@@ -195,7 +195,7 @@ export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 export type SemanticColor = 'success' | 'info' | 'warning' | 'error' | 'default';
 export declare const useSemanticColorMap: () => Record<SemanticColor, string>;
-export type DownloadFailureReason = 'insecure' | 'unreachable' | 'rejected' | 'popup-blocked';
+export type DownloadFailureReason = 'unreachable' | 'rejected' | 'popup-blocked';
 /**
  * Thrown when a download never reached the browser's download manager.
  *

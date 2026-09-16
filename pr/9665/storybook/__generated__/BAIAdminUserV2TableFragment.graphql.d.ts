@@ -21,6 +21,16 @@ export type BAIAdminUserV2TableFragment$data = ReadonlyArray<{
         readonly resourcePolicy: string;
         readonly role: UserRoleV2 | null | undefined;
     };
+    readonly projects?: {
+        readonly edges: ReadonlyArray<{
+            readonly node: {
+                readonly basicInfo: {
+                    readonly name: string;
+                };
+                readonly id: string;
+            };
+        }>;
+    } | null | undefined;
     readonly security: {
         readonly allowedClientIp: ReadonlyArray<string> | null | undefined;
         readonly sudoSessionEnabled: boolean;
