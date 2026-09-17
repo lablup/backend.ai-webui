@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "オプションを検索 をクリア",
+    "ClearSelection": "選択をクリア",
     "NoResults": "結果がありません",
     "SearchOptions": "オプションを検索"
   },

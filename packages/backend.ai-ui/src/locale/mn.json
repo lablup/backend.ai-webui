@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
+    "ClearSelection": "Сонголтыг арилгах",
     "NoResults": "Үр дүн олдсонгүй",
     "SearchOptions": "Сонголтуудаас хайх"
   },

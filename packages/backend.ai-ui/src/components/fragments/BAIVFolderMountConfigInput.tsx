@@ -512,6 +512,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
       <BAIFlex direction="row" gap="xs" justify="between">
         <BAIComplexSelect
           multiple
+          allowClear
           label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
           isLabelHidden
           isDisabled={disabled}
@@ -628,9 +629,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     </div>
                     <BAIVFolderPathPicker
                       label={t('comp:BAIVFolderMountConfigInput.Subpath')}
-                      // Empty means the folder root, which the '/' before it
-                      // already reads as.
-                      placeholder=""
+                      placeholder={t('comp:VFolderPathPicker.SelectAPath')}
                       allowClear
                       disabled={disabled}
                       vfolderUuid={entry.vfolderId}

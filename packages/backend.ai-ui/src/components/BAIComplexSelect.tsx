@@ -202,6 +202,13 @@ export interface BAIComplexSelectProps {
   triggerDisplay?: BAIComplexSelectTriggerDisplay;
   /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
   maxTriggerTokens?: number;
+  /**
+   * Shows a clear button beside the chevron while something is selected.
+   * The trigger is a `<button>`, so the clear button is a sibling laid over
+   * its end; it is not rendered together with `description`, which would sit
+   * under the trigger and move it.
+   */
+  allowClear?: boolean;
   'data-testid'?: string;
 }
 
@@ -351,6 +358,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   status,
   size,
   width = '100%',
+  allowClear = false,
   endReached,
   atBottomThreshold = 30,
   atBottomStateChange,
@@ -545,7 +553,10 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
     return remaining > 0 ? `${joined}, +${remaining}` : joined;
   })();
 
-  return (
+  const hasClearButton =
+    allowClear && !isDisabled && !description && selected.length > 0;
+
+  const selector = (
     <ComplexSelector<BAIComplexSelectValue>
       label={label}
       isLabelHidden={isLabelHidden}
@@ -721,6 +732,25 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
         </div>
       )}
     </ComplexSelector>
+  );
+
+  if (!allowClear) return selector;
+  return (
+    <span
+      className="bai-complex-select-field"
+      data-size={size}
+      data-clearable={hasClearButton ? 'true' : undefined}
+    >
+      {selector}
+      {hasClearButton && (
+        <span className="bai-complex-select-field__clear">
+          <InputClearButton
+            label={t('comp:BAIComplexSelect.ClearSelection')}
+            onClick={() => onChange?.(multiple ? [] : null)}
+          />
+        </span>
+      )}
+    </span>
   );
 };
 

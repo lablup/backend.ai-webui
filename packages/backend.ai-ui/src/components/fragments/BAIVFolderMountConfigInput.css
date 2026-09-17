@@ -4,7 +4,7 @@
   container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-1);
+  gap: var(--spacing-3);
 }
 
 .bai-vfolder-mount-config__header,
@@ -112,7 +112,7 @@
   .bai-vfolder-mount-config__row {
     grid-template-columns: minmax(0, 1fr) var(--spacing-7);
     row-gap: var(--spacing-1);
-    padding-block: var(--spacing-1);
+    padding-block: var(--spacing-2);
   }
 
   .bai-vfolder-mount-config__row > * {

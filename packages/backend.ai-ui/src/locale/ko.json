@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "옵션 검색 지우기",
+    "ClearSelection": "선택 지우기",
     "NoResults": "결과 없음",
     "SearchOptions": "옵션 검색"
   },

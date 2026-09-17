@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
+    "ClearSelection": "Εκκαθάριση επιλογής",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
     "SearchOptions": "Αναζήτηση επιλογών"
   },

@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
+    "ClearSelection": "Tyhjennä valinta",
     "NoResults": "Ei tuloksia",
     "SearchOptions": "Hae vaihtoehdoista"
   },

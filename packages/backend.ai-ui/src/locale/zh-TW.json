@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜尋選項",
+    "ClearSelection": "清除選擇",
     "NoResults": "無結果",
     "SearchOptions": "搜尋選項"
   },

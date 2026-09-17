@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Hapus Cari opsi",
+    "ClearSelection": "Hapus pilihan",
     "NoResults": "Tidak ada hasil",
     "SearchOptions": "Cari opsi"
   },

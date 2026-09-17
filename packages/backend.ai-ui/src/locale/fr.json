@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Effacer Rechercher parmi les options",
+    "ClearSelection": "Effacer la sélection",
     "NoResults": "Aucun résultat",
     "SearchOptions": "Rechercher parmi les options"
   },

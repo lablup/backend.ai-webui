@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Xóa Tìm trong các tùy chọn",
+    "ClearSelection": "Xóa lựa chọn",
     "NoResults": "Không có kết quả",
     "SearchOptions": "Tìm trong các tùy chọn"
   },

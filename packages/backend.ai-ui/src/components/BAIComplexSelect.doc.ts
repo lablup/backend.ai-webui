@@ -246,6 +246,13 @@ export const docs = {
       default: '3',
     },
     {
+      name: 'allowClear',
+      type: 'boolean',
+      description:
+        'Shows a clear button left of the chevron while something is selected; it emits `[]` in `multiple` mode and `null` otherwise. Not rendered together with `description`, which sits under the trigger.',
+      default: 'false',
+    },
+    {
       name: 'data-testid',
       type: 'string',
       description:

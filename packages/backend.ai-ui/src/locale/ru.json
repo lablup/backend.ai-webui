@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Очистить Поиск по вариантам",
+    "ClearSelection": "Очистить выбор",
     "NoResults": "Нет результатов",
     "SearchOptions": "Поиск по вариантам"
   },

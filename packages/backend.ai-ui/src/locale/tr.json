@@ -107,6 +107,7 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
+    "ClearSelection": "Seçimi temizle",
     "NoResults": "Sonuç yok",
     "SearchOptions": "Seçenekleri ara"
   },
