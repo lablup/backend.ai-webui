@@ -51,18 +51,26 @@ const SessionLauncherStorageStep: React.FC<{
 
   return (
     <>
-      {/* The rule still blocks submit; each row already shows its own error. */}
-      <Form.Item name="vfolderMounts" rules={[mountConfigRule]} noStyle>
-        <BAIVFolderMountConfigInput
-          ref={mountConfigInputRef}
-          currentProjectId={project.id}
-          ownerEmail={ownerEmail}
-          mountableHosts={mountableHosts}
-          autoMountedFolders={autoMountedFolders}
-          folderExplorerPath={generateFolderPath}
-          filter={isSelectableFolder}
-          onClickCreateFolder={() => setIsCreateModalOpen(true)}
-        />
+      {/* The outer item keeps the form's text scale; the named one still blocks
+          submit but `help={false}` stops it echoing the rows' own errors. */}
+      <Form.Item>
+        <Form.Item
+          name="vfolderMounts"
+          rules={[mountConfigRule]}
+          noStyle
+          help={false}
+        >
+          <BAIVFolderMountConfigInput
+            ref={mountConfigInputRef}
+            currentProjectId={project.id}
+            ownerEmail={ownerEmail}
+            mountableHosts={mountableHosts}
+            autoMountedFolders={autoMountedFolders}
+            folderExplorerPath={generateFolderPath}
+            filter={isSelectableFolder}
+            onClickCreateFolder={() => setIsCreateModalOpen(true)}
+          />
+        </Form.Item>
       </Form.Item>
       <FolderCreateModalV2
         open={isCreateModalOpen}
