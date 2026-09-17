@@ -235,7 +235,7 @@ export interface ResolvedVFolderMount {
   vfolderId: string;
   name: string;
   mountDestination: string;
-  /** True when the alias input was left empty, so the default path applies. */
+  /** True when the mount resolves to the default `${aliasBasePath}${name}`. */
   isDefaultAlias: boolean;
   subpath: string;
 }
@@ -247,15 +247,17 @@ export const resolveVFolderMounts = (
 ): Array<ResolvedVFolderMount> =>
   _.map(value ?? [], (entry) => {
     const name = entry.name || entry.vfolderId;
+    const basePath = options?.aliasBasePath ?? DEFAULT_ALIAS_BASE_PATH;
+    const mountDestination = inputToMountDestination(
+      name,
+      entry.mountDestination,
+      basePath,
+    );
     return {
       vfolderId: entry.vfolderId,
       name,
-      mountDestination: inputToMountDestination(
-        name,
-        entry.mountDestination,
-        options?.aliasBasePath ?? DEFAULT_ALIAS_BASE_PATH,
-      ),
-      isDefaultAlias: _.isEmpty(entry.mountDestination?.trim()),
+      mountDestination,
+      isDefaultAlias: mountDestination === `${basePath}${name}`,
       subpath: entry.subpath?.trim() ?? '',
     };
   });
@@ -451,10 +453,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     description: <VFolderOptionMeta folder={folder} />,
     extra: <VFolderPermissionBadge permission={folder.permission} />,
   }));
-  const folderByUuid = new Map(
-    mountableFolders.map(({ folder, uuid }) => [uuid, folder]),
-  );
-
   // Resolve each entry's mount destination + validity once via the same
   // exported helper a consumer uses to gate the form, then read per row below.
   const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
@@ -496,9 +494,13 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
         return {
           vfolderId: item.value,
           name: item.label,
-          // Raw alias starts empty -> resolves to the default mount path
-          // (`${aliasBasePath}${name}`) at display time.
-          mountDestination: '',
+          // Prefilled with the default path so the destination is visible
+          // and editable; an emptied input still resolves to the same path.
+          mountDestination: inputToMountDestination(
+            item.label,
+            '',
+            aliasBasePath,
+          ),
           subpath: '',
         };
       }),
@@ -546,11 +548,10 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
       {mountConfigs.length > 0 && (
         <div className="bai-vfolder-mount-config__grid" role="list">
           <div className="bai-vfolder-mount-config__header" aria-hidden>
-            <BAIText type="secondary">
-              {t('comp:BAIVFolderMountConfigInput.Folder')}
-            </BAIText>
             <BAIFlex gap="xxs" align="center">
               <BAIText type="secondary">
+                {t('comp:BAIVFolderMountConfigInput.Folder')}
+                {' / '}
                 {t('comp:BAIVFolderMountConfigInput.Subpath')}
               </BAIText>
               <BAIQuestionIconWithTooltip
@@ -570,7 +571,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           </div>
           {mountConfigs.map((entry) => {
             const name = entry.name || entry.vfolderId;
-            const folder = folderByUuid.get(entry.vfolderId);
+            const aliasInput = entry.mountDestination ?? '';
             const status = statusByVFolderId[entry.vfolderId];
             const aliasErrorMessage = status.aliasError
               ? t(
@@ -598,29 +599,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 role="listitem"
               >
                 {/* Source: the folder and the subpath read as one path. */}
-                <div className="bai-vfolder-mount-config__folder">
-                  <div className="bai-vfolder-mount-config__folder-name">
-                    <BAIVFolderIdenticon vfolderId={entry.vfolderId} />
-                    {folderExplorerPath ? (
-                      <BAILink
-                        to={folderExplorerPath(entry.vfolderId)}
-                        ellipsis
-                      >
-                        {name}
-                      </BAILink>
-                    ) : (
-                      <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
-                    )}
-                  </div>
-                  {folder ? (
-                    <div className="bai-vfolder-mount-config__folder-meta">
-                      <VFolderPermissionBadge permission={folder.permission} />
-                      <BAIText type="secondary" ellipsis>
-                        {folder.host}
-                      </BAIText>
-                    </div>
-                  ) : null}
-                </div>
                 <Form.Item
                   validateStatus={subpathInvalid ? 'error' : undefined}
                   help={
@@ -630,35 +608,54 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   }
                   style={{ marginBottom: 0, minWidth: 0 }}
                 >
-                  <BAIVFolderPathPicker
-                    label={t('comp:BAIVFolderMountConfigInput.Subpath')}
-                    placeholder={t(
-                      'comp:BAIVFolderMountConfigInput.EntireFolder',
-                    )}
-                    size="sm"
-                    allowClear
-                    disabled={disabled}
-                    vfolderUuid={entry.vfolderId}
-                    // '' and the folder root are the same mount, so both show
-                    // the "entire folder" placeholder instead of a bare '/'.
-                    value={entry.subpath || undefined}
-                    onChange={(next) => updateEntry({ subpath: next ?? '' })}
-                  />
+                  <div className="bai-vfolder-mount-config__source">
+                    <div className="bai-vfolder-mount-config__folder">
+                      <BAIVFolderIdenticon vfolderId={entry.vfolderId} />
+                      {folderExplorerPath ? (
+                        <BAILink
+                          to={folderExplorerPath(entry.vfolderId)}
+                          ellipsis
+                        >
+                          {name}
+                        </BAILink>
+                      ) : (
+                        <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
+                      )}
+                      <BAIText type="secondary">/</BAIText>
+                    </div>
+                    <BAIVFolderPathPicker
+                      label={t('comp:BAIVFolderMountConfigInput.Subpath')}
+                      placeholder={t(
+                        'comp:BAIVFolderMountConfigInput.EntireFolder',
+                      )}
+                      size="sm"
+                      allowClear
+                      disabled={disabled}
+                      vfolderUuid={entry.vfolderId}
+                      // '' and the folder root are the same mount, so both show
+                      // the "entire folder" placeholder instead of a bare '/'.
+                      value={entry.subpath || undefined}
+                      onChange={(next) => updateEntry({ subpath: next ?? '' })}
+                    />
+                  </div>
                 </Form.Item>
                 <ArrowRight
                   className="bai-vfolder-mount-config__arrow"
                   size="1em"
                   aria-hidden
                 />
-                {/* Nameless Form.Item: `help` and `extra` render together,
-                    so the path stays visible while the alias is fixed. */}
+                {/* `extra` shows the resolved path only when it differs from
+                    what is typed (a relative alias). */}
                 <Form.Item
                   validateStatus={aliasErrorMessage ? 'error' : undefined}
                   help={aliasErrorMessage}
                   extra={
-                    <BAIText type="secondary" ellipsis={{ tooltip: true }}>
-                      {status.mountDestination}
-                    </BAIText>
+                    aliasInput.trim() &&
+                    aliasInput.trim() !== status.mountDestination ? (
+                      <BAIText type="secondary" ellipsis={{ tooltip: true }}>
+                        {status.mountDestination}
+                      </BAIText>
+                    ) : undefined
                   }
                   style={{ marginBottom: 0, minWidth: 0 }}
                 >
@@ -670,8 +667,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                     size="sm"
                     hasClear
                     isDisabled={disabled}
-                    placeholder={name}
-                    value={entry.mountDestination ?? ''}
+                    placeholder={status.mountDestination}
+                    value={aliasInput}
                     onChange={(next) => updateEntry({ mountDestination: next })}
                   />
                 </Form.Item>

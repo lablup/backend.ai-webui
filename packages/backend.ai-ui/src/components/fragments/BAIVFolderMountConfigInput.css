@@ -11,27 +11,47 @@
 .bai-vfolder-mount-config__row {
   display: grid;
   grid-template-columns:
-    minmax(0, 0.9fr) minmax(0, 1fr) var(--spacing-5) minmax(0, 1.3fr)
+    minmax(0, 1.2fr) var(--spacing-5) minmax(0, 1fr)
     var(--spacing-7);
   column-gap: var(--spacing-2);
   align-items: start;
 }
 
-.bai-vfolder-mount-config__folder-name,
 .bai-vfolder-mount-config__arrow {
   height: var(--size-element-sm);
 }
 
-.bai-vfolder-mount-config__folder {
+/* The folder name is the fixed head of the source path; the picker is its
+   editable tail, so the two share one outline. */
+.bai-vfolder-mount-config__source {
+  display: flex;
   min-width: 0;
 }
 
-.bai-vfolder-mount-config__folder-name,
-.bai-vfolder-mount-config__folder-meta {
+.bai-vfolder-mount-config__folder {
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
+  flex: 0 1 auto;
   min-width: 0;
+  max-width: 60%;
+  height: var(--size-element-sm);
+  padding-inline: var(--spacing-2);
+  border: 1px solid var(--color-border-emphasized);
+  border-inline-end: 0;
+  border-start-start-radius: var(--radius-element);
+  border-end-start-radius: var(--radius-element);
+  background: var(--color-background-muted);
+}
+
+.bai-vfolder-mount-config__source > .bai-vfolder-path-picker {
+  flex: 1 1 0;
+}
+
+.bai-vfolder-mount-config__source .astryx-complex-selector,
+.bai-vfolder-mount-config__source .astryx-complex-selector > button {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
 }
 
 .bai-vfolder-mount-config__arrow {

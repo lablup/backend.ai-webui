@@ -15,6 +15,7 @@ import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   BAIVFolderMountConfigInput,
+  inputToMountDestination,
   safeDecodeUuid,
   type BAIVFolderMountConfigInputRef,
   type LegacyVFolder,
@@ -93,7 +94,10 @@ const SessionLauncherStorageStep: React.FC<{
             {
               vfolderId,
               name: response.metadata.name,
-              mountDestination: '',
+              mountDestination: inputToMountDestination(
+                response.metadata.name,
+                '',
+              ),
               subpath: '',
             },
           ]);
