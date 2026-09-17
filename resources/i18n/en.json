@@ -802,6 +802,7 @@
     "General": "General",
     "Host": "Host",
     "HostDetails": "Displays quota information for the selected storage host.",
+    "InMyPersonalProject": "This folder belongs to your personal project.",
     "InvalidEmail": "Invalid email address",
     "Invited": "Invited",
     "InvitedFolders": "Invited Folders",

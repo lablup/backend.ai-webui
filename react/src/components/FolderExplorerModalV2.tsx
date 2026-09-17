@@ -22,6 +22,7 @@ import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModal
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -142,6 +143,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     ? null
     : toProjectContext(currentProject);
   const currentUserAccessKey = baiClient?._config?.accessKey;
+  const [currentUser] = useCurrentUserInfo();
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
   const bodyRef = useRef<HTMLDivElement | null>(null);
 
@@ -212,9 +214,11 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             }
             ownership {
               projectId
+              creatorId
               project {
                 basicInfo {
                   name
+                  type
                 }
               }
             }
@@ -563,12 +567,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               !!vfolderNode?.ownership?.projectId ? (
               <Banner
                 title={
-                  vfolderNode.ownership?.project?.basicInfo?.name
-                    ? t('data.NotInProject', {
-                        projectName:
-                          vfolderNode.ownership.project.basicInfo.name,
-                      })
-                    : t('data.BelongsToDifferentProject')
+                  vfolderNode.ownership?.project?.basicInfo?.type ===
+                    'PERSONAL' &&
+                  vfolderNode.ownership?.creatorId === currentUser.uuid
+                    ? t('data.InMyPersonalProject')
+                    : vfolderNode.ownership?.project?.basicInfo?.name
+                      ? t('data.NotInProject', {
+                          projectName:
+                            vfolderNode.ownership.project.basicInfo.name,
+                        })
+                      : t('data.BelongsToDifferentProject')
                 }
                 status="info"
               />
