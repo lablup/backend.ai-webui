@@ -97,8 +97,8 @@ export interface BAIComplexSelectProps {
     /**
      * Shows a clear button beside the chevron while something is selected.
      * The trigger is a `<button>`, so the clear button is a sibling laid over
-     * its end; it is not rendered together with `description`, which would sit
-     * under the trigger and move it.
+     * its end, anchored to the field's bottom. It is not rendered while
+     * `status.message` is shown, because that message sits under the trigger.
      */
     allowClear?: boolean;
     'data-testid'?: string;
