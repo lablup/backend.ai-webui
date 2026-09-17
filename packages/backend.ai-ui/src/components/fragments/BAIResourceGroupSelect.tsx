@@ -29,7 +29,7 @@ export const useResourceGroupNames = (
           filter: $filter
           orderBy: [{ field: NAME, direction: ASC }]
           limit: 100
-        ) @since(version: "26.2.0") {
+        ) {
           edges {
             node {
               name

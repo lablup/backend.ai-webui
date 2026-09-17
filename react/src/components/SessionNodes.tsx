@@ -114,7 +114,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         service_ports
         user_id
         agent_ids
-        priority @since(version: "24.09.0")
+        priority
         ...SessionStatusTagFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
@@ -144,7 +144,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         domain_name
         scaling_group
         project_id
-        owner @since(version: "25.13.0") {
+        owner {
           email
         }
         dependees {

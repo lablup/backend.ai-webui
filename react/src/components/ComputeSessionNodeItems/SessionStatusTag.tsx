@@ -70,7 +70,7 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         status
         status_info
         status_data
-        queue_position @since(version: "25.13.0")
+        queue_position
       }
     `,
     sessionFrgmt,

@@ -84,8 +84,8 @@ const KeypairResourcePolicyList: React.FC<KeypairResourcePolicyListProps> = (
             max_containers_per_session
             idle_timeout
             allowed_vfolder_hosts
-            max_pending_session_count @since(version: "24.03.4")
-            max_concurrent_sftp_sessions @since(version: "24.03.4")
+            max_pending_session_count
+            max_concurrent_sftp_sessions
             created_at
             ...KeypairResourcePolicySettingModalFragment
             ...KeypairResourcePolicyInfoModalFragment

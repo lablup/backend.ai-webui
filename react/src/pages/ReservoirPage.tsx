@@ -170,7 +170,7 @@ const ReservoirPage: React.FC = () => {
             name
             type
           }
-          huggingfaceRegistries @since(version: "25.14.0") {
+          huggingfaceRegistries {
             edges {
               node {
                 id
@@ -190,7 +190,7 @@ const ReservoirPage: React.FC = () => {
             count
             edges {
               node {
-                id @since(version: "25.17.0")
+                id
                 ...BAIArtifactTableArtifactFragment
                 ...BAIImportArtifactModalArtifactFragment
                 ...BAIDeactivateArtifactsModalArtifactsFragment

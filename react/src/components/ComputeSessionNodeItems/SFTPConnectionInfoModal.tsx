@@ -54,7 +54,7 @@ const SFTPConnectionInfoModal: React.FC<SFTPConnectionInfoModalProps> = ({
         # @since matches the other vfolder_nodes usages so it merges cleanly on
         # the shared ComputeSessionNode selection (this project targets >= 26,
         # so the field is always present and needs no vfolder_mounts fallback).
-        vfolder_nodes @since(version: "25.4.0") {
+        vfolder_nodes {
           edges {
             node {
               name

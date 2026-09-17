@@ -295,7 +295,6 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
           edges @required(action: THROW) {
             node @required(action: THROW) {
               id @required(action: THROW)
-              name @deprecatedSince(version: "24.12.0")
               tag
               registry
               architecture

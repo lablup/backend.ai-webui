@@ -88,8 +88,8 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
         cur_size
         cloneable
         status
-        permissions @since(version: "24.09.0")
-        unmanaged_path @since(version: "25.04.0")
+        permissions
+        unmanaged_path
         ...VFolderPermissionCellFragment
         ...useVirtualFolderNodePathFragment
       }

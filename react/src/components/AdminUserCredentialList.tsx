@@ -82,7 +82,7 @@ export const AdminUserCredentialListQuery = graphql`
         last_used
         rate_limit
         num_queries
-        concurrency_used @since(version: "24.09.0")
+        concurrency_used
 
         ...KeypairSettingModalFragment
         ...KeypairInfoModalFragment

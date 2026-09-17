@@ -53,8 +53,7 @@ const ManageImageResourceLimitModal: React.FC<
           max
         }
         registry
-        name @deprecatedSince(version: "24.12.0")
-        namespace @since(version: "24.12.0")
+        namespace
         architecture
         tag
       }
@@ -101,7 +100,7 @@ const ManageImageResourceLimitModal: React.FC<
     // sessions immediately without any image reinstall.
     commitModifyImageInput({
       variables: {
-        target: `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`,
+        target: `${image?.registry}/${image?.namespace}:${image?.tag}`,
         architecture: image?.architecture,
         props: {
           resource_limits,

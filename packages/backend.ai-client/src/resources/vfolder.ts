@@ -181,11 +181,7 @@ export class VFolder {
    */
   async rename(new_name = null, vfolder_id = null): Promise<any> {
     const body = { new_name };
-    const vfolder = vfolder_id
-      ? vfolder_id
-      : this.client.supports('vfolder-id-based')
-        ? this.id
-        : this.name;
+    const vfolder = vfolder_id ? vfolder_id : this.id;
     let rqst = this.client.newSignedRequest(
       'POST',
       `${this.urlPrefix}/${vfolder}/rename`,
@@ -405,9 +401,7 @@ export class VFolder {
 
     let rqst = this.client.newSignedRequest(
       'POST',
-      this.client.supports('background-file-delete')
-        ? `${this.urlPrefix}/${name}/delete-files-async`
-        : `${this.urlPrefix}/${name}/delete-files`,
+      `${this.urlPrefix}/${name}/delete-files-async`,
       body,
     );
     return this.client._wrapWithPromise(rqst);

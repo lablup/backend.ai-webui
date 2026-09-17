@@ -190,14 +190,14 @@ const SessionDetailContent: React.FC<{
         name
         project_id
         user_id
-        owner @since(version: "25.13.0") {
+        owner {
           email
         }
         resource_opts
         status
         status_data
         vfolder_mounts
-        vfolder_nodes @since(version: "25.4.0") {
+        vfolder_nodes {
           edges {
             node {
               ...FolderLink_vfolderNode
@@ -212,7 +212,7 @@ const SessionDetailContent: React.FC<{
         requested_slots
         occupied_slots
         tag
-        idle_checks @since(version: "24.12.0")
+        idle_checks
         type
         startup_command
 

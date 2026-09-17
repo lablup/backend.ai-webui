@@ -31,7 +31,7 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
     graphql`
       fragment MountedVFolderLinksFragment on ComputeSessionNode {
         row_id
-        vfolder_nodes @since(version: "25.4.0") {
+        vfolder_nodes {
           edges {
             node {
               ...FolderLink_vfolderNode
