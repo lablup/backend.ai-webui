@@ -12,6 +12,7 @@ import {
 import { BAIUserUnionIcon } from '../../icons';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
+import BAICard from '../BAICard';
 import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
@@ -494,13 +495,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
         return {
           vfolderId: item.value,
           name: item.label,
-          // Prefilled with the default path so the destination is visible
-          // and editable; an emptied input still resolves to the same path.
-          mountDestination: inputToMountDestination(
-            item.label,
-            '',
-            aliasBasePath,
-          ),
+          // Empty resolves to the default path, which the input shows as its
+          // placeholder.
+          mountDestination: '',
           subpath: '',
         };
       }),
@@ -547,157 +544,169 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
         </ButtonGroup>
       </BAIFlex>
       {mountConfigs.length > 0 && (
-        <div className="bai-vfolder-mount-config__grid" role="list">
-          <div className="bai-vfolder-mount-config__header" aria-hidden>
-            <BAIFlex gap="xxs" align="center">
-              <BAIText type="secondary">
-                {t('comp:BAIVFolderMountConfigInput.SourcePath')}
-              </BAIText>
-              <BAIQuestionIconWithTooltip
-                title={t('comp:BAIVFolderMountConfigInput.SubpathTooltip')}
-              />
-            </BAIFlex>
-            <span />
-            <BAIFlex gap="xxs" align="center">
-              <BAIText type="secondary">
-                {t('comp:BAIVFolderMountConfigInput.DestinationPath')}
-              </BAIText>
-              <BAIQuestionIconWithTooltip
-                title={t('comp:BAIVFolderMountConfigInput.PathAndAliasTooltip')}
-              />
-            </BAIFlex>
-            <span />
-          </div>
-          {mountConfigs.map((entry) => {
-            const name = entry.name || entry.vfolderId;
-            const aliasInput = entry.mountDestination ?? '';
-            const status = statusByVFolderId[entry.vfolderId];
-            const aliasErrorMessage = status.aliasError
-              ? t(
-                  {
-                    invalidFormat:
-                      'comp:BAIVFolderMountConfigInput.AliasInvalid',
-                    overlapping:
-                      'comp:BAIVFolderMountConfigInput.AliasOverlapping',
-                    overlappingWithAutoMount:
-                      'comp:BAIVFolderMountConfigInput.AliasOverlappingWithAutoMount',
-                  }[status.aliasError],
-                )
-              : undefined;
-            const subpathInvalid = !!status.subpathError;
-            const updateEntry = (patch: Partial<VFolderMountConfigValue>) =>
-              setValue((prev) =>
-                prev.map((m) =>
-                  m.vfolderId === entry.vfolderId ? { ...m, ...patch } : m,
-                ),
-              );
-            return (
-              <div
-                key={entry.vfolderId}
-                className="bai-vfolder-mount-config__row"
-                role="listitem"
-              >
-                {/* Source: the folder and the subpath read as one path. */}
-                <Form.Item
-                  validateStatus={subpathInvalid ? 'error' : undefined}
-                  help={
-                    subpathInvalid
-                      ? t('comp:BAIVFolderMountConfigInput.SubpathInvalid')
-                      : undefined
-                  }
-                  style={{ marginBottom: 0, minWidth: 0 }}
+        <BAICard size="small">
+          <div className="bai-vfolder-mount-config__grid" role="list">
+            <div className="bai-vfolder-mount-config__header" aria-hidden>
+              <BAIFlex gap="xxs" align="center">
+                <BAIText type="secondary">
+                  {t('comp:BAIVFolderMountConfigInput.SourcePath')}
+                </BAIText>
+                <BAIQuestionIconWithTooltip
+                  title={t('comp:BAIVFolderMountConfigInput.SubpathTooltip')}
+                />
+              </BAIFlex>
+              <span />
+              <BAIFlex gap="xxs" align="center">
+                <BAIText type="secondary">
+                  {t('comp:BAIVFolderMountConfigInput.DestinationPath')}
+                </BAIText>
+                <BAIQuestionIconWithTooltip
+                  title={t(
+                    'comp:BAIVFolderMountConfigInput.PathAndAliasTooltip',
+                  )}
+                />
+              </BAIFlex>
+              <span />
+            </div>
+            {mountConfigs.map((entry) => {
+              const name = entry.name || entry.vfolderId;
+              const aliasInput = entry.mountDestination ?? '';
+              const status = statusByVFolderId[entry.vfolderId];
+              const aliasErrorMessage = status.aliasError
+                ? t(
+                    {
+                      invalidFormat:
+                        'comp:BAIVFolderMountConfigInput.AliasInvalid',
+                      overlapping:
+                        'comp:BAIVFolderMountConfigInput.AliasOverlapping',
+                      overlappingWithAutoMount:
+                        'comp:BAIVFolderMountConfigInput.AliasOverlappingWithAutoMount',
+                    }[status.aliasError],
+                  )
+                : undefined;
+              const subpathInvalid = !!status.subpathError;
+              const updateEntry = (patch: Partial<VFolderMountConfigValue>) =>
+                setValue((prev) =>
+                  prev.map((m) =>
+                    m.vfolderId === entry.vfolderId ? { ...m, ...patch } : m,
+                  ),
+                );
+              return (
+                <div
+                  key={entry.vfolderId}
+                  className="bai-vfolder-mount-config__row"
+                  role="listitem"
                 >
-                  <div className="bai-vfolder-mount-config__source">
-                    <div className="bai-vfolder-mount-config__folder">
-                      <BAIVFolderIdenticon vfolderId={entry.vfolderId} />
-                      {/* Only the name shrinks, so the trailing '/' stays. */}
-                      <span className="bai-vfolder-mount-config__folder-name">
-                        {folderExplorerPath ? (
-                          <BAILink
-                            to={folderExplorerPath(entry.vfolderId)}
-                            ellipsis
-                          >
-                            {name}
-                          </BAILink>
-                        ) : (
-                          <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
-                        )}
-                      </span>
-                      <span className="bai-vfolder-mount-config__separator">
-                        /
-                      </span>
-                    </div>
-                    <BAIVFolderPathPicker
-                      label={t('comp:BAIVFolderMountConfigInput.Subpath')}
-                      placeholder={t('comp:VFolderPathPicker.SelectAPath')}
-                      allowClear
-                      disabled={disabled}
-                      vfolderUuid={entry.vfolderId}
-                      value={entry.subpath}
-                      onChange={(next) => updateEntry({ subpath: next ?? '' })}
-                    />
-                  </div>
-                </Form.Item>
-                <span className="bai-vfolder-mount-config__arrow" aria-hidden>
-                  <ArrowRight size="1em" />
-                </span>
-                {/* `extra` shows the resolved path only when it differs from
-                    what is typed (a relative alias). */}
-                <Form.Item
-                  validateStatus={aliasErrorMessage ? 'error' : undefined}
-                  help={aliasErrorMessage}
-                  extra={
-                    aliasInput.trim() &&
-                    aliasInput.trim() !== status.mountDestination ? (
-                      <BAIText type="secondary" ellipsis={{ tooltip: true }}>
-                        {status.mountDestination}
-                      </BAIText>
-                    ) : undefined
-                  }
-                  style={{ marginBottom: 0, minWidth: 0 }}
-                >
-                  <TextInput
-                    label={t(
-                      'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
-                    )}
-                    isLabelHidden
-                    hasClear
-                    isDisabled={disabled}
-                    placeholder={status.mountDestination}
-                    value={aliasInput}
-                    onChange={(next) => updateEntry({ mountDestination: next })}
-                  />
-                </Form.Item>
-                <div className="bai-vfolder-mount-config__remove">
-                  <Tooltip
-                    content={t('comp:BAIVFolderMountConfigInput.RemoveFolder')}
+                  {/* Source: the folder and the subpath read as one path. */}
+                  <Form.Item
+                    validateStatus={subpathInvalid ? 'error' : undefined}
+                    help={
+                      subpathInvalid
+                        ? t('comp:BAIVFolderMountConfigInput.SubpathInvalid')
+                        : undefined
+                    }
+                    style={{ marginBottom: 0, minWidth: 0 }}
                   >
-                    <BAIButton
-                      type="text"
-                      size="small"
-                      disabled={disabled}
-                      aria-label={t(
+                    <div className="bai-vfolder-mount-config__source">
+                      <div className="bai-vfolder-mount-config__folder">
+                        <BAIVFolderIdenticon vfolderId={entry.vfolderId} />
+                        {/* Only the name shrinks, so the trailing '/' stays. */}
+                        <span className="bai-vfolder-mount-config__folder-name">
+                          {folderExplorerPath ? (
+                            <BAILink
+                              to={folderExplorerPath(entry.vfolderId)}
+                              ellipsis
+                            >
+                              {name}
+                            </BAILink>
+                          ) : (
+                            <BAIText ellipsis={{ tooltip: true }}>
+                              {name}
+                            </BAIText>
+                          )}
+                        </span>
+                        <span className="bai-vfolder-mount-config__separator">
+                          /
+                        </span>
+                      </div>
+                      <BAIVFolderPathPicker
+                        label={t('comp:BAIVFolderMountConfigInput.Subpath')}
+                        placeholder={t('comp:VFolderPathPicker.SelectAPath')}
+                        allowClear
+                        disabled={disabled}
+                        vfolderUuid={entry.vfolderId}
+                        value={entry.subpath}
+                        onChange={(next) =>
+                          updateEntry({ subpath: next ?? '' })
+                        }
+                      />
+                    </div>
+                  </Form.Item>
+                  <span className="bai-vfolder-mount-config__arrow" aria-hidden>
+                    <ArrowRight size="1em" />
+                  </span>
+                  {/* `extra` shows the resolved path only when it differs from
+                    what is typed (a relative alias). */}
+                  <Form.Item
+                    validateStatus={aliasErrorMessage ? 'error' : undefined}
+                    help={aliasErrorMessage}
+                    extra={
+                      aliasInput.trim() &&
+                      aliasInput.trim() !== status.mountDestination ? (
+                        <BAIText type="secondary" ellipsis={{ tooltip: true }}>
+                          {status.mountDestination}
+                        </BAIText>
+                      ) : undefined
+                    }
+                    style={{ marginBottom: 0, minWidth: 0 }}
+                  >
+                    <TextInput
+                      label={t(
+                        'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
+                      )}
+                      isLabelHidden
+                      hasClear
+                      isDisabled={disabled}
+                      placeholder={status.mountDestination}
+                      value={aliasInput}
+                      onChange={(next) =>
+                        updateEntry({ mountDestination: next })
+                      }
+                    />
+                  </Form.Item>
+                  <div className="bai-vfolder-mount-config__remove">
+                    <Tooltip
+                      content={t(
                         'comp:BAIVFolderMountConfigInput.RemoveFolder',
                       )}
-                      icon={
-                        <XIcon
-                          size={token.size}
-                          color={token.colorTextQuaternary}
-                        />
-                      }
-                      style={{ flexShrink: 0, height: token.controlHeight }}
-                      onClick={() =>
-                        setValue((prev) =>
-                          prev.filter((m) => m.vfolderId !== entry.vfolderId),
-                        )
-                      }
-                    />
-                  </Tooltip>
+                    >
+                      <BAIButton
+                        type="text"
+                        size="small"
+                        disabled={disabled}
+                        aria-label={t(
+                          'comp:BAIVFolderMountConfigInput.RemoveFolder',
+                        )}
+                        icon={
+                          <XIcon
+                            size={token.size}
+                            color={token.colorTextQuaternary}
+                          />
+                        }
+                        style={{ flexShrink: 0, height: token.controlHeight }}
+                        onClick={() =>
+                          setValue((prev) =>
+                            prev.filter((m) => m.vfolderId !== entry.vfolderId),
+                          )
+                        }
+                      />
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </BAICard>
       )}
       {autoMountedFolders && autoMountedFolders.length > 0 && (
         <BAIFlex gap="xxs" align="center" wrap="wrap">
