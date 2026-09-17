@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8739e2f2352afa47fa7a97b234e30000>>
+ * @generated SignedSource<<dc866ba5d9e81fd0a7e0e082d2bb33dd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,7 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type VFolderMountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
+export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";

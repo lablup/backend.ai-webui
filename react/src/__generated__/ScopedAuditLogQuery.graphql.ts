@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4c7ca1c470d4e9f0e9949c894dd823c2>>
+ * @generated SignedSource<<dfd866cf8251cc0547e10aab3afa14ed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -336,6 +336,13 @@ return {
                   {
                     "alias": null,
                     "args": null,
+                    "kind": "ScalarField",
+                    "name": "clientIp",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
                     "concreteType": "UserV2",
                     "kind": "LinkedField",
                     "name": "user",
@@ -375,12 +382,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2dcf9c0b20e5a73b15d792b27a74e854",
+    "cacheID": "a683abe05a2f7bb62f8c45cccd816fdf",
     "id": null,
     "metadata": {},
     "name": "ScopedAuditLogQuery",
     "operationKind": "query",
-    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
+    "text": "query ScopedAuditLogQuery(\n  $scope: AuditLogScope!\n  $filter: AuditLogFilter\n  $orderBy: [AuditLogOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  scopedAuditLogsV2(scope: $scope, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAIAuditLogNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIAuditLogNodesFragment on AuditLogV2 {\n  id\n  createdAt\n  operation\n  status\n  description\n  duration\n  requestId\n  actionId\n  entityType\n  entityId\n  triggeredBy\n  clientIp @since(version: \"26.9.0\")\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n"
   }
 };
 })();

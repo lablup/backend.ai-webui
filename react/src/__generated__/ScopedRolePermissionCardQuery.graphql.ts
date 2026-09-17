@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ed9964b5357ab1436c283ce0968ff869>>
+ * @generated SignedSource<<ad8c267d9e3e9bc273fa301dc38f7e9c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -85,8 +85,8 @@ export type ScopedRolePermissionCardQuery$data = {
       readonly edges: ReadonlyArray<{
         readonly node: {
           readonly entityType: string;
-          readonly operation: OperationType;
-          readonly scopeId: string;
+          readonly operation: OperationType | null | undefined;
+          readonly scopeId: string | null | undefined;
           readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_permissionsFragment">;
         };
       }>;

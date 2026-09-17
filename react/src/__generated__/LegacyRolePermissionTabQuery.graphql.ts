@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<263f9737f8ca50c814167832788771fc>>
+ * @generated SignedSource<<56654b715b686264544a377a2d829b92>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -82,7 +82,7 @@ export type LegacyRolePermissionTabQuery$data = {
       readonly node: {
         readonly entityType: string;
         readonly id: string;
-        readonly operation: OperationType;
+        readonly operation: OperationType | null | undefined;
         readonly scope: {
           readonly basicInfo?: {
             readonly domainName: string;
@@ -98,8 +98,8 @@ export type LegacyRolePermissionTabQuery$data = {
           readonly resourceGroupName?: string;
           readonly vfolderName?: string | null | undefined;
         } | null | undefined;
-        readonly scopeId: string;
-        readonly scopeType: RBACElementType;
+        readonly scopeId: string | null | undefined;
+        readonly scopeType: RBACElementType | null | undefined;
       };
     }>;
   } | null | undefined;

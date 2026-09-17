@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<23e73ca480b651bfd905127e220b2020>>
+ * @generated SignedSource<<020118d8caadf48465187c4b103a10d6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,9 +27,9 @@ export type LegacyCreatePermissionModalUpdateMutation$data = {
   readonly adminUpdatePermission: {
     readonly entityType: string;
     readonly id: string;
-    readonly operation: OperationType;
-    readonly scopeId: string;
-    readonly scopeType: RBACElementType;
+    readonly operation: OperationType | null | undefined;
+    readonly scopeId: string | null | undefined;
+    readonly scopeType: RBACElementType | null | undefined;
   } | null | undefined;
 };
 export type LegacyCreatePermissionModalUpdateMutation = {

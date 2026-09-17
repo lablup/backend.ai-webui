@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7bdfa674f45f3a80c1e9235107236f3e>>
+ * @generated SignedSource<<b8bdfda94221d70888611e4eaca20071>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,8 +14,8 @@ import { FragmentRefs } from "relay-runtime";
 export type RoleScopePermissionEditModal_permissionsFragment$data = ReadonlyArray<{
   readonly entityType: string;
   readonly id: string;
-  readonly operation: OperationType;
-  readonly scopeId: string;
+  readonly operation: OperationType | null | undefined;
+  readonly scopeId: string | null | undefined;
   readonly " $fragmentType": "RoleScopePermissionEditModal_permissionsFragment";
 }>;
 export type RoleScopePermissionEditModal_permissionsFragment$key = ReadonlyArray<{

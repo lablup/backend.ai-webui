@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<18f662171cdf11c0e5d20006f23168d1>>
+ * @generated SignedSource<<de816130e4eb0edd55176f51b3250b04>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type VFolderMountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
+export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
 export type VFolderUsageMode = "DATA" | "GENERAL" | "MODEL" | "%future added value";

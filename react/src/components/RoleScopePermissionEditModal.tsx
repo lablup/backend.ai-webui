@@ -387,6 +387,8 @@ const RoleScopePermissionEditModal: React.FC<
   // scope against its own initial state.
   const permissionIdByScopeCell = new Map<string, Map<string, string>>();
   permissions.forEach((permission) => {
+    // Null only on 26.9, which answers the legacy fields as null.
+    if (!permission.scopeId || !permission.operation) return;
     const cellKey = makeCellKey(permission.entityType, permission.operation);
     let idByCell = permissionIdByScopeCell.get(permission.scopeId);
     if (!idByCell) {
@@ -575,6 +577,7 @@ const RoleScopePermissionEditModal: React.FC<
         // Successfully-created rows carry their new permission id — record it
         // so a later uncheck of the same cell can delete it without a refetch.
         addPayload?.items.forEach((item) => {
+          if (!item.scopeId || !item.operation) return;
           recordApplied(
             item.scopeId,
             makeCellKey(item.entityType, item.operation),
@@ -583,12 +586,15 @@ const RoleScopePermissionEditModal: React.FC<
         });
         addPayload?.failed.forEach((failure) => {
           logger.error('Failed to add permission', failure.message);
-          const cellKey = makeCellKey(failure.entityType, failure.operation);
+          const cellKey = makeCellKey(
+            failure.entityType,
+            failure.operation ?? '',
+          );
           failures.push({
             key: `grant-${failure.scopeId}-${cellKey}`,
             scopeLabel: scopeLabelOf(
               scopeList.find((scope) => scope.scopeId === failure.scopeId),
-              failure.scopeId,
+              failure.scopeId ?? '',
             ),
             cellKey,
             message: failure.message,

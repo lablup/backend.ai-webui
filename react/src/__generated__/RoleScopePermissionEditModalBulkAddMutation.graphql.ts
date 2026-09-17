@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e5258aaad90872edf6651fe7c829f20d>>
+ * @generated SignedSource<<ca34aaa344bd58118865bbe01f66dac1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,11 +17,11 @@ export type BulkAddRolePermissionsInput = {
 };
 export type CreatePermissionInput = {
   entityType: string;
-  operation: OperationType;
+  operation?: OperationType | null | undefined;
   permission: PermissionBit;
   roleId: string;
-  scopeId: string;
-  scopeType: RBACElementType;
+  scopeId?: string | null | undefined;
+  scopeType?: RBACElementType | null | undefined;
 };
 export type RoleScopePermissionEditModalBulkAddMutation$variables = {
   input: BulkAddRolePermissionsInput;
@@ -31,15 +31,15 @@ export type RoleScopePermissionEditModalBulkAddMutation$data = {
     readonly failed: ReadonlyArray<{
       readonly entityType: string;
       readonly message: string;
-      readonly operation: string;
-      readonly scopeId: string;
+      readonly operation: string | null | undefined;
+      readonly scopeId: string | null | undefined;
     }>;
     readonly items: ReadonlyArray<{
       readonly entityType: string;
       readonly id: string;
-      readonly operation: OperationType;
-      readonly scopeId: string;
-      readonly scopeType: RBACElementType;
+      readonly operation: OperationType | null | undefined;
+      readonly scopeId: string | null | undefined;
+      readonly scopeType: RBACElementType | null | undefined;
     }>;
   } | null | undefined;
 };

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<074a8afce5a482701cb240f376d7cf2d>>
+ * @generated SignedSource<<ca97910d095b33d43bd4a1c2957219de>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,11 +14,11 @@ export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | 
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type CreatePermissionInput = {
   entityType: string;
-  operation: OperationType;
+  operation?: OperationType | null | undefined;
   permission: PermissionBit;
   roleId: string;
-  scopeId: string;
-  scopeType: RBACElementType;
+  scopeId?: string | null | undefined;
+  scopeType?: RBACElementType | null | undefined;
 };
 export type LegacyCreatePermissionModalCreateMutation$variables = {
   input: CreatePermissionInput;
@@ -27,9 +27,9 @@ export type LegacyCreatePermissionModalCreateMutation$data = {
   readonly adminCreatePermission: {
     readonly entityType: string;
     readonly id: string;
-    readonly operation: OperationType;
-    readonly scopeId: string;
-    readonly scopeType: RBACElementType;
+    readonly operation: OperationType | null | undefined;
+    readonly scopeId: string | null | undefined;
+    readonly scopeType: RBACElementType | null | undefined;
   } | null | undefined;
 };
 export type LegacyCreatePermissionModalCreateMutation = {
