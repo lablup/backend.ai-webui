@@ -4,7 +4,7 @@
  */
 import { Form } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
+import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
@@ -324,9 +324,10 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
   'use memo';
   const { t } = useTranslation();
 
-  const autoMountNames = useSuspendedAutoMountedFolderNames({
-    currentProjectId,
-  });
+  const autoMountNames = _.map(
+    useSuspendedAutoMountedFolders({ currentProjectId }),
+    'name',
+  );
 
   if (autoMountNames.length === 0) return null;
 

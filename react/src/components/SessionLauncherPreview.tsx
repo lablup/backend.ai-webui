@@ -14,12 +14,13 @@ import {
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
+import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import {
   SessionLauncherFormValue,
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
 import { PortTag } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
@@ -35,6 +36,7 @@ import {
   BAICard,
   BAIFlex,
   BAIImageMetaIcon,
+  BAILink,
   BAIMetadataList,
   BAITable,
   BAIText,
@@ -106,11 +108,12 @@ const SessionLauncherPreview: React.FC<{
   // `preserve` reads the raw store: `owner` has no registered Form.Item.
   const owner = Form.useWatch('owner', { form, preserve: true });
   const mountableHosts = useMountableStorageHosts(currentProjectId);
-  const autoMountedFolderNames = useSuspendedAutoMountedFolderNames({
+  const autoMountedFolders = useSuspendedAutoMountedFolders({
     ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
     mountableHosts,
   });
+  const { generateFolderPath } = useFolderExplorerOpener();
 
   const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
   const hasAnySubpath = _.some(mountRows, (row) => !!row.subpath);
@@ -423,12 +426,17 @@ const SessionLauncherPreview: React.FC<{
               title={t('session.launcher.NoFolderMounted')}
             />
           )}
-          {autoMountedFolderNames.length > 0 ? (
+          {autoMountedFolders.length > 0 ? (
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('data.AutomountFolders')}>
                 <BAIFlex gap="xs" wrap="wrap">
-                  {_.map(autoMountedFolderNames, (name) => (
-                    <Badge key={name} label={name} />
+                  {_.map(autoMountedFolders, (folder) => (
+                    <BAILink
+                      key={folder.vfolderId}
+                      to={generateFolderPath(folder.vfolderId)}
+                    >
+                      <Badge label={folder.name} />
+                    </BAILink>
                   ))}
                 </BAIFlex>
               </MetadataListItem>

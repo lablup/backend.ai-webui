@@ -6,6 +6,7 @@ import {
   convertToUUID,
   isMountableLegacyVFolder,
   mountDestinationToInput,
+  type AutoMountedFolder,
   type LegacyVFolder,
   type LegacyVFolderMountScope,
   type VFolderMountConfigValue,
@@ -83,21 +84,24 @@ export const ownerEmailFromOwner = (
   return isComplete ? owner?.email : undefined;
 };
 
+/** A dotfile folder is what a session mounts without being asked. */
+export const isAutoMountFolderName = (name: string) => name.startsWith('.');
+
 /**
  * The folders a session mounts on its own — ready dotfile folders — picked out
  * of a `GET /folders` list the same way VFolderTable did it.
  */
-export const autoMountedFolderNamesFrom = (
+export const autoMountedFoldersFrom = (
   folders: Array<LegacyVFolder>,
   scope: LegacyVFolderMountScope,
-): Array<string> =>
+): Array<AutoMountedFolder> =>
   _.map(
     _.filter(
       folders,
       (folder) =>
         folder.status === 'ready' &&
-        folder.name.startsWith('.') &&
+        isAutoMountFolderName(folder.name) &&
         isMountableLegacyVFolder(folder, scope),
     ),
-    (folder) => folder.name,
+    (folder) => ({ vfolderId: convertToUUID(folder.id), name: folder.name }),
   );

@@ -3,12 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form, type FormInstance } from '../form-engine';
-import { ownerEmailFromOwner } from '../helper/vfolderMounts';
+import {
+  isAutoMountFolderName,
+  ownerEmailFromOwner,
+} from '../helper/vfolderMounts';
 import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
-import { useSuspendedAutoMountedFolderNames } from '../hooks/useSuspendedAutoMountedFolderNames';
+import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
 import type { ProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import {
   BAIVFolderMountConfigInput,
   safeDecodeUuid,
@@ -21,7 +25,7 @@ import React, { useRef, useState } from 'react';
 
 // Dotfile folders are mounted by the session itself, so they are never offered.
 const isSelectableFolder = (folder: LegacyVFolder) =>
-  folder.status === 'ready' && !folder.name.startsWith('.');
+  folder.status === 'ready' && !isAutoMountFolderName(folder.name);
 
 const SessionLauncherStorageStep: React.FC<{
   form: FormInstance<SessionLauncherFormValue>;
@@ -37,14 +41,15 @@ const SessionLauncherStorageStep: React.FC<{
   const ownerEmail = ownerEmailFromOwner(owner);
 
   const mountableHosts = useMountableStorageHosts(project.id);
-  const autoMountedFolderNames = useSuspendedAutoMountedFolderNames({
+  const autoMountedFolders = useSuspendedAutoMountedFolders({
     ownerEmail,
     currentProjectId: project.id,
     mountableHosts,
   });
   const mountConfigRule = useVFolderMountConfigFormRule({
-    autoMountedFolderNames,
+    autoMountedFolderNames: _.map(autoMountedFolders, 'name'),
   });
+  const { generateFolderPath } = useFolderExplorerOpener();
 
   return (
     <>
@@ -55,7 +60,8 @@ const SessionLauncherStorageStep: React.FC<{
           currentProjectId={project.id}
           ownerEmail={ownerEmail}
           mountableHosts={mountableHosts}
-          autoMountedFolderNames={autoMountedFolderNames}
+          autoMountedFolders={autoMountedFolders}
+          folderExplorerPath={generateFolderPath}
           filter={isSelectableFolder}
           onClickCreateFolder={() => setIsCreateModalOpen(true)}
         />
@@ -70,7 +76,7 @@ const SessionLauncherStorageStep: React.FC<{
           // `GET /folders` query has seen it.
           await mountConfigInputRef.current?.refetch();
           // A dotfile folder is auto-mounted by the session, never selected.
-          if (response.metadata.name.startsWith('.')) return;
+          if (isAutoMountFolderName(response.metadata.name)) return;
           // The create mutation answers with a Relay global id.
           const vfolderId = safeDecodeUuid(response.id);
           if (!vfolderId) return;

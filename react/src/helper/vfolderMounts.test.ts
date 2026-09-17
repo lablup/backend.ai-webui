@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
-  autoMountedFolderNamesFrom,
+  autoMountedFoldersFrom,
+  isAutoMountFolderName,
   normalizeLegacyMountFields,
   ownerEmailFromOwner,
 } from './vfolderMounts';
@@ -11,6 +12,8 @@ import type { LegacyVFolder } from 'backend.ai-ui';
 
 const HEX_ID = '2f9d4a1b6c7e4f0aa1b2c3d4e5f60718';
 const UUID_ID = '2f9d4a1b-6c7e-4f0a-a1b2-c3d4e5f60718';
+const OTHER_HEX_ID = '7a1c2b3d4e5f60718293a4b5c6d7e8f9';
+const OTHER_UUID_ID = '7a1c2b3d-4e5f-6071-8293-a4b5c6d7e8f9';
 
 describe('normalizeLegacyMountFields', () => {
   it('converts 32-hex mount_ids to dashed UUIDs and drops the legacy keys', () => {
@@ -114,11 +117,19 @@ describe('ownerEmailFromOwner', () => {
   });
 });
 
-describe('autoMountedFolderNamesFrom', () => {
+describe('isAutoMountFolderName', () => {
+  it('treats a dotfile folder name as auto-mounted', () => {
+    expect(isAutoMountFolderName('.bashrc')).toBe(true);
+    expect(isAutoMountFolderName('my-data')).toBe(false);
+  });
+});
+
+describe('autoMountedFoldersFrom', () => {
   const PROJECT_ID = 'c2b0a4de-0d1e-4f5a-9b6c-7d8e9f001122';
 
   const folder = (overrides: Partial<LegacyVFolder>): LegacyVFolder =>
     ({
+      id: HEX_ID,
       name: '.bashrc',
       host: 'local:volume1',
       status: 'ready',
@@ -127,22 +138,25 @@ describe('autoMountedFolderNamesFrom', () => {
       ...overrides,
     }) as LegacyVFolder;
 
-  it("picks the ready dotfile folders out of the owner's list", () => {
+  it("picks the ready dotfile folders out of the owner's list, with dashed ids", () => {
     expect(
-      autoMountedFolderNamesFrom(
+      autoMountedFoldersFrom(
         [
           folder({ name: '.bashrc' }),
           folder({ name: 'owner-data' }),
-          folder({ name: '.local' }),
+          folder({ name: '.local', id: OTHER_HEX_ID }),
         ],
         { currentProjectId: PROJECT_ID, mountableHosts: ['local:volume1'] },
       ),
-    ).toEqual(['.bashrc', '.local']);
+    ).toEqual([
+      { vfolderId: UUID_ID, name: '.bashrc' },
+      { vfolderId: OTHER_UUID_ID, name: '.local' },
+    ]);
   });
 
   it('excludes a dotfile folder that is not ready', () => {
     expect(
-      autoMountedFolderNamesFrom(
+      autoMountedFoldersFrom(
         [folder({ name: '.deleted', status: 'delete-pending' })],
         { currentProjectId: PROJECT_ID, mountableHosts: ['local:volume1'] },
       ),
@@ -151,28 +165,34 @@ describe('autoMountedFolderNamesFrom', () => {
 
   it('excludes a dotfile folder on a host that does not allow mounting', () => {
     expect(
-      autoMountedFolderNamesFrom(
+      autoMountedFoldersFrom(
         [
           folder({ name: '.bashrc', host: 'local:volume1' }),
-          folder({ name: '.ssh', host: 'local:no-mount' }),
+          folder({
+            name: '.ssh',
+            host: 'local:no-mount',
+            id: OTHER_HEX_ID,
+          }),
         ],
         { currentProjectId: PROJECT_ID, mountableHosts: ['local:volume1'] },
       ),
-    ).toEqual(['.bashrc']);
+    ).toEqual([{ vfolderId: UUID_ID, name: '.bashrc' }]);
   });
 
   it('keeps every host when no mountable host list is given', () => {
     expect(
-      autoMountedFolderNamesFrom(
+      autoMountedFoldersFrom(
         [folder({ name: '.ssh', host: 'local:no-mount' })],
-        { currentProjectId: PROJECT_ID },
+        {
+          currentProjectId: PROJECT_ID,
+        },
       ),
-    ).toEqual(['.ssh']);
+    ).toEqual([{ vfolderId: UUID_ID, name: '.ssh' }]);
   });
 
   it('excludes a project folder owned by another project', () => {
     expect(
-      autoMountedFolderNamesFrom(
+      autoMountedFoldersFrom(
         [
           folder({
             name: '.shared',
@@ -183,10 +203,11 @@ describe('autoMountedFolderNamesFrom', () => {
             name: '.elsewhere',
             ownership_type: 'group',
             group: 'ffffffff-0000-0000-0000-000000000000',
+            id: OTHER_HEX_ID,
           }),
         ],
         { currentProjectId: PROJECT_ID },
       ),
-    ).toEqual(['.shared']);
+    ).toEqual([{ vfolderId: UUID_ID, name: '.shared' }]);
   });
 });
