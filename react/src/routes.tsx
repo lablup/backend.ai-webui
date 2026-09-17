@@ -812,36 +812,26 @@ export const mainLayoutChildRoutes: RouteObject[] = [
         children: [
           {
             index: true,
-            Component: () => {
-              const baiClient = useSuspendedBackendaiClient();
-              return baiClient?.supports('reservoir') ? (
-                <Suspense
-                  fallback={
-                    <BAIFlex direction="column" style={{ maxWidth: 700 }}>
-                      <BAISkeleton rows={4} />
-                    </BAIFlex>
-                  }
-                >
-                  <ReservoirPage />
-                </Suspense>
-              ) : (
-                <WebUINavigate to={'/error'} replace />
-              );
-            },
+            element: (
+              <Suspense
+                fallback={
+                  <BAIFlex direction="column" style={{ maxWidth: 700 }}>
+                    <BAISkeleton rows={4} />
+                  </BAIFlex>
+                }
+              >
+                <ReservoirPage />
+              </Suspense>
+            ),
             handle: { scope: 'admin', menuKey: 'reservoir' },
           },
           {
             path: ':artifactId',
-            Component: () => {
-              const baiClient = useSuspendedBackendaiClient();
-              return baiClient?.supports('reservoir') ? (
-                <Suspense fallback={<BAISkeleton rows={4} />}>
-                  <ReservoirArtifactDetailPage />
-                </Suspense>
-              ) : (
-                <WebUINavigate to={'/error'} replace />
-              );
-            },
+            element: (
+              <Suspense fallback={<BAISkeleton rows={4} />}>
+                <ReservoirArtifactDetailPage />
+              </Suspense>
+            ),
             handle: {
               scope: 'admin',
               menuKey: 'reservoir',
@@ -852,19 +842,14 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'scheduler',
-        Component: () => {
-          const baiClient = useSuspendedBackendaiClient();
-          return baiClient?.supports('fair-share-scheduling') ? (
-            <Suspense fallback={<BAISkeleton rows={4} />}>
-              <SchedulerPage />
-              {/* Super-admin page (ADR-0001): no ambient project context —
-                  the session-detail project-mismatch alert is suppressed. */}
-              <SessionDetailAndContainerLogOpenerLegacy project={null} />
-            </Suspense>
-          ) : (
-            <WebUINavigate to={'/error'} replace />
-          );
-        },
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <SchedulerPage />
+            {/* Super-admin page (ADR-0001): no ambient project context —
+                the session-detail project-mismatch alert is suppressed. */}
+            <SessionDetailAndContainerLogOpenerLegacy project={null} />
+          </Suspense>
+        ),
         handle: {
           scope: 'admin',
           menuKey: 'scheduler',
@@ -945,16 +930,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
       },
       {
         path: 'rbac',
-        Component: () => {
-          const baiClient = useSuspendedBackendaiClient();
-          return baiClient?.supports('rbac') ? (
-            <Suspense fallback={<BAISkeleton rows={4} />}>
-              <RBACManagementPage />
-            </Suspense>
-          ) : (
-            <WebUINavigate to={'/error'} replace />
-          );
-        },
+        element: (
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <RBACManagementPage />
+          </Suspense>
+        ),
         handle: {
           scope: 'admin',
           menuKey: 'rbac',

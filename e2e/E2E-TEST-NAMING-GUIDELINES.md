@@ -285,18 +285,20 @@ self-skipping:
 - `@requires-webui-vX.Y` — requires a WebUI build >= vX.Y
   (e.g. `@requires-webui-v26.4` for the FR-2302 datetime filters)
 - `@requires-manager-vX.Y` — requires a Backend.AI manager >= X.Y
-  (e.g. `@requires-manager-v25.15` for the FR-1575 Agent Statistics widget)
+  (e.g. `@requires-manager-v26.9` for the FR-3476 Runtime Parameter UI metadata)
 
 ```bash
 # Run everything except specs that need a newer manager
-npx playwright test --grep-invert "@requires-manager-v25.15"
+npx playwright test --grep-invert "@requires-manager-v26.9"
 ```
 
 Pair the tag with a **declarative gate** from `e2e/utils/feature-gate-util.ts`
-(`skipUnlessClientFeature`, `skipUnlessClientConfig`) instead of probing for a
+(`skipUnlessManagerVersion`, `skipUnlessClientConfig`) instead of probing for a
 UI element inside the test body and skipping when it is absent. The gate skips
 with an auditable reason on incapable backends; on capable backends a missing
-UI element fails the test instead of silently skipping.
+UI element fails the test instead of silently skipping. Named capability flags
+(`baiClient.supports(...)`) are gone (FR-3980) — every manager-version gate
+now checks `isManagerVersionCompatibleWith(...)` directly.
 
 ### Environment-constraint tags (FR-3114)
 
@@ -497,11 +499,11 @@ that may be air-gapped.
 
 ### Tags
 
-| Tag | Meaning |
-|-----|---------|
-| `@smoke` | Base smoke marker. A spec carrying ONLY `@smoke` (no role tag) must perform **no login at all** — it is included in every run regardless of role. |
-| `@smoke` + `@smoke-admin` | Requires admin credentials (`loginAsAdmin`). Excluded from user-role runs. |
-| `@smoke` + `@smoke-user` | Requires user credentials (`loginAsUser`). Excluded from admin-role runs — a smoke run has only ONE role's credentials, so `loginAsUser` under an admin run would fall back to dev-default credentials and fail on customer clusters. |
+| Tag                       | Meaning                                                                                                                                                                                                                               |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@smoke`                  | Base smoke marker. A spec carrying ONLY `@smoke` (no role tag) must perform **no login at all** — it is included in every run regardless of role.                                                                                     |
+| `@smoke` + `@smoke-admin` | Requires admin credentials (`loginAsAdmin`). Excluded from user-role runs.                                                                                                                                                            |
+| `@smoke` + `@smoke-user`  | Requires user credentials (`loginAsUser`). Excluded from admin-role runs — a smoke run has only ONE role's credentials, so `loginAsUser` under an admin run would fall back to dev-default credentials and fail on customer clusters. |
 
 Role selection is **exclusive**: the role tag must match the login helper the
 spec actually calls. The smoke config selects `@smoke` (bare) + `@smoke-<role>`
@@ -555,22 +557,22 @@ following:
    Version/environment dependencies must instead use the declarative
    `@requires-*` tag + gate convention (see "Feature-gate tags (FR-3112)"
    and "Environment-constraint tags (FR-3114)" above): the gate skips with
-   an auditable reason on incapable targets and *fails* (not skips) when
+   an auditable reason on incapable targets and _fails_ (not skips) when
    the UI is unexpectedly missing on capable ones.
 
    Interaction with the smoke run:
-   - A smoke-tagged test that also carries `@requires-*` (e.g. the dashboard
-     Agent Stats tests, `@requires-manager-v25.15`) is still selected by the
-     smoke config; on an incapable target it reports an **auditable skip**
-     in the smoke report — acceptable, but keep such tests to a minimum
-     since every skip reduces the report's install-verification signal.
+   - A smoke-tagged test that also carries `@requires-*` is still selected by
+     the smoke config; on an incapable target it reports an **auditable
+     skip** in the smoke report — acceptable, but keep such tests to a
+     minimum since every skip reduces the report's install-verification
+     signal.
    - The session-lifecycle agent guard is deliberately NOT a `@requires-*`
      gate: `e2e/playwright.smoke.config.ts` force-enables it via
      `BACKEND_AI_AGENTS_AVAILABLE=true` so a session-incapable cluster
      shows up RED, not skipped — being able to run sessions is the point
      of the install.
-   New smoke specs should prefer asserting on UI that exists across all
-   supported server versions.
+     New smoke specs should prefer asserting on UI that exists across all
+     supported server versions.
 
 ### How to apply
 
@@ -579,11 +581,9 @@ Add the tag to the existing `tag: [...]` array on the outermost
 
 ```typescript
 // Before
-test.describe(
-  'Login',
-  { tag: ['@auth', '@functional'] },
-  () => { /* ... */ },
-);
+test.describe('Login', { tag: ['@auth', '@functional'] }, () => {
+  /* ... */
+});
 
 // After — added @smoke and @smoke-admin (beforeEach uses loginAsAdmin)
 test.describe(
@@ -591,7 +591,9 @@ test.describe(
   {
     tag: ['@auth', '@functional', '@smoke', '@smoke-admin'],
   },
-  () => { /* ... */ },
+  () => {
+    /* ... */
+  },
 );
 ```
 
@@ -604,7 +606,9 @@ single test inside a heavier describe qualifies for smoke (see rule 6):
 test(
   'Create, monitor, and terminate interactive session',
   { tag: ['@smoke', '@smoke-admin'] }, // only this test joins the smoke set
-  async ({ page }) => { /* ... */ },
+  async ({ page }) => {
+    /* ... */
+  },
 );
 ```
 

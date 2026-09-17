@@ -20,7 +20,6 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useTheme } from '@lablup/ui-common/theme';
@@ -76,8 +75,6 @@ const BAIRouteNodes = ({
   'use memo';
   const { t } = useBAIi18n();
   const { token } = useTheme();
-  const baiClient = useConnectedBAIClient();
-  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
 
   const routes = useFragment<BAIRouteNodesFragment$key>(
     graphql`
@@ -171,20 +168,18 @@ const BAIRouteNodes = ({
           </BAIFlex>
         ),
       },
-      isSupportRouteHealthStatus
-        ? {
-            title: t('comp:BAIRouteNodes.HealthStatus'),
-            dataIndex: 'healthStatus',
-            key: 'healthStatus',
-            render: (healthStatus) =>
-              healthStatus && healthStatus !== '%future added value' ? (
-                <Badge
-                  variant={badgeVariantForStatus('route', healthStatus)}
-                  label={healthStatus}
-                />
-              ) : null,
-          }
-        : undefined,
+      {
+        title: t('comp:BAIRouteNodes.HealthStatus'),
+        dataIndex: 'healthStatus',
+        key: 'healthStatus',
+        render: (healthStatus) =>
+          healthStatus && healthStatus !== '%future added value' ? (
+            <Badge
+              variant={badgeVariantForStatus('route', healthStatus)}
+              label={healthStatus}
+            />
+          ) : null,
+      },
       // TODO(needs-backend): Unhide when backend interaction for traffic status is supported (FR-2591)
       // {
       //   title: t('comp:BAIRouteNodes.TrafficStatus'),

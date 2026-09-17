@@ -31,7 +31,7 @@ const hits = buildHits({
 
 const makeCtx = (overrides: Partial<SearchContext> = {}): SearchContext => ({
   isSuperAdmin: false,
-  supports: () => false,
+  isManagerVersionCompatibleWith: () => false,
   config: { fasttrackEndpoint: null },
   visibleMenuKeys: new Set(allMenuKeys),
   disabledMenuKeys: new Set(),
@@ -128,28 +128,26 @@ describe('isHitVisible', () => {
   });
 
   it.each([
-    [
-      'tab:/project/:projectName/statistics?tab=user-session-history',
-      'user-metrics',
-      false,
-    ],
-    [
-      'tab:/admin/deployments?tab=prometheus-preset',
-      'prometheus-query-preset',
-      false,
-    ],
-    [
-      'tab:/admin/deployments?tab=deployment-presets',
-      'deployment-preset',
-      false,
-    ],
-  ])('gates %s on supports(%s)', (id, feature, isSuperAdmin) => {
+    ['tab:/admin/deployments?tab=prometheus-preset', '26.4.2'],
+    ['tab:/admin/deployments?tab=deployment-presets', '26.4.2'],
+  ])('gates %s on manager %s', (id, version) => {
     const hit = hitById(id);
-    expect(isHitVisible(hit, makeCtx({ isSuperAdmin }))).toBe(false);
+    expect(isHitVisible(hit, makeCtx())).toBe(false);
     expect(
       isHitVisible(
         hit,
-        makeCtx({ isSuperAdmin, supports: (f) => f === feature }),
+        makeCtx({ isManagerVersionCompatibleWith: (v) => v === version }),
+      ),
+    ).toBe(true);
+  });
+
+  it('does not gate the user session history tab', () => {
+    expect(
+      isHitVisible(
+        hitById(
+          'tab:/project/:projectName/statistics?tab=user-session-history',
+        ),
+        makeCtx(),
       ),
     ).toBe(true);
   });
@@ -164,7 +162,7 @@ describe('isHitVisible', () => {
     expect(
       isHitVisible(hitById('tab:/admin/environment?tab=image'), makeCtx()),
     ).toBe(true);
-    expect(_.size(TAB_GATES)).toBe(4);
+    expect(_.size(TAB_GATES)).toBe(3);
   });
 
   it('lets actions bring their own gate', () => {

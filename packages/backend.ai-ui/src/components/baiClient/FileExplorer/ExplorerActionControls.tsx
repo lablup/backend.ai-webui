@@ -187,39 +187,37 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                 }}
               />
             </Tooltip>
-            {baiClient.supports('download-archive') && (
-              <Tooltip
-                content={t('comp:FileExplorer.DownloadSelected')}
-                placement="above"
-                alignment="start"
-              >
-                <BAIButton
-                  disabled={!enableDownload}
-                  aria-label={t('comp:FileExplorer.DownloadSelected')}
-                  icon={
-                    <DownloadIcon
-                      style={{
-                        color: enableDownload
-                          ? token('--color-info')
-                          : token('--color-text-disabled'),
-                      }}
-                    />
-                  }
-                  action={async () => {
-                    const filePaths = selectedFiles.map((file) =>
-                      currentPath === '.'
-                        ? file.name
-                        : `${currentPath}/${file.name}`,
-                    );
-                    // onError already toasted; an escaping rejection would
-                    // hit the page's error boundary and unmount the modal.
-                    await downloadArchiveMutation
-                      .mutateAsync(filePaths)
-                      .catch(() => {});
-                  }}
-                />
-              </Tooltip>
-            )}
+            <Tooltip
+              content={t('comp:FileExplorer.DownloadSelected')}
+              placement="above"
+              alignment="start"
+            >
+              <BAIButton
+                disabled={!enableDownload}
+                aria-label={t('comp:FileExplorer.DownloadSelected')}
+                icon={
+                  <DownloadIcon
+                    style={{
+                      color: enableDownload
+                        ? token('--color-info')
+                        : token('--color-text-disabled'),
+                    }}
+                  />
+                }
+                action={async () => {
+                  const filePaths = selectedFiles.map((file) =>
+                    currentPath === '.'
+                      ? file.name
+                      : `${currentPath}/${file.name}`,
+                  );
+                  // onError already toasted; an escaping rejection would
+                  // hit the page's error boundary and unmount the modal.
+                  await downloadArchiveMutation
+                    .mutateAsync(filePaths)
+                    .catch(() => {});
+                }}
+              />
+            </Tooltip>
           </>
         )}
         <Tooltip content={t('comp:FileExplorer.CreateFolder')} isEnabled={!lg}>

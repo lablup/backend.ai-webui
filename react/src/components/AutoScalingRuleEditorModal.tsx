@@ -15,7 +15,6 @@ import {
   CATALOG_FETCH_LIMIT,
   SIGNED_32BIT_MAX_INT,
 } from '../helper/const-vars';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
@@ -113,11 +112,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const { token } = useTheme();
-  const baiClient = useSuspendedBackendaiClient();
   const currentUserRole = useCurrentUserRole();
-  const isSupportPrometheusAutoScalingRule = baiClient.supports(
-    'prometheus-auto-scaling-rule',
-  );
 
   const { prometheusQueryPresets } =
     useLazyLoadQuery<AutoScalingRuleEditorModalPresetsQuery>(
@@ -291,14 +286,6 @@ const AutoScalingRuleEditorModalContent: React.FC<{
               label: t('autoScalingRule.MetricSourceKernel'),
               value: 'KERNEL',
             },
-            ...(!isSupportPrometheusAutoScalingRule
-              ? [
-                  {
-                    label: t('autoScalingRule.MetricSourceInferenceFramework'),
-                    value: 'INFERENCE_FRAMEWORK',
-                  },
-                ]
-              : []),
             {
               label: t('autoScalingRule.MetricSourcePrometheus'),
               value: 'PROMETHEUS',

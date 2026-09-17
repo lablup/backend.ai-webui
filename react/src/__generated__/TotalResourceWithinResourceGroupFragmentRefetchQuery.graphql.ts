@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8c111ffd2d6d2bf7ab9a9f37ddef6226>>
+ * @generated SignedSource<<f3c21d79bde6ee74b185cfd477e93052>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -237,16 +237,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "1335c737e46f0b0e67c214f39054bc17",
+    "cacheID": "1d744418a6e7f182c9904c7383c730fd",
     "id": null,
     "metadata": {},
     "name": "TotalResourceWithinResourceGroupFragmentRefetchQuery",
     "operationKind": "query",
-    "text": "query TotalResourceWithinResourceGroupFragmentRefetchQuery(\n  $agentNodeFilter: String!\n  $isSuperAdmin: Boolean!\n  $resourceGroup: String\n) {\n  ...TotalResourceWithinResourceGroupFragment_2otDCj\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 100, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) @since(version: \"24.12.0\") {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n"
+    "text": "query TotalResourceWithinResourceGroupFragmentRefetchQuery(\n  $agentNodeFilter: String!\n  $isSuperAdmin: Boolean!\n  $resourceGroup: String\n) {\n  ...TotalResourceWithinResourceGroupFragment_2otDCj\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 100, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3df403affc38baa3c5ffaa00ce40db2e";
+(node as any).hash = "7b179b18efbc97a0952f082b55315041";
 
 export default node;

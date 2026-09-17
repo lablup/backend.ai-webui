@@ -201,23 +201,16 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsHealthCheckEnable = baiClient.supports(
-    'model-health-check-enable',
-  );
-  // The single-string `command` + `shell` fields exist since 26.7.0; gated at 26.8.0 on the
-  // preset service config (FR-3205); older managers only understand the
-  // deprecated `startCommand` token list.
-  const supportsCommandShell = baiClient.supports(
-    'model-service-command-string',
-  );
-  // BA-7210 / FR-3481: managers this version+ resolve an omitted
-  // name/modelPath/port from the runtime variant baseline / model mount
-  // destination at revision resolution, so the submit payload can send null
-  // instead of coercing a fallback value. Older managers require non-null
-  // name/modelPath/port, so the fallbacks stay in place for them.
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  const supportsHealthCheckEnable =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc7');
+  // Single-string `command` + `shell` (FR-3205); older managers only
+  // understand the deprecated `startCommand` token list.
+  const supportsCommandShell =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
+  // BA-7210 / FR-3481: newer managers resolve an omitted name/modelPath/port,
+  // so submit sends null; older managers keep the fallback values.
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 

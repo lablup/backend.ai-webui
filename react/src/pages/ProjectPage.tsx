@@ -91,9 +91,8 @@ const ProjectPage = () => {
   const baiClient = useSuspendedBackendaiClient();
   // RoleFilter.mappedScope (the role lookup this action relies on) exists
   // from manager 26.8.0; hide the action on older managers.
-  const supportsProjectAdminSetting = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
+  const supportsProjectAdminSetting =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   // From 26.9.0 the project admin grant is a `scope_admin` permission rather
   // than a name-suffixed SYSTEM role.
   const matchesProjectAdminByScopeAdminPermission = baiClient.supports(

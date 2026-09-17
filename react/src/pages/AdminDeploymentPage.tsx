@@ -92,10 +92,10 @@ const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const isPrometheusPresetSupported = baiClient.supports(
-    'prometheus-query-preset',
-  );
-  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
+  const isPrometheusPresetSupported =
+    baiClient.isManagerVersionCompatibleWith('26.4.2');
+  const isDeploymentPresetSupported =
+    baiClient.isManagerVersionCompatibleWith('26.4.2');
 
   // Default status scope for the deployments tab: hide terminated deployments.
   // `status` is never a user-settable filter property, so the deployments tab

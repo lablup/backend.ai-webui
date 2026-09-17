@@ -171,12 +171,8 @@ const AdminDeployment = ({
   >(null);
   const [drawerRevisionId, setDrawerRevisionId] = useState<string | null>(null);
 
-  const supportsExtendedFilter = baiClient.supports(
-    'model-deployment-extended-filter',
-  );
-  const supportsReplicaNestedFilter = baiClient.supports(
-    'deployment-replica-nested-filter',
-  );
+  const supportsExtendedFilter = baiClient.isManagerVersionCompatibleWith('26.4.3');
+  const supportsReplicaNestedFilter = baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;

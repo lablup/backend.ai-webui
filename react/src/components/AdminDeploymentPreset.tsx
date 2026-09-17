@@ -134,9 +134,9 @@ const AdminDeploymentPreset = ({
     webuiNavigate(buildPath('admin', 'deployments/deployment-presets/new'));
   };
 
-  const isSupported = baiClient.supports('deployment-preset');
+  const isSupported = baiClient.isManagerVersionCompatibleWith('26.4.2');
   // AND/OR/NOT on DeploymentRevisionPresetFilter arrived in 26.7.0.
-  const supportsSubFilter = baiClient.supports('sub-filter');
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   // BA-5918 (26.4.4rc3) turned `runtimeVariantId` into a UUIDFilter; the
   // control only emits the wrapper shape.
   const supportsFilterWrapperInputs = baiClient.supports(

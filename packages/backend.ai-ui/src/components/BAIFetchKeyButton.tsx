@@ -13,11 +13,13 @@ import {
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
 import { RotateCw, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 /** antd `SizeType` -> Astryx's button size scale. */
 const ASTRYX_SIZE = {

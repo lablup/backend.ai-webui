@@ -34,14 +34,12 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
-  // Managers >= 26.8.0 can filter `Role.scopes` by scope type, which the
-  // merged Detailed Permissions view depends on. Older managers get the
-  // legacy separate Scopes / Permissions tabs instead.
-  const supportsDetailedPermissions = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
+  const supportsAutoAssign =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
+  // The merged Detailed Permissions view filters `Role.scopes` by scope type;
+  // older managers get the legacy Scopes / Permissions tabs.
+  const supportsDetailedPermissions =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const [activeTab, setActiveTab] = useState(
     supportsDetailedPermissions ? 'detailedPermissions' : 'scopes',
   );

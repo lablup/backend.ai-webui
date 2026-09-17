@@ -97,6 +97,8 @@ const RoleListTab: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const supportsMappedScopeFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -303,7 +305,7 @@ const RoleListTab: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-                baiClient?.supports('rbac-filter-assigned-user') && {
+                baiClient.isManagerVersionCompatibleWith('26.4.4') && {
                   key: 'assignedUser.userId',
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
@@ -329,7 +331,7 @@ const RoleListTab: React.FC = () => {
                     />
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeType',
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
@@ -357,7 +359,7 @@ const RoleListTab: React.FC = () => {
                     </Suspense>
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
                   // `equals` is the one operator both the 26.8 StringFilter

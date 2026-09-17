@@ -43,7 +43,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE';
   const legacyPermissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.supports('rbac-filter-wrapper')
+    entityType: (baiClient.isManagerVersionCompatibleWith('26.4.4rc9')
       ? { equals: PROJECT_ADMIN_PAGE }
       : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
   };
@@ -101,9 +101,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
     { legacyPermissionFilter, supportsMyRolesV2 },
     {
       // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: baiClient.supports('my-roles')
-        ? 'store-or-network'
-        : 'store-only',
+      fetchPolicy: 'store-or-network',
     },
   );
 

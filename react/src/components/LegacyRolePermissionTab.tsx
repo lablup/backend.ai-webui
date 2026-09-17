@@ -113,10 +113,8 @@ interface LegacyRolePermissionTabProps {
 }
 
 /**
- * Legacy Permissions tab for managers without `role-mapped-scope-filter`
- * (< 26.8.0). Managers with the flag get the merged Detailed Permissions view
- * (`RolePermissionDetailTab`) instead. Filtering, ordering, and pagination all
- * run server-side via query variables.
+ * Legacy Permissions tab for managers < 26.8.0; newer managers get the merged
+ * Detailed Permissions view (`RolePermissionDetailTab`) instead.
  */
 const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
   roleId,
@@ -124,7 +122,8 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsRbacFilterWrapper = baiClient.supports('rbac-filter-wrapper');
+  const supportsRbacFilterWrapper =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const relayEnvironment = useRelayEnvironment();

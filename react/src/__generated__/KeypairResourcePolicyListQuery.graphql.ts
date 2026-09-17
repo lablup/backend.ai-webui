@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c9536429df51c278c01cc5f4c0f64fdc>>
+ * @generated SignedSource<<bb89f087be905e723c22361217681a55>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -196,16 +196,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8aa6fd2edaf33010f00f1159caae20e3",
+    "cacheID": "50772fbe4e4620df2678df3f4953a8a3",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyListQuery",
     "operationKind": "query",
-    "text": "query KeypairResourcePolicyListQuery {\n  keypair_resource_policies {\n    name\n    default_for_unspecified\n    total_resource_slots\n    max_session_lifetime\n    max_concurrent_sessions\n    max_containers_per_session\n    idle_timeout\n    allowed_vfolder_hosts\n    max_pending_session_count @since(version: \"24.03.4\")\n    max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n    created_at\n    ...KeypairResourcePolicySettingModalFragment\n    ...KeypairResourcePolicyInfoModalFragment\n    ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment on KeyPairResourcePolicy {\n  allowed_vfolder_hosts\n}\n\nfragment KeypairResourcePolicyInfoModalFragment on KeyPairResourcePolicy {\n  name\n  created_at\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count @since(version: \"24.03.4\")\n  max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n  max_pending_session_resource_slots @since(version: \"24.03.4\")\n  ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n}\n\nfragment KeypairResourcePolicySettingModalFragment on KeyPairResourcePolicy {\n  name\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count @since(version: \"24.03.4\")\n  max_concurrent_sftp_sessions @since(version: \"24.03.4\")\n}\n"
+    "text": "query KeypairResourcePolicyListQuery {\n  keypair_resource_policies {\n    name\n    default_for_unspecified\n    total_resource_slots\n    max_session_lifetime\n    max_concurrent_sessions\n    max_containers_per_session\n    idle_timeout\n    allowed_vfolder_hosts\n    max_pending_session_count\n    max_concurrent_sftp_sessions\n    created_at\n    ...KeypairResourcePolicySettingModalFragment\n    ...KeypairResourcePolicyInfoModalFragment\n    ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment on KeyPairResourcePolicy {\n  allowed_vfolder_hosts\n}\n\nfragment KeypairResourcePolicyInfoModalFragment on KeyPairResourcePolicy {\n  name\n  created_at\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count\n  max_concurrent_sftp_sessions\n  max_pending_session_resource_slots\n  ...BAIAllowedVfolderHostsWithPermissionFromKeyPairResourcePolicyFragment\n}\n\nfragment KeypairResourcePolicySettingModalFragment on KeyPairResourcePolicy {\n  name\n  default_for_unspecified\n  total_resource_slots\n  max_session_lifetime\n  max_concurrent_sessions\n  max_containers_per_session\n  idle_timeout\n  allowed_vfolder_hosts\n  max_pending_session_count\n  max_concurrent_sftp_sessions\n}\n"
   }
 };
 })();
 
-(node as any).hash = "82203a46b35856249641eb2e7cc9f9c0";
+(node as any).hash = "c8b44f027297894bb29bb455b3e7b6a7";
 
 export default node;

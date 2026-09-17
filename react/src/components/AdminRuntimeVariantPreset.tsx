@@ -109,10 +109,9 @@ const AdminRuntimeVariantPreset = ({
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
-  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
-  // capability (Strawberry V2). On older managers, restrict the property
-  // filter to a single condition so it emits a flat filter the backend accepts.
-  const supportsSubFilter = baiClient.supports('sub-filter');
+  // AND/OR/NOT sub-filters need manager 26.7.0; older managers get a single
+  // condition so the filter stays flat.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   // BA-5918 (26.4.4rc3) turned `runtimeVariantId` into a UUIDFilter; the
   // control only emits the wrapper shape.
   const supportsFilterWrapperInputs = baiClient.supports(
