@@ -571,8 +571,9 @@ following:
      `BACKEND_AI_AGENTS_AVAILABLE=true` so a session-incapable cluster
      shows up RED, not skipped — being able to run sessions is the point
      of the install.
-     New smoke specs should prefer asserting on UI that exists across all
-     supported server versions.
+
+   New smoke specs should prefer asserting on UI that exists across all
+   supported server versions.
 
 ### How to apply
 

@@ -133,9 +133,7 @@ commitModifyAgentSetting({
     const agentRecord = store.get(agent?.id || "");
     if (agentRecord) {
       agentRecord.setValue(values.schedulable, "schedulable");
-      if (baiClient?.supports("admin-resource-group-select")) {
-        agentRecord.setValue(values.scaling_group, "scaling_group");
-      }
+      agentRecord.setValue(values.scaling_group, "scaling_group");
     }
   },
   onCompleted(res, errors) { ... },
