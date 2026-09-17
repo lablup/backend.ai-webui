@@ -46,9 +46,7 @@ const SessionLauncherStorageStep: React.FC<{
     currentProjectId: project.id,
     mountableHosts,
   });
-  const mountConfigRule = useVFolderMountConfigFormRule({
-    autoMountedFolderNames: _.map(autoMountedFolders, 'name'),
-  });
+  const mountConfigRule = useVFolderMountConfigFormRule({ autoMountedFolders });
   const { generateFolderPath } = useFolderExplorerOpener();
 
   return (
