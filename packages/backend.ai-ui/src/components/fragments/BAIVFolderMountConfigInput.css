@@ -53,6 +53,17 @@
   flex: none;
 }
 
+/* Sized on purpose, a step above the 14px name it leads. */
+.bai-vfolder-mount-config__folder > .bai-vfolder-identicon {
+  width: 17px;
+  height: 17px;
+}
+
+/* A path separator, toned like the field's chevron rather than its text. */
+.bai-vfolder-mount-config__separator {
+  color: var(--color-icon-secondary);
+}
+
 .bai-vfolder-mount-config__folder > .bai-vfolder-mount-config__folder-name {
   display: flex;
   flex: 0 1 auto;

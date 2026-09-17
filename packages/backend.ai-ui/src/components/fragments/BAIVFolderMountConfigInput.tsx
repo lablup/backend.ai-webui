@@ -622,7 +622,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                           <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
                         )}
                       </span>
-                      <BAIText type="secondary">/</BAIText>
+                      <span className="bai-vfolder-mount-config__separator">
+                        /
+                      </span>
                     </div>
                     <BAIVFolderPathPicker
                       label={t('comp:BAIVFolderMountConfigInput.Subpath')}
