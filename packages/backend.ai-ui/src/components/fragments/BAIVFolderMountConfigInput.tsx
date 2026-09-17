@@ -345,8 +345,11 @@ const useMountableLegacyFolders = (
 const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
   permission,
 }) => {
+  'use memo';
   const values = [
-    { label: 'R', color: 'green' },
+    ...(permission.includes('r') || permission.includes('w')
+      ? [{ label: 'R', color: 'green' }]
+      : []),
     ...(permission.includes('w') ? [{ label: 'W', color: 'blue' }] : []),
     ...(permission.includes('d') ? [{ label: 'D', color: 'red' }] : []),
   ];
@@ -546,7 +549,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
       {mountConfigs.length > 0 && (
         <BAICard size="small">
           <div className="bai-vfolder-mount-config__grid" role="list">
-            <div className="bai-vfolder-mount-config__header" aria-hidden>
+            <div className="bai-vfolder-mount-config__header">
               <BAIFlex gap="xxs" align="center">
                 <BAIText type="secondary">
                   {t('comp:BAIVFolderMountConfigInput.SourcePath')}

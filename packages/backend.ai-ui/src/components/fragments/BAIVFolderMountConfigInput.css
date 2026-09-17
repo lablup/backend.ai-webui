@@ -42,11 +42,23 @@
   max-width: 50%;
   height: var(--size-element-md);
   padding-inline: var(--spacing-2);
-  border: 1px solid var(--color-border-emphasized);
+  border: var(--border-width) solid var(--color-border-emphasized);
   border-inline-end: 0;
   border-start-start-radius: var(--radius-element);
   border-end-start-radius: var(--radius-element);
   background: var(--color-background-muted);
+}
+
+/* The head follows the picker's focus and disabled looks, so the fused
+   field reads as one control in every state. */
+.bai-vfolder-mount-config__source:has(.astryx-complex-selector:focus-within)
+  > .bai-vfolder-mount-config__folder {
+  border-color: var(--color-accent);
+}
+
+.bai-vfolder-mount-config__source:has(button[aria-haspopup]:disabled)
+  > .bai-vfolder-mount-config__folder {
+  opacity: 0.5;
 }
 
 .bai-vfolder-mount-config__folder > * {

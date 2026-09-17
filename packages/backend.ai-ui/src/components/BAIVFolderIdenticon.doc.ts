@@ -13,7 +13,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass `vfolderId` (the dashed UUID) when you hold a plain folder id; the glyph then matches the one the folder lists draw for the same folder.',
+          'Pass `vfolderId` (the dashed UUID) when you hold a plain folder id; the glyph then matches the one the `VirtualFolderNode`-based folder lists (the Data page) draw for the same folder.',
       },
       {
         guidance: true,

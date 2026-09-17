@@ -205,8 +205,8 @@ export interface BAIComplexSelectProps {
   /**
    * Shows a clear button beside the chevron while something is selected.
    * The trigger is a `<button>`, so the clear button is a sibling laid over
-   * its end; it is not rendered together with `description`, which would sit
-   * under the trigger and move it.
+   * its end, anchored to the field's bottom. It is not rendered while
+   * `status.message` is shown, because that message sits under the trigger.
    */
   allowClear?: boolean;
   'data-testid'?: string;
@@ -554,7 +554,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   })();
 
   const hasClearButton =
-    allowClear && !isDisabled && !description && selected.length > 0;
+    allowClear && !isDisabled && !status?.message && selected.length > 0;
 
   const selector = (
     <ComplexSelector<BAIComplexSelectValue>
@@ -573,7 +573,8 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
       isOptional={isOptional}
       status={status}
       size={size}
-      width={width}
+      // With `allowClear` the wrapper below carries `width`.
+      width={allowClear ? '100%' : width}
       data-testid={testId}
     >
       {(_value, emit, close, state) => (
@@ -738,6 +739,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   return (
     <span
       className="bai-complex-select-field"
+      style={{ width: typeof width === 'number' ? `${width}px` : width }}
       data-size={size}
       data-clearable={hasClearButton ? 'true' : undefined}
     >

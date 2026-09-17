@@ -212,12 +212,14 @@
 
 /* `allowClear`: the clear button is laid over the trigger's end, left of the
    chevron, and anchored to the bottom so a visible label above does not move
-   it. */
+   it. Unlayered on purpose: the trigger's padding is a StyleX atom, which a
+   layered rule cannot outrank. `button[aria-haspopup]` is the only handle the
+   trigger exposes (verified against @astryxdesign/core 0.5.4). */
 .bai-complex-select-field {
   position: relative;
-  display: flex;
-  flex: 1 1 auto;
+  display: inline-flex;
   min-width: 0;
+  max-width: 100%;
 }
 
 .bai-complex-select-field > * {
