@@ -1,4 +1,4 @@
-import { ConcreteRequest } from 'relay-runtime';
+import { ConcreteRequest, FragmentRefs } from 'relay-runtime';
 export type ImageV2Status = "ALIVE" | "DELETED" | "%future added value";
 export type ImageV2Filter = {
     AND?: ReadonlyArray<ImageV2Filter> | null | undefined;
@@ -70,6 +70,7 @@ export type BAIAdminImageSelectPaginatedQuery$data = {
                     readonly architecture: string;
                     readonly canonicalName: string;
                 };
+                readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagV2Fragment">;
             };
         }>;
     } | null | undefined;

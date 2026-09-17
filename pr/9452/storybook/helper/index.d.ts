@@ -1,5 +1,6 @@
 import { default as Big } from 'big.js';
 export * from './astryxTagVariant';
+export * from './combineFilters';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 export declare function parseValueWithUnit(str: string): [number, string | undefined];
