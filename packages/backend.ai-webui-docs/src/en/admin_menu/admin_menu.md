@@ -472,6 +472,7 @@ The **Audit Log** tab tracks all action history for the deployment. Each entry i
 - **Description**: Additional details about the operation.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
+- **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
 You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
