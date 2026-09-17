@@ -39,6 +39,7 @@ import {
   BAILink,
   BAIMetadataList,
   BAITable,
+  BAIVFolderIdenticon,
   BAIText,
   imageNodeTagFacts,
   filterOutEmpty,
@@ -116,7 +117,6 @@ const SessionLauncherPreview: React.FC<{
   const { generateFolderPath } = useFolderExplorerOpener();
 
   const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
-  const hasAnySubpath = _.some(mountRows, (row) => !!row.subpath);
 
   return (
     <>
@@ -397,11 +397,24 @@ const SessionLauncherPreview: React.FC<{
               columns={filterOutEmpty([
                 {
                   dataIndex: 'name',
-                  title: t('data.folders.Name'),
+                  title: t('session.launcher.MountSourcePath'),
+                  render: (
+                    value: string,
+                    record: (typeof mountRows)[number],
+                  ) => (
+                    <BAIFlex gap="xs" align="center">
+                      <BAIVFolderIdenticon vfolderId={record.vfolderId} />
+                      <BAILink to={generateFolderPath(record.vfolderId)}>
+                        {value}
+                      </BAILink>
+                      <Text color="secondary">/</Text>
+                      {record.subpath}
+                    </BAIFlex>
+                  ),
                 },
                 {
                   dataIndex: 'mountDestination',
-                  title: t('session.launcher.FolderAlias'),
+                  title: t('session.launcher.MountDestinationPath'),
                   render: (
                     value: string,
                     record: (typeof mountRows)[number],
@@ -411,10 +424,6 @@ const SessionLauncherPreview: React.FC<{
                     ) : (
                       value
                     ),
-                },
-                hasAnySubpath && {
-                  dataIndex: 'subpath',
-                  title: t('session.launcher.FolderSubpath'),
                 },
               ])}
               dataSource={mountRows}
