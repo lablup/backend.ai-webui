@@ -489,8 +489,10 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             title={t('comp:BAIVFolderMountConfigInput.Refresh')}
             loading={isFetching}
             disabled={disabled}
-            action={async () => {
-              await refetch();
+            // The query already drives `loading`; `action` would add a transition
+            // that can stay pending after the fetch settles.
+            onClick={() => {
+              void refetch();
             }}
           />
         </ButtonGroup>
