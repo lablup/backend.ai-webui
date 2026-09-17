@@ -31,6 +31,7 @@
     "MultiNode": "Олон зангилаа",
     "MultiNodeNotConfiguredWarning": "Хэрэв кластер дээр олон зангилаа тохируулаагүй бол энэ урьдчилсан тохиргоогоор үүсгэсэн сешн эхлэхгүй.",
     "Name": "Нэр",
+    "NameCannotContainWhitespace": "Нэр хоосон зай агуулж болохгүй.",
     "NamePlaceholder": "жн: vLLM-GPU-Large",
     "NameRequired": "Нэр заавал бөглөх ёстой.",
     "NotSupported": "Одоогийн backend хувилбар байршуулалтын урьдчилсан тохиргооны удирдлагыг дэмждэггүй.",

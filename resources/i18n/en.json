@@ -31,6 +31,7 @@
     "MultiNode": "Multi Node",
     "MultiNodeNotConfiguredWarning": "If multi-node is not configured on the cluster, sessions created from this preset will fail to start.",
     "Name": "Name",
+    "NameCannotContainWhitespace": "Name cannot contain whitespace.",
     "NamePlaceholder": "e.g., vLLM-GPU-Large",
     "NameRequired": "Name is required.",
     "NotSupported": "Deployment preset management is not supported by the current backend version.",

@@ -1298,6 +1298,7 @@
         "adminDeploymentPreset.MultiNode",
         "adminDeploymentPreset.MultiNodeNotConfiguredWarning",
         "adminDeploymentPreset.Name",
+        "adminDeploymentPreset.NameCannotContainWhitespace",
         "adminDeploymentPreset.NamePlaceholder",
         "adminDeploymentPreset.NameRequired",
         "adminDeploymentPreset.OpenToPublic",

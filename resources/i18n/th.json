@@ -31,6 +31,7 @@
     "MultiNode": "หลายโหนด",
     "MultiNodeNotConfiguredWarning": "หากไม่ได้กำหนดค่าหลายโหนดบนคลัสเตอร์ เซสชันที่สร้างจากพรีเซ็ตนี้จะเริ่มทำงานไม่สำเร็จ",
     "Name": "ชื่อ",
+    "NameCannotContainWhitespace": "ชื่อต้องไม่มีช่องว่าง",
     "NamePlaceholder": "เช่น vLLM-GPU-Large",
     "NameRequired": "ชื่อเป็นสิ่งจำเป็น",
     "NotSupported": "การจัดการค่าตั้งล่วงหน้าการปรับใช้ไม่รองรับในเวอร์ชัน backend ปัจจุบัน",

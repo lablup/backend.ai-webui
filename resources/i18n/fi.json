@@ -31,6 +31,7 @@
     "MultiNode": "Monisolmuinen",
     "MultiNodeNotConfiguredWarning": "Jos klusterissa ei ole määritetty monisolmutilaa, tästä esiasetuksesta luodut istunnot eivät käynnisty.",
     "Name": "Nimi",
+    "NameCannotContainWhitespace": "Nimi ei voi sisältää välilyöntejä.",
     "NamePlaceholder": "esim. vLLM-GPU-Large",
     "NameRequired": "Nimi on pakollinen",
     "NotSupported": "Käyttöönottoesiasetuusten hallintaa ei tueta nykyisessä backend-versiossa.",

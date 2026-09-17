@@ -31,6 +31,7 @@
     "MultiNode": "Multi-nodo",
     "MultiNodeNotConfiguredWarning": "Se il multi-nodo non è configurato sul cluster, le sessioni create da questo preset non si avvieranno.",
     "Name": "Nome",
+    "NameCannotContainWhitespace": "Il nome non può contenere spazi.",
     "NamePlaceholder": "es. vLLM-GPU-Large",
     "NameRequired": "Il nome è obbligatorio",
     "NotSupported": "La gestione delle preimpostazioni di distribuzione non è supportata dalla versione corrente del backend.",

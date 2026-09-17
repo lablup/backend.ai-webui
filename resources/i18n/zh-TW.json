@@ -31,6 +31,7 @@
     "MultiNode": "多節點",
     "MultiNodeNotConfiguredWarning": "如果叢集未設定多節點，使用此預設集建立的工作階段將無法啟動。",
     "Name": "名稱",
+    "NameCannotContainWhitespace": "名稱不能包含空白字元。",
     "NamePlaceholder": "例如：vLLM-GPU-Large",
     "NameRequired": "名稱為必填項。",
     "NotSupported": "目前的後端版本不支援部署預設管理。",

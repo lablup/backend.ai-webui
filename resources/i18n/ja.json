@@ -31,6 +31,7 @@
     "MultiNode": "マルチノード",
     "MultiNodeNotConfiguredWarning": "クラスターにマルチノードが設定されていない場合、このプリセットで作成したセッションの起動に失敗します。",
     "Name": "名前",
+    "NameCannotContainWhitespace": "名前に空白を含めることはできません。",
     "NamePlaceholder": "例: vLLM-GPU-Large",
     "NameRequired": "名前は必須です。",
     "NotSupported": "デプロイメントプリセット管理は現在のバックエンドバージョンではサポートされていません。",
