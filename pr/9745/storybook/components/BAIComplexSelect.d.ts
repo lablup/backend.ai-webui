@@ -94,6 +94,13 @@ export interface BAIComplexSelectProps {
     triggerDisplay?: BAIComplexSelectTriggerDisplay;
     /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
     maxTriggerTokens?: number;
+    /**
+     * Shows a clear button beside the chevron while something is selected.
+     * The trigger is a `<button>`, so the clear button is a sibling laid over
+     * its end; it is not rendered together with `description`, which would sit
+     * under the trigger and move it.
+     */
+    allowClear?: boolean;
     'data-testid'?: string;
 }
 declare const BAIComplexSelect: React.FC<BAIComplexSelectProps>;

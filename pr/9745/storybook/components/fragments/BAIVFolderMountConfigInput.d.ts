@@ -106,7 +106,7 @@ export interface ResolvedVFolderMount {
     vfolderId: string;
     name: string;
     mountDestination: string;
-    /** True when the alias input was left empty, so the default path applies. */
+    /** True when the mount resolves to the default `${aliasBasePath}${name}`. */
     isDefaultAlias: boolean;
     subpath: string;
 }
