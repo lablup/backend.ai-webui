@@ -8,13 +8,41 @@ element again.
 ## Language
 
 **Pin**:
-One reviewer remark tied to one element: an anchor, an optional note, and an
-id. A pin is self-contained — its link alone is enough to show it again.
+One remark tied to one element: an anchor, an optional note, and an id —
+whoever authored it, a reviewer or an implementing session. A pin is
+self-contained — its link alone is enough to show it again. Its id is a
+fingerprint of its content — the anchor, with the capped note it carries, pr
+and when it was made — so an edit that changes the carried note makes a
+different pin, and restoring that note restores the pin.
 _Avoid_: comment (the channel's word), marker (the drawn glyph only), pick
+
+**Walkthrough**:
+The ordered pin set an implementing session leaves on the dev server at the
+end of its run, saying what changed and what to check. A walkthrough is a
+separate, read-only set from a reviewer's own draft set; opening its link
+never merges the two.
+_Avoid_: tour, review set, session
+
+**Stop**:
+One pin in a walkthrough: what changed and what to check, with an optional
+code reference.
+_Avoid_: step, waypoint, checkpoint
+
+**Mark**:
+The tinted display guided mode places over a located stop's element, in
+place of the reviewer pin glyph.
+_Avoid_: highlight, annotation, marker (the reviewer-pin glyph)
+
+**Navigator**:
+The fixed control that walks a walkthrough's stops in order and shows how
+many are viewed.
+_Avoid_: toolbar, control bar, progress bar
 
 **Pin set**:
 The ordered list of pins a reviewer makes in one sitting and hands over
-together, as one comment and one link. A single pin is a pin set of one.
+together, as one comment and one link. A single pin is a pin set of one. Set
+order fixes the marker numbers, the block order, and the page the set link opens
+on — the first pin's.
 _Avoid_: batch, session, group, thread
 
 **Draft set**:

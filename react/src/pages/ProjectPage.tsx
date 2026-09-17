@@ -18,6 +18,7 @@ import ProjectAdminSettingModal, {
 } from '../components/ProjectAdminSettingModal';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { theme } from '../theme-shim';
 import {
@@ -121,6 +122,9 @@ const ProjectPage = () => {
     {
       history: 'replace',
     },
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ProjectPage',
   );
   const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -432,12 +436,21 @@ const ProjectPage = () => {
                 {
                   key: 'id',
                   propertyLabel: t('project.ProjectID'),
-                  type: 'string',
-                  defaultOperator: '==',
+                  type: 'uuid',
                   rule: {
                     message: t('project.ProjectIDFilterRuleMessage'),
                     validate: (value) => isValidUUID(value),
                   },
+                },
+                {
+                  key: 'created_at',
+                  propertyLabel: t('general.CreatedAt'),
+                  type: 'datetime',
+                },
+                {
+                  key: 'modified_at',
+                  propertyLabel: t('general.ModifiedAt'),
+                  type: 'datetime',
                 },
               ]}
               value={queryParams.filter}
@@ -504,6 +517,10 @@ const ProjectPage = () => {
           order={queryParams.order}
           onChangeOrder={(order) => {
             setQueryParams({ order });
+          }}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
           }}
           customizeColumns={(columns) =>
             columns.map((col) =>

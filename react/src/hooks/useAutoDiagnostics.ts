@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useSuspendedBackendaiClient } from '.';
 import type { DiagnosticResult } from '../types/diagnostics';
 import { useCspDiagnostics } from './useCspDiagnostics';
 import { useEndpointDiagnostics } from './useEndpointDiagnostics';
@@ -29,20 +28,17 @@ export function useDiagnosticsBadgeSeverity(): BadgeSeverity {
 }
 
 /**
- * Hook that runs a subset of critical diagnostic checks after login
- * and exposes the highest severity via a Jotai atom for the sidebar badge.
+ * Hook that runs the critical diagnostic checks after login and exposes the
+ * highest severity via a Jotai atom for the sidebar badge.
  *
- * - Only runs for superadmin users.
- * - Runs asynchronously and does NOT block the login flow.
- * - Reuses the existing diagnostics hooks for consistency with the diagnostics page.
+ * Mount only for superadmins (`AutoDiagnosticsEffect` in routes.tsx gates
+ * this) — the underlying hooks issue superadmin-scoped requests
+ * (e.g. `storage_volume_list`) as soon as they run (FR-3892).
  */
 export function useAutoDiagnostics(): void {
   'use memo';
 
   const setDiagnosticsBadgeSeverity = useSetAtom(diagnosticsBadgeSeverityAtom);
-  const baiClient = useSuspendedBackendaiClient();
-
-  const isSuperAdmin: boolean = !!baiClient?.is_superadmin;
 
   // Reuse existing diagnostics hooks to avoid duplicating API requests
   const { results: endpointResults } = useEndpointDiagnostics();
@@ -50,38 +46,23 @@ export function useAutoDiagnostics(): void {
   const configResults = useWebServerConfigDiagnostics();
   const storageResults = useStorageProxyDiagnostics();
 
-  // Compute critical results by filtering results from the shared hooks
-  const criticalResults: DiagnosticResult[] = (() => {
-    if (!isSuperAdmin) return [];
+  const allResults: DiagnosticResult[] = [
+    ...endpointResults,
+    ...cspResults,
+    ...configResults,
+    ...storageResults,
+  ];
 
-    const allResults: DiagnosticResult[] = [
-      ...endpointResults,
-      ...cspResults,
-      ...configResults,
-      ...storageResults,
-    ];
-
-    return allResults.filter(
-      (r) => r.severity === 'critical' || r.severity === 'warning',
-    );
-  })();
-
-  // Determine the highest severity: critical > warning > null
-  const highestSeverity: BadgeSeverity = (() => {
-    if (criticalResults.some((r) => r.severity === 'critical')) {
-      return 'critical';
-    }
-    if (criticalResults.some((r) => r.severity === 'warning')) {
-      return 'warning';
-    }
-    return null;
-  })();
+  // Highest severity wins: critical > warning > null
+  const highestSeverity: BadgeSeverity = allResults.some(
+    (r) => r.severity === 'critical',
+  )
+    ? 'critical'
+    : allResults.some((r) => r.severity === 'warning')
+      ? 'warning'
+      : null;
 
   useEffect(() => {
-    if (!isSuperAdmin) {
-      setDiagnosticsBadgeSeverity(null);
-      return;
-    }
     setDiagnosticsBadgeSeverity(highestSeverity);
-  }, [isSuperAdmin, highestSeverity, setDiagnosticsBadgeSeverity]);
+  }, [highestSeverity, setDiagnosticsBadgeSeverity]);
 }

@@ -113,7 +113,7 @@ Every revision mounts one model storage folder into each replica. The fields dir
 
 - **Model Folder**: The model storage folder to mount on each replica.
 - **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
-- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Leave it unset to mount the folder root.
+- **Subpath**: A subfolder inside the model folder to mount instead of the folder root. Click the field to open a directory picker and choose the subfolder from the selected model folder's directory tree. Leave it unset to mount the folder root.
 
 <a id="service-configuration"></a>
 
@@ -590,6 +590,8 @@ The **Revision History** tab lists all revisions added to the deployment, sorted
 
 ![](../images/revision_history_tab.png)
 
+Above the table sit a property filter bar and a refresh button. You can narrow the list by **Revision Number**, **Created At**, **Cluster Mode**, **Image**, and **Model Folder**. The **Image** and **Model Folder** values are picked from dropdowns instead of being typed as identifiers, and the resulting filter tag shows the name you selected. The **Model Folder** dropdown is scoped to the deployment's own project and lists only model-usage folders, excluding deleted ones — the same scope as the folder picker in the Add Revision modal.
+
 The table includes the following columns:
 
 - **Revision (ID)**: The revision number and its UUID. The revision number is an incrementing integer; lower numbers are older revisions. Click the revision number to open the revision detail drawer.
@@ -669,7 +671,9 @@ The rule list provides:
 - The following columns: **Metric Source**, **Condition**, **Cooldown Sec.**, **Step Size**, **Min / Max Replicas**, **Created At**, and **Last Triggered**. The **Step Size** column automatically shows `+`, `−`, or `±` based on the direction derived from the thresholds you have set.
 - Per-row edit and delete icons shown next to the condition summary in each row.
 
-Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor. To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
+Click the `Add Rules` button to open the **Add Auto Scaling Rule** editor.
+
+To modify an existing rule, click the edit icon on its row; the **Edit Auto Scaling Rule** editor opens with the rule's values pre-filled. The editor contains the following fields in order:
 
 - **Metric Source**: Select `Kernel` or `Prometheus`.
 - **Metric Name**: For `Kernel`, enter a metric name. Common metrics such as `cpu_util`, `mem`, `net_rx`, and `net_tx` are offered as autocomplete suggestions, and you can also type a custom name freely.
@@ -873,4 +877,3 @@ Click the **Deploy** button in the drawer header to deploy the model as a servic
 If the selected model has no compatible presets for the current project, the drawer's
 **Deploy** button is disabled and deployment is blocked until a compatible preset is available.
 :::
-

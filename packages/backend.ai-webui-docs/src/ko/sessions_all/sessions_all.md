@@ -302,6 +302,28 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 ![](../images/session_scheduling_history_button.png)
 
+<a id="preemption-statuses"></a>
+
+### 선점 관련 상태
+
+세션이 `RESERVED`, `PREEMPTED`, `RESCHEDULING` 상태로도 표시될 수 있습니다. 스케줄러가 우선순위가 높은 작업을 위해 자원을 확보해야 할 때 사용하는 상태입니다.
+
+- `RESERVED`: 자원 예약을 보유한 채, 필요한 자원이 확보되기를 기다리는 세션입니다.
+- `PREEMPTED`: 우선순위가 높은 작업이 자원을 사용할 수 있도록 선점 대상으로 선택된 세션입니다.
+- `RESCHEDULING`: 선점되어 대기열로 돌아간 세션으로, 자동으로 다시 스케줄됩니다.
+
+세 가지 상태의 세션은 모두 여전히 자원을 점유하고 있으므로 **종료됨** 이 아니라 **실행 중** 목록에 표시됩니다.
+
+스케줄러가 세션에 선점 사유를 기록한 경우, 세션 상태 태그에 마우스를 올리면 내부 값 대신 다음과 같은 설명이 표시됩니다.
+
+| 사유 | 설명 |
+|------|------|
+| `PREEMPTED_BY_SCHEDULER` | 우선순위가 높은 작업에 자원을 양보하기 위해 스케줄러가 종료한 세션입니다. |
+| `preempted-by-reservation` | 우선순위가 높은 작업에 자원을 양보하기 위해 선점 대상으로 선택된 세션입니다. |
+| `preemption-reservation` | 자원 예약을 보유한 채 자원이 확보되기를 기다리는 세션입니다. |
+| `RESCHEDULED` | 선점되어 대기열로 돌아간 세션으로, 자동으로 다시 스케줄됩니다. |
+
+
 <a id="session-scheduling-history"></a>
 
 ### 세션 스케줄링 기록
@@ -392,7 +414,7 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 - **수행자**: 작업을 수행한 사용자의 이메일 주소와 계정 ID
 - **작업**: 수행된 작업의 유형 (예: 세션 생성, 종료 또는 자원 변경)
-- **상태**: 작업의 결과 (`SUCCESS`, `ERROR`, `RUNNING` 또는 `UNKNOWN`)
+- **상태**: 작업의 결과 (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED` 또는 `UNKNOWN`). `DENIED`는 오류로 실패한 것이 아니라 정책에 의해 의도적으로 거부되었음을 의미합니다
 - **시각**: 작업이 발생한 시각
 
 #### 감사 로그 필터

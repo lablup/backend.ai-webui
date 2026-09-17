@@ -12,6 +12,7 @@ import {
 } from '../utils/test-util';
 import { usersTabButton } from '../utils/user-profile-util';
 import test, { expect, type APIRequestContext } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
 
 // Helper to open the My Keypair Management modal
 async function openKeypairModal(page: import('@playwright/test').Page) {
@@ -133,8 +134,7 @@ async function deleteInactiveKeypair(
 // spec file (e.g. rbac/*) running in parallel against the shared user can
 // corrupt its keypair/project state. Using a disposable user gives each test
 // run a clean slate and lets the file run safely in parallel with others.
-const TEST_RUN_ID =
-  Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const TEST_RUN_ID = Date.now().toString(36) + randomUUID().slice(0, 4);
 const FIXTURE_EMAIL = `e2e-mykeypair-${TEST_RUN_ID}@lablup.com`;
 const FIXTURE_USERNAME = `e2e-mykeypair-${TEST_RUN_ID}`;
 const FIXTURE_PASSWORD = 'testing@123';

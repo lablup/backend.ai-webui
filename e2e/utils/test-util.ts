@@ -142,14 +142,32 @@ export async function login(
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // Expand the endpoint section if it's not already visible. Must be the role
-  // locator: getByLabel('Endpoint') also matches the 'Endpoint History' /
-  // 'About Endpoint' controls once the section is open.
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
+  // Expand the endpoint section if it's not already visible.
+  // `getByLabel('Endpoint')` matches on substring, so it also picks up the
+  // "Endpoint History" trigger and the "About Endpoint" button — three
+  // elements, so it throws. `exact` pins the role lookup to the input alone.
+  const endpointInput = page.getByRole('textbox', {
+    name: 'Endpoint',
+    exact: true,
+  });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
+    // Older login UIs hide the input behind an 'Advanced' toggle.
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) {
+      await advanced.click();
+    }
   }
-  await endpointInput.fill(endpoint);
+  // No endpoint input means the server pins `apiEndpoint` (the config.toml
+  // intercept above did not take — an installed cluster under
+  // `playwright.smoke.config.ts`). Wait briefly rather than probing once:
+  // `isVisible()` does not auto-wait, and a slow render must not submit an
+  // empty endpoint.
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
+    await endpointInput.fill(endpoint);
+  } catch {
+    // server-pinned endpoint: nothing to fill
+  }
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login
   // information mismatch"). Retry the submit a couple of times, with a fixed

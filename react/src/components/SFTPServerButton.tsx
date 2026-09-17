@@ -20,6 +20,7 @@ import {
   StartSessionWithDefaultValue,
   useStartSession,
 } from '../hooks/useStartSession';
+import { openSFTPFailureModal } from './sftpFailureModal';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -171,9 +172,17 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
                 }
                 if (results?.rejected && results.rejected.length > 0) {
                   const error = results.rejected[0].reason;
-                  modal.error({
-                    title: error?.title,
-                    content: getErrorMessage(error),
+                  openSFTPFailureModal({
+                    modal,
+                    t,
+                    error,
+                    getErrorMessage,
+                    onGoToUploadSessions: () => {
+                      webuiNavigate({
+                        pathname: '/session',
+                        search: '?type=system',
+                      });
+                    },
                   });
                 }
               })

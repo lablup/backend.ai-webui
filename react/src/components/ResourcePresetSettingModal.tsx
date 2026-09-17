@@ -35,7 +35,7 @@ import { graphql, useFragment, useMutation } from 'react-relay';
  * (`resource_presets` has no group column; its only relation is to one
  * `ScalingGroupRow`, and a null `scaling_group_name` means the preset is
  * global), so the options must not be narrowed by any project.
- * `BAIResourceGroupSelect` queries `scaling_groups` unscoped, which is
+ * `BAIResourceGroupSelect` lists `adminResourceGroups` unfiltered, which is
  * exactly that list. Spreading `props` keeps the value/onChange pair
  * `BAIFormItem` injects into its direct child from being swallowed by the
  * Suspense boundary.

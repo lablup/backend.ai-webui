@@ -13,6 +13,7 @@ import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAIQuestionIconWithTooltip,
+  BAIBadge,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
@@ -37,6 +38,7 @@ export type DomainFairShare = NonNullable<
 
 const availableDomainFairShareSorterKeys = [
   'domainName',
+  'domainIsActive',
   'fairShareFactor',
   'createdAt',
 ] as const;
@@ -45,6 +47,7 @@ export const domainFairShareOrderFieldMap: Record<
   DomainFairShareOrderField
 > = {
   domainName: 'DOMAIN_NAME',
+  domainIsActive: 'DOMAIN_IS_ACTIVE',
   fairShareFactor: 'FAIR_SHARE_FACTOR',
   createdAt: 'CREATED_AT',
 };
@@ -96,6 +99,9 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         domain {
           basicInfo {
             name
+          }
+          lifecycle {
+            isActive
           }
         }
         id
@@ -238,6 +244,22 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
           </BAIFlex>
         );
       },
+    },
+    {
+      title: t('general.Status'),
+      key: 'domainIsActive',
+      dataIndex: ['domain', 'lifecycle', 'isActive'],
+      sortKey: 'domainIsActive',
+      sorter: isEnableSorter('domainIsActive'),
+      render: (isActive: boolean | null | undefined) =>
+        _.isNil(isActive) ? (
+          '-'
+        ) : (
+          <BAIBadge
+            color={isActive ? 'success' : 'default'}
+            text={isActive ? t('general.Active') : t('general.Inactive')}
+          />
+        ),
     },
     {
       title: t('general.ModifiedAt'),

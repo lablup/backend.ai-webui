@@ -7,8 +7,11 @@ import {
   ProjectFairShareStepQuery,
 } from '../../__generated__/ProjectFairShareStepQuery.graphql';
 import { convertToOrderBy, handleRowSelectionChange } from '../../helper';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import FairShareStepToolbar from './FairShareStepToolbar';
+import FairShareStepToolbar, {
+  flattenUnsupportedSubFilter,
+} from './FairShareStepToolbar';
 import FairShareWeightSettingModal from './FairShareWeightSettingModal';
 import ProjectFairShareTable, {
   availableProjectFairShareSorterValues,
@@ -46,6 +49,14 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
 
   const { t } = useTranslation();
 
+  // Two conditions serialize as `{ AND: [...] }`, which needs `sub-filter`
+  // (26.7+); this step is reachable from 26.2. Below 26.7 expose only the
+  // property that shipped before FR-3920, capped at one condition.
+  // TODO(FR-3920): once #9638's `maxConditions` lands, show them with
+  // `maxConditions={1}` instead of hiding them.
+  const supportsSubFilter =
+    useSuspendedBackendaiClient().supports('sub-filter');
+
   const [selectedRows, setSelectedRows] = useState<Array<ProjectFairShare>>([]);
   const [selectedSingleRow, setSelectedSingleRow] =
     useState<ProjectFairShare | null>(null);
@@ -71,11 +82,17 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
     },
   );
 
+  // A URL written before this gate (or on a newer manager) can still carry
+  // an AND/OR/NOT combinator the filter control can no longer produce here.
+  const effectiveFilter = supportsSubFilter
+    ? queryParams.filter
+    : flattenUnsupportedSubFilter(queryParams.filter);
+
   const queryVariables = {
     resourceGroupName,
     domainName,
     filter: {
-      ...(queryParams.filter || {}),
+      ...(effectiveFilter || {}),
     },
     order: convertToOrderBy<ProjectFairShareOrderBy>(
       queryParams.order,
@@ -147,14 +164,24 @@ const ProjectFairShareStep: React.FC<ProjectFairShareStepProps> = ({
     <BAIFlex direction="column" align="stretch" gap="xs">
       <ResourceGroupSchedulerTypeAlert resourceGroupFrgmt={resourceGroupNode} />
       <FairShareStepToolbar
+        singleCondition={!supportsSubFilter}
         filterProperties={[
           {
             key: 'project.name',
             propertyLabel: t('fairShare.Name'),
             type: 'string',
           },
+          ...(supportsSubFilter
+            ? ([
+                {
+                  key: 'project.isActive',
+                  propertyLabel: t('fairShare.ActiveStatus'),
+                  type: 'boolean',
+                },
+              ] as const)
+            : []),
         ]}
-        filterValue={queryParams.filter || {}}
+        filterValue={effectiveFilter || {}}
         onChangeFilter={(filter) => {
           setQueryParams({
             filter: filter || null,

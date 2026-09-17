@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<932c8525c83cc9568f3aafc94900516f>>
+ * @generated SignedSource<<92b200fe70d662c9846790c7f2b28d39>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type ContainerRegistryListQuery$variables = {
+  allowedProjectPreviewCount?: number | null | undefined;
   domain: string;
   filter?: string | null | undefined;
   first?: number | null | undefined;
@@ -22,7 +23,17 @@ export type ContainerRegistryListQuery$data = {
     readonly count: number | null | undefined;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly allowed_groups_preview: {
+          readonly count: number | null | undefined;
+          readonly edges: ReadonlyArray<{
+            readonly node: {
+              readonly id: string;
+              readonly name: string | null | undefined;
+            } | null | undefined;
+          } | null | undefined>;
+        } | null | undefined;
         readonly id: string;
+        readonly is_global: boolean | null | undefined;
         readonly name: string | null | undefined;
         readonly password: string | null | undefined;
         readonly project: string | null | undefined;
@@ -50,29 +61,34 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domain"
+  "name": "allowedProjectPreviewCount"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "domain"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "first"
+  "name": "filter"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "first"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "offset"
+},
+v5 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "order"
 },
-v5 = [
+v6 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -94,84 +110,133 @@ v5 = [
     "variableName": "order"
   }
 ],
-v6 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "row_id",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "registry_name",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "url",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "project",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "username",
   "storageKey": null
 },
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "password",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "ssl_verify",
   "storageKey": null
 },
-v16 = {
+v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "is_global",
+  "storageKey": null
+},
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v17 = {
+v19 = {
+  "alias": "allowed_groups_preview",
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "first",
+      "variableName": "allowedProjectPreviewCount"
+    }
+  ],
+  "concreteType": "GroupConnection",
+  "kind": "LinkedField",
+  "name": "allowed_groups",
+  "plural": false,
+  "selections": [
+    (v18/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "GroupEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "GroupNode",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v7/*: any*/),
+            (v10/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v20 = {
   "alias": null,
   "args": [
     {
@@ -185,7 +250,7 @@ v17 = {
   "name": "domain",
   "plural": false,
   "selections": [
-    (v9/*: any*/),
+    (v10/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -203,7 +268,8 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/)
+      (v4/*: any*/),
+      (v5/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -211,7 +277,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "ContainerRegistryConnection",
         "kind": "LinkedField",
         "name": "container_registry_nodes",
@@ -238,7 +304,6 @@ return {
                     "kind": "FragmentSpread",
                     "name": "ContainerRegistryEditorModalFragment"
                   },
-                  (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
@@ -247,18 +312,21 @@ return {
                   (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
-                  (v15/*: any*/)
+                  (v15/*: any*/),
+                  (v16/*: any*/),
+                  (v17/*: any*/),
+                  (v19/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v16/*: any*/)
+          (v18/*: any*/)
         ],
         "storageKey": null
       },
-      (v17/*: any*/)
+      (v20/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -266,18 +334,19 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v0/*: any*/),
       (v1/*: any*/),
-      (v4/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v5/*: any*/),
+      (v3/*: any*/),
+      (v4/*: any*/),
+      (v0/*: any*/)
     ],
     "kind": "Operation",
     "name": "ContainerRegistryListQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v5/*: any*/),
+        "args": (v6/*: any*/),
         "concreteType": "ContainerRegistryConnection",
         "kind": "LinkedField",
         "name": "container_registry_nodes",
@@ -299,15 +368,15 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v6/*: any*/),
                   (v7/*: any*/),
-                  (v9/*: any*/),
                   (v8/*: any*/),
                   (v10/*: any*/),
+                  (v9/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
                   (v13/*: any*/),
-                  (v15/*: any*/),
+                  (v14/*: any*/),
+                  (v16/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -315,13 +384,7 @@ return {
                     "name": "extra",
                     "storageKey": null
                   },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "is_global",
-                    "storageKey": null
-                  },
+                  (v17/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -346,9 +409,9 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v6/*: any*/),
                               (v7/*: any*/),
-                              (v9/*: any*/)
+                              (v8/*: any*/),
+                              (v10/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -358,31 +421,33 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v14/*: any*/)
+                  (v15/*: any*/),
+                  (v17/*: any*/),
+                  (v19/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v16/*: any*/)
+          (v18/*: any*/)
         ],
         "storageKey": null
       },
-      (v17/*: any*/)
+      (v20/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "2c290294552cc0caa3dd687d9720335e",
+    "cacheID": "279a8ff084f27722eee722cf65359241",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryListQuery",
     "operationKind": "query",
-    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) @since(version: \"24.09.0\") {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n  $allowedProjectPreviewCount: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n        is_global\n        allowed_groups_preview: allowed_groups(first: $allowedProjectPreviewCount) {\n          count\n          edges {\n            node {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "83d2445a2d783eb91f99f02f22559918";
+(node as any).hash = "d9a698f1064474787f290df2a33ce915";
 
 export default node;

@@ -533,6 +533,10 @@ describe('BAIPropertyFilter render', () => {
       />,
     );
     expect(screen.getByTestId('property-filter')).toBeInTheDocument();
+    // The root class hook `BAIPowerSearchAdapters.css` styles against.
+    expect(
+      screen.getByTestId('property-filter').closest('.bai-power-search'),
+    ).not.toBeNull();
   });
 });
 

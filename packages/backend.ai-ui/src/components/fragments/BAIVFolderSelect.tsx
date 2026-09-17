@@ -90,7 +90,12 @@ export interface BAIVFolderSelectProps extends Omit<
 > {
   /** Plain key(s), as the antd `BAIVFolderSelect` exposes. */
   value?: string | Array<string> | null;
-  onChange?: (value: string | Array<string> | undefined) => void;
+  /** The second argument is the picked option, so a `renderInput` filter can
+   * label its token with the folder name while the id serializes. */
+  onChange?: (
+    value: string | Array<string> | undefined,
+    option?: BAILabeledValue | Array<BAILabeledValue>,
+  ) => void;
   currentProjectId?: string;
   filter?: string;
   valuePropName?: 'id' | 'row_id';
@@ -200,12 +205,11 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
             selectedKeys.length
               ? mergeFilterValues(
                   _.map(selectedKeys, (value) => {
-                    // When valuePropName is 'id', the outer key is the
-                    // global id — convert to the local UUID the filter
-                    // expects. When 'row_id', use the value directly.
+                    // The queryfilter only knows `id` (the local UUID); a
+                    // `row_id` key already is that UUID, a global id is not.
                     const filterValue =
                       valuePropName === 'id' ? toLocalId(value) : value;
-                    return `${valuePropName} == "${filterValue}"`;
+                    return `id == "${filterValue}"`;
                   }),
                   '|',
                 )
@@ -355,8 +359,12 @@ const BAIVFolderSelect: React.FC<BAIVFolderSelectProps> = ({
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
-        setControllableValue(multiple ? keys : keys[0], undefined);
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

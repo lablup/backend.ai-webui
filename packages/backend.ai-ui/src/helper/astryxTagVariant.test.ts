@@ -84,6 +84,27 @@ describe('badgeVariantForStatus', () => {
     expect(badgeVariantForStatus('session', 'PENDING')).toBe('neutral');
   });
 
+  it('maps preemption lifecycle states and reasons', () => {
+    // No new hue: RESERVED progresses toward RUNNING like SCHEDULED, the two
+    // victim states lose resources like TERMINATING.
+    expect(badgeVariantForStatus('session', 'RESERVED')).toBe('info');
+    expect(badgeVariantForStatus('session', 'PREEMPTED')).toBe('warning');
+    expect(badgeVariantForStatus('session', 'RESCHEDULING')).toBe('warning');
+    expect(badgeVariantForStatus('kernel', 'RESERVED')).toBe('success');
+    expect(
+      badgeVariantForStatus('sessionStatusInfo', 'PREEMPTED_BY_SCHEDULER'),
+    ).toBe('warning');
+    expect(badgeVariantForStatus('sessionStatusInfo', 'RESCHEDULED')).toBe(
+      'info',
+    );
+    expect(
+      badgeVariantForStatus('sessionStatusInfo', 'preemption-reservation'),
+    ).toBe('info');
+    expect(
+      badgeVariantForStatus('sessionStatusInfo', 'preempted-by-reservation'),
+    ).toBe('warning');
+  });
+
   it('maps deployment and route health states', () => {
     expect(badgeVariantForStatus('deployment', 'HEALTHY')).toBe('success');
     expect(badgeVariantForStatus('deployment', 'DEGRADED')).toBe('warning');

@@ -19,7 +19,11 @@ interface DeploymentRevisionCardProps {
   revisionFetchKey: string;
   onAddRevision: () => void;
   revisionCardRef?: React.RefObject<HTMLDivElement | null>;
-  isAddRevisionDisabled?: boolean;
+  /**
+   * Why "Add Revision" is unavailable, decided by the page. The reason IS the
+   * flag (FR-3679): `undefined` enables, a string disables and names why.
+   */
+  addRevisionDisabledReason?: string;
 }
 
 /**
@@ -33,7 +37,7 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
   revisionFetchKey,
   onAddRevision,
   revisionCardRef,
-  isAddRevisionDisabled = false,
+  addRevisionDisabledReason,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -94,7 +98,8 @@ const DeploymentRevisionCard: React.FC<DeploymentRevisionCardProps> = ({
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
-            disabled={isAddRevisionDisabled}
+            disabled={!!addRevisionDisabledReason}
+            title={addRevisionDisabledReason}
             // `action` (not `onClick`) wraps the open state update in
             // `startTransition` so the page stays interactive while the
             // modal mounts.

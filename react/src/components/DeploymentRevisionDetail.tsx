@@ -20,6 +20,7 @@ import {
   BAICard,
   BAIFlex,
   BAIId,
+  BAIImageNodeSimpleTagV2,
   BAIMetadataList,
   BAIResourceNumberWithIcon,
   BAIText,
@@ -132,6 +133,7 @@ const DeploymentRevisionDetail: React.FC<{
             canonicalName
             architecture
           }
+          ...BAIImageNodeSimpleTagV2Fragment
         }
         modelDefinition {
           models {
@@ -209,12 +211,7 @@ const DeploymentRevisionDetail: React.FC<{
       typeof inferenceRuntimeConfig === 'object' &&
       Object.keys(inferenceRuntimeConfig).length === 0
     );
-  const imageCanonicalName = revision.imageV2?.identity?.canonicalName;
-  const imageArchitecture = revision.imageV2?.identity?.architecture;
-  const imageFullName =
-    imageCanonicalName && imageArchitecture
-      ? `${imageCanonicalName}@${imageArchitecture}`
-      : imageCanonicalName;
+  const imageV2 = revision.imageV2;
 
   // PILOT-DECISION: antd Descriptions `bordered`, per-item `span`, and the
   // `styles.label/content` word-break objects have no MetadataList
@@ -436,8 +433,8 @@ const DeploymentRevisionDetail: React.FC<{
     {
       key: 'image',
       label: t('deployment.Image'),
-      children: imageFullName ? (
-        <BAIText copyable>{imageFullName}</BAIText>
+      children: imageV2 ? (
+        <BAIImageNodeSimpleTagV2 imageFrgmt={imageV2} />
       ) : (
         renderFallback()
       ),

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e764b4d46e1ad41cc4d98eb0f4271bf2>>
+ * @generated SignedSource<<1b8a48c6c2e410d9c20b141396d95667>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,13 +12,14 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type SessionV2OrderField = "CREATED_AT" | "ID" | "NAME" | "STATUS" | "TERMINATED_AT" | "%future added value";
-export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type SessionV2Filter = {
   AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
   NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;
   OR?: ReadonlyArray<SessionV2Filter> | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
@@ -57,6 +58,20 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type SessionV2OrderBy = {
   direction?: OrderDirection;
@@ -504,13 +519,6 @@ return {
                                     "alias": null,
                                     "args": null,
                                     "kind": "ScalarField",
-                                    "name": "namespace",
-                                    "storageKey": null
-                                  },
-                                  {
-                                    "alias": null,
-                                    "args": null,
-                                    "kind": "ScalarField",
                                     "name": "architecture",
                                     "storageKey": null
                                   }
@@ -658,12 +666,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ce21c7ce05a652ddcd879723a7162834",
+    "cacheID": "e894bcd148585ed26646f2638d53ee35",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSessionPageQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectSessionsV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    namespace\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTagV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTagV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSessionPageQuery(\n  $projectId: UUID!\n  $filter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  projectSessionsV2(scope: {projectId: $projectId}, filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        metadata {\n          name\n        }\n        ...BAISessionNodesV2Fragment\n        ...TerminateSessionModalForProjectAdminFragment\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTagV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTagV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n\nfragment TerminateSessionModalForProjectAdminFragment on SessionV2 {\n  id\n  metadata {\n    name\n  }\n  kernels {\n    edges {\n      node {\n        id\n        resource {\n          agentId\n          containerId\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();

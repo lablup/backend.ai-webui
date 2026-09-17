@@ -43,7 +43,7 @@ import {
   UserIcon,
   UsersIcon,
 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -137,6 +137,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
     vfolderNode.accessControl?.permission === 'RW_DELETE'
       ? 'rw'
       : 'ro';
+  // The value the user just picked, shown until the update and the store
+  // refresh land (or the update fails and the server value returns).
+  const [pendingPermission, setPendingPermission] = useState<string | null>(
+    null,
+  );
 
   // Model project folders are read-only by design (FR-1290), matching
   // FolderCreateModalV2. The manager used to enforce `ro` server-side and no
@@ -208,7 +213,8 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           placement="below"
           label={t('data.folders.MountPermission')}
           isLabelHidden
-          value={currentSelectPermission}
+          value={pendingPermission ?? currentSelectPermission}
+          isLoading={pendingPermission !== null}
           options={[
             { value: 'ro', label: t('data.ReadOnly') },
             {
@@ -219,9 +225,14 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           ]}
           onChange={(value) => {
             // Defense-in-depth: never persist 'rw' for a restricted folder.
-            if (shouldDisableRWPermission && value === 'rw') {
+            if (
+              (shouldDisableRWPermission && value === 'rw') ||
+              pendingPermission !== null ||
+              value === currentSelectPermission
+            ) {
               return;
             }
+            setPendingPermission(value);
             updateMutation.mutate(
               { permission: value, id: vfolderId },
               {
@@ -232,9 +243,10 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
                   );
 
                   // Refresh the V2 VFolder record so the UI reflects the new
-                  // `accessControl.permission` value. The refetch is fire-and-
-                  // forget; swallow failures so a background refresh error
-                  // does not surface as an unhandled promise rejection.
+                  // `accessControl.permission` value. Failures are swallowed
+                  // so a background refresh error does not surface as an
+                  // unhandled promise rejection; the pending value is cleared
+                  // either way.
                   void fetchQuery<VFolderNodeDescriptionV2PermissionRefreshQuery>(
                     relayEnv,
                     graphql`
@@ -254,9 +266,11 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
                     },
                   )
                     .toPromise()
-                    .catch(() => {});
+                    .catch(() => {})
+                    .finally(() => setPendingPermission(null));
                 },
                 onError: (error) => {
+                  setPendingPermission(null);
                   message.error(getErrorMessage(error));
                 },
               },

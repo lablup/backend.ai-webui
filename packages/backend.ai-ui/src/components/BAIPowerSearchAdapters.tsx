@@ -28,9 +28,14 @@
  through a ref that is refreshed on each render. The component identity is
  stable; the behaviour is current.
 */
+import './BAIPowerSearchAdapters.css';
+import { PowerSearchFilterEditor } from '@astryxdesign/core/PowerSearch';
 import type {
   CustomOperatorValue,
   EnumItem,
+  OperatorValue,
+  PowerSearchComponentOverride,
+  PowerSearchEditorProps,
 } from '@astryxdesign/core/PowerSearch';
 import type { SearchSource } from '@astryxdesign/core/Typeahead';
 import * as _ from 'lodash-es';
@@ -50,7 +55,12 @@ export type FilterPropertyOption = {
 
 /** The `renderInput` escape hatch shared by both filters (FR-3011 / FR-3258). */
 export type FilterRenderInput = (props: {
+  /** Stages a value; the edit popover's Apply button commits it. */
   onAddCondition: (value: string | undefined, label?: string) => void;
+  /** The staged (or committed) value — feed it back so the pick stays visible. */
+  value: string | null;
+  /** The popover's disabled state. */
+  isDisabled?: boolean;
 }) => ReactNode;
 
 /** Only string-ish labels survive into a token; anything else falls back. */
@@ -123,11 +133,7 @@ type EditorProps = {
 
 /**
  * Builds (and caches) one `custom` operator value per `renderInput` property.
- *
- * PILOT-DECISION: the antd filter committed a condition the instant the
- * control emitted a value. PowerSearch owns the commit (its popover has an
- * Apply button), so the control now stages the value and the user confirms.
- * One extra click; the alternative was reimplementing the popover.
+ * The control stages a value; the popover's Apply button commits it.
  */
 export function useRenderInputEditors({
   recordLabel,
@@ -150,24 +156,32 @@ export function useRenderInputEditors({
     const cached = editorCacheRef.current.get(propertyKey);
     if (cached) return cached;
 
-    const Editor: ComponentType<EditorProps> = ({ onChange }) => {
+    const Editor: ComponentType<EditorProps> = ({
+      onChange,
+      value,
+      isDisabled,
+    }) => {
       const render = latestRenderInputRef.current[propertyKey];
       return (
-        // The consumer's control is very often an antd Select whose dropdown
-        // lives in a body portal. Stop pointer events from bubbling out of the
-        // editor so the popover's dismiss-on-outside-click does not fire while
-        // the user is picking an option.
+        // The consumer's control usually opens its dropdown in a body portal;
+        // stop pointer events here so the popover's dismiss-on-outside-click
+        // does not fire while the user is picking an option.
         <div
           onPointerDown={(event) => event.stopPropagation()}
           onMouseDown={(event) => event.stopPropagation()}
+          // The popover row sizes its value slot from this box's content, so a
+          // long label must not set the slot: claim a fixed share, then fill it.
+          style={{ width: '8rem', minWidth: '100%', maxWidth: '100%' }}
         >
           {render?.({
-            onAddCondition: (value, label) => {
+            value,
+            isDisabled,
+            onAddCondition: (committed, label) => {
               // Truthy guard: an empty label would blank the token.
-              if (value != null && label) {
-                recordLabel(propertyKey, value, label);
+              if (committed != null && label) {
+                recordLabel(propertyKey, committed, label);
               }
-              onChange(value ?? null);
+              onChange(committed ?? null);
             },
           })}
         </div>
@@ -220,3 +234,46 @@ export interface BAIPowerSearchChromeProps {
   className?: string;
   'data-testid'?: string;
 }
+
+/**
+ * Astryx's default editor popover content, wrapped in the class hook
+ * `BAIPowerSearchAdapters.css` styles against.
+ */
+export const BAIPowerSearchEditor = (props: PowerSearchEditorProps) => {
+  'use memo';
+
+  return (
+    <div className="bai-power-search-editor">
+      <PowerSearchFilterEditor {...props} />
+    </div>
+  );
+};
+
+const BAI_EDITOR_OVERRIDE: PowerSearchComponentOverride = {
+  Editor: BAIPowerSearchEditor,
+};
+
+/**
+ * `components` for both filters' PowerSearch. PowerSearch picks the override
+ * by the operator value type the popover opens on, so every type maps to the
+ * same editor; the full `Record` makes a new Astryx type a compile error.
+ */
+export const baiPowerSearchComponents: Record<
+  OperatorValue['type'],
+  PowerSearchComponentOverride
+> = {
+  empty: BAI_EDITOR_OVERRIDE,
+  string: BAI_EDITOR_OVERRIDE,
+  string_list: BAI_EDITOR_OVERRIDE,
+  integer: BAI_EDITOR_OVERRIDE,
+  float: BAI_EDITOR_OVERRIDE,
+  time: BAI_EDITOR_OVERRIDE,
+  date_absolute: BAI_EDITOR_OVERRIDE,
+  date_relative: BAI_EDITOR_OVERRIDE,
+  date_range: BAI_EDITOR_OVERRIDE,
+  enum: BAI_EDITOR_OVERRIDE,
+  enum_list: BAI_EDITOR_OVERRIDE,
+  entity_list: BAI_EDITOR_OVERRIDE,
+  custom: BAI_EDITOR_OVERRIDE,
+  nested: BAI_EDITOR_OVERRIDE,
+};

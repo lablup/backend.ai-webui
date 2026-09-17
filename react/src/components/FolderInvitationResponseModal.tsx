@@ -22,6 +22,11 @@ import { List, ListItem } from '@astryxdesign/core/List';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
 import {
+  borderVars,
+  typeScaleVars,
+} from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
+import {
   BAIMetadataList,
   BAIModal,
   type BAIModalProps,
@@ -31,6 +36,22 @@ import * as _ from 'lodash-es';
 import { FolderIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+const styles = stylex.create({
+  item: {
+    // Astryx ListItem's :last-child divider suppression is a shorthand that
+    // loses to its own longhands in StyleX — re-suppress it here (FR-3893).
+    alignItems: 'flex-start',
+    borderBlockEndWidth: {
+      default: borderVars['--border-width'],
+      ':last-child': 0,
+    },
+  },
+  // Center the 1em icon on the label's first line (Astryx list-marker trick).
+  icon: {
+    marginTop: `calc((1em * ${typeScaleVars['--text-body-leading']} - 1em) / 2)`,
+  },
+});
 
 interface FolderInvitationResponseModalProps extends Omit<
   BAIModalProps,
@@ -62,7 +83,8 @@ const FolderInvitationResponseModal: React.FC<
     <ListItem
       key={item.id}
       label={item.vfolder_name ?? ''}
-      startContent={<FolderIcon size="1em" />}
+      xstyle={styles.item}
+      startContent={<FolderIcon size="1em" {...stylex.props(styles.icon)} />}
       description={
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('data.From')}>

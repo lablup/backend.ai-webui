@@ -12,13 +12,13 @@ import {
   ResourceNumbersOfSession,
   SessionLauncherFormValue,
 } from '../pages/SessionLauncherPage';
-import ImageMetaIcon from './ImageMetaIcon';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIImageMetaIcon,
   BAIQuestionIconWithTooltip,
   BAIModal,
   BAIModalProps,
@@ -247,7 +247,7 @@ const SessionTemplateModal: React.FC<SessionTemplateModalProps> = ({
                   imageStr && (
                     <Tooltip content={imageStr} placement="end">
                       <BAIFlex gap={'xxs'}>
-                        <ImageMetaIcon image={imageStr} />
+                        <BAIImageMetaIcon image={imageStr} />
                         <Text>
                           {getImageAliasName(imageStr)}{' '}
                           {getBaseVersion(imageStr)}

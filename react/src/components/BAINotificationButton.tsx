@@ -4,6 +4,7 @@
  */
 import { useBAINotificationState } from '../hooks/useBAINotification';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
+import { useNotificationDrawerState } from '../hooks/useShellPanels';
 import { useThemeMode } from '../hooks/useThemeMode';
 import './BAINotificationButton.css';
 import WEBUINotificationDrawer from './WEBUINotificationDrawer';
@@ -12,12 +13,9 @@ import { Kbd } from '@astryxdesign/core/Kbd';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIBadgeCount } from 'backend.ai-ui';
 import { t } from 'i18next';
-import { atom, useAtom } from 'jotai';
 import * as _ from 'lodash-es';
 import { Bell } from 'lucide-react';
 import React from 'react';
-
-export const isOpenDrawerState = atom(false);
 
 // Pure UI: badge + drawer toggle. Notification event handling and toast
 // rendering live in the app-wide <NotificationHost /> (DefaultProviders),
@@ -38,7 +36,7 @@ const BAINotificationButton: React.FC<BAINotificationButtonProps> = ({
   const [notifications] = useBAINotificationState();
   const { isDarkMode } = useThemeMode();
 
-  const [isOpenDrawer, setIsOpenDrawer] = useAtom(isOpenDrawerState);
+  const [isOpenDrawer, setIsOpenDrawer] = useNotificationDrawerState();
 
   useKeyboardShortcut(
     (event) => {

@@ -7,8 +7,11 @@ import {
   ResourceGroupOrderBy,
 } from '../../__generated__/ResourceGroupFairShareStepQuery.graphql';
 import { convertToOrderBy } from '../../helper';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../../hooks/reactPaginationQueryOptions';
-import FairShareStepToolbar from './FairShareStepToolbar';
+import FairShareStepToolbar, {
+  flattenUnsupportedSubFilter,
+} from './FairShareStepToolbar';
 import ResourceGroupFairShareTable, {
   availableResourceGroupSorterValues,
   resourceGroupOrderFieldMap,
@@ -33,6 +36,14 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
 
   const { t } = useTranslation();
 
+  // Two conditions serialize as `{ AND: [...] }`, which needs `sub-filter`
+  // (26.7+); this step is reachable from 26.2. Below 26.7 expose only the
+  // property that shipped before FR-3920, capped at one condition.
+  // TODO(FR-3920): once #9638's `maxConditions` lands, show them with
+  // `maxConditions={1}` instead of hiding them.
+  const supportsSubFilter =
+    useSuspendedBackendaiClient().supports('sub-filter');
+
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -52,14 +63,20 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
     },
   );
 
+  // A URL written before this gate (or on a newer manager) can still carry
+  // an AND/OR/NOT combinator the filter control can no longer produce here.
+  const effectiveFilter = supportsSubFilter
+    ? queryParams.filter
+    : flattenUnsupportedSubFilter(queryParams.filter);
+
   const queryVariables = {
     filter: {
-      ...(queryParams.filter || {}),
+      ...(effectiveFilter || {}),
     },
     order: convertToOrderBy<ResourceGroupOrderBy>(
       queryParams.order,
       resourceGroupOrderFieldMap,
-    ) || [{ field: 'NAME', direction: 'DESC' }],
+    ) || [{ field: 'NAME', direction: 'ASC' }],
     limit: baiPaginationOption.limit,
     offset: baiPaginationOption.offset,
   };
@@ -103,14 +120,34 @@ const ResourceGroupFairShareStep: React.FC<ResourceGroupFairShareStepProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="xs">
       <FairShareStepToolbar
+        singleCondition={!supportsSubFilter}
         filterProperties={[
           {
             key: 'name',
             propertyLabel: t('fairShare.Name'),
             type: 'string',
           },
+          ...(supportsSubFilter
+            ? ([
+                {
+                  key: 'description',
+                  propertyLabel: t('resourceGroup.Description'),
+                  type: 'string',
+                },
+                {
+                  key: 'isActive',
+                  propertyLabel: t('resourceGroup.ActiveStatus'),
+                  type: 'boolean',
+                },
+                {
+                  key: 'isPublic',
+                  propertyLabel: t('resourceGroup.PublicStatus'),
+                  type: 'boolean',
+                },
+              ] as const)
+            : []),
         ]}
-        filterValue={queryParams.filter || {}}
+        filterValue={effectiveFilter || {}}
         onChangeFilter={(filter) => {
           setQueryParams({
             filter: filter || null,

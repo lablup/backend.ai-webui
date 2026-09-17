@@ -19,6 +19,13 @@
     overflow: visible;
   }
 
+  /* MobileNav's `::backdrop` blurs the page behind it. Every other overlay
+     (`BAIDialog`, `BAIDrawerPortal`) dims without blurring (FR-3585), so the
+     nav drawer keeps only the tint. */
+  .bai-app-shell-drawer::backdrop {
+    backdrop-filter: none;
+  }
+
   /* The drawer's header row is painted as the SAME theme brand band the rail's
      logo band has (`--color-accent`), so mobile and desktop follow one theme
      decision. MobileNav exposes no stable class for its header row, so the

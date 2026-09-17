@@ -83,6 +83,9 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"
   },
+  "comp:BAIBadgeList": {
+    "AndMore": "ja {{rest}} muuta"
+  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
@@ -355,18 +358,22 @@
     "UpdateProject": "Päivitä projekti"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktiivinen",
     "ContainerRegistry": "Säiliörekisteri",
     "ContainerRegistryProject": "Säiliörekisteriprojekti",
     "CreatedAt": "Luotu",
     "Description": "Kuvaus",
     "Domain": "Toimialue",
+    "Inactive": "Passiivinen",
     "IntegrationID": "Integraation tunnus",
+    "ModifiedAt": "Muokattu",
     "Name": "Nimi",
     "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
     "Registry": "Rekisteri",
     "ResourcePolicy": "Resurssipolitiikka",
     "ScalingGroups": "Resurssiryhmät",
+    "Status": "Tila",
     "StorageNodes": "Tallennussolmut",
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"
@@ -645,6 +652,7 @@
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
     "EditFile": "Muokkaa tiedostoa",
+    "ExistingItem": "Nykyinen",
     "FileCreatedSuccessfully": "Tiedosto luotiin onnistuneesti.",
     "FileName": "Tiedoston nimi",
     "FileNamePlaceholder": "esim. model-definition.yaml",
@@ -657,11 +665,13 @@
     "ModifiedAt": "Muutettu",
     "Name": "Nimi",
     "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
+    "OtherItemsWillBeUploaded": "Myös {{count}} muuta kohdetta ladataan.",
     "Path": "Polku",
     "PleaseEnterAFileName": "Anna tiedoston nimi.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
     "RenameFile": "Nimeä uudelleen",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
+    "SelectItemsToOverwrite": "Nämä kohteet ovat jo täällä. Valitse korvattavat kohteet; valitsemattomat ohitetaan.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
     "TypeDeleteToConfirm": "Kirjoita 'Poistaa' vahvistaaksesi.",
@@ -669,6 +679,7 @@
     "UnsupportedFileFormat": "Tämä tiedostomuoto ei tue muokkaamista.",
     "UploadFiles": "Lähetä tiedostot",
     "UploadFolder": "Lataa kansio",
+    "UploadingItem": "Ladattava",
     "error": {
       "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi.",
       "FileNameRequired": "Anna tiedoston tai kansionimi."

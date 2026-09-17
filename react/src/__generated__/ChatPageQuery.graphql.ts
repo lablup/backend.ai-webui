@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<63dd841df9adad8ca11bfb960098eef6>>
+ * @generated SignedSource<<6cd9d1d56165d0521ed8e672fa6d7525>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type DeploymentFilter = {
   destroyedAt?: NullableDateTimeFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   endpointUrl?: StringFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   openToPublic?: boolean | null | undefined;
   projectId?: UUIDFilter | null | undefined;
@@ -107,6 +108,20 @@ export type TrafficStatusFilter = {
   in?: ReadonlyArray<TrafficStatus> | null | undefined;
   notEquals?: TrafficStatus | null | undefined;
   notIn?: ReadonlyArray<TrafficStatus> | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type ChatPageQuery$variables = {
   filter?: DeploymentFilter | null | undefined;

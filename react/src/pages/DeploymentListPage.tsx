@@ -19,6 +19,7 @@ import { convertToOrderBy } from '../helper';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { toProjectContext } from '../types/projectContext';
@@ -491,6 +492,7 @@ const DeploymentListPage: React.FC = () => {
   // flag has to be owned here, above the Suspense boundary.
   const [isCreating, { setLeft: closeCreate, setRight: openCreate }] =
     useToggle(false);
+  useCreateActionArrival(openCreate);
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
       <BAICard

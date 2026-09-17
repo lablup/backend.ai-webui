@@ -2375,6 +2375,11 @@ function safeJsonForScript(value: unknown): string {
     .replace(/\u2029/g, "\\u2029");
 }
 
+/** Escape every RegExp metacharacter so a literal string matches itself. */
+function escapeRegExp(literal: string): string {
+  return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 export function buildRootRedirectIndexPage(
   opts: RootRedirectIndexPageOptions,
 ): string {
@@ -2445,10 +2450,11 @@ export function buildRootRedirectIndexPage(
     .join("\n");
   // Loop-safety guard regex source (see comment inside the script).
   // For a mounted page the accepted pathnames are `/<basePath>`,
-  // `/<basePath>/`, and `/<basePath>/index.html`; only `.` in the
-  // validated basePath charset is regex-significant, so escape it.
+  // `/<basePath>/`, and `/<basePath>/index.html`. The charset guard above
+  // already rules out every metacharacter except `.`, but escape the whole
+  // class so the escaping is complete on its own terms.
   const guardSource = basePath
-    ? `^\\/${basePath.replace(/\./g, "\\.")}\\/?(?:index\\.html)?$`
+    ? `^\\/${escapeRegExp(basePath)}\\/?(?:index\\.html)?$`
     : `^\\/?(?:index\\.html)?$`;
 
   // The script is intentionally tiny and CSP-friendly. No fetch, no CDN,

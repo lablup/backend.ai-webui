@@ -4,10 +4,12 @@ import * as _ from 'lodash-es';
 
 /**
  * Status values of an audit log entry, mirroring the backend `AuditLogStatus`
- * enum (`SUCCESS | ERROR | UNKNOWN | RUNNING`). Defined as a hand-written union
- * so the badge stays a presentational component with no Relay dependency.
+ * enum (`SUCCESS | ERROR | UNKNOWN | RUNNING | DENIED`). Defined as a
+ * hand-written union so the badge stays a presentational component with no
+ * Relay dependency.
  */
-export type AuditLogStatus = 'SUCCESS' | 'ERROR' | 'UNKNOWN' | 'RUNNING';
+export type AuditLogStatus =
+  'SUCCESS' | 'ERROR' | 'UNKNOWN' | 'RUNNING' | 'DENIED';
 
 export interface BAIAuditLogStatusTagProps extends Omit<
   BAIBadgeProps,
@@ -20,6 +22,8 @@ const statusSemanticMap: Record<AuditLogStatus, SemanticColor | undefined> = {
   SUCCESS: 'success',
   ERROR: 'error',
   RUNNING: 'info',
+  // Denied by policy — deliberate rejection, not a system error.
+  DENIED: 'warning',
   // Unknown / indeterminate — render an outline-only dot (color undefined).
   UNKNOWN: undefined,
 } as const;
@@ -28,7 +32,7 @@ const statusSemanticMap: Record<AuditLogStatus, SemanticColor | undefined> = {
  * BAIAuditLogStatusTag - Semantic color-coded status badge for audit log
  * entries. Wraps {@link BAIBadge}, mapping each `AuditLogStatus` to a semantic
  * color (`SUCCESS` → success, `ERROR` → error, `RUNNING` → info + processing
- * ripple, `UNKNOWN` → outline dot). Presentational only, no Relay dependency.
+ * ripple, `DENIED` → warning, `UNKNOWN` → outline dot). Presentational only, no Relay dependency.
  */
 const BAIAuditLogStatusTag = ({
   status,

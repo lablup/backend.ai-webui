@@ -4,6 +4,12 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { action } from 'storybook/actions';
 
+const sampleStorageHostOptions = [
+  { label: 'local:volume1', value: 'local:volume1' },
+  { label: 'local:volume2', value: 'local:volume2' },
+  { label: 'nfs:data', value: 'nfs:data' },
+];
+
 const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
   title: 'Filter/BAIGraphQLPropertyFilter',
   component: BAIGraphQLPropertyFilter,
@@ -24,7 +30,7 @@ const meta: Meta<typeof BAIGraphQLPropertyFilter> = {
 New in this version:
 - **DateTime support**: When a property has type 'datetime', a DatePicker with time selection is rendered instead of a text input. Values are serialized as ISO strings and displayed in filter tags as 'YYYY-MM-DD HH:mm'.
 - **UUID support**: UUID type properties use \`equals\`, \`notEquals\`, \`in\`, \`notIn\` operators and support validation rules.
-- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select). The control commits a condition via \`onAddCondition(value, label?)\` as soon as a value is selected (so a single-select picker confirms on selection); pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the condition tag shows the label instead. Give the control \`value={null}\` so it stays controlled and clears after each commit. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
+- **Custom input via \`renderInput\`**: Replace the default AutoComplete input with any controlled control (e.g., a user/domain picker or async select). The control stages a value via \`onAddCondition(value, label?)\` and the edit popover's Apply button commits it; feed the render prop's \`value\` back into the control so the staged pick stays visible (and when an existing token is reopened for editing). Pass a human-readable \`label\` when the committed value is opaque (e.g. a UUID) so the token shows the label instead. Keep using a built-in \`type\` (e.g. \`uuid\`) that matches what the control emits.
 - Operatorless fields via valueMode: 'scalar' for properties that should emit direct scalar values (e.g., { isUrgent: true }). Use implicitOperator (defaults to 'equals') to control how tags are displayed in the UI.
 
 The component generates GraphQL-compatible filter objects that can be directly used in GraphQL queries, enabling powerful and flexible data filtering across the platform.
@@ -92,14 +98,15 @@ FilterProperty = {
   // Visual operator for UI tags when valueMode='scalar' (default 'equals')
   implicitOperator?: FilterOperator;
   // Custom input renderer — replaces the default AutoComplete with a controlled
-  // control (e.g. BAIUserSelect). \`onAddCondition(value, label?)\` commits the
-  // value as a condition immediately (single-select pickers confirm on
-  // selection) and serializes it per the property's \`type\`. Pass a
-  // human-readable \`label\` when the value is opaque (e.g. a UUID) so the
-  // condition tag stays readable. Give the control \`value={null}\` so it
-  // stays controlled and clears after each commit.
+  // control (e.g. BAIUserSelect). \`onAddCondition(value, label?)\` stages the
+  // value and the edit popover's Apply button commits it, serialized per the
+  // property's \`type\`. Pass a human-readable \`label\` when the value is opaque
+  // (e.g. a UUID) so the token stays readable, and feed \`value\` back into the
+  // control so the staged pick stays visible.
   renderInput?: (props: {
     onAddCondition: (value: string | undefined, label?: string) => void;
+    value: string | null;
+    isDisabled?: boolean;
   }) => ReactNode;
 }
         `,
@@ -873,7 +880,7 @@ export const WithRenderInput: Story = {
     docs: {
       description: {
         story:
-          'When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control commits a condition via `onAddCondition(value, label?)` as soon as it emits a non-empty value; keep it controlled with `value={null}` so it clears after each commit. Useful for async selects (e.g., fetching options from an API).',
+          "When `renderInput` is provided, the default AutoComplete is replaced with a custom control. The control stages a value via `onAddCondition(value, label?)` and the edit popover's Apply button commits it; feed the render prop's `value` back into the control so the staged pick stays visible. Useful for async selects (e.g., fetching options from an API).",
       },
     },
   },
@@ -890,19 +897,19 @@ export const WithRenderInput: Story = {
         propertyLabel: 'Storage Host',
         type: 'string',
         defaultOperator: 'equals',
-        renderInput: ({ onAddCondition }) => (
+        renderInput: ({ onAddCondition, value, isDisabled }) => (
           <BAIComplexSelect
             label="Storage Host"
             isLabelHidden
             placeholder="Select storage host"
-            width={180}
             hasSearch={false}
-            options={[
-              { label: 'local:volume1', value: 'local:volume1' },
-              { label: 'local:volume2', value: 'local:volume2' },
-              { label: 'nfs:data', value: 'nfs:data' },
-            ]}
-            value={null}
+            options={sampleStorageHostOptions}
+            isDisabled={isDisabled}
+            value={
+              sampleStorageHostOptions.find(
+                (option) => option.value === value,
+              ) ?? null
+            }
             onChange={(next) => {
               const labeled = next as BAILabeledValue | null;
               onAddCondition(labeled?.value);
@@ -969,7 +976,7 @@ export const WithCustomType: Story = {
     docs: {
       description: {
         story:
-          "A property whose input is a controlled antd Select supplied via `renderInput`. Selecting an option calls `onAddCondition(value, label)` — the filter commits the value as a condition serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`, while the condition tag shows the label (email) instead of the opaque UUID.",
+          "A property whose input is a controlled `BAIComplexSelect` supplied via `renderInput`. Selecting an option calls `onAddCondition(value, label)`, which stages the value; the edit popover's Apply button commits it, serialized per `type: 'uuid'` → `{ owner: { id: { equals: <id> } } }`, while the token shows the label (email) instead of the opaque UUID. The render prop's `value` is fed back into the select so the staged pick stays visible.",
       },
     },
   },
@@ -980,14 +987,17 @@ export const WithCustomType: Story = {
         propertyLabel: 'Owner',
         type: 'uuid',
         fixedOperator: 'equals',
-        renderInput: ({ onAddCondition }) => (
+        renderInput: ({ onAddCondition, value, isDisabled }) => (
           <BAIComplexSelect
             label="Owner"
             isLabelHidden
             placeholder="Select owner"
-            width={220}
             options={sampleOwnerOptions}
-            value={null}
+            isDisabled={isDisabled}
+            value={
+              sampleOwnerOptions.find((option) => option.value === value) ??
+              null
+            }
             onChange={(next) => {
               const labeled = next as BAILabeledValue | null;
               onAddCondition(labeled?.value, labeled?.label);

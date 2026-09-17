@@ -4,6 +4,9 @@ BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev 
 BUILD_NUMBER := $(shell git rev-list --count HEAD)
 REVISION_INDEX := $(shell git --no-pager log --pretty=format:%h -n 1)
 site := $(or $(site),main)
+# Targets list their steps as ordered prerequisites (dep -> package_zip -> package_deb).
+.NOTPARALLEL:
+DEB_TOOLS := $(shell command -v dpkg-deb >/dev/null 2>&1 && echo yes)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
@@ -98,6 +101,13 @@ dep_web:
 # Prepare the Electron app directory. Requires dep_web to have run first.
 # Uses publicPath patching instead of a full second React build (~4-8 min savings).
 #
+# The `cp -r electron-app/*` below also carries `electron-app/pnpm-workspace.yaml`.
+# That marker is load-bearing: it makes the staged directory its own pnpm
+# workspace root. Without it, `--ignore-workspace` is not enough on pnpm >= 12 —
+# the hoisted node linker walks up to the repo's workspace root and installs the
+# Electron dependencies into the REPO ROOT `node_modules/`, leaving
+# `build/electron-app/node_modules/` empty and shipping an app.asar with no deps.
+#
 # Idempotent: skips when `build/electron-app/app/index.html` already carries
 # the patched `es6://assets/` marker. This mirrors the original
 # Makefile's skip semantics so downstream targets that re-declare `dep` as a
@@ -176,6 +186,7 @@ compile_localproxy:
 package_zip:
 	@printf "$(GREEN)Packaging as ZIP archive...$(NC)"
 	@cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	@node -e 'const fs=require("fs"),f="./build/electron-app/package.json",p=JSON.parse(fs.readFileSync(f));p.version=process.argv[1];fs.writeFileSync(f,JSON.stringify(p,null,2)+"\n")' $(BUILD_VERSION)
 	@node ./app-packager.js $(os) $(arch)
 	@cd app; zip -r -6 ./backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip "./Backend.AI Desktop-$(os_api)-$(arch)"
 ifeq ($(site),main)
@@ -184,6 +195,25 @@ else
 	@mv ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_VERSION)-$(site).zip
 endif
 	@printf "$(YELLOW)Finished$(NC)\n"
+# Debian package from the packager output `package_zip` leaves behind; skipped
+# without dpkg-deb, fatal when DEB_REQUIRED=1 (see README). LICENSE becomes the copyright file.
+package_deb:
+ifeq ($(DEB_TOOLS),yes)
+	@printf "$(GREEN)Packaging as Debian package...$(NC)"
+	@rm -f ./app/backend.ai-desktop_*_$(deb_arch).deb
+	@cat ./LICENSE ./node_modules/electron/LICENSE > "./app/Backend.AI Desktop-$(os_api)-$(arch)/LICENSE"
+	@npx --yes electron-installer-debian@4.0.0 --src "./app/Backend.AI Desktop-$(os_api)-$(arch)" --dest ./app --arch $(deb_arch) --config ./deb-installer.json
+ifeq ($(site),main)
+	@mv ./app/backend.ai-desktop_*_$(deb_arch).deb ./app/backend.ai-desktop-$(BUILD_VERSION)-$(os)-$(arch).deb
+else
+	@mv ./app/backend.ai-desktop_*_$(deb_arch).deb ./app/backend.ai-desktop-$(os)-$(arch)-$(BUILD_VERSION)-$(site).deb
+endif
+	@printf "$(YELLOW)Finished$(NC)\n"
+else ifeq ($(DEB_REQUIRED),1)
+	$(error dpkg-deb not found and DEB_REQUIRED=1)
+else
+	@printf "$(YELLOW)dpkg-deb not found, skipping Debian package$(NC)\n"
+endif
 package_dmg:
 	@printf "$(GREEN)Packaging as DMG file...$(NC)"
 	@cp ./configs/$(site).toml ./build/electron-app/app/config.toml
@@ -241,13 +271,15 @@ linux_x64: os := linux
 linux_x64: os_api := linux
 linux_x64: arch := x64
 linux_x64: local_proxy_postfix :=
-linux_x64: dep compile_localproxy package_zip
+linux_x64: deb_arch := amd64
+linux_x64: dep compile_localproxy package_zip package_deb
 	@printf "$(GREEN)Build finished$(NC): Linux x64\n"
 linux_arm64: os := linux
 linux_arm64: os_api := linux
 linux_arm64: arch := arm64
 linux_arm64: local_proxy_postfix :=
-linux_arm64: dep compile_localproxy package_zip
+linux_arm64: deb_arch := arm64
+linux_arm64: dep compile_localproxy package_zip package_deb
 	@printf "$(GREEN)Build finished$(NC): Linux arm64\n"
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .

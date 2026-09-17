@@ -146,7 +146,8 @@ Top-level fields:
 | `undeclared[]` | flags used but never declared, i.e. permanently `false` |
 | `risks.noE2E[]` | `{pr, fr, subject, ui[]}` — UI changed, no e2e changed |
 | `risks.destructive[]` | `{pr, fr, subject, destructive[]}` — irreversible-flow files |
-| `risks.noDocs[]` | `{pr, fr, subject}` — user-visible `feat:` with no manual change |
+| `risks.noDocs[]` | `{pr, fr, subject}` — `feat:` that changed a page or component (`react/src/pages|components`, `Dev*` files excluded) with no manual change |
+| `risks.noDocsSkipped[]` | `{pr, fr, subject, reason}` — `feat:` with UI files the script set aside (`dev-tooling`, `library-only`, `no-page-surface`). Debugging only — answers "why was #N not flagged?"; the digest never counts or lists them, they already appear under 새 기능 |
 | `i18n[]` | `{file, addedCount, missing[], placeholder[]}` per locale file |
 
 ### 3. Render the HTML
@@ -170,6 +171,13 @@ file-level caution.
 **5** items and append `외 N건` when there are more. For R3, do not list 40 locale
 files — collapse to the shape (`대부분의 언어에서 placeholder N개 / 누락 M개`) and
 name only the outliers.
+
+**`외 N건` is a size fold, nothing else.** It means "N more of the same kind that
+did not fit", so the reader can ask for them and get a list of equals. An item
+you drop for a *reason* — not manual material, not user-facing, a false positive
+— is never folded into it: either leave it out entirely (the script already
+does this for R5) or name it with its reason. The rc.4 thread had to ask what
+"외 4건" were because a triage was hiding inside a fold.
 
 **HTML safety**: escape `&`, `<`, `>`, `"`, `'` in every string taken from the JSON
 (PR subjects, file paths, flag names) before inserting it. Emit only `<b>`, `<i>`,
@@ -216,6 +224,7 @@ Template:
 
 <b>📖 매뉴얼 미반영</b> — {n}건<br/>
 <ul><li><a href="{prUrl}">#{pr}</a> {subject}</li></ul>
+{외 N건}
 <hr/>
 <i>🤖 scripts/release-risk-report.mjs · 결함 목록이 아니라 QA 확인 항목입니다</i>
 ```
@@ -235,6 +244,11 @@ How each special section is written:
   field; a correctly annotated usage is not news. When `gating.gaps` is empty,
   keep the section as the single line `⚙️ 버전 게이팅 누락 — 없음 ✅`: for a
   go/no-go reader, "checked and clean" and "not checked" must not look the same.
+- **매뉴얼 미반영 (R5)**: `risks.noDocs[]` is the list and the heading count is
+  its length. Feats the script set aside (`risks.noDocsSkipped[]`: dev tooling,
+  library-only, no page surface) are not counted and not mentioned — they are
+  already in 새 기능 and the commit list. If one of them does deserve a manual
+  entry, fix `isManualFacing` in the script rather than editing the digest.
 
 Drop any other section whose count is 0 rather than printing an empty heading.
 If every section is empty, post a single line saying the range has no risk
@@ -306,8 +320,15 @@ every step below is described, not executed. Steps, in order:
    never doubled:
 
    ```bash
-   $FW_JIRA search "project = FR AND summary ~ \"Final Train\" AND summary ~ \"$VERSION\"" --limit 5
+   $FW_JIRA search "project = FR AND summary ~ \"Final Train\" ORDER BY created DESC" --limit 10 \
+     | grep -iF "$VERSION"
    ```
+
+   List the recent trains and match the version string yourself. Do NOT put
+   the version into the JQL: `summary ~ "26.9.0"` is a tokenized text search
+   and returned nothing for FR-3663 "Final Train to v26.9.0" on 2026-09-09 —
+   a `--train` run that trusted it would have created a second Story. The
+   grep also catches the `vWebUI 26.9.0` and bare `26.9.0` spellings alike.
 
    On a hit, skip creation, use the existing key, and say so in the reply.
 

@@ -981,9 +981,11 @@ export class Client {
       // managers keep using the deprecated `startCommand` token list and never
       // receive `shell`.
       this._features['model-service-command-string'] = true;
-      // `PREEMPTED` / `RESCHEDULING` join the `SessionV2Status` enum (BA-6749,
-      // lablup/backend.ai#13126, FR-3673). Enum coercion rejects the whole
-      // query on an older manager, so status filters must omit them.
+      // `PREEMPTED` / `RESCHEDULING` (BA-6749, lablup/backend.ai#13126,
+      // FR-3673) and `RESERVED` (lablup/backend.ai#13235 / #13260) all join
+      // the v2 session/kernel status enums in the 26.8.0 release. Enum
+      // coercion rejects the whole query on an older manager, so status
+      // filters must omit them.
       this._features['session-preemption-statuses'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
@@ -1007,6 +1009,12 @@ export class Client {
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.
       this._features['runtime-variant-preset-ui-metadata'] = true;
+    }
+    // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
+    // requested id (`items` / `successes` plus `failed`) instead of a bare
+    // count, and the counts became `@deprecated`. FR-3820.
+    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      this._features['bulk-mutation-per-id-results'] = true;
     }
   }
 

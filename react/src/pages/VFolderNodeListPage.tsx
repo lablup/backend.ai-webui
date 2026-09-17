@@ -18,6 +18,7 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
@@ -87,6 +88,8 @@ const VFOLDER_STATUSES = [
 
 interface VFolderNodeListPageProps {}
 
+const DEFAULT_ORDER = '-created_at';
+
 const FILTER_BY_STATUS_CATEGORY = {
   active:
     'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
@@ -122,7 +125,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     setSelectedFolderList([]);
   }
 
-  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [
+    isOpenCreateModal,
+    { toggle: toggleCreateModal, setRight: openCreateModal },
+  ] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
 
@@ -137,7 +143,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsString.withDefault('-created_at'),
+      order: parseAsString,
       filter: parseAsString,
       statusCategory: parseAsString.withDefault('active'),
       mode: parseAsString.withDefault('all'),
@@ -186,7 +192,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       queryParams.filter,
       usageModeFilter,
     ]),
-    order: queryParams.order,
+    order: queryParams.order || DEFAULT_ORDER,
     permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
@@ -203,6 +209,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   useEffect(() => {
     refetchOnInvitationChange();
   }, [invitations.length]);
+
+  useCreateActionArrival(openCreateModal);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(

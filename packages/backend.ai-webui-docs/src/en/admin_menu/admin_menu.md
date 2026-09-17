@@ -301,6 +301,9 @@ options:
 ![](../images/purge_users_modal.png)
 <!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
+If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
+user's email together with the error message, while the remaining users are purged normally.
+
 :::danger
 Purging a user is **irreversible**. The user's virtual folders, kernel history,
 and related keypairs are also deleted. Make sure you have selected the correct
@@ -411,13 +414,13 @@ Depending on the system settings, project folders may not be allowed.
 :::
 
 First, log in with an admin account and create a project folder. After moving to
-the Data page, click `Create Folder` to open the folder creation dialog.
-Enter the folder name, set the Type to Project. When the type is set to Project,
-it will be automatically assigned to the project selected in the project selector in the header.
-Permission is set to Read-Only.
+the admin Data page, click `Create Folder` to open the folder creation dialog.
+Because the admin Data page can create only project folders, the dialog does not show a folder type
+selector.
+In the **Target Project** field at the top of the dialog, choose the project that will own the
+folder, then enter the folder name and set **Mount Permission**.
 
 ![](../images/group_folder_creation.png)
-<!-- TODO: Re-capture group_folder_creation.png — shows the old UI. -->
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
@@ -442,7 +445,7 @@ Administrators and superadmins can access the Admin Deployments page at `/admin/
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Displays the deployment list across all projects, with the same lifecycle and property filters as the user-facing Deployments page.
+- **Deployments**: Displays the deployment list across all projects and provides the same lifecycle and property filters as the user-facing Deployments page. This cross-project view additionally offers a **Project** filter property.
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
@@ -495,7 +498,7 @@ You can narrow the list using the property filter bar at the top, which supports
 
 - **Name**: Filter by the model card's name (string match).
 - **Domain**: Filter by the owning domain (string match).
-- **Project**: Filter by the owning project's UUID. The value is checked before the filter is applied, so a malformed identifier is rejected with a message instead of returning an empty list.
+- **Project**: Filter by the owning project. Instead of typing a project identifier, you can pick from a searchable dropdown of the Model Store projects.
 - **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
 Edit and delete action icons are shown directly in the **Name** cell of each row.
@@ -574,7 +577,7 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 - **Options**: The optional **Filter Labels** and **Group Labels** that consumers can apply on top of the preset.
 - **Created At** / **Updated At**: Timestamps maintained automatically by the server.
 
-You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
+You can search and narrow the list with the property filter above the table, and click any column header to change the sort order. The **Category** property can be selected from the categories defined on this cluster instead of typing a category ID.
 
 <a id="prometheus-preset-column-settings"></a>
 
@@ -991,6 +994,11 @@ which the session will be created once sufficient resources become available.
 
 ![](../images/scheduler_page.png)
 
+Use the **Resource Group** selector above the list to choose which group's pending queue is shown. It
+is searchable and lists every active resource group in the cluster, sorted by name. Your choice is kept in the page URL as a `resourceGroup` query
+parameter, so you can bookmark or share the tab and come back to the same group; if the URL names a
+group that no longer exists or is no longer active, the first active resource group is shown instead.
+
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
@@ -1006,12 +1014,13 @@ The **Priority** column and the priority editing actions are shown only when the
 version 26.4.0 or later.
 :::
 
-On the **Sessions** tab, the property filter offers the following conditions:
+On the **Sessions** tab, you can use the property filter to narrow the list — by **Session ID** when
+needed, by the session's owner (email or full name), by its project or domain, and by session
+attributes such as result, cluster mode, priority, and creation or termination time.
 
-- **Project**: Choose the project from a searchable dropdown of the projects on this cluster. Because the
-  project is picked from the list, you do not have to look up its identifier; the resulting filter tag
-  shows the project's name.
-- **Session Name**, **Resource Group**, **Agent**, **Owner Email**: Narrow the list by text match.
+Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
+list first and export only the sessions you need. Filter conditions the export does not support are
+ignored, so the exported file may contain more sessions than the table shows, never fewer.
 
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
@@ -1082,6 +1091,10 @@ you edit a weight rather than only in the table.
 
 At each step, the following common features are available:
 
+- **Filter**: A property filter above the table narrows the rows. The Resource Group step filters by
+  **Name**, **Description**, **Active status**, and **Public Status**; the Domain and Project steps
+  filter by **Name** and **Active status**. On managers that do not support combined filter
+  conditions, only **Name** is offered and one condition can be applied at a time.
 - **Pagination**: Navigate through results with configurable page size.
 
 ### Resource group
@@ -1100,6 +1113,8 @@ The table includes the following columns:
 - **Decay Unit**: The period (in days) for aggregating usage.
 - **Half Life**: The period (in days) over which the usage reflection rate decreases by half.
 - **Lookback**: The range (in days) of usage history reflected in calculations.
+- **Status**: Whether the resource group is **Active** or **Inactive**.
+- **Created At**: The creation timestamp.
 
 ### Resource group fair share settings
 
@@ -1135,6 +1150,7 @@ The table includes the following columns:
 - **Weight**: The current weight value. Displays "default" if using the default weight.
 - **Fair Share Factor**: The scheduling priority calculated by the scheduler. Higher values indicate higher priority.
 - **Resource Allocation**: Average daily decayed resource usage per resource type (CPU, Memory, GPU / Day).
+- **Status**: Whether the domain is **Active** or **Inactive**.
 - **Modified At**: The last modification timestamp.
 - **Created At**: The creation timestamp.
 
@@ -1150,6 +1166,7 @@ After selecting a domain, the Project step displays a table of projects with the
 column structure as the Domain step. Click a project name to drill into the User step.
 
 ![](../images/fair_share_project_page.png)
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
@@ -1438,9 +1455,18 @@ node. The drawer has two tabs: **Resources**, which breaks the usage down per re
 **Sessions**, which lists the compute sessions assigned to this agent so you can see what is running on
 the node before stopping or restarting it. On the **Sessions** tab, use the **Running** / **Finished**
 selector to switch between sessions that still occupy the node's resources and sessions that have
-already finished, and click a session name to open its detail view on the Admin Session page.
+already finished, and click a session name to show that session's details.
 
 ![](../images/detailed_agent_node_usage_information.png)
+
+When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
+[Experimental features](#experimental-features) section), the **Sessions** tab also shows a **View
+mode** control next to the refresh button that switches between **Table** and **Grid**. The grid
+replaces the session table with one cell per session on this agent, colored by that session's live
+resource utilization, and follows the current **Running** / **Finished** selection. For a description
+of the grid's own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
+
+![](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 
@@ -1495,6 +1521,13 @@ location and restart the agent daemon. Management of the resource groups is
 possible in Resource Group tab of the Resource page.
 
 ![](../images/resource_group_page.png)
+
+The **Active** and **Inactive** buttons above the list choose which resource groups are listed, and the
+property filter next to them narrows the list by **Name**, **Description**, **Public**, or **Default**.
+On managers that do not support combined filter conditions, only one condition can be applied at a time.
+
+The **Default** column marks the default resource group. At most one resource group carries the marker,
+and an agent that registers without a resolvable resource group name falls back to it.
 
 <a id="scheduling-methods"></a>
 
@@ -1884,6 +1917,17 @@ This page is only for showing current information.
 
 Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
+
+![](../images/projects_page.png)
+
+The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
+filter next to them narrows the list by **Name**, **Domain**, **Resource Policy**, **Project ID**,
+**Created At**, or **Modified At**. **Project ID** must be a full UUID, and **Created At** and
+**Modified At** take a date and time.
+
+The **Modified At** and **Status** columns are hidden by default and can be shown using the
+column-settings gear button (⚙) below the table, next to the pagination controls. **Status** shows whether a project is
+**Active** or **Inactive**. Your column choices are persisted per browser across sessions.
 
 <a id="set-project-admin"></a>
 

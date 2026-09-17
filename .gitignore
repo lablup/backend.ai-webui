@@ -182,3 +182,6 @@ e2e/recordings/
 # directory briefly lived here; its durable records moved to
 # .specs/FR-3482-astryx-migration/ in FR-3488).
 .scratch/
+
+# smoke run reports (e2e/playwright.smoke.config.ts)
+e2e/smoke-report/

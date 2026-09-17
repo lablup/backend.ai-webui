@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f0b8b5c6b602f081b41aa2aac962406f>>
+ * @generated SignedSource<<826d2705b32122edb0fe40bcba2c9cfb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "%future added value";
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type ProjectV2Filter = {
   AND?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;

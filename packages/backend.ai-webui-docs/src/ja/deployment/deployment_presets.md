@@ -172,7 +172,7 @@
 ![](../images/runtime_variant_preset_list.png)
 <!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
-表の上部には、プロパティフィルター（**名前**、**ランタイムバリアント ID**）、更新ボタン、**パラメータを作成** ボタンがあります。既定で表示される列は次のとおりです。
+表の上部には、プロパティフィルター（**名前**、**ランタイム**）、更新ボタン、**パラメータを作成** ボタンがあります。**ランタイム** の値は ID を入力するのではなく、このサーバーに定義されたランタイムのドロップダウンから選択し、適用されたフィルタータグにはランタイム名が表示されます。既定で表示される列は次のとおりです。
 
 - **名前**: パラメータの名前です。この列には行ごとの編集・削除ボタンも表示されます。
 - **ランタイムバリアント (ID)**: パラメータが属するランタイムです。ランタイムの名前に続けて、その ID が括弧内に表示されます。ID の横にはコピーボタンがあります。ランタイムバリアントの名前を返さないサーバーでは、列のタイトルが **ランタイムバリアント ID** となり、ID のみが表示されます。
