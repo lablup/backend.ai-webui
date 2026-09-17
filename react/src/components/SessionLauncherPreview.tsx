@@ -407,8 +407,12 @@ const SessionLauncherPreview: React.FC<{
                       <BAILink to={generateFolderPath(record.vfolderId)}>
                         {value}
                       </BAILink>
-                      <Text color="secondary">/</Text>
-                      {record.subpath}
+                      {record.subpath ? (
+                        <>
+                          <Text color="secondary">/</Text>
+                          {record.subpath}
+                        </>
+                      ) : null}
                     </BAIFlex>
                   ),
                 },
