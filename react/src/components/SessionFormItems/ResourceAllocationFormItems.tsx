@@ -77,6 +77,46 @@ export const isMinOversMaxValue = (min: number, max: number) => {
 };
 
 /**
+ * The shmem the automatic rule picks for a memory size `M_plus_S`: `1g` once
+ * M+S reaches both 4G and the image's minimum memory + 1G, otherwise
+ * `AUTOMATIC_DEFAULT_SHMEM`.
+ */
+export const getAutomaticShmem = (M_plus_S: string, imageMinMem: string) => {
+  return compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
+    compareNumberWithUnits(
+      M_plus_S,
+      addNumberWithUnits(imageMinMem, '1g') || '0b',
+    ) >= 0 &&
+    // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
+    compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
+    ? '1g'
+    : AUTOMATIC_DEFAULT_SHMEM;
+};
+
+/**
+ * The entries of `next` that differ from `current`; `mem` / `shmem` compare
+ * by size, so `1g` and `1024m` count as unchanged. Automatic writes go
+ * through this so re-running them settles instead of re-notifying the form
+ * (FR-3985).
+ */
+export const pickChangedResourceValues = <T extends Record<string, unknown>>(
+  next: T,
+  current: Record<string, unknown> | undefined,
+): Partial<T> =>
+  _.pickBy(next, (value, key) => {
+    const currentValue = current?.[key];
+    if (_.isEqual(value, currentValue)) return false;
+    if (
+      (key === 'mem' || key === 'shmem') &&
+      _.isString(value) &&
+      _.isString(currentValue)
+    ) {
+      return compareNumberWithUnits(value, currentValue) !== 0;
+    }
+    return true;
+  }) as Partial<T>;
+
+/**
  * Returns true when the given accelerator slot name represents a unified
  * memory architecture, where the accelerator memory and the host memory
  * share a single physical pool. Identified by a `.unified` suffix on the
@@ -394,30 +434,24 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
-  const allocatablePresetNames = useMemo(() => {
-    return getAllocatablePresetNames(
+  // `resourceLimits` is rebuilt on every render, so key the array by its
+  // contents: a fresh identity would re-run the auto-select effect each render.
+  const allocatablePresetNamesKey = JSON.stringify(
+    getAllocatablePresetNames(
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
-    );
-  }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
+    ),
+  );
+  const allocatablePresetNames = useMemo(
+    (): string[] => JSON.parse(allocatablePresetNamesKey),
+    [allocatablePresetNamesKey],
+  );
 
   const runShmemAutomationRule = (M_plus_S: string) => {
-    // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
-    if (
-      // M+S > 4G
-      compareNumberWithUnits(M_plus_S, '4g') >= 0 &&
-      // M+S > M+1G
-      compareNumberWithUnits(
-        M_plus_S,
-        addNumberWithUnits(currentImageMinM, '1g') || '0b',
-      ) >= 0 &&
-      // if 1G < AUTOMATIC_DEFAULT_SHMEM, no need to apply 1G rule
-      compareNumberWithUnits('1g', AUTOMATIC_DEFAULT_SHMEM) > 0
-    ) {
-      form.setFieldValue(['resource', 'shmem'], '1g');
-    } else {
-      form.setFieldValue(['resource', 'shmem'], AUTOMATIC_DEFAULT_SHMEM);
+    const shmem = getAutomaticShmem(M_plus_S, currentImageMinM);
+    if (form.getFieldValue(['resource', 'shmem']) !== shmem) {
+      form.setFieldValue(['resource', 'shmem'], shmem);
     }
   };
 
@@ -432,7 +466,10 @@ const ResourceAllocationFormItems: React.FC<
       'resource',
       'acceleratorType',
     ]);
-    if (!isUnifiedAcceleratorSlot(activeAcceleratorType)) {
+    if (
+      !isUnifiedAcceleratorSlot(activeAcceleratorType) ||
+      _.isUndefined(form.getFieldValue(['resource', 'accelerator']))
+    ) {
       return;
     }
     form.setFieldValue(['resource', 'accelerator'], undefined);
@@ -550,17 +587,33 @@ const ResourceAllocationFormItems: React.FC<
         });
       }
 
-      form.setFieldsValue({
-        resource: {
-          ...minimumResources,
-        },
-      });
+      // A unified slot keeps `accelerator` cleared (see
+      // `syncUnifiedAcceleratorIfNeeded`); writing the minimum first would
+      // flip it on every run.
+      const isUnifiedTarget = isUnifiedAcceleratorSlot(
+        minimumResources.acceleratorType ??
+          form.getFieldValue(['resource', 'acceleratorType']),
+      );
+      if (isUnifiedTarget) {
+        delete minimumResources.accelerator;
+      }
+      const changedResources = pickChangedResourceValues(
+        minimumResources,
+        form.getFieldValue('resource'),
+      );
+      if (!_.isEmpty(changedResources)) {
+        form.setFieldsValue({
+          resource: changedResources,
+        });
+      }
 
       // set to 0 when currentImage doesn't support any AI accelerator
       if (
         currentImage &&
         currentImageAcceleratorLimits &&
-        currentImageAcceleratorLimits.length === 0
+        currentImageAcceleratorLimits.length === 0 &&
+        !isUnifiedTarget &&
+        form.getFieldValue(['resource', 'accelerator']) !== 0
       ) {
         form.setFieldValue(['resource', 'accelerator'], 0);
       }
