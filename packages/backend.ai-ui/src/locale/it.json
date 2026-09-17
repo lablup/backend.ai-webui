@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Percorso di montaggio",
     "AutoMountedFolders": "Cartelle montate automaticamente",
     "CreateFolder": "Crea una nuova cartella di archiviazione",
+    "EntireFolder": "Intera cartella",
+    "Folder": "Cartella",
     "Folders": "cartelle",
-    "Name": "Nome",
+    "OwnerProject": "Progetto",
+    "OwnerUser": "Utente",
     "PathAndAlias": "Percorso & Alias",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
     "Refresh": "ricaricare",
@@ -746,6 +749,7 @@
     "Username": "Nome utente"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Cancella percorso",
     "ClickToSelectPath": "Clicca per selezionare un percorso",
     "SelectAPath": "Seleziona un percorso",
     "SelectAPathInFolder": "Seleziona un percorso in {{folderName}}",

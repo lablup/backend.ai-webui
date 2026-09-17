@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Einhängepfad",
     "AutoMountedFolders": "Automatisch eingehängte Ordner",
     "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
+    "EntireFolder": "Gesamter Ordner",
+    "Folder": "Ordner",
     "Folders": "Ordner",
-    "Name": "Name",
+    "OwnerProject": "Projekt",
+    "OwnerUser": "Benutzer",
     "PathAndAlias": "Pfad & Alias",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
     "Refresh": "Aktualisierung",
@@ -746,6 +749,7 @@
     "Username": "Benutzername"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Pfad löschen",
     "ClickToSelectPath": "Klicken, um einen Pfad auszuwählen",
     "SelectAPath": "Einen Pfad auswählen",
     "SelectAPathInFolder": "Einen Pfad in {{folderName}} auswählen",

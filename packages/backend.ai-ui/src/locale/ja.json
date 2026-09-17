@@ -626,8 +626,11 @@
     "AliasPlaceholder": "マウントパス",
     "AutoMountedFolders": "自動マウントフォルダ",
     "CreateFolder": "新規ストレージフォルダー作成",
+    "EntireFolder": "フォルダ全体",
+    "Folder": "フォルダ",
     "Folders": "フォルダー",
-    "Name": "名前",
+    "OwnerProject": "プロジェクト",
+    "OwnerUser": "ユーザー",
     "PathAndAlias": "パス & エイリアス",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
     "Refresh": "更新",
@@ -746,6 +749,7 @@
     "Username": "ユーザー名"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "パスをクリア",
     "ClickToSelectPath": "クリックしてパスを選択",
     "SelectAPath": "パスを選択",
     "SelectAPathInFolder": "{{folderName}} 内のパスを選択",

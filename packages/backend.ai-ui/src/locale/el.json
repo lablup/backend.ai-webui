@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Διαδρομή προσάρτησης",
     "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
     "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
+    "EntireFolder": "Ολόκληρος ο φάκελος",
+    "Folder": "Φάκελος",
     "Folders": "Φάκελοι",
-    "Name": "Όνομα",
+    "OwnerProject": "Έργο",
+    "OwnerUser": "Χρήστης",
     "PathAndAlias": "Διαδρομή & Ψευδώνυμο",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
     "Refresh": "Φρεσκάρω",
@@ -746,6 +749,7 @@
     "Username": "Όνομα χρήστη"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Εκκαθάριση διαδρομής",
     "ClickToSelectPath": "Κάντε κλικ για να επιλέξετε διαδρομή",
     "SelectAPath": "Επιλέξτε διαδρομή",
     "SelectAPathInFolder": "Επιλέξτε διαδρομή στο {{folderName}}",

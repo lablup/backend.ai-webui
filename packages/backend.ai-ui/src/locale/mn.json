@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Маунтын зам",
     "AutoMountedFolders": "Автоматаар маунт хийсэн хавтаснууд",
     "CreateFolder": "Шинэ хадгалах фолдер үүсгэх",
+    "EntireFolder": "Хавтас бүхэлдээ",
+    "Folder": "Хавтас",
     "Folders": "Фолдерууд",
-    "Name": "Нэр",
+    "OwnerProject": "Төсөл",
+    "OwnerUser": "Хэрэглэгч",
     "PathAndAlias": "Зам & Alias",
     "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
     "Refresh": "Сэргээх",
@@ -746,6 +749,7 @@
     "Username": "Хэрэглэгчийн нэр"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Замыг арилгах",
     "ClickToSelectPath": "Зам сонгохын тулд дарна уу",
     "SelectAPath": "Зам сонгох",
     "SelectAPathInFolder": "{{folderName}} хавтаснаас зам сонгох",

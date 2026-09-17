@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Mount path",
     "AutoMountedFolders": "Automount Folders",
     "CreateFolder": "Create a new storage folder",
+    "EntireFolder": "Entire folder",
+    "Folder": "Folder",
     "Folders": "Folders",
-    "Name": "Name",
+    "OwnerProject": "Project",
+    "OwnerUser": "User",
     "PathAndAlias": "Path & Alias",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
     "Refresh": "Refresh",
@@ -747,6 +750,7 @@
     "Username": "Username"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Clear path",
     "ClickToSelectPath": "Click to select a path",
     "SelectAPath": "Select a path",
     "SelectAPathInFolder": "Select a path in {{folderName}}",

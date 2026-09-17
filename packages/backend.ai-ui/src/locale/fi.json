@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Liitospolku",
     "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
     "CreateFolder": "Luo uusi tallennuskansio",
+    "EntireFolder": "Koko kansio",
+    "Folder": "Kansio",
     "Folders": "Kansiot",
-    "Name": "Nimi",
+    "OwnerProject": "Projekti",
+    "OwnerUser": "Käyttäjä",
     "PathAndAlias": "Polku & Alias",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
     "Refresh": "Päivitä",
@@ -746,6 +749,7 @@
     "Username": "Käyttäjänimi"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Tyhjennä polku",
     "ClickToSelectPath": "Napsauta valitaksesi polun",
     "SelectAPath": "Valitse polku",
     "SelectAPathInFolder": "Valitse polku kansiossa {{folderName}}",

@@ -71,6 +71,18 @@ export const docs = {
         'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing. The parameter is optional so a clear action can emit `undefined` (nothing picked); treat it as "back to unset" or, where the root is the meaningful default, as `\'\'`.',
     },
     {
+      name: 'allowClear',
+      type: 'boolean',
+      description:
+        "Shows a clear button beside the chevron while a value is picked. Clearing emits `undefined` (nothing picked), which is distinct from the vfolder root `''`.",
+    },
+    {
+      name: 'placeholder',
+      type: 'string',
+      description:
+        'Replaces the "click to select a path" copy shown while nothing is picked, e.g. "Entire folder" where an unset subpath means the whole folder. The "select a folder first" copy still wins while `vfolderUuid` is missing.',
+    },
+    {
       name: 'disabled',
       type: 'boolean',
       description:

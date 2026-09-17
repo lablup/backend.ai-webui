@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Ruta de montaje",
     "AutoMountedFolders": "Carpetas de montaje automático",
     "CreateFolder": "Crear una nueva carpeta de almacenamiento",
+    "EntireFolder": "Carpeta completa",
+    "Folder": "Carpeta",
     "Folders": "Carpetas",
-    "Name": "Nombre",
+    "OwnerProject": "Proyecto",
+    "OwnerUser": "Usuario",
     "PathAndAlias": "Ruta & Alias",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
     "Refresh": "Actualizar",
@@ -746,6 +749,7 @@
     "Username": "Nombre de usuario"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Borrar ruta",
     "ClickToSelectPath": "Haga clic para seleccionar una ruta",
     "SelectAPath": "Seleccionar una ruta",
     "SelectAPathInFolder": "Seleccionar una ruta en {{folderName}}",

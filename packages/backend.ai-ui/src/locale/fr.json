@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Chemin de montage",
     "AutoMountedFolders": "Dossiers montés automatiquement",
     "CreateFolder": "Créer un nouveau dossier de stockage",
+    "EntireFolder": "Dossier entier",
+    "Folder": "Dossier",
     "Folders": "Dossiers",
-    "Name": "Nom",
+    "OwnerProject": "Projet",
+    "OwnerUser": "Utilisateur",
     "PathAndAlias": "Chemin & Alias",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
     "Refresh": "Rafraîchir",
@@ -746,6 +749,7 @@
     "Username": "Nom d'utilisateur"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Effacer le chemin",
     "ClickToSelectPath": "Cliquez pour sélectionner un chemin",
     "SelectAPath": "Sélectionner un chemin",
     "SelectAPathInFolder": "Sélectionner un chemin dans {{folderName}}",

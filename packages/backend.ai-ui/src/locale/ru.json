@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Путь монтирования",
     "AutoMountedFolders": "Папки с автомонтированием",
     "CreateFolder": "Создать новую папку для хранения",
+    "EntireFolder": "Вся папка",
+    "Folder": "Папка",
     "Folders": "Папки",
-    "Name": "Имя",
+    "OwnerProject": "Проект",
+    "OwnerUser": "Пользователь",
     "PathAndAlias": "Путь & Псевдоним",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
     "Refresh": "Обновить",
@@ -746,6 +749,7 @@
     "Username": "Имя пользователя"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Очистить путь",
     "ClickToSelectPath": "Нажмите, чтобы выбрать путь",
     "SelectAPath": "Выбрать путь",
     "SelectAPathInFolder": "Выбрать путь в {{folderName}}",

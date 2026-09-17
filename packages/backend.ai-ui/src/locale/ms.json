@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Laluan mount",
     "AutoMountedFolders": "Folder mount automatik",
     "CreateFolder": "Buat folder storan baru",
+    "EntireFolder": "Keseluruhan folder",
+    "Folder": "Folder",
     "Folders": "Folder",
-    "Name": "Nama",
+    "OwnerProject": "Projek",
+    "OwnerUser": "Pengguna",
     "PathAndAlias": "Laluan & Alias",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
     "Refresh": "Segarkan",
@@ -746,6 +749,7 @@
     "Username": "Nama Pengguna"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Kosongkan laluan",
     "ClickToSelectPath": "Klik untuk memilih laluan",
     "SelectAPath": "Pilih laluan",
     "SelectAPathInFolder": "Pilih laluan dalam {{folderName}}",

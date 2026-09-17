@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Bağlama yolu",
     "AutoMountedFolders": "Otomatik bağlanan klasörler",
     "CreateFolder": "Yeni bir depolama klasörü oluşturun",
+    "EntireFolder": "Tüm klasör",
+    "Folder": "Klasör",
     "Folders": "klasörler",
-    "Name": "Ad",
+    "OwnerProject": "Proje",
+    "OwnerUser": "Kullanıcı",
     "PathAndAlias": "Yol & Takma Ad",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
     "Refresh": "Yenile",
@@ -746,6 +749,7 @@
     "Username": "Kullanıcı Adı"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Yolu temizle",
     "ClickToSelectPath": "Yol seçmek için tıklayın",
     "SelectAPath": "Bir yol seçin",
     "SelectAPathInFolder": "{{folderName}} içinde bir yol seçin",

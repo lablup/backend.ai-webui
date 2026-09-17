@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Đường dẫn mount",
     "AutoMountedFolders": "Thư mục tự động mount",
     "CreateFolder": "Tạo một thư mục lưu trữ mới",
+    "EntireFolder": "Toàn bộ thư mục",
+    "Folder": "Thư mục",
     "Folders": "Thư mục",
-    "Name": "Tên",
+    "OwnerProject": "Dự án",
+    "OwnerUser": "Người dùng",
     "PathAndAlias": "Đường dẫn & Bí danh",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
     "Refresh": "Làm tươi",
@@ -746,6 +749,7 @@
     "Username": "Tên người dùng"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Xóa đường dẫn",
     "ClickToSelectPath": "Nhấp để chọn đường dẫn",
     "SelectAPath": "Chọn đường dẫn",
     "SelectAPathInFolder": "Chọn đường dẫn trong {{folderName}}",

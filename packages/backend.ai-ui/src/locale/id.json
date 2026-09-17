@@ -626,8 +626,11 @@
     "AliasPlaceholder": "Jalur mount",
     "AutoMountedFolders": "Folder mount otomatis",
     "CreateFolder": "Buat folder penyimpanan baru",
+    "EntireFolder": "Seluruh folder",
+    "Folder": "Folder",
     "Folders": "Folder",
-    "Name": "Nama",
+    "OwnerProject": "Proyek",
+    "OwnerUser": "Pengguna",
     "PathAndAlias": "Jalur & Alias",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
     "Refresh": "Segarkan",
@@ -746,6 +749,7 @@
     "Username": "Nama Pengguna"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Hapus jalur",
     "ClickToSelectPath": "Klik untuk memilih jalur",
     "SelectAPath": "Pilih jalur",
     "SelectAPathInFolder": "Pilih jalur di {{folderName}}",

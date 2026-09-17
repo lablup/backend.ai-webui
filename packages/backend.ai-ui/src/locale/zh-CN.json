@@ -626,8 +626,11 @@
     "AliasPlaceholder": "挂载路径",
     "AutoMountedFolders": "自动挂载文件夹",
     "CreateFolder": "创建一个新的存储文件夹",
+    "EntireFolder": "整个文件夹",
+    "Folder": "文件夹",
     "Folders": "文件夹",
-    "Name": "名称",
+    "OwnerProject": "项目",
+    "OwnerUser": "用户",
     "PathAndAlias": "路径 & 别名",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
     "Refresh": "刷新",
@@ -746,6 +749,7 @@
     "Username": "用户名"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "清除路径",
     "ClickToSelectPath": "点击选择路径",
     "SelectAPath": "选择路径",
     "SelectAPathInFolder": "在 {{folderName}} 中选择路径",

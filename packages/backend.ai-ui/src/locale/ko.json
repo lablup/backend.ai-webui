@@ -626,8 +626,11 @@
     "AliasPlaceholder": "마운트 경로",
     "AutoMountedFolders": "자동 마운트 폴더",
     "CreateFolder": "새 폴더 추가",
+    "EntireFolder": "폴더 전체",
+    "Folder": "폴더",
     "Folders": "폴더",
-    "Name": "이름",
+    "OwnerProject": "프로젝트",
+    "OwnerUser": "사용자",
     "PathAndAlias": "경로 & 대체이름",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
     "Refresh": "새로고침",
@@ -747,6 +750,7 @@
     "Username": "사용자 이름"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "경로 지우기",
     "ClickToSelectPath": "클릭하여 경로 선택",
     "SelectAPath": "경로 선택",
     "SelectAPathInFolder": "{{folderName}} 폴더에서 경로 선택",

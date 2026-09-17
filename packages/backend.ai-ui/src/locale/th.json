@@ -626,8 +626,11 @@
     "AliasPlaceholder": "พาธ mount",
     "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
     "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
+    "EntireFolder": "ทั้งโฟลเดอร์",
+    "Folder": "โฟลเดอร์",
     "Folders": "โฟลเดอร์",
-    "Name": "ชื่อ",
+    "OwnerProject": "โปรเจกต์",
+    "OwnerUser": "ผู้ใช้",
     "PathAndAlias": "พาธ & Alias",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
     "Refresh": "รีเฟรช",
@@ -746,6 +749,7 @@
     "Username": "ชื่อผู้ใช้"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "ล้างพาธ",
     "ClickToSelectPath": "คลิกเพื่อเลือกพาธ",
     "SelectAPath": "เลือกพาธ",
     "SelectAPathInFolder": "เลือกพาธใน {{folderName}}",

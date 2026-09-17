@@ -632,8 +632,11 @@
     "AliasPlaceholder": "Caminho de montagem",
     "AutoMountedFolders": "Pastas de montagem automática",
     "CreateFolder": "Crie uma nova pasta de armazenamento",
+    "EntireFolder": "Pasta inteira",
+    "Folder": "Pasta",
     "Folders": "Pastas",
-    "Name": "Nome",
+    "OwnerProject": "Projeto",
+    "OwnerUser": "Usuário",
     "PathAndAlias": "Caminho & Alias",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
     "Refresh": "Atualizar",
@@ -752,6 +755,7 @@
     "Username": "Nome de usuário"
   },
   "comp:VFolderPathPicker": {
+    "ClearPath": "Limpar caminho",
     "ClickToSelectPath": "Clique para selecionar um caminho",
     "SelectAPath": "Selecionar um caminho",
     "SelectAPathInFolder": "Selecionar um caminho em {{folderName}}",
