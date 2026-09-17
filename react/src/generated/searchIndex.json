@@ -1378,6 +1378,7 @@
         "modelService.Command",
         "modelService.CommandArgvLabel",
         "modelService.CommandExecHelper",
+        "modelService.CommandJsonArgumentHelper",
         "modelService.CommandShellHelper",
         "modelService.EnableHealthCheck",
         "modelService.Execution",

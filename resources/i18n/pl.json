@@ -2070,6 +2070,7 @@
     "Command": "Polecenie",
     "CommandArgvLabel": "Polecenie (argv)",
     "CommandExecHelper": "Uruchamiane bezpośrednio jako argumenty, bez powłoki — operatory (; && | $VAR, przekierowania itp.) są traktowane jako zwykły tekst. Oddziel argumenty spacjami; argumenty zawierające spacje ujmij w cudzysłów (np. --name \"my model\").",
+    "CommandJsonArgumentHelper": "Aby przekazać ciąg JSON jako pojedynczy argument, ujmij cały JSON w pojedyncze cudzysłowy, a podwójne cudzysłowy wewnątrz pozostaw bez zmian (np. --override-generation-config '{\"temperature\": 0.7}').",
     "CommandShellHelper": "Uruchamiane za pośrednictwem powłoki (np. bash -c \"...\"), dzięki czemu działają operatory powłoki (; && | $VAR, przekierowania itp.).",
     "Controls": "Elementy sterujące",
     "CreateNewDeploymentWithPreset": "Utwórz nowe wdrożenie z presetem",
