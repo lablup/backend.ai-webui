@@ -431,6 +431,8 @@ const ResourceAllocationFormItems: React.FC<
     // React's transition lanes, freezing every `useDeferredValue` on the page.
     if (
       supportedAcceleratorTypesInRGByImage?.length === 0 &&
+      // a unified slot keeps `accelerator` cleared instead
+      !isUnifiedAcceleratorSlot(currentResourceValue?.acceleratorType) &&
       currentResourceValue?.accelerator !== 0
     ) {
       form.setFieldsValue({
@@ -443,6 +445,7 @@ const ResourceAllocationFormItems: React.FC<
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
   // contents: a fresh identity would re-run the auto-select effect each render.
+  // Kept as an explicit `useMemo` because that identity is load-bearing.
   const allocatablePresetNamesKey = JSON.stringify(
     getAllocatablePresetNames(
       checkPresetInfo?.presets,
@@ -457,7 +460,14 @@ const ResourceAllocationFormItems: React.FC<
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     const shmem = getAutomaticShmem(M_plus_S, currentImageMinM);
-    if (form.getFieldValue(['resource', 'shmem']) !== shmem) {
+    if (
+      !_.isEmpty(
+        pickChangedResourceValues(
+          { shmem },
+          { shmem: form.getFieldValue(['resource', 'shmem']) },
+        ),
+      )
+    ) {
       form.setFieldValue(['resource', 'shmem'], shmem);
     }
   };
