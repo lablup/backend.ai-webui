@@ -60,6 +60,34 @@ export declare const useSearchVFolderFiles: (vfolder: string, fetchKey?: string)
     isFetching: boolean;
     isLoading: boolean;
 };
-export declare const useUploadVFolderFiles: () => {
-    uploadFiles: (fileList: Array<RcFile>, onUpload: (files: Array<RcFile>, currentPath: string) => void, afterUpload?: () => void) => Promise<void>;
+/** One top-level entry a picked file list will create in the target directory. */
+export interface UploadEntry {
+    name: string;
+    isDirectory: boolean;
+    files: Array<RcFile>;
+}
+/** An entry whose name is already taken in the target directory. */
+export interface DuplicatedUploadEntry extends UploadEntry {
+    existingItem: VFolderFile;
+}
+/**
+ * Resolves name collisions before handing a pick to the uploader: the caller
+ * gets `requestUpload`, and renders `OverwriteConfirmModal` with the returned
+ * props so the user can keep or overwrite each colliding entry (FR-1564).
+ *
+ * Must be called where it outlives the upload trigger — the drag overlay
+ * unmounts on drop, which would take the pending decision with it.
+ */
+export declare const useUploadVFolderFiles: ({ targetVFolderId, currentPath, onUpload, }: {
+    targetVFolderId: string;
+    currentPath: string;
+    onUpload: (files: Array<RcFile>, currentPath: string) => void;
+}) => {
+    requestUpload: (fileList: Array<RcFile>) => Promise<void>;
+    overwriteConfirmModalProps: {
+        open: boolean;
+        duplicatedEntries: DuplicatedUploadEntry[];
+        newEntryCount: number;
+        onRequestClose: (success: boolean, overwritingNames?: Array<string>) => void;
+    };
 };
