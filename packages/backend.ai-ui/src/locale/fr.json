@@ -248,6 +248,10 @@
       "Title": "Impossible de se connecter avec Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Progression du démarrage des noyaux",
+    "KernelTerminationProgress": "Progression de l'arrêt des noyaux"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Taille de cluster",
     "Concurrency": "Sessions simultanées",

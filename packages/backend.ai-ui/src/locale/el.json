@@ -248,6 +248,10 @@
       "Title": "Δεν ήταν δυνατή η σύνδεση με Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Πρόοδος εκκίνησης πυρήνων",
+    "KernelTerminationProgress": "Πρόοδος τερματισμού πυρήνων"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Μέγεθος συμπλέγματος",
     "Concurrency": "Ταυτόχρονες συνεδρίες",

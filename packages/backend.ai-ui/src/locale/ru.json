@@ -248,6 +248,10 @@
       "Title": "Не удалось войти через Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Прогресс запуска ядер",
+    "KernelTerminationProgress": "Прогресс завершения ядер"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Размер кластера",
     "Concurrency": "Одновременные сессии",

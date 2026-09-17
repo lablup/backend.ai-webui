@@ -248,6 +248,10 @@
       "Title": "Backend.AI アカウントでログインできませんでした"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "カーネル起動の進捗",
+    "KernelTerminationProgress": "カーネル終了の進捗"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "クラスターサイズ",
     "Concurrency": "同時実行セッション数",
