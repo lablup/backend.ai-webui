@@ -1010,7 +1010,8 @@ export class Client {
       // read-only on the RuntimeVariantPreset type). FR-3476.
       this._features['runtime-variant-preset-ui-metadata'] = true;
       // LoginHistoryV2 / AuditLogV2 gained `clientIp`. FR-3661.
-      this._features['client-ip'] = true;
+      this._features['client-ip-of-login-history'] = true;
+      this._features['client-ip-of-audit-log'] = true;
     }
   }
 

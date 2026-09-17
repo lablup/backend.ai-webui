@@ -77,7 +77,7 @@ const BAIAuditLogNodes = ({
   'use memo';
   const { t } = useBAIi18n();
   const baiClient = useConnectedBAIClient();
-  const isClientIpSupported = baiClient.supports('client-ip');
+  const isClientIpSupported = baiClient.supports('client-ip-of-audit-log');
 
   const auditLogs = useFragment<BAIAuditLogNodesFragment$key>(
     graphql`
