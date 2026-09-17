@@ -76,6 +76,25 @@ const STOP_FIELDS: Record<string, Check> = {
   dlg: (v) => v === 1,
 };
 
+/** The stop fields by name — what `stripStopFields` takes back off. */
+export const STOP_FIELD_NAMES = Object.keys(STOP_FIELDS);
+
+/**
+ * The same anchor as an ORDINARY pin: every stop field gone, every element
+ * signal (`s`, `p`, `q`, `tag`, `txt`, `tid`, `rect`, `c`) kept.
+ *
+ * A reviewer's remark about a stop is a finding of their own, and
+ * `review-pins parse` leaves stops out of its findings by default — a
+ * walkthrough's own link would otherwise read as N things to answer. So what
+ * the reviewer copies is a pin, pointing at the same element.
+ */
+export function stripStopFields(anchor: AnchorV3): AnchorV3 {
+  const next: AnchorV3 = { ...anchor };
+  for (const field of STOP_FIELD_NAMES)
+    delete (next as unknown as Record<string, unknown>)[field];
+  return next;
+}
+
 /**
  * The decoder's answer to a stop field it does not like: drop that field and
  * keep the pin. A link is pasted by a stranger, but a bad `code` list must

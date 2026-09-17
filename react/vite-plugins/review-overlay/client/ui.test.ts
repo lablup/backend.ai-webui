@@ -490,3 +490,43 @@ describe('the composer in edit mode', () => {
     expect(copyButton().textContent).toBe('Save note');
   });
 });
+
+/**
+ * The stylesheet is one template literal, so an unbalanced brace is not a
+ * syntax error anywhere — it silently NESTS every rule after it inside the
+ * one that never closed. Deleting a block cost `:host` its closing brace
+ * once, and the overlay lost every style below it (FR-3950).
+ */
+describe('the injected stylesheet', () => {
+  const css = () =>
+    Array.from(ui.root.querySelectorAll('style'))
+      .map((sheet) => sheet.textContent ?? '')
+      .join('\n');
+
+  it('is brace-balanced, and never leaves a rule open', () => {
+    const text = css();
+    expect(text).not.toBe('');
+
+    let depth = 0;
+    for (const char of text) {
+      if (char === '{') depth++;
+      else if (char === '}') depth--;
+      // A close with nothing open means the imbalance is above, not below.
+      expect(depth).toBeGreaterThanOrEqual(0);
+    }
+    expect(depth).toBe(0);
+  });
+
+  it('closes `:host` before the rules that follow it', () => {
+    // The last token in the block, then the brace that ends it.
+    expect(css()).toMatch(/--bai-del-text:[^;]+;\s*\}/);
+  });
+
+  it('inherits color-scheme through the `all: initial` reset', () => {
+    // Without it the app's light-dark() tokens resolve to their light half,
+    // so a dark app gets a white popover.
+    expect(css()).toMatch(
+      /all:\s*initial;[\s\S]{0,400}?color-scheme:\s*inherit;/,
+    );
+  });
+});
