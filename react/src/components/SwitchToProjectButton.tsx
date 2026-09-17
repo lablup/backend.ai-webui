@@ -65,7 +65,7 @@ const SwitchToProjectButtonWithQuery: React.FC<
   const { group_node } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
     graphql`
       query SwitchToProjectButtonQuery($projectId: String!) {
-        group_node(id: $projectId) @since(version: "24.03.0") {
+        group_node(id: $projectId) {
           id
           name
         }

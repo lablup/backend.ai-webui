@@ -84,7 +84,7 @@ const BAIRouteNodes = ({
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
         status
-        healthStatus @since(version: "26.4.0")
+        healthStatus
         trafficRatio
         createdAt
         errorData

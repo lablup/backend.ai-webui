@@ -26,13 +26,12 @@ const IMAGES_QUERY = graphql`
       tag
       registry
       architecture
-      name @deprecatedSince(version: "24.12.0")
-      namespace @since(version: "24.12.0")
+      namespace
       labels {
         key
         value
       }
-      tags @since(version: "24.12.0") {
+      tags {
         key
         value
       }

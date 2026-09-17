@@ -58,10 +58,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         created_at
         # follows version of https://github.com/lablup/backend.ai/pull/1993
         # --------------- START --------------------
-        max_vfolder_count @since(version: "23.09.6")
-        max_quota_scope_size @since(version: "23.09.2")
+        max_vfolder_count
+        max_quota_scope_size
         # ---------------- END ---------------------
-        max_network_count @since(version: "24.12.0")
+        max_network_count
       }
     `,
     projectResourcePolicyFrgmt,

@@ -109,9 +109,9 @@ const ContainerRegistryEditorModal: React.FC<
         project
         username
         ssl_verify
-        extra @since(version: "24.09.3")
-        is_global @since(version: "24.09.0")
-        allowed_groups(first: 100) @since(version: "25.3.0") {
+        extra
+        is_global
+        allowed_groups(first: 100) {
           edges {
             node {
               id
@@ -161,9 +161,9 @@ const ContainerRegistryEditorModal: React.FC<
             username
             password
             ssl_verify
-            extra @since(version: "24.09.3")
-            is_global @since(version: "24.09.0")
-            allowed_groups(first: 100) @since(version: "25.3.0") {
+            extra
+            is_global
+            allowed_groups(first: 100) {
               edges {
                 node {
                   id

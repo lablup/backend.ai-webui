@@ -53,7 +53,7 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
       query MyKeypairInfoModalLegacyQuery($email: String) {
         user(email: $email) {
           email
-          main_access_key @since(version: "23.09.7")
+          main_access_key
         }
       }
     `,
