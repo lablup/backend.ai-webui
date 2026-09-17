@@ -136,9 +136,11 @@ test.describe(
       await adminModelCardPage.getDeleteConfirmButton().click();
 
       // Verify success message
-      await expect(page.getByText(/Model card has been deleted/)).toBeVisible({
-        timeout: 15000,
-      });
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(/Model card has been deleted/),
+      ).toBeVisible({ timeout: 15000 });
 
       // Verify the row is no longer in the table
       await expect(adminModelCardPage.getPaginationInfo()).toContainText(
@@ -263,8 +265,11 @@ test.describe(
       await bulkDialog.getByRole('textbox').fill('Delete');
 
       // Wait for Form.useWatch to re-render and enable the button before clicking.
+      // `exact` — the confirm input's clear button ("Clear Type Delete to
+      // confirm.") also substring-matches 'Delete'.
       const deleteButton = bulkDialog.getByRole('button', {
         name: 'Delete',
+        exact: true,
       });
       await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
       await deleteButton.click();
@@ -272,7 +277,9 @@ test.describe(
       // Wait for the success toast — under parallel-test load the bulk deletion
       // can be slow, so wait on the visible outcome rather than polling the dialog.
       await expect(
-        page.getByText(/\d+ model card\(s\) have been deleted\./i),
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(/\d+ model card\(s\) have been deleted\./i),
       ).toBeVisible({ timeout: 240000 });
       await expect(bulkDialog).toBeHidden();
 
@@ -685,8 +692,11 @@ test.describe(
       await bulkDialog.getByRole('textbox').fill('Delete');
 
       // Wait for Form.useWatch to re-render and enable the button before clicking.
+      // `exact` — the confirm input's clear button ("Clear Type Delete to
+      // confirm.") also substring-matches 'Delete'.
       const deleteButton = bulkDialog.getByRole('button', {
         name: 'Delete',
+        exact: true,
       });
       await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
       await deleteButton.click();
@@ -695,9 +705,11 @@ test.describe(
       // sequentially; under parallel-test load the combined mutation can be slow,
       // so we wait directly on the visible outcome rather than polling the dialog.
       await expect(
-        page.getByText(
-          /model card\(s\) and their folders have been moved to trash/i,
-        ),
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(
+            /model card\(s\) and their folders have been moved to trash/i,
+          ),
       ).toBeVisible({ timeout: 240000 });
 
       // Dialog must be hidden once the notification is shown
@@ -785,8 +797,11 @@ test.describe(
       await bulkDialog.getByRole('textbox').fill('Delete');
 
       // Wait for Form.useWatch to re-render and enable the button before clicking.
+      // `exact` — the confirm input's clear button ("Clear Type Delete to
+      // confirm.") also substring-matches 'Delete'.
       const deleteButton = bulkDialog.getByRole('button', {
         name: 'Delete',
+        exact: true,
       });
       await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
       await deleteButton.click();
@@ -794,7 +809,9 @@ test.describe(
       // Wait for the success toast — under parallel-test load the bulk deletion
       // can be slow, so wait on the visible outcome rather than polling the dialog.
       await expect(
-        page.getByText(/\d+ model card\(s\) have been deleted\./i),
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(/\d+ model card\(s\) have been deleted\./i),
       ).toBeVisible({ timeout: 240000 });
       await expect(bulkDialog).toBeHidden();
 

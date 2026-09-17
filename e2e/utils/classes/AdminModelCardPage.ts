@@ -56,6 +56,13 @@ export class AdminModelCardPage {
     return this.page.getByText(/\d+ - \d+ of \d+ items/);
   }
 
+  // Astryx's ToastViewport renders every toast twice: once in the visible
+  // stack (`role="region"`, named "Notifications") and once in a singleton
+  // screen-reader announcer — an unscoped getByText() strict-mode-violates.
+  getToastRegion(): Locator {
+    return this.page.getByRole('region', { name: 'Notifications' });
+  }
+
   // ── Toolbar / actions ────────────────────────────────────────────────────
 
   getCreateModelCardButton(): Locator {
@@ -499,8 +506,12 @@ export class AdminModelCardPage {
   }
 
   getDeleteConfirmButton(): Locator {
+    // `exact` — the confirm input's clear button is named "Clear Type <card
+    // name> to confirm.", which substring-matches 'Delete' for any fixture
+    // whose name contains "delete".
     return this.getDeleteConfirmDialog().getByRole('button', {
       name: 'Delete',
+      exact: true,
     });
   }
 
@@ -573,7 +584,7 @@ export class AdminModelCardPage {
     await expect(this.getDeleteConfirmButton()).toBeEnabled({ timeout: 10000 });
     await this.getDeleteConfirmButton().click();
     await expect(
-      this.page.getByText(/Model card has been deleted/),
+      this.getToastRegion().getByText(/Model card has been deleted/),
     ).toBeVisible({ timeout: 30000 });
   }
 }
