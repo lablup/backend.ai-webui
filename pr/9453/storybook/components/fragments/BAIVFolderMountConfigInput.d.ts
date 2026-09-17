@@ -1,6 +1,7 @@
 import { RuleObject } from '../../form-engine';
 import { LegacyVFolder } from '../../hooks/useSuspendedLegacyVFolders';
 import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
+import { LinkProps } from 'react-router-dom';
 export type { LegacyVFolder };
 /**
  * A single vfolder mount configuration emitted by BAIVFolderMountConfigInput.
@@ -18,6 +19,11 @@ export interface VFolderMountConfigValue {
     name?: string;
     mountDestination?: string;
     subpath?: string;
+}
+/** A folder the session mounts on its own, identified so it can be linked. */
+export interface AutoMountedFolder {
+    vfolderId: string;
+    name: string;
 }
 export interface BAIVFolderMountConfigInputRef {
     /** Re-runs the `GET /folders` query behind the folder select. */
@@ -44,12 +50,17 @@ export interface BAIVFolderMountConfigInputProps {
     /** Base path prepended to a relative alias input (mirrors VFolderTable). */
     aliasBasePath?: string;
     /**
-     * Names of folders that are auto-mounted. Their default mount paths
+     * Folders that are auto-mounted. Their default mount paths
      * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-     * is flagged, they are shown as a read-only tag list at the bottom, and
+     * is flagged, they are shown as a read-only badge list at the bottom, and
      * they are dropped from the folder options.
      */
-    autoMountedFolderNames?: string[];
+    autoMountedFolders?: Array<AutoMountedFolder>;
+    /**
+     * Route that opens a folder in the host's folder explorer. Given, every
+     * folder name the component renders becomes a link to it.
+     */
+    folderExplorerPath?: (vfolderId: string) => LinkProps['to'];
     /**
      * Opens the host's folder-creation modal. The create button is rendered only
      * when this is given, because the modal lives in the host app.
@@ -72,8 +83,8 @@ export declare const mountDestinationToInput: (name: string, mountDestination: s
 export interface VFolderMountConfigStatusOptions {
     /** Base path prepended to a relative alias input (mirrors VFolderTable). */
     aliasBasePath?: string;
-    /** Names of auto-mounted folders, included in the overlap check. */
-    autoMountedFolderNames?: string[];
+    /** Auto-mounted folders, included in the overlap check. */
+    autoMountedFolders?: ReadonlyArray<Pick<AutoMountedFolder, 'name'>>;
 }
 export interface VFolderMountConfigEntryStatus {
     /** The resolved absolute mount path for the entry (for display). */
@@ -124,7 +135,7 @@ export declare const useVFolderMountConfigFormRule: (options?: VFolderMountConfi
  *
  * The folder list comes from REST `GET /folders` rather than the
  * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolderNames` gates the host supplies cannot be expressed there.
+ * `autoMountedFolders` gates the host supplies cannot be expressed there.
  * The component suspends on that fetch, so the consumer owns the Suspense
  * boundary.
  *
