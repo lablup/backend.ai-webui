@@ -550,9 +550,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           <div className="bai-vfolder-mount-config__header" aria-hidden>
             <BAIFlex gap="xxs" align="center">
               <BAIText type="secondary">
-                {t('comp:BAIVFolderMountConfigInput.Folder')}
-                {' / '}
-                {t('comp:BAIVFolderMountConfigInput.Subpath')}
+                {t('comp:BAIVFolderMountConfigInput.SourcePath')}
               </BAIText>
               <BAIQuestionIconWithTooltip
                 title={t('comp:BAIVFolderMountConfigInput.SubpathTooltip')}
@@ -561,7 +559,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             <span />
             <BAIFlex gap="xxs" align="center">
               <BAIText type="secondary">
-                {t('comp:BAIVFolderMountConfigInput.PathAndAlias')}
+                {t('comp:BAIVFolderMountConfigInput.DestinationPath')}
               </BAIText>
               <BAIQuestionIconWithTooltip
                 title={t('comp:BAIVFolderMountConfigInput.PathAndAliasTooltip')}
@@ -611,39 +609,37 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                   <div className="bai-vfolder-mount-config__source">
                     <div className="bai-vfolder-mount-config__folder">
                       <BAIVFolderIdenticon vfolderId={entry.vfolderId} />
-                      {folderExplorerPath ? (
-                        <BAILink
-                          to={folderExplorerPath(entry.vfolderId)}
-                          ellipsis
-                        >
-                          {name}
-                        </BAILink>
-                      ) : (
-                        <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
-                      )}
+                      {/* Only the name shrinks, so the trailing '/' stays. */}
+                      <span className="bai-vfolder-mount-config__folder-name">
+                        {folderExplorerPath ? (
+                          <BAILink
+                            to={folderExplorerPath(entry.vfolderId)}
+                            ellipsis
+                          >
+                            {name}
+                          </BAILink>
+                        ) : (
+                          <BAIText ellipsis={{ tooltip: true }}>{name}</BAIText>
+                        )}
+                      </span>
                       <BAIText type="secondary">/</BAIText>
                     </div>
                     <BAIVFolderPathPicker
                       label={t('comp:BAIVFolderMountConfigInput.Subpath')}
-                      placeholder={t(
-                        'comp:BAIVFolderMountConfigInput.EntireFolder',
-                      )}
-                      size="sm"
+                      // Empty means the folder root, which the '/' before it
+                      // already reads as.
+                      placeholder=""
                       allowClear
                       disabled={disabled}
                       vfolderUuid={entry.vfolderId}
-                      // '' and the folder root are the same mount, so both show
-                      // the "entire folder" placeholder instead of a bare '/'.
                       value={entry.subpath || undefined}
                       onChange={(next) => updateEntry({ subpath: next ?? '' })}
                     />
                   </div>
                 </Form.Item>
-                <ArrowRight
-                  className="bai-vfolder-mount-config__arrow"
-                  size="1em"
-                  aria-hidden
-                />
+                <span className="bai-vfolder-mount-config__arrow" aria-hidden>
+                  <ArrowRight size="1em" />
+                </span>
                 {/* `extra` shows the resolved path only when it differs from
                     what is typed (a relative alias). */}
                 <Form.Item
@@ -664,7 +660,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                       'comp:BAIVFolderMountConfigInput.AliasPlaceholder',
                     )}
                     isLabelHidden
-                    size="sm"
                     hasClear
                     isDisabled={disabled}
                     placeholder={status.mountDestination}

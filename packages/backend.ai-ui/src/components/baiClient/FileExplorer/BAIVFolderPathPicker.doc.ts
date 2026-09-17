@@ -80,7 +80,7 @@ export const docs = {
       name: 'placeholder',
       type: 'string',
       description:
-        'Replaces the "click to select a path" copy shown while nothing is picked, e.g. "Entire folder" where an unset subpath means the whole folder. The "select a folder first" copy still wins while `vfolderUuid` is missing.',
+        'Replaces the "click to select a path" copy shown while nothing is picked, or `""` for no copy at all where an unset subpath is self-explanatory. The "select a folder first" copy still wins while `vfolderUuid` is missing.',
     },
     {
       name: 'disabled',

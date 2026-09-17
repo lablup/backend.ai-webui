@@ -17,8 +17,13 @@
   align-items: start;
 }
 
+/* Centered on the control row, not on the helper-text-inflated cell. */
 .bai-vfolder-mount-config__arrow {
-  height: var(--size-element-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--size-element-md);
+  color: var(--color-text-secondary);
 }
 
 /* The folder name is the fixed head of the source path; the picker is its
@@ -34,14 +39,29 @@
   gap: var(--spacing-2);
   flex: 0 1 auto;
   min-width: 0;
-  max-width: 60%;
-  height: var(--size-element-sm);
+  max-width: 50%;
+  height: var(--size-element-md);
   padding-inline: var(--spacing-2);
   border: 1px solid var(--color-border-emphasized);
   border-inline-end: 0;
   border-start-start-radius: var(--radius-element);
   border-end-start-radius: var(--radius-element);
   background: var(--color-background-muted);
+}
+
+.bai-vfolder-mount-config__folder > * {
+  flex: none;
+}
+
+.bai-vfolder-mount-config__folder > .bai-vfolder-mount-config__folder-name {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bai-vfolder-mount-config__folder-name > * {
+  min-width: 0;
 }
 
 .bai-vfolder-mount-config__source > .bai-vfolder-path-picker {
@@ -52,11 +72,6 @@
 .bai-vfolder-mount-config__source .astryx-complex-selector > button {
   border-start-start-radius: 0;
   border-end-start-radius: 0;
-}
-
-.bai-vfolder-mount-config__arrow {
-  justify-self: center;
-  color: var(--color-text-secondary);
 }
 
 .bai-vfolder-mount-config__option-meta {
@@ -99,9 +114,12 @@
   }
 
   .bai-vfolder-mount-config__arrow {
-    justify-self: start;
+    justify-content: start;
     height: auto;
     margin-inline-start: var(--spacing-2);
+  }
+
+  .bai-vfolder-mount-config__arrow > svg {
     transform: rotate(90deg);
   }
 }
