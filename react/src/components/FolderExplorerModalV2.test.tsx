@@ -219,8 +219,12 @@ const renderModal = ({
   ownershipProjectId,
   legacyPermissions,
   hostPermissions,
+  ownershipProjectType,
+  creatorId,
 }: {
   ownershipProjectId: string | null;
+  ownershipProjectType?: 'GENERAL' | 'PERSONAL';
+  creatorId?: string;
   legacyPermissions?: string[];
   hostPermissions?: string[];
 }) => {
@@ -243,9 +247,15 @@ const renderModal = ({
         metadata: { name: 'test-folder' },
         ownership: {
           userId: 'someone-else-uuid',
+          creatorId: creatorId ?? 'someone-else-uuid',
           projectId: ownershipProjectId,
           project: ownershipProjectId
-            ? { basicInfo: { name: 'folder-project-name' } }
+            ? {
+                basicInfo: {
+                  name: 'folder-project-name',
+                  type: ownershipProjectType ?? 'GENERAL',
+                },
+              }
             : null,
         },
       }),
@@ -374,6 +384,44 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     // acceptance criterion) instead of the header selection.
     const permissionOperation = findPermissionOperation(seenOperations);
     expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
+  });
+
+  it("on a general route: names the current user's personal project as their own instead of another project (FR-3981)", async () => {
+    renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'PERSONAL',
+      creatorId: 'current-user-uuid',
+    });
+
+    expect(
+      await screen.findByText('data.InMyPersonalProject'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('data.NotInProject')).not.toBeInTheDocument();
+  });
+
+  it('on a general route: keeps the project-name alert for a general project the user created (FR-3981)', async () => {
+    renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'GENERAL',
+      creatorId: 'current-user-uuid',
+    });
+
+    expect(await screen.findByText('data.NotInProject')).toBeInTheDocument();
+    expect(
+      screen.queryByText('data.InMyPersonalProject'),
+    ).not.toBeInTheDocument();
+  });
+
+  it("on a general route: keeps the project-name alert for another user's personal project (FR-3981)", async () => {
+    renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'PERSONAL',
+    });
+
+    expect(await screen.findByText('data.NotInProject')).toBeInTheDocument();
+    expect(
+      screen.queryByText('data.InMyPersonalProject'),
+    ).not.toBeInTheDocument();
   });
 });
 
