@@ -1,10 +1,13 @@
 import {
+  DownloadFailedError,
   addNumberWithUnits,
   compareNumberWithUnits,
   convertToBinaryUnit,
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  DOWNLOAD_PROBE_TIMEOUT_MS,
+  initiateDownload,
   omitNullAndUndefinedFields,
   parseValueWithUnit,
   toFixedFloorWithoutTrailingZeros,
@@ -404,5 +407,123 @@ describe('omitNullAndUndefinedFields', () => {
     const input = {};
     const output = omitNullAndUndefinedFields(input);
     expect(output).toEqual({});
+  });
+});
+
+describe('initiateDownload', () => {
+  const DOWNLOAD_URL = 'http://10.0.0.1:6021/download?token=jwt';
+  let clickSpy: ReturnType<typeof vi.spyOn>;
+
+  const okResponse = () => ({
+    ok: true,
+    status: 200,
+    body: { cancel: vi.fn().mockResolvedValue(undefined) },
+  });
+
+  beforeEach(() => {
+    clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('probes the URL and then clicks a hidden download link', async () => {
+    const response = okResponse();
+    const fetchMock = vi.fn().mockResolvedValue(response);
+    vi.stubGlobal('fetch', fetchMock);
+
+    await initiateDownload(DOWNLOAD_URL, 'notes.txt');
+
+    expect(fetchMock).toHaveBeenCalledWith(DOWNLOAD_URL, {
+      signal: expect.any(AbortSignal),
+    });
+    expect(clickSpy).toHaveBeenCalledTimes(1);
+    // The probe wanted the status line only, so the body is dropped rather
+    // than streaming the file a second time.
+    expect(response.body.cancel).toHaveBeenCalled();
+    expect(document.querySelector('a[download]')).toBeNull();
+  });
+
+  it('reports an unreachable proxy instead of starting a download', async () => {
+    const cause = new TypeError('Failed to fetch');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(cause));
+
+    const error = await initiateDownload(DOWNLOAD_URL, 'notes.txt').catch(
+      (e) => e,
+    );
+
+    expect(error).toBeInstanceOf(DownloadFailedError);
+    expect(error.reason).toBe('unreachable');
+    expect(error.origin).toBe('http://10.0.0.1:6021');
+    expect(error.originalError).toBe(cause);
+    expect(clickSpy).not.toHaveBeenCalled();
+  });
+
+  it('gives up on a proxy that never answers', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchMock = vi.fn(
+        (_url: string, { signal }: { signal: AbortSignal }) =>
+          new Promise((_resolve, reject) => {
+            signal.addEventListener('abort', () =>
+              reject(
+                new DOMException('The operation was aborted.', 'AbortError'),
+              ),
+            );
+          }),
+      );
+      vi.stubGlobal('fetch', fetchMock);
+
+      const pending = initiateDownload(DOWNLOAD_URL, 'notes.txt').catch(
+        (e) => e,
+      );
+      await vi.advanceTimersByTimeAsync(DOWNLOAD_PROBE_TIMEOUT_MS - 1);
+      expect(fetchMock.mock.calls[0][1].signal.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
+
+      const error = await pending;
+      expect(error).toBeInstanceOf(DownloadFailedError);
+      expect(error.reason).toBe('unreachable');
+      expect(error.originalError).toBeInstanceOf(DOMException);
+      expect(clickSpy).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('reports the status when the proxy refuses the token', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, status: 403, body: null }),
+    );
+
+    const error = await initiateDownload(DOWNLOAD_URL, 'notes.txt').catch(
+      (e) => e,
+    );
+
+    expect(error).toBeInstanceOf(DownloadFailedError);
+    expect(error.reason).toBe('rejected');
+    expect(error.status).toBe(403);
+    expect(clickSpy).not.toHaveBeenCalled();
+  });
+
+  it('reports a blocked pop-up on iOS Safari', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(okResponse()));
+    vi.stubGlobal('iOSSafari', true);
+    const openMock = vi.fn().mockReturnValue(null);
+    vi.stubGlobal('open', openMock);
+
+    const error = await initiateDownload(DOWNLOAD_URL, 'notes.txt').catch(
+      (e) => e,
+    );
+
+    expect(error).toBeInstanceOf(DownloadFailedError);
+    expect(error.reason).toBe('popup-blocked');
+    expect(openMock).toHaveBeenCalledWith(DOWNLOAD_URL, '_blank');
+    expect(clickSpy).not.toHaveBeenCalled();
   });
 });
