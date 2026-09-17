@@ -19,6 +19,7 @@ import BAIVFolderMountConfigInput, {
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { action } from 'storybook/actions';
 
 const DEMO_WIDTH = 760;
@@ -154,7 +155,7 @@ for configuring vfolder mounts.
   connection, because the session launcher's mount gates cannot be expressed as a
   GraphQL filter: the host must be in \`mountableHosts\` (those granting
   \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
-  names in \`autoMountedFolderNames\` are dropped — the session mounts them anyway.
+  folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
   \`filter\` hides rows on top of that without shrinking the selection.
 - It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
   the mount gates reject is dropped from the value with a warning toast; one that
@@ -168,8 +169,10 @@ for configuring vfolder mounts.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolderNames\` drop out of the offered folder options, join the overlap check (a user
-  alias colliding with an auto-mounted folder is flagged) and are shown as read-only tags at the bottom.
+- \`autoMountedFolders\` drop out of the offered folder options, join the overlap check (a user
+  alias colliding with an auto-mounted folder is flagged) and are shown as read-only badges at the bottom.
+- \`folderExplorerPath\` turns every folder name the component renders — each mount row and each
+  auto-mounted badge — into a link into the host app's folder explorer (see **WithFolderExplorerLinks**).
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
@@ -184,13 +187,15 @@ dropped in the **WithAutoMountedFolders** story.
   },
   decorators: [
     (Story) => (
-      <MockVFolderFileProviders
-        folders={legacyFolders}
-        trees={createTrees}
-        suspenseFallback="Loading..."
-      >
-        <Story />
-      </MockVFolderFileProviders>
+      <MemoryRouter>
+        <MockVFolderFileProviders
+          folders={legacyFolders}
+          trees={createTrees}
+          suspenseFallback="Loading..."
+        >
+          <Story />
+        </MockVFolderFileProviders>
+      </MemoryRouter>
     ),
   ],
   argTypes: {
@@ -233,11 +238,19 @@ dropped in the **WithAutoMountedFolders** story.
         defaultValue: { summary: '/home/work/' },
       },
     },
-    autoMountedFolderNames: {
+    autoMountedFolders: {
       control: { type: 'object' },
       description:
-        'Names of auto-mounted folders: dropped from the offered folder options, folded into the overlap check and shown as read-only tags',
-      table: { type: { summary: 'string[]' } },
+        'Auto-mounted folders: dropped from the offered folder options, folded into the overlap check and shown as read-only badges',
+      table: {
+        type: { summary: 'Array<{ vfolderId: string; name: string }>' },
+      },
+    },
+    folderExplorerPath: {
+      control: false,
+      description:
+        "Route that opens a folder in the host app's folder explorer; given, folder names render as links",
+      table: { type: { summary: "(vfolderId: string) => LinkProps['to']" } },
     },
     mountableHosts: {
       control: { type: 'object' },
@@ -254,7 +267,7 @@ dropped in the **WithAutoMountedFolders** story.
   },
   args: {
     mountableHosts: MOCK_MOUNTABLE_HOSTS,
-    autoMountedFolderNames: [],
+    autoMountedFolders: [],
   },
 };
 
@@ -344,13 +357,13 @@ export const OverlappingPaths: Story = {
  */
 export const WithAutoMountedFolders: Story = {
   args: {
-    autoMountedFolderNames: ['.config'],
+    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
   },
   parameters: {
     docs: {
       description: {
         story:
-          "`autoMountedFolderNames={['.config']}` drops that folder from the select and renders it as a read-only tag below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.",
+          '`autoMountedFolders` naming `.config` drops that folder from the select and renders it as a read-only badge below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
       },
     },
   },
@@ -368,6 +381,39 @@ export const WithAutoMountedFolders: Story = {
           vfolderId: folderId(5),
           name: folderName(5),
           mountDestination: 'checkpoints',
+          subpath: '',
+        },
+      ]}
+    />
+  ),
+};
+
+/**
+ * `folderExplorerPath` turns the folder names into links into the host app's
+ * folder explorer — both the mount rows and the auto-mounted badges.
+ */
+export const WithFolderExplorerLinks: Story = {
+  args: {
+    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
+    // The host builds a real route; here the id just lands in the hash.
+    folderExplorerPath: (vfolderId) => `#folder=${vfolderId}`,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "With `folderExplorerPath` given, each row's folder name renders as a link (still truncating with a tooltip) and each auto-mounted badge becomes one too. Without it they stay plain text, as in the other stories.",
+      },
+    },
+  },
+  render: (args) => (
+    <ControlledDemo
+      {...args}
+      initialValue={[
+        {
+          vfolderId: folderId(0),
+          name: folderName(0),
+          mountDestination: 'data',
           subpath: '',
         },
       ]}
@@ -395,7 +441,7 @@ export const WithFormValidation: Story = {
       const [result, setResult] = useState<string>('');
       const mountConfigRule = useVFolderMountConfigFormRule({
         aliasBasePath: args.aliasBasePath,
-        autoMountedFolderNames: args.autoMountedFolderNames,
+        autoMountedFolderNames: args.autoMountedFolders?.map((f) => f.name),
       });
       return (
         <Form

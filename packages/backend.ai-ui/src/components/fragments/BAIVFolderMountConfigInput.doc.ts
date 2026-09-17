@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "Form control for choosing vfolders and configuring how each one is mounted. It loads the folder list itself, so no queryRef is needed and a Suspense boundary is required above it, and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. Beside the select sits a button group: a refresh button that re-runs the folder query, and — only when `onClickCreateFolder` is given — a create button that hands the click back to the host, whose folder-creation modal it is; `ref.refetch()` exposes the same refresh imperatively so the host can pull in a folder it just created. The picker reads the REST `GET /folders` list rather than the `vfolder_nodes` connection, because the mount gates it applies cannot be expressed as a GraphQL filter: the host must be one of the `mountableHosts` the caller supplies (those granting `mount-in-session`), the folder must be reachable from `currentProjectId`, and a name in `autoMountedFolderNames` is dropped from the options because the session mounts it regardless. `filter` hides rows on top of that, display-only, and an already-selected folder stays visible. An entry the mount gates reject — an unreachable host or project — is pruned from the value with a warning toast; a folder that merely became auto-mounted is not, since it is still mounted. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
+      "Form control for choosing vfolders and configuring how each one is mounted. It loads the folder list itself, so no queryRef is needed and a Suspense boundary is required above it, and gives every selected folder a row with an alias input and a `BAIVFolderPathPicker` for its subpath, so the mounted subfolder is browsed rather than typed. Beside the select sits a button group: a refresh button that re-runs the folder query, and — only when `onClickCreateFolder` is given — a create button that hands the click back to the host, whose folder-creation modal it is; `ref.refetch()` exposes the same refresh imperatively so the host can pull in a folder it just created. The picker reads the REST `GET /folders` list rather than the `vfolder_nodes` connection, because the mount gates it applies cannot be expressed as a GraphQL filter: the host must be one of the `mountableHosts` the caller supplies (those granting `mount-in-session`), the folder must be reachable from `currentProjectId`, and a folder in `autoMountedFolders` is dropped from the options because the session mounts it regardless. `filter` hides rows on top of that, display-only, and an already-selected folder stays visible. An entry the mount gates reject — an unreachable host or project — is pruned from the value with a warning toast; a folder that merely became auto-mounted is not, since it is still mounted. The value is a `VFolderMountConfigValue[]` where `vfolderId` is the vfolder UUID and `mountDestination` is the raw alias exactly as typed: empty resolves to `${aliasBasePath}${name}`, a relative segment resolves under `aliasBasePath`, and an absolute path is used as-is. The module owns the whole mount-value vocabulary so a consumer never restates it: `inputToMountDestination` / `mountDestinationToInput` (the two directions of the alias rule), `resolveVFolderMounts` (every entry's name, resolved path, default-alias flag and subpath in one pass), `toMountCreationConfig` (the manager `creation_config` mount fields), `getVFolderMountConfigStatuses` (per-entry validity), and `useVFolderMountConfigFormRule` (a ready `Form.Item` `rules` entry with BUI-translated messages). The inline per-row errors are advisory only; the form rule is what makes `form.validateFields()` reject.",
     bestPractices: [
       {
         guidance: true,
@@ -26,7 +26,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Wrap it in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule({ aliasBasePath, autoMountedFolderNames })` — the same options you gave the component — so `form.validateFields()` rejects invalid mounts with the already-translated message.',
+          'Wrap it in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule({ aliasBasePath, autoMountedFolderNames })` — the rule takes the auto-mounted folders by name, so map `autoMountedFolders` to their names — so `form.validateFields()` rejects invalid mounts with the already-translated message.',
       },
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass `autoMountedFolderNames` wherever dotfile folders are mounted automatically; their default paths join the overlap check and are listed read-only under the rows.',
+          'Pass `autoMountedFolders` wherever dotfile folders are mounted automatically; their default paths join the overlap check and they are listed read-only under the rows.',
       },
       {
         guidance: true,
@@ -127,10 +127,16 @@ export const docs = {
       default: "'/home/work/'",
     },
     {
-      name: 'autoMountedFolderNames',
-      type: 'string[]',
+      name: 'autoMountedFolders',
+      type: 'Array<{ vfolderId: string; name: string }>',
       description:
-        'Names of folders mounted automatically. They are dropped from the offered folder options (but never pruned from an existing value), their default mount paths join the overlap check (so a colliding user alias is flagged with its own `overlappingWithAutoMount` kind and message), and the names are listed as read-only chips below the rows.',
+        'Folders mounted automatically. They are dropped from the offered folder options (but never pruned from an existing value), their default mount paths join the overlap check (so a colliding user alias is flagged with its own `overlappingWithAutoMount` kind and message), and they are listed as read-only badges below the rows. The id is what `folderExplorerPath` links each badge to.',
+    },
+    {
+      name: 'folderExplorerPath',
+      type: "(vfolderId: string) => LinkProps['to']",
+      description:
+        "Route that opens a folder in the host app's folder explorer. Given, every folder name the component renders — each mount row and each auto-mounted badge — becomes a link to it; omitted, they stay plain text.",
     },
     {
       name: 'onClickCreateFolder',
@@ -149,7 +155,7 @@ export const docs = {
     {
       label: 'Inside a form, gated on validity',
       code: `const mountConfigRule = useVFolderMountConfigFormRule({
-  autoMountedFolderNames,
+  autoMountedFolderNames: autoMountedFolders.map((folder) => folder.name),
 });
 
 <Form.Item
@@ -160,7 +166,8 @@ export const docs = {
   <BAIVFolderMountConfigInput
     currentProjectId={currentProject.id}
     mountableHosts={mountableHosts}
-    autoMountedFolderNames={autoMountedFolderNames}
+    autoMountedFolders={autoMountedFolders}
+    folderExplorerPath={generateFolderPath}
   />
 </Form.Item>`,
     },
@@ -183,7 +190,7 @@ await baiClient.createIfNotExists(image, sessionName, {
   currentProjectId={currentProject.id}
   ownerEmail={ownerEmail}
   mountableHosts={mountableHosts}
-  autoMountedFolderNames={autoMountedFolderNames}
+  autoMountedFolders={autoMountedFolders}
   filter={(folder) => folder.status === 'ready'}
   value={mounts}
   onChange={setMounts}

@@ -16,6 +16,7 @@ import BAIComplexSelect, {
   type BAILabeledValue,
 } from '../BAIComplexSelect';
 import BAIFlex from '../BAIFlex';
+import BAILink from '../BAILink';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
@@ -31,6 +32,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
+import { type LinkProps } from 'react-router-dom';
 
 // Lives with the query that returns it; re-exported here because this module
 // is where the rest of the mount vocabulary is published from.
@@ -52,6 +54,12 @@ export interface VFolderMountConfigValue {
   name?: string;
   mountDestination?: string;
   subpath?: string;
+}
+
+/** A folder the session mounts on its own, identified so it can be linked. */
+export interface AutoMountedFolder {
+  vfolderId: string;
+  name: string;
 }
 
 export interface BAIVFolderMountConfigInputRef {
@@ -80,12 +88,17 @@ export interface BAIVFolderMountConfigInputProps {
   /** Base path prepended to a relative alias input (mirrors VFolderTable). */
   aliasBasePath?: string;
   /**
-   * Names of folders that are auto-mounted. Their default mount paths
+   * Folders that are auto-mounted. Their default mount paths
    * (`${aliasBasePath}${name}`) join the overlap set so a colliding user alias
-   * is flagged, they are shown as a read-only tag list at the bottom, and
+   * is flagged, they are shown as a read-only badge list at the bottom, and
    * they are dropped from the folder options.
    */
-  autoMountedFolderNames?: string[];
+  autoMountedFolders?: Array<AutoMountedFolder>;
+  /**
+   * Route that opens a folder in the host's folder explorer. Given, every
+   * folder name the component renders becomes a link to it.
+   */
+  folderExplorerPath?: (vfolderId: string) => LinkProps['to'];
   /**
    * Opens the host's folder-creation modal. The create button is rendered only
    * when this is given, because the modal lives in the host app.
@@ -326,7 +339,7 @@ const useMountableLegacyFolders = (
  *
  * The folder list comes from REST `GET /folders` rather than the
  * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolderNames` gates the host supplies cannot be expressed there.
+ * `autoMountedFolders` gates the host supplies cannot be expressed there.
  * The component suspends on that fetch, so the consumer owns the Suspense
  * boundary.
  *
@@ -339,7 +352,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   filter,
   disabled,
   aliasBasePath = DEFAULT_ALIAS_BASE_PATH,
-  autoMountedFolderNames,
+  autoMountedFolders,
+  folderExplorerPath,
   onClickCreateFolder,
   ref,
   ...props
@@ -375,7 +389,8 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   }));
   const selectedIdSet = new Set(mountConfigs.map((e) => e.vfolderId));
 
-  const autoMountedNameSet = new Set(autoMountedFolderNames ?? []);
+  const autoMountedFolderNames = (autoMountedFolders ?? []).map((f) => f.name);
+  const autoMountedNameSet = new Set(autoMountedFolderNames);
 
   // Offering an auto-mounted folder is noise: the session mounts it anyway, so
   // picking it could only produce a duplicate mount path. It narrows the
@@ -523,6 +538,13 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 )
               : undefined;
             const subpathInvalid = !!status.subpathError;
+            // Match the input control height so the name lines up with the
+            // input row, not the helper-text-inflated row height.
+            const nameStyle = {
+              width: 150,
+              flexShrink: 0,
+              lineHeight: `${token.controlHeight}px`,
+            };
             return (
               <BAIFlex
                 key={entry.vfolderId}
@@ -530,18 +552,19 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 align="start"
                 gap="xxs"
               >
-                <BAIText
-                  ellipsis={{ tooltip: true }}
-                  style={{
-                    width: 150,
-                    flexShrink: 0,
-                    // Match the input control height so the name lines up with
-                    // the input row, not the helper-text-inflated row height.
-                    lineHeight: `${token.controlHeight}px`,
-                  }}
-                >
-                  {name}
-                </BAIText>
+                {folderExplorerPath ? (
+                  <BAILink
+                    to={folderExplorerPath(entry.vfolderId)}
+                    ellipsis
+                    style={nameStyle}
+                  >
+                    {name}
+                  </BAILink>
+                ) : (
+                  <BAIText ellipsis={{ tooltip: true }} style={nameStyle}>
+                    {name}
+                  </BAIText>
+                )}
                 {/* Nameless Form.Item: `help` and `extra` render together,
                     so the path stays visible while the alias is fixed. */}
                 <Form.Item
@@ -634,14 +657,27 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
           })}
         </BAIFlex>
       )}
-      {autoMountedFolderNames && autoMountedFolderNames.length > 0 && (
+      {autoMountedFolders && autoMountedFolders.length > 0 && (
         <BAIFlex gap="xxs" align="center" wrap="wrap">
           <BAIText type="secondary">
             {t('comp:BAIVFolderMountConfigInput.AutoMountedFolders')}
           </BAIText>
-          {autoMountedFolderNames.map((folderName) => (
-            <Badge key={folderName} variant="neutral" label={folderName} />
-          ))}
+          {autoMountedFolders.map((folder) =>
+            folderExplorerPath ? (
+              <BAILink
+                key={folder.vfolderId}
+                to={folderExplorerPath(folder.vfolderId)}
+              >
+                <Badge variant="neutral" label={folder.name} />
+              </BAILink>
+            ) : (
+              <Badge
+                key={folder.vfolderId}
+                variant="neutral"
+                label={folder.name}
+              />
+            ),
+          )}
         </BAIFlex>
       )}
     </BAIFlex>
