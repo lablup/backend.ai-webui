@@ -38,10 +38,8 @@ interface LegacyRoleScopeTabProps {
 }
 
 /**
- * Legacy Scopes tab for managers without `role-mapped-scope-filter`
- * (< 26.8.0). Managers with the flag get the merged Detailed Permissions view
- * (`RolePermissionDetailTab`) instead. Filtering, ordering, and pagination all
- * run server-side via query variables.
+ * Legacy Scopes tab for managers < 26.8.0; newer managers get the merged
+ * Detailed Permissions view (`RolePermissionDetailTab`) instead.
  */
 const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
   'use memo';
@@ -180,7 +178,7 @@ const LegacyRoleScopeTab: React.FC<LegacyRoleScopeTabProps> = ({ roleId }) => {
               key: 'entityType',
               propertyLabel: t('rbac.ScopeType'),
               type: 'enum',
-              valueMode: baiClient.supports('rbac-filter-wrapper')
+              valueMode: baiClient.isManagerVersionCompatibleWith('26.4.4rc9')
                 ? 'operator'
                 : 'scalar',
               options: [

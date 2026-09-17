@@ -29,8 +29,8 @@ export interface ServiceConfigurationFormItemsProps {
   /**
    * BA-7210 / FR-3481: appended below the base Port tooltip text when the
    * caller's manager supports inheriting an omitted port from the runtime
-   * variant baseline. Only the preset page passes this (gated on
-   * `preset-model-config-type`); the revision modal never inherits a port.
+   * variant baseline. Only the preset page passes this (gated on manager
+   * 26.9.0); the revision modal never inherits a port.
    */
   portTooltipExtra?: string;
 }
@@ -59,9 +59,8 @@ const ServiceConfigurationFormItems: React.FC<
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsCommandShell = baiClient.supports(
-    'model-service-command-string',
-  );
+  const supportsCommandShell =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   return (
     // PILOT-DECISION: antd `Collapse` (single bordered panel, size="small",

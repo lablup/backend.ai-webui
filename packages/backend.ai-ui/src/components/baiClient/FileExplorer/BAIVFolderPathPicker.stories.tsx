@@ -200,7 +200,7 @@ const createMockClient = (): BAIClient => {
 
   return {
     vfolder: mockVFolder,
-    supports: () => false,
+    isManagerVersionCompatibleWith: () => false,
     _config: { isDirectorySizeVisible: false },
   } as unknown as BAIClient;
 };

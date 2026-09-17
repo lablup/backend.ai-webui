@@ -6,7 +6,6 @@ import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__genera
 import { SessionDetailContentFragment$key } from '../__generated__/SessionDetailContentFragment.graphql';
 import { SessionDetailContentQuery } from '../__generated__/SessionDetailContentQuery.graphql';
 import { convertToBinaryUnit } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
@@ -26,7 +25,6 @@ import SessionIdleChecks, {
   IdleChecks,
 } from './ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
-import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
 import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import { UNSAFELazySessionImageTag } from './ImageTags';
@@ -120,14 +118,8 @@ const SessionDetailContent: React.FC<{
 
   const [currentUser] = useCurrentUserInfo();
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsSessionSchedulingHistory = baiClient.supports(
-    'session-scheduling-history',
-  );
 
   const [openIdleCheckDescriptionModal, setOpenIdleCheckDescriptionModal] =
-    useState<boolean>(false);
-  const [openStatusDetailModal, setOpenStatusDetailModal] =
     useState<boolean>(false);
   // PILOT-DECISION (ticket 17): the usage-target antd Select rendered with
   // `display: 'none'` (dead UI); it is removed instead of being ported to an
@@ -195,7 +187,6 @@ const SessionDetailContent: React.FC<{
         }
         resource_opts
         status
-        status_data
         vfolder_mounts
         vfolder_nodes {
           edges {
@@ -259,7 +250,6 @@ const SessionDetailContent: React.FC<{
         ...SessionUsageMonitorFragment
         ...ContainerCommitModalFragment
         ...SessionIdleChecksNodeFragment
-        ...SessionStatusDetailModalFragment
         ...AppLauncherModalFragment
         ...MountedVFolderLinksFragment
         ...BAISessionAgentIdsFragment
@@ -270,7 +260,6 @@ const SessionDetailContent: React.FC<{
     (internalLoadedSession as SessionDetailContentFragment$key) || sessionFrgmt,
   );
 
-  // The feature to display imminent expiration time as a separate Alert is supported from version 24.12.
   const imminentExpirationTime = _.min(
     _.values(
       useMemoizedJSONParse<IdleChecks>(session?.idle_checks, {
@@ -408,46 +397,18 @@ const SessionDetailContent: React.FC<{
             </MetadataListItem>
             <MetadataListItem label={t('session.Status')}>
               <BAIFlex>
-                <SessionStatusTag
-                  sessionFrgmt={session}
-                  showInfo={!supportsSessionSchedulingHistory}
+                <SessionStatusTag sessionFrgmt={session} />
+                {/* `.bai-action-accent` restores the legacy link tint on this
+                    ghost button (see `backend.ai-ui/src/styles/actionAccent.css`). */}
+                <IconButton
+                  className="bai-action-accent"
+                  variant="ghost"
+                  size="sm"
+                  icon={<History size="1em" />}
+                  label={t('session.SessionSchedulingHistory')}
+                  tooltip={t('session.SessionSchedulingHistory')}
+                  onClick={() => toggleOpenSessionSchedulingHistoryModal()}
                 />
-                {/* QA-FINDINGS Q-37 — both controls in this row were antd
-                    `type="link"` buttons (`Button` / `BAIButton`), i.e. painted
-                    `colorLink` #FF7A00. The conversion to `IconButton
-                    variant="ghost"` dropped the tint to `--color-text-primary`
-                    (measured rgb(20,20,20) light / rgb(255,255,255) dark),
-                    which is what "버튼 색깔이 default 라서 클릭 가능한지 알기
-                    힘듭니다" is describing. `.bai-action-accent` restores it
-                    through `--color-text-accent`, which resolves to exactly
-                    `colorLink` here and to `colorInfo` under the admin theme —
-                    see `packages/backend.ai-ui/src/styles/actionAccent.css`. */}
-                {!supportsSessionSchedulingHistory &&
-                session?.status_data &&
-                session?.status_data !== '{}' ? (
-                  <IconButton
-                    className="bai-action-accent"
-                    variant="ghost"
-                    size="sm"
-                    icon={<Info size="1em" />}
-                    label={t('button.ClickForMoreDetails')}
-                    tooltip={t('button.ClickForMoreDetails')}
-                    onClick={() => {
-                      setOpenStatusDetailModal(true);
-                    }}
-                  />
-                ) : null}
-                {supportsSessionSchedulingHistory && (
-                  <IconButton
-                    className="bai-action-accent"
-                    variant="ghost"
-                    size="sm"
-                    icon={<History size="1em" />}
-                    label={t('session.SessionSchedulingHistory')}
-                    tooltip={t('session.SessionSchedulingHistory')}
-                    onClick={() => toggleOpenSessionSchedulingHistoryModal()}
-                  />
-                )}
               </BAIFlex>
             </MetadataListItem>
             <MetadataListItem label={t('session.SessionType')}>
@@ -539,9 +500,7 @@ const SessionDetailContent: React.FC<{
             <MetadataListItem label={t('session.ClusterMode')}>
               <BAISessionClusterMode sessionFrgmt={session} showSize />
             </MetadataListItem>
-            {baiClient.supports('idle-checks-gql') &&
-            session.status === 'RUNNING' &&
-            imminentExpirationTime ? (
+            {session.status === 'RUNNING' && imminentExpirationTime ? (
               <MetadataListItem label={t('session.ReclamationStatus')}>
                 <BAIFlex gap="xxs" align="start">
                   <Suspense
@@ -719,11 +678,6 @@ const SessionDetailContent: React.FC<{
         sessionId={id}
         open={openSessionSchedulingHistoryModal}
         onCancel={toggleOpenSessionSchedulingHistoryModal}
-      />
-      <SessionStatusDetailModal
-        sessionFrgmt={session}
-        open={openStatusDetailModal}
-        onCancel={() => setOpenStatusDetailModal(false)}
       />
     </BAIFlex>
   ) : (

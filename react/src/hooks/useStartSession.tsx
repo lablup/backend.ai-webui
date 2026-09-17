@@ -129,8 +129,6 @@ export const useStartSession = () => {
   const relayEnv = useRelayEnvironment();
   const resolveImageReference = useResolveImageReference();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMountById = baiClient.supports('mount-by-id');
-  const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
 
   const [currentGlobalResourceGroup] = useCurrentResourceGroupState();
 
@@ -145,11 +143,9 @@ export const useStartSession = () => {
       enabled: false,
       command: undefined,
       scheduleDate: undefined,
-      ...(supportBatchTimeout && {
-        timeoutEnabled: false,
-        timeout: undefined,
-        timeoutUnit: 's',
-      }),
+      timeoutEnabled: false,
+      timeout: undefined,
+      timeoutUnit: 's',
     },
     envvars: [],
     // set default_session_environment only if set
@@ -254,8 +250,7 @@ export const useStartSession = () => {
           : {}),
 
         // Batch timeout configuration (optional)
-        ...(supportBatchTimeout &&
-        values?.batch?.timeoutEnabled &&
+        ...(values?.batch?.timeoutEnabled &&
         !_.isUndefined(values?.batch?.timeout)
           ? {
               batchTimeout:
@@ -309,9 +304,8 @@ export const useStartSession = () => {
           }),
 
           // Storage configuration
-          [supportsMountById ? 'mount_ids' : 'mounts']: values.mount_ids,
-          [supportsMountById ? 'mount_id_map' : 'mount_map']:
-            values.mount_id_map,
+          mount_ids: values.mount_ids,
+          mount_id_map: values.mount_id_map,
 
           // Environment variables
           environ: {
@@ -326,8 +320,7 @@ export const useStartSession = () => {
           preopen_ports: transformPortValuesToNumbers(values.ports),
 
           // Agent selection (optional)
-          ...(baiClient.supports('agent-select') &&
-          !baiClient?._config?.hideAgents &&
+          ...(!baiClient?._config?.hideAgents &&
           values.agent !== undefined &&
           !_.isEqual(_.castArray(values.agent), ['auto'])
             ? {

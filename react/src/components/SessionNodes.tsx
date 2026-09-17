@@ -453,14 +453,13 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('agent_ids'),
         render: (__, session) => <BAISessionAgentIds sessionFrgmt={session} />,
       },
-      userRole === 'superadmin' &&
-        baiClient.isManagerVersionCompatibleWith('25.13.0') && {
-          key: 'owner',
-          title: t('session.launcher.OwnerEmail'),
-          defaultHidden: false,
-          exportKey: 'user_email',
-          render: (__, session) => session.owner?.email || '-',
-        },
+      userRole === 'superadmin' && {
+        key: 'owner',
+        title: t('session.launcher.OwnerEmail'),
+        defaultHidden: false,
+        exportKey: 'user_email',
+        render: (__, session) => session.owner?.email || '-',
+      },
     ]),
     (column) => {
       return disableSorter ? _.omit(column, 'sorter') : column;

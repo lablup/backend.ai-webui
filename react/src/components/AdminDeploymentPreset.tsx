@@ -133,7 +133,7 @@ const AdminDeploymentPreset = ({
     webuiNavigate(buildPath('admin', 'deployments/deployment-presets/new'));
   };
 
-  const isSupported = baiClient.supports('deployment-preset');
+  const isSupported = baiClient.isManagerVersionCompatibleWith('26.4.2');
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>

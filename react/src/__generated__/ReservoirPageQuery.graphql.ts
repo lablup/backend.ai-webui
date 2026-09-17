@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b40a7b8cc507ce1241e3bf444daf05b9>>
+ * @generated SignedSource<<479b38578d9b7024978e26d4eb00fb2b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -530,7 +530,6 @@ return {
                 "plural": false,
                 "selections": [
                   (v7/*: any*/),
-                  (v7/*: any*/),
                   (v5/*: any*/),
                   {
                     "alias": null,
@@ -613,16 +612,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "542a92480107493722c41e9553c74586",
+    "cacheID": "a7c928b70f3643b8ae92173d3087405d",
     "id": null,
     "metadata": {},
     "name": "ReservoirPageQuery",
     "operationKind": "query",
-    "text": "query ReservoirPageQuery(\n  $order: [ArtifactOrderBy!]\n  $limit: Int\n  $offset: Int\n  $filter: ArtifactFilter\n) {\n  defaultArtifactRegistry(artifactType: MODEL) {\n    name\n    type\n    id\n  }\n  huggingfaceRegistries @since(version: \"25.14.0\") {\n    edges {\n      node {\n        id\n        ...BAIHuggingFaceRegistrySettingModalFragment\n      }\n    }\n  }\n  total: artifacts(filter: {availability: [ALIVE, DELETED]}) {\n    count\n  }\n  artifacts(orderBy: $order, limit: $limit, offset: $offset, filter: $filter) {\n    count\n    edges {\n      node {\n        id @since(version: \"25.17.0\")\n        ...BAIArtifactTableArtifactFragment\n        ...BAIImportArtifactModalArtifactFragment\n        ...BAIDeactivateArtifactsModalArtifactsFragment\n        ...BAIActivateArtifactsModalArtifactsFragment\n        revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n          edges {\n            node {\n              id\n              ...BAIImportArtifactModalArtifactRevisionFragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIActivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactStatusTagFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTableArtifactFragment on Artifact {\n  id\n  name\n  description\n  updatedAt\n  scannedAt\n  availability\n  registry {\n    name\n    url\n  }\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n  latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n    edges {\n      node {\n        id\n        version\n        size\n        status\n        ...BAIArtifactStatusTagFragment\n        ...BAIArtifactRevisionDownloadButtonFragment\n      }\n    }\n  }\n}\n\nfragment BAIArtifactTypeTagFragment on Artifact {\n  type\n}\n\nfragment BAIDeactivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n\nfragment BAIHuggingFaceRegistrySettingModalFragment on HuggingFaceRegistry {\n  id\n  token\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
+    "text": "query ReservoirPageQuery(\n  $order: [ArtifactOrderBy!]\n  $limit: Int\n  $offset: Int\n  $filter: ArtifactFilter\n) {\n  defaultArtifactRegistry(artifactType: MODEL) {\n    name\n    type\n    id\n  }\n  huggingfaceRegistries {\n    edges {\n      node {\n        id\n        ...BAIHuggingFaceRegistrySettingModalFragment\n      }\n    }\n  }\n  total: artifacts(filter: {availability: [ALIVE, DELETED]}) {\n    count\n  }\n  artifacts(orderBy: $order, limit: $limit, offset: $offset, filter: $filter) {\n    count\n    edges {\n      node {\n        id\n        ...BAIArtifactTableArtifactFragment\n        ...BAIImportArtifactModalArtifactFragment\n        ...BAIDeactivateArtifactsModalArtifactsFragment\n        ...BAIActivateArtifactsModalArtifactsFragment\n        revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n          edges {\n            node {\n              id\n              ...BAIImportArtifactModalArtifactRevisionFragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIActivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactStatusTagFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactTableArtifactFragment on Artifact {\n  id\n  name\n  description\n  updatedAt\n  scannedAt\n  availability\n  registry {\n    name\n    url\n  }\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n  latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n    edges {\n      node {\n        id\n        version\n        size\n        status\n        ...BAIArtifactStatusTagFragment\n        ...BAIArtifactRevisionDownloadButtonFragment\n      }\n    }\n  }\n}\n\nfragment BAIArtifactTypeTagFragment on Artifact {\n  type\n}\n\nfragment BAIDeactivateArtifactsModalArtifactsFragment on Artifact {\n  id\n  name\n}\n\nfragment BAIHuggingFaceRegistrySettingModalFragment on HuggingFaceRegistry {\n  id\n  token\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
   }
 };
 })();
 
-(node as any).hash = "077e0b0b0d4218132cb616b6beb02f12";
+(node as any).hash = "40fc900512963c9101365fe40460f032";
 
 export default node;

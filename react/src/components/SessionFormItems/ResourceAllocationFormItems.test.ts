@@ -109,7 +109,6 @@ describe('getAllocatablePresetNames', () => {
   const image_has_cuda_shares_min1_max1: Image = {
     id: 'id1',
     namespace: 'image1',
-    name: undefined,
     digest: 'digest1',
     architecture: 'arm64',
     humanized_name: 'Image 1',

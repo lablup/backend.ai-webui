@@ -97,10 +97,10 @@ const AdminDeploymentPage: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const isPrometheusPresetSupported = baiClient.supports(
-    'prometheus-query-preset',
-  );
-  const isDeploymentPresetSupported = baiClient.supports('deployment-preset');
+  const isPrometheusPresetSupported =
+    baiClient.isManagerVersionCompatibleWith('26.4.2');
+  const isDeploymentPresetSupported =
+    baiClient.isManagerVersionCompatibleWith('26.4.2');
 
   // A single `{ tab, filter, order }` URL state is shared by every tab, plus a
   // single pagination state. Only the active tab's values are ever present in

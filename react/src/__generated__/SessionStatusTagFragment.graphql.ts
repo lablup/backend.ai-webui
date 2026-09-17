@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ce0c03510ae52c4848158164afe3de85>>
+ * @generated SignedSource<<fd1253e36646b9f094b8228f0ed7fefe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,6 @@ export type SessionStatusTagFragment$data = {
   readonly id: string;
   readonly queue_position: number | null | undefined;
   readonly status: string | null | undefined;
-  readonly status_data: string | null | undefined;
   readonly status_info: string | null | undefined;
   readonly " $fragmentType": "SessionStatusTagFragment";
 };
@@ -54,13 +53,6 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "status_data",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "queue_position",
       "storageKey": null
     }
@@ -69,6 +61,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "c3d20b190bc6eae04a56b944246b93fb";
+(node as any).hash = "fbc4d47be98bf84fc90c14ee936430cd";
 
 export default node;

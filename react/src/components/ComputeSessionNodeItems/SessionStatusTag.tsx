@@ -6,12 +6,11 @@ import {
   SessionStatusTagFragment$data,
   SessionStatusTagFragment$key,
 } from '../../__generated__/SessionStatusTagFragment.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { BAIFlex, badgeVariantForStatus } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { LoaderCircle, CircleAlertIcon } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -27,7 +26,6 @@ const STATUS_INFO_DESCRIPTION_KEY: Record<string, string> = {
 
 interface SessionStatusTagProps {
   sessionFrgmt?: SessionStatusTagFragment$key | null;
-  showInfo?: boolean;
   showQueuePosition?: boolean;
   showTooltip?: boolean;
 }
@@ -48,20 +46,12 @@ const isTransitional = (session: SessionStatusTagFragment$data) => {
   ].includes(session?.status || '');
 };
 
-// PILOT-DECISION (ticket 17): antd `Tag color` (per-file blue/green/red map)
-// -> Astryx `Badge` variants via the repo-global `badgeVariantForStatus`
-// lookup (`session` / `sessionStatusInfo` domains, ticket 13). The bespoke
-// pill styling (11px joined radii, dashed second segment, 80px ellipsis
-// width, paddingSM tweaks) is dropped — defaults-first; the two-segment
-// status+reason pill becomes two adjacent Badges.
 const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
   sessionFrgmt,
-  showInfo,
   showQueuePosition = true,
   showTooltip = true,
 }) => {
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
 
   const session = useFragment(
     graphql`
@@ -69,7 +59,6 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
         id
         status
         status_info
-        status_data
         queue_position
       }
     `,
@@ -97,110 +86,22 @@ const SessionStatusTag: React.FC<SessionStatusTagProps> = ({
           <LoaderCircle className="bai-icon-spin" size="1em" />
         ) : undefined
       }
-      label={
-        <>
-          {session.status || ' '}
-          {session.status_info && isTransitional(session) ? (
-            <CircleAlertIcon
-              size="1em"
-              style={{
-                verticalAlign: 'text-top',
-                marginLeft: 4,
-                color: 'var(--color-error)',
-              }}
-            />
-          ) : null}
-        </>
-      }
+      label={session.status || ' '}
     />
   );
 
-  const queuePositionBadge = displayQuePosition ? (
-    <Tooltip content={t('session.PendingPosition')}>
-      <Badge label={`#${displayQuePosition}`} />
-    </Tooltip>
-  ) : null;
-
-  if (baiClient.supports('session-scheduling-history')) {
-    const schedulingHistoryBadge = (
-      <Badge
-        variant={badgeVariantForStatus('session', session.status)}
-        icon={
-          isTransitional(session) ? (
-            <LoaderCircle className="bai-icon-spin" size="1em" />
-          ) : undefined
-        }
-        label={session.status || ' '}
-      />
-    );
-    return (
-      <BAIFlex gap="xs">
-        {showTooltip && statusInfoDescriptionKey ? (
-          <Tooltip content={t(statusInfoDescriptionKey)}>
-            {schedulingHistoryBadge}
-          </Tooltip>
-        ) : (
-          schedulingHistoryBadge
-        )}
-        {queuePositionBadge}
-      </BAIFlex>
-    );
-  }
-
-  if (_.isEmpty(session.status_info) || !showInfo) {
-    return (
-      <BAIFlex wrap="nowrap" gap="xs">
-        {showTooltip && session.status_info ? (
-          <Tooltip
-            content={
-              statusInfoDescriptionKey
-                ? t(statusInfoDescriptionKey)
-                : session.status_info
-            }
-          >
-            {statusBadge}
-          </Tooltip>
-        ) : (
-          statusBadge
-        )}
-        {queuePositionBadge}
-      </BAIFlex>
-    );
-  }
-
   return (
-    <BAIFlex gap={'xs'}>
-      <BAIFlex gap="xxs">
-        <Badge
-          variant={badgeVariantForStatus('session', session.status)}
-          icon={
-            isTransitional(session) ? (
-              <LoaderCircle className="bai-icon-spin" size="1em" />
-            ) : undefined
-          }
-          label={session.status || ' '}
-        />
-        {statusInfoDescriptionKey ? (
-          <Tooltip content={t(statusInfoDescriptionKey)}>
-            <Badge
-              variant={badgeVariantForStatus(
-                'sessionStatusInfo',
-                session.status_info,
-              )}
-              label={session.status_info}
-            />
-          </Tooltip>
-        ) : (
-          <Badge
-            variant={badgeVariantForStatus(
-              'sessionStatusInfo',
-              session.status_info,
-            )}
-            label={session.status_info}
-          />
-        )}
-      </BAIFlex>
-      {queuePositionBadge}
+    <BAIFlex gap="xs">
+      {showTooltip && statusInfoDescriptionKey ? (
+        <Tooltip content={t(statusInfoDescriptionKey)}>{statusBadge}</Tooltip>
+      ) : (
+        statusBadge
+      )}
+      {displayQuePosition ? (
+        <Tooltip content={t('session.PendingPosition')}>
+          <Badge label={`#${displayQuePosition}`} />
+        </Tooltip>
+      ) : null}
     </BAIFlex>
   );
 };

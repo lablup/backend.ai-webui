@@ -82,9 +82,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
   // document, so it is gated and the deprecated count is selected instead.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
+  const supportsPerIdResults =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
 
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`

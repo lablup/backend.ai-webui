@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1ed0f4c7c3583c904088fd68e80ae273>>
+ * @generated SignedSource<<28e3640fead37673720088d54750c3be>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -321,16 +321,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "62091db6b06c21e064f9d3efbd98e367",
+    "cacheID": "55cac2fefe8f832a4c7f4a86b5c6204b",
     "id": null,
     "metadata": {},
     "name": "AdminUserCredentialListQuery",
     "operationKind": "query",
-    "text": "query AdminUserCredentialListQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $domain_name: String\n  $email: String\n  $is_active: Boolean\n) {\n  keypair_list(limit: $limit, offset: $offset, filter: $filter, order: $order, domain_name: $domain_name, email: $email, is_active: $is_active) {\n    items {\n      id\n      user_id\n      full_name\n      access_key\n      is_admin\n      resource_policy\n      created_at\n      last_used\n      rate_limit\n      num_queries\n      concurrency_used @since(version: \"24.09.0\")\n      ...KeypairSettingModalFragment\n      ...KeypairInfoModalFragment\n    }\n    total_count\n  }\n}\n\nfragment KeypairInfoModalFragment on KeyPair {\n  user_id\n  access_key\n  secret_key\n  is_admin\n  created_at\n  last_used\n  resource_policy\n  num_queries\n  rate_limit\n  concurrency_used @since(version: \"24.09.0\")\n}\n\nfragment KeypairSettingModalFragment on KeyPair {\n  rate_limit\n  access_key\n  resource_policy\n}\n"
+    "text": "query AdminUserCredentialListQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n  $order: String\n  $domain_name: String\n  $email: String\n  $is_active: Boolean\n) {\n  keypair_list(limit: $limit, offset: $offset, filter: $filter, order: $order, domain_name: $domain_name, email: $email, is_active: $is_active) {\n    items {\n      id\n      user_id\n      full_name\n      access_key\n      is_admin\n      resource_policy\n      created_at\n      last_used\n      rate_limit\n      num_queries\n      concurrency_used\n      ...KeypairSettingModalFragment\n      ...KeypairInfoModalFragment\n    }\n    total_count\n  }\n}\n\nfragment KeypairInfoModalFragment on KeyPair {\n  user_id\n  access_key\n  secret_key\n  is_admin\n  created_at\n  last_used\n  resource_policy\n  num_queries\n  rate_limit\n  concurrency_used\n}\n\nfragment KeypairSettingModalFragment on KeyPair {\n  rate_limit\n  access_key\n  resource_policy\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5a923585acaafaadf35e35bb071e1ac5";
+(node as any).hash = "4fd2d239a8c50b845514b6dc8fff558c";
 
 export default node;

@@ -3,14 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { MountedVFolderLinksFragment$key } from '../__generated__/MountedVFolderLinksFragment.graphql';
-import { MountedVFolderLinksLegacyLazyFolderLinkFragment$key } from '../__generated__/MountedVFolderLinksLegacyLazyFolderLinkFragment.graphql';
-import { MountedVFolderLinksQuery } from '../__generated__/MountedVFolderLinksQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import FolderLink from './FolderLink';
-import { BAISkeleton } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { Suspense } from 'react';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import React from 'react';
+import { graphql, useFragment } from 'react-relay';
 
 interface MountedVFolderLinksProps {
   sessionFrgmt: MountedVFolderLinksFragment$key;
@@ -19,8 +15,6 @@ interface MountedVFolderLinksProps {
 const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
   sessionFrgmt,
 }) => {
-  const baiClient = useSuspendedBackendaiClient();
-
   // TODO(needs-backend): the FR-2619 V2 migration cannot reach this surface
   // because `ComputeSessionNode` only exposes the V1 `vfolder_nodes`
   // (`VirtualFolderConnection`) field — there is no V2 `VFolder` connection
@@ -30,7 +24,6 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
   const session = useFragment(
     graphql`
       fragment MountedVFolderLinksFragment on ComputeSessionNode {
-        row_id
         vfolder_nodes {
           edges {
             node {
@@ -38,86 +31,23 @@ const MountedVFolderLinks: React.FC<MountedVFolderLinksProps> = ({
             }
           }
         }
-        ...MountedVFolderLinksLegacyLazyFolderLinkFragment
       }
     `,
     sessionFrgmt,
   );
 
-  return baiClient.supports('vfolder_nodes_in_session_node') ? (
-    _.map(session.vfolder_nodes?.edges, (vfolder, idx) => {
-      return (
-        vfolder?.node && (
-          <FolderLink
-            key={`mounted-vfolder-${idx}`}
-            vfolderNodeFragment={vfolder.node}
-            // TODO: For now, disable state using VirtualFolderNode permissions in FolderLink component.
-            // Currently shows Alert.error in Folder Explorer instead due to related bugs
-          />
-        )
-      );
-    })
-  ) : session.row_id ? (
-    // TODO: This part can be removed once compatibility with v25.4.0 is no longer needed.
-    // antd `Skeleton.Input size="small" active block` → the
-    // `BAISkeleton` input variant (MAPPING "Also COMPOSITION"):
-    // `active` is always-on behaviour and `block` is already the default
-    // full width.
-    <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
-      <LegacyLazyMountedVFolderLinks sessionFrgmt={session} />
-    </Suspense>
-  ) : null;
+  return _.map(session.vfolder_nodes?.edges, (vfolder, idx) => {
+    return (
+      vfolder?.node && (
+        <FolderLink
+          key={`mounted-vfolder-${idx}`}
+          vfolderNodeFragment={vfolder.node}
+          // TODO: For now, disable state using VirtualFolderNode permissions in FolderLink component.
+          // Currently shows Alert.error in Folder Explorer instead due to related bugs
+        />
+      )
+    );
+  });
 };
 
 export default MountedVFolderLinks;
-
-const LegacyLazyMountedVFolderLinks: React.FC<{
-  sessionFrgmt: MountedVFolderLinksLegacyLazyFolderLinkFragment$key;
-}> = ({ sessionFrgmt }) => {
-  const baiClient = useSuspendedBackendaiClient();
-  const session = useFragment(
-    graphql`
-      fragment MountedVFolderLinksLegacyLazyFolderLinkFragment on ComputeSessionNode {
-        row_id
-        vfolder_mounts
-      }
-    `,
-    sessionFrgmt,
-  );
-
-  const { legacy_session } = useLazyLoadQuery<MountedVFolderLinksQuery>(
-    graphql`
-      query MountedVFolderLinksQuery($uuid: UUID!) {
-        legacy_session: compute_session(id: $uuid) {
-          mounts
-        }
-      }
-    `,
-    {
-      uuid: session.row_id || '',
-    },
-    {
-      fetchPolicy: session.row_id ? 'store-and-network' : 'store-only',
-    },
-  );
-
-  return baiClient.supports('vfolder-mounts')
-    ? _.map(
-        // compute_session_node query's vfolder_mounts is not include name.
-        // To provide vfolder name in compute_session_node, schema must be changed.
-        // legacy_session.mounts (name) and session.vfolder_mounts (id) give vfolder information in same order.
-        _.zip(legacy_session?.mounts, session?.vfolder_mounts),
-        (mountInfo) => {
-          const [name, id] = mountInfo;
-          return (
-            <FolderLink
-              key={id}
-              folderId={id ?? ''}
-              folderName={name ?? ''}
-              showIcon
-            />
-          );
-        },
-      )
-    : legacy_session?.mounts?.join(', ');
-};

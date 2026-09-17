@@ -156,7 +156,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     };
     return (
       <Suspense fallback={fallback}>
-        {baiClient.supports('rbac-domain-scope-uuid') ? (
+        {baiClient.isManagerVersionCompatibleWith('26.9.0') ? (
           <BAIDomainSelectV2 {...domainSelectProps} />
         ) : (
           <BAIDomainSelect {...domainSelectProps} />
@@ -351,9 +351,9 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { logger } = useBAILogger();
   const [form] = Form.useForm();
   const baiClient = useSuspendedBackendaiClient();
-  // Auto-assign is only supported on managers >= 26.4.4. Gate the form field
-  // and the mutation input so older managers never receive the unknown field.
-  const supportsAutoAssign = baiClient.supports('role-auto-assign');
+  // Gates the form field and mutation input so older managers never receive it.
+  const supportsAutoAssign =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
 
   const { rbacPermissionMatrix } =
     useLazyLoadQuery<RoleFormModalPermissionMatrixQuery>(

@@ -168,9 +168,9 @@ const ResourceGroupList: React.FC = () => {
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const baiClient = useSuspendedBackendaiClient();
-  // AND/OR/NOT sub-filters only exist on managers with the `sub-filter`
-  // capability; older ones reject them, so restrict to a single condition.
-  const supportsSubFilter = baiClient.supports('sub-filter');
+  // AND/OR/NOT sub-filters need manager 26.7.0; older ones reject them, so
+  // restrict to a single condition.
+  const supportsSubFilter = baiClient.isManagerVersionCompatibleWith('26.7.0');
   const [activeType, setActiveType] = useState<'active' | 'inactive'>('active');
   const [
     openCreateModal,

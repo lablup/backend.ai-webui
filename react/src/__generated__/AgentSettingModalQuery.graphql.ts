@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3214eb7707210b78d3d5e2abcc62b135>>
+ * @generated SignedSource<<db9afd20977e45eef729496a415cc70f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -156,12 +156,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "46beb32231d26fa312aba8940c79553d",
+    "cacheID": "1f10fbc3e723942f4712a5f3e0bd5712",
     "id": null,
     "metadata": {},
     "name": "AgentSettingModalQuery",
     "operationKind": "query",
-    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  adminResourceGroups(first: 10) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
+    "text": "query AgentSettingModalQuery {\n  ...BAIAdminResourceGroupSelect_resourceGroupsFragment\n}\n\nfragment BAIAdminResourceGroupSelect_resourceGroupsFragment on Query {\n  adminResourceGroups(first: 10) {\n    count\n    edges {\n      node {\n        id\n        name\n        __typename\n      }\n      cursor\n    }\n    pageInfo {\n      endCursor\n      hasNextPage\n    }\n  }\n}\n"
   }
 };
 })();

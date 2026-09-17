@@ -143,16 +143,13 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       ? data.firstScope.edges[0].node.scopeId
       : undefined;
 
-  // System-generated project admin roles are managed through the project
-  // page's one-click admin setting, which requires manager >= 26.8.0
-  // (role-mapped-scope-filter). Show their assignments read-only there; on
-  // older managers direct assignment here is the only way to grant project
-  // admin, so keep the actions available (FR-3424).
+  // System project admin roles are managed from the project page on managers
+  // >= 26.8.0; older managers only grant project admin here (FR-3424).
   const isReadOnly =
     data.source === 'SYSTEM' &&
     !!projectScopeId &&
     !!data.name?.toLowerCase().includes('admin') &&
-    baiClient.supports('role-mapped-scope-filter');
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`

@@ -38,8 +38,8 @@ export type SessionStatusCategory =
 
 /**
  * The running / finished status buckets, narrowed to what the connected
- * manager's `SessionV2Status` enum actually accepts. Callers read
- * `supports('session-preemption-statuses')` and pass it in.
+ * manager's `SessionV2Status` enum actually accepts. Callers pass whether the
+ * manager is 26.8.0 or later.
  */
 export const getSessionV2StatusBuckets = (
   supportsPreemptionStatuses: boolean,

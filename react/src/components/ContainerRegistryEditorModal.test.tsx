@@ -32,7 +32,7 @@ vi.mock('../hooks', async (importOriginal) => {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
       _config: { domainName: 'default' },
-      supports: () => false,
+      isManagerVersionCompatibleWith: () => false,
     }),
   };
 });
@@ -52,6 +52,12 @@ vi.mock('./ProjectSelectForAdminPage', async () => {
       });
     },
   };
+});
+
+// The Extra Information editor needs the host ThemeModeProvider.
+vi.mock('./BAICodeEditor', async () => {
+  const React = await import('react');
+  return { default: () => React.createElement('div') };
 });
 
 const renderModal = (

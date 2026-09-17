@@ -103,7 +103,6 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
           <span style={{ fontWeight: 'normal' }}>
             <SessionStatusTag
               sessionFrgmt={session}
-              showInfo
               showQueuePosition={false}
             />
           </span>

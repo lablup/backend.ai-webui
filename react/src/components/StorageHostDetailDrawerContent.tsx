@@ -57,13 +57,11 @@ const StorageHostDetailDrawerContent: React.FC<
   const isQuotaSupportedStorage =
     storageVolume?.capabilities?.includes('quota') ?? false;
 
-  // The keypair-scoped User Folder Permissions view (filter policies by a
-  // user's keypairs + Assigned Keypairs column) relies on the `keypair.userId`
-  // filter and `keypairs` connection added to `adminKeypairResourcePoliciesV2`
-  // in 26.4.4. Older managers fall back to the policy-name selection view.
+  // The keypair-scoped User Folder Permissions view needs the `keypair.userId`
+  // filter; older managers fall back to the policy-name selection view.
   const baiClient = useSuspendedBackendaiClient();
   const supportsKeypairUserFilter =
-    baiClient?.supports('keypair-resource-policy-user-filter') ?? false;
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">

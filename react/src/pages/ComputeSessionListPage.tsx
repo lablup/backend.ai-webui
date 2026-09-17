@@ -687,7 +687,9 @@ const ComputeSessionListPage = () => {
                         // sessions. Mirrors the table's user_id filter via the
                         // session export `user.email` filter (BA-6480).
                         if (
-                          baiClient.supports('session-export-user-filter') &&
+                          baiClient.isManagerVersionCompatibleWith(
+                            '26.4.4rc9',
+                          ) &&
                           currentUser.email
                         ) {
                           csvFilter.user = {

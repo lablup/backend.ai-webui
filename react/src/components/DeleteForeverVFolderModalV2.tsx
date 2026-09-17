@@ -43,10 +43,9 @@ const DeleteForeverVFolderModalV2: React.FC<
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
   // `successes` is 26.9.0+ and `failed` 26.4.4+; `@since` strips each from
-  // the document below its version, and the flag picks which count to read.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
+  // the document below its version, and this picks which count to read.
+  const supportsPerIdResults =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
   // Per-folder failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{

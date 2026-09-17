@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d61d04afc8bd5d12af2f5c11ff9dcf09>>
+ * @generated SignedSource<<2484beafe0ae93006ef6099a661451e2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -83,16 +83,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "771101ff4fc852306cbe9f9c79e4bfa3",
+    "cacheID": "52c59e77f72c4107824f14221143ad92",
     "id": null,
     "metadata": {},
     "name": "ResourcePresetSelectQuery",
     "operationKind": "query",
-    "text": "query ResourcePresetSelectQuery {\n  resource_presets {\n    name\n    resource_slots\n    shared_memory\n    scaling_group_name @since(version: \"25.4.0\")\n  }\n}\n"
+    "text": "query ResourcePresetSelectQuery {\n  resource_presets {\n    name\n    resource_slots\n    shared_memory\n    scaling_group_name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dfa37ac6f9f8c11a92d885bf5d51af3e";
+(node as any).hash = "e82af1b048ab523df0ab9ded965a4c46";
 
 export default node;

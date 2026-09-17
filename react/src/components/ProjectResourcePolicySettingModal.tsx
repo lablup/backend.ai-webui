@@ -15,7 +15,6 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -46,9 +45,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   const { token } = theme.useToken();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance>(null);
-
-  const baiClient = useSuspendedBackendaiClient();
-  const supportMaxNetworkCount = baiClient?.supports('max_network_count');
 
   const projectResourcePolicy = useFragment(
     graphql`
@@ -138,9 +134,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
                 : GBToBytes(values?.max_quota_scope_size),
             max_network_count: values?.max_network_count || -1,
           };
-        if (!supportMaxNetworkCount) {
-          delete props.max_network_count;
-        }
         if (projectResourcePolicy === null) {
           commitCreateProjectResourcePolicy({
             variables: {
@@ -294,20 +287,18 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
               units="GB"
             />
           </FormItemWithUnlimited>
-          {supportMaxNetworkCount ? (
-            <FormItemWithUnlimited
-              name={'max_network_count'}
-              unlimitedValue={-1}
+          <FormItemWithUnlimited
+            name={'max_network_count'}
+            unlimitedValue={-1}
+            label={t('resourcePolicy.MaxNetworkCount')}
+            style={{ width: '100%', margin: 0 }}
+          >
+            <AstryxFormNumberInput
               label={t('resourcePolicy.MaxNetworkCount')}
-              style={{ width: '100%', margin: 0 }}
-            >
-              <AstryxFormNumberInput
-                label={t('resourcePolicy.MaxNetworkCount')}
-                min={0}
-                max={SIGNED_32BIT_MAX_INT}
-              />
-            </FormItemWithUnlimited>
-          ) : null}
+              min={0}
+              max={SIGNED_32BIT_MAX_INT}
+            />
+          </FormItemWithUnlimited>
         </BAIFlex>
       </Form>
     </BAIModal>

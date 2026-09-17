@@ -232,7 +232,6 @@ describe('getImageFullName', () => {
     const result =
       getImageFullName({
         namespace: 'abc/def/training',
-        name: undefined,
         humanized_name: 'abc/def/training',
         tag: '01-py3-abc-v1-def',
         registry: '192.168.0.1:7080',
@@ -286,70 +285,10 @@ describe('getImageFullName', () => {
       '192.168.0.1:7080/abc/def/training:01-py3-abc-v1-def@x86_64',
     );
   });
-  it('should return the full image name using only the name if there is a name but no namespace.', () => {
-    const result =
-      getImageFullName({
-        namespace: undefined,
-        name: 'abc/def/training',
-        humanized_name: 'abc/def/training',
-        tag: '01-py3-abc-v1-def',
-        registry: '192.168.0.1:7080',
-        architecture: 'x86_64',
-        digest: 'sha256:123456',
-        id: 'sample id',
-        installed: true,
-        resource_limits: [
-          {
-            key: 'cpu',
-            min: '1',
-            max: null,
-          },
-          {
-            key: 'mem',
-            min: '1g',
-            max: null,
-          },
-          {
-            key: 'cuda.device',
-            min: '0',
-            max: null,
-          },
-          {
-            key: 'cuda.shares',
-            min: '0',
-            max: null,
-          },
-        ],
-        labels: [
-          {
-            key: 'maintainer',
-            value: 'NVIDIA CORPORATION <cudatools@nvidia.com>',
-          },
-        ],
-        base_image_name: 'def/training',
-        supported_accelerators: undefined,
-        tags: [
-          {
-            key: 'py3',
-            value: 'abc',
-          },
-          {
-            key: 'v1',
-            value: 'def',
-          },
-        ],
-        version: '01',
-      }) || '';
-    expect(result).toBe(
-      '192.168.0.1:7080/abc/def/training:01-py3-abc-v1-def@x86_64',
-    );
-  });
-
-  it('should return the full image name using namespace if there are both name and namespace.', () => {
+  it('should return the full image name using the namespace.', () => {
     const result =
       getImageFullName({
         namespace: 'abc/def/training',
-        name: 'ghi/jkl/training',
         humanized_name: 'abc/def/training',
         tag: '01-py3-abc-v1-def',
         registry: '192.168.0.1:7080',
@@ -1288,19 +1227,6 @@ describe('resolveImageFullName', () => {
     expect(
       resolveImageFullName('cr.backend.ai/stable/python', undefined),
     ).toBeUndefined();
-  });
-
-  it('should fall back to the deprecated name field when namespace is absent', () => {
-    expect(
-      resolveImageFullName('cr.backend.ai/stable/python', [
-        {
-          registry: 'cr.backend.ai',
-          name: 'stable/python',
-          tag: '3.13-ubuntu24.04',
-          architecture: 'x86_64',
-        },
-      ]),
-    ).toBe('cr.backend.ai/stable/python:3.13-ubuntu24.04@x86_64');
   });
 
   it('should handle a registry with a port', () => {

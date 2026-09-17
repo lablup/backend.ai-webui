@@ -14,7 +14,7 @@ describe('getSessionV2StatusBuckets', () => {
     expect(running).toContain('RESCHEDULING');
   });
 
-  it('drops all preemption statuses when the client lacks the flag', () => {
+  it('drops all preemption statuses on managers older than 26.8.0', () => {
     expect(getSessionV2StatusBuckets(false).running).toEqual([
       'PENDING',
       'SCHEDULED',

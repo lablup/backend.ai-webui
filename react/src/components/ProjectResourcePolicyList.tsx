@@ -15,7 +15,6 @@ import {
   numberSorterWithInfinityValue,
 } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -59,9 +58,6 @@ const ProjectResourcePolicyList: React.FC<
   const [deletingPolicyName, setDeletingPolicyName] = useState<string | null>(
     null,
   );
-
-  const baiClient = useSuspendedBackendaiClient();
-  const supportMaxNetworkCount = baiClient?.supports('max_network_count');
 
   const { project_resource_policies } =
     useLazyLoadQuery<ProjectResourcePolicyListQuery>(
@@ -158,15 +154,13 @@ const ProjectResourcePolicyList: React.FC<
           -1,
         ),
     },
-    supportMaxNetworkCount
-      ? {
-          title: t('resourcePolicy.MaxNetworkCount'),
-          dataIndex: 'max_network_count',
-          key: 'max_network_count',
-          render: (text) => (text === -1 ? '∞' : text),
-          sorter: () => true,
-        }
-      : {},
+    {
+      title: t('resourcePolicy.MaxNetworkCount'),
+      dataIndex: 'max_network_count',
+      key: 'max_network_count',
+      render: (text) => (text === -1 ? '∞' : text),
+      sorter: () => true,
+    },
     {
       title: 'ID',
       dataIndex: 'id',

@@ -10,7 +10,6 @@ import { AgentSettingModalMutation } from '../__generated__/AgentSettingModalMut
 import { AgentSettingModalQuery } from '../__generated__/AgentSettingModalQuery.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSwitch } from './astryxFormControls';
 import {
@@ -40,7 +39,6 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const baiClient = useSuspendedBackendaiClient();
 
   const formRef = useRef<FormInstance<AgentSettingModalFragment$data> | null>(
     null,
@@ -54,9 +52,7 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
     `,
     {},
     {
-      fetchPolicy: baiClient?.supports('admin-resource-group-select')
-        ? 'network-only'
-        : 'store-only',
+      fetchPolicy: 'network-only',
     },
   );
 
@@ -101,18 +97,14 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
                 id: toLocalId(agent?.id ?? ''),
                 props: {
                   schedulable: values.schedulable,
-                  ...(baiClient?.supports('admin-resource-group-select') && {
-                    scaling_group: values.scaling_group,
-                  }),
+                  scaling_group: values.scaling_group,
                 },
               },
               updater: (store) => {
                 const agentRecord = store.get(agent?.id || '');
                 if (agentRecord) {
                   agentRecord.setValue(values.schedulable, 'schedulable');
-                  if (baiClient?.supports('admin-resource-group-select')) {
-                    agentRecord.setValue(values.scaling_group, 'scaling_group');
-                  }
+                  agentRecord.setValue(values.scaling_group, 'scaling_group');
                 }
               },
               onCompleted(res, errors) {
@@ -138,19 +130,17 @@ const AgentSettingModal: React.FC<AgentSettingModalProps> = ({
         preserve={false}
         initialValues={{ ...agent }}
       >
-        {baiClient?.supports('admin-resource-group-select') && (
-          <BAIFormItem
-            name="scaling_group"
+        <BAIFormItem
+          name="scaling_group"
+          label={t('agent.ResourceGroup')}
+          required={true}
+        >
+          <BAIAdminResourceGroupSelect
             label={t('agent.ResourceGroup')}
-            required={true}
-          >
-            <BAIAdminResourceGroupSelect
-              label={t('agent.ResourceGroup')}
-              isLabelHidden
-              queryRef={queryRef}
-            />
-          </BAIFormItem>
-        )}
+            isLabelHidden
+            queryRef={queryRef}
+          />
+        </BAIFormItem>
         <BAIFormItem
           name="schedulable"
           label={t('agent.Schedulable')}

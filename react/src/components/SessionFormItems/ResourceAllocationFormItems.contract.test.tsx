@@ -54,11 +54,6 @@ vi.mock('../../hooks', async (importOriginal) => {
   return {
     ...originalModule,
     useSuspendedBackendaiClient: () => ({
-      // `custom-accelerator-quantum-size` support makes the resource-group
-      // query use `store-and-network`, so the operation is observable on the
-      // mock environment.
-      supports: (feature: string) =>
-        feature === 'custom-accelerator-quantum-size',
       _config: { allowCustomResourceAllocation: true },
       resourcePreset: { check: mockResourcePresetCheck },
     }),

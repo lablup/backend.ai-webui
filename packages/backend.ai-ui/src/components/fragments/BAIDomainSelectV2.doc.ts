@@ -8,12 +8,12 @@ export const docs = {
   keywords: ['domain', 'select', 'dropdown', 'picker', 'uuid', 'relay'],
   usage: {
     description:
-      'The uuid-valued sibling of BAIDomainSelect: it shows the domain name but emits the domain uuid. It is self-fetching — no fragment reference or queryRef is passed in — but it runs a Relay `adminDomainsV2` query with `store-and-network`, so it must render under a RelayEnvironmentProvider and inside a Suspense boundary. That field is superadmin-only and requires manager 26.9.0 or later, so gate the component behind the corresponding capability check and fall back to BAIDomainSelect otherwise. The whole list arrives in one request — there is no pagination or server-side search — and each option value is the node id run through `toLocalId`. It is a thin wrapper over BAISelect: everything except the props below is passed straight through, and `options` is not accepted because the component owns them.',
+      'The uuid-valued sibling of BAIDomainSelect: it shows the domain name but emits the domain uuid. It is self-fetching — no fragment reference or queryRef is passed in — but it runs a Relay `adminDomainsV2` query with `store-and-network`, so it must render under a RelayEnvironmentProvider and inside a Suspense boundary. That field is superadmin-only and requires manager 26.9.0 or later, so gate the component behind a manager version check and fall back to BAIDomainSelect otherwise. The whole list arrives in one request — there is no pagination or server-side search — and each option value is the node id run through `toLocalId`. It is a thin wrapper over BAISelect: everything except the props below is passed straight through, and `options` is not accepted because the component owns them.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Choose between this component and BAIDomainSelect from a manager capability check, since the two emit different value shapes for the same field.',
+          'Choose between this component and BAIDomainSelect from a manager version check, since the two emit different value shapes for the same field.',
       },
       {
         guidance: true,
@@ -61,9 +61,9 @@ export const docs = {
   ],
   examples: [
     {
-      label: 'Capability-gated domain scope picker',
+      label: 'Manager-version-gated domain scope picker',
       code: `<Suspense fallback={fallback}>
-  {baiClient.supports('rbac-domain-scope-uuid') ? (
+  {baiClient.isManagerVersionCompatibleWith('26.9.0') ? (
     <BAIDomainSelectV2 {...domainSelectProps} />
   ) : (
     <BAIDomainSelect {...domainSelectProps} />

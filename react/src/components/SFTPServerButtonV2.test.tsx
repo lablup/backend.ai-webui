@@ -82,7 +82,7 @@ const { mockBaiClient, mockCreateIfNotExists, mockListHosts } = vi.hoisted(
         accessKey: 'test-access-key',
         domainName: 'default',
       },
-      supports: () => false,
+      isManagerVersionCompatibleWith: () => false,
       createIfNotExists: mockCreateIfNotExists,
       vfolder: {
         list_hosts: mockListHosts,

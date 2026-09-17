@@ -10,10 +10,11 @@
  * Instead, gate the test on the *actual* capability source the WebUI itself
  * reads, and let the UI assertion fail loudly when the backend is capable:
  *
- * - Manager-version capabilities → `skipUnlessClientFeature(page, 'agent-stats', ...)`
- *   (same source of truth as `baiClient.supports(...)` in components; the
- *   version → flag mapping lives in `packages/backend.ai-client/src/client.ts`
- *   `_updateSupportList()`)
+ * - Manager-version capabilities → `skipUnlessManagerVersion(page, '26.9.0', ...)`
+ *   (same source of truth as `baiClient.isManagerVersionCompatibleWith(...)`
+ *   in components — named capability flags via `supports()` are gone; every
+ *   version gate above the project's LTS baseline is now an inline version
+ *   check in the component itself, FR-3980)
  * - `config.toml` toggles → `skipUnlessClientConfig(page, 'enableModelFolders', ...)`
  *   (same source of truth as `baiClient._config.*` in components)
  * - Client properties (FR-3114) → `getClientProperty(page, 'current_group')`
@@ -23,9 +24,9 @@
  *   as `baiClient.vfolder.list_allowed_types()`)
  *
  * Pair these gates with a version-requirement tag on the test or describe
- * block (e.g. `@requires-manager-v25.15`, `@requires-webui-v26.4`) so gated
+ * block (e.g. `@requires-manager-v26.9`, `@requires-webui-v26.4`) so gated
  * specs can be excluded explicitly on incapable targets:
- * `npx playwright test --grep-invert "@requires-manager-v25.15"`.
+ * `npx playwright test --grep-invert "@requires-manager-v26.9"`.
  * See e2e/E2E-TEST-NAMING-GUIDELINES.md ("Feature-gate tags (FR-3112)" and
  * "Environment-constraint tags (FR-3114)").
  */
@@ -77,10 +78,10 @@ function isVersionAtLeast(version: string, minVersion: string): boolean {
 
 /**
  * Declaratively skips the current test when the WebUI under test is older
- * than `minVersion`. Use for WebUI-version capabilities that have no
- * `baiClient.supports(...)` flag (pair with a `@requires-webui-vX.Y` tag).
- * On a capable build the test proceeds, so a missing UI element fails
- * loudly instead of being reported as a skip.
+ * than `minVersion`. Use for WebUI-version capabilities that are not gated
+ * by a manager version (pair with a `@requires-webui-vX.Y` tag). On a
+ * capable build the test proceeds, so a missing UI element fails loudly
+ * instead of being reported as a skip.
  */
 export async function skipUnlessWebUIVersion(
   page: Page,
@@ -95,18 +96,19 @@ export async function skipUnlessWebUIVersion(
 }
 
 /**
- * Returns whether the logged-in Backend.AI client reports support for the
- * given capability flag — the same check components perform via
- * `baiClient.supports(feature)`.
+ * Returns whether the logged-in Backend.AI client's manager satisfies the
+ * given version — the same check components perform via
+ * `baiClient.isManagerVersionCompatibleWith(version)`.
  */
-export async function clientSupports(
+export async function isManagerVersionCompatible(
   page: Page,
-  feature: string,
+  version: string,
 ): Promise<boolean> {
   await waitForBackendAIClient(page);
   return page.evaluate(
-    (f) => !!(globalThis as any).backendaiclient?.supports(f),
-    feature,
+    (v) =>
+      !!(globalThis as any).backendaiclient?.isManagerVersionCompatibleWith(v),
+    version,
   );
 }
 
@@ -127,21 +129,21 @@ export async function getClientConfigValue(
 
 /**
  * Declarative feature gate: skips the current test (with the given auditable
- * reason) when the backend does not support the capability flag. When the
- * backend IS capable, the test proceeds — so a missing UI element becomes a
- * real failure instead of a silent skip.
+ * reason) when the backend manager is older than `version`. When the backend
+ * IS capable, the test proceeds — so a missing UI element becomes a real
+ * failure instead of a silent skip.
  *
  * The `reason` should cite the originating feature ticket and the minimum
  * backend version, e.g.
- * `"Agent Statistics widget requires the 'agent-stats' capability (manager >= 25.15.0, FR-1575)"`.
+ * `"Deployment Presets require manager >= 26.4.2 (FR-3205)"`.
  */
-export async function skipUnlessClientFeature(
+export async function skipUnlessManagerVersion(
   page: Page,
-  feature: string,
+  version: string,
   reason: string,
 ): Promise<void> {
-  const supported = await clientSupports(page, feature);
-  test.skip(!supported, reason);
+  const compatible = await isManagerVersionCompatible(page, version);
+  test.skip(!compatible, reason);
 }
 
 /**

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99bdccbe04e97785e1504afef94cd266>>
+ * @generated SignedSource<<ef17823f0f28a7b6782a161f0d13c15c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -100,17 +100,10 @@ v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "status_data",
-  "storageKey": null
-},
-v9 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "queue_position",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -197,7 +190,6 @@ return {
           (v6/*: any*/),
           (v7/*: any*/),
           (v8/*: any*/),
-          (v9/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -205,7 +197,7 @@ return {
             "name": "created_at",
             "storageKey": null
           },
-          (v10/*: any*/),
+          (v9/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -234,8 +226,7 @@ return {
           (v5/*: any*/),
           (v6/*: any*/),
           (v7/*: any*/),
-          (v8/*: any*/),
-          (v9/*: any*/)
+          (v8/*: any*/)
         ],
         "storageKey": null
       },
@@ -251,7 +242,6 @@ return {
           (v6/*: any*/),
           (v7/*: any*/),
           (v8/*: any*/),
-          (v9/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -259,19 +249,26 @@ return {
             "name": "name",
             "storageKey": null
           },
-          (v10/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "status_data",
+            "storageKey": null
+          },
+          (v9/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "34f258c08b6db62df953842ebe3f5c1d",
+    "cacheID": "c3b1eecbde1b66914994a82e444d04a6",
     "id": null,
     "metadata": {},
     "name": "AstryxSessionProbeCasesQuery",
     "operationKind": "query",
-    "text": "query AstryxSessionProbeCasesQuery(\n  $id1: GlobalIDField!\n  $id2: GlobalIDField!\n  $id3: GlobalIDField!\n) {\n  running: compute_session_node(id: $id1) {\n    ...SessionStatusTagFragment\n    ...SessionReservationFragment\n    ...SessionIdleChecksNodeFragment\n    id\n  }\n  pending: compute_session_node(id: $id2) {\n    ...SessionStatusTagFragment\n    id\n  }\n  error: compute_session_node(id: $id3) {\n    ...SessionStatusTagFragment\n    ...SessionStatusDetailModalFragment\n    id\n  }\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n"
+    "text": "query AstryxSessionProbeCasesQuery(\n  $id1: GlobalIDField!\n  $id2: GlobalIDField!\n  $id3: GlobalIDField!\n) {\n  running: compute_session_node(id: $id1) {\n    ...SessionStatusTagFragment\n    ...SessionReservationFragment\n    ...SessionIdleChecksNodeFragment\n    id\n  }\n  pending: compute_session_node(id: $id2) {\n    ...SessionStatusTagFragment\n    id\n  }\n  error: compute_session_node(id: $id3) {\n    ...SessionStatusTagFragment\n    ...SessionStatusDetailModalFragment\n    id\n  }\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  queue_position\n}\n"
   }
 };
 })();

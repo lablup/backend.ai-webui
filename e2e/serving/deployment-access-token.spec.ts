@@ -54,7 +54,7 @@ import {
   provisionDeploymentFixtures,
   selectRevisionModalOption,
 } from '../utils/deployment-fixtures';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { test, expect, Page } from '@playwright/test';
 
@@ -144,10 +144,10 @@ test.describe(
         // multi-worker runs and can slow both sides' list/upload waits; CI
         // runs single-worker (playwright.config.ts), where this cannot
         // happen.
-        await skipUnlessClientFeature(
+        await skipUnlessManagerVersion(
           page,
-          'deployment-preset',
-          "Adding a revision from a preset requires the 'deployment-preset' capability (manager >= 26.4.x)",
+          '26.4.2',
+          'Adding a revision from a preset requires manager >= 26.4.2',
         );
         fixtures = await provisionDeploymentFixtures(page);
 
