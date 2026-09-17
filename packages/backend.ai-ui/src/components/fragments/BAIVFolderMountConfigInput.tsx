@@ -632,7 +632,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                       allowClear
                       disabled={disabled}
                       vfolderUuid={entry.vfolderId}
-                      value={entry.subpath || undefined}
+                      value={entry.subpath}
                       onChange={(next) => updateEntry({ subpath: next ?? '' })}
                     />
                   </div>

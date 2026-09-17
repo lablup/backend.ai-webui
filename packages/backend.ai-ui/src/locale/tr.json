@@ -637,7 +637,7 @@
     "SourcePath": "Klasördeki yol (source)",
     "Subpath": "Alt yol",
     "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
-    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; / klasörün kökünü belirtir.",
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; klasörün kökünü bağlamak için boş bırakın.",
     "UnmountableFoldersRemoved": "Artık bağlayamayacağınız klasörler seçimden kaldırıldı."
   },
   "comp:BAIVFolderSelect": {

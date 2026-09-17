@@ -637,7 +637,7 @@
     "SourcePath": "Jalur di folder (source)",
     "Subpath": "Subjal",
     "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
-    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Klik kolom ini untuk menelusuri folder dan memilih salah satu; / berarti root folder.",
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Klik kolom ini untuk menelusuri folder dan memilih salah satu; biarkan kosong untuk mount root folder.",
     "UnmountableFoldersRemoved": "Folder yang tidak lagi dapat Anda pasang telah dihapus dari pilihan."
   },
   "comp:BAIVFolderSelect": {

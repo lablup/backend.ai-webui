@@ -132,8 +132,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     });
   };
 
-  const hasClearButton =
-    !!allowClear && !disabled && selectedSubPath !== undefined;
+  const hasClearButton = !!allowClear && !disabled && !!selectedSubPath;
 
   return (
     <>
@@ -155,11 +154,9 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
           isLabelHidden
           value={selectedSubPath}
           isLoading={isPickerPending}
-          // Leading '/' distinguishes "vfolder root picked" ('' → '/') from
-          // "nothing picked yet" (undefined → placeholder).
-          triggerLabel={
-            selectedSubPath === undefined ? undefined : `/${selectedSubPath}`
-          }
+          // A subpath is relative, so it shows without a leading '/'; the root
+          // ('') mounts the same as nothing picked and shows empty too.
+          triggerLabel={selectedSubPath || undefined}
           placeholder={
             !vfolderUuid
               ? t('comp:VFolderPathPicker.SelectFolderFirst')

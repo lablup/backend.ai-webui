@@ -415,7 +415,6 @@ const SessionLauncherPreview: React.FC<{
                 hasAnySubpath && {
                   dataIndex: 'subpath',
                   title: t('session.launcher.FolderSubpath'),
-                  render: (value: string) => (value ? `/${value}` : ''),
                 },
               ])}
               dataSource={mountRows}

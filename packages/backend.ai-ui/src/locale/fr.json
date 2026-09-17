@@ -637,7 +637,7 @@
     "SourcePath": "Chemin dans le dossier (source)",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
-    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; / correspond à la racine du dossier.",
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; laissez-le vide pour monter la racine du dossier.",
     "UnmountableFoldersRemoved": "Les dossiers que vous ne pouvez plus monter ont été retirés de la sélection."
   },
   "comp:BAIVFolderSelect": {

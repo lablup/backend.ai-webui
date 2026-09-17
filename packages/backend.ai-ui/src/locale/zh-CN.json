@@ -637,7 +637,7 @@
     "SourcePath": "文件夹内路径 (source)",
     "Subpath": "子路径",
     "SubpathInvalid": "子路径必须是相对路径，且不能包含 '..'。",
-    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。点击该输入框浏览文件夹并选择；/ 表示文件夹根目录。",
+    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。点击该输入框浏览文件夹并选择；留空则挂载文件夹根目录。",
     "UnmountableFoldersRemoved": "已从所选内容中移除您无法再挂载的文件夹。"
   },
   "comp:BAIVFolderSelect": {

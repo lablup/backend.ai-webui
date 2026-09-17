@@ -643,7 +643,7 @@
     "SourcePath": "Caminho na pasta (source)",
     "Subpath": "Subcaminho",
     "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
-    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; / é a raiz da pasta.",
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; deixe vazio para montar a raiz da pasta.",
     "UnmountableFoldersRemoved": "As pastas que você não pode mais montar foram removidas da seleção."
   },
   "comp:BAIVFolderSelect": {
