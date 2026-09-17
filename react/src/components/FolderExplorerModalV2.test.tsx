@@ -399,6 +399,19 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(screen.queryByText('data.NotInProject')).not.toBeInTheDocument();
   });
 
+  it('on a general route: keeps the project-name alert for a general project the user created (FR-3981)', async () => {
+    renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'GENERAL',
+      creatorId: 'current-user-uuid',
+    });
+
+    expect(await screen.findByText('data.NotInProject')).toBeInTheDocument();
+    expect(
+      screen.queryByText('data.InMyPersonalProject'),
+    ).not.toBeInTheDocument();
+  });
+
   it("on a general route: keeps the project-name alert for another user's personal project (FR-3981)", async () => {
     renderModal({
       ownershipProjectId: 'folder-project-id',
