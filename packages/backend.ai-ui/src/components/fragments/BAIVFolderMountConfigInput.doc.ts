@@ -26,7 +26,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Wrap it in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule({ aliasBasePath, autoMountedFolderNames })` — the rule takes the auto-mounted folders by name, so map `autoMountedFolders` to their names — so `form.validateFields()` rejects invalid mounts with the already-translated message.',
+          'Wrap it in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule({ aliasBasePath, autoMountedFolders })` — the rule takes the same `autoMountedFolders` the component does — so `form.validateFields()` rejects invalid mounts with the already-translated message.',
       },
       {
         guidance: true,
@@ -155,7 +155,7 @@ export const docs = {
     {
       label: 'Inside a form, gated on validity',
       code: `const mountConfigRule = useVFolderMountConfigFormRule({
-  autoMountedFolderNames: autoMountedFolders.map((folder) => folder.name),
+  autoMountedFolders,
 });
 
 <Form.Item

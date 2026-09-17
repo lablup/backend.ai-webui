@@ -156,8 +156,8 @@ const isSubpathInvalid = (subpath?: string) => {
 export interface VFolderMountConfigStatusOptions {
   /** Base path prepended to a relative alias input (mirrors VFolderTable). */
   aliasBasePath?: string;
-  /** Names of auto-mounted folders, included in the overlap check. */
-  autoMountedFolderNames?: string[];
+  /** Auto-mounted folders, included in the overlap check. */
+  autoMountedFolders?: ReadonlyArray<Pick<AutoMountedFolder, 'name'>>;
 }
 
 export interface VFolderMountConfigEntryStatus {
@@ -193,8 +193,8 @@ export const getVFolderMountConfigStatuses = (
   // Auto-mounted folders occupy their default mount path; include them so a
   // user alias colliding with an auto-mounted folder counts as an overlap.
   const autoMountDestinations = new Set(
-    (options?.autoMountedFolderNames ?? []).map((n) =>
-      inputToMountDestination(n, '', basePath),
+    (options?.autoMountedFolders ?? []).map((folder) =>
+      inputToMountDestination(folder.name, '', basePath),
     ),
   );
   const destinationCounts = _.countBy([
@@ -389,8 +389,9 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   }));
   const selectedIdSet = new Set(mountConfigs.map((e) => e.vfolderId));
 
-  const autoMountedFolderNames = (autoMountedFolders ?? []).map((f) => f.name);
-  const autoMountedNameSet = new Set(autoMountedFolderNames);
+  const autoMountedNameSet = new Set(
+    (autoMountedFolders ?? []).map((f) => f.name),
+  );
 
   // Offering an auto-mounted folder is noise: the session mounts it anyway, so
   // picking it could only produce a duplicate mount path. It narrows the
@@ -412,7 +413,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   // exported helper a consumer uses to gate the form, then read per row below.
   const statusByVFolderId = getVFolderMountConfigStatuses(mountConfigs, {
     aliasBasePath,
-    autoMountedFolderNames,
+    autoMountedFolders,
   });
 
   // A value restored from a template or a URL can name a folder this owner and
@@ -538,13 +539,6 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 )
               : undefined;
             const subpathInvalid = !!status.subpathError;
-            // Match the input control height so the name lines up with the
-            // input row, not the helper-text-inflated row height.
-            const nameStyle = {
-              width: 150,
-              flexShrink: 0,
-              lineHeight: `${token.controlHeight}px`,
-            };
             return (
               <BAIFlex
                 key={entry.vfolderId}
@@ -552,16 +546,29 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 align="start"
                 gap="xxs"
               >
+                {/* Match the input control height so the name lines up with
+                    the input row, not the helper-text-inflated row height. */}
                 {folderExplorerPath ? (
                   <BAILink
                     to={folderExplorerPath(entry.vfolderId)}
                     ellipsis
-                    style={nameStyle}
+                    style={{
+                      width: 150,
+                      flexShrink: 0,
+                      lineHeight: `${token.controlHeight}px`,
+                    }}
                   >
                     {name}
                   </BAILink>
                 ) : (
-                  <BAIText ellipsis={{ tooltip: true }} style={nameStyle}>
+                  <BAIText
+                    ellipsis={{ tooltip: true }}
+                    style={{
+                      width: 150,
+                      flexShrink: 0,
+                      lineHeight: `${token.controlHeight}px`,
+                    }}
+                  >
                     {name}
                   </BAIText>
                 )}

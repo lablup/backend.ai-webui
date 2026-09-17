@@ -116,7 +116,7 @@ describe('getVFolderMountConfigStatuses', () => {
   it('flags an alias that resolves onto an auto-mounted folder default path', () => {
     const statuses = getVFolderMountConfigStatuses(
       [{ vfolderId: dataFolder, name: 'my-data', mountDestination: '.config' }],
-      { autoMountedFolderNames: ['.config'] },
+      { autoMountedFolders: [{ name: '.config' }] },
     );
     expect(statuses[dataFolder]).toMatchObject({
       mountDestination: '/home/work/.config',
@@ -127,7 +127,7 @@ describe('getVFolderMountConfigStatuses', () => {
   it('leaves an alias alone when no auto-mounted folder claims its path', () => {
     const statuses = getVFolderMountConfigStatuses(
       [{ vfolderId: dataFolder, name: 'my-data', mountDestination: 'data' }],
-      { autoMountedFolderNames: ['.config'] },
+      { autoMountedFolders: [{ name: '.config' }] },
     );
     expect(statuses[dataFolder].aliasError).toBeUndefined();
   });

@@ -441,7 +441,7 @@ export const WithFormValidation: Story = {
       const [result, setResult] = useState<string>('');
       const mountConfigRule = useVFolderMountConfigFormRule({
         aliasBasePath: args.aliasBasePath,
-        autoMountedFolderNames: args.autoMountedFolders?.map((f) => f.name),
+        autoMountedFolders: args.autoMountedFolders,
       });
       return (
         <Form
