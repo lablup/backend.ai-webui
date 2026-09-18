@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "Muat naik fail dibatalkan oleh permintaan pengguna.",
     "FileUploadFailed": "Gagal memuat naik beberapa fail dalam folder '{{folderName}}'.",
     "Filename": "Nama fail",
+    "FolderDetailUnavailable": "Butiran folder tidak tersedia",
+    "FolderDetailUnavailableDescription": "Maklumat folder tidak dapat dimuatkan, tetapi anda masih boleh melayari failnya.",
     "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",

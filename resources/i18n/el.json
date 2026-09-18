@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "Η μεταφόρτωση αρχείων ακυρώθηκε με αίτημα χρήστη.",
     "FileUploadFailed": "Απέτυχε να ανεβάσει κάποια αρχεία στο φάκελο '{{folderName}}'.",
     "Filename": "Όνομα αρχείου",
+    "FolderDetailUnavailable": "Οι λεπτομέρειες του φακέλου δεν είναι διαθέσιμες",
+    "FolderDetailUnavailableDescription": "Δεν ήταν δυνατή η φόρτωση των πληροφοριών του φακέλου, αλλά μπορείτε να περιηγηθείτε στα αρχεία του.",
     "FolderNotFoundOrNoAccess": "Ο φάκελος δεν βρέθηκε ή απορρίφθηκε η πρόσβαση",
     "Metadata": "Μεταδεδομένα",
     "NoExplorerSupportForUnmanagedFolder": "Οι μη διαχειριζόμενοι φάκελοι δεν υποστηρίζουν τον εξερευνητή αρχείων.",

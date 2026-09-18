@@ -1607,6 +1607,8 @@
     "FileUploadCancelled": "การอัปโหลดไฟล์ถูกยกเลิกโดยคำขอผู้ใช้",
     "FileUploadFailed": "ไม่สามารถอัปโหลดไฟล์บางไฟล์ในโฟลเดอร์ '{{folderName}}'",
     "Filename": "ชื่อไฟล์",
+    "FolderDetailUnavailable": "ไม่สามารถแสดงรายละเอียดโฟลเดอร์",
+    "FolderDetailUnavailableDescription": "ไม่สามารถโหลดข้อมูลโฟลเดอร์ได้ แต่ยังคงเรียกดูไฟล์ภายในได้",
     "FolderNotFoundOrNoAccess": "ไม่พบโฟลเดอร์หรือถูกปฏิเสธการเข้าถึง",
     "Metadata": "ข้อมูลเมตา",
     "NoExplorerSupportForUnmanagedFolder": "โฟลเดอร์ที่ไม่มีการจัดการไม่รองรับ File Explorer",

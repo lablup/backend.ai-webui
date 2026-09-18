@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "La carga de archivo fue cancelada por solicitud del usuario.",
     "FileUploadFailed": "No se pudo cargar algunos archivos en la carpeta '{{folderName}}'.",
     "Filename": "Nombre del archivo",
+    "FolderDetailUnavailable": "Los detalles de la carpeta no están disponibles",
+    "FolderDetailUnavailableDescription": "No se pudo cargar la información de la carpeta, pero aún puede explorar sus archivos.",
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "Metadata": "Metadatos",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",

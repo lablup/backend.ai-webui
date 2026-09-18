@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "Das Datei -Upload wurde durch Benutzeranforderung storniert.",
     "FileUploadFailed": "Es wurden einige Dateien nicht in Ordner '{{folderName}}' hochgeladen.",
     "Filename": "Dateiname",
+    "FolderDetailUnavailable": "Ordnerdetails sind nicht verfügbar",
+    "FolderDetailUnavailableDescription": "Die Ordnerinformationen konnten nicht geladen werden, die Dateien lassen sich aber weiterhin durchsuchen.",
     "FolderNotFoundOrNoAccess": "Ordner, der nicht gefunden oder zugänglich ist verweigert",
     "Metadata": "Metadaten",
     "NoExplorerSupportForUnmanagedFolder": "Nicht verwaltete Ordner unterstützen den Datei -Explorer nicht.",

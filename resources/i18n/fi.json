@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FileUploadFailed": "Joidenkin tiedostojen lähettäminen kansioon '{{folderName}}'.",
     "Filename": "Tiedoston nimi",
+    "FolderDetailUnavailable": "Kansion tiedot eivät ole saatavilla",
+    "FolderDetailUnavailableDescription": "Kansion tietoja ei voitu ladata, mutta voit silti selata sen tiedostoja.",
     "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "Metadata": "Metatiedot",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",

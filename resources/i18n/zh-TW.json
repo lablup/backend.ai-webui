@@ -1621,6 +1621,8 @@
     "FileUploadCancelled": "文件上傳已通過用戶請求取消。",
     "FileUploadFailed": "無法將某些文件上傳到文件夾'{{folderName}}'中。",
     "Filename": "文件名",
+    "FolderDetailUnavailable": "無法載入資料夾資訊",
+    "FolderDetailUnavailableDescription": "未能載入資料夾資訊，但仍可瀏覽其中的檔案。",
     "FolderNotFoundOrNoAccess": "未找到或拒絕訪問的文件夾",
     "Metadata": "中繼資料",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夾不支持文件資源管理器。",
