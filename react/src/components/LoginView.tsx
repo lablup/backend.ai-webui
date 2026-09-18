@@ -28,6 +28,12 @@ import { App } from '../app-shim';
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
 import {
+  clearApiKeypair,
+  loadApiKeypair,
+  resolveInitialConnectionMode,
+  saveApiKeypair,
+} from '../helper/apiKeypairSession';
+import {
   devApiEndpointOverride,
   devEmailOverride,
   devPasswordOverride,
@@ -204,7 +210,9 @@ const LoginView: React.FC<{
 
     const newCfg = atomLoginConfig;
     setLoginConfig(newCfg);
-    setConnectionMode(newCfg.connection_mode);
+    setConnectionMode(
+      resolveInitialConnectionMode(newCfg, loadApiKeypair() !== null),
+    );
     // An already-resolved endpoint (a stored session's server, kept in `prev`)
     // wins so a dev override never clobbers the backend a live session targets
     // — that would re-introduce the login-screen bounce. Fall back to the
@@ -785,24 +793,38 @@ const LoginView: React.FC<{
   );
 
   const connectUsingAPI = useCallback(
-    async (_showError = true, endpointOverride?: string) => {
+    async (showError = true, endpointOverride?: string) => {
       const ep = (endpointOverride ?? apiEndpoint).trim();
-      const apiKey = form.getFieldValue('api_key') || '';
-      const secretKey = form.getFieldValue('secret_key') || '';
+      const typedAccessKey = form.getFieldValue('api_key') || '';
+      // A silent login after a reload has an empty form; the keypair this tab
+      // kept stands in for it.
+      const stored = typedAccessKey ? null : loadApiKeypair();
+      const accessKey = typedAccessKey || stored?.accessKey || '';
+      const secretKey = typedAccessKey
+        ? form.getFieldValue('secret_key') || ''
+        : stored?.secretKey || '';
+      if (!accessKey || !secretKey) {
+        open();
+        setIsLoading(false);
+        return;
+      }
 
-      const { client } = createBackendAIClient(apiKey, secretKey, ep, 'API');
+      const { client } = createBackendAIClient(accessKey, secretKey, ep, 'API');
       clientRef.current = client;
       client.ready = false;
 
       try {
         await client.get_manager_version();
         await doGQLConnect(client);
+        saveApiKeypair({ accessKey, secretKey });
       } catch {
-        notification(t('error.CannotConnectToServer'));
+        if (stored) clearApiKeypair();
+        open();
         setIsLoading(false);
+        if (showError) notification(t('error.CannotConnectToServer'));
       }
     },
-    [apiEndpoint, form, doGQLConnect, notification, t],
+    [apiEndpoint, form, doGQLConnect, notification, open, t],
   );
 
   const handleLogin = useCallback(async () => {
@@ -967,12 +989,14 @@ const LoginView: React.FC<{
         return false;
       }
     }
+    if (connectionMode === 'API') return loadApiKeypair() !== null;
     return false;
   }, [resolveEndpoint, connectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
   const logoutSession = useCallback(async (): Promise<void> => {
+    clearApiKeypair();
     if (clientRef.current) {
       await clientRef.current.logout();
     }
