@@ -30,6 +30,7 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
+  BAIUserSelect,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   type DeploymentSorterKey,
@@ -173,6 +174,9 @@ const AdminDeployment = ({
   const supportsExtendedFilter = baiClient.supports(
     'model-deployment-extended-filter',
   );
+  const supportsReplicaNestedFilter = baiClient.supports(
+    'deployment-replica-nested-filter',
+  );
 
   const mergedFilter = queryRef.variables.filter as
     DeploymentFilter | undefined;
@@ -296,6 +300,70 @@ const AdminDeployment = ({
       type: 'datetime' as const,
       operators: ['after' as const, 'before' as const],
       defaultOperator: 'after' as const,
+    },
+    supportsExtendedFilter && {
+      key: 'createdUserId',
+      propertyLabel: t('deployment.Owner'),
+      type: 'uuid' as const,
+      fixedOperator: 'equals' as const,
+      rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIUserSelect
+          valuePropName="id"
+          label={t('deployment.Owner')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          onChange={(next, option) =>
+            // The picker emits the user UUID; forward the option label
+            // (email) so the condition tag stays readable.
+            onAddCondition(
+              next as string | undefined,
+              Array.isArray(option) ? option[0]?.label : option?.label,
+            )
+          }
+        />
+      ),
+    },
+    // `replicas.some.X` nests as ReplicaNestedFilter -> ReplicaFilter -> the
+    // per-field filter, which is what `buildNestedFilter` emits from the key.
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.status',
+      propertyLabel: t('deployment.filter.ReplicaStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Provisioning'), value: 'PROVISIONING' },
+        { label: t('replicaStatus.Running'), value: 'RUNNING' },
+        { label: t('replicaStatus.Terminating'), value: 'TERMINATING' },
+        { label: t('replicaStatus.Terminated'), value: 'TERMINATED' },
+        { label: t('replicaStatus.FailedToStart'), value: 'FAILED_TO_START' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.healthStatus',
+      propertyLabel: t('deployment.filter.ReplicaHealthStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.NotChecked'), value: 'NOT_CHECKED' },
+        { label: t('replicaStatus.Healthy'), value: 'HEALTHY' },
+        { label: t('replicaStatus.Unhealthy'), value: 'UNHEALTHY' },
+        { label: t('replicaStatus.Degraded'), value: 'DEGRADED' },
+      ],
+    },
+    supportsReplicaNestedFilter && {
+      key: 'replicas.some.trafficStatus',
+      propertyLabel: t('deployment.filter.ReplicaTrafficStatus'),
+      type: 'enum' as const,
+      fixedOperator: 'equals' as const,
+      strictSelection: true,
+      options: [
+        { label: t('replicaStatus.Active'), value: 'ACTIVE' },
+        { label: t('replicaStatus.Inactive'), value: 'INACTIVE' },
+      ],
     },
   ]);
 

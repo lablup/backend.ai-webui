@@ -1090,7 +1090,7 @@
     "AddAccessToken": "Zugriffstoken hinzufügen",
     "AddNewRevisionFromThis": "Neue Revision basierend auf dieser",
     "AddRevision": "Revision hinzufügen",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Wechseln Sie zum Projekt dieser Bereitstellung, um eine Revision hinzuzufügen.",
     "AdditionalMounts": "Zusätzliche Einhängepunkte",
     "AnotherDeploymentInProgress": "Ein weiteres Deployment-Update wird bereits durchgeführt. Bitte warten Sie, bis es abgeschlossen ist, bevor Sie es erneut versuchen.",
     "Apply": "Bereitstellen",
@@ -1189,7 +1189,7 @@
     "NotAccessibleOrDeleted": "Diese Bereitstellung wurde gelöscht oder Sie haben keine Berechtigung, darauf zuzugreifen.",
     "NotInProject": "Diese Bereitstellung gehört zu einem anderen Projekt.",
     "NumberOfReplicas": "Anzahl der Replikate",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Nur der Eigentümer der Bereitstellung kann diese Bereitstellung verwalten.",
     "OpenCreateDeploymentModal": "Modal zum Erstellen einer Bereitstellung öffnen",
     "OpenToPublic": "Öffentlich",
     "OpenToPublicCannotBeChanged": "Die bei der Erstellung ausgewählte Einstellung für den öffentlichen Zugriff kann nicht geändert werden.",
@@ -1271,7 +1271,10 @@
       "OpenToPublic": "Öffentlich",
       "ResourceGroup": "Ressourcengruppe",
       "Status": "Status",
-      "Tags": "Tags"
+      "Tags": "Tags",
+      "ReplicaStatus": "Replikat-Lebenszyklus",
+      "ReplicaHealthStatus": "Replikat-Gesundheitsstatus",
+      "ReplicaTrafficStatus": "Replikat-Datenverkehrsstatus"
     },
     "nav": {
       "Next": "Weiter",

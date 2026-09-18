@@ -1090,7 +1090,7 @@
     "AddAccessToken": "Tambah Token Akses",
     "AddNewRevisionFromThis": "Revision baharu berdasarkan ini",
     "AddRevision": "Tambah Revision",
-    "AddRevisionDisabledProjectMismatch": "__NOT_TRANSLATED__",
+    "AddRevisionDisabledProjectMismatch": "Tukar ke projek penggunaan ini untuk menambah semakan.",
     "AdditionalMounts": "Pemasangan Tambahan",
     "AnotherDeploymentInProgress": "Kemas kini deployment lain sedang dalam proses. Sila tunggu sehingga selesai sebelum mencuba lagi.",
     "Apply": "Gunakan",
@@ -1189,7 +1189,7 @@
     "NotAccessibleOrDeleted": "Penggunaan ini telah dipadam atau anda tidak mempunyai kebenaran untuk mengaksesnya.",
     "NotInProject": "Penggunaan ini tergolong dalam projek lain.",
     "NumberOfReplicas": "Bilangan Replika",
-    "OnlyOwnerCanManage": "__NOT_TRANSLATED__",
+    "OnlyOwnerCanManage": "Hanya pemilik penggunaan boleh mengurus penggunaan ini.",
     "OpenCreateDeploymentModal": "Buka modal cipta penggunaan",
     "OpenToPublic": "Terbuka kepada Awam",
     "OpenToPublicCannotBeChanged": "Tetapan akses awam yang dipilih semasa penciptaan tidak boleh diubah.",
@@ -1271,7 +1271,10 @@
       "OpenToPublic": "Awam",
       "ResourceGroup": "Kumpulan Sumber",
       "Status": "Status",
-      "Tags": "Tag"
+      "Tags": "Tag",
+      "ReplicaStatus": "Kitar hayat replika",
+      "ReplicaHealthStatus": "Status kesihatan replika",
+      "ReplicaTrafficStatus": "Status trafik replika"
     },
     "nav": {
       "Next": "Seterusnya",

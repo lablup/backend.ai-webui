@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f27ae6a82121f2077d921d9a02c909be>>
+ * @generated SignedSource<<a3ff7ccab83e2684eb0fc8fbb60d8fc1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -244,6 +244,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "rank",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "runtimeVariantId",
                     "storageKey": null
                   },
@@ -412,12 +419,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0268564a49c64dda3487228965ad3b7f",
+    "cacheID": "877073383ac47df1f9e81ff2b17328b8",
     "id": null,
     "metadata": {},
     "name": "AdminDeploymentPresetQuery",
     "operationKind": "query",
-    "text": "query AdminDeploymentPresetQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
+    "text": "query AdminDeploymentPresetQuery(\n  $filter: DeploymentRevisionPresetFilter\n  $orderBy: [DeploymentRevisionPresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  deploymentRevisionPresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...AdminDeploymentPresetTableFragment\n      }\n    }\n  }\n}\n\nfragment AdminDeploymentPresetTableFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  rank\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n      architecture\n    }\n  }\n  deploymentDefaults {\n    replicaCount\n    deploymentStrategy\n    openToPublic\n    revisionHistoryLimit\n  }\n  createdAt\n  updatedAt\n}\n"
   }
 };
 })();

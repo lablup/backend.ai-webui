@@ -44,7 +44,7 @@
     "PresetUpdated": "Deployment preset has been updated.",
     "PresetValues": "Preset Values",
     "Rank": "Rank",
-    "RankTooltip": "Display ordering among presets of the same runtime. Lower values appear first.",
+    "RankTooltip": "Display ordering among presets of the same runtime variant. Lower values are shown first.",
     "Replicas": "Replica Count",
     "ReplicasPlaceholder": "e.g., 2",
     "ReplicasTooltip": "Default replica count applied when a deployment is created from this preset.",
@@ -1256,6 +1256,9 @@
       "EndpointUrl": "Endpoint URL",
       "Name": "Name",
       "OpenToPublic": "Public",
+      "ReplicaHealthStatus": "Replica Health Status",
+      "ReplicaStatus": "Replica Lifecycle",
+      "ReplicaTrafficStatus": "Replica Traffic Status",
       "ResourceGroup": "Resource Group",
       "Status": "Status",
       "Tags": "Tags"
