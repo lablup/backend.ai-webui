@@ -170,3 +170,28 @@ describe('BAITable invalid page number (FR-3703)', () => {
     expect(screen.queryByText('Invalid page number')).not.toBeInTheDocument();
   });
 });
+
+describe('BAITable page size change (FR-3994)', () => {
+  it('reports the new page size once, not the one it replaced', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    renderTable({
+      dataSource: makeRows(10),
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 250,
+        pageSizeOptions: [10, 20, 50],
+        onChange,
+      },
+    });
+
+    await user.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: '20' }));
+
+    // Astryx fires onPageSizeChange and then onChange(1) in the same event;
+    // the trailing call must not re-report the previous size.
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(1, 20);
+  });
+});

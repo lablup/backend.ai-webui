@@ -89,7 +89,7 @@ import {
   Inbox,
   Settings,
 } from 'lucide-react';
-import React, { useState, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
@@ -646,6 +646,10 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       trigger: 'no-trigger',
     },
   );
+
+  // Set by onPageSizeChange so the onChange(1) Astryx fires right after it is
+  // dropped rather than re-reporting the previous page size.
+  const isPageSizeChangeRef = useRef(false);
 
   const total = pagination
     ? (pagination.total ?? sortedRows.length)
@@ -1360,10 +1364,18 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 size={pagination?.size ?? 'sm'}
                 label={String(t('comp:BAITable.Pagination'))}
                 onChange={(page) => {
+                  // Astryx's size selector fires onPageSizeChange and then
+                  // onChange(1) in the same event; that trailing call still
+                  // closes over the page size just replaced (FR-3994).
+                  if (isPageSizeChangeRef.current) {
+                    isPageSizeChangeRef.current = false;
+                    return;
+                  }
                   setCurrentPage(page);
                   pagination?.onChange?.(page, currentPageSize);
                 }}
                 onPageSizeChange={(pageSize) => {
+                  isPageSizeChangeRef.current = true;
                   setCurrentPage(1);
                   setCurrentPageSize(pageSize);
                   pagination?.onChange?.(1, pageSize);
