@@ -71,6 +71,11 @@ interface LoginFormPanelProps {
   loginError: { message: string; description?: string } | null;
   onClearLoginError?: () => void;
   connectionMode: ConnectionMode;
+  /**
+   * Why the Session/API switch cannot be operated, or `false` when it can.
+   * The reason travels with the flag so the two can never disagree.
+   */
+  signinModeDisabled: boolean | { reason: string };
   loginConfig: LoginConfigState;
   apiEndpoint: string;
   otpRequired: boolean;
@@ -103,6 +108,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   loginError,
   onClearLoginError,
   connectionMode,
+  signinModeDisabled,
   loginConfig,
   apiEndpoint,
   otpRequired,
@@ -249,6 +255,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
           <div style={{ marginBottom: token.marginMD }}>
+            {/* `disabledMessage` is the whole control's, not a segment's:
+                Astryx has no per-item reason, and a disabled control swallows
+                the hover an external Tooltip would need. */}
             <SegmentedControl
               value={connectionMode}
               onChange={(value) =>
@@ -256,6 +265,12 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               }
               layout="fill"
               label={t('login.Login', { postProcess: [] })}
+              isDisabled={!!signinModeDisabled}
+              disabledMessage={
+                typeof signinModeDisabled === 'object'
+                  ? signinModeDisabled.reason
+                  : undefined
+              }
             >
               <SegmentedControlItem
                 value="SESSION"

@@ -81,6 +81,9 @@ const extractErrorType = (typeUrl?: string): string => {
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
 
+/** How long the endpoint field has to settle before it is asked what it is. */
+const ENDPOINT_PROBE_DEBOUNCE_MS = 500;
+
 const LoginView: React.FC<{
   /**
    * When true, delays closing the login panel until MainLayout signals
@@ -276,15 +279,19 @@ const LoginView: React.FC<{
   useEffect(() => {
     if (!normalizedEndpoint) return;
     let cancelled = false;
-    isWebServerEndpoint(normalizedEndpoint).then((isWebServer) => {
-      if (cancelled) return;
-      setWebServerProbe({ endpoint: normalizedEndpoint, isWebServer });
-      // Pin the mode itself, not just the switch: the login path, the silent
-      // re-login and the session check all read this one value.
-      if (isWebServer) setConnectionMode('SESSION');
-    });
+    // The field reports every keystroke, so settle before asking the network.
+    const timer = setTimeout(() => {
+      isWebServerEndpoint(normalizedEndpoint).then((isWebServer) => {
+        if (cancelled) return;
+        setWebServerProbe({ endpoint: normalizedEndpoint, isWebServer });
+        // Pin the mode itself, not just the switch: the login path, the silent
+        // re-login and the session check all read this one value.
+        if (isWebServer) setConnectionMode('SESSION');
+      });
+    }, ENDPOINT_PROBE_DEBOUNCE_MS);
     return () => {
       cancelled = true;
+      clearTimeout(timer);
     };
   }, [normalizedEndpoint]);
 
@@ -1157,11 +1164,12 @@ const LoginView: React.FC<{
         loginError={loginError}
         onClearLoginError={() => setLoginError(null)}
         connectionMode={connectionMode}
-        loginConfig={
-          canChangeSigninMode
-            ? loginConfig
-            : { ...loginConfig, change_signin_support: false }
+        signinModeDisabled={
+          isEndpointWebServer
+            ? { reason: t('login.APISigninNeedsManagerEndpoint') }
+            : false
         }
+        loginConfig={loginConfig}
         apiEndpoint={apiEndpoint}
         otpRequired={otpRequired}
         needsOtpRegistration={needsOtpRegistration}

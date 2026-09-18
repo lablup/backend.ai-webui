@@ -1945,6 +1945,7 @@
     "APIEndpointEmpty": "Punkt końcowy interfejsu API jest pusty. Określ punkt końcowy interfejsu API, aby się zalogować.",
     "APIKey": "Klucz API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Logowanie przez API wymaga endpointu Manager. Ten adres to Backend.AI Webserver.",
     "ActiveSessionExists": "Aktywna sesja logowania już istnieje.",
     "ActiveSessionExistsDescription": "Jesteś już zalogowany z innej przeglądarki lub karty. Najpierw wyloguj się z tamtej sesji lub spróbuj ponownie.",
     "AdvancedSettings": "Zaawansowane",

@@ -1946,6 +1946,7 @@
     "APIEndpointEmpty": "API-Endpunkt ist leer. Bitte geben Sie den API-Endpunkt für die Anmeldung an.",
     "APIKey": "API-Schlüssel",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API-Anmeldung erfordert einen Manager-Endpunkt. Diese Adresse ist ein Backend.AI Webserver.",
     "ActiveSessionExists": "Es besteht bereits eine aktive Anmeldesitzung.",
     "ActiveSessionExistsDescription": "Sie sind bereits von einem anderen Browser oder Tab angemeldet. Bitte melden Sie sich zuerst aus der anderen Sitzung ab oder versuchen Sie es erneut.",
     "AdvancedSettings": "Erweitert",

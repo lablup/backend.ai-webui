@@ -1931,6 +1931,7 @@
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
     "APIKey": "API Key",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API sign-in needs a Manager endpoint. This address is a Backend.AI Webserver.",
     "ActiveSessionExists": "An active login session already exists.",
     "ActiveSessionExistsDescription": "You are already logged in from another browser or tab. Please log out from the other session first, or try again.",
     "AdvancedSettings": "Advanced",

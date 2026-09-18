@@ -1946,6 +1946,7 @@
     "APIEndpointEmpty": "Điểm cuối API trống. Vui lòng chỉ định điểm cuối API để đăng nhập.",
     "APIKey": "Mã API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Đăng nhập bằng API cần một endpoint của Manager. Địa chỉ này là một Backend.AI Webserver.",
     "ActiveSessionExists": "Đã tồn tại một phiên đăng nhập đang hoạt động.",
     "ActiveSessionExistsDescription": "Bạn đã đăng nhập từ trình duyệt hoặc tab khác. Vui lòng đăng xuất khỏi phiên đó trước, hoặc thử lại.",
     "AdvancedSettings": "Nâng cao",
