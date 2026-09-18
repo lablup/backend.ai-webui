@@ -227,6 +227,7 @@
     "DiskPerc": "ディスク %の",
     "ElapsedTime": "経過時間",
     "Endpoint": "終点",
+    "LostAt": "切断日時",
     "Maintaining": "維持",
     "NoAgentToDisplay": "エージェント情報がありません。",
     "NoAvailableLiveStat": "表示する使用量なし",
@@ -243,8 +244,10 @@
     "StartsAt": "開始時刻",
     "Status": "状態",
     "StatusChanged": "変更済み",
+    "StatusChangedAt": "状態変更日時",
     "Terminated": "終了しました",
     "Utilization": "使用量",
+    "Version": "バージョン",
     "WatcherActionFailed": "エージェントの制御に失敗しました。",
     "WatcherActionWarning": "このエージェントで実行中のセッションに影響する場合があります。",
     "WatcherRestart": "エージェントを再起動",
@@ -257,6 +260,7 @@
   "agentStats": {
     "AgentStats": "エージェントの統計",
     "AgentStatsDescription": "このパネルには、システム内のすべてのエージェントにわたって使用されているすべてのリソースが表示されます。\n値は、すべてのアクティブなセッションで使用されたリソースの合計を表します。",
+    "SchedulableAgents": "スケジュール可能なエージェント",
     "UsedResources": "使用済みリソース"
   },
   "aiAgent": {

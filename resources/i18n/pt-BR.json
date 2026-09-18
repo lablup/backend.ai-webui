@@ -227,6 +227,7 @@
     "DiskPerc": "Disco %",
     "ElapsedTime": "Tempo decorrido",
     "Endpoint": "Endpoint",
+    "LostAt": "Perdido em",
     "Maintaining": "Mantendo",
     "NoAgentToDisplay": "Nenhum agente a apresentar",
     "NoAvailableLiveStat": "Nenhuma estatística em direto disponível",
@@ -243,8 +244,10 @@
     "StartsAt": "Iniciado em",
     "Status": "Status",
     "StatusChanged": "Alterado",
+    "StatusChangedAt": "Status alterado em",
     "Terminated": "Rescindido",
     "Utilization": "Utilização",
+    "Version": "Versão",
     "WatcherActionFailed": "Falha ao controlar o agente.",
     "WatcherActionWarning": "As sessões em execução neste agente podem ser afetadas.",
     "WatcherRestart": "Reiniciar Agente",
@@ -257,6 +260,7 @@
   "agentStats": {
     "AgentStats": "Estatísticas do Agente",
     "AgentStatsDescription": "Este painel mostra todos os recursos usados em todos os agentes do sistema. \nOs valores representam o total de recursos usados por todas as sessões ativas.",
+    "SchedulableAgents": "Agentes agendáveis",
     "UsedResources": "Recursos Utilizados"
   },
   "aiAgent": {
