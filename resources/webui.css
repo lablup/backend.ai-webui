@@ -1,10 +1,11 @@
 body {
   margin: 0;
   --token-fontFamily:
-    "Ubuntu", Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
-    Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF",
-    "Nanum Gothic", "Malgun Gothic", sans-serif;
+    "Ubuntu", Roboto, "Noto Sans JP", "Noto Sans KR", "Noto Sans Thai",
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic,
+    "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic",
+    "Malgun Gothic", sans-serif;
   font-family: var(--token-fontFamily);
   --lumo-font-family: var(--token-fontFamily);
   --lumo-primary-text-color: var(--token-colorPrimary, #27824f);
@@ -42,7 +43,9 @@ body {
   font-family:
     "Ubuntu",
     "Roboto",
+    "Noto Sans JP",
     "Noto Sans KR",
+    "Noto Sans Thai",
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;

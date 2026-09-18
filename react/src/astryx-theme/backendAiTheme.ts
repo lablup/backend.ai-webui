@@ -905,7 +905,8 @@ export const BAI_DEFAULT_SEEDS = {
    */
   info: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
   /** theme.json `fontFamily` */
-  fontFamily: "'Ubuntu', Roboto, sans-serif",
+  fontFamily:
+    "'Ubuntu', Roboto, 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans Thai', sans-serif",
 };
 
 export type BrandThemeRole = 'brand' | 'admin' | 'secondary';
