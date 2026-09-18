@@ -1239,6 +1239,7 @@
     "StartChatTest": "Sohbette test et",
     "SwitchProjectConfirmContent": "Bu dağıtım \"{{projectName}}\" projesine ait. Görüntülemek için o projeye geçirileceksiniz. Devam edilsin mi?",
     "SwitchProjectConfirmTitle": "Başka bir projeye geçilsin mi?",
+    "SwitchToCustomMode": "Gelişmiş Mod'a geç",
     "Tags": "Etiketler",
     "TagsPlaceholder": "Etiketleri virgülle ayırarak girin",
     "TagsTooltip": "Dağıtımları düzenlemek ve filtrelemek için isteğe bağlı etiketler. Eklemek için Enter veya virgüle basın.",

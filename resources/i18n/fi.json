@@ -1239,6 +1239,7 @@
     "StartChatTest": "Testaa chatissa",
     "SwitchProjectConfirmContent": "Tämä käyttöönotto kuuluu projektiin \"{{projectName}}\". Sinut siirretään kyseiseen projektiin sen tarkastelua varten. Jatketaanko?",
     "SwitchProjectConfirmTitle": "Vaihdetaanko toiseen projektiin?",
+    "SwitchToCustomMode": "Vaihda edistyneeseen tilaan",
     "Tags": "Tunnisteet",
     "TagsPlaceholder": "Syötä tunnisteet, pilkuilla erotettuna",
     "TagsTooltip": "Valinnaisia merkintöjä käyttöönottojen järjestämiseen ja suodattamiseen. Paina Enter tai pilkku lisätäksesi.",

@@ -1239,6 +1239,7 @@
     "StartChatTest": "Tester dans le chat",
     "SwitchProjectConfirmContent": "Ce déploiement appartient au projet \"{{projectName}}\". Vous serez basculé vers ce projet pour le consulter. Continuer ?",
     "SwitchProjectConfirmTitle": "Passer à un autre projet ?",
+    "SwitchToCustomMode": "Passer en Mode Avancé",
     "Tags": "Étiquettes",
     "TagsPlaceholder": "Saisir des étiquettes, séparées par des virgules",
     "TagsTooltip": "Étiquettes optionnelles pour organiser et filtrer les déploiements. Appuyez sur Entrée ou virgule pour ajouter.",

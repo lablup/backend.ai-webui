@@ -1239,6 +1239,7 @@
     "StartChatTest": "Testar no Chat",
     "SwitchProjectConfirmContent": "Esta implantação pertence ao projeto \"{{projectName}}\". Será mudado para esse projeto para a visualizar. Continuar?",
     "SwitchProjectConfirmTitle": "Mudar para outro projeto?",
+    "SwitchToCustomMode": "Mudar para o Modo Avançado",
     "Tags": "Etiquetas",
     "TagsPlaceholder": "Introduza etiquetas, separadas por vírgulas",
     "TagsTooltip": "Etiquetas opcionais para organizar e filtrar implementações. Prima Enter ou vírgula para adicionar.",

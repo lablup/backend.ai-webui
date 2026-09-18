@@ -1239,6 +1239,7 @@
     "StartChatTest": "在聊天中测试",
     "SwitchProjectConfirmContent": "此部署属于「{{projectName}}」项目。系统将切换到该项目以便查看。是否继续？",
     "SwitchProjectConfirmTitle": "是否切换到其他项目？",
+    "SwitchToCustomMode": "切换到高级模式",
     "Tags": "标签",
     "TagsPlaceholder": "输入标签，以逗号分隔",
     "TagsTooltip": "用于组织和筛选部署的可选标签。按 Enter 或逗号添加。",

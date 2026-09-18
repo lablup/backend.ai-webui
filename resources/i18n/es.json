@@ -1239,6 +1239,7 @@
     "StartChatTest": "Probar en el chat",
     "SwitchProjectConfirmContent": "Este despliegue pertenece al proyecto \"{{projectName}}\". Se le cambiará a ese proyecto para verlo. ¿Continuar?",
     "SwitchProjectConfirmTitle": "¿Cambiar a otro proyecto?",
+    "SwitchToCustomMode": "Cambiar al Modo Avanzado",
     "Tags": "Etiquetas",
     "TagsPlaceholder": "Ingrese etiquetas, separadas por comas",
     "TagsTooltip": "Etiquetas opcionales para organizar y filtrar implementaciones. Presione Enter o coma para añadir.",

@@ -1239,6 +1239,7 @@
     "StartChatTest": "Przetestuj w czacie",
     "SwitchProjectConfirmContent": "To wdrożenie należy do projektu „{{projectName}}“. Zostaniesz przełączony na ten projekt, aby je wyświetlić. Kontynuować?",
     "SwitchProjectConfirmTitle": "Przełączyć na inny projekt?",
+    "SwitchToCustomMode": "Przełącz na tryb zaawansowany",
     "Tags": "Tagi",
     "TagsPlaceholder": "Wprowadź tagi, oddzielone przecinkami",
     "TagsTooltip": "Opcjonalne etykiety do organizowania i filtrowania wdrożeń. Naciśnij Enter lub przecinek, aby dodać.",

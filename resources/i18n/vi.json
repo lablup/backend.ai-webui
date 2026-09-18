@@ -1239,6 +1239,7 @@
     "StartChatTest": "Thử trong Trò chuyện",
     "SwitchProjectConfirmContent": "Lượt triển khai này thuộc dự án \"{{projectName}}\". Bạn sẽ được chuyển sang dự án đó để xem. Tiếp tục?",
     "SwitchProjectConfirmTitle": "Chuyển sang dự án khác?",
+    "SwitchToCustomMode": "Chuyển sang chế độ nâng cao",
     "Tags": "Thẻ",
     "TagsPlaceholder": "Nhập thẻ, phân cách bằng dấu phẩy",
     "TagsTooltip": "Nhãn tùy chọn để tổ chức và lọc các triển khai. Nhấn Enter hoặc dấu phẩy để thêm.",
