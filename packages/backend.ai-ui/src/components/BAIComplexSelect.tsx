@@ -205,7 +205,8 @@ export interface BAIComplexSelectProps {
   /**
    * antd `allowClear`: a clear button between the spinner and the chevron
    * while something is selected (`ComplexSelector.hasClear`, added by
-   * react/patches/@astryxdesign__core@0.5.4.patch).
+   * react/patches/@astryxdesign__core@0.5.4.patch, upstream
+   * https://github.com/facebook/astryx/issues/6361).
    */
   allowClear?: boolean;
   'data-testid'?: string;
