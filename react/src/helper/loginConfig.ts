@@ -187,6 +187,26 @@ export function getDefaultLoginConfig(): LoginConfigState {
   };
 }
 
+/**
+ * True when the WebUI is served by the Backend.AI webserver, which names its
+ * own origin as `apiEndpoint`. The webserver proxies only session-authenticated
+ * `/func/*` calls, so API-mode signing can never reach the manager through it
+ * (FR-3562). Electron loads the page from its own bundle, so the same-origin
+ * test says nothing there and the mode switch is left alone.
+ */
+export function isServedByWebServer(
+  apiEndpoint: string,
+  pageOrigin: string = globalThis.location?.origin ?? '',
+  isElectron: boolean = Boolean((globalThis as any).isElectron),
+): boolean {
+  if (isElectron || !apiEndpoint || !pageOrigin) return false;
+  try {
+    return new URL(apiEndpoint).origin === pageOrigin;
+  } catch {
+    return false;
+  }
+}
+
 export function refreshConfigFromToml(config: any): LoginConfigState {
   const state = getDefaultLoginConfig();
 
@@ -392,6 +412,10 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
         : '';
     state.connection_mode =
       rawMode === 'SESSION' || rawMode === 'API' ? rawMode : 'SESSION';
+  }
+  if (isServedByWebServer(state.api_endpoint)) {
+    state.change_signin_support = false;
+    state.connection_mode = 'SESSION';
   }
 
   state.directoryBasedUsage = getConfigValueByExists(g, {
