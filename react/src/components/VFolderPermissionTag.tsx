@@ -33,6 +33,7 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
   vFolderFrgmt = null,
   permission,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const vFolder = useFragment(
     graphql`
@@ -43,8 +44,8 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
     vFolderFrgmt,
   );
   const resolvedPermission = vFolder?.permission || permission;
-  // 'none' (or the legacy field's null) means the folder mounts to nobody.
-  if (!resolvedPermission || resolvedPermission === 'none') {
+  // REST answers the caller's effective level; 'none' mounts nothing.
+  if (resolvedPermission === 'none') {
     return <BAIDoubleTag values={[{ label: t('data.NotMountable') }]} />;
   }
   const tagValues: DoubleTagObjectValue[] = _.compact(
