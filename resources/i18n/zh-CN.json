@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "文件上传已通过用户请求取消。",
     "FileUploadFailed": "无法将某些文件上传到文件夹'{{folderName}}'中。",
     "Filename": "文件名",
+    "FolderDetailUnavailable": "无法加载文件夹信息",
+    "FolderDetailUnavailableDescription": "未能加载文件夹信息，但仍可浏览其中的文件。",
     "FolderNotFoundOrNoAccess": "未找到或拒绝访问的文件夹",
     "Metadata": "元数据",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夹不支持文件资源管理器。",

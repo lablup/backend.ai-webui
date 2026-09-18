@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "Загрузка файла была отменена пользовательским запросом.",
     "FileUploadFailed": "Не удалось загрузить некоторые файлы в папке '{{folderName}}'.",
     "Filename": "Имя файла",
+    "FolderDetailUnavailable": "Сведения о папке недоступны",
+    "FolderDetailUnavailableDescription": "Не удалось загрузить информацию о папке, но её файлы по-прежнему можно просматривать.",
     "FolderNotFoundOrNoAccess": "Папка не найдена или доступа отказана",
     "Metadata": "Метаданные",
     "NoExplorerSupportForUnmanagedFolder": "Неуправляемые папки не поддерживают исследователь файлов.",

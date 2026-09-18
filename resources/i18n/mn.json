@@ -1620,6 +1620,8 @@
     "FileUploadCancelled": "Файлын байршуулалтыг хэрэглэгчийн хүсэлтээр цуцлагдсан.",
     "FileUploadFailed": "'{{folderName}}' Файлд файл байршуулж чадсангүй.",
     "Filename": "Хөдөлгөөний нэр",
+    "FolderDetailUnavailable": "Хавтасны мэдээлэл боломжгүй байна",
+    "FolderDetailUnavailableDescription": "Хавтасны мэдээллийг ачаалж чадсангүй ч файлуудыг нь үзэх боломжтой хэвээр байна.",
     "FolderNotFoundOrNoAccess": "Фолдер олдсонгүй эсвэл хандалтыг үгүйсгэв",
     "Metadata": "Метадата",
     "NoExplorerSupportForUnmanagedFolder": "НҮБ-нээгүй хавтас нь файлын Explorer-ийг дэмждэггүй.",
