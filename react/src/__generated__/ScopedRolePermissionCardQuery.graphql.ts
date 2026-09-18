@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2398201d3eb88285bfed50519b6432c2>>
+ * @generated SignedSource<<ad8c267d9e3e9bc273fa301dc38f7e9c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,15 +17,9 @@ export type EntityFilter = {
   NOT?: ReadonlyArray<EntityFilter> | null | undefined;
   OR?: ReadonlyArray<EntityFilter> | null | undefined;
   entityId?: StringFilter | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
-  scopeType?: RBACElementTypeFilter | null | undefined;
-};
-export type RBACElementTypeFilter = {
-  equals?: RBACElementType | null | undefined;
-  in?: ReadonlyArray<RBACElementType> | null | undefined;
-  notEquals?: RBACElementType | null | undefined;
-  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+  scopeType?: StringFilter | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -54,7 +48,7 @@ export type PermissionFilter = {
   NOT?: ReadonlyArray<PermissionFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
@@ -71,6 +65,12 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
+export type RBACElementTypeFilter = {
+  equals?: RBACElementType | null | undefined;
+  in?: ReadonlyArray<RBACElementType> | null | undefined;
+  notEquals?: RBACElementType | null | undefined;
+  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+};
 export type ScopedRolePermissionCardQuery$variables = {
   permissionFilter?: PermissionFilter | null | undefined;
   permissionLimit?: number | null | undefined;
@@ -84,9 +84,9 @@ export type ScopedRolePermissionCardQuery$data = {
     readonly permissions: {
       readonly edges: ReadonlyArray<{
         readonly node: {
-          readonly entityType: RBACElementType;
-          readonly operation: OperationType;
-          readonly scopeId: string;
+          readonly entityType: string;
+          readonly operation: OperationType | null | undefined;
+          readonly scopeId: string | null | undefined;
           readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_permissionsFragment">;
         };
       }>;
@@ -111,7 +111,7 @@ export type ScopedRolePermissionCardQuery$data = {
             readonly vfolderName?: string | null | undefined;
           } | null | undefined;
           readonly scopeId: string;
-          readonly scopeType: RBACElementType;
+          readonly scopeType: string;
           readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_scopesFragment">;
         };
       }>;

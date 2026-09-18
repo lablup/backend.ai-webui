@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3e79b23cbd69d830bdf6fd3a92afe702>>
+ * @generated SignedSource<<56654b715b686264544a377a2d829b92>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,7 +19,7 @@ export type PermissionFilter = {
   NOT?: ReadonlyArray<PermissionFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
@@ -29,12 +29,6 @@ export type UUIDFilter = {
   in?: ReadonlyArray<string> | null | undefined;
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
-};
-export type RBACElementTypeFilter = {
-  equals?: RBACElementType | null | undefined;
-  in?: ReadonlyArray<RBACElementType> | null | undefined;
-  notEquals?: RBACElementType | null | undefined;
-  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -64,6 +58,12 @@ export type DateTimeFilter = {
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
 };
+export type RBACElementTypeFilter = {
+  equals?: RBACElementType | null | undefined;
+  in?: ReadonlyArray<RBACElementType> | null | undefined;
+  notEquals?: RBACElementType | null | undefined;
+  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+};
 export type PermissionOrderBy = {
   direction?: OrderDirection;
   field: PermissionOrderField;
@@ -80,9 +80,9 @@ export type LegacyRolePermissionTabQuery$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
-        readonly entityType: RBACElementType;
+        readonly entityType: string;
         readonly id: string;
-        readonly operation: OperationType;
+        readonly operation: OperationType | null | undefined;
         readonly scope: {
           readonly basicInfo?: {
             readonly domainName: string;
@@ -98,8 +98,8 @@ export type LegacyRolePermissionTabQuery$data = {
           readonly resourceGroupName?: string;
           readonly vfolderName?: string | null | undefined;
         } | null | undefined;
-        readonly scopeId: string;
-        readonly scopeType: RBACElementType;
+        readonly scopeId: string | null | undefined;
+        readonly scopeType: RBACElementType | null | undefined;
       };
     }>;
   } | null | undefined;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d88bd670b0670884b8098bb35150dbcd>>
+ * @generated SignedSource<<b4f613daa689fddb09084a3233100fed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type RoleAssignmentOrderField = "EMAIL" | "GRANTED_AT" | "USERNAME" | "%future added value";
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
@@ -36,6 +37,7 @@ export type RoleAssignmentRoleNestedFilter = {
   AND?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
   OR?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
+  mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   source?: RoleSourceFilter | null | undefined;
   status?: RoleStatusFilter | null | undefined;
@@ -74,14 +76,28 @@ export type RoleStatusFilter = {
   notEquals?: RoleStatus | null | undefined;
   notIn?: ReadonlyArray<RoleStatus> | null | undefined;
 };
+export type RoleMappedScopeNestedFilter = {
+  AND?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
+  NOT?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
+  OR?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
+  scopeId?: UUIDFilter | null | undefined;
+  scopeType?: StringFilter | null | undefined;
+};
 export type PermissionNestedFilter = {
   AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   operation?: OperationTypeFilter | null | undefined;
+  permission?: PermissionBitFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
+};
+export type PermissionBitFilter = {
+  equals?: PermissionBit | null | undefined;
+  in?: ReadonlyArray<PermissionBit> | null | undefined;
+  notEquals?: PermissionBit | null | undefined;
+  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
 };
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;

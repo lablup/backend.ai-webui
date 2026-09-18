@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  type CreatePermissionInput,
   LegacyCreatePermissionModalCreateMutation,
   type OperationType,
   type RBACElementType,
@@ -302,13 +303,15 @@ const LegacyCreatePermissionModal: React.FC<
         } else {
           commitCreatePermission({
             variables: {
+              // 26.8 shape; the drawer follow-up (FR-3905) moves it onto
+              // the 26.9 PermissionBit input.
               input: {
                 roleId,
                 scopeType: scopeType as RBACElementType,
                 scopeId: scopeId as string,
                 entityType: values.entityType,
                 operation: values.operation,
-              },
+              } as CreatePermissionInput,
             },
             onCompleted: (_data, errors) => {
               if (errors && errors.length > 0) {

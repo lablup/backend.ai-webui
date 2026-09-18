@@ -1005,6 +1005,9 @@ export class Client {
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
       this._features['rbac-domain-scope-uuid'] = true;
+      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
+      // `Role.scopes` and `RBACElementType` remain as deprecated. FR-3905.
+      this._features['rbac-single-scope-role'] = true;
       // BA-7253 / backend PR #13562 — category/displayName/uiOption became
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.

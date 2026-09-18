@@ -53,7 +53,7 @@ interface EditingPermission {
 }
 
 interface PermissionScopeRecord {
-  scopeType: string;
+  scopeType?: string | null;
   scope?: {
     basicInfo?: {
       domainName?: string | null;
@@ -291,36 +291,37 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
     }
   };
 
+  // The legacy fields are nullable because 26.9 answers them as null.
   const handleEdit = (record: {
     id: string;
-    scopeType: string;
-    scopeId: string;
+    scopeType?: string | null;
+    scopeId?: string | null;
     entityType: string;
-    operation: string;
+    operation?: string | null;
   }) =>
     openPermissionModal({
       id: toLocalId(record.id),
-      scopeType: record.scopeType,
-      scopeId: record.scopeId,
+      scopeType: record.scopeType ?? '',
+      scopeId: record.scopeId ?? '',
       entityType: record.entityType,
-      operation: record.operation,
+      operation: record.operation ?? '',
     });
 
   const handleDelete = (
     record: {
       id: string;
       entityType: string;
-      operation: string;
-      scopeId?: string;
+      operation?: string | null;
+      scopeId?: string | null;
     } & PermissionScopeRecord,
   ) => {
     const scopeName = resolveScopeName(record);
     setDeletingPermission({
       id: toLocalId(record.id),
-      scopeType: record.scopeType,
+      scopeType: record.scopeType ?? '',
       scopeTarget: scopeName || record.scopeId || '-',
       entityType: record.entityType,
-      operation: record.operation,
+      operation: record.operation ?? '',
     });
   };
 

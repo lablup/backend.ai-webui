@@ -294,6 +294,8 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   // per row × entity when computing tag state.
   const grantedByScopeEntity = new Map<string, Set<string>>();
   permissionNodes.forEach((node) => {
+    // Null only on 26.9, which answers the legacy fields as null.
+    if (!node.operation) return;
     const key = `${node.scopeId}|${node.entityType}`;
     let operations = grantedByScopeEntity.get(key);
     if (!operations) {

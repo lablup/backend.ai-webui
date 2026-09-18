@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f424bff1517b6cb39af5b82d15e179d5>>
+ * @generated SignedSource<<1ddd51fc1fb8d6cf0dabe6604c9f8c9f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,16 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleScopePermissionEditModal_rbacPermissionMatrixFragment$data = ReadonlyArray<{
   readonly entities: ReadonlyArray<{
     readonly actions: ReadonlyArray<{
-      readonly requiredPermission: OperationType;
+      readonly requiredPermission: PermissionBit;
     }>;
-    readonly entityType: RBACElementType;
+    readonly entityType: string;
   }>;
-  readonly scopeType: RBACElementType;
+  readonly scopeType: string;
   readonly " $fragmentType": "RoleScopePermissionEditModal_rbacPermissionMatrixFragment";
 }>;
 export type RoleScopePermissionEditModal_rbacPermissionMatrixFragment$key = ReadonlyArray<{
