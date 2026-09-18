@@ -605,6 +605,11 @@ const DefaultErrorCard: React.FC<{
   const isInteractiveKind =
     error.kind === 'totp-required' || error.kind === 'concurrent-session';
 
+  // Kinds whose cause message is an internal, untranslated constant the
+  // description already covers. It stays in the copy-details payload.
+  const isCauseDetailRedundant =
+    error.kind === 'totp-required' || error.kind === 'keypair-unavailable';
+
   // Wrap in a Promise so BAIButton.action triggers its async loading
   // state; the synchronous state reset completes before the next render,
   // which is visually indistinguishable from the live sequence restart.
@@ -643,7 +648,7 @@ const DefaultErrorCard: React.FC<{
           <Text as="p" display="block" style={{ margin: 0 }}>
             {description}
           </Text>
-          {causeDetail && error.kind !== 'totp-required' && (
+          {causeDetail && !isCauseDetailRedundant && (
             <Text
               as="div"
               display="block"

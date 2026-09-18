@@ -65,7 +65,9 @@ export class KeypairUnavailableError extends Error {
 }
 
 /** Duck-typed check for `KeypairUnavailableError` crossing module boundaries. */
-export const isKeypairUnavailableError = (err: unknown): boolean =>
+export const isKeypairUnavailableError = (
+  err: unknown,
+): err is KeypairUnavailableError =>
   typeof err === 'object' &&
   err !== null &&
   (err as { isKeypairUnavailable?: unknown }).isKeypairUnavailable === true;
@@ -88,7 +90,13 @@ export async function connectViaGQL(
   (globalThis as any).backendaiclient = client;
 
   if (!response['keypair']) {
-    await client.logout();
+    // Best-effort cleanup: a rejecting logout must not replace the typed
+    // error with an unclassifiable one.
+    try {
+      await client.logout();
+    } catch {
+      /* empty */
+    }
     throw new KeypairUnavailableError();
   }
 

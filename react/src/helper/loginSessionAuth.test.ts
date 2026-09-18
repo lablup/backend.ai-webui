@@ -41,6 +41,19 @@ describe('connectViaGQL — empty keypair (FR-3998)', () => {
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
+  test('still throws KeypairUnavailableError when the cleanup logout rejects', async () => {
+    // API-key mode has no webserver session, so `POST /server/logout` can
+    // reject — the classification must survive it.
+    const client = {
+      query: vi.fn().mockResolvedValue({ keypair: null }),
+      logout: vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      KeypairUnavailableError,
+    );
+  });
+
   test('the thrown error is recognizable across module boundaries', async () => {
     const client = {
       query: vi.fn().mockResolvedValue({ keypair: null }),

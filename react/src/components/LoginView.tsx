@@ -482,6 +482,19 @@ const LoginView: React.FC<{
         data?: Record<string, unknown>;
       };
 
+      // Not a login failure: `connectUsingSession` runs the post-auth GQL
+      // bootstrap inside the same try as `client.login()`, so an empty
+      // keypair lands here rather than in `handleGQLError`.
+      if (isKeypairUnavailableError(err)) {
+        if (showError) {
+          notification(
+            t('login.KeypairUnavailable'),
+            t('login.KeypairUnavailableDescription'),
+          );
+        }
+        return 'reopen';
+      }
+
       // --- Login errors (envelope responses from /server/login) ---
       if (e.isLoginError && e.data) {
         const errorType = extractErrorType(e.data.type as string);

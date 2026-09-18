@@ -76,9 +76,8 @@ vi.mock('../helper/loginSessionAuth', async () => {
     typeof import('../helper/loginSessionAuth')
   >('../helper/loginSessionAuth');
   return {
+    ...actual,
     __esModule: true,
-    KeypairUnavailableError: actual.KeypairUnavailableError,
-    isKeypairUnavailableError: actual.isKeypairUnavailableError,
     createBackendAIClient: vi.fn(),
     tokenLogin: vi.fn(),
     connectViaGQL: vi.fn(),
