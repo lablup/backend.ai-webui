@@ -17,7 +17,6 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import BAIDoubleTag from '../BAIDoubleTag';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
@@ -28,7 +27,9 @@ import './BAIVFolderMountConfigInput.css';
 import { Badge } from '@astryxdesign/core/Badge';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { ArrowRight, PlusIcon, RotateCw, User, XIcon } from 'lucide-react';
 import React, {
@@ -77,6 +78,11 @@ export interface BAIVFolderMountConfigInputProps {
   defaultValue?: VFolderMountConfigValue[];
   onChange?: (value: VFolderMountConfigValue[]) => void;
   currentProjectId?: string;
+  /**
+   * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
+   * project folder's owner line needs it from the host.
+   */
+  currentProjectName?: string;
   /** Lists the folders of this user instead of the caller's own. */
   ownerEmail?: string;
   /**
@@ -341,37 +347,58 @@ const useMountableLegacyFolders = (
   return { mountableFolders, mountableIdSet };
 };
 
-/** `ro` / `rw` / `wd` from the REST list, drawn as the data page draws it. */
+/** `ro` / `rw` / `wd` from the REST list, as welded tokens in the data page's colours. */
 const VFolderPermissionBadge: React.FC<{ permission: string }> = ({
   permission,
 }) => {
   'use memo';
-  const values = [
+  const letters = [
     ...(permission.includes('r') || permission.includes('w')
-      ? [{ label: 'R', color: 'green' }]
+      ? [{ label: 'R', color: 'green' as const }]
       : []),
-    ...(permission.includes('w') ? [{ label: 'W', color: 'blue' }] : []),
-    ...(permission.includes('d') ? [{ label: 'D', color: 'red' }] : []),
+    ...(permission.includes('w')
+      ? [{ label: 'W', color: 'blue' as const }]
+      : []),
+    ...(permission.includes('d')
+      ? [{ label: 'D', color: 'red' as const }]
+      : []),
   ];
-  return <BAIDoubleTag values={values} />;
+  return (
+    <span className="bai-vfolder-mount-config__permission">
+      {letters.map(({ label, color }) => (
+        <Token key={label} label={label} color={color} size="sm" />
+      ))}
+    </span>
+  );
 };
 
 /** Second line of a folder option: who owns it, what it is for, where it is. */
-const VFolderOptionMeta: React.FC<{ folder: LegacyVFolder }> = ({ folder }) => {
+const VFolderOptionMeta: React.FC<{
+  folder: LegacyVFolder;
+  projectName?: string;
+}> = ({ folder, projectName }) => {
   'use memo';
   const { t } = useBAIi18n();
   const isUserOwned = folder.ownership_type === 'user';
+  // The REST list leaves `user_email` / `group_name` empty on most managers.
+  const owner = isUserOwned
+    ? folder.user_email ||
+      folder.creator ||
+      t('comp:BAIVFolderMountConfigInput.OwnerUser')
+    : folder.group_name ||
+      projectName ||
+      t('comp:BAIVFolderMountConfigInput.OwnerProject');
+  // "YYYY-MM-DD hh:mm:ss.ffffff+00:00" -> ISO, so the offset is honoured.
+  const createdAt = dayjs(folder.created_at.replace(' ', 'T'));
   return (
     <span className="bai-vfolder-mount-config__option-meta">
       <span>
         {isUserOwned ? <User size="1em" /> : <BAIUserUnionIcon />}
-        {isUserOwned
-          ? t('comp:BAIVFolderMountConfigInput.OwnerUser')
-          : folder.group_name ||
-            t('comp:BAIVFolderMountConfigInput.OwnerProject')}
+        {owner}
       </span>
       <span>{folder.usage_mode}</span>
       <span>{folder.host}</span>
+      {createdAt.isValid() && <span>{createdAt.format('ll')}</span>}
     </span>
   );
 };
@@ -389,6 +416,7 @@ const VFolderOptionMeta: React.FC<{ folder: LegacyVFolder }> = ({ folder }) => {
  */
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
+  currentProjectName,
   ownerEmail,
   mountableHosts,
   filter,
@@ -448,13 +476,15 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const folderOptions = displayingFolders.map(({ folder, uuid }) => ({
     value: uuid,
     label: folder.name,
-    labelContent: (
-      <BAIFlex gap="xs" align="center">
-        <BAIVFolderIdenticon vfolderId={uuid} />
-        <BAIText ellipsis>{folder.name}</BAIText>
-      </BAIFlex>
+    icon: (
+      <BAIVFolderIdenticon
+        vfolderId={uuid}
+        className="bai-vfolder-mount-config__option-icon"
+      />
     ),
-    description: <VFolderOptionMeta folder={folder} />,
+    description: (
+      <VFolderOptionMeta folder={folder} projectName={currentProjectName} />
+    ),
     extra: <VFolderPermissionBadge permission={folder.permission} />,
   }));
   // Resolve each entry's mount destination + validity once via the same
@@ -513,6 +543,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
         <BAIComplexSelect
           multiple
           allowClear
+          selectionMark="checkbox"
           label={t('comp:BAIVFolderMountConfigInput.SelectFolder')}
           isLabelHidden
           isDisabled={disabled}

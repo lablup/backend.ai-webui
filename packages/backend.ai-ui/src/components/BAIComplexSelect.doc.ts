@@ -86,7 +86,7 @@ export const docs = {
       name: 'options',
       type: 'Array<BAIComplexSelectOption>',
       description:
-        'The currently loaded rows. Each carries a string `value` and `label`, plus optional `description`, `extra` and `disabled`.',
+        'The currently loaded rows. Each carries a string `value` and `label`, plus optional `labelContent`, `icon` (a leading visual centered on the row), `description`, `extra` and `disabled`.',
       default: '[]',
     },
     {
@@ -251,6 +251,13 @@ export const docs = {
       description:
         'Shows a clear button between the loading spinner and the chevron while something is selected (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.5.4.patch`); it emits `[]` in `multiple` mode and `null` otherwise.',
       default: 'false',
+    },
+    {
+      name: 'selectionMark',
+      type: "'check' | 'checkbox'",
+      description:
+        "How a selected option is marked: `'check'` draws the theme's check at the row's end, `'checkbox'` a checkbox at its start — easier to scan in a `multiple` list with rich rows.",
+      default: "'check'",
     },
     {
       name: 'data-testid',

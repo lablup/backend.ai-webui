@@ -63,6 +63,7 @@ const SessionLauncherStorageStep: React.FC<{
           <BAIVFolderMountConfigInput
             ref={mountConfigInputRef}
             currentProjectId={project.id}
+            currentProjectName={project.name}
             ownerEmail={ownerEmail}
             mountableHosts={mountableHosts}
             autoMountedFolders={autoMountedFolders}
