@@ -11,8 +11,9 @@ description: >
   walkthrough to PR #N", `/walkthrough <pr>`, "워크스루 다시 만들어줘",
   "re-mint the walkthrough", "after the dev server is advertised for a PR I
   implemented", or a request to show a reviewer what changed on screen. It
-  never posts to Teams, never touches the dev-server comment, and never marks
-  a PR ready.
+  never posts to Teams, never edits the dev-server comment itself (booting a
+  server for a PR goes through `dev-server`, which does), and never marks a
+  PR ready.
 ---
 
 # Walkthrough
@@ -45,25 +46,25 @@ in, replay, mint, verify, link) and `scripts/comment.sh` posts it.
 The branch path assumes the session is on the PR's branch with the diff in
 its head. Given only a number, get both first:
 
-1. **The PR.** `gh pr view <n> --json headRefName,headRefOid,title,body,url`.
-   A closed or merged PR gets no walkthrough — say so and stop.
-2. **A checkout of its branch.** `git worktree list` — reuse a worktree already
-   on `headRefName`; otherwise `git worktree add
-../backend.ai-webui-worktrees/<KEY> origin/<headRefName>` and `pnpm install`
-   there. The worktree must sit **at the PR head**: `mint.mjs` refuses a server
-   whose checkout is behind the sha the comment would stamp.
-3. **A live server.** `mint.mjs --pr <n> --dry-run` says whether a boot record
-   serves the PR (it reads every record under `~/.local/state/fw/dev-servers/`,
-   since the app name may carry a `/rename` word the title cannot predict).
-   When it exits 3 with _no live dev server serves PR #n_, run the
-   `dev-server` skill **from that worktree** — endpoint from the PR body, then
-   the shell / `.env` value, as its §2c says — wait for `advertise.sh` to
-   write the record, and re-run the dry run. The backend being unreachable is
-   a preflight failure here as everywhere: one line, no walkthrough.
-4. **The diff.** `gh pr diff <n>` (or `git diff origin/main...<headRefOid>` in
-   the worktree) is what the manifest is written from — §3–§5 apply unchanged.
-   Read the PR body's own summary first; it names what the author thinks is
-   visible.
+1. **Is there a server?** `mint.mjs --pr <n> --dry-run` needs no manifest
+   and answers in one line (§6): the live server that serves the PR, or
+   exit 3. It refuses a PR that is not open, so that check is not yours.
+2. **No server** — boot one for `headRefName` with the `dev-server` skill,
+   from a checkout at the PR head: reuse a worktree already on that branch
+   only when this session made it or it is clean; otherwise
+   `git worktree add .claude/worktrees/<KEY> origin/<headRefName>` (where
+   `EnterWorktree` and `fw:cleanup-worktrees` keep them) and `pnpm install`
+   there. Say before booting that `advertise.sh` will comment the server's
+   URL on a PR this session did not implement. When the backend is
+   unreachable, that is a preflight failure here as everywhere: one line,
+   no walkthrough. Re-run the dry run once the record exists.
+3. **A server on the layer above** — for a stack, the top layer's server
+   serves every lower PR and its head contains theirs; `mint.mjs` accepts
+   that (it says so on stderr) and the stops are verified against that
+   build. Only a server whose commit does not contain the PR head is refused.
+4. **The diff.** `gh pr diff <n>` is what the manifest is written from —
+   §3–§5 apply unchanged. Read the PR body's own summary first; it names
+   what the author thinks is visible.
 5. **Mint and post** with `--pr <n>` (§6) and `comment.sh … --pr <n>` (§7).
    The report's `pr` and `sha` come from GitHub, not from the current branch.
 
@@ -75,7 +76,7 @@ failure produces **no comment and no walkthrough**, not a partial one.
 | Check                              | How                                                                                                                                                                                                      |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                                                                                                                                                                        |
-| A boot record for this branch      | `~/.local/state/fw/dev-servers/<app>.json`, `stoppedAt: null` — or, with `--pr`, any live record whose `served[]` names the PR (`scripts/resolve.mjs`)                                                   |
+| A live server for the PR           | the boot record `mint.mjs` resolves (§6): this branch's, or with `--pr` the one that serves the PR                                                                                                       |
 | The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
 | The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
 | The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
@@ -201,21 +202,22 @@ node .claude/skills/walkthrough/scripts/mint.mjs \
   --report /tmp/walkthrough-report.json
 ```
 
-Without `--pr`: `--app` defaults to the name `dev-server` claimed for this
-branch, the PR to the boot record's `served[]` entry for it, `--sha` to
-`git rev-parse HEAD`.
-
-With `--pr <n>` (§1a): the PR is looked up on GitHub; the app is the newest
-live boot record whose `served[]` names it (stopped records and dead pids do
-not count), else the name `dev-server` would claim for its branch; `--sha`
-defaults to the PR head. A record whose `worktree` is not at that head is
-refused (exit 3) — the comment stamps the sha, so the server must serve it.
-`--app` still overrides the record lookup.
+Which server, in one place: without `--pr`, the app is the name
+`dev-server` claims for the current branch (`--app` overrides), the PR is
+that record's `served[]` entry, `--sha` defaults to `git rev-parse HEAD`.
+With `--pr <n>` the PR is looked up in `--repo` (default
+`lablup/backend.ai-webui`, never the cwd's remote) and must be open; the app
+is the live boot record that serves it — never stopped, pid alive, the same
+repo — preferring the record on the PR's own branch over a stack layer above
+it, then the newest boot; `--app` narrows that to one record; `--sha`
+defaults to the PR head. Either way the server must serve the sha (its
+`/__review/state.head`, else the record's worktree) or a commit that
+contains it; a server behind the sha exits 3.
 
 `--env-file` overrides where the admin account is read from (the server's own
 checkout, then this one) — never print or commit it. `--dry-run` resolves
-everything and launches no browser; it is the cheap way to learn whether a PR
-has a server at all.
+everything and launches no browser — without `--manifest`, for the one
+question §1a starts with.
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and

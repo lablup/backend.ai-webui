@@ -9,19 +9,21 @@
  * it in a fresh page to check every stop really lands on its element.
  *
  *   mint.mjs --manifest <path> [--app <name>] [--endpoint <url>] [--sha <sha>]
- *            [--pr <n>] [--env-file <path>] [--report <path>] [--settle <ms>]
- *            [--dry-run]
+ *            [--pr <n>] [--repo <owner/repo>] [--env-file <path>]
+ *            [--report <path>] [--settle <ms>] [--dry-run]
  *
  * Without `--pr` the PR is the current branch's and the app is the name
- * `dev-server` claims for it. With `--pr <n>` the PR is looked up on GitHub:
- * the app is whichever live boot record serves that PR (a `/rename` word
- * cannot be predicted from the title), the sha is the PR head, and a server
- * whose worktree is behind that head is refused rather than described.
+ * `dev-server` claims for it. With `--pr <n>` the PR is looked up on GitHub
+ * (`--repo`, default lablup/backend.ai-webui — never the cwd's remote), the
+ * app is the live boot record that serves it, and the sha is the PR head.
+ * Either way the server must serve that sha, or a commit that contains it (a
+ * stack layer above, unpushed commits): the comment stamps the sha, so a
+ * server behind it is refused. `--dry-run` needs no manifest.
  *
  * Exit: 0 a set link · 2 usage / bad manifest · 3 preflight (no walkthrough).
  */
 import { parseManifest, projectBasePath, stopLabel } from "./manifest.mjs";
-import { readRecords, recordServingPr } from "./resolve.mjs";
+import { prFromRecord, readRecords, recordServingPr } from "./resolve.mjs";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -34,6 +36,9 @@ const REPO_ROOT = resolve(HERE, "../../../..");
 const STATE_DIR =
   process.env.BAI_DEV_SERVER_STATE_DIR ??
   resolve(homedir(), ".local/state/fw/dev-servers");
+/** The repo the PR lives in — advertise.sh and comment.sh share this default. */
+const REPO_DEFAULT = "lablup/backend.ai-webui";
+const SHA_RE = /^[0-9a-f]{40}$/;
 /**
  * The overlay's ladder retries while the SPA renders, and guided mode may
  * fetch before it renders: 30 s is the whole budget a stop gets.
@@ -60,6 +65,7 @@ function parseArgs(argv) {
     endpoint: "",
     sha: "",
     pr: "",
+    repo: "",
     envFile: "",
     report: "",
     settle: "",
@@ -71,6 +77,7 @@ function parseArgs(argv) {
     "--endpoint": "endpoint",
     "--sha": "sha",
     "--pr": "pr",
+    "--repo": "repo",
     "--env-file": "envFile",
     "--report": "report",
     "--settle": "settle",
@@ -88,7 +95,8 @@ function parseArgs(argv) {
     flags[name] = value;
     i += 1;
   }
-  if (!flags.manifest) fail(2, "--manifest <path> is required");
+  if (!flags.manifest && !flags.dryRun)
+    fail(2, "--manifest <path> is required (only --dry-run runs without one)");
   return flags;
 }
 
@@ -104,6 +112,15 @@ const gitIn = (cwd, ...args) => {
   }
 };
 const git = (...args) => gitIn(REPO_ROOT, ...args);
+/** Whether `git <args>` exits 0 in `cwd` — for `merge-base --is-ancestor`. */
+const gitOk = (cwd, ...args) => {
+  try {
+    execFileSync("git", args, { cwd, stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 /** `KEY=value` lines, quotes stripped — the `.env.playwright` dialect. */
 function readEnvFile(file) {
@@ -136,50 +153,46 @@ function endpointFromProcess(pid) {
 const gh = (args) =>
   JSON.parse(
     execFileSync("gh", args, {
+      cwd: REPO_ROOT,
       encoding: "utf8",
       timeout: 8000,
       stdio: ["ignore", "pipe", "ignore"],
     }),
   );
 
-/** The PR `--pr` names: its branch and head, or a preflight refusal. */
-function lookupPr(value) {
+/** The open PR `--pr` names, looked up in `repo`; anything else is a refusal. */
+function lookupPr(value, repo) {
   const number = Number.parseInt(value, 10);
   if (!Number.isInteger(number) || number <= 0)
     fail(2, `--pr needs a PR number, not '${value}'`);
+  let pr;
   try {
-    return gh([
+    pr = gh([
       "pr",
       "view",
       String(number),
+      "--repo",
+      repo,
       "--json",
-      "number,title,headRefName,headRefOid,url",
+      "number,title,state,headRefName,headRefOid,url",
     ]);
   } catch {
-    return fail(3, `PR #${number} not found on GitHub (or gh is offline)`);
+    fail(3, `PR #${number} not found in ${repo} (or gh is offline)`);
   }
+  if (pr.state !== "OPEN")
+    fail(3, `PR #${number} is ${pr.state.toLowerCase()} — no walkthrough`);
+  return pr;
 }
 
-/** `owner/repo` of this checkout, or "" when gh cannot say. */
-function repoName() {
-  try {
-    return gh(["repo", "view", "--json", "nameWithOwner"]).nameWithOwner ?? "";
-  } catch {
-    return "";
-  }
-}
-
-/** The app name `dev-server` would claim for `target`'s branch (or ours). */
-async function resolveApp(flags, target) {
+/** The app name `dev-server` claims for the current branch. */
+async function resolveApp(flags) {
   if (flags.app) return flags.app;
-  const branch = target?.headRefName || git("branch", "--show-current");
-  let pr = target ? { number: target.number, title: target.title } : null;
-  if (!pr) {
-    try {
-      pr = gh(["pr", "view", branch, "--json", "number,title"]);
-    } catch {
-      // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
-    }
+  const branch = git("branch", "--show-current");
+  let pr = null;
+  try {
+    pr = gh(["pr", "view", branch, "--json", "number,title"]);
+  } catch {
+    // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
   }
   const mod = await import(resolve(REPO_ROOT, "scripts/portless-app-name.mjs"));
   const name = mod.resolveAppName({
@@ -192,27 +205,15 @@ async function resolveApp(flags, target) {
   return name;
 }
 
-function readBootRecord(app, target) {
+function readBootRecord(app) {
   const file = resolve(STATE_DIR, `${app}.json`);
-  if (!existsSync(file)) {
-    if (target)
-      fail(
-        3,
-        `no live dev server serves PR #${target.number} (${target.headRefName}) and no boot record at ${file} — boot one for that branch with the dev-server skill, then re-run`,
-      );
+  if (!existsSync(file))
     fail(3, `no boot record at ${file} — is the dev server advertised?`);
-  }
   try {
     return { file, record: JSON.parse(readFileSync(file, "utf8")) };
   } catch (error) {
     return fail(3, `${file} is not readable JSON (${error.message})`);
   }
-}
-
-function prFromRecord(record) {
-  const served = Array.isArray(record.served) ? record.served : [];
-  const mine = served.find((entry) => entry.branch === record.branch);
-  return (mine ?? served[served.length - 1])?.pr ?? null;
 }
 
 /** A Portless route answers a 2xx AND `X-Portless: 1`; the header alone is a 404. */
@@ -226,6 +227,27 @@ async function probePortless(url) {
   } catch {
     return false;
   }
+}
+
+/**
+ * The commit the server serves: `/__review/state.head` (the overlay reads its
+ * own checkout), else the record's worktree. "" when neither answers.
+ */
+async function servedHead(base, record) {
+  try {
+    const response = await fetch(`${base.replace(/\/$/, "")}/__review/state`, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
+    });
+    const head = (await response.json())?.head;
+    if (SHA_RE.test(head ?? "")) return head;
+  } catch {
+    // An overlay that cannot read its checkout; fall through to the record.
+  }
+  const local = record.worktree
+    ? gitIn(record.worktree, "rev-parse", "HEAD")
+    : "";
+  return SHA_RE.test(local) ? local : "";
 }
 
 /** Guided mode ships as `/__review/guided.js`; an older overlay answers 404. */
@@ -411,24 +433,44 @@ async function main() {
   if (!Number.isInteger(settleMs) || settleMs < 0)
     fail(2, `--settle takes whole milliseconds, not '${flags.settle}'`);
 
-  let stops;
-  try {
-    stops = parseManifest(readFileSync(resolve(flags.manifest), "utf8"));
-  } catch (error) {
-    return fail(2, error.message);
+  let stops = [];
+  if (flags.manifest) {
+    try {
+      stops = parseManifest(readFileSync(resolve(flags.manifest), "utf8"));
+    } catch (error) {
+      return fail(2, error.message);
+    }
   }
 
-  const target = flags.pr ? lookupPr(flags.pr) : null;
-  // On demand for a PR: the live record that serves it names the app, since
-  // a `/rename` word in the claimed name is not derivable from the PR.
-  const serving =
-    target && !flags.app
-      ? recordServingPr(readRecords(STATE_DIR), target.number, {
-          repo: repoName(),
-        })
-      : null;
-  const app = serving?.record?.app ?? (await resolveApp(flags, target));
-  const { file, record } = serving ?? readBootRecord(app, target);
+  const repo = flags.repo || REPO_DEFAULT;
+  const target = flags.pr ? lookupPr(flags.pr, repo) : null;
+  let app = flags.app;
+  let file;
+  let record;
+  if (target) {
+    // The live record that serves the PR names the app: a `/rename` word in
+    // the claimed name cannot be predicted from the title. With `--app` the
+    // named record still has to be live and serve the PR.
+    const records = readRecords(STATE_DIR).filter(
+      (entry) => !app || entry.record?.app === app,
+    );
+    const hit = recordServingPr(records, target.number, {
+      repo,
+      branch: target.headRefName,
+    });
+    if (!hit)
+      fail(
+        3,
+        app
+          ? `${app} is not a live dev server that serves PR #${target.number}`
+          : `no live dev server serves PR #${target.number} (${target.headRefName}) — boot one for that branch with the dev-server skill, then re-run`,
+      );
+    ({ file, record } = hit);
+    app = record.app;
+  } else {
+    app = await resolveApp(flags);
+    ({ file, record } = readBootRecord(app));
+  }
   if (record.stoppedAt)
     fail(
       3,
@@ -438,32 +480,46 @@ async function main() {
   if (!Number.isInteger(pr))
     fail(3, `no PR for '${app}' in ${file} — pass --pr <n>`);
   const sha = flags.sha || target?.headRefOid || git("rev-parse", "HEAD");
-  if (!/^[0-9a-f]{40}$/.test(sha))
-    fail(3, `'${sha}' is not a 40-char commit sha`);
-  // The comment stamps `sha`; a server whose checkout is behind it would be
-  // verified against code the sha does not describe.
-  const servedSha = record.worktree
-    ? gitIn(record.worktree, "rev-parse", "HEAD")
-    : "";
-  if (/^[0-9a-f]{40}$/.test(servedSha) && servedSha !== sha)
-    fail(
-      3,
-      `${record.worktree} serves ${servedSha.slice(0, 7)} but the walkthrough would claim ${sha.slice(0, 7)} — update that checkout to the PR head (Vite reloads on its own), then re-run`,
-    );
+  if (!SHA_RE.test(sha)) fail(3, `'${sha}' is not a 40-char commit sha`);
 
   // advertise.sh refuses an unroutable server rather than publish a
   // `.localhost` URL; a set link goes in the same public comment.
   const base = record.url;
   if (!base) fail(3, `${file} carries no gateway URL — is the box joined?`);
-  if (!(await probePortless(base)))
+  const [routable, guided] = await Promise.all([
+    probePortless(base),
+    servesGuidedMode(base),
+  ]);
+  if (!routable)
     fail(3, `${base} is not a routable Portless 2xx — no walkthrough`);
   // An overlay without guided mode draws a stop as a bare pin and drops its
   // notes (a branch that predates FR-3950): a walkthrough there misleads.
-  if (!(await servesGuidedMode(base)))
+  if (!guided)
     fail(
       3,
       `${base} serves an overlay without guided mode (no /__review/guided.js) — rebase the branch onto a main that includes FR-3950, then re-run; no walkthrough`,
     );
+  // The comment stamps `sha`; the server must serve it, or a commit that
+  // contains it (the stack layer above, or commits not pushed yet).
+  const served = await servedHead(base, record);
+  if (!served)
+    fail(
+      3,
+      `cannot tell which commit ${base} serves (no /__review/state head, no readable checkout at ${record.worktree ?? "?"}) — no walkthrough`,
+    );
+  if (served !== sha) {
+    const contains =
+      !!record.worktree &&
+      gitOk(record.worktree, "merge-base", "--is-ancestor", sha, served);
+    if (!contains)
+      fail(
+        3,
+        `${base} serves ${served.slice(0, 7)}, which does not contain the PR head ${sha.slice(0, 7)} — update that checkout to the PR head or boot a server for it, then re-run`,
+      );
+    process.stderr.write(
+      `walkthrough: ${base} serves ${served.slice(0, 7)}, which contains the PR head ${sha.slice(0, 7)} — the stops are verified against that build\n`,
+    );
+  }
 
   const envFile =
     flags.envFile ||
