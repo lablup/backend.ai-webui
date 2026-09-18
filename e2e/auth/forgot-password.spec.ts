@@ -1,7 +1,7 @@
 // E2E tests for the "Forgot Password" flow.
 //
 // The feature spans two surfaces:
-//   1. Login page (/): "Forgot password? Change" link → ChangePasswordEmailModal
+//   1. Login page (/): "Forgot password" link → ChangePasswordEmailModal
 //      (requires allowAnonymousChangePassword=true in config.toml + SESSION mode)
 //   2. Change password page (/change-password?token=JWT): ChangePasswordView
 //      (direct page navigation; no login required)
@@ -74,7 +74,7 @@ const CHANGE_PASSWORD_ERROR_EMAIL_MISMATCH = {
  * allowAnonymousChangePassword config in place.
  */
 async function openForgotPasswordModal(page: Page): Promise<void> {
-  await page.getByText('Change').click();
+  await page.getByRole('link', { name: 'Forgot password' }).click();
   await expect(
     page.getByRole('dialog', { name: 'Send change password email' }),
   ).toBeVisible({ timeout: 10_000 });
@@ -84,7 +84,7 @@ async function openForgotPasswordModal(page: Page): Promise<void> {
 
 test.describe('Forgot password email modal', () => {
   test.beforeEach(async ({ page, request }) => {
-    // Enable the "Forgot password?" link by setting allowAnonymousChangePassword=true
+    // Enable the "Forgot password" link by setting allowAnonymousChangePassword=true
     await modifyConfigToml(page, request, {
       general: {
         connectionMode: 'SESSION',
@@ -98,12 +98,14 @@ test.describe('Forgot password email modal', () => {
     'User can open the forgot password modal from login page',
     { tag: ['@regression', '@auth', '@functional', '@smoke'] },
     async ({ page }) => {
-      // 1. Verify "Forgot password?" text is visible on the login page
-      await expect(page.getByText('Forgot password?')).toBeVisible({
+      // 1. Verify the "Forgot password" link is visible on the login page
+      await expect(
+        page.getByRole('link', { name: 'Forgot password' }),
+      ).toBeVisible({
         timeout: 10_000,
       });
 
-      // 2. Click "Change" link to open the ChangePasswordEmailModal
+      // 2. Click the link to open the ChangePasswordEmailModal
       await openForgotPasswordModal(page);
 
       // 3. Verify modal title, email input, and Send button are all present
@@ -243,13 +245,13 @@ test.describe('Forgot password email modal', () => {
       await expect(
         page.getByRole('dialog', { name: 'Send change password email' }),
       ).toBeHidden({ timeout: 10_000 });
-      await expect(page.getByLabel('Email or Username')).toBeVisible();
+      await expect(page.getByLabel('Email')).toBeVisible();
       await expect(page.getByLabel('Password')).toBeVisible();
     },
   );
 
   test(
-    '"Forgot password?" link is hidden when config is disabled',
+    '"Forgot password" link is hidden when config is disabled',
     { tag: ['@regression', '@auth', '@functional'] },
     async ({ page, request }) => {
       // Override config to disable allowAnonymousChangePassword
@@ -261,9 +263,10 @@ test.describe('Forgot password email modal', () => {
       });
       await page.goto(webuiEndpoint);
 
-      // Verify "Forgot password?" text and "Change" link are not visible
-      await expect(page.getByText('Forgot password?')).toBeHidden();
-      await expect(page.getByText('Change')).toBeHidden();
+      // Verify the "Forgot password" link is not visible
+      await expect(
+        page.getByRole('link', { name: 'Forgot password' }),
+      ).toBeHidden();
     },
   );
 });
@@ -389,7 +392,7 @@ test.describe('Change password page', () => {
       // 3. Click Close and verify redirect to login page
       await page.getByRole('button', { name: 'Close' }).click();
       await page.waitForURL(webuiEndpoint + '/', { timeout: 10_000 });
-      await expect(page.getByLabel('Email or Username')).toBeVisible({
+      await expect(page.getByLabel('Email')).toBeVisible({
         timeout: 10_000,
       });
     },
@@ -418,7 +421,7 @@ test.describe('Change password page', () => {
       // 3. Click Close and verify redirect to login page
       await page.getByRole('button', { name: 'Close' }).click();
       await page.waitForURL(webuiEndpoint + '/', { timeout: 10_000 });
-      await expect(page.getByLabel('Email or Username')).toBeVisible({
+      await expect(page.getByLabel('Email')).toBeVisible({
         timeout: 10_000,
       });
     },
