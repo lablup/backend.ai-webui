@@ -39,6 +39,7 @@ import {
 import {
   createBackendAIClient,
   connectViaGQL,
+  isKeypairUnavailableError,
   loadConfigFromWebServer,
   loginWithSAML,
   loginWithOpenID,
@@ -674,7 +675,12 @@ const LoginView: React.FC<{
           message?: string;
           status?: number;
         };
-        if (e.message) {
+        if (isKeypairUnavailableError(err)) {
+          notification(
+            t('login.KeypairUnavailable'),
+            t('login.KeypairUnavailableDescription'),
+          );
+        } else if (e.message) {
           if (e.status === 408) {
             notification(
               t('error.LoginSucceededManagerNotResponding'),
@@ -797,8 +803,15 @@ const LoginView: React.FC<{
       try {
         await client.get_manager_version();
         await doGQLConnect(client);
-      } catch {
-        notification(t('error.CannotConnectToServer'));
+      } catch (err: unknown) {
+        if (isKeypairUnavailableError(err)) {
+          notification(
+            t('login.KeypairUnavailable'),
+            t('login.KeypairUnavailableDescription'),
+          );
+        } else {
+          notification(t('error.CannotConnectToServer'));
+        }
         setIsLoading(false);
       }
     },

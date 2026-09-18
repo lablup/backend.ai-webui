@@ -49,6 +49,28 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
 }
 
 /**
+ * Thrown when the post-authentication `keypair` query comes back empty.
+ * The manager scopes keypairs by `allowed_client_ip`, so a client outside
+ * the allow-list authenticates fine and then sees no keypair at all — the
+ * `isKeypairUnavailable` flag lets callers say that instead of the generic
+ * "login failed" (FR-3998).
+ */
+export class KeypairUnavailableError extends Error {
+  /** Duck-typing marker: survives module duplication (HMR, mocked imports). */
+  readonly isKeypairUnavailable = true;
+  constructor() {
+    super('Keypair information is missing.');
+    this.name = 'KeypairUnavailableError';
+  }
+}
+
+/** Duck-typed check for `KeypairUnavailableError` crossing module boundaries. */
+export const isKeypairUnavailableError = (err: unknown): boolean =>
+  typeof err === 'object' &&
+  err !== null &&
+  (err as { isKeypairUnavailable?: unknown }).isKeypairUnavailable === true;
+
+/**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, groups, and config.
  */
@@ -67,7 +89,7 @@ export async function connectViaGQL(
 
   if (!response['keypair']) {
     await client.logout();
-    throw new Error('Keypair information is missing.');
+    throw new KeypairUnavailableError();
   }
 
   const resourcePolicy = response['keypair'].resource_policy;
