@@ -2,14 +2,12 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  RBACElementType,
-  RoleFormModalCreateMutation,
-} from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
 import { RoleFormModalUpdateMutation } from '../__generated__/RoleFormModalUpdateMutation.graphql';
+import type { RBACElementType } from '../__generated__/RoleScopePermissionEditModalBulkAddMutation.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';

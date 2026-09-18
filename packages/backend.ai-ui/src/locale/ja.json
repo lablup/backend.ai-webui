@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "アクション ID",
     "Actor": "実行者",
+    "ClientIp": "クライアントIP",
     "Description": "説明",
     "Duration": "所要時間",
     "EntityId": "エンティティ ID",
@@ -268,6 +269,7 @@
     "SelectKeypair": "キーペアを選択"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "クライアントIP",
     "Domain": "ドメイン",
     "FailReason": "失敗の理由",
     "LoginTime": "ログイン日時",

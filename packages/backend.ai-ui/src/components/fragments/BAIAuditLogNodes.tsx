@@ -13,6 +13,7 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
+import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -75,6 +76,8 @@ const BAIAuditLogNodes = ({
 }: BAIAuditLogNodesProps) => {
   'use memo';
   const { t } = useBAIi18n();
+  const baiClient = useConnectedBAIClient();
+  const isClientIpSupported = baiClient.supports('client-ip-of-audit-log');
 
   const auditLogs = useFragment<BAIAuditLogNodesFragment$key>(
     graphql`
@@ -90,6 +93,7 @@ const BAIAuditLogNodes = ({
         entityType
         entityId
         triggeredBy
+        clientIp @since(version: "26.9.0")
         user {
           id
           basicInfo {
@@ -172,6 +176,16 @@ const BAIAuditLogNodes = ({
           );
         },
       },
+      isClientIpSupported
+        ? {
+            key: 'clientIp',
+            title: t('comp:BAIAuditLogNodes.ClientIp'),
+            dataIndex: 'clientIp',
+            // Shown exactly as the server returns it: the manager already
+            // applies the client IP masking policy, so it may be masked or null.
+            render: (__, record) => record.clientIp || '-',
+          }
+        : undefined,
       {
         key: 'entityType',
         title: t('comp:BAIAuditLogNodes.EntityType'),

@@ -1005,10 +1005,16 @@ export class Client {
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
       this._features['rbac-domain-scope-uuid'] = true;
+      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
+      // `Role.scopes` and `RBACElementType` remain as deprecated. FR-3905.
+      this._features['rbac-single-scope-role'] = true;
       // BA-7253 / backend PR #13562 — category/displayName/uiOption became
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.
       this._features['runtime-variant-preset-ui-metadata'] = true;
+      // LoginHistoryV2 / AuditLogV2 gained `clientIp`. FR-3661.
+      this._features['client-ip-of-login-history'] = true;
+      this._features['client-ip-of-audit-log'] = true;
     }
     // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
     // requested id (`items` / `successes` plus `failed`) instead of a bare

@@ -849,6 +849,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   required: true,
                   message: t('adminDeploymentPreset.NameRequired'),
                 },
+                {
+                  pattern: /^\S+$/,
+                  message: t(
+                    'adminDeploymentPreset.NameCannotContainWhitespace',
+                  ),
+                },
               ]}
             >
               <AstryxFormTextInput
@@ -1180,7 +1186,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="startupCommand"
               label={t('adminDeploymentPreset.StartupCommand')}
               tooltip={t('adminDeploymentPreset.StartupCommandTooltip')}
-              extra={t('modelService.StartCommandHelperShell')}
+              extra={
+                <BAIFlex direction="column" align="start">
+                  <span>{t('modelService.StartCommandHelperShell')}</span>
+                  <span>{t('modelService.CommandJsonArgumentHelper')}</span>
+                </BAIFlex>
+              }
             >
               <AstryxFormTextArea
                 label={t('adminDeploymentPreset.StartupCommand')}

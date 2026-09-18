@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "操作 ID",
     "Actor": "执行者",
+    "ClientIp": "客户端 IP",
     "Description": "描述",
     "Duration": "持续时间",
     "EntityId": "实体 ID",
@@ -268,6 +269,7 @@
     "SelectKeypair": "选择密钥对"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "客户端 IP",
     "Domain": "域",
     "FailReason": "失败原因",
     "LoginTime": "登录时间",

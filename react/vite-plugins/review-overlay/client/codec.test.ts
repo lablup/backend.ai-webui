@@ -140,3 +140,47 @@ describe('an anchor carrying the reviewer note', () => {
     expect(decoded?.n).toBeUndefined();
   });
 });
+
+describe('walkthrough stop fields (FR-3949)', () => {
+  const stop: AnchorV3 = {
+    ...anchor,
+    ch: '업로드 버튼이 카드 헤더로 옮겨졌습니다.',
+    ck: '목록 위 오른쪽 상단에 "Upload" 버튼이 보여야 합니다.',
+    old: '행마다 ⬆ 아이콘',
+    new: '헤더의 "Upload" 버튼',
+    type: 'modified',
+    kind: 'button',
+    code: [{ path: 'react/src/pages/VFolderListPage.tsx', line: 120, to: 131 }],
+    sha: 'c61efbf21a4d9e0b7f3c2d8e5a6b1c0d9e8f7a6b',
+    pr: 9605,
+    via: [{ click: { text: 'Upload' } }],
+    dlg: 1,
+  };
+
+  it('round-trips every stop field', async () => {
+    await expect(decodeAnchor(await encodeAnchor(stop))).resolves.toEqual(stop);
+  });
+
+  // The element the link points at outranks its annotation: a bad field is
+  // dropped, the pin survives.
+  it('drops an ill-typed stop field instead of refusing the anchor', async () => {
+    const bad = { ...stop, code: 'react/src/x.tsx:1', dlg: 2 } as unknown;
+    const decoded = await decodeAnchor(await encodeAnchor(bad as AnchorV3));
+    expect(decoded).not.toBeNull();
+    expect(decoded).not.toHaveProperty('code');
+    expect(decoded).not.toHaveProperty('dlg');
+    expect(decoded?.ck).toBe(stop.ck);
+  });
+
+  it('drops a stop text over its cap, and a code list over three', async () => {
+    const bad = {
+      ...stop,
+      ch: 'x'.repeat(281),
+      code: Array.from({ length: 4 }, () => ({ path: 'a.ts', line: 1 })),
+    };
+    const decoded = await decodeAnchor(await encodeAnchor(bad));
+    expect(decoded).not.toHaveProperty('ch');
+    expect(decoded).not.toHaveProperty('code');
+    expect(decoded?.ck).toBe(stop.ck);
+  });
+});

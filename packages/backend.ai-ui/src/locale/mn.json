@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Үйлийн ID",
     "Actor": "Гүйцэтгэгч",
+    "ClientIp": "Клиентийн IP",
     "Description": "Тайлбар",
     "Duration": "Үргэлжлэх хугацаа",
     "EntityId": "Объектын ID",
@@ -268,6 +269,7 @@
     "SelectKeypair": "Түлхүүрийн хос сонгох"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Клиентийн IP",
     "Domain": "Домэйн",
     "FailReason": "Амжилтгүй болсон шалтгаан",
     "LoginTime": "Нэвтэрсэн цаг",

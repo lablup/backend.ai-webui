@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { RBACElementType } from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RBACElementType } from '../__generated__/RoleScopePermissionEditModalBulkAddMutation.graphql';
 
 /**
  * Every value of the GraphQL `RBACElementType` enum, in SDL order.

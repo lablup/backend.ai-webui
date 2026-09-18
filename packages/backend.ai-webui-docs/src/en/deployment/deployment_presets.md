@@ -73,7 +73,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
 2. Fill in the fields. The form is a three-step wizard — **Basic Info**, **Model & Execution**, and **Review** — with the step list on the right and `Previous` / `Next` navigation at the bottom. Use `Skip to Review` to jump straight to the last step. The fields are organized into the following sections:
 
    - **Basic Info**:
-      * **Name**: A unique preset name (for example, `vLLM-GPU-Large`).
+      * **Name**: A unique preset name (for example, `vLLM-GPU-Large`). The name cannot contain whitespace.
       * **Description**: A short summary of the preset's intended use.
       * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
