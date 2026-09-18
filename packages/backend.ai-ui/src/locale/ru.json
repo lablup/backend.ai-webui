@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Очистить Поиск по вариантам",
-    "ClearSelection": "Очистить выбор",
     "NoResults": "Нет результатов",
     "SearchOptions": "Поиск по вариантам"
   },
@@ -749,7 +748,6 @@
     "Username": "Имя пользователя"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Очистить путь",
     "ClickToSelectPath": "Нажмите, чтобы выбрать путь",
     "SelectAPath": "Выбрать путь",
     "SelectAPathInFolder": "Выбрать путь в {{folderName}}",

@@ -249,7 +249,7 @@ export const docs = {
       name: 'allowClear',
       type: 'boolean',
       description:
-        'Shows a clear button left of the chevron while something is selected; it emits `[]` in `multiple` mode and `null` otherwise. Not rendered while `status.message` is shown, since that message sits under the trigger.',
+        'Shows a clear button between the loading spinner and the chevron while something is selected (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.5.4.patch`); it emits `[]` in `multiple` mode and `null` otherwise.',
       default: 'false',
     },
     {

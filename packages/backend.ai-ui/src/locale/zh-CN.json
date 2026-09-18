@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜索选项",
-    "ClearSelection": "清除选择",
     "NoResults": "无结果",
     "SearchOptions": "搜索选项"
   },
@@ -749,7 +748,6 @@
     "Username": "用户名"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "清除路径",
     "ClickToSelectPath": "点击选择路径",
     "SelectAPath": "选择路径",
     "SelectAPathInFolder": "在 {{folderName}} 中选择路径",

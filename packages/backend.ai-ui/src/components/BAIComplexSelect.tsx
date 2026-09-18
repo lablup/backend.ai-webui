@@ -203,10 +203,9 @@ export interface BAIComplexSelectProps {
   /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
   maxTriggerTokens?: number;
   /**
-   * Shows a clear button beside the chevron while something is selected.
-   * The trigger is a `<button>`, so the clear button is a sibling laid over
-   * its end, anchored to the field's bottom. It is not rendered while
-   * `status.message` is shown, because that message sits under the trigger.
+   * antd `allowClear`: a clear button between the spinner and the chevron
+   * while something is selected (`ComplexSelector.hasClear`, added by
+   * react/patches/@astryxdesign__core@0.5.4.patch).
    */
   allowClear?: boolean;
   'data-testid'?: string;
@@ -553,10 +552,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
     return remaining > 0 ? `${joined}, +${remaining}` : joined;
   })();
 
-  const hasClearButton =
-    allowClear && !isDisabled && !status?.message && selected.length > 0;
-
-  const selector = (
+  return (
     <ComplexSelector<BAIComplexSelectValue>
       label={label}
       isLabelHidden={isLabelHidden}
@@ -573,8 +569,9 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
       isOptional={isOptional}
       status={status}
       size={size}
-      // With `allowClear` the wrapper below carries `width`.
-      width={allowClear ? '100%' : width}
+      width={width}
+      hasClear={allowClear}
+      onClear={() => onChange?.(multiple ? [] : null)}
       data-testid={testId}
     >
       {(_value, emit, close, state) => (
@@ -733,26 +730,6 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
         </div>
       )}
     </ComplexSelector>
-  );
-
-  if (!allowClear) return selector;
-  return (
-    <span
-      className="bai-complex-select-field"
-      style={{ width: typeof width === 'number' ? `${width}px` : width }}
-      data-size={size}
-      data-clearable={hasClearButton ? 'true' : undefined}
-    >
-      {selector}
-      {hasClearButton && (
-        <span className="bai-complex-select-field__clear">
-          <InputClearButton
-            label={t('comp:BAIComplexSelect.ClearSelection')}
-            onClick={() => onChange?.(multiple ? [] : null)}
-          />
-        </span>
-      )}
-    </span>
   );
 };
 

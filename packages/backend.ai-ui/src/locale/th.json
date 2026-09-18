@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "ล้าง ค้นหาตัวเลือก",
-    "ClearSelection": "ล้างการเลือก",
     "NoResults": "ไม่พบผลลัพธ์",
     "SearchOptions": "ค้นหาตัวเลือก"
   },
@@ -749,7 +748,6 @@
     "Username": "ชื่อผู้ใช้"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "ล้างพาธ",
     "ClickToSelectPath": "คลิกเพื่อเลือกพาธ",
     "SelectAPath": "เลือกพาธ",
     "SelectAPathInFolder": "เลือกพาธใน {{folderName}}",

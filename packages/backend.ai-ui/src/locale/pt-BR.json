@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Limpar Pesquisar opções",
-    "ClearSelection": "Limpar seleção",
     "NoResults": "Sem resultados",
     "SearchOptions": "Pesquisar opções"
   },
@@ -755,7 +754,6 @@
     "Username": "Nome de usuário"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Limpar caminho",
     "ClickToSelectPath": "Clique para selecionar um caminho",
     "SelectAPath": "Selecionar um caminho",
     "SelectAPathInFolder": "Selecionar um caminho em {{folderName}}",

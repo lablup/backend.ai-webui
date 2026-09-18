@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
-    "ClearSelection": "Сонголтыг арилгах",
     "NoResults": "Үр дүн олдсонгүй",
     "SearchOptions": "Сонголтуудаас хайх"
   },
@@ -749,7 +748,6 @@
     "Username": "Хэрэглэгчийн нэр"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Замыг арилгах",
     "ClickToSelectPath": "Зам сонгохын тулд дарна уу",
     "SelectAPath": "Зам сонгох",
     "SelectAPathInFolder": "{{folderName}} хавтаснаас зам сонгох",

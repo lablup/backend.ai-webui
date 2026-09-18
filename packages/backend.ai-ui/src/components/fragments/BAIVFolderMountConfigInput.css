@@ -88,7 +88,7 @@
 }
 
 /* The name shrinks only once the picker is down to its minimum width. */
-.bai-vfolder-mount-config__source > .bai-vfolder-path-picker {
+.bai-vfolder-mount-config__source > .astryx-field {
   flex: 1 1 calc(var(--spacing-12) * 3);
   min-width: calc(var(--spacing-12) * 3);
 }

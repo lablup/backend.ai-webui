@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "옵션 검색 지우기",
-    "ClearSelection": "선택 지우기",
     "NoResults": "결과 없음",
     "SearchOptions": "옵션 검색"
   },
@@ -750,7 +749,6 @@
     "Username": "사용자 이름"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "경로 지우기",
     "ClickToSelectPath": "클릭하여 경로 선택",
     "SelectAPath": "경로 선택",
     "SelectAPathInFolder": "{{folderName}} 폴더에서 경로 선택",

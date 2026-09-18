@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Xóa Tìm trong các tùy chọn",
-    "ClearSelection": "Xóa lựa chọn",
     "NoResults": "Không có kết quả",
     "SearchOptions": "Tìm trong các tùy chọn"
   },
@@ -749,7 +748,6 @@
     "Username": "Tên người dùng"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Xóa đường dẫn",
     "ClickToSelectPath": "Nhấp để chọn đường dẫn",
     "SelectAPath": "Chọn đường dẫn",
     "SelectAPathInFolder": "Chọn đường dẫn trong {{folderName}}",

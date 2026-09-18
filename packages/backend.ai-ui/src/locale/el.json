@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
-    "ClearSelection": "Εκκαθάριση επιλογής",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
     "SearchOptions": "Αναζήτηση επιλογών"
   },
@@ -749,7 +748,6 @@
     "Username": "Όνομα χρήστη"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Εκκαθάριση διαδρομής",
     "ClickToSelectPath": "Κάντε κλικ για να επιλέξετε διαδρομή",
     "SelectAPath": "Επιλέξτε διαδρομή",
     "SelectAPathInFolder": "Επιλέξτε διαδρομή στο {{folderName}}",

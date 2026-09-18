@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "オプションを検索 をクリア",
-    "ClearSelection": "選択をクリア",
     "NoResults": "結果がありません",
     "SearchOptions": "オプションを検索"
   },
@@ -749,7 +748,6 @@
     "Username": "ユーザー名"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "パスをクリア",
     "ClickToSelectPath": "クリックしてパスを選択",
     "SelectAPath": "パスを選択",
     "SelectAPathInFolder": "{{folderName}} 内のパスを選択",

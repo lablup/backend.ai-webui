@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Hapus Cari opsi",
-    "ClearSelection": "Hapus pilihan",
     "NoResults": "Tidak ada hasil",
     "SearchOptions": "Cari opsi"
   },
@@ -749,7 +748,6 @@
     "Username": "Nama Pengguna"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Hapus jalur",
     "ClickToSelectPath": "Klik untuk memilih jalur",
     "SelectAPath": "Pilih jalur",
     "SelectAPathInFolder": "Pilih jalur di {{folderName}}",

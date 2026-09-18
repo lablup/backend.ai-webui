@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Kosongkan Cari pilihan",
-    "ClearSelection": "Kosongkan pilihan",
     "NoResults": "Tiada keputusan",
     "SearchOptions": "Cari pilihan"
   },
@@ -749,7 +748,6 @@
     "Username": "Nama Pengguna"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Kosongkan laluan",
     "ClickToSelectPath": "Klik untuk memilih laluan",
     "SelectAPath": "Pilih laluan",
     "SelectAPathInFolder": "Pilih laluan dalam {{folderName}}",

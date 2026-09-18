@@ -107,7 +107,6 @@
   },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
-    "ClearSelection": "Seçimi temizle",
     "NoResults": "Sonuç yok",
     "SearchOptions": "Seçenekleri ara"
   },
@@ -749,7 +748,6 @@
     "Username": "Kullanıcı Adı"
   },
   "comp:VFolderPathPicker": {
-    "ClearPath": "Yolu temizle",
     "ClickToSelectPath": "Yol seçmek için tıklayın",
     "SelectAPath": "Bir yol seçin",
     "SelectAPathInFolder": "{{folderName}} içinde bir yol seçin",

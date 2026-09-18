@@ -10,12 +10,10 @@ import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
-import './BAIVFolderPathPicker.css';
 import {
   ComplexSelector,
   type ComplexSelectorSize,
 } from '@astryxdesign/core/ComplexSelector';
-import { InputClearButton } from '@astryxdesign/core/Field';
 import type { SizeValue } from '@astryxdesign/core/utils';
 import {
   useEffectEvent,
@@ -41,7 +39,7 @@ export interface BAIVFolderPathPickerProps {
   defaultValue?: string;
   /** Emits `undefined` when the value is cleared (nothing picked). */
   onChange?: (selectedSubPath?: string) => void;
-  /** Shows a clear button while a value is picked. */
+  /** Shows a clear button while a non-root path is picked. */
   allowClear?: boolean;
   /** Overrides the "click to select" copy shown while nothing is picked. */
   placeholder?: string;
@@ -132,59 +130,45 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     });
   };
 
-  const hasClearButton = !!allowClear && !disabled && !!selectedSubPath;
-
   return (
     <>
-      <span
-        className="bai-vfolder-path-picker"
-        data-clearable={hasClearButton ? 'true' : undefined}
-        style={{ width: typeof width === 'number' ? `${width}px` : width }}
+      <ComplexSelector<string | undefined>
+        // Display-only trigger. Astryx `Selector` owns its popup with no open
+        // hook (BAISelect keeps `open`/`onOpenChange` inert), so the trigger
+        // is a ComplexSelector: preventDefault() makes composeEventHandlers
+        // skip its own popover-open handler, and the modal opens instead.
+        onClick={(e) => {
+          e.preventDefault();
+          openPicker();
+        }}
+        label={label ?? t('comp:VFolderPathPicker.SelectAPath')}
+        isLabelHidden
+        value={selectedSubPath}
+        isLoading={isPickerPending}
+        // A subpath is relative, so it shows without a leading '/'; the root
+        // ('') mounts the same as nothing picked and shows empty too.
+        triggerLabel={selectedSubPath || undefined}
+        placeholder={
+          !vfolderUuid
+            ? t('comp:VFolderPathPicker.SelectFolderFirst')
+            : (placeholder ?? t('comp:VFolderPathPicker.ClickToSelectPath'))
+        }
+        isDisabled={disabled}
+        // `hasClear` / `onClear`: react/patches/@astryxdesign__core@0.5.4.patch
+        hasClear={allowClear}
+        onClear={() => setSelectedSubPath(undefined)}
+        size={size}
+        width={width}
+        style={style}
       >
-        <ComplexSelector<string | undefined>
-          // Display-only trigger. Astryx `Selector` owns its popup with no open
-          // hook (BAISelect keeps `open`/`onOpenChange` inert), so the trigger
-          // is a ComplexSelector: preventDefault() makes composeEventHandlers
-          // skip its own popover-open handler, and the modal opens instead.
-          onClick={(e) => {
-            e.preventDefault();
-            openPicker();
-          }}
-          label={label ?? t('comp:VFolderPathPicker.SelectAPath')}
-          isLabelHidden
-          value={selectedSubPath}
-          isLoading={isPickerPending}
-          // A subpath is relative, so it shows without a leading '/'; the root
-          // ('') mounts the same as nothing picked and shows empty too.
-          triggerLabel={selectedSubPath || undefined}
-          placeholder={
-            !vfolderUuid
-              ? t('comp:VFolderPathPicker.SelectFolderFirst')
-              : (placeholder ?? t('comp:VFolderPathPicker.ClickToSelectPath'))
-          }
-          isDisabled={disabled}
-          size={size}
-          width="100%"
-          style={style}
-        >
-          {(_value, _onChange, close, { isOpen }) => (
-            <PopoverToModalRedirect
-              isOpen={isOpen}
-              close={close}
-              openPicker={openPicker}
-            />
-          )}
-        </ComplexSelector>
-        {/* A sibling, not a child: the trigger is a <button>. */}
-        {hasClearButton && (
-          <span className="bai-vfolder-path-picker__clear">
-            <InputClearButton
-              label={t('comp:VFolderPathPicker.ClearPath')}
-              onClick={() => setSelectedSubPath(undefined)}
-            />
-          </span>
+        {(_value, _onChange, close, { isOpen }) => (
+          <PopoverToModalRedirect
+            isOpen={isOpen}
+            close={close}
+            openPicker={openPicker}
+          />
         )}
-      </span>
+      </ComplexSelector>
       {/* Mounted only while open (BAIUnmountAfterClose) and only after the
           first loadQuery. The modal suspends until its preloaded query
           resolves; because it mounts inside the transition above, React
