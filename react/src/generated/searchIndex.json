@@ -2841,7 +2841,6 @@
         "credential.StatusInfo",
         "credential.StatusUpdatedSuccessfully",
         "credential.TooltipForRequirePasswordChange",
-        "credential.TypePermanentlyDelete",
         "credential.UpdateUsers",
         "credential.UpdateUsersWarningAlertTitle",
         "credential.UpdatedUsers",
@@ -4252,7 +4251,6 @@
       "settings": [],
       "keys": [
         "credential.PermanentlyDelete",
-        "credential.TypePermanentlyDelete",
         "dialog.title.DeleteSomething",
         "environment.Architecture",
         "environment.BaseImageName",
@@ -5275,7 +5273,6 @@
         "credential.SecretKey",
         "credential.SetAsMain",
         "credential.SetAsMainConfirm",
-        "credential.TypePermanentlyDelete",
         "desktopNotification.NotSupported",
         "desktopNotification.PermissionDenied",
         "dialog.ask.DoYouWantToResetChanges",

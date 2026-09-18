@@ -711,7 +711,6 @@
     "StatusInfo": "ステータス情報",
     "StatusUpdatedSuccessfully": "ユーザーステータスが変更されました。",
     "TooltipForRequirePasswordChange": "このオプションをオンにすると、ユーザーは次回ログイン時にパスワードを変更する必要があります。",
-    "TypePermanentlyDelete": "\"{{text}}\"と入力してください。",
     "UpdateUsers": "ユーザーを一括編集",
     "UpdateUsersWarningAlertTitle": "UID または GID を設定すると、既存のフォルダマウントの使用が制限される場合があります。",
     "UpdatedUsers": "全{{total}}人中{{count}}人のユーザーを更新しました。",

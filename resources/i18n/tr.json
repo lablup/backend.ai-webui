@@ -711,7 +711,6 @@
     "StatusInfo": "Durum Bilgisi",
     "StatusUpdatedSuccessfully": "Kullanıcı durumu değişti.",
     "TooltipForRequirePasswordChange": "Bu seçeneği etkinleştirirseniz kullanıcı bir sonraki girişte şifresini değiştirmek zorunda kalacaktır.",
-    "TypePermanentlyDelete": "Lütfen \"{{text}}\" yazın.",
     "UpdateUsers": "Kullanıcıları Toplu Düzenle",
     "UpdateUsersWarningAlertTitle": "UID veya GID(lerin) ayarlanması, daha önce oluşturulmuş klasör bağlamalarının kullanılmasını kısıtlayabilir.",
     "UpdatedUsers": "Toplam {{total}} kullanıcıdan {{count}} güncellendi.",
