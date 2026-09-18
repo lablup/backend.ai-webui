@@ -1,86 +1,60 @@
 import { isServedByWebServer, refreshConfigFromToml } from './loginConfig';
-import { afterEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
+
+// jsdom gives the test page a real origin; "same origin" means that one.
+const pageOrigin = globalThis.location.origin;
+const otherOrigin = 'https://manager.example.com:8091';
 
 describe('isServedByWebServer', () => {
-  it('is true when apiEndpoint shares the page origin', () => {
-    expect(
-      isServedByWebServer(
-        'https://webui.example.com',
-        'https://webui.example.com',
-        false,
-      ),
-    ).toBe(true);
-    expect(
-      isServedByWebServer(
-        'https://webui.example.com/',
-        'https://webui.example.com',
-        false,
-      ),
-    ).toBe(true);
+  it('is true only when apiEndpoint shares the page origin', () => {
+    expect(isServedByWebServer(pageOrigin)).toBe(true);
+    expect(isServedByWebServer(`${pageOrigin}/`)).toBe(true);
+    expect(isServedByWebServer(otherOrigin)).toBe(false);
   });
 
-  it('is false for another origin, an empty endpoint, or a bad URL', () => {
-    expect(
-      isServedByWebServer(
-        'https://manager.example.com:8091',
-        'https://webui.example.com',
-        false,
-      ),
-    ).toBe(false);
-    expect(isServedByWebServer('', 'https://webui.example.com', false)).toBe(
-      false,
-    );
-    expect(
-      isServedByWebServer('not a url', 'https://webui.example.com', false),
-    ).toBe(false);
-  });
-
-  it('is false in Electron even on a matching origin', () => {
-    expect(
-      isServedByWebServer(
-        'https://webui.example.com',
-        'https://webui.example.com',
-        true,
-      ),
-    ).toBe(false);
+  it('is false for an empty, non-string, or unparsable endpoint', () => {
+    expect(isServedByWebServer('')).toBe(false);
+    expect(isServedByWebServer(undefined)).toBe(false);
+    expect(isServedByWebServer('not a url')).toBe(false);
+    expect(isServedByWebServer('[Default API Endpoint]')).toBe(false);
   });
 });
 
-describe('refreshConfigFromToml on a webserver-served page', () => {
-  afterEach(() => {
+describe('refreshConfigFromToml sign-in mode', () => {
+  beforeEach(() => {
+    localStorage.clear();
     delete (globalThis as any).isElectron;
   });
 
-  const pageOrigin = globalThis.location.origin;
+  const general = (apiEndpoint: string, connectionMode = 'API') => ({
+    general: { apiEndpoint, connectionMode, allowChangeSigninMode: true },
+  });
 
-  it('drops the mode switch and forces SESSION when apiEndpoint is the page origin', () => {
-    const state = refreshConfigFromToml({
-      general: {
-        apiEndpoint: pageOrigin,
-        connectionMode: 'API',
-        allowChangeSigninMode: true,
-      },
-    });
+  it('hides the switch on a webserver-served page but keeps the configured mode', () => {
+    const state = refreshConfigFromToml(general(pageOrigin));
     expect(state.change_signin_support).toBe(false);
-    expect(state.connection_mode).toBe('SESSION');
+    expect(state.connection_mode).toBe('API');
   });
 
   it('keeps the switch when apiEndpoint is another host', () => {
-    const state = refreshConfigFromToml({
-      general: {
-        apiEndpoint: 'https://manager.example.com:8091',
-        connectionMode: 'API',
-        allowChangeSigninMode: true,
-      },
-    });
+    const state = refreshConfigFromToml(general(otherOrigin));
     expect(state.change_signin_support).toBe(true);
     expect(state.connection_mode).toBe('API');
   });
 
   it('keeps the switch when the endpoint field is left for the user', () => {
-    const state = refreshConfigFromToml({
-      general: { apiEndpoint: '', allowChangeSigninMode: true },
-    });
-    expect(state.change_signin_support).toBe(true);
+    expect(refreshConfigFromToml(general('')).change_signin_support).toBe(true);
+  });
+
+  it('restores the mode Electron stored, except on a webserver-served page', () => {
+    (globalThis as any).isElectron = true;
+    localStorage.setItem('backendaiwebui.connection_mode', 'API');
+
+    expect(
+      refreshConfigFromToml(general(otherOrigin, 'SESSION')).connection_mode,
+    ).toBe('API');
+    expect(
+      refreshConfigFromToml(general(pageOrigin, 'SESSION')).connection_mode,
+    ).toBe('SESSION');
   });
 });
