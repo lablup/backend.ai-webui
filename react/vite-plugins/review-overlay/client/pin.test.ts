@@ -102,6 +102,7 @@ beforeEach(() => {
 
 afterEach(() => {
   pin.dispose();
+  delete (document.documentElement as Partial<HTMLElement>).getClientRects;
 });
 
 describe('createDeepLinkPin', () => {
@@ -254,6 +255,43 @@ describe('createDeepLinkPin', () => {
       expect(pin.locate()).toBe(true);
       // 8 pad + the 34px marker clamped to the same edge + its 10px gap.
       expect(card().style.top).toBe('52px');
+    });
+
+    /**
+     * The measured failure: on github.com the element a pin holds stops being
+     * drawn for a moment — the site re-renders its file list seconds after it
+     * looks settled — and the pin drew a zero-size box at 0,0, marker and card
+     * with it, on top of the site's logo. No "scrolled below" wording, nothing
+     * to click: it reads as a pin on the corner of the page.
+     */
+    it('gives up an element that has stopped being drawn', () => {
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(marked()).toBe(true);
+
+      // A document that lays out, and an element that no longer does.
+      document.documentElement.getClientRects = () =>
+        [
+          { left: 0, top: 0, width: 1024, height: 800 },
+        ] as unknown as DOMRectList;
+      element.getBoundingClientRect = () =>
+        ({ width: 0, height: 0 }) as DOMRect;
+      pin.locate();
+
+      expect(marked()).toBe(false);
+      expect(card().classList.contains('found')).toBe(false);
+      expect(pin.locatedElement()).toBeNull();
+    });
+
+    // …and jsdom, where nothing has a box, must keep reading a zero rect as
+    // "no layout engine" rather than "the element went away".
+    it('keeps drawing a zero rect in a document that lays nothing out', () => {
+      mountSized({ top: 100, bottom: 100, height: 0, width: 0 }, 60);
+      show();
+
+      expect(pin.locate()).toBe(true);
+      expect(marked()).toBe(true);
     });
 
     // `getBoundingClientRect` still reports the box of an element a scroller

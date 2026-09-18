@@ -54,6 +54,23 @@ export const isRendered = (element: Element): boolean => {
   return false;
 };
 
+/**
+ * Does this document lay anything out? jsdom does not, and reports nothing for
+ * every element — so only here does "has no box" mean "hidden" rather than
+ * "no layout engine", and only here does the gate below apply.
+ */
+export const hasLayout = (doc: Document): boolean =>
+  doc.documentElement.getClientRects().length > 0;
+
+/**
+ * An element with no box is never an answer: a pin drawn on one puts its
+ * marker, its box and its card in the page's top-left corner, with none of
+ * the wording an honestly off-screen pin gets. Waiting for the real element
+ * to come back is the better answer, and the retry driver is already waiting.
+ */
+const drawable = (found: Element | null, doc: Document): Element | null =>
+  !found || !hasLayout(doc) || isRendered(found) ? found : null;
+
 /** react-grab 0.1.50 answers synchronously, so this costs no await. */
 function displayName(element: Element): string | null {
   const grab = window.__REACT_GRAB__;
@@ -213,6 +230,13 @@ export function quickFindTarget(
   anchor: AnchorV3 | null,
   options: ResolveOptions = {},
 ): Element | null {
+  return drawable(quickLadder(anchor, options), options.doc ?? document);
+}
+
+function quickLadder(
+  anchor: AnchorV3 | null,
+  options: ResolveOptions,
+): Element | null {
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const strict = isStop(anchor);
@@ -222,7 +246,10 @@ export function quickFindTarget(
     textMatches(bySelector, anchor.txt) &&
     !componentConflicts(bySelector, anchor) &&
     inScope(bySelector, anchor) &&
-    withinLandmark(bySelector, anchor, strict)
+    withinLandmark(bySelector, anchor, strict) &&
+    // A hit with no box is a copy of the element, not the element: the rungs
+    // below get their turn, and the gate above refuses it if they find nothing.
+    (isRendered(bySelector) || !hasLayout(doc))
   )
     return bySelector;
   const landmark = uniqueLandmark(anchor, doc, options.ignore);
@@ -252,6 +279,13 @@ export function findAnchorTarget(
   anchor: AnchorV3 | null,
   options: ResolveOptions = {},
 ): Element | null {
+  return drawable(fullLadder(anchor, options), options.doc ?? document);
+}
+
+function fullLadder(
+  anchor: AnchorV3 | null,
+  options: ResolveOptions,
+): Element | null {
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const strict = isStop(anchor);
@@ -261,7 +295,8 @@ export function findAnchorTarget(
     textMatches(bySelector, anchor.txt) &&
     !componentConflicts(bySelector, anchor) &&
     inScope(bySelector, anchor) &&
-    withinLandmark(bySelector, anchor, strict)
+    withinLandmark(bySelector, anchor, strict) &&
+    (isRendered(bySelector) || !hasLayout(doc))
   )
     return bySelector;
 

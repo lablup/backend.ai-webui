@@ -447,6 +447,20 @@ describe('a hidden look-alike never beats a rendered one', () => {
     }
   };
 
+  /**
+   * …and jsdom lays nothing out at all, which the client reads as "no layout
+   * engine", not "everything is hidden". Refusing an element with no box is
+   * conditional on that: a test about hidden elements says the document lays
+   * out, and one about jsdom itself does not.
+   */
+  const laidOut = () => render(document.documentElement);
+
+  afterEach(() => {
+    delete (document.documentElement as Partial<HTMLElement>).getClientRects;
+    delete (document.documentElement as Partial<HTMLElement>)
+      .getBoundingClientRect;
+  });
+
   const twice = `
     <div class="sr"><a href="/f">.cspell.json</a></div>
     <div class="wide"><a href="/f">.cspell.json</a></div>
@@ -457,6 +471,7 @@ describe('a hidden look-alike never beats a rendered one', () => {
 
   it('is skipped by the text scan that would have taken it first', () => {
     mount(twice);
+    laidOut();
     render(copies()[1]);
 
     // The selector has gone stale, so the scan is the only rung left.
@@ -465,6 +480,7 @@ describe('a hidden look-alike never beats a rendered one', () => {
 
   it('loses the selector rung too, in both ladders', () => {
     mount(twice);
+    laidOut();
     render(copies()[1]);
 
     const both = file({ s: 'a[href="/f"]' });
@@ -473,6 +489,7 @@ describe('a hidden look-alike never beats a rendered one', () => {
   });
 
   it('does not disqualify a landmark it duplicates', () => {
+    laidOut();
     mount(`
       <div class="sr" data-testid="row"><a href="/f">.cspell.json</a></div>
       <div class="wide" data-testid="row"><a href="/f">.cspell.json</a></div>
@@ -487,15 +504,27 @@ describe('a hidden look-alike never beats a rendered one', () => {
 
   it('loses to a rendered one for a strict stop as well', () => {
     mount(twice);
+    laidOut();
     render(copies()[1]);
 
     const stop = file({ s: '#gone', ck: 'The file row is visible' });
     expect(findAnchorTarget(stop)).toBe(copies()[1]);
   });
 
-  // The whole preference is conditional on something being drawable: with no
-  // layout at all — jsdom, and a page mid-render — the old order stands.
-  it('changes nothing when no candidate has a box', () => {
+  // Waiting is better than drawing somewhere wrong: the marker, the box and
+  // the card of a boxless element all land in the page's top-left corner, and
+  // the retry driver is already waiting for the real one to come back.
+  it('is refused outright when it is the only candidate left', () => {
+    mount(twice);
+    laidOut();
+
+    expect(findAnchorTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+  });
+
+  // The whole preference is conditional on the document laying anything out:
+  // in jsdom nothing has a box, and the old order stands.
+  it('changes nothing in a document with no layout at all', () => {
     mount(twice);
 
     expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[0]);

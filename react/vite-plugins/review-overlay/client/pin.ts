@@ -16,6 +16,7 @@ import { icon, ICON_STYLE } from './icons.js';
 import {
   findAnchorTarget,
   hasLandmark,
+  hasLayout,
   inScope,
   isRendered,
   quickFindTarget,
@@ -515,6 +516,16 @@ function createPinView(deps: ViewDeps): PinView {
   function place(): DockEdge | null {
     if (!located) return hide();
     const box = markedBox(located);
+    // Nothing can be drawn ON an element with no box: the marker, the box and
+    // the card would all land at 0,0, over whatever the page keeps in its
+    // corner, and without the wording a scrolled-away pin gets. Where there IS
+    // layout, that means the element stopped being drawn between resolving it
+    // and drawing it — measured on github.com, which re-renders its file list
+    // seconds after it looks settled. Give it up; the ladder looks again.
+    if (!box.width && !box.height && hasLayout(located.ownerDocument)) {
+      setLocated(null);
+      return hide();
+    }
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     // A rect with no size at all is jsdom (or `display: contents`), not a
@@ -633,13 +644,12 @@ function createPinView(deps: ViewDeps): PinView {
       missedScans = full ? 0 : missedScans + 1;
       next = full ?? next;
     }
-    // Whatever the rungs above settled for, an answer with no layout box loses
-    // to one that has it — including an element held across a re-render that
-    // hid it, which is the case `held` above would otherwise keep forever.
-    if (next && !isRendered(next)) {
-      const drawable = findAnchorTarget(target.anchor, { ignore: host });
-      if (drawable && isRendered(drawable)) next = drawable;
-    }
+    // `held` is the one answer above that never went through the ladder, so it
+    // is the one that can still be an element the page has since hidden — and
+    // a pin on one of those draws in the page's top-left corner. Re-resolve;
+    // the ladder returns nothing that cannot be drawn on.
+    if (next && !isRendered(next) && hasLayout(next.ownerDocument))
+      next = findAnchorTarget(target.anchor, { ignore: host });
     setLocated(next);
   }
 

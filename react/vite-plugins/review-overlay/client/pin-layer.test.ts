@@ -116,7 +116,18 @@ beforeEach(() => {
 
 afterEach(() => {
   layer.dispose();
+  delete (document.documentElement as Partial<HTMLElement>).getClientRects;
 });
+
+/**
+ * jsdom lays nothing out, and the client reads that as "no layout engine"
+ * rather than "everything is hidden". A test about hidden elements has to say
+ * the document does lay out.
+ */
+const laidOut = () => {
+  document.documentElement.getClientRects = () =>
+    [{ left: 0, top: 0, width: 1024, height: 800 }] as unknown as DOMRectList;
+};
 
 describe('createPinLayer', () => {
   it('draws one view per pin, tagged with its own id', () => {
@@ -263,6 +274,7 @@ describe('createPinLayer', () => {
 
     // The same anchor, re-rendered: the held copy loses its box, the new one
     // has one. `getClientRects` is what tells them apart.
+    laidOut();
     one.getClientRects = () => [] as unknown as DOMRectList;
     const redrawn = one.cloneNode(true) as HTMLElement;
     const rect = { left: 20, top: 100, width: 400, height: 200 } as DOMRect;
