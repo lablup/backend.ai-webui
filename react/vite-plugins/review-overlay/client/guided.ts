@@ -8,7 +8,7 @@
  * gathered back into ordinary `bai-review` blocks.
  *
  * Composes `marks.ts`, `navigator.ts` and `popover.ts` over the set and the
- * progress `walkthrough.ts` holds. `main.ts` starts and stops it.
+ * progress `walkthrough.ts` holds. `boot.ts` starts and stops it.
  */
 import { blockStamp } from './block.js';
 import { pathNeedsChange, pinSetUrlAt, retryUntil } from './deeplink.js';
@@ -92,7 +92,14 @@ export interface GuidedModeOptions {
   rememberStop: (id: string) => void;
   /** Read once, at entry: the stop the reload that brought us here asked for. */
   takeRememberedStop: () => string | null;
-  /** The reader left the walkthrough; `main.ts` forgets the set. */
+  /**
+   * The host's answer to "may the overlay claim keys on this page" (ADR 0008).
+   * `false` unbinds the bare `n` / `p` / `v` / `m` / `c` / `[` / `]` below:
+   * they are live shortcuts on the sites a second host visits, and `c` copies.
+   * Escape stays — it is not `preventDefault`ed and closes our own chrome.
+   */
+  pageChords: boolean;
+  /** The reader left the walkthrough; `boot.ts` forgets the set. */
   onExit: () => void;
 }
 
@@ -179,42 +186,52 @@ export function startGuidedMode(options: GuidedModeOptions) {
     root,
     onSelect: (id) => go(ids.indexOf(id), false),
   });
-  const nav = createNavigator(root, {
-    onNext: () => go(current + 1),
-    onPrev: () => go(current - 1),
-    onTogglePanel: () => {
-      panelOpen = !panelOpen;
-      refresh();
+  /** Both panels name keys, and neither may name one the host never bound. */
+  const chrome = { pageChords: options.pageChords };
+  const nav = createNavigator(
+    root,
+    {
+      onNext: () => go(current + 1),
+      onPrev: () => go(current - 1),
+      onTogglePanel: () => {
+        panelOpen = !panelOpen;
+        refresh();
+      },
+      onCopyComments: copyComments,
+      onCopySummary: copySummary,
+      onGo: (index) => go(index),
+      onExit: exit,
     },
-    onCopyComments: copyComments,
-    onCopySummary: copySummary,
-    onGo: (index) => go(index),
-    onExit: exit,
-  });
-  const pop = createPopover(root, {
-    onToggleViewed: (viewed) => {
-      progress.setViewed(stops[current].id, viewed);
-      refresh();
+    chrome,
+  );
+  const pop = createPopover(
+    root,
+    {
+      onToggleViewed: (viewed) => {
+        progress.setViewed(stops[current].id, viewed);
+        refresh();
+      },
+      onComment: (text) => {
+        const stop = stops[current];
+        if (!stop) return;
+        const before = progress.commented(ids).length;
+        progress.setComment(stop.id, text);
+        prepareSoon(stop);
+        // Every keystroke, and nothing on screen says the text — only whether
+        // there IS text. Re-render on the flip, not on the typing. Never the
+        // popover: the reader has the caret in it.
+        if (before === progress.commented(ids).length) return;
+        renderMarks(found);
+        nav.render(navModel(found));
+      },
+      onCopyRef: copyRef,
+      onClose: () => {
+        popOpen = false;
+        refresh();
+      },
     },
-    onComment: (text) => {
-      const stop = stops[current];
-      if (!stop) return;
-      const before = progress.commented(ids).length;
-      progress.setComment(stop.id, text);
-      prepareSoon(stop);
-      // Every keystroke, and nothing on screen says the text — only whether
-      // there IS text. Re-render on the flip, not on the typing. Never the
-      // popover: the reader has the caret in it.
-      if (before === progress.commented(ids).length) return;
-      renderMarks(found);
-      nav.render(navModel(found));
-    },
-    onCopyRef: copyRef,
-    onClose: () => {
-      popOpen = false;
-      refresh();
-    },
-  });
+    chrome,
+  );
 
   // --------------------------------------------------------------- render
 
@@ -506,6 +523,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       return;
     }
     if (evt.metaKey || evt.ctrlKey || evt.altKey) return;
+    if (!options.pageChords) return;
     const stop = stops[current];
     if (!stop) return;
     if (evt.code === 'KeyN' || evt.code === 'BracketRight') go(current + 1);
