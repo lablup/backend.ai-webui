@@ -34,6 +34,11 @@ export interface BAIVFolderMountConfigInputProps {
     defaultValue?: VFolderMountConfigValue[];
     onChange?: (value: VFolderMountConfigValue[]) => void;
     currentProjectId?: string;
+    /**
+     * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
+     * project folder's owner line needs it from the host.
+     */
+    currentProjectName?: string;
     /** Lists the folders of this user instead of the caller's own. */
     ownerEmail?: string;
     /**
