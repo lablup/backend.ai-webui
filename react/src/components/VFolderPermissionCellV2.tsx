@@ -4,7 +4,6 @@
  */
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
 import { HStack } from '@lablup/ui-common/Stack';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';
@@ -43,29 +42,22 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
         label: t('data.ReadWrite'),
         icon: 'RW',
       },
+      none: {
+        label: t('data.NotMountable'),
+        icon: '',
+      },
     };
-    // RW_DELETE folds into RW; NONE (no mount permission) renders `-`.
-    const permission = vfolderData?.accessControl?.permission;
+    // NONE mounts to nobody; RW_DELETE mounts as READ_WRITE (backend.ai#14679).
     const perm =
-      permission === 'READ_ONLY'
-        ? 'ro'
-        : permission === 'READ_WRITE' || permission === 'RW_DELETE'
-          ? 'rw'
-          : undefined;
+      vfolderData?.accessControl?.permission === 'NONE'
+        ? 'none'
+        : vfolderData?.accessControl?.permission === 'READ_ONLY'
+          ? 'ro'
+          : 'rw';
     return {
-      permissionInfo: perm ? permissionMap[perm] : undefined,
+      permissionInfo: permissionMap[perm],
     };
   }, [vfolderData, t]);
-
-  if (!permissionInfo) {
-    return (
-      <HStack gap={2} {...props}>
-        <Tooltip content={t('data.folders.NoMountPermission')}>
-          <BAIText>-</BAIText>
-        </Tooltip>
-      </HStack>
-    );
-  }
 
   return (
     <HStack gap={2} {...props}>
