@@ -33,6 +33,12 @@ declare module '@astryxdesign/core/Text' {
   }
 }
 
+declare module '@astryxdesign/core/Button' {
+  interface ButtonVariantMap {
+    'link': true;
+  }
+}
+
 declare module '@astryxdesign/core/Badge' {
   interface BadgeVariantMap {
     'gray': true;

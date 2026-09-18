@@ -44,7 +44,11 @@
  pure-`onClick` router/mutation actions with no `href` — no `BAIButton` call
  site in the repo passes `href` at all — so `Link` would mean a
  destination-less `<a>`, exactly what D3 rejected for `BAILink`. `ghost` keeps
- button semantics and the low-emphasis look.
+ button semantics and the low-emphasis look. Amended by FR-3524: the element
+ choice stands, but the paint comes from the theme's `variant:link` custom
+ variant (`backendAiTheme.ts`), which also drops the hover box and the control
+ box. Icon-only `type="link"` stays on `ghost` + `.bai-action-accent`, whose
+ square hit target the inline footprint would collapse.
 
  PILOT-DECISION — **`type="dashed"` (5 sites) becomes `variant="secondary"`.**
  MAPPING §3.3: "no equivalent -> `variant="secondary"`, record the decision".
@@ -108,11 +112,12 @@ export interface BAIButtonProps extends Omit<
   variant?: 'filled' | 'outlined' | 'solid' | 'dashed' | 'text' | 'link';
   /**
    * antd v6's colour axis (`default | primary | danger | blue | purple | …`),
-   * which pairs with `variant`. Astryx `Button` has a closed 4-value `variant`
-   * enum and no colour slot (P5), so only `danger` carries meaning here — it
-   * is folded into the same resolution as the `danger` boolean; everything
-   * else is accepted and ignored rather than silently mapped to a hue Astryx
-   * does not have. Two live call sites pass `color="default"`.
+   * which pairs with `variant`. Two values are load-bearing: `danger` resolves
+   * to `variant="destructive"` (identical to the `danger` boolean), and
+   * `default` opts a `type`/`variant="link"` button out of the accent tint.
+   * Every other value is accepted and ignored — Astryx `Button` has a closed
+   * 4-value `variant` enum with no colour slot (P5), so there is no hue to map
+   * them onto.
    */
   color?: string;
   /**
@@ -146,24 +151,43 @@ const BAIButton: React.FC<BAIButtonProps> = ({
   onClick,
   title,
   style,
+  className,
   ...restProps
 }) => {
   const emphasis = type ?? antdVariant;
-  const variant =
-    danger || antdColor === 'danger'
-      ? 'destructive'
-      : emphasis === 'primary' || emphasis === 'solid'
-        ? 'primary'
+  const isDanger = danger || antdColor === 'danger';
+  const isIconOnly = !!icon && (children === undefined || children === null);
+
+  // FR-3524: a link action must read as one. `color="default"` opts out.
+  const isLinkTinted =
+    !isDanger && emphasis === 'link' && antdColor !== 'default';
+  // Icon-only keeps `ghost` + the class: the theme variant strips padding and
+  // the control height, which would shrink a square hit target to its glyph.
+  const useLinkVariant = isLinkTinted && !isIconOnly;
+
+  const variant = isDanger
+    ? 'destructive'
+    : emphasis === 'primary' || emphasis === 'solid'
+      ? 'primary'
+      : useLinkVariant
+        ? 'link'
         : emphasis === 'text' || emphasis === 'link'
           ? 'ghost'
           : 'secondary';
+
+  const resolvedClassName =
+    [
+      className,
+      isLinkTinted && !useLinkVariant ? 'bai-action-accent' : undefined,
+    ]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   const { t } = useBAIi18n();
   // antd allowed an icon-only button with NO accessible name at all; Astryx
   // requires one (P8). Prefer whatever name the call site already wrote
   // (`aria-label`, then `title`, which antd rendered as the native tooltip),
   // then the button's own text, and only then the generic placeholder.
-  const isIconOnly = !!icon && (children === undefined || children === null);
   const label =
     nodeToAccessibleLabel(children) ||
     (restProps['aria-label'] ?? '') ||
@@ -172,6 +196,7 @@ const BAIButton: React.FC<BAIButtonProps> = ({
 
   const shared = {
     ...restProps,
+    className: resolvedClassName,
     variant,
     size: size ? SIZE_MAP[size] : undefined,
     isLoading: loading,

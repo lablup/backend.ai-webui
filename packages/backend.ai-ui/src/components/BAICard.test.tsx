@@ -189,6 +189,39 @@ describe('BAICard', () => {
       expect(button).toBeInTheDocument();
     });
 
+    // FR-3524: the extra action is a `type="link"` BAIButton, so it resolves to
+    // the theme's `link` variant — except on error/warning cards, where BAICard
+    // passes `color="default"` so the glyph keeps carrying the status.
+    it.each(['default', 'success'] as const)(
+      'should give the extra action the link variant on a %s status card',
+      (status) => {
+        render(
+          <BAICard title="Card" status={status} extraButtonTitle="Action">
+            Content
+          </BAICard>,
+        );
+        expect(screen.getByRole('button', { name: /Action/i })).toHaveAttribute(
+          'data-variant',
+          'link',
+        );
+      },
+    );
+
+    it.each(['error', 'warning'] as const)(
+      'should leave the extra action on ghost on a %s status card',
+      (status) => {
+        render(
+          <BAICard title="Card" status={status} extraButtonTitle="Action">
+            Content
+          </BAICard>,
+        );
+        expect(screen.getByRole('button', { name: /Action/i })).toHaveAttribute(
+          'data-variant',
+          'ghost',
+        );
+      },
+    );
+
     it('should render ReactNode as extraButtonTitle', () => {
       render(
         <BAICard
