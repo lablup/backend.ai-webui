@@ -2,8 +2,8 @@ import BAIButton from './BAIButton';
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
-import BAITag from './BAITag';
 import BAIText from './BAIText';
+import { Token } from '@astryxdesign/core/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**
@@ -200,29 +200,24 @@ export const ManyItems: Story = {
   },
 };
 
-export const WithTags: Story = {
-  name: 'TagsLayout',
+export const WithTokens: Story = {
+  name: 'TokensLayout',
   render: () => (
     <BAIRowWrapWithDividers columnGap={16} rowGap={8}>
-      <BAITag color="blue">React</BAITag>
-      <BAITag color="green">TypeScript</BAITag>
-      <BAITag color="orange">Storybook</BAITag>
-      {/* This entry predates the astryx migration and named the library the
-          tag itself is demonstrating a rename target of; keep the tag but
-          drop the now-inapplicable "Ant Design" label. */}
-      <BAITag color="red">UI Library</BAITag>
-      <BAITag color="purple">Frontend</BAITag>
-      <BAITag color="cyan">UI Components</BAITag>
-      {/* geekblue/magenta have no direct Astryx Badge hue; BAITag's shared
-          astryxTagVariant lookup already folds them into blue/pink. */}
-      <BAITag color="geekblue">Responsive</BAITag>
-      <BAITag color="magenta">Layout</BAITag>
+      <Token color="blue" label="React" />
+      <Token color="green" label="TypeScript" />
+      <Token color="orange" label="Storybook" />
+      <Token color="red" label="UI Library" />
+      <Token color="purple" label="Frontend" />
+      <Token color="cyan" label="UI Components" />
+      <Token color="blue" label="Responsive" />
+      <Token color="pink" label="Layout" />
     </BAIRowWrapWithDividers>
   ),
   parameters: {
     docs: {
       description: {
-        story: 'Using with Ant Design tags for a clean separated layout.',
+        story: 'Using with Astryx Tokens for a clean separated layout.',
       },
     },
   },
@@ -388,7 +383,7 @@ export const MixedContent: Story = {
   name: 'MixedContent',
   render: () => (
     <BAIRowWrapWithDividers columnGap={20} rowGap={16}>
-      <BAITag color="processing">Status: Active</BAITag>
+      <Token color="blue" label="Status: Active" />
       <BAIButton size="small" type="primary">
         Edit
       </BAIButton>
@@ -397,7 +392,7 @@ export const MixedContent: Story = {
         <BAIText>95/100</BAIText>
       </BAIFlex>
       <BAIButton size="small">View Details</BAIButton>
-      <BAITag color="success">Verified</BAITag>
+      <Token color="green" label="Verified" />
       <BAIText type="secondary">Last updated: 2 hours ago</BAIText>
     </BAIRowWrapWithDividers>
   ),

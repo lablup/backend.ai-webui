@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "ja {{rest}} muuta"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Heikentynyt",
     "Deploying": "Käyttöönottaminen",
     "Healthy": "Terve",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "testi"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "ja {{rest}} muuta"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",

@@ -13,19 +13,19 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import {
   AgentNodeInList,
   BAIAgentTable,
   BAIColumnType,
-  BAIDoubleTag,
+  BAIDoubleToken,
   BAIFlex,
   BAIFlexProps,
   BAIPropertyFilter,
   BAITableProps,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
-  badgeVariantForStatus,
+  tokenColorForStatus,
   filterOutEmpty,
   mergeFilterValues,
   useControllableValue,
@@ -147,27 +147,25 @@ const AgentList: React.FC<AgentListProps> = ({
     key: 'region',
     dataIndex: 'region',
     render: (value) => {
-      const platformData: {
-        [key: string]: { color: string; icon: string };
-      } = {
-        aws: { color: 'orange', icon: 'aws' },
-        amazon: { color: 'orange', icon: 'aws' },
-        azure: { color: 'blue', icon: 'azure' },
-        gcp: { color: 'lightblue', icon: 'gcp' },
-        google: { color: 'lightblue', icon: 'gcp' },
-        nbp: { color: 'green', icon: 'nbp' },
-        naver: { color: 'green', icon: 'nbp' },
-        openstack: { color: 'red', icon: 'openstack' },
-        dgx: { color: 'green', icon: 'local' },
-        local: { color: 'yellow', icon: 'local' },
+      const platformIcon: Record<string, string> = {
+        aws: 'aws',
+        amazon: 'aws',
+        azure: 'azure',
+        gcp: 'gcp',
+        google: 'gcp',
+        nbp: 'nbp',
+        naver: 'nbp',
+        openstack: 'openstack',
+        dgx: 'local',
+        local: 'local',
       };
       const regionData = _.split(value, '/');
       const platform = regionData?.[0];
       const location = regionData?.length > 1 ? regionData[1] : '';
-      const { color, icon } = platformData[platform] || {
-        color: 'yellow',
-        icon: 'local',
-      };
+      const icon = platformIcon[platform] ?? 'local';
+      const color = platformIcon[platform]
+        ? tokenColorForStatus('cloudPlatform', platform)
+        : 'yellow';
       return (
         <BAIFlex gap={'xxs'}>
           <img
@@ -180,21 +178,14 @@ const AgentList: React.FC<AgentListProps> = ({
             }}
           />
           {location !== '' ? (
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
-                { label: location, color: color },
-                { label: platform, color: color },
+                { label: location, color },
+                { label: platform, color },
               ]}
             />
           ) : (
-            // antd Tag → Badge (MAPPING §3.5), color routed through the
-            // repo-global `cloudPlatform` domain lookup (ticket 13) instead
-            // of the local platformData color map (kept above for
-            // BAIDoubleTag, a still-antd frontier component).
-            <Badge
-              variant={badgeVariantForStatus('cloudPlatform', platform)}
-              label={platform}
-            />
+            <Token color={color} label={platform} />
           )}
         </BAIFlex>
       );

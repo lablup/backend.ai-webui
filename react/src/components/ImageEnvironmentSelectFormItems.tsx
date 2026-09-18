@@ -21,14 +21,15 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
+import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
+import { Token } from '@astryxdesign/core/Token';
 import {
-  badgeVariantForTagColor,
-  BAIDoubleTag,
+  BAIDoubleToken,
+  BAITextHighlighter,
+  tokenColorForTagColor,
   BAIFlex,
   BAIImageMetaIcon,
   imageNodeTagFacts,
@@ -531,15 +532,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         )
                       ) {
                         extraFilterValues.push(environmentGroup.prefix);
-                        // antd `Tag color` → Astryx `Badge variant` through the
-                        // repo-global lookup (ticket 13). Never a raw hue/hex.
                         environmentPrefixTag = (
-                          <Badge
-                            variant={badgeVariantForTagColor('purple')}
-                            label={
-                              <TextHighlighter keyword={environmentSearch}>
+                          <Token
+                            color="purple"
+                            label={environmentGroup.prefix}
+                            isLabelHidden
+                            endContent={
+                              <BAITextHighlighter keyword={environmentSearch}>
                                 {environmentGroup.prefix}
-                              </TextHighlighter>
+                              </BAITextHighlighter>
                             }
                           />
                         );
@@ -554,21 +555,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             label.color
                           ) {
                             extraFilterValues.push(label.tag);
-                            // `label.color` is a runtime-arbitrary string from
-                            // the image metadata JSON; the lookup normalises it
-                            // and falls back to `neutral` for anything it does
-                            // not recognise (ticket 13 §5).
+                            // `label.color` is a runtime string from the image
+                            // metadata JSON; unknown values fall back to default.
                             return (
-                              <Badge
+                              <Token
                                 key={label.tag}
-                                variant={badgeVariantForTagColor(label.color)}
-                                label={
-                                  <TextHighlighter
+                                color={tokenColorForTagColor(label.color)}
+                                label={label.tag}
+                                isLabelHidden
+                                endContent={
+                                  <BAITextHighlighter
                                     keyword={environmentSearch}
-                                    key={label.tag}
                                   >
                                     {label.tag}
-                                  </TextHighlighter>
+                                  </BAITextHighlighter>
                                 }
                               />
                             );
@@ -580,7 +580,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         <SelectOption
                           key={environmentGroup.environmentName}
                           value={environmentGroup.environmentName}
-                          // The prefix/meta badge texts live in Badge props, so
+                          // The prefix/meta token texts live in Token props, so
                           // the accessible/search label restates them (FR-3544).
                           label={_.compact([
                             environmentGroup.displayName,
@@ -742,17 +742,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             !requirement.startsWith('customized_'),
                         ),
                         (requirement, idx) => (
-                          <BAIDoubleTag
+                          <BAIDoubleToken
                             key={idx}
+                            highlightKeyword={versionSearch}
                             values={_.split(
                               metadata?.tagAlias[requirement] || requirement,
                               ':',
                             ).map((str) => {
                               extraFilterValues.push(str);
-                              return {
-                                label: str,
-                                highlightKeyword: versionSearch,
-                              };
+                              return { label: str, color: 'default' as const };
                             })}
                           />
                         ),
@@ -775,7 +773,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           extraFilterValues.push('Customized');
                           extraFilterValues.push(tag);
                           requirementTags.push(
-                            <BAIDoubleTag
+                            <BAIDoubleToken
                               key={requirementTags.length + 1}
                               highlightKeyword={versionSearch}
                               values={[
@@ -834,7 +832,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             {!_.isEmpty(tagFacts) ? (
                               <>
                                 <ImageMetaDivider />
-                                <ImageTagBadges
+                                <ImageTagTokens
                                   facts={tagFacts}
                                   highlightKeyword={versionSearch}
                                 />

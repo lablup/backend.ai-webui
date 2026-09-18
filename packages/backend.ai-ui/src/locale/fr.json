@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Sélectionner un preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "et {{rest}} de plus"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Dégradé",
     "Deploying": "En déploiement",
     "Healthy": "En bonne santé",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "et {{rest}} de plus"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Créé à",

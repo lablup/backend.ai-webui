@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6aa345b193b1c906d692570c6331f904>>
+ * @generated SignedSource<<19aef1a7819b71d35f432aa53d812759>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -28,7 +28,7 @@ export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
   };
   readonly metadata: {
     readonly name: string;
-    readonly " $fragmentSpreads": FragmentRefs<"BAISessionClusterModeV2Fragment" | "BAISessionTypeTagV2Fragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"BAISessionClusterModeV2Fragment" | "BAISessionTypeTokenV2Fragment">;
   };
   readonly project: {
     readonly basicInfo: {
@@ -157,7 +157,7 @@ return {
         {
           "args": null,
           "kind": "FragmentSpread",
-          "name": "BAISessionTypeTagV2Fragment"
+          "name": "BAISessionTypeTokenV2Fragment"
         },
         {
           "args": null,
@@ -323,6 +323,6 @@ return {
 };
 })();
 
-(node as any).hash = "8a95f29a56c4f590b7cf7269949d9396";
+(node as any).hash = "01dc6fe81a8e934f2a322fb7442bea58";
 
 export default node;

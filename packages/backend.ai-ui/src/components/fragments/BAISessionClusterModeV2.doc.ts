@@ -12,7 +12,7 @@ export const docs = {
     'single node',
     'multi node',
     'session v2',
-    'badge',
+    'token',
   ],
   usage: {
     description:
@@ -26,7 +26,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Use `mode="tag"` where the value shares a row with other badges, and the default text mode in table cells and description lists.',
+          'Use `mode="tag"` where the value shares a row with other tokens, and the default text mode in table cells and description lists.',
       },
       {
         guidance: false,
@@ -59,7 +59,7 @@ export const docs = {
       name: 'mode',
       type: "'text' | 'tag'",
       description:
-        'Presentation: plain Astryx Text, or a neutral Badge carrying the same label and size.',
+        'Presentation: plain Astryx Text with the size in parentheses, or a default-colour Astryx Token whose single string label reads `<mode> × <size>`.',
       default: "'text'",
     },
   ],
@@ -78,7 +78,7 @@ export const docs = {
 }`,
     },
     {
-      label: 'Mode only, as a badge',
+      label: 'Mode only, as a token',
       code: `<BAISessionClusterModeV2
   metadataFrgmt={session.metadata}
   mode="tag"
