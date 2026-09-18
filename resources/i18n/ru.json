@@ -711,7 +711,6 @@
     "StatusInfo": "Информация о статусе",
     "StatusUpdatedSuccessfully": "Статус пользователя изменился.",
     "TooltipForRequirePasswordChange": "При включении этой опции пользователь будет обязан сменить пароль при следующем входе.",
-    "TypePermanentlyDelete": "Пожалуйста, введите \"{{text}}\".",
     "UpdateUsers": "Массовое редактирование пользователей",
     "UpdateUsersWarningAlertTitle": "Задание UID или GID(ов) может ограничить использование ранее созданных точек монтирования.",
     "UpdatedUsers": "Обновлено {{count}} из {{total}} пользователей.",

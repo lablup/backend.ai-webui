@@ -711,7 +711,6 @@
     "StatusInfo": "Thông tin trạng thái",
     "StatusUpdatedSuccessfully": "Trạng thái người dùng đã thay đổi.",
     "TooltipForRequirePasswordChange": "Khi bật tùy chọn này, người dùng sẽ phải thay đổi mật khẩu ở lần đăng nhập tiếp theo.",
-    "TypePermanentlyDelete": "Vui lòng nhập \"{{text}}\".",
     "UpdateUsers": "Chỉnh sửa người dùng hàng loạt",
     "UpdateUsersWarningAlertTitle": "Thiết lập UID hoặc GID có thể giới hạn việc sử dụng các mount thư mục đã tạo trước đó.",
     "UpdatedUsers": "Đã cập nhật {{count}} trong tổng số {{total}} người dùng.",
