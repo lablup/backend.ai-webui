@@ -6,7 +6,9 @@ import {
   mockClientPromise,
 } from '../../tests/storybook-mock-utils';
 import { BAIConfigProvider } from '../provider/BAIConfigProvider';
-import BAIArtifactTable from './BAIArtifactTable';
+import BAIArtifactTable, {
+  availableArtifactSorterValues,
+} from './BAIArtifactTable';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -42,6 +44,9 @@ const meta: Meta<typeof BAIArtifactTable> = {
 | \`onClickPull\` | \`(artifactId: string, revisionId: string) => void\` | - | Callback when pull button is clicked |
 | \`onClickDelete\` | \`(artifactId: string) => void\` | - | Callback when deactivate button is clicked |
 | \`onClickRestore\` | \`(artifactId: string) => void\` | - | Callback when activate button is clicked |
+| \`order\` | \`(typeof availableArtifactSorterValues)[number] \\| null\` | - | Current sort, e.g. \`name\` / \`-updatedAt\` (server-side) |
+| \`onChangeOrder\` | \`(order: (typeof availableArtifactSorterValues)[number] \\| null) => void\` | - | Callback when a sortable header is clicked |
+| \`disableSorter\` | \`boolean\` | \`false\` | Strips every column sorter |
 
 ## Pre-configured Columns
 - **Name**: Artifact name with type tag and description
@@ -50,8 +55,13 @@ const meta: Meta<typeof BAIArtifactTable> = {
 - **Size**: Latest revision size in human-readable format
 - **Scanned**: Time since last scan (relative time)
 - **Updated**: Time since last update (relative time)
+- **Type**: Artifact type tag (hidden by default; carries the \`TYPE\` ordering)
 - **Registry**: Registry name and URL (hidden by default)
 - **Source**: Source repository link (hidden by default)
+
+Name, Type, Size, Scanned and Updated carry **server-side** sorters: the table is order-controlled, so
+\`order\` and \`onChangeOrder\` must be wired together. These stories hold the order in local state, so the
+header arrows respond, but the mocked resolver does not re-sort the rows — only the real query does.
 
 For other props (loading, pagination, etc.), refer to [BAITable](?path=/docs/table-baitable--docs).
         `,
@@ -124,6 +134,9 @@ const QueryResolver: React.FC<QueryResolverProps> = ({
   onClickRestore,
   loading,
 }) => {
+  const [order, setOrder] = useState<
+    (typeof availableArtifactSorterValues)[number] | null
+  >(null);
   const { artifacts } = useLazyLoadQuery<BAIArtifactTableStoriesQuery>(
     graphql`
       query BAIArtifactTableStoriesQuery {
@@ -148,6 +161,8 @@ const QueryResolver: React.FC<QueryResolverProps> = ({
   return (
     <BAIArtifactTable
       artifactFragment={artifactNodes}
+      order={order}
+      onChangeOrder={setOrder}
       onClickPull={onClickPull}
       onClickDelete={onClickDelete}
       onClickRestore={onClickRestore}

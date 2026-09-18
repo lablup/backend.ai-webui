@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The artifact list of the Reservoir page. It reads the plural fragment `BAIArtifactTableArtifactFragment` on `Artifact`, so the caller passes an ARRAY of artifact nodes (spread the fragment on the connection node and filter out nulls before handing it over). The fragment already pulls the latest revision, the type tag and the status tag, so no extra selection is needed at the call site. Columns are fixed and built internally: name with description and BAIArtifactTypeTag, an availability control (Deactivate when `ALIVE`, Activate when `DELETED`, nothing otherwise), latest version with BAIArtifactStatusTag and a pull button shown only while that revision is `SCANNED`, size, scanned and updated relative times, plus registry and source columns that ship hidden by default. Everything except `dataSource`, `columns` and `rowKey` passes through to BAITable — loading, pagination, rowSelection, onRow and the rest.',
+      'The artifact list of the Reservoir page. It reads the plural fragment `BAIArtifactTableArtifactFragment` on `Artifact`, so the caller passes an ARRAY of artifact nodes (spread the fragment on the connection node and filter out nulls before handing it over). The fragment already pulls the latest revision, the type tag and the status tag, so no extra selection is needed at the call site. Columns are fixed and built internally: name with description and BAIArtifactTypeTag, an availability control (Deactivate when `ALIVE`, Activate when `DELETED`, nothing otherwise), latest version with BAIArtifactStatusTag and a pull button shown only while that revision is `SCANNED`, size, scanned and updated relative times, plus type, registry and source columns that ship hidden by default. Name, type, size, scanned and updated carry server-side sorters whose emitted order strings map onto `ArtifactOrderField` (`name` -> `NAME`, `scannedAt` -> `SCANNED_AT`, …), so the page converts the order string with `convertToOrderBy` and feeds it back through `order`. Everything except `dataSource`, `columns`, `rowKey`, `onChangeOrder` and `disableSorter` passes through to BAITable — loading, `order`, pagination, rowSelection, onRow and the rest. `onChangeOrder` is consumed and re-emitted narrowed to `availableArtifactSorterValues`, and `disableSorter` is consumed to strip the sorters from the column set; neither reaches BAITable as given.',
     bestPractices: [
       {
         guidance: true,
@@ -32,6 +32,11 @@ export const docs = {
         guidance: true,
         description:
           'Copy the artifact array before sorting or reversing it — the fragment data is frozen in the Relay store and the table renders it in the order given.',
+      },
+      {
+        guidance: true,
+        description:
+          'Wire `order` and `onChangeOrder` together — the table is order-controlled, so a sorter click without `onChangeOrder` changes nothing. Persist the order string (one of `availableArtifactSorterValues`) in the URL and convert it with `convertToOrderBy`.',
       },
       {
         guidance: false,
@@ -74,6 +79,20 @@ export const docs = {
         'Called with the artifact id when the Activate control is clicked, which is rendered only for rows whose availability is `DELETED`.',
       required: true,
     },
+    {
+      name: 'onChangeOrder',
+      type: '(order: (typeof availableArtifactSorterValues)[number] | null) => void',
+      description:
+        'Called with the new order string (`name`, `-updatedAt`, …) when a sortable header is clicked, and with `null` when sorting is cleared. Convert it with `convertToOrderBy` and feed the result back as the query `orderBy`.',
+      required: false,
+    },
+    {
+      name: 'disableSorter',
+      type: 'boolean',
+      description:
+        'Strips every column sorter, for a call site that renders an unsorted artifact list (an embedded preview, a fixed-order selection list).',
+      required: false,
+    },
   ],
   examples: [
     {
@@ -81,6 +100,11 @@ export const docs = {
       code: `<BAIArtifactTable
   artifactFragment={filterOutEmpty(artifacts?.edges.map((e) => e?.node) ?? [])}
   loading={deferredQueryVariables !== queryVariables}
+  order={queryParams.order}
+  onChangeOrder={(order) => {
+    setQuery({ order: order ?? null });
+    setTablePaginationOption({ current: 1 });
+  }}
   onClickPull={(artifactId, revisionId) => openImportModal(artifactId, revisionId)}
   onClickDelete={(artifactId) => openDeactivateModal(artifactId)}
   onClickRestore={(artifactId) => openActivateModal(artifactId)}
