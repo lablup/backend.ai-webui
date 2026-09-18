@@ -25,13 +25,19 @@ export interface LegacyVFolder {
     max_size: null | number;
     cur_size: number;
 }
+export interface LegacyVFolderListOptions {
+    /** Lists this user's folders instead of the caller's own. */
+    ownerEmail?: string;
+    /** Scopes the list to a project (`group_id`) server side. */
+    groupId?: string;
+}
 /**
  * The folder list behind `BAIVFolderMountConfigInput`: the caller's folders,
  * or `ownerEmail`'s when a session is launched on someone else's behalf.
- * Suspends. One cache entry per owner, so a host deriving something from the
- * same list (auto-mounted names) shares the component's single fetch.
+ * Suspends. One cache entry per owner and project, so a host deriving
+ * something from the same list (auto-mounted names) shares the single fetch.
  */
-export declare const useSuspendedLegacyVFolders: (ownerEmail?: string) => {
+export declare const useSuspendedLegacyVFolders: ({ ownerEmail, groupId, }?: LegacyVFolderListOptions) => {
     folders: LegacyVFolder[];
     refetch: (options?: import('@tanstack/react-query').RefetchOptions) => Promise<import('@tanstack/react-query').QueryObserverResult<LegacyVFolder[], unknown>>;
     isFetching: boolean;
