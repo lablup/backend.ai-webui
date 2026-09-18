@@ -1184,7 +1184,7 @@
     "NoDesiredReplicas": "O número desejado de réplicas é 0, pelo que a implementação está indisponível. Defina-o para 1 ou mais para começar a atender pedidos.",
     "NoPresetsAvailable": "Nenhum preset de implementação disponível.",
     "NoPresetsAvailableDescription": "Tente novamente mais tarde, ou crie uma implementação na <a>página de Implementações</a>.",
-    "NoPresetsAvailableSwitchToCustom": "Nenhum preset disponível. Mude para o modo Personalizado para adicionar uma Revision manualmente.",
+    "NoPresetsAvailableSwitchToCustom": "Nenhum preset disponível. Mude para o Modo Avançado para adicionar uma Revision manualmente.",
     "NoRunningReplicas": "Não há réplicas disponíveis, pelo que a implementação está indisponível. Verifique as definições de revisão e o estado das réplicas.",
     "NotAccessibleOrDeleted": "Esta implantação foi eliminada ou não tem permissão para aceder à mesma.",
     "NotInProject": "Esta implantação pertence a outro projeto.",

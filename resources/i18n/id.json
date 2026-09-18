@@ -1184,7 +1184,7 @@
     "NoDesiredReplicas": "Jumlah replika yang diinginkan adalah 0, sehingga penerapan tidak tersedia. Setel ke 1 atau lebih untuk mulai melayani permintaan.",
     "NoPresetsAvailable": "Tidak ada preset penerapan yang tersedia.",
     "NoPresetsAvailableDescription": "Coba lagi nanti, atau buat penerapan di <a>halaman Penerapan</a>.",
-    "NoPresetsAvailableSwitchToCustom": "Tidak ada preset yang tersedia. Alihkan ke mode Kustom untuk menambahkan revision secara manual.",
+    "NoPresetsAvailableSwitchToCustom": "Tidak ada preset yang tersedia. Alihkan ke Mode Lanjutan untuk menambahkan revision secara manual.",
     "NoRunningReplicas": "Tidak ada replika yang tersedia, sehingga penerapan tidak tersedia. Periksa pengaturan revisi dan status replika.",
     "NotAccessibleOrDeleted": "Penerapan ini telah dihapus atau Anda tidak memiliki izin untuk mengaksesnya.",
     "NotInProject": "Penerapan ini termasuk dalam proyek lain.",

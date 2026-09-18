@@ -1184,7 +1184,7 @@
     "NoDesiredReplicas": "목표 복제본 수가 0으로 설정되어 배포를 사용할 수 없습니다. 목표 복제본 수를 1 이상으로 변경해 주세요.",
     "NoPresetsAvailable": "사용 가능한 배포 프리셋이 없습니다.",
     "NoPresetsAvailableDescription": "잠시 후 다시 시도하거나, <a>배포 페이지</a>에서 배포를 생성해 주세요.",
-    "NoPresetsAvailableSwitchToCustom": "사용 가능한 프리셋이 없습니다. 직접 설정 모드로 전환하여 리비전을 수동으로 추가하세요.",
+    "NoPresetsAvailableSwitchToCustom": "사용 가능한 프리셋이 없습니다. 고급 모드로 전환하여 리비전을 수동으로 추가하세요.",
     "NoRunningReplicas": "사용 가능한 복제본이 없어 배포를 사용할 수 없습니다. 리비전 설정과 복제본 상태를 확인해 주세요.",
     "NotAccessibleOrDeleted": "삭제된 배포이거나 접근 권한이 없습니다.",
     "NotInProject": "이 배포는 다른 프로젝트에 속해 있습니다.",

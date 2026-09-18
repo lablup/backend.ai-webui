@@ -1185,7 +1185,7 @@
     "NoDesiredReplicas": "目標副本數設定為 0，因此部署不可用。請將目標副本數設定為 1 或以上以開始處理請求。",
     "NoPresetsAvailable": "沒有可用的部署預設。",
     "NoPresetsAvailableDescription": "請稍後再試，或在<a>部署頁面</a>建立部署。",
-    "NoPresetsAvailableSwitchToCustom": "沒有可用的預設。請切換至自訂模式手動新增 Revision。",
+    "NoPresetsAvailableSwitchToCustom": "沒有可用的預設。請切換至進階模式手動新增 Revision。",
     "NoRunningReplicas": "沒有可用的副本，因此部署不可用。請檢查修訂設定和副本狀態。",
     "NotAccessibleOrDeleted": "此部署已被刪除，或您沒有存取權限。",
     "NotInProject": "此部署屬於其他專案。",

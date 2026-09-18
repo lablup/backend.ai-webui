@@ -1184,7 +1184,7 @@
     "NoDesiredReplicas": "Il numero di repliche desiderato è 0, quindi la distribuzione non è disponibile. Impostalo su 1 o più per iniziare a gestire le richieste.",
     "NoPresetsAvailable": "Nessun preset di distribuzione disponibile.",
     "NoPresetsAvailableDescription": "Riprova più tardi, o crea una distribuzione nella <a>pagina Distribuzioni</a>.",
-    "NoPresetsAvailableSwitchToCustom": "Nessun preset disponibile. Passa alla modalità Personalizzata per aggiungere una Revision manualmente.",
+    "NoPresetsAvailableSwitchToCustom": "Nessun preset disponibile. Passa alla Modalità Avanzata per aggiungere una Revision manualmente.",
     "NoRunningReplicas": "Nessuna replica è disponibile, quindi la distribuzione non è disponibile. Controlla le impostazioni di revisione e lo stato delle repliche.",
     "NotAccessibleOrDeleted": "Questa distribuzione è stata eliminata o non disponi dei permessi per accedervi.",
     "NotInProject": "Questa distribuzione appartiene a un altro progetto.",

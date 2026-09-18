@@ -1184,7 +1184,7 @@
     "NoDesiredReplicas": "Żądana liczba replik wynosi 0, więc wdrożenie jest niedostępne. Ustaw wartość 1 lub więcej, aby rozpocząć obsługę żądań.",
     "NoPresetsAvailable": "Brak dostępnych presetów wdrożenia.",
     "NoPresetsAvailableDescription": "Spróbuj ponownie później lub utwórz wdrożenie na <a>stronie Wdrożenia</a>.",
-    "NoPresetsAvailableSwitchToCustom": "Brak dostępnych presetów. Przełącz się na tryb niestandardowy, aby dodać Revision ręcznie.",
+    "NoPresetsAvailableSwitchToCustom": "Brak dostępnych presetów. Przełącz się na tryb zaawansowany, aby dodać Revision ręcznie.",
     "NoRunningReplicas": "Brak dostępnych replik, więc wdrożenie jest niedostępne. Sprawdź ustawienia rewizji i stan replik.",
     "NotAccessibleOrDeleted": "To wdrożenie zostało usunięte lub nie masz uprawnień, aby uzyskać do niego dostęp.",
     "NotInProject": "To wdrożenie należy do innego projektu.",

@@ -1184,7 +1184,7 @@
     "NoDesiredReplicas": "Số lượng bản sao mong muốn là 0, do đó triển khai không khả dụng. Đặt thành 1 trở lên để bắt đầu xử lý yêu cầu.",
     "NoPresetsAvailable": "Không có preset triển khai nào.",
     "NoPresetsAvailableDescription": "Vui lòng thử lại sau, hoặc tạo triển khai trên <a>trang Triển khai</a>.",
-    "NoPresetsAvailableSwitchToCustom": "Không có preset nào. Hãy chuyển sang chế độ Tùy chỉnh để thêm Revision thủ công.",
+    "NoPresetsAvailableSwitchToCustom": "Không có preset nào. Hãy chuyển sang chế độ nâng cao để thêm Revision thủ công.",
     "NoRunningReplicas": "Không có bản sao nào khả dụng, vì vậy triển khai không khả dụng. Kiểm tra cài đặt sửa đổi và trạng thái bản sao.",
     "NotAccessibleOrDeleted": "Triển khai này đã bị xóa hoặc bạn không có quyền truy cập.",
     "NotInProject": "Triển khai này thuộc về một dự án khác.",
