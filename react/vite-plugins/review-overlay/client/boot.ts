@@ -94,7 +94,7 @@ export interface OverlayHostOptions {
   autoNavigate?: boolean;
   /** Default `'inherit'` — the page's `--color-*` tokens. */
   palette?: OverlayPalette;
-  /** The `data-bai-review-overlay` value; default `''`, i.e. bare. */
+  /** The `OVERLAY_MARKER_ATTR` value; default `''`, i.e. bare. */
   marker?: string;
   /**
    * Whether react-grab can still arrive. Left out, it is derived from the
@@ -546,6 +546,7 @@ function boot(host: OverlayHost): OverlayHandle {
   });
   const dock = createSetDock({
     root: ui.root,
+    pageChords: host.pageChords,
     onCopyAll: copySet,
     onClear: () => {
       store.clear();

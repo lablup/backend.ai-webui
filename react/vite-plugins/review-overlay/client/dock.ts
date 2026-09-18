@@ -16,9 +16,14 @@ import type { SetPin } from './types.js';
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
 export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
-/** A toggle is named for what pressing it DOES, never for its state (R8.1). */
-const HIDE_CARDS_LABEL = `Hide every card (${CARDS_CHORD})`;
-const SHOW_CARDS_LABEL = `Show every card (${CARDS_CHORD})`;
+/**
+ * A toggle is named for what pressing it DOES, never for its state (R8.1).
+ * The chord is named only where the host bound one (ADR 0008).
+ */
+const hideCardsLabel = (chord: boolean) =>
+  chord ? `Hide every card (${CARDS_CHORD})` : 'Hide every card';
+const showCardsLabel = (chord: boolean) =>
+  chord ? `Show every card (${CARDS_CHORD})` : 'Show every card';
 
 /** Where a dragged dock is parked, per tab. Cleared with the tab, not the set. */
 export const DOCK_POS_KEY = 'bai-review:dock-pos';
@@ -186,12 +191,24 @@ const STYLE = `
     flex: none; max-width: 50%; overflow: hidden; text-overflow: ellipsis;
     white-space: nowrap; font-size: 11px; color: var(--bai-review-text-dim);
   }
+  /* An away row carries a "where" AND a fifth button, which left the note ~7px
+     of the 260px dock: the where drops to a line of its own, indented past the
+     index to start under the label. */
+  .setdock .row.away { flex-wrap: wrap; }
+  .setdock .row.away .where {
+    order: 1; flex: 1 0 100%; max-width: none; padding-left: 22px;
+  }
 ${ICON_STYLE}
 `;
 
 export interface SetDockOptions {
   /** The overlay's shadow root — the dock is a sibling of the pin layer. */
   root: ShadowRoot;
+  /**
+   * The host's answer to "may the overlay claim keys on this page" (ADR 0008).
+   * `false` and `boot.ts` binds no ⌘⇧H, so the dock names none either.
+   */
+  pageChords: boolean;
   /** Runs inside the click: build and write the set, synchronously. */
   onCopyAll: () => void;
   onClear: () => void;
@@ -305,17 +322,22 @@ export function createSetDock(options: SetDockOptions) {
     'Copy all',
   );
   const clear = button('clear', 'trash-2', 'Clear the whole set', 'Clear all');
-  const cards = button('cards', 'eye-off', HIDE_CARDS_LABEL, 'Cards');
-  const chord = document.createElement('span');
-  chord.className = 'chord';
-  chord.textContent = CARDS_CHORD;
+  const chords = options.pageChords;
+  const cards = button('cards', 'eye-off', hideCardsLabel(chords), 'Cards');
   const confirm = document.createElement('span');
   confirm.className = 'confirm';
   const confirmText = document.createElement('span');
   const yes = button('yes', 'check', 'Yes, clear the whole set');
   const no = button('no', 'x', 'Keep the set');
   confirm.append(confirmText, yes, no);
-  head.append(grip, title, cards, chord, copyAll, clear, confirm);
+  head.append(grip, title, cards);
+  if (chords) {
+    const chord = document.createElement('span');
+    chord.className = 'chord';
+    chord.textContent = CARDS_CHORD;
+    head.append(chord);
+  }
+  head.append(copyAll, clear, confirm);
   const rows = document.createElement('div');
   rows.className = 'rows';
   dock.append(head, rows);
@@ -562,7 +584,10 @@ export function createSetDock(options: SetDockOptions) {
     // `aria-pressed` on a name that changes with the action reads out as its
     // own contradiction — "Show every card, pressed" while they are hidden.
     setIcon(cards, cardsHidden ? 'eye' : 'eye-off');
-    setLabel(cards, cardsHidden ? SHOW_CARDS_LABEL : HIDE_CARDS_LABEL);
+    setLabel(
+      cards,
+      cardsHidden ? showCardsLabel(chords) : hideCardsLabel(chords),
+    );
     // A row action re-renders every row, which would drop the focus it was
     // pressed with — a keyboard user repeating ▲ must not tab back each time.
     const focused = focusedRowAction();

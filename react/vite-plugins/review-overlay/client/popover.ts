@@ -116,6 +116,14 @@ export interface PopoverModel {
   place: PopoverPlace;
 }
 
+export interface PopoverOptions {
+  /**
+   * The host's answer to "may the overlay claim keys on this page" (ADR 0008).
+   * `false` unbinds the bare keys this panel names; Escape is bound either way.
+   */
+  pageChords: boolean;
+}
+
 export interface PopoverCallbacks {
   onToggleViewed: (viewed: boolean) => void;
   onComment: (text: string) => void;
@@ -133,7 +141,18 @@ const whereLine = (model: PopoverModel): string => {
   return '';
 };
 
-export function createPopover(root: ShadowRoot, on: PopoverCallbacks) {
+/** The keys guided mode binds only where the host lets it (ADR 0008). */
+const BARE_KEYS =
+  '<kbd>n</kbd>/<kbd>p</kbd> · <kbd>v</kbd> viewed · <kbd>m</kbd> comment · ' +
+  '<kbd>c</kbd> ref · ';
+
+export function createPopover(
+  root: ShadowRoot,
+  on: PopoverCallbacks,
+  options: PopoverOptions,
+) {
+  /** Never a key the host turned off: a hint nothing answers is a lie. */
+  const hint = (key: string) => (options.pageChords ? ` (${key})` : '');
   const style = document.createElement('style');
   style.textContent = STYLE;
   const pop = document.createElement('div');
@@ -168,7 +187,7 @@ export function createPopover(root: ShadowRoot, on: PopoverCallbacks) {
         <span class="type ${model.type}">${model.type}</span>
         <span class="kind">${esc(model.kind)}</span>
         <span class="spacer"></span>
-        <button data-pact="ref" title="Copy ref (c)">Copy ref</button>
+        <button data-pact="ref" title="Copy ref${hint('c')}">Copy ref</button>
         <label><input type="checkbox" data-pact="viewed"> Viewed</label>
         <button data-pact="close" title="Close (Esc)" aria-label="Close">✕</button>
       </div>
@@ -190,12 +209,12 @@ export function createPopover(root: ShadowRoot, on: PopoverCallbacks) {
                 .join('')}</div>`
             : ''
         }
-        <div><div class="lbl">Comment (m)</div><textarea data-pact="comment" aria-label="Comment on this change" placeholder="Something off? Write it here — Copy N comments gathers every one with its ref."></textarea></div>
+        <div><div class="lbl">Comment${hint('m')}</div><textarea data-pact="comment" aria-label="Comment on this change" placeholder="Something off? Write it here — Copy N comments gathers every one with its ref."></textarea></div>
       </div>
       <div class="foot">
         <span>#${model.index + 1} · ${esc(model.page)} · ${esc(model.id)}</span>
         <span class="spacer"></span>
-        <span><kbd>n</kbd>/<kbd>p</kbd> · <kbd>v</kbd> viewed · <kbd>m</kbd> comment · <kbd>c</kbd> ref · <kbd>Esc</kbd></span>
+        <span>${options.pageChords ? BARE_KEYS : ''}<kbd>Esc</kbd></span>
       </div>`;
     const area = textarea();
     if (area) area.value = model.comment;

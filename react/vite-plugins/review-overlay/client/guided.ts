@@ -186,42 +186,52 @@ export function startGuidedMode(options: GuidedModeOptions) {
     root,
     onSelect: (id) => go(ids.indexOf(id), false),
   });
-  const nav = createNavigator(root, {
-    onNext: () => go(current + 1),
-    onPrev: () => go(current - 1),
-    onTogglePanel: () => {
-      panelOpen = !panelOpen;
-      refresh();
+  /** Both panels name keys, and neither may name one the host never bound. */
+  const chrome = { pageChords: options.pageChords };
+  const nav = createNavigator(
+    root,
+    {
+      onNext: () => go(current + 1),
+      onPrev: () => go(current - 1),
+      onTogglePanel: () => {
+        panelOpen = !panelOpen;
+        refresh();
+      },
+      onCopyComments: copyComments,
+      onCopySummary: copySummary,
+      onGo: (index) => go(index),
+      onExit: exit,
     },
-    onCopyComments: copyComments,
-    onCopySummary: copySummary,
-    onGo: (index) => go(index),
-    onExit: exit,
-  });
-  const pop = createPopover(root, {
-    onToggleViewed: (viewed) => {
-      progress.setViewed(stops[current].id, viewed);
-      refresh();
+    chrome,
+  );
+  const pop = createPopover(
+    root,
+    {
+      onToggleViewed: (viewed) => {
+        progress.setViewed(stops[current].id, viewed);
+        refresh();
+      },
+      onComment: (text) => {
+        const stop = stops[current];
+        if (!stop) return;
+        const before = progress.commented(ids).length;
+        progress.setComment(stop.id, text);
+        prepareSoon(stop);
+        // Every keystroke, and nothing on screen says the text — only whether
+        // there IS text. Re-render on the flip, not on the typing. Never the
+        // popover: the reader has the caret in it.
+        if (before === progress.commented(ids).length) return;
+        renderMarks(found);
+        nav.render(navModel(found));
+      },
+      onCopyRef: copyRef,
+      onClose: () => {
+        popOpen = false;
+        refresh();
+      },
     },
-    onComment: (text) => {
-      const stop = stops[current];
-      if (!stop) return;
-      const before = progress.commented(ids).length;
-      progress.setComment(stop.id, text);
-      prepareSoon(stop);
-      // Every keystroke, and nothing on screen says the text — only whether
-      // there IS text. Re-render on the flip, not on the typing. Never the
-      // popover: the reader has the caret in it.
-      if (before === progress.commented(ids).length) return;
-      renderMarks(found);
-      nav.render(navModel(found));
-    },
-    onCopyRef: copyRef,
-    onClose: () => {
-      popOpen = false;
-      refresh();
-    },
-  });
+    chrome,
+  );
 
   // --------------------------------------------------------------- render
 

@@ -6,8 +6,10 @@
  */
 import { bootOverlay, defaultOverlayHost } from './boot.js';
 import { encodeAnchor } from './codec.js';
+import { CARDS_CHORD } from './dock.js';
 import { DRAFT_KEY } from './draft.js';
 import type { AnchorV3, ReviewServerState, SetPin } from './types.js';
+import { OVERLAY_MARKER_ATTR } from './ui.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const A = 'c_aaaaaaa';
@@ -106,6 +108,24 @@ const navPill = () => shadow()?.querySelector('.bai-nav') as HTMLElement | null;
 const pillText = () =>
   navPill()?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
 
+/** What the chrome ADVERTISES: a title, a label, the popover's key legend. */
+const dockText = () => shadow()?.querySelector('.setdock')?.textContent ?? '';
+const cardsLabel = () =>
+  shadow()?.querySelector('.setdock .cards')?.getAttribute('aria-label') ?? '';
+const navTitle = (act: string) =>
+  navPill()?.querySelector(`[data-act="${act}"]`)?.getAttribute('title') ?? '';
+const popTitle = (act: string) =>
+  shadow()
+    ?.querySelector(`.bai-popover [data-pact="${act}"]`)
+    ?.getAttribute('title') ?? '';
+const popText = () =>
+  shadow()?.querySelector('.bai-popover')?.textContent ?? '';
+const keyLegend = () =>
+  shadow()
+    ?.querySelector('.bai-popover .foot span:last-child')
+    ?.textContent?.replace(/\s+/g, ' ')
+    .trim() ?? '';
+
 /** A fresh document per test: the flag is what makes a second boot a no-op. */
 async function boot(options: Parameters<typeof bootOverlay>[0] = {}) {
   vi.resetModules();
@@ -191,6 +211,20 @@ describe('the host marker', () => {
       'extension',
     );
   });
+
+  /**
+   * A second host stands down on this attribute, so it imports the name rather
+   * than restating it: a rename that missed one reader would leave two
+   * overlays on the same page, with nothing failing.
+   */
+  it('is written under the name the client exports', async () => {
+    await boot({ expectReactGrab: false, marker: 'extension' });
+
+    expect(OVERLAY_MARKER_ATTR).toBe('data-bai-review-overlay');
+    expect(document.querySelector(`[${OVERLAY_MARKER_ATTR}="extension"]`)).toBe(
+      overlayHost(),
+    );
+  });
 });
 
 describe('the palette', () => {
@@ -243,6 +277,29 @@ describe('the page chords', () => {
     expect(picking()).toBe(true);
     handle?.cancelPick();
     expect(picking()).toBe(false);
+  });
+
+  it('names the cards chord in the dock it bound one for', async () => {
+    const hash = await part(A, 'create');
+
+    await boot({ expectReactGrab: false, bootHash: `#${hash}` });
+
+    expect(dockText()).toContain(CARDS_CHORD);
+    expect(cardsLabel()).toBe(`Hide every card (${CARDS_CHORD})`);
+  });
+
+  /** A hint for a key nothing listens to is worse than no hint at all. */
+  it('advertises no chord it did not bind', async () => {
+    const hash = await part(A, 'create');
+
+    await boot({
+      expectReactGrab: false,
+      pageChords: false,
+      bootHash: `#${hash}`,
+    });
+
+    expect(dockText()).not.toContain(CARDS_CHORD);
+    expect(cardsLabel()).toBe('Hide every card');
   });
 });
 
@@ -393,5 +450,40 @@ describe('guided mode on a page the overlay does not own', () => {
     await boot({ expectReactGrab: false, bootHash: `#${hash}` });
 
     expect(pressBare('KeyN').defaultPrevented).toBe(true);
+  });
+
+  it('offers none of those letters as a hint either', async () => {
+    const hash = [
+      await stopPart(A, 'create'),
+      await stopPart(B, 'upload'),
+    ].join('&');
+
+    await boot({
+      expectReactGrab: false,
+      pageChords: false,
+      bootHash: `#${hash}`,
+    });
+
+    expect(navTitle('prev')).toBe('Previous stop');
+    expect(navTitle('next')).toBe('Next stop');
+    expect(popTitle('ref')).toBe('Copy ref');
+    expect(popText()).toContain('Comment');
+    expect(popText()).not.toContain('Comment (m)');
+    // Escape is bound whatever the host answers, so it stays — alone.
+    expect(keyLegend()).toBe('Esc');
+  });
+
+  it('keeps the whole legend where the keys are bound', async () => {
+    const hash = [
+      await stopPart(A, 'create'),
+      await stopPart(B, 'upload'),
+    ].join('&');
+
+    await boot({ expectReactGrab: false, bootHash: `#${hash}` });
+
+    expect(navTitle('prev')).toBe('Previous stop (p)');
+    expect(popTitle('ref')).toBe('Copy ref (c)');
+    expect(popText()).toContain('Comment (m)');
+    expect(keyLegend()).toBe('n/p · v viewed · m comment · c ref · Esc');
   });
 });

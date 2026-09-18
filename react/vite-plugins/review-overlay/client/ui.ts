@@ -18,6 +18,12 @@ import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
 import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
 
+/**
+ * The attribute the shadow host carries, and the only mark a host — or another
+ * one deciding whether to stand down — has to recognise the overlay by.
+ */
+export const OVERLAY_MARKER_ATTR = 'data-bai-review-overlay';
+
 /** Everything the outline needs; a `DOMRect` and a projected region both fit. */
 type RectLike = { left: number; top: number; width: number; height: number };
 
@@ -233,7 +239,7 @@ ${lines}
 
 /** What differs between the hosts this client runs under (the OverlayHost). */
 export interface OverlayUIOptions {
-  /** The `data-bai-review-overlay` value, so hosts can be told apart. */
+  /** The `OVERLAY_MARKER_ATTR` value, so hosts can be told apart. */
   marker?: string;
   palette?: OverlayPalette;
 }
@@ -244,7 +250,7 @@ export function createOverlayUI(
 ) {
   const palette = options.palette ?? 'inherit';
   const host = document.createElement('div');
-  host.setAttribute('data-bai-review-overlay', options.marker ?? '');
+  host.setAttribute(OVERLAY_MARKER_ATTR, options.marker ?? '');
   host.setAttribute('data-react-grab-ignore-events', '');
   const root = host.attachShadow({ mode: 'open' });
   document.body.appendChild(host);

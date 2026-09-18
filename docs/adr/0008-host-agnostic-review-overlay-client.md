@@ -67,7 +67,9 @@ host가 넘기는 `OverlayHostOptions`는 항목이 전부 optional이고, `boot
 
 `expectReactGrab`은 일곱 번째이자 유일하게 세 가지 상태를 갖는 항목이다. 값을 주지 않으면 지금까지처럼 state의 `host === 'static'`에서 파생하고, `false`를 주면 react-grab을 기다리지 않는다. 이 값이 없던 때에는 react-grab이 없는 host가 static build를 자칭하는 것 말고는 방법이 없었다.
 
-`marker`는 값만 바뀌고 attribute 자체는 남는다. `[data-bai-review-overlay]` selector로 overlay를 찾는 코드와 test가 그대로 동작해야 하기 때문이다.
+`marker`는 값만 바뀌고 attribute 자체는 남는다. `[data-bai-review-overlay]` selector로 overlay를 찾는 코드와 test가 그대로 동작해야 하기 때문이다. attribute 이름은 그 값을 쓰는 `ui.ts`가 `OVERLAY_MARKER_ATTR`로 export하고, client 안에서 그 이름을 읽거나 쓰는 곳은 전부 이 상수를 쓴다. native overlay를 보고 물러서야 하는 host도 literal을 다시 적는 대신 이것을 import한다 — 이름이 바뀌었는데 한 쪽만 따라가지 않으면 한 page에 overlay가 둘 뜨고, 그때 실패하는 test가 없다.
+
+**page chord를 끈 host에게는 그 key를 광고하지도 않는다.** `pageChords: false`면 dock header의 `⌘⇧H` hint와 cards button label의 chord 접미사, navigator의 `Previous stop (p)`·`Next stop (n)` title, popover의 `Copy ref (c)`·`Comment (m)`와 key legend가 모두 빠진다. 붙지 않은 key를 안내하는 UI는 그 자체로 틀린 말이다. Escape는 `pageChords`와 무관하게 언제나 동작하므로 legend에 남고, composer의 `⌘⏎`는 textarea 자신의 shortcut이라 그대로 있다.
 
 ### 3. extension은 client를 다시 구현하지 않고 vendoring한다
 
@@ -97,7 +99,7 @@ draft set, navigation guard, focus handover, dock 위치, walkthrough 진행률�
 
 ### 6. route event 이름을 export한다
 
-`deeplink.ts`의 `ROUTE_EVENT` 상수를 export한다. `patchHistory()`가 page의 `history`를 감싸는 방식은 isolated world에서 동작하지 않지만 DOM event는 world를 넘으므로, extension adapter가 `navigation` API에서 같은 이름의 event를 직접 dispatch하면 `watchRoute`가 그대로 듣는다. client 쪽 변경은 이 export 하나뿐이다.
+`deeplink.ts`의 `ROUTE_EVENT` 상수를 export한다. `patchHistory()`가 page의 `history`를 감싸는 방식은 isolated world에서 동작하지 않지만 DOM event는 world를 넘으므로, extension adapter가 `navigation` API에서 같은 이름의 event를 직접 dispatch하면 `watchRoute`가 그대로 듣는다. route watching을 위한 client 쪽 변경은 이 export 하나뿐이다.
 
 ## 대안과 기각 사유
 
@@ -108,7 +110,7 @@ draft set, navigation guard, focus handover, dock 위치, walkthrough 진행률�
 
 ## Consequences
 
-- **Default host unchanged**: dev server와 static build에서 관찰되는 동작은 그대로다. wire format, block 문법, label, cap, id 파생은 손대지 않았고, 기존 vitest suite는 어느 test도 고치지 않은 채 통과한다 — seam을 덮는 test가 늘었을 뿐이다.
+- **Default host unchanged**: dev server와 static build에서 관찰되는 동작은 그대로다. wire format, block 문법, label, cap, id 파생은 손대지 않았다. 기존 vitest suite에서 고친 것은 dock을 만드는 한 줄 — `SetDockOptions`에 새로 생긴 `pageChords` — 뿐이고, 나머지는 seam을 덮는 test가 늘어난 것이다.
 - **New module served for free**: dev server는 `/__review/<name>.js`를 `client/<name>.ts`로 1:1 매핑하고 static build는 `main.ts`에서 도달하는 module을 전부 한 chunk로 묶으므로, `boot.ts`는 plugin을 고치지 않고도 serve되고 번들된다.
 - **Extension tsconfig compatibility**: extension의 `exactOptionalPropertyTypes: true`, `moduleResolution: node`, `DOM.Iterable` 없는 `lib`에서 client 전체가 컴파일된다. 고친 곳은 네 군데이고 동작은 바뀌지 않았다 — `anchor.ts`의 `tid` 대입, `boot.ts`의 pick state에 담기는 `component`, `ui.ts`의 `copyWithToast` payload(`pin.ts:654`가 `html: undefined`를 넘기던 자리), 그리고 `DOMTokenList`를 펼치던 `dock.ts`의 `Array.from`.
 - **A gate, pinned to TypeScript 5.x**: 위 문장은 저절로 참으로 남지 않으므로 `react/vite-plugins/review-overlay/tsconfig.host.json`이 extension의 flag로 client를 컴파일하고 `scripts/verify.sh`가 lane으로 돌린다. 이 lane만 **root의 TypeScript 5.5.4**를 쓴다: TypeScript 6은 iterable DOM 선언을 `DOM` lib 본체로 합쳐서 `DOM.Iterable` 위반을 아예 감지하지 못하고, `react/`의 6.0.3으로 돌리면 gate의 절반이 무력해진다. `host-conformance.ts`가 extension host를 type으로만 적어 두어 `OverlayHost`가 다시 `OverlayHostOptions`에 담기지 않게 되면 gate가 깨진다.

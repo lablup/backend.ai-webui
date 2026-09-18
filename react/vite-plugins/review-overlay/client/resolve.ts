@@ -7,6 +7,7 @@ import { TAG_RE } from './anchor-guard.js';
 import { normText } from './anchor.js';
 import { DIALOG_SELECTOR, isStop } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
+import { OVERLAY_MARKER_ATTR } from './ui.js';
 
 /** How many candidates a text scan will look at before giving up. */
 const SCAN_LIMIT = 5000;
@@ -100,7 +101,7 @@ const frameSuffices = (strict: boolean, anchor: AnchorV3): boolean =>
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
   !!element &&
-  (!!element.closest('[data-bai-review-overlay]') ||
+  (!!element.closest(`[${OVERLAY_MARKER_ATTR}]`) ||
     (!!ignore && (element === ignore || ignore.contains(element))));
 
 function querySafe(
