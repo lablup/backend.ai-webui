@@ -32,7 +32,7 @@ export type BAIModelDeploymentNodesFragment$data = ReadonlyArray<{
         readonly status: DeploymentStatus;
         readonly tags: ReadonlyArray<string>;
         readonly updatedAt: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagChips_metadata">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIDeploymentTagTokens_metadata">;
     };
     readonly networkAccess: {
         readonly endpointUrl: string | null | undefined;

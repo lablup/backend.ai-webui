@@ -6,7 +6,7 @@ export type BAIArtifactRevisionTableArtifactRevisionFragment$data = ReadonlyArra
     readonly status: ArtifactStatus;
     readonly updatedAt: string | null | undefined;
     readonly version: string;
-    readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDeleteButtonFragment" | "BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusTagFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDeleteButtonFragment" | "BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusBadgeFragment">;
     readonly " $fragmentType": "BAIArtifactRevisionTableArtifactRevisionFragment";
 }>;
 export type BAIArtifactRevisionTableArtifactRevisionFragment$key = ReadonlyArray<{

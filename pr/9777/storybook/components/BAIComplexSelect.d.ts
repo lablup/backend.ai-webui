@@ -26,6 +26,8 @@ export interface BAIComplexSelectOption {
      * name, so P26-3 holds.
      */
     labelContent?: React.ReactNode;
+    /** Leading visual (avatar, glyph), centered on the row beside its text. */
+    icon?: React.ReactNode;
     /** Secondary line under the label (antd `optionRender` subtitle shape). */
     description?: React.ReactNode;
     /** Trailing rich content (badges, tags, meta) — the other half of P26-3. */
@@ -94,6 +96,19 @@ export interface BAIComplexSelectProps {
     triggerDisplay?: BAIComplexSelectTriggerDisplay;
     /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
     maxTriggerTokens?: number;
+    /**
+     * antd `allowClear`: a clear button between the spinner and the chevron
+     * while something is selected (`ComplexSelector.hasClear`, added by
+     * react/patches/@astryxdesign__core@0.5.4.patch, upstream
+     * https://github.com/facebook/astryx/pull/6362).
+     */
+    allowClear?: boolean;
+    /**
+     * How a selected option is marked: `'check'` (default) draws the theme's
+     * check at the row's end; `'checkbox'` draws a checkbox at its start, which
+     * reads better for a `multiple` list with rich rows.
+     */
+    selectionMark?: 'check' | 'checkbox';
     'data-testid'?: string;
 }
 declare const BAIComplexSelect: React.FC<BAIComplexSelectProps>;
