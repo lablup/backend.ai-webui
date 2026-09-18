@@ -858,6 +858,7 @@
     "NewFolderName": "Nowa nazwa folderu",
     "NoStorageDescriptionFound": "Bez opisu.",
     "NotInProject": "Ten folder należy do projektu '{{ projectName }}'.",
+    "NotMountable": "Nie do zamontowania",
     "NumberOfFolders": "Liczba folderów",
     "Permission": "Pozwolenie",
     "Pipeline": "Foldery rurociągów",

@@ -858,6 +858,7 @@
     "NewFolderName": "Nama folder baharu",
     "NoStorageDescriptionFound": "Tiada deskripsi.",
     "NotInProject": "Folder ini milik projek '{{ projectName }}'.",
+    "NotMountable": "Tidak boleh dilekap",
     "NumberOfFolders": "Bilangan folder",
     "Permission": "Kebenaran",
     "Pipeline": "Folder Saluran Paip",

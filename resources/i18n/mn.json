@@ -858,6 +858,7 @@
     "NewFolderName": "Шинэ фолдерын нэр",
     "NoStorageDescriptionFound": "Тайлбар алга.",
     "NotInProject": "Энэхүү хавтас нь '{{ projectName }}' төсөлд хамаарна.",
+    "NotMountable": "Холбож болохгүй",
     "NumberOfFolders": "Фолдеруудын тоо",
     "Permission": "Зөвшөөрөл",
     "Pipeline": "Дамжуулах хоолойн хавтас",

@@ -42,13 +42,18 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
         label: t('data.ReadWrite'),
         icon: 'RW',
       },
+      none: {
+        label: t('data.NotMountable'),
+        icon: '',
+      },
     };
-    // V2 enum: READ_ONLY, READ_WRITE, RW_DELETE.
-    // READ_ONLY  -> RO badge
-    // READ_WRITE -> RW badge
-    // RW_DELETE  -> RW badge (delete capability is surfaced via row actions)
+    // NONE mounts to nobody; RW_DELETE mounts as READ_WRITE (backend.ai#14679).
     const perm =
-      vfolderData?.accessControl?.permission === 'READ_ONLY' ? 'ro' : 'rw';
+      vfolderData?.accessControl?.permission === 'NONE'
+        ? 'none'
+        : vfolderData?.accessControl?.permission === 'READ_ONLY'
+          ? 'ro'
+          : 'rw';
     return {
       permissionInfo: permissionMap[perm],
     };
