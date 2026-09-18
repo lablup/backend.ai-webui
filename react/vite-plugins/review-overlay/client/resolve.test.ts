@@ -429,3 +429,76 @@ describe('walkthrough stops resolve strictly (FR-3949)', () => {
     expect(findAnchorTarget(loose)).toBeNull();
   });
 });
+
+/**
+ * Pages render the same thing twice. github.com emits every file-name link in
+ * a screen-reader cell first, `display: none`, and again in the cell a reader
+ * sees — and the scan, walking document order, took the first one. The pin
+ * then drew a zero-size box in the page's top-left corner, which is not even
+ * the "scrolled below" state the real element deserved.
+ */
+describe('a hidden look-alike never beats a rendered one', () => {
+  /** jsdom reports nothing for every element; give these ones a box. */
+  const render = (...elements: Element[]) => {
+    for (const element of elements) {
+      const rect = { left: 0, top: 0, width: 120, height: 20 } as DOMRect;
+      element.getClientRects = () => [rect] as unknown as DOMRectList;
+      element.getBoundingClientRect = () => rect;
+    }
+  };
+
+  const twice = `
+    <div class="sr"><a href="/f">.cspell.json</a></div>
+    <div class="wide"><a href="/f">.cspell.json</a></div>
+  `;
+  const copies = () => document.querySelectorAll('a');
+  const file = (over: Partial<AnchorV3> = {}) =>
+    anchor({ s: '.wide a', tag: 'a', txt: '.cspell.json', ...over });
+
+  it('is skipped by the text scan that would have taken it first', () => {
+    mount(twice);
+    render(copies()[1]);
+
+    // The selector has gone stale, so the scan is the only rung left.
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[1]);
+  });
+
+  it('loses the selector rung too, in both ladders', () => {
+    mount(twice);
+    render(copies()[1]);
+
+    const both = file({ s: 'a[href="/f"]' });
+    expect(quickFindTarget(both)).toBe(copies()[1]);
+    expect(findAnchorTarget(both)).toBe(copies()[1]);
+  });
+
+  it('does not disqualify a landmark it duplicates', () => {
+    mount(`
+      <div class="sr" data-testid="row"><a href="/f">.cspell.json</a></div>
+      <div class="wide" data-testid="row"><a href="/f">.cspell.json</a></div>
+    `);
+    const rows = document.querySelectorAll('[data-testid="row"]');
+    render(rows[1], copies()[1]);
+
+    const framed = file({ s: '#gone', tid: 'row' });
+    expect(findAnchorTarget(framed)).toBe(copies()[1]);
+    expect(quickFindTarget(framed)).toBe(rows[1]);
+  });
+
+  it('loses to a rendered one for a strict stop as well', () => {
+    mount(twice);
+    render(copies()[1]);
+
+    const stop = file({ s: '#gone', ck: 'The file row is visible' });
+    expect(findAnchorTarget(stop)).toBe(copies()[1]);
+  });
+
+  // The whole preference is conditional on something being drawable: with no
+  // layout at all — jsdom, and a page mid-render — the old order stands.
+  it('changes nothing when no candidate has a box', () => {
+    mount(twice);
+
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[0]);
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBe(copies()[0]);
+  });
+});

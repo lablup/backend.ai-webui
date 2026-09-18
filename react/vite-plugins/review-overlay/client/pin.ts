@@ -17,6 +17,7 @@ import {
   findAnchorTarget,
   hasLandmark,
   inScope,
+  isRendered,
   quickFindTarget,
   textMatches,
 } from './resolve.js';
@@ -616,12 +617,20 @@ function createPinView(deps: ViewDeps): PinView {
     hadLandmark = landmark;
     // A dialog that closed without unmounting (BAIDialog drops its role) must
     // release the element it held, or a dlg stop stays located behind nothing.
-    const held =
+    const kept =
       located?.isConnected &&
       textMatches(located, target.anchor.txt) &&
       inScope(located, target.anchor)
         ? located
         : null;
+    // …and an element the page has since hidden gives the pin back to one that
+    // is on screen. Holding it is what turns a one-frame mis-resolution into a
+    // permanent one. With nothing drawable to swap to, it is kept as before.
+    const swap =
+      kept && !isRendered(kept)
+        ? quickFindTarget(target.anchor, { ignore: host })
+        : null;
+    const held = swap && isRendered(swap) ? swap : kept;
     if (held) missedScans = 0;
     let next = held ?? quickFindTarget(target.anchor, { ignore: host });
     // A stop's element appears with no URL change (a modal, a step), so it

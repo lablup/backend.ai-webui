@@ -251,6 +251,30 @@ describe('createPinLayer', () => {
     expect(toasts).toEqual([]);
   });
 
+  // …but holding is not unconditional. A page that swaps its visible copy for
+  // an identical hidden one (github.com re-renders its file list that way)
+  // would otherwise leave the pin on the hidden copy for good — a zero-size
+  // box in the page's corner, where the card cannot even say "scrolled below".
+  it('gives a held element back when the page hides it and draws another', async () => {
+    const one = mount('one');
+    layer.show([target('c_a', 'one')], { focusId: null });
+    layer.locate();
+    expect(layer.locatedElement('c_a')).toBe(one);
+
+    // The same anchor, re-rendered: the held copy loses its box, the new one
+    // has one. `getClientRects` is what tells them apart.
+    one.getClientRects = () => [] as unknown as DOMRectList;
+    const redrawn = one.cloneNode(true) as HTMLElement;
+    const rect = { left: 20, top: 100, width: 400, height: 200 } as DOMRect;
+    redrawn.getClientRects = () => [rect] as unknown as DOMRectList;
+    redrawn.getBoundingClientRect = () => rect;
+    document.body.append(redrawn);
+    // The layer repositions on a debounce, off a mutation record.
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    expect(layer.locatedElement('c_a')).toBe(redrawn);
+  });
+
   // The twin of the above, for a removal from the MIDDLE. Trimming the tail
   // to the new length first drops the LAST pin's card and re-seats that pin
   // onto its neighbour's, losing the element it had already located.
