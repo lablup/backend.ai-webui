@@ -16,6 +16,7 @@
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
 import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2PermissionRefreshQuery.graphql';
 import { App } from '../app-shim';
+import { mountPermissionFromV2 } from '../helper/vfolderMountPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -132,15 +133,14 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const vfolderId = toLocalId(vfolderNode.id);
 
-  // `accessControl.permission` is the folder's mount permission, not the
-  // caller's rights on it; NONE leaves the selector empty instead of guessing.
-  const mountPermission = vfolderNode.accessControl?.permission;
-  const currentSelectPermission =
-    mountPermission === 'READ_WRITE' || mountPermission === 'RW_DELETE'
-      ? 'rw'
-      : mountPermission === 'READ_ONLY'
-        ? 'ro'
-        : undefined;
+  // `accessControl.permission` is the folder's DEFAULT mount level, which the
+  // selector below sets through the legacy REST endpoint. NONE (a personal
+  // folder's default since backend.ai#14679) is not offered, so it shows no
+  // selection rather than a misleading "Read only". See FR-3988.
+  const currentSelectPermission = (() => {
+    const level = mountPermissionFromV2(vfolderNode.accessControl?.permission);
+    return level === 'none' ? undefined : (level ?? undefined);
+  })();
   // The value the user just picked, shown until the update and the store
   // refresh land (or the update fails and the server value returns).
   const [pendingPermission, setPendingPermission] = useState<string | null>(

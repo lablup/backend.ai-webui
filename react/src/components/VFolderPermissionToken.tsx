@@ -37,6 +37,7 @@ const VFolderPermissionToken: React.FC<VFolderPermissionTokenProps> = ({
   vFolderFrgmt = null,
   permission,
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const vFolder = useFragment(
     graphql`
@@ -47,10 +48,12 @@ const VFolderPermissionToken: React.FC<VFolderPermissionTokenProps> = ({
     vFolderFrgmt,
   );
   const resolvedPermission = vFolder?.permission || permission;
-  // 'none' (or the legacy field's null) means the folder mounts to nobody.
-  if (!resolvedPermission || resolvedPermission === 'none') {
+  // REST answers the caller's effective level; 'none' mounts nothing.
+  if (resolvedPermission === 'none') {
     return (
-      <BAIDoubleToken values={[{ label: t('data.NotMountable'), color: 'default' }]} />
+      <BAIDoubleToken
+        values={[{ label: t('data.NotMountable'), color: 'default' }]}
+      />
     );
   }
   const tokenValues: BAIDoubleTokenValue[] = _.compact(
