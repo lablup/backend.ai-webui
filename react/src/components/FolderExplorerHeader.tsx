@@ -36,7 +36,7 @@ const FolderExplorerHeader: React.FC<FolderExplorerHeaderProps> = ({
         id
         user
         permission
-        unmanaged_path @since(version: "25.04.0")
+        unmanaged_path
         ...VFolderNameTitleNodeFragment
         ...VFolderNodeIdenticonFragment
         ...EditableVFolderNameFragment

@@ -128,9 +128,8 @@ const RuntimeParameterFormSection: React.FC<
   const { t } = useTranslation();
   const form = Form.useFormInstance();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsRequiredField = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
+  const supportsRequiredField =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
   const groups = useRuntimeParameterSchema(runtimeVariant);
 
   // Notify parent when groups change (for serialization at submit time)
@@ -361,9 +360,8 @@ const ParameterControl: React.FC<ParameterControlProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsRequired = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
+  const supportsRequired =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
 
   const label = param.displayName ?? param.name;
   const tooltip = param.description ?? undefined;

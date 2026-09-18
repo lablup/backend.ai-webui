@@ -190,34 +190,32 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                 }}
               />
             </Tooltip>
-            {baiClient.supports('download-archive') && (
-              <Tooltip
-                content={t('comp:FileExplorer.DownloadSelected')}
-                placement="above"
-                alignment="start"
-              >
-                <BAIButton
-                  disabled={!enableDownload}
-                  icon={
-                    <DownloadIcon
-                      style={{
-                        color: enableDownload
-                          ? token.colorInfo
-                          : token.colorTextDisabled,
-                      }}
-                    />
-                  }
-                  action={async () => {
-                    const filePaths = selectedFiles.map((file) =>
-                      currentPath === '.'
-                        ? file.name
-                        : `${currentPath}/${file.name}`,
-                    );
-                    await downloadArchiveMutation.mutateAsync(filePaths);
-                  }}
-                />
-              </Tooltip>
-            )}
+            <Tooltip
+              content={t('comp:FileExplorer.DownloadSelected')}
+              placement="above"
+              alignment="start"
+            >
+              <BAIButton
+                disabled={!enableDownload}
+                icon={
+                  <DownloadIcon
+                    style={{
+                      color: enableDownload
+                        ? token.colorInfo
+                        : token.colorTextDisabled,
+                    }}
+                  />
+                }
+                action={async () => {
+                  const filePaths = selectedFiles.map((file) =>
+                    currentPath === '.'
+                      ? file.name
+                      : `${currentPath}/${file.name}`,
+                  );
+                  await downloadArchiveMutation.mutateAsync(filePaths);
+                }}
+              />
+            </Tooltip>
           </>
         )}
         <Tooltip content={t('comp:FileExplorer.CreateFolder')} isEnabled={!lg}>

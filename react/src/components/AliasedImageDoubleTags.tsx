@@ -30,7 +30,7 @@ const AliasedImageDoubleTags: React.FC<AliasedImageDoubleTagsProps> = ({
           key
           value
         }
-        tags @since(version: "24.12.0") {
+        tags {
           key
           value
         }

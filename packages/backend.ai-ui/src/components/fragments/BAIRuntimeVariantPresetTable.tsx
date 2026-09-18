@@ -59,12 +59,10 @@ const BAIRuntimeVariantPresetTable = ({
   'use memo';
   const { t } = useBAIi18n();
   const baiClient = useConnectedBAIClient();
-  const isRequiredSupported = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
-  const isRuntimeVariantFieldSupported = baiClient.supports(
-    'runtime-variant-preset-runtime-variant-field',
-  );
+  const isRequiredSupported =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
+  const isRuntimeVariantFieldSupported =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
 
   const presets = useFragment<BAIRuntimeVariantPresetTableFragment$key>(
     graphql`

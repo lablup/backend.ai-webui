@@ -27,7 +27,7 @@ import TotalResourceWithinResourceGroup, {
 } from '../components/TotalResourceWithinResourceGroup';
 import { breadcrumbExtraAtom } from '../components/breadcrumbExtraAtom';
 import { dashboardEditModeAtom } from '../components/dashboardEditModeAtom';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import {
@@ -68,7 +68,6 @@ const DashboardPage: React.FC = () => {
   const currentProject = useCurrentProjectValue();
   const currentResourceGroup = useCurrentResourceGroupValue();
   const userRole = useCurrentUserRole();
-  const baiClient = useSuspendedBackendaiClient();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
 
@@ -140,8 +139,6 @@ const DashboardPage: React.FC = () => {
 
   const isAvailableTotalResourcePanel =
     useIsAvailableTotalResourceWithinResourceGroup();
-
-  const isAgentStatsSupported = baiClient.supports('agent-stats');
 
   const queryRef = useLazyLoadQuery<DashboardPageQuery>(
     graphql`
@@ -342,7 +339,6 @@ const DashboardPage: React.FC = () => {
       },
     },
     _.isEqual(userRole, 'superadmin') &&
-      isAgentStatsSupported &&
       queryRef.AgentStatsFragment && {
         id: 'agentStats',
         rowSpan: 2,

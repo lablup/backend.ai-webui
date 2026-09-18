@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<61b0c8548945db7bfa197644463347cc>>
+ * @generated SignedSource<<c4b625ba1aefcfa06c9b9315601d1136>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,7 +22,6 @@ export type CustomizedImageListQuery$data = {
       readonly key: string | null | undefined;
       readonly value: string | null | undefined;
     } | null | undefined> | null | undefined;
-    readonly name: string | null | undefined;
     readonly namespace: string | null | undefined;
     readonly registry: string | null | undefined;
     readonly supported_accelerators: ReadonlyArray<string | null | undefined> | null | undefined;
@@ -52,45 +51,38 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "humanized_name",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "humanized_name",
+  "name": "tag",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "tag",
+  "name": "registry",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "registry",
+  "name": "architecture",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "architecture",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "digest",
   "storageKey": null
 },
-v7 = [
+v6 = [
   {
     "alias": null,
     "args": null,
@@ -106,48 +98,48 @@ v7 = [
     "storageKey": null
   }
 ],
-v8 = {
+v7 = {
   "alias": null,
   "args": null,
   "concreteType": "KVPair",
   "kind": "LinkedField",
   "name": "labels",
   "plural": true,
-  "selections": (v7/*: any*/),
+  "selections": (v6/*: any*/),
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "supported_accelerators",
   "storageKey": null
 },
-v10 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "namespace",
   "storageKey": null
 },
-v11 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "base_image_name",
   "storageKey": null
 },
-v12 = {
+v11 = {
   "alias": null,
   "args": null,
   "concreteType": "KVPair",
   "kind": "LinkedField",
   "name": "tags",
   "plural": true,
-  "selections": (v7/*: any*/),
+  "selections": (v6/*: any*/),
   "storageKey": null
 },
-v13 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -175,13 +167,12 @@ return {
           (v3/*: any*/),
           (v4/*: any*/),
           (v5/*: any*/),
-          (v6/*: any*/),
+          (v7/*: any*/),
           (v8/*: any*/),
           (v9/*: any*/),
           (v10/*: any*/),
           (v11/*: any*/),
           (v12/*: any*/),
-          (v13/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -214,29 +205,28 @@ return {
           (v3/*: any*/),
           (v4/*: any*/),
           (v5/*: any*/),
-          (v6/*: any*/),
+          (v7/*: any*/),
           (v8/*: any*/),
           (v9/*: any*/),
           (v10/*: any*/),
           (v11/*: any*/),
-          (v12/*: any*/),
-          (v13/*: any*/)
+          (v12/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "9d2e928aef36de71b7da3ce796f74e22",
+    "cacheID": "dfb2d94e961f979c3a742730d0c4d263",
     "id": null,
     "metadata": {},
     "name": "CustomizedImageListQuery",
     "operationKind": "query",
-    "text": "query CustomizedImageListQuery {\n  customized_images {\n    id\n    name @deprecatedSince(version: \"24.12.0\")\n    humanized_name\n    tag\n    registry\n    architecture\n    digest\n    labels {\n      key\n      value\n    }\n    supported_accelerators\n    namespace @since(version: \"24.12.0\")\n    base_image_name @since(version: \"24.12.0\")\n    tags @since(version: \"24.12.0\") {\n      key\n      value\n    }\n    version @since(version: \"24.12.0\")\n    ...AliasedImageDoubleTagsFragment\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n"
+    "text": "query CustomizedImageListQuery {\n  customized_images {\n    id\n    humanized_name\n    tag\n    registry\n    architecture\n    digest\n    labels {\n      key\n      value\n    }\n    supported_accelerators\n    namespace\n    base_image_name\n    tags {\n      key\n      value\n    }\n    version\n    ...AliasedImageDoubleTagsFragment\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags {\n    key\n    value\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0e0ff40aaf7c9d5c859389b31cd6762a";
+(node as any).hash = "37b371a719b2d1920f79a3fba1b30aac";
 
 export default node;

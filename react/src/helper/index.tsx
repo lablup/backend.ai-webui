@@ -394,7 +394,7 @@ export const getImageFullName = (
   image: DeepPartial<Image | CommittedImage | EnvironmentImage>,
 ) => {
   return image
-    ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}@${image.architecture}`
+    ? `${image.registry}/${image.namespace}:${image.tag}@${image.architecture}`
     : undefined;
 };
 
@@ -598,8 +598,7 @@ export const resolveImageFullName = (
     const sameEnvironment = _.filter(
       candidates,
       (image) =>
-        `${image.registry}/${image.namespace ?? image.name}` ===
-          registryAndNamespace &&
+        `${image.registry}/${image.namespace}` === registryAndNamespace &&
         (!hasArch || image.architecture === architecture),
     );
     // Sorted the same way as the launcher's version select: latest first,

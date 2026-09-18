@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b39e8c29c06dc23f9bb6bb7728abfc92>>
+ * @generated SignedSource<<0e1a369e5f9da268dcd820fc145043e4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -263,24 +263,23 @@ return {
             "kind": "ScalarField",
             "name": "cloneable",
             "storageKey": null
-          },
-          (v5/*: any*/)
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "aa7d23c4c129717653b4c4f26ccc8468",
+    "cacheID": "fbb1718f6bc944a594048d203876104b",
     "id": null,
     "metadata": {},
     "name": "FolderExplorerModalQuery",
     "operationKind": "query",
-    "text": "query FolderExplorerModalQuery(\n  $vfolderGlobalId: String!\n) {\n  vfolder_node(id: $vfolderGlobalId) {\n    group\n    group_name\n    unmanaged_path @since(version: \"25.04.0\")\n    permissions\n    host\n    id\n    name\n    ...FolderExplorerHeaderFragment\n    ...VFolderNodeDescriptionFragment\n    ...VFolderNameTitleNodeFragment\n  }\n}\n\nfragment EditableVFolderNameFragment on VirtualFolderNode {\n  id\n  name\n  user\n  group\n  status\n}\n\nfragment FileBrowserButtonFragment on VirtualFolderNode {\n  id\n  host\n}\n\nfragment FolderExplorerHeaderFragment on VirtualFolderNode {\n  id\n  user\n  permission\n  unmanaged_path @since(version: \"25.04.0\")\n  ...VFolderNameTitleNodeFragment\n  ...VFolderNodeIdenticonFragment\n  ...EditableVFolderNameFragment\n  ...FileBrowserButtonFragment\n  ...SFTPServerButtonFragment\n}\n\nfragment SFTPServerButtonFragment on VirtualFolderNode {\n  id\n  host\n}\n\nfragment VFolderNameTitleNodeFragment on VirtualFolderNode {\n  name\n}\n\nfragment VFolderNodeDescriptionFragment on VirtualFolderNode {\n  id\n  host\n  quota_scope_id\n  user\n  user_email\n  group\n  group_name\n  creator\n  usage_mode\n  permission\n  ownership_type\n  max_files\n  max_size\n  created_at\n  last_used\n  num_files\n  cur_size\n  cloneable\n  status\n  permissions @since(version: \"24.09.0\")\n  unmanaged_path @since(version: \"25.04.0\")\n  ...VFolderPermissionCellFragment\n  ...useVirtualFolderNodePathFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment VFolderPermissionCellFragment on VirtualFolderNode {\n  permissions\n}\n\nfragment useVirtualFolderNodePathFragment on VirtualFolderNode {\n  id\n  host\n  quota_scope_id\n  user\n  user_email\n  group\n  group_name\n  creator\n  usage_mode\n  permission\n  ownership_type\n  max_files\n  max_size\n  created_at\n  last_used\n  num_files\n  cur_size\n  cloneable\n  status\n  permissions @since(version: \"24.09.0\")\n}\n"
+    "text": "query FolderExplorerModalQuery(\n  $vfolderGlobalId: String!\n) {\n  vfolder_node(id: $vfolderGlobalId) {\n    group\n    group_name\n    unmanaged_path\n    permissions\n    host\n    id\n    name\n    ...FolderExplorerHeaderFragment\n    ...VFolderNodeDescriptionFragment\n    ...VFolderNameTitleNodeFragment\n  }\n}\n\nfragment EditableVFolderNameFragment on VirtualFolderNode {\n  id\n  name\n  user\n  group\n  status\n}\n\nfragment FileBrowserButtonFragment on VirtualFolderNode {\n  id\n  host\n}\n\nfragment FolderExplorerHeaderFragment on VirtualFolderNode {\n  id\n  user\n  permission\n  unmanaged_path\n  ...VFolderNameTitleNodeFragment\n  ...VFolderNodeIdenticonFragment\n  ...EditableVFolderNameFragment\n  ...FileBrowserButtonFragment\n  ...SFTPServerButtonFragment\n}\n\nfragment SFTPServerButtonFragment on VirtualFolderNode {\n  id\n  host\n}\n\nfragment VFolderNameTitleNodeFragment on VirtualFolderNode {\n  name\n}\n\nfragment VFolderNodeDescriptionFragment on VirtualFolderNode {\n  id\n  host\n  quota_scope_id\n  user\n  user_email\n  group\n  group_name\n  creator\n  usage_mode\n  permission\n  ownership_type\n  max_files\n  max_size\n  created_at\n  last_used\n  num_files\n  cur_size\n  cloneable\n  status\n  permissions\n  unmanaged_path\n  ...VFolderPermissionCellFragment\n  ...useVirtualFolderNodePathFragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment VFolderPermissionCellFragment on VirtualFolderNode {\n  permissions\n}\n\nfragment useVirtualFolderNodePathFragment on VirtualFolderNode {\n  id\n  host\n  quota_scope_id\n  user\n  user_email\n  group\n  group_name\n  creator\n  usage_mode\n  permission\n  ownership_type\n  max_files\n  max_size\n  created_at\n  last_used\n  num_files\n  cur_size\n  cloneable\n  status\n  permissions\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bc8ed85ec64ce6416231f71a40388f03";
+(node as any).hash = "bac87f7f7586cf6497a24c09fcaf8d08";
 
 export default node;

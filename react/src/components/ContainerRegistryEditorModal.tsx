@@ -93,7 +93,6 @@ const ContainerRegistryEditorModal: React.FC<
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
-  const isSupportExtraField = baiClient.supports('extra-field');
 
   const formRef = useRef<FormInstance<RegistryFormInput>>(null);
 
@@ -109,9 +108,9 @@ const ContainerRegistryEditorModal: React.FC<
         project
         username
         ssl_verify
-        extra @since(version: "24.09.3")
-        is_global @since(version: "24.09.0")
-        allowed_groups @since(version: "25.3.0") {
+        extra
+        is_global
+        allowed_groups {
           edges {
             node {
               id
@@ -161,9 +160,9 @@ const ContainerRegistryEditorModal: React.FC<
             username
             password
             ssl_verify
-            extra @since(version: "24.09.3")
-            is_global @since(version: "24.09.0")
-            allowed_groups @since(version: "25.3.0") {
+            extra
+            is_global
+            allowed_groups {
               edges {
                 node {
                   id
@@ -582,44 +581,42 @@ const ContainerRegistryEditorModal: React.FC<
             )
           }
         </BAIFormItem>
-        {isSupportExtraField && (
-          <BAIFormItem label={t('registry.ExtraInformation')}>
-            <BAIFlex
-              style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
-                overflow: 'hidden',
-              }}
-            >
-              <BAIFormItem
-                name="extra"
-                noStyle
-                rules={[
-                  {
-                    validator: (_, value) => {
-                      if (value) {
-                        try {
-                          JSON.parse(value);
-                        } catch {
-                          return Promise.reject(
-                            t('registry.DescExtraJsonFormat'),
-                          );
-                        }
+        <BAIFormItem label={t('registry.ExtraInformation')}>
+          <BAIFlex
+            style={{
+              border: `1px solid ${token.colorBorder}`,
+              borderRadius: token.borderRadius,
+              overflow: 'hidden',
+            }}
+          >
+            <BAIFormItem
+              name="extra"
+              noStyle
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (value) {
+                      try {
+                        JSON.parse(value);
+                      } catch {
+                        return Promise.reject(
+                          t('registry.DescExtraJsonFormat'),
+                        );
                       }
-                      return Promise.resolve();
-                    },
+                    }
+                    return Promise.resolve();
                   },
-                ]}
-              >
-                <BAICodeEditor
-                  editable
-                  language="json"
-                  style={{ width: '100%' }}
-                />
-              </BAIFormItem>
-            </BAIFlex>
-          </BAIFormItem>
-        )}
+                },
+              ]}
+            >
+              <BAICodeEditor
+                editable
+                language="json"
+                style={{ width: '100%' }}
+              />
+            </BAIFormItem>
+          </BAIFlex>
+        </BAIFormItem>
       </Form>
     </BAIModal>
   );

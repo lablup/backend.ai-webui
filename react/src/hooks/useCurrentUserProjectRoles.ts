@@ -29,10 +29,9 @@ export interface CurrentUserProjectRolesResult {
  * Hook that inspects the current user's RBAC role assignments and reports which
  * projects they have project-admin scope over.
  *
- * Uses the `myRoles` query (added in core 26.3.0). On older cores that do not
- * implement it, `@catch(to: RESULT)` makes the field resolve to `{ ok: false }`
- * and the hook returns empty admin arrays instead of throwing — so general
- * pages continue to render.
+ * Uses the `myRoles` query. `@catch(to: RESULT)` makes a failing field resolve
+ * to `{ ok: false }` and the hook returns empty admin arrays instead of
+ * throwing — so general pages continue to render.
  *
  * Super-admin / domain-admin detection is sourced from the backendaiclient
  * (the legacy signals the existing codebase already relies on), since those
@@ -44,7 +43,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
   const PROJECT_ADMIN_PAGE = 'PROJECT_ADMIN_PAGE' satisfies RBACElementType;
   const permissionFilter: PermissionNestedFilter = {
     // Cast confined to the one field the generated type can't model.
-    entityType: (baiClient.supports('rbac-filter-wrapper')
+    entityType: (baiClient.isManagerVersionCompatibleWith('26.4.4rc9')
       ? { equals: PROJECT_ADMIN_PAGE }
       : PROJECT_ADMIN_PAGE) as PermissionNestedFilter['entityType'],
   };
@@ -80,9 +79,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
     { permissionFilter },
     {
       // store-or-network keeps the result cached across pages for the session.
-      fetchPolicy: baiClient.supports('my-roles')
-        ? 'store-or-network'
-        : 'store-only',
+      fetchPolicy: 'store-or-network',
     },
   );
 

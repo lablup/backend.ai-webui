@@ -58,7 +58,7 @@ import {
   provisionDeploymentFixtures,
   provisionDeploymentModelFolder,
 } from '../utils/deployment-fixtures';
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
+import { skipUnlessManagerVersion } from '../utils/feature-gate-util';
 import { loginAsAdmin, modifyConfigToml, navigateTo } from '../utils/test-util';
 import { getFormItemControlByLabel } from '../utils/test-util-antd';
 import { test, expect, Page } from '@playwright/test';
@@ -492,10 +492,10 @@ test.describe(
       // has one, or provisioning a throwaway `e2e-dfx-*` preset otherwise. A
       // model folder is not needed here since this test only inspects the
       // modal's fields and never submits.
-      await skipUnlessClientFeature(
+      await skipUnlessManagerVersion(
         page,
-        'deployment-preset',
-        "Preset Mode requires the 'deployment-preset' capability (manager >= 26.4.x)",
+        '26.4.2',
+        'Preset Mode requires manager >= 26.4.2',
       );
       const preset = await ensureDeploymentPreset(page);
       if (preset.presetId) {
@@ -656,10 +656,10 @@ test.describe(
           // otherwise -- no hand-seeded cluster fixture is assumed either
           // way. Deployment presets need backend support, so gate on the same
           // capability flag the UI checks.
-          await skipUnlessClientFeature(
+          await skipUnlessManagerVersion(
             page,
-            'deployment-preset',
-            "Adding a revision from a preset requires the 'deployment-preset' capability (manager >= 26.4.x)",
+            '26.4.2',
+            'Adding a revision from a preset requires manager >= 26.4.2',
           );
           const provisioned = await provisionDeploymentFixtures(page);
           fixtures = provisioned;

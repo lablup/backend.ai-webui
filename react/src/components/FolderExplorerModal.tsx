@@ -100,7 +100,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
         vfolder_node(id: $vfolderGlobalId) {
           group
           group_name
-          unmanaged_path @since(version: "25.04.0")
+          unmanaged_path
           permissions
           host
           id

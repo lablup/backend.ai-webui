@@ -56,6 +56,8 @@ const RBACManagementPage: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
+  const supportsMappedScopeFilter =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -269,7 +271,7 @@ const RBACManagementPage: React.FC = () => {
                   ],
                   strictSelection: true,
                 },
-                baiClient?.supports('rbac-filter-assigned-user') && {
+                baiClient.isManagerVersionCompatibleWith('26.4.4') && {
                   key: 'assignedUser.userId',
                   propertyLabel: t('rbac.AssignedUser'),
                   type: 'uuid',
@@ -295,7 +297,7 @@ const RBACManagementPage: React.FC = () => {
                     />
                   ),
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeType',
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
@@ -308,7 +310,7 @@ const RBACManagementPage: React.FC = () => {
                   })),
                   strictSelection: true,
                 },
-                baiClient?.supports('role-mapped-scope-filter') && {
+                supportsMappedScopeFilter && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
                   type: 'string',

@@ -3,7 +3,6 @@
 //            9 (My Resources in Resource Group Widget), 10 (Agent Stats Widget),
 //            11 (Recently Created Sessions Widget), 12 (Board Layout)
 // plus: custom panel add flow (edit sider -> panel modal), added after the plan
-import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
@@ -339,73 +338,59 @@ test.describe(
     // -----------------------------------------------------------------------
     // 10. Agent Stats Widget (Admin Only)
     // -----------------------------------------------------------------------
-    test.describe(
-      'Agent Stats Widget',
-      { tag: ['@requires-manager-v25.15'] },
-      () => {
-        test.beforeEach(async ({ page, request }) => {
-          await loginAsAdmin(page, request);
-          await navigateTo(page, 'summary');
+    test.describe('Agent Stats Widget', () => {
+      test.beforeEach(async ({ page, request }) => {
+        await loginAsAdmin(page, request);
+        await navigateTo(page, 'summary');
+      });
 
-          // Declarative feature gate (FR-3112): the Agent Statistics widget is
-          // rendered only when the manager supports 'agent-stats'
-          // (manager >= 25.15.0; widget introduced by FR-1575).
-          await skipUnlessClientFeature(
-            page,
-            'agent-stats',
-            "Agent Statistics widget requires the 'agent-stats' capability (Backend.AI manager >= 25.15.0, FR-1575)",
-          );
+      test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
+        page,
+      }) => {
+        // The widget is always present (manager >= 26.4.0 is the project baseline).
+        const widget = page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'Agent Statistics' });
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+
+        // 2. Verify a "Used" / "Free" segmented toggle is present.
+        // `AgentStats.tsx` renders Astryx `SegmentedControl`
+        // (`role="radiogroup"`, `label="Used/Free"`, composed from the two
+        // option labels).
+        const segmentedControl = widget.getByRole('radiogroup', {
+          name: 'Used/Free',
         });
+        await expect(segmentedControl).toBeVisible();
 
-        test('Admin can view cluster-level resource statistics in the Agent Stats widget', async ({
-          page,
-        }) => {
-          // 1. The backend is capable — the widget MUST be present; absence is a failure.
-          const widget = page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Agent Statistics' });
-          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        // 3. Click the "Free" segment and verify it becomes selected
+        await segmentedControl.getByRole('radio', { name: 'Free' }).click();
+        await expect(
+          segmentedControl.getByRole('radio', { name: 'Free' }),
+        ).toBeChecked();
 
-          // 2. Verify a "Used" / "Free" segmented toggle is present.
-          // `AgentStats.tsx` renders Astryx `SegmentedControl`
-          // (`role="radiogroup"`, `label="Used/Free"`, composed from the two
-          // option labels).
-          const segmentedControl = widget.getByRole('radiogroup', {
-            name: 'Used/Free',
-          });
-          await expect(segmentedControl).toBeVisible();
+        // 4. Click the "Used" segment and verify it becomes selected
+        await segmentedControl.getByRole('radio', { name: 'Used' }).click();
+        await expect(
+          segmentedControl.getByRole('radio', { name: 'Used' }),
+        ).toBeChecked();
+      });
 
-          // 3. Click the "Free" segment and verify it becomes selected
-          await segmentedControl.getByRole('radio', { name: 'Free' }).click();
-          await expect(
-            segmentedControl.getByRole('radio', { name: 'Free' }),
-          ).toBeChecked();
+      test('Admin can manually refresh the Agent Stats widget', async ({
+        page,
+      }) => {
+        const widget = page
+          .locator('.bai_grid_item')
+          .filter({ hasText: 'Agent Statistics' });
+        await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-          // 4. Click the "Used" segment and verify it becomes selected
-          await segmentedControl.getByRole('radio', { name: 'Used' }).click();
-          await expect(
-            segmentedControl.getByRole('radio', { name: 'Used' }),
-          ).toBeChecked();
-        });
+        // 2. Click the refresh button in the widget header
+        const refreshButton = widget.getByRole('button', { name: 'Refresh' });
+        await refreshButton.click();
 
-        test('Admin can manually refresh the Agent Stats widget', async ({
-          page,
-        }) => {
-          // 1. The backend is capable — the widget MUST be present; absence is a failure.
-          const widget = page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Agent Statistics' });
-          await expect(widget).toBeVisible({ timeout: WIDGET_TIMEOUT });
-
-          // 2. Click the refresh button in the widget header
-          const refreshButton = widget.getByRole('button', { name: 'Refresh' });
-          await refreshButton.click();
-
-          // 3. Verify the widget still renders after refresh (no error state)
-          await expect(widget).toBeVisible();
-        });
-      },
-    );
+        // 3. Verify the widget still renders after refresh (no error state)
+        await expect(widget).toBeVisible();
+      });
+    });
 
     // -----------------------------------------------------------------------
     // 11. Recently Created Sessions Widget

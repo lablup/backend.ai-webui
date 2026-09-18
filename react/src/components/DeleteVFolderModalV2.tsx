@@ -45,12 +45,10 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  // Older managers have no `items` / `failed` on the payload and reject the
-  // whole document, so the per-id selections are gated and the deprecated
-  // count is selected instead.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
-    'bulk-mutation-per-id-results',
-  );
+  // Older managers reject `items` / `failed` on the payload, so the per-id
+  // selections are gated and the deprecated count is selected instead.
+  const supportsPerIdResults =
+    useSuspendedBackendaiClient().isManagerVersionCompatibleWith('26.9.0');
   // Per-folder failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{

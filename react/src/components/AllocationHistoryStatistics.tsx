@@ -3,11 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
-import {
-  UserStatsData,
-  UserStatsDataKey,
-  useSuspendedBackendaiClient,
-} from '../hooks';
+import { UserStatsData, UserStatsDataKey } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
 import { theme } from '../theme-shim';
@@ -190,7 +186,6 @@ const AllocationHistoryStatistics: React.FC<
   const { data } = useUserUsageStats({
     fetchKey,
   });
-  const baiClient = useSuspendedBackendaiClient();
 
   return (
     <BAIFlex direction="column" align="start" gap="md">
@@ -234,30 +229,6 @@ const AllocationHistoryStatistics: React.FC<
           unitType="count"
         />
       </GraphCard>
-      {!baiClient?.supports('user-metrics') ? (
-        <>
-          <GraphCard title="IO-Read" tooltipText={t('statistics.IOReadDesc')}>
-            <UsageBarChart
-              data={data}
-              dataKey="io_read_bytes"
-              period={period}
-              targetUnit="m"
-              displayUnit="MiB"
-              unitType="decimal"
-            />
-          </GraphCard>
-          <GraphCard title="IO-Write" tooltipText={t('statistics.IOWriteDesc')}>
-            <UsageBarChart
-              data={data}
-              dataKey="io_write_bytes"
-              period={period}
-              targetUnit="m"
-              displayUnit="MiB"
-              unitType="decimal"
-            />
-          </GraphCard>
-        </>
-      ) : null}
     </BAIFlex>
   );
 };

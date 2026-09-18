@@ -95,9 +95,8 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
    * (legacy managers, where they can only be submitted alongside a real
    * name/modelPath).
    */
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
   // `true` includes untouched fields and arrays (e.g. modelDefinition.models)
   // that getFieldsValue() omits; its overload returns `any`, so annotate here.
   const values: AdminDeploymentPresetFormValue = form.getFieldsValue(true);

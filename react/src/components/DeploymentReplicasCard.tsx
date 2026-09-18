@@ -40,7 +40,6 @@ import {
   safeDecodeUuid,
   toLocalId,
   type GraphQLFilter,
-  useConnectedBAIClient,
   BAILink,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -238,10 +237,6 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
   const isInitialFetch =
     fetchKey === 0 &&
     (replicaFetchKey === undefined || replicaFetchKey === INITIAL_FETCH_KEY);
-  const baiClient = useConnectedBAIClient();
-  const supportsRouteSchedulingHistory = baiClient.supports(
-    'route-scheduling-history',
-  );
   const [isRouteHistoryOpen, setIsRouteHistoryOpen] = useState(false);
   const [routeHistoryQueryRef, loadRouteHistoryQuery] =
     useQueryLoader<RouteSchedulingHistoryModalQuery>(
@@ -370,35 +365,30 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       render: (value: string | null | undefined, record: ReplicaNode) => (
         <BAIFlex align="center" gap="xs">
           <ReplicaStatusTag status={toReplicaTagStatus(value)} />
-          {supportsRouteSchedulingHistory && (
-            // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
-            // the button with no accessible name (it resolved to "Action"),
-            // and `type="link"` lost the accent tint (FR-3572).
-            <IconButton
-              className="bai-action-accent"
-              variant="ghost"
-              size="sm"
-              icon={<History size="1em" />}
-              label={t('route.RouteSchedulingHistory')}
-              tooltip={t('route.RouteSchedulingHistory')}
-              clickAction={async () => {
-                const id = safeDecodeUuid(record.id) ?? record.id;
-                // Render-as-you-fetch: start the request in the open event.
-                loadRouteHistoryQuery(
-                  {
-                    scope: { routeId: id },
-                    orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
-                    limit: 10,
-                    offset: 0,
-                  },
-                  {
-                    fetchPolicy: 'store-and-network',
-                  },
-                );
-                setIsRouteHistoryOpen(true);
-              }}
-            />
-          )}
+          <IconButton
+            className="bai-action-accent"
+            variant="ghost"
+            size="sm"
+            icon={<History size="1em" />}
+            label={t('route.RouteSchedulingHistory')}
+            tooltip={t('route.RouteSchedulingHistory')}
+            clickAction={async () => {
+              const id = safeDecodeUuid(record.id) ?? record.id;
+              // Render-as-you-fetch: start the request in the open event.
+              loadRouteHistoryQuery(
+                {
+                  scope: { routeId: id },
+                  orderBy: [{ field: 'UPDATED_AT', direction: 'DESC' }],
+                  limit: 10,
+                  offset: 0,
+                },
+                {
+                  fetchPolicy: 'store-and-network',
+                },
+              );
+              setIsRouteHistoryOpen(true);
+            }}
+          />
         </BAIFlex>
       ),
     },

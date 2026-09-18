@@ -104,13 +104,13 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
   const [searchStr, setSearchStr] = useState<string>('');
   const deferredSearchStr = useDeferredValue(searchStr);
 
-  // See the antd original for the full rationale (deployment-replica-nested-
-  // filter support gate, unscoped-by-project note). Unchanged here.
+  // Same serving-replica filter as ChatPage: nested replica filter on manager
+  // 26.8.0+, lifecycle status on older ones. Deliberately not project-scoped.
   const nameFilter = deferredSearchStr
     ? { name: { iContains: deferredSearchStr } }
     : undefined;
   const deploymentFilter: DeploymentSelectQuery['variables']['filter'] =
-    baiClient.supports('deployment-replica-nested-filter')
+    baiClient.isManagerVersionCompatibleWith('26.8.0')
       ? {
           replicas: {
             some: {

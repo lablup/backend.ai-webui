@@ -97,7 +97,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           name
           resource_slots
           shared_memory
-          scaling_group_name @since(version: "25.4.0")
+          scaling_group_name
         }
       }
     `,

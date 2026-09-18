@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ca0fe5a130171f9b98480845fa9ecca4>>
+ * @generated SignedSource<<cd9d64fa689dc95d6feca78305e89836>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -87,15 +87,15 @@ const node: ConcreteRequest = {
     ]
   },
   "params": {
-    "cacheID": "b2605aadfb3d6bd4a21f3f7887043e31",
+    "cacheID": "d4c9110559266288c5a3d0cff1dd3ca2",
     "id": null,
     "metadata": {},
     "name": "AgentStatsRefetchQuery",
     "operationKind": "query",
-    "text": "query AgentStatsRefetchQuery {\n  ...AgentStatsFragment\n}\n\nfragment AgentStatsFragment on Query {\n  agentStats @since(version: \"25.15.0\") {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n}\n"
+    "text": "query AgentStatsRefetchQuery {\n  ...AgentStatsFragment\n}\n\nfragment AgentStatsFragment on Query {\n  agentStats {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n}\n"
   }
 };
 
-(node as any).hash = "458be767c066ba74fbebc3d9d84638ca";
+(node as any).hash = "0ba322943313b1a45b5b1f244712d4ac";
 
 export default node;

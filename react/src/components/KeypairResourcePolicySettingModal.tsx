@@ -15,7 +15,6 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
@@ -68,7 +67,6 @@ const KeypairResourcePolicySettingModal: React.FC<
   const formRef = useRef<FormInstance>(null);
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
-  const baiClient = useSuspendedBackendaiClient();
 
   const keypairResourcePolicy = useFragment(
     graphql`
@@ -81,8 +79,8 @@ const KeypairResourcePolicySettingModal: React.FC<
         max_containers_per_session
         idle_timeout
         allowed_vfolder_hosts
-        max_pending_session_count @since(version: "24.03.4")
-        max_concurrent_sftp_sessions @since(version: "24.03.4")
+        max_pending_session_count
+        max_concurrent_sftp_sessions
       }
     `,
     keypairResourcePolicyFrgmt,
@@ -494,22 +492,20 @@ const KeypairResourcePolicySettingModal: React.FC<
                   />
                 </FormItemWithUnlimited>
               </div>
-              {baiClient.supports('max-pending-session-count') ? (
-                <div style={{ flex: '1 1 240px', minWidth: 240 }}>
-                  <FormItemWithUnlimited
-                    name={'max_pending_session_count'}
-                    unlimitedValue={null}
+              <div style={{ flex: '1 1 240px', minWidth: 240 }}>
+                <FormItemWithUnlimited
+                  name={'max_pending_session_count'}
+                  unlimitedValue={null}
+                  label={t('resourcePolicy.MaxPendingSessionCount')}
+                  style={{ margin: 0, width: '100%' }}
+                >
+                  <AstryxFormNumberInput
                     label={t('resourcePolicy.MaxPendingSessionCount')}
-                    style={{ margin: 0, width: '100%' }}
-                  >
-                    <AstryxFormNumberInput
-                      label={t('resourcePolicy.MaxPendingSessionCount')}
-                      min={0}
-                      max={SIGNED_32BIT_MAX_INT}
-                    />
-                  </FormItemWithUnlimited>
-                </div>
-              ) : null}
+                    min={0}
+                    max={SIGNED_32BIT_MAX_INT}
+                  />
+                </FormItemWithUnlimited>
+              </div>
               <div style={{ flex: '1 1 240px', minWidth: 240 }}>
                 <FormItemWithUnlimited
                   name={'max_concurrent_sessions'}

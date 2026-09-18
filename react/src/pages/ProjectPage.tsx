@@ -84,9 +84,8 @@ const ProjectPage = () => {
   const baiClient = useSuspendedBackendaiClient();
   // RoleFilter.mappedScope (the role lookup this action relies on) exists
   // from manager 26.8.0; hide the action on older managers.
-  const supportsProjectAdminSetting = baiClient.supports(
-    'role-mapped-scope-filter',
-  );
+  const supportsProjectAdminSetting =
+    baiClient.isManagerVersionCompatibleWith('26.8.0');
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(

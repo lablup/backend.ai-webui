@@ -32,7 +32,7 @@ export const useVirtualFolderPath = (
         cur_size
         cloneable
         status
-        permissions @since(version: "24.09.0")
+        permissions
       }
     `,
     vfolderNodeFrgmt,

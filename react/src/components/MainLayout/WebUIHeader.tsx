@@ -110,18 +110,13 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
         gap="xxs"
         align="center"
       >
-        {baiClient.supports('extend-login-session') &&
-          baiClient._config.enableExtendLoginSession && (
-            <Suspense>
-              <LoginSessionExtendButton data-testid="button-extend-login-session" />
-              {/* PILOT-DECISION: the antd `Divider orientation="vertical"`
-                  here was painted `borderColor: 'transparent'` — i.e. it was
-                  a SPACER, not a rule. Astryx `Divider` has no colour prop
-                  (closed enums, P5), so the spacer is expressed as spacing
-                  instead of a hidden rule. */}
-              {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
-            </Suspense>
-          )}
+        {baiClient._config.enableExtendLoginSession && (
+          <Suspense>
+            <LoginSessionExtendButton data-testid="button-extend-login-session" />
+            {/* A spacer, not a rule: the legacy divider was transparent. */}
+            {gridBreakpoint.md && <span style={{ width: token.marginXS }} />}
+          </Suspense>
+        )}
         {/* Same self-scoping reason as `BAINotificationButton` below: both own
             floating surfaces, so neither may sit inside a `MediaTheme`. */}
         <GlobalSearchPaletteButton data-testid="button-global-search" />

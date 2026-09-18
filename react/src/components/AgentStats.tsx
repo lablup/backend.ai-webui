@@ -58,7 +58,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
     graphql`
       fragment AgentStatsFragment on Query
       @refetchable(queryName: "AgentStatsRefetchQuery") {
-        agentStats @since(version: "25.15.0") {
+        agentStats {
           totalResource {
             free
             used

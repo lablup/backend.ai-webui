@@ -66,7 +66,6 @@ const CustomizedImageList: React.FC = () => {
       query CustomizedImageListQuery {
         customized_images {
           id
-          name @deprecatedSince(version: "24.12.0")
           humanized_name
           tag
           registry
@@ -77,13 +76,13 @@ const CustomizedImageList: React.FC = () => {
             value
           }
           supported_accelerators
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
+          namespace
+          base_image_name
+          tags {
             key
             value
           }
-          version @since(version: "24.12.0")
+          version
           ...AliasedImageDoubleTagsFragment
         }
       }

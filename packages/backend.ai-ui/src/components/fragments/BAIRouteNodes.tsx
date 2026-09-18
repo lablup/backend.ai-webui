@@ -23,7 +23,6 @@ import {
   BAITable,
   BAITableProps,
 } from '../Table';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -97,15 +96,13 @@ const BAIRouteNodes = ({
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
   const semanticColorMap = useSemanticColorMap();
-  const baiClient = useConnectedBAIClient();
-  const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
 
   const routes = useFragment<BAIRouteNodesFragment$key>(
     graphql`
       fragment BAIRouteNodesFragment on Route @relay(plural: true) {
         id
         status
-        healthStatus @since(version: "26.4.0")
+        healthStatus
         trafficRatio
         createdAt
         errorData
@@ -196,26 +193,24 @@ const BAIRouteNodes = ({
           </BAIFlex>
         ),
       },
-      isSupportRouteHealthStatus
-        ? {
-            title: t('comp:BAIRouteNodes.HealthStatus'),
-            dataIndex: 'healthStatus',
-            key: 'healthStatus',
-            render: (healthStatus) =>
-              healthStatus && healthStatus !== '%future added value' ? (
-                <BAITag
-                  color={
-                    semanticColorMap[
-                      routeHealthStatusSemanticMap[healthStatus] ?? 'default'
-                    ]
-                  }
-                  style={{ marginRight: 0 }}
-                >
-                  {healthStatus}
-                </BAITag>
-              ) : null,
-          }
-        : undefined,
+      {
+        title: t('comp:BAIRouteNodes.HealthStatus'),
+        dataIndex: 'healthStatus',
+        key: 'healthStatus',
+        render: (healthStatus) =>
+          healthStatus && healthStatus !== '%future added value' ? (
+            <BAITag
+              color={
+                semanticColorMap[
+                  routeHealthStatusSemanticMap[healthStatus] ?? 'default'
+                ]
+              }
+              style={{ marginRight: 0 }}
+            >
+              {healthStatus}
+            </BAITag>
+          ) : null,
+      },
       // TODO(needs-backend): Unhide when backend interaction for traffic status is supported (FR-2591)
       // {
       //   title: t('comp:BAIRouteNodes.TrafficStatus'),

@@ -678,9 +678,10 @@ const AdminComputeSessionListPage = () => {
                       _.assign(
                         csvFilter,
                         buildSessionExportFilter(queryParams.filter, {
-                          supportsUserFilter: baiClient.supports(
-                            'session-export-user-filter',
-                          ),
+                          supportsUserFilter:
+                            baiClient.isManagerVersionCompatibleWith(
+                              '26.4.4rc9',
+                            ),
                         }),
                       );
                       await exportCSV(selectedExportKeys, csvFilter).catch(

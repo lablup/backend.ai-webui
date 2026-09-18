@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9246471cf6c0a31317078c7273c3e60b>>
+ * @generated SignedSource<<2ccec4ac990f027abbf2ffd7c97eb133>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -106,16 +106,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ae75c283d1803be0e160390a438f1ef0",
+    "cacheID": "7e7b82b2a12891405f7f408c9e006c63",
     "id": null,
     "metadata": {},
     "name": "KeypairInfoModalQuery",
     "operationKind": "query",
-    "text": "query KeypairInfoModalQuery(\n  $domain_name: String\n  $email: String\n) {\n  user(domain_name: $domain_name, email: $email) {\n    main_access_key @since(version: \"24.03.0\")\n    id\n  }\n}\n"
+    "text": "query KeypairInfoModalQuery(\n  $domain_name: String\n  $email: String\n) {\n  user(domain_name: $domain_name, email: $email) {\n    main_access_key\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4e1858d8f369f238aa329976b4678e7b";
+(node as any).hash = "03ab73a9934cfbc7eda316ddd63bb761";
 
 export default node;

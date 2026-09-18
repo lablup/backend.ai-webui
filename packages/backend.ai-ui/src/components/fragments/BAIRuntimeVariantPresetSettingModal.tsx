@@ -139,12 +139,10 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
   const { logger } = useBAILogger();
   const [form] = Form.useForm<RuntimeVariantPresetFormValues>();
   const baiClient = useConnectedBAIClient();
-  const isRequiredSupported = baiClient.supports(
-    'runtime-variant-preset-required',
-  );
-  const isUIMetadataSupported = baiClient.supports(
-    'runtime-variant-preset-ui-metadata',
-  );
+  const isRequiredSupported =
+    baiClient.isManagerVersionCompatibleWith('26.4.4rc9');
+  const isUIMetadataSupported =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
 
   const preset = useFragment(
     graphql`

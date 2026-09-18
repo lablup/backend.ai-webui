@@ -9,7 +9,7 @@ import {
 } from '../__generated__/PendingSessionNodeListQuery.graphql';
 import { Form } from '../form-engine';
 import { handleRowSelectionChange } from '../helper';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
@@ -45,13 +45,6 @@ const PendingSessionNodeList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const baiClient = useSuspendedBackendaiClient();
-  // Editing priority is only safe on managers that sequence all pending
-  // workloads in a single scheduling tick (BA-6788, backend.ai#12668,
-  // shipped in 26.4). On older managers, lowering a priority could hide
-  // the session from scheduling passes, so hide the priority UI entirely.
-  const enablePriorityEditing =
-    baiClient.isManagerVersionCompatibleWith('26.4.0');
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [selectedResourceGroup, setSelectedResourceGroup] = useQueryState(
     'resourceGroup',
@@ -166,7 +159,7 @@ const PendingSessionNodeList: React.FC = () => {
           />
         </Form.Item>
         <BAIFlex gap="xs">
-          {enablePriorityEditing && selectedSessionList.length > 0 && (
+          {selectedSessionList.length > 0 && (
             <>
               <BAISelectionLabel
                 count={selectedSessionList.length}
@@ -203,31 +196,27 @@ const PendingSessionNodeList: React.FC = () => {
 
       <SessionNodes
         disableSorter
-        enablePriorityColumn={enablePriorityEditing}
-        rowSelection={
-          enablePriorityEditing
-            ? {
-                type: 'checkbox',
-                preserveSelectedRowKeys: true,
-                getCheckboxProps(record) {
-                  // Priority is only editable while the session is PENDING.
-                  return {
-                    disabled: record.status !== 'PENDING',
-                  };
-                },
-                onChange: (selectedRowKeys) => {
-                  handleRowSelectionChange(
-                    selectedRowKeys,
-                    filterOutNullAndUndefined(
-                      session_pending_queue?.edges.map((e) => e?.node),
-                    ),
-                    setSelectedSessionList,
-                  );
-                },
-                selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
-              }
-            : undefined
-        }
+        enablePriorityColumn
+        rowSelection={{
+          type: 'checkbox',
+          preserveSelectedRowKeys: true,
+          getCheckboxProps(record) {
+            // Priority is only editable while the session is PENDING.
+            return {
+              disabled: record.status !== 'PENDING',
+            };
+          },
+          onChange: (selectedRowKeys) => {
+            handleRowSelectionChange(
+              selectedRowKeys,
+              filterOutNullAndUndefined(
+                session_pending_queue?.edges.map((e) => e?.node),
+              ),
+              setSelectedSessionList,
+            );
+          },
+          selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
+        }}
         onClickSessionName={(session) => {
           // Set sessionDetailDrawerFrgmt in location state via webUINavigate
           // instead of directly setting sessionDetailId query param

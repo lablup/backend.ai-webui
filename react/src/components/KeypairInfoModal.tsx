@@ -42,7 +42,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         resource_policy
         num_queries
         rate_limit
-        concurrency_used @since(version: "24.09.0")
+        concurrency_used
       }
     `,
     keypairInfoModalFrgmt,
@@ -53,7 +53,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
     graphql`
       query KeypairInfoModalQuery($domain_name: String, $email: String) {
         user(domain_name: $domain_name, email: $email) {
-          main_access_key @since(version: "24.03.0")
+          main_access_key
         }
       }
     `,

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<83cdc56233962d6d9df4a6d627ff733b>>
+ * @generated SignedSource<<ce6985a67ec090d718a51ec8da89245f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,7 +37,6 @@ export type ImageListQuery$data = {
           readonly key: string | null | undefined;
           readonly value: string | null | undefined;
         } | null | undefined> | null | undefined;
-        readonly name: string | null | undefined;
         readonly namespace: string | null | undefined;
         readonly registry: string | null | undefined;
         readonly resource_limits: ReadonlyArray<{
@@ -139,53 +138,46 @@ v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "tag",
   "storageKey": null
 },
 v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "tag",
+  "name": "registry",
   "storageKey": null
 },
 v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "registry",
+  "name": "architecture",
   "storageKey": null
 },
 v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "architecture",
+  "name": "digest",
   "storageKey": null
 },
 v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "digest",
+  "name": "installed",
   "storageKey": null
 },
 v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "installed",
-  "storageKey": null
-},
-v14 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "key",
   "storageKey": null
 },
-v15 = [
-  (v14/*: any*/),
+v14 = [
+  (v13/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -194,24 +186,24 @@ v15 = [
     "storageKey": null
   }
 ],
-v16 = {
+v15 = {
   "alias": null,
   "args": null,
   "concreteType": "KVPair",
   "kind": "LinkedField",
   "name": "labels",
   "plural": true,
-  "selections": (v15/*: any*/),
+  "selections": (v14/*: any*/),
   "storageKey": null
 },
-v17 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "humanized_name",
   "storageKey": null
 },
-v18 = {
+v17 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceLimit",
@@ -219,7 +211,7 @@ v18 = {
   "name": "resource_limits",
   "plural": true,
   "selections": [
-    (v14/*: any*/),
+    (v13/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -237,80 +229,80 @@ v18 = {
   ],
   "storageKey": null
 },
-v19 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "namespace",
   "storageKey": null
 },
-v20 = {
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "base_image_name",
   "storageKey": null
 },
-v21 = {
+v20 = {
   "alias": null,
   "args": null,
   "concreteType": "KVPair",
   "kind": "LinkedField",
   "name": "tags",
   "plural": true,
-  "selections": (v15/*: any*/),
+  "selections": (v14/*: any*/),
   "storageKey": null
 },
-v22 = {
+v21 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "version",
   "storageKey": null
 },
-v23 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "size_bytes",
   "storageKey": null
 },
-v24 = {
+v23 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "is_local",
   "storageKey": null
 },
-v25 = {
+v24 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "supported_accelerators",
   "storageKey": null
 },
-v26 = {
+v25 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v27 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v28 = {
+v27 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "aliases",
   "storageKey": null
 },
-v29 = {
+v28 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -369,7 +361,7 @@ return {
                       (v10/*: any*/),
                       (v11/*: any*/),
                       (v12/*: any*/),
-                      (v13/*: any*/),
+                      (v15/*: any*/),
                       (v16/*: any*/),
                       (v17/*: any*/),
                       (v18/*: any*/),
@@ -382,7 +374,6 @@ return {
                       (v25/*: any*/),
                       (v26/*: any*/),
                       (v27/*: any*/),
-                      (v28/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
@@ -408,7 +399,7 @@ return {
             },
             "action": "THROW"
           },
-          (v29/*: any*/)
+          (v28/*: any*/)
         ],
         "storageKey": null
       }
@@ -459,7 +450,7 @@ return {
                   (v10/*: any*/),
                   (v11/*: any*/),
                   (v12/*: any*/),
-                  (v13/*: any*/),
+                  (v15/*: any*/),
                   (v16/*: any*/),
                   (v17/*: any*/),
                   (v18/*: any*/),
@@ -471,33 +462,30 @@ return {
                   (v24/*: any*/),
                   (v25/*: any*/),
                   (v26/*: any*/),
-                  (v27/*: any*/),
-                  (v28/*: any*/),
-                  (v21/*: any*/),
-                  (v19/*: any*/)
+                  (v27/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v29/*: any*/)
+          (v28/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "50b55236fe496973684f06099be07c68",
+    "cacheID": "43a7b57b5159deddbbc9cc797b87bb6b",
     "id": null,
     "metadata": {},
     "name": "ImageListQuery",
     "operationKind": "query",
-    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n"
+    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  namespace\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  namespace\n  architecture\n  tag\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2bf0431c6359bef2d43f98c8eaa14462";
+(node as any).hash = "ac4ba43eee2151cc38bf50eabd64d170";
 
 export default node;

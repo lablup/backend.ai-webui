@@ -247,12 +247,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   const { token } = theme.useToken();
   const screens = useBAIBreakpoint();
   const baiClient = useSuspendedBackendaiClient();
-  // BA-7210 / FR-3481: managers this version+ resolve an omitted model
-  // name/modelPath from the runtime variant baseline / model mount
-  // destination at revision resolution, so the form can stop requiring them.
-  const supportsNullableModelDefinition = baiClient.supports(
-    'preset-model-config-type',
-  );
+  // BA-7210 / FR-3481: newer managers resolve an omitted model name/modelPath,
+  // so the form can stop requiring them.
+  const supportsNullableModelDefinition =
+    baiClient.isManagerVersionCompatibleWith('26.9.0');
   const commonEnvVars = useCommonEnvVarConfigs();
 
   const preset = useFragment(
@@ -947,7 +945,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {/* Service Configuration (port, command, shell) — shown only when
                 the selected runtime variant reads vfolder config files
                 (custom) AND the manager supports submitting it independently
-                of Model Definition (26.9.0+, `preset-model-config-type`).
+                of Model Definition (manager 26.9.0+).
                 Legacy managers require a real name/modelPath alongside any
                 service data (`PresetModelConfigInput.name`/`modelPath` were
                 required, non-empty strings pre-BA-7210) — showing this here
