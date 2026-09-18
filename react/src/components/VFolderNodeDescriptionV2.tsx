@@ -16,6 +16,7 @@
 import { VFolderNodeDescriptionV2Fragment$key } from '../__generated__/VFolderNodeDescriptionV2Fragment.graphql';
 import { VFolderNodeDescriptionV2PermissionRefreshQuery } from '../__generated__/VFolderNodeDescriptionV2PermissionRefreshQuery.graphql';
 import { App } from '../app-shim';
+import { mountPermissionFromV2 } from '../helper/vfolderMountPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -125,18 +126,14 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const vfolderId = toLocalId(vfolderNode.id);
 
-  // V2 `VFolderMountPermission` enum → legacy REST permission string mapping
-  // for the `<Selector/>` below. READ_ONLY → 'ro', READ_WRITE/RW_DELETE → 'rw'.
-  // NOTE: `accessControl.permission` is the *mount* permission (how this folder
-  // would be mounted into a session), not the caller's operational rights on
-  // the folder. When the value is null/undefined we fall back to 'ro' so that
-  // users without an explicit permission do not see a misleading read-write
-  // default. See FR-2619 follow-up for a proper permission set.
-  const currentSelectPermission =
-    vfolderNode.accessControl?.permission === 'READ_WRITE' ||
-    vfolderNode.accessControl?.permission === 'RW_DELETE'
-      ? 'rw'
-      : 'ro';
+  // `accessControl.permission` is the folder's DEFAULT mount level, which the
+  // selector below sets through the legacy REST endpoint. NONE (a personal
+  // folder's default since backend.ai#14679) is not offered, so it shows no
+  // selection rather than a misleading "Read only". See FR-3988.
+  const currentSelectPermission = (() => {
+    const level = mountPermissionFromV2(vfolderNode.accessControl?.permission);
+    return level === 'none' ? undefined : (level ?? undefined);
+  })();
   // The value the user just picked, shown until the update and the store
   // refresh land (or the update fails and the server value returns).
   const [pendingPermission, setPendingPermission] = useState<string | null>(
