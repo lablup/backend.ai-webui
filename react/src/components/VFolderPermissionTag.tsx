@@ -6,6 +6,7 @@ import { VFolderPermissionTag_VFolder$key } from '../__generated__/VFolderPermis
 import { BAIDoubleTag, DoubleTagObjectValue } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 const hasPermission = (permission: string | undefined, perm: string) => {
@@ -32,6 +33,7 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
   vFolderFrgmt = null,
   permission,
 }) => {
+  const { t } = useTranslation();
   const vFolder = useFragment(
     graphql`
       fragment VFolderPermissionTag_VFolder on VirtualFolder {
@@ -40,6 +42,11 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
     `,
     vFolderFrgmt,
   );
+  const resolvedPermission = vFolder?.permission || permission;
+  // 'none' (or the legacy field's null) means the folder mounts to nobody.
+  if (!resolvedPermission || resolvedPermission === 'none') {
+    return <BAIDoubleTag values={[{ label: t('data.NotMountable') }]} />;
+  }
   const tagValues: DoubleTagObjectValue[] = _.compact(
     _.map(
       {
@@ -48,7 +55,7 @@ const VFolderPermissionTag: React.FC<VFolderPermissionTagProps> = ({
         d: 'red',
       },
       (color, perm) => {
-        if (hasPermission(vFolder?.permission || permission, perm)) {
+        if (hasPermission(resolvedPermission, perm)) {
           return {
             label: perm.toUpperCase(),
             color,

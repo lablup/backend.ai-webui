@@ -257,8 +257,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [allFolderList, currentProject.id]);
 
   const mountableFoldersByPermission = useMemo(() => {
-    return accessibleFoldersByCurrentProject.filter((folder) =>
-      mountableVolumesByPermission.includes(folder.host),
+    return accessibleFoldersByCurrentProject.filter(
+      (folder) =>
+        mountableVolumesByPermission.includes(folder.host) &&
+        // `permission` is the caller's effective mount level; the manager
+        // refuses to mount a folder at 'none' (backend.ai#14679).
+        folder.permission !== 'none',
     );
   }, [accessibleFoldersByCurrentProject, mountableVolumesByPermission]);
 

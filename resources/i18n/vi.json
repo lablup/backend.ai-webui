@@ -828,6 +828,7 @@
     "NewFolderName": "Tên thư mục mới",
     "NoStorageDescriptionFound": "Không có mô tả.",
     "NotInProject": "Thư mục này thuộc dự án '{{ projectName }}'.",
+    "NotMountable": "Không thể gắn",
     "NumberOfFolders": "Số lượng thư mục",
     "Permission": "Sự cho phép",
     "Pipeline": "Thư mục đường ống",

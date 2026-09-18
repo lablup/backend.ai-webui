@@ -828,6 +828,7 @@
     "NewFolderName": "Nama folder baru",
     "NoStorageDescriptionFound": "Tidak ada deskripsi.",
     "NotInProject": "Folder ini milik proyek '{{ projectName }}'.",
+    "NotMountable": "Tidak dapat dipasang",
     "NumberOfFolders": "Jumlah folder",
     "Permission": "Izin",
     "Pipeline": "Folder Pipa",

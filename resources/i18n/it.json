@@ -828,6 +828,7 @@
     "NewFolderName": "Nuovo nome della cartella",
     "NoStorageDescriptionFound": "Nessuna descrizione.",
     "NotInProject": "Questa cartella appartiene al progetto '{{ projectName }}'.",
+    "NotMountable": "Non montabile",
     "NumberOfFolders": "Numero di cartelle",
     "Permission": "Autorizzazione",
     "Pipeline": "Cartelle della pipeline",

@@ -17574,6 +17574,11 @@ type Query
   """Added in 26.4.2. Get a single virtual folder by ID."""
   vfolderV2(vfolderId: UUID!): VFolder @join__field(graph: STRAWBERRY)
 
+  """
+  Added in 26.9.0. The mount levels set on a virtual folder, one row per user.
+  """
+  vfolderMountPolicies(vfolderId: UUID!): VFolderMountPoliciesPayload @join__field(graph: STRAWBERRY)
+
   """Added in 26.4.2. List virtual folders within a specific project."""
   projectVfolders(projectId: UUID!, filter: VFolderFilter = null, orderBy: [VFolderOrderBy!] = null, before: String = null, after: String = null, first: Int = null, last: Int = null, limit: Int = null, offset: Int = null): VFolderConnection @join__field(graph: STRAWBERRY)
 
