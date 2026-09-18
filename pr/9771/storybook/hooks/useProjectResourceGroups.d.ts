@@ -36,17 +36,17 @@ interface UseProjectResourceGroupsOptions {
      */
     filter?: (resourceGroupName: string) => boolean;
     /**
-     * Keep the SFTP-designated resource groups in the result. Only a system
-     * (SSH/SFTP) session can actually run in one, so this stays off everywhere
-     * else (FR-3996).
+     * Keep the SFTP-designated resource groups in the result. They are reserved
+     * for SSH/SFTP system sessions, so every other surface leaves this off
+     * (FR-3996).
      */
     includeSFTPResourceGroups?: boolean;
 }
 /**
  * The option list rule, kept pure so it can be exercised without a client:
  * drop the resource groups any volume has designated for SFTP, then apply the
- * caller's own filter. `includeSFTPResourceGroups` keeps the SFTP ones —
- * a system (SSH/SFTP) session is the only thing that runs in one (FR-3996).
+ * caller's own filter. `includeSFTPResourceGroups` keeps the SFTP ones, for
+ * the SSH/SFTP system-session surfaces they are reserved for (FR-3996).
  */
 export declare const selectProjectResourceGroups: (scalingGroups: ScalingGroupItem[], volumeInfo: StorageHostsResponse["volume_info"] | undefined, options?: UseProjectResourceGroupsOptions) => ScalingGroupItem[];
 /**
