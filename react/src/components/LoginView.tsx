@@ -277,7 +277,9 @@ const LoginView: React.FC<{
     webServerProbe.isWebServer;
 
   useEffect(() => {
-    if (!normalizedEndpoint) return;
+    // Only the login panel renders the switch this answers for, so a signed-in
+    // page has no use for the answer and does not ask.
+    if (!isLoginPanelOpen || !normalizedEndpoint) return;
     let cancelled = false;
     // The field reports every keystroke, so settle before asking the network.
     const timer = setTimeout(() => {
@@ -293,7 +295,7 @@ const LoginView: React.FC<{
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [normalizedEndpoint]);
+  }, [isLoginPanelOpen, normalizedEndpoint]);
 
   // Sync apiEndpoint state changes to the form field.
   // Ant Design's initialValues only applies on first render, so subsequent
