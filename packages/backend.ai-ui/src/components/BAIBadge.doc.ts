@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A coloured status dot with a label beside it — the shape antd `Badge status={…} text={…}` produced. It renders an Astryx `StatusDot` for the dot plus a sibling `Text` for the visible label, because `StatusDot` alone paints only the dot and treats its own `label` as the accessible name. The `color` prop takes a BUI `SemanticColor` (`success` / `info` / `warning` / `error` / `default`) rather than a raw hue, so every status in the app maps onto the same five-way vocabulary; omitting it renders an outline-only dot for an unknown or indeterminate state. Specialised badges such as `BAISchedulingResultBadge`, `BAIAuditLogStatusTag` and `StorageUsageBadge` are built on it by fixing `color` and `text`.',
+      'A coloured status dot with a label beside it — the shape antd `Badge status={…} text={…}` produced. It renders an Astryx `StatusDot` for the dot plus a sibling `Text` for the visible label, because `StatusDot` alone paints only the dot and treats its own `label` as the accessible name. The `color` prop takes a BUI `SemanticColor` (`success` / `info` / `warning` / `error` / `default`) rather than a raw hue, so every status in the app maps onto the same five-way vocabulary; omitting it renders an outline-only dot for an unknown or indeterminate state. Specialised badges such as `BAISchedulingResultBadge`, `BAIAuditLogStatusBadge` and `StorageUsageBadge` are built on it by fixing `color` and `text`.',
     bestPractices: [
       {
         guidance: true,

@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "選擇預設"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "另有 {{rest}} 項"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降級",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "測試"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "另有 {{rest}} 項"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "創建於",

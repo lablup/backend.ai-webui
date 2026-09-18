@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<da10c7e632d4e5cbd3d8dccd94bf2bf9>>
+ * @generated SignedSource<<cb54c80649ad43aeb64eeb325bc71b72>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type BAIArtifactRevisionTableArtifactRevisionFragment$data = ReadonlyArra
   readonly status: ArtifactStatus;
   readonly updatedAt: string | null | undefined;
   readonly version: string;
-  readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDeleteButtonFragment" | "BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusTagFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDeleteButtonFragment" | "BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusBadgeFragment">;
   readonly " $fragmentType": "BAIArtifactRevisionTableArtifactRevisionFragment";
 }>;
 export type BAIArtifactRevisionTableArtifactRevisionFragment$key = ReadonlyArray<{
@@ -71,7 +71,7 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "BAIArtifactStatusTagFragment"
+      "name": "BAIArtifactStatusBadgeFragment"
     },
     {
       "args": null,
@@ -88,6 +88,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "158ee46c42cc9ac1a45a9f1d359de5db";
+(node as any).hash = "4b886a8f1069332114e0162802fc049f";
 
 export default node;

@@ -8,16 +8,16 @@ import LegacyRolePermissionTab from './LegacyRolePermissionTab';
 import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
-import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIMetadataList,
   BAISkeleton,
-  badgeVariantForStatus,
-  badgeVariantForTagColor,
   toLocalId,
+  tokenColorForTagColor,
+  tokenColorForStatus,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
@@ -75,18 +75,16 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
       <BAICard>
         <BAIMetadataList columns={2} label={{ position: 'start', width: 160 }}>
           <MetadataListItem label={t('rbac.Source')}>
-            {/* Tag -> Badge through the repo-global lookup (ticket 13); no
-                per-file colour map. */}
-            <Badge
-              variant={badgeVariantForStatus('role', role.source ?? undefined)}
+            <Token
+              color={tokenColorForStatus('role', role.source ?? undefined)}
               label={
                 role.source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')
               }
             />
           </MetadataListItem>
           <MetadataListItem label={t('rbac.Status')}>
-            <Badge
-              variant={badgeVariantForStatus('role', role.status ?? undefined)}
+            <Token
+              color={tokenColorForStatus('role', role.status ?? undefined)}
               label={
                 role.status === 'ACTIVE' ? t('rbac.Active') : t('rbac.Inactive')
               }
@@ -104,8 +102,8 @@ const RoleDetailDrawerContent: React.FC<RoleDetailDrawerContentProps> = ({
           </MetadataListItem>
           {supportsAutoAssign ? (
             <MetadataListItem label={t('rbac.AutoAssign')}>
-              <Badge
-                variant={badgeVariantForTagColor(
+              <Token
+                color={tokenColorForTagColor(
                   role.autoAssign ? 'green' : 'default',
                 )}
                 label={

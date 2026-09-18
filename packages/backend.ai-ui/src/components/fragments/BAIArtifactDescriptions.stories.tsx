@@ -11,7 +11,7 @@ import { MemoryRouter } from 'react-router-dom';
  *
  * Key features:
  * - Shows artifact name, type, source, and description
- * - Artifact type displayed with BAIArtifactTypeTag
+ * - Artifact type displayed with BAIArtifactTypeToken
  * - Source as clickable link
  * - Displays "N/A" for empty descriptions
  *

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c0cd2f598740cec2d90f4da040cf7100>>
+ * @generated SignedSource<<c9f2441eaac4e7ed1d7421bd96edc3a7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -124,12 +124,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "227d7d6583def5b3e67a21e59862ef97",
+    "cacheID": "bd8126378fa1d702c7ecfd87b197266a",
     "id": null,
     "metadata": {},
     "name": "BAIArtifactDescriptionsStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIArtifactDescriptionsStoriesQuery {\n  artifact(id: \"test-id\") {\n    ...BAIArtifactDescriptionsFragment\n    id\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n}\n\nfragment BAIArtifactTypeTagFragment on Artifact {\n  type\n}\n"
+    "text": "query BAIArtifactDescriptionsStoriesQuery {\n  artifact(id: \"test-id\") {\n    ...BAIArtifactDescriptionsFragment\n    id\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n"
   }
 };
 })();

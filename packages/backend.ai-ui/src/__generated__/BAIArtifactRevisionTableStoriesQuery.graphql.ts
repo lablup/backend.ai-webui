@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<95d971bbc1e8e67e6728dc048c7a7347>>
+ * @generated SignedSource<<05b54c02ef205677cfbf82b24f5ca94d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -297,12 +297,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "280a372f093b2e970e9fa51c09e21ed2",
+    "cacheID": "71987b8f9a83a0e6c2c99b50af2f685f",
     "id": null,
     "metadata": {},
     "name": "BAIArtifactRevisionTableStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIArtifactRevisionTableStoriesQuery {\n  artifact(id: \"artifact-1\") {\n    revisions(limit: 100, offset: 0) {\n      edges {\n        node {\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusTagFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusTagFragment on ArtifactRevision {\n  status\n}\n"
+    "text": "query BAIArtifactRevisionTableStoriesQuery {\n  artifact(id: \"artifact-1\") {\n    revisions(limit: 100, offset: 0) {\n      edges {\n        node {\n          ...BAIArtifactRevisionTableArtifactRevisionFragment\n          id\n        }\n      }\n    }\n    latestVersion: revisions(limit: 1, orderBy: [{field: VERSION, direction: DESC}, {field: UPDATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          ...BAIArtifactRevisionTableLatestRevisionFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment BAIArtifactRevisionDeleteButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision {\n  status\n}\n\nfragment BAIArtifactRevisionTableArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n  updatedAt\n  ...BAIArtifactStatusBadgeFragment\n  ...BAIArtifactRevisionDownloadButtonFragment\n  ...BAIArtifactRevisionDeleteButtonFragment\n}\n\nfragment BAIArtifactRevisionTableLatestRevisionFragment on ArtifactRevision {\n  id\n}\n\nfragment BAIArtifactStatusBadgeFragment on ArtifactRevision {\n  status\n}\n"
   }
 };
 })();

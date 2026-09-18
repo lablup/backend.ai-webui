@@ -6,7 +6,7 @@ import { SessionReservationFragment$key } from '../../__generated__/SessionReser
 import { formatDurationAsDays } from '../../helper';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIDoubleTag, BAIIntervalView } from 'backend.ai-ui';
+import { BAIDoubleBadge, BAIIntervalView } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -48,7 +48,7 @@ const SessionReservation: React.FC<{
               <Text>{intervalValue}</Text>
             </Tooltip>
           ) : (
-            <BAIDoubleTag
+            <BAIDoubleBadge
               values={[
                 { label: t('session.ElapsedTime') },
                 { label: intervalValue },

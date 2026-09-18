@@ -5,9 +5,9 @@
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Spinner } from '@astryxdesign/core/Spinner';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -162,9 +162,8 @@ const UserInfoModal: React.FC<Props> = ({
             <BAIFlex gap="xs" wrap="wrap">
               {_.map(user?.projects?.edges, (edge) => {
                 return (
-                  <Badge
+                  <Token
                     key={edge?.node?.id}
-                    variant="neutral"
                     label={edge?.node?.basicInfo.name}
                   />
                 );

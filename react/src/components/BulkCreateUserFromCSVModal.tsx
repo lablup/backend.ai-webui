@@ -44,12 +44,12 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { FileInput } from '@astryxdesign/core/FileInput';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
@@ -64,10 +64,10 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  badgeVariantForTagColor,
   filterOutNullAndUndefined,
   useBAILogger,
   useBAISignedRequestWithPromise,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -1400,9 +1400,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     {t('credential.IssuesFound')}
                   </Text>
                   {errorCategories.map((cat) => (
-                    <Badge
+                    <Token
                       key={cat.key}
-                      variant={badgeVariantForTagColor('error')}
+                      color={tokenColorForTagColor('error')}
                       label={`${cat.label} · ${cat.count}`}
                     />
                   ))}

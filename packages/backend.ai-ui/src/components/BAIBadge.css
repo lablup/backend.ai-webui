@@ -13,7 +13,7 @@
 
  2. `.bai-badge-dot--unknown` preserves a SEMANTIC state, not a look.
     `BAIBadge` distinguishes "this status is known and is X" (filled dot) from
-    "the status is unknown / indeterminate" (outline dot) — `BAIAuditLogStatusTag`
+    "the status is unknown / indeterminate" (outline dot) — `BAIAuditLogStatusBadge`
     maps `UNKNOWN` onto it, `StorageUsageBadge` uses it for a missing percent.
     Astryx `StatusDot`'s variant enum (`success|warning|error|accent|neutral`)
     has no outline member, so collapsing to `neutral` would make "unknown" and

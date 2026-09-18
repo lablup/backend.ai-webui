@@ -3,12 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Link } from '@astryxdesign/core/Link';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
-  badgeVariantForTagColor,
   BAICard,
   BAIFlex,
   BAIText,
@@ -154,20 +153,8 @@ const HuggingFaceModelPreview: React.FC<HuggingFaceModelPreviewProps> = ({
       <BAIFlex direction="column" align="stretch" gap="xs">
         {(data.pipeline_tag || data.library_name) && (
           <BAIFlex gap="xxs" wrap="wrap">
-            {/* antd `Tag` with no `color` → Astryx `Badge` through the
-                repo-global lookup (ticket 13); never a hand-picked hue. */}
-            {data.pipeline_tag && (
-              <Badge
-                label={data.pipeline_tag}
-                variant={badgeVariantForTagColor(undefined)}
-              />
-            )}
-            {data.library_name && (
-              <Badge
-                label={data.library_name}
-                variant={badgeVariantForTagColor(undefined)}
-              />
-            )}
+            {data.pipeline_tag && <Token label={data.pipeline_tag} />}
+            {data.library_name && <Token label={data.library_name} />}
           </BAIFlex>
         )}
         <BAIFlex gap="md" wrap="wrap">

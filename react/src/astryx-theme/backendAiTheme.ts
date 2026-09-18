@@ -694,6 +694,96 @@ const COMMAND_PALETTE_ROW_OVERLAYS = {
  * genuinely long menu on screen.
  */
 /**
+ * Outlined `Token`: no fill, a 1px outline in the token's own colour.
+ * Token zeroes its border and sets its fill through StyleX atoms that outrank
+ * `@layer astryx-theme`, so the fill is removed by re-pointing the variable it
+ * reads and the outline is an inset shadow (Token declares no `box-shadow`).
+ */
+const TOKEN_OUTLINE_COLORS = [
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'teal',
+  'cyan',
+  'blue',
+  'purple',
+  'pink',
+  'gray',
+] as const;
+
+const TOKEN_OUTLINED = {
+  token: {
+    'color:default': {
+      '--color-neutral': 'transparent',
+      boxShadow:
+        'inset 0 0 0 var(--border-width) var(--color-border-emphasized)',
+    },
+    ...Object.fromEntries(
+      TOKEN_OUTLINE_COLORS.map((color) => [
+        `color:${color}`,
+        {
+          [`--color-background-${color}`]: 'transparent',
+          boxShadow: `inset 0 0 0 var(--border-width) var(--color-border-${color})`,
+        },
+      ]),
+    ),
+  },
+};
+
+/**
+ * Tinted `Badge`: a light fill, a 1px outline and dark text, all in one hue.
+ * The palette variants are already a light fill with dark text and only gain
+ * the outline. The solid semantic variants take the palette hue closest to
+ * their status colour: the base theme fills them with a `background-color` of
+ * its own in this layer, so the fill is declared directly, while the text is an
+ * atom and is reached through the variable it reads.
+ */
+const BADGE_SEMANTIC_HUES = {
+  info: ['--color-on-accent', 'blue'],
+  success: ['--color-on-success', 'teal'],
+  warning: ['--color-on-warning', 'yellow'],
+  error: ['--color-on-error', 'red'],
+  neutral: ['--color-text-primary', 'gray'],
+} as const;
+
+const BADGE_PALETTE_HUES = [
+  'blue',
+  'cyan',
+  'green',
+  'orange',
+  'pink',
+  'purple',
+  'red',
+  'teal',
+  'yellow',
+] as const;
+
+const badgeOutline = (hue: string) =>
+  `inset 0 0 0 var(--border-width) var(--color-border-${hue})`;
+
+const BADGE_TINTED = {
+  badge: {
+    ...Object.fromEntries(
+      Object.entries(BADGE_SEMANTIC_HUES).map(([variant, [text, hue]]) => [
+        `variant:${variant}`,
+        {
+          backgroundColor: `var(--color-background-${hue})`,
+          [text]: `var(--color-text-${hue})`,
+          boxShadow: badgeOutline(hue),
+        },
+      ]),
+    ),
+    ...Object.fromEntries(
+      BADGE_PALETTE_HUES.map((hue) => [
+        `variant:${hue}`,
+        { boxShadow: badgeOutline(hue) },
+      ]),
+    ),
+  },
+};
+
+/**
  * Pins the `ComplexSelector` field to the element-size ramp `Selector` uses.
  * Astryx 0.4.0 sized it `min-height` + padding (40px at md, vs `Selector`'s
  * 32px, so the two engines sat at different heights in one toolbar row); 0.4.3
@@ -1187,6 +1277,8 @@ export function buildBackendAiTheme(
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,
+      ...TOKEN_OUTLINED,
+      ...BADGE_TINTED,
       ...FIELD_PAGE_OVERLAYS,
       ...COMMAND_PALETTE_ROW_OVERLAYS,
       ...ANTD_HOVER_PARITY,

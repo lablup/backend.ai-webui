@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Ön ayar seçin"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "ve {{rest}} tane daha"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Bozulmuş",
     "Deploying": "Dağıtılıyor",
     "Healthy": "Sağlıklı",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "ve {{rest}} tane daha"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Oluşturulma Tarihi",

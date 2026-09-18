@@ -1,53 +1,23 @@
 /**
- * Repo-global antd `Tag color` → Astryx variant lookup (astryx migration
- * prefactor, ticket 13).
+ * The one colour lookup for Astryx `Badge` and `Token` (ADR 0007). The file
+ * name keeps "Tag" because its input vocabulary is the antd `Tag color` set.
  *
- * Page-group migration tickets convert `<Tag color={X}>` call sites to Astryx
- * `Badge` (read-only pill), `Token` (closable/removable pill) or `StatusDot`
- * by routing X through THIS module only. Do not invent per-page color maps —
- * 65 files each inventing their own is the failure mode this module prevents.
+ * Which primitive a value gets:
+ * - `Badge` — a value the system changes on its own over time: lifecycle and
+ *   health status, in-progress markers, Current/Latest pointers, live tickers,
+ *   counts. Colour: `badgeVariantForStatus` / `badgeVariantForTagColor`.
+ * - `Token` — a value that changes only when a user edits it, or a category
+ *   label: names, types, permissions, versions, tags, on/off settings,
+ *   recorded outcomes. Colour: `tokenColorForStatus` / `tokenColorForTagColor`.
  *
- * Astryx target vocabularies (closed enums, discovered via
- * `astryx component Badge|Token|StatusDot`, core 0.3.0):
- * - Badge.variant:  neutral | info | success | warning | error |
- *                   blue | cyan | green | orange | pink | purple | red | teal | yellow
- * - Token.color:    default | red | orange | yellow | green | teal | cyan |
- *                   blue | purple | pink | gray
- * - StatusDot.variant: success | warning | error | accent | neutral
- *
- * ## Unmapped-value policy (per value class, binding for tickets 15–24)
- *
- * 1. antd status presets (`success`/`processing`/`error`/`warning`/`default`)
- *    → same-name semantic variant; `processing` → `info` (Astryx has no
- *    processing variant; spinner icons stay at the call site).
- * 2. antd palette presets (`blue`, `green`, …) → same-hue variant. Hues Astryx
- *    does not have merge into the nearest neighbour: `geekblue`→`blue`,
- *    `gold`→`yellow`, `magenta`→`pink`, `volcano`→`orange`, `lime`→`green`.
- * 3. `*-inverse` presets → base hue. The filled/inverse emphasis axis does not
- *    exist on Astryx Badge and is DROPPED (defaults-first; MIGRATION-SPEC §0
- *    simplicity policy — do not rebuild it).
- * 4. Theme token refs (`token.colorPrimary` at 3 sites: main-access-key tags)
- *    → `PRIMARY_TAG_VARIANT` (brand hue as a named variant). Arbitrary theme
- *    routing is NOT supported; if the brand hue changes, update that one const.
- * 5. Arbitrary hex / CSS color names / runtime metadata strings (e.g. image
- *    metadata `label.color`, AgentList `lightblue`) → normalized against the
- *    preset table; anything still unknown DROPS to `neutral`/`default`.
- *    Arbitrary color values are inexpressible in Astryx's closed enums and are
- *    never routed through the theme layer.
- * 6. BUI `SemanticColor` (`success|info|warning|error|default`) values are
- *    accepted directly (`info`→`info`, `default`→`neutral`).
- *
- * Domain status maps below unify the per-file maps that exist today
- * (SessionStatusTag, BAISessionNodesV2, BAIDeploymentStatusTag, BAIRouteNodes,
- * ReplicaStatusTag, VFolderNodes(V2), BAILoginHistoryTable, AgentStatusTag,
- * ScopedRolePermissionCard, …). Where two legacy maps disagreed
- * (session PENDING: V1 `blue` vs V2 `default`) the newer V2 mapping wins and
- * the transitional hues are expressed with the semantic `info` variant, per
- * Astryx Badge guidance (loud semantic variants only for states needing
- * attention; quiet `neutral` for terminal/default states).
+ * Do not add per-file colour maps; extend the tables here. Input policy:
+ * antd status presets map to the same-name semantic variant (`processing` →
+ * `info`), palette presets to the nearest Astryx hue, `*-inverse` to its base
+ * hue, BUI `SemanticColor` directly (`default` → `neutral`); anything else —
+ * hex, unknown CSS names — drops to `neutral` / `default`.
  */
 
-/** Astryx `Badge` `variant` union (core 0.3.0). */
+/** Astryx `Badge` `variant` union (core 0.5.4). */
 export type AstryxBadgeVariant =
   | 'neutral'
   | 'info'
@@ -64,7 +34,7 @@ export type AstryxBadgeVariant =
   | 'teal'
   | 'yellow';
 
-/** Astryx `Token` `color` union (core 0.3.0). */
+/** Astryx `Token` `color` union (core 0.5.4). */
 export type AstryxTokenColor =
   | 'default'
   | 'red'
@@ -78,13 +48,8 @@ export type AstryxTokenColor =
   | 'pink'
   | 'gray';
 
-/**
- * Brand-accent replacement for `<Tag color={token.colorPrimary}>` sites
- * (AdminUserCredentialList, KeypairInfoModal ×2). The Backend.AI brand accent
- * is a green; Badge's closed enum cannot take the exact token, so the brand
- * hue is fixed here as a single named decision (policy class 4).
- */
-export const PRIMARY_TAG_VARIANT: AstryxBadgeVariant = 'green';
+/** Brand-accent Token colour, used for the main-access-key marker. */
+export const PRIMARY_TOKEN_COLOR: AstryxTokenColor = 'green';
 
 /**
  * antd Tag `color` value → Astryx Badge variant.
@@ -141,7 +106,7 @@ const BADGE_VARIANT_TO_TOKEN_COLOR: Record<
 /**
  * Map any antd `Tag color` value (status preset, palette preset, `-inverse`
  * preset, BUI SemanticColor, or an arbitrary runtime string) to an Astryx
- * `Badge` variant. Unknown values drop to `'neutral'` (policy class 5).
+ * `Badge` variant. Unknown values drop to `'neutral'`.
  */
 export const badgeVariantForTagColor = (
   color?: string | null,
@@ -157,8 +122,9 @@ export const badgeVariantForTagColor = (
 };
 
 /**
- * Same lookup for closable tags that become Astryx `Token` (its `color` enum
- * differs from Badge's). Unknown values drop to `'default'`.
+ * The same lookup for a settled value drawn as a `Token`: semantic variants
+ * become hues (`success`→green, `warning`→orange, `error`→red, `info`→blue,
+ * `neutral`→default). Unknown values drop to `'default'`.
  */
 export const tokenColorForTagColor = (
   color?: string | null,
@@ -171,7 +137,7 @@ export const tokenColorForTagColor = (
  * kebab-case and V2 UPPERCASE where both are still alive).
  */
 export const STATUS_BADGE_VARIANT = {
-  /** ComputeSession(V2) status — unifies SessionStatusTag + BAISessionNodesV2. */
+  /** ComputeSession(V2) status — unifies SessionStatusBadge + BAISessionNodesV2. */
   session: {
     PENDING: 'neutral',
     RESERVED: 'info',
@@ -223,7 +189,7 @@ export const STATUS_BADGE_VARIANT = {
     'creation-failed': 'error',
     'no-available-instances': 'error',
   },
-  /** Session type — category colors (BAISessionTypeTag[V2]). geekblue→blue. */
+  /** Session type — category colors (BAISessionTypeToken[V2]). geekblue→blue. */
   sessionType: {
     INTERACTIVE: 'blue',
     BATCH: 'cyan',
@@ -247,7 +213,7 @@ export const STATUS_BADGE_VARIANT = {
     'delete-complete': 'neutral',
     'delete-error': 'error',
   },
-  /** Model-service deployment status (BAIDeploymentStatusTag). */
+  /** Model-service deployment status (BAIDeploymentStatusBadge). */
   deployment: {
     HEALTHY: 'success',
     READY: 'success',
@@ -274,7 +240,7 @@ export const STATUS_BADGE_VARIANT = {
     DEGRADED: 'warning',
     NOT_CHECKED: 'neutral',
   },
-  /** Replica health/lifecycle status (ReplicaStatusTag). */
+  /** Replica health/lifecycle status (ReplicaStatusBadge). */
   replica: {
     HEALTHY: 'success',
     UNHEALTHY: 'error',
@@ -287,7 +253,7 @@ export const STATUS_BADGE_VARIANT = {
     TERMINATED: 'neutral',
     FAILED_TO_START: 'error',
   },
-  /** Agent status (AgentStatusTag, AgentList). */
+  /** Agent status (AgentStatusBadge, AgentList). */
   agent: {
     ALIVE: 'success',
     LOST: 'error',
@@ -323,14 +289,6 @@ export const STATUS_BADGE_VARIANT = {
     SYSTEM: 'neutral',
     CUSTOM: 'success',
   },
-  /** Model-service validation status (ValidationStatusTag). */
-  validation: {
-    default: 'neutral',
-    finished: 'neutral',
-    processing: 'info',
-    error: 'error',
-    success: 'success',
-  },
   /** Cloud platform / region category colors (AgentList, StorageProxyList). */
   cloudPlatform: {
     aws: 'orange',
@@ -356,7 +314,7 @@ export const STATUS_BADGE_VARIANT = {
     spectrumscale: 'green',
     weka: 'purple',
   },
-  /** VFolder permission letters (VFolderPermissionTag, SummaryItemInvitation). */
+  /** VFolder permission letters (VFolderPermissionToken, SummaryItemInvitation). */
   vfolderPermission: {
     r: 'green',
     w: 'blue',
@@ -368,10 +326,8 @@ export const STATUS_BADGE_VARIANT = {
 export type StatusDomain = keyof typeof STATUS_BADGE_VARIANT;
 
 /**
- * Look up the Badge variant for a domain state. Unknown/unlisted states
- * (including Relay's `'%future added value'`) drop to `'neutral'`
- * (policy class 5) — matching today's behaviour where unmapped statuses
- * render an uncolored antd Tag.
+ * Domain value → Badge variant. Unknown values, including Relay's
+ * `'%future added value'`, drop to `'neutral'`.
  */
 export const badgeVariantForStatus = (
   domain: StatusDomain,
@@ -384,7 +340,7 @@ export const badgeVariantForStatus = (
   return map[value] ?? 'neutral';
 };
 
-/** `Token`-flavoured domain lookup for closable/removable tag call sites. */
+/** Domain value → Token colour, for settled values drawn as a `Token`. */
 export const tokenColorForStatus = (
   domain: StatusDomain,
   value?: string | null,

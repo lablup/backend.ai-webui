@@ -16,6 +16,7 @@ import SourceCodeView from './SourceCodeView';
 import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
@@ -387,9 +388,7 @@ const DeploymentRevisionDetail: React.FC<{
                   {mount.mountDestination && (
                     <Text color="secondary">{mount.mountDestination}</Text>
                   )}
-                  {mount.mountPerm && (
-                    <Badge variant="neutral" label={mount.mountPerm} />
-                  )}
+                  {mount.mountPerm && <Token label={mount.mountPerm} />}
                 </BAIFlex>
               </BAIFlex>
             ))}

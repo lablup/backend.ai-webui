@@ -3,6 +3,7 @@ import {
   BAIAgentTableFragment$key,
 } from '../../__generated__/BAIAgentTableFragment.graphql';
 import {
+  badgeVariantForStatus,
   convertToBinaryUnit,
   convertToDecimalUnit,
   convertUnitValue,
@@ -12,13 +13,13 @@ import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
-import BAIDoubleTag from '../BAIDoubleTag';
+import BAIDoubleBadge from '../BAIDoubleBadge';
+import BAIDoubleToken from '../BAIDoubleToken';
 import BAIFlex from '../BAIFlex';
 import BAIIntervalView from '../BAIIntervalView';
 import BAILink from '../BAILink';
 import BAIProgressWithLabel from '../BAIProgressWithLabel';
 import { ResourceTypeIcon } from '../BAIResourceNumberWithIcon';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import {
   BAIColumnType,
@@ -32,6 +33,7 @@ import {
   useConnectedBAIClient,
 } from '../provider';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus } from 'lucide-react';
@@ -525,24 +527,19 @@ const StatusCell: React.FC<{
   const parsedAvailableSlots = JSON.parse(record?.available_slots || '{}');
   return (
     <BAIFlex direction="column" gap="xxs" align="start">
-      <BAIDoubleTag
+      <BAIDoubleBadge
         values={[
           { label: 'Agent' },
           {
             label: record?.version || '',
-            color:
-              value === 'ALIVE'
-                ? 'green'
-                : value === 'TERMINATED'
-                  ? 'red'
-                  : 'blue',
+            variant: badgeVariantForStatus('agent', value),
           },
         ]}
       />
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
                 { label: 'CUDA' },
                 {
@@ -552,9 +549,9 @@ const StatusCell: React.FC<{
               ]}
             />
           ) : (
-            <BAITag color="green">CUDA Disabled</BAITag>
+            <Token color="green" label="CUDA Disabled" />
           )}
-          <BAIDoubleTag
+          <BAIDoubleToken
             values={[
               { label: 'CUDA Plugin' },
               {
@@ -564,9 +561,7 @@ const StatusCell: React.FC<{
             ]}
           />
           {_.includes(_.keys(parsedAvailableSlots), 'cuda.shares') ? (
-            <BAITag color="blue" style={{ borderRadius: 0 }}>
-              Fractional GPU™
-            </BAITag>
+            <Token color="blue" label="Fractional GPU™" />
           ) : null}
         </>
       ) : null}
@@ -676,7 +671,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                 }}
                 delay={1000}
                 render={(intervalValue) => (
-                  <BAIDoubleTag
+                  <BAIDoubleBadge
                     values={[
                       { label: t('comp:AgentTable.Running') },
                       { label: intervalValue },

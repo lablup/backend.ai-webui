@@ -3,7 +3,7 @@ import {
   BAITableProps,
   BAIColumnType,
   BAIText,
-  BooleanTag,
+  BAIBooleanToken,
   filterOutEmpty,
   toLocalId,
   filterOutNullAndUndefined,
@@ -231,7 +231,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         sorter: isEnableSorter('sudo_session_enabled'),
         dataIndex: 'sudo_session_enabled',
         render: (_, record) => (
-          <BooleanTag value={record.sudo_session_enabled} />
+          <BAIBooleanToken value={record.sudo_session_enabled} />
         ),
       },
       {
@@ -240,7 +240,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         sorter: isEnableSorter('need_password_change'),
         dataIndex: 'need_password_change',
         render: (_, record) => (
-          <BooleanTag value={record.need_password_change} />
+          <BAIBooleanToken value={record.need_password_change} />
         ),
       },
       {
@@ -249,7 +249,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         sorter: isEnableSorter('totp_activated'),
         dataIndex: 'totp_activated',
         render: (_, record) => (
-          <BooleanTag
+          <BAIBooleanToken
             value={record.totp_activated}
             trueLabel={t('comp:UserNodes.Enabled')}
             falseLabel={t('comp:UserNodes.Disabled')}

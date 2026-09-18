@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Select Preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "and {{rest}} more"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degraded",
     "Deploying": "Deploying",
     "Healthy": "Healthy",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "Test"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "and {{rest}} more"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Created At",

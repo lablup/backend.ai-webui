@@ -21,17 +21,17 @@ import {
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
-import { PortTag } from './PortSelectFormItem';
+import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
+import { PortToken } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Heading } from '@astryxdesign/core/Heading';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
@@ -87,7 +87,7 @@ const SessionLauncherImageRow: React.FC = () => {
       {!_.isEmpty(facts) ? (
         <>
           <ImageMetaDivider />
-          <ImageTagBadges facts={facts} />
+          <ImageTagTokens facts={facts} />
         </>
       ) : null}
       <BAIText copyable={{ text: fullName }} />
@@ -331,7 +331,7 @@ const SessionLauncherPreview: React.FC<{
                   // t('session.launcher.CustomAllocation')
                   ''
                 ) : (
-                  <Badge label={form.getFieldValue('allocationPreset')} />
+                  <Token label={form.getFieldValue('allocationPreset')} />
                 )}
 
                 <ResourceNumbersOfSession
@@ -447,7 +447,7 @@ const SessionLauncherPreview: React.FC<{
                       key={folder.vfolderId}
                       to={generateFolderPath(folder.vfolderId)}
                     >
-                      <Badge label={folder.name} />
+                      <Token label={folder.name} />
                     </BAILink>
                   ))}
                 </BAIFlex>
@@ -471,9 +471,9 @@ const SessionLauncherPreview: React.FC<{
             <BAIFlex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
                 (v, idx) => (
-                  <PortTag key={idx + v} value={v} style={{ margin: 0 }}>
+                  <PortToken key={idx + v} value={v} style={{ margin: 0 }}>
                     {v}
-                  </PortTag>
+                  </PortToken>
                 ),
               )}
 

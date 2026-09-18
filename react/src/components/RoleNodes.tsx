@@ -12,17 +12,19 @@ import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIColumnType,
-  BAIDoubleTag,
+  BAIDoubleToken,
   BAIFlex,
   BAIId,
   BAITable,
   BAITableProps,
-  badgeVariantForStatus,
   badgeVariantForTagColor,
   filterOutEmpty,
   useToggle,
+  tokenColorForTagColor,
+  tokenColorForStatus,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -154,7 +156,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           first?.scopeId;
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
                 { label: scopeTypeLabel, color: 'blue' },
                 { label: scopeName, color: 'default' },
@@ -195,12 +197,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'source',
       title: t('rbac.Source'),
       dataIndex: 'source',
-      // BUI `BAITag` DISSOLVES into Astryx `Badge` at the call site
-      // (MAPPING §8); the variant comes from the repo-global ticket-13 lookup.
       render: (source: string) => {
         return (
-          <Badge
-            variant={badgeVariantForStatus('role', source)}
+          <Token
+            color={tokenColorForStatus('role', source)}
             label={source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
           />
         );
@@ -211,8 +211,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       title: t('rbac.AutoAssign'),
       dataIndex: 'autoAssign',
       render: (autoAssign: boolean) => (
-        <Badge
-          variant={badgeVariantForTagColor(autoAssign ? 'green' : 'default')}
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
           label={autoAssign ? t('general.Active') : t('general.Inactive')}
         />
       ),

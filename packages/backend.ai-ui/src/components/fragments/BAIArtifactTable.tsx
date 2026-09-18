@@ -15,8 +15,8 @@ import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
-import BAIArtifactStatusTag from './BAIArtifactStatusTag';
-import BAIArtifactTypeTag from './BAIArtifactTypeTag';
+import BAIArtifactStatusBadge from './BAIArtifactStatusBadge';
+import BAIArtifactTypeToken from './BAIArtifactTypeToken';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import dayjs from 'dayjs';
@@ -118,7 +118,7 @@ const BAIArtifactTable = ({
           name
           url
         }
-        ...BAIArtifactTypeTagFragment
+        ...BAIArtifactTypeTokenFragment
         latestVersion: revisions(
           limit: 1
           orderBy: [
@@ -132,7 +132,7 @@ const BAIArtifactTable = ({
               version
               size
               status
-              ...BAIArtifactStatusTagFragment
+              ...BAIArtifactStatusBadgeFragment
               ...BAIArtifactRevisionDownloadButtonFragment
             }
           }
@@ -154,7 +154,7 @@ const BAIArtifactTable = ({
               <BAILink to={'/reservoir/' + toLocalId(record.id)} style={{}}>
                 {name}
               </BAILink>
-              <BAIArtifactTypeTag artifactTypeFrgmt={record} />
+              <BAIArtifactTypeToken artifactTypeFrgmt={record} />
             </BAIFlex>
             {record.description && (
               <Text color="secondary" size="sm" display="block">
@@ -219,7 +219,7 @@ const BAIArtifactTable = ({
         return (
           <BAIFlex gap={'xs'} wrap="wrap" align="center">
             <BAIText monospace>{latestVersion.version}</BAIText>
-            <BAIArtifactStatusTag artifactRevisionFrgmt={latestVersion} />
+            <BAIArtifactStatusBadge artifactRevisionFrgmt={latestVersion} />
             {latestVersion.status === 'SCANNED' ? (
               <BAIArtifactRevisionDownloadButton
                 title={t('comp:BAIArtifactTable.PullLatestVersion')}
