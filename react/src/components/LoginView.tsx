@@ -275,6 +275,13 @@ const LoginView: React.FC<{
   const isEndpointWebServer =
     webServerProbe?.endpoint === normalizedEndpoint &&
     webServerProbe.isWebServer;
+  // Derived, never stored: a config refresh re-applies the configured mode at
+  // any time (`loadConfigFromWebServer` on the Electron login path does it
+  // mid-flight), so a value pinned once here would be silently reverted while
+  // the switch stayed disabled. Everything that acts on the mode reads this.
+  const effectiveConnectionMode: ConnectionMode = isEndpointWebServer
+    ? 'SESSION'
+    : connectionMode;
 
   useEffect(() => {
     // Only the login panel renders the switch this answers for, so a signed-in
@@ -286,9 +293,6 @@ const LoginView: React.FC<{
       isWebServerEndpoint(normalizedEndpoint).then((isWebServer) => {
         if (cancelled) return;
         setWebServerProbe({ endpoint: normalizedEndpoint, isWebServer });
-        // Pin the mode itself, not just the switch: the login path, the silent
-        // re-login and the session check all read this one value.
-        if (isWebServer) setConnectionMode('SESSION');
       });
     }, ENDPOINT_PROBE_DEBOUNCE_MS);
     return () => {
@@ -908,7 +912,7 @@ const LoginView: React.FC<{
       await loadConfigFromWebServer(ep);
     }
 
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
 
@@ -943,7 +947,7 @@ const LoginView: React.FC<{
     loginConfig,
     form,
     apiEndpoint,
-    connectionMode,
+    effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
     notification,
@@ -971,9 +975,9 @@ const LoginView: React.FC<{
       if ((globalThis as Record<string, unknown>).isElectron) {
         await loadConfigFromWebServer(ep);
       }
-      if (connectionMode === 'SESSION') {
+      if (effectiveConnectionMode === 'SESSION') {
         await connectUsingSession(showError, ep);
-      } else if (connectionMode === 'API') {
+      } else if (effectiveConnectionMode === 'API') {
         await connectUsingAPI(showError, ep);
       } else {
         open();
@@ -981,7 +985,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
-      connectionMode,
+      effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
       open,
@@ -995,7 +999,7 @@ const LoginView: React.FC<{
     if ((globalThis as Record<string, unknown>).isElectron) {
       await loadConfigFromWebServer(ep);
     }
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
@@ -1008,7 +1012,7 @@ const LoginView: React.FC<{
       }
     }
     return false;
-  }, [resolveEndpoint, connectionMode]);
+  }, [resolveEndpoint, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
@@ -1027,7 +1031,7 @@ const LoginView: React.FC<{
     onCheckLogin: checkLogin,
     onLogoutSession: logoutSession,
     apiEndpoint,
-    connectionMode,
+    connectionMode: effectiveConnectionMode,
   });
 
   const canChangeSigninMode =
@@ -1165,7 +1169,7 @@ const LoginView: React.FC<{
         isLoading={isLoading}
         loginError={loginError}
         onClearLoginError={() => setLoginError(null)}
-        connectionMode={connectionMode}
+        connectionMode={effectiveConnectionMode}
         signinModeDisabled={
           isEndpointWebServer
             ? { reason: t('login.APISigninNeedsManagerEndpoint') }
