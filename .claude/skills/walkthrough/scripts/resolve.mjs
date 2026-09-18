@@ -38,32 +38,47 @@ export function pidAlive(pid) {
   }
 }
 
+/** The `served[]` entries of a boot record — `[]` for a record without one. */
+export function servedOf(record) {
+  return Array.isArray(record?.served) ? record.served : [];
+}
+
+/** The PR a record's own branch serves: its `served[]` entry, else the top one. */
+export function prFromRecord(record) {
+  const served = servedOf(record);
+  const mine = served.find((entry) => entry?.branch === record?.branch);
+  return (mine ?? served[served.length - 1])?.pr ?? null;
+}
+
 /**
- * The newest live record whose `served[]` names `pr`, or null.
+ * The live record that serves `pr`, or null.
  *
  * Live means never stopped and, when the record carries a pid, that the pid
  * still answers — a server killed without `advertise.sh stop` leaves a
- * record that says nothing was stopped. `repo` is matched when both sides
- * name one, so a box serving two checkouts of different repos cannot hand
- * one PR number to the other's server.
+ * record that says nothing was stopped. `repo` is matched when the record
+ * names one, so a box serving two repos cannot hand one PR number to the
+ * other's server. A record whose own `branch` is the PR's branch wins over a
+ * stack layer above it (whose `served[]` lists every lower layer); among
+ * equals the newest boot wins.
  */
 export function recordServingPr(
   records,
   pr,
-  { isAlive = pidAlive, repo = "" } = {},
+  { isAlive = pidAlive, repo = "", branch = "" } = {},
 ) {
-  const wanted = Number(pr);
   const candidates = records.filter(({ record }) => {
     if (!record || record.stoppedAt) return false;
+    if (!servedOf(record).some((entry) => entry?.pr === pr)) return false;
     if (repo && record.repo && record.repo !== repo) return false;
-    if (record.pid && !isAlive(record.pid)) return false;
-    const served = Array.isArray(record.served) ? record.served : [];
-    return served.some((entry) => Number(entry?.pr) === wanted);
+    return !record.pid || isAlive(record.pid);
   });
-  candidates.sort((a, b) =>
-    String(b.record.startedAt ?? "").localeCompare(
-      String(a.record.startedAt ?? ""),
-    ),
+  const own = ({ record }) => (branch && record.branch === branch ? 1 : 0);
+  candidates.sort(
+    (a, b) =>
+      own(b) - own(a) ||
+      String(b.record.startedAt ?? "").localeCompare(
+        String(a.record.startedAt ?? ""),
+      ),
   );
   return candidates[0] ?? null;
 }
