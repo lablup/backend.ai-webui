@@ -17,6 +17,7 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
@@ -141,6 +142,13 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // BA-5918 (26.4.4rc3) turned `domainName` into a StringFilter and
+  // `projectId` into a UUIDFilter; the control only emits the wrapper shape.
+  const supportsFilterWrapperInputs = baiClient.supports(
+    'v2-filter-wrapper-inputs',
+  );
+  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -321,21 +329,22 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
-            filterProperties={[
+            maxConditions={supportsSubFilter ? undefined : 1}
+            filterProperties={filterOutEmpty([
               {
                 key: 'name',
                 propertyLabel: t('adminModelCard.Name'),
                 type: 'string',
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'domainName',
                 propertyLabel: t('adminModelCard.Domain'),
-                type: 'string',
+                type: 'string' as const,
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'projectId',
                 propertyLabel: t('adminModelCard.Project'),
-                type: 'uuid',
+                type: 'uuid' as const,
                 rule: {
                   message: t('project.ProjectIDFilterRuleMessage'),
                   validate: (value) => isValidUUID(value),
@@ -381,7 +390,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   />
                 ),
               },
-            ]}
+            ])}
             value={filter}
             onChange={(value) => {
               onReload(
