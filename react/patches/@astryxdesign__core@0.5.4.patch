@@ -1,0 +1,69 @@
+diff --git a/dist/ComplexSelector/ComplexSelector.d.ts b/dist/ComplexSelector/ComplexSelector.d.ts
+index 3ad19cf41b1b093e8b2f3d2baf07d55591e2d45f..ff02c93fee500db2a340120376e7200cb23c5e0d 100644
+--- a/dist/ComplexSelector/ComplexSelector.d.ts
++++ b/dist/ComplexSelector/ComplexSelector.d.ts
+@@ -80,6 +80,14 @@ export interface ComplexSelectorProps<Value> extends Omit<BaseProps<HTMLDivEleme
+     isDisabled?: boolean;
+     /** Shows loading state on the trigger. */
+     isLoading?: boolean;
++    /**
++     * Shows a clear button between the loading spinner and the chevron while
++     * `triggerLabel` is set, as `Selector`'s `hasClear` does. Activating it
++     * calls `onClear`, or `onChange(undefined)` when `onClear` is not given.
++     */
++    hasClear?: boolean;
++    /** Called when the clear button is activated. */
++    onClear?: () => void;
+     /** Validation status. */
+     status?: ComplexSelectorStatus;
+     /** Status placement. */
+@@ -143,7 +151,7 @@ export interface ComplexSelectorProps<Value> extends Omit<BaseProps<HTMLDivEleme
+  * </ComplexSelector>
+  * ```
+  */
+-export declare function ComplexSelector<Value>({ label, value, onChange, changeAction, children, triggerLabel, placeholder: placeholderFromProps, isLabelHidden, description, isOptional, isRequired, isDisabled, isLoading, status, statusVariant, labelTooltip, size, variant, startIcon, width, placement, alignment, handleRef, onOpenChange, contentXstyle, xstyle, className, style, 'data-testid': testId, onClick: onClickProp, ...props }: ComplexSelectorProps<Value>): React.JSX.Element;
++export declare function ComplexSelector<Value>({ label, value, onChange, changeAction, children, triggerLabel, placeholder: placeholderFromProps, isLabelHidden, description, isOptional, isRequired, isDisabled, isLoading, hasClear, onClear, status, statusVariant, labelTooltip, size, variant, startIcon, width, placement, alignment, handleRef, onOpenChange, contentXstyle, xstyle, className, style, 'data-testid': testId, onClick: onClickProp, ...props }: ComplexSelectorProps<Value>): React.JSX.Element;
+ export declare namespace ComplexSelector {
+     var displayName: string;
+ }
+diff --git a/dist/ComplexSelector/ComplexSelector.js b/dist/ComplexSelector/ComplexSelector.js
+index f259046cdeff159dcf913734a643acd7eab02fef..b0b004782bf230e0c4d65fae019c25dd95d31ed1 100644
+--- a/dist/ComplexSelector/ComplexSelector.js
++++ b/dist/ComplexSelector/ComplexSelector.js
+@@ -18,6 +18,7 @@
+ import React, { useCallback, useId, useImperativeHandle, useOptimistic, useRef, useTransition } from 'react';
+ import * as stylex from '@stylexjs/stylex';
+ import { Field, inputWrapperStyles } from "../Field/index.js";
++import { InputClearButton } from "../Field/InputClearButton.js";
+ import { Icon, renderIconSlot } from "../Icon/index.js";
+ import { Spinner } from "../Spinner/index.js";
+ import { useTranslator } from "../i18n/index.js";
+@@ -195,6 +196,8 @@ export function ComplexSelector({
+   isRequired = false,
+   isDisabled = false,
+   isLoading = false,
++  hasClear = false,
++  onClear,
+   status,
+   statusVariant = 'attached',
+   labelTooltip,
+@@ -351,6 +354,19 @@ export function ComplexSelector({
+         })
+       }), isBusy && /*#__PURE__*/_jsx(Spinner, {
+         size: "sm"
++      }), hasClear && triggerLabel != null && !isDisabled && /*#__PURE__*/_jsx(InputClearButton, {
++        label: t('@astryx.selector.clearLabel', {
++          label
++        }),
++        // The container's own click opens the popover; a clear must not.
++        onClick: event => {
++          event.stopPropagation();
++          if (onClear) {
++            onClear();
++          } else {
++            onChange?.(undefined);
++          }
++        }
+       }), /*#__PURE__*/_jsx(Icon, {
+         icon: "chevronDown",
+         size: "sm",

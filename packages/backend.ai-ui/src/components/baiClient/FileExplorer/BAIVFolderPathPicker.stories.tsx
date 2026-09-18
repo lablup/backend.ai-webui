@@ -271,7 +271,7 @@ const DirectoryPickerModalDemo: React.FC = () => {
       <BAIText type="secondary">
         Last selection:{' '}
         <BAIText code>
-          {lastResult === undefined ? '(none)' : `/${lastResult}`}
+          {lastResult === undefined ? '(none)' : JSON.stringify(lastResult)}
         </BAIText>
       </BAIText>
       {queryRef != null && (

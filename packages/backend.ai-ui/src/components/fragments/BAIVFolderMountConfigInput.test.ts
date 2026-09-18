@@ -6,6 +6,7 @@ import {
   getVFolderMountConfigStatuses,
   inputToMountDestination,
   mountDestinationToInput,
+  resolveVFolderMounts,
   toMountCreationConfig,
 } from './BAIVFolderMountConfigInput';
 
@@ -143,5 +144,46 @@ describe('getVFolderMountConfigStatuses', () => {
     ]);
     expect(statuses[dataFolder].aliasError).toBe('overlapping');
     expect(statuses[sharedFolder].aliasError).toBe('overlapping');
+  });
+});
+
+describe('resolveVFolderMounts', () => {
+  const entry = (mountDestination: string) => ({
+    vfolderId: 'id-1',
+    name: 'data',
+    mountDestination,
+  });
+
+  it('flags an empty alias as the default path', () => {
+    const [mount] = resolveVFolderMounts([entry('')]);
+    expect(mount.mountDestination).toBe('/home/work/data');
+    expect(mount.isDefaultAlias).toBe(true);
+  });
+
+  it('flags the default path typed by hand, absolute or relative', () => {
+    expect(
+      resolveVFolderMounts([entry('/home/work/data')])[0].isDefaultAlias,
+    ).toBe(true);
+    expect(resolveVFolderMounts([entry('data')])[0].isDefaultAlias).toBe(true);
+  });
+
+  it('does not flag a custom alias', () => {
+    expect(resolveVFolderMounts([entry('other')])[0].isDefaultAlias).toBe(
+      false,
+    );
+    expect(resolveVFolderMounts([entry('/mnt/data')])[0].isDefaultAlias).toBe(
+      false,
+    );
+  });
+
+  it('compares against a custom aliasBasePath', () => {
+    const options = { aliasBasePath: '/workspace/' };
+    expect(resolveVFolderMounts([entry('')], options)[0].isDefaultAlias).toBe(
+      true,
+    );
+    expect(
+      resolveVFolderMounts([entry('/home/work/data')], options)[0]
+        .isDefaultAlias,
+    ).toBe(false);
   });
 });
