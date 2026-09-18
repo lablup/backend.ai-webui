@@ -15,6 +15,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { partitionProjectMemberships } from '../helper/projectMembership';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -327,31 +328,11 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     userSettingFrgmt ?? null,
   );
 
-  // `projects` lists every membership, while the selector only offers the
-  // assignable projects of the domain. PERSONAL projects (manager 26.9.0) are
-  // created and removed with the user, so they are never assignable: they stay
-  // out of the form and are re-attached on submit, because `groupIds` REPLACES
-  // the whole membership set.
-  const memberProjects = _.compact(
-    _.map(user?.projects?.edges, (edge) =>
-      edge?.node?.id
-        ? {
-            id: toLocalId(edge.node.id),
-            name: edge.node.basicInfo.name,
-            type: edge.node.basicInfo.type,
-          }
-        : null,
-    ),
-  );
-  const assignableProjects = _.filter(
-    memberProjects,
-    (project) => project.type !== 'PERSONAL',
-  );
+  // `projects` lists every membership; the selector only offers the domain's
+  // assignable ones.
+  const { assignable: assignableProjects, personal: personalProjects } =
+    partitionProjectMemberships(user?.projects?.edges);
   const assignableProjectIds = _.map(assignableProjects, 'id');
-  const personalProjectIds = _.map(
-    _.filter(memberProjects, (project) => project.type === 'PERSONAL'),
-    'id',
-  );
 
   // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
   const [commitUpdateUserV2, isInFlightUpdateUserV2] =
@@ -606,8 +587,17 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               : undefined,
             role: formValues.role ? roleToV2[formValues.role] : undefined,
             domainName: formValues.domain_name,
+            // `groupIds` replaces the whole membership set, so the personal
+            // project has to ride along — except when the user is moving to
+            // another domain, where asserting a project of the old one would
+            // be worse than leaving the manager to handle it.
             groupIds: formValues.group_ids
-              ? [...formValues.group_ids, ...personalProjectIds]
+              ? _.uniq([
+                  ...formValues.group_ids,
+                  ...(formValues.domain_name === user.organization.domainName
+                    ? _.map(personalProjects, 'id')
+                    : []),
+                ])
               : undefined,
             allowedClientIp: formValues.allowed_client_ip,
             needPasswordChange: formValues.need_password_change || false,

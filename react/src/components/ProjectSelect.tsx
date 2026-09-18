@@ -36,10 +36,9 @@ export interface ProjectSelectProps extends BAISelectProps {
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
   /**
-   * Labels for already-selected projects the domain's option list cannot
-   * contain (an inactive project, say). Only entries that are currently
-   * selected become options, so this never widens the assignable set — it
-   * keeps such a value from rendering as a bare UUID (FR-3989).
+   * Labels for selected projects the domain's option list cannot contain, so
+   * they do not render as a bare UUID. Only currently-selected entries become
+   * options, which keeps the assignable set unchanged.
    */
   fallbackProjects?: ReadonlyArray<FallbackProject>;
   'aria-label'?: string;
@@ -54,6 +53,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -161,9 +161,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   );
 
   const showNoProjectError =
-    !accessibleProjects?.length &&
-    !selectProps.disabled &&
-    !selectProps.loading;
+    !optionProjects.length && !selectProps.disabled && !selectProps.loading;
 
   const noAccessibleProjectsMessage = t('projectSelect.NoAccessibleProjects');
 
