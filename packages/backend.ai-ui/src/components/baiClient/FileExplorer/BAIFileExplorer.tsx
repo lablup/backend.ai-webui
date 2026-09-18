@@ -391,15 +391,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             enableWrite={enableWrite}
             enableUpload={enableUpload}
             onUpload={requestUpload}
-            onFolderCreated={
-              isDirectoryPicker
-                ? (folderName) => {
-                    // Jump straight into the created folder so "select this
-                    // location" picks it.
-                    navigateDown(folderName);
-                  }
-                : undefined
-            }
             onDeleteFilesInBackground={onDeleteFilesInBackground}
             onClearSelection={() => setSelectedItems([])}
             onRequestClose={(
