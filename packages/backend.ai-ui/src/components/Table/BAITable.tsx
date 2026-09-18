@@ -648,7 +648,9 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   );
 
   // Set by onPageSizeChange so the onChange(1) Astryx fires right after it is
-  // dropped rather than re-reporting the previous page size.
+  // dropped rather than re-reporting the previous page size. Cleared on the
+  // microtask too, so a future Astryx that stops firing that trailing call
+  // cannot leave the flag set and swallow the next page click.
   const isPageSizeChangeRef = useRef(false);
 
   const total = pagination
@@ -1376,6 +1378,9 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 }}
                 onPageSizeChange={(pageSize) => {
                   isPageSizeChangeRef.current = true;
+                  queueMicrotask(() => {
+                    isPageSizeChangeRef.current = false;
+                  });
                   setCurrentPage(1);
                   setCurrentPageSize(pageSize);
                   pagination?.onChange?.(1, pageSize);
