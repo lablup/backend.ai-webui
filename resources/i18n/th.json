@@ -1933,6 +1933,7 @@
     "APIEndpointEmpty": "จุดสิ้นสุด API ว่างเปล่า กรุณาระบุจุดสิ้นสุด API เพื่อเข้าสู่ระบบ",
     "APIKey": "คีย์ API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "การเข้าสู่ระบบด้วย API ต้องใช้เอนด์พอยต์ของ Manager ที่อยู่นี้เป็น Backend.AI Webserver",
     "ActiveSessionExists": "มีเซสชันการเข้าสู่ระบบที่ใช้งานอยู่แล้ว",
     "ActiveSessionExistsDescription": "คุณได้เข้าสู่ระบบจากเบราว์เซอร์หรือแท็บอื่นอยู่แล้ว กรุณาออกจากระบบจากเซสชันอื่นก่อน หรือลองอีกครั้ง",
     "AdvancedSettings": "ขั้นสูง",
