@@ -2,12 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-/**
- * Login Configuration Utilities
- *
- * Extracted from backend-ai-login.ts to support the React LoginView component.
- * Handles reading and applying configuration values from config.toml to global state.
- */
+/** Reads config.toml into the login state and applies it to the client. */
 
 type ConfigValueType = 'boolean' | 'number' | 'string' | 'array';
 
@@ -188,18 +183,14 @@ export function getDefaultLoginConfig(): LoginConfigState {
 }
 
 /**
- * True when the WebUI is served by the Backend.AI webserver, which names its
- * own origin as `apiEndpoint`. The webserver proxies only session-authenticated
- * `/func/*` calls, so API-mode signing can never reach the manager through it
- * (FR-3562). Electron loads the page from its own bundle, so the same-origin
- * test says nothing there and the mode switch is left alone.
+ * The webserver names its own origin as `apiEndpoint` and proxies only
+ * session-authenticated `/func/*` calls, so API-mode sign-in cannot work
+ * through it (FR-3562). Electron's bundle origin never matches an http one.
  */
-export function isServedByWebServer(
-  apiEndpoint: string,
-  pageOrigin: string = globalThis.location?.origin ?? '',
-  isElectron: boolean = Boolean((globalThis as any).isElectron),
-): boolean {
-  if (isElectron || !apiEndpoint || !pageOrigin) return false;
+export function isServedByWebServer(apiEndpoint: unknown): boolean {
+  const pageOrigin = globalThis.location?.origin;
+  if (typeof apiEndpoint !== 'string' || !apiEndpoint || !pageOrigin)
+    return false;
   try {
     return new URL(apiEndpoint).origin === pageOrigin;
   } catch {
@@ -213,6 +204,9 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
   if (!config) return state;
 
   const g = config.general;
+  // A webserver-served page offers no Session/API switch and ignores a mode
+  // Electron stored earlier; the webserver's own config decides the mode.
+  const servedByWebServer = isServedByWebServer(g?.apiEndpoint);
   const w = config.wsproxy;
   const r = config.resources;
   const e = config.environments;
@@ -240,11 +234,13 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: g?.allowAnonymousChangePassword,
   }) as boolean;
 
-  state.change_signin_support = getConfigValueByExists(g, {
-    valueType: 'boolean',
-    defaultValue: false,
-    value: g?.allowChangeSigninMode,
-  }) as boolean;
+  state.change_signin_support =
+    !servedByWebServer &&
+    (getConfigValueByExists(g, {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: g?.allowChangeSigninMode,
+    }) as boolean);
 
   state.allow_project_resource_monitor = getConfigValueByExists(g, {
     valueType: 'boolean',
@@ -397,6 +393,7 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     'backendaiwebui.connection_mode',
   );
   if (
+    !servedByWebServer &&
     (globalThis as any).isElectron &&
     storedConnectionMode !== null &&
     storedConnectionMode !== '' &&
@@ -412,10 +409,6 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
         : '';
     state.connection_mode =
       rawMode === 'SESSION' || rawMode === 'API' ? rawMode : 'SESSION';
-  }
-  if (isServedByWebServer(state.api_endpoint)) {
-    state.change_signin_support = false;
-    state.connection_mode = 'SESSION';
   }
 
   state.directoryBasedUsage = getConfigValueByExists(g, {
