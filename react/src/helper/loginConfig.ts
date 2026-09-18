@@ -183,9 +183,11 @@ export function getDefaultLoginConfig(): LoginConfigState {
 }
 
 /**
- * The webserver names its own origin as `apiEndpoint` and proxies only
- * session-authenticated `/func/*` calls, so API-mode sign-in cannot work
- * through it (FR-3562). Electron's bundle origin never matches an http one.
+ * True when the page and its `apiEndpoint` share an origin — the shape of a
+ * webserver-served deployment, which proxies only session-authenticated
+ * `/func/*` and so cannot carry an API-mode sign-in (FR-3562). Deliberately
+ * not an `isElectron` test: web-shell mode is Electron AND webserver-served,
+ * while a browser on a static bundle can point straight at a manager.
  */
 export function isServedByWebServer(apiEndpoint: unknown): boolean {
   const pageOrigin = globalThis.location?.origin;
