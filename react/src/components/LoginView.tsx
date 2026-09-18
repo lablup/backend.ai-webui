@@ -27,6 +27,7 @@ import { App } from '../app-shim';
 //     served by the Astryx app-shim (see the header comment), so no antd
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
+import { extractErrorType } from '../helper/backendErrorType';
 import {
   devApiEndpointOverride,
   devEmailOverride,
@@ -67,16 +68,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
-
-/**
- * Extract the error type suffix from a Backend.AI problem type URL.
- * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
- */
-const extractErrorType = (typeUrl?: string): string => {
-  if (!typeUrl) return '';
-  const parts = typeUrl.split('/');
-  return parts[parts.length - 1] || '';
-};
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
 
