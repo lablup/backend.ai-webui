@@ -3,10 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
+import {
+  VFOLDER_MOUNT_PERMISSION_ICONS,
+  VFOLDER_MOUNT_PERMISSION_LABEL_KEYS,
+  mountPermissionFromV2,
+} from '../helper/vfolderMountPermission';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { HStack } from '@astryxdesign/core/Stack';
 import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
@@ -20,50 +26,50 @@ const VFolderPermissionCellV2: React.FC<VFolderPermissionCellV2Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const [currentUser] = useCurrentUserInfo();
 
   const vfolderData = useFragment(
     graphql`
       fragment VFolderPermissionCellV2Fragment on VFolder {
         accessControl {
           permission
+          ownershipType
+        }
+        ownership {
+          userId
         }
       }
     `,
     vfolderFrgmt ?? null,
   );
 
-  const { permissionInfo } = useMemo(() => {
-    const permissionMap: { [key: string]: { label: string; icon: string } } = {
-      ro: {
-        label: t('data.ReadOnly'),
-        icon: 'R',
-      },
-      rw: {
-        label: t('data.ReadWrite'),
-        icon: 'RW',
-      },
-    };
-    // V2 enum: READ_ONLY, READ_WRITE, RW_DELETE.
-    // READ_ONLY  -> RO badge
-    // READ_WRITE -> RW badge
-    // RW_DELETE  -> RW badge (delete capability is surfaced via row actions)
-    const perm =
-      vfolderData?.accessControl?.permission === 'READ_ONLY' ? 'ro' : 'rw';
-    return {
-      permissionInfo: permissionMap[perm],
-    };
-  }, [vfolderData, t]);
+  const level = mountPermissionFromV2(vfolderData?.accessControl?.permission);
+  // `accessControl.permission` is the folder's DEFAULT level. A personal
+  // folder's default is `none` (backend.ai#14679): its owner mounts it
+  // read-write regardless and an invitee mounts at their own policy row, so
+  // the default says nothing about the viewer — only the owner's level is known.
+  const perm =
+    level === 'none' && vfolderData?.accessControl?.ownershipType === 'USER'
+      ? vfolderData?.ownership?.userId === currentUser?.uuid
+        ? 'rw'
+        : null
+      : level;
+  const icons = perm ? VFOLDER_MOUNT_PERMISSION_ICONS[perm] : '';
 
   return (
     <HStack gap={2} {...props}>
-      <BAIText>{permissionInfo?.label}</BAIText>
-      <HStack>
-        {_.map(permissionInfo?.icon, (tag) => (
-          <BAIText key={tag} code>
-            {_.toUpper(tag)}
-          </BAIText>
-        ))}
-      </HStack>
+      <BAIText>
+        {perm ? t(VFOLDER_MOUNT_PERMISSION_LABEL_KEYS[perm]) : '-'}
+      </BAIText>
+      {icons && (
+        <HStack>
+          {_.map(icons, (tag) => (
+            <BAIText key={tag} code>
+              {tag}
+            </BAIText>
+          ))}
+        </HStack>
+      )}
     </HStack>
   );
 };
