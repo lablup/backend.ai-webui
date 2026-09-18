@@ -28,7 +28,10 @@ export const useSuspendedAutoMountedFolders = ({
   mountableHosts,
 }: AutoMountedFoldersOptions): Array<AutoMountedFolder> => {
   'use memo';
-  const { folders } = useSuspendedLegacyVFolders(ownerEmail);
+  const { folders } = useSuspendedLegacyVFolders({
+    ownerEmail,
+    groupId: currentProjectId,
+  });
 
   return autoMountedFoldersFrom(folders, {
     currentProjectId,
