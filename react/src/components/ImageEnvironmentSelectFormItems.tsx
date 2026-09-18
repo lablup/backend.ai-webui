@@ -172,8 +172,19 @@ const ImageEnvironmentSelectFormItems: React.FC<
     _.map(
       _.groupBy(
         _.filter(images, (image) => {
+          // A legacy customized image can carry `ai.backend.features: private`;
+          // keep only that one visible when selected, never other private images.
+          const isSelectedCustomizedImage =
+            !!environments?.version &&
+            getImageFullName(image) === environments.version &&
+            _.some(
+              image?.labels,
+              (label) => label?.key === 'ai.backend.customized-image.name',
+            );
           return (
-            (showPrivate ? true : !isPrivateImage(image)) &&
+            (showPrivate ||
+              !isPrivateImage(image) ||
+              isSelectedCustomizedImage) &&
             (filter ? filter(image) : true)
           );
         }),
