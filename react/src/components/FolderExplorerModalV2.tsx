@@ -201,6 +201,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           # backend adds it (FR-2619 follow-up).
           legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
             id
+            name
+            host
+            unmanaged_path
             permissions
           }
           vfolderNode: vfolderV2(vfolderId: $vfolderId) {
@@ -233,6 +236,15 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
       },
     );
+
+  // FR-3997: any one of `VFolder`'s eight non-nullable fields coming back null
+  // nulls the whole node, so the legacy node decides readability instead.
+  const isFolderReadable = !!vfolderNode || !!legacyVFolderNode;
+  const isFolderDetailUnavailable = !vfolderNode && !!legacyVFolderNode;
+  const folderName = vfolderNode?.metadata?.name ?? legacyVFolderNode?.name;
+  const folderHost = vfolderNode?.host ?? legacyVFolderNode?.host ?? '';
+  const folderUnmanagedPath =
+    vfolderNode?.unmanagedPath ?? legacyVFolderNode?.unmanaged_path;
 
   // Permission calculation follows the folder's own ownership project when
   // the folder is project-owned (what the user can do must not depend on the
@@ -303,8 +315,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   };
 
   const { uploadStatus, uploadFiles } = useFileUploadManager(
-    vfolderNode?.id,
-    vfolderNode?.metadata?.name || undefined,
+    vfolderNode?.id ?? legacyVFolderNode?.id,
+    folderName || undefined,
   );
   // Polling to update fetchKey when there are pending uploads
   useInterval(
@@ -321,14 +333,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   }, [uploadStatus, updateFetchKey]);
 
   const hasDownloadContentPermission = _.includes(
-    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    unitedAllowedPermissionByVolume[folderHost],
     'download-file',
   );
   // `upload-file` on the storage host gates the actual upload pipeline:
   // upload buttons (file/folder), drag-drop, and the in-app text editor save
   // (which overwrites the file via the upload API).
   const hasUploadHostPermission = _.includes(
-    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
   // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
@@ -348,16 +360,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
-  const fileExplorerElement = vfolderNode?.unmanagedPath ? (
+  const fileExplorerElement = folderUnmanagedPath ? (
     <Banner
       status="info"
       title={t('explorer.NoExplorerSupportForUnmanagedFolder')}
     />
-  ) : !hasNoPermissions && vfolderNode ? (
+  ) : !hasNoPermissions && isFolderReadable ? (
     <BAIFileExplorer
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
-      targetVFolderName={vfolderNode?.metadata?.name ?? 'folder'}
+      targetVFolderName={folderName ?? 'folder'}
       deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {
@@ -383,7 +395,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 onClick={() => {
                   closeNotification(`delete:${bgTaskId}`);
                 }}
-              >{`${vfolderNode.metadata?.name}`}</BAILink>
+              >
+                {folderName}
+              </BAILink>
             </span>
           ),
           backgroundTask: {
@@ -506,7 +520,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         },
       }}
       headerContent={
-        vfolderNode ? (
+        isFolderDetailUnavailable ? (
+          <span>{folderName}</span>
+        ) : vfolderNode ? (
           <FolderExplorerHeaderV2
             vfolderNodeFrgmt={vfolderNode}
             // ADR-0001: on super-admin routes `pageProject` is `null` — the
@@ -560,10 +576,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               ['--container-padding-block-end' as string]: '0px',
             }}
           >
-            {vfolderNode === null ? (
+            {!isFolderReadable ? (
               <Banner
                 title={t('explorer.FolderNotFoundOrNoAccess')}
                 status="error"
+              />
+            ) : isFolderDetailUnavailable ? (
+              <Banner
+                title={t('explorer.FolderDetailUnavailable')}
+                description={t('explorer.FolderDetailUnavailableDescription')}
+                status="warning"
               />
             ) : hasNoPermissions ? (
               <Banner title={t('explorer.NoPermissions')} status="error" />
@@ -583,7 +605,11 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               />
             ) : null}
 
-            {vfolderNode && !hasNoPermissions ? (
+            {isFolderDetailUnavailable ? (
+              // No v2 node means no metadata / audit-log panel to sit beside
+              // the file list, so the explorer takes the whole body.
+              fileExplorerElement
+            ) : vfolderNode && !hasNoPermissions ? (
               xl ? (
                 // antd `Splitter` owned containment — panel sizes always summed
                 // to the container and each panel clipped. `useResizable` only

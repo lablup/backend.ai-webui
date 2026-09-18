@@ -1621,6 +1621,8 @@
     "FileUploadCancelled": "사용자 요청에 따라 파일 업로드가 취소되었습니다.",
     "FileUploadFailed": "'{{folderName}}' 폴더에서 일부 파일 업로드에 실패했습니다. ",
     "Filename": "파일 이름",
+    "FolderDetailUnavailable": "폴더 정보를 불러올 수 없습니다",
+    "FolderDetailUnavailableDescription": "폴더 정보를 불러오지 못했지만 파일은 계속 탐색할 수 있습니다.",
     "FolderNotFoundOrNoAccess": "존재하지 않거나 접근할 수 없는 폴더입니다.",
     "Metadata": "메타데이터",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged 폴더는 파일 탐색기를 지원하지 않습니다.",

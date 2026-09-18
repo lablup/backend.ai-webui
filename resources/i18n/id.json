@@ -1622,6 +1622,8 @@
     "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna.",
     "FileUploadFailed": "Gagal mengunggah beberapa file di folder '{{folderName}}'.",
     "Filename": "Nama file",
+    "FolderDetailUnavailable": "Detail folder tidak tersedia",
+    "FolderDetailUnavailableDescription": "Informasi folder tidak dapat dimuat, tetapi Anda masih dapat menjelajahi berkasnya.",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
