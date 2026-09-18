@@ -463,6 +463,7 @@
     "Yes": "Ya"
   },
   "chatui": {
+    "AttachmentNotStored": "Lampiran tidak disimpan kerana had storan pelayar",
     "Attachments": "Lampiran",
     "CannotFindModel": "Model LLM tidak dijumpai. \nSahkan laluan asas dan keserasian token dengan Openai, kemudian tekan 'Model Refresh'",
     "ChatTitle": "Tajuk sembang",
@@ -475,6 +476,9 @@
     "DeploymentModels": "Model {{name}}",
     "DropFileHere": "Lepaskan fail di sini",
     "History": "Sejarah",
+    "HistoryAttachmentsNotStored": "Storan pelayar penuh. Lampiran tidak lagi disimpan dalam sejarah sembang.",
+    "HistoryNotStored": "Storan pelayar penuh. Perubahan terkini pada sembang ini akan hilang selepas muat semula.",
+    "HistoryOlderChatsNotStored": "Storan pelayar penuh. Sembang lama tidak lagi disimpan dan akan hilang selepas muat semula.",
     "NewChat": "Sembang Baharu",
     "NoDesiredReplicas": "Bilangan replika yang dikehendaki untuk penggunaan ini ialah 0, jadi ia tidak boleh membalas. Tetapkan bilangan replika yang dikehendaki kepada 1 atau lebih untuk menggunakannya.",
     "ScrollToBottom": "Tatal ke bawah",
