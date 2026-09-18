@@ -53,7 +53,7 @@ interface EditableVFolderNameV2Props {
   /**
    * Explicit project prop contract (ADR-0001, FR-3413): the project context
    * the page decided on, compared against the folder's ownership project for
-   * the rename gate. With `null` (super-admin pages) the project-membership
+   * the rename gate. With `null` (super-admin pages) the project-admin
    * branch simply doesn't match — the folder owner and super admins keep
    * their rename power. Never reads the ambient current project.
    */
@@ -100,7 +100,7 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const [userInfo] = useCurrentUserInfo();
   // Not `useEffectiveAdminRole` — it resolves its target from the ambient
   // project, which this contract must not depend on.
-  const { isSuperAdmin } = useCurrentUserProjectRoles();
+  const { isSuperAdmin, projectAdminIds } = useCurrentUserProjectRoles();
   const baiClient = useSuspendedBackendaiClient();
   const renameMutation = useTanMutation({
     mutationFn: (input: { id: string; name: string }) => {
@@ -117,16 +117,18 @@ const EditableVFolderNameV2: React.FC<EditableVFolderNameV2Props> = ({
   const [isEditing, setIsEditing] = useState(false);
 
   // Rename is allowed for the folder owner, super admins (any project —
-  // their power must not flicker with header state), or members of the
-  // page-decided project when the folder belongs to that project. With
-  // `project === null` the membership branch never matches.
+  // their power must not flicker with header state), or project admins of
+  // the page-decided project when the folder belongs to it. A plain project
+  // member only gets READ on a project-scoped folder, so offering the pencil
+  // to one only produced a 403 (FR-3522).
   const isEditingAllowed =
     editable &&
     (userInfo.uuid === vfolderNode.ownership?.userId ||
       isSuperAdmin ||
       (project !== null &&
         !!vfolderNode.ownership?.projectId &&
-        project.id === vfolderNode.ownership.projectId)) &&
+        project.id === vfolderNode.ownership.projectId &&
+        projectAdminIds.includes(project.id))) &&
     !isDeletedCategory(vfolderNode.status);
 
   const isPendingRenameMutation =
