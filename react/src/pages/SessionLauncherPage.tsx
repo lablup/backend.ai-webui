@@ -1168,6 +1168,9 @@ const SessionLauncherPage = () => {
                 >
                   <ResourceAllocationFormItems
                     project={currentProjectContext}
+                    // An SSH/SFTP system session runs in the SFTP resource
+                    // group the selector hides from every other session type.
+                    includeSFTPResourceGroups={sessionType === 'system'}
                     enableAgentSelect={
                       !baiClient._config.hideAgents &&
                       baiClient.supports('agent-select')
