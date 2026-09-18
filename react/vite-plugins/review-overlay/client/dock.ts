@@ -507,7 +507,10 @@ export function createSetDock(options: SetDockOptions) {
         ? active.closest<HTMLElement>('.row .act')
         : null;
     const id = control?.closest<HTMLElement>('.row')?.dataset.pinId;
-    const act = control && [...control.classList].find((c) => c !== 'act');
+    // `Array.from`, not a spread: the extension's `lib` has no `DOM.Iterable`
+    // and a `DOMTokenList` is not iterable there (ADR 0008).
+    const act =
+      control && Array.from(control.classList).find((c) => c !== 'act');
     return id && act ? { id, act } : null;
   }
 

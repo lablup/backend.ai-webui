@@ -8,14 +8,15 @@
  * `--color-*` custom properties: `all: initial` does not reset custom
  * properties, so they inherit across the shadow boundary and the overlay
  * follows the page into dark mode. Each carries a literal fallback for a page
- * where the theme has not been applied yet.
+ * where the theme has not been applied yet. A host that is not this app asks
+ * for `palette: 'own'` instead — see `TONES`.
  *
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
  * its select mode is on, so the composer stays clickable mid-pick.
  */
 import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
-import type { AnchorRect, CopyPayload } from './types.js';
+import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
 
 /** Everything the outline needs; a `DOMRect` and a projected region both fit. */
 type RectLike = { left: number; top: number; width: number; height: number };
@@ -57,7 +58,7 @@ export const COPY_FAILED = 'Could not reach the clipboard — try again';
 export function copyWithToast(
   copy: (text: string, html?: string) => boolean | Promise<boolean>,
   toast: (message: string) => void,
-  payload: { text: string; html?: string; toast?: string },
+  payload: { text: string; html?: string | undefined; toast?: string },
 ): void {
   const done = (ok: boolean) =>
     toast(ok ? (payload.toast ?? COPIED_ONE) : COPY_FAILED);
@@ -115,9 +116,135 @@ const el = <K extends keyof HTMLElementTagNameMap>(
   return node;
 };
 
-export function createOverlayUI(callbacks: OverlayUICallbacks) {
+/**
+ * Every colour the overlay would rather take from the page it sits on: the
+ * app's own token, the light literal to fall back to, and — for a host that
+ * must not read the page at all — the dark half the app would have supplied.
+ */
+const TONES = {
+  surface: {
+    name: '--bai-review-surface',
+    from: '--color-background-popover',
+    light: '#fff',
+    dark: '#1a2529',
+  },
+  text: {
+    name: '--bai-review-text',
+    from: '--color-text-primary',
+    light: '#0a1317',
+    dark: '#e8eef1',
+  },
+  textDim: {
+    name: '--bai-review-text-dim',
+    from: '--color-text-secondary',
+    light: '#4e606f',
+    dark: '#9fb0bb',
+  },
+  border: {
+    name: '--bai-review-border',
+    from: '--color-border-emphasized',
+    light: '#ccd3db',
+    dark: '#3a4a53',
+  },
+  inverted: {
+    name: '--bai-review-inverted',
+    from: '--color-background-inverted',
+    light: '#0a1317',
+    dark: '#e8eef1',
+  },
+  onInverted: {
+    name: '--bai-review-on-inverted',
+    from: '--color-background-surface',
+    light: '#fff',
+    dark: '#0a1317',
+  },
+  field: {
+    name: '--bai-review-field',
+    from: '--color-background-surface',
+    light: '#fff',
+    dark: '#131c20',
+  },
+  error: {
+    name: '--bai-review-error',
+    from: '--color-text-red',
+    light: '#c0392b',
+    dark: '#ff8a80',
+  },
+  shadow: {
+    name: '--bai-review-shadow',
+    from: '--color-shadow',
+    light: 'rgba(5, 54, 89, .25)',
+    dark: 'rgba(0, 0, 0, .5)',
+  },
+  rowHover: {
+    name: '--bai-row-hover',
+    from: '--color-overlay-hover',
+    light: 'rgba(5, 54, 89, .05)',
+    dark: 'rgba(255, 255, 255, .06)',
+  },
+  focusText: {
+    name: '--bai-focus-text',
+    from: '--color-text-accent',
+    light: '#0064e0',
+    dark: '#7ab5ff',
+  },
+  modText: {
+    name: '--bai-mod-text',
+    from: '--color-text-orange',
+    light: '#6b2203',
+    dark: '#ffc65c',
+  },
+  addText: {
+    name: '--bai-add-text',
+    from: '--color-text-green',
+    light: '#09441f',
+    dark: '#6ee08a',
+  },
+  delText: {
+    name: '--bai-del-text',
+    from: '--color-text-red',
+    light: '#7b0210',
+    dark: '#ff9a90',
+  },
+} as const;
+
+/** One themed value: the page's token, or a literal for a host without one. */
+const tone = (palette: OverlayPalette, key: keyof typeof TONES): string => {
+  const spec = TONES[key];
+  return palette === 'own' ? spec.light : `var(${spec.from}, ${spec.light})`;
+};
+
+/**
+ * An `own` palette has no app to follow into dark mode, so it follows the OS.
+ * Empty for `inherit`, whose tokens already resolve to whatever the app is.
+ */
+const darkTones = (palette: OverlayPalette): string => {
+  if (palette === 'inherit') return '';
+  const lines = Object.values(TONES)
+    .map((spec) => `        ${spec.name}: ${spec.dark};`)
+    .join('\n');
+  return `
+    @media (prefers-color-scheme: dark) {
+      :host {
+${lines}
+      }
+    }`;
+};
+
+/** What differs between the hosts this client runs under (the OverlayHost). */
+export interface OverlayUIOptions {
+  /** The `data-bai-review-overlay` value, so hosts can be told apart. */
+  marker?: string;
+  palette?: OverlayPalette;
+}
+
+export function createOverlayUI(
+  callbacks: OverlayUICallbacks,
+  options: OverlayUIOptions = {},
+) {
+  const palette = options.palette ?? 'inherit';
   const host = document.createElement('div');
-  host.setAttribute('data-bai-review-overlay', '');
+  host.setAttribute('data-bai-review-overlay', options.marker ?? '');
   host.setAttribute('data-react-grab-ignore-events', '');
   const root = host.attachShadow({ mode: 'open' });
   document.body.appendChild(host);
@@ -128,32 +255,34 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       all: initial;
       /* all:initial resets color-scheme too, and the app's tokens are
          light-dark() pairs — without this a dark app resolves to the light
-         half and the popover comes back white. */
-      color-scheme: inherit;
-      --bai-review-surface: var(--color-background-popover, #fff);
-      --bai-review-text: var(--color-text-primary, #0a1317);
-      --bai-review-text-dim: var(--color-text-secondary, #4e606f);
-      --bai-review-border: var(--color-border-emphasized, #ccd3db);
+         half and the popover comes back white. An own palette has no app to
+         inherit from and says which schemes it has drawn itself for. */
+      color-scheme: ${palette === 'own' ? 'light dark' : 'inherit'};
+      --bai-review-surface: ${tone(palette, 'surface')};
+      --bai-review-text: ${tone(palette, 'text')};
+      --bai-review-text-dim: ${tone(palette, 'textDim')};
+      --bai-review-border: ${tone(palette, 'border')};
       /* The pin's own colour, not a theme token — no Astryx --color-* carries
          it. Dark on-accent: white measures 3.25:1 on it, #0a1317 5.78:1. */
       --bai-review-accent: #ff0de7;
       --bai-review-accent-rgb: 255, 13, 231;
       --bai-review-accent-soft: rgba(var(--bai-review-accent-rgb), .35);
       --bai-review-on-accent: #0a1317;
-      --bai-review-inverted: var(--color-background-inverted, #0a1317);
-      --bai-review-on-inverted: var(--color-background-surface, #fff);
-      --bai-review-error: var(--color-text-red, #c0392b);
-      --bai-review-shadow: var(--color-shadow, rgba(5, 54, 89, .25));
+      --bai-review-inverted: ${tone(palette, 'inverted')};
+      --bai-review-on-inverted: ${tone(palette, 'onInverted')};
+      /* The composer's textarea — a surface inside a surface. */
+      --bai-review-field: ${tone(palette, 'field')};
+      --bai-review-error: ${tone(palette, 'error')};
+      --bai-review-shadow: ${tone(palette, 'shadow')};
       /* react-grab 0.1.50's box STYLE — 1px stroke at α.5 over an α.08 fill —
          in our accent, so every surface of this tool is the one colour. */
       --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
       --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
       /* The docs PR-preview palette (FR-3950), split by what it paints.
          MARKS keep the docs grammar literally — a change is green or amber
-         wherever it is read. CHROME binds to the app's own tokens, so guided
-         mode follows the theme toggle in the header; the palette used to
-         hard-code its surfaces and flip them on prefers-color-scheme, which
-         turned the popover dark under a light app on a dark OS. */
+         wherever it is read. CHROME goes through the palette above, so guided
+         mode follows the app's own theme toggle and not the OS — except under
+         an own palette, which has no app to follow. */
       --bai-add: #16a34a; --bai-add-bg: rgba(34, 197, 94, .18);
       --bai-mod: #ca8a04; --bai-mod-bg: rgba(250, 204, 21, .32);
       --bai-del: #dc2626;
@@ -162,16 +291,16 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       --bai-pop-bg: var(--bai-review-surface);
       --bai-pop-fg: var(--bai-review-text);
       --bai-pop-border: var(--bai-review-border);
-      --bai-row-hover: var(--color-overlay-hover, rgba(5, 54, 89, .05));
+      --bai-row-hover: ${tone(palette, 'rowHover')};
       /* The same three hues as INK on that surface. The docs literals are
          mixed for white and drop to ~2.5:1 on the app's dark surface, so text
          takes the app's own on-surface colours and the marks keep the docs
          ones. Each is ≥4.5:1 in both themes. */
-      --bai-focus-text: var(--color-text-accent, #0064e0);
-      --bai-mod-text: var(--color-text-orange, #6b2203);
-      --bai-add-text: var(--color-text-green, #09441f);
-      --bai-del-text: var(--color-text-red, #7b0210);
-    }
+      --bai-focus-text: ${tone(palette, 'focusText')};
+      --bai-mod-text: ${tone(palette, 'modText')};
+      --bai-add-text: ${tone(palette, 'addText')};
+      --bai-del-text: ${tone(palette, 'delText')};
+    }${darkTones(palette)}
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {
       border: 1px solid var(--bai-review-border);
@@ -207,7 +336,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }
     .compose textarea {
       width: 100%; height: 64px; font-size: 14px; padding: 6px;
-      background: var(--color-background-surface, #fff);
+      background: var(--bai-review-field);
       color: var(--bai-review-text);
       border: 1px solid var(--bai-review-border); border-radius: 6px;
       resize: vertical;
@@ -756,8 +885,11 @@ ${ICON_STYLE}
     placeCompose,
     copyText,
     /** `copyText` plus the line it says; the composer's own copy says more. */
-    copyWithToast: (payload: { text: string; html?: string; toast?: string }) =>
-      copyWithToast(copyText, showToast, payload),
+    copyWithToast: (payload: {
+      text: string;
+      html?: string | undefined;
+      toast?: string;
+    }) => copyWithToast(copyText, showToast, payload),
     isOwnEvent,
   };
 }

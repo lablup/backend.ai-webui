@@ -192,7 +192,7 @@ export interface PinLayerOptions {
   /**
    * Re-render this pin's whole comment, SYNCHRONOUSLY — the copy runs through
    * `execCommand` on the gateway origin, so nothing may be awaited inside the
-   * gesture. `main.ts` owns it: the server state and the stack live there, and
+   * gesture. `boot.ts` owns it: the server state and the stack live there, and
    * `null` means those reads have not landed for this element yet.
    */
   buildComment: (target: DeepLinkPinTarget) => PinCopyPayload | null;
@@ -215,7 +215,7 @@ export interface PinLayerOptions {
   onGiveUp?: (pendingIds: string[]) => void;
 }
 
-/** The one-view layer `main.ts` opened a link with before pin sets. */
+/** The one-view layer `boot.ts` opened a link with before pin sets. */
 export type DeepLinkPinOptions = PinLayerOptions;
 
 export interface DeepLinkPinTarget {

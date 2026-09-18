@@ -3,6 +3,7 @@
  * every module under `client/` is transpiled per request and served from
  * `/__review/*.js`; nothing here reaches the app bundle.
  */
+import type { ReactGrabAPI } from 'react-grab';
 
 /** Fractional position of the picked element inside its testid landmark. */
 export interface AnchorRect {
@@ -151,8 +152,14 @@ export interface DraftSet {
 
 declare global {
   interface Window {
-    /** Set by `main.ts` so a second `/__review/*.js` entry is a no-op. */
+    /** Set by `bootOverlay` so a second boot in this document is a no-op. */
     __baiReviewOverlay?: boolean;
+    /**
+     * react-grab's own global. Declared here too — identically — so a host
+     * that vendors `client/` needs only a module shim for `react-grab`, not a
+     * `Window` augmentation of its own (ADR 0008).
+     */
+    __REACT_GRAB__?: ReactGrabAPI;
     /**
      * Dev-only handoff from the app, which owns the router the overlay cannot
      * read. Written by `react/src/components/DevReviewRouteLabel.tsx`.
@@ -168,6 +175,13 @@ declare global {
     };
   }
 }
+
+/**
+ * Where the overlay's colours come from. `inherit` reads the page's Astryx
+ * `--color-*` across the shadow boundary; `own` reads nothing from the page,
+ * because a foreign site's tokens of the same name mean something else.
+ */
+export type OverlayPalette = 'inherit' | 'own';
 
 /** One copy, two flavours: a markdown textarea and a rich editor. */
 export interface CopyPayload {
