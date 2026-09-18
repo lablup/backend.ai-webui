@@ -95,10 +95,10 @@ export interface BAIComplexSelectProps {
     /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
     maxTriggerTokens?: number;
     /**
-     * Shows a clear button beside the chevron while something is selected.
-     * The trigger is a `<button>`, so the clear button is a sibling laid over
-     * its end, anchored to the field's bottom. It is not rendered while
-     * `status.message` is shown, because that message sits under the trigger.
+     * antd `allowClear`: a clear button between the spinner and the chevron
+     * while something is selected (`ComplexSelector.hasClear`, added by
+     * react/patches/@astryxdesign__core@0.5.4.patch, upstream
+     * https://github.com/facebook/astryx/issues/6361).
      */
     allowClear?: boolean;
     'data-testid'?: string;

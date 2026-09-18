@@ -16,7 +16,7 @@ export interface BAIVFolderPathPickerProps {
     defaultValue?: string;
     /** Emits `undefined` when the value is cleared (nothing picked). */
     onChange?: (selectedSubPath?: string) => void;
-    /** Shows a clear button while a value is picked. */
+    /** Shows a clear button while a non-root path is picked. */
     allowClear?: boolean;
     /** Overrides the "click to select" copy shown while nothing is picked. */
     placeholder?: string;
