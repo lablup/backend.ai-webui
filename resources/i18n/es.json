@@ -828,6 +828,7 @@
     "NewFolderName": "Nuevo nombre de carpeta",
     "NoStorageDescriptionFound": "Sin descripción.",
     "NotInProject": "Esta carpeta pertenece al proyecto '{{ projectName }}'.",
+    "NotMountable": "No montable",
     "NumberOfFolders": "Número de carpetas",
     "Permission": "Permiso",
     "Pipeline": "Carpetas de tuberías",

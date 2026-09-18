@@ -828,6 +828,7 @@
     "NewFolderName": "Uusi kansion nimi",
     "NoStorageDescriptionFound": "Ei kuvausta.",
     "NotInProject": "Tämä kansio kuuluu projektiin '{{ projectName }}'.",
+    "NotMountable": "Ei liitettävissä",
     "NumberOfFolders": "Kansioiden määrä",
     "Permission": "Lupa",
     "Pipeline": "Putkiston kansiot",

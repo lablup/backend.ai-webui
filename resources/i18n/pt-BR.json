@@ -828,6 +828,7 @@
     "NewFolderName": "Novo nome da pasta",
     "NoStorageDescriptionFound": "Sem descrição.",
     "NotInProject": "Esta pasta pertence ao projeto '{{ projectName }}'.",
+    "NotMountable": "Não montável",
     "NumberOfFolders": "Número de pastas",
     "Permission": "Permissão",
     "Pipeline": "Pastas de pipelines",

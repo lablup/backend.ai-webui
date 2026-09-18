@@ -828,6 +828,7 @@
     "NewFolderName": "새 폴더 이름",
     "NoStorageDescriptionFound": "별도 설명이 없습니다.",
     "NotInProject": "이 폴더는 '{{ projectName }}' 프로젝트에 속해 있습니다.",
+    "NotMountable": "마운트 불가",
     "NumberOfFolders": "폴더 개수",
     "Permission": "권한",
     "Pipeline": "파이프라인",
