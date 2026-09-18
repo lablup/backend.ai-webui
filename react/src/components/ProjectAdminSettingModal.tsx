@@ -7,7 +7,7 @@ import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSett
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -36,18 +36,16 @@ import {
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
-// Exported so the opener can `loadQuery` it in the click event. The backend
-// registers a pair of SYSTEM-source roles on each project scope
-// (`project-<id>-member` / `project-<id>-admin`); the filter looks them up by
-// the project's scope id, the admin one is picked by its name suffix, and the
-// nested `users` connection carries its current assignments.
+// Exported so the opener can `loadQuery` it in the click event. The filter is
+// built by `buildProjectAdminRoleFilter`; the nested `users` connection carries
+// each role's current assignments.
 export const ProjectAdminSettingQuery = graphql`
   query ProjectAdminSettingModalQuery(
     $filter: RoleFilter
     $limit: Int
     $offset: Int
   ) {
-    adminRoles(filter: $filter, first: 10) {
+    adminRoles(filter: $filter, first: 50) {
       count
       edges {
         node {
@@ -73,6 +71,63 @@ export const ProjectAdminSettingQuery = graphql`
     }
   }
 `;
+
+/**
+ * Entity type whose permissions a project-admin role carries after the
+ * single-scope RBAC migration (manager 26.9.0, BA-7796). Matched
+ * case-insensitively because the entity type is a free-form string on
+ * `PermissionNestedFilter` and managers differ on its casing.
+ */
+const SCOPE_ADMIN_ENTITY_TYPE = 'scope_admin';
+
+type ProjectAdminRoleFilter =
+  ProjectAdminSettingModalQuery['variables']['filter'];
+
+type ProjectAdminRole = NonNullable<
+  NonNullable<
+    NonNullable<
+      ProjectAdminSettingModalQuery['response']['adminRoles']
+    >['edges'][number]
+  >['node']
+>;
+
+/**
+ * Filter that selects the roles granting project admin on `projectId`.
+ *
+ * Single-scope managers (26.9.0+) carry that grant as a `scope_admin`
+ * permission on any number of roles in the scope, so the lookup asks for the
+ * permission. Older managers register one SYSTEM role pair per project
+ * (`project-<id>-member` / `project-<id>-admin`) and only the name says which
+ * is which.
+ */
+export const buildProjectAdminRoleFilter = (
+  projectId: string,
+  matchesByScopeAdminPermission: boolean,
+): ProjectAdminRoleFilter => ({
+  status: { equals: 'ACTIVE' },
+  mappedScope: {
+    scopeType: { equals: 'PROJECT' },
+    scopeId: { equals: projectId },
+  },
+  ...(matchesByScopeAdminPermission
+    ? { permission: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } } }
+    : { source: { equals: 'SYSTEM' } }),
+});
+
+/**
+ * The roles `buildProjectAdminRoleFilter` asked for. The permission filter has
+ * already narrowed the connection, so every returned role counts; the legacy
+ * filter returns the SYSTEM pair, of which only the `-admin` one does.
+ */
+export const selectProjectAdminRoles = (
+  data: ProjectAdminSettingModalQuery['response'] | undefined,
+  matchesByScopeAdminPermission: boolean,
+): Array<ProjectAdminRole> =>
+  filterOutNullAndUndefined(
+    _.map(data?.adminRoles?.edges, (edge) => edge?.node),
+  ).filter(
+    (node) => matchesByScopeAdminPermission || _.endsWith(node.name, 'admin'),
+  );
 
 interface ProjectAdminSettingModalProps extends Omit<
   BAIModalProps,
@@ -106,6 +161,10 @@ const ProjectAdminSettingModal = ({
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const webuiNavigate = useWebUINavigate();
+  const baiClient = useSuspendedBackendaiClient();
+  const matchesByScopeAdminPermission = baiClient.supports(
+    'rbac-single-scope-role',
+  );
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
 
   // Keep the previous result visible while a reload is in flight so the table
@@ -118,12 +177,23 @@ const ProjectAdminSettingModal = ({
     deferredQueryRef,
   );
 
-  const role =
-    _.find(data.adminRoles?.edges, (edge) =>
-      _.endsWith(edge?.node?.name, 'admin'),
-    )?.node ?? null;
-  const assignments = filterOutNullAndUndefined(
-    role?.users?.edges?.map((edge) => edge?.node) ?? [],
+  const roles = selectProjectAdminRoles(data, matchesByScopeAdminPermission);
+  // A user holding several of the project's admin roles is one row; revoking
+  // it has to drop every one of them.
+  const assignments = _.map(
+    _.groupBy(
+      roles.flatMap((adminRole) =>
+        filterOutNullAndUndefined(
+          _.map(adminRole.users?.edges, (edge) => edge?.node),
+        ).map((node) => ({ ...node, roleId: adminRole.id })),
+      ),
+      'userId',
+    ),
+    (group) => ({
+      userId: group[0].userId,
+      email: group[0].user?.basicInfo?.email,
+      roleIds: _.map(group, 'roleId'),
+    }),
   );
 
   const mutateBulkAssignRole =
@@ -164,23 +234,29 @@ const ProjectAdminSettingModal = ({
   };
 
   const handleAssign = async () => {
-    if (!role) {
+    if (_.isEmpty(roles)) {
       return;
     }
     await formRef.current
       ?.validateFields()
       .then(async (values) => {
         try {
-          const result = await mutateBulkAssignRole({
-            input: {
-              roleId: toLocalId(role.id),
-              userIds: values.userIds,
-              // Passing projectId auto-adds the project to each user's allowed
-              // project list.
-              projectId,
-            },
-          });
-          const failed = result.adminBulkAssignRole?.failed ?? [];
+          const results = await Promise.all(
+            roles.map((adminRole) =>
+              mutateBulkAssignRole({
+                input: {
+                  roleId: toLocalId(adminRole.id),
+                  userIds: values.userIds,
+                  // Passing projectId auto-adds the project to each user's
+                  // allowed project list.
+                  projectId,
+                },
+              }),
+            ),
+          );
+          const failed = results.flatMap(
+            (result) => result.adminBulkAssignRole?.failed ?? [],
+          );
           if (failed.length > 0) {
             message.warning(
               t('rbac.BulkAssignPartialFailure', { count: failed.length }),
@@ -202,6 +278,8 @@ const ProjectAdminSettingModal = ({
         } catch (error) {
           logger.error(error);
           message.error(resolveErrorMessage(error));
+          // One role of several may already have been granted.
+          onReload(queryRef.variables, { fetchPolicy: 'network-only' });
         }
       })
       .catch((error) => {
@@ -210,22 +288,28 @@ const ProjectAdminSettingModal = ({
       });
   };
 
-  const handleRevoke = async (userId: string) => {
-    if (!role) {
+  const handleRevoke = async (userId: string, roleIds: Array<string>) => {
+    if (_.isEmpty(roleIds)) {
       return;
     }
     try {
-      await mutateRevokeRole({
-        input: {
-          roleId: toLocalId(role.id),
-          userId,
-        },
-      });
+      await Promise.all(
+        roleIds.map((roleId) =>
+          mutateRevokeRole({
+            input: {
+              roleId: toLocalId(roleId),
+              userId,
+            },
+          }),
+        ),
+      );
       message.success(t('rbac.UserRevoked'));
       onReload(queryRef.variables, { fetchPolicy: 'network-only' });
     } catch (error) {
       logger.error(error);
       message.error(resolveErrorMessage(error));
+      // One role of several may already have been revoked.
+      onReload(queryRef.variables, { fetchPolicy: 'network-only' });
     }
   };
 
@@ -234,7 +318,9 @@ const ProjectAdminSettingModal = ({
       title={
         <BAIFlex align="center">
           {t('project.SetProjectAdmin')}
-          {role && (
+          {/* The RBAC page shows one role at a time, so the shortcut opens the
+              first of the project's admin roles. */}
+          {roles[0] && (
             <Tooltip content={t('project.ViewRBACPermissions')}>
               <BAIButton
                 type="text"
@@ -243,9 +329,9 @@ const ProjectAdminSettingModal = ({
                 onClick={() => {
                   const searchParams = new URLSearchParams({
                     filter: JSON.stringify({
-                      name: { iContains: role.name },
+                      name: { iContains: roles[0].name },
                     }),
-                    roleDetail: role.id,
+                    roleDetail: roles[0].id,
                   });
                   webuiNavigate(`/rbac?${searchParams.toString()}`);
                 }}
@@ -295,7 +381,7 @@ const ProjectAdminSettingModal = ({
           </BAIFlex>
         </Form>
         <BAITable
-          rowKey="id"
+          rowKey="userId"
           size="small"
           dataSource={assignments}
           loading={isRefetchingInTransition}
@@ -303,7 +389,7 @@ const ProjectAdminSettingModal = ({
             {
               key: 'email',
               title: t('general.E-Mail'),
-              render: (__, record) => record.user?.basicInfo?.email || '-',
+              render: (__, record) => record.email || '-',
             },
             {
               key: 'userId',
@@ -320,7 +406,7 @@ const ProjectAdminSettingModal = ({
                     size="small"
                     danger
                     icon={<XIcon />}
-                    action={() => handleRevoke(record.userId)}
+                    action={() => handleRevoke(record.userId, record.roleIds)}
                   />
                 </Tooltip>
               ),

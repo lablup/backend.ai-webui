@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<01f6a060eebb8f374f02e1b154a31355>>
+ * @generated SignedSource<<b79d3b316d3366b22a8122f4751058c5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -186,7 +186,7 @@ v3 = [
       {
         "kind": "Literal",
         "name": "first",
-        "value": 10
+        "value": 50
       }
     ],
     "concreteType": "RoleConnection",
@@ -330,16 +330,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e7d1bf46cef89b3dbbaa8a24dcee1796",
+    "cacheID": "7aced2be3883cb104594394af0c33968",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 10) {\n    count\n    edges {\n      node {\n        id\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 50) {\n    count\n    edges {\n      node {\n        id\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9d31cbe485a291bde3dd5977f0f3db7f";
+(node as any).hash = "799949e432d4e5b70d80ce1669b3af39";
 
 export default node;
