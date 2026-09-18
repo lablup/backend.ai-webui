@@ -46,6 +46,11 @@ const VFolderPermissionCell: React.FC<VFolderPermissionCellProps> = ({
         label: t('data.ReadWrite'),
         icon: 'RW',
       },
+      // The folder mounts to nobody (backend.ai#14679).
+      none: {
+        label: t('data.NotMountable'),
+        icon: '',
+      },
     };
     const perm = vfolderData?.permissions
       ? _.includes(vfolderData.permissions, 'mount_rw')

@@ -10,6 +10,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 const hasPermission = (permission: string | undefined, perm: string) => {
@@ -36,6 +37,7 @@ const VFolderPermissionToken: React.FC<VFolderPermissionTokenProps> = ({
   vFolderFrgmt = null,
   permission,
 }) => {
+  const { t } = useTranslation();
   const vFolder = useFragment(
     graphql`
       fragment VFolderPermissionToken_VFolder on VirtualFolder {
@@ -44,9 +46,16 @@ const VFolderPermissionToken: React.FC<VFolderPermissionTokenProps> = ({
     `,
     vFolderFrgmt,
   );
+  const resolvedPermission = vFolder?.permission || permission;
+  // 'none' (or the legacy field's null) means the folder mounts to nobody.
+  if (!resolvedPermission || resolvedPermission === 'none') {
+    return (
+      <BAIDoubleToken values={[{ label: t('data.NotMountable'), color: 'default' }]} />
+    );
+  }
   const tokenValues: BAIDoubleTokenValue[] = _.compact(
     _.map(['r', 'w', 'd'], (perm) =>
-      hasPermission(vFolder?.permission || permission, perm)
+      hasPermission(resolvedPermission, perm)
         ? {
             label: perm.toUpperCase(),
             color: tokenColorForStatus('vfolderPermission', perm),

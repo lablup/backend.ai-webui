@@ -815,6 +815,7 @@
     "NewFolderName": "New folder name",
     "NoStorageDescriptionFound": "No description.",
     "NotInProject": "This folder belongs to '{{ projectName }}' project.",
+    "NotMountable": "Not mountable",
     "NumberOfFolders": "Number of folders",
     "Permission": "Permission",
     "Pipeline": "Pipeline",
