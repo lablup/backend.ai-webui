@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Virheellinen polkumuoto.",
     "AliasOverlapping": "Liitospolku on päällekkäinen toisen kansion kanssa.",
+    "AliasOverlappingWithAutoMount": "Liitospolku on päällekkäinen automaattisesti liitetyn kansion kanssa.",
     "AliasPlaceholder": "Liitospolku",
     "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
-    "Name": "Nimi",
-    "PathAndAlias": "Polku & Alias",
+    "CreateFolder": "Luo uusi tallennuskansio",
+    "DestinationPath": "Kontin polku (destination)",
+    "Folders": "Kansiot",
+    "OwnerProject": "Projekti",
+    "OwnerUser": "Käyttäjä",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
+    "Refresh": "Päivitä",
     "RemoveFolder": "Poista",
+    "SelectFolder": "Valitse kansio",
+    "SourcePath": "Polku kansiossa (source)",
     "Subpath": "Alihakemisto",
     "SubpathInvalid": "Alihakemiston on oltava suhteellinen polku eikä se saa sisältää '..'.",
-    "SubpathPlaceholder": "esim. dataset/train (valinnainen)",
-    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Jätä tyhjäksi liittääksesi juuren."
+    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Napsauta kenttää selataksesi kansiota ja valitaksesi alikansion; jätä tyhjäksi, jos haluat liittää kansion juuren.",
+    "UnmountableFoldersRemoved": "Kansiot, joita et voi enää liittää, poistettiin valinnasta."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"

@@ -1939,6 +1939,13 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             style={{ marginTop: token.marginXS }}
             title={t('deployment.NoPresetsAvailable')}
             description={t('deployment.NoPresetsAvailableSwitchToCustom')}
+            endContent={
+              <Button
+                size="sm"
+                label={t('deployment.SwitchToCustomMode')}
+                onClick={() => void handleModeChange('custom')}
+              />
+            }
           />
         ) : (
           <Form<PresetFormValues>

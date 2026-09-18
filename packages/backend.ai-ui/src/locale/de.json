@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Ungültiges Pfadformat.",
     "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasOverlappingWithAutoMount": "Der Einhängepfad überschneidet sich mit einem automatisch eingehängten Ordner.",
     "AliasPlaceholder": "Einhängepfad",
     "AutoMountedFolders": "Automatisch eingehängte Ordner",
-    "Name": "Name",
-    "PathAndAlias": "Pfad & Alias",
+    "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
+    "DestinationPath": "Container-Pfad (destination)",
+    "Folders": "Ordner",
+    "OwnerProject": "Projekt",
+    "OwnerUser": "Benutzer",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
+    "Refresh": "Aktualisierung",
     "RemoveFolder": "Entfernen",
+    "SelectFolder": "Ordner auswählen",
+    "SourcePath": "Pfad im Ordner (source)",
     "Subpath": "Unterpfad",
     "SubpathInvalid": "Der Unterpfad muss ein relativer Pfad sein und darf '..' nicht enthalten.",
-    "SubpathPlaceholder": "z. B. dataset/train (optional)",
-    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Leer lassen, um die Wurzel einzuhängen."
+    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Klicken Sie auf das Feld, um den Ordner zu durchsuchen und einen auszuwählen; leer lassen, um die Ordnerwurzel einzuhängen.",
+    "UnmountableFoldersRemoved": "Ordner, die Sie nicht mehr einbinden können, wurden aus der Auswahl entfernt."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Ordner auswählen"

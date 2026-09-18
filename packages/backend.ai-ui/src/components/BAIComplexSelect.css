@@ -185,6 +185,12 @@
     min-width: 0;
   }
 
+  /* Stretch the row so `extra` lands at the trailing edge, not after the text. */
+  .bai-complex-select__option-content > * {
+    flex: 1;
+    min-width: 0;
+  }
+
   /* Reserved on every row, so a row occupies the same geometry whether or not
      it is the chosen one. `min-width` rather than `width`: a theme can replace
      `check` with a larger indicator (a radio is 20px at `sm`). */

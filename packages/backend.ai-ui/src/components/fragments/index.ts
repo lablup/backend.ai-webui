@@ -111,14 +111,22 @@ export type {
 export { default as BAIVFolderMountConfigInput } from './BAIVFolderMountConfigInput';
 export {
   inputToMountDestination,
+  mountDestinationToInput,
   getVFolderMountConfigStatuses,
-  isVFolderMountConfigValid,
+  resolveVFolderMounts,
+  toMountCreationConfig,
+  useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 export type {
+  AutoMountedFolder,
   BAIVFolderMountConfigInputProps,
+  BAIVFolderMountConfigInputRef,
+  LegacyVFolder,
   VFolderMountConfigValue,
   VFolderMountConfigStatusOptions,
   VFolderMountConfigEntryStatus,
+  ResolvedVFolderMount,
+  VFolderMountCreationConfig,
 } from './BAIVFolderMountConfigInput';
 export { default as BAIProjectVfolderSelect } from './BAIProjectVfolderSelect';
 export type {

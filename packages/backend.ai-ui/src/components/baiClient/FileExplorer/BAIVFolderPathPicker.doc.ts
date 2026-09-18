@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "A form control for choosing a sub path inside a given virtual folder. It renders a select-like `ComplexSelector` purely as a display trigger — it has no dropdown of its own; every open gesture, mouse or keyboard, is redirected to `BAIDirectoryPickerModal`, so a path can only be picked by browsing and never typed. The value is the sub path within the vfolder: `''` for the vfolder root, `'sub/path'` below it, and `undefined` while nothing has been picked; the trigger displays it with a leading slash so a chosen root is visibly different from an empty field. The vfolder itself is chosen elsewhere and handed in as `vfolderUuid`. `value`, `defaultValue` and `onChange` follow the controllable-value convention, so the component drops into a Form.Item and works controlled or uncontrolled. Opening the picker preloads the modal's query inside a transition, which is what the trigger shows as its loading state.",
+      "A form control for choosing a sub path inside a given virtual folder. It renders a select-like `ComplexSelector` purely as a display trigger — it has no dropdown of its own; every open gesture, mouse or keyboard, is redirected to `BAIDirectoryPickerModal`, so a path can only be picked by browsing and never typed. The value is the sub path within the vfolder: `''` for the vfolder root, `'sub/path'` below it, and `undefined` while nothing has been picked; the trigger displays it as the relative path it is, without a leading slash, and shows the root as empty because mounting the root is what an unset subpath means. The vfolder itself is chosen elsewhere and handed in as `vfolderUuid`. `value`, `defaultValue` and `onChange` follow the controllable-value convention, so the component drops into a Form.Item and works controlled or uncontrolled. Opening the picker preloads the modal's query inside a transition, which is what the trigger shows as its loading state.",
     bestPractices: [
       {
         guidance: true,
@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Read a stored path back as an absolute one — the leading slash is display only, and `onChange` emits the bare sub path.',
+          'Prefix the value with a slash for display — a subpath is relative to its vfolder, and the validation of mount subpaths rejects an absolute one.',
       },
     ],
   },
@@ -68,7 +68,19 @@ export const docs = {
       name: 'onChange',
       type: '(selectedSubPath?: string) => void',
       description:
-        'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing.',
+        'Fired with the newly chosen sub path when the picker is confirmed. Cancelling the modal keeps the current value and emits nothing. The parameter is optional so a clear action can emit `undefined` (nothing picked); treat it as "back to unset" or, where the root is the meaningful default, as `\'\'`.',
+    },
+    {
+      name: 'allowClear',
+      type: 'boolean',
+      description:
+        "Shows a clear button between the loading spinner and the chevron while a non-root path is picked (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.5.4.patch`). Clearing emits `undefined` (nothing picked), which is distinct from the vfolder root `''`.",
+    },
+    {
+      name: 'placeholder',
+      type: 'string',
+      description:
+        'Replaces the "click to select a path" copy shown while nothing is picked, or `""` for no copy at all where an unset subpath is self-explanatory. The "select a folder first" copy still wins while `vfolderUuid` is missing.',
     },
     {
       name: 'disabled',
@@ -77,10 +89,21 @@ export const docs = {
         'Disables the trigger and blocks the picker from opening, on top of the block that a missing `vfolderUuid` already imposes.',
     },
     {
+      name: 'size',
+      type: 'ComplexSelectorSize',
+      description: 'Control height, in the Astryx size vocabulary.',
+    },
+    {
+      name: 'width',
+      type: 'SizeValue',
+      description: 'Field width, forwarded to ComplexSelector.',
+      default: "'100%'",
+    },
+    {
       name: 'style',
       type: 'React.CSSProperties',
       description:
-        'Inline style forwarded to the trigger, typically to set its width.',
+        'Inline style forwarded to the trigger. Width has its own `width` prop; reach for this only for something `width` and `size` cannot express.',
     },
     {
       name: 'label',
@@ -113,7 +136,6 @@ export const docs = {
       code: `<BAIVFolderPathPicker
   vfolderUuid={vfolderUuid}
   onChange={setSelectedSubPath}
-  style={{ width: '100%' }}
 />`,
     },
   ],
