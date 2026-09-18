@@ -24,12 +24,24 @@ type ProjectInfo = {
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
+export type FallbackProject = {
+  id: string;
+  name: string;
+  type?: string | null;
+};
 export interface ProjectSelectProps extends BAISelectProps {
   onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
+  /**
+   * Labels for already-selected projects the domain's option list cannot
+   * contain (an inactive project, say). Only entries that are currently
+   * selected become options, so this never widens the assignable set — it
+   * keeps such a value from rendering as a bare UUID (FR-3989).
+   */
+  fallbackProjects?: ReadonlyArray<FallbackProject>;
   'aria-label'?: string;
 }
 
@@ -38,6 +50,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
+  fallbackProjects,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
@@ -55,6 +68,31 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   });
 
   const accessibleProjects = disableDefaultFilter ? groups : memberProjects;
+
+  const selectedIds: Array<string> = _.isArray(value)
+    ? (value as Array<string>)
+    : _.isNil(value)
+      ? []
+      : [value as string];
+  const fallbackOptionProjects = _.map(
+    _.filter(
+      fallbackProjects,
+      (project) =>
+        selectedIds.includes(project.id) &&
+        !_.some(accessibleProjects, { id: project.id }),
+    ),
+    (project) => ({
+      id: project.id,
+      name: project.name,
+      type: project.type ?? 'GENERAL',
+      is_active: null,
+      resource_policy: null,
+    }),
+  );
+  const optionProjects = [
+    ...(accessibleProjects ?? []),
+    ...fallbackOptionProjects,
+  ];
 
   const lockedProjectIds = !lockedProjectTypes?.length
     ? []
@@ -90,7 +128,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     })[key] || key;
 
   const groupOptions = _.map(
-    _.groupBy(accessibleProjects, 'type'),
+    _.groupBy(optionProjects, 'type'),
     (value, key) => {
       return {
         label: getLabel(key),
