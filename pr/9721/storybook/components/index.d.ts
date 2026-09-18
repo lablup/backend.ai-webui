@@ -134,6 +134,8 @@ export { default as BAIPopconfirm } from './BAIPopconfirm';
 export type { BAIPopconfirmProps } from './BAIPopconfirm';
 export { default as BAIBadgeCount } from './BAIBadgeCount';
 export type { BAIBadgeCountProps } from './BAIBadgeCount';
+export { default as BAIBadgeList } from './BAIBadgeList';
+export type { BAIBadgeListProps, BAIBadgeListItem } from './BAIBadgeList';
 export { default as BAINotificationStack } from './BAINotificationStack';
 export type { BAINotificationStackProps, BAINotificationStackItem, } from './BAINotificationStack';
 export { toBAINotificationStackItems } from './BAINotificationStackAdapter';
