@@ -257,15 +257,15 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     );
   }, [allFolderList, currentProject.id]);
 
-  const mountableFoldersByPermission = useMemo(() => {
-    return accessibleFoldersByCurrentProject.filter(
-      (folder) =>
-        mountableVolumesByPermission.includes(folder.host) &&
-        // `permission` is the caller's effective mount level; the manager
-        // refuses to mount a folder at 'none' (backend.ai#14679).
-        folder.permission !== 'none',
-    );
-  }, [accessibleFoldersByCurrentProject, mountableVolumesByPermission]);
+  // REST `permission` is the CALLER's effective mount level even when
+  // `owner_user_email` names someone else, so the 'none' gate (the manager
+  // refuses such a mount, backend.ai#14679) only holds when the caller is the
+  // session owner; on behalf of another user the manager resolves it for them.
+  const mountableFoldersByPermission = accessibleFoldersByCurrentProject.filter(
+    (folder) =>
+      mountableVolumesByPermission.includes(folder.host) &&
+      (ownerEmail ? true : folder.permission !== 'none'),
+  );
 
   useEffect(() => {
     // check selectedRowKeys are valid
