@@ -528,8 +528,8 @@ function createPinView(deps: ViewDeps): PinView {
     }
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    // A rect with no size at all is jsdom (or `display: contents`), not a
-    // scrolled-away element.
+    // A rect with no size at all is jsdom, not a scrolled-away element: where
+    // there IS layout the gate above already gave such an element up.
     const measured = box.width > 0 || box.height > 0;
     const outside = (area: Bounds) =>
       box.bottom <= area.top ||
