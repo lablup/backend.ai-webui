@@ -16,20 +16,19 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Switch } from '@astryxdesign/core/Switch';
+import { Token } from '@astryxdesign/core/Token';
 import {
-  BAIBadgeList,
+  BAITokenRow,
   BAIDeleteConfirmModal,
   BAIFlex,
   BAINameActionCell,
   BAIPropertyFilter,
   BAITable,
-  BooleanTag,
+  BAIBooleanToken,
   INITIAL_FETCH_KEY,
-  badgeVariantForTagColor,
   filterOutNullAndUndefined,
   type BAIColumnType,
   type BAIColumnsType,
@@ -348,14 +347,7 @@ const ContainerRegistryList: React.FC<{
       title: t('registry.Project'),
       dataIndex: 'project',
       render: (value) => {
-        // Uncolored antd Tag -> neutral Astryx Badge (Tag lookup policy).
-        return value ? (
-          <Badge
-            key={value}
-            variant={badgeVariantForTagColor(undefined)}
-            label={value}
-          />
-        ) : null;
+        return value ? <Token key={value} label={value} /> : null;
       },
     },
     {
@@ -372,7 +364,7 @@ const ContainerRegistryList: React.FC<{
       key: 'is_global',
       title: t('registry.Global'),
       dataIndex: 'is_global',
-      render: (value) => <BooleanTag value={value} />,
+      render: (value) => <BAIBooleanToken value={value} />,
     },
     {
       key: 'allowed_groups',
@@ -387,7 +379,7 @@ const ContainerRegistryList: React.FC<{
           _.map(record.allowed_groups_preview?.edges, (edge) => edge?.node),
         );
         return (
-          <BAIBadgeList
+          <BAITokenRow
             items={_.map(groups, (group) => ({
               key: group.id,
               label: group.name ?? '',

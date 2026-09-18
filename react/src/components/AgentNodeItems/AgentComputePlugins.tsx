@@ -3,7 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AgentComputePluginsFragment$key } from '../../__generated__/AgentComputePluginsFragment.graphql';
-import { BAIDoubleTag, BAITag } from 'backend.ai-ui';
+import { Token } from '@astryxdesign/core/Token';
+import { BAIDoubleToken } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
 
@@ -33,7 +34,7 @@ const AgentComputePlugins: React.FC<AgentComputePluginsProps> = ({
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
                 { label: 'CUDA' },
                 {
@@ -43,9 +44,9 @@ const AgentComputePlugins: React.FC<AgentComputePluginsProps> = ({
               ]}
             />
           ) : (
-            <BAITag color="green">CUDA Disabled</BAITag>
+            <Token color="green" label="CUDA Disabled" />
           )}
-          <BAIDoubleTag
+          <BAIDoubleToken
             values={[
               { label: 'CUDA Plugin' },
               {
@@ -55,9 +56,7 @@ const AgentComputePlugins: React.FC<AgentComputePluginsProps> = ({
             ]}
           />
           {_.includes(_.keys(parsedAvailableSlots), 'cuda.shares') ? (
-            <BAITag color="blue" style={{ borderRadius: 0 }}>
-              Fractional GPU™
-            </BAITag>
+            <Token color="blue" label="Fractional GPU™" />
           ) : null}
         </>
       ) : (

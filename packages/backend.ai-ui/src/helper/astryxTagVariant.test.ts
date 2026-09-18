@@ -1,5 +1,5 @@
 import {
-  PRIMARY_TAG_VARIANT,
+  PRIMARY_TOKEN_COLOR,
   STATUS_BADGE_VARIANT,
   badgeVariantForStatus,
   badgeVariantForTagColor,
@@ -146,11 +146,20 @@ describe('tokenColorForStatus', () => {
     expect(tokenColorForStatus('session', 'ERROR')).toBe('red');
     expect(tokenColorForStatus('session', 'TERMINATED')).toBe('default');
   });
+
+  it('maps settled-value domains used by Token call sites', () => {
+    expect(tokenColorForStatus('loginHistory', 'SUCCESS')).toBe('green');
+    expect(tokenColorForStatus('loginHistory', 'REVOKED_BY_ADMIN')).toBe(
+      'orange',
+    );
+    expect(tokenColorForStatus('role', 'ACTIVE')).toBe('green');
+    expect(tokenColorForStatus('vfolderPermission', 'r')).toBe('green');
+  });
 });
 
 describe('module invariants', () => {
-  it('exposes a brand variant for token.colorPrimary call sites', () => {
-    expect(PRIMARY_TAG_VARIANT).toBe('green');
+  it('exposes the brand Token colour for the main-access-key marker', () => {
+    expect(PRIMARY_TOKEN_COLOR).toBe('green');
   });
 
   it('every domain map value is a valid Badge variant', () => {

@@ -14,8 +14,8 @@ import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
@@ -29,7 +29,7 @@ import {
   BAISelectionLabel,
   useBAILogger,
   BAIText,
-  PRIMARY_TAG_VARIANT,
+  PRIMARY_TOKEN_COLOR,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -593,11 +593,11 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             render: (isAdmin) =>
               isAdmin ? (
                 <BAIFlex gap="xs">
-                  <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
-                  <Badge variant="green" label="user" />
+                  <Token color={PRIMARY_TOKEN_COLOR} label="admin" />
+                  <Token color="green" label="user" />
                 </BAIFlex>
               ) : (
-                <Badge variant="green" label="user" />
+                <Token color="green" label="user" />
               ),
             sorter: true,
           },

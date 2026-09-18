@@ -14,13 +14,13 @@ import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { theme } from '../theme-shim';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Card } from '@astryxdesign/core/Card';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -149,7 +149,7 @@ const ModelCardV2Card: React.FC<{
         <BAIFlex direction="row" justify="between" wrap="wrap" gap="xs">
           <BAIFlex direction="row" wrap="wrap" gap="xs">
             {modelCard.metadata?.task && (
-              <Badge variant="neutral" label={modelCard.metadata.task} />
+              <Token label={modelCard.metadata.task} />
             )}
             {(modelCard.updatedAt || modelCard.createdAt) && (
               <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>

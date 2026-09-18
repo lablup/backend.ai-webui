@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Урьдчилан тохиргоо сонгох"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "болон бусад {{rest}}"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Муудсан",
     "Deploying": "Байршуулж байна",
     "Healthy": "Эрүүл",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "турших"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "болон бусад {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Үүсгэсэн",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<acb019ce986fafbfa7f6c6b75936a471>>
+ * @generated SignedSource<<b817448f4c0af5cdfb9b2e127ab7f429>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type BAIArtifactDescriptionsFragment$data = {
     readonly name: string | null | undefined;
     readonly url: string | null | undefined;
   };
-  readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTagFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTokenFragment">;
   readonly " $fragmentType": "BAIArtifactDescriptionsFragment";
 };
 export type BAIArtifactDescriptionsFragment$key = {
@@ -69,7 +69,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "BAIArtifactTypeTagFragment"
+      "name": "BAIArtifactTypeTokenFragment"
     }
   ],
   "type": "Artifact",
@@ -77,6 +77,6 @@ return {
 };
 })();
 
-(node as any).hash = "72f809fc549edf3101d3994ddc540f18";
+(node as any).hash = "6b8b05b1999cb37d1990e80a12ae600a";
 
 export default node;

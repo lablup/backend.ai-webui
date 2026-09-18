@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "และอีก {{rest}} รายการ"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "ลดลง",
     "Deploying": "กำลังปรับใช้",
     "Healthy": "ปกติ",
@@ -606,6 +603,9 @@
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
+  },
+  "comp:BAITokenRow": {
+    "AndMore": "และอีก {{rest}} รายการ"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",

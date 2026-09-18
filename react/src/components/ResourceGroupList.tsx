@@ -23,8 +23,8 @@ import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
-import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIButton,
   BAIColumnsType,
@@ -470,7 +470,7 @@ const ResourceGroupList: React.FC = () => {
         return proxies.length > 0 ? (
           <BAIFlex gap="xxs" wrap="wrap">
             {_.map(proxies, (proxy) => (
-              <Badge key={proxy} variant="blue" label={proxy} />
+              <Token key={proxy} color="blue" label={proxy} />
             ))}
           </BAIFlex>
         ) : (

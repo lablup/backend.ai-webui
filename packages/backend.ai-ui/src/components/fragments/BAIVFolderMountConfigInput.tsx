@@ -7,9 +7,9 @@ import BAIFlex from '../BAIFlex';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
 import BAIVFolderSelect from './BAIVFolderSelect';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import * as _ from 'lodash-es';
 import { XIcon } from 'lucide-react';
@@ -440,7 +440,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
             {t('comp:BAIVFolderMountConfigInput.AutoMountedFolders')}
           </BAIText>
           {autoMountedFolderNames.map((folderName) => (
-            <Badge key={folderName} variant="neutral" label={folderName} />
+            <Token key={folderName} label={folderName} />
           ))}
         </BAIFlex>
       )}

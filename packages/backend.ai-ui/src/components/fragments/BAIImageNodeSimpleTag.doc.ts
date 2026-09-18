@@ -12,11 +12,11 @@ export const docs = {
     'tag',
     'version',
     'architecture',
-    'chip',
+    'token',
   ],
   usage: {
     description:
-      'One-line identity of a v1 `ImageNode` (ADR 0005) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag chips and a copy control for the full reference. It reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`), so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. It must sit under `BAIMetaDataProvider`, because the icon and the tag aliases come from `useBAIImageMetaData`. `BAIImageNodeSimpleTagV2` draws the same row from the v2 schema; the two share the `imageNodeTagFacts` builder that decides double tag versus single badge and the row markup itself, an internal `ImageNodeSimpleTag` the barrel does not export.',
+      'One-line identity of a v1 `ImageNode` (ADR 0005) — meta icon, aliased base name, base version and architecture, divider-separated, followed by the image tag tokens and a copy control for the full reference. It reads `BAIImageNodeSimpleTagFragment` on `ImageNode` (`registry`, `namespace`, `tag`, `architecture`, `base_image_name`, `version`, `tags`, `labels`), so the caller spreads that fragment on the `ImageNode` in its query and passes the node to `imageFrgmt`; a null reference renders nothing. It must sit under `BAIMetaDataProvider`, because the icon and the tag aliases come from `useBAIImageMetaData`. `BAIImageNodeSimpleTagV2` draws the same row from the v2 schema; the two share the `imageNodeTagFacts` builder that decides double token versus single token and the row markup itself, an internal `ImageNodeSimpleTag` the barrel does not export.',
     bestPractices: [
       {
         guidance: true,
@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Keep the tag chips in a narrow cell — `withoutTag` removes them together with their leading divider, leaving only name, version and architecture.',
+          'Keep the tag tokens in a narrow cell — `withoutTag` removes them together with their leading divider, leaving only name, version and architecture.',
       },
     ],
   },
@@ -50,14 +50,14 @@ export const docs = {
       name: 'imageFrgmt',
       type: 'BAIImageNodeSimpleTagFragment$key | null',
       description:
-        'Fragment reference for the image to describe. The component renders null when the reference is null or the fragment resolves to nothing, so the surrounding cell stays empty instead of showing placeholders. A tag whose key contains `customized_` takes its value from the `ai.backend.customized-image.name` label and is tinted cyan; each tag renders as a two-part BAIDoubleTag only when the metadata provider has no alias for it, and as a single Badge carrying the alias otherwise.',
+        'Fragment reference for the image to describe. The component renders null when the reference is null or the fragment resolves to nothing, so the surrounding cell stays empty instead of showing placeholders. A tag whose key contains `customized_` takes its value from the `ai.backend.customized-image.name` label and is tinted cyan; each tag renders as a two-part BAIDoubleToken only when the metadata provider has no alias for it, and as a single Token carrying the alias otherwise.',
       required: true,
     },
     {
       name: 'withoutTag',
       type: 'boolean',
       description:
-        'Drops the image tag chips and the divider before them, leaving the icon, base name, version and architecture.',
+        'Drops the image tag tokens and the divider before them, leaving the icon, base name, version and architecture.',
       default: 'false',
     },
     {

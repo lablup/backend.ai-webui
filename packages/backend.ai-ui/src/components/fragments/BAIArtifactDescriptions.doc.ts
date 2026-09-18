@@ -16,12 +16,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'Read-only summary of a single artifact, rendered as an Astryx MetadataList in two-column mode with four fixed rows: name, type, source and description. It reads `BAIArtifactDescriptionsFragment` on `Artifact`, so the caller spreads that fragment on the artifact node — the fragment also spreads `BAIArtifactTypeTagFragment`, which is what renders the type row. The source row is a BAILink opening `source.url` in a new tab with `source.name` as its text, and falls back to an empty href when the artifact carries no URL; an artifact with no description shows "N/A" instead of an empty row. The component takes no layout props — place it inside the surrounding BAIFlex or card that owns its spacing.',
+      'Read-only summary of a single artifact, rendered as an Astryx MetadataList in two-column mode with four fixed rows: name, type, source and description. It reads `BAIArtifactDescriptionsFragment` on `Artifact`, so the caller spreads that fragment on the artifact node — the fragment also spreads `BAIArtifactTypeTokenFragment`, which is what renders the type row. The source row is a BAILink opening `source.url` in a new tab with `source.name` as its text, and falls back to an empty href when the artifact carries no URL; an artifact with no description shows "N/A" instead of an empty row. The component takes no layout props — place it inside the surrounding BAIFlex or card that owns its spacing.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Spread `BAIArtifactDescriptionsFragment` on the artifact node in the page or modal query; spreading `BAIArtifactTypeTagFragment` separately is unnecessary because this fragment already includes it.',
+          'Spread `BAIArtifactDescriptionsFragment` on the artifact node in the page or modal query; spreading `BAIArtifactTypeTokenFragment` separately is unnecessary because this fragment already includes it.',
       },
       {
         guidance: true,
@@ -50,7 +50,7 @@ export const docs = {
       name: 'artifactFrgmt',
       type: 'BAIArtifactDescriptionsFragment$key',
       description:
-        'Fragment reference for the artifact to summarize. It supplies `name`, `description`, `source { name url }` and the data BAIArtifactTypeTag reads for the type row.',
+        'Fragment reference for the artifact to summarize. It supplies `name`, `description`, `source { name url }` and the data BAIArtifactTypeToken reads for the type row.',
       required: true,
     },
   ],
