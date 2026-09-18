@@ -29,24 +29,38 @@ export interface LegacyVFolder {
   cur_size: number;
 }
 
+export interface LegacyVFolderListOptions {
+  /** Lists this user's folders instead of the caller's own. */
+  ownerEmail?: string;
+  /** Scopes the list to a project (`group_id`) server side. */
+  groupId?: string;
+}
+
 /**
  * The folder list behind `BAIVFolderMountConfigInput`: the caller's folders,
  * or `ownerEmail`'s when a session is launched on someone else's behalf.
- * Suspends. One cache entry per owner, so a host deriving something from the
- * same list (auto-mounted names) shares the component's single fetch.
+ * Suspends. One cache entry per owner and project, so a host deriving
+ * something from the same list (auto-mounted names) shares the single fetch.
  */
-export const useSuspendedLegacyVFolders = (ownerEmail?: string) => {
+export const useSuspendedLegacyVFolders = ({
+  ownerEmail,
+  groupId,
+}: LegacyVFolderListOptions = {}) => {
   'use memo';
   const baiRequestWithPromise = useBAISignedRequestWithPromise();
 
   const { data, refetch, isFetching } = useSuspenseTanQuery<
     Array<LegacyVFolder>
   >({
-    // The request carries no project scope — that gate is applied client-side.
-    queryKey: ['BAIVFolderMountConfigInputFolders', ownerEmail ?? ''],
+    queryKey: [
+      'BAIVFolderMountConfigInputFolders',
+      ownerEmail ?? '',
+      groupId ?? '',
+    ],
     queryFn: () => {
       const search = new URLSearchParams();
       if (ownerEmail) search.set('owner_user_email', ownerEmail);
+      if (groupId) search.set('group_id', groupId);
       const query = search.toString();
       return baiRequestWithPromise({
         method: 'GET',

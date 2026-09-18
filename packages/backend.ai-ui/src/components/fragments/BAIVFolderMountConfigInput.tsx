@@ -371,7 +371,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     folders: allFolderList,
     refetch,
     isFetching,
-  } = useSuspendedLegacyVFolders(ownerEmail);
+  } = useSuspendedLegacyVFolders({ ownerEmail, groupId: currentProjectId });
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 
