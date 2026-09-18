@@ -1945,6 +1945,7 @@
     "APIEndpointEmpty": "Le point de terminaison de l'API est vide. Veuillez spécifier le point de terminaison de l'API pour vous connecter.",
     "APIKey": "clé API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "La connexion via API nécessite un endpoint Manager. Cette adresse est un Backend.AI Webserver.",
     "ActiveSessionExists": "Une session de connexion active existe déjà.",
     "ActiveSessionExistsDescription": "Vous êtes déjà connecté depuis un autre navigateur ou onglet. Veuillez d'abord vous déconnecter de l'autre session ou réessayer.",
     "AdvancedSettings": "Avancé",

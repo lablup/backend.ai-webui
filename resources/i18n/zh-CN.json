@@ -1946,6 +1946,7 @@
     "APIEndpointEmpty": "API 端点为空。请指定要登录的 API 端点。",
     "APIKey": "API 密钥",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API 登录需要 Manager 端点。此地址是 Backend.AI Webserver。",
     "ActiveSessionExists": "已存在活动的登录会话。",
     "ActiveSessionExistsDescription": "您已从其他浏览器或标签页登录。请先从其他会话注销，或重试。",
     "AdvancedSettings": "高级设置",

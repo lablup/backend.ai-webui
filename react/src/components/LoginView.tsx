@@ -44,6 +44,7 @@ import {
   loginWithOpenID,
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
+import { isWebServerEndpoint } from '../helper/webServerEndpoint';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -79,6 +80,9 @@ const extractErrorType = (typeUrl?: string): string => {
 };
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
+
+/** How long the endpoint field has to settle before it is asked what it is. */
+const ENDPOINT_PROBE_DEBOUNCE_MS = 500;
 
 const LoginView: React.FC<{
   /**
@@ -122,6 +126,16 @@ const LoginView: React.FC<{
   );
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
+  // FR-3562: a webserver proxies only session-authenticated `/func/*`, so an
+  // API-mode sign-in against one can never reach the manager. Asked of the
+  // endpoint rather than assumed from the page, because the desktop app and a
+  // dev server are served elsewhere while still pointing at a webserver.
+  // The answer is kept next to the endpoint it describes, so a changed
+  // endpoint stops applying the old verdict without another render.
+  const [webServerProbe, setWebServerProbe] = useState<{
+    endpoint: string;
+    isWebServer: boolean;
+  } | null>(null);
   const [apiEndpoint, setApiEndpoint] = useState(() => {
     // A stored endpoint means a session may be live against that backend, so
     // it wins over the dev override: silent re-login then reconnects to the
@@ -256,6 +270,36 @@ const LoginView: React.FC<{
   useEffect(() => {
     configRef.current = loginConfig;
   }, [loginConfig]);
+
+  const normalizedEndpoint = apiEndpoint.trim().replace(/\/+$/, '');
+  const isEndpointWebServer =
+    webServerProbe?.endpoint === normalizedEndpoint &&
+    webServerProbe.isWebServer;
+  // Derived, never stored: a config refresh re-applies the configured mode at
+  // any time (`loadConfigFromWebServer` on the Electron login path does it
+  // mid-flight), so a value pinned once here would be silently reverted while
+  // the switch stayed disabled. Everything that acts on the mode reads this.
+  const effectiveConnectionMode: ConnectionMode = isEndpointWebServer
+    ? 'SESSION'
+    : connectionMode;
+
+  useEffect(() => {
+    // Only the login panel renders the switch this answers for, so a signed-in
+    // page has no use for the answer and does not ask.
+    if (!isLoginPanelOpen || !normalizedEndpoint) return;
+    let cancelled = false;
+    // The field reports every keystroke, so settle before asking the network.
+    const timer = setTimeout(() => {
+      isWebServerEndpoint(normalizedEndpoint).then((isWebServer) => {
+        if (cancelled) return;
+        setWebServerProbe({ endpoint: normalizedEndpoint, isWebServer });
+      });
+    }, ENDPOINT_PROBE_DEBOUNCE_MS);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [isLoginPanelOpen, normalizedEndpoint]);
 
   // Sync apiEndpoint state changes to the form field.
   // Ant Design's initialValues only applies on first render, so subsequent
@@ -868,7 +912,7 @@ const LoginView: React.FC<{
       await loadConfigFromWebServer(ep);
     }
 
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
 
@@ -903,7 +947,7 @@ const LoginView: React.FC<{
     loginConfig,
     form,
     apiEndpoint,
-    connectionMode,
+    effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
     notification,
@@ -931,9 +975,9 @@ const LoginView: React.FC<{
       if ((globalThis as Record<string, unknown>).isElectron) {
         await loadConfigFromWebServer(ep);
       }
-      if (connectionMode === 'SESSION') {
+      if (effectiveConnectionMode === 'SESSION') {
         await connectUsingSession(showError, ep);
-      } else if (connectionMode === 'API') {
+      } else if (effectiveConnectionMode === 'API') {
         await connectUsingAPI(showError, ep);
       } else {
         open();
@@ -941,7 +985,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
-      connectionMode,
+      effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
       open,
@@ -955,7 +999,7 @@ const LoginView: React.FC<{
     if ((globalThis as Record<string, unknown>).isElectron) {
       await loadConfigFromWebServer(ep);
     }
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
@@ -968,7 +1012,7 @@ const LoginView: React.FC<{
       }
     }
     return false;
-  }, [resolveEndpoint, connectionMode]);
+  }, [resolveEndpoint, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
@@ -987,17 +1031,20 @@ const LoginView: React.FC<{
     onCheckLogin: checkLogin,
     onLogoutSession: logoutSession,
     apiEndpoint,
-    connectionMode,
+    connectionMode: effectiveConnectionMode,
   });
+
+  const canChangeSigninMode =
+    loginConfig.change_signin_support && !isEndpointWebServer;
 
   const handleConnectionModeChange = useCallback(
     (mode: ConnectionMode) => {
-      if (!loginConfig.change_signin_support) return;
+      if (!canChangeSigninMode) return;
       setConnectionMode(mode);
       setLoginError(null);
       localStorage.setItem('backendaiwebui.connection_mode', mode);
     },
-    [loginConfig.change_signin_support],
+    [canChangeSigninMode],
   );
 
   const showSignupDialog = useCallback(
@@ -1122,7 +1169,12 @@ const LoginView: React.FC<{
         isLoading={isLoading}
         loginError={loginError}
         onClearLoginError={() => setLoginError(null)}
-        connectionMode={connectionMode}
+        connectionMode={effectiveConnectionMode}
+        signinModeDisabled={
+          isEndpointWebServer
+            ? { reason: t('login.APISigninNeedsManagerEndpoint') }
+            : false
+        }
         loginConfig={loginConfig}
         apiEndpoint={apiEndpoint}
         otpRequired={otpRequired}
