@@ -163,6 +163,79 @@ export const astryxBrandTheme = defineTheme({
       'color:warning': { color: 'var(--color-warning)' },
       'color:success': { color: 'var(--color-success)' },
     },
+    // KEEP IN SYNC with `TOKEN_OUTLINED` in
+    // `react/src/astryx-theme/backendAiTheme.ts`.
+    token: {
+      'color:default': {
+        '--color-neutral': 'transparent',
+        boxShadow:
+          'inset 0 0 0 var(--border-width) var(--color-border-emphasized)',
+      },
+      ...Object.fromEntries(
+        (
+          [
+            'red',
+            'orange',
+            'yellow',
+            'green',
+            'teal',
+            'cyan',
+            'blue',
+            'purple',
+            'pink',
+            'gray',
+          ] as const
+        ).map((color) => [
+          `color:${color}`,
+          {
+            [`--color-background-${color}`]: 'transparent',
+            boxShadow: `inset 0 0 0 var(--border-width) var(--color-border-${color})`,
+          },
+        ]),
+      ),
+    },
+    // KEEP IN SYNC with `BADGE_TINTED` in
+    // `react/src/astryx-theme/backendAiTheme.ts`.
+    badge: {
+      ...Object.fromEntries(
+        (
+          [
+            ['info', '--color-on-accent', 'blue'],
+            ['success', '--color-on-success', 'teal'],
+            ['warning', '--color-on-warning', 'yellow'],
+            ['error', '--color-on-error', 'red'],
+            ['neutral', '--color-text-primary', 'gray'],
+          ] as const
+        ).map(([variant, text, hue]) => [
+          `variant:${variant}`,
+          {
+            backgroundColor: `var(--color-background-${hue})`,
+            [text]: `var(--color-text-${hue})`,
+            boxShadow: `inset 0 0 0 var(--border-width) var(--color-border-${hue})`,
+          },
+        ]),
+      ),
+      ...Object.fromEntries(
+        (
+          [
+            'blue',
+            'cyan',
+            'green',
+            'orange',
+            'pink',
+            'purple',
+            'red',
+            'teal',
+            'yellow',
+          ] as const
+        ).map((hue) => [
+          `variant:${hue}`,
+          {
+            boxShadow: `inset 0 0 0 var(--border-width) var(--color-border-${hue})`,
+          },
+        ]),
+      ),
+    },
     // KEEP IN SYNC with `ANTD_DIALOG_SURFACE` in
     // `react/src/astryx-theme/backendAiTheme.ts` (audit 1, catalog O-1/O-10;
     // the heading-2 pin is approved-1b — `DialogHeader` hard-codes

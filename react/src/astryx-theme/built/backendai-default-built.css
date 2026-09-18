@@ -480,73 +480,92 @@
   }
 
   .astryx-badge.info {
-    background-color: var(--astryx-theme-neutral-color-status-fill-accent);
+    background-color: var(--color-background-blue);
     color: var(--color-on-accent);
+    --color-on-accent: var(--color-text-blue);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-blue);
   }
 
   .astryx-badge.neutral {
     background-color: var(--color-background-gray);
     color: var(--color-text-gray);
+    --color-text-primary: var(--color-text-gray);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-gray);
   }
 
   .astryx-badge.success {
-    background-color: var(--astryx-theme-neutral-color-status-fill-success);
+    background-color: var(--color-background-teal);
     color: var(--color-on-success);
+    --color-on-success: var(--color-text-teal);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-teal);
   }
 
   .astryx-badge.warning {
-    background-color: var(--astryx-theme-neutral-color-status-fill-warning);
+    background-color: var(--color-background-yellow);
     color: var(--color-on-warning);
+    --color-on-warning: var(--color-text-yellow);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-yellow);
   }
 
   .astryx-badge.error {
-    background-color: var(--astryx-theme-neutral-color-status-fill-error);
+    background-color: var(--color-background-red);
     color: var(--color-on-error);
+    --color-on-error: var(--color-text-red);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-red);
   }
 
   .astryx-badge.red {
     background-color: var(--color-background-red);
     color: var(--color-text-red);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-red);
   }
 
   .astryx-badge.orange {
     background-color: var(--color-background-orange);
     color: var(--color-text-orange);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-orange);
   }
 
   .astryx-badge.yellow {
     background-color: var(--color-background-yellow);
     color: var(--color-text-yellow);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-yellow);
   }
 
   .astryx-badge.green {
     background-color: var(--color-background-green);
     color: var(--color-text-green);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-green);
   }
 
   .astryx-badge.teal {
     background-color: var(--color-background-teal);
     color: var(--color-text-teal);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-teal);
   }
 
   .astryx-badge.cyan {
     background-color: var(--color-background-cyan);
     color: var(--color-text-cyan);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-cyan);
   }
 
   .astryx-badge.blue {
     background-color: var(--color-background-blue);
     color: var(--color-text-blue);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-blue);
   }
 
   .astryx-badge.purple {
     background-color: var(--color-background-purple);
     color: var(--color-text-purple);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-purple);
   }
 
   .astryx-badge.pink {
     background-color: var(--color-background-pink);
     color: var(--color-text-pink);
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-pink);
   }
 
   .astryx-badge.gray {
@@ -749,6 +768,61 @@
 
   .astryx-complex-selector.lg {
     height: var(--size-element-lg);
+  }
+
+  .astryx-token.default {
+    --color-neutral: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-emphasized);
+  }
+
+  .astryx-token.red {
+    --color-background-red: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-red);
+  }
+
+  .astryx-token.orange {
+    --color-background-orange: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-orange);
+  }
+
+  .astryx-token.yellow {
+    --color-background-yellow: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-yellow);
+  }
+
+  .astryx-token.green {
+    --color-background-green: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-green);
+  }
+
+  .astryx-token.teal {
+    --color-background-teal: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-teal);
+  }
+
+  .astryx-token.cyan {
+    --color-background-cyan: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-cyan);
+  }
+
+  .astryx-token.blue {
+    --color-background-blue: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-blue);
+  }
+
+  .astryx-token.purple {
+    --color-background-purple: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-purple);
+  }
+
+  .astryx-token.pink {
+    --color-background-pink: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-pink);
+  }
+
+  .astryx-token.gray {
+    --color-background-gray: transparent;
+    box-shadow: inset 0 0 0 var(--border-width) var(--color-border-gray);
   }
 
   .astryx-field {
