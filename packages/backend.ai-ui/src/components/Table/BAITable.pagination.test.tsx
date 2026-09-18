@@ -11,6 +11,7 @@ import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 
 interface Row {
   id: string;
@@ -168,5 +169,75 @@ describe('BAITable invalid page number (FR-3703)', () => {
     expect(screen.getByText('row-1')).toBeInTheDocument();
     expect(screen.getByText('row-7')).toBeInTheDocument();
     expect(screen.queryByText('Invalid page number')).not.toBeInTheDocument();
+  });
+});
+
+/*
+ FR-3994. Astryx's size selector calls onPageSizeChange and then, in the same
+ event, onChange(1) — unconditionally. BAITable answered both, and the second
+ answer closed over the page size that had just been replaced.
+
+ Callers that only write state through `useBAIPaginationOptionState` never saw
+ it: that setter skips a write equal to the values of the render it was read
+ from, which is exactly what the trailing call carries. Callers that reload
+ from the arguments instead (`onReload` with the last requested variables —
+ AdminUserManagement and ~15 siblings) issued a second query with the old
+ limit, and the size change never took. Both shapes are pinned here.
+*/
+describe('BAITable page size change (FR-3994)', () => {
+  const pickTwenty = async () => {
+    const user = userEvent.setup();
+    await user.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: '20' }));
+  };
+
+  it('reports the new page size once, not the one it replaced', async () => {
+    const onChange = vi.fn();
+    renderTable({
+      dataSource: makeRows(10),
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 250,
+        pageSizeOptions: [10, 20, 50],
+        onChange,
+      },
+    });
+
+    await pickTwenty();
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(1, 20);
+  });
+
+  it('leaves a caller that reloads from the reported arguments on the new size', async () => {
+    // The `onReload` shape: `pageSize` comes from the last REQUESTED variables,
+    // so it still reads 10 while the change is being reported.
+    const requested: Array<number> = [];
+    const Harness = () => {
+      const [limit, setLimit] = useState(10);
+      return (
+        <BAITable<Row>
+          rowKey="id"
+          columns={COLUMNS}
+          dataSource={makeRows(10)}
+          pagination={{
+            current: 1,
+            pageSize: limit,
+            total: 250,
+            pageSizeOptions: [10, 20, 50],
+            onChange: (__, nextPageSize) => {
+              requested.push(nextPageSize);
+              setLimit(nextPageSize);
+            },
+          }}
+        />
+      );
+    };
+    render(<Harness />);
+
+    await pickTwenty();
+
+    expect(requested).toEqual([20]);
   });
 });
