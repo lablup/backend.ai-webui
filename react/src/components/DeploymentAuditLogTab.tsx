@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -23,6 +24,7 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
   deploymentId,
 }) => {
   'use memo';
+  const baiClient = useSuspendedBackendaiClient();
   const [auditLogQueryRef, loadAuditLogQuery] =
     useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
 
@@ -46,7 +48,11 @@ const DeploymentAuditLogTab: React.FC<DeploymentAuditLogTabProps> = ({
         scope: {
           entity: [
             {
-              entityType: 'MODEL_DEPLOYMENT',
+              // 26.9.0 names the entity by the manager's own `EntityType`;
+              // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
+              entityType: baiClient.supports('audit-log-entity-type-name')
+                ? 'deployment'
+                : 'MODEL_DEPLOYMENT',
               entityId: safeDecodeUuid(deploymentId) ?? deploymentId,
             },
           ],
