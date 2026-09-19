@@ -24,12 +24,23 @@ type ProjectInfo = {
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
+export type FallbackProject = {
+  id: string;
+  name: string;
+  type?: string | null;
+};
 export interface ProjectSelectProps extends BAISelectProps {
   onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
+  /**
+   * Labels for selected projects the domain's option list cannot contain, so
+   * they do not render as a bare UUID. Only currently-selected entries become
+   * options, which keeps the assignable set unchanged.
+   */
+  fallbackProjects?: ReadonlyArray<FallbackProject>;
   'aria-label'?: string;
 }
 
@@ -38,9 +49,11 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
+  fallbackProjects,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
@@ -55,6 +68,31 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   });
 
   const accessibleProjects = disableDefaultFilter ? groups : memberProjects;
+
+  const selectedIds: Array<string> = _.isArray(value)
+    ? (value as Array<string>)
+    : _.isNil(value)
+      ? []
+      : [value as string];
+  const fallbackOptionProjects = _.map(
+    _.filter(
+      fallbackProjects,
+      (project) =>
+        selectedIds.includes(project.id) &&
+        !_.some(accessibleProjects, { id: project.id }),
+    ),
+    (project) => ({
+      id: project.id,
+      name: project.name,
+      type: project.type ?? 'GENERAL',
+      is_active: null,
+      resource_policy: null,
+    }),
+  );
+  const optionProjects = [
+    ...(accessibleProjects ?? []),
+    ...fallbackOptionProjects,
+  ];
 
   const lockedProjectIds = !lockedProjectTypes?.length
     ? []
@@ -90,7 +128,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     })[key] || key;
 
   const groupOptions = _.map(
-    _.groupBy(accessibleProjects, 'type'),
+    _.groupBy(optionProjects, 'type'),
     (value, key) => {
       return {
         label: getLabel(key),
@@ -123,9 +161,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   );
 
   const showNoProjectError =
-    !accessibleProjects?.length &&
-    !selectProps.disabled &&
-    !selectProps.loading;
+    !optionProjects.length && !selectProps.disabled && !selectProps.loading;
 
   const noAccessibleProjectsMessage = t('projectSelect.NoAccessibleProjects');
 
