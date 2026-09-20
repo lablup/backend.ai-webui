@@ -72,7 +72,7 @@ flowchart LR
 - **Why both gates**: `@since`는 26.8 매니저가 모르는 새 field 때문에 요청 전체가 거부되지 않게 한다. `@deprecatedSince`는 26.9 매니저에게 맞는 permission이 없는 `myRoles` filter를 보내지 않게 한다. 폐기된 field는 26.9에서 거부되지 않으므로, 이 gate가 빠져도 오류는 나지 않고 결과가 비어 있다.
 - **Error isolation**: 두 root field 모두 `@catch(to: RESULT)`를 단다. field가 오류를 내면 hook은 `{ ok: false }`를 받아 그 결과를 건너뛰고, 페이지는 계속 그려진다.
 - **Object field pair**: `RoleNodesFragment`는 role의 `scopes`에 `@deprecatedSince(version: "26.9.0")`를, `scopeType`·`scopeId`·`scope`에 `@since(version: "26.9.0")`를 단다. `RoleAssignmentTabFragment`는 `firstScope: scopes(first: 1)`와 `scopeType`·`scopeId`에 같은 쌍을 단다.
-- **Read order**: `RoleNodes`와 `RoleAssignmentTab`은 `scopeType`에 값이 있으면 그 scope를 읽고, 없으면 `scopes`의 첫 항목을 읽는다.
+- **Read order**: `RoleNodes`와 `RoleAssignmentTab`은 `scopeType`에 값이 있으면 그 scope를 읽고, 없으면 `scopes`의 첫 항목을 읽는다. `RoleNodes`의 `readRoleScope`는 두 경로에서 `scopeType`·`scopeId`·`scope`와 `extraCount`를 답한다. `extraCount`는 26.9에서 항상 0이고, 26.8 이하에서는 cell이 이름을 대지 못한 나머지 scope 개수다. scope type과 scope id 열은 이 값이 0보다 클 때만 `+N` badge를 붙이므로 매니저 버전을 보지 않는다.
 - **Empty-scope check**: `RolePermissionDetailTab_roleScopeFragment`는 `totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0")`의 `count`와 `scopeId @since(version: "26.9.0")`를 select한다. `RolePermissionDetailTab`은 `scopeId`가 없고 `count`가 0일 때만 빈 상태를 그린다. 26.9 role은 항상 scope 하나를 가진다.
 - **Result merge**: hook은 `heldPermissions`의 답에서 `permissions`에 `READ`가 있는 `scopeId`를 모으고, `legacyRoles`의 답에서 각 role의 `scopes` 중 `scopeType`이 PROJECT인 `scopeId`를 모아 한 집합으로 합친다. transformer가 한쪽만 남기므로 한 요청에서는 한쪽만 값이 있다.
 
@@ -81,7 +81,7 @@ flowchart LR
 - **Spellings**: 26.8은 scope/entity type을 대문자 enum 값(`PROJECT`)으로, 26.9는 소문자 snake_case 문자열(`project`)로 답한다.
 - **Case folding**: type 값을 비교하는 component는 값을 `toUpperCase()`한 뒤 대문자 값과 비교한다. 지금 비교하는 곳은 `RoleFormModal`의 scope type 옵션 필터와 `ScopeIdSelect`의 picker 분기, `RoleAssignmentTab`의 `PROJECT` 판정이다.
 - **Labels**: `react/src/helper/rbacElementTypes.ts`의 `rbacTypeI18nKey(type)`가 `rbac.types.<대문자 type>` 키를 만든다. `RoleNodes`, `RoleFormModal`, `RBACManagementPage`가 이 함수로 라벨을 찾고, i18n 키는 대문자 표기 그대로 둔다.
-- **Filter options**: role 목록 filter의 scope type 옵션은 `rbacScopeEntityCombinations`가 답한 `scopeType` 전부다.
+- **Filter options**: role 목록 filter의 scope type 옵션은 `rbacScopeEntityCombinations`가 답한 `scopeType` 전부다. 이 query는 `RBACManagementPage`의 `ScopeTypeSelect`가 직접 들고, filter 속성의 `renderInput`이 그 select를 `Suspense`로 감싼다. 페이지는 filter를 열기 전에는 이 query를 보내지 않는다.
 - **Form options**: role form의 scope type 옵션은 `rbacPermissionMatrix`가 답한 `scopeType` 중, 대문자로 바꾼 값이 `RBAC_ELEMENT_TYPES`(scope-id picker가 있는 type의 대문자 목록)에 있고 action이 하나 이상인 entity를 가진 것이다. 대문자 기준으로 중복을 없앤다.
 - **Sent value**: 두 옵션 모두 매니저가 답한 표기를 option value로 쓰고, 그 값을 filter와 mutation에 그대로 보낸다.
 - **Scope id filter**: role 목록의 `mappedScope.scopeId` filter는 `type: 'uuid'`와 `fixedOperator: 'equals'`를 쓴다. `equals`는 26.8과 26.9의 filter type이 모두 받는 operator다.
@@ -126,6 +126,7 @@ flowchart LR
 | `LegacyCreatePermissionModal`의 create, update mutation | input의 옛 field, payload의 `scopeType`, `scopeId`, `operation` | create는 `permission`이 없어 거부된다. component는 `as CreatePermissionInput` cast로 컴파일한다. |
 | `LegacyRolePermissionTabQuery` | `Permission.scopeType`, `scopeId`, `operation`, `scope`, `PermissionFilter.scopeType` | `RoleDetailDrawerContent`는 `role-mapped-scope-filter`(26.8.0)가 꺼진 매니저에서만 이 tab과 `LegacyCreatePermissionModal`을 보여 주므로 26.9에서는 요청하지 않는다. |
 
+- **Chip label after reload**: `renderInput`을 쓰는 filter 속성은 commit한 값의 label을 `onAddCondition`이 넘긴 메모리 상의 map에만 남긴다. 새로고침하면 scope type chip이 번역된 label 대신 매니저가 준 값(`project`)을 보여 준다. 같은 filter의 assigned-user 속성도 같다. 속성 단위 `resolveLabels`가 생기면 함께 풀린다.
 - **Case-sensitive leftovers**: `ScopedRolePermissionCard`는 카드 제목 라벨을 `rbac.types.${scopeType}`로 직접 만든다. 26.9의 소문자 값에는 맞는 키가 없어 소문자 원문이 제목에 나온다. `LegacyCreatePermissionModal`은 `RBAC_ELEMENT_TYPES`와 대소문자를 구분해 비교하지만, 이 modal은 26.9에서 보이지 않는다.
 
 ## 출처
