@@ -541,6 +541,32 @@ describe('BAIPropertyFilter render', () => {
 });
 
 /*
+ FR-4006 — the clear-all button at the right edge of the input used to drop a
+ single token per press, because Astryx's `Tokenizer` reports its clear-all as
+ a one-token removal. A local patch makes `PowerSearch` honour the emptied
+ token list instead.
+*/
+describe('BAIPropertyFilter clear-all (FR-4006)', () => {
+  it('clears every applied filter in one press', async () => {
+    const onChange = vi.fn();
+    render(
+      <BAIPropertyFilter
+        filterProperties={PAGE_FIXTURES[0].filterProperties}
+        value={'name ilike "%data%" & status == "ready"'}
+        onChange={onChange}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear all' }));
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    // An empty filter is `undefined` here, as it is for the last chip removed
+    // one at a time.
+    expect(onChange).toHaveBeenCalledWith(undefined);
+  });
+});
+
+/*
  FR-3739 — guards the `useFocusTrap` restore behaviour Astryx fixed upstream in
  0.5.4 (a local patch carried the same fix from 0.5.0 to 0.5.2).
 

@@ -67,3 +67,23 @@ index f259046cdeff159dcf913734a643acd7eab02fef..b0b004782bf230e0c4d65fae019c25dd
        }), /*#__PURE__*/_jsx(Icon, {
          icon: "chevronDown",
          size: "sm",
+diff --git a/dist/PowerSearch/PowerSearch.js b/dist/PowerSearch/PowerSearch.js
+index ecede7ad63a5590dd3c1d522e2cea7bc8b4e0cf6..9d28905bd0c42358f05a68dc8c15c6875c23676d 100644
+--- a/dist/PowerSearch/PowerSearch.js
++++ b/dist/PowerSearch/PowerSearch.js
+@@ -529,6 +529,15 @@ export function PowerSearch({
+       });
+     } else if (change.type === 'remove' && change.item) {
+       const auxData = change.item.auxiliaryData;
++      // Tokenizer's clear-all empties the item list but reports only the LAST
++      // token as removed; honour the list so one press drops every filter.
++      if (_items.length === 0 && filters.length > 0) {
++        const kept = filters.filter(filter => filter.isReadOnly);
++        if (kept.length !== filters.length) {
++          onChange(kept, 'remove', 0);
++        }
++        return;
++      }
+       if (auxData?.filterIndex != null) {
+         const newFilters = filters.filter((_, i) => i !== auxData.filterIndex);
+         onChange(newFilters, 'remove', auxData.filterIndex);

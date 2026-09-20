@@ -19,6 +19,7 @@ import BAIGraphQLPropertyFilter, {
   type GraphQLFilter,
 } from './BAIGraphQLPropertyFilter';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 describe('buildNestedFilter', () => {
   it('builds a single-level filter', () => {
@@ -426,5 +427,27 @@ describe('BAIGraphQLPropertyFilter render', () => {
         .getByTestId('graphql-property-filter')
         .closest('.bai-power-search'),
     ).not.toBeNull();
+  });
+});
+
+describe('clear-all button', () => {
+  const { filterProperties } = PAGE_FIXTURES[1];
+
+  it('clears every applied filter in one press', async () => {
+    const onChange = vi.fn();
+    render(
+      <BAIGraphQLPropertyFilter
+        filterProperties={filterProperties}
+        value={{
+          AND: [{ email: { contains: 'lablup' } }, { isActive: true }],
+        }}
+        onChange={onChange}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear all' }));
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(undefined);
   });
 });
