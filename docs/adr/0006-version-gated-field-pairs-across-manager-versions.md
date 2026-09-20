@@ -5,8 +5,9 @@
 > 낯선 용어는 문서 맨 아래 [용어](#용어)에 모아 두었다.
 
 - `data/schema.graphql`은 매니저 [supergraph](#용어)의 복사본이고 손으로 고치지 않는다. 26.9.0 supergraph는 26.9.0이 폐기한 RBAC field를 `@deprecated`로 남기므로, 옛 field를 select한 document도 relay-compiler가 컴파일한다.
-- 한 document가 26.8 매니저와 26.9 매니저가 각각 답하는 root field를 함께 select한다. 옛 field에는 `@deprecatedSince(version: "26.9.0")`, 새 field에는 `@since(version: "26.9.0")`를 달고, `react/src/helper/graphql-transformer.ts`가 요청 전에 연결된 매니저에 맞지 않는 쪽을 지운다.
-- 이 방식을 따르는 RBAC document는 `useCurrentUserProjectRoles`의 query 하나다. 권한 tab과 할당 tab의 document는 아직 gate되지 않았고, 26.9 매니저에서 어떻게 동작하는지는 Consequences에 적었다.
+- 한 document가 26.8 매니저와 26.9 매니저가 각각 답하는 field를 함께 select한다. 옛 field에는 `@deprecatedSince(version: "26.9.0")`, 새 field에는 `@since(version: "26.9.0")`를 달고, `react/src/helper/graphql-transformer.ts`가 요청 전에 연결된 매니저에 맞지 않는 쪽을 지운다.
+- 이 방식을 따르는 RBAC document는 `useCurrentUserProjectRoles`의 query, role 목록의 `RoleNodesFragment`, role drawer의 `RoleAssignmentTabFragment`와 `RolePermissionDetailTab_roleScopeFragment`다. 권한 tab의 document는 아직 gate되지 않았고, 26.9 매니저에서 어떻게 동작하는지는 Consequences에 적었다.
+- RBAC type 문자열을 비교하는 component는 값을 대문자로 바꾼 뒤 비교하고, 매니저에 보낼 때는 매니저가 답한 표기를 그대로 보낸다. role form은 `rbac-single-scope-role` flag로 `CreateRoleInput.scope`와 `scopes` 중 하나를 보낸다.
 
 ## Context
 
@@ -37,7 +38,8 @@ flowchart LR
   config["relay-base.config.js"]
   merged["data/merged_schema.graphql<br/>gitignore"]
   compiler["relay-compiler"]
-  hook["useCurrentUserProjectRoles<br/>myRoles @deprecatedSince 26.9.0<br/>myAtomicBulkScopePermissions @since 26.9.0"]
+  hook["RBAC documents<br/>useCurrentUserProjectRoles, RoleNodes,<br/>role drawer fragments<br/>옛 field @deprecatedSince 26.9.0<br/>새 field @since 26.9.0"]
+  form["RoleFormModal<br/>CreateRoleInput.scope 또는 scopes"]
   transformer["graphql-transformer.ts<br/>RelayEnvironment fetch"]
   client["backend.ai-client<br/>isManagerVersionCompatibleWith"]
   old["manager 26.8"]
@@ -50,8 +52,10 @@ flowchart LR
   hook -- "요청 문서와 variables" --> transformer
   client -- "manager version" --> transformer
   client -- "supports rbac-single-scope-role" --> hook
-  transformer -- "myRoles만 남긴 문서" --> old
-  transformer -- "myAtomicBulkScopePermissions만 남긴 문서" --> new
+  client -- "supports rbac-single-scope-role" --> form
+  form -- "create mutation" --> transformer
+  transformer -- "옛 field만 남긴 문서" --> old
+  transformer -- "새 field만 남긴 문서" --> new
 ```
 
 ## Decision
@@ -60,16 +64,29 @@ flowchart LR
 
 - **Source file**: `data/schema.graphql`은 backend.ai supergraph를 복사한 파일이며, 옛 매니저용 정의를 여기에 더하지 않는다. 옛 매니저가 답하는 field는 supergraph가 `@deprecated`로 남긴 정의를 그대로 select한다.
 
-### 2. 매니저마다 다른 root field는 directive 쌍으로 가른다
+### 2. 매니저마다 다른 field는 directive 쌍으로 가른다
 
 - **Directive pair**: 옛 field에는 `@deprecatedSince(version: V)`, 새 field에는 `@since(version: V)`를 단다. V는 매니저가 그 field를 폐기하거나 더한 버전이다. `useCurrentUserProjectRoles`는 한 query에 `legacyRoles: myRoles … @deprecatedSince(version: "26.9.0")`와 `heldPermissions: myAtomicBulkScopePermissions … @since(version: "26.9.0")`를 나란히 둔다.
 - **Version boundary**: `graphql-transformer.ts`는 연결된 매니저가 V 이상이면 `@since` field를 남기고 `@deprecatedSince` field를 지우며, V 미만이면 반대로 한다.
 - **Variable pruning**: 두 root field는 각자 variable(`$targets`, `$legacyPermissionFilter`)을 받는다. `graphql-transformer.ts`는 field를 지운 뒤 문서 안에서 더는 참조되지 않는 variable 정의를 지우므로, 26.8 매니저가 받는 문서에는 `$targets: [PermissionTarget!]!` 정의가 없다. `RelayEnvironment.ts`는 variables 객체를 줄이지 않고 그대로 보낸다.
 - **Why both gates**: `@since`는 26.8 매니저가 모르는 새 field 때문에 요청 전체가 거부되지 않게 한다. `@deprecatedSince`는 26.9 매니저에게 맞는 permission이 없는 `myRoles` filter를 보내지 않게 한다. 폐기된 field는 26.9에서 거부되지 않으므로, 이 gate가 빠져도 오류는 나지 않고 결과가 비어 있다.
 - **Error isolation**: 두 root field 모두 `@catch(to: RESULT)`를 단다. field가 오류를 내면 hook은 `{ ok: false }`를 받아 그 결과를 건너뛰고, 페이지는 계속 그려진다.
+- **Object field pair**: `RoleNodesFragment`는 role의 `scopes`에 `@deprecatedSince(version: "26.9.0")`를, `scopeType`·`scopeId`·`scope`에 `@since(version: "26.9.0")`를 단다. `RoleAssignmentTabFragment`는 `firstScope: scopes(first: 1)`와 `scopeType`·`scopeId`에 같은 쌍을 단다.
+- **Read order**: `RoleNodes`와 `RoleAssignmentTab`은 `scopeType`에 값이 있으면 그 scope를 읽고, 없으면 `scopes`의 첫 항목을 읽는다. `RoleNodes`의 `readRoleScope`는 두 경로에서 `scopeType`·`scopeId`·`scope`와 `extraCount`를 답한다. `extraCount`는 26.9에서 항상 0이고, 26.8 이하에서는 cell이 이름을 대지 못한 나머지 scope 개수다. scope type과 scope id 열은 이 값이 0보다 클 때만 `+N` badge를 붙이므로 매니저 버전을 보지 않는다.
+- **Empty-scope check**: `RolePermissionDetailTab_roleScopeFragment`는 `totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0")`의 `count`와 `scopeId @since(version: "26.9.0")`를 select한다. `RolePermissionDetailTab`은 `scopeId`가 없고 `count`가 0일 때만 빈 상태를 그린다. 26.9 role은 항상 scope 하나를 가진다.
 - **Result merge**: hook은 `heldPermissions`의 답에서 `permissions`에 `READ`가 있는 `scopeId`를 모으고, `legacyRoles`의 답에서 각 role의 `scopes` 중 `scopeType`이 PROJECT인 `scopeId`를 모아 한 집합으로 합친다. transformer가 한쪽만 남기므로 한 요청에서는 한쪽만 값이 있다.
 
-### 3. 같은 hook의 나머지 분기는 feature flag로 고른다
+### 3. RBAC type 문자열은 대소문자를 무시하고 매니저의 표기로 보낸다
+
+- **Spellings**: 26.8은 scope/entity type을 대문자 enum 값(`PROJECT`)으로, 26.9는 소문자 snake_case 문자열(`project`)로 답한다.
+- **Case folding**: type 값을 비교하는 component는 값을 `toUpperCase()`한 뒤 대문자 값과 비교한다. 지금 비교하는 곳은 `RoleFormModal`의 scope type 옵션 필터와 `ScopeIdSelect`의 picker 분기, `RoleAssignmentTab`의 `PROJECT` 판정이다.
+- **Labels**: `react/src/helper/rbacElementTypes.ts`의 `rbacTypeI18nKey(type)`가 `rbac.types.<대문자 type>` 키를 만든다. `RoleNodes`, `RoleFormModal`, `RBACManagementPage`가 이 함수로 라벨을 찾고, i18n 키는 대문자 표기 그대로 둔다.
+- **Filter options**: role 목록 filter의 scope type 옵션은 `rbacScopeEntityCombinations`가 답한 `scopeType` 전부다. 이 query는 `RBACManagementPage`의 `ScopeTypeSelect`가 직접 들고, filter 속성의 `renderInput`이 그 select를 `Suspense`로 감싼다. 페이지는 filter를 열기 전에는 이 query를 보내지 않는다.
+- **Form options**: role form의 scope type 옵션은 `rbacPermissionMatrix`가 답한 `scopeType` 중, 대문자로 바꾼 값이 `RBAC_ELEMENT_TYPES`(scope-id picker가 있는 type의 대문자 목록)에 있고 action이 하나 이상인 entity를 가진 것이다. 대문자 기준으로 중복을 없앤다.
+- **Sent value**: 두 옵션 모두 매니저가 답한 표기를 option value로 쓰고, 그 값을 filter와 mutation에 그대로 보낸다.
+- **Scope id filter**: role 목록의 `mappedScope.scopeId` filter는 `type: 'uuid'`와 `fixedOperator: 'equals'`를 쓴다. `equals`는 26.8과 26.9의 filter type이 모두 받는 operator다.
+
+### 4. document 밖의 분기는 feature flag로 고른다
 
 - **Flag location**: [feature flag](#용어)는 `packages/backend.ai-client/src/client.ts`의 `isManagerVersionCompatibleWith('<version>')` block이 켜고, component와 hook은 `baiClient.supports(flag)`로 읽는다.
 - **Hook flags**: `useCurrentUserProjectRoles`가 읽는 flag와 그 값이다.
@@ -80,9 +97,11 @@ flowchart LR
 | `my-roles` | 26.4.0 | 주 query를 `store-or-network`로 읽는다. | 주 query를 `store-only`로 읽는다. |
 | `rbac-filter-wrapper` | 26.4.4rc9 | `$legacyPermissionFilter.entityType`을 `{ equals: 'PROJECT_ADMIN_PAGE' }`로 보낸다. | 같은 값을 문자열 그대로 보낸다. |
 
-### 4. 26.8 지원을 끝낼 때 함께 지운다
+- **Role form flag**: `RoleFormModal`은 scope type 하나와 scope id 하나를 받는다. `rbac-single-scope-role`이 켜져 있으면 `CreateRoleInput.scope`로, 꺼져 있으면 항목 하나짜리 `CreateRoleInput.scopes`로 보낸다.
 
-- **Removal set**: 26.8 매니저 지원을 끝내는 PR은 RBAC document의 `@deprecatedSince(version: "26.9.0")` 선택과 그 결과를 읽는 코드, `rbac-single-scope-role` 분기, 옛 shape로 보내는 permission input의 `as CreatePermissionInput` cast를 함께 지운다. 같은 버전 표시는 RBAC가 아닌 document(`DeleteVFolderModalV2`, `DeleteForeverVFolderModalV2`, `PurgeUsersModal`)에도 있으므로, 대상은 `@deprecatedSince(version: "26.9.0")`를 grep한 결과에서 RBAC document만 고른다.
+### 5. 26.8 지원을 끝낼 때 함께 지운다
+
+- **Removal set**: 26.8 매니저 지원을 끝내는 PR은 RBAC document의 `@deprecatedSince(version: "26.9.0")` 선택과 그 결과를 읽는 코드, `rbac-single-scope-role` 분기(`useCurrentUserProjectRoles`, `RoleFormModal`), 옛 shape로 보내는 permission input의 `as CreatePermissionInput` cast를 함께 지운다. 같은 버전 표시는 RBAC가 아닌 document(`DeleteVFolderModalV2`, `DeleteForeverVFolderModalV2`, `PurgeUsersModal`)에도 있으므로, 대상은 `@deprecatedSince(version: "26.9.0")`를 grep한 결과에서 RBAC document만 고른다.
 
 ## 대안과 기각 사유
 
@@ -94,10 +113,10 @@ flowchart LR
 ## Consequences
 
 - **One build, two managers**: `useCurrentUserProjectRoles`는 같은 빌드로 26.8 매니저와 26.9 매니저 모두에서 프로젝트 관리자 여부를 답한다.
-- **Nullability gap**: `@since` field는 generated type에서 non-null이지만 옛 매니저에서는 `undefined`다. component가 그 값을 확인 없이 쓰면 TypeScript는 잡지 못한다. `useCurrentUserProjectRoles`는 `@catch` 결과의 `ok`와 optional chaining으로 이를 처리한다.
+- **Nullability gap**: `@since` field는 generated type에서 non-null이지만 옛 매니저에서는 `undefined`다. component가 그 값을 확인 없이 쓰면 TypeScript는 잡지 못한다. `useCurrentUserProjectRoles`는 `@catch` 결과의 `ok`와 optional chaining으로, `RoleNodes`와 `RoleAssignmentTab`은 `scopeType`에, `RolePermissionDetailTab`은 `scopeId`에 값이 있는지 먼저 확인한다.
 - **Deprecated nulls**: 폐기된 field는 generated type에서 nullable이다. `RoleScopePermissionEditModal`과 `ScopedRolePermissionCard`는 `scopeId`나 `operation`이 `null`인 permission 행을 건너뛰고, `LegacyRolePermissionTab`은 `null`을 빈 문자열로 바꾼다.
 - **Bulk target cap**: `myAtomicBulkScopePermissions`는 target 100개까지 받으므로 `useCurrentUserProjectRoles`는 사용자의 프로젝트 중 앞 100개만 묻는다. 그 뒤의 프로젝트는 사용자가 관리자여도 관리자로 판정되지 않는다.
-- **Ungated RBAC documents**: 아래 document는 폐기된 정의를 gate 없이 select하거나 보낸다. 이 화면들을 26.9 permission 모델로 옮기는 일은 FR-3957, FR-3958, FR-3959다.
+- **Ungated RBAC documents**: 아래 document는 폐기된 정의를 gate 없이 select하거나 보낸다. 이 화면들을 26.9 permission 모델로 옮기는 일은 FR-3957, FR-3959다.
 
 | document | 폐기된 정의 | 26.9 매니저에서 |
 |---|---|---|
@@ -106,11 +125,13 @@ flowchart LR
 | `RoleScopePermissionEditModalBulkAddMutation` | input의 `scopeType`, `scopeId`, `operation`, payload의 같은 field | input에 required `permission`이 없어 mutation이 거부된다. component는 `as CreatePermissionInput[]` cast로 컴파일한다. |
 | `LegacyCreatePermissionModal`의 create, update mutation | input의 옛 field, payload의 `scopeType`, `scopeId`, `operation` | create는 `permission`이 없어 거부된다. component는 `as CreatePermissionInput` cast로 컴파일한다. |
 | `LegacyRolePermissionTabQuery` | `Permission.scopeType`, `scopeId`, `operation`, `scope`, `PermissionFilter.scopeType` | `RoleDetailDrawerContent`는 `role-mapped-scope-filter`(26.8.0)가 꺼진 매니저에서만 이 tab과 `LegacyCreatePermissionModal`을 보여 주므로 26.9에서는 요청하지 않는다. |
-| `RoleAssignmentTabFragment` | `firstScope: scopes(first: 1)` | 26.9가 답하는 소문자 `scopeType`은 component의 `=== 'PROJECT'` 비교와 맞지 않아, `projectScopeId`가 `undefined`가 된다. |
+
+- **Chip label after reload**: `renderInput`을 쓰는 filter 속성은 commit한 값의 label을 `onAddCondition`이 넘긴 메모리 상의 map에만 남긴다. 새로고침하면 scope type chip이 번역된 label 대신 매니저가 준 값(`project`)을 보여 준다. 같은 filter의 assigned-user 속성도 같다. 속성 단위 `resolveLabels`가 생기면 함께 풀린다.
+- **Case-sensitive leftovers**: `ScopedRolePermissionCard`는 카드 제목 라벨을 `rbac.types.${scopeType}`로 직접 만든다. 26.9의 소문자 값에는 맞는 키가 없어 소문자 원문이 제목에 나온다. `LegacyCreatePermissionModal`은 `RBAC_ELEMENT_TYPES`와 대소문자를 구분해 비교하지만, 이 modal은 26.9에서 보이지 않는다.
 
 ## 출처
 
-- Jira: FR-3905 (Epic FR-3906). 호환 정책은 FR-3962에서 정했다. 후속은 FR-3957 권한 탭, FR-3958 할당 탭, FR-3959 Legacy 탭이다.
+- Jira: FR-3905 (Epic FR-3906). 호환 정책은 FR-3962에서 정했다. role 목록·drawer fragment의 gate는 FR-3955, role form의 단일 scope 입력은 FR-3956이다. 후속은 FR-3957 권한 탭, FR-3958 할당 탭, FR-3959 Legacy 탭이다.
 - backend.ai: BA-7796 (#14478) scope-entity association table 제거, BA-7885 (#14628) role, permission, assignment를 scope로 읽기, BA-7919 (#14669) `Role.scopes`를 deprecated로 복구, BA-7924 (#14678) `myScopePermissions`·`myAtomicBulkScopePermissions`와 `RoleFilter.permission`.
 - schema: `data/schema.graphql`은 backend.ai 26.9.0 supergraph의 복사본이다. 비교 기준인 26.8.3은 backend.ai 태그 `26.8.3`의 supergraph다.
 - 결정일: 2026-09-17.

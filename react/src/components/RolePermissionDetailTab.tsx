@@ -4,7 +4,7 @@
  */
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
-import { type RBACElementType } from '../__generated__/RoleScopePermissionEditModalBulkAddMutation.graphql';
+import { type RBACElementType } from '../__generated__/ScopedRolePermissionCardQuery.graphql';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAISkeleton, BAICard, BAIFlex } from 'backend.ai-ui';
@@ -35,9 +35,10 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   const role = useFragment(
     graphql`
       fragment RolePermissionDetailTab_roleScopeFragment on Role {
-        totalScopes: scopes(first: 1) {
+        totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0") {
           count
         }
+        scopeId @since(version: "26.9.0")
         ...ScopedRolePermissionCardFragment
       }
     `,
@@ -65,7 +66,8 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
     (rbacPermissionMatrix ?? []).map((combination) => combination.scopeType),
   );
 
-  if (role.totalScopes?.count === 0) {
+  // A role on a manager >= 26.9.0 always belongs to one scope.
+  if (!role.scopeId && role.totalScopes?.count === 0) {
     return (
       <BAICard styles={{ body: { paddingTop: 0 } }}>
         {/* antd `Empty` -> `EmptyState` (MAPPING §4): `description` becomes
@@ -85,7 +87,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
             key={scopeType}
             roleNodeFrgmt={role}
             rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
-            // 26.8 enum spelling; the drawer follow-up (FR-3957) retires it.
+            // 26.8 enum spelling; the drawer follow-up (FR-3905) retires it.
             scopeType={scopeType as RBACElementType}
           />
         ))}
