@@ -430,7 +430,12 @@ describe('BAIGraphQLPropertyFilter render', () => {
   });
 });
 
-describe('clear-all button', () => {
+/*
+ FR-4006 — the clear-all button used to drop a single token per press, because
+ Astryx's `Tokenizer` reports its clear-all as a one-token removal. A local
+ patch makes `PowerSearch` honour the emptied token list instead.
+*/
+describe('BAIGraphQLPropertyFilter clear-all (FR-4006)', () => {
   const { filterProperties } = PAGE_FIXTURES[1];
 
   it('clears every applied filter in one press', async () => {
@@ -444,6 +449,9 @@ describe('clear-all button', () => {
         onChange={onChange}
       />,
     );
+    // Guards the assertions below from a fixture that stopped parsing: without
+    // two chips a one-chip removal would satisfy them too.
+    expect(screen.getAllByRole('button', { name: /^Remove / })).toHaveLength(2);
 
     await userEvent.click(screen.getByRole('button', { name: 'Clear all' }));
 

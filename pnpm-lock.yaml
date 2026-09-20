@@ -362,7 +362,7 @@ overrides:
   lodash: ^4.18.0
 
 patchedDependencies:
-  '@astryxdesign/core@0.5.4': fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f
+  '@astryxdesign/core@0.5.4': c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50
   '@astryxdesign/lab@0.3.0-canary.12db2a1': 0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08
   '@cloudscape-design/board-components@3.0.176': 06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98
   portless@0.15.5: 70a864975f22925bd3149ee3838e98819ba2c3d3e47e8ee98f98088a3e72456e
@@ -743,16 +743,16 @@ importers:
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
-        version: 0.5.4(db24d72a5b8ca663967ba289cbdcef22)
+        version: 0.5.4(6f07d4efc608e32d0f51658ed558fc7f)
       '@astryxdesign/core':
         specifier: 'catalog:'
-        version: 0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/lab':
         specifier: 'catalog:'
-        version: 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/theme-neutral':
         specifier: 'catalog:'
-        version: 0.5.4(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        version: 0.5.4(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@eslint/js':
         specifier: 'catalog:'
         version: 9.39.5
@@ -926,13 +926,13 @@ importers:
         version: 2.0.230(react@19.2.8)(zod@4.4.3)
       '@astryxdesign/core':
         specifier: 'catalog:'
-        version: 0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/lab':
         specifier: 'catalog:'
-        version: 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@astryxdesign/theme-neutral':
         specifier: 'catalog:'
-        version: 0.5.4(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        version: 0.5.4(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       '@cloudscape-design/board-components':
         specifier: 3.0.176
         version: 3.0.176(patch_hash=06f6366f1016801dd543a4b968e088fbcbf34ee1a4473bc09a07e35206597a98)(@cloudscape-design/components@3.0.1341(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -1170,7 +1170,7 @@ importers:
     devDependencies:
       '@astryxdesign/cli':
         specifier: 'catalog:'
-        version: 0.5.4(db24d72a5b8ca663967ba289cbdcef22)
+        version: 0.5.4(6f07d4efc608e32d0f51658ed558fc7f)
       '@babel/core':
         specifier: 'catalog:'
         version: 7.29.7(supports-color@8.1.1)
@@ -11266,7 +11266,7 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@astryxdesign/cli@0.5.4(db24d72a5b8ca663967ba289cbdcef22)':
+  '@astryxdesign/cli@0.5.4(6f07d4efc608e32d0f51658ed558fc7f)':
     dependencies:
       commander: 12.1.0
       gpt-tokenizer: 3.4.0
@@ -11274,23 +11274,23 @@ snapshots:
       jscodeshift: 17.4.0(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(supports-color@8.1.1)
       zod: 4.4.3
     optionalDependencies:
-      '@astryxdesign/core': 0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/lab': 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@astryxdesign/theme-neutral': 0.5.4(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/lab': 0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/theme-neutral': 0.5.4(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
 
-  '@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@stylexjs/stylex': 0.19.0
       intl-messageformat: 11.2.13
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
-  '@astryxdesign/lab@0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/lab@0.3.0-canary.12db2a1(patch_hash=0e5e0cbe89a52670bf3b7b7324794cf671a257ce501858d58f346a993af51e08)(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@lexical/code@0.46.0(typescript@6.0.3))(@lexical/headless@0.46.0(bufferutil@4.1.0)(typescript@6.0.3)(utf-8-validate@6.0.6))(@lexical/html@0.46.0(typescript@6.0.3))(@lexical/link@0.46.0(typescript@6.0.3))(@lexical/list@0.46.0(typescript@6.0.3))(@lexical/markdown@0.46.0(typescript@6.0.3))(@lexical/react@0.46.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@6.0.3)(yjs@13.6.31))(@lexical/rich-text@0.46.0(typescript@6.0.3))(@lexical/selection@0.46.0(typescript@6.0.3))(@lexical/utils@0.46.0(typescript@6.0.3))(@stylexjs/stylex@0.19.0)(lexical@0.46.0(typescript@6.0.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@stylexjs/stylex': 0.19.0
       d3-array: 3.2.4
       d3-scale: 4.0.2
@@ -11310,9 +11310,9 @@ snapshots:
       '@lexical/utils': 0.46.0(typescript@6.0.3)
       lexical: 0.46.0(typescript@6.0.3)
 
-  '@astryxdesign/theme-neutral@0.5.4(@astryxdesign/core@0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
+  '@astryxdesign/theme-neutral@0.5.4(@astryxdesign/core@0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@astryxdesign/core': 0.5.4(patch_hash=fef658d0c67f98b28cef6678c81fbc5d572fd296aeed7ec7331835899b2ca39f)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/core': 0.5.4(patch_hash=c58e2c6fa39bdb88e39027f3a505604a98eabe65572ef47d40ee4e4218a59b50)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react: 1.37.0(react@19.2.8)
       react: 19.2.8
 

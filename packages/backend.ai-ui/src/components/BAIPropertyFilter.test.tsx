@@ -547,8 +547,7 @@ describe('BAIPropertyFilter render', () => {
  token list instead.
 */
 describe('BAIPropertyFilter clear-all (FR-4006)', () => {
-  it('clears every applied filter in one press', async () => {
-    const onChange = vi.fn();
+  const renderWithTwoFilters = (onChange: (value: string) => void) => {
     render(
       <BAIPropertyFilter
         filterProperties={PAGE_FIXTURES[0].filterProperties}
@@ -556,13 +555,31 @@ describe('BAIPropertyFilter clear-all (FR-4006)', () => {
         onChange={onChange}
       />,
     );
+    // Guards the assertions below from a fixture that stopped parsing: without
+    // two chips a one-chip removal would satisfy them too.
+    expect(screen.getAllByRole('button', { name: /^Remove / })).toHaveLength(2);
+  };
+
+  it('clears every applied filter in one press', async () => {
+    const onChange = vi.fn();
+    renderWithTwoFilters(onChange);
 
     await userEvent.click(screen.getByRole('button', { name: 'Clear all' }));
 
     expect(onChange).toHaveBeenCalledTimes(1);
-    // An empty filter is `undefined` here, as it is for the last chip removed
-    // one at a time.
     expect(onChange).toHaveBeenCalledWith(undefined);
+  });
+
+  it("still removes only its own chip from a chip's remove button", async () => {
+    const onChange = vi.fn();
+    renderWithTwoFilters(onChange);
+
+    await userEvent.click(
+      screen.getAllByRole('button', { name: /^Remove / })[1],
+    );
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith('name ilike "%data%"');
   });
 });
 
