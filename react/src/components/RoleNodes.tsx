@@ -137,9 +137,21 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
 
   // Managers >= 26.9.0 answer the one scope a role belongs to; older ones
   // answer a scopes connection, of which the first is shown and the rest counted.
-  const readRoleScope = (record: RoleNodeInList) => {
+  const readRoleScope = (
+    record: RoleNodeInList,
+  ): {
+    scopeType?: string | null;
+    scopeId?: string | null;
+    scope?: RoleNodeInList['scope'];
+    extraCount: number;
+  } => {
     if (record.scopeType) {
-      return { ...record, extraCount: 0 };
+      return {
+        scopeType: record.scopeType,
+        scopeId: record.scopeId,
+        scope: record.scope,
+        extraCount: 0,
+      };
     }
     const first = record.scopes?.edges?.[0]?.node;
     return {
@@ -209,8 +221,19 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'scopeId',
       title: t('rbac.ScopeRawId'),
       render: (_, record: RoleNodeInList) => {
-        const { scopeId } = readRoleScope(record);
-        return scopeId ? <BAIId uuid={scopeId} /> : '-';
+        const { scopeId, extraCount } = readRoleScope(record);
+        if (!scopeId) return '-';
+        return (
+          <BAIFlex gap="xxs" wrap="wrap" align="center">
+            <BAIId uuid={scopeId} />
+            {extraCount > 0 && (
+              <Badge
+                variant={badgeVariantForTagColor('default')}
+                label={`+${extraCount}`}
+              />
+            )}
+          </BAIFlex>
+        );
       },
     },
     {
