@@ -45,7 +45,7 @@ After `browser_navigate`, the page often shows "Loading components..." for sever
 
 ### Web Fonts Before Every Capture
 
-The UI fonts (Ubuntu for Latin, Pretendard for Hangul, both self-hosted under `resources/fonts/`) load lazily per `unicode-range`, so a capture taken right after a language switch or dialog open can bake the browser's temporary fallback face into the PNG. **Immediately before every `browser_take_screenshot`**, wait for the font set to settle:
+The UI fonts (Ubuntu for Latin, Pretendard for Hangul, both self-hosted under `resources/fonts/`) load lazily — a face is fetched only once the page uses it — so a capture taken right after a language switch or dialog open can bake the browser's temporary fallback face into the PNG. **Immediately before every `browser_take_screenshot`**, wait for the font set to settle:
 
 ```js
 // browser_run_code
