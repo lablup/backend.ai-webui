@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Compute Sessions" />
   <meta name="twitter:description" content="This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Compute Sessions","inLanguage":"en","description":"This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page.","dateModified":"2026-09-17T06:31:21.000Z","url":"https://webui.docs.backend.ai/next/en/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Compute Sessions","inLanguage":"en","description":"This document will cover how to query and create container-based compute sessions and utilize various web applications on the 'Sessions' page.","dateModified":"2026-09-21T07:15:10.000Z","url":"https://webui.docs.backend.ai/next/en/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4b66d5f)">v26.9.0-alpha.0 (4b66d5f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (5c800ca)">v26.9.0-alpha.0 (5c800ca)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -254,7 +254,7 @@ the session WILL NOT run until the start time.</li>
 <li data-bai-block="18">Users can also set the &#39;Timeout Duration&#39; of a batch-type compute session.
 When users set the timeout duration, The session will automatically terminate if the specified time is exceeded.</li>
 </ul>
-<p><figure data-bai-block="19" class="doc-figure"><img src="./images/session_type_batch.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2669" height="1770" /><figcaption>Figure 10.3</figcaption></figure>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/session_type_batch.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1768" /><figcaption>Figure 10.3</figcaption></figure>
 </p>
 </li>
 </ul>
@@ -420,387 +420,408 @@ To resolve this issue, setting the number of threads to 1 or 2 would work.</p>
 <p data-bai-block="57">When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.</p>
-<p><figure data-bai-block="58" class="doc-figure"><img src="./images/launch_session_data.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="824" /><figcaption>Figure 10.12</figcaption></figure>
+<p><figure data-bai-block="58" class="doc-figure"><img src="./images/launch_session_data.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1404" height="600" /><figcaption>Figure 10.12</figcaption></figure>
 </p>
-<p data-bai-block="59">users can specify the storage folders to mount in the compute session.
-Folder explorer can be used by clicking folder name. For further information,
-please refer <a href="./vfolder.html#explore-folder">Explore Folder</a> section.</p>
-<p><figure data-bai-block="60" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 10.13</figcaption></figure>
+<p data-bai-block="59">Users can specify the storage folders to mount in the compute session with the
+folder selector.</p>
+<p data-bai-block="60">Each selected folder is listed as a row with two path fields:</p>
+<ul>
+<li data-bai-block="61"><strong>Path in folder (source)</strong>: The subfolder inside the storage folder to mount.
+ Click the field to browse the folder and pick a directory; leave it empty to
+ mount the folder root.</li>
+<li data-bai-block="62"><strong>Container path (destination)</strong>: The path inside the container where the folder
+ is mounted. Leave it empty to mount the folder on <code>/home/work/&lt;folder name&gt;</code>,
+ enter an absolute path to mount it on that path, or enter a relative path to
+ mount it under <code>/home/work/</code>. A path that overlaps another mounted folder or an
+ automount folder is reported as an error, and the session cannot be launched
+ until the overlap is resolved.</li>
+</ul>
+<p data-bai-block="63">Click the remove (<code>X</code>) button at the end of a row to drop that folder from the
+mount list. Folder explorer can be used by clicking folder name. For further
+information, please refer <a href="./vfolder.html#explore-folder">Explore Folder</a> section.</p>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/folder_explorer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3348" height="1268" /><figcaption>Figure 10.13</figcaption></figure>
 </p>
-<p data-bai-block="61">New folder can be created by clicking the <code>+</code> button next to the search box.
-When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer <a href="./vfolder.html#create-storage-folder">Create Storage Folder</a> section.</p>
-<p><figure data-bai-block="62" class="doc-figure"><img src="./images/folder_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="780" /><figcaption>Figure 10.14</figcaption></figure>
-</p>
+<p data-bai-block="65">Folders that are mounted automatically are listed as <code>Automount Folders</code> below
+the rows. They do not need to be selected.</p>
+<div class="admonition admonition-note">
+<div data-bai-block="66" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="67">If a folder in the selection can no longer be mounted, for example when its
+sharing has been revoked, it is removed from the selection and a notification
+is shown.</p>
+</div></div>
+
+
 <p><a id="network"></a></p>
-<h3 data-bai-block="63" id="sessions_all-network">Network<a class="hash-link" href="#sessions_all-network" aria-label="Direct link to Network">#</a></h3>
-<p data-bai-block="64">Click the <code>Next</code> button below, or the <code>Network</code> menu on the right to proceed to the next page.
+<h3 data-bai-block="68" id="sessions_all-network">Network<a class="hash-link" href="#sessions_all-network" aria-label="Direct link to Network">#</a></h3>
+<p data-bai-block="69">Click the <code>Next</code> button below, or the <code>Network</code> menu on the right to proceed to the next page.
 On this page, Network configuration can be done such as Preopen Ports.</p>
 <ul>
-<li data-bai-block="65">Set Preopen Ports: Provides an interface for users to set preopen ports in a
+<li data-bai-block="70">Set Preopen Ports: Provides an interface for users to set preopen ports in a
 compute session. Refer to the <a href="#set-preopen-ports">How to add preopen ports before session creation</a> for further information.</li>
 </ul>
-<p><figure data-bai-block="66" class="doc-figure"><img src="./images/launch_session_network.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>Figure 10.15</figcaption></figure>
+<p><figure data-bai-block="71" class="doc-figure"><img src="./images/launch_session_network.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>Figure 10.14</figcaption></figure>
 </p>
 <p><a id="confirm-and-launch"></a></p>
-<h3 data-bai-block="67" id="sessions_all-confirm-and-launch">Confirm and Launch<a class="hash-link" href="#sessions_all-confirm-and-launch" aria-label="Direct link to Confirm and Launch">#</a></h3>
-<p data-bai-block="68">If you are done with the network setting, click the <code>Next</code> button below, or
+<h3 data-bai-block="72" id="sessions_all-confirm-and-launch">Confirm and Launch<a class="hash-link" href="#sessions_all-confirm-and-launch" aria-label="Direct link to Confirm and Launch">#</a></h3>
+<p data-bai-block="73">If you are done with the network setting, click the <code>Next</code> button below, or
 <code>Confirm and Launch</code> button on the right to proceed to the last page.</p>
-<p data-bai-block="69">On the last page, users could view information of session(s) to create,
+<p data-bai-block="74">On the last page, users could view information of session(s) to create,
 such as environment itself, allocated resources, mount information,
 environment variables set on the previous pages, preopen ports, etc.,
 Review the settings, then click the <code>Launch</code> button to launch the session.
 Click the <code>Edit</code> button located at the top right of each card to redirect to relevant page.</p>
-<p><figure data-bai-block="70" class="doc-figure"><img src="./images/launch_session_confirm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="2032" /><figcaption>Figure 10.16</figcaption></figure>
+<p><figure data-bai-block="75" class="doc-figure"><img src="./images/launch_session_confirm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="2030" /><figcaption>Figure 10.15</figcaption></figure>
 </p>
-<p data-bai-block="71">To launch more than one session at once with the same configuration, click the
+<p data-bai-block="76">To launch more than one session at once with the same configuration, click the
 more (<code>...</code>) icon next to the <code>Launch</code> button to open its dropdown menu and
 select <strong>Launch Multiple Sessions</strong>. A dialog appears where you can set the
 <strong>Number of sessions</strong> to create; each session is created independently with
 the resources shown on the form. The single-click <code>Launch</code> action still starts
 one session by default.</p>
-<p><figure data-bai-block="72" class="doc-figure"><img src="./images/session_start_multiple_dropdown.png" alt="" class="doc-image" loading="lazy" decoding="async" width="308" height="87" /><figcaption>Figure 10.17</figcaption></figure>
+<p><figure data-bai-block="77" class="doc-figure"><img src="./images/session_start_multiple_dropdown.png" alt="" class="doc-image" loading="lazy" decoding="async" width="308" height="87" /><figcaption>Figure 10.16</figcaption></figure>
 </p>
-<p><figure data-bai-block="73" class="doc-figure"><img src="./images/session_start_dropdown.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>Figure 10.18</figcaption></figure>
+<p><figure data-bai-block="78" class="doc-figure"><img src="./images/session_start_dropdown.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>Figure 10.17</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="74" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="79" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="75">Concurrent session launch is capped by the system; if the requested total
+<p data-bai-block="80">Concurrent session launch is capped by the system; if the requested total
 exceeds your remaining session quota, a warning is shown and some sessions may
 be queued until resources become available.</p>
 </div></div>
 
 
-<p data-bai-block="76">If there is an issue with the settings, an error message will be displayed as follows.
+<p data-bai-block="81">If there is an issue with the settings, an error message will be displayed as follows.
 Users can edit their settings when this happens.</p>
-<p><figure data-bai-block="77" class="doc-figure"><img src="./images/launch_session_error_card.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="358" /><figcaption>Figure 10.19</figcaption></figure>
+<p><figure data-bai-block="82" class="doc-figure"><img src="./images/launch_session_error_card.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="358" /><figcaption>Figure 10.18</figcaption></figure>
 </p>
-<p data-bai-block="78">When you click the <code>Launch</code> button, a warning dialog appears stating that there are no mounted folders.
+<p data-bai-block="83">When you click the <code>Launch</code> button, a warning dialog appears stating that there are no mounted folders.
 If folder mounting is not required, you can ignore the warning and click the <code>Start</code> button in the dialog to proceed.</p>
-<p><figure data-bai-block="79" class="doc-figure"><img src="./images/no_folder_notification_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="832" height="630" /><figcaption>Figure 10.20</figcaption></figure>
+<p><figure data-bai-block="84" class="doc-figure"><img src="./images/no_folder_notification_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="832" height="630" /><figcaption>Figure 10.19</figcaption></figure>
 </p>
-<p data-bai-block="80">When a new compute session is added in the <strong>Running</strong> tab, a notification appears at the bottom-right corner of the screen.
+<p data-bai-block="85">When a new compute session is added in the <strong>Running</strong> tab, a notification appears at the bottom-right corner of the screen.
 The bottom-left area of the notification displays the session status, while the bottom-right area includes buttons for opening the app dialog,
 launching the terminal, viewing container logs, and terminating the session.
 You can also view this session creation notification by clicking <strong>Notifications</strong> in the header.</p>
-<p><figure data-bai-block="81" class="doc-figure"><img src="./images/session_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>Figure 10.21</figcaption></figure>
+<p><figure data-bai-block="86" class="doc-figure"><img src="./images/session_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 10.20</figcaption></figure>
 </p>
-<p><figure data-bai-block="82" class="doc-figure"><img src="./images/session_notification.png" alt="" class="doc-image" loading="lazy" decoding="async" width="760" height="190" /><figcaption>Figure 10.22</figcaption></figure>
+<p><figure data-bai-block="87" class="doc-figure"><img src="./images/session_notification.png" alt="" class="doc-image" loading="lazy" decoding="async" width="760" height="190" /><figcaption>Figure 10.21</figcaption></figure>
 </p>
-<p data-bai-block="83">By clicking the app dialog button on the far left, you can view the available app services.</p>
-<p><figure data-bai-block="84" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>Figure 10.23</figcaption></figure>
+<p data-bai-block="88">By clicking the app dialog button on the far left, you can view the available app services.</p>
+<p><figure data-bai-block="89" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>Figure 10.22</figcaption></figure>
 </p>
-<h3 data-bai-block="85" id="sessions_all-recent-history">Recent History<a class="hash-link" href="#sessions_all-recent-history" aria-label="Direct link to Recent History">#</a></h3>
-<p data-bai-block="86">&#39;Session Launcher&#39; page provides a set of options for creating sessions. The
+<h3 data-bai-block="90" id="sessions_all-recent-history">Recent History<a class="hash-link" href="#sessions_all-recent-history" aria-label="Direct link to Recent History">#</a></h3>
+<p data-bai-block="91">&#39;Session Launcher&#39; page provides a set of options for creating sessions. The
 <code>Recent History</code> feature remembers information about previously created sessions.</p>
-<p><figure data-bai-block="87" class="doc-figure"><img src="./images/recent_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>Figure 10.24</figcaption></figure>
+<p><figure data-bai-block="92" class="doc-figure"><img src="./images/recent_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>Figure 10.23</figcaption></figure>
 </p>
-<p><figure data-bai-block="88" class="doc-figure"><img src="./images/recent_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="850" height="274" /><figcaption>Figure 10.25</figcaption></figure>
+<p><figure data-bai-block="93" class="doc-figure"><img src="./images/recent_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="850" height="274" /><figcaption>Figure 10.24</figcaption></figure>
 </p>
-<p data-bai-block="89">The <code>Recent History</code> modal stores information about the five most recently created sessions.
+<p data-bai-block="94">The <code>Recent History</code> modal stores information about the five most recently created sessions.
 Clicking a session name takes you to the &#39;Confirm and Launch&#39; page, which is the final step of session creation.
 Each item can be renamed or pinned for easier access.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="90" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="91">Superadmins can query all compute session information currently running (or
+<p data-bai-block="96">Superadmins can query all compute session information currently running (or
 terminated) in the cluster, and users can only view the sessions they have
 created.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="92" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="97" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="93">Compute session list may not be displayed normally due to intermittent
+<p data-bai-block="98">Compute session list may not be displayed normally due to intermittent
 network connection problems, and etc. This can be solved by refreshing the
 browser.</p>
 </div></div>
 
 
 <p><a id="session-list-view-and-refresh"></a></p>
-<h2 data-bai-block="94" id="sessions_all-session-list-view">Session List View<a class="hash-link" href="#sessions_all-session-list-view" aria-label="Direct link to Session List View">#</a></h2>
-<p data-bai-block="95">The session list groups your sessions into type tabs — <strong>All</strong>, <strong>Interactive</strong>,
+<h2 data-bai-block="99" id="sessions_all-session-list-view">Session List View<a class="hash-link" href="#sessions_all-session-list-view" aria-label="Direct link to Session List View">#</a></h2>
+<p data-bai-block="100">The session list groups your sessions into type tabs — <strong>All</strong>, <strong>Interactive</strong>,
 <strong>Batch</strong>, <strong>Inference</strong>, and <strong>Upload Sessions</strong> — and each tab carries a
 <strong>Running</strong> / <strong>Finished</strong> switch and a property filter for <strong>Session Name</strong>,
 <strong>Resource Group</strong>, and <strong>Agent</strong>.</p>
 <p><a id="session-resource-grid"></a></p>
-<h3 data-bai-block="96" id="sessions_all-resource-grid-view">Resource grid view<a class="hash-link" href="#sessions_all-resource-grid-view" aria-label="Direct link to Resource grid view">#</a></h3>
-<p data-bai-block="97">When the experimental <strong>Session resource grid view</strong> feature is enabled in User
+<h3 data-bai-block="101" id="sessions_all-resource-grid-view">Resource grid view<a class="hash-link" href="#sessions_all-resource-grid-view" aria-label="Direct link to Resource grid view">#</a></h3>
+<p data-bai-block="102">When the experimental <strong>Session resource grid view</strong> feature is enabled in User
 Settings, a <strong>View mode</strong> toggle appears above the list, next to the refresh
 button, and switches the list between <strong>Table</strong> and <strong>Grid</strong>. Refer to the
 <a href="./user_settings.html#experimental-features">Experimental features</a> section for how to turn the
 feature on. The grid uses the same type tabs, <strong>Running</strong> / <strong>Finished</strong> switch,
 and property filter as the table, so you can narrow the list first and then
 switch the view mode.</p>
-<p><figure data-bai-block="98" class="doc-figure"><img src="./images/session_resource_grid.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1172" height="379" /><figcaption>Figure 10.26</figcaption></figure>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/session_resource_grid.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="582" /><figcaption>Figure 10.25</figcaption></figure>
 </p>
-<p data-bai-block="99">In the grid, each session is drawn as a plate of small cells whose color
+<p data-bai-block="104">In the grid, each session is drawn as a plate of small cells whose color
 reflects the live utilization of the session: a neutral fill below 50%,
 progressively stronger warning colors between 50% and 80%, and a red fill at
 80% or above. A session that reports no live data — one that is not running
 yet, for example — keeps the <strong>No data</strong> color, and a session whose resources
 are still only requested is drawn with a dashed outline. The legend above the
 grid explains each color.</p>
-<p data-bai-block="100">Hover a plate to see a summary of that session: its status, type, cluster mode,
+<p data-bai-block="105">Hover a plate to see a summary of that session: its status, type, cluster mode,
 resource group, image, start time and elapsed time, the utilization of each
 allocated resource, and its disk I/O. Click the plate to open the session
 detail panel.</p>
-<p data-bai-block="101">The controls above the grid decide what a single cell stands for:</p>
+<p data-bai-block="106">The controls above the grid decide what a single cell stands for:</p>
 <ul>
-<li data-bai-block="102"><strong>Grid mode</strong>: <strong>Resource</strong> draws one cell per unit of a single selected
+<li data-bai-block="107"><strong>Grid mode</strong>: <strong>Resource</strong> draws one cell per unit of a single selected
 resource, while <strong>Kernel</strong> draws one cell per kernel of the session.</li>
-<li data-bai-block="103"><strong>Resource</strong> (Resource mode only): The resource to visualize — <strong>CPU</strong>,
+<li data-bai-block="108"><strong>Resource</strong> (Resource mode only): The resource to visualize — <strong>CPU</strong>,
 <strong>Memory</strong>, or any accelerator the listed sessions use. One cell is one CPU
 core, one memory unit, or one accelerator device, and a fractional
 accelerator share is drawn as a partially filled cell. Accelerators that
 report device memory offer two entries, one for utilization (<code>util</code>) and one
 for device memory (<code>mem</code>).</li>
-<li data-bai-block="104"><strong>Memory unit</strong> (Resource mode, memory resources only): How much memory a
+<li data-bai-block="109"><strong>Memory unit</strong> (Resource mode, memory resources only): How much memory a
 single cell stands for — 1, 2, 4, or 8 GiB.</li>
-<li data-bai-block="105"><strong>Metric</strong> (Kernel mode only): The live statistic used to color the kernel
+<li data-bai-block="110"><strong>Metric</strong> (Kernel mode only): The live statistic used to color the kernel
 cells. When none of the listed sessions reports live metrics, the selector is
 disabled and shows <strong>No live metrics</strong>.</li>
-<li data-bai-block="106"><strong>Layout</strong>: <strong>Serpentine</strong> runs every other row in the opposite direction, so
+<li data-bai-block="111"><strong>Layout</strong>: <strong>Serpentine</strong> runs every other row in the opposite direction, so
 the cells of a session that wraps stay connected; <strong>Word-wrap</strong> starts every
 row at the left edge instead.</li>
 </ul>
-<p data-bai-block="107">Notices above the grid explain what the grid leaves out:</p>
+<p data-bai-block="112">Notices above the grid explain what the grid leaves out:</p>
 <ul>
-<li data-bai-block="108">When the current filter matches more sessions than the grid draws, only the
+<li data-bai-block="113">When the current filter matches more sessions than the grid draws, only the
 first 100 sessions are shown and a notice reports the total.</li>
-<li data-bai-block="109">In Resource mode, sessions that hold none of the selected resource are hidden
+<li data-bai-block="114">In Resource mode, sessions that hold none of the selected resource are hidden
 and a notice reports how many were hidden.</li>
 </ul>
 <p><a id="session-detail-panel"></a></p>
-<h2 data-bai-block="110" id="sessions_all-session-detail-panel">Session detail panel<a class="hash-link" href="#sessions_all-session-detail-panel" aria-label="Direct link to Session detail panel">#</a></h2>
-<p data-bai-block="111">For detailed information on the session, click the session name in the session list.
+<h2 data-bai-block="115" id="sessions_all-session-detail-panel">Session detail panel<a class="hash-link" href="#sessions_all-session-detail-panel" aria-label="Direct link to Session detail panel">#</a></h2>
+<p data-bai-block="116">For detailed information on the session, click the session name in the session list.
 The session details panel shows the information of the session, such as the
 session ID, user ID, status, type, environments, mount information, resource allocation, reserved time,
 elapsed time, agent, cluster mode, resource usage including network I/O, and kernel information.</p>
-<p data-bai-block="112">Click the <code>Log</code> button next to the <code>Hostname</code> in <code>Kernels</code> to view the logs of that kernel directly.</p>
-<p><figure data-bai-block="113" class="doc-figure"><img src="./images/session_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>Figure 10.27</figcaption></figure>
+<p data-bai-block="117">Click the <code>Log</code> button next to the <code>Hostname</code> in <code>Kernels</code> to view the logs of that kernel directly.</p>
+<p><figure data-bai-block="118" class="doc-figure"><img src="./images/session_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1726" /><figcaption>Figure 10.26</figcaption></figure>
 </p>
-<p data-bai-block="114">Backend.AI provides additional information for sessions in <code>PENDING</code>, <code>TERMINATED</code>, or <code>CANCELLED</code> states.
+<p data-bai-block="119">Backend.AI provides additional information for sessions in <code>PENDING</code>, <code>TERMINATED</code>, or <code>CANCELLED</code> states.
 Click the <code>Info</code> button to check the details when available.</p>
-<p data-bai-block="115">A clock icon button appears next to the session status tag
+<p data-bai-block="120">A clock icon button appears next to the session status tag
 in the session detail panel. Clicking this icon opens the Session Scheduling History modal, which provides
 a detailed log of all scheduling decisions the system made for the session. For more information, refer to
 the <a href="#session-scheduling-history">Session Scheduling History</a> section.</p>
-<p><figure data-bai-block="116" class="doc-figure"><img src="./images/session_scheduling_history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="752" height="603" /><figcaption>Figure 10.28</figcaption></figure>
+<p><figure data-bai-block="121" class="doc-figure"><img src="./images/session_scheduling_history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="752" height="603" /><figcaption>Figure 10.27</figcaption></figure>
 </p>
 <p><a id="preemption-statuses"></a></p>
-<h3 data-bai-block="117" id="sessions_all-preemption-statuses">Preemption statuses<a class="hash-link" href="#sessions_all-preemption-statuses" aria-label="Direct link to Preemption statuses">#</a></h3>
-<p data-bai-block="118">A session can also appear in the <code>RESERVED</code>, <code>PREEMPTED</code>, and <code>RESCHEDULING</code>
+<h3 data-bai-block="122" id="sessions_all-preemption-statuses">Preemption statuses<a class="hash-link" href="#sessions_all-preemption-statuses" aria-label="Direct link to Preemption statuses">#</a></h3>
+<p data-bai-block="123">A session can also appear in the <code>RESERVED</code>, <code>PREEMPTED</code>, and <code>RESCHEDULING</code>
 statuses. The scheduler uses them when it has to free resources for a
 higher-priority job:</p>
 <ul>
-<li data-bai-block="119"><code>RESERVED</code>: The session holds a resource reservation and is waiting for the
+<li data-bai-block="124"><code>RESERVED</code>: The session holds a resource reservation and is waiting for the
 resources it needs to be freed.</li>
-<li data-bai-block="120"><code>PREEMPTED</code>: The session was selected for preemption so that a higher-priority
+<li data-bai-block="125"><code>PREEMPTED</code>: The session was selected for preemption so that a higher-priority
 job can use its resources.</li>
-<li data-bai-block="121"><code>RESCHEDULING</code>: The session was preempted and returned to the queue, and will be
+<li data-bai-block="126"><code>RESCHEDULING</code>: The session was preempted and returned to the queue, and will be
 scheduled again automatically.</li>
 </ul>
-<p data-bai-block="122">A session in any of these three statuses still occupies resources, so it is listed
+<p data-bai-block="127">A session in any of these three statuses still occupies resources, so it is listed
 under <strong>Running</strong>, not <strong>Finished</strong>.</p>
-<p data-bai-block="123">When the scheduler records one of its preemption reasons on a session, hovering
+<p data-bai-block="128">When the scheduler records one of its preemption reasons on a session, hovering
 the session status tag shows that reason in plain language instead of the raw
 internal value:</p>
 <table>
 <thead>
-<tr data-bai-block="124">
+<tr data-bai-block="129">
 <th>Reason</th>
 <th>Description</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="125">
+<tbody><tr data-bai-block="130">
 <td><code>PREEMPTED_BY_SCHEDULER</code></td>
 <td>This session was terminated by the scheduler to free resources for a higher-priority job.</td>
 </tr>
-<tr data-bai-block="126">
+<tr data-bai-block="131">
 <td><code>preempted-by-reservation</code></td>
 <td>This session was selected for preemption to free resources for a higher-priority job.</td>
 </tr>
-<tr data-bai-block="127">
+<tr data-bai-block="132">
 <td><code>preemption-reservation</code></td>
 <td>This session holds a resource reservation and is waiting for the resources to be freed.</td>
 </tr>
-<tr data-bai-block="128">
+<tr data-bai-block="133">
 <td><code>RESCHEDULED</code></td>
 <td>This session was preempted and returned to the queue; it will be scheduled again automatically.</td>
 </tr>
 </tbody></table>
 <p><a id="session-scheduling-history"></a></p>
-<h3 data-bai-block="129" id="sessions_all-session-scheduling-history">Session scheduling history<a class="hash-link" href="#sessions_all-session-scheduling-history" aria-label="Direct link to Session scheduling history">#</a></h3>
-<p data-bai-block="130">The Session Scheduling History modal provides transparency into the internal scheduling lifecycle of a
+<h3 data-bai-block="134" id="sessions_all-session-scheduling-history">Session scheduling history<a class="hash-link" href="#sessions_all-session-scheduling-history" aria-label="Direct link to Session scheduling history">#</a></h3>
+<p data-bai-block="135">The Session Scheduling History modal provides transparency into the internal scheduling lifecycle of a
 compute session. It displays a detailed record of every scheduling phase the session went through,
 including status transitions, results, retry attempts, and any errors encountered. This is particularly
 useful for understanding why a session is delayed, stuck in <code>PENDING</code>, or has failed to start.</p>
-<p><figure data-bai-block="131" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>Figure 10.29</figcaption></figure>
+<p><figure data-bai-block="136" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>Figure 10.28</figcaption></figure>
 </p>
-<h4 data-bai-block="132" id="sessions_all-filter-bar">Filter bar<a class="hash-link" href="#sessions_all-filter-bar" aria-label="Direct link to Filter bar">#</a></h4>
-<p data-bai-block="133">At the top of the modal, a filter bar allows you to narrow down the scheduling history records. You can
+<h4 data-bai-block="137" id="sessions_all-filter-bar">Filter bar<a class="hash-link" href="#sessions_all-filter-bar" aria-label="Direct link to Filter bar">#</a></h4>
+<p data-bai-block="138">At the top of the modal, a filter bar allows you to narrow down the scheduling history records. You can
 filter by the following properties:</p>
 <ul>
-<li data-bai-block="134"><strong>ID</strong>: Filter by history record ID (UUID, exact match)</li>
-<li data-bai-block="135"><strong>Phase</strong>: Filter by scheduling phase name</li>
-<li data-bai-block="136"><strong>Result</strong>: Filter by result type (SUCCESS, FAILURE, STALE, NEED_RETRY, EXPIRED, GIVE_UP, SKIPPED)</li>
-<li data-bai-block="137"><strong>From Status</strong>: Filter by the session status before the scheduling step</li>
-<li data-bai-block="138"><strong>To Status</strong>: Filter by the session status after the scheduling step</li>
-<li data-bai-block="139"><strong>Error Code</strong>: Filter by error code</li>
-<li data-bai-block="140"><strong>Message</strong>: Filter by message content</li>
-<li data-bai-block="141"><strong>Created At</strong>: Filter by the record creation time</li>
-<li data-bai-block="142"><strong>Updated At</strong>: Filter by the record update time</li>
+<li data-bai-block="139"><strong>ID</strong>: Filter by history record ID (UUID, exact match)</li>
+<li data-bai-block="140"><strong>Phase</strong>: Filter by scheduling phase name</li>
+<li data-bai-block="141"><strong>Result</strong>: Filter by result type (SUCCESS, FAILURE, STALE, NEED_RETRY, EXPIRED, GIVE_UP, SKIPPED)</li>
+<li data-bai-block="142"><strong>From Status</strong>: Filter by the session status before the scheduling step</li>
+<li data-bai-block="143"><strong>To Status</strong>: Filter by the session status after the scheduling step</li>
+<li data-bai-block="144"><strong>Error Code</strong>: Filter by error code</li>
+<li data-bai-block="145"><strong>Message</strong>: Filter by message content</li>
+<li data-bai-block="146"><strong>Created At</strong>: Filter by the record creation time</li>
+<li data-bai-block="147"><strong>Updated At</strong>: Filter by the record update time</li>
 </ul>
-<p data-bai-block="143">A refresh button is also available next to the filter bar to reload the scheduling history data.</p>
-<h4 data-bai-block="144" id="sessions_all-history-table">History table<a class="hash-link" href="#sessions_all-history-table" aria-label="Direct link to History table">#</a></h4>
-<p data-bai-block="145">The scheduling history table displays records with the following columns:</p>
+<p data-bai-block="148">A refresh button is also available next to the filter bar to reload the scheduling history data.</p>
+<h4 data-bai-block="149" id="sessions_all-history-table">History table<a class="hash-link" href="#sessions_all-history-table" aria-label="Direct link to History table">#</a></h4>
+<p data-bai-block="150">The scheduling history table displays records with the following columns:</p>
 <ul>
-<li data-bai-block="146"><strong>Updated At</strong>: When this record was last updated</li>
-<li data-bai-block="147"><strong>Created At</strong>: When this record was created</li>
-<li data-bai-block="148"><strong>Phase</strong>: The name of the scheduling phase</li>
-<li data-bai-block="149"><strong>Result</strong>: The outcome of this scheduling step, shown as a color-coded badge</li>
-<li data-bai-block="150"><strong>From Status</strong>: The session status before this scheduling step</li>
-<li data-bai-block="151"><strong>To Status</strong>: The session status after this scheduling step</li>
-<li data-bai-block="152"><strong>Attempts</strong>: How many times this scheduling step was attempted</li>
-<li data-bai-block="153"><strong>Message</strong>: A summary message for this scheduling step</li>
+<li data-bai-block="151"><strong>Updated At</strong>: When this record was last updated</li>
+<li data-bai-block="152"><strong>Created At</strong>: When this record was created</li>
+<li data-bai-block="153"><strong>Phase</strong>: The name of the scheduling phase</li>
+<li data-bai-block="154"><strong>Result</strong>: The outcome of this scheduling step, shown as a color-coded badge</li>
+<li data-bai-block="155"><strong>From Status</strong>: The session status before this scheduling step</li>
+<li data-bai-block="156"><strong>To Status</strong>: The session status after this scheduling step</li>
+<li data-bai-block="157"><strong>Attempts</strong>: How many times this scheduling step was attempted</li>
+<li data-bai-block="158"><strong>Message</strong>: A summary message for this scheduling step</li>
 </ul>
-<p data-bai-block="154">You can sort the table by the <strong>Created At</strong> or <strong>Updated At</strong> columns to view records in your
+<p data-bai-block="159">You can sort the table by the <strong>Created At</strong> or <strong>Updated At</strong> columns to view records in your
 preferred order.</p>
-<h4 data-bai-block="155" id="sessions_all-history-table-pagination">History table pagination<a class="hash-link" href="#sessions_all-history-table-pagination" aria-label="Direct link to History table pagination">#</a></h4>
-<p data-bai-block="156">The scheduling history table is paginated with offset-based pagination. The default page size is 10
+<h4 data-bai-block="160" id="sessions_all-history-table-pagination">History table pagination<a class="hash-link" href="#sessions_all-history-table-pagination" aria-label="Direct link to History table pagination">#</a></h4>
+<p data-bai-block="161">The scheduling history table is paginated with offset-based pagination. The default page size is 10
 records per page. Changing a filter or the sort order automatically resets the view back to page 1.</p>
-<h4 data-bai-block="157" id="sessions_all-expandable-sub-steps">Expandable sub-steps<a class="hash-link" href="#sessions_all-expandable-sub-steps" aria-label="Direct link to Expandable sub-steps">#</a></h4>
-<p data-bai-block="158">Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
+<h4 data-bai-block="162" id="sessions_all-expandable-sub-steps">Expandable sub-steps<a class="hash-link" href="#sessions_all-expandable-sub-steps" aria-label="Direct link to Expandable sub-steps">#</a></h4>
+<p data-bai-block="163">Some history records contain detailed sub-steps. When sub-steps are available, an expand arrow appears
 on the left side of the row. Click it to reveal a nested table showing the individual sub-steps of
 that scheduling phase.</p>
-<p><figure data-bai-block="159" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>Figure 10.30</figcaption></figure>
+<p><figure data-bai-block="164" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>Figure 10.29</figcaption></figure>
 </p>
-<p data-bai-block="160">The sub-steps table includes the following columns:</p>
+<p data-bai-block="165">The sub-steps table includes the following columns:</p>
 <ul>
-<li data-bai-block="161"><strong>Step</strong>: The name of the sub-step</li>
-<li data-bai-block="162"><strong>Result</strong>: The outcome of the sub-step, shown as a color-coded badge</li>
-<li data-bai-block="163"><strong>Error Code</strong>: A specific error code if the step failed</li>
-<li data-bai-block="164"><strong>Message</strong>: Detailed information or error description</li>
-<li data-bai-block="165"><strong>Started At</strong>: When the sub-step began</li>
-<li data-bai-block="166"><strong>Ended At</strong>: When the sub-step completed</li>
+<li data-bai-block="166"><strong>Step</strong>: The name of the sub-step</li>
+<li data-bai-block="167"><strong>Result</strong>: The outcome of the sub-step, shown as a color-coded badge</li>
+<li data-bai-block="168"><strong>Error Code</strong>: A specific error code if the step failed</li>
+<li data-bai-block="169"><strong>Message</strong>: Detailed information or error description</li>
+<li data-bai-block="170"><strong>Started At</strong>: When the sub-step began</li>
+<li data-bai-block="171"><strong>Ended At</strong>: When the sub-step completed</li>
 </ul>
-<h4 data-bai-block="167" id="sessions_all-result-badge-colors">Result badge colors<a class="hash-link" href="#sessions_all-result-badge-colors" aria-label="Direct link to Result badge colors">#</a></h4>
-<p data-bai-block="168">Each scheduling step and sub-step displays a color-coded result badge indicating its outcome:</p>
+<h4 data-bai-block="172" id="sessions_all-result-badge-colors">Result badge colors<a class="hash-link" href="#sessions_all-result-badge-colors" aria-label="Direct link to Result badge colors">#</a></h4>
+<p data-bai-block="173">Each scheduling step and sub-step displays a color-coded result badge indicating its outcome:</p>
 <table>
 <thead>
-<tr data-bai-block="169">
+<tr data-bai-block="174">
 <th>Result</th>
 <th>Color</th>
 <th>Meaning</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="170">
+<tbody><tr data-bai-block="175">
 <td>SUCCESS</td>
 <td>Green</td>
 <td>The step completed successfully</td>
 </tr>
-<tr data-bai-block="171">
+<tr data-bai-block="176">
 <td>FAILURE</td>
 <td>Red</td>
 <td>The step failed</td>
 </tr>
-<tr data-bai-block="172">
+<tr data-bai-block="177">
 <td>STALE</td>
 <td>Gray</td>
 <td>The record is stale or outdated</td>
 </tr>
-<tr data-bai-block="173">
+<tr data-bai-block="178">
 <td>NEED_RETRY</td>
 <td>Yellow</td>
 <td>The step needs to be retried</td>
 </tr>
-<tr data-bai-block="174">
+<tr data-bai-block="179">
 <td>EXPIRED</td>
 <td>Red</td>
 <td>The scheduling attempt expired</td>
 </tr>
-<tr data-bai-block="175">
+<tr data-bai-block="180">
 <td>GIVE_UP</td>
 <td>Red</td>
 <td>The system gave up on scheduling</td>
 </tr>
-<tr data-bai-block="176">
+<tr data-bai-block="181">
 <td>SKIPPED</td>
 <td>Gray</td>
 <td>The step was skipped</td>
 </tr>
 </tbody></table>
 <p><a id="session-audit-log"></a></p>
-<h3 data-bai-block="177" id="sessions_all-session-audit-log">Session audit log<a class="hash-link" href="#sessions_all-session-audit-log" aria-label="Direct link to Session audit log">#</a></h3>
-<p data-bai-block="178">The <strong>Audit Log</strong> tab appears at the bottom of the session detail panel alongside the <strong>Kernels</strong>
+<h3 data-bai-block="182" id="sessions_all-session-audit-log">Session audit log<a class="hash-link" href="#sessions_all-session-audit-log" aria-label="Direct link to Session audit log">#</a></h3>
+<p data-bai-block="183">The <strong>Audit Log</strong> tab appears at the bottom of the session detail panel alongside the <strong>Kernels</strong>
 tab. It provides a chronological record of every action taken on the session — such as status
 changes, resource modifications, and administrative operations — along with who triggered each
 action and when.</p>
-<p><figure data-bai-block="179" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>Figure 10.31</figcaption></figure>
+<p><figure data-bai-block="184" class="doc-figure"><img src="./images/session_audit_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1880" /><figcaption>Figure 10.30</figcaption></figure>
 </p>
 <!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 <div class="admonition admonition-note">
-<div data-bai-block="180" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="185" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="181">The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
+<p data-bai-block="186">The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
 may see an empty result even when the tab is accessible.</p>
 </div></div>
 
 
-<h4 data-bai-block="182" id="sessions_all-audit-log-columns">Audit log columns<a class="hash-link" href="#sessions_all-audit-log-columns" aria-label="Direct link to Audit log columns">#</a></h4>
-<p data-bai-block="183">The Audit Log table includes the following columns:</p>
+<h4 data-bai-block="187" id="sessions_all-audit-log-columns">Audit log columns<a class="hash-link" href="#sessions_all-audit-log-columns" aria-label="Direct link to Audit log columns">#</a></h4>
+<p data-bai-block="188">The Audit Log table includes the following columns:</p>
 <ul>
-<li data-bai-block="184"><strong>Triggered By</strong>: The email address and account ID of the actor who initiated the action</li>
-<li data-bai-block="185"><strong>Client IP</strong>: The IP address the action was requested from, shown exactly as the server
+<li data-bai-block="189"><strong>Triggered By</strong>: The email address and account ID of the actor who initiated the action</li>
+<li data-bai-block="190"><strong>Client IP</strong>: The IP address the action was requested from, shown exactly as the server
 reports it. It may be partially masked by the administrator&#39;s client IP masking policy,
 or <code>-</code> when it was not recorded</li>
-<li data-bai-block="186"><strong>Operation</strong>: The type of action performed (for example, session creation, termination, or
+<li data-bai-block="191"><strong>Operation</strong>: The type of action performed (for example, session creation, termination, or
 resource change)</li>
-<li data-bai-block="187"><strong>Status</strong>: The outcome of the action (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>DENIED</code>, or
+<li data-bai-block="192"><strong>Status</strong>: The outcome of the action (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>DENIED</code>, or
 <code>UNKNOWN</code>). <code>DENIED</code> means the action was deliberately rejected by policy rather than
 having failed with an error</li>
-<li data-bai-block="188"><strong>Time</strong>: When the action occurred</li>
+<li data-bai-block="193"><strong>Time</strong>: When the action occurred</li>
 </ul>
-<h4 data-bai-block="189" id="sessions_all-audit-log-filters">Audit log filters<a class="hash-link" href="#sessions_all-audit-log-filters" aria-label="Direct link to Audit log filters">#</a></h4>
-<p data-bai-block="190">Use the filter bar above the table to narrow down the log entries:</p>
+<h4 data-bai-block="194" id="sessions_all-audit-log-filters">Audit log filters<a class="hash-link" href="#sessions_all-audit-log-filters" aria-label="Direct link to Audit log filters">#</a></h4>
+<p data-bai-block="195">Use the filter bar above the table to narrow down the log entries:</p>
 <ul>
-<li data-bai-block="191"><strong>Status</strong>: Filter by action outcome (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>UNKNOWN</code>)</li>
-<li data-bai-block="192"><strong>Operation</strong>: Search by operation name or keyword</li>
-<li data-bai-block="193"><strong>Triggered By</strong>: Search by actor ID</li>
-<li data-bai-block="194"><strong>Time</strong>: Filter by a date-range picker</li>
+<li data-bai-block="196"><strong>Status</strong>: Filter by action outcome (<code>SUCCESS</code>, <code>ERROR</code>, <code>RUNNING</code>, <code>UNKNOWN</code>)</li>
+<li data-bai-block="197"><strong>Operation</strong>: Search by operation name or keyword</li>
+<li data-bai-block="198"><strong>Triggered By</strong>: Search by actor ID</li>
+<li data-bai-block="199"><strong>Time</strong>: Filter by a date-range picker</li>
 </ul>
-<p data-bai-block="195">A <strong>Refresh</strong> button reloads the log. The audit log query is deferred and sent only the first time
+<p data-bai-block="200">A <strong>Refresh</strong> button reloads the log. The audit log query is deferred and sent only the first time
 you activate the <strong>Audit Log</strong> tab.</p>
 <p><a id="use_session"></a></p>
-<h2 data-bai-block="196" id="sessions_all-use-jupyter-notebook">Use Jupyter Notebook<a class="hash-link" href="#sessions_all-use-jupyter-notebook" aria-label="Direct link to Use Jupyter Notebook">#</a></h2>
-<p data-bai-block="197">Let&#39;s look at how to use and manage an already running compute session.
+<h2 data-bai-block="201" id="sessions_all-use-jupyter-notebook">Use Jupyter Notebook<a class="hash-link" href="#sessions_all-use-jupyter-notebook" aria-label="Direct link to Use Jupyter Notebook">#</a></h2>
+<p data-bai-block="202">Let&#39;s look at how to use and manage an already running compute session.
 Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
 the app services available for that session.</p>
-<p><figure data-bai-block="198" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>Figure 10.32</figcaption></figure>
+<p><figure data-bai-block="203" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>Figure 10.31</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="199" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="204" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="200">There are two check options under the app icons. Opening the app with each item checked
+<p data-bai-block="205">There are two check options under the app icons. Opening the app with each item checked
 applies the following features, respectively:</p>
 <p><a id="open-app-to-public"></a></p>
 <ul>
-<li data-bai-block="201">Open app to public: Open the app to the public. Basically, web services
+<li data-bai-block="206">Open app to public: Open the app to the public. Basically, web services
 such as Terminal and Jupyter Notebook services are not accessible by
 other users, even if the user knows the service URL, since they are
 considered unauthenticated. However, checking this option makes it possible
 for anyone who knows the service URL (and port number) to access and use it. Of
 course, the user must have a network path to access the service.</li>
-<li data-bai-block="202">Try preferred port: Without this option checked, a port number for the web service is randomly
+<li data-bai-block="207">Try preferred port: Without this option checked, a port number for the web service is randomly
 assigned from the port pool prepared in advance by Backend.AI.
 If you check this item and enter a specific port number, the entered
 port number will be tried first. However, there is no guarantee that the desired
@@ -808,118 +829,118 @@ port will always be assigned because the port may not exist at all in the port
 pool or another service may already be using the port. In this case, the
 port number is randomly assigned.</li>
 </ul>
-<p data-bai-block="203">Depending on the system configuration, these options may not be shown.</p>
+<p data-bai-block="208">Depending on the system configuration, these options may not be shown.</p>
 </div></div>
 
 
-<p data-bai-block="204">Let&#39;s click on Jupyter Notebook.</p>
-<p><figure data-bai-block="205" class="doc-figure"><img src="./images/jupyter_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2420" height="582" /><figcaption>Figure 10.33</figcaption></figure>
+<p data-bai-block="209">Let&#39;s click on Jupyter Notebook.</p>
+<p><figure data-bai-block="210" class="doc-figure"><img src="./images/jupyter_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2420" height="582" /><figcaption>Figure 10.32</figcaption></figure>
 </p>
-<p data-bai-block="206">Pop up windows will show that Jupyter Notebook is running. This
+<p data-bai-block="211">Pop up windows will show that Jupyter Notebook is running. This
 notebook was created inside a running compute session and can be used easily
 with the click of a button. Also, there is no need for a separate package installation process because the language environment and
 library provided by the computation session can be used as it is. For detailed
 instructions on how to use Jupyter Notebook, please refer to the official Jupyter Notebook
 documentation.</p>
-<p data-bai-block="207"><code>id_container file</code> in the notebook&#39;s file explorer, contains a private
+<p data-bai-block="212"><code>id_container file</code> in the notebook&#39;s file explorer, contains a private
 SSH key. If necessary, users can download it and use it for SSH / SFTP access to
 the container.</p>
-<p data-bai-block="208">Click the <code>NEW</code> button at the top right and select the Notebook for Backend.AI,
+<p data-bai-block="213">Click the <code>NEW</code> button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where users can enter their own code.</p>
-<p><figure data-bai-block="209" class="doc-figure"><img src="./images/backendai_notebook_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="807" height="544" /><figcaption>Figure 10.34</figcaption></figure>
+<p><figure data-bai-block="214" class="doc-figure"><img src="./images/backendai_notebook_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="807" height="544" /><figcaption>Figure 10.33</figcaption></figure>
 </p>
-<p data-bai-block="210">In this window, users can enter and execute any code that they want by using the
+<p data-bai-block="215">In this window, users can enter and execute any code that they want by using the
 environment that session provides. The code is executed on one of the
 Backend.AI nodes where the compute session is actually created and there is no
 need to configure a separate environment on the local machine.</p>
-<p><figure data-bai-block="211" class="doc-figure"><img src="./images/notebook_code_execution.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2336" height="1178" /><figcaption>Figure 10.35</figcaption></figure>
+<p><figure data-bai-block="216" class="doc-figure"><img src="./images/notebook_code_execution.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2336" height="1178" /><figcaption>Figure 10.34</figcaption></figure>
 </p>
-<p data-bai-block="212">When window is closed, <code>Untitled.ipynb</code> file can be founded in the notebook file explorer.
+<p data-bai-block="217">When window is closed, <code>Untitled.ipynb</code> file can be founded in the notebook file explorer.
 Note that the files created here are deleted when session is terminated. The way to preserve those files even
 after the session is terminated is described in the Data &amp; Storage Folders section.</p>
-<p><figure data-bai-block="213" class="doc-figure"><img src="./images/untitled_ipynb_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="652" /><figcaption>Figure 10.36</figcaption></figure>
+<p><figure data-bai-block="218" class="doc-figure"><img src="./images/untitled_ipynb_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="652" /><figcaption>Figure 10.35</figcaption></figure>
 </p>
-<h2 data-bai-block="214" id="sessions_all-use-web-terminal">Use web terminal<a class="hash-link" href="#sessions_all-use-web-terminal" aria-label="Direct link to Use web terminal">#</a></h2>
-<p data-bai-block="215">This section will explain how to use the web terminal. Click the
+<h2 data-bai-block="219" id="sessions_all-use-web-terminal">Use web terminal<a class="hash-link" href="#sessions_all-use-web-terminal" aria-label="Direct link to Use web terminal">#</a></h2>
+<p data-bai-block="220">This section will explain how to use the web terminal. Click the
 terminal icon(second button) to use the container&#39;s ttyd app. A terminal will appear in a new window
 and users can run shell commands to access the computational session as shown in the following figure.
 If familiar with the commands, users can easily run various Linux commands. <code>Untitled.ipynb</code> file
 can be found in Jupyter Notebook, which is listed with the <code>ls</code> command. This shows that both apps
 are running in the same container environment.</p>
-<p><figure data-bai-block="216" class="doc-figure"><img src="./images/session_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2182" height="1062" /><figcaption>Figure 10.37</figcaption></figure>
+<p><figure data-bai-block="221" class="doc-figure"><img src="./images/session_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2182" height="1062" /><figcaption>Figure 10.36</figcaption></figure>
 </p>
-<p data-bai-block="217">Files created here can also be immediately seen in the Jupyter Notebook as well. Conversely, changes made to files in Jupyter
+<p data-bai-block="222">Files created here can also be immediately seen in the Jupyter Notebook as well. Conversely, changes made to files in Jupyter
 Notebook can also be checked right from the terminal. This is because they are using the same files in the same compute session.</p>
-<p data-bai-block="218">In addition to this, users can use web-based services such as TensorBoard, Jupyter
+<p data-bai-block="223">In addition to this, users can use web-based services such as TensorBoard, Jupyter
 Lab, etc., depending on the type of environments provided by the compute session.</p>
-<h2 data-bai-block="219" id="sessions_all-query-compute-session-log">Query compute session log<a class="hash-link" href="#sessions_all-query-compute-session-log" aria-label="Direct link to Query compute session log">#</a></h2>
-<p data-bai-block="220">Users can view the log of the compute session by clicking the <code>See Container Logs</code>
+<h2 data-bai-block="224" id="sessions_all-query-compute-session-log">Query compute session log<a class="hash-link" href="#sessions_all-query-compute-session-log" aria-label="Direct link to Query compute session log">#</a></h2>
+<p data-bai-block="225">Users can view the log of the compute session by clicking the <code>See Container Logs</code>
 icon in the session detail panel.</p>
-<p><figure data-bai-block="221" class="doc-figure"><img src="./images/session_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2816" height="1740" /><figcaption>Figure 10.38</figcaption></figure>
+<p><figure data-bai-block="226" class="doc-figure"><img src="./images/session_log.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2816" height="1740" /><figcaption>Figure 10.37</figcaption></figure>
 </p>
-<p data-bai-block="222">The log window provides the following controls above the log view:</p>
+<p data-bai-block="227">The log window provides the following controls above the log view:</p>
 <ul>
-<li data-bai-block="223"><strong>Kernel selector</strong>: Choose which kernel of the session to read. For a
+<li data-bai-block="228"><strong>Kernel selector</strong>: Choose which kernel of the session to read. For a
 single-container session there is only one entry; for a cluster session, each
 container is listed by its hostname with the first characters of its ID.</li>
-<li data-bai-block="224"><strong>Download</strong>: Save the currently displayed log to a text file.</li>
+<li data-bai-block="229"><strong>Download</strong>: Save the currently displayed log to a text file.</li>
 </ul>
-<p data-bai-block="225">You can also search within the displayed log using the search box built into the
+<p data-bai-block="230">You can also search within the displayed log using the search box built into the
 log view.</p>
 <p><a id="rename-running-session"></a></p>
-<h2 data-bai-block="226" id="sessions_all-rename-running-session">Rename running session<a class="hash-link" href="#sessions_all-rename-running-session" aria-label="Direct link to Rename running session">#</a></h2>
-<p data-bai-block="227">Name of the active session can be changed. Click the <code>Edit</code> button in the session detail
+<h2 data-bai-block="231" id="sessions_all-rename-running-session">Rename running session<a class="hash-link" href="#sessions_all-rename-running-session" aria-label="Direct link to Rename running session">#</a></h2>
+<p data-bai-block="232">Name of the active session can be changed. Click the <code>Edit</code> button in the session detail
 panel to change the session name.
 New session name should also follow the <a href="#session-naming-rule">the authoring rule</a>.</p>
-<p><figure data-bai-block="228" class="doc-figure"><img src="./images/session_renaming.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="160" /><figcaption>Figure 10.39</figcaption></figure>
+<p><figure data-bai-block="233" class="doc-figure"><img src="./images/session_renaming.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="160" /><figcaption>Figure 10.38</figcaption></figure>
 </p>
 <p><a id="delete_session"></a></p>
-<h2 data-bai-block="229" id="sessions_all-delete-a-compute-session">Delete a compute session<a class="hash-link" href="#sessions_all-delete-a-compute-session" aria-label="Direct link to Delete a compute session">#</a></h2>
-<p data-bai-block="230">To terminate a specific session, simply click on the red power button and click
+<h2 data-bai-block="234" id="sessions_all-delete-a-compute-session">Delete a compute session<a class="hash-link" href="#sessions_all-delete-a-compute-session" aria-label="Direct link to Delete a compute session">#</a></h2>
+<p data-bai-block="235">To terminate a specific session, simply click on the red power button and click
 <code>Terminate</code> button in the dialog. Since the data in the folder inside the compute
 session is deleted as soon as the compute session ends, it is recommended to
 move the data to the mounted folder or upload it to the mounted folder from the
 beginning.</p>
-<p><figure data-bai-block="231" class="doc-figure"><img src="./images/session_destroy_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="270" /><figcaption>Figure 10.40</figcaption></figure>
+<p><figure data-bai-block="236" class="doc-figure"><img src="./images/session_destroy_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="270" /><figcaption>Figure 10.39</figcaption></figure>
 </p>
 <p><a id="idleness-checks"></a></p>
-<h2 data-bai-block="232" id="sessions_all-idleness-checks">Idleness checks<a class="hash-link" href="#sessions_all-idleness-checks" aria-label="Direct link to Idleness checks">#</a></h2>
-<p data-bai-block="233">Backend.AI supports three types of inactivity (idleness) criteria for automatic garbage
+<h2 data-bai-block="237" id="sessions_all-idleness-checks">Idleness checks<a class="hash-link" href="#sessions_all-idleness-checks" aria-label="Direct link to Idleness checks">#</a></h2>
+<p data-bai-block="238">Backend.AI supports three types of inactivity (idleness) criteria for automatic garbage
 collection of compute sessions: Max Session Lifetime, Network Idle Timeout, and Utilization
 Checker.</p>
-<p data-bai-block="234">The criteria that apply to a running session are shown in the <strong>Reclamation Status</strong>
+<p data-bai-block="239">The criteria that apply to a running session are shown in the <strong>Reclamation Status</strong>
 row of the session detail panel, together with the time remaining before each one
 would terminate the session. The row appears while the session is running and at
 least one of its idle checks has a countdown, whether that countdown still has
 days to go or only minutes.</p>
-<p><figure data-bai-block="235" class="doc-figure"><img src="./images/idle_checks_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1436" height="324" /><figcaption>Figure 10.41</figcaption></figure>
+<p><figure data-bai-block="240" class="doc-figure"><img src="./images/idle_checks_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1436" height="324" /><figcaption>Figure 10.40</figcaption></figure>
 </p>
-<p data-bai-block="236">The meaning of idle checkers are as follows. Click the question-mark (<code>?</code>) icon
+<p data-bai-block="241">The meaning of idle checkers are as follows. Click the question-mark (<code>?</code>) icon
 next to the <strong>Reclamation Status</strong> label to open a dialog with the full
 explanation of each one.</p>
 <ul>
-<li data-bai-block="237"><p>Max Session Lifetime: Force-terminate sessions after this time from creation.
+<li data-bai-block="242"><p>Max Session Lifetime: Force-terminate sessions after this time from creation.
 This measure prevents sessions from running indefinitely.</p>
 </li>
-<li data-bai-block="238"><p>Network Idle Timeout: Force-terminate sessions that do not exchange data with the user (browser
+<li data-bai-block="243"><p>Network Idle Timeout: Force-terminate sessions that do not exchange data with the user (browser
 or web app) after this time. Traffic between the user and the compute session continuously occurs
 when the user interacts with an app, like terminal or Jupyter, by keyboard input, Jupyter cell
 creation, etc. Jupyter cell creation, etc. If there is no interaction for a certain period, the
 condition of garbage collection will be met. Even if there is a process executing a job in the
 compute session, it is subject to termination if there is no user interaction.</p>
 </li>
-<li data-bai-block="239"><p>Utilization Checker: Resources allocated to a compute session are reclaimed
+<li data-bai-block="244"><p>Utilization Checker: Resources allocated to a compute session are reclaimed
 based on the utilization of those resources. The decision to delete is based on
 the following two factors:</p>
 <ul>
-<li data-bai-block="240">Grace Period: The time during which the utilization idle checker is
+<li data-bai-block="245">Grace Period: The time during which the utilization idle checker is
 inactive. Even with low usage, the compute session won&#39;t be terminated during
 this period. However, once the grace period is over, if the average
 utilization remain below the threshold during the set idle timeout period,
 the system can terminate the session at any time. The grace period is
 merely a guaranteed duration during which termination does not occur. This
 measure is primarily for efficient management of low-usage GPU resources.</li>
-<li data-bai-block="241">Utilization Threshold: If the resource utilization of a compute session does
+<li data-bai-block="246">Utilization Threshold: If the resource utilization of a compute session does
 not exceed the set threshold for a certain duration (idle timeout), that
 session will be automatically terminated. For example, if the accelerator
 utilization threshold is set to 1%, and a compute session shows a
@@ -930,201 +951,201 @@ collection criteria.</li>
 </li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="242" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="247" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="243">After the grace period, sessions can be terminated anytime if utilization
+<p data-bai-block="248">After the grace period, sessions can be terminated anytime if utilization
 remains low. Briefly using the resources does not extend the grace period.
 Only the average utilization over the last idle timeout is considered.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="244" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="249" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="245">Depending on the environment settings, the idle checkers that apply and the
+<p data-bai-block="250">Depending on the environment settings, the idle checkers that apply and the
 resource types listed for the utilization checker may be different.</p>
 </div></div>
 
 
 <p><a id="reclamation-status"></a></p>
-<h3 data-bai-block="246" id="sessions_all-reclamation-status">Reclamation Status<a class="hash-link" href="#sessions_all-reclamation-status" aria-label="Direct link to Reclamation Status">#</a></h3>
-<p data-bai-block="247">The session list includes a <strong>Reclamation Status</strong> column that tells you at a
+<h3 data-bai-block="251" id="sessions_all-reclamation-status">Reclamation Status<a class="hash-link" href="#sessions_all-reclamation-status" aria-label="Direct link to Reclamation Status">#</a></h3>
+<p data-bai-block="252">The session list includes a <strong>Reclamation Status</strong> column that tells you at a
 glance how close each session is to being reclaimed by the utilization checker.
 The same badge replaces the plain label of the utilization entry in the
 <strong>Reclamation Status</strong> row of the session detail panel.</p>
-<p data-bai-block="248">The badge has three levels, described in the popover legend as:</p>
+<p data-bai-block="253">The badge has three levels, described in the popover legend as:</p>
 <ul>
-<li data-bai-block="249"><strong>Safe</strong>: The current average utilization is comfortably above the threshold.</li>
-<li data-bai-block="250"><strong>Warning</strong>: The current average is above the threshold, but close to it.</li>
-<li data-bai-block="251"><strong>At risk</strong>: The current average is below the threshold.</li>
+<li data-bai-block="254"><strong>Safe</strong>: The current average utilization is comfortably above the threshold.</li>
+<li data-bai-block="255"><strong>Warning</strong>: The current average is above the threshold, but close to it.</li>
+<li data-bai-block="256"><strong>At risk</strong>: The current average is below the threshold.</li>
 </ul>
-<p data-bai-block="252">The badge changes level before the average actually falls below the threshold, so a
+<p data-bai-block="257">The badge changes level before the average actually falls below the threshold, so a
 session can show <strong>At risk</strong> while its current average is still above the configured
 value. Treat it as an early warning that leaves you time to react, not as a report
 that the threshold has already been crossed.</p>
-<p data-bai-block="253">Sessions that the utilization checker does not apply to, and sessions for which
+<p data-bai-block="258">Sessions that the utilization checker does not apply to, and sessions for which
 no measurement is available yet, show <code>-</code> in the column. In the session detail
 panel, an entry whose first reclamation decision has not been made yet reads
 <strong>Checking reclamation status</strong> in place of the remaining-time tag.</p>
-<p data-bai-block="254">Hover the information (i) icon next to the badge to open a popover with the
+<p data-bai-block="259">Hover the information (i) icon next to the badge to open a popover with the
 details behind the level:</p>
 <ul>
-<li data-bai-block="255">The condition sentence, which states whether resources are reclaimed when
+<li data-bai-block="260">The condition sentence, which states whether resources are reclaimed when
 <strong>any</strong> of the listed conditions stays at the at-risk level or only when
 <strong>all</strong> of them do. Which sentence appears depends on how your administrator
 configured the checker.</li>
-<li data-bai-block="256">One row per measured resource, each with its own level badge and the current
+<li data-bai-block="261">One row per measured resource, each with its own level badge and the current
 average against the configured threshold, in the form
 <code>(current 12% | threshold 5%)</code>.</li>
-<li data-bai-block="257">A legend describing the criterion for each of the three levels.</li>
+<li data-bai-block="262">A legend describing the criterion for each of the three levels.</li>
 </ul>
-<p data-bai-block="258">Resources without a measurement are listed with a dash and do not affect the
+<p data-bai-block="263">Resources without a measurement are listed with a dash and do not affect the
 overall level.</p>
-<p data-bai-block="259">As the countdown on the utilization entry gets short, the remaining-time tag next to
+<p data-bai-block="264">As the countdown on the utilization entry gets short, the remaining-time tag next to
 it takes on the same color as the badge, so a countdown shown in red belongs to a
 session about to be reclaimed. While there is still plenty of time left, the tag
 stays plain even if the badge already shows a risk level.</p>
-<p><figure data-bai-block="260" class="doc-figure"><img src="./images/session_reclamation_status_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2224" height="340" /><figcaption>Figure 10.42</figcaption></figure>
+<p><figure data-bai-block="265" class="doc-figure"><img src="./images/session_reclamation_status_column.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2224" height="340" /><figcaption>Figure 10.41</figcaption></figure>
 </p>
-<p><figure data-bai-block="261" class="doc-figure"><img src="./images/session_reclamation_status_popover.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1298" height="434" /><figcaption>Figure 10.43</figcaption></figure>
+<p><figure data-bai-block="266" class="doc-figure"><img src="./images/session_reclamation_status_popover.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1298" height="434" /><figcaption>Figure 10.42</figcaption></figure>
 </p>
 <p><a id="how-to-add-environment-variable-before-creating-a-session"></a></p>
-<h2 data-bai-block="262" id="sessions_all-how-to-add-environment-variable-before-creating-a-session">How to add environment variable before creating a session<a class="hash-link" href="#sessions_all-how-to-add-environment-variable-before-creating-a-session" aria-label="Direct link to How to add environment variable before creating a session">#</a></h2>
-<p data-bai-block="263">To give more convenient workspace for users, Backend.AI supports environment variable setting
+<h2 data-bai-block="267" id="sessions_all-how-to-add-environment-variable-before-creating-a-session">How to add environment variable before creating a session<a class="hash-link" href="#sessions_all-how-to-add-environment-variable-before-creating-a-session" aria-label="Direct link to How to add environment variable before creating a session">#</a></h2>
+<p data-bai-block="268">To give more convenient workspace for users, Backend.AI supports environment variable setting
 in session launching. In this feature, users can add any envs such as <code>PATH</code> by filling out
 variable name and value in environment configuration dialog.</p>
-<p data-bai-block="264">To add environment variable, simply click <code>+ Add environment variables</code> button of the Variable.
+<p data-bai-block="269">To add environment variable, simply click <code>+ Add environment variables</code> button of the Variable.
 Also, you can remove the variable by clicking <code>-</code> button of the row that you want to get rid of.</p>
-<p><figure data-bai-block="265" class="doc-figure"><img src="./images/launch_session_env.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="594" /><figcaption>Figure 10.44</figcaption></figure>
+<p><figure data-bai-block="270" class="doc-figure"><img src="./images/launch_session_env.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="594" /><figcaption>Figure 10.43</figcaption></figure>
 </p>
-<p data-bai-block="266">You can write down variable name and value in the same line of the input fields.</p>
+<p data-bai-block="271">You can write down variable name and value in the same line of the input fields.</p>
 <p><a id="set-preopen-ports"></a></p>
-<h2 data-bai-block="267" id="sessions_all-how-to-add-preopen-ports-before-creating-a-session">How to add preopen ports before creating a session<a class="hash-link" href="#sessions_all-how-to-add-preopen-ports-before-creating-a-session" aria-label="Direct link to How to add preopen ports before creating a session">#</a></h2>
-<p data-bai-block="268">Backend.AI supports preopen ports setting at container startup. When using this feature, there is no need to build
+<h2 data-bai-block="272" id="sessions_all-how-to-add-preopen-ports-before-creating-a-session">How to add preopen ports before creating a session<a class="hash-link" href="#sessions_all-how-to-add-preopen-ports-before-creating-a-session" aria-label="Direct link to How to add preopen ports before creating a session">#</a></h2>
+<p data-bai-block="273">Backend.AI supports preopen ports setting at container startup. When using this feature, there is no need to build
 separate images when you want to expose the serving port.</p>
-<p data-bai-block="269">To add preopen ports, simply enter multiple values separated by either a comma (,) or a space.</p>
-<p><figure data-bai-block="270" class="doc-figure"><img src="./images/preopen-ports-config.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>Figure 10.45</figcaption></figure>
+<p data-bai-block="274">To add preopen ports, simply enter multiple values separated by either a comma (,) or a space.</p>
+<p><figure data-bai-block="275" class="doc-figure"><img src="./images/preopen-ports-config.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="430" /><figcaption>Figure 10.44</figcaption></figure>
 </p>
-<p data-bai-block="271">On the fourth page of the session creation page, users can add, update and delete written preopen ports. To see more detailed
+<p data-bai-block="276">On the fourth page of the session creation page, users can add, update and delete written preopen ports. To see more detailed
 information, please click the <code>Help (?)</code> button.</p>
-<p data-bai-block="272">Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press <code>Enter</code>. Users can specify multiple ports, separated by commas (,).
+<p data-bai-block="277">Users can put port numbers in between 1024 ~ 65535, to the input fields. Then, press <code>Enter</code>. Users can specify multiple ports, separated by commas (,).
 Users can check the configured preopen ports in the session app launcher.</p>
-<p><figure data-bai-block="273" class="doc-figure"><img src="./images/session_app_launcher.png" alt="" class="doc-image" loading="lazy" decoding="async" width="450" height="722" /><figcaption>Figure 10.46</figcaption></figure>
+<p><figure data-bai-block="278" class="doc-figure"><img src="./images/session_app_launcher.png" alt="" class="doc-image" loading="lazy" decoding="async" width="450" height="722" /><figcaption>Figure 10.45</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="274" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="279" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="275">The preopen ports are <strong>the internal ports within the container</strong>. Therefore, unlike other apps, when users click the
+<p data-bai-block="280">The preopen ports are <strong>the internal ports within the container</strong>. Therefore, unlike other apps, when users click the
 preopen ports in the session app launcher, a blank page will appear. Please bind a server to the respective port
 before use.</p>
 </div></div>
 
 
 <p><a id="save-session-commit"></a></p>
-<h2 data-bai-block="276" id="sessions_all-save-session-commit">Save session commit<a class="hash-link" href="#sessions_all-save-session-commit" aria-label="Direct link to Save session commit">#</a></h2>
-<p data-bai-block="277">Backend.AI supports the &quot;Convert Session to Image&quot; feature. Committing a <code>RUNNING</code> session will save the
+<h2 data-bai-block="281" id="sessions_all-save-session-commit">Save session commit<a class="hash-link" href="#sessions_all-save-session-commit" aria-label="Direct link to Save session commit">#</a></h2>
+<p data-bai-block="282">Backend.AI supports the &quot;Convert Session to Image&quot; feature. Committing a <code>RUNNING</code> session will save the
 current state of the session as a new image. Click the <code>Commit</code> button (the fourth icon) in the session detail panel
 to open a dialog displaying the session information. After entering the session name, users can convert the session to
 a new image. The session name must be 4 to 32 characters long and can only contain alphanumeric letters, hyphens (<code>-</code>),
 or underscores (<code>_</code>).</p>
-<p><figure data-bai-block="278" class="doc-figure"><img src="./images/push_session_to_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="422" /><figcaption>Figure 10.47</figcaption></figure>
+<p><figure data-bai-block="283" class="doc-figure"><img src="./images/push_session_to_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="570" height="422" /><figcaption>Figure 10.46</figcaption></figure>
 </p>
-<p data-bai-block="279">After filling out session name in the input field, click the <code>PUSH SESSION TO CUSTOMIZED IMAGE</code> button.
+<p data-bai-block="284">After filling out session name in the input field, click the <code>PUSH SESSION TO CUSTOMIZED IMAGE</code> button.
 The customized image created in this way can be used in future session creations. However, directories
 mounted to the container for image commits are considered external resources and are not included in
 the final image. Remember that <code>/home/work</code> is a mount folder (scratch directory), so it is not included.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="280" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="285" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="281">Currently, Backend.AI supports &quot;Convert Session to Image&quot; only when the session is in <code>INTERACTIVE</code> mode.
+<p data-bai-block="286">Currently, Backend.AI supports &quot;Convert Session to Image&quot; only when the session is in <code>INTERACTIVE</code> mode.
 To prevent unexpected error, users may not be able to terminate the session during committing process.
 To stop the ongoing process, check the session, and force-terminate it.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="282" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="287" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="283">The number of times to &quot;Convert Session to Image&quot; may be limited by the user resource policy. In this case,
+<p data-bai-block="288">The number of times to &quot;Convert Session to Image&quot; may be limited by the user resource policy. In this case,
 <a href="./my_environments.html#delete-customized-image">remove the existing customized image</a> and try again. If this does not resolves
 the problem, please contact the administrator.</p>
 </div></div>
 
 
 
-<h2 data-bai-block="284" id="sessions_all-utilizing-converted-images-of-ongoing-sessions">Utilizing converted images of ongoing sessions<a class="hash-link" href="#sessions_all-utilizing-converted-images-of-ongoing-sessions" aria-label="Direct link to Utilizing converted images of ongoing sessions">#</a></h2>
-<p data-bai-block="285">Converting an ongoing session into an image allows users to select this image from the environments in the session launcher
+<h2 data-bai-block="289" id="sessions_all-utilizing-converted-images-of-ongoing-sessions">Utilizing converted images of ongoing sessions<a class="hash-link" href="#sessions_all-utilizing-converted-images-of-ongoing-sessions" aria-label="Direct link to Utilizing converted images of ongoing sessions">#</a></h2>
+<p data-bai-block="290">Converting an ongoing session into an image allows users to select this image from the environments in the session launcher
 when creating a new session. This image is not exposed to other users and is useful for continuing to use the current session
 state as is. The converted image is tagged with <code>Customized&lt;session name&gt;</code>.</p>
-<p><figure data-bai-block="286" class="doc-figure"><img src="./images/select_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1348" height="240" /><figcaption>Figure 10.48</figcaption></figure>
+<p><figure data-bai-block="291" class="doc-figure"><img src="./images/select_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1348" height="240" /><figcaption>Figure 10.47</figcaption></figure>
 </p>
-<p data-bai-block="287">To manually enter the environment name for future session creation, please click the copy icon.</p>
-<p><figure data-bai-block="288" class="doc-figure"><img src="./images/copy_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1024" height="64" /><figcaption>Figure 10.49</figcaption></figure>
+<p data-bai-block="292">To manually enter the environment name for future session creation, please click the copy icon.</p>
+<p><figure data-bai-block="293" class="doc-figure"><img src="./images/copy_customized_image.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1024" height="64" /><figcaption>Figure 10.48</figcaption></figure>
 </p>
-<h2 data-bai-block="289" id="sessions_all-advanced-web-terminal-usage">Advanced web terminal usage<a class="hash-link" href="#sessions_all-advanced-web-terminal-usage" aria-label="Direct link to Advanced web terminal usage">#</a></h2>
-<p data-bai-block="290">The web-based terminal internally embeds a utility called
+<h2 data-bai-block="294" id="sessions_all-advanced-web-terminal-usage">Advanced web terminal usage<a class="hash-link" href="#sessions_all-advanced-web-terminal-usage" aria-label="Direct link to Advanced web terminal usage">#</a></h2>
+<p data-bai-block="295">The web-based terminal internally embeds a utility called
 <a href="https://github.com/tmux/tmux/wiki">tmux</a>. tmux is a terminal multiplexer that
 supports to open multiple shell windows within a single shell, so as to allow
 multiple programs to run in foreground simultaneously. If users want to take
 advantage of more powerful tmux features, they can refer to the official tmux
 documentation and other usage examples on the Internet.</p>
-<p data-bai-block="291">Here we are introducing some simple but useful features.</p>
-<h3 data-bai-block="292" id="sessions_all-copy-terminal-contents">Copy terminal contents<a class="hash-link" href="#sessions_all-copy-terminal-contents" aria-label="Direct link to Copy terminal contents">#</a></h3>
-<p data-bai-block="293">tmux offers a number of useful features, but it&#39;s a bit confusing for first-time
+<p data-bai-block="296">Here we are introducing some simple but useful features.</p>
+<h3 data-bai-block="297" id="sessions_all-copy-terminal-contents">Copy terminal contents<a class="hash-link" href="#sessions_all-copy-terminal-contents" aria-label="Direct link to Copy terminal contents">#</a></h3>
+<p data-bai-block="298">tmux offers a number of useful features, but it&#39;s a bit confusing for first-time
 users. In particular, tmux has its own clipboard buffer, so when copying the
 contents of the terminal, users can suffer from the fact that it can be pasted
 only within tmux by default. Furthermore, it is difficult to expose user
 system&#39;s clipboard to tmux inside web browser, so the terminal
 contents cannot be copied and pasted to other programs of user&#39;s computer. The
 so-called <code>Ctrl-C</code> / <code>Ctrl-V</code> is not working with tmux.</p>
-<p data-bai-block="294">If copy and paste of terminal contents is needed to system&#39;s clipboard,
+<p data-bai-block="299">If copy and paste of terminal contents is needed to system&#39;s clipboard,
 users can temporarily turn off tmux&#39;s mouse support. First, press <code>Ctrl-B</code> key
 to enter tmux control mode. Then type <code>:set -g mouse off</code> and press <code>Enter</code>
 (note to type the first colon as well). Users can check what they are
 typing in the status bar at the bottom of the screen. Then drag the desired text
 from the terminal with the mouse and press the <code>Ctrl-C</code> or <code>Cmd-C</code> (in Mac)
 to copy them to the clipboard of the user&#39;s computer.</p>
-<p data-bai-block="295">With mouse support turned off, scrolling through the mouse wheel is not supprted, to see
+<p data-bai-block="300">With mouse support turned off, scrolling through the mouse wheel is not supprted, to see
 the contents of the previous page from the terminal. In this case, users can turn
 on mouse support. Press <code>Ctrl-B</code>, and this time, type <code>:set -g mouse on</code>. Now scrolling through mouse wheelis available to see the contents of the previous page.</p>
-<p data-bai-block="296">If you remember <code>:set -g mouse off</code> or <code>:set -g mouse on</code> after <code>Ctrl-B</code>,
+<p data-bai-block="301">If you remember <code>:set -g mouse off</code> or <code>:set -g mouse on</code> after <code>Ctrl-B</code>,
 you can use the web terminal more conveniently.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="297" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="302" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="298"><code>Ctrl-B</code> is tmux&#39;s default control mode key. If users set another control key
+<p data-bai-block="303"><code>Ctrl-B</code> is tmux&#39;s default control mode key. If users set another control key
 by modifying <code>.tmux.conf</code> in user home directory, they should press the set
 key combination instead of <code>Ctrl-B</code>.</p>
 </div></div>
 
 
 <div class="admonition admonition-note">
-<div data-bai-block="299" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="304" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="300">In the Windows environment, refer to the following shortcuts.</p>
+<p data-bai-block="305">In the Windows environment, refer to the following shortcuts.</p>
 <ul>
-<li data-bai-block="301">Copy: Hold down <code>Shift</code>, right-click and drag</li>
-<li data-bai-block="302">Paste: Press <code>Ctrl-Shift-V</code></li>
+<li data-bai-block="306">Copy: Hold down <code>Shift</code>, right-click and drag</li>
+<li data-bai-block="307">Paste: Press <code>Ctrl-Shift-V</code></li>
 </ul>
 </div></div>
 
 
-<h3 data-bai-block="303" id="sessions_all-check-the-terminal-history-using-keyboard">Check the terminal history using keyboard<a class="hash-link" href="#sessions_all-check-the-terminal-history-using-keyboard" aria-label="Direct link to Check the terminal history using keyboard">#</a></h3>
-<p data-bai-block="304">There is also a way to copy the terminal contents and check the previous
+<h3 data-bai-block="308" id="sessions_all-check-the-terminal-history-using-keyboard">Check the terminal history using keyboard<a class="hash-link" href="#sessions_all-check-the-terminal-history-using-keyboard" aria-label="Direct link to Check the terminal history using keyboard">#</a></h3>
+<p data-bai-block="309">There is also a way to copy the terminal contents and check the previous
 contents of the terminal simultaneously. It is to check the previous contents
 using the keyboard. Again, click <code>Ctrl-B</code> first, and then press the <code>Page Up</code> and/or <code>Page Down</code> keys. To exit search mode, just press the <code>q</code>
 key. With this method, users can check the contents of the terminal history even
 when the mouse support is turned off.</p>
 <p><a id="tmux_guide"></a></p>
-<h3 data-bai-block="305" id="sessions_all-spawn-multiple-shells">Spawn multiple shells<a class="hash-link" href="#sessions_all-spawn-multiple-shells" aria-label="Direct link to Spawn multiple shells">#</a></h3>
-<p data-bai-block="306">The main advantage of tmux is to launch and use multiple shells in one
+<h3 data-bai-block="310" id="sessions_all-spawn-multiple-shells">Spawn multiple shells<a class="hash-link" href="#sessions_all-spawn-multiple-shells" aria-label="Direct link to Spawn multiple shells">#</a></h3>
+<p data-bai-block="311">The main advantage of tmux is to launch and use multiple shells in one
 terminal window. Pressing <code>Ctrl-B</code> key and <code>c</code>. will show the new shell environment.
 Previous window is not visible at this point, but is not terminated.
 Press <code>Ctrl-B</code> and <code>w</code>. List of shells currently open on tmux is shown.
@@ -1132,25 +1153,25 @@ Shell starting with <code>0:</code> is the initial shell environment, and the sh
 starting with <code>1:</code> is the one just created. Users can move between shells
 using the up/down keys. Place the cursor on the shell <code>0:</code> and press the Enter
 key to select it.</p>
-<p><figure data-bai-block="307" class="doc-figure"><img src="./images/tmux_multi_session_pane.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2784" height="2164" /><figcaption>Figure 10.50</figcaption></figure>
+<p><figure data-bai-block="312" class="doc-figure"><img src="./images/tmux_multi_session_pane.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2784" height="2164" /><figcaption>Figure 10.49</figcaption></figure>
 </p>
-<p data-bai-block="308">In this way, users can use multiple shell environments within a web terminal. To exit or terminate the
+<p data-bai-block="313">In this way, users can use multiple shell environments within a web terminal. To exit or terminate the
 current shell, just enter <code>exit</code> command or press <code>Ctrl-B x</code> key and then
 type <code>y</code>.</p>
-<p data-bai-block="309">In summary:</p>
+<p data-bai-block="314">In summary:</p>
 <ul>
-<li data-bai-block="310"><code>Ctrl-B c</code>: create a new tmux shell</li>
-<li data-bai-block="311"><code>Ctrl-B w</code>: query current tmux shells and move around among them</li>
-<li data-bai-block="312"><code>exit</code> or <code>Ctrl-B x</code>: terminate the current shell</li>
+<li data-bai-block="315"><code>Ctrl-B c</code>: create a new tmux shell</li>
+<li data-bai-block="316"><code>Ctrl-B w</code>: query current tmux shells and move around among them</li>
+<li data-bai-block="317"><code>exit</code> or <code>Ctrl-B x</code>: terminate the current shell</li>
 </ul>
-<p data-bai-block="313">Combining the above commands allows users to perform various tasks simultaneously
+<p data-bai-block="318">Combining the above commands allows users to perform various tasks simultaneously
 on multiple shells.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 17, 2026</span>
+  <span class="last-updated">Last updated on Sep 21, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./session_page.html">

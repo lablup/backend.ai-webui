@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การเมาท์โฟลเดอร์จัดเก็บ" />
   <meta name="twitter:description" content="Backend.AI มีฟังก์ชันในการเมาท์โฟลเดอร์จัดเก็บเมื่อสร้างเซสชันการคำนวณ เมื่อเริ่มเซสชันการคำนวณใหม่ ผู้ใช้จะสามารถเข้าถึงไดเรกทอรี /home/work/ ได้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การเมาท์โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีฟังก์ชันในการเมาท์โฟลเดอร์จัดเก็บเมื่อสร้างเซสชันการคำนวณ เมื่อเริ่มเซสชันการคำนวณใหม่ ผู้ใช้จะสามารถเข้าถึงไดเรกทอรี /home/work/ ได้…","dateModified":"2026-09-14T07:13:23.000Z","url":"https://webui.docs.backend.ai/next/th/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การเมาท์โฟลเดอร์จัดเก็บ","inLanguage":"th","description":"Backend.AI มีฟังก์ชันในการเมาท์โฟลเดอร์จัดเก็บเมื่อสร้างเซสชันการคำนวณ เมื่อเริ่มเซสชันการคำนวณใหม่ ผู้ใช้จะสามารถเข้าถึงไดเรกทอรี /home/work/ ได้…","dateModified":"2026-09-21T05:55:32.000Z","url":"https://webui.docs.backend.ai/next/th/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/mount_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/mount_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/mount_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4b66d5f)">v26.9.0-alpha.0 (4b66d5f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (5c800ca)">v26.9.0-alpha.0 (5c800ca)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -217,10 +217,10 @@
 หากต้องการเก็บข้อมูลภายในคอนเทนเนอร์ไว้โดยไม่คำนึงถึงวงจรชีวิตของคอนเทนเนอร์ ต้องเมาท์โฟลเดอร์โฮสต์แยกต่างหากเข้าไปในคอนเทนเนอร์ จากนั้นจึงสร้างไฟล์ภายในโฟลเดอร์ที่เมาท์ไว้</p>
 <p data-bai-block="2">ไปที่หน้า &#39;เซสชัน&#39; แล้วคลิกปุ่ม &#39;เริ่มต้น&#39;
 หลังจากกรอกข้อมูลในขั้นตอน &#39;ประเภทเซสชัน&#39; และ &#39;สภาพแวดล้อมและการจัดสรรทรัพยากร&#39; แล้ว
-ให้ไปที่ขั้นตอน &#39;ข้อมูลและการจัดเก็บ&#39; เพื่อดูรายการโฟลเดอร์ที่ผู้ใช้สามารถเมาท์ได้
-จากรายการนี้ ให้เลือกโฟลเดอร์ที่ต้องการเมาท์แล้วเพิ่มเข้าไป หรือเลือกหลายโฟลเดอร์เพื่อเมาท์เพิ่มเติม
+ให้ไปที่ขั้นตอน &#39;ข้อมูลและการจัดเก็บ&#39; แล้วเปิดดรอปดาวน์ <strong>เลือกโฟลเดอร์</strong> เพื่อดูโฟลเดอร์ที่ผู้ใช้สามารถเมาท์ได้
+เลือกโฟลเดอร์หนึ่งโฟลเดอร์หรือมากกว่านั้นจากดรอปดาวน์นี้ โฟลเดอร์ที่เลือกแต่ละรายการจะถูกเพิ่มเข้าไปในรายการโฟลเดอร์ที่จะเมาท์
 เอกสารนี้จะอธิบายวิธีการเมาท์โฟลเดอร์สองโฟลเดอร์คือ <code>user1-ml-test</code> และ <code>user2-vfolder</code> และสร้างเซสชัน</p>
-<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1969" height="1353" /><figcaption>รูปที่ 16.1</figcaption></figure>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2032" height="824" /><figcaption>รูปที่ 16.1</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="4" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
@@ -267,48 +267,57 @@
 
 <p data-bai-block="14">โดยค่าเริ่มต้น โฟลเดอร์ที่เลือกจะถูกเมาท์โดยใช้ชื่อของโฟลเดอร์ภายใต้ <code>/home/work/</code> ภายในเซสชันการคำนวณ
 ตัวอย่างเช่น หากชื่อโฟลเดอร์คือ <code>test</code> จะถูกเมาท์ที่ <code>/home/work/test</code>
-หากต้องการกำหนดพาธของการเมาท์เอง ให้ระบุพาธแบบสัมบูรณ์ในช่อง &#39;Path and Alias&#39;
-การระบุ <code>/workspace</code> ในช่องข้อมูลของโฟลเดอร์ <code>test</code> จะเมาท์ไปที่ <code>/workspace</code> ภายในเซสชัน
+หากต้องการกำหนดพาธของการเมาท์เอง ให้ระบุพาธแบบสัมบูรณ์ในช่อง <strong>พาธในคอนเทนเนอร์ (destination)</strong> ที่แถวของโฟลเดอร์นั้น
+การระบุ <code>/workspace</code> ในช่องของโฟลเดอร์ <code>test</code> จะเมาท์ไปที่ <code>/workspace</code> ภายในเซสชัน
 การระบุพาธแบบสัมพัทธ์จะเมาท์โฟลเดอร์ภายใต้ <code>/home/work/</code> ด้วยพาธดังกล่าว</p>
 </div></div>
 
 
-<p data-bai-block="15">Backend.AI มีตัวเลือกในการเก็บไฟล์ในโฟลเดอร์ไว้เมื่อเซสชันการคำนวณถูกลบ
+<div class="admonition admonition-note">
+<div data-bai-block="15" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div class="admonition-content">
+
+<p data-bai-block="16">หากต้องการเมาท์โฟลเดอร์ย่อยแทนทั้งโฟลเดอร์ ให้ระบุช่อง <strong>พาธในโฟลเดอร์ (source)</strong> ที่แถวของโฟลเดอร์นั้น
+คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกพาธ หากเว้นว่างไว้จะเป็นการเมาท์ root ของโฟลเดอร์</p>
+</div></div>
+
+
+<p data-bai-block="17">Backend.AI มีตัวเลือกในการเก็บไฟล์ในโฟลเดอร์ไว้เมื่อเซสชันการคำนวณถูกลบ
 ตัวอย่างด้านล่างแสดงให้เห็นถึงสิ่งที่เกิดขึ้น</p>
-<p data-bai-block="16">ภายใต้ <code>user2-vfolder</code> ให้สร้าง <code>test_file</code>
+<p data-bai-block="18">ภายใต้ <code>user2-vfolder</code> ให้สร้าง <code>test_file</code>
 เติมเนื้อหาด้วยข้อความ &quot;file inside user2-vfolder&quot;</p>
-<p><figure data-bai-block="17" class="doc-figure"><img src="./images/mounted_folders_in_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1364" height="284" /><figcaption>รูปที่ 16.4</figcaption></figure>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/mounted_folders_in_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1364" height="284" /><figcaption>รูปที่ 16.4</figcaption></figure>
 </p>
-<p data-bai-block="18">เมื่อรันคำสั่ง <code>ls</code> ที่ <code>user2-vfolder</code> ผู้ใช้จะยืนยันได้ว่าไฟล์ถูกสร้างขึ้นเรียบร้อยแล้ว
+<p data-bai-block="20">เมื่อรันคำสั่ง <code>ls</code> ที่ <code>user2-vfolder</code> ผู้ใช้จะยืนยันได้ว่าไฟล์ถูกสร้างขึ้นเรียบร้อยแล้ว
 โปรดทราบว่าสามารถตรวจสอบเนื้อหาของไฟล์ได้ด้วยคำสั่ง <code>cat</code></p>
-<p data-bai-block="19">ตอนนี้ให้ลบเซสชันการคำนวณและไปที่หน้า Storage
+<p data-bai-block="21">ตอนนี้ให้ลบเซสชันการคำนวณและไปที่หน้า Storage
 หาโฟลเดอร์ <code>user2-vfolder</code> เปิดตัวสำรวจไฟล์ และตรวจสอบว่า <code>test_file</code> มีอยู่
 คลิกปุ่ม &#39;ดาวน์โหลด&#39; ที่แถวของไฟล์ ซึ่งแสดงอยู่ในคอลัมน์ &#39;ชื่อ&#39; เพื่อดาวน์โหลดไฟล์ไปยังเครื่องในเครื่อง และเปิดไฟล์
 เพื่อยืนยันว่าเนื้อหาเป็น &quot;file inside user2-vfolder&quot;</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/download_file_from_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3240" height="1420" /><figcaption>รูปที่ 16.5</figcaption></figure>
+<p><figure data-bai-block="22" class="doc-figure"><img src="./images/download_file_from_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3240" height="1420" /><figcaption>รูปที่ 16.5</figcaption></figure>
 </p>
-<p data-bai-block="21">เมื่อคุณจัดการไฟล์บนโฟลเดอร์ที่เมาท์ไว้ในขณะสร้างเซสชันการคำนวณ
+<p data-bai-block="23">เมื่อคุณจัดการไฟล์บนโฟลเดอร์ที่เมาท์ไว้ในขณะสร้างเซสชันการคำนวณ
 ข้อมูลจะสามารถคงอยู่ได้แม้หลังจากที่ผู้ใช้สิ้นสุดเซสชันการคำนวณ</p>
 <p><a id="using-automount-folder"></a></p>
-<h2 data-bai-block="22" id="mount_vfolder-การกำหนดคาสภาพแวดลอมของเซสชนการคำนวณดวยโฟลเดอรเมาทอตโนมต">การกำหนดค่าสภาพแวดล้อมของเซสชันการคำนวณด้วยโฟลเดอร์เมาท์อัตโนมัติ<a class="hash-link" href="#mount_vfolder-การกำหนดคาสภาพแวดลอมของเซสชนการคำนวณดวยโฟลเดอรเมาทอตโนมต" aria-label="Direct link to การกำหนดค่าสภาพแวดล้อมของเซสชันการคำนวณด้วยโฟลเดอร์เมาท์อัตโนมัติ">#</a></h2>
-<p data-bai-block="23">หากต้องการใช้โปรแกรมหรือไลบรารีใหม่ที่ไม่ได้ถูกติดตั้งไว้ล่วงหน้าในเซสชันการคำนวณ คุณสามารถใช้คุณลักษณะของโฟลเดอร์จัดเก็บและ<a href="./vfolder.html#automount-folder">โฟลเดอร์เมาท์อัตโนมัติ</a>
+<h2 data-bai-block="24" id="mount_vfolder-การกำหนดคาสภาพแวดลอมของเซสชนการคำนวณดวยโฟลเดอรเมาทอตโนมต">การกำหนดค่าสภาพแวดล้อมของเซสชันการคำนวณด้วยโฟลเดอร์เมาท์อัตโนมัติ<a class="hash-link" href="#mount_vfolder-การกำหนดคาสภาพแวดลอมของเซสชนการคำนวณดวยโฟลเดอรเมาทอตโนมต" aria-label="Direct link to การกำหนดค่าสภาพแวดล้อมของเซสชันการคำนวณด้วยโฟลเดอร์เมาท์อัตโนมัติ">#</a></h2>
+<p data-bai-block="25">หากต้องการใช้โปรแกรมหรือไลบรารีใหม่ที่ไม่ได้ถูกติดตั้งไว้ล่วงหน้าในเซสชันการคำนวณ คุณสามารถใช้คุณลักษณะของโฟลเดอร์จัดเก็บและ<a href="./vfolder.html#automount-folder">โฟลเดอร์เมาท์อัตโนมัติ</a>
 ซึ่งเป็นอิสระจากวงจรชีวิตของเซสชันการคำนวณ ในการติดตั้งแพ็กเกจ
 สิ่งนี้ช่วยให้คุณสามารถกำหนดค่าสภาพแวดล้อมที่สอดคล้องกันได้ โดยไม่คำนึงถึงประเภทของเซสชันการคำนวณ</p>
 <p><a id="using-pip-with-automountfolder"></a></p>
-<h3 data-bai-block="24" id="mount_vfolder-ตดตงแพกเกจ-python-ผาน-pip">ติดตั้งแพ็กเกจ Python ผ่าน pip<a class="hash-link" href="#mount_vfolder-ตดตงแพกเกจ-python-ผาน-pip" aria-label="Direct link to ติดตั้งแพ็กเกจ Python ผ่าน pip">#</a></h3>
-<p data-bai-block="25">การสร้างโฟลเดอร์ชื่อ <code>.local</code> จะช่วยให้ผู้ใช้สามารถติดตั้งแพ็กเกจ Python ของผู้ใช้ไว้ในโฟลเดอร์เดียวกันได้
+<h3 data-bai-block="26" id="mount_vfolder-ตดตงแพกเกจ-python-ผาน-pip">ติดตั้งแพ็กเกจ Python ผ่าน pip<a class="hash-link" href="#mount_vfolder-ตดตงแพกเกจ-python-ผาน-pip" aria-label="Direct link to ติดตั้งแพ็กเกจ Python ผ่าน pip">#</a></h3>
+<p data-bai-block="27">การสร้างโฟลเดอร์ชื่อ <code>.local</code> จะช่วยให้ผู้ใช้สามารถติดตั้งแพ็กเกจ Python ของผู้ใช้ไว้ในโฟลเดอร์เดียวกันได้
 โดยค่าเริ่มต้น <code>pip</code> จะติดตั้งแพ็กเกจในโฟลเดอร์ <code>.local</code> ภายใต้โฟลเดอร์โฮมของผู้ใช้
 (โปรดทราบว่าโฟลเดอร์เมาท์อัตโนมัติจะถูกเมาท์ไว้ภายใต้โฟลเดอร์โฮมของผู้ใช้)
 ดังนั้น หากต้องการให้แพ็กเกจ Python ที่ชื่อ <code>tqdm</code> ถูกติดตั้งอยู่ตลอดเวลา ไม่ว่าสภาพแวดล้อมการคำนวณจะเป็นแบบใด
 สามารถรันคำสั่งต่อไปนี้ได้จากเทอร์มินัล:</p>
-<div data-bai-block="26" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tqdm</span></span></code></pre></div>
-<p data-bai-block="27">หลังจากนั้น เมื่อสร้างเซสชันการคำนวณใหม่ โฟลเดอร์ <code>.local</code> ที่ติดตั้งแพ็กเกจ <code>tqdm</code> ไว้จะถูกเมาท์โดยอัตโนมัติ
+<div data-bai-block="28" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tqdm</span></span></code></pre></div>
+<p data-bai-block="29">หลังจากนั้น เมื่อสร้างเซสชันการคำนวณใหม่ โฟลเดอร์ <code>.local</code> ที่ติดตั้งแพ็กเกจ <code>tqdm</code> ไว้จะถูกเมาท์โดยอัตโนมัติ
 ทำให้ผู้ใช้สามารถใช้งานได้โดยไม่ต้องติดตั้งแพ็กเกจ <code>tqdm</code> ซ้ำอีก</p>
 <div class="admonition admonition-note">
-<div data-bai-block="28" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
+<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>หมายเหตุ</div>
 <div class="admonition-content">
 
-<p data-bai-block="29">เมื่อใช้งาน Python หลายเวอร์ชัน หรือใช้เซสชันที่มี Python เวอร์ชันต่างกัน แพ็กเกจอาจมีปัญหาด้านความเข้ากันได้
+<p data-bai-block="31">เมื่อใช้งาน Python หลายเวอร์ชัน หรือใช้เซสชันที่มี Python เวอร์ชันต่างกัน แพ็กเกจอาจมีปัญหาด้านความเข้ากันได้
 สามารถหลีกเลี่ยงปัญหานี้ได้โดยการแยกตัวแปรสภาพแวดล้อม <code>PYTHONPATH</code> ผ่านไฟล์ <code>.bashrc</code>
 เนื่องจากแพ็กเกจ <code>pip</code> ของผู้ใช้จะถูกติดตั้งในพาธที่ระบุไว้ใน <code>PYTHONPATH</code></p>
 </div></div>
@@ -316,33 +325,33 @@
 
 
 <p><a id="using-linuxbrew-with-automountfolder"></a></p>
-<h3 data-bai-block="30" id="mount_vfolder-ตดตงแพกเกจผาน-homebrew">ติดตั้งแพ็กเกจผ่าน Homebrew<a class="hash-link" href="#mount_vfolder-ตดตงแพกเกจผาน-homebrew" aria-label="Direct link to ติดตั้งแพ็กเกจผ่าน Homebrew">#</a></h3>
-<p data-bai-block="31">ตัวจัดการแพ็กเกจ เช่น <code>apt</code> ของ Ubuntu หรือ <code>yum</code> ของ CentOS มักจะต้องใช้สิทธิ์ <code>root</code>
+<h3 data-bai-block="32" id="mount_vfolder-ตดตงแพกเกจผาน-homebrew">ติดตั้งแพ็กเกจผ่าน Homebrew<a class="hash-link" href="#mount_vfolder-ตดตงแพกเกจผาน-homebrew" aria-label="Direct link to ติดตั้งแพ็กเกจผ่าน Homebrew">#</a></h3>
+<p data-bai-block="33">ตัวจัดการแพ็กเกจ เช่น <code>apt</code> ของ Ubuntu หรือ <code>yum</code> ของ CentOS มักจะต้องใช้สิทธิ์ <code>root</code>
 ด้วยเหตุผลด้านความปลอดภัย การเข้าถึง <code>sudo</code> และ <code>root</code> ถูกบล็อกไว้โดยค่าเริ่มต้นในเซสชันการคำนวณของ Backend.AI (อาจได้รับอนุญาตขึ้นอยู่กับการตั้งค่า) ดังนั้นเราจึงแนะนำให้ใช้ <a href="https://docs.brew.sh/Homebrew-on-Linux">Homebrew on Linux</a> ซึ่งไม่ต้องใช้ <code>sudo</code></p>
-<p data-bai-block="32">สามารถตั้งค่า Homebrew ได้ดังนี้:</p>
+<p data-bai-block="34">สามารถตั้งค่า Homebrew ได้ดังนี้:</p>
 <ul>
-<li data-bai-block="33"><p>สร้างโฟลเดอร์ <code>.linuxbrew</code> ในหน้า Data &amp; Storage</p>
+<li data-bai-block="35"><p>สร้างโฟลเดอร์ <code>.linuxbrew</code> ในหน้า Data &amp; Storage</p>
 </li>
-<li data-bai-block="34"><p>สร้างเซสชันการคำนวณ (โฟลเดอร์ <code>.linuxbrew</code> จะถูกเมาท์โดยอัตโนมัติที่
+<li data-bai-block="36"><p>สร้างเซสชันการคำนวณ (โฟลเดอร์ <code>.linuxbrew</code> จะถูกเมาท์โดยอัตโนมัติที่
 <code>/home/linuxbrew/.linuxbrew</code>)</p>
 </li>
-<li data-bai-block="35"><p>ติดตั้ง Homebrew ในเซสชันการคำนวณ หากยังไม่ได้ติดตั้ง</p>
-<div data-bai-block="36" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> /bin/bash</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> "$(</span><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></code></pre></div>
+<li data-bai-block="37"><p>ติดตั้ง Homebrew ในเซสชันการคำนวณ หากยังไม่ได้ติดตั้ง</p>
+<div data-bai-block="38" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> /bin/bash</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> "$(</span><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></code></pre></div>
 </li>
-<li data-bai-block="37"><p>สามารถติดตั้งแพ็กเกจ Homebrew ได้ดังนี้:</p>
-<div data-bai-block="38" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hello</span></span>
+<li data-bai-block="39"><p>สามารถติดตั้งแพ็กเกจ Homebrew ได้ดังนี้:</p>
+<div data-bai-block="40" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hello</span></span>
 <span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> hello</span></span>
 <span class="line"><span style="color:#B392F0">Hello,</span><span style="color:#9ECBFF"> world!</span></span></code></pre></div>
 </li>
 </ul>
-<p data-bai-block="39"><code>brew</code> จะติดตั้งแพ็กเกจภายใต้ <code>/home/linuxbrew/.linuxbrew</code> ซึ่งจะถูกเมาท์โดยอัตโนมัติเมื่อมีโฟลเดอร์ <code>.linuxbrew</code> อยู่
+<p data-bai-block="41"><code>brew</code> จะติดตั้งแพ็กเกจภายใต้ <code>/home/linuxbrew/.linuxbrew</code> ซึ่งจะถูกเมาท์โดยอัตโนมัติเมื่อมีโฟลเดอร์ <code>.linuxbrew</code> อยู่
 ดังนั้น หากคุณสร้างโฟลเดอร์เมาท์อัตโนมัติชื่อ <code>.linuxbrew</code> ไว้แล้ว แพ็กเกจ Homebrew ที่ติดตั้งไว้ก่อนหน้านี้จะสามารถใช้งานได้อีกครั้ง แม้ว่าจะลบเซสชันการคำนวณเดิมและสร้างเซสชันการคำนวณใหม่ก็ตาม</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/mount_vfolder/mount_vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 14 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 21 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./vfolder.html">

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="스토리지 폴더 마운트" />
   <meta name="twitter:description" content="Backend.AI는 연산 세션을 생성할 때 스토리지 폴더를 마운트할 수 있는 기능을 제공합니다. 새로운 연산 세션을 시작하면 사용자는 /home/work/ 디렉터리에 접근할 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더 마운트","inLanguage":"ko","description":"Backend.AI는 연산 세션을 생성할 때 스토리지 폴더를 마운트할 수 있는 기능을 제공합니다. 새로운 연산 세션을 시작하면 사용자는 /home/work/ 디렉터리에 접근할 수 있습니다.","dateModified":"2026-09-14T07:13:23.000Z","url":"https://webui.docs.backend.ai/next/ko/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"스토리지 폴더 마운트","inLanguage":"ko","description":"Backend.AI는 연산 세션을 생성할 때 스토리지 폴더를 마운트할 수 있는 기능을 제공합니다. 새로운 연산 세션을 시작하면 사용자는 /home/work/ 디렉터리에 접근할 수 있습니다.","dateModified":"2026-09-21T05:55:32.000Z","url":"https://webui.docs.backend.ai/next/ko/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/mount_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/mount_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/mount_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4b66d5f)">v26.9.0-alpha.0 (4b66d5f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (5c800ca)">v26.9.0-alpha.0 (5c800ca)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -217,10 +217,10 @@
 컨테이너의 생명 주기와 관계없이 데이터를 보존하려면, 별도의 호스트 폴더를 컨테이너에 마운트한 후 마운트된 폴더 안에서 파일을 생성해야 합니다.</p>
 <p data-bai-block="2"><code>세션</code> 페이지로 이동하여 <code>시작</code> 버튼을 클릭합니다.
 &#39;세션 타입&#39;, &#39;실행 환경 및 자원 할당&#39; 단계를 채운 후,
-&#39;데이터 &amp; 폴더&#39; 단계로 이동하면 사용자가 마운트할 수 있는 폴더 목록을 확인할 수 있습니다.
-이 목록에서 마운트할 폴더를 선택하여 추가하거나, 여러 폴더를 선택하여 추가로 마운트할 수 있습니다.
+&#39;데이터 &amp; 폴더&#39; 단계로 이동한 후 <strong>폴더를 선택해주세요</strong> 드롭다운을 열면 사용자가 마운트할 수 있는 폴더를 확인할 수 있습니다.
+이 드롭다운에서 하나 이상의 폴더를 선택하면, 선택한 폴더가 마운트할 폴더 목록에 추가됩니다.
 이 문서에서는 <code>user1-ml-test</code>와 <code>user2-vfolder</code> 두 개의 폴더를 마운트한 후 세션을 생성하는 방법을 설명합니다.</p>
-<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1969" height="1353" /><figcaption>그림 16.1</figcaption></figure>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2032" height="824" /><figcaption>그림 16.1</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="4" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
@@ -266,44 +266,53 @@
 
 <p data-bai-block="14">선택한 폴더는 기본적으로 연산 세션 내부의 <code>/home/work/</code> 아래에 폴더 이름으로 마운트됩니다.
 예를 들어, 폴더 이름이 <code>test</code>인 경우 <code>/home/work/test</code>에 마운트됩니다.
-마운트 경로를 사용자 지정하려면 &#39;경로&#39; 입력 필드에 절대 경로를 입력합니다.
-<code>test</code> 폴더의 입력 필드에 <code>/workspace</code>를 입력하면 세션 내부의 <code>/workspace</code>에 마운트됩니다.
+마운트 경로를 사용자 지정하려면 해당 폴더 행의 <strong>컨테이너 경로 (destination)</strong> 필드에 절대 경로를 입력합니다.
+<code>test</code> 폴더의 필드에 <code>/workspace</code>를 입력하면 세션 내부의 <code>/workspace</code>에 마운트됩니다.
 상대 경로를 입력하면 <code>/home/work/</code> 아래에 해당 경로로 폴더가 마운트됩니다.</p>
 </div></div>
 
 
-<p data-bai-block="15">Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존할 수 있는 옵션을 제공합니다.
+<div class="admonition admonition-note">
+<div data-bai-block="15" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div class="admonition-content">
+
+<p data-bai-block="16">폴더 전체가 아닌 하위 폴더를 마운트하려면 해당 폴더 행의 <strong>폴더 안의 경로 (source)</strong> 필드를 입력합니다.
+필드를 클릭하면 폴더를 탐색하며 경로를 선택할 수 있고, 비워 두면 폴더 루트가 마운트됩니다.</p>
+</div></div>
+
+
+<p data-bai-block="17">Backend.AI에서는 연산 세션을 삭제해도 폴더 안의 파일을 보존할 수 있는 옵션을 제공합니다.
 아래 예제를 통해 관련된 내용을 확인할 수 있습니다.</p>
-<p data-bai-block="16"><code>user2-vfolder</code> 아래에 <code>test_file</code>을 생성합니다.
+<p data-bai-block="18"><code>user2-vfolder</code> 아래에 <code>test_file</code>을 생성합니다.
 파일의 내용을 &quot;file inside user2-vfolder&quot;로 채웁니다.</p>
-<p><figure data-bai-block="17" class="doc-figure"><img src="./images/mounted_folders_in_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1364" height="284" /><figcaption>그림 16.4</figcaption></figure>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/mounted_folders_in_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1364" height="284" /><figcaption>그림 16.4</figcaption></figure>
 </p>
-<p data-bai-block="18"><code>user2-vfolder</code>에 대해 <code>ls</code> 명령을 실행하면 파일이 정상적으로 생성된 것을 확인할 수 있습니다.
+<p data-bai-block="20"><code>user2-vfolder</code>에 대해 <code>ls</code> 명령을 실행하면 파일이 정상적으로 생성된 것을 확인할 수 있습니다.
 <code>cat</code> 명령을 사용하면 파일의 내용도 확인할 수 있습니다.</p>
-<p data-bai-block="19">이제 연산 세션을 삭제하고 스토리지 페이지로 이동합니다.
+<p data-bai-block="21">이제 연산 세션을 삭제하고 스토리지 페이지로 이동합니다.
 <code>user2-vfolder</code> 폴더를 찾아 파일 탐색기를 열고 <code>test_file</code>이 존재하는지 확인합니다.
 <code>이름</code> 열의 파일 행에 표시되는 <code>다운로드</code> 버튼을 클릭하여 파일을 로컬 컴퓨터에 다운로드한 후 열어서
 내용이 &quot;file inside user2-vfolder&quot;인지 확인합니다.</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/download_file_from_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3240" height="1420" /><figcaption>그림 16.5</figcaption></figure>
+<p><figure data-bai-block="22" class="doc-figure"><img src="./images/download_file_from_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3240" height="1420" /><figcaption>그림 16.5</figcaption></figure>
 </p>
-<p data-bai-block="21">연산 세션을 생성할 때 폴더를 마운트한 후, 마운트된 폴더에서 파일 작업을 수행하면 연산 세션이 종료된 이후에도 데이터를 보존할 수 있습니다.</p>
+<p data-bai-block="23">연산 세션을 생성할 때 폴더를 마운트한 후, 마운트된 폴더에서 파일 작업을 수행하면 연산 세션이 종료된 이후에도 데이터를 보존할 수 있습니다.</p>
 <p><a id="using-automount-folder"></a></p>
-<h2 data-bai-block="22" id="mount_vfolder-자동-마운트-폴더를-이용하여-연산-세션-환경-구성하기">자동 마운트 폴더를 이용하여 연산 세션 환경 구성하기<a class="hash-link" href="#mount_vfolder-자동-마운트-폴더를-이용하여-연산-세션-환경-구성하기" aria-label="Direct link to 자동 마운트 폴더를 이용하여 연산 세션 환경 구성하기">#</a></h2>
-<p data-bai-block="23">연산 세션에 사전 설치되어 있지 않은 새 프로그램이나 라이브러리가 필요한 경우, 연산 세션의 생명 주기와 독립적인 스토리지 폴더 속성과 <a href="./vfolder.html#automount-folder">자동 마운트 폴더</a>를 활용하여 패키지를 설치할 수 있습니다.
+<h2 data-bai-block="24" id="mount_vfolder-자동-마운트-폴더를-이용하여-연산-세션-환경-구성하기">자동 마운트 폴더를 이용하여 연산 세션 환경 구성하기<a class="hash-link" href="#mount_vfolder-자동-마운트-폴더를-이용하여-연산-세션-환경-구성하기" aria-label="Direct link to 자동 마운트 폴더를 이용하여 연산 세션 환경 구성하기">#</a></h2>
+<p data-bai-block="25">연산 세션에 사전 설치되어 있지 않은 새 프로그램이나 라이브러리가 필요한 경우, 연산 세션의 생명 주기와 독립적인 스토리지 폴더 속성과 <a href="./vfolder.html#automount-folder">자동 마운트 폴더</a>를 활용하여 패키지를 설치할 수 있습니다.
 이를 통해 연산 세션의 종류에 관계없이 일관된 환경을 구성할 수 있습니다.</p>
 <p><a id="using-pip-with-automountfolder"></a></p>
-<h3 data-bai-block="24" id="mount_vfolder-pip를-통한-파이썬-패키지-설치">pip를 통한 파이썬 패키지 설치<a class="hash-link" href="#mount_vfolder-pip를-통한-파이썬-패키지-설치" aria-label="Direct link to pip를 통한 파이썬 패키지 설치">#</a></h3>
-<p data-bai-block="25"><code>.local</code>이라는 이름의 폴더를 생성하면 동일한 폴더에 Python 사용자 패키지를 설치할 수 있습니다.
+<h3 data-bai-block="26" id="mount_vfolder-pip를-통한-파이썬-패키지-설치">pip를 통한 파이썬 패키지 설치<a class="hash-link" href="#mount_vfolder-pip를-통한-파이썬-패키지-설치" aria-label="Direct link to pip를 통한 파이썬 패키지 설치">#</a></h3>
+<p data-bai-block="27"><code>.local</code>이라는 이름의 폴더를 생성하면 동일한 폴더에 Python 사용자 패키지를 설치할 수 있습니다.
 <code>pip</code>는 기본적으로 사용자의 홈 폴더 아래 <code>.local</code> 폴더에 패키지를 설치합니다
 (자동 마운트 폴더는 사용자의 홈 폴더 아래에 마운트됩니다).
 따라서 컴퓨팅 환경에 관계없이 <code>tqdm</code>이라는 Python 패키지를 항상 설치된 상태로 유지하려면 터미널에서 다음과 같은 명령을 실행합니다.</p>
-<div data-bai-block="26" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tqdm</span></span></code></pre></div>
-<p data-bai-block="27">이후 새로운 연산 세션을 생성하면 <code>tqdm</code> 패키지가 설치된 <code>.local</code> 폴더가 자동으로 마운트되므로, <code>tqdm</code> 패키지를 다시 설치하지 않아도 바로 사용할 수 있습니다.</p>
+<div data-bai-block="28" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tqdm</span></span></code></pre></div>
+<p data-bai-block="29">이후 새로운 연산 세션을 생성하면 <code>tqdm</code> 패키지가 설치된 <code>.local</code> 폴더가 자동으로 마운트되므로, <code>tqdm</code> 패키지를 다시 설치하지 않아도 바로 사용할 수 있습니다.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="28" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="29">여러 Python 버전을 사용하거나 서로 다른 Python 버전의 세션을 사용하는 경우 패키지 호환성 문제가 발생할 수 있습니다.
+<p data-bai-block="31">여러 Python 버전을 사용하거나 서로 다른 Python 버전의 세션을 사용하는 경우 패키지 호환성 문제가 발생할 수 있습니다.
 이는 <code>.bashrc</code>를 통해 <code>PYTHONPATH</code> 환경 변수를 분기하여 해결할 수 있습니다.
 사용자의 <code>pip</code> 패키지가 <code>PYTHONPATH</code>에 지정된 경로에 설치되기 때문입니다.</p>
 </div></div>
@@ -311,32 +320,32 @@
 
 
 <p><a id="using-linuxbrew-with-automountfolder"></a></p>
-<h3 data-bai-block="30" id="mount_vfolder-homebrew를-통한-패키지-설치">Homebrew를 통한 패키지 설치<a class="hash-link" href="#mount_vfolder-homebrew를-통한-패키지-설치" aria-label="Direct link to Homebrew를 통한 패키지 설치">#</a></h3>
-<p data-bai-block="31">Ubuntu의 <code>apt</code>나 CentOS의 <code>yum</code>과 같은 패키지 관리자는 일반적으로 <code>root</code> 권한이 필요합니다.
+<h3 data-bai-block="32" id="mount_vfolder-homebrew를-통한-패키지-설치">Homebrew를 통한 패키지 설치<a class="hash-link" href="#mount_vfolder-homebrew를-통한-패키지-설치" aria-label="Direct link to Homebrew를 통한 패키지 설치">#</a></h3>
+<p data-bai-block="33">Ubuntu의 <code>apt</code>나 CentOS의 <code>yum</code>과 같은 패키지 관리자는 일반적으로 <code>root</code> 권한이 필요합니다.
 보안상의 이유로 Backend.AI의 연산 세션에서는 기본적으로 <code>sudo</code> 및 <code>root</code> 접근이 차단되어 있으므로(설정에 따라 허용될 수 있음), <code>sudo</code>가 필요하지 않은 <a href="https://docs.brew.sh/Homebrew-on-Linux">Homebrew on Linux</a>를 사용하는 것을 권장합니다.</p>
-<p data-bai-block="32">Homebrew는 다음과 같이 구성할 수 있습니다.</p>
+<p data-bai-block="34">Homebrew는 다음과 같이 구성할 수 있습니다.</p>
 <ul>
-<li data-bai-block="33"><p>데이터 &amp; 폴더 페이지에서 <code>.linuxbrew</code> 폴더를 생성합니다.</p>
+<li data-bai-block="35"><p>데이터 &amp; 폴더 페이지에서 <code>.linuxbrew</code> 폴더를 생성합니다.</p>
 </li>
-<li data-bai-block="34"><p>연산 세션을 생성합니다 (<code>.linuxbrew</code> 폴더가 <code>/home/linuxbrew/.linuxbrew</code>에 자동으로 마운트됩니다).</p>
+<li data-bai-block="36"><p>연산 세션을 생성합니다 (<code>.linuxbrew</code> 폴더가 <code>/home/linuxbrew/.linuxbrew</code>에 자동으로 마운트됩니다).</p>
 </li>
-<li data-bai-block="35"><p>연산 세션에서 Homebrew가 아직 설치되지 않은 경우 설치합니다.</p>
-<div data-bai-block="36" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> /bin/bash</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> "$(</span><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></code></pre></div>
+<li data-bai-block="37"><p>연산 세션에서 Homebrew가 아직 설치되지 않은 경우 설치합니다.</p>
+<div data-bai-block="38" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> /bin/bash</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> "$(</span><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></code></pre></div>
 </li>
-<li data-bai-block="37"><p>Homebrew 패키지는 다음과 같이 설치할 수 있습니다.</p>
-<div data-bai-block="38" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hello</span></span>
+<li data-bai-block="39"><p>Homebrew 패키지는 다음과 같이 설치할 수 있습니다.</p>
+<div data-bai-block="40" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hello</span></span>
 <span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> hello</span></span>
 <span class="line"><span style="color:#B392F0">Hello,</span><span style="color:#9ECBFF"> world!</span></span></code></pre></div>
 </li>
 </ul>
-<p data-bai-block="39"><code>brew</code>는 <code>/home/linuxbrew/.linuxbrew</code> 아래에 패키지를 설치하며, <code>.linuxbrew</code> 폴더가 존재하면 자동으로 마운트됩니다.
+<p data-bai-block="41"><code>brew</code>는 <code>/home/linuxbrew/.linuxbrew</code> 아래에 패키지를 설치하며, <code>.linuxbrew</code> 폴더가 존재하면 자동으로 마운트됩니다.
 따라서 <code>.linuxbrew</code>라는 자동 마운트 폴더를 생성해 두면, 연산 세션을 삭제하고 새로운 연산 세션을 생성하더라도 이전에 설치한 Homebrew 패키지를 다시 사용할 수 있습니다.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/mount_vfolder/mount_vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 14일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 21일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./vfolder.html">
