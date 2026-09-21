@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="관리자 기능" />
   <meta name="twitter:description" content="관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-09-21T16:41:41.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"관리자 기능","inLanguage":"ko","description":"관리자 계정으로 로그인하면 사이드바 상단에 관리자 설정 메뉴가 추가됩니다. 이 메뉴를 선택하면 사이드바가 관리자 메뉴만 표시하도록 전환됩니다. Backend.AI에 등록된 사용자 정보는 사용자 메뉴에서 볼 수 있습니다.","dateModified":"2026-09-21T18:58:56.000Z","url":"https://webui.docs.backend.ai/next/ko/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (c5d94ec)">v26.9.0-alpha.0 (c5d94ec)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (589e115)">v26.9.0-alpha.0 (589e115)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1776,124 +1776,125 @@ WebUI의 어느 화면에서든 편집기를 열 수 있습니다.</li>
 <p><a id="manage-projects"></a></p>
 <h2 data-bai-block="797" id="admin_menu-프로젝트-관리">프로젝트 관리<a class="hash-link" href="#admin_menu-프로젝트-관리" aria-label="Direct link to 프로젝트 관리">#</a></h2>
 <p data-bai-block="798">슈퍼 관리자는 프로젝트 페이지에서 클러스터의 모든 프로젝트를 확인하고 생성, 수정, 비활성화, 활성화, 영구
-삭제할 수 있습니다. 각 행에는 프로젝트 관리자 권한을 부여할 수 있는 바로 가기도 제공됩니다. 개인 프로젝트는
-기본적으로 숨겨져 있으며, 목록 위의 유형 필터를 제거하면 표시됩니다.</p>
-<p><figure data-bai-block="799" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 24.96</figcaption></figure>
+삭제할 수 있습니다. 각 행에는 프로젝트 관리자 권한을 부여할 수 있는 바로 가기도 제공됩니다.</p>
+<p data-bai-block="799">목록에는 기본적으로 개인 프로젝트가 표시되지 않으며, 미리 적용된 <strong>유형</strong> 필터를 제거하면 함께 표시됩니다.</p>
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
+<p><figure data-bai-block="800" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 24.96</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /project — recapture once the capture backend runs a released 26.9.0 manager; on 26.9.0a3 the `group-nodes-type-filter` flag is off, so the default type filter that hides personal projects is not applied. -->
-
-<p data-bai-block="800">목록 위의 <strong>활성</strong>, <strong>비활성</strong> 버튼으로 표시할 프로젝트를 선택할 수 있습니다.</p>
-<p data-bai-block="801"><strong>수정 시각</strong>과 <strong>상태</strong> 열은 기본적으로 숨겨져 있으며, 테이블 아래 페이지 이동 컨트롤 옆의 열 설정(⚙) 버튼으로 표시할 수
+<p data-bai-block="801">목록 위의 <strong>활성</strong>, <strong>비활성</strong> 버튼으로 표시할 프로젝트를 선택할 수 있으며, 그 옆의 속성 필터로 <strong>이름</strong>,
+<strong>도메인</strong>, <strong>자원 정책</strong>, <strong>프로젝트 ID</strong>, <strong>생성일</strong>, <strong>수정일</strong> 기준으로 목록을 좁힐 수 있습니다.
+<strong>프로젝트 ID</strong>에는 완전한 UUID를 입력해야 하며, <strong>생성일</strong>과 <strong>수정일</strong>에는 날짜와 시각을 입력합니다.</p>
+<p data-bai-block="802"><strong>수정 시각</strong>과 <strong>상태</strong> 열은 기본적으로 숨겨져 있으며, 테이블 아래 페이지 이동 컨트롤 옆의 열 설정(⚙) 버튼으로 표시할 수
 있습니다. <strong>상태</strong> 열에는 프로젝트가 <strong>활성</strong>인지 <strong>비활성</strong>인지 표시됩니다. 선택한 열 구성은 브라우저별로
 세션 간에 유지됩니다.</p>
 <p><a id="set-project-admin"></a></p>
-<h3 data-bai-block="802" id="admin_menu-프로젝트-관리자-지정">프로젝트 관리자 지정<a class="hash-link" href="#admin_menu-프로젝트-관리자-지정" aria-label="Direct link to 프로젝트 관리자 지정">#</a></h3>
-<p data-bai-block="803">RBAC 관리 페이지에서 프로젝트의 역할을 찾지 않고도, 프로젝트 목록에서 바로 해당 프로젝트의 관리자를 관리할 수
+<h3 data-bai-block="803" id="admin_menu-프로젝트-관리자-지정">프로젝트 관리자 지정<a class="hash-link" href="#admin_menu-프로젝트-관리자-지정" aria-label="Direct link to 프로젝트 관리자 지정">#</a></h3>
+<p data-bai-block="804">RBAC 관리 페이지에서 프로젝트의 역할을 찾지 않고도, 프로젝트 목록에서 바로 해당 프로젝트의 관리자를 관리할 수
 있습니다.</p>
 <ol>
-<li data-bai-block="804">프로젝트 목록에서 대상 프로젝트를 찾습니다.</li>
-<li data-bai-block="805">행의 <strong>프로젝트 관리자 권한 설정</strong>(방패) 액션을 클릭합니다. 모델 스토어 프로젝트에서는 이 액션을 사용할 수
+<li data-bai-block="805">프로젝트 목록에서 대상 프로젝트를 찾습니다.</li>
+<li data-bai-block="806">행의 <strong>프로젝트 관리자 권한 설정</strong>(방패) 액션을 클릭합니다. 모델 스토어 프로젝트에서는 이 액션을 사용할 수
 없습니다.</li>
-<li data-bai-block="806"><strong>프로젝트 관리자 권한 설정</strong> 대화 상자가 열립니다.</li>
+<li data-bai-block="807"><strong>프로젝트 관리자 권한 설정</strong> 대화 상자가 열립니다.</li>
 </ol>
-<p><figure data-bai-block="807" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>그림 24.97</figcaption></figure>
+<p><figure data-bai-block="808" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>그림 24.97</figcaption></figure>
 </p>
-<p data-bai-block="808">대화 상자는 다음으로 구성됩니다.</p>
+<p data-bai-block="809">대화 상자는 다음으로 구성됩니다.</p>
 <ul>
-<li data-bai-block="809">프로젝트 관리자 권한을 부여하면 해당 프로젝트가 사용자의 허용 프로젝트 목록에 자동으로 추가되어 이후 사용자가
+<li data-bai-block="810">프로젝트 관리자 권한을 부여하면 해당 프로젝트가 사용자의 허용 프로젝트 목록에 자동으로 추가되어 이후 사용자가
 그 프로젝트에 접근할 수 있게 된다는 안내 알림.</li>
-<li data-bai-block="810">계정을 하나 이상 고를 수 있는 <strong>사용자 검색 및 선택</strong> 필드와, 선택한 사용자에게 프로젝트 관리자 권한을 부여하는
+<li data-bai-block="811">계정을 하나 이상 고를 수 있는 <strong>사용자 검색 및 선택</strong> 필드와, 선택한 사용자에게 프로젝트 관리자 권한을 부여하는
 <strong>추가</strong> 버튼.</li>
-<li data-bai-block="811">현재 권한을 가진 사용자 목록 테이블. 각 사용자의 이메일과 ID가 표시되고, 행 끝에 <strong>관리자 권한 해제</strong> 액션이
+<li data-bai-block="812">현재 권한을 가진 사용자 목록 테이블. 각 사용자의 이메일과 ID가 표시되고, 행 끝에 <strong>관리자 권한 해제</strong> 액션이
 있습니다.</li>
 </ul>
-<p data-bai-block="812">변경할 때마다 대화 상자가 닫히지 않으므로, 여러 사용자를 한 자리에서 부여하거나 해제할 수 있습니다. 일부만
+<p data-bai-block="813">변경할 때마다 대화 상자가 닫히지 않으므로, 여러 사용자를 한 자리에서 부여하거나 해제할 수 있습니다. 일부만
 성공한 경우 실패한 사용자별로 오류가 보고됩니다.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="813" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div data-bai-block="814" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
 <div class="admonition-content">
 
-<p data-bai-block="814">프로젝트 관리자 권한을 해제해도 사용자의 허용 프로젝트 목록에서 해당 프로젝트가 <strong>자동으로 제거되지 않습니다</strong>.
+<p data-bai-block="815">프로젝트 관리자 권한을 해제해도 사용자의 허용 프로젝트 목록에서 해당 프로젝트가 <strong>자동으로 제거되지 않습니다</strong>.
 프로젝트 접근까지 차단하려면 목록에서 직접 제거해야 합니다.
 <a href="#create-and-update-users">사용자 목록 조회 및 관리</a> 섹션을 참고하세요.</p>
 </div></div>
 
 
-<p data-bai-block="815">이 바로 가기의 기반이 되는 역할과 권한 모델, 그리고 RBAC 관리 페이지에서 수행하는 동일한 절차는
+<p data-bai-block="816">이 바로 가기의 기반이 되는 역할과 권한 모델, 그리고 RBAC 관리 페이지에서 수행하는 동일한 절차는
 <a href="./rbac_management.html#grant-project-admin">프로젝트 관리자 권한 부여</a> 섹션을 참고하세요.</p>
-<h2 data-bai-block="816" id="admin_menu-rbac-관리">RBAC 관리<a class="hash-link" href="#admin_menu-rbac-관리" aria-label="Direct link to RBAC 관리">#</a></h2>
-<p data-bai-block="817">RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 권한이 포함된 역할을 정의하고 사용자에게 할당할 수 있습니다. Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 작업을 제어할 수 있습니다.</p>
-<p data-bai-block="818">역할, 권한 및 사용자 할당 관리에 대한 자세한 정보는 <a href="./rbac_management.html#rbac-management">RBAC 관리</a> 페이지를 참고하세요.</p>
+<h2 data-bai-block="817" id="admin_menu-rbac-관리">RBAC 관리<a class="hash-link" href="#admin_menu-rbac-관리" aria-label="Direct link to RBAC 관리">#</a></h2>
+<p data-bai-block="818">RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 권한이 포함된 역할을 정의하고 사용자에게 할당할 수 있습니다. Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 작업을 제어할 수 있습니다.</p>
+<p data-bai-block="819">역할, 권한 및 사용자 할당 관리에 대한 자세한 정보는 <a href="./rbac_management.html#rbac-management">RBAC 관리</a> 페이지를 참고하세요.</p>
 <p><a id="diagnostics"></a></p>
-<h2 data-bai-block="819" id="admin_menu-진단">진단<a class="hash-link" href="#admin_menu-진단" aria-label="Direct link to 진단">#</a></h2>
-<p data-bai-block="820">슈퍼 관리자는 관리자 사이드바에서 <strong>진단</strong> 페이지를 열어 WebUI 배포에 대한 자동 상태 점검을 실행할 수 있습니다. 이 페이지는 브라우저와 서버 간 구성을 평가하고 잘못된 설정을 보고하여, 연결 또는 보안 문제가 사용자에게 영향을 미치기 전에 파악할 수 있도록 합니다.</p>
-<p><figure data-bai-block="821" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>그림 24.98</figcaption></figure>
+<h2 data-bai-block="820" id="admin_menu-진단">진단<a class="hash-link" href="#admin_menu-진단" aria-label="Direct link to 진단">#</a></h2>
+<p data-bai-block="821">슈퍼 관리자는 관리자 사이드바에서 <strong>진단</strong> 페이지를 열어 WebUI 배포에 대한 자동 상태 점검을 실행할 수 있습니다. 이 페이지는 브라우저와 서버 간 구성을 평가하고 잘못된 설정을 보고하여, 연결 또는 보안 문제가 사용자에게 영향을 미치기 전에 파악할 수 있도록 합니다.</p>
+<p><figure data-bai-block="822" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>그림 24.98</figcaption></figure>
 </p>
-<p data-bai-block="822">페이지 상단의 도구 모음에서는 다음 컨트롤을 제공합니다.</p>
+<p data-bai-block="823">페이지 상단의 도구 모음에서는 다음 컨트롤을 제공합니다.</p>
 <ul>
-<li data-bai-block="823"><strong>실패한 항목만 표시</strong>: 통과한 점검을 모두 숨기고, 경고나 오류가 있는 섹션만 표시하는 토글입니다.</li>
-<li data-bai-block="824"><code>진단 재실행</code>: 모든 점검을 다시 평가하고 결과를 새로 고칩니다.</li>
-<li data-bai-block="825"><code>CSV 내보내기</code>: 작업 드롭다운 메뉴에서 사용할 수 있으며, 모든 진단 결과를 <code>diagnostics-YYYY-MM-DD.csv</code> 파일로 내보냅니다.</li>
+<li data-bai-block="824"><strong>실패한 항목만 표시</strong>: 통과한 점검을 모두 숨기고, 경고나 오류가 있는 섹션만 표시하는 토글입니다.</li>
+<li data-bai-block="825"><code>진단 재실행</code>: 모든 점검을 다시 평가하고 결과를 새로 고칩니다.</li>
+<li data-bai-block="826"><code>CSV 내보내기</code>: 작업 드롭다운 메뉴에서 사용할 수 있으며, 모든 진단 결과를 <code>diagnostics-YYYY-MM-DD.csv</code> 파일로 내보냅니다.</li>
 </ul>
 <div class="admonition admonition-tip">
-<div data-bai-block="826" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
+<div data-bai-block="827" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
 <div class="admonition-content">
 
-<p data-bai-block="827">Backend.AI에서 내보낸 CSV 파일은 파일 맨 앞에 UTF-8 BOM(Byte Order Mark)이 포함됩니다. 이를 통해 비 UTF-8 시스템(예: CP949를 사용하는 한국어 Windows)에서 Microsoft Excel이 인코딩을 올바르게 인식하여 한국어, 일본어, 중국어 등 멀티바이트 문자를 깨짐 없이 표시할 수 있습니다.</p>
+<p data-bai-block="828">Backend.AI에서 내보낸 CSV 파일은 파일 맨 앞에 UTF-8 BOM(Byte Order Mark)이 포함됩니다. 이를 통해 비 UTF-8 시스템(예: CP949를 사용하는 한국어 Windows)에서 Microsoft Excel이 인코딩을 올바르게 인식하여 한국어, 일본어, 중국어 등 멀티바이트 문자를 깨짐 없이 표시할 수 있습니다.</p>
 </div></div>
 
 
-<p data-bai-block="828">진단 항목은 다음과 같은 접을 수 있는 섹션으로 구성되며, 각 섹션은 개별 점검 결과를 통과, 경고, 심각 수준으로 표시합니다.</p>
+<p data-bai-block="829">진단 항목은 다음과 같은 접을 수 있는 섹션으로 구성되며, 각 섹션은 개별 점검 결과를 통과, 경고, 심각 수준으로 표시합니다.</p>
 <ul>
-<li data-bai-block="829"><strong>콘텐츠 보안 정책</strong>: 애플리케이션이 필요한 리소스에 접근할 수 있도록 콘텐츠 보안 정책 헤더(<code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, <code>style-src</code> 등)를 확인합니다.</li>
-<li data-bai-block="830"><strong>스토리지 프록시</strong>: 스토리지 볼륨 목록과 스토리지 프록시의 연결 가능 여부 및 사용량 지표를 점검합니다.</li>
-<li data-bai-block="831"><strong>엔드포인트 연결</strong>: API 엔드포인트에 연결할 수 있는지, 연결이 정상적으로 수립되는지 검증합니다.</li>
-<li data-bai-block="832"><strong>웹 서버 설정</strong>: URL 형식, SSL/프로토콜 일관성, 연결 모드 등 <code>config.toml</code> 설정을 검증합니다.</li>
+<li data-bai-block="830"><strong>콘텐츠 보안 정책</strong>: 애플리케이션이 필요한 리소스에 접근할 수 있도록 콘텐츠 보안 정책 헤더(<code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, <code>style-src</code> 등)를 확인합니다.</li>
+<li data-bai-block="831"><strong>스토리지 프록시</strong>: 스토리지 볼륨 목록과 스토리지 프록시의 연결 가능 여부 및 사용량 지표를 점검합니다.</li>
+<li data-bai-block="832"><strong>엔드포인트 연결</strong>: API 엔드포인트에 연결할 수 있는지, 연결이 정상적으로 수립되는지 검증합니다.</li>
+<li data-bai-block="833"><strong>웹 서버 설정</strong>: URL 형식, SSL/프로토콜 일관성, 연결 모드 등 <code>config.toml</code> 설정을 검증합니다.</li>
 </ul>
-<p data-bai-block="833"><strong>실패한 항목만 표시</strong>를 켠 상태에서 모든 점검을 통과하면 화면이 비어 보이지 않습니다.
+<p data-bai-block="834"><strong>실패한 항목만 표시</strong>를 켠 상태에서 모든 점검을 통과하면 화면이 비어 보이지 않습니다.
 <code>실패한 항목이 없습니다. 모든 진단을 통과했습니다.</code> 라는 안내가 표시되어 결과가 정상임을 분명히 알 수 있습니다.</p>
-<p><figure data-bai-block="834" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 24.99</figcaption></figure>
+<p><figure data-bai-block="835" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 24.99</figcaption></figure>
 </p>
 <div class="admonition admonition-tip">
-<div data-bai-block="835" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
+<div data-bai-block="836" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>팁</div>
 <div class="admonition-content">
 
-<p data-bai-block="836">연결 문제를 해결할 때는 먼저 <strong>실패한 항목만 표시</strong>를 켜고 <code>진단 재실행</code>을 실행하세요. 주의가 필요한 점검만 빠르게 확인할 수 있습니다.</p>
+<p data-bai-block="837">연결 문제를 해결할 때는 먼저 <strong>실패한 항목만 표시</strong>를 켜고 <code>진단 재실행</code>을 실행하세요. 주의가 필요한 점검만 빠르게 확인할 수 있습니다.</p>
 </div></div>
 
 
 <p><a id="branding"></a></p>
-<h2 data-bai-block="837" id="admin_menu-브랜딩">브랜딩<a class="hash-link" href="#admin_menu-브랜딩" aria-label="Direct link to 브랜딩">#</a></h2>
-<p data-bai-block="838"><strong>브랜딩</strong> 페이지에서는 슈퍼 관리자가 조직의 기업 아이덴티티에 맞게 WebUI의 시각적 요소(색상, 로고, 폰트)를 사용자 지정할 수 있습니다. 관리자 사이드바에서 접근할 수 있습니다.</p>
-<p><figure data-bai-block="839" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>그림 24.100</figcaption></figure>
+<h2 data-bai-block="838" id="admin_menu-브랜딩">브랜딩<a class="hash-link" href="#admin_menu-브랜딩" aria-label="Direct link to 브랜딩">#</a></h2>
+<p data-bai-block="839"><strong>브랜딩</strong> 페이지에서는 슈퍼 관리자가 조직의 기업 아이덴티티에 맞게 WebUI의 시각적 요소(색상, 로고, 폰트)를 사용자 지정할 수 있습니다. 관리자 사이드바에서 접근할 수 있습니다.</p>
+<p><figure data-bai-block="840" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>그림 24.100</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="840" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
+<div data-bai-block="841" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>주의</div>
 <div class="admonition-content">
 
-<p data-bai-block="841">변경한 테마는 이 페이지에서 즉시 적용되지 않습니다. 사용자 지정 테마를 적용하려면 설정을 JSON 파일로 내보낸 뒤 지원팀에 전달하세요.</p>
+<p data-bai-block="842">변경한 테마는 이 페이지에서 즉시 적용되지 않습니다. 사용자 지정 테마를 적용하려면 설정을 JSON 파일로 내보낸 뒤 지원팀에 전달하세요.</p>
 </div></div>
 
 
-<p data-bai-block="842">도구 모음에서는 다음을 제공합니다.</p>
+<p data-bai-block="843">도구 모음에서는 다음을 제공합니다.</p>
 <ul>
-<li data-bai-block="843"><code>미리보기</code>: 현재 테마 변경 사항을 미리 보는 새 창을 엽니다.</li>
-<li data-bai-block="844"><code>JSON 설정</code>: 테마 구성을 JSON 형식으로 직접 편집하고 내보낼 수 있는 모달을 엽니다.</li>
-<li data-bai-block="845">모든 브랜딩 설정을 기본값으로 되돌리는 초기화 컨트롤.</li>
-<li data-bai-block="846">설정을 필터링하는 검색창.</li>
+<li data-bai-block="844"><code>미리보기</code>: 현재 테마 변경 사항을 미리 보는 새 창을 엽니다.</li>
+<li data-bai-block="845"><code>JSON 설정</code>: 테마 구성을 JSON 형식으로 직접 편집하고 내보낼 수 있는 모달을 엽니다.</li>
+<li data-bai-block="846">모든 브랜딩 설정을 기본값으로 되돌리는 초기화 컨트롤.</li>
+<li data-bai-block="847">설정을 필터링하는 검색창.</li>
 </ul>
-<p data-bai-block="847">설정은 다음과 같이 그룹으로 나뉩니다.</p>
+<p data-bai-block="848">설정은 다음과 같이 그룹으로 나뉩니다.</p>
 <ul>
-<li data-bai-block="848"><strong>테마</strong>: 주요 색상, 헤더 배경 색상, 링크 색상, 안내 색상, 오류 색상, 완료 색상, 텍스트 색상에 대한 색상 선택기입니다. 각 색상은 라이트 모드와 다크 모드에 대해 개별적으로 설정하고 초기화할 수 있습니다.</li>
-<li data-bai-block="849"><strong>로고 CI</strong>: 라이트 모드와 다크 모드의 기본 사이드바 로고, 축소된 사이드바 로고를 업로드하고 표시 크기를 설정합니다.</li>
-<li data-bai-block="850"><strong>세부 로고 CI</strong>: 로그인 페이지와 소개 팝업에 표시되는 로고를 라이트/다크 모드별로 업로드하고 크기를 설정합니다.</li>
-<li data-bai-block="851"><strong>폰트</strong>: 인터페이스 전반에 사용되는 폰트 패밀리를 선택합니다.</li>
+<li data-bai-block="849"><strong>테마</strong>: 주요 색상, 헤더 배경 색상, 링크 색상, 안내 색상, 오류 색상, 완료 색상, 텍스트 색상에 대한 색상 선택기입니다. 각 색상은 라이트 모드와 다크 모드에 대해 개별적으로 설정하고 초기화할 수 있습니다.</li>
+<li data-bai-block="850"><strong>로고 CI</strong>: 라이트 모드와 다크 모드의 기본 사이드바 로고, 축소된 사이드바 로고를 업로드하고 표시 크기를 설정합니다.</li>
+<li data-bai-block="851"><strong>세부 로고 CI</strong>: 로그인 페이지와 소개 팝업에 표시되는 로고를 라이트/다크 모드별로 업로드하고 크기를 설정합니다.</li>
+<li data-bai-block="852"><strong>폰트</strong>: 인터페이스 전반에 사용되는 폰트 패밀리를 선택합니다.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="852" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
+<div data-bai-block="853" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="853">이미지를 업로드하거나 색상을 변경한 후에는 <code>미리보기</code>로 결과를 확인하세요. 변경 사항은 운영 중인 서비스에 자동으로 적용되지 않으므로, JSON 설정을 내보내 지원팀에 문의하여 배포해야 합니다.</p>
+<p data-bai-block="854">이미지를 업로드하거나 색상을 변경한 후에는 <code>미리보기</code>로 결과를 확인하세요. 변경 사항은 운영 중인 서비스에 자동으로 적용되지 않으므로, JSON 설정을 내보내 지원팀에 문의하여 배포해야 합니다.</p>
 </div></div>
 
 

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Logging in with an admin account adds an Admin Settings menu at the top of the sidebar." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-09-21T16:41:41.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-09-21T18:58:56.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (c5d94ec)">v26.9.0-alpha.0 (c5d94ec)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (589e115)">v26.9.0-alpha.0 (589e115)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -2095,124 +2095,126 @@ for Backend.AI is compatible or not, check the Component panel.</p>
 <p><a id="manage-projects"></a></p>
 <h2 data-bai-block="801" id="admin_menu-manage-projects">Manage projects<a class="hash-link" href="#admin_menu-manage-projects" aria-label="Direct link to Manage projects">#</a></h2>
 <p data-bai-block="802">Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
-activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
-Personal projects are hidden by default; remove the type filter above the list to show them.</p>
-<p><figure data-bai-block="803" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.96</figcaption></figure>
+activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.</p>
+<p data-bai-block="803">The list excludes personal projects by default; remove the pre-applied <strong>Type</strong> filter to include them.</p>
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
+<p><figure data-bai-block="804" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.96</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /project — recapture once the capture backend runs a released 26.9.0 manager; on 26.9.0a3 the `group-nodes-type-filter` flag is off, so the default type filter that hides personal projects is not applied. -->
-
-<p data-bai-block="804">The <strong>Active</strong> and <strong>Inactive</strong> buttons above the list choose which projects are listed.</p>
-<p data-bai-block="805">The <strong>Modified At</strong> and <strong>Status</strong> columns are hidden by default and can be shown using the
+<p data-bai-block="805">The <strong>Active</strong> and <strong>Inactive</strong> buttons above the list choose which projects are listed, and the property
+filter next to them narrows the list by <strong>Name</strong>, <strong>Domain</strong>, <strong>Resource Policy</strong>, <strong>Project ID</strong>,
+<strong>Created At</strong>, or <strong>Modified At</strong>. <strong>Project ID</strong> must be a full UUID, and <strong>Created At</strong> and
+<strong>Modified At</strong> take a date and time.</p>
+<p data-bai-block="806">The <strong>Modified At</strong> and <strong>Status</strong> columns are hidden by default and can be shown using the
 column-settings gear button (⚙) below the table, next to the pagination controls. <strong>Status</strong> shows whether a project is
 <strong>Active</strong> or <strong>Inactive</strong>. Your column choices are persisted per browser across sessions.</p>
 <p><a id="set-project-admin"></a></p>
-<h3 data-bai-block="806" id="admin_menu-set-project-admins">Set project admins<a class="hash-link" href="#admin_menu-set-project-admins" aria-label="Direct link to Set project admins">#</a></h3>
-<p data-bai-block="807">Instead of locating the project&#39;s role on the RBAC Management page, you can manage a project&#39;s
+<h3 data-bai-block="807" id="admin_menu-set-project-admins">Set project admins<a class="hash-link" href="#admin_menu-set-project-admins" aria-label="Direct link to Set project admins">#</a></h3>
+<p data-bai-block="808">Instead of locating the project&#39;s role on the RBAC Management page, you can manage a project&#39;s
 administrators directly from the project list.</p>
 <ol>
-<li data-bai-block="808">Locate the project in the Projects list.</li>
-<li data-bai-block="809">Click the <strong>Set Project Admin</strong> (shield) action in the row. The action is unavailable for Model Store
+<li data-bai-block="809">Locate the project in the Projects list.</li>
+<li data-bai-block="810">Click the <strong>Set Project Admin</strong> (shield) action in the row. The action is unavailable for Model Store
 projects.</li>
-<li data-bai-block="810">The <strong>Set Project Admin</strong> dialog opens.</li>
+<li data-bai-block="811">The <strong>Set Project Admin</strong> dialog opens.</li>
 </ol>
-<p><figure data-bai-block="811" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>Figure 24.97</figcaption></figure>
+<p><figure data-bai-block="812" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>Figure 24.97</figcaption></figure>
 </p>
-<p data-bai-block="812">The dialog contains:</p>
+<p data-bai-block="813">The dialog contains:</p>
 <ul>
-<li data-bai-block="813">An information alert explaining that granting project admin permission automatically adds the project
+<li data-bai-block="814">An information alert explaining that granting project admin permission automatically adds the project
 to the user&#39;s allowed project list, so the user can access the project afterwards.</li>
-<li data-bai-block="814">A <strong>Search and select users</strong> field where you can pick one or more accounts, followed by an <strong>Add</strong>
+<li data-bai-block="815">A <strong>Search and select users</strong> field where you can pick one or more accounts, followed by an <strong>Add</strong>
 button that grants them project admin permission.</li>
-<li data-bai-block="815">A table of the users who currently hold the permission, showing each user&#39;s email and ID, with a
+<li data-bai-block="816">A table of the users who currently hold the permission, showing each user&#39;s email and ID, with a
 <strong>Revoke admin permission</strong> action at the end of the row.</li>
 </ul>
-<p data-bai-block="816">The dialog stays open after each change, so you can grant and revoke several people in one sitting. If
+<p data-bai-block="817">The dialog stays open after each change, so you can grant and revoke several people in one sitting. If
 only part of a batch succeeds, the failures are reported per user.</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="817" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="818" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="818">Revoking project admin permission does <strong>not</strong> remove the project from the user&#39;s allowed project list.
+<p data-bai-block="819">Revoking project admin permission does <strong>not</strong> remove the project from the user&#39;s allowed project list.
 To take away access to the project as well, remove it from that list manually — see
 <a href="#create-and-update-users">Browse and manage users</a>.</p>
 </div></div>
 
 
-<p data-bai-block="819">For the full role and permission model behind this shortcut, and for the equivalent flow on the RBAC
+<p data-bai-block="820">For the full role and permission model behind this shortcut, and for the equivalent flow on the RBAC
 Management page, refer to the <a href="./rbac_management.html#grant-project-admin">Grant Project Admin authority</a> section.</p>
-<h2 data-bai-block="820" id="admin_menu-rbac-management">RBAC management<a class="hash-link" href="#admin_menu-rbac-management" aria-label="Direct link to RBAC management">#</a></h2>
-<p data-bai-block="821">RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.</p>
-<p data-bai-block="822">For detailed information about managing roles, permissions, and user assignments, refer to the dedicated <a href="#rbac-management">RBAC Management</a> page.</p>
+<h2 data-bai-block="821" id="admin_menu-rbac-management">RBAC management<a class="hash-link" href="#admin_menu-rbac-management" aria-label="Direct link to RBAC management">#</a></h2>
+<p data-bai-block="822">RBAC (Role-Based Access Control) Management allows superadmins to define roles with fine-grained permissions and assign them to users. You can control which actions specific users are allowed to perform on various resources throughout the Backend.AI system.</p>
+<p data-bai-block="823">For detailed information about managing roles, permissions, and user assignments, refer to the dedicated <a href="#rbac-management">RBAC Management</a> page.</p>
 <p><a id="diagnostics"></a></p>
-<h2 data-bai-block="823" id="admin_menu-diagnostics">Diagnostics<a class="hash-link" href="#admin_menu-diagnostics" aria-label="Direct link to Diagnostics">#</a></h2>
-<p data-bai-block="824">Superadmins can open the <strong>Diagnostics</strong> page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.</p>
-<p><figure data-bai-block="825" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>Figure 24.98</figcaption></figure>
+<h2 data-bai-block="824" id="admin_menu-diagnostics">Diagnostics<a class="hash-link" href="#admin_menu-diagnostics" aria-label="Direct link to Diagnostics">#</a></h2>
+<p data-bai-block="825">Superadmins can open the <strong>Diagnostics</strong> page from the admin sidebar to run a set of automated health checks on the WebUI deployment. The page evaluates the browser-to-server configuration and reports any misconfiguration, so that connectivity or security problems can be identified before they affect users.</p>
+<p><figure data-bai-block="826" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>Figure 24.98</figcaption></figure>
 </p>
-<p data-bai-block="826">The toolbar at the top of the page provides the following controls:</p>
+<p data-bai-block="827">The toolbar at the top of the page provides the following controls:</p>
 <ul>
-<li data-bai-block="827"><strong>Show only failed items</strong>: A toggle that hides every passing check so that only the sections containing warnings or errors remain visible.</li>
-<li data-bai-block="828"><code>Re-run Diagnostics</code>: Re-evaluates every check and refreshes the results.</li>
-<li data-bai-block="829"><code>Export CSV</code>: Available from the actions dropdown menu, this exports all diagnostic results to a CSV file named <code>diagnostics-YYYY-MM-DD.csv</code>.</li>
+<li data-bai-block="828"><strong>Show only failed items</strong>: A toggle that hides every passing check so that only the sections containing warnings or errors remain visible.</li>
+<li data-bai-block="829"><code>Re-run Diagnostics</code>: Re-evaluates every check and refreshes the results.</li>
+<li data-bai-block="830"><code>Export CSV</code>: Available from the actions dropdown menu, this exports all diagnostic results to a CSV file named <code>diagnostics-YYYY-MM-DD.csv</code>.</li>
 </ul>
 <div class="admonition admonition-tip">
-<div data-bai-block="830" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
+<div data-bai-block="831" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
 <div class="admonition-content">
 
-<p data-bai-block="831">Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.</p>
+<p data-bai-block="832">Exported CSV files include a UTF-8 BOM at the start of the file, so Microsoft Excel on non-UTF-8 systems (for example, Korean Windows using CP949) correctly recognizes the encoding and displays multi-byte characters without garbling.</p>
 </div></div>
 
 
-<p data-bai-block="832">The diagnostics are organized into the following collapsible sections, each showing the result of its individual checks with a pass, warning, or critical severity:</p>
+<p data-bai-block="833">The diagnostics are organized into the following collapsible sections, each showing the result of its individual checks with a pass, warning, or critical severity:</p>
 <ul>
-<li data-bai-block="833"><strong>Content Security Policy</strong>: Verifies the Content Security Policy headers (such as <code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, and <code>style-src</code>) so that the application can reach the resources it needs.</li>
-<li data-bai-block="834"><strong>Storage Proxy</strong>: Checks the storage volume list together with the storage proxy&#39;s reachability and usage metrics.</li>
-<li data-bai-block="835"><strong>Endpoint Connectivity</strong>: Validates that the API endpoint is reachable and that a connection can be established.</li>
-<li data-bai-block="836"><strong>Web Server Configuration</strong>: Validates the <code>config.toml</code> settings, including URL formatting, SSL/protocol consistency, and connection mode.</li>
+<li data-bai-block="834"><strong>Content Security Policy</strong>: Verifies the Content Security Policy headers (such as <code>connect-src</code>, <code>frame-src</code>, <code>script-src</code>, and <code>style-src</code>) so that the application can reach the resources it needs.</li>
+<li data-bai-block="835"><strong>Storage Proxy</strong>: Checks the storage volume list together with the storage proxy&#39;s reachability and usage metrics.</li>
+<li data-bai-block="836"><strong>Endpoint Connectivity</strong>: Validates that the API endpoint is reachable and that a connection can be established.</li>
+<li data-bai-block="837"><strong>Web Server Configuration</strong>: Validates the <code>config.toml</code> settings, including URL formatting, SSL/protocol consistency, and connection mode.</li>
 </ul>
-<p data-bai-block="837">When <strong>Show only failed items</strong> is enabled and every check passes, the page does not go blank: it shows a
+<p data-bai-block="838">When <strong>Show only failed items</strong> is enabled and every check passes, the page does not go blank: it shows a
 placeholder reading <code>No failed items. All diagnostics passed.</code>, so a clean result is unmistakable.</p>
-<p><figure data-bai-block="838" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.99</figcaption></figure>
+<p><figure data-bai-block="839" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 24.99</figcaption></figure>
 </p>
 <div class="admonition admonition-tip">
-<div data-bai-block="839" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
+<div data-bai-block="840" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>TIP</div>
 <div class="admonition-content">
 
-<p data-bai-block="840">When troubleshooting a connection problem, enable <strong>Show only failed items</strong> and click <code>Re-run Diagnostics</code> first — it surfaces just the checks that need attention.</p>
+<p data-bai-block="841">When troubleshooting a connection problem, enable <strong>Show only failed items</strong> and click <code>Re-run Diagnostics</code> first — it surfaces just the checks that need attention.</p>
 </div></div>
 
 
 <p><a id="branding"></a></p>
-<h2 data-bai-block="841" id="admin_menu-branding">Branding<a class="hash-link" href="#admin_menu-branding" aria-label="Direct link to Branding">#</a></h2>
-<p data-bai-block="842">The <strong>Branding</strong> page lets superadmins customize the visual identity of the WebUI — colors, logos, and fonts — to match an organization&#39;s corporate identity. It is available from the admin sidebar.</p>
-<p><figure data-bai-block="843" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>Figure 24.100</figcaption></figure>
+<h2 data-bai-block="842" id="admin_menu-branding">Branding<a class="hash-link" href="#admin_menu-branding" aria-label="Direct link to Branding">#</a></h2>
+<p data-bai-block="843">The <strong>Branding</strong> page lets superadmins customize the visual identity of the WebUI — colors, logos, and fonts — to match an organization&#39;s corporate identity. It is available from the admin sidebar.</p>
+<p><figure data-bai-block="844" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>Figure 24.100</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="844" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
+<div data-bai-block="845" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
 
-<p data-bai-block="845">The updated theme cannot be applied immediately from this page. To apply a customized theme, export the configuration as a JSON file and provide it to the support team.</p>
+<p data-bai-block="846">The updated theme cannot be applied immediately from this page. To apply a customized theme, export the configuration as a JSON file and provide it to the support team.</p>
 </div></div>
 
 
-<p data-bai-block="846">The toolbar provides:</p>
+<p data-bai-block="847">The toolbar provides:</p>
 <ul>
-<li data-bai-block="847"><code>Preview</code>: Opens a new window that previews the current theme changes.</li>
-<li data-bai-block="848"><code>JSON Config</code>: Opens a modal where the theme configuration can be edited directly as JSON and exported.</li>
-<li data-bai-block="849">A reset control that restores all branding settings to their defaults.</li>
-<li data-bai-block="850">A search bar to filter the settings.</li>
+<li data-bai-block="848"><code>Preview</code>: Opens a new window that previews the current theme changes.</li>
+<li data-bai-block="849"><code>JSON Config</code>: Opens a modal where the theme configuration can be edited directly as JSON and exported.</li>
+<li data-bai-block="850">A reset control that restores all branding settings to their defaults.</li>
+<li data-bai-block="851">A search bar to filter the settings.</li>
 </ul>
-<p data-bai-block="851">The settings are divided into the following groups:</p>
+<p data-bai-block="852">The settings are divided into the following groups:</p>
 <ul>
-<li data-bai-block="852"><strong>Theme</strong>: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.</li>
-<li data-bai-block="853"><strong>Logo CI</strong>: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.</li>
-<li data-bai-block="854"><strong>Detail Logo CI</strong>: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.</li>
-<li data-bai-block="855"><strong>Font</strong>: Select the font family used throughout the interface.</li>
+<li data-bai-block="853"><strong>Theme</strong>: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.</li>
+<li data-bai-block="854"><strong>Logo CI</strong>: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.</li>
+<li data-bai-block="855"><strong>Detail Logo CI</strong>: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.</li>
+<li data-bai-block="856"><strong>Font</strong>: Select the font family used throughout the interface.</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="856" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="857" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="857">After uploading an image or changing a color, use <code>Preview</code> to see the result. Because the changes are not applied to the live service automatically, export the JSON configuration and contact support to roll it out.</p>
+<p data-bai-block="858">After uploading an image or changing a color, use <code>Preview</code> to see the result. Because the changes are not applied to the live service automatically, export the JSON configuration and contact support to roll it out.</p>
 </div></div>
 
 

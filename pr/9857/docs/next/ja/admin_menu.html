@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="管理者機能" />
   <meta name="twitter:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-09-21T16:41:41.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-09-21T18:58:56.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (c5d94ec)">v26.9.0-alpha.0 (c5d94ec)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (589e115)">v26.9.0-alpha.0 (589e115)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1975,124 +1975,126 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
 <p><a id="manage-projects"></a></p>
 <h2 data-bai-block="797" id="admin_menu-プロジェクト管理">プロジェクト管理<a class="hash-link" href="#admin_menu-プロジェクト管理" aria-label="Direct link to プロジェクト管理">#</a></h2>
 <p data-bai-block="798">スーパー管理者はプロジェクトページでクラスター内のすべてのプロジェクトを確認し、作成、編集、無効化、有効化、
-完全削除を行えます。各行には、プロジェクト管理者権限を付与するためのショートカットもあります。個人プロジェクトは
-既定で非表示になっており、一覧の上にあるタイプフィルターを削除すると表示されます。</p>
-<p><figure data-bai-block="799" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.96</figcaption></figure>
+完全削除を行えます。各行には、プロジェクト管理者権限を付与するためのショートカットもあります。</p>
+<p data-bai-block="799">既定では個人プロジェクトは一覧に表示されず、あらかじめ適用されている <strong>タイプ</strong> フィルターを削除すると表示されます。</p>
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
+<p><figure data-bai-block="800" class="doc-figure"><img src="./images/projects_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.96</figcaption></figure>
 </p>
-<!-- TODO(screenshot): /project — recapture once the capture backend runs a released 26.9.0 manager; on 26.9.0a3 the `group-nodes-type-filter` flag is off, so the default type filter that hides personal projects is not applied. -->
-
-<p data-bai-block="800">一覧の上にある <strong>アクティブ</strong>、<strong>非アクティブ</strong> ボタンで表示するプロジェクトを切り替えられます。</p>
-<p data-bai-block="801"><strong>更新日時</strong> と <strong>ステータス</strong> 列は既定で非表示になっており、テーブル下部のページ送りコントロールの横にある列設定（⚙）ボタンで表示
+<p data-bai-block="801">一覧の上にある <strong>アクティブ</strong>、<strong>非アクティブ</strong> ボタンで表示するプロジェクトを切り替えられます。その隣の
+プロパティフィルターでは、<strong>名前</strong>、<strong>ドメイン</strong>、<strong>リソースポリシー</strong>、<strong>プロジェクトID</strong>、<strong>作成日</strong>、
+<strong>更新日</strong> で一覧を絞り込めます。<strong>プロジェクトID</strong> には完全なUUIDを入力する必要があり、<strong>作成日</strong> と
+<strong>更新日</strong> には日付と時刻を指定します。</p>
+<p data-bai-block="802"><strong>更新日時</strong> と <strong>ステータス</strong> 列は既定で非表示になっており、テーブル下部のページ送りコントロールの横にある列設定（⚙）ボタンで表示
 できます。<strong>ステータス</strong> 列にはプロジェクトが <strong>アクティブ</strong> か <strong>非アクティブ</strong> かが表示されます。選択した列
 構成はブラウザごとにセッションをまたいで保持されます。</p>
 <p><a id="set-project-admin"></a></p>
-<h3 data-bai-block="802" id="admin_menu-プロジェクト管理者を設定する">プロジェクト管理者を設定する<a class="hash-link" href="#admin_menu-プロジェクト管理者を設定する" aria-label="Direct link to プロジェクト管理者を設定する">#</a></h3>
-<p data-bai-block="803">RBAC管理ページでプロジェクトのロールを探さなくても、プロジェクト一覧から直接そのプロジェクトの管理者を管理できます。</p>
+<h3 data-bai-block="803" id="admin_menu-プロジェクト管理者を設定する">プロジェクト管理者を設定する<a class="hash-link" href="#admin_menu-プロジェクト管理者を設定する" aria-label="Direct link to プロジェクト管理者を設定する">#</a></h3>
+<p data-bai-block="804">RBAC管理ページでプロジェクトのロールを探さなくても、プロジェクト一覧から直接そのプロジェクトの管理者を管理できます。</p>
 <ol>
-<li data-bai-block="804">プロジェクト一覧で対象のプロジェクトを見つけます。</li>
-<li data-bai-block="805">行の <strong>プロジェクト管理者を設定</strong>（盾）アクションをクリックします。モデルストアのプロジェクトではこのアクションは
+<li data-bai-block="805">プロジェクト一覧で対象のプロジェクトを見つけます。</li>
+<li data-bai-block="806">行の <strong>プロジェクト管理者を設定</strong>（盾）アクションをクリックします。モデルストアのプロジェクトではこのアクションは
 利用できません。</li>
-<li data-bai-block="806"><strong>プロジェクト管理者を設定</strong> ダイアログが開きます。</li>
+<li data-bai-block="807"><strong>プロジェクト管理者を設定</strong> ダイアログが開きます。</li>
 </ol>
-<p><figure data-bai-block="807" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="968" /><figcaption>図 24.97</figcaption></figure>
+<p><figure data-bai-block="808" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="968" /><figcaption>図 24.97</figcaption></figure>
 </p>
-<p data-bai-block="808">ダイアログは次の要素で構成されます。</p>
+<p data-bai-block="809">ダイアログは次の要素で構成されます。</p>
 <ul>
-<li data-bai-block="809">プロジェクト管理者権限を付与すると、そのプロジェクトがユーザーの許可されたプロジェクトリストに自動的に追加され、
+<li data-bai-block="810">プロジェクト管理者権限を付与すると、そのプロジェクトがユーザーの許可されたプロジェクトリストに自動的に追加され、
 以降そのユーザーがそのプロジェクトにアクセスできるようになる旨の情報アラート。</li>
-<li data-bai-block="810">1人以上のアカウントを選べる <strong>ユーザーを検索して選択</strong> フィールドと、選択したユーザーにプロジェクト管理者権限を
+<li data-bai-block="811">1人以上のアカウントを選べる <strong>ユーザーを検索して選択</strong> フィールドと、選択したユーザーにプロジェクト管理者権限を
 付与する <strong>追加</strong> ボタン。</li>
-<li data-bai-block="811">現在この権限を持つユーザーの一覧テーブル。各ユーザーのメールアドレスとIDが表示され、行末に
+<li data-bai-block="812">現在この権限を持つユーザーの一覧テーブル。各ユーザーのメールアドレスとIDが表示され、行末に
 <strong>管理者権限を無効化</strong> アクションがあります。</li>
 </ul>
-<p data-bai-block="812">変更のたびにダイアログが閉じることはないため、複数のユーザーに対してまとめて付与・解除できます。一部だけ成功した
+<p data-bai-block="813">変更のたびにダイアログが閉じることはないため、複数のユーザーに対してまとめて付与・解除できます。一部だけ成功した
 場合は、失敗したユーザーごとにエラーが報告されます。</p>
 <div class="admonition admonition-warning">
-<div data-bai-block="813" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div data-bai-block="814" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
 
-<p data-bai-block="814">プロジェクト管理者権限を解除しても、そのプロジェクトはユーザーの許可されたプロジェクトリストから
+<p data-bai-block="815">プロジェクト管理者権限を解除しても、そのプロジェクトはユーザーの許可されたプロジェクトリストから
 <strong>自動的には削除されません</strong>。プロジェクトへのアクセスも取り消すには、リストから手動で削除してください。
 <a href="#create-and-update-users">ユーザー一覧の参照と管理</a>セクションを参照してください。</p>
 </div></div>
 
 
-<p data-bai-block="815">このショートカットの背後にあるロールと権限のモデル、およびRBAC管理ページでの同等の手順については、
+<p data-bai-block="816">このショートカットの背後にあるロールと権限のモデル、およびRBAC管理ページでの同等の手順については、
 <a href="./rbac_management.html#grant-project-admin">プロジェクト管理者権限の付与</a>セクションを参照してください。</p>
-<h2 data-bai-block="816" id="admin_menu-rbac管理">RBAC管理<a class="hash-link" href="#admin_menu-rbac管理" aria-label="Direct link to RBAC管理">#</a></h2>
-<p data-bai-block="817">RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。</p>
-<p data-bai-block="818">ロール、権限、ユーザー割り当ての管理の詳細については、<a href="./rbac_management.html#rbac-management">RBAC管理</a>ページを参照してください。</p>
+<h2 data-bai-block="817" id="admin_menu-rbac管理">RBAC管理<a class="hash-link" href="#admin_menu-rbac管理" aria-label="Direct link to RBAC管理">#</a></h2>
+<p data-bai-block="818">RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。</p>
+<p data-bai-block="819">ロール、権限、ユーザー割り当ての管理の詳細については、<a href="./rbac_management.html#rbac-management">RBAC管理</a>ページを参照してください。</p>
 <p><a id="diagnostics"></a></p>
-<h2 data-bai-block="819" id="admin_menu-診断">診断<a class="hash-link" href="#admin_menu-診断" aria-label="Direct link to 診断">#</a></h2>
-<p data-bai-block="820">スーパー管理者は、管理者サイドバーから <strong>診断</strong> ページを開いて、WebUI デプロイメントに対する自動状態チェックを実行できます。このページはブラウザーとサーバー間の構成を評価し、誤った設定を報告することで、接続またはセキュリティの問題がユーザーに影響を与える前に把握できるようにします。</p>
-<p><figure data-bai-block="821" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>図 24.98</figcaption></figure>
+<h2 data-bai-block="820" id="admin_menu-診断">診断<a class="hash-link" href="#admin_menu-診断" aria-label="Direct link to 診断">#</a></h2>
+<p data-bai-block="821">スーパー管理者は、管理者サイドバーから <strong>診断</strong> ページを開いて、WebUI デプロイメントに対する自動状態チェックを実行できます。このページはブラウザーとサーバー間の構成を評価し、誤った設定を報告することで、接続またはセキュリティの問題がユーザーに影響を与える前に把握できるようにします。</p>
+<p><figure data-bai-block="822" class="doc-figure"><img src="./images/diagnostics_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="782" /><figcaption>図 24.98</figcaption></figure>
 </p>
-<p data-bai-block="822">ページ上部のツールバーには、次のコントロールがあります。</p>
+<p data-bai-block="823">ページ上部のツールバーには、次のコントロールがあります。</p>
 <ul>
-<li data-bai-block="823"><strong>失敗した項目のみ表示</strong>: 成功したチェックをすべて非表示にし、警告またはエラーがあるセクションのみを表示するトグルです。</li>
-<li data-bai-block="824"><code>診断を再実行</code>: すべてのチェックを再評価し、結果を更新します。</li>
-<li data-bai-block="825"><code>CSVエクスポート</code>: アクションドロップダウンメニューから利用でき、すべての診断結果を <code>diagnostics-YYYY-MM-DD.csv</code> ファイルにエクスポートします。</li>
+<li data-bai-block="824"><strong>失敗した項目のみ表示</strong>: 成功したチェックをすべて非表示にし、警告またはエラーがあるセクションのみを表示するトグルです。</li>
+<li data-bai-block="825"><code>診断を再実行</code>: すべてのチェックを再評価し、結果を更新します。</li>
+<li data-bai-block="826"><code>CSVエクスポート</code>: アクションドロップダウンメニューから利用でき、すべての診断結果を <code>diagnostics-YYYY-MM-DD.csv</code> ファイルにエクスポートします。</li>
 </ul>
 <div class="admonition admonition-tip">
-<div data-bai-block="826" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div data-bai-block="827" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
 <div class="admonition-content">
 
-<p data-bai-block="827">エクスポートされた CSV ファイルのファイル先頭には UTF-8 BOM（バイト順マーク）が含まれています。これにより、UTF-8 以外のシステム（例：CP949 を使用する韓国語 Windows）の Microsoft Excel でも文字コードが正しく認識され、マルチバイト文字が文字化けせずに表示されます。</p>
+<p data-bai-block="828">エクスポートされた CSV ファイルのファイル先頭には UTF-8 BOM（バイト順マーク）が含まれています。これにより、UTF-8 以外のシステム（例：CP949 を使用する韓国語 Windows）の Microsoft Excel でも文字コードが正しく認識され、マルチバイト文字が文字化けせずに表示されます。</p>
 </div></div>
 
 
-<p data-bai-block="828">診断は次の折りたたみ可能なセクションで構成され、各セクションは個々のチェック結果を合格、警告、重大の重要度で表示します。</p>
+<p data-bai-block="829">診断は次の折りたたみ可能なセクションで構成され、各セクションは個々のチェック結果を合格、警告、重大の重要度で表示します。</p>
 <ul>
-<li data-bai-block="829"><strong>コンテンツセキュリティポリシー</strong>: アプリケーションが必要なリソースにアクセスできるよう、コンテンツセキュリティポリシーヘッダー（<code>connect-src</code>、<code>frame-src</code>、<code>script-src</code>、<code>style-src</code> など）を確認します。</li>
-<li data-bai-block="830"><strong>ストレージプロキシ</strong>: ストレージボリュームの一覧と、ストレージプロキシの到達可能性および使用状況の指標をチェックします。</li>
-<li data-bai-block="831"><strong>エンドポイント接続</strong>: API エンドポイントに到達可能か、接続を確立できるかを検証します。</li>
-<li data-bai-block="832"><strong>Webサーバー設定</strong>: URL の形式、SSL/プロトコルの整合性、接続モードなど、<code>config.toml</code> の設定を検証します。</li>
+<li data-bai-block="830"><strong>コンテンツセキュリティポリシー</strong>: アプリケーションが必要なリソースにアクセスできるよう、コンテンツセキュリティポリシーヘッダー（<code>connect-src</code>、<code>frame-src</code>、<code>script-src</code>、<code>style-src</code> など）を確認します。</li>
+<li data-bai-block="831"><strong>ストレージプロキシ</strong>: ストレージボリュームの一覧と、ストレージプロキシの到達可能性および使用状況の指標をチェックします。</li>
+<li data-bai-block="832"><strong>エンドポイント接続</strong>: API エンドポイントに到達可能か、接続を確立できるかを検証します。</li>
+<li data-bai-block="833"><strong>Webサーバー設定</strong>: URL の形式、SSL/プロトコルの整合性、接続モードなど、<code>config.toml</code> の設定を検証します。</li>
 </ul>
-<p data-bai-block="833"><strong>失敗した項目のみ表示</strong> をオンにした状態ですべてのチェックに合格すると、画面が空白になることはありません。
+<p data-bai-block="834"><strong>失敗した項目のみ表示</strong> をオンにした状態ですべてのチェックに合格すると、画面が空白になることはありません。
 <code>失敗した項目はありません。すべての診断に合格しました。</code> というプレースホルダーが表示され、結果が正常であることが
 はっきりわかります。</p>
-<p><figure data-bai-block="834" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.99</figcaption></figure>
+<p><figure data-bai-block="835" class="doc-figure"><img src="./images/diagnostics_empty_state.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 24.99</figcaption></figure>
 </p>
 <div class="admonition admonition-tip">
-<div data-bai-block="835" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
+<div data-bai-block="836" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M6.5 0C3.48 0 1 2.19 1 5c0 .92.55 2.25 1 3 1.34 2.25 1.78 2.78 2 4v1h5v-1c.22-1.22.66-1.75 2-4 .45-.75 1-2.08 1-3 0-2.81-2.48-5-5.5-5zm3.64 7.48c-.25.44-.47.8-.67 1.11-.86 1.41-1.25 2.06-1.45 3.23-.02.05-.02.11-.02.17H5c0-.06 0-.13-.02-.17-.2-1.17-.59-1.83-1.45-3.23-.2-.31-.42-.67-.67-1.11C2.44 6.78 2 5.65 2 5c0-2.2 2.02-4 4.5-4 2.48 0 4.5 1.8 4.5 4 0 .65-.44 1.78-.86 2.48zM4 13h5v1H4v-1z"/></svg></span>ヒント</div>
 <div class="admonition-content">
 
-<p data-bai-block="836">接続の問題をトラブルシューティングする際は、まず <strong>失敗した項目のみ表示</strong> をオンにして <code>診断を再実行</code> を実行してください。対応が必要なチェックだけを素早く確認できます。</p>
+<p data-bai-block="837">接続の問題をトラブルシューティングする際は、まず <strong>失敗した項目のみ表示</strong> をオンにして <code>診断を再実行</code> を実行してください。対応が必要なチェックだけを素早く確認できます。</p>
 </div></div>
 
 
 <p><a id="branding"></a></p>
-<h2 data-bai-block="837" id="admin_menu-ブランディング">ブランディング<a class="hash-link" href="#admin_menu-ブランディング" aria-label="Direct link to ブランディング">#</a></h2>
-<p data-bai-block="838"><strong>ブランディング</strong> ページでは、スーパー管理者が組織のコーポレートアイデンティティに合わせて、WebUI の視覚的要素（色、ロゴ、フォント）をカスタマイズできます。管理者サイドバーからアクセスできます。</p>
-<p><figure data-bai-block="839" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>図 24.100</figcaption></figure>
+<h2 data-bai-block="838" id="admin_menu-ブランディング">ブランディング<a class="hash-link" href="#admin_menu-ブランディング" aria-label="Direct link to ブランディング">#</a></h2>
+<p data-bai-block="839"><strong>ブランディング</strong> ページでは、スーパー管理者が組織のコーポレートアイデンティティに合わせて、WebUI の視覚的要素（色、ロゴ、フォント）をカスタマイズできます。管理者サイドバーからアクセスできます。</p>
+<p><figure data-bai-block="840" class="doc-figure"><img src="./images/branding_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1840" /><figcaption>図 24.100</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
-<div data-bai-block="840" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div data-bai-block="841" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
 
-<p data-bai-block="841">変更したテーマは、このページから即座に適用することはできません。カスタマイズしたテーマを適用するには、設定を JSON ファイルとしてエクスポートし、サポートチームに提供してください。</p>
+<p data-bai-block="842">変更したテーマは、このページから即座に適用することはできません。カスタマイズしたテーマを適用するには、設定を JSON ファイルとしてエクスポートし、サポートチームに提供してください。</p>
 </div></div>
 
 
-<p data-bai-block="842">ツールバーには次の機能があります。</p>
+<p data-bai-block="843">ツールバーには次の機能があります。</p>
 <ul>
-<li data-bai-block="843"><code>プレビュー</code>: 現在のテーマ変更をプレビューする新しいウィンドウを開きます。</li>
-<li data-bai-block="844"><code>JSON設定</code>: テーマ構成を JSON として直接編集し、エクスポートできるモーダルを開きます。</li>
-<li data-bai-block="845">すべてのブランディング設定を既定値に戻すリセットコントロール。</li>
-<li data-bai-block="846">設定を絞り込む検索バー。</li>
+<li data-bai-block="844"><code>プレビュー</code>: 現在のテーマ変更をプレビューする新しいウィンドウを開きます。</li>
+<li data-bai-block="845"><code>JSON設定</code>: テーマ構成を JSON として直接編集し、エクスポートできるモーダルを開きます。</li>
+<li data-bai-block="846">すべてのブランディング設定を既定値に戻すリセットコントロール。</li>
+<li data-bai-block="847">設定を絞り込む検索バー。</li>
 </ul>
-<p data-bai-block="847">設定は次のグループに分かれています。</p>
+<p data-bai-block="848">設定は次のグループに分かれています。</p>
 <ul>
-<li data-bai-block="848"><strong>テーマ</strong>: 主要色、ヘッダー背景色、リンク色、情報色、エラー色、成功色、テキスト色のカラーピッカーです。各色はライトモードとダークモードで個別に設定し、リセットできます。</li>
-<li data-bai-block="849"><strong>CIロゴ</strong>: ライトモードとダークモードのメインサイドバーロゴ、折りたたみ時のサイドバーロゴをアップロードし、表示サイズを設定します。</li>
-<li data-bai-block="850"><strong>詳細ロゴ CI</strong>: ログインページと About モーダルに表示されるロゴを、ライト/ダークモードごとにアップロードし、サイズを設定します。</li>
-<li data-bai-block="851"><strong>フォント</strong>: インターフェイス全体で使用されるフォントファミリーを選択します。</li>
+<li data-bai-block="849"><strong>テーマ</strong>: 主要色、ヘッダー背景色、リンク色、情報色、エラー色、成功色、テキスト色のカラーピッカーです。各色はライトモードとダークモードで個別に設定し、リセットできます。</li>
+<li data-bai-block="850"><strong>CIロゴ</strong>: ライトモードとダークモードのメインサイドバーロゴ、折りたたみ時のサイドバーロゴをアップロードし、表示サイズを設定します。</li>
+<li data-bai-block="851"><strong>詳細ロゴ CI</strong>: ログインページと About モーダルに表示されるロゴを、ライト/ダークモードごとにアップロードし、サイズを設定します。</li>
+<li data-bai-block="852"><strong>フォント</strong>: インターフェイス全体で使用されるフォントファミリーを選択します。</li>
 </ul>
 <div class="admonition admonition-note">
-<div data-bai-block="852" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="853" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="853">画像をアップロードしたり色を変更したりした後は、<code>プレビュー</code> で結果を確認してください。変更は稼働中のサービスに自動的には適用されないため、JSON 設定をエクスポートしてサポートチームに問い合わせて展開する必要があります。</p>
+<p data-bai-block="854">画像をアップロードしたり色を変更したりした後は、<code>プレビュー</code> で結果を確認してください。変更は稼働中のサービスに自動的には適用されないため、JSON 設定をエクスポートしてサポートチームに問い合わせて展開する必要があります。</p>
 </div></div>
 
 
