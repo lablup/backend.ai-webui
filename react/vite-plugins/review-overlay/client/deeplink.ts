@@ -277,8 +277,12 @@ export const createNoteStore = (
   storage: Storage | null = safeStorage(),
 ): FocusStore => createHandover(NOTE_KEY, storage);
 
-/** Dispatched by the patched `history`, so every listener hears one navigation. */
-const ROUTE_EVENT = 'bai-review:route';
+/**
+ * Dispatched by the patched `history`, so every listener hears one navigation.
+ * Exported because a host that cannot patch the page's `history` — a content
+ * script runs in its own realm — dispatches this event itself instead.
+ */
+export const ROUTE_EVENT = 'bai-review:route';
 
 /**
  * React Router owns the history and changes route without a reload, so a
