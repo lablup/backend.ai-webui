@@ -1905,6 +1905,7 @@
     "AgentId": "Agenttitunnus",
     "ContainerId": "Konttitunnus",
     "ContainerLogs": "Säiliölokit",
+    "FailedToLoadContainerLogs": "Säiliölokien lataaminen epäonnistui",
     "Hostname": "Isäntänimi",
     "Kernel": "Ytimen",
     "KernelId": "Ytimen tunnus",

@@ -1905,6 +1905,7 @@
     "AgentId": "Id ejen",
     "ContainerId": "ID kontena",
     "ContainerLogs": "Log kontena",
+    "FailedToLoadContainerLogs": "Gagal memuatkan log kontena",
     "Hostname": "Nama Host",
     "Kernel": "Kernel",
     "KernelId": "ID Kernel",

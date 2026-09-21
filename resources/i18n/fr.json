@@ -1906,6 +1906,7 @@
     "AgentId": "ID d'agent",
     "ContainerId": "ID de conteneur",
     "ContainerLogs": "Journaux des conteneurs",
+    "FailedToLoadContainerLogs": "Échec du chargement des journaux des conteneurs",
     "Hostname": "Nom d'hôte",
     "Kernel": "Noyau",
     "KernelId": "ID du noyau",

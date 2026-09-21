@@ -1905,6 +1905,7 @@
     "AgentId": "ID de agente",
     "ContainerId": "ID de contenedor",
     "ContainerLogs": "Registros de contenedores",
+    "FailedToLoadContainerLogs": "No se pudieron cargar los registros de contenedores",
     "Hostname": "Nombre de host",
     "Kernel": "Núcleo",
     "KernelId": "ID de núcleo",

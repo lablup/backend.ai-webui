@@ -1907,6 +1907,7 @@
     "AgentId": "エージェントID",
     "ContainerId": "コンテナID",
     "ContainerLogs": "コンテナログ",
+    "FailedToLoadContainerLogs": "コンテナログの読み込みに失敗しました",
     "Hostname": "ホスト名",
     "Kernel": "カーネル",
     "KernelId": "カーネルID",

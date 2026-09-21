@@ -1894,6 +1894,7 @@
     "AgentId": "ID ตัวแทน",
     "ContainerId": "ID คอนเทนเนอร์",
     "ContainerLogs": "บันทึกคอนเทนเนอร์",
+    "FailedToLoadContainerLogs": "ไม่สามารถโหลดบันทึกคอนเทนเนอร์ได้",
     "Hostname": "ชื่อโฮสต์",
     "Kernel": "เคอร์เนล",
     "KernelId": "ID เคอร์เนล",
