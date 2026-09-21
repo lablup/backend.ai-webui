@@ -94,6 +94,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
     isPending,
     isRefetching,
     isError,
+    isFetching,
     error,
     dataUpdatedAt,
   } = useTanQuery<string>({
@@ -117,16 +118,20 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         .get_logs(session?.row_id, session?.access_key, selectedKernelId, 15000)
         .then((req: any) => req.result.logs);
     },
-    // Without it this query never holds data — it only ever fails — and
-    // query-core blanks `error` and returns the status to `pending` at the
-    // START of every fetch for such a query (`fetchState`), so the alert
-    // below would unmount on each auto-refresh and come back when the
-    // request failed again.
-    initialData: '',
   });
 
+  // react-query drops `error` and returns the status to `pending` at the
+  // START of every fetch while the query has never held data (query-core
+  // `fetchState`), and this one only fails, so `isError` goes false on each
+  // auto-refresh. Hold the failure here so the alert stays put until a fetch
+  // actually resolves.
+  const [heldError, setHeldError] = useState<unknown>(null);
+  if (isError && heldError !== error) setHeldError(error);
+  else if (heldError && !isError && !isFetching) setHeldError(null);
+  const displayedError = isError ? error : heldError;
+
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
-    useMemoWithPrevious(() => (logs ? logs.split('\n').length : 0), [logs]);
+    useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
 
   const { md } = useBAIBreakpoint();
   const { t } = useTranslation();
@@ -198,6 +203,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             onChange={(value) => {
               setSelectedKernelId(value);
               resetPreviousLineNumber();
+              setHeldError(null);
             }}
             autoSelectOption
             options={_.map(
@@ -249,12 +255,12 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
           />
         </BAIFlex>
 
-        {isError ? (
+        {displayedError ? (
           <BAIAlert
             type="error"
             style={{ alignSelf: 'stretch' }}
             title={t('kernel.FailedToLoadContainerLogs')}
-            description={getErrorMessage(error)}
+            description={getErrorMessage(displayedError)}
           />
         ) : null}
 
