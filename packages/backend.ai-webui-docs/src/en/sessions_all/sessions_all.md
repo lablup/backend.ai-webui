@@ -213,17 +213,49 @@ Data in those folders can also be reused by mounting it when creating another co
 
 ![](../images/launch_session_data.png)
 
-users can specify the storage folders to mount in the compute session.
-Folder explorer can be used by clicking folder name. For further information,
-please refer [Explore Folder](#explore-folder) section.
+Users can specify the storage folders to mount in the compute session with the
+`Select Folder` dropdown. Each option in the list shows the folder name together
+with its owner (user or project), usage mode, host, creation date, and the
+permission you hold on the folder (`R`, `W`, `D`). Type in the dropdown to filter
+the list by folder name. Folders that are mounted automatically, and folders that
+cannot be mounted in the current project, are not offered.
+
+Two buttons are placed next to the dropdown:
+
+- `+` (Create a new storage folder): opens the folder creation dialog. The folder
+   you create is added to the list and selected as a folder to mount.
+   For further information, please refer [Create Storage Folder](#create-storage-folder) section.
+- `Refresh`: reloads the folder list, for example after a folder has been created
+   or shared elsewhere.
+
+![](../images/folder_create_modal.png)
+
+Each selected folder is listed as a row with two path fields:
+
+- **Path in folder (source)**: The subfolder inside the storage folder to mount.
+   Click the field to browse the folder and pick a directory; leave it empty to
+   mount the folder root.
+- **Container path (destination)**: The path inside the container where the folder
+   is mounted. Leave it empty to mount the folder on `/home/work/<folder name>`,
+   enter an absolute path to mount it on that path, or enter a relative path to
+   mount it under `/home/work/`. A path that overlaps another mounted folder or an
+   automount folder is reported as an error, and the session cannot be launched
+   until the overlap is resolved.
+
+Click the remove (`X`) button at the end of a row to drop that folder from the
+mount list. Folder explorer can be used by clicking folder name. For further
+information, please refer [Explore Folder](#explore-folder) section.
 
 ![](../images/folder_explorer.png)
 
-New folder can be created by clicking the `+` button next to the search box.
-When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer [Create Storage Folder](#create-storage-folder) section.
+Folders that are mounted automatically are listed as `Automount Folders` below
+the rows. They do not need to be selected.
 
-![](../images/folder_create_modal.png)
+:::note
+If a folder in the selection can no longer be mounted, for example when its
+sharing has been revoked, it is removed from the selection and a notification
+is shown.
+:::
 
 <a id="network"></a>
 
