@@ -29,4 +29,12 @@
   .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
     display: block;
   }
+
+  /* `TOKEN_OUTLINED` (FR-4002) clears the default Token's fill and rings it,
+     which is the "settled value" look; a filter chip keeps its filled look.
+     `inherit` restores the theme's `--color-neutral` the rule re-pointed. */
+  .bai-power-search .astryx-token.default {
+    --color-neutral: inherit;
+    box-shadow: none;
+  }
 }
