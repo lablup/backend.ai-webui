@@ -89,7 +89,7 @@ import {
   Inbox,
   Settings,
 } from 'lucide-react';
-import React, { useState, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
@@ -646,6 +646,15 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       trigger: 'no-trigger',
     },
   );
+
+  // Astryx's `Pagination` answers a page-size pick with `onPageSizeChange(size)`
+  // and then `onChange(1)` in the same event. That follow-up still closes over
+  // the size on screen, so forwarding it would tell the consumer `(1, oldSize)`
+  // right after `(1, newSize)` and undo the pick on every controlled table
+  // (#9607). `onPageSizeChange` already reports the reset to page 1, so the
+  // follow-up is dropped. The flag lives for that one event only: a microtask
+  // clears it, so a later page change is never swallowed.
+  const isPageSizeChangingRef = useRef(false);
 
   const total = pagination
     ? (pagination.total ?? sortedRows.length)
@@ -1360,10 +1369,15 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 size={pagination?.size ?? 'sm'}
                 label={String(t('comp:BAITable.Pagination'))}
                 onChange={(page) => {
+                  if (isPageSizeChangingRef.current) return;
                   setCurrentPage(page);
                   pagination?.onChange?.(page, currentPageSize);
                 }}
                 onPageSizeChange={(pageSize) => {
+                  isPageSizeChangingRef.current = true;
+                  queueMicrotask(() => {
+                    isPageSizeChangingRef.current = false;
+                  });
                   setCurrentPage(1);
                   setCurrentPageSize(pageSize);
                   pagination?.onChange?.(1, pageSize);

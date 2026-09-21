@@ -11,6 +11,7 @@ import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 
 interface Row {
   id: string;
@@ -94,6 +95,68 @@ describe('BAITable pagination (FR-3563)', () => {
     expect(screen.getByText('Invalid page number')).toBeInTheDocument();
     expect(screen.queryByText('row-21')).not.toBeInTheDocument();
     expect(screen.queryByText('row-1')).not.toBeInTheDocument();
+  });
+});
+
+describe('BAITable page-size change (#9607)', () => {
+  // Astryx's Pagination answers a page-size pick with `onPageSizeChange(size)`
+  // and then `onChange(1)` in the same event. The consumer must hear about it
+  // once, with the new size — not a second time with the size still on screen.
+  const pickPageSize = async (size: number) => {
+    await userEvent.click(
+      screen.getByRole('combobox', { name: 'Items per page' }),
+    );
+    await userEvent.click(screen.getByRole('option', { name: String(size) }));
+  };
+
+  it('reports a page-size pick once, with the new size', async () => {
+    const onChange = vi.fn();
+    renderTable({
+      dataSource: makeRows(10),
+      pagination: { current: 3, pageSize: 10, total: 100, onChange },
+    });
+
+    await pickPageSize(20);
+
+    expect(onChange.mock.calls).toEqual([[1, 20]]);
+  });
+
+  it('keeps the picked size on a controlled table', async () => {
+    const Controlled = () => {
+      const [page, setPage] = useState(1);
+      const [pageSize, setPageSize] = useState(10);
+      return (
+        <BAITable<Row>
+          rowKey="id"
+          columns={COLUMNS}
+          dataSource={makeRows(25)}
+          pagination={{
+            current: page,
+            pageSize,
+            onChange: (nextPage, nextPageSize) => {
+              setPage(nextPage);
+              setPageSize(nextPageSize);
+            },
+          }}
+        />
+      );
+    };
+    render(<Controlled />);
+
+    await pickPageSize(20);
+
+    expect(screen.getByText('row-20')).toBeInTheDocument();
+    expect(screen.queryByText('row-21')).not.toBeInTheDocument();
+  });
+
+  it('still reports the page changes that follow a size pick', async () => {
+    const onChange = vi.fn();
+    renderTable({ dataSource: makeRows(100), pagination: { onChange } });
+
+    await pickPageSize(20);
+    await userEvent.click(screen.getByRole('button', { name: 'Go to page 2' }));
+
+    expect(onChange).toHaveBeenLastCalledWith(2, 20);
   });
 });
 
