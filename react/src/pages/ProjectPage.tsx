@@ -89,11 +89,6 @@ const ProjectPage = () => {
   const supportsProjectAdminSetting = baiClient.supports(
     'role-mapped-scope-filter',
   );
-  // From 26.9.0 the project admin grant is a `scope_admin` permission rather
-  // than a name-suffixed SYSTEM role.
-  const matchesProjectAdminByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -232,10 +227,7 @@ const ProjectPage = () => {
       return;
     }
     const variables: ProjectAdminSettingModalQuery['variables'] = {
-      filter: buildProjectAdminRoleFilter(
-        project.row_id,
-        matchesProjectAdminByScopeAdminPermission,
-      ),
+      filter: buildProjectAdminRoleFilter(project.row_id),
       limit: 100,
       offset: 0,
     };
@@ -255,10 +247,7 @@ const ProjectPage = () => {
     }
     // The project's admin roles are resolved here, before the modal opens; a
     // project without one only gets an error message.
-    const adminRoles = selectProjectAdminRoles(
-      roleData,
-      matchesProjectAdminByScopeAdminPermission,
-    );
+    const adminRoles = selectProjectAdminRoles(roleData);
     if (_.isEmpty(adminRoles)) {
       message.error(
         t('project.ProjectAdminRoleNotFound', {

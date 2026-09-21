@@ -7,7 +7,7 @@ import { ProjectAdminSettingModalQuery } from '../__generated__/ProjectAdminSett
 import { ProjectAdminSettingModalRevokeMutation } from '../__generated__/ProjectAdminSettingModalRevokeMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useWebUINavigate } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -72,10 +72,7 @@ export const ProjectAdminSettingQuery = graphql`
   }
 `;
 
-/**
- * Entity type a project-admin role carries a permission on after the
- * single-scope RBAC migration (manager 26.9.0, BA-7796).
- */
+// Project admin is a permission on this entity type (BA-7796).
 const SCOPE_ADMIN_ENTITY_TYPE = 'scope_admin';
 
 type ProjectAdminRoleFilter =
@@ -89,56 +86,24 @@ type ProjectAdminRole = NonNullable<
   >['node']
 >;
 
-/**
- * Filter that selects the roles granting project admin on `projectId`.
- *
- * Single-scope managers (26.9.0+) carry that grant as a `scope_admin`
- * permission on any number of roles in the scope, so the lookup asks for the
- * permission. Older managers register one SYSTEM role pair per project
- * (`project-<id>-member` / `project-<id>-admin`) and only the name says which
- * is which.
- *
- * 26.9 answers the scope type as a lowercase string where older managers use
- * the uppercase `RBACElementType` value (ADR 0006), so the new branch matches
- * it case-insensitively.
- */
+// The scope type is answered in lowercase, hence `iEquals` (ADR 0006).
 export const buildProjectAdminRoleFilter = (
   projectId: string,
-  matchesByScopeAdminPermission: boolean,
-): ProjectAdminRoleFilter =>
-  matchesByScopeAdminPermission
-    ? {
-        status: { equals: 'ACTIVE' },
-        mappedScope: {
-          scopeType: { iEquals: 'project' },
-          scopeId: { equals: projectId },
-        },
-        permission: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } },
-      }
-    : {
-        status: { equals: 'ACTIVE' },
-        source: { equals: 'SYSTEM' },
-        mappedScope: {
-          scopeType: { equals: 'PROJECT' },
-          scopeId: { equals: projectId },
-        },
-      };
+): ProjectAdminRoleFilter => ({
+  status: { equals: 'ACTIVE' },
+  mappedScope: {
+    scopeType: { iEquals: 'project' },
+    scopeId: { equals: projectId },
+  },
+  permission: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } },
+});
 
-/**
- * The roles `buildProjectAdminRoleFilter` asked for, in a stable order. The
- * permission filter has already narrowed the connection, so every returned
- * role counts; the legacy filter returns the SYSTEM pair, of which only the
- * `-admin` one does.
- */
 export const selectProjectAdminRoles = (
   data: ProjectAdminSettingModalQuery['response'] | undefined,
-  matchesByScopeAdminPermission: boolean,
 ): Array<ProjectAdminRole> =>
   _.sortBy(
     filterOutNullAndUndefined(
       _.map(data?.adminRoles?.edges, (edge) => edge?.node),
-    ).filter(
-      (node) => matchesByScopeAdminPermission || _.endsWith(node.name, 'admin'),
     ),
     // `adminRoles` is unordered, and the modal's RBAC shortcut opens roles[0].
     ['name', 'id'],
@@ -206,10 +171,6 @@ const ProjectAdminSettingModal = ({
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const webuiNavigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
-  const matchesByScopeAdminPermission = baiClient.supports(
-    'rbac-single-scope-role',
-  );
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
 
   // Keep the previous result visible while a reload is in flight so the table
@@ -222,7 +183,7 @@ const ProjectAdminSettingModal = ({
     deferredQueryRef,
   );
 
-  const roles = selectProjectAdminRoles(data, matchesByScopeAdminPermission);
+  const roles = selectProjectAdminRoles(data);
   const assignments = groupProjectAdminAssignmentsByUser(roles);
 
   const mutateBulkAssignRole =
