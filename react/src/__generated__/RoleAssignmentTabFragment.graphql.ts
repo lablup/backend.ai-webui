@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9967e7970e43894b8fd21394ad38d1c6>>
+ * @generated SignedSource<<8190e159d94d7437f9285035c8ac8b76>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -25,24 +25,6 @@ export type RoleAssignmentTabFragment$data = {
   readonly scopeId: string;
   readonly scopeType: string;
   readonly source: RoleSource;
-  readonly users: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly grantedAt: string;
-        readonly grantedBy: string | null | undefined;
-        readonly id: string;
-        readonly user: {
-          readonly basicInfo: {
-            readonly email: string;
-            readonly fullName: string | null | undefined;
-          };
-          readonly id: string;
-        } | null | undefined;
-        readonly userId: string;
-      };
-    }>;
-  } | null | undefined;
   readonly " $fragmentType": "RoleAssignmentTabFragment";
 };
 export type RoleAssignmentTabFragment$key = {
@@ -50,24 +32,15 @@ export type RoleAssignmentTabFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"RoleAssignmentTabFragment">;
 };
 
-import RoleAssignmentTabRefetchQuery_graphql from './RoleAssignmentTabRefetchQuery.graphql';
-
 const node: ReaderFragment = (function(){
 var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scopeType",
   "storageKey": null
 },
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -75,45 +48,18 @@ v2 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "filter"
-    },
-    {
-      "defaultValue": 10,
-      "kind": "LocalArgument",
-      "name": "limit"
-    },
-    {
-      "defaultValue": 0,
-      "kind": "LocalArgument",
-      "name": "offset"
-    },
-    {
-      "defaultValue": null,
-      "kind": "LocalArgument",
-      "name": "orderBy"
-    }
-  ],
+  "argumentDefinitions": [],
   "kind": "Fragment",
-  "metadata": {
-    "refetch": {
-      "connection": null,
-      "fragmentPathInResult": [
-        "node"
-      ],
-      "operation": RoleAssignmentTabRefetchQuery_graphql,
-      "identifierInfo": {
-        "identifierField": "id",
-        "identifierQueryVariableName": "id"
-      }
-    }
-  },
+  "metadata": null,
   "name": "RoleAssignmentTabFragment",
   "selections": [
-    (v0/*: any*/),
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -158,8 +104,8 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v1/*: any*/),
-                (v2/*: any*/)
+                (v0/*: any*/),
+                (v1/*: any*/)
               ],
               "storageKey": null
             }
@@ -169,134 +115,14 @@ return {
       ],
       "storageKey": "scopes(first:1)"
     },
-    (v1/*: any*/),
-    (v2/*: any*/),
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "filter",
-          "variableName": "filter"
-        },
-        {
-          "kind": "Variable",
-          "name": "limit",
-          "variableName": "limit"
-        },
-        {
-          "kind": "Variable",
-          "name": "offset",
-          "variableName": "offset"
-        },
-        {
-          "kind": "Variable",
-          "name": "orderBy",
-          "variableName": "orderBy"
-        }
-      ],
-      "concreteType": "RoleAssignmentConnection",
-      "kind": "LinkedField",
-      "name": "users",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "count",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "RoleAssignmentEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "RoleAssignment",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v0/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "userId",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "grantedBy",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "grantedAt",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": "UserV2",
-                  "kind": "LinkedField",
-                  "name": "user",
-                  "plural": false,
-                  "selections": [
-                    (v0/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "UserV2BasicInfo",
-                      "kind": "LinkedField",
-                      "name": "basicInfo",
-                      "plural": false,
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "email",
-                          "storageKey": null
-                        },
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "fullName",
-                          "storageKey": null
-                        }
-                      ],
-                      "storageKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
+    (v0/*: any*/),
+    (v1/*: any*/)
   ],
   "type": "Role",
   "abstractKey": null
 };
 })();
 
-(node as any).hash = "676c78d26ad688220e9451861c65d203";
+(node as any).hash = "a542fef79aca9ed1e6e437613e3679d8";
 
 export default node;

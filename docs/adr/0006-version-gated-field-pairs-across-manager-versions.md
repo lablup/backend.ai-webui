@@ -6,7 +6,7 @@
 
 - `data/schema.graphql`은 매니저 [supergraph](#용어)의 복사본이고 손으로 고치지 않는다. 26.9.0 supergraph는 26.9.0이 폐기한 RBAC field를 `@deprecated`로 남기므로, 옛 field를 select한 document도 relay-compiler가 컴파일한다.
 - 한 document가 26.8 매니저와 26.9 매니저가 각각 답하는 field를 함께 select한다. 옛 field에는 `@deprecatedSince(version: "26.9.0")`, 새 field에는 `@since(version: "26.9.0")`를 달고, `react/src/helper/graphql-transformer.ts`가 요청 전에 연결된 매니저에 맞지 않는 쪽을 지운다.
-- 이 방식을 따르는 RBAC document는 `useCurrentUserProjectRoles`의 query, role 목록의 `RoleNodesFragment`, role drawer의 `RoleAssignmentTabFragment`, `RolePermissionDetailTab_roleScopeFragment`, `ScopedRolePermissionCardQuery`, `RoleScopePermissionEditModal_permissionsFragment`, `RoleScopePermissionEditModalBulkAddMutation`이다. `LegacyRoleScopeTab`, `LegacyRolePermissionTab`, `LegacyCreatePermissionModal`의 document는 26.8.0 미만 매니저만 받으므로 gate하지 않는다.
+- 이 방식을 따르는 RBAC document는 `useCurrentUserProjectRoles`의 query, role 목록의 `RoleNodesFragment`, role drawer의 `RoleAssignmentTabFragment`, `RolePermissionDetailTab_roleScopeFragment`, `ScopedRolePermissionCardQuery`, `RoleScopePermissionEditModal_permissionsFragment`, `RoleScopePermissionEditModalBulkAddMutation`, `AssignRoleModalBulkAssignMutation`이다. `LegacyRoleScopeTab`, `LegacyRolePermissionTab`, `LegacyCreatePermissionModal`의 document는 26.8.0 미만 매니저만 받으므로 gate하지 않는다.
 - RBAC type 문자열을 비교하는 component는 값을 대문자로 바꾼 뒤 비교하고, 매니저에 보낼 때는 매니저가 답한 표기를 그대로 보낸다. role form은 `rbac-single-scope-role` flag로 `CreateRoleInput.scope`와 `scopes` 중 하나를 보낸다. `ScopedRolePermissionCard`는 같은 flag로 scope filter·pagination variables와 permission filter를 variables에 넣을지 고르고, `RoleScopePermissionEditModal`은 `CreatePermissionInput`의 shape을 고른다.
 
 ## Context
@@ -108,6 +108,7 @@ flowchart LR
 - **Card variables**: `ScopedRolePermissionCard`는 `rbac-single-scope-role`이 꺼져 있을 때만 `$scopeFilter`·`$scopeLimit`·`$scopeOffset`과 `$permissionFilter`를 variables에 넣고 scope-id filter, row selection, pagination을 그린다. `$scopeFilter`·`$scopeLimit`·`$scopeOffset`의 정의는 그 variables를 쓰는 `scopes` field와 함께 transformer가 지우지만, `permissions(filter: $permissionFilter)`는 gate하지 않으므로 `$permissionFilter` 정의는 남고 26.9 매니저는 값을 `null`로 받는다. `PermissionFilter.scopeType`은 `RBACElementTypeFilter`(`equals: RBACElementType`)라 26.9 매니저는 소문자 값을 variable 검증에서 거부한다.
 - **Permission input shape**: `RoleScopePermissionEditModal`은 flag가 켜져 있으면 `CreatePermissionInput`을 `{ roleId, entityType, permission }`으로, 꺼져 있으면 `{ roleId, scopeType, scopeId, entityType, operation }`으로 보낸다.
 - **Delegate columns**: `RoleScopePermissionEditModal`은 delegate(`GRANT_*`) column group을 flag가 아니라 `rbacPermissionMatrix`가 그 scope type에 `GRANT_*` `requiredPermission`을 답할 때만 그린다. 26.9 매니저는 `PermissionBit` 다섯 개만 답하므로 group 없이 다섯 column만 그린다.
+- **Assignment source**: `RoleAssignmentTab`은 assignment 행을 `Role.users`가 아니라 `adminRoleAssignments(filter: { roleId })`로 읽는다. `Role.users`는 26.9.0에서 `@deprecated`이고, 그 대체인 `Role.usersV2`는 표가 보여 주는 `grantedAt`·`grantedBy`를 답하지 않는다. `AssignRoleModalBulkAssignMutation`은 `failed`에 `@deprecatedSince(version: "26.9.0")`를 단다. 26.9 매니저는 거부된 사용자가 있으면 mutation 전체를 거부하므로, `AssignRoleModal`은 그 오류를 선택한 사용자 전부의 실패로 표에 적는다.
 
 ### 5. 26.8 지원을 끝낼 때 함께 지운다
 
@@ -141,7 +142,7 @@ flowchart LR
 
 ## 출처
 
-- Jira: FR-3905 (Epic FR-3906). 호환 정책은 FR-3962에서 정했다. role 목록·drawer fragment의 gate는 FR-3955, role form의 단일 scope 입력은 FR-3956, 권한 tab의 gate는 FR-3957이다. 후속은 FR-3958 할당 탭, FR-3959 Legacy 탭이다.
+- Jira: FR-3905 (Epic FR-3906). 호환 정책은 FR-3962에서 정했다. role 목록·drawer fragment의 gate는 FR-3955, role form의 단일 scope 입력은 FR-3956, 권한 tab의 gate는 FR-3957, 할당 tab의 source 전환은 FR-3958이다. 후속은 FR-3959 Legacy 탭이다.
 - backend.ai: BA-7796 (#14478) scope-entity association table 제거, BA-7885 (#14628) role, permission, assignment를 scope로 읽기, BA-7919 (#14669) `Role.scopes`를 deprecated로 복구, BA-7924 (#14678) `myScopePermissions`·`myAtomicBulkScopePermissions`와 `RoleFilter.permission`.
 - schema: `data/schema.graphql`은 backend.ai 26.9.0 supergraph의 복사본이다. 비교 기준인 26.8.3은 backend.ai 태그 `26.8.3`의 supergraph다.
 - 결정일: 2026-09-17.
