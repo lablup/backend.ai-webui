@@ -206,9 +206,10 @@ test.describe(
 
       // First access: the `type != "PERSONAL"` chip is pre-applied
       // (`DEFAULT_PROJECT_FILTER` in `ProjectPage.tsx`), so no PERSONAL row
-      // is listed. Token remove buttons are named `Remove <Field>: <operator>`.
+      // is listed. Token remove buttons are named `Remove <Field>: <operator>`;
+      // `!=` renders as "is not" (`comp:BAIPropertyFilter.operator.NotEquals`).
       const typeChip = page.getByRole('button', {
-        name: 'Remove Type: not equals',
+        name: 'Remove Type: is not',
       });
       await expect(typeChip).toBeVisible({ timeout: 30000 });
       await expect(
