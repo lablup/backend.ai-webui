@@ -21,7 +21,16 @@
  specificity boost that no selector can beat within that layer, but any
  unlayered rule beats every named layer, so a single class is enough and no
  `!important` is needed.
+
+ No outline: `BADGE_TINTED` rings every Badge variant with an inset
+ `box-shadow` (neutral → `--color-border-gray`). A tab count is a plain pill,
+ and on the accent fill of the selected state the grey ring reads as a stray
+ border, so it is dropped for both states.
 */
+.bai-tab-count-badge {
+  box-shadow: none;
+}
+
 .bai-tab-count-badge--selected {
   background-color: var(--color-accent);
   color: var(--color-on-accent);
