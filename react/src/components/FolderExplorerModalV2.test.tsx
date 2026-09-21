@@ -214,6 +214,7 @@ vi.mock('./VFolderNodeDescriptionV2', async () => {
 });
 
 const VFOLDER_UUID = '11111111-2222-3333-4444-555555555555';
+const OTHER_VFOLDER_UUID = '66666666-7777-8888-9999-000000000000';
 
 const renderModal = ({
   ownershipProjectId,
@@ -262,7 +263,9 @@ const renderModal = ({
       KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
     });
   const seenOperations: Array<{ name: string; variables: any }> = [];
-  for (let i = 0; i < 12; i++) {
+  // Enough for several explorer sessions (folder + permission + audit-log
+  // queries each); an exhausted queue surfaces as an unrelated `findBy*` timeout.
+  for (let i = 0; i < 24; i++) {
     environment.mock.queueOperationResolver((operation: any) => {
       seenOperations.push({
         name: operation.request.node.params.name,
@@ -274,24 +277,31 @@ const renderModal = ({
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  render(
+  // The explorer is globally mounted and only toggles `open` / `vfolderID`
+  // (`FolderExplorerOpener`), so a "session" is a rerender, never a remount.
+  const tree = (session: { open: boolean; vfolderID: string }) => (
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <>
             <Suspense fallback={null}>
               <FolderExplorerModalV2
-                vfolderID={VFOLDER_UUID.replaceAll('-', '')}
-                open
+                vfolderID={session.vfolderID.replaceAll('-', '')}
+                open={session.open}
                 onRequestClose={vi.fn()}
               />
             </Suspense>
           </>
         </MemoryRouter>
       </QueryClientProvider>
-    </RelayEnvironmentProvider>,
+    </RelayEnvironmentProvider>
   );
-  return { seenOperations };
+  const { rerender } = render(tree({ open: true, vfolderID: VFOLDER_UUID }));
+  return {
+    seenOperations,
+    rerenderSession: (session: { open: boolean; vfolderID: string }) =>
+      rerender(tree(session)),
+  };
 };
 
 const findPermissionOperation = (
@@ -497,5 +507,44 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
       expect(props.enableUpload).toBe(true);
       expect(props.enableWrite).toBe(true);
     });
+  });
+});
+
+describe('FolderExplorerModalV2 side-panel session state (FR-4005)', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+  });
+
+  // `BAITabList` leaves `role` unset, so Astryx renders its navigation
+  // pattern: a tab is a button with `aria-current`, not `role="tab"`.
+  const auditLogTab = () =>
+    screen.getByRole('button', { name: 'auditLog.AuditLog' });
+
+  it('reopening the explorer on another folder starts the side panel on the metadata tab', async () => {
+    const { rerenderSession } = renderModal({ ownershipProjectId: null });
+
+    await screen.findByTestId('mock-file-explorer');
+    expect(
+      await screen.findByTestId('mock-vfolder-description'),
+    ).toBeInTheDocument();
+
+    fireEvent.click(auditLogTab());
+    await waitFor(() => {
+      expect(auditLogTab()).toHaveAttribute('aria-current', 'true');
+    });
+    expect(
+      screen.queryByTestId('mock-vfolder-description'),
+    ).not.toBeInTheDocument();
+
+    // Close the explorer (the opener drops `?folder=`, so `vfolderID` empties
+    // with `open`), then open a different folder.
+    rerenderSession({ open: false, vfolderID: '' });
+    rerenderSession({ open: true, vfolderID: OTHER_VFOLDER_UUID });
+
+    expect(
+      await screen.findByTestId('mock-vfolder-description'),
+    ).toBeInTheDocument();
+    expect(auditLogTab()).not.toHaveAttribute('aria-current');
   });
 });

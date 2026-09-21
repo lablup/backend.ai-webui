@@ -57,7 +57,9 @@ import {
 import * as _ from 'lodash-es';
 import {
   type ComponentProps,
+  createContext,
   Suspense,
+  useContext,
   useDeferredValue,
   useEffect,
   useRef,
@@ -116,6 +118,137 @@ interface FolderExplorerProps extends Omit<
   /** Accepted and ignored — the Astryx modal always unmounts when closed. */
   destroyOnHidden?: boolean;
 }
+
+/** The rendered side panel, published by `VFolderInfoPanelSession`. */
+const VFolderInfoPanelContext = createContext<React.ReactNode>(null);
+
+/** Renders the panel wherever the live layout branch puts it. */
+const VFolderInfoPanel: React.FC = () => (
+  <>{useContext(VFolderInfoPanelContext)}</>
+);
+
+/**
+ * Owns the side panel's tab and audit-log query for ONE explorer session: it
+ * sits inside the modal body, which `BAIModal` drops while closed (FR-4005),
+ * and above the `xl` layout fork, which a resize swaps out.
+ */
+const VFolderInfoPanelSession: React.FC<{
+  vfolderNodeFrgmt: ComponentProps<
+    typeof VFolderNodeDescriptionV2
+  >['vfolderNodeFrgmt'];
+  vfolderUuid: string;
+  type: 'card' | 'line';
+  children: React.ReactNode;
+}> = ({ vfolderNodeFrgmt, vfolderUuid, type, children }) => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
+    'metadata',
+  );
+  const [auditLogQueryRef, loadAuditLogQuery] =
+    useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
+
+  const { baiPaginationOption, setTablePaginationOption } =
+    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+  const reloadAuditLogQuery: ComponentProps<
+    typeof ScopedAuditLog
+  >['onReload'] = (variables, options) => {
+    const limit = variables.limit ?? 10;
+    setTablePaginationOption({
+      pageSize: limit,
+      current: variables.offset ? Math.floor(variables.offset / limit) + 1 : 1,
+    });
+    loadAuditLogQuery(variables, options);
+  };
+
+  const loadAuditLog = () => {
+    loadAuditLogQuery(
+      {
+        scope: {
+          entity: [
+            {
+              // 26.9.0 names the entity by the manager's own `EntityType`;
+              // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
+              entityType: baiClient.supports('audit-log-entity-type-name')
+                ? 'vfolder'
+                : 'VFOLDER',
+              entityId: vfolderUuid,
+            },
+          ],
+        },
+        orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
+        limit: baiPaginationOption.limit,
+        offset: baiPaginationOption.offset,
+      },
+      { fetchPolicy: 'store-and-network' },
+    );
+  };
+
+  // antd's `Tabs` reserved `token.margin` (16px) under the tab bar
+  // (`.ant-tabs-nav { margin: 0 0 16px }`) and this call site added
+  // `styles.content.paddingBottom = token.paddingContentVertical` (12px).
+  // `BAITabs` renders the active panel bare, so both gutters have to be
+  // restored around the panel content — scoped here rather than in the shared
+  // wrapper, whose other five call sites were signed off flush.
+  const panelStyle: React.CSSProperties = {
+    paddingBlockStart: 'var(--spacing-4)',
+    paddingBlockEnd: 'var(--spacing-3)',
+  };
+
+  const panel = (
+    <BAITabs
+      type={type}
+      activeKey={activeTab}
+      onChange={(key: string) => {
+        if (key === 'auditLog' && auditLogQueryRef == null) {
+          loadAuditLog();
+        }
+        setActiveTab(key as typeof activeTab);
+      }}
+      items={[
+        {
+          key: 'metadata',
+          label: t('explorer.Metadata'),
+          children: (
+            <div style={panelStyle}>
+              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNodeFrgmt} />
+            </div>
+          ),
+        },
+        {
+          key: 'auditLog',
+          label: t('auditLog.AuditLog'),
+          children: (
+            <div style={panelStyle}>
+              <BAIErrorBoundary>
+                {auditLogQueryRef ? (
+                  <Suspense fallback={<BAISkeleton rows={4} />}>
+                    <ScopedAuditLog
+                      queryRef={auditLogQueryRef}
+                      onReload={reloadAuditLogQuery}
+                      tableSettings={{}}
+                    />
+                  </Suspense>
+                ) : (
+                  <BAISkeleton rows={4} />
+                )}
+              </BAIErrorBoundary>
+            </div>
+          ),
+        },
+      ]}
+    />
+  );
+
+  return (
+    <VFolderInfoPanelContext.Provider value={panel}>
+      {children}
+    </VFolderInfoPanelContext.Provider>
+  );
+};
 
 const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   vfolderID,
@@ -257,51 +390,6 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     currentPath: string;
   } | null>(null);
 
-  const [activeTab, setActiveTab] = useState<'metadata' | 'auditLog'>(
-    'metadata',
-  );
-  const [auditLogQueryRef, loadAuditLogQuery] =
-    useQueryLoader<ScopedAuditLogQueryType>(ScopedAuditLogQuery);
-
-  const { baiPaginationOption, setTablePaginationOption } =
-    useBAIPaginationOptionState({ current: 1, pageSize: 10 });
-  const reloadAuditLogQuery: ComponentProps<
-    typeof ScopedAuditLog
-  >['onReload'] = (variables, options) => {
-    const limit = variables.limit ?? 10;
-    setTablePaginationOption({
-      pageSize: limit,
-      current: variables.offset ? Math.floor(variables.offset / limit) + 1 : 1,
-    });
-    loadAuditLogQuery(variables, options);
-  };
-
-  const loadAuditLog = () => {
-    if (!vfolderNode?.id) {
-      return;
-    }
-    loadAuditLogQuery(
-      {
-        scope: {
-          entity: [
-            {
-              // 26.9.0 names the entity by the manager's own `EntityType`;
-              // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
-              entityType: baiClient.supports('audit-log-entity-type-name')
-                ? 'vfolder'
-                : 'VFOLDER',
-              entityId: vfolderUuid,
-            },
-          ],
-        },
-        orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
-        limit: baiPaginationOption.limit,
-        offset: baiPaginationOption.offset,
-      },
-      { fetchPolicy: 'store-and-network' },
-    );
-  };
-
   const { uploadStatus, uploadFiles } = useFileUploadManager(
     vfolderNode?.id,
     vfolderNode?.metadata?.name || undefined,
@@ -426,66 +514,6 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     />
   ) : null;
 
-  // antd's `Tabs` reserved `token.margin` (16px) under the tab bar
-  // (`.ant-tabs-nav { margin: 0 0 16px }`) and this call site added
-  // `styles.content.paddingBottom = token.paddingContentVertical` (12px).
-  // `BAITabs` renders the active panel bare, so both gutters have to be
-  // restored around the panel content — scoped here rather than in the shared
-  // wrapper, whose other five call sites were signed off flush.
-  const infoPanelPanelStyle: React.CSSProperties = {
-    paddingBlockStart: 'var(--spacing-4)',
-    paddingBlockEnd: 'var(--spacing-3)',
-  };
-
-  const vFolderInfoPanelElement = vfolderNode ? (
-    <BAITabs
-      // Restored (QA2-A): the legacy `type={xl ? 'card' : 'line'}` split. The
-      // wide layout puts this panel beside the file list, where the boxed tabs
-      // read as a panel header; the narrow layout stacks it, where the
-      // underlined strip is lighter.
-      type={xl ? 'card' : 'line'}
-      activeKey={activeTab}
-      onChange={(key: string) => {
-        if (key === 'auditLog' && auditLogQueryRef == null) {
-          loadAuditLog();
-        }
-        setActiveTab(key as typeof activeTab);
-      }}
-      items={[
-        {
-          key: 'metadata',
-          label: t('explorer.Metadata'),
-          children: (
-            <div style={infoPanelPanelStyle}>
-              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
-            </div>
-          ),
-        },
-        {
-          key: 'auditLog',
-          label: t('auditLog.AuditLog'),
-          children: (
-            <div style={infoPanelPanelStyle}>
-              <BAIErrorBoundary>
-                {auditLogQueryRef ? (
-                  <Suspense fallback={<BAISkeleton rows={4} />}>
-                    <ScopedAuditLog
-                      queryRef={auditLogQueryRef}
-                      onReload={reloadAuditLogQuery}
-                      tableSettings={{}}
-                    />
-                  </Suspense>
-                ) : (
-                  <BAISkeleton rows={4} />
-                )}
-              </BAIErrorBoundary>
-            </div>
-          ),
-        },
-      ]}
-    />
-  ) : null;
-
   return (
     <BAIModal
       width={'min(90%, 1900px)'}
@@ -584,83 +612,96 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             ) : null}
 
             {vfolderNode && !hasNoPermissions ? (
-              xl ? (
-                // antd `Splitter` owned containment — panel sizes always summed
-                // to the container and each panel clipped. `useResizable` only
-                // yields a number, so the panes carry it themselves (FR-3590).
-                // `gap` applies on BOTH sides of the handle, so half the legacy
-                // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
-                <div
-                  ref={observeSplitRow}
-                  style={{
-                    display: 'flex',
-                    flex: 1,
-                    minWidth: 0,
-                    gap: 'var(--spacing-2)',
-                  }}
-                >
+              // A different folder is a different session, even when the
+              // explorer never closed in between (`?folder=` can change under
+              // an open explorer).
+              <VFolderInfoPanelSession
+                key={vfolderUuid}
+                vfolderNodeFrgmt={vfolderNode}
+                vfolderUuid={vfolderUuid}
+                // The wide layout puts the panel beside the file list, where
+                // the boxed tabs read as a panel header; the narrow layout
+                // stacks it, where the underlined strip is lighter.
+                type={xl ? 'card' : 'line'}
+              >
+                {xl ? (
+                  // antd `Splitter` owned containment — panel sizes always summed
+                  // to the container and each panel clipped. `useResizable` only
+                  // yields a number, so the panes carry it themselves (FR-3590).
+                  // `gap` applies on BOTH sides of the handle, so half the legacy
+                  // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
                   <div
+                    ref={observeSplitRow}
                     style={{
+                      display: 'flex',
                       flex: 1,
-                      minWidth: EXPLORER_MIN_WIDTH,
-                      overflow: 'hidden',
+                      minWidth: 0,
+                      gap: 'var(--spacing-2)',
                     }}
                   >
-                    {fileExplorerElement}
-                  </div>
-                  {/* The handle's own `height: 100%` resolves to `auto` here —
+                    <div
+                      style={{
+                        flex: 1,
+                        minWidth: EXPLORER_MIN_WIDTH,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {fileExplorerElement}
+                    </div>
+                    {/* The handle's own `height: 100%` resolves to `auto` here —
                       this row is sized by `min-height` only, which makes the
                       percentage indefinite, collapsing the handle (divider +
                       pill) to ~30px pinned at the top, over the tab strip. A
                       stretched flex wrapper gives it a definite height. */}
-                  <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                    <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                      <ResizeHandle
+                        direction="horizontal"
+                        isReversed
+                        hasDivider
+                        // `center` also routes the grab zone away from
+                        // `hitAreaOffsetX`, whose block-axis `-50%` shifts a
+                        // `top/bottom: 0` box off the divider (FR-3591).
+                        pillPlacement="center"
+                        label={t('explorer.Metadata')}
+                        resizable={infoPanel.props}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        width: infoPanel.size,
+                        flexShrink: 1,
+                        minWidth: 0,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <VFolderInfoPanel />
+                    </div>
+                  </div>
+                ) : (
+                  <VStack align="stretch" gap={6}>
+                    {fileExplorerElement}
                     <ResizeHandle
-                      direction="horizontal"
+                      direction="vertical"
                       isReversed
                       hasDivider
-                      // `center` also routes the grab zone away from
-                      // `hitAreaOffsetX`, whose block-axis `-50%` shifts a
-                      // `top/bottom: 0` box off the divider (FR-3591).
+                      // `center` routes the grab zone away from `hitAreaOffsetY`,
+                      // the inline-axis mirror of the FR-3591 offset bug.
                       pillPlacement="center"
                       label={t('explorer.Metadata')}
-                      resizable={infoPanel.props}
+                      resizable={stackedInfoPanel.props}
                     />
-                  </div>
-                  <div
-                    style={{
-                      width: infoPanel.size,
-                      flexShrink: 1,
-                      minWidth: 0,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {vFolderInfoPanelElement}
-                  </div>
-                </div>
-              ) : (
-                <VStack align="stretch" gap={6}>
-                  {fileExplorerElement}
-                  <ResizeHandle
-                    direction="vertical"
-                    isReversed
-                    hasDivider
-                    // `center` routes the grab zone away from `hitAreaOffsetY`,
-                    // the inline-axis mirror of the FR-3591 offset bug.
-                    pillPlacement="center"
-                    label={t('explorer.Metadata')}
-                    resizable={stackedInfoPanel.props}
-                  />
-                  <div
-                    style={{
-                      height: stackedInfoPanel.size,
-                      flexShrink: 0,
-                      overflow: 'auto',
-                    }}
-                  >
-                    {vFolderInfoPanelElement}
-                  </div>
-                </VStack>
-              )
+                    <div
+                      style={{
+                        height: stackedInfoPanel.size,
+                        flexShrink: 0,
+                        overflow: 'auto',
+                      }}
+                    >
+                      <VFolderInfoPanel />
+                    </div>
+                  </VStack>
+                )}
+              </VFolderInfoPanelSession>
             ) : null}
           </VStack>
         )}
