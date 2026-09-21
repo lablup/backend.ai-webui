@@ -38,8 +38,6 @@ The table displays the following columns:
 - **Created At**: The date and time when the role was created.
 - **Updated At**: The date and time when the role was last modified.
 
-A role is bound to exactly one scope. When you are connected to a manager older than 26.9 — where a role could hold several scopes — the **Scope Type** and **Scope ID** columns show the first scope with a `+N` indicator for the remaining ones.
-
 ### System vs custom roles
 
 Roles are categorized into two source types:
