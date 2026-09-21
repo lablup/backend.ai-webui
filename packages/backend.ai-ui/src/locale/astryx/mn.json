@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Хажуугийн самбарыг дэлгэх",
   "@astryx.sideNavItem.collapse": "{label}-г хураах",
   "@astryx.sideNavItem.expand": "{label}-г дэлгэх",
+  "@astryx.spinner.loading": "Ачаалж байна",
   "@astryx.step.goToStep": "{stepNumber, number}-р алхам руу очих: {label}",
   "@astryx.step.goToStepWithStatus": "{stepNumber, number}-р алхам руу очих: {label}, {status}",
   "@astryx.step.status.completed": "дууссан",

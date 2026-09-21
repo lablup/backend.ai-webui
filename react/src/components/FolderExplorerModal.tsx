@@ -90,7 +90,7 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
   // the description panel keeps its 500px default and stays drag-resizable.
   const infoPanel = useResizable({
     defaultSize: 500,
-    minSizePx: 320,
+    minSize: 320,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);

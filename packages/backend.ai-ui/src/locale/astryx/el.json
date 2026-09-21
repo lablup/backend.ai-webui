@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Ανάπτυξη πλευρικής στήλης",
   "@astryx.sideNavItem.collapse": "Σύμπτυξη {label}",
   "@astryx.sideNavItem.expand": "Ανάπτυξη {label}",
+  "@astryx.spinner.loading": "Φόρτωση",
   "@astryx.step.goToStep": "Μετάβαση στο βήμα {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Μετάβαση στο βήμα {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "ολοκληρώθηκε",

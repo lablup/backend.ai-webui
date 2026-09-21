@@ -316,7 +316,7 @@ check_astryx_integration() {
   # Astryx CLI discovery skips a `{Name}.doc.ts` that fails the schema with only
   # a stderr warning, silently dropping that BAI* component from the catalog.
   # This re-validates every contribution (errors fail, warnings pass).
-  bin react astryx validate-integration backend.ai-ui
+  bin react astryx doctor integration validate backend.ai-ui
 }
 
 check_agent_mappings() {

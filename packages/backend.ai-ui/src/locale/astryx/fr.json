@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Développer la barre latérale",
   "@astryx.sideNavItem.collapse": "Réduire {label}",
   "@astryx.sideNavItem.expand": "Développer {label}",
+  "@astryx.spinner.loading": "Chargement",
   "@astryx.step.goToStep": "Aller à l’étape {stepNumber, number} : {label}",
   "@astryx.step.goToStepWithStatus": "Aller à l’étape {stepNumber, number} : {label}, {status}",
   "@astryx.step.status.completed": "terminé",

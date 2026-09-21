@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "ขยายแถบด้านข้าง",
   "@astryx.sideNavItem.collapse": "ยุบ {label}",
   "@astryx.sideNavItem.expand": "ขยาย {label}",
+  "@astryx.spinner.loading": "กำลังโหลด",
   "@astryx.step.goToStep": "ไปยังขั้นตอนที่ {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "ไปยังขั้นตอนที่ {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "เสร็จสิ้น",

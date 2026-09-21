@@ -164,8 +164,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
   const infoPanel = useResizable({
     defaultSize: '45%',
-    minSizePx: 550,
-    maxSizePx:
+    minSize: 550,
+    maxSize:
       splitRowWidth > 0
         ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
         : undefined,
@@ -177,7 +177,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // axis here.
   const stackedInfoPanel = useResizable({
     defaultSize: STACKED_INFO_PANEL_DEFAULT_HEIGHT,
-    minSizePx: STACKED_INFO_PANEL_MIN_HEIGHT,
+    minSize: STACKED_INFO_PANEL_MIN_HEIGHT,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);

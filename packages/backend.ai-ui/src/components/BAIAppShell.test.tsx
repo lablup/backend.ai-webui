@@ -9,13 +9,14 @@ import { fileURLToPath } from 'node:url';
  * puts AppShell above its `md` breakpoint — the inline-rail layout. The drawer
  * is only mounted BELOW the breakpoint (and only when a `sideNav` exists, which
  * is what turns AppShell's mobile nav on), so the drawer cases install a mock
- * that matches the `(max-width: …)` query instead.
+ * that matches AppShell's `(width < …px)` query instead (an exclusive bound
+ * since Astryx 0.6.0; it was `(max-width: …)` before).
  */
 const setViewportIsMobile = (isMobile: boolean) => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({
-      matches: isMobile && query.includes('max-width'),
+      matches: isMobile && query.includes('width <'),
       media: query,
       onchange: null,
       addListener: vi.fn(),
