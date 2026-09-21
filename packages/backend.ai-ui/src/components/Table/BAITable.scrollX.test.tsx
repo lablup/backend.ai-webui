@@ -3,7 +3,11 @@
  value mapping, and the PER-COLUMN max-width release — a table-wide release
  would let auto layout push a resized column back to its content width.
 */
-import { dimLayerOf, renderScrollTable } from './BAITable.scrollTestFixtures';
+import {
+  dimLayerOf,
+  renderScrollTable,
+  rootOf,
+} from './BAITable.scrollTestFixtures';
 
 describe('BAITable scroll.x', () => {
   it.each([
@@ -44,6 +48,21 @@ describe('BAITable scroll.x', () => {
     expect(noteHeader.style.maxWidth).toBe('none');
     // Cancels the percentage width `resolveColumnWidths` still emits.
     expect(noteHeader.style.width).toBe('auto');
+  });
+
+  // FR-4007: the root is the flex item a caller lays out, and its size reset
+  // lives on this class. jsdom has no layout, so pin the hook, not the effect.
+  it('names the outer wrapper so the flex size reset can reach it', () => {
+    const { container } = renderScrollTable({ scroll: { x: 'max-content' } });
+    const root = rootOf(container);
+    expect(root).toBeInTheDocument();
+    expect(root).toContainElement(dimLayerOf(container));
+    expect(rootOf(renderScrollTable().container)).toBeInTheDocument();
+  });
+
+  it('keeps a caller className alongside the root class', () => {
+    const { container } = renderScrollTable({ className: 'my-table' });
+    expect(rootOf(container)).toHaveClass('my-table');
   });
 
   it('leaves every cell clipped when x mode is off', () => {

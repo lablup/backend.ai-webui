@@ -1264,7 +1264,12 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   );
 
   return (
-    <div className={className} style={style}>
+    // `bai-table-astryx-root` carries this div's flex-item size reset
+    // (BAITable.css).
+    <div
+      className={classNames('bai-table-astryx-root', className)}
+      style={style}
+    >
       {/* PILOT-DECISION: antd's loading overlay (dim + centred spinner over the
           existing rows) has no Astryx equivalent. Dimming preserves "old data
           stays readable while refetching"; the spinner is lost. The wrapper
