@@ -1892,6 +1892,7 @@
     "AgentId": "Agent ID",
     "ContainerId": "Container ID",
     "ContainerLogs": "Container Logs",
+    "FailedToLoadContainerLogs": "Failed to load container logs",
     "Hostname": "Hostname",
     "Kernel": "Kernel",
     "KernelId": "Kernel ID",

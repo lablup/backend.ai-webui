@@ -14,7 +14,14 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
-import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
+import {
+  BAIAlert,
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CheckIcon, CopyIcon, DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';
@@ -86,6 +93,9 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
     refetch,
     isPending,
     isRefetching,
+    isError,
+    isFetching,
+    error,
     dataUpdatedAt,
   } = useTanQuery<string>({
     queryKey: [
@@ -110,11 +120,22 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
     },
   });
 
+  // react-query drops `error` and returns the status to `pending` at the
+  // START of every fetch while the query has never held data (query-core
+  // `fetchState`), and this one only fails, so `isError` goes false on each
+  // auto-refresh. Hold the failure here so the alert stays put until a fetch
+  // actually resolves.
+  const [heldError, setHeldError] = useState<unknown>(null);
+  if (isError && heldError !== error) setHeldError(error);
+  else if (heldError && !isError && !isFetching) setHeldError(null);
+  const displayedError = isError ? error : heldError;
+
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
     useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
 
   const { md } = useBAIBreakpoint();
   const { t } = useTranslation();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   return (
     <BAIModal
@@ -182,6 +203,7 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
             onChange={(value) => {
               setSelectedKernelId(value);
               resetPreviousLineNumber();
+              setHeldError(null);
             }}
             autoSelectOption
             options={_.map(
@@ -233,9 +255,21 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
           />
         </BAIFlex>
 
+        {displayedError ? (
+          <BAIAlert
+            type="error"
+            style={{ alignSelf: 'stretch' }}
+            title={t('kernel.FailedToLoadContainerLogs')}
+            description={getErrorMessage(displayedError)}
+          />
+        ) : null}
+
         <div
           style={{
-            height: 'calc(100% - 50px)',
+            // Sized by what is left over rather than a fixed subtraction, so
+            // the error alert above can take the room it needs.
+            flex: 1,
+            minHeight: 0,
             alignSelf: 'stretch',
 
             border: `1px solid var(--color-border)`,

@@ -1908,6 +1908,7 @@
     "AgentId": "ID Agen",
     "ContainerId": "ID Kontainer",
     "ContainerLogs": "Log Kontainer",
+    "FailedToLoadContainerLogs": "Gagal memuat log kontainer",
     "Hostname": "Nama host",
     "Kernel": "Inti",
     "KernelId": "ID kernel",

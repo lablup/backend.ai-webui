@@ -1908,6 +1908,7 @@
     "AgentId": "代理ID",
     "ContainerId": "容器ID",
     "ContainerLogs": "容器日誌",
+    "FailedToLoadContainerLogs": "無法載入容器日誌",
     "Hostname": "主機名",
     "Kernel": "核心",
     "KernelId": "內核ID",

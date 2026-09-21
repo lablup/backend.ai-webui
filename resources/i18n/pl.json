@@ -1906,6 +1906,7 @@
     "AgentId": "Identyfikator agenta",
     "ContainerId": "Identyfikator kontenera",
     "ContainerLogs": "Dzienniki kontenera",
+    "FailedToLoadContainerLogs": "Nie udało się załadować dzienników kontenera",
     "Hostname": "Nazwa hosta",
     "Kernel": "Jądro",
     "KernelId": "ID jądra",

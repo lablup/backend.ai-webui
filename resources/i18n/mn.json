@@ -1906,6 +1906,7 @@
     "AgentId": "Хийнний ID",
     "ContainerId": "Контейнер ID",
     "ContainerLogs": "Савны бүртгэл",
+    "FailedToLoadContainerLogs": "Савны бүртгэлийг ачаалж чадсангүй",
     "Hostname": "Хотийнгуу нэр",
     "Kernel": "Цөм",
     "KernelId": "Цөмийн ID",

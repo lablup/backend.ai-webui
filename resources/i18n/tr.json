@@ -1905,6 +1905,7 @@
     "AgentId": "Ajan kimliği",
     "ContainerId": "Konteyner kimliği",
     "ContainerLogs": "Konteyner Günlükleri",
+    "FailedToLoadContainerLogs": "Konteyner günlükleri yüklenemedi",
     "Hostname": "Ana bilgisayar adı",
     "Kernel": "Çekirdek",
     "KernelId": "Çekirdek kimliği",

@@ -1907,6 +1907,7 @@
     "AgentId": "Agenten -ID",
     "ContainerId": "Container -ID",
     "ContainerLogs": "Containerprotokolle",
+    "FailedToLoadContainerLogs": "Containerprotokolle konnten nicht geladen werden",
     "Hostname": "Hostname",
     "Kernel": "Kernel",
     "KernelId": "Kernel ID",

@@ -1907,6 +1907,7 @@
     "AgentId": "에이전트 ID",
     "ContainerId": "컨테이너 ID",
     "ContainerLogs": "컨테이너 로그",
+    "FailedToLoadContainerLogs": "컨테이너 로그를 불러오지 못했습니다",
     "Hostname": "호스트명",
     "Kernel": "커널",
     "KernelId": "커널 ID",

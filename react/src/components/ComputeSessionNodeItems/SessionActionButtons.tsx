@@ -301,6 +301,7 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
         isVisible('logs') && (
           <IconButton
             key="logs"
+            data-testid="session-container-logs-button"
             size={astryxSize}
             icon={<BAISessionLogIcon />}
             label={t('session.SeeContainerLogs')}
