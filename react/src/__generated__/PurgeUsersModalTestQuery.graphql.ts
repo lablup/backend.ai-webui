@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3a8f2fe54f06e75726babb51ed1ee1d5>>
+ * @generated SignedSource<<d41ec8138a161ecb1de70253f91995b7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type PurgeUsersModalTestQuery$data = {
   readonly adminUsersV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly id: string;
         readonly " $fragmentSpreads": FragmentRefs<"PurgeUsersModalFragment">;
       };
     }>;
@@ -32,7 +33,14 @@ var v0 = [
     "name": "limit",
     "value": 1
   }
-];
+],
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [],
@@ -64,6 +72,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v1/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -112,13 +121,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
-                    "storageKey": null
-                  },
+                  (v1/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -149,16 +152,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "bc008a0cfca5f1fc14ea9e726aaa6e70",
+    "cacheID": "6e12fc26691999414e3851bc836a6c15",
     "id": null,
     "metadata": {},
     "name": "PurgeUsersModalTestQuery",
     "operationKind": "query",
-    "text": "query PurgeUsersModalTestQuery {\n  adminUsersV2(limit: 1) {\n    edges {\n      node {\n        ...PurgeUsersModalFragment\n        id\n      }\n    }\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n"
+    "text": "query PurgeUsersModalTestQuery {\n  adminUsersV2(limit: 1) {\n    edges {\n      node {\n        id\n        ...PurgeUsersModalFragment\n      }\n    }\n  }\n}\n\nfragment PurgeUsersModalFragment on UserV2 {\n  id\n  basicInfo {\n    email\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d177d79b45b0f4ac908d534a8a3339ac";
+(node as any).hash = "75efe01a03cf471fc918e89426a4c1ec";
 
 export default node;
