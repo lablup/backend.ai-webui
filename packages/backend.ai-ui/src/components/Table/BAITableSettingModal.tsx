@@ -23,7 +23,6 @@
  sortable-list primitive.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIDialog from '../BAIDialog';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
@@ -32,6 +31,7 @@ import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { useTheme } from '@astryxdesign/core/theme';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
@@ -81,7 +81,7 @@ const SortableRow: React.FC<{
     transition,
     isDragging,
   } = useSortable({ id, disabled: isDragDisabled });
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <div
@@ -92,8 +92,8 @@ const SortableRow: React.FC<{
         opacity: isDragging ? 0.6 : 1,
         display: 'flex',
         alignItems: 'center',
-        gap: token.marginXS,
-        paddingBlock: token.paddingXXS,
+        gap: token('--spacing-2'),
+        paddingBlock: token('--spacing-1'),
       }}
     >
       {isDragDisabled ? (
@@ -105,7 +105,7 @@ const SortableRow: React.FC<{
           style={{
             cursor: 'grab',
             display: 'inline-flex',
-            color: token.colorTextTertiary,
+            color: token('--color-text-tertiary'),
           }}
           aria-hidden
         >
@@ -126,7 +126,7 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // Working set, seeded once per mount. `BAIUnmountAfterClose` guarantees a
   // fresh mount per open, so no reset effect is needed.
@@ -273,7 +273,10 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
         }
         style={{ minWidth: 0 }}
       />
-      <span style={{ display: 'none' }} data-token={token.colorText} />
+      <span
+        style={{ display: 'none' }}
+        data-token={token('--color-text-primary')}
+      />
     </BAIDialog>
   );
 };

@@ -13,7 +13,6 @@ import ModelCardDrawer from '../components/ModelCardDrawer';
 import TextHighlighter from '../components/TextHighlighter';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
-import { theme } from '../theme-shim';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Card } from '@astryxdesign/core/Card';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
@@ -21,6 +20,7 @@ import { Grid } from '@astryxdesign/core/Grid';
 import { Pagination } from '@astryxdesign/core/Pagination';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFetchKeyButton,
   BAIFlex,
@@ -100,7 +100,7 @@ const ModelCardV2Card: React.FC<{
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const modelCard = useFragment(
     graphql`
@@ -152,7 +152,10 @@ const ModelCardV2Card: React.FC<{
               <Token label={modelCard.metadata.task} />
             )}
             {(modelCard.updatedAt || modelCard.createdAt) && (
-              <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+              <Text
+                color="secondary"
+                style={{ fontSize: token('--font-size-sm') }}
+              >
                 {t('modelStore.RelativeTime', {
                   time: dayjs(
                     modelCard.updatedAt ?? modelCard.createdAt,
@@ -165,7 +168,7 @@ const ModelCardV2Card: React.FC<{
             <Text
               color="secondary"
               style={{
-                fontSize: token.fontSizeSM,
+                fontSize: token('--font-size-sm'),
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 4,
@@ -173,7 +176,7 @@ const ModelCardV2Card: React.FC<{
             >
               <AuthorIcon
                 author={modelCard.metadata.author}
-                size={token.fontSizeSM}
+                size={token('--font-size-sm')}
               />
               {modelCard.metadata.author}
             </Text>

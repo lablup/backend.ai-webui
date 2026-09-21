@@ -9,8 +9,8 @@ import {
   PERMISSION_DISPLAY_MAP,
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
-import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAINameActionCell,
   BAITable,
@@ -61,7 +61,7 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const storageVolume = useFragment(
     graphql`
       fragment KeypairResourcePolicyStoragePermissionTable_storageVolumeFrgmt on StorageVolume {
@@ -257,12 +257,12 @@ const KeypairResourcePolicyStoragePermissionTable: React.FC<
                 );
                 return enabled.has(permKey) ? (
                   <CircleCheck
-                    style={{ color: token.colorSuccess }}
+                    style={{ color: token('--color-success') }}
                     size="1em"
                   />
                 ) : (
                   <CircleX
-                    style={{ color: token.colorTextDisabled }}
+                    style={{ color: token('--color-text-disabled') }}
                     size="1em"
                   />
                 );

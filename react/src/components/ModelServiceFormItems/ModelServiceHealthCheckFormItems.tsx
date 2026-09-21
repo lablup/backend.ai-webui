@@ -4,12 +4,12 @@
  */
 import { Form } from '../../form-engine';
 import type { FormInstance } from '../../form-engine';
-import { theme } from '../../theme-shim';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from '../astryxFormControls';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,14 +42,14 @@ const ModelServiceHealthCheckFormItems: React.FC<
 > = ({ namePrefix, placeholders }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   return (
     <>
       <Form.Item
         name={[...namePrefix, 'enableHealthCheck']}
         valuePropName="checked"
-        style={{ marginTop: token.marginXS, marginBottom: 0 }}
+        style={{ marginTop: token('--spacing-2'), marginBottom: 0 }}
       >
         <AstryxFormCheckbox label={t('modelService.EnableHealthCheck')} />
       </Form.Item>

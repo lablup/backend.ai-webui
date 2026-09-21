@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 /**
  * Vitest config for repo-root `/src` and `/scripts` tests (FR-2609).
  *
- * These are small Node-environment suites (pep440, dev-config, gen-theme-schema,
+ * These are small Node-environment suites (pep440, dev-config,
  * i18n-merge-driver) that previously ran under `ts-jest`. They do not need a
  * browser DOM, React, or Relay — so this config is deliberately minimal and
  * does not share the `@vitejs/plugin-react` transform pipeline used by
@@ -28,10 +28,8 @@ export default defineConfig({
     ],
 
     // V8 coverage instrumentation slows down tests significantly on CI's
-    // smaller boxes. `gen-theme-schema.test.ts > generates a valid JSON
-    // schema file` exercises the antd type tree several times per test
-    // and routinely takes 5–10s under coverage. Bump the per-test timeout
-    // so CI matches a normal local run without coverage.
+    // smaller boxes. Bump the per-test timeout so CI matches a normal local
+    // run without coverage.
     testTimeout: 30000,
 
     // Coverage settings — see comment in `react/vitest.config.ts`. Same

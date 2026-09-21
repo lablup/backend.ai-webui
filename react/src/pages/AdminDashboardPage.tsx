@@ -18,8 +18,8 @@ import {
   useCurrentProjectValue,
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   filterOutEmpty,
@@ -33,7 +33,7 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const AdminDashboardPage: React.FC = () => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
@@ -110,7 +110,7 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <SessionCountDashboardItem
@@ -152,7 +152,9 @@ const AdminDashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+                <BAISkeleton
+                  style={{ padding: `0px ${token('--spacing-5')}` }}
+                />
               }
             >
               <AgentStats
@@ -175,7 +177,7 @@ const AdminDashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <ActiveAgents

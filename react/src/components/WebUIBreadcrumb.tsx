@@ -2,10 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import AstryxRouterLink from './AstryxRouterLink';
 import { breadcrumbExtraAtom } from './breadcrumbExtraAtom';
 import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';
@@ -19,7 +19,7 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
   const matches = useMatches();
   // matches[0].handle.
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { t } = useTranslation();
   const breadcrumbMatches = _.filter(matches, (match) => {
@@ -41,9 +41,9 @@ const WebUIBreadcrumb: React.FC<WebUIBreadcrumbProps> = (props) => {
       style={_.merge(
         {
           height: 40,
-          paddingLeft: token.paddingContentHorizontalLG,
-          paddingRight: token.paddingContentHorizontalLG,
-          borderBottom: `1px solid ${token.colorBorder}`,
+          paddingLeft: token('--spacing-6'),
+          paddingRight: token('--spacing-6'),
+          borderBottom: `1px solid ${token('--color-border-emphasized')}`,
         } as React.CSSProperties,
         props.style,
       )}

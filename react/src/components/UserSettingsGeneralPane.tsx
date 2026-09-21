@@ -22,7 +22,6 @@ import MyKeypairManagementModal from './MyKeypairManagementModal';
 import SSHKeypairManagementModal from './SSHKeypairManagementModal';
 import SettingList, { SettingGroup } from './SettingList';
 import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
-import ThemeAccentColorPicker from './ThemeAccentColorPicker';
 import { Button } from '@astryxdesign/core/Button';
 import {
   filterOutEmpty,
@@ -47,12 +46,9 @@ const UserSettingsGeneralPane = () => {
     setActiveThemeFamily: setThemeFamily,
     themeFamilies: families,
   } = useCustomThemeConfig();
-  const [themeAccent, setThemeAccent] = useBAISettingUserState(
-    'custom_primary_color',
-  );
   // Branding preview mode shows the edited default theme as-is, so the theme
-  // (family) and primary color settings are hidden there (useCustomThemeConfig
-  // ignores them in that mode).
+  // (family) setting is hidden there (useCustomThemeConfig ignores it in that
+  // mode).
   const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
     defaultValue: false,
   });
@@ -162,10 +158,9 @@ const UserSettingsGeneralPane = () => {
             }
           },
         },
-        // Theme (family) / primary color customization is operator-gated
-        // (config.toml `allowThemeMode`). The family selector additionally
-        // needs more than the `default` family in the catalog (a theme.json
-        // without a `families` block yields a single-entry catalog).
+        // Theme family selection is operator-gated (config.toml
+        // `allowThemeMode`) and needs more than the `default` family in the
+        // catalog (a theme.json without a `families` block yields none).
         baiClient._config.allowThemeMode &&
         !isThemePreviewMode &&
         Object.keys(families).length > 1
@@ -193,19 +188,6 @@ const UserSettingsGeneralPane = () => {
               // Clear the stored selection instead of writing the default key
               // so resolution keeps following the `default` family.
               onReset: () => setThemeFamily(undefined),
-            }
-          : null,
-        baiClient._config.allowThemeMode && !isThemePreviewMode
-          ? {
-              'data-testid': 'items-theme-accent',
-              type: 'custom',
-              title: t('userSettings.ThemeAccentColor'),
-              description: t('userSettings.DescThemeAccentColor'),
-              // No defaultValue: unset means "follow the theme.json colors";
-              // reset clears the per-scheme overrides back to that state.
-              value: themeAccent,
-              onReset: () => setThemeAccent(undefined),
-              children: <ThemeAccentColorPicker />,
             }
           : null,
         {

@@ -9,7 +9,6 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { ProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -20,6 +19,7 @@ import {
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIButton,
@@ -102,7 +102,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [form] = Form.useForm<FormValues>();
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -307,7 +307,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 }
               : { openToPublic: false, replicaCount: 1, tags: [] }
           }
-          style={{ marginTop: token.marginXS }}
+          style={{ marginTop: token('--spacing-2') }}
         >
           <BAIFormItem
             name="name"

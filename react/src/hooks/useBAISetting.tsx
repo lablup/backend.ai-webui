@@ -7,7 +7,7 @@ import type { PersistedPanel } from '../components/DashboardPanels/types';
 import { jotaiStore } from '../components/DefaultProviders';
 import type { RecentSearchHit } from '../components/GlobalSearchPalette/types';
 import { backendaiOptions } from '../global-stores';
-import { CustomThemeConfig } from '../helper/customThemeConfig';
+import { BAIAppearanceConfig } from '../helper/customThemeConfig';
 import type { AgentEndpointBindings, AgentProfile } from './useAIAgent';
 import { BAITableColumnOverrideRecord } from 'backend.ai-ui';
 import { atom, useAtom } from 'jotai';
@@ -58,8 +58,7 @@ export interface UserSettings {
   [key: `fetchKeyAutoUpdateDelay.${string}`]: number | null;
 
   max_concurrent_uploads?: number;
-  custom_theme_config?: CustomThemeConfig;
-  custom_primary_color?: { light?: string; dark?: string };
+  custom_theme_config?: BAIAppearanceConfig;
   deploymentRevisionCreationMode?: 'preset' | 'custom';
   // Session resource grid: per-session group-color overrides, keyed by
   // session id, valued by palette index (FR-3570).

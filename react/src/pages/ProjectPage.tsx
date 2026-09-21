@@ -20,7 +20,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAICard,
@@ -78,7 +78,7 @@ const ProjectPage = () => {
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { getErrorMessage } = useErrorMessageResolver();
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
@@ -473,7 +473,9 @@ const ProjectPage = () => {
                     was a second, weaker channel for the same string. */}
                 <BAIButton
                   title={t('project.BulkEdit')}
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
                   onClick={toggleBulkEditModal}
                 />
               </>

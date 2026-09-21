@@ -7,14 +7,19 @@ import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
-import { useBAIBreakpoint } from '../../theme-shim';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { LazyLog, ScrollFollow } from '@melloware/react-logviewer';
-import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
+import {
+  BAIFlex,
+  BAIModal,
+  BAIModalProps,
+  BAISelect,
+  useBAIBreakpoint,
+} from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CheckIcon, CopyIcon, DownloadIcon } from 'lucide-react';
 import React, { useState } from 'react';

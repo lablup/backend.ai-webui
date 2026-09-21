@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import { AssistantChatMessage } from './AssistantChatMesssage';
 import ScrollBottomHandlerButton from './ScrollBottomHandlerButton';
 import { UserChatMessage } from './UserChatMesssage';
 import { UIMessage } from '@ai-sdk/react';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { useCallback, useRef, useState } from 'react';
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
@@ -29,7 +29,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
 }) => {
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const [atBottom, setAtBottom] = useState(true);
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // overscan should be 1.5 times the height of the window
   const overscan = typeof window !== 'undefined' ? window.innerHeight * 1.5 : 0;
@@ -75,7 +75,7 @@ const VirtualChatMessageList: React.FC<VirtualizedListProps> = ({
           position: 'absolute',
           right: '50%',
           transform: 'translateX(+50%)',
-          bottom: token.marginSM,
+          bottom: token('--spacing-3'),
           opacity: atBottom ? 0 : 1,
           transition: 'opacity 0.2s',
           transitionDelay: atBottom ? '0s' : '0.2s',

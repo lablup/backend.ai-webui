@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import React, { memo } from 'react';
 
@@ -22,7 +22,7 @@ export interface ChatMessageContainerProps extends BAIFlexProps {
 
 export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
   ({ children, placement = {}, avatar, onMouseEnter, onMouseLeave }) => {
-    const { token } = theme.useToken();
+    const { token } = useTheme();
 
     return (
       <BAIFlex
@@ -32,10 +32,10 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
         style={{
           marginLeft: placement.left ? 0 : '15%',
           marginRight: placement.right ? 0 : 20,
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          paddingTop: placement.top ? token.paddingMD : 0,
-          paddingBottom: placement.bottom ? token.paddingMD : 0,
+          paddingLeft: token('--spacing-5'),
+          paddingRight: token('--spacing-5'),
+          paddingTop: placement.top ? token('--spacing-5') : 0,
+          paddingBottom: placement.bottom ? token('--spacing-5') : 0,
         }}
         gap={'sm'}
         onMouseEnter={onMouseEnter}
@@ -51,12 +51,12 @@ export const ChatMessageContainer: React.FC<ChatMessageContainerProps> = memo(
           justify="center"
           align="center"
           style={{
-            width: token.controlHeight,
-            height: token.controlHeight,
+            width: token('--size-element-md'),
+            height: token('--size-element-md'),
             flexShrink: 0,
             borderRadius: '50%',
-            backgroundColor: token.colorFillTertiary,
-            fontSize: token.fontSizeHeading3,
+            backgroundColor: token('--color-fill-tertiary'),
+            fontSize: token('--font-size-2xl'),
             lineHeight: 1,
           }}
         >

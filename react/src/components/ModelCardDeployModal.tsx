@@ -9,10 +9,10 @@ import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
 import { Banner } from '@astryxdesign/core/Banner';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
@@ -70,7 +70,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
   // TODO(needs-backend): `availablePresets` here is the server-filtered list
@@ -294,7 +294,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
               }}
             />
           }
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         />
       )}
       <Form form={form} layout="vertical">
