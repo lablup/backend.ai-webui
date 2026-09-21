@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Deployments" />
   <meta name="twitter:description" content="Backend.AI lets you deploy AI models as inference services through the Deployments feature." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-09-14T07:13:23.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-09-21T05:54:27.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (5705d35)">v26.9.0-alpha.0 (5705d35)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (30fe22f)">v26.9.0-alpha.0 (30fe22f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -288,7 +288,7 @@
 <p data-bai-block="54">The subsections below describe revision-level fields in detail. They apply both when adding a revision manually in <strong>Advanced Mode</strong> and when you want to understand what each field controls.</p>
 <h4 data-bai-block="55" id="deployment-model-folder-mount">Model folder mount<a class="hash-link" href="#deployment-model-folder-mount" aria-label="Direct link to Model folder mount">#</a></h4>
 <p data-bai-block="56">Every revision mounts one model storage folder into each replica. The fields directly below the folder selector control where that folder appears inside the container.</p>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="390" /><figcaption>Figure 12.5</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>Figure 12.5</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="58"><strong>Model Folder</strong>: The model storage folder to mount on each replica.</li>
@@ -305,7 +305,7 @@
 </ul>
 </li>
 <li data-bai-block="66"><strong>Shell</strong>: The shell binary used to run the command (for example, <code>/bin/bash</code>). Shown only in <strong>Shell</strong> mode, where it is required. The binary must exist in the container image, or the service fails to start.</li>
-<li data-bai-block="67"><strong>Command</strong>: The command that launches the inference server, for example <code>python -m http.server 8000</code>. In <strong>Shell</strong> mode this is a multi-line box; in <strong>Exec</strong> mode the field is relabeled <strong>Command (argv)</strong> and becomes a single-line input.</li>
+<li data-bai-block="67"><strong>Command</strong>: The command that launches the inference server, for example <code>python -m http.server 8000</code>. In <strong>Shell</strong> mode this is a multi-line box; in <strong>Exec</strong> mode the field is relabeled <strong>Command (argv)</strong> and becomes a single-line input. To pass a JSON string as a single argument, wrap the whole JSON in single quotes and keep the double quotes inside as they are — for example, <code>--override-generation-config &#39;{&quot;temperature&quot;: 0.7}&#39;</code>.</li>
 <li data-bai-block="68"><strong>Port</strong>: The container port that the inference server listens on (2–65535).</li>
 </ul>
 <div class="admonition admonition-tip">
@@ -721,7 +721,7 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 <p data-bai-block="257">The <strong>Revisions</strong> card on the deployment detail page has three tabs: <strong>Current Revision</strong>, <strong>Revision History</strong>, and <strong>Audit Log</strong>. The <code>Add Revision</code> button at the top of the card is available from all tabs and opens the Add Revision modal (see <a href="#add-revision">Add Revision</a>).</p>
 <h4 data-bai-block="258" id="deployment-current-revision-tab">Current revision tab<a class="hash-link" href="#deployment-current-revision-tab" aria-label="Direct link to Current revision tab">#</a></h4>
 <p data-bai-block="259">The <strong>Current Revision</strong> tab shows the full configuration of the revision that is currently active and serving traffic.</p>
-<p><figure data-bai-block="260" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1414" /><figcaption>Figure 12.16</figcaption></figure>
+<p><figure data-bai-block="260" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1374" /><figcaption>Figure 12.16</figcaption></figure>
 </p>
 <p data-bai-block="261">The following fields are displayed:</p>
 <ul>
@@ -985,7 +985,7 @@ For instance, when using the service generated by Backend.AI, please refer to th
 <p><a id="model-store"></a></p>
 <h2 data-bai-block="403" id="deployment-model-store">Model Store<a class="hash-link" href="#deployment-model-store" aria-label="Direct link to Model Store">#</a></h2>
 <p data-bai-block="404">The Model Store provides a card-based gallery of pre-configured models that you can browse, search, and deploy. You can access the Model Store from the sidebar menu.</p>
-<p><figure data-bai-block="405" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>Figure 12.33</figcaption></figure>
+<p><figure data-bai-block="405" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 12.33</figcaption></figure>
 </p>
 <h3 data-bai-block="406" id="deployment-browsing-and-searching-models">Browsing and searching models<a class="hash-link" href="#deployment-browsing-and-searching-models" aria-label="Direct link to Browsing and searching models">#</a></h3>
 <p data-bai-block="407">The page uses a filter and sort layout at the top:</p>
@@ -1025,7 +1025,7 @@ For instance, when using the service generated by Backend.AI, please refer to th
 <li data-bai-block="426"><strong>Min Resource</strong>: The minimum resource requirements (CPU, memory, GPU)</li>
 </ul>
 <p data-bai-block="427">If the model card includes a README, it is rendered as a <code>README.md</code> card at the bottom of the drawer.</p>
-<p><figure data-bai-block="428" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>Figure 12.34</figcaption></figure>
+<p><figure data-bai-block="428" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>Figure 12.34</figcaption></figure>
 </p>
 <h3 data-bai-block="429" id="deployment-deploying-a-model">Deploying a model<a class="hash-link" href="#deployment-deploying-a-model" aria-label="Direct link to Deploying a model">#</a></h3>
 <p data-bai-block="430">Click the <strong>Deploy</strong> button in the drawer header to deploy the model as a service. The deploy flow behaves in one of two ways:</p>
@@ -1055,7 +1055,7 @@ For instance, when using the service generated by Backend.AI, please refer to th
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 14, 2026</span>
+  <span class="last-updated">Last updated on Sep 21, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

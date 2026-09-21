@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Mount Storage Folders" />
   <meta name="twitter:description" content="Backend.AI provides a function to mount storage folders when creating a compute session." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Mount Storage Folders","inLanguage":"en","description":"Backend.AI provides a function to mount storage folders when creating a compute session.","dateModified":"2026-09-14T07:13:23.000Z","url":"https://webui.docs.backend.ai/next/en/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Mount Storage Folders","inLanguage":"en","description":"Backend.AI provides a function to mount storage folders when creating a compute session.","dateModified":"2026-09-21T05:55:32.000Z","url":"https://webui.docs.backend.ai/next/en/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/mount_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/mount_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/mount_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (5705d35)">v26.9.0-alpha.0 (5705d35)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (30fe22f)">v26.9.0-alpha.0 (30fe22f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -217,11 +217,11 @@ This is because compute sessions are dynamically created and deleted based on th
 To preserve data inside a container regardless of the container&#39;s lifecycle, a separate host folder must be mounted in the container, and then files must be created within the mounted folder.</p>
 <p data-bai-block="2">Go to &#39;Sessions&#39; page and click the <code>Start</code> button.
 After filling out the &#39;Session Type&#39;, &#39;Environments &amp; Resource allocation&#39; steps,
-navigate to the &#39;Data &amp; Storage&#39; step to see a list of folders that users can mount.
-From this list, choose the folders to mount and add them, or select multiple folders to mount more.
+navigate to the &#39;Data &amp; Storage&#39; step and open the <strong>Select Folder</strong> dropdown to see the folders that users can mount.
+Choose one or more folders from this dropdown; each selected folder is added to the list of folders to mount.
 The documentation will explain how to mount two folders, <code>user1-ml-test</code> and <code>user2-vfolder</code>,
 and then create a session.</p>
-<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1969" height="1353" /><figcaption>Figure 16.1</figcaption></figure>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2032" height="824" /><figcaption>Figure 16.1</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="4" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -268,49 +268,58 @@ Or you can also open terminal app from the notification.
 
 <p data-bai-block="14">The selected folder will be mounted with its name under <code>/home/work/</code> inside the compute session, by its default.
 For example, if folder&#39;s name is <code>test</code>, it is mounted on <code>/home/work/test</code>.
-To customize the mount path, write an absolute path in the &#39;Path and Alias&#39; input fields.
-Writing <code>/workspace</code> in the input field of the <code>test</code> folder will mount to <code>/workspace</code> inside the session.
+To customize the mount path, write an absolute path in the <strong>Container path (destination)</strong> field on the folder&#39;s row.
+Writing <code>/workspace</code> in the field of the <code>test</code> folder will mount to <code>/workspace</code> inside the session.
 Writing a relative path will mount the folder under <code>/home/work/</code> with the path.</p>
 </div></div>
 
 
-<p data-bai-block="15">Backend.AI gives an option to preserve files in folders when a compute session is deleted.
+<div class="admonition admonition-note">
+<div data-bai-block="15" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div class="admonition-content">
+
+<p data-bai-block="16">To mount a subfolder instead of the whole folder, fill in the <strong>Path in folder (source)</strong> field on the folder&#39;s row.
+Click the field to browse the folder and pick a path; leaving it empty mounts the folder root.</p>
+</div></div>
+
+
+<p data-bai-block="17">Backend.AI gives an option to preserve files in folders when a compute session is deleted.
 The example below illustrates what&#39;s happening.</p>
-<p data-bai-block="16">Under the <code>user2-vfolder</code>, create a <code>test_file</code>.
+<p data-bai-block="18">Under the <code>user2-vfolder</code>, create a <code>test_file</code>.
 Fill the contents with &quot;file inside user2-vfolder&quot;.</p>
-<p><figure data-bai-block="17" class="doc-figure"><img src="./images/mounted_folders_in_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1364" height="284" /><figcaption>Figure 16.4</figcaption></figure>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/mounted_folders_in_terminal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1364" height="284" /><figcaption>Figure 16.4</figcaption></figure>
 </p>
-<p data-bai-block="18">Running <code>ls</code> command against <code>user2-vfolder</code>, users can confirm the file was created successfully.
+<p data-bai-block="20">Running <code>ls</code> command against <code>user2-vfolder</code>, users can confirm the file was created successfully.
 Please note the contents of the file can be chekced with <code>cat</code> command.</p>
-<p data-bai-block="19">Now delete the compute session and go to the Storage page.
+<p data-bai-block="21">Now delete the compute session and go to the Storage page.
 Locate the <code>user2-vfolder folder</code>, open a file explorer and check that the <code>test_file</code> exists.
 Click the <code>Download</code> button on the file&#39;s row, which appears in the <code>Name</code> column,
 to download the file to the local machine and open it
 to confirm that the contents are &quot;file inside user2-vfolder&quot;.</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/download_file_from_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3240" height="1420" /><figcaption>Figure 16.5</figcaption></figure>
+<p><figure data-bai-block="22" class="doc-figure"><img src="./images/download_file_from_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3240" height="1420" /><figcaption>Figure 16.5</figcaption></figure>
 </p>
-<p data-bai-block="21">Performing file management on a mounted folder when you create a compute session,
+<p data-bai-block="23">Performing file management on a mounted folder when you create a compute session,
 data can be preserved even after users ends the compute session.</p>
 <p><a id="using-automount-folder"></a></p>
-<h2 data-bai-block="22" id="mount_vfolder-configure-a-compute-session-environment-using-an-automount-folder">Configure a compute session environment using an automount folder<a class="hash-link" href="#mount_vfolder-configure-a-compute-session-environment-using-an-automount-folder" aria-label="Direct link to Configure a compute session environment using an automount folder">#</a></h2>
-<p data-bai-block="23">If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and <a href="./vfolder.html#automount-folder">automount folder</a>,
+<h2 data-bai-block="24" id="mount_vfolder-configure-a-compute-session-environment-using-an-automount-folder">Configure a compute session environment using an automount folder<a class="hash-link" href="#mount_vfolder-configure-a-compute-session-environment-using-an-automount-folder" aria-label="Direct link to Configure a compute session environment using an automount folder">#</a></h2>
+<p data-bai-block="25">If a new program or library is required that is not pre-installed in a compute session, a Storage folder attribute and <a href="./vfolder.html#automount-folder">automount folder</a>,
 which is independent of the compute session lifecycle, can be used to install the package.
 Configure a consistent environment regardless of the type of compute session.</p>
 <p><a id="using-pip-with-automountfolder"></a></p>
-<h3 data-bai-block="24" id="mount_vfolder-install-python-packages-via-pip">Install Python packages via pip<a class="hash-link" href="#mount_vfolder-install-python-packages-via-pip" aria-label="Direct link to Install Python packages via pip">#</a></h3>
-<p data-bai-block="25">Creating a folder named <code>.local</code> allows a user to install Python user packages in same folder.
+<h3 data-bai-block="26" id="mount_vfolder-install-python-packages-via-pip">Install Python packages via pip<a class="hash-link" href="#mount_vfolder-install-python-packages-via-pip" aria-label="Direct link to Install Python packages via pip">#</a></h3>
+<p data-bai-block="27">Creating a folder named <code>.local</code> allows a user to install Python user packages in same folder.
 <code>pip</code> by default installs the packages in the <code>.local</code> folder under the user&#39;s home folder
 (Please note that automount folder is mounted under user&#39;s home folder).
 So, to keep a Python package called <code>tqdm</code> installed at all times, regardless of the computing environment,
 a command like the following could be issued from the terminal:</p>
-<div data-bai-block="26" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tqdm</span></span></code></pre></div>
-<p data-bai-block="27">After that, when a new compute session is created, the <code>.local</code> folder where the <code>tqdm</code> package
+<div data-bai-block="28" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> tqdm</span></span></code></pre></div>
+<p data-bai-block="29">After that, when a new compute session is created, the <code>.local</code> folder where the <code>tqdm</code> package
 is installed is automatically mounted, so users can use it without reinstalling the <code>tqdm</code> package.</p>
 <div class="admonition admonition-note">
-<div data-bai-block="28" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
+<div data-bai-block="30" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
 <div class="admonition-content">
 
-<p data-bai-block="29">When using multiple Python versions or sessions with different Python versions, packages may have compatibility issues.
+<p data-bai-block="31">When using multiple Python versions or sessions with different Python versions, packages may have compatibility issues.
 This can be circumvented by branching <code>PYTHONPATH</code> environment variable via the <code>.bashrc</code>.
 This is because the user&#39;s <code>pip</code> package is installed in the path specified in the <code>PYTHONPATH</code>.</p>
 </div></div>
@@ -318,33 +327,33 @@ This is because the user&#39;s <code>pip</code> package is installed in the path
 
 
 <p><a id="using-linuxbrew-with-automountfolder"></a></p>
-<h3 data-bai-block="30" id="mount_vfolder-install-packages-via-homebrew">Install packages via Homebrew<a class="hash-link" href="#mount_vfolder-install-packages-via-homebrew" aria-label="Direct link to Install packages via Homebrew">#</a></h3>
-<p data-bai-block="31">Package managers like Ubuntu <code>apt</code> or CentOS <code>yum</code> usually require the <code>root</code> permission.
+<h3 data-bai-block="32" id="mount_vfolder-install-packages-via-homebrew">Install packages via Homebrew<a class="hash-link" href="#mount_vfolder-install-packages-via-homebrew" aria-label="Direct link to Install packages via Homebrew">#</a></h3>
+<p data-bai-block="33">Package managers like Ubuntu <code>apt</code> or CentOS <code>yum</code> usually require the <code>root</code> permission.
 For security reasons, <code>sudo</code> and <code>root</code> accesses are blocked by default in Backend.AI&#39;s compute session (Depending on the configuration, this may be allowed), so we recommend to use <a href="https://docs.brew.sh/Homebrew-on-Linux">Homebrew on Linux</a> which does not require <code>sudo</code>.</p>
-<p data-bai-block="32">Homebrew can be configured as follows:</p>
+<p data-bai-block="34">Homebrew can be configured as follows:</p>
 <ul>
-<li data-bai-block="33"><p>Create <code>.linuxbrew</code> folder in Data &amp; Storage page.</p>
+<li data-bai-block="35"><p>Create <code>.linuxbrew</code> folder in Data &amp; Storage page.</p>
 </li>
-<li data-bai-block="34"><p>Create a compute session (<code>.linuxbrew</code> folder is automatically mounted at
+<li data-bai-block="36"><p>Create a compute session (<code>.linuxbrew</code> folder is automatically mounted at
 <code>/home/linuxbrew/.linuxbrew</code>).</p>
 </li>
-<li data-bai-block="35"><p>Install Homebrew in the compute session, if not yet installed.</p>
-<div data-bai-block="36" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> /bin/bash</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> "$(</span><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></code></pre></div>
+<li data-bai-block="37"><p>Install Homebrew in the compute session, if not yet installed.</p>
+<div data-bai-block="38" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> /bin/bash</span><span style="color:#79B8FF"> -c</span><span style="color:#9ECBFF"> "$(</span><span style="color:#B392F0">curl</span><span style="color:#79B8FF"> -fsSL</span><span style="color:#9ECBFF"> https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></span></code></pre></div>
 </li>
-<li data-bai-block="37"><p>Homebrew packages can be installed like following:</p>
-<div data-bai-block="38" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hello</span></span>
+<li data-bai-block="39"><p>Homebrew packages can be installed like following:</p>
+<div data-bai-block="40" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">shell</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-shell shiki-host"><code><span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> brew</span><span style="color:#9ECBFF"> install</span><span style="color:#9ECBFF"> hello</span></span>
 <span class="line"><span style="color:#B392F0">$</span><span style="color:#9ECBFF"> hello</span></span>
 <span class="line"><span style="color:#B392F0">Hello,</span><span style="color:#9ECBFF"> world!</span></span></code></pre></div>
 </li>
 </ul>
-<p data-bai-block="39"><code>brew</code> installs packages under <code>/home/linuxbrew/.linuxbrew</code> which is automatically mounted when <code>.linuxbrew</code> folder exists.
+<p data-bai-block="41"><code>brew</code> installs packages under <code>/home/linuxbrew/.linuxbrew</code> which is automatically mounted when <code>.linuxbrew</code> folder exists.
 So, if an automount folder named &#39;&#39;.linuxbrew&#39;&#39; is created, the Homebrew packages previously installed can be used again, even if the compute session is deleted and a new compute session is created.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/mount_vfolder/mount_vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 14, 2026</span>
+  <span class="last-updated">Last updated on Sep 21, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./vfolder.html">

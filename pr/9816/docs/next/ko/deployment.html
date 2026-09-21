@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="배포" />
   <meta name="twitter:description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-09-14T07:13:23.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-09-21T05:54:27.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (5705d35)">v26.9.0-alpha.0 (5705d35)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (30fe22f)">v26.9.0-alpha.0 (30fe22f)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -288,7 +288,7 @@
 <p data-bai-block="54">아래 하위 섹션에서는 리비전 단위 필드를 자세히 설명합니다. <strong>고급 모드</strong>에서 리비전을 수동으로 추가할 때와 각 필드가 무엇을 제어하는지 이해하고자 할 때 모두 적용됩니다.</p>
 <h4 data-bai-block="55" id="deployment-모델-폴더-마운트">모델 폴더 마운트<a class="hash-link" href="#deployment-모델-폴더-마운트" aria-label="Direct link to 모델 폴더 마운트">#</a></h4>
 <p data-bai-block="56">리비전마다 하나의 모델 스토리지 폴더가 각 복제본에 마운트됩니다. 폴더 선택기 바로 아래의 필드에서 해당 폴더가 컨테이너 내부의 어느 위치에 나타날지 지정합니다.</p>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="390" /><figcaption>그림 12.5</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>그림 12.5</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="58"><strong>모델 폴더</strong>: 각 복제본에 마운트할 모델 스토리지 폴더입니다.</li>
@@ -305,7 +305,7 @@
 </ul>
 </li>
 <li data-bai-block="66"><strong>셸</strong>: 명령어 실행에 사용할 셸 바이너리입니다(예: <code>/bin/bash</code>). <strong>Shell</strong> 방식에서만 표시되며 필수 입력 항목입니다. 해당 바이너리가 컨테이너 이미지에 없으면 서비스가 시작되지 않습니다.</li>
-<li data-bai-block="67"><strong>명령어</strong>: 추론 서버를 실행하는 명령어입니다. 예를 들어 <code>python -m http.server 8000</code>. <strong>Shell</strong> 방식에서는 여러 줄 입력 상자이며, <strong>Exec</strong> 방식에서는 <strong>명령어 (argv)</strong> 라는 이름의 한 줄 입력 필드로 바뀝니다.</li>
+<li data-bai-block="67"><strong>명령어</strong>: 추론 서버를 실행하는 명령어입니다. 예를 들어 <code>python -m http.server 8000</code>. <strong>Shell</strong> 방식에서는 여러 줄 입력 상자이며, <strong>Exec</strong> 방식에서는 <strong>명령어 (argv)</strong> 라는 이름의 한 줄 입력 필드로 바뀝니다. JSON 문자열을 하나의 인수로 전달하려면 JSON 전체를 작은따옴표로 감싸고 내부의 큰따옴표는 그대로 둡니다. 예: <code>--override-generation-config &#39;{&quot;temperature&quot;: 0.7}&#39;</code>.</li>
 <li data-bai-block="68"><strong>포트</strong>: 추론 서버가 수신하는 컨테이너 포트입니다(2~65535).</li>
 </ul>
 <div class="admonition admonition-tip">
@@ -689,7 +689,7 @@
 <p data-bai-block="250">배포 상세 페이지의 <strong>리비전</strong> 카드에는 <strong>현재 리비전</strong>, <strong>리비전 히스토리</strong>, <strong>감사 로그</strong> 세 개의 탭이 있습니다. 카드 상단의 <code>리비전 추가</code> 버튼은 모든 탭에서 사용할 수 있으며, 리비전 추가 모달을 엽니다(<a href="#add-revision">리비전 추가</a> 참고).</p>
 <h4 data-bai-block="251" id="deployment-현재-리비전-탭">현재 리비전 탭<a class="hash-link" href="#deployment-현재-리비전-탭" aria-label="Direct link to 현재 리비전 탭">#</a></h4>
 <p data-bai-block="252"><strong>현재 리비전</strong> 탭은 현재 활성 상태로 트래픽을 처리 중인 리비전의 전체 설정을 표시합니다.</p>
-<p><figure data-bai-block="253" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1414" /><figcaption>그림 12.16</figcaption></figure>
+<p><figure data-bai-block="253" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1374" /><figcaption>그림 12.16</figcaption></figure>
 </p>
 <p data-bai-block="254">다음 필드가 표시됩니다:</p>
 <ul>
@@ -954,7 +954,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
 <p><a id="model-store"></a></p>
 <h2 data-bai-block="395" id="deployment-모델-스토어">모델 스토어<a class="hash-link" href="#deployment-모델-스토어" aria-label="Direct link to 모델 스토어">#</a></h2>
 <p data-bai-block="396">모델 스토어(Model Store)는 사전 구성된 모델을 탐색, 검색 및 배포할 수 있는 카드 기반 갤러리를 제공합니다. 사이드바 메뉴에서 모델 스토어에 접근할 수 있습니다.</p>
-<p><figure data-bai-block="397" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>그림 12.33</figcaption></figure>
+<p><figure data-bai-block="397" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 12.33</figcaption></figure>
 </p>
 <h3 data-bai-block="398" id="deployment-모델-탐색-및-검색">모델 탐색 및 검색<a class="hash-link" href="#deployment-모델-탐색-및-검색" aria-label="Direct link to 모델 탐색 및 검색">#</a></h3>
 <p data-bai-block="399">페이지 상단은 필터 및 정렬 레이아웃을 사용합니다:</p>
@@ -994,7 +994,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
 <li data-bai-block="418"><strong>최소 리소스(Min Resource)</strong>: 최소 리소스 요구 사항(CPU, 메모리, GPU)</li>
 </ul>
 <p data-bai-block="419">모델 카드에 README가 포함된 경우, Drawer 하단에 <code>README.md</code> 카드로 렌더링됩니다.</p>
-<p><figure data-bai-block="420" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>그림 12.34</figcaption></figure>
+<p><figure data-bai-block="420" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 12.34</figcaption></figure>
 </p>
 <h3 data-bai-block="421" id="deployment-모델-배포">모델 배포<a class="hash-link" href="#deployment-모델-배포" aria-label="Direct link to 모델 배포">#</a></h3>
 <p data-bai-block="422">Drawer 헤더의 <code>배포(Deploy)</code> 버튼을 클릭하여 모델을 서비스로 배포합니다. 배포 흐름은 다음 두 가지 방식 중 하나로 동작합니다:</p>
@@ -1024,7 +1024,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 14일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 21일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">
