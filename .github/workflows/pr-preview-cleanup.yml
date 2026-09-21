@@ -40,9 +40,10 @@ on:
 permissions: {}
 
 concurrency:
-  # Deliberately its own group, not shared with the deploy: joining that group
-  # could cancel a pending deploy and leave the site stale. Races against a
-  # concurrent deploy are handled by the push retry instead.
+  # One cleanup at a time. A burst of preview completions collapses into a
+  # single pending run, which is fine: every run reconciles against the live
+  # open-PR list. The deploy has no group of its own (FR-4020); races against
+  # it are handled by the push retry instead.
   group: pr-preview-cleanup
   cancel-in-progress: false
 
