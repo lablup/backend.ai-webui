@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-21T19:00:43.626Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 3,
+        "added": 0,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "appendix",
+          "title": "Appendix",
+          "status": "modified",
+          "url": "next/en/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 3
+          },
+          "fingerprints": [
+            "6f4beb911f4e",
+            "20f63e8f870c",
+            "2fff643a3e54"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 3,
+        "added": 0,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "appendix",
+          "title": "付録",
+          "status": "modified",
+          "url": "next/ja/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 3
+          },
+          "fingerprints": [
+            "311f6340dde4",
+            "1033570199fb",
+            "a733ffd67129"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 3,
+        "added": 0,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "appendix",
+          "title": "부록",
+          "status": "modified",
+          "url": "next/ko/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 3
+          },
+          "fingerprints": [
+            "3a3236cb14cc",
+            "0ac8f730c686",
+            "a1ce522ac515"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 3,
+        "added": 0,
+        "modified": 3,
+        "removed": 0,
+        "images": 3,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "appendix",
+          "title": "ภาคผนวก",
+          "status": "modified",
+          "url": "next/th/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 3,
+            "removed": 0,
+            "images": 3,
+            "total": 3
+          },
+          "fingerprints": [
+            "4fcc2663fa88",
+            "4784ef42bc8f",
+            "75b008dce332"
+          ]
+        }
+      ]
+    }
+  }
+}
