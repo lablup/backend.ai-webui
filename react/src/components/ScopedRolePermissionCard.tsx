@@ -238,9 +238,9 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
         $permissionLimit: Int
       ) {
         adminRole(id: $roleId) {
-          scopeType @since(version: "26.9.0")
-          scopeId @since(version: "26.9.0")
-          scope @since(version: "26.9.0") {
+          scopeType @since(version: "26.9.0a1")
+          scopeId @since(version: "26.9.0a1")
+          scope @since(version: "26.9.0a1") {
             ... on DomainV2 {
               basicInfo {
                 domainName: name
@@ -281,7 +281,7 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
             filter: $scopeFilter
             limit: $scopeLimit
             offset: $scopeOffset
-          ) @deprecatedSince(version: "26.9.0") {
+          ) @deprecatedSince(version: "26.9.0a1") {
             count
             edges {
               node {
@@ -330,10 +330,10 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
           permissions(filter: $permissionFilter, limit: $permissionLimit) {
             edges {
               node {
-                scopeId @deprecatedSince(version: "26.9.0")
-                operation @deprecatedSince(version: "26.9.0")
+                scopeId @deprecatedSince(version: "26.9.0a1")
+                operation @deprecatedSince(version: "26.9.0a1")
                 entityType
-                permission @since(version: "26.9.0")
+                permission @since(version: "26.9.0a1")
                 ...RoleScopePermissionEditModal_permissionsFragment
               }
             }

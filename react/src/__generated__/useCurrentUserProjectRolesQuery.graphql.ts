@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8b7502266e9092b145d275bf304b48f4>>
+ * @generated SignedSource<<061fdcf0567ad4ef3a48d25f46e35f00>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -401,16 +401,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9a4897a8166f0ec93e2404a57b3a3794",
+    "cacheID": "e1129fba4dad2141042ebd4522eb9ef1",
     "id": null,
     "metadata": {},
     "name": "useCurrentUserProjectRolesQuery",
     "operationKind": "query",
-    "text": "query useCurrentUserProjectRolesQuery(\n  $targets: [PermissionTarget!]!\n  $legacyPermissionFilter: PermissionNestedFilter\n) {\n  heldPermissions: myAtomicBulkScopePermissions(input: {targets: $targets}) @since(version: \"26.9.0\") {\n    items {\n      scopeId\n      permissions\n    }\n  }\n  legacyRoles: myRoles(first: 100, filter: {permission: $legacyPermissionFilter}) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useCurrentUserProjectRolesQuery(\n  $targets: [PermissionTarget!]!\n  $legacyPermissionFilter: PermissionNestedFilter\n) {\n  heldPermissions: myAtomicBulkScopePermissions(input: {targets: $targets}) @since(version: \"26.9.0a1\") {\n    items {\n      scopeId\n      permissions\n    }\n  }\n  legacyRoles: myRoles(first: 100, filter: {permission: $legacyPermissionFilter}) @deprecatedSince(version: \"26.9.0a1\") {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9ca5f11bc6d861a8eb2abae3380bf7d9";
+(node as any).hash = "a77bc69e3ac4e21600261530f2f13ee8";
 
 export default node;
