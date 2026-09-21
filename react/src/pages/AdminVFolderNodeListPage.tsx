@@ -26,6 +26,7 @@ import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAISkeleton,
   BAIVFolderDeleteButton,
   BAIAdminProjectSelect,
   BAICard,
@@ -40,7 +41,13 @@ import {
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -504,76 +511,83 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 />
               </HStack>
             </HStack>
-            <VFolderNodes
-              order={queryParams.order}
-              loading={deferredQueryVariables !== queryVariables}
-              // ADR-0001: super-admin page — no ambient project context. The
-              // deployment-creation escalation modal embeds its own required
-              // project selector.
-              project={null}
-              // FR-3423: deployments are project-scoped, and this page is an
-              // oversight surface across every project — deploying from here
-              // would create an endpoint in a project the admin may not
-              // belong to and can't afterwards see or clean up. Mirrors the
-              // FileBrowser/SFTP disabled-with-tooltip treatment already
-              // applied to this page (FR-3412).
-              noDeployTooltip={t('data.folders.CannotDeployFromAdminMenu')}
-              vfoldersFrgmt={filterOutNullAndUndefined(
-                _.map(vfolder_nodes?.edges, 'node'),
-              )}
-              rowSelection={{
-                type: 'checkbox',
-                preserveSelectedRowKeys: true,
-                getCheckboxProps(record: VFolderNodeInList) {
-                  return {
-                    disabled:
-                      isDeletedCategory(record.status) &&
-                      record.status !== 'delete-pending',
-                  };
-                },
-                onChange: (selectedRowKeys) => {
-                  handleRowSelectionChange(
-                    selectedRowKeys,
-                    filterOutNullAndUndefined(
-                      _.map(vfolder_nodes?.edges, 'node'),
-                    ),
-                    setSelectedFolderList,
+            {/* FR-4009: a query suspending inside the table (useCurrentUserProjectRoles
+                refetches after a folder mutation) must not blank the whole page. */}
+            <Suspense fallback={<BAISkeleton rows={4} />}>
+              <VFolderNodes
+                order={queryParams.order}
+                loading={
+                  deferredQueryVariables !== queryVariables ||
+                  deferredFetchKey !== fetchKey
+                }
+                // ADR-0001: super-admin page — no ambient project context. The
+                // deployment-creation escalation modal embeds its own required
+                // project selector.
+                project={null}
+                // FR-3423: deployments are project-scoped, and this page is an
+                // oversight surface across every project — deploying from here
+                // would create an endpoint in a project the admin may not
+                // belong to and can't afterwards see or clean up. Mirrors the
+                // FileBrowser/SFTP disabled-with-tooltip treatment already
+                // applied to this page (FR-3412).
+                noDeployTooltip={t('data.folders.CannotDeployFromAdminMenu')}
+                vfoldersFrgmt={filterOutNullAndUndefined(
+                  _.map(vfolder_nodes?.edges, 'node'),
+                )}
+                rowSelection={{
+                  type: 'checkbox',
+                  preserveSelectedRowKeys: true,
+                  getCheckboxProps(record: VFolderNodeInList) {
+                    return {
+                      disabled:
+                        isDeletedCategory(record.status) &&
+                        record.status !== 'delete-pending',
+                    };
+                  },
+                  onChange: (selectedRowKeys) => {
+                    handleRowSelectionChange(
+                      selectedRowKeys,
+                      filterOutNullAndUndefined(
+                        _.map(vfolder_nodes?.edges, 'node'),
+                      ),
+                      setSelectedFolderList,
+                    );
+                  },
+                  selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
+                }}
+                pagination={{
+                  pageSize: tablePaginationOption.pageSize,
+                  current: tablePaginationOption.current,
+                  total: vfolder_nodes?.count ?? 0,
+                  onChange(current, pageSize) {
+                    if (_.isNumber(current) && _.isNumber(pageSize)) {
+                      setTablePaginationOption({ current, pageSize });
+                    }
+                  },
+                }}
+                onChangeOrder={(order) => {
+                  setQuery({ order: order ?? null });
+                }}
+                onRemoveRow={(removedId) => {
+                  setSelectedFolderList((prevSelected) =>
+                    _.filter(prevSelected, (folder) => folder.id !== removedId),
                   );
-                },
-                selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
-              }}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: vfolder_nodes?.count ?? 0,
-                onChange(current, pageSize) {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                },
-              }}
-              onChangeOrder={(order) => {
-                setQuery({ order: order ?? null });
-              }}
-              onRemoveRow={(removedId) => {
-                setSelectedFolderList((prevSelected) =>
-                  _.filter(prevSelected, (folder) => folder.id !== removedId),
-                );
-                updateFetchKey();
-              }}
-              tableSettings={{
-                columnOverrides: columnOverrides,
-                // Storage oversight is this page's job, so the quota/usage and
-                // creation columns start visible here but stay hidden on /data.
-                defaultColumnOverrides: {
-                  creator: { hidden: false },
-                  cur_size: { hidden: false },
-                  max_size: { hidden: false },
-                  created_at: { hidden: false },
-                },
-                onColumnOverridesChange: setColumnOverrides,
-              }}
-            />
+                  updateFetchKey();
+                }}
+                tableSettings={{
+                  columnOverrides: columnOverrides,
+                  // Storage oversight is this page's job, so the quota/usage and
+                  // creation columns start visible here but stay hidden on /data.
+                  defaultColumnOverrides: {
+                    creator: { hidden: false },
+                    cur_size: { hidden: false },
+                    max_size: { hidden: false },
+                    created_at: { hidden: false },
+                  },
+                  onColumnOverridesChange: setColumnOverrides,
+                }}
+              />
+            </Suspense>
           </VStack>
         </BAICard>
         <DeleteVFolderModal
