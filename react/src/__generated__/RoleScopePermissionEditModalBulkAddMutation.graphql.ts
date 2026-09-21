@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<46498d1a6dc7ffea524a1ed59448d41b>>
+ * @generated SignedSource<<6d0eb3eead61cd3bed4dc18aa5a6ed44>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -166,16 +166,16 @@ return {
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "2e6da2ccd8105c4c926fde2b35af1927",
+    "cacheID": "5a0c9aa0c0ddaf70e57bb5779427d1c5",
     "id": null,
     "metadata": {},
     "name": "RoleScopePermissionEditModalBulkAddMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleScopePermissionEditModalBulkAddMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      scopeId @deprecatedSince(version: \"26.9.0\")\n      entityType\n      operation @deprecatedSince(version: \"26.9.0\")\n      permission @since(version: \"26.9.0\")\n    }\n    failed {\n      scopeId @deprecatedSince(version: \"26.9.0\")\n      entityType\n      operation @deprecatedSince(version: \"26.9.0\")\n      permission @since(version: \"26.9.0\")\n      message\n    }\n  }\n}\n"
+    "text": "mutation RoleScopePermissionEditModalBulkAddMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      scopeId @deprecatedSince(version: \"26.9.0a1\")\n      entityType\n      operation @deprecatedSince(version: \"26.9.0a1\")\n      permission @since(version: \"26.9.0a1\")\n    }\n    failed {\n      scopeId @deprecatedSince(version: \"26.9.0a1\")\n      entityType\n      operation @deprecatedSince(version: \"26.9.0a1\")\n      permission @since(version: \"26.9.0a1\")\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f895a6c386f34aea9a5afb4259a50629";
+(node as any).hash = "48b1cdeb6a4f56a32b7bc298170ef25f";
 
 export default node;

@@ -85,7 +85,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
-        scopes(first: 3) @deprecatedSince(version: "26.9.0") {
+        scopes(first: 3) @deprecatedSince(version: "26.9.0a1") {
           count
           edges {
             node {
@@ -111,9 +111,9 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
             }
           }
         }
-        scopeType @since(version: "26.9.0")
-        scopeId @since(version: "26.9.0")
-        scope @since(version: "26.9.0") {
+        scopeType @since(version: "26.9.0a1")
+        scopeId @since(version: "26.9.0a1")
+        scope @since(version: "26.9.0a1") {
           ... on ProjectV2 {
             basicInfo {
               projectName: name

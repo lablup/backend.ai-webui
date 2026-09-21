@@ -197,10 +197,10 @@ const RoleScopePermissionEditModal: React.FC<
       fragment RoleScopePermissionEditModal_permissionsFragment on Permission
       @relay(plural: true) {
         id
-        scopeId @deprecatedSince(version: "26.9.0")
+        scopeId @deprecatedSince(version: "26.9.0a1")
         entityType
-        operation @deprecatedSince(version: "26.9.0")
-        permission @since(version: "26.9.0")
+        operation @deprecatedSince(version: "26.9.0a1")
+        permission @since(version: "26.9.0a1")
       }
     `,
     permissionsFrgmt,
@@ -214,16 +214,16 @@ const RoleScopePermissionEditModal: React.FC<
         adminBulkAddRolePermissions(input: $input) {
           items {
             id
-            scopeId @deprecatedSince(version: "26.9.0")
+            scopeId @deprecatedSince(version: "26.9.0a1")
             entityType
-            operation @deprecatedSince(version: "26.9.0")
-            permission @since(version: "26.9.0")
+            operation @deprecatedSince(version: "26.9.0a1")
+            permission @since(version: "26.9.0a1")
           }
           failed {
-            scopeId @deprecatedSince(version: "26.9.0")
+            scopeId @deprecatedSince(version: "26.9.0a1")
             entityType
-            operation @deprecatedSince(version: "26.9.0")
-            permission @since(version: "26.9.0")
+            operation @deprecatedSince(version: "26.9.0a1")
+            permission @since(version: "26.9.0a1")
             message
           }
         }
