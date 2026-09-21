@@ -9,21 +9,33 @@
  */
 import { esc } from './escape-html.js';
 
-const WIDTH = 560;
+/** Wide enough that a two-paragraph stop wraps into few enough lines to
+    read without scrolling; still under half of a 1440px screen. */
+const WIDTH = 720;
 const PAD = 12;
 const GAP = 14;
+/** Chrome the panel keeps clear: the banner above it, the pill below it. */
+const TOP_RESERVE = 60;
+const BOTTOM_RESERVE = 70;
+/** Under this the panel scrolls instead of shrinking out of readability. */
+const MIN_HEIGHT = 200;
+/** Stands in until the panel has been laid out and can be measured. */
+const ASSUMED_HEIGHT = 300;
 
 const STYLE = `
   .bai-popover {
     position: fixed; z-index: 2147483004; width: min(${WIDTH}px, 92vw);
+    /* Never taller than the viewport: a long stop scrolls its body rather
+       than pushing the foot — and the comment box — off the screen. */
+    max-height: max(${MIN_HEIGHT}px, calc(100vh - ${TOP_RESERVE + BOTTOM_RESERVE}px));
     display: none; background: var(--bai-pop-bg); color: var(--bai-pop-fg);
     border: 1px solid var(--bai-pop-border); border-radius: 8px;
     box-shadow: 0 12px 32px var(--bai-review-shadow); font-size: 13px;
     line-height: 1.5; pointer-events: auto;
   }
-  .bai-popover.shown { display: block; }
+  .bai-popover.shown { display: flex; flex-direction: column; }
   .bai-popover .head {
-    display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+    display: flex; flex: none; align-items: center; gap: 8px; padding: 6px 10px;
     border-bottom: 1px solid var(--bai-pop-border); font-size: 12px;
   }
   .bai-popover .type {
@@ -47,7 +59,18 @@ const STYLE = `
     border-color: var(--bai-review-border);
   }
   .bai-popover label { display: flex; align-items: center; gap: 4px; }
-  .bai-popover .body { padding: 10px 12px; display: grid; gap: 8px; }
+  .bai-popover .body {
+    padding: 10px 12px; display: grid; gap: 8px; align-content: start;
+    overflow: auto; min-height: 0; overscroll-behavior: contain;
+    /* An overlay scrollbar stays invisible until it is used, so a capped
+       panel would hide the comment box with no cue at all. Reserving the
+       gutter is what opts Chromium out of overlay scrollbars; the standard
+       properties are the ones that reach an element inside a shadow root —
+       the ::-webkit-scrollbar rules do not. */
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bai-pop-border) transparent;
+  }
   .bai-popover .lbl {
     font-size: 10px; font-weight: 700; text-transform: uppercase;
     letter-spacing: .06em; color: var(--bai-review-text-dim);
@@ -81,7 +104,7 @@ const STYLE = `
     resize: vertical;
   }
   .bai-popover .foot {
-    display: flex; align-items: center; gap: 10px; padding: 6px 10px;
+    display: flex; flex: none; align-items: center; gap: 10px; padding: 6px 10px;
     border-top: 1px solid var(--bai-pop-border); font-size: 11px;
     color: var(--bai-review-text-dim);
   }
@@ -222,30 +245,41 @@ export function createPopover(
 
   /** Under the mark when it fits, above it when it does not, centred when away. */
   function place(where: PopoverPlace) {
+    /*
+     * The CSS cap is what the panel can actually be; measuring it and clamping
+     * against the same number is what keeps both ends on screen. A viewport
+     * too short for even the cap keeps the head visible and loses the foot —
+     * the panel scrolls, so nothing in it is unreachable.
+     */
+    const cap = Math.max(
+      MIN_HEIGHT,
+      window.innerHeight - TOP_RESERVE - BOTTOM_RESERVE,
+    );
+    const height = Math.min(pop.offsetHeight || ASSUMED_HEIGHT, cap);
+    const lowest = Math.max(PAD, window.innerHeight - BOTTOM_RESERVE - height);
+    const highest = Math.min(TOP_RESERVE, lowest);
+    const clamp = (top: number) => Math.min(Math.max(top, highest), lowest);
+
     if (where.kind !== 'located') {
       Object.assign(pop.style, {
         left: '50%',
-        top: '46%',
-        transform: 'translate(-50%, -50%)',
+        top: `${clamp(Math.round((window.innerHeight - height) / 2))}px`,
+        transform: 'translateX(-50%)',
       });
       return;
     }
     const rect = where.rect;
     const width = Math.min(WIDTH, window.innerWidth * 0.92);
-    const height = pop.offsetHeight || 300;
     const left = Math.min(
       Math.max(PAD, rect.left),
       Math.max(PAD, window.innerWidth - width - PAD),
     );
     const below = rect.bottom + GAP;
-    const top =
-      below + height < window.innerHeight - 70
-        ? below
-        : Math.max(60, rect.top - height - GAP);
+    const above = rect.top - height - GAP;
     Object.assign(pop.style, {
       transform: '',
       left: `${left}px`,
-      top: `${top}px`,
+      top: `${clamp(below <= lowest ? below : above)}px`,
     });
   }
 
