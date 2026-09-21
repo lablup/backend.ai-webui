@@ -214,7 +214,7 @@ Data in those folders can also be reused by mounting it when creating another co
 ![](../images/launch_session_data.png)
 
 Users can specify the storage folders to mount in the compute session with the
-`Select Folder` dropdown.
+folder selector.
 
 Each selected folder is listed as a row with two path fields:
 
