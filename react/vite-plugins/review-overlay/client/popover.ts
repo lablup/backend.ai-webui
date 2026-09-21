@@ -9,7 +9,9 @@
  */
 import { esc } from './escape-html.js';
 
-const WIDTH = 560;
+/** Wide enough that a two-paragraph stop wraps into few enough lines to
+    read without scrolling; still under half of a 1440px screen. */
+const WIDTH = 720;
 const PAD = 12;
 const GAP = 14;
 /** Chrome the panel keeps clear: the banner above it, the pill below it. */

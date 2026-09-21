@@ -154,6 +154,18 @@ describe('popover placement', () => {
     expect(box()).toMatchObject({ top: 154, left: '300px', transform: '' });
   });
 
+  it('keeps the full panel width on screen at the right edge', () => {
+    undoMeasure = measurePanelAs(300);
+    const pop = make();
+
+    pop.render(
+      model({ kind: 'located', rect: { left: 1200, top: 100, bottom: 140 } }),
+    );
+
+    // 1280 - 720 - 12: the clamp uses the same width the CSS gives the panel.
+    expect(box().left).toBe('548px');
+  });
+
   it('clamps the left edge to the window', () => {
     undoMeasure = measurePanelAs(300);
     viewport(600, 900);
