@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-21T19:00:40.133Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "agent_summary",
+          "title": "Agent Summary",
+          "status": "modified",
+          "url": "next/en/agent_summary.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/agent_summary/agent_summary.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "15548d8023bb"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "agent_summary",
+          "title": "エージェントサマリー",
+          "status": "modified",
+          "url": "next/ja/agent_summary.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/agent_summary/agent_summary.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "15501c4d38ed"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "agent_summary",
+          "title": "에이전트 요약",
+          "status": "modified",
+          "url": "next/ko/agent_summary.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/agent_summary/agent_summary.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "e61fa5d5542f"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "agent_summary",
+          "title": "สรุปเอเจนต์",
+          "status": "modified",
+          "url": "next/th/agent_summary.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/agent_summary/agent_summary.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "44c9af075d04"
+          ]
+        }
+      ]
+    }
+  }
+}
