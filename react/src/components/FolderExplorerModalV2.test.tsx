@@ -241,11 +241,13 @@ const withNullRootFields = (
 
 const renderModal = ({
   ownershipProjectId,
+  ownershipProjectType,
   legacyPermissions,
   hostPermissions,
   nullResolvers,
 }: {
   ownershipProjectId: string | null;
+  ownershipProjectType?: 'GENERAL' | 'PERSONAL';
   legacyPermissions?: string[];
   hostPermissions?: string[];
   /** Root fields the manager resolves to `null` for this folder (FR-3997). */
@@ -281,6 +283,12 @@ const renderModal = ({
               : null,
           },
         }),
+        // The owning project's type, read by the ownership banner through the
+        // legacy `group_node` (FR-3983).
+        GroupNode: () => ({
+          id: btoa(`GroupNode:${ownershipProjectId}`),
+          type: ownershipProjectType ?? 'GENERAL',
+        }),
         KeyPair: () => ({ resource_policy: 'default' }),
         // The storage-host capability axis. `enableUpload` / `enableEdit` are the
         // AND of this and the folder-level `write_content`, so both sides need a
@@ -299,7 +307,7 @@ const renderModal = ({
       nullResolvers ?? [],
     );
   const seenOperations: Array<{ name: string; variables: any }> = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 16; i++) {
     environment.mock.queueOperationResolver((operation: any) => {
       seenOperations.push({
         name: operation.request.node.params.name,
@@ -340,6 +348,13 @@ const findPermissionOperation = (
       'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
   );
 
+const findOwnershipProjectOperation = (
+  seenOperations: Array<{ name: string; variables: any }>,
+) =>
+  seenOperations.find(
+    (op) => op.name === 'FolderExplorerModalV2OwnershipProjectQuery',
+  );
+
 describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
     mockIsProjectAgnosticPage = false;
@@ -377,6 +392,8 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(
       screen.queryByText('data.BelongsToDifferentProject'),
     ).not.toBeInTheDocument();
+    // ...and the project-type lookup behind it is not issued either.
+    expect(findOwnershipProjectOperation(seenOperations)).toBeUndefined();
 
     // Permission calculation follows the folder's OWN project — never the
     // ambient decoy.
@@ -411,6 +428,30 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     // acceptance criterion) instead of the header selection.
     const permissionOperation = findPermissionOperation(seenOperations);
     expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
+
+    // The banner decided after looking the owning project up by its id.
+    expect(
+      findOwnershipProjectOperation(seenOperations)?.variables.projectId,
+    ).toBe(btoa('GroupNode:folder-project-id'));
+  });
+
+  it('on a general route with a folder in a PERSONAL project: hides the ownership-mismatch alert (FR-3983)', async () => {
+    const { seenOperations } = renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'PERSONAL',
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+    // The lookup ran and answered PERSONAL...
+    await waitFor(() =>
+      expect(findOwnershipProjectOperation(seenOperations)).toBeDefined(),
+    );
+
+    // ...so neither wording of the cross-project banner is rendered.
+    expect(screen.queryByText('data.NotInProject')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('data.BelongsToDifferentProject'),
+    ).not.toBeInTheDocument();
   });
 });
 
