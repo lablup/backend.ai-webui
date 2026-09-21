@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-21T19:01:59.138Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 2,
+        "changes": 8,
+        "added": 0,
+        "modified": 8,
+        "removed": 0,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "bac458934999"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "39d415732c42",
+            "bac458934999",
+            "cf64a1a2ee9b",
+            "4f532719ddc4",
+            "bac458934999-2",
+            "bac458934999-3",
+            "c99e4fb38ae5"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 2,
+        "changes": 8,
+        "added": 0,
+        "modified": 8,
+        "removed": 0,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "ff3471000985"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "479d5f928fb4",
+            "ff3471000985",
+            "70c88fb05c93",
+            "59c06ab8e179",
+            "ff3471000985-2",
+            "ff3471000985-3",
+            "6548e13ef36e"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 2,
+        "changes": 8,
+        "added": 0,
+        "modified": 8,
+        "removed": 0,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "a98b41366c80"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "c84bf7a043bb",
+            "a98b41366c80",
+            "c3f0d70c0141",
+            "dd36756e37f6",
+            "a98b41366c80-2",
+            "a98b41366c80-3",
+            "7967a65b07b3"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 2,
+        "changes": 8,
+        "added": 0,
+        "modified": 8,
+        "removed": 0,
+        "images": 8,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "881578a4dbdd"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "cb67efeba750",
+            "881578a4dbdd",
+            "c2c76edd4379",
+            "ed7e791ff8e2",
+            "881578a4dbdd-2",
+            "881578a4dbdd-3",
+            "e260faf87f32"
+          ]
+        }
+      ]
+    }
+  }
+}
