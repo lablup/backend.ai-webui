@@ -117,10 +117,16 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
         .get_logs(session?.row_id, session?.access_key, selectedKernelId, 15000)
         .then((req: any) => req.result.logs);
     },
+    // Without it this query never holds data — it only ever fails — and
+    // query-core blanks `error` and returns the status to `pending` at the
+    // START of every fetch for such a query (`fetchState`), so the alert
+    // below would unmount on each auto-refresh and come back when the
+    // request failed again.
+    initialData: '',
   });
 
   const [lastLineNumbers, { resetPrevious: resetPreviousLineNumber }] =
-    useMemoWithPrevious(() => logs?.split('\n').length || 0, [logs]);
+    useMemoWithPrevious(() => (logs ? logs.split('\n').length : 0), [logs]);
 
   const { md } = useBAIBreakpoint();
   const { t } = useTranslation();

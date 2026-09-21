@@ -12,6 +12,7 @@
 import ContainerLogModal from './ContainerLogModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -55,7 +56,11 @@ vi.mock('../../theme-shim', () => ({
 }));
 
 vi.mock('../AutoUpdateFetchKeyButton', () => ({
-  default: () => <button type="button">refresh</button>,
+  default: ({ onChange }: { onChange: () => void }) => (
+    <button type="button" onClick={() => onChange()}>
+      refresh
+    </button>
+  ),
 }));
 
 // The real viewer measures its container and paints through a virtualised
@@ -121,6 +126,28 @@ describe('ContainerLogModal', () => {
     ).toBeInTheDocument();
     // The traceback is operator noise and must not reach the dialog.
     expect(screen.queryByText(/Traceback/)).not.toBeInTheDocument();
+  });
+
+  it('keeps the alert on screen while the next refresh is in flight', async () => {
+    // query-core blanks `error` at the start of every fetch for a query that
+    // has never held data, which used to unmount the alert on each refresh.
+    getLogs.mockRejectedValueOnce(serverError);
+    getLogs.mockReturnValueOnce(new Promise(() => {}));
+    renderModal();
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('kernel.FailedToLoadContainerLogs'),
+      ).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: 'refresh' }));
+    await waitFor(() => {
+      expect(getLogs).toHaveBeenCalledTimes(2);
+    });
+    expect(
+      screen.getByText('kernel.FailedToLoadContainerLogs'),
+    ).toBeInTheDocument();
   });
 
   it('shows no alert once logs arrive', async () => {
