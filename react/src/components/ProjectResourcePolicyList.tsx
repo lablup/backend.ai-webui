@@ -208,7 +208,7 @@ const ProjectResourcePolicyList: React.FC<
     });
     exportCSVWithFormattingRules(
       responseData as ProjectResourcePolicies[],
-      'project_resource_polices',
+      'project_resource_policies',
       {
         max_vfolder_count: (text: ProjectResourcePolicies) =>
           _.toNumber(text) === 0 ? '-' : text,

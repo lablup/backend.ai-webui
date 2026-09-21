@@ -8,10 +8,12 @@ import type {
   UserResourcePolicyV2Query as UserResourcePolicyV2QueryType,
 } from '../__generated__/UserResourcePolicyV2Query.graphql';
 import { App } from '../app-shim';
-import { convertToOrderBy } from '../helper';
+import { convertToDecimalUnit, convertToOrderBy } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicyV2SettingModal from './UserResourcePolicyV2SettingModal';
 import {
+  availableUserResourcePolicyExportFields,
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -23,6 +25,7 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
@@ -53,6 +56,14 @@ export const UserResourcePolicyV2Query = graphql`
         node {
           id
           name
+          maxVfolderCount
+          maxConcurrentLogins
+          maxSessionCountPerModelSession
+          maxQuotaScopeSize {
+            expr
+          }
+          maxCustomizedImageCount
+          createdAt
           ...BAIUserResourcePolicyV2TableFragment
           ...UserResourcePolicyV2SettingModalFragment
         }
@@ -69,6 +80,12 @@ type UserResourcePolicyV2Node = NonNullable<
   >['node']
 >;
 
+// Fails to compile if the query above stops selecting an exportable field.
+type UserResourcePolicyExportRow = Pick<
+  UserResourcePolicyV2Node,
+  (typeof availableUserResourcePolicyExportFields)[number]
+>;
+
 export interface UserResourcePolicyV2Props extends Omit<
   BAIUserResourcePolicyV2TableProps,
   | 'userResourcePoliciesFrgmt'
@@ -78,6 +95,7 @@ export interface UserResourcePolicyV2Props extends Omit<
   | 'dataSource'
   | 'pagination'
   | 'customizeColumns'
+  | 'exportSettings'
 > {
   queryRef: PreloadedQuery<UserResourcePolicyV2QueryType>;
   onReload: (
@@ -135,6 +153,33 @@ const UserResourcePolicyV2 = ({
   const userResourcePolicies = filterOutNullAndUndefined(
     (data.adminUserResourcePoliciesV2?.edges ?? []).map((edge) => edge?.node),
   );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (_.isEmpty(selectedExportKeys) || _.isEmpty(userResourcePolicies)) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+    const exportRows: Array<Partial<UserResourcePolicyExportRow>> = _.map(
+      userResourcePolicies,
+      (policy) =>
+        _.pick(
+          policy,
+          selectedExportKeys as Array<keyof UserResourcePolicyExportRow>,
+        ),
+    );
+    exportCSVWithFormattingRules(exportRows, 'user_resource_policies', {
+      maxVfolderCount: (value) => (_.toNumber(value) === 0 ? '∞' : value),
+      maxConcurrentLogins: (value) => value ?? '∞',
+      maxQuotaScopeSize: (value) =>
+        value?.expr === '-1'
+          ? '∞'
+          : (convertToDecimalUnit(value?.expr, 'auto')?.displayValue ?? '-'),
+      createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+    });
+    message.info(
+      t('resourcePolicy.ExportedCurrentPageOnly', { count: exportRows.length }),
+    );
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -281,6 +326,12 @@ const UserResourcePolicyV2 = ({
           )
         }
         userResourcePoliciesFrgmt={userResourcePolicies}
+        exportSettings={{
+          supportedFields: [...availableUserResourcePolicyExportFields],
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
+        }}
         {...tableProps}
       />
       <UserResourcePolicyV2SettingModal

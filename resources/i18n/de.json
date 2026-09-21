@@ -2609,6 +2609,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED' erlaubt die Nutzung bis zur Kapazität des Agent-Knotens, während 'LIMITED' Ressourcen verweigert, sofern sie nicht explizit festgelegt sind. In den meisten Fällen wird 'UNLIMITED' empfohlen.",
     "DeletePolicy": "Richtlinien löschen",
     "ExportCSV": "CSV exportieren",
+    "ExportedCurrentPageOnly": "{{count}} Zeilen der aktuellen Seite wurden exportiert. Andere Seiten sind nicht enthalten.",
     "Folders": "Ordner",
     "IdleTimeout": "Leerlauf-Timeout",
     "IdleTimeoutSec": "Leerlauf-Timeout (Sek.)",

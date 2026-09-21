@@ -2594,6 +2594,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED' allows usage up to the agent node’s capacity, while 'LIMITED' denies resources unless explicitly set. In most cases, 'UNLIMITED' is recommended.",
     "DeletePolicy": "Delete Policy",
     "ExportCSV": "Export CSV",
+    "ExportedCurrentPageOnly": "Exported {{count}} rows from the current page. Other pages are not included.",
     "Folders": "Folders",
     "IdleTimeout": "Idle Timeout",
     "IdleTimeoutSec": "Idle timeout (sec.)",

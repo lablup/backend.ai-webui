@@ -9,9 +9,12 @@ import type {
 } from '../__generated__/KeypairResourcePolicyV2Query.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import KeypairResourcePolicyV2SettingModal from './KeypairResourcePolicyV2SettingModal';
 import {
+  availableKeypairResourcePolicyExportFields,
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -23,6 +26,7 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useState } from 'react';
@@ -53,6 +57,27 @@ export const KeypairResourcePolicyV2Query = graphql`
         node {
           id
           name
+          defaultForUnspecified
+          totalResourceSlots {
+            resourceType
+            quantity
+            unlimited
+          }
+          maxConcurrentSessions
+          maxContainersPerSession
+          idleTimeout
+          maxSessionLifetime
+          allowedVfolderHosts {
+            host
+          }
+          maxPendingSessionCount
+          maxConcurrentSftpSessions
+          maxPendingSessionResourceSlots {
+            resourceType
+            quantity
+            unlimited
+          }
+          createdAt
           ...BAIKeypairResourcePolicyV2TableFragment
           ...KeypairResourcePolicyV2SettingModalFragment
         }
@@ -69,6 +94,23 @@ type KeypairResourcePolicyV2Node = NonNullable<
   >['node']
 >;
 
+// Fails to compile if the query above stops selecting an exportable field.
+type KeypairResourcePolicyExportRow = Pick<
+  KeypairResourcePolicyV2Node,
+  (typeof availableKeypairResourcePolicyExportFields)[number]
+>;
+
+const formatResourceSlots = (
+  entries: KeypairResourcePolicyV2Node['totalResourceSlots'] | null,
+) =>
+  _.isEmpty(entries)
+    ? '-'
+    : _.map(
+        entries,
+        (entry) =>
+          `${entry.resourceType}: ${entry.unlimited ? '∞' : (entry.quantity ?? '-')}`,
+      ).join(', ');
+
 export interface KeypairResourcePolicyV2Props extends Omit<
   BAIKeypairResourcePolicyV2TableProps,
   | 'keypairResourcePoliciesFrgmt'
@@ -78,6 +120,7 @@ export interface KeypairResourcePolicyV2Props extends Omit<
   | 'dataSource'
   | 'pagination'
   | 'customizeColumns'
+  | 'exportSettings'
 > {
   queryRef: PreloadedQuery<KeypairResourcePolicyV2QueryType>;
   onReload: (
@@ -137,6 +180,38 @@ const KeypairResourcePolicyV2 = ({
       (edge) => edge?.node,
     ),
   );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (_.isEmpty(selectedExportKeys) || _.isEmpty(keypairResourcePolicies)) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+    const exportRows: Array<Partial<KeypairResourcePolicyExportRow>> = _.map(
+      keypairResourcePolicies,
+      (policy) =>
+        _.pick(
+          policy,
+          selectedExportKeys as Array<keyof KeypairResourcePolicyExportRow>,
+        ),
+    );
+    exportCSVWithFormattingRules(exportRows, 'keypair_resource_policies', {
+      totalResourceSlots: formatResourceSlots,
+      maxConcurrentSessions: (value) => value || '∞',
+      maxContainersPerSession: (value) =>
+        value === SIGNED_32BIT_MAX_INT ? '∞' : value,
+      idleTimeout: (value) => value || '∞',
+      maxSessionLifetime: (value) => value || '∞',
+      allowedVfolderHosts: (value) =>
+        _.isEmpty(value) ? '-' : _.map(value, 'host').join(', '),
+      maxPendingSessionCount: (value) => value ?? '∞',
+      maxConcurrentSftpSessions: (value) => value || '∞',
+      maxPendingSessionResourceSlots: formatResourceSlots,
+      createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+    });
+    message.info(
+      t('resourcePolicy.ExportedCurrentPageOnly', { count: exportRows.length }),
+    );
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -296,6 +371,12 @@ const KeypairResourcePolicyV2 = ({
           )
         }
         keypairResourcePoliciesFrgmt={keypairResourcePolicies}
+        exportSettings={{
+          supportedFields: [...availableKeypairResourcePolicyExportFields],
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
+        }}
         {...tableProps}
       />
       <Suspense>

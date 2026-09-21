@@ -2006,6 +2006,7 @@
         "resourcePolicy.DefaultForUnspecifiedTooltipDesc1",
         "resourcePolicy.DefaultForUnspecifiedTooltipDesc2",
         "resourcePolicy.DeletePolicy",
+        "resourcePolicy.ExportedCurrentPageOnly",
         "resourcePolicy.Folders",
         "resourcePolicy.IdleTimeout",
         "resourcePolicy.IdleTimeoutSec",

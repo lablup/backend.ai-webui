@@ -2607,6 +2607,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' membolehkan penggunaan sehingga kapasiti node ejen, sementara 'Limited' menafikan sumber kecuali secara jelas ditetapkan. \nDalam kebanyakan kes, 'tidak terhad' disyorkan.",
     "DeletePolicy": "Padam dasar",
     "ExportCSV": "Eksport CSV",
+    "ExportedCurrentPageOnly": "Mengeksport {{count}} baris daripada halaman semasa. Halaman lain tidak disertakan.",
     "Folders": "Folder",
     "IdleTimeout": "Tamat Masa Terbiar",
     "IdleTimeoutSec": "Tamat waktu tunggu (sek.)",

@@ -2607,6 +2607,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Rajoittamaton' sallii käytön Agent -solmun kapasiteettiin saakka, kun taas 'rajoitettu' kieltää resursseja, ellei nimenomaisesti ole asetettu. \nUseimmissa tapauksissa suositellaan 'rajoittamatonta'.",
     "DeletePolicy": "Poistaa käytännöt",
     "ExportCSV": "Vie CSV",
+    "ExportedCurrentPageOnly": "Vietiin {{count}} riviä nykyiseltä sivulta. Muut sivut eivät sisälly vientiin.",
     "Folders": "Kansiot",
     "IdleTimeout": "Käyttämättömyyden aikakatkaisu",
     "IdleTimeoutSec": "Tyhjäkäynnin aikakatkaisu (sek.)",

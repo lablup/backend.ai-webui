@@ -2607,6 +2607,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Sınırsız', aracı düğümünün kapasitesine kadar kullanım sağlarken, 'Limited' açıkça ayarlanmadıkça kaynakları reddeder. \nÇoğu durumda, 'sınırsız' önerilir.",
     "DeletePolicy": "Politikayı sil",
     "ExportCSV": "CSV'yi dışa aktar",
+    "ExportedCurrentPageOnly": "Geçerli sayfadaki {{count}} satır dışa aktarıldı. Diğer sayfalar dahil değildir.",
     "Folders": "klasörler",
     "IdleTimeout": "Boşta Kalma Zaman Aşımı",
     "IdleTimeoutSec": "Boşta kalma zaman aşımı (sn.)",

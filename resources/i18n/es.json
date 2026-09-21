@@ -2607,6 +2607,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' permite el uso a la capacidad del nodo del agente, mientras que 'limitado' niega los recursos a menos que estén explícitamente. \nEn la mayoría de los casos, se recomienda 'ilimitado'.",
     "DeletePolicy": "Eliminar política",
     "ExportCSV": "Exportar CSV",
+    "ExportedCurrentPageOnly": "Se exportaron {{count}} filas de la página actual. Las demás páginas no están incluidas.",
     "Folders": "Carpetas",
     "IdleTimeout": "Tiempo de inactividad",
     "IdleTimeoutSec": "Tiempo de espera (seg.)",

@@ -19,6 +19,9 @@ export * from './vfolderHostPermission';
  `helper/index.ts` antd-free.
 */
 
+/** The manager's "no limit" sentinel for count fields; rendered as ∞. */
+export const SIGNED_32BIT_MAX_INT = 2147483647;
+
 export function parseValueWithUnit(str: string): [number, string | undefined] {
   const match = str?.match(/^(\d+(?:\.\d+)?|\.\d+)\s*([a-zA-Z%]*)$/);
   if (!match) {

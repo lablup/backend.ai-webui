@@ -2611,6 +2611,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "“無限”允許使用代理節點的容量，而“有限”拒絕資源，除非明確設置。在大多數情況下，建議“無限”。",
     "DeletePolicy": "刪除政策",
     "ExportCSV": "匯出CSV",
+    "ExportedCurrentPageOnly": "已匯出目前頁面的 {{count}} 列。其他頁面未包含在內。",
     "Folders": "文件夾",
     "IdleTimeout": "空閒超時",
     "IdleTimeoutSec": "空閒超時（秒）",

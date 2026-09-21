@@ -8,10 +8,12 @@ import type {
   ProjectResourcePolicyV2Query as ProjectResourcePolicyV2QueryType,
 } from '../__generated__/ProjectResourcePolicyV2Query.graphql';
 import { App } from '../app-shim';
-import { convertToOrderBy } from '../helper';
+import { convertToDecimalUnit, convertToOrderBy } from '../helper';
+import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicyV2SettingModal from './ProjectResourcePolicyV2SettingModal';
 import {
+  availableProjectResourcePolicyExportFields,
   BAIButton,
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
@@ -23,6 +25,7 @@ import {
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
@@ -53,6 +56,12 @@ export const ProjectResourcePolicyV2Query = graphql`
         node {
           id
           name
+          maxVfolderCount
+          maxQuotaScopeSize {
+            expr
+          }
+          maxNetworkCount
+          createdAt
           ...BAIProjectResourcePolicyV2TableFragment
           ...ProjectResourcePolicyV2SettingModalFragment
         }
@@ -69,6 +78,12 @@ type ProjectResourcePolicyV2Node = NonNullable<
   >['node']
 >;
 
+// Fails to compile if the query above stops selecting an exportable field.
+type ProjectResourcePolicyExportRow = Pick<
+  ProjectResourcePolicyV2Node,
+  (typeof availableProjectResourcePolicyExportFields)[number]
+>;
+
 export interface ProjectResourcePolicyV2Props extends Omit<
   BAIProjectResourcePolicyV2TableProps,
   | 'projectResourcePoliciesFrgmt'
@@ -78,6 +93,7 @@ export interface ProjectResourcePolicyV2Props extends Omit<
   | 'dataSource'
   | 'pagination'
   | 'customizeColumns'
+  | 'exportSettings'
 > {
   queryRef: PreloadedQuery<ProjectResourcePolicyV2QueryType>;
   onReload: (
@@ -137,6 +153,33 @@ const ProjectResourcePolicyV2 = ({
       (edge) => edge?.node,
     ),
   );
+
+  const handleExportCSV = (selectedExportKeys: string[]) => {
+    if (_.isEmpty(selectedExportKeys) || _.isEmpty(projectResourcePolicies)) {
+      message.error(t('resourcePolicy.NoDataToExport'));
+      return;
+    }
+    const exportRows: Array<Partial<ProjectResourcePolicyExportRow>> = _.map(
+      projectResourcePolicies,
+      (policy) =>
+        _.pick(
+          policy,
+          selectedExportKeys as Array<keyof ProjectResourcePolicyExportRow>,
+        ),
+    );
+    exportCSVWithFormattingRules(exportRows, 'project_resource_policies', {
+      maxVfolderCount: (value) => (_.toNumber(value) === 0 ? '∞' : value),
+      maxQuotaScopeSize: (value) =>
+        value?.expr === '-1'
+          ? '∞'
+          : (convertToDecimalUnit(value?.expr, 'auto')?.displayValue ?? '-'),
+      maxNetworkCount: (value) => (_.toNumber(value) === -1 ? '∞' : value),
+      createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+    });
+    message.info(
+      t('resourcePolicy.ExportedCurrentPageOnly', { count: exportRows.length }),
+    );
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
@@ -272,6 +315,12 @@ const ProjectResourcePolicyV2 = ({
           )
         }
         projectResourcePoliciesFrgmt={projectResourcePolicies}
+        exportSettings={{
+          supportedFields: [...availableProjectResourcePolicyExportFields],
+          onExport: async (selectedExportKeys) => {
+            handleExportCSV(selectedExportKeys);
+          },
+        }}
         {...tableProps}
       />
       <ProjectResourcePolicyV2SettingModal

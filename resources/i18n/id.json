@@ -2610,6 +2610,7 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' memungkinkan penggunaan hingga kapasitas agen node, sementara 'Limited' menolak sumber daya kecuali diatur secara eksplisit. \nDalam kebanyakan kasus, 'tidak terbatas' direkomendasikan.",
     "DeletePolicy": "Hapus Kebijakan",
     "ExportCSV": "Ekspor CSV",
+    "ExportedCurrentPageOnly": "Mengekspor {{count}} baris dari halaman saat ini. Halaman lain tidak disertakan.",
     "Folders": "Folder",
     "IdleTimeout": "Batas Waktu Diam",
     "IdleTimeoutSec": "Waktu tunggu menganggur (dtk.)",
