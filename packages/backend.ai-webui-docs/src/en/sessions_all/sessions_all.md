@@ -214,21 +214,7 @@ Data in those folders can also be reused by mounting it when creating another co
 ![](../images/launch_session_data.png)
 
 Users can specify the storage folders to mount in the compute session with the
-`Select Folder` dropdown. Each option in the list shows the folder name together
-with its owner (user or project), usage mode, host, creation date, and the
-permission you hold on the folder (`R`, `W`, `D`). Type in the dropdown to filter
-the list by folder name. Folders that are mounted automatically, and folders that
-cannot be mounted in the current project, are not offered.
-
-Two buttons are placed next to the dropdown:
-
-- `+` (Create a new storage folder): opens the folder creation dialog. The folder
-   you create is added to the list and selected as a folder to mount.
-   For further information, please refer [Create Storage Folder](#create-storage-folder) section.
-- `Refresh`: reloads the folder list, for example after a folder has been created
-   or shared elsewhere.
-
-![](../images/folder_create_modal.png)
+`Select Folder` dropdown.
 
 Each selected folder is listed as a row with two path fields:
 
