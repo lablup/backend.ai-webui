@@ -183,6 +183,10 @@ describe('BAITable invalid page number (FR-3703)', () => {
  from the arguments instead (`onReload` with the last requested variables —
  AdminUserManagement and ~15 siblings) issued a second query with the old
  limit, and the size change never took. Both shapes are pinned here.
+
+ BAITable now coalesces whatever Astryx reports in one event into a single
+ `onChange` carrying the latest values, so nothing here depends on the order
+ or the count of Astryx's calls — only on what the caller ends up hearing.
 */
 describe('BAITable page size change (FR-3994)', () => {
   const pickTwenty = async () => {
@@ -239,5 +243,26 @@ describe('BAITable page size change (FR-3994)', () => {
     await pickTwenty();
 
     expect(requested).toEqual([20]);
+  });
+
+  it('still reports a plain page click once, with the current page size', async () => {
+    const onChange = vi.fn();
+    renderTable({
+      dataSource: makeRows(10),
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 250,
+        pageSizeOptions: [10, 20, 50],
+        onChange,
+      },
+    });
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'Go to next page' }));
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith(2, 10);
   });
 });

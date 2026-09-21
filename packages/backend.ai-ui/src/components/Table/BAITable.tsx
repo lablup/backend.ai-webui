@@ -89,7 +89,7 @@ import {
   Inbox,
   Settings,
 } from 'lucide-react';
-import React, { useRef, useState, type ReactNode } from 'react';
+import React, { useEffect, useRef, useState, type ReactNode } from 'react';
 
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
@@ -647,11 +647,28 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     },
   );
 
-  // Set by onPageSizeChange so the onChange(1) Astryx fires right after it is
-  // dropped rather than re-reporting the previous page size. Cleared on the
-  // microtask too, so a future Astryx that stops firing that trailing call
-  // cannot leave the flag set and swallow the next page click.
-  const isPageSizeChangeRef = useRef(false);
+  // Astryx's size selector fires onPageSizeChange and then onChange(1) in the
+  // same event, and that trailing call closes over the page size just replaced
+  // (FR-3994). Every pagination callback records what it would report here and
+  // one microtask flushes the latest, so the caller hears each event once with
+  // the current values whatever Astryx's call order or count.
+  const pageSizeRef = useRef(currentPageSize);
+  useEffect(() => {
+    pageSizeRef.current = currentPageSize;
+  }, [currentPageSize]);
+  const pendingReportRef = useRef<{ page: number; pageSize: number } | null>(
+    null,
+  );
+  const reportPagination = (page: number, pageSize: number) => {
+    const isScheduled = pendingReportRef.current !== null;
+    pendingReportRef.current = { page, pageSize };
+    if (isScheduled) return;
+    queueMicrotask(() => {
+      const next = pendingReportRef.current;
+      pendingReportRef.current = null;
+      if (next && pagination) pagination.onChange?.(next.page, next.pageSize);
+    });
+  };
 
   const total = pagination
     ? (pagination.total ?? sortedRows.length)
@@ -1366,24 +1383,14 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
                 size={pagination?.size ?? 'sm'}
                 label={String(t('comp:BAITable.Pagination'))}
                 onChange={(page) => {
-                  // Astryx's size selector fires onPageSizeChange and then
-                  // onChange(1) in the same event; that trailing call still
-                  // closes over the page size just replaced (FR-3994).
-                  if (isPageSizeChangeRef.current) {
-                    isPageSizeChangeRef.current = false;
-                    return;
-                  }
                   setCurrentPage(page);
-                  pagination?.onChange?.(page, currentPageSize);
+                  reportPagination(page, pageSizeRef.current);
                 }}
                 onPageSizeChange={(pageSize) => {
-                  isPageSizeChangeRef.current = true;
-                  queueMicrotask(() => {
-                    isPageSizeChangeRef.current = false;
-                  });
+                  pageSizeRef.current = pageSize;
                   setCurrentPage(1);
                   setCurrentPageSize(pageSize);
-                  pagination?.onChange?.(1, pageSize);
+                  reportPagination(1, pageSize);
                 }}
               />
             </>
