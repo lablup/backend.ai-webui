@@ -999,8 +999,6 @@ export class Client {
       // returning the old non-null shape, so call sites must not treat an
       // omitted field as "inherit from variant" unless this flag is set.
       this._features['preset-model-config-type'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7234 / backend #13538 — DomainV2 `id` became the domain uuid, and
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
@@ -1023,11 +1021,9 @@ export class Client {
       // `type`, so the Projects page can hide the per-user PERSONAL projects
       // (BA-7659) behind a removable chip. FR-4015.
       this._features['group-nodes-type-filter'] = true;
-    }
-    // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
-    // requested id (`items` / `successes` plus `failed`) instead of a bare
-    // count, and the counts became `@deprecated`. FR-3820.
-    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
+      // requested id (`items` / `successes` plus `failed`) instead of a bare
+      // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
     }
   }
