@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b8bdfda94221d70888611e4eaca20071>>
+ * @generated SignedSource<<4cc03a366df396ce36d9fc969a6da74b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,13 @@
 
 import { ReaderFragment } from 'relay-runtime';
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type RoleScopePermissionEditModal_permissionsFragment$data = ReadonlyArray<{
   readonly entityType: string;
   readonly id: string;
   readonly operation: OperationType | null | undefined;
+  readonly permission: PermissionBit;
   readonly scopeId: string | null | undefined;
   readonly " $fragmentType": "RoleScopePermissionEditModal_permissionsFragment";
 }>;
@@ -58,12 +60,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "operation",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permission",
+      "storageKey": null
     }
   ],
   "type": "Permission",
   "abstractKey": null
 };
 
-(node as any).hash = "cb3f7b3a7f29508663f442e9145ed467";
+(node as any).hash = "6cd6aa062049ec6c25822765c00655dd";
 
 export default node;
