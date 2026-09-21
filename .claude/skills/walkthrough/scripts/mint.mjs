@@ -12,9 +12,16 @@
  *            [--pr <n>] [--env-file <path>] [--report <path>] [--settle <ms>]
  *            [--dry-run]
  *
+ * Without `--pr` the PR is the current branch's and the app is the name
+ * `dev-server` claims for it. With `--pr <n>` the PR is looked up on GitHub:
+ * the app is whichever live boot record serves that PR (a `/rename` word
+ * cannot be predicted from the title), the sha is the PR head, and a server
+ * whose worktree is behind that head is refused rather than described.
+ *
  * Exit: 0 a set link · 2 usage / bad manifest · 3 preflight (no walkthrough).
  */
 import { parseManifest, projectBasePath, stopLabel } from "./manifest.mjs";
+import { readRecords, recordServingPr } from "./resolve.mjs";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -85,16 +92,18 @@ function parseArgs(argv) {
   return flags;
 }
 
-const git = (...args) => {
+const gitIn = (cwd, ...args) => {
   try {
     return execFileSync("git", args, {
-      cwd: REPO_ROOT,
+      cwd,
       encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
     }).trim();
   } catch {
     return "";
   }
 };
+const git = (...args) => gitIn(REPO_ROOT, ...args);
 
 /** `KEY=value` lines, quotes stripped — the `.env.playwright` dialect. */
 function readEnvFile(file) {
@@ -124,20 +133,53 @@ function endpointFromProcess(pid) {
   return "";
 }
 
-async function resolveApp(flags) {
-  if (flags.app) return flags.app;
-  const branch = git("branch", "--show-current");
-  let pr = null;
+const gh = (args) =>
+  JSON.parse(
+    execFileSync("gh", args, {
+      encoding: "utf8",
+      timeout: 8000,
+      stdio: ["ignore", "pipe", "ignore"],
+    }),
+  );
+
+/** The PR `--pr` names: its branch and head, or a preflight refusal. */
+function lookupPr(value) {
+  const number = Number.parseInt(value, 10);
+  if (!Number.isInteger(number) || number <= 0)
+    fail(2, `--pr needs a PR number, not '${value}'`);
   try {
-    pr = JSON.parse(
-      execFileSync("gh", ["pr", "view", branch, "--json", "number,title"], {
-        encoding: "utf8",
-        timeout: 8000,
-        stdio: ["ignore", "pipe", "ignore"],
-      }),
-    );
+    return gh([
+      "pr",
+      "view",
+      String(number),
+      "--json",
+      "number,title,headRefName,headRefOid,url",
+    ]);
   } catch {
-    // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
+    return fail(3, `PR #${number} not found on GitHub (or gh is offline)`);
+  }
+}
+
+/** `owner/repo` of this checkout, or "" when gh cannot say. */
+function repoName() {
+  try {
+    return gh(["repo", "view", "--json", "nameWithOwner"]).nameWithOwner ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/** The app name `dev-server` would claim for `target`'s branch (or ours). */
+async function resolveApp(flags, target) {
+  if (flags.app) return flags.app;
+  const branch = target?.headRefName || git("branch", "--show-current");
+  let pr = target ? { number: target.number, title: target.title } : null;
+  if (!pr) {
+    try {
+      pr = gh(["pr", "view", branch, "--json", "number,title"]);
+    } catch {
+      // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
+    }
   }
   const mod = await import(resolve(REPO_ROOT, "scripts/portless-app-name.mjs"));
   const name = mod.resolveAppName({
@@ -150,10 +192,16 @@ async function resolveApp(flags) {
   return name;
 }
 
-function readBootRecord(app) {
+function readBootRecord(app, target) {
   const file = resolve(STATE_DIR, `${app}.json`);
-  if (!existsSync(file))
+  if (!existsSync(file)) {
+    if (target)
+      fail(
+        3,
+        `no live dev server serves PR #${target.number} (${target.headRefName}) and no boot record at ${file} — boot one for that branch with the dev-server skill, then re-run`,
+      );
     fail(3, `no boot record at ${file} — is the dev server advertised?`);
+  }
   try {
     return { file, record: JSON.parse(readFileSync(file, "utf8")) };
   } catch (error) {
@@ -370,22 +418,38 @@ async function main() {
     return fail(2, error.message);
   }
 
-  const app = await resolveApp(flags);
-  const { file, record } = readBootRecord(app);
+  const target = flags.pr ? lookupPr(flags.pr) : null;
+  // On demand for a PR: the live record that serves it names the app, since
+  // a `/rename` word in the claimed name is not derivable from the PR.
+  const serving =
+    target && !flags.app
+      ? recordServingPr(readRecords(STATE_DIR), target.number, {
+          repo: repoName(),
+        })
+      : null;
+  const app = serving?.record?.app ?? (await resolveApp(flags, target));
+  const { file, record } = serving ?? readBootRecord(app, target);
   if (record.stoppedAt)
     fail(
       3,
       `${file} says the server stopped at ${record.stoppedAt} — boot it first`,
     );
-  const pr = Number.parseInt(
-    flags.pr || String(prFromRecord(record) ?? ""),
-    10,
-  );
+  const pr = target?.number ?? prFromRecord(record);
   if (!Number.isInteger(pr))
     fail(3, `no PR for '${app}' in ${file} — pass --pr <n>`);
-  const sha = flags.sha || git("rev-parse", "HEAD");
+  const sha = flags.sha || target?.headRefOid || git("rev-parse", "HEAD");
   if (!/^[0-9a-f]{40}$/.test(sha))
     fail(3, `'${sha}' is not a 40-char commit sha`);
+  // The comment stamps `sha`; a server whose checkout is behind it would be
+  // verified against code the sha does not describe.
+  const servedSha = record.worktree
+    ? gitIn(record.worktree, "rev-parse", "HEAD")
+    : "";
+  if (/^[0-9a-f]{40}$/.test(servedSha) && servedSha !== sha)
+    fail(
+      3,
+      `${record.worktree} serves ${servedSha.slice(0, 7)} but the walkthrough would claim ${sha.slice(0, 7)} — update that checkout to the PR head (Vite reloads on its own), then re-run`,
+    );
 
   // advertise.sh refuses an unroutable server rather than publish a
   // `.localhost` URL; a set link goes in the same public comment.
