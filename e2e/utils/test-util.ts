@@ -1476,7 +1476,7 @@ export async function modifyThemeJson(
       theme = {
         light: {
           token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
+            fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
             colorPrimary: '#FF7A00',
             colorLink: '#FF7A00',
             colorText: '#141414',
@@ -1488,7 +1488,7 @@ export async function modifyThemeJson(
         },
         dark: {
           token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
+            fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
             colorPrimary: '#DC6B03',
             colorLink: '#DC6B03',
             colorText: '#FFF',

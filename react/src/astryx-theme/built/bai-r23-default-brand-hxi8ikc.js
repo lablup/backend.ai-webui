@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-hv7b7uv theme — built by `pnpm exec astryx theme build`
+ * bai-r23-default-brand-hxi8ikc theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandHv7b7uvTheme } from './bai-r23-default-brand-hv7b7uv';
- *   import './bai-r23-default-brand-hv7b7uv.css';
+ *   import { baiR23DefaultBrandHxi8ikcTheme } from './bai-r23-default-brand-hxi8ikc';
+ *   import './bai-r23-default-brand-hxi8ikc.css';
  */
-export const baiR23DefaultBrandHv7b7uvTheme = {
-  name: 'bai-r23-default-brand-hv7b7uv',
+export const baiR23DefaultBrandHxi8ikcTheme = {
+  name: 'bai-r23-default-brand-hxi8ikc',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -80,8 +80,8 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
     "--duration-slow-min": "525ms",
     "--duration-slow": "300ms",
     "--duration-slow-max": "935ms",
-    "--font-family-body": "'Ubuntu', Roboto, sans-serif",
-    "--font-family-heading": "'Ubuntu', Roboto, sans-serif",
+    "--font-family-body": "'Ubuntu', Roboto, Pretendard, sans-serif",
+    "--font-family-heading": "'Ubuntu', Roboto, Pretendard, sans-serif",
     "--font-family-code": "ui-monospace, \"SF Mono\", Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
     "--color-syntax-keyword": "light-dark(#6b187c, #efa8ff)",
     "--color-syntax-string": "light-dark(#0b5615, #a4d6a3)",
@@ -215,7 +215,7 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r23-default-brand-hv7b7uv"],
+  __localTokenLineage: ["neutral","bai-r23-default-brand-hxi8ikc"],
   components: {
     "heading": {
       "level:1": {

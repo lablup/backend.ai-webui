@@ -43,6 +43,17 @@ Delete these temporary files during cleanup.
 
 After `browser_navigate`, the page often shows "Loading components..." for several seconds. **Always use `browser_wait_for` with a 3-second delay** or wait for a specific text element to appear. Do NOT rely on navigation alone.
 
+### Web Fonts Before Every Capture
+
+The UI fonts (Ubuntu for Latin, Pretendard for Hangul, both self-hosted under `resources/fonts/`) load lazily per `unicode-range`, so a capture taken right after a language switch or dialog open can bake the browser's temporary fallback face into the PNG. **Immediately before every `browser_take_screenshot`**, wait for the font set to settle:
+
+```js
+// browser_run_code
+await document.fonts.ready;
+```
+
+A fixed delay is not a substitute — `document.fonts.ready` resolves only once every font the page requested has finished loading.
+
 ## Reference Guides
 
 - `packages/backend.ai-webui-docs/SCREENSHOT-GUIDELINES.md` - Naming conventions, capture standards, file locations
@@ -121,8 +132,9 @@ Open the browser and log in:
 3. Navigate to the target page/feature
 4. Prepare the UI state (open dialogs, expand menus, fill sample data)
 5. **Always use `browser_snapshot` first** to verify the page state and identify correct element refs
-6. Capture with `browser_take_screenshot` using focused element `ref` (NOT full page)
-7. Repeat for all screenshots needed in this language
+6. Wait for `document.fonts.ready` via `browser_run_code` (see "Web Fonts Before Every Capture")
+7. Capture with `browser_take_screenshot` using focused element `ref` (NOT full page)
+8. Repeat for all screenshots needed in this language
 
 **Capture rules:**
 - **Prefer element-level screenshots** using the `ref` parameter — crop to the relevant dialog, panel, or section
