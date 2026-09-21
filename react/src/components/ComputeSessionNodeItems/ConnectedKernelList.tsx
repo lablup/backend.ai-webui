@@ -19,6 +19,7 @@ import {
   BAITable,
   BAIUnmountAfterClose,
   BAIDoubleBadge,
+  BAIFlex,
   BAIId,
   type BAIColumnType,
   BAIText,
@@ -69,7 +70,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       dataIndex: 'cluster_hostname',
       render: (hostname, record) => {
         return (
-          <>
+          <BAIFlex gap="xxs">
             <Text>{hostname}</Text>
             <IconButton
               variant="ghost"
@@ -81,7 +82,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
                 record.row_id && setKernelIdForLogModal(record.row_id);
               }}
             />
-          </>
+          </BAIFlex>
         );
       },
     },
