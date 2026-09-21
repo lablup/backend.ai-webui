@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Eylem ID",
     "Actor": "Aktör",
+    "ClientIp": "İstemci IP'si",
     "Description": "Açıklama",
     "Duration": "Süre",
     "EntityId": "Varlık ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Bozulmuş",
     "Deploying": "Dağıtılıyor",
     "Healthy": "Sağlıklı",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Anahtar Çifti Seçin"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "İstemci IP'si",
     "Domain": "Alan Adı",
     "FailReason": "Hata Nedeni",
     "LoginTime": "Oturum Açma Zamanı",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ve {{rest}} tane daha"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Oluşturulma Tarihi",
     "MaxConcurrentLogins": "Maksimum eşzamanlı oturum açma",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Geçersiz yol biçimi.",
     "AliasOverlapping": "Bağlama yolu başka bir klasörle çakışıyor.",
+    "AliasOverlappingWithAutoMount": "Bağlama yolu otomatik bağlanan bir klasörle çakışıyor.",
     "AliasPlaceholder": "Bağlama yolu",
     "AutoMountedFolders": "Otomatik bağlanan klasörler",
-    "Name": "Ad",
-    "PathAndAlias": "Yol & Takma Ad",
+    "CreateFolder": "Yeni bir depolama klasörü oluşturun",
+    "DestinationPath": "Konteyner yolu (destination)",
+    "Folders": "klasörler",
+    "OwnerProject": "Proje",
+    "OwnerUser": "Kullanıcı",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
+    "Refresh": "Yenile",
     "RemoveFolder": "Kaldır",
+    "SelectFolder": "Klasör Seç",
+    "SourcePath": "Klasördeki yol (source)",
     "Subpath": "Alt yol",
     "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
-    "SubpathPlaceholder": "örn. dataset/train (isteğe bağlı)",
-    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Kökü bağlamak için boş bırakın."
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; klasörün kökünü bağlamak için boş bırakın.",
+    "UnmountableFoldersRemoved": "Artık bağlayamayacağınız klasörler seçimden kaldırıldı."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Klasör Seç"

@@ -7,88 +7,116 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
+import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
+import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import {
   SessionLauncherFormValue,
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
-import ImageMetaIcon from './ImageMetaIcon';
-import {
-  imageNodeTagFacts,
-  ImageMetaDivider,
-  ImageTagBadges,
-  ImageTags,
-} from './ImageTags';
-import { PortTag } from './PortSelectFormItem';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
+import { PortToken } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
+  BAIImageMetaIcon,
+  BAILink,
   BAIMetadataList,
   BAITable,
+  BAIVFolderIdenticon,
   BAIText,
+  imageNodeTagFacts,
+  filterOutEmpty,
+  resolveVFolderMounts,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { CheckIcon, CopyIcon } from 'lucide-react';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 /**
- * Copy-only affordance replacing antd `Typography.Text copyable` with no
- * children (a bare copy icon that copies the full image name).
+ * The review step's image row. A manually typed image has no parts to
+ * decompose, so it stays a copyable code string; a picked image is a legacy
+ * `Image` form value with no fragment, so the row is drawn here (ADR 0005).
  */
-const CopyValueIconButton: React.FC<{ value?: string; label: string }> = ({
-  value,
-  label,
-}) => {
+const SessionLauncherImageRow: React.FC = () => {
   'use memo';
-  const [copied, setCopied] = useState(false);
+  const form = Form.useFormInstance<SessionLauncherFormValue>();
+  const [, { tagAlias }] = useBackendAIImageMetaData();
+
+  const environments = form.getFieldValue('environments');
+  const image = environments?.image;
+
+  if (environments?.manual) {
+    return (
+      <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
+        <BAIImageMetaIcon image={environments.manual} />
+        <BAIText code copyable>
+          {environments.manual}
+        </BAIText>
+      </BAIFlex>
+    );
+  }
+
+  const fullName = getImageFullName(image) || environments?.version;
+  const facts = imageNodeTagFacts(image?.tags, image?.labels, tagAlias);
+
   return (
-    <IconButton
-      variant="ghost"
-      size="sm"
-      icon={copied ? <CheckIcon aria-hidden /> : <CopyIcon aria-hidden />}
-      label={label}
-      tooltip={label}
-      isDisabled={copied}
-      onClick={() => {
-        void navigator.clipboard?.writeText(value ?? '');
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }}
-    />
+    <BAIFlex direction="row" wrap="wrap" gap="xxs">
+      <BAIImageMetaIcon image={fullName} />
+      <Text>{tagAlias(image?.base_image_name)}</Text>
+      <ImageMetaDivider />
+      <Text>{image?.version}</Text>
+      <ImageMetaDivider />
+      <Text>{image?.architecture}</Text>
+      {!_.isEmpty(facts) ? (
+        <>
+          <ImageMetaDivider />
+          <ImageTagTokens facts={facts} />
+        </>
+      ) : null}
+      <BAIText copyable={{ text: fullName }} />
+    </BAIFlex>
   );
 };
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
-}> = ({ onClickEditStep }) => {
+  currentProjectId: string;
+}> = ({ onClickEditStep, currentProjectId }) => {
   const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
   const baiClient = useSuspendedBackendaiClient();
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
-  const supportExtendedImageInfo =
-    baiClient?.supports('extended-image-info') ?? false;
   const currentProject = useCurrentProjectValue();
-  const [, { getBaseVersion, getBaseImage, tagAlias }] =
-    useBackendAIImageMetaData();
+  // `preserve` reads the raw store: `owner` has no registered Form.Item.
+  const owner = Form.useWatch('owner', { form, preserve: true });
+  const mountableHosts = useMountableStorageHosts(currentProjectId);
+  const autoMountedFolders = useSuspendedAutoMountedFolders({
+    ownerEmail: ownerEmailFromOwner(owner),
+    currentProjectId,
+    mountableHosts,
+  });
+  const { generateFolderPath } = useFolderExplorerOpener();
+
+  const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
 
   return (
     <>
@@ -218,128 +246,7 @@ const SessionLauncherPreview: React.FC<{
             {currentProject.name}
           </MetadataListItem>
           <MetadataListItem label={t('general.Image')}>
-            {supportExtendedImageInfo ? (
-              <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
-                <ImageMetaIcon
-                  image={
-                    form.getFieldValue('environments')?.version ||
-                    form.getFieldValue('environments')?.manual
-                  }
-                />
-                <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
-                  {form.getFieldValue('environments')?.manual ? (
-                    <BAIText code copyable>
-                      {form.getFieldValue('environments')?.manual}
-                    </BAIText>
-                  ) : (
-                    <>
-                      <Text>
-                        {tagAlias(
-                          form.getFieldValue('environments')?.image
-                            ?.base_image_name,
-                        )}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {form.getFieldValue('environments')?.image?.version}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {
-                          form.getFieldValue('environments')?.image
-                            ?.architecture
-                        }
-                      </Text>
-                      <ImageMetaDivider />
-                      {/* TODO: replace this with AliasedImageDoubleTags after image list query with ImageNode is implemented. */}
-                      <ImageTagBadges
-                        facts={imageNodeTagFacts(
-                          form.getFieldValue('environments')?.image?.tags,
-                          form.getFieldValue('environments')?.image?.labels,
-                          tagAlias,
-                        )}
-                      />
-                      <BAIFlex gap={'xxs'}>
-                        <CopyValueIconButton
-                          label={t('button.CopySomething', {
-                            name: t('general.Image'),
-                          })}
-                          value={
-                            getImageFullName(
-                              form.getFieldValue('environments')?.image,
-                            ) || form.getFieldValue('environments')?.version
-                          }
-                        />
-                      </BAIFlex>
-                    </>
-                  )}
-                </BAIFlex>
-              </BAIFlex>
-            ) : (
-              <BAIFlex direction="row" align="center" gap="xs" wrap="nowrap">
-                <ImageMetaIcon
-                  image={
-                    form.getFieldValue('environments')?.version ||
-                    form.getFieldValue('environments')?.manual
-                  }
-                />
-                <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
-                  {form.getFieldValue('environments')?.manual ? (
-                    <BAIText code copyable>
-                      {form.getFieldValue('environments')?.manual}
-                    </BAIText>
-                  ) : (
-                    <>
-                      <Text>
-                        {tagAlias(
-                          getBaseImage(
-                            form.getFieldValue('environments')?.version,
-                          ),
-                        )}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {getBaseVersion(
-                          form.getFieldValue('environments')?.version,
-                        )}
-                      </Text>
-                      <ImageMetaDivider />
-                      <Text>
-                        {
-                          form.getFieldValue('environments')?.image
-                            ?.architecture
-                        }
-                      </Text>
-                      <ImageMetaDivider />
-                      <ImageTags
-                        tag={form.getFieldValue([
-                          'environments',
-                          'image',
-                          'tag',
-                        ])}
-                        labels={
-                          form.getFieldValue('environments')?.image
-                            ?.labels as Array<{
-                            key: string;
-                            value: string;
-                          }>
-                        }
-                      />
-                      <CopyValueIconButton
-                        label={t('button.CopySomething', {
-                          name: t('general.Image'),
-                        })}
-                        value={
-                          getImageFullName(
-                            form.getFieldValue('environments')?.image,
-                          ) || form.getFieldValue('environments')?.version
-                        }
-                      />
-                    </>
-                  )}
-                </BAIFlex>
-              </BAIFlex>
-            )}
+            <SessionLauncherImageRow />
           </MetadataListItem>
           {form.getFieldValue('envvars')?.length > 0 && (
             <MetadataListItem label={t('session.launcher.EnvironmentVariable')}>
@@ -424,7 +331,7 @@ const SessionLauncherPreview: React.FC<{
                   // t('session.launcher.CustomAllocation')
                   ''
                 ) : (
-                  <Badge label={form.getFieldValue('allocationPreset')} />
+                  <Token label={form.getFieldValue('allocationPreset')} />
                 )}
 
                 <ResourceNumbersOfSession
@@ -474,7 +381,7 @@ const SessionLauncherPreview: React.FC<{
         showDivider
         size="small"
         status={
-          form.getFieldError('mount_id_map').length > 0 ? 'error' : undefined
+          form.getFieldError('vfolderMounts').length > 0 ? 'error' : undefined
         }
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
@@ -482,37 +389,48 @@ const SessionLauncherPreview: React.FC<{
         }}
       >
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
-          {form.getFieldValue('mount_ids')?.length > 0 ? (
+          {mountRows.length > 0 ? (
             <BAITable
-              rowKey="name"
+              rowKey="vfolderId"
               size="small"
               pagination={false}
-              columns={[
+              columns={filterOutEmpty([
                 {
                   dataIndex: 'name',
-                  title: t('data.folders.Name'),
+                  title: t('session.launcher.MountSourcePath'),
+                  render: (
+                    value: string,
+                    record: (typeof mountRows)[number],
+                  ) => (
+                    <BAIFlex gap="xs" align="center">
+                      <BAIVFolderIdenticon vfolderId={record.vfolderId} />
+                      <BAILink to={generateFolderPath(record.vfolderId)}>
+                        {value}
+                      </BAILink>
+                      {record.subpath ? (
+                        <>
+                          <Text color="secondary">/</Text>
+                          {record.subpath}
+                        </>
+                      ) : null}
+                    </BAIFlex>
+                  ),
                 },
                 {
-                  dataIndex: 'alias',
-                  title: t('session.launcher.FolderAlias'),
-                  render: (value, record) => {
-                    return _.isEmpty(value) ? (
-                      <Text color="placeholder">
-                        {`/home/work/${record.name}`}
-                      </Text>
+                  dataIndex: 'mountDestination',
+                  title: t('session.launcher.MountDestinationPath'),
+                  render: (
+                    value: string,
+                    record: (typeof mountRows)[number],
+                  ) =>
+                    record.isDefaultAlias ? (
+                      <Text color="placeholder">{value}</Text>
                     ) : (
                       value
-                    );
-                  },
+                    ),
                 },
-              ]}
-              dataSource={_.map(form.getFieldValue('mount_ids'), (v) => {
-                const name = form.getFieldValue('vfoldersNameMap')?.[v] || v;
-                return {
-                  name,
-                  alias: form.getFieldValue('mount_id_map')?.[v],
-                };
-              })}
+              ])}
+              dataSource={mountRows}
             />
           ) : (
             <Banner
@@ -520,16 +438,18 @@ const SessionLauncherPreview: React.FC<{
               title={t('session.launcher.NoFolderMounted')}
             />
           )}
-          {form.getFieldValue('autoMountedFolderNames')?.length > 0 ? (
+          {autoMountedFolders.length > 0 ? (
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('data.AutomountFolders')}>
                 <BAIFlex gap="xs" wrap="wrap">
-                  {_.map(
-                    form.getFieldValue('autoMountedFolderNames'),
-                    (name) => {
-                      return <Badge key={name} label={name} />;
-                    },
-                  )}
+                  {_.map(autoMountedFolders, (folder) => (
+                    <BAILink
+                      key={folder.vfolderId}
+                      to={generateFolderPath(folder.vfolderId)}
+                    >
+                      <Token label={folder.name} />
+                    </BAILink>
+                  ))}
                 </BAIFlex>
               </MetadataListItem>
             </BAIMetadataList>
@@ -551,9 +471,9 @@ const SessionLauncherPreview: React.FC<{
             <BAIFlex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
                 (v, idx) => (
-                  <PortTag key={idx + v} value={v} style={{ margin: 0 }}>
+                  <PortToken key={idx + v} value={v} style={{ margin: 0 }}>
                     {v}
-                  </PortTag>
+                  </PortToken>
                 ),
               )}
 

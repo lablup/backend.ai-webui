@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<52e31f44eeac3b5270a5bd020e292043>>
+ * @generated SignedSource<<d470488ecaea58c1e6aec2b1caa35862>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type VFolderMountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
+export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderNodeDescriptionV2PermissionRefreshQuery$variables = {
   vfolderId: string;
 };

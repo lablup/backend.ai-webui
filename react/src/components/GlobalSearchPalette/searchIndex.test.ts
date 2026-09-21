@@ -80,11 +80,15 @@ describe('generated search index', () => {
   });
 
   it('finds at least the inventoried tabs and setting items', () => {
+    // A page-level tab strip hangs off `?tab=`, except the user-settings modal,
+    // whose categories are `?settings=` (FR-3903).
+    const isPrimaryTab = (param: string) =>
+      param === 'tab' || param === 'settings';
     const tabPages = index.entries.filter((e) =>
-      e.tabs.some((t) => t.param === 'tab'),
+      e.tabs.some((t) => isPrimaryTab(t.param)),
     );
     const tabKeys = index.entries.reduce(
-      (a, e) => a + e.tabs.filter((t) => t.param === 'tab').length,
+      (a, e) => a + e.tabs.filter((t) => isPrimaryTab(t.param)).length,
       0,
     );
     const allTabs = index.entries.flatMap((e) => e.tabs);

@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Action ID",
     "Actor": "Actor",
+    "ClientIp": "Client IP",
     "Description": "Description",
     "Duration": "Duration",
     "EntityId": "Entity ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degraded",
     "Deploying": "Deploying",
     "Healthy": "Healthy",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Select Keypair"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Client IP",
     "Domain": "Domain",
     "FailReason": "Failure Reason",
     "LoginTime": "Login Time",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "and {{rest}} more"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Created At",
     "MaxConcurrentLogins": "Max Concurrent Logins",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Invalid path format.",
     "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasOverlappingWithAutoMount": "Mount path overlaps with an auto-mounted folder.",
     "AliasPlaceholder": "Mount path",
     "AutoMountedFolders": "Automount Folders",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
+    "CreateFolder": "Create a new storage folder",
+    "DestinationPath": "Container path (destination)",
+    "Folders": "Folders",
+    "OwnerProject": "Project",
+    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
+    "Refresh": "Refresh",
     "RemoveFolder": "Remove",
+    "SelectFolder": "Select Folder",
+    "SourcePath": "Path in folder (source)",
     "Subpath": "Subpath",
     "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; leave it empty to mount the folder root.",
+    "UnmountableFoldersRemoved": "Folders you can no longer mount were removed from the selection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
@@ -728,6 +740,7 @@
     "ModifiedAt": "Modified At",
     "NeedPasswordChange": "Need Password Change",
     "Project": "Project",
+    "Projects": "Projects",
     "ResourcePolicy": "Resource Policy",
     "Role": "Role",
     "Status": "Status",

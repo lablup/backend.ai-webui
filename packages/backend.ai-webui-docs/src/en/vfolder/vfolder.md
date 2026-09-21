@@ -144,6 +144,7 @@ Saving from the editor uploads the modified file, so the **Edit File** action re
 The **Audit Log** tab in the right panel shows a chronological list of all operations performed on this storage folder (create, update, delete events, and more).
 
 ![](../images/vfolder_audit_log_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 The audit log shows the following columns, in order:
 
@@ -153,6 +154,7 @@ The audit log shows the following columns, in order:
 - **Description**: Additional details about the operation.
 - **Duration**: How long the operation took.
 - **Triggered By**: The user who performed the operation, shown in "email (id)" format.
+- **Client IP**: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
 You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
@@ -188,6 +190,10 @@ them in an alert titled *"The following folder(s) without delete permission will
 be excluded."* Check the list before proceeding with the deletion: only the
 remaining folders move to the Trash tab, and the confirmation message below the
 alert counts just the folders that are actually moved.
+
+If some of the selected folders still cannot be deleted, the folders that can be
+deleted are moved to the Trash tab as usual, and a failure dialog lists each
+folder that failed with the reason in the **Error Message** column.
 
 ### Restore or permanently delete
 

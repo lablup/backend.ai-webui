@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID ενέργειας",
     "Actor": "Εκτελεστής",
+    "ClientIp": "IP πελάτη",
     "Description": "Περιγραφή",
     "Duration": "Διάρκεια",
     "EntityId": "ID οντότητας",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Υποβαθμισμένο",
     "Deploying": "Αναπτύσσεται",
     "Healthy": "Υγιές",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Επιλέξτε ζεύγος κλειδιών"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP πελάτη",
     "Domain": "Τομέας",
     "FailReason": "Αιτία αποτυχίας",
     "LoginTime": "Ώρα σύνδεσης",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "δοκιμή"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "και {{rest}} ακόμη"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Δημιουργήθηκε στο",
     "MaxConcurrentLogins": "Μέγιστες ταυτόχρονες συνδέσεις",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Μη έγκυρη μορφή διαδρομής.",
     "AliasOverlapping": "Η διαδρομή προσάρτησης επικαλύπτεται με άλλο φάκελο.",
+    "AliasOverlappingWithAutoMount": "Η διαδρομή προσάρτησης επικαλύπτεται με φάκελο αυτόματης προσάρτησης.",
     "AliasPlaceholder": "Διαδρομή προσάρτησης",
     "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
-    "Name": "Όνομα",
-    "PathAndAlias": "Διαδρομή & Ψευδώνυμο",
+    "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
+    "DestinationPath": "Διαδρομή container (destination)",
+    "Folders": "Φάκελοι",
+    "OwnerProject": "Έργο",
+    "OwnerUser": "Χρήστης",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
+    "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",
+    "SelectFolder": "Επιλογή φακέλου",
+    "SourcePath": "Διαδρομή στον φάκελο (source)",
     "Subpath": "Υποδιαδρομή",
     "SubpathInvalid": "Η υποδιαδρομή πρέπει να είναι σχετική και να μην περιέχει '..'.",
-    "SubpathPlaceholder": "π.χ. dataset/train (προαιρετικό)",
-    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Αφήστε κενό για προσάρτηση της ρίζας."
+    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Κάντε κλικ στο πεδίο για να περιηγηθείτε στον φάκελο και να επιλέξετε έναν· αφήστε το κενό για να προσαρτηθεί η ρίζα του φακέλου.",
+    "UnmountableFoldersRemoved": "Οι φάκελοι που δεν μπορείτε πλέον να προσαρτήσετε αφαιρέθηκαν από την επιλογή."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"

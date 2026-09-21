@@ -3,16 +3,17 @@ import {
   BAIColumnType,
   BAITable,
   BAITableProps,
-  BAITag,
+  tokenColorForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  type SemanticColor,
 } from '..';
 import type {
   BAILoginHistoryTableFragment$data,
   BAILoginHistoryTableFragment$key,
 } from '../__generated__/BAILoginHistoryTableFragment.graphql';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import useConnectedBAIClient from './provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { Token } from '@astryxdesign/core/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -65,26 +66,6 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableLoginHistorySorterKeys, key);
 };
 
-// Semantic color per login attempt result. SUCCESS is green, every FAILED_*
-// outcome is red, and the remaining lifecycle results (logout/expiry/eviction)
-// stay neutral or amber so a failed sign-in stands out at a glance.
-const loginHistoryResultColorMap: Record<LoginAttemptResult, SemanticColor> = {
-  SUCCESS: 'success',
-  FAILED_INVALID_CREDENTIALS: 'error',
-  FAILED_USER_INACTIVE: 'error',
-  FAILED_BLOCKED: 'error',
-  FAILED_PASSWORD_EXPIRED: 'error',
-  FAILED_REJECTED_BY_HOOK: 'error',
-  FAILED_SESSION_ALREADY_EXISTS: 'error',
-  LOGOUT: 'default',
-  REVOKED_BY_ADMIN: 'warning',
-  REVOKED_BY_USER: 'default',
-  EVICTED: 'warning',
-  EXPIRED: 'default',
-  // Relay generates `'%future added value'` for forward-compatible enums.
-  '%future added value': 'default',
-};
-
 export interface BAILoginHistoryTableProps extends Omit<
   BAITableProps<LoginHistoryNodeInList>,
   'dataSource' | 'columns' | 'onChangeOrder'
@@ -116,6 +97,8 @@ const BAILoginHistoryTable = ({
 }: BAILoginHistoryTableProps) => {
   'use memo';
   const { t } = useBAIi18n();
+  const baiClient = useConnectedBAIClient();
+  const isClientIpSupported = baiClient.supports('client-ip-of-login-history');
 
   const loginHistory = useFragment<BAILoginHistoryTableFragment$key>(
     graphql`
@@ -124,6 +107,7 @@ const BAILoginHistoryTable = ({
         id
         result
         domainName
+        clientIp @since(version: "26.9.0")
         failReason
         createdAt
       }
@@ -139,12 +123,12 @@ const BAILoginHistoryTable = ({
         dataIndex: 'result',
         fixed: 'left',
         sorter: isEnableSorter('result'),
-        // Login attempt results are shown as the raw server enum value
-        // (e.g. `FAILED_INVALID_CREDENTIALS`); only the tag color is mapped.
+        // A recorded outcome, so a Token (ADR 0007); the raw enum is the label.
         render: (__, record) => (
-          <BAITag color={loginHistoryResultColorMap[record.result]}>
-            {record.result}
-          </BAITag>
+          <Token
+            color={tokenColorForStatus('loginHistory', record.result)}
+            label={record.result}
+          />
         ),
       },
       {
@@ -154,6 +138,16 @@ const BAILoginHistoryTable = ({
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.domainName || '-',
       },
+      isClientIpSupported
+        ? {
+            key: 'clientIp',
+            title: t('comp:BAILoginHistoryTable.ClientIp'),
+            dataIndex: 'clientIp',
+            // Shown exactly as the server returns it: the manager already
+            // applies the client IP masking policy, so it may be masked or null.
+            render: (__, record) => record.clientIp || '-',
+          }
+        : undefined,
       {
         key: 'createdAt',
         title: t('comp:BAILoginHistoryTable.LoginTime'),

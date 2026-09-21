@@ -27,6 +27,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIVFolderDeleteButton,
+  BAIAdminProjectSelect,
   BAICard,
   BAIPropertyFilter,
   BAISelectionLabel,
@@ -59,10 +60,13 @@ const VFOLDER_STATUSES = [
   'DELETE_ERROR',
 ];
 
+const DEFAULT_ORDER = '-created_at';
+
 const FILTER_BY_STATUS_CATEGORY = {
   active:
     'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
-  deleted: 'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR"]',
+  deleted:
+    'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR", "DELETE_COMPLETE"]',
 };
 
 const AdminVFolderNodeListPage: React.FC = (props) => {
@@ -94,7 +98,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsString.withDefault('-created_at'),
+      order: parseAsString,
       filter: parseAsString,
       statusCategory: parseAsString.withDefault('active'),
       mode: parseAsString.withDefault('all'),
@@ -148,7 +152,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       queryParams.filter,
       usageModeFilter,
     ]),
-    order: queryParams.order,
+    order: queryParams.order || DEFAULT_ORDER,
     permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
@@ -335,6 +339,34 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       type: 'string',
                     },
                     {
+                      // `group` is the vfolder queryfilter field holding the
+                      // owning project UUID.
+                      key: 'group',
+                      propertyLabel: t('data.Project'),
+                      type: 'string',
+                      defaultOperator: '==',
+                      renderInput: ({ onAddCondition, value, isDisabled }) => (
+                        <BAIAdminProjectSelect
+                          // The filter row already prints the property label.
+                          label={t('data.Project')}
+                          isLabelHidden
+                          value={value}
+                          isDisabled={isDisabled}
+                          onChange={(value, option) => {
+                            onAddCondition(
+                              value as string | undefined,
+                              _.castArray(option ?? [])[0]?.label,
+                            );
+                          }}
+                        />
+                      ),
+                    },
+                    {
+                      key: 'creator',
+                      propertyLabel: t('data.folders.Creator'),
+                      type: 'string',
+                    },
+                    {
                       key: 'status',
                       propertyLabel: t('data.folders.Status'),
                       type: 'string',
@@ -383,6 +415,26 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                           value: 'rw',
                         },
                       ],
+                    },
+                    {
+                      key: 'created_at',
+                      propertyLabel: t('data.folders.CreatedAt'),
+                      type: 'datetime',
+                    },
+                    {
+                      key: 'last_used',
+                      propertyLabel: t('credential.LastUsed'),
+                      type: 'datetime',
+                    },
+                    {
+                      key: 'max_size',
+                      propertyLabel: t('data.folders.MaxSize'),
+                      type: 'number',
+                    },
+                    {
+                      key: 'cloneable',
+                      propertyLabel: t('data.folders.Cloneable'),
+                      type: 'boolean',
                     },
                   ]}
                   value={queryParams.filter ?? undefined}
@@ -511,6 +563,14 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               }}
               tableSettings={{
                 columnOverrides: columnOverrides,
+                // Storage oversight is this page's job, so the quota/usage and
+                // creation columns start visible here but stay hidden on /data.
+                defaultColumnOverrides: {
+                  creator: { hidden: false },
+                  cur_size: { hidden: false },
+                  max_size: { hidden: false },
+                  created_at: { hidden: false },
+                },
                 onColumnOverridesChange: setColumnOverrides,
               }}
             />

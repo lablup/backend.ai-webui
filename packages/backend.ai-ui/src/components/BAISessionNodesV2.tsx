@@ -9,10 +9,10 @@ import {
   BAIImageNodeSimpleTagV2,
   BAIIntervalView,
   BAISessionClusterModeV2,
-  BAISessionTypeTagV2,
+  BAISessionTypeTokenV2,
   BAITable,
   BAITableProps,
-  BAITag,
+  badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
 } from '..';
@@ -23,6 +23,7 @@ import type {
 } from '../__generated__/BAISessionNodesV2Fragment.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import { Badge } from '@astryxdesign/core/Badge';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';
@@ -54,22 +55,6 @@ export const availableSessionV2SorterValues = [
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableSessionV2SorterKeys, key);
-};
-
-const STATUS_COLOR_MAP: Partial<Record<SessionV2Status, string>> = {
-  PENDING: 'default',
-  RESERVED: 'blue',
-  SCHEDULED: 'blue',
-  PREPARING: 'blue',
-  PREPARED: 'blue',
-  CREATING: 'blue',
-  RUNNING: 'green',
-  DEPRIORITIZING: 'orange',
-  PREEMPTED: 'orange',
-  RESCHEDULING: 'orange',
-  TERMINATING: 'orange',
-  TERMINATED: 'default',
-  CANCELLED: 'red',
 };
 
 type ResourceEntry = { resourceType: string; quantity: string };
@@ -167,7 +152,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         }
         metadata {
           name
-          ...BAISessionTypeTagV2Fragment
+          ...BAISessionTypeTokenV2Fragment
           ...BAISessionClusterModeV2Fragment
         }
         lifecycle {
@@ -248,11 +233,10 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
           const status = session.lifecycle?.status;
           if (!status) return '-';
           return (
-            <BAITag
-              color={STATUS_COLOR_MAP[status as SessionV2Status] ?? 'default'}
-            >
-              {status}
-            </BAITag>
+            <Badge
+              variant={badgeVariantForStatus('session', status)}
+              label={status}
+            />
           );
         },
       },
@@ -339,7 +323,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
         defaultHidden: true,
         render: (__, session) =>
           session.metadata ? (
-            <BAISessionTypeTagV2 metadataFrgmt={session.metadata} />
+            <BAISessionTypeTokenV2 metadataFrgmt={session.metadata} />
           ) : (
             '-'
           ),

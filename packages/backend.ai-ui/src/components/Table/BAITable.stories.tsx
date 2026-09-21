@@ -1,6 +1,6 @@
-import BAITag from '../BAITag';
 import BAITable from './BAITable';
 import { BAITableColumnOverrideItem, BAIColumnsType } from './tableTypes';
+import { Token } from '@astryxdesign/core/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type Key } from 'react';
 
@@ -98,9 +98,9 @@ const sampleColumns: BAIColumnsType<any> = [
         active: 'green',
         inactive: 'red',
         pending: 'orange',
-      };
+      } as const;
       return (
-        <BAITag color={colors[status as keyof typeof colors]}>{status}</BAITag>
+        <Token color={colors[status as keyof typeof colors]} label={status} />
       );
     },
     width: 100,

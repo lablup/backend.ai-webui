@@ -231,3 +231,69 @@ describe('withNote', () => {
     expect('nt' in short).toBe(false);
   });
 });
+
+describe('walkthrough stops at capture (FR-3949)', () => {
+  it('drops a volatile query param, keeps the rest in order', () => {
+    history.replaceState(
+      {},
+      '',
+      '/session/start?tab=general&formValues=%7B%22a%22%3A1%7D&step=2',
+    );
+    mount('<button data-testid="skip">Skip to review</button>');
+    const anchor = captureAnchorSignals(
+      document.querySelector('[data-testid="skip"]') as Element,
+    );
+    expect(anchor.q).toBe('tab=general&step=2');
+    history.replaceState({}, '', '/');
+  });
+
+  it('leaves the surviving params byte-identical (no re-encoding)', () => {
+    history.replaceState({}, '', '/data?tab=a%20b&formValues=%7B%7D&x=1');
+    mount('<button data-testid="skip">Skip</button>');
+    const anchor = captureAnchorSignals(
+      document.querySelector('[data-testid="skip"]') as Element,
+    );
+    expect(anchor.q).toBe('tab=a%20b&x=1');
+    history.replaceState({}, '', '/');
+  });
+
+  it('records a pick inside a dialog as dlg', () => {
+    mount(
+      '<div role="dialog"><button data-testid="ok">OK</button></div><button data-testid="out">Out</button>',
+    );
+    const inside = captureAnchorSignals(
+      document.querySelector('[data-testid="ok"]') as Element,
+    );
+    const outside = captureAnchorSignals(
+      document.querySelector('[data-testid="out"]') as Element,
+    );
+    expect(inside.dlg).toBe(1);
+    expect(outside).not.toHaveProperty('dlg');
+  });
+
+  // BAIDialog renders role="alertdialog"; Astryx's own is a native <dialog>.
+  it('records a pick inside an alertdialog or a native dialog as dlg', () => {
+    mount(
+      '<div role="alertdialog"><button data-testid="a">A</button></div><dialog open><button data-testid="b">B</button></dialog>',
+    );
+    for (const tid of ['a', 'b']) {
+      const anchor = captureAnchorSignals(
+        document.querySelector(`[data-testid="${tid}"]`) as Element,
+      );
+      expect(anchor.dlg).toBe(1);
+    }
+  });
+
+  it('guards the stop fields like every other field', () => {
+    const base = { v: 3, s: 'button', p: '/', ck: 'It shows' };
+    expect(isAnchorV3(base)).toBe(true);
+    expect(isAnchorV3({ ...base, ch: 'x'.repeat(281) })).toBe(false);
+    expect(isAnchorV3({ ...base, type: 'removed' })).toBe(false);
+    expect(isAnchorV3({ ...base, sha: 'c61efbf' })).toBe(false);
+    expect(isAnchorV3({ ...base, code: [] })).toBe(false);
+    expect(
+      isAnchorV3({ ...base, code: [{ path: 'a.ts', line: 3, to: 2 }] }),
+    ).toBe(false);
+    expect(isAnchorV3({ ...base, via: [{ click: {} }] })).toBe(false);
+  });
+});

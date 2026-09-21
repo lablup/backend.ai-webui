@@ -16,11 +16,16 @@ import { icon, ICON_STYLE } from './icons.js';
 import {
   findAnchorTarget,
   hasLandmark,
+  hasLayout,
+  inScope,
+  isRendered,
   quickFindTarget,
   textMatches,
 } from './resolve.js';
 import { projectFraction } from './selection.js';
+import { isStop } from './stop-guard.js';
 import type { AnchorV3, PinCopyPayload } from './types.js';
+import { copyWithToast } from './ui.js';
 
 const REPOSITION_DEBOUNCE_MS = 300;
 /** Long enough for a `behavior: 'smooth'` scroll and its momentum to stop. */
@@ -189,7 +194,7 @@ export interface PinLayerOptions {
   /**
    * Re-render this pin's whole comment, SYNCHRONOUSLY — the copy runs through
    * `execCommand` on the gateway origin, so nothing may be awaited inside the
-   * gesture. `main.ts` owns it: the server state and the stack live there, and
+   * gesture. `boot.ts` owns it: the server state and the stack live there, and
    * `null` means those reads have not landed for this element yet.
    */
   buildComment: (target: DeepLinkPinTarget) => PinCopyPayload | null;
@@ -212,7 +217,7 @@ export interface PinLayerOptions {
   onGiveUp?: (pendingIds: string[]) => void;
 }
 
-/** The one-view layer `main.ts` opened a link with before pin sets. */
+/** The one-view layer `boot.ts` opened a link with before pin sets. */
 export type DeepLinkPinOptions = PinLayerOptions;
 
 export interface DeepLinkPinTarget {
@@ -511,10 +516,20 @@ function createPinView(deps: ViewDeps): PinView {
   function place(): DockEdge | null {
     if (!located) return hide();
     const box = markedBox(located);
+    // Nothing can be drawn ON an element with no box: the marker, the box and
+    // the card would all land at 0,0, over whatever the page keeps in its
+    // corner, and without the wording a scrolled-away pin gets. Where there IS
+    // layout, that means the element stopped being drawn between resolving it
+    // and drawing it — measured on github.com, which re-renders its file list
+    // seconds after it looks settled. Give it up; the ladder looks again.
+    if (!box.width && !box.height && hasLayout(located.ownerDocument)) {
+      setLocated(null);
+      return hide();
+    }
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    // A rect with no size at all is jsdom (or `display: contents`), not a
-    // scrolled-away element.
+    // A rect with no size at all is jsdom, not a scrolled-away element: where
+    // there IS layout the gate above already gave such an element up.
     const measured = box.width > 0 || box.height > 0;
     const outside = (area: Bounds) =>
       box.bottom <= area.top ||
@@ -611,21 +626,30 @@ function createPinView(deps: ViewDeps): PinView {
     const landmark = hasLandmark(target.anchor);
     if (landmark && !hadLandmark) missedScans = 0;
     hadLandmark = landmark;
+    // A dialog that closed without unmounting (BAIDialog drops its role) must
+    // release the element it held, or a dlg stop stays located behind nothing.
     const held =
-      located?.isConnected && textMatches(located, target.anchor.txt)
+      located?.isConnected &&
+      textMatches(located, target.anchor.txt) &&
+      inScope(located, target.anchor)
         ? located
         : null;
     if (held) missedScans = 0;
     let next = held ?? quickFindTarget(target.anchor, { ignore: host });
-    if (
-      !held &&
-      missedScans < MAX_MISSED_SCANS &&
-      (!next || isLandmarkFallback(next))
-    ) {
+    // A stop's element appears with no URL change (a modal, a step), so it
+    // is exempt from the budget the route watcher would otherwise re-arm.
+    const budgeted = missedScans < MAX_MISSED_SCANS || isStop(target.anchor);
+    if (!held && budgeted && (!next || isLandmarkFallback(next))) {
       const full = findAnchorTarget(target.anchor, { ignore: host });
       missedScans = full ? 0 : missedScans + 1;
       next = full ?? next;
     }
+    // `held` is the one answer above that never went through the ladder, so it
+    // is the one that can still be an element the page has since hidden — and
+    // a pin on one of those draws in the page's top-left corner. Re-resolve;
+    // the ladder returns nothing that cannot be drawn on.
+    if (next && !isRendered(next) && hasLayout(next.ownerDocument))
+      next = findAnchorTarget(target.anchor, { ignore: host });
     setLocated(next);
   }
 
@@ -644,15 +668,8 @@ function createPinView(deps: ViewDeps): PinView {
     deps.onHide?.(target);
   });
 
-  function write(text: string, html: string | undefined, ok: string) {
-    const done = (written: boolean) =>
-      deps.showToast(
-        written ? ok : 'Could not reach the clipboard — try again',
-      );
-    const copied = deps.copyText(text, html);
-    if (typeof copied === 'boolean') done(copied);
-    else void copied.then(done);
-  }
+  const write = (text: string, html: string | undefined, ok: string) =>
+    copyWithToast(deps.copyText, deps.showToast, { text, html, toast: ok });
 
   /**
    * The bare id, not the `#bai=v3.` link: what the reader pastes into the PR
@@ -998,7 +1015,13 @@ export function createPinLayer(options: PinLayerOptions) {
     if (records.every((record) => host.contains(record.target as Node))) return;
     schedule();
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // `open` / `role` flip when a dialog closes in place, with no childList record.
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['open', 'role'],
+  });
   window.addEventListener('resize', placeSoon);
   // Viewport coordinates, so a scroll moves the pin — including a scroll in an
   // overflow ancestor, which a document-coordinate layer would miss.

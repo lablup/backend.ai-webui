@@ -231,7 +231,7 @@ If your branch name contains an `FR-XXXX` issue number, the URL is `https://fr-X
 | `pnpm run lint-fix`         | Auto-fix ESLint issues                                         |
 | `pnpm run format`           | Prettier format check                                          |
 | `pnpm run format-fix`       | Auto-fix formatting                                            |
-| `bash scripts/verify.sh`    | Run Relay + Lint + Format + TypeScript checks                  |
+| `bash scripts/verify.sh`    | Run Relay + Lint + Format + TypeScript checks (parallel lanes; `VERIFY_TESTS=1` adds Vitest) |
 | `pnpm run electron:d`       | Run Electron in dev mode                                       |
 | `pnpm run electron:d:hmr`   | Run Electron in dev mode with HMR (live debug)                 |
 | `pnpm run test`             | Jest unit tests (root: scripts/, src/)                         |
@@ -522,6 +522,30 @@ root (via `dotenv`), so you can put `WSPROXY_CORS_ORIGINS=...` there instead of
 exporting it. Requests from disallowed origins receive no CORS headers and a
 `PUT /conf` from a disallowed origin is rejected with `403`.
 
+#### Restricting the proxying port pool
+
+By default each app the local proxy opens is bound to an **ephemeral port
+assigned by the OS**. Set `WSPROXY_PORT_POOL` to confine those ports to a known
+range instead — useful when a firewall or a container port mapping only lets a
+fixed set of ports through. It accepts a comma-separated list of single ports
+and inclusive `from-to` ranges:
+
+```console
+$ export WSPROXY_PORT_POOL="10000-10100"
+$ export WSPROXY_PORT_POOL="10000-10010,20022,23389"
+```
+
+Ports are handed out in the listed order, skipping the ones already taken by a
+running app. Invalid entries are logged and ignored, but the pool stays in
+force: when the whole pool is in use — or when the value was set yet no entry
+survived parsing — a new app request fails with `500` instead of silently
+falling back to an OS-assigned port outside the pool. A preferred port picked
+in the app launcher is honoured only when it is a member of the pool;
+otherwise that request fails with `500` too. Leaving the variable unset keeps
+the default behaviour. Like `WSPROXY_CORS_ORIGINS`, this is an environment variable of the
+proxy **process** and can be put in the repository-root `.env` instead of being
+exported.
+
 ## Build web server with specific configuration
 
 You can prepare site-specific configuration as `toml` format. Also, you can build site-specific web bundle refering in `configs` directory.
@@ -609,11 +633,18 @@ $ make mac_arm64
 - `BAI_APP_SIGN_KEYCHAIN_PASSWORD="<Import password of exported p12 file>"`
   Signing Identity is equivalent to the name of signing certificate added on Keychain Access.
 
-#### Linux x86-64 version
+#### Linux version (x86-64 / arm64)
 
 ```console
 $ make linux
 ```
+
+Each Linux build produces a ZIP archive and, when `dpkg-deb` is available on
+the build host (`apt install dpkg` on Debian/Ubuntu, `brew install dpkg` on
+macOS), a Debian package (`backend.ai-desktop-<version>-linux-<arch>.deb`) as
+well. Without it the `.deb` step is skipped with a warning; set `DEB_REQUIRED=1`
+(as the release workflow does) to make the missing tool a build error instead.
+The package metadata (name, desktop entry, icons) lives in `deb-installer.json`.
 
 ### Packaging as zip files
 

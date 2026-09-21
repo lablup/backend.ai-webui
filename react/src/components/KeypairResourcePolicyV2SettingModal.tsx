@@ -15,7 +15,10 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { v2PermissionToKey } from '../helper/storageHostPermission';
+import {
+  MOUNT_IN_SESSION_PERMISSION,
+  v2PermissionToKey,
+} from '../helper/storageHostPermission';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -51,7 +54,7 @@ const DEFAULT_VFOLDER_HOST_PERMISSIONS = [
   'create-vfolder',
   'modify-vfolder',
   'delete-vfolder',
-  'mount-in-session',
+  MOUNT_IN_SESSION_PERMISSION,
   'upload-file',
   'download-file',
   'invite-others',

@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "รหัสการดำเนินการ",
     "Actor": "ผู้ดำเนินการ",
+    "ClientIp": "IP ของไคลเอ็นต์",
     "Description": "คำอธิบาย",
     "Duration": "ระยะเวลา",
     "EntityId": "รหัสเอนทิตี",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "ลดลง",
     "Deploying": "กำลังปรับใช้",
     "Healthy": "ปกติ",
@@ -265,6 +266,7 @@
     "SelectKeypair": "เลือกคู่คีย์"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP ของไคลเอ็นต์",
     "Domain": "โดเมน",
     "FailReason": "สาเหตุที่ล้มเหลว",
     "LoginTime": "เวลาเข้าสู่ระบบ",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "และอีก {{rest}} รายการ"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",
     "MaxConcurrentLogins": "จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
     "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasOverlappingWithAutoMount": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์ที่ mount อัตโนมัติ",
     "AliasPlaceholder": "พาธ mount",
     "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
-    "Name": "ชื่อ",
-    "PathAndAlias": "พาธ & Alias",
+    "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
+    "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
+    "Folders": "โฟลเดอร์",
+    "OwnerProject": "โปรเจกต์",
+    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",
+    "SelectFolder": "เลือกโฟลเดอร์",
+    "SourcePath": "พาธในโฟลเดอร์ (source)",
     "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
-    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
-    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย หากเว้นว่างไว้จะ mount root ของโฟลเดอร์",
+    "UnmountableFoldersRemoved": "โฟลเดอร์ที่คุณไม่สามารถเมานต์ได้อีกต่อไปถูกนำออกจากรายการที่เลือกแล้ว"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"

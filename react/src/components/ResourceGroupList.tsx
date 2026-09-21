@@ -15,16 +15,16 @@ import { ResourceGroupListUpdateMutation } from '../__generated__/ResourceGroupL
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useSFTPProxyResourceGroupsQuery } from '../hooks/useSFTPResourceGroups';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
-import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIButton,
   BAIColumnsType,
@@ -128,20 +128,21 @@ const ResourceGroupSettingModalWithQuery: React.FC<{
   onRequestClose: (success: boolean) => void;
 }> = ({ resourceGroupName, onRequestClose, ...modalProps }) => {
   'use memo';
-  const { scaling_group } = useLazyLoadQuery<ResourceGroupListSettingModalQuery>(
-    graphql`
-      query ResourceGroupListSettingModalQuery($name: String!) {
-        scaling_group(name: $name) {
-          ...ResourceGroupSettingModalFragment
+  const { scaling_group } =
+    useLazyLoadQuery<ResourceGroupListSettingModalQuery>(
+      graphql`
+        query ResourceGroupListSettingModalQuery($name: String!) {
+          scaling_group(name: $name) {
+            ...ResourceGroupSettingModalFragment
+          }
         }
-      }
-    `,
-    { name: resourceGroupName },
-    // `modify_scaling_group` returns only `ok`/`msg`, so the cached
-    // `ScalingGroup` keeps its pre-edit values; the form reads
-    // `initialValues` once at mount, so a cached first render would stick.
-    { fetchPolicy: 'network-only' },
-  );
+      `,
+      { name: resourceGroupName },
+      // `modify_scaling_group` returns only `ok`/`msg`, so the cached
+      // `ScalingGroup` keeps its pre-edit values; the form reads
+      // `initialValues` once at mount, so a cached first render would stick.
+      { fetchPolicy: 'network-only' },
+    );
 
   // `ResourceGroupSettingModal` reads a null fragment as "create mode", so a
   // row deleted between the list query and this lookup would turn Edit into a
@@ -469,7 +470,7 @@ const ResourceGroupList: React.FC = () => {
         return proxies.length > 0 ? (
           <BAIFlex gap="xxs" wrap="wrap">
             {_.map(proxies, (proxy) => (
-              <Badge key={proxy} variant="blue" label={proxy} />
+              <Token key={proxy} color="blue" label={proxy} />
             ))}
           </BAIFlex>
         ) : (

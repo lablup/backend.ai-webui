@@ -17,7 +17,7 @@
  which callers must treat as "no name available" — either `isLabelHidden` plus
  an `endContent` render (Token/Badge), or an explicit translated fallback.
 
- The walk also cannot see PROP-carried text (`Badge label=`, `BAIDoubleTag
+ The walk also cannot see PROP-carried text (`Badge label=`, `BAIDoubleToken
  values=`) — such call sites name the text explicitly instead (`title` on
  `BAISelect`'s options path, `label` on its children carrier — FR-3544).
 */

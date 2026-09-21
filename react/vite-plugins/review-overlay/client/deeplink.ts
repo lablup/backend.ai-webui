@@ -7,6 +7,7 @@
  * a link without an anchor is plain text now — never an error.
  */
 import { isSafePath, PIN_BODY_SRC } from './codec.js';
+import { stripVolatileQuery } from './stop-guard.js';
 import type { AnchorV3, SetPin } from './types.js';
 
 /** `[#&]` because the pin can ride inside a fragment the app already uses. */
@@ -55,8 +56,13 @@ export function pathNeedsChange(
   location: { pathname: string; search: string },
 ): boolean {
   if (!isSafePath(anchor.p)) return false;
-  const want = anchor.q ? `?${anchor.q}` : '';
-  return anchor.p !== location.pathname || want !== location.search;
+  // Both sides volatile-free: the launcher rewrites `formValues` into the
+  // URL on every keystroke, and that must not flip a fresh pin to "away".
+  const want = stripVolatileQuery(anchor.q ?? '');
+  return (
+    anchor.p !== location.pathname ||
+    want !== stripVolatileQuery(location.search)
+  );
 }
 
 /** Everything in the fragment that is not a pin, so the app's own hash lives. */
@@ -271,8 +277,12 @@ export const createNoteStore = (
   storage: Storage | null = safeStorage(),
 ): FocusStore => createHandover(NOTE_KEY, storage);
 
-/** Dispatched by the patched `history`, so every listener hears one navigation. */
-const ROUTE_EVENT = 'bai-review:route';
+/**
+ * Dispatched by the patched `history`, so every listener hears one navigation.
+ * Exported because a host that cannot patch the page's `history` — a content
+ * script runs in its own realm — dispatches this event itself instead.
+ */
+export const ROUTE_EVENT = 'bai-review:route';
 
 /**
  * React Router owns the history and changes route without a reload, so a

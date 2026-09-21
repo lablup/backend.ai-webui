@@ -20,7 +20,7 @@ import { MemoryRouter } from 'react-router-dom';
  * - Pre-configured columns for artifact details (name, version, size, status, etc.)
  * - Activate/Deactivate controls for artifact management
  * - Pull latest version functionality
- * - Type and status tags
+ * - Type token and status badge
  *
  * @see BAIArtifactTable.tsx for implementation details
  */
@@ -44,9 +44,9 @@ const meta: Meta<typeof BAIArtifactTable> = {
 | \`onClickRestore\` | \`(artifactId: string) => void\` | - | Callback when activate button is clicked |
 
 ## Pre-configured Columns
-- **Name**: Artifact name with type tag and description
+- **Name**: Artifact name with type token and description
 - **Controls**: Activate/Deactivate buttons based on artifact availability
-- **Latest Version**: Latest revision version with status tag and pull button
+- **Latest Version**: Latest revision version with status badge and pull button
 - **Size**: Latest revision size in human-readable format
 - **Scanned**: Time since last scan (relative time)
 - **Updated**: Time since last update (relative time)

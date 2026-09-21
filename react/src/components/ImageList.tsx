@@ -17,7 +17,7 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
-import AliasedImageDoubleTags from './AliasedImageDoubleTags';
+import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
@@ -27,6 +27,7 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
@@ -34,13 +35,15 @@ import {
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
   BAITable,
+  BAIText,
+  BAIBooleanToken,
+  BAITokenRow,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
-  badgeVariantForTagColor,
+  convertToBinaryUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
   type BAIColumnType,
-  BAIText,
   useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
@@ -72,6 +75,11 @@ const availableImageSorterKeys = [
   'architecture',
   'namespace',
   'base_image_name',
+  'name',
+  'tag',
+  'status',
+  'is_local',
+  'accelerators',
 ] as const;
 const availableImageSorterValues = [
   ...availableImageSorterKeys,
@@ -79,6 +87,43 @@ const availableImageSorterValues = [
 ] as const;
 const isEnableSorter = (key: string) =>
   _.includes(availableImageSorterKeys, key);
+
+/**
+ * Columns that carry detail rather than identity: off until asked for.
+ * `status` is in here because the list is live-only unless the user adds a
+ * status condition, so the column would read ALIVE on every row by default.
+ */
+const DEFAULT_HIDDEN_IMAGE_COLUMN_KEYS = [
+  'status',
+  'type',
+  'is_local',
+  'aliases',
+  'supported_accelerators',
+];
+
+/** Every `ImageStatus` the manager knows, i.e. "do not narrow by status". */
+export const ALL_IMAGE_STATUSES = [
+  'ALIVE',
+  'DELETED',
+  'PURGING',
+  'PURGE_ERROR',
+] as const;
+
+// Values in the minilang are double-quoted and carry no escapes, so a quoted
+// span can hold anything — `status` included. Blank them before matching.
+const stripQuotedValues = (filter: string) => filter.replace(/"[^"]*"/g, '""');
+
+const hasStatusCondition = (filter: string) =>
+  /(?:^|[&|(])\s*status\s/.test(stripQuotedValues(filter));
+
+/**
+ * The `filter_by_statuses` argument a given queryfilter needs. A `status`
+ * condition is ANDed with it, and its server default is `[ALIVE]`, so such a
+ * condition can never match anything else unless the argument widens too.
+ * `undefined` leaves the default alone — the list stays live-only.
+ */
+export const filterByStatusesFor = (filter: string) =>
+  hasStatusCondition(filter) ? [...ALL_IMAGE_STATUSES] : undefined;
 
 interface ImageListProps {
   /**
@@ -224,6 +269,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
     first: baiPaginationOption.first,
     filter: imageFilter || undefined,
     order: queryParams.order || undefined,
+    filterByStatuses: filterByStatusesFor(imageFilter),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -236,6 +282,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
         $first: Int
         $filter: String
         $order: String
+        $filterByStatuses: [ImageStatus]
       ) {
         image_nodes(
           scope_id: $scopeId
@@ -243,6 +290,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
           first: $first
           filter: $filter
           order: $order
+          filter_by_statuses: $filterByStatuses
         ) {
           edges @required(action: THROW) {
             node @required(action: THROW) {
@@ -263,14 +311,20 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 min
                 max
               }
-              namespace @since(version: "24.12.0")
-              base_image_name @since(version: "24.12.0")
-              tags @since(version: "24.12.0") {
+              namespace
+              base_image_name
+              tags {
                 key
                 value
               }
-              version @since(version: "24.12.0")
-              ...AliasedImageDoubleTagsFragment
+              version
+              size_bytes
+              is_local
+              supported_accelerators
+              status
+              type
+              aliases
+              ...AliasedImageTagTokensFragment
               ...ManageImageResourceLimitModal_image
               ...ManageAppsModal_image
             }
@@ -298,28 +352,17 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
-      // antd `Tag color="gold"` -> Astryx Badge via the repo-global Tag
-      // lookup (ticket 13 policy): gold -> yellow.
       render: (_text, row) => (
         <BAIFlex direction="row" gap="xxs" wrap="wrap">
           {row?.id && installingImages.includes(row.id) ? (
-            <Badge
-              variant={badgeVariantForTagColor('gold')}
-              label={t('environment.Installing')}
-            />
+            <Badge variant="info" label={t('environment.Installing')} />
           ) : row?.installed ? (
-            <Badge
-              variant={badgeVariantForTagColor('gold')}
-              label={t('environment.Installed')}
-            />
+            <Badge variant="success" label={t('environment.Installed')} />
           ) : null}
           {/* An installed private image cannot be picked in the session
               launcher, so surface the label here (FR-70). */}
           {isPrivateImage(row) ? (
-            <Badge
-              variant={badgeVariantForTagColor('red')}
-              label={t('environment.Private')}
-            />
+            <Token color="red" label={t('environment.Private')} />
           ) : null}
         </BAIFlex>
       ),
@@ -333,16 +376,16 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // rc-table quirk that `BAITable` does not reproduce; taking it
       // from the second is the Astryx/antd `(value, record, index)` contract.
       render: (_value, row) => (
-        // `maxLines={1}` for the same reason as the Digest column below:
-        // Astryx's table cell is `white-space: nowrap; overflow: hidden`, so an
-        // untruncated path is CLIPPED rather than wrapped as it was under antd.
-        // One line plus Astryx's built-in truncation tooltip keeps the whole
-        // value reachable and keeps the copy control inside the cell.
-        <BAIText copyable ellipsis={{ tooltip: true }}>
+        // The table cell is `white-space: nowrap; overflow: hidden`, so an
+        // untruncated path is clipped rather than wrapped.
+        <BAIText monospace copyable ellipsis={{ tooltip: true }}>
           {getImageFullName(row) || ''}
         </BAIText>
       ),
-      // Computed (`getImageFullName`) — not orderable on the server.
+      // Computed (`getImageFullName`); `name` is the server column the path is
+      // built from, so it is the closest ordering the backend colmap offers.
+      sorter: isEnableSorter('name'),
+      sortKey: 'name',
       width: token.screenXS,
     },
     {
@@ -379,9 +422,86 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       title: t('environment.Tags'),
       key: 'tags',
       dataIndex: 'tags',
+      // The backend orders by the raw `tag` column, not the parsed KV list.
+      sorter: isEnableSorter('tag'),
+      sortKey: 'tag',
+      render: (_text, row) => <AliasedImageTagTokens imageFrgmt={row} />,
+    },
+    {
+      title: t('environment.ImageStatus'),
+      key: 'status',
+      dataIndex: 'status',
+      sorter: isEnableSorter('status'),
+      render: (value) =>
+        value ? (
+          <Badge
+            variant={
+              value === 'ALIVE'
+                ? 'success'
+                : value === 'DELETED'
+                  ? 'error'
+                  : 'warning'
+            }
+            label={value}
+          />
+        ) : (
+          '-'
+        ),
+    },
+    {
+      title: t('data.Type'),
+      key: 'type',
+      dataIndex: 'type',
+      // `type` is in the backend order colmap but points at a column that does
+      // not exist on the image row, so ordering by it raises server-side.
+      render: (value) => value ?? '-',
+    },
+    {
+      title: t('environment.Local'),
+      key: 'is_local',
+      dataIndex: 'is_local',
+      sorter: isEnableSorter('is_local'),
+      render: (value) => <BAIBooleanToken value={value} />,
+    },
+    {
+      title: t('environment.Size'),
+      key: 'size_bytes',
+      dataIndex: 'size_bytes',
+      render: (value) => {
+        // `convertToBinaryUnit` throws on anything it cannot parse, which
+        // would take the whole table down with it.
+        const bytes = _.toNumber(value);
+        if (_.isNil(value) || !_.isFinite(bytes)) {
+          return '-';
+        }
+        const size = convertToBinaryUnit(_.toString(bytes), 'auto', 2, true);
+        return size ? `${size.numberFixed} ${size.displayUnit}` : '-';
+      },
+    },
+    {
+      title: t('environment.Aliases'),
+      key: 'aliases',
+      dataIndex: 'aliases',
       render: (_text, row) => (
-        <AliasedImageDoubleTags label="" color="blue" imageFrgmt={row} />
+        <BAITokenRow
+          items={_.map(_.compact(row.aliases), (alias) => ({
+            key: alias,
+            label: alias,
+          }))}
+        />
       ),
+    },
+    {
+      title: t('environment.SupportedAccelerators'),
+      key: 'supported_accelerators',
+      dataIndex: 'supported_accelerators',
+      // The backend order colmap calls this column `accelerators`.
+      sorter: isEnableSorter('accelerators'),
+      sortKey: 'accelerators',
+      render: (_text, row) =>
+        _.isEmpty(row.supported_accelerators)
+          ? '-'
+          : _.join(_.compact(row.supported_accelerators), ', '),
     },
     {
       title: t('environment.Digest'),
@@ -467,8 +587,12 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
     },
   ]);
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] =
+  const [storedHiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('ImageList');
+  // The setting is only seeded once the user opens the column settings, so an
+  // untouched account gets the defaults rather than every column at once.
+  const hiddenColumnKeys =
+    storedHiddenColumnKeys ?? DEFAULT_HIDDEN_IMAGE_COLUMN_KEYS;
 
   return (
     <>
@@ -535,14 +659,14 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                 },
                 {
                   key: 'status',
-                  propertyLabel: t('environment.Status'),
+                  propertyLabel: t('environment.ImageStatus'),
                   type: 'string',
                   strictSelection: true,
                   defaultOperator: '==',
-                  options: [
-                    { label: 'ALIVE', value: 'ALIVE' },
-                    { label: 'DELETED', value: 'DELETED' },
-                  ],
+                  options: _.map([...ALL_IMAGE_STATUSES], (status) => ({
+                    label: status,
+                    value: status,
+                  })),
                 },
                 {
                   key: 'type',
@@ -560,6 +684,26 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
                   key: 'is_local',
                   propertyLabel: t('environment.Local'),
                   type: 'boolean',
+                },
+                {
+                  key: 'project',
+                  propertyLabel: t('environment.RegistryProject'),
+                  type: 'string',
+                },
+                {
+                  key: 'registry_id',
+                  propertyLabel: t('environment.RegistryID'),
+                  type: 'uuid',
+                },
+                {
+                  key: 'created_at',
+                  propertyLabel: t('general.CreatedAt'),
+                  type: 'datetime',
+                },
+                {
+                  key: 'accelerators',
+                  propertyLabel: t('environment.SupportedAccelerators'),
+                  type: 'string',
                 },
               ])}
               value={imageFilter || undefined}

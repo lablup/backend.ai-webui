@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  type CreatePermissionInput,
   type OperationType,
   type RBACElementType,
   RoleScopePermissionEditModalBulkAddMutation,
@@ -31,7 +32,7 @@ import {
   BAIBulkErrorModal,
   BAICheckbox,
   type BAIColumnsType,
-  BAIDoubleTag,
+  BAIDoubleToken,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -362,8 +363,12 @@ const RoleScopePermissionEditModal: React.FC<
     .filter((entity) => entity.actions.length > 0)
     .map((entity) => ({
       entityType: entity.entityType,
+      // 26.8 answers an OperationType here; the drawer follow-up (FR-3905)
+      // moves this grid onto the 26.9 PermissionBit.
       supportedOperations: new Set(
-        entity.actions.map((action) => action.requiredPermission),
+        entity.actions.map(
+          (action) => action.requiredPermission as OperationType,
+        ),
       ),
     }));
 
@@ -382,6 +387,8 @@ const RoleScopePermissionEditModal: React.FC<
   // scope against its own initial state.
   const permissionIdByScopeCell = new Map<string, Map<string, string>>();
   permissions.forEach((permission) => {
+    // Null only on 26.9, which answers the legacy fields as null.
+    if (!permission.scopeId || !permission.operation) return;
     const cellKey = makeCellKey(permission.entityType, permission.operation);
     let idByCell = permissionIdByScopeCell.get(permission.scopeId);
     if (!idByCell) {
@@ -539,7 +546,9 @@ const RoleScopePermissionEditModal: React.FC<
       // (FR-6 / spec Risks).
       const [addResult, removeResult] = await Promise.allSettled([
         createInputs.length > 0
-          ? bulkAddPermissions({ input: { permissions: createInputs } })
+          ? bulkAddPermissions({
+              input: { permissions: createInputs as CreatePermissionInput[] },
+            })
           : Promise.resolve(null),
         deleteIds.length > 0
           ? bulkRemovePermissions({ input: { permissionIds: deleteIds } })
@@ -568,6 +577,7 @@ const RoleScopePermissionEditModal: React.FC<
         // Successfully-created rows carry their new permission id — record it
         // so a later uncheck of the same cell can delete it without a refetch.
         addPayload?.items.forEach((item) => {
+          if (!item.scopeId || !item.operation) return;
           recordApplied(
             item.scopeId,
             makeCellKey(item.entityType, item.operation),
@@ -576,12 +586,15 @@ const RoleScopePermissionEditModal: React.FC<
         });
         addPayload?.failed.forEach((failure) => {
           logger.error('Failed to add permission', failure.message);
-          const cellKey = makeCellKey(failure.entityType, failure.operation);
+          const cellKey = makeCellKey(
+            failure.entityType,
+            failure.operation ?? '',
+          );
           failures.push({
             key: `grant-${failure.scopeId}-${cellKey}`,
             scopeLabel: scopeLabelOf(
               scopeList.find((scope) => scope.scopeId === failure.scopeId),
-              failure.scopeId,
+              failure.scopeId ?? '',
             ),
             cellKey,
             message: failure.message,
@@ -887,7 +900,7 @@ const RoleScopePermissionEditModal: React.FC<
             title: t('rbac.ScopeId'),
             dataIndex: 'scopeLabel',
             render: (scopeLabel: string) => (
-              <BAIDoubleTag
+              <BAIDoubleToken
                 values={[
                   { label: scopeTypeLabel, color: 'blue' },
                   { label: scopeLabel, color: 'default' },
@@ -905,7 +918,7 @@ const RoleScopePermissionEditModal: React.FC<
               }
               const [entityType, operation] = cellKey.split(CELL_KEY_SEPARATOR);
               return (
-                <BAIDoubleTag
+                <BAIDoubleToken
                   values={[
                     { label: rbacTypeLabel(entityType), color: 'blue' },
                     { label: operationLabel(operation), color: 'default' },

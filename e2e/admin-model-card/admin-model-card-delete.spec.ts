@@ -58,7 +58,10 @@ test.describe(
       //      exist, moveToTrashAndVerify will throw — we catch and continue.
       //   2. Try to purge from Trash. If the folder was not found in step 1 and
       //      is not in Trash either, deleteForeverAndVerifyFromTrash will throw —
-      //      we catch and continue.
+      //      we catch and continue. A folder the card deletion already
+      //      cascade-purged sits in Trash as DELETE-COMPLETE with its Delete
+      //      button disabled for good; `skipIfAlreadyDeleted` treats that as
+      //      done instead of waiting on the button.
       for (const folderName of foldersToClean) {
         try {
           await moveToTrashAndVerify(page, folderName, 'admin-data', {
@@ -68,7 +71,14 @@ test.describe(
           // Folder may already be in Trash or may not exist
         }
         try {
-          await deleteForeverAndVerifyFromTrash(page, folderName, 'admin-data');
+          await deleteForeverAndVerifyFromTrash(
+            page,
+            folderName,
+            'admin-data',
+            {
+              skipIfAlreadyDeleted: true,
+            },
+          );
         } catch {
           // Folder may not be in Trash (already purged or never created)
         }
@@ -136,9 +146,11 @@ test.describe(
       await adminModelCardPage.getDeleteConfirmButton().click();
 
       // Verify success message
-      await expect(page.getByText(/Model card has been deleted/)).toBeVisible({
-        timeout: 15000,
-      });
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(/Model card has been deleted/),
+      ).toBeVisible({ timeout: 15000 });
 
       // Verify the row is no longer in the table
       await expect(adminModelCardPage.getPaginationInfo()).toContainText(
@@ -263,8 +275,11 @@ test.describe(
       await bulkDialog.getByRole('textbox').fill('Delete');
 
       // Wait for Form.useWatch to re-render and enable the button before clicking.
+      // `exact` — the confirm input's clear button ("Clear Type Delete to
+      // confirm.") also substring-matches 'Delete'.
       const deleteButton = bulkDialog.getByRole('button', {
         name: 'Delete',
+        exact: true,
       });
       await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
       await deleteButton.click();
@@ -272,7 +287,9 @@ test.describe(
       // Wait for the success toast — under parallel-test load the bulk deletion
       // can be slow, so wait on the visible outcome rather than polling the dialog.
       await expect(
-        page.getByText(/\d+ model card\(s\) have been deleted\./i),
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(/\d+ model card\(s\) have been deleted\./i),
       ).toBeVisible({ timeout: 240000 });
       await expect(bulkDialog).toBeHidden();
 
@@ -524,15 +541,23 @@ test.describe(
       // Confirm deletion
       await adminModelCardPage.getDeleteConfirmButton().click();
 
-      // Verify the success notification for card + folder deletion
+      // Verify the success notification for card + folder deletion. It is an
+      // `upsertNotification` notice (link-bearing), so it lives in the
+      // notification stack; scoped because Astryx mirrors notice text into a
+      // singleton screen-reader announcer, so an unscoped getByText resolves
+      // twice.
       await expect(
-        page.getByText(
-          'Model card and its associated folder have been moved to trash.',
-        ),
+        adminModelCardPage
+          .getNotificationStack()
+          .getByText(
+            'Model card and its associated folder have been moved to trash.',
+          ),
       ).toBeVisible({ timeout: 30000 });
 
       // Verify "Go to Data > Trash" link is visible in the notification
-      const goToTrashLink = page.getByText('Go to Data > Trash');
+      const goToTrashLink = adminModelCardPage
+        .getNotificationStack()
+        .getByText('Go to Data > Trash');
       await expect(goToTrashLink).toBeVisible();
 
       // Click "Go to Data > Trash" and verify URL includes folder filter
@@ -600,9 +625,11 @@ test.describe(
       // Verify the notification message for card-only deletion.
       // Card-only deletion uses message.success() — a plain toast with no navigation link.
       await expect(
-        page.getByText(
-          'Model card has been deleted. The model folder was not deleted.',
-        ),
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(
+            'Model card has been deleted. The model folder was not deleted.',
+          ),
       ).toBeVisible({ timeout: 15000 });
 
       // Verify the model card row is removed from the filtered table
@@ -685,8 +712,11 @@ test.describe(
       await bulkDialog.getByRole('textbox').fill('Delete');
 
       // Wait for Form.useWatch to re-render and enable the button before clicking.
+      // `exact` — the confirm input's clear button ("Clear Type Delete to
+      // confirm.") also substring-matches 'Delete'.
       const deleteButton = bulkDialog.getByRole('button', {
         name: 'Delete',
+        exact: true,
       });
       await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
       await deleteButton.click();
@@ -694,17 +724,23 @@ test.describe(
       // Wait for the success notification — card delete + folder soft-delete run
       // sequentially; under parallel-test load the combined mutation can be slow,
       // so we wait directly on the visible outcome rather than polling the dialog.
+      // `upsertNotification` notice (link-bearing) → notification stack, not
+      // the `message.success` toast region.
       await expect(
-        page.getByText(
-          /model card\(s\) and their folders have been moved to trash/i,
-        ),
+        adminModelCardPage
+          .getNotificationStack()
+          .getByText(
+            /model card\(s\) and their folders have been moved to trash/i,
+          ),
       ).toBeVisible({ timeout: 240000 });
 
       // Dialog must be hidden once the notification is shown
       await expect(bulkDialog).toBeHidden();
 
       // Verify "Go to Data > Trash" link is visible
-      const goToTrashLink = page.getByText('Go to Data > Trash');
+      const goToTrashLink = adminModelCardPage
+        .getNotificationStack()
+        .getByText('Go to Data > Trash');
       await expect(goToTrashLink).toBeVisible();
 
       // Click the link and verify navigation to trash tab without folder filter
@@ -785,8 +821,11 @@ test.describe(
       await bulkDialog.getByRole('textbox').fill('Delete');
 
       // Wait for Form.useWatch to re-render and enable the button before clicking.
+      // `exact` — the confirm input's clear button ("Clear Type Delete to
+      // confirm.") also substring-matches 'Delete'.
       const deleteButton = bulkDialog.getByRole('button', {
         name: 'Delete',
+        exact: true,
       });
       await expect(deleteButton).not.toBeDisabled({ timeout: 5000 });
       await deleteButton.click();
@@ -794,12 +833,18 @@ test.describe(
       // Wait for the success toast — under parallel-test load the bulk deletion
       // can be slow, so wait on the visible outcome rather than polling the dialog.
       await expect(
-        page.getByText(/\d+ model card\(s\) have been deleted\./i),
+        adminModelCardPage
+          .getToastRegion()
+          .getByText(/\d+ model card\(s\) have been deleted\./i),
       ).toBeVisible({ timeout: 240000 });
       await expect(bulkDialog).toBeHidden();
 
       // Verify no "Go to Data > Trash" link appears (folders were kept active)
-      await expect(page.getByText('Go to Data > Trash')).not.toBeVisible();
+      await expect(
+        adminModelCardPage
+          .getNotificationStack()
+          .getByText('Go to Data > Trash'),
+      ).not.toBeVisible();
 
       // Verify selection label has cleared (cards were deleted)
       await expect(adminModelCardPage.getSelectionLabel()).toBeHidden();

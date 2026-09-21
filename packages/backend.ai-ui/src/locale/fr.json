@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID d'action",
     "Actor": "Acteur",
+    "ClientIp": "IP du client",
     "Description": "Description",
     "Duration": "Durée",
     "EntityId": "ID d'entité",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Dégradé",
     "Deploying": "En déploiement",
     "Healthy": "En bonne santé",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Sélectionner une paire de clés"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP du client",
     "Domain": "Domaine",
     "FailReason": "Raison de l'échec",
     "LoginTime": "Heure de connexion",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "et {{rest}} de plus"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Créé à",
     "MaxConcurrentLogins": "Connexions simultanées max.",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format de chemin invalide.",
     "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasOverlappingWithAutoMount": "Le chemin de montage chevauche un dossier monté automatiquement.",
     "AliasPlaceholder": "Chemin de montage",
     "AutoMountedFolders": "Dossiers montés automatiquement",
-    "Name": "Nom",
-    "PathAndAlias": "Chemin & Alias",
+    "CreateFolder": "Créer un nouveau dossier de stockage",
+    "DestinationPath": "Chemin du conteneur (destination)",
+    "Folders": "Dossiers",
+    "OwnerProject": "Projet",
+    "OwnerUser": "Utilisateur",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
+    "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",
+    "SelectFolder": "Sélectionner un dossier",
+    "SourcePath": "Chemin dans le dossier (source)",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (facultatif)",
-    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Laissez vide pour monter la racine."
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; laissez-le vide pour monter la racine du dossier.",
+    "UnmountableFoldersRemoved": "Les dossiers que vous ne pouvez plus monter ont été retirés de la sélection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"

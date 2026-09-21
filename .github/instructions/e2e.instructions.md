@@ -115,6 +115,14 @@ Naming (full rules in `e2e/E2E-TEST-NAMING-GUIDELINES.md`):
   `'user can create an interactive session with a mounted folder'`.
 - Tag every describe block: priority (`@smoke` / `@critical` / `@regression`), feature
   (`@vfolder`, `@session`, …) and type (`@functional`, `@visual`, `@integration`).
+- `@smoke` carries a role suffix for the post-install smoke run
+  (`e2e/playwright.smoke.config.ts`, `pnpm e2e:smoke`): a test with **only** `@smoke` must perform
+  no login, `@smoke @smoke-admin` needs `loginAsAdmin`, `@smoke @smoke-user` needs
+  `loginAsUser`. The role tag must match the login helper the test actually calls —
+  a smoke run has one role's credentials only. A describe that mixes both helpers
+  cannot carry a role tag; tag the individual tests instead. `--grep @smoke --list`
+  shows the union of both roles; the smoke config does the partition. Full rules:
+  `e2e/E2E-TEST-NAMING-GUIDELINES.md` → "Smoke tags".
 - POM classes go in `e2e/utils/classes/{feature}/`, extending `BasePage` / `BaseModal`.
 
 ---

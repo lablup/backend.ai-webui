@@ -274,3 +274,260 @@ describe('the landmark’s rect projection', () => {
     expect(findAnchorTarget(noText)).toBe(iconOnly);
   });
 });
+
+// A stop is a pin the implementing session authored; a wrong element under
+// its mark is worse than a waiting one, so it resolves strictly.
+describe('walkthrough stops resolve strictly (FR-3949)', () => {
+  const stop = (over: Partial<AnchorV3> = {}): AnchorV3 =>
+    anchor({ ck: 'The Models choice is visible', ...over });
+
+  it('takes no text look-alike while its landmark is absent', () => {
+    // The modal is closed: only the page's own "Models" filter is on screen.
+    mount('<button data-testid="filter-models">Models</button>');
+    const modalRadio = {
+      s: '[data-testid="model-usage-mode"]',
+      tid: 'model-usage-mode',
+      txt: 'Models',
+    };
+    expect(findAnchorTarget(anchor(modalRadio))?.textContent).toBe('Models');
+    expect(findAnchorTarget(stop(modalRadio))).toBeNull();
+    expect(quickFindTarget(stop(modalRadio))).toBeNull();
+  });
+
+  it('is found once its landmark is on the page', () => {
+    mount(
+      '<button data-testid="filter-models">Models</button><div role="dialog"><label data-testid="model-usage-mode">Models</label></div>',
+    );
+    const found = findAnchorTarget(
+      stop({
+        s: '[data-testid="model-usage-mode"]',
+        tid: 'model-usage-mode',
+        txt: 'Models',
+        tag: 'label',
+      }),
+    );
+    expect(found?.tagName).toBe('LABEL');
+  });
+
+  it('takes no stale selector hit', () => {
+    mount('<button>Cancel</button>');
+    expect(findAnchorTarget(anchor())?.textContent).toBe('Cancel');
+    expect(findAnchorTarget(stop())).toBeNull();
+  });
+
+  it('scans the page only when it has no landmark to match', () => {
+    mount('<section><button>Login</button></section>');
+    expect(
+      findAnchorTarget(stop({ s: '#gone', tid: undefined }))?.textContent,
+    ).toBe('Login');
+  });
+
+  it('never settles for the frame its element lives in', () => {
+    mount('<div data-testid="panel"><button>Other</button></div>');
+    const framed = {
+      s: '#_r_gone_',
+      tid: 'panel',
+      rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+      txt: 'Save',
+    };
+    expect(quickFindTarget(anchor(framed))?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+    expect(quickFindTarget(stop(framed))).toBeNull();
+    expect(findAnchorTarget(stop(framed))).toBeNull();
+  });
+
+  it('with dlg, counts an element inside an alertdialog too', () => {
+    mount('<div role="alertdialog"><button data-testid="ok">OK</button></div>');
+    const found = findAnchorTarget(
+      stop({ s: '[data-testid="ok"]', tid: 'ok', txt: 'OK', dlg: 1 }),
+    );
+    expect(found?.textContent).toBe('OK');
+  });
+
+  // An icon-only pick has no text to tell the frame from the element, and
+  // the projection needs layout; the landmark is the honest best answer.
+  it('settles for the landmark when the stop carries no text', () => {
+    mount('<div data-testid="panel"><button aria-label="x"></button></div>');
+    const iconOnly = stop({
+      s: '#_r_gone_',
+      tid: 'panel',
+      rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+      txt: undefined,
+    });
+    expect(quickFindTarget(iconOnly)?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+    expect(findAnchorTarget(iconOnly)?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+  });
+
+  it('with dlg, counts only an element inside an open dialog', () => {
+    mount('<button data-testid="ok">OK</button>');
+    const dialogStop = stop({
+      s: '[data-testid="ok"]',
+      tid: 'ok',
+      txt: 'OK',
+      dlg: 1,
+    });
+    expect(findAnchorTarget(dialogStop)).toBeNull();
+    expect(quickFindTarget(dialogStop)).toBeNull();
+    mount('<div role="dialog"><button data-testid="ok">OK</button></div>');
+    expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
+    expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
+  });
+
+  // A closed native <dialog> keeps its subtree in the DOM, so "inside a
+  // dialog" is not enough: it has to be an OPEN one.
+  it('with dlg, ignores an element inside a closed native dialog', () => {
+    mount('<dialog><button data-testid="ok">OK</button></dialog>');
+    const dialogStop = stop({
+      s: '[data-testid="ok"]',
+      tid: 'ok',
+      txt: 'OK',
+      dlg: 1,
+    });
+    expect(findAnchorTarget(dialogStop)).toBeNull();
+    expect(quickFindTarget(dialogStop)).toBeNull();
+    document.querySelector('dialog')?.setAttribute('open', '');
+    expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
+    expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
+  });
+
+  // A recycled selector can hit a same-text control outside the landmark; a
+  // stop takes the selector only where the text scan would take it.
+  it('takes a selector hit only inside its landmark', () => {
+    mount(
+      '<button class="primary">Save</button><div data-testid="panel"><button>Save</button></div>',
+    );
+    const outside = { s: 'button.primary', tid: 'panel', txt: 'Save' };
+    const panel = () => document.querySelector('[data-testid="panel"]');
+    expect(quickFindTarget(anchor(outside))?.className).toBe('primary');
+    const quick = quickFindTarget(stop(outside));
+    expect(quick?.className).not.toBe('primary');
+    expect(panel()?.contains(quick)).toBe(true);
+    const full = findAnchorTarget(stop(outside));
+    expect(full?.tagName).toBe('BUTTON');
+    expect(panel()?.contains(full)).toBe(true);
+    mount('<button class="primary">Save</button>');
+    expect(quickFindTarget(stop(outside))).toBeNull();
+    expect(findAnchorTarget(stop(outside))).toBeNull();
+  });
+
+  // Two tabs render the same row component, so the landmark testid is not
+  // unique; the selector hit still counts when it sits inside one of them.
+  it('resolves through a duplicated landmark by its selector hit', () => {
+    mount(
+      '<div data-testid="row"><button>Save</button></div><div data-testid="row"><button id="right">Save</button></div><button id="loose">Save</button>',
+    );
+    const inside = stop({ s: '#right', tid: 'row', txt: 'Save' });
+    expect(quickFindTarget(inside)?.id).toBe('right');
+    expect(findAnchorTarget(inside)?.id).toBe('right');
+    const loose = stop({ s: '#loose', tid: 'row', txt: 'Save' });
+    expect(quickFindTarget(loose)).toBeNull();
+    expect(findAnchorTarget(loose)).toBeNull();
+  });
+});
+
+/**
+ * Pages render the same thing twice. github.com emits every file-name link in
+ * a screen-reader cell first, `display: none`, and again in the cell a reader
+ * sees — and the scan, walking document order, took the first one. The pin
+ * then drew a zero-size box in the page's top-left corner, which is not even
+ * the "scrolled below" state the real element deserved.
+ */
+describe('a hidden look-alike never beats a rendered one', () => {
+  /** jsdom reports nothing for every element; give these ones a box. */
+  const render = (...elements: Element[]) => {
+    for (const element of elements) {
+      const rect = { left: 0, top: 0, width: 120, height: 20 } as DOMRect;
+      element.getClientRects = () => [rect] as unknown as DOMRectList;
+      element.getBoundingClientRect = () => rect;
+    }
+  };
+
+  /**
+   * …and jsdom lays nothing out at all, which the client reads as "no layout
+   * engine", not "everything is hidden". Refusing an element with no box is
+   * conditional on that: a test about hidden elements says the document lays
+   * out, and one about jsdom itself does not.
+   */
+  const laidOut = () => render(document.documentElement);
+
+  afterEach(() => {
+    delete (document.documentElement as Partial<HTMLElement>).getClientRects;
+    delete (document.documentElement as Partial<HTMLElement>)
+      .getBoundingClientRect;
+  });
+
+  const twice = `
+    <div class="sr"><a href="/f">.cspell.json</a></div>
+    <div class="wide"><a href="/f">.cspell.json</a></div>
+  `;
+  const copies = () => document.querySelectorAll('a');
+  const file = (over: Partial<AnchorV3> = {}) =>
+    anchor({ s: '.wide a', tag: 'a', txt: '.cspell.json', ...over });
+
+  it('is skipped by the text scan that would have taken it first', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    // The selector has gone stale, so the scan is the only rung left.
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[1]);
+  });
+
+  it('loses the selector rung too, in both ladders', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    const both = file({ s: 'a[href="/f"]' });
+    expect(quickFindTarget(both)).toBe(copies()[1]);
+    expect(findAnchorTarget(both)).toBe(copies()[1]);
+  });
+
+  it('does not disqualify a landmark it duplicates', () => {
+    laidOut();
+    mount(`
+      <div class="sr" data-testid="row"><a href="/f">.cspell.json</a></div>
+      <div class="wide" data-testid="row"><a href="/f">.cspell.json</a></div>
+    `);
+    const rows = document.querySelectorAll('[data-testid="row"]');
+    render(rows[1], copies()[1]);
+
+    const framed = file({ s: '#gone', tid: 'row' });
+    expect(findAnchorTarget(framed)).toBe(copies()[1]);
+    expect(quickFindTarget(framed)).toBe(rows[1]);
+  });
+
+  it('loses to a rendered one for a strict stop as well', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    const stop = file({ s: '#gone', ck: 'The file row is visible' });
+    expect(findAnchorTarget(stop)).toBe(copies()[1]);
+  });
+
+  // Waiting is better than drawing somewhere wrong: the marker, the box and
+  // the card of a boxless element all land in the page's top-left corner, and
+  // the retry driver is already waiting for the real one to come back.
+  it('is refused outright when it is the only candidate left', () => {
+    mount(twice);
+    laidOut();
+
+    expect(findAnchorTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+  });
+
+  // The whole preference is conditional on the document laying anything out:
+  // in jsdom nothing has a box, and the old order stands.
+  it('changes nothing in a document with no layout at all', () => {
+    mount(twice);
+
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[0]);
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBe(copies()[0]);
+  });
+});

@@ -7,6 +7,7 @@
  */
 import { NOTE_MAX, SELECTOR_MAX } from './anchor-guard.js';
 import { fractionWithin, type Box } from './selection.js';
+import { DIALOG_SELECTOR, stripVolatileQuery } from './stop-guard.js';
 import type { AnchorComponent, AnchorV3 } from './types.js';
 
 const esc = (v: string) => (window.CSS && CSS.escape ? CSS.escape(v) : v);
@@ -85,7 +86,7 @@ export function captureAnchorSignals(
     s: buildSelector(target),
     p: location.pathname,
   };
-  const q = location.search.replace(/^\?/, '');
+  const q = stripVolatileQuery(location.search);
   if (q) anchor.q = q;
   anchor.tag = target.tagName.toLowerCase();
   const txt = normText(
@@ -94,7 +95,8 @@ export function captureAnchorSignals(
   if (txt) anchor.txt = txt;
   const tidEl = target.closest('[data-testid]');
   if (tidEl) {
-    anchor.tid = tidEl.getAttribute('data-testid') ?? undefined;
+    const tid = tidEl.getAttribute('data-testid');
+    if (tid !== null) anchor.tid = tid;
     if (tidEl !== target) {
       const cr = tidEl.getBoundingClientRect();
       const tr = target.getBoundingClientRect();
@@ -115,6 +117,7 @@ export function captureAnchorSignals(
     if (sel) anchor.sel = sel;
   }
   if (component) anchor.c = component;
+  if (target.closest(DIALOG_SELECTOR)) anchor.dlg = 1;
   return anchor;
 }
 

@@ -4,6 +4,7 @@
  * `querySelector` and `location.assign`.
  */
 import { isSafePath } from './codec.js';
+import { hasValidStopFields } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 
 /** Every string is bounded: the payload comes off a public PR comment. */
@@ -56,5 +57,5 @@ export function isAnchorV3(value: unknown): value is AnchorV3 {
     if (c.src !== undefined && !isText(c.src, NAME_MAX)) return false;
     if (c.dn !== undefined && !isText(c.dn, NAME_MAX)) return false;
   }
-  return true;
+  return hasValidStopFields(a);
 }

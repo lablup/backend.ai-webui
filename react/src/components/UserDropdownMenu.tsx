@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { UserDropdownMenuQuery } from '../__generated__/UserDropdownMenuQuery.graphql';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useCurrentUserInfo,
   useCurrentUserRole,
@@ -14,6 +14,7 @@ import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
 import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
   DropdownMenu,
   type DropdownMenuOption,
@@ -31,7 +32,6 @@ import {
   ShieldCheck,
   CircleAlert,
   Lock,
-  FileText,
   LogOut,
   Settings,
   Download,
@@ -77,7 +77,8 @@ const UserDropdownMenu: React.FC<{
 
   const userRole = useCurrentUserRole();
 
-  const webuiNavigate = useWebUINavigate();
+  // The settings surface is a modal over the current page, not a route.
+  const { open: openUserSettings } = useUserSettingsModal();
   const { isTOTPSupported } = useTOTPSupported();
 
   const [fetchKey, updateFetchKey] = useFetchKey();
@@ -154,14 +155,7 @@ const UserDropdownMenu: React.FC<{
       label: t('webui.menu.Preferences'),
       icon: <Settings size="1em" />,
       onClick: () => {
-        webuiNavigate('/usersettings?tab=general');
-      },
-    },
-    {
-      label: t('webui.menu.LogsErrors'),
-      icon: <FileText size="1em" />,
-      onClick: () => {
-        webuiNavigate('/usersettings?tab=logs');
+        openUserSettings('general');
       },
     },
     (baiClient._config.allowAppDownloadPanel ||

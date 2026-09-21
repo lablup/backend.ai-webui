@@ -16,18 +16,19 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Switch } from '@astryxdesign/core/Switch';
+import { Token } from '@astryxdesign/core/Token';
 import {
+  BAITokenRow,
   BAIDeleteConfirmModal,
   BAIFlex,
   BAINameActionCell,
   BAIPropertyFilter,
   BAITable,
+  BAIBooleanToken,
   INITIAL_FETCH_KEY,
-  badgeVariantForTagColor,
   filterOutNullAndUndefined,
   type BAIColumnType,
   type BAIColumnsType,
@@ -48,6 +49,18 @@ import { parseAsString, useQueryStates } from 'nuqs';
 import { useState, useDeferredValue, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
+
+/**
+ * How many allowed projects a row shows before the "and N more" indicator.
+ * It is also the `first:` on the query — unargumented, the manager applies its
+ * own DEFAULT_PAGE_SIZE and the row silently drops the rest. The field is
+ * aliased because `ContainerRegistryEditorModalFragment` selects the same one
+ * uncapped, and Relay requires one argument set per field per parent.
+ */
+const ALLOWED_PROJECT_PREVIEW_COUNT = 3;
+
+/** Columns that restate what another column already says: off until asked for. */
+const DEFAULT_HIDDEN_REGISTRY_COLUMN_KEYS = ['is_global'];
 
 export type ContainerRegistry = NonNullable<
   NonNullable<
@@ -94,6 +107,7 @@ const ContainerRegistryList: React.FC<{
       order: queryParams.order,
       first: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
+      allowedProjectPreviewCount: ALLOWED_PROJECT_PREVIEW_COUNT,
     }),
     [
       baiClient._config.domainName,
@@ -116,13 +130,14 @@ const ContainerRegistryList: React.FC<{
           $order: String
           $first: Int
           $offset: Int
+          $allowedProjectPreviewCount: Int
         ) {
           container_registry_nodes(
             filter: $filter
             order: $order
             first: $first
             offset: $offset
-          ) @since(version: "24.09.0") {
+          ) {
             edges {
               node {
                 ...ContainerRegistryEditorModalFragment
@@ -136,6 +151,18 @@ const ContainerRegistryList: React.FC<{
                 username
                 password
                 ssl_verify
+                is_global
+                allowed_groups_preview: allowed_groups(
+                  first: $allowedProjectPreviewCount
+                ) {
+                  count
+                  edges {
+                    node {
+                      id
+                      name
+                    }
+                  }
+                }
               }
             }
             count
@@ -233,14 +260,8 @@ const ContainerRegistryList: React.FC<{
         );
       }
     };
-    const isSupportImageRescanByProject = baiClient.supports(
-      'image_rescan_by_project',
-    );
     baiClient.maintenance
-      .rescan_images(
-        registry_name,
-        isSupportImageRescanByProject ? (project ?? undefined) : undefined,
-      )
+      .rescan_images(registry_name, project ?? undefined)
       .then(({ rescan_images }: any) => {
         if (rescan_images.ok) {
           upsertNotification({
@@ -326,14 +347,7 @@ const ContainerRegistryList: React.FC<{
       title: t('registry.Project'),
       dataIndex: 'project',
       render: (value) => {
-        // Uncolored antd Tag -> neutral Astryx Badge (Tag lookup policy).
-        return value ? (
-          <Badge
-            key={value}
-            variant={badgeVariantForTagColor(undefined)}
-            label={value}
-          />
-        ) : null;
+        return value ? <Token key={value} label={value} /> : null;
       },
     },
     {
@@ -345,6 +359,36 @@ const ContainerRegistryList: React.FC<{
       key: 'password',
       title: t('registry.Password'),
       dataIndex: 'password',
+    },
+    {
+      key: 'is_global',
+      title: t('registry.Global'),
+      dataIndex: 'is_global',
+      render: (value) => <BAIBooleanToken value={value} />,
+    },
+    {
+      key: 'allowed_groups',
+      title: t('registry.AllowedProjects'),
+      render: (_value, record) => {
+        // A global registry has no allow-list; the server answers this field
+        // with every project, which is noise rather than information.
+        if (record.is_global) {
+          return t('environment.AllProjects');
+        }
+        const groups = filterOutNullAndUndefined(
+          _.map(record.allowed_groups_preview?.edges, (edge) => edge?.node),
+        );
+        return (
+          <BAITokenRow
+            items={_.map(groups, (group) => ({
+              key: group.id,
+              label: group.name ?? '',
+            }))}
+            maxCount={ALLOWED_PROJECT_PREVIEW_COUNT}
+            totalCount={record.allowed_groups_preview?.count ?? undefined}
+          />
+        );
+      },
     },
     {
       key: 'enabled',
@@ -425,9 +469,12 @@ const ContainerRegistryList: React.FC<{
     },
   ];
 
-  const [hiddenColumnKeys, setHiddenColumnKeys] = useHiddenColumnKeysSetting(
-    'ContainerRegistryList',
-  );
+  const [storedHiddenColumnKeys, setHiddenColumnKeys] =
+    useHiddenColumnKeysSetting('ContainerRegistryList');
+  // The setting is only seeded once the user opens the column settings, so an
+  // untouched account gets the defaults rather than every column at once.
+  const hiddenColumnKeys =
+    storedHiddenColumnKeys ?? DEFAULT_HIDDEN_REGISTRY_COLUMN_KEYS;
 
   return (
     <BAIFlex

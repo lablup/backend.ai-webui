@@ -3,6 +3,7 @@
  * every module under `client/` is transpiled per request and served from
  * `/__review/*.js`; nothing here reaches the app bundle.
  */
+import type { ReactGrabAPI } from 'react-grab';
 
 /** Fractional position of the picked element inside its testid landmark. */
 export interface AnchorRect {
@@ -25,10 +26,24 @@ export interface AnchorComponent {
   dn?: string;
 }
 
+/** A GitHub "Files changed" reference a stop points at (FR-3949). */
+export interface AnchorCodeRef {
+  /** Repository-relative path. */
+  path: string;
+  line: number;
+  /** Last line of a range, when the stop covers more than one. */
+  to?: number;
+}
+
+/** One replayable step on the way to a stop's element. */
+export interface AnchorVia {
+  click: { text?: string; tid?: string };
+}
+
 /**
- * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url, so every
- * key is one or two characters: it travels inside a URL fragment that people
- * paste into PR comments and chat.
+ * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url and kept
+ * terse: it travels inside a URL fragment that people paste into PR comments
+ * and chat.
  */
 export interface AnchorV3 {
   v: 3;
@@ -61,6 +76,26 @@ export interface AnchorV3 {
   n?: string;
   /** The note was longer than the cap, so `n` ends in an ellipsis. */
   nt?: 1;
+  // ---- walkthrough stop fields (FR-3949): present on a pin the implementing
+  // session authored; `ck` alone makes an anchor a stop. Caps in stop-guard.ts.
+  /** What changed. */
+  ch?: string;
+  /** What to check — the expected outcome the reader verifies. */
+  ck?: string;
+  /** Short literals for the `old → new` line. */
+  old?: string;
+  new?: string;
+  type?: 'added' | 'modified';
+  /** Short element kind, e.g. `button`, `table column`. */
+  kind?: string;
+  code?: AnchorCodeRef[];
+  /** The 40-hex head the stop was minted for. */
+  sha?: string;
+  pr?: number;
+  /** How to reach the element when it is not on screen at landing. */
+  via?: AnchorVia[];
+  /** Picked inside a dialog (`DIALOG_SELECTOR`). */
+  dlg?: 1;
 }
 
 /**
@@ -117,17 +152,36 @@ export interface DraftSet {
 
 declare global {
   interface Window {
-    /** Set by `main.ts` so a second `/__review/*.js` entry is a no-op. */
+    /** Set by `bootOverlay` so a second boot in this document is a no-op. */
     __baiReviewOverlay?: boolean;
+    /**
+     * react-grab's own global. Declared here too — identically — so a host
+     * that vendors `client/` needs only a module shim for `react-grab`, not a
+     * `Window` augmentation of its own (ADR 0008).
+     */
+    __REACT_GRAB__?: ReactGrabAPI;
     /**
      * Dev-only handoff from the app, which owns the router the overlay cannot
      * read. Written by `react/src/components/DevReviewRouteLabel.tsx`.
      */
     __BAI_REVIEW__?: {
       routeLabel?: string;
+      /**
+       * The app's router, so guided mode can cross pages without a reload
+       * (FR-3950). Absent outside a Router, and the overlay falls back to
+       * `location.assign` then.
+       */
+      navigate?: (to: string) => void;
     };
   }
 }
+
+/**
+ * Where the overlay's colours come from. `inherit` reads the page's Astryx
+ * `--color-*` across the shadow boundary; `own` reads nothing from the page,
+ * because a foreign site's tokens of the same name mean something else.
+ */
+export type OverlayPalette = 'inherit' | 'own';
 
 /** One copy, two flavours: a markdown textarea and a rich editor. */
 export interface CopyPayload {
@@ -150,6 +204,11 @@ export interface ReviewServerState {
   source: 'boot-record' | 'gh' | 'none';
   /** Absolute repository root, so the client can relativize source paths. */
   root?: string | null;
+  /**
+   * The head this server is serving (`git rev-parse HEAD`), so a walkthrough
+   * minted for another one can say so (FR-3950). Absent outside a checkout.
+   */
+  head?: string | null;
   /**
    * `serve` (the default) — a dev server answered, and react-grab loads with
    * the app. `static` — the state was embedded in a built document (FR-3880),

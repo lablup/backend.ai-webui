@@ -8,6 +8,7 @@ export const docs = {
   keywords: [
     'login history',
     'audit log',
+    'client ip',
     'sign in',
     'attempt',
     'table',
@@ -16,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The presentational table over a plural `LoginHistoryV2` Relay fragment, listing sign-in attempts and the session lifecycle events that follow them. It renders four columns — the attempt result as a BAITag, the domain, the login time formatted as `ll LTS`, and the failure reason — and result, domain and login time are server-sortable. The result is shown as the raw server enum (`FAILED_INVALID_CREDENTIALS`, `REVOKED_BY_ADMIN`, …) because those values are not translated; only the tag colour is mapped, so a success reads green, every failure red, an admin revoke or eviction amber, and the ordinary logout or expiry neutral. Login history is read-only, so unlike BAILoginSessionTable it carries no row actions. Filtering, pagination and query orchestration belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.',
+      "The presentational table over a plural `LoginHistoryV2` Relay fragment, listing sign-in attempts and the session lifecycle events that follow them. It renders five columns — the attempt result as an Astryx Token (a recorded outcome, not a live state), the domain, the client IP, the login time formatted as `ll LTS`, and the failure reason — and result, domain and login time are server-sortable. The client IP column is rendered only when the connected client reports the `client-ip-of-login-history` capability (manager 26.9.0), so the component must sit under BAIClientProvider; the value is shown exactly as the manager returns it, since the server applies the client IP masking policy, so the cell may hold a masked address or `-` when the policy records none. The result is shown as the raw server enum (`FAILED_INVALID_CREDENTIALS`, `REVOKED_BY_ADMIN`, …) because those values are not translated; only the token colour is mapped, through `tokenColorForStatus('loginHistory')`, so a success reads green, every failure red, an admin revoke or eviction orange, and the ordinary logout or expiry the default outline. Login history is read-only, so unlike BAILoginSessionTable it carries no row actions. Filtering, pagination and query orchestration belong to the consuming surface: it renders BAITable, and every remaining BAITableProps prop passes straight through.",
     bestPractices: [
       {
         guidance: true,

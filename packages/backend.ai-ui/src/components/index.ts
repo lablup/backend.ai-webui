@@ -133,7 +133,8 @@ export { default as BAIListAlert } from './BAIListAlert';
 export type { BAIListAlertProps, BAIListAlertItem } from './BAIListAlert';
 export { default as BAIProjectResourceGroupSelect } from './BAIProjectResourceGroupSelect';
 export { default as BAITextHighlighter } from './BAITextHighlighter';
-export { default as BooleanTag } from './BooleanTag';
+export { default as BAIBooleanToken } from './BAIBooleanToken';
+export type { BAIBooleanTokenProps } from './BAIBooleanToken';
 export {
   default as BAIUserNodes,
   availableUserSorterValues,
@@ -192,25 +193,32 @@ export type {
 } from './BAIProjectResourcePolicyV2Table';
 export type { BAIUncontrolledInputProps } from './BAIUncontrolledInput';
 export { default as BAIUncontrolledInput } from './BAIUncontrolledInput';
-export { default as BAITag } from './BAITag';
-export { default as BAITagList } from './BAITagList';
-export type { BAITagListProps, BAITagListItem } from './BAITagList';
+export { default as BAITokenList } from './BAITokenList';
+export type { BAITokenListProps, BAITokenListItem } from './BAITokenList';
 export {
-  default as BAIDeploymentStatusTag,
+  default as BAIDeploymentStatusBadge,
   isDeploymentInStoppedCategory,
   DEPLOYMENT_STOPPED_CATEGORY_STATUSES,
   isDeploymentInProgress,
   DEPLOYMENT_IN_PROGRESS_STATUSES,
-} from './BAIDeploymentStatusTag';
+} from './BAIDeploymentStatusBadge';
 export type {
-  BAIDeploymentStatusTagProps,
+  BAIDeploymentStatusBadgeProps,
   BAIDeploymentStatus,
-} from './BAIDeploymentStatusTag';
+} from './BAIDeploymentStatusBadge';
 export { default as BAIIntervalView } from './BAIIntervalView';
 export { default as BAIImageMetaIcon } from './BAIImageMetaIcon';
 export type { BAIImageMetaIconProps } from './BAIImageMetaIcon';
-export { default as BAIDoubleTag } from './BAIDoubleTag';
-export type { DoubleTagObjectValue, BAIDoubleTagProps } from './BAIDoubleTag';
+export { default as BAIDoubleToken } from './BAIDoubleToken';
+export type {
+  BAIDoubleTokenValue,
+  BAIDoubleTokenProps,
+} from './BAIDoubleToken';
+export { default as BAIDoubleBadge } from './BAIDoubleBadge';
+export type {
+  BAIDoubleBadgeValue,
+  BAIDoubleBadgeProps,
+} from './BAIDoubleBadge';
 export { default as BAIProgressWithLabel } from './BAIProgressWithLabel';
 export type { BAIProgressWithLabelProps } from './BAIProgressWithLabel';
 export { default as BAISchedulingResultBadge } from './BAISchedulingResultBadge';
@@ -218,11 +226,11 @@ export type {
   BAISchedulingResultBadgeProps,
   SchedulingResult,
 } from './BAISchedulingResultBadge';
-export { default as BAIAuditLogStatusTag } from './BAIAuditLogStatusTag';
+export { default as BAIAuditLogStatusBadge } from './BAIAuditLogStatusBadge';
 export type {
-  BAIAuditLogStatusTagProps,
+  BAIAuditLogStatusBadgeProps,
   AuditLogStatus,
-} from './BAIAuditLogStatusTag';
+} from './BAIAuditLogStatusBadge';
 export { default as StorageUsageBadge } from './StorageUsageBadge';
 export type { StorageUsageBadgeProps } from './StorageUsageBadge';
 export { default as BAIBoardItemErrorBoundary } from './BAIBoardItemErrorBoundary';
@@ -240,6 +248,8 @@ export { default as BAIPopconfirm } from './BAIPopconfirm';
 export type { BAIPopconfirmProps } from './BAIPopconfirm';
 export { default as BAIBadgeCount } from './BAIBadgeCount';
 export type { BAIBadgeCountProps } from './BAIBadgeCount';
+export { default as BAITokenRow } from './BAITokenRow';
+export type { BAITokenRowProps, BAITokenRowItem } from './BAITokenRow';
 export { default as BAINotificationStack } from './BAINotificationStack';
 export type {
   BAINotificationStackProps,
@@ -254,6 +264,8 @@ export { default as BAIVFolderDeleteButton } from './BAIVFolderDeleteButton';
 export type { BAIVFolderDeleteButtonProps } from './BAIVFolderDeleteButton';
 export { default as BAIVFolderDeleteButtonV2 } from './BAIVFolderDeleteButtonV2';
 export type { BAIVFolderDeleteButtonV2Props } from './BAIVFolderDeleteButtonV2';
+export { default as BAIVFolderIdenticon } from './BAIVFolderIdenticon';
+export type { BAIVFolderIdenticonProps } from './BAIVFolderIdenticon';
 export { default as BAIDrawer } from './BAIDrawer';
 export type { BAIDrawerProps } from './BAIDrawer';
 export { default as BAIDialog } from './BAIDialog';

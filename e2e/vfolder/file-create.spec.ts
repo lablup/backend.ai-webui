@@ -67,34 +67,36 @@ test.describe(
       await modal.close();
     });
 
-    test('User can create a new file in the file explorer', async ({
-      page,
-    }) => {
-      const modal = await openFolderExplorer(page, testFolderName);
-      await modal.verifyFileExplorerLoaded();
+    test(
+      'User can create a new file in the file explorer',
+      { tag: ['@smoke', '@smoke-user'] },
+      async ({ page }) => {
+        const modal = await openFolderExplorer(page, testFolderName);
+        await modal.verifyFileExplorerLoaded();
 
-      // Click Create File button
-      const createFileButton = await modal.getCreateFileButton();
-      await createFileButton.click();
+        // Click Create File button
+        const createFileButton = await modal.getCreateFileButton();
+        await createFileButton.click();
 
-      // Verify Create File modal appears
-      const createFileModal = page.getByRole('dialog').filter({
-        hasText: 'Create a new file',
-      });
-      await expect(createFileModal).toBeVisible();
+        // Verify Create File modal appears
+        const createFileModal = page.getByRole('dialog').filter({
+          hasText: 'Create a new file',
+        });
+        await expect(createFileModal).toBeVisible();
 
-      // Enter file name
-      const fileName = 'test-file-' + new Date().getTime() + '.txt';
-      await createFileModal.getByRole('textbox').fill(fileName);
+        // Enter file name
+        const fileName = 'test-file-' + new Date().getTime() + '.txt';
+        await createFileModal.getByRole('textbox').fill(fileName);
 
-      // Click Create button
-      await createFileModal.getByRole('button', { name: 'Create' }).click();
+        // Click Create button
+        await createFileModal.getByRole('button', { name: 'Create' }).click();
 
-      // Verify file appears in the file list
-      await modal.verifyFileVisible(fileName);
+        // Verify file appears in the file list
+        await modal.verifyFileVisible(fileName);
 
-      await modal.close();
-    });
+        await modal.close();
+      },
+    );
 
     test('User can create a yaml configuration file', async ({ page }) => {
       const modal = await openFolderExplorer(page, testFolderName);

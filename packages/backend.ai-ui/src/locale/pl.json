@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID akcji",
     "Actor": "Aktor",
+    "ClientIp": "IP klienta",
     "Description": "Opis",
     "Duration": "Czas trwania",
     "EntityId": "ID encji",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Wybierz wdrożenie"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Zdegradowany",
     "Deploying": "Wdrażanie",
     "Healthy": "Sprawny",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Wybierz parę kluczy"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP klienta",
     "Domain": "Domena",
     "FailReason": "Przyczyna błędu",
     "LoginTime": "Czas logowania",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "i {{rest}} więcej"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Utworzono o godz",
     "MaxConcurrentLogins": "Maks. liczba równoczesnych logowań",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Nieprawidłowy format ścieżki.",
     "AliasOverlapping": "Ścieżka montowania pokrywa się z innym folderem.",
+    "AliasOverlappingWithAutoMount": "Ścieżka montowania pokrywa się z automatycznie montowanym folderem.",
     "AliasPlaceholder": "Ścieżka montowania",
     "AutoMountedFolders": "Automatycznie montowane foldery",
-    "Name": "Nazwa",
-    "PathAndAlias": "Ścieżka & Alias",
+    "CreateFolder": "Utwórz nowy folder przechowywania",
+    "DestinationPath": "Ścieżka w kontenerze (destination)",
+    "Folders": "Foldery",
+    "OwnerProject": "Projekt",
+    "OwnerUser": "Użytkownik",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
+    "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",
+    "SelectFolder": "Wybierz folder",
+    "SourcePath": "Ścieżka w folderze (source)",
     "Subpath": "Podścieżka",
     "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
-    "SubpathPlaceholder": "np. dataset/train (opcjonalne)",
-    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Pozostaw puste, aby zamontować katalog główny."
+    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Kliknij pole, aby przeglądać folder i wybrać podfolder; pozostaw puste, aby zamontować katalog główny folderu.",
+    "UnmountableFoldersRemoved": "Foldery, których nie możesz już zamontować, zostały usunięte z zaznaczenia."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"

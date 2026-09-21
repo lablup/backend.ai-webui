@@ -3,6 +3,7 @@ import Big from 'big.js';
 import * as _ from 'lodash-es';
 
 export * from './astryxTagVariant';
+export * from './combineFilters';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
 
@@ -465,7 +466,7 @@ export const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
 };
 
 export const convertToUUID = (id: string): string => {
-  if (isValidUUID(id) && /^[0-9a-fA-F]{36}$/.test(id)) {
+  if (isValidUUID(id)) {
     return id;
   }
   return id.replace(

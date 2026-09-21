@@ -18,8 +18,8 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import RoleScopePermissionEditModal, {
   resolveScopeName,
 } from './RoleScopePermissionEditModal';
-import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAICard,
@@ -33,9 +33,9 @@ import {
   BAITable,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
-  badgeVariantForStatus,
   toLocalId,
   useFetchKey,
+  tokenColorForStatus,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
@@ -58,12 +58,6 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
  * resolve — deferred as a follow-up.
  */
 const PERMISSION_FETCH_LIMIT = 500;
-
-// The former local `GRANT_STATE_TAG_COLOR` map is gone: the repo-global
-// ticket-13 lookup already carries this domain as
-// `badgeVariantForStatus('grantState', …)` (full -> success, partial ->
-// warning, none -> neutral). Per-file colour maps are exactly what that
-// module exists to prevent.
 
 /** A scope row node as returned by this card's query. */
 type ScopeRowNode = NonNullable<
@@ -294,6 +288,8 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
   // per row × entity when computing tag state.
   const grantedByScopeEntity = new Map<string, Set<string>>();
   permissionNodes.forEach((node) => {
+    // Null only on 26.9, which answers the legacy fields as null.
+    if (!node.operation) return;
     const key = `${node.scopeId}|${node.entityType}`;
     let operations = grantedByScopeEntity.get(key);
     if (!operations) {
@@ -370,8 +366,8 @@ const ScopedRolePermissionCard: React.FC<ScopedRolePermissionCardProps> = ({
                   key={entity.entityType}
                   content={stateLabel[grantState]}
                 >
-                  <Badge
-                    variant={badgeVariantForStatus('grantState', grantState)}
+                  <Token
+                    color={tokenColorForStatus('grantState', grantState)}
                     label={t(`rbac.types.${entity.entityType}`, {
                       defaultValue: entity.entityType,
                     })}

@@ -16,6 +16,12 @@ import { use } from 'react';
 
 const MAX_EDITABLE_FILE_SIZE = 1024 * 1024; // 1 MB
 
+// A file name is the whole point of this cell, and the ones users have are
+// long. Below this the row actions fold into the more menu rather than take
+// the last of the name's width (FR-3926) — the cell's default reserve is 40px,
+// which the type icon alone nearly fills.
+const MIN_FILE_NAME_WIDTH = 120;
+
 interface FileNameCellProps {
   selectedItem: VFolderFile;
   existingFiles: Array<VFolderFile>;
@@ -156,6 +162,7 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
     >
       <BAINameActionCell
         showActions="always"
+        minTitleWidth={MIN_FILE_NAME_WIDTH}
         title={
           <EditableFileName
             fileInfo={selectedItem}

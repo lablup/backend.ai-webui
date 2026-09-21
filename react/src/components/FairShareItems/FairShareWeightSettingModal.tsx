@@ -30,7 +30,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAITagList,
+  BAITokenList,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -596,7 +596,7 @@ const FairShareWeightSettingModal: React.FC<
             hidden={editTarget !== 'domain'}
           >
             {isBulkEdit ? (
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   domainsFairShares,
                   (domain) => domain.domain?.basicInfo?.name || '',
@@ -616,7 +616,7 @@ const FairShareWeightSettingModal: React.FC<
             hidden={editTarget !== 'project'}
           >
             {isBulkEdit ? (
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   projectFairShares,
                   (project) => project.project?.basicInfo?.name || '',
@@ -640,7 +640,7 @@ const FairShareWeightSettingModal: React.FC<
             hidden={editTarget !== 'user'}
           >
             {isBulkEdit ? (
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   userFairShares,
                   (user) => user.user?.basicInfo?.email || '',

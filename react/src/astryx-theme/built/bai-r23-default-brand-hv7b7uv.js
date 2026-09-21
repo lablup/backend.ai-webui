@@ -348,60 +348,79 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
     },
     "badge": {
       "variant:info": {
-        "backgroundColor": "var(--astryx-theme-neutral-color-status-fill-accent)",
-        "color": "var(--color-on-accent)"
+        "backgroundColor": "var(--color-background-blue)",
+        "color": "var(--color-on-accent)",
+        "--color-on-accent": "var(--color-text-blue)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-blue)"
       },
       "variant:neutral": {
         "backgroundColor": "var(--color-background-gray)",
-        "color": "var(--color-text-gray)"
+        "color": "var(--color-text-gray)",
+        "--color-text-primary": "var(--color-text-gray)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-gray)"
       },
       "variant:success": {
-        "backgroundColor": "var(--astryx-theme-neutral-color-status-fill-success)",
-        "color": "var(--color-on-success)"
+        "backgroundColor": "var(--color-background-teal)",
+        "color": "var(--color-on-success)",
+        "--color-on-success": "var(--color-text-teal)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-teal)"
       },
       "variant:warning": {
-        "backgroundColor": "var(--astryx-theme-neutral-color-status-fill-warning)",
-        "color": "var(--color-on-warning)"
+        "backgroundColor": "var(--color-background-yellow)",
+        "color": "var(--color-on-warning)",
+        "--color-on-warning": "var(--color-text-yellow)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-yellow)"
       },
       "variant:error": {
-        "backgroundColor": "var(--astryx-theme-neutral-color-status-fill-error)",
-        "color": "var(--color-on-error)"
+        "backgroundColor": "var(--color-background-red)",
+        "color": "var(--color-on-error)",
+        "--color-on-error": "var(--color-text-red)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-red)"
       },
       "variant:red": {
         "backgroundColor": "var(--color-background-red)",
-        "color": "var(--color-text-red)"
+        "color": "var(--color-text-red)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-red)"
       },
       "variant:orange": {
         "backgroundColor": "var(--color-background-orange)",
-        "color": "var(--color-text-orange)"
+        "color": "var(--color-text-orange)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-orange)"
       },
       "variant:yellow": {
         "backgroundColor": "var(--color-background-yellow)",
-        "color": "var(--color-text-yellow)"
+        "color": "var(--color-text-yellow)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-yellow)"
       },
       "variant:green": {
         "backgroundColor": "var(--color-background-green)",
-        "color": "var(--color-text-green)"
+        "color": "var(--color-text-green)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-green)"
       },
       "variant:teal": {
         "backgroundColor": "var(--color-background-teal)",
-        "color": "var(--color-text-teal)"
+        "color": "var(--color-text-teal)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-teal)"
       },
       "variant:cyan": {
         "backgroundColor": "var(--color-background-cyan)",
-        "color": "var(--color-text-cyan)"
+        "color": "var(--color-text-cyan)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-cyan)"
       },
       "variant:blue": {
         "backgroundColor": "var(--color-background-blue)",
-        "color": "var(--color-text-blue)"
+        "color": "var(--color-text-blue)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-blue)"
       },
       "variant:purple": {
         "backgroundColor": "var(--color-background-purple)",
-        "color": "var(--color-text-purple)"
+        "color": "var(--color-text-purple)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-purple)"
       },
       "variant:pink": {
         "backgroundColor": "var(--color-background-pink)",
-        "color": "var(--color-text-pink)"
+        "color": "var(--color-text-pink)",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-pink)"
       },
       "variant:gray": {
         "backgroundColor": "var(--color-background-gray)",
@@ -594,6 +613,52 @@ export const baiR23DefaultBrandHv7b7uvTheme = {
       },
       "size:lg": {
         "height": "var(--size-element-lg)"
+      }
+    },
+    "token": {
+      "color:default": {
+        "--color-neutral": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-emphasized)"
+      },
+      "color:red": {
+        "--color-background-red": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-red)"
+      },
+      "color:orange": {
+        "--color-background-orange": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-orange)"
+      },
+      "color:yellow": {
+        "--color-background-yellow": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-yellow)"
+      },
+      "color:green": {
+        "--color-background-green": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-green)"
+      },
+      "color:teal": {
+        "--color-background-teal": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-teal)"
+      },
+      "color:cyan": {
+        "--color-background-cyan": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-cyan)"
+      },
+      "color:blue": {
+        "--color-background-blue": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-blue)"
+      },
+      "color:purple": {
+        "--color-background-purple": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-purple)"
+      },
+      "color:pink": {
+        "--color-background-pink": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-pink)"
+      },
+      "color:gray": {
+        "--color-background-gray": "transparent",
+        "boxShadow": "inset 0 0 0 var(--border-width) var(--color-border-gray)"
       }
     },
     "field": {

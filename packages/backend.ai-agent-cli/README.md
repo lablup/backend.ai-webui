@@ -885,12 +885,14 @@ fields:
 
 `docs` is `<page-slug>#<english-heading-anchor>`; the resolver checks that the
 heading exists and builds the deployed URL through the same builder `search`
-uses. `variant` is the Astryx `Badge` variant the WebUI paints the value with
-(`packages/backend.ai-ui/src/helper/astryxTagVariant.ts`), which is also where
-the value vocabularies were read off.
+uses. `variant` is the Astryx `Badge` variant the WebUI paints the value with,
+or — for settled values drawn as a Token — the Badge variant
+`tokenColorForStatus` derives the Token colour from
+(`packages/backend.ai-ui/src/helper/astryxTagVariant.ts`, which is also where
+the value vocabularies were read off).
 
 Only types worth a human's sentence are curated — the ones whose values the UI
-renders as badges and whose meaning the SDL does not carry. Everything else
+renders as badges or tokens and whose meaning the SDL does not carry. Everything else
 answers from `auto`/`heuristic` and prints `MISSING` for the rest; a new schema
 field is never a hard failure.
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b6c5c96b93f74351a0f1185c36e32f11>>
+ * @generated SignedSource<<ca34aaa344bd58118865bbe01f66dac1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,16 +10,18 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type BulkAddRolePermissionsInput = {
   permissions: ReadonlyArray<CreatePermissionInput>;
 };
 export type CreatePermissionInput = {
-  entityType: RBACElementType;
-  operation: OperationType;
+  entityType: string;
+  operation?: OperationType | null | undefined;
+  permission: PermissionBit;
   roleId: string;
-  scopeId: string;
-  scopeType: RBACElementType;
+  scopeId?: string | null | undefined;
+  scopeType?: RBACElementType | null | undefined;
 };
 export type RoleScopePermissionEditModalBulkAddMutation$variables = {
   input: BulkAddRolePermissionsInput;
@@ -29,15 +31,15 @@ export type RoleScopePermissionEditModalBulkAddMutation$data = {
     readonly failed: ReadonlyArray<{
       readonly entityType: string;
       readonly message: string;
-      readonly operation: string;
-      readonly scopeId: string;
+      readonly operation: string | null | undefined;
+      readonly scopeId: string | null | undefined;
     }>;
     readonly items: ReadonlyArray<{
-      readonly entityType: RBACElementType;
+      readonly entityType: string;
       readonly id: string;
-      readonly operation: OperationType;
-      readonly scopeId: string;
-      readonly scopeType: RBACElementType;
+      readonly operation: OperationType | null | undefined;
+      readonly scopeId: string | null | undefined;
+      readonly scopeType: RBACElementType | null | undefined;
     }>;
   } | null | undefined;
 };

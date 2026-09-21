@@ -16,11 +16,12 @@ import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAIRadioGroup from './BAIRadioGroup';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
-import ReplicaStatusTag, { ReplicaStatus } from './ReplicaStatusTag';
+import ReplicaStatusBadge, { ReplicaStatus } from './ReplicaStatusBadge';
 import RouteSchedulingHistoryModal, {
   RouteSchedulingHistoryQuery,
 } from './RouteSchedulingHistoryModal';
 import SessionDetailDrawer from './SessionDetailDrawer';
+import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
@@ -33,7 +34,6 @@ import {
   BAIId,
   BAIQuestionIconWithTooltip,
   BAITable,
-  BAITag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   filterOutEmpty,
@@ -83,13 +83,9 @@ const availableReplicaSorterValues = [
 const isEnableSorter = (key: string) =>
   _.includes(availableReplicaSorterKeys, key);
 
-/**
- * Narrow the GraphQL-derived `healthStatus` / `status` enum value to the
- * union accepted by `ReplicaStatusTag`. The schema enums are strict subsets,
- * so this is a no-op cast with an `unknown` fallback when the backend later
- * adds a value the tag does not yet render (e.g. `WARMING_UP` for `status`).
- */
-const toReplicaTagStatus = (value?: string | null): ReplicaStatus =>
+// The schema enums are strict subsets of `ReplicaStatus`; a missing value
+// falls back to NOT_CHECKED.
+const toReplicaStatus = (value?: string | null): ReplicaStatus =>
   (value as ReplicaStatus) ?? 'NOT_CHECKED';
 
 interface DeploymentReplicasCardProps {
@@ -369,7 +365,7 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       dataIndex: 'status',
       render: (value: string | null | undefined, record: ReplicaNode) => (
         <BAIFlex align="center" gap="xs">
-          <ReplicaStatusTag status={toReplicaTagStatus(value)} />
+          <ReplicaStatusBadge status={toReplicaStatus(value)} />
           {supportsRouteSchedulingHistory && (
             // `IconButton`'s own `label`/`tooltip` — the wrapping `Tooltip` left
             // the button with no accessible name (it resolved to "Action"),
@@ -420,10 +416,10 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
         //
         // A terminated replica reports healthStatus NOT_CHECKED, whose
         // "awaiting the first health check" tooltip is misleading once the
-        // replica is gone — suppress the tooltip in that case (keep the tag).
-        <ReplicaStatusTag
-          status={toReplicaTagStatus(value)}
-          showTooltip={toReplicaTagStatus(record.status) !== 'TERMINATED'}
+        // replica is gone — suppress the tooltip in that case (keep the badge).
+        <ReplicaStatusBadge
+          status={toReplicaStatus(value)}
+          showTooltip={toReplicaStatus(record.status) !== 'TERMINATED'}
         />
       ),
     },
@@ -439,11 +435,14 @@ const DeploymentReplicasCardContent: React.FC<DeploymentReplicasCardProps> = ({
       ),
       dataIndex: 'trafficStatus',
       render: (value: string | null | undefined) => (
-        <BAITag color={value === 'ACTIVE' ? 'success' : 'default'}>
-          {value === 'ACTIVE'
-            ? t('replicaStatus.Active')
-            : t('replicaStatus.Inactive')}
-        </BAITag>
+        <Badge
+          variant={value === 'ACTIVE' ? 'success' : 'neutral'}
+          label={
+            value === 'ACTIVE'
+              ? t('replicaStatus.Active')
+              : t('replicaStatus.Inactive')
+          }
+        />
       ),
     },
     {

@@ -2,14 +2,14 @@ import {
   BAIProjectTableFragment$data,
   BAIProjectTableFragment$key,
 } from '../../__generated__/BAIProjectTableFragment.graphql';
-import { badgeVariantForTagColor, toLocalId } from '../../helper';
+import { tokenColorForTagColor, toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIBadge from '../BAIBadge';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -149,11 +149,9 @@ const BAIProjectTable = ({
       key: 'type',
       title: t('comp:BAIProjectTable.Type'),
       dataIndex: 'type',
-      // to-astryx W2-D: antd `Tag` -> Astryx `Badge`; the `blue` hue goes
-      // through the repo-global lookup (MAPPING §3.5).
       render: (value) => (
-        <Badge
-          variant={badgeVariantForTagColor(value === 'GENERAL' ? null : 'blue')}
+        <Token
+          color={tokenColorForTagColor(value === 'GENERAL' ? null : 'blue')}
           label={value}
         />
       ),

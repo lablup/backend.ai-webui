@@ -624,11 +624,13 @@ test.describe(
     test('Admin can filter images by status using strict selection', async ({
       page,
     }) => {
-      // 1. Apply Status filter with strict selection value "ALIVE"
-      await applyImageFilter(page, 'Status', 'ALIVE');
+      // 1. Apply Image Status filter with strict selection value "ALIVE"
+      // (`t('environment.ImageStatus')` — the property was relabelled from
+      // "Status" in #9637).
+      await applyImageFilter(page, 'Image Status', 'ALIVE');
 
-      // 2. Verify the committed token "Status: is ALIVE" appears
-      const statusLabel = imageFilterTokenLabel('Status', 'is');
+      // 2. Verify the committed token "Image Status: is ALIVE" appears
+      const statusLabel = imageFilterTokenLabel('Image Status', 'is');
       const statusTag = page.getByRole('button', {
         name: `Remove ${statusLabel}`,
       });

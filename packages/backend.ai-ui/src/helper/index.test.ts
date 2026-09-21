@@ -3,6 +3,7 @@ import {
   addNumberWithUnits,
   compareNumberWithUnits,
   convertToBinaryUnit,
+  convertToUUID,
   convertToDecimalUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -525,5 +526,23 @@ describe('initiateDownload', () => {
     expect(error.reason).toBe('popup-blocked');
     expect(openMock).toHaveBeenCalledWith(DOWNLOAD_URL, '_blank');
     expect(clickSpy).not.toHaveBeenCalled();
+  });
+});
+
+describe('convertToUUID', () => {
+  test('returns a dashed uuid unchanged', () => {
+    expect(convertToUUID('01234567-89ab-cdef-0123-456789abcdef')).toBe(
+      '01234567-89ab-cdef-0123-456789abcdef',
+    );
+  });
+
+  test('reformats a 32-hex id into a dashed uuid', () => {
+    expect(convertToUUID('0123456789abcdef0123456789abcdef')).toBe(
+      '01234567-89ab-cdef-0123-456789abcdef',
+    );
+  });
+
+  test('leaves a non-uuid string alone', () => {
+    expect(convertToUUID('not-a-uuid')).toBe('not-a-uuid');
   });
 });

@@ -13,7 +13,7 @@ import { theme } from '../theme-shim';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
-import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import {
   BAIFlex,
   BAILink,
@@ -52,7 +52,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
         status_info
         status_data
         ...SessionActionButtonsFragment
-        ...SessionStatusTagFragment
+        ...SessionStatusBadgeFragment
       }
     `,
     sessionFrgmt,
@@ -108,7 +108,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
           description={
             <BAIFlex direction="column" gap="xs" style={{ width: '100%' }}>
               <BAIFlex justify="between" style={{ width: '100%' }}>
-                <SessionStatusTag
+                <SessionStatusBadge
                   sessionFrgmt={node || null}
                   showQueuePosition={false}
                   showTooltip={false}

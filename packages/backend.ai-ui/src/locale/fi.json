@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Toiminnon ID",
     "Actor": "Suorittaja",
+    "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",
     "Duration": "Kesto",
     "EntityId": "Entiteetin ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Heikentynyt",
     "Deploying": "Käyttöönottaminen",
     "Healthy": "Terve",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Valitse avainpari"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Asiakkaan IP",
     "Domain": "Toimialue",
     "FailReason": "Epäonnistumisen syy",
     "LoginTime": "Kirjautumisaika",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ja {{rest}} muuta"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",
     "MaxConcurrentLogins": "Samanaikaisten kirjautumisten enimmäismäärä",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Virheellinen polkumuoto.",
     "AliasOverlapping": "Liitospolku on päällekkäinen toisen kansion kanssa.",
+    "AliasOverlappingWithAutoMount": "Liitospolku on päällekkäinen automaattisesti liitetyn kansion kanssa.",
     "AliasPlaceholder": "Liitospolku",
     "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
-    "Name": "Nimi",
-    "PathAndAlias": "Polku & Alias",
+    "CreateFolder": "Luo uusi tallennuskansio",
+    "DestinationPath": "Kontin polku (destination)",
+    "Folders": "Kansiot",
+    "OwnerProject": "Projekti",
+    "OwnerUser": "Käyttäjä",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
+    "Refresh": "Päivitä",
     "RemoveFolder": "Poista",
+    "SelectFolder": "Valitse kansio",
+    "SourcePath": "Polku kansiossa (source)",
     "Subpath": "Alihakemisto",
     "SubpathInvalid": "Alihakemiston on oltava suhteellinen polku eikä se saa sisältää '..'.",
-    "SubpathPlaceholder": "esim. dataset/train (valinnainen)",
-    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Jätä tyhjäksi liittääksesi juuren."
+    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Napsauta kenttää selataksesi kansiota ja valitaksesi alikansion; jätä tyhjäksi, jos haluat liittää kansion juuren.",
+    "UnmountableFoldersRemoved": "Kansiot, joita et voi enää liittää, poistettiin valinnasta."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"

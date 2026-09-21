@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "アクション ID",
     "Actor": "実行者",
+    "ClientIp": "クライアントIP",
     "Description": "説明",
     "Duration": "所要時間",
     "EntityId": "エンティティ ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "低下中",
     "Deploying": "デプロイ中",
     "Healthy": "正常",
@@ -265,6 +266,7 @@
     "SelectKeypair": "キーペアを選択"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "クライアントIP",
     "Domain": "ドメイン",
     "FailReason": "失敗の理由",
     "LoginTime": "ログイン日時",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "テスト"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "他 {{rest}} 件"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "作成日",
     "MaxConcurrentLogins": "最大同時ログイン数",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "パスの形式が無効です。",
     "AliasOverlapping": "マウントパスが別のフォルダと重複しています。",
+    "AliasOverlappingWithAutoMount": "マウントパスが自動マウントフォルダと重複しています。",
     "AliasPlaceholder": "マウントパス",
     "AutoMountedFolders": "自動マウントフォルダ",
-    "Name": "名前",
-    "PathAndAlias": "パス & エイリアス",
+    "CreateFolder": "新規ストレージフォルダー作成",
+    "DestinationPath": "コンテナのパス (destination)",
+    "Folders": "フォルダー",
+    "OwnerProject": "プロジェクト",
+    "OwnerUser": "ユーザー",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
+    "Refresh": "更新",
     "RemoveFolder": "削除",
+    "SelectFolder": "フォルダを選択",
+    "SourcePath": "フォルダ内のパス (source)",
     "Subpath": "サブパス",
     "SubpathInvalid": "サブパスは相対パスである必要があり、'..' を含めることはできません。",
-    "SubpathPlaceholder": "例: dataset/train (省略可)",
-    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。ルートをマウントするには空欄にしてください。"
+    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。入力欄をクリックしてフォルダを参照し、選択してください。空のままにするとフォルダのルートをマウントします。",
+    "UnmountableFoldersRemoved": "マウントできなくなったフォルダーを選択から除外しました。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"

@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "操作 ID",
     "Actor": "执行者",
+    "ClientIp": "客户端 IP",
     "Description": "描述",
     "Duration": "持续时间",
     "EntityId": "实体 ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "选择部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降级",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -265,6 +266,7 @@
     "SelectKeypair": "选择密钥对"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "客户端 IP",
     "Domain": "域",
     "FailReason": "失败原因",
     "LoginTime": "登录时间",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "测试"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "另有 {{rest}} 项"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "创建于",
     "MaxConcurrentLogins": "最大并发登录数",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路径格式无效。",
     "AliasOverlapping": "挂载路径与另一个文件夹重叠。",
+    "AliasOverlappingWithAutoMount": "挂载路径与自动挂载文件夹重叠。",
     "AliasPlaceholder": "挂载路径",
     "AutoMountedFolders": "自动挂载文件夹",
-    "Name": "名称",
-    "PathAndAlias": "路径 & 别名",
+    "CreateFolder": "创建一个新的存储文件夹",
+    "DestinationPath": "容器路径 (destination)",
+    "Folders": "文件夹",
+    "OwnerProject": "项目",
+    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
+    "Refresh": "刷新",
     "RemoveFolder": "移除",
+    "SelectFolder": "选择文件夹",
+    "SourcePath": "文件夹内路径 (source)",
     "Subpath": "子路径",
     "SubpathInvalid": "子路径必须是相对路径，且不能包含 '..'。",
-    "SubpathPlaceholder": "例如 dataset/train（可选）",
-    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。留空则挂载根目录。"
+    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。点击该输入框浏览文件夹并选择；留空则挂载文件夹根目录。",
+    "UnmountableFoldersRemoved": "已从所选内容中移除您无法再挂载的文件夹。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "选择文件夹"

@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "액션 ID",
     "Actor": "수행자",
+    "ClientIp": "클라이언트 IP",
     "Description": "설명",
     "Duration": "소요 시간",
     "EntityId": "엔티티 ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "저하됨",
     "Deploying": "배포 중",
     "Healthy": "정상",
@@ -265,6 +266,7 @@
     "SelectKeypair": "키페어를 선택해주세요"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "클라이언트 IP",
     "Domain": "도메인",
     "FailReason": "실패 사유",
     "LoginTime": "로그인 시각",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "테스트"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "외 {{rest}}개"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "생성 날짜",
     "MaxConcurrentLogins": "최대 동시 로그인",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "경로 형식이 올바르지 않습니다.",
     "AliasOverlapping": "다른 폴더와 마운트 경로가 중복됩니다.",
+    "AliasOverlappingWithAutoMount": "마운트 경로가 자동 마운트 폴더와 겹칩니다.",
     "AliasPlaceholder": "마운트 경로",
     "AutoMountedFolders": "자동 마운트 폴더",
-    "Name": "이름",
-    "PathAndAlias": "경로 & 대체이름",
+    "CreateFolder": "새 폴더 추가",
+    "DestinationPath": "컨테이너 경로 (destination)",
+    "Folders": "폴더",
+    "OwnerProject": "프로젝트",
+    "OwnerUser": "사용자",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
+    "Refresh": "새로고침",
     "RemoveFolder": "제거",
+    "SelectFolder": "폴더를 선택해주세요",
+    "SourcePath": "폴더 안의 경로 (source)",
     "Subpath": "하위 경로",
     "SubpathInvalid": "하위 경로는 상대 경로여야 하며 '..'을 포함할 수 없습니다.",
-    "SubpathPlaceholder": "예: dataset/train (선택)",
-    "SubpathTooltip": "폴더 루트 대신 폴더 내부의 하위 경로를 마운트 소스로 사용합니다. 비워두면 루트가 마운트됩니다."
+    "SubpathTooltip": "폴더 루트 대신 폴더 내부의 하위 경로를 마운트 소스로 사용합니다. 입력란을 클릭해 폴더를 탐색하며 선택하세요. 비워 두면 폴더 루트를 마운트합니다.",
+    "UnmountableFoldersRemoved": "더 이상 마운트할 수 없는 폴더를 선택에서 제외했습니다."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "폴더를 선택해주세요"
@@ -728,6 +740,7 @@
     "ModifiedAt": "수정일",
     "NeedPasswordChange": "비밀번호 변경 필요",
     "Project": "프로젝트",
+    "Projects": "프로젝트",
     "ResourcePolicy": "자원 정책",
     "Role": "역할",
     "Status": "상태",

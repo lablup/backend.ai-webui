@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID hành động",
     "Actor": "Người thực hiện",
+    "ClientIp": "IP máy khách",
     "Description": "Mô tả",
     "Duration": "Thời lượng",
     "EntityId": "ID thực thể",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Bị suy giảm",
     "Deploying": "Đang triển khai",
     "Healthy": "Bình thường",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Chọn cặp khóa"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP máy khách",
     "Domain": "Miền",
     "FailReason": "Lý do thất bại",
     "LoginTime": "Thời gian đăng nhập",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "và {{rest}} mục khác"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Được tạo tại",
     "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
     "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasOverlappingWithAutoMount": "Đường dẫn mount trùng lặp với thư mục tự động mount.",
     "AliasPlaceholder": "Đường dẫn mount",
     "AutoMountedFolders": "Thư mục tự động mount",
-    "Name": "Tên",
-    "PathAndAlias": "Đường dẫn & Bí danh",
+    "CreateFolder": "Tạo một thư mục lưu trữ mới",
+    "DestinationPath": "Đường dẫn container (destination)",
+    "Folders": "Thư mục",
+    "OwnerProject": "Dự án",
+    "OwnerUser": "Người dùng",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
+    "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",
+    "SelectFolder": "Chọn thư mục",
+    "SourcePath": "Đường dẫn trong thư mục (source)",
     "Subpath": "Đường dẫn con",
     "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
-    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
-    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Nhấp vào trường này để duyệt thư mục và chọn một thư mục con; để trống để mount thư mục gốc.",
+    "UnmountableFoldersRemoved": "Các thư mục bạn không còn gắn kết được đã bị loại khỏi lựa chọn."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"

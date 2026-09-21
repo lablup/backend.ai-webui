@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d88bd670b0670884b8098bb35150dbcd>>
+ * @generated SignedSource<<0f2235a74248591d1616dada3214b643>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type RoleAssignmentOrderField = "EMAIL" | "GRANTED_AT" | "USERNAME" | "%future added value";
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
@@ -36,6 +37,7 @@ export type RoleAssignmentRoleNestedFilter = {
   AND?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
   OR?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
+  mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   source?: RoleSourceFilter | null | undefined;
   status?: RoleStatusFilter | null | undefined;
@@ -74,14 +76,28 @@ export type RoleStatusFilter = {
   notEquals?: RoleStatus | null | undefined;
   notIn?: ReadonlyArray<RoleStatus> | null | undefined;
 };
+export type RoleMappedScopeNestedFilter = {
+  AND?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
+  NOT?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
+  OR?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
+  scopeId?: UUIDFilter | null | undefined;
+  scopeType?: StringFilter | null | undefined;
+};
 export type PermissionNestedFilter = {
   AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   operation?: OperationTypeFilter | null | undefined;
+  permission?: PermissionBitFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
+};
+export type PermissionBitFilter = {
+  equals?: PermissionBit | null | undefined;
+  in?: ReadonlyArray<PermissionBit> | null | undefined;
+  notEquals?: PermissionBit | null | undefined;
+  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
 };
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;
@@ -176,6 +192,20 @@ v7 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
   "storageKey": null
 };
 return {
@@ -286,20 +316,8 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "scopeType",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "scopeId",
-                            "storageKey": null
-                          },
+                          (v8/*: any*/),
+                          (v9/*: any*/),
                           (v7/*: any*/)
                         ],
                         "storageKey": null
@@ -310,6 +328,8 @@ return {
                 ],
                 "storageKey": "scopes(first:1)"
               },
+              (v8/*: any*/),
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": (v6/*: any*/),
@@ -419,16 +439,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3fa8c5e941ca4d715644f8e9150bad89",
+    "cacheID": "05ed4264296b8becb123881b4a692526",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0\")\n  scopeId @since(version: \"26.9.0\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1686ca5dcae81b1949d2704e9d05ec20";
+(node as any).hash = "676c78d26ad688220e9451861c65d203";
 
 export default node;

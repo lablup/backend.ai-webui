@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID de acción",
     "Actor": "Actor",
+    "ClientIp": "IP del cliente",
     "Description": "Descripción",
     "Duration": "Duración",
     "EntityId": "ID de entidad",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Seleccionar despliegue"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradado",
     "Deploying": "Desplegando",
     "Healthy": "Saludable",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Seleccionar par de claves"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP del cliente",
     "Domain": "Dominio",
     "FailReason": "Motivo del error",
     "LoginTime": "Hora de inicio de sesión",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "prueba"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "y {{rest}} más"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Creado en",
     "MaxConcurrentLogins": "Máx. de inicios de sesión simultáneos",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato de ruta inválido.",
     "AliasOverlapping": "La ruta de montaje se superpone con otra carpeta.",
+    "AliasOverlappingWithAutoMount": "La ruta de montaje se superpone con una carpeta de montaje automático.",
     "AliasPlaceholder": "Ruta de montaje",
     "AutoMountedFolders": "Carpetas de montaje automático",
-    "Name": "Nombre",
-    "PathAndAlias": "Ruta & Alias",
+    "CreateFolder": "Crear una nueva carpeta de almacenamiento",
+    "DestinationPath": "Ruta del contenedor (destination)",
+    "Folders": "Carpetas",
+    "OwnerProject": "Proyecto",
+    "OwnerUser": "Usuario",
     "PathAndAliasTooltip": "La ruta dentro del contenedor donde se montará la carpeta. Déjelo vacío para usar la ruta predeterminada.",
+    "Refresh": "Actualizar",
     "RemoveFolder": "Eliminar",
+    "SelectFolder": "Seleccionar carpeta",
+    "SourcePath": "Ruta en la carpeta (source)",
     "Subpath": "Subruta",
     "SubpathInvalid": "La subruta debe ser una ruta relativa y no debe contener '..'.",
-    "SubpathPlaceholder": "p. ej. dataset/train (opcional)",
-    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Déjelo vacío para montar la raíz."
+    "SubpathTooltip": "Monta una subcarpeta dentro de la carpeta como origen en lugar de su raíz. Haga clic en el campo para explorar la carpeta y elegir una; déjelo vacío para montar la raíz de la carpeta.",
+    "UnmountableFoldersRemoved": "Se han eliminado de la selección las carpetas que ya no puedes montar."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleccionar carpeta"

@@ -301,6 +301,9 @@ options:
 ![](../images/purge_users_modal.png)
 <!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
+If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
+user's email together with the error message, while the remaining users are purged normally.
+
 :::danger
 Purging a user is **irreversible**. The user's virtual folders, kernel history,
 and related keypairs are also deleted. Make sure you have selected the correct
@@ -469,6 +472,7 @@ The **Audit Log** tab tracks all action history for the deployment. Each entry i
 - **Description**: Additional details about the operation.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
+- **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
 You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
@@ -1011,8 +1015,13 @@ The **Priority** column and the priority editing actions are shown only when the
 version 26.4.0 or later.
 :::
 
-On the **Sessions** tab, you can use the property filter to narrow the list, including by **Session ID**
-when needed.
+On the **Sessions** tab, you can use the property filter to narrow the list — by **Session ID** when
+needed, by the session's owner (email or full name), by its project or domain, and by session
+attributes such as result, cluster mode, priority, and creation or termination time.
+
+Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
+list first and export only the sessions you need. Filter conditions the export does not support are
+ignored, so the exported file may contain more sessions than the table shows, never fewer.
 
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
@@ -1083,6 +1092,10 @@ you edit a weight rather than only in the table.
 
 At each step, the following common features are available:
 
+- **Filter**: A property filter above the table narrows the rows. The Resource Group step filters by
+  **Name**, **Description**, **Active status**, and **Public Status**; the Domain and Project steps
+  filter by **Name** and **Active status**. On managers that do not support combined filter
+  conditions, only **Name** is offered and one condition can be applied at a time.
 - **Pagination**: Navigate through results with configurable page size.
 
 ### Resource group
@@ -1101,6 +1114,8 @@ The table includes the following columns:
 - **Decay Unit**: The period (in days) for aggregating usage.
 - **Half Life**: The period (in days) over which the usage reflection rate decreases by half.
 - **Lookback**: The range (in days) of usage history reflected in calculations.
+- **Status**: Whether the resource group is **Active** or **Inactive**.
+- **Created At**: The creation timestamp.
 
 ### Resource group fair share settings
 
@@ -1136,6 +1151,7 @@ The table includes the following columns:
 - **Weight**: The current weight value. Displays "default" if using the default weight.
 - **Fair Share Factor**: The scheduling priority calculated by the scheduler. Higher values indicate higher priority.
 - **Resource Allocation**: Average daily decayed resource usage per resource type (CPU, Memory, GPU / Day).
+- **Status**: Whether the domain is **Active** or **Inactive**.
 - **Modified At**: The last modification timestamp.
 - **Created At**: The creation timestamp.
 
@@ -1151,6 +1167,7 @@ After selecting a domain, the Project step displays a table of projects with the
 column structure as the Domain step. Click a project name to drill into the User step.
 
 ![](../images/fair_share_project_page.png)
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
@@ -1505,6 +1522,13 @@ location and restart the agent daemon. Management of the resource groups is
 possible in Resource Group tab of the Resource page.
 
 ![](../images/resource_group_page.png)
+
+The **Active** and **Inactive** buttons above the list choose which resource groups are listed, and the
+property filter next to them narrows the list by **Name**, **Description**, **Public**, or **Default**.
+On managers that do not support combined filter conditions, only one condition can be applied at a time.
+
+The **Default** column marks the default resource group. At most one resource group carries the marker,
+and an agent that registers without a resolvable resource group name falls back to it.
 
 <a id="scheduling-methods"></a>
 
@@ -1894,6 +1918,17 @@ This page is only for showing current information.
 
 Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
+
+![](../images/projects_page.png)
+
+The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
+filter next to them narrows the list by **Name**, **Domain**, **Resource Policy**, **Project ID**,
+**Created At**, or **Modified At**. **Project ID** must be a full UUID, and **Created At** and
+**Modified At** take a date and time.
+
+The **Modified At** and **Status** columns are hidden by default and can be shown using the
+column-settings gear button (⚙) below the table, next to the pagination controls. **Status** shows whether a project is
+**Active** or **Inactive**. Your column choices are persisted per browser across sessions.
 
 <a id="set-project-admin"></a>
 

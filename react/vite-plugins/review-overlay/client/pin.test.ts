@@ -102,6 +102,7 @@ beforeEach(() => {
 
 afterEach(() => {
   pin.dispose();
+  delete (document.documentElement as Partial<HTMLElement>).getClientRects;
 });
 
 describe('createDeepLinkPin', () => {
@@ -254,6 +255,43 @@ describe('createDeepLinkPin', () => {
       expect(pin.locate()).toBe(true);
       // 8 pad + the 34px marker clamped to the same edge + its 10px gap.
       expect(card().style.top).toBe('52px');
+    });
+
+    /**
+     * The measured failure: on github.com the element a pin holds stops being
+     * drawn for a moment — the site re-renders its file list seconds after it
+     * looks settled — and the pin drew a zero-size box at 0,0, marker and card
+     * with it, on top of the site's logo. No "scrolled below" wording, nothing
+     * to click: it reads as a pin on the corner of the page.
+     */
+    it('gives up an element that has stopped being drawn', () => {
+      const element = mountSized({ top: 100, bottom: 300, height: 200 }, 60);
+      show();
+      expect(pin.locate()).toBe(true);
+      expect(marked()).toBe(true);
+
+      // A document that lays out, and an element that no longer does.
+      document.documentElement.getClientRects = () =>
+        [
+          { left: 0, top: 0, width: 1024, height: 800 },
+        ] as unknown as DOMRectList;
+      element.getBoundingClientRect = () =>
+        ({ width: 0, height: 0 }) as DOMRect;
+      pin.locate();
+
+      expect(marked()).toBe(false);
+      expect(card().classList.contains('found')).toBe(false);
+      expect(pin.locatedElement()).toBeNull();
+    });
+
+    // …and jsdom, where nothing has a box, must keep reading a zero rect as
+    // "no layout engine" rather than "the element went away".
+    it('keeps drawing a zero rect in a document that lays nothing out', () => {
+      mountSized({ top: 100, bottom: 100, height: 0, width: 0 }, 60);
+      show();
+
+      expect(pin.locate()).toBe(true);
+      expect(marked()).toBe(true);
     });
 
     // `getBoundingClientRect` still reports the box of an element a scroller
@@ -618,6 +656,57 @@ describe('createDeepLinkPin', () => {
 
       expect(scans).toBeGreaterThan(0);
       expect(scans).toBeLessThanOrEqual(3);
+    });
+
+    // A stop's element is behind a modal or a step; that opening changes no
+    // URL, so the scan must still be running when it happens (FR-3949).
+    it('keeps scanning for a stop after the budget is spent', async () => {
+      show({
+        s: '#_r_gone_',
+        tid: 'confirm',
+        txt: 'Confirm',
+        ck: 'The confirm button is visible',
+      });
+      expect(pin.locate()).toBe(false);
+      const app = document.querySelector('#app') as HTMLElement;
+      for (let i = 0; i < 5; i++) {
+        app.append(document.createElement('i'));
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      expect(pin.locatedElement()).toBeNull();
+
+      app.insertAdjacentHTML(
+        'beforeend',
+        '<div role="dialog"><button data-testid="confirm">Confirm</button></div>',
+      );
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()?.textContent).toBe('Confirm');
+      expect(marker().classList.contains('found')).toBe(true);
+    });
+
+    // BAIDialog closes by dropping its `role` and keeps its subtree mounted,
+    // so the held element must be re-checked against the dialog scope.
+    it('releases a dlg stop when its dialog closes in place', async () => {
+      const app = document.querySelector('#app') as HTMLElement;
+      app.insertAdjacentHTML(
+        'beforeend',
+        '<div id="dlg" role="dialog"><button data-testid="confirm">Confirm</button></div>',
+      );
+      show({
+        s: '[data-testid="confirm"]',
+        tid: 'confirm',
+        txt: 'Confirm',
+        ck: 'The confirm button is visible',
+        dlg: 1,
+      });
+      expect(pin.locate()).toBe(true);
+
+      document.querySelector('#dlg')?.removeAttribute('role');
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(pin.locatedElement()).toBeNull();
+      expect(marker().classList.contains('found')).toBe(false);
     });
 
     it('escalates when the cheap ladder comes back empty', async () => {

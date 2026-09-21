@@ -113,7 +113,7 @@ test.describe(
 
     test(
       'Admin can view the deployments list with expected columns and controls',
-      { tag: ['@smoke'] },
+      { tag: ['@smoke', '@smoke-admin'] },
       async ({ page }) => {
         // 1. Navigate to /deployments.
         await navigateTo(page, 'deployments');

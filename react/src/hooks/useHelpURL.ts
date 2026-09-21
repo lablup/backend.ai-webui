@@ -4,6 +4,10 @@
  */
 import { useCurrentLanguage } from '../components/DefaultProviders';
 import { resolveHelpDocPath } from '../helper/helpAnchors';
+import {
+  coerceUserSettingsCategory,
+  USER_SETTINGS_PARAM,
+} from '../helper/userSettingsModal';
 import { useWebUILocation } from './index';
 import { useCurrentMenuKey } from './useRouteScope';
 
@@ -31,8 +35,15 @@ export const useHelpURL = (): string => {
   // Scope-aware menu key (route handle): under `/admin/<feature>` and
   // `/project/:name/<feature>` the first pathname segment is the scope prefix,
   // so the lookup uses the matched route's menu key, not the pathname.
-  const matchingKey = useCurrentMenuKey() || '';
-  const activeTab = new URLSearchParams(location.search).get('tab');
+  const routeMenuKey = useCurrentMenuKey() || '';
+  const searchParams = new URLSearchParams(location.search);
+  // An open settings modal covers whatever page is underneath, so it owns the
+  // help target — otherwise the "?" would answer for the page behind it.
+  const settingsCategory = coerceUserSettingsCategory(
+    searchParams.get(USER_SETTINGS_PARAM),
+  );
+  const matchingKey = settingsCategory ? 'usersettings' : routeMenuKey;
+  const activeTab = settingsCategory ?? searchParams.get('tab');
 
   return manualURL + resolveHelpDocPath(matchingKey, activeTab);
 };

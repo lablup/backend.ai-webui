@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b78089aac8bc62c530ba4d92940b2647>>
+ * @generated SignedSource<<8b7502266e9092b145d275bf304b48f4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,13 +11,20 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type PermissionTarget = {
+  entityType: string;
+  scopeId: string;
+  scopeType: string;
+};
 export type PermissionNestedFilter = {
   AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   operation?: OperationTypeFilter | null | undefined;
+  permission?: PermissionBitFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
 };
@@ -43,6 +50,12 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type PermissionBitFilter = {
+  equals?: PermissionBit | null | undefined;
+  in?: ReadonlyArray<PermissionBit> | null | undefined;
+  notEquals?: PermissionBit | null | undefined;
+  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
+};
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;
   in?: ReadonlyArray<RBACElementType> | null | undefined;
@@ -56,10 +69,17 @@ export type OperationTypeFilter = {
   notIn?: ReadonlyArray<OperationType> | null | undefined;
 };
 export type useCurrentUserProjectRolesQuery$variables = {
-  permissionFilter?: PermissionNestedFilter | null | undefined;
+  legacyPermissionFilter?: PermissionNestedFilter | null | undefined;
+  targets: ReadonlyArray<PermissionTarget>;
 };
 export type useCurrentUserProjectRolesQuery$data = {
-  readonly myRolesResult: Result<{
+  readonly heldPermissions: Result<{
+    readonly items: ReadonlyArray<{
+      readonly permissions: ReadonlyArray<PermissionBit>;
+      readonly scopeId: string;
+    }>;
+  } | null | undefined, unknown>;
+  readonly legacyRoles: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
@@ -69,7 +89,7 @@ export type useCurrentUserProjectRolesQuery$data = {
             readonly edges: ReadonlyArray<{
               readonly node: {
                 readonly scopeId: string;
-                readonly scopeType: RBACElementType;
+                readonly scopeType: string;
               };
             }>;
           } | null | undefined;
@@ -84,20 +104,72 @@ export type useCurrentUserProjectRolesQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "permissionFilter"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "legacyPermissionFilter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "targets"
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
+},
+v3 = {
+  "alias": "heldPermissions",
+  "args": [
+    {
+      "fields": [
+        {
+          "kind": "Variable",
+          "name": "targets",
+          "variableName": "targets"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "input"
+    }
+  ],
+  "concreteType": "MyAtomicBulkScopePermissionsPayload",
+  "kind": "LinkedField",
+  "name": "myAtomicBulkScopePermissions",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ScopeEntityPermission",
+      "kind": "LinkedField",
+      "name": "items",
+      "plural": true,
+      "selections": [
+        (v2/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "permissions",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v4 = [
   {
     "fields": [
       {
         "kind": "Variable",
         "name": "permission",
-        "variableName": "permissionFilter"
+        "variableName": "legacyPermissionFilter"
       }
     ],
     "kind": "ObjectValue",
@@ -109,28 +181,21 @@ v1 = [
     "value": 100
   }
 ],
-v2 = {
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = [
+v6 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 1
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-},
-v5 = {
+v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -139,16 +204,24 @@ v5 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "useCurrentUserProjectRolesQuery",
     "selections": [
       {
         "kind": "CatchField",
+        "field": (v3/*: any*/),
+        "to": "RESULT"
+      },
+      {
+        "kind": "CatchField",
         "field": {
-          "alias": "myRolesResult",
-          "args": (v1/*: any*/),
+          "alias": "legacyRoles",
+          "args": (v4/*: any*/),
           "concreteType": "RoleAssignmentConnection",
           "kind": "LinkedField",
           "name": "myRoles",
@@ -170,7 +243,7 @@ return {
                   "name": "node",
                   "plural": false,
                   "selections": [
-                    (v2/*: any*/),
+                    (v5/*: any*/),
                     {
                       "alias": null,
                       "args": null,
@@ -179,10 +252,10 @@ return {
                       "name": "role",
                       "plural": false,
                       "selections": [
-                        (v2/*: any*/),
+                        (v5/*: any*/),
                         {
                           "alias": null,
-                          "args": (v3/*: any*/),
+                          "args": (v6/*: any*/),
                           "concreteType": "EntityConnection",
                           "kind": "LinkedField",
                           "name": "scopes",
@@ -204,8 +277,8 @@ return {
                                   "name": "node",
                                   "plural": false,
                                   "selections": [
-                                    (v4/*: any*/),
-                                    (v5/*: any*/)
+                                    (v2/*: any*/),
+                                    (v7/*: any*/)
                                   ],
                                   "storageKey": null
                                 }
@@ -235,13 +308,17 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "useCurrentUserProjectRolesQuery",
     "selections": [
+      (v3/*: any*/),
       {
-        "alias": "myRolesResult",
-        "args": (v1/*: any*/),
+        "alias": "legacyRoles",
+        "args": (v4/*: any*/),
         "concreteType": "RoleAssignmentConnection",
         "kind": "LinkedField",
         "name": "myRoles",
@@ -263,7 +340,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v2/*: any*/),
+                  (v5/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -272,10 +349,10 @@ return {
                     "name": "role",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
+                      (v5/*: any*/),
                       {
                         "alias": null,
-                        "args": (v3/*: any*/),
+                        "args": (v6/*: any*/),
                         "concreteType": "EntityConnection",
                         "kind": "LinkedField",
                         "name": "scopes",
@@ -297,9 +374,9 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v4/*: any*/),
-                                  (v5/*: any*/),
-                                  (v2/*: any*/)
+                                  (v2/*: any*/),
+                                  (v7/*: any*/),
+                                  (v5/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -324,16 +401,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5eded640065127c5714bd52980e64c02",
+    "cacheID": "9a4897a8166f0ec93e2404a57b3a3794",
     "id": null,
     "metadata": {},
     "name": "useCurrentUserProjectRolesQuery",
     "operationKind": "query",
-    "text": "query useCurrentUserProjectRolesQuery(\n  $permissionFilter: PermissionNestedFilter\n) {\n  myRolesResult: myRoles(first: 100, filter: {permission: $permissionFilter}) {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useCurrentUserProjectRolesQuery(\n  $targets: [PermissionTarget!]!\n  $legacyPermissionFilter: PermissionNestedFilter\n) {\n  heldPermissions: myAtomicBulkScopePermissions(input: {targets: $targets}) @since(version: \"26.9.0\") {\n    items {\n      scopeId\n      permissions\n    }\n  }\n  legacyRoles: myRoles(first: 100, filter: {permission: $legacyPermissionFilter}) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ac9b1935fcf340c2333c3e50f9623092";
+(node as any).hash = "9ca5f11bc6d861a8eb2abae3380bf7d9";
 
 export default node;

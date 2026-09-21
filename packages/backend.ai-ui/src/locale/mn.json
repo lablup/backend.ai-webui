@@ -70,6 +70,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Үйлийн ID",
     "Actor": "Гүйцэтгэгч",
+    "ClientIp": "Клиентийн IP",
     "Description": "Тайлбар",
     "Duration": "Үргэлжлэх хугацаа",
     "EntityId": "Объектын ID",
@@ -152,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Муудсан",
     "Deploying": "Байршуулж байна",
     "Healthy": "Эрүүл",
@@ -265,6 +266,7 @@
     "SelectKeypair": "Түлхүүрийн хос сонгох"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Клиентийн IP",
     "Domain": "Домэйн",
     "FailReason": "Амжилтгүй болсон шалтгаан",
     "LoginTime": "Нэвтэрсэн цаг",
@@ -602,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "турших"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "болон бусад {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Үүсгэсэн",
     "MaxConcurrentLogins": "Хамгийн их зэрэгцээ нэвтрэлт",
@@ -617,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Замын формат буруу байна.",
     "AliasOverlapping": "Маунтын зам өөр хавтастай давхцаж байна.",
+    "AliasOverlappingWithAutoMount": "Маунтын зам автоматаар маунт хийсэн хавтастай давхцаж байна.",
     "AliasPlaceholder": "Маунтын зам",
     "AutoMountedFolders": "Автоматаар маунт хийсэн хавтаснууд",
-    "Name": "Нэр",
-    "PathAndAlias": "Зам & Alias",
+    "CreateFolder": "Шинэ хадгалах фолдер үүсгэх",
+    "DestinationPath": "Контейнерийн зам (destination)",
+    "Folders": "Фолдерууд",
+    "OwnerProject": "Төсөл",
+    "OwnerUser": "Хэрэглэгч",
     "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
+    "Refresh": "Сэргээх",
     "RemoveFolder": "Хасах",
+    "SelectFolder": "Хавтас сонгох",
+    "SourcePath": "Хавтас доторх зам (source)",
     "Subpath": "Дэд зам",
     "SubpathInvalid": "Дэд зам нь харьцангуй зам байх ёстой бөгөөд '..' агуулж болохгүй.",
-    "SubpathPlaceholder": "жш нь dataset/train (заавал биш)",
-    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Үндсийг маунт хийхийн тулд хоосон үлдээнэ үү."
+    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Талбар дээр дарж хавтсыг нэгжин дэд хавтас сонгоно уу; хоосон үлдээвэл хавтасны үндсийг маунт хийнэ.",
+    "UnmountableFoldersRemoved": "Таны цаашид холбох боломжгүй болсон хавтсуудыг сонголтоос хаслаа."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
