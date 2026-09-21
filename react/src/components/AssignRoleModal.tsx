@@ -41,7 +41,9 @@ interface FailedAssignment {
  * failure the modal stays open: successfully assigned users are deselected,
  * only the failed users remain in the select (marked with an error border),
  * and the shared `BAIBulkErrorModal` lists each failure — pressing Assign
- * again retries just the remaining users.
+ * again retries just the remaining users. A manager >= 26.9.0 reports no
+ * partial failure (a refused user rejects the whole request), so there every
+ * selected user stays in the select for the retry.
  */
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   roleId,
@@ -83,7 +85,9 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             grantedBy
             grantedAt
           }
-          failed {
+          # A manager >= 26.9.0 answers no per-user failures: a refused user
+          # rejects the whole mutation, which the catch below handles.
+          failed @deprecatedSince(version: "26.9.0") {
             userId
             message
           }
