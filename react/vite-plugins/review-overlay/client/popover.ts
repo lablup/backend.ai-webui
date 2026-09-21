@@ -61,7 +61,15 @@ const STYLE = `
   .bai-popover label { display: flex; align-items: center; gap: 4px; }
   .bai-popover .body {
     padding: 10px 12px; display: grid; gap: 8px; align-content: start;
-    overflow: auto; min-height: 0;
+    overflow: auto; min-height: 0; overscroll-behavior: contain;
+    /* An overlay scrollbar stays invisible until it is used, so a capped
+       panel would hide the comment box with no cue at all. Reserving the
+       gutter is what opts Chromium out of overlay scrollbars; the standard
+       properties are the ones that reach an element inside a shadow root —
+       the ::-webkit-scrollbar rules do not. */
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bai-pop-border) transparent;
   }
   .bai-popover .lbl {
     font-size: 10px; font-weight: 700; text-transform: uppercase;
