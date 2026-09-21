@@ -1929,6 +1929,9 @@ This page is only for showing current information.
 Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
 
+The list excludes personal projects by default; remove the pre-applied **Type** filter to include them.
+
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
