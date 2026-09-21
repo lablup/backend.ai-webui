@@ -2234,6 +2234,7 @@
     "ResourcePolicy": "Политика ресурсов",
     "RevokeProjectAdmin": "Отозвать разрешение администратора",
     "SetProjectAdmin": "Установить администратора проекта",
+    "Type": "Тип",
     "ViewRBACPermissions": "Просмотреть разрешения RBAC"
   },
   "projectMembers": {

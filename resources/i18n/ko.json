@@ -2236,6 +2236,7 @@
     "ResourcePolicy": "자원 정책",
     "RevokeProjectAdmin": "관리자 권한 해제",
     "SetProjectAdmin": "프로젝트 관리자 권한 설정",
+    "Type": "유형",
     "ViewRBACPermissions": "RBAC 권한 확인"
   },
   "projectMembers": {

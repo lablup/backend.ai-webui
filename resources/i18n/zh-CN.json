@@ -2236,6 +2236,7 @@
     "ResourcePolicy": "资源策略",
     "RevokeProjectAdmin": "撤销管理员权限",
     "SetProjectAdmin": "设置项目管理员",
+    "Type": "类型",
     "ViewRBACPermissions": "查看 RBAC 权限"
   },
   "projectMembers": {

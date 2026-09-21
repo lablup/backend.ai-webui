@@ -1818,6 +1818,7 @@
         "project.ResourcePolicy",
         "project.RevokeProjectAdmin",
         "project.SetProjectAdmin",
+        "project.Type",
         "project.ViewRBACPermissions",
         "rbac.BulkAssignPartialFailure",
         "rbac.PleaseSelectUsers",

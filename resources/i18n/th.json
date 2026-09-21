@@ -2223,6 +2223,7 @@
     "ResourcePolicy": "นโยบายทรัพยากร",
     "RevokeProjectAdmin": "เพิกถอนสิทธิ์ผู้ดูแลระบบ",
     "SetProjectAdmin": "ตั้งค่าผู้ดูแลโปรเจกต์",
+    "Type": "ประเภท",
     "ViewRBACPermissions": "ดูสิทธิ์ RBAC"
   },
   "projectMembers": {

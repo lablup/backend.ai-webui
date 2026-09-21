@@ -2234,6 +2234,7 @@
     "ResourcePolicy": "Πολιτική πόρων",
     "RevokeProjectAdmin": "Ανάκληση δικαιώματος διαχειριστή",
     "SetProjectAdmin": "Ορισμός διαχειριστή έργου",
+    "Type": "Τύπος",
     "ViewRBACPermissions": "Προβολή δικαιωμάτων RBAC"
   },
   "projectMembers": {
