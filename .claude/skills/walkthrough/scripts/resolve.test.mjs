@@ -1,5 +1,10 @@
 // node --test .claude/skills/walkthrough/scripts/resolve.test.mjs
-import { pidAlive, readRecords, recordServingPr } from "./resolve.mjs";
+import {
+  pidAlive,
+  prFromRecord,
+  readRecords,
+  recordServingPr,
+} from "./resolve.mjs";
 import assert from "node:assert/strict";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -26,10 +31,6 @@ test("picks the live record whose served[] names the PR", () => {
   ];
   assert.equal(
     recordServingPr(records, 10, { isAlive: alive })?.file,
-    "b.json",
-  );
-  assert.equal(
-    recordServingPr(records, "10", { isAlive: alive })?.file,
     "b.json",
   );
   assert.equal(recordServingPr(records, 12, { isAlive: alive }), null);
@@ -80,6 +81,45 @@ test("two live servers for one PR: the newest boot wins", () => {
   );
 });
 
+test("the record on the PR's own branch beats a newer stack layer above it", () => {
+  // A server booted from the top of a stack serves every lower layer too.
+  const own = {
+    file: "own.json",
+    record: record({ startedAt: "2026-09-18T01:00:00Z" }),
+  };
+  const upper = {
+    file: "upper.json",
+    record: record({
+      app: "fr-2-pr11-word",
+      branch: "feat/FR-2",
+      startedAt: "2026-09-18T03:00:00Z",
+      served: [
+        { pr: 10, branch: "feat/FR-1" },
+        { pr: 11, branch: "feat/FR-2" },
+      ],
+    }),
+  };
+  const opts = { isAlive: alive, branch: "feat/FR-1" };
+  assert.equal(recordServingPr([upper, own], 10, opts)?.file, "own.json");
+  // With no server on the PR's branch the layer above it still serves the PR.
+  assert.equal(recordServingPr([upper], 10, opts)?.file, "upper.json");
+});
+
+test("prFromRecord answers for the record's own branch, else the top layer", () => {
+  assert.equal(prFromRecord(record()), 10);
+  const stacked = record({
+    branch: "feat/FR-2",
+    served: [
+      { pr: 10, branch: "feat/FR-1" },
+      { pr: 11, branch: "feat/FR-2" },
+    ],
+  });
+  assert.equal(prFromRecord(stacked), 11);
+  assert.equal(prFromRecord(record({ branch: "other" })), 10);
+  assert.equal(prFromRecord(record({ served: [] })), null);
+  assert.equal(prFromRecord({}), null);
+});
+
 test("a record without a pid is trusted on stoppedAt alone", () => {
   const nopid = { file: "p.json", record: record({ pid: undefined }) };
   assert.equal(
@@ -105,5 +145,6 @@ test("pidAlive answers for this process and not for a nonsense pid", () => {
   assert.equal(pidAlive(process.pid), true);
   assert.equal(pidAlive(0), false);
   assert.equal(pidAlive(-1), false);
-  assert.equal(pidAlive(2 ** 22 - 1), false);
+  // Beyond any kernel pid_max (2^22 on 64-bit Linux), so never allocatable.
+  assert.equal(pidAlive(2 ** 31), false);
 });
