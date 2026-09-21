@@ -61,7 +61,7 @@ Go to the Data page and check that the `tests` folder is displayed in
 the list. If you don't see it on the list, try refreshing your browser page.
 Since you have accepted the invitation, you can now view the contents of User
 A's `tests` folder in User B account. Unlike folders created by User B,
-shared folders appear without the check icon in the Owner column. You
+the shared folder shows User A's email address in the Owner column. You
 can also see the `Read only` mark displayed in the Mount Permission column.
 
 ![](../images/test_vfolder_listed_in_B.png)
