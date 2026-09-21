@@ -87,6 +87,23 @@ In the Users list, columns that hold several values — **Allowed Client IPs** a
 show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
 complete list without widening the column.
 
+A **Projects** column shows the projects each user belongs to, following the same inline-plus-`+N`
+pattern. It is hidden by default; turn it on with the column-settings gear button (⚙) below the table,
+next to the pagination controls.
+
+The **Active** and **Inactive** buttons above the list choose which accounts are listed, and the
+property filter next to them narrows the list further. The offered properties are **Email**, **ID**,
+**Name**, **Project**, **Project Is Active**, **Domain**, **Domain Is Active**, **Integration Name**,
+**Created At**, and **Role**. On managers that support the extended user filter, **Full Name**,
+**Resource Policy**, **Description**, **Status Info**, **Password change required**, **2FA Enabled**,
+**Enable sudo session**, **Container UID**, **Container GID**, and **Supplementary GID** are offered
+as well.
+
+Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
+list first and export only the users you need. Filter conditions the export does not support are
+ignored — a warning is shown when that happens, and the exported file may then contain more users than
+the table shows, never fewer.
+
 <a id="bulk-create-users"></a>
 
 ### Bulk create users
@@ -330,6 +347,12 @@ keypairs are shown immediately, and to see the inactive keypairs, click
 **Inactive** above the table.
 
 ![](../images/credential_list_tab.png)
+
+The property filter above the list narrows the keypairs by **User ID**, **Access Key**,
+**Permission**, **Full Name**, **Resource Policy**, **Projects**, **Rate Limit**,
+**Number Of Queries**, or **Created At**. Besides the access key and its owner, the list shows a
+**Full Name** column with the owner's display name and a **Last Used** column with the time the
+keypair last authenticated a request; a keypair that has never been used shows `-`.
 
 Like in Users tab, you can use the inline buttons in the keypair's row to view or
 edit keypair details. Click the info icon button to see specific details of the keypair.
@@ -1262,6 +1285,25 @@ The image list displays additional columns for more detailed image information:
 - **Base Image Name**: The base name of the image, with alias tags for easier identification.
 - **Version**: The version tag of the image.
 - **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
+- **Image Status**: The image's lifecycle status — `ALIVE`, `DELETED`, `PURGING`, or `PURGE_ERROR`.
+- **Type**: The image's type — `COMPUTE`, `SERVICE`, or `SYSTEM`.
+- **Local**: Whether the image comes from an agent's local Docker daemon instead of a registry.
+- **Size**: The image size, shown in binary units.
+- **Aliases**: The aliases registered for the image.
+- **Supported Accelerators**: The accelerator types the image can run on.
+
+**Image Status**, **Type**, **Local**, **Aliases**, and **Supported Accelerators** are hidden by
+default; turn them on with the column-settings gear button (⚙) below the table, next to the pagination
+controls. Most columns can also be sorted by clicking their header.
+
+The property filter above the list narrows the images by **ID**, **Image**, **Name**, **Registry**,
+**Architecture**, **Namespace**, **Base image name**, **Tags**, **Image Status**, **Type**, **Local**,
+**Registry Project**, **Registry ID**, **Created At**, or **Supported Accelerators**.
+
+:::note
+The list shows only live images unless you add an **Image Status** condition to the property filter.
+Adding one widens the query to every status, so deleted and purging images become visible.
+:::
 
 You can select multiple uninstalled images and click the **Install Image** button to install them in
 bulk. Installing an image enqueues a short-lived session that pulls the image, so the dialog asks
@@ -1327,6 +1369,12 @@ the connected registry. Image information which does not have labels for
 Backend.AI among the images stored in the registry is not updated.
 
 ![](../images/image_registries_page.png)
+
+Besides the connection details, the registry list shows an **Allowed Projects** column listing the
+projects that may use the registry — a registry shared with every project shows **All projects**
+instead — and a **Global** column telling you whether the registry is shared that way. **Global** is
+hidden by default; turn it on with the column-settings gear button (⚙) below the table, next to the
+pagination controls.
 
 You can add your own private docker registry by clicking the **Add Registry**
 button. The registry creation dialog contains the following fields:
@@ -1401,6 +1449,9 @@ Go to the Resource Presets tab on the Environment page. You can check the list
 of currently defined resource presets.
 
 ![](../images/resource_preset_list.png)
+
+The property filter above the list narrows the presets by **Name** or **Resource Group**, and both
+columns can be sorted by clicking their header.
 
 You can set resources such as CPU, RAM, fGPU, etc. to be provided by the
 resource preset by clicking the **Edit** (pencil) action in the Name column.
@@ -1557,7 +1608,11 @@ The resource group edit dialog contains the following additional fields:
   proxies is left untouched. When no proxy is selected for a group, that group is not restricted to a
   particular proxy.
 - **Active**: Toggle the active status of the resource group.
-- **Public**: When enabled, the resource group is visible to all users.
+- **Public**: When disabled, the resource group is reserved for system sessions such as SFTP uploads.
+  It is hidden from regular users' resource group lists and regular session creation in it is rejected,
+  but it stays visible to administrators. Enabling it does not widen access by itself — which domains,
+  projects, and keypairs can use the resource group is decided by their respective association
+  settings.
 - **Pending timeout**:
   A compute session will be canceled if it stays `PENDING` status for longer
   than the Pending timeout. When you wish to prevent a session from remaining
