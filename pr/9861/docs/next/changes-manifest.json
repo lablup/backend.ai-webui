@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-21T16:43:58.463Z",
+  "generatedAt": "2026-09-21T19:01:45.778Z",
   "languages": [
     "en",
     "ja",
@@ -12,16 +12,33 @@
   "langs": {
     "en": {
       "totals": {
-        "pages": 1,
-        "changes": 6,
+        "pages": 2,
+        "changes": 14,
         "added": 0,
-        "modified": 6,
+        "modified": 14,
         "removed": 0,
-        "images": 6,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "session_page",
+          "title": "Session Page",
+          "status": "modified",
+          "url": "next/en/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "aa405379a600"
+          ]
+        },
         {
           "slug": "sessions_all",
           "title": "Compute Sessions",
@@ -30,34 +47,58 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
           "counts": {
             "added": 0,
-            "modified": 6,
+            "modified": 13,
             "removed": 0,
-            "images": 6,
-            "total": 6
+            "images": 13,
+            "total": 13
           },
           "fingerprints": [
-            "3485076eb818",
-            "52e002abf6e6",
-            "29620858716b",
-            "b4b9d148f4ae",
-            "078cf5ec20f1",
-            "8e8048f39562"
+            "aa405379a600",
+            "3a5e4de77d07",
+            "21ba69c0b461",
+            "fae8af33fbb5",
+            "a292b3bb2b76",
+            "187bdecd6931",
+            "377936ae3fc3",
+            "75c6fb5f22f7",
+            "ee6569d320f5",
+            "636078f19e76",
+            "1d6651ceb48d",
+            "61c3a2c22d2e",
+            "b8c8b59d3453"
           ]
         }
       ]
     },
     "ja": {
       "totals": {
-        "pages": 1,
-        "changes": 6,
+        "pages": 2,
+        "changes": 14,
         "added": 0,
-        "modified": 6,
+        "modified": 14,
         "removed": 0,
-        "images": 6,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "session_page",
+          "title": "セッションページ",
+          "status": "modified",
+          "url": "next/ja/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "4bd2b1f80822"
+          ]
+        },
         {
           "slug": "sessions_all",
           "title": "コンピュートセッション",
@@ -66,34 +107,58 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
           "counts": {
             "added": 0,
-            "modified": 6,
+            "modified": 13,
             "removed": 0,
-            "images": 6,
-            "total": 6
+            "images": 13,
+            "total": 13
           },
           "fingerprints": [
-            "e87f5848d1b8",
-            "8dfac4a907ac",
-            "54c3443dae37",
-            "7fed7b96a5af",
-            "3fc4cd7ee669",
-            "1e92900ee74f"
+            "4bd2b1f80822",
+            "51db94fcb28a",
+            "8a74d9615aec",
+            "db6c0e275d40",
+            "f8f6d30c30a6",
+            "4e20106ac2b2",
+            "3231cd4377a7",
+            "284e1bb62883",
+            "d92652774139",
+            "aac856749b61",
+            "20cb6c0ac9e0",
+            "2b16e0907514",
+            "8452e8fe31e2"
           ]
         }
       ]
     },
     "ko": {
       "totals": {
-        "pages": 1,
-        "changes": 6,
+        "pages": 2,
+        "changes": 14,
         "added": 0,
-        "modified": 6,
+        "modified": 14,
         "removed": 0,
-        "images": 6,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "session_page",
+          "title": "세션 페이지",
+          "status": "modified",
+          "url": "next/ko/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "e57a6288f4e2"
+          ]
+        },
         {
           "slug": "sessions_all",
           "title": "연산 세션",
@@ -102,34 +167,58 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
           "counts": {
             "added": 0,
-            "modified": 6,
+            "modified": 13,
             "removed": 0,
-            "images": 6,
-            "total": 6
+            "images": 13,
+            "total": 13
           },
           "fingerprints": [
-            "d4c60c02305d",
-            "04076a7daa57",
-            "1d9c5a130ec4",
-            "497513233c96",
-            "bcc347087b9d",
-            "747b8557701b"
+            "e57a6288f4e2",
+            "4bd1c831d58b",
+            "68ee7d0a4373",
+            "f8f17e5b4dcf",
+            "d53ff3032e9b",
+            "e9293fd7047e",
+            "d8defced42ef",
+            "4b80db143fbd",
+            "2101642b05a1",
+            "716800d645f0",
+            "1d7cdf720468",
+            "45ba1b57d169",
+            "ca6539a1283b"
           ]
         }
       ]
     },
     "th": {
       "totals": {
-        "pages": 1,
-        "changes": 6,
+        "pages": 2,
+        "changes": 14,
         "added": 0,
-        "modified": 6,
+        "modified": 14,
         "removed": 0,
-        "images": 6,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
       "pages": [
+        {
+          "slug": "session_page",
+          "title": "หน้าเซสชัน",
+          "status": "modified",
+          "url": "next/th/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "860346afe99b"
+          ]
+        },
         {
           "slug": "sessions_all",
           "title": "เซสชันการคำนวณ",
@@ -138,18 +227,25 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
           "counts": {
             "added": 0,
-            "modified": 6,
+            "modified": 13,
             "removed": 0,
-            "images": 6,
-            "total": 6
+            "images": 13,
+            "total": 13
           },
           "fingerprints": [
-            "c8d5a5ba05ab",
-            "5732a4e16699",
-            "d919f261fc09",
-            "9b1d568a830e",
-            "64425b9eb50d",
-            "e7cf12b59324"
+            "860346afe99b",
+            "cd10349be511",
+            "993214e3185b",
+            "d38cdbc07a12",
+            "3cfc74ea4f12",
+            "e2f3e2fce32e",
+            "8e61973c26a7",
+            "e60cb06348b8",
+            "ad75eb6efc7a",
+            "fa2cec330e74",
+            "2d5af33ab68a",
+            "c2ec5ed9ed45",
+            "310815c4b22e"
           ]
         }
       ]
