@@ -2221,6 +2221,7 @@
     "ResourcePolicy": "Resource Policy",
     "RevokeProjectAdmin": "Revoke admin permission",
     "SetProjectAdmin": "Set Project Admin",
+    "Type": "Type",
     "ViewRBACPermissions": "View RBAC permissions"
   },
   "projectMembers": {

@@ -2235,6 +2235,7 @@
     "ResourcePolicy": "Ресурсийн бодлого",
     "RevokeProjectAdmin": "Админ зөвшөөрлийг цуцлах",
     "SetProjectAdmin": "Төслийн администратор тохируулах",
+    "Type": "Төрөл",
     "ViewRBACPermissions": "RBAC зөвшөөрлийг үзэх"
   },
   "projectMembers": {

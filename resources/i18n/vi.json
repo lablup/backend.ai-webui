@@ -2236,6 +2236,7 @@
     "ResourcePolicy": "Chính sách tài nguyên",
     "RevokeProjectAdmin": "Thu hồi quyền quản trị viên",
     "SetProjectAdmin": "Đặt quản trị dự án",
+    "Type": "Kiểu",
     "ViewRBACPermissions": "Xem quyền RBAC"
   },
   "projectMembers": {

@@ -2238,6 +2238,7 @@
     "ResourcePolicy": "資源策略",
     "RevokeProjectAdmin": "撤銷管理員權限",
     "SetProjectAdmin": "設定專案管理員",
+    "Type": "類型",
     "ViewRBACPermissions": "檢視 RBAC 權限"
   },
   "projectMembers": {

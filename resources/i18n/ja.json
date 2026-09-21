@@ -2236,6 +2236,7 @@
     "ResourcePolicy": "リソースポリシー",
     "RevokeProjectAdmin": "管理者権限を無効化",
     "SetProjectAdmin": "プロジェクト管理者を設定",
+    "Type": "タイプ",
     "ViewRBACPermissions": "RBAC権限を表示"
   },
   "projectMembers": {

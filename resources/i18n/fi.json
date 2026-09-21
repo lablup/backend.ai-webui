@@ -2234,6 +2234,7 @@
     "ResourcePolicy": "Resurssipolitiikka",
     "RevokeProjectAdmin": "Peruuta ylläpitäjän käyttöoikeus",
     "SetProjectAdmin": "Aseta projektin ylläpitäjä",
+    "Type": "Tyyppi",
     "ViewRBACPermissions": "Näytä RBAC-käyttöoikeudet"
   },
   "projectMembers": {

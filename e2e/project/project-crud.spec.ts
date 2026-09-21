@@ -196,6 +196,34 @@ test.describe(
         defaultRow.getByRole('cell', { name: 'GENERAL' }),
       ).toBeVisible();
     });
+
+    test('Personal projects are hidden by a default type filter the admin can remove', async ({
+      page,
+      request,
+    }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'project');
+
+      // First access: the `type != "PERSONAL"` chip is pre-applied
+      // (`DEFAULT_PROJECT_FILTER` in `ProjectPage.tsx`), so no PERSONAL row
+      // is listed. Token remove buttons are named `Remove <Field>: <operator>`.
+      const typeChip = page.getByRole('button', {
+        name: 'Remove Type: not equals',
+      });
+      await expect(typeChip).toBeVisible({ timeout: 30000 });
+      await expect(
+        page.getByRole('cell', { name: 'PERSONAL', exact: true }),
+      ).toHaveCount(0);
+
+      // Removing the chip is remembered as an explicit empty filter
+      // (`?filter=`), so a reload does not bring the default back.
+      await typeChip.click();
+      await expect(typeChip).toBeHidden();
+      await expect(page).toHaveURL(/[?&]filter=(&|$)/);
+      await page.reload();
+      await expect(projectsTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(typeChip).toBeHidden();
+    });
   },
 );
 
