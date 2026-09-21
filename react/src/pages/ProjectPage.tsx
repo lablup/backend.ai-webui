@@ -15,6 +15,8 @@ import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
+  buildProjectAdminRoleFilter,
+  selectProjectAdminRoles,
 } from '../components/ProjectAdminSettingModal';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -91,6 +93,11 @@ const ProjectPage = () => {
   // from manager 26.8.0; hide the action on older managers.
   const supportsProjectAdminSetting = baiClient.supports(
     'role-mapped-scope-filter',
+  );
+  // From 26.9.0 the project admin grant is a `scope_admin` permission rather
+  // than a name-suffixed SYSTEM role.
+  const matchesProjectAdminByScopeAdminPermission = baiClient.supports(
+    'rbac-single-scope-role',
   );
   const supportsTypeFilter = baiClient.supports('group-nodes-type-filter');
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
@@ -235,14 +242,10 @@ const ProjectPage = () => {
       return;
     }
     const variables: ProjectAdminSettingModalQuery['variables'] = {
-      filter: {
-        source: { equals: 'SYSTEM' },
-        status: { equals: 'ACTIVE' },
-        mappedScope: {
-          scopeType: { equals: 'PROJECT' },
-          scopeId: { equals: project.row_id },
-        },
-      },
+      filter: buildProjectAdminRoleFilter(
+        project.row_id,
+        matchesProjectAdminByScopeAdminPermission,
+      ),
       limit: 100,
       offset: 0,
     };
@@ -260,14 +263,13 @@ const ProjectPage = () => {
       );
       return;
     }
-    // The project admin role is resolved here, before the modal opens; a
-    // project without one only gets an error message. The project scope
-    // carries a member/admin SYSTEM role pair — the admin one is identified
-    // by its name suffix.
-    const hasProjectAdminRole = _.some(roleData?.adminRoles?.edges, (edge) =>
-      _.endsWith(edge?.node?.name, 'admin'),
+    // The project's admin roles are resolved here, before the modal opens; a
+    // project without one only gets an error message.
+    const adminRoles = selectProjectAdminRoles(
+      roleData,
+      matchesProjectAdminByScopeAdminPermission,
     );
-    if (!hasProjectAdminRole) {
+    if (_.isEmpty(adminRoles)) {
       message.error(
         t('project.ProjectAdminRoleNotFound', {
           project: project.name ?? project.row_id,
