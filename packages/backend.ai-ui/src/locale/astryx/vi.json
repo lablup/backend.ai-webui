@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Mở rộng thanh bên",
   "@astryx.sideNavItem.collapse": "Thu gọn {label}",
   "@astryx.sideNavItem.expand": "Mở rộng {label}",
+  "@astryx.spinner.loading": "Đang tải",
   "@astryx.step.goToStep": "Đến bước {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Đến bước {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "đã hoàn tất",

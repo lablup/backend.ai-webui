@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Laajenna sivupalkki",
   "@astryx.sideNavItem.collapse": "Kutista {label}",
   "@astryx.sideNavItem.expand": "Laajenna {label}",
+  "@astryx.spinner.loading": "Ladataan",
   "@astryx.step.goToStep": "Siirry vaiheeseen {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Siirry vaiheeseen {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "valmis",

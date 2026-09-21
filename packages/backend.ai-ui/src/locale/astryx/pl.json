@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Rozwiń panel boczny",
   "@astryx.sideNavItem.collapse": "Zwiń {label}",
   "@astryx.sideNavItem.expand": "Rozwiń {label}",
+  "@astryx.spinner.loading": "Ładowanie",
   "@astryx.step.goToStep": "Przejdź do kroku {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Przejdź do kroku {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "ukończono",
