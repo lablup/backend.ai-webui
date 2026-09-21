@@ -441,6 +441,7 @@
         "settings.SearchPlaceholder",
         "settings.ShowOnlyChanged",
         "theme.CannotApplyInvalidJsonConfig",
+        "theme.ConvertedV1ThemeConfig",
         "theme.FailedToReadFile",
         "theme.InvalidJsonFileAlert",
         "theme.JsonConfigAppliedSuccessfully",
