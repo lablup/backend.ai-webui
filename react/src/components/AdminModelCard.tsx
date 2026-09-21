@@ -17,6 +17,7 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
@@ -67,7 +68,17 @@ type ModelCardNode = NonNullableNodeOnEdges<
   AdminModelCardQuery$data['adminModelCardsV2']
 >;
 
-const availableModelCardSorterKeys = ['name', 'created_at'] as const;
+const availableModelCardSorterKeys = [
+  'name',
+  'created_at',
+  // Opened by 26.9.0 (backend #14811); gated on `model-card-search-axes`.
+  'title',
+  'category',
+  'task',
+  'access_level',
+  'domain_name',
+  'project_id',
+] as const;
 
 export const availableModelCardSorterValues = [
   ...availableModelCardSorterKeys,
@@ -142,6 +153,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // 26.9.0 opened the metadata axes of the model card search (backend #14811).
+  const supportsSearchAxes = baiClient.supports('model-card-search-axes');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -256,6 +270,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     {
       key: 'title',
       title: t('adminModelCard.Title'),
+      sorter: supportsSearchAxes,
       render: (_, record) =>
         record.metadata?.title ? (
           <Text maxLines={1} style={{ maxWidth: 200 }}>
@@ -268,17 +283,20 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     {
       key: 'category',
       title: t('modelStore.Category'),
+      sorter: supportsSearchAxes,
       render: (_, record) => record.metadata?.category || '-',
     },
     {
       key: 'task',
       title: t('modelStore.Task'),
+      sorter: supportsSearchAxes,
       render: (_, record) => record.metadata?.task || '-',
     },
     {
       key: 'accessLevel',
       title: t('adminModelCard.AccessLevel'),
       dataIndex: 'accessLevel',
+      sorter: supportsSearchAxes,
       render: (accessLevel) => (
         <Token
           color={tokenColorForTagColor(
@@ -297,11 +315,13 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       key: 'domainName',
       title: t('adminModelCard.Domain'),
       dataIndex: 'domainName',
+      sorter: supportsSearchAxes,
     },
     {
       key: 'projectId',
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
+      sorter: supportsSearchAxes,
       render: (projectId) => (
         <BAIText
           copyable
@@ -327,10 +347,25 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
-            filterProperties={[
+            filterProperties={filterOutEmpty([
               {
                 key: 'name',
                 propertyLabel: t('adminModelCard.Name'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'title',
+                propertyLabel: t('adminModelCard.Title'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'category',
+                propertyLabel: t('modelStore.Category'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'task',
+                propertyLabel: t('modelStore.Task'),
                 type: 'string',
               },
               {
@@ -367,6 +402,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 ),
               },
               {
+                // Deprecated since 26.9.0 in favour of `usedBy.vfolder`, which
+                // a filter row cannot fill without an unbounded id fan-out.
+                // FR-4014 settles the replacement with CoreDev.
                 key: 'storageHost',
                 propertyLabel: t('import.StorageHost'),
                 type: 'string',
@@ -387,7 +425,23 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   />
                 ),
               },
-            ]}
+              supportsSearchAxes && {
+                key: 'accessLevel',
+                propertyLabel: t('adminModelCard.AccessLevel'),
+                type: 'enum',
+                strictSelection: true,
+                options: [
+                  { label: t('adminModelCard.Public'), value: 'PUBLIC' },
+                  { label: t('adminModelCard.Private'), value: 'PRIVATE' },
+                ],
+              },
+              supportsSearchAxes && {
+                key: 'createdAt',
+                propertyLabel: t('general.CreatedAt'),
+                type: 'datetime',
+                defaultOperator: 'after',
+              },
+            ])}
             value={filter}
             onChange={(value) => {
               onReload(
