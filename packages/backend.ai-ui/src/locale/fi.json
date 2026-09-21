@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "ja {{rest}} muuta"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Heikentynyt",
     "Deploying": "Käyttöönottaminen",
     "Healthy": "Terve",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ja {{rest}} muuta"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",
     "MaxConcurrentLogins": "Samanaikaisten kirjautumisten enimmäismäärä",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
     "Download": "Lataa",
+    "DownloadPopupBlocked": "Selain esti latausikkunan. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
+    "DownloadRejected": "Storage proxy hylkäsi latauksen (HTTP {{status}}). Lataus ei käynnistynyt.",
     "DownloadSelected": "Lataa",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "DownloadUnreachable": "Storage proxy -palvelimeen osoitteessa {{origin}} ei saatu yhteyttä. Lataus ei käynnistynyt.",
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",

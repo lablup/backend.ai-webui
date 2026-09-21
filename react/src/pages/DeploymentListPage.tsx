@@ -30,7 +30,7 @@ import {
   BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagChips,
+  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -379,7 +379,7 @@ const DeploymentListPageContent: React.FC<DeploymentListPageContentProps> = ({
                   next = {
                     ...col,
                     render: (_value, record) => (
-                      <BAIDeploymentTagChips
+                      <BAIDeploymentTagTokens
                         metadataFrgmt={record.metadata}
                         stopRowClick
                         onTagClick={(tag) => {

@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "選擇預設"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "另有 {{rest}} 項"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降級",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "測試"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "另有 {{rest}} 項"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "創建於",
     "MaxConcurrentLogins": "最大並發登入數",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
     "DeleteSelectedItemsDialog": "刪除確認",
     "Download": "下載",
+    "DownloadPopupBlocked": "瀏覽器封鎖了下載視窗。請允許本網站的彈出視窗後再試一次。",
+    "DownloadRejected": "儲存代理拒絕了此次下載（HTTP {{status}}），下載未開始。",
     "DownloadSelected": "下載",
     "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
+    "DownloadUnreachable": "無法連線至 {{origin}} 的儲存代理，下載未開始。",
     "DragAndDropDesc": "將文件拖到此區域上傳。",
     "DuplicatedFiles": "覆蓋確認",
     "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",

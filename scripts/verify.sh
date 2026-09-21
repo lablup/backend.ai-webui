@@ -369,6 +369,12 @@ start_lane gate "TypeScript" bin react tsc --noEmit --incremental
 # The react lane reaches backend.ai-{ui,client} through tsconfig `paths`,
 # but nothing pulls in the agent CLI, so it gets its own lane.
 start_lane gate "TypeScript (agent-cli)" bin packages/backend.ai-agent-cli tsc --noEmit
+# The review overlay client is vendored by the Chrome extension (ADR 0008) and
+# built with narrower flags than react's. Deliberately the ROOT TypeScript
+# (5.5.4): react's 6.x folded the iterable DOM declarations into the base `DOM`
+# lib, so the no-`DOM.Iterable` half of the gate cannot fail there.
+start_lane gate "TypeScript (review overlay host seam)" \
+  bin . tsc --noEmit -p react/vite-plugins/review-overlay/tsconfig.host.json
 start_lane gate "Vite warmup paths" check_warmup_paths
 start_lane gate "StyleX cssInjectionTarget" check_stylex_injection
 start_lane gate "Astryx theme build" check_astryx_theme_built

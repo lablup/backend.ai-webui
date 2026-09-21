@@ -121,8 +121,6 @@ const VFolderNodeDescription: React.FC<VFolderNodeDescriptionProps> = ({
       key: 'status',
       label: t('data.folders.Status'),
       children: (
-        // BAITag DISSOLVES into `Badge`; the variant comes from the global
-        // ticket-13 lookup, replacing the imported `statusTagColor` map.
         <Badge
           variant={badgeVariantForStatus('vfolder', vfolderNode.status)}
           label={_.toUpper(vfolderNode.status || '')}

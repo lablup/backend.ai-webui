@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Wybierz preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "i {{rest}} więcej"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później lub skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Wybierz wdrożenie"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Zdegradowany",
     "Deploying": "Wdrażanie",
     "Healthy": "Sprawny",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "i {{rest}} więcej"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Utworzono o godz",
     "MaxConcurrentLogins": "Maks. liczba równoczesnych logowań",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
     "Download": "Pobierz",
+    "DownloadPopupBlocked": "Przeglądarka zablokowała okno pobierania. Zezwól na wyskakujące okienka dla tej witryny i spróbuj ponownie.",
+    "DownloadRejected": "Storage proxy odrzucił pobieranie (HTTP {{status}}). Pobieranie nie zostało rozpoczęte.",
     "DownloadSelected": "Pobierz",
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
+    "DownloadUnreachable": "Nie można połączyć się ze storage proxy pod adresem {{origin}}. Pobieranie nie zostało rozpoczęte.",
     "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
     "DuplicatedFiles": "Nadpisz potwierdzenie",
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",

@@ -999,8 +999,6 @@ export class Client {
       // returning the old non-null shape, so call sites must not treat an
       // omitted field as "inherit from variant" unless this flag is set.
       this._features['preset-model-config-type'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7234 / backend #13538 — DomainV2 `id` became the domain uuid, and
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
@@ -1015,11 +1013,17 @@ export class Client {
       // LoginHistoryV2 / AuditLogV2 gained `clientIp`. FR-3661.
       this._features['client-ip-of-login-history'] = true;
       this._features['client-ip-of-audit-log'] = true;
-    }
-    // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
-    // requested id (`items` / `successes` plus `failed`) instead of a bare
-    // count, and the counts became `@deprecated`. FR-3820.
-    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // An audit-log scope names its entity by the manager's EntityType name
+      // (`vfolder`), not the `RBACElementType` enum spelling (`VFOLDER`) that
+      // 26.4.4-26.8.x expect there. FR-3982.
+      this._features['audit-log-entity-type-name'] = true;
+      // BA-8075 / backend PR #14867 — the legacy `group_nodes` filter accepts
+      // `type`, so the Projects page can hide the per-user PERSONAL projects
+      // (BA-7659) behind a removable chip. FR-4015.
+      this._features['group-nodes-type-filter'] = true;
+      // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
+      // requested id (`items` / `successes` plus `failed`) instead of a bare
+      // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
     }
   }

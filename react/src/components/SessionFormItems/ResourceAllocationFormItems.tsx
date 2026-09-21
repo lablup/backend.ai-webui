@@ -166,6 +166,12 @@ interface ResourceAllocationFormItemsProps {
    * group is sourced from the parent deployment rather than chosen here.
    */
   hideResourceGroupFormItem?: boolean;
+  /**
+   * List the SFTP-designated resource groups in the selector. They are
+   * reserved for SSH/SFTP system sessions, so only the launcher sets this,
+   * for `sessionType === 'system'` (FR-3996).
+   */
+  includeSFTPResourceGroups?: boolean;
   extraAcceleratorRules?: Array<{
     warningOnly?: boolean;
     validator: (rule: unknown, value: number) => Promise<void>;
@@ -242,6 +248,7 @@ const ResourceAllocationFormItems: React.FC<
   hideClusterFormItems = false,
   autoSelectFirstResourceGroup = false,
   hideResourceGroupFormItem = false,
+  includeSFTPResourceGroups = false,
   extraAcceleratorRules,
 }) => {
   const form = Form.useFormInstance<MergedResourceAllocationFormValue>();
@@ -722,6 +729,7 @@ const ResourceAllocationFormItems: React.FC<
         <BAIProjectResourceGroupSelect
           projectName={project.name}
           autoSelectDefault={autoSelectFirstResourceGroup}
+          includeSFTPResourceGroups={includeSFTPResourceGroups}
           showSearch
         />
       </Form.Item>

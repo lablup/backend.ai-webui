@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<86fd86a451afed7978946c77480ab9e8>>
+ * @generated SignedSource<<3cbb4ab9c93bc1bc339e4ebafe2aec67>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -185,6 +185,20 @@ v7 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -294,20 +308,8 @@ return {
                         "name": "node",
                         "plural": false,
                         "selections": [
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "scopeType",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "scopeId",
-                            "storageKey": null
-                          },
+                          (v8/*: any*/),
+                          (v9/*: any*/),
                           (v7/*: any*/)
                         ],
                         "storageKey": null
@@ -318,6 +320,8 @@ return {
                 ],
                 "storageKey": "scopes(first:1)"
               },
+              (v8/*: any*/),
+              (v9/*: any*/),
               {
                 "alias": null,
                 "args": (v6/*: any*/),
@@ -427,16 +431,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3fa8c5e941ca4d715644f8e9150bad89",
+    "cacheID": "05ed4264296b8becb123881b4a692526",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_40cQ3G\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_40cQ3G on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0\")\n  scopeId @since(version: \"26.9.0\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1686ca5dcae81b1949d2704e9d05ec20";
+(node as any).hash = "676c78d26ad688220e9451861c65d203";
 
 export default node;

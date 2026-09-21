@@ -15,13 +15,14 @@ import {
 } from '../helper/storageHostPermission';
 import { theme } from '../theme-shim';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlertIconWithTooltip,
   BAIFlex,
   BAINameActionCell,
   BAITable,
-  BAITag,
+  PRIMARY_TOKEN_COLOR,
   BAIText,
   BAIUnmountAfterClose,
   type BAITableProps,
@@ -279,8 +280,7 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                 kp.accessKey === kp.user.organization.mainAccessKey;
               // Stack every assigned keypair as its own tag, with the user's
               // main access key sorted to the top (client-side — the connection
-              // isn't server-ordered) and highlighted in `colorPrimary` with a
-              // leading info icon + tooltip.
+              // isn't server-ordered) and marked with a leading info icon + tooltip.
               const sortedKeypairNodes = _.sortBy(keypairNodes, (kp) =>
                 isMainAccessKey(kp) ? 0 : 1,
               );
@@ -292,18 +292,14 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
                         key={kp.id}
                         content={t('credential.MainAccessKey')}
                       >
-                        <BAITag
+                        <Token
+                          color={PRIMARY_TOKEN_COLOR}
                           icon={<Info size="1em" />}
-                          style={{
-                            color: token.colorPrimary,
-                            borderColor: token.colorPrimary,
-                          }}
-                        >
-                          {kp.accessKey}
-                        </BAITag>
+                          label={kp.accessKey}
+                        />
                       </Tooltip>
                     ) : (
-                      <BAITag key={kp.id}>{kp.accessKey}</BAITag>
+                      <Token key={kp.id} label={kp.accessKey} />
                     ),
                   )}
                 </BAIFlex>

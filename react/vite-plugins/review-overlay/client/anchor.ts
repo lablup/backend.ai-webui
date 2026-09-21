@@ -95,7 +95,8 @@ export function captureAnchorSignals(
   if (txt) anchor.txt = txt;
   const tidEl = target.closest('[data-testid]');
   if (tidEl) {
-    anchor.tid = tidEl.getAttribute('data-testid') ?? undefined;
+    const tid = tidEl.getAttribute('data-testid');
+    if (tid !== null) anchor.tid = tid;
     if (tidEl !== target) {
       const cr = tidEl.getBoundingClientRect();
       const tr = target.getBoundingClientRect();

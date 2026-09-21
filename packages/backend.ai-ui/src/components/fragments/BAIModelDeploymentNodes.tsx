@@ -4,13 +4,13 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIDeploymentStatusTag, {
+import BAIBooleanToken from '../BAIBooleanToken';
+import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
-} from '../BAIDeploymentStatusTag';
+} from '../BAIDeploymentStatusBadge';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
-import BooleanTag from '../BooleanTag';
 import {
   BAIColumnType,
   BAIColumnsType,
@@ -19,7 +19,7 @@ import {
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
-import BAIDeploymentTagChips from './BAIDeploymentTagChips';
+import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -107,7 +107,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             }
             id
           }
-          ...BAIDeploymentTagChips_metadata
+          ...BAIDeploymentTagTokens_metadata
         }
         networkAccess {
           endpointUrl
@@ -187,7 +187,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             return '-';
           }
           return (
-            <BAIDeploymentStatusTag status={status as BAIDeploymentStatus} />
+            <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
           );
         },
       },
@@ -262,7 +262,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         dataIndex: 'tag',
         sorter: isEnableSorter('tag'),
         render: (__, record) => (
-          <BAIDeploymentTagChips
+          <BAIDeploymentTagTokens
             metadataFrgmt={record.metadata}
             stopRowClick
             fallback={<Text color="secondary">-</Text>}
@@ -353,7 +353,9 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         title: t('comp:BAIModelDeploymentNodes.OpenToPublic'),
         defaultHidden: true,
         render: (__, record) => (
-          <BooleanTag value={record.networkAccess?.openToPublic ?? false} />
+          <BAIBooleanToken
+            value={record.networkAccess?.openToPublic ?? false}
+          />
         ),
       },
       {

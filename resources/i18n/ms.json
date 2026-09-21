@@ -2234,6 +2234,7 @@
     "ResourcePolicy": "Dasar Sumber",
     "RevokeProjectAdmin": "Batalkan Kebenaran Pentadbir",
     "SetProjectAdmin": "Tetapkan Pentadbir Projek",
+    "Type": "Jenis",
     "ViewRBACPermissions": "Lihat Kebenaran RBAC"
   },
   "projectMembers": {

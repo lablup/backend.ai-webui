@@ -1,3 +1,5 @@
+import { DownloadFailedError } from '../../../helper';
+import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { useQuery } from '@tanstack/react-query';
@@ -166,6 +168,35 @@ export const useSearchVFolderFiles = (vfolder: string, fetchKey?: string) => {
     refetch,
     isFetching,
     isLoading,
+  };
+};
+
+/**
+ * Turns a failed download into the message shown to the user. Both download
+ * paths — the per-row action and the toolbar archive — share it so a proxy the
+ * browser cannot reach reads the same either way.
+ */
+export const useDownloadErrorMessage = () => {
+  'use memo';
+  const { t } = useBAIi18n();
+
+  return (error: unknown): string | undefined => {
+    if (error instanceof DownloadFailedError) {
+      switch (error.reason) {
+        case 'rejected':
+          return t('comp:FileExplorer.DownloadRejected', {
+            status: error.status,
+          });
+        case 'popup-blocked':
+          return t('comp:FileExplorer.DownloadPopupBlocked');
+        default:
+          return t('comp:FileExplorer.DownloadUnreachable', {
+            origin: error.origin,
+          });
+      }
+    }
+    const err = error as { message?: string; title?: string } | null;
+    return err?.message || err?.title;
   };
 };
 

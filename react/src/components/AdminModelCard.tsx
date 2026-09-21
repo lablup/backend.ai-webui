@@ -24,6 +24,7 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAdminProjectSelect,
@@ -40,7 +41,7 @@ import {
   BAITable,
   type BAITableSettings,
   BAIText,
-  BAITag,
+  tokenColorForTagColor,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -279,11 +280,16 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.AccessLevel'),
       dataIndex: 'accessLevel',
       render: (accessLevel) => (
-        <BAITag color={accessLevel === 'PUBLIC' ? 'green' : 'default'}>
-          {accessLevel === 'PUBLIC'
-            ? t('adminModelCard.Public')
-            : t('adminModelCard.Private')}
-        </BAITag>
+        <Token
+          color={tokenColorForTagColor(
+            accessLevel === 'PUBLIC' ? 'green' : 'default',
+          )}
+          label={
+            accessLevel === 'PUBLIC'
+              ? t('adminModelCard.Public')
+              : t('adminModelCard.Private')
+          }
+        />
       ),
     },
     // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field

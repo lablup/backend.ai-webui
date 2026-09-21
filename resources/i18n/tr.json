@@ -2234,6 +2234,7 @@
     "ResourcePolicy": "Kaynak Politikası",
     "RevokeProjectAdmin": "Yönetici İznini İptal Et",
     "SetProjectAdmin": "Proje Yöneticisini Ayarla",
+    "Type": "Tür",
     "ViewRBACPermissions": "RBAC İzinlerini Görüntüle"
   },
   "projectMembers": {

@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Seleziona preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "e altri {{rest}}"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Si è verificato un errore imprevisto. Riprova più tardi o contatta l'assistenza se il problema persiste."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Seleziona deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradato",
     "Deploying": "In distribuzione",
     "Healthy": "Integro",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "e altri {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Creato a",
     "MaxConcurrentLogins": "Accessi simultanei massimi",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
     "DeleteSelectedItemsDialog": "Elimina la conferma",
     "Download": "Scarica",
+    "DownloadPopupBlocked": "Il browser ha bloccato la finestra di download. Consenti i pop-up per questo sito e riprova.",
+    "DownloadRejected": "Lo storage proxy ha rifiutato il download (HTTP {{status}}). Il download non è stato avviato.",
     "DownloadSelected": "Scarica",
     "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
+    "DownloadUnreachable": "Impossibile raggiungere lo storage proxy su {{origin}}. Il download non è stato avviato.",
     "DragAndDropDesc": "Trascina i file in quest'area da caricare.",
     "DuplicatedFiles": "Sovrascrivere la conferma",
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",

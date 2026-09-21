@@ -24,7 +24,6 @@ import BAIText from '../BAIText';
 import BAIVFolderIdenticon from '../BAIVFolderIdenticon';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import './BAIVFolderMountConfigInput.css';
-import { Badge } from '@astryxdesign/core/Badge';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Token } from '@astryxdesign/core/Token';
@@ -753,14 +752,10 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
                 key={folder.vfolderId}
                 to={folderExplorerPath(folder.vfolderId)}
               >
-                <Badge variant="neutral" label={folder.name} />
+                <Token label={folder.name} />
               </BAILink>
             ) : (
-              <Badge
-                key={folder.vfolderId}
-                variant="neutral"
-                label={folder.name}
-              />
+              <Token key={folder.vfolderId} label={folder.name} />
             ),
           )}
         </BAIFlex>

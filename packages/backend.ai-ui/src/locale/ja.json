@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "プリセットを選択"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "他 {{rest}} 件"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "低下中",
     "Deploying": "デプロイ中",
     "Healthy": "正常",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "テスト"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "他 {{rest}} 件"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "作成日",
     "MaxConcurrentLogins": "最大同時ログイン数",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
     "Download": "ダウンロード",
+    "DownloadPopupBlocked": "ブラウザーがダウンロードウィンドウをブロックしました。このサイトのポップアップを許可してからもう一度お試しください。",
+    "DownloadRejected": "ストレージプロキシがダウンロードを拒否しました (HTTP {{status}})。ダウンロードは開始されませんでした。",
     "DownloadSelected": "ダウンロード",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "DownloadUnreachable": "{{origin}} のストレージプロキシに接続できません。ダウンロードは開始されませんでした。",
     "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
     "DuplicatedFiles": "確認の上書き",
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",

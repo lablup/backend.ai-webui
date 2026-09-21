@@ -74,6 +74,11 @@ type ProjectNode = NonNullable<
   >['node']
 >;
 
+const PROJECT_TYPES = ['GENERAL', 'MODEL_STORE', 'PERSONAL'] as const;
+// Every user owns a PERSONAL project from manager 26.9.0 (BA-7659); the page
+// starts with them hidden behind this chip and the user removes it to see them.
+const DEFAULT_PROJECT_FILTER = 'type != "PERSONAL"';
+
 const ProjectPage = () => {
   'use memo';
 
@@ -94,6 +99,7 @@ const ProjectPage = () => {
   const matchesProjectAdminByScopeAdminPermission = baiClient.supports(
     'rbac-single-scope-role',
   );
+  const supportsTypeFilter = baiClient.supports('group-nodes-type-filter');
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -121,7 +127,9 @@ const ProjectPage = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsStringLiteral(availableProjectSorterValues),
-      filter: parseAsString.withDefault(''),
+      // No default: `null` (key absent) means the filter bar was never
+      // touched, while '' (`?filter=`) means every chip was removed.
+      filter: parseAsString,
       status: parseAsStringLiteral(['active', 'inactive']).withDefault(
         'active',
       ),
@@ -142,12 +150,14 @@ const ProjectPage = () => {
     queryParams.status === 'active'
       ? 'is_active == true'
       : 'is_active == false';
+  const filterValue =
+    queryParams.filter ?? (supportsTypeFilter ? DEFAULT_PROJECT_FILTER : '');
 
   const queryVariables: ProjectPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.limit,
     order: queryParams.order || '-created_at',
-    filter: mergeFilterValues([queryParams.filter, statusFilter]) || null,
+    filter: mergeFilterValues([filterValue, statusFilter]) || null,
   };
 
   const deferredValueQueryVariables = useDeferredValue(queryVariables);
@@ -430,6 +440,21 @@ const ProjectPage = () => {
                   propertyLabel: t('project.Domain'),
                   type: 'string',
                 },
+                ...(supportsTypeFilter
+                  ? [
+                      {
+                        key: 'type',
+                        propertyLabel: t('project.Type'),
+                        type: 'string' as const,
+                        strictSelection: true,
+                        defaultOperator: '==',
+                        options: PROJECT_TYPES.map((type) => ({
+                          label: type,
+                          value: type,
+                        })),
+                      },
+                    ]
+                  : []),
                 {
                   key: 'resource_policy',
                   propertyLabel: t('project.ResourcePolicy'),
@@ -455,7 +480,7 @@ const ProjectPage = () => {
                   type: 'datetime',
                 },
               ]}
-              value={queryParams.filter}
+              value={filterValue}
               onChange={(filter) => {
                 setQueryParams({ filter: filter || '' });
                 setSelectedProjectList([]);

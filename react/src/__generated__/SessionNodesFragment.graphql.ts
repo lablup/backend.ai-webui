@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<03107147ca5707a621edb3741c5d0158>>
+ * @generated SignedSource<<88f75ebbceae496cda8ee2d643ca456f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -57,7 +57,7 @@ export type SessionNodesFragment$data = ReadonlyArray<{
   readonly terminated_at: string | null | undefined;
   readonly type: string | null | undefined;
   readonly user_id: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "EditSessionPriorityModalFragment" | "SessionAccessKeyFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTokenFragment" | "EditSessionPriorityModalFragment" | "SessionAccessKeyFragment" | "SessionDetailDrawerFragment" | "SessionReclamationStatusCellFragment" | "SessionReservationFragment" | "SessionSlotCellFragment" | "SessionStatusBadgeFragment" | "SessionUsageMonitorFragment" | "TerminateSessionModalFragment">;
   readonly " $fragmentType": "SessionNodesFragment";
 } | null | undefined>;
 export type SessionNodesFragment$key = ReadonlyArray<{
@@ -183,7 +183,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionStatusTagFragment"
+      "name": "SessionStatusBadgeFragment"
     },
     {
       "args": null,
@@ -218,7 +218,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "BAISessionTypeTagFragment"
+      "name": "BAISessionTypeTokenFragment"
     },
     {
       "args": null,
@@ -387,6 +387,6 @@ return {
 };
 })();
 
-(node as any).hash = "2485a16dab716580189a67cf09fa09a4";
+(node as any).hash = "e82809d24692f351694742437486e393";
 
 export default node;

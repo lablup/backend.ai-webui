@@ -283,7 +283,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     loadAuditLogQuery(
       {
         scope: {
-          entity: [{ entityType: 'VFOLDER', entityId: vfolderUuid }],
+          entity: [
+            {
+              // 26.9.0 names the entity by the manager's own `EntityType`;
+              // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
+              entityType: baiClient.supports('audit-log-entity-type-name')
+                ? 'vfolder'
+                : 'VFOLDER',
+              entityId: vfolderUuid,
+            },
+          ],
         },
         orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
         limit: baiPaginationOption.limit,

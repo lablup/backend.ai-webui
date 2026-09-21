@@ -1262,6 +1262,12 @@ The image list displays additional columns for more detailed image information:
 - **Base Image Name**: The base name of the image, with alias tags for easier identification.
 - **Version**: The version tag of the image.
 - **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
+- **Image Status**: The image's lifecycle status — `ALIVE`, `DELETED`, `PURGING`, or `PURGE_ERROR`.
+- **Type**: The image's type — `COMPUTE`, `SERVICE`, or `SYSTEM`.
+- **Local**: Whether the image comes from an agent's local Docker daemon instead of a registry.
+- **Size**: The image size, shown in binary units.
+- **Aliases**: The aliases registered for the image.
+- **Supported Accelerators**: The accelerator types the image can run on.
 
 You can select multiple uninstalled images and click the **Install Image** button to install them in
 bulk. Installing an image enqueues a short-lived session that pulls the image, so the dialog asks
@@ -1557,7 +1563,11 @@ The resource group edit dialog contains the following additional fields:
   proxies is left untouched. When no proxy is selected for a group, that group is not restricted to a
   particular proxy.
 - **Active**: Toggle the active status of the resource group.
-- **Public**: When enabled, the resource group is visible to all users.
+- **Public**: When disabled, the resource group is reserved for system sessions such as SFTP uploads.
+  It is hidden from regular users' resource group lists and regular session creation in it is rejected,
+  but it stays visible to administrators. Enabling it does not widen access by itself — which domains,
+  projects, and keypairs can use the resource group is decided by their respective association
+  settings.
 - **Pending timeout**:
   A compute session will be canceled if it stays `PENDING` status for longer
   than the Pending timeout. When you wish to prevent a session from remaining

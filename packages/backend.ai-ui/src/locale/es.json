@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Seleccionar preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "y {{rest}} más"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Se produjo un error inesperado. Inténtelo de nuevo más tarde o contacte con el soporte si el problema persiste."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Seleccionar despliegue"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradado",
     "Deploying": "Desplegando",
     "Healthy": "Saludable",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "prueba"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "y {{rest}} más"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Creado en",
     "MaxConcurrentLogins": "Máx. de inicios de sesión simultáneos",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "Los archivos y carpetas eliminados no se pueden restaurar. \n¿Quieres continuar?",
     "DeleteSelectedItemsDialog": "Eliminar confirmación",
     "Download": "Descargar",
+    "DownloadPopupBlocked": "El navegador bloqueó la ventana de descarga. Permita las ventanas emergentes para este sitio e inténtelo de nuevo.",
+    "DownloadRejected": "El storage proxy rechazó la descarga (HTTP {{status}}). La descarga no se inició.",
     "DownloadSelected": "Descargar",
     "DownloadStarted": "El archivo \"{{fileName}}\" ha comenzado.",
+    "DownloadUnreachable": "No se pudo conectar con el storage proxy en {{origin}}. La descarga no se inició.",
     "DragAndDropDesc": "Arrastre y suelte archivos a esta área para cargar.",
     "DuplicatedFiles": "Confirmación de sobrescribencia",
     "DuplicatedFilesDesc": "El archivo o carpeta con el mismo nombre ya existe. \n¿Quieres sobrescribir?",

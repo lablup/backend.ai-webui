@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fa09b1169ad4eaacc7fa8fa5779f59bf>>
+ * @generated SignedSource<<77a5e860413ccc168fc6c3c8347b048b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,7 +20,7 @@ export type AgentDetailDrawerContentFragment$data = {
   readonly schedulable: boolean | null | undefined;
   readonly status: string | null | undefined;
   readonly status_changed: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AgentActionButtonsFragment" | "AgentComputePluginsFragment" | "AgentResourcesFragment" | "AgentStatusTagFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AgentActionButtonsFragment" | "AgentComputePluginsFragment" | "AgentResourcesFragment" | "AgentStatusBadgeFragment">;
   readonly " $fragmentType": "AgentDetailDrawerContentFragment";
 };
 export type AgentDetailDrawerContentFragment$key = {
@@ -100,7 +100,7 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "AgentStatusTagFragment"
+      "name": "AgentStatusBadgeFragment"
     },
     {
       "args": null,
@@ -122,6 +122,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "6a91613e3113c7a03ad038ffec9bd55e";
+(node as any).hash = "becfd84532a1f08b22e067532616f046";
 
 export default node;

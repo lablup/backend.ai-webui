@@ -1,8 +1,8 @@
 import BAIBoardItemTitle from './BAIBoardItemTitle';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
-import BAITag from './BAITag';
 import { Heading } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Settings, RotateCw } from 'lucide-react';
 
@@ -107,7 +107,7 @@ export const WithTooltipAndExtra: Story = {
     tooltip: 'Active compute sessions in your environment',
     extra: (
       <BAIFlex gap="xs" align="center">
-        <BAITag color="blue">12 Active</BAITag>
+        <Token color="blue" label="12 Active" />
         <BAIButton type="text" size="small" icon={<RotateCw size="1em" />} />
         <BAIButton type="text" size="small" icon={<Settings size="1em" />} />
       </BAIFlex>
@@ -131,7 +131,7 @@ export const CustomTitle: Story = {
         <Heading level={5} style={{ margin: 0, color: '#1890ff' }}>
           Custom Styled Title
         </Heading>
-        <BAITag color="green">NEW</BAITag>
+        <Token color="green" label="NEW" />
       </BAIFlex>
     ),
     tooltip: 'This demonstrates using a custom React node as title',

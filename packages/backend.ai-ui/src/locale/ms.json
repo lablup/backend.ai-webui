@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Pilih Pratetap"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "dan {{rest}} lagi"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ralat tidak dijangka berlaku. Sila cuba lagi nanti atau hubungi sokongan jika masalah berterusan."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Penggunaan"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Merosot",
     "Deploying": "Sedang menggunakan",
     "Healthy": "Sihat",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "ujian"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "dan {{rest}} lagi"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Dicipta pada",
     "MaxConcurrentLogins": "Log Masuk Serentak Maksimum",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
     "DeleteSelectedItemsDialog": "Padam pengesahan",
     "Download": "Muat turun",
+    "DownloadPopupBlocked": "Pelayar menyekat tetingkap muat turun. Benarkan pop timbul untuk tapak ini dan cuba lagi.",
+    "DownloadRejected": "Storage proxy menolak muat turun (HTTP {{status}}). Muat turun tidak bermula.",
     "DownloadSelected": "Muat turun",
     "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
+    "DownloadUnreachable": "Tidak dapat menghubungi storage proxy di {{origin}}. Muat turun tidak bermula.",
     "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
     "DuplicatedFiles": "Pengesahan Pengesahan",
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",

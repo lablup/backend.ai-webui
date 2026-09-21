@@ -4,11 +4,11 @@ import {
 } from '../../__generated__/BAIRuntimeVariantPresetTableFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIBooleanToken from '../BAIBooleanToken';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIQuestionIconWithTooltip from '../BAIQuestionIconWithTooltip';
 import BAIText from '../BAIText';
-import BooleanTag from '../BooleanTag';
 import {
   BAIColumnsType,
   BAIColumnType,
@@ -257,7 +257,7 @@ const BAIRuntimeVariantPresetTable = ({
         title: t('comp:BAIRuntimeVariantPresetTable.Required'),
         sorter: isEnableSorter('required'),
         render: (__, record) => (
-          <BooleanTag
+          <BAIBooleanToken
             value={record.required ?? false}
             trueLabel={t('comp:BAIRuntimeVariantPresetTable.Required')}
             falseLabel={t('comp:BAIRuntimeVariantPresetTable.Optional')}

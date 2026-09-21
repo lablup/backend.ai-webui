@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Selecionar preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "e mais {{rest}}"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ocorreu um erro inesperado. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradado",
     "Deploying": "Implantando",
     "Healthy": "Saudável",
@@ -613,6 +610,9 @@
   "comp:BAITestButton": {
     "Test": "teste"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "e mais {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Criado em",
     "MaxConcurrentLogins": "Máx. de logins simultâneos",
@@ -661,8 +661,11 @@
     "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
     "DeleteSelectedItemsDialog": "Excluir confirmação",
     "Download": "Baixar",
+    "DownloadPopupBlocked": "O navegador bloqueou a janela de download. Permita pop-ups para este site e tente novamente.",
+    "DownloadRejected": "O storage proxy recusou o download (HTTP {{status}}). O download não foi iniciado.",
     "DownloadSelected": "Baixar",
     "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
+    "DownloadUnreachable": "Não foi possível acessar o storage proxy em {{origin}}. O download não foi iniciado.",
     "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
     "DuplicatedFiles": "Substituição de substituição",
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",

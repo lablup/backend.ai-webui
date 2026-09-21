@@ -5,12 +5,15 @@ description: >
   numbered stops a reviewer opens in the live dev server, each one marking an
   element on screen with what changed and what to check. Run it as the LAST
   step of the implementation workflow, after the `dev-server` skill has
-  advertised the PR's server — and on demand for any PR that has a live
-  server. Trigger on "walkthrough 만들어줘", "make a walkthrough",
-  "워크스루 다시 만들어줘", "re-mint the walkthrough", "after the dev server is
-  advertised for a PR I implemented", or a request to show a reviewer what
-  changed on screen. It never posts to Teams, never touches the dev-server
-  comment, and never marks a PR ready.
+  advertised the PR's server — and on demand for any PR by number, booting
+  a dev server for its branch when none is live. Trigger on "walkthrough
+  만들어줘", "make a walkthrough", "PR #N에 walkthrough 달아줘", "add a
+  walkthrough to PR #N", `/walkthrough <pr>`, "워크스루 다시 만들어줘",
+  "re-mint the walkthrough", "after the dev server is advertised for a PR I
+  implemented", or a request to show a reviewer what changed on screen. It
+  never posts to Teams, never edits the dev-server comment itself (booting a
+  server for a PR goes through `dev-server`, which does), and never marks a
+  PR ready.
 ---
 
 # Walkthrough
@@ -31,10 +34,39 @@ in, replay, mint, verify, link) and `scripts/comment.sh` posts it.
   dev-server comment). The walkthrough is about the diff, so it runs on the
   branch you implemented, for that branch's PR only — lower layers of a stack
   got theirs on their own turn.
-- **On demand** for any PR with a live server, when someone asks for one.
+- **On demand, by PR number** — `/walkthrough 9751`, "PR #9751에 walkthrough
+  달아줘" — for a PR this session did not implement, from any checkout. The
+  steps are §1a; `mint.mjs --pr <n>` does the resolution.
 - **Re-runs**: an implementation re-run that changes the UI re-mints and edits
   the comment in place. A doc-only or test-only re-run does not — the stops
   still point at the same elements, and a re-mint would only churn the ids.
+
+### 1a. On demand for a PR by number
+
+The branch path assumes the session is on the PR's branch with the diff in
+its head. Given only a number, get both first:
+
+1. **Is there a server?** `mint.mjs --pr <n> --dry-run` needs no manifest
+   and answers in one line (§6): the live server that serves the PR, or
+   exit 3. It refuses a PR that is not open, so that check is not yours.
+2. **No server** — boot one for `headRefName` with the `dev-server` skill,
+   from a checkout at the PR head: reuse a worktree already on that branch
+   only when this session made it or it is clean; otherwise
+   `git worktree add .claude/worktrees/<KEY> origin/<headRefName>` (where
+   `EnterWorktree` and `fw:cleanup-worktrees` keep them) and `pnpm install`
+   there. Say before booting that `advertise.sh` will comment the server's
+   URL on a PR this session did not implement. When the backend is
+   unreachable, that is a preflight failure here as everywhere: one line,
+   no walkthrough. Re-run the dry run once the record exists.
+3. **A server on the layer above** — for a stack, the top layer's server
+   serves every lower PR and its head contains theirs; `mint.mjs` accepts
+   that (it says so on stderr) and the stops are verified against that
+   build. Only a server whose commit does not contain the PR head is refused.
+4. **The diff.** `gh pr diff <n>` is what the manifest is written from —
+   §3–§5 apply unchanged. Read the PR body's own summary first; it names
+   what the author thinks is visible.
+5. **Mint and post** with `--pr <n>` (§6) and `comment.sh … --pr <n>` (§7).
+   The report's `pr` and `sha` come from GitHub, not from the current branch.
 
 ## 2. Preflight
 
@@ -44,7 +76,7 @@ failure produces **no comment and no walkthrough**, not a partial one.
 | Check                              | How                                                                                                                                                                                                      |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | The box has joined the dev gateway | `~/.config/fw/dev-gw.json` exists                                                                                                                                                                        |
-| A boot record for this branch      | `~/.local/state/fw/dev-servers/<app>.json`, `stoppedAt: null`                                                                                                                                            |
+| A live server for the PR           | the boot record `mint.mjs` resolves (§6): this branch's, or with `--pr` the one that serves the PR                                                                                                       |
 | The server is routable             | the record's `url` answers a 2xx with `X-Portless: 1`                                                                                                                                                    |
 | The server has guided mode         | `/__review/guided.js` answers 200; an older overlay (a branch that predates FR-3950) draws a stop as a bare pin without its notes, so `mint.mjs` exits 3 and says to rebase onto a main that includes it |
 | The app shell survives login       | `mint.mjs` checks it and exits 3                                                                                                                                                                         |
@@ -140,6 +172,13 @@ every problem at once; the caps mirror the overlay's `stop-guard.ts`.
   the previous state when there was one. ≤ 280 chars.
 - `ck` — **one** outcome the reader can verify by looking or with one click
   ("…가 보여야 합니다"). ≤ 280 chars.
+- **`ck` states the condition that produces the new behaviour**, as value →
+  what shows: `마운트 권한이 "none"인 폴더는 "마운트 불가", "ro"는 "Read only"로
+보여야 합니다`. When the connected backend cannot produce that value yet (the
+  feature is not deployed there), keep the condition and add one clause saying
+  what this server cannot show — and list it under "Not shown in the
+  walkthrough" (§7). "Should look the same as before" is not a check: it
+  describes the unchanged branch and hides the one the PR added.
 - `old` / `new` — literals, ≤ 40 chars each. Omit both when nothing was
   replaced.
 - **Language** — the requester's chat language, and UI labels quoted
@@ -163,11 +202,22 @@ node .claude/skills/walkthrough/scripts/mint.mjs \
   --report /tmp/walkthrough-report.json
 ```
 
-`--app` defaults to the name `dev-server` claimed for this branch, `--pr` to
-the boot record's `served[]` entry for it, `--sha` to `git rev-parse HEAD`.
+Which server, in one place: without `--pr`, the app is the name
+`dev-server` claims for the current branch (`--app` overrides), the PR is
+that record's `served[]` entry, `--sha` defaults to `git rev-parse HEAD`.
+With `--pr <n>` the PR is looked up in `--repo` (default
+`lablup/backend.ai-webui`, never the cwd's remote) and must be open; the app
+is the live boot record that serves it — never stopped, pid alive, the same
+repo — preferring the record on the PR's own branch over a stack layer above
+it, then the newest boot; `--app` narrows that to one record; `--sha`
+defaults to the PR head. Either way the server must serve the sha (its
+`/__review/state.head`, else the record's worktree) or a commit that
+contains it; a server behind the sha exits 3.
+
 `--env-file` overrides where the admin account is read from (the server's own
 checkout, then this one) — never print or commit it. `--dry-run` resolves
-everything and launches no browser.
+everything and launches no browser — without `--manifest`, for the one
+question §1a starts with.
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and
@@ -236,5 +286,6 @@ A preflight failure replaces the whole line with the one-line reason.
 
 ```bash
 node --test .claude/skills/walkthrough/scripts/manifest.test.mjs
+node --test .claude/skills/walkthrough/scripts/resolve.test.mjs
 bash .claude/skills/walkthrough/scripts/test-comment.sh
 ```

@@ -2237,6 +2237,7 @@
     "ResourcePolicy": "Kebijakan Sumber Daya",
     "RevokeProjectAdmin": "Cabut Izin Admin",
     "SetProjectAdmin": "Atur Admin Proyek",
+    "Type": "Tipe",
     "ViewRBACPermissions": "Lihat Izin RBAC"
   },
   "projectMembers": {

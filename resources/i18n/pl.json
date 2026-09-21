@@ -2236,6 +2236,7 @@
     "ResourcePolicy": "Polityka zasobów",
     "RevokeProjectAdmin": "Odwołaj uprawnienie administratora",
     "SetProjectAdmin": "Ustaw administratora projektu",
+    "Type": "Typ",
     "ViewRBACPermissions": "Wyświetl uprawnienia RBAC"
   },
   "projectMembers": {

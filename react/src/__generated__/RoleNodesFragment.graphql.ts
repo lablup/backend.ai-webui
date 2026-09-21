@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<76a5bf32275e3e7610da7a3eec4b5210>>
+ * @generated SignedSource<<df1064c7a9118759a5ed5c8b999740cb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,15 @@ export type RoleNodesFragment$data = ReadonlyArray<{
   readonly description: string | null | undefined;
   readonly id: string;
   readonly name: string;
+  readonly scope: {
+    readonly basicInfo?: {
+      readonly domainName?: string;
+      readonly projectName: string;
+      readonly userEmail?: string;
+    };
+  } | null | undefined;
+  readonly scopeId: string;
+  readonly scopeType: string;
   readonly scopes: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -44,7 +53,108 @@ export type RoleNodesFragment$key = ReadonlyArray<{
   readonly " $fragmentSpreads": FragmentRefs<"RoleNodesFragment">;
 }>;
 
-const node: ReaderFragment = {
+const node: ReaderFragment = (function(){
+var v0 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": null,
+  "kind": "LinkedField",
+  "name": "scope",
+  "plural": false,
+  "selections": [
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectBasicInfo",
+          "kind": "LinkedField",
+          "name": "basicInfo",
+          "plural": false,
+          "selections": [
+            {
+              "alias": "projectName",
+              "args": null,
+              "kind": "ScalarField",
+              "name": "name",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "type": "ProjectV2",
+      "abstractKey": null
+    },
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "DomainBasicInfo",
+          "kind": "LinkedField",
+          "name": "basicInfo",
+          "plural": false,
+          "selections": [
+            {
+              "alias": "domainName",
+              "args": null,
+              "kind": "ScalarField",
+              "name": "name",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "type": "DomainV2",
+      "abstractKey": null
+    },
+    {
+      "kind": "InlineFragment",
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "UserV2BasicInfo",
+          "kind": "LinkedField",
+          "name": "basicInfo",
+          "plural": false,
+          "selections": [
+            {
+              "alias": "userEmail",
+              "args": null,
+              "kind": "ScalarField",
+              "name": "email",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "type": "UserV2",
+      "abstractKey": null
+    }
+  ],
+  "storageKey": null
+};
+return {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
@@ -153,106 +263,9 @@ const node: ReaderFragment = {
               "name": "node",
               "plural": false,
               "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeType",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeId",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "concreteType": null,
-                  "kind": "LinkedField",
-                  "name": "scope",
-                  "plural": false,
-                  "selections": [
-                    {
-                      "kind": "InlineFragment",
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "concreteType": "ProjectBasicInfo",
-                          "kind": "LinkedField",
-                          "name": "basicInfo",
-                          "plural": false,
-                          "selections": [
-                            {
-                              "alias": "projectName",
-                              "args": null,
-                              "kind": "ScalarField",
-                              "name": "name",
-                              "storageKey": null
-                            }
-                          ],
-                          "storageKey": null
-                        }
-                      ],
-                      "type": "ProjectV2",
-                      "abstractKey": null
-                    },
-                    {
-                      "kind": "InlineFragment",
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "concreteType": "DomainBasicInfo",
-                          "kind": "LinkedField",
-                          "name": "basicInfo",
-                          "plural": false,
-                          "selections": [
-                            {
-                              "alias": "domainName",
-                              "args": null,
-                              "kind": "ScalarField",
-                              "name": "name",
-                              "storageKey": null
-                            }
-                          ],
-                          "storageKey": null
-                        }
-                      ],
-                      "type": "DomainV2",
-                      "abstractKey": null
-                    },
-                    {
-                      "kind": "InlineFragment",
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "concreteType": "UserV2BasicInfo",
-                          "kind": "LinkedField",
-                          "name": "basicInfo",
-                          "plural": false,
-                          "selections": [
-                            {
-                              "alias": "userEmail",
-                              "args": null,
-                              "kind": "ScalarField",
-                              "name": "email",
-                              "storageKey": null
-                            }
-                          ],
-                          "storageKey": null
-                        }
-                      ],
-                      "type": "UserV2",
-                      "abstractKey": null
-                    }
-                  ],
-                  "storageKey": null
-                }
+                (v0/*: any*/),
+                (v1/*: any*/),
+                (v2/*: any*/)
               ],
               "storageKey": null
             }
@@ -261,12 +274,16 @@ const node: ReaderFragment = {
         }
       ],
       "storageKey": "scopes(first:3)"
-    }
+    },
+    (v0/*: any*/),
+    (v1/*: any*/),
+    (v2/*: any*/)
   ],
   "type": "Role",
   "abstractKey": null
 };
+})();
 
-(node as any).hash = "b08a19ba3571fc072ffdec030bf888a0";
+(node as any).hash = "b3f38f409a3e5733e2d8beb6a1f6178f";
 
 export default node;

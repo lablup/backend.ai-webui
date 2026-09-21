@@ -5,10 +5,9 @@
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AstryxFormTagsInput } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
-import { badgeVariantForTagColor } from 'backend.ai-ui';
+import { Token } from '@astryxdesign/core/Token';
 import * as _ from 'lodash-es';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -99,12 +98,12 @@ const PortSelectFormItem: React.FC<Props> = ({
     >
       {/*
         PILOT-DECISION: this used to paint an individual chip red (`tagRender`
-        + `PortTag`) when the port string was malformed, out of range, or
+        + `PortToken`) when the port string was malformed, out of range, or
         duplicated. Astryx advises against per-token colors ("Avoid applying
         custom colors to individual tokens inside a Tokenizer"), and the four
         `rules` above already surface every one of those conditions as a
         field-level error message — so the red chip is dropped rather than
-        reproduced. `PortTag` itself stays exported for
+        reproduced. `PortToken` itself stays exported for
         `SessionLauncherPreview`. `open={false}` / `suffixIcon={null}` map to
         nothing: the empty search source yields no dropdown and no suffix
         affordance.
@@ -134,33 +133,24 @@ const PortSelectFormItem: React.FC<Props> = ({
   );
 };
 
-/**
- * antd `Tag` → Astryx `Badge` (MAPPING §3.5), with the colour routed through
- * the repo-global lookup (ticket 13) instead of a literal hue.
- *
- * P1 note: the props were grepped, not guessed — the only call site
- * (`SessionLauncherPreview`) passes `value`, `style` and `children`.
- */
-interface PortTagProps {
+interface PortTokenProps {
   value: string;
   inValid?: boolean;
-  children?: ReactNode;
+  children?: string;
   style?: CSSProperties;
   className?: string;
 }
 
-export const PortTag: React.FC<PortTagProps> = ({
+export const PortToken: React.FC<PortTokenProps> = ({
   inValid,
   value,
   children,
-  ...tagProps
+  ...tokenProps
 }) => {
   return (
-    <Badge
-      {...tagProps}
-      variant={badgeVariantForTagColor(
-        !inValid && isValidPortStr(value) ? undefined : 'red',
-      )}
+    <Token
+      {...tokenProps}
+      color={!inValid && isValidPortStr(value) ? 'default' : 'red'}
       label={children ?? value}
     />
   );

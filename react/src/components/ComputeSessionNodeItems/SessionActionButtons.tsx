@@ -92,13 +92,12 @@ const isAppSupported = (session: SessionActionButtonsFragment$data) => {
 const toAstryxSize = (size?: SessionActionButtonSize): 'sm' | 'md' | 'lg' =>
   size === 'small' ? 'sm' : 'md';
 
-// A disabled control must not keep a solid fill: inside an info Banner the theme
-// collapses `--color-accent` onto the text colour, so a half-opacity filled chip
-// still reads louder than an enabled neighbour. FR-3506.
+// A disabled member keeps the group's outlined surface and reads as disabled from
+// its glyph alone; a ghost member let the notice's tint through. FR-4023.
 const variantWhenEnabled = (
   isDisabled: boolean,
   variant: 'primary' | 'secondary',
-): 'primary' | 'secondary' | 'ghost' => (isDisabled ? 'ghost' : variant);
+): 'primary' | 'secondary' => (isDisabled ? 'secondary' : variant);
 
 const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
   sessionFrgmt,

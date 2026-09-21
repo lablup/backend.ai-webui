@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Επιλέξτε προεπιλογή"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "και {{rest}} ακόμη"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Υποβαθμισμένο",
     "Deploying": "Αναπτύσσεται",
     "Healthy": "Υγιές",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "δοκιμή"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "και {{rest}} ακόμη"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Δημιουργήθηκε στο",
     "MaxConcurrentLogins": "Μέγιστες ταυτόχρονες συνδέσεις",
@@ -655,8 +655,11 @@
     "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
     "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
     "Download": "Λήψη",
+    "DownloadPopupBlocked": "Το πρόγραμμα περιήγησης απέκλεισε το παράθυρο λήψης. Επιτρέψτε τα αναδυόμενα παράθυρα για αυτόν τον ιστότοπο και δοκιμάστε ξανά.",
+    "DownloadRejected": "Ο storage proxy απέρριψε τη λήψη (HTTP {{status}}). Η λήψη δεν ξεκίνησε.",
     "DownloadSelected": "Λήψη",
     "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
+    "DownloadUnreachable": "Δεν ήταν δυνατή η σύνδεση με τον storage proxy στο {{origin}}. Η λήψη δεν ξεκίνησε.",
     "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση.",
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",

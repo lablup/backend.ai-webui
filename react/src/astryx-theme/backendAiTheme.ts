@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 23;
+export const THEME_NAME_REV = 24;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -130,8 +130,10 @@ export const THEME_NAME_REV = 23;
  * ## Scope — the NEUTRAL BACKGROUND family (+ the interaction fills)
  *
  * Deliberately NOT touched, so brand-accent surfaces survive: `--color-accent`
- * and its ramp, every `--color-{status}`, the `--color-background-{hue}`
- * chips, and `--color-track`. Those are intentionally brand-tinted.
+ * and its ramp, every `--color-{status}`, and the `--color-background-{hue}`
+ * chips. Those are intentionally brand-tinted. `--color-track` was originally
+ * left out on the same reasoning; it is now pinned, because it shares the
+ * skeleton's ramp stop rather than the accent's — see `--color-track` below.
  * `--color-background-inverted` is also left alone: antd's counterpart
  * (`colorBgSpotlight`) is `rgba(0,0,0,0.85)`/`#424242`, i.e. NOT an inversion
  * in dark mode, so adopting it would break the Astryx semantic.
@@ -169,6 +171,15 @@ const ANTD_NEUTRAL_SURFACES = {
   // the loading curtain to the post-login screens"). Astryx's default was an
   // opaque `#B8A89F`/`#51443C`; antd's was this alpha over the surface.
   '--color-skeleton': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
+    string,
+    string,
+  ],
+  // Slider/Spinner tracks. Astryx seeds this from the SAME ramp stop as
+  // `--color-skeleton` (`NV[70]`/`NV[30]`), so pinning only the skeleton left
+  // the track as the last opaque `#B8A89F`/`#51443C` swatch — which is what
+  // the session launcher's sliders looked too heavy against (FR-4016). Same
+  // pair as the skeleton, restoring Astryx's own track = skeleton tie.
+  '--color-track': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
     string,
     string,
   ],
@@ -694,6 +705,96 @@ const COMMAND_PALETTE_ROW_OVERLAYS = {
  * genuinely long menu on screen.
  */
 /**
+ * Outlined `Token`: no fill, a 1px outline in the token's own colour.
+ * Token zeroes its border and sets its fill through StyleX atoms that outrank
+ * `@layer astryx-theme`, so the fill is removed by re-pointing the variable it
+ * reads and the outline is an inset shadow (Token declares no `box-shadow`).
+ */
+const TOKEN_OUTLINE_COLORS = [
+  'red',
+  'orange',
+  'yellow',
+  'green',
+  'teal',
+  'cyan',
+  'blue',
+  'purple',
+  'pink',
+  'gray',
+] as const;
+
+const TOKEN_OUTLINED = {
+  token: {
+    'color:default': {
+      '--color-neutral': 'transparent',
+      boxShadow:
+        'inset 0 0 0 var(--border-width) var(--color-border-emphasized)',
+    },
+    ...Object.fromEntries(
+      TOKEN_OUTLINE_COLORS.map((color) => [
+        `color:${color}`,
+        {
+          [`--color-background-${color}`]: 'transparent',
+          boxShadow: `inset 0 0 0 var(--border-width) var(--color-border-${color})`,
+        },
+      ]),
+    ),
+  },
+};
+
+/**
+ * Tinted `Badge`: a light fill, a 1px outline and dark text, all in one hue.
+ * The palette variants are already a light fill with dark text and only gain
+ * the outline. The solid semantic variants take the palette hue closest to
+ * their status colour: the base theme fills them with a `background-color` of
+ * its own in this layer, so the fill is declared directly, while the text is an
+ * atom and is reached through the variable it reads.
+ */
+const BADGE_SEMANTIC_HUES = {
+  info: ['--color-on-accent', 'blue'],
+  success: ['--color-on-success', 'teal'],
+  warning: ['--color-on-warning', 'yellow'],
+  error: ['--color-on-error', 'red'],
+  neutral: ['--color-text-primary', 'gray'],
+} as const;
+
+const BADGE_PALETTE_HUES = [
+  'blue',
+  'cyan',
+  'green',
+  'orange',
+  'pink',
+  'purple',
+  'red',
+  'teal',
+  'yellow',
+] as const;
+
+const badgeOutline = (hue: string) =>
+  `inset 0 0 0 var(--border-width) var(--color-border-${hue})`;
+
+const BADGE_TINTED = {
+  badge: {
+    ...Object.fromEntries(
+      Object.entries(BADGE_SEMANTIC_HUES).map(([variant, [text, hue]]) => [
+        `variant:${variant}`,
+        {
+          backgroundColor: `var(--color-background-${hue})`,
+          [text]: `var(--color-text-${hue})`,
+          boxShadow: badgeOutline(hue),
+        },
+      ]),
+    ),
+    ...Object.fromEntries(
+      BADGE_PALETTE_HUES.map((hue) => [
+        `variant:${hue}`,
+        { boxShadow: badgeOutline(hue) },
+      ]),
+    ),
+  },
+};
+
+/**
  * Pins the `ComplexSelector` field to the element-size ramp `Selector` uses.
  * Astryx 0.4.0 sized it `min-height` + padding (40px at md, vs `Selector`'s
  * 32px, so the two engines sat at different heights in one toolbar row); 0.4.3
@@ -905,7 +1006,7 @@ export const BAI_DEFAULT_SEEDS = {
    */
   info: { light: '#028DF2', dark: '#009BDD' } as BrandSeedPair,
   /** theme.json `fontFamily` */
-  fontFamily: "'Ubuntu', Roboto, sans-serif",
+  fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
 };
 
 export type BrandThemeRole = 'brand' | 'admin' | 'secondary';
@@ -1187,6 +1288,8 @@ export function buildBackendAiTheme(
       ...ANTD_DIALOG_SURFACE,
       ...ANTD_DROPDOWN_DENSITY,
       ...COMPLEX_SELECTOR_HEIGHT_PARITY,
+      ...TOKEN_OUTLINED,
+      ...BADGE_TINTED,
       ...FIELD_PAGE_OVERLAYS,
       ...COMMAND_PALETTE_ROW_OVERLAYS,
       ...ANTD_HOVER_PARITY,
