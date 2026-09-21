@@ -96,7 +96,9 @@ export function useMutationWithPromise<T extends MutationParameters>(
         variables,
         onCompleted: (response, errors) => {
           if (errors) {
-            reject(errors);
+            // A `data` + `errors` response: surface the GraphQL messages as an
+            // Error so `getErrorMessage` / `error.message` readers see them.
+            reject(new Error(errors.map((e) => e.message).join('\n')));
           } else {
             resolve(response);
           }
