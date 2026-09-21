@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<20a7a7c32ca38786e366b23645f44900>>
+ * @generated SignedSource<<51a115e3bfd50c8da15e1dfe7acebaaa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,6 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
@@ -24,7 +23,7 @@ export type RoleFilter = {
   assignedUser?: RoleUserNestedFilter | null | undefined;
   mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
-  permission?: PermissionNestedFilter | null | undefined;
+  permissions?: RolePermissionNestedFilter | null | undefined;
   source?: RoleSourceFilter | null | undefined;
   status?: RoleStatusFilter | null | undefined;
 };
@@ -81,13 +80,20 @@ export type RoleMappedScopeNestedFilter = {
   scopeId?: UUIDFilter | null | undefined;
   scopeType?: StringFilter | null | undefined;
 };
-export type PermissionNestedFilter = {
-  AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
+export type RolePermissionNestedFilter = {
+  every?: PermissionFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: PermissionFilter | null | undefined;
+  some?: PermissionFilter | null | undefined;
+};
+export type PermissionFilter = {
+  AND?: ReadonlyArray<PermissionFilter> | null | undefined;
+  NOT?: ReadonlyArray<PermissionFilter> | null | undefined;
+  OR?: ReadonlyArray<PermissionFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
-  operation?: OperationTypeFilter | null | undefined;
   permission?: PermissionBitFilter | null | undefined;
+  roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
 };
@@ -97,17 +103,17 @@ export type PermissionBitFilter = {
   notEquals?: PermissionBit | null | undefined;
   notIn?: ReadonlyArray<PermissionBit> | null | undefined;
 };
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;
   in?: ReadonlyArray<RBACElementType> | null | undefined;
   notEquals?: RBACElementType | null | undefined;
   notIn?: ReadonlyArray<RBACElementType> | null | undefined;
-};
-export type OperationTypeFilter = {
-  equals?: OperationType | null | undefined;
-  in?: ReadonlyArray<OperationType> | null | undefined;
-  notEquals?: OperationType | null | undefined;
-  notIn?: ReadonlyArray<OperationType> | null | undefined;
 };
 export type RoleOrderBy = {
   direction?: OrderDirection;

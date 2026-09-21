@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3649002009cec947955cf56c0fdb0b61>>
+ * @generated SignedSource<<b79611d135c8b923b902a2231c664dae>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,12 +18,19 @@ export type ModelRevisionFilter = {
   NOT?: ReadonlyArray<ModelRevisionFilter> | null | undefined;
   OR?: ReadonlyArray<ModelRevisionFilter> | null | undefined;
   clusterMode?: StringFilter | null | undefined;
+  clusterSize?: IntFilter | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   deploymentId?: string | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   imageId?: UUIDFilter | null | undefined;
+  modelDefinitionPath?: StringFilter | null | undefined;
+  modelMountDestination?: StringFilter | null | undefined;
   modelVfolderId?: UUIDFilter | null | undefined;
   resourceGroup?: StringFilter | null | undefined;
   revisionNumber?: IntFilter | null | undefined;
+  revisionPresetId?: UUIDFilter | null | undefined;
+  runtimeVariantId?: UUIDFilter | null | undefined;
+  vfolderSubpath?: StringFilter | null | undefined;
 };
 export type IntFilter = {
   equals?: number | null | undefined;

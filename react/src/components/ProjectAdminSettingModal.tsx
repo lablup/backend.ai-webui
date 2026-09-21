@@ -87,6 +87,8 @@ type ProjectAdminRole = NonNullable<
 >;
 
 // The scope type is answered in lowercase, hence `iEquals` (ADR 0006).
+// `permissions.some` matches roles carrying at least one entry on the
+// entity type (backend BA-8077).
 export const buildProjectAdminRoleFilter = (
   projectId: string,
 ): ProjectAdminRoleFilter => ({
@@ -95,7 +97,7 @@ export const buildProjectAdminRoleFilter = (
     scopeType: { iEquals: 'project' },
     scopeId: { equals: projectId },
   },
-  permission: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } },
+  permissions: { some: { entityType: { iEquals: SCOPE_ADMIN_ENTITY_TYPE } } },
 });
 
 export const selectProjectAdminRoles = (

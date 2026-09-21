@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7e6431c19fdc463dea098af0d14d8eac>>
+ * @generated SignedSource<<3884ccfce953d0db7480b2e62f468c2e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,12 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type DeploymentOrderField = "CREATED_AT" | "DESTROYED_AT" | "DOMAIN" | "NAME" | "PROJECT" | "RESOURCE_GROUP" | "TAG" | "%future added value";
+export type DeploymentOrderField = "CREATED_AT" | "CREATED_USER_ID" | "DESIRED_REPLICAS" | "DESTROYED_AT" | "DOMAIN" | "ENDPOINT_URL" | "ENTITY_ID" | "NAME" | "OPEN_TO_PUBLIC" | "PROJECT" | "RESOURCE_GROUP" | "SCALING_STATE" | "TAG" | "%future added value";
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHEALTHY" | "%future added value";
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type ScalingState = "SCALING" | "STABLE" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
 export type DeploymentFilter = {
   AND?: ReadonlyArray<DeploymentFilter> | null | undefined;
@@ -22,15 +23,18 @@ export type DeploymentFilter = {
   OR?: ReadonlyArray<DeploymentFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   createdUserId?: UUIDFilter | null | undefined;
+  desiredReplicas?: IntFilter | null | undefined;
   destroyedAt?: NullableDateTimeFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   endpointUrl?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   openToPublic?: boolean | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicas?: ReplicaNestedFilter | null | undefined;
   resourceGroup?: StringFilter | null | undefined;
+  scalingState?: ScalingStateFilter | null | undefined;
   status?: DeploymentStatusFilter | null | undefined;
   tags?: StringFilter | null | undefined;
 };
@@ -83,6 +87,7 @@ export type NullableDateTimeFilter = {
 };
 export type ReplicaNestedFilter = {
   every?: ReplicaFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: ReplicaFilter | null | undefined;
   some?: ReplicaFilter | null | undefined;
 };
@@ -90,7 +95,11 @@ export type ReplicaFilter = {
   AND?: ReadonlyArray<ReplicaFilter> | null | undefined;
   NOT?: ReadonlyArray<ReplicaFilter> | null | undefined;
   OR?: ReadonlyArray<ReplicaFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   healthStatus?: ReplicaHealthStatusFilter | null | undefined;
+  revisionId?: UUIDFilter | null | undefined;
+  sessionId?: UUIDFilter | null | undefined;
   status?: ReplicaStatusFilter | null | undefined;
   trafficStatus?: TrafficStatusFilter | null | undefined;
 };
@@ -114,6 +123,7 @@ export type TrafficStatusFilter = {
 };
 export type EntityLabelNestedFilter = {
   every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: EntityLabelFilter | null | undefined;
   some?: EntityLabelFilter | null | undefined;
 };
@@ -125,6 +135,20 @@ export type EntityLabelFilter = {
   entityType?: StringFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type ScalingStateFilter = {
+  equals?: ScalingState | null | undefined;
+  in?: ReadonlyArray<ScalingState> | null | undefined;
+  notEquals?: ScalingState | null | undefined;
+  notIn?: ReadonlyArray<ScalingState> | null | undefined;
 };
 export type DeploymentOrderBy = {
   direction?: OrderDirection;

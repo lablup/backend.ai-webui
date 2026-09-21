@@ -42,7 +42,7 @@ describe('buildProjectAdminRoleFilter', () => {
         scopeType: { iEquals: 'project' },
         scopeId: { equals: PROJECT_ID },
       },
-      permission: { entityType: { iEquals: 'scope_admin' } },
+      permissions: { some: { entityType: { iEquals: 'scope_admin' } } },
     });
   });
 });
