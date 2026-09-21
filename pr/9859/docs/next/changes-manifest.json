@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-21T16:43:46.831Z",
+  "generatedAt": "2026-09-21T19:01:16.699Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 5,
+        "changes": 4,
         "added": 0,
-        "modified": 5,
+        "modified": 4,
         "removed": 0,
-        "images": 5,
+        "images": 4,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -30,17 +30,16 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/deployment/deployment.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 4,
             "removed": 0,
-            "images": 5,
-            "total": 5
+            "images": 4,
+            "total": 4
           },
           "fingerprints": [
-            "d772b11b761c",
-            "1d029ae83b66",
-            "12f230233223",
-            "5fe45984ae1c",
-            "1b4ae0f7ac30"
+            "9580ce29ac65",
+            "6bb350a0091b",
+            "4b79838d6d3d",
+            "d7baf49f14d4"
           ]
         }
       ]
@@ -48,11 +47,11 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 5,
+        "changes": 6,
         "added": 0,
-        "modified": 5,
+        "modified": 6,
         "removed": 0,
-        "images": 5,
+        "images": 6,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -65,17 +64,18 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/deployment/deployment.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 6,
             "removed": 0,
-            "images": 5,
-            "total": 5
+            "images": 6,
+            "total": 6
           },
           "fingerprints": [
-            "eca73f73cbf1",
-            "b6e181010519",
-            "33952b670bd8",
-            "9fd522370864",
-            "88d5d753fcd3"
+            "826fa3059812",
+            "84e8b372178a",
+            "7d8d3ea9bf8a",
+            "e38a4b88f603",
+            "a1dc8d40a57d",
+            "2fe3bcd5591d"
           ]
         }
       ]
@@ -83,11 +83,11 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 5,
+        "changes": 6,
         "added": 0,
-        "modified": 5,
+        "modified": 6,
         "removed": 0,
-        "images": 5,
+        "images": 6,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -100,17 +100,18 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/deployment/deployment.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 6,
             "removed": 0,
-            "images": 5,
-            "total": 5
+            "images": 6,
+            "total": 6
           },
           "fingerprints": [
-            "a10f294f0626",
-            "eca29ebef152",
-            "f58a942b9639",
-            "372175a58293",
-            "d179b9538764"
+            "8ec07e4a4787",
+            "1fd551c29ed0",
+            "590cc050ee8a",
+            "908be3f3d1be",
+            "b4e25028e4e6",
+            "cc3f7cc02509"
           ]
         }
       ]
@@ -118,11 +119,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 5,
+        "changes": 4,
         "added": 0,
-        "modified": 5,
+        "modified": 4,
         "removed": 0,
-        "images": 5,
+        "images": 4,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -135,17 +136,16 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/deployment/deployment.md",
           "counts": {
             "added": 0,
-            "modified": 5,
+            "modified": 4,
             "removed": 0,
-            "images": 5,
-            "total": 5
+            "images": 4,
+            "total": 4
           },
           "fingerprints": [
-            "b71426b42dea",
-            "66c6f7903c5f",
-            "336e64792d5a",
-            "aaa424312131",
-            "d0aa4b734a0d"
+            "390d47475782",
+            "f6da49c5344c",
+            "ed32042d6d64",
+            "0354f79bf9ff"
           ]
         }
       ]
