@@ -7,14 +7,14 @@
  */
 
 /**
- * bai-r23-default-brand-hxi8ikc theme — built by `pnpm exec astryx theme build`
+ * bai-r24-default-brand-h1you1vi theme — built by `pnpm exec astryx theme build`
  * Import the CSS file alongside this module:
  *
- *   import { baiR23DefaultBrandHxi8ikcTheme } from './bai-r23-default-brand-hxi8ikc';
- *   import './bai-r23-default-brand-hxi8ikc.css';
+ *   import { baiR24DefaultBrandH1you1viTheme } from './bai-r24-default-brand-h1you1vi';
+ *   import './bai-r24-default-brand-h1you1vi.css';
  */
-export const baiR23DefaultBrandHxi8ikcTheme = {
-  name: 'bai-r23-default-brand-hxi8ikc',
+export const baiR24DefaultBrandH1you1viTheme = {
+  name: 'bai-r24-default-brand-h1you1vi',
   __built: true,
   tokens: {
     "--font-size-4xs": "0.375rem",
@@ -188,7 +188,7 @@ export const baiR23DefaultBrandHxi8ikcTheme = {
     "--shadow-inset-warning": "inset 0px 0px 0px 2px #f8d36a4D",
     "--shadow-inset-error": "inset 0px 0px 0px 2px #de47454D",
     "--color-background-inverted": "light-dark(#211A16, #FFFBF8)",
-    "--color-track": "light-dark(#B8A89F, #51443C)",
+    "--color-track": "light-dark(rgba(0,0,0,0.15), rgba(255,255,255,0.18))",
     "--size-element-sm": "24px"
   },
   localTokens: {
@@ -215,7 +215,7 @@ export const baiR23DefaultBrandHxi8ikcTheme = {
     "--astryx-theme-neutral-color-destructive-overlay-hover": "neutral",
     "--astryx-theme-neutral-color-destructive-overlay-pressed": "neutral"
   },
-  __localTokenLineage: ["neutral","bai-r23-default-brand-hxi8ikc"],
+  __localTokenLineage: ["neutral","bai-r24-default-brand-h1you1vi"],
   components: {
     "heading": {
       "level:1": {

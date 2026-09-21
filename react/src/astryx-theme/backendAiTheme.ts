@@ -64,7 +64,7 @@ import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 export { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT };
 
 /** Bump when the static recipe (align tokens, formulas) changes. */
-export const THEME_NAME_REV = 23;
+export const THEME_NAME_REV = 24;
 
 /**
  * NEUTRAL BACKGROUND FAMILY — pinned to the measured legacy antd values.
@@ -130,8 +130,10 @@ export const THEME_NAME_REV = 23;
  * ## Scope — the NEUTRAL BACKGROUND family (+ the interaction fills)
  *
  * Deliberately NOT touched, so brand-accent surfaces survive: `--color-accent`
- * and its ramp, every `--color-{status}`, the `--color-background-{hue}`
- * chips, and `--color-track`. Those are intentionally brand-tinted.
+ * and its ramp, every `--color-{status}`, and the `--color-background-{hue}`
+ * chips. Those are intentionally brand-tinted. `--color-track` was originally
+ * left out on the same reasoning; it is now pinned, because it shares the
+ * skeleton's ramp stop rather than the accent's — see `--color-track` below.
  * `--color-background-inverted` is also left alone: antd's counterpart
  * (`colorBgSpotlight`) is `rgba(0,0,0,0.85)`/`#424242`, i.e. NOT an inversion
  * in dark mode, so adopting it would break the Astryx semantic.
@@ -169,6 +171,15 @@ const ANTD_NEUTRAL_SURFACES = {
   // the loading curtain to the post-login screens"). Astryx's default was an
   // opaque `#B8A89F`/`#51443C`; antd's was this alpha over the surface.
   '--color-skeleton': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
+    string,
+    string,
+  ],
+  // Slider/Spinner tracks. Astryx seeds this from the SAME ramp stop as
+  // `--color-skeleton` (`NV[70]`/`NV[30]`), so pinning only the skeleton left
+  // the track as the last opaque `#B8A89F`/`#51443C` swatch — which is what
+  // the session launcher's sliders looked too heavy against (FR-4016). Same
+  // pair as the skeleton, restoring Astryx's own track = skeleton tie.
+  '--color-track': ['rgba(0,0,0,0.15)', 'rgba(255,255,255,0.18)'] as [
     string,
     string,
   ],
