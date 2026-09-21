@@ -4,7 +4,6 @@
  */
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
-import { type RBACElementType } from '../__generated__/ScopedRolePermissionCardQuery.graphql';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAISkeleton, BAICard, BAIFlex } from 'backend.ai-ui';
@@ -18,13 +17,11 @@ interface RolePermissionDetailTabProps {
 }
 
 /**
- * "Detailed Permissions" tab — merges the former Scopes and Permissions tabs.
- * Renders one `ScopedRolePermissionCard` per scope type that
- * `rbacPermissionMatrix` reports (so a type added on the server needs no code
- * change here). Each card issues its own server-filtered query and hides
- * itself when the role has no scope of its type, leaving one card per assigned
- * scope type with display-only, grant-state color-coded entity tags (FR-2,
- * FR-3, FR-4).
+ * "Detailed Permissions" tab. A manager >= 26.9.0 answers the role's one
+ * scope, so the tab renders one `ScopedRolePermissionCard` for that scope
+ * type. An older manager answers a scopes connection, so the tab renders one
+ * card per scope type `rbacPermissionMatrix` reports and each card hides
+ * itself when the role has no scope of its type (ADR 0006).
  */
 const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   roleNodeFrgmt,
@@ -38,6 +35,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
         totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0") {
           count
         }
+        scopeType @since(version: "26.9.0")
         scopeId @since(version: "26.9.0")
         ...ScopedRolePermissionCardFragment
       }
@@ -59,21 +57,20 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // One card candidate per matrix scope type. The scope types come from the
-  // server as-is — nothing is hardcoded client-side. Each card derives its own
-  // entity × operation set from the matrix fragment.
-  const scopeTypes = _.uniq(
-    (rbacPermissionMatrix ?? []).map((combination) => combination.scopeType),
-  );
+  // The role's one scope type on managers >= 26.9.0; every matrix scope type,
+  // as the server spells it, before.
+  const scopeTypes = role.scopeType
+    ? [role.scopeType]
+    : _.uniq(
+        (rbacPermissionMatrix ?? []).map(
+          (combination) => combination.scopeType,
+        ),
+      );
 
   // A role on a manager >= 26.9.0 always belongs to one scope.
   if (!role.scopeId && role.totalScopes?.count === 0) {
     return (
-      <BAICard styles={{ body: { paddingTop: 0 } }}>
-        {/* antd `Empty` -> `EmptyState` (MAPPING §4): `description` becomes
-            the required `title`, and `PRESENTED_IMAGE_SIMPLE` is dropped —
-            EmptyState has no built-in illustration, only an optional custom
-            `icon` (same treatment as BulkCreateUserFromCSVModal). */}
+      <BAICard>
         <EmptyState title={t('rbac.NoScopesToDisplay')} />
       </BAICard>
     );
@@ -87,8 +84,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
             key={scopeType}
             roleNodeFrgmt={role}
             rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
-            // 26.8 enum spelling; the drawer follow-up (FR-3905) retires it.
-            scopeType={scopeType as RBACElementType}
+            scopeType={scopeType}
           />
         ))}
       </Suspense>
