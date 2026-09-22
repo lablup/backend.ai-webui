@@ -775,6 +775,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             ),
             sorter: isEnableSorter('host'),
           },
+          // This column shows the folder default (`accessControl.permission`),
+          // not the caller's own level. `VFolder.permissions` (26.9.0) carries
+          // that, behind a `@since` gate (ADR 0006) — FR-3988.
           {
             key: 'permissions',
             title: t('data.folders.MountPermission'),
