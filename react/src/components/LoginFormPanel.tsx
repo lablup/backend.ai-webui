@@ -32,13 +32,10 @@ import {
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  DropdownMenu,
-  type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
+import { List, ListItem } from '@astryxdesign/core/List';
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -54,16 +51,23 @@ import {
 import DOMPurify from 'dompurify';
 import {
   X,
-  Cloud,
   ChevronDown,
   Info,
   ChevronRight,
+  Trash2,
   TriangleAlert,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
+
+/** One row of the endpoint history list. */
+export interface EndpointHistoryEntry {
+  endpoint: string;
+  /** Pinned from `VITE_DEFAULT_API_ENDPOINT`; tagged, but deletable like the rest. */
+  isFromEnv?: boolean;
+}
 
 interface LoginFormPanelProps {
   isOpen: boolean;
@@ -83,7 +87,9 @@ interface LoginFormPanelProps {
   showEndpointInput: boolean;
   isEndpointDisabled: boolean;
   form: FormInstance;
-  endpointMenuItems: DropdownMenuOption[];
+  endpointHistory: EndpointHistoryEntry[];
+  onSelectEndpoint: (ep: string) => void;
+  onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
@@ -115,7 +121,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   showEndpointInput,
   isEndpointDisabled,
   form,
-  endpointMenuItems,
+  endpointHistory,
+  onSelectEndpoint,
+  onDeleteEndpoint,
   onKeyDown,
   onLogin,
   onConnectionModeChange,
@@ -138,6 +146,41 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
+  const [isEndpointHistoryOpen, setIsEndpointHistoryOpen] = useState(false);
+  const endpointHistoryRef = useRef<HTMLDivElement>(null);
+  // Set while a pointer press outside the list is in progress (see below).
+  const isPointerPressOutsideRef = useRef(false);
+
+  // Closing the list on the input's blur re-centres the dialog between a
+  // pointer's down and up, so the pressed button moves out from under it and
+  // its click never fires. A press outside therefore defers the close to the
+  // click that follows it; keyboard blur and Escape still close at once.
+  useEffect(() => {
+    if (!isEndpointHistoryOpen) return;
+    const isInside = (e: Event) =>
+      !!endpointHistoryRef.current &&
+      e.composedPath().includes(endpointHistoryRef.current);
+    const onPointerDown = (e: PointerEvent) => {
+      isPointerPressOutsideRef.current = !isInside(e);
+    };
+    // Focus has already moved by pointerup, so a press that ends without a
+    // click (released off-window) must not leave the flag set.
+    const onPointerUp = () => {
+      isPointerPressOutsideRef.current = false;
+    };
+    const onClick = (e: MouseEvent) => {
+      if (!isInside(e)) setIsEndpointHistoryOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    document.addEventListener('pointerup', onPointerUp, true);
+    document.addEventListener('click', onClick);
+    return () => {
+      isPointerPressOutsideRef.current = false;
+      document.removeEventListener('pointerdown', onPointerDown, true);
+      document.removeEventListener('pointerup', onPointerUp, true);
+      document.removeEventListener('click', onClick);
+    };
+  }, [isEndpointHistoryOpen]);
   const [helpPanel, setHelpPanel] = useState<{
     title: string;
     content: string;
@@ -451,44 +494,88 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {isEndpointExpanded && (
                 <BAIFlex
                   gap="xs"
-                  align="center"
+                  align="start"
                   style={{ marginTop: token.marginXS }}
                 >
-                  {/* antd `Dropdown` wrapped an arbitrary trigger element;
-                      Astryx `DropdownMenu` renders its own trigger from
-                      `button` props and binds `onClick` per ITEM, so the
-                      endpoint-select handler is attached where the items are
-                      built (LoginView). The `overlayStyle` z-index and the
-                      hand-painted info-blue icon tint have no destination
-                      (P5). */}
-                  <DropdownMenu
-                    hasChevron={false}
-                    menuWidth={340}
-                    button={{
-                      variant: 'ghost',
-                      isIconOnly: true,
-                      icon: <Cloud size="1em" />,
-                      label: t('login.EndpointHistory'),
+                  <div
+                    ref={endpointHistoryRef}
+                    // The saved endpoints behave as the field's own autofill:
+                    // focus opens the list; a pointer press outside closes it
+                    // on the following click (see the effect above).
+                    onFocus={() => setIsEndpointHistoryOpen(true)}
+                    onBlur={(e) => {
+                      if (
+                        !isPointerPressOutsideRef.current &&
+                        !e.currentTarget.contains(e.relatedTarget as Node)
+                      ) {
+                        setIsEndpointHistoryOpen(false);
+                      }
                     }}
-                    items={endpointMenuItems}
-                  />
-                  <BAIFormItem
-                    name="api_endpoint"
-                    style={{ flex: 1, marginBottom: 0 }}
-                    rules={[
-                      {
-                        pattern: /^https?:\/\/(.*)/,
-                        message: t('login.EndpointStartWith'),
-                      },
-                    ]}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') setIsEndpointHistoryOpen(false);
+                    }}
+                    style={{ flex: 1, minWidth: 0 }}
                   >
-                    <AstryxFormTextInput
-                      label={t('login.Endpoint', { postProcess: [] })}
-                      placeholder={t('login.Endpoint', { postProcess: [] })}
-                      disabled={isEndpointDisabled || isLoading}
-                      onChange={(value) => onSetApiEndpoint(value)}
-                    />
-                  </BAIFormItem>
+                    <BAIFormItem
+                      name="api_endpoint"
+                      style={{ marginBottom: 0 }}
+                      rules={[
+                        {
+                          pattern: /^https?:\/\/(.*)/,
+                          message: t('login.EndpointStartWith'),
+                        },
+                      ]}
+                    >
+                      <AstryxFormTextInput
+                        label={t('login.Endpoint', { postProcess: [] })}
+                        placeholder={t('login.Endpoint', { postProcess: [] })}
+                        disabled={isEndpointDisabled || isLoading}
+                        onChange={(value) => onSetApiEndpoint(value)}
+                      />
+                    </BAIFormItem>
+                    {isEndpointHistoryOpen && endpointHistory.length > 0 && (
+                      <div
+                        // In flow under the input, not floating: a positioned
+                        // panel overflowed the dialog's scroll box. Height is
+                        // capped so a long history scrolls inside the list.
+                        style={{
+                          marginTop: 'var(--spacing-1)',
+                          maxHeight: 140,
+                          overflowY: 'auto',
+                          background: 'var(--color-background-surface)',
+                          border: '1px solid var(--color-border)',
+                          borderRadius: 'var(--radius-element)',
+                        }}
+                      >
+                        <List density="compact" hasDividers>
+                          {endpointHistory.map(({ endpoint, isFromEnv }) => (
+                            <ListItem
+                              key={endpoint}
+                              label={isFromEnv ? `${endpoint} (env)` : endpoint}
+                              onClick={() => {
+                                onSelectEndpoint(endpoint);
+                                setIsEndpointHistoryOpen(false);
+                              }}
+                              endContent={
+                                <IconButton
+                                  variant="ghost"
+                                  size="sm"
+                                  icon={<Trash2 size="1em" />}
+                                  label={`${t('button.Delete')}: ${endpoint}`}
+                                  onClick={(e) => {
+                                    // The row is the select target; deleting
+                                    // must not also select it.
+                                    e.stopPropagation();
+                                    onDeleteEndpoint(endpoint);
+                                  }}
+                                />
+                              }
+                            />
+                          ))}
+                        </List>
+                      </div>
+                    )}
+                  </div>
                   <IconButton
                     icon={<Info size="1em" />}
                     variant="ghost"
