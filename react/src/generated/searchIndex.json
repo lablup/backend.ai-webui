@@ -2966,7 +2966,6 @@
         "login.E-mailOrUsername",
         "login.EmailSendButton",
         "login.Endpoint",
-        "login.EndpointHistory",
         "login.EndpointInfo",
         "login.EndpointStartWith",
         "login.ForgotPassword",
