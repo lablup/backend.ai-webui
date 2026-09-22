@@ -1608,6 +1608,7 @@
     "FileUploadCancelled": "The file upload was canceled by user request.",
     "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
     "Filename": "File Name",
+    "FolderDetailUnavailable": "Folder details are unavailable",
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",

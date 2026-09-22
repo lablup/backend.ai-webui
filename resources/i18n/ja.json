@@ -1621,6 +1621,7 @@
     "FileUploadCancelled": "ファイルのアップロードは、ユーザーリクエストによってキャンセルされました。",
     "FileUploadFailed": "Folder '{{folderName}}'にいくつかのファイルをアップロードできませんでした。",
     "Filename": "ファイル名",
+    "FolderDetailUnavailable": "フォルダ情報を読み込めません",
     "FolderNotFoundOrNoAccess": "フォルダーが見つかりませんまたはアクセスが拒否されません",
     "Metadata": "メタデータ",
     "NoExplorerSupportForUnmanagedFolder": "管理されていないフォルダーは、ファイルエクスプローラーをサポートしていません。",

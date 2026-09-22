@@ -1621,6 +1621,7 @@
     "FileUploadCancelled": "Tải lên tệp đã bị hủy bởi yêu cầu người dùng.",
     "FileUploadFailed": "Không thể tải lên một số tệp trong thư mục '{{folderName}}'.",
     "Filename": "Tên tệp",
+    "FolderDetailUnavailable": "Không có thông tin chi tiết của thư mục",
     "FolderNotFoundOrNoAccess": "Thư mục không tìm thấy hoặc truy cập bị từ chối",
     "Metadata": "Siêu dữ liệu",
     "NoExplorerSupportForUnmanagedFolder": "Các thư mục không được quản lý không hỗ trợ trình thám hiểm tệp.",

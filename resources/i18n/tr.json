@@ -1621,6 +1621,7 @@
     "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi.",
     "FileUploadFailed": "Bazı dosyaları '{{{folderName}}' klasörüne yükleyemedi.",
     "Filename": "Dosya adı",
+    "FolderDetailUnavailable": "Klasör ayrıntıları kullanılamıyor",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "Metadata": "Meta Veri",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
