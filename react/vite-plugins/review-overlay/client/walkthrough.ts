@@ -28,6 +28,8 @@ export const WALKTHROUGH_KEY = 'bai-review:walkthrough';
 export const WALKTHROUGH_FOCUS_KEY = 'bai-review:walkthrough-focus';
 /** Progress outlives the tab, so it is `localStorage` and keyed by `sha`. */
 export const WALKTHROUGH_STATE_PREFIX = 'bai-review:walkthrough-state:';
+/** The language the reader picked for this walkthrough, same keying (FR-4057). */
+export const WALKTHROUGH_LANG_PREFIX = 'bai-review:walkthrough-lang:';
 /** Where a stop's code links point when the server names no repository. */
 export const DEFAULT_REPO_URL = 'https://github.com/lablup/backend.ai-webui';
 
@@ -265,15 +267,60 @@ export function createWalkthroughProgress(
   };
 }
 
+/**
+ * The language the reader chose for this walkthrough, or `null` while they
+ * have not chosen. Absence is meaningful: the overlay only takes the app's
+ * language over once somebody asks it to, so a reader who never touches the
+ * toggle keeps whatever language they had set.
+ */
+export interface WalkthroughLanguage {
+  get(): string | null;
+  set(lang: string): void;
+}
+
+export function createWalkthroughLanguage(
+  sha: string,
+  storage: Storage | null = safeLocal(),
+): WalkthroughLanguage {
+  const key = `${WALKTHROUGH_LANG_PREFIX}${sha}`;
+  return {
+    get() {
+      try {
+        const held = storage?.getItem(key);
+        return held || null;
+      } catch {
+        return null;
+      }
+    },
+    set(lang) {
+      try {
+        storage?.setItem(key, lang);
+      } catch {
+        // The choice still holds for this page; the next one starts over.
+      }
+    },
+  };
+}
+
 // ------------------------------------------------------------------ prose
 
+/** How a `via` sentence reads, per language the popover offers. */
+const VIA_PROSE: Record<
+  string,
+  { step: (what: string) => string; join: string }
+> = {
+  en: { step: (what) => `Click “${what}”`, join: ', then ' },
+  ko: { step: (what) => `“${what}” 클릭`, join: ', 그다음 ' },
+};
+
 /** A waiting stop's `via`, as the sentence the reader follows. */
-export function viaSentence(via: AnchorVia[] | undefined): string {
+export function viaSentence(via: AnchorVia[] | undefined, lang = 'en'): string {
+  const prose = VIA_PROSE[lang] ?? VIA_PROSE.en;
   const steps = (via ?? [])
     .map(({ click }) => click.text ?? click.tid ?? '')
     .filter(Boolean)
-    .map((what) => `Click “${what}”`);
-  return steps.join(', then ');
+    .map(prose.step);
+  return steps.join(prose.join);
 }
 
 /** The page half of a stop's label — what the navigator groups by. */

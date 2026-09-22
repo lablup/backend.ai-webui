@@ -113,6 +113,7 @@ test("the caps match stop-guard.ts, which is what strips a field in-page", () =>
     "CODE_REFS_MAX",
     "VIA_MAX",
     "VIA_TEXT_MAX",
+    "I18N_LANGS_MAX",
   ]) {
     const declared = new RegExp(`export const ${name} = (\\d+)`).exec(source);
     assert.ok(declared, `${name} is no longer declared in stop-guard.ts`);
@@ -159,4 +160,78 @@ test("routes hang off the project-scoped base the app lands on", () => {
   );
   assert.equal(projectBasePath("/start"), "");
   assert.equal(projectBasePath(""), "");
+});
+
+// ---------------------------------------------------------------- i18n
+
+const EN = {
+  ch: "The create button moved into the card header.",
+  ck: 'A "Create Folder" button should sit above the list.',
+};
+
+test("a stop translated into a second language passes", () => {
+  const [parsed] = parseManifest([stop({ lng: "ko", i18n: { en: EN } })]);
+  assert.equal(parsed.i18n.en.ck, EN.ck);
+});
+
+test("lng and i18n travel together or not at all", () => {
+  rejects([stop({ lng: "ko" })], "lng needs i18n");
+  rejects([stop({ i18n: { en: EN } })], "i18n needs lng");
+});
+
+test("a language must be a code, and not the one ch/ck are in", () => {
+  rejects([stop({ lng: "korean", i18n: { en: EN } })], "lng must be");
+  rejects([stop({ lng: "ko", i18n: { korean: EN } })], "not a language code");
+  rejects(
+    [stop({ lng: "ko", i18n: { ko: EN } })],
+    "already the language ch/ck are written in",
+  );
+});
+
+test("a translation says at least what changed and what to check", () => {
+  rejects([stop({ lng: "ko", i18n: { en: { ch: EN.ch } } })], "i18n.en: ck");
+  rejects([stop({ lng: "ko", i18n: { en: { ck: EN.ck } } })], "i18n.en: ch");
+  rejects(
+    [stop({ lng: "ko", i18n: { en: "nope" } })],
+    "i18n.en: not an object",
+  );
+  rejects([stop({ lng: "ko", i18n: {} })], "names no language");
+});
+
+test("a translation obeys the same caps as the stop it translates", () => {
+  rejects(
+    [
+      stop({
+        lng: "ko",
+        i18n: { en: { ...EN, ch: "x".repeat(STOP_TEXT_MAX + 1) } },
+      }),
+    ],
+    `i18n.en: ch is required (<= ${STOP_TEXT_MAX}`,
+  );
+  rejects(
+    [
+      stop({
+        lng: "ko",
+        i18n: { en: { ...EN, old: "x".repeat(STOP_LITERAL_MAX + 1) } },
+      }),
+    ],
+    "i18n.en: old must be",
+  );
+  rejects(
+    [stop({ lng: "ko", i18n: { en: { ...EN, ck: "ok\nforged" } } })],
+    "i18n.en: ck",
+  );
+  rejects(
+    [stop({ lng: "ko", i18n: { en: { ...EN, via: [{}] } } })],
+    "only {click: {...}} steps are replayable",
+  );
+});
+
+test("a stop carries at most I18N_LANGS_MAX translations", () => {
+  const many = {};
+  for (const lang of ["en", "ja", "th", "de", "fr"]) many[lang] = EN;
+  rejects(
+    [stop({ lng: "ko", i18n: many })],
+    `i18n holds at most ${caps.I18N_LANGS_MAX} languages`,
+  );
 });

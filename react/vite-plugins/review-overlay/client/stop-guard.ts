@@ -4,7 +4,12 @@
  * (FR-3949, additive under ADR 0002). Every cap lives here, shared by the
  * decoder and by whatever mints a stop.
  */
-import type { AnchorCodeRef, AnchorV3, AnchorVia } from './types.js';
+import type {
+  AnchorCodeRef,
+  AnchorI18nText,
+  AnchorV3,
+  AnchorVia,
+} from './types.js';
 
 export const STOP_TEXT_MAX = 280;
 export const STOP_LITERAL_MAX = 40;
@@ -13,7 +18,11 @@ export const CODE_PATH_MAX = 256;
 export const CODE_REFS_MAX = 3;
 export const VIA_MAX = 8;
 export const VIA_TEXT_MAX = 120;
+/** A stop carries its own wording plus this many translations (FR-4057). */
+export const I18N_LANGS_MAX = 4;
 const SHA_RE = /^[0-9a-f]{40}$/;
+/** `ko`, `en`, `pt-BR` — the shape `resources/i18n` names a language by. */
+const LANG_RE = /^[a-z]{2}(-[A-Za-z]{2,4})?$/;
 
 /**
  * Query params that describe a moment, not a place: the session launcher
@@ -61,6 +70,33 @@ const list =
     value.length <= max &&
     value.every(item);
 
+/**
+ * A translation says at least what changed and what to check; the literals and
+ * the `via` sentence fall back to the base language when it omits them.
+ */
+const isI18nText = (value: unknown): value is AnchorI18nText => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const text = value as Record<string, unknown>;
+  if (!isText(text.ch, STOP_TEXT_MAX) || !isText(text.ck, STOP_TEXT_MAX))
+    return false;
+  if (text.old !== undefined && !isText(text.old, STOP_LITERAL_MAX))
+    return false;
+  if (text.new !== undefined && !isText(text.new, STOP_LITERAL_MAX))
+    return false;
+  return text.via === undefined || list(isVia, VIA_MAX)(text.via);
+};
+
+const isI18n = (value: unknown): boolean => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const langs = Object.keys(value as object);
+  if (!langs.length || langs.length > I18N_LANGS_MAX) return false;
+  return langs.every(
+    (lang) =>
+      LANG_RE.test(lang) &&
+      isI18nText((value as Record<string, unknown>)[lang]),
+  );
+};
+
 /** Field → the shape it must have; anything else is dropped, never fatal. */
 const STOP_FIELDS: Record<string, Check> = {
   ch: (v) => isText(v, STOP_TEXT_MAX),
@@ -74,6 +110,8 @@ const STOP_FIELDS: Record<string, Check> = {
   pr: (v) => isLine(v),
   via: list(isVia, VIA_MAX),
   dlg: (v) => v === 1,
+  lng: (v) => typeof v === 'string' && LANG_RE.test(v),
+  i18n: isI18n,
 };
 
 /** The stop fields by name — what `stripStopFields` takes back off. */
@@ -138,4 +176,45 @@ export function stripVolatileQuery(search: string): string {
     .split('&')
     .filter((pair) => !VOLATILE_QUERY_PARAMS.includes(keyOf(pair)))
     .join('&');
+}
+
+/**
+ * The languages this stop can be read in, base first — empty unless it was
+ * minted with both `lng` and `i18n`, which is what the toggle keys off.
+ */
+export function stopLanguages(anchor: AnchorV3): string[] {
+  if (!anchor.lng || !anchor.i18n) return [];
+  const langs = [anchor.lng];
+  for (const lang of Object.keys(anchor.i18n))
+    if (!langs.includes(lang)) langs.push(lang);
+  return langs.length > 1 ? langs : [];
+}
+
+/** One stop's wording, in whichever language the reader is holding it in. */
+export interface StopText {
+  ch: string;
+  ck: string;
+  old?: string | undefined;
+  new?: string | undefined;
+  via?: AnchorVia[] | undefined;
+}
+
+/** The stop's wording in `lang`, falling back per field to the base one. */
+export function stopTextIn(anchor: AnchorV3, lang?: string | null): StopText {
+  const base = {
+    ch: anchor.ch ?? '',
+    ck: anchor.ck ?? '',
+    old: anchor.old,
+    new: anchor.new,
+    via: anchor.via,
+  };
+  const text = lang && lang !== anchor.lng ? anchor.i18n?.[lang] : undefined;
+  if (!text) return base;
+  return {
+    ch: text.ch ?? base.ch,
+    ck: text.ck ?? base.ck,
+    old: text.old ?? base.old,
+    new: text.new ?? base.new,
+    via: text.via ?? base.via,
+  };
 }

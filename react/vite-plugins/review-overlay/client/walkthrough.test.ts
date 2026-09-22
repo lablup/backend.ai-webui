@@ -4,13 +4,19 @@
  * own parser, which is what a Claude session reads the paste with.
  */
 import { parsePins } from '../cli.js';
-import { isStop, STOP_FIELD_NAMES } from './stop-guard.js';
+import {
+  isStop,
+  stopLanguages,
+  stopTextIn,
+  STOP_FIELD_NAMES,
+} from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 import {
   buildCommentCopy,
   codeHref,
   codeText,
   commentPin,
+  createWalkthroughLanguage,
   createWalkthroughProgress,
   createWalkthroughStore,
   pageCount,
@@ -315,5 +321,67 @@ describe('the comment export', () => {
       c: { name: 'UploadButton' },
       n: 'needs a tooltip',
     });
+  });
+});
+
+/**
+ * A stop reads in two languages (FR-4057): the one the session wrote it in and
+ * whatever it was translated into. The reader's pick outlives the full reload
+ * that walking to the next stop makes, which is why it is stored.
+ */
+describe('a stop in two languages', () => {
+  const bilingual = stop('c_bbbbbbb', {
+    lng: 'ko',
+    ch: '업로드 버튼이 카드 헤더로 옮겨졌습니다.',
+    ck: '목록 위에 버튼이 보여야 합니다.',
+    old: '행마다 업로드 아이콘',
+    new: '헤더의 버튼',
+    i18n: {
+      en: {
+        ch: 'The upload button moved into the card header.',
+        ck: 'The button shows above the list.',
+      },
+    },
+  }).anchor;
+
+  it('offers the language it was written in first', () => {
+    expect(stopLanguages(bilingual)).toEqual(['ko', 'en']);
+  });
+
+  it('offers nothing to switch between without a translation', () => {
+    expect(stopLanguages(stop('c_ccccccc').anchor)).toEqual([]);
+    expect(stopLanguages({ ...bilingual, lng: undefined })).toEqual([]);
+  });
+
+  it('reads the translation, falling back per field to the base', () => {
+    const en = stopTextIn(bilingual, 'en');
+    expect(en.ch).toBe('The upload button moved into the card header.');
+    // The translation named no literals, so the reader still sees the pair.
+    expect(en.old).toBe('행마다 업로드 아이콘');
+    expect(stopTextIn(bilingual, 'ko').ch).toBe(bilingual.ch);
+    expect(stopTextIn(bilingual, 'ja').ch).toBe(bilingual.ch);
+    expect(stopTextIn(bilingual, null).ck).toBe(bilingual.ck);
+  });
+
+  it('says the via sentence in the language on screen', () => {
+    const via = [{ click: { text: 'Create Folder' } }];
+    expect(viaSentence(via, 'ko')).toBe('“Create Folder” 클릭');
+    expect(viaSentence(via, 'en')).toBe('Click “Create Folder”');
+    expect(viaSentence(via, 'ja')).toBe('Click “Create Folder”');
+  });
+
+  it('remembers the reader’s pick per walkthrough, and only once made', () => {
+    const storage = memoryStorage();
+    const language = createWalkthroughLanguage(SHA, storage);
+    expect(language.get()).toBeNull();
+    language.set('en');
+    expect(createWalkthroughLanguage(SHA, storage).get()).toBe('en');
+    // A different walkthrough is a different question.
+    expect(createWalkthroughLanguage('b'.repeat(40), storage).get()).toBeNull();
+  });
+
+  it('keeps the language fields off the pin a reviewer copies', () => {
+    expect(STOP_FIELD_NAMES).toContain('lng');
+    expect(STOP_FIELD_NAMES).toContain('i18n');
   });
 });

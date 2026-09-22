@@ -127,7 +127,14 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
           "line": 88,
           "to": 104
         }
-      ]
+      ],
+      "lng": "ko",
+      "i18n": {
+        "en": {
+          "ch": "The folder create modal gained a Models usage-mode radio.",
+          "ck": "The modal's usage mode shows a \"Models\" choice."
+        }
+      }
     }
   ]
 }
@@ -145,6 +152,10 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
   node whose text matches — an SVG label, a table cell).
 - `label` — optional; without it the comment's head is
   `Page › testid › tag "text"`, derived from the anchor.
+- `lng` / `i18n` — the language `ch`/`ck`/`old`/`new` are written in, and the
+  same stop in other languages (§5). Both or neither. An `i18n` entry needs
+  `ch` and `ck`; `old`, `new` and `via` fall back to the base language when it
+  omits them. At most 4 translations, and never one keyed by `lng` itself.
 - Capture inside a `[role=dialog]` sets `dlg: 1` on its own — do not write it.
 
 `scripts/manifest.mjs` validates the file before a browser starts and reports
@@ -183,6 +194,14 @@ every problem at once; the caps mirror the overlay's `stop-guard.ts`.
   replaced.
 - **Language** — the requester's chat language, and UI labels quoted
   **verbatim** in the language the UI shows them in.
+- **Write every stop twice, `ko` and `en`** (FR-4057): the base fields in the
+  requester's language with `"lng"` naming it, and the other under
+  `"i18n"`. The popover's KO/EN toggle switches the stop text and the app's
+  own language together, so the quoted UI labels must be the ones THAT
+  language shows — the English stop quotes the English label, the Korean stop
+  the Korean one. Look both up in `resources/i18n/{en,ko}.json` rather than
+  translating a label yourself. A translation is not a second judgement: both
+  say the same thing about the same element.
 - **Write for the person looking at the screen, not for the code.** Name
   what they see — the red line, the dotted line, the button's label, the
   panel's title — and what it does now versus before. No function or
@@ -218,6 +237,11 @@ contains it; a server behind the sha exits 3.
 checkout, then this one) — never print or commit it. `--dry-run` resolves
 everything and launches no browser — without `--manifest`, for the one
 question §1a starts with.
+
+A translated stop is minted **without** the element's text (`txt`): every
+resolution tier ANDs it, so a stop that carried it would come unpinned the
+moment the reader switched language. It resolves by selector, testid landmark
+and rect instead — which is why `find` should name a `testid` (§3).
 
 The script logs in, replays each stop, mints the anchor with the overlay's own
 in-page modules, builds the set link, then opens it in a **fresh page** and
