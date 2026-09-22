@@ -100,7 +100,11 @@ const BAIOverlayScrollbar: React.FC<BAIOverlayScrollbarProps> = ({
         MIN_THUMB_HEIGHT,
       );
       const maxTop = clientHeight - thumbHeight;
-      const top = (scrollTop / (scrollHeight - clientHeight)) * maxTop || 0;
+      // Fractional scrollTop (zoom, DPR > 1) can exceed the integer range.
+      const top = Math.min(
+        Math.max((scrollTop / (scrollHeight - clientHeight)) * maxTop || 0, 0),
+        maxTop,
+      );
       thumb.style.height = `${thumbHeight}px`;
       thumb.style.transform = `translateY(${top}px)`;
     };
