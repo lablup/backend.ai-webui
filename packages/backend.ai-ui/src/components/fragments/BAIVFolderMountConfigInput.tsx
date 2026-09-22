@@ -337,10 +337,19 @@ export const useVFolderMountConfigFormRule = (
 const useMountableLegacyFolders = (
   allFolderList: Array<LegacyVFolder>,
   scope: LegacyVFolderMountScope,
+  // REST `permission` is the CALLER's effective mount level even when
+  // `ownerEmail` names someone else, so the 'none' gate (the manager refuses
+  // such a mount, backend.ai#14679) only holds when the caller is the session
+  // owner; on behalf of another user the manager resolves it for them.
+  mountsAsCaller: boolean,
 ) => {
   'use memo';
   const mountableFolders = allFolderList
-    .filter((folder) => isMountableLegacyVFolder(folder, scope))
+    .filter(
+      (folder) =>
+        isMountableLegacyVFolder(folder, scope) &&
+        (!mountsAsCaller || folder.permission !== 'none'),
+    )
     .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
   const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
   return { mountableFolders, mountableIdSet };
@@ -447,6 +456,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   const { mountableFolders, mountableIdSet } = useMountableLegacyFolders(
     allFolderList,
     { currentProjectId, mountableHosts },
+    !ownerEmail,
   );
 
   const mountConfigs = value ?? [];
