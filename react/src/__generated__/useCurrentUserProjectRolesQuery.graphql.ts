@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7fbb13cc38f76399a15a127cd0276025>>
+ * @generated SignedSource<<d146ce84a5e498b0100fd1f26fc0ed85>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -437,16 +437,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d201629aae89eaff579e6c436291b768",
+    "cacheID": "b87ef5c9295685986512ae3d0448c784",
     "id": null,
     "metadata": {},
     "name": "useCurrentUserProjectRolesQuery",
     "operationKind": "query",
-    "text": "query useCurrentUserProjectRolesQuery(\n  $targets: [PermissionTarget!]!\n  $legacyPermissionFilter: PermissionNestedFilter\n  $supportsHeldPermissions: Boolean!\n) {\n  heldPermissions: myAtomicBulkScopePermissions(input: {targets: $targets}) @include(if: $supportsHeldPermissions) @since(version: \"26.9.0\") {\n    items {\n      scopeId\n      permissions\n    }\n  }\n  legacyRoles: myRoles(first: 100, filter: {permission: $legacyPermissionFilter}) @skip(if: $supportsHeldPermissions) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useCurrentUserProjectRolesQuery(\n  $targets: [PermissionTarget!]!\n  $legacyPermissionFilter: PermissionNestedFilter\n  $supportsHeldPermissions: Boolean!\n) {\n  heldPermissions: myAtomicBulkScopePermissions(input: {targets: $targets}) @include(if: $supportsHeldPermissions) @since(version: \"26.9.0a4\") {\n    items {\n      scopeId\n      permissions\n    }\n  }\n  legacyRoles: myRoles(first: 100, filter: {permission: $legacyPermissionFilter}) @skip(if: $supportsHeldPermissions) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "980bff276095d5b37f8dbf497e0ebccc";
+(node as any).hash = "314a6919b8903ac472a9b927ca3b5511";
 
 export default node;
