@@ -1021,6 +1021,11 @@ export class Client {
       // `type`, so the Projects page can hide the per-user PERSONAL projects
       // (BA-7659) behind a removable chip. FR-4015.
       this._features['group-nodes-type-filter'] = true;
+      // BA-7659 / backend PR #14251 — `PERSONAL` joins the `ProjectTypeV2`
+      // enum, so a v2 project filter may name it. Enum coercion rejects the
+      // whole query on a manager without the member, so the filter must be
+      // omitted there. FR-4036.
+      this._features['personal-project-type'] = true;
       // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.
@@ -1205,10 +1210,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
         }
         return this.check_login();
       } else if (result.authenticated === false) {

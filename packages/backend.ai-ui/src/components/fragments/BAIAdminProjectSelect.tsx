@@ -71,7 +71,14 @@ export interface BAIAdminProjectSelectProps extends Omit<
     option?: BAILabeledValue | Array<BAILabeledValue>,
   ) => void;
   filter?: {
-    type?: { equals?: 'GENERAL' | 'MODEL_STORE' };
+    /**
+     * `notEquals: 'PERSONAL'` needs a manager that declares the member —
+     * gate it on `personal-project-type` at the call site.
+     */
+    type?: {
+      equals?: 'GENERAL' | 'MODEL_STORE';
+      notEquals?: 'PERSONAL';
+    };
   };
   ref?: React.Ref<BAIAdminProjectSelectRef>;
 }

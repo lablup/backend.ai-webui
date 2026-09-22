@@ -4,6 +4,7 @@
  */
 import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from '../__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIRadioGroup from './BAIRadioGroup';
 import QuotaScopeTable from './QuotaScopeTable';
 import {
@@ -25,6 +26,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
   const storageVolume = useFragment(
     graphql`
       fragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {
@@ -73,6 +75,13 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
             // field's accessible name reuses it and stays visually hidden.
             label={t('storageHost.ForProject')}
             isLabelHidden
+            // A PERSONAL project's quota follows its one owner, who is already
+            // reachable through the "For User" side. FR-4036.
+            filter={
+              baiClient.supports('personal-project-type')
+                ? { type: { notEquals: 'PERSONAL' } }
+                : undefined
+            }
             value={projectId}
             onChange={(value) => setProjectId(value as string | undefined)}
             width={240}

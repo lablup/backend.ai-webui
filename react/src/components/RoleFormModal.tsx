@@ -163,7 +163,17 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'PROJECT') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminProjectSelect {...branchProps} />
+        <BAIAdminProjectSelect
+          // A PERSONAL project holds one user's own resources and is created
+          // and removed with that user, so it is not a role scope anyone
+          // grants against. FR-4036.
+          filter={
+            baiClient.supports('personal-project-type')
+              ? { type: { notEquals: 'PERSONAL' } }
+              : undefined
+          }
+          {...branchProps}
+        />
       </Suspense>
     );
   }
