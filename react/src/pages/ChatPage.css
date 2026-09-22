@@ -7,7 +7,6 @@
  carries `position: relative` and `overflow: hidden`.
 */
 .chat-history-panel {
-  /* The pre-Astryx antd drawer's `size={300}`. */
   --chat-history-panel-width: 300px;
 
   position: absolute;

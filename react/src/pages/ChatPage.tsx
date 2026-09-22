@@ -127,9 +127,8 @@ interface ChatHistoryPanelProps {
   onClickHistory: (id: string) => void;
 }
 
-// Contained by the chat-area wrapper (`position: relative`), not the viewport:
-// it overlays only the chat cards, as the pre-Astryx `getContainer={false}`
-// antd drawer did. Styling: ChatPage.css.
+// Contained by the chat-area wrapper (position: relative), so it overlays only
+// the chat cards. Styling: ChatPage.css.
 const ChatHistoryPanel = ({
   selectedHistoryId,
   history,
@@ -144,7 +143,7 @@ const ChatHistoryPanel = ({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    closeButtonRef.current?.focus();
+    closeButtonRef.current?.focus({ preventScroll: true });
   }, []);
 
   return (
