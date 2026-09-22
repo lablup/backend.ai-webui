@@ -826,10 +826,18 @@
     }
 
     const PIN_EXCERPT = 72;
-    // What the row says a pin is: its text, or the file name of an image.
-    const pinText = (c) => {
+    // What the row says a pin is: its own text. An image has none a reader
+    // would know, so it borrows the section it sits in and falls back to its
+    // file name.
+    const pinText = (c, pageTitle) => {
       const raw = (c.newText || c.oldText || "").replace(/\s+/g, " ").trim();
-      const text = c.blockKind === "image" ? raw.split("/").pop() || raw : raw;
+      const section = c.section && c.section.text;
+      const text =
+        c.blockKind === "image"
+          ? (section === pageTitle ? "" : section) ||
+            raw.split("/").pop() ||
+            raw
+          : raw;
       return text.length > PIN_EXCERPT
         ? `${text.slice(0, PIN_EXCERPT)}…`
         : text || KIND_LABEL[c.blockKind] || c.blockKind;
@@ -855,7 +863,7 @@
             ` data-pin-slug="${escAttr(p.slug)}" data-pin-id="${c.id}"` +
             ` title="${escAttr(pinTitle(c))}">` +
             `<span class="bai-nav__pin-id bai-nav__pin-id--${c.type}">${c.id}</span>` +
-            `<span class="bai-nav__pin-text">${esc(pinText(c))}</span>` +
+            `<span class="bai-nav__pin-text">${esc(pinText(c, p.title))}</span>` +
             (noted
               ? `<span class="bai-nav__pin-flag bai-nav__pin-flag--note" title="has a comment">✎</span>`
               : "") +
