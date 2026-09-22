@@ -1,0 +1,1 @@
+import{Y as i,h as t,Z as f,_ as n}from"./iframe-DG6aux2g.js";function u(e,s,r){if(!i(r))return!1;var a=typeof s;return(a=="number"?t(r)&&f(s,r.length):a=="string"&&s in r)?n(r[s],e):!1}export{u as i};
