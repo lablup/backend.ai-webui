@@ -59,7 +59,7 @@ StyleX source for the consumer to compile.
 
 The root `pnpm-workspace.yaml` catalog pins `@astryxdesign/core`,
 `theme-neutral` and `cli` to **0.6.2**, and `lab` to `0.3.0-canary.12db2a1`.
-FR-4034 / #9854 made that bump. The "v0.5.4" in `CLAUDE.md`'s ASTRYX block is
+FR-4034 / #9854 made that bump. `CLAUDE.md`'s ASTRYX block on current `main` also says v0.6.2. Older checkouts still say v0.5.4, which is
 stale. Source for all of this section:
 `react/node_modules/@astryxdesign/core/package.json` and its `dist/`.
 
