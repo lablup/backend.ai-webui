@@ -118,6 +118,8 @@ export declare const localeCompare: (a?: string | null, b?: string | null) => nu
 type KnownGlobalIdType = 'VirtualFolderNode' | 'VFolder' | 'ComputeSessionNode' | 'GroupNode' | 'UserNode' | 'ProjectNode' | 'ModelDeployment' | 'ImageV2';
 export declare const toGlobalId: (type: KnownGlobalIdType, id: string) => string;
 export declare const toLocalId: (globalId: string) => string;
+/** The V2 `VFolder` global id for a folder UUID, as `vfolderV2.id` carries it. */
+export declare const toVFolderV2GlobalId: (vfolderId: string) => string;
 /**
  * Filters out empty values from an array. An item is considered "empty" if it is:
  * - `undefined`
