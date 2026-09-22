@@ -551,8 +551,8 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     },
     {
       title: t('data.Type'),
-      dataIndex: 'type',
-      sorter: (a, b) => a.type.localeCompare(b.type),
+      dataIndex: 'ownership_type',
+      sorter: (a, b) => a.ownership_type.localeCompare(b.ownership_type),
       render: (_, record) => {
         return (
           <BAIFlex direction="column">

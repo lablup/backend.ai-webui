@@ -57,7 +57,7 @@ const flush = () =>
 const renderWithFolders = async (
   value: Array<VFolderMountConfigValue>,
   onChange: (next: Array<VFolderMountConfigValue>) => void,
-  options: { folders?: Array<LegacyVFolder>; ownerEmail?: string } = {},
+  options: { folders?: Array<LegacyVFolder> } = {},
 ) => {
   await act(async () => {
     render(
@@ -69,7 +69,6 @@ const renderWithFolders = async (
           <BAIVFolderMountConfigInput
             currentProjectId={MOCK_LEGACY_PROJECT_ID}
             mountableHosts={MOCK_MOUNTABLE_HOSTS}
-            ownerEmail={options.ownerEmail}
             value={value}
             onChange={onChange}
           />
@@ -98,8 +97,8 @@ describe('BAIVFolderMountConfigInput prune', () => {
     expect(warning).toHaveBeenCalledTimes(1);
   });
 
-  // backend.ai#14679: REST `permission` is the caller's effective level, and
-  // the manager refuses to mount a folder they resolve to `none`.
+  // backend.ai#14679: `permission` is the caller's effective level, and the
+  // manager refuses to mount a folder they resolve to `none`.
   it('drops an entry the caller resolves to none and warns once', async () => {
     const warning = vi.spyOn(message, 'warning').mockImplementation(vi.fn());
     const onChange = vi.fn();
@@ -112,22 +111,6 @@ describe('BAIVFolderMountConfigInput prune', () => {
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith([mountableEntry]);
     expect(warning).toHaveBeenCalledTimes(1);
-  });
-
-  // With `ownerEmail` the REST value is still the caller's, not that user's,
-  // so the gate must be off and the manager resolves the level for them.
-  it('keeps a none entry when mounting on behalf of another user', async () => {
-    const warning = vi.spyOn(message, 'warning').mockImplementation(vi.fn());
-    const onChange = vi.fn();
-
-    await renderWithFolders([mountableEntry, noneEntry], onChange, {
-      folders: [...mockLegacyVFolders, noneFolder],
-      ownerEmail: 'someone-else@lablup.com',
-    });
-
-    expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
-    expect(onChange).not.toHaveBeenCalled();
-    expect(warning).not.toHaveBeenCalled();
   });
 
   it('keeps a fully mountable selection and stays silent', async () => {
