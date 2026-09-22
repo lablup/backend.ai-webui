@@ -262,7 +262,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             />
           }
           placement="below"
-          alignment="start"
+          alignment="end"
           style={{
             padding: token.paddingXS,
           }}

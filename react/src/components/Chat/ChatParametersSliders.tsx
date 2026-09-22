@@ -63,6 +63,9 @@ export const ChatParameterSliderFormItem = ({
         min={min}
         max={max}
         step={step ?? null}
+        // Astryx `NumberInput`'s min-content (~246px) exceeds this popover's
+        // width, so without this the `flex: 3` slider collapses to 0.
+        inputContainerMinWidth={0}
       />
     </BAIFormItem>
   );
