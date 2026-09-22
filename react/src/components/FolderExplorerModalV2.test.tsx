@@ -7,7 +7,13 @@ import '../../__test__/resizeObserver.mock.js';
 import FolderExplorerModalV2 from './FolderExplorerModalV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -260,9 +266,11 @@ const renderModal = ({
       MockPayloadGenerator.generate(operation, {
         // The legacy per-user RBAC list the FR-3800 gating reads.
         VirtualFolderNode: () => ({
+          id: btoa(`VirtualFolderNode:${VFOLDER_UUID}`),
           name: 'legacy-folder-name',
           host: 'local:volume1',
           unmanaged_path: null,
+          status: 'ready',
           permissions: legacyPermissions ?? [
             'read_content',
             'write_content',
@@ -602,6 +610,17 @@ describe('FolderExplorerModalV2 v2-resolver fallback (FR-3997)', () => {
     expect(fileExplorerProps.at(-1)?.targetVFolderName).toBe(
       'legacy-folder-name',
     );
+    // The header keeps its shape on the legacy node — identicon and level-3
+    // heading — instead of collapsing to a plain-text name (FR-4042).
+    const title = screen.getByTestId('folder-explorer-title');
+    expect(
+      within(title).getByRole('heading', {
+        level: 3,
+        name: 'legacy-folder-name',
+      }),
+    ).toBeInTheDocument();
+    expect(title.querySelector('img.bai-vfolder-identicon')).not.toBeNull();
+    expect(screen.getByTestId('folder-explorer-actions')).toBeInTheDocument();
     // The warning replaces the metadata content, not the whole modal: the info
     // panel keeps its tabs, and the audit log runs off its own query.
     expect(
