@@ -48,3 +48,9 @@
     animation: none;
   }
 }
+
+/* `showHeader={false}` hides the row Astryx carries column widths on, so the
+   table shrinks to its content and pulls the row actions off the edge. */
+.chat-history-panel__body table {
+  width: 100%;
+}

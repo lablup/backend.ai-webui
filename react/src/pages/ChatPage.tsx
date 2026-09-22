@@ -225,6 +225,7 @@ const ChatHistoryPanel = ({
             },
             {
               key: 'actions',
+              align: 'right',
               width: token.sizeXXL,
               render: (_, record) => (
                 <IconButton
