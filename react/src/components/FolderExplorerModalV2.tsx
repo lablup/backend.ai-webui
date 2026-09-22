@@ -33,6 +33,7 @@ import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
+import FolderExplorerHeader from './FolderExplorerHeader';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -205,6 +206,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             host
             unmanaged_path
             permissions
+            ...FolderExplorerHeaderFragment
           }
           vfolderNode: vfolderV2(vfolderId: $vfolderId) {
             unmanagedPath
@@ -526,9 +528,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         },
       }}
       headerContent={
-        !vfolderNode ? (
-          <span>{folderName}</span>
-        ) : (
+        vfolderNode ? (
           <FolderExplorerHeaderV2
             vfolderNodeFrgmt={vfolderNode}
             // ADR-0001: on super-admin routes `pageProject` is `null` — the
@@ -541,6 +541,12 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 : undefined
             }
           />
+        ) : legacyVFolderNode ? (
+          // FR-3997 fallback: the V1 header draws the same identicon, title,
+          // rename and session buttons from the legacy node's own fragments.
+          <FolderExplorerHeader vfolderNodeFrgmt={legacyVFolderNode} />
+        ) : (
+          <span />
         )
       }
       closeLabel={t('button.Close')}
