@@ -35,12 +35,10 @@ export interface BAIVFolderMountConfigInputProps {
     onChange?: (value: VFolderMountConfigValue[]) => void;
     currentProjectId?: string;
     /**
-     * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
-     * project folder's owner line needs it from the host.
+     * Name of `currentProjectId`, for a project folder's owner line when the
+     * node carries no `group_name`.
      */
     currentProjectName?: string;
-    /** Lists the folders of this user instead of the caller's own. */
-    ownerEmail?: string;
     /**
      * Hosts granting `mount-in-session`. Which policies merge into that list
      * is the host app's business, so it is supplied rather than queried here.

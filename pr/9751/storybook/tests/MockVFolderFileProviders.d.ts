@@ -9,7 +9,7 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
     vfolders?: Array<MockVFolder>;
     trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-    /** Rows the mocked REST `GET /folders` request answers with. */
+    /** Rows `vfolder_nodes` answers with, in the shape the mount select reads. */
     folders?: Array<LegacyVFolder>;
     /** Fallback for a Suspense boundary around `children`; omit to render bare. */
     suspenseFallback?: React.ReactNode;

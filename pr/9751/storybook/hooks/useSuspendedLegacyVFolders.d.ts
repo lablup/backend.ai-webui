@@ -1,7 +1,7 @@
 /**
- * A folder as the REST `GET /folders` endpoint returns it. Distinct from the
- * GraphQL `vfolder_nodes` shape: `id` is the 32-hex local id (no dashes) and
- * `group` is the owning project's UUID or `null` for a user folder.
+ * A folder as `vfolder_nodes` returns it, reshaped to the field names the
+ * mount select and the auto-mount helper already read. `id` is the dashed row
+ * uuid and `group` is the owning project's uuid, or `null` for a user folder.
  */
 export interface LegacyVFolder {
     name: string;
@@ -11,7 +11,6 @@ export interface LegacyVFolder {
     status: string;
     usage_mode: string;
     created_at: string;
-    is_owner: boolean;
     permission: string;
     user: string | null;
     group: string | null;
@@ -19,27 +18,31 @@ export interface LegacyVFolder {
     user_email: string | null;
     group_name: string | null;
     ownership_type: string;
-    type: string;
     cloneable: boolean;
     max_files: number;
     max_size: null | number;
     cur_size: number;
 }
 export interface LegacyVFolderListOptions {
-    /** Lists this user's folders instead of the caller's own. */
-    ownerEmail?: string;
-    /** Scopes the list to a project (`group_id`) server side. */
+    /** Scopes the list to a project; the caller's own folders come with it. */
     groupId?: string;
 }
 /**
- * The folder list behind `BAIVFolderMountConfigInput`: the caller's folders,
- * or `ownerEmail`'s when a session is launched on someone else's behalf.
- * Suspends. One cache entry per owner and project, so a host deriving
- * something from the same list (auto-mounted names) shares the single fetch.
+ * The level the CALLER mounts this folder at. `vfolder_nodes.permissions` is
+ * resolved per caller — owner, then their policy row, then the folder default
+ * (backend.ai#14679) — so a folder they cannot mount carries no mount verb at
+ * all. `wd` folds into `rw`, the vocabulary the select renders.
  */
-export declare const useSuspendedLegacyVFolders: ({ ownerEmail, groupId, }?: LegacyVFolderListOptions) => {
+export declare const mountLevelFromPermissions: (permissions: ReadonlyArray<unknown> | null | undefined) => string;
+/**
+ * The folder list behind `BAIVFolderMountConfigInput`, and the auto-mount
+ * helper reading the same rows. Always the caller's own reachable folders:
+ * `vfolder_nodes` takes no owner, so a session launched for somebody else no
+ * longer lists that person's folders (FR-4045). Suspends.
+ */
+export declare const useSuspendedLegacyVFolders: ({ groupId, }?: LegacyVFolderListOptions) => {
     folders: LegacyVFolder[];
-    refetch: (options?: import('@tanstack/react-query').RefetchOptions) => Promise<import('@tanstack/react-query').QueryObserverResult<LegacyVFolder[], unknown>>;
+    refetch: () => Promise<void>;
     isFetching: boolean;
 };
 export interface LegacyVFolderMountScope {
