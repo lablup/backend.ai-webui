@@ -34,6 +34,10 @@ import {
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  probeLoginSession,
+  type LoginBootstrap,
+} from '../helper/loginBootstrap';
+import {
   getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
@@ -437,14 +441,22 @@ const LoginView: React.FC<{
   );
 
   const doGQLConnect = useCallback(
-    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
+    async (
+      client: ReturnType<typeof createBackendAIClient>['client'],
+      bootstrap?: LoginBootstrap | null,
+    ) => {
       // Read directly from Jotai store to get the latest config synchronously,
       // including any merged webserver config from loadConfigFromWebServer().
       // Using configRef.current here would return stale config because React
       // hasn't re-rendered yet after the Jotai atom update.
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
 
-      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      const updatedEndpoints = await connectViaGQL(
+        client,
+        cfg,
+        endpoints,
+        bootstrap,
+      );
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);
@@ -706,6 +718,10 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
       clientRef.current = client;
 
+      // Reachability and the existing-session check run concurrently; the
+      // bootstrap query answers 401 when the webserver holds no session for
+      // this browser. Only the probe is awaited first so Esc can still abort.
+      const sessionProbe = probeLoginSession(client).catch(() => null);
       try {
         await probeManager(client);
       } catch (err: unknown) {
@@ -718,17 +734,10 @@ const LoginView: React.FC<{
         return;
       }
 
-      // Check if already logged in
-      let isLogon = false;
-      try {
-        isLogon = !!(await client.check_login());
-      } catch {
-        isLogon = false;
-      }
-
-      if (isLogon) {
+      const bootstrap = await sessionProbe;
+      if (bootstrap) {
         try {
-          await doGQLConnect(client);
+          await doGQLConnect(client, bootstrap);
         } catch (err: unknown) {
           handleGQLError(err, showError);
         }
@@ -959,9 +968,11 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
       try {
-        await probeManager(client);
-        const isLogon = await client.check_login();
-        return !!isLogon;
+        const [, bootstrap] = await Promise.all([
+          probeManager(client),
+          probeLoginSession(client),
+        ]);
+        return bootstrap !== null;
       } catch {
         return false;
       }
