@@ -46,6 +46,7 @@ import {
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
+import { INTENTIONAL_LOGOUT_FLAG } from '../hooks/useLogout';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
@@ -922,8 +923,16 @@ const LoginView: React.FC<{
   // a login modal. Fires once — a failure leaves the error and the form for
   // the human rather than retrying into the login_attempt limiter.
   const autoLoginFiredRef = useRef(false);
+  // An intentional logout reloads the page, so without this the screen would
+  // remount and sign the same account straight back in — leaving no way to
+  // reach the form. Read at first render: useLoginOrchestration clears the
+  // flag from an effect.
+  const [followsIntentionalLogout] = useState(
+    () => sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG) === '1',
+  );
   const fireAutoLogin = useEffectEvent(() => {
     if (autoLoginFiredRef.current) return;
+    if (followsIntentionalLogout) return;
     if (connectionMode !== 'SESSION') return;
     if (!devEmailOverride || !devPasswordOverride) return;
     autoLoginFiredRef.current = true;
