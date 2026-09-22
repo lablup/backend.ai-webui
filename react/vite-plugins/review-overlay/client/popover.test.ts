@@ -36,7 +36,10 @@ const viewport = (width: number, height: number) => {
   });
 };
 
-const model = (place: PopoverPlace): PopoverModel => ({
+const model = (
+  place: PopoverPlace,
+  over: Partial<PopoverModel> = {},
+): PopoverModel => ({
   id: 'c_aaaaaaa',
   index: 0,
   total: 3,
@@ -52,6 +55,9 @@ const model = (place: PopoverPlace): PopoverModel => ({
   comment: '',
   viewed: false,
   place,
+  lang: 'en',
+  langs: [],
+  ...over,
 });
 
 let host: HTMLElement;
@@ -66,6 +72,8 @@ const box = () => {
   return { top, left: style.left, transform: style.transform };
 };
 
+const picked: string[] = [];
+
 const make = () =>
   createPopover(
     root,
@@ -73,12 +81,14 @@ const make = () =>
       onToggleViewed: () => {},
       onComment: () => {},
       onCopyRef: () => {},
+      onLanguage: (lang) => picked.push(lang),
       onClose: () => {},
     },
     { pageChords: true },
   );
 
 beforeEach(() => {
+  picked.length = 0;
   document.body.innerHTML = '';
   viewport(1280, 900);
   host = document.createElement('div');
@@ -177,5 +187,64 @@ describe('popover placement', () => {
 
     // width = min(560, 552) = 552, so the furthest right edge is 600-552-12.
     expect(box().left).toBe('36px');
+  });
+});
+
+/**
+ * The KO/EN toggle (FR-4057). A stop minted with a translation offers it; one
+ * minted without carries no toggle at all, which is every stop older than the
+ * feature.
+ */
+describe('language toggle', () => {
+  const bilingual = (over: Partial<PopoverModel> = {}) =>
+    model(
+      { kind: 'away', page: 'Data' },
+      {
+        lang: 'ko',
+        langs: ['ko', 'en'],
+        changed: '업로드 버튼이 카드 헤더로 옮겨졌습니다.',
+        check: '목록 위에 버튼이 보여야 합니다.',
+        ...over,
+      },
+    );
+
+  it('offers every language the stop carries, marking the current one', () => {
+    make().render(bilingual());
+    const buttons = [
+      ...panel().querySelectorAll<HTMLElement>('[data-pact="lang"]'),
+    ];
+    expect(buttons.map((b) => b.textContent)).toEqual(['ko', 'en']);
+    expect(buttons.map((b) => b.getAttribute('aria-pressed'))).toEqual([
+      'true',
+      'false',
+    ]);
+  });
+
+  it('draws no toggle for a stop minted in one language', () => {
+    make().render(model({ kind: 'away', page: 'Data' }));
+    expect(panel().querySelector('[data-pact="lang"]')).toBeNull();
+  });
+
+  it('reports the language the reader clicked', () => {
+    make().render(bilingual());
+    panel()
+      .querySelector<HTMLElement>('[data-lang="en"]')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(picked).toEqual(['en']);
+  });
+
+  it('rewrites the same stop when only the language changed', () => {
+    const pop = make();
+    pop.render(bilingual());
+    expect(panel().textContent).toContain('무엇이 바뀌었나');
+    pop.render(
+      bilingual({
+        lang: 'en',
+        changed: 'The upload button moved into the card header.',
+        check: 'The button shows above the list.',
+      }),
+    );
+    expect(panel().textContent).toContain('What changed');
+    expect(panel().textContent).toContain('moved into the card header');
   });
 });
