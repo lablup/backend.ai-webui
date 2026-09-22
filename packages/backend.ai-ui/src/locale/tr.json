@@ -136,7 +136,7 @@
     "CannotBeUndone": "Bu işlem geri alınamaz.",
     "DeleteItem": "Sil",
     "DeleteNItems": "{{count}} öğeyi sil",
-    "TypeToConfirm": "Onaylamak için <code>{{confirmText}}</code> yazın."
+    "TypeToConfirm": "Onaylamak için <token>{{confirmText}}</token> yazın."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Oluşturan"

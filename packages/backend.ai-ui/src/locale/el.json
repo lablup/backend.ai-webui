@@ -136,7 +136,7 @@
     "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
     "DeleteItem": "Διαγραφή",
     "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
-    "TypeToConfirm": "Πληκτρολογήστε <code>{{confirmText}}</code> για επιβεβαίωση."
+    "TypeToConfirm": "Πληκτρολογήστε <token>{{confirmText}}</token> για επιβεβαίωση."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"

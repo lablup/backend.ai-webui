@@ -136,7 +136,7 @@
     "CannotBeUndone": "Esta acción no se puede deshacer.",
     "DeleteItem": "Eliminar",
     "DeleteNItems": "Eliminar {{count}} elementos",
-    "TypeToConfirm": "Escriba <code>{{confirmText}}</code> para confirmar."
+    "TypeToConfirm": "Escriba <token>{{confirmText}}</token> para confirmar."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creado por"

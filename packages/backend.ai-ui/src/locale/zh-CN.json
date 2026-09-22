@@ -136,7 +136,7 @@
     "CannotBeUndone": "此操作无法撤销。",
     "DeleteItem": "删除",
     "DeleteNItems": "删除 {{count}} 个项目",
-    "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
+    "TypeToConfirm": "输入 <token>{{confirmText}}</token> 以确认。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "创建者"

@@ -136,7 +136,7 @@
     "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "DeleteItem": "ลบ",
     "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
+    "TypeToConfirm": "พิมพ์ <token>{{confirmText}}</token> เพื่อยืนยัน"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"

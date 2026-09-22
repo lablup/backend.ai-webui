@@ -136,7 +136,7 @@
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Padam",
     "DeleteNItems": "Padam {{count}} item",
-    "TypeToConfirm": "Taip <code>{{confirmText}}</code> untuk mengesahkan."
+    "TypeToConfirm": "Taip <token>{{confirmText}}</token> untuk mengesahkan."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"

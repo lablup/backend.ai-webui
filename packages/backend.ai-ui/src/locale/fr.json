@@ -136,7 +136,7 @@
     "CannotBeUndone": "Cette action est irréversible.",
     "DeleteItem": "Supprimer",
     "DeleteNItems": "Supprimer {{count}} éléments",
-    "TypeToConfirm": "Saisissez <code>{{confirmText}}</code> pour confirmer."
+    "TypeToConfirm": "Saisissez <token>{{confirmText}}</token> pour confirmer."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Créé par"

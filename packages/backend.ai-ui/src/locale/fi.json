@@ -136,7 +136,7 @@
     "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
     "DeleteItem": "Poista",
     "DeleteNItems": "Poista {{count}} kohdetta",
-    "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
+    "TypeToConfirm": "Kirjoita <token>{{confirmText}}</token> vahvistaaksesi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Luonut"
