@@ -29,8 +29,10 @@ import {
   type BAIColumnsType,
   BAIFetchKeyButton,
   BAIFlex,
+  BAIId,
   BAIListAlert,
   BAITable,
+  BAIText,
   INITIAL_FETCH_KEY,
   toLocalId,
   tokenColorForStatus,
@@ -242,34 +244,36 @@ const RolePermissionRowEditor: React.FC<RolePermissionRowEditorProps> = ({
           }))}
         />
       )}
-      <BAIFlex gap="lg" wrap="wrap" align="center">
-        {PERMISSION_BITS.map((bit) => {
-          const isGrantable = row.grantable.has(bit);
-          const checkbox = (
-            <BAICheckbox
-              checked={checked[bit]}
-              disabled={!isGrantable}
-              onChange={(next) =>
-                setChecked((previous) => ({ ...previous, [bit]: next }))
-              }
-            >
-              {bitLabel(bit)}
-            </BAICheckbox>
-          );
-          return isGrantable ? (
-            <React.Fragment key={bit}>{checkbox}</React.Fragment>
-          ) : (
-            <Tooltip key={bit} content={t('rbac.PermissionNotAssignable')}>
-              {checkbox}
-            </Tooltip>
-          );
-        })}
-      </BAIFlex>
-      <BAIFlex gap="xs" justify="end">
-        <Button label={t('button.Cancel')} onClick={onCancel} />
-        <BAIButton type="primary" disabled={!isDirty} action={save}>
-          {t('button.Save')}
-        </BAIButton>
+      <BAIFlex justify="between" align="center" gap="md" wrap="wrap">
+        <BAIFlex gap="lg" wrap="wrap" align="center">
+          {PERMISSION_BITS.map((bit) => {
+            const isGrantable = row.grantable.has(bit);
+            const checkbox = (
+              <BAICheckbox
+                checked={checked[bit]}
+                disabled={!isGrantable}
+                onChange={(next) =>
+                  setChecked((previous) => ({ ...previous, [bit]: next }))
+                }
+              >
+                {bitLabel(bit)}
+              </BAICheckbox>
+            );
+            return isGrantable ? (
+              <React.Fragment key={bit}>{checkbox}</React.Fragment>
+            ) : (
+              <Tooltip key={bit} content={t('rbac.PermissionNotAssignable')}>
+                {checkbox}
+              </Tooltip>
+            );
+          })}
+        </BAIFlex>
+        <BAIFlex gap="xs" align="center">
+          <Button label={t('button.Cancel')} onClick={onCancel} />
+          <BAIButton type="primary" disabled={!isDirty} action={save}>
+            {t('button.Save')}
+          </BAIButton>
+        </BAIFlex>
       </BAIFlex>
     </BAIFlex>
   );
@@ -277,6 +281,10 @@ const RolePermissionRowEditor: React.FC<RolePermissionRowEditorProps> = ({
 
 export interface RolePermissionSummaryTableProps {
   roleNodeFrgmt: RolePermissionSummaryTableFragment$key;
+  /** The role's scope, resolved by the drawer content (it selects `scope`
+   *  once for both; a second selection would ride the role list query). */
+  scopeName: string | null;
+  scopeId: string;
 }
 
 /**
@@ -288,6 +296,8 @@ export interface RolePermissionSummaryTableProps {
  */
 const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   roleNodeFrgmt,
+  scopeName,
+  scopeId,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -454,16 +464,26 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
       <BAIFlex justify="between" align="center" gap="sm" wrap="wrap">
-        <TextInput
-          label={t('rbac.FilterByPermissionType')}
-          isLabelHidden
-          value={filterText}
-          hasClear
-          startIcon={Search}
-          placeholder={t('rbac.FilterByPermissionType')}
-          onChange={setFilterText}
-          width={260}
-        />
+        <BAIFlex gap="sm" align="center" wrap="wrap">
+          <BAIFlex gap="xs" align="center">
+            {scopeName ? (
+              <BAIText strong>{scopeName}</BAIText>
+            ) : (
+              <BAIId uuid={scopeId} style={{ maxWidth: 160 }} />
+            )}
+            <Token color="blue" label={rbacTypeLabel(scopeType)} />
+          </BAIFlex>
+          <TextInput
+            label={t('rbac.FilterByPermissionType')}
+            isLabelHidden
+            value={filterText}
+            hasClear
+            startIcon={Search}
+            placeholder={t('rbac.FilterByPermissionType')}
+            onChange={setFilterText}
+            width={260}
+          />
+        </BAIFlex>
         <BAIFetchKeyButton
           value={fetchKey}
           onChange={updateFetchKey}
