@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * FR-3989: a selected project the domain's option list cannot contain (the
- * user's PERSONAL project) used to render as a bare UUID.
+ * FR-3989: the user's PERSONAL project, which the domain's option list never
+ * contains, used to render as a bare UUID.
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
@@ -38,6 +38,13 @@ const groups = [
     is_active: true,
     resource_policy: 'default',
   },
+  {
+    id: 'project-model-store',
+    name: 'model-store',
+    type: 'MODEL_STORE',
+    is_active: true,
+    resource_policy: 'default',
+  },
 ];
 
 vi.mock('../hooks/useAccessibleProjects', () => ({
@@ -65,9 +72,11 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   };
 });
 
+type SelectOption = { value: string; label: unknown; disabled: boolean };
+
 const renderSelect = (props: {
   value: Array<string>;
-  fallbackProjects?: Array<{ id: string; name: string; type?: string | null }>;
+  personalProject?: { id: string; name: string };
   lockedProjectTypes?: Array<string>;
 }) =>
   render(
@@ -80,106 +89,76 @@ const renderSelect = (props: {
     />,
   );
 
-describe('ProjectSelect fallbackProjects', () => {
-  it('labels a selected project the option list does not contain', () => {
-    renderSelect({
-      value: ['project-general', 'project-archived'],
-      fallbackProjects: [
-        { id: 'project-archived', name: 'archived-team', type: 'GENERAL' },
-      ],
-    });
+const readGroups = () =>
+  JSON.parse(screen.getByTestId('options').textContent ?? '[]') as Array<{
+    label: string;
+    options: Array<SelectOption>;
+  }>;
 
-    const options = screen.getByTestId('options').textContent ?? '';
-    expect(options).toContain('archived-team');
-    expect(options).toContain('project-archived');
-  });
+const personalProject = { id: 'project-personal', name: 'seungwon' };
 
-  it('ignores a fallback project that is not selected', () => {
-    renderSelect({
-      value: ['project-general'],
-      fallbackProjects: [
-        { id: 'project-archived', name: 'archived-team', type: 'GENERAL' },
-      ],
-    });
-
-    const options = screen.getByTestId('options').textContent ?? '';
-    expect(options).toContain('coredev');
-    expect(options).not.toContain('archived-team');
-  });
-
-  it('does not duplicate a fallback project that is already an option', () => {
-    renderSelect({
-      value: ['project-general'],
-      fallbackProjects: [
-        { id: 'project-general', name: 'coredev', type: 'GENERAL' },
-      ],
-    });
-
-    const options = screen.getByTestId('options').textContent ?? '';
-    expect(options.match(/coredev/g)).toHaveLength(2); // label + projectName
-  });
-
-  it('labels and locks a selected PERSONAL project', () => {
+describe('ProjectSelect personalProject', () => {
+  it('shows the personal project by name, locked, under the Personal group', () => {
     renderSelect({
       value: ['project-general', 'project-personal'],
-      fallbackProjects: [
-        { id: 'project-general', name: 'coredev', type: 'GENERAL' },
-        { id: 'project-personal', name: 'seungwon', type: 'PERSONAL' },
-      ],
-      lockedProjectTypes: ['PERSONAL'],
+      personalProject,
     });
 
-    const groupsJson = JSON.parse(
-      screen.getByTestId('options').textContent ?? '[]',
-    ) as Array<{
-      label: string;
-      options: Array<{ value: string; label: string; disabled: boolean }>;
-    }>;
+    const groupsJson = readGroups();
     expect(groupsJson.map((group) => group.label)).toEqual([
       'general.General',
+      'data.ModelStore',
       'projectSelect.Personal',
     ]);
-    const options = groupsJson.flatMap((group) => group.options);
-    expect(options).toHaveLength(2);
-    const personal = options.find(
-      (option) => option.value === 'project-personal',
+    const personalGroup = groupsJson.find(
+      (group) => group.label === 'projectSelect.Personal',
     );
-    expect(personal).toMatchObject({ disabled: true });
+    expect(personalGroup?.options).toHaveLength(1);
+    const personal = personalGroup?.options[0];
+    expect(personal).toMatchObject({
+      value: 'project-personal',
+      disabled: true,
+    });
     expect(JSON.stringify(personal?.label)).toContain('seungwon');
     expect(JSON.stringify(personal?.label)).toContain(
       'projectSelect.PersonalProjectCannotBeRemoved',
     );
-    const general = options.find(
-      (option) => option.value === 'project-general',
-    );
+    const general = groupsJson[0].options[0];
     expect(general).toMatchObject({ disabled: false, label: 'coredev' });
   });
 
-  it('shows the lock hint only on a locked PERSONAL option', () => {
+  it('has no personal option without the prop', () => {
+    renderSelect({ value: ['project-general'] });
+
+    const options = screen.getByTestId('options').textContent ?? '';
+    expect(options).not.toContain('projectSelect.Personal');
+    expect(options).not.toContain('project-personal');
+  });
+
+  it('locks a MODEL_STORE option without the personal tooltip', () => {
     renderSelect({
-      value: ['project-general', 'project-personal'],
-      fallbackProjects: [
-        { id: 'project-personal', name: 'seungwon', type: 'PERSONAL' },
-      ],
+      value: ['project-general', 'project-model-store'],
+      lockedProjectTypes: ['MODEL_STORE'],
     });
-    // Unlocked PERSONAL option: no hint.
+
+    const modelStore = readGroups()
+      .flatMap((group) => group.options)
+      .find((option) => option.value === 'project-model-store');
+    expect(modelStore).toMatchObject({ disabled: true, label: 'model-store' });
     expect(screen.getByTestId('options').textContent).not.toContain(
       'projectSelect.PersonalProjectCannotBeRemoved',
     );
   });
 
-  it('does not show the lock hint on a locked MODEL_STORE option', () => {
+  it('does not duplicate a personal project that is already an option', () => {
     renderSelect({
-      value: ['project-general', 'project-model-store'],
-      fallbackProjects: [
-        { id: 'project-model-store', name: 'model-store', type: 'MODEL_STORE' },
-      ],
-      lockedProjectTypes: ['MODEL_STORE'],
+      value: ['project-general'],
+      personalProject: { id: 'project-general', name: 'coredev' },
     });
-    const options = screen.getByTestId('options').textContent ?? '';
-    expect(options).toContain('"disabled":true');
-    expect(options).not.toContain(
-      'projectSelect.PersonalProjectCannotBeRemoved',
-    );
+
+    const options = readGroups().flatMap((group) => group.options);
+    expect(
+      options.filter((option) => option.value === 'project-general'),
+    ).toHaveLength(1);
   });
 });

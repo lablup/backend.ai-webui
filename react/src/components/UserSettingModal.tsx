@@ -327,20 +327,23 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     userSettingFrgmt ?? null,
   );
 
-  // Every membership, PERSONAL included, so the selector can label (and lock)
-  // projects the domain's option list does not offer.
-  const projectMemberships = _.compact(
+  // PERSONAL included: the manager ignores it in `groupIds`, and the selector
+  // shows it as a locked option.
+  const projectMembershipIds = _.compact(
     _.map(user?.projects?.edges, (edge) =>
-      edge?.node
-        ? {
-            id: toLocalId(edge.node.id),
-            name: edge.node.basicInfo.name,
-            type: edge.node.basicInfo.type,
-          }
-        : null,
+      edge?.node?.id ? toLocalId(edge.node.id) : null,
     ),
   );
-  const projectMembershipIds = _.map(projectMemberships, 'id');
+  const personalProjectNode = _.find(
+    user?.projects?.edges,
+    (edge) => edge?.node?.basicInfo.type === 'PERSONAL',
+  )?.node;
+  const personalProject = personalProjectNode
+    ? {
+        id: toLocalId(personalProjectNode.id),
+        name: personalProjectNode.basicInfo.name,
+      }
+    : undefined;
 
   // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
   const [commitUpdateUserV2, isInFlightUpdateUserV2] =
@@ -1171,8 +1174,8 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       mode="multiple"
                       domain={getFieldValue('domain_name')}
                       disableDefaultFilter
-                      lockedProjectTypes={user ? ['PERSONAL'] : ['MODEL_STORE']}
-                      fallbackProjects={projectMemberships}
+                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                      personalProject={personalProject}
                     />
                   </BAIFormItem>
                 );

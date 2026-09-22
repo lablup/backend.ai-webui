@@ -24,22 +24,15 @@ type ProjectInfo = {
   projectResourcePolicy: any; // Replace 'any' with the actual type
   projectName: string;
 };
-export type FallbackProject = {
-  id: string;
-  name: string;
-  type?: string | null;
-};
 export interface ProjectSelectProps extends BAISelectProps {
   onSelectProject?: (projectInfo: ProjectInfo) => void;
   domain: string;
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
-  /**
-   * Labels selected projects the domain's option list cannot contain (e.g. a
-   * PERSONAL project). Only selected entries become options.
-   */
-  fallbackProjects?: ReadonlyArray<FallbackProject>;
+  /** The user's personal project, which the domain's option list never
+   * contains; shown as a locked option. */
+  personalProject?: { id: string; name: string };
   'aria-label'?: string;
 }
 
@@ -48,7 +41,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
-  fallbackProjects,
+  personalProject,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
@@ -68,35 +61,31 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
 
   const accessibleProjects = disableDefaultFilter ? groups : memberProjects;
 
-  const selectedIds: Array<string> = _.compact(_.castArray(value ?? []));
-  const fallbackOptionProjects = _.map(
-    _.filter(
-      fallbackProjects,
-      (project) =>
-        selectedIds.includes(project.id) &&
-        !_.some(accessibleProjects, { id: project.id }),
-    ),
-    (project) => ({
-      id: project.id,
-      name: project.name,
-      type: project.type ?? 'GENERAL',
-      is_active: null,
-      resource_policy: null,
-    }),
-  );
   const optionProjects = [
     ...(accessibleProjects ?? []),
-    ...fallbackOptionProjects,
+    ...(personalProject &&
+    !_.some(accessibleProjects, { id: personalProject.id })
+      ? [
+          {
+            ...personalProject,
+            type: 'PERSONAL',
+            is_active: null,
+            resource_policy: null,
+          },
+        ]
+      : []),
   ];
 
-  const isLockedType = (type?: string | null) =>
-    !!lockedProjectTypes?.includes(type ?? '');
-  const lockedProjectIds: Array<string> = _.compact(
-    _.map(
-      _.filter(accessibleProjects, (p) => isLockedType(p?.type)),
-      'id',
-    ),
-  );
+  const lockedProjectIds = !lockedProjectTypes?.length
+    ? []
+    : (_.compact(
+        _.map(
+          _.filter(accessibleProjects, (p) =>
+            lockedProjectTypes.includes(p?.type ?? ''),
+          ),
+          'id',
+        ),
+      ) as string[]);
 
   // Auto-select locked projects when they become available
   const autoSelectLockedProjects = useEffectEvent(() => {
@@ -129,11 +118,11 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
           const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
-          const isLocked = isLockedType(project?.type);
-          const showLockIcon = isLocked && project?.type === 'PERSONAL';
+          const isPersonal =
+            !!personalProject && project?.id === personalProject.id;
           return {
             label:
-              isAdmin || showLockIcon ? (
+              isAdmin || isPersonal ? (
                 <BAIFlex gap={token.marginXS} align="center">
                   <span>{project?.name}</span>
                   {isAdmin && (
@@ -143,7 +132,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
                       icon={<ShieldUser />}
                     />
                   )}
-                  {showLockIcon && (
+                  {isPersonal && (
                     <BAIIconWithTooltip
                       content={t(
                         'projectSelect.PersonalProjectCannotBeRemoved',
@@ -160,7 +149,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,
             projectName: project?.name,
-            disabled: isLocked,
+            disabled:
+              isPersonal || lockedProjectIds.includes(project?.id ?? ''),
           };
         }),
       };
