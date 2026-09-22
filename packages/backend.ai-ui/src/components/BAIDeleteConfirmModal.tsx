@@ -48,6 +48,7 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { Token } from '@astryxdesign/core/Token';
 import { CircleAlert } from 'lucide-react';
 import React, { isValidElement, useState } from 'react';
 
@@ -215,7 +216,7 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     <BAITrans
       i18nKey="comp:BAIDeleteConfirmModal.TypeToConfirm"
       values={{ confirmText: resolvedConfirmText }}
-      components={{ code: <Text type="code">{''}</Text> }}
+      components={{ token: <Token label={resolvedConfirmText} size="sm" /> }}
     />
   );
 

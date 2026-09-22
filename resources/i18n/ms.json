@@ -711,7 +711,6 @@
     "StatusInfo": "Maklumat Status",
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika pilihan ini diaktifkan, pengguna perlu menukar kata laluan mereka semasa log masuk seterusnya.",
-    "TypePermanentlyDelete": "Sila taip \"{{text}}\".",
     "UpdateUsers": "Sunting Pengguna secara Pukal",
     "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) mungkin menghadkan penggunaan pemasangan folder yang telah dibuat sebelum ini.",
     "UpdatedUsers": "Dikemas kini {{count}} daripada {{total}} pengguna.",

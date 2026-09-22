@@ -73,6 +73,17 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   // is the whole mechanism here too.
   const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
   const [deleteModelServices, setDeleteModelServices] = useState(false);
+  // Both options are per-purge choices, so an open starts them over. Derived
+  // state via the render-phase compare, as BAIDeleteConfirmModal resets its
+  // own typed-confirm gate (FR-3990).
+  const [wasOpen, setWasOpen] = useState(!!open);
+  if (!!open !== wasOpen) {
+    setWasOpen(!!open);
+    if (open) {
+      setPurgeSharedVfolders(false);
+      setDeleteModelServices(false);
+    }
+  }
   // Per-user failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{
@@ -197,9 +208,6 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         }))}
         requireConfirmInput
         confirmText={t('credential.PermanentlyDelete')}
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
         inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
         cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
         okText={t('credential.PermanentlyDelete')}

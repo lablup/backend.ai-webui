@@ -711,7 +711,6 @@
     "StatusInfo": "Info Status",
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika opsi ini diaktifkan, pengguna harus mengganti kata sandi saat masuk berikutnya.",
-    "TypePermanentlyDelete": "Silakan ketik \"{{text}}\".",
     "UpdateUsers": "Edit Massal Pengguna",
     "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) dapat membatasi penggunaan mount folder yang telah dibuat sebelumnya.",
     "UpdatedUsers": "Diperbarui {{count}} dari {{total}} pengguna.",

@@ -133,7 +133,7 @@
     "CannotBeUndone": "Hành động này không thể hoàn tác.",
     "DeleteItem": "Xóa",
     "DeleteNItems": "Xóa {{count}} mục",
-    "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
+    "TypeToConfirm": "Nhập <token>{{confirmText}}</token> để xác nhận."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Được tạo bởi"

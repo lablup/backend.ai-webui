@@ -711,7 +711,6 @@
     "StatusInfo": "Informazioni sullo stato",
     "StatusUpdatedSuccessfully": "Lo stato dell'utente è cambiato.",
     "TooltipForRequirePasswordChange": "Se abiliti questa opzione, l'utente dovrà cambiare la password al prossimo accesso.",
-    "TypePermanentlyDelete": "Digita \"{{text}}\".",
     "UpdateUsers": "Modifica in blocco degli utenti",
     "UpdateUsersWarningAlertTitle": "Impostare UID o GID(s) potrebbe limitare l'uso dei mount di cartelle creati in precedenza.",
     "UpdatedUsers": "Aggiornati {{count}} di {{total}} utenti.",

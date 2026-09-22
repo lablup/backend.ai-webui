@@ -133,7 +133,7 @@
     "CannotBeUndone": "Questa azione non può essere annullata.",
     "DeleteItem": "Elimina",
     "DeleteNItems": "Elimina {{count}} elementi",
-    "TypeToConfirm": "Digita <code>{{confirmText}}</code> per confermare."
+    "TypeToConfirm": "Digita <token>{{confirmText}}</token> per confermare."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creato da"

@@ -133,7 +133,7 @@
     "CannotBeUndone": "Esta ação não pode ser desfeita.",
     "DeleteItem": "Excluir",
     "DeleteNItems": "Excluir {{count}} itens",
-    "TypeToConfirm": "Digite <code>{{confirmText}}</code> para confirmar."
+    "TypeToConfirm": "Digite <token>{{confirmText}}</token> para confirmar."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Criado por"

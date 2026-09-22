@@ -698,7 +698,6 @@
     "StatusInfo": "Status Info",
     "StatusUpdatedSuccessfully": "The user status has changed.",
     "TooltipForRequirePasswordChange": "When enabled, the user must change their password at next login.",
-    "TypePermanentlyDelete": "Please type \"{{text}}\".",
     "UpdateUsers": "Bulk Edit Users",
     "UpdateUsersWarningAlertTitle": "Setting UID or GID(s) may restrict the use of previously created folder mounts.",
     "UpdatedUsers": "Updated {{count}} out of {{total}} users.",

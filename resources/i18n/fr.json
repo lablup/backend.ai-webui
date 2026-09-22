@@ -711,7 +711,6 @@
     "StatusInfo": "Informations sur le statut",
     "StatusUpdatedSuccessfully": "Le statut de l'utilisateur a changé.",
     "TooltipForRequirePasswordChange": "Si cette option est activée, l'utilisateur devra changer son mot de passe lors de sa prochaine connexion.",
-    "TypePermanentlyDelete": "Veuillez saisir \"{{text}}\".",
     "UpdateUsers": "Édition en masse des utilisateurs",
     "UpdateUsersWarningAlertTitle": "La définition de l'UID ou des GID peut restreindre l'utilisation des points de montage de dossiers créés précédemment.",
     "UpdatedUsers": "{{count}} utilisateurs mis à jour sur {{total}}.",

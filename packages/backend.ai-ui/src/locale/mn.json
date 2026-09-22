@@ -133,7 +133,7 @@
     "CannotBeUndone": "Энэ үйлдлийг буцаах боломжгүй.",
     "DeleteItem": "Устгах",
     "DeleteNItems": "{{count}} зүйл устгах",
-    "TypeToConfirm": "Баталгаажуулахын тулд <code>{{confirmText}}</code> гэж бичнэ үү."
+    "TypeToConfirm": "Баталгаажуулахын тулд <token>{{confirmText}}</token> гэж бичнэ үү."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Үүсгэсэн"

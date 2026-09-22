@@ -133,7 +133,7 @@
     "CannotBeUndone": "This action cannot be undone.",
     "DeleteItem": "Delete",
     "DeleteNItems": "Delete {{count}} items",
-    "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
+    "TypeToConfirm": "Type <token>{{confirmText}}</token> to confirm."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Created by"

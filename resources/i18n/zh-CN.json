@@ -711,7 +711,6 @@
     "StatusInfo": "状态信息",
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "启用此选项后，用户下次登录时需更改密码。",
-    "TypePermanentlyDelete": "请输入“{{text}}”。",
     "UpdateUsers": "批量编辑用户",
     "UpdateUsersWarningAlertTitle": "设置 UID 或 GID 可能会限制对已创建文件夹挂载的访问。",
     "UpdatedUsers": "已更新 {{count}} / {{total}} 名用户。",

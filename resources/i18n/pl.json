@@ -711,7 +711,6 @@
     "StatusInfo": "Szczegóły statusu",
     "StatusUpdatedSuccessfully": "Status użytkownika uległ zmianie.",
     "TooltipForRequirePasswordChange": "Jeśli ta opcja jest włączona, użytkownik będzie musiał zmienić hasło przy następnym logowaniu.",
-    "TypePermanentlyDelete": "Wpisz \"{{text}}\".",
     "UpdateUsers": "Masowa edycja użytkowników",
     "UpdateUsersWarningAlertTitle": "Ustawienie UID lub GID(ów) może ograniczyć używanie wcześniej utworzonych punktów montowania folderów.",
     "UpdatedUsers": "Zaktualizowano {{count}} z {{total}} użytkowników.",

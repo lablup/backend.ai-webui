@@ -133,7 +133,7 @@
     "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "DeleteItem": "Löschen",
     "DeleteNItems": "{{count}} Elemente löschen",
-    "TypeToConfirm": "Geben Sie <code>{{confirmText}}</code> ein, um zu bestätigen."
+    "TypeToConfirm": "Geben Sie <token>{{confirmText}}</token> ein, um zu bestätigen."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Erstellt von"
