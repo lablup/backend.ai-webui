@@ -6,6 +6,7 @@ import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { theme } from '../theme-shim';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -13,7 +14,7 @@ import {
   BAISelectProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Info, LockIcon, ShieldUser } from 'lucide-react';
+import { Info, ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -120,31 +121,38 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
           const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
           const isPersonal =
             !!personalProject && project?.id === personalProject.id;
+          // Fills the option row so the whole item opens the hint; `pointerEvents`
+          // covers single mode, whose disabled Item sets `none` (FR-3837).
+          const row = (
+            <BAIFlex
+              gap={token.marginXS}
+              align="center"
+              style={
+                isPersonal ? { flexGrow: 1, pointerEvents: 'auto' } : undefined
+              }
+            >
+              <span>{project?.name}</span>
+              {isAdmin && (
+                <BAIIconWithTooltip
+                  content={t('projectSelect.ProjectAdminBadge')}
+                  focusable={false}
+                  icon={<ShieldUser />}
+                />
+              )}
+            </BAIFlex>
+          );
           return {
-            label:
-              isAdmin || isPersonal ? (
-                <BAIFlex gap={token.marginXS} align="center">
-                  <span>{project?.name}</span>
-                  {isAdmin && (
-                    <BAIIconWithTooltip
-                      content={t('projectSelect.ProjectAdminBadge')}
-                      focusable={false}
-                      icon={<ShieldUser />}
-                    />
-                  )}
-                  {isPersonal && (
-                    <BAIIconWithTooltip
-                      content={t(
-                        'projectSelect.PersonalProjectCannotBeRemoved',
-                      )}
-                      focusable={false}
-                      icon={<LockIcon />}
-                    />
-                  )}
-                </BAIFlex>
-              ) : (
-                project?.name
-              ),
+            label: isPersonal ? (
+              <Tooltip
+                content={t('projectSelect.PersonalProjectCannotBeRemoved')}
+              >
+                {row}
+              </Tooltip>
+            ) : isAdmin ? (
+              row
+            ) : (
+              project?.name
+            ),
             value: project?.id,
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,

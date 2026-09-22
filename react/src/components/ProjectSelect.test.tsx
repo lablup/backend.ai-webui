@@ -9,9 +9,13 @@
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
 import ProjectSelect from './ProjectSelect';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { isValidElement, type ReactElement, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+const captured = vi.hoisted(() => ({ options: undefined as unknown }));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -58,21 +62,15 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
   const actual = await importOriginal<typeof import('backend.ai-ui')>();
   return {
     ...actual,
-    // Serialize the resolved option list; the real popup needs a live
-    // dropdown, and what this test is about is which options exist.
-    // React dev elements carry a circular `_owner`; drop the `_`-prefixed
-    // internals so a JSX label serializes as its type-less props tree.
-    BAISelect: ({ options }: { options?: unknown }) => (
-      <div data-testid="options">
-        {JSON.stringify(options, (key, value) =>
-          key.startsWith('_') ? undefined : value,
-        )}
-      </div>
-    ),
+    // Capture the resolved option list; the real popup needs a live dropdown.
+    BAISelect: ({ options }: { options?: unknown }) => {
+      captured.options = options;
+      return null;
+    },
   };
 });
 
-type SelectOption = { value: string; label: unknown; disabled: boolean };
+type SelectOption = { value: string; label: ReactNode; disabled: boolean };
 
 const renderSelect = (props: {
   value: Array<string>;
@@ -90,10 +88,7 @@ const renderSelect = (props: {
   );
 
 const readGroups = () =>
-  JSON.parse(screen.getByTestId('options').textContent ?? '[]') as Array<{
-    label: string;
-    options: Array<SelectOption>;
-  }>;
+  captured.options as Array<{ label: string; options: Array<SelectOption> }>;
 
 const personalProject = { id: 'project-personal', name: 'seungwon' };
 
@@ -119,10 +114,20 @@ describe('ProjectSelect personalProject', () => {
       value: 'project-personal',
       disabled: true,
     });
-    expect(JSON.stringify(personal?.label)).toContain('seungwon');
-    expect(JSON.stringify(personal?.label)).toContain(
+
+    // The whole label is the tooltip trigger; no lock glyph beside the name.
+    const label = personal?.label as ReactElement<{
+      content: ReactNode;
+      children: ReactNode;
+    }>;
+    expect(isValidElement(label) && label.type).toBe(Tooltip);
+    expect(label.props.content).toBe(
       'projectSelect.PersonalProjectCannotBeRemoved',
     );
+    const { container } = render(<>{label.props.children}</>);
+    expect(container.textContent).toBe('seungwon');
+    expect(container.querySelector('svg')).toBeNull();
+
     const general = groupsJson[0].options[0];
     expect(general).toMatchObject({ disabled: false, label: 'coredev' });
   });
@@ -130,9 +135,13 @@ describe('ProjectSelect personalProject', () => {
   it('has no personal option without the prop', () => {
     renderSelect({ value: ['project-general'] });
 
-    const options = screen.getByTestId('options').textContent ?? '';
-    expect(options).not.toContain('projectSelect.Personal');
-    expect(options).not.toContain('project-personal');
+    const groups = readGroups();
+    expect(groups.map((group) => group.label)).not.toContain(
+      'projectSelect.Personal',
+    );
+    expect(
+      groups.flatMap((group) => group.options).map((option) => option.value),
+    ).not.toContain('project-personal');
   });
 
   it('locks a MODEL_STORE option without the personal tooltip', () => {
@@ -144,10 +153,8 @@ describe('ProjectSelect personalProject', () => {
     const modelStore = readGroups()
       .flatMap((group) => group.options)
       .find((option) => option.value === 'project-model-store');
+    // A plain string label, so no tooltip wraps it.
     expect(modelStore).toMatchObject({ disabled: true, label: 'model-store' });
-    expect(screen.getByTestId('options').textContent).not.toContain(
-      'projectSelect.PersonalProjectCannotBeRemoved',
-    );
   });
 
   it('does not duplicate a personal project that is already an option', () => {
