@@ -18,6 +18,7 @@
  - `BAIFileExplorer` / `ScopedAuditLog` / `BAILink` stay BUI (frontier:
    tickets 25/28 own their internals).
 */
+import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
@@ -31,6 +32,7 @@ import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
@@ -116,6 +118,45 @@ interface FolderExplorerProps extends Omit<
   /** Accepted and ignored — the Astryx modal always unmounts when closed. */
   destroyOnHidden?: boolean;
 }
+
+// Read through the legacy `group_node`, which skips the RBAC own check that
+// `vfolderV2.ownership.project` runs, so a personal project is recognised even
+// when the caller holds no project role on it (FR-3983).
+const OwnershipProjectBanner: React.FC<{
+  projectId: string;
+  projectName?: string | null;
+}> = ({ projectId, projectName }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { group_node } =
+    useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
+      graphql`
+        query FolderExplorerModalV2OwnershipProjectQuery($projectId: String!) {
+          group_node(id: $projectId) @since(version: "24.03.0") {
+            id
+            type
+          }
+        }
+      `,
+      { projectId: toGlobalId('GroupNode', projectId) },
+    );
+
+  // The header never offers a personal project, so a folder in one is not
+  // "in another project" — the mismatch is structural, not a user choice.
+  if (group_node?.type === 'PERSONAL') {
+    return null;
+  }
+  return (
+    <Banner
+      title={
+        projectName
+          ? t('data.NotInProject', { projectName })
+          : t('data.BelongsToDifferentProject')
+      }
+      status="info"
+    />
+  );
+};
 
 const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   vfolderID,
@@ -590,17 +631,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             ) : pageProject !== null &&
               pageProject.id !== vfolderNode?.ownership?.projectId &&
               !!vfolderNode?.ownership?.projectId ? (
-              <Banner
-                title={
-                  vfolderNode.ownership?.project?.basicInfo?.name
-                    ? t('data.NotInProject', {
-                        projectName:
-                          vfolderNode.ownership.project.basicInfo.name,
-                      })
-                    : t('data.BelongsToDifferentProject')
-                }
-                status="info"
-              />
+              <ErrorBoundaryWithNullFallback>
+                <Suspense fallback={null}>
+                  <OwnershipProjectBanner
+                    projectId={vfolderNode.ownership.projectId}
+                    projectName={vfolderNode.ownership.project?.basicInfo?.name}
+                  />
+                </Suspense>
+              </ErrorBoundaryWithNullFallback>
             ) : null}
 
             {isFolderReadable && !hasNoPermissions ? (
