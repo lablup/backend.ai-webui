@@ -291,7 +291,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
                     gap={1}
                     vAlign="center"
                     hAlign="between"
-                    className="bai-complex-select__foot"
+                    className="bai-complex-select__foot bai-complex-select__foot--divided"
                   >
                     <Button
                       variant="ghost"
