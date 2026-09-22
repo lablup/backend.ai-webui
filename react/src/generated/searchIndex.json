@@ -3505,6 +3505,7 @@
         "error.ServiceUnavailable",
         "error.UnauthorizedToken",
         "error.UnknownError",
+        "general.TotalItems",
         "general.Value",
         "modelService.BasePath",
         "modelService.Token",

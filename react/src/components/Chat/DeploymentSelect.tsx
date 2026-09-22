@@ -40,7 +40,10 @@ import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { getCustomEndpointHost } from './ChatModel';
+import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { HStack } from '@astryxdesign/core/Stack';
+import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIComplexSelect,
@@ -201,6 +204,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
     },
   );
 
+  const total = myDeployments?.count ?? undefined;
   const options: Array<BAIComplexSelectOption> = _.compact(
     _.map(paginationData, (node) => {
       const value = node?.id ? toLocalId(node.id) : undefined;
@@ -209,13 +213,6 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
         : null;
     }),
   );
-  if (onSelectCustomEndpoint) {
-    options.push({
-      value: CUSTOM_ENDPOINT_OPTION_VALUE,
-      label: t('chatui.customEndpoint.ConnectCustomEndpoint'),
-      icon: <LinkIcon size="1em" />,
-    });
-  }
 
   const labeledValue: BAIComplexSelectValue = customEndpointURL
     ? ({
@@ -280,17 +277,41 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           {...selectProps}
           isLoading={isLoading || searchStr !== deferredSearchStr}
           isLoadingNext={isLoadingNext}
-          total={myDeployments?.count ?? undefined}
+          total={total}
           options={options}
           value={labeledValue}
           onChange={(next) => {
             const value = _.isArray(next) ? next[0]?.value : next?.value;
-            if (value === CUSTOM_ENDPOINT_OPTION_VALUE) {
-              onSelectCustomEndpoint?.();
-              return;
-            }
             setControllableValue(value, undefined);
           }}
+          footer={
+            onSelectCustomEndpoint
+              ? (close) => (
+                  <HStack
+                    gap={1}
+                    vAlign="center"
+                    hAlign="between"
+                    className="bai-complex-select__foot"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      icon={<LinkIcon size="1em" />}
+                      label={t('chatui.customEndpoint.ConnectCustomEndpoint')}
+                      onClick={() => {
+                        close();
+                        onSelectCustomEndpoint();
+                      }}
+                    />
+                    {_.isNumber(total) && total > 0 ? (
+                      <Text color="secondary" size="sm">
+                        {t('general.TotalItems', { total })}
+                      </Text>
+                    ) : null}
+                  </HStack>
+                )
+              : undefined
+          }
           searchValue={searchStr}
           onSearch={setSearchStr}
           onOpenChange={setControllableOpen}
