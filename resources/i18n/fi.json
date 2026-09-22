@@ -2316,6 +2316,7 @@
     "UpdatedAt": "Päivitetty"
   },
   "rbac": {
+    "AccessLevel": "Käyttöoikeustaso",
     "Activate": "Aktivoi",
     "ActivateRole": "Aktivoi rooli",
     "Active": "Aktiivinen",
@@ -2350,6 +2351,7 @@
     "EntityType": "Käyttöoikeuden tyyppi",
     "ErrorMessage": "Virheilmoitus",
     "FKConstraintViolation": "Roolia ei voi poistaa pysyvästi. Poista ensin kaikki määritykset ja käyttöoikeudet.",
+    "FilterByPermissionType": "Suodata käyttöoikeustyypin mukaan",
     "FullyAllowed": "Täysin sallittu",
     "GrantedAt": "Myönnetty",
     "Inactive": "Ei-aktiivinen",
