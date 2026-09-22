@@ -1100,7 +1100,13 @@ export async function generateWebDiff(
       const headFile = path.join(headDir, `${slug}.html`);
       const headHtml = stripInjected(fs.readFileSync(headFile, "utf-8"));
       const headBlocks = extractBlocks(headHtml, headDir);
-      if (!headBlocks) continue;
+      if (!headBlocks) {
+        // No chapter body to diff — the language index, the redirect stubs.
+        // The PR comment's preview link lands on the index, so it still gets
+        // the overlay: the navigator there reaches every changed page.
+        fs.writeFileSync(headFile, injectHead(headHtml, [], slug, assetPrefix));
+        continue;
+      }
 
       const title = pageTitle(headHtml, slug);
       const sourcePath = sourcePathOf(headHtml, lang, slug);
