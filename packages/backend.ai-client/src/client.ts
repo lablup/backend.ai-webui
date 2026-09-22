@@ -36,6 +36,7 @@ import {
 import { safeStorage } from './safe-storage';
 import type {
   FeatureSet,
+  GraphQLEnvelope,
   GraphQLVariables,
   LoginEnvelope,
   RequestBody,
@@ -1072,8 +1073,26 @@ export class Client {
   }
 
   /**
-   * Check if webserver is authenticated. This requires additional webserver package.
-   *
+   * Adopt the live webserver session without a `/server/login-check` round
+   * trip: the access key comes from a login envelope or the bootstrap
+   * GraphQL query, the session id from the last `X-BackendAI-SessionID`
+   * header. Returns false when either is missing so the caller can fall
+   * back to `check_login`.
+   */
+  adoptLoginSession(accessKey: string | null | undefined): boolean {
+    if (!accessKey || !this._loginSessionId) {
+      return false;
+    }
+    this._config._accessKey = accessKey;
+    this._config._session_id = this._loginSessionId;
+    return true;
+  }
+
+  /**
+   * Ask the webserver whether it holds a session for this browser. Page load
+   * no longer calls this (FR-2367): the bootstrap GraphQL query answers 401
+   * for an unknown session instead. Kept as the fallback for a session whose
+   * id is not known locally (`adoptLoginSession` returned false).
    */
   async check_login() {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null, null);
@@ -1154,6 +1173,9 @@ export class Client {
       if (this._loginSessionId !== null && this._loginSessionId !== '') {
         safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
       }
+      if (this.adoptLoginSession(result.data.access_key)) {
+        return true;
+      }
       return this.check_login();
     }
 
@@ -1205,10 +1227,10 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        }
+        if (this.adoptLoginSession(result.data?.access_key)) {
+          return true;
         }
         return this.check_login();
       } else if (result.authenticated === false) {
@@ -1886,14 +1908,30 @@ export class Client {
     retry: number = 0,
     secure: boolean = false,
   ): Promise<TData> {
+    return this.queryEnvelope<TData>(q, v, signal, timeout, retry, secure).then(
+      (r) => r.data,
+    );
+  }
+
+  /**
+   * `query` with the whole response body. The GraphQL router reports a
+   * subgraph's 401 as a 200 whose `errors[]` carry the refusal, so a caller
+   * that needs the auth outcome reads it from here rather than from `data`.
+   */
+  async queryEnvelope<TData = unknown>(
+    q: string,
+    v: GraphQLVariables | null,
+    signal: AbortSignal | null = null,
+    timeout: number = 0,
+    retry: number = 0,
+    secure: boolean = false,
+  ): Promise<GraphQLEnvelope<TData>> {
     let query = {
       query: q,
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: { data: TData }) => r.data,
-    );
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
   /**

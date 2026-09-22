@@ -14,6 +14,7 @@
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
 import { Form } from '../form-engine';
+import { probeLoginSession } from '../helper/loginBootstrap';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -326,25 +327,23 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
 
     const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
 
-    try {
-      await client.get_manager_version();
-    } catch (cause) {
+    // Reachability and the cookie-session fast-path settle in one round
+    // trip. A browser the webserver already knows (a prior login in the
+    // same browser) skips `token_login` entirely; this also covers a
+    // caller that mounts the boundary without a URL token.
+    const [managerProbe, sessionProbe] = await Promise.allSettled([
+      client.get_manager_version(),
+      probeLoginSession(client),
+    ]);
+    if (managerProbe.status === 'rejected') {
+      const cause = managerProbe.reason;
       logger.error('[STokenLoginBoundary] server unreachable', cause);
       surfaceError({ kind: 'server-unreachable', cause });
       return;
     }
-
-    // Idempotency / cookie-session fast-path: if the browser already
-    // holds a valid session (from a prior login in the same browser), we
-    // skip `token_login` entirely. This also covers the case where a
-    // caller mounts the boundary without a URL token — an existing
-    // session alone is enough to reach the success state.
-    let alreadyLoggedIn = false;
-    try {
-      alreadyLoggedIn = !!(await client.check_login());
-    } catch {
-      alreadyLoggedIn = false;
-    }
+    const bootstrap =
+      sessionProbe.status === 'fulfilled' ? (sessionProbe.value ?? null) : null;
+    const alreadyLoggedIn = bootstrap !== null;
 
     // Only after the session check do we surface `missing-token`: a bare
     // `?sToken=` URL with no cookie session still fails, but a session
@@ -408,7 +407,7 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
         // re-authenticating. `backend-ai-connected` is still dispatched
         // below so Relay and plugin subscribers unblock even on this
         // fast-path.
-        await connectViaGQL(client, cfg, endpoints);
+        await connectViaGQL(client, cfg, endpoints, bootstrap);
       } else {
         await tokenLogin(client, sToken!, cfg, endpoints, effectiveParams);
       }
