@@ -127,8 +127,8 @@ interface ChatHistoryPanelProps {
   onClickHistory: (id: string) => void;
 }
 
-// Contained by the chat-area wrapper (position: relative), so it overlays only
-// the chat cards. Styling: ChatPage.css.
+// Contained by the page card (position: relative), so it overlays the whole
+// card, header included. Styling: ChatPage.css.
 const ChatHistoryPanel = ({
   selectedHistoryId,
   history,
@@ -385,6 +385,7 @@ const PureChatPage = ({ id }: { id: string }) => {
             display: 'flex',
             flexDirection: 'column',
             flex: 1,
+            position: 'relative',
           }}
         >
           <VStack
@@ -428,9 +429,7 @@ const PureChatPage = ({ id }: { id: string }) => {
             {/* `flex: 1` + `minHeight: 0`, never `height: 100%` — this column
                 shares the parent VStack's height with the title row, so
                 `height: 100%` overflows it by the title row and `overflow:
-                hidden` eats the composer off the bottom.
-                `position: relative` contains the history panel here, so it
-                overlays the chat cards only — never the page header. */}
+                hidden` eats the composer off the bottom. */}
             <BAIFlex
               direction="column"
               align="stretch"
@@ -438,7 +437,6 @@ const PureChatPage = ({ id }: { id: string }) => {
                 overflow: 'hidden',
                 minHeight: 0,
                 flex: 1,
-                position: 'relative',
               }}
             >
               {id && (
@@ -488,35 +486,33 @@ const PureChatPage = ({ id }: { id: string }) => {
                   </Suspense>
                 </BAIFlex>
               )}
-              {openHistory && (
-                <ChatHistoryPanel
-                  selectedHistoryId={chat.id}
-                  history={history}
-                  onClickClose={closeHistory}
-                  onClickRemove={(historyId) => {
-                    const remainHistories = removeHistory(historyId);
-
-                    if (remainHistories === 0) {
-                      closeHistory();
-                      navigate(buildProjectPath('chat'), { replace: true });
-                    } else if (historyId === chat.id) {
-                      const chat = history.filter(
-                        ({ id }) => id !== historyId,
-                      )[0];
-                      navigate(buildProjectPath(`chat/${chat?.id}`), {
-                        replace: true,
-                      });
-                    }
-                  }}
-                  onClickHistory={(historyId) => {
-                    navigate(buildProjectPath(`chat/${historyId}`), {
-                      replace: true,
-                    });
-                  }}
-                />
-              )}
             </BAIFlex>
           </VStack>
+          {openHistory && (
+            <ChatHistoryPanel
+              selectedHistoryId={chat.id}
+              history={history}
+              onClickClose={closeHistory}
+              onClickRemove={(historyId) => {
+                const remainHistories = removeHistory(historyId);
+
+                if (remainHistories === 0) {
+                  closeHistory();
+                  navigate(buildProjectPath('chat'), { replace: true });
+                } else if (historyId === chat.id) {
+                  const chat = history.filter(({ id }) => id !== historyId)[0];
+                  navigate(buildProjectPath(`chat/${chat?.id}`), {
+                    replace: true,
+                  });
+                }
+              }}
+              onClickHistory={(historyId) => {
+                navigate(buildProjectPath(`chat/${historyId}`), {
+                  replace: true,
+                });
+              }}
+            />
+          )}
         </Card>
       </BAIFlex>
     )
