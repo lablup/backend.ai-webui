@@ -152,6 +152,13 @@ const ChatSender: React.FC<ChatSenderProps> = ({
       // rather than spending another 28px on a header row.
       density="compact"
       elevation="none"
+      // This composer sits inside a chat card, not in a standalone chat app,
+      // so it takes the card's container radius over Astryx's 28px chat radius.
+      style={
+        {
+          '--_chat-composer-radius': 'var(--radius-container)',
+        } as React.CSSProperties
+      }
       value={value ?? ''}
       onChange={onInputChange}
       onSubmit={() => onInputSubmit?.()}
