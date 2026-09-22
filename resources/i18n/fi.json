@@ -2251,6 +2251,8 @@
     "AskAdminForProjectAccess": "Pyydä järjestelmänvalvojaa myöntämään sinulle pääsy projektiin.",
     "GoToProject": "Siirry projektiin {{project}}",
     "NoAccessibleProjects": "Ei saatavilla olevia projekteja.",
+    "Personal": "Henkilökohtainen",
+    "PersonalProjectCannotBeRemoved": "Käyttäjälle määritettyä henkilökohtaista projektia ei voi poistaa.",
     "ProjectAdminBadge": "Projektin ylläpitäjä",
     "ProjectNotFoundOrNoAccess": "Projektia '{{project}}' ei löydy tai sinulla ei ole siihen pääsyä.",
     "SwitchToAccessibleProject": "Valitse käytettävissä oleva projekti sivun yläreunassa olevasta projektin valitsimesta."

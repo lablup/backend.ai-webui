@@ -2251,6 +2251,8 @@
     "AskAdminForProjectAccess": "Ζητήστε από τον διαχειριστή σας να σας παραχωρήσει πρόσβαση σε ένα έργο.",
     "GoToProject": "Μετάβαση στο {{project}}",
     "NoAccessibleProjects": "Δεν υπάρχουν προσβάσιμα έργα.",
+    "Personal": "Προσωπικό",
+    "PersonalProjectCannotBeRemoved": "Το προσωπικό έργο που έχει ανατεθεί στον χρήστη δεν μπορεί να αφαιρεθεί.",
     "ProjectAdminBadge": "Διαχειριστής έργου",
     "ProjectNotFoundOrNoAccess": "Το έργο '{{project}}' δεν βρέθηκε ή δεν έχετε πρόσβαση σε αυτό.",
     "SwitchToAccessibleProject": "Επιλέξτε ένα προσβάσιμο έργο από τον επιλογέα έργου στο επάνω μέρος της σελίδας."
