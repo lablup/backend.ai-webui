@@ -655,6 +655,59 @@ test("generateWebDiff — modified page: sidecar, manifest, stamping and idempot
   }
 });
 
+test("generateWebDiff — a page with no chapter body still carries the overlay", async () => {
+  const root = tmpdir("chapterless");
+  try {
+    const base = path.join(root, "base");
+    const head = path.join(root, "head");
+    // The language index: a table of contents, nothing to diff. It is where the
+    // PR comment's preview link lands, so the navigator has to be there.
+    const index = [
+      "<!DOCTYPE html>",
+      '<html lang="en">',
+      "<head>",
+      '  <meta charset="utf-8" />',
+      "  <title>User Guide</title>",
+      "</head>",
+      '<body><main><ul><li><a href="./vfolder.html">Folders</a></li></ul></main></body>',
+      "</html>",
+    ].join("\n");
+    for (const build of [base, head]) {
+      writePage(build, "en", "index", index);
+      writePage(build, "en", "vfolder", page("<p>Open the Data page.</p>"));
+    }
+
+    const manifest = await generateWebDiff(makeConfig(root), {
+      base,
+      head,
+      lang: "en",
+      quiet: true,
+    });
+    // Nothing changed, so no page is listed — the index still gets the assets,
+    // and no block stamps, because it has no blocks.
+    assert.equal(manifest.langs.en.totals.pages, 0);
+    const stamped = fs.readFileSync(
+      path.join(head, "next", "en", "index.html"),
+      "utf-8",
+    );
+    assert.equal(stamped.match(/pr-preview\.js/g)?.length, 1);
+    assert.match(stamped, /data-page="index"/);
+    assert.equal(stamped.match(/data-bai-block="/g), null);
+    assert.ok(
+      !fs.existsSync(path.join(head, "next", "en", "index.changes.json")),
+    );
+
+    // Re-running against the already-stamped build changes nothing.
+    await generateWebDiff(makeConfig(root), { base, head, lang: "en", quiet: true });
+    assert.equal(
+      fs.readFileSync(path.join(head, "next", "en", "index.html"), "utf-8"),
+      stamped,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test("generateWebDiff — flags a formatting-only change and leaves text edits unflagged", async () => {
   const root = tmpdir("formatting");
   try {
