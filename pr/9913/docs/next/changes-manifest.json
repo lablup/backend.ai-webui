@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-22T16:12:26.360Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "chat",
+          "title": "Chat",
+          "status": "modified",
+          "url": "next/en/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/chat/chat.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "aeef572010d7"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "chat",
+          "title": "チャット",
+          "status": "modified",
+          "url": "next/ja/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/chat/chat.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "12a56a3305f5"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "chat",
+          "title": "채팅",
+          "status": "modified",
+          "url": "next/ko/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/chat/chat.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "f2890e5de43a"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "chat",
+          "title": "แชท",
+          "status": "modified",
+          "url": "next/th/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/chat/chat.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "c3a74748eb56"
+          ]
+        }
+      ]
+    }
+  }
+}
