@@ -109,14 +109,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
       <BAIFlex direction="column" align="start" gap="xxs">
         {/* Not an <h3>: Astryx has no copyable Heading, so the name renders as
             large text with the shared copy control, as in the other drawers. */}
-        <BAIText
-          strong
-          copyable
-          style={{
-            fontSize: 'var(--text-large-size)',
-            lineHeight: 'var(--text-large-leading)',
-          }}
-        >
+        <BAIText strong copyable size="2xl">
           {role.name}
         </BAIText>
         {role.description ? (
@@ -195,7 +188,11 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
         </TabList>
         <Suspense fallback={<BAISkeleton />}>
           {activeTab === 'permissions' && (
-            <RolePermissionSummaryTable roleNodeFrgmt={role} />
+            <RolePermissionSummaryTable
+              roleNodeFrgmt={role}
+              scopeName={scopeName}
+              scopeId={role.scopeId ?? ''}
+            />
           )}
           {activeTab === 'assignments' && (
             <RoleAssignmentTab roleNodeFrgmt={role} />
