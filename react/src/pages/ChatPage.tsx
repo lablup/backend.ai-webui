@@ -10,7 +10,10 @@ import {
   getChatById,
   useHistory,
 } from '../components/Chat/ChatHistory';
-import { type ChatProviderData } from '../components/Chat/ChatModel';
+import {
+  normalizeCustomEndpointURL,
+  type ChatProviderData,
+} from '../components/Chat/ChatModel';
 import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -95,17 +98,24 @@ function useDefaultDeploymentId() {
 export function useChatProviderData(
   defaultDeploymentId?: string,
 ): ChatProviderData {
-  const [{ deploymentId, modelId, agentId, apiKey }] = useQueryStates({
+  const [{ deploymentId, modelId, agentId, apiKey, baseURL }] = useQueryStates({
     deploymentId: parseAsString,
     agentId: parseAsString,
     modelId: parseAsString,
     apiKey: parseAsString,
+    baseURL: parseAsString,
   });
+  // `?baseURL=` opens a custom endpoint; the key is never taken from the URL.
+  const customBaseURL = baseURL
+    ? normalizeCustomEndpointURL(baseURL)
+    : undefined;
 
   return {
     basePath: 'v1', // Use OpenAPI 'v1' for OpenAI compatibility basePath,
-    baseURL: '',
-    deploymentId: deploymentId ?? defaultDeploymentId ?? undefined,
+    baseURL: customBaseURL ?? '',
+    deploymentId: customBaseURL
+      ? ''
+      : (deploymentId ?? defaultDeploymentId ?? undefined),
     agentId: agentId ?? undefined,
     modelId: modelId ?? undefined,
     apiKey: apiKey ?? undefined,

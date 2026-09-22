@@ -39,6 +39,7 @@ import { useAccessibleProjects } from '../../hooks/useAccessibleProjects';
 import { useCurrentProjectValue } from '../../hooks/useCurrentProject';
 import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import { useProjectPath } from '../../hooks/useRouteScope';
+import { getCustomEndpointHost } from './ChatModel';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
@@ -46,13 +47,14 @@ import {
   BAIFlex,
   toGlobalId,
   toLocalId,
+  type BAIComplexSelectOption,
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
   type BAILabeledValue,
   useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon, LinkIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -74,12 +76,20 @@ export interface DeploymentSelectProps extends Omit<
   onChange?: (value: string | undefined) => void;
   fetchKey?: string;
   showDetailPageButton?: boolean;
+  /** When set, the trigger shows this custom endpoint instead of a deployment. */
+  customEndpointURL?: string;
+  /** Fired when the user picks the "custom endpoint" row; `onChange` is not. */
+  onSelectCustomEndpoint?: () => void;
 }
+
+export const CUSTOM_ENDPOINT_OPTION_VALUE = '__custom_endpoint__';
 
 const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
   fetchKey,
   showDetailPageButton: showInfoButton,
   isLoading,
+  customEndpointURL,
+  onSelectCustomEndpoint,
   ...selectProps
 }) => {
   'use memo';
@@ -191,7 +201,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
     },
   );
 
-  const options = _.compact(
+  const options: Array<BAIComplexSelectOption> = _.compact(
     _.map(paginationData, (node) => {
       const value = node?.id ? toLocalId(node.id) : undefined;
       return value && node?.metadata.name
@@ -199,13 +209,25 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
         : null;
     }),
   );
+  if (onSelectCustomEndpoint) {
+    options.push({
+      value: CUSTOM_ENDPOINT_OPTION_VALUE,
+      label: t('chatui.customEndpoint.ConnectCustomEndpoint'),
+      icon: <LinkIcon size="1em" />,
+    });
+  }
 
-  const labeledValue: BAIComplexSelectValue = controllableValue
+  const labeledValue: BAIComplexSelectValue = customEndpointURL
     ? ({
-        label: selectedDeployment?.metadata.name ?? controllableValue,
-        value: controllableValue,
+        label: getCustomEndpointHost(customEndpointURL) ?? customEndpointURL,
+        value: CUSTOM_ENDPOINT_OPTION_VALUE,
       } satisfies BAILabeledValue)
-    : null;
+    : controllableValue
+      ? ({
+          label: selectedDeployment?.metadata.name ?? controllableValue,
+          value: controllableValue,
+        } satisfies BAILabeledValue)
+      : null;
 
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -263,6 +285,10 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           value={labeledValue}
           onChange={(next) => {
             const value = _.isArray(next) ? next[0]?.value : next?.value;
+            if (value === CUSTOM_ENDPOINT_OPTION_VALUE) {
+              onSelectCustomEndpoint?.();
+              return;
+            }
             setControllableValue(value, undefined);
           }}
           searchValue={searchStr}
@@ -275,7 +301,7 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
             <IconButton
               icon={<InfoIcon />}
               label={t('deployment.GoToDetailPage')}
-              isDisabled={!controllableValue}
+              isDisabled={!controllableValue || !!customEndpointURL}
               onClick={goToDeploymentDetailPage}
             />
           </Tooltip>

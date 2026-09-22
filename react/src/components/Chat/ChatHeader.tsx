@@ -9,7 +9,11 @@ import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useProjectPath } from '../../hooks/useRouteScope';
 import { theme } from '../../theme-shim';
 import AIAgentSelect from './AIAgentSelect';
-import type { ChatModel, ChatParameters } from './ChatModel';
+import {
+  getCustomEndpointHost,
+  type ChatModel,
+  type ChatParameters,
+} from './ChatModel';
 import { ChatParametersSliders } from './ChatParametersSliders';
 import DeploymentSelect, { DeploymentSelectProps } from './DeploymentSelect';
 import ModelSelect from './ModelSelect';
@@ -70,6 +74,8 @@ interface ChatHeaderProps {
   onChangeModel: (modelId: string) => void;
   deploymentFrgmt?: ChatHeader_Deployment$key | null;
   onChangeDeployment: DeploymentSelectProps['onChange'];
+  customEndpointURL?: string;
+  onSelectCustomEndpoint?: () => void;
   agents: AIAgent[];
   agent?: AIAgent;
   onChangeAgent: (agent: AIAgent) => void;
@@ -96,6 +102,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onChangeModel,
   deploymentFrgmt,
   onChangeDeployment,
+  customEndpointURL,
+  onSelectCustomEndpoint,
   agent,
   onChangeAgent,
   sync,
@@ -138,8 +146,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   // item) has no destination on Astryx `DropdownMenuItemData` (no color/
   // variant field, closed shape) — dropped (P5: closed enum, no colour
   // escape hatch).
+  // The deployments "chatting" tab addresses a deployment, not a URL.
+  const canCompare = showCompareMenuItem && !customEndpointURL;
   const items: DropdownMenuOption[] = filterOutEmpty([
-    showCompareMenuItem && {
+    canCompare && {
       label: t('chatui.CompareWithOtherModels'),
       icon: <ScaleIcon />,
       onClick: () => {
@@ -153,7 +163,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         });
       },
     },
-    showCompareMenuItem && {
+    canCompare && {
       type: 'divider' as const,
     },
     {
@@ -226,12 +236,18 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             }}
             value={deploymentId}
             showDetailPageButton
+            customEndpointURL={customEndpointURL}
+            onSelectCustomEndpoint={onSelectCustomEndpoint}
           />
         )}
         {!isEmpty(models) && (
           <ModelSelect
             models={models}
-            deploymentName={deployment?.metadata.name}
+            deploymentName={
+              customEndpointURL
+                ? getCustomEndpointHost(customEndpointURL)
+                : deployment?.metadata.name
+            }
             value={modelId}
             onChange={(modelId) => {
               startTransition(() => {

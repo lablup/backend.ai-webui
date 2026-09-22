@@ -17,8 +17,14 @@ import {
   ChatModel,
   getLatestUserMessage,
   ChatMessage,
+  isCustomEndpointProvider,
 } from './ChatModel';
+import CustomEndpointForm from './CustomEndpointForm';
 import { CustomModelForm } from './CustomModelForm';
+import {
+  setCustomEndpointApiKey,
+  useCustomEndpointApiKey,
+} from './customEndpointKeyStore';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -184,6 +190,7 @@ function useModels(
   const modelsError = modelsResult?.error
     ? getModelsErrorMessage(modelsResult.error)
     : undefined;
+  const modelsErrorStatus = modelsResult?.error;
 
   return {
     // useTanQuery leaves `data` undefined until the query settles; normalize to
@@ -193,6 +200,7 @@ function useModels(
     models: modelsResult?.data ?? [],
     modelId,
     modelsError,
+    modelsErrorStatus,
     isLoadingModels,
   } as const;
 }
@@ -283,20 +291,30 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const { agents, getEndpointBinding } = useAIAgent();
   const agent = agents.find((a) => a.id === chat.provider.agentId);
   const agentEndpoint = agent ? getEndpointBinding(agent.id) : undefined;
-  const effectiveApiKey = agentEndpoint?.endpoint_token || chat.provider.apiKey;
   const agentEndpointUrl = agentEndpoint?.endpoint_url;
 
-  const baseURL = createBaseURL(
-    logger,
-    chat.provider.basePath,
-    agentEndpointUrl || deployment?.networkAccess.endpointUrl,
-  );
-  const { models, modelId, modelsError, isLoadingModels } = useModels(
-    chat.provider,
-    fetchKey,
-    baseURL,
-    effectiveApiKey,
-  );
+  // A custom endpoint's key is per chat panel and session-only; the persisted
+  // provider record carries the URL alone.
+  const isCustomEndpoint =
+    !agentEndpointUrl && isCustomEndpointProvider(chat.provider);
+  const customApiKey = useCustomEndpointApiKey(chat.id);
+  const [isCustomFormOpen, setIsCustomFormOpen] = useState(false);
+  const effectiveApiKey =
+    agentEndpoint?.endpoint_token ||
+    (isCustomEndpoint ? customApiKey : chat.provider.apiKey);
+
+  const baseURL = isCustomEndpoint
+    ? chat.provider.baseURL
+    : createBaseURL(
+        logger,
+        chat.provider.basePath,
+        agentEndpointUrl || deployment?.networkAccess.endpointUrl,
+      );
+  const { models, modelId, modelsError, modelsErrorStatus, isLoadingModels } =
+    useModels(chat.provider, fetchKey, baseURL, effectiveApiKey);
+  const showCustomEndpointForm =
+    isCustomFormOpen ||
+    (isCustomEndpoint && !isLoadingModels && _.isEmpty(models));
 
   const [input, setInput] = useState('');
 
@@ -316,7 +334,12 @@ const PureChatCard: React.FC<ChatCardProps> = ({
       },
       fetch: useEventNotStable(async (input, init) => {
         // For custom models or client-side fetching, handle directly
-        if (fetchOnClient || modelId === 'custom' || agentEndpointUrl) {
+        if (
+          fetchOnClient ||
+          modelId === 'custom' ||
+          agentEndpointUrl ||
+          isCustomEndpoint
+        ) {
           const provider = createOpenAICompatible({
             name: 'backend-ai',
             baseURL: baseURL ?? '',
@@ -532,12 +555,19 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           // deployment
           deploymentFrgmt={deployment}
           onChangeDeployment={(deploymentId) => {
+            setIsCustomFormOpen(false);
+            setCustomEndpointApiKey(chat.id, undefined);
             onUpdateChat?.({
               provider: {
                 deploymentId,
+                baseURL: '',
               },
             });
           }}
+          customEndpointURL={
+            isCustomEndpoint ? chat.provider.baseURL : undefined
+          }
+          onSelectCustomEndpoint={() => setIsCustomFormOpen(true)}
           // sync
           sync={chat.sync}
           onChangeSync={(sync) => {
@@ -584,6 +614,35 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           position: 'relative',
         }}
       >
+        {showCustomEndpointForm && (
+          <CustomEndpointForm
+            baseURL={isCustomEndpoint ? chat.provider.baseURL : undefined}
+            apiKey={isCustomEndpoint ? customApiKey : undefined}
+            isApiKeyMissing={
+              isCustomEndpoint && !customApiKey && modelsErrorStatus === 401
+            }
+            errorMessage={
+              isCustomEndpoint && !isCustomFormOpen ? modelsError : undefined
+            }
+            loading={isPendingUpdate || (isCustomEndpoint && isLoadingModels)}
+            onSubmit={(values) => {
+              startUpdateTransition(() => {
+                setCustomEndpointApiKey(chat.id, values.apiKey);
+                setIsCustomFormOpen(false);
+                updateFetchKey();
+                onUpdateChat?.({
+                  provider: {
+                    deploymentId: '',
+                    agentId: '',
+                    baseURL: values.baseURL,
+                    modelId: '',
+                  },
+                });
+              });
+            }}
+            onCancel={() => setIsCustomFormOpen(false)}
+          />
+        )}
         {baseURL && (deployment || agentEndpointUrl) && _.isEmpty(models) && (
           <CustomModelForm
             deploymentUrl={
@@ -619,7 +678,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
             }}
           />
         ) : null}
-        {!baseURL ? (
+        {!baseURL && !showCustomEndpointForm ? (
           <Banner
             title={t('error.InvalidBaseURL')}
             status="error"
