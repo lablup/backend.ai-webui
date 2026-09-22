@@ -25,6 +25,7 @@ import {
   setCustomEndpointApiKey,
   useCustomEndpointApiKey,
 } from './customEndpointKeyStore';
+import { fetchOpenAIModels } from './openAIModels';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -96,13 +97,6 @@ function readFileAsDataURL(file: File): Promise<string> {
   });
 }
 
-function createModelsURL(baseURL: string) {
-  const { origin, pathname: path } = new URL(baseURL.trim());
-  const normalizedPath = path === '/' ? '/models' : `${path}/models`;
-
-  return new URL(normalizedPath, origin).toString();
-}
-
 function useModels(
   provider: ChatProviderData,
   fetchKey: string,
@@ -132,52 +126,25 @@ function useModels(
   }>({
     queryKey: ['models', fetchKey, baseURL, effectiveApiKey ?? provider.apiKey],
     queryFn: async () => {
+      if (!baseURL) {
+        return { data: [] };
+      }
       try {
-        if (!baseURL) {
-          return { data: [] };
-        }
-
-        const url = createModelsURL(baseURL);
-        const authToken = effectiveApiKey ?? provider.apiKey;
-        // FR-3212: An unresponsive endpoint (TCP connects but never returns an
-        // HTTP response) would otherwise hang this fetch forever, leaving the
-        // Suspense boundary spinning indefinitely. Abort after 30s so the
-        // request rejects and falls into the catch below (error: -1), driving
-        // the established CustomModelForm recovery UX. 30s is generous enough
-        // for a slow-but-healthy endpoint (cold start, app-proxy/TLS latency)
-        // while still bounding a dead connection to a recoverable failure.
-        const response = await fetch(url, {
-          headers: {
-            Authorization: authToken ? `Bearer ${authToken}` : '',
-          },
-          signal: AbortSignal.timeout(30000),
-        });
-
-        if (!response.ok) {
-          return { data: [], error: response.status };
-        }
-
-        const result = await response.json();
-        if (!_.isArray(result?.data)) {
-          throw new Error('Invalid response format');
-        }
-        return result;
+        const result = await fetchOpenAIModels(
+          baseURL,
+          effectiveApiKey ?? provider.apiKey,
+        );
+        return {
+          data: result.data,
+          error: result.error
+            ? result.error.kind === 'http'
+              ? result.error.status
+              : -1
+            : undefined,
+        };
       } catch {
         return { data: [], error: -1 };
       }
-    },
-    select: (res) => {
-      return {
-        data: res.data
-          ? res.data.map((model) => ({
-              id: model.id,
-              name: model.id,
-            }))
-          : [],
-        // Preserve the error code so consumers (modelsError below) can detect
-        // a failed `/models` fetch; otherwise it is dropped by this select.
-        error: res.error,
-      };
     },
   });
 
@@ -315,6 +282,8 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const showCustomEndpointForm =
     isCustomFormOpen ||
     (isCustomEndpoint && !isLoadingModels && _.isEmpty(models));
+  const isApiKeyMissing =
+    isCustomEndpoint && !customApiKey && modelsErrorStatus === 401;
 
   const [input, setInput] = useState('');
 
@@ -618,11 +587,16 @@ const PureChatCard: React.FC<ChatCardProps> = ({
           <CustomEndpointForm
             baseURL={isCustomEndpoint ? chat.provider.baseURL : undefined}
             apiKey={isCustomEndpoint ? customApiKey : undefined}
-            isApiKeyMissing={
-              isCustomEndpoint && !customApiKey && modelsErrorStatus === 401
-            }
-            errorMessage={
-              isCustomEndpoint && !isCustomFormOpen ? modelsError : undefined
+            isApiKeyMissing={isApiKeyMissing}
+            initialFailure={
+              isCustomEndpoint &&
+              !isCustomFormOpen &&
+              !isApiKeyMissing &&
+              modelsErrorStatus
+                ? modelsErrorStatus > 0
+                  ? { kind: 'http', status: modelsErrorStatus }
+                  : { kind: 'network' }
+                : undefined
             }
             loading={isPendingUpdate || (isCustomEndpoint && isLoadingModels)}
             onSubmit={(values) => {

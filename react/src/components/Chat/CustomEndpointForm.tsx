@@ -6,11 +6,13 @@ import { Form } from '../../form-engine';
 import { theme } from '../../theme-shim';
 import BAIFormItem from '../BAIFormItem';
 import { AstryxFormTextInput } from '../astryxFormControls';
-import { normalizeCustomEndpointURL } from './ChatModel';
+import { normalizeCustomEndpointURL, type ChatModel } from './ChatModel';
+import { fetchOpenAIModels, type ModelsFetchError } from './openAIModels';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { BAIFlex } from 'backend.ai-ui';
 import { LinkIcon } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type CustomEndpointFormValues = {
@@ -23,18 +25,26 @@ interface CustomEndpointFormProps {
   apiKey?: string;
   /** The URL came back from history but its key did not (see `customEndpointKeyStore`). */
   isApiKeyMissing?: boolean;
-  /** Last `/models` failure for the current URL and key. */
-  errorMessage?: string;
+  /** Why the restored endpoint's `/models` call failed, shown before any retry. */
+  initialFailure?: ModelsFetchError;
   loading?: boolean;
-  onSubmit: (values: CustomEndpointFormValues) => void;
+  /** Called only after `/models` answered with at least one model. */
+  onSubmit: (values: CustomEndpointFormValues, models: ChatModel[]) => void;
   onCancel?: () => void;
+}
+
+type ProbeFailure = ModelsFetchError | { kind: 'no-models' };
+
+function suggestV1(baseURL: string) {
+  const url = new URL(baseURL);
+  return /\/v1$/.test(url.pathname) ? undefined : `${baseURL}/v1`;
 }
 
 const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
   baseURL,
   apiKey,
   isApiKeyMissing,
-  errorMessage,
+  initialFailure,
   loading,
   onSubmit,
   onCancel,
@@ -43,15 +53,101 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
   const { t } = useTranslation();
   const { token: themeToken } = theme.useToken();
   const [form] = Form.useForm<CustomEndpointFormValues>();
+  const [isProbing, setIsProbing] = useState(false);
+  const [failure, setFailure] = useState<
+    { error: ProbeFailure; baseURL: string } | undefined
+  >(initialFailure && baseURL ? { error: initialFailure, baseURL } : undefined);
+
+  const isBusy = !!loading || isProbing;
+
+  const connect = async (values: CustomEndpointFormValues) => {
+    const normalized = normalizeCustomEndpointURL(values.baseURL) ?? '';
+    const key = values.apiKey?.trim() || undefined;
+    setIsProbing(true);
+    setFailure(undefined);
+    try {
+      const result = await fetchOpenAIModels(normalized, key);
+      if (result.error) {
+        setFailure({ error: result.error, baseURL: normalized });
+        return;
+      }
+      if (result.data.length === 0) {
+        setFailure({ error: { kind: 'no-models' }, baseURL: normalized });
+        return;
+      }
+      onSubmit({ baseURL: normalized, apiKey: key }, result.data);
+    } finally {
+      setIsProbing(false);
+    }
+  };
 
   const submit = () => {
-    form.validateFields().then((values) => {
-      onSubmit({
-        baseURL: normalizeCustomEndpointURL(values.baseURL) ?? '',
-        apiKey: values.apiKey?.trim() || undefined,
-      });
-    });
+    form.validateFields().then(connect);
   };
+
+  const retryWithV1 = (url: string) => {
+    form.setFieldsValue({ baseURL: url });
+    connect({ baseURL: url, apiKey: form.getFieldValue('apiKey') });
+  };
+
+  const describeFailure = ({
+    error,
+    baseURL: failedURL,
+  }: NonNullable<typeof failure>): {
+    title: string;
+    description?: string;
+    retryURL?: string;
+  } => {
+    switch (error.kind) {
+      case 'http':
+        if (error.status === 401 || error.status === 403) {
+          return {
+            title: t('chatui.customEndpoint.error.Unauthorized'),
+            description: t('chatui.customEndpoint.error.UnauthorizedHint'),
+          };
+        }
+        if (error.status === 404) {
+          const retryURL = suggestV1(failedURL);
+          return {
+            title: t('chatui.customEndpoint.error.NotFound'),
+            description: retryURL
+              ? t('chatui.customEndpoint.error.NotFoundSuggestV1', {
+                  url: retryURL,
+                })
+              : t('chatui.customEndpoint.error.NotFoundHint'),
+            retryURL,
+          };
+        }
+        if (error.status >= 500) {
+          return {
+            title: t('chatui.customEndpoint.error.ServerError', {
+              status: error.status,
+            }),
+          };
+        }
+        return {
+          title: t('chatui.customEndpoint.error.Http', {
+            status: error.status,
+          }),
+        };
+      case 'timeout':
+        return { title: t('chatui.customEndpoint.error.Timeout') };
+      case 'network':
+        return {
+          title: t('chatui.customEndpoint.error.Network'),
+          description: t('chatui.customEndpoint.error.NetworkHint'),
+        };
+      case 'invalid-response':
+        return {
+          title: t('chatui.customEndpoint.error.InvalidResponse'),
+          description: t('chatui.customEndpoint.error.NotFoundHint'),
+        };
+      case 'no-models':
+        return { title: t('chatui.customEndpoint.error.NoModels') };
+    }
+  };
+
+  const failureView = failure ? describeFailure(failure) : undefined;
 
   return (
     <BAIFlex
@@ -71,17 +167,28 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
         key={baseURL}
         initialValues={{ baseURL: baseURL ?? '', apiKey: apiKey ?? '' }}
       >
-        {isApiKeyMissing ? (
+        {failureView ? (
+          <Banner
+            status="error"
+            title={failureView.title}
+            description={failureView.description}
+            endContent={
+              failureView.retryURL ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  isDisabled={isBusy}
+                  label={t('chatui.customEndpoint.error.RetryWithV1')}
+                  onClick={() => retryWithV1(failureView.retryURL ?? '')}
+                />
+              ) : undefined
+            }
+            style={{ marginBottom: themeToken.size }}
+          />
+        ) : isApiKeyMissing ? (
           <Banner
             status="warning"
             title={t('chatui.customEndpoint.ApiKeyMissing')}
-            style={{ marginBottom: themeToken.size }}
-          />
-        ) : errorMessage ? (
-          <Banner
-            status="error"
-            title={t('chatui.customEndpoint.ConnectionFailed')}
-            description={errorMessage}
             style={{ marginBottom: themeToken.size }}
           />
         ) : null}
@@ -107,7 +214,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           <AstryxFormTextInput
             label={t('chatui.customEndpoint.BaseURL')}
             placeholder="https://api.example.com/v1"
-            disabled={loading}
+            disabled={isBusy}
             hasAutoFocus={!baseURL}
             onEnter={submit}
           />
@@ -121,7 +228,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
             type="password"
             label={t('chatui.customEndpoint.ApiKey')}
             placeholder="sk-…"
-            disabled={loading}
+            disabled={isBusy}
             autoComplete="off"
             hasAutoFocus={!!baseURL && isApiKeyMissing}
             onEnter={submit}
@@ -131,14 +238,14 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
           <Button
             variant="primary"
             icon={<LinkIcon size="1em" />}
-            isLoading={loading}
+            isLoading={isBusy}
             label={t('chatui.customEndpoint.Connect')}
             onClick={submit}
           />
           {onCancel ? (
             <Button
               variant="secondary"
-              isDisabled={loading}
+              isDisabled={isBusy}
               label={t('button.Cancel')}
               onClick={onCancel}
             />

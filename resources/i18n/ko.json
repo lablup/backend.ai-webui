@@ -519,7 +519,22 @@
       "ConnectCustomEndpoint": "커스텀 엔드포인트 연결…",
       "ConnectionFailed": "이 엔드포인트에서 모델 목록을 불러오지 못했습니다.",
       "Edit": "커스텀 엔드포인트 수정",
-      "InvalidBaseURL": "유효한 http(s) URL을 입력하세요."
+      "InvalidBaseURL": "유효한 http(s) URL을 입력하세요.",
+      "error": {
+        "Http": "엔드포인트가 HTTP {{status}} 으로 응답했습니다.",
+        "InvalidResponse": "응답이 OpenAI 호환 모델 목록 형식이 아닙니다.",
+        "Network": "엔드포인트에 연결할 수 없습니다.",
+        "NetworkHint": "주소와 네트워크를 확인하세요. 요청은 이 브라우저에서 직접 보내므로 서버가 CORS 를 허용해야 합니다.",
+        "NoModels": "엔드포인트가 모델을 반환하지 않았습니다.",
+        "NotFound": "이 Base URL 에서 /models 를 찾을 수 없습니다 (404).",
+        "NotFoundHint": "Base URL 은 API 루트를 가리켜야 하며, 보통 /v1 로 끝납니다.",
+        "NotFoundSuggestV1": "Base URL 은 보통 /v1 로 끝납니다 — {{url}} 로 시도해 보세요.",
+        "RetryWithV1": "/v1 붙여 다시 시도",
+        "ServerError": "엔드포인트 서버 오류입니다 (HTTP {{status}}).",
+        "Timeout": "엔드포인트가 30초 동안 응답하지 않았습니다.",
+        "Unauthorized": "엔드포인트가 요청을 거부했습니다 (401/403).",
+        "UnauthorizedHint": "API 키를 확인하거나, 엔드포인트가 요구한다면 키를 입력하세요."
+      }
     },
     "intro": {
       "Description": "배포에 정의된 LLM 모델과 OpenAI 호환 API로 대화할 수 있습니다.",
