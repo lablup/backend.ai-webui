@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6dabd7752b416159d28268924c01a948>>
+ * @generated SignedSource<<d064a83c14f9d875df4ad30ec7155bc3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,7 @@ export type RolePermissionDetailTabMatrixQuery$variables = Record<PropertyKey, n
 export type RolePermissionDetailTabMatrixQuery$data = {
   readonly rbacPermissionMatrix: ReadonlyArray<{
     readonly scopeType: string;
-    readonly " $fragmentSpreads": FragmentRefs<"RolePermissionSummaryTable_rbacPermissionMatrixFragment" | "ScopedRolePermissionCard_rbacPermissionMatrixFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"ScopedRolePermissionCard_rbacPermissionMatrixFragment">;
   }> | null | undefined;
 };
 export type RolePermissionDetailTabMatrixQuery = {
@@ -46,11 +46,6 @@ return {
         "plural": true,
         "selections": [
           (v0/*: any*/),
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "RolePermissionSummaryTable_rbacPermissionMatrixFragment"
-          },
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -120,16 +115,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "cf37d80970edfa0349ddf9f5b3b4e0a7",
+    "cacheID": "0010d510e43785caba131492bc44e146",
     "id": null,
     "metadata": {},
     "name": "RolePermissionDetailTabMatrixQuery",
     "operationKind": "query",
-    "text": "query RolePermissionDetailTabMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    ...RolePermissionSummaryTable_rbacPermissionMatrixFragment\n    ...ScopedRolePermissionCard_rbacPermissionMatrixFragment\n  }\n}\n\nfragment RolePermissionSummaryTable_rbacPermissionMatrixFragment on ScopeEntityOperationCombination {\n  scopeType\n  entities {\n    entityType\n    actions {\n      requiredPermission\n    }\n  }\n}\n\nfragment RoleScopePermissionEditModal_rbacPermissionMatrixFragment on ScopeEntityOperationCombination {\n  scopeType\n  entities {\n    entityType\n    actions {\n      requiredPermission\n    }\n  }\n}\n\nfragment ScopedRolePermissionCard_rbacPermissionMatrixFragment on ScopeEntityOperationCombination {\n  scopeType\n  entities {\n    entityType\n    actions {\n      requiredPermission\n    }\n  }\n  ...RoleScopePermissionEditModal_rbacPermissionMatrixFragment\n}\n"
+    "text": "query RolePermissionDetailTabMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    ...ScopedRolePermissionCard_rbacPermissionMatrixFragment\n  }\n}\n\nfragment RoleScopePermissionEditModal_rbacPermissionMatrixFragment on ScopeEntityOperationCombination {\n  scopeType\n  entities {\n    entityType\n    actions {\n      requiredPermission\n    }\n  }\n}\n\nfragment ScopedRolePermissionCard_rbacPermissionMatrixFragment on ScopeEntityOperationCombination {\n  scopeType\n  entities {\n    entityType\n    actions {\n      requiredPermission\n    }\n  }\n  ...RoleScopePermissionEditModal_rbacPermissionMatrixFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2dd037690bdfc8ca66051f46a379922e";
+(node as any).hash = "7bc8b4ed1a4b4c7addb69fb3602fa43a";
 
 export default node;
