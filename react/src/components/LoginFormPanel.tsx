@@ -382,7 +382,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               label={t('login.Login')}
             />
           </BAIFormItem>
-
           {/* SSO buttons */}
           {loginConfig.singleSignOnVendors.includes('saml') && (
             <BAIFormItem style={{ marginBottom: token.marginSM }}>
