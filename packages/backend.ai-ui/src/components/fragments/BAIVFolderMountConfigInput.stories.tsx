@@ -212,11 +212,6 @@ dropped in the **WithAutoMountedFolders** story.
       description: 'Project ID to scope vfolder selection',
       table: { type: { summary: 'string' } },
     },
-    ownerEmail: {
-      control: { type: 'text' },
-      description: "Lists this user's folders instead of the caller's own",
-      table: { type: { summary: 'string' } },
-    },
     filter: {
       control: false,
       description: 'Display-only folder filter, applied after the mount gates',

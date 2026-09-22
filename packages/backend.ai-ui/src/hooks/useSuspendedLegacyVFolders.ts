@@ -1,10 +1,11 @@
-import { useSuspenseTanQuery } from '../helper/reactQueryAlias';
-import { useBAISignedRequestWithPromise } from './useBAISignedRequestWithPromise';
+import type { useSuspendedLegacyVFoldersQuery } from '../__generated__/useSuspendedLegacyVFoldersQuery.graphql';
+import { useCallback, useState } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
- * A folder as the REST `GET /folders` endpoint returns it. Distinct from the
- * GraphQL `vfolder_nodes` shape: `id` is the 32-hex local id (no dashes) and
- * `group` is the owning project's UUID or `null` for a user folder.
+ * A folder as `vfolder_nodes` returns it, reshaped to the field names the
+ * mount select and the auto-mount helper already read. `id` is the dashed row
+ * uuid and `group` is the owning project's uuid, or `null` for a user folder.
  */
 export interface LegacyVFolder {
   name: string;
@@ -14,7 +15,6 @@ export interface LegacyVFolder {
   status: string;
   usage_mode: string;
   created_at: string;
-  is_owner: boolean;
   permission: string;
   user: string | null;
   group: string | null;
@@ -22,7 +22,6 @@ export interface LegacyVFolder {
   user_email: string | null;
   group_name: string | null;
   ownership_type: string;
-  type: string;
   cloneable: boolean;
   max_files: number;
   max_size: null | number;
@@ -30,47 +29,124 @@ export interface LegacyVFolder {
 }
 
 export interface LegacyVFolderListOptions {
-  /** Lists this user's folders instead of the caller's own. */
-  ownerEmail?: string;
-  /** Scopes the list to a project (`group_id`) server side. */
+  /** Scopes the list to a project; the caller's own folders come with it. */
   groupId?: string;
 }
 
+/** The mount verbs `permissions` can carry, most permissive first. */
+const MOUNT_VERBS = [
+  ['mount_wd', 'rw'],
+  ['mount_rw', 'rw'],
+  ['mount_ro', 'ro'],
+] as const;
+
 /**
- * The folder list behind `BAIVFolderMountConfigInput`: the caller's folders,
- * or `ownerEmail`'s when a session is launched on someone else's behalf.
- * Suspends. One cache entry per owner and project, so a host deriving
- * something from the same list (auto-mounted names) shares the single fetch.
+ * The level the CALLER mounts this folder at. `vfolder_nodes.permissions` is
+ * resolved per caller — owner, then their policy row, then the folder default
+ * (backend.ai#14679) — so a folder they cannot mount carries no mount verb at
+ * all. `wd` folds into `rw`, the vocabulary the select renders.
+ */
+export const mountLevelFromPermissions = (
+  permissions: ReadonlyArray<unknown> | null | undefined,
+): string => {
+  const held = new Set(permissions ?? []);
+  return MOUNT_VERBS.find(([verb]) => held.has(verb))?.[1] ?? 'none';
+};
+
+// `vfolder_nodes` pages and the select needs the whole set at once, so it asks
+// for one page big enough to hold a project's folders. Deleted rows are
+// filtered server side to keep that budget for mountable ones.
+const PAGE_SIZE = 500;
+const ACTIVE_ONLY =
+  'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"';
+
+/**
+ * The folder list behind `BAIVFolderMountConfigInput`, and the auto-mount
+ * helper reading the same rows. Always the caller's own reachable folders:
+ * `vfolder_nodes` takes no owner, so a session launched for somebody else no
+ * longer lists that person's folders (FR-4045). Suspends.
  */
 export const useSuspendedLegacyVFolders = ({
-  ownerEmail,
   groupId,
 }: LegacyVFolderListOptions = {}) => {
   'use memo';
-  const baiRequestWithPromise = useBAISignedRequestWithPromise();
+  const [fetchKey, setFetchKey] = useState(0);
 
-  const { data, refetch, isFetching } = useSuspenseTanQuery<
-    Array<LegacyVFolder>
-  >({
-    queryKey: [
-      'BAIVFolderMountConfigInputFolders',
-      ownerEmail ?? '',
-      groupId ?? '',
-    ],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      if (ownerEmail) search.set('owner_user_email', ownerEmail);
-      if (groupId) search.set('group_id', groupId);
-      const query = search.toString();
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders${query ? `?${query}` : ''}`,
-      }) as Promise<Array<LegacyVFolder>>;
+  const data = useLazyLoadQuery<useSuspendedLegacyVFoldersQuery>(
+    graphql`
+      query useSuspendedLegacyVFoldersQuery(
+        $scopeId: ScopeField
+        $filter: String
+        $first: Int
+      ) {
+        vfolder_nodes(
+          scope_id: $scopeId
+          filter: $filter
+          first: $first
+          offset: 0
+        ) {
+          edges {
+            node {
+              row_id
+              name
+              host
+              status
+              usage_mode
+              created_at
+              quota_scope_id
+              user
+              user_email
+              group
+              group_name
+              creator
+              ownership_type
+              cloneable
+              max_files
+              max_size
+              cur_size
+              permissions
+            }
+          }
+        }
+      }
+    `,
+    {
+      scopeId: groupId ? `project:${groupId}` : null,
+      filter: ACTIVE_ONLY,
+      first: PAGE_SIZE,
     },
-    staleTime: 30 * 1000,
-  });
+    { fetchKey, fetchPolicy: 'store-and-network' },
+  );
 
-  return { folders: data, refetch, isFetching };
+  const folders: Array<LegacyVFolder> = (data.vfolder_nodes?.edges ?? [])
+    .map((edge) => edge?.node)
+    .filter((node) => !!node)
+    .map((node) => ({
+      name: node.name ?? '',
+      id: node.row_id ?? '',
+      quota_scope_id: node.quota_scope_id ?? '',
+      host: node.host ?? '',
+      status: node.status ?? '',
+      usage_mode: node.usage_mode ?? '',
+      created_at: node.created_at ?? '',
+      permission: mountLevelFromPermissions(node.permissions),
+      user: node.user ?? null,
+      group: node.group ?? null,
+      creator: node.creator ?? '',
+      user_email: node.user_email ?? null,
+      group_name: node.group_name ?? null,
+      ownership_type: node.ownership_type ?? '',
+      cloneable: node.cloneable ?? false,
+      max_files: node.max_files ?? 0,
+      max_size: node.max_size ?? null,
+      cur_size: node.cur_size ?? 0,
+    }));
+
+  const refetch = useCallback(async () => {
+    setFetchKey((key) => key + 1);
+  }, []);
+
+  return { folders, refetch, isFetching: false };
 };
 
 export interface LegacyVFolderMountScope {
