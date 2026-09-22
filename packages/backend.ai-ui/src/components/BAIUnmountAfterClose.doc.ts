@@ -29,6 +29,11 @@ export const docs = {
           'Keep the child controlled by the parent — the wrapper only observes open, it never opens or closes the dialog itself.',
       },
       {
+        guidance: true,
+        description:
+          'Make the child expose `open` and forward `afterClose` / `afterOpenChange` to the BAIModal, BAIDialog or BAIDrawer it renders — the wrapper injects those two callbacks and unmounts only when one fires, so a child with a closed prop surface never unmounts (this is how FR-3990 leaked state).',
+      },
+      {
         guidance: false,
         description:
           'Pass more than one child; React.Children.only throws on a fragment or a list.',

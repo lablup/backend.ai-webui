@@ -79,6 +79,30 @@ const blurOnInert = (root: HTMLElement) => {
 };
 
 describe('BAIDialog', () => {
+  // The lifecycle `BAIUnmountAfterClose` subscribes to, through a wrapping
+  // component that exposes `open` (the wrapper reads `open`, not `isOpen`).
+  it('fires afterOpenChange and afterClose on the close edge', () => {
+    const afterOpenChange = vi.fn();
+    const afterClose = vi.fn();
+    const ui = (isOpen: boolean) => (
+      <BAIDialog
+        isOpen={isOpen}
+        onOpenChange={() => {}}
+        afterOpenChange={afterOpenChange}
+        afterClose={afterClose}
+      >
+        <button type="button">Inside</button>
+      </BAIDialog>
+    );
+    const { rerender } = render(ui(true));
+    expect(afterOpenChange).not.toHaveBeenCalled();
+    rerender(ui(false));
+    expect(afterOpenChange).toHaveBeenCalledExactlyOnceWith(false);
+    expect(afterClose).toHaveBeenCalledTimes(1);
+    // Closed, but still mounted: dropping it is the wrapper's job.
+    expect(screen.getByText('Inside')).toBeInTheDocument();
+  });
+
   it('portals to document.body without a native <dialog>', () => {
     renderPortal();
 

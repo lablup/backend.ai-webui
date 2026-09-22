@@ -28,9 +28,10 @@
    in place of `BAIButton`'s `action` prop; the close-on-success is ours, the
    same way the pilot modal did it.
 */
+import { useAfterOpenChange } from '../../hooks/useAfterOpenChange';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
-import BAIDialog from '../BAIDialog';
+import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -43,7 +44,10 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import * as _ from 'lodash-es';
 import React, { useMemo, useState } from 'react';
 
-export interface BAITableColumnCSVExportModalProps<T = unknown> {
+export interface BAITableColumnCSVExportModalProps<T = unknown> extends Pick<
+  BAIDialogProps,
+  'afterOpenChange' | 'afterClose'
+> {
   open: boolean;
   /** `true` when an export actually ran, `false` on cancel / dismiss. */
   onRequestClose?: (success: boolean) => void;
@@ -69,11 +73,16 @@ const BAITableColumnCSVExportModal = <T,>({
   supportedFields,
   columns,
   notice,
+  afterOpenChange,
+  afterClose,
 }: BAITableColumnCSVExportModalProps<T>): React.JSX.Element | null => {
   'use memo';
 
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
+  // Fired here rather than by `BAIDialog`: the early return below unmounts
+  // the dialog before it could see the close.
+  useAfterOpenChange(open, { afterOpenChange, afterClose });
 
   const columnOptions = useMemo(
     () =>

@@ -4,7 +4,12 @@
  */
 import { StorageHostDetailDrawerFragment$key } from '../__generated__/StorageHostDetailDrawerFragment.graphql';
 import StorageHostDetailDrawerContent from './StorageHostDetailDrawerContent';
-import { BAIDrawer, BAISkeleton, BAIFetchKeyButton } from 'backend.ai-ui';
+import {
+  BAIDrawer,
+  type BAIDrawerProps,
+  BAISkeleton,
+  BAIFetchKeyButton,
+} from 'backend.ai-ui';
 import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -14,7 +19,10 @@ import { graphql, useFragment } from 'react-relay';
 // `onRefetchParentList`/`onRequestClose`). antd `Drawer` → lab `Drawer`
 // (MAPPING §2 LAB), same shape as the AgentDetailDrawer/
 // DeploymentRevisionDetailDrawer precedent (ticket 18): `open`→`isOpen`.
-interface StorageHostDetailDrawerProps {
+interface StorageHostDetailDrawerProps extends Pick<
+  BAIDrawerProps,
+  'afterOpenChange' | 'afterClose'
+> {
   open?: boolean;
   storageVolumeFrgmt?: StorageHostDetailDrawerFragment$key | null;
   /**
@@ -33,6 +41,8 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
   storageVolumeFrgmt,
   onRefetchParentList,
   onRequestClose,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -58,6 +68,8 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
     <BAIDrawer
       open={open}
       onClose={onRequestClose}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
       side="end"
       size={900}
       title={t('storageHost.StorageHostInfo')}

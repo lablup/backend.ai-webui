@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useAfterOpenChange } from '../hooks/useAfterOpenChange';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIDrawer.css';
 import BAIDrawerPortal from './BAIDrawerPortal';
@@ -18,6 +19,10 @@ export interface BAIDrawerProps {
   open?: boolean;
   /** Close request (Escape, scrim click, the header close button). */
   onClose?: () => void;
+  /** Called with the new visibility right after `open` changes. */
+  afterOpenChange?: (open: boolean) => void;
+  /** Called after `open` turns false. Drives `BAIUnmountAfterClose`. */
+  afterClose?: () => void;
   /** Header title. antd `Drawer`'s `title`. */
   title?: ReactNode;
   /** Header actions, rendered at the trailing edge. antd `Drawer`'s `extra`. */
@@ -67,6 +72,8 @@ export interface BAIDrawerProps {
 const BAIDrawer: React.FC<BAIDrawerProps> = ({
   open = false,
   onClose,
+  afterOpenChange,
+  afterClose,
   title,
   extra,
   label,
@@ -80,6 +87,7 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  useAfterOpenChange(open, { afterOpenChange, afterClose });
 
   // lab `Drawer` requires a non-empty accessible name.
   const accessibleName =

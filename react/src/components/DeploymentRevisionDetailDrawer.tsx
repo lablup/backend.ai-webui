@@ -4,7 +4,7 @@
  */
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import DeploymentRevisionDetail from './DeploymentRevisionDetail';
-import { BAIDrawer, BAISkeleton } from 'backend.ai-ui';
+import { BAIDrawer, type BAIDrawerProps, BAISkeleton } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,7 +18,10 @@ type RevisionStatus = 'current' | 'deploying' | 'none';
 // `revisionFrgmt`, `status`, plus `title` and `extra`). The antd names are
 // kept on the public surface and mapped to the lab Drawer internally
 // (`open`→`isOpen`; antd `size="large"` ≈ 736px → `size={736}`).
-interface DeploymentRevisionDetailDrawerProps {
+interface DeploymentRevisionDetailDrawerProps extends Pick<
+  BAIDrawerProps,
+  'afterOpenChange' | 'afterClose'
+> {
   /** Whether the drawer is open. antd Drawer's `open`. */
   open?: boolean;
   /** Close request handler (Escape, scrim click, close button). */
@@ -33,7 +36,16 @@ interface DeploymentRevisionDetailDrawerProps {
 
 const DeploymentRevisionDetailDrawer: React.FC<
   DeploymentRevisionDetailDrawerProps
-> = ({ open = false, onClose, revisionFrgmt, status, title, extra }) => {
+> = ({
+  open = false,
+  onClose,
+  afterOpenChange,
+  afterClose,
+  revisionFrgmt,
+  status,
+  title,
+  extra,
+}) => {
   'use memo';
   const { t } = useTranslation();
 
@@ -43,6 +55,8 @@ const DeploymentRevisionDetailDrawer: React.FC<
     <BAIDrawer
       open={open}
       onClose={onClose}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
       side="end"
       size={736}
       title={heading}

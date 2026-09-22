@@ -24,7 +24,7 @@
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
-import BAIDialog from '../BAIDialog';
+import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
@@ -58,7 +58,10 @@ export interface BAITableSettingResult {
   columnOrder: Array<string>;
 }
 
-export interface BAITableSettingModalProps {
+export interface BAITableSettingModalProps extends Pick<
+  BAIDialogProps,
+  'afterOpenChange' | 'afterClose'
+> {
   open: boolean;
   columns: Array<BAITableSettingColumn>;
   /** Currently visible keys, in current display order. */
@@ -123,6 +126,8 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
   visibleColumnKeys,
   disableReorder,
   onRequestClose,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
   const { t } = useBAIi18n();
@@ -201,6 +206,8 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
       onOpenChange={(next) => {
         if (!next) onRequestClose(undefined);
       }}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
       width={420}
       purpose="form"
     >

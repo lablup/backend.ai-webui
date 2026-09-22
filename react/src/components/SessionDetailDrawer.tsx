@@ -7,7 +7,12 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { BAIDrawer, BAISkeleton, useFetchKey } from 'backend.ai-ui';
+import {
+  BAIDrawer,
+  type BAIDrawerProps,
+  BAISkeleton,
+  useFetchKey,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +25,10 @@ import { useLocation } from 'react-router-dom';
 // DeploymentReplicasCard) pass exactly `open` / `sessionId` / `onClose`, so
 // the explicit interface below is the whole live surface. antd spellings are
 // kept and mapped internally (`open` -> `isOpen`).
-interface SessionDetailDrawerProps {
+interface SessionDetailDrawerProps extends Pick<
+  BAIDrawerProps,
+  'afterOpenChange' | 'afterClose'
+> {
   /** Whether the drawer is open. antd Drawer's `open`. */
   open?: boolean;
   /** Close request handler (Escape, scrim click, close button). */
@@ -37,6 +45,8 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   sessionId,
   open = false,
   onClose,
+  afterOpenChange,
+  afterClose,
   project,
 }) => {
   const { t } = useTranslation();
@@ -80,6 +90,8 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
     <BAIDrawer
       open={open}
       onClose={onClose}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
       side="end"
       size={800}
       title={t('session.SessionInfo')}

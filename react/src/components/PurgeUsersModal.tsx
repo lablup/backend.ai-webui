@@ -12,6 +12,7 @@ import {
   BAIBulkErrorModal,
   type BAIColumnsType,
   BAIDeleteConfirmModal,
+  type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -34,7 +35,10 @@ interface PurgeFailure {
   message: string;
 }
 
-export interface PurgeUsersModalProps {
+export interface PurgeUsersModalProps extends Pick<
+  BAIDeleteConfirmModalProps,
+  'afterOpenChange' | 'afterClose'
+> {
   usersFrgmt: PurgeUsersModalFragment$key;
   open?: boolean;
   onOk?: () => void;
@@ -46,6 +50,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   open,
   onOk,
   onCancel,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
 
@@ -73,23 +79,20 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   // is the whole mechanism here too.
   const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
   const [deleteModelServices, setDeleteModelServices] = useState(false);
-  // Both options are per-purge choices, so an open starts them over. Derived
-  // state via the render-phase compare, as BAIDeleteConfirmModal resets its
-  // own typed-confirm gate (FR-3990).
-  const [wasOpen, setWasOpen] = useState(!!open);
-  if (!!open !== wasOpen) {
-    setWasOpen(!!open);
-    if (open) {
-      setPurgeSharedVfolders(false);
-      setDeleteModelServices(false);
-    }
-  }
   // Per-user failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{
     failures: PurgeFailure[];
     total: number;
   } | null>(null);
+  // `BAIUnmountAfterClose` drops this component on `afterClose`, and the
+  // failure report below lives in it: a partial success closes the confirm
+  // and opens the report in one commit, so the signal waits for the report.
+  const [isCloseDeferred, setIsCloseDeferred] = useState(false);
+  const notifyClosed = () => {
+    afterOpenChange?.(false);
+    afterClose?.();
+  };
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
   // document, so it is gated and the deprecated count is selected instead.
@@ -199,6 +202,13 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         onOpenChange={(next) => {
           if (!next) onCancel?.();
         }}
+        afterOpenChange={(next) => {
+          if (next) afterOpenChange?.(true);
+        }}
+        afterClose={() => {
+          if (failureReport) setIsCloseDeferred(true);
+          else notifyClosed();
+        }}
         title={t('credential.PermanentlyDeleteUsers')}
         maskClosable={false}
         confirmLoading={isPending || isInFlightBulkPurge}
@@ -236,7 +246,13 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         })}
         columns={failureColumns}
         dataSource={failureReport?.failures ?? []}
-        onRequestClose={() => setFailureReport(null)}
+        onRequestClose={() => {
+          setFailureReport(null);
+          if (isCloseDeferred) {
+            setIsCloseDeferred(false);
+            notifyClosed();
+          }
+        }}
       />
     </>
   );

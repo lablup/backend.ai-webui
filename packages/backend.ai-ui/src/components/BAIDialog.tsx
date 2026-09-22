@@ -10,6 +10,7 @@
  The inner `<Dialog isInline>` is always told `isOpen`: its inline path renders
  `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
+import { useAfterOpenChange } from '../hooks/useAfterOpenChange';
 import './BAIDialog.css';
 import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 import { Dialog } from '@astryxdesign/core/Dialog';
@@ -108,6 +109,10 @@ export interface BAIDialogProps extends Omit<
    * surface, so `style={{ zIndex }}` does not.
    */
   zIndex?: number;
+  /** Called with the new visibility right after `isOpen` changes. */
+  afterOpenChange?: (open: boolean) => void;
+  /** Called after `isOpen` turns false. Drives `BAIUnmountAfterClose`. */
+  afterClose?: () => void;
 }
 
 const BAIDialog: React.FC<BAIDialogProps> = ({
@@ -120,6 +125,8 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
   purpose = 'info',
   padding,
   zIndex,
+  afterOpenChange,
+  afterClose,
   role,
   children,
   xstyle,
@@ -129,6 +136,7 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
   ...rest
 }) => {
   'use memo';
+  useAfterOpenChange(isOpen, { afterOpenChange, afterClose });
 
   // Theme CSS is `@scope`d to `[data-astryx-theme]`, so re-emitting the nearest
   // theme's NAME (not its mode) keeps an admin-region modal on the admin accent.

@@ -59,6 +59,18 @@ export const docs = {
         'Close request from Escape, a scrim click, or the header close button. The drawer is fully controlled, so it stays open until `open` flips.',
     },
     {
+      name: 'afterOpenChange',
+      type: '(open: boolean) => void',
+      description:
+        'Called with the new visibility right after `open` changes. Not called on mount.',
+    },
+    {
+      name: 'afterClose',
+      type: '() => void',
+      description:
+        'Called right after `open` turns false. This is what `BAIUnmountAfterClose` listens to, so a drawer component it wraps must forward this prop for the unmount to happen.',
+    },
+    {
       name: 'title',
       type: 'ReactNode',
       description:
