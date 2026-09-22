@@ -518,6 +518,7 @@
       "Connect": "연결",
       "ConnectCustomEndpoint": "커스텀 엔드포인트 연결…",
       "ConnectionFailed": "이 엔드포인트에서 모델 목록을 불러오지 못했습니다.",
+      "Edit": "커스텀 엔드포인트 수정",
       "InvalidBaseURL": "유효한 http(s) URL을 입력하세요."
     },
     "intro": {

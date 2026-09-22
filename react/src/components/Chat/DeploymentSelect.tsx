@@ -54,7 +54,7 @@ import {
   useControllableValue,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { InfoIcon, LinkIcon } from 'lucide-react';
+import { InfoIcon, LinkIcon, PencilIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -296,12 +296,20 @@ const DeploymentSelect: React.FC<DeploymentSelectProps> = ({
           onOpenChange={setControllableOpen}
           endReached={loadNext}
         />
-        {showInfoButton ? (
+        {showInfoButton && customEndpointURL ? (
+          <Tooltip content={t('chatui.customEndpoint.Edit')}>
+            <IconButton
+              icon={<PencilIcon />}
+              label={t('chatui.customEndpoint.Edit')}
+              onClick={onSelectCustomEndpoint}
+            />
+          </Tooltip>
+        ) : showInfoButton ? (
           <Tooltip content={t('deployment.GoToDetailPage')}>
             <IconButton
               icon={<InfoIcon />}
               label={t('deployment.GoToDetailPage')}
-              isDisabled={!controllableValue || !!customEndpointURL}
+              isDisabled={!controllableValue}
               onClick={goToDeploymentDetailPage}
             />
           </Tooltip>
