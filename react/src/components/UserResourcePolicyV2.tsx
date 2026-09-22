@@ -11,6 +11,7 @@ import { App } from '../app-shim';
 import { convertToDecimalUnit, convertToOrderBy } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import UserResourcePolicyV2SettingModal from './UserResourcePolicyV2SettingModal';
 import {
   availableUserResourcePolicyExportFields,
@@ -31,11 +32,13 @@ import { Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  fetchQuery,
   graphql,
   PreloadedQuery,
   usePreloadedQuery,
   UseQueryLoaderLoadQueryOptions,
   useMutation,
+  useRelayEnvironment,
 } from 'react-relay';
 
 export const UserResourcePolicyV2Query = graphql`
@@ -113,6 +116,8 @@ const UserResourcePolicyV2 = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const relayEnvironment = useRelayEnvironment();
+  const exportPagedCSV = usePagedCSVExport();
 
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingUserResourcePolicy, setEditingUserResourcePolicy] =
@@ -155,30 +160,54 @@ const UserResourcePolicyV2 = ({
   );
 
   const handleExportCSV = (selectedExportKeys: string[]) => {
-    if (_.isEmpty(selectedExportKeys) || _.isEmpty(userResourcePolicies)) {
+    if (_.isEmpty(selectedExportKeys)) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
-    const exportRows: Array<Partial<UserResourcePolicyExportRow>> = _.map(
-      userResourcePolicies,
-      (policy) =>
-        _.pick(
-          policy,
-          selectedExportKeys as Array<keyof UserResourcePolicyExportRow>,
-        ),
-    );
-    exportCSVWithFormattingRules(exportRows, 'user_resource_policies', {
-      maxVfolderCount: (value) => (_.toNumber(value) === 0 ? '∞' : value),
-      maxConcurrentLogins: (value) => value ?? '∞',
-      maxQuotaScopeSize: (value) =>
-        value?.expr === '-1'
-          ? '∞'
-          : (convertToDecimalUnit(value?.expr, 'auto')?.displayValue ?? '-'),
-      createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+    const exportKeys = selectedExportKeys as Array<
+      keyof UserResourcePolicyExportRow
+    >;
+    // Walks the current filter and order page by page (see `usePagedCSVExport`),
+    // so the file is not limited to the page on screen.
+    void exportPagedCSV<UserResourcePolicyV2Node>({
+      fetchPage: async (limit, offset) => {
+        const page = await fetchQuery<UserResourcePolicyV2QueryType>(
+          relayEnvironment,
+          UserResourcePolicyV2Query,
+          {
+            filter: queryRef.variables.filter,
+            orderBy: queryRef.variables.orderBy,
+            limit,
+            offset,
+          },
+          { fetchPolicy: 'network-only' },
+        ).toPromise();
+        return {
+          count: page?.adminUserResourcePoliciesV2?.count ?? 0,
+          rows: filterOutNullAndUndefined(
+            (page?.adminUserResourcePoliciesV2?.edges ?? []).map(
+              (edge) => edge?.node,
+            ),
+          ),
+        };
+      },
+      writeCSV: (policies) => {
+        const exportRows: Array<Partial<UserResourcePolicyExportRow>> = _.map(
+          policies,
+          (policy) => _.pick(policy, exportKeys),
+        );
+        exportCSVWithFormattingRules(exportRows, 'user_resource_policies', {
+          maxVfolderCount: (value) => (_.toNumber(value) === 0 ? '∞' : value),
+          maxConcurrentLogins: (value) => value ?? '∞',
+          maxQuotaScopeSize: (value) =>
+            value?.expr === '-1'
+              ? '∞'
+              : (convertToDecimalUnit(value?.expr, 'auto')?.displayValue ??
+                '-'),
+          createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+        });
+      },
     });
-    message.info(
-      t('resourcePolicy.ExportedCurrentPageOnly', { count: exportRows.length }),
-    );
   };
 
   return (

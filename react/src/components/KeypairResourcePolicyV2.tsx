@@ -12,6 +12,7 @@ import { convertToOrderBy } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import KeypairResourcePolicyV2SettingModal from './KeypairResourcePolicyV2SettingModal';
 import {
   availableKeypairResourcePolicyExportFields,
@@ -32,11 +33,13 @@ import { Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
 import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  fetchQuery,
   graphql,
   PreloadedQuery,
   usePreloadedQuery,
   UseQueryLoaderLoadQueryOptions,
   useMutation,
+  useRelayEnvironment,
 } from 'react-relay';
 
 export const KeypairResourcePolicyV2Query = graphql`
@@ -138,6 +141,8 @@ const KeypairResourcePolicyV2 = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const relayEnvironment = useRelayEnvironment();
+  const exportPagedCSV = usePagedCSVExport();
 
   const [isCreatingPolicySetting, setIsCreatingPolicySetting] = useState(false);
   const [editingKeypairResourcePolicy, setEditingKeypairResourcePolicy] =
@@ -182,35 +187,56 @@ const KeypairResourcePolicyV2 = ({
   );
 
   const handleExportCSV = (selectedExportKeys: string[]) => {
-    if (_.isEmpty(selectedExportKeys) || _.isEmpty(keypairResourcePolicies)) {
+    if (_.isEmpty(selectedExportKeys)) {
       message.error(t('resourcePolicy.NoDataToExport'));
       return;
     }
-    const exportRows: Array<Partial<KeypairResourcePolicyExportRow>> = _.map(
-      keypairResourcePolicies,
-      (policy) =>
-        _.pick(
-          policy,
-          selectedExportKeys as Array<keyof KeypairResourcePolicyExportRow>,
-        ),
-    );
-    exportCSVWithFormattingRules(exportRows, 'keypair_resource_policies', {
-      totalResourceSlots: formatResourceSlots,
-      maxConcurrentSessions: (value) => value || '∞',
-      maxContainersPerSession: (value) =>
-        value === SIGNED_32BIT_MAX_INT ? '∞' : value,
-      idleTimeout: (value) => value || '∞',
-      maxSessionLifetime: (value) => value || '∞',
-      allowedVfolderHosts: (value) =>
-        _.isEmpty(value) ? '-' : _.map(value, 'host').join(', '),
-      maxPendingSessionCount: (value) => value ?? '∞',
-      maxConcurrentSftpSessions: (value) => value || '∞',
-      maxPendingSessionResourceSlots: formatResourceSlots,
-      createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+    const exportKeys = selectedExportKeys as Array<
+      keyof KeypairResourcePolicyExportRow
+    >;
+    // Walks the current filter and order page by page (see `usePagedCSVExport`),
+    // so the file is not limited to the page on screen.
+    void exportPagedCSV<KeypairResourcePolicyV2Node>({
+      fetchPage: async (limit, offset) => {
+        const page = await fetchQuery<KeypairResourcePolicyV2QueryType>(
+          relayEnvironment,
+          KeypairResourcePolicyV2Query,
+          {
+            filter: queryRef.variables.filter,
+            orderBy: queryRef.variables.orderBy,
+            limit,
+            offset,
+          },
+          { fetchPolicy: 'network-only' },
+        ).toPromise();
+        return {
+          count: page?.adminKeypairResourcePoliciesV2?.count ?? 0,
+          rows: filterOutNullAndUndefined(
+            (page?.adminKeypairResourcePoliciesV2?.edges ?? []).map(
+              (edge) => edge?.node,
+            ),
+          ),
+        };
+      },
+      writeCSV: (policies) => {
+        const exportRows: Array<Partial<KeypairResourcePolicyExportRow>> =
+          _.map(policies, (policy) => _.pick(policy, exportKeys));
+        exportCSVWithFormattingRules(exportRows, 'keypair_resource_policies', {
+          totalResourceSlots: formatResourceSlots,
+          maxConcurrentSessions: (value) => value || '∞',
+          maxContainersPerSession: (value) =>
+            value === SIGNED_32BIT_MAX_INT ? '∞' : value,
+          idleTimeout: (value) => value || '∞',
+          maxSessionLifetime: (value) => value || '∞',
+          allowedVfolderHosts: (value) =>
+            _.isEmpty(value) ? '-' : _.map(value, 'host').join(', '),
+          maxPendingSessionCount: (value) => value ?? '∞',
+          maxConcurrentSftpSessions: (value) => value || '∞',
+          maxPendingSessionResourceSlots: formatResourceSlots,
+          createdAt: (value) => (value ? dayjs(value).format('lll') : '-'),
+        });
+      },
     });
-    message.info(
-      t('resourcePolicy.ExportedCurrentPageOnly', { count: exportRows.length }),
-    );
   };
 
   return (
