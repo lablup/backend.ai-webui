@@ -2312,6 +2312,7 @@
     "UpdatedAt": "Aggiornato il"
   },
   "rbac": {
+    "AccessLevel": "Livello di accesso",
     "Activate": "Attiva",
     "ActivateRole": "Attiva ruolo",
     "Active": "Attivo",
@@ -2346,6 +2347,7 @@
     "EntityType": "Tipo di permesso",
     "ErrorMessage": "Messaggio di errore",
     "FKConstraintViolation": "Impossibile eliminare definitivamente questo ruolo. Rimuovere prima tutte le assegnazioni e i permessi.",
+    "FilterByPermissionType": "Filtra per tipo di permesso",
     "FullyAllowed": "Completamente consentito",
     "GrantedAt": "Concesso il",
     "Inactive": "Inattivo",

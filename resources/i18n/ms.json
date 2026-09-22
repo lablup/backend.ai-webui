@@ -2312,6 +2312,7 @@
     "UpdatedAt": "Dikemas Kini Pada"
   },
   "rbac": {
+    "AccessLevel": "Tahap akses",
     "Activate": "Aktifkan",
     "ActivateRole": "Aktifkan Peranan",
     "Active": "Aktif",
@@ -2346,6 +2347,7 @@
     "EntityType": "Jenis Kebenaran",
     "ErrorMessage": "Mesej Ralat",
     "FKConstraintViolation": "Tidak dapat mengalih keluar peranan ini secara kekal. Sila alih keluar semua tugasan dan kebenaran terlebih dahulu.",
+    "FilterByPermissionType": "Tapis mengikut jenis kebenaran",
     "FullyAllowed": "Dibenarkan sepenuhnya",
     "GrantedAt": "Diberikan Pada",
     "Inactive": "Tidak aktif",

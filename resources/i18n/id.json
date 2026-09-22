@@ -2315,6 +2315,7 @@
     "UpdatedAt": "Diperbarui Pada"
   },
   "rbac": {
+    "AccessLevel": "Tingkat akses",
     "Activate": "Aktifkan",
     "ActivateRole": "Aktifkan Peran",
     "Active": "Aktif",
@@ -2349,6 +2350,7 @@
     "EntityType": "Jenis Izin",
     "ErrorMessage": "Pesan Galat",
     "FKConstraintViolation": "Tidak dapat menghapus peran ini secara permanen. Hapus semua penetapan dan izin terlebih dahulu.",
+    "FilterByPermissionType": "Filter berdasarkan jenis izin",
     "FullyAllowed": "Diizinkan sepenuhnya",
     "GrantedAt": "Diberikan Pada",
     "Inactive": "Tidak aktif",

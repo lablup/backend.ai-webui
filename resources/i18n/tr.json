@@ -2312,6 +2312,7 @@
     "UpdatedAt": "Güncellenme Tarihi"
   },
   "rbac": {
+    "AccessLevel": "Erişim düzeyi",
     "Activate": "Etkinleştir",
     "ActivateRole": "Rolü Etkinleştir",
     "Active": "Aktif",
@@ -2346,6 +2347,7 @@
     "EntityType": "İzin Türü",
     "ErrorMessage": "Hata mesajı",
     "FKConstraintViolation": "Bu rol kalıcı olarak silinemez. Lütfen önce tüm atamaları ve izinleri kaldırın.",
+    "FilterByPermissionType": "İzin türüne göre filtrele",
     "FullyAllowed": "Tamamen izin verildi",
     "GrantedAt": "Verilme Tarihi",
     "Inactive": "Pasif",

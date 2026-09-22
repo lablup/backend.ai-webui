@@ -2314,6 +2314,7 @@
     "UpdatedAt": "Atualizado em"
   },
   "rbac": {
+    "AccessLevel": "Nível de acesso",
     "Activate": "Ativar",
     "ActivateRole": "Ativar perfil",
     "Active": "Ativo",
@@ -2348,6 +2349,7 @@
     "EntityType": "Tipo de permissão",
     "ErrorMessage": "Mensagem de erro",
     "FKConstraintViolation": "Não é possível eliminar permanentemente esta função. Remova primeiro todas as atribuições e permissões.",
+    "FilterByPermissionType": "Filtrar por tipo de permissão",
     "FullyAllowed": "Totalmente permitido",
     "GrantedAt": "Concedido em",
     "Inactive": "Inativo",

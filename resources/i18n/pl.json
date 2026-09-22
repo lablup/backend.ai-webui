@@ -2314,6 +2314,7 @@
     "UpdatedAt": "Zaktualizowano"
   },
   "rbac": {
+    "AccessLevel": "Poziom dostępu",
     "Activate": "Aktywuj",
     "ActivateRole": "Aktywuj rolę",
     "Active": "Aktywny",
@@ -2348,6 +2349,7 @@
     "EntityType": "Typ uprawnienia",
     "ErrorMessage": "Komunikat o błędzie",
     "FKConstraintViolation": "Nie można trwale usunąć tej roli. Najpierw usuń wszystkie przypisania i uprawnienia.",
+    "FilterByPermissionType": "Filtruj według typu uprawnienia",
     "FullyAllowed": "W pełni dozwolone",
     "GrantedAt": "Przyznano",
     "Inactive": "Nieaktywny",

@@ -2314,6 +2314,7 @@
     "UpdatedAt": "Ngày cập nhật"
   },
   "rbac": {
+    "AccessLevel": "Mức truy cập",
     "Activate": "Kích hoạt",
     "ActivateRole": "Kích hoạt vai trò",
     "Active": "Hoạt động",
@@ -2348,6 +2349,7 @@
     "EntityType": "Loại quyền",
     "ErrorMessage": "Thông báo lỗi",
     "FKConstraintViolation": "Không thể xóa vĩnh viễn vai trò này. Vui lòng xóa tất cả phân công và quyền trước.",
+    "FilterByPermissionType": "Lọc theo loại quyền",
     "FullyAllowed": "Được phép hoàn toàn",
     "GrantedAt": "Được cấp lúc",
     "Inactive": "Không hoạt động",

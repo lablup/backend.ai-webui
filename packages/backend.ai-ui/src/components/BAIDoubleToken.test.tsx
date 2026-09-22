@@ -63,4 +63,32 @@ describe('BAIDoubleToken', () => {
     expect(tokens[0]).toHaveAttribute('aria-label', 'python');
     expect(screen.getByText('py')).toBeInTheDocument();
   });
+
+  it('appends the copy control to a copyable segment, keeping tokens the direct children', () => {
+    const { container } = render(
+      <BAIDoubleToken
+        values={[
+          { label: 'Project', color: 'blue' },
+          {
+            label: '01a0c2f9-4e84-7f7c-a9b5-f24958a5f8fa',
+            color: 'default',
+            copyable: true,
+          },
+        ]}
+      />,
+    );
+    // The copy control's tooltip bubble lands as a trailing sibling of the
+    // chips, so the weld CSS keys on `:last-of-type` — count the chips only.
+    const tokens = Array.from(
+      root(container).querySelectorAll(':scope > .astryx-token'),
+    );
+    expect(tokens).toHaveLength(2);
+    expect(tokens[1]).toBe(
+      root(container).querySelector(':scope > .astryx-token:last-of-type'),
+    );
+    const copyButton = screen.getByRole('button', { name: 'Copy' });
+    expect(tokens[1]).toContainElement(copyButton);
+    expect(tokens[0]).not.toContainElement(copyButton);
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
 });

@@ -2314,6 +2314,7 @@
     "UpdatedAt": "更新日時"
   },
   "rbac": {
+    "AccessLevel": "アクセスレベル",
     "Activate": "有効化",
     "ActivateRole": "ロールを有効化",
     "Active": "アクティブ",
@@ -2348,6 +2349,7 @@
     "EntityType": "権限タイプ",
     "ErrorMessage": "エラーメッセージ",
     "FKConstraintViolation": "このロールを完全に削除できません。まずすべての割り当てと権限を削除してください。",
+    "FilterByPermissionType": "権限タイプで絞り込む",
     "FullyAllowed": "すべて許可",
     "GrantedAt": "付与日時",
     "Inactive": "非アクティブ",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ca34aaa344bd58118865bbe01f66dac1>>
+ * @generated SignedSource<<7500fccc260d5755743ca92cf8785b68>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,29 +23,26 @@ export type CreatePermissionInput = {
   scopeId?: string | null | undefined;
   scopeType?: RBACElementType | null | undefined;
 };
-export type RoleScopePermissionEditModalBulkAddMutation$variables = {
+export type RolePermissionSummaryTableGrantMutation$variables = {
   input: BulkAddRolePermissionsInput;
 };
-export type RoleScopePermissionEditModalBulkAddMutation$data = {
+export type RolePermissionSummaryTableGrantMutation$data = {
   readonly adminBulkAddRolePermissions: {
     readonly failed: ReadonlyArray<{
       readonly entityType: string;
       readonly message: string;
-      readonly operation: string | null | undefined;
-      readonly scopeId: string | null | undefined;
+      readonly permission: PermissionBit;
     }>;
     readonly items: ReadonlyArray<{
       readonly entityType: string;
       readonly id: string;
-      readonly operation: OperationType | null | undefined;
-      readonly scopeId: string | null | undefined;
-      readonly scopeType: RBACElementType | null | undefined;
+      readonly permission: PermissionBit;
     }>;
   } | null | undefined;
 };
-export type RoleScopePermissionEditModalBulkAddMutation = {
-  response: RoleScopePermissionEditModalBulkAddMutation$data;
-  variables: RoleScopePermissionEditModalBulkAddMutation$variables;
+export type RolePermissionSummaryTableGrantMutation = {
+  response: RolePermissionSummaryTableGrantMutation$data;
+  variables: RolePermissionSummaryTableGrantMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -60,24 +57,17 @@ v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeId",
+  "name": "entityType",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "entityType",
+  "name": "permission",
   "storageKey": null
 },
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "operation",
-  "storageKey": null
-},
-v4 = [
+v3 = [
   {
     "alias": null,
     "args": [
@@ -107,16 +97,8 @@ v4 = [
             "name": "id",
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "scopeType",
-            "storageKey": null
-          },
           (v1/*: any*/),
-          (v2/*: any*/),
-          (v3/*: any*/)
+          (v2/*: any*/)
         ],
         "storageKey": null
       },
@@ -130,7 +112,6 @@ v4 = [
         "selections": [
           (v1/*: any*/),
           (v2/*: any*/),
-          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -150,8 +131,8 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "RoleScopePermissionEditModalBulkAddMutation",
-    "selections": (v4/*: any*/),
+    "name": "RolePermissionSummaryTableGrantMutation",
+    "selections": (v3/*: any*/),
     "type": "Mutation",
     "abstractKey": null
   },
@@ -159,20 +140,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "RoleScopePermissionEditModalBulkAddMutation",
-    "selections": (v4/*: any*/)
+    "name": "RolePermissionSummaryTableGrantMutation",
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "42260fc6c93be99534c8da6f57d445d5",
+    "cacheID": "1251c54dd22874695493fe8444fee058",
     "id": null,
     "metadata": {},
-    "name": "RoleScopePermissionEditModalBulkAddMutation",
+    "name": "RolePermissionSummaryTableGrantMutation",
     "operationKind": "mutation",
-    "text": "mutation RoleScopePermissionEditModalBulkAddMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      scopeType\n      scopeId\n      entityType\n      operation\n    }\n    failed {\n      scopeId\n      entityType\n      operation\n      message\n    }\n  }\n}\n"
+    "text": "mutation RolePermissionSummaryTableGrantMutation(\n  $input: BulkAddRolePermissionsInput!\n) {\n  adminBulkAddRolePermissions(input: $input) {\n    items {\n      id\n      entityType\n      permission\n    }\n    failed {\n      entityType\n      permission\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "645cfe960d1d54f95e061f266d877ab2";
+(node as any).hash = "8cde7fb3c899ce368d1aca3414efd257";
 
 export default node;

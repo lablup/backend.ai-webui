@@ -2314,6 +2314,7 @@
     "UpdatedAt": "Mis à jour le"
   },
   "rbac": {
+    "AccessLevel": "Niveau d'accès",
     "Activate": "Activer",
     "ActivateRole": "Activer le rôle",
     "Active": "actif",
@@ -2348,6 +2349,7 @@
     "EntityType": "Type de permission",
     "ErrorMessage": "Message d'erreur",
     "FKConstraintViolation": "Impossible de supprimer définitivement ce rôle. Veuillez d'abord supprimer toutes les attributions et permissions.",
+    "FilterByPermissionType": "Filtrer par type de permission",
     "FullyAllowed": "Entièrement autorisé",
     "GrantedAt": "Accordé le",
     "Inactive": "Inactif",

@@ -2314,6 +2314,7 @@
     "UpdatedAt": "Aktualisiert am"
   },
   "rbac": {
+    "AccessLevel": "Zugriffsebene",
     "Activate": "Aktivieren",
     "ActivateRole": "Rolle aktivieren",
     "Active": "Aktiv",
@@ -2348,6 +2349,7 @@
     "EntityType": "Berechtigungstyp",
     "ErrorMessage": "Fehlermeldung",
     "FKConstraintViolation": "Diese Rolle kann nicht gelöscht werden. Bitte entfernen Sie zuerst alle Zuweisungen und Berechtigungen.",
+    "FilterByPermissionType": "Nach Berechtigungstyp filtern",
     "FullyAllowed": "Vollständig erlaubt",
     "GrantedAt": "Gewährt am",
     "Inactive": "Inaktiv",

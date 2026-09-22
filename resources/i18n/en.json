@@ -2299,6 +2299,7 @@
     "UpdatedAt": "Updated At"
   },
   "rbac": {
+    "AccessLevel": "Access Level",
     "Activate": "Activate",
     "ActivateRole": "Activate Role",
     "Active": "Active",
@@ -2333,6 +2334,7 @@
     "EntityType": "Permission Type",
     "ErrorMessage": "Error Message",
     "FKConstraintViolation": "Cannot purge this role. Please remove all assignments and permissions first.",
+    "FilterByPermissionType": "Filter by permission type",
     "FullyAllowed": "Fully allowed",
     "GrantedAt": "Granted At",
     "Inactive": "Inactive",

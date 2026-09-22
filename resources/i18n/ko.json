@@ -2314,6 +2314,7 @@
     "UpdatedAt": "수정일"
   },
   "rbac": {
+    "AccessLevel": "허용 수준",
     "Activate": "활성화",
     "ActivateRole": "역할 활성화",
     "Active": "활성",
@@ -2348,6 +2349,7 @@
     "EntityType": "권한 타입",
     "ErrorMessage": "에러 메시지",
     "FKConstraintViolation": "이 역할을 제거할 수 없습니다. 먼저 모든 할당 및 세부 권한을 제거하세요.",
+    "FilterByPermissionType": "권한 타입으로 필터",
     "FullyAllowed": "모두 허용됨",
     "GrantedAt": "부여 일시",
     "Inactive": "비활성",

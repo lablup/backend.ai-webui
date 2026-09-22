@@ -2301,6 +2301,7 @@
     "UpdatedAt": "อัปเดตเมื่อ"
   },
   "rbac": {
+    "AccessLevel": "ระดับการเข้าถึง",
     "Activate": "เปิดใช้งาน",
     "ActivateRole": "เปิดใช้งานบทบาท",
     "Active": "ใช้งานอยู่",
@@ -2335,6 +2336,7 @@
     "EntityType": "ประเภทสิทธิ์",
     "ErrorMessage": "ข้อความแสดงข้อผิดพลาด",
     "FKConstraintViolation": "ไม่สามารถลบบทบาทนี้อย่างถาวรได้ กรุณาลบการมอบหมายและสิทธิ์ทั้งหมดก่อน",
+    "FilterByPermissionType": "กรองตามประเภทสิทธิ์",
     "FullyAllowed": "อนุญาตทั้งหมด",
     "GrantedAt": "ได้รับเมื่อ",
     "Inactive": "ไม่ได้ใช้งาน",

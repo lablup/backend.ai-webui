@@ -2316,6 +2316,7 @@
     "UpdatedAt": "更新時間"
   },
   "rbac": {
+    "AccessLevel": "存取層級",
     "Activate": "啟用",
     "ActivateRole": "啟用角色",
     "Active": "活躍",
@@ -2350,6 +2351,7 @@
     "EntityType": "權限類型",
     "ErrorMessage": "錯誤信息",
     "FKConstraintViolation": "無法清除此角色。請先移除所有分配和權限。",
+    "FilterByPermissionType": "依權限類型篩選",
     "FullyAllowed": "完全允許",
     "GrantedAt": "授予時間",
     "Inactive": "非活躍",
