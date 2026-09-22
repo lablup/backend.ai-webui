@@ -1622,7 +1622,6 @@
     "FileUploadFailed": "Impossibile caricare alcuni file nella cartella '{{folderName}}'.",
     "Filename": "Nome del file",
     "FolderDetailUnavailable": "I dettagli della cartella non sono disponibili",
-    "FolderDetailUnavailableDescription": "Non è stato possibile caricare le informazioni della cartella, ma puoi comunque esplorarne i file.",
     "FolderNotFoundOrNoAccess": "Cartella non trovata o accesso negata",
     "Metadata": "Metadati",
     "NoExplorerSupportForUnmanagedFolder": "Le cartelle non gestite non supportano l'esploratore dei file.",

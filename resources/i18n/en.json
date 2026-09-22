@@ -1609,7 +1609,6 @@
     "FileUploadFailed": "Failed to upload some files in folder '{{folderName}}'.",
     "Filename": "File Name",
     "FolderDetailUnavailable": "Folder details are unavailable",
-    "FolderDetailUnavailableDescription": "The folder's information could not be loaded, but you can still browse its files.",
     "FolderNotFoundOrNoAccess": "Folder not found or access denied",
     "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Unmanaged folders do not support the file explorer.",

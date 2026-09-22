@@ -1622,7 +1622,6 @@
     "FileUploadFailed": "Bazı dosyaları '{{{folderName}}' klasörüne yükleyemedi.",
     "Filename": "Dosya adı",
     "FolderDetailUnavailable": "Klasör ayrıntıları kullanılamıyor",
-    "FolderDetailUnavailableDescription": "Klasör bilgileri yüklenemedi, ancak dosyalarına göz atmaya devam edebilirsiniz.",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "Metadata": "Meta Veri",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",

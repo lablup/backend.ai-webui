@@ -240,7 +240,6 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // FR-3997: any one of `VFolder`'s eight non-nullable fields coming back null
   // nulls the whole node, so the legacy node decides readability instead.
   const isFolderReadable = !!vfolderNode || !!legacyVFolderNode;
-  const isFolderDetailUnavailable = !vfolderNode && !!legacyVFolderNode;
   const folderName = vfolderNode?.metadata?.name ?? legacyVFolderNode?.name;
   const folderHost = vfolderNode?.host ?? legacyVFolderNode?.host ?? '';
   const folderUnmanagedPath =
@@ -289,7 +288,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   };
 
   const loadAuditLog = () => {
-    if (!vfolderNode?.id) {
+    if (!isFolderReadable) {
       return;
     }
     loadAuditLogQuery(
@@ -451,7 +450,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     paddingBlockEnd: 'var(--spacing-3)',
   };
 
-  const vFolderInfoPanelElement = vfolderNode ? (
+  const vFolderInfoPanelElement = isFolderReadable ? (
     <BAITabs
       // Restored (QA2-A): the legacy `type={xl ? 'card' : 'line'}` split. The
       // wide layout puts this panel beside the file list, where the boxed tabs
@@ -471,7 +470,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           label: t('explorer.Metadata'),
           children: (
             <div style={infoPanelPanelStyle}>
-              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+              {vfolderNode ? (
+                <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+              ) : (
+                <Banner
+                  title={t('explorer.FolderDetailUnavailable')}
+                  status="warning"
+                />
+              )}
             </div>
           ),
         },
@@ -520,9 +526,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
         },
       }}
       headerContent={
-        isFolderDetailUnavailable ? (
+        !vfolderNode ? (
           <span>{folderName}</span>
-        ) : vfolderNode ? (
+        ) : (
           <FolderExplorerHeaderV2
             vfolderNodeFrgmt={vfolderNode}
             // ADR-0001: on super-admin routes `pageProject` is `null` — the
@@ -535,8 +541,6 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 : undefined
             }
           />
-        ) : (
-          <span />
         )
       }
       closeLabel={t('button.Close')}
@@ -581,12 +585,6 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 title={t('explorer.FolderNotFoundOrNoAccess')}
                 status="error"
               />
-            ) : isFolderDetailUnavailable ? (
-              <Banner
-                title={t('explorer.FolderDetailUnavailable')}
-                description={t('explorer.FolderDetailUnavailableDescription')}
-                status="warning"
-              />
             ) : hasNoPermissions ? (
               <Banner title={t('explorer.NoPermissions')} status="error" />
             ) : pageProject !== null &&
@@ -605,11 +603,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               />
             ) : null}
 
-            {isFolderDetailUnavailable ? (
-              // No v2 node means no metadata / audit-log panel to sit beside
-              // the file list, so the explorer takes the whole body.
-              fileExplorerElement
-            ) : vfolderNode && !hasNoPermissions ? (
+            {isFolderReadable && !hasNoPermissions ? (
               xl ? (
                 // antd `Splitter` owned containment — panel sizes always summed
                 // to the container and each panel clipped. `useResizable` only

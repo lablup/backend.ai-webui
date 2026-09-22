@@ -1623,7 +1623,6 @@
     "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
     "Filename": "Nom de fichier",
     "FolderDetailUnavailable": "Les détails du dossier sont indisponibles",
-    "FolderDetailUnavailableDescription": "Les informations du dossier n'ont pas pu être chargées, mais vous pouvez toujours parcourir ses fichiers.",
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "Metadata": "Métadonnées",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",

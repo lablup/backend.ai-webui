@@ -561,10 +561,15 @@ describe('FolderExplorerModalV2 v2-resolver fallback (FR-3997)', () => {
     expect(fileExplorerProps.at(-1)?.targetVFolderName).toBe(
       'legacy-folder-name',
     );
-    // No v2 node means no metadata panel beside the file list.
+    // The warning replaces the metadata content, not the whole modal: the info
+    // panel keeps its tabs, and the audit log runs off its own query.
     expect(
       screen.queryByTestId('mock-vfolder-description'),
     ).not.toBeInTheDocument();
+    // Astryx's TabList renders each label twice (one copy is the hidden
+    // width-measuring span), so count rather than expect a single node.
+    expect(screen.getAllByText('explorer.Metadata').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('auditLog.AuditLog').length).toBeGreaterThan(0);
   });
 
   it('keeps the hard error when both resolvers refuse the folder', async () => {
@@ -580,5 +585,6 @@ describe('FolderExplorerModalV2 v2-resolver fallback (FR-3997)', () => {
     expect(
       screen.queryByText('explorer.FolderDetailUnavailable'),
     ).not.toBeInTheDocument();
+    expect(screen.queryByText('explorer.Metadata')).not.toBeInTheDocument();
   });
 });

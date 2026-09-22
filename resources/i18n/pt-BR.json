@@ -1622,7 +1622,6 @@
     "FileUploadFailed": "Falha ao fazer upload de alguns arquivos na pasta '{{folderName}}'.",
     "Filename": "Nome do arquivo",
     "FolderDetailUnavailable": "Os detalhes da pasta não estão disponíveis",
-    "FolderDetailUnavailableDescription": "Não foi possível carregar as informações da pasta, mas você ainda pode explorar seus arquivos.",
     "FolderNotFoundOrNoAccess": "Pasta não encontrada ou acesso negado",
     "Metadata": "Metadados",
     "NoExplorerSupportForUnmanagedFolder": "Pastas não gerenciadas não suportam o File Explorer.",

@@ -1623,7 +1623,6 @@
     "FileUploadFailed": "Nie udało się przesłać niektórych plików w folderze „{{folderName}}”.",
     "Filename": "Nazwa pliku",
     "FolderDetailUnavailable": "Szczegóły folderu są niedostępne",
-    "FolderDetailUnavailableDescription": "Nie udało się wczytać informacji o folderze, ale nadal możesz przeglądać jego pliki.",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "Metadata": "Metadane",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
