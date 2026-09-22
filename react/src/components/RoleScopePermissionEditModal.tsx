@@ -24,7 +24,6 @@ import {
   type BulkCellState,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -111,12 +110,39 @@ type ScopeNameRecord = Omit<
 >;
 
 /**
- * An `EntityRef`'s display name from its resolved `scope` entity; null when
- * it carries none, so callers fall back to the raw scope id. Exported for
- * `ScopedRolePermissionCard`, whose table shows the same names.
+ * Resolve an `EntityRef`'s human-readable display name from its resolved
+ * `scope` entity, per scope type. Returns null-ish when the type is unknown
+ * or the entity carries no name — callers fall back to the raw scope id.
+ * Exported for `ScopedRolePermissionCard`, whose table shows the same names.
  */
-export const resolveScopeName = (record: ScopeNameRecord): string | null =>
-  resolveRBACScopeName(record);
+export const resolveScopeName = (
+  record: ScopeNameRecord,
+): string | null | undefined => {
+  const scope = record?.scope;
+  if (!scope) return null;
+  switch (record.scopeType) {
+    case 'DOMAIN':
+      return scope.basicInfo?.domainName;
+    case 'PROJECT':
+      return scope.basicInfo?.projectName;
+    case 'USER':
+      return scope.basicInfo?.email;
+    case 'VFOLDER':
+      return scope.vfolderName;
+    case 'SESSION':
+      return scope.metadata?.sessionName;
+    case 'MODEL_DEPLOYMENT':
+      return scope.metadata?.deploymentName;
+    case 'RESOURCE_GROUP':
+      return scope.resourceGroupName;
+    case 'CONTAINER_REGISTRY':
+      return scope.project
+        ? `${scope.registryName} - ${scope.project}`
+        : scope.registryName;
+    default:
+      return null;
+  }
+};
 
 interface RoleScopePermissionEditModalProps extends Omit<
   BAIModalProps,

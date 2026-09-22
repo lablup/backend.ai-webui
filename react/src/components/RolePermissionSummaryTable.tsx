@@ -7,9 +7,9 @@ import {
   type PermissionBit,
   RolePermissionSummaryTableGrantMutation,
 } from '../__generated__/RolePermissionSummaryTableGrantMutation.graphql';
+import { RolePermissionSummaryTableMatrixQuery } from '../__generated__/RolePermissionSummaryTableMatrixQuery.graphql';
 import { RolePermissionSummaryTableQuery } from '../__generated__/RolePermissionSummaryTableQuery.graphql';
 import { RolePermissionSummaryTableRevokeMutation } from '../__generated__/RolePermissionSummaryTableRevokeMutation.graphql';
-import { RolePermissionSummaryTable_rbacPermissionMatrixFragment$key } from '../__generated__/RolePermissionSummaryTable_rbacPermissionMatrixFragment.graphql';
 import { App } from '../app-shim';
 import { reasonMessage } from '../helper/mutationError';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
@@ -277,22 +277,17 @@ const RolePermissionRowEditor: React.FC<RolePermissionRowEditorProps> = ({
 
 export interface RolePermissionSummaryTableProps {
   roleNodeFrgmt: RolePermissionSummaryTableFragment$key;
-  rbacPermissionMatrixFrgmt: RolePermissionSummaryTable_rbacPermissionMatrixFragment$key;
-  /** The role's one scope type, spelled as the manager answered it. */
-  scopeType: string;
 }
 
 /**
- * The Permissions tab on a manager >= 26.9.0a4, where a role belongs to one
- * scope: one row per permission type of that scope, with the access level and
- * the granted bits, and an expandable editor per row. The document selects the
- * 26.9 fields only — `RolePermissionDetailTab` mounts it only when the manager
- * answered the role's `scopeType` (ADR 0006).
+ * The Permissions tab of `RoleDetailDrawerV2` (managers >= 26.9.0a4, one
+ * scope per role): one row per permission type of that scope, with the access
+ * level and the granted bits, and an expandable editor per row. Its own query
+ * and mutations select the 26.9 fields only; the fragment's `scopeType` carries
+ * `@since` because it rides the role list query (ADR 0006).
  */
 const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   roleNodeFrgmt,
-  rbacPermissionMatrixFrgmt,
-  scopeType,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -301,25 +296,31 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     graphql`
       fragment RolePermissionSummaryTableFragment on Role {
         id
+        scopeType @since(version: "26.9.0a4")
       }
     `,
     roleNodeFrgmt,
   );
-  const rbacPermissionMatrix = useFragment(
-    graphql`
-      fragment RolePermissionSummaryTable_rbacPermissionMatrixFragment on ScopeEntityOperationCombination
-      @relay(plural: true) {
-        scopeType
-        entities {
-          entityType
-          actions {
-            requiredPermission
+  const scopeType = role.scopeType ?? '';
+
+  const { rbacPermissionMatrix } =
+    useLazyLoadQuery<RolePermissionSummaryTableMatrixQuery>(
+      graphql`
+        query RolePermissionSummaryTableMatrixQuery {
+          rbacPermissionMatrix {
+            scopeType
+            entities {
+              entityType
+              actions {
+                requiredPermission
+              }
+            }
           }
         }
-      }
-    `,
-    rbacPermissionMatrixFrgmt,
-  );
+      `,
+      {},
+      { fetchPolicy: 'store-and-network' },
+    );
 
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -370,7 +371,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     t(`rbac.operations.${bit}`, { defaultValue: bit });
 
   const rows: EntityRow[] = (
-    rbacPermissionMatrix.find(
+    (rbacPermissionMatrix ?? []).find(
       (combination) =>
         combination.scopeType.toUpperCase() === scopeType.toUpperCase(),
     )?.entities ?? []

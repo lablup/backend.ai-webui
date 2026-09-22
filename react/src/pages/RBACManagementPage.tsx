@@ -14,6 +14,7 @@ import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManageme
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
+import RoleDetailDrawerV2 from '../components/RoleDetailDrawerV2';
 import RoleFormModal from '../components/RoleFormModal';
 import RoleNodes, {
   type RoleNodeInList,
@@ -147,6 +148,7 @@ const RBACManagementPage: React.FC = () => {
               id
               ...RoleNodesFragment
               ...RoleDetailDrawerFragment
+              ...RoleDetailDrawerV2Fragment
             }
           }
         }
@@ -491,11 +493,21 @@ const RBACManagementPage: React.FC = () => {
           }
         }}
       />
-      <RoleDetailDrawer
-        open={!!selectedRole}
-        roleFrgmt={selectedRole}
-        onClose={() => setRoleDetailParam({ roleDetail: null })}
-      />
+      {/* One drawer per manager shape: the single-scope role (>= 26.9.0a4)
+          gets the V2 drawer, everything older the previous one (ADR 0006). */}
+      {baiClient?.supports('rbac-single-scope-role') ? (
+        <RoleDetailDrawerV2
+          open={!!selectedRole}
+          roleFrgmt={selectedRole}
+          onClose={() => setRoleDetailParam({ roleDetail: null })}
+        />
+      ) : (
+        <RoleDetailDrawer
+          open={!!selectedRole}
+          roleFrgmt={selectedRole}
+          onClose={() => setRoleDetailParam({ roleDetail: null })}
+        />
+      )}
       <BAIDeleteConfirmModal
         open={!!purgingRole}
         items={

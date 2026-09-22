@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c4187064884e5c5b1bada4a73802441e>>
+ * @generated SignedSource<<f5df48e6584fc606087502556f5308aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,11 +12,10 @@ import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RolePermissionDetailTab_roleScopeFragment$data = {
   readonly scopeId: string;
-  readonly scopeType: string;
   readonly totalScopes: {
     readonly count: number;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"RolePermissionSummaryTableFragment" | "ScopedRolePermissionCardFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"ScopedRolePermissionCardFragment">;
   readonly " $fragmentType": "RolePermissionDetailTab_roleScopeFragment";
 };
 export type RolePermissionDetailTab_roleScopeFragment$key = {
@@ -58,20 +57,8 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "scopeType",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
       "name": "scopeId",
       "storageKey": null
-    },
-    {
-      "args": null,
-      "kind": "FragmentSpread",
-      "name": "RolePermissionSummaryTableFragment"
     },
     {
       "args": null,
@@ -83,6 +70,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "4391ab65bf0032f11ad2c66bbb0f1c39";
+(node as any).hash = "812fb93d369daa6fbba5563fcb2cb593";
 
 export default node;
