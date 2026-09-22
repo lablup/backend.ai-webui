@@ -63,7 +63,7 @@ const UserInfoModal: React.FC<Props> = ({
           resourcePolicy
           mainAccessKey
         }
-        projects {
+        projects(limit: 1000) {
           edges {
             node {
               id

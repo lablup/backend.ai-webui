@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<886d1d670b3953cd558d0ee663cd9966>>
+ * @generated SignedSource<<3a2d8877e479611c352c21c02c3e5bbc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type AutoScalingRuleEditorModalPresetsQuery$variables = Record<PropertyKey, never>;
+export type AutoScalingRuleEditorModalPresetsQuery$variables = {
+  limit: number;
+};
 export type AutoScalingRuleEditorModalPresetsQuery$data = {
   readonly prometheusQueryPresets: {
     readonly edges: ReadonlyArray<{
@@ -36,24 +38,37 @@ export type AutoScalingRuleEditorModalPresetsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v1 = {
+v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v2 = [
+v3 = [
   {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      }
+    ],
     "concreteType": "QueryDefinitionConnection",
     "kind": "LinkedField",
     "name": "prometheusQueryPresets",
@@ -75,8 +90,8 @@ v2 = [
             "name": "node",
             "plural": false,
             "selections": [
-              (v0/*: any*/),
               (v1/*: any*/),
+              (v2/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -127,8 +142,8 @@ v2 = [
                 "name": "category",
                 "plural": false,
                 "selections": [
-                  (v0/*: any*/),
-                  (v1/*: any*/)
+                  (v1/*: any*/),
+                  (v2/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -144,32 +159,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "AutoScalingRuleEditorModalPresetsQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "AutoScalingRuleEditorModalPresetsQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "04d06fec5284e709aaee3606d8a4bb53",
+    "cacheID": "6d311f0545011ee1c6a5ab3cac1f1939",
     "id": null,
     "metadata": {},
     "name": "AutoScalingRuleEditorModalPresetsQuery",
     "operationKind": "query",
-    "text": "query AutoScalingRuleEditorModalPresetsQuery {\n  prometheusQueryPresets {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        categoryId\n        metricName\n        queryTemplate\n        timeWindow\n        category @since(version: \"26.4.3\") {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AutoScalingRuleEditorModalPresetsQuery(\n  $limit: Int!\n) {\n  prometheusQueryPresets(limit: $limit) {\n    edges {\n      node {\n        id\n        name\n        description\n        rank\n        categoryId\n        metricName\n        queryTemplate\n        timeWindow\n        category @since(version: \"26.4.3\") {\n          id\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6582d4cf067148f5b39755e919c0f4f2";
+(node as any).hash = "7d9cdf46714c6881f9b7b0a851b37c93";
 
 export default node;

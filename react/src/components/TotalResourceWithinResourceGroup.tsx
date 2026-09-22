@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { TotalResourceWithinResourceGroupFragment$key } from '../__generated__/TotalResourceWithinResourceGroupFragment.graphql';
+import { TotalResourceWithinResourceGroupRemainingAgentsQuery } from '../__generated__/TotalResourceWithinResourceGroupRemainingAgentsQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
   useCurrentUserRole,
@@ -31,14 +32,134 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  useMemo,
   useTransition,
   useDeferredValue,
   useEffect,
+  useEffectEvent,
+  useState,
   ReactNode,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useRefetchableFragment } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useRefetchableFragment,
+  useRelayEnvironment,
+} from 'react-relay';
+
+// One page of agents per request; the statistic below sums EVERY agent in the
+// resource group, so pages after the first are fetched until `count` is met.
+const AGENT_PAGE_SIZE = 100;
+
+interface AgentSlots {
+  id: string | null | undefined;
+  available_slots: string | null | undefined;
+  occupied_slots: string | null | undefined;
+}
+
+const remainingAgentsQuery = graphql`
+  query TotalResourceWithinResourceGroupRemainingAgentsQuery(
+    $resourceGroup: String
+    $isSuperAdmin: Boolean!
+    $agentNodeFilter: String!
+    $limit: Int!
+    $offset: Int!
+  ) {
+    agent_summary_list(
+      limit: $limit
+      offset: $offset
+      status: "ALIVE"
+      scaling_group: $resourceGroup
+      filter: "schedulable == true"
+    ) @skip(if: $isSuperAdmin) {
+      items {
+        id
+        available_slots
+        occupied_slots
+      }
+    }
+    agent_nodes(filter: $agentNodeFilter, first: $limit, offset: $offset)
+      @since(version: "24.12.0")
+      @include(if: $isSuperAdmin) {
+      edges {
+        node {
+          id
+          available_slots
+          occupied_slots
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Agents past the fragment's first page. Keyed on the first page's identity so
+ * a refetch (resource group change, refresh) invalidates the tail with it.
+ */
+const useRemainingAgents = ({
+  firstPageKey,
+  loadedCount,
+  totalCount,
+  variables,
+}: {
+  firstPageKey: object | null | undefined;
+  loadedCount: number;
+  totalCount: number | null | undefined;
+  variables: Omit<
+    TotalResourceWithinResourceGroupRemainingAgentsQuery['variables'],
+    'limit' | 'offset'
+  >;
+}) => {
+  'use memo';
+  const relayEnv = useRelayEnvironment();
+  const [remaining, setRemaining] = useState<{
+    key: object | null | undefined;
+    agents: Array<AgentSlots>;
+  }>({ key: undefined, agents: [] });
+
+  const needsMore =
+    !!firstPageKey && _.isNumber(totalCount) && totalCount > loadedCount;
+
+  const fetchRemaining = useEffectEvent(async (isCancelled: () => boolean) => {
+    const agents: Array<AgentSlots> = [];
+    for (
+      let offset = loadedCount;
+      offset < (totalCount as number);
+      offset += AGENT_PAGE_SIZE
+    ) {
+      const page =
+        await fetchQuery<TotalResourceWithinResourceGroupRemainingAgentsQuery>(
+          relayEnv,
+          remainingAgentsQuery,
+          { ...variables, limit: AGENT_PAGE_SIZE, offset },
+        ).toPromise();
+      if (isCancelled()) return;
+      const items: ReadonlyArray<AgentSlots | null | undefined> =
+        page?.agent_nodes
+          ? page.agent_nodes.edges.map((edge) => edge?.node)
+          : (page?.agent_summary_list?.items ?? []);
+      if (_.isEmpty(items)) break;
+      agents.push(...filterOutNullAndUndefined(items));
+    }
+    setRemaining({ key: firstPageKey, agents });
+  });
+
+  useEffect(() => {
+    if (!needsMore) return;
+    let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- state is set after the awaited pages resolve, not synchronously
+    fetchRemaining(() => cancelled);
+    return () => {
+      cancelled = true;
+    };
+  }, [firstPageKey, needsMore]);
+
+  const isCurrent = remaining.key === firstPageKey;
+  return {
+    remainingAgents: isCurrent ? remaining.agents : [],
+    isLoadingRemaining: needsMore && !isCurrent,
+  };
+};
 
 interface TotalResourceWithinResourceGroupProps extends BAIFlexProps {
   queryRef: TotalResourceWithinResourceGroupFragment$key;
@@ -63,6 +184,7 @@ export const useIsAvailableTotalResourceWithinResourceGroup = () => {
 const TotalResourceWithinResourceGroup: React.FC<
   TotalResourceWithinResourceGroupProps
 > = ({ queryRef, refetching, extra, ...props }) => {
+  'use memo';
   const { t } = useTranslation();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const currentResourceGroup = useCurrentResourceGroupValue();
@@ -82,7 +204,7 @@ const TotalResourceWithinResourceGroup: React.FC<
         queryName: "TotalResourceWithinResourceGroupFragmentRefetchQuery"
       ) {
         agent_summary_list(
-          limit: 1000
+          limit: 100
           offset: 0
           status: "ALIVE"
           scaling_group: $resourceGroup
@@ -134,15 +256,31 @@ const TotalResourceWithinResourceGroup: React.FC<
     }
   }, [deferredSelectedResourceGroup, refetch, userRole]);
 
-  const resourceData = useMemo(() => {
-    const agents = agent_nodes
+  const firstPageAgents: Array<AgentSlots> = filterOutNullAndUndefined(
+    agent_nodes
       ? _.map(agent_nodes?.edges, 'node')
-      : agent_summary_list?.items || [];
+      : agent_summary_list?.items || [],
+  );
+  const { remainingAgents, isLoadingRemaining } = useRemainingAgents({
+    firstPageKey: agent_nodes ?? agent_summary_list,
+    loadedCount: firstPageAgents.length,
+    totalCount: agent_nodes
+      ? agent_nodes.count
+      : agent_summary_list?.total_count,
+    variables: {
+      resourceGroup: deferredSelectedResourceGroup,
+      isSuperAdmin: userRole === 'superadmin',
+      agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${deferredSelectedResourceGroup}"`,
+    },
+  });
+
+  const resourceData = (() => {
+    const agents = [...firstPageAgents, ...remainingAgents];
 
     const totalOccupiedSlots: Record<string, number> = {};
     const totalAvailableSlots: Record<string, number> = {};
 
-    _.forEach(filterOutNullAndUndefined(agents), (agent) => {
+    _.forEach(agents, (agent) => {
       let occupiedSlots;
       let availableSlots;
 
@@ -276,7 +414,7 @@ const TotalResourceWithinResourceGroup: React.FC<
     );
 
     return { cpu: cpuData, memory: memoryData, accelerators };
-  }, [agent_nodes, agent_summary_list, resourceSlotsDetails]);
+  })();
 
   return (
     <BAIFlex
@@ -329,7 +467,7 @@ const TotalResourceWithinResourceGroup: React.FC<
             </SegmentedControl>
             <BAIFetchKeyButton
               size="small"
-              loading={isPendingRefetch || refetching}
+              loading={isPendingRefetch || refetching || isLoadingRemaining}
               value=""
               onChange={() => {
                 // Handle local refetching

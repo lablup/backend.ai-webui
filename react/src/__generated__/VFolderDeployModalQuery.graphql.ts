@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8d73c0725ee7556d934d618fddb38bc3>>
+ * @generated SignedSource<<03d5f6e78e017e07e02448f1c7444510>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -30,6 +30,11 @@ export type VFolderDeployModalQuery = {
 
 const node: ConcreteRequest = (function(){
 var v0 = [
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 100
+  },
   {
     "kind": "Literal",
     "name": "orderBy",
@@ -115,7 +120,7 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "deploymentRevisionPresets(orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
+        "storageKey": "deploymentRevisionPresets(limit:100,orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
       }
     ],
     "type": "Query",
@@ -488,21 +493,21 @@ return {
             "storageKey": null
           }
         ],
-        "storageKey": "deploymentRevisionPresets(orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
+        "storageKey": "deploymentRevisionPresets(limit:100,orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
       }
     ]
   },
   "params": {
-    "cacheID": "d13a05683d9410fd57a20e2a7d819bb4",
+    "cacheID": "b315a407dbb038e520d838938adc46f0",
     "id": null,
     "metadata": {},
     "name": "VFolderDeployModalQuery",
     "operationKind": "query",
-    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query VFolderDeployModalQuery {\n  deploymentRevisionPresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "28257fbdb782608acef6e45d698dac96";
+(node as any).hash = "d41e1d8e2c9ac9c93d11fd1345f19122";
 
 export default node;

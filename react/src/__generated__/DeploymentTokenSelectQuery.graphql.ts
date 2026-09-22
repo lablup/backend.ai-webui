@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<67a04953432bd9b61489a464abf3e172>>
+ * @generated SignedSource<<2d7ae132ff4fd8d2e93aa7d86b999542>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,8 @@ import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type DeploymentTokenSelectQuery$variables = {
   deploymentId: string;
+  limit: number;
+  notExpiredBefore: string;
 };
 export type DeploymentTokenSelectQuery$data = {
   readonly deployment: Result<{
@@ -33,30 +35,60 @@ export type DeploymentTokenSelectQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "deploymentId"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "deploymentId"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "notExpiredBefore"
+},
+v3 = [
   {
     "kind": "Variable",
     "name": "id",
     "variableName": "deploymentId"
   }
 ],
-v2 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v5 = {
   "alias": null,
   "args": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "after",
+              "variableName": "notExpiredBefore"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "expiresAt"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "filter"
+    },
+    {
+      "kind": "Variable",
+      "name": "limit",
+      "variableName": "limit"
+    },
     {
       "kind": "Literal",
       "name": "orderBy",
@@ -89,7 +121,7 @@ v3 = {
           "name": "node",
           "plural": false,
           "selections": [
-            (v2/*: any*/),
+            (v4/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -118,11 +150,15 @@ v3 = {
       "storageKey": null
     }
   ],
-  "storageKey": "accessTokens(orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}])"
+  "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "DeploymentTokenSelectQuery",
@@ -131,13 +167,13 @@ return {
         "kind": "CatchField",
         "field": {
           "alias": null,
-          "args": (v1/*: any*/),
+          "args": (v3/*: any*/),
           "concreteType": "ModelDeployment",
           "kind": "LinkedField",
           "name": "deployment",
           "plural": false,
           "selections": [
-            (v3/*: any*/)
+            (v5/*: any*/)
           ],
           "storageKey": null
         },
@@ -149,36 +185,40 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v2/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Operation",
     "name": "DeploymentTokenSelectQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
+        "args": (v3/*: any*/),
         "concreteType": "ModelDeployment",
         "kind": "LinkedField",
         "name": "deployment",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
-          (v2/*: any*/)
+          (v5/*: any*/),
+          (v4/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "c83af70fa58b61c9daa4716e6a2a8049",
+    "cacheID": "612bef0adbc6deb7cc69b6264a4d1cb2",
     "id": null,
     "metadata": {},
     "name": "DeploymentTokenSelectQuery",
     "operationKind": "query",
-    "text": "query DeploymentTokenSelectQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentTokenSelectQuery(\n  $deploymentId: ID!\n  $notExpiredBefore: DateTime!\n  $limit: Int!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(filter: {expiresAt: {after: $notExpiredBefore}}, orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit) {\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d5448e0f4b2191906c5ba30e7d998fdd";
+(node as any).hash = "07a4ba5e299d6b245f265af0b32db1da";
 
 export default node;

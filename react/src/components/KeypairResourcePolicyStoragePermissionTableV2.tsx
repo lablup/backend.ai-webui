@@ -116,7 +116,8 @@ const KeypairResourcePolicyStoragePermissionTableV2: React.FC<
             host
             permissions
           }
-          keypairs(filter: $keypairFilter) @include(if: $includeKeypairs) {
+          keypairs(filter: $keypairFilter, limit: 100)
+            @include(if: $includeKeypairs) {
             edges {
               node {
                 id

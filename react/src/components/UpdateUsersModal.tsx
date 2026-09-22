@@ -126,7 +126,7 @@ const UpdateUsersModal = ({
               createdAt
               modifiedAt
             }
-            projects {
+            projects(limit: 1000) {
               edges {
                 node {
                   id
