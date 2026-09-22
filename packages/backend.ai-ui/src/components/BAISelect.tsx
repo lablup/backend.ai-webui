@@ -575,14 +575,6 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
       : _.isArray(defaultValue)
         ? (defaultValue as Array<unknown>).map(toOptionKey)
         : [];
-    // A selected disabled option is locked: MultiSelector blocks toggling it,
-    // but its clear-all path (button, Delete/Backspace) would still drop it.
-    const disabledKeys = new Set(
-      rawOptions
-        .filter((option) => option.disabled)
-        .map((option) => toOptionKey(option.value)),
-    );
-    const lockedKeys = selected.filter((key) => disabledKeys.has(key));
     return (
       <MultiSelector
         {...shared}
@@ -591,9 +583,8 @@ function BAISelect<ValueType = any, OptionType = BAISelectOption>({
         // QA2-B-1: labels, not "N selected". See the PILOT-DECISION above.
         triggerDisplay={triggerDisplay}
         maxBadges={maxBadges}
-        hasClear={allowClear && selected.length > lockedKeys.length}
-        onChange={(changed) => {
-          const next = _.union(changed, lockedKeys);
+        hasClear={allowClear}
+        onChange={(next) => {
           const originals = next.map(
             (key) =>
               rawOptions.find(
