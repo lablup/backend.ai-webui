@@ -4,23 +4,27 @@
  */
 import {
   type CreatePermissionInput,
-  type PermissionBit,
+  type OperationType,
+  type RBACElementType,
   RoleScopePermissionEditModalBulkAddMutation,
 } from '../__generated__/RoleScopePermissionEditModalBulkAddMutation.graphql';
 import { RoleScopePermissionEditModalBulkRemoveMutation } from '../__generated__/RoleScopePermissionEditModalBulkRemoveMutation.graphql';
 import { RoleScopePermissionEditModalFragment$key } from '../__generated__/RoleScopePermissionEditModalFragment.graphql';
 import { RoleScopePermissionEditModal_permissionsFragment$key } from '../__generated__/RoleScopePermissionEditModal_permissionsFragment.graphql';
 import { RoleScopePermissionEditModal_rbacPermissionMatrixFragment$key } from '../__generated__/RoleScopePermissionEditModal_rbacPermissionMatrixFragment.graphql';
+import {
+  RoleScopePermissionEditModal_scopesFragment$data,
+  RoleScopePermissionEditModal_scopesFragment$key,
+} from '../__generated__/RoleScopePermissionEditModal_scopesFragment.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import {
   applyBulkPermissionCells,
   type BulkCellState,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { resolveRBACScopeName } from '../helper/rbacScopeName';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -45,10 +49,13 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 /**
- * The five `PermissionBit`s, in column order. A manager < 26.9.0 names the
- * same five as its direct `OperationType`s.
+ * Grantable operations grouped into Direct vs Delegate (`GRANT_*`), ported from
+ * the removed `CreatePermissionModal`. Together they cover the full
+ * `OperationType` enum — every operation always gets a column; combinations the
+ * permission matrix does not support render as disabled cells. The order here
+ * is the column order within each group.
  */
-const PERMISSION_BITS: ReadonlyArray<string> = [
+const DIRECT_OPERATIONS: ReadonlyArray<OperationType> = [
   'CREATE',
   'READ',
   'UPDATE',
@@ -56,12 +63,7 @@ const PERMISSION_BITS: ReadonlyArray<string> = [
   'HARD_DELETE',
 ];
 
-/**
- * `OperationType`'s delegate operations. A manager >= 26.9.0 lists none of
- * them in its permission matrix, so the delegate column group only appears
- * when the matrix lists one.
- */
-const DELEGATE_OPERATIONS: ReadonlyArray<string> = [
+const DELEGATE_OPERATIONS: ReadonlyArray<OperationType> = [
   'GRANT_ALL',
   'GRANT_READ',
   'GRANT_UPDATE',
@@ -69,16 +71,15 @@ const DELEGATE_OPERATIONS: ReadonlyArray<string> = [
   'GRANT_HARD_DELETE',
 ];
 
-// Separates the `entityType` and `permission` halves of a grid cell key
-// (`"<entityType>|<permission>"`). Scoped to this modal.
+// Separates the `entityType` and `operation` halves of a grid cell key
+// (`"<entityType>|<operation>"`). Scoped to this modal.
 const CELL_KEY_SEPARATOR = '|';
-const makeCellKey = (entityType: string, permission: string) =>
-  `${entityType}${CELL_KEY_SEPARATOR}${permission}`;
+const makeCellKey = (entityType: string, operation: string) =>
+  `${entityType}${CELL_KEY_SEPARATOR}${operation}`;
 
-/** One scope being edited, resolved by the parent card. */
-export interface EditingScope {
+/** Internal per-scope shape derived from the scopes fragment. */
+interface EditingScope {
   scopeId: string;
-  /** Display name; the raw scope id stands in when absent. */
   scopeName?: string | null;
 }
 
@@ -98,6 +99,25 @@ interface FailedPermissionRequest {
   message: string;
 }
 
+/**
+ * An `EntityRef` scope row with the per-type name fields selected — the
+ * `_scopesFragment` element type with the Relay brand key dropped, so
+ * `ScopedRolePermissionCard`'s structurally identical query nodes are
+ * accepted too.
+ */
+type ScopeNameRecord = Omit<
+  RoleScopePermissionEditModal_scopesFragment$data[number],
+  ' $fragmentType'
+>;
+
+/**
+ * An `EntityRef`'s display name from its resolved `scope` entity; null when
+ * it carries none, so callers fall back to the raw scope id. Exported for
+ * `ScopedRolePermissionCard`, whose table shows the same names.
+ */
+export const resolveScopeName = (record: ScopeNameRecord): string | null =>
+  resolveRBACScopeName(record);
+
 interface RoleScopePermissionEditModalProps extends Omit<
   BAIModalProps,
   'onOk' | 'title' | 'footer'
@@ -110,22 +130,22 @@ interface RoleScopePermissionEditModalProps extends Omit<
    * pre-checked grid always agrees with the tags on screen.
    */
   permissionsFrgmt: RoleScopePermissionEditModal_permissionsFragment$key;
-  /** The scope type of every edited scope, spelled as the manager answered. */
-  scopeType: string;
   /**
-   * The scope(s) being edited. One entry → single-scope edit; many →
-   * multi-scope bulk edit (managers < 26.9.0 only, where a role can hold
-   * several scopes). Empty while the modal is closed.
+   * The `EntityRef` scope row(s) being edited. One entry → single-scope edit;
+   * many → multi-scope bulk edit (FR-6). Empty while the modal is closed. The
+   * scope type is derived from these nodes (uniform per card), so no separate
+   * prop is needed.
    */
-  scopes: ReadonlyArray<EditingScope>;
+  scopesFrgmt: RoleScopePermissionEditModal_scopesFragment$key;
   onRequestClose: (success: boolean) => void;
 }
 
 /**
- * Scope-level permission edit modal. Edits a scope's entire configurable
- * entity × permission grid at once (FR-6).
+ * Scope-level permission edit modal. Replaces the former
+ * `CreatePermissionModal`: instead of creating one permission at a time, it
+ * edits a scope's entire configurable entity × action grid at once (FR-6).
  *
- * - **Single-scope** (`scopes.length === 1`): the permissions the role
+ * - **Single-scope** (`scopes.length === 1`): the operations the role
  *   currently grants on that scope are pre-checked; saving reconciles the grid
  *   against them.
  * - **Multi-scope bulk** (`scopes.length > 1`): every cell starts as
@@ -151,8 +171,7 @@ const RoleScopePermissionEditModal: React.FC<
   roleNodeFrgmt,
   rbacPermissionMatrixFrgmt,
   permissionsFrgmt,
-  scopeType,
-  scopes,
+  scopesFrgmt,
   onRequestClose,
   ...baiModalProps
 }) => {
@@ -160,11 +179,6 @@ const RoleScopePermissionEditModal: React.FC<
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const baiClient = useSuspendedBackendaiClient();
-  // A manager >= 26.9.0 takes `{ roleId, entityType, permission }` and answers
-  // no scope on a permission; an older one takes the scope and an
-  // `OperationType` (ADR 0006).
-  const isSingleScopeRole = baiClient.supports('rbac-single-scope-role');
 
   const role = useFragment(
     graphql`
@@ -197,10 +211,9 @@ const RoleScopePermissionEditModal: React.FC<
       fragment RoleScopePermissionEditModal_permissionsFragment on Permission
       @relay(plural: true) {
         id
-        scopeId @deprecatedSince(version: "26.9.0a4")
+        scopeId
         entityType
-        operation @deprecatedSince(version: "26.9.0a4")
-        permission @since(version: "26.9.0a4")
+        operation
       }
     `,
     permissionsFrgmt,
@@ -214,16 +227,15 @@ const RoleScopePermissionEditModal: React.FC<
         adminBulkAddRolePermissions(input: $input) {
           items {
             id
-            scopeId @deprecatedSince(version: "26.9.0a4")
+            scopeType
+            scopeId
             entityType
-            operation @deprecatedSince(version: "26.9.0a4")
-            permission @since(version: "26.9.0a4")
+            operation
           }
           failed {
-            scopeId @deprecatedSince(version: "26.9.0a4")
+            scopeId
             entityType
-            operation @deprecatedSince(version: "26.9.0a4")
-            permission @since(version: "26.9.0a4")
+            operation
             message
           }
         }
@@ -250,39 +262,89 @@ const RoleScopePermissionEditModal: React.FC<
     );
 
   // Captured at mount: wrapped in `BAIUnmountAfterClose`, this component lives
-  // exactly one open cycle, and freezing the list keeps the title/grid stable
-  // during the close animation after the parent clears its selection.
-  const [scopeList] = useState<ReadonlyArray<EditingScope>>(scopes);
+  // exactly one open cycle, and freezing the scope refs keeps the title/grid
+  // stable during the close animation after the parent clears its selection.
+  const [scopeRefs] = useState(scopesFrgmt);
+  const scopeNodes = useFragment(
+    graphql`
+      fragment RoleScopePermissionEditModal_scopesFragment on EntityRef
+      @relay(plural: true) {
+        scopeType
+        scopeId
+        scope {
+          ... on DomainV2 {
+            basicInfo {
+              domainName: name
+            }
+          }
+          ... on ProjectV2 {
+            basicInfo {
+              projectName: name
+            }
+          }
+          ... on UserV2 {
+            basicInfo {
+              email
+            }
+          }
+          ... on VirtualFolderNode {
+            vfolderName: name
+          }
+          ... on SessionV2 {
+            metadata {
+              sessionName: name
+            }
+          }
+          ... on ModelDeployment {
+            metadata {
+              deploymentName: name
+            }
+          }
+          ... on ResourceGroup {
+            resourceGroupName: name
+          }
+          ... on ContainerRegistryV2 {
+            registryName
+            project
+          }
+        }
+      }
+    `,
+    scopeRefs,
+  );
+
+  // The scope type is uniform across a card's rows — derived from the nodes.
+  const scopeType = scopeNodes[0]?.scopeType;
+  const scopeList: EditingScope[] = scopeNodes.map((node) => ({
+    scopeId: node.scopeId,
+    scopeName: resolveScopeName(node),
+  }));
   const isBulk = scopeList.length > 1;
-  // A manager >= 26.9.0 answers no scope on a permission: every permission
-  // follows the role's one scope, which is the one scope being edited.
-  const roleScopeId = isSingleScopeRole ? scopeList[0]?.scopeId : undefined;
   // Falls back to the raw RBAC type name when no i18n label is registered.
   const rbacTypeLabel = (type: string) =>
-    t(rbacTypeI18nKey(type), { defaultValue: type });
-  const scopeTypeLabel = rbacTypeLabel(scopeType);
+    t(`rbac.types.${type}`, { defaultValue: type });
+  const scopeTypeLabel = scopeType ? rbacTypeLabel(scopeType) : '';
   const displayName = scopeList[0]?.scopeName || scopeList[0]?.scopeId || '-';
 
-  // Configurable entity × permission grid for this scope type. Cells are
-  // keyed by `requiredPermission` — the value granted/revoked and the same
-  // identity the tag state compares against — so two matrix actions that
-  // share a requiredPermission collapse to a single checkbox. A manager
-  // >= 26.9.0 answers a `PermissionBit`, an older one an `OperationType`.
+  // Configurable entity × operation grid for this scope type. Cells are keyed by
+  // the OperationType (`requiredPermission`) — the value granted/revoked and the
+  // same identity the tag state (FR-4) compares against — so two matrix actions
+  // that share a requiredPermission collapse to a single checkbox.
   const matrixEntry = rbacPermissionMatrix.find(
-    (combination) =>
-      combination.scopeType.toUpperCase() === scopeType.toUpperCase(),
+    (combination) => combination.scopeType === scopeType,
   );
   const entities = (matrixEntry?.entities ?? [])
     .filter((entity) => entity.actions.length > 0)
     .map((entity) => ({
       entityType: entity.entityType,
-      grantable: new Set<string>(
-        entity.actions.map((action) => action.requiredPermission),
+      // 26.8 answers an OperationType here; the drawer follow-up (FR-3905)
+      // moves this grid onto the 26.9 PermissionBit.
+      supportedOperations: new Set(
+        entity.actions.map(
+          (action) => action.requiredPermission as OperationType,
+        ),
       ),
     }));
-  const hasDelegateOperations = entities.some((entity) =>
-    DELEGATE_OPERATIONS.some((operation) => entity.grantable.has(operation)),
-  );
 
   // Cells already reconciled by earlier partially-failed saves, keyed by
   // scopeId → cellKey → new permission id (granted) or null (revoked). The
@@ -299,14 +361,13 @@ const RoleScopePermissionEditModal: React.FC<
   // scope against its own initial state.
   const permissionIdByScopeCell = new Map<string, Map<string, string>>();
   permissions.forEach((permission) => {
-    const granted = permission.permission ?? permission.operation;
-    const permissionScopeId = permission.scopeId ?? roleScopeId;
-    if (!granted || !permissionScopeId) return;
-    const cellKey = makeCellKey(permission.entityType, granted);
-    let idByCell = permissionIdByScopeCell.get(permissionScopeId);
+    // Null only on 26.9, which answers the legacy fields as null.
+    if (!permission.scopeId || !permission.operation) return;
+    const cellKey = makeCellKey(permission.entityType, permission.operation);
+    let idByCell = permissionIdByScopeCell.get(permission.scopeId);
     if (!idByCell) {
       idByCell = new Map<string, string>();
-      permissionIdByScopeCell.set(permissionScopeId, idByCell);
+      permissionIdByScopeCell.set(permission.scopeId, idByCell);
     }
     idByCell.set(cellKey, toLocalId(permission.id));
   });
@@ -360,7 +421,7 @@ const RoleScopePermissionEditModal: React.FC<
   // Column header for a `GRANT_*` operation. The Delegate group header already
   // says "delegate", so the column shows only the delegated base operation
   // (GRANT_READ → "Read"); GRANT_ALL has no base operation and shows "All".
-  const delegateOperationColumnLabel = (operation: string) => {
+  const delegateOperationColumnLabel = (operation: OperationType) => {
     const baseOperation = operation.replace(/^GRANT_/, '');
     return baseOperation === 'ALL'
       ? t('general.All')
@@ -378,6 +439,11 @@ const RoleScopePermissionEditModal: React.FC<
   };
 
   const handleSave = async () => {
+    // No scope nodes → nothing to derive the scope type from, nothing to save.
+    if (!scopeType) {
+      return;
+    }
+
     // Cells the grid defines: single-scope registers every rendered cell as
     // a boolean; bulk registers only the cells switched into edit mode
     // ('Keep as is' cells stay `undefined` and are skipped).
@@ -434,27 +500,16 @@ const RoleScopePermissionEditModal: React.FC<
       return;
     }
 
-    const createInputs: CreatePermissionInput[] = createEntries.map(
-      ({ scope, key }) => {
-        const [entityType, permission] = key.split(CELL_KEY_SEPARATOR);
-        if (isSingleScopeRole) {
-          return {
-            roleId,
-            entityType,
-            permission: permission as PermissionBit,
-          };
-        }
-        // The 26.9 supergraph types `permission` as required and the scope
-        // as an `RBACElementType`; the cast goes with 26.8 support (ADR 0006).
-        return {
-          roleId,
-          scopeType,
-          scopeId: scope.scopeId,
-          entityType,
-          operation: permission,
-        } as CreatePermissionInput;
-      },
-    );
+    const createInputs = createEntries.map(({ scope, key }) => {
+      const [entityType, operation] = key.split(CELL_KEY_SEPARATOR);
+      return {
+        roleId,
+        scopeType: scopeType as RBACElementType,
+        scopeId: scope.scopeId,
+        entityType: entityType as RBACElementType,
+        operation: operation as OperationType,
+      };
+    });
     const deleteIds = deleteEntries.map((entry) => entry.permissionId);
 
     setIsSaving(true);
@@ -465,7 +520,9 @@ const RoleScopePermissionEditModal: React.FC<
       // (FR-6 / spec Risks).
       const [addResult, removeResult] = await Promise.allSettled([
         createInputs.length > 0
-          ? bulkAddPermissions({ input: { permissions: createInputs } })
+          ? bulkAddPermissions({
+              input: { permissions: createInputs as CreatePermissionInput[] },
+            })
           : Promise.resolve(null),
         deleteIds.length > 0
           ? bulkRemovePermissions({ input: { permissionIds: deleteIds } })
@@ -494,27 +551,24 @@ const RoleScopePermissionEditModal: React.FC<
         // Successfully-created rows carry their new permission id — record it
         // so a later uncheck of the same cell can delete it without a refetch.
         addPayload?.items.forEach((item) => {
-          const granted = item.permission ?? item.operation;
-          const itemScopeId = item.scopeId ?? roleScopeId;
-          if (!granted || !itemScopeId) return;
+          if (!item.scopeId || !item.operation) return;
           recordApplied(
-            itemScopeId,
-            makeCellKey(item.entityType, granted),
+            item.scopeId,
+            makeCellKey(item.entityType, item.operation),
             toLocalId(item.id),
           );
         });
         addPayload?.failed.forEach((failure) => {
           logger.error('Failed to add permission', failure.message);
-          const failureScopeId = failure.scopeId ?? roleScopeId ?? '';
           const cellKey = makeCellKey(
             failure.entityType,
-            failure.permission ?? failure.operation ?? '',
+            failure.operation ?? '',
           );
           failures.push({
-            key: `grant-${failureScopeId}-${cellKey}`,
+            key: `grant-${failure.scopeId}-${cellKey}`,
             scopeLabel: scopeLabelOf(
-              scopeList.find((scope) => scope.scopeId === failureScopeId),
-              failureScopeId,
+              scopeList.find((scope) => scope.scopeId === failure.scopeId),
+              failure.scopeId ?? '',
             ),
             cellKey,
             message: failure.message,
@@ -627,16 +681,16 @@ const RoleScopePermissionEditModal: React.FC<
     }
   };
 
-  // Every column renders a cell; combinations absent from the permission
-  // matrix show a '-' with a "not assignable" tooltip so the grid shape stays
-  // identical across entities. Bulk mode renders each cell as a
-  // `BAIBulkEditFormItem`: 'Keep as is' until clicked, then an editable
+  // Every OperationType renders a cell; combinations absent from the
+  // permission matrix show a '-' with a "not assignable" tooltip so the
+  // grid shape stays identical across entities. Bulk mode renders each cell
+  // as a `BAIBulkEditFormItem`: 'Keep as is' until clicked, then an editable
   // checkbox that starts checked.
   const renderPermissionCell = (
     entity: (typeof entities)[number],
-    permission: string,
+    operation: OperationType,
   ) => {
-    if (!entity.grantable.has(permission)) {
+    if (!entity.supportedOperations.has(operation)) {
       return (
         <Tooltip content={t('rbac.PermissionNotAssignable')}>
           <Text color="secondary" style={{ padding: '0 8px' }}>
@@ -645,7 +699,7 @@ const RoleScopePermissionEditModal: React.FC<
         </Tooltip>
       );
     }
-    const key = makeCellKey(entity.entityType, permission);
+    const key = makeCellKey(entity.entityType, operation);
     if (isBulk) {
       return (
         <BAIBulkEditFormItem
@@ -672,21 +726,20 @@ const RoleScopePermissionEditModal: React.FC<
     );
   };
 
-  const permissionColumns = (
-    operations: ReadonlyArray<string>,
-    columnTitle: (operation: string) => string,
-  ) =>
-    operations.map((operation) => ({
-      key: operation,
-      title: columnTitle(operation),
-      align: 'center' as const,
-      // Bulk cells host the 'Keep as is' placeholder input, which needs a
-      // stable column width (checkbox-only cells size themselves).
-      width: isBulk ? 120 : undefined,
-      render: (_value: unknown, entity: (typeof entities)[number]) =>
-        renderPermissionCell(entity, operation),
-    }));
-  const bitColumns = permissionColumns(PERMISSION_BITS, operationLabel);
+  const operationGroups = [
+    {
+      key: 'direct',
+      title: t('rbac.operationGroups.Direct'),
+      operations: DIRECT_OPERATIONS,
+      columnTitle: operationLabel,
+    },
+    {
+      key: 'delegate',
+      title: t('rbac.operationGroups.Delegate'),
+      operations: DELEGATE_OPERATIONS,
+      columnTitle: delegateOperationColumnLabel,
+    },
+  ];
   const columns: BAIColumnsType<(typeof entities)[number]> = [
     {
       key: 'entityType',
@@ -696,25 +749,20 @@ const RoleScopePermissionEditModal: React.FC<
         <Text>{rbacTypeLabel(entity.entityType)}</Text>
       ),
     },
-    // The Direct / Delegate group headers only earn their row when a delegate
-    // column exists; otherwise the five bits sit flat.
-    ...(hasDelegateOperations
-      ? [
-          {
-            key: 'direct',
-            title: t('rbac.operationGroups.Direct'),
-            children: bitColumns,
-          },
-          {
-            key: 'delegate',
-            title: t('rbac.operationGroups.Delegate'),
-            children: permissionColumns(
-              DELEGATE_OPERATIONS,
-              delegateOperationColumnLabel,
-            ),
-          },
-        ]
-      : bitColumns),
+    ...operationGroups.map((group) => ({
+      key: group.key,
+      title: group.title,
+      children: group.operations.map((operation) => ({
+        key: operation,
+        title: group.columnTitle(operation),
+        align: 'center' as const,
+        // Bulk cells host the 'Keep as is' placeholder input, which needs a
+        // stable column width (checkbox-only cells size themselves).
+        width: isBulk ? 120 : undefined,
+        render: (_value: unknown, entity: (typeof entities)[number]) =>
+          renderPermissionCell(entity, operation),
+      })),
+    })),
   ];
 
   return (
@@ -737,6 +785,9 @@ const RoleScopePermissionEditModal: React.FC<
           {!isBulk && (
             // Single-scope edit: the edited scope's name as a small subtitle
             // (the title itself only carries the scope type).
+            // `type="secondary"` + `fontSizeSM` is Astryx's `supporting` type
+            // (MAPPING §3.4); `ellipsis={{tooltip}}` is `maxLines` +
+            // `hasTruncateTooltip`, which shows the tooltip only when clamped.
             <Text
               type="supporting"
               weight="normal"
@@ -756,8 +807,10 @@ const RoleScopePermissionEditModal: React.FC<
       // cancel must report success=true — the parent then refetches and the
       // tags reflect the true state.
       onCancel={() => onRequestClose(appliedCellOverrides.size > 0)}
-      // Bulk cells render a 'Keep as is' placeholder input per column, so the
-      // grid needs considerably more room than the checkbox-only grid.
+      // Bulk cells render a 'Keep as is' placeholder input per operation
+      // column, so the grid needs considerably more room than the
+      // checkbox-only single-scope grid. antd's own `max-width:
+      // calc(100vw - 32px)` keeps it inside the viewport on small screens.
       width={isBulk ? 900 : 760}
     >
       <Form ref={formRef} component={false}>
@@ -778,6 +831,8 @@ const RoleScopePermissionEditModal: React.FC<
             />
           )}
           {entities.length === 0 ? (
+            // antd `Empty` -> `EmptyState`: `description` becomes the
+            // required `title` (MAPPING §4).
             <EmptyState title={t('rbac.NoPermissionsToDisplay')} />
           ) : (
             <BAITable
@@ -802,6 +857,7 @@ const RoleScopePermissionEditModal: React.FC<
         alertDescription={
           <>
             {t('rbac.PermissionsPartialFailureDescription')}{' '}
+            {/* `colorTextSecondary` + `fontSizeSM` is the `supporting` type. */}
             <Text type="supporting">
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
@@ -834,13 +890,12 @@ const RoleScopePermissionEditModal: React.FC<
               if (!cellKey) {
                 return '-';
               }
-              const [entityType, permission] =
-                cellKey.split(CELL_KEY_SEPARATOR);
+              const [entityType, operation] = cellKey.split(CELL_KEY_SEPARATOR);
               return (
                 <BAIDoubleToken
                   values={[
                     { label: rbacTypeLabel(entityType), color: 'blue' },
-                    { label: operationLabel(permission), color: 'default' },
+                    { label: operationLabel(operation), color: 'default' },
                   ]}
                 />
               );

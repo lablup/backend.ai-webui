@@ -12,7 +12,6 @@ import {
   BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
-  BAIText,
   useFetchKey,
 } from 'backend.ai-ui';
 import { SquarePenIcon } from 'lucide-react';
@@ -103,25 +102,9 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
       open={open}
       onClose={onClose}
       side="end"
-      // Slightly wider than antd's `size="large"` (736px): the Detailed
-      // Permissions cards host a filter row, selection actions, and a
-      // three-column table.
+      // Wider than the 736px default: the permission tables need the room.
       size={800}
-      label={t('rbac.RoleDetailInfo')}
-      // Not an `<h3>`: the drawer already announces itself through `label`,
-      // so the role name renders as large text with the shared copy control.
-      title={
-        <BAIText
-          strong
-          copyable
-          style={{
-            fontSize: 'var(--text-large-size)',
-            lineHeight: 'var(--text-large-leading)',
-          }}
-        >
-          {role?.name ?? t('rbac.RoleDetailInfo')}
-        </BAIText>
-      }
+      title={t('rbac.RoleDetailInfo')}
       extra={
         <>
           {role?.source === 'CUSTOM' && (

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<aab689f9a9e10545645f702775cefdf0>>
+ * @generated SignedSource<<c4187064884e5c5b1bada4a73802441e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,7 @@ export type RolePermissionDetailTab_roleScopeFragment$data = {
   readonly totalScopes: {
     readonly count: number;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"ScopedRolePermissionCardFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"RolePermissionSummaryTableFragment" | "ScopedRolePermissionCardFragment">;
   readonly " $fragmentType": "RolePermissionDetailTab_roleScopeFragment";
 };
 export type RolePermissionDetailTab_roleScopeFragment$key = {
@@ -71,6 +71,11 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
+      "name": "RolePermissionSummaryTableFragment"
+    },
+    {
+      "args": null,
+      "kind": "FragmentSpread",
       "name": "ScopedRolePermissionCardFragment"
     }
   ],
@@ -78,6 +83,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "33795ed652813eb037d0c2b99bc7d927";
+(node as any).hash = "4391ab65bf0032f11ad2c66bbb0f1c39";
 
 export default node;

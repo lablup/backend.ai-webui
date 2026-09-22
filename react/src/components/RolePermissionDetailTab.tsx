@@ -4,6 +4,8 @@
  */
 import { RolePermissionDetailTabMatrixQuery } from '../__generated__/RolePermissionDetailTabMatrixQuery.graphql';
 import { RolePermissionDetailTab_roleScopeFragment$key } from '../__generated__/RolePermissionDetailTab_roleScopeFragment.graphql';
+import { type RBACElementType } from '../__generated__/ScopedRolePermissionCardQuery.graphql';
+import RolePermissionSummaryTable from './RolePermissionSummaryTable';
 import ScopedRolePermissionCard from './ScopedRolePermissionCard';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { BAISkeleton, BAICard, BAIFlex } from 'backend.ai-ui';
@@ -17,11 +19,11 @@ interface RolePermissionDetailTabProps {
 }
 
 /**
- * "Detailed Permissions" tab. A manager >= 26.9.0 answers the role's one
- * scope, so the tab renders one `ScopedRolePermissionCard` for that scope
- * type. An older manager answers a scopes connection, so the tab renders one
- * card per scope type `rbacPermissionMatrix` reports and each card hides
- * itself when the role has no scope of its type (ADR 0006).
+ * "Detailed Permissions" tab. A manager >= 26.9.0a4 answers the role's one
+ * scope, so the tab renders the per-entity permission summary for that scope.
+ * An older manager answers a scopes connection, so the tab renders one
+ * `ScopedRolePermissionCard` per scope type `rbacPermissionMatrix` reports and
+ * each card hides itself when the role has no scope of its type (ADR 0006).
  */
 const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   roleNodeFrgmt,
@@ -37,6 +39,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
+        ...RolePermissionSummaryTableFragment
         ...ScopedRolePermissionCardFragment
       }
     `,
@@ -49,6 +52,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
         query RolePermissionDetailTabMatrixQuery {
           rbacPermissionMatrix {
             scopeType
+            ...RolePermissionSummaryTable_rbacPermissionMatrixFragment
             ...ScopedRolePermissionCard_rbacPermissionMatrixFragment
           }
         }
@@ -57,17 +61,7 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // The role's one scope type on managers >= 26.9.0; every matrix scope type,
-  // as the server spells it, before.
-  const scopeTypes = role.scopeType
-    ? [role.scopeType]
-    : _.uniq(
-        (rbacPermissionMatrix ?? []).map(
-          (combination) => combination.scopeType,
-        ),
-      );
-
-  // A role on a manager >= 26.9.0 always belongs to one scope.
+  // A role on a manager >= 26.9.0a4 always belongs to one scope.
   if (!role.scopeId && role.totalScopes?.count === 0) {
     return (
       <BAICard>
@@ -75,6 +69,24 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
       </BAICard>
     );
   }
+
+  if (role.scopeType) {
+    return (
+      <Suspense fallback={<BAISkeleton />}>
+        <RolePermissionSummaryTable
+          roleNodeFrgmt={role}
+          rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
+          scopeType={role.scopeType}
+        />
+      </Suspense>
+    );
+  }
+
+  // Every matrix scope type, as the server spells it; each card derives its
+  // own entity × operation set from the matrix fragment.
+  const scopeTypes = _.uniq(
+    (rbacPermissionMatrix ?? []).map((combination) => combination.scopeType),
+  );
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
@@ -84,7 +96,8 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
             key={scopeType}
             roleNodeFrgmt={role}
             rbacPermissionMatrixFrgmt={rbacPermissionMatrix ?? []}
-            scopeType={scopeType}
+            // The 26.8 enum spelling; the card only mounts on that path.
+            scopeType={scopeType as RBACElementType}
           />
         ))}
       </Suspense>
