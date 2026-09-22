@@ -430,9 +430,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 propertyLabel: t('adminModelCard.AccessLevel'),
                 type: 'enum',
                 strictSelection: true,
+                // `accessLevel` is a StringFilter over the stored text, which is
+                // the lowercase enum value: 'public' / 'internal'.
                 options: [
-                  { label: t('adminModelCard.Public'), value: 'PUBLIC' },
-                  { label: t('adminModelCard.Private'), value: 'PRIVATE' },
+                  { label: t('adminModelCard.Public'), value: 'public' },
+                  { label: t('adminModelCard.Private'), value: 'internal' },
                 ],
               },
               supportsSearchAxes && {
