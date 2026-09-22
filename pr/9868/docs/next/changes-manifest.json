@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-21T19:01:59.138Z",
+  "generatedAt": "2026-09-22T15:33:09.235Z",
   "languages": [
     "en",
     "ja",
@@ -36,7 +36,7 @@
             "total": 1
           },
           "fingerprints": [
-            "bac458934999"
+            "8bbfa34d8b36"
           ]
         },
         {
@@ -54,11 +54,11 @@
           },
           "fingerprints": [
             "39d415732c42",
-            "bac458934999",
-            "cf64a1a2ee9b",
+            "8bbfa34d8b36",
+            "80fd24451d72",
             "4f532719ddc4",
-            "bac458934999-2",
-            "bac458934999-3",
+            "8bbfa34d8b36-2",
+            "8bbfa34d8b36-3",
             "c99e4fb38ae5"
           ]
         }
@@ -90,7 +90,7 @@
             "total": 1
           },
           "fingerprints": [
-            "ff3471000985"
+            "3fb41326bc91"
           ]
         },
         {
@@ -108,11 +108,11 @@
           },
           "fingerprints": [
             "479d5f928fb4",
-            "ff3471000985",
-            "70c88fb05c93",
+            "3fb41326bc91",
+            "867ed7eb3f8c",
             "59c06ab8e179",
-            "ff3471000985-2",
-            "ff3471000985-3",
+            "3fb41326bc91-2",
+            "3fb41326bc91-3",
             "6548e13ef36e"
           ]
         }
@@ -144,7 +144,7 @@
             "total": 1
           },
           "fingerprints": [
-            "a98b41366c80"
+            "960ebc49b3b0"
           ]
         },
         {
@@ -162,11 +162,11 @@
           },
           "fingerprints": [
             "c84bf7a043bb",
-            "a98b41366c80",
-            "c3f0d70c0141",
+            "960ebc49b3b0",
+            "57808984dd97",
             "dd36756e37f6",
-            "a98b41366c80-2",
-            "a98b41366c80-3",
+            "960ebc49b3b0-2",
+            "960ebc49b3b0-3",
             "7967a65b07b3"
           ]
         }
@@ -198,7 +198,7 @@
             "total": 1
           },
           "fingerprints": [
-            "881578a4dbdd"
+            "58eea8cdb6c2"
           ]
         },
         {
@@ -216,11 +216,11 @@
           },
           "fingerprints": [
             "cb67efeba750",
-            "881578a4dbdd",
-            "c2c76edd4379",
+            "58eea8cdb6c2",
+            "ff394254262a",
             "ed7e791ff8e2",
-            "881578a4dbdd-2",
-            "881578a4dbdd-3",
+            "58eea8cdb6c2-2",
+            "58eea8cdb6c2-3",
             "e260faf87f32"
           ]
         }
