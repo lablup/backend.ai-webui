@@ -134,10 +134,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   // Relay ID.
   const deploymentId = deployment?.id ? toLocalId(deployment.id) : undefined;
 
-  // PILOT-DECISION: antd `danger` (red text on the "Delete Chatting Session"
-  // item) has no destination on Astryx `DropdownMenuItemData` (no color/
-  // variant field, closed shape) — dropped (P5: closed enum, no colour
-  // escape hatch).
   const items: DropdownMenuOption[] = filterOutEmpty([
     showCompareMenuItem && {
       label: t('chatui.CompareWithOtherModels'),
@@ -169,6 +165,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
     closable && {
       label: t('chatui.DeleteChattingSession'),
       icon: <X size="1em" />,
+      variant: 'destructive' as const,
       onClick: () => {
         onRemoveChat?.();
       },
@@ -297,6 +294,10 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
         )}
         <DropdownMenu
           items={items}
+          // The trigger sits at the card header's right edge, where the default
+          // start-aligned, trigger-width popover has no room and clips labels.
+          alignment="end"
+          menuWidth="max-content"
           button={{
             variant: 'ghost',
             icon: <EllipsisVertical size="1em" />,
