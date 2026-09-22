@@ -10,7 +10,6 @@ import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalF
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { partitionProjectMemberships } from '../helper/projectMembership';
 import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
@@ -79,20 +78,6 @@ const UpdateUsersModal = ({
         id
         basicInfo {
           email
-        }
-        organization {
-          domainName
-        }
-        projects {
-          edges {
-            node {
-              id
-              basicInfo {
-                name
-                type
-              }
-            }
-          }
         }
       }
     `,
@@ -179,47 +164,31 @@ const UpdateUsersModal = ({
             setIsPending(true);
 
             // v2: same field-inclusion rules as the legacy path, but with
-            // camelCase keys and the UserStatusV2 enum. `groupIds` replaces a
-            // user's whole membership set, so each user's personal project —
-            // which no selector can offer — rides along, unless the update
-            // moves that user to another domain.
-            const inputFor = (user: (typeof users)[number]) =>
-              _.omitBy(
-                {
-                  domainName: values.domain_name,
-                  groupIds: _.isEmpty(values.group_ids)
-                    ? undefined
-                    : _.uniq([
-                        ...(values.group_ids ?? []),
-                        ...(_.isNil(values.domain_name) ||
-                        values.domain_name === user.organization.domainName
-                          ? _.map(
-                              partitionProjectMemberships(user.projects?.edges)
-                                .personal,
-                              'id',
-                            )
-                          : []),
-                      ]),
-                  status: values.status ? statusToV2[values.status] : undefined,
-                  resourcePolicy: values.resource_policy,
-                  containerUid: values.container_uid,
-                  containerMainGid: values.container_main_gid,
-                  containerGids: !_.isEmpty(values.container_gids)
-                    ? _.map(values.container_gids, (gid) => _.toNumber(gid))
-                    : undefined,
-                },
-                (value) =>
-                  _.isNil(value) ||
-                  value === '' ||
-                  (!_.isNumber(value) && _.isEmpty(value)),
-              );
+            // camelCase keys and the UserStatusV2 enum.
+            const input = _.omitBy(
+              {
+                domainName: values.domain_name,
+                groupIds: values.group_ids,
+                status: values.status ? statusToV2[values.status] : undefined,
+                resourcePolicy: values.resource_policy,
+                containerUid: values.container_uid,
+                containerMainGid: values.container_main_gid,
+                containerGids: !_.isEmpty(values.container_gids)
+                  ? _.map(values.container_gids, (gid) => _.toNumber(gid))
+                  : undefined,
+              },
+              (value) =>
+                _.isNil(value) ||
+                value === '' ||
+                (!_.isNumber(value) && _.isEmpty(value)),
+            );
 
             commitBulkUpdate({
               variables: {
                 input: {
                   users: users.map((user) => ({
                     userId: toLocalId(user.id),
-                    input: inputFor(user),
+                    input,
                   })),
                 },
                 isNotSupportTotp: !isTOTPSupported,

@@ -2253,6 +2253,8 @@
     "AskAdminForProjectAccess": "관리자에게 프로젝트 접근 권한을 요청하세요.",
     "GoToProject": "{{project}}로 이동",
     "NoAccessibleProjects": "선택 가능한 프로젝트가 없습니다.",
+    "Personal": "개인",
+    "PersonalProjectCannotBeRemoved": "사용자에 할당된 개인 프로젝트는 제거가 불가능 합니다.",
     "ProjectAdminBadge": "프로젝트 관리자",
     "ProjectNotFoundOrNoAccess": "프로젝트 '{{project}}'를 찾을 수 없거나 접근 권한이 없습니다.",
     "SwitchToAccessibleProject": "페이지 상단의 프로젝트 선택기에서 접근 가능한 프로젝트를 선택하세요."

@@ -2253,6 +2253,8 @@
     "AskAdminForProjectAccess": "Poproś administratora o przyznanie dostępu do projektu.",
     "GoToProject": "Przejdź do {{project}}",
     "NoAccessibleProjects": "Brak dostępnych projektów.",
+    "Personal": "Osobisty",
+    "PersonalProjectCannotBeRemoved": "Nie można usunąć projektu osobistego przypisanego do użytkownika.",
     "ProjectAdminBadge": "Administrator projektu",
     "ProjectNotFoundOrNoAccess": "Projekt '{{project}}' nie został znaleziony lub nie masz do niego dostępu.",
     "SwitchToAccessibleProject": "Wybierz dostępny projekt z selektora projektów na górze strony."

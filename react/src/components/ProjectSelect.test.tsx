@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 /**
- * FR-3989: a selected project the domain's option list cannot contain used to
- * render as a bare UUID, and stayed unchecked in the dropdown.
+ * FR-3989: a selected project the domain's option list cannot contain (the
+ * user's PERSONAL project) used to render as a bare UUID.
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
@@ -53,8 +53,14 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
     ...actual,
     // Serialize the resolved option list; the real popup needs a live
     // dropdown, and what this test is about is which options exist.
+    // React dev elements carry a circular `_owner`; drop the `_`-prefixed
+    // internals so a JSX label serializes as its type-less props tree.
     BAISelect: ({ options }: { options?: unknown }) => (
-      <div data-testid="options">{JSON.stringify(options)}</div>
+      <div data-testid="options">
+        {JSON.stringify(options, (key, value) =>
+          key.startsWith('_') ? undefined : value,
+        )}
+      </div>
     ),
   };
 });
@@ -62,6 +68,7 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 const renderSelect = (props: {
   value: Array<string>;
   fallbackProjects?: Array<{ id: string; name: string; type?: string | null }>;
+  lockedProjectTypes?: Array<string>;
 }) =>
   render(
     <ProjectSelect
@@ -110,5 +117,69 @@ describe('ProjectSelect fallbackProjects', () => {
 
     const options = screen.getByTestId('options').textContent ?? '';
     expect(options.match(/coredev/g)).toHaveLength(2); // label + projectName
+  });
+
+  it('labels and locks a selected PERSONAL project', () => {
+    renderSelect({
+      value: ['project-general', 'project-personal'],
+      fallbackProjects: [
+        { id: 'project-general', name: 'coredev', type: 'GENERAL' },
+        { id: 'project-personal', name: 'seungwon', type: 'PERSONAL' },
+      ],
+      lockedProjectTypes: ['PERSONAL'],
+    });
+
+    const groupsJson = JSON.parse(
+      screen.getByTestId('options').textContent ?? '[]',
+    ) as Array<{
+      label: string;
+      options: Array<{ value: string; label: string; disabled: boolean }>;
+    }>;
+    expect(groupsJson.map((group) => group.label)).toEqual([
+      'general.General',
+      'projectSelect.Personal',
+    ]);
+    const options = groupsJson.flatMap((group) => group.options);
+    expect(options).toHaveLength(2);
+    const personal = options.find(
+      (option) => option.value === 'project-personal',
+    );
+    expect(personal).toMatchObject({ disabled: true });
+    expect(JSON.stringify(personal?.label)).toContain('seungwon');
+    expect(JSON.stringify(personal?.label)).toContain(
+      'projectSelect.PersonalProjectCannotBeRemoved',
+    );
+    const general = options.find(
+      (option) => option.value === 'project-general',
+    );
+    expect(general).toMatchObject({ disabled: false, label: 'coredev' });
+  });
+
+  it('shows the lock hint only on a locked PERSONAL option', () => {
+    renderSelect({
+      value: ['project-general', 'project-personal'],
+      fallbackProjects: [
+        { id: 'project-personal', name: 'seungwon', type: 'PERSONAL' },
+      ],
+    });
+    // Unlocked PERSONAL option: no hint.
+    expect(screen.getByTestId('options').textContent).not.toContain(
+      'projectSelect.PersonalProjectCannotBeRemoved',
+    );
+  });
+
+  it('does not show the lock hint on a locked MODEL_STORE option', () => {
+    renderSelect({
+      value: ['project-general', 'project-model-store'],
+      fallbackProjects: [
+        { id: 'project-model-store', name: 'model-store', type: 'MODEL_STORE' },
+      ],
+      lockedProjectTypes: ['MODEL_STORE'],
+    });
+    const options = screen.getByTestId('options').textContent ?? '';
+    expect(options).toContain('"disabled":true');
+    expect(options).not.toContain(
+      'projectSelect.PersonalProjectCannotBeRemoved',
+    );
   });
 });

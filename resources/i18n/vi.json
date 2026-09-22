@@ -2253,6 +2253,8 @@
     "AskAdminForProjectAccess": "Hãy yêu cầu quản trị viên cấp cho bạn quyền truy cập vào một dự án.",
     "GoToProject": "Đi đến {{project}}",
     "NoAccessibleProjects": "Không có dự án nào có thể truy cập.",
+    "Personal": "Cá nhân",
+    "PersonalProjectCannotBeRemoved": "Không thể xóa dự án cá nhân đã được gán cho người dùng.",
     "ProjectAdminBadge": "Quản trị dự án",
     "ProjectNotFoundOrNoAccess": "Dự án '{{project}}' không được tìm thấy hoặc bạn không có quyền truy cập vào nó.",
     "SwitchToAccessibleProject": "Chọn một dự án có thể truy cập từ bộ chọn dự án ở đầu trang."

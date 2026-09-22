@@ -15,7 +15,6 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { partitionProjectMemberships } from '../helper/projectMembership';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -328,11 +327,20 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     userSettingFrgmt ?? null,
   );
 
-  // `projects` lists every membership; the selector only offers the domain's
-  // assignable ones.
-  const { assignable: assignableProjects, personal: personalProjects } =
-    partitionProjectMemberships(user?.projects?.edges);
-  const assignableProjectIds = _.map(assignableProjects, 'id');
+  // Every membership, PERSONAL included, so the selector can label (and lock)
+  // projects the domain's option list does not offer.
+  const projectMemberships = _.compact(
+    _.map(user?.projects?.edges, (edge) =>
+      edge?.node
+        ? {
+            id: toLocalId(edge.node.id),
+            name: edge.node.basicInfo.name,
+            type: edge.node.basicInfo.type,
+          }
+        : null,
+    ),
+  );
+  const projectMembershipIds = _.map(projectMemberships, 'id');
 
   // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
   const [commitUpdateUserV2, isInFlightUpdateUserV2] =
@@ -587,18 +595,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               : undefined,
             role: formValues.role ? roleToV2[formValues.role] : undefined,
             domainName: formValues.domain_name,
-            // `groupIds` replaces the whole membership set, so the personal
-            // project has to ride along — except when the user is moving to
-            // another domain, where asserting a project of the old one would
-            // be worse than leaving the manager to handle it.
-            groupIds: formValues.group_ids
-              ? _.uniq([
-                  ...formValues.group_ids,
-                  ...(formValues.domain_name === user.organization.domainName
-                    ? _.map(personalProjects, 'id')
-                    : []),
-                ])
-              : undefined,
+            groupIds: formValues.group_ids,
             allowedClientIp: formValues.allowed_client_ip,
             needPasswordChange: formValues.need_password_change || false,
             resourcePolicy: formValues.resource_policy,
@@ -747,7 +744,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   container_gids: user.container.containerGids
                     ? _.map(user.container.containerGids, (gid) => String(gid))
                     : undefined,
-                  group_ids: assignableProjectIds,
+                  group_ids: projectMembershipIds,
                 }
               : ({
                   need_password_change: bulkCreate ? true : false,
@@ -1167,15 +1164,15 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     label={t('credential.Projects')}
                     getValueFromEvent={(value) => value}
                     getValueProps={(value) => ({
-                      value: _.isArray(value) ? value : assignableProjectIds,
+                      value: _.isArray(value) ? value : projectMembershipIds,
                     })}
                   >
                     <ProjectSelect
                       mode="multiple"
                       domain={getFieldValue('domain_name')}
                       disableDefaultFilter
-                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
-                      fallbackProjects={assignableProjects}
+                      lockedProjectTypes={user ? ['PERSONAL'] : ['MODEL_STORE']}
+                      fallbackProjects={projectMemberships}
                     />
                   </BAIFormItem>
                 );

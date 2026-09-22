@@ -13,7 +13,7 @@ import {
   BAISelectProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Info, ShieldUser } from 'lucide-react';
+import { Info, LockIcon, ShieldUser } from 'lucide-react';
 import React, { useEffect, useEffectEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -36,9 +36,8 @@ export interface ProjectSelectProps extends BAISelectProps {
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
   /**
-   * Labels for selected projects the domain's option list cannot contain, so
-   * they do not render as a bare UUID. Only currently-selected entries become
-   * options, which keeps the assignable set unchanged.
+   * Labels selected projects the domain's option list cannot contain (e.g. a
+   * PERSONAL project). Only selected entries become options.
    */
   fallbackProjects?: ReadonlyArray<FallbackProject>;
   'aria-label'?: string;
@@ -69,11 +68,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
 
   const accessibleProjects = disableDefaultFilter ? groups : memberProjects;
 
-  const selectedIds: Array<string> = _.isArray(value)
-    ? (value as Array<string>)
-    : _.isNil(value)
-      ? []
-      : [value as string];
+  const selectedIds: Array<string> = _.compact(_.castArray(value ?? []));
   const fallbackOptionProjects = _.map(
     _.filter(
       fallbackProjects,
@@ -94,16 +89,14 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     ...fallbackOptionProjects,
   ];
 
-  const lockedProjectIds = !lockedProjectTypes?.length
-    ? []
-    : (_.compact(
-        _.map(
-          _.filter(accessibleProjects, (p) =>
-            lockedProjectTypes.includes(p?.type ?? ''),
-          ),
-          'id',
-        ),
-      ) as string[]);
+  const isLockedType = (type?: string | null) =>
+    !!lockedProjectTypes?.includes(type ?? '');
+  const lockedProjectIds: Array<string> = _.compact(
+    _.map(
+      _.filter(accessibleProjects, (p) => isLockedType(p?.type)),
+      'id',
+    ),
+  );
 
   // Auto-select locked projects when they become available
   const autoSelectLockedProjects = useEffectEvent(() => {
@@ -125,6 +118,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     ({
       GENERAL: t('general.General'),
       MODEL_STORE: t('data.ModelStore'),
+      PERSONAL: t('projectSelect.Personal'),
     })[key] || key;
 
   const groupOptions = _.map(
@@ -134,26 +128,39 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         label: getLabel(key),
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
-          const showBadge =
-            !!project?.id && projectAdminIds.includes(project.id);
+          const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
+          const isLocked = isLockedType(project?.type);
+          const showLockIcon = isLocked && project?.type === 'PERSONAL';
           return {
-            label: showBadge ? (
-              <BAIFlex gap={token.marginXS} align="center">
-                <span>{project?.name}</span>
-                <BAIIconWithTooltip
-                  content={t('projectSelect.ProjectAdminBadge')}
-                  focusable={false}
-                  icon={<ShieldUser />}
-                />
-              </BAIFlex>
-            ) : (
-              project?.name
-            ),
+            label:
+              isAdmin || showLockIcon ? (
+                <BAIFlex gap={token.marginXS} align="center">
+                  <span>{project?.name}</span>
+                  {isAdmin && (
+                    <BAIIconWithTooltip
+                      content={t('projectSelect.ProjectAdminBadge')}
+                      focusable={false}
+                      icon={<ShieldUser />}
+                    />
+                  )}
+                  {showLockIcon && (
+                    <BAIIconWithTooltip
+                      content={t(
+                        'projectSelect.PersonalProjectCannotBeRemoved',
+                      )}
+                      focusable={false}
+                      icon={<LockIcon />}
+                    />
+                  )}
+                </BAIFlex>
+              ) : (
+                project?.name
+              ),
             value: project?.id,
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,
             projectName: project?.name,
-            disabled: lockedProjectIds.includes(project?.id ?? ''),
+            disabled: isLocked,
           };
         }),
       };

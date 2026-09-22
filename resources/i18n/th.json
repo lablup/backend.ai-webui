@@ -2240,6 +2240,8 @@
     "AskAdminForProjectAccess": "โปรดติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์เข้าถึงโปรเจกต์",
     "GoToProject": "ไปยัง {{project}}",
     "NoAccessibleProjects": "ไม่มีโปรเจกต์ที่สามารถเข้าถึงได้",
+    "Personal": "ส่วนตัว",
+    "PersonalProjectCannotBeRemoved": "ไม่สามารถนำโปรเจกต์ส่วนตัวที่กำหนดให้กับผู้ใช้ออกได้",
     "ProjectAdminBadge": "ผู้ดูแลโปรเจกต์",
     "ProjectNotFoundOrNoAccess": "ไม่พบโปรเจกต์ '{{project}}' หรือคุณไม่มีสิทธิ์เข้าถึง",
     "SwitchToAccessibleProject": "เลือกโปรเจกต์ที่สามารถเข้าถึงได้จากตัวเลือกโปรเจกต์ที่ด้านบนของหน้า"
