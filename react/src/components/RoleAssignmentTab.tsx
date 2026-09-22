@@ -100,7 +100,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
         # nodes the drawer fragment now composes with, and unaliased fields
         # with different arguments conflict in one query.
-        firstScope: scopes(first: 1) @deprecatedSince(version: "26.9.0") {
+        firstScope: scopes(first: 1) @deprecatedSince(version: "26.9.0a4") {
           edges {
             node {
               scopeType
@@ -108,8 +108,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             }
           }
         }
-        scopeType @since(version: "26.9.0")
-        scopeId @since(version: "26.9.0")
+        scopeType @since(version: "26.9.0a4")
+        scopeId @since(version: "26.9.0a4")
         users(
           filter: $filter
           orderBy: $orderBy
