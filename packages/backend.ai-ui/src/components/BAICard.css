@@ -132,19 +132,19 @@
  rail->content: 16px on every tabbed surface.
 */
 
-/*
- `showDivider` — the header rule runs the card's full width, as antd's
- `ant-card-head` border did, rather than stopping at the padding. Same bleed as
- the tab strip above.
-*/
+/* Only the bordered variant subtracts its border from the padding. */
+.bai-card[data-variant='muted'] {
+  --bai-card-inset: max(0px, var(--container-padding-inline-start));
+}
+
+/* `showDivider`: the header rule runs to the card's side borders. */
 .bai-card__divider {
   margin-inline: calc(-1 * var(--bai-card-inset));
   max-width: none;
   width: auto;
 }
 
-/* `size="small"`: the title steps down to the body size (antd's small card
-   head is `fontSize`, 14px), so the header row is the sm extra button's 24px. */
-.bai-card--compact .bai-card__head > h5 {
+/* `size="small"`: a 14px title, so the header row is the sm button's 24px. */
+.bai-card__title--compact {
   font-size: var(--font-size-base);
 }

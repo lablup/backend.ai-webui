@@ -273,7 +273,8 @@ const BAICard: React.FC<BAICardProps> = ({
       padding={padding ?? (size === 'small' ? 3 : 6)}
       width={width}
     >
-      <VStack gap={size === 'small' ? 3 : 4} align="stretch">
+      {/* A tabbed card keeps 16px under its tab rail at every size (BAICard.css). */}
+      <VStack gap={size === 'small' && !tabs.length ? 3 : 4} align="stretch">
         {cover}
         {hasTitleRow ? (
           // `bai-card__head` / `bai-card__extra` are ANCHORS, not styling
@@ -299,7 +300,14 @@ const BAICard: React.FC<BAICardProps> = ({
               // is `fontSizeLG` (16px), and on the restored antd ramp 16px is
               // heading-5. (It was `level={3}` while Astryx's own ramp put 17px
               // there.)
-              <Heading level={5}>{title}</Heading>
+              <Heading
+                level={5}
+                className={
+                  size === 'small' ? 'bai-card__title--compact' : undefined
+                }
+              >
+                {title}
+              </Heading>
             ) : (
               title
             )}
