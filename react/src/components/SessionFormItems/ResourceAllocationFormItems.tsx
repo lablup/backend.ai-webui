@@ -403,13 +403,11 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
-  const allocatablePresetIds = useMemo(() => {
-    return getAllocatablePresetIds(
-      checkPresetInfo?.presets,
-      resourceLimits,
-      currentImage,
-    );
-  }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
+  const allocatablePresetIds = getAllocatablePresetIds(
+    checkPresetInfo?.presets,
+    resourceLimits,
+    currentImage,
+  );
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
