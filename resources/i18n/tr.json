@@ -1269,12 +1269,12 @@
       "EndpointUrl": "Uç Nokta URL'si",
       "Name": "Ad",
       "OpenToPublic": "Herkese Açık",
+      "ReplicaHealthStatus": "Replika sağlık durumu",
+      "ReplicaStatus": "Replika yaşam döngüsü",
+      "ReplicaTrafficStatus": "Replika trafik durumu",
       "ResourceGroup": "Kaynak Grubu",
       "Status": "Durum",
-      "Tags": "Etiketler",
-      "ReplicaStatus": "Replika yaşam döngüsü",
-      "ReplicaHealthStatus": "Replika sağlık durumu",
-      "ReplicaTrafficStatus": "Replika trafik durumu"
+      "Tags": "Etiketler"
     },
     "nav": {
       "Next": "İleri",

@@ -1269,12 +1269,12 @@
       "EndpointUrl": "URL Titik Akhir",
       "Name": "Nama",
       "OpenToPublic": "Publik",
+      "ReplicaHealthStatus": "Status kesehatan replika",
+      "ReplicaStatus": "Siklus hidup replika",
+      "ReplicaTrafficStatus": "Status lalu lintas replika",
       "ResourceGroup": "Grup Sumber Daya",
       "Status": "Status",
-      "Tags": "Tag",
-      "ReplicaStatus": "Siklus hidup replika",
-      "ReplicaHealthStatus": "Status kesehatan replika",
-      "ReplicaTrafficStatus": "Status lalu lintas replika"
+      "Tags": "Tag"
     },
     "nav": {
       "Next": "Berikutnya",

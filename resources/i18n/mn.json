@@ -1269,12 +1269,12 @@
       "EndpointUrl": "Endpoint URL",
       "Name": "Нэр",
       "OpenToPublic": "Нийтэд нээлттэй",
+      "ReplicaHealthStatus": "Хуулбарын эрүүл мэндийн төлөв",
+      "ReplicaStatus": "Хуулбарын амьдралын мөчлөг",
+      "ReplicaTrafficStatus": "Хуулбарын урсгалын төлөв",
       "ResourceGroup": "Нөөцийн бүлэг",
       "Status": "Төлөв",
-      "Tags": "Шошго",
-      "ReplicaStatus": "Хуулбарын амьдралын мөчлөг",
-      "ReplicaHealthStatus": "Хуулбарын эрүүл мэндийн төлөв",
-      "ReplicaTrafficStatus": "Хуулбарын урсгалын төлөв"
+      "Tags": "Шошго"
     },
     "nav": {
       "Next": "Дараах",

@@ -1269,12 +1269,12 @@
       "EndpointUrl": "URL конечной точки",
       "Name": "Имя",
       "OpenToPublic": "Публичное",
+      "ReplicaHealthStatus": "Состояние здоровья реплики",
+      "ReplicaStatus": "Жизненный цикл реплики",
+      "ReplicaTrafficStatus": "Состояние трафика реплики",
       "ResourceGroup": "Группа ресурсов",
       "Status": "Статус",
-      "Tags": "Теги",
-      "ReplicaStatus": "Жизненный цикл реплики",
-      "ReplicaHealthStatus": "Состояние здоровья реплики",
-      "ReplicaTrafficStatus": "Состояние трафика реплики"
+      "Tags": "Теги"
     },
     "nav": {
       "Next": "Далее",

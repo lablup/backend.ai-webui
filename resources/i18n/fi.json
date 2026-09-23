@@ -1269,12 +1269,12 @@
       "EndpointUrl": "Päätepisteen URL",
       "Name": "Nimi",
       "OpenToPublic": "Julkinen",
+      "ReplicaHealthStatus": "Replikan terveystila",
+      "ReplicaStatus": "Replikan elinkaari",
+      "ReplicaTrafficStatus": "Replikan liikennetila",
       "ResourceGroup": "Resurssiryhmä",
       "Status": "Tila",
-      "Tags": "Tunnisteet",
-      "ReplicaStatus": "Replikan elinkaari",
-      "ReplicaHealthStatus": "Replikan terveystila",
-      "ReplicaTrafficStatus": "Replikan liikennetila"
+      "Tags": "Tunnisteet"
     },
     "nav": {
       "Next": "Seuraava",

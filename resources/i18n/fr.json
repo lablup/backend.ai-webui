@@ -1269,12 +1269,12 @@
       "EndpointUrl": "URL du point de terminaison",
       "Name": "Nom",
       "OpenToPublic": "Public",
+      "ReplicaHealthStatus": "État de santé de la réplique",
+      "ReplicaStatus": "Cycle de vie de la réplique",
+      "ReplicaTrafficStatus": "État du trafic de la réplique",
       "ResourceGroup": "Groupe de ressources",
       "Status": "Statut",
-      "Tags": "Étiquettes",
-      "ReplicaStatus": "Cycle de vie de la réplique",
-      "ReplicaHealthStatus": "État de santé de la réplique",
-      "ReplicaTrafficStatus": "État du trafic de la réplique"
+      "Tags": "Étiquettes"
     },
     "nav": {
       "Next": "Suivant",

@@ -1269,12 +1269,12 @@
       "EndpointUrl": "エンドポイントURL",
       "Name": "名前",
       "OpenToPublic": "公開",
+      "ReplicaHealthStatus": "レプリカのヘルスステータス",
+      "ReplicaStatus": "レプリカのライフサイクル",
+      "ReplicaTrafficStatus": "レプリカのトラフィックステータス",
       "ResourceGroup": "リソースグループ",
       "Status": "状態",
-      "Tags": "タグ",
-      "ReplicaStatus": "レプリカのライフサイクル",
-      "ReplicaHealthStatus": "レプリカのヘルスステータス",
-      "ReplicaTrafficStatus": "レプリカのトラフィックステータス"
+      "Tags": "タグ"
     },
     "nav": {
       "Next": "次へ",

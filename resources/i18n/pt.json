@@ -1269,12 +1269,12 @@
       "EndpointUrl": "URL do endpoint",
       "Name": "Nome",
       "OpenToPublic": "Público",
+      "ReplicaHealthStatus": "Estado de saúde da réplica",
+      "ReplicaStatus": "Ciclo de vida da réplica",
+      "ReplicaTrafficStatus": "Estado de tráfego da réplica",
       "ResourceGroup": "Grupo de Recursos",
       "Status": "Estado",
-      "Tags": "Etiquetas",
-      "ReplicaStatus": "Ciclo de vida da réplica",
-      "ReplicaHealthStatus": "Estado de saúde da réplica",
-      "ReplicaTrafficStatus": "Estado de tráfego da réplica"
+      "Tags": "Etiquetas"
     },
     "nav": {
       "Next": "Seguinte",

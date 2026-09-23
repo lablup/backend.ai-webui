@@ -333,7 +333,10 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
           );
         }
         return (
-          <BAIText ellipsis={{ tooltip: projectName }} style={{ maxWidth: 150 }}>
+          <BAIText
+            ellipsis={{ tooltip: projectName }}
+            style={{ maxWidth: 150 }}
+          >
             {projectName}
           </BAIText>
         );

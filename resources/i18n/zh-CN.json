@@ -1269,12 +1269,12 @@
       "EndpointUrl": "端点 URL",
       "Name": "名称",
       "OpenToPublic": "公开",
+      "ReplicaHealthStatus": "副本健康状态",
+      "ReplicaStatus": "副本生命周期",
+      "ReplicaTrafficStatus": "副本流量状态",
       "ResourceGroup": "资源组",
       "Status": "状态",
-      "Tags": "标签",
-      "ReplicaStatus": "副本生命周期",
-      "ReplicaHealthStatus": "副本健康状态",
-      "ReplicaTrafficStatus": "副本流量状态"
+      "Tags": "标签"
     },
     "nav": {
       "Next": "下一步",

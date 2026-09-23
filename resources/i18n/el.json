@@ -1269,12 +1269,12 @@
       "EndpointUrl": "URL τελικού σημείου",
       "Name": "Όνομα",
       "OpenToPublic": "Δημόσιο",
+      "ReplicaHealthStatus": "Κατάσταση υγείας αντιγράφου",
+      "ReplicaStatus": "Κατάσταση κύκλου ζωής αντιγράφου",
+      "ReplicaTrafficStatus": "Κατάσταση κίνησης αντιγράφου",
       "ResourceGroup": "Ομάδα πόρων",
       "Status": "Κατάσταση",
-      "Tags": "Ετικέτες",
-      "ReplicaStatus": "Κατάσταση κύκλου ζωής αντιγράφου",
-      "ReplicaHealthStatus": "Κατάσταση υγείας αντιγράφου",
-      "ReplicaTrafficStatus": "Κατάσταση κίνησης αντιγράφου"
+      "Tags": "Ετικέτες"
     },
     "nav": {
       "Next": "Επόμενο",

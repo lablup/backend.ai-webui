@@ -1270,12 +1270,12 @@
       "EndpointUrl": "端點 URL",
       "Name": "名稱",
       "OpenToPublic": "公開",
+      "ReplicaHealthStatus": "副本健康狀態",
+      "ReplicaStatus": "副本生命週期",
+      "ReplicaTrafficStatus": "副本流量狀態",
       "ResourceGroup": "資源群組",
       "Status": "狀態",
-      "Tags": "標籤",
-      "ReplicaStatus": "副本生命週期",
-      "ReplicaHealthStatus": "副本健康狀態",
-      "ReplicaTrafficStatus": "副本流量狀態"
+      "Tags": "標籤"
     },
     "nav": {
       "Next": "下一步",

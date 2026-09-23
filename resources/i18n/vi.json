@@ -1269,12 +1269,12 @@
       "EndpointUrl": "URL điểm cuối",
       "Name": "Tên",
       "OpenToPublic": "Công khai",
+      "ReplicaHealthStatus": "Trạng thái sức khỏe bản sao",
+      "ReplicaStatus": "Vòng đời bản sao",
+      "ReplicaTrafficStatus": "Trạng thái lưu lượng bản sao",
       "ResourceGroup": "Nhóm tài nguyên",
       "Status": "Trạng thái",
-      "Tags": "Thẻ",
-      "ReplicaStatus": "Vòng đời bản sao",
-      "ReplicaHealthStatus": "Trạng thái sức khỏe bản sao",
-      "ReplicaTrafficStatus": "Trạng thái lưu lượng bản sao"
+      "Tags": "Thẻ"
     },
     "nav": {
       "Next": "Tiếp theo",
