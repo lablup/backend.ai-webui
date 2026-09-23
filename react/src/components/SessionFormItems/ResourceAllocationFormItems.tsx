@@ -444,7 +444,7 @@ const ResourceAllocationFormItems: React.FC<
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
-  // contents; a fresh identity would re-run the auto-select effect each render.
+  // contents; the compiler then keeps one identity per key (`'use memo'`).
   const allocatablePresetNamesKey = JSON.stringify(
     getAllocatablePresetNames(
       checkPresetInfo?.presets,
@@ -452,9 +452,8 @@ const ResourceAllocationFormItems: React.FC<
       currentImage,
     ),
   );
-  const allocatablePresetNames = useMemo(
-    (): string[] => JSON.parse(allocatablePresetNamesKey),
-    [allocatablePresetNamesKey],
+  const allocatablePresetNames: string[] = JSON.parse(
+    allocatablePresetNamesKey,
   );
 
   const runShmemAutomationRule = (M_plus_S: string) => {
