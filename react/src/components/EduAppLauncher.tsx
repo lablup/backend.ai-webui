@@ -16,7 +16,7 @@ import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
 import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

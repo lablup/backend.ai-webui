@@ -19,7 +19,10 @@
  * between `loginHost` (950) and `modalBase` (1100), so an upstream bump moving
  * it lands inside the ladder's range with nothing else to notice. Still live
  * after FR-3585: `ChatPage`, the notification drawer, and the inner `<dialog>`
- * of every portalled drawer all open with `show()` and take this base.
+ * of every portalled drawer all open with `show()` and take this base. lab
+ * emits the value through an inline custom property rather than a stylesheet
+ * literal, so `Drawer.js`'s `NON_MODAL_BASE_Z` is the number and `lab.css` is
+ * checked for the absence of any literal in the ladder's band.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -122,7 +125,9 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
   for (const [key, value] of Object.entries(layers)) {
     const name = cssName(key);
     if (declared[name] === undefined) {
-      failures.push(`${LADDER_CSS}: ${name} is not declared (${key} = ${value}).`);
+      failures.push(
+        `${LADDER_CSS}: ${name} is not declared (${key} = ${value}).`,
+      );
     } else if (declared[name] !== value) {
       failures.push(
         `${LADDER_CSS}: ${name} is ${declared[name]}, but ` +
@@ -143,7 +148,9 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
   ]);
   for (const name of Object.keys(declared)) {
     if (!expected.has(name)) {
-      failures.push(`${LADDER_CSS}: ${name} has no counterpart in ${LADDER_TS}.`);
+      failures.push(
+        `${LADDER_CSS}: ${name} has no counterpart in ${LADDER_TS}.`,
+      );
     }
   }
 
@@ -178,17 +185,25 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
         "non-modal overlay base check.",
     );
   } else {
-    if (!new RegExp(`z-index:\\s*${LAB_NON_MODAL_BASE_Z}\\b`).test(labCss)) {
-      failures.push(
-        `${LAB_CSS}: no \`z-index:${LAB_NON_MODAL_BASE_Z}\` rule. lab's ` +
-          "non-modal overlay base moved; re-check that no ladder layer " +
-          "collides with the new one.",
-      );
+    // lab.css must not pin an overlay inside the band this ladder spans: the
+    // base is the JS constant below, and the stylesheet only carries it in
+    // through an inline custom property. A literal in range is a second,
+    // unowned source of truth.
+    for (const [, value] of labCss.matchAll(/z-index:\s*(\d+)\b/g)) {
+      const z = Number(value);
+      if (z >= layers.loginHost && z <= layers.notification) {
+        failures.push(
+          `${LAB_CSS}: literal \`z-index:${z}\` inside the ladder's band ` +
+            `(${layers.loginHost}–${layers.notification}). lab used to leave ` +
+            "this to the inline custom property its JS sets; a literal here " +
+            "stacks against the ladder with nothing to notice.",
+        );
+      }
     }
     if (
-      !new RegExp(
-        `NON_MODAL_BASE_Z\\s*=\\s*${LAB_NON_MODAL_BASE_Z}\\b`,
-      ).test(drawerJs)
+      !new RegExp(`NON_MODAL_BASE_Z\\s*=\\s*${LAB_NON_MODAL_BASE_Z}\\b`).test(
+        drawerJs,
+      )
     ) {
       failures.push(
         `${LAB_DRAWER_JS}: \`NON_MODAL_BASE_Z\` is no longer ` +

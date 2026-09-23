@@ -32,7 +32,7 @@
  | `loading`                          | `BAISkeleton` in place of the body (FR-3513)        |
  | `maskClosable` / `keyboard`        | `Dialog.purpose` (`info` / `form` / `required`)     |
  | `styles.{header,body,footer,…}`    | inline styles on the matching Astryx slot           |
- | `.ant-modal-*` CSS (BAIModal.css)  | deleted — the slots are Astryx's own                |
+ | `.ant-modal-*` CSS                 | deleted — the slots are Astryx's own                |
 
  ## PILOT-DECISIONs (recorded in .specs/FR-3482-astryx-migration/issues/p3-b-modal-family.md)
 
@@ -72,6 +72,7 @@
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIDialog from './BAIDialog';
+import './BAIModal.css';
 import BAISkeleton from './BAISkeleton';
 import { Button } from '@astryxdesign/core/Button';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
@@ -83,6 +84,7 @@ import {
   LayoutHeader,
 } from '@astryxdesign/core/Layout';
 import { HStack } from '@astryxdesign/core/Stack';
+import cx from 'classnames';
 import {
   SquareStack,
   Square,
@@ -680,7 +682,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
     <LayoutHeader
       hasDivider
       style={styles?.header}
-      className={classNames?.header}
+      className={cx('bai-modal__header', classNames?.header)}
     >
       <HStack justify="between" align="center" gap={2} width="100%">
         {headerContent}
@@ -713,7 +715,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
           : undefined
       }
       style={styles?.header}
-      className={classNames?.header}
+      className={cx('bai-modal__header', classNames?.header)}
     />
   );
 
@@ -758,7 +760,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
             <LayoutFooter
               hasDivider
               style={styles?.footer}
-              className={classNames?.footer}
+              className={cx('bai-modal__footer', classNames?.footer)}
             >
               {resolvedFooter}
             </LayoutFooter>

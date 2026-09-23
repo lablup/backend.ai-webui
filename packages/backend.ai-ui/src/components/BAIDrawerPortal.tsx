@@ -23,16 +23,12 @@ import { createPortal } from 'react-dom';
     so a closing drawer does not re-render its whole subtree a frame later. */
 const HIDDEN_ATTRIBUTE = 'data-bai-drawer-hidden';
 
-/** Everything lab `Drawer` takes; the portal owns the scrim, so not `hasScrim`
-    — nor the collapse-to-rail pair its `hasScrim={false}` silently unlocks. */
-export type BAIDrawerPortalProps = Omit<
-  DrawerProps,
-  'hasScrim' | 'isCollapsed' | 'onCollapsedChange'
->;
+/** Everything lab `Drawer` takes; the portal owns the scrim, so not `hasScrim`. */
+export type BAIDrawerPortalProps = Omit<DrawerProps, 'hasScrim'>;
 
 const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   isOpen,
-  onClose,
+  onOpenChange,
   children,
   ...rest
 }) => {
@@ -44,7 +40,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
 
   // Modality restored by hand: `show()` traps nothing. Escape stays lab's — its
   // dialog `keydown` already closes the top drawer, and a second handler here
-  // would call `onClose` twice.
+  // would request the close twice.
   const rootRef = useRef<HTMLDivElement>(null);
   const isTopmost = useDialogLevel(rootRef, isOpen);
 
@@ -103,7 +99,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
       isPointerDownOnMaskRef.current && event.target === maskRef.current;
     isPointerDownOnMaskRef.current = false;
     if (isMaskClick) {
-      onClose();
+      onOpenChange(false);
     }
   };
 
@@ -125,7 +121,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
       <Drawer
         {...rest}
         isOpen={isOpen}
-        onClose={onClose}
+        onOpenChange={onOpenChange}
         hasScrim={false}
         // lab omits it without a scrim, but the portal restores modality.
         aria-modal={isOpen ? 'true' : undefined}

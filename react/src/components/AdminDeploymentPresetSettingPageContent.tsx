@@ -53,7 +53,7 @@ import {
 import './collapsible-section.css';
 import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import {
   BAISkeleton,
   BAIAdminImageSelect,
