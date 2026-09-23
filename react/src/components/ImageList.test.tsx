@@ -524,6 +524,7 @@ describe('ImageList rescan row action (FR-3948)', () => {
     architecture: 'x86_64',
     installed: false,
     labels: [],
+    status: 'ALIVE',
   };
   const CANONICAL = 'cr.backend.ai/stable/python:3.9-ubuntu20.04';
 
@@ -539,7 +540,7 @@ describe('ImageList rescan row action (FR-3948)', () => {
     errors: [],
   });
 
-  const renderOneImage = () => {
+  const renderOneImage = (node: Record<string, unknown> = IMAGE) => {
     const environment: RelayMockEnvironment = createMockEnvironment();
     // A queued resolver is consumed by ONE operation, so queue several and
     // count how many list fetches actually ran.
@@ -548,7 +549,7 @@ describe('ImageList rescan row action (FR-3948)', () => {
       environment.mock.queueOperationResolver((operation) => {
         fetchCount += 1;
         return MockPayloadGenerator.generate(operation, {
-          ImageConnection: () => ({ count: 1, edges: [{ node: IMAGE }] }),
+          ImageConnection: () => ({ count: 1, edges: [{ node }] }),
         });
       });
     });
@@ -684,6 +685,18 @@ describe('ImageList rescan row action (FR-3948)', () => {
 
     // Await a sibling row action first — asserting absence while the list is
     // still suspended would pass without ever rendering the row.
+    expect(
+      await screen.findByRole('button', { name: 'environment.ManageApps' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'environment.RescanImage' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides the action on a row that is not ALIVE', async () => {
+    // The manager resolves the canonical among ALIVE images only.
+    renderOneImage({ ...IMAGE, status: 'DELETED' });
+
     expect(
       await screen.findByRole('button', { name: 'environment.ManageApps' }),
     ).toBeInTheDocument();

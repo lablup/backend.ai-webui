@@ -591,9 +591,9 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               setManagingApp(row);
             }}
           />
-          {/* `POST /admin/images/rescan` is `superadmin_required`, like the
-              import button above. */}
-          {baiClient.is_superadmin ? (
+          {/* `POST /admin/images/rescan` is `superadmin_required` and only
+              resolves ALIVE images; any other status 404s. */}
+          {baiClient.is_superadmin && row.status === 'ALIVE' ? (
             <IconButton
               className="bai-action-accent"
               variant="ghost"
