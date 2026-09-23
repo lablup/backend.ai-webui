@@ -178,6 +178,45 @@ describe('BAIDrawerPortal', () => {
     expect(onDrawerOpenChange).not.toHaveBeenCalled();
   });
 
+  // The non-scrim drawer (the notification drawer) skips the portal but goes
+  // through the same patched lab handler, so it needs the same guarantee.
+  it('routes Escape to a modal opened inside a non-scrim drawer', async () => {
+    const user = userEvent.setup();
+    const onDrawerClose = vi.fn();
+    const onModalOpenChange = vi.fn();
+    const NonScrim: React.FC = () => {
+      'use memo';
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      return (
+        <BAIDrawer
+          open
+          hasScrim={false}
+          title="Notices"
+          onClose={onDrawerClose}
+        >
+          <button type="button" onClick={() => setIsModalOpen(true)}>
+            Deploy
+          </button>
+          <BAIDialog
+            isOpen={isModalOpen}
+            onOpenChange={onModalOpenChange}
+            aria-label="deploy"
+          >
+            <button type="button">Confirm</button>
+          </BAIDialog>
+        </BAIDrawer>
+      );
+    };
+    render(<NonScrim />);
+
+    await user.click(screen.getByRole('button', { name: 'Deploy' }));
+    act(() => screen.getByRole('button', { name: 'Confirm' }).focus());
+    await user.keyboard('{Escape}');
+
+    expect(onModalOpenChange).toHaveBeenCalledWith(false);
+    expect(onDrawerClose).not.toHaveBeenCalled();
+  });
+
   // lab listens for Escape on its `<dialog>`, so the press has to bubble out of
   // the panel — which it still does through the portal.
   it('closes on Escape pressed inside the drawer panel', async () => {

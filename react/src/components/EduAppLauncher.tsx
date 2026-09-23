@@ -770,13 +770,8 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   const STEP_SESSION = 0;
   const STEP_LAUNCH = 1;
   let currentStep = STEP_SESSION;
-  // PILOT-DECISION: antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB).
-  // antd's per-item lifecycle enum (`wait|process|finish|error`) has NO
-  // counterpart: lab derives completed/active/upcoming from the parent's
-  // `activeStep`, and its `status` is a SEMANTIC enum (accent/success/
-  // warning/error) layered on top. So only the error state survives as an
-  // explicit status; `wait`/`process`/`finish` are expressed by `activeStep`,
-  // which is what `currentStep` already carries.
+  // `Stepper` derives completed/active/upcoming from `activeStep`, so only the
+  // error state is passed as an explicit `Step.status`.
   let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
     'wait',
     'wait',

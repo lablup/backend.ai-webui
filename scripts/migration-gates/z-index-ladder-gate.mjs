@@ -189,6 +189,14 @@ export function runZIndexLadderGate({ repoRoot = REPO_ROOT } = {}) {
     // base is the JS constant below, and the stylesheet only carries it in
     // through an inline custom property. A literal in range is a second,
     // unowned source of truth.
+    for (const key of ["loginHost", "notification"]) {
+      if (layers[key] === undefined) {
+        failures.push(
+          `${LADDER_TS}: \`${key}\` is gone, and it bounds the band the ` +
+            `${LAB_CSS} check scans. Update the bounds in this gate.`,
+        );
+      }
+    }
     for (const [, value] of labCss.matchAll(/z-index:\s*(\d+)\b/g)) {
       const z = Number(value);
       if (z >= layers.loginHost && z <= layers.notification) {

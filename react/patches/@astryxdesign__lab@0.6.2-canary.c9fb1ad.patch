@@ -1,8 +1,8 @@
 diff --git a/dist/Drawer/Drawer.js b/dist/Drawer/Drawer.js
-index 6fd2ca4734ae69af28b93e5528717e46ed265341..0b7605127ec0030af027bc2dcac245bff90ee6dc 100644
+index 6fd2ca4734ae69af28b93e5528717e46ed265341..fc31012a969a2508fbae7d24b2900e8a117da55c 100644
 --- a/dist/Drawer/Drawer.js
 +++ b/dist/Drawer/Drawer.js
-@@ -289,7 +289,12 @@
+@@ -289,7 +289,14 @@
    // top of the drawer stack closes, so stacked siblings peel off
    // innermost-first.
    const handleKeyDown = useCallback(event => {
@@ -12,11 +12,13 @@ index 6fd2ca4734ae69af28b93e5528717e46ed265341..0b7605127ec0030af027bc2dcac245bf
 +    // through here even though it is not in this dialog's DOM subtree. Acting
 +    // on it (and preventing its default) makes the shared layer-dismissal
 +    // stack stand down, so neither the layer nor the drawer closes.
-+    if (event.key === 'Escape' && event.currentTarget.contains(event.target)) {
++    // An Escape that ends an IME composition cancels the composition, not the
++    // drawer (the layer stack makes the same exception).
++    if (event.key === 'Escape' && !event.nativeEvent.isComposing && event.currentTarget.contains(event.target)) {
        event.preventDefault();
        if (isTopDrawer(drawerId)) {
          onOpenChange(false);
-@@ -344,7 +349,7 @@
+@@ -344,7 +351,7 @@
      }), stylex.props(styles.dialog, overlayPaddingReset.reset, sideStyle, dynamicStyles.inlineSize(widthValue, mobileWidth), isRendered && styles.rendered, isOpen && sideOpenStyle, hasScrim ? styles.scrim : dynamicStyles.stackZ(stackZ), hasScrim && isOpen && styles.scrimOpen, xstyle), className, style),
      ...safeProps,
      "aria-label": label,
@@ -50,10 +52,10 @@ index 19c803aa98debc29728cbc69065f9144adb67ca8..3719b7865f676a90877986778577d546
    return /*#__PURE__*/_jsx("div", {
      ref: ref,
 diff --git a/src/Drawer/Drawer.tsx b/src/Drawer/Drawer.tsx
-index b78b6eb759b3d32717531c698a45f52e337bd507..061ed9a78bc001a28370bb143b976798ebbefc1b 100644
+index b78b6eb759b3d32717531c698a45f52e337bd507..56da4d7955ec516e93f0c22efde30d2b36866be0 100644
 --- a/src/Drawer/Drawer.tsx
 +++ b/src/Drawer/Drawer.tsx
-@@ -462,7 +462,16 @@
+@@ -462,7 +462,19 @@
    // innermost-first.
    const handleKeyDown = useCallback(
      (event: React.KeyboardEvent<HTMLDialogElement>) => {
@@ -64,14 +66,17 @@ index b78b6eb759b3d32717531c698a45f52e337bd507..061ed9a78bc001a28370bb143b976798
 +      // subtree. Acting on it (and preventing its default) makes the shared
 +      // layer-dismissal stack stand down, so neither the layer nor the drawer
 +      // closes.
++      // An Escape that ends an IME composition cancels the composition, not
++      // the drawer (the layer stack makes the same exception).
 +      if (
 +        event.key === 'Escape' &&
++        !event.nativeEvent.isComposing &&
 +        event.currentTarget.contains(event.target as Node)
 +      ) {
          event.preventDefault();
          if (isTopDrawer(drawerId)) {
            onOpenChange(false);
-@@ -542,7 +551,10 @@
+@@ -542,7 +554,10 @@
        )}
        {...safeProps}
        aria-label={label}
