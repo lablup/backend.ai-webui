@@ -158,6 +158,15 @@ describe('BAITable page-size change (#9607)', () => {
 
     expect(onChange).toHaveBeenLastCalledWith(2, 20);
   });
+
+  it('reports a plain page change once, with the current size', async () => {
+    const onChange = vi.fn();
+    renderTable({ dataSource: makeRows(100), pagination: { onChange } });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Go to page 2' }));
+
+    expect(onChange.mock.calls).toEqual([[2, 10]]);
+  });
 });
 
 describe('BAITable invalid page number (FR-3703)', () => {
