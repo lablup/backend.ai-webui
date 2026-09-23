@@ -17,6 +17,12 @@ export interface BAIDialogProps extends Omit<DialogProps, 'ref' | 'isInline' | '
      * surface, so `style={{ zIndex }}` does not.
      */
     zIndex?: number;
+    /**
+     * Called with the new visibility right after `isOpen` changes, never on
+     * mount. There is no exit animation, so the close edge is the end of the
+     * close. Drives `BAIUnmountAfterClose`.
+     */
+    afterOpenChange?: (open: boolean) => void;
 }
 declare const BAIDialog: React.FC<BAIDialogProps>;
 export default BAIDialog;
