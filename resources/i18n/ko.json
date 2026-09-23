@@ -44,7 +44,7 @@
     "PresetUpdated": "배포 프리셋이 업데이트되었습니다.",
     "PresetValues": "프리셋 값",
     "Rank": "순위",
-    "RankTooltip": "같은 런타임 배리언트의 프리셋 중 표시 순서입니다. 값이 작을수록 먼저 표시됩니다.",
+    "RankTooltip": "같은 런타임의 프리셋 간 표시 순서입니다. 값이 낮을수록 먼저 표시됩니다.",
     "Replicas": "복제본 수",
     "ReplicasPlaceholder": "예: 2",
     "ReplicasTooltip": "이 프리셋으로 배포를 생성할 때 적용되는 기본 복제본 수입니다.",
