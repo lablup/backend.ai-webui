@@ -50,7 +50,8 @@ export const availableDeploymentSorterKeys = [
   'tag',
 ] as const;
 
-export type DeploymentSorterKey = (typeof availableDeploymentSorterKeys)[number];
+export type DeploymentSorterKey =
+  (typeof availableDeploymentSorterKeys)[number];
 
 export const availableDeploymentSorterValues = [
   ...availableDeploymentSorterKeys,
@@ -59,7 +60,6 @@ export const availableDeploymentSorterValues = [
 
 export type DeploymentOrderValue =
   (typeof availableDeploymentSorterValues)[number];
-
 
 export interface BAIModelDeploymentNodesProps extends Omit<
   BAITableProps<ModelDeploymentNodeInList>,
