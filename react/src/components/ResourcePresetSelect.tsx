@@ -198,8 +198,19 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           {preset.name}
           {preset.scaling_group_name ? (
             // Global presets carry no mark; the token names the group this
-            // one belongs to, so same-named rows tell apart.
-            <Token label={preset.scaling_group_name} size="sm" />
+            // one belongs to, so same-named rows tell apart. A disabled row
+            // already explains itself, so the token stays quiet there.
+            presetOption?.disabledReason ? (
+              <Token label={preset.scaling_group_name} size="sm" />
+            ) : (
+              <Tooltip
+                content={t('resourcePreset.OnlyAvailableInResourceGroup', {
+                  name: preset.scaling_group_name,
+                })}
+              >
+                <Token label={preset.scaling_group_name} size="sm" />
+              </Tooltip>
+            )
           ) : null}
         </BAIFlex>
         <BAIFlex direction="row" gap={'xxs'}>
