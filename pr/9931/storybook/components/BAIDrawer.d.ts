@@ -4,6 +4,13 @@ export interface BAIDrawerProps {
     open?: boolean;
     /** Close request (Escape, scrim click, the header close button). */
     onClose?: () => void;
+    /**
+     * Called with `true` as soon as the drawer opens, and with `false` once the
+     * slide-out has finished. Never on mount.
+     */
+    afterOpenChange?: (open: boolean) => void;
+    /** Called once the slide-out has finished. Drives `BAIUnmountAfterClose`. */
+    afterClose?: () => void;
     /** Header title. antd `Drawer`'s `title`. */
     title?: ReactNode;
     /** Header actions, rendered at the trailing edge. antd `Drawer`'s `extra`. */
