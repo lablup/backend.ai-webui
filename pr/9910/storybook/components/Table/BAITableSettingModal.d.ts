@@ -11,7 +11,7 @@ export interface BAITableSettingResult {
     /** Every column key, in the order the user left them. */
     columnOrder: Array<string>;
 }
-export interface BAITableSettingModalProps extends Pick<BAIDialogProps, 'afterOpenChange' | 'afterClose'> {
+export interface BAITableSettingModalProps extends Pick<BAIDialogProps, 'afterOpenChange'> {
     open: boolean;
     columns: Array<BAITableSettingColumn>;
     /** Currently visible keys, in current display order. */
