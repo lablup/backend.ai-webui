@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIModal` hands its close edge to the `BAIDialog` it keeps mounted in the
- same slot, so `afterClose` still fires and `BAIUnmountAfterClose` can drop it.
+ `BAIModal` hands its close edge to the `BAIDialog` it keeps mounted, mounts
+ its content on first open, and keeps it while closed unless `destroyOnHidden`
+ is set. `BAIUnmountAfterClose` drops the whole modal instead.
 */
 import BAIModal from './BAIModal';
 import BAIUnmountAfterClose from './BAIUnmountAfterClose';
@@ -37,14 +38,43 @@ describe('BAIModal close lifecycle', () => {
     rerender(ui(false));
     expect(afterOpenChange).toHaveBeenCalledExactlyOnceWith(false);
     expect(afterClose).toHaveBeenCalledTimes(1);
-    // A closed modal still renders nothing of its own.
-    expect(screen.queryByText('Inside')).toBeNull();
     rerender(ui(true));
     expect(afterOpenChange).toHaveBeenLastCalledWith(true);
     expect(afterClose).toHaveBeenCalledTimes(1);
   });
 
-  it('is dropped by BAIUnmountAfterClose once it closes', () => {
+  it('does not render its content before the first open', () => {
+    render(
+      <BAIModal open={false} title="Settings">
+        <span>Inside</span>
+      </BAIModal>,
+    );
+    expect(screen.queryByText('Inside')).toBeNull();
+  });
+
+  it('keeps its content mounted while closed without destroyOnHidden', () => {
+    const ui = (open: boolean) => (
+      <BAIModal open={open} title="Settings">
+        <span>Inside</span>
+      </BAIModal>
+    );
+    const { rerender } = render(ui(true));
+    rerender(ui(false));
+    expect(screen.getByText('Inside')).toBeInTheDocument();
+  });
+
+  it('unmounts its content on close with destroyOnHidden', () => {
+    const ui = (open: boolean) => (
+      <BAIModal open={open} title="Settings" destroyOnHidden>
+        <span>Inside</span>
+      </BAIModal>
+    );
+    const { rerender } = render(ui(true));
+    rerender(ui(false));
+    expect(screen.queryByText('Inside')).toBeNull();
+  });
+
+  it('is dropped entirely by BAIUnmountAfterClose once it closes', () => {
     const ui = (open: boolean) => (
       <BAIUnmountAfterClose>
         <BAIModal open={open} title="Settings">
@@ -55,6 +85,7 @@ describe('BAIModal close lifecycle', () => {
     const { rerender } = render(ui(true));
     expect(screen.getByText('Inside')).toBeInTheDocument();
     rerender(ui(false));
+    expect(screen.queryByText('Inside')).toBeNull();
     // The kept-mounted BAIDialog portal root goes too.
     expect(document.querySelector('.bai-dialog')).toBeNull();
   });
