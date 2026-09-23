@@ -463,6 +463,7 @@
     "Yes": "sì"
   },
   "chatui": {
+    "AttachmentNotStored": "Allegato non salvato a causa del limite di archiviazione del browser",
     "Attachments": "Allegati",
     "CannotFindModel": "Modelli LLM non trovati. Verificare il percorso di base e la compatibilità del token con OpenAI, quindi premere 'Aggiorna modelli'.",
     "ChatTitle": "Titolo della chat",
@@ -475,6 +476,9 @@
     "DeploymentModels": "Modelli di {{name}}",
     "DropFileHere": "Rilascia il file qui",
     "History": "La storia",
+    "HistoryAttachmentsNotStored": "L'archiviazione del browser è piena. Gli allegati non vengono più salvati nella cronologia delle chat.",
+    "HistoryNotStored": "L'archiviazione del browser è piena. Le modifiche recenti a questa chat andranno perse dopo il ricaricamento.",
+    "HistoryOlderChatsNotStored": "L'archiviazione del browser è piena. Le chat meno recenti non vengono più salvate e andranno perse dopo il ricaricamento.",
     "NewChat": "Nuova chiacchierata",
     "NoDesiredReplicas": "Il numero di repliche desiderato per questa distribuzione è 0, quindi non può rispondere. Imposta il numero di repliche desiderato su 1 o più per utilizzarla.",
     "ScrollToBottom": "Scorri fino in fondo",

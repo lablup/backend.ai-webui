@@ -463,6 +463,7 @@
     "Yes": "tak"
   },
   "chatui": {
+    "AttachmentNotStored": "Załącznik nie został zapisany z powodu limitu pamięci przeglądarki",
     "Attachments": "Załączniki",
     "CannotFindModel": "Nie znaleziono modeli LLM. Sprawdź ścieżkę podstawową i zgodność tokena z OpenAI, a następnie naciśnij \"Odśwież modele\".",
     "ChatTitle": "Tytuł czatu",
@@ -475,6 +476,9 @@
     "DeploymentModels": "Modele użytkownika {{name}}",
     "DropFileHere": "Upuść plik tutaj",
     "History": "Historia",
+    "HistoryAttachmentsNotStored": "Pamięć przeglądarki jest pełna. Załączniki nie są już zapisywane w historii czatu.",
+    "HistoryNotStored": "Pamięć przeglądarki jest pełna. Ostatnie zmiany w tym czacie znikną po ponownym załadowaniu.",
+    "HistoryOlderChatsNotStored": "Pamięć przeglądarki jest pełna. Starsze czaty nie są już zapisywane i znikną po ponownym załadowaniu.",
     "NewChat": "Nowy czat",
     "NoDesiredReplicas": "Żądana liczba replik dla tego wdrożenia wynosi 0, więc nie może odpowiadać. Ustaw żądaną liczbę replik na 1 lub więcej, aby z niego korzystać.",
     "ScrollToBottom": "Przewiń na dół",

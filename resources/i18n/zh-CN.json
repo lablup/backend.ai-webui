@@ -463,6 +463,7 @@
     "Yes": "是的"
   },
   "chatui": {
+    "AttachmentNotStored": "由于浏览器存储限制，附件未被保存",
     "Attachments": "附件",
     "CannotFindModel": "未找到 LLM 模型。验证基本路径和令牌与 OpenAI 的兼容性，然后按 \"刷新模型",
     "ChatTitle": "聊天标题",
@@ -475,6 +476,9 @@
     "DeploymentModels": "{{name}}的模型",
     "DropFileHere": "将文件拖放到此处",
     "History": "历史",
+    "HistoryAttachmentsNotStored": "浏览器存储空间已满。附件将不再保存到聊天记录中。",
+    "HistoryNotStored": "浏览器存储空间已满。此聊天的最近更改将在重新加载后丢失。",
+    "HistoryOlderChatsNotStored": "浏览器存储空间已满。较早的聊天将不再保存，重新加载后会丢失。",
     "NewChat": "新聊天",
     "NoDesiredReplicas": "该部署的目标副本数为 0，因此无法响应。请将目标副本数设置为 1 或更多以使用它。",
     "ScrollToBottom": "滚动到底部",

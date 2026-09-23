@@ -463,6 +463,7 @@
     "Yes": "はい"
   },
   "chatui": {
+    "AttachmentNotStored": "ブラウザのストレージ制限のため、添付ファイルは保存されませんでした",
     "Attachments": "添付ファイル",
     "CannotFindModel": "LLM モデルが見つかりません。ベースパスと OpenAI とのトークンの互換性を確認し、'Refresh Models' を押してください。",
     "ChatTitle": "チャットタイトル",
@@ -475,6 +476,9 @@
     "DeploymentModels": "{{name}}のモデル",
     "DropFileHere": "ここにファイルをドロップします",
     "History": "歴史",
+    "HistoryAttachmentsNotStored": "ブラウザのストレージがいっぱいです。添付ファイルはチャット履歴に保存されなくなります。",
+    "HistoryNotStored": "ブラウザのストレージがいっぱいです。このチャットの最近の変更は再読み込み後に失われます。",
+    "HistoryOlderChatsNotStored": "ブラウザのストレージがいっぱいです。古いチャットは保存されなくなり、再読み込み後に失われます。",
     "NewChat": "新しいチャット",
     "NoDesiredReplicas": "このデプロイの目標レプリカ数が0のため、応答できません。目標レプリカ数を1以上に設定してください。",
     "ScrollToBottom": "一番下へスクロール",
