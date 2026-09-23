@@ -15,6 +15,7 @@ import type {
   SelectorOptionType,
 } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
@@ -193,7 +194,14 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     } = JSON.parse(preset.resource_slots || '{}');
     const row = (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
-        {preset.name}
+        <BAIFlex direction="row" gap={'xs'} align="center">
+          {preset.name}
+          {preset.scaling_group_name ? (
+            // Global presets carry no mark; the token names the group this
+            // one belongs to, so same-named rows tell apart.
+            <Token label={preset.scaling_group_name} size="sm" />
+          ) : null}
+        </BAIFlex>
         <BAIFlex direction="row" gap={'xxs'}>
           {_.map(
             _.omitBy(slotsInfo, (_slot, key) =>
