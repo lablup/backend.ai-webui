@@ -15,6 +15,7 @@ import type {
   SelectorOptionType,
 } from '@astryxdesign/core/Selector';
 import { Selector } from '@astryxdesign/core/Selector';
+import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -37,6 +38,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 export interface PresetOptionType extends SelectorOptionData {
   preset?: ResourcePreset;
+  /** Set exactly when the option is disabled; shown on hover. */
+  disabledReason?: string;
 }
 
 export type ResourcePreset = NonNullable<
@@ -109,20 +112,28 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     },
   );
 
-  const resourcePresets = resourceGroup
-    ? _.filter(
-        resource_presets,
-        (preset) =>
-          preset?.scaling_group_name === resourceGroup ||
-          _.isEmpty(preset?.scaling_group_name),
-      )
-    : resource_presets;
+  // Why a preset cannot be picked right now; `undefined` means it can.
+  const disabledReasonOf = (preset: ResourcePreset | null | undefined) => {
+    if (
+      resourceGroup &&
+      preset?.scaling_group_name &&
+      preset.scaling_group_name !== resourceGroup
+    ) {
+      return t('resourcePreset.OnlyAvailableInResourceGroup', {
+        name: preset.scaling_group_name,
+      });
+    }
+    if (
+      allocatablePresetIds &&
+      !allocatablePresetIds.includes(preset?.id ?? '')
+    )
+      return t('resourcePreset.ExceedsAllocatableResources');
+    return undefined;
+  };
 
-  const firstAvailablePreset = [...(resourcePresets ?? [])]
+  const firstAvailablePreset = [...(resource_presets ?? [])]
     .filter(
-      (p): p is NonNullable<typeof p> =>
-        p != null &&
-        (!allocatablePresetIds || allocatablePresetIds.includes(p.id ?? '')),
+      (p): p is NonNullable<typeof p> => p != null && !disabledReasonOf(p),
     )
     .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0];
   const firstAvailablePresetId = firstAvailablePreset?.id;
@@ -143,16 +154,18 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   // required), and the rich row moves into `renderOption` — so the parallel
   // `selectedLabel` field disappears rather than being emulated.
   const presetOptions: PresetOptionType[] = _.map(
-    resourcePresets,
-    (preset) => ({
-      // Names repeat across resource groups; the id is the option's key.
-      value: preset?.id ?? '',
-      label: preset?.name ?? '',
-      disabled: allocatablePresetIds
-        ? !allocatablePresetIds.includes(preset?.id || '')
-        : undefined,
-      preset: preset ?? undefined,
-    }),
+    resource_presets,
+    (preset) => {
+      const disabledReason = disabledReasonOf(preset);
+      return {
+        // Names repeat across resource groups; the id is the option's key.
+        value: preset?.id ?? '',
+        label: preset?.name ?? '',
+        disabled: !!disabledReason,
+        disabledReason,
+        preset: preset ?? undefined,
+      };
+    },
   )
     .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
     .sort((a, b) => localeCompare(a.label, b.label));
@@ -172,12 +185,13 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         </BAIFlex>
       );
     }
-    const preset = presetOptions.find((o) => o.value === option.value)?.preset;
+    const presetOption = presetOptions.find((o) => o.value === option.value);
+    const preset = presetOption?.preset;
     if (!preset) return option.label;
     const slotsInfo: {
       [key in ResourceSlotName]: string;
     } = JSON.parse(preset.resource_slots || '{}');
-    return (
+    const row = (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
         {preset.name}
         <BAIFlex direction="row" gap={'xxs'}>
@@ -204,6 +218,11 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
+    );
+    return presetOption?.disabledReason ? (
+      <Tooltip content={presetOption.disabledReason}>{row}</Tooltip>
+    ) : (
+      row
     );
   };
 

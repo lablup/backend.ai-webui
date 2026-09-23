@@ -300,9 +300,11 @@ const ResourceAllocationFormItems: React.FC<
   // `useResourceLimitAndRemaining` so its "is this resource group valid?"
   // guard is keyed off the `project` prop instead of the ambient current
   // project's derived resource-group atom (ADR-0001).
-  const accessibleResourceGroupNames = _.compact(
-    _.map(accessible_scaling_groups, (group) => group?.name),
-  );
+  // `null` (the field errored) is not "no group is valid": leave it undefined
+  // so the hook falls back to the project's own resource-group list.
+  const accessibleResourceGroupNames = accessible_scaling_groups
+    ? _.compact(_.map(accessible_scaling_groups, (group) => group?.name))
+    : undefined;
   const currentResourceValue = Form.useWatch(['resource']);
   const currentImage = Form.useWatch(['environments', 'image'], {
     form,
