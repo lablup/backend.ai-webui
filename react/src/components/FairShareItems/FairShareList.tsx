@@ -203,6 +203,7 @@ const FairShareList: React.FC = () => {
           <Step
             key={item.key}
             step={idx}
+            indicator="number"
             label={item.label}
             description={item.description}
             isDisabled={

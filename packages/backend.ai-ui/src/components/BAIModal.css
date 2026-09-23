@@ -1,0 +1,27 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for `<BAIModal>`. Plain CSS over Astryx tokens: BUI's tsup
+ build runs no StyleX compiler.
+*/
+
+@layer components {
+  /* Header and footer share one height: an md control row inside a 12px inset
+     (57px). The floor sits on Layout's padded inner wrapper, which stays a
+     block box so a bare-Button footer keeps its own width. FR-4069. */
+  .bai-modal__header,
+  .bai-modal__footer {
+    --layout-padding-outer-y: var(--spacing-3);
+    --layout-padding-inner-y: var(--spacing-3);
+  }
+
+  .bai-modal__header > *,
+  .bai-modal__footer > * {
+    align-content: center;
+    min-block-size: calc(
+      var(--size-element-md) + var(--layout-padding-outer-y, var(--spacing-4)) +
+        var(--layout-padding-inner-y, var(--spacing-4))
+    );
+  }
+}

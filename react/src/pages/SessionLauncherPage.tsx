@@ -58,7 +58,6 @@ import { theme, useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Card } from '@astryxdesign/core/Card';
 import { Divider } from '@astryxdesign/core/Divider';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
@@ -69,7 +68,6 @@ import { Heading } from '@astryxdesign/core/Heading';
 // `astryxFormControls` adapters.
 import { InputGroup } from '@astryxdesign/core/InputGroup';
 import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
-import { VStack } from '@astryxdesign/core/Stack';
 import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -77,6 +75,7 @@ import * as stylex from '@stylexjs/stylex';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
   BAIPopconfirm,
+  BAICard,
   BAIFlex,
   BAIIntervalView,
   BAIResourceNumberWithIcon,
@@ -226,8 +225,7 @@ interface StepPropsWithKey extends StepItem {
 }
 
 /**
- * Step-section container: Astryx `Card` + `Heading` composition replacing the
- * antd `Card title` (MAPPING.md §5.1). `hidden` keeps the original
+ * Step-section container. `hidden` keeps the original
  * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
  * form state across steps (the form engine requirement).
  */
@@ -238,12 +236,9 @@ const StepCard: React.FC<{
 }> = ({ title, hidden, children }) => {
   'use memo';
   return (
-    <Card style={{ display: hidden ? 'none' : undefined }}>
-      <VStack gap={4} align="stretch">
-        {title ? <Heading level={5}>{title}</Heading> : null}
-        {children}
-      </VStack>
-    </Card>
+    <BAICard title={title} style={{ display: hidden ? 'none' : undefined }}>
+      {children}
+    </BAICard>
   );
 };
 
@@ -622,6 +617,7 @@ const SessionLauncherPage = () => {
         <BAIFlex
           direction="column"
           align="stretch"
+          gap="md"
           style={{ flex: 1, maxWidth: 700 }}
         >
           <BAIFlex direction="row" justify="between">
@@ -1539,7 +1535,7 @@ const SessionLauncherPage = () => {
                   key={s.key}
                   step={idx}
                   label={s.title}
-                  indicator={s.icon}
+                  indicator={s.icon ?? 'number'}
                 />
               ))}
             </Stepper>
