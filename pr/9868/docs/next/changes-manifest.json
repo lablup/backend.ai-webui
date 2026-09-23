@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-22T15:33:09.235Z",
+  "generatedAt": "2026-09-23T00:36:31.932Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 2,
-        "changes": 8,
+        "changes": 9,
         "added": 0,
-        "modified": 8,
+        "modified": 9,
         "removed": 0,
-        "images": 8,
+        "images": 9,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -47,14 +47,15 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
           "counts": {
             "added": 0,
-            "modified": 7,
+            "modified": 8,
             "removed": 0,
-            "images": 7,
-            "total": 7
+            "images": 8,
+            "total": 8
           },
           "fingerprints": [
             "39d415732c42",
             "8bbfa34d8b36",
+            "64fa6bd6ab63",
             "80fd24451d72",
             "4f532719ddc4",
             "8bbfa34d8b36-2",
@@ -67,11 +68,11 @@
     "ja": {
       "totals": {
         "pages": 2,
-        "changes": 8,
+        "changes": 9,
         "added": 0,
-        "modified": 8,
+        "modified": 9,
         "removed": 0,
-        "images": 8,
+        "images": 9,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -101,14 +102,15 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
           "counts": {
             "added": 0,
-            "modified": 7,
+            "modified": 8,
             "removed": 0,
-            "images": 7,
-            "total": 7
+            "images": 8,
+            "total": 8
           },
           "fingerprints": [
             "479d5f928fb4",
             "3fb41326bc91",
+            "9232cb770b28",
             "867ed7eb3f8c",
             "59c06ab8e179",
             "3fb41326bc91-2",
@@ -121,11 +123,11 @@
     "ko": {
       "totals": {
         "pages": 2,
-        "changes": 8,
+        "changes": 9,
         "added": 0,
-        "modified": 8,
+        "modified": 9,
         "removed": 0,
-        "images": 8,
+        "images": 9,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -155,14 +157,15 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
           "counts": {
             "added": 0,
-            "modified": 7,
+            "modified": 8,
             "removed": 0,
-            "images": 7,
-            "total": 7
+            "images": 8,
+            "total": 8
           },
           "fingerprints": [
             "c84bf7a043bb",
             "960ebc49b3b0",
+            "1c96aebcb467",
             "57808984dd97",
             "dd36756e37f6",
             "960ebc49b3b0-2",
@@ -175,11 +178,11 @@
     "th": {
       "totals": {
         "pages": 2,
-        "changes": 8,
+        "changes": 9,
         "added": 0,
-        "modified": 8,
+        "modified": 9,
         "removed": 0,
-        "images": 8,
+        "images": 9,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -209,14 +212,15 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
           "counts": {
             "added": 0,
-            "modified": 7,
+            "modified": 8,
             "removed": 0,
-            "images": 7,
-            "total": 7
+            "images": 8,
+            "total": 8
           },
           "fingerprints": [
             "cb67efeba750",
             "58eea8cdb6c2",
+            "a515c556af03",
             "ff394254262a",
             "ed7e791ff8e2",
             "58eea8cdb6c2-2",
