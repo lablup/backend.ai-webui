@@ -24,15 +24,15 @@ import {
   BAIButton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIDeploymentStatusTag,
-  BAIDeploymentTagChips,
+  BAIDeploymentStatusBadge,
+  BAIDeploymentTagTokens,
   BAIFetchKeyButton,
   BAIFlex,
   BAIId,
   BAIMetadataList,
   BAIText,
   BAIUnmountAfterClose,
-  BooleanTag,
+  BAIBooleanToken,
   isDeploymentInStoppedCategory,
   safeDecodeUuid,
   toLocalId,
@@ -89,7 +89,7 @@ const DeploymentOverviewContent: React.FC<{
       <MetadataListItem label={t('deployment.Lifecycle')}>
         {deployment?.metadata.status ? (
           <BAIFlex align="center" gap="xs">
-            <BAIDeploymentStatusTag
+            <BAIDeploymentStatusBadge
               status={deployment.metadata.status as BAIDeploymentStatus}
             />
             {onClickSchedulingHistory && (
@@ -141,7 +141,7 @@ const DeploymentOverviewContent: React.FC<{
         )}
       </MetadataListItem>
       <MetadataListItem label={t('deployment.Visibility')}>
-        <BooleanTag
+        <BAIBooleanToken
           value={deployment?.networkAccess.openToPublic}
           trueLabel={t('deployment.Public')}
           falseLabel={t('deployment.Private')}
@@ -152,7 +152,7 @@ const DeploymentOverviewContent: React.FC<{
         {deployment?.replicaState?.desiredReplicaCount ?? renderFallback()}
       </MetadataListItem>
       <MetadataListItem label={t('deployment.Tags')}>
-        <BAIDeploymentTagChips
+        <BAIDeploymentTagTokens
           metadataFrgmt={deployment?.metadata ?? null}
           onTagClick={(tag) => {
             // Stay within the same deployment-list URL space the user came
@@ -210,7 +210,7 @@ const DeploymentBasicInfoCard: React.FC<DeploymentBasicInfoCardProps> = ({
               name
             }
           }
-          ...BAIDeploymentTagChips_metadata
+          ...BAIDeploymentTagTokens_metadata
         }
         networkAccess {
           openToPublic

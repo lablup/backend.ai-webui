@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<01f6a060eebb8f374f02e1b154a31355>>
+ * @generated SignedSource<<7c1ad04d8f577eb35812b641b9c9ade4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type RoleSource = "CUSTOM" | "SYSTEM" | "%future added value";
@@ -21,7 +20,7 @@ export type RoleFilter = {
   assignedUser?: RoleUserNestedFilter | null | undefined;
   mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
-  permission?: PermissionNestedFilter | null | undefined;
+  permissions?: RolePermissionNestedFilter | null | undefined;
   source?: RoleSourceFilter | null | undefined;
   status?: RoleStatusFilter | null | undefined;
 };
@@ -78,13 +77,20 @@ export type RoleMappedScopeNestedFilter = {
   scopeId?: UUIDFilter | null | undefined;
   scopeType?: StringFilter | null | undefined;
 };
-export type PermissionNestedFilter = {
-  AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
+export type RolePermissionNestedFilter = {
+  every?: PermissionFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: PermissionFilter | null | undefined;
+  some?: PermissionFilter | null | undefined;
+};
+export type PermissionFilter = {
+  AND?: ReadonlyArray<PermissionFilter> | null | undefined;
+  NOT?: ReadonlyArray<PermissionFilter> | null | undefined;
+  OR?: ReadonlyArray<PermissionFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
   entityType?: StringFilter | null | undefined;
-  operation?: OperationTypeFilter | null | undefined;
   permission?: PermissionBitFilter | null | undefined;
+  roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
 };
@@ -94,17 +100,17 @@ export type PermissionBitFilter = {
   notEquals?: PermissionBit | null | undefined;
   notIn?: ReadonlyArray<PermissionBit> | null | undefined;
 };
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;
   in?: ReadonlyArray<RBACElementType> | null | undefined;
   notEquals?: RBACElementType | null | undefined;
   notIn?: ReadonlyArray<RBACElementType> | null | undefined;
-};
-export type OperationTypeFilter = {
-  equals?: OperationType | null | undefined;
-  in?: ReadonlyArray<OperationType> | null | undefined;
-  notEquals?: OperationType | null | undefined;
-  notIn?: ReadonlyArray<OperationType> | null | undefined;
 };
 export type ProjectAdminSettingModalQuery$variables = {
   filter?: RoleFilter | null | undefined;
@@ -186,7 +192,7 @@ v3 = [
       {
         "kind": "Literal",
         "name": "first",
-        "value": 10
+        "value": 50
       }
     ],
     "concreteType": "RoleConnection",
@@ -330,16 +336,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "e7d1bf46cef89b3dbbaa8a24dcee1796",
+    "cacheID": "7aced2be3883cb104594394af0c33968",
     "id": null,
     "metadata": {},
     "name": "ProjectAdminSettingModalQuery",
     "operationKind": "query",
-    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 10) {\n    count\n    edges {\n      node {\n        id\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query ProjectAdminSettingModalQuery(\n  $filter: RoleFilter\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, first: 50) {\n    count\n    edges {\n      node {\n        id\n        name\n        users(limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              userId\n              user {\n                id\n                basicInfo {\n                  email\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9d31cbe485a291bde3dd5977f0f3db7f";
+(node as any).hash = "799949e432d4e5b70d80ce1669b3af39";
 
 export default node;

@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Επιλέξτε προεπιλογή"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "και {{rest}} ακόμη"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
     "DeleteItem": "Διαγραφή",
     "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
-    "TypeToConfirm": "Πληκτρολογήστε <code>{{confirmText}}</code> για επιβεβαίωση."
+    "TypeToConfirm": "Πληκτρολογήστε <token>{{confirmText}}</token> για επιβεβαίωση."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Υποβαθμισμένο",
     "Deploying": "Αναπτύσσεται",
     "Healthy": "Υγιές",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "δοκιμή"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "και {{rest}} ακόμη"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Δημιουργήθηκε στο",
     "MaxConcurrentLogins": "Μέγιστες ταυτόχρονες συνδέσεις",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Μη έγκυρη μορφή διαδρομής.",
     "AliasOverlapping": "Η διαδρομή προσάρτησης επικαλύπτεται με άλλο φάκελο.",
+    "AliasOverlappingWithAutoMount": "Η διαδρομή προσάρτησης επικαλύπτεται με φάκελο αυτόματης προσάρτησης.",
     "AliasPlaceholder": "Διαδρομή προσάρτησης",
     "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
-    "Name": "Όνομα",
-    "PathAndAlias": "Διαδρομή & Ψευδώνυμο",
+    "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
+    "DestinationPath": "Διαδρομή container (destination)",
+    "Folders": "Φάκελοι",
+    "OwnerProject": "Έργο",
+    "OwnerUser": "Χρήστης",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
+    "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",
+    "SelectFolder": "Επιλογή φακέλου",
+    "SourcePath": "Διαδρομή στον φάκελο (source)",
     "Subpath": "Υποδιαδρομή",
     "SubpathInvalid": "Η υποδιαδρομή πρέπει να είναι σχετική και να μην περιέχει '..'.",
-    "SubpathPlaceholder": "π.χ. dataset/train (προαιρετικό)",
-    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Αφήστε κενό για προσάρτηση της ρίζας."
+    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Κάντε κλικ στο πεδίο για να περιηγηθείτε στον φάκελο και να επιλέξετε έναν· αφήστε το κενό για να προσαρτηθεί η ρίζα του φακέλου.",
+    "UnmountableFoldersRemoved": "Οι φάκελοι που δεν μπορείτε πλέον να προσαρτήσετε αφαιρέθηκαν από την επιλογή."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
     "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
     "Download": "Λήψη",
+    "DownloadPopupBlocked": "Το πρόγραμμα περιήγησης απέκλεισε το παράθυρο λήψης. Επιτρέψτε τα αναδυόμενα παράθυρα για αυτόν τον ιστότοπο και δοκιμάστε ξανά.",
+    "DownloadRejected": "Ο storage proxy απέρριψε τη λήψη (HTTP {{status}}). Η λήψη δεν ξεκίνησε.",
     "DownloadSelected": "Λήψη",
     "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
+    "DownloadUnreachable": "Δεν ήταν δυνατή η σύνδεση με τον storage proxy στο {{origin}}. Η λήψη δεν ξεκίνησε.",
     "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση.",
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",

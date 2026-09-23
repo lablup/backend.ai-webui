@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "展開側邊欄",
   "@astryx.sideNavItem.collapse": "收合 {label}",
   "@astryx.sideNavItem.expand": "展開 {label}",
+  "@astryx.spinner.loading": "載入中",
   "@astryx.step.goToStep": "前往步驟 {stepNumber, number}：{label}",
   "@astryx.step.goToStepWithStatus": "前往步驟 {stepNumber, number}：{label}，{status}",
   "@astryx.step.status.completed": "已完成",

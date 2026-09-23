@@ -12,7 +12,7 @@
 
  FRONTIER COMPONENT — the public surface is unchanged (`color` as a BUI
  `SemanticColor`, `processing`, plus antd `Badge`'s `text` / `style` /
- `className`), so `BAIAuditLogStatusTag`, `BAISchedulingResultBadge`,
+ `className`), so `BAIAuditLogStatusBadge`, `BAISchedulingResultBadge`,
  `StorageUsageBadge` and `SessionSlotCell` stay at zero diff.
 */
 import { SemanticColor } from '../helper';

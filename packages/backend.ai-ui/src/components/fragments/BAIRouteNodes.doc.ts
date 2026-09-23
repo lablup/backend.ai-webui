@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The route (replica) table of a model service endpoint. It reads the plural Relay fragment `BAIRouteNodesFragment` on `Route`, so the caller spreads that fragment on each route node in its own query and passes the array as `routesFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Columns are route id (with a red alert button when the row carries `errorData`), session id, status tag, health-status tag, and created-at; the health-status column is rendered only when the connected client reports the `route-health-status` capability, so the component must sit under BAIClientProvider. The three `onClick*` props are what make the id, error and scheduling-history affordances appear at all — without them the cells render as plain text. It renders BAITable, so every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
+      'The route (replica) table of a model service endpoint. It reads the plural Relay fragment `BAIRouteNodesFragment` on `Route`, so the caller spreads that fragment on each route node in its own query and passes the array as `routesFrgmt`; null and undefined entries are dropped and rows are keyed by `id`. Columns are route id (with a red alert button when the row carries `errorData`), session id, status badge, health-status badge (both coloured through the `route` domain of `badgeVariantForStatus`), and created-at; the health-status column is rendered only when the connected client reports the `route-health-status` capability, so the component must sit under BAIClientProvider. The three `onClick*` props are what make the id, error and scheduling-history affordances appear at all — without them the cells render as plain text. It renders BAITable, so every BAITable prop except `dataSource`, `columns` and `onChangeOrder` passes through.',
     bestPractices: [
       {
         guidance: true,
@@ -87,7 +87,7 @@ export const docs = {
       name: 'onClickSchedulingHistory',
       type: '(routeId: string) => void',
       description:
-        'Adds a history icon button beside the status tag and receives the route’s decoded UUID. Omitting it removes the button entirely.',
+        'Adds a history icon button beside the status badge and receives the route’s decoded UUID. Omitting it removes the button entirely.',
     },
   ],
   examples: [

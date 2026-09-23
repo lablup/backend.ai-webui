@@ -16,21 +16,28 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
+import './ChatPage.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Card } from '@astryxdesign/core/Card';
+import { Divider } from '@astryxdesign/core/Divider';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Skeleton } from '@astryxdesign/core/Skeleton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Drawer } from '@astryxdesign/lab';
 import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { HistoryIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import {
+  HistoryIcon,
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
+  XIcon,
+} from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -112,39 +119,70 @@ export function useChatProviderData(
   };
 }
 
-interface ChatHistoryDrawerProps {
+interface ChatHistoryPanelProps {
   selectedHistoryId?: string;
   history: ChatHistoryData[];
-  open?: boolean;
   onClickClose: () => void;
   onClickRemove: (id: string) => void;
   onClickHistory: (id: string) => void;
 }
 
-const ChatHistoryDrawer = ({
+// Contained by the page card (position: relative), so it overlays the whole
+// card, header included. Styling: ChatPage.css.
+const ChatHistoryPanel = ({
   selectedHistoryId,
   history,
-  open,
   onClickClose,
   onClickRemove,
   onClickHistory,
-}: ChatHistoryDrawerProps) => {
+}: ChatHistoryPanelProps) => {
   'use memo';
 
   const { token } = theme.useToken();
   const { t } = useTranslation();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus({ preventScroll: true });
+  }, []);
 
   return (
-    <Drawer
-      isOpen={!!open}
-      onClose={onClickClose}
-      hasScrim={false}
-      side="end"
-      size={300}
-      label={t('chatui.History')}
+    <VStack
+      className="chat-history-panel"
+      align="stretch"
+      role="complementary"
+      aria-label={t('chatui.History')}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          onClickClose();
+        }
+      }}
     >
-      <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
+      <HStack
+        justify="between"
+        align="center"
+        gap={2}
+        paddingInline={4}
+        paddingBlock={3}
+      >
         <Heading level={5}>{t('chatui.History')}</Heading>
+        <IconButton
+          ref={closeButtonRef}
+          variant="ghost"
+          icon={<XIcon size="1em" />}
+          label={t('button.Close')}
+          onClick={onClickClose}
+        />
+      </HStack>
+      <Divider />
+      <VStack
+        className="chat-history-panel__body"
+        align="stretch"
+        isScrollable
+        paddingInline={4}
+        paddingBlock={2}
+      >
         <BAITable
           showHeader={false}
           dataSource={history.map((item) => ({
@@ -187,6 +225,7 @@ const ChatHistoryDrawer = ({
             },
             {
               key: 'actions',
+              align: 'right',
               width: token.sizeXXL,
               render: (_, record) => (
                 <IconButton
@@ -208,7 +247,7 @@ const ChatHistoryDrawer = ({
           pagination={false}
         />
       </VStack>
-    </Drawer>
+    </VStack>
   );
 };
 
@@ -310,6 +349,12 @@ const PureChatPage = ({ id }: { id: string }) => {
   } = useHistory(id, provider);
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const historyToggleRef = useRef<HTMLButtonElement>(null);
+
+  const closeHistory = () => {
+    setOpenHistory(false);
+    historyToggleRef.current?.focus();
+  };
 
   return (
     chat && (
@@ -341,6 +386,7 @@ const PureChatPage = ({ id }: { id: string }) => {
             display: 'flex',
             flexDirection: 'column',
             flex: 1,
+            position: 'relative',
           }}
         >
           <VStack
@@ -370,6 +416,7 @@ const PureChatPage = ({ id }: { id: string }) => {
                 </Tooltip>
                 <Tooltip content={t('chatui.History')}>
                   <IconButton
+                    ref={historyToggleRef}
                     variant="ghost"
                     icon={<HistoryIcon />}
                     label={t('chatui.History')}
@@ -380,14 +427,10 @@ const PureChatPage = ({ id }: { id: string }) => {
                 </Tooltip>
               </BAIFlex>
             </HStack>
-            {/* `flex: 1` + `minHeight: 0`, never `height: 100%`. This column is
-                a flex child of the `VStack` above, which also holds the title
-                row. `height: 100%` resolves against the VStack's *full* height
-                and so ignores that sibling — the column then overflows the
-                VStack by exactly the title row's height, and the VStack's
-                `overflow: hidden` eats that much off the bottom, which is
-                where the composer lives. Growing into the leftover space
-                instead keeps the whole height budget honest. */}
+            {/* `flex: 1` + `minHeight: 0`, never `height: 100%` — this column
+                shares the parent VStack's height with the title row, so
+                `height: 100%` overflows it by the title row and `overflow:
+                hidden` eats the composer off the bottom. */}
             <BAIFlex
               direction="column"
               align="stretch"
@@ -446,32 +489,31 @@ const PureChatPage = ({ id }: { id: string }) => {
               )}
             </BAIFlex>
           </VStack>
-          <ChatHistoryDrawer
-            selectedHistoryId={chat.id}
-            open={openHistory}
-            history={history}
-            onClickClose={() => {
-              setOpenHistory(false);
-            }}
-            onClickRemove={(historyId) => {
-              const remainHistories = removeHistory(historyId);
+          {openHistory && (
+            <ChatHistoryPanel
+              selectedHistoryId={chat.id}
+              history={history}
+              onClickClose={closeHistory}
+              onClickRemove={(historyId) => {
+                const remainHistories = removeHistory(historyId);
 
-              if (remainHistories === 0) {
-                setOpenHistory(false);
-                navigate(buildProjectPath('chat'), { replace: true });
-              } else if (historyId === chat.id) {
-                const chat = history.filter(({ id }) => id !== historyId)[0];
-                navigate(buildProjectPath(`chat/${chat?.id}`), {
+                if (remainHistories === 0) {
+                  closeHistory();
+                  navigate(buildProjectPath('chat'), { replace: true });
+                } else if (historyId === chat.id) {
+                  const chat = history.filter(({ id }) => id !== historyId)[0];
+                  navigate(buildProjectPath(`chat/${chat?.id}`), {
+                    replace: true,
+                  });
+                }
+              }}
+              onClickHistory={(historyId) => {
+                navigate(buildProjectPath(`chat/${historyId}`), {
                   replace: true,
                 });
-              }
-            }}
-            onClickHistory={(historyId) => {
-              navigate(buildProjectPath(`chat/${historyId}`), {
-                replace: true,
-              });
-            }}
-          />
+              }}
+            />
+          )}
         </Card>
       </BAIFlex>
     )

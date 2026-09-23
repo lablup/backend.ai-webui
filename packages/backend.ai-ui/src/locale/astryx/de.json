@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Seitenleiste ausklappen",
   "@astryx.sideNavItem.collapse": "{label} einklappen",
   "@astryx.sideNavItem.expand": "{label} erweitern",
+  "@astryx.spinner.loading": "Wird geladen",
   "@astryx.step.goToStep": "Zu Schritt {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Zu Schritt {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "abgeschlossen",

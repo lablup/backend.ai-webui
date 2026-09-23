@@ -4,9 +4,9 @@ import {
   BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
-  BAITagList,
+  BAITokenList,
   BAIText,
-  BooleanTag,
+  BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
@@ -199,7 +199,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         sorter: isEnableSorter('projectName'),
         defaultHidden: true,
         render: (__, record) => (
-          <BAITagList
+          <BAITokenList
             variant="text"
             maxInline={2}
             items={_.compact(
@@ -250,14 +250,16 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'sudo_session_enabled',
         title: t('comp:UserNodes.SudoSessionEnabled'),
         render: (__, record) => (
-          <BooleanTag value={record.security?.sudoSessionEnabled ?? false} />
+          <BAIBooleanToken
+            value={record.security?.sudoSessionEnabled ?? false}
+          />
         ),
       },
       {
         key: 'totp_activated',
         title: t('comp:UserNodes.TwoFA'),
         render: (__, record) => (
-          <BooleanTag
+          <BAIBooleanToken
             value={record.security?.totpActivated ?? false}
             trueLabel={t('comp:UserNodes.Enabled')}
             falseLabel={t('comp:UserNodes.Disabled')}
@@ -276,7 +278,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'allowed_client_ip',
         title: t('comp:UserNodes.AllowedClientIps'),
         render: (__, record) => (
-          <BAITagList
+          <BAITokenList
             variant="text"
             maxInline={1}
             items={record.security?.allowedClientIp ?? []}
@@ -299,7 +301,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'need_password_change',
         title: t('comp:UserNodes.NeedPasswordChange'),
         render: (__, record) => (
-          <BooleanTag value={record.status?.needPasswordChange} />
+          <BAIBooleanToken value={record.status?.needPasswordChange} />
         ),
       },
       {
@@ -342,7 +344,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           </BAIFlex>
         ),
         render: (__, record) => (
-          <BAITagList
+          <BAITokenList
             variant="text"
             maxInline={1}
             items={record.container?.containerGids ?? []}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<83cdc56233962d6d9df4a6d627ff733b>>
+ * @generated SignedSource<<b4c00d9d0aa2d03523e356bcd8e77dce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -55,7 +55,7 @@ export type ImageListQuery$data = {
         } | null | undefined> | null | undefined;
         readonly type: ImageType | null | undefined;
         readonly version: string | null | undefined;
-        readonly " $fragmentSpreads": FragmentRefs<"AliasedImageDoubleTagsFragment" | "ManageAppsModal_image" | "ManageImageResourceLimitModal_image">;
+        readonly " $fragmentSpreads": FragmentRefs<"AliasedImageTagTokensFragment" | "ManageAppsModal_image" | "ManageImageResourceLimitModal_image">;
       };
     } | null | undefined>;
   } | null | undefined;
@@ -386,7 +386,7 @@ return {
                       {
                         "args": null,
                         "kind": "FragmentSpread",
-                        "name": "AliasedImageDoubleTagsFragment"
+                        "name": "AliasedImageTagTokensFragment"
                       },
                       {
                         "args": null,
@@ -488,16 +488,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "50b55236fe496973684f06099be07c68",
+    "cacheID": "a056f7b2589b9d79cff5ce474686bdc3",
     "id": null,
     "metadata": {},
     "name": "ImageListQuery",
     "operationKind": "query",
-    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageDoubleTagsFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n"
+    "text": "query ImageListQuery(\n  $scopeId: ScopeField!\n  $offset: Int\n  $first: Int\n  $filter: String\n  $order: String\n  $filterByStatuses: [ImageStatus]\n) {\n  image_nodes(scope_id: $scopeId, offset: $offset, first: $first, filter: $filter, order: $order, filter_by_statuses: $filterByStatuses) {\n    edges {\n      node {\n        id\n        name @deprecatedSince(version: \"24.12.0\")\n        tag\n        registry\n        architecture\n        digest\n        installed\n        labels {\n          key\n          value\n        }\n        humanized_name\n        resource_limits {\n          key\n          min\n          max\n        }\n        namespace\n        base_image_name\n        tags {\n          key\n          value\n        }\n        version\n        size_bytes\n        is_local\n        supported_accelerators\n        status\n        type\n        aliases\n        ...AliasedImageTagTokensFragment\n        ...ManageImageResourceLimitModal_image\n        ...ManageAppsModal_image\n      }\n    }\n    count\n  }\n}\n\nfragment AliasedImageTagTokensFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n\nfragment ManageAppsModal_image on ImageNode {\n  labels {\n    key\n    value\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n\nfragment ManageImageResourceLimitModal_image on ImageNode {\n  resource_limits {\n    key\n    min\n    max\n  }\n  registry\n  name @deprecatedSince(version: \"24.12.0\")\n  namespace @since(version: \"24.12.0\")\n  architecture\n  tag\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2bf0431c6359bef2d43f98c8eaa14462";
+(node as any).hash = "04d3d479321043fe22d2a5a96c4aa049";
 
 export default node;

@@ -7,6 +7,7 @@ import { TAG_RE } from './anchor-guard.js';
 import { normText } from './anchor.js';
 import { DIALOG_SELECTOR, isStop } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
+import { OVERLAY_MARKER_ATTR } from './ui.js';
 
 /** How many candidates a text scan will look at before giving up. */
 const SCAN_LIMIT = 5000;
@@ -34,6 +35,41 @@ export const textMatches = (element: Element, txt?: string): boolean => {
 };
 
 const safeTag = (tag?: string) => (tag && TAG_RE.test(tag) ? tag : '*');
+
+/**
+ * Does this element occupy space on screen? A pin was CLICKED, so its element
+ * had a box — but pages carry look-alikes that never do, and a text scan in
+ * document order takes whichever comes first. Measured: github.com renders
+ * every file-name link twice, the screen-reader copy first and inside a
+ * `display: none` cell.
+ *
+ * `getClientRects()` costs one layout read and already answers `display: none`,
+ * `[hidden]` and a detached node. jsdom returns nothing for everything, so
+ * every candidate ties there and the callers fall back to today's order.
+ */
+export const isRendered = (element: Element): boolean => {
+  const rects = element.getClientRects();
+  for (let i = 0; i < rects.length; i++)
+    if (rects[i].width > 0 || rects[i].height > 0) return true;
+  return false;
+};
+
+/**
+ * Does this document lay anything out? jsdom does not, and reports nothing for
+ * every element — so only here does "has no box" mean "hidden" rather than
+ * "no layout engine", and only here does the gate below apply.
+ */
+export const hasLayout = (doc: Document): boolean =>
+  doc.documentElement.getClientRects().length > 0;
+
+/**
+ * An element with no box is never an answer: a pin drawn on one puts its
+ * marker, its box and its card in the page's top-left corner, with none of
+ * the wording an honestly off-screen pin gets. Waiting for the real element
+ * to come back is the better answer, and the retry driver is already waiting.
+ */
+const drawable = (found: Element | null, doc: Document): Element | null =>
+  !found || !hasLayout(doc) || isRendered(found) ? found : null;
 
 /** react-grab 0.1.50 answers synchronously, so this costs no await. */
 function displayName(element: Element): string | null {
@@ -100,7 +136,7 @@ const frameSuffices = (strict: boolean, anchor: AnchorV3): boolean =>
 
 const isOurs = (element: Element | null, ignore?: Element | null) =>
   !!element &&
-  (!!element.closest('[data-bai-review-overlay]') ||
+  (!!element.closest(`[${OVERLAY_MARKER_ATTR}]`) ||
     (!!ignore && (element === ignore || ignore.contains(element))));
 
 function querySafe(
@@ -109,8 +145,17 @@ function querySafe(
   ignore?: Element | null,
 ): Element | null {
   try {
-    const hit = doc.querySelector(selector);
-    return isOurs(hit, ignore) ? null : hit;
+    const hits = doc.querySelectorAll(selector);
+    const first = hits[0] ?? null;
+    if (isOurs(first, ignore)) return null;
+    if (!first || isRendered(first)) return first;
+    // The selector caught a copy with no box; a later match that has one is
+    // the element the reader can actually see.
+    for (let i = 1; i < hits.length; i++) {
+      const hit = hits[i];
+      if (!isOurs(hit, ignore) && isRendered(hit)) return hit;
+    }
+    return first;
   } catch {
     // A selector from a pasted comment is not guaranteed to parse.
     return null;
@@ -150,8 +195,18 @@ function uniqueLandmark(
 ): Element | null {
   if (!anchor.tid) return null;
   const found = doc.querySelectorAll(`[data-testid="${esc(anchor.tid)}"]`);
-  if (found.length !== 1) return null;
-  return isOurs(found[0], ignore) ? null : found[0];
+  // A landmark a hidden copy of the page duplicates is still the only one on
+  // screen, and without this the copy would disqualify the whole rung.
+  let onlyRendered: Element | null = null;
+  let rendered = 0;
+  for (let i = 0; i < found.length; i++) {
+    if (!isRendered(found[i])) continue;
+    rendered++;
+    onlyRendered = found[i];
+  }
+  const hit =
+    rendered === 1 ? onlyRendered : found.length === 1 ? found[0] : null;
+  return !hit || isOurs(hit, ignore) ? null : hit;
 }
 
 /**
@@ -175,6 +230,13 @@ export function quickFindTarget(
   anchor: AnchorV3 | null,
   options: ResolveOptions = {},
 ): Element | null {
+  return drawable(quickLadder(anchor, options), options.doc ?? document);
+}
+
+function quickLadder(
+  anchor: AnchorV3 | null,
+  options: ResolveOptions,
+): Element | null {
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const strict = isStop(anchor);
@@ -184,7 +246,10 @@ export function quickFindTarget(
     textMatches(bySelector, anchor.txt) &&
     !componentConflicts(bySelector, anchor) &&
     inScope(bySelector, anchor) &&
-    withinLandmark(bySelector, anchor, strict)
+    withinLandmark(bySelector, anchor, strict) &&
+    // A hit with no box is a copy of the element, not the element: the rungs
+    // below get their turn, and the gate above refuses it if they find nothing.
+    (isRendered(bySelector) || !hasLayout(doc))
   )
     return bySelector;
   const landmark = uniqueLandmark(anchor, doc, options.ignore);
@@ -214,6 +279,13 @@ export function findAnchorTarget(
   anchor: AnchorV3 | null,
   options: ResolveOptions = {},
 ): Element | null {
+  return drawable(fullLadder(anchor, options), options.doc ?? document);
+}
+
+function fullLadder(
+  anchor: AnchorV3 | null,
+  options: ResolveOptions,
+): Element | null {
   if (!anchor || typeof anchor.s !== 'string') return null;
   const doc = options.doc ?? document;
   const strict = isStop(anchor);
@@ -223,7 +295,8 @@ export function findAnchorTarget(
     textMatches(bySelector, anchor.txt) &&
     !componentConflicts(bySelector, anchor) &&
     inScope(bySelector, anchor) &&
-    withinLandmark(bySelector, anchor, strict)
+    withinLandmark(bySelector, anchor, strict) &&
+    (isRendered(bySelector) || !hasLayout(doc))
   )
     return bySelector;
 
@@ -232,15 +305,26 @@ export function findAnchorTarget(
     const candidates = scope.querySelectorAll(safeTag(anchor.tag));
     let best: Element | null = null;
     let bestByComponent = false;
+    let bestRendered = false;
     for (let i = 0; i < candidates.length && i < SCAN_LIMIT; i++) {
       const candidate = candidates[i];
       if (isOurs(candidate, options.ignore)) continue;
       if (!elementText(candidate).includes(anchor.txt)) continue;
       if (!inScope(candidate, anchor)) continue;
+      // Being on screen outranks every other signal: a hidden look-alike is
+      // not what the reader clicked, however well it matches.
+      const rendered = isRendered(candidate);
+      if (best && bestRendered && !rendered) continue;
       // The component name breaks the tie two controls with the same words
       // inside one card would otherwise lose; deeper wins within a tier,
       // because the outer wrappers all contain the same words.
       const byComponent = componentMatches(candidate, anchor);
+      if (best && rendered && !bestRendered) {
+        best = candidate;
+        bestRendered = true;
+        bestByComponent = byComponent;
+        continue;
+      }
       // A named wrapper must not veto the deeper node it contains: the name
       // rules between branches, containment still rules within one.
       if (best && bestByComponent && !byComponent && !best.contains(candidate))
@@ -251,6 +335,7 @@ export function findAnchorTarget(
         best.contains(candidate)
       ) {
         best = candidate;
+        bestRendered = rendered;
         bestByComponent = byComponent;
       }
     }

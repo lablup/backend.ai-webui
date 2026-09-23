@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Sélectionner un preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "et {{rest}} de plus"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Cette action est irréversible.",
     "DeleteItem": "Supprimer",
     "DeleteNItems": "Supprimer {{count}} éléments",
-    "TypeToConfirm": "Saisissez <code>{{confirmText}}</code> pour confirmer."
+    "TypeToConfirm": "Saisissez <token>{{confirmText}}</token> pour confirmer."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Créé par"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Dégradé",
     "Deploying": "En déploiement",
     "Healthy": "En bonne santé",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "et {{rest}} de plus"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Créé à",
     "MaxConcurrentLogins": "Connexions simultanées max.",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format de chemin invalide.",
     "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasOverlappingWithAutoMount": "Le chemin de montage chevauche un dossier monté automatiquement.",
     "AliasPlaceholder": "Chemin de montage",
     "AutoMountedFolders": "Dossiers montés automatiquement",
-    "Name": "Nom",
-    "PathAndAlias": "Chemin & Alias",
+    "CreateFolder": "Créer un nouveau dossier de stockage",
+    "DestinationPath": "Chemin du conteneur (destination)",
+    "Folders": "Dossiers",
+    "OwnerProject": "Projet",
+    "OwnerUser": "Utilisateur",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
+    "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",
+    "SelectFolder": "Sélectionner un dossier",
+    "SourcePath": "Chemin dans le dossier (source)",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (facultatif)",
-    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Laissez vide pour monter la racine."
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; laissez-le vide pour monter la racine du dossier.",
+    "UnmountableFoldersRemoved": "Les dossiers que vous ne pouvez plus monter ont été retirés de la sélection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
     "DeleteSelectedItemsDialog": "Supprimer la confirmation",
     "Download": "Télécharger",
+    "DownloadPopupBlocked": "Le navigateur a bloqué la fenêtre de téléchargement. Autorisez les fenêtres pop-up pour ce site, puis réessayez.",
+    "DownloadRejected": "Le storage proxy a refusé le téléchargement (HTTP {{status}}). Le téléchargement n'a pas démarré.",
     "DownloadSelected": "Télécharger",
     "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
+    "DownloadUnreachable": "Impossible de joindre le storage proxy à l'adresse {{origin}}. Le téléchargement n'a pas démarré.",
     "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
     "DuplicatedFiles": "Écran de confirmation",
     "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",

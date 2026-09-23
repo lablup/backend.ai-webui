@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "選擇預設"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "另有 {{rest}} 項"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "此操作無法復原。",
     "DeleteItem": "刪除",
     "DeleteNItems": "刪除 {{count}} 個項目",
-    "TypeToConfirm": "輸入 <code>{{confirmText}}</code> 以確認。"
+    "TypeToConfirm": "輸入 <token>{{confirmText}}</token> 以確認。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "建立者"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降級",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "測試"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "另有 {{rest}} 項"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "創建於",
     "MaxConcurrentLogins": "最大並發登入數",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路徑格式無效。",
     "AliasOverlapping": "掛載路徑與另一個資料夾重疊。",
+    "AliasOverlappingWithAutoMount": "掛載路徑與自動掛載資料夾重疊。",
     "AliasPlaceholder": "掛載路徑",
     "AutoMountedFolders": "自動掛載資料夾",
-    "Name": "名稱",
-    "PathAndAlias": "路徑 & 別名",
+    "CreateFolder": "創建一個新的存儲文件夾",
+    "DestinationPath": "容器路徑 (destination)",
+    "Folders": "文件夾",
+    "OwnerProject": "專案",
+    "OwnerUser": "使用者",
     "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
+    "Refresh": "刷新",
     "RemoveFolder": "移除",
+    "SelectFolder": "選擇資料夾",
+    "SourcePath": "資料夾內路徑 (source)",
     "Subpath": "子路徑",
     "SubpathInvalid": "子路徑必須是相對路徑，且不能包含 '..'。",
-    "SubpathPlaceholder": "例如 dataset/train（選填）",
-    "SubpathTooltip": "將資料夾內的子資料夾作為掛載來源，而非資料夾根目錄。留空則掛載根目錄。"
+    "SubpathTooltip": "將資料夾內的子資料夾作為掛載來源，而非資料夾根目錄。點擊該欄位瀏覽資料夾並選擇；留空則掛載資料夾根目錄。",
+    "UnmountableFoldersRemoved": "已從所選項目中移除您無法再掛載的資料夾。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "選擇資料夾"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
     "DeleteSelectedItemsDialog": "刪除確認",
     "Download": "下載",
+    "DownloadPopupBlocked": "瀏覽器封鎖了下載視窗。請允許本網站的彈出視窗後再試一次。",
+    "DownloadRejected": "儲存代理拒絕了此次下載（HTTP {{status}}），下載未開始。",
     "DownloadSelected": "下載",
     "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
+    "DownloadUnreachable": "無法連線至 {{origin}} 的儲存代理，下載未開始。",
     "DragAndDropDesc": "將文件拖到此區域上傳。",
     "DuplicatedFiles": "覆蓋確認",
     "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",

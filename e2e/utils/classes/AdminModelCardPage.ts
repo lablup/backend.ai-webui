@@ -63,6 +63,14 @@ export class AdminModelCardPage {
     return this.page.getByRole('region', { name: 'Notifications' });
   }
 
+  // Link-bearing notices (`notification.*` / `upsertNotification`) render in
+  // `BAINotificationStack`, not the toast region; its root is `role=
+  // "presentation"`, so scope by the stack's test id
+  // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
+  getNotificationStack(): Locator {
+    return this.page.getByTestId('bai-notification-stack');
+  }
+
   // ── Toolbar / actions ────────────────────────────────────────────────────
 
   getCreateModelCardButton(): Locator {
@@ -145,12 +153,18 @@ export class AdminModelCardPage {
   }
 
   getBulkDeleteButton(): Locator {
-    // Delete button in the toolbar area (sibling of the selection label, not inside table rows)
+    // Delete button in the toolbar area (sibling of the selection label, not
+    // inside table rows). It is an icon-only `BAIButton`, whose accessible
+    // name is the generic "Action" placeholder (`BAIButton.tsx`), not
+    // "delete" — key on the trash icon, as `bulk-user-creation.spec.ts` does.
     return this.page
       .getByText(/\d+ selected/)
       .locator('..')
       .locator('..')
-      .getByRole('button', { name: 'delete' });
+      .getByRole('button', { name: 'Action', exact: true })
+      .filter({
+        has: this.page.locator('svg.lucide-trash2, svg.lucide-trash-2'),
+      });
   }
 
   // ── Modals ───────────────────────────────────────────────────────────────

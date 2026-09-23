@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<85aef79f57b08d02241c1bf9f8ef63b4>>
+ * @generated SignedSource<<5a6b40da83865189dcd34dc13a4f804f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,7 +16,7 @@ export type BAIComputeSessionNodeNotificationItemFragment$data = {
   readonly status: string | null | undefined;
   readonly status_data: string | null | undefined;
   readonly status_info: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionActionButtonsFragment" | "SessionStatusTagFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"SessionActionButtonsFragment" | "SessionStatusBadgeFragment">;
   readonly " $fragmentType": "BAIComputeSessionNodeNotificationItemFragment";
 };
 export type BAIComputeSessionNodeNotificationItemFragment$key = {
@@ -73,13 +73,13 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionStatusTagFragment"
+      "name": "SessionStatusBadgeFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "072204200ff77273a5d4f68970569ab2";
+(node as any).hash = "8d53c71903c9d2d640979e4ab2758dfe";
 
 export default node;

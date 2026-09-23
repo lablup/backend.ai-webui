@@ -23,18 +23,18 @@ export interface ThemePreset {
 
 /**
  * Astryx theme-neutral's own palette, read off `@astryxdesign/theme-neutral`'s
- * `theme.css` (0.5.4) — a monochrome accent, deliberately not a brand hue.
+ * `theme.css` (0.6.2) — a monochrome accent, deliberately not a brand hue.
  * The shim re-runs antd's dark ramp over these seeds, so the dark shades land
  * near, not exactly on, Astryx's own; the point is the absent brand hue.
  */
 const ASTRYX_NEUTRAL_SEEDS: { light: Seeds; dark: Seeds } = {
   light: {
-    colorPrimary: '#262626',
-    colorLink: '#262626',
-    colorInfo: '#00458c',
-    colorError: '#9e0015',
-    colorSuccess: '#237028',
-    colorWarning: '#745b00',
+    colorPrimary: '#1b1b1b',
+    colorLink: '#1b1b1b',
+    colorInfo: '#003978',
+    colorError: '#76000c',
+    colorSuccess: '#00490b',
+    colorWarning: '#4b3900',
     fontFamily:
       'Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },

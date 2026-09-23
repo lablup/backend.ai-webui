@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "选择预设"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "另有 {{rest}} 项"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "此操作无法撤销。",
     "DeleteItem": "删除",
     "DeleteNItems": "删除 {{count}} 个项目",
-    "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
+    "TypeToConfirm": "输入 <token>{{confirmText}}</token> 以确认。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "创建者"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "选择部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降级",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "测试"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "另有 {{rest}} 项"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "创建于",
     "MaxConcurrentLogins": "最大并发登录数",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路径格式无效。",
     "AliasOverlapping": "挂载路径与另一个文件夹重叠。",
+    "AliasOverlappingWithAutoMount": "挂载路径与自动挂载文件夹重叠。",
     "AliasPlaceholder": "挂载路径",
     "AutoMountedFolders": "自动挂载文件夹",
-    "Name": "名称",
-    "PathAndAlias": "路径 & 别名",
+    "CreateFolder": "创建一个新的存储文件夹",
+    "DestinationPath": "容器路径 (destination)",
+    "Folders": "文件夹",
+    "OwnerProject": "项目",
+    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
+    "Refresh": "刷新",
     "RemoveFolder": "移除",
+    "SelectFolder": "选择文件夹",
+    "SourcePath": "文件夹内路径 (source)",
     "Subpath": "子路径",
     "SubpathInvalid": "子路径必须是相对路径，且不能包含 '..'。",
-    "SubpathPlaceholder": "例如 dataset/train（可选）",
-    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。留空则挂载根目录。"
+    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。点击该输入框浏览文件夹并选择；留空则挂载文件夹根目录。",
+    "UnmountableFoldersRemoved": "已从所选内容中移除您无法再挂载的文件夹。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "选择文件夹"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
     "DeleteSelectedItemsDialog": "删除确认",
     "Download": "下载",
+    "DownloadPopupBlocked": "浏览器拦截了下载窗口。请允许本站点的弹出窗口后重试。",
+    "DownloadRejected": "存储代理拒绝了此次下载（HTTP {{status}}），下载未开始。",
     "DownloadSelected": "下载",
     "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
+    "DownloadUnreachable": "无法连接到 {{origin}} 上的存储代理，下载未开始。",
     "DragAndDropDesc": "将文件拖到此区域上传。",
     "DuplicatedFiles": "覆盖确认",
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",

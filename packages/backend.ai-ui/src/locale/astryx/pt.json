@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Expandir a barra lateral",
   "@astryx.sideNavItem.collapse": "Fechar {label}",
   "@astryx.sideNavItem.expand": "Expandir {label}",
+  "@astryx.spinner.loading": "A carregar",
   "@astryx.step.goToStep": "Ir para o passo {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Ir para o passo {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "concluído",

@@ -8,7 +8,7 @@
  * gathered back into ordinary `bai-review` blocks.
  *
  * Composes `marks.ts`, `navigator.ts` and `popover.ts` over the set and the
- * progress `walkthrough.ts` holds. `main.ts` starts and stops it.
+ * progress `walkthrough.ts` holds. `boot.ts` starts and stops it.
  */
 import { blockStamp } from './block.js';
 import { pathNeedsChange, pinSetUrlAt, retryUntil } from './deeplink.js';
@@ -26,12 +26,14 @@ import {
   type PopoverPlace,
 } from './popover.js';
 import { findAnchorTarget } from './resolve.js';
+import { stopLanguages, stopTextIn } from './stop-guard.js';
 import type { ReviewServerState } from './types.js';
 import {
   buildCommentCopy,
   codeHref,
   codeText,
   commentPin,
+  createWalkthroughLanguage,
   createWalkthroughProgress,
   prepareComment,
   type PreparedComment,
@@ -44,6 +46,10 @@ import {
   walkthroughSha,
   type WalkthroughStop,
 } from './walkthrough.js';
+
+/** The app mounts its language listener after we do, so the switch retries. */
+const LANG_TRIES = 12;
+const LANG_EVERY_MS = 300;
 
 /** ~10 s of ladder after entry or a route change, as the pin layer runs. */
 const LADDER_TRIES = 34;
@@ -92,13 +98,22 @@ export interface GuidedModeOptions {
   rememberStop: (id: string) => void;
   /** Read once, at entry: the stop the reload that brought us here asked for. */
   takeRememberedStop: () => string | null;
-  /** The reader left the walkthrough; `main.ts` forgets the set. */
+  /**
+   * The host's answer to "may the overlay claim keys on this page" (ADR 0008).
+   * `false` unbinds the bare `n` / `p` / `v` / `m` / `c` / `[` / `]` below:
+   * they are live shortcuts on the sites a second host visits, and `c` copies.
+   * Escape stays — it is not `preventDefault`ed and closes our own chrome.
+   */
+  pageChords: boolean;
+  /** The reader left the walkthrough; `boot.ts` forgets the set. */
   onExit: () => void;
 }
 
 export function startGuidedMode(options: GuidedModeOptions) {
   const { root, host, stops } = options;
-  const progress = createWalkthroughProgress(walkthroughSha(stops));
+  const sha = walkthroughSha(stops);
+  const progress = createWalkthroughProgress(sha);
+  const language = createWalkthroughLanguage(sha);
   const ids = stops.map((stop) => stop.id);
   const style = document.createElement('style');
   style.textContent = BANNER_STYLE;
@@ -112,6 +127,9 @@ export function startGuidedMode(options: GuidedModeOptions) {
   let settleTimer = 0;
   let frame = 0;
   let cancelLadder: () => void = () => undefined;
+  let cancelLang: () => void = () => undefined;
+  /** Null until the reader picks one: each stop then reads in its own `lng`. */
+  let chosenLang: string | null = language.get();
 
   /** Called, never aliased: a detached `requestAnimationFrame` throws. */
   const raf = (callback: FrameRequestCallback): number =>
@@ -169,6 +187,35 @@ export function startGuidedMode(options: GuidedModeOptions) {
   const stopType = (stop: WalkthroughStop): 'added' | 'modified' =>
     stop.anchor.type === 'added' ? 'added' : 'modified';
 
+  /** What this stop reads in: the reader's pick, else the language it was written in. */
+  const langOf = (stop: WalkthroughStop): string =>
+    chosenLang ?? stop.anchor.lng ?? 'en';
+
+  /**
+   * Put the APP in this language too, through the host's own switch
+   * (`DefaultProviders.tsx`): it re-renders in place, persists nothing, and so
+   * leaves the reader's stored language alone — a reload restores it.
+   *
+   * The host binds its `langChanged` listener when the app mounts, which on a
+   * cold page is after the overlay boots, so an event sent once can land on
+   * nobody. Retry until `<html lang>` says the host took it.
+   */
+  function applyAppLanguage(lang: string): void {
+    cancelLang();
+    const switchLanguage = (
+      window as unknown as { switchLanguage?: (lang: string) => void }
+    ).switchLanguage;
+    if (typeof switchLanguage !== 'function') return;
+    cancelLang = retryUntil(
+      () => {
+        if (document.documentElement.lang === lang) return true;
+        switchLanguage(lang);
+        return document.documentElement.lang === lang;
+      },
+      { tries: LANG_TRIES, everyMs: LANG_EVERY_MS },
+    );
+  }
+
   function place(stop: WalkthroughStop): Place {
     if (pathNeedsChange(stop.anchor, location)) return { kind: 'away' };
     const element = findAnchorTarget(stop.anchor, { ignore: host });
@@ -179,42 +226,58 @@ export function startGuidedMode(options: GuidedModeOptions) {
     root,
     onSelect: (id) => go(ids.indexOf(id), false),
   });
-  const nav = createNavigator(root, {
-    onNext: () => go(current + 1),
-    onPrev: () => go(current - 1),
-    onTogglePanel: () => {
-      panelOpen = !panelOpen;
-      refresh();
+  /** Both panels name keys, and neither may name one the host never bound. */
+  const chrome = { pageChords: options.pageChords };
+  const nav = createNavigator(
+    root,
+    {
+      onNext: () => go(current + 1),
+      onPrev: () => go(current - 1),
+      onTogglePanel: () => {
+        panelOpen = !panelOpen;
+        refresh();
+      },
+      onCopyComments: copyComments,
+      onCopySummary: copySummary,
+      onGo: (index) => go(index),
+      onExit: exit,
     },
-    onCopyComments: copyComments,
-    onCopySummary: copySummary,
-    onGo: (index) => go(index),
-    onExit: exit,
-  });
-  const pop = createPopover(root, {
-    onToggleViewed: (viewed) => {
-      progress.setViewed(stops[current].id, viewed);
-      refresh();
+    chrome,
+  );
+  const pop = createPopover(
+    root,
+    {
+      onToggleViewed: (viewed) => {
+        progress.setViewed(stops[current].id, viewed);
+        refresh();
+      },
+      onComment: (text) => {
+        const stop = stops[current];
+        if (!stop) return;
+        const before = progress.commented(ids).length;
+        progress.setComment(stop.id, text);
+        prepareSoon(stop);
+        // Every keystroke, and nothing on screen says the text — only whether
+        // there IS text. Re-render on the flip, not on the typing. Never the
+        // popover: the reader has the caret in it.
+        if (before === progress.commented(ids).length) return;
+        renderMarks(found);
+        nav.render(navModel(found));
+      },
+      onCopyRef: copyRef,
+      onLanguage: (lang) => {
+        chosenLang = lang;
+        language.set(lang);
+        applyAppLanguage(lang);
+        refresh();
+      },
+      onClose: () => {
+        popOpen = false;
+        refresh();
+      },
     },
-    onComment: (text) => {
-      const stop = stops[current];
-      if (!stop) return;
-      const before = progress.commented(ids).length;
-      progress.setComment(stop.id, text);
-      prepareSoon(stop);
-      // Every keystroke, and nothing on screen says the text — only whether
-      // there IS text. Re-render on the flip, not on the typing. Never the
-      // popover: the reader has the caret in it.
-      if (before === progress.commented(ids).length) return;
-      renderMarks(found);
-      nav.render(navModel(found));
-    },
-    onCopyRef: copyRef,
-    onClose: () => {
-      popOpen = false;
-      refresh();
-    },
-  });
+    chrome,
+  );
 
   // --------------------------------------------------------------- render
 
@@ -291,7 +354,13 @@ export function startGuidedMode(options: GuidedModeOptions) {
       };
     }
     if (at.kind === 'waiting')
-      return { kind: 'waiting', via: viaSentence(stop.anchor.via) };
+      return {
+        kind: 'waiting',
+        via: viaSentence(
+          stopTextIn(stop.anchor, langOf(stop)).via,
+          langOf(stop),
+        ),
+      };
     return { kind: 'away', page: stopPage(stop) };
   }
 
@@ -300,6 +369,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (!popOpen || !stop) return null;
     const base = repoUrl(options.serverState());
     const pr = stop.anchor.pr ?? servedPr();
+    const lang = langOf(stop);
+    const text = stopTextIn(stop.anchor, lang);
     return {
       id: stop.id,
       index: current,
@@ -308,10 +379,12 @@ export function startGuidedMode(options: GuidedModeOptions) {
       label: stop.label,
       type: stopType(stop),
       kind: stop.anchor.kind ?? '',
-      changed: stop.anchor.ch ?? '',
-      check: stop.anchor.ck ?? '',
-      old: stop.anchor.old ?? '',
-      next: stop.anchor.new ?? '',
+      changed: text.ch,
+      check: text.ck,
+      old: text.old ?? '',
+      next: text.new ?? '',
+      lang,
+      langs: stopLanguages(stop.anchor),
       code: pr
         ? (stop.anchor.code ?? []).map((ref) => ({
             text: codeText(ref),
@@ -506,6 +579,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       return;
     }
     if (evt.metaKey || evt.ctrlKey || evt.altKey) return;
+    if (!options.pageChords) return;
     const stop = stops[current];
     if (!stop) return;
     if (evt.code === 'KeyN' || evt.code === 'BracketRight') go(current + 1);
@@ -587,6 +661,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
     for (const timer of exportTimers.values()) clearTimeout(timer);
     exportTimers.clear();
     cancelLadder();
+    cancelLang();
     clearTimeout(settleTimer);
     observer.disconnect();
     window.removeEventListener('pagehide', flushProgress);
@@ -614,6 +689,9 @@ export function startGuidedMode(options: GuidedModeOptions) {
       ? requested
       : here.findIndex((where) => where.kind !== 'away');
   current = landed < 0 ? 0 : landed;
+  // The host's switch persists nothing, so a choice made on the previous stop
+  // has to be re-applied on the page the reader just reloaded into.
+  if (chosenLang) applyAppLanguage(chosenLang);
   refresh();
   ladder();
   // Ready before the first gesture: `Copy ref` works on a stop with no

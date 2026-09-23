@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<77ec75e74316c526b62ffe0403cc529c>>
+ * @generated SignedSource<<4ba8b8f4c95c212a93efbf33ca122b18>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -345,12 +345,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5062d00c24fb0046c5727aa256ba1815",
+    "cacheID": "75b8dd5e9baf9d125e761871128bbcae",
     "id": null,
     "metadata": {},
     "name": "ResourcesAstryxProbeAgentQuery",
     "operationKind": "query",
-    "text": "query ResourcesAstryxProbeAgentQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  agent_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    edges {\n      node {\n        id\n        ...AgentDetailDrawerFragment\n      }\n    }\n    count\n  }\n}\n\nfragment AgentActionButtonsFragment on AgentNode {\n  status\n  ...AgentSettingModalFragment\n  ...AgentLifeCycleControlModalFragment\n}\n\nfragment AgentComputePluginsFragment on AgentNode {\n  compute_plugins\n  available_slots\n}\n\nfragment AgentDetailDrawerContentFragment on AgentNode {\n  id\n  row_id\n  addr\n  status\n  status_changed\n  schedulable\n  first_contact\n  region\n  scaling_group\n  ...AgentStatusTagFragment\n  ...AgentComputePluginsFragment\n  ...AgentResourcesFragment\n  ...AgentActionButtonsFragment\n}\n\nfragment AgentDetailDrawerFragment on Node {\n  __isNode: __typename\n  ... on AgentNode {\n    id\n    ...AgentDetailDrawerContentFragment\n  }\n  id\n}\n\nfragment AgentDetailModalFragment on AgentNode {\n  id\n  live_stat\n  available_slots\n  occupied_slots\n}\n\nfragment AgentLifeCycleControlModalFragment on AgentNode {\n  id\n  status\n  status_changed\n}\n\nfragment AgentResourcesFragment on AgentNode {\n  occupied_slots\n  available_slots\n  live_stat\n  gpu_alloc_map\n  ...AgentDetailModalFragment\n}\n\nfragment AgentSettingModalFragment on AgentNode {\n  id\n  scaling_group\n  schedulable\n}\n\nfragment AgentStatusTagFragment on AgentNode {\n  status\n  status_changed\n  version\n}\n"
+    "text": "query ResourcesAstryxProbeAgentQuery(\n  $filter: String\n  $order: String\n  $offset: Int\n  $first: Int\n  $before: String\n  $after: String\n  $last: Int\n) {\n  agent_nodes(filter: $filter, order: $order, offset: $offset, first: $first, after: $after, before: $before, last: $last) {\n    edges {\n      node {\n        id\n        ...AgentDetailDrawerFragment\n      }\n    }\n    count\n  }\n}\n\nfragment AgentActionButtonsFragment on AgentNode {\n  status\n  ...AgentSettingModalFragment\n  ...AgentLifeCycleControlModalFragment\n}\n\nfragment AgentComputePluginsFragment on AgentNode {\n  compute_plugins\n  available_slots\n}\n\nfragment AgentDetailDrawerContentFragment on AgentNode {\n  id\n  row_id\n  addr\n  status\n  status_changed\n  schedulable\n  first_contact\n  region\n  scaling_group\n  ...AgentStatusBadgeFragment\n  ...AgentComputePluginsFragment\n  ...AgentResourcesFragment\n  ...AgentActionButtonsFragment\n}\n\nfragment AgentDetailDrawerFragment on Node {\n  __isNode: __typename\n  ... on AgentNode {\n    id\n    ...AgentDetailDrawerContentFragment\n  }\n  id\n}\n\nfragment AgentDetailModalFragment on AgentNode {\n  id\n  live_stat\n  available_slots\n  occupied_slots\n}\n\nfragment AgentLifeCycleControlModalFragment on AgentNode {\n  id\n  status\n  status_changed\n}\n\nfragment AgentResourcesFragment on AgentNode {\n  occupied_slots\n  available_slots\n  live_stat\n  gpu_alloc_map\n  ...AgentDetailModalFragment\n}\n\nfragment AgentSettingModalFragment on AgentNode {\n  id\n  scaling_group\n  schedulable\n}\n\nfragment AgentStatusBadgeFragment on AgentNode {\n  status\n  status_changed\n  version\n}\n"
   }
 };
 })();

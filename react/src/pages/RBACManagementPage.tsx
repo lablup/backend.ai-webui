@@ -10,6 +10,7 @@ import {
   RoleFilter,
   RoleOrderBy,
 } from '../__generated__/RBACManagementPageQuery.graphql';
+import { RBACManagementPageScopeTypesQuery } from '../__generated__/RBACManagementPageScopeTypesQuery.graphql';
 import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import RoleDetailDrawer from '../components/RoleDetailDrawer';
@@ -19,7 +20,7 @@ import RoleNodes, {
   availableRoleSorterValues,
 } from '../components/RoleNodes';
 import { convertToOrderBy } from '../helper';
-import { ALL_RBAC_ELEMENT_TYPES } from '../helper/rbacElementTypes';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import {
@@ -30,6 +31,8 @@ import {
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
+  BAISelect,
+  type BAISelectProps,
   BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
@@ -45,11 +48,44 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from 'nuqs';
-import { useDeferredValue, useState } from 'react';
+import { Suspense, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const statusFilterValues = ['ACTIVE', 'DELETED'] as const;
+
+// Since 26.9.0 scope types are lowercase names the manager lists, not an enum
+// the client could enumerate.
+const ScopeTypeSelect: React.FC<Omit<BAISelectProps, 'options'>> = (props) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { rbacScopeEntityCombinations } =
+    useLazyLoadQuery<RBACManagementPageScopeTypesQuery>(
+      graphql`
+        query RBACManagementPageScopeTypesQuery {
+          rbacScopeEntityCombinations {
+            scopeType
+          }
+        }
+      `,
+      {},
+      { fetchPolicy: 'store-or-network' },
+    );
+
+  return (
+    <BAISelect
+      showSearch
+      label={t('rbac.ScopeType')}
+      isLabelHidden
+      style={{ width: '100%' }}
+      options={(rbacScopeEntityCombinations ?? []).map(({ scopeType }) => ({
+        label: t(rbacTypeI18nKey(scopeType), { defaultValue: scopeType }),
+        value: scopeType,
+      }))}
+      {...props}
+    />
+  );
+};
 
 const RBACManagementPage: React.FC = () => {
   'use memo';
@@ -300,18 +336,36 @@ const RBACManagementPage: React.FC = () => {
                   propertyLabel: t('rbac.ScopeType'),
                   type: 'enum',
                   fixedOperator: 'equals',
-                  // The whole enum, not RoleFormModal's scope-id-picker
-                  // whitelist: the server filters on any element type.
-                  options: ALL_RBAC_ELEMENT_TYPES.map((type) => ({
-                    label: t(`rbac.types.${type}`, { defaultValue: type }),
-                    value: type,
-                  })),
-                  strictSelection: true,
+                  // The select owns its query and suspends on first open.
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
+                    <Suspense
+                      fallback={
+                        <BAISelect
+                          loading
+                          disabled
+                          label={t('rbac.ScopeType')}
+                          isLabelHidden
+                          style={{ width: '100%' }}
+                        />
+                      }
+                    >
+                      <ScopeTypeSelect
+                        value={value}
+                        disabled={isDisabled}
+                        onChange={(next, option) =>
+                          onAddCondition(next, option?.label)
+                        }
+                      />
+                    </Suspense>
+                  ),
                 },
                 baiClient?.supports('role-mapped-scope-filter') && {
                   key: 'mappedScope.scopeId',
                   propertyLabel: t('rbac.ScopeRawId'),
-                  type: 'string',
+                  // `equals` is the one operator both the 26.8 StringFilter
+                  // and the 26.9 UUIDFilter accept.
+                  type: 'uuid',
+                  fixedOperator: 'equals',
                 },
               ])}
               value={queryParams.filter ?? undefined}

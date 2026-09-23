@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Урьдчилан тохиргоо сонгох"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "болон бусад {{rest}}"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Энэ үйлдлийг буцаах боломжгүй.",
     "DeleteItem": "Устгах",
     "DeleteNItems": "{{count}} зүйл устгах",
-    "TypeToConfirm": "Баталгаажуулахын тулд <code>{{confirmText}}</code> гэж бичнэ үү."
+    "TypeToConfirm": "Баталгаажуулахын тулд <token>{{confirmText}}</token> гэж бичнэ үү."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Үүсгэсэн"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Байршуулалт сонгох"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Муудсан",
     "Deploying": "Байршуулж байна",
     "Healthy": "Эрүүл",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "турших"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "болон бусад {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Үүсгэсэн",
     "MaxConcurrentLogins": "Хамгийн их зэрэгцээ нэвтрэлт",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Замын формат буруу байна.",
     "AliasOverlapping": "Маунтын зам өөр хавтастай давхцаж байна.",
+    "AliasOverlappingWithAutoMount": "Маунтын зам автоматаар маунт хийсэн хавтастай давхцаж байна.",
     "AliasPlaceholder": "Маунтын зам",
     "AutoMountedFolders": "Автоматаар маунт хийсэн хавтаснууд",
-    "Name": "Нэр",
-    "PathAndAlias": "Зам & Alias",
+    "CreateFolder": "Шинэ хадгалах фолдер үүсгэх",
+    "DestinationPath": "Контейнерийн зам (destination)",
+    "Folders": "Фолдерууд",
+    "OwnerProject": "Төсөл",
+    "OwnerUser": "Хэрэглэгч",
     "PathAndAliasTooltip": "Хавтасыг контейнер дотор маунт хийх зам. Анхдагч замыг ашиглахын тулд хоосон үлдээнэ үү.",
+    "Refresh": "Сэргээх",
     "RemoveFolder": "Хасах",
+    "SelectFolder": "Хавтас сонгох",
+    "SourcePath": "Хавтас доторх зам (source)",
     "Subpath": "Дэд зам",
     "SubpathInvalid": "Дэд зам нь харьцангуй зам байх ёстой бөгөөд '..' агуулж болохгүй.",
-    "SubpathPlaceholder": "жш нь dataset/train (заавал биш)",
-    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Үндсийг маунт хийхийн тулд хоосон үлдээнэ үү."
+    "SubpathTooltip": "Хавтасны үндсийн оронд хавтас дотрах дэд хавтасыг эх сурвалж болгон маунт хийнэ. Талбар дээр дарж хавтсыг нэгжин дэд хавтас сонгоно уу; хоосон үлдээвэл хавтасны үндсийг маунт хийнэ.",
+    "UnmountableFoldersRemoved": "Таны цаашид холбох боломжгүй болсон хавтсуудыг сонголтоос хаслаа."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Хавтас сонгох"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Устгасан файлууд, хавтасыг сэргээх боломжгүй байна. \nТа үргэлжлүүлэхийг хүсч байна уу?",
     "DeleteSelectedItemsDialog": "Баталгаажуулалтыг устгах",
     "Download": "Татаж авах",
+    "DownloadPopupBlocked": "Хөтөч татах цонхыг блоклолоо. Энэ сайтын попап цонхыг зөвшөөрөөд дахин оролдоно уу.",
+    "DownloadRejected": "Storage proxy татахыг татгалзлаа (HTTP {{status}}). Татаж авах эхлээгүй.",
     "DownloadSelected": "Татаж авах",
     "DownloadStarted": "Файл \"{{fileName}} нь\" Татаж авах ажил эхэллээ.",
+    "DownloadUnreachable": "{{origin}} дэх storage proxy-тэй холбогдож чадсангүй. Татаж авах эхлээгүй.",
     "DragAndDropDesc": "Байршуулахын тулд энэ газарт файлуудыг чирч, буулгана уу.",
     "DuplicatedFiles": "Баталгаажуулалтыг дарж бичих",
     "DuplicatedFilesDesc": "Ижил нэртэй файл эсвэл хавтас аль хэдийн байна. \nТа дарж бичихийг хүсч байна уу?",

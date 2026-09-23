@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Pilih Preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "dan {{rest}} lainnya"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Hapus",
     "DeleteNItems": "Hapus {{count}} item",
-    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
+    "TypeToConfirm": "Ketik <token>{{confirmText}}</token> untuk mengonfirmasi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Terdegradasi",
     "Deploying": "Sedang Diterapkan",
     "Healthy": "Sehat",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "tes"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "dan {{rest}} lainnya"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Dibuat di",
     "MaxConcurrentLogins": "Login Bersamaan Maksimum",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format jalur tidak valid.",
     "AliasOverlapping": "Jalur mount bertumpang tindih dengan folder lain.",
+    "AliasOverlappingWithAutoMount": "Jalur mount bertumpang tindih dengan folder mount otomatis.",
     "AliasPlaceholder": "Jalur mount",
     "AutoMountedFolders": "Folder mount otomatis",
-    "Name": "Nama",
-    "PathAndAlias": "Jalur & Alias",
+    "CreateFolder": "Buat folder penyimpanan baru",
+    "DestinationPath": "Jalur kontainer (destination)",
+    "Folders": "Folder",
+    "OwnerProject": "Proyek",
+    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
+    "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",
+    "SelectFolder": "Pilih Folder",
+    "SourcePath": "Jalur di folder (source)",
     "Subpath": "Subjal",
     "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
-    "SubpathPlaceholder": "mis. dataset/train (opsional)",
-    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Kosongkan untuk mount dari root."
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Klik kolom ini untuk menelusuri folder dan memilih salah satu; biarkan kosong untuk mount root folder.",
+    "UnmountableFoldersRemoved": "Folder yang tidak lagi dapat Anda pasang telah dihapus dari pilihan."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
     "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
     "Download": "Unduh",
+    "DownloadPopupBlocked": "Peramban memblokir jendela unduhan. Izinkan pop-up untuk situs ini lalu coba lagi.",
+    "DownloadRejected": "Storage proxy menolak unduhan (HTTP {{status}}). Unduhan tidak dimulai.",
     "DownloadSelected": "Unduh",
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "DownloadUnreachable": "Tidak dapat menjangkau storage proxy di {{origin}}. Unduhan tidak dimulai.",
     "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
     "DuplicatedFiles": "Timpa konfirmasi",
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",

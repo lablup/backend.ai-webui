@@ -32,7 +32,7 @@ import {
   BAIBulkErrorModal,
   BAICheckbox,
   type BAIColumnsType,
-  BAIDoubleTag,
+  BAIDoubleToken,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -900,7 +900,7 @@ const RoleScopePermissionEditModal: React.FC<
             title: t('rbac.ScopeId'),
             dataIndex: 'scopeLabel',
             render: (scopeLabel: string) => (
-              <BAIDoubleTag
+              <BAIDoubleToken
                 values={[
                   { label: scopeTypeLabel, color: 'blue' },
                   { label: scopeLabel, color: 'default' },
@@ -918,7 +918,7 @@ const RoleScopePermissionEditModal: React.FC<
               }
               const [entityType, operation] = cellKey.split(CELL_KEY_SEPARATOR);
               return (
-                <BAIDoubleTag
+                <BAIDoubleToken
                   values={[
                     { label: rbacTypeLabel(entityType), color: 'blue' },
                     { label: operationLabel(operation), color: 'default' },

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4535281cf97f84428b776aa5e1bc963d>>
+ * @generated SignedSource<<dde86bf99b44605cb8b714d4cc7e5563>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
@@ -34,6 +35,10 @@ export type UserSettingModalFragment$data = {
   readonly projects: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+          readonly type: ProjectTypeV2;
+        };
         readonly id: string;
       };
     }>;
@@ -273,7 +278,32 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v0/*: any*/)
+                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectBasicInfo",
+                  "kind": "LinkedField",
+                  "name": "basicInfo",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "name",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "type",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
               ],
               "storageKey": null
             }
@@ -294,6 +324,6 @@ return {
 };
 })();
 
-(node as any).hash = "fe5c9e96f7b5b915441f9784c6cb4b3e";
+(node as any).hash = "c8cb60fe5ddaaa45c265be70c551da1c";
 
 export default node;

@@ -1,18 +1,17 @@
 /**
  * The image row `BAIImageNodeSimpleTag` and `BAIImageNodeSimpleTagV2` draw
  * once their fragment is read (ADR 0005): meta icon, aliased base name, base
- * version and architecture, then the tag chips and a copy control for the full
+ * version and architecture, then the tag tokens and a copy control for the full
  * reference. Internal — the barrel exports the two fragment readers, not this.
  */
-import { badgeVariantForTagColor } from '../../helper';
 import { theme } from '../../theme-shim';
-import BAIDoubleTag from '../BAIDoubleTag';
+import BAIDoubleToken from '../BAIDoubleToken';
 import BAIFlex from '../BAIFlex';
 import BAIImageMetaIcon from '../BAIImageMetaIcon';
 import BAIText from '../BAIText';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import * as _ from 'lodash-es';
 import React from 'react';
 
@@ -84,7 +83,7 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
           <BAIFlex direction="row" align="center" gap="xxs" wrap="wrap">
             {_.map(facts, (fact, index) =>
               fact.isDouble ? (
-                <BAIDoubleTag
+                <BAIDoubleToken
                   key={`${fact.key}-${index}`}
                   values={[
                     {
@@ -98,11 +97,9 @@ const ImageNodeSimpleTag: React.FC<ImageNodeSimpleTagProps> = ({
                   ]}
                 />
               ) : (
-                <Badge
+                <Token
                   key={`${fact.key}-${index}`}
-                  variant={badgeVariantForTagColor(
-                    fact.isCustomized ? 'cyan' : 'blue',
-                  )}
+                  color={fact.isCustomized ? 'cyan' : 'blue'}
                   label={fact.aliasedTag}
                 />
               ),

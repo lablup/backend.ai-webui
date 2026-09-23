@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Voreinstellung auswählen"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "und {{rest}} weitere"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "DeleteItem": "Löschen",
     "DeleteNItems": "{{count}} Elemente löschen",
-    "TypeToConfirm": "Geben Sie <code>{{confirmText}}</code> ein, um zu bestätigen."
+    "TypeToConfirm": "Geben Sie <token>{{confirmText}}</token> ein, um zu bestätigen."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Erstellt von"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Deployment auswählen"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Beeinträchtigt",
     "Deploying": "Wird bereitgestellt",
     "Healthy": "Fehlerfrei",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "und {{rest}} weitere"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Hergestellt in",
     "MaxConcurrentLogins": "Max. gleichzeitige Anmeldungen",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Ungültiges Pfadformat.",
     "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasOverlappingWithAutoMount": "Der Einhängepfad überschneidet sich mit einem automatisch eingehängten Ordner.",
     "AliasPlaceholder": "Einhängepfad",
     "AutoMountedFolders": "Automatisch eingehängte Ordner",
-    "Name": "Name",
-    "PathAndAlias": "Pfad & Alias",
+    "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
+    "DestinationPath": "Container-Pfad (destination)",
+    "Folders": "Ordner",
+    "OwnerProject": "Projekt",
+    "OwnerUser": "Benutzer",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
+    "Refresh": "Aktualisierung",
     "RemoveFolder": "Entfernen",
+    "SelectFolder": "Ordner auswählen",
+    "SourcePath": "Pfad im Ordner (source)",
     "Subpath": "Unterpfad",
     "SubpathInvalid": "Der Unterpfad muss ein relativer Pfad sein und darf '..' nicht enthalten.",
-    "SubpathPlaceholder": "z. B. dataset/train (optional)",
-    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Leer lassen, um die Wurzel einzuhängen."
+    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Klicken Sie auf das Feld, um den Ordner zu durchsuchen und einen auszuwählen; leer lassen, um die Ordnerwurzel einzuhängen.",
+    "UnmountableFoldersRemoved": "Ordner, die Sie nicht mehr einbinden können, wurden aus der Auswahl entfernt."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Ordner auswählen"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
     "DeleteSelectedItemsDialog": "Bestätigung löschen",
     "Download": "Herunterladen",
+    "DownloadPopupBlocked": "Der Browser hat das Download-Fenster blockiert. Erlauben Sie Pop-ups für diese Website und versuchen Sie es erneut.",
+    "DownloadRejected": "Der Storage-Proxy hat den Download abgelehnt (HTTP {{status}}). Der Download wurde nicht gestartet.",
     "DownloadSelected": "Herunterladen",
     "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
+    "DownloadUnreachable": "Der Storage-Proxy unter {{origin}} ist nicht erreichbar. Der Download wurde nicht gestartet.",
     "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
     "DuplicatedFiles": "Überschreibung der Bestätigung",
     "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",

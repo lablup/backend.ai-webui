@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Развернуть боковую панель",
   "@astryx.sideNavItem.collapse": "Свернуть {label}",
   "@astryx.sideNavItem.expand": "Развернуть {label}",
+  "@astryx.spinner.loading": "Загрузка",
   "@astryx.step.goToStep": "Перейти к шагу {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Перейти к шагу {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "завершено",

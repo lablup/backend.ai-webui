@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Выберите пресет"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "и ещё {{rest}}"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Это действие нельзя отменить.",
     "DeleteItem": "Удалить",
     "DeleteNItems": "Удалить {{count}} элементов",
-    "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
+    "TypeToConfirm": "Введите <token>{{confirmText}}</token> для подтверждения."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Создано"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Ухудшено",
     "Deploying": "Развёртывается",
     "Healthy": "Работает",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "тест"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "и ещё {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Создан в",
     "MaxConcurrentLogins": "Максимум одновременных входов",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Неверный формат пути.",
     "AliasOverlapping": "Путь монтирования перекрывается с другой папкой.",
+    "AliasOverlappingWithAutoMount": "Путь монтирования перекрывается с папкой автомонтирования.",
     "AliasPlaceholder": "Путь монтирования",
     "AutoMountedFolders": "Папки с автомонтированием",
-    "Name": "Имя",
-    "PathAndAlias": "Путь & Псевдоним",
+    "CreateFolder": "Создать новую папку для хранения",
+    "DestinationPath": "Путь в контейнере (destination)",
+    "Folders": "Папки",
+    "OwnerProject": "Проект",
+    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
+    "Refresh": "Обновить",
     "RemoveFolder": "Удалить",
+    "SelectFolder": "Выбрать папку",
+    "SourcePath": "Путь в папке (source)",
     "Subpath": "Подпуть",
     "SubpathInvalid": "Подпуть должен быть относительным путём и не должен содержать '..'.",
-    "SubpathPlaceholder": "напр. dataset/train (необязательно)",
-    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Оставьте пустым для монтирования корня."
+    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Нажмите на поле, чтобы просмотреть папку и выбрать подпапку; оставьте пустым, чтобы смонтировать корень папки.",
+    "UnmountableFoldersRemoved": "Папки, которые больше нельзя подключить, удалены из выбора."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Выбрать папку"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
     "Download": "Скачать",
+    "DownloadPopupBlocked": "Браузер заблокировал окно загрузки. Разрешите всплывающие окна для этого сайта и повторите попытку.",
+    "DownloadRejected": "Storage proxy отклонил загрузку (HTTP {{status}}). Загрузка не началась.",
     "DownloadSelected": "Скачать",
     "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "DownloadUnreachable": "Не удалось связаться со storage proxy по адресу {{origin}}. Загрузка не началась.",
     "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
     "DuplicatedFiles": "Перезаписать подтверждение",
     "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",

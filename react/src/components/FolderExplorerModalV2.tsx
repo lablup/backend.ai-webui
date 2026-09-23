@@ -18,6 +18,7 @@
  - `BAIFileExplorer` / `ScopedAuditLog` / `BAILink` stay BUI (frontier:
    tickets 25/28 own their internals).
 */
+import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
@@ -31,8 +32,10 @@ import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
+import FolderExplorerHeader from './FolderExplorerHeader';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -117,6 +120,45 @@ interface FolderExplorerProps extends Omit<
   destroyOnHidden?: boolean;
 }
 
+// Read through the legacy `group_node`, which skips the RBAC own check that
+// `vfolderV2.ownership.project` runs, so a personal project is recognised even
+// when the caller holds no project role on it (FR-3983).
+const OwnershipProjectBanner: React.FC<{
+  projectId: string;
+  projectName?: string | null;
+}> = ({ projectId, projectName }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { group_node } =
+    useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
+      graphql`
+        query FolderExplorerModalV2OwnershipProjectQuery($projectId: String!) {
+          group_node(id: $projectId) @since(version: "24.03.0") {
+            id
+            type
+          }
+        }
+      `,
+      { projectId: toGlobalId('GroupNode', projectId) },
+    );
+
+  // The header never offers a personal project, so a folder in one is not
+  // "in another project" — the mismatch is structural, not a user choice.
+  if (group_node?.type === 'PERSONAL') {
+    return null;
+  }
+  return (
+    <Banner
+      title={
+        projectName
+          ? t('data.NotInProject', { projectName })
+          : t('data.BelongsToDifferentProject')
+      }
+      status="info"
+    />
+  );
+};
+
 const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   vfolderID,
   onRequestClose,
@@ -164,8 +206,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
   const infoPanel = useResizable({
     defaultSize: '45%',
-    minSizePx: 550,
-    maxSizePx:
+    minSize: 550,
+    maxSize:
       splitRowWidth > 0
         ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
         : undefined,
@@ -177,7 +219,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // axis here.
   const stackedInfoPanel = useResizable({
     defaultSize: STACKED_INFO_PANEL_DEFAULT_HEIGHT,
-    minSizePx: STACKED_INFO_PANEL_MIN_HEIGHT,
+    minSize: STACKED_INFO_PANEL_MIN_HEIGHT,
   });
 
   const deferredOpen = useDeferredValue(modalProps.open);
@@ -201,7 +243,11 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           # backend adds it (FR-2619 follow-up).
           legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
             id
+            name
+            host
+            unmanaged_path
             permissions
+            ...FolderExplorerHeaderFragment
           }
           vfolderNode: vfolderV2(vfolderId: $vfolderId) {
             unmanagedPath
@@ -233,6 +279,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
       },
     );
+
+  // FR-3997: any one of `VFolder`'s eight non-nullable fields coming back null
+  // nulls the whole node, so the legacy node decides readability instead.
+  const isFolderReadable = !!vfolderNode || !!legacyVFolderNode;
+  const folderName = vfolderNode?.metadata?.name ?? legacyVFolderNode?.name;
+  const folderHost = vfolderNode?.host ?? legacyVFolderNode?.host ?? '';
+  const folderUnmanagedPath =
+    vfolderNode?.unmanagedPath ?? legacyVFolderNode?.unmanaged_path;
 
   // Permission calculation follows the folder's own ownership project when
   // the folder is project-owned (what the user can do must not depend on the
@@ -277,13 +331,22 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   };
 
   const loadAuditLog = () => {
-    if (!vfolderNode?.id) {
+    if (!isFolderReadable) {
       return;
     }
     loadAuditLogQuery(
       {
         scope: {
-          entity: [{ entityType: 'VFOLDER', entityId: vfolderUuid }],
+          entity: [
+            {
+              // 26.9.0 names the entity by the manager's own `EntityType`;
+              // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
+              entityType: baiClient.supports('audit-log-entity-type-name')
+                ? 'vfolder'
+                : 'VFOLDER',
+              entityId: vfolderUuid,
+            },
+          ],
         },
         orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
         limit: baiPaginationOption.limit,
@@ -294,8 +357,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   };
 
   const { uploadStatus, uploadFiles } = useFileUploadManager(
-    vfolderNode?.id,
-    vfolderNode?.metadata?.name || undefined,
+    vfolderNode?.id ?? legacyVFolderNode?.id,
+    folderName || undefined,
   );
   // Polling to update fetchKey when there are pending uploads
   useInterval(
@@ -312,14 +375,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   }, [uploadStatus, updateFetchKey]);
 
   const hasDownloadContentPermission = _.includes(
-    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    unitedAllowedPermissionByVolume[folderHost],
     'download-file',
   );
   // `upload-file` on the storage host gates the actual upload pipeline:
   // upload buttons (file/folder), drag-drop, and the in-app text editor save
   // (which overwrites the file via the upload API).
   const hasUploadHostPermission = _.includes(
-    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
   // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
@@ -339,16 +402,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
-  const fileExplorerElement = vfolderNode?.unmanagedPath ? (
+  const fileExplorerElement = folderUnmanagedPath ? (
     <Banner
       status="info"
       title={t('explorer.NoExplorerSupportForUnmanagedFolder')}
     />
-  ) : !hasNoPermissions && vfolderNode ? (
+  ) : !hasNoPermissions && isFolderReadable ? (
     <BAIFileExplorer
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
-      targetVFolderName={vfolderNode?.metadata?.name ?? 'folder'}
+      targetVFolderName={folderName ?? 'folder'}
       deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {
@@ -374,7 +437,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 onClick={() => {
                   closeNotification(`delete:${bgTaskId}`);
                 }}
-              >{`${vfolderNode.metadata?.name}`}</BAILink>
+              >
+                {folderName}
+              </BAILink>
             </span>
           ),
           backgroundTask: {
@@ -428,7 +493,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     paddingBlockEnd: 'var(--spacing-3)',
   };
 
-  const vFolderInfoPanelElement = vfolderNode ? (
+  const vFolderInfoPanelElement = isFolderReadable ? (
     <BAITabs
       // Restored (QA2-A): the legacy `type={xl ? 'card' : 'line'}` split. The
       // wide layout puts this panel beside the file list, where the boxed tabs
@@ -448,7 +513,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           label: t('explorer.Metadata'),
           children: (
             <div style={infoPanelPanelStyle}>
-              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+              {vfolderNode ? (
+                <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+              ) : (
+                <Banner
+                  title={t('explorer.FolderDetailUnavailable')}
+                  status="warning"
+                />
+              )}
             </div>
           ),
         },
@@ -510,6 +582,10 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 : undefined
             }
           />
+        ) : legacyVFolderNode ? (
+          // FR-3997 fallback: the V1 header draws the same identicon, title,
+          // rename and session buttons from the legacy node's own fragments.
+          <FolderExplorerHeader vfolderNodeFrgmt={legacyVFolderNode} />
         ) : (
           <span />
         )
@@ -551,7 +627,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
               ['--container-padding-block-end' as string]: '0px',
             }}
           >
-            {vfolderNode === null ? (
+            {!isFolderReadable ? (
               <Banner
                 title={t('explorer.FolderNotFoundOrNoAccess')}
                 status="error"
@@ -561,20 +637,17 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
             ) : pageProject !== null &&
               pageProject.id !== vfolderNode?.ownership?.projectId &&
               !!vfolderNode?.ownership?.projectId ? (
-              <Banner
-                title={
-                  vfolderNode.ownership?.project?.basicInfo?.name
-                    ? t('data.NotInProject', {
-                        projectName:
-                          vfolderNode.ownership.project.basicInfo.name,
-                      })
-                    : t('data.BelongsToDifferentProject')
-                }
-                status="info"
-              />
+              <ErrorBoundaryWithNullFallback>
+                <Suspense fallback={null}>
+                  <OwnershipProjectBanner
+                    projectId={vfolderNode.ownership.projectId}
+                    projectName={vfolderNode.ownership.project?.basicInfo?.name}
+                  />
+                </Suspense>
+              </ErrorBoundaryWithNullFallback>
             ) : null}
 
-            {vfolderNode && !hasNoPermissions ? (
+            {isFolderReadable && !hasNoPermissions ? (
               xl ? (
                 // antd `Splitter` owned containment — panel sizes always summed
                 // to the container and each panel clipped. `useResizable` only

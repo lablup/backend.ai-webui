@@ -12,7 +12,8 @@
      floor, so at the floor a 180px-minimum date input plus a long operator
      label squeeze the field selector to a few characters and push the value
      editor out of the clipped popover (FR-3931). Wrap on content instead. */
-  .bai-power-search-editor .astryx-stack.horizontal {
+  .bai-power-search-editor
+    .astryx-stack:is(.horizontal, [data-direction='horizontal']) {
     flex-wrap: wrap;
   }
 
@@ -28,5 +29,13 @@
      disables its `text-overflow: ellipsis`; a block label truncates. */
   .bai-power-search .astryx-token > button > span:not(.astryx-icon) {
     display: block;
+  }
+
+  /* `TOKEN_OUTLINED` (FR-4002) clears the default Token's fill and rings it,
+     which is the "settled value" look; a filter chip keeps its filled look.
+     `inherit` restores the theme's `--color-neutral` the rule re-pointed. */
+  .bai-power-search .astryx-token.default {
+    --color-neutral: inherit;
+    box-shadow: none;
   }
 }

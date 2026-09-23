@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Kenar çubuğunu genişlet",
   "@astryx.sideNavItem.collapse": "{label} öğesini daralt",
   "@astryx.sideNavItem.expand": "{label} öğesini genişlet",
+  "@astryx.spinner.loading": "Yükleniyor",
   "@astryx.step.goToStep": "{stepNumber, number}. adıma git: {label}",
   "@astryx.step.goToStepWithStatus": "{stepNumber, number}. adıma git: {label}, {status}",
   "@astryx.step.status.completed": "tamamlandı",

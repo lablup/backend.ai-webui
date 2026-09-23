@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "サイドバーを展開",
   "@astryx.sideNavItem.collapse": "{label} を折りたたむ",
   "@astryx.sideNavItem.expand": "{label} を展開",
+  "@astryx.spinner.loading": "読み込み中",
   "@astryx.step.goToStep": "ステップ {stepNumber, number} へ移動: {label}",
   "@astryx.step.goToStepWithStatus": "ステップ {stepNumber, number} へ移動: {label}、{status}",
   "@astryx.step.status.completed": "完了",

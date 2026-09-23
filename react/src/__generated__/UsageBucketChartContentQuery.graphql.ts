@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<22818a99b7ea3d62beff4881b2183184>>
+ * @generated SignedSource<<30d6a926482fea491eae786f8d0f86ce>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -73,9 +73,11 @@ export type ProjectV2Filter = {
   NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  description?: StringFilter | null | undefined;
   domain?: ProjectDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  integrationName?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   name?: StringFilter | null | undefined;
@@ -108,10 +110,13 @@ export type UserV2Filter = {
   createdAt?: DateTimeFilter | null | undefined;
   description?: StringFilter | null | undefined;
   domain?: UserDomainNestedFilter | null | undefined;
+  domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
+  keypairs?: UserKeypairNestedFilter | null | undefined;
+  modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
   resourcePolicy?: StringFilter | null | undefined;
@@ -120,6 +125,7 @@ export type UserV2Filter = {
   statusInfo?: StringFilter | null | undefined;
   sudoSessionEnabled?: boolean | null | undefined;
   totpActivated?: boolean | null | undefined;
+  totpActivatedAt?: NullableDateTimeFilter | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
 };
@@ -147,6 +153,32 @@ export type IntArrayFilter = {
   contains?: number | null | undefined;
   containsAll?: ReadonlyArray<number> | null | undefined;
   containsAny?: ReadonlyArray<number> | null | undefined;
+};
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type UserKeypairNestedFilter = {
+  every?: KeypairFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: KeypairFilter | null | undefined;
+  some?: KeypairFilter | null | undefined;
+};
+export type KeypairFilter = {
+  AND?: ReadonlyArray<KeypairFilter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairFilter> | null | undefined;
+  OR?: ReadonlyArray<KeypairFilter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  isActive?: boolean | null | undefined;
+  isAdmin?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
+  userId?: UUIDFilter | null | undefined;
 };
 export type UserDomainNestedFilter = {
   isActive?: boolean | null | undefined;

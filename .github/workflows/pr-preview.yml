@@ -264,11 +264,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    concurrency:
-      # gh-pages takes one push at a time across every PR; the retry loop below
-      # then only has to cope with the cleanup job, not with sibling previews.
-      group: pr-preview-gh-pages
-      cancel-in-progress: false
+    # No shared concurrency group here: GitHub keeps one pending job per group
+    # and cancels the older one, so a burst of PRs lost previews (FR-4020). The
+    # push retry below is what serializes gh-pages.
     steps:
       - name: Check out the maintenance scripts
         uses: actions/checkout@v7
@@ -328,12 +326,14 @@ jobs:
           KINDS: ${{ steps.verify.outputs.kinds }}
         run: |
           # A manual push with retry-on-conflict rather than a Pages action, so a
-          # concurrent cleanup just retries instead of failing the run.
+          # concurrent cleanup or sibling preview just retries instead of failing
+          # the run. Attempts and jitter are sized for the nightly docs bot, which
+          # opens a dozen PRs within two minutes.
           set -euo pipefail
           REPO_URL="https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
           WORK_DIR="$PWD"
           PAGES_DIR="${RUNNER_TEMP}/gh-pages"
-          MAX_ATTEMPTS=5
+          MAX_ATTEMPTS=12
 
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -382,9 +382,10 @@ jobs:
               exit 0
             fi
 
-            echo "Push failed (likely a concurrent update); retrying in $((attempt * 2))s."
+            delay=$((attempt + RANDOM % 5))
+            echo "Push failed (likely a concurrent update); retrying in ${delay}s."
             echo "::endgroup::"
-            sleep $((attempt * 2))
+            sleep "$delay"
           done
 
           echo "::error::Failed to deploy the PR preview after ${MAX_ATTEMPTS} attempts."

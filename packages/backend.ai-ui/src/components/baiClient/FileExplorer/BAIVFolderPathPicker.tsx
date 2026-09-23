@@ -10,7 +10,11 @@ import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
-import { ComplexSelector } from '@astryxdesign/core/ComplexSelector';
+import {
+  ComplexSelector,
+  type ComplexSelectorSize,
+} from '@astryxdesign/core/ComplexSelector';
+import type { SizeValue } from '@astryxdesign/core/utils';
 import {
   useEffectEvent,
   useLayoutEffect,
@@ -33,8 +37,17 @@ export interface BAIVFolderPathPickerProps {
    */
   value?: string;
   defaultValue?: string;
+  /** Emits `undefined` when the value is cleared (nothing picked). */
   onChange?: (selectedSubPath?: string) => void;
+  /** Shows a clear button while a non-root path is picked. */
+  allowClear?: boolean;
+  /** Overrides the "click to select" copy shown while nothing is picked. */
+  placeholder?: string;
   disabled?: boolean;
+  /** Control height, in the Astryx size vocabulary. */
+  size?: ComplexSelectorSize;
+  /** Field width, forwarded to ComplexSelector. */
+  width?: SizeValue;
   style?: React.CSSProperties;
   /**
    * Accessible name of the trigger; visually hidden (the surrounding
@@ -80,7 +93,16 @@ const PopoverToModalRedirect: React.FC<{
 const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
   'use memo';
 
-  const { vfolderUuid, disabled, style, label } = props;
+  const {
+    vfolderUuid,
+    disabled,
+    size,
+    width = '100%',
+    style,
+    label,
+    allowClear,
+    placeholder,
+  } = props;
   const { t } = useBAIi18n();
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
     string | undefined
@@ -123,18 +145,21 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
         isLabelHidden
         value={selectedSubPath}
         isLoading={isPickerPending}
-        // Leading '/' distinguishes "vfolder root picked" ('' → '/') from
-        // "nothing picked yet" (undefined → placeholder).
-        triggerLabel={
-          selectedSubPath === undefined ? undefined : `/${selectedSubPath}`
-        }
+        // A subpath is relative, so it shows without a leading '/'; the root
+        // ('') mounts the same as nothing picked and shows empty too.
+        triggerLabel={selectedSubPath || undefined}
         placeholder={
-          vfolderUuid
-            ? t('comp:VFolderPathPicker.ClickToSelectPath')
-            : t('comp:VFolderPathPicker.SelectFolderFirst')
+          !vfolderUuid
+            ? t('comp:VFolderPathPicker.SelectFolderFirst')
+            : (placeholder ?? t('comp:VFolderPathPicker.ClickToSelectPath'))
         }
         isDisabled={disabled}
-        width={style?.width}
+        // `hasClear` / `onClear`: react/patches/@astryxdesign__core@0.6.2.patch
+        // (upstream: https://github.com/facebook/astryx/pull/6362)
+        hasClear={allowClear}
+        onClear={() => setSelectedSubPath(undefined)}
+        size={size}
+        width={width}
         style={style}
       >
         {(_value, _onChange, close, { isOpen }) => (

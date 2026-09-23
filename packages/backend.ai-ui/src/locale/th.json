@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "เลือกการตั้งค่าล่วงหน้า"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "และอีก {{rest}} รายการ"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "DeleteItem": "ลบ",
     "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
+    "TypeToConfirm": "พิมพ์ <token>{{confirmText}}</token> เพื่อยืนยัน"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "ลดลง",
     "Deploying": "กำลังปรับใช้",
     "Healthy": "ปกติ",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "และอีก {{rest}} รายการ"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",
     "MaxConcurrentLogins": "จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
     "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasOverlappingWithAutoMount": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์ที่ mount อัตโนมัติ",
     "AliasPlaceholder": "พาธ mount",
     "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
-    "Name": "ชื่อ",
-    "PathAndAlias": "พาธ & Alias",
+    "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
+    "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
+    "Folders": "โฟลเดอร์",
+    "OwnerProject": "โปรเจกต์",
+    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",
+    "SelectFolder": "เลือกโฟลเดอร์",
+    "SourcePath": "พาธในโฟลเดอร์ (source)",
     "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
-    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
-    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย หากเว้นว่างไว้จะ mount root ของโฟลเดอร์",
+    "UnmountableFoldersRemoved": "โฟลเดอร์ที่คุณไม่สามารถเมานต์ได้อีกต่อไปถูกนำออกจากรายการที่เลือกแล้ว"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
     "Download": "ดาวน์โหลด",
+    "DownloadPopupBlocked": "เบราว์เซอร์บล็อกหน้าต่างดาวน์โหลด โปรดอนุญาตป๊อปอัปสำหรับเว็บไซต์นี้แล้วลองอีกครั้ง",
+    "DownloadRejected": "storage proxy ปฏิเสธการดาวน์โหลด (HTTP {{status}}) การดาวน์โหลดไม่ได้เริ่มต้น",
     "DownloadSelected": "ดาวน์โหลด",
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "DownloadUnreachable": "ไม่สามารถเชื่อมต่อ storage proxy ที่ {{origin}} ได้ การดาวน์โหลดไม่ได้เริ่มต้น",
     "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
     "DuplicatedFiles": "การยืนยันการเขียนทับ",
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",

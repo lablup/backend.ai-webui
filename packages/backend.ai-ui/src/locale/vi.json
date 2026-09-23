@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Chọn cài đặt sẵn"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "và {{rest}} mục khác"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Hành động này không thể hoàn tác.",
     "DeleteItem": "Xóa",
     "DeleteNItems": "Xóa {{count}} mục",
-    "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
+    "TypeToConfirm": "Nhập <token>{{confirmText}}</token> để xác nhận."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Được tạo bởi"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Chọn triển khai"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Bị suy giảm",
     "Deploying": "Đang triển khai",
     "Healthy": "Bình thường",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "kiểm tra"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "và {{rest}} mục khác"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Được tạo tại",
     "MaxConcurrentLogins": "Số lần đăng nhập đồng thời tối đa",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Định dạng đường dẫn không hợp lệ.",
     "AliasOverlapping": "Đường dẫn mount trùng lặp với thư mục khác.",
+    "AliasOverlappingWithAutoMount": "Đường dẫn mount trùng lặp với thư mục tự động mount.",
     "AliasPlaceholder": "Đường dẫn mount",
     "AutoMountedFolders": "Thư mục tự động mount",
-    "Name": "Tên",
-    "PathAndAlias": "Đường dẫn & Bí danh",
+    "CreateFolder": "Tạo một thư mục lưu trữ mới",
+    "DestinationPath": "Đường dẫn container (destination)",
+    "Folders": "Thư mục",
+    "OwnerProject": "Dự án",
+    "OwnerUser": "Người dùng",
     "PathAndAliasTooltip": "Đường dẫn bên trong container nơi thư mục sẽ được mount. Để trống để sử dụng đường dẫn mặc định.",
+    "Refresh": "Làm tươi",
     "RemoveFolder": "Xóa",
+    "SelectFolder": "Chọn thư mục",
+    "SourcePath": "Đường dẫn trong thư mục (source)",
     "Subpath": "Đường dẫn con",
     "SubpathInvalid": "Đường dẫn con phải là đường dẫn tương đối và không được chứa '..'.",
-    "SubpathPlaceholder": "vd. dataset/train (tùy chọn)",
-    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Để trống để mount từ thư mục gốc."
+    "SubpathTooltip": "Mount một thư mục con bên trong thư mục làm nguồn thay vì thư mục gốc. Nhấp vào trường này để duyệt thư mục và chọn một thư mục con; để trống để mount thư mục gốc.",
+    "UnmountableFoldersRemoved": "Các thư mục bạn không còn gắn kết được đã bị loại khỏi lựa chọn."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Chọn thư mục"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
     "Download": "Tải xuống",
+    "DownloadPopupBlocked": "Trình duyệt đã chặn cửa sổ tải xuống. Hãy cho phép cửa sổ bật lên cho trang này rồi thử lại.",
+    "DownloadRejected": "Storage proxy đã từ chối yêu cầu tải xuống (HTTP {{status}}). Quá trình tải xuống chưa bắt đầu.",
     "DownloadSelected": "Tải xuống",
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
+    "DownloadUnreachable": "Không thể kết nối tới storage proxy tại {{origin}}. Quá trình tải xuống chưa bắt đầu.",
     "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
     "DuplicatedFiles": "Ghi đè xác nhận",
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",

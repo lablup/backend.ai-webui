@@ -77,6 +77,34 @@ describe('BAIOverlayScrollbar', () => {
     expect(target).not.toHaveAttribute('data-bai-custom-scrollbar');
   });
 
+  it('keeps the thumb inside the track when a fractional scrollTop overshoots the integer scroll range', async () => {
+    const Component = await loadComponent(false);
+    const frames: FrameRequestCallback[] = [];
+    const raf = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((cb) => frames.push(cb));
+    const { container, targetRef } = renderWithTarget(Component);
+    const target = targetRef.current!;
+    // jsdom has no layout: fake a 900px viewport over 1727px of content,
+    // scrolled 0.5px past the integer range (scrollHeight - clientHeight).
+    Object.defineProperties(target, {
+      clientHeight: { configurable: true, value: 900 },
+      scrollHeight: { configurable: true, value: 1727 },
+      scrollTop: { configurable: true, value: 827.5, writable: true },
+    });
+    target.dispatchEvent(new Event('scroll'));
+    frames.splice(0).forEach((cb) => cb(0));
+
+    const thumb = container.querySelector<HTMLElement>(
+      '.bai-overlay-scrollbar-thumb',
+    )!;
+    const thumbHeight = (900 / 1727) * 900;
+    const maxTop = 900 - thumbHeight;
+    expect(thumb.style.height).toBe(`${thumbHeight}px`);
+    expect(thumb.style.transform).toBe(`translateY(${maxTop}px)`);
+    raf.mockRestore();
+  });
+
   it('renders nothing and leaves the native indicator alone on touch-primary platforms', async () => {
     const Component = await loadComponent(true);
     const { container, targetRef } = renderWithTarget(Component);

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<29634ae30b5642bbe761f4dc5a6a6ff6>>
+ * @generated SignedSource<<1bd7bc9309b49b881d5b18c7f3afe678>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -287,12 +287,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8770594107fabf03fdec1a71bd39f28e",
+    "cacheID": "eb50fa7bda4ed7e2180d5b0e1002389a",
     "id": null,
     "metadata": {},
     "name": "BAIImportArtifactModalStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIImportArtifactModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n}\n\nfragment BAIArtifactTypeTagFragment on Artifact {\n  type\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
+    "text": "query BAIImportArtifactModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIImportArtifactModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIImportArtifactModalArtifactFragment on Artifact {\n  id\n  name\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIImportArtifactModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
   }
 };
 })();

@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "Kembangkan bar sisi",
   "@astryx.sideNavItem.collapse": "Kuncupkan {label}",
   "@astryx.sideNavItem.expand": "Kembangkan {label}",
+  "@astryx.spinner.loading": "Memuatkan",
   "@astryx.step.goToStep": "Ke langkah {stepNumber, number}: {label}",
   "@astryx.step.goToStepWithStatus": "Ke langkah {stepNumber, number}: {label}, {status}",
   "@astryx.step.status.completed": "selesai",

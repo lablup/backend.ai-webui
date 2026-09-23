@@ -13,7 +13,7 @@ import { theme } from '../theme-shim';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
-import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import {
   BAIFlex,
   BAILink,
@@ -52,7 +52,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
         status_info
         status_data
         ...SessionActionButtonsFragment
-        ...SessionStatusTagFragment
+        ...SessionStatusBadgeFragment
       }
     `,
     sessionFrgmt,
@@ -108,7 +108,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
           description={
             <BAIFlex direction="column" gap="xs" style={{ width: '100%' }}>
               <BAIFlex justify="between" style={{ width: '100%' }}>
-                <SessionStatusTag
+                <SessionStatusBadge
                   sessionFrgmt={node || null}
                   showQueuePosition={false}
                   showTooltip={false}
@@ -163,11 +163,41 @@ const SessionStatusRefresherUsingSubscription: React.FC<{
       ) {
         schedulingEventsBySession(sessionId: $session_id) {
           reason
+          # Only the fields a scheduling event changes: Relay patches them onto the
+          # normalized session record, so every component reading them re-renders.
           session {
             status
-            ...BAIComputeSessionNodeNotificationItemFragment
-            ...SessionNodesFragment
-            ...SessionDetailContentFragment
+            status_info
+            status_data
+            result
+            service_ports
+            commit_status
+            agent_ids
+            occupied_slots
+            created_at
+            starts_at
+            terminated_at
+            queue_position
+            idle_checks
+            kernel_nodes {
+              edges {
+                node {
+                  status
+                  status_info
+                  agent_id
+                  container_id
+                  # An event can be the first time the store sees a kernel, so
+                  # carry what the list and detail rows render it by.
+                  row_id
+                  cluster_role
+                  cluster_idx
+                  cluster_hostname
+                  image {
+                    ...BAIImageNodeSimpleTagFragment
+                  }
+                }
+              }
+            }
           }
         }
       }

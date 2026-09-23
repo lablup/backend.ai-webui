@@ -429,3 +429,105 @@ describe('walkthrough stops resolve strictly (FR-3949)', () => {
     expect(findAnchorTarget(loose)).toBeNull();
   });
 });
+
+/**
+ * Pages render the same thing twice. github.com emits every file-name link in
+ * a screen-reader cell first, `display: none`, and again in the cell a reader
+ * sees — and the scan, walking document order, took the first one. The pin
+ * then drew a zero-size box in the page's top-left corner, which is not even
+ * the "scrolled below" state the real element deserved.
+ */
+describe('a hidden look-alike never beats a rendered one', () => {
+  /** jsdom reports nothing for every element; give these ones a box. */
+  const render = (...elements: Element[]) => {
+    for (const element of elements) {
+      const rect = { left: 0, top: 0, width: 120, height: 20 } as DOMRect;
+      element.getClientRects = () => [rect] as unknown as DOMRectList;
+      element.getBoundingClientRect = () => rect;
+    }
+  };
+
+  /**
+   * …and jsdom lays nothing out at all, which the client reads as "no layout
+   * engine", not "everything is hidden". Refusing an element with no box is
+   * conditional on that: a test about hidden elements says the document lays
+   * out, and one about jsdom itself does not.
+   */
+  const laidOut = () => render(document.documentElement);
+
+  afterEach(() => {
+    delete (document.documentElement as Partial<HTMLElement>).getClientRects;
+    delete (document.documentElement as Partial<HTMLElement>)
+      .getBoundingClientRect;
+  });
+
+  const twice = `
+    <div class="sr"><a href="/f">.cspell.json</a></div>
+    <div class="wide"><a href="/f">.cspell.json</a></div>
+  `;
+  const copies = () => document.querySelectorAll('a');
+  const file = (over: Partial<AnchorV3> = {}) =>
+    anchor({ s: '.wide a', tag: 'a', txt: '.cspell.json', ...over });
+
+  it('is skipped by the text scan that would have taken it first', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    // The selector has gone stale, so the scan is the only rung left.
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[1]);
+  });
+
+  it('loses the selector rung too, in both ladders', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    const both = file({ s: 'a[href="/f"]' });
+    expect(quickFindTarget(both)).toBe(copies()[1]);
+    expect(findAnchorTarget(both)).toBe(copies()[1]);
+  });
+
+  it('does not disqualify a landmark it duplicates', () => {
+    laidOut();
+    mount(`
+      <div class="sr" data-testid="row"><a href="/f">.cspell.json</a></div>
+      <div class="wide" data-testid="row"><a href="/f">.cspell.json</a></div>
+    `);
+    const rows = document.querySelectorAll('[data-testid="row"]');
+    render(rows[1], copies()[1]);
+
+    const framed = file({ s: '#gone', tid: 'row' });
+    expect(findAnchorTarget(framed)).toBe(copies()[1]);
+    expect(quickFindTarget(framed)).toBe(rows[1]);
+  });
+
+  it('loses to a rendered one for a strict stop as well', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    const stop = file({ s: '#gone', ck: 'The file row is visible' });
+    expect(findAnchorTarget(stop)).toBe(copies()[1]);
+  });
+
+  // Waiting is better than drawing somewhere wrong: the marker, the box and
+  // the card of a boxless element all land in the page's top-left corner, and
+  // the retry driver is already waiting for the real one to come back.
+  it('is refused outright when it is the only candidate left', () => {
+    mount(twice);
+    laidOut();
+
+    expect(findAnchorTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+  });
+
+  // The whole preference is conditional on the document laying anything out:
+  // in jsdom nothing has a box, and the old order stands.
+  it('changes nothing in a document with no layout at all', () => {
+    mount(twice);
+
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[0]);
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBe(copies()[0]);
+  });
+});

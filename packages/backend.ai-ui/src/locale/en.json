@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Select Preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "and {{rest}} more"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "This action cannot be undone.",
     "DeleteItem": "Delete",
     "DeleteNItems": "Delete {{count}} items",
-    "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
+    "TypeToConfirm": "Type <token>{{confirmText}}</token> to confirm."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Created by"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degraded",
     "Deploying": "Deploying",
     "Healthy": "Healthy",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "Test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "and {{rest}} more"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Created At",
     "MaxConcurrentLogins": "Max Concurrent Logins",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Invalid path format.",
     "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasOverlappingWithAutoMount": "Mount path overlaps with an auto-mounted folder.",
     "AliasPlaceholder": "Mount path",
     "AutoMountedFolders": "Automount Folders",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
+    "CreateFolder": "Create a new storage folder",
+    "DestinationPath": "Container path (destination)",
+    "Folders": "Folders",
+    "OwnerProject": "Project",
+    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
+    "Refresh": "Refresh",
     "RemoveFolder": "Remove",
+    "SelectFolder": "Select Folder",
+    "SourcePath": "Path in folder (source)",
     "Subpath": "Subpath",
     "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; leave it empty to mount the folder root.",
+    "UnmountableFoldersRemoved": "Folders you can no longer mount were removed from the selection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
     "DeleteSelectedItemsDialog": "Delete Confirmation",
     "Download": "Download",
+    "DownloadPopupBlocked": "The browser blocked the download window. Allow pop-ups for this site and try again.",
+    "DownloadRejected": "The storage proxy refused the download (HTTP {{status}}). The download did not start.",
     "DownloadSelected": "Download",
     "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "DownloadUnreachable": "Could not reach the storage proxy at {{origin}}. The download did not start.",
     "DragAndDropDesc": "Drag and drop files to this area to upload.",
     "DuplicatedFiles": "Overwrite Confirmation",
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",

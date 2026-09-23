@@ -14,7 +14,7 @@ import { getImageFullName, localeCompare } from '../helper';
 import { useBackendAIImageMetaData } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import { theme } from '../theme-shim';
-import AliasedImageDoubleTags from './AliasedImageDoubleTags';
+import AliasedImageTagTokens from './AliasedImageTagTokens';
 import TextHighlighter from './TextHighlighter';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
@@ -84,7 +84,7 @@ const CustomizedImageList: React.FC = () => {
             value
           }
           version @since(version: "24.12.0")
-          ...AliasedImageDoubleTagsFragment
+          ...AliasedImageTagTokensFragment
         }
       }
     `,
@@ -262,7 +262,7 @@ const CustomizedImageList: React.FC = () => {
       key: 'tags',
       dataIndex: 'tags',
       render: (_text: Array<{ key: string; value: string }>, row) => (
-        <AliasedImageDoubleTags
+        <AliasedImageTagTokens
           imageFrgmt={row}
           highlightKeyword={imageSearch}
         />
@@ -381,9 +381,6 @@ const CustomizedImageList: React.FC = () => {
         }
         confirmText={t('credential.PermanentlyDelete')}
         requireConfirmInput
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
         inputProps={{
           placeholder: t('credential.PermanentlyDelete'),
         }}

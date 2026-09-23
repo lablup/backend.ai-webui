@@ -7,7 +7,13 @@ import '../../__test__/resizeObserver.mock.js';
 import FolderExplorerModalV2 from './FolderExplorerModalV2';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import { Suspense } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { MemoryRouter } from 'react-router-dom';
@@ -215,54 +221,101 @@ vi.mock('./VFolderNodeDescriptionV2', async () => {
 
 const VFOLDER_UUID = '11111111-2222-3333-4444-555555555555';
 
+/**
+ * `MockPayloadGenerator` always materializes a node, so a resolver that refuses
+ * the folder is expressed by nulling the root field after generation.
+ */
+const withNullRootFields = (
+  operation: any,
+  payload: any,
+  nullRootFields: Array<string> = [],
+) => {
+  if (
+    nullRootFields.length === 0 ||
+    operation.request.node.params.name !== 'FolderExplorerModalV2Query'
+  ) {
+    return payload;
+  }
+  return {
+    ...payload,
+    data: {
+      ...payload.data,
+      ...Object.fromEntries(nullRootFields.map((field) => [field, null])),
+    },
+  };
+};
+
 const renderModal = ({
   ownershipProjectId,
+  ownershipProjectType,
   legacyPermissions,
   hostPermissions,
+  nullResolvers,
 }: {
   ownershipProjectId: string | null;
+  ownershipProjectType?: 'GENERAL' | 'PERSONAL';
   legacyPermissions?: string[];
   hostPermissions?: string[];
+  /** Root fields the manager resolves to `null` for this folder (FR-3997). */
+  nullResolvers?: Array<'vfolderNode' | 'legacyVFolderNode'>;
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const resolver = (operation: any) =>
-    MockPayloadGenerator.generate(operation, {
-      // The legacy per-user RBAC list the FR-3800 gating reads.
-      VirtualFolderNode: () => ({
-        permissions: legacyPermissions ?? [
-          'read_content',
-          'write_content',
-          'delete_content',
-        ],
-      }),
-      VFolder: () => ({
-        id: btoa(`VFolder:${VFOLDER_UUID}`),
-        host: 'local:volume1',
-        unmanagedPath: null,
-        status: 'ready',
-        metadata: { name: 'test-folder' },
-        ownership: {
-          userId: 'someone-else-uuid',
-          projectId: ownershipProjectId,
-          project: ownershipProjectId
-            ? { basicInfo: { name: 'folder-project-name' } }
-            : null,
-        },
-      }),
-      KeyPair: () => ({ resource_policy: 'default' }),
-      // The storage-host capability axis. `enableUpload` / `enableEdit` are the
-      // AND of this and the folder-level `write_content`, so both sides need a
-      // knob to be gated independently.
-      Domain: () => ({
-        allowed_vfolder_hosts: JSON.stringify({
-          'local:volume1': hostPermissions ?? ['download-file', 'upload-file'],
+    withNullRootFields(
+      operation,
+      MockPayloadGenerator.generate(operation, {
+        // The legacy per-user RBAC list the FR-3800 gating reads.
+        VirtualFolderNode: () => ({
+          id: btoa(`VirtualFolderNode:${VFOLDER_UUID}`),
+          name: 'legacy-folder-name',
+          host: 'local:volume1',
+          unmanaged_path: null,
+          status: 'ready',
+          permissions: legacyPermissions ?? [
+            'read_content',
+            'write_content',
+            'delete_content',
+          ],
         }),
+        VFolder: () => ({
+          id: btoa(`VFolder:${VFOLDER_UUID}`),
+          host: 'local:volume1',
+          unmanagedPath: null,
+          status: 'ready',
+          metadata: { name: 'test-folder' },
+          ownership: {
+            userId: 'someone-else-uuid',
+            projectId: ownershipProjectId,
+            project: ownershipProjectId
+              ? { basicInfo: { name: 'folder-project-name' } }
+              : null,
+          },
+        }),
+        // The owning project's type, read by the ownership banner through the
+        // legacy `group_node` (FR-3983).
+        GroupNode: () => ({
+          id: btoa(`GroupNode:${ownershipProjectId}`),
+          type: ownershipProjectType ?? 'GENERAL',
+        }),
+        KeyPair: () => ({ resource_policy: 'default' }),
+        // The storage-host capability axis. `enableUpload` / `enableEdit` are the
+        // AND of this and the folder-level `write_content`, so both sides need a
+        // knob to be gated independently.
+        Domain: () => ({
+          allowed_vfolder_hosts: JSON.stringify({
+            'local:volume1': hostPermissions ?? [
+              'download-file',
+              'upload-file',
+            ],
+          }),
+        }),
+        Group: () => ({ allowed_vfolder_hosts: '{}' }),
+        KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
       }),
-      Group: () => ({ allowed_vfolder_hosts: '{}' }),
-      KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
-    });
+      nullResolvers ?? [],
+    );
   const seenOperations: Array<{ name: string; variables: any }> = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 16; i++) {
     environment.mock.queueOperationResolver((operation: any) => {
       seenOperations.push({
         name: operation.request.node.params.name,
@@ -303,6 +356,13 @@ const findPermissionOperation = (
       'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
   );
 
+const findOwnershipProjectOperation = (
+  seenOperations: Array<{ name: string; variables: any }>,
+) =>
+  seenOperations.find(
+    (op) => op.name === 'FolderExplorerModalV2OwnershipProjectQuery',
+  );
+
 describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
     mockIsProjectAgnosticPage = false;
@@ -340,6 +400,8 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     expect(
       screen.queryByText('data.BelongsToDifferentProject'),
     ).not.toBeInTheDocument();
+    // ...and the project-type lookup behind it is not issued either.
+    expect(findOwnershipProjectOperation(seenOperations)).toBeUndefined();
 
     // Permission calculation follows the folder's OWN project — never the
     // ambient decoy.
@@ -374,6 +436,30 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
     // acceptance criterion) instead of the header selection.
     const permissionOperation = findPermissionOperation(seenOperations);
     expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
+
+    // The banner decided after looking the owning project up by its id.
+    expect(
+      findOwnershipProjectOperation(seenOperations)?.variables.projectId,
+    ).toBe(btoa('GroupNode:folder-project-id'));
+  });
+
+  it('on a general route with a folder in a PERSONAL project: hides the ownership-mismatch alert (FR-3983)', async () => {
+    const { seenOperations } = renderModal({
+      ownershipProjectId: 'folder-project-id',
+      ownershipProjectType: 'PERSONAL',
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+    // The lookup ran and answered PERSONAL...
+    await waitFor(() =>
+      expect(findOwnershipProjectOperation(seenOperations)).toBeDefined(),
+    );
+
+    // ...so neither wording of the cross-project banner is rendered.
+    expect(screen.queryByText('data.NotInProject')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('data.BelongsToDifferentProject'),
+    ).not.toBeInTheDocument();
   });
 });
 
@@ -497,5 +583,68 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
       expect(props.enableUpload).toBe(true);
       expect(props.enableWrite).toBe(true);
     });
+  });
+});
+
+describe('FolderExplorerModalV2 v2-resolver fallback (FR-3997)', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+    fileExplorerProps.length = 0;
+  });
+
+  it('opens the explorer on the legacy node when vfolderV2 refuses the folder, warning instead of dead-ending', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      nullResolvers: ['vfolderNode'],
+    });
+
+    expect(await screen.findByTestId('mock-file-explorer')).toBeInTheDocument();
+    expect(
+      screen.getByText('explorer.FolderDetailUnavailable'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderNotFoundOrNoAccess'),
+    ).not.toBeInTheDocument();
+    // The legacy node carries the identity the explorer needs.
+    expect(fileExplorerProps.at(-1)?.targetVFolderName).toBe(
+      'legacy-folder-name',
+    );
+    // The header keeps its shape on the legacy node — identicon and level-3
+    // heading — instead of collapsing to a plain-text name (FR-4042).
+    const title = screen.getByTestId('folder-explorer-title');
+    expect(
+      within(title).getByRole('heading', {
+        level: 3,
+        name: 'legacy-folder-name',
+      }),
+    ).toBeInTheDocument();
+    expect(title.querySelector('img.bai-vfolder-identicon')).not.toBeNull();
+    expect(screen.getByTestId('folder-explorer-actions')).toBeInTheDocument();
+    // The warning replaces the metadata content, not the whole modal: the info
+    // panel keeps its tabs, and the audit log runs off its own query.
+    expect(
+      screen.queryByTestId('mock-vfolder-description'),
+    ).not.toBeInTheDocument();
+    // Astryx's TabList renders each label twice (one copy is the hidden
+    // width-measuring span), so count rather than expect a single node.
+    expect(screen.getAllByText('explorer.Metadata').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('auditLog.AuditLog').length).toBeGreaterThan(0);
+  });
+
+  it('keeps the hard error when both resolvers refuse the folder', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      nullResolvers: ['vfolderNode', 'legacyVFolderNode'],
+    });
+
+    expect(
+      await screen.findByText('explorer.FolderNotFoundOrNoAccess'),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderDetailUnavailable'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('explorer.Metadata')).not.toBeInTheDocument();
   });
 });

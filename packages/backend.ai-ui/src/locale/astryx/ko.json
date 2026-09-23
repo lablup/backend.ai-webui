@@ -198,6 +198,7 @@
   "@astryx.sideNavCollapseButton.expandSidebar": "사이드바 펼치기",
   "@astryx.sideNavItem.collapse": "{label} 접기",
   "@astryx.sideNavItem.expand": "{label} 펼치기",
+  "@astryx.spinner.loading": "로딩 중",
   "@astryx.step.goToStep": "{stepNumber, number}단계로 이동: {label}",
   "@astryx.step.goToStepWithStatus": "{stepNumber, number}단계로 이동: {label}, {status}",
   "@astryx.step.status.completed": "완료됨",

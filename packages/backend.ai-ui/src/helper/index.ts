@@ -466,7 +466,7 @@ export const safeDecodeUuid = (idOrGlobalId: string): string | undefined => {
 };
 
 export const convertToUUID = (id: string): string => {
-  if (isValidUUID(id) && /^[0-9a-fA-F]{36}$/.test(id)) {
+  if (isValidUUID(id)) {
     return id;
   }
   return id.replace(
@@ -492,36 +492,113 @@ export const useSemanticColorMap = (): Record<SemanticColor, string> => {
   };
 };
 
+export type DownloadFailureReason =
+  'unreachable' | 'rejected' | 'popup-blocked';
+
+/**
+ * Thrown when a download never reached the browser's download manager.
+ *
+ * Handing a URL to `<a download>` (or `window.open`) tells the caller nothing
+ * about what the browser did with it, so without this the UI reports success
+ * for a file that never arrives — FR-3927.
+ */
+export class DownloadFailedError extends Error {
+  readonly reason: DownloadFailureReason;
+  readonly origin: string;
+  readonly status?: number;
+  readonly originalError?: unknown;
+
+  constructor(
+    downloadURL: string,
+    reason: DownloadFailureReason,
+    {
+      status,
+      originalError,
+    }: { status?: number; originalError?: unknown } = {},
+  ) {
+    super(`Download failed (${reason}${status ? ` ${status}` : ''})`);
+    this.name = 'DownloadFailedError';
+    this.reason = reason;
+    this.origin = originOf(downloadURL);
+    this.status = status;
+    this.originalError = originalError;
+  }
+}
+
+const originOf = (url: string): string => {
+  try {
+    return new URL(url, globalThis.location?.href).origin;
+  } catch {
+    return url;
+  }
+};
+
+// A proxy that never answers (a firewalled or wrong port) would otherwise hold
+// the button's pending state for the browser's own connect timeout.
+export const DOWNLOAD_PROBE_TIMEOUT_MS = 15_000;
+
+/**
+ * Ask the storage proxy for the download before the browser is told to save
+ * it, so an unreachable proxy, a blocked insecure download or a refused token
+ * surfaces as an error instead of a silent no-op.
+ *
+ * The storage proxy has allowed cross-origin GETs on `/download` and
+ * `/download-archive` since 22.03.0, and its download token is a stateless JWT
+ * valid until `exp` — so this costs one extra request whose body is dropped as
+ * soon as the status line arrives, and the token still works for the real
+ * transfer. It does not support `HEAD` (405).
+ */
+const verifyDownloadURL = async (downloadURL: string): Promise<void> => {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), DOWNLOAD_PROBE_TIMEOUT_MS);
+  let response: Response;
+  try {
+    response = await fetch(downloadURL, { signal: controller.signal });
+  } catch (error) {
+    throw new DownloadFailedError(downloadURL, 'unreachable', {
+      originalError: error,
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+  // Only the status line was wanted; cancelling ends the probe transfer rather
+  // than streaming the whole file a second time.
+  void response.body?.cancel().catch(() => {});
+  if (!response.ok) {
+    throw new DownloadFailedError(downloadURL, 'rejected', {
+      status: response.status,
+    });
+  }
+};
+
 /**
  * Initiate a file download from a URL with a custom filename.
  * Handles iOS Safari separately by opening a new window.
+ *
+ * Rejects with a {@link DownloadFailedError} when the download did not start.
  */
 export const initiateDownload = async (
   downloadURL: string,
   fileName: string,
 ): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    try {
-      // @ts-ignore - iOS Safari
-      if (globalThis.iOSSafari) {
-        const newWindow = window.open(downloadURL, '_blank');
-        newWindow && resolve();
-      } else {
-        const downloadLink = document.createElement('a');
-        downloadLink.style.display = 'none';
-        downloadLink.href = downloadURL;
-        downloadLink.download = fileName;
-        downloadLink.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+  await verifyDownloadURL(downloadURL);
 
-        resolve();
-      }
-    } catch (error) {
-      reject(error);
+  // @ts-ignore - iOS Safari (set by manifest/app.js)
+  if (globalThis.iOSSafari) {
+    if (!window.open(downloadURL, '_blank')) {
+      throw new DownloadFailedError(downloadURL, 'popup-blocked');
     }
+    return;
+  }
+
+  const downloadLink = document.createElement('a');
+  downloadLink.style.display = 'none';
+  downloadLink.href = downloadURL;
+  downloadLink.download = fileName;
+  downloadLink.addEventListener('click', (e) => {
+    e.stopPropagation();
   });
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
 };

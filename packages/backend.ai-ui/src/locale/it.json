@@ -84,9 +84,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Seleziona preset"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "e altri {{rest}}"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Si è verificato un errore imprevisto. Riprova più tardi o contatta l'assistenza se il problema persiste."
   },
@@ -136,7 +133,7 @@
     "CannotBeUndone": "Questa azione non può essere annullata.",
     "DeleteItem": "Elimina",
     "DeleteNItems": "Elimina {{count}} elementi",
-    "TypeToConfirm": "Digita <code>{{confirmText}}</code> per confermare."
+    "TypeToConfirm": "Digita <token>{{confirmText}}</token> per confermare."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creato da"
@@ -156,7 +153,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Seleziona deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradato",
     "Deploying": "In distribuzione",
     "Healthy": "Integro",
@@ -607,6 +604,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "e altri {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Creato a",
     "MaxConcurrentLogins": "Accessi simultanei massimi",
@@ -622,16 +622,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato del percorso non valido.",
     "AliasOverlapping": "Il percorso di montaggio si sovrappone a un'altra cartella.",
+    "AliasOverlappingWithAutoMount": "Il percorso di montaggio si sovrappone a una cartella montata automaticamente.",
     "AliasPlaceholder": "Percorso di montaggio",
     "AutoMountedFolders": "Cartelle montate automaticamente",
-    "Name": "Nome",
-    "PathAndAlias": "Percorso & Alias",
+    "CreateFolder": "Crea una nuova cartella di archiviazione",
+    "DestinationPath": "Percorso del container (destination)",
+    "Folders": "cartelle",
+    "OwnerProject": "Progetto",
+    "OwnerUser": "Utente",
     "PathAndAliasTooltip": "Il percorso all'interno del container dove verrà montata la cartella. Lasciare vuoto per usare il percorso predefinito.",
+    "Refresh": "ricaricare",
     "RemoveFolder": "Rimuovi",
+    "SelectFolder": "Seleziona cartella",
+    "SourcePath": "Percorso nella cartella (source)",
     "Subpath": "Sottopercorso",
     "SubpathInvalid": "Il sottopercorso deve essere un percorso relativo e non deve contenere '..'.",
-    "SubpathPlaceholder": "es. dataset/train (facoltativo)",
-    "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Lasciare vuoto per montare la radice."
+    "SubpathTooltip": "Monta una sottocartella all'interno della cartella come sorgente invece della sua radice. Fare clic sul campo per esplorare la cartella e sceglierne una; lasciare vuoto per montare la radice della cartella.",
+    "UnmountableFoldersRemoved": "Le cartelle che non puoi più montare sono state rimosse dalla selezione."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Seleziona cartella"
@@ -648,8 +655,11 @@
     "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
     "DeleteSelectedItemsDialog": "Elimina la conferma",
     "Download": "Scarica",
+    "DownloadPopupBlocked": "Il browser ha bloccato la finestra di download. Consenti i pop-up per questo sito e riprova.",
+    "DownloadRejected": "Lo storage proxy ha rifiutato il download (HTTP {{status}}). Il download non è stato avviato.",
     "DownloadSelected": "Scarica",
     "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
+    "DownloadUnreachable": "Impossibile raggiungere lo storage proxy su {{origin}}. Il download non è stato avviato.",
     "DragAndDropDesc": "Trascina i file in quest'area da caricare.",
     "DuplicatedFiles": "Sovrascrivere la conferma",
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",

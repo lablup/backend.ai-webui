@@ -45,13 +45,17 @@
    drop their own border and keep only a 1px leading divider. `!important`
    outranks production's unlayered StyleX copy (see BAISider.css). Horizontal
    groups only; no vertical ButtonGroup exists in the app. */
-.astryx-button-group:has(.astryx-button.secondary) {
+.astryx-button-group:has(
+  .astryx-button:is(.secondary, [data-variant='secondary'])
+) {
   position: relative;
   border-radius: var(--radius-element);
 }
 /* The ring must paint ABOVE the members — an inset outline/border on the
    wrapper is covered by their opaque fills — so it is a generated overlay. */
-.astryx-button-group:has(.astryx-button.secondary)::after {
+.astryx-button-group:has(
+    .astryx-button:is(.secondary, [data-variant='secondary'])
+  )::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -59,13 +63,15 @@
   border-radius: inherit;
   pointer-events: none;
 }
-.astryx-button-group .astryx-button.secondary {
+.astryx-button-group .astryx-button:is(.secondary, [data-variant='secondary']) {
   border-width: 0 !important;
 }
 /* Every member of a ringed group gets the same divider — a mixed group
    (ghost-rendered disabled members between secondaries) otherwise alternates
    Astryx's faint default divider with the emphasized one. */
-.astryx-button-group:has(.astryx-button.secondary)
+.astryx-button-group:has(
+    .astryx-button:is(.secondary, [data-variant='secondary'])
+  )
   .astryx-button:not(:first-child) {
   border-inline-start-width: 1px !important;
   border-inline-start-style: solid !important;
@@ -76,9 +82,14 @@
    so seam brightness alternates with the enabled members'. Inside a ringed
    group the frame stays at full strength and the disabled state reads from
    the glyph alone, via the disabled text token (icons follow currentColor). */
-.astryx-button-group:has(.astryx-button.secondary)
+.astryx-button-group:has(
+    .astryx-button:is(.secondary, [data-variant='secondary'])
+  )
   .astryx-button[aria-disabled='true'],
-.astryx-button-group:has(.astryx-button.secondary) .astryx-button:disabled {
+.astryx-button-group:has(
+    .astryx-button:is(.secondary, [data-variant='secondary'])
+  )
+  .astryx-button:disabled {
   opacity: 1 !important;
   color: var(--color-text-disabled) !important;
 }
@@ -86,7 +97,8 @@
 /* A solid primary group's divider stays on-accent (white-family in BOTH
    modes, like the label) but translucent — Astryx's opaque white cut the
    fill too hard, and a theme-flipping grey reads as a foreign border. */
-.astryx-button-group .astryx-button.primary:not(:first-child) {
+.astryx-button-group
+  .astryx-button:is(.primary, [data-variant='primary']):not(:first-child) {
   border-inline-start-color: color-mix(
     in srgb,
     var(--color-on-accent) 35%,
