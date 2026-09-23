@@ -10,7 +10,7 @@ import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
 import UserFairShareStep from './UserFairShareStep';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Heading } from '@astryxdesign/core/Heading';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import {
   BAISkeleton,
   BAIQuestionIconWithTooltip,
@@ -31,21 +31,9 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 type FairShareStepKey = 'resource-group' | 'domain' | 'project' | 'user';
 
 /**
- * PILOT-DECISION: antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2, verdict
- * LAB). `Step.label` and `Step.description` are required STRINGS (P2), so each
- * antd `title` — a `BAIFlex` of "<section name>" plus a truncated
- * "(<selected value>)" — splits into exactly those two slots, and the selected
- * project's display name is resolved by this component's own `@skip`ped
- * `projectV2` query instead of a JSX child. That is the split the mapping
- * prescribes for ReactNode labels, and it drops the hand-built
- * ellipsis/tooltip because `Step` truncates its own description.
- *
- * Also dropped with the antd component: `type="panel"` (the arrow-chevron
- * panel skin, which has no Astryx counterpart — `Stepper` draws a progress
- * track), the per-item `icon={<Ban />}` on unreachable steps (`isDisabled`
- * already communicates it, and `Step` owns its indicator), and
- * `styles.itemTitle`. The `createStyles` block existed ONLY to repaint
- * `.ant-steps-item-finish`, so it dies with the component (P6).
+ * `Step.label` and `Step.description` are required STRINGS, so each step's
+ * section name and selected value go in those two slots; the selected
+ * project's name comes from this component's own `@skip`ped `projectV2` query.
  */
 type StepItem = {
   key: FairShareStepKey;

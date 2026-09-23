@@ -92,12 +92,12 @@ export const docs = {
       name: 'size',
       type: 'number | string',
       description:
-        'Panel extent along the slide axis — width for a start/end drawer, height for top/bottom.',
+        "Panel width (lab `Drawer`'s `width`). Below 640px the panel keeps a 56px reveal of the page behind it.",
       default: '400',
     },
     {
       name: 'side',
-      type: "'start' | 'end' | 'top' | 'bottom'",
+      type: "'start' | 'end'",
       description:
         'Edge the panel slides in from. Logical values, so `start`/`end` follow the writing direction.',
       default: "'end'",

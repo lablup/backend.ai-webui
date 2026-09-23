@@ -53,7 +53,7 @@ import {
 import './collapsible-section.css';
 import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import {
   BAISkeleton,
   BAIAdminImageSelect,
@@ -1390,12 +1390,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
         <BAIFlex style={{ position: 'sticky', top: 80 }}>
-          {/* PILOT-DECISION: antd Steps → lab Stepper. `current`→`activeStep`,
-              `onChange`→`onStepClick`, `size="small"`→`density="compact"`;
-              antd's explicit 'process'/'wait' statuses are derived
-              automatically from `activeStep` and were dropped. Note Astryx
-              only makes completed/current steps clickable — forward jumps go
-              through the Next / Skip-to-Review buttons instead of the rail. */}
+          {/* Only completed and current steps are clickable; forward jumps go
+              through the Next / Skip-to-Review buttons. */}
           <Stepper
             activeStep={currentStepIndex}
             orientation="vertical"

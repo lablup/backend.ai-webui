@@ -1,0 +1,114 @@
+diff --git a/dist/Drawer/Drawer.js b/dist/Drawer/Drawer.js
+index 6fd2ca4734ae69af28b93e5528717e46ed265341..fc31012a969a2508fbae7d24b2900e8a117da55c 100644
+--- a/dist/Drawer/Drawer.js
++++ b/dist/Drawer/Drawer.js
+@@ -289,7 +289,14 @@
+   // top of the drawer stack closes, so stacked siblings peel off
+   // innermost-first.
+   const handleKeyDown = useCallback(event => {
+-    if (event.key === 'Escape') {
++    // React events follow the REACT tree, so a layer portalled out of this
++    // drawer's children — a dialog opened from inside it — bubbles its Escape
++    // through here even though it is not in this dialog's DOM subtree. Acting
++    // on it (and preventing its default) makes the shared layer-dismissal
++    // stack stand down, so neither the layer nor the drawer closes.
++    // An Escape that ends an IME composition cancels the composition, not the
++    // drawer (the layer stack makes the same exception).
++    if (event.key === 'Escape' && !event.nativeEvent.isComposing && event.currentTarget.contains(event.target)) {
+       event.preventDefault();
+       if (isTopDrawer(drawerId)) {
+         onOpenChange(false);
+@@ -344,7 +351,7 @@
+     }), stylex.props(styles.dialog, overlayPaddingReset.reset, sideStyle, dynamicStyles.inlineSize(widthValue, mobileWidth), isRendered && styles.rendered, isOpen && sideOpenStyle, hasScrim ? styles.scrim : dynamicStyles.stackZ(stackZ), hasScrim && isOpen && styles.scrimOpen, xstyle), className, style),
+     ...safeProps,
+     "aria-label": label,
+-    "aria-modal": hasScrim ? 'true' : undefined,
++    "aria-modal": safeProps['aria-modal'] ?? (hasScrim ? 'true' : undefined),
+     onClick: composeEventHandlers(onClickProp, handleClick),
+     onKeyDown: composeEventHandlers(onKeyDownProp, handleKeyDown),
+     onCancel: handleCancel,
+diff --git a/dist/Tour/TourStep.js b/dist/Tour/TourStep.js
+index 19c803aa98debc29728cbc69065f9144adb67ca8..3719b7865f676a90877986778577d546d0123818 100644
+--- a/dist/Tour/TourStep.js
++++ b/dist/Tour/TourStep.js
+@@ -102,12 +102,13 @@
+     if (el == null || typeof el.showPopover !== 'function') {
+       return;
+     }
+-    el.showPopover();
+-    return () => {
+-      if (el.isConnected && typeof el.hidePopover === 'function') {
+-        el.hidePopover();
+-      }
+-    };
++    // Promote exactly once, and never hide-then-reshow: top-layer order is
++    // promotion order, so a re-promotion (React StrictMode's dev double-invoke
++    // of this effect) would move the overlay ABOVE the callout and paint the
++    // spotlight dim over it. Detaching the node drops it from the top layer.
++    if (!el.matches(':popover-open')) {
++      el.showPopover();
++    }
+   }, []);
+   return /*#__PURE__*/_jsx("div", {
+     ref: ref,
+diff --git a/src/Drawer/Drawer.tsx b/src/Drawer/Drawer.tsx
+index b78b6eb759b3d32717531c698a45f52e337bd507..56da4d7955ec516e93f0c22efde30d2b36866be0 100644
+--- a/src/Drawer/Drawer.tsx
++++ b/src/Drawer/Drawer.tsx
+@@ -462,7 +462,19 @@
+   // innermost-first.
+   const handleKeyDown = useCallback(
+     (event: React.KeyboardEvent<HTMLDialogElement>) => {
+-      if (event.key === 'Escape') {
++      // React events follow the REACT tree, so a layer portalled out of this
++      // drawer's children — a dialog opened from inside it — bubbles its
++      // Escape through here even though it is not in this dialog's DOM
++      // subtree. Acting on it (and preventing its default) makes the shared
++      // layer-dismissal stack stand down, so neither the layer nor the drawer
++      // closes.
++      // An Escape that ends an IME composition cancels the composition, not
++      // the drawer (the layer stack makes the same exception).
++      if (
++        event.key === 'Escape' &&
++        !event.nativeEvent.isComposing &&
++        event.currentTarget.contains(event.target as Node)
++      ) {
+         event.preventDefault();
+         if (isTopDrawer(drawerId)) {
+           onOpenChange(false);
+@@ -542,7 +554,10 @@
+       )}
+       {...safeProps}
+       aria-label={label}
+-      aria-modal={hasScrim ? 'true' : undefined}
++      // Scrimless by itself is non-modal, but a consumer that restores the
++      // modality by hand (a portal supplying its own mask and focus trap) must
++      // be able to say so.
++      aria-modal={safeProps['aria-modal'] ?? (hasScrim ? 'true' : undefined)}
+       onClick={composeEventHandlers(onClickProp, handleClick)}
+       onKeyDown={composeEventHandlers(onKeyDownProp, handleKeyDown)}
+       onCancel={handleCancel}>
+diff --git a/src/Tour/TourStep.tsx b/src/Tour/TourStep.tsx
+index 1b98f09f5a487a690dcc35315b25e55b82cd93e1..56fcd7bd60fb6b07318ec676a1afc08d7ca52ebd 100644
+--- a/src/Tour/TourStep.tsx
++++ b/src/Tour/TourStep.tsx
+@@ -168,12 +168,13 @@
+     if (el == null || typeof el.showPopover !== 'function') {
+       return;
+     }
+-    el.showPopover();
+-    return () => {
+-      if (el.isConnected && typeof el.hidePopover === 'function') {
+-        el.hidePopover();
+-      }
+-    };
++    // Promote exactly once, and never hide-then-reshow: top-layer order is
++    // promotion order, so a re-promotion (React StrictMode's dev double-invoke
++    // of this effect) would move the overlay ABOVE the callout and paint the
++    // spotlight dim over it. Detaching the node drops it from the top layer.
++    if (!el.matches(':popover-open')) {
++      el.showPopover();
++    }
+   }, []);
+ 
+   return (

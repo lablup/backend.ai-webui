@@ -65,16 +65,14 @@ import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
 import { Heading } from '@astryxdesign/core/Heading';
 // FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
 // self-hosted replacement is parked (see form-engine/engine.ts). Everything
-// INSIDE the items is Astryx as of wave 3: the controls go through the shared
-// `astryxFormControls` adapters, and `Steps` is the lab `Stepper`, which is a
-// real dependency now (`@astryxdesign/lab@0.3.0-canary.12db2a1`, already in
-// the graph for Drawer/Tour and for `EduAppLauncher`'s own Stepper).
+// INSIDE the items is Astryx: the controls go through the shared
+// `astryxFormControls` adapters.
 import { InputGroup } from '@astryxdesign/core/InputGroup';
 import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
 import { VStack } from '@astryxdesign/core/Stack';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Step, Stepper } from '@astryxdesign/lab';
 import * as stylex from '@stylexjs/stylex';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
@@ -217,11 +215,7 @@ export type AppOption = {
 export type SessionLauncherStepKey =
   'sessionType' | 'environment' | 'storage' | 'network' | 'review';
 
-/**
- * antd `StepsProps['items'][number]`, restated as the three fields this page
- * actually sets. `status` was assigned per item at render time (see the
- * Stepper below) and has no lab counterpart, so it is not part of the shape.
- */
+/** The fields this page sets on a `Stepper` step. */
 type StepItem = {
   title: string;
   icon?: React.ReactNode;
@@ -1525,19 +1519,6 @@ const SessionLauncherPage = () => {
             data-test-id="neo-session-launcher-tour-step"
             style={{ position: 'sticky', top: 80 }}
           >
-            {/* antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB; same
-                call W2A-15 made for `FairShareList` and ticket 23 for
-                `EduAppLauncher`).
-                - `current` -> `activeStep`, `onChange` -> `onStepClick`.
-                - The per-item `status: 'process' | 'wait'` mapping is DROPPED:
-                  lab derives completed / active / upcoming from `activeStep`,
-                  and its `status` is a SEMANTIC enum (accent/success/warning/
-                  error) layered on top. `process`/`wait` said nothing that
-                  `activeStep` does not already say.
-                - `size="small"` has no counterpart; `density` is the nearest
-                  axis and `compact` is the small rung.
-                - `Step.label` is a required STRING, which every step title
-                  here already is. */}
             <Stepper
               orientation="vertical"
               density="compact"
@@ -1554,7 +1535,12 @@ const SessionLauncherPage = () => {
               }}
             >
               {_.map(steps, (s, idx) => (
-                <Step key={s.key} step={idx} label={s.title} icon={s.icon} />
+                <Step
+                  key={s.key}
+                  step={idx}
+                  label={s.title}
+                  indicator={s.icon}
+                />
               ))}
             </Stepper>
           </BAIFlex>
