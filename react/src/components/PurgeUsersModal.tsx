@@ -12,6 +12,7 @@ import {
   BAIBulkErrorModal,
   type BAIColumnsType,
   BAIDeleteConfirmModal,
+  type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -34,7 +35,10 @@ interface PurgeFailure {
   message: string;
 }
 
-export interface PurgeUsersModalProps {
+export interface PurgeUsersModalProps extends Pick<
+  BAIDeleteConfirmModalProps,
+  'afterOpenChange' | 'afterClose'
+> {
   usersFrgmt: PurgeUsersModalFragment$key;
   open?: boolean;
   onOk?: () => void;
@@ -46,6 +50,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   open,
   onOk,
   onCancel,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
 
@@ -78,6 +84,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const [failureReport, setFailureReport] = useState<{
     failures: PurgeFailure[];
     total: number;
+    purgedCount: number;
   } | null>(null);
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
@@ -145,6 +152,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             );
             setFailureReport({
               total: userList.length,
+              purgedCount,
               failures: _.map(failed, (f) => ({
                 key: f.userId,
                 email: emailByLocalId[f.userId] ?? f.userId,
@@ -160,7 +168,9 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
                 count: purgedCount,
               }),
             );
-            onOk?.();
+            // A partial success keeps the confirm open under the report;
+            // `onOk` (close + reload) runs once the report is dismissed.
+            if (failed.length === 0) onOk?.();
             resolve();
           } else {
             reject(new Error(t('error.UnknownError')));
@@ -188,6 +198,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         onOpenChange={(next) => {
           if (!next) onCancel?.();
         }}
+        afterOpenChange={afterOpenChange}
+        afterClose={afterClose}
         title={t('credential.PermanentlyDeleteUsers')}
         maskClosable={false}
         confirmLoading={isPending || isInFlightBulkPurge}
@@ -197,9 +209,6 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         }))}
         requireConfirmInput
         confirmText={t('credential.PermanentlyDelete')}
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
         inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
         cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
         okText={t('credential.PermanentlyDelete')}
@@ -228,7 +237,10 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         })}
         columns={failureColumns}
         dataSource={failureReport?.failures ?? []}
-        onRequestClose={() => setFailureReport(null)}
+        onRequestClose={() => {
+          setFailureReport(null);
+          if (failureReport && failureReport.purgedCount > 0) onOk?.();
+        }}
       />
     </>
   );

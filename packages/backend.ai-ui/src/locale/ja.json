@@ -133,7 +133,7 @@
     "CannotBeUndone": "この操作は元に戻せません。",
     "DeleteItem": "削除",
     "DeleteNItems": "{{count}} 件を削除",
-    "TypeToConfirm": "<code>{{confirmText}}</code> と入力して確認してください。"
+    "TypeToConfirm": "<token>{{confirmText}}</token> と入力して確認してください。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "作成者"
@@ -698,7 +698,7 @@
     }
   },
   "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}}アイテム"
+    "Total": "{{total}}アイテム中 {{start}} - {{end}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
@@ -809,7 +809,7 @@
     "Search": "検索",
     "Select": "選択",
     "SelectPlaceholder": "{{label}}を選択してください",
-    "TotalItems": "Total {{total}}アイテム",
+    "TotalItems": "合計 {{total}}アイテム",
     "Unit": "単位",
     "button": {
       "Action": "アクション",

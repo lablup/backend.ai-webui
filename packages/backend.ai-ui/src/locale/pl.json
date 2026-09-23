@@ -133,7 +133,7 @@
     "CannotBeUndone": "Tej operacji nie można cofnąć.",
     "DeleteItem": "Usuń",
     "DeleteNItems": "Usuń {{count}} elementów",
-    "TypeToConfirm": "Wpisz <code>{{confirmText}}</code>, aby potwierdzić."
+    "TypeToConfirm": "Wpisz <token>{{confirmText}}</token>, aby potwierdzić."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Utworzono przez"

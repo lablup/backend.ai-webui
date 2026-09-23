@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "API 金鑰",
+      "ApiKeyHint": "僅保存在此聊天面板的記憶體中，不會被儲存。重新載入頁面後需要重新輸入。",
+      "ApiKeyMissing": "此聊天使用了自訂端點。請重新輸入 API 金鑰以繼續。",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "相容 OpenAI 的 Base URL，通常以 /v1 結尾。端點必須允許來自此瀏覽器的請求（CORS）。",
+      "BaseURLRequired": "請輸入 Base URL。",
+      "Connect": "連線",
+      "ConnectCustomEndpoint": "連線自訂端點…",
+      "Edit": "編輯自訂端點",
+      "InvalidBaseURL": "請輸入有效的 http(s) URL。",
+      "error": {
+        "Http": "端點回傳了 HTTP {{status}}。",
+        "InvalidResponse": "回應不是相容 OpenAI 的模型清單。",
+        "Network": "無法連線到端點。",
+        "NetworkHint": "請檢查位址和網路。請求直接從此瀏覽器送出，因此伺服器必須允許（CORS）。",
+        "NoModels": "端點未回傳任何模型。",
+        "NotFound": "在此 Base URL 上找不到 /models（404）。",
+        "NotFoundHint": "Base URL 應指向 API 根路徑，通常以 /v1 結尾。",
+        "NotFoundSuggestV1": "Base URL 通常以 /v1 結尾 — 請嘗試 {{url}}。",
+        "RetryWithV1": "加上 /v1 重試",
+        "ServerError": "端點回報了伺服器錯誤（HTTP {{status}}）。",
+        "Timeout": "端點在 30 秒內沒有回應。",
+        "Unauthorized": "端點拒絕了請求（401/403）。",
+        "UnauthorizedHint": "請檢查 API 金鑰；若端點需要，請輸入金鑰。"
+      }
+    },
     "intro": {
       "Description": "透過相容 OpenAI 的 API，與您的部署中定義的 LLM 模型對話。",
       "Title": "與您已部署的模型對話"
@@ -711,7 +738,6 @@
     "StatusInfo": "狀態資訊",
     "StatusUpdatedSuccessfully": "用户状态已更改。",
     "TooltipForRequirePasswordChange": "啟用此選項後，使用者在下次登入時需更改密碼。",
-    "TypePermanentlyDelete": "請輸入 \"{{text}}\".",
     "UpdateUsers": "批次編輯使用者",
     "UpdateUsersWarningAlertTitle": "設定 UID 或 GID（或多個）可能會限制先前建立之資料夾掛載的使用。",
     "UpdatedUsers": "已更新 {{count}} / {{total}} 位使用者。",
@@ -1622,6 +1648,7 @@
     "FileUploadCancelled": "文件上傳已通過用戶請求取消。",
     "FileUploadFailed": "無法將某些文件上傳到文件夾'{{folderName}}'中。",
     "Filename": "文件名",
+    "FolderDetailUnavailable": "無法載入資料夾資訊",
     "FolderNotFoundOrNoAccess": "未找到或拒絕訪問的文件夾",
     "Metadata": "中繼資料",
     "NoExplorerSupportForUnmanagedFolder": "未管理的文件夾不支持文件資源管理器。",
@@ -2254,6 +2281,8 @@
     "AskAdminForProjectAccess": "請聯絡管理員為您授予專案存取權限。",
     "GoToProject": "前往 {{project}}",
     "NoAccessibleProjects": "沒有可存取的專案。",
+    "Personal": "個人",
+    "PersonalProjectCannotBeRemoved": "無法移除指派給使用者的個人專案。",
     "ProjectAdminBadge": "專案管理員",
     "ProjectNotFoundOrNoAccess": "找不到專案 '{{project}}' 或您沒有存取權限。",
     "SwitchToAccessibleProject": "請從頁面頂部的專案選擇器中選擇一個可存取的專案。"
@@ -2613,6 +2642,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "“無限”允許使用代理節點的容量，而“有限”拒絕資源，除非明確設置。在大多數情況下，建議“無限”。",
     "DeletePolicy": "刪除政策",
     "ExportCSV": "匯出CSV",
+    "ExportCapNotice": "共 {{count}} 列，僅匯出前 {{limit}} 列。",
+    "ExportFetchProgress": "已取得 {{fetched}}/{{total}} 列。",
+    "ExportPreparing": "正在準備匯出…",
+    "ExportedRows": "已匯出 {{count}} 列。",
     "Folders": "文件夾",
     "IdleTimeout": "空閒超時",
     "IdleTimeoutSec": "空閒超時（秒）",

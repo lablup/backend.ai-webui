@@ -314,6 +314,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           edges {
             node {
               id
+              basicInfo {
+                name
+                type
+              }
             }
           }
         }
@@ -322,6 +326,24 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     `,
     userSettingFrgmt ?? null,
   );
+
+  // PERSONAL included: the manager ignores it in `groupIds`, and the selector
+  // shows it as a locked option.
+  const projectMembershipIds = _.compact(
+    _.map(user?.projects?.edges, (edge) =>
+      edge?.node?.id ? toLocalId(edge.node.id) : null,
+    ),
+  );
+  const personalProjectNode = _.find(
+    user?.projects?.edges,
+    (edge) => edge?.node?.basicInfo.type === 'PERSONAL',
+  )?.node;
+  const personalProject = personalProjectNode
+    ? {
+        id: toLocalId(personalProjectNode.id),
+        name: personalProjectNode.basicInfo.name,
+      }
+    : undefined;
 
   // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
   const [commitUpdateUserV2, isInFlightUpdateUserV2] =
@@ -369,6 +391,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   id
                   basicInfo {
                     name
+                    type
                   }
                 }
               }
@@ -674,7 +697,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             : t('credential.CreateUser')
       }
       okText={user ? t('button.Save') : t('button.Create')}
-      destroyOnHidden
       onOk={() => formRef.current?.submit()}
       confirmLoading={isInFlight}
       // A bulk create that partially failed leaves this form open, so its
@@ -724,11 +746,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   container_gids: user.container.containerGids
                     ? _.map(user.container.containerGids, (gid) => String(gid))
                     : undefined,
-                  group_ids: _.compact(
-                    _.map(user.projects?.edges, (edge) =>
-                      edge?.node?.id ? toLocalId(edge.node.id) : null,
-                    ),
-                  ),
+                  group_ids: projectMembershipIds,
                 }
               : ({
                   need_password_change: bulkCreate ? true : false,
@@ -1148,13 +1166,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     label={t('credential.Projects')}
                     getValueFromEvent={(value) => value}
                     getValueProps={(value) => ({
-                      value: _.isArray(value)
-                        ? value
-                        : _.compact(
-                            _.map(user?.projects?.edges, (edge) =>
-                              edge?.node?.id ? toLocalId(edge.node.id) : null,
-                            ),
-                          ),
+                      value: _.isArray(value) ? value : projectMembershipIds,
                     })}
                   >
                     <ProjectSelect
@@ -1162,6 +1174,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       domain={getFieldValue('domain_name')}
                       disableDefaultFilter
                       lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                      personalProject={personalProject}
                     />
                   </BAIFormItem>
                 );

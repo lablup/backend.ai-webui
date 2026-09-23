@@ -248,7 +248,6 @@ const FolderExplorerModal: React.FC<FolderExplorerProps> = ({
       className="folder-explorer-modal-header"
       width={'90%'}
       keyboard
-      destroyOnHidden
       footer={null}
       style={{ maxWidth: '1600px' }}
       styles={{

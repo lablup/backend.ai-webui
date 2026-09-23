@@ -286,7 +286,6 @@ const VFolderDeployModal: React.FC<VFolderDeployModalProps> = ({
   return (
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
-      destroyOnHidden
       width={480}
       okText={t('modelStore.Deploy')}
       okButtonProps={{

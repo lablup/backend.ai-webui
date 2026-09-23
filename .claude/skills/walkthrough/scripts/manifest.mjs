@@ -12,6 +12,10 @@ export const CODE_PATH_MAX = 256;
 export const CODE_REFS_MAX = 3;
 export const VIA_MAX = 8;
 export const VIA_TEXT_MAX = 120;
+export const I18N_LANGS_MAX = 4;
+
+/** `ko`, `en`, `pt-BR` — mirrors `LANG_RE` in stop-guard.ts. */
+const LANG_RE = /^[a-z]{2}(-[A-Za-z]{2,4})?$/;
 
 /** A walkthrough a reader will not finish is not a walkthrough (FR-3945). */
 export const MAX_STOPS = 20;
@@ -61,6 +65,50 @@ function checkVia(via, where, errors) {
   });
 }
 
+/**
+ * A stop reads in the language it was written in (`lng`) plus whatever `i18n`
+ * translates it into. Both or neither: a translation with no base language to
+ * switch back from would give the reader a toggle with one side blank.
+ */
+function checkI18n(stop, where, errors) {
+  const { lng, i18n } = stop;
+  if (lng === undefined && i18n === undefined) return;
+  if (lng !== undefined && (typeof lng !== "string" || !LANG_RE.test(lng)))
+    errors.push(`${where}: lng must be a language code like "ko"`);
+  if (i18n === undefined)
+    return errors.push(`${where}: lng needs i18n — one language is no toggle`);
+  if (lng === undefined)
+    return errors.push(`${where}: i18n needs lng, the language ch/ck are in`);
+  if (!i18n || typeof i18n !== "object" || Array.isArray(i18n))
+    return errors.push(`${where}: i18n must be an object keyed by language`);
+  const langs = Object.keys(i18n);
+  if (!langs.length)
+    return errors.push(`${where}: i18n names no language — drop it or fill it`);
+  if (langs.length > I18N_LANGS_MAX)
+    errors.push(`${where}: i18n holds at most ${I18N_LANGS_MAX} languages`);
+  for (const lang of langs) {
+    const at = `${where}.i18n.${lang}`;
+    if (!LANG_RE.test(lang))
+      errors.push(`${at}: not a language code like "en"`);
+    if (lang === lng)
+      errors.push(`${at}: is already the language ch/ck are written in`);
+    const text = i18n[lang];
+    if (!text || typeof text !== "object" || Array.isArray(text)) {
+      errors.push(`${at}: not an object`);
+      continue;
+    }
+    if (!isText(text.ch, STOP_TEXT_MAX))
+      errors.push(`${at}: ch is required (<= ${STOP_TEXT_MAX} chars)`);
+    if (!isText(text.ck, STOP_TEXT_MAX))
+      errors.push(`${at}: ck is required (<= ${STOP_TEXT_MAX} chars)`);
+    for (const key of ["old", "new"]) {
+      if (text[key] !== undefined && !isText(text[key], STOP_LITERAL_MAX))
+        errors.push(`${at}: ${key} must be 1-${STOP_LITERAL_MAX} chars`);
+    }
+    if (text.via !== undefined) checkVia(text.via, at, errors);
+  }
+}
+
 function checkStop(stop, index, errors) {
   const where = `stop ${index + 1}`;
   if (!stop || typeof stop !== "object")
@@ -102,6 +150,7 @@ function checkStop(stop, index, errors) {
     errors.push(`${where}: label must be 1-${STOP_TEXT_MAX} chars`);
   if (stop.code !== undefined) checkCode(stop.code, where, errors);
   if (stop.via !== undefined) checkVia(stop.via, where, errors);
+  checkI18n(stop, where, errors);
 }
 
 /** `{stops: [...]}` or a bare array; throws with every problem at once. */

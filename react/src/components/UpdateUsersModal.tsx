@@ -132,6 +132,7 @@ const UpdateUsersModal = ({
                   id
                   basicInfo {
                     name
+                    type
                   }
                 }
               }
@@ -154,7 +155,7 @@ const UpdateUsersModal = ({
       {...modalProps}
       okButtonProps={{
         ...modalProps.okButtonProps,
-        disabled: users.length === 0
+        disabled: users.length === 0,
       }}
       onOk={(e) => {
         formRef.current

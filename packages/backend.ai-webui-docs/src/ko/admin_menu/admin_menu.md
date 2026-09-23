@@ -1604,6 +1604,9 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 슈퍼 관리자는 프로젝트 페이지에서 클러스터의 모든 프로젝트를 확인하고 생성, 수정, 비활성화, 활성화, 영구
 삭제할 수 있습니다. 각 행에는 프로젝트 관리자 권한을 부여할 수 있는 바로 가기도 제공됩니다.
 
+목록에는 기본적으로 개인 프로젝트가 표시되지 않으며, 미리 적용된 **유형** 필터를 제거하면 함께 표시됩니다.
+
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 목록 위의 **활성**, **비활성** 버튼으로 표시할 프로젝트를 선택할 수 있으며, 그 옆의 속성 필터로 **이름**,

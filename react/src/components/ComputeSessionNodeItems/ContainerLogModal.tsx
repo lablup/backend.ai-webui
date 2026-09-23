@@ -189,7 +189,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       }}
       {...modalProps}
       footer={null}
-      destroyOnHidden
     >
       <BAIFlex
         direction="column"

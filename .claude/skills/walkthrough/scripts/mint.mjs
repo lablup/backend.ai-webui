@@ -317,6 +317,14 @@ async function mintInPage(page, find, fields, at) {
       // drop on read must never leave here in the first place. `at` is not an
       // anchor field — it only seasons the id.
       const raw = { ...anchorMod.captureAnchorSignals(el), ...fields };
+      // A translated stop is read with the app in either language, and `txt`
+      // is the element's label in ONE of them: every resolution tier ANDs it
+      // (`resolve.ts`), so keeping it would unpin the stop the moment the
+      // reader switches. Without it a strict stop resolves by selector,
+      // testid landmark and rect, which no language changes. The label the
+      // comment shows still quotes the text captured here.
+      const captured = raw.txt;
+      if (raw.i18n) delete raw.txt;
       const anchor = guard ? guard.stripInvalidStopFields(raw) : raw;
       const b64 = await codecMod.encodeAnchor(anchor);
       if (b64.length > maxPart)
@@ -337,7 +345,7 @@ async function mintInPage(page, find, fields, at) {
           q: anchor.q ?? "",
           tid: anchor.tid ?? "",
           tag: anchor.tag ?? "",
-          txt: anchor.txt ?? "",
+          txt: captured ?? "",
           dlg: anchor.dlg ?? 0,
         },
         kept,
@@ -699,7 +707,16 @@ const describeStop = (stop) =>
 /** The FR-3949 stop fields, minus the ones the manifest left out. */
 function stopFields(stop, { sha, pr }) {
   const fields = { ch: stop.ch, ck: stop.ck, sha, pr };
-  for (const key of ["old", "new", "type", "kind", "code", "via"]) {
+  for (const key of [
+    "old",
+    "new",
+    "type",
+    "kind",
+    "code",
+    "via",
+    "lng",
+    "i18n",
+  ]) {
     if (stop[key] !== undefined) fields[key] = stop[key];
   }
   return fields;

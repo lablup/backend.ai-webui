@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "API-avain",
+      "ApiKeyHint": "Säilytetään vain tämän chat-paneelin muistissa eikä sitä tallenneta. Sivun uudelleenlatauksen jälkeen avain on syötettävä uudelleen.",
+      "ApiKeyMissing": "Tämä keskustelu käytti mukautettua päätepistettä. Jatka syöttämällä API-avain uudelleen.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "OpenAI-yhteensopiva Base URL, joka päättyy yleensä /v1. Päätepisteen on sallittava pyynnöt tästä selaimesta (CORS).",
+      "BaseURLRequired": "Syötä Base URL.",
+      "Connect": "Yhdistä",
+      "ConnectCustomEndpoint": "Yhdistä mukautettu päätepiste…",
+      "Edit": "Muokkaa mukautettua päätepistettä",
+      "InvalidBaseURL": "Syötä kelvollinen http(s)-URL.",
+      "error": {
+        "Http": "Päätepiste vastasi HTTP {{status}}.",
+        "InvalidResponse": "Vastaus ei ole OpenAI-yhteensopiva malliluettelo.",
+        "Network": "Päätepisteeseen ei saatu yhteyttä.",
+        "NetworkHint": "Tarkista osoite ja verkkoyhteys. Pyyntö lähetetään suoraan tästä selaimesta, joten palvelimen on sallittava se (CORS).",
+        "NoModels": "Päätepiste ei palauttanut yhtään mallia.",
+        "NotFound": "Tästä Base URL:stä ei löytynyt /models (404).",
+        "NotFoundHint": "Base URL:n on osoitettava API:n juureen, joka päättyy yleensä /v1.",
+        "NotFoundSuggestV1": "Base URL päättyy yleensä /v1 – kokeile {{url}}.",
+        "RetryWithV1": "Yritä uudelleen /v1:llä",
+        "ServerError": "Päätepiste ilmoitti palvelinvirheestä (HTTP {{status}}).",
+        "Timeout": "Päätepiste ei vastannut 30 sekunnissa.",
+        "Unauthorized": "Päätepiste hylkäsi pyynnön (401/403).",
+        "UnauthorizedHint": "Tarkista API-avain tai syötä avain, jos päätepiste vaatii sen."
+      }
+    },
     "intro": {
       "Description": "Keskustele Käyttöönotossasi määritellyn LLM-mallin kanssa OpenAI-yhteensopivan API:n kautta.",
       "Title": "Keskustele käyttöönotetuilla malleillasi"
@@ -711,7 +738,6 @@
     "StatusInfo": "Tilatiedot",
     "StatusUpdatedSuccessfully": "Käyttäjän tila on muuttunut.",
     "TooltipForRequirePasswordChange": "Kun tämä asetus on päällä, käyttäjän on vaihdettava salasanansa seuraavalla kirjautumiskerralla.",
-    "TypePermanentlyDelete": "Kirjoita \"{{text}}\".",
     "UpdateUsers": "Käyttäjien massamuokkaus",
     "UpdateUsersWarningAlertTitle": "UID:n tai GID:ien asettaminen saattaa rajoittaa aiemmin liitettyjen kansioiden käyttöä.",
     "UpdatedUsers": "Päivitetty {{count}}/{{total}} käyttäjää.",
@@ -1621,6 +1647,7 @@
     "FileUploadCancelled": "Tiedoston lataus peruutettiin käyttäjäpyynnöllä.",
     "FileUploadFailed": "Joidenkin tiedostojen lähettäminen kansioon '{{folderName}}'.",
     "Filename": "Tiedoston nimi",
+    "FolderDetailUnavailable": "Kansion tiedot eivät ole saatavilla",
     "FolderNotFoundOrNoAccess": "Kansiota ei löydy tai pääsy kielletty",
     "Metadata": "Metatiedot",
     "NoExplorerSupportForUnmanagedFolder": "Hallitsemattomat kansiot eivät tue tiedostotutkijaa.",
@@ -2250,6 +2277,8 @@
     "AskAdminForProjectAccess": "Pyydä järjestelmänvalvojaa myöntämään sinulle pääsy projektiin.",
     "GoToProject": "Siirry projektiin {{project}}",
     "NoAccessibleProjects": "Ei saatavilla olevia projekteja.",
+    "Personal": "Henkilökohtainen",
+    "PersonalProjectCannotBeRemoved": "Käyttäjälle määritettyä henkilökohtaista projektia ei voi poistaa.",
     "ProjectAdminBadge": "Projektin ylläpitäjä",
     "ProjectNotFoundOrNoAccess": "Projektia '{{project}}' ei löydy tai sinulla ei ole siihen pääsyä.",
     "SwitchToAccessibleProject": "Valitse käytettävissä oleva projekti sivun yläreunassa olevasta projektin valitsimesta."
@@ -2609,6 +2638,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Rajoittamaton' sallii käytön Agent -solmun kapasiteettiin saakka, kun taas 'rajoitettu' kieltää resursseja, ellei nimenomaisesti ole asetettu. \nUseimmissa tapauksissa suositellaan 'rajoittamatonta'.",
     "DeletePolicy": "Poistaa käytännöt",
     "ExportCSV": "Vie CSV",
+    "ExportCapNotice": "{{count}} rivistä viedään vain ensimmäiset {{limit}}.",
+    "ExportFetchProgress": "Haettu {{fetched}}/{{total}} riviä.",
+    "ExportPreparing": "Valmistellaan vientiä…",
+    "ExportedRows": "Viety {{count}} riviä.",
     "Folders": "Kansiot",
     "IdleTimeout": "Käyttämättömyyden aikakatkaisu",
     "IdleTimeoutSec": "Tyhjäkäynnin aikakatkaisu (sek.)",

@@ -240,7 +240,6 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
   return (
     <BAIModal
       {...baiModalProps}
-      destroyOnHidden
       onOk={handleOk}
       onCancel={handleCancel}
       centered
@@ -524,9 +523,7 @@ const AutoScalingRuleEditorModalLegacy: React.FC<
             },
           ]}
         >
-          <AstryxFormNumberInput
-            label={t('autoScalingRule.CoolDownSeconds')}
-          />
+          <AstryxFormNumberInput label={t('autoScalingRule.CoolDownSeconds')} />
         </Form.Item>
       </Form>
     </BAIModal>

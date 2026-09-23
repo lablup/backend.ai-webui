@@ -178,7 +178,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnHidden
       title={
         resourceGroup
           ? t('resourceGroup.ModifyResourceGroup')

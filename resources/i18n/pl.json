@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Klucz API",
+      "ApiKeyHint": "Przechowywany tylko w pamięci tego panelu czatu i nigdy nie zapisywany. Po odświeżeniu strony trzeba go wpisać ponownie.",
+      "ApiKeyMissing": "Ten czat używał niestandardowego punktu końcowego. Aby kontynuować, wpisz ponownie klucz API.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL zgodny z OpenAI, zwykle zakończony /v1. Punkt końcowy musi zezwalać na żądania z tej przeglądarki (CORS).",
+      "BaseURLRequired": "Wpisz Base URL.",
+      "Connect": "Połącz",
+      "ConnectCustomEndpoint": "Połącz niestandardowy punkt końcowy…",
+      "Edit": "Edytuj niestandardowy punkt końcowy",
+      "InvalidBaseURL": "Wpisz prawidłowy adres http(s).",
+      "error": {
+        "Http": "Punkt końcowy odpowiedział kodem HTTP {{status}}.",
+        "InvalidResponse": "Odpowiedź nie jest listą modeli zgodną z OpenAI.",
+        "Network": "Nie można połączyć się z punktem końcowym.",
+        "NetworkHint": "Sprawdź adres i sieć. Żądanie jest wysyłane bezpośrednio z tej przeglądarki, więc serwer musi na nie zezwalać (CORS).",
+        "NoModels": "Punkt końcowy nie zwrócił żadnych modeli.",
+        "NotFound": "Nie znaleziono /models pod tym Base URL (404).",
+        "NotFoundHint": "Base URL musi wskazywać katalog główny API, który zwykle kończy się na /v1.",
+        "NotFoundSuggestV1": "Base URL zwykle kończy się na /v1 — spróbuj {{url}}.",
+        "RetryWithV1": "Spróbuj ponownie z /v1",
+        "ServerError": "Punkt końcowy zgłosił błąd serwera (HTTP {{status}}).",
+        "Timeout": "Punkt końcowy nie odpowiedział w ciągu 30 sekund.",
+        "Unauthorized": "Punkt końcowy odrzucił żądanie (401/403).",
+        "UnauthorizedHint": "Sprawdź klucz API lub wpisz go, jeśli punkt końcowy go wymaga."
+      }
+    },
     "intro": {
       "Description": "Czatuj z modelem LLM zdefiniowanym w swoim Wdrożeniu przez API zgodne z OpenAI.",
       "Title": "Czatuj z wdrożonymi modelami"
@@ -711,7 +738,6 @@
     "StatusInfo": "Szczegóły statusu",
     "StatusUpdatedSuccessfully": "Status użytkownika uległ zmianie.",
     "TooltipForRequirePasswordChange": "Jeśli ta opcja jest włączona, użytkownik będzie musiał zmienić hasło przy następnym logowaniu.",
-    "TypePermanentlyDelete": "Wpisz \"{{text}}\".",
     "UpdateUsers": "Masowa edycja użytkowników",
     "UpdateUsersWarningAlertTitle": "Ustawienie UID lub GID(ów) może ograniczyć używanie wcześniej utworzonych punktów montowania folderów.",
     "UpdatedUsers": "Zaktualizowano {{count}} z {{total}} użytkowników.",
@@ -1622,6 +1648,7 @@
     "FileUploadCancelled": "Przesłanie pliku zostało anulowane na żądanie użytkownika.",
     "FileUploadFailed": "Nie udało się przesłać niektórych plików w folderze „{{folderName}}”.",
     "Filename": "Nazwa pliku",
+    "FolderDetailUnavailable": "Szczegóły folderu są niedostępne",
     "FolderNotFoundOrNoAccess": "Folder nie został znaleziony ani nie ma dostępu",
     "Metadata": "Metadane",
     "NoExplorerSupportForUnmanagedFolder": "Foldery niezarządzane nie obsługują eksploratora plików.",
@@ -2252,6 +2279,8 @@
     "AskAdminForProjectAccess": "Poproś administratora o przyznanie dostępu do projektu.",
     "GoToProject": "Przejdź do {{project}}",
     "NoAccessibleProjects": "Brak dostępnych projektów.",
+    "Personal": "Osobisty",
+    "PersonalProjectCannotBeRemoved": "Nie można usunąć projektu osobistego przypisanego do użytkownika.",
     "ProjectAdminBadge": "Administrator projektu",
     "ProjectNotFoundOrNoAccess": "Projekt '{{project}}' nie został znaleziony lub nie masz do niego dostępu.",
     "SwitchToAccessibleProject": "Wybierz dostępny projekt z selektora projektów na górze strony."
@@ -2611,6 +2640,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "„Unlimited” pozwala na wykorzystanie pojemności węzła agenta, podczas gdy „ograniczony” zaprzecza zasobom, chyba że wyraźnie ustalono. \nW większości przypadków zaleca się „nieograniczone”.",
     "DeletePolicy": "Usuń zasady",
     "ExportCSV": "eksportuj plik CSV",
+    "ExportCapNotice": "Z {{count}} wierszy wyeksportowanych zostanie tylko pierwszych {{limit}}.",
+    "ExportFetchProgress": "Pobrano {{fetched}} z {{total}} wierszy.",
+    "ExportPreparing": "Przygotowywanie eksportu…",
+    "ExportedRows": "Wyeksportowano {{count}} wierszy.",
     "Folders": "Lornetka składana",
     "IdleTimeout": "Limit czasu bezczynności",
     "IdleTimeoutSec": "Limit czasu bezczynności (sek.)",

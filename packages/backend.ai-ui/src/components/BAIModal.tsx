@@ -41,8 +41,9 @@
     **zero** outside `BAIModal.stories.tsx`. Still accepted and ignored.
  2. **`centered` is accepted and ignored** — Astryx dialogs are centred unless
     `position` is set (same call as ticket 04 / the app-shim).
- 3. **`destroyOnHidden` / `destroyOnClose` are always on.** This component
-    renders no children while closed, which is stricter than antd's default.
+ 3. **Content mounts on first open and stays mounted while closed.** There is
+    no `destroyOnHidden`: wrap the modal in `BAIUnmountAfterClose` to drop it,
+    and its state, on close.
  4. **A minimized modal stays modal.** antd dropped the mask so the page behind
     stayed interactive; `BAIDialog` always paints one. Minimize therefore
     collapses the dialog to a title bar parked at `minimizedPlacement` but does
@@ -56,9 +57,9 @@
     `Layout` keeps the header slot outside the scrolling content.
     `zIndex` is the exception: the modal is a portalled div with a real
     z-index since FR-3578, so a passed value is forwarded, not ignored.
- 6. **`afterClose` fires from an effect on the `open` transition**, not from a
-    transition-end event, so it lands a frame earlier than antd's. This is what
-    `BAIUnmountAfterClose` subscribes to and it keeps working unchanged.
+ 6. **`afterClose` / `afterOpenChange` fire from `BAIDialog`'s `afterOpenChange`**
+    on the `open` transition. There is no exit animation to wait for, so this
+    is the end of the close. `BAIUnmountAfterClose` subscribes to it.
 
  ## ReactNode title
 
@@ -91,7 +92,7 @@ import {
   Maximize,
   Minus,
 } from 'lucide-react';
-import React, { isValidElement, useEffect, useRef, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 
 export type WindowState = 'default' | 'minimized' | 'maximized' | 'fullscreen';
 export type WindowAction = 'minimize' | 'maximize' | 'fullscreen';
@@ -305,8 +306,6 @@ export interface BAIModalProps {
 
   /* ------------------------------------- accepted and ignored (see header) */
   centered?: boolean;
-  destroyOnClose?: boolean;
-  destroyOnHidden?: boolean;
   draggable?: boolean;
   stickyTitle?: boolean;
   forceRender?: boolean;
@@ -401,6 +400,10 @@ const BAIModal: React.FC<BAIModalProps> = ({
   const [windowState, setWindowState] = useState<WindowState>('default');
 
   const isVisible = open ?? isOpen ?? false;
+  const [hasOpened, setHasOpened] = useState(isVisible);
+  if (isVisible && !hasOpened) {
+    setHasOpened(true);
+  }
 
   // The `(info) => ...` form of `styles` / `classNames` was already inert in
   // the antd-era component; keep it inert rather than half-supported.
@@ -410,20 +413,6 @@ const BAIModal: React.FC<BAIModalProps> = ({
     typeof classNamesProp === 'function'
       ? undefined
       : (classNamesProp ?? undefined);
-
-  // antd fired `afterClose` when the exit transition ended. Astryx has no exit
-  // transition, so the close edge itself is the signal. `BAIUnmountAfterClose`
-  // listens to exactly this to drop the subtree.
-  const wasVisibleRef = useRef(isVisible);
-  useEffect(() => {
-    if (wasVisibleRef.current !== isVisible) {
-      wasVisibleRef.current = isVisible;
-      afterOpenChange?.(isVisible);
-      if (!isVisible) afterClose?.();
-    }
-    // `afterClose` / `afterOpenChange` are stable callbacks at every call site.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVisible]);
 
   // Reset the window state when the modal is closed programmatically.
   useEffect(() => {
@@ -435,10 +424,11 @@ const BAIModal: React.FC<BAIModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  // Nothing is rendered while closed — see PILOT-DECISION 3. Every hook has
-  // already run, so returning here skips building the header/footer trees on
-  // closed-modal re-renders.
-  if (!isVisible) return null;
+  // `BAIDialog` stays mounted while closed so it can fire the close edge.
+  const handleAfterOpenChange = (next: boolean) => {
+    afterOpenChange?.(next);
+    if (!next) afterClose?.();
+  };
 
   const hasWindowControls = !!windowActions && windowActions.length > 0;
   const activeActions: Array<WindowAction> = windowActions ?? [];
@@ -719,10 +709,11 @@ const BAIModal: React.FC<BAIModalProps> = ({
 
   return (
     <BAIDialog
-      isOpen
+      isOpen={isVisible}
       onOpenChange={(next) => {
         if (!next) void handleCancel();
       }}
+      afterOpenChange={handleAfterOpenChange}
       width={dialogWidth}
       {...(zIndex !== undefined ? { zIndex } : undefined)}
       {...(dialogMaxHeight !== undefined
@@ -736,35 +727,37 @@ const BAIModal: React.FC<BAIModalProps> = ({
       aria-label={rest['aria-label']}
       data-testid={rest['data-testid']}
     >
-      <Layout
-        style={styles?.container ?? styles?.content}
-        header={headerNode}
-        content={
-          isMinimized ? undefined : (
-            <LayoutContent>
-              <div
-                {...bodyProps}
-                ref={bodyRef ?? bodyProps?.ref}
-                className={classNames?.body ?? bodyProps?.className}
-                style={{ ...styles?.body, ...bodyProps?.style }}
+      {hasOpened ? (
+        <Layout
+          style={styles?.container ?? styles?.content}
+          header={headerNode}
+          content={
+            isMinimized ? undefined : (
+              <LayoutContent>
+                <div
+                  {...bodyProps}
+                  ref={bodyRef ?? bodyProps?.ref}
+                  className={classNames?.body ?? bodyProps?.className}
+                  style={{ ...styles?.body, ...bodyProps?.style }}
+                >
+                  {loading ? <BAISkeleton /> : children}
+                </div>
+              </LayoutContent>
+            )
+          }
+          footer={
+            isMinimized || !resolvedFooter ? undefined : (
+              <LayoutFooter
+                hasDivider
+                style={styles?.footer}
+                className={classNames?.footer}
               >
-                {loading ? <BAISkeleton /> : children}
-              </div>
-            </LayoutContent>
-          )
-        }
-        footer={
-          isMinimized || !resolvedFooter ? undefined : (
-            <LayoutFooter
-              hasDivider
-              style={styles?.footer}
-              className={classNames?.footer}
-            >
-              {resolvedFooter}
-            </LayoutFooter>
-          )
-        }
-      />
+                {resolvedFooter}
+              </LayoutFooter>
+            )
+          }
+        />
+      ) : null}
     </BAIDialog>
   );
 };

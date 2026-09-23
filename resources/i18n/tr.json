@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "API Anahtarı",
+      "ApiKeyHint": "Yalnızca bu sohbet panelinin belleğinde tutulur ve asla kaydedilmez. Sayfa yeniden yüklendiğinde tekrar girmeniz gerekir.",
+      "ApiKeyMissing": "Bu sohbet özel bir uç nokta kullanıyordu. Devam etmek için API anahtarını yeniden girin.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "OpenAI uyumlu Base URL, genellikle /v1 ile biter. Uç nokta bu tarayıcıdan gelen isteklere izin vermelidir (CORS).",
+      "BaseURLRequired": "Base URL girin.",
+      "Connect": "Bağlan",
+      "ConnectCustomEndpoint": "Özel uç nokta bağla…",
+      "Edit": "Özel uç noktayı düzenle",
+      "InvalidBaseURL": "Geçerli bir http(s) URL'si girin.",
+      "error": {
+        "Http": "Uç nokta HTTP {{status}} ile yanıt verdi.",
+        "InvalidResponse": "Yanıt OpenAI uyumlu bir model listesi değil.",
+        "Network": "Uç noktaya ulaşılamadı.",
+        "NetworkHint": "Adresi ve ağınızı kontrol edin. İstek doğrudan bu tarayıcıdan gönderildiği için sunucunun buna izin vermesi gerekir (CORS).",
+        "NoModels": "Uç nokta hiç model döndürmedi.",
+        "NotFound": "Bu Base URL'de /models bulunamadı (404).",
+        "NotFoundHint": "Base URL, genellikle /v1 ile biten API köküne işaret etmelidir.",
+        "NotFoundSuggestV1": "Base URL genellikle /v1 ile biter — {{url}} adresini deneyin.",
+        "RetryWithV1": "/v1 ile yeniden dene",
+        "ServerError": "Uç nokta bir sunucu hatası bildirdi (HTTP {{status}}).",
+        "Timeout": "Uç nokta 30 saniye içinde yanıt vermedi.",
+        "Unauthorized": "Uç nokta isteği reddetti (401/403).",
+        "UnauthorizedHint": "API anahtarını kontrol edin veya uç nokta gerektiriyorsa bir anahtar girin."
+      }
+    },
     "intro": {
       "Description": "Dağıtımınızda tanımlanan LLM modeliyle OpenAI uyumlu API aracılığıyla sohbet edin.",
       "Title": "Dağıtılan modellerinizle sohbet edin"
@@ -711,7 +738,6 @@
     "StatusInfo": "Durum Bilgisi",
     "StatusUpdatedSuccessfully": "Kullanıcı durumu değişti.",
     "TooltipForRequirePasswordChange": "Bu seçeneği etkinleştirirseniz kullanıcı bir sonraki girişte şifresini değiştirmek zorunda kalacaktır.",
-    "TypePermanentlyDelete": "Lütfen \"{{text}}\" yazın.",
     "UpdateUsers": "Kullanıcıları Toplu Düzenle",
     "UpdateUsersWarningAlertTitle": "UID veya GID(lerin) ayarlanması, daha önce oluşturulmuş klasör bağlamalarının kullanılmasını kısıtlayabilir.",
     "UpdatedUsers": "Toplam {{total}} kullanıcıdan {{count}} güncellendi.",
@@ -1621,6 +1647,7 @@
     "FileUploadCancelled": "Dosya yükleme kullanıcı isteği ile iptal edildi.",
     "FileUploadFailed": "Bazı dosyaları '{{{folderName}}' klasörüne yükleyemedi.",
     "Filename": "Dosya adı",
+    "FolderDetailUnavailable": "Klasör ayrıntıları kullanılamıyor",
     "FolderNotFoundOrNoAccess": "Klasör bulunamadı veya erişim reddedildi",
     "Metadata": "Meta Veri",
     "NoExplorerSupportForUnmanagedFolder": "Yönetilmeyen klasörler Dosya Gezgini'ni desteklemez.",
@@ -2250,6 +2277,8 @@
     "AskAdminForProjectAccess": "Yöneticinizden bir projeye erişim izni vermesini isteyin.",
     "GoToProject": "{{project}} projesine git",
     "NoAccessibleProjects": "Erişilebilir proje bulunmuyor.",
+    "Personal": "Kişisel",
+    "PersonalProjectCannotBeRemoved": "Kullanıcıya atanan kişisel proje kaldırılamaz.",
     "ProjectAdminBadge": "Proje Yöneticisi",
     "ProjectNotFoundOrNoAccess": "'{{project}}' projesi bulunamadı veya erişim izniniz yok.",
     "SwitchToAccessibleProject": "Sayfanın üstündeki proje seçicisinden erişilebilir bir proje seçin."
@@ -2609,6 +2638,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Sınırsız', aracı düğümünün kapasitesine kadar kullanım sağlarken, 'Limited' açıkça ayarlanmadıkça kaynakları reddeder. \nÇoğu durumda, 'sınırsız' önerilir.",
     "DeletePolicy": "Politikayı sil",
     "ExportCSV": "CSV'yi dışa aktar",
+    "ExportCapNotice": "{{count}} satırdan yalnızca ilk {{limit}} tanesi dışa aktarılacak.",
+    "ExportFetchProgress": "{{total}} satırdan {{fetched}} tanesi alındı.",
+    "ExportPreparing": "Dışa aktarma hazırlanıyor…",
+    "ExportedRows": "{{count}} satır dışa aktarıldı.",
     "Folders": "klasörler",
     "IdleTimeout": "Boşta Kalma Zaman Aşımı",
     "IdleTimeoutSec": "Boşta kalma zaman aşımı (sn.)",

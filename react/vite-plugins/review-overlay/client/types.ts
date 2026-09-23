@@ -40,6 +40,16 @@ export interface AnchorVia {
   click: { text?: string; tid?: string };
 }
 
+/** One stop's wording in a language other than the one it was written in. */
+export interface AnchorI18nText {
+  ch?: string;
+  ck?: string;
+  old?: string;
+  new?: string;
+  /** Only the labels the sentence quotes; replay always uses the base `via`. */
+  via?: AnchorVia[];
+}
+
 /**
  * `#bai=v3` anchor payload. Serialised as deflate-raw + base64url and kept
  * terse: it travels inside a URL fragment that people paste into PR comments
@@ -96,6 +106,10 @@ export interface AnchorV3 {
   via?: AnchorVia[];
   /** Picked inside a dialog (`DIALOG_SELECTOR`). */
   dlg?: 1;
+  /** Language of the stop text above, present only with `i18n` (FR-4057). */
+  lng?: string;
+  /** The same stop in other languages, keyed by language code. */
+  i18n?: Record<string, AnchorI18nText>;
 }
 
 /**

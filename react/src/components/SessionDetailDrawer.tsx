@@ -7,24 +7,22 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { ProjectContextOrNull } from '../types/projectContext';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import SessionDetailContent from './SessionDetailContent';
-import { BAIDrawer, BAISkeleton, useFetchKey } from 'backend.ai-ui';
+import {
+  BAIDrawer,
+  type BAIDrawerProps,
+  BAISkeleton,
+  useFetchKey,
+} from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useMemo, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
-// PILOT-DECISION: props no longer extend antd `DrawerProps` (a type-only antd
-// import still blocks the P15 gate). All three consumers
-// (SessionDetailAndContainerLogOpenerLegacy, RecentlyCreatedSession,
-// DeploymentReplicasCard) pass exactly `open` / `sessionId` / `onClose`, so
-// the explicit interface below is the whole live surface. antd spellings are
-// kept and mapped internally (`open` -> `isOpen`).
-interface SessionDetailDrawerProps {
-  /** Whether the drawer is open. antd Drawer's `open`. */
-  open?: boolean;
-  /** Close request handler (Escape, scrim click, close button). */
-  onClose?: () => void;
+interface SessionDetailDrawerProps extends Omit<
+  BAIDrawerProps,
+  'title' | 'extra' | 'children'
+> {
   sessionId?: string;
   /**
    * Explicit project prop contract (ADR-0001, FR-3413): pass-through to
@@ -35,9 +33,8 @@ interface SessionDetailDrawerProps {
 }
 const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   sessionId,
-  open = false,
-  onClose,
   project,
+  ...drawerProps
 }) => {
   const { t } = useTranslation();
   useSuspendedBackendaiClient();
@@ -78,8 +75,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
 
   return (
     <BAIDrawer
-      open={open}
-      onClose={onClose}
+      {...drawerProps}
       side="end"
       size={800}
       title={t('session.SessionInfo')}

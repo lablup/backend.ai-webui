@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Kunci API",
+      "ApiKeyHint": "Hanya disimpan di memori panel obrolan ini dan tidak pernah disimpan permanen. Setelah halaman dimuat ulang, kunci harus dimasukkan lagi.",
+      "ApiKeyMissing": "Obrolan ini menggunakan titik akhir kustom. Masukkan kembali kunci API untuk melanjutkan.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL yang kompatibel dengan OpenAI, biasanya diakhiri /v1. Titik akhir harus mengizinkan permintaan dari browser ini (CORS).",
+      "BaseURLRequired": "Masukkan Base URL.",
+      "Connect": "Hubungkan",
+      "ConnectCustomEndpoint": "Hubungkan titik akhir kustom…",
+      "Edit": "Sunting titik akhir kustom",
+      "InvalidBaseURL": "Masukkan URL http(s) yang valid.",
+      "error": {
+        "Http": "Titik akhir merespons dengan HTTP {{status}}.",
+        "InvalidResponse": "Respons bukan daftar model yang kompatibel dengan OpenAI.",
+        "Network": "Tidak dapat menjangkau titik akhir.",
+        "NetworkHint": "Periksa alamat dan jaringan Anda. Permintaan dikirim langsung dari browser ini, jadi server harus mengizinkannya (CORS).",
+        "NoModels": "Titik akhir tidak mengembalikan model apa pun.",
+        "NotFound": "/models tidak ditemukan pada Base URL ini (404).",
+        "NotFoundHint": "Base URL harus mengarah ke akar API, yang biasanya diakhiri /v1.",
+        "NotFoundSuggestV1": "Base URL biasanya diakhiri /v1 — coba {{url}}.",
+        "RetryWithV1": "Coba lagi dengan /v1",
+        "ServerError": "Titik akhir melaporkan kesalahan server (HTTP {{status}}).",
+        "Timeout": "Titik akhir tidak merespons dalam 30 detik.",
+        "Unauthorized": "Titik akhir menolak permintaan (401/403).",
+        "UnauthorizedHint": "Periksa kunci API, atau masukkan kunci jika titik akhir memerlukannya."
+      }
+    },
     "intro": {
       "Description": "Ngobrol dengan model LLM yang ditentukan dalam Deployment Anda melalui API yang kompatibel dengan OpenAI.",
       "Title": "Ngobrol dengan model yang telah Anda deploy"
@@ -711,7 +738,6 @@
     "StatusInfo": "Info Status",
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika opsi ini diaktifkan, pengguna harus mengganti kata sandi saat masuk berikutnya.",
-    "TypePermanentlyDelete": "Silakan ketik \"{{text}}\".",
     "UpdateUsers": "Edit Massal Pengguna",
     "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) dapat membatasi penggunaan mount folder yang telah dibuat sebelumnya.",
     "UpdatedUsers": "Diperbarui {{count}} dari {{total}} pengguna.",
@@ -1622,6 +1648,7 @@
     "FileUploadCancelled": "Unggah file dibatalkan dengan permintaan pengguna.",
     "FileUploadFailed": "Gagal mengunggah beberapa file di folder '{{folderName}}'.",
     "Filename": "Nama file",
+    "FolderDetailUnavailable": "Detail folder tidak tersedia",
     "FolderNotFoundOrNoAccess": "Folder tidak ditemukan atau akses ditolak",
     "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikelola tidak mendukung file explorer.",
@@ -2253,6 +2280,8 @@
     "AskAdminForProjectAccess": "Minta administrator Anda untuk memberikan akses ke sebuah proyek.",
     "GoToProject": "Buka {{project}}",
     "NoAccessibleProjects": "Tidak ada proyek yang dapat diakses.",
+    "Personal": "Pribadi",
+    "PersonalProjectCannotBeRemoved": "Proyek pribadi yang ditetapkan untuk pengguna tidak dapat dihapus.",
     "ProjectAdminBadge": "Admin Proyek",
     "ProjectNotFoundOrNoAccess": "Proyek '{{project}}' tidak ditemukan atau Anda tidak memiliki akses ke proyek tersebut.",
     "SwitchToAccessibleProject": "Pilih proyek yang dapat diakses dari pemilih proyek di bagian atas halaman."
@@ -2612,6 +2641,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' memungkinkan penggunaan hingga kapasitas agen node, sementara 'Limited' menolak sumber daya kecuali diatur secara eksplisit. \nDalam kebanyakan kasus, 'tidak terbatas' direkomendasikan.",
     "DeletePolicy": "Hapus Kebijakan",
     "ExportCSV": "Ekspor CSV",
+    "ExportCapNotice": "Hanya {{limit}} baris pertama dari {{count}} baris yang akan diekspor.",
+    "ExportFetchProgress": "{{fetched}} dari {{total}} baris telah diambil.",
+    "ExportPreparing": "Menyiapkan ekspor…",
+    "ExportedRows": "{{count}} baris telah diekspor.",
     "Folders": "Folder",
     "IdleTimeout": "Batas Waktu Diam",
     "IdleTimeoutSec": "Waktu tunggu menganggur (dtk.)",

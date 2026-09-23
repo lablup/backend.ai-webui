@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Clé API",
+      "ApiKeyHint": "Conservée uniquement en mémoire pour ce panneau de chat, jamais enregistrée. Après un rechargement de la page, il faut la saisir à nouveau.",
+      "ApiKeyMissing": "Ce chat utilisait un point de terminaison personnalisé. Saisissez à nouveau la clé API pour continuer.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL compatible OpenAI, se terminant généralement par /v1. Le point de terminaison doit autoriser les requêtes de ce navigateur (CORS).",
+      "BaseURLRequired": "Saisissez la Base URL.",
+      "Connect": "Connecter",
+      "ConnectCustomEndpoint": "Connecter un point de terminaison personnalisé…",
+      "Edit": "Modifier le point de terminaison personnalisé",
+      "InvalidBaseURL": "Saisissez une URL http(s) valide.",
+      "error": {
+        "Http": "Le point de terminaison a répondu HTTP {{status}}.",
+        "InvalidResponse": "La réponse n'est pas une liste de modèles compatible OpenAI.",
+        "Network": "Impossible de joindre le point de terminaison.",
+        "NetworkHint": "Vérifiez l'adresse et votre réseau. La requête est envoyée directement depuis ce navigateur ; le serveur doit donc l'autoriser (CORS).",
+        "NoModels": "Le point de terminaison n'a renvoyé aucun modèle.",
+        "NotFound": "/models est introuvable à cette Base URL (404).",
+        "NotFoundHint": "La Base URL doit pointer vers la racine de l'API, qui se termine généralement par /v1.",
+        "NotFoundSuggestV1": "La Base URL se termine généralement par /v1 : essayez {{url}}.",
+        "RetryWithV1": "Réessayer avec /v1",
+        "ServerError": "Le point de terminaison a signalé une erreur serveur (HTTP {{status}}).",
+        "Timeout": "Le point de terminaison n'a pas répondu en 30 secondes.",
+        "Unauthorized": "Le point de terminaison a refusé la requête (401/403).",
+        "UnauthorizedHint": "Vérifiez la clé API, ou saisissez-en une si le point de terminaison l'exige."
+      }
+    },
     "intro": {
       "Description": "Discutez avec le modèle LLM défini dans votre Déploiement via une API compatible OpenAI.",
       "Title": "Discutez avec vos modèles déployés"
@@ -711,7 +738,6 @@
     "StatusInfo": "Informations sur le statut",
     "StatusUpdatedSuccessfully": "Le statut de l'utilisateur a changé.",
     "TooltipForRequirePasswordChange": "Si cette option est activée, l'utilisateur devra changer son mot de passe lors de sa prochaine connexion.",
-    "TypePermanentlyDelete": "Veuillez saisir \"{{text}}\".",
     "UpdateUsers": "Édition en masse des utilisateurs",
     "UpdateUsersWarningAlertTitle": "La définition de l'UID ou des GID peut restreindre l'utilisation des points de montage de dossiers créés précédemment.",
     "UpdatedUsers": "{{count}} utilisateurs mis à jour sur {{total}}.",
@@ -1622,6 +1648,7 @@
     "FileUploadCancelled": "Le téléchargement du fichier a été annulé par demande de l'utilisateur.",
     "FileUploadFailed": "Échec pour télécharger certains fichiers dans le dossier '{{folderName}}'.",
     "Filename": "Nom de fichier",
+    "FolderDetailUnavailable": "Les détails du dossier sont indisponibles",
     "FolderNotFoundOrNoAccess": "Dossier non trouvé ou accès refusé",
     "Metadata": "Métadonnées",
     "NoExplorerSupportForUnmanagedFolder": "Les dossiers non gérés ne prennent pas en charge l'explorateur de fichiers.",
@@ -2252,6 +2279,8 @@
     "AskAdminForProjectAccess": "Demandez à votre administrateur de vous accorder l'accès à un projet.",
     "GoToProject": "Aller au projet {{project}}",
     "NoAccessibleProjects": "Aucun projet accessible.",
+    "Personal": "Personnel",
+    "PersonalProjectCannotBeRemoved": "Le projet personnel attribué à l’utilisateur ne peut pas être retiré.",
     "ProjectAdminBadge": "Administrateur de projet",
     "ProjectNotFoundOrNoAccess": "Le projet '{{project}}' est introuvable ou vous n'y avez pas accès.",
     "SwitchToAccessibleProject": "Sélectionnez un projet accessible depuis le sélecteur de projet en haut de la page."
@@ -2611,6 +2640,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "`` Unlimited '' permet l'utilisation de la capacité du nœud d'agent, tandis que «Limited» nie les ressources à moins d'être définies explicitement. \nDans la plupart des cas, «illimité» est recommandé.",
     "DeletePolicy": "Supprimer la politique",
     "ExportCSV": "exporter au format CSV",
+    "ExportCapNotice": "Seules les {{limit}} premières lignes sur {{count}} seront exportées.",
+    "ExportFetchProgress": "{{fetched}} lignes sur {{total}} récupérées.",
+    "ExportPreparing": "Préparation de l'export…",
+    "ExportedRows": "{{count}} lignes exportées.",
     "Folders": "Dossiers",
     "IdleTimeout": "Délai d'inactivité",
     "IdleTimeoutSec": "Délai d'inactivité (sec.)",

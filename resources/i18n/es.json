@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Clave de API",
+      "ApiKeyHint": "Solo se guarda en la memoria de este panel de chat y nunca se almacena. Al recargar la página tendrá que volver a introducirla.",
+      "ApiKeyMissing": "Este chat usaba un endpoint personalizado. Vuelva a introducir la clave de API para continuar.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL compatible con OpenAI, que suele terminar en /v1. El endpoint debe permitir solicitudes desde este navegador (CORS).",
+      "BaseURLRequired": "Introduzca la Base URL.",
+      "Connect": "Conectar",
+      "ConnectCustomEndpoint": "Conectar un endpoint personalizado…",
+      "Edit": "Editar endpoint personalizado",
+      "InvalidBaseURL": "Introduzca una URL http(s) válida.",
+      "error": {
+        "Http": "El endpoint respondió con HTTP {{status}}.",
+        "InvalidResponse": "La respuesta no es una lista de modelos compatible con OpenAI.",
+        "Network": "No se pudo acceder al endpoint.",
+        "NetworkHint": "Compruebe la dirección y su red. La solicitud se envía directamente desde este navegador, por lo que el servidor debe permitirla (CORS).",
+        "NoModels": "El endpoint no devolvió ningún modelo.",
+        "NotFound": "No se encontró /models en esta Base URL (404).",
+        "NotFoundHint": "La Base URL debe apuntar a la raíz de la API, que suele terminar en /v1.",
+        "NotFoundSuggestV1": "La Base URL suele terminar en /v1: pruebe con {{url}}.",
+        "RetryWithV1": "Reintentar con /v1",
+        "ServerError": "El endpoint informó de un error del servidor (HTTP {{status}}).",
+        "Timeout": "El endpoint no respondió en 30 segundos.",
+        "Unauthorized": "El endpoint rechazó la solicitud (401/403).",
+        "UnauthorizedHint": "Compruebe la clave de API o introduzca una si el endpoint la requiere."
+      }
+    },
     "intro": {
       "Description": "Chatea con el modelo LLM definido en tu Despliegue a través de una API compatible con OpenAI.",
       "Title": "Chatea con tus modelos desplegados"
@@ -711,7 +738,6 @@
     "StatusInfo": "Información de estado",
     "StatusUpdatedSuccessfully": "El estado del usuario ha cambiado.",
     "TooltipForRequirePasswordChange": "Si activa esta opción, los usuarios deberán cambiar su contraseña en el próximo inicio de sesión.",
-    "TypePermanentlyDelete": "Por favor, escriba \"{{text}}\".",
     "UpdateUsers": "Edición masiva de usuarios",
     "UpdateUsersWarningAlertTitle": "Establecer UID o GID(s) puede restringir el uso de montajes de carpetas creados previamente.",
     "UpdatedUsers": "Actualizados {{count}} de {{total}} usuarios.",
@@ -1621,6 +1647,7 @@
     "FileUploadCancelled": "La carga de archivo fue cancelada por solicitud del usuario.",
     "FileUploadFailed": "No se pudo cargar algunos archivos en la carpeta '{{folderName}}'.",
     "Filename": "Nombre del archivo",
+    "FolderDetailUnavailable": "Los detalles de la carpeta no están disponibles",
     "FolderNotFoundOrNoAccess": "Carpeta no encontrada ni de acceso denegada",
     "Metadata": "Metadatos",
     "NoExplorerSupportForUnmanagedFolder": "Las carpetas no administradas no admiten el explorador de archivos.",
@@ -2250,6 +2277,8 @@
     "AskAdminForProjectAccess": "Pida a su administrador que le conceda acceso a un proyecto.",
     "GoToProject": "Ir al proyecto {{project}}",
     "NoAccessibleProjects": "No hay proyectos accesibles.",
+    "Personal": "Personal",
+    "PersonalProjectCannotBeRemoved": "El proyecto personal asignado al usuario no se puede quitar.",
     "ProjectAdminBadge": "Administrador del proyecto",
     "ProjectNotFoundOrNoAccess": "El proyecto '{{project}}' no fue encontrado o no tienes acceso a él.",
     "SwitchToAccessibleProject": "Selecciona un proyecto accesible desde el selector de proyectos en la parte superior de la página."
@@ -2609,6 +2638,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' permite el uso a la capacidad del nodo del agente, mientras que 'limitado' niega los recursos a menos que estén explícitamente. \nEn la mayoría de los casos, se recomienda 'ilimitado'.",
     "DeletePolicy": "Eliminar política",
     "ExportCSV": "Exportar CSV",
+    "ExportCapNotice": "Solo se exportarán las primeras {{limit}} de {{count}} filas.",
+    "ExportFetchProgress": "Se han obtenido {{fetched}} de {{total}} filas.",
+    "ExportPreparing": "Preparando la exportación…",
+    "ExportedRows": "Se han exportado {{count}} filas.",
     "Folders": "Carpetas",
     "IdleTimeout": "Tiempo de inactividad",
     "IdleTimeoutSec": "Tiempo de espera (seg.)",

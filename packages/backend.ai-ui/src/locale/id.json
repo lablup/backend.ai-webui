@@ -133,7 +133,7 @@
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Hapus",
     "DeleteNItems": "Hapus {{count}} item",
-    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
+    "TypeToConfirm": "Ketik <token>{{confirmText}}</token> untuk mengonfirmasi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"

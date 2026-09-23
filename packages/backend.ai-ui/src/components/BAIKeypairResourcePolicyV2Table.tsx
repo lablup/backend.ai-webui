@@ -15,6 +15,7 @@ import {
   filterOutEmpty,
   filterOutNullAndUndefined,
   ResourceTypeIcon,
+  SIGNED_32BIT_MAX_INT,
 } from '..';
 import type {
   BAIKeypairResourcePolicyV2TableFragment$data,
@@ -31,10 +32,6 @@ export type KeypairResourcePolicyV2InList = NonNullable<
 
 type ResourceLimitEntry =
   KeypairResourcePolicyV2InList['totalResourceSlots'][number];
-
-// `max_containers_per_session` is stored as the signed 32-bit ceiling when the
-// operator means "no limit", so that exact value renders as ∞.
-const SIGNED_32BIT_MAX_INT = 2147483647;
 
 const availableKeypairResourcePolicySorterKeys = [
   'name',
@@ -55,6 +52,22 @@ export const availableKeypairResourcePolicySorterValues = [
 const isEnableSorter = (key: string) => {
   return _.includes(availableKeypairResourcePolicySorterKeys, key);
 };
+
+/** The CSV-exportable fields — the base column keys, in column order. */
+export const availableKeypairResourcePolicyExportFields = [
+  'name',
+  'defaultForUnspecified',
+  'totalResourceSlots',
+  'maxConcurrentSessions',
+  'maxContainersPerSession',
+  'idleTimeout',
+  'maxSessionLifetime',
+  'allowedVfolderHosts',
+  'maxPendingSessionCount',
+  'maxConcurrentSftpSessions',
+  'maxPendingSessionResourceSlots',
+  'createdAt',
+] as const satisfies ReadonlyArray<keyof KeypairResourcePolicyV2InList>;
 
 export interface BAIKeypairResourcePolicyV2TableProps extends Omit<
   BAITableProps<KeypairResourcePolicyV2InList>,

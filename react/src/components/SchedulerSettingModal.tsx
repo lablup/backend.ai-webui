@@ -104,7 +104,6 @@ const SchedulerSettingModal = ({
       okButtonProps={{
         type: 'primary',
       }}
-      destroyOnHidden
     >
       <Form ref={formRef} layout="vertical">
         <BAIFormItem

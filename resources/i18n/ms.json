@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Kunci API",
+      "ApiKeyHint": "Hanya disimpan dalam memori panel sembang ini dan tidak pernah disimpan. Selepas halaman dimuat semula, anda perlu memasukkannya semula.",
+      "ApiKeyMissing": "Sembang ini menggunakan titik akhir tersuai. Masukkan semula kunci API untuk meneruskan.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL serasi OpenAI, biasanya berakhir dengan /v1. Titik akhir mesti membenarkan permintaan daripada pelayar ini (CORS).",
+      "BaseURLRequired": "Masukkan Base URL.",
+      "Connect": "Sambung",
+      "ConnectCustomEndpoint": "Sambung titik akhir tersuai…",
+      "Edit": "Edit titik akhir tersuai",
+      "InvalidBaseURL": "Masukkan URL http(s) yang sah.",
+      "error": {
+        "Http": "Titik akhir membalas dengan HTTP {{status}}.",
+        "InvalidResponse": "Respons bukan senarai model yang serasi dengan OpenAI.",
+        "Network": "Tidak dapat mencapai titik akhir.",
+        "NetworkHint": "Semak alamat dan rangkaian anda. Permintaan dihantar terus daripada pelayar ini, jadi pelayan mesti membenarkannya (CORS).",
+        "NoModels": "Titik akhir tidak mengembalikan sebarang model.",
+        "NotFound": "/models tidak ditemui pada Base URL ini (404).",
+        "NotFoundHint": "Base URL mesti menghala ke akar API, yang biasanya berakhir dengan /v1.",
+        "NotFoundSuggestV1": "Base URL biasanya berakhir dengan /v1 — cuba {{url}}.",
+        "RetryWithV1": "Cuba semula dengan /v1",
+        "ServerError": "Titik akhir melaporkan ralat pelayan (HTTP {{status}}).",
+        "Timeout": "Titik akhir tidak membalas dalam masa 30 saat.",
+        "Unauthorized": "Titik akhir menolak permintaan (401/403).",
+        "UnauthorizedHint": "Semak kunci API, atau masukkan satu jika titik akhir memerlukannya."
+      }
+    },
     "intro": {
       "Description": "Berbual dengan model LLM yang ditakrifkan dalam Penggunaan anda melalui API yang serasi dengan OpenAI.",
       "Title": "Berbual dengan model yang telah anda gunakan"
@@ -711,7 +738,6 @@
     "StatusInfo": "Maklumat Status",
     "StatusUpdatedSuccessfully": "Status pengguna telah berubah.",
     "TooltipForRequirePasswordChange": "Jika pilihan ini diaktifkan, pengguna perlu menukar kata laluan mereka semasa log masuk seterusnya.",
-    "TypePermanentlyDelete": "Sila taip \"{{text}}\".",
     "UpdateUsers": "Sunting Pengguna secara Pukal",
     "UpdateUsersWarningAlertTitle": "Menetapkan UID atau GID(s) mungkin menghadkan penggunaan pemasangan folder yang telah dibuat sebelum ini.",
     "UpdatedUsers": "Dikemas kini {{count}} daripada {{total}} pengguna.",
@@ -1621,6 +1647,7 @@
     "FileUploadCancelled": "Muat naik fail dibatalkan oleh permintaan pengguna.",
     "FileUploadFailed": "Gagal memuat naik beberapa fail dalam folder '{{folderName}}'.",
     "Filename": "Nama fail",
+    "FolderDetailUnavailable": "Butiran folder tidak tersedia",
     "FolderNotFoundOrNoAccess": "Folder tidak dijumpai atau akses ditolak",
     "Metadata": "Metadata",
     "NoExplorerSupportForUnmanagedFolder": "Folder yang tidak dikendalikan tidak menyokong penjelajah fail.",
@@ -2250,6 +2277,8 @@
     "AskAdminForProjectAccess": "Minta pentadbir anda memberikan akses kepada projek.",
     "GoToProject": "Pergi ke {{project}}",
     "NoAccessibleProjects": "Tiada projek yang boleh diakses.",
+    "Personal": "Peribadi",
+    "PersonalProjectCannotBeRemoved": "Projek peribadi yang diberikan kepada pengguna tidak boleh dialih keluar.",
     "ProjectAdminBadge": "Pentadbir Projek",
     "ProjectNotFoundOrNoAccess": "Projek '{{project}}' tidak ditemui atau anda tidak mempunyai akses kepadanya.",
     "SwitchToAccessibleProject": "Pilih projek yang boleh diakses daripada pemilih projek di bahagian atas halaman."
@@ -2609,6 +2638,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' membolehkan penggunaan sehingga kapasiti node ejen, sementara 'Limited' menafikan sumber kecuali secara jelas ditetapkan. \nDalam kebanyakan kes, 'tidak terhad' disyorkan.",
     "DeletePolicy": "Padam dasar",
     "ExportCSV": "Eksport CSV",
+    "ExportCapNotice": "Hanya {{limit}} baris pertama daripada {{count}} baris akan dieksport.",
+    "ExportFetchProgress": "{{fetched}} daripada {{total}} baris telah diambil.",
+    "ExportPreparing": "Menyediakan eksport…",
+    "ExportedRows": "{{count}} baris telah dieksport.",
     "Folders": "Folder",
     "IdleTimeout": "Tamat Masa Terbiar",
     "IdleTimeoutSec": "Tamat waktu tunggu (sek.)",

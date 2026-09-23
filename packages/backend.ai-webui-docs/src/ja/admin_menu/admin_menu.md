@@ -1807,6 +1807,9 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
 スーパー管理者はプロジェクトページでクラスター内のすべてのプロジェクトを確認し、作成、編集、無効化、有効化、
 完全削除を行えます。各行には、プロジェクト管理者権限を付与するためのショートカットもあります。
 
+既定では個人プロジェクトは一覧に表示されず、あらかじめ適用されている **タイプ** フィルターを削除すると表示されます。
+
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 一覧の上にある **アクティブ**、**非アクティブ** ボタンで表示するプロジェクトを切り替えられます。その隣の
