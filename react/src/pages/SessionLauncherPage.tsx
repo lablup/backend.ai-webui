@@ -1534,7 +1534,7 @@ const SessionLauncherPage = () => {
                   key={s.key}
                   step={idx}
                   label={s.title}
-                  indicator={s.icon}
+                  indicator={s.icon ?? 'number'}
                 />
               ))}
             </Stepper>

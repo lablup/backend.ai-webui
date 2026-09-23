@@ -893,11 +893,13 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         >
           <Step
             step={0}
+            indicator="number"
             label={t('eduapi.PreparingSession')}
             status={stepStatuses[0] === 'error' ? 'error' : undefined}
           />
           <Step
             step={1}
+            indicator="number"
             label={t('eduapi.LaunchingAppStep')}
             status={stepStatuses[1] === 'error' ? 'error' : undefined}
           />
