@@ -131,3 +131,20 @@
  as broken") — and `BAICard`'s `VStack gap={4}` already IS 16px. Measured
  rail->content: 16px on every tabbed surface.
 */
+
+/*
+ `showDivider` — the header rule runs the card's full width, as antd's
+ `ant-card-head` border did, rather than stopping at the padding. Same bleed as
+ the tab strip above.
+*/
+.bai-card__divider {
+  margin-inline: calc(-1 * var(--bai-card-inset));
+  max-width: none;
+  width: auto;
+}
+
+/* `size="small"`: the title steps down to the body size (antd's small card
+   head is `fontSize`, 14px), so the header row is the sm extra button's 24px. */
+.bai-card--compact .bai-card__head > h5 {
+  font-size: var(--font-size-base);
+}
