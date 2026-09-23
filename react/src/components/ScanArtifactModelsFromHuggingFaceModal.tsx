@@ -69,7 +69,6 @@ const ScanArtifactModelsFromHuggingFaceModal = ({
         okText={t('scanArtifactModelsFromHuggingFaceModal.Scan')}
         centered
         cancelText={t('button.Close')}
-        destroyOnHidden
         {...modalProps}
         okButtonProps={{
           loading: isInflightScanArtifactModels,

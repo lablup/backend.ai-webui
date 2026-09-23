@@ -245,7 +245,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           // refactor should decouple form state from modal lifecycle.
           ...(needToResetPassword ? { wrapper: { display: 'none' } } : {}),
         }}
-        destroyOnHidden
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
@@ -736,7 +735,6 @@ const ResetPasswordRequiredInline: React.FC<{
       mask={{ closable: false }}
       footer={null}
       width={450}
-      destroyOnHidden
     >
       <BAIFlex
         direction="column"
@@ -904,7 +902,6 @@ const TOTPActivateInline: React.FC<{
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
-      destroyOnHidden
       onOk={handleOk}
       loading={!isSuccess}
     >
@@ -982,7 +979,6 @@ const ChangePasswordEmailModal: React.FC<
       onOk={handleSend}
       confirmLoading={mutation.isPending}
       okText={t('login.EmailSendButton')}
-      destroyOnHidden
     >
       <Text as="p" display="block">
         {t('login.DescChangePasswordEmail')}

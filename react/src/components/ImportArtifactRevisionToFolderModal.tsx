@@ -158,7 +158,6 @@ const ImportArtifactRevisionToFolderModal = ({
         title={t('importArtifactRevisionToFolderModal.ImportToFolder')}
         okText={t('importArtifactRevisionToFolderModal.Import')}
         centered
-        destroyOnHidden
         {...modalProps}
         okButtonProps={{
           loading: isInflightImportArtifacts,

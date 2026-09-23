@@ -68,7 +68,6 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
       title={t('userSettings.MyKeypairInfo')}
       centered
       onCancel={onRequestClose}
-      destroyOnHidden
       width={'auto'}
       footer={[
         <Button

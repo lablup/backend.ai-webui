@@ -105,7 +105,6 @@ const OverlayNetworkSettingModal = ({
         }
       }}
       cancelText={t('button.Cancel')}
-      destroyOnHidden
     >
       <Form ref={formRef} layout="vertical">
         <BAIFormItem

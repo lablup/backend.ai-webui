@@ -103,7 +103,6 @@ const LaunchMultipleSessionsModal: React.FC<
       title={t('session.launcher.LaunchMultipleSessions')}
       okText={t('session.launcher.Start')}
       cancelText={t('button.Cancel')}
-      destroyOnHidden
       width={560}
       {...baiModalProps}
       onOk={async () => {

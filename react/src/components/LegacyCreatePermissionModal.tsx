@@ -350,7 +350,6 @@ const LegacyCreatePermissionModal: React.FC<
       onCancel={() => onRequestClose(false)}
       confirmLoading={isCreateInFlight || isUpdateInFlight}
       maskClosable={false}
-      destroyOnHidden
       {...baiModalProps}
     >
       <Form

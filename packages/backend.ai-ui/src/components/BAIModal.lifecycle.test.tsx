@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  `BAIModal` hands its close edge to the `BAIDialog` it keeps mounted, mounts
- its content on first open, and keeps it while closed unless `destroyOnHidden`
- is set. `BAIUnmountAfterClose` drops the whole modal instead.
+ its content on first open and keeps it while closed. `BAIUnmountAfterClose`
+ drops the whole modal, and its state, instead.
 */
 import BAIModal from './BAIModal';
 import BAIUnmountAfterClose from './BAIUnmountAfterClose';
@@ -52,7 +52,7 @@ describe('BAIModal close lifecycle', () => {
     expect(screen.queryByText('Inside')).toBeNull();
   });
 
-  it('keeps its content mounted while closed without destroyOnHidden', () => {
+  it('keeps its content mounted while closed', () => {
     const ui = (open: boolean) => (
       <BAIModal open={open} title="Settings">
         <span>Inside</span>
@@ -61,17 +61,6 @@ describe('BAIModal close lifecycle', () => {
     const { rerender } = render(ui(true));
     rerender(ui(false));
     expect(screen.getByText('Inside')).toBeInTheDocument();
-  });
-
-  it('unmounts its content on close with destroyOnHidden', () => {
-    const ui = (open: boolean) => (
-      <BAIModal open={open} title="Settings" destroyOnHidden>
-        <span>Inside</span>
-      </BAIModal>
-    );
-    const { rerender } = render(ui(true));
-    rerender(ui(false));
-    expect(screen.queryByText('Inside')).toBeNull();
   });
 
   it('is dropped entirely by BAIUnmountAfterClose once it closes', () => {

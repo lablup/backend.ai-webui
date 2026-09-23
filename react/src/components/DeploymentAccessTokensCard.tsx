@@ -242,7 +242,6 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
       <BAIUnmountAfterClose>
         <BAIModal
           open={createdToken !== null}
-          destroyOnHidden
           title={t('deployment.accessToken.Token')}
           onCancel={() => setCreatedToken(null)}
           footer={null}
@@ -585,7 +584,6 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   return (
     <BAIModal
       open={open}
-      destroyOnHidden
       centered
       width={420}
       title={t('deployment.accessToken.Create')}

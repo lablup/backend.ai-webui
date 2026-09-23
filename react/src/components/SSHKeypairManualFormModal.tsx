@@ -32,9 +32,19 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance>(null);
 
+  // Hook-level callbacks, not `mutate(…, { onSuccess })`: `BAIUnmountAfterClose`
+  // unmounts this modal on cancel, and per-call callbacks never fire after that.
   const mutationToPostSSHKeypair = useTanMutation({
     mutationFn: (values: { pubkey: string; privkey: string }) => {
       return baiClient.postSSHKeypair(values);
+    },
+    onSuccess: () => {
+      message.success(t('userSettings.SSHKeypairEnterManuallyFinished'));
+      onRequestRefresh();
+      onRequestClose();
+    },
+    onError: (error) => {
+      message.error(getErrorMessage(error));
     },
   });
 
@@ -46,23 +56,11 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
         formRef.current
           ?.validateFields()
           .then((values) => {
-            mutationToPostSSHKeypair.mutate(values, {
-              onSuccess: () => {
-                message.success(
-                  t('userSettings.SSHKeypairEnterManuallyFinished'),
-                );
-                onRequestRefresh();
-                onRequestClose();
-              },
-              onError: (error) => {
-                message.error(getErrorMessage(error));
-              },
-            });
+            mutationToPostSSHKeypair.mutate(values);
           })
           .catch(() => {});
       }}
       confirmLoading={mutationToPostSSHKeypair.isPending}
-      destroyOnHidden={true}
       {...baiModalProps}
     >
       {/* PILOT-DECISION: the antd `Input.TextArea` sites carried a hand-rolled

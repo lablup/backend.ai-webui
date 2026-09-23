@@ -144,7 +144,6 @@ const UpdateResourceGroupsModal: React.FC<UpdateResourceGroupsModalProps> = ({
       onCancel={() => onRequestClose(false)}
       confirmLoading={isSubmitting}
       loading={proxyResourceGroups === undefined || isFetching}
-      destroyOnHidden
       {...baiModalProps}
     >
       <BAIFlex direction="column" align="stretch" gap="md">

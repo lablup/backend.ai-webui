@@ -320,7 +320,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
       </BAIFlex>
       <DeleteSelectedItemsModal
-        destroyOnHidden
         open={openDeleteModal}
         selectedFiles={selectedFiles}
         onDeleteFilesInBackground={onDeleteFilesInBackground}
@@ -332,7 +331,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateDirectoryModal
-        destroyOnHidden
         open={openCreateModal}
         onRequestClose={(success: boolean, createdFolderName?: string) => {
           if (success) {
@@ -345,7 +343,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateFileModal
-        destroyOnHidden
         open={openCreateFileModal}
         onRequestClose={(success: boolean) => {
           if (success) {

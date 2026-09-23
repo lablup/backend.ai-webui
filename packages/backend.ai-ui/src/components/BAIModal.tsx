@@ -41,9 +41,9 @@
     **zero** outside `BAIModal.stories.tsx`. Still accepted and ignored.
  2. **`centered` is accepted and ignored** — Astryx dialogs are centred unless
     `position` is set (same call as ticket 04 / the app-shim).
- 3. **Content mounts on first open.** Closed, it stays mounted unless
-    `destroyOnHidden` / `destroyOnClose` is set, as in antd. Wrap the modal in
-    `BAIUnmountAfterClose` to drop the whole component instead.
+ 3. **Content mounts on first open and stays mounted while closed.** There is
+    no `destroyOnHidden`: wrap the modal in `BAIUnmountAfterClose` to drop it,
+    and its state, on close.
  4. **A minimized modal stays modal.** antd dropped the mask so the page behind
     stayed interactive; `BAIDialog` always paints one. Minimize therefore
     collapses the dialog to a title bar parked at `minimizedPlacement` but does
@@ -306,8 +306,6 @@ export interface BAIModalProps {
 
   /* ------------------------------------- accepted and ignored (see header) */
   centered?: boolean;
-  destroyOnClose?: boolean;
-  destroyOnHidden?: boolean;
   draggable?: boolean;
   stickyTitle?: boolean;
   forceRender?: boolean;
@@ -395,8 +393,6 @@ const BAIModal: React.FC<BAIModalProps> = ({
   style,
   styles: stylesProp,
   classNames: classNamesProp,
-  destroyOnHidden,
-  destroyOnClose,
   ...rest
 }) => {
   'use memo';
@@ -408,8 +404,6 @@ const BAIModal: React.FC<BAIModalProps> = ({
   if (isVisible && !hasOpened) {
     setHasOpened(true);
   }
-  const shouldRenderContent =
-    isVisible || (hasOpened && !destroyOnHidden && !destroyOnClose);
 
   // The `(info) => ...` form of `styles` / `classNames` was already inert in
   // the antd-era component; keep it inert rather than half-supported.
@@ -733,7 +727,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
       aria-label={rest['aria-label']}
       data-testid={rest['data-testid']}
     >
-      {shouldRenderContent ? (
+      {hasOpened ? (
         <Layout
           style={styles?.container ?? styles?.content}
           header={headerNode}

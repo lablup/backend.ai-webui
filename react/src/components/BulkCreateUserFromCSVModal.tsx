@@ -978,7 +978,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   return (
     <BAIModal
       centered
-      destroyOnHidden
       title={
         <BAIFlex align="center" gap="xxs">
           {t('credential.BulkCreateUserFromCSV')}

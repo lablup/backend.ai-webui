@@ -61,7 +61,6 @@ const PrivacyPolicyModal = ({
     <BAIModal
       title={t('webui.menu.PrivacyPolicy')}
       onCancel={onRequestClose}
-      destroyOnHidden
       footer={null}
       width={'80%'}
       {...props}
