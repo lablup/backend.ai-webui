@@ -5,9 +5,11 @@ export type ProjectV2Filter = {
     NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;
     OR?: ReadonlyArray<ProjectV2Filter> | null | undefined;
     createdAt?: DateTimeFilter | null | undefined;
+    description?: StringFilter | null | undefined;
     domain?: ProjectDomainNestedFilter | null | undefined;
     domainName?: StringFilter | null | undefined;
     id?: UUIDFilter | null | undefined;
+    integrationName?: StringFilter | null | undefined;
     isActive?: boolean | null | undefined;
     modifiedAt?: DateTimeFilter | null | undefined;
     name?: StringFilter | null | undefined;

@@ -66,6 +66,11 @@ export interface BAITableSettings {
 export interface BAIExportSettings {
     supportedFields: string[];
     onExport: (selectedExportKeys: string[]) => Promise<void>;
+    /**
+     * Shown as a warning above the column list in the export modal, before the
+     * user commits — e.g. that the export holds only the first N rows.
+     */
+    notice?: ReactNode;
 }
 /**
  * Column model for `BAITable`.
