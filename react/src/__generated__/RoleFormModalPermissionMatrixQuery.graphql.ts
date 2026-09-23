@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a41bf2f17160c142d7d3942f1ec33091>>
+ * @generated SignedSource<<f384e0a08a2336aa10a496cf95175fdb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RoleFormModalPermissionMatrixQuery$variables = Record<PropertyKey, never>;
 export type RoleFormModalPermissionMatrixQuery$data = {
   readonly rbacPermissionMatrix: ReadonlyArray<{
-    readonly entities: ReadonlyArray<{
-      readonly actions: ReadonlyArray<{
-        readonly requiredPermission: PermissionBit;
-      }>;
-    }>;
     readonly scopeType: string;
   }> | null | undefined;
 };
@@ -42,35 +36,6 @@ var v0 = [
         "kind": "ScalarField",
         "name": "scopeType",
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "EntityActionInfo",
-        "kind": "LinkedField",
-        "name": "entities",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "OperationInfo",
-            "kind": "LinkedField",
-            "name": "actions",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "requiredPermission",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
       }
     ],
     "storageKey": null
@@ -94,16 +59,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "25fd6c8406d027782c61ef4326c8af19",
+    "cacheID": "3e49acf208c65d7a49ee93149e0d5f79",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalPermissionMatrixQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalPermissionMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    entities {\n      actions {\n        requiredPermission\n      }\n    }\n  }\n}\n"
+    "text": "query RoleFormModalPermissionMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ee9601df7953401560bef1064288f384";
+(node as any).hash = "b33c3c63cd1cb02e180b5ffe68024ae1";
 
 export default node;
