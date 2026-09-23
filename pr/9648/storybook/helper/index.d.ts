@@ -3,6 +3,8 @@ export * from './astryxTagVariant';
 export * from './combineFilters';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
+/** The manager's "no limit" sentinel for count fields; rendered as ∞. */
+export declare const SIGNED_32BIT_MAX_INT = 2147483647;
 export declare function parseValueWithUnit(str: string): [number, string | undefined];
 export declare const GBToBytes: (value?: number) => number;
 export declare const bytesToGB: (bytes: number, decimalPoint?: number, nullStr?: string) => string | number;
