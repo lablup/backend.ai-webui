@@ -401,8 +401,8 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
-  const allocatablePresetNames = useMemo(() => {
-    return getAllocatablePresetNames(
+  const allocatablePresetIds = useMemo(() => {
+    return getAllocatablePresetIds(
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
@@ -587,10 +587,10 @@ const ResourceAllocationFormItems: React.FC<
   );
 
   const updateResourceFieldsBasedOnPreset = useEventNotStable(
-    (name: string) => {
+    (presetId: string) => {
       const preset = _.find(
         checkPresetInfo?.presets,
-        (preset) => preset.name === name,
+        (preset) => preset.id === presetId,
       );
       const slots = _.pick(preset?.resource_slots, _.keys(resourceSlotsInRG));
       const mem = convertToBinaryUnit(slots?.mem || 0, 'g', 2)?.value;
@@ -665,18 +665,21 @@ const ResourceAllocationFormItems: React.FC<
       ) {
         // if the current preset is custom or minimum-required, do nothing.
       } else {
+        const firstAllocatablePreset = _.sortBy(
+          _.filter(checkPresetInfo?.presets, (preset) =>
+            allocatablePresetIds.includes(preset.id),
+          ),
+          'name',
+        )[0];
         if (
-          allocatablePresetNames.includes(
-            form.getFieldValue('allocationPreset'),
-          )
+          allocatablePresetIds.includes(form.getFieldValue('allocationPreset'))
         ) {
           // if the current preset is available in the current resource group, do nothing.
-        } else if (enableResourcePresets && allocatablePresetNames[0]) {
-          const autoSelectedPreset = _.sortBy(allocatablePresetNames)[0];
+        } else if (enableResourcePresets && firstAllocatablePreset) {
           form.setFieldsValue({
-            allocationPreset: autoSelectedPreset,
+            allocationPreset: firstAllocatablePreset.id,
           });
-          updateResourceFieldsBasedOnPreset(autoSelectedPreset);
+          updateResourceFieldsBasedOnPreset(firstAllocatablePreset.id);
         } else {
           // if the current preset is not available in the current resource group, set to "minimum-required".
           if (baiClient._config.allowCustomResourceAllocation) {
@@ -697,7 +700,8 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [
     currentAllocationPreset,
-    allocatablePresetNames,
+    allocatablePresetIds,
+    checkPresetInfo?.presets,
     resourceSlotsInRG,
     form,
     enableResourcePresets,
@@ -762,7 +766,7 @@ const ResourceAllocationFormItems: React.FC<
                   // Check if the selected preset has a specific shmem setting
                   const selectedPreset = _.find(
                     checkPresetInfo?.presets,
-                    (preset) => preset.name === value,
+                    (preset) => preset.id === value,
                   );
                   const hasPresetShmem =
                     selectedPreset?.shared_memory &&
@@ -775,7 +779,7 @@ const ResourceAllocationFormItems: React.FC<
                 }
               }
             }}
-            allocatablePresetNames={allocatablePresetNames}
+            allocatablePresetIds={allocatablePresetIds}
             resourceGroup={currentResourceGroupInForm}
           />
         </Form.Item>
@@ -1825,7 +1829,7 @@ const MemoizedResourceAllocationFormItems = React.memo(
 
 export default MemoizedResourceAllocationFormItems;
 
-export const getAllocatablePresetNames = (
+export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
   currentImage: Image,
@@ -1877,7 +1881,7 @@ export const getAllocatablePresetNames = (
               _.toNumber(resourceLimits.accelerators[key]?.max);
       }
     });
-  }).map((preset) => preset.name);
+  }).map((preset) => preset.id);
 
   const byImageAcceleratorLimits = _.filter(presets, (preset) => {
     const acceleratorResourceOfPreset = _.omitBy(
@@ -1909,7 +1913,7 @@ export const getAllocatablePresetNames = (
         })
       );
     }
-  }).map((preset) => preset.name);
+  }).map((preset) => preset.id);
   return currentImageAcceleratorLimits.length === 0
     ? bySliderLimit
     : _.intersection(bySliderLimit, byImageAcceleratorLimits);

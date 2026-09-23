@@ -47,14 +47,14 @@ export type ResourcePreset = NonNullable<
  * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
  * replaced by the props the single call site actually passes (P1 — grepped,
  * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
- * `allocatablePresetNames`, `resourceGroup`; the Form injects `value`), plus
+ * `allocatablePresetIds`, `resourceGroup`; the Form injects `value`), plus
  * the usual disabled/loading/style trio.
  */
 export interface ResourcePresetSelectProps {
   /** Injected by `Form.Item`. */
   value?: string;
   onChange?: (value: string, options: PresetOptionType) => void;
-  allocatablePresetNames?: string[];
+  allocatablePresetIds?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   resourceGroup?: string;
@@ -63,7 +63,7 @@ export interface ResourcePresetSelectProps {
   style?: CSSProperties;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
-  allocatablePresetNames,
+  allocatablePresetIds,
   showCustom,
   showMinimumRequired,
   resourceGroup,
@@ -94,6 +94,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     graphql`
       query ResourcePresetSelectQuery {
         resource_presets {
+          id
           name
           resource_slots
           shared_memory
@@ -117,24 +118,24 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
       )
     : resource_presets;
 
-  const firstAvailablePresetName = [...(resourcePresets ?? [])]
+  const firstAvailablePreset = [...(resourcePresets ?? [])]
     .filter(
       (p): p is NonNullable<typeof p> =>
         p != null &&
-        (!allocatablePresetNames ||
-          allocatablePresetNames.includes(p.name ?? '')),
+        (!allocatablePresetIds || allocatablePresetIds.includes(p.id ?? '')),
     )
-    .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0]?.name;
+    .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0];
+  const firstAvailablePresetId = firstAvailablePreset?.id;
 
   useEffect(() => {
-    if (autoSelectDefault && !controllableValue && firstAvailablePresetName) {
-      setControllableValue(firstAvailablePresetName, {
-        value: firstAvailablePresetName,
-        label: firstAvailablePresetName,
+    if (autoSelectDefault && !controllableValue && firstAvailablePresetId) {
+      setControllableValue(firstAvailablePresetId, {
+        value: firstAvailablePresetId,
+        label: firstAvailablePreset?.name ?? '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSelectDefault, firstAvailablePresetName]);
+  }, [autoSelectDefault, firstAvailablePresetId]);
 
   // PILOT-DECISION: antd `optionLabelProp="selectedLabel"` let an option carry
   // a rich `label` node for the popup and a plain string for the trigger.
@@ -144,16 +145,17 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   const presetOptions: PresetOptionType[] = _.map(
     resourcePresets,
     (preset) => ({
-      value: preset?.name ?? '',
+      // Names repeat across resource groups; the id is the option's key.
+      value: preset?.id ?? '',
       label: preset?.name ?? '',
-      disabled: allocatablePresetNames
-        ? !allocatablePresetNames.includes(preset?.name || '')
+      disabled: allocatablePresetIds
+        ? !allocatablePresetIds.includes(preset?.id || '')
         : undefined,
       preset: preset ?? undefined,
     }),
   )
     .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
-    .sort((a, b) => localeCompare(a.value, b.value));
+    .sort((a, b) => localeCompare(a.label, b.label));
 
   const renderResourceRow = (option: SelectorOptionData) => {
     if (option.value === 'minimum-required') {
