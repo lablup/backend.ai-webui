@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (30fe22f)">v26.9.0-alpha.0 (30fe22f)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (690a71a)">v26.9.0-alpha.0 (690a71a)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -280,7 +280,7 @@
 <p data-bai-block="26">次のページに進むには、下部の「次のページ」ボタンをクリックするか、右側の「実行環境とリソース割り当て」メニューをクリックします。
 追加設定なしでセッションを作成したい場合は、「レビューへスキップ」ボタンを押してください。
 この場合、他のページの設定はすべて既定値が使用されます。</p>
-<p>  <figure data-bai-block="27" class="doc-figure"><img src="./images/launch_session_environments_and_resource.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="2560" /><figcaption>図 10.6</figcaption></figure>
+<p>  <figure data-bai-block="27" class="doc-figure"><img src="./images/launch_session_environments_and_resource.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="2608" /><figcaption>図 10.6</figcaption></figure>
 </p>
 <h3 data-bai-block="28" id="sessions_all-実行環境">実行環境<a class="hash-link" href="#sessions_all-実行環境" aria-label="Direct link to 実行環境">#</a></h3>
 <p data-bai-block="29">2番目のページで設定できる各項目の詳細な説明については、以下を参照してください。</p>
@@ -316,7 +316,7 @@
 <li data-bai-block="37"><p>リソースプリセット: このテンプレートには、コンピュートセッションに割り当てるCPU、メモリ、GPUなどの
 リソースセットが事前に定義されています。管理者は、よく使われるリソース設定を事前に定義できます。
 数値入力を調整するか、スライダーを動かすことで、ユーザーは希望する量のリソースを割り当てることができます。</p>
-<p><figure data-bai-block="38" class="doc-figure"><img src="./images/launch_session_resource.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1604" /><figcaption>図 10.8</figcaption></figure>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/launch_session_resource.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1602" /><figcaption>図 10.8</figcaption></figure>
 </p>
 <p>各項目の意味は次のとおりです。
 「案内(ヘルプ)」ボタン（?）をクリックすると、詳細な情報を確認できます。</p>
@@ -334,7 +334,7 @@ GPUメモリの少なくとも2倍のメモリを割り当てる必要があり�
 <li data-bai-block="42">AIアクセラレータ: AIアクセラレータ（GPUまたはNPU）は、機械学習に関わる行列/ベクトル演算に適しています。
 AIアクセラレータは、トレーニング/推論アルゴリズムを桁違いに高速化し、
 実行時間を数週間から数日に短縮します。
-<figure data-bai-block="43" class="doc-figure"><img src="./images/launch_session_resource_2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1604" /><figcaption>図 10.9</figcaption></figure>
+<figure data-bai-block="43" class="doc-figure"><img src="./images/launch_session_resource_2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="1602" /><figcaption>図 10.9</figcaption></figure>
 </li>
 </ul>
 </li>
@@ -367,7 +367,7 @@ AIアクセラレータは、トレーニング/推論アルゴリズムを桁�
 現在、この機能はシングルノード、シングルコンテナ環境でのみサポートされています。</p>
 </li>
 <li data-bai-block="49"><p>クラスターモード: 1つのコンピュートセッションをエージェントにどのように配置するかを選択します。<strong>シングルノード</strong>を選択すると、メインノードとすべてのワーカーノードが1つのエージェント（物理ノードまたは仮想マシン）に配置され、<strong>マルチノード</strong>を選択すると、1つのメインノードと1つ以上のワーカーノードが複数のエージェントに分割して配置されます。各オプションの横にある（<code>?</code>）アイコンにカーソルを合わせると、簡単な説明が表示されます。モードを選択した後、スライダーまたは数値入力で<strong>クラスターサイズ</strong>を指定します。シングルノードモードではサイズは1つのエージェント上に作成される<strong>コンテナ</strong>数を表し、マルチノードモードでは複数のエージェントに分散される<strong>ノード</strong>数を表します。スライダーの<em>残りリソース</em>マークは、現在割り当てられているリソースですぐに起動できる最大サイズを示します。より大きなサイズを選択することもできますが、十分なリソースが空くまでセッションが保留状態になる場合があります。サイズが1のマルチノードセッションは、シングルノードセッションとして作成されます。詳細については、<a href="./cluster_session.html#backendai-cluster-compute-session">Backend.AIクラスターコンピュートセッションの概要</a>を参照してください。</p>
-<p><figure data-bai-block="50" class="doc-figure"><img src="./images/cluster_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1352" height="302" /><figcaption>図 10.10</figcaption></figure>
+<p><figure data-bai-block="50" class="doc-figure"><img src="./images/cluster_mode.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1352" height="300" /><figcaption>図 10.10</figcaption></figure>
 </p>
 </li>
 </ul>
@@ -482,7 +482,7 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 ヘッダーの<strong>通知</strong>をクリックすると、このセッション作成通知を再度表示することもできます。</p>
 <p><figure data-bai-block="86" class="doc-figure"><img src="./images/session_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 10.20</figcaption></figure>
 </p>
-<p><figure data-bai-block="87" class="doc-figure"><img src="./images/session_notification.png" alt="" class="doc-image" loading="lazy" decoding="async" width="760" height="190" /><figcaption>図 10.21</figcaption></figure>
+<p><figure data-bai-block="87" class="doc-figure"><img src="./images/session_notification.png" alt="" class="doc-image" loading="lazy" decoding="async" width="768" height="172" /><figcaption>図 10.21</figcaption></figure>
 </p>
 <p data-bai-block="88">一番左のアプリダイアログボタンをクリックすると、利用可能なアプリサービスを確認できます。</p>
 <p><figure data-bai-block="89" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>図 10.22</figcaption></figure>
@@ -490,9 +490,9 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <h3 data-bai-block="90" id="sessions_all-最近の履歴">最近の履歴<a class="hash-link" href="#sessions_all-最近の履歴" aria-label="Direct link to 最近の履歴">#</a></h3>
 <p data-bai-block="91">「セッションランチャー」ページは、セッションを作成するためのさまざまなオプションを提供します。
 <code>最近の履歴</code>機能は、以前に作成したセッションの情報を記憶します。</p>
-<p><figure data-bai-block="92" class="doc-figure"><img src="./images/recent_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1440" height="900" /><figcaption>図 10.23</figcaption></figure>
+<p><figure data-bai-block="92" class="doc-figure"><img src="./images/recent_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 10.23</figcaption></figure>
 </p>
-<p><figure data-bai-block="93" class="doc-figure"><img src="./images/recent_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="850" height="274" /><figcaption>図 10.24</figcaption></figure>
+<p><figure data-bai-block="93" class="doc-figure"><img src="./images/recent_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1688" height="444" /><figcaption>図 10.24</figcaption></figure>
 </p>
 <p data-bai-block="94"><code>最近の履歴</code>モーダルには、最新の5つのセッションの情報が保存されます。
 セッション名をクリックすると、セッション作成の最終ステップである「レビューと開始」ページに移動します。
@@ -615,7 +615,7 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <p><a id="session-scheduling-history"></a></p>
 <h3 data-bai-block="134" id="sessions_all-セッションのスケジュール履歴">セッションのスケジュール履歴<a class="hash-link" href="#sessions_all-セッションのスケジュール履歴" aria-label="Direct link to セッションのスケジュール履歴">#</a></h3>
 <p data-bai-block="135">セッションのスケジュール履歴モーダルは、コンピュートセッションの内部スケジューリングライフサイクルを透明に表示します。セッションが経たすべてのスケジューリングフェーズの詳細な記録を表示し、ステータス遷移、結果、リトライ回数、発生したエラーなどの情報を含みます。この機能は、セッションが遅延している理由、<code>PENDING</code>状態に留まっている理由、または開始に失敗した理由を理解するのに特に役立ちます。</p>
-<p><figure data-bai-block="136" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1780" /><figcaption>図 10.28</figcaption></figure>
+<p><figure data-bai-block="136" class="doc-figure"><img src="./images/session_scheduling_history_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 10.28</figcaption></figure>
 </p>
 <h4 data-bai-block="137" id="sessions_all-フィルターバー">フィルターバー<a class="hash-link" href="#sessions_all-フィルターバー" aria-label="Direct link to フィルターバー">#</a></h4>
 <p data-bai-block="138">モーダル上部のフィルターバーを使用して、スケジュール履歴レコードを絞り込むことができます。以下のプロパティでフィルタリングできます：</p>
@@ -648,7 +648,7 @@ Backend.AIは既定で、この値をセッションのCPUコア数と同じに�
 <p data-bai-block="161">スケジュール履歴テーブルはオフセットベースのページネーションを使用しており、既定のページサイズは1ページあたり10件です。フィルターまたはソート順を変更すると、表示は自動的に1ページ目にリセットされます。</p>
 <h4 data-bai-block="162" id="sessions_all-展開可能なサブステップ">展開可能なサブステップ<a class="hash-link" href="#sessions_all-展開可能なサブステップ" aria-label="Direct link to 展開可能なサブステップ">#</a></h4>
 <p data-bai-block="163">一部の履歴レコードには詳細なサブステップが含まれています。サブステップがある場合、行の左側に展開矢印が表示されます。クリックすると、そのスケジューリングフェーズの個別のサブステップを表示するネストされたテーブルが表示されます。</p>
-<p><figure data-bai-block="164" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1500" height="1000" /><figcaption>図 10.29</figcaption></figure>
+<p><figure data-bai-block="164" class="doc-figure"><img src="./images/session_scheduling_history_substeps.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 10.29</figcaption></figure>
 </p>
 <p data-bai-block="165">サブステップテーブルには、以下のカラムが含まれます：</p>
 <ul>
