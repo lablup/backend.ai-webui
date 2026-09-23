@@ -21,6 +21,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
   BAINameActionCell,
   type BAINameActionCellAction,
   disabledReason,
@@ -241,7 +242,6 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
       <BAIUnmountAfterClose>
         <BAIModal
           open={createdToken !== null}
-          destroyOnHidden
           title={t('deployment.accessToken.Token')}
           onCancel={() => setCreatedToken(null)}
           footer={null}
@@ -512,7 +512,10 @@ const DayjsDateTimeInput: React.FC<{
   );
 };
 
-interface CreateAccessTokenModalProps {
+interface CreateAccessTokenModalProps extends Pick<
+  BAIModalProps,
+  'afterOpenChange' | 'afterClose'
+> {
   open: boolean;
   confirmLoading?: boolean;
   onRequestClose: (result?: { expiresAt: string | null }) => void;
@@ -522,6 +525,8 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   open,
   confirmLoading,
   onRequestClose,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -579,7 +584,6 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   return (
     <BAIModal
       open={open}
-      destroyOnHidden
       centered
       width={420}
       title={t('deployment.accessToken.Create')}
@@ -587,6 +591,8 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
       confirmLoading={confirmLoading}
       onOk={handleOk}
       onCancel={() => onRequestClose()}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
     >
       <Form<CreateAccessTokenFormValues>
         form={form}

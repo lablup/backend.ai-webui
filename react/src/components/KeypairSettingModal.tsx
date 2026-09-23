@@ -87,7 +87,6 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
       }
       okText={keypair ? t('button.Save') : t('button.Create')}
       width={500}
-      destroyOnHidden
       onOk={() => {
         formRef.current
           ?.validateFields()

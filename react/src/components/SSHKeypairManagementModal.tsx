@@ -12,6 +12,7 @@ import { HStack } from '@astryxdesign/core/Stack';
 import {
   BAIModal,
   BAIModalProps,
+  BAIUnmountAfterClose,
   useToggle,
   useUpdatableState,
 } from 'backend.ai-ui';
@@ -96,18 +97,20 @@ const SSHKeypairManagementModal: React.FC<SSHKeypairManagementModalProps> = ({
           });
         }}
       />
-      <SSHKeypairManualFormModal
-        open={isOpenSSHKeypairManualFormModal}
-        // Closing is idempotent: the modal now closes from the mutation's
-        // onSuccess, so a toggle would reopen it after a cancel mid-request.
-        onCancel={closeSSHKeypairManualFormModal}
-        onRequestClose={closeSSHKeypairManualFormModal}
-        onRequestRefresh={() => {
-          startRefreshModalTransition(() => {
-            updateFetchKey();
-          });
-        }}
-      />
+      <BAIUnmountAfterClose>
+        <SSHKeypairManualFormModal
+          open={isOpenSSHKeypairManualFormModal}
+          // Closing is idempotent: the modal now closes from the mutation's
+          // onSuccess, so a toggle would reopen it after a cancel mid-request.
+          onCancel={closeSSHKeypairManualFormModal}
+          onRequestClose={closeSSHKeypairManualFormModal}
+          onRequestRefresh={() => {
+            startRefreshModalTransition(() => {
+              updateFetchKey();
+            });
+          }}
+        />
+      </BAIUnmountAfterClose>
     </>
   );
 };

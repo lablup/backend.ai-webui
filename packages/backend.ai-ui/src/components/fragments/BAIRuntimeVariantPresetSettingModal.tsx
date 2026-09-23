@@ -503,7 +503,6 @@ const BAIRuntimeVariantPresetSettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onRequestClose(false)}
-      destroyOnHidden
       confirmLoading={isInFlightCreate || isInFlightUpdate}
       okText={preset ? t('general.button.Save') : t('general.button.Create')}
     >

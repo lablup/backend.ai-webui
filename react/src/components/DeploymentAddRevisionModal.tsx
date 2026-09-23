@@ -1896,7 +1896,6 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
       }
       onCancel={() => onRequestClose()}
       confirmLoading={isAddInFlight || isResolvingImage}
-      destroyOnHidden
       {...restModalProps}
     >
       {/* "Load current revision" affordance — mode-independent, rendered

@@ -483,7 +483,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightCreateRole || isInFlightUpdateRole}
       maskClosable={false}
-      destroyOnHidden
       {...baiModalProps}
     >
       <Form

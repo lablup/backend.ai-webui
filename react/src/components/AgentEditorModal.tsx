@@ -234,7 +234,6 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnHidden
       title={isEditing ? t('aiAgent.EditAgent') : t('aiAgent.CreateAgent')}
       okText={okLabel}
       width={760}
