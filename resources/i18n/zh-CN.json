@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "API 密钥",
+      "ApiKeyHint": "仅保存在此聊天面板的内存中，不会被存储。重新加载页面后需要重新输入。",
+      "ApiKeyMissing": "此聊天使用了自定义端点。请重新输入 API 密钥以继续。",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "兼容 OpenAI 的 Base URL，通常以 /v1 结尾。端点必须允许来自此浏览器的请求（CORS）。",
+      "BaseURLRequired": "请输入 Base URL。",
+      "Connect": "连接",
+      "ConnectCustomEndpoint": "连接自定义端点…",
+      "Edit": "编辑自定义端点",
+      "InvalidBaseURL": "请输入有效的 http(s) URL。",
+      "error": {
+        "Http": "端点返回了 HTTP {{status}}。",
+        "InvalidResponse": "响应不是兼容 OpenAI 的模型列表。",
+        "Network": "无法访问端点。",
+        "NetworkHint": "请检查地址和网络。请求直接从此浏览器发出，因此服务器必须允许（CORS）。",
+        "NoModels": "端点未返回任何模型。",
+        "NotFound": "在此 Base URL 上找不到 /models（404）。",
+        "NotFoundHint": "Base URL 应指向 API 根路径，通常以 /v1 结尾。",
+        "NotFoundSuggestV1": "Base URL 通常以 /v1 结尾 — 请尝试 {{url}}。",
+        "RetryWithV1": "加上 /v1 重试",
+        "ServerError": "端点报告了服务器错误（HTTP {{status}}）。",
+        "Timeout": "端点在 30 秒内没有响应。",
+        "Unauthorized": "端点拒绝了请求（401/403）。",
+        "UnauthorizedHint": "请检查 API 密钥；如果端点需要，请输入密钥。"
+      }
+    },
     "intro": {
       "Description": "通过兼容 OpenAI 的 API，与您的部署中定义的 LLM 模型对话。",
       "Title": "与您已部署的模型对话"
