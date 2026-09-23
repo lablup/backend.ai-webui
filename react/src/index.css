@@ -20,8 +20,8 @@
 
 @import '@astryxdesign/core/reset.css';
 @import '@astryxdesign/core/astryx.css';
-/* Astryx Lab (canary, exact pin — MIGRATION-SPEC §1-④; to-astryx ticket 18):
-   layered styles for lab components (Drawer, Tour, Stepper, …). */
+/* Astryx Lab (canary, exact pin): layered styles for lab components (Drawer,
+   Tour, Stat, …). */
 @import '@astryxdesign/lab/lab.css';
 @import '@astryxdesign/theme-neutral/theme.css';
 

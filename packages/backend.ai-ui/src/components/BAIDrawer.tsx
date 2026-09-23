@@ -11,13 +11,25 @@ import { HStack, StackItem, VStack } from '@astryxdesign/core/Stack';
 import { Drawer } from '@astryxdesign/lab';
 import classNames from 'classnames';
 import { X } from 'lucide-react';
-import React, { type ReactNode } from 'react';
+import React, {
+  type ReactNode,
+  useEffectEvent,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 export interface BAIDrawerProps {
   /** Whether the drawer is open. antd `Drawer`'s `open`. */
   open?: boolean;
   /** Close request (Escape, scrim click, the header close button). */
   onClose?: () => void;
+  /**
+   * Called with `true` as soon as the drawer opens, and with `false` once the
+   * slide-out has finished. Never on mount.
+   */
+  afterOpenChange?: (open: boolean) => void;
+  /** Called once the slide-out has finished. Drives `BAIUnmountAfterClose`. */
+  afterClose?: () => void;
   /** Header title. antd `Drawer`'s `title`. */
   title?: ReactNode;
   /** Header actions, rendered at the trailing edge. antd `Drawer`'s `extra`. */
@@ -31,7 +43,7 @@ export interface BAIDrawerProps {
   /** Panel size along the slide axis. antd `Drawer`'s `size`/`width`. */
   size?: number | string;
   /** Edge the panel slides from. @default 'end' */
-  side?: 'start' | 'end' | 'top' | 'bottom';
+  side?: 'start' | 'end';
   /**
    * Modal scrim, and with it the modality switch: `true` renders through
    * `BAIDrawerPortal` (modal band level + focus containment), `false` keeps
@@ -67,6 +79,8 @@ export interface BAIDrawerProps {
 const BAIDrawer: React.FC<BAIDrawerProps> = ({
   open = false,
   onClose,
+  afterOpenChange,
+  afterClose,
   title,
   extra,
   label,
@@ -80,6 +94,32 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+
+  // lab delays `dialog.close()` until the slide-out is over, so the native
+  // `close` event is the end of the close; unmounting earlier cuts it off.
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const wasOpenRef = useRef(open);
+  const notifyOpened = useEffectEvent(() => afterOpenChange?.(true));
+  const notifyClosed = useEffectEvent(() => {
+    afterOpenChange?.(false);
+    afterClose?.();
+  });
+  useLayoutEffect(() => {
+    if (wasOpenRef.current === open) return;
+    wasOpenRef.current = open;
+    if (open) {
+      notifyOpened();
+      return;
+    }
+    const dialog = dialogRef.current;
+    if (!dialog?.open) {
+      notifyClosed();
+      return;
+    }
+    const handleClose = () => notifyClosed();
+    dialog.addEventListener('close', handleClose, { once: true });
+    return () => dialog.removeEventListener('close', handleClose);
+  }, [open]);
 
   // lab `Drawer` requires a non-empty accessible name.
   const accessibleName =
@@ -134,10 +174,13 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
   );
 
   const drawerProps = {
+    ref: dialogRef,
     isOpen: open,
-    onClose: () => onClose?.(),
+    onOpenChange: (next: boolean) => {
+      if (!next) onClose?.();
+    },
     side,
-    size,
+    width: size,
     label: accessibleName,
     // The header above owns the close affordance, at antd's `start` placement.
     // Leaving lab's own button on would paint a second, floating one over the

@@ -91,7 +91,6 @@ const BAIHuggingFaceRegistrySettingModal: React.FC<
   return (
     <BAIModal
       title={t('comp:BAIHuggingFaceRegistrySettingModal.HuggingFaceSettings')}
-      destroyOnHidden
       confirmLoading={isInflightUpdate}
       onOk={handleOk}
       afterClose={() => {

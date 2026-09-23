@@ -140,7 +140,6 @@ const DashboardPanelModal: React.FC<DashboardPanelModalProps> = ({
   return (
     <BAIModal
       open={open}
-      destroyOnHidden
       width="min(960px, 95vw)"
       title={
         initialPanel

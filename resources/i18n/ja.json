@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "APIキー",
+      "ApiKeyHint": "このチャットパネルのメモリにのみ保持され、保存されません。ページを再読み込みすると再入力が必要です。",
+      "ApiKeyMissing": "このチャットはカスタムエンドポイントを使用していました。続行するにはAPIキーを再入力してください。",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "OpenAI互換のBase URLで、通常は /v1 で終わります。エンドポイントはこのブラウザからのリクエストを許可する必要があります(CORS)。",
+      "BaseURLRequired": "Base URLを入力してください。",
+      "Connect": "接続",
+      "ConnectCustomEndpoint": "カスタムエンドポイントに接続…",
+      "Edit": "カスタムエンドポイントを編集",
+      "InvalidBaseURL": "有効な http(s) URL を入力してください。",
+      "error": {
+        "Http": "エンドポイントが HTTP {{status}} を返しました。",
+        "InvalidResponse": "応答がOpenAI互換のモデル一覧ではありません。",
+        "Network": "エンドポイントに接続できません。",
+        "NetworkHint": "アドレスとネットワークを確認してください。リクエストはこのブラウザから直接送信されるため、サーバーが許可(CORS)している必要があります。",
+        "NoModels": "エンドポイントがモデルを返しませんでした。",
+        "NotFound": "このBase URLで /models が見つかりません (404)。",
+        "NotFoundHint": "Base URLはAPIのルートを指す必要があり、通常は /v1 で終わります。",
+        "NotFoundSuggestV1": "Base URLは通常 /v1 で終わります — {{url}} を試してください。",
+        "RetryWithV1": "/v1 を付けて再試行",
+        "ServerError": "エンドポイントでサーバーエラーが発生しました (HTTP {{status}})。",
+        "Timeout": "エンドポイントが30秒以内に応答しませんでした。",
+        "Unauthorized": "エンドポイントがリクエストを拒否しました (401/403)。",
+        "UnauthorizedHint": "APIキーを確認するか、エンドポイントが必要とする場合はキーを入力してください。"
+      }
+    },
     "intro": {
       "Description": "デプロイに定義されたLLMモデルと、OpenAI互換APIを通じてチャットできます。",
       "Title": "デプロイしたモデルとチャットする"
@@ -2613,6 +2640,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "「Unlimited」により、エージェントノードの容量までの使用が可能になり、「Limited」は明示的に設定しない限りリソースを拒否します。\nほとんどの場合、「無制限」が推奨されます。",
     "DeletePolicy": "ポリシーを削除します",
     "ExportCSV": "CSVエクスポート",
+    "ExportCapNotice": "全 {{count}} 行のうち最初の {{limit}} 行のみエクスポートされます。",
+    "ExportFetchProgress": "{{total}} 行中 {{fetched}} 行を取得しました。",
+    "ExportPreparing": "エクスポートを準備しています…",
+    "ExportedRows": "{{count}} 行をエクスポートしました。",
     "Folders": "フォルダー",
     "IdleTimeout": "アイドルタイムアウト",
     "IdleTimeoutSec": "アイドルタイムアウト（秒）",

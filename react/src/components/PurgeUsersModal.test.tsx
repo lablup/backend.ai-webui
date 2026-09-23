@@ -7,18 +7,25 @@ import '../../__test__/resizeObserver.mock.js';
 import type { PurgeUsersModalTestQuery } from '../__generated__/PurgeUsersModalTestQuery.graphql';
 import PurgeUsersModal from './PurgeUsersModal';
 import '@testing-library/jest-dom';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Suspense } from 'react';
+import { BAIUnmountAfterClose } from 'backend.ai-ui';
+import { Suspense, useState } from 'react';
 import {
   graphql,
   RelayEnvironmentProvider,
   useLazyLoadQuery,
 } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
-import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 
-// `t` is identity-mapped, so the assertions read as i18n keys.
+/**
+ * FR-3990: the two "also delete" options are per-purge choices, so reopening
+ * the modal must not carry the previous user's answers over. The reset is
+ * `BAIUnmountAfterClose` dropping the modal after close (FR-4061), so every
+ * harness renders through it, as AdminUserManagement does. `t` is
+ * identity-mapped, so the assertions read as i18n keys.
+ */
+
 vi.mock('react-i18next', async () => {
   const React = await import('react');
   return {
@@ -54,11 +61,7 @@ vi.mock('../hooks', async (importOriginal) => {
   };
 });
 
-const Harness: React.FC<{
-  open: boolean;
-  onOk?: () => void;
-  onCancel?: () => void;
-}> = ({ open, onOk, onCancel }) => {
+const useUsers = () => {
   const data = useLazyLoadQuery<PurgeUsersModalTestQuery>(
     graphql`
       query PurgeUsersModalTestQuery {
@@ -74,24 +77,55 @@ const Harness: React.FC<{
     `,
     {},
   );
-  const usersFrgmt = (data.adminUsersV2?.edges ?? [])
+  return (data.adminUsersV2?.edges ?? [])
     .map((edge) => edge?.node)
     .filter((node): node is NonNullable<typeof node> => node != null);
+};
 
-  return (
+const Harness: React.FC<{
+  open: boolean;
+  onOk?: () => void;
+  onCancel?: () => void;
+  afterClose?: () => void;
+}> = ({ open, onOk, onCancel, afterClose }) => (
+  <BAIUnmountAfterClose>
     <PurgeUsersModal
+      usersFrgmt={useUsers()}
       open={open}
-      usersFrgmt={usersFrgmt}
       onOk={onOk}
       onCancel={onCancel}
+      afterClose={afterClose}
     />
+  </BAIUnmountAfterClose>
+);
+
+// Closes itself on OK / cancel, as AdminUserManagement does.
+const SelfClosingHarness: React.FC<{
+  afterClose: () => void;
+  onOk?: () => void;
+}> = ({ afterClose, onOk }) => {
+  const [open, setOpen] = useState(true);
+  return (
+    <BAIUnmountAfterClose>
+      <PurgeUsersModal
+        usersFrgmt={useUsers()}
+        open={open}
+        onOk={() => {
+          onOk?.();
+          setOpen(false);
+        }}
+        onCancel={() => setOpen(false)}
+        afterClose={afterClose}
+      />
+    </BAIUnmountAfterClose>
   );
 };
 
+// `toLocalId` decodes the global id, so it has to be a real one.
 const USER_GLOBAL_ID = btoa('UserV2:00000000-0000-0000-0000-000000000001');
 
-const renderModal = () => {
-  const environment: RelayMockEnvironment = createMockEnvironment();
+const renderModal = (afterClose?: () => void) => {
+  const environment = createMockEnvironment();
   const onOk = vi.fn();
   const onCancel = vi.fn();
   environment.mock.queueOperationResolver((operation) =>
@@ -102,21 +136,27 @@ const renderModal = () => {
       }),
     }),
   );
-  const tree = (open: boolean) => (
+  const ui = (open: boolean) => (
     <RelayEnvironmentProvider environment={environment}>
       <Suspense fallback={null}>
-        <Harness open={open} onOk={onOk} onCancel={onCancel} />
+        <Harness
+          open={open}
+          onOk={onOk}
+          onCancel={onCancel}
+          afterClose={afterClose}
+        />
       </Suspense>
     </RelayEnvironmentProvider>
   );
-  const { rerender } = render(tree(true));
+  const { rerender } = render(ui(true));
   return {
     environment,
     onOk,
     onCancel,
+    close: () => rerender(ui(false)),
     reopen: async () => {
-      rerender(tree(false));
-      rerender(tree(true));
+      rerender(ui(false));
+      rerender(ui(true));
     },
   };
 };
@@ -138,9 +178,7 @@ const confirmAndSubmit = async (user: ReturnType<typeof userEvent.setup>) => {
   await user.click(okButton);
 };
 
-// FR-3990: the two "also delete" options are per-purge choices, so reopening
-// the modal must not carry the previous user's answers over.
-describe('PurgeUsersModal (FR-3990)', () => {
+describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
   it('starts both purge options unchecked again on every open', async () => {
     const user = userEvent.setup();
     const { reopen } = renderModal();
@@ -155,6 +193,73 @@ describe('PurgeUsersModal (FR-3990)', () => {
     for (const checkbox of optionCheckboxes()) {
       expect(checkbox).not.toBeChecked();
     }
+  });
+
+  // `BAIUnmountAfterClose` injects `afterClose` and unmounts on it; a modal
+  // that swallowed the prop stayed mounted, which is how the leak above began.
+  it('forwards afterClose to the confirm modal', () => {
+    const afterClose = vi.fn();
+    const { close } = renderModal(afterClose);
+    optionCheckboxes();
+    expect(afterClose).not.toHaveBeenCalled();
+    close();
+    expect(afterClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the confirm open under a partial-failure report and closes on dismissal', async () => {
+    const user = userEvent.setup();
+    const afterClose = vi.fn();
+    const onOk = vi.fn();
+    const environment = createMockEnvironment();
+    environment.mock.queueOperationResolver((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        UserV2: () => ({ id: btoa('UserV2:u1') }),
+      }),
+    );
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <Suspense fallback={null}>
+          <SelfClosingHarness afterClose={afterClose} onOk={onOk} />
+        </Suspense>
+      </RelayEnvironmentProvider>,
+    );
+
+    await user.type(
+      screen.getByRole('textbox'),
+      'credential.PermanentlyDelete',
+    );
+    await user.click(
+      screen.getByRole('button', { name: 'credential.PermanentlyDelete' }),
+    );
+    // One user purged, one refused: the report opens over the still-open confirm.
+    await act(async () => {
+      environment.mock.resolveMostRecentOperation((operation) =>
+        MockPayloadGenerator.generate(operation, {
+          BulkPurgeUsersV2Payload: () => ({
+            successes: ['u1'],
+            purgedCount: 1,
+            failed: [{ userId: 'u2', message: 'boom' }],
+          }),
+        }),
+      );
+    });
+
+    expect(await screen.findByText('boom')).toBeInTheDocument();
+    expect(onOk).not.toHaveBeenCalled();
+    expect(afterClose).not.toHaveBeenCalled();
+    optionCheckboxes();
+
+    // Escape dismisses the topmost dialog only: the report closes, `onOk`
+    // closes the confirm, and the wrapper drops the whole component.
+    await user.keyboard('{Escape}');
+    expect(screen.queryByText('boom')).toBeNull();
+    expect(onOk).toHaveBeenCalledTimes(1);
+    expect(afterClose).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByRole('checkbox', {
+        name: 'credential.DeleteSharedVirtualFolders',
+      }),
+    ).toBeNull();
   });
 });
 

@@ -30,13 +30,18 @@ vi.mock('react-i18next', async (importOriginal) => {
 const renderDrawer = (
   props: Partial<React.ComponentProps<typeof BAIDrawerPortal>> = {},
 ) => {
-  const onClose = vi.fn();
+  const onOpenChange = vi.fn();
   const result = render(
-    <BAIDrawerPortal isOpen onClose={onClose} label="Details" {...props}>
+    <BAIDrawerPortal
+      isOpen
+      onOpenChange={onOpenChange}
+      label="Details"
+      {...props}
+    >
       <button type="button">Inside</button>
     </BAIDrawerPortal>,
   );
-  return { ...result, onClose };
+  return { ...result, onOpenChange };
 };
 
 const getRoot = () =>
@@ -48,13 +53,13 @@ const getMask = () =>
 
 // A drawer with a modal opened from inside it — the FR-3585 arrangement.
 const Nested: React.FC<{
-  onDrawerClose: () => void;
+  onDrawerOpenChange: (isOpen: boolean) => void;
   onModalOpenChange: (isOpen: boolean) => void;
-}> = ({ onDrawerClose, onModalOpenChange }) => {
+}> = ({ onDrawerOpenChange, onModalOpenChange }) => {
   'use memo';
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
-    <BAIDrawerPortal isOpen onClose={onDrawerClose} label="Details">
+    <BAIDrawerPortal isOpen onOpenChange={onDrawerOpenChange} label="Details">
       <button type="button" onClick={() => setIsModalOpen(true)}>
         Deploy
       </button>
@@ -125,7 +130,7 @@ describe('BAIDrawerPortal', () => {
   // portalled modal instead, leaving it unclickable and untabbable.
   it('lets a modal opened inside it take the level above and inert it', async () => {
     const user = userEvent.setup();
-    render(<Nested onDrawerClose={vi.fn()} onModalOpenChange={vi.fn()} />);
+    render(<Nested onDrawerOpenChange={vi.fn()} onModalOpenChange={vi.fn()} />);
 
     await user.click(screen.getByRole('button', { name: 'Deploy' }));
 
@@ -156,14 +161,53 @@ describe('BAIDrawerPortal', () => {
   // press dismisses it without also collapsing the drawer underneath.
   it('routes Escape to the modal above it, leaving the drawer open', async () => {
     const user = userEvent.setup();
-    const onDrawerClose = vi.fn();
+    const onDrawerOpenChange = vi.fn();
     const onModalOpenChange = vi.fn();
     render(
       <Nested
-        onDrawerClose={onDrawerClose}
+        onDrawerOpenChange={onDrawerOpenChange}
         onModalOpenChange={onModalOpenChange}
       />,
     );
+
+    await user.click(screen.getByRole('button', { name: 'Deploy' }));
+    act(() => screen.getByRole('button', { name: 'Confirm' }).focus());
+    await user.keyboard('{Escape}');
+
+    expect(onModalOpenChange).toHaveBeenCalledWith(false);
+    expect(onDrawerOpenChange).not.toHaveBeenCalled();
+  });
+
+  // The non-scrim drawer (the notification drawer) skips the portal but goes
+  // through the same patched lab handler, so it needs the same guarantee.
+  it('routes Escape to a modal opened inside a non-scrim drawer', async () => {
+    const user = userEvent.setup();
+    const onDrawerClose = vi.fn();
+    const onModalOpenChange = vi.fn();
+    const NonScrim: React.FC = () => {
+      'use memo';
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      return (
+        <BAIDrawer
+          open
+          hasScrim={false}
+          title="Notices"
+          onClose={onDrawerClose}
+        >
+          <button type="button" onClick={() => setIsModalOpen(true)}>
+            Deploy
+          </button>
+          <BAIDialog
+            isOpen={isModalOpen}
+            onOpenChange={onModalOpenChange}
+            aria-label="deploy"
+          >
+            <button type="button">Confirm</button>
+          </BAIDialog>
+        </BAIDrawer>
+      );
+    };
+    render(<NonScrim />);
 
     await user.click(screen.getByRole('button', { name: 'Deploy' }));
     act(() => screen.getByRole('button', { name: 'Confirm' }).focus());
@@ -177,24 +221,24 @@ describe('BAIDrawerPortal', () => {
   // the panel — which it still does through the portal.
   it('closes on Escape pressed inside the drawer panel', async () => {
     const user = userEvent.setup();
-    const { onClose } = renderDrawer();
+    const { onOpenChange } = renderDrawer();
 
     act(() => screen.getByRole('button', { name: 'Inside' }).focus());
     await user.keyboard('{Escape}');
 
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledExactlyOnceWith(false);
   });
 
   it('closes on a mask click, but not on a drag that started inside', () => {
-    const { onClose } = renderDrawer();
+    const { onOpenChange } = renderDrawer();
 
     fireEvent.mouseDown(screen.getByRole('button', { name: 'Inside' }));
     fireEvent.click(getMask());
-    expect(onClose).not.toHaveBeenCalled();
+    expect(onOpenChange).not.toHaveBeenCalled();
 
     fireEvent.mouseDown(getMask());
     fireEvent.click(getMask());
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledExactlyOnceWith(false);
   });
 
   // Hiding the root the moment `isOpen` flips would cut lab's slide-out off;
@@ -202,7 +246,7 @@ describe('BAIDrawerPortal', () => {
   it('keeps the root rendered until lab closes the inner dialog', () => {
     vi.useFakeTimers();
     const drawer = (isOpen: boolean) => (
-      <BAIDrawerPortal isOpen={isOpen} onClose={vi.fn()} label="Details">
+      <BAIDrawerPortal isOpen={isOpen} onOpenChange={vi.fn()} label="Details">
         <button type="button">Inside</button>
       </BAIDrawerPortal>
     );
@@ -231,7 +275,7 @@ describe('BAIDrawerPortal', () => {
     render(
       <Theme theme={outerTheme} mode="light">
         <Theme theme={innerTheme} mode="light">
-          <BAIDrawerPortal isOpen onClose={vi.fn()} label="Details">
+          <BAIDrawerPortal isOpen onOpenChange={vi.fn()} label="Details">
             <span>body</span>
           </BAIDrawerPortal>
         </Theme>

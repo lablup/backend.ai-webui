@@ -267,7 +267,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           : t('deployment.CreateDeployment')
       }
       onCancel={() => onRequestClose(false)}
-      destroyOnHidden
       width={520}
       confirmLoading={isCreating || isUpdating}
       footer={

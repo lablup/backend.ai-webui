@@ -47,6 +47,7 @@ import { Text } from '@astryxdesign/core/Text';
 import {
   BAI_Z_INDEX,
   BAIModal,
+  type BAIModalProps,
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
@@ -244,7 +245,6 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
           // refactor should decouple form state from modal lifecycle.
           ...(needToResetPassword ? { wrapper: { display: 'none' } } : {}),
         }}
-        destroyOnHidden
       >
         {/* Mode switching: Segmented control */}
         {loginConfig.change_signin_support && (
@@ -735,7 +735,6 @@ const ResetPasswordRequiredInline: React.FC<{
       mask={{ closable: false }}
       footer={null}
       width={450}
-      destroyOnHidden
     >
       <BAIFlex
         direction="column"
@@ -903,7 +902,6 @@ const TOTPActivateInline: React.FC<{
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
-      destroyOnHidden
       onOk={handleOk}
       loading={!isSuccess}
     >
@@ -923,11 +921,13 @@ const TOTPActivateInline: React.FC<{
 /**
  * Modal for sending a password change email (forgot password flow).
  */
-const ChangePasswordEmailModal: React.FC<{
-  open: boolean;
-  apiEndpoint: string;
-  onClose: () => void;
-}> = ({ open, apiEndpoint, onClose }) => {
+const ChangePasswordEmailModal: React.FC<
+  Pick<BAIModalProps, 'afterOpenChange' | 'afterClose'> & {
+    open: boolean;
+    apiEndpoint: string;
+    onClose: () => void;
+  }
+> = ({ open, apiEndpoint, onClose, afterOpenChange, afterClose }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -974,10 +974,11 @@ const ChangePasswordEmailModal: React.FC<{
       title={t('login.SendChangePasswordEmail')}
       open={open}
       onCancel={onClose}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
       onOk={handleSend}
       confirmLoading={mutation.isPending}
       okText={t('login.EmailSendButton')}
-      destroyOnHidden
     >
       <Text as="p" display="block">
         {t('login.DescChangePasswordEmail')}

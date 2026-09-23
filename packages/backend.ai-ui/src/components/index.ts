@@ -170,6 +170,7 @@ export type { SessionV2InList, SessionV2Status } from './BAISessionNodesV2';
 export {
   default as BAIUserResourcePolicyV2Table,
   availableUserResourcePolicySorterValues,
+  availableUserResourcePolicyExportFields,
 } from './BAIUserResourcePolicyV2Table';
 export type {
   BAIUserResourcePolicyV2TableProps,
@@ -178,6 +179,7 @@ export type {
 export {
   default as BAIKeypairResourcePolicyV2Table,
   availableKeypairResourcePolicySorterValues,
+  availableKeypairResourcePolicyExportFields,
 } from './BAIKeypairResourcePolicyV2Table';
 export type {
   BAIKeypairResourcePolicyV2TableProps,
@@ -186,6 +188,7 @@ export type {
 export {
   default as BAIProjectResourcePolicyV2Table,
   availableProjectResourcePolicySorterValues,
+  availableProjectResourcePolicyExportFields,
 } from './BAIProjectResourcePolicyV2Table';
 export type {
   BAIProjectResourcePolicyV2TableProps,

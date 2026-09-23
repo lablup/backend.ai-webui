@@ -18,8 +18,15 @@ export type {
   BAIArtifactRevisionTableProps,
   ArtifactRevision,
 } from './BAIArtifactRevisionTable';
-export { default as BAIArtifactTable } from './BAIArtifactTable';
-export type { BAIArtifactTableProps } from './BAIArtifactTable';
+export {
+  default as BAIArtifactTable,
+  availableArtifactSorterKeys,
+  availableArtifactSorterValues,
+} from './BAIArtifactTable';
+export type {
+  BAIArtifactTableProps,
+  ArtifactSorterKey,
+} from './BAIArtifactTable';
 export { default as BAIImportArtifactModal } from './BAIImportArtifactModal';
 export type {
   BAIImportArtifactModalProps,

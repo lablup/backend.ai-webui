@@ -59,6 +59,18 @@ export const docs = {
         'Close request from Escape, a scrim click, or the header close button. The drawer is fully controlled, so it stays open until `open` flips.',
     },
     {
+      name: 'afterOpenChange',
+      type: '(open: boolean) => void',
+      description:
+        'Called with `true` as soon as the drawer opens and with `false` once the slide-out has finished. Not called on mount.',
+    },
+    {
+      name: 'afterClose',
+      type: '() => void',
+      description:
+        'Called once the slide-out has finished. This is what `BAIUnmountAfterClose` listens to, so a drawer component it wraps must forward this prop for the unmount to happen.',
+    },
+    {
       name: 'title',
       type: 'ReactNode',
       description:
@@ -80,12 +92,12 @@ export const docs = {
       name: 'size',
       type: 'number | string',
       description:
-        'Panel extent along the slide axis — width for a start/end drawer, height for top/bottom.',
+        "Panel width (lab `Drawer`'s `width`). Below 640px the panel keeps a 56px reveal of the page behind it.",
       default: '400',
     },
     {
       name: 'side',
-      type: "'start' | 'end' | 'top' | 'bottom'",
+      type: "'start' | 'end'",
       description:
         'Edge the panel slides in from. Logical values, so `start`/`end` follow the writing direction.',
       default: "'end'",

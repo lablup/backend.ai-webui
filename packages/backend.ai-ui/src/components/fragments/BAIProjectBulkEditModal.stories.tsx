@@ -44,7 +44,7 @@ const meta: Meta<typeof BAIProjectBulkEditModal> = {
 - **Parallel Mutations**: Executes mutations for all projects simultaneously using Promise.all
 - **Loading State**: Shows loading spinner in select field while data loads (Suspense)
 - **Confirm Loading**: Save button shows loading state during mutation execution
-- **Auto Cleanup**: Uses \`destroyOnHidden\` to unmount component when closed
+- **Auto Cleanup**: Wrap in \`BAIUnmountAfterClose\` to unmount the component when closed
 
 For other props, refer to [BAIModal](/?path=/docs/modal-baimodal--docs).
 

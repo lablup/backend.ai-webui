@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "API 키",
+      "ApiKeyHint": "이 채팅 패널의 메모리에만 보관되며 저장되지 않습니다. 페이지를 새로고침하면 다시 입력해야 합니다.",
+      "ApiKeyMissing": "이 채팅은 커스텀 엔드포인트를 사용했습니다. 계속하려면 API 키를 다시 입력하세요.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "OpenAI 호환 Base URL이며 보통 /v1로 끝납니다. 엔드포인트가 이 브라우저의 요청을 허용(CORS)해야 합니다.",
+      "BaseURLRequired": "Base URL을 입력하세요.",
+      "Connect": "연결",
+      "ConnectCustomEndpoint": "커스텀 엔드포인트 연결…",
+      "Edit": "커스텀 엔드포인트 수정",
+      "InvalidBaseURL": "유효한 http(s) URL을 입력하세요.",
+      "error": {
+        "Http": "엔드포인트가 HTTP {{status}} 으로 응답했습니다.",
+        "InvalidResponse": "응답이 OpenAI 호환 모델 목록 형식이 아닙니다.",
+        "Network": "엔드포인트에 연결할 수 없습니다.",
+        "NetworkHint": "주소와 네트워크를 확인하세요. 요청은 이 브라우저에서 직접 보내므로 서버가 CORS 를 허용해야 합니다.",
+        "NoModels": "엔드포인트가 모델을 반환하지 않았습니다.",
+        "NotFound": "이 Base URL 에서 /models 를 찾을 수 없습니다 (404).",
+        "NotFoundHint": "Base URL 은 API 루트를 가리켜야 하며, 보통 /v1 로 끝납니다.",
+        "NotFoundSuggestV1": "Base URL 은 보통 /v1 로 끝납니다 — {{url}} 로 시도해 보세요.",
+        "RetryWithV1": "/v1 붙여 다시 시도",
+        "ServerError": "엔드포인트 서버 오류입니다 (HTTP {{status}}).",
+        "Timeout": "엔드포인트가 30초 동안 응답하지 않았습니다.",
+        "Unauthorized": "엔드포인트가 요청을 거부했습니다 (401/403).",
+        "UnauthorizedHint": "API 키를 확인하거나, 엔드포인트가 요구한다면 키를 입력하세요."
+      }
+    },
     "intro": {
       "Description": "배포에 정의된 LLM 모델과 OpenAI 호환 API로 대화할 수 있습니다.",
       "Title": "배포한 모델과 대화하기"
@@ -2613,6 +2640,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED'을 사용하면 에이전트 노드의 용량까지 사용을 허용하는 반면, 'LIMITED'는 명시적으로 설정되지 않는 한 리소스를 거부합니다. \n대부분의 경우 'UNLIMITED'을 권장합니다.",
     "DeletePolicy": "정책 삭제",
     "ExportCSV": "CSV로 내보내기",
+    "ExportCapNotice": "전체 {{count}}개 행 중 처음 {{limit}}개만 내보냅니다.",
+    "ExportFetchProgress": "{{total}}개 행 중 {{fetched}}개를 가져왔습니다.",
+    "ExportPreparing": "내보내기를 준비하는 중…",
+    "ExportedRows": "{{count}}개 행을 내보냈습니다.",
     "Folders": "폴더",
     "IdleTimeout": "유휴 대기 시간",
     "IdleTimeoutSec": "유휴 대기 시간 (초)",

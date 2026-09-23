@@ -16,7 +16,7 @@ import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Link } from '@astryxdesign/core/Link';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
 import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -770,13 +770,8 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
   const STEP_SESSION = 0;
   const STEP_LAUNCH = 1;
   let currentStep = STEP_SESSION;
-  // PILOT-DECISION: antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB).
-  // antd's per-item lifecycle enum (`wait|process|finish|error`) has NO
-  // counterpart: lab derives completed/active/upcoming from the parent's
-  // `activeStep`, and its `status` is a SEMANTIC enum (accent/success/
-  // warning/error) layered on top. So only the error state survives as an
-  // explicit status; `wait`/`process`/`finish` are expressed by `activeStep`,
-  // which is what `currentStep` already carries.
+  // `Stepper` derives completed/active/upcoming from `activeStep`, so only the
+  // error state is passed as an explicit `Step.status`.
   let stepStatuses: Array<'wait' | 'process' | 'finish' | 'error'> = [
     'wait',
     'wait',
@@ -893,11 +888,14 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         >
           <Step
             step={0}
+            // Only `auto` draws the error glyph on a step not yet reached.
+            indicator={stepStatuses[0] === 'error' ? 'auto' : 'number'}
             label={t('eduapi.PreparingSession')}
             status={stepStatuses[0] === 'error' ? 'error' : undefined}
           />
           <Step
             step={1}
+            indicator={stepStatuses[1] === 'error' ? 'auto' : 'number'}
             label={t('eduapi.LaunchingAppStep')}
             status={stepStatuses[1] === 'error' ? 'error' : undefined}
           />

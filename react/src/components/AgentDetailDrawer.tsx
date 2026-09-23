@@ -5,27 +5,29 @@
 import { AgentDetailDrawerFragment$key } from '../__generated__/AgentDetailDrawerFragment.graphql';
 import AgentDetailDrawerContent from './AgentDetailDrawerContent';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
-import { BAIDrawer, BAISkeleton, toLocalId, useBAILogger } from 'backend.ai-ui';
+import {
+  BAIDrawer,
+  type BAIDrawerProps,
+  BAISkeleton,
+  toLocalId,
+  useBAILogger,
+} from 'backend.ai-ui';
 import { Suspense, useEffect, useEffectEvent, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useMutation, useRefetchableFragment } from 'react-relay';
 
-// PILOT-DECISION: props no longer extend antd `DrawerProps` (P1 grep — the
-// only consumer, AgentList, passes `agentNodeFrgmt`/`open`/`onRequestClose`).
-// antd `Drawer` → `BAIDrawer` (qa2-c), which wraps lab `Drawer` and
-// restores antd's header arrangement (`[X] title …… [extra]`, divider, padded
-// scrollable body) so `title`/`extra` are props again instead of a hand-rolled
-// first content row that collided with lab's floating close button.
-interface AgentDetailDrawerProps {
-  open?: boolean;
+interface AgentDetailDrawerProps extends Omit<
+  BAIDrawerProps,
+  'onClose' | 'title' | 'extra' | 'children'
+> {
   onRequestClose?: () => void;
   agentNodeFrgmt?: AgentDetailDrawerFragment$key | null;
 }
 
 const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
-  open = false,
   onRequestClose,
   agentNodeFrgmt,
+  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -80,7 +82,7 @@ const AgentDetailDrawer: React.FC<AgentDetailDrawerProps> = ({
 
   return (
     <BAIDrawer
-      open={open}
+      {...drawerProps}
       onClose={onRequestClose}
       side="end"
       size={800}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<200e6326ec5656895da2dc14ce90da14>>
+ * @generated SignedSource<<db25ab3043470fa82b994d6bb01fe81a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -75,7 +75,15 @@ export type UserResourcePolicyV2Query$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly createdAt: string | null | undefined;
         readonly id: string;
+        readonly maxConcurrentLogins: number | null | undefined;
+        readonly maxCustomizedImageCount: number;
+        readonly maxQuotaScopeSize: {
+          readonly expr: string;
+        };
+        readonly maxSessionCountPerModelSession: number;
+        readonly maxVfolderCount: number;
         readonly name: string;
         readonly " $fragmentSpreads": FragmentRefs<"BAIUserResourcePolicyV2TableFragment" | "UserResourcePolicyV2SettingModalFragment">;
       };
@@ -150,6 +158,59 @@ v7 = {
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
+},
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxVfolderCount",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxConcurrentLogins",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxSessionCountPerModelSession",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "BinarySizeInfo",
+  "kind": "LinkedField",
+  "name": "maxQuotaScopeSize",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "expr",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxCustomizedImageCount",
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createdAt",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -190,6 +251,12 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -251,59 +318,12 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxVfolderCount",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxConcurrentLogins",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxSessionCountPerModelSession",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "BinarySizeInfo",
-                    "kind": "LinkedField",
-                    "name": "maxQuotaScopeSize",
-                    "plural": false,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "expr",
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxCustomizedImageCount",
-                    "storageKey": null
-                  }
+                  (v8/*: any*/),
+                  (v9/*: any*/),
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -316,16 +336,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b4d6a4d0afeee1c1a05504fd9268ed2c",
+    "cacheID": "9b51e1e38d314c01ac01f244f0860085",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
+    "text": "query UserResourcePolicyV2Query(\n  $filter: UserResourcePolicyV2Filter\n  $orderBy: [UserResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminUserResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        maxVfolderCount\n        maxConcurrentLogins\n        maxSessionCountPerModelSession\n        maxQuotaScopeSize {\n          expr\n        }\n        maxCustomizedImageCount\n        createdAt\n        ...BAIUserResourcePolicyV2TableFragment\n        ...UserResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIUserResourcePolicyV2TableFragment on UserResourcePolicyV2 {\n  id\n  name\n  createdAt\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n\nfragment UserResourcePolicyV2SettingModalFragment on UserResourcePolicyV2 {\n  id\n  name\n  maxVfolderCount\n  maxConcurrentLogins\n  maxSessionCountPerModelSession\n  maxQuotaScopeSize {\n    expr\n  }\n  maxCustomizedImageCount\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0eca06ab39c8e6b871b0fff606e5f9a6";
+(node as any).hash = "63156949e2611a89dc37f8decfad3bf7";
 
 export default node;

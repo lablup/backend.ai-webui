@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Chave de API",
+      "ApiKeyHint": "Mantida apenas na memória deste painel de chat e nunca salva. Ao recarregar a página, será preciso digitá-la novamente.",
+      "ApiKeyMissing": "Este chat usava um endpoint personalizado. Digite a chave de API novamente para continuar.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL compatível com OpenAI, geralmente terminando em /v1. O endpoint precisa permitir requisições deste navegador (CORS).",
+      "BaseURLRequired": "Digite a Base URL.",
+      "Connect": "Conectar",
+      "ConnectCustomEndpoint": "Conectar um endpoint personalizado…",
+      "Edit": "Editar endpoint personalizado",
+      "InvalidBaseURL": "Digite uma URL http(s) válida.",
+      "error": {
+        "Http": "O endpoint respondeu com HTTP {{status}}.",
+        "InvalidResponse": "A resposta não é uma lista de modelos compatível com OpenAI.",
+        "Network": "Não foi possível acessar o endpoint.",
+        "NetworkHint": "Verifique o endereço e sua rede. A requisição é enviada diretamente deste navegador, então o servidor precisa permiti-la (CORS).",
+        "NoModels": "O endpoint não retornou nenhum modelo.",
+        "NotFound": "/models não foi encontrado nesta Base URL (404).",
+        "NotFoundHint": "A Base URL deve apontar para a raiz da API, que geralmente termina em /v1.",
+        "NotFoundSuggestV1": "A Base URL geralmente termina em /v1 — tente {{url}}.",
+        "RetryWithV1": "Tentar novamente com /v1",
+        "ServerError": "O endpoint relatou um erro de servidor (HTTP {{status}}).",
+        "Timeout": "O endpoint não respondeu em 30 segundos.",
+        "Unauthorized": "O endpoint recusou a requisição (401/403).",
+        "UnauthorizedHint": "Verifique a chave de API ou digite uma, se o endpoint exigir."
+      }
+    },
     "intro": {
       "Description": "Converse com o modelo LLM definido na sua Implantação por meio de uma API compatível com OpenAI.",
       "Title": "Converse com seus modelos implantados"
@@ -2611,6 +2638,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'Unlimited' permite o uso até a capacidade do nó do agente, enquanto 'limitado' nega recursos, a menos que seja explicitamente definido. \nNa maioria dos casos, recomenda -se 'ilimitado'.",
     "DeletePolicy": "Excluir política",
     "ExportCSV": "Exportar CSV",
+    "ExportCapNotice": "Apenas as primeiras {{limit}} de {{count}} linhas serão exportadas.",
+    "ExportFetchProgress": "Obtidas {{fetched}} de {{total}} linhas.",
+    "ExportPreparing": "Preparando a exportação…",
+    "ExportedRows": "{{count}} linhas exportadas.",
     "Folders": "Pastas",
     "IdleTimeout": "Tempo limite ocioso",
     "IdleTimeoutSec": "Tempo limite ocioso (seg.)",

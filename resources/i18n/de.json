@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "API-Schlüssel",
+      "ApiKeyHint": "Wird nur im Speicher dieses Chat-Panels gehalten und nie gespeichert. Nach dem Neuladen der Seite muss er erneut eingegeben werden.",
+      "ApiKeyMissing": "Dieser Chat hat einen benutzerdefinierten Endpunkt verwendet. Geben Sie den API-Schlüssel erneut ein, um fortzufahren.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "OpenAI-kompatible Base URL, meist mit /v1 am Ende. Der Endpunkt muss Anfragen von diesem Browser zulassen (CORS).",
+      "BaseURLRequired": "Geben Sie die Base URL ein.",
+      "Connect": "Verbinden",
+      "ConnectCustomEndpoint": "Benutzerdefinierten Endpunkt verbinden…",
+      "Edit": "Benutzerdefinierten Endpunkt bearbeiten",
+      "InvalidBaseURL": "Geben Sie eine gültige http(s)-URL ein.",
+      "error": {
+        "Http": "Der Endpunkt hat mit HTTP {{status}} geantwortet.",
+        "InvalidResponse": "Die Antwort ist keine OpenAI-kompatible Modellliste.",
+        "Network": "Der Endpunkt ist nicht erreichbar.",
+        "NetworkHint": "Prüfen Sie die Adresse und Ihr Netzwerk. Die Anfrage wird direkt von diesem Browser gesendet, daher muss der Server sie zulassen (CORS).",
+        "NoModels": "Der Endpunkt hat keine Modelle zurückgegeben.",
+        "NotFound": "/models wurde unter dieser Base URL nicht gefunden (404).",
+        "NotFoundHint": "Die Base URL muss auf das API-Stammverzeichnis zeigen, das meist mit /v1 endet.",
+        "NotFoundSuggestV1": "Die Base URL endet meist mit /v1 – versuchen Sie {{url}}.",
+        "RetryWithV1": "Mit /v1 erneut versuchen",
+        "ServerError": "Der Endpunkt meldet einen Serverfehler (HTTP {{status}}).",
+        "Timeout": "Der Endpunkt hat innerhalb von 30 Sekunden nicht geantwortet.",
+        "Unauthorized": "Der Endpunkt hat die Anfrage abgelehnt (401/403).",
+        "UnauthorizedHint": "Prüfen Sie den API-Schlüssel oder geben Sie einen ein, falls der Endpunkt ihn verlangt."
+      }
+    },
     "intro": {
       "Description": "Chatten Sie mit dem LLM-Modell, das in Ihrer Bereitstellung definiert ist, über eine OpenAI-kompatible API.",
       "Title": "Chatten Sie mit Ihren bereitgestellten Modellen"
@@ -2613,6 +2640,10 @@
     "DefaultForUnspecifiedTooltipDesc2": "'UNLIMITED' erlaubt die Nutzung bis zur Kapazität des Agent-Knotens, während 'LIMITED' Ressourcen verweigert, sofern sie nicht explizit festgelegt sind. In den meisten Fällen wird 'UNLIMITED' empfohlen.",
     "DeletePolicy": "Richtlinien löschen",
     "ExportCSV": "CSV exportieren",
+    "ExportCapNotice": "Von {{count}} Zeilen werden nur die ersten {{limit}} exportiert.",
+    "ExportFetchProgress": "{{fetched}} von {{total}} Zeilen abgerufen.",
+    "ExportPreparing": "Export wird vorbereitet…",
+    "ExportedRows": "{{count}} Zeilen exportiert.",
     "Folders": "Ordner",
     "IdleTimeout": "Leerlauf-Timeout",
     "IdleTimeoutSec": "Leerlauf-Timeout (Sek.)",

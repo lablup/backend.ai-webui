@@ -79,6 +79,7 @@ const LaunchMultipleSessionsModal: React.FC<
   resourceGroup,
   ResourcePreview,
   onRequestClose,
+  afterClose,
   ...baiModalProps
 }) => {
   'use memo';
@@ -102,7 +103,6 @@ const LaunchMultipleSessionsModal: React.FC<
       title={t('session.launcher.LaunchMultipleSessions')}
       okText={t('session.launcher.Start')}
       cancelText={t('button.Cancel')}
-      destroyOnHidden
       width={560}
       {...baiModalProps}
       onOk={async () => {
@@ -113,7 +113,10 @@ const LaunchMultipleSessionsModal: React.FC<
         onRequestClose(values.count);
       }}
       onCancel={() => onRequestClose()}
-      afterClose={() => formRef.current?.resetFields()}
+      afterClose={() => {
+        formRef.current?.resetFields();
+        afterClose?.();
+      }}
     >
       <Form
         ref={formRef}
