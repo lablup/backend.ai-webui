@@ -79,6 +79,7 @@ const LaunchMultipleSessionsModal: React.FC<
   resourceGroup,
   ResourcePreview,
   onRequestClose,
+  afterClose,
   ...baiModalProps
 }) => {
   'use memo';
@@ -113,7 +114,10 @@ const LaunchMultipleSessionsModal: React.FC<
         onRequestClose(values.count);
       }}
       onCancel={() => onRequestClose()}
-      afterClose={() => formRef.current?.resetFields()}
+      afterClose={() => {
+        formRef.current?.resetFields();
+        afterClose?.();
+      }}
     >
       <Form
         ref={formRef}

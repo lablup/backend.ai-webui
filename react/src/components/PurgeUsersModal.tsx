@@ -84,15 +84,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   const [failureReport, setFailureReport] = useState<{
     failures: PurgeFailure[];
     total: number;
+    purgedCount: number;
   } | null>(null);
-  // `BAIUnmountAfterClose` drops this component on `afterClose`, and the
-  // failure report below lives in it: a partial success closes the confirm
-  // and opens the report in one commit, so the signal waits for the report.
-  const [isCloseDeferred, setIsCloseDeferred] = useState(false);
-  const notifyClosed = () => {
-    afterOpenChange?.(false);
-    afterClose?.();
-  };
 
   // `successes` only exists on 26.9.0+ managers; older ones reject the whole
   // document, so it is gated and the deprecated count is selected instead.
@@ -159,6 +152,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             );
             setFailureReport({
               total: userList.length,
+              purgedCount,
               failures: _.map(failed, (f) => ({
                 key: f.userId,
                 email: emailByLocalId[f.userId] ?? f.userId,
@@ -174,7 +168,9 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
                 count: purgedCount,
               }),
             );
-            onOk?.();
+            // A partial success keeps the confirm open under the report;
+            // `onOk` (close + reload) runs once the report is dismissed.
+            if (failed.length === 0) onOk?.();
             resolve();
           } else {
             reject(new Error(t('error.UnknownError')));
@@ -202,13 +198,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         onOpenChange={(next) => {
           if (!next) onCancel?.();
         }}
-        afterOpenChange={(next) => {
-          if (next) afterOpenChange?.(true);
-        }}
-        afterClose={() => {
-          if (failureReport) setIsCloseDeferred(true);
-          else notifyClosed();
-        }}
+        afterOpenChange={afterOpenChange}
+        afterClose={afterClose}
         title={t('credential.PermanentlyDeleteUsers')}
         maskClosable={false}
         confirmLoading={isPending || isInFlightBulkPurge}
@@ -248,10 +239,7 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
         dataSource={failureReport?.failures ?? []}
         onRequestClose={() => {
           setFailureReport(null);
-          if (isCloseDeferred) {
-            setIsCloseDeferred(false);
-            notifyClosed();
-          }
+          if (failureReport && failureReport.purgedCount > 0) onOk?.();
         }}
       />
     </>

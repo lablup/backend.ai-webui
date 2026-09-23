@@ -78,16 +78,20 @@ const Harness: React.FC<{ open: boolean; afterClose?: () => void }> = ({
 );
 
 // Closes itself on OK / cancel, as AdminUserManagement does.
-const SelfClosingHarness: React.FC<{ afterClose: () => void }> = ({
-  afterClose,
-}) => {
+const SelfClosingHarness: React.FC<{
+  afterClose: () => void;
+  onOk?: () => void;
+}> = ({ afterClose, onOk }) => {
   const [open, setOpen] = useState(true);
   return (
     <BAIUnmountAfterClose>
       <PurgeUsersModal
         usersFrgmt={useUsers()}
         open={open}
-        onOk={() => setOpen(false)}
+        onOk={() => {
+          onOk?.();
+          setOpen(false);
+        }}
         onCancel={() => setOpen(false)}
         afterClose={afterClose}
       />
@@ -152,9 +156,10 @@ describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
     expect(afterClose).toHaveBeenCalledTimes(1);
   });
 
-  it('holds afterClose until a partial-failure report is dismissed', async () => {
+  it('keeps the confirm open under a partial-failure report and closes on dismissal', async () => {
     const user = userEvent.setup();
     const afterClose = vi.fn();
+    const onOk = vi.fn();
     const environment = createMockEnvironment();
     // `toLocalId` decodes the global id, so it has to be a real one.
     environment.mock.queueOperationResolver((operation) =>
@@ -165,7 +170,7 @@ describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
     render(
       <RelayEnvironmentProvider environment={environment}>
         <Suspense fallback={null}>
-          <SelfClosingHarness afterClose={afterClose} />
+          <SelfClosingHarness afterClose={afterClose} onOk={onOk} />
         </Suspense>
       </RelayEnvironmentProvider>,
     );
@@ -177,7 +182,7 @@ describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
     await user.click(
       screen.getByRole('button', { name: 'credential.PermanentlyDelete' }),
     );
-    // One user purged, one refused: the confirm closes and the report opens.
+    // One user purged, one refused: the report opens over the still-open confirm.
     await act(async () => {
       environment.mock.resolveMostRecentOperation((operation) =>
         MockPayloadGenerator.generate(operation, {
@@ -191,10 +196,20 @@ describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
     });
 
     expect(await screen.findByText('boom')).toBeInTheDocument();
+    expect(onOk).not.toHaveBeenCalled();
     expect(afterClose).not.toHaveBeenCalled();
+    optionCheckboxes();
 
+    // Escape dismisses the topmost dialog only: the report closes, `onOk`
+    // closes the confirm, and the wrapper drops the whole component.
     await user.keyboard('{Escape}');
     expect(screen.queryByText('boom')).toBeNull();
+    expect(onOk).toHaveBeenCalledTimes(1);
     expect(afterClose).toHaveBeenCalledTimes(1);
+    expect(
+      screen.queryByRole('checkbox', {
+        name: 'credential.DeleteSharedVirtualFolders',
+      }),
+    ).toBeNull();
   });
 });

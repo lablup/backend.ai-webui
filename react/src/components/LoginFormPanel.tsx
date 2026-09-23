@@ -47,6 +47,7 @@ import { Text } from '@astryxdesign/core/Text';
 import {
   BAI_Z_INDEX,
   BAIModal,
+  type BAIModalProps,
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
@@ -923,11 +924,13 @@ const TOTPActivateInline: React.FC<{
 /**
  * Modal for sending a password change email (forgot password flow).
  */
-const ChangePasswordEmailModal: React.FC<{
-  open: boolean;
-  apiEndpoint: string;
-  onClose: () => void;
-}> = ({ open, apiEndpoint, onClose }) => {
+const ChangePasswordEmailModal: React.FC<
+  Pick<BAIModalProps, 'afterOpenChange' | 'afterClose'> & {
+    open: boolean;
+    apiEndpoint: string;
+    onClose: () => void;
+  }
+> = ({ open, apiEndpoint, onClose, afterOpenChange, afterClose }) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -974,6 +977,8 @@ const ChangePasswordEmailModal: React.FC<{
       title={t('login.SendChangePasswordEmail')}
       open={open}
       onCancel={onClose}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
       onOk={handleSend}
       confirmLoading={mutation.isPending}
       okText={t('login.EmailSendButton')}
