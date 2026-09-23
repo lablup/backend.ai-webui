@@ -154,9 +154,10 @@ const ChatSender: React.FC<ChatSenderProps> = ({
       elevation="none"
       // This composer sits inside a chat card, not in a standalone chat app,
       // so it takes the card's container radius over Astryx's 28px chat radius.
+      // Set on the root so the attachment drawer's corners and tuck follow it.
       style={
         {
-          '--_chat-composer-radius': 'var(--radius-container)',
+          '--radius-chat': 'var(--radius-container)',
         } as React.CSSProperties
       }
       value={value ?? ''}
