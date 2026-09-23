@@ -1,0 +1,38 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for `<BAIModal>`. Plain CSS over Astryx tokens: BUI's tsup
+ build runs no StyleX compiler.
+*/
+
+@layer components {
+  /* The header and footer bands read as a pair, so both claim the same default
+     height: one md control row inside a 12px vertical inset (57px with the
+     divider). Without the floor the header is the shorter of the two —
+     Astryx's `DialogHeader` pulls its title block and its close button back to
+     a 16px row (49px band, measured) while the footer's md `Button`s stand at
+     their full 32px. Either band still grows past the floor when its own
+     content is taller.
+
+     The inset is the Layout band's own padding var, so the floor below follows
+     it. The floor sits on the padded inner element — `LayoutHeader` /
+     `LayoutFooter`'s wrapper, which centres itself with `margin-inline: auto` —
+     so the band above it stays a block box. */
+  .bai-modal__header,
+  .bai-modal__footer {
+    --layout-padding-outer-y: var(--spacing-3);
+    --layout-padding-inner-y: var(--spacing-3);
+  }
+
+  .bai-modal__header > *,
+  .bai-modal__footer > * {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-block-size: calc(
+      var(--size-element-md) + var(--layout-padding-outer-y, var(--spacing-4)) +
+        var(--layout-padding-inner-y, var(--spacing-4))
+    );
+  }
+}

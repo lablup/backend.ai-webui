@@ -1405,6 +1405,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Step
                 key={title}
                 step={idx}
+                indicator="number"
                 label={title}
                 status={stepErrors[idx] ? 'error' : undefined}
               />
