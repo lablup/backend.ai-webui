@@ -37,6 +37,16 @@ const isEnableSorter = (key: string) => {
   return _.includes(availableProjectResourcePolicySorterKeys, key);
 };
 
+/** The CSV-exportable fields — the base column keys, in column order. */
+export const availableProjectResourcePolicyExportFields = [
+  'name',
+  'maxVfolderCount',
+  'maxQuotaScopeSize',
+  'maxNetworkCount',
+  'id',
+  'createdAt',
+] as const satisfies ReadonlyArray<keyof ProjectResourcePolicyV2InList>;
+
 export interface BAIProjectResourcePolicyV2TableProps extends Omit<
   BAITableProps<ProjectResourcePolicyV2InList>,
   'dataSource' | 'columns' | 'onChangeOrder'
