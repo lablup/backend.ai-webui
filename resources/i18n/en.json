@@ -1256,6 +1256,9 @@
       "EndpointUrl": "Endpoint URL",
       "Name": "Name",
       "OpenToPublic": "Public",
+      "ReplicaHealthStatus": "Replica Health Status",
+      "ReplicaStatus": "Replica Lifecycle",
+      "ReplicaTrafficStatus": "Replica Traffic Status",
       "ResourceGroup": "Resource Group",
       "Status": "Status",
       "Tags": "Tags"

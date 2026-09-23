@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e205c5c49e72a3073c4ad46aca823944>>
+ * @generated SignedSource<<31b08c7c75fe7461303f070cf3eec741>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,6 +37,7 @@ export type AdminDeploymentPresetTableFragment$data = ReadonlyArray<{
     };
   } | null | undefined;
   readonly name: string;
+  readonly rank: number;
   readonly runtimeVariant: {
     readonly id: string;
     readonly name: string;
@@ -88,6 +89,13 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "description",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "rank",
       "storageKey": null
     },
     {
@@ -256,6 +264,6 @@ return {
 };
 })();
 
-(node as any).hash = "ddc54a723142b6774ad34cfe74fc2123";
+(node as any).hash = "99343adbbd7ed8da8d091580bcedbc85";
 
 export default node;

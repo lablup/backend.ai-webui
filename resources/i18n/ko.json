@@ -1269,6 +1269,9 @@
       "EndpointUrl": "엔드포인트 URL",
       "Name": "이름",
       "OpenToPublic": "공개",
+      "ReplicaHealthStatus": "복제본 헬스 상태",
+      "ReplicaStatus": "복제본 라이프사이클",
+      "ReplicaTrafficStatus": "복제본 트래픽 상태",
       "ResourceGroup": "자원 그룹",
       "Status": "상태",
       "Tags": "태그"
