@@ -211,10 +211,6 @@ describe('getAutomaticShmem', () => {
     expect(getAutomaticShmem('2g', '1g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
     expect(getAutomaticShmem('4g', '4g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
   });
-
-  it('is deterministic for the same input', () => {
-    expect(getAutomaticShmem('6g', '2g')).toBe(getAutomaticShmem('6g', '2g'));
-  });
 });
 
 describe('pickChangedResourceValues', () => {

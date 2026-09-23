@@ -444,8 +444,7 @@ const ResourceAllocationFormItems: React.FC<
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
-  // contents: a fresh identity would re-run the auto-select effect each render.
-  // Kept as an explicit `useMemo` because that identity is load-bearing.
+  // contents; a fresh identity would re-run the auto-select effect each render.
   const allocatablePresetNamesKey = JSON.stringify(
     getAllocatablePresetNames(
       checkPresetInfo?.presets,
