@@ -1832,7 +1832,18 @@
       "scope": "admin",
       "path": "/admin/rbac",
       "labelKey": "webui.menu.RBACManagement",
-      "tabs": [],
+      "tabs": [
+        {
+          "param": "tab",
+          "key": "presets",
+          "labelKey": "rbac.Presets"
+        },
+        {
+          "param": "tab",
+          "key": "roles",
+          "labelKey": "rbac.Roles"
+        }
+      ],
       "settings": [],
       "keys": [
         "button.Add",
@@ -1864,6 +1875,7 @@
         "rbac.Custom",
         "rbac.Deactivate",
         "rbac.DeactivateRole",
+        "rbac.Deleted",
         "rbac.DuplicatePermission",
         "rbac.DuplicateRoleName",
         "rbac.EditPermission",
@@ -1892,6 +1904,7 @@
         "rbac.PermissionsPartialFailureDescription",
         "rbac.PermissionsSaved",
         "rbac.PleaseSelectUsers",
+        "rbac.PresetName",
         "rbac.PurgeRole",
         "rbac.RemovePermission",
         "rbac.RevokeUser",
@@ -1902,6 +1915,7 @@
         "rbac.RoleDescription",
         "rbac.RoleDetailInfo",
         "rbac.RoleName",
+        "rbac.RolePresetDetailInfo",
         "rbac.RolePurged",
         "rbac.RoleScopes",
         "rbac.RoleUpdated",
