@@ -209,12 +209,14 @@ export { default as BAIRuntimeVariantPresetSettingModal } from './BAIRuntimeVari
 export type { BAIRuntimeVariantPresetSettingModalProps } from './BAIRuntimeVariantPresetSettingModal';
 export {
   default as BAIModelDeploymentNodes,
+  availableDeploymentSorterKeys,
   availableDeploymentSorterValues,
 } from './BAIModelDeploymentNodes';
 export type {
   BAIModelDeploymentNodesProps,
   ModelDeploymentNodeInList,
   DeploymentOrderValue,
+  DeploymentSorterKey,
 } from './BAIModelDeploymentNodes';
 export { default as BAIDeploymentTagTokens } from './BAIDeploymentTagTokens';
 export type { BAIDeploymentTagTokensProps } from './BAIDeploymentTagTokens';
