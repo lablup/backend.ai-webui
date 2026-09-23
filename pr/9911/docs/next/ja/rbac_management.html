@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="RBAC管理" />
   <meta name="twitter:description" content="RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。RBACを使用すると、Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RBAC管理","inLanguage":"ja","description":"RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。RBACを使用すると、Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。","dateModified":"2026-09-16T07:39:48.000Z","url":"https://webui.docs.backend.ai/next/ja/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RBAC管理","inLanguage":"ja","description":"RBAC（ロールベースアクセス制御）管理では、スーパー管理者がきめ細かい権限を持つロールを定義し、ユーザーに割り当てることができます。RBACを使用すると、Backend.AIシステム全体で特定のユーザーがさまざまなリソースに対して実行できる操作を制御できます。","dateModified":"2026-09-23T01:49:38.000Z","url":"https://webui.docs.backend.ai/next/ja/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
   <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
   <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91ee60c)">v26.9.0-alpha.0 (91ee60c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (3cfb3c7)">v26.9.0-alpha.0 (3cfb3c7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -224,7 +224,7 @@
 <li data-bai-block="9"><strong>ソース</strong>: 利用可能な値（<strong>システム</strong> / <strong>カスタム</strong>）を自由入力のテキストボックスではなく選択式の入力として表示します。</li>
 <li data-bai-block="10"><strong>割り当てられたユーザー</strong>: ユーザーピッカーで、選択したユーザーに割り当てられたロールのみを表示するように一覧を絞り込みます。生成された条件タグにはユーザーのメールアドレスが表示されます。</li>
 <li data-bai-block="11"><strong>スコープタイプ</strong>: RBACのスコープタイプ（例: ドメイン、プロジェクト、ユーザー）を一覧表示する選択式の入力です。</li>
-<li data-bai-block="12"><strong>スコープID</strong>: 生のスコープUUIDで検索する自由入力テキストです。</li>
+<li data-bai-block="12"><strong>スコープID</strong>: 正確なスコープUUIDで一覧を絞り込みます。</li>
 </ul>
 </li>
 <li data-bai-block="13"><strong>ロールを作成</strong>: 新しいカスタムロールを作成するボタンです。</li>
@@ -233,8 +233,8 @@
 <ul>
 <li data-bai-block="15"><strong>ロール名</strong>: ロールの名前です。名前をクリックするとロール詳細パネルが開きます。</li>
 <li data-bai-block="16"><strong>説明</strong>: ロールの目的に関する簡単な説明です。</li>
-<li data-bai-block="17"><strong>スコープタイプ</strong>: ロールに最初に割り当てられたスコープのタイプです。ロールに複数のスコープが割り当てられている場合は <code>+N</code> 表示が一緒に表示されます。</li>
-<li data-bai-block="18"><strong>スコープID</strong>: ロールに最初に割り当てられたスコープの生IDです。複数のスコープが割り当てられている場合は <code>+N</code> 表示が一緒に表示されます。</li>
+<li data-bai-block="17"><strong>スコープタイプ</strong>: ロールに設定されたスコープのタイプで、スコープ名と併せて表示されます。</li>
+<li data-bai-block="18"><strong>スコープID</strong>: ロールに設定されたスコープの生IDです。</li>
 <li data-bai-block="19"><strong>ソース</strong>: ロールが<strong>システム</strong>（事前定義）か<strong>カスタム</strong>（ユーザー作成）かを示します。</li>
 <li data-bai-block="20"><strong>自動割り当て</strong>: ロールが登録されているスコープにユーザーが追加された際に、そのロールが自動的に割り当てられるかどうかを示します。自動割り当てが有効な場合は<strong>アクティブ</strong>、無効な場合は<strong>非アクティブ</strong>と表示されます。</li>
 <li data-bai-block="21"><strong>作成日時</strong>: ロールが作成された日時です。</li>
@@ -244,10 +244,10 @@
 <p data-bai-block="24">ロールは2つのソースタイプに分類されます:</p>
 <ul>
 <li data-bai-block="25"><strong>システム</strong>: 自動生成されるロールです。名前や説明は編集できませんが、ユーザーの割り当てと権限を管理できます。</li>
-<li data-bai-block="26"><strong>カスタム</strong>: スーパー管理者が作成したロールです。名前、説明、割り当て、スコープ、権限など、すべての項目を編集できます。</li>
+<li data-bai-block="26"><strong>カスタム</strong>: スーパー管理者が作成したロールです。名前、説明、ユーザーの割り当て、権限をすべて編集できます。</li>
 </ul>
 <h2 data-bai-block="27" id="rbac_management-ロールの作成">ロールの作成<a class="hash-link" href="#rbac_management-ロールの作成" aria-label="Direct link to ロールの作成">#</a></h2>
-<p data-bai-block="28">ロールを作成する際には、まず<strong>スコープ</strong>を事前に定義する必要があります。スコープはロールを特定のリソースエンティティ（ドメイン、プロジェクト、ユーザーなど）にバインドし、後で追加するすべての権限がここで定義したスコープ内でのみ動作するように制限します。</p>
+<p data-bai-block="28">ロールを作成する際には、まず<strong>スコープ</strong>を事前に定義する必要があります。スコープはロールを特定のリソースエンティティ（ドメイン、プロジェクト、ユーザーなど）にバインドし、後で追加するすべての権限がここで定義したスコープ内でのみ動作するように制限します。1つのロールに設定できるスコープは1つだけです。</p>
 <p data-bai-block="29">新しいカスタムロールを作成するには:</p>
 <ol>
 <li data-bai-block="30">ロール一覧ページの右上にある<strong>ロールを作成</strong>ボタンをクリックします</li>
@@ -255,155 +255,156 @@
 <li data-bai-block="32"><strong>ロール名</strong>（必須）: 一意のロール名を入力します</li>
 <li data-bai-block="33"><strong>説明</strong>（任意）: ロールの目的に関する説明を入力します</li>
 <li data-bai-block="34"><strong>自動割り当て</strong>（任意）: 有効にすると、ロールが登録されているスコープにユーザーが追加された際に、そのロールが自動的に付与されます。デフォルトは無効です。</li>
-<li data-bai-block="35"><strong>スコープタイプ / 対象</strong>（必須、1つ以上）: 各スコープ行で<strong>スコープタイプ</strong>を選択し、そのスコープタイプ内の特定の<strong>対象</strong>を選択します。<strong>追加</strong>ボタンでスコープ行を追加したり、削除アイコンで行を削除できます。少なくとも1つのスコープを追加する必要があります。</li>
+<li data-bai-block="35"><strong>スコープタイプ</strong>（必須）: ロールを適用するスコープタイプを選択します（例: ドメイン、プロジェクト、ユーザー）</li>
+<li data-bai-block="36"><strong>対象</strong>（必須）: そのスコープタイプ内の特定の対象を選択します。ロールには1つのスコープだけが設定されます。</li>
 </ul>
 </li>
-<li data-bai-block="36"><strong>OK</strong>をクリックしてロールを作成します</li>
+<li data-bai-block="37"><strong>OK</strong>をクリックしてロールを作成します</li>
 </ol>
-<p><figure data-bai-block="37" class="doc-figure"><img src="./images/rbac_create_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.2</figcaption></figure>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/rbac_create_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.2</figcaption></figure>
 </p>
 <div class="admonition admonition-info">
-<div data-bai-block="38" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
+<div data-bai-block="39" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
 <div class="admonition-content">
 
-<p data-bai-block="39">ロール作成時に設定する<strong>スコープタイプ</strong>と<strong>対象</strong>は、それ自体で権限を付与するものではありません。代わりに、後でこのロールに<a href="#manage-permissions">権限</a>を追加する際に選択できる<strong>スコープタイプ / 対象</strong>の候補をあらかじめ定義します。つまり、ロール作成の段階では、このロールの権限が取り得るスコープタイプと対象の範囲をあらかじめ限定するものであり、各権限はここで定義したスコープタイプと対象の範囲内でのみ設定できます。</p>
+<p data-bai-block="40">ロール作成時に設定する<strong>スコープタイプ</strong>と<strong>対象</strong>は、それ自体で権限を付与するものではありません。代わりに、後でこのロールに<a href="#manage-permissions">権限</a>を追加する際に使用できる<strong>スコープタイプ / 対象</strong>をあらかじめ定義します。つまり、ロール作成の段階では、このロールの権限が取り得るスコープタイプと対象をあらかじめ限定するものであり、各権限はここで定義したスコープタイプと対象の範囲内でのみ設定できます。</p>
 </div></div>
 
 
 <div class="admonition admonition-warning">
-<div data-bai-block="40" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
+<div data-bai-block="41" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
 
-<p data-bai-block="41">スコープはロール作成時に定義され、作成後はロール詳細パネルから編集できません。ロールを作成する前にスコープを慎重に計画してください。</p>
+<p data-bai-block="42">スコープはロール作成時に定義され、作成後はロール詳細パネルから編集できません。ロールを作成する前にスコープを慎重に計画してください。</p>
 </div></div>
 
 
-<h2 data-bai-block="42" id="rbac_management-ロール詳細の表示">ロール詳細の表示<a class="hash-link" href="#rbac_management-ロール詳細の表示" aria-label="Direct link to ロール詳細の表示">#</a></h2>
-<p data-bai-block="43">ロールの詳細情報を表示するには、テーブルでロール名をクリックします。ページの右側に詳細パネルが開きます。</p>
-<p data-bai-block="44">パネルのヘッダーにはロール名が表示され、カスタムロールの場合は<strong>編集</strong>ボタンが提供されます。詳細セクションには以下のメタデータが表示されます:</p>
+<h2 data-bai-block="43" id="rbac_management-ロール詳細の表示">ロール詳細の表示<a class="hash-link" href="#rbac_management-ロール詳細の表示" aria-label="Direct link to ロール詳細の表示">#</a></h2>
+<p data-bai-block="44">ロールの詳細情報を表示するには、テーブルでロール名をクリックします。ページの右側に詳細パネルが開きます。</p>
+<p data-bai-block="45">パネルのヘッダーにはロール名が表示され、カスタムロールの場合は<strong>編集</strong>ボタンが提供されます。詳細セクションには以下のメタデータが表示されます:</p>
 <ul>
-<li data-bai-block="45"><strong>ソース</strong>: システムまたはカスタム</li>
-<li data-bai-block="46"><strong>ステータス</strong>: アクティブまたは非アクティブ</li>
-<li data-bai-block="47"><strong>自動割り当て</strong>: 自動割り当てがアクティブか非アクティブかを示します。アクティブの場合、登録されているスコープのいずれかに追加されたユーザーに対して、ロールが自動的に付与されます。</li>
-<li data-bai-block="48"><strong>作成日時</strong>: 作成タイムスタンプ</li>
-<li data-bai-block="49"><strong>更新日時</strong>: 最終変更タイムスタンプ</li>
-<li data-bai-block="50"><strong>説明</strong>: ロールの説明</li>
+<li data-bai-block="46"><strong>ソース</strong>: システムまたはカスタム</li>
+<li data-bai-block="47"><strong>ステータス</strong>: アクティブまたは非アクティブ</li>
+<li data-bai-block="48"><strong>自動割り当て</strong>: 自動割り当てがアクティブか非アクティブかを示します。アクティブの場合、登録されているスコープのいずれかに追加されたユーザーに対して、ロールが自動的に付与されます。</li>
+<li data-bai-block="49"><strong>作成日時</strong>: 作成タイムスタンプ</li>
+<li data-bai-block="50"><strong>更新日時</strong>: 最終変更タイムスタンプ</li>
+<li data-bai-block="51"><strong>説明</strong>: ロールの説明</li>
 </ul>
-<p data-bai-block="51">メタデータの下には<strong>権限</strong>と<strong>ロール割り当て</strong>の2つのタブがあります。デフォルトでは<strong>権限</strong>タブが選択されています。</p>
-<p><figure data-bai-block="52" class="doc-figure"><img src="./images/rbac_role_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.3</figcaption></figure>
+<p data-bai-block="52">メタデータの下には<strong>権限</strong>と<strong>ロール割り当て</strong>の2つのタブがあります。デフォルトでは<strong>権限</strong>タブが選択されています。</p>
+<p><figure data-bai-block="53" class="doc-figure"><img src="./images/rbac_role_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.3</figcaption></figure>
 </p>
-<h3 data-bai-block="53" id="rbac_management-ロールの編集">ロールの編集<a class="hash-link" href="#rbac_management-ロールの編集" aria-label="Direct link to ロールの編集">#</a></h3>
-<p data-bai-block="54">カスタムロールの名前、説明、または自動割り当て設定を編集するには:</p>
+<h3 data-bai-block="54" id="rbac_management-ロールの編集">ロールの編集<a class="hash-link" href="#rbac_management-ロールの編集" aria-label="Direct link to ロールの編集">#</a></h3>
+<p data-bai-block="55">カスタムロールの名前、説明、または自動割り当て設定を編集するには:</p>
 <ol>
-<li data-bai-block="55">テーブルでロール名をクリックして詳細パネルを開きます</li>
-<li data-bai-block="56">パネルヘッダーの<strong>編集</strong>ボタン（鉛筆アイコン）をクリックします</li>
-<li data-bai-block="57">編集モーダルで以下のフィールドを変更します:<ul>
-<li data-bai-block="58"><strong>ロール名</strong>: ロールの名前</li>
-<li data-bai-block="59"><strong>説明</strong>: ロールの目的に関する説明</li>
-<li data-bai-block="60"><strong>自動割り当て</strong>: 有効にすると、ロールが登録されているスコープにユーザーが追加された際に、そのロールが自動的に付与されます。</li>
+<li data-bai-block="56">テーブルでロール名をクリックして詳細パネルを開きます</li>
+<li data-bai-block="57">パネルヘッダーの<strong>編集</strong>ボタン（鉛筆アイコン）をクリックします</li>
+<li data-bai-block="58">編集モーダルで以下のフィールドを変更します:<ul>
+<li data-bai-block="59"><strong>ロール名</strong>: ロールの名前</li>
+<li data-bai-block="60"><strong>説明</strong>: ロールの目的に関する説明</li>
+<li data-bai-block="61"><strong>自動割り当て</strong>: 有効にすると、ロールが登録されているスコープにユーザーが追加された際に、そのロールが自動的に付与されます。</li>
 </ul>
 </li>
-<li data-bai-block="61"><strong>OK</strong>をクリックして変更を保存します</li>
+<li data-bai-block="62"><strong>OK</strong>をクリックして変更を保存します</li>
 </ol>
-<p><figure data-bai-block="62" class="doc-figure"><img src="./images/rbac_edit_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.4</figcaption></figure>
+<p><figure data-bai-block="63" class="doc-figure"><img src="./images/rbac_edit_role_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.4</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="63" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="64" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="64">編集ボタンはカスタムロールでのみ利用可能です。システムロールの名前や説明は変更できません。また、どちらの場合もロール作成後にスコープを変更することはできません。</p>
+<p data-bai-block="65">編集ボタンはカスタムロールでのみ利用可能です。システムロールの名前や説明は変更できません。また、どちらの場合もロール作成後にスコープを変更することはできません。</p>
 </div></div>
 
 
 <p><a id="view-role-scopes"></a></p>
 <p><a id="manage-permissions"></a></p>
-<h2 data-bai-block="65" id="rbac_management-権限の管理">権限の管理<a class="hash-link" href="#rbac_management-権限の管理" aria-label="Direct link to 権限の管理">#</a></h2>
-<p data-bai-block="66">ロール詳細パネルの<strong>権限</strong>タブは、ロールのスコープときめ細かい権限を統合した詳細ビューです。ロールが使用する<strong>スコープタイプごとに1枚のカード</strong>をレンダリングし、各カードはそのスコープタイプのスコープと、それらに付与された権限を併せて表示します。</p>
-<p><figure data-bai-block="67" class="doc-figure"><img src="./images/rbac_permissions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.5</figcaption></figure>
+<h2 data-bai-block="66" id="rbac_management-権限の管理">権限の管理<a class="hash-link" href="#rbac_management-権限の管理" aria-label="Direct link to 権限の管理">#</a></h2>
+<p data-bai-block="67">ロール詳細パネルの<strong>権限</strong>タブは、ロールのスコープときめ細かい権限を統合した詳細ビューです。ロールが使用する<strong>スコープタイプごとに1枚のカード</strong>をレンダリングし、各カードはそのスコープタイプのスコープと、それらに付与された権限を併せて表示します。</p>
+<p><figure data-bai-block="68" class="doc-figure"><img src="./images/rbac_permissions_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.5</figcaption></figure>
 </p>
 <div class="admonition admonition-info">
-<div data-bai-block="68" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
+<div data-bai-block="69" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
 <div class="admonition-content">
 
-<p data-bai-block="69">ロールが参照できるスコープはロール作成時に定義され、その後は<strong>読み取り専用</strong>です。ロール詳細パネルから変更することはできません。権限タブでは、スコープは各スコープタイプカード内の行として表示されます。ロールのスコープを変更するには、目的のスコープを持つ新しいロールを作成する必要があります。</p>
+<p data-bai-block="70">ロールが参照できるスコープはロール作成時に定義され、その後は<strong>読み取り専用</strong>です。ロール詳細パネルから変更することはできません。権限タブでは、スコープは各スコープタイプカード内の行として表示されます。ロールのスコープを変更するには、目的のスコープを持つ新しいロールを作成する必要があります。</p>
 </div></div>
 
 
-<h3 data-bai-block="70" id="rbac_management-スコープタイプカード">スコープタイプカード<a class="hash-link" href="#rbac_management-スコープタイプカード" aria-label="Direct link to スコープタイプカード">#</a></h3>
-<p data-bai-block="71">権限タブには、ロールが使用するスコープタイプ（例: ドメイン、プロジェクト、ユーザー）ごとに1枚のカードが表示されます。ロールが使用しないスコープタイプは非表示になり、カードのタイトルはローカライズされたスコープタイプ名です。各カードには以下が含まれます:</p>
+<h3 data-bai-block="71" id="rbac_management-スコープタイプカード">スコープタイプカード<a class="hash-link" href="#rbac_management-スコープタイプカード" aria-label="Direct link to スコープタイプカード">#</a></h3>
+<p data-bai-block="72">権限タブには、ロールが使用するスコープタイプ（例: ドメイン、プロジェクト、ユーザー）ごとに1枚のカードが表示されます。ロールが使用しないスコープタイプは非表示になり、カードのタイトルはローカライズされたスコープタイプ名です。各カードには以下が含まれます:</p>
 <ul>
-<li data-bai-block="72"><strong>スコープIDフィルター</strong>: 生のスコープUUIDでカードの行を絞り込むプロパティフィルターです。解決済みのスコープ名での検索はできません。</li>
-<li data-bai-block="73"><strong>更新</strong>ボタン: カードの行を再読み込みし、権限タグを再計算します。</li>
-<li data-bai-block="74"><strong>スコープテーブル</strong>: このタイプに属するロールのスコープを以下の列とともに一覧表示します:<ul>
-<li data-bai-block="75"><strong>名前</strong>: 解決済みのスコープ名（例: ドメイン、プロジェクト、ユーザーの表示名）で、そのスコープの権限編集モーダルを開くインラインの<strong>編集</strong>アクションが併せて表示されます。</li>
-<li data-bai-block="76"><strong>ID</strong>: スコープUUIDです。</li>
-<li data-bai-block="77"><strong>権限</strong>: 権限タイプごとに1つのタグが付与状態に応じて色分けされて表示されます（下記参照）。スコープタイプに設定可能なエンティティがない場合、この列は<code>-</code>と表示されます。</li>
+<li data-bai-block="73"><strong>スコープIDフィルター</strong>: 生のスコープUUIDでカードの行を絞り込むプロパティフィルターです。解決済みのスコープ名での検索はできません。</li>
+<li data-bai-block="74"><strong>更新</strong>ボタン: カードの行を再読み込みし、権限タグを再計算します。</li>
+<li data-bai-block="75"><strong>スコープテーブル</strong>: このタイプに属するロールのスコープを以下の列とともに一覧表示します:<ul>
+<li data-bai-block="76"><strong>名前</strong>: 解決済みのスコープ名（例: ドメイン、プロジェクト、ユーザーの表示名）で、そのスコープの権限編集モーダルを開くインラインの<strong>編集</strong>アクションが併せて表示されます。</li>
+<li data-bai-block="77"><strong>ID</strong>: スコープUUIDです。</li>
+<li data-bai-block="78"><strong>権限</strong>: 権限タイプごとに1つのタグが付与状態に応じて色分けされて表示されます（下記参照）。スコープタイプに設定可能なエンティティがない場合、この列は<code>-</code>と表示されます。</li>
 </ul>
 </li>
-<li data-bai-block="78"><strong>ページネーション</strong>: スコープが多い場合にカードのスコープをページで表示します。</li>
+<li data-bai-block="79"><strong>ページネーション</strong>: スコープが多い場合にカードのスコープをページで表示します。</li>
 </ul>
-<p data-bai-block="79">ロールにスコープがまったくない場合、タブにはカードの代わりに<strong>このロールにはスコープが設定されていません</strong>というメッセージが表示されます。</p>
+<p data-bai-block="80">ロールにスコープがまったくない場合、タブにはカードの代わりに<strong>このロールにはスコープが設定されていません</strong>というメッセージが表示されます。</p>
 <p><a id="grant-state-tags"></a></p>
-<h3 data-bai-block="80" id="rbac_management-付与状態タグ">付与状態タグ<a class="hash-link" href="#rbac_management-付与状態タグ" aria-label="Direct link to 付与状態タグ">#</a></h3>
-<p data-bai-block="81"><strong>権限</strong>列では、各権限タイプのタグは、そのスコープに対してそのタイプの操作がどれだけ付与されているかに応じて色分けされます:</p>
+<h3 data-bai-block="81" id="rbac_management-付与状態タグ">付与状態タグ<a class="hash-link" href="#rbac_management-付与状態タグ" aria-label="Direct link to 付与状態タグ">#</a></h3>
+<p data-bai-block="82"><strong>権限</strong>列では、各権限タイプのタグは、そのスコープに対してそのタイプの操作がどれだけ付与されているかに応じて色分けされます:</p>
 <ul>
-<li data-bai-block="82"><strong>すべて許可</strong>（緑）: その権限タイプのすべての操作が付与されています。</li>
-<li data-bai-block="83"><strong>一部許可</strong>（黄）: 一部の操作のみが付与され、すべてではありません。</li>
-<li data-bai-block="84"><strong>許可されていません</strong>（色なし）: どの操作も付与されていません。</li>
+<li data-bai-block="83"><strong>すべて許可</strong>（緑）: その権限タイプのすべての操作が付与されています。</li>
+<li data-bai-block="84"><strong>一部許可</strong>（黄）: 一部の操作のみが付与され、すべてではありません。</li>
+<li data-bai-block="85"><strong>許可されていません</strong>（色なし）: どの操作も付与されていません。</li>
 </ul>
-<p data-bai-block="85">タグにカーソルを合わせると、状態ラベルが表示されます。</p>
-<p><figure data-bai-block="86" class="doc-figure"><img src="./images/rbac_permissions_card_grant_tags.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1502" height="470" /><figcaption>図 21.6</figcaption></figure>
+<p data-bai-block="86">タグにカーソルを合わせると、状態ラベルが表示されます。</p>
+<p><figure data-bai-block="87" class="doc-figure"><img src="./images/rbac_permissions_card_grant_tags.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1502" height="470" /><figcaption>図 21.6</figcaption></figure>
 </p>
-<h3 data-bai-block="87" id="rbac_management-権限について">権限について<a class="hash-link" href="#rbac_management-権限について" aria-label="Direct link to 権限について">#</a></h3>
-<p data-bai-block="88">各権限は4つの構成要素で構成されています:</p>
+<h3 data-bai-block="88" id="rbac_management-権限について">権限について<a class="hash-link" href="#rbac_management-権限について" aria-label="Direct link to 権限について">#</a></h3>
+<p data-bai-block="89">各権限は4つの構成要素で構成されています:</p>
 <ul>
-<li data-bai-block="89"><strong>スコープタイプ</strong>: 権限が適用される有効範囲（例: ドメイン、プロジェクト、ユーザー）</li>
-<li data-bai-block="90"><strong>対象</strong>: 有効範囲内の特定のエンティティ（例: 特定のドメイン名、特定のプロジェクト）</li>
-<li data-bai-block="91"><strong>権限タイプ</strong>: 権限の有効範囲内で操作が実行される対象です。</li>
-<li data-bai-block="92"><strong>権限</strong>: 権限タイプに対して許可される操作です。選択した権限タイプに応じて、有効な操作のみが表示されます。操作は2つのカテゴリに分類されます:<ul>
-<li data-bai-block="93"><strong>直接実行</strong>: 作成、読み取り、更新、削除、完全削除</li>
-<li data-bai-block="94"><strong>他ユーザーへ委任</strong>: 全権限委任、読み取り権限委任、更新権限委任、削除権限委任、完全削除権限委任</li>
+<li data-bai-block="90"><strong>スコープタイプ</strong>: 権限が適用される有効範囲（例: ドメイン、プロジェクト、ユーザー）</li>
+<li data-bai-block="91"><strong>対象</strong>: 有効範囲内の特定のエンティティ（例: 特定のドメイン名、特定のプロジェクト）</li>
+<li data-bai-block="92"><strong>権限タイプ</strong>: 権限の有効範囲内で操作が実行される対象です。</li>
+<li data-bai-block="93"><strong>権限</strong>: 権限タイプに対して許可される操作です。選択した権限タイプに応じて、有効な操作のみが表示されます。操作は2つのカテゴリに分類されます:<ul>
+<li data-bai-block="94"><strong>直接実行</strong>: 作成、読み取り、更新、削除、完全削除</li>
+<li data-bai-block="95"><strong>他ユーザーへ委任</strong>: 全権限委任、読み取り権限委任、更新権限委任、削除権限委任、完全削除権限委任</li>
 </ul>
 </li>
 </ul>
 <div class="admonition admonition-info">
-<div data-bai-block="95" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
+<div data-bai-block="96" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
 <div class="admonition-content">
 
-<p data-bai-block="96">各権限の<strong>スコープタイプ / 対象</strong>の組み合わせは、ロールのスコープエントリから継承されます。ロール作成時に定義されたスコープに対してのみ権限を付与できます。ロールの適用範囲を広げるには、追加のスコープを持つ新しいロールを作成する必要があります。</p>
+<p data-bai-block="97">各権限の<strong>スコープタイプ / 対象</strong>の組み合わせは、ロールのスコープから継承されます。ロール作成時に定義されたスコープに対してのみ権限を付与できます。ロールの適用範囲を広げるには、必要なスコープを持つ新しいロールをもう1つ作成する必要があります。</p>
 </div></div>
 
 
-<h3 data-bai-block="97" id="rbac_management-権限設定の例">権限設定の例<a class="hash-link" href="#rbac_management-権限設定の例" aria-label="Direct link to 権限設定の例">#</a></h3>
-<p data-bai-block="98">以下は、4つの構成要素がどのように連携するかを理解するための一般的な権限設定例です。<strong>スコープタイプ / 対象</strong>列は、権限が再利用するロールレベルのスコープを示しています。</p>
+<h3 data-bai-block="98" id="rbac_management-権限設定の例">権限設定の例<a class="hash-link" href="#rbac_management-権限設定の例" aria-label="Direct link to 権限設定の例">#</a></h3>
+<p data-bai-block="99">以下は、4つの構成要素がどのように連携するかを理解するための一般的な権限設定例です。<strong>スコープタイプ / 対象</strong>列は、権限が再利用するロールレベルのスコープを示しています。</p>
 <table>
 <thead>
-<tr data-bai-block="99">
+<tr data-bai-block="100">
 <th>シナリオ</th>
 <th>スコープタイプ / 対象</th>
 <th>権限タイプ</th>
 <th>権限</th>
 </tr>
 </thead>
-<tbody><tr data-bai-block="100">
+<tbody><tr data-bai-block="101">
 <td>特定プロジェクトでストレージフォルダの作成を許可</td>
 <td>プロジェクト / my-project</td>
 <td>フォルダ</td>
 <td>作成</td>
 </tr>
-<tr data-bai-block="101">
+<tr data-bai-block="102">
 <td>特定のドメイン内のすべてのセッションの表示を許可</td>
 <td>ドメイン / default</td>
 <td>セッション</td>
 <td>読み取り</td>
 </tr>
-<tr data-bai-block="102">
+<tr data-bai-block="103">
 <td>特定のドメイン内のモデルサービスの管理を許可</td>
 <td>ドメイン / default</td>
 <td>モデルサービス</td>
 <td>作成、読み取り、更新</td>
 </tr>
-<tr data-bai-block="103">
+<tr data-bai-block="104">
 <td>特定のドメイン内のコンテナイメージの削除を許可</td>
 <td>ドメイン / default</td>
 <td>イメージ</td>
@@ -413,119 +414,119 @@
 <p><a id="add-a-permission"></a></p>
 <p><a id="remove-a-permission"></a></p>
 <p><a id="edit-permissions-for-a-scope"></a></p>
-<h3 data-bai-block="104" id="rbac_management-スコープの権限を編集単一スコープ">スコープの権限を編集（単一スコープ）<a class="hash-link" href="#rbac_management-スコープの権限を編集単一スコープ" aria-label="Direct link to スコープの権限を編集（単一スコープ）">#</a></h3>
-<p data-bai-block="105">権限は、各行が権限タイプ、各セルが操作のチェックボックスであるグリッドベースのモーダルを通じて、スコープごとに編集します。</p>
+<h3 data-bai-block="105" id="rbac_management-スコープの権限を編集単一スコープ">スコープの権限を編集（単一スコープ）<a class="hash-link" href="#rbac_management-スコープの権限を編集単一スコープ" aria-label="Direct link to スコープの権限を編集（単一スコープ）">#</a></h3>
+<p data-bai-block="106">権限は、各行が権限タイプ、各セルが操作のチェックボックスであるグリッドベースのモーダルを通じて、スコープごとに編集します。</p>
 <ol>
-<li data-bai-block="106"><strong>権限</strong>タブでスコープタイプカードを開き、変更したいスコープ行の<strong>編集</strong>アクションをクリックします。</li>
-<li data-bai-block="107"><strong>{スコープタイプ}権限を編集</strong>モーダルが開き、スコープ名がサブタイトルとして表示されます。以下のグリッドが表示されます:<ul>
-<li data-bai-block="108">行はスコープタイプに有効な<strong>権限タイプ</strong>です。</li>
-<li data-bai-block="109">列は<strong>直接実行</strong>（作成、読み取り、更新、削除、完全削除）と<strong>他ユーザーへ委任</strong>（すべて、読み取り、更新、削除、完全削除）のグループに分かれています。</li>
-<li data-bai-block="110">権限マトリックスがサポートしていないセルは<code>-</code>と表示され、**この権限は割り当てできません。**というツールチップが表示されます。</li>
+<li data-bai-block="107"><strong>権限</strong>タブでスコープタイプカードを開き、変更したいスコープ行の<strong>編集</strong>アクションをクリックします。</li>
+<li data-bai-block="108"><strong>{スコープタイプ}権限を編集</strong>モーダルが開き、スコープ名がサブタイトルとして表示されます。以下のグリッドが表示されます:<ul>
+<li data-bai-block="109">行はスコープタイプに有効な<strong>権限タイプ</strong>です。</li>
+<li data-bai-block="110">列は<strong>直接実行</strong>（作成、読み取り、更新、削除、完全削除）と<strong>他ユーザーへ委任</strong>（すべて、読み取り、更新、削除、完全削除）のグループに分かれています。</li>
+<li data-bai-block="111">権限マトリックスがサポートしていないセルは<code>-</code>と表示され、**この権限は割り当てできません。**というツールチップが表示されます。</li>
 </ul>
 </li>
-<li data-bai-block="111">各チェックボックスは、スコープに現在付与されている操作に合わせて<strong>あらかじめチェック</strong>されています。セルをチェック／チェック解除して許可内容を変更します。</li>
-<li data-bai-block="112"><strong>保存</strong>をクリックします。変更はスコープの現在の付与状態と照合され、新しくチェックしたセルは付与され、解除したセルは削除されます。</li>
+<li data-bai-block="112">各チェックボックスは、スコープに現在付与されている操作に合わせて<strong>あらかじめチェック</strong>されています。セルをチェック／チェック解除して許可内容を変更します。</li>
+<li data-bai-block="113"><strong>保存</strong>をクリックします。変更はスコープの現在の付与状態と照合され、新しくチェックしたセルは付与され、解除したセルは削除されます。</li>
 </ol>
-<p><figure data-bai-block="113" class="doc-figure"><img src="./images/rbac_permission_edit_modal_single.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1520" height="596" /><figcaption>図 21.7</figcaption></figure>
+<p><figure data-bai-block="114" class="doc-figure"><img src="./images/rbac_permission_edit_modal_single.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1520" height="596" /><figcaption>図 21.7</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
-<div data-bai-block="114" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="115" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="115">権限の編集は<strong>元に戻せる</strong>操作です。いつでもモーダルを再度開いてグリッドを変更できるため、保存には名前を入力して確認する代わりに通常の<strong>保存</strong>ボタンを使用します。</p>
+<p data-bai-block="116">権限の編集は<strong>元に戻せる</strong>操作です。いつでもモーダルを再度開いてグリッドを変更できるため、保存には名前を入力して確認する代わりに通常の<strong>保存</strong>ボタンを使用します。</p>
 </div></div>
 
 
 <p><a id="edit-permissions-for-multiple-scopes"></a></p>
-<h3 data-bai-block="116" id="rbac_management-複数スコープの権限を編集一括">複数スコープの権限を編集（一括）<a class="hash-link" href="#rbac_management-複数スコープの権限を編集一括" aria-label="Direct link to 複数スコープの権限を編集（一括）">#</a></h3>
-<p data-bai-block="117">同じタイプの複数のスコープに、同じ権限変更を一度に適用できます。</p>
+<h3 data-bai-block="117" id="rbac_management-複数スコープの権限を編集一括">複数スコープの権限を編集（一括）<a class="hash-link" href="#rbac_management-複数スコープの権限を編集一括" aria-label="Direct link to 複数スコープの権限を編集（一括）">#</a></h3>
+<p data-bai-block="118">同じタイプの複数のスコープに、同じ権限変更を一度に適用できます。</p>
 <ol>
-<li data-bai-block="118">スコープタイプカードで、行のチェックボックスを使用して<strong>2つ以上</strong>のスコープを選択します。選択件数ラベルが表示されたら、その横の鉛筆（<strong>権限を編集</strong>）コントロールを使用して一括モーダルを開きます。</li>
-<li data-bai-block="119"><strong>{スコープタイプ}権限を一括編集</strong>モーダルが開きます。すべてのセルは<strong>現状のまま</strong>の状態で始まります。触れなかったセルは選択した各スコープの既存の値を保持し、編集モードに切り替えたセルのみが選択した<strong>すべての</strong>スコープに適用されます。</li>
-<li data-bai-block="120">セルをクリックして編集モードに切り替えます（チェックされた状態で始まります）。チェック／チェック解除して、選択したすべてのスコープに適用する値を設定します。</li>
-<li data-bai-block="121"><strong>保存</strong>をクリックして、選択したすべてのスコープに変更を適用します。</li>
+<li data-bai-block="119">スコープタイプカードで、行のチェックボックスを使用して<strong>2つ以上</strong>のスコープを選択します。選択件数ラベルが表示されたら、その横の鉛筆（<strong>権限を編集</strong>）コントロールを使用して一括モーダルを開きます。</li>
+<li data-bai-block="120"><strong>{スコープタイプ}権限を一括編集</strong>モーダルが開きます。すべてのセルは<strong>現状のまま</strong>の状態で始まります。触れなかったセルは選択した各スコープの既存の値を保持し、編集モードに切り替えたセルのみが選択した<strong>すべての</strong>スコープに適用されます。</li>
+<li data-bai-block="121">セルをクリックして編集モードに切り替えます（チェックされた状態で始まります）。チェック／チェック解除して、選択したすべてのスコープに適用する値を設定します。</li>
+<li data-bai-block="122"><strong>保存</strong>をクリックして、選択したすべてのスコープに変更を適用します。</li>
 </ol>
-<p><figure data-bai-block="122" class="doc-figure"><img src="./images/rbac_permission_edit_modal_bulk.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="856" /><figcaption>図 21.8</figcaption></figure>
+<p><figure data-bai-block="123" class="doc-figure"><img src="./images/rbac_permission_edit_modal_bulk.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="856" /><figcaption>図 21.8</figcaption></figure>
 </p>
 <p><a id="no-op-and-partial-failure-behavior"></a></p>
-<h3 data-bai-block="123" id="rbac_management-変更なしと部分的な失敗の動作">変更なしと部分的な失敗の動作<a class="hash-link" href="#rbac_management-変更なしと部分的な失敗の動作" aria-label="Direct link to 変更なしと部分的な失敗の動作">#</a></h3>
-<p data-bai-block="124">権限の変更を保存すると:</p>
+<h3 data-bai-block="124" id="rbac_management-変更なしと部分的な失敗の動作">変更なしと部分的な失敗の動作<a class="hash-link" href="#rbac_management-変更なしと部分的な失敗の動作" aria-label="Direct link to 変更なしと部分的な失敗の動作">#</a></h3>
+<p data-bai-block="125">権限の変更を保存すると:</p>
 <ul>
-<li data-bai-block="125">変更がない場合、モーダルはリクエストを送信せずに閉じ、**変更はありません。**というメッセージが表示されます。</li>
-<li data-bai-block="126">成功すると、**権限を保存しました。**というメッセージが表示され、カードのタグが再計算されます。</li>
-<li data-bai-block="127"><strong>部分的な失敗</strong>の場合、モーダルは開いたままになり、失敗したセルにフラグが付きます。一括エラーモーダルには、失敗した各リクエスト（対象スコープ、権限、エラーメッセージ）と成功・失敗の件数が一覧表示されます。グリッドを調整して再度保存すると、失敗したセルのみを再試行できます。</li>
+<li data-bai-block="126">変更がない場合、モーダルはリクエストを送信せずに閉じ、**変更はありません。**というメッセージが表示されます。</li>
+<li data-bai-block="127">成功すると、**権限を保存しました。**というメッセージが表示され、カードのタグが再計算されます。</li>
+<li data-bai-block="128"><strong>部分的な失敗</strong>の場合、モーダルは開いたままになり、失敗したセルにフラグが付きます。一括エラーモーダルには、失敗した各リクエスト（対象スコープ、権限、エラーメッセージ）と成功・失敗の件数が一覧表示されます。グリッドを調整して再度保存すると、失敗したセルのみを再試行できます。</li>
 </ul>
 <!-- ![](/images/rbac_permission_partial_failure_modal.png) -->
 <!-- TODO: Capture the bulk-error modal shown after a partial-failure permission save -->
 
 <p><a id="manage-user-assignments"></a></p>
-<h2 data-bai-block="128" id="rbac_management-ユーザー割り当ての管理">ユーザー割り当ての管理<a class="hash-link" href="#rbac_management-ユーザー割り当ての管理" aria-label="Direct link to ユーザー割り当ての管理">#</a></h2>
-<p data-bai-block="129">ロール詳細パネルの<strong>ロール割り当て</strong>タブでは、ロールに割り当てられているユーザーを確認できます。</p>
-<p><figure data-bai-block="130" class="doc-figure"><img src="./images/rbac_assignments_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.9</figcaption></figure>
+<h2 data-bai-block="129" id="rbac_management-ユーザー割り当ての管理">ユーザー割り当ての管理<a class="hash-link" href="#rbac_management-ユーザー割り当ての管理" aria-label="Direct link to ユーザー割り当ての管理">#</a></h2>
+<p data-bai-block="130">ロール詳細パネルの<strong>ロール割り当て</strong>タブでは、ロールに割り当てられているユーザーを確認できます。</p>
+<p><figure data-bai-block="131" class="doc-figure"><img src="./images/rbac_assignments_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.9</figcaption></figure>
 </p>
 <p><a id="add-users-to-a-role"></a></p>
-<h3 data-bai-block="131" id="rbac_management-ロールにユーザーを追加">ロールにユーザーを追加<a class="hash-link" href="#rbac_management-ロールにユーザーを追加" aria-label="Direct link to ロールにユーザーを追加">#</a></h3>
+<h3 data-bai-block="132" id="rbac_management-ロールにユーザーを追加">ロールにユーザーを追加<a class="hash-link" href="#rbac_management-ロールにユーザーを追加" aria-label="Direct link to ロールにユーザーを追加">#</a></h3>
 <ol>
-<li data-bai-block="132">ロール詳細パネルを開き、<strong>ロール割り当て</strong>タブを選択します</li>
-<li data-bai-block="133"><strong>ユーザーを追加</strong>ボタンをクリックします</li>
-<li data-bai-block="134">モーダルでメールアドレスまたは名前でユーザーを検索します</li>
-<li data-bai-block="135">チェックボックスを使用して1人以上のユーザーを選択します</li>
-<li data-bai-block="136"><strong>割り当て</strong>をクリックして選択したユーザーをロールに割り当てます</li>
+<li data-bai-block="133">ロール詳細パネルを開き、<strong>ロール割り当て</strong>タブを選択します</li>
+<li data-bai-block="134"><strong>ユーザーを追加</strong>ボタンをクリックします</li>
+<li data-bai-block="135">モーダルでメールアドレスまたは名前でユーザーを検索します</li>
+<li data-bai-block="136">チェックボックスを使用して1人以上のユーザーを選択します</li>
+<li data-bai-block="137"><strong>割り当て</strong>をクリックして選択したユーザーをロールに割り当てます</li>
 </ol>
-<p><figure data-bai-block="137" class="doc-figure"><img src="./images/rbac_add_user_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.10</figcaption></figure>
+<p><figure data-bai-block="138" class="doc-figure"><img src="./images/rbac_add_user_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.10</figcaption></figure>
 </p>
-<p data-bai-block="138">ユーザーの追加は一括操作です。一度に複数のユーザーを選択して、まとめて割り当てることができます。一部の割り当てが失敗した場合、モーダルは開いたままになり、一括エラーモーダルに失敗した各ユーザーとエラーメッセージ、成功・失敗の件数が一覧表示されます。正常に割り当てられたユーザーは選択から解除されるため、失敗したユーザーのみが選択された状態で残り、<strong>追加</strong>を再度クリックしてそれらだけを再試行できます。</p>
+<p data-bai-block="139">ユーザーの追加は一括操作です。一度に複数のユーザーを選択して、まとめて割り当てることができます。一部の割り当てが失敗した場合、モーダルは開いたままになり、一括エラーモーダルに失敗した各ユーザーとエラーメッセージ、成功・失敗の件数が一覧表示されます。正常に割り当てられたユーザーは選択から解除されるため、失敗したユーザーのみが選択された状態で残り、<strong>追加</strong>を再度クリックしてそれらだけを再試行できます。</p>
 <!-- ![](/images/rbac_assign_user_partial_failure.png) -->
 <!-- TODO: Capture the Add User modal with the bulk-error modal listing failed assignments -->
 
 <p><a id="system-roles-and-assignment-restrictions"></a></p>
-<h3 data-bai-block="139" id="rbac_management-システムロールと割り当ての制限">システムロールと割り当ての制限<a class="hash-link" href="#rbac_management-システムロールと割り当ての制限" aria-label="Direct link to システムロールと割り当ての制限">#</a></h3>
-<p data-bai-block="140">システムが生成したプロジェクト管理者ロール（<strong>ソース</strong>が<strong>システム</strong>の<code>role_project_&lt;project_id&gt;_admin</code>ロール）は、ロール割り当てタブからユーザーを直接割り当てたり外したりすることはできません。このタブには**システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。**という警告アラートが表示され、割り当てテーブルは読み取り専用になります（<strong>ユーザーを追加</strong>と解除のコントロールは非表示になります）。</p>
-<p><figure data-bai-block="141" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>図 21.11</figcaption></figure>
+<h3 data-bai-block="140" id="rbac_management-システムロールと割り当ての制限">システムロールと割り当ての制限<a class="hash-link" href="#rbac_management-システムロールと割り当ての制限" aria-label="Direct link to システムロールと割り当ての制限">#</a></h3>
+<p data-bai-block="141">システムが生成したプロジェクト管理者ロール（<strong>ソース</strong>が<strong>システム</strong>のロール）は、ロール割り当てタブからユーザーを直接割り当てたり外したりすることはできません。このタブには**システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。**という警告アラートが表示され、割り当てテーブルは読み取り専用になります（<strong>ユーザーを追加</strong>と解除のコントロールは非表示になります）。</p>
+<p><figure data-bai-block="142" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>図 21.11</figcaption></figure>
 </p>
-<p data-bai-block="142">プロジェクトを管理するユーザーを指定するには、代わりにプロジェクトページの<strong>プロジェクト管理者を設定</strong>を使用してください。プロジェクト管理者機能の章の<a href="./project_admin.html#set-project-admin">プロジェクト管理者を設定</a>、および下記の<a href="#grant-project-admin">プロジェクト管理者権限の付与</a>を参照してください。</p>
+<p data-bai-block="143">プロジェクトを管理するユーザーを指定するには、代わりにプロジェクトページの<strong>プロジェクト管理者を設定</strong>を使用してください。プロジェクト管理者機能の章の<a href="./project_admin.html#set-project-admin">プロジェクト管理者を設定</a>、および下記の<a href="#grant-project-admin">プロジェクト管理者権限の付与</a>を参照してください。</p>
 <p><a id="revoke-users-from-a-role"></a></p>
-<h3 data-bai-block="143" id="rbac_management-ロールからユーザーを解除">ロールからユーザーを解除<a class="hash-link" href="#rbac_management-ロールからユーザーを解除" aria-label="Direct link to ロールからユーザーを解除">#</a></h3>
-<p data-bai-block="144">1人のユーザーを解除することも、複数のユーザーを一度に解除することもできます。</p>
-<p data-bai-block="145">1人のユーザーを解除するには:</p>
+<h3 data-bai-block="144" id="rbac_management-ロールからユーザーを解除">ロールからユーザーを解除<a class="hash-link" href="#rbac_management-ロールからユーザーを解除" aria-label="Direct link to ロールからユーザーを解除">#</a></h3>
+<p data-bai-block="145">1人のユーザーを解除することも、複数のユーザーを一度に解除することもできます。</p>
+<p data-bai-block="146">1人のユーザーを解除するには:</p>
 <ol>
-<li data-bai-block="146"><strong>ロール割り当て</strong>タブで、ユーザー行にマウスを合わせ、ユーザーの横にある解除（ゴミ箱）アイコンをクリックします。</li>
-<li data-bai-block="147"><strong>ロールからユーザーを外す</strong>確認モーダルが開きます。一覧に表示されたユーザーを確認し、<strong>ロールからユーザーを外す</strong>をクリックして確定するか、<strong>キャンセル</strong>で閉じます。</li>
+<li data-bai-block="147"><strong>ロール割り当て</strong>タブで、ユーザー行にマウスを合わせ、ユーザーの横にある解除（ゴミ箱）アイコンをクリックします。</li>
+<li data-bai-block="148"><strong>ロールからユーザーを外す</strong>確認モーダルが開きます。一覧に表示されたユーザーを確認し、<strong>ロールからユーザーを外す</strong>をクリックして確定するか、<strong>キャンセル</strong>で閉じます。</li>
 </ol>
-<p><figure data-bai-block="148" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="496" /><figcaption>図 21.12</figcaption></figure>
+<p><figure data-bai-block="149" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="496" /><figcaption>図 21.12</figcaption></figure>
 </p>
-<p data-bai-block="149">複数のユーザーを一度に解除するには:</p>
+<p data-bai-block="150">複数のユーザーを一度に解除するには:</p>
 <ol>
-<li data-bai-block="150"><strong>ロール割り当て</strong>タブで、チェックボックスを使用して解除するユーザーを選択します。解除コントロールの横に、選択された行数を示す選択件数ラベルが表示されます。そのラベルの選択解除コントロールを使用して、すべての行の選択を解除できます。</li>
-<li data-bai-block="151">1つ以上の行が選択されると表示される一括<strong>ロールからユーザーを外す</strong>ボタン（ゴミ箱アイコン）をクリックします。</li>
-<li data-bai-block="152"><strong>ロールからユーザーを外す</strong>確認モーダルで、一覧に表示されたユーザーを確認し、<strong>ロールからユーザーを外す</strong>をクリックして確定するか、<strong>キャンセル</strong>で閉じます。</li>
+<li data-bai-block="151"><strong>ロール割り当て</strong>タブで、チェックボックスを使用して解除するユーザーを選択します。解除コントロールの横に、選択された行数を示す選択件数ラベルが表示されます。そのラベルの選択解除コントロールを使用して、すべての行の選択を解除できます。</li>
+<li data-bai-block="152">1つ以上の行が選択されると表示される一括<strong>ロールからユーザーを外す</strong>ボタン（ゴミ箱アイコン）をクリックします。</li>
+<li data-bai-block="153"><strong>ロールからユーザーを外す</strong>確認モーダルで、一覧に表示されたユーザーを確認し、<strong>ロールからユーザーを外す</strong>をクリックして確定するか、<strong>キャンセル</strong>で閉じます。</li>
 </ol>
-<p><figure data-bai-block="153" class="doc-figure"><img src="./images/rbac_bulk_revoke_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.13</figcaption></figure>
+<p><figure data-bai-block="154" class="doc-figure"><img src="./images/rbac_bulk_revoke_selection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.13</figcaption></figure>
 </p>
-<p data-bai-block="154">ユーザーを解除すると、そのユーザーのこのロールへの割り当てだけが取り除かれ、ロール自体や他の割り当ては保持されます。</p>
+<p data-bai-block="155">ユーザーを解除すると、そのユーザーのこのロールへの割り当てだけが取り除かれ、ロール自体や他の割り当ては保持されます。</p>
 <div class="admonition admonition-note">
-<div data-bai-block="155" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
+<div data-bai-block="156" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
 <div class="admonition-content">
 
-<p data-bai-block="156">ロール割り当ての解除は、<strong>ロール割り当て</strong>タブからユーザーを再度追加することで元に戻せます。</p>
+<p data-bai-block="157">ロール割り当ての解除は、<strong>ロール割り当て</strong>タブからユーザーを再度追加することで元に戻せます。</p>
 </div></div>
 
 
 <p><a id="grant-project-admin"></a></p>
-<h2 data-bai-block="157" id="rbac_management-プロジェクト管理者権限の付与">プロジェクト管理者権限の付与<a class="hash-link" href="#rbac_management-プロジェクト管理者権限の付与" aria-label="Direct link to プロジェクト管理者権限の付与">#</a></h2>
-<p data-bai-block="158">プロジェクトを作成すると、<code>role_project_&lt;project_id&gt;_admin</code>という専用のロールも併せて作成されます。ここで<code>&lt;project_id&gt;</code>は対象プロジェクトのUUIDの先頭8文字です。このロールに割り当てられたユーザーは、該当プロジェクトに対する<a href="./project_admin.html#project-admin-features">プロジェクト管理者</a>権限を得ます。これにより、システム全体のスーパー管理者権限を持たなくても、そのプロジェクトのユーザー、セッション、デプロイ、ストレージフォルダを管理できるようになります。</p>
-<p><figure data-bai-block="159" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.14</figcaption></figure>
+<h2 data-bai-block="158" id="rbac_management-プロジェクト管理者権限の付与">プロジェクト管理者権限の付与<a class="hash-link" href="#rbac_management-プロジェクト管理者権限の付与" aria-label="Direct link to プロジェクト管理者権限の付与">#</a></h2>
+<p data-bai-block="159">プロジェクトを作成すると、そのプロジェクト専用のプロジェクト管理者ロールも併せて作成されます。このロールに割り当てられたユーザーは、該当プロジェクトに対する<a href="./project_admin.html#project-admin-features">プロジェクト管理者</a>権限を得ます。これにより、システム全体のスーパー管理者権限を持たなくても、そのプロジェクトのユーザー、セッション、デプロイ、ストレージフォルダを管理できるようになります。</p>
+<p><figure data-bai-block="160" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 21.14</figcaption></figure>
 </p>
-<p data-bai-block="160">プロジェクト管理者権限は、プロジェクト管理者機能の章の<a href="./project_admin.html#set-project-admin">プロジェクト管理者を設定</a>で説明する<strong>プロジェクト</strong>管理者ページの<strong>プロジェクト管理者を設定</strong>ワンクリックフローを通じて付与・取り消しします。<code>role_project_&lt;project_id&gt;_admin</code>ロールはシステムロールであるため、ここのロール割り当てタブは<strong>読み取り専用</strong>であり、確認用に提供されます。ロールを開いて、現在プロジェクト管理者権限を持つユーザーを確認できます。<strong>プロジェクト管理者を設定</strong>モーダルは、RBACショートカットを通じてこのロールの詳細パネルにもリンクします。</p>
-<p><figure data-bai-block="161" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1800" /><figcaption>図 21.15</figcaption></figure>
+<p data-bai-block="161">プロジェクト管理者権限は、プロジェクト管理者機能の章の<a href="./project_admin.html#set-project-admin">プロジェクト管理者を設定</a>で説明する<strong>プロジェクト</strong>管理者ページの<strong>プロジェクト管理者を設定</strong>ワンクリックフローを通じて付与・取り消しします。プロジェクト管理者ロールはシステムロールであるため、ここのロール割り当てタブは<strong>読み取り専用</strong>であり、確認用に提供されます。ロールを開いて、現在プロジェクト管理者権限を持つユーザーを確認できます。<strong>プロジェクト管理者を設定</strong>モーダルは、RBACショートカットを通じてこのロールの詳細パネルにもリンクします。</p>
+<p><figure data-bai-block="162" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1598" height="1800" /><figcaption>図 21.15</figcaption></figure>
 </p>
-<p data-bai-block="162">権限が付与されると、ユーザーには即座にプロジェクト管理者権限が適用されます。次にヘッダーのプロジェクトドロップダウンを開くと、対応するプロジェクトの横にプロジェクト管理者バッジが表示され、<a href="./project_admin.html#project-admin-features">プロジェクト管理者機能</a>章で説明されているプロジェクト管理者専用のサイドバー項目も表示されます。</p>
+<p data-bai-block="163">権限が付与されると、ユーザーには即座にプロジェクト管理者権限が適用されます。次にヘッダーのプロジェクトドロップダウンを開くと、対応するプロジェクトの横にプロジェクト管理者バッジが表示され、<a href="./project_admin.html#project-admin-features">プロジェクト管理者機能</a>章で説明されているプロジェクト管理者専用のサイドバー項目も表示されます。</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月16日</span>
+  <span class="last-updated">最終更新日 2026年9月23日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">

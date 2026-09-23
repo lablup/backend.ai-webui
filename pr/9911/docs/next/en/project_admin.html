@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Project Admin Features" />
   <meta name="twitter:description" content="A Project Admin is a user who has been granted administrative authority over a specific project." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Project Admin Features","inLanguage":"en","description":"A Project Admin is a user who has been granted administrative authority over a specific project.","dateModified":"2026-09-16T07:39:48.000Z","url":"https://webui.docs.backend.ai/next/en/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Project Admin Features","inLanguage":"en","description":"A Project Admin is a user who has been granted administrative authority over a specific project.","dateModified":"2026-09-23T01:03:06.000Z","url":"https://webui.docs.backend.ai/next/en/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
   <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
   <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91ee60c)">v26.9.0-alpha.0 (91ee60c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (3cfb3c7)">v26.9.0-alpha.0 (3cfb3c7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -216,6 +216,8 @@
 <p data-bai-block="3">When you open the project dropdown in the header, projects in which you have the project-admin role are marked with a shield-shaped badge next to the project name. Hovering the badge displays a <strong>Project Admin</strong> tooltip, confirming that selecting this project will reveal the project-admin sidebar entries described below.</p>
 <p><figure data-bai-block="4" class="doc-figure"><img src="./images/header_project_selector_with_admin_badge.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="200" /><figcaption>Figure 20.1</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="5">Switching to a different project from the header&#39;s project selector re-evaluates the user&#39;s role: the same user may act as a project admin in one project and as a regular user in another within the same login session. To learn how project-admin roles are granted and revoked, see <a href="./rbac_management.html#grant-project-admin">Grant Project Admin Authority</a> in the RBAC Management chapter.</p>
 <div class="admonition admonition-note">
 <div data-bai-block="6" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -227,6 +229,8 @@
 
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/forbidden_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1260" height="700" /><figcaption>Figure 20.2</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
+
 <p><a id="set-project-admin"></a></p>
 <h2 data-bai-block="9" id="project_admin-set-project-admin">Set Project Admin<a class="hash-link" href="#project_admin-set-project-admin" aria-label="Direct link to Set Project Admin">#</a></h2>
 <p data-bai-block="10">Superadmins can grant and revoke project admin for one or more users in a single place through the <strong>Set Project Admin</strong> modal, launched from the <strong>Project</strong> admin page (<strong>Users → Project</strong>).</p>
@@ -266,20 +270,28 @@
 </ul>
 <p><figure data-bai-block="30" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="900" /><figcaption>Figure 20.5</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="31">On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.</p>
 <p><figure data-bai-block="32" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>Figure 20.6</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p><a id="refreshing-project-admin-pages"></a></p>
 <h2 data-bai-block="33" id="project_admin-refreshing-project-admin-pages">Refreshing project-admin pages<a class="hash-link" href="#project_admin-refreshing-project-admin-pages" aria-label="Direct link to Refreshing project-admin pages">#</a></h2>
 <p data-bai-block="34">The project-admin pages provide the same refresh button. Click the refresh button to refresh the table list.</p>
 <p data-bai-block="35">The dropdown button next to the refresh button opens the <strong>Auto Refresh</strong> menu, where you can choose the auto-refresh interval.</p>
 <p><figure data-bai-block="36" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="172" height="446" /><figcaption>Figure 20.7</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p><a id="users"></a></p>
 <h2 data-bai-block="37" id="project_admin-users">Users<a class="hash-link" href="#project_admin-users" aria-label="Direct link to Users">#</a></h2>
 <p data-bai-block="38">The <strong>Users</strong> page lists every user who belongs to the currently selected project. Use this page to review project membership at a glance — for example, to confirm who has access to the project&#39;s resources or to identify inactive accounts.</p>
 <p><figure data-bai-block="39" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.8</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="40">The page provides the following controls:</p>
 <ul>
 <li data-bai-block="41"><strong>Active / Inactive</strong> segmented control: Toggle between active and inactive users. Active is selected by default.</li>
@@ -291,6 +303,8 @@
 <p data-bai-block="45">The <strong>Data</strong> page lists the storage folders (vfolders) owned by the currently selected project. Use this page to create project-shared folders, restore folders that were accidentally deleted, or purge folders that no longer need to be retained.</p>
 <p><figure data-bai-block="46" class="doc-figure"><img src="./images/project_admin_data_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.9</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="47">The page provides the following controls:</p>
 <ul>
 <li data-bai-block="48"><p><strong>Active / Trash</strong> tabs: Switch between currently active folders and folders that have been soft-deleted. Each tab shows a count badge with the number of folders it contains.</p>
@@ -310,6 +324,8 @@
 </ol>
 <p><figure data-bai-block="56" class="doc-figure"><img src="./images/project_admin_create_folder_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="872" /><figcaption>Figure 20.10</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <div class="admonition admonition-info">
 <div data-bai-block="57" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>INFO</div>
 <div class="admonition-content">
@@ -330,6 +346,8 @@
 </ul>
 <p><figure data-bai-block="65" class="doc-figure"><img src="./images/project_admin_data_deleted_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.11</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <div class="admonition admonition-danger">
 <div data-bai-block="66" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>DANGER</div>
 <div class="admonition-content">
@@ -343,6 +361,8 @@
 <p data-bai-block="69">The <strong>Sessions</strong> page lists the compute sessions owned by users in the currently selected project. Use this page to monitor active workloads, identify long-running sessions, or terminate sessions that are no longer needed.</p>
 <p><figure data-bai-block="70" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.12</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="71">The page provides the following controls:</p>
 <ul>
 <li data-bai-block="72"><strong>Running / Finished</strong> segmented control: Toggle between currently running sessions and sessions that have already finished.</li>
@@ -359,6 +379,8 @@
 </ol>
 <p><figure data-bai-block="81" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1060" height="560" /><figcaption>Figure 20.13</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <div class="admonition admonition-warning">
 <div data-bai-block="82" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
 <div class="admonition-content">
@@ -380,6 +402,8 @@
 <p data-bai-block="87">The <strong>Deployments</strong> page lists the model deployments owned by the currently selected project. Use this page to oversee inference endpoints, edit deployment settings, or remove deployments that are no longer in use.</p>
 <p><figure data-bai-block="88" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.14</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="89">The page provides the following controls:</p>
 <ul>
 <li data-bai-block="90"><strong>Running / Terminated</strong> segmented control: Toggle between currently running deployments and deployments that have been terminated.</li>
@@ -397,13 +421,15 @@
 </ul>
 <p><figure data-bai-block="100" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>Figure 20.15</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="101">For details about deployment revisions, replicas, and traffic routing, see the <a href="./deployment.html#model-serving">Deployments</a> chapter.</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 16, 2026</span>
+  <span class="last-updated">Last updated on Sep 23, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./user_settings.html">

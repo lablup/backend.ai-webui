@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="클러스터 세션" />
   <meta name="twitter:description" content="Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 클러스터 연산 세션을 지원합니다. 클러스터 세션은 여러 개의 컨테이너로 구성되며, 각 컨테이너는 여러 물리 노드에 걸쳐 생성됩니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"클러스터 세션","inLanguage":"ko","description":"Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 클러스터 연산 세션을 지원합니다. 클러스터 세션은 여러 개의 컨테이너로 구성되며, 각 컨테이너는 여러 물리 노드에 걸쳐 생성됩니다.","dateModified":"2026-09-16T07:39:48.000Z","url":"https://webui.docs.backend.ai/next/ko/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"클러스터 세션","inLanguage":"ko","description":"Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 클러스터 연산 세션을 지원합니다. 클러스터 세션은 여러 개의 컨테이너로 구성되며, 각 컨테이너는 여러 물리 노드에 걸쳐 생성됩니다.","dateModified":"2026-09-21T04:20:28.000Z","url":"https://webui.docs.backend.ai/next/ko/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/cluster_session.html" />
   <link rel="alternate" hreflang="en" href="../en/cluster_session.html" />
   <link rel="alternate" hreflang="ja" href="../ja/cluster_session.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91ee60c)">v26.9.0-alpha.0 (91ee60c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (3cfb3c7)">v26.9.0-alpha.0 (3cfb3c7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -275,7 +275,7 @@
 </ul>
 <p data-bai-block="37">그 아래에 있는 &quot;클러스터 크기&quot;를 설정합니다. 3으로 설정할 경우, 메인 컨테이너를 포함해서 총 세 개의 컨테이너가 생성됩니다. 이 세 개의 컨테이너는 사설 네트워크로 묶여 하나의 연산 세션을 구성합니다.</p>
 <p data-bai-block="38">시작 버튼을 클릭하여 연산 세션 생성 요청을 보내고 잠시 기다리면 클러스터 세션이 생성됩니다. 세션 생성 이후에, 세션 상세 페이지에서 생성된 컨테이너를 확인할 수 있습니다.</p>
-<p><figure data-bai-block="39" class="doc-figure"><img src="./images/cluster_session_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1502" height="440" /><figcaption>그림 11.3</figcaption></figure>
+<p><figure data-bai-block="39" class="doc-figure"><img src="./images/cluster_session_created.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1502" height="438" /><figcaption>그림 11.3</figcaption></figure>
 </p>
 <p data-bai-block="40">방금 생성한 연산 세션에서 터미널 앱을 열어 보겠습니다. 환경 변수를 조회하면, 위 섹션에서 설명한 <code>BACKENDAI_CLUSTER_*</code> 변수들이 설정되어 있는 것을 확인할 수 있습니다. 각 환경 변수의 의미와 값을 위의 설명과 비교해 보십시오.</p>
 <p><figure data-bai-block="41" class="doc-figure"><img src="./images/terminal_on_main_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="808" height="240" /><figcaption>그림 11.4</figcaption></figure>
@@ -294,7 +294,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/cluster_session/cluster_session.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 16일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 21일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./sessions_all.html">

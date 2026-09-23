@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="プロジェクト管理者機能" />
   <meta name="twitter:description" content="プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"プロジェクト管理者機能","inLanguage":"ja","description":"プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。","dateModified":"2026-09-16T07:39:48.000Z","url":"https://webui.docs.backend.ai/next/ja/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"プロジェクト管理者機能","inLanguage":"ja","description":"プロジェクト管理者は、特定のプロジェクトに対する管理権限を付与されたユーザーです。プロジェクト管理者は、システム全体のスーパー管理者権限を必要とせずに、自分が管理するプロジェクトに所属するユーザーを確認したり、コンピュートセッションやモデルデプロイメントを監視したり、ストレージフォルダを運用したりできます。","dateModified":"2026-09-23T01:03:06.000Z","url":"https://webui.docs.backend.ai/next/ja/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
   <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
   <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91ee60c)">v26.9.0-alpha.0 (91ee60c)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (3cfb3c7)">v26.9.0-alpha.0 (3cfb3c7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -216,6 +216,8 @@
 <p data-bai-block="3">ヘッダーのプロジェクトドロップダウンを開くと、プロジェクト管理者ロールを持つプロジェクトには名前の横に盾の形のバッジが表示されます。バッジにカーソルを合わせると <strong>プロジェクト管理者</strong> ツールチップが表示され、このプロジェクトを選択すると以下で説明するプロジェクト管理者向けサイドバー項目が表示されることが確認できます。</p>
 <p><figure data-bai-block="4" class="doc-figure"><img src="./images/header_project_selector_with_admin_badge.png" alt="" class="doc-image" loading="lazy" decoding="async" width="600" height="200" /><figcaption>図 20.1</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="5">ヘッダーのプロジェクトセレクターで別のプロジェクトに切り替えると、ユーザーのロールが再評価されます。同じユーザーが同一のログインセッション内で、あるプロジェクトではプロジェクト管理者として、別のプロジェクトでは一般ユーザーとして振る舞うことがあります。プロジェクト管理者ロールの付与と取り消しの方法については、RBAC管理章の<a href="./rbac_management.html#grant-project-admin">プロジェクト管理者権限の付与</a>セクションを参照してください。</p>
 <div class="admonition admonition-note">
 <div data-bai-block="6" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
@@ -227,6 +229,8 @@
 
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/forbidden_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1260" height="700" /><figcaption>図 20.2</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
+
 <p><a id="set-project-admin"></a></p>
 <h2 data-bai-block="9" id="project_admin-プロジェクト管理者を設定">プロジェクト管理者を設定<a class="hash-link" href="#project_admin-プロジェクト管理者を設定" aria-label="Direct link to プロジェクト管理者を設定">#</a></h2>
 <p data-bai-block="10">スーパー管理者は、<strong>プロジェクト</strong>管理者ページ（<strong>ユーザー → プロジェクト</strong>）から起動する<strong>プロジェクト管理者を設定</strong>モーダルを通じて、1か所で1人以上のユーザーにプロジェクト管理者権限を付与・取り消しできます。</p>
@@ -266,20 +270,28 @@
 </ul>
 <p><figure data-bai-block="30" class="doc-figure"><img src="./images/project_admin_sidebar.png" alt="" class="doc-image" loading="lazy" decoding="async" width="480" height="900" /><figcaption>図 20.5</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="31">プロジェクト管理者ページでは、上部のプロジェクトセレクターで選択したプロジェクト配下の項目のみが表示されます。この内容はページ上部のバナーで確認できます。</p>
 <p><figure data-bai-block="32" class="doc-figure"><img src="./images/project_admin_scope_alert.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="92" /><figcaption>図 20.6</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p><a id="refreshing-project-admin-pages"></a></p>
 <h2 data-bai-block="33" id="project_admin-プロジェクト管理者ページの更新">プロジェクト管理者ページの更新<a class="hash-link" href="#project_admin-プロジェクト管理者ページの更新" aria-label="Direct link to プロジェクト管理者ページの更新">#</a></h2>
 <p data-bai-block="34">プロジェクト管理者ページには同じ更新ボタンが用意されています。更新ボタンをクリックすると、テーブルの一覧を更新できます。</p>
 <p data-bai-block="35">更新ボタンの横のドロップダウンボタンをクリックすると <strong>自動更新</strong> メニューが開き、自動更新の間隔を選択できます。</p>
 <p><figure data-bai-block="36" class="doc-figure"><img src="./images/project_admin_auto_refresh_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="188" height="446" /><figcaption>図 20.7</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p><a id="users"></a></p>
 <h2 data-bai-block="37" id="project_admin-ユーザー">ユーザー<a class="hash-link" href="#project_admin-ユーザー" aria-label="Direct link to ユーザー">#</a></h2>
 <p data-bai-block="38"><strong>ユーザー</strong> ページには、現在選択されているプロジェクトに所属するすべてのユーザーが表示されます。このページを使用して、プロジェクトのメンバーを一目で確認できます。例えば、プロジェクトのリソースにアクセスできるユーザーを確認したり、非アクティブなアカウントを特定したりできます。</p>
 <p><figure data-bai-block="39" class="doc-figure"><img src="./images/project_admin_users_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.8</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="40">このページには以下のコントロールが用意されています:</p>
 <ul>
 <li data-bai-block="41"><strong>アクティブ / 非アクティブ</strong> セグメントコントロール: アクティブユーザーと非アクティブユーザーを切り替えます。デフォルトではアクティブが選択されています。</li>
@@ -291,6 +303,8 @@
 <p data-bai-block="45"><strong>データ</strong> ページには、現在選択されているプロジェクトが所有するストレージフォルダ（vfolder）が表示されます。このページから、プロジェクト共有フォルダの作成、誤って削除されたフォルダの復元、保持の必要がなくなったフォルダの完全削除を行えます。</p>
 <p><figure data-bai-block="46" class="doc-figure"><img src="./images/project_admin_data_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.9</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="47">このページには以下のコントロールが用意されています:</p>
 <ul>
 <li data-bai-block="48"><p><strong>アクティブ / ゴミ箱</strong> タブ: 現在アクティブなフォルダとソフト削除されたフォルダを切り替えます。各タブには、含まれるフォルダ数を示す件数バッジが表示されます。</p>
@@ -310,6 +324,8 @@
 </ol>
 <p><figure data-bai-block="56" class="doc-figure"><img src="./images/project_admin_create_folder_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="916" /><figcaption>図 20.10</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <div class="admonition admonition-info">
 <div data-bai-block="57" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"/></svg></span>情報</div>
 <div class="admonition-content">
@@ -330,6 +346,8 @@
 </ul>
 <p><figure data-bai-block="65" class="doc-figure"><img src="./images/project_admin_data_deleted_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.11</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <div class="admonition admonition-danger">
 <div data-bai-block="66" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 12 16"><path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"/></svg></span>危険</div>
 <div class="admonition-content">
@@ -343,6 +361,8 @@
 <p data-bai-block="69"><strong>セッション</strong> ページには、現在選択されているプロジェクトのユーザーが所有するコンピュートセッションが表示されます。このページから、アクティブなワークロードの監視、長時間実行されているセッションの特定、不要になったセッションの終了を行えます。</p>
 <p><figure data-bai-block="70" class="doc-figure"><img src="./images/project_admin_sessions_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.12</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="71">このページには以下のコントロールが用意されています:</p>
 <ul>
 <li data-bai-block="72"><strong>実行中 / 終了済み</strong> セグメントコントロール: 現在実行中のセッションとすでに終了したセッションを切り替えます。</li>
@@ -359,6 +379,8 @@
 </ol>
 <p><figure data-bai-block="81" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1060" height="516" /><figcaption>図 20.13</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <div class="admonition admonition-warning">
 <div data-bai-block="82" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>警告</div>
 <div class="admonition-content">
@@ -380,6 +402,8 @@
 <p data-bai-block="87"><strong>デプロイメント</strong> ページには、現在選択されているプロジェクトが所有するモデルデプロイメントが表示されます。このページから、推論エンドポイントの管理、デプロイメント設定の編集、使用しなくなったデプロイメントの削除を行えます。</p>
 <p><figure data-bai-block="88" class="doc-figure"><img src="./images/project_admin_deployments_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.14</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="89">このページには以下のコントロールが用意されています:</p>
 <ul>
 <li data-bai-block="90"><strong>実行中 / 終了済み</strong> セグメントコントロール: 現在実行中のデプロイメントと終了したデプロイメントを切り替えます。</li>
@@ -397,13 +421,15 @@
 </ul>
 <p><figure data-bai-block="100" class="doc-figure"><img src="./images/project_admin_deployment_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 20.15</figcaption></figure>
 </p>
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
+
 <p data-bai-block="101">デプロイメントのリビジョン、レプリカ、トラフィックルーティングの詳細については、<a href="./deployment.html#model-serving">デプロイ</a>章を参照してください。</p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/project_admin/project_admin.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月16日</span>
+  <span class="last-updated">最終更新日 2026年9月23日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./user_settings.html">
