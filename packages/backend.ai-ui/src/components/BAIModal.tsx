@@ -56,9 +56,9 @@
     `Layout` keeps the header slot outside the scrolling content.
     `zIndex` is the exception: the modal is a portalled div with a real
     z-index since FR-3578, so a passed value is forwarded, not ignored.
- 6. **`afterClose` fires from an effect on the `open` transition**, not from a
-    transition-end event, so it lands a frame earlier than antd's. This is what
-    `BAIUnmountAfterClose` subscribes to and it keeps working unchanged.
+ 6. **`afterClose` / `afterOpenChange` fire from `BAIDialog`'s `afterOpenChange`**
+    on the `open` transition. There is no exit animation to wait for, so this
+    is the end of the close. `BAIUnmountAfterClose` subscribes to it.
 
  ## ReactNode title
 
@@ -91,7 +91,7 @@ import {
   Maximize,
   Minus,
 } from 'lucide-react';
-import React, { isValidElement, useEffect, useRef, useState } from 'react';
+import React, { isValidElement, useEffect, useState } from 'react';
 
 export type WindowState = 'default' | 'minimized' | 'maximized' | 'fullscreen';
 export type WindowAction = 'minimize' | 'maximize' | 'fullscreen';
@@ -411,20 +411,6 @@ const BAIModal: React.FC<BAIModalProps> = ({
       ? undefined
       : (classNamesProp ?? undefined);
 
-  // antd fired `afterClose` when the exit transition ended. Astryx has no exit
-  // transition, so the close edge itself is the signal. `BAIUnmountAfterClose`
-  // listens to exactly this to drop the subtree.
-  const wasVisibleRef = useRef(isVisible);
-  useEffect(() => {
-    if (wasVisibleRef.current !== isVisible) {
-      wasVisibleRef.current = isVisible;
-      afterOpenChange?.(isVisible);
-      if (!isVisible) afterClose?.();
-    }
-    // `afterClose` / `afterOpenChange` are stable callbacks at every call site.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVisible]);
-
   // Reset the window state when the modal is closed programmatically.
   useEffect(() => {
     if (!isVisible && windowState !== 'default') {
@@ -435,10 +421,23 @@ const BAIModal: React.FC<BAIModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  // Nothing is rendered while closed — see PILOT-DECISION 3. Every hook has
-  // already run, so returning here skips building the header/footer trees on
-  // closed-modal re-renders.
-  if (!isVisible) return null;
+  // `BAIDialog` fires the close edge, so it stays mounted in the same slot
+  // while closed; nothing else is built for a closed modal (PILOT-DECISION 3).
+  const handleAfterOpenChange = (next: boolean) => {
+    afterOpenChange?.(next);
+    if (!next) afterClose?.();
+  };
+  if (!isVisible) {
+    return (
+      <BAIDialog
+        isOpen={false}
+        onOpenChange={() => {}}
+        afterOpenChange={handleAfterOpenChange}
+      >
+        {null}
+      </BAIDialog>
+    );
+  }
 
   const hasWindowControls = !!windowActions && windowActions.length > 0;
   const activeActions: Array<WindowAction> = windowActions ?? [];
@@ -723,6 +722,7 @@ const BAIModal: React.FC<BAIModalProps> = ({
       onOpenChange={(next) => {
         if (!next) void handleCancel();
       }}
+      afterOpenChange={handleAfterOpenChange}
       width={dialogWidth}
       {...(zIndex !== undefined ? { zIndex } : undefined)}
       {...(dialogMaxHeight !== undefined

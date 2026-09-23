@@ -61,13 +61,7 @@ export const docs = {
       name: 'afterOpenChange',
       type: '(open: boolean) => void',
       description:
-        'Called with the new visibility right after `isOpen` changes. Not called on mount.',
-    },
-    {
-      name: 'afterClose',
-      type: '() => void',
-      description:
-        'Called right after `isOpen` turns false. This is what `BAIUnmountAfterClose` listens to, so a dialog component it wraps must forward this prop for the unmount to happen.',
+        'Called with the new visibility right after `isOpen` changes. Not called on mount. The dialog has no exit animation, so `false` marks the end of the close. This is what `BAIUnmountAfterClose` listens to, so a dialog component it wraps must stay mounted while closed and forward this prop.',
     },
     {
       name: 'children',

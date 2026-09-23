@@ -19,20 +19,10 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 import { useLocation } from 'react-router-dom';
 
-// PILOT-DECISION: props no longer extend antd `DrawerProps` (a type-only antd
-// import still blocks the P15 gate). All three consumers
-// (SessionDetailAndContainerLogOpenerLegacy, RecentlyCreatedSession,
-// DeploymentReplicasCard) pass exactly `open` / `sessionId` / `onClose`, so
-// the explicit interface below is the whole live surface. antd spellings are
-// kept and mapped internally (`open` -> `isOpen`).
-interface SessionDetailDrawerProps extends Pick<
+interface SessionDetailDrawerProps extends Omit<
   BAIDrawerProps,
-  'afterOpenChange' | 'afterClose'
+  'title' | 'extra' | 'children'
 > {
-  /** Whether the drawer is open. antd Drawer's `open`. */
-  open?: boolean;
-  /** Close request handler (Escape, scrim click, close button). */
-  onClose?: () => void;
   sessionId?: string;
   /**
    * Explicit project prop contract (ADR-0001, FR-3413): pass-through to
@@ -43,11 +33,8 @@ interface SessionDetailDrawerProps extends Pick<
 }
 const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
   sessionId,
-  open = false,
-  onClose,
-  afterOpenChange,
-  afterClose,
   project,
+  ...drawerProps
 }) => {
   const { t } = useTranslation();
   useSuspendedBackendaiClient();
@@ -88,10 +75,7 @@ const SessionDetailDrawer: React.FC<SessionDetailDrawerProps> = ({
 
   return (
     <BAIDrawer
-      open={open}
-      onClose={onClose}
-      afterOpenChange={afterOpenChange}
-      afterClose={afterClose}
+      {...drawerProps}
       side="end"
       size={800}
       title={t('session.SessionInfo')}

@@ -10,7 +10,6 @@
  The inner `<Dialog isInline>` is always told `isOpen`: its inline path renders
  `null` when closed, and children stay mounted as the native `<dialog>` did.
 */
-import { useAfterOpenChange } from '../hooks/useAfterOpenChange';
 import './BAIDialog.css';
 import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 import { Dialog } from '@astryxdesign/core/Dialog';
@@ -20,7 +19,13 @@ import { dataAttr } from '@astryxdesign/core/naming';
 import { useThemeName } from '@astryxdesign/core/theme';
 import { devWarn, isFocusDetached, mergeRefs } from '@astryxdesign/core/utils';
 import classNames from 'classnames';
-import React, { useEffect, useId, useLayoutEffect, useRef } from 'react';
+import React, {
+  useEffect,
+  useEffectEvent,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 const HEADING_SELECTOR = '[role="heading"], h1, h2, h3, h4, h5, h6';
@@ -109,10 +114,12 @@ export interface BAIDialogProps extends Omit<
    * surface, so `style={{ zIndex }}` does not.
    */
   zIndex?: number;
-  /** Called with the new visibility right after `isOpen` changes. */
+  /**
+   * Called with the new visibility right after `isOpen` changes, never on
+   * mount. There is no exit animation, so the close edge is the end of the
+   * close. Drives `BAIUnmountAfterClose`.
+   */
   afterOpenChange?: (open: boolean) => void;
-  /** Called after `isOpen` turns false. Drives `BAIUnmountAfterClose`. */
-  afterClose?: () => void;
 }
 
 const BAIDialog: React.FC<BAIDialogProps> = ({
@@ -126,7 +133,6 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
   padding,
   zIndex,
   afterOpenChange,
-  afterClose,
   role,
   children,
   xstyle,
@@ -136,7 +142,16 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
   ...rest
 }) => {
   'use memo';
-  useAfterOpenChange(isOpen, { afterOpenChange, afterClose });
+
+  const wasOpenRef = useRef(isOpen);
+  const notifyOpenChange = useEffectEvent((open: boolean) => {
+    afterOpenChange?.(open);
+  });
+  useEffect(() => {
+    if (wasOpenRef.current === isOpen) return;
+    wasOpenRef.current = isOpen;
+    notifyOpenChange(isOpen);
+  }, [isOpen]);
 
   // Theme CSS is `@scope`d to `[data-astryx-theme]`, so re-emitting the nearest
   // theme's NAME (not its mode) keeps an admin-region modal on the admin accent.

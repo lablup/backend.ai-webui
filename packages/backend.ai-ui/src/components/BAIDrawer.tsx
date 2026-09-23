@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { useAfterOpenChange } from '../hooks/useAfterOpenChange';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIDrawer.css';
 import BAIDrawerPortal from './BAIDrawerPortal';
@@ -12,16 +11,24 @@ import { HStack, StackItem, VStack } from '@astryxdesign/core/Stack';
 import { Drawer } from '@astryxdesign/lab';
 import classNames from 'classnames';
 import { X } from 'lucide-react';
-import React, { type ReactNode } from 'react';
+import React, {
+  type ReactNode,
+  useEffectEvent,
+  useLayoutEffect,
+  useRef,
+} from 'react';
 
 export interface BAIDrawerProps {
   /** Whether the drawer is open. antd `Drawer`'s `open`. */
   open?: boolean;
   /** Close request (Escape, scrim click, the header close button). */
   onClose?: () => void;
-  /** Called with the new visibility right after `open` changes. */
+  /**
+   * Called with `true` as soon as the drawer opens, and with `false` once the
+   * slide-out has finished. Never on mount.
+   */
   afterOpenChange?: (open: boolean) => void;
-  /** Called after `open` turns false. Drives `BAIUnmountAfterClose`. */
+  /** Called once the slide-out has finished. Drives `BAIUnmountAfterClose`. */
   afterClose?: () => void;
   /** Header title. antd `Drawer`'s `title`. */
   title?: ReactNode;
@@ -87,7 +94,32 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  useAfterOpenChange(open, { afterOpenChange, afterClose });
+
+  // lab delays `dialog.close()` until the slide-out is over, so the native
+  // `close` event is the end of the close; unmounting earlier cuts it off.
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const wasOpenRef = useRef(open);
+  const notifyOpened = useEffectEvent(() => afterOpenChange?.(true));
+  const notifyClosed = useEffectEvent(() => {
+    afterOpenChange?.(false);
+    afterClose?.();
+  });
+  useLayoutEffect(() => {
+    if (wasOpenRef.current === open) return;
+    wasOpenRef.current = open;
+    if (open) {
+      notifyOpened();
+      return;
+    }
+    const dialog = dialogRef.current;
+    if (!dialog?.open) {
+      notifyClosed();
+      return;
+    }
+    const handleClose = () => notifyClosed();
+    dialog.addEventListener('close', handleClose, { once: true });
+    return () => dialog.removeEventListener('close', handleClose);
+  }, [open]);
 
   // lab `Drawer` requires a non-empty accessible name.
   const accessibleName =
@@ -142,6 +174,7 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
   );
 
   const drawerProps = {
+    ref: dialogRef,
     isOpen: open,
     onClose: () => onClose?.(),
     side,

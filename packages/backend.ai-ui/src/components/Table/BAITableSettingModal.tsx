@@ -60,7 +60,7 @@ export interface BAITableSettingResult {
 
 export interface BAITableSettingModalProps extends Pick<
   BAIDialogProps,
-  'afterOpenChange' | 'afterClose'
+  'afterOpenChange'
 > {
   open: boolean;
   columns: Array<BAITableSettingColumn>;
@@ -127,7 +127,6 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
   disableReorder,
   onRequestClose,
   afterOpenChange,
-  afterClose,
 }) => {
   'use memo';
   const { t } = useBAIi18n();
@@ -165,8 +164,6 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
     if (from === -1 || to === -1) return;
     setOrder(arrayMove(order, from, to));
   };
-
-  if (!open) return null;
 
   const list = (
     <VStack gap={0} align="stretch">
@@ -207,7 +204,6 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
         if (!next) onRequestClose(undefined);
       }}
       afterOpenChange={afterOpenChange}
-      afterClose={afterClose}
       width={420}
       purpose="form"
     >

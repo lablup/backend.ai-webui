@@ -62,13 +62,13 @@ export const docs = {
       name: 'afterOpenChange',
       type: '(open: boolean) => void',
       description:
-        'Called with the new visibility right after `open` changes. Not called on mount.',
+        'Called with `true` as soon as the drawer opens and with `false` once the slide-out has finished. Not called on mount.',
     },
     {
       name: 'afterClose',
       type: '() => void',
       description:
-        'Called right after `open` turns false. This is what `BAIUnmountAfterClose` listens to, so a drawer component it wraps must forward this prop for the unmount to happen.',
+        'Called once the slide-out has finished. This is what `BAIUnmountAfterClose` listens to, so a drawer component it wraps must forward this prop for the unmount to happen.',
     },
     {
       name: 'title',

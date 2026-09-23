@@ -14,16 +14,10 @@ import { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
-// PILOT-DECISION: no longer extends antd `DrawerProps` (P1 grep — the only
-// consumer, StorageProxyList, passes `open`/`storageVolumeFrgmt`/
-// `onRefetchParentList`/`onRequestClose`). antd `Drawer` → lab `Drawer`
-// (MAPPING §2 LAB), same shape as the AgentDetailDrawer/
-// DeploymentRevisionDetailDrawer precedent (ticket 18): `open`→`isOpen`.
-interface StorageHostDetailDrawerProps extends Pick<
+interface StorageHostDetailDrawerProps extends Omit<
   BAIDrawerProps,
-  'afterOpenChange' | 'afterClose'
+  'onClose' | 'title' | 'extra' | 'children'
 > {
-  open?: boolean;
   storageVolumeFrgmt?: StorageHostDetailDrawerFragment$key | null;
   /**
    * Callback to refetch the parent list query. The detail drawer reads the
@@ -37,12 +31,10 @@ interface StorageHostDetailDrawerProps extends Pick<
 }
 
 const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
-  open = false,
   storageVolumeFrgmt,
   onRefetchParentList,
   onRequestClose,
-  afterOpenChange,
-  afterClose,
+  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -66,10 +58,8 @@ const StorageHostDetailDrawer: React.FC<StorageHostDetailDrawerProps> = ({
 
   return (
     <BAIDrawer
-      open={open}
+      {...drawerProps}
       onClose={onRequestClose}
-      afterOpenChange={afterOpenChange}
-      afterClose={afterClose}
       side="end"
       size={900}
       title={t('storageHost.StorageHostInfo')}
