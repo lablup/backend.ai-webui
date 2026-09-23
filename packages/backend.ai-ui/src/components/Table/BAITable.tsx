@@ -1447,6 +1447,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
             columns={_.map(flatColumns, ({ column }) => column)}
             supportedFields={exportSettings.supportedFields}
             onExport={exportSettings.onExport}
+            notice={exportSettings.notice}
           />
         </BAIUnmountAfterClose>
       ) : null}

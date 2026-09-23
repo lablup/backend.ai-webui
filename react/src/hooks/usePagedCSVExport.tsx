@@ -18,9 +18,10 @@ export interface PagedCSVExportOptions<Row> {
 
 /**
  * Exports a paginated connection to CSV, reporting each fetched page as
- * progress on one notification and, when the set exceeds the cap, saying so
- * there as well. Resolves once the notification has reached its final state;
- * it never rejects.
+ * progress on one notification. The row cap is announced before this runs —
+ * `BAIExportSettings.notice` in the export modal — so the notification only
+ * reports the walk. Resolves once the notification has reached its final
+ * state; it never rejects.
  */
 export const usePagedCSVExport = () => {
   const { t } = useTranslation();
@@ -37,17 +38,13 @@ export const usePagedCSVExport = () => {
     try {
       const result = await collectPagedExportRows(
         fetchPage,
-        ({ fetched, total, count }) => {
+        ({ fetched, total }) => {
           upsertNotification({
             key,
-            description:
-              count > total
-                ? t('resourcePolicy.ExportFetchProgressCapped', {
-                    fetched,
-                    total,
-                    count,
-                  })
-                : t('resourcePolicy.ExportFetchProgress', { fetched, total }),
+            description: t('resourcePolicy.ExportFetchProgress', {
+              fetched,
+              total,
+            }),
             backgroundTask: {
               status: 'pending',
               percent: total > 0 ? (fetched / total) * 100 : 100,
@@ -68,12 +65,9 @@ export const usePagedCSVExport = () => {
       writeCSV(result.rows);
       upsertNotification({
         key,
-        description: result.truncated
-          ? t('resourcePolicy.ExportedCappedRows', {
-              count: result.fetched,
-              total: result.count,
-            })
-          : t('resourcePolicy.ExportedRows', { count: result.fetched }),
+        description: t('resourcePolicy.ExportedRows', {
+          count: result.fetched,
+        }),
         backgroundTask: { status: 'resolved', percent: 100 },
         duration: CLOSING_DURATION,
       });

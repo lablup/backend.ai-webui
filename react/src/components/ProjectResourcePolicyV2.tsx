@@ -10,6 +10,7 @@ import type {
 import { App } from '../app-shim';
 import { convertToDecimalUnit, convertToOrderBy } from '../helper';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
+import { CSV_EXPORT_MAX_ROWS } from '../helper/pagedExport';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import ProjectResourcePolicyV2SettingModal from './ProjectResourcePolicyV2SettingModal';
@@ -344,6 +345,14 @@ const ProjectResourcePolicyV2 = ({
         projectResourcePoliciesFrgmt={projectResourcePolicies}
         exportSettings={{
           supportedFields: [...availableProjectResourcePolicyExportFields],
+          notice:
+            (data.adminProjectResourcePoliciesV2?.count ?? 0) >
+            CSV_EXPORT_MAX_ROWS
+              ? t('resourcePolicy.ExportCapNotice', {
+                  limit: CSV_EXPORT_MAX_ROWS,
+                  count: data.adminProjectResourcePoliciesV2?.count,
+                })
+              : undefined,
           onExport: async (selectedExportKeys) => {
             handleExportCSV(selectedExportKeys);
           },

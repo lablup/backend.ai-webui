@@ -32,6 +32,7 @@ import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIDialog from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
+import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
@@ -49,6 +50,8 @@ export interface BAITableColumnCSVExportModalProps<T = unknown> {
   onExport: (selectedExportKeys: string[]) => Promise<void>;
   supportedFields: string[];
   columns: BAIColumnsType<T>;
+  /** Warning shown above the column list — see `BAIExportSettings.notice`. */
+  notice?: React.ReactNode;
 }
 
 /** Pulls the plain-text part out of a JSX column title (icons etc. dropped). */
@@ -65,6 +68,7 @@ const BAITableColumnCSVExportModal = <T,>({
   onExport,
   supportedFields,
   columns,
+  notice,
 }: BAITableColumnCSVExportModalProps<T>): React.JSX.Element | null => {
   'use memo';
 
@@ -197,6 +201,13 @@ const BAITableColumnCSVExportModal = <T,>({
         content={
           <LayoutContent>
             <VStack gap={2} align="stretch">
+              {notice ? (
+                <Banner
+                  status="warning"
+                  title={notice}
+                  data-testid="bai-table-export-notice"
+                />
+              ) : null}
               <TextInput
                 label={String(t('comp:BAITable.SearchTableColumn'))}
                 isLabelHidden

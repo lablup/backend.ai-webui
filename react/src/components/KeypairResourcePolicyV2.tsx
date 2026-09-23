@@ -11,6 +11,7 @@ import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
+import { CSV_EXPORT_MAX_ROWS } from '../helper/pagedExport';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { usePagedCSVExport } from '../hooks/usePagedCSVExport';
 import KeypairResourcePolicyV2SettingModal from './KeypairResourcePolicyV2SettingModal';
@@ -399,6 +400,14 @@ const KeypairResourcePolicyV2 = ({
         keypairResourcePoliciesFrgmt={keypairResourcePolicies}
         exportSettings={{
           supportedFields: [...availableKeypairResourcePolicyExportFields],
+          notice:
+            (data.adminKeypairResourcePoliciesV2?.count ?? 0) >
+            CSV_EXPORT_MAX_ROWS
+              ? t('resourcePolicy.ExportCapNotice', {
+                  limit: CSV_EXPORT_MAX_ROWS,
+                  count: data.adminKeypairResourcePoliciesV2?.count,
+                })
+              : undefined,
           onExport: async (selectedExportKeys) => {
             handleExportCSV(selectedExportKeys);
           },
