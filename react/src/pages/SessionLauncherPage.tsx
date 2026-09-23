@@ -225,6 +225,32 @@ interface StepPropsWithKey extends StepItem {
 }
 
 /**
+ * Which step renders each form field, by the field's top-level name, so the
+ * Stepper can flag a step that holds a validation error. A field added to a
+ * step needs an entry here, or its errors will not surface on the rail.
+ */
+const STEP_OF_FIELD: Record<string, SessionLauncherStepKey> = {
+  sessionType: 'sessionType',
+  sessionName: 'sessionType',
+  batch: 'sessionType',
+  owner: 'sessionType',
+  inference: 'sessionType',
+  environments: 'environment',
+  envvars: 'environment',
+  allocationPreset: 'environment',
+  resource: 'environment',
+  resourceGroup: 'environment',
+  cluster_mode: 'environment',
+  cluster_size: 'environment',
+  agent: 'environment',
+  num_of_sessions: 'environment',
+  hpcOptimization: 'environment',
+  vfolderMounts: 'storage',
+  mounts: 'storage',
+  ports: 'network',
+};
+
+/**
  * Step-section container. `hidden` keeps the original
  * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
  * form state across steps (the form engine requirement).
@@ -478,9 +504,18 @@ const SessionLauncherPage = () => {
 
   const currentStepKey = steps[currentStep]?.key;
 
-  const hasError = _.some(
+  const fieldErrors = _.filter(
     form.getFieldsError(),
     (item) => item.errors.length > 0,
+  );
+  const hasError = fieldErrors.length > 0;
+  const stepsWithError = new Set(
+    _.compact(
+      _.map(
+        fieldErrors,
+        (item) => STEP_OF_FIELD[String(_.castArray(item.name)[0])],
+      ),
+    ),
   );
 
   const [finalStepLastValidateTime, setFinalStepLastValidateTime] =
@@ -1535,6 +1570,7 @@ const SessionLauncherPage = () => {
                   step={idx}
                   label={s.title}
                   indicator={s.icon ?? 'number'}
+                  status={stepsWithError.has(s.key) ? 'error' : undefined}
                 />
               ))}
             </Stepper>
