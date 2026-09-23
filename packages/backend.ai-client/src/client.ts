@@ -995,6 +995,11 @@ export class Client {
       // (FR-3905, FR-3963).
       this._features['rbac-single-scope-role'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
+      // `adminRolePresets` answers the 26.9 preset shape from 26.9.0a4 on;
+      // the RBAC page's Presets tab is hidden below it (FR-4065).
+      this._features['rbac-role-presets'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
