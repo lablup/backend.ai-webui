@@ -306,7 +306,7 @@ const BAIArtifactTable = ({
       key: 'type',
       sorter: isEnableSorter('type'),
       render: (_value, record: Artifact) => (
-        <BAIArtifactTypeTag artifactTypeFrgmt={record} />
+        <BAIArtifactTypeToken artifactTypeFrgmt={record} />
       ),
       defaultHidden: true,
     },
