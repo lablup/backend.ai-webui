@@ -13,7 +13,7 @@ import { Heading } from '@astryxdesign/core/Text';
 import {
   BAISkeleton,
   BAIBoardItemTitle,
-  BAIDoubleTag,
+  BAIDoubleBadge,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
@@ -192,7 +192,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
             {/* antd Typography.Text styled to fontSizeHeading5 (16px). On the
                 restored antd type ramp 16px is heading-5. */}
             <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
-            <BAIDoubleTag
+            <BAIDoubleBadge
               values={[
                 { label: t('agentStats.SchedulableAgents') },
                 {
