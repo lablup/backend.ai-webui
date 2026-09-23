@@ -43,7 +43,7 @@ export interface BAIDrawerProps {
   /** Panel size along the slide axis. antd `Drawer`'s `size`/`width`. */
   size?: number | string;
   /** Edge the panel slides from. @default 'end' */
-  side?: 'start' | 'end' | 'top' | 'bottom';
+  side?: 'start' | 'end';
   /**
    * Modal scrim, and with it the modality switch: `true` renders through
    * `BAIDrawerPortal` (modal band level + focus containment), `false` keeps
@@ -176,9 +176,11 @@ const BAIDrawer: React.FC<BAIDrawerProps> = ({
   const drawerProps = {
     ref: dialogRef,
     isOpen: open,
-    onClose: () => onClose?.(),
+    onOpenChange: (next: boolean) => {
+      if (!next) onClose?.();
+    },
     side,
-    size,
+    width: size,
     label: accessibleName,
     // The header above owns the close affordance, at antd's `start` placement.
     // Leaving lab's own button on would paint a second, floating one over the

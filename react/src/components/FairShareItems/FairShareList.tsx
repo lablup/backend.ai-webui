@@ -10,7 +10,7 @@ import ResourceGroupFairShareStep from './ResourceGroupFairShareStep';
 import UserFairShareStep from './UserFairShareStep';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Heading } from '@astryxdesign/core/Heading';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import {
   BAISkeleton,
   BAIQuestionIconWithTooltip,
