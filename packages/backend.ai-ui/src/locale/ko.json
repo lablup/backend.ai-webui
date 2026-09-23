@@ -246,6 +246,10 @@
       "Title": "Backend.AI 계정으로 로그인하지 못했습니다"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "커널 시작 진행률",
+    "KernelTerminationProgress": "커널 종료 진행률"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "클러스터 크기",
     "Concurrency": "동시실행 세션 수",

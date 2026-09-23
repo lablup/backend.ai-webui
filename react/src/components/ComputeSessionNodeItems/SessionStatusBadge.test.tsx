@@ -8,6 +8,7 @@ import type { SessionStatusBadgeTestQuery } from '../../__generated__/SessionSta
 import SessionStatusBadge from './SessionStatusBadge';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Suspense } from 'react';
 import {
   graphql,
@@ -62,7 +63,8 @@ const TestRenderer: React.FC = () => {
 const renderTag = (session: {
   status: string;
   cluster_size: number;
-  kernelStatuses: Array<string>;
+  kernelStatuses?: Array<string>;
+  kernelEdges?: Array<unknown>;
 }) => {
   const environment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
@@ -75,9 +77,11 @@ const renderTag = (session: {
         queue_position: null,
         cluster_size: session.cluster_size,
         kernel_nodes: {
-          edges: session.kernelStatuses.map((status, index) => ({
-            node: { id: `kernel-${index}`, status },
-          })),
+          edges:
+            session.kernelEdges ??
+            (session.kernelStatuses ?? []).map((status, index) => ({
+              node: { id: `kernel-${index}`, status },
+            })),
         },
       }),
     }),
@@ -136,5 +140,87 @@ describe('SessionStatusBadge kernel progress ring (FR-3923)', () => {
     expect(
       document.querySelector('.bai-progress-ring'),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('SessionStatusBadge kernel breakdown popover (FR-3924)', () => {
+  // The react-i18next mock above also feeds BUI's `useBAIi18n`, so the
+  // breakdown's title comes back as its key here; the numbers are what this
+  // wiring is about anyway.
+  const breakdown = () =>
+    document.querySelector('.bai-kernel-progress-breakdown');
+
+  it('opens a per-kernel breakdown on hover for a cluster session', async () => {
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelStatuses: [...repeat('TERMINATED', 119), 'TERMINATING'],
+    });
+
+    await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(await screen.findByText('119 / 120')).toBeInTheDocument();
+    expect(screen.getByText('TERMINATED')).toBeInTheDocument();
+    expect(screen.getByText('119')).toBeInTheDocument();
+    expect(screen.getAllByText('TERMINATING').length).toBeGreaterThan(1);
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('RUNNING')).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
+
+  it('makes the breakdown trigger reachable by keyboard', async () => {
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelStatuses: [...repeat('TERMINATED', 119), 'TERMINATING'],
+    });
+
+    // Astryx `Badge` is a bare <span>; without a tabIndex the hover card has
+    // no keyboard path at all.
+    const trigger = (await screen.findByText('TERMINATING')).closest(
+      '[tabindex="0"]',
+    );
+    expect(trigger).not.toBeNull();
+
+    trigger && (trigger as HTMLElement).focus();
+    expect(await screen.findByText('119 / 120')).toBeInTheDocument();
+  });
+
+  it('gives a single-node session no breakdown trigger', async () => {
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 1,
+      kernelStatuses: ['RUNNING'],
+    });
+
+    await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(breakdown()).toBeNull();
+  });
+
+  it('gives a connection of empty edges no breakdown trigger', async () => {
+    // Relay permits null edges and nodes; the edge COUNT alone used to open a
+    // hover card reporting every bucket as zero.
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelEdges: [null, { node: null }],
+    });
+
+    await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(breakdown()).toBeNull();
+  });
+
+  it('gives a settled session no breakdown trigger', async () => {
+    renderTag({
+      status: 'RUNNING',
+      cluster_size: 120,
+      kernelStatuses: repeat('RUNNING', 120),
+    });
+
+    await userEvent.hover(await screen.findByText('RUNNING'));
+
+    expect(breakdown()).toBeNull();
   });
 });
