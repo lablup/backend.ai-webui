@@ -497,7 +497,7 @@
     },
     "customEndpoint": {
       "ApiKey": "API key",
-      "ApiKeyHint": "Kept only in this browser tab for this chat panel. It is not saved with the chat history.",
+      "ApiKeyHint": "Kept in memory for this chat panel only, never saved. Reloading the page asks for it again.",
       "ApiKeyMissing": "This chat used a custom endpoint. Enter the API key again to continue.",
       "BaseURL": "Base URL",
       "BaseURLHint": "OpenAI-compatible base URL, usually ending with /v1. The endpoint must allow requests from this browser (CORS).",

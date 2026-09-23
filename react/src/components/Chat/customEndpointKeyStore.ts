@@ -4,37 +4,11 @@
  */
 import { useSyncExternalStore } from 'react';
 
-// API keys for custom (non-Backend.AI) endpoints live here, keyed by chat
-// panel id, and never in the localStorage chat history. sessionStorage
-// survives a reload but not the tab, so a persisted history entry comes back
-// with its URL and asks for the key again.
-const STORAGE_KEY = 'backendaiwebui.session.chat_custom_endpoint_keys';
-
-type KeyMap = Record<string, string>;
+// API keys for custom (non-Backend.AI) endpoints, keyed by chat panel id.
+// Memory only: never written to Web Storage, so a reload asks for the key again.
+let keys: Record<string, string> = {};
 
 const listeners = new Set<() => void>();
-
-function read(): KeyMap {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    return typeof parsed === 'object' && parsed !== null ? parsed : {};
-  } catch {
-    return {};
-  }
-}
-
-let snapshot: KeyMap = read();
-
-function write(next: KeyMap) {
-  snapshot = next;
-  try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-  } catch {
-    // Storage may be unavailable (private mode, quota); keep the in-memory copy.
-  }
-  listeners.forEach((listener) => listener());
-}
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
@@ -44,17 +18,18 @@ function subscribe(listener: () => void) {
 }
 
 export function getCustomEndpointApiKey(chatId: string): string | undefined {
-  return snapshot[chatId] || undefined;
+  return keys[chatId] || undefined;
 }
 
 export function setCustomEndpointApiKey(chatId: string, apiKey?: string) {
-  const next = { ...snapshot };
+  const next = { ...keys };
   if (apiKey) {
     next[chatId] = apiKey;
   } else {
     delete next[chatId];
   }
-  write(next);
+  keys = next;
+  listeners.forEach((listener) => listener());
 }
 
 export function copyCustomEndpointApiKey(fromChatId: string, toChatId: string) {
@@ -67,7 +42,7 @@ export function copyCustomEndpointApiKey(fromChatId: string, toChatId: string) {
 export function useCustomEndpointApiKey(chatId: string) {
   return useSyncExternalStore(
     subscribe,
-    () => snapshot[chatId] || undefined,
+    () => keys[chatId] || undefined,
     () => undefined,
   );
 }

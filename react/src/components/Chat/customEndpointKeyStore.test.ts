@@ -11,8 +11,6 @@ import {
 } from './customEndpointKeyStore';
 import { act, renderHook } from '@testing-library/react';
 
-const STORAGE_KEY = 'backendaiwebui.session.chat_custom_endpoint_keys';
-
 describe('customEndpointKeyStore', () => {
   afterEach(() => {
     setCustomEndpointApiKey('/chat/a', undefined);
@@ -26,19 +24,18 @@ describe('customEndpointKeyStore', () => {
     expect(getCustomEndpointApiKey('/chat/b')).toBe('key-b');
   });
 
-  it('writes to sessionStorage only, never localStorage', () => {
+  it('never writes the key to Web Storage', () => {
+    sessionStorage.clear();
+    localStorage.clear();
     setCustomEndpointApiKey('/chat/a', 'key-a');
-    expect(JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}')).toEqual({
-      '/chat/a': 'key-a',
-    });
-    expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
+    expect(sessionStorage.length).toBe(0);
+    expect(localStorage.length).toBe(0);
   });
 
   it('clears a key when set to undefined', () => {
     setCustomEndpointApiKey('/chat/a', 'key-a');
     setCustomEndpointApiKey('/chat/a', undefined);
     expect(getCustomEndpointApiKey('/chat/a')).toBeUndefined();
-    expect(sessionStorage.getItem(STORAGE_KEY)).toBe('{}');
   });
 
   it('copies a key to a cloned panel', () => {

@@ -260,7 +260,7 @@ const PureChatCard: React.FC<ChatCardProps> = ({
   const agentEndpoint = agent ? getEndpointBinding(agent.id) : undefined;
   const agentEndpointUrl = agentEndpoint?.endpoint_url;
 
-  // A custom endpoint's key is per chat panel and session-only; the persisted
+  // A custom endpoint's key is per chat panel and memory-only; the persisted
   // provider record carries the URL alone.
   const isCustomEndpoint =
     !agentEndpointUrl && isCustomEndpointProvider(chat.provider);

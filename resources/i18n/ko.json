@@ -510,7 +510,7 @@
     },
     "customEndpoint": {
       "ApiKey": "API 키",
-      "ApiKeyHint": "이 채팅 패널에 대해 현재 브라우저 탭에서만 유지되며, 채팅 기록에는 저장되지 않습니다.",
+      "ApiKeyHint": "이 채팅 패널의 메모리에만 보관되며 저장되지 않습니다. 페이지를 새로고침하면 다시 입력해야 합니다.",
       "ApiKeyMissing": "이 채팅은 커스텀 엔드포인트를 사용했습니다. 계속하려면 API 키를 다시 입력하세요.",
       "BaseURL": "Base URL",
       "BaseURLHint": "OpenAI 호환 Base URL이며 보통 /v1로 끝납니다. 엔드포인트가 이 브라우저의 요청을 허용(CORS)해야 합니다.",
