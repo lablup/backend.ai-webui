@@ -1,3 +1,5 @@
+import { ComplexSelectorSize } from '@astryxdesign/core/ComplexSelector';
+import { SizeValue } from '@astryxdesign/core/utils';
 export interface BAIVFolderPathPickerProps {
     /**
      * UUID of the vfolder to browse. Pair it with a separate vfolder select:
@@ -12,8 +14,17 @@ export interface BAIVFolderPathPickerProps {
      */
     value?: string;
     defaultValue?: string;
+    /** Emits `undefined` when the value is cleared (nothing picked). */
     onChange?: (selectedSubPath?: string) => void;
+    /** Shows a clear button while a non-root path is picked. */
+    allowClear?: boolean;
+    /** Overrides the "click to select" copy shown while nothing is picked. */
+    placeholder?: string;
     disabled?: boolean;
+    /** Control height, in the Astryx size vocabulary. */
+    size?: ComplexSelectorSize;
+    /** Field width, forwarded to ComplexSelector. */
+    width?: SizeValue;
     style?: React.CSSProperties;
     /**
      * Accessible name of the trigger; visually hidden (the surrounding
