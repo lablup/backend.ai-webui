@@ -2,6 +2,8 @@ import { BAIColumnsType, BAITableProps } from '..';
 import { BAIKeypairResourcePolicyV2TableFragment$data, BAIKeypairResourcePolicyV2TableFragment$key } from '../__generated__/BAIKeypairResourcePolicyV2TableFragment.graphql';
 export type KeypairResourcePolicyV2InList = NonNullable<BAIKeypairResourcePolicyV2TableFragment$data[number]>;
 export declare const availableKeypairResourcePolicySorterValues: readonly ["name", "createdAt", "maxSessionLifetime", "maxConcurrentSessions", "maxContainersPerSession", "idleTimeout", "maxConcurrentSftpSessions", "maxPendingSessionCount", ...("-createdAt" | "-name" | "-maxSessionLifetime" | "-maxConcurrentSessions" | "-maxContainersPerSession" | "-idleTimeout" | "-maxConcurrentSftpSessions" | "-maxPendingSessionCount")[]];
+/** The CSV-exportable fields — the base column keys, in column order. */
+export declare const availableKeypairResourcePolicyExportFields: readonly ["name", "defaultForUnspecified", "totalResourceSlots", "maxConcurrentSessions", "maxContainersPerSession", "idleTimeout", "maxSessionLifetime", "allowedVfolderHosts", "maxPendingSessionCount", "maxConcurrentSftpSessions", "maxPendingSessionResourceSlots", "createdAt"];
 export interface BAIKeypairResourcePolicyV2TableProps extends Omit<BAITableProps<KeypairResourcePolicyV2InList>, 'dataSource' | 'columns' | 'onChangeOrder'> {
     keypairResourcePoliciesFrgmt: BAIKeypairResourcePolicyV2TableFragment$key;
     disableSorter?: boolean;

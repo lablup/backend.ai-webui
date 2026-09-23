@@ -3,8 +3,10 @@ export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
 export type RuntimeVariantPresetUIType = "CHECKBOX" | "NUMBER_INPUT" | "SELECT" | "SLIDER" | "TEXT_INPUT" | "%future added value";
 export type CreateRuntimeVariantPresetInput = {
+    addedVersion?: string | null | undefined;
     category?: string | null | undefined;
     defaultValue?: string | null | undefined;
+    deprecatedVersion?: string | null | undefined;
     description?: string | null | undefined;
     displayName?: string | null | undefined;
     key: string;
