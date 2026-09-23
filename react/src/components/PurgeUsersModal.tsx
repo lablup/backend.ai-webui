@@ -26,7 +26,7 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 // full component swap to BUI `BAIDeleteConfirmModal` rather than a
 // piecemeal Form/Checkbox rename. Purge is the permanent-delete flow
 // (`.claude/rules/destructive-confirmation.md`), and BAIDeleteConfirmModal
-// (BUI/antd) has no Astryx equivalent to extend in place. The public prop
+// (BUI) has no Astryx equivalent to extend in place. The public prop
 // contract (`usersFrgmt`/`open`/`onOk`/`onCancel`) is kept unchanged so
 // AdminUserManagement.tsx's 2 call sites don't need to change.
 interface PurgeFailure {
@@ -137,14 +137,12 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             reject(new Error(t('error.UnknownError')));
             return;
           }
-          const {
-            successes,
-            purgedCount: deprecatedCount,
-            failed,
-          } = adminBulkPurgeUsersV2;
+          const { successes, failed } = adminBulkPurgeUsersV2;
+          // `successes`/`failed` answer for every requested user exactly
+          // once; derive from that instead of trusting the deprecated count.
           const purgedCount = supportsPerIdResults
             ? (successes?.length ?? 0)
-            : (deprecatedCount ?? 0);
+            : userList.length - failed.length;
 
           if (failed.length > 0) {
             const emailByLocalId = _.fromPairs(
@@ -161,15 +159,16 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             });
           }
 
-          if (purgedCount > 0) {
+          // An empty `failed` list is success even at a zero count. A partial
+          // success keeps the confirm open under the report; `onOk` (close +
+          // reload) then runs once the report is dismissed.
+          if (failed.length === 0 || purgedCount > 0) {
             message.success(
               t('credential.UsersPermanentlyDeleted', {
                 total: userList.length,
                 count: purgedCount,
               }),
             );
-            // A partial success keeps the confirm open under the report;
-            // `onOk` (close + reload) runs once the report is dismissed.
             if (failed.length === 0) onOk?.();
             resolve();
           } else {

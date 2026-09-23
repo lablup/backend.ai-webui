@@ -4,9 +4,10 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
+import type { PurgeUsersModalTestQuery } from '../__generated__/PurgeUsersModalTestQuery.graphql';
 import PurgeUsersModal from './PurgeUsersModal';
 import '@testing-library/jest-dom';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { Suspense, useState } from 'react';
@@ -38,21 +39,36 @@ vi.mock('react-i18next', async () => {
   };
 });
 
+// Controllable per-test so both the 26.9.0+ (`successes`) and the
+// deprecated (`purgedCount`) manager paths can be exercised.
+const { getSupportsPerIdResults, setSupportsPerIdResults } = vi.hoisted(() => {
+  let supportsPerIdResults = true;
+  return {
+    getSupportsPerIdResults: () => supportsPerIdResults,
+    setSupportsPerIdResults: (value: boolean) => {
+      supportsPerIdResults = value;
+    },
+  };
+});
+
 vi.mock('../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../hooks')>();
   return {
     ...originalModule,
-    useSuspendedBackendaiClient: () => ({ supports: () => true }),
+    useSuspendedBackendaiClient: () => ({
+      supports: () => getSupportsPerIdResults(),
+    }),
   };
 });
 
 const useUsers = () => {
-  const data = useLazyLoadQuery<any>(
+  const data = useLazyLoadQuery<PurgeUsersModalTestQuery>(
     graphql`
       query PurgeUsersModalTestQuery {
         adminUsersV2(limit: 1) {
           edges {
             node {
+              id
               ...PurgeUsersModalFragment
             }
           }
@@ -61,17 +77,23 @@ const useUsers = () => {
     `,
     {},
   );
-  return data.adminUsersV2.edges.map((edge: any) => edge.node);
+  return (data.adminUsersV2?.edges ?? [])
+    .map((edge) => edge?.node)
+    .filter((node): node is NonNullable<typeof node> => node != null);
 };
 
-const Harness: React.FC<{ open: boolean; afterClose?: () => void }> = ({
-  open,
-  afterClose,
-}) => (
+const Harness: React.FC<{
+  open: boolean;
+  onOk?: () => void;
+  onCancel?: () => void;
+  afterClose?: () => void;
+}> = ({ open, onOk, onCancel, afterClose }) => (
   <BAIUnmountAfterClose>
     <PurgeUsersModal
       usersFrgmt={useUsers()}
       open={open}
+      onOk={onOk}
+      onCancel={onCancel}
       afterClose={afterClose}
     />
   </BAIUnmountAfterClose>
@@ -99,20 +121,38 @@ const SelfClosingHarness: React.FC<{
   );
 };
 
+// `toLocalId` decodes the global id, so it has to be a real one.
+const USER_GLOBAL_ID = btoa('UserV2:00000000-0000-0000-0000-000000000001');
+
 const renderModal = (afterClose?: () => void) => {
   const environment = createMockEnvironment();
+  const onOk = vi.fn();
+  const onCancel = vi.fn();
   environment.mock.queueOperationResolver((operation) =>
-    MockPayloadGenerator.generate(operation),
+    MockPayloadGenerator.generate(operation, {
+      UserV2: () => ({
+        id: USER_GLOBAL_ID,
+        basicInfo: { email: 'purge-target@example.com' },
+      }),
+    }),
   );
   const ui = (open: boolean) => (
     <RelayEnvironmentProvider environment={environment}>
       <Suspense fallback={null}>
-        <Harness open={open} afterClose={afterClose} />
+        <Harness
+          open={open}
+          onOk={onOk}
+          onCancel={onCancel}
+          afterClose={afterClose}
+        />
       </Suspense>
     </RelayEnvironmentProvider>
   );
   const { rerender } = render(ui(true));
   return {
+    environment,
+    onOk,
+    onCancel,
     close: () => rerender(ui(false)),
     reopen: async () => {
       rerender(ui(false));
@@ -127,6 +167,16 @@ const optionCheckboxes = () => [
   }),
   screen.getByRole('checkbox', { name: 'credential.DeleteDeploymentsAsWell' }),
 ];
+
+const confirmAndSubmit = async (user: ReturnType<typeof userEvent.setup>) => {
+  const input = await screen.findByRole('textbox');
+  await user.type(input, 'credential.PermanentlyDelete');
+  const okButton = screen.getByRole('button', {
+    name: 'credential.PermanentlyDelete',
+  });
+  await waitFor(() => expect(okButton).toBeEnabled());
+  await user.click(okButton);
+};
 
 describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
   it('starts both purge options unchecked again on every open', async () => {
@@ -161,7 +211,6 @@ describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
     const afterClose = vi.fn();
     const onOk = vi.fn();
     const environment = createMockEnvironment();
-    // `toLocalId` decodes the global id, so it has to be a real one.
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {
         UserV2: () => ({ id: btoa('UserV2:u1') }),
@@ -211,5 +260,55 @@ describe('PurgeUsersModal (FR-3990 / FR-4061)', () => {
         name: 'credential.DeleteSharedVirtualFolders',
       }),
     ).toBeNull();
+  });
+});
+
+// FR-4008: `successes` + `failed` are documented to answer for every
+// requested user exactly once, so an empty `failed` list with a zero count is
+// evidence of success, not failure — the modal must still close.
+describe('PurgeUsersModal (FR-4008)', () => {
+  it('calls onOk when the mutation reports no successes and no failures', async () => {
+    setSupportsPerIdResults(true);
+    const user = userEvent.setup();
+    const { environment, onOk } = renderModal();
+
+    await confirmAndSubmit(user);
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    environment.mock.resolveMostRecentOperation((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        BulkPurgeUsersV2Payload: () => ({
+          successes: [],
+          purgedCount: 0,
+          failed: [],
+        }),
+      }),
+    );
+
+    await waitFor(() => expect(onOk).toHaveBeenCalledTimes(1));
+  });
+
+  it('calls onOk on a deprecated manager reporting purgedCount 0 and no failures', async () => {
+    setSupportsPerIdResults(false);
+    const user = userEvent.setup();
+    const { environment, onOk } = renderModal();
+
+    await confirmAndSubmit(user);
+
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    environment.mock.resolveMostRecentOperation((operation) =>
+      MockPayloadGenerator.generate(operation, {
+        BulkPurgeUsersV2Payload: () => ({
+          purgedCount: 0,
+          failed: [],
+        }),
+      }),
+    );
+
+    await waitFor(() => expect(onOk).toHaveBeenCalledTimes(1));
   });
 });
