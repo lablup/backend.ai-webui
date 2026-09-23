@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Khóa API",
+      "ApiKeyHint": "Chỉ được giữ trong bộ nhớ của bảng trò chuyện này và không bao giờ được lưu. Sau khi tải lại trang, bạn cần nhập lại.",
+      "ApiKeyMissing": "Cuộc trò chuyện này đã dùng điểm cuối tùy chỉnh. Hãy nhập lại khóa API để tiếp tục.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL tương thích OpenAI, thường kết thúc bằng /v1. Điểm cuối phải cho phép yêu cầu từ trình duyệt này (CORS).",
+      "BaseURLRequired": "Nhập Base URL.",
+      "Connect": "Kết nối",
+      "ConnectCustomEndpoint": "Kết nối điểm cuối tùy chỉnh…",
+      "Edit": "Chỉnh sửa điểm cuối tùy chỉnh",
+      "InvalidBaseURL": "Nhập URL http(s) hợp lệ.",
+      "error": {
+        "Http": "Điểm cuối đã phản hồi HTTP {{status}}.",
+        "InvalidResponse": "Phản hồi không phải danh sách mô hình tương thích OpenAI.",
+        "Network": "Không thể kết nối tới điểm cuối.",
+        "NetworkHint": "Kiểm tra địa chỉ và mạng của bạn. Yêu cầu được gửi trực tiếp từ trình duyệt này nên máy chủ phải cho phép (CORS).",
+        "NoModels": "Điểm cuối không trả về mô hình nào.",
+        "NotFound": "Không tìm thấy /models tại Base URL này (404).",
+        "NotFoundHint": "Base URL phải trỏ tới gốc API, thường kết thúc bằng /v1.",
+        "NotFoundSuggestV1": "Base URL thường kết thúc bằng /v1 — hãy thử {{url}}.",
+        "RetryWithV1": "Thử lại với /v1",
+        "ServerError": "Điểm cuối báo lỗi máy chủ (HTTP {{status}}).",
+        "Timeout": "Điểm cuối không phản hồi trong 30 giây.",
+        "Unauthorized": "Điểm cuối đã từ chối yêu cầu (401/403).",
+        "UnauthorizedHint": "Kiểm tra khóa API, hoặc nhập khóa nếu điểm cuối yêu cầu."
+      }
+    },
     "intro": {
       "Description": "Trò chuyện với mô hình LLM được định nghĩa trong Triển khai của bạn qua API tương thích OpenAI.",
       "Title": "Trò chuyện với các mô hình đã triển khai của bạn"

@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Chiave API",
+      "ApiKeyHint": "Conservata solo nella memoria di questo pannello di chat e mai salvata. Dopo aver ricaricato la pagina dovrai inserirla di nuovo.",
+      "ApiKeyMissing": "Questa chat usava un endpoint personalizzato. Inserisci di nuovo la chiave API per continuare.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL compatibile con OpenAI, di solito termina con /v1. L'endpoint deve consentire le richieste da questo browser (CORS).",
+      "BaseURLRequired": "Inserisci la Base URL.",
+      "Connect": "Connetti",
+      "ConnectCustomEndpoint": "Connetti un endpoint personalizzato…",
+      "Edit": "Modifica endpoint personalizzato",
+      "InvalidBaseURL": "Inserisci un URL http(s) valido.",
+      "error": {
+        "Http": "L'endpoint ha risposto con HTTP {{status}}.",
+        "InvalidResponse": "La risposta non è un elenco di modelli compatibile con OpenAI.",
+        "Network": "Impossibile raggiungere l'endpoint.",
+        "NetworkHint": "Controlla l'indirizzo e la rete. La richiesta viene inviata direttamente da questo browser, quindi il server deve consentirla (CORS).",
+        "NoModels": "L'endpoint non ha restituito alcun modello.",
+        "NotFound": "/models non trovato in questa Base URL (404).",
+        "NotFoundHint": "La Base URL deve puntare alla radice dell'API, che di solito termina con /v1.",
+        "NotFoundSuggestV1": "La Base URL di solito termina con /v1: prova {{url}}.",
+        "RetryWithV1": "Riprova con /v1",
+        "ServerError": "L'endpoint ha segnalato un errore del server (HTTP {{status}}).",
+        "Timeout": "L'endpoint non ha risposto entro 30 secondi.",
+        "Unauthorized": "L'endpoint ha rifiutato la richiesta (401/403).",
+        "UnauthorizedHint": "Controlla la chiave API oppure inseriscine una se l'endpoint la richiede."
+      }
+    },
     "intro": {
       "Description": "Chatta con il modello LLM definito nella tua Distribuzione tramite un'API compatibile con OpenAI.",
       "Title": "Chatta con i tuoi modelli distribuiti"

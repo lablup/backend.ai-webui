@@ -508,6 +508,33 @@
         }
       }
     },
+    "customEndpoint": {
+      "ApiKey": "Kunci API",
+      "ApiKeyHint": "Hanya disimpan dalam memori panel sembang ini dan tidak pernah disimpan. Selepas halaman dimuat semula, anda perlu memasukkannya semula.",
+      "ApiKeyMissing": "Sembang ini menggunakan titik akhir tersuai. Masukkan semula kunci API untuk meneruskan.",
+      "BaseURL": "Base URL",
+      "BaseURLHint": "Base URL serasi OpenAI, biasanya berakhir dengan /v1. Titik akhir mesti membenarkan permintaan daripada pelayar ini (CORS).",
+      "BaseURLRequired": "Masukkan Base URL.",
+      "Connect": "Sambung",
+      "ConnectCustomEndpoint": "Sambung titik akhir tersuai…",
+      "Edit": "Edit titik akhir tersuai",
+      "InvalidBaseURL": "Masukkan URL http(s) yang sah.",
+      "error": {
+        "Http": "Titik akhir membalas dengan HTTP {{status}}.",
+        "InvalidResponse": "Respons bukan senarai model yang serasi dengan OpenAI.",
+        "Network": "Tidak dapat mencapai titik akhir.",
+        "NetworkHint": "Semak alamat dan rangkaian anda. Permintaan dihantar terus daripada pelayar ini, jadi pelayan mesti membenarkannya (CORS).",
+        "NoModels": "Titik akhir tidak mengembalikan sebarang model.",
+        "NotFound": "/models tidak ditemui pada Base URL ini (404).",
+        "NotFoundHint": "Base URL mesti menghala ke akar API, yang biasanya berakhir dengan /v1.",
+        "NotFoundSuggestV1": "Base URL biasanya berakhir dengan /v1 — cuba {{url}}.",
+        "RetryWithV1": "Cuba semula dengan /v1",
+        "ServerError": "Titik akhir melaporkan ralat pelayan (HTTP {{status}}).",
+        "Timeout": "Titik akhir tidak membalas dalam masa 30 saat.",
+        "Unauthorized": "Titik akhir menolak permintaan (401/403).",
+        "UnauthorizedHint": "Semak kunci API, atau masukkan satu jika titik akhir memerlukannya."
+      }
+    },
     "intro": {
       "Description": "Berbual dengan model LLM yang ditakrifkan dalam Penggunaan anda melalui API yang serasi dengan OpenAI.",
       "Title": "Berbual dengan model yang telah anda gunakan"

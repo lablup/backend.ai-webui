@@ -504,7 +504,6 @@
       "BaseURLRequired": "Enter the base URL.",
       "Connect": "Connect",
       "ConnectCustomEndpoint": "Connect a custom endpoint…",
-      "ConnectionFailed": "Could not load models from this endpoint.",
       "Edit": "Edit custom endpoint",
       "InvalidBaseURL": "Enter a valid http(s) URL.",
       "error": {
