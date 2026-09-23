@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="デプロイ" />
   <meta name="twitter:description" content="Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-14T07:33:41.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-21T05:54:27.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (fd339b7)">v26.9.0-alpha.0 (fd339b7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (14a22d7)">v26.9.0-alpha.0 (14a22d7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -288,7 +288,7 @@
 <p data-bai-block="54">以下のサブセクションでは、Revision レベルのフィールドについて詳しく説明します。これらは <strong>高度な設定モード</strong> で手動で Revision を追加する場合と、各フィールドの動作を理解したい場合の両方に適用されます。</p>
 <h4 data-bai-block="55" id="deployment-モデルフォルダーのマウント">モデルフォルダーのマウント<a class="hash-link" href="#deployment-モデルフォルダーのマウント" aria-label="Direct link to モデルフォルダーのマウント">#</a></h4>
 <p data-bai-block="56">Revision ごとに 1 つのモデルストレージフォルダーが各レプリカにマウントされます。フォルダーセレクタのすぐ下にあるフィールドで、そのフォルダーをコンテナ内のどこに配置するかを指定します。</p>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="390" /><figcaption>図 12.5</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>図 12.5</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="58"><strong>モデルフォルダー</strong>: 各レプリカにマウントするモデルストレージフォルダーです。</li>
@@ -305,7 +305,7 @@
 </ul>
 </li>
 <li data-bai-block="66"><strong>シェル</strong>: コマンドの実行に使用するシェルバイナリです（例: <code>/bin/bash</code>）。<strong>Shell</strong> 方式でのみ表示され、必須項目です。このバイナリがコンテナイメージに存在しないと、サービスは起動に失敗します。</li>
-<li data-bai-block="67"><strong>コマンド</strong>: 推論サーバを起動するコマンドです（例: <code>python -m http.server 8000</code>）。<strong>Shell</strong> 方式では複数行の入力ボックスになり、<strong>Exec</strong> 方式ではラベルが <strong>コマンド (argv)</strong> に変わり 1 行の入力フィールドになります。</li>
+<li data-bai-block="67"><strong>コマンド</strong>: 推論サーバを起動するコマンドです（例: <code>python -m http.server 8000</code>）。<strong>Shell</strong> 方式では複数行の入力ボックスになり、<strong>Exec</strong> 方式ではラベルが <strong>コマンド (argv)</strong> に変わり 1 行の入力フィールドになります。JSON 文字列を 1 つの引数として渡すには、JSON 全体をシングルクォートで囲み、内部のダブルクォートはそのままにします（例: <code>--override-generation-config &#39;{&quot;temperature&quot;: 0.7}&#39;</code>）。</li>
 <li data-bai-block="68"><strong>ポート</strong>: 推論サーバがリッスンするコンテナポートです（2〜65535）。</li>
 </ul>
 <div class="admonition admonition-tip">
@@ -710,7 +710,7 @@
 <p data-bai-block="258">デプロイ詳細ページの <strong>Revisions</strong> カードには、<strong>現在の Revision</strong>、<strong>Revision 履歴</strong>、<strong>監査ログ</strong> の 3 つのタブがあります。カード上部の <code>Revision を追加</code> ボタンはすべてのタブから使用でき、Revision 追加モーダルを開きます（<a href="#add-revision">Revision の追加</a> を参照）。</p>
 <h4 data-bai-block="259" id="deployment-現在の-revision-タブ">現在の Revision タブ<a class="hash-link" href="#deployment-現在の-revision-タブ" aria-label="Direct link to 現在の Revision タブ">#</a></h4>
 <p data-bai-block="260"><strong>現在の Revision</strong> タブは、現在アクティブでトラフィックを処理している Revision の完全な設定を表示します。</p>
-<p><figure data-bai-block="261" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1414" /><figcaption>図 12.16</figcaption></figure>
+<p><figure data-bai-block="261" class="doc-figure"><img src="./images/current_revision_tab.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="1374" /><figcaption>図 12.16</figcaption></figure>
 </p>
 <p data-bai-block="262">次のフィールドが表示されます。</p>
 <ul>
@@ -975,7 +975,7 @@ Backend.AIだけでなく、さまざまなサービスから生成できます�
 <p><a id="model-store"></a></p>
 <h2 data-bai-block="403" id="deployment-モデルストア">モデルストア<a class="hash-link" href="#deployment-モデルストア" aria-label="Direct link to モデルストア">#</a></h2>
 <p data-bai-block="404">モデルストア（Model Store）は、事前構成されたモデルを閲覧、検索、デプロイできるカードベースのギャラリーを提供します。サイドバーメニューからモデルストアにアクセスできます。</p>
-<p><figure data-bai-block="405" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2880" height="1800" /><figcaption>図 12.33</figcaption></figure>
+<p><figure data-bai-block="405" class="doc-figure"><img src="./images/model_store_page_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 12.33</figcaption></figure>
 </p>
 <h3 data-bai-block="406" id="deployment-モデルの閲覧と検索">モデルの閲覧と検索<a class="hash-link" href="#deployment-モデルの閲覧と検索" aria-label="Direct link to モデルの閲覧と検索">#</a></h3>
 <p data-bai-block="407">ページ上部にはフィルターと並べ替えのレイアウトが使用されています：</p>
@@ -1015,7 +1015,7 @@ Backend.AIだけでなく、さまざまなサービスから生成できます�
 <li data-bai-block="426"><strong>最小リソース（Min Resource）</strong>: 最小リソース要件（CPU、メモリ、GPU）</li>
 </ul>
 <p data-bai-block="427">モデルカードに README が含まれている場合は、ドロワーの下部に <code>README.md</code> カードとしてレンダリングされます。</p>
-<p><figure data-bai-block="428" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="800" height="1004" /><figcaption>図 12.34</figcaption></figure>
+<p><figure data-bai-block="428" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>図 12.34</figcaption></figure>
 </p>
 <h3 data-bai-block="429" id="deployment-モデルのデプロイ">モデルのデプロイ<a class="hash-link" href="#deployment-モデルのデプロイ" aria-label="Direct link to モデルのデプロイ">#</a></h3>
 <p data-bai-block="430">ドロワーヘッダーの <code>デプロイ（Deploy）</code> ボタンをクリックすると、モデルがサービスとしてデプロイされます。デプロイフローは次の 2 通りのいずれかで動作します：</p>
@@ -1046,7 +1046,7 @@ Backend.AIだけでなく、さまざまなサービスから生成できます�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月14日</span>
+  <span class="last-updated">最終更新日 2026年9月21日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

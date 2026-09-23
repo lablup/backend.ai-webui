@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-22T16:12:26.357Z",
+  "generatedAt": "2026-09-23T00:11:31.468Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 1,
+        "changes": 10,
         "added": 0,
-        "modified": 1,
+        "modified": 10,
         "removed": 0,
-        "images": 1,
+        "images": 10,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -30,13 +30,22 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
           "counts": {
             "added": 0,
-            "modified": 1,
+            "modified": 10,
             "removed": 0,
-            "images": 1,
-            "total": 1
+            "images": 10,
+            "total": 10
           },
           "fingerprints": [
-            "b6cc1ce30497"
+            "8953aa57d94b",
+            "1a26c5cf3e31",
+            "b3b4914592a3",
+            "c82351c2ede6",
+            "b6cc1ce30497",
+            "12efb8213e00",
+            "0f5f3597c58e",
+            "15fe71b759f9",
+            "50350f7a78f0",
+            "b472c95def87"
           ]
         }
       ]
@@ -44,11 +53,11 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 1,
+        "changes": 10,
         "added": 0,
-        "modified": 1,
+        "modified": 10,
         "removed": 0,
-        "images": 1,
+        "images": 10,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -61,13 +70,22 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
           "counts": {
             "added": 0,
-            "modified": 1,
+            "modified": 10,
             "removed": 0,
-            "images": 1,
-            "total": 1
+            "images": 10,
+            "total": 10
           },
           "fingerprints": [
-            "23f8d6ee3f3c"
+            "7dc4dbf9a748",
+            "ca7264bcb3b8",
+            "1533f9c2ae39",
+            "c2c4f77f539c",
+            "23f8d6ee3f3c",
+            "28aa66ed9b79",
+            "2d44329d81a5",
+            "0d7205900477",
+            "08728176c266",
+            "fb427c44a685"
           ]
         }
       ]
@@ -75,11 +93,11 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 1,
+        "changes": 10,
         "added": 0,
-        "modified": 1,
+        "modified": 10,
         "removed": 0,
-        "images": 1,
+        "images": 10,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -92,13 +110,22 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
           "counts": {
             "added": 0,
-            "modified": 1,
+            "modified": 10,
             "removed": 0,
-            "images": 1,
-            "total": 1
+            "images": 10,
+            "total": 10
           },
           "fingerprints": [
-            "b6b5c4e2a568"
+            "956b274e043b",
+            "75451e409e1f",
+            "7423114ab3f8",
+            "49b95992acc1",
+            "b6b5c4e2a568",
+            "7b1382f672eb",
+            "9a255840c532",
+            "8ec117b160c0",
+            "4675556ee72e",
+            "67294844407b"
           ]
         }
       ]
@@ -106,11 +133,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 1,
+        "changes": 10,
         "added": 0,
-        "modified": 1,
+        "modified": 10,
         "removed": 0,
-        "images": 1,
+        "images": 10,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -123,13 +150,22 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
           "counts": {
             "added": 0,
-            "modified": 1,
+            "modified": 10,
             "removed": 0,
-            "images": 1,
-            "total": 1
+            "images": 10,
+            "total": 10
           },
           "fingerprints": [
-            "7a6804bbd275"
+            "a6cf994c35ce",
+            "4212deee7994",
+            "3a73443848ca",
+            "bb417877aaa5",
+            "7a6804bbd275",
+            "2ff7e4c0abd8",
+            "7e6a1a0a7db5",
+            "11ced9059eb3",
+            "f42e38b20d6f",
+            "1ff403214604"
           ]
         }
       ]

@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダの共有" />
   <meta name="twitter:description" content="ストレージフォルダの内容を他のユーザーやプロジェクトメンバーと共有して共同作業を行う必要があるかもしれません。この目的のために、Backend.AIは柔軟なフォルダ共有機能を提供します。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダの共有","inLanguage":"ja","description":"ストレージフォルダの内容を他のユーザーやプロジェクトメンバーと共有して共同作業を行う必要があるかもしれません。この目的のために、Backend.AIは柔軟なフォルダ共有機能を提供します。","dateModified":"2026-09-14T07:33:41.000Z","url":"https://webui.docs.backend.ai/next/ja/share_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダの共有","inLanguage":"ja","description":"ストレージフォルダの内容を他のユーザーやプロジェクトメンバーと共有して共同作業を行う必要があるかもしれません。この目的のために、Backend.AIは柔軟なフォルダ共有機能を提供します。","dateModified":"2026-09-21T06:47:47.000Z","url":"https://webui.docs.backend.ai/next/ja/share_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/share_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/share_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/share_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (fd339b7)">v26.9.0-alpha.0 (fd339b7)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (14a22d7)">v26.9.0-alpha.0 (14a22d7)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -241,14 +241,14 @@
 <p data-bai-block="17">リンクをクリックすると<strong>招待されたフォルダー</strong>モーダルが開き、保留中のフォルダ招待を承諾または辞退できます。</p>
 <p><figure data-bai-block="18" class="doc-figure"><img src="./images/invitation_accept.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="350" /><figcaption>図 17.7</figcaption></figure>
 </p>
-<p data-bai-block="19">データページに移動し、<code>tests</code>フォルダがリストに表示されていることを確認します。リストに表示されない場合は、ブラウザページを更新してみてください。招待を承諾したので、ユーザーBのアカウントでユーザーAの<code>tests</code>フォルダの内容を確認できるようになりました。ユーザーBが作成したフォルダとは異なり、共有フォルダにはオーナー列にチェックアイコンが表示されません。また、マウント権限列に<code>読み取り専用</code>の表示が確認できます。</p>
+<p data-bai-block="19">データページに移動し、<code>tests</code>フォルダがリストに表示されていることを確認します。リストに表示されない場合は、ブラウザページを更新してみてください。招待を承諾したので、ユーザーBのアカウントでユーザーAの<code>tests</code>フォルダの内容を確認できるようになりました。ユーザーBが作成したフォルダとは異なり、共有フォルダにはオーナー列にユーザーAのメールアドレスが表示されます。また、マウント権限列に<code>読み取り専用</code>の表示が確認できます。</p>
 <p><figure data-bai-block="20" class="doc-figure"><img src="./images/test_vfolder_listed_in_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2264" height="636" /><figcaption>図 17.8</figcaption></figure>
 </p>
 <p data-bai-block="21">リストで<code>tests</code>フォルダ名をクリックして、フォルダ内に移動しましょう。ユーザーAのアカウントで確認した<code>hello.txt</code>と<code>myfolder</code>を再び確認できます。ユーザーAが<code>読み取り専用</code>で共有したため、フォルダーエクスプローラーでは書き込み系の操作が無効化されます。<strong>アップロード</strong>、<strong>フォルダー作成</strong>、<strong>消去</strong>の各ボタンと、項目名の隣にある<strong>Rename</strong>ボタンは使用できず、ユーザーBはフォルダの内容の閲覧とダウンロードのみ行えます。</p>
 <p><figure data-bai-block="22" class="doc-figure"><img src="./images/folder_explorer_in_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2628" height="1648" /><figcaption>図 17.9</figcaption></figure>
 </p>
 <p data-bai-block="23">ユーザーBのアカウントでこのストレージフォルダをマウントしてコンピュートセッションを作成してみましょう。</p>
-<p><figure data-bai-block="24" class="doc-figure"><img src="./images/launch_session_with_test_mounted_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2400" height="1230" /><figcaption>図 17.10</figcaption></figure>
+<p><figure data-bai-block="24" class="doc-figure"><img src="./images/launch_session_with_test_mounted_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2400" height="972" /><figcaption>図 17.10</figcaption></figure>
 </p>
 <p data-bai-block="25">セッションを作成した後、ウェブターミナルを開き、<code>tests</code>フォルダがホームフォルダにマウントされていることを確認します。<code>tests</code>フォルダの内容は表示されますが、ファイルの作成や削除は許可されません。これは、ユーザーAが読み取り専用で共有したためです。書き込みアクセスを含む形で共有されている場合、ユーザーBは<code>tests</code>フォルダ内にファイルを作成できます。</p>
 <p><figure data-bai-block="26" class="doc-figure"><img src="./images/file_operations_on_shared_test_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="960" height="188" /><figcaption>図 17.11</figcaption></figure>
@@ -293,7 +293,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/share_vfolder/share_vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月14日</span>
+  <span class="last-updated">最終更新日 2026年9月21日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./mount_vfolder.html">
