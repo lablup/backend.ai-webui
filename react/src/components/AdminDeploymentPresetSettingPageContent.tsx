@@ -1405,7 +1405,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Step
                 key={title}
                 step={idx}
-                indicator="number"
+                // Only `auto` draws the error glyph on a step not yet reached.
+                indicator={stepErrors[idx] ? 'auto' : 'number'}
                 label={title}
                 status={stepErrors[idx] ? 'error' : undefined}
               />

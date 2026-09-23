@@ -888,13 +888,14 @@ const EduAppLauncher: React.FC<EduAppLauncherProps> = ({
         >
           <Step
             step={0}
-            indicator="number"
+            // Only `auto` draws the error glyph on a step not yet reached.
+            indicator={stepStatuses[0] === 'error' ? 'auto' : 'number'}
             label={t('eduapi.PreparingSession')}
             status={stepStatuses[0] === 'error' ? 'error' : undefined}
           />
           <Step
             step={1}
-            indicator="number"
+            indicator={stepStatuses[1] === 'error' ? 'auto' : 'number'}
             label={t('eduapi.LaunchingAppStep')}
             status={stepStatuses[1] === 'error' ? 'error' : undefined}
           />
