@@ -13,10 +13,7 @@ import { RolePermissionSummaryTableRevokeMutation } from '../__generated__/RoleP
 import { App } from '../app-shim';
 import { reasonMessage } from '../helper/mutationError';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
-import {
-  computeRBACGrantState,
-  type RBACGrantState,
-} from '../helper/rbacGrantState';
+import './RolePermissionSummaryTable.css';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Text } from '@astryxdesign/core/Text';
@@ -35,7 +32,6 @@ import {
   BAIText,
   INITIAL_FETCH_KEY,
   toLocalId,
-  tokenColorForStatus,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
@@ -48,17 +44,40 @@ import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 /**
  * Upper bound of permission rows fetched for the role — far above one scope's
- * entity × bit grid, so the summary and the row editors never miss a grant.
+ * entity × bit grid, so the grid never misses a grant.
  */
 const PERMISSION_FETCH_LIMIT = 500;
 
-/** The five `PermissionBit`s, in display order. */
+/** The five `PermissionBit`s, in column order. */
 const PERMISSION_BITS: ReadonlyArray<PermissionBit> = [
   'CREATE',
   'READ',
   'UPDATE',
   'SOFT_DELETE',
   'HARD_DELETE',
+];
+
+const ENTITY_COLUMN_WIDTH = 300;
+
+/** The bits grouped under the Read / Write column headers. */
+const PERMISSION_GROUPS: ReadonlyArray<{
+  key: string;
+  titleKey: string;
+  bits: ReadonlyArray<PermissionBit>;
+  /** Fixed width in px; the Write group takes the rest of the row. */
+  width?: number;
+}> = [
+  {
+    key: 'read',
+    titleKey: 'rbac.PermissionGroupRead',
+    bits: ['READ'],
+    width: 100,
+  },
+  {
+    key: 'write',
+    titleKey: 'rbac.PermissionGroupWrite',
+    bits: ['CREATE', 'UPDATE', 'SOFT_DELETE', 'HARD_DELETE'],
+  },
 ];
 
 interface EntityRow {
@@ -69,215 +88,22 @@ interface EntityRow {
   granted: ReadonlyMap<string, string>;
 }
 
-interface RolePermissionRowEditorProps {
-  roleId: string;
+/** A cell whose checkbox differs from what the role grants now. */
+interface PendingChange {
   row: EntityRow;
-  /** After a save reached the backend; `done` when every request succeeded. */
-  onSaved: (done: boolean) => void;
-  onCancel: () => void;
+  bit: PermissionBit;
+  /** `true` when the role grants the bit and the checkbox is off. */
+  isRevoke: boolean;
 }
 
-/**
- * The expanded row: one checkbox per permission bit, saved straight against
- * the role. Grants and revokes ship as the two bulk mutations; a request the
- * backend rejects stays listed above the checkboxes for a retry (FR-3334).
- */
-const RolePermissionRowEditor: React.FC<RolePermissionRowEditorProps> = ({
-  roleId,
-  row,
-  onSaved,
-  onCancel,
-}) => {
-  'use memo';
-  const { t } = useTranslation();
-  const { message } = App.useApp();
-  const { logger } = useBAILogger();
+interface SaveFailure {
+  entityType: string;
+  bit: string;
+  message: string;
+}
 
-  const grantPermissions =
-    useMutationWithPromise<RolePermissionSummaryTableGrantMutation>(graphql`
-      mutation RolePermissionSummaryTableGrantMutation(
-        $input: BulkAddRolePermissionsInput!
-      ) {
-        adminBulkAddRolePermissions(input: $input) {
-          items {
-            id
-            entityType
-            permission
-          }
-          failed {
-            entityType
-            permission
-            message
-          }
-        }
-      }
-    `);
-  const revokePermissions =
-    useMutationWithPromise<RolePermissionSummaryTableRevokeMutation>(graphql`
-      mutation RolePermissionSummaryTableRevokeMutation(
-        $input: BulkRemoveRolePermissionsInput!
-      ) {
-        adminBulkRemoveRolePermissions(input: $input) {
-          items {
-            id
-          }
-          failed {
-            permissionId
-            message
-          }
-        }
-      }
-    `);
-
-  // The intended state per bit, seeded from what the role grants now. It
-  // outlives a partial-failure refetch so a retry re-submits only what is
-  // still different.
-  const [checked, setChecked] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(
-      PERMISSION_BITS.map((bit) => [bit, row.granted.has(bit)]),
-    ),
-  );
-  const [failures, setFailures] = useState<
-    Array<{ bit: string; message: string }>
-  >([]);
-
-  const bitLabel = (bit: string) =>
-    t(`rbac.operations.${bit}`, { defaultValue: bit });
-
-  const toGrant = PERMISSION_BITS.filter(
-    (bit) => checked[bit] && !row.granted.has(bit),
-  );
-  const toRevoke = PERMISSION_BITS.filter(
-    (bit) => !checked[bit] && row.granted.has(bit),
-  );
-  const isDirty = toGrant.length > 0 || toRevoke.length > 0;
-
-  const save = async () => {
-    const [grantResult, revokeResult] = await Promise.allSettled([
-      toGrant.length > 0
-        ? grantPermissions({
-            input: {
-              permissions: toGrant.map((permission) => ({
-                roleId,
-                entityType: row.entityType,
-                permission,
-              })),
-            },
-          })
-        : Promise.resolve(null),
-      toRevoke.length > 0
-        ? revokePermissions({
-            input: {
-              permissionIds: toRevoke.map(
-                (bit) => row.granted.get(bit) as string,
-              ),
-            },
-          })
-        : Promise.resolve(null),
-    ]);
-
-    const nextFailures: Array<{ bit: string; message: string }> = [];
-    if (grantResult.status === 'fulfilled') {
-      grantResult.value?.adminBulkAddRolePermissions?.failed.forEach(
-        (failure) => {
-          logger.error('Failed to grant permission', failure.message);
-          nextFailures.push({
-            bit: failure.permission ?? '',
-            message: failure.message,
-          });
-        },
-      );
-    } else {
-      logger.error('Failed to grant permissions', grantResult.reason);
-      toGrant.forEach((bit) =>
-        nextFailures.push({ bit, message: reasonMessage(grantResult.reason) }),
-      );
-    }
-    if (revokeResult.status === 'fulfilled') {
-      const failedById = new Map(
-        (revokeResult.value?.adminBulkRemoveRolePermissions?.failed ?? []).map(
-          (failure) => [String(failure.permissionId), failure.message],
-        ),
-      );
-      toRevoke.forEach((bit) => {
-        const failureMessage = failedById.get(String(row.granted.get(bit)));
-        if (failureMessage !== undefined) {
-          logger.error('Failed to revoke permission', failureMessage);
-          nextFailures.push({ bit, message: failureMessage });
-        }
-      });
-    } else {
-      logger.error('Failed to revoke permissions', revokeResult.reason);
-      toRevoke.forEach((bit) =>
-        nextFailures.push({
-          bit,
-          message: reasonMessage(revokeResult.reason),
-        }),
-      );
-    }
-
-    setFailures(nextFailures);
-    if (nextFailures.length === 0) {
-      message.success(t('rbac.PermissionsSaved'));
-      onSaved(true);
-      return;
-    }
-    message.error(t('rbac.PermissionsPartialFailureDescription'));
-    onSaved(false);
-  };
-
-  return (
-    <BAIFlex direction="column" align="stretch" gap="sm">
-      {failures.length > 0 && (
-        <BAIListAlert
-          type="error"
-          showIcon
-          title={t('rbac.PermissionsPartialFailureDescription')}
-          items={failures.map((failure, index) => ({
-            key: `${failure.bit}-${index}`,
-            content: (
-              <BAIFlex gap="xs" align="center" wrap="wrap">
-                <Token color="default" label={bitLabel(failure.bit)} />
-                <Text>{failure.message}</Text>
-              </BAIFlex>
-            ),
-          }))}
-        />
-      )}
-      <BAIFlex justify="between" align="center" gap="md" wrap="wrap">
-        <BAIFlex gap="lg" wrap="wrap" align="center">
-          {PERMISSION_BITS.map((bit) => {
-            const isGrantable = row.grantable.has(bit);
-            const checkbox = (
-              <BAICheckbox
-                checked={checked[bit]}
-                disabled={!isGrantable}
-                onChange={(next) =>
-                  setChecked((previous) => ({ ...previous, [bit]: next }))
-                }
-              >
-                {bitLabel(bit)}
-              </BAICheckbox>
-            );
-            return isGrantable ? (
-              <React.Fragment key={bit}>{checkbox}</React.Fragment>
-            ) : (
-              <Tooltip key={bit} content={t('rbac.PermissionNotAssignable')}>
-                {checkbox}
-              </Tooltip>
-            );
-          })}
-        </BAIFlex>
-        <BAIFlex gap="xs" align="center">
-          <Button label={t('button.Cancel')} onClick={onCancel} />
-          <BAIButton type="primary" disabled={!isDirty} action={save}>
-            {t('button.Save')}
-          </BAIButton>
-        </BAIFlex>
-      </BAIFlex>
-    </BAIFlex>
-  );
-};
+/** Checkbox overrides per entity type and bit; absent means "as granted". */
+type Draft = Record<string, Partial<Record<PermissionBit, boolean>>>;
 
 export interface RolePermissionSummaryTableProps {
   roleNodeFrgmt: RolePermissionSummaryTableFragment$key;
@@ -289,10 +115,12 @@ export interface RolePermissionSummaryTableProps {
 
 /**
  * The Permissions tab of `RoleDetailDrawerV2` (managers >= 26.9.0a4, one
- * scope per role): one row per permission type of that scope, with the access
- * level and the granted bits, and an expandable editor per row. Its own query
- * and mutations select the 26.9 fields only; the fragment's `scopeType` carries
- * `@since` because it rides the role list query (ADR 0006).
+ * scope per role): one row per permission type of that scope and one checkbox
+ * column per permission bit, edited in place. Every toggled cell is a pending
+ * change until the floating save bar ships them all as the two bulk
+ * mutations. Its own query and mutations select the 26.9 fields only; the
+ * fragment's `scopeType` carries `@since` because it rides the role list
+ * query (ADR 0006).
  */
 const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
   roleNodeFrgmt,
@@ -301,6 +129,8 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { logger } = useBAILogger();
 
   const role = useFragment(
     graphql`
@@ -311,6 +141,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
     `,
     roleNodeFrgmt,
   );
+  const roleId = toLocalId(role.id);
   const scopeType = role.scopeType ?? '';
 
   const { rbacPermissionMatrix } =
@@ -353,7 +184,7 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
         }
       }
     `,
-    { roleId: toLocalId(role.id), permissionLimit: PERMISSION_FETCH_LIMIT },
+    { roleId, permissionLimit: PERMISSION_FETCH_LIMIT },
     {
       fetchKey: deferredFetchKey,
       fetchPolicy:
@@ -362,6 +193,42 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
           : 'network-only',
     },
   );
+
+  const grantPermissions =
+    useMutationWithPromise<RolePermissionSummaryTableGrantMutation>(graphql`
+      mutation RolePermissionSummaryTableGrantMutation(
+        $input: BulkAddRolePermissionsInput!
+      ) {
+        adminBulkAddRolePermissions(input: $input) {
+          items {
+            id
+            entityType
+            permission
+          }
+          failed {
+            entityType
+            permission
+            message
+          }
+        }
+      }
+    `);
+  const revokePermissions =
+    useMutationWithPromise<RolePermissionSummaryTableRevokeMutation>(graphql`
+      mutation RolePermissionSummaryTableRevokeMutation(
+        $input: BulkRemoveRolePermissionsInput!
+      ) {
+        adminBulkRemoveRolePermissions(input: $input) {
+          items {
+            id
+          }
+          failed {
+            permissionId
+            message
+          }
+        }
+      }
+    `);
 
   const grantedByEntity = new Map<string, Map<string, string>>();
   _.compact(
@@ -395,6 +262,143 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
       granted: grantedByEntity.get(entity.entityType) ?? new Map(),
     }));
 
+  // The intended state of every toggled cell, kept with the fetch key it was
+  // made against. A refetch (after a save, or the refresh button) retires
+  // every override the backend now reports, so a partially failed save leaves
+  // only the rejected cells pending.
+  const [draftState, setDraftState] = useState<{
+    fetchKey: typeof deferredFetchKey;
+    draft: Draft;
+  }>({ fetchKey: deferredFetchKey, draft: {} });
+  const [failures, setFailures] = useState<SaveFailure[]>([]);
+  let draft = draftState.draft;
+  if (draftState.fetchKey !== deferredFetchKey) {
+    draft = {};
+    Object.entries(draftState.draft).forEach(([entityType, bits]) => {
+      const granted = grantedByEntity.get(entityType);
+      const kept = Object.fromEntries(
+        Object.entries(bits).filter(
+          ([bit, checked]) => checked !== (granted?.has(bit) ?? false),
+        ),
+      );
+      if (Object.keys(kept).length > 0) draft[entityType] = kept;
+    });
+    setDraftState({ fetchKey: deferredFetchKey, draft });
+  }
+
+  const isChecked = (row: EntityRow, bit: PermissionBit) =>
+    draft[row.entityType]?.[bit] ?? row.granted.has(bit);
+  const setChecked = (row: EntityRow, bit: PermissionBit, checked: boolean) =>
+    setDraftState((previous) => ({
+      ...previous,
+      draft: {
+        ...previous.draft,
+        [row.entityType]: { ...previous.draft[row.entityType], [bit]: checked },
+      },
+    }));
+
+  const changes: PendingChange[] = rows.flatMap((row) =>
+    PERMISSION_BITS.filter(
+      (bit) =>
+        row.grantable.has(bit) && isChecked(row, bit) !== row.granted.has(bit),
+    ).map((bit) => ({ row, bit, isRevoke: row.granted.has(bit) })),
+  );
+  const changedEntityTypes = new Set(
+    changes.map((change) => change.row.entityType),
+  );
+
+  const save = async () => {
+    const toGrant = changes.filter((change) => !change.isRevoke);
+    const toRevoke = changes.filter((change) => change.isRevoke);
+    const [grantResult, revokeResult] = await Promise.allSettled([
+      toGrant.length > 0
+        ? grantPermissions({
+            input: {
+              permissions: toGrant.map(({ row, bit }) => ({
+                roleId,
+                entityType: row.entityType,
+                permission: bit,
+              })),
+            },
+          })
+        : Promise.resolve(null),
+      toRevoke.length > 0
+        ? revokePermissions({
+            input: {
+              permissionIds: toRevoke.map(
+                ({ row, bit }) => row.granted.get(bit) as string,
+              ),
+            },
+          })
+        : Promise.resolve(null),
+    ]);
+
+    const nextFailures: SaveFailure[] = [];
+    if (grantResult.status === 'fulfilled') {
+      grantResult.value?.adminBulkAddRolePermissions?.failed.forEach(
+        (failure) => {
+          logger.error('Failed to grant permission', failure.message);
+          nextFailures.push({
+            entityType: failure.entityType ?? '',
+            bit: failure.permission ?? '',
+            message: failure.message,
+          });
+        },
+      );
+    } else {
+      logger.error('Failed to grant permissions', grantResult.reason);
+      toGrant.forEach(({ row, bit }) =>
+        nextFailures.push({
+          entityType: row.entityType,
+          bit,
+          message: reasonMessage(grantResult.reason),
+        }),
+      );
+    }
+    if (revokeResult.status === 'fulfilled') {
+      const failedById = new Map(
+        (revokeResult.value?.adminBulkRemoveRolePermissions?.failed ?? []).map(
+          (failure) => [String(failure.permissionId), failure.message],
+        ),
+      );
+      toRevoke.forEach(({ row, bit }) => {
+        const failureMessage = failedById.get(String(row.granted.get(bit)));
+        if (failureMessage !== undefined) {
+          logger.error('Failed to revoke permission', failureMessage);
+          nextFailures.push({
+            entityType: row.entityType,
+            bit,
+            message: failureMessage,
+          });
+        }
+      });
+    } else {
+      logger.error('Failed to revoke permissions', revokeResult.reason);
+      toRevoke.forEach(({ row, bit }) =>
+        nextFailures.push({
+          entityType: row.entityType,
+          bit,
+          message: reasonMessage(revokeResult.reason),
+        }),
+      );
+    }
+
+    setFailures(nextFailures);
+    // Re-read the grants so the grid reflects what the backend accepted; the
+    // draft effect then retires every override the refetch confirms.
+    updateFetchKey();
+    if (nextFailures.length === 0) {
+      message.success(t('rbac.PermissionsSaved'));
+      return;
+    }
+    message.error(t('rbac.PermissionsPartialFailureDescription'));
+  };
+
+  const discard = () => {
+    setDraftState((previous) => ({ ...previous, draft: {} }));
+    setFailures([]);
+  };
+
   const [filterText, setFilterText] = useState('');
   const keyword = filterText.trim().toLowerCase();
   const visibleRows = keyword
@@ -405,56 +409,55 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
       )
     : rows;
 
-  const [expandedKeys, setExpandedKeys] = useState<ReadonlyArray<React.Key>>(
-    [],
-  );
-  const collapse = (entityType: string) =>
-    setExpandedKeys((keys) => keys.filter((key) => key !== entityType));
-
-  const stateLabel: Record<RBACGrantState, string> = {
-    full: t('rbac.FullyAllowed'),
-    partial: t('rbac.PartiallyAllowed'),
-    none: t('rbac.NotAllowed'),
+  // The bit's name follows its checkbox ("☐ Update"), so a row reads on its own
+  // once the header has scrolled away.
+  const renderBitCheckbox = (row: EntityRow, bit: PermissionBit) => {
+    const isGrantable = row.grantable.has(bit);
+    const item = (
+      <BAIFlex key={bit} gap="xxs" align="center" wrap="nowrap">
+        <BAICheckbox
+          label={bitLabel(bit)}
+          isLabelHidden
+          size="sm"
+          checked={isChecked(row, bit)}
+          disabled={!isGrantable}
+          onChange={(next) => setChecked(row, bit, next)}
+        />
+        <Text color={isGrantable ? undefined : 'disabled'}>
+          {bitLabel(bit)}
+        </Text>
+      </BAIFlex>
+    );
+    return isGrantable ? (
+      item
+    ) : (
+      <Tooltip key={bit} content={t('rbac.PermissionNotEditable')}>
+        {item}
+      </Tooltip>
+    );
   };
+
+  const groupColumns = PERMISSION_GROUPS.map((group) => ({
+    key: group.key,
+    title: t(group.titleKey),
+    width: group.width,
+    render: (_value: unknown, row: EntityRow) => (
+      <BAIFlex gap="md" align="center" wrap="nowrap">
+        {group.bits.map((bit) => renderBitCheckbox(row, bit))}
+      </BAIFlex>
+    ),
+  }));
 
   const columns: BAIColumnsType<EntityRow> = [
     {
       key: 'entityType',
       title: t('rbac.PermissionType'),
-      width: 220,
+      // Pixel widths on every column but Write: proportional widths split the
+      // row equally, which starves Write and wraps its checkboxes.
+      width: ENTITY_COLUMN_WIDTH,
       render: (_value, row) => <Text>{rbacTypeLabel(row.entityType)}</Text>,
     },
-    {
-      key: 'accessLevel',
-      title: t('rbac.AccessLevel'),
-      width: 160,
-      render: (_value, row) => {
-        const grantState = computeRBACGrantState(
-          [...row.grantable],
-          new Set(row.granted.keys()),
-        );
-        return (
-          <Token
-            color={tokenColorForStatus('grantState', grantState)}
-            label={stateLabel[grantState]}
-          />
-        );
-      },
-    },
-    {
-      key: 'permissions',
-      title: t('rbac.Permissions'),
-      render: (_value, row) => {
-        const grantedBits = PERMISSION_BITS.filter((bit) =>
-          row.granted.has(bit),
-        );
-        return grantedBits.length > 0 ? (
-          <Text>{grantedBits.map(bitLabel).join(', ')}</Text>
-        ) : (
-          <Text color="secondary">-</Text>
-        );
-      },
-    },
+    ...groupColumns,
   ];
 
   if (rows.length === 0) {
@@ -497,24 +500,63 @@ const RolePermissionSummaryTable: React.FC<RolePermissionSummaryTableProps> = ({
         pagination={false}
         size="small"
         loading={deferredFetchKey !== fetchKey}
-        expandable={{
-          expandedRowKeys: expandedKeys,
-          onExpandedRowsChange: setExpandedKeys,
-          expandedRowRender: (row) => (
-            <RolePermissionRowEditor
-              roleId={toLocalId(role.id)}
-              row={row}
-              onCancel={() => collapse(row.entityType)}
-              onSaved={(done) => {
-                // Re-read the grants so the summary row and the editor's
-                // baseline reflect what the backend accepted.
-                updateFetchKey();
-                if (done) collapse(row.entityType);
-              }}
-            />
-          ),
-        }}
+        onRow={(row) => ({
+          className: changedEntityTypes.has(row.entityType)
+            ? 'role-permission-summary-table__row--changed'
+            : undefined,
+        })}
       />
+      {changes.length > 0 && (
+        // Sticks to the bottom of the drawer's scroll box, so the save
+        // controls stay in reach however far down the grid the user is.
+        // Inline because BAIFlex's own inline `position`/`padding` beat CSS.
+        // `bottom` equals the drawer body's bottom padding, so the bar does
+        // not shift when the scroll reaches the end.
+        <BAIFlex
+          className="role-permission-summary-table__save-bar"
+          direction="column"
+          align="stretch"
+          gap="sm"
+          style={{
+            position: 'sticky',
+            bottom: 'var(--spacing-6)',
+            padding: 'var(--spacing-3) var(--spacing-4)',
+          }}
+        >
+          {failures.length > 0 && (
+            <BAIListAlert
+              type="error"
+              showIcon
+              title={t('rbac.PermissionsPartialFailureDescription')}
+              maxHeight={160}
+              items={failures.map((failure, index) => ({
+                key: `${failure.entityType}-${failure.bit}-${index}`,
+                content: (
+                  <BAIFlex gap="xs" align="center" wrap="wrap">
+                    <Token
+                      color="default"
+                      label={rbacTypeLabel(failure.entityType)}
+                    />
+                    <Token color="default" label={bitLabel(failure.bit)} />
+                    <Text>{failure.message}</Text>
+                  </BAIFlex>
+                ),
+              }))}
+            />
+          )}
+          <BAIFlex justify="between" align="center" gap="md" wrap="wrap">
+            <Text>
+              {t('rbac.UnsavedPermissionChanges', { count: changes.length })}
+            </Text>
+            <BAIFlex gap="xs" align="center">
+              <Button label={t('button.Cancel')} onClick={discard} />
+              <BAIButton type="primary" action={save}>
+                {t('button.Save')}
+              </BAIButton>
+            </BAIFlex>
+          </BAIFlex>
+        </BAIFlex>
+      )}
     </BAIFlex>
   );
 };
