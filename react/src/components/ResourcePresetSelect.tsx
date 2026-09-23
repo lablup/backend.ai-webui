@@ -28,7 +28,7 @@ import * as _ from 'lodash-es';
 import { SquarePen, Info } from 'lucide-react';
 import React, { useEffect, useTransition } from 'react';
 import type { CSSProperties } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
@@ -40,7 +40,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 export interface PresetOptionType extends SelectorOptionData {
   preset?: ResourcePreset;
   /** Set exactly when the option is disabled; shown on hover. */
-  disabledReason?: string;
+  disabledReason?: React.ReactNode;
 }
 
 export type ResourcePreset = NonNullable<
@@ -113,16 +113,24 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     },
   );
 
+  // "Only available in the <group/> resource group", the group as a token.
+  const onlyInGroupNode = (name: string) => (
+    <Trans
+      i18nKey="resourcePreset.OnlyAvailableInResourceGroup"
+      components={{ group: <Token label={name} size="sm" /> }}
+    />
+  );
+
   // Why a preset cannot be picked right now; `undefined` means it can.
-  const disabledReasonOf = (preset: ResourcePreset | null | undefined) => {
+  const disabledReasonOf = (
+    preset: ResourcePreset | null | undefined,
+  ): React.ReactNode => {
     if (
       resourceGroup &&
       preset?.scaling_group_name &&
       preset.scaling_group_name !== resourceGroup
     ) {
-      return t('resourcePreset.OnlyAvailableInResourceGroup', {
-        name: preset.scaling_group_name,
-      });
+      return onlyInGroupNode(preset.scaling_group_name);
     }
     if (
       allocatablePresetIds &&
@@ -203,11 +211,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             presetOption?.disabledReason ? (
               <Token label={preset.scaling_group_name} size="sm" />
             ) : (
-              <Tooltip
-                content={t('resourcePreset.OnlyAvailableInResourceGroup', {
-                  name: preset.scaling_group_name,
-                })}
-              >
+              <Tooltip content={onlyInGroupNode(preset.scaling_group_name)}>
                 <Token label={preset.scaling_group_name} size="sm" />
               </Tooltip>
             )

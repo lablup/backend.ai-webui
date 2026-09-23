@@ -2689,7 +2689,7 @@
     "Name": "Name",
     "NoPresetName": "Input preset name",
     "NoResourcePresetToDisplay": "No Resource Presets to display",
-    "OnlyAvailableInResourceGroup": "Only available in the {{name}} resource group",
+    "OnlyAvailableInResourceGroup": "Only available in the <group/> resource group",
     "PresetName": "Preset Name",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Resource Preset",
