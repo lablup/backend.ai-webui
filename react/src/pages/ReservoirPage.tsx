@@ -8,10 +8,13 @@ import {
   ReservoirPageQuery$variables,
   ArtifactType,
   ArtifactFilter,
+  ArtifactOrderBy,
+  ArtifactOrderField,
 } from '../__generated__/ReservoirPageQuery.graphql';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ScanArtifactModelsFromHuggingFaceModal from '../components/ScanArtifactModelsFromHuggingFaceModal';
+import { convertToOrderBy } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
 import { useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -31,6 +34,8 @@ import {
   BAIActivateArtifactsModalArtifactsFragmentKey,
   BAIArtifactTable,
   BAICard,
+  availableArtifactSorterValues,
+  type ArtifactSorterKey,
   BAIDeactivateArtifactsModal,
   BAIDeactivateArtifactsModalArtifactsFragmentKey,
   BAIFlex,
@@ -47,13 +52,29 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { BanIcon, Brain, UndoIcon } from 'lucide-react';
-import { parseAsJson, parseAsString, useQueryStates } from 'nuqs';
+import {
+  parseAsJson,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from 'nuqs';
 import React, { useMemo, useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const getStatusFilter = (status: string) => {
   return { availability: [status] };
+};
+
+const DEFAULT_ARTIFACT_ORDER: ReadonlyArray<ArtifactOrderBy> = [
+  { field: 'UPDATED_AT', direction: 'DESC' },
+];
+const artifactOrderFieldMap: Record<ArtifactSorterKey, ArtifactOrderField> = {
+  name: 'NAME',
+  type: 'TYPE',
+  size: 'SIZE',
+  scannedAt: 'SCANNED_AT',
+  updatedAt: 'UPDATED_AT',
 };
 
 type ArtifactNode = NonNullable<
@@ -110,6 +131,7 @@ const ReservoirPage: React.FC = () => {
         (value) => value as ArtifactFilter,
       ).withDefault({}),
       mode: parseAsString.withDefault('ALIVE'),
+      order: parseAsStringLiteral(availableArtifactSorterValues),
     },
     { history: 'replace' },
   );
@@ -119,12 +141,11 @@ const ReservoirPage: React.FC = () => {
     () => ({
       offset: baiPaginationOption.offset,
       limit: baiPaginationOption.limit,
-      order: [
-        {
-          field: 'UPDATED_AT',
-          direction: 'DESC',
-        },
-      ],
+      order:
+        convertToOrderBy<ArtifactOrderBy>(
+          queryParams.order,
+          artifactOrderFieldMap,
+        ) ?? DEFAULT_ARTIFACT_ORDER,
       filter: _.merge(
         {},
         JSON.parse(jsonStringFilter || '{}'),
@@ -136,6 +157,7 @@ const ReservoirPage: React.FC = () => {
       baiPaginationOption.limit,
       jsonStringFilter,
       queryParams.mode,
+      queryParams.order,
     ],
   );
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -450,6 +472,11 @@ const ReservoirPage: React.FC = () => {
             </BAIFlex>
           </BAIFlex>
           <BAIArtifactTable
+            order={queryParams.order}
+            onChangeOrder={(order) => {
+              setQuery({ order: order ?? null });
+              setTablePaginationOption({ current: 1 });
+            }}
             artifactFragment={filterOutEmpty(
               artifacts?.edges.map((e) => e?.node) ?? [],
             )}
