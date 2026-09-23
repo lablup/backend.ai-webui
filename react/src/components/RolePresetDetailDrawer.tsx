@@ -75,7 +75,8 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
         deleted
         createdAt
         updatedAt
-        permissionPresets {
+        # Without a limit the manager answers only the first 10 entries.
+        permissionEntries: permissionPresets(limit: 500) {
           count
           edges {
             node {
@@ -94,7 +95,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
     t(rbacTypeI18nKey(type), { defaultValue: type });
 
   const permissionsByEntityType = _.groupBy(
-    (rolePreset?.permissionPresets?.edges ?? []).map((edge) => edge.node),
+    (rolePreset?.permissionEntries?.edges ?? []).map((edge) => edge.node),
     (node) => node.entityType,
   );
   const permissionRows = _.sortBy(

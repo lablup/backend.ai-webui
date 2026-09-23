@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7aee021cc4fb0bb136889f6f283d62d6>>
+ * @generated SignedSource<<4df18f535cab4607907196f9f9e05952>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -140,8 +140,14 @@ return {
                 "storageKey": null
               },
               {
-                "alias": null,
-                "args": null,
+                "alias": "permissionEntries",
+                "args": [
+                  {
+                    "kind": "Literal",
+                    "name": "limit",
+                    "value": 500
+                  }
+                ],
                 "concreteType": "RolePermissionPresetConnection",
                 "kind": "LinkedField",
                 "name": "permissionPresets",
@@ -192,7 +198,7 @@ return {
                     "storageKey": null
                   }
                 ],
-                "storageKey": null
+                "storageKey": "permissionPresets(limit:500)"
               }
             ],
             "type": "RolePreset",
@@ -204,16 +210,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "6279a9980c13629e889d38544f548022",
+    "cacheID": "3fc0a2d2b398a7fc02099f562afd236e",
     "id": null,
     "metadata": {},
     "name": "RolePresetDetailDrawerRefetchQuery",
     "operationKind": "query",
-    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n    edges {\n      node {\n        id\n        entityType\n        permission\n      }\n    }\n  }\n  id\n}\n"
+    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  permissionEntries: permissionPresets(limit: 500) {\n    count\n    edges {\n      node {\n        id\n        entityType\n        permission\n      }\n    }\n  }\n  id\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1e0598da6ef44d6169f0c17c3db3bf45";
+(node as any).hash = "0ca02691d31767a8a27d472cceec0f3b";
 
 export default node;

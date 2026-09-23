@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb555a8ea72c3ff0dc88dfda051f4996>>
+ * @generated SignedSource<<ffd7e19007e7722652ef7ba7afc42b7c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -267,6 +267,31 @@ return {
                     "name": "permissionPresets",
                     "plural": false,
                     "selections": [
+                      (v5/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "deleted",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": "permissionEntries",
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "limit",
+                        "value": 500
+                      }
+                    ],
+                    "concreteType": "RolePermissionPresetConnection",
+                    "kind": "LinkedField",
+                    "name": "permissionPresets",
+                    "plural": false,
+                    "selections": [
                       (v5/*: any*/),
                       {
                         "alias": null,
@@ -306,14 +331,7 @@ return {
                         "storageKey": null
                       }
                     ],
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "deleted",
-                    "storageKey": null
+                    "storageKey": "permissionPresets(limit:500)"
                   }
                 ],
                 "storageKey": null
@@ -327,12 +345,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "64ff0932874583a1a79cbcb67b6768a9",
+    "cacheID": "b4c9ff7e4fe2dd6e752bbb672d04b4df",
     "id": null,
     "metadata": {},
     "name": "RolePresetListTabQuery",
     "operationKind": "query",
-    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n    edges {\n      node {\n        id\n        entityType\n        permission\n      }\n    }\n  }\n  id\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n"
+    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  permissionEntries: permissionPresets(limit: 500) {\n    count\n    edges {\n      node {\n        id\n        entityType\n        permission\n      }\n    }\n  }\n  id\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n"
   }
 };
 })();

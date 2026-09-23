@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<28634dc2fc3f5d97e67d4c84df4316bb>>
+ * @generated SignedSource<<18954ed196b1618b9f8fbab9e80ede04>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type RolePresetDetailDrawerFragment$data = {
   readonly deleted: boolean;
   readonly id: string;
   readonly name: string;
-  readonly permissionPresets: {
+  readonly permissionEntries: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -107,8 +107,14 @@ return {
       "storageKey": null
     },
     {
-      "alias": null,
-      "args": null,
+      "alias": "permissionEntries",
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 500
+        }
+      ],
       "concreteType": "RolePermissionPresetConnection",
       "kind": "LinkedField",
       "name": "permissionPresets",
@@ -159,7 +165,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "permissionPresets(limit:500)"
     },
     (v0/*: any*/)
   ],
@@ -168,6 +174,6 @@ return {
 };
 })();
 
-(node as any).hash = "1e0598da6ef44d6169f0c17c3db3bf45";
+(node as any).hash = "0ca02691d31767a8a27d472cceec0f3b";
 
 export default node;
