@@ -163,8 +163,6 @@ export interface BAIModalProps {
     /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
     zIndex?: number;
     centered?: boolean;
-    destroyOnClose?: boolean;
-    destroyOnHidden?: boolean;
     draggable?: boolean;
     stickyTitle?: boolean;
     forceRender?: boolean;

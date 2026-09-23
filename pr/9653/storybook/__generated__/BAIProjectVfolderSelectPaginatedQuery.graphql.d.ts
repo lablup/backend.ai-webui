@@ -55,6 +55,7 @@ export type DateTimeFilter = {
 };
 export type EntityLabelNestedFilter = {
     every?: EntityLabelFilter | null | undefined;
+    exists?: boolean | null | undefined;
     none?: EntityLabelFilter | null | undefined;
     some?: EntityLabelFilter | null | undefined;
 };
