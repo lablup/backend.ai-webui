@@ -293,9 +293,10 @@ test.describe(
       // Verify the README card title is visible (with file icon)
       await expect(drawer.getByText('README.md')).toBeVisible();
 
-      // Verify the README heading is rendered as markdown (H1)
+      // Verify the README heading is rendered as markdown (H1). Scoped to
+      // level 1 — the drawer's own title is also a heading with this name.
       await expect(
-        drawer.getByRole('heading', { name: 'Mock LLM Model' }),
+        drawer.getByRole('heading', { name: 'Mock LLM Model', level: 1 }),
       ).toBeVisible();
 
       // Verify the README paragraph text is visible
