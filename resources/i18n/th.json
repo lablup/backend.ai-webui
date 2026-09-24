@@ -227,6 +227,7 @@
     "DiskPerc": "ดิสก์ %",
     "ElapsedTime": "เวลาที่ผ่านไป",
     "Endpoint": "จุดสิ้นสุด",
+    "LostAt": "สูญหายเมื่อ",
     "Maintaining": "กำลังบำรุงรักษา",
     "NoAgentToDisplay": "ไม่มีตัวแทนที่จะแสดง",
     "NoAvailableLiveStat": "ไม่มีสถิติแบบเรียลไทม์",
@@ -243,8 +244,10 @@
     "StartsAt": "เริ่มเมื่อ",
     "Status": "สถานะ",
     "StatusChanged": "เปลี่ยนแปลงแล้ว",
+    "StatusChangedAt": "สถานะเปลี่ยนเมื่อ",
     "Terminated": "ยุติแล้ว",
     "Utilization": "การใช้งาน",
+    "Version": "เวอร์ชัน",
     "WatcherActionFailed": "ไม่สามารถควบคุมตัวแทนได้",
     "WatcherActionWarning": "เซสชันที่กำลังทำงานบนตัวแทนนี้อาจได้รับผลกระทบ",
     "WatcherRestart": "รีสตาร์ทตัวแทน",
@@ -257,6 +260,7 @@
   "agentStats": {
     "AgentStats": "สถิติตัวแทน",
     "AgentStatsDescription": "แผงนี้แสดงทรัพยากรที่ใช้ทั้งหมดจากตัวแทนทั้งหมดในระบบ \nค่านี้แสดงถึงทรัพยากรที่ใช้ทั้งหมดตามเซสชันที่ใช้งานอยู่ทั้งหมด",
+    "SchedulableAgents": "เอเจนต์ที่จัดตารางได้",
     "UsedResources": "ทรัพยากรที่ใช้แล้ว"
   },
   "aiAgent": {

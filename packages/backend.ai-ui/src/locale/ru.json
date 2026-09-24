@@ -6,6 +6,7 @@
     "DiskPerc": "Диск %",
     "Endpoint": "Конечная точка",
     "FailedToLoadCellData": "Не удалось загрузить данные.",
+    "LostAt": "Потерян",
     "NoAvailableLiveStat": "Живая статистика недоступна",
     "Region": "Регион",
     "ResourceGroup": "Группа ресурсов",
@@ -13,7 +14,8 @@
     "Schedulable": "Доступно для планирования",
     "Starts": "Запуски",
     "Status": "Статус",
-    "Utilization": "Использование"
+    "Utilization": "Использование",
+    "Version": "Версия"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Разрешено",
