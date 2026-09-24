@@ -34,6 +34,7 @@ import {
   BAINameActionCell,
   BAISelect,
   type BAISelectProps,
+  BAIUnmountAfterClose,
   BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
@@ -496,17 +497,21 @@ const RBACManagementPage: React.FC = () => {
       {/* One drawer per manager shape: the single-scope role (>= 26.9.0a4)
           gets the V2 drawer, everything older the previous one (ADR 0006). */}
       {baiClient?.supports('rbac-single-scope-role') ? (
-        <RoleDetailDrawerV2
-          open={!!selectedRole}
-          roleFrgmt={selectedRole}
-          onClose={() => setRoleDetailParam({ roleDetail: null })}
-        />
+        <BAIUnmountAfterClose>
+          <RoleDetailDrawerV2
+            open={!!selectedRole}
+            roleFrgmt={selectedRole}
+            onClose={() => setRoleDetailParam({ roleDetail: null })}
+          />
+        </BAIUnmountAfterClose>
       ) : (
-        <RoleDetailDrawer
-          open={!!selectedRole}
-          roleFrgmt={selectedRole}
-          onClose={() => setRoleDetailParam({ roleDetail: null })}
-        />
+        <BAIUnmountAfterClose>
+          <RoleDetailDrawer
+            open={!!selectedRole}
+            roleFrgmt={selectedRole}
+            onClose={() => setRoleDetailParam({ roleDetail: null })}
+          />
+        </BAIUnmountAfterClose>
       )}
       <BAIDeleteConfirmModal
         open={!!purgingRole}

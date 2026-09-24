@@ -9,6 +9,7 @@ import RoleFormModal from './RoleFormModal';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIDrawer,
+  type BAIDrawerProps,
   BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
@@ -19,9 +20,10 @@ import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
-interface RoleDetailDrawerV2Props {
-  open?: boolean;
-  onClose?: () => void;
+interface RoleDetailDrawerV2Props extends Omit<
+  BAIDrawerProps,
+  'title' | 'extra' | 'label' | 'size' | 'side' | 'children'
+> {
   /**
    * The role node selected in the list; `null`/`undefined` while the drawer is
    * closed. The list query already holds the data, so opening issues no fetch;
@@ -39,6 +41,7 @@ const RoleDetailDrawerV2: React.FC<RoleDetailDrawerV2Props> = ({
   roleFrgmt,
   open = false,
   onClose,
+  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -72,6 +75,7 @@ const RoleDetailDrawerV2: React.FC<RoleDetailDrawerV2Props> = ({
 
   return (
     <BAIDrawer
+      {...drawerProps}
       open={open}
       onClose={onClose}
       side="end"
