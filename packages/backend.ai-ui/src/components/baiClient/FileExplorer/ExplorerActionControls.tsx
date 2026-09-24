@@ -52,10 +52,6 @@ interface ExplorerActionControlsProps {
   // folder); file creation and upload entry points are hidden entirely
   // instead of rendered disabled.
   mode?: 'explorer' | 'directoryPicker';
-  // Fired with the new folder's name right after a successful mkdir, in
-  // addition to onRequestClose(true). The directory picker uses this to jump
-  // straight into the created folder.
-  onFolderCreated?: (folderName: string) => void;
   // onClickRefresh?: (key: string) => void;
   extra?: React.ReactNode;
 }
@@ -71,7 +67,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   enableWrite = false,
   enableUpload = enableWrite,
   mode = 'explorer',
-  onFolderCreated,
   extra,
 }) => {
   const { t } = useBAIi18n();
@@ -332,12 +327,9 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
       />
       <CreateDirectoryModal
         open={openCreateModal}
-        onRequestClose={(success: boolean, createdFolderName?: string) => {
+        onRequestClose={(success: boolean) => {
           if (success) {
             onRequestClose(true);
-            if (createdFolderName) {
-              onFolderCreated?.(createdFolderName);
-            }
           }
           toggleCreateModal();
         }}
