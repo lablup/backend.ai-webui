@@ -9,6 +9,7 @@ import RoleFormModal from './RoleFormModal';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import {
   BAIDrawer,
+  type BAIDrawerProps,
   BAISkeleton,
   BAIFetchKeyButton,
   BAIFlex,
@@ -20,17 +21,10 @@ import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
-// PILOT-DECISION: props no longer extend antd `DrawerProps` (the type import
-// was itself an antd import, P15). The only consumer — RBACManagementPage —
-// passes `open`, `roleFrgmt`, `onClose`, so the explicit interface below is
-// the whole live surface. Same treatment as ticket 18's
-// `DeploymentRevisionDetailDrawer`; the antd spellings stay on the public
-// surface and map to the lab Drawer internally (`open` -> `isOpen`).
-interface RoleDetailDrawerProps {
-  /** Whether the drawer is open. antd Drawer's `open`. */
-  open?: boolean;
-  /** Close request handler (Escape, scrim click, close button). */
-  onClose?: () => void;
+interface RoleDetailDrawerProps extends Omit<
+  BAIDrawerProps,
+  'title' | 'extra' | 'label' | 'size' | 'side' | 'children'
+> {
   /**
    * The role node selected in the list; `null`/`undefined` while the drawer is
    * closed. The drawer issues no fetch of its own on open — the list query
@@ -44,6 +38,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   roleFrgmt,
   open = false,
   onClose,
+  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -51,30 +46,8 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // QA-FINDINGS Q-27: hold the last non-null fragment ref so the drawer still
-  // has data to paint while it animates OUT.
-  //
-  // RBACManagementPage drives `open` and `roleFrgmt` from the same URL param,
-  // so closing nulls the ref in the SAME commit that flips `open` to false.
-  // `BAIDrawer` keeps the drawer mounted and fully laid out for the
-  // exit transition, so for that whole window the user is looking at a live
-  // drawer whose title has fallen back to `rbac.RoleDetailInfo` and whose body
-  // is empty — measured at 182ms, with the slide-out not starting until
-  // ~630ms. The usual escape hatches do not apply: `BAIUnmountAfterClose` is a
-  // no-op here (`BAIDrawer` exposes no `afterClose`/`afterOpenChange` to
-  // hang it on), and keying the drawer on the role id would remount it on every
-  // selection change and throw away the animation entirely.
-  //
-  // The store is state, not a `useRef`: a ref written and read during render
-  // is exactly what `react-hooks/refs` forbids, so this is React's documented
-  // "adjust state while rendering" form instead. It cannot loop — within one
-  // parent commit `roleFrgmt` is a fixed prop, so the immediate re-render
-  // React schedules sees the guard as false.
-  //
-  // A live `roleFrgmt` always wins, and it is captured on the SAME render it
-  // arrives, so opening a different role paints that role on its first frame;
-  // the stored fragment ref is consulted only after the parent has already
-  // cleared its selection, i.e. during the exit.
+  // The page nulls `roleFrgmt` in the same commit that closes the drawer, so
+  // the last live ref keeps the body painted through the exit animation.
   const [lastRoleFrgmt, setLastRoleFrgmt] =
     useState<RoleDetailDrawerFragment$key | null>(roleFrgmt ?? null);
   if (roleFrgmt && roleFrgmt !== lastRoleFrgmt) {
@@ -100,6 +73,7 @@ const RoleDetailDrawer: React.FC<RoleDetailDrawerProps> = ({
 
   return (
     <BAIDrawer
+      {...drawerProps}
       open={open}
       onClose={onClose}
       side="end"
