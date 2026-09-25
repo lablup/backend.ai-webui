@@ -10,7 +10,7 @@ import {
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import StoragePermissionEditModal from './StoragePermissionEditModal';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAINameActionCell,
   BAITable,

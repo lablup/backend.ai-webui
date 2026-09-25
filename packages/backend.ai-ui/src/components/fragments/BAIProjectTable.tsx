@@ -9,7 +9,7 @@ import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';

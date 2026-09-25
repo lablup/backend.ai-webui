@@ -7,10 +7,10 @@ import { themePresets, type ThemeStyle } from './themeConfig';
 import {
   Theme as AstryxThemeProvider,
   useTheme,
-} from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';

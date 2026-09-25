@@ -55,12 +55,12 @@ import {
   isColumnVisible,
   renderColumnTitle,
 } from './tableTypes';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Icon } from '@astryxdesign/core/Icon';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Pagination } from '@astryxdesign/core/Pagination';
-import type { PaginationProps } from '@astryxdesign/core/Pagination';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Icon } from '@lablup/ui-common/Icon';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Pagination } from '@lablup/ui-common/Pagination';
+import type { PaginationProps } from '@lablup/ui-common/Pagination';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
 import {
   Table,
   pixel,
@@ -70,16 +70,16 @@ import {
   useTableSelection,
   useTableSortable,
   useTableStickyColumns,
-} from '@astryxdesign/core/Table';
+} from '@lablup/ui-common/Table';
 import type {
   TableColumn,
   TableDensity,
   TablePlugin,
   TableProps,
   TableSortState,
-} from '@astryxdesign/core/Table';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/Table';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import {

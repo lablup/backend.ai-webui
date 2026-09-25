@@ -6,7 +6,7 @@ import type { AstryxTokenColor } from '../helper/astryxTagVariant';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex, { type BAIFlexProps } from './BAIFlex';
 import BAIText from './BAIText';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import * as _ from 'lodash-es';
 import React from 'react';
 

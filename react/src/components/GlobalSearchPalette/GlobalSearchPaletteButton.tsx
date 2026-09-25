@@ -4,10 +4,10 @@
  */
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useHotkeys } from '@astryxdesign/core/hooks';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useHotkeys } from '@lablup/ui-common/hooks';
 import { Search } from 'lucide-react';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

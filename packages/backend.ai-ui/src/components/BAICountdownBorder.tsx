@@ -1,5 +1,5 @@
 import './BAICountdownBorder.css';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import React, { useEffect, useRef, useState } from 'react';
 
 export interface BAICountdownBorderProps {

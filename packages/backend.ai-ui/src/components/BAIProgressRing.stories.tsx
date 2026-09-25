@@ -1,7 +1,7 @@
 import BAIFlex from './BAIFlex';
 import BAIProgressRing from './BAIProgressRing';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Text } from '@lablup/ui-common/Text';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof BAIProgressRing> = {

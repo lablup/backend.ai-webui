@@ -15,15 +15,15 @@ import {
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import {
-  buildDynamicColumnAliases,
   CanonicalUserColumn,
+  RawUserRow,
+  TEMPLATE_CSV,
+  buildDynamicColumnAliases,
   extractRawUserRows,
   findMissingRequiredColumns,
   mapUserCSVColumns,
   mergeColumnAliases,
   parseBoolean,
-  RawUserRow,
-  TEMPLATE_CSV,
 } from '../helper/bulkUserCSV';
 import { downloadBlob, parseCSV } from '../helper/csv-util';
 import { useCurrentDomainValue } from '../hooks';
@@ -31,8 +31,8 @@ import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
@@ -43,16 +43,15 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { FileInput } from '@astryxdesign/core/FileInput';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { FileInput } from '@lablup/ui-common/FileInput';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAIButton,
   BAIDomainSelect,
@@ -61,24 +60,25 @@ import {
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
+  BAISkeleton,
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  tokenColorForTagColor,
   useBAILogger,
   useBAISignedRequestWithPromise,
-  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  CircleAlert,
   CircleCheck,
   CircleX,
-  Trash,
   Download,
-  CircleAlert,
   FileText,
   Plus,
   RotateCw,
+  Trash,
 } from 'lucide-react';
 import React, {
   Suspense,

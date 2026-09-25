@@ -22,8 +22,8 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIFetchKeyButton,
@@ -32,11 +32,11 @@ import {
   BAINameActionCell,
   BAISelectionLabel,
   BAITable,
-  type BAITableProps,
+  BAIText,
   BAIUnmountAfterClose,
   toLocalId,
   useFetchKey,
-  BAIText,
+  type BAITableProps,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleX, SquarePenIcon } from 'lucide-react';

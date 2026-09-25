@@ -16,13 +16,14 @@ import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRev
 import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Button } from '@astryxdesign/core/Button';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Link } from '@astryxdesign/core/Link';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Link } from '@lablup/ui-common/Link';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
+  ArtifactRevision,
   BAIArtifactRevisionDeleteButton,
   BAIArtifactRevisionDownloadButton,
   BAIArtifactRevisionTable,
@@ -38,12 +39,11 @@ import {
   BAIMetadataList,
   BAIPullingArtifactRevisionAlert,
   BAIText,
+  INITIAL_FETCH_KEY,
   convertToDecimalUnit,
   filterOutNullAndUndefined,
-  INITIAL_FETCH_KEY,
-  useUpdatableState,
-  ArtifactRevision,
   toLocalId,
+  useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';

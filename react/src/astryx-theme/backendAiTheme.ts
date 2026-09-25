@@ -51,8 +51,8 @@ import type {
   BAIThemeConfig,
   BAIThemeSeedValue,
 } from '../helper/customThemeConfig';
-import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { defineTheme, type DefinedTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 import {
   ANTD_ALIGN_TOKENS,
   BAI_SELF_COLOR_TOKENS,

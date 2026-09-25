@@ -2,8 +2,8 @@ import type { AstryxTokenColor } from '../helper/astryxTagVariant';
 import './BAIDoubleToken.css';
 import BAIText from './BAIText';
 import BAITextHighlighter from './BAITextHighlighter';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Token } from '@astryxdesign/core/Token';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Token } from '@lablup/ui-common/Token';
 import * as _ from 'lodash-es';
 import React from 'react';
 

@@ -18,12 +18,12 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIDialog from './BAIDialog';
 import type { BAIDialogProps } from './BAIDialog';
-import type { AlertDialogProps } from '@astryxdesign/core/AlertDialog';
-import { Button } from '@astryxdesign/core/Button';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import type { AlertDialogProps } from '@lablup/ui-common/AlertDialog';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import React, { useId } from 'react';
 
 export interface BAIAlertDialogProps

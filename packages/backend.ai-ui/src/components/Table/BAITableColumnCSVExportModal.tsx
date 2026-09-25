@@ -31,15 +31,15 @@
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
-import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as _ from 'lodash-es';
 import React, { useMemo, useState } from 'react';
 

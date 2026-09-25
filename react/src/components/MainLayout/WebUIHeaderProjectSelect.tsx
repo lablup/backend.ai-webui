@@ -24,8 +24,8 @@ import { useThemeMode } from '../../hooks/useThemeMode';
 import { useUrlProjectValidity } from '../../hooks/useUrlProjectValidity';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import ProjectSelect from '../ProjectSelect';
-import { Text } from '@astryxdesign/core/Text';
-import { MediaTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { MediaTheme } from '@lablup/ui-common/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
   useSessionStorageState,

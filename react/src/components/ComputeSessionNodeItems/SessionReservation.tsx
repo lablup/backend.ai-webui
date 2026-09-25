@@ -4,8 +4,8 @@
  */
 import { SessionReservationFragment$key } from '../../__generated__/SessionReservationFragment.graphql';
 import { formatDurationAsDays } from '../../helper';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAIDoubleBadge, BAIIntervalView } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React from 'react';

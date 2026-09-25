@@ -11,9 +11,9 @@ import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-import { useTheme } from '@astryxdesign/core/theme';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import type { DropdownMenuOption } from '@lablup/ui-common/DropdownMenu';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISkeleton,
   filterOutEmpty,

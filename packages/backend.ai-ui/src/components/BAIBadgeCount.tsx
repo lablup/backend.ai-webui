@@ -36,8 +36,8 @@
  visible decision at each of the 8 sites instead of an invisible default.
 */
 import './BAIBadgeCount.css';
-import { Badge } from '@astryxdesign/core/Badge';
-import type { BadgeProps } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
+import type { BadgeProps } from '@lablup/ui-common/Badge';
 import React from 'react';
 
 export interface BAIBadgeCountProps extends Omit<BadgeProps, 'label' | 'icon'> {

@@ -44,7 +44,7 @@
  See the file for the measurement and the reasoning.
 */
 import './BAIAlert.css';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import classNames from 'classnames';
 import React from 'react';
 import type { ReactNode } from 'react';

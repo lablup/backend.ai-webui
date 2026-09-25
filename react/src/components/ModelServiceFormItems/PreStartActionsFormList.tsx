@@ -4,7 +4,7 @@
  */
 import { Form } from '../../form-engine';
 import { AstryxFormTextInput } from '../astryxFormControls';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus, PlusIcon } from 'lucide-react';
 import React from 'react';

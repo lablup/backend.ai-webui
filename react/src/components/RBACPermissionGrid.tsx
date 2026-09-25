@@ -6,12 +6,12 @@ import { RBACPermissionGridMatrixQuery } from '../__generated__/RBACPermissionGr
 import { App } from '../app-shim';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import './RBACPermissionGrid.css';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAICheckbox,

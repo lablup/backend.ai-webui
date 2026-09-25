@@ -7,7 +7,7 @@ import BAIAlert from './BAIAlert';
 import BAIFlex from './BAIFlex';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import { BAITable, type BAIColumnsType } from './Table';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { TriangleAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
 

@@ -23,7 +23,7 @@
 */
 import './BAILink.css';
 import BAIText from './BAIText';
-import { Link as AstryxLink } from '@astryxdesign/core/Link';
+import { Link as AstryxLink } from '@lablup/ui-common/Link';
 import React from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 

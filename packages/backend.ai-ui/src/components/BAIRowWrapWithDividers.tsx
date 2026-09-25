@@ -1,5 +1,5 @@
 // BAIRowWrapWithDividers.tsx
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 export interface BAIRowWrapWithDividersProps {

@@ -8,7 +8,7 @@
  per-session plates and cells read as false detail while loading.
 */
 import BAIFlex from './BAIFlex';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
 import classNames from 'classnames';
 import React from 'react';
 

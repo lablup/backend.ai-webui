@@ -18,12 +18,12 @@
    fails on drift. */
 @layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
 
-@import '@astryxdesign/core/reset.css';
-@import '@astryxdesign/core/astryx.css';
+@import '@lablup/ui-common/reset.css';
+@import '@lablup/ui-common/astryx.css';
 /* Astryx Lab (canary, exact pin): layered styles for lab components (Drawer,
    Tour, Stat, …). */
-@import '@astryxdesign/lab/lab.css';
-@import '@astryxdesign/theme-neutral/theme.css';
+@import '@lablup/ui-common/lab/lab.css';
+@import '@lablup/ui-common/theme/neutral/theme.css';
 
 /* FR-3580: Astryx recolours a Banner's whole subtree to its status hue —
    `.astryx-banner.info` rebinds `--color-accent` to the info blue, which is

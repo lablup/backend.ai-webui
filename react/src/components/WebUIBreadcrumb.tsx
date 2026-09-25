@@ -4,8 +4,8 @@
  */
 import AstryxRouterLink from './AstryxRouterLink';
 import { breadcrumbExtraAtom } from './breadcrumbExtraAtom';
-import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
-import { useTheme } from '@astryxdesign/core/theme';
+import { BreadcrumbItem, Breadcrumbs } from '@lablup/ui-common/Breadcrumbs';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';

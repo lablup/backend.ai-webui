@@ -1,5 +1,5 @@
 import type { BAILocale } from '.';
-import en from '@astryxdesign/core/locales/en.json';
+import en from '@lablup/ui-common/locales/en.json';
 
 // Upstream ships {defaultMessage, description} entries; the override channel
 // takes flat strings. Imported from core, not copied — no second source.

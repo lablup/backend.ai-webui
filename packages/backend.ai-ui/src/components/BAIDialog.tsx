@@ -12,12 +12,14 @@
 */
 import './BAIDialog.css';
 import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
+// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
 import { Dialog } from '@astryxdesign/core/Dialog';
+// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
 import type { DialogPosition, DialogProps } from '@astryxdesign/core/Dialog';
-import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
-import { dataAttr } from '@astryxdesign/core/naming';
-import { useThemeName } from '@astryxdesign/core/theme';
-import { devWarn, isFocusDetached, mergeRefs } from '@astryxdesign/core/utils';
+import { useFocusTrap, useScrollLock } from '@lablup/ui-common/hooks';
+import { dataAttr } from '@lablup/ui-common/naming';
+import { useThemeName } from '@lablup/ui-common/theme';
+import { devWarn, isFocusDetached, mergeRefs } from '@lablup/ui-common/utils';
 import classNames from 'classnames';
 import React, {
   useEffect,

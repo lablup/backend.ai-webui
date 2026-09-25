@@ -11,9 +11,10 @@
 */
 import { BAI_Z_INDEX } from '../styles/zIndexLadder';
 import BAIDialog from './BAIDialog';
+// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
 import { DialogHeader } from '@astryxdesign/core/Dialog';
-import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
-import { Theme, defineTheme } from '@astryxdesign/core/theme';
+import { Layout, LayoutContent } from '@lablup/ui-common/Layout';
+import { Theme, defineTheme } from '@lablup/ui-common/theme';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';

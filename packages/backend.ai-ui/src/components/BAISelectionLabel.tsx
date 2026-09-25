@@ -23,9 +23,9 @@
  and Astryx exposes no `color` slot (P5).
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { CircleXIcon } from 'lucide-react';
 import React from 'react';
 

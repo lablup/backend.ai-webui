@@ -11,22 +11,22 @@ import {
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  filterOutNullAndUndefined,
   BAICephIcon,
   BAIColumnsType,
+  BAIDoubleToken,
   BAIFlex,
   BAILink,
+  BAIProgressWithLabel,
   BAIPureStorageIcon,
   BAITable,
-  BAIProgressWithLabel,
-  BAIDoubleToken,
-  tokenColorForStatus,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
+  tokenColorForStatus,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

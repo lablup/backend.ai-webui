@@ -12,8 +12,8 @@
  class so the stack keeps a stable hook.
 */
 import BAIFlex from './BAIFlex';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import React, { type ReactNode } from 'react';
 
 export interface BAINotificationItemStyles {

@@ -8,8 +8,8 @@
  (final-switch material) and stay.
 */
 import BAIFlex from './BAIFlex';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as _ from 'lodash-es';
 import React from 'react';
 

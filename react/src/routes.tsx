@@ -45,7 +45,7 @@ import Page404 from './pages/Page404';
 import UnknownRoutePage from './pages/UnknownRoutePage';
 import VFolderNodeListPage from './pages/VFolderNodeListPage';
 import { toProjectContext } from './types/projectContext';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';

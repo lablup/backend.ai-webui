@@ -6,7 +6,7 @@ import { RecentlyCreatedSessionFragment$key } from '../__generated__/RecentlyCre
 import { ProjectContextOrNull } from '../types/projectContext';
 import SessionDetailDrawer from './SessionDetailDrawer';
 import SessionNodes from './SessionNodes';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   filterOutNullAndUndefined,
   toLocalId,

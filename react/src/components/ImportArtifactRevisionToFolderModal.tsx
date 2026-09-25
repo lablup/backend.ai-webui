@@ -9,9 +9,9 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIFlex,
@@ -31,7 +31,7 @@ import * as _ from 'lodash-es';
 import { PlusIcon } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 export interface ImportArtifactRevisionToFolderModalProps extends Omit<
   BAIModalProps,

@@ -52,11 +52,11 @@
  `content` is Omitted because this component OWNS the content.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { Button } from '@astryxdesign/core/Button';
-import { Popover } from '@astryxdesign/core/Popover';
-import type { PopoverProps } from '@astryxdesign/core/Popover';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Popover } from '@lablup/ui-common/Popover';
+import type { PopoverProps } from '@lablup/ui-common/Popover';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import React, { useEffect, useRef, useState } from 'react';
 
 export interface BAIPopconfirmProps extends Omit<

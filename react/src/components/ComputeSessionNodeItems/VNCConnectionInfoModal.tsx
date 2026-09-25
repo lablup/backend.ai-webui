@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Banner } from '@astryxdesign/core/Banner';
-import { Link } from '@astryxdesign/core/Link';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Link } from '@lablup/ui-common/Link';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAIFlex,
   BAIMetadataList,

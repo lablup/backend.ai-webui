@@ -49,7 +49,7 @@
  */
 import './FormItemVisual.css';
 import getFeedbackIcon from './feedbackIcons';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { CircleHelp } from 'lucide-react';
 import * as React from 'react';
 

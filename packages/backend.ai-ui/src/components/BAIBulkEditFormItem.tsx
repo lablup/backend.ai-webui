@@ -21,8 +21,8 @@ import type { RuleObject, RuleRender } from '../form-engine';
 import { useControllableValue } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
-import { Link } from '@astryxdesign/core/Link';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Link } from '@lablup/ui-common/Link';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import * as _ from 'lodash-es';
 import React, {
   cloneElement,

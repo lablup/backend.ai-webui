@@ -24,13 +24,13 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Divider } from '@astryxdesign/core/Divider';
+import { Divider } from '@lablup/ui-common/Divider';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
-} from '@astryxdesign/core/DropdownMenu';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/DropdownMenu';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDoubleToken,
   BAITextHighlighter,

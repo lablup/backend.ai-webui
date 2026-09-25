@@ -30,8 +30,8 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
 import './BAIStatistic.css';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as _ from 'lodash-es';
 import React, { type ReactNode } from 'react';
 

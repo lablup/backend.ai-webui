@@ -4,11 +4,11 @@
  */
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { convertToDecimalUnit } from '../helper/index';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { ProgressBar } from '@astryxdesign/core/ProgressBar';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { ProgressBar } from '@lablup/ui-common/ProgressBar';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import { BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';

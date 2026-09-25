@@ -104,12 +104,12 @@
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAISelect.css';
-import { MultiSelector } from '@astryxdesign/core/MultiSelector';
+import { MultiSelector } from '@lablup/ui-common/MultiSelector';
 import {
   Selector,
   type SelectorOptionData,
   type SelectorOptionType,
-} from '@astryxdesign/core/Selector';
+} from '@lablup/ui-common/Selector';
 import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import React from 'react';

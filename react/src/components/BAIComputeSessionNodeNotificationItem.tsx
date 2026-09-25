@@ -13,7 +13,7 @@ import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
 import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAILink,

@@ -16,12 +16,12 @@
  `href` renders a `<button>`, which also keeps the affordance keyboard-reachable.
 */
 import BAIFlex from './BAIFlex';
-import { Badge } from '@astryxdesign/core/Badge';
-import { HoverCard } from '@astryxdesign/core/HoverCard';
-import { Link } from '@astryxdesign/core/Link';
-import { Popover } from '@astryxdesign/core/Popover';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Badge } from '@lablup/ui-common/Badge';
+import { HoverCard } from '@lablup/ui-common/HoverCard';
+import { Link } from '@lablup/ui-common/Link';
+import { Popover } from '@lablup/ui-common/Popover';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
 
