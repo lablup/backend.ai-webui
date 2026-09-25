@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Ungültige Seitenzahl",
     "NoDataToDisplay": "Keine Daten zum Anzeigen",
     "Pagination": "Seitennummerierung",
+    "RowNumber": "Zeile {{number}}",
     "SearchTableColumn": "Suchtabellenspalten",
     "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
     "SettingTable": "Tabelleneinstellungen"

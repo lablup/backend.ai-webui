@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
     "NoDataToDisplay": "Δεν υπάρχουν δεδομένα για εμφάνιση",
     "Pagination": "Σελιδοποίηση",
+    "RowNumber": "γραμμή {{number}}",
     "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
     "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
     "SettingTable": "Ρυθμίσεις πίνακα"

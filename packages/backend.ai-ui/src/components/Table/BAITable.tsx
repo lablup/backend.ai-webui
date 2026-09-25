@@ -183,7 +183,11 @@ export interface BAITableRowSelection<RecordType> {
   getCheckboxProps?: (record: RecordType) => { disabled?: boolean };
   /** Keys of rows that are not on the current page survive a select-all. */
   preserveSelectedRowKeys?: boolean;
-  /** Accessible per-row checkbox label, e.g. `record => record.name`. */
+  /**
+   * The row's display name for its checkbox label ("Select <name>"), e.g.
+   * `record => record.name`. Without it (or when it returns an empty string)
+   * the checkbox is named by position on the page ("Select row 3").
+   */
   getRowLabel?: (record: RecordType) => string;
 }
 
@@ -440,21 +444,23 @@ const flattenColumns = <RecordType extends AnyRecord>(
 const renderTitle = renderColumnTitle;
 
 /**
- * The label a column carries in the settings / export modals: its own title,
- * prefixed by its group's when it has one, so a nested column reads
- * `Resources / CPU` rather than a bare `CPU` that collides with its siblings
- * under other groups. Falls back to the column key when the header is textless.
+ * A column's own title, prefixed by its group's when it has one, so a nested
+ * column reads `Resources / CPU` rather than a bare `CPU` that collides with
+ * its siblings under other groups. Empty when the header is textless.
  */
-const columnPlainLabel = <RecordType extends AnyRecord>({
-  key,
+const columnTextLabel = <RecordType extends AnyRecord>({
   column,
   groupTitle,
 }: FlatColumn<RecordType>): string => {
   const own = columnTitleToPlainText(renderTitle(column)).trim();
   const group = columnTitleToPlainText(groupTitle).trim();
-  const label = group && own ? `${group} / ${own}` : own || group;
-  return label || key;
+  return group && own ? `${group} / ${own}` : own || group;
 };
+
+/** The settings / export modal label: the text label, else the column key. */
+const columnPlainLabel = <RecordType extends AnyRecord>(
+  flatColumn: FlatColumn<RecordType>,
+): string => columnTextLabel(flatColumn) || flatColumn.key;
 
 /* -------------------------------------------------------------------------- */
 /* Component                                                                   */
@@ -1094,11 +1100,20 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       isDetailRow(item)
         ? false
         : !rowSelection?.getCheckboxProps?.(item as RecordType)?.disabled,
-    getRowLabel: (item) =>
-      isDetailRow(item)
-        ? ''
-        : (rowSelection?.getRowLabel?.(item as RecordType) ??
-          getRowKey(item as RecordType)),
+    // Never the row key: it is often an opaque global id, which makes every
+    // checkbox name long and meaningless to assistive tech and agents.
+    getRowLabel: (item) => {
+      if (isDetailRow(item)) return '';
+      const record = item as RecordType;
+      return (
+        rowSelection?.getRowLabel?.(record) ||
+        String(
+          t('comp:BAITable.RowNumber', {
+            number: (rowIndexByKey.get(getRowKey(record)) ?? 0) + 1,
+          }),
+        )
+      );
+    },
     getIsAllSelected: () =>
       rows.length > 0 &&
       _.every(rows, (record) => selectedKeySet.has(getRowKey(record))),
@@ -1165,6 +1180,25 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
     },
   };
 
+  /* ---- header accessible names ------------------------------------------ */
+
+  // Named from content, a header would also absorb the sort button's label and
+  // the resize separator's `aria-valuenow` ("Sort by name 60").
+  const headerLabelByKey = new Map(
+    _.map(flatColumns, (flatColumn) => [
+      flatColumn.key,
+      columnTextLabel(flatColumn),
+    ]),
+  );
+  const headerLabelPlugin: TablePlugin<AnyRow> = {
+    transformHeaderCell: (props, column) => {
+      const label = headerLabelByKey.get(column.key);
+      return label
+        ? { ...props, htmlProps: { ...props.htmlProps, 'aria-label': label } }
+        : props;
+    },
+  };
+
   /* ---- plugin record ----------------------------------------------------- */
 
   /**
@@ -1196,6 +1230,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       next.selectionWidth = selectionWidthPlugin;
     }
     if (resizable) next.resize = resizePlugin;
+    next.headerLabel = headerLabelPlugin;
     next.sticky = stickyPlugin;
     // Before `cellRow`, so a consumer's `onCell` style still has the last word.
     if (isScrollX) next.scrollX = scrollXPlugin;

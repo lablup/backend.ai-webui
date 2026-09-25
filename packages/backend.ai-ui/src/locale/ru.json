@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Неверный номер страницы",
     "NoDataToDisplay": "Нет данных для отображения",
     "Pagination": "Разбиение на страницы",
+    "RowNumber": "строку {{number}}",
     "SearchTableColumn": "Поиск таблицы столбцов",
     "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
     "SettingTable": "Настройки таблицы"

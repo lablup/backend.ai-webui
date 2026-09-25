@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Số trang không hợp lệ",
     "NoDataToDisplay": "Không có dữ liệu để hiển thị",
     "Pagination": "Phân trang",
+    "RowNumber": "hàng {{number}}",
     "SearchTableColumn": "Các cột bảng tìm kiếm",
     "SelectColumnToDisplay": "Chọn các cột để hiển thị",
     "SettingTable": "Cài đặt bảng"

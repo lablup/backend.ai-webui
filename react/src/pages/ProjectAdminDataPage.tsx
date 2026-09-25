@@ -11,7 +11,7 @@ import type {
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import BAITabs from '../components/BAITabs';
+import BAITabs, { baiTabPanelProps } from '../components/BAITabs';
 import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
 import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
@@ -54,6 +54,7 @@ import React, {
   Suspense,
   useDeferredValue,
   useEffect,
+  useId,
   useRef,
   useState,
 } from 'react';
@@ -124,6 +125,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
   >([]);
+  const tabPanelId = useId();
 
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
@@ -259,6 +261,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
   return (
     <>
       <BAITabs
+        panelId={tabPanelId}
         activeKey={queryParams.statusCategory}
         onChange={(key: string) => {
           const storedQuery = queryMapRef.current[key] || {
@@ -305,7 +308,11 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           };
         })}
       />
-      <VStack align="stretch" gap={3}>
+      <VStack
+        align="stretch"
+        gap={3}
+        {...baiTabPanelProps(tabPanelId, queryParams.statusCategory)}
+      >
         <HStack justify="between" wrap="wrap" gap={3}>
           <HStack gap={3} align="start" style={{ flexShrink: 1 }} wrap="wrap">
             <BAIRadioGroup

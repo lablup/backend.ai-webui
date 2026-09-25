@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Geçersiz sayfa numarası",
     "NoDataToDisplay": "Görüntülenecek veri yok",
     "Pagination": "Sayfalama",
+    "RowNumber": "{{number}}. satır",
     "SearchTableColumn": "Arama Tablosu sütunları",
     "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
     "SettingTable": "Masa Ayarları"

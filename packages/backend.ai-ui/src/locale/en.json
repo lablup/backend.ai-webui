@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Invalid page number",
     "NoDataToDisplay": "No data to display",
     "Pagination": "Pagination",
+    "RowNumber": "row {{number}}",
     "SearchTableColumn": "Search table columns",
     "SelectColumnToDisplay": "Select columns to display",
     "SettingTable": "Table Settings"

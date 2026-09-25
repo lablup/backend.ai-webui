@@ -599,6 +599,7 @@
     "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
     "NoDataToDisplay": "표시할 데이터가 없습니다",
     "Pagination": "페이지 나누기",
+    "RowNumber": "{{number}}번째 행",
     "SearchTableColumn": "표시할 열 검색",
     "SelectColumnToDisplay": "표시할 열 선택",
     "SettingTable": "표 설정"

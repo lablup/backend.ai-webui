@@ -11,7 +11,7 @@ import { App } from '../app-shim';
 import ActionItemContent from '../components/ActionItemContent';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import BAITabs from '../components/BAITabs';
+import BAITabs, { baiTabPanelProps } from '../components/BAITabs';
 import TerminateSessionModal from '../components/ComputeSessionNodeItems/TerminateSessionModal';
 import ConfigurableResourceCard from '../components/ConfigurableResourceCard';
 import SessionNodes, {
@@ -58,7 +58,14 @@ import {
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
-import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';
+import {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -109,6 +116,7 @@ const ComputeSessionListPage = () => {
     Array<SessionNode>
   >([]);
   const [isOpenTerminateModal, setOpenTerminateModal] = useState(false);
+  const tabPanelId = useId();
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.ComputeSessionListPage',
@@ -413,6 +421,7 @@ const ComputeSessionListPage = () => {
         }}
       >
         <BAITabs
+          panelId={tabPanelId}
           activeKey={queryParams.type}
           onChange={(key) => {
             const storedQuery = queryMapRef.current[key] || {
@@ -453,7 +462,12 @@ const ComputeSessionListPage = () => {
             }),
           )}
         />
-        <BAIFlex direction="column" align="stretch" gap={'sm'}>
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap={'sm'}
+          {...baiTabPanelProps(tabPanelId, queryParams.type)}
+        >
           <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
             <BAIFlex
               gap={'sm'}

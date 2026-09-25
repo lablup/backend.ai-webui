@@ -599,6 +599,7 @@
     "InvalidPageNumber": "無效的頁碼",
     "NoDataToDisplay": "暫無資料",
     "Pagination": "分頁",
+    "RowNumber": "第 {{number}} 列",
     "SearchTableColumn": "搜索表列",
     "SelectColumnToDisplay": "選擇要顯示的列",
     "SettingTable": "表設置"
