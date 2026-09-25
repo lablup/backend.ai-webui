@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e394c9f6f68c88769b205a99afe43a97>>
+ * @generated SignedSource<<8c111ffd2d6d2bf7ab9a9f37ddef6226>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -132,7 +132,7 @@ return {
               {
                 "kind": "Literal",
                 "name": "limit",
-                "value": 1000
+                "value": 100
               },
               {
                 "kind": "Literal",
@@ -237,16 +237,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7489105a86a5060de9ab3821a9f96d8f",
+    "cacheID": "1335c737e46f0b0e67c214f39054bc17",
     "id": null,
     "metadata": {},
     "name": "TotalResourceWithinResourceGroupFragmentRefetchQuery",
     "operationKind": "query",
-    "text": "query TotalResourceWithinResourceGroupFragmentRefetchQuery(\n  $agentNodeFilter: String!\n  $isSuperAdmin: Boolean!\n  $resourceGroup: String\n) {\n  ...TotalResourceWithinResourceGroupFragment_2otDCj\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 1000, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) @since(version: \"24.12.0\") {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n"
+    "text": "query TotalResourceWithinResourceGroupFragmentRefetchQuery(\n  $agentNodeFilter: String!\n  $isSuperAdmin: Boolean!\n  $resourceGroup: String\n) {\n  ...TotalResourceWithinResourceGroupFragment_2otDCj\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 100, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) @since(version: \"24.12.0\") {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "fc6ddb3f40e58a89fe4433db28848cdf";
+(node as any).hash = "3df403affc38baa3c5ffaa00ce40db2e";
 
 export default node;

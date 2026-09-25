@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9ee57f8ba51e51cc65d124fc56bd6cab>>
+ * @generated SignedSource<<075a1233ac12ecf7ccedc4a5ad044371>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type DeploymentAutoScalingCardPresetsQuery$variables = Record<PropertyKey, never>;
+export type DeploymentAutoScalingCardPresetsQuery$variables = {
+  limit: number;
+};
 export type DeploymentAutoScalingCardPresetsQuery$data = {
   readonly prometheusQueryPresets: {
     readonly edges: ReadonlyArray<{
@@ -28,8 +30,21 @@ export type DeploymentAutoScalingCardPresetsQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  }
+],
+v1 = [
+  {
     "alias": null,
-    "args": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      }
+    ],
     "concreteType": "QueryDefinitionConnection",
     "kind": "LinkedField",
     "name": "prometheusQueryPresets",
@@ -77,32 +92,32 @@ var v0 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "DeploymentAutoScalingCardPresetsQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "DeploymentAutoScalingCardPresetsQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "cc679b7f385bc973b5b68d9964531688",
+    "cacheID": "749645209b19211c05878fbe8edd8039",
     "id": null,
     "metadata": {},
     "name": "DeploymentAutoScalingCardPresetsQuery",
     "operationKind": "query",
-    "text": "query DeploymentAutoScalingCardPresetsQuery {\n  prometheusQueryPresets {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query DeploymentAutoScalingCardPresetsQuery(\n  $limit: Int!\n) {\n  prometheusQueryPresets(limit: $limit) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6d5f2bbfca84b48a6aa4d1e118d88fdb";
+(node as any).hash = "5ec4cad8e439381e93851982bd3e0ad8";
 
 export default node;

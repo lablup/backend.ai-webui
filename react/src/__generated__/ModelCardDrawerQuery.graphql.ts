@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<62761d7e56511e27f133c082b295c691>>
+ * @generated SignedSource<<4c46c0ca4ef18def24e7f99aa2327c51>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -258,6 +258,11 @@ return {
           {
             "alias": null,
             "args": [
+              {
+                "kind": "Literal",
+                "name": "limit",
+                "value": 100
+              },
               {
                 "kind": "Literal",
                 "name": "orderBy",
@@ -621,7 +626,7 @@ return {
                 "storageKey": null
               }
             ],
-            "storageKey": "availablePresets(orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
+            "storageKey": "availablePresets(limit:100,orderBy:[{\"direction\":\"ASC\",\"field\":\"RANK\"}])"
           }
         ],
         "storageKey": null
@@ -629,12 +634,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "33e16587997de9e1ad58fda766f8fb71",
+    "cacheID": "dd93119183c43c643812f82af1f8b6d8",
     "id": null,
     "metadata": {},
     "name": "ModelCardDrawerQuery",
     "operationKind": "query",
-    "text": "query ModelCardDrawerQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}]) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
+    "text": "query ModelCardDrawerQuery(\n  $id: UUID!\n) {\n  modelCardV2(id: $id) {\n    ...ModelCardDrawerFragment\n    id\n  }\n}\n\nfragment DeploymentPresetDetailModalFragment on DeploymentRevisionPreset {\n  id\n  name\n  description\n  runtimeVariantId\n  runtimeVariant {\n    id\n    name\n  }\n  cluster {\n    clusterMode\n    clusterSize\n  }\n  execution {\n    imageId\n    startupCommand\n    bootstrapScript\n    environ {\n      key\n      value\n    }\n  }\n  image @since(version: \"26.4.4\") {\n    id\n    identity {\n      canonicalName\n    }\n  }\n  resource {\n    resourceOpts {\n      name\n      value\n    }\n  }\n  resourceSlots {\n    slotName\n    quantity\n  }\n  deploymentDefaults {\n    openToPublic\n    replicaCount\n    revisionHistoryLimit\n    deploymentStrategy\n  }\n  presetValues @since(version: \"26.4.4rc9\") {\n    presetId\n    value\n  }\n  modelDefinition {\n    models {\n      name\n      service {\n        healthCheck {\n          enable @since(version: \"26.4.4rc7\")\n          interval\n          path\n          maxRetries\n          maxWaitTime\n          expectedStatusCode\n          initialDelay\n        }\n      }\n    }\n  }\n}\n\nfragment ModelCardDeployModalFragment on ModelCardV2 {\n  id\n  availablePresets(orderBy: [{field: RANK, direction: \"ASC\"}], limit: 100) {\n    edges {\n      node {\n        id\n        name\n        runtimeVariantId\n        ...DeploymentPresetDetailModalFragment\n      }\n    }\n  }\n}\n\nfragment ModelCardDrawerFragment on ModelCardV2 {\n  id\n  name\n  metadata {\n    title\n    author\n    description\n    task\n    category\n    architecture\n    framework\n    label\n    license\n    modelVersion\n  }\n  minResource {\n    resourceType\n    quantity\n  }\n  readme\n  createdAt\n  updatedAt\n  vfolder {\n    id\n    metadata {\n      name\n    }\n    ...VFolderNodeIdenticonV2Fragment\n  }\n  ...ModelCardDeployModalFragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n"
   }
 };
 })();

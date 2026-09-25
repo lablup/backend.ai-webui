@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cbfb4ee571ef910f26592f0312bb1296>>
+ * @generated SignedSource<<cbc683cccdd215ef6bfc609330583d48>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -241,7 +241,13 @@ return {
                   },
                   {
                     "alias": null,
-                    "args": null,
+                    "args": [
+                      {
+                        "kind": "Literal",
+                        "name": "first",
+                        "value": 100
+                      }
+                    ],
                     "concreteType": "GroupConnection",
                     "kind": "LinkedField",
                     "name": "project_nodes",
@@ -285,7 +291,7 @@ return {
                         "storageKey": null
                       }
                     ],
-                    "storageKey": null
+                    "storageKey": "project_nodes(first:100)"
                   }
                 ],
                 "storageKey": null
@@ -299,12 +305,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0aadaeb53b3f54722cc880edb5d80b93",
+    "cacheID": "1f906814ad12e4e8868191bb8d6d4549",
     "id": null,
     "metadata": {},
     "name": "BAIUserNodesStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIUserNodesStoriesQuery {\n  user_nodes {\n    edges {\n      node {\n        ...BAIUserNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIUserNodesFragment on UserNode {\n  id\n  email\n  full_name\n  role\n  description\n  username\n  created_at\n  modified_at\n  status\n  domain_name\n  resource_policy\n  allowed_client_ip\n  container_gids\n  container_main_gid\n  container_uid\n  status_info\n  sudo_session_enabled\n  need_password_change\n  totp_activated\n  project_nodes {\n    count\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query BAIUserNodesStoriesQuery {\n  user_nodes {\n    edges {\n      node {\n        ...BAIUserNodesFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIUserNodesFragment on UserNode {\n  id\n  email\n  full_name\n  role\n  description\n  username\n  created_at\n  modified_at\n  status\n  domain_name\n  resource_policy\n  allowed_client_ip\n  container_gids\n  container_main_gid\n  container_uid\n  status_info\n  sudo_session_enabled\n  need_password_change\n  totp_activated\n  project_nodes(first: 100) {\n    count\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();

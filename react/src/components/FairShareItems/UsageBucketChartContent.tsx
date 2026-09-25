@@ -187,6 +187,10 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
       })),
     } satisfies UserV2Filter,
     limit: dateRange[1].diff(dateRange[0], 'day'),
+    // One row per selected id; without a bound the V2 connections return 10.
+    domainLimit: Math.max(selectedDomainNames.length, 1),
+    projectLimit: Math.max(selectedProjectIds.length, 1),
+    userLimit: Math.max(selectedUserUuids.length, 1),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
@@ -205,6 +209,9 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
           $selectedResourceGroupName: String!
           $selectedProjectId: UUID!
           $limit: Int
+          $domainLimit: Int!
+          $projectLimit: Int!
+          $userLimit: Int!
         ) {
           resourceGroups: adminResourceGroups(
             filter: { name: { equals: $selectedResourceGroupName } }
@@ -223,7 +230,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
               }
             }
           }
-          domains: adminDomainsV2(filter: $domainFilter)
+          domains: adminDomainsV2(filter: $domainFilter, limit: $domainLimit)
             @skip(if: $skipDomain) {
             count
             edges {
@@ -254,8 +261,10 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
               }
             }
           }
-          projects: adminProjectsV2(filter: $projectFilter)
-            @skip(if: $skipProject) {
+          projects: adminProjectsV2(
+            filter: $projectFilter
+            limit: $projectLimit
+          ) @skip(if: $skipProject) {
             count
             edges {
               node {
@@ -289,7 +298,8 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
               }
             }
           }
-          users: adminUsersV2(filter: $userFilter) @skip(if: $skipUser) {
+          users: adminUsersV2(filter: $userFilter, limit: $userLimit)
+            @skip(if: $skipUser) {
             count
             edges {
               node {

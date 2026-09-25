@@ -53,7 +53,10 @@ import {
 // differs to avoid clashing with the imported generated type.
 export const VFolderDeployQuery = graphql`
   query VFolderDeployModalQuery {
-    deploymentRevisionPresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+    deploymentRevisionPresets(
+      orderBy: [{ field: RANK, direction: "ASC" }]
+      limit: 100
+    ) {
       edges {
         node {
           id

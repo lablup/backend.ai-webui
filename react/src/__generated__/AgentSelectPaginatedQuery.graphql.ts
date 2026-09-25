@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5f77dec6357ae5058fe89c93b5255c64>>
+ * @generated SignedSource<<d720418a21111e42fa4c61da760cb4b9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,14 +9,14 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type AgentSelectQuery$variables = {
+export type AgentSelectPaginatedQuery$variables = {
   filter?: string | null | undefined;
   limit: number;
   offset: number;
   scaling_group?: string | null | undefined;
   status?: string | null | undefined;
 };
-export type AgentSelectQuery$data = {
+export type AgentSelectPaginatedQuery$data = {
   readonly agent_summary_list: {
     readonly items: ReadonlyArray<{
       readonly architecture: string | null | undefined;
@@ -29,9 +29,9 @@ export type AgentSelectQuery$data = {
     readonly total_count: number;
   } | null | undefined;
 };
-export type AgentSelectQuery = {
-  response: AgentSelectQuery$data;
-  variables: AgentSelectQuery$variables;
+export type AgentSelectPaginatedQuery = {
+  response: AgentSelectPaginatedQuery$data;
+  variables: AgentSelectPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -170,7 +170,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "AgentSelectQuery",
+    "name": "AgentSelectPaginatedQuery",
     "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -185,20 +185,20 @@ return {
       (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "AgentSelectQuery",
+    "name": "AgentSelectPaginatedQuery",
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "57b0881c2a4e4ba1bdeceb88d9ec41bd",
+    "cacheID": "cc5ba14510d7795e96d248ab3d866222",
     "id": null,
     "metadata": {},
-    "name": "AgentSelectQuery",
+    "name": "AgentSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query AgentSelectQuery(\n  $limit: Int!\n  $offset: Int!\n  $status: String\n  $filter: String\n  $scaling_group: String\n) {\n  agent_summary_list(limit: $limit, offset: $offset, status: $status, filter: $filter, scaling_group: $scaling_group) {\n    items {\n      id\n      status\n      schedulable\n      available_slots\n      occupied_slots\n      architecture\n    }\n    total_count\n  }\n}\n"
+    "text": "query AgentSelectPaginatedQuery(\n  $limit: Int!\n  $offset: Int!\n  $status: String\n  $filter: String\n  $scaling_group: String\n) {\n  agent_summary_list(limit: $limit, offset: $offset, status: $status, filter: $filter, scaling_group: $scaling_group) {\n    items {\n      id\n      status\n      schedulable\n      available_slots\n      occupied_slots\n      architecture\n    }\n    total_count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a3558359a8ee951a4caa89c783133e85";
+(node as any).hash = "224c4328d7131a1087094f055cd19779";
 
 export default node;

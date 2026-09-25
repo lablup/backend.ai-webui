@@ -12,6 +12,7 @@ import { DeploymentAutoScalingCardPresetsQuery } from '../__generated__/Deployme
 import { DeploymentAutoScalingCard_deployment$key } from '../__generated__/DeploymentAutoScalingCard_deployment.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
+import { CATALOG_FETCH_LIMIT } from '../helper/const-vars';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -210,8 +211,8 @@ const DeploymentAutoScalingCardContent: React.FC<
   const { prometheusQueryPresets } =
     useLazyLoadQuery<DeploymentAutoScalingCardPresetsQuery>(
       graphql`
-        query DeploymentAutoScalingCardPresetsQuery {
-          prometheusQueryPresets {
+        query DeploymentAutoScalingCardPresetsQuery($limit: Int!) {
+          prometheusQueryPresets(limit: $limit) {
             edges {
               node {
                 id
@@ -221,7 +222,7 @@ const DeploymentAutoScalingCardContent: React.FC<
           }
         }
       `,
-      {},
+      { limit: CATALOG_FETCH_LIMIT },
     );
 
   const presetMap = (() => {
