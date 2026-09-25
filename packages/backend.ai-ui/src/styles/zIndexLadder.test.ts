@@ -6,8 +6,12 @@
  outside this package (`index.html`) is checked by
  `scripts/migration-gates/z-index-ladder-gate.mjs`.
 */
-import { MAX_DIALOG_LEVEL } from '../components/dialogLevelStack';
-import { BAI_Z_INDEX, BAI_Z_INDEX_MODAL_LEVEL_STEP } from './zIndexLadder';
+import {
+  BAI_MODAL_Z_INDEX_BAND,
+  BAI_Z_INDEX,
+  BAI_Z_INDEX_MODAL_LEVEL_STEP,
+} from './zIndexLadder';
+import { MAX_MODAL_LEVEL } from '@lablup/ui-common/Modal';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -56,8 +60,16 @@ describe('the z-index ladder', () => {
 
   it('keeps the whole modal band under the notification stack', () => {
     expect(
-      BAI_Z_INDEX.modalBase + MAX_DIALOG_LEVEL * BAI_Z_INDEX_MODAL_LEVEL_STEP,
+      BAI_Z_INDEX.modalBase + MAX_MODAL_LEVEL * BAI_Z_INDEX_MODAL_LEVEL_STEP,
     ).toBeLessThan(BAI_Z_INDEX.notification);
+  });
+
+  it('hands ui-common the modal band it declares', () => {
+    expect(BAI_MODAL_Z_INDEX_BAND).toStrictEqual({
+      base: BAI_Z_INDEX.modalBase,
+      step: BAI_Z_INDEX_MODAL_LEVEL_STEP,
+      max: BAI_Z_INDEX.notification - 1,
+    });
   });
 
   it('matches the custom properties in zIndexLadder.css', () => {

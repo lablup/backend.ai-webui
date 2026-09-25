@@ -13,13 +13,14 @@
  | `splash` | 900 | `index.html` `#splash`, which stays mounted as the logged-out backdrop. It sits BELOW `modalBase` deliberately: every dialog is a `document.body` portal now, so no login-screen wrapper can lift one over a splash that outranks the band |
  | `loginHost` | 950 | `InteractiveLoginPage`'s full-viewport card host |
  | (theme-shim) | 1000–1002 | a SECOND vocabulary this ladder does not own: `theme-shim`'s `zIndexPopupBase` (1000, operator-settable through `resources/antdThemeConfig.schema.json`), read by `FolderExplorerModal` (`+ 2`); lab `Drawer`'s non-modal base is 1000 too, and `DragAndDrop` sits at 1001 |
- | `modalBase` | 1100 | `BAIDialog` and `BAIDrawerPortal` (the scrimmed drawer), plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per level of the stack they share |
+ | `modalBase` | 1100 | ui-common `Modal` (so `BAIModal` and the app-shim's `modal.*`) and `BAIDrawerPortal` (the scrimmed drawer), plus `BAI_Z_INDEX_MODAL_LEVEL_STEP` per level of ui-common's modal stack they share. `BAI_MODAL_Z_INDEX_BAND` hands this band to that stack |
  | `loginSideHelp` | 1101 | `LoginFormPanel`'s side help panel — a fixed sibling anchored to the base modal's edge, so it clears that modal's mask but not a modal opened on top of it |
  | `notification` | 11000 | `.bai-notification-stack` |
  | (CSS top layer) | above all | Astryx `Toast`/`Popover`/`DropdownMenu`/`Tooltip`, `BAITour` — not stackable against this ladder. A NON-SCRIM lab `Drawer` is not here either: it opens with `show()`, so it stacks at the theme-shim 1000 band above |
  | context-local stacking | off the ladder at any magnitude | `BAIBoard.css`, `BAITable*`, `BAICompactGroup.css` — local to a subtree |
 */
 import './zIndexLadder.css';
+import { configureModalZIndex } from '@lablup/ui-common/Modal';
 
 /** Low → high; `zIndexLadder.test.ts` pins the declaration order increasing. */
 export const BAI_Z_INDEX = {
@@ -37,3 +38,12 @@ export const BAI_Z_INDEX = {
 
 /** Each nested portal — dialog or scrimmed drawer — claims one step above `modalBase`. */
 export const BAI_Z_INDEX_MODAL_LEVEL_STEP = 10;
+
+/** ui-common's modal stack, fitted to this ladder: it stops under `notification`. */
+export const BAI_MODAL_Z_INDEX_BAND = {
+  base: BAI_Z_INDEX.modalBase,
+  step: BAI_Z_INDEX_MODAL_LEVEL_STEP,
+  max: BAI_Z_INDEX.notification - 1,
+} as const;
+
+configureModalZIndex(BAI_MODAL_Z_INDEX_BAND);
