@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A row of read-only Astryx Tokens for a settled collection that lives inside a table cell — the projects a container registry is allowed for, an image\'s aliases, a record\'s labels. It renders the first `maxCount` items (three by default) and closes with a translated "and N more" count, so a record with a long tail cannot stretch the row or push later columns off screen. When the server returned only a page of the collection, pass `totalCount` and the indicator reports what exists rather than what was fetched. Layout props reach the underlying BAIFlex, so a caller can change the gap or stop the wrap.',
+      'A row of read-only Astryx Tokens for a settled collection that lives inside a table cell — the projects a container registry is allowed for, an image\'s aliases, a record\'s labels. It renders the first `maxCount` items (three by default) and closes with a translated "and N more" count, so a record with a long tail cannot stretch the row or push later columns off screen. When the server returned only a page of the collection, pass `totalCount` and the indicator reports what exists rather than what was fetched. It is ui-common `TokenRow` under its BUI name; other div attributes (className, style, data-*) reach the row.',
     bestPractices: [
       {
         guidance: true,
@@ -68,7 +68,7 @@ export const docs = {
     },
     {
       name: 'color',
-      type: 'AstryxTokenColor',
+      type: 'TokenColor',
       description:
         'Colour of every token in the row, passed to Astryx Token. Left unset, the default (neutral outline) colour applies.',
     },
@@ -80,10 +80,10 @@ export const docs = {
       default: "'-'",
     },
     {
-      name: 'direction | gap | wrap | justify | align',
-      type: 'BAIFlexProps',
+      name: 'moreLabel',
+      type: '(count: number) => string',
       description:
-        'Layout of the row, forwarded to BAIFlex. Defaults to a wrapping row with an `xxs` gap.',
+        'The count after the tokens, given how many were left out. Defaults to the translated "and N more" from ui-common\'s catalog.',
     },
   ],
   examples: [
