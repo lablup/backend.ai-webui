@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { maskString } from '../helper';
 import {
   isNavigableMenuKey,
   readMainHeading,
@@ -27,6 +28,18 @@ import {
 } from 'backend.ai-ui';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+
+/** The email as the header shows it: masked when `maskUserInfo` is on. */
+export const displayedEmail = (
+  email: string | null | undefined,
+  maskUserInfo: boolean | undefined,
+): string | null => {
+  if (!email) return null;
+  if (!maskUserInfo) return email;
+  const at = email.indexOf('@');
+  const localLength = at < 0 ? email.length : at;
+  return maskString(email, '*', 2, Math.max(localLength - 2, 0));
+};
 
 const NO_INPUT: WebMCPInputSchema = {
   type: 'object',
@@ -167,7 +180,7 @@ const WebMCPGlobalToolsRegistrar: React.FC = () => {
 
   useWebMCPTool(
     createWhoamiTool({
-      email: baiClient.email ?? null,
+      email: displayedEmail(baiClient.email, baiClient._config?.maskUserInfo),
       role: role ?? null,
       project: currentProject?.id
         ? { id: currentProject.id, name: currentProject.name ?? null }
