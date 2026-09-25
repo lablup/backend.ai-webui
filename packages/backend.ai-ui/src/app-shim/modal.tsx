@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  to-astryx ticket 04 — antd `modal.confirm/error/info/...` drop-in composed on
- `BAIDialog` (Astryx `Dialog`'s surface, portalled — FR-3578).
+ ui-common `Modal` (portalled, not promoted to the top layer — FR-3578).
 
  antd call-site contract preserved:
 
@@ -22,7 +22,7 @@
 
  Branching (answers/07 §4): `confirm` with plain-text title/content renders the
  WAI-ARIA alert-dialog shape, which is `BAIAlertDialog`. Everything else gets
- the `DialogHeader` + `Layout` shape on `BAIDialog`. Both keep antd's
+ the `ModalHeader` + `Layout` shape on `Modal`. Both keep antd's
  confirm-family dismissal: Escape yes, backdrop no.
 
  Promise/close semantics (all antd-matching):
@@ -33,12 +33,10 @@
  - `.update()` throws — 0 real usages repo-wide (answers/07 §1.1), kept loud.
 */
 import BAIAlertDialog from '../components/BAIAlertDialog';
-import BAIDialog from '../components/BAIDialog';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
-import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Button } from '@lablup/ui-common/Button';
 import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { Modal, ModalHeader } from '@lablup/ui-common/Modal';
 import { HStack } from '@lablup/ui-common/Stack';
 import React, { isValidElement, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
@@ -68,7 +66,7 @@ export interface ModalShimFuncProps {
   onOk?: () => unknown;
   onCancel?: () => unknown;
   width?: number | string;
-  /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
+  /** Forwarded to ui-common `Modal`'s `zIndex`, a request inside the modal band. */
   zIndex?: number;
   /**
    * PILOT-DECISION: the following antd props are accepted for call-site
@@ -281,7 +279,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
   }
 
   return (
-    <BAIDialog
+    <Modal
       isOpen
       onOpenChange={handleOpenChange}
       width={options.width}
@@ -290,7 +288,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
     >
       <Layout
         header={
-          <DialogHeader
+          <ModalHeader
             title={toText(options.title)}
             onOpenChange={handleOpenChange}
           />
@@ -323,14 +321,14 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
           </LayoutFooter>
         }
       />
-    </BAIDialog>
+    </Modal>
   );
 };
 
 /**
  * Renders every pending imperative modal task. Mounted exactly once by
  * `<BAIAppProvider>`. Concurrent tasks each get their own portal, and
- * `BAIDialog`'s level stack keeps them in call order.
+ * ui-common's modal stack keeps them in call order.
  */
 export const AppShimModalHost: React.FC = () => {
   'use memo';

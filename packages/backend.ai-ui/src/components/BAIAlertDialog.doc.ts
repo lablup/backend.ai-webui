@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The WAI-ARIA alert-dialog pattern for a consequential but single-click confirmation: a title, a one-sentence description of the consequence, a ghost cancel button and an action button that defaults to the destructive variant. It rebuilds Astryx `AlertDialog`\'s anatomy on top of BAIDialog, because Astryx\'s own off-top-layer path (`isInline`) downgrades the role to `group`; here the surface is portalled into the body, keeps `role="alertdialog"` with both its name and its description wired up, focuses cancel first, and lets Escape — but not a backdrop click — dismiss. The dialog does not close itself: `onAction` must call `onOpenChange(false)` when the work finishes. This is not the irreversible tier — permanent deletion goes through BAIDeleteConfirmModal with `requireConfirmInput`. Open state, `width`, `zIndex` and the rest of the surface props pass through to BAIDialog.',
+      'The WAI-ARIA alert-dialog pattern for a consequential but single-click confirmation: a title, a one-sentence description of the consequence, a ghost cancel button and an action button that defaults to the destructive variant. It rebuilds Astryx `AlertDialog`\'s anatomy on top of ui-common Modal, because Astryx\'s own off-top-layer path (`isInline`) downgrades the role to `group`; here the surface is portalled into the body, keeps `role="alertdialog"` with both its name and its description wired up, focuses cancel first, and lets Escape — but not a backdrop click — dismiss. The dialog does not close itself: `onAction` must call `onOpenChange(false)` when the work finishes. This is not the irreversible tier — permanent deletion goes through BAIDeleteConfirmModal with `requireConfirmInput`. Open state, `width`, `zIndex` and the rest of the surface props pass through to ui-common Modal.',
     bestPractices: [
       {
         guidance: true,
@@ -41,7 +41,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Pass rich content: `title` and `description` are plain strings, and a confirmation that needs markup belongs in a BAIDialog you compose yourself.',
+          'Pass rich content: `title` and `description` are plain strings, and a confirmation that needs markup belongs in a ui-common Modal you compose yourself.',
       },
     ],
   },
@@ -78,7 +78,7 @@ export const docs = {
       name: 'onOpenChange',
       type: '(isOpen: boolean) => unknown',
       description:
-        'Called with `false` when the user cancels or presses Escape. Inherited from BAIDialog and also invoked by the cancel button.',
+        'Called with `false` when the user cancels or presses Escape. Inherited from ui-common Modal and also invoked by the cancel button.',
       required: true,
     },
     {

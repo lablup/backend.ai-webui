@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  `BAIAlertDialog` — the WAI-ARIA alert-dialog pattern
- (https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) on `BAIDialog`'s
+ (https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) on ui-common `Modal`'s
  portalled surface, so it leaves the top layer like every other BUI modal
  (FR-3578). Astryx `AlertDialog`'s own off-top-layer path is `isInline`, which
  hard-codes `role="group"` and hides the ids behind `useId` — see the commit.
@@ -16,12 +16,11 @@
  button variants and id wiring against this file.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import BAIDialog from './BAIDialog';
-import type { BAIDialogProps } from './BAIDialog';
 import type { AlertDialogProps } from '@lablup/ui-common/AlertDialog';
 import { Button } from '@lablup/ui-common/Button';
 import { Heading } from '@lablup/ui-common/Heading';
 import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { Modal, type ModalProps } from '@lablup/ui-common/Modal';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import React, { useId } from 'react';
@@ -29,8 +28,28 @@ import React, { useId } from 'react';
 export interface BAIAlertDialogProps
   extends
     Omit<
-      BAIDialogProps,
-      'children' | 'purpose' | 'role' | 'aria-labelledby' | 'aria-describedby'
+      ModalProps,
+      | 'children'
+      | 'purpose'
+      | 'role'
+      | 'aria-labelledby'
+      | 'aria-describedby'
+      // Modal's generated header and footer: this component draws its own.
+      | 'title'
+      | 'subtitle'
+      | 'headerStartContent'
+      | 'headerEndContent'
+      | 'hasCloseButton'
+      | 'footer'
+      | 'onAction'
+      | 'actionLabel'
+      | 'actionVariant'
+      | 'isActionLoading'
+      | 'isActionDisabled'
+      | 'actionButtonProps'
+      | 'cancelLabel'
+      | 'hasCancelButton'
+      | 'isLoading'
     >,
     Pick<
       AlertDialogProps,
@@ -67,7 +86,7 @@ const BAIAlertDialog: React.FC<BAIAlertDialogProps> = ({
   const descriptionId = `${id}-description`;
 
   return (
-    <BAIDialog
+    <Modal
       {...rest}
       onOpenChange={onOpenChange}
       // The pattern's dismissal contract: Escape cancels, the backdrop does
@@ -97,7 +116,7 @@ const BAIAlertDialog: React.FC<BAIAlertDialogProps> = ({
                 isDisabled={isCancelDisabled}
                 onClick={() => onOpenChange(false)}
                 // The pattern preselects the least destructive choice;
-                // `BAIDialog` focuses `[data-autofocus]` once open.
+                // `Modal` focuses `[data-autofocus]` once open.
                 data-autofocus=""
               />
               <Button
@@ -111,7 +130,7 @@ const BAIAlertDialog: React.FC<BAIAlertDialogProps> = ({
           </LayoutFooter>
         }
       />
-    </BAIDialog>
+    </Modal>
   );
 };
 

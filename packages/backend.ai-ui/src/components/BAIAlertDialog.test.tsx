@@ -3,15 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  `BAIAlertDialog` — the contract the app-shim's plain-text `confirm` rides on:
- portalled like `BAIDialog`, `role="alertdialog"` carrying BOTH its name and
+ portalled like ui-common `Modal`, `role="alertdialog"` carrying BOTH its name and
  its description, Escape-only dismissal, and one shared level stack.
 
  NOTE: `setupTests` polyfills `showModal`/`close`, so an accidental native
  `<dialog>` would NOT fail on its own — the tag is asserted explicitly.
 */
 import BAIAlertDialog from './BAIAlertDialog';
-import BAIDialog from './BAIDialog';
 import { Layout, LayoutContent } from '@lablup/ui-common/Layout';
+import { Modal } from '@lablup/ui-common/Modal';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -35,20 +35,19 @@ const renderAlert = (
   return { ...result, onOpenChange, onAction };
 };
 
-const getMask = () =>
-  document.querySelector('.bai-dialog__mask') as HTMLElement;
+const getMask = () => document.querySelector('.uic-modal__mask') as HTMLElement;
 
 const levelOf = (root: Element | null | undefined) =>
-  Number((root as HTMLElement).style.getPropertyValue('--bai-dialog-level'));
+  Number((root as HTMLElement).style.getPropertyValue('--uic-modal-level'));
 
 describe('BAIAlertDialog', () => {
   it('portals to document.body without a native <dialog>', () => {
     renderAlert();
 
-    const root = document.body.querySelector('.bai-dialog');
+    const root = document.body.querySelector('.uic-modal');
     expect(root?.parentElement).toBe(document.body);
     expect(document.querySelector('dialog')).toBeNull();
-    expect(root?.hasAttribute('data-bai-modal-open')).toBe(true);
+    expect(root?.hasAttribute('data-uic-modal-open')).toBe(true);
   });
 
   // Astryx `AlertDialog`'s only off-top-layer path renders `role="group"`, so
@@ -119,12 +118,12 @@ describe('BAIAlertDialog', () => {
 
   // Both surfaces have to claim from the SAME registry, or a confirm raised
   // from inside a dialog neither paints above it nor inerts it.
-  it('stacks above an open BAIDialog and inerts it', () => {
+  it('stacks above an open Modal and inerts it', () => {
     render(
       <>
-        <BAIDialog isOpen onOpenChange={vi.fn()} aria-label="base">
+        <Modal isOpen onOpenChange={vi.fn()} aria-label="base">
           <Layout content={<LayoutContent>base body</LayoutContent>} />
-        </BAIDialog>
+        </Modal>
         <BAIAlertDialog
           isOpen
           onOpenChange={vi.fn()}
@@ -138,8 +137,8 @@ describe('BAIAlertDialog', () => {
 
     const baseRoot = screen
       .getByRole('dialog', { name: 'base' })
-      .closest('.bai-dialog');
-    const alertRoot = screen.getByRole('alertdialog').closest('.bai-dialog');
+      .closest('.uic-modal');
+    const alertRoot = screen.getByRole('alertdialog').closest('.uic-modal');
 
     expect(levelOf(baseRoot)).toBe(0);
     expect(levelOf(alertRoot)).toBe(1);
@@ -153,8 +152,8 @@ describe('BAIAlertDialog', () => {
     expect(
       screen
         .getByRole('alertdialog')
-        .closest<HTMLElement>('.bai-dialog')
-        ?.style.getPropertyValue('--bai-dialog-z'),
+        .closest<HTMLElement>('.uic-modal')
+        ?.style.getPropertyValue('--uic-modal-z'),
     ).toBe('10001');
   });
 });

@@ -9,13 +9,13 @@
 */
 
 @layer components {
-  /* One stack with `BAIDialog`: `dialogLevelStack.ts` resolves and writes
-     `--bai-dialog-z` on this root too, so a modal opened later paints over the
+  /* One stack with ui-common `Modal`: its `useModalLevel` resolves and writes
+     `--uic-modal-z` on this root too, so a modal opened later paints over the
      drawer. The band base is the fallback for a root that has not claimed. */
   .bai-drawer-portal {
     position: fixed;
     inset: 0;
-    z-index: var(--bai-dialog-z, var(--bai-z-modal-base));
+    z-index: var(--uic-modal-z, var(--bai-z-modal-base));
   }
 
   /* Closed but still rendered: lab keeps the panel sliding out for one

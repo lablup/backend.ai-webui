@@ -9,10 +9,9 @@
  NOTE: `setupTests` polyfills showModal/show/close, so a `showModal()` would NOT
  fail on its own — the two calls are spied on explicitly.
 */
-import BAIDialog from './BAIDialog';
 import BAIDrawer from './BAIDrawer';
 import BAIDrawerPortal from './BAIDrawerPortal';
-import { BAI_MODAL_OPEN_ATTRIBUTE } from './dialogLevelStack';
+import { MODAL_OPEN_ATTRIBUTE, Modal } from '@lablup/ui-common/Modal';
 import { Theme, defineTheme } from '@lablup/ui-common/theme';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -63,13 +62,13 @@ const Nested: React.FC<{
       <button type="button" onClick={() => setIsModalOpen(true)}>
         Deploy
       </button>
-      <BAIDialog
+      <Modal
         isOpen={isModalOpen}
         onOpenChange={onModalOpenChange}
         aria-label="deploy"
       >
         <button type="button">Confirm</button>
-      </BAIDialog>
+      </Modal>
     </BAIDrawerPortal>
   );
 };
@@ -92,7 +91,7 @@ describe('BAIDrawerPortal', () => {
 
     const root = getRoot();
     expect(root?.parentElement).toBe(document.body);
-    expect(root?.hasAttribute(BAI_MODAL_OPEN_ATTRIBUTE)).toBe(true);
+    expect(root?.hasAttribute(MODAL_OPEN_ATTRIBUTE)).toBe(true);
     // `show()` is the whole fix: no top layer, so nothing outside is inerted.
     expect(show).toHaveBeenCalledTimes(1);
     expect(showModal).not.toHaveBeenCalled();
@@ -122,7 +121,7 @@ describe('BAIDrawerPortal', () => {
     );
 
     expect(getRoot()).toBeNull();
-    expect(document.querySelector(`[${BAI_MODAL_OPEN_ATTRIBUTE}]`)).toBeNull();
+    expect(document.querySelector(`[${MODAL_OPEN_ATTRIBUTE}]`)).toBeNull();
     expect(document.querySelector('dialog')?.open).toBe(true);
   });
 
@@ -136,15 +135,15 @@ describe('BAIDrawerPortal', () => {
 
     const drawerRoot = getRoot() as HTMLElement;
     const modalRoot = document.querySelector<HTMLElement>(
-      '.bai-dialog',
+      '.uic-modal',
     ) as HTMLElement;
-    expect(drawerRoot.style.getPropertyValue('--bai-dialog-level')).toBe('0');
-    expect(modalRoot.style.getPropertyValue('--bai-dialog-level')).toBe('1');
+    expect(drawerRoot.style.getPropertyValue('--uic-modal-level')).toBe('0');
+    expect(modalRoot.style.getPropertyValue('--uic-modal-level')).toBe('1');
     // One stack, so the later claim also paints higher.
     expect(
-      Number(modalRoot.style.getPropertyValue('--bai-dialog-z')),
+      Number(modalRoot.style.getPropertyValue('--uic-modal-z')),
     ).toBeGreaterThan(
-      Number(drawerRoot.style.getPropertyValue('--bai-dialog-z')),
+      Number(drawerRoot.style.getPropertyValue('--uic-modal-z')),
     );
     expect(drawerRoot.hasAttribute('inert')).toBe(true);
     expect(modalRoot.hasAttribute('inert')).toBe(false);
@@ -197,13 +196,13 @@ describe('BAIDrawerPortal', () => {
           <button type="button" onClick={() => setIsModalOpen(true)}>
             Deploy
           </button>
-          <BAIDialog
+          <Modal
             isOpen={isModalOpen}
             onOpenChange={onModalOpenChange}
             aria-label="deploy"
           >
             <button type="button">Confirm</button>
-          </BAIDialog>
+          </Modal>
         </BAIDrawer>
       );
     };
@@ -266,7 +265,7 @@ describe('BAIDrawerPortal', () => {
   it('keeps children mounted but unmarked while closed', () => {
     renderDrawer({ isOpen: false });
 
-    expect(getRoot()?.hasAttribute(BAI_MODAL_OPEN_ATTRIBUTE)).toBe(false);
+    expect(getRoot()?.hasAttribute(MODAL_OPEN_ATTRIBUTE)).toBe(false);
     expect(getRoot()?.hasAttribute('data-bai-drawer-hidden')).toBe(true);
     expect(screen.getByText('Inside')).toBeInTheDocument();
   });

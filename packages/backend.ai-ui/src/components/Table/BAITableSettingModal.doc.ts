@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The column-settings dialog behind BAITable's settings button. It renders a BAIDialog holding a search field and one row per column: a drag handle, a CheckboxInput for visibility, and the column label. Required columns get a locked, always-checked box, and drag-to-reorder runs on dnd-kit inside a DndContext that is skipped while a search term is active, so a filtered subset can never be reordered against the full list. The working set is ordinary component state seeded once per mount, so nothing is committed until Apply: cancel and the close affordance call onRequestClose with undefined, Apply calls it with the new selectedColumnKeys and columnOrder. BAITable renders it internally when tableSettings is set — mount it directly only where the same picker is needed outside BAITable.",
+      "The column-settings dialog behind BAITable's settings button. It renders a ui-common Modal holding a search field and one row per column: a drag handle, a CheckboxInput for visibility, and the column label. Required columns get a locked, always-checked box, and drag-to-reorder runs on dnd-kit inside a DndContext that is skipped while a search term is active, so a filtered subset can never be reordered against the full list. The working set is ordinary component state seeded once per mount, so nothing is committed until Apply: cancel and the close affordance call onRequestClose with undefined, Apply calls it with the new selectedColumnKeys and columnOrder. BAITable renders it internally when tableSettings is set — mount it directly only where the same picker is needed outside BAITable.",
     bestPractices: [
       {
         guidance: true,

@@ -57,7 +57,7 @@ const UserSettingsModalOpener = () => {
     setRawCategory(null);
   };
 
-  // `BAIDialog` keeps its children mounted while closed, so the gate is here:
+  // A closed `BAIModal` keeps its children mounted, so the gate is here:
   // no Relay loaders and no chunk fetch until the modal is actually open.
   if (category === null) return null;
 

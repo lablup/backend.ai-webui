@@ -8,7 +8,7 @@
  inside an antd `Modal` wrapped in a `Form` whose only field was the search
  box — three container components for what is a searchable checkbox list. This
  rebuild drops all of that chrome and mirrors `BAITableSettingModal`:
- `Dialog` + `Layout` + a plain scrolling `VStack` of `CheckboxInput` rows.
+ ui-common `Modal` + `Layout` + a plain scrolling `VStack` of `CheckboxInput` rows.
 
  The EXPORT-KEY GROUPING logic is preserved verbatim, because it is the only
  non-obvious behaviour here: several columns can project the same backend
@@ -29,13 +29,14 @@
    same way the pilot modal did it.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
+import { theme } from '../../theme-shim';
 import type { BAIColumnsType } from './tableTypes';
 import { Banner } from '@lablup/ui-common/Banner';
 import { Button } from '@lablup/ui-common/Button';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { Modal, ModalHeader, type ModalProps } from '@lablup/ui-common/Modal';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { TextInput } from '@lablup/ui-common/TextInput';
@@ -44,7 +45,7 @@ import * as _ from 'lodash-es';
 import React, { useMemo, useState } from 'react';
 
 export interface BAITableColumnCSVExportModalProps<T = unknown> extends Pick<
-  BAIDialogProps,
+  ModalProps,
   'afterOpenChange'
 > {
   open: boolean;
@@ -182,7 +183,7 @@ const BAITableColumnCSVExportModal = <T,>({
   };
 
   return (
-    <BAIDialog
+    <Modal
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
@@ -193,7 +194,7 @@ const BAITableColumnCSVExportModal = <T,>({
     >
       <Layout
         header={
-          <DialogHeader
+          <ModalHeader
             title={String(t('comp:BAITable.ExportCSV'))}
             subtitle={String(t('comp:BAITable.SelectColumnToDisplay'))}
             onOpenChange={(next) => {
@@ -276,7 +277,7 @@ const BAITableColumnCSVExportModal = <T,>({
         }
         style={{ minWidth: 0 }}
       />
-    </BAIDialog>
+    </Modal>
   );
 };
 
