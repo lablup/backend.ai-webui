@@ -2,7 +2,7 @@ import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
 import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
-import { i18n } from '../src/locale';
+import { i18n, type BAILocale } from '../src/locale';
 import { ThemeShimProvider, theme } from '../src/theme-shim';
 import { themePresets, type ThemeStyle } from './themeConfig';
 import { Skeleton } from '@lablup/ui-common/Skeleton';
@@ -47,6 +47,17 @@ dayjs.extend(relativeTime);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
+
+// The published `backend.ai-ui/locale/*` modules, keyed by `lang`, so a story
+// gets the Astryx and ui-common strings the app gets for that language.
+const localeModules = Object.fromEntries(
+  Object.values(
+    import.meta.glob<BAILocale>('../src/locale/[a-z][a-z]_*.ts', {
+      eager: true,
+      import: 'default',
+    }),
+  ).map((module) => [module.lang, module]),
+);
 
 interface StorybookProviderProps {
   locale: string;
@@ -96,11 +107,10 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
         mode={isDarkMode ? 'dark' : 'light'}
         seeds={isDarkMode ? preset.dark : preset.light}
       >
-        {/* The real production wrapper, carrying only the locale — which
-            drives BUI's i18next, dayjs and Astryx's resolver from one `lang`,
-            keeping Astryx chrome strings and plurals on the story's locale
-            instead of the 'en' context default (P13). */}
-        <BAIConfigProvider locale={{ lang: locale }}>
+        {/* The real production wrapper with the app's locale module: BUI's
+            i18next, dayjs and Astryx's resolver (Astryx and ui-common
+            strings) all follow the story's locale. */}
+        <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
           {/* The `form.requiredMark` inversion — no asterisk on required
               fields, "(Optional)" appended to the rest — mirrors what
               `react/src/components/DefaultProviders.tsx` does in the app.
