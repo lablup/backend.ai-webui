@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e2b38b5e5345f84ac4c1367ca7216031>>
+ * @generated SignedSource<<c5e8477b21741bb962383f0292b9ca74>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,27 +10,25 @@
 
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type WebMCPSessionListToolsFragment$data = ReadonlyArray<{
-  readonly agent_ids: ReadonlyArray<string | null | undefined> | null | undefined;
-  readonly created_at: string | null | undefined;
-  readonly domain_name: string | null | undefined;
-  readonly name: string | null | undefined;
-  readonly owner: {
-    readonly email: string | null | undefined;
-  } | null | undefined;
-  readonly project_id: string | null | undefined;
-  readonly result: string | null | undefined;
+export type WebMCPAgentListToolsFragment$data = ReadonlyArray<{
+  readonly addr: string | null | undefined;
+  readonly architecture: string | null | undefined;
+  readonly available_slots: string | null | undefined;
+  readonly first_contact: string | null | undefined;
+  readonly id: string;
+  readonly lost_at: string | null | undefined;
+  readonly occupied_slots: string | null | undefined;
+  readonly region: string | null | undefined;
   readonly row_id: string | null | undefined;
   readonly scaling_group: string | null | undefined;
+  readonly schedulable: boolean | null | undefined;
   readonly status: string | null | undefined;
-  readonly status_info: string | null | undefined;
-  readonly terminated_at: string | null | undefined;
-  readonly type: string | null | undefined;
-  readonly " $fragmentType": "WebMCPSessionListToolsFragment";
+  readonly version: string | null | undefined;
+  readonly " $fragmentType": "WebMCPAgentListToolsFragment";
 }>;
-export type WebMCPSessionListToolsFragment$key = ReadonlyArray<{
-  readonly " $data"?: WebMCPSessionListToolsFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"WebMCPSessionListToolsFragment">;
+export type WebMCPAgentListToolsFragment$key = ReadonlyArray<{
+  readonly " $data"?: WebMCPAgentListToolsFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"WebMCPAgentListToolsFragment">;
 }>;
 
 const node: ReaderFragment = {
@@ -39,8 +37,15 @@ const node: ReaderFragment = {
   "metadata": {
     "plural": true
   },
-  "name": "WebMCPSessionListToolsFragment",
+  "name": "WebMCPAgentListToolsFragment",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     {
       "alias": null,
       "args": null,
@@ -52,35 +57,56 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "name",
+      "name": "addr",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "status",
+      "name": "region",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "status_info",
+      "name": "architecture",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "result",
+      "name": "version",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "type",
+      "name": "first_contact",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "lost_at",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "occupied_slots",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "available_slots",
       "storageKey": null
     },
     {
@@ -94,60 +120,21 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "created_at",
+      "name": "status",
       "storageKey": null
     },
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "terminated_at",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "domain_name",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "project_id",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "agent_ids",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "UserNode",
-      "kind": "LinkedField",
-      "name": "owner",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "email",
-          "storageKey": null
-        }
-      ],
+      "name": "schedulable",
       "storageKey": null
     }
   ],
-  "type": "ComputeSessionNode",
+  "type": "AgentNode",
   "abstractKey": null
 };
 
-(node as any).hash = "83da4d6b67f9ae8af9fd40902b17e925";
+(node as any).hash = "ad8bb13c5722c3d70a5d2a9b4bb36cc6";
 
 export default node;

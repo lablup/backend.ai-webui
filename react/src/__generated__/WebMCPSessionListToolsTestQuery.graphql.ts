@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a5220b9a74124005ff97f19589a2cad8>>
+ * @generated SignedSource<<145b6f6208d5e342ba44f7afe7120a21>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -34,18 +34,31 @@ var v0 = [
   }
 ],
 v1 = {
-  "enumValues": null,
-  "nullable": true,
-  "plural": false,
-  "type": "DateTime"
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
 },
 v2 = {
   "enumValues": null,
   "nullable": true,
   "plural": false,
-  "type": "String"
+  "type": "DateTime"
 },
 v3 = {
+  "enumValues": null,
+  "nullable": true,
+  "plural": false,
+  "type": "String"
+},
+v4 = {
+  "enumValues": null,
+  "nullable": false,
+  "plural": false,
+  "type": "ID"
+},
+v5 = {
   "enumValues": null,
   "nullable": true,
   "plural": false,
@@ -217,10 +230,23 @@ return {
                   {
                     "alias": null,
                     "args": null,
-                    "kind": "ScalarField",
-                    "name": "id",
+                    "concreteType": "UserNode",
+                    "kind": "LinkedField",
+                    "name": "owner",
+                    "plural": false,
+                    "selections": [
+                      {
+                        "alias": null,
+                        "args": null,
+                        "kind": "ScalarField",
+                        "name": "email",
+                        "storageKey": null
+                      },
+                      (v1/*: any*/)
+                    ],
                     "storageKey": null
-                  }
+                  },
+                  (v1/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -233,7 +259,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "55202356738b98c67f749cbfcaeb210d",
+    "cacheID": "cf93dfd407cbcd138833a53b72ec39cb",
     "id": null,
     "metadata": {
       "relayTestingSelectionTypeInfo": {
@@ -261,28 +287,31 @@ return {
           "plural": true,
           "type": "String"
         },
-        "compute_session_nodes.edges.node.created_at": (v1/*: any*/),
-        "compute_session_nodes.edges.node.domain_name": (v2/*: any*/),
-        "compute_session_nodes.edges.node.id": {
+        "compute_session_nodes.edges.node.created_at": (v2/*: any*/),
+        "compute_session_nodes.edges.node.domain_name": (v3/*: any*/),
+        "compute_session_nodes.edges.node.id": (v4/*: any*/),
+        "compute_session_nodes.edges.node.name": (v3/*: any*/),
+        "compute_session_nodes.edges.node.owner": {
           "enumValues": null,
-          "nullable": false,
+          "nullable": true,
           "plural": false,
-          "type": "ID"
+          "type": "UserNode"
         },
-        "compute_session_nodes.edges.node.name": (v2/*: any*/),
-        "compute_session_nodes.edges.node.project_id": (v3/*: any*/),
-        "compute_session_nodes.edges.node.result": (v2/*: any*/),
-        "compute_session_nodes.edges.node.row_id": (v3/*: any*/),
-        "compute_session_nodes.edges.node.scaling_group": (v2/*: any*/),
-        "compute_session_nodes.edges.node.status": (v2/*: any*/),
-        "compute_session_nodes.edges.node.status_info": (v2/*: any*/),
-        "compute_session_nodes.edges.node.terminated_at": (v1/*: any*/),
-        "compute_session_nodes.edges.node.type": (v2/*: any*/)
+        "compute_session_nodes.edges.node.owner.email": (v3/*: any*/),
+        "compute_session_nodes.edges.node.owner.id": (v4/*: any*/),
+        "compute_session_nodes.edges.node.project_id": (v5/*: any*/),
+        "compute_session_nodes.edges.node.result": (v3/*: any*/),
+        "compute_session_nodes.edges.node.row_id": (v5/*: any*/),
+        "compute_session_nodes.edges.node.scaling_group": (v3/*: any*/),
+        "compute_session_nodes.edges.node.status": (v3/*: any*/),
+        "compute_session_nodes.edges.node.status_info": (v3/*: any*/),
+        "compute_session_nodes.edges.node.terminated_at": (v2/*: any*/),
+        "compute_session_nodes.edges.node.type": (v3/*: any*/)
       }
     },
     "name": "WebMCPSessionListToolsTestQuery",
     "operationKind": "query",
-    "text": "query WebMCPSessionListToolsTestQuery {\n  compute_session_nodes(first: 10) {\n    edges {\n      node {\n        ...WebMCPSessionListToolsFragment\n        id\n      }\n    }\n  }\n}\n\nfragment WebMCPSessionListToolsFragment on ComputeSessionNode {\n  row_id\n  name\n  status\n  status_info\n  result\n  type\n  scaling_group\n  created_at\n  terminated_at\n  domain_name\n  project_id\n  agent_ids\n}\n"
+    "text": "query WebMCPSessionListToolsTestQuery {\n  compute_session_nodes(first: 10) {\n    edges {\n      node {\n        ...WebMCPSessionListToolsFragment\n        id\n      }\n    }\n  }\n}\n\nfragment WebMCPSessionListToolsFragment on ComputeSessionNode {\n  row_id\n  name\n  status\n  status_info\n  result\n  type\n  scaling_group\n  created_at\n  terminated_at\n  domain_name\n  project_id\n  agent_ids\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n}\n"
   }
 };
 })();

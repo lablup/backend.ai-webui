@@ -16,6 +16,7 @@ import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
 import SessionResourceGrid from '../components/SessionResourceGrid';
+import WebMCPSessionListTools from '../components/WebMCPSessionListTools';
 import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
@@ -221,6 +222,7 @@ const AdminComputeSessionListPage = () => {
               name @required(action: THROW)
               ...SessionNodesFragment
               ...TerminateSessionModalFragment
+              ...WebMCPSessionListToolsFragment
             }
           }
           count
@@ -276,6 +278,22 @@ const AdminComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
+  const sessionNodes = filterOutNullAndUndefined(
+    compute_session_nodes?.edges.map((e) => e?.node),
+  );
+  const defaultColumnOverrides = {
+    sessionId: { hidden: false },
+    environment: { hidden: false },
+    resourceGroup: { hidden: false },
+    type: { hidden: false },
+    cluster_mode: { hidden: false },
+    created_at: { hidden: false },
+    project_id: { hidden: false },
+    // Only the Finished category has a termination time to show.
+    ...(queryParams.statusCategory === 'finished'
+      ? { terminated_at: { hidden: false } }
+      : {}),
+  };
 
   return (
     <BAIFlex direction="column" align="stretch" gap={'sm'}>
@@ -574,126 +592,123 @@ const AdminComputeSessionListPage = () => {
             />
           </Suspense>
         ) : computeSessionNodeResult.ok ? (
-          <SessionNodes
-            order={queryParams.order}
-            onClickSessionName={(session) => {
-              const newSearchParams = new URLSearchParams(location.search);
-              newSearchParams.set('sessionDetail', session.row_id);
-              webUINavigate(
-                {
-                  pathname: location.pathname,
-                  hash: location.hash,
-                  search: newSearchParams.toString(),
-                },
-                {
-                  state: {
-                    sessionDetailDrawerFrgmt: session,
-                    createdAt: new Date().toISOString(),
+          <>
+            <WebMCPSessionListTools
+              sessionsFrgmt={sessionNodes}
+              columnOverrides={{
+                ...defaultColumnOverrides,
+                ...columnOverrides,
+              }}
+              page={tablePaginationOption.current}
+              pageSize={tablePaginationOption.pageSize}
+              total={compute_session_nodes?.count}
+              viewParams={_.omit(queryParams, 'view')}
+            />
+            <SessionNodes
+              order={queryParams.order}
+              onClickSessionName={(session) => {
+                const newSearchParams = new URLSearchParams(location.search);
+                newSearchParams.set('sessionDetail', session.row_id);
+                webUINavigate(
+                  {
+                    pathname: location.pathname,
+                    hash: location.hash,
+                    search: newSearchParams.toString(),
                   },
-                },
-              );
-            }}
-            loading={deferredQueryVariables !== queryVariables}
-            rowSelection={{
-              type: 'checkbox',
-              preserveSelectedRowKeys: true,
-              getCheckboxProps(record) {
-                return {
-                  disabled: isNotRunningCategory(record.status),
-                };
-              },
-              onChange: (selectedRowKeys) => {
-                handleRowSelectionChange(
-                  selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    compute_session_nodes?.edges.map((e) => e?.node),
-                  ),
-                  setSelectedSessionList,
-                );
-              },
-              selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
-            }}
-            sessionsFrgmt={filterOutNullAndUndefined(
-              compute_session_nodes?.edges.map((e) => e?.node),
-            )}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              current: tablePaginationOption.current,
-              total: compute_session_nodes?.count ?? 0,
-              onChange: (current, pageSize) => {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({ current, pageSize });
-                }
-              },
-            }}
-            onChangeOrder={(order) => {
-              setQueryParams({ order });
-            }}
-            tableSettings={{
-              columnOverrides: columnOverrides,
-              defaultColumnOverrides: {
-                sessionId: { hidden: false },
-                environment: { hidden: false },
-                resourceGroup: { hidden: false },
-                type: { hidden: false },
-                cluster_mode: { hidden: false },
-                created_at: { hidden: false },
-                project_id: { hidden: false },
-                // Only the Finished category has a termination time to show.
-                ...(queryParams.statusCategory === 'finished'
-                  ? { terminated_at: { hidden: false } }
-                  : {}),
-              },
-              onColumnOverridesChange: setColumnOverrides,
-            }}
-            exportSettings={
-              !_.isEmpty(supportedFields) &&
-              (userRole === 'superadmin' || userRole === 'admin')
-                ? {
-                    supportedFields,
-                    onExport: async (selectedExportKeys) => {
-                      const csvFilter: Record<string, unknown> = {};
-                      if (queryParams.statusCategory === 'finished') {
-                        csvFilter.status = ['TERMINATED', 'CANCELLED'];
-                      } else {
-                        csvFilter.status = [
-                          'PENDING',
-                          'SCHEDULED',
-                          'PREPARING',
-                          'PREPARED',
-                          'CREATING',
-                          'PULLING',
-                          'RESTARTING',
-                          'RUNNING',
-                          'TERMINATING',
-                          'ERROR',
-                        ];
-                      }
-                      if (queryParams.type && queryParams.type !== 'all') {
-                        csvFilter.session_type = [queryParams.type];
-                      }
-                      // Forward every table condition the export endpoint can
-                      // express; the rest is dropped, so the CSV stays a
-                      // superset of the table and never a subset (FR-3915).
-                      _.assign(
-                        csvFilter,
-                        buildSessionExportFilter(queryParams.filter, {
-                          supportsUserFilter: baiClient.supports(
-                            'session-export-user-filter',
-                          ),
-                        }),
-                      );
-                      await exportCSV(selectedExportKeys, csvFilter).catch(
-                        (err) => {
-                          message.error(t('general.ErrorOccurred'));
-                          logger.error(err);
-                        },
-                      );
+                  {
+                    state: {
+                      sessionDetailDrawerFrgmt: session,
+                      createdAt: new Date().toISOString(),
                     },
+                  },
+                );
+              }}
+              loading={deferredQueryVariables !== queryVariables}
+              rowSelection={{
+                type: 'checkbox',
+                preserveSelectedRowKeys: true,
+                getCheckboxProps(record) {
+                  return {
+                    disabled: isNotRunningCategory(record.status),
+                  };
+                },
+                onChange: (selectedRowKeys) => {
+                  handleRowSelectionChange(
+                    selectedRowKeys,
+                    sessionNodes,
+                    setSelectedSessionList,
+                  );
+                },
+                selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
+              }}
+              sessionsFrgmt={sessionNodes}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                current: tablePaginationOption.current,
+                total: compute_session_nodes?.count ?? 0,
+                onChange: (current, pageSize) => {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({ current, pageSize });
                   }
-                : undefined
-            }
-          />
+                },
+              }}
+              onChangeOrder={(order) => {
+                setQueryParams({ order });
+              }}
+              tableSettings={{
+                columnOverrides: columnOverrides,
+                defaultColumnOverrides,
+                onColumnOverridesChange: setColumnOverrides,
+              }}
+              exportSettings={
+                !_.isEmpty(supportedFields) &&
+                (userRole === 'superadmin' || userRole === 'admin')
+                  ? {
+                      supportedFields,
+                      onExport: async (selectedExportKeys) => {
+                        const csvFilter: Record<string, unknown> = {};
+                        if (queryParams.statusCategory === 'finished') {
+                          csvFilter.status = ['TERMINATED', 'CANCELLED'];
+                        } else {
+                          csvFilter.status = [
+                            'PENDING',
+                            'SCHEDULED',
+                            'PREPARING',
+                            'PREPARED',
+                            'CREATING',
+                            'PULLING',
+                            'RESTARTING',
+                            'RUNNING',
+                            'TERMINATING',
+                            'ERROR',
+                          ];
+                        }
+                        if (queryParams.type && queryParams.type !== 'all') {
+                          csvFilter.session_type = [queryParams.type];
+                        }
+                        // Forward every table condition the export endpoint can
+                        // express; the rest is dropped, so the CSV stays a
+                        // superset of the table and never a subset (FR-3915).
+                        _.assign(
+                          csvFilter,
+                          buildSessionExportFilter(queryParams.filter, {
+                            supportsUserFilter: baiClient.supports(
+                              'session-export-user-filter',
+                            ),
+                          }),
+                        );
+                        await exportCSV(selectedExportKeys, csvFilter).catch(
+                          (err) => {
+                            message.error(t('general.ErrorOccurred'));
+                            logger.error(err);
+                          },
+                        );
+                      },
+                    }
+                  : undefined
+              }
+            />
+          </>
         ) : (
           <Banner status="error" title={t('error.FailedToLoadTableData')} />
         )}
