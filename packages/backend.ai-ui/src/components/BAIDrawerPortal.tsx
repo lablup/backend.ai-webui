@@ -7,6 +7,10 @@
  outside its flat tree, which included the portalled modals FR-3578 introduced;
  the inner drawer therefore takes `hasScrim={false}` and opens with `show()`,
  which promotes nothing (FR-3585).
+
+ Stays in BUI rather than ui-common (FR-4087): it relies on this repo's lab
+ patch (`react/patches/@astryxdesign__lab@*.patch`: Escape containment and an
+ `aria-modal` passthrough), which ui-common's consumers do not get.
 */
 import '../styles/zIndexLadder';
 import './BAIDrawerPortal.css';
