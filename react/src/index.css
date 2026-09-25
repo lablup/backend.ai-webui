@@ -16,7 +16,7 @@
    Identical statements are idempotent; a divergent one silently hands the
    order to whichever loads first. `scripts/migration-gates/layer-order-gate.mjs`
    fails on drift. */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
 
 @import '@lablup/ui-common/reset.css';
 @import '@lablup/ui-common/astryx.css';
@@ -24,6 +24,8 @@
    Tour, Stat, …). */
 @import '@lablup/ui-common/lab/lab.css';
 @import '@lablup/ui-common/theme/neutral/theme.css';
+/* ui-common's global sheet, all in `@layer ui-common` (ADR 0009). */
+@import '@lablup/ui-common/ui-common.css';
 
 /* FR-3580: Astryx recolours a Banner's whole subtree to its status hue —
    `.astryx-banner.info` rebinds `--color-accent` to the info blue, which is

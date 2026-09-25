@@ -43,7 +43,7 @@
  * !! DIFFERENT ones silently give you whichever loads first, and
  * !! `scripts/migration-gates/layer-order-gate.mjs` fails on drift.
  */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
 
 @layer components {
   /* First-party icon baseline. `iconShim` renders `.bai-icon` wrappers and BUI
