@@ -143,7 +143,7 @@ Backend.AI Web UI is built with
 - `react` 19 as library for web UI
 - `vite` 6 as bundler and dev server
 - `relay` / GraphQL as data-fetching layer
-- `@astryxdesign/core` (Astryx) as component library, with StyleX `xstyle` for styling
+- Astryx as component library, imported through `@lablup/ui-common`, with StyleX `xstyle` for styling
 - `jotai` for global UI state management
 - `typescript` for type safety
 - `eslint` 9 (flat config) + `prettier` for code quality

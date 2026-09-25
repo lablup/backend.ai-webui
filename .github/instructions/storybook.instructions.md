@@ -522,7 +522,7 @@ import { BAIAppProvider } from '../src/app-shim';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
 import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
 import { ThemeShimProvider } from '../src/theme-shim';
-import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
+import { Theme as AstryxThemeProvider } from '@lablup/ui-common/theme';
 
 const GlobalConfigProvider = ({ locale, isDarkMode, seedToken, children }) => (
   <AstryxThemeProvider theme={astryxBrandTheme} mode={isDarkMode ? 'dark' : 'light'}>
@@ -622,7 +622,7 @@ const meta: Meta<typeof BAIText> = {
 };
 ```
 
-Note the framing. antd is not a dependency — `BAITextProps` extends `Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'children'>` and the component renders `@astryxdesign/core/Text`. The antd names in the description are **history**: the prop surface was deliberately kept antd-shaped so the several hundred existing call sites needed no edit. When a story description touches that vocabulary, describe it as a shape that was kept and point at `.claude/rules/component-props-extension.md` — never as a library the component is built on.
+Note the framing. antd is not a dependency — `BAITextProps` extends `Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'children'>` and the component renders Astryx `Text` (`@lablup/ui-common/Text`). The antd names in the description are **history**: the prop surface was deliberately kept antd-shaped so the several hundred existing call sites needed no edit. When a story description touches that vocabulary, describe it as a shape that was kept and point at `.claude/rules/component-props-extension.md` — never as a library the component is built on.
 
 ### Best Practices
 
