@@ -22,7 +22,7 @@ import {
 } from '../../hooks/useResourceLimitAndRemaining';
 import { theme } from '../../theme-shim';
 import { ProjectContext } from '../../types/projectContext';
-import AgentSelect from '../AgentSelect';
+import AgentSelect, { type AgentRemainingSlotsMap } from '../AgentSelect';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -52,7 +52,13 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
-import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
+import React, {
+  Suspense,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -316,6 +322,16 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+  const currentAgentInForm = Form.useWatch(['agent'], {
+    form,
+    preserve: true,
+  });
+
+  // Reported by `AgentSelect`, which already computes it for its option rows.
+  // Merged rather than replaced: the select re-queries with a search filter, so
+  // a narrowed result must not drop the agent the form still holds.
+  const [agentRemainingSlots, setAgentRemainingSlots] =
+    useState<AgentRemainingSlotsMap>({});
 
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
@@ -401,13 +417,30 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
+  // A concrete single agent bounds the allocation further than the
+  // keypair/group/resource-group limits do. "auto" and multi-agent picks are
+  // scheduled across agents, so they keep the unfiltered preset list.
+  const selectedAgentNames = _.compact(_.castArray(currentAgentInForm));
+  const selectedAgentRemainingSlots =
+    enableAgentSelect &&
+    selectedAgentNames.length === 1 &&
+    selectedAgentNames[0] !== 'auto'
+      ? agentRemainingSlots[selectedAgentNames[0]]
+      : undefined;
+
   const allocatablePresetNames = useMemo(() => {
     return getAllocatablePresetNames(
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
+      selectedAgentRemainingSlots,
     );
-  }, [checkPresetInfo?.presets, resourceLimits, currentImage]);
+  }, [
+    checkPresetInfo?.presets,
+    resourceLimits,
+    currentImage,
+    selectedAgentRemainingSlots,
+  ]);
 
   const runShmemAutomationRule = (M_plus_S: string) => {
     // if M+S > 4G, S can be 1G regard to current image's minimum mem(M)
@@ -1538,6 +1571,12 @@ const ResourceAllocationFormItems: React.FC<
                   fetchKey={agentFetchKey}
                   mode={supportMultiAgents ? 'multiple' : undefined}
                   fallbackToAuto
+                  onRemainingSlotsChange={(next) =>
+                    setAgentRemainingSlots((prev) => {
+                      const merged = { ...prev, ...next };
+                      return _.isEqual(prev, merged) ? prev : merged;
+                    })
+                  }
                   labelRender={
                     supportMultiAgents
                       ? ({ label, value }) => {
@@ -1829,6 +1868,8 @@ export const getAllocatablePresetNames = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
   currentImage: Image,
+  /** Remaining slots of the single agent the session is pinned to, if any. */
+  agentRemainingSlots?: Record<string, number>,
 ) => {
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -1910,7 +1951,30 @@ export const getAllocatablePresetNames = (
       );
     }
   }).map((preset) => preset.name);
-  return currentImageAcceleratorLimits.length === 0
-    ? bySliderLimit
-    : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+  const byResourceLimit =
+    currentImageAcceleratorLimits.length === 0
+      ? bySliderLimit
+      : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+
+  if (!agentRemainingSlots) {
+    return byResourceLimit;
+  }
+
+  const byAgentRemainingSlots = _.filter(presets, (preset) => {
+    return _.every(preset.resource_slots, (_value, key) => {
+      // shmem comes out of the session's own mem, so the agent doesn't slot it.
+      if (key === 'shmem') return true;
+      const requested = preset.resource_slots[key];
+      // `check-presets` zero-fills every preset with every cluster-known slot
+      // type, while an agent only reports the slots it physically has. So a
+      // missing slot means 0 remaining, not "disqualify the preset": compare
+      // numerically and let a zero request pass.
+      const remaining = agentRemainingSlots[key] ?? 0;
+      return key === 'mem'
+        ? compareNumberWithUnits(requested, remaining) <= 0
+        : (_.toNumber(requested) || 0) <= remaining;
+    });
+  }).map((preset) => preset.name);
+
+  return _.intersection(byResourceLimit, byAgentRemainingSlots);
 };
