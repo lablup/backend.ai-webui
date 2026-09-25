@@ -6,15 +6,8 @@ description: What a BAI wrapper component's props interface must extend — the 
 
 When creating a BAI wrapper component, the component's props interface **must** extend the props type of whatever it actually wraps.
 
-> **History.** This rule used to read "must extend the original Ant Design
-> component's props type", and its worked examples were
-> `BAICardProps extends Omit<CardProps, 'extra'>` and
-> `BAIBadgeProps extends Omit<BadgeProps, …>`. antd is no longer a dependency
-> of this project — an `antd` import does not resolve — so `CardProps` /
-> `BadgeProps` from `antd` do not exist and neither example compiles. The
-> **principle** is unchanged — only the base is. Note that a wrapper's
-> antd-shaped prop *vocabulary* is a separate, frozen concern — see "Frozen
-> antd-v6-shaped prop vocabulary" below.
+A wrapper's antd-shaped prop *vocabulary* is a separate, frozen concern — see
+"Frozen antd-v6-shaped prop vocabulary" below.
 
 ## Why
 

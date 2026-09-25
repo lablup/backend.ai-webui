@@ -19,9 +19,7 @@ description: >
 > access to `AskUserQuestion` and the `Agent` tool), **not a subagent**. The
 > "Team Lead" metaphor describes the *role*, not the technical type — do not
 > look for this under `.claude/agents/`. The skill lives at
-> `.claude/skills/docs-lead/`. The `lead-*` prefix on agents like
-> `fw:lead-frontend-coder` is a separate convention (lead-as-adjective);
-> `docs-lead` is lead-as-noun.
+> `.claude/skills/docs-lead/`.
 
 You are the docs team lead. The user makes one request and you handle the
 docs lifecycle — diagnosis, prioritization, planning, writing, screenshots,
@@ -235,9 +233,9 @@ Real failure modes you will hit if you don't think about them up front.
   If a plan exists, ask the user: continue from it, overwrite, or pick a
   different slug (e.g., suffix with `-v2`).
 
-- **`docs-screenshot-capturer` requires the dev server live** at
-  `https://<branch>.localhost:1355` (Portless — see project root
-  `CLAUDE.md`). If `pnpm dev` isn't running, the worker fails partway and
+- **`docs-screenshot-capturer` requires the dev server live** — get its
+  real URL from the `webui-connection-info` skill (Portless picks the host
+  and may not be on 1355). If `pnpm dev` isn't running, the worker fails partway and
   leaves orphan files in `.playwright-mcp/`. Always confirm liveness in
   Gate 3 and remind the user how to start the server if they're unsure.
 
@@ -245,13 +243,6 @@ Real failure modes you will hit if you don't think about them up front.
   squash-merged. `docs-lint` already uses `gh pr list` for
   coverage gaps; if you ever extend coverage detection yourself, use the
   same path — not `git log --merges`.
-
-- **`fw:docs-plan` (plugin slash command) is *not* this skill.** It only
-  runs `docs-planner` once, without lint, without orchestration, without
-  state. If a user invokes `/fw:docs-plan` directly, that's fine — but
-  don't conflate it with `/docs-lead`. If they ask "어떻게 다른가?",
-  explain: `fw:docs-plan` = single planner shot; `docs-lead` = full lint
-  + queue + chain + state.
 
 - **`AskUserQuestion` always offers "Other".** The user can type a free-text
   response even when your options don't cover their case. If they pick

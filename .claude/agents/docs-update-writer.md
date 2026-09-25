@@ -1,6 +1,6 @@
 ---
 name: docs-update-writer
-description: Use this agent to write or update user manual documentation based on a documentation update plan. It reads the plan created by docs-update-planner and writes the actual documentation content in the correct format and style. Examples: <example>Context: A documentation update plan has been created and the user wants the actual docs written. user: 'Write the documentation updates from the plan' assistant: 'I'll use the docs-update-writer agent to write the documentation updates following the plan.' <commentary> The user has a plan ready and needs the actual documentation content written, which is exactly what this writer agent does. </commentary></example><example>Context: User wants to update a specific section of the manual. user: 'Update the session page docs to include the new batch session feature' assistant: 'I'll launch the docs-update-writer to write the documentation for the batch session feature.' <commentary> The user needs specific documentation content written for a feature, perfect for this agent. </commentary></example>
+description: Write or update user manual pages in all four languages (en first, then ko/ja/th) from a docs-update-planner plan or a direct request to document a feature. Use when the docs change is decided and the content needs writing.
 tools: Glob, Grep, Read, Write, Edit, Bash
 model: opus
 color: blue
@@ -111,8 +111,10 @@ Detailed instructions:
 
 ![](images/step_screenshot.png)
 
-   Important notes or warnings are indented with 3 spaces.
-   This formatting is used for cautions, tips, and system-dependent information.
+:::note
+Important notes, cautions, and system-dependent information go in an admonition
+(`:::note`, `:::tip`, `:::warning`, ...). 3-space indented notes are legacy.
+:::
 
 ## Another Section
 
@@ -125,8 +127,8 @@ Additional content following the same patterns.
 2. **Visual first**: Include a screenshot early to orient the user
 3. **Step-by-step**: Use numbered lists for procedures
 4. **Field descriptions**: When documenting forms/dialogs, describe each field with bullet lists
-5. **Notes and warnings**: Use indented blocks for important information
-6. **Cross-references**: Link to related sections using `[text <ref>](#section <ref>)` format
+5. **Notes and warnings**: Use admonitions (`:::note`, `:::warning`, ...) for important information
+6. **Cross-references**: Link to related sections using `[Display Text](#anchor-id)` format
 7. **Completeness**: Cover both happy path and edge cases/limitations
 
 #### Content Exclusions — do NOT write these (FR-3480, PR #8619)
@@ -183,29 +185,21 @@ After English is complete, write the translated versions. See `TRANSLATION-GUIDE
 
 ### Step 7: Update Navigation (if needed)
 
-If new pages are added, update `book.config.yaml`:
+If new pages are added, give each language's page a frontmatter `navTitle:` (the sidebar label), then add a path-only entry under the right `category` for all 4 languages in `book.config.yaml`:
 
 ```yaml
 navigation:
   en:
-    - title: New Section Title
-      path: new_section/new_section.md
-  ko:
-    - title: 새 섹션 제목
-      path: new_section/new_section.md
-  ja:
-    - title: 新セクションタイトル
-      path: new_section/new_section.md
-  th:
-    - title: ส่วนใหม่
-      path: new_section/new_section.md
+    - category: Workloads
+      items:
+        - path: new_section/new_section.md
 ```
 
 ### Step 8: Verify Consistency
 
 After writing, verify:
 - All 4 language versions have the same structure
-- Image references are consistent across languages (images are shared)
+- Image references use the same filenames across languages (each language directory holds its own capture; see `SCREENSHOT-GUIDELINES.md`)
 - Cross-references work correctly
 - No broken links or missing references
 - New pages are added to `book.config.yaml` for all languages

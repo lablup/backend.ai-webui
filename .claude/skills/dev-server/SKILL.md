@@ -1,24 +1,11 @@
 ---
 name: dev-server
 description: >
-  Start the project's development server. For backend.ai-webui this means
-  `pnpm dev` (no separate wsproxy needed by default). For other projects,
-  read the project's README.md and package.json to determine the right command.
-  When a Claude Code `/color <name>` slash command is visible in the current
-  conversation history, set VITE_THEME_HEADER_COLOR to the matching hex so the dev
-  server's header reflects this Claude session's color. When `/rename <name>`
-  is visible, slugify the name and pass it as PORTLESS_APP_NAME so the dev
-  URL reflects the session name; dev.mjs prepends the branch's FR number and
-  the PR number itself, and derives a word from the PR title when there is no
-  /rename, so pass the word only. When the current branch's PR description names
-  a backend test server (bare IP, `host:port`, or full URL), set
-  VITE_DEFAULT_API_ENDPOINT so the login screen pre-fills that endpoint; when a
-  live session is connected to a different backend a dev-only banner flags the
-  mismatch instead of forcing a logout. When the user supplies dev test
-  credentials, set VITE_DEFAULT_EMAIL / VITE_DEFAULT_PASSWORD to pre-fill the
-  login form too. Dev servers run without the resident TypeScript program
-  (~1.3 GB per server) by default; pass VITE_DEV_TYPECHECK=on only when the
-  user explicitly asked for type checking, and say either way in the reply.
+  Start the project's development server (`pnpm dev` for backend.ai-webui;
+  discovered from README/package.json elsewhere), deriving the header color,
+  app name, default backend endpoint and login pre-fill from this session's
+  /color and /rename, the branch's PR description and user-supplied test
+  credentials, and advertising the server on the PRs it serves.
   Trigger on: "start dev server", "run dev", "pnpm dev 띄워", "개발 서버 띄워",
   "dev 서버 시작", "boot the dev environment", "실행해줘 dev".
 ---
@@ -331,8 +318,8 @@ Once the server is up, tell the user **both** the Portless (HTTPS) URL and the u
 ### For backend.ai-webui
 
 - **Portless URL** — **always read from Portless's stdout**, do not construct it yourself:
-  - Portless prints the full URL (scheme + host + port) on startup, e.g. `https://fr-2701.localhost:1356`. Read that line from the background task's output and use it verbatim.
-  - **Never assume port `1355`.** The `dev.mjs` script *requests* `-p 1355`, but if another Portless daemon is already bound there (e.g. another Claude session / worktree), the new instance ends up on a different port (1356, 1357, …). The skill author repeatedly got this wrong by quoting "1355" from this doc instead of reading the actual log line.
+  - Portless prints the full URL (scheme + host + port) on startup, e.g. `https://fr-3665-pr9049-statusline.localhost:1356`. Read that line from the background task's output and use it verbatim.
+  - **Never assume port `1355`.** The `dev.mjs` script *requests* `-p 1355`, but if another Portless daemon is already bound there (e.g. another Claude session / worktree), the new instance ends up on a different port (1356, 1357, …).
   - Same rule for the subdomain: even though step 2b decided the app name, take the hostname Portless prints — it's the source of truth in case Portless re-sanitized or fell back.
 - **React URL** — the local Vite dev server URL:
   - The webui uses **Vite** (`VITE v6.x ready in <ms>` line), so the `Local:` URL is printed within ~1s of startup — no need to wait for a long bundle compile.
@@ -342,7 +329,7 @@ Once the server is up, tell the user **both** the Portless (HTTPS) URL and the u
 Run a short Bash with an until-loop polling the background bash's output file for **both** the Portless URL line (the `https://…localhost:<port>` line Portless prints on startup) and Vite's `Local:` line (fallback bound ~10–15s, since Vite is fast). Once both URLs are known, present them like this — exactly two lines, no preamble:
 
 ```
-Portless: https://fr-2701.localhost:1356
+Portless: https://fr-3665-pr9049-statusline.localhost:1356
 React:    http://127.0.0.1:4627/
 ```
 

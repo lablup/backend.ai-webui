@@ -13,39 +13,7 @@ src/
 └── th/                        # Thai
 ```
 
-Each language directory mirrors the same structure:
-```
-{lang}/
-├── quickstart.md
-├── disclaimer.md
-├── overview/overview.md
-├── installation/installation.md
-├── login/login.md
-├── header/header.md
-├── start/start.md
-├── dashboard/dashboard.md
-├── summary/summary.md
-├── vfolder/vfolder.md
-├── session_page/session_page.md
-├── sessions_all/sessions_all.md
-├── mount_vfolder/mount_vfolder.md
-├── share_vfolder/share_vfolder.md
-├── deployment/deployment.md
-├── chat/chat.md
-├── import_run/import_run.md
-├── my_environments/my_environments.md
-├── agent_summary/agent_summary.md
-├── statistics/statistics.md
-├── sftp_to_container/sftp_to_container.md
-├── user_settings/user_settings.md
-├── cluster_session/cluster_session.md
-├── admin_menu/admin_menu.md
-├── trouble_shooting/trouble_shooting.md
-├── appendix/appendix.md
-├── license_agreement/license_agreement.md
-├── references/references.md
-└── images/                    # Screenshots (shared naming across languages)
-```
+Each language directory mirrors the same structure, with screenshots under `{lang}/images/` (same filenames in every language, each captured in that language's UI). The page list and its grouping are the `navigation` section of `src/book.config.yaml`.
 
 ## AI Agent Workflow
 
@@ -54,7 +22,7 @@ Each language directory mirrors the same structure:
 The full agent set:
 
 - **`docs-lead`** (skill, main context) — Triage, prioritization, decision gates, worker orchestration, accumulating state in `.agent-output/docs-state.md`. The single entry point. Adopts Karpathy's LLM Wiki Ingest + Lint operations (Query is intentionally not adopted — the manual stays human-curated).
-- **`docs-lint`** (subagent, diagnosis-only) — Health diagnosis across five checks: terminology drift (parses `TERMINOLOGY.md` "Terms to Avoid"), translation parity gap, stale screenshot candidates, broken cross-ref / image link, PR coverage gap. Writes `.agent-output/docs-lint-report.md` with a 10-run rolling history. **Never modifies docs.**
+- **`docs-lint`** (subagent, diagnosis-only) — Health diagnosis across five checks: terminology drift (reads the `avoid[]` array in `terminology.json`), translation parity gap, stale screenshot candidates, broken cross-ref / image link, PR coverage gap. Writes `.agent-output/docs-lint-report.md` with a 10-run rolling history. **Never modifies docs.**
 - **`docs-update-planner`** (subagent) — Analyzes PR changes or feature descriptions to create a documentation update plan (`.agent-output/docs-update-plan-{topic}.md`)
 - **`docs-update-writer`** (subagent) — Writes documentation content across all 4 languages following the plan
 - **`docs-update-reviewer`** (subagent) — Reviews for accuracy, consistency, style, and translation quality; auto-fixes issues (`.agent-output/docs-review-report-{topic}.md`)
@@ -88,7 +56,7 @@ Read these before writing or editing documentation:
 - Use terminology from `TERMINOLOGY.md` consistently
 - Follow `DOCUMENTATION-STYLE-GUIDE.md` for all formatting
 - Check `resources/i18n/{lang}.json` in the main project for actual UI label translations
-- Images are shared naming across languages: `![](images/filename.png)`
+- Images use the same filename in every language (`![](images/filename.png)`), but each language directory holds its own capture
 - Keep all 4 language versions structurally identical
 
 ### Code blocks (cheat sheet)

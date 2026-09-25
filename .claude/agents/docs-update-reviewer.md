@@ -1,6 +1,6 @@
 ---
 name: docs-update-reviewer
-description: Use this agent to review and improve written user manual documentation. It checks for accuracy, consistency, style compliance, translation quality, and completeness across all languages. Examples: <example>Context: Documentation has been written and needs quality review. user: 'Review the docs that were just written' assistant: 'I'll use the docs-update-reviewer agent to review and improve the documentation.' <commentary> The user wants quality review of newly written docs, which is exactly what this reviewer agent does. </commentary></example><example>Context: User wants to verify documentation quality before merging. user: 'Check the documentation changes for any issues before I submit the PR' assistant: 'I'll launch the docs-update-reviewer to check accuracy, consistency, and translation quality.' <commentary> Pre-merge documentation review is the core purpose of this agent. </commentary></example>
+description: Review written or changed user manual pages for accuracy against the code and i18n labels, style-guide and terminology compliance, cross-language parity, and translation quality, then apply the fixes. Use after docs-update-writer or before merging a docs PR.
 tools: Glob, Grep, Read, Write, Edit, Bash
 model: opus
 color: red
@@ -91,9 +91,9 @@ Check for consistency across the documentation:
 - [ ] H1 for page title, H2 for major sections, H3 for subsections
 - [ ] Bullet lists (`-`) for features/options
 - [ ] Numbered lists (`1.`) for step-by-step procedures
-- [ ] Indented blocks (3 spaces) for notes/warnings
+- [ ] Admonitions (`:::note`, `:::warning`, ...) for new notes/warnings (3-space indented notes are legacy)
 - [ ] Image format: `![](images/filename.png)`
-- [ ] Cross-reference format: `[text <ref>](#section <ref>)`
+- [ ] Cross-reference format: `[Display Text](#anchor-id)`
 - [ ] Professional, instructional tone throughout
 - [ ] Second person ("You can...", "Click the...")
 - [ ] Active voice preferred
@@ -170,7 +170,7 @@ Verify against rules in `packages/backend.ai-webui-docs/TRANSLATION-GUIDE.md` an
 - [ ] No broken image references
 
 #### Cross-References
-- [ ] Internal links use correct format: `[text <ref>](#section <ref>)`
+- [ ] Internal links use correct format: `[Display Text](#anchor-id)`
 - [ ] Referenced sections exist
 - [ ] No circular references
 - [ ] Related documentation is properly linked

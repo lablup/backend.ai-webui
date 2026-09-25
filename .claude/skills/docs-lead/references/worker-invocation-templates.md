@@ -67,7 +67,7 @@ language, change type) for every file you touched.`
 Agent({
   description: "Capture docs screenshots",
   subagent_type: "docs-screenshot-capturer",
-  prompt: `Live app: <URL — typically https://<branch>.localhost:1355>
+  prompt: `Live app: <URL — the running server's real URL from webui-connection-info>
 Sample creds (read from e2e/envs/.env.playwright): use admin or user as the
 target screenshot's audience requires.
 
