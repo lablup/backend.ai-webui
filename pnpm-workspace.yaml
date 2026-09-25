@@ -10,7 +10,7 @@ catalog:
   "@astryxdesign/lab": 0.6.2-canary.c9fb1ad
   # Registry spec; until 0.2.0 is published, `overrides` below points it at
   # the packed tarball in vendor/ (ADR 0009, vendor/README.md).
-  "@lablup/ui-common": 0.2.0-alpha.1
+  "@lablup/ui-common": 0.2.0-alpha.2
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -144,7 +144,7 @@ overrides:
   # Pre-publish ui-common (ADR 0009): catalogs reject `file:` specs, so the
   # vendored tarball is pinned here. Swapping the tarball is this one line;
   # the 0.2.0 cut-over deletes it. See vendor/README.md.
-  "@lablup/ui-common": file:vendor/lablup-ui-common-0.2.0-alpha.1.tgz
+  "@lablup/ui-common": file:vendor/lablup-ui-common-0.2.0-alpha.2.tgz
   tar-fs@2: 2.1.4
   # Build-tooling override. `@electron/packager` and `electron`'s own
   # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
