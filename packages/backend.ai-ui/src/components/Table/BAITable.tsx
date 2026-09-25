@@ -38,6 +38,7 @@ import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
+import BAIModal from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import './BAITable.css';
@@ -1409,7 +1410,18 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       ) : null}
 
       {tableSettings ? (
-        <Suspense>
+        <Suspense
+          fallback={
+            <BAIModal
+              open={isSettingModalOpen}
+              width={420}
+              title={String(t('comp:BAITable.SettingTable'))}
+              footer={null}
+              loading
+              onCancel={() => setIsSettingModalOpen(false)}
+            />
+          }
+        >
           <BAIUnmountAfterClose>
             <BAITableSettingModal
               open={isSettingModalOpen}

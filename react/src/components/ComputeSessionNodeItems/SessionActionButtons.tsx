@@ -27,6 +27,7 @@ import {
   BAISftpIcon,
   BAITerminalAppIcon,
   BAITerminateIcon,
+  BAIModal,
   BAIUnmountAfterClose,
   filterOutEmpty,
 } from 'backend.ai-ui';
@@ -386,7 +387,18 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           </ErrorBoundaryWithNullFallback>
         )}
         {isVisible('logs') && (
-          <Suspense>
+          <Suspense
+            fallback={
+              <BAIModal
+                open={openLogModal}
+                width="100%"
+                title={t('kernel.ContainerLogs')}
+                footer={null}
+                loading
+                onCancel={() => setOpenLogModal(false)}
+              />
+            }
+          >
             <BAIUnmountAfterClose>
               <ContainerLogModal
                 sessionFrgmt={session}
