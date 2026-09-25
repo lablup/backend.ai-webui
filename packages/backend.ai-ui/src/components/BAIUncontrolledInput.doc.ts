@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A text or number field that reports its value only when the user finishes editing — on Enter or on blur — never on every keystroke. It renders Astryx `TextInput`, or `NumberInput` when `type` is `"number"`, and keeps the draft in local state because Astryx has no uncontrolled mode; changing `defaultValue` reseeds that draft and discards uncommitted edits. There is deliberately no `value` / `onChange` pair: the point of the component is that an expensive commit side effect (writing a theme token, persisting a setting) runs once per edit instead of once per character. Astryx requires an accessible name, so an absent `label` falls back to a translated generic that is visually hidden.',
+      'A text or number field that reports its value only when the user finishes editing — on Enter or on blur — never on every keystroke. It renders Astryx `TextInput`, or `NumberInput` when `type` is `"number"`, and keeps the draft in local state because Astryx has no uncontrolled mode; changing `defaultValue` reseeds that draft and discards uncommitted edits. There is deliberately no `value` / `onChange` pair: the point of the component is that an expensive commit side effect (writing a theme token, persisting a setting) runs once per edit instead of once per character. Astryx requires an accessible name, so an absent `label` falls back to the translated generic from the ui-common catalog (`uic.UncontrolledInput.label`), visually hidden. It is an adapter over ui-common `UncontrolledInput` that keeps the antd `disabled` and string `status`.',
     bestPractices: [
       {
         guidance: true,
