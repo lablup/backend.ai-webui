@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
     "ErrorOccurred": "Алдаа гарлаа"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Цэвэрлэх",
-    "HexValue": "Hex утга",
-    "NoColor": "Өнгөгүй",
-    "SelectColor": "Өнгө сонгох"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
     "NoResults": "Үр дүн олдсонгүй",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Хуваарилсан / Хүссэн"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Бүлгийн өнгийг өөрчлөх",
-    "ResourceGrid": "Нөөцийн тор",
-    "UseColorN": "Өнгө {{n}} ашиглах"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Хязгааргүй"

@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Yürütme başarısız oldu",
     "ErrorOccurred": "Bir hata oluştu"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Temizle",
-    "HexValue": "Onaltılık değer",
-    "NoColor": "Renk yok",
-    "SelectColor": "Renk seç"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Ayrılan / İstenen"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Grup rengini değiştir",
-    "ResourceGrid": "Kaynak ızgarası",
-    "UseColorN": "Renk {{n}} kullan"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Sınırsız"

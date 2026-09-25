@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Esecuzione non riuscita",
     "ErrorOccurred": "Si è verificato un errore"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Cancella",
-    "HexValue": "Valore esadecimale",
-    "NoColor": "Nessun colore",
-    "SelectColor": "Seleziona colore"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Cancella Cerca tra le opzioni",
     "NoResults": "Nessun risultato",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Allocato / Richiesto"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Cambia colore del gruppo",
-    "ResourceGrid": "Griglia delle risorse",
-    "UseColorN": "Usa il colore {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Illimitato"

@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Ausführung fehlgeschlagen",
     "ErrorOccurred": "Ein Fehler ist aufgetreten"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Löschen",
-    "HexValue": "Hex-Wert",
-    "NoColor": "Keine Farbe",
-    "SelectColor": "Farbe auswählen"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Optionen durchsuchen löschen",
     "NoResults": "Keine Ergebnisse",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Zugewiesen / Angefordert"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Gruppenfarbe ändern",
-    "ResourceGrid": "Ressourcenraster",
-    "UseColorN": "Farbe {{n}} verwenden"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unbegrenzt"

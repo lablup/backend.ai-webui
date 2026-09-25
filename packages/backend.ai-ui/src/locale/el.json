@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
     "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Καθαρισμός",
-    "HexValue": "Δεκαεξαδική τιμή",
-    "NoColor": "Χωρίς χρώμα",
-    "SelectColor": "Επιλογή χρώματος"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Διατεθέντα / Ζητούμενα"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Αλλαγή χρώματος ομάδας",
-    "ResourceGrid": "Πλέγμα πόρων",
-    "UseColorN": "Χρήση χρώματος {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Απεριόριστος"

@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "การดำเนินการล้มเหลว",
     "ErrorOccurred": "เกิดข้อผิดพลาด"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "ล้าง",
-    "HexValue": "ค่าเลขฐานสิบหก",
-    "NoColor": "ไม่มีสี",
-    "SelectColor": "เลือกสี"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "ล้าง ค้นหาตัวเลือก",
     "NoResults": "ไม่พบผลลัพธ์",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "ที่จัดสรร / ที่ร้องขอ"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "เปลี่ยนสีกลุ่ม",
-    "ResourceGrid": "ตารางทรัพยากร",
-    "UseColorN": "ใช้สี {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "ไม่ จำกัด"

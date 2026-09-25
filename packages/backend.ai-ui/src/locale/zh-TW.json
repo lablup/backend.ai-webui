@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "執行錯誤",
     "ErrorOccurred": "發生錯誤"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "清除",
-    "HexValue": "十六進位值",
-    "NoColor": "無顏色",
-    "SelectColor": "選擇顏色"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜尋選項",
     "NoResults": "無結果",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "已分配 / 請求"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "變更群組顏色",
-    "ResourceGrid": "資源網格",
-    "UseColorN": "使用顏色 {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無限"

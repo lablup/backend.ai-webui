@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "実行エラー",
     "ErrorOccurred": "問題が発生しました。"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "クリア",
-    "HexValue": "16進数の値",
-    "NoColor": "色なし",
-    "SelectColor": "色を選択"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "オプションを検索 をクリア",
     "NoResults": "結果がありません",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "割り当て / 要求"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "グループの色を変更",
-    "ResourceGrid": "リソースグリッド",
-    "UseColorN": "色{{n}}を使用"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無制限"

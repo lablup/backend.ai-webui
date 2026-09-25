@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Ошибка выполнения",
     "ErrorOccurred": "Произошла ошибка"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Очистить",
-    "HexValue": "Шестнадцатеричное значение",
-    "NoColor": "Без цвета",
-    "SelectColor": "Выбрать цвет"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Очистить Поиск по вариантам",
     "NoResults": "Нет результатов",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Выделено / Запрошено"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Изменить цвет группы",
-    "ResourceGrid": "Сетка ресурсов",
-    "UseColorN": "Использовать цвет {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Неограниченный"

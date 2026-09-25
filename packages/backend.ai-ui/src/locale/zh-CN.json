@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "执行错误",
     "ErrorOccurred": "发生错误"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "清除",
-    "HexValue": "十六进制值",
-    "NoColor": "无颜色",
-    "SelectColor": "选择颜色"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜索选项",
     "NoResults": "无结果",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "已分配 / 请求"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "更改分组颜色",
-    "ResourceGrid": "资源网格",
-    "UseColorN": "使用颜色 {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "无限"

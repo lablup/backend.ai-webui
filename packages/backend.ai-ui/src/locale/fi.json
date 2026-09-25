@@ -98,12 +98,6 @@
     "ActionExecutionFailed": "Suoritus epäonnistui",
     "ErrorOccurred": "Tapahtui virhe"
   },
-  "comp:BAIColorPicker": {
-    "Clear": "Tyhjennä",
-    "HexValue": "Heksa-arvo",
-    "NoColor": "Ei väriä",
-    "SelectColor": "Valitse väri"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
@@ -404,11 +398,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Varattu / Pyydetty"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Vaihda ryhmän väri",
-    "ResourceGrid": "Resurssiruudukko",
-    "UseColorN": "Käytä väriä {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Rajoittamaton"
