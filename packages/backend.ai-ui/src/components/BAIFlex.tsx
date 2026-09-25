@@ -1,22 +1,31 @@
-import { useTheme } from '@lablup/ui-common/theme';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Stays in BUI rather than ui-common (FR-4087): it is the frozen antd `Flex`
+ vocabulary (`direction`, `justify`, `gap="sm"`) of ~290 call sites, and
+ Astryx `Stack`/`HStack`/`VStack` already own the role for new code.
+*/
 import React, { type CSSProperties, type PropsWithChildren } from 'react';
 
 type GapSize = number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl';
 type GapProp = GapSize | [GapSize | undefined, GapSize | undefined];
 
-// Named gap -> Astryx spacing token (antd sizeXXS..sizeXXL = 4..48px). A
-// `Record` over every rung: an unresolved name once silently dropped the gap
-// declaration at ~470 call sites, so a missing rung must fail here at compile
-// time, not degrade at runtime.
-const GAP_TOKEN: Record<Exclude<GapSize, number>, string> = {
-  xxs: '--spacing-1',
-  xs: '--spacing-2',
-  sm: '--spacing-3',
-  ms: '--spacing-4',
-  md: '--spacing-5',
-  lg: '--spacing-6',
-  xl: '--spacing-8',
-  xxl: '--spacing-12',
+/**
+ * Named gap -> Astryx spacing token. The rungs are the antd `size*` ladder the
+ * theme-shim used to resolve (4/8/12/16/20/24/32/48), which the shim read from
+ * these same variables, so every gap is pixel-identical to the shim's
+ * (`BAIFlex.test.tsx` compares them).
+ */
+const BAI_FLEX_GAP_VAR: Record<Exclude<GapSize, number>, string> = {
+  xxs: 'var(--spacing-1)',
+  xs: 'var(--spacing-2)',
+  sm: 'var(--spacing-3)',
+  ms: 'var(--spacing-4)',
+  md: 'var(--spacing-5)',
+  lg: 'var(--spacing-6)',
+  xl: 'var(--spacing-8)',
+  xxl: 'var(--spacing-12)',
 };
 
 export interface BAIFlexProps
@@ -42,20 +51,16 @@ const BAIFlex = React.forwardRef<HTMLDivElement, BAIFlexProps>(
     },
     ref,
   ) => {
-    const { token } = useTheme();
-
     const getGapSize = (size: GapSize | undefined) => {
-      if (size === undefined) return 0;
-      // `|| 0` so a theme missing the token degrades to a flat gap rather
-      // than emitting `NaNpx` and dropping the declaration.
-      return typeof size === 'string'
-        ? parseFloat(token(GAP_TOKEN[size])) || 0
-        : size;
+      if (size === undefined) return '0px';
+      return typeof size === 'string' ? BAI_FLEX_GAP_VAR[size] : `${size}px`;
     };
 
     const gapStyle = Array.isArray(gap)
-      ? `${getGapSize(gap[0])}px ${getGapSize(gap[1])}px`
-      : getGapSize(gap);
+      ? `${getGapSize(gap[0])} ${getGapSize(gap[1])}`
+      : typeof gap === 'number'
+        ? gap
+        : getGapSize(gap);
 
     const transferConst = [justify, align];
     const transferConstStyle = transferConst.map((el) => {
