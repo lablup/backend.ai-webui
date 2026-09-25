@@ -14,6 +14,7 @@ import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
 import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
+import WebMCPVFolderListTools from '../components/WebMCPVFolderListTools';
 import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
@@ -245,6 +246,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
                 ...VFolderNodeIdenticonFragment
                 ...SharedFolderPermissionInfoModalFragment
                 ...BAIVFolderDeleteButtonFragment
+                ...WebMCPVFolderListToolsFragment
               }
             }
             count
@@ -279,6 +281,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
       },
     );
+
+  const vfolderNodes = filterOutNullAndUndefined(
+    _.map(vfolder_nodes?.edges, 'node'),
+  );
 
   return (
     <VStack align="stretch" gap={5} {...props}>
@@ -520,14 +526,20 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             </HStack>
           </HStack>
+          <WebMCPVFolderListTools
+            vfoldersFrgmt={vfolderNodes}
+            columnOverrides={columnOverrides}
+            page={tablePaginationOption.current}
+            pageSize={tablePaginationOption.pageSize}
+            total={vfolder_nodes?.count}
+            viewParams={queryParams}
+          />
           <VFolderNodes
             order={queryParams.order}
             loading={deferredQueryVariables !== queryVariables}
             disableProjectFolderActions
             project={toProjectContext(currentProject)}
-            vfoldersFrgmt={filterOutNullAndUndefined(
-              _.map(vfolder_nodes?.edges, 'node'),
-            )}
+            vfoldersFrgmt={vfolderNodes}
             rowSelection={{
               type: 'checkbox',
               preserveSelectedRowKeys: true,
@@ -541,9 +553,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               onChange: (selectedRowKeys) => {
                 handleRowSelectionChange(
                   selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    _.map(vfolder_nodes?.edges, 'node'),
-                  ),
+                  vfolderNodes,
                   setSelectedFolderList,
                 );
               },
