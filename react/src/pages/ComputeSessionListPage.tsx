@@ -18,6 +18,7 @@ import SessionNodes, {
   availableSessionSorterValues,
 } from '../components/SessionNodes';
 import SessionResourceGrid from '../components/SessionResourceGrid';
+import WebMCPSessionListTools from '../components/WebMCPSessionListTools';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -259,6 +260,7 @@ const ComputeSessionListPage = () => {
               name @required(action: THROW)
               ...SessionNodesFragment
               ...TerminateSessionModalFragment
+              ...WebMCPSessionListToolsFragment
             }
           }
           count
@@ -319,6 +321,9 @@ const ComputeSessionListPage = () => {
   const compute_session_nodes = computeSessionNodeResult.ok
     ? computeSessionNodeResult.value
     : null;
+  const sessionNodes = filterOutNullAndUndefined(
+    compute_session_nodes?.edges.map((e) => e?.node),
+  );
   // Responsive policy R3 (ticket 14): the render tree branches on `lg`
   // (the action card is unmounted below lg), so the JS hook stays; the antd
   // Row/Col track layout becomes an Astryx 24-column Grid whose spans are
@@ -592,119 +597,125 @@ const ComputeSessionListPage = () => {
               />
             </Suspense>
           ) : computeSessionNodeResult.ok ? (
-            <SessionNodes
-              order={queryParams.order}
-              onClickSessionName={(session) => {
-                // Set sessionDetailDrawerFrgmt in location state via webUINavigate
-                // instead of directly setting sessionDetailId query param
-                // to avoid additional fetch in SessionDetailDrawer
-                const newSearchParams = new URLSearchParams(location.search);
-                newSearchParams.set('sessionDetail', session.row_id);
-                webUINavigate(
-                  {
-                    pathname: location.pathname,
-                    hash: location.hash,
-                    search: newSearchParams.toString(),
-                  },
-                  {
-                    state: {
-                      sessionDetailDrawerFrgmt: session,
-                      createdAt: new Date().toISOString(),
+            <>
+              <WebMCPSessionListTools
+                sessionsFrgmt={sessionNodes}
+                columnOverrides={columnOverrides}
+                page={tablePaginationOption.current}
+                pageSize={tablePaginationOption.pageSize}
+                total={compute_session_nodes?.count}
+                viewParams={_.omit(queryParams, 'view')}
+              />
+              <SessionNodes
+                order={queryParams.order}
+                onClickSessionName={(session) => {
+                  // Set sessionDetailDrawerFrgmt in location state via webUINavigate
+                  // instead of directly setting sessionDetailId query param
+                  // to avoid additional fetch in SessionDetailDrawer
+                  const newSearchParams = new URLSearchParams(location.search);
+                  newSearchParams.set('sessionDetail', session.row_id);
+                  webUINavigate(
+                    {
+                      pathname: location.pathname,
+                      hash: location.hash,
+                      search: newSearchParams.toString(),
                     },
-                  },
-                );
-              }}
-              loading={deferredQueryVariables !== queryVariables}
-              rowSelection={{
-                type: 'checkbox',
-                // Preserve selected rows between pages, but clear when filter changes
-                preserveSelectedRowKeys: true,
-                getCheckboxProps(record) {
-                  return {
-                    disabled: isNotRunningCategory(record.status),
-                  };
-                },
-                onChange: (selectedRowKeys) => {
-                  // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
-                  handleRowSelectionChange(
-                    selectedRowKeys,
-                    filterOutNullAndUndefined(
-                      compute_session_nodes?.edges.map((e) => e?.node),
-                    ),
-                    setSelectedSessionList,
-                  );
-                },
-                selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
-              }}
-              sessionsFrgmt={filterOutNullAndUndefined(
-                compute_session_nodes?.edges.map((e) => e?.node),
-              )}
-              pagination={{
-                pageSize: tablePaginationOption.pageSize,
-                current: tablePaginationOption.current,
-                total: compute_session_nodes?.count ?? 0,
-                onChange: (current, pageSize) => {
-                  if (_.isNumber(current) && _.isNumber(pageSize)) {
-                    setTablePaginationOption({ current, pageSize });
-                  }
-                },
-              }}
-              onChangeOrder={(order) => {
-                setQueryParams({ order });
-              }}
-              tableSettings={{
-                columnOverrides: columnOverrides,
-                onColumnOverridesChange: setColumnOverrides,
-              }}
-              exportSettings={
-                !_.isEmpty(supportedFields)
-                  ? {
-                      supportedFields,
-                      onExport: async (selectedExportKeys) => {
-                        const csvFilter: Record<string, unknown> = {};
-                        if (queryParams.statusCategory === 'finished') {
-                          csvFilter.status = ['TERMINATED', 'CANCELLED'];
-                        } else {
-                          csvFilter.status = [
-                            'PENDING',
-                            'SCHEDULED',
-                            'PREPARING',
-                            'PREPARED',
-                            'CREATING',
-                            'PULLING',
-                            'RESTARTING',
-                            'RUNNING',
-                            'TERMINATING',
-                            'ERROR',
-                          ];
-                        }
-                        if (queryParams.type && queryParams.type !== 'all') {
-                          csvFilter.session_type = [queryParams.type];
-                        }
-                        // This page is strictly personal (see currentUserFilter
-                        // above), so the CSV export must be scoped to the current
-                        // user too — otherwise an admin exports every user's
-                        // sessions. Mirrors the table's user_id filter via the
-                        // session export `user.email` filter (BA-6480).
-                        if (
-                          baiClient.supports('session-export-user-filter') &&
-                          currentUser.email
-                        ) {
-                          csvFilter.user = {
-                            email: { equals: currentUser.email },
-                          };
-                        }
-                        await exportCSV(selectedExportKeys, csvFilter).catch(
-                          (err) => {
-                            message.error(t('general.ErrorOccurred'));
-                            logger.error(err);
-                          },
-                        );
+                    {
+                      state: {
+                        sessionDetailDrawerFrgmt: session,
+                        createdAt: new Date().toISOString(),
                       },
+                    },
+                  );
+                }}
+                loading={deferredQueryVariables !== queryVariables}
+                rowSelection={{
+                  type: 'checkbox',
+                  // Preserve selected rows between pages, but clear when filter changes
+                  preserveSelectedRowKeys: true,
+                  getCheckboxProps(record) {
+                    return {
+                      disabled: isNotRunningCategory(record.status),
+                    };
+                  },
+                  onChange: (selectedRowKeys) => {
+                    // Using selectedRowKeys to retrieve selected rows since selectedRows lack nested fragment types
+                    handleRowSelectionChange(
+                      selectedRowKeys,
+                      sessionNodes,
+                      setSelectedSessionList,
+                    );
+                  },
+                  selectedRowKeys: _.map(selectedSessionList, (i) => i.id),
+                }}
+                sessionsFrgmt={sessionNodes}
+                pagination={{
+                  pageSize: tablePaginationOption.pageSize,
+                  current: tablePaginationOption.current,
+                  total: compute_session_nodes?.count ?? 0,
+                  onChange: (current, pageSize) => {
+                    if (_.isNumber(current) && _.isNumber(pageSize)) {
+                      setTablePaginationOption({ current, pageSize });
                     }
-                  : undefined
-              }
-            />
+                  },
+                }}
+                onChangeOrder={(order) => {
+                  setQueryParams({ order });
+                }}
+                tableSettings={{
+                  columnOverrides: columnOverrides,
+                  onColumnOverridesChange: setColumnOverrides,
+                }}
+                exportSettings={
+                  !_.isEmpty(supportedFields)
+                    ? {
+                        supportedFields,
+                        onExport: async (selectedExportKeys) => {
+                          const csvFilter: Record<string, unknown> = {};
+                          if (queryParams.statusCategory === 'finished') {
+                            csvFilter.status = ['TERMINATED', 'CANCELLED'];
+                          } else {
+                            csvFilter.status = [
+                              'PENDING',
+                              'SCHEDULED',
+                              'PREPARING',
+                              'PREPARED',
+                              'CREATING',
+                              'PULLING',
+                              'RESTARTING',
+                              'RUNNING',
+                              'TERMINATING',
+                              'ERROR',
+                            ];
+                          }
+                          if (queryParams.type && queryParams.type !== 'all') {
+                            csvFilter.session_type = [queryParams.type];
+                          }
+                          // This page is strictly personal (see currentUserFilter
+                          // above), so the CSV export must be scoped to the current
+                          // user too — otherwise an admin exports every user's
+                          // sessions. Mirrors the table's user_id filter via the
+                          // session export `user.email` filter (BA-6480).
+                          if (
+                            baiClient.supports('session-export-user-filter') &&
+                            currentUser.email
+                          ) {
+                            csvFilter.user = {
+                              email: { equals: currentUser.email },
+                            };
+                          }
+                          await exportCSV(selectedExportKeys, csvFilter).catch(
+                            (err) => {
+                              message.error(t('general.ErrorOccurred'));
+                              logger.error(err);
+                            },
+                          );
+                        },
+                      }
+                    : undefined
+                }
+              />
+            </>
           ) : (
             <Banner status="error" title={t('error.FailedToLoadTableData')} />
           )}

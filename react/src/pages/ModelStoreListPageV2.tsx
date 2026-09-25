@@ -11,6 +11,7 @@ import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
 import TextHighlighter from '../components/TextHighlighter';
+import WebMCPModelCardListTools from '../components/WebMCPModelCardListTools';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
@@ -28,10 +29,12 @@ import {
   BAIGraphQLPropertyFilter,
   BAISelect,
   BAIStorageHostSelect,
+  filterOutNullAndUndefined,
   safeDecodeUuid,
   useUpdatableState,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import { ArrowUpDown } from 'lucide-react';
 import {
   parseAsJson,
@@ -196,6 +199,8 @@ const ModelCardV2Grid: React.FC<{
   offset: number;
   onTotalChange: (total: number) => void;
   onCardClick?: (id: string) => void;
+  /** The store's URL params, reported by the WebMCP tools. */
+  viewParams: { filter: string | null; sort: string };
 }> = ({
   projectId,
   filter,
@@ -207,6 +212,7 @@ const ModelCardV2Grid: React.FC<{
   offset,
   onTotalChange,
   onCardClick,
+  viewParams,
 }) => {
   'use memo';
 
@@ -248,6 +254,7 @@ const ModelCardV2Grid: React.FC<{
             node {
               id
               ...ModelStoreListPageV2_ModelCardV2Fragment
+              ...WebMCPModelCardListToolsFragment
             }
           }
         }
@@ -277,28 +284,46 @@ const ModelCardV2Grid: React.FC<{
     onTotalChanged();
   }, [total]);
 
+  const webMCPTools = (
+    <WebMCPModelCardListTools
+      modelCardsFrgmt={filterOutNullAndUndefined(_.map(items, 'node'))}
+      page={pageSize > 0 ? Math.floor(offset / pageSize) + 1 : 1}
+      pageSize={pageSize}
+      total={total}
+      viewParams={viewParams}
+    />
+  );
+
   if (items.length === 0) {
-    return <EmptyState title={t('modelStore.NoModelsFound')} />;
+    return (
+      <>
+        {webMCPTools}
+        <EmptyState title={t('modelStore.NoModelsFound')} />
+      </>
+    );
   }
 
   // PILOT-DECISION (RESPONSIVE-POLICY.md R1): identical recipe to
   // AIAgentPage's grid — `xs={24} sm={24} lg={12} xl={12} xxl={8} xxxl={6}`
   // first goes 2-up at `lg` (992px) -> `minWidth: 496`; `xxxl={6}` -> `max: 4`.
   return (
-    <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
-      {items.map((edge) => {
-        const item = edge?.node;
-        if (!item) return null;
-        return (
-          <ModelCardV2Card
-            key={item.id}
-            modelCardV2Frgmt={item}
-            searchKeyword={searchKeyword}
-            onClick={() => onCardClick?.(item.id)}
-          />
-        );
-      })}
-    </Grid>
+    <>
+      {webMCPTools}
+      <Grid columns={{ minWidth: 496, max: 4 }} gap={4}>
+        {items.map((edge) => {
+          const item = edge?.node;
+          if (!item) return null;
+          return (
+            <ModelCardV2Card
+              key={item.id}
+              modelCardV2Frgmt={item}
+              searchKeyword={searchKeyword}
+              onClick={() => onCardClick?.(item.id)}
+            />
+          );
+        })}
+      </Grid>
+    </>
   );
 };
 
@@ -485,6 +510,10 @@ const ModelStoreListPageV2: React.FC = () => {
           onTotalChange={setTotal}
           onCardClick={(id) => {
             setQueryParams({ modelCard: id });
+          }}
+          viewParams={{
+            filter: filter ? JSON.stringify(filter) : null,
+            sort: queryParams.sort,
           }}
         />
       </div>

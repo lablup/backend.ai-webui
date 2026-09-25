@@ -14,6 +14,7 @@ import DeploymentReplicasCard from '../components/DeploymentReplicasCard';
 import DeploymentRevisionCard from '../components/DeploymentRevisionCard';
 import DeploymentRevisionDetailDrawer from '../components/DeploymentRevisionDetailDrawer';
 import SwitchToProjectButton from '../components/SwitchToProjectButton';
+import { WebMCPDeploymentDetailTools } from '../components/WebMCPDeploymentTools';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -358,6 +359,19 @@ const DeploymentDetailPage: React.FC = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="md">
+      <WebMCPDeploymentDetailTools
+        deployment={{
+          id: deploymentId,
+          name: deploymentName ?? null,
+          status: deploymentStatus ?? null,
+          projectId: deploymentProjectId,
+          projectName: deploymentProjectName,
+          endpointUrl: deployment.networkAccess.endpointUrl ?? null,
+          openToPublic: deployment.networkAccess.openToPublic ?? null,
+          runningReplicas: deployment.runningReplicas?.count ?? 0,
+          desiredReplicas: deployment.replicaState?.desiredReplicaCount ?? 0,
+        }}
+      />
       {isProjectMismatch && deploymentProjectId && (
         <Banner
           status="warning"
