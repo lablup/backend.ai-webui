@@ -17,10 +17,12 @@ import AdminScopeLayout from './components/MainLayout/AdminScopeLayout';
 import MainLayout from './components/MainLayout/MainLayout';
 import ProjectScopeLayout from './components/MainLayout/ProjectScopeLayout';
 import RouteAccessGuard from './components/RouteAccessGuard';
+import RouteDocumentTitle from './components/RouteDocumentTitle';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
 import UserSettingsRouteRedirect from './components/UserSettingsRouteRedirect';
+import WebMCPGlobalTools from './components/WebMCPGlobalTools';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
@@ -1685,6 +1687,15 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
+            <ErrorBoundaryWithNullFallback>
+              <RouteDocumentTitle />
+            </ErrorBoundaryWithNullFallback>
+            {/* Suspends until login; renders nothing unless WebMCP is on. */}
+            <Suspense fallback={null}>
+              <ErrorBoundaryWithNullFallback>
+                <WebMCPGlobalTools />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
             {/* Handoff to the review overlay (FR-3811). Dev servers: on
                 unless VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite
                 plugin. Built bundles: only where VITE_REVIEW_OVERLAY_BUILD
