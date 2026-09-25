@@ -13,7 +13,6 @@ import { useBackendAIAppLauncher } from '../../hooks/useBackendAIAppLauncher';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
 import AppLauncherModal from './AppLauncherModal';
 import ContainerCommitModal from './ContainerCommitModal';
-import ContainerLogModal from './ContainerLogModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
@@ -35,6 +34,8 @@ import * as _ from 'lodash-es';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
+
+const ContainerLogModal = React.lazy(() => import('./ContainerLogModal'));
 
 type SessionActionButtonKey =
   | 'appLauncher'
@@ -385,15 +386,17 @@ const SessionActionButtons: React.FC<SessionActionButtonsProps> = ({
           </ErrorBoundaryWithNullFallback>
         )}
         {isVisible('logs') && (
-          <BAIUnmountAfterClose>
-            <ContainerLogModal
-              sessionFrgmt={session}
-              open={openLogModal}
-              onCancel={() => {
-                setOpenLogModal(false);
-              }}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense>
+            <BAIUnmountAfterClose>
+              <ContainerLogModal
+                sessionFrgmt={session}
+                open={openLogModal}
+                onCancel={() => {
+                  setOpenLogModal(false);
+                }}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
         )}
         {isVisible('containerCommit') && (
           <ContainerCommitModal

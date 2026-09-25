@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import type { DeploymentPresetDetailModalFragment$key } from '../__generated__/DeploymentPresetDetailModalFragment.graphql';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { Heading } from '@astryxdesign/core/Heading';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
