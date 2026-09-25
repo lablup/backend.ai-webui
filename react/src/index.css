@@ -24,8 +24,9 @@
    Tour, Stat, …). */
 @import '@lablup/ui-common/lab/lab.css';
 @import '@lablup/ui-common/theme/neutral/theme.css';
-/* ui-common's global sheet, all in `@layer ui-common` (ADR 0009). */
-@import '@lablup/ui-common/ui-common.css';
+/* Not `@lablup/ui-common/ui-common.css`: it only carries global scrollbar
+   rules. ui-common component CSS travels with each component, in
+   `@layer ui-common` (ADR 0009). */
 
 /* FR-3580: Astryx recolours a Banner's whole subtree to its status hue —
    `.astryx-banner.info` rebinds `--color-accent` to the info blue, which is

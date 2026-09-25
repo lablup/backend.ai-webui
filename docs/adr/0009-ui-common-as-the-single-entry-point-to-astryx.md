@@ -87,9 +87,9 @@ flowchart TB
 | CSS `@astryxdesign/lab/lab.css` | `@lablup/ui-common/lab/lab.css` |
 | CSS `@astryxdesign/theme-neutral/theme.css` | `@lablup/ui-common/theme/neutral/theme.css` |
 
-- **Excluded names**: ui-common은 core의 `Dialog` subpath를 [exclusion list](#용어)로 mirror에서 뺀다. 지금 `@astryxdesign/core/Dialog`를 import하는 파일은 `BAIDialog.tsx`, `BAIModal.tsx`, `app-shim/modal.tsx`, `Table/BAITableSettingModal.tsx`, `Table/BAITableColumnCSVExportModal.tsx`와 test 두 개(`BAIDialog.test.tsx`, `react/src/astryx-theme/nestedThemePortal.test.tsx`)다. 이 파일들은 `Dialog`, `DialogHeader`, `DialogProps`, `DialogPosition` 대신 ui-common `Modal`과 그 export를 쓴다. `Modal`이 없는 ui-common 0.2.0-alpha.0에서는 core `Dialog` import를 유지하고, 그 import 줄에만 `eslint-disable-next-line no-restricted-imports -- TODO(FR-4086)`를 붙인다.
-- **Dialog cluster**: `BAIModal`, 그 base인 `BAIDialog`, `BAIUnmountAfterClose`는 FR-4087의 첫 이동 묶음으로 함께 ui-common으로 간다. `BAIDialog`의 동작, 즉 top layer로 올리지 않고 portal로 그려 notice가 위에 남게 하는 것(FR-3578)과 창 최소화는 ui-common `Modal`이 가져간다.
-- **ui-common's own CSS**: ui-common custom component의 style은 `@lablup/ui-common/ui-common.css`에 있고, 모든 rule이 `@layer ui-common` 안에 있다. `react/src/index.css`와 `packages/backend.ai-ui/.storybook/astryx.css`는 위 CSS 다음에 이 파일을 `@import`한다.
+- **Excluded names**: ui-common은 core의 `Dialog` subpath를 [exclusion list](#용어)로 mirror에서 뺀다. `Dialog`, `DialogHeader`, `DialogProps` 대신 `@lablup/ui-common/Modal`의 `Modal`, `ModalHeader`, `ModalProps`를 쓴다.
+- **Dialog cluster**: `BAIDialog`의 동작, 즉 top layer로 올리지 않고 portal로 그려 notice가 위에 남게 하는 것(FR-3578)과 level stack은 ui-common `Modal`이 가져가고, `BAIDialog`는 지운다. `BAIModal`은 `Modal` 위의 adapter로 BUI에 남아 antd 모양 prop, 창 최소화, `confirmBeforeClose`를 맡는다. `BAIUnmountAfterClose`도 BUI에 남는다. ui-common에서 같은 일은 `Modal`의 `unmountOnClose`가 한다 (FR-4087).
+- **ui-common's own CSS**: ui-common custom component의 style은 각 component가 직접 import하고, 모든 rule이 `@layer ui-common` 안에 있다. 전역 scrollbar rule만 담은 `@lablup/ui-common/ui-common.css`는 webui의 모양을 바꾸므로 `react/src/index.css`도 Storybook도 import하지 않는다.
 - **Product theme stays**: `react/src/astryx-theme/`의 Backend.AI theme family는 webui의 제품 theme으로 남는다. 손으로 쓴 파일은 `defineTheme`과 `Theme`을 `@lablup/ui-common/theme`에서, `neutralTheme`을 `@lablup/ui-common/theme/neutral`에서 import한다.
 - **New code**: 새 webui code는 BUI에 `BAI*` adapter가 있으면 그것을, 없으면 ui-common component를 직접 쓴다.
 
@@ -157,14 +157,14 @@ flowchart TB
 | `packages/backend.ai-ui/src/styles/backend.ai-ui.css` | BUI를 단독으로 쓰는 consumer용 |
 | `packages/backend.ai-ui/.storybook/astryx.css` | Storybook용 |
 
-- **Precedence**: `ui-common.css`의 composite style은 Astryx base와 theme의 primitive style을 이기고, webui와 BUI의 `@layer components` rule은 ui-common을 이긴다.
+- **Precedence**: ui-common component의 composite style은 Astryx base와 theme의 primitive style을 이기고, webui와 BUI의 `@layer components` rule은 ui-common을 이긴다.
 - **Gate**: `scripts/migration-gates/layer-order-gate.mjs`의 `REQUIRED_ORDER`에 `astryx-theme` 다음으로 `ui-common`이 들어간다.
 
 ### 7. agent 지침과 token gate는 ui-common에서 만든다
 
 - **Agent block**: `AGENTS.md`(`CLAUDE.md`는 이 파일의 symlink)와 `react/AGENTS.md`의 `ASTRYX:START`/`ASTRYX:END` block은 `ui-common agents --write <file>`이 만드는 `UI-COMMON:START`/`UI-COMMON:END` block으로 바뀐다. 이 block은 `astryx init --features agents` 출력의 import 경로를 ui-common으로 고쳐 쓴 것이다. marker가 다르므로 `astryx init`이나 `astryx upgrade`가 덮어쓰지 않는다.
 - **Project lines**: `ASTRYX` block에 붙어 있던 MIGRATION RELAXATION, STATUS SEMANTICS(ADR 0007), BUI INTEGRATION 줄은 UI-COMMON block에 다시 붙인다. block 아래의 재생성 안내는 `ui-common agents`를 다시 돌리라는 내용으로 바뀐다.
-- **Token gate**: `scripts/migration-gates/astryx-token-gate.mjs`의 `DEFAULT_DECLARED_CSS`에서 core와 theme-neutral 항목은 ui-common이 싣는 같은 CSS 파일로 바뀌고, `ui-common.css`가 더해진다. `react/src/astryx-theme/built/backendai-default-built.css` 항목은 그대로다.
+- **Token gate**: `scripts/migration-gates/astryx-token-gate.mjs`의 `DEFAULT_DECLARED_CSS`에서 core와 theme-neutral 항목은 ui-common이 싣는 같은 CSS 파일로 바뀐다. `react/src/astryx-theme/built/backendai-default-built.css` 항목은 그대로다.
 
 ## 대안과 기각 사유
 
@@ -180,7 +180,7 @@ flowchart TB
 
 - **One import path**: agent와 사람이 Astryx component를 찾을 때 경로는 `@lablup/ui-common/<X>` 하나다. `ui-common component`, `ui-common search` 같은 CLI 명령이 `astryx` 출력을 같은 경로로 고쳐 보여 주고, 제외된 이름에는 대신 쓸 이름을 붙인다.
 - **Upgrade through ui-common**: Astryx version을 올리는 일은 ui-common의 `sync-astryx` 명령이 먼저 한다. webui는 그 뒤 ui-common version과 catalog pin을 함께 올리고 `ui-common upgrade`로 codemod를 돌린다. webui가 Astryx만 따로 올릴 수는 없다.
-- **Global scrollbar**: `ui-common.css`의 scrollbar rule이 앱과 Storybook에 들어온다. 앱에서는 `MainLayout.css`의 unlayered scrollbar rule이 색과 세로 폭을 계속 정하고, ui-common rule이 가로 scrollbar 높이(0.5rem)와 thumb 모서리를 더한다.
+- **Global scrollbar**: webui는 `ui-common.css`를 싣지 않으므로 scrollbar 모양은 계속 `MainLayout.css`의 unlayered rule이 정한다.
 - **Tarball refresh**: 0.2.0 publish 전에는 ui-common을 고칠 때마다 누군가 tarball을 다시 pack해 `vendor/`에 넣어야 webui가 그 변경을 본다.
 - **Component home narrows**: `.claude/rules/bui-component-home.md`의 "새 재사용 component는 BUI"는 BAI 의존성이 있는 component에만 남는다. 제품 중립인 component는 ui-common으로 가고, BUI에는 adapter가 남는다.
 - **Exempt files track core**: 2항의 예외 파일은 계속 `@astryxdesign/*` 경로를 쓰므로, Astryx를 올릴 때 codemod가 아니라 `astryx theme build` 재실행과 손 수정으로 따라간다.

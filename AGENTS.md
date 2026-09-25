@@ -150,7 +150,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common 0.2.0-alpha.0 · Astryx v0.6.2 · 164 components
+@lablup/ui-common 0.2.0-alpha.1 · Astryx v0.6.2 · 164 components
 IMPORTS: every Astryx component, hook, token and stylesheet comes from `@lablup/ui-common`, never `@astryxdesign/*` (ESLint rejects it): `@astryxdesign/core/<X>` → `@lablup/ui-common/<X>`, `@astryxdesign/lab` → `@lablup/ui-common/lab`, `@astryxdesign/theme-neutral` → `@lablup/ui-common/theme/neutral`. `Dialog` is not mirrored; its replacement is ui-common `Modal`.
 CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`). Its output prints `@astryxdesign/*` import lines — write them as the `@lablup/ui-common` path above.
 
@@ -158,7 +158,7 @@ SETUP (once, in your app entry e.g. main.tsx) — without these, components rend
   @layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
   import "@lablup/ui-common/reset.css";
   import "@lablup/ui-common/astryx.css";
-  import "@lablup/ui-common/ui-common.css";
+  (webui does not import "@lablup/ui-common/ui-common.css": it holds only global scrollbar rules, and each ui-common component imports its own CSS)
 
 WORKFLOW — discover, don't guess. Before writing UI:
 1. `astryx build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
