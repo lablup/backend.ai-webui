@@ -108,7 +108,12 @@ Names follow a fixed pattern, so you can recognise a tool without a catalog:
 | `bai_list_visible_<noun>` | The rows the page is showing, in the page's order (e.g. sessions, folders, deployments). |
 | `bai_get_current_<noun>`  | The one item open or selected (a drawer, a detail page), or `null`.                      |
 | `bai_get_<noun>_filter`   | The filter, sort and pagination the page holds in its URL.                               |
-| `bai_prepare_<noun>`      | Opens a create/edit form and fills it. **Never submits.**                                |
+| `bai_prepare_<noun>`      | Opens a create/edit form and fills it. **Never submits.** Returns `webui_url`.          |
+
+A `bai_prepare_<noun>` tool lives on its form's page: open the page first
+(for a session, `bai_navigate {"path":"/session/start"}`), then call it.
+`bai_navigate` refuses a path that carries form values (`use_prepare_tool`),
+so the agent-filled notice is never skipped.
 
 A `list_visible` tool returns what is on screen — one page of a table, not the
 whole resource. For "all of them" use `bai-agent query`.
@@ -141,12 +146,14 @@ page, or it has not mounted yet) and `webmcp_unsupported` (attached browser).
 
 ## Hard rules
 
-1. **After a `bai_prepare_<noun>` tool, stop.** Never click the form's
-   create / confirm / **Start** / OK button yourself, not through a tool, not
-   through `click`. Tell the user what you filled and where the button is, and
-   hand the tab over. The tab must be one they can see: `--headed` on their own
-   machine, or `agent-browser dashboard start` (loopback only; it streams every
-   session on this machine). Do not close the session — that discards the form.
+1. **After a `bai_prepare_<noun>` tool, stop and hand over the link.** Never
+   click the form's create / confirm / **Launch** / OK button yourself, not
+   through a tool, not through `click`. The result's `webui_url` reopens the
+   same filled form, with a "filled by an AI agent" notice, in the user's own
+   signed-in browser. Give the user that URL, list what you filled (`applied`)
+   and what the page refused (`rejected`, `unverified`), and let them review and
+   press the button. Do not rebuild the URL yourself, and do not send the user
+   to your own browser tab: they cannot see it.
 2. **Never perform a destructive action** — delete, purge, terminate, revoke,
    force-stop — by any route: no tool offers one, and you do not click one.
    Point the user at the page and let them do it.
