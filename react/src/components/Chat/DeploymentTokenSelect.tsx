@@ -23,7 +23,7 @@ import {
 import dayjs from 'dayjs';
 import { maxBy } from 'lodash-es';
 import { Settings } from 'lucide-react';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useEffect, useEffectEvent } from 'react';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -77,21 +77,13 @@ const DeploymentTokenSelectWithQuery: React.FC<
   const { t } = useTranslation();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
-  // Fixed at mount so the variables stay stable across renders.
-  const [mountedAt] = useState(() => dayjs().toISOString());
-
   const { deployment } = useLazyLoadQuery<DeploymentTokenSelectQuery>(
     graphql`
-      query DeploymentTokenSelectQuery(
-        $deploymentId: ID!
-        $notExpiredBefore: DateTime!
-        $limit: Int!
-      ) {
+      query DeploymentTokenSelectQuery($deploymentId: ID!, $limit: Int!) {
         deployment(id: $deploymentId) @catch {
-          # Filter server-side: the default page is 10 rows, and a page of
-          # only-expired tokens would hide older valid ones.
+          # Expiry is filtered client-side: DateTimeFilter cannot match a NULL
+          # expiresAt, so an after-filter would drop never-expiring tokens.
           accessTokens(
-            filter: { expiresAt: { after: $notExpiredBefore } }
             orderBy: [{ field: CREATED_AT, direction: DESC }]
             limit: $limit
           ) {
@@ -113,7 +105,6 @@ const DeploymentTokenSelectWithQuery: React.FC<
       // mounts with a non-empty deploymentId (the outer DeploymentTokenSelect
       // renders a plain Input otherwise), so no client-skip guard is needed.
       deploymentId: toGlobalId('ModelDeployment', deploymentId),
-      notExpiredBefore: mountedAt,
       limit: CATALOG_FETCH_LIMIT,
     },
     // Refetch on mount so returning from token creation (e.g. via the Access
