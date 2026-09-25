@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "A numeric field whose stepping follows a non-linear ladder rather than a fixed increment — `0.125, 0.25, 0.5, 1, 2, 4, 8, …`, the shape resource allocations actually take. It composes an Astryx `InputGroup` around a `NumberInput` plus a pair of stepper `IconButton`s, and cancels `NumberInput`'s own linear ArrowUp / ArrowDown handling so the keyboard walks the same ladder as the buttons. Each step is clamped into `min` / `max` before it is committed. The component is controlled only: `value` and `onChange` are both required, so the caller always owns the state.",
+      "A numeric field whose stepping follows a non-linear ladder rather than a fixed increment — `0.125, 0.25, 0.5, 1, 2, 4, 8, …`, the shape resource allocations actually take. It is an adapter over ui-common `StepNumberInput` (an Astryx `InputGroup` around a `NumberInput` plus ui-common's `NumberStepper` column), and cancels `NumberInput`'s own linear ArrowUp / ArrowDown handling so the keyboard walks the same ladder as the buttons. Each step is clamped into `min` / `max` before it is committed. The component is controlled only: `value` and `onChange` are both required, so the caller always owns the state.",
     bestPractices: [
       {
         guidance: true,

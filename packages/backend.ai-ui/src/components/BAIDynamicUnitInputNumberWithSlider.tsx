@@ -34,8 +34,9 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
-import { useControllableValue, useUpdatableState } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
+import useControllableValue from '../hooks/useControllableValue';
+import { useUpdatableState } from '../hooks/useUpdatableState';
 import BAIDynamicUnitInputNumber, {
   BAIDynamicUnitInputNumberProps,
 } from './BAIDynamicUnitInputNumber';
