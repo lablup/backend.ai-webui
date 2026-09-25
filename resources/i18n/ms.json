@@ -2985,6 +2985,8 @@
       "AddingKernelToSocketQueue": "Menambah kernel ke soket barisan ...",
       "AdvancedSettings": "Tetapan Lanjutan",
       "AgentNode": "ejen",
+      "AgentPrefilledDescription": "Ejen AI telah mengisi borang ini. Semak setiap nilai sebelum anda menekan {{launch}}.",
+      "AgentPrefilledTitle": "Diisi oleh ejen AI",
       "AllocateNode": "Mod kluster",
       "ApplicationMemory": "Memori aplikasi {{value}}",
       "Architecture": "Seni bina",

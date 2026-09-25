@@ -2986,6 +2986,8 @@
       "AddingKernelToSocketQueue": "Цөмийг сокет дараалалд нэмж оруулах ...",
       "AdvancedSettings": "Нарийвчилсан тохиргоо",
       "AgentNode": "Агент",
+      "AgentPrefilledDescription": "AI агент энэ маягтыг бөглөсөн. «{{launch}}» товчийг дарахаас өмнө бүх утгыг шалгана уу.",
+      "AgentPrefilledTitle": "AI агент бөглөсөн",
       "AllocateNode": "Кластер горим",
       "ApplicationMemory": "Аппликейшны санах ой {{value}}",
       "Architecture": "Архитектур",

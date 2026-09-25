@@ -2985,6 +2985,8 @@
       "AddingKernelToSocketQueue": "Ytimen lisääminen socket-jonoon...",
       "AdvancedSettings": "Lisäasetukset",
       "AgentNode": "Agentti",
+      "AgentPrefilledDescription": "Tekoälyagentti täytti tämän lomakkeen. Tarkista kaikki arvot ennen kuin painat {{launch}}.",
+      "AgentPrefilledTitle": "Tekoälyagentin täyttämä",
       "AllocateNode": "Cluster-tila",
       "ApplicationMemory": "Sovellusmuisti {{value}}",
       "Architecture": "Arkkitehtuuri",

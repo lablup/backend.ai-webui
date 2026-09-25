@@ -2971,6 +2971,8 @@
       "AddingKernelToSocketQueue": "กำลังเพิ่มเคอร์เนลเข้าคิวซ็อกเก็ต...",
       "AdvancedSettings": "การตั้งค่าขั้นสูง",
       "AgentNode": "ตัวแทน",
+      "AgentPrefilledDescription": "เอเจนต์ AI กรอกแบบฟอร์มนี้ ตรวจสอบค่าทั้งหมดก่อนกด “{{launch}}”",
+      "AgentPrefilledTitle": "กรอกโดยเอเจนต์ AI",
       "AllocateNode": "โหมดคลัสเตอร์",
       "ApplicationMemory": "หน่วยความจำแอปพลิเคชัน {{value}}",
       "Architecture": "สถาปัตยกรรม",
