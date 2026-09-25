@@ -72,7 +72,7 @@ flowchart TB
 
 ### 1. source는 Astryx를 `@lablup/ui-common`으로만 import한다
 
-`react/src/**`, `packages/backend.ai-ui/src/**`, `packages/backend.ai-ui/.storybook/**`의 Astryx import는 아래 표대로 ui-common subpath로 옮긴다. webui에 두는 일회성 [codemod](#용어) script가 표를 한 번 적용하고, 그 뒤에는 2항의 ESLint rule이 같은 상태를 지킨다. ui-common version 사이의 migration은 이 script가 아니라 `ui-common upgrade`가 맡는다.
+`react/src/**`, `packages/backend.ai-ui/src/**`, `packages/backend.ai-ui/.storybook/**`의 Astryx import는 아래 표대로 ui-common subpath로 옮긴다. webui에 두는 일회성 [codemod](#용어) script `scripts/ui-common-codemod.mjs`가 표를 적용하고(rebase로 들어온 새 import에는 다시 돌린다), 그 뒤에는 2항의 ESLint rule이 같은 상태를 지킨다. ui-common version 사이의 migration은 이 script가 아니라 `ui-common upgrade`가 맡는다.
 
 | 지금의 import | 바뀐 import |
 |---|---|
@@ -87,7 +87,7 @@ flowchart TB
 | CSS `@astryxdesign/lab/lab.css` | `@lablup/ui-common/lab/lab.css` |
 | CSS `@astryxdesign/theme-neutral/theme.css` | `@lablup/ui-common/theme/neutral/theme.css` |
 
-- **Excluded names**: ui-common은 core의 `Dialog` subpath를 [exclusion list](#용어)로 mirror에서 뺀다. 지금 `@astryxdesign/core/Dialog`를 import하는 파일은 `BAIDialog.tsx`, `BAIModal.tsx`, `app-shim/modal.tsx`, `Table/BAITableSettingModal.tsx`, `Table/BAITableColumnCSVExportModal.tsx`와 test 두 개(`BAIDialog.test.tsx`, `react/src/astryx-theme/nestedThemePortal.test.tsx`)다. 이 파일들은 같은 pass에서 `Dialog`, `DialogHeader`, `DialogProps`, `DialogPosition` 대신 ui-common `Modal`과 그 export를 쓴다.
+- **Excluded names**: ui-common은 core의 `Dialog` subpath를 [exclusion list](#용어)로 mirror에서 뺀다. 지금 `@astryxdesign/core/Dialog`를 import하는 파일은 `BAIDialog.tsx`, `BAIModal.tsx`, `app-shim/modal.tsx`, `Table/BAITableSettingModal.tsx`, `Table/BAITableColumnCSVExportModal.tsx`와 test 두 개(`BAIDialog.test.tsx`, `react/src/astryx-theme/nestedThemePortal.test.tsx`)다. 이 파일들은 `Dialog`, `DialogHeader`, `DialogProps`, `DialogPosition` 대신 ui-common `Modal`과 그 export를 쓴다. `Modal`이 없는 ui-common 0.2.0-alpha.0에서는 core `Dialog` import를 유지하고, 그 import 줄에만 `eslint-disable-next-line no-restricted-imports -- TODO(FR-4086)`를 붙인다.
 - **Dialog cluster**: `BAIModal`, 그 base인 `BAIDialog`, `BAIUnmountAfterClose`는 FR-4087의 첫 이동 묶음으로 함께 ui-common으로 간다. `BAIDialog`의 동작, 즉 top layer로 올리지 않고 portal로 그려 notice가 위에 남게 하는 것(FR-3578)과 창 최소화는 ui-common `Modal`이 가져간다.
 - **ui-common's own CSS**: ui-common custom component의 style은 `@lablup/ui-common/ui-common.css`에 있고, 모든 rule이 `@layer ui-common` 안에 있다. `react/src/index.css`와 `packages/backend.ai-ui/.storybook/astryx.css`는 위 CSS 다음에 이 파일을 `@import`한다.
 - **Product theme stays**: `react/src/astryx-theme/`의 Backend.AI theme family는 webui의 제품 theme으로 남는다. 손으로 쓴 파일은 `defineTheme`과 `Theme`을 `@lablup/ui-common/theme`에서, `neutralTheme`을 `@lablup/ui-common/theme/neutral`에서 import한다.
@@ -97,12 +97,13 @@ flowchart TB
 
 - **Rule**: `react/eslint.config.js`와 `packages/backend.ai-ui/eslint.config.js`의 `no-restricted-imports`가 `@astryxdesign/*` group을 error로 막고, 메시지로 `@lablup/ui-common/<X>`를 가리킨다.
 - **React blocks**: `react/eslint.config.js`는 rule을 다시 선언하는 block마다 pattern을 반복해야 한다. 공유 배열 `restrictedImportPatterns`에 pattern을 넣고, 지금 그 배열을 쓰지 않고 `backend.ai-ui/*` group을 손으로 반복하는 project-agnostic page block도 `...restrictedImportPatterns`를 쓰게 바꾼다.
-- **BUI blocks**: BUI의 기존 `no-restricted-imports` block은 test와 story를 `ignores`로 빼고 `react-i18next` path를 막는다. flat config에서는 같은 파일에 걸린 뒤 block의 rule 설정이 앞 block을 대신하므로, ban pattern은 기존 block에 더하고, test와 story만 대상으로 하는 block을 하나 더 두어 같은 pattern을 건다.
+- **BUI blocks**: BUI의 기존 `no-restricted-imports` block은 test와 story를 `ignores`로 빼고 `react-i18next` path를 막는다. flat config에서는 같은 파일에 걸린 뒤 block의 rule 설정이 앞 block을 대신하므로, ban pattern은 기존 block에 더하고, 기존 block이 빼는 파일(test, story, `useBAIi18n.ts`, `BAITrans.tsx`)만 대상으로 하는 block을 하나 더 두어 같은 pattern을 건다.
 - **Exempt files**: 아래 파일은 `@astryxdesign/*`를 그대로 import하고, ban block의 `ignores`로 뺀다. negated group pattern으로 풀지 않는다.
 
 | 파일 | 이유 |
 |---|---|
 | `packages/backend.ai-ui/src/**/*.doc.ts` | CLI의 integration 문서 입력이다. `@astryxdesign/cli/authoring`의 type만 쓰고 앱 bundle에 들어가지 않는다. |
+| `packages/backend.ai-ui/src/astryx-docs/**` | CLI integration 문서(`backend-ai-ui.doc.ts`)와 그것을 `@astryxdesign/cli/authoring`으로 검증하는 test다. |
 | `packages/backend.ai-ui/src/astryx-theme-augmentations.d.ts` | module augmentation은 core의 실제 module id(`@astryxdesign/core/Text` 등)를 대상으로 해야 한다. |
 | `react/src/astryx-theme/built/**` | `astryx theme build` 출력이다. `scripts/verify.sh`가 CLI 출력과 byte 단위로 비교하고, 이미 ESLint `ignores`에 있다. codemod도 이 디렉터리를 건드리지 않는다. |
 
@@ -119,8 +120,11 @@ flowchart TB
 | `@astryxdesign/theme-neutral` | 삭제 | 삭제 |
 
 - **Version spec**: `@lablup/ui-common`의 spec은 registry version이다. 0.2.0이 publish되기 전에는 저장소 루트의 `vendor/lablup-ui-common-<version>.tgz`를 `file:` spec으로 가리킨다. `workspace:`나 `link:` spec은 쓰지 않는다. packed tarball은 registry package와 같은 방식으로 설치되어, link가 가리는 두 번째 core 문제가 설치 단계에서 그대로 드러난다.
+- **Tarball pin**: pnpm catalog는 `file:` spec을 받지 않는다(`ERR_PNPM_CATALOG_ENTRY_INVALID_SPEC`). 그래서 catalog의 `@lablup/ui-common`은 registry version을 적고, `pnpm-workspace.yaml`의 `overrides` 한 줄이 그것을 `file:vendor/lablup-ui-common-<version>.tgz`로 바꾼다. tarball 교체는 그 한 줄이고, 0.2.0 전환은 그 줄을 지운다. 절차는 `vendor/README.md`에 있다.
+- **Build externals**: BUI의 library build는 peer만 external로 두므로, `vite.config.ts`가 `@astryxdesign/*` 전체를 external로 더 둔다. core가 peer에서 빠져도 남은 core import가 `dist`에 두 번째 copy로 bundle되지 않는다.
+- **Test runner**: ui-common의 custom component는 자기 `.css`를 import한다. `react/vitest.config.ts`는 `server.deps.inline`에 ui-common을 두어 Vite가 그 CSS import를 처리하게 한다.
 - **Pinned core devDependency**: lab의 canary version은 core를 optional이 아닌 peer로 요구한다. webui의 importer에 core가 없으면 pnpm [`autoInstallPeers`](#용어)가 patch 없는 core를 하나 더 설치하고, `--frozen-lockfile`과 peer 검사는 통과한다. `react/`와 BUI가 같은 pin의 core를 devDependency로 두면 pnpm이 lab의 peer를 그 core로 채운다. CLI도 설치된 core를 읽으므로 core가 필요하다.
-- **Lab stays installed**: `@lablup/ui-common/lab`은 optional peer인 `@astryxdesign/lab`이 설치되어 있어야 해석된다. `scripts/migration-gates/z-index-ladder-gate.mjs`도 `react/node_modules/@astryxdesign/lab/dist/`를 읽는다. source는 lab을 import하지 않는다.
+- **Lab stays installed**: `@lablup/ui-common/lab`은 optional peer인 `@astryxdesign/lab`이 설치되어 있어야 해석된다. `scripts/migration-gates/z-index-ladder-gate.mjs`도 `react/node_modules/@astryxdesign/lab/dist/`를 읽는다. source는 lab을 `@lablup/ui-common/lab`과 `@lablup/ui-common/lab/lab.css`로만 import한다(`BAIDrawer`, `BAITour`, `Stat` 등).
 - **Bare-name patch keys**: `pnpm-workspace.yaml`의 `patchedDependencies` key `"@astryxdesign/core@0.6.2"`와 `"@astryxdesign/lab@0.6.2-canary.c9fb1ad"`는 version 없는 `"@astryxdesign/core"`와 `"@astryxdesign/lab"`이 된다. FR-4059는 이것을 tripwire로 정했다. key가 version 하나에 묶이지 않으므로 pnpm은 그래프에 있는 모든 version의 copy에 patch 적용을 시도한다.
 - **Pins move together**: ui-common 한 version은 Astryx pin 한 벌에 묶인다. catalog의 `@astryxdesign/*` pin은 ui-common이 pin한 version과 같아야 하며, ui-common을 올릴 때 함께 올린다. 둘이 다르면 core가 두 벌 설치된다.
 
@@ -134,7 +138,7 @@ flowchart TB
 
 - **Key format**: ui-common component는 기본 문자열을 Astryx `useTranslator()`로 찾는다. key는 `uic.<Component>.<key>`이고, 영어 `defaultMessage`는 ui-common code에 있다.
 - **Explicit prop wins**: call site가 문자열 prop을 넘기면 그 값이 catalog보다 우선한다.
-- **Locale modules**: `packages/backend.ai-ui/src/locale/<lang>_<REGION>.ts`는 지금 `BAILocale.astryxLocale`에 Astryx key의 번역을 평평한 문자열로 담는다. 각 module은 여기에 ui-common이 싣는 같은 언어의 `uic.*` 번역과 BUI의 override를 합친다. `BAILocale.lang`(`ko`, `pt-BR` 등)과 Astryx 파일 이름(`ko-KR.json` 등)의 대응은 이 module이 import하는 파일로 정해진다. ui-common 번역이 없는 언어(`id`, `mn`, `ms`, `th` 등)는 영어 `defaultMessage`로 그려진다.
+- **Locale modules**: `packages/backend.ai-ui/src/locale/<lang>_<REGION>.ts`는 지금 `BAILocale.astryxLocale`에 Astryx key의 번역을 평평한 문자열로 담는다. 각 module은 여기에 ui-common이 싣는 같은 언어의 `uic.*` 번역과 BUI의 override를 합친다. 병합은 `packages/backend.ai-ui/src/locale/uiCommonMessages.ts`의 `withUiCommonMessages(<Astryx locale 이름>, overrides)`가 한다. 이 함수는 `uiCommonMessages[<이름>]`을 평평한 문자열로 바꾸고 BUI override를 그 위에 얹는다. `BAILocale.lang`(`ko`, `pt-BR` 등)과 Astryx locale 이름(`ko-KR`, `pt-PT` 등)의 대응은 각 module이 넘기는 이름으로 정해진다. ui-common 번역이 없는 언어(`id`, `mn`, `ms`, `th` 등)는 영어 `defaultMessage`로 그려진다.
 - **One mount**: `packages/backend.ai-ui/src/components/provider/BAIConfigProvider/BAIConfigProvider.tsx`는 지금처럼 `overrides={{ [lang]: locale.astryxLocale }}`를 `InternationalizationProvider`에 넘긴다. component마다 번역을 감싸는 wrapper는 없고, ui-common에 자체 context도 없다.
 - **Moved keys**: 옮긴 component가 쓰던 BUI locale key는 그 component가 옮겨 갈 때 번역과 함께 ui-common key가 된다.
 
@@ -176,6 +180,7 @@ flowchart TB
 
 - **One import path**: agent와 사람이 Astryx component를 찾을 때 경로는 `@lablup/ui-common/<X>` 하나다. `ui-common component`, `ui-common search` 같은 CLI 명령이 `astryx` 출력을 같은 경로로 고쳐 보여 주고, 제외된 이름에는 대신 쓸 이름을 붙인다.
 - **Upgrade through ui-common**: Astryx version을 올리는 일은 ui-common의 `sync-astryx` 명령이 먼저 한다. webui는 그 뒤 ui-common version과 catalog pin을 함께 올리고 `ui-common upgrade`로 codemod를 돌린다. webui가 Astryx만 따로 올릴 수는 없다.
+- **Global scrollbar**: `ui-common.css`의 scrollbar rule이 앱과 Storybook에 들어온다. 앱에서는 `MainLayout.css`의 unlayered scrollbar rule이 색과 세로 폭을 계속 정하고, ui-common rule이 가로 scrollbar 높이(0.5rem)와 thumb 모서리를 더한다.
 - **Tarball refresh**: 0.2.0 publish 전에는 ui-common을 고칠 때마다 누군가 tarball을 다시 pack해 `vendor/`에 넣어야 webui가 그 변경을 본다.
 - **Component home narrows**: `.claude/rules/bui-component-home.md`의 "새 재사용 component는 BUI"는 BAI 의존성이 있는 component에만 남는다. 제품 중립인 component는 ui-common으로 가고, BUI에는 adapter가 남는다.
 - **Exempt files track core**: 2항의 예외 파일은 계속 `@astryxdesign/*` 경로를 쓰므로, Astryx를 올릴 때 codemod가 아니라 `astryx theme build` 재실행과 손 수정으로 따라간다.
