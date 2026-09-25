@@ -2,70 +2,29 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIDynamicUnitInputNumber` on Astryx (to-astryx phase 3, wave 2 / W2-D).
+ `BAIDynamicUnitInputNumber` — the `"<number><unit>"` size field (`"4g"`).
+ It stays in BUI (FR-4087): the value is Backend.AI's size notation and the
+ units are its binary memory units (`convertToBinaryUnit`, `m`/`g`/`t`/`p`
+ shown as MiB/GiB/…), which are not a product-neutral contract.
 
- The `"<number><unit>"` size field (e.g. `"4g"`). antd built it from
- `Space.Compact` + `InputNumber stringMode onStep` + `Select`; every one of
- those four pieces needed a different answer (MAPPING §3.17, §3.1, §4):
-
-   `Space.Compact`            -> `InputGroup` (the welded input row)
-   `InputNumber`              -> `NumberInput`
-   `InputNumber.onStep`       -> NONE -> explicit ladder controls, see below
-   `InputNumber.stringMode`   -> NONE -> the string lives in this component
-   `Select` (unit)            -> `Selector` (static options, <5 of them)
-   `Select.suffixIcon={null}` -> NONE -> the single-unit case renders no
-                                 selector at all, which is what that hack meant
-   `Space.Addon`              -> the addon nodes render inside the `InputGroup`
-
- The public contract is unchanged: `value` is still the `"4g"` string,
- `onChange` still emits one, and `dynamicSteps` / `units` / `min` / `max` /
- `roundStep` / `addonPrefix` / `addonSuffix` / `defaultUnit` / `disableAutoUnit`
- keep their meaning. The unit-carry arithmetic (step past the top of the ladder
- -> next unit up, past the bottom -> next unit down) is ported verbatim.
-
- PILOT-DECISION — **`onStep` is replaced by explicit ladder controls PLUS a
- keydown handler.** Same call as the sibling `BAIDynamicStepInputNumber`; the
- rationale (`NumberInput`'s own stepping is linear and would silently
- linearise the ladder AND the unit carry) is written up in
- `astryxNumberStepper.tsx`. antd's `onStep` fired for BOTH the spinner click
- and ↑/↓, so the buttons alone were only half of it: `handleKeyDown` below
- cancels `NumberInput`'s own linear step and runs the same ladder, which is
- what makes ↑ from `4g` land on `8g` and ↑ from `512g` carry to `1t`.
-
- RESTORED — **typing a unit letter switches the unit.** antd's `InputNumber`
- is a TEXT field, so `"512m"` reached a raw `input` listener that re-parsed
- it. `handleKeyDown` matches the typed character against `units`,
- `preventDefault`s it out of the field, and re-serialises the current number
- under the new unit — covering every unit in `units`, not just the `m|g` the
- old regex hard-coded. (The key-event route dates from when the field was a
- native number input that discarded letters; it stays on 0.4.0's text-backed
- field because a letter must not land in the numeric text either.)
-
- PILOT-DECISION — **`stringMode` is dropped, and nothing is lost here.**
- MAPPING §3.17 lists it as NONE. It existed so antd's `InputNumber` could hold
- big values without float error; this component already parses/serialises the
- string itself (`parseValueWithUnit`), and the numeric half is a size in a
- chosen unit — never large enough to exceed `Number.MAX_SAFE_INTEGER`.
-
- RESTORED — **an out-of-range entry is clamped on blur.** antd's `InputNumber`
- clamped to `min`/`max` when the field lost focus; Astryx's `NumberInput`
- instead REJECTS an out-of-range string outright (`parseNumberInput` returns
- `null` past either bound), so the entry silently reverted to the previous
- value and the user's intent was thrown away. `handleBlur` reads the raw field
- text — the only place the rejected entry still exists — and commits the
- clamped value, restoring antd's contract.
+ The stepper is ui-common's `NumberStepper`, on a non-linear ladder with a
+ unit carry: stepping past the top of `dynamicSteps` moves to the next unit
+ up, past the bottom to the next unit down. `handleKeyDown` runs the same
+ ladder for ArrowUp/ArrowDown (NumberInput's own stepping is linear) and
+ switches the unit when a unit letter is typed. `handleBlur` clamps an
+ out-of-range entry, which `NumberInput` would otherwise reject outright.
 */
 import { convertToBinaryUnit, parseValueWithUnit, SizeUnit } from '../helper';
 import { useControllableValue, usePrevious } from '../hooks';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import {
-  AstryxNumberStepper,
-  nextLadderIndex,
-  type StepDirection,
-} from './astryxNumberStepper';
 import { InputGroup, InputGroupText } from '@lablup/ui-common/InputGroup';
 import { NumberInput } from '@lablup/ui-common/NumberInput';
 import { Selector } from '@lablup/ui-common/Selector';
+import {
+  NumberStepper,
+  getNextStepIndex,
+  type StepDirection,
+} from '@lablup/ui-common/components/StepNumberInput';
 import * as _ from 'lodash-es';
 import React from 'react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -150,7 +109,11 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
 
   const handleStep = (direction: StepDirection) => {
     const numValueNotNull = _.isNil(numValue) ? 0 : numValue;
-    const nextIndex = nextLadderIndex(dynamicSteps, numValueNotNull, direction);
+    const nextIndex = getNextStepIndex(
+      dynamicSteps,
+      numValueNotNull,
+      direction,
+    );
     const currentUnitIndex = units.indexOf(unit);
 
     if (!disableAutoUnit && nextIndex < 0) {
@@ -297,12 +260,7 @@ const BAIDynamicUnitInputNumber: React.FC<BAIDynamicUnitInputNumberProps> = ({
         isDisabled={disabled}
         width="100%"
       />
-      <AstryxNumberStepper
-        onStep={handleStep}
-        isDisabled={disabled}
-        increaseLabel={t('general.Increase')}
-        decreaseLabel={t('general.Decrease')}
-      />
+      <NumberStepper onStep={handleStep} isDisabled={disabled} />
       {/* A single available unit is a static label, not a choice — antd faked
           that with `suffixIcon={null} open={false}` on a Select. */}
       {units.length > 1 ? (
