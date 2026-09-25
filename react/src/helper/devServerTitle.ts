@@ -18,11 +18,14 @@
  * so it never drifts from `index.html`, and is idempotent — re-invoking it
  * (e.g. on HMR) does not double-prefix.
  */
+export const devServerTitlePrefix = (): string =>
+  import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_NAME
+    ? `[${import.meta.env.VITE_DEV_SERVER_NAME}] `
+    : '';
+
 export const applyDevServerTitle = () => {
-  if (import.meta.env.DEV && import.meta.env.VITE_DEV_SERVER_NAME) {
-    const prefix = `[${import.meta.env.VITE_DEV_SERVER_NAME}] `;
-    if (!document.title.startsWith(prefix)) {
-      document.title = `${prefix}${document.title}`;
-    }
+  const prefix = devServerTitlePrefix();
+  if (prefix && !document.title.startsWith(prefix)) {
+    document.title = `${prefix}${document.title}`;
   }
 };
