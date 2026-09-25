@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://www.backend.ai/schemas/deployment-config.schema.json",
+  "title": "Backend.AI Deployment Config",
+  "description": "Optional `deployment-config.yaml` placed in a model folder to pre-configure the image, resources and environment a deployment starts from. Every field is a default that deployment-time input (Add Revision form / API request) overrides. Any top-level key other than the ones listed here is read as a runtime-variant section (for example `vllm`), which overrides the root-level values for that variant only. The legacy `service-definition.toml` in the same folder carries the same shape. An empty document parses as `null` and is accepted.",
+  "type": ["object", "null"],
+  "properties": {
+    "environment": {
+      "$ref": "#/$defs/Environment"
+    },
+    "image": {
+      "type": "string",
+      "description": "Full path of the container image, read at the root level. Equivalent to `environment.image`.",
+      "examples": [
+        "example.com/model-server:latest"
+      ]
+    },
+    "architecture": {
+      "type": "string",
+      "description": "CPU architecture of the image, read at the root level. Equivalent to `environment.architecture`.",
+      "examples": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "resource_slots": {
+      "$ref": "#/$defs/ResourceSlots"
+    },
+    "resource_opts": {
+      "$ref": "#/$defs/ResourceOpts"
+    },
+    "environ": {
+      "$ref": "#/$defs/Environ"
+    }
+  },
+  "additionalProperties": {
+    "$ref": "#/$defs/RuntimeVariantSection"
+  },
+  "$defs": {
+    "Environment": {
+      "type": "object",
+      "description": "Container image and architecture for the inference service.",
+      "additionalProperties": true,
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Full path of the container image.",
+          "examples": [
+            "example.com/model-server:latest"
+          ]
+        },
+        "architecture": {
+          "type": "string",
+          "description": "CPU architecture of the image.",
+          "examples": [
+            "x86_64",
+            "aarch64"
+          ]
+        }
+      }
+    },
+    "ResourceSlots": {
+      "type": "object",
+      "description": "Compute resources allocated to each replica. Quote keys that contain a dot, such as \"cuda.shares\".",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "cpu": 4,
+          "cuda.shares": "0.5",
+          "mem": "16gb"
+        }
+      ]
+    },
+    "ResourceOpts": {
+      "type": "object",
+      "description": "Additional resource options such as `shmem` (shared memory size).",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "shmem": "8g"
+        }
+      ]
+    },
+    "Environ": {
+      "type": "object",
+      "description": "Environment variables passed to the inference service container. Root and variant values are merged.",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "examples": [
+        {
+          "MODEL_NAME": "example-model-name"
+        }
+      ]
+    },
+    "RuntimeVariantSection": {
+      "type": "object",
+      "description": "Per-runtime-variant overrides (for example `vllm`, `sglang`, `tgi`). Only the fields listed in the section are overridden; everything else falls back to the root level.",
+      "additionalProperties": true,
+      "properties": {
+        "environment": {
+          "$ref": "#/$defs/Environment"
+        },
+        "image": {
+          "type": "string",
+          "description": "Full path of the container image for this variant."
+        },
+        "architecture": {
+          "type": "string",
+          "description": "CPU architecture of the image for this variant."
+        },
+        "resource_slots": {
+          "$ref": "#/$defs/ResourceSlots"
+        },
+        "resource_opts": {
+          "$ref": "#/$defs/ResourceOpts"
+        },
+        "environ": {
+          "$ref": "#/$defs/Environ"
+        }
+      }
+    }
+  }
+}
