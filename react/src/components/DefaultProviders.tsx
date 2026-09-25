@@ -21,6 +21,7 @@ import {
   useWebUINavigate,
 } from '../hooks';
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
+import { useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 import I18nKeyMarkers, { appendI18nKeyMarker } from './I18nKeyMarkers';
 import NotificationHost from './NotificationHost';
@@ -30,6 +31,7 @@ import {
   BAIConfigProvider,
   BAIMetaDataProvider,
   BAIText,
+  BAIWebMCPProvider,
   useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -269,6 +271,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const [lang] = useCurrentLanguage();
   const { t } = useTranslation();
   const { token } = useTheme();
+  const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
 
   // Non-`en` locales are lazy chunks; `loadBuiLocale` caches one promise per
   // language, so `use` suspends on the same object across renders.
@@ -375,7 +378,10 @@ export const DefaultProvidersForReactRoot: React.FC<{
                       <Suspense>
                         {/* <BrowserRouter> */}
                         {/* <RoutingEventHandler /> */}
-                        {children}
+                        {/* WebMCP tool gate, ADR 0011. */}
+                        <BAIWebMCPProvider enabled={enableWebMCP}>
+                          {children}
+                        </BAIWebMCPProvider>
                         {/* </BrowserRouter> */}
                       </Suspense>
                     </BAIMetaDataProviderWrapper>
