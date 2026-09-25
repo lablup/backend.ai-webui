@@ -101,11 +101,46 @@ describe('createPrepareSessionTool', () => {
         },
       ],
     });
+    const path = `${window.location.pathname}${openLauncher.mock.calls[0][0]}`;
     expect(result).toEqual({
-      path: `${window.location.pathname}${window.location.search}`,
+      path,
+      webui_url: new URL(path, window.location.origin).href,
       applied: { sessionName: 'agent-prefill-demo', folders: ['data'] },
       rejected: [],
       nextStep: PREPARE_SESSION_NEXT_STEP,
+    });
+  });
+
+  it('hands back a webui_url that reopens exactly the same prefilled launcher', async () => {
+    const { tool, openLauncher } = makeTool();
+    const input = {
+      sessionType: 'batch',
+      sessionName: 'agent-prefill-demo',
+      startupCommand: 'python train.py --epochs 3 && echo "done"',
+      cpu: 2,
+      memoryGiB: 4,
+      folders: 'data',
+    };
+    const result = (await tool.execute(input)) as { webui_url: string };
+
+    const url = new URL(result.webui_url);
+    expect(url.origin).toBe(window.location.origin);
+    expect(url.pathname).toBe(window.location.pathname);
+    // Only the launcher's own params: nothing else (no token or session) rides along.
+    expect([...url.searchParams.keys()].sort()).toEqual([
+      'agentPrefill',
+      'formValues',
+      'step',
+    ]);
+    const sent = searchOf(openLauncher);
+    expect(url.searchParams.get('agentPrefill')).toBe(sent.get('agentPrefill'));
+    expect(JSON.parse(url.searchParams.get('formValues')!)).toEqual(
+      JSON.parse(sent.get('formValues')!),
+    );
+    expect(JSON.parse(url.searchParams.get('formValues')!)).toMatchObject({
+      sessionType: 'batch',
+      batch: { command: input.startupCommand },
+      resource: { cpu: 2, mem: '4g' },
     });
   });
 
