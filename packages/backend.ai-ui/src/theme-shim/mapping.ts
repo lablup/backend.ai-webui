@@ -81,12 +81,8 @@ export const TOKEN_MAP: Record<string, MapEntry> = {
   paddingMD: sp('--spacing-5'),
   paddingLG: sp('--spacing-6'),
   paddingXL: sp('--spacing-8'),
-  // The `size*` ladder must be COMPLETE: `BAIFlex`'s `gap="sm" | "ms" |
-  // "md" | "lg"` resolves the token by name (`'size' + size.toUpperCase()`),
-  // so a hole here does not fall back to anything — it hands React
-  // `gap: undefined` and the flex gap silently collapses to 0. The four
-  // middle rungs were missing until 2026-08-08, which flattened ~470 call
-  // sites (`gap="sm"` 275, `gap="md"` 180, `gap="lg"` 19).
+  // `BAIFlex` reads these rungs' variables directly since FR-4087; its test
+  // pins each `gap` rung to the value this ladder resolves to.
   sizeXXS: sp('--spacing-1'), //  4
   sizeXS: sp('--spacing-2'), //  8
   sizeSM: sp('--spacing-3'), // 12
