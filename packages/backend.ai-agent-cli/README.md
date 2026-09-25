@@ -999,8 +999,10 @@ a repository-level `.claude/skills` entry, so a checkout gets it the same way
 any other machine does (`pnpm run bai-agent init --skill --no-login`). It
 carries what the block deliberately does not: the preflight and login procedure, when to answer
 directly versus point the user at the WebUI, the neighbouring skills'
-boundaries, and `references/query-cookbook.md` — ready-to-run documents that
-`src/init/skill.test.ts` re-validates against the SDL.
+boundaries, `references/query-cookbook.md` — ready-to-run documents that
+`src/init/skill.test.ts` re-validates against the SDL — and
+`references/webui-browser.md`, the guide to operating the WebUI itself through
+agent-browser and the WebMCP tools it registers (ADR 0009).
 
 ## Output contract
 
