@@ -801,11 +801,9 @@
   },
   "general": {
     "Decrease": "Хасах",
-    "DeselectAll": "Бүгдийг сонголтоос хасах",
     "File": "Файл",
     "Increase": "Нэмэх",
     "Loading": "Ачаалж байна...",
-    "NSelected": "{{count}} сонгогдсон",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
     "Search": "Хайх",

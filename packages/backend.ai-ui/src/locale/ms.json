@@ -801,11 +801,9 @@
   },
   "general": {
     "Decrease": "Kurangkan",
-    "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
     "Increase": "Tambah",
     "Loading": "Memuatkan...",
-    "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",
     "Search": "Cari",

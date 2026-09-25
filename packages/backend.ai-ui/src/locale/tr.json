@@ -801,11 +801,9 @@
   },
   "general": {
     "Decrease": "Azalt",
-    "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
     "Increase": "Artır",
     "Loading": "Yükleniyor...",
-    "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
     "Search": "Ara",

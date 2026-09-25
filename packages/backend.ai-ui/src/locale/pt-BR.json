@@ -807,11 +807,9 @@
   },
   "general": {
     "Decrease": "Diminuir",
-    "DeselectAll": "Desmarcar tudo",
     "File": "Arquivo",
     "Increase": "Aumentar",
     "Loading": "Carregando...",
-    "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
     "Project": "Projeto",
     "Search": "Pesquisar",
