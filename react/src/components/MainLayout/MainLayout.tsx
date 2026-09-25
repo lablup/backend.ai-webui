@@ -203,7 +203,7 @@ function MainLayout() {
               align="stretch"
               // Stable hook for e2e and page-level styles. The native scrollbar
               // is hidden by `BAIOverlayScrollbar` below (it sets
-              // `data-bai-custom-scrollbar` on this element) and an overlay
+              // `data-uic-overlay-scrollbar` on this element) and an overlay
               // thumb is painted instead, so content width never shifts with
               // scrollability.
               className="main-layout-content-scroll"
