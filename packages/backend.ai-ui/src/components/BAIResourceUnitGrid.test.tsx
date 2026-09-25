@@ -2,177 +2,38 @@ import BAIResourceUnitGrid, {
   type BAIUnitGridGroup,
 } from './BAIResourceUnitGrid';
 import { fireEvent, render, screen } from '@testing-library/react';
-
-// Partial mock: preserve every real export from `react-i18next` (notably
-// `initReactI18next`, which BUI's `locale/index.ts` consumes at import time)
-// and only override `useTranslation`. See BAIStatistic.test.tsx (FR-2986).
-vi.mock('react-i18next', async () => {
-  const actual =
-    await vi.importActual<typeof import('react-i18next')>('react-i18next');
-  return {
-    ...actual,
-    useTranslation: () => ({
-      t: (key: string, options?: { n?: number }) => {
-        const translations: { [key: string]: string } = {
-          'comp:BAIResourceUnitGrid.ChangeGroupColor': 'Change group color',
-          'comp:BAIResourceUnitGrid.ResourceGrid': 'Resource grid',
-          'comp:BAIResourceUnitGrid.UseColorN': `Use color ${options?.n}`,
-        };
-        return translations[key] || key;
-      },
-    }),
-  };
-});
-
-const unit = (color = '#3469d6') => ({ color });
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const GROUPS: BAIUnitGridGroup[] = [
-  { key: 'alpha', label: 'Alpha', units: [unit(), unit(), unit()] },
-  { key: 'beta', label: 'Beta', units: [unit('#b84134'), unit('#b84134')] },
+  { key: 'alpha', label: 'Alpha', units: [{ color: '#3469d6' }] },
+  { key: 'beta', label: 'Beta', units: [{ color: '#b84134' }] },
 ];
 
-const cellsOf = (container: HTMLElement, key?: string) =>
-  container.querySelectorAll(
-    key
-      ? `.bai-resource-unit-grid-cell[data-group-key="${key}"]`
-      : '.bai-resource-unit-grid-cell',
-  );
-
 describe('BAIResourceUnitGrid', () => {
-  it('renders one cell per unit, attributed to its group by key', () => {
+  it('renders ui-common UnitGrid under the WebUI palette class', () => {
     const { container } = render(
       <BAIResourceUnitGrid
         groups={GROUPS}
         columns={8}
-        aria-label="Unit grid"
+        className="extra"
+        aria-label="Sessions"
       />,
     );
-    expect(cellsOf(container)).toHaveLength(5);
-    expect(cellsOf(container, 'alpha')).toHaveLength(3);
-    expect(cellsOf(container, 'beta')).toHaveLength(2);
-    expect(screen.getByRole('img', { name: 'Unit grid' })).toBeInTheDocument();
+    const root = container.firstElementChild as HTMLElement;
+    expect(root).toHaveClass(
+      'uic-unit-grid',
+      'bai-resource-unit-grid',
+      'extra',
+    );
+    expect(screen.getByRole('img', { name: 'Sessions' })).toBeInTheDocument();
+    expect(
+      container.querySelector<SVGPathElement>('path[data-group-key="beta"]')!
+        .style.fill,
+    ).toBe('var(--uic-unit-grid-group-2)');
   });
 
-  it('caps each group at maxUnitsPerGroup', () => {
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={[{ key: 'big', units: Array.from({ length: 10 }, unit) }]}
-        maxUnitsPerGroup={4}
-        columns={8}
-      />,
-    );
-    expect(cellsOf(container, 'big')).toHaveLength(4);
-  });
-
-  it('renders a partial-fill overlay for fraction cells', () => {
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={[
-          { key: 'a', units: [unit(), { color: '#3469d6', fraction: 0.5 }] },
-        ]}
-        columns={8}
-      />,
-    );
-    // 2 base cells + 1 fraction overlay rect, all attributed to the group.
-    expect(cellsOf(container, 'a')).toHaveLength(2);
-    expect(container.querySelectorAll('rect[data-group-key="a"]')).toHaveLength(
-      3,
-    );
-  });
-
-  it('names each group plate for assistive tech', () => {
-    const { container } = render(
-      <BAIResourceUnitGrid groups={GROUPS} columns={8} />,
-    );
-    // role="img" on the svg flattens its subtree for AT, so the groups are
-    // enumerable through the parallel sr-only list (no <title> on the
-    // plates — its only rendered effect was a native tooltip competing
-    // with the component's own popover).
-    const srItems = Array.from(
-      container.querySelectorAll('.bai-resource-unit-grid-sr-only li'),
-    ).map((el) => el.textContent);
-    expect(srItems).toEqual(['Alpha', 'Beta']);
-    expect(container.querySelectorAll('path > title')).toHaveLength(0);
-  });
-
-  it('shows the popover slot content for the hovered group', () => {
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={GROUPS}
-        columns={8}
-        renderGroupPopover={(group) => <div>popover: {group.label}</div>}
-      />,
-    );
-    fireEvent.mouseMove(cellsOf(container, 'beta')[0]);
-    expect(screen.getByText('popover: Beta')).toBeInTheDocument();
-    expect(screen.queryByText('popover: Alpha')).not.toBeInTheDocument();
-  });
-
-  // A `position: fixed` popover resolves its offsets against the nearest
-  // transformed ancestor, not the viewport — a drawer panel is one, and the
-  // popover landed off-screen there before FR-3652.
-  it('rebases the popover onto the fixed-positioning containing block', () => {
-    const WRAPPER_LEFT = 1144;
-    const renderWithOrigin = (originLeft: number) => {
-      const spy = vi
-        .spyOn(Element.prototype, 'getBoundingClientRect')
-        .mockImplementation(function (this: Element) {
-          if (this.classList.contains('bai-resource-unit-grid-wrapper')) {
-            return { left: WRAPPER_LEFT, top: 0 } as DOMRect;
-          }
-          // The zero-size probe the component appends to measure the origin.
-          if (this.getAttribute('aria-hidden') === 'true') {
-            return { left: originLeft, top: 0 } as DOMRect;
-          }
-          return { left: 0, top: 0 } as DOMRect;
-        });
-      const { container, unmount } = render(
-        <BAIResourceUnitGrid
-          groups={GROUPS}
-          columns={8}
-          renderGroupPopover={(group) => <div>popover: {group.label}</div>}
-        />,
-      );
-      fireEvent.mouseMove(cellsOf(container, 'beta')[0]);
-      const popover = container.querySelector<HTMLElement>(
-        '.bai-resource-unit-grid-popover',
-      );
-      const left = parseFloat(popover?.style.left ?? 'NaN');
-      unmount();
-      spy.mockRestore();
-      return left;
-    };
-
-    const untransformed = renderWithOrigin(0);
-    const insideDrawer = renderWithOrigin(1120);
-
-    expect(untransformed).toBe(WRAPPER_LEFT);
-    expect(insideDrawer).toBe(WRAPPER_LEFT - 1120);
-  });
-
-  it('keeps hover attribution keyed by group key when groups are reordered', () => {
-    const renderPopover = (group: BAIUnitGridGroup) => (
-      <div>popover: {group.label}</div>
-    );
-    const { container, rerender } = render(
-      <BAIResourceUnitGrid
-        groups={GROUPS}
-        columns={8}
-        renderGroupPopover={renderPopover}
-      />,
-    );
-    rerender(
-      <BAIResourceUnitGrid
-        groups={[...GROUPS].reverse()}
-        columns={8}
-        renderGroupPopover={renderPopover}
-      />,
-    );
-    fireEvent.mouseMove(cellsOf(container, 'alpha')[0]);
-    expect(screen.getByText('popover: Alpha')).toBeInTheDocument();
-  });
-
-  it('fires onHueOverrideChange with (key, paletteIdx) from the picker', () => {
+  it("names the picker controls from ui-common's catalog", () => {
     const onHueOverrideChange = vi.fn();
     const { container } = render(
       <BAIResourceUnitGrid
@@ -181,100 +42,28 @@ describe('BAIResourceUnitGrid', () => {
         onHueOverrideChange={onHueOverrideChange}
       />,
     );
-    fireEvent.mouseMove(cellsOf(container, 'alpha')[0]);
+    fireEvent.mouseMove(
+      container.querySelector('.uic-unit-grid__cell[data-group-key="alpha"]')!,
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Change group color' }));
     fireEvent.click(screen.getByRole('button', { name: 'Use color 3' }));
     expect(onHueOverrideChange).toHaveBeenCalledWith('alpha', 2);
   });
 
-  it('falls back to a translated accessible name when aria-label is omitted', () => {
-    render(<BAIResourceUnitGrid groups={GROUPS} columns={8} />);
-    expect(
-      screen.getByRole('img', { name: 'Resource grid' }),
-    ).toBeInTheDocument();
-  });
-
-  it('supports keyboard activation of the picker controls', () => {
-    const onHueOverrideChange = vi.fn();
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={GROUPS}
-        columns={8}
-        onHueOverrideChange={onHueOverrideChange}
-      />,
+  // The stylesheet is the adapter's contract: every group hue and both inks.
+  it('sets all seven group hues and both inks', () => {
+    const css = readFileSync(
+      resolve(__dirname, 'BAIResourceUnitGrid.css'),
+      'utf8',
     );
-    fireEvent.mouseMove(cellsOf(container, 'alpha')[0]);
-    const toggle = screen.getByRole('button', { name: 'Change group color' });
-    expect(toggle).toHaveAttribute('tabindex', '0');
-    // Enter on the toggle opens the palette row.
-    fireEvent.keyDown(toggle, { key: 'Enter' });
-    const swatch = screen.getByRole('button', { name: 'Use color 2' });
-    expect(swatch).toHaveAttribute('tabindex', '0');
-    // Space activates a swatch AND is prevented from scrolling the page.
-    const spaceNotPrevented = fireEvent.keyDown(swatch, { key: ' ' });
-    expect(spaceNotPrevented).toBe(false);
-    expect(onHueOverrideChange).toHaveBeenCalledWith('alpha', 1);
-  });
-
-  it('fires onClickGroup with the group key', () => {
-    const onClickGroup = vi.fn();
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={GROUPS}
-        columns={8}
-        onClickGroup={onClickGroup}
-      />,
-    );
-    fireEvent.click(cellsOf(container, 'beta')[1]);
-    expect(onClickGroup).toHaveBeenCalledWith('beta');
-  });
-
-  it('renders the empty fallback when there are no units to show', () => {
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={[]}
-        columns={8}
-        emptyFallback={<div>nothing here</div>}
-      />,
-    );
-    expect(screen.getByText('nothing here')).toBeInTheDocument();
-    expect(cellsOf(container)).toHaveLength(0);
-  });
-
-  it('renders a dashed plate outline only for plateVariant "dashed" groups', () => {
-    const { container } = render(
-      <BAIResourceUnitGrid
-        groups={[
-          {
-            key: 'pending-ish',
-            units: [unit(), unit()],
-            plateVariant: 'dashed',
-          },
-          { key: 'solid-default', units: [unit()] },
-          { key: 'solid-explicit', units: [unit()], plateVariant: 'solid' },
-        ]}
-        columns={8}
-      />,
-    );
-    const plateOf = (key: string) =>
-      container.querySelector(`path[data-group-key="${key}"]`);
-    expect(plateOf('pending-ish')).toHaveAttribute('stroke-dasharray', '6 4');
-    expect(plateOf('solid-default')).not.toHaveAttribute('stroke-dasharray');
-    expect(plateOf('solid-explicit')).not.toHaveAttribute('stroke-dasharray');
-  });
-
-  it('renders provided legend items', () => {
-    render(
-      <BAIResourceUnitGrid
-        groups={GROUPS}
-        columns={8}
-        legendItems={[
-          { color: '#42825c', label: 'Low' },
-          { color: '#b84134', label: 'High' },
-        ]}
-      />,
-    );
-    expect(screen.getByText('Low')).toBeInTheDocument();
-    expect(screen.getByText('High')).toBeInTheDocument();
+    for (let i = 1; i <= 7; i++) {
+      expect(css).toMatch(
+        new RegExp(
+          `--uic-unit-grid-group-${i}: light-dark\\(#[0-9a-f]{6}, #[0-9a-f]{6}\\);`,
+        ),
+      );
+    }
+    expect(css).toMatch(/--uic-unit-grid-ink-dark: #262626;/);
+    expect(css).toMatch(/--uic-unit-grid-ink-light: #fafafa;/);
   });
 });

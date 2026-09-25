@@ -1,7 +1,7 @@
 import integration from '../../astryx.integration';
 import { parseDoc, parseReference } from '@astryxdesign/cli/authoring';
 import fg from 'fast-glob';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -108,17 +108,20 @@ describe.each(componentDocs.map((file) => [stemOf(file), file]))(
       const { docs } = await import(/* @vite-ignore */ file);
       let source = readFileSync(resolve(dirname(file), `${stem}.tsx`), 'utf-8');
       // An adapter over a component moved to ui-common (ADR 0009) names only
-      // the props it maps; the rest are declared in ui-common's typings.
+      // the props it maps; the rest are declared in ui-common's typings, one
+      // file per component in the subpath's directory.
       for (const [, name] of source.matchAll(
         /from '@lablup\/ui-common\/components\/(\w+)'/g,
       )) {
-        source += readFileSync(
-          resolve(
-            packageDir,
-            `node_modules/@lablup/ui-common/dist/components/${name}/${name}.d.ts`,
-          ),
-          'utf-8',
+        const typings = resolve(
+          packageDir,
+          `node_modules/@lablup/ui-common/dist/components/${name}`,
         );
+        for (const file of readdirSync(typings)) {
+          if (file.endsWith('.d.ts')) {
+            source += readFileSync(resolve(typings, file), 'utf-8');
+          }
+        }
       }
       for (const props of propLists(docs)) {
         for (const prop of props) {
