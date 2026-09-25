@@ -22,6 +22,7 @@ import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
+import { WebMCPAdminUserTools } from './WebMCPAdminUserTools';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -88,6 +89,7 @@ export const AdminUserManagementQuery = graphql`
           ...UpdateUsersModalFragment
           ...UserInfoModalFragment
           ...UserSettingModalFragment
+          ...WebMCPAdminUserToolsFragment
         }
       }
     }
@@ -572,6 +574,26 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           </ButtonGroup>
         </BAIFlex>
       </BAIFlex>
+      <WebMCPAdminUserTools
+        usersFrgmt={filterOutNullAndUndefined(
+          _.map(adminUsersV2?.edges, 'node'),
+        )}
+        columnOverrides={columnOverrides}
+        page={current}
+        pageSize={pageSize}
+        total={adminUsersV2?.count}
+        viewParams={{
+          tab: 'users',
+          status: statusValue,
+          filter: _.isEmpty(propertyFilterValue)
+            ? null
+            : JSON.stringify(propertyFilterValue),
+          order: orderValue,
+        }}
+        openedUserId={
+          selectedUserForInfoModal?.id ?? selectedUserForSettingModal?.id
+        }
+      />
       <BAIAdminUserV2Table
         usersFrgmt={filterOutNullAndUndefined(
           _.map(adminUsersV2?.edges, 'node'),

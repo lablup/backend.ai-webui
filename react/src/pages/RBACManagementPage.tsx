@@ -19,6 +19,7 @@ import RoleNodes, {
   type RoleNodeInList,
   availableRoleSorterValues,
 } from '../components/RoleNodes';
+import WebMCPRoleListTools from '../components/WebMCPRoleListTools';
 import { convertToOrderBy } from '../helper';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -35,12 +36,14 @@ import {
   type BAISelectProps,
   BAIUserSelect,
   filterOutEmpty,
+  filterOutNullAndUndefined,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
+import * as _ from 'lodash-es';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
   parseAsJson,
@@ -146,6 +149,7 @@ const RBACManagementPage: React.FC = () => {
             node {
               id
               ...RoleNodesFragment
+              ...WebMCPRoleListToolsFragment
               ...RoleDetailDrawerFragment
             }
           }
@@ -395,6 +399,19 @@ const RBACManagementPage: React.FC = () => {
             </BAIButton>
           </BAIFlex>
         </BAIFlex>
+        <WebMCPRoleListTools
+          rolesFrgmt={filterOutNullAndUndefined(roleNodes)}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={queryRef.adminRoles?.count}
+          viewParams={{
+            status: queryParams.status,
+            filter: _.isEmpty(queryParams.filter)
+              ? null
+              : JSON.stringify(queryParams.filter),
+            order: queryParams.order,
+          }}
+        />
         <RoleNodes
           rolesFrgmt={roleNodes}
           loading={deferredQueryVariables !== queryVariables}
