@@ -57,6 +57,18 @@ export const resolveAppPath = (
   ) {
     return notAllowed('"path" must not carry a login token.');
   }
+  // A form filled through the URL must carry the agent-filled notice (ADR 0009).
+  if (
+    url.searchParams.has('formValues') ||
+    url.searchParams.has('agentPrefill')
+  ) {
+    return {
+      ok: false,
+      code: 'use_prepare_tool',
+      message:
+        'Paths that prefill a form are not accepted. Open the page and call its bai_prepare_<noun> tool instead.',
+    };
+  }
 
   const segments = url.pathname.split('/').filter(Boolean);
   const [first] = segments;
