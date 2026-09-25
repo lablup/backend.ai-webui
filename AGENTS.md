@@ -150,7 +150,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.2 · Astryx v0.6.2 · 164 components
+@lablup/ui-common v0.2.0-alpha.3 · Astryx v0.6.2 · 164 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -181,13 +181,13 @@ MORE CLI:
   swizzle <Name>     eject component source for deep customization
   upgrade --from <v> run after bumping @lablup/ui-common: ui-common's codemods, then Astryx's
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.2 wraps Astryx v0.6.2):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.3 wraps Astryx v0.6.2):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use Modal (@lablup/ui-common/Modal), not Dialog: ui-common hides Dialog.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
-- ui-common's own components: BooleanToken, CountBadge, DigitPopIn, DoubleBadge, ErrorState, IconWithTooltip, ImageWithFallback, Modal, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, Skeleton composites, SmoothHeight, StatCard. `pnpm exec ui-common docs ui-common` explains them.
+- ui-common's own components: BooleanToken, ConfirmPopover, CountBadge, DigitPopIn, DoubleBadge, ErrorState, IconWithTooltip, ImageWithFallback, Modal, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, SelectionLabel, Skeleton composites, SmoothHeight, StatCard, UncontrolledInput. `pnpm exec ui-common docs ui-common` explains them.
 - After bumping @lablup/ui-common: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
 <!-- UI-COMMON:END -->
 PROJECT LINES (this repo; outside the generated markers so `ui-common agents --write` keeps them, and they win where they disagree with the block):
