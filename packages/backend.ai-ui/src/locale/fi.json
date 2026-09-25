@@ -559,9 +559,6 @@
     "MultiNodeShort": "Moni-",
     "SingleNodeShort": "Yksittäinen"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Rajoittamaton"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Valitse tallennuspalvelin"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "testi"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "ja {{rest}} muuta"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",

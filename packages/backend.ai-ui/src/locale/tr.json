@@ -559,9 +559,6 @@
     "MultiNodeShort": "Çok",
     "SingleNodeShort": "Bekar"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Sınırsız"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Depolama Sunucusu Seç"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "ve {{rest}} tane daha"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Oluşturulma Tarihi",

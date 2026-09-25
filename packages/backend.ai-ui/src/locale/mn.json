@@ -559,9 +559,6 @@
     "MultiNodeShort": "Олон-нүдэт",
     "SingleNodeShort": "Нэг-нүдэт"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Хязгааргүй"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "турших"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "болон бусад {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Үүсгэсэн",

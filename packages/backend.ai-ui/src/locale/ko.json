@@ -559,9 +559,6 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "제한없음"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "테스트"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "외 {{rest}}개"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "생성 날짜",

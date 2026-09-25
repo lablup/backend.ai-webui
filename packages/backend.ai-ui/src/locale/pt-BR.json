@@ -565,9 +565,6 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Solteiro"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Ilimitado"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Selecionar host de armazenamento"
   },
@@ -603,9 +600,6 @@
   },
   "comp:BAITestButton": {
     "Test": "teste"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "e mais {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Criado em",

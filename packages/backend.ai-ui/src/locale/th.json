@@ -559,9 +559,6 @@
     "MultiNodeShort": "หลาย",
     "SingleNodeShort": "เดี่ยว"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "ไม่ จำกัด"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "เลือกโฮสต์จัดเก็บข้อมูล"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "และอีก {{rest}} รายการ"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",

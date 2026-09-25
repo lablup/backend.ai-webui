@@ -559,9 +559,6 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Απεριόριστος"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "και {{rest}} ακόμη"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Δημιουργήθηκε στο",

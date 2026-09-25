@@ -559,9 +559,6 @@
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "無制限"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "ストレージホストを選択"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "テスト"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "他 {{rest}} 件"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "作成日",

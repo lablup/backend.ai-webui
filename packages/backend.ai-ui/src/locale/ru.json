@@ -559,9 +559,6 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Неограниченный"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "тест"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "и ещё {{rest}}"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Создан в",

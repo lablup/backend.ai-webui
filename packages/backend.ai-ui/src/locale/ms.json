@@ -559,9 +559,6 @@
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Tidak terhad"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Hos Storan"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "ujian"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "dan {{rest}} lagi"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Dicipta pada",

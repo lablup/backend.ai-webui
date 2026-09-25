@@ -559,9 +559,6 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "单节点"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "无限"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "选择存储主机"
   },
@@ -597,9 +594,6 @@
   },
   "comp:BAITestButton": {
     "Test": "测试"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "另有 {{rest}} 项"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "创建于",
