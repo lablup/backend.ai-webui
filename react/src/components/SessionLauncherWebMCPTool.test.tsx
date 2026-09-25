@@ -1,0 +1,231 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+ */
+import SessionLauncherWebMCPTool, {
+  createPrepareSessionTool,
+  LAUNCHER_REVIEW_STEP,
+  PREPARE_SESSION_NEXT_STEP,
+} from './SessionLauncherWebMCPTool';
+import toolSource from './SessionLauncherWebMCPTool.tsx?raw';
+import { render, waitFor } from '@testing-library/react';
+import { BAIWebMCPProvider, type WebMCPToolDescriptor } from 'backend.ai-ui';
+import { Suspense } from 'react';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createMockEnvironment } from 'relay-test-utils';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('../hooks', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../hooks')>()),
+  useSuspendedBackendaiClient: () => ({
+    _config: { allowCustomResourceAllocation: true },
+    user_uuid: 'user-1',
+  }),
+}));
+vi.mock('../hooks/useMountableStorageHosts', () => ({
+  useMountableStorageHosts: () => ['local:volume1'],
+}));
+
+const VERSION = 'cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64';
+
+const makeTool = (
+  readEnvironment: (id: string) => { version?: string } | null = () => ({
+    version: VERSION,
+  }),
+) => {
+  const openLauncher = vi.fn<(search: string) => void>();
+  const tool = createPrepareSessionTool({
+    findFolders: async (names) =>
+      names.includes('data') ? [{ vfolderId: 'uuid-data', name: 'data' }] : [],
+    allowCustomResourceAllocation: true,
+    openLauncher,
+    readEnvironment,
+    pollMs: 1,
+    timeoutMs: 20,
+  });
+  return { tool, openLauncher };
+};
+
+const searchOf = (openLauncher: ReturnType<typeof vi.fn>) =>
+  new URLSearchParams(openLauncher.mock.calls[0][0] as string);
+
+describe('createPrepareSessionTool', () => {
+  it('opens the launcher review step once with formValues and an agent marker', async () => {
+    const { tool, openLauncher } = makeTool();
+    const result = await tool.execute({
+      sessionName: 'agent-prefill-demo',
+      folders: 'data',
+    });
+
+    expect(openLauncher).toHaveBeenCalledTimes(1);
+    const search = searchOf(openLauncher);
+    expect(search.get('step')).toBe(String(LAUNCHER_REVIEW_STEP));
+    expect(search.get('agentPrefill')).toMatch(/^\w{8}$/);
+    expect(JSON.parse(search.get('formValues')!)).toEqual({
+      sessionName: 'agent-prefill-demo',
+      vfolderMounts: [
+        {
+          vfolderId: 'uuid-data',
+          name: 'data',
+          mountDestination: '',
+          subpath: '',
+        },
+      ],
+    });
+    expect(result).toEqual({
+      path: `${window.location.pathname}${window.location.search}`,
+      applied: { sessionName: 'agent-prefill-demo', folders: ['data'] },
+      rejected: [],
+      nextStep: PREPARE_SESSION_NEXT_STEP,
+    });
+  });
+
+  it('confirms the image from the form the prefill opened', async () => {
+    const readEnvironment = vi.fn(() => ({ version: VERSION }));
+    const { tool, openLauncher } = makeTool(readEnvironment);
+    const result = await tool.execute({ image: VERSION });
+
+    const prefillId = searchOf(openLauncher).get('agentPrefill');
+    expect(readEnvironment).toHaveBeenCalledWith(prefillId);
+    expect(result).toMatchObject({ applied: { image: VERSION }, rejected: [] });
+  });
+
+  it('rejects an image the launcher replaced with another one', async () => {
+    const { tool } = makeTool();
+    const result = await tool.execute({ image: 'cr.backend.ai/x/missing:1' });
+    expect(result).toMatchObject({
+      applied: {},
+      rejected: [
+        {
+          field: 'image',
+          reason: expect.stringContaining(`selected "${VERSION}"`),
+        },
+      ],
+    });
+  });
+
+  it('reports the image as unverified when the form never resolves it', async () => {
+    const { tool } = makeTool(() => null);
+    const result = await tool.execute({ image: VERSION });
+    expect(result).toMatchObject({
+      rejected: [],
+      unverified: [{ field: 'image' }],
+    });
+  });
+
+  it('is not read-only and flags echoed user text as untrusted', () => {
+    const { tool } = makeTool();
+    expect(tool.name).toBe('bai_prepare_session');
+    expect(tool.annotations).toEqual({ untrustedContentHint: true });
+    expect(tool.description).toMatch(/never submits/i);
+  });
+
+  it('has no path to a submit or mutation', () => {
+    expect(toolSource).not.toMatch(
+      /useStartSession|startSession|commitMutation|useMutation|performLaunch|validateFields|submit\(/,
+    );
+  });
+});
+
+describe('SessionLauncherWebMCPTool', () => {
+  const registerTool =
+    vi.fn<
+      (tool: WebMCPToolDescriptor, options: { signal: AbortSignal }) => void
+    >();
+
+  beforeEach(() => {
+    registerTool.mockClear();
+    Object.defineProperty(document, 'modelContext', {
+      configurable: true,
+      get: () => ({ registerTool }),
+    });
+  });
+  afterEach(() => {
+    delete (document as { modelContext?: unknown }).modelContext;
+  });
+
+  const folderNode = (entityId: string, name: string, permission = 'RW') => ({
+    node: {
+      entityId,
+      accessControl: { permission },
+      metadata: { name },
+    },
+  });
+
+  const renderTool = (openLauncher = vi.fn()) => {
+    const environment = createMockEnvironment();
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <BAIWebMCPProvider enabled>
+          <Suspense fallback={null}>
+            <SessionLauncherWebMCPTool
+              project={{ id: 'project-1', name: 'default' }}
+              openLauncher={openLauncher}
+              readEnvironment={() => ({ version: VERSION })}
+            />
+          </Suspense>
+        </BAIWebMCPProvider>
+      </RelayEnvironmentProvider>,
+    );
+    return environment;
+  };
+
+  it('looks folders up only when called, and keeps the mountable ones', async () => {
+    const openLauncher = vi.fn();
+    const environment = renderTool(openLauncher);
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(1));
+    expect(environment.mock.getAllOperations()).toHaveLength(0);
+
+    const [descriptor] = registerTool.mock.calls[0];
+    let variables: Record<string, unknown> = {};
+    environment.mock.queueOperationResolver((operation) => {
+      variables = operation.request.variables;
+      return {
+        data: {
+          scopedVFoldersV2: {
+            edges: [
+              folderNode('uuid-data', 'data'),
+              folderNode('uuid-local', '.local'),
+              folderNode('uuid-none', 'no-mount', 'NONE'),
+            ],
+          },
+        },
+      };
+    });
+
+    const result = await descriptor.execute({
+      folders: 'data,.local,no-mount,elsewhere',
+    });
+    expect(result).toMatchObject({
+      applied: { folders: ['data'] },
+      rejected: [
+        { field: 'folders', reason: expect.stringContaining('".local"') },
+        { field: 'folders', reason: expect.stringContaining('"no-mount"') },
+        { field: 'folders', reason: expect.stringContaining('"elsewhere"') },
+      ],
+    });
+    expect(variables.scope).toEqual({
+      user: [{ value: 'user-1' }],
+      project: [{ value: 'project-1' }],
+    });
+    expect(JSON.stringify(variables.filter)).toContain(
+      '"host":{"in":["local:volume1"]}',
+    );
+    const formValues = JSON.parse(
+      new URLSearchParams(openLauncher.mock.calls[0][0]).get('formValues')!,
+    );
+    expect(formValues.vfolderMounts[0].vfolderId).toBe('uuid-data');
+  });
+
+  it('refuses invalid input before navigating', async () => {
+    const openLauncher = vi.fn();
+    renderTool(openLauncher);
+    await waitFor(() => expect(registerTool).toHaveBeenCalledTimes(1));
+    const [descriptor] = registerTool.mock.calls[0];
+
+    await expect(
+      descriptor.execute({ sessionType: 'batch', launch: true }),
+    ).resolves.toMatchObject({ error: { code: 'invalid_input' } });
+    expect(openLauncher).not.toHaveBeenCalled();
+  });
+});
