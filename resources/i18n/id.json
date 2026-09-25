@@ -2988,6 +2988,8 @@
       "AddingKernelToSocketQueue": "Menambahkan kernel ke antrian soket...",
       "AdvancedSettings": "Pengaturan Lanjutan",
       "AgentNode": "Agen",
+      "AgentPrefilledDescription": "Agen AI mengisi formulir ini. Periksa setiap nilai sebelum Anda menekan {{launch}}.",
+      "AgentPrefilledTitle": "Diisi oleh agen AI",
       "AllocateNode": "Modus klaster",
       "ApplicationMemory": "Memori aplikasi {{value}}",
       "Architecture": "Arsitektur",

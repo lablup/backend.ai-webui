@@ -2987,6 +2987,8 @@
       "AddingKernelToSocketQueue": "Adicionando kernel à fila de soquetes ...",
       "AdvancedSettings": "Configurações avançadas",
       "AgentNode": "Agente",
+      "AgentPrefilledDescription": "Um agente de IA preencheu este formulário. Reveja todos os valores antes de premir “{{launch}}”.",
+      "AgentPrefilledTitle": "Preenchido por um agente de IA",
       "AllocateNode": "Modo de cluster",
       "ApplicationMemory": "Memória da aplicação {{value}}",
       "Architecture": "Arquitetura",

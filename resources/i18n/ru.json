@@ -2985,6 +2985,8 @@
       "AddingKernelToSocketQueue": "Добавление ядра в очередь сокетов ...",
       "AdvancedSettings": "Расширенные настройки",
       "AgentNode": "Агент",
+      "AgentPrefilledDescription": "ИИ-агент заполнил эту форму. Проверьте все значения, прежде чем нажать «{{launch}}».",
+      "AgentPrefilledTitle": "Заполнено ИИ-агентом",
       "AllocateNode": "Кластерный режим",
       "ApplicationMemory": "Память приложения {{value}}",
       "Architecture": "Архитектура",

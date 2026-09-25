@@ -2987,6 +2987,8 @@
       "AddingKernelToSocketQueue": "Kernel zur Socket-Warteschlange hinzugefügt...",
       "AdvancedSettings": "Erweiterte Einstellungen",
       "AgentNode": "Agent",
+      "AgentPrefilledDescription": "Ein KI-Agent hat dieses Formular ausgefüllt. Prüfen Sie alle Werte, bevor Sie auf „{{launch}}“ klicken.",
+      "AgentPrefilledTitle": "Von einem KI-Agenten ausgefüllt",
       "AllocateNode": "Cluster-Modus",
       "ApplicationMemory": "Anwendungsspeicher {{value}}",
       "Architecture": "Architektur",

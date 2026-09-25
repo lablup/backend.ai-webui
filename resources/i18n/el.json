@@ -2985,6 +2985,8 @@
       "AddingKernelToSocketQueue": "Προσθήκη πυρήνα στην ουρά υποδοχής ...",
       "AdvancedSettings": "Σύνθετες ρυθμίσεις",
       "AgentNode": "Μέσο",
+      "AgentPrefilledDescription": "Ένας πράκτορας τεχνητής νοημοσύνης συμπλήρωσε αυτή τη φόρμα. Ελέγξτε όλες τις τιμές πριν πατήσετε «{{launch}}».",
+      "AgentPrefilledTitle": "Συμπληρώθηκε από πράκτορα τεχνητής νοημοσύνης",
       "AllocateNode": "Λειτουργία συμπλέγματος",
       "ApplicationMemory": "Μνήμη εφαρμογής {{value}}",
       "Architecture": "Αρχιτεκτονική",

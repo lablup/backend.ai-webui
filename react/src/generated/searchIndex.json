@@ -4754,6 +4754,8 @@
         "session.launcher.AIAccelerator",
         "session.launcher.AddEnvironmentVariable",
         "session.launcher.AgentNode",
+        "session.launcher.AgentPrefilledDescription",
+        "session.launcher.AgentPrefilledTitle",
         "session.launcher.ApplicationMemory",
         "session.launcher.Architecture",
         "session.launcher.AutoSelect",

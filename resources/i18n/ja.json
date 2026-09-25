@@ -2987,6 +2987,8 @@
       "AddingKernelToSocketQueue": "カーネルをソケットキューに追加しています...",
       "AdvancedSettings": "詳細設定",
       "AgentNode": "エージェント",
+      "AgentPrefilledDescription": "AI エージェントがこのフォームを入力しました。「{{launch}}」を押す前にすべての値を確認してください。",
+      "AgentPrefilledTitle": "AI エージェントが入力したフォーム",
       "AllocateNode": "クラスターモード",
       "ApplicationMemory": "アプリケーションメモリ {{value}}",
       "Architecture": "アーキテクチャ",

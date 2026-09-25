@@ -2987,6 +2987,8 @@
       "AddingKernelToSocketQueue": "Thêm hạt nhân vào hàng đợi socket ...",
       "AdvancedSettings": "Cài đặt nâng cao",
       "AgentNode": "Đại lý",
+      "AgentPrefilledDescription": "Một tác tử AI đã điền biểu mẫu này. Hãy kiểm tra mọi giá trị trước khi nhấn “{{launch}}”.",
+      "AgentPrefilledTitle": "Được điền bởi tác tử AI",
       "AllocateNode": "Chế độ cụm",
       "ApplicationMemory": "Bộ nhớ ứng dụng {{value}}",
       "Architecture": "Ngành kiến trúc",

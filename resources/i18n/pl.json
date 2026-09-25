@@ -2988,6 +2988,8 @@
       "AddingKernelToSocketQueue": "Dodawanie jądra do kolejki gniazda...",
       "AdvancedSettings": "Ustawienia zaawansowane",
       "AgentNode": "Agent",
+      "AgentPrefilledDescription": "Agent AI wypełnił ten formularz. Sprawdź wszystkie wartości, zanim naciśniesz „{{launch}}”.",
+      "AgentPrefilledTitle": "Wypełnione przez agenta AI",
       "AllocateNode": "Tryb klastra",
       "ApplicationMemory": "Pamięć aplikacji {{value}}",
       "Architecture": "Architektura",

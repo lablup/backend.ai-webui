@@ -2988,6 +2988,8 @@
       "AddingKernelToSocketQueue": "Ajout du noyau à la file d'attente des sockets...",
       "AdvancedSettings": "Paramètres avancés",
       "AgentNode": "Agent",
+      "AgentPrefilledDescription": "Un agent IA a rempli ce formulaire. Vérifiez chaque valeur avant d’appuyer sur « {{launch}} ».",
+      "AgentPrefilledTitle": "Rempli par un agent IA",
       "AllocateNode": "Mode cluster",
       "ApplicationMemory": "Mémoire de l'application {{value}}",
       "Architecture": "Architecture",

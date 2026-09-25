@@ -2989,6 +2989,8 @@
       "AddingKernelToSocketQueue": "將內核添加到套接字隊列...",
       "AdvancedSettings": "進階設定",
       "AgentNode": "代理人",
+      "AgentPrefilledDescription": "AI 代理填寫了此表單。請在點擊「{{launch}}」前檢查所有值。",
+      "AgentPrefilledTitle": "由 AI 代理填寫",
       "AllocateNode": "集群模式",
       "ApplicationMemory": "應用程式記憶體 {{value}}",
       "Architecture": "建筑学",

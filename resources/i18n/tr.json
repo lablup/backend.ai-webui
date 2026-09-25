@@ -2985,6 +2985,8 @@
       "AddingKernelToSocketQueue": "Soket kuyruğuna çekirdek ekleniyor...",
       "AdvancedSettings": "Gelişmiş Ayarlar",
       "AgentNode": "Ajan",
+      "AgentPrefilledDescription": "Bu formu bir yapay zekâ ajanı doldurdu. “{{launch}}” düğmesine basmadan önce tüm değerleri gözden geçirin.",
+      "AgentPrefilledTitle": "Bir yapay zekâ ajanı tarafından dolduruldu",
       "AllocateNode": "küme modu",
       "ApplicationMemory": "Uygulama Belleği {{value}}",
       "Architecture": "Mimarlık",

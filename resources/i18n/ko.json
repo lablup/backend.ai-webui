@@ -2987,6 +2987,8 @@
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "AdvancedSettings": "고급 설정",
       "AgentNode": "에이전트",
+      "AgentPrefilledDescription": "AI 에이전트가 이 양식을 채웠습니다. {{launch}} 버튼을 누르기 전에 모든 값을 확인하세요.",
+      "AgentPrefilledTitle": "AI 에이전트가 입력한 양식",
       "AllocateNode": "배치",
       "ApplicationMemory": "Application MEM {{value}}",
       "Architecture": "아키텍처",
