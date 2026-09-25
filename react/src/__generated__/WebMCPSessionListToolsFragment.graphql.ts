@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<051026e5dc11c247f996c88fb28f6538>>
+ * @generated SignedSource<<e2b38b5e5345f84ac4c1367ca7216031>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,9 @@ export type WebMCPSessionListToolsFragment$data = ReadonlyArray<{
   readonly created_at: string | null | undefined;
   readonly domain_name: string | null | undefined;
   readonly name: string | null | undefined;
+  readonly owner: {
+    readonly email: string | null | undefined;
+  } | null | undefined;
   readonly project_id: string | null | undefined;
   readonly result: string | null | undefined;
   readonly row_id: string | null | undefined;
@@ -121,12 +124,30 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "agent_ids",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "UserNode",
+      "kind": "LinkedField",
+      "name": "owner",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "email",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "c64a40c111c7ed7782b9fce4fb2075f9";
+(node as any).hash = "83da4d6b67f9ae8af9fd40902b17e925";
 
 export default node;

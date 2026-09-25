@@ -95,6 +95,7 @@ describe('route-handle access declarations (FR-3383)', () => {
     ['/admin/deployments', 'superadmin'],
     ['/admin/dashboard', 'superadmin'],
     ['/admin/rbac', 'superadmin'],
+    ['/admin/agent', 'superadmin'],
     // Project-admin subtree.
     ['/project/foo/admin/users', 'projectAdmin'],
     ['/project/foo/admin/session', 'projectAdmin'],
