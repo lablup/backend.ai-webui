@@ -1977,6 +1977,7 @@
     "APIEndpointEmpty": "O endpoint da API está vazio. Especifique o endpoint da API para fazer o login.",
     "APIKey": "Chave API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "O login via API precisa de um endpoint do Manager. Este endereço é um Backend.AI Webserver.",
     "ActiveSessionExists": "Já existe uma sessão de login ativa.",
     "ActiveSessionExistsDescription": "Você já está conectado em outro navegador ou aba. Por favor, faça logout da outra sessão primeiro ou tente novamente.",
     "AdvancedSettings": "Avançado",

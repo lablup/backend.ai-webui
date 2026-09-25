@@ -1977,6 +1977,7 @@
     "APIEndpointEmpty": "Конечная точка API пуста. Укажите конечную точку API для входа.",
     "APIKey": "Ключ API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Для входа через API требуется endpoint Manager. Этот адрес — Backend.AI Webserver.",
     "ActiveSessionExists": "Активный сеанс входа уже существует.",
     "ActiveSessionExistsDescription": "Вы уже вошли в систему из другого браузера или вкладки. Пожалуйста, сначала выйдите из другого сеанса или повторите попытку.",
     "AdvancedSettings": "Дополнительно",

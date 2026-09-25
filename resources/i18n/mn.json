@@ -1978,6 +1978,7 @@
     "APIEndpointEmpty": "API Төгсгөлийн цэг хоосон байна. Нэвтрэхийн тулд API төгсгөлийн цэгийг зааж өгнө үү.",
     "APIKey": "API түлхүүр",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API нэвтрэхэд Manager endpoint шаардлагатай. Энэ хаяг бол Backend.AI Webserver юм.",
     "ActiveSessionExists": "Идэвхтэй нэвтрэх сессион аль хэдийн байна.",
     "ActiveSessionExistsDescription": "Та өөр хөтөч эсвэл табаас аль хэдийн нэвтэрсэн байна. Эхлээд нөгөө сессионоос гарах эсвэл дахин оролдоно уу.",
     "AdvancedSettings": "Нарийвчилсан",

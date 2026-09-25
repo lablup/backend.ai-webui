@@ -1979,6 +1979,7 @@
     "APIEndpointEmpty": "APIエンドポイントが空です。ログインするAPIエンドポイントを指定してください。",
     "APIKey": "APIキー",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "APIログインにはManagerのエンドポイントが必要です。このアドレスはBackend.AI Webserverです。",
     "ActiveSessionExists": "すでにアクティブなログインセッションが存在します。",
     "ActiveSessionExistsDescription": "別のブラウザまたはタブからすでにログインしています。先に別のセッションからログアウトするか、再試行してください。",
     "AdvancedSettings": "詳細設定",

@@ -1977,6 +1977,7 @@
     "APIEndpointEmpty": "Titik Akhir API kosong. Sila nyatakan titik akhir API untuk log masuk.",
     "APIKey": "Kunci API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Log masuk API memerlukan endpoint Manager. Alamat ini adalah Backend.AI Webserver.",
     "ActiveSessionExists": "Sesi log masuk aktif sudah wujud.",
     "ActiveSessionExistsDescription": "Anda sudah log masuk dari pelayar atau tab lain. Sila log keluar dari sesi lain dahulu, atau cuba lagi.",
     "AdvancedSettings": "Lanjutan",

@@ -1977,6 +1977,7 @@
     "APIEndpointEmpty": "Το API Endpoint είναι κενό. Προσδιορίστε το τελικό σημείο API για σύνδεση.",
     "APIKey": "Κλειδί API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Η σύνδεση μέσω API απαιτεί ένα Manager endpoint. Αυτή η διεύθυνση είναι ένας Backend.AI Webserver.",
     "ActiveSessionExists": "Υπάρχει ήδη μια ενεργή σύνδεση.",
     "ActiveSessionExistsDescription": "Είστε ήδη συνδεδεμένος από άλλο πρόγραμμα περιήγησης ή καρτέλα. Αποσυνδεθείτε πρώτα από την άλλη σύνδεση ή προσπαθήστε ξανά.",
     "AdvancedSettings": "Σύνθετες ρυθμίσεις",
