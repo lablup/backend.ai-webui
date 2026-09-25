@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
-    "AreYouSureToPermanentlyDeleteTarget": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά {{target}};",
-    "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
-    "DeleteItem": "Διαγραφή",
-    "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
-    "TypeToConfirm": "Πληκτρολογήστε <token>{{confirmText}}</token> για επιβεβαίωση."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Μείωση",
     "File": "Αρχείο",
-    "Increase": "Αύξηση",
     "Loading": "Φόρτωση...",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",

@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "{{count}} sürümlerini başarıyla kaldırdı.",
     "Version": "Versiyon"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Silmek istediğinizden emin misiniz?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}} kalıcı olarak silinsin mi?",
-    "CannotBeUndone": "Bu işlem geri alınamaz.",
-    "DeleteItem": "Sil",
-    "DeleteNItems": "{{count}} öğeyi sil",
-    "TypeToConfirm": "Onaylamak için <token>{{confirmText}}</token> yazın."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Oluşturan"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Azalt",
     "File": "Dosya",
-    "Increase": "Artır",
     "Loading": "Yükleniyor...",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",

@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "Removido com sucesso {{count}} versões.",
     "Version": "Versão"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Tem a certeza de que pretende eliminar?",
-    "AreYouSureToPermanentlyDeleteTarget": "Tem certeza de que deseja excluir permanentemente {{target}}?",
-    "CannotBeUndone": "Esta ação não pode ser anulada.",
-    "DeleteItem": "Eliminar",
-    "DeleteNItems": "Eliminar {{count}} itens",
-    "TypeToConfirm": "Escreva <token>{{confirmText}}</token> para confirmar."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Criado por"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Diminuir",
     "File": "Arquivo",
-    "Increase": "Aumentar",
     "Loading": "A carregar...",
     "Optional": "Opcional",
     "Project": "Projeto",

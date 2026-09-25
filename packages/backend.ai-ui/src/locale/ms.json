@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "Berjaya dikeluarkan {{count}} versi.",
     "Version": "Versi"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Adakah anda pasti mahu memadam?",
-    "AreYouSureToPermanentlyDeleteTarget": "Adakah anda pasti mahu memadam {{target}} secara kekal?",
-    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
-    "DeleteItem": "Padam",
-    "DeleteNItems": "Padam {{count}} item",
-    "TypeToConfirm": "Taip <token>{{confirmText}}</token> untuk mengesahkan."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Kurangkan",
     "File": "Fail",
-    "Increase": "Tambah",
     "Loading": "Memuatkan...",
     "Optional": "Pilihan",
     "Project": "Projek",

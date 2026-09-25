@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "成功删除了{{count}}版本。",
     "Version": "版本"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "您确定要删除吗？",
-    "AreYouSureToPermanentlyDeleteTarget": "确定要永久删除{{target}}吗？",
-    "CannotBeUndone": "此操作无法撤销。",
-    "DeleteItem": "删除",
-    "DeleteNItems": "删除 {{count}} 个项目",
-    "TypeToConfirm": "输入 <token>{{confirmText}}</token> 以确认。"
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "创建者"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "减少",
     "File": "文件",
-    "Increase": "增加",
     "Loading": "加载中...",
     "Optional": "可选",
     "Project": "项目",

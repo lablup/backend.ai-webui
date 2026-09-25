@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
-    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
-    "CannotBeUndone": "Это действие нельзя отменить.",
-    "DeleteItem": "Удалить",
-    "DeleteNItems": "Удалить {{count}} элементов",
-    "TypeToConfirm": "Введите <token>{{confirmText}}</token> для подтверждения."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Создано"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Уменьшить",
     "File": "Файл",
-    "Increase": "Увеличить",
     "Loading": "Загрузка...",
     "Optional": "Необязательно",
     "Project": "Проект",

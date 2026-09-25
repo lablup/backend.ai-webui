@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "ลบเวอร์ชัน {{count}} สำเร็จ",
     "Version": "รุ่น"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "คุณแน่ใจหรือไม่ว่าต้องการลบ?",
-    "AreYouSureToPermanentlyDeleteTarget": "คุณแน่ใจหรือไม่ว่าต้องการลบ {{target}} อย่างถาวร?",
-    "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
-    "DeleteItem": "ลบ",
-    "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <token>{{confirmText}}</token> เพื่อยืนยัน"
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "ลด",
     "File": "ไฟล์",
-    "Increase": "เพิ่ม",
     "Loading": "กำลังโหลด...",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",

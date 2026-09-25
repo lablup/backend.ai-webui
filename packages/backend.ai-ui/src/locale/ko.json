@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "{{count}}개 버전을 제거했습니다.",
     "Version": "버전"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "정말 삭제하시겠습니까?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}을(를) 영구 삭제하시겠습니까?",
-    "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
-    "DeleteItem": "삭제",
-    "DeleteNItems": "{{count}}개 항목 삭제",
-    "TypeToConfirm": "<token>{{confirmText}}</token>을(를) 입력해주세요."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "생성자"
   },
@@ -801,9 +793,7 @@
     }
   },
   "general": {
-    "Decrease": "감소",
     "File": "파일",
-    "Increase": "증가",
     "Loading": "로딩 중...",
     "Optional": "선택",
     "Project": "프로젝트",

@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "Đã loại bỏ thành công các phiên bản {{count}}.",
     "Version": "Phiên bản"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
-    "AreYouSureToPermanentlyDeleteTarget": "Bạn có chắc muốn xóa vĩnh viễn {{target}} không?",
-    "CannotBeUndone": "Hành động này không thể hoàn tác.",
-    "DeleteItem": "Xóa",
-    "DeleteNItems": "Xóa {{count}} mục",
-    "TypeToConfirm": "Nhập <token>{{confirmText}}</token> để xác nhận."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Được tạo bởi"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Giảm",
     "File": "Tệp",
-    "Increase": "Tăng",
     "Loading": "Đang tải...",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",

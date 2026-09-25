@@ -129,14 +129,6 @@
     "SuccessFullyRemoved": "Poistettu onnistuneesti {{count}} versiot.",
     "Version": "Versio"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Haluatko varmasti poistaa?",
-    "AreYouSureToPermanentlyDeleteTarget": "Haluatko varmasti poistaa {{target}} pysyvästi?",
-    "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
-    "DeleteItem": "Poista",
-    "DeleteNItems": "Poista {{count}} kohdetta",
-    "TypeToConfirm": "Kirjoita <token>{{confirmText}}</token> vahvistaaksesi."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Luonut"
   },
@@ -800,9 +792,7 @@
     }
   },
   "general": {
-    "Decrease": "Vähennä",
     "File": "Tiedosto",
-    "Increase": "Lisää",
     "Loading": "Ladataan...",
     "Optional": "Valinnainen",
     "Project": "Projekti",
