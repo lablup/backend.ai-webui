@@ -25,6 +25,18 @@ describe('resolveAppPath', () => {
     expect(resolve('/admin/users')).toEqual({ ok: true, to: '/admin/users' });
   });
 
+  it('refuses form-prefill paths so the agent-filled notice cannot be skipped', () => {
+    for (const path of [
+      '/session/start?formValues=%7B%22sessionName%22%3A%22x%22%7D',
+      '/project/alpha/session/start?agentPrefill=abc',
+    ]) {
+      expect(resolve(path)).toMatchObject({
+        ok: false,
+        code: 'use_prepare_tool',
+      });
+    }
+  });
+
   it('rebases a flat project menu path onto the active project', () => {
     expect(resolve('/session/start?step=2')).toEqual({
       ok: true,

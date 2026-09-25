@@ -86,6 +86,8 @@ flowchart LR
 
 - **Enforced by the tool list**: WebUI는 submit이나 삭제를 부르는 `execute`를 만들지 않는 것으로 이 규칙을 지킨다. agent가 UI의 승인 버튼을 누를 수 있어도, tool을 불러서는 그 action이 일어나지 않는다.
 - **Prepare description**: `bai_prepare_<noun>`의 `description`은 form을 submit하지 않으며 submit은 사람이 한다고 적는다.
+- **Hand-off by link**: agent는 보통 사용자가 볼 수 없는 자기 browser에서 일한다. 그래서 `bai_prepare_<noun>`은 채운 form을 그대로 여는 `webui_url`을 돌려주고, 사용자는 그 link를 자기 browser에서 열어 확인한 뒤 직접 submit한다. form 상태는 URL에 담고, 비밀 값은 담지 않는다.
+- **Agent-filled marker**: `bai_prepare_<noun>`이 연 form의 URL에는 `agentPrefill` parameter가 붙고, page는 그 parameter가 있을 때 "AI agent가 채운 form이니 확인 후 submit하라"는 알림을 보여준다. `bai_navigate`는 form 상태 parameter(`formValues`)를 담은 경로를 거절한다(`use_prepare_tool`). 그래야 알림 없이 채워진 form이 생기지 않는다.
 - **No extra data**: tool은 자기를 등록한 component가 화면에 그리는 data만 돌려준다. 권한 때문에 화면에 없는 field를 tool을 위해 더 가져오지 않는다.
 
 ### 5. tool은 입력을 스스로 검사한다
@@ -116,6 +118,7 @@ flowchart LR
 
 - **Shape**: 모든 error는 `{ error: { code, message, issues? } }`이다(`WebMCPErrorResult`).
 - **Success shape**: 성공한 호출은 camelCase key를 가진 JSON object 하나를 돌려준다.
+- **Link key**: 사람에게 건넬 절대 URL은 `webui_url` key에 담는다. `bai-agent` CLI의 query 결과 행이 같은 이름을 쓰므로, agent는 CLI와 browser 어느 쪽에서 받았든 같은 key를 사용자에게 건넨다. camelCase 규칙의 유일한 예외다.
 
 ### 7. annotation은 정해진 조건에서만 단다
 
