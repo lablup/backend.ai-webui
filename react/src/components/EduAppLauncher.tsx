@@ -13,10 +13,10 @@ import { useBackendAIAppLauncherFragment$key } from '../__generated__/useBackend
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useBackendAIAppLauncher } from '../hooks/useBackendAIAppLauncher';
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Link } from '@astryxdesign/core/Link';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Link } from '@lablup/ui-common/Link';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import { BAICard, BAIFlex, toGlobalId, useBAILogger } from 'backend.ai-ui';
 import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';

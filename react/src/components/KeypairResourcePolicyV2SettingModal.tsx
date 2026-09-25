@@ -27,10 +27,10 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Card } from '@astryxdesign/core/Card';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Icon } from '@astryxdesign/core/Icon';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Card } from '@lablup/ui-common/Card';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Icon } from '@lablup/ui-common/Icon';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,

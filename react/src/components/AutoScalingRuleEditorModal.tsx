@@ -24,7 +24,7 @@ import {
   AstryxFormTextInput,
   type AstryxFormSelectorOptions,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIFlex,

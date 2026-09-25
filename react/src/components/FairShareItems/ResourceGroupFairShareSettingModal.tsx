@@ -15,7 +15,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from '../astryxFormControls';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAIQuestionIconWithTooltip,
   BAIAlert,
@@ -198,13 +198,7 @@ const ResourceGroupFairShareSettingModal: React.FC<
             by name (P9): 24px = step 6 across, 16px = step 4 down. The `Col`
             wrappers with `alignSelf: 'start'` become the grid's own
             `align="start"`. */}
-        <Grid
-          columns={2}
-          columnGap={6}
-          rowGap={4}
-          align="start"
-          width="100%"
-        >
+        <Grid columns={2} columnGap={6} rowGap={4} align="start" width="100%">
           <Form.Item
             hidden
             style={{ minWidth: 0 }}
@@ -227,106 +221,106 @@ const ResourceGroupFairShareSettingModal: React.FC<
               units={t('fairShare.Days')}
             />
           </Form.Item>
-            <Form.Item
-              style={{ minWidth: 0 }}
-              label={
-                <BAIFlex gap="xxs">
-                  {t('fairShare.HalfLifeDays')}
-                  <BAIQuestionIconWithTooltip
-                    title={t('fairShare.HalfLifeDaysDescription')}
-                  />
-                </BAIFlex>
-              }
-              name="halfLifeDays"
-              rules={[
-                {
-                  required: true,
-                  message: t('fairShare.PleaseInputFieldWithFieldName', {
-                    field: t('fairShare.HalfLifeDays'),
-                  }),
+          <Form.Item
+            style={{ minWidth: 0 }}
+            label={
+              <BAIFlex gap="xxs">
+                {t('fairShare.HalfLifeDays')}
+                <BAIQuestionIconWithTooltip
+                  title={t('fairShare.HalfLifeDaysDescription')}
+                />
+              </BAIFlex>
+            }
+            name="halfLifeDays"
+            rules={[
+              {
+                required: true,
+                message: t('fairShare.PleaseInputFieldWithFieldName', {
+                  field: t('fairShare.HalfLifeDays'),
+                }),
+              },
+              {
+                validator: (_, value) => {
+                  if (value % 1 !== 0) {
+                    return Promise.reject(
+                      new Error(t('error.OnlyIntegersAreAllowed')),
+                    );
+                  }
+                  return Promise.resolve();
                 },
-                {
-                  validator: (_, value) => {
-                    if (value % 1 !== 0) {
-                      return Promise.reject(
-                        new Error(t('error.OnlyIntegersAreAllowed')),
-                      );
-                    }
-                    return Promise.resolve();
-                  },
+              },
+            ]}
+          >
+            <AstryxFormNumberInput
+              label={t('fairShare.HalfLifeDays')}
+              min={1}
+              step={1}
+              units={t('fairShare.Days')}
+            />
+          </Form.Item>
+          <Form.Item
+            style={{ minWidth: 0 }}
+            label={
+              <BAIFlex gap="xxs">
+                {t('fairShare.LookbackDays')}
+                <BAIQuestionIconWithTooltip
+                  title={t('fairShare.LookbackDaysDescription')}
+                />
+              </BAIFlex>
+            }
+            name="lookbackDays"
+            rules={[
+              {
+                required: true,
+                message: t('fairShare.PleaseInputFieldWithFieldName', {
+                  field: t('fairShare.LookbackDays'),
+                }),
+              },
+              {
+                validator: (_, value) => {
+                  if (value % 1 !== 0) {
+                    return Promise.reject(
+                      new Error(t('error.OnlyIntegersAreAllowed')),
+                    );
+                  }
+                  return Promise.resolve();
                 },
-              ]}
-            >
-              <AstryxFormNumberInput
-                label={t('fairShare.HalfLifeDays')}
-                min={1}
-                step={1}
-                units={t('fairShare.Days')}
-              />
-            </Form.Item>
-            <Form.Item
-              style={{ minWidth: 0 }}
-              label={
-                <BAIFlex gap="xxs">
-                  {t('fairShare.LookbackDays')}
-                  <BAIQuestionIconWithTooltip
-                    title={t('fairShare.LookbackDaysDescription')}
-                  />
-                </BAIFlex>
-              }
-              name="lookbackDays"
-              rules={[
-                {
-                  required: true,
-                  message: t('fairShare.PleaseInputFieldWithFieldName', {
-                    field: t('fairShare.LookbackDays'),
-                  }),
-                },
-                {
-                  validator: (_, value) => {
-                    if (value % 1 !== 0) {
-                      return Promise.reject(
-                        new Error(t('error.OnlyIntegersAreAllowed')),
-                      );
-                    }
-                    return Promise.resolve();
-                  },
-                },
-              ]}
-            >
-              <AstryxFormNumberInput
-                label={t('fairShare.LookbackDays')}
-                min={1}
-                step={1}
-                units={t('fairShare.Days')}
-              />
-            </Form.Item>
-            <Form.Item
-              style={{ minWidth: 0 }}
-              label={
-                <BAIFlex gap="xxs">
-                  {t('fairShare.DefaultWeight')}
-                  <BAIQuestionIconWithTooltip
-                    title={t('fairShare.DefaultWeightDescription')}
-                  />
-                </BAIFlex>
-              }
-              name="defaultWeight"
-              rules={[
-                {
-                  required: true,
-                  message: t('fairShare.PleaseInputFieldWithFieldName', {
-                    field: t('fairShare.DefaultWeight'),
-                  }),
-                },
-              ]}
-            >
-              <AstryxFormNumberInput
-                label={t('fairShare.DefaultWeight')}
-                min={0}
-                step={0.1}
-              />
-            </Form.Item>
+              },
+            ]}
+          >
+            <AstryxFormNumberInput
+              label={t('fairShare.LookbackDays')}
+              min={1}
+              step={1}
+              units={t('fairShare.Days')}
+            />
+          </Form.Item>
+          <Form.Item
+            style={{ minWidth: 0 }}
+            label={
+              <BAIFlex gap="xxs">
+                {t('fairShare.DefaultWeight')}
+                <BAIQuestionIconWithTooltip
+                  title={t('fairShare.DefaultWeightDescription')}
+                />
+              </BAIFlex>
+            }
+            name="defaultWeight"
+            rules={[
+              {
+                required: true,
+                message: t('fairShare.PleaseInputFieldWithFieldName', {
+                  field: t('fairShare.DefaultWeight'),
+                }),
+              },
+            ]}
+          >
+            <AstryxFormNumberInput
+              label={t('fairShare.DefaultWeight')}
+              min={0}
+              step={0.1}
+            />
+          </Form.Item>
         </Grid>
 
         <Form.Item
@@ -344,12 +338,12 @@ const ResourceGroupFairShareSettingModal: React.FC<
             styles={{ body: { paddingBottom: 0, paddingTop: token.padding } }}
           >
             <Grid
-          columns={2}
-          columnGap={6}
-          rowGap={4}
-          align="start"
-          width="100%"
-        >
+              columns={2}
+              columnGap={6}
+              rowGap={4}
+              align="start"
+              width="100%"
+            >
               {_.map(resourceGroup?.fairShareSpec?.resourceWeights, (entry) => {
                 const weightLabel =
                   _.get(mergedResourceSlots, entry?.resourceType)

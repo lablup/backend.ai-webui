@@ -5,7 +5,7 @@
 import { theme } from '../theme-shim';
 import AstryxRouterLink from './AstryxRouterLink';
 import { breadcrumbExtraAtom } from './breadcrumbExtraAtom';
-import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
+import { Breadcrumbs, BreadcrumbItem } from '@lablup/ui-common/Breadcrumbs';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import * as _ from 'lodash-es';

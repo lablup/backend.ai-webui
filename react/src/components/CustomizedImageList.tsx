@@ -16,9 +16,9 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { theme } from '../theme-shim';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import TextHighlighter from './TextHighlighter';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIDeleteConfirmModal,
   BAIFlex,

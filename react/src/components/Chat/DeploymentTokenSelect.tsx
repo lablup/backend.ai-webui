@@ -7,11 +7,11 @@ import type {
   DeploymentTokenSelectQuery$data,
 } from '../../__generated__/DeploymentTokenSelectQuery.graphql';
 import WebUILink from '../WebUILink';
-import { Code } from '@astryxdesign/core/Code';
-import type { SelectorOptionData } from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Code } from '@lablup/ui-common/Code';
+import type { SelectorOptionData } from '@lablup/ui-common/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAIFlex,
   BAIIconWithTooltip,

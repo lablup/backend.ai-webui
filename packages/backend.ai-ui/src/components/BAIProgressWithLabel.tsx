@@ -9,7 +9,7 @@
 */
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import * as _ from 'lodash-es';
 import React from 'react';
 

@@ -9,9 +9,9 @@ import {
 } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAIModal,

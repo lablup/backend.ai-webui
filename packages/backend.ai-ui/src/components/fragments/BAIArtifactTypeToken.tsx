@@ -2,7 +2,7 @@ import {
   ArtifactType,
   BAIArtifactTypeTokenFragment$key,
 } from '../../__generated__/BAIArtifactTypeTokenFragment.graphql';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import { Brain, Container, Package } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
 

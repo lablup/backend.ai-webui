@@ -5,9 +5,9 @@
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
 import { theme } from '../theme-shim';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
   BAIIconWithTooltip,

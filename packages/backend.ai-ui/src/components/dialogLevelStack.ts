@@ -9,7 +9,7 @@ import {
   BAI_Z_INDEX,
   BAI_Z_INDEX_MODAL_LEVEL_STEP as Z_STEP,
 } from '../styles/zIndexLadder';
-import { devWarn } from '@astryxdesign/core/utils';
+import { devWarn } from '@lablup/ui-common/utils';
 import {
   useEffectEvent,
   useLayoutEffect,

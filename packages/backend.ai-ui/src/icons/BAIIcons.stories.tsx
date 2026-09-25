@@ -2,7 +2,7 @@ import BAIFlex from '../components/BAIFlex';
 import BAIText from '../components/BAIText';
 import { theme } from '../theme-shim';
 import * as Icons from './index';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 

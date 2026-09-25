@@ -5,7 +5,7 @@
 import { Form, type FormItemProps } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { AstryxFormTagsInput } from './astryxFormControls';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import React from 'react';

@@ -3,11 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import './BAIAppShell.css';
-import { AppShell, useAppShellMobile } from '@astryxdesign/core/AppShell';
-import { MobileNav } from '@astryxdesign/core/MobileNav';
-import { SideNavRenderContext } from '@astryxdesign/core/SideNav';
-import { VStack } from '@astryxdesign/core/Stack';
-import { useTheme } from '@astryxdesign/core/theme';
+import { AppShell, useAppShellMobile } from '@lablup/ui-common/AppShell';
+import { MobileNav } from '@lablup/ui-common/MobileNav';
+import { SideNavRenderContext } from '@lablup/ui-common/SideNav';
+import { VStack } from '@lablup/ui-common/Stack';
+import { useTheme } from '@lablup/ui-common/theme';
 import classNames from 'classnames';
 import React, {
   type ComponentProps,

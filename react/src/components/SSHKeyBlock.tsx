@@ -4,7 +4,7 @@
  */
 import { theme } from '../theme-shim';
 import './SSHKeyBlock.css';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import React from 'react';
 

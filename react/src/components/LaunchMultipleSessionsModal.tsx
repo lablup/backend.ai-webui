@@ -10,8 +10,8 @@ import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemain
 import { theme } from '../theme-shim';
 import { ResourceAllocationFormValue } from './SessionFormItems/ResourceAllocationFormItems';
 import { AstryxFormNumberInput } from './astryxFormControls';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIFlex,
   BAIMetadataList,

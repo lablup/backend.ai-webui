@@ -5,7 +5,7 @@
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAITour from './BAITour';
 import useTourTargets from './useTourTargets';
-import { TourStep } from '@astryxdesign/lab';
+import { TourStep } from '@lablup/ui-common/lab';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 

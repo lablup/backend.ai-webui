@@ -56,21 +56,21 @@ import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
 import { theme, useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Divider } from '@astryxdesign/core/Divider';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { Divider } from '@lablup/ui-common/Divider';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
 // FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
 // self-hosted replacement is parked (see form-engine/engine.ts). Everything
 // INSIDE the items is Astryx: the controls go through the shared
 // `astryxFormControls` adapters.
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {

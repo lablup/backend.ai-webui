@@ -5,8 +5,8 @@
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { Button } from '@astryxdesign/core/Button';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Button } from '@lablup/ui-common/Button';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { BAI_Z_INDEX, BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import { Suspense, useEffect } from 'react';

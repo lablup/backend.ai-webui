@@ -1,7 +1,7 @@
 import type { AstryxBadgeVariant } from '../helper/astryxTagVariant';
 import './BAIDoubleToken.css';
-import { Badge } from '@astryxdesign/core/Badge';
-import { HStack } from '@astryxdesign/core/Stack';
+import { Badge } from '@lablup/ui-common/Badge';
+import { HStack } from '@lablup/ui-common/Stack';
 import * as _ from 'lodash-es';
 import React from 'react';
 

@@ -14,9 +14,9 @@ import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Divider } from '@astryxdesign/core/Divider';
-import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Divider } from '@lablup/ui-common/Divider';
+import { ResizeHandle, useResizable } from '@lablup/ui-common/Resizable';
 import {
   BAISkeleton,
   BAIFileExplorer,

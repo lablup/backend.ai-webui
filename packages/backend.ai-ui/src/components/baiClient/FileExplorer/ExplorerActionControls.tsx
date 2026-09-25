@@ -17,8 +17,8 @@ import DeleteSelectedItemsModal, {
 } from './DeleteSelectedItemsModal';
 import { useDownloadErrorMessage } from './hooks';
 import type { RcFile } from './hooks';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   DownloadIcon,
   FilePlus,

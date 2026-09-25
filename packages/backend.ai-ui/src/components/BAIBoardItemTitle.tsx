@@ -1,7 +1,7 @@
-import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { Heading } from '@astryxdesign/core/Text';
+import BAIQuestionIconWithTooltip from './BAIQuestionIconWithTooltip';
+import { Heading } from '@lablup/ui-common/Text';
 import React from 'react';
 
 export interface BAIBoardItemTitleProps {

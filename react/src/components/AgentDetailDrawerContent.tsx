@@ -19,9 +19,9 @@ import AgentSessions, {
 } from './AgentNodeItems/AgentSessions';
 import AgentStatusBadge from './AgentNodeItems/AgentStatusBadge';
 import BAIErrorBoundary from './BAIErrorBoundary';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Text } from '@astryxdesign/core/Text';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAICard,
   BAIDoubleBadge,

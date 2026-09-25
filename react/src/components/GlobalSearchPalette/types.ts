@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import type { SearchableItem } from '@astryxdesign/core/Typeahead';
+import type { SearchableItem } from '@lablup/ui-common/Typeahead';
 import type { ReactNode } from 'react';
 import type { To } from 'react-router-dom';
 

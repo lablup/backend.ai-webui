@@ -6,9 +6,9 @@ import { NotificationState } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import BAINotificationBackgroundProgress from './BAINotificationBackgroundProgress';
 import './BAINotificationListItem.css';
-import { Card } from '@astryxdesign/core/Card';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Card } from '@lablup/ui-common/Card';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -114,7 +114,9 @@ const BAIGeneralNotificationItem: React.FC<{
             {notification?.onCancel ? (
               <BAIFlex style={{ flexShrink: 0 }}>
                 {/* antd `Button type="link"` -> `Link` (MAPPING §3.3). */}
-                <Link onClick={notification.onCancel}>{t('button.Cancel')}</Link>
+                <Link onClick={notification.onCancel}>
+                  {t('button.Cancel')}
+                </Link>
               </BAIFlex>
             ) : null}
             {notification.extraDescription && !notification?.onCancel ? (

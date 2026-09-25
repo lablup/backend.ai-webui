@@ -4,7 +4,7 @@ import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
 import BAIRowWrapWithDividers from './BAIRowWrapWithDividers';
 import BAIStatistic, { BAIStatisticProps } from './BAIStatistic';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import React from 'react';
 
 interface ResourceData {

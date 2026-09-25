@@ -10,7 +10,7 @@
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIFlex from './BAIFlex';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { LoaderCircle } from 'lucide-react';
 
 const TotalFooter: React.FC<{

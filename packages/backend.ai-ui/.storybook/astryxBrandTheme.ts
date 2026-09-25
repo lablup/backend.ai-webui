@@ -28,8 +28,8 @@ import {
   ANTD_DARK_ALGORITHM_OUTPUT,
 } from '../src/theme-shim';
 import webuiThemeJson from './theme.json';
-import { defineTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { defineTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 
 /** Map a declared dark seed to antd darkAlgorithm's measured output for it. */
 const resolveDarkSeed = (seed: string): string =>

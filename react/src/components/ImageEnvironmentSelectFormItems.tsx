@@ -24,8 +24,8 @@ import { theme } from '../theme-shim';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Token } from '@astryxdesign/core/Token';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIDoubleToken,
   BAITextHighlighter,

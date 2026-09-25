@@ -16,9 +16,9 @@ import ContainerCommitModal from './ContainerCommitModal';
 import ContainerLogModal from './ContainerLogModal';
 import SFTPConnectionInfoModal from './SFTPConnectionInfoModal';
 import TerminateSessionModal from './TerminateSessionModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
 import {
   BAIAppIcon,
   BAIContainerCommitIcon,

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useWebUINavigate } from '../hooks';
-import { Breadcrumbs, BreadcrumbItem } from '@astryxdesign/core/Breadcrumbs';
+import { Breadcrumbs, BreadcrumbItem } from '@lablup/ui-common/Breadcrumbs';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 

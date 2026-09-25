@@ -35,10 +35,11 @@
 import BAIAlertDialog from '../components/BAIAlertDialog';
 import BAIDialog from '../components/BAIDialog';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { Button } from '@astryxdesign/core/Button';
+// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
 import { DialogHeader } from '@astryxdesign/core/Dialog';
-import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
-import { HStack } from '@astryxdesign/core/Stack';
+import { Button } from '@lablup/ui-common/Button';
+import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { HStack } from '@lablup/ui-common/Stack';
 import React, { isValidElement, useSyncExternalStore } from 'react';
 import type { ReactNode } from 'react';
 

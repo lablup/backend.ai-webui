@@ -4,8 +4,8 @@
  */
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 

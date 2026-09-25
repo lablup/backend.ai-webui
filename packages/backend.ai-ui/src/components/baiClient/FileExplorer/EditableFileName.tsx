@@ -46,7 +46,7 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import './EditableFileName.css';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { useMutation } from '@tanstack/react-query';
 import * as _ from 'lodash-es';
 import { File, Folder, PencilIcon } from 'lucide-react';

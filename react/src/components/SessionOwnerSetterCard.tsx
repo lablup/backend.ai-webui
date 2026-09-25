@@ -11,15 +11,15 @@ import { AstryxFormSwitch } from './astryxFormControls';
 // FRONTIER (ticket 17): form-heavy card. `Form.useWatch` / `Form.Item` are
 // self-hosted since ticket 34 (live again since ticket 35); every control and
 // every piece of chrome below is Astryx now.
-import { Card } from '@astryxdesign/core/Card';
-import { Grid, GridSpan } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Selector } from '@astryxdesign/core/Selector';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Card } from '@lablup/ui-common/Card';
+import { Grid, GridSpan } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Selector } from '@lablup/ui-common/Selector';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   BAICard,
   BAICardProps,

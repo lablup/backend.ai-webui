@@ -5,8 +5,8 @@
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useBAIBreakpoint } from '../theme-shim';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { useUpdatableState, BAIFlex, BAIIntervalView } from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';

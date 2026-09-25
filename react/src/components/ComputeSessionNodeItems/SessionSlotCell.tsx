@@ -15,9 +15,9 @@ import {
 import { useSessionLiveStat } from '../../hooks/useSessionNodeLiveStat';
 import { getUnifiedSlotNameFromTag } from '../SessionFormItems/ResourceAllocationFormItems';
 import { displayMemoryUsage } from '../SessionUsageMonitor';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import * as stylex from '@stylexjs/stylex';
 import type { SemanticColor } from 'backend.ai-ui';
 import { BAIBadge, BAIBadgeProps, BAIFlex } from 'backend.ai-ui';

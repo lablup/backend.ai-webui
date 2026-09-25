@@ -35,7 +35,7 @@
    `isHeaderHidden` instead of an emptied label.
 */
 import AstryxRouterLink from './AstryxRouterLink';
-import { SideNavItem, SideNavSection } from '@astryxdesign/core/SideNav';
+import { SideNavItem, SideNavSection } from '@lablup/ui-common/SideNav';
 import React from 'react';
 
 /**

@@ -78,17 +78,17 @@ import VFolderTableFormItem, {
 } from './VFolderTableFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
 import './collapsible-section.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { Divider } from '@astryxdesign/core/Divider';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { Divider } from '@lablup/ui-common/Divider';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
+} from '@lablup/ui-common/SegmentedControl';
 import {
   BAISkeleton,
   BAIAvailablePresetSelect,

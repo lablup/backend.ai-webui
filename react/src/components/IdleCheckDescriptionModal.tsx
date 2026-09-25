@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { theme } from '../theme-shim';
-import { Heading, Text } from '@astryxdesign/core/Text';
+import { Heading, Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIModal, type BAIModalProps } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

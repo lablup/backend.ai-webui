@@ -13,7 +13,7 @@ import BAIDialog from './BAIDialog';
 import BAIDrawer from './BAIDrawer';
 import BAIDrawerPortal from './BAIDrawerPortal';
 import { BAI_MODAL_OPEN_ATTRIBUTE } from './dialogLevelStack';
-import { Theme, defineTheme } from '@astryxdesign/core/theme';
+import { Theme, defineTheme } from '@lablup/ui-common/theme';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';

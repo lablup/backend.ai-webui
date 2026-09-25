@@ -1,8 +1,8 @@
 import type { BrandSeeds } from '../src/theme-shim';
 import { astryxBrandTheme } from './astryxBrandTheme';
 import webuiThemeJson from './theme.json';
-import type { DefinedTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import type { DefinedTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 
 export type ThemeStyle = 'astryx' | 'webui';
 

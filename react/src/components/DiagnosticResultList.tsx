@@ -4,8 +4,8 @@
  */
 import { theme } from '../theme-shim';
 import type { DiagnosticResult } from '../types/diagnostics';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Text } from '@lablup/ui-common/Text';
 import { BAISkeleton, BAIFlex } from 'backend.ai-ui';
 import { CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

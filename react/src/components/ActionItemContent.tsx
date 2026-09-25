@@ -4,9 +4,9 @@
  */
 import { theme } from '../theme-shim';
 import WebUILink from './WebUILink';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import { ReactNode, useRef } from 'react';
 import { To } from 'react-router-dom';

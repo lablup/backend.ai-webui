@@ -18,8 +18,8 @@ import {
   AstryxFormSwitch,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
 import {
   BAIButton,
   BAIFlex,

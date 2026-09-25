@@ -6,7 +6,7 @@ import { theme } from '../../theme-shim';
 import './ChatMessageContent.css';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';

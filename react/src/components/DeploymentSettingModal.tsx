@@ -17,9 +17,9 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIButton,

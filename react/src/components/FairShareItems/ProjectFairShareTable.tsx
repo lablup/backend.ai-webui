@@ -9,8 +9,8 @@ import {
 } from '../../__generated__/ProjectFairShareTableFragment.graphql';
 import { theme } from '../../theme-shim';
 import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIBadge,

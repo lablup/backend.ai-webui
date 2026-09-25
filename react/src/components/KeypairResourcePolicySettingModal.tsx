@@ -26,10 +26,10 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Card } from '@astryxdesign/core/Card';
-import { Icon } from '@astryxdesign/core/Icon';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Card } from '@lablup/ui-common/Card';
+import { Icon } from '@lablup/ui-common/Icon';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIDynamicUnitInputNumber,
   BAIAllowedHostNamesSelect,

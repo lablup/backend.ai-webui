@@ -40,7 +40,7 @@ import BAIDynamicUnitInputNumber, {
   BAIDynamicUnitInputNumberProps,
 } from './BAIDynamicUnitInputNumber';
 import BAIFlex from './BAIFlex';
-import { Slider } from '@astryxdesign/core/Slider';
+import { Slider } from '@lablup/ui-common/Slider';
 import * as _ from 'lodash-es';
 import React, { useEffect, useMemo } from 'react';
 

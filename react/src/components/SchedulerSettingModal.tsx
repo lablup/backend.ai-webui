@@ -12,7 +12,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormSelector,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIQuestionIconWithTooltip,
   BAIModal,

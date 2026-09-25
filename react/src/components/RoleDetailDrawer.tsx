@@ -6,7 +6,7 @@ import { RoleDetailDrawerFragment$key } from '../__generated__/RoleDetailDrawerF
 import { RoleDetailDrawerRefetchQuery } from '../__generated__/RoleDetailDrawerRefetchQuery.graphql';
 import RoleDetailDrawerContent from './RoleDetailDrawerContent';
 import RoleFormModal from './RoleFormModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAIDrawer,
   BAISkeleton,

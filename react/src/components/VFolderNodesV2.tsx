@@ -33,10 +33,10 @@ import SharedFolderPermissionInfoModalV2 from './SharedFolderPermissionInfoModal
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import VFolderPermissionCellV2 from './VFolderPermissionCellV2';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIAlertIconWithTooltip,

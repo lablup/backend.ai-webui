@@ -7,8 +7,8 @@ import {
   SessionStatusBadgeFragment$key,
 } from '../../__generated__/SessionStatusBadgeFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAIFlex, badgeVariantForStatus } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LoaderCircle, CircleAlertIcon } from 'lucide-react';

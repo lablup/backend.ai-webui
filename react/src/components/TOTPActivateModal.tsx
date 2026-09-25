@@ -9,7 +9,7 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Spinner } from '@astryxdesign/core/Spinner';
+import { Spinner } from '@lablup/ui-common/Spinner';
 import { BAIModal, BAIModalProps, BAIFlex, BAIText } from 'backend.ai-ui';
 // PILOT-DECISION (p3-w3b): antd `QRCode` was the last antd RENDER in this
 // file. MAPPING.md §2 grades it **NONE** — neither Astryx core nor lab ships

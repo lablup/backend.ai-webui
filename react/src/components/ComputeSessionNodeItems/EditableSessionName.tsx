@@ -14,10 +14,10 @@ import { useValidateSessionName } from '../../hooks/useValidateSessionName';
 // Form ENGINE (Form + Form.Item) — locked SHIM decision. The control inside
 // the item is Astryx now.
 import { AstryxFormTextInput } from '../astryxFormControls';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { CheckIcon, CopyIcon, PencilIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -5,7 +5,7 @@
 import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import type { BAIFormItemProps } from './BAIFormItem';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { BAIFlex } from 'backend.ai-ui';
 import React, {
   Attributes,

@@ -16,7 +16,7 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { HStack } from '@astryxdesign/core/Stack';
+import { HStack } from '@lablup/ui-common/Stack';
 import { BAISkeleton } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';

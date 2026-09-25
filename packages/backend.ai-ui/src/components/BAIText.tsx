@@ -22,10 +22,10 @@
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Link } from '@astryxdesign/core/Link';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Link } from '@lablup/ui-common/Link';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import classNames from 'classnames';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import React, {

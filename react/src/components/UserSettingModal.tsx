@@ -38,13 +38,10 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import type { SearchableItem, SearchSource } from '@lablup/ui-common/Typeahead';
 import {
   BAISkeleton,
   BAIAlert,

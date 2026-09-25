@@ -13,6 +13,12 @@ const restrictedImportPatterns = [
   {
     group: ['backend.ai-ui/*', '!backend.ai-ui/dist', '!backend.ai-ui/locale'],
   },
+  // ADR 0009: Astryx is reached only through its @lablup/ui-common mirror.
+  {
+    group: ['@astryxdesign/*'],
+    message:
+      'Import Astryx through @lablup/ui-common: @astryxdesign/core/<X> -> @lablup/ui-common/<X>, @astryxdesign/lab -> @lablup/ui-common/lab (ADR 0009).',
+  },
 ];
 const restrictedImportPaths = [
   {
@@ -51,6 +57,8 @@ export default [
 
   {
     files: ['**/*.ts', '**/*.tsx'],
+    // `astryx theme build` output keeps its @astryxdesign/* ids (ADR 0009).
+    ignores: ['src/astryx-theme/built/**'],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -154,13 +162,8 @@ export default [
         'error',
         {
           patterns: [
-            {
-              group: [
-                'backend.ai-ui/*',
-                '!backend.ai-ui/dist',
-                '@lobehub/fluent-emoji',
-              ],
-            },
+            ...restrictedImportPatterns,
+            { group: ['@lobehub/fluent-emoji'] },
             {
               group: ['**/useCurrentProject'],
               importNames: ['useCurrentProjectValue'],

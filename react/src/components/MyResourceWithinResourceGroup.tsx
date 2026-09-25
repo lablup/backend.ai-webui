@@ -13,8 +13,8 @@ import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSel
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
+} from '@lablup/ui-common/SegmentedControl';
+import { Heading } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIBoardItemTitle,

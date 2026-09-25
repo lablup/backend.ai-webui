@@ -1,7 +1,7 @@
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAITextHighlighter from './BAITextHighlighter';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React from 'react';
 

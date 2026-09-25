@@ -75,16 +75,17 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIDialog from './BAIDialog';
 import './BAIModal.css';
 import BAISkeleton from './BAISkeleton';
-import { Button } from '@astryxdesign/core/Button';
+// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
 import { DialogHeader } from '@astryxdesign/core/Dialog';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   Layout,
   LayoutContent,
   LayoutFooter,
   LayoutHeader,
-} from '@astryxdesign/core/Layout';
-import { HStack } from '@astryxdesign/core/Stack';
+} from '@lablup/ui-common/Layout';
+import { HStack } from '@lablup/ui-common/Stack';
 import cx from 'classnames';
 import {
   SquareStack,

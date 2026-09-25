@@ -34,11 +34,11 @@ import SharedMemoryFormItems from './SharedMemoryFormItems';
 // FRONTIER (ticket 17): the launcher's form-visual core. The Form ENGINE and
 // `Form.Item` are self-hosted since ticket 34 (live again since ticket 35),
 // and every control and every piece of chrome below is Astryx now.
-import { Card } from '@astryxdesign/core/Card';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
-import { VStack } from '@astryxdesign/core/Stack';
-import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { Card } from '@lablup/ui-common/Card';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
+import { VStack } from '@lablup/ui-common/Stack';
+import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIDynamicUnitInputNumberWithSlider,

@@ -57,8 +57,8 @@ import { jotaiStore } from './DefaultProviders';
 import LoginFormPanel from './LoginFormPanel';
 // antd's <App> element stays mounted as a nested provider: unmigrated
 // children in this subtree (e.g. SignupModal) still read antd's context.
-import { Button } from '@astryxdesign/core/Button';
-import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
+import { Button } from '@lablup/ui-common/Button';
+import type { DropdownMenuOption } from '@lablup/ui-common/DropdownMenu';
 import { BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';

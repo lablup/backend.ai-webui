@@ -15,7 +15,7 @@ import {
 } from './bridge';
 import { message } from './message';
 import { AppShimModalHost, modal } from './modal';
-import type { ShowToastFn, ToastOptions } from '@astryxdesign/core/Toast';
+import type { ShowToastFn, ToastOptions } from '@lablup/ui-common/Toast';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';

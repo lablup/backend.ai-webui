@@ -17,9 +17,9 @@ import {
 } from '../../hooks/useWebUIMenuItems';
 import { theme } from '../../theme-shim';
 import BAIMenu from '../BAIMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { filterOutEmpty, useSessionStorageState } from 'backend.ai-ui';
 import { ArrowLeftIcon, ShieldUserIcon } from 'lucide-react';
 import React, { useEffect } from 'react';

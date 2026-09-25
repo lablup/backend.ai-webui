@@ -4,8 +4,8 @@
  */
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { theme } from '../../theme-shim';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Text } from '@astryxdesign/core/Text';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex, BAIUncontrolledInput } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 

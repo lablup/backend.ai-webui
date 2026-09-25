@@ -10,11 +10,11 @@
 */
 import './BAIDrawerPortal.css';
 import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
-import { useFocusTrap, useScrollLock } from '@astryxdesign/core/hooks';
-import { dataAttr } from '@astryxdesign/core/naming';
-import { useThemeName } from '@astryxdesign/core/theme';
-import { mergeRefs } from '@astryxdesign/core/utils';
-import { Drawer, type DrawerProps } from '@astryxdesign/lab';
+import { useFocusTrap, useScrollLock } from '@lablup/ui-common/hooks';
+import { Drawer, type DrawerProps } from '@lablup/ui-common/lab';
+import { dataAttr } from '@lablup/ui-common/naming';
+import { useThemeName } from '@lablup/ui-common/theme';
+import { mergeRefs } from '@lablup/ui-common/utils';
 import classNames from 'classnames';
 import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';

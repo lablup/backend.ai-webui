@@ -10,8 +10,8 @@
 import { BAIDeploymentOwnerInfo_deployment$key } from '../../__generated__/BAIDeploymentOwnerInfo_deployment.graphql';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIText from '../BAIText';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 

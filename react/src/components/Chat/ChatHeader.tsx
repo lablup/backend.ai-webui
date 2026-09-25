@@ -20,10 +20,10 @@ import ModelSelect from './ModelSelect';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Popover } from '@astryxdesign/core/Popover';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Popover } from '@lablup/ui-common/Popover';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { filterOutEmpty, BAIFlex, toLocalId } from 'backend.ai-ui';
 import { isEmpty } from 'lodash-es';
 import {

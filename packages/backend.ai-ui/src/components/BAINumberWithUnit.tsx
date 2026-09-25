@@ -4,7 +4,7 @@
 */
 import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
 import BAIFlex from './BAIFlex';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 
 interface BAINumberWithUnitProps {
   numberUnit: string;

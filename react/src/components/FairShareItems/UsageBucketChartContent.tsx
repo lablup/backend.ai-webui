@@ -15,8 +15,8 @@ import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/Us
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import { presetPalettes, theme } from '../../theme-shim';
 import './UsageBucketChartContent.css';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
 import {
   convertToBinaryUnit,
   INITIAL_FETCH_KEY,

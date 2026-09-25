@@ -12,7 +12,7 @@ import {
   AstryxFormTextInput,
   type AstryxFormNumberInputProps,
 } from './astryxFormControls';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import { BAIDynamicUnitInputNumber, BAIFlex } from 'backend.ai-ui';
 import { CircleMinus } from 'lucide-react';
 import React from 'react';

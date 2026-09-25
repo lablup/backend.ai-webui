@@ -13,8 +13,8 @@ import { theme } from '../theme-shim';
 import type {
   SelectorOptionData,
   SelectorOptionType,
-} from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
+} from '@lablup/ui-common/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
 import {
   BAIFlex,
   BAIIconWithTooltip,

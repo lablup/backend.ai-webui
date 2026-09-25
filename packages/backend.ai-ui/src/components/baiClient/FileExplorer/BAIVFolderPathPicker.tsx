@@ -13,8 +13,8 @@ import BAIDirectoryPickerModal, {
 import {
   ComplexSelector,
   type ComplexSelectorSize,
-} from '@astryxdesign/core/ComplexSelector';
-import type { SizeValue } from '@astryxdesign/core/utils';
+} from '@lablup/ui-common/ComplexSelector';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import {
   useEffectEvent,
   useLayoutEffect,

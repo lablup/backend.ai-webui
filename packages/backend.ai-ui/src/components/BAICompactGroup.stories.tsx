@@ -1,9 +1,9 @@
 import { Form } from '../form-engine';
 import BAICompactGroup from './BAICompactGroup';
-import { Button } from '@astryxdesign/core/Button';
-import { HStack } from '@astryxdesign/core/HStack';
-import { Selector } from '@astryxdesign/core/Selector';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Button } from '@lablup/ui-common/Button';
+import { HStack } from '@lablup/ui-common/HStack';
+import { Selector } from '@lablup/ui-common/Selector';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 

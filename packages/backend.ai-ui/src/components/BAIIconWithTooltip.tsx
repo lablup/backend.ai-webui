@@ -11,8 +11,8 @@
  `BAIQuestionIconWithTooltip`, a FRONTIER COMPONENT).
 */
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip, type TooltipProps } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip, type TooltipProps } from '@lablup/ui-common/Tooltip';
 import type { CSSProperties, ReactNode } from 'react';
 
 export interface BAIIconWithTooltipProps extends Omit<

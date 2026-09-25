@@ -9,14 +9,14 @@ import {
   FormListProps,
 } from '../form-engine';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { usePopover } from '@astryxdesign/core/Popover';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { usePopover } from '@lablup/ui-common/Popover';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import {
   colorVars,
   radiusVars,
   spacingVars,
   typeScaleVars,
-} from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { BAIButton, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

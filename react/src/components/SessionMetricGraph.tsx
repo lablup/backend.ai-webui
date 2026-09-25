@@ -14,8 +14,8 @@ import {
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import './SessionMetricGraph.css';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,

@@ -44,9 +44,9 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIColorPicker.css';
 import BAIFlex from './BAIFlex';
-import { Button } from '@astryxdesign/core/Button';
-import { Popover } from '@astryxdesign/core/Popover';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { Button } from '@lablup/ui-common/Button';
+import { Popover } from '@lablup/ui-common/Popover';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import React, { useEffect, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 

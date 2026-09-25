@@ -33,8 +33,8 @@
  only suppress the focus move, because the input they belong to is the caller's.
 */
 import './astryxNumberStepper.css';
-import { Icon } from '@astryxdesign/core/Icon';
-import { InputGroupText } from '@astryxdesign/core/InputGroup';
+import { Icon } from '@lablup/ui-common/Icon';
+import { InputGroupText } from '@lablup/ui-common/InputGroup';
 import React from 'react';
 
 export type StepDirection = 'up' | 'down';

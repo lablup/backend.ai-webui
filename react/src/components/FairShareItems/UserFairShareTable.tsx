@@ -8,7 +8,7 @@ import {
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
 import { theme } from '../../theme-shim';
-import { Divider } from '@astryxdesign/core/Divider';
+import { Divider } from '@lablup/ui-common/Divider';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,

@@ -1,5 +1,5 @@
 import { BAIArtifactStatusBadgeFragment$key } from '../../__generated__/BAIArtifactStatusBadgeFragment.graphql';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import { graphql, useFragment } from 'react-relay';
 
 export interface BAIArtifactStatusBadgeProps {

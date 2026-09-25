@@ -12,9 +12,9 @@ import { useSuspenseGetAnnouncement } from '../hooks/useSuspenseGetAnnouncement'
 import { theme } from '../theme-shim';
 import './AnnouncementBanner.css';
 import AnnouncementEditModal from './AnnouncementEditModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Markdown } from '@astryxdesign/core/Markdown';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Markdown } from '@lablup/ui-common/Markdown';
 import {
   BAIUnmountAfterClose,
   useSessionStorageState,

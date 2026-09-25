@@ -13,7 +13,7 @@
 */
 import { theme } from '../theme-shim';
 import BAIFlex from './BAIFlex';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import React, { type ReactNode } from 'react';
 
 export interface BAINotificationItemStyles {

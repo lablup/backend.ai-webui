@@ -5,8 +5,8 @@
 import { SessionAccessKeyFragment$key } from '../../__generated__/SessionAccessKeyFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserInfo } from '../../hooks/backendai';
-import { useTheme } from '@astryxdesign/core';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@lablup/ui-common';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

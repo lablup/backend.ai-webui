@@ -9,7 +9,7 @@
  CHILD of the nav, not a sibling.
 */
 import BAITabList from './BAITabList';
-import { Tab } from '@astryxdesign/core/TabList';
+import { Tab } from '@lablup/ui-common/TabList';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 

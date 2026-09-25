@@ -8,8 +8,8 @@ import { theme } from '../theme-shim';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
+} from '@lablup/ui-common/SegmentedControl';
+import { Heading } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIBoardItemTitle,

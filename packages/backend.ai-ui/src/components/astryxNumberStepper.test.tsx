@@ -1,5 +1,5 @@
 import { AstryxNumberStepper, nextLadderIndex } from './astryxNumberStepper';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

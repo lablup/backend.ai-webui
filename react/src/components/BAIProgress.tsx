@@ -4,7 +4,7 @@
  */
 import usePrimaryColors from '../hooks/usePrimaryColors';
 import { theme } from '../theme-shim';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';

@@ -17,7 +17,7 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   useUpdatableState,
   filterOutEmpty,

@@ -19,12 +19,12 @@ import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
 import LoginSession, { LoginSessionQuery } from './LoginSession';
 import UserSettingsGeneralPane from './UserSettingsGeneralPane';
 import WEBUIHelpButton from './WEBUIHelpButton';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Icon } from '@astryxdesign/core/Icon';
-import { List, ListItem } from '@astryxdesign/core/List';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Icon } from '@lablup/ui-common/Icon';
+import { List, ListItem } from '@lablup/ui-common/List';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIModal, BAISkeleton } from 'backend.ai-ui';
 import {
   ArrowLeft,

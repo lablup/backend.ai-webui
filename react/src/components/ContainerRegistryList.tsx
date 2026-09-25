@@ -16,10 +16,10 @@ import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting'
 import { usePainKiller } from '../hooks/usePainKiller';
 import ContainerRegistryEditorModal from './ContainerRegistryEditorModal';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAITokenRow,
   BAIDeleteConfirmModal,

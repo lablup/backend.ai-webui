@@ -8,7 +8,7 @@ import { theme } from '../theme-shim';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

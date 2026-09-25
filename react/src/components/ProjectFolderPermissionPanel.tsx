@@ -9,8 +9,8 @@ import { useCurrentDomainValue } from '../hooks';
 import { theme } from '../theme-shim';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAICard,
   BAIDomainSelect,

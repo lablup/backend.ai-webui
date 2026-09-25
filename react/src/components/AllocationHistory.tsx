@@ -4,8 +4,8 @@
  */
 import { Form } from '../form-engine';
 import AllocationHistoryStatistics from './AllocationHistoryStatistics';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Selector } from '@astryxdesign/core/Selector';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Selector } from '@lablup/ui-common/Selector';
 import {
   BAISkeleton,
   useUpdatableState,

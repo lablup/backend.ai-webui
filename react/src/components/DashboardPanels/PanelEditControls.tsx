@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { dashboardEditModeAtom } from '../dashboardEditModeAtom';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { BAIFlex, BAIPopconfirm } from 'backend.ai-ui';
 import { useAtomValue } from 'jotai';
 import { SquarePenIcon, Trash2 } from 'lucide-react';

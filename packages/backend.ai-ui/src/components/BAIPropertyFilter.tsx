@@ -57,13 +57,13 @@ import {
   type FilterPropertyOption,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
-import { PowerSearch } from '@astryxdesign/core/PowerSearch';
+import { PowerSearch } from '@lablup/ui-common/PowerSearch';
 import type {
   OperatorValue,
   PowerSearchConfig,
   PowerSearchField,
   PowerSearchFilter,
-} from '@astryxdesign/core/PowerSearch';
+} from '@lablup/ui-common/PowerSearch';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import type { TFunction } from 'i18next';

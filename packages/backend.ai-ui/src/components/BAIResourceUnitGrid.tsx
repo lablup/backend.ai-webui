@@ -27,7 +27,7 @@ import {
   type UnitGridLayout,
   type UnitGridMetrics,
 } from './BAIResourceUnitGrid.geometry';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import classNames from 'classnames';
 import React, {
   useEffect,

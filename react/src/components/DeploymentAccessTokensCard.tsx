@@ -10,9 +10,9 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSelector } from './astryxFormControls';
-import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
-import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
-import { Text } from '@astryxdesign/core/Text';
+import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
+import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIButton,

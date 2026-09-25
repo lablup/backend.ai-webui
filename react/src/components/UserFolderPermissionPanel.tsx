@@ -5,8 +5,8 @@
 import { UserFolderPermissionPanelQuery } from '../__generated__/UserFolderPermissionPanelQuery.graphql';
 import { UserFolderPermissionPanel_storageVolumeFrgmt$key } from '../__generated__/UserFolderPermissionPanel_storageVolumeFrgmt.graphql';
 import KeypairResourcePolicyStoragePermissionTable from './KeypairResourcePolicyStoragePermissionTable';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAdminKeypairResourcePolicySelect,
   BAICard,

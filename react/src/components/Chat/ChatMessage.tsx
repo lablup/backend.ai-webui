@@ -9,11 +9,11 @@ import {
 } from './ChatMessageContainer';
 import ChatMessageContent from './ChatMessageContent';
 import { UIMessage } from '@ai-sdk/react';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { Text } from '@astryxdesign/core/Text';
-import { Thumbnail } from '@astryxdesign/core/Thumbnail';
-import { Token } from '@astryxdesign/core/Token';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Text } from '@lablup/ui-common/Text';
+import { Thumbnail } from '@lablup/ui-common/Thumbnail';
+import { Token } from '@lablup/ui-common/Token';
 import { BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { PaperclipIcon } from 'lucide-react';

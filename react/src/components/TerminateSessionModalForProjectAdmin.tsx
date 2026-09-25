@@ -8,8 +8,8 @@ import { App } from '../app-shim';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
 import './TerminateSessionModalForProjectAdmin.css';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAICard,
   BAIFlex,

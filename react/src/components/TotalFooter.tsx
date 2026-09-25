@@ -7,7 +7,7 @@
  -> Astryx `Text color="secondary"`, and the spinner colour reads the token
  variable directly so the file no longer needs the theme shim.
 */
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { BAIFlex } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

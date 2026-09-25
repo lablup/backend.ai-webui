@@ -44,13 +44,13 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { FileInput } from '@astryxdesign/core/FileInput';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { FileInput } from '@lablup/ui-common/FileInput';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAISkeleton,
   BAIAlert,

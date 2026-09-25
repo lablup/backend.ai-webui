@@ -27,11 +27,11 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIVFolderDeleteButtonV2,
   BAISkeleton,

@@ -10,9 +10,10 @@ import { ThemeModeProvider } from '../hooks/useThemeMode';
 import AstryxAdminTheme from './AstryxAdminTheme';
 import AstryxBrandTheme from './AstryxBrandTheme';
 import { resolveRoleTheme } from './resolveRoleTheme';
+// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
 import { Dialog, DialogHeader } from '@astryxdesign/core/Dialog';
-import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
-import { MediaTheme } from '@astryxdesign/core/theme';
+import { Layout, LayoutContent } from '@lablup/ui-common/Layout';
+import { MediaTheme } from '@lablup/ui-common/theme';
 import { render, screen } from '@testing-library/react';
 import { BAIDialog } from 'backend.ai-ui';
 import { describe, expect, it, vi } from 'vitest';

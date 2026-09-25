@@ -24,7 +24,7 @@ import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
 import { theme } from '../theme-shim';
-import { Heading } from '@astryxdesign/core/Heading';
+import { Heading } from '@lablup/ui-common/Heading';
 import {
   BAIFlex,
   convertToUUID,

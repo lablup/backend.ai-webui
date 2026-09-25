@@ -11,7 +11,7 @@
 */
 import BAIAlertDialog from './BAIAlertDialog';
 import BAIDialog from './BAIDialog';
-import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
+import { Layout, LayoutContent } from '@lablup/ui-common/Layout';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

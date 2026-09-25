@@ -44,11 +44,11 @@
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from './BAIModal';
 import { BAITrans } from './BAITrans';
-import { Banner } from '@astryxdesign/core/Banner';
-import { VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Token } from '@astryxdesign/core/Token';
+import { Banner } from '@lablup/ui-common/Banner';
+import { VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Token } from '@lablup/ui-common/Token';
 import { CircleAlert } from 'lucide-react';
 import React, { isValidElement, useState } from 'react';
 

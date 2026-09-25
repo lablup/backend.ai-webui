@@ -28,8 +28,8 @@ import {
 import { fetchOpenAIModels } from './openAIModels';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
 import {
   convertToModelMessages,
   DefaultChatTransport,

@@ -24,9 +24,9 @@ import {
   type BulkCellState,
   type PermissionCellDiff,
 } from '../helper/rbacPermissionDiff';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIBulkEditFormItem,
   BAIBulkErrorModal,

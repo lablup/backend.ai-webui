@@ -27,10 +27,10 @@ import {
 } from '../hooks/useWebUIConfig';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Text } from '@lablup/ui-common/Text';
 import { BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {

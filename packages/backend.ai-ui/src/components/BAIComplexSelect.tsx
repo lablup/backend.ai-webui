@@ -76,23 +76,23 @@
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIComplexSelect.css';
-import { ComplexSelector } from '@astryxdesign/core/ComplexSelector';
+import { ComplexSelector } from '@lablup/ui-common/ComplexSelector';
 import type {
   ComplexSelectorSize,
   ComplexSelectorStatus,
-} from '@astryxdesign/core/ComplexSelector';
-import { Divider } from '@astryxdesign/core/Divider';
-import { InputClearButton } from '@astryxdesign/core/Field';
-import { Icon } from '@astryxdesign/core/Icon';
-import { useIndicator } from '@astryxdesign/core/Indicator';
-import { SelectorOption } from '@astryxdesign/core/Selector';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { VisuallyHidden } from '@astryxdesign/core/VisuallyHidden';
-import { themeProps } from '@astryxdesign/core/utils';
-import type { SizeValue } from '@astryxdesign/core/utils';
+} from '@lablup/ui-common/ComplexSelector';
+import { Divider } from '@lablup/ui-common/Divider';
+import { InputClearButton } from '@lablup/ui-common/Field';
+import { Icon } from '@lablup/ui-common/Icon';
+import { useIndicator } from '@lablup/ui-common/Indicator';
+import { SelectorOption } from '@lablup/ui-common/Selector';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { VisuallyHidden } from '@lablup/ui-common/VisuallyHidden';
+import { themeProps } from '@lablup/ui-common/utils';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import * as _ from 'lodash-es';
 import React, {
   useCallback,

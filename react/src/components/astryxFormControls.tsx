@@ -36,26 +36,23 @@
     `e.target.checked`).
 */
 import { FormItemInputContext } from '../form-engine';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { MultiSelector } from '@astryxdesign/core/MultiSelector';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { MultiSelector } from '@lablup/ui-common/MultiSelector';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import type { SelectorOptionType } from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Switch } from '@astryxdesign/core/Switch';
-import { TextArea } from '@astryxdesign/core/TextArea';
-import type { TextInputProps } from '@astryxdesign/core/TextInput';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
-import type { SizeValue } from '@astryxdesign/core/utils';
+} from '@lablup/ui-common/SegmentedControl';
+import type { SelectorOptionType } from '@lablup/ui-common/Selector';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Switch } from '@lablup/ui-common/Switch';
+import { TextArea } from '@lablup/ui-common/TextArea';
+import type { TextInputProps } from '@lablup/ui-common/TextInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import type { SearchableItem, SearchSource } from '@lablup/ui-common/Typeahead';
+import type { SizeValue } from '@lablup/ui-common/utils';
 import * as _ from 'lodash-es';
 import React, { useEffectEvent } from 'react';
 

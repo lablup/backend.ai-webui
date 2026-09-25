@@ -41,9 +41,9 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
-import { VStack } from '@astryxdesign/core/Stack';
+import { Banner } from '@lablup/ui-common/Banner';
+import { ResizeHandle, useResizable } from '@lablup/ui-common/Resizable';
+import { VStack } from '@lablup/ui-common/Stack';
 import {
   BAISkeleton,
   BAIFileExplorer,

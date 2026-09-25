@@ -15,9 +15,9 @@ import { BAISessionAgentIdsFragment$key } from '../../__generated__/BAISessionAg
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
-import { Link } from '@astryxdesign/core/Link';
-import { Popover } from '@astryxdesign/core/Popover';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Popover } from '@lablup/ui-common/Popover';
+import { Text } from '@lablup/ui-common/Text';
 import * as _ from 'lodash-es';
 import { Copy } from 'lucide-react';
 import React, { useMemo } from 'react';

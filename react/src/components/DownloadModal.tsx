@@ -9,14 +9,14 @@ import {
 } from '../hooks';
 import BAITabs from './BAITabs';
 import SourceCodeView from './SourceCodeView';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Stack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Stack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIMetadataList,

@@ -58,12 +58,12 @@
      stays available for a call site that needs it alone.
 */
 import './BAINotificationStack.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import type { BannerStatus } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { ProgressBar } from '@astryxdesign/core/ProgressBar';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import type { BannerStatus } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { ProgressBar } from '@lablup/ui-common/ProgressBar';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import React, { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 /** Matches `.bai-notification-stack-item`'s exit animation budget. */

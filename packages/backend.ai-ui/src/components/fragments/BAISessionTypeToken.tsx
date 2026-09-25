@@ -1,6 +1,6 @@
 import { BAISessionTypeTokenFragment$key } from '../../__generated__/BAISessionTypeTokenFragment.graphql';
 import { tokenColorForStatus } from '../../helper';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import * as _ from 'lodash-es';
 import React from 'react';
 import { useFragment, graphql } from 'react-relay';

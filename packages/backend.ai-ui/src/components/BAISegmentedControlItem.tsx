@@ -6,8 +6,8 @@
  through as children; it only reaches an attribute via `isLabelHidden`, which
  this wrapper drops so a ReactNode label can never become an `aria-label`.
 */
-import type { SegmentedControlItemProps } from '@astryxdesign/core/SegmentedControl';
-import { SegmentedControlItem } from '@astryxdesign/core/SegmentedControl';
+import type { SegmentedControlItemProps } from '@lablup/ui-common/SegmentedControl';
+import { SegmentedControlItem } from '@lablup/ui-common/SegmentedControl';
 import React from 'react';
 
 export interface BAISegmentedControlItemProps extends Omit<

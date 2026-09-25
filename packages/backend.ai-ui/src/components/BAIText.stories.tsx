@@ -1,7 +1,7 @@
 import BAICard from './BAICard';
 import BAIFlex from './BAIFlex';
 import BAIText from './BAIText';
-import { Kbd } from '@astryxdesign/core/Kbd';
+import { Kbd } from '@lablup/ui-common/Kbd';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**

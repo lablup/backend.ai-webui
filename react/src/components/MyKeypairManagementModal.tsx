@@ -18,10 +18,10 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
   BAIDeleteConfirmModal,

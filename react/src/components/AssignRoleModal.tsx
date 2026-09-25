@@ -7,7 +7,7 @@ import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
 import { theme } from '../theme-shim';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,

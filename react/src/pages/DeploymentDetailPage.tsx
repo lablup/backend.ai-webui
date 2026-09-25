@@ -25,10 +25,10 @@ import {
 } from '../hooks/useWebUIMenuItems';
 import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Heading } from '@astryxdesign/core/Heading';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Heading } from '@lablup/ui-common/Heading';
 import {
   BAIButton,
   BAIDeploymentStatus,

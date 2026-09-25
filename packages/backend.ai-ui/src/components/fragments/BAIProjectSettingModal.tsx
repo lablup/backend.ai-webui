@@ -26,7 +26,7 @@ import {
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import { useBAIResourceSlots } from '../provider';
-import { HStack } from '@astryxdesign/core/Stack';
+import { HStack } from '@lablup/ui-common/Stack';
 import * as _ from 'lodash-es';
 import { useDeferredValue, useRef } from 'react';
 import {

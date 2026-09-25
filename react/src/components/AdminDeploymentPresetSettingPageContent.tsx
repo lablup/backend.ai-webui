@@ -51,9 +51,9 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
+import { Button } from '@lablup/ui-common/Button';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
 import {
   BAISkeleton,
   BAIAdminImageSelect,

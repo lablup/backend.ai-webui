@@ -21,12 +21,12 @@ import { useRecentSearchHits } from './useRecentSearchHits';
 import {
   CommandPalette,
   CommandPaletteInput,
-} from '@astryxdesign/core/CommandPalette';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { textSizeVars } from '@astryxdesign/core/theme/tokens.stylex';
+} from '@lablup/ui-common/CommandPalette';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { textSizeVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import { useBAILogger } from 'backend.ai-ui';
 import { Settings } from 'lucide-react';

@@ -4,7 +4,7 @@ import BAIButton from './BAIButton';
 import BAICheckbox from './BAICheckbox';
 import BAIDeleteConfirmModal from './BAIDeleteConfirmModal';
 import BAIFlex from './BAIFlex';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Trash2, Folder } from 'lucide-react';
 import { useState } from 'react';

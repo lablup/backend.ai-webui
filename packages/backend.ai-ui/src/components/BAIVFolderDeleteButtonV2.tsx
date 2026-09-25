@@ -19,7 +19,7 @@
    icon-only and relied on a wrapping Tooltip for its name.
 */
 import { BAIVFolderDeleteButtonV2Fragment$key } from '../__generated__/BAIVFolderDeleteButtonV2Fragment.graphql';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { TrashIcon } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';

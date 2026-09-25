@@ -30,8 +30,8 @@ import {
 } from './bridge';
 import { message, type MessageApi } from './message';
 import { AppShimModalHost, modal, type ModalApi } from './modal';
-import { LayerProvider, type LayerToastConfig } from '@astryxdesign/core/Layer';
-import { useToast } from '@astryxdesign/core/Toast';
+import { LayerProvider, type LayerToastConfig } from '@lablup/ui-common/Layer';
+import { useToast } from '@lablup/ui-common/Toast';
 import React, { useEffect, type ReactNode } from 'react';
 
 export { message, modal };

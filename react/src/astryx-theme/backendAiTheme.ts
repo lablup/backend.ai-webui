@@ -54,8 +54,8 @@
    registration, and identical seed sets share one registration via the
    build cache below.
  */
-import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { defineTheme, type DefinedTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 import { ANTD_ALIGN_TOKENS, ANTD_DARK_ALGORITHM_OUTPUT } from 'backend.ai-ui';
 
 // The measured parity tables moved into BUI's theme-shim with the shim itself

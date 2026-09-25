@@ -4,7 +4,7 @@
  */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
 import { BAI_BREAKPOINTS } from '../theme-shim';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   filterOutEmpty,
   BAIFlex,

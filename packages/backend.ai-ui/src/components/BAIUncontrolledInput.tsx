@@ -33,8 +33,8 @@
  ticket. Passing a real `label` is the per-surface copy task (P8).
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { NumberInput } from '@astryxdesign/core/NumberInput';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { NumberInput } from '@lablup/ui-common/NumberInput';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import React, { useState } from 'react';
 import type { CSSProperties } from 'react';
 

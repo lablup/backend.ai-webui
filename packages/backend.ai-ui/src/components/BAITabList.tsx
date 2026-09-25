@@ -32,7 +32,7 @@
     the nav is what forces rule 1 to be violated.
 */
 import './BAITabList.css';
-import { TabList, type TabListProps } from '@astryxdesign/core/TabList';
+import { TabList, type TabListProps } from '@lablup/ui-common/TabList';
 import React, { type ReactNode } from 'react';
 
 export interface BAITabListProps extends Omit<TabListProps, 'ref'> {

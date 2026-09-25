@@ -13,10 +13,10 @@ import { useBAIBreakpoint } from '../theme-shim';
 import './DeploymentRevisionDetail.css';
 import FolderLink from './FolderLink';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Badge } from '@lablup/ui-common/Badge';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIFlex,

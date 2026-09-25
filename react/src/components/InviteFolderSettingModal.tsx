@@ -22,11 +22,11 @@ import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSelector, AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector } from '@astryxdesign/core/Selector';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Selector } from '@lablup/ui-common/Selector';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading } from '@lablup/ui-common/Text';
 import {
   BAIPopconfirm,
   BAIModal,

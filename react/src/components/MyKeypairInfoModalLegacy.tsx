@@ -7,8 +7,8 @@ import { MyKeypairInfoModalLegacyQuery } from '../__generated__/MyKeypairInfoMod
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Button } from '@astryxdesign/core/Button';
-import { Token } from '@astryxdesign/core/Token';
+import { Button } from '@lablup/ui-common/Button';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
   BAIModal,

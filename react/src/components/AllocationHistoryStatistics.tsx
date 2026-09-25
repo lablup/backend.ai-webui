@@ -13,7 +13,7 @@ import useUserUsageStats from '../hooks/useUserUsageStats';
 import { theme } from '../theme-shim';
 import { Period } from './AllocationHistory';
 import './AllocationHistoryStatistics.css';
-import { Heading } from '@astryxdesign/core/Heading';
+import { Heading } from '@lablup/ui-common/Heading';
 import { BAICard, BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';

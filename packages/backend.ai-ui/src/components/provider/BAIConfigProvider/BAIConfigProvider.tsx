@@ -3,7 +3,7 @@ import { type BAIClient, BAIClientProvider } from '../BAIClientProvider';
 import {
   InternationalizationProvider,
   getLocaleDirection,
-} from '@astryxdesign/core/i18n';
+} from '@lablup/ui-common/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';

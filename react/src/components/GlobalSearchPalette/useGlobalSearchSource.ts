@@ -16,7 +16,7 @@ import {
 } from './searchArtifacts';
 import type { SearchConfigFlags, SearchContext, SearchHit } from './types';
 import { useRecentSearchHits } from './useRecentSearchHits';
-import type { SearchSource } from '@astryxdesign/core/Typeahead';
+import type { SearchSource } from '@lablup/ui-common/Typeahead';
 import { useBAILogger } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useEffectEvent } from 'react';

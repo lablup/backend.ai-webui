@@ -13,8 +13,8 @@ import { compareNumberWithUnits } from '../helper';
 import { useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormNumberInput } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Grid } from '@astryxdesign/core/Grid';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Grid } from '@lablup/ui-common/Grid';
 import {
   BAIFlex,
   BAIModal,

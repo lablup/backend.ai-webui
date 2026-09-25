@@ -8,6 +8,19 @@ import fs from "node:fs";
 // Embedded inline (not referenced by path) so the schema CONTENT is part of
 // the resolved config: editing i18n.schema.json then invalidates `--cache`d
 // lint results for the locale files, which a `$schema` path alone would not.
+// ADR 0009: Astryx is reached only through its @lablup/ui-common mirror.
+const astryxImportBan = {
+  group: ["@astryxdesign/*"],
+  message:
+    "Import Astryx through @lablup/ui-common: @astryxdesign/core/<X> -> @lablup/ui-common/<X>, @astryxdesign/lab -> @lablup/ui-common/lab (ADR 0009).",
+};
+// Files the Astryx CLI writes or reads keep the real @astryxdesign/* ids.
+const astryxImportBanExempt = [
+  "src/**/*.doc.ts",
+  "src/astryx-docs/**",
+  "src/astryx-theme-augmentations.d.ts",
+];
+
 const i18nSchema = JSON.parse(
   fs.readFileSync(new URL("./i18n.schema.json", import.meta.url), "utf8"),
 );
@@ -61,11 +74,13 @@ export default [
       "**/*.test.*",
       "**/*.stories.*",
       "**/__test__/**",
+      ...astryxImportBanExempt,
     ],
     rules: {
       "no-restricted-imports": [
         "error",
         {
+          patterns: [astryxImportBan],
           paths: [
             {
               name: "react-i18next",
@@ -82,6 +97,22 @@ export default [
           ],
         },
       ],
+    },
+  },
+
+  // The files the block above exempts from the react-i18next ban still get
+  // the Astryx ban (a later block's rule config replaces an earlier one's).
+  {
+    files: [
+      "src/hooks/useBAIi18n.ts",
+      "src/components/BAITrans.tsx",
+      "**/*.test.*",
+      "**/*.stories.*",
+      "**/__test__/**",
+    ],
+    ignores: astryxImportBanExempt,
+    rules: {
+      "no-restricted-imports": ["error", { patterns: [astryxImportBan] }],
     },
   },
 

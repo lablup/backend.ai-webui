@@ -5,7 +5,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { BAILink, BAIModal, BAIModalProps } from 'backend.ai-ui';
 
 interface AboutBackendAIModalProps extends BAIModalProps {
