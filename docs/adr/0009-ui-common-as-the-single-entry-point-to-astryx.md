@@ -163,7 +163,8 @@ flowchart TB
 ### 7. agent 지침과 token gate는 ui-common에서 만든다
 
 - **Agent block**: `AGENTS.md`(`CLAUDE.md`는 이 파일의 symlink)와 `react/AGENTS.md`의 `ASTRYX:START`/`ASTRYX:END` block은 `ui-common agents --write <file>`이 만드는 `UI-COMMON:START`/`UI-COMMON:END` block으로 바뀐다. 이 block은 `astryx init --features agents` 출력의 import 경로를 ui-common으로 고쳐 쓴 것이다. marker가 다르므로 `astryx init`이나 `astryx upgrade`가 덮어쓰지 않는다.
-- **Project lines**: `ASTRYX` block에 붙어 있던 MIGRATION RELAXATION, STATUS SEMANTICS(ADR 0007), BUI INTEGRATION 줄은 UI-COMMON block에 다시 붙인다. block 아래의 재생성 안내는 `ui-common agents`를 다시 돌리라는 내용으로 바뀐다.
+- **Project lines**: `ASTRYX` block에 붙어 있던 MIGRATION RELAXATION, STATUS SEMANTICS(ADR 0007), BUI INTEGRATION 줄은 UI-COMMON block의 END marker 바로 뒤, marker 밖의 PROJECT LINES에 둔다. 그래서 `ui-common agents --write`로 block을 다시 만들어도 사라지지 않는다. block 아래의 재생성 안내는 `ui-common agents`를 다시 돌리라는 내용으로 바뀐다.
+- **Staleness gate**: `scripts/verify.sh`는 두 파일에 `ui-common agents --check`를 돌려, ui-common을 올린 뒤 block을 다시 만들지 않으면 실패한다.
 - **Token gate**: `scripts/migration-gates/astryx-token-gate.mjs`의 `DEFAULT_DECLARED_CSS`에서 core와 theme-neutral 항목은 ui-common이 싣는 같은 CSS 파일로 바뀐다. `react/src/astryx-theme/built/backendai-default-built.css` 항목은 그대로다.
 
 ## 대안과 기각 사유
@@ -194,7 +195,7 @@ flowchart TB
 - [FR-4054](https://lablup.atlassian.net/browse/FR-4054): Astryx 모양 props와 BUI adapter. [FR-4055](https://lablup.atlassian.net/browse/FR-4055): `useTranslator`와 provider에서의 병합. [FR-4087](https://lablup.atlassian.net/browse/FR-4087): 이동 순서와 `theme-shim` track.
 - ui-common: [#40](https://github.com/lablup/ui-common/issues/40)(dependency form, theme, layer), [#41](https://github.com/lablup/ui-common/issues/41)(admission rule, 직접 import 금지), [#42](https://github.com/lablup/ui-common/issues/42)(`ui-common` CLI), [#52](https://github.com/lablup/ui-common/issues/52)(upgrade tool).
 - 결정일: 2026-09-25.
-- 관련: [ADR 0007](0007-badge-for-live-values-and-token-for-settled-values.md)의 `Badge`·`Token`은 이제 `@lablup/ui-common/Badge`·`@lablup/ui-common/Token`에서 import하고, 그 ADR의 STATUS SEMANTICS 줄은 UI-COMMON block으로 옮겨 간다. `.claude/rules/component-props-extension.md`가 adapter props의 base를 정한다.
+- 관련: [ADR 0007](0007-badge-for-live-values-and-token-for-settled-values.md)의 `Badge`·`Token`은 이제 `@lablup/ui-common/Badge`·`@lablup/ui-common/Token`에서 import하고, 그 ADR의 STATUS SEMANTICS 줄은 UI-COMMON block 바로 뒤의 PROJECT LINES로 옮겨 간다. `.claude/rules/component-props-extension.md`가 adapter props의 base를 정한다.
 
 ## 용어
 

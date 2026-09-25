@@ -34,9 +34,10 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 - When no BAI equivalent exists, use **Astryx** directly, imported through its
   `@lablup/ui-common` mirror: `@lablup/ui-common/<Name>`, never `@astryxdesign/*`
   (ESLint rejects it; ADR 0009). Discover
-  before writing: `astryx search "<thing>"`, `astryx component <Name>`. The CLI lives in
-  the `react` workspace, so run it as `pnpm exec astryx …` from `react/` or
-  `pnpm run astryx …` from the repository root — `pnpm exec` finds no binary at the root.
+  before writing: `ui-common search "<thing>"`, `ui-common component <Name>`. The CLI comes
+  with `@lablup/ui-common`, a dependency of `react/` and BUI only, so run it as
+  `pnpm exec ui-common …` from `react/` or `pnpm run ui-common …` from the repository
+  root — `pnpm exec` finds no binary at the root.
   See the `UI-COMMON` block in `AGENTS.md` / `react/AGENTS.md`.
 - **antd is not a dependency.** `import … from 'antd'` does not resolve and fails `tsc`;
   the workspace is exact-pinned so it cannot re-enter transitively. Never add one.
