@@ -91,6 +91,7 @@ export interface LoginConfigState {
   enableInteractiveLoginAccountSwitch: boolean;
   enableModelFolders: boolean;
   enableReservoir: boolean;
+  enableWebMCP: boolean;
   showNonInstalledImages: boolean;
   proxy_url: string;
   openPortToPublic: boolean;
@@ -160,6 +161,7 @@ export function getDefaultLoginConfig(): LoginConfigState {
     enableInteractiveLoginAccountSwitch: true,
     enableModelFolders: true,
     enableReservoir: false,
+    enableWebMCP: false,
     showNonInstalledImages: false,
     proxy_url: 'http://127.0.0.1:5050/',
     openPortToPublic: false,
@@ -460,6 +462,12 @@ export function refreshConfigFromToml(config: any): LoginConfigState {
     value: g?.enableReservoir,
   }) as boolean;
 
+  state.enableWebMCP = getConfigValueByExists(g, {
+    valueType: 'boolean',
+    defaultValue: false,
+    value: g?.enableWebMCP,
+  }) as boolean;
+
   // -- wsproxy section --
   state.proxy_url = getConfigValueByExists(w, {
     valueType: 'string',
@@ -679,5 +687,6 @@ export function applyConfigToClient(cfg: LoginConfigState): void {
   client._config.inactiveList = cfg.inactiveList;
   client._config.allowSignout = cfg.allow_signout;
   client._config.enableReservoir = cfg.enableReservoir;
+  client._config.enableWebMCP = cfg.enableWebMCP;
   client.ready = true;
 }
