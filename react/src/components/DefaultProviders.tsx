@@ -20,6 +20,7 @@ import {
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { useThemeMode } from '../hooks/useThemeMode';
+import { useLoginConfig } from '../hooks/useWebUIConfig';
 import '../index.css';
 // antd `theme.useToken()` drop-in backed by Astryx tokens (to-astryx ticket
 // 03). Renders no DOM and touches no document attributes — mounting it is
@@ -32,6 +33,7 @@ import {
   BAIConfigProvider,
   BAIMetaDataProvider,
   BAIText,
+  BAIWebMCPProvider,
   useUpdateEffect,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
@@ -321,6 +323,7 @@ export const DefaultProvidersForReactRoot: React.FC<{
   const { isDarkMode } = useThemeMode();
 
   const { themeConfig } = useCustomThemeConfig();
+  const enableWebMCP = useLoginConfig()?.enableWebMCP ?? false;
 
   const currentLocale =
     buiLanguages[lang as keyof typeof buiLanguages] ?? buiLanguages['en'];
@@ -435,7 +438,10 @@ export const DefaultProvidersForReactRoot: React.FC<{
                         <Suspense>
                           {/* <BrowserRouter> */}
                           {/* <RoutingEventHandler /> */}
-                          {children}
+                          {/* WebMCP tool gate, ADR 0009. */}
+                          <BAIWebMCPProvider enabled={enableWebMCP}>
+                            {children}
+                          </BAIWebMCPProvider>
                           {/* </BrowserRouter> */}
                         </Suspense>
                       </BAIMetaDataProviderWrapper>
