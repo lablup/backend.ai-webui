@@ -1,0 +1,12 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ ui-common `NotificationItem` takes no per-slot styles, so the FR-4110 title
+ gap is closed here until it does.
+*/
+@layer components {
+  .bai-session-notification-item .uic-notification-item__title {
+    margin-bottom: 0;
+  }
+}

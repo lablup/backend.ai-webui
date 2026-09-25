@@ -9,6 +9,7 @@ import {
   useSetBAINotification,
 } from '../hooks/useBAINotification';
 import { useProjectPath } from '../hooks/useRouteScope';
+import './BAIComputeSessionNodeNotificationItem.css';
 import SessionActionButtons, {
   PrimaryAppOption,
 } from './ComputeSessionNodeItems/SessionActionButtons';
@@ -86,7 +87,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
     node && (
       <>
         <BAINotificationItem
-          styles={{ title: { marginBottom: 0 } }}
+          className="bai-session-notification-item"
           title={
             <BAIText ellipsis>
               {t('general.Session')}:&nbsp;

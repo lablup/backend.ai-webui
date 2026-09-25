@@ -80,10 +80,7 @@ export type {
   BAILabeledValue,
 } from './BAIComplexSelect';
 export { default as BAINotificationItem } from './BAINotificationItem';
-export type {
-  BAINotificationItemProps,
-  BAINotificationItemStyles,
-} from './BAINotificationItem';
+export type { BAINotificationItemProps } from './BAINotificationItem';
 export { default as BAIModal } from './BAIModal';
 export type { BAIModalProps } from './BAIModal';
 export { default as BAISkeleton } from './BAISkeleton';
