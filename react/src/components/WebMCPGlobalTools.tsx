@@ -109,7 +109,7 @@ export const createNavigateTool = ({
 }): WebMCPTool => ({
   name: 'bai_navigate',
   description:
-    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title; with reloaded: true the page is reloading, so wait for it and list the tools again.',
+    'Open a page in this Backend.AI WebUI tab. Pass exactly one of "page" (a menu key the user can access) or "path" (an app path under /project/<name>/ or /admin/; a flat menu path such as /session?x=1 opens in the current project). Only navigates — never submits or deletes anything. Returns the resulting path and tab title; with reloaded: true the page is reloading, so wait for it and list the tools again. To fill a new session form, open /session/start and call bai_prepare_session there.',
   inputSchema: {
     type: 'object',
     properties: {
