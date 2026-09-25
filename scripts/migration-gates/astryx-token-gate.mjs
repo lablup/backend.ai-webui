@@ -15,8 +15,10 @@
  *
  * This gate cross-checks every `var(--…)` USED in app source against the
  * set of custom properties DECLARED by:
- *   1. @astryxdesign/core (dist/astryx.css + src/reset.css)
- *   2. @astryxdesign/theme-neutral (dist/theme.css)
+ *   1. Astryx core (astryx.css + reset.css) and theme-neutral (theme.css),
+ *      read through their @lablup/ui-common mirrors (ADR 0009), whose
+ *      `@import`s are followed to the installed Astryx files
+ *   2. ui-common's own global sheet (ui-common.css)
  *   3. the built brand theme (react/src/astryx-theme/built/*.css)
  *   4. the scanned source itself (CSS `--x: …` declarations and
  *      JS/TSX object keys `'--x': …`, including inline setProperty maps)
@@ -33,7 +35,8 @@
  * Informational by default (exit 0); `--strict` exits 1 on any undeclared
  * usage.
  */
-import { readFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, readdirSync, existsSync, realpathSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -50,10 +53,12 @@ export const DEFAULT_SCAN_ROOTS = [
   "packages/backend.ai-ui/src",
 ];
 
+const UI_COMMON_DIST = "react/node_modules/@lablup/ui-common/dist";
 export const DEFAULT_DECLARED_CSS = [
-  "react/node_modules/@astryxdesign/core/dist/astryx.css",
-  "react/node_modules/@astryxdesign/core/src/reset.css",
-  "react/node_modules/@astryxdesign/theme-neutral/dist/theme.css",
+  `${UI_COMMON_DIST}/astryx/astryx.css`,
+  `${UI_COMMON_DIST}/astryx/reset.css`,
+  `${UI_COMMON_DIST}/astryx/theme/neutral/theme.css`,
+  `${UI_COMMON_DIST}/ui-common.css`,
   "react/src/astryx-theme/built/backendai-default-built.css",
 ];
 
@@ -73,6 +78,30 @@ export function parseDeclaredCss(text) {
   const re = /(?:^|[{;\s'"(])(--[a-zA-Z0-9_-]+)\s*:/g;
   let m;
   while ((m = re.exec(text)) !== null) names.add(m[1]);
+  return names;
+}
+
+const CSS_IMPORT_RE = /@import\s+(?:url\(\s*)?['"]([^'"]+)['"]/g;
+
+/**
+ * Declared names in a CSS file and, transitively, in every file it
+ * `@import`s. A ui-common mirror sheet is a bare `@import` of the Astryx
+ * file, resolved here the way a bundler would, from the importing file.
+ */
+export function readDeclaredCss(absPath, seen = new Set()) {
+  const names = new Set();
+  const real = realpathSync(absPath);
+  if (seen.has(real)) return names;
+  seen.add(real);
+  const text = readFileSync(real, "utf8");
+  for (const name of parseDeclaredCss(text)) names.add(name);
+  const resolveFrom = createRequire(real);
+  for (const [, spec] of text.matchAll(CSS_IMPORT_RE)) {
+    const target = spec.startsWith(".")
+      ? resolve(dirname(real), spec)
+      : resolveFrom.resolve(spec);
+    for (const name of readDeclaredCss(target, seen)) names.add(name);
+  }
   return names;
 }
 
@@ -231,7 +260,7 @@ export function runTokenGate({
       missingDeclaredSources.push(cssPath);
       continue;
     }
-    for (const name of parseDeclaredCss(readFileSync(abs, "utf8"))) {
+    for (const name of readDeclaredCss(abs)) {
       declared.add(name);
     }
   }
