@@ -147,6 +147,20 @@ node packages/backend.ai-agent-cli/dist/cli.js login --endpoint <manager url>
 
 The CLI derives the WebUI origin from this checkout's branch the same way `scripts/dev.mjs` does (`fr-XXXX.localhost:1355`, honouring `PORTLESS_PORT`); pass `--webui <origin>` to override it. The browser POSTs the session to a loopback listener the CLI opened, so both must run on the same machine — over a tunnel or a shared dev-gw URL, use `bai-agent login --paste` instead. `packages/backend.ai-agent-cli/README.md` has the full flow.
 
+## WebMCP smoke check (`scripts/webmcp-smoke.sh`)
+
+With `enableWebMCP = true` under `[general]` in `config.toml`, the WebUI registers WebMCP tools an agent in [agent-browser](https://agent-browser.dev) can call (ADR 0009; the agent-facing guide is `packages/backend.ai-agent-cli/skill/references/webui-browser.md`). The smoke script checks the app-shell tools against a running WebUI:
+
+```bash
+export AGENT_BROWSER_SESSION=webmcp-smoke
+export AGENT_BROWSER_IGNORE_HTTPS_ERRORS=1   # Portless certificate
+export AGENT_BROWSER_ARGS="--no-sandbox"     # only on Linux boxes whose Chrome needs it
+bash scripts/webmcp-smoke.sh https://fr-XXXX.localhost:1355/            # session already logged in
+bash scripts/webmcp-smoke.sh --auth bai-webui https://fr-XXXX.localhost:1355/   # log in from the auth vault first
+```
+
+It prints a PASS/FAIL/SKIP table and a `DIAGNOSIS` line, and its exit code tells the three "no tools" cases apart: `3` not logged in (the global tools register only after login), `4` `enableWebMCP` off, `5` a browser without WebMCP (an attached `--cdp` browser). `--help` lists the rest.
+
 ## Storybook
 
 ```bash
