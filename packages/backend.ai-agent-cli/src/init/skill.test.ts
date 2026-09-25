@@ -11,9 +11,10 @@ import { describe, expect, it } from 'vitest';
 const SKILL_DIR = 'packages/backend.ai-agent-cli/skill';
 const SKILL = `${SKILL_DIR}/SKILL.md`;
 const COOKBOOK = `${SKILL_DIR}/references/query-cookbook.md`;
+const BROWSER_GUIDE = `${SKILL_DIR}/references/webui-browser.md`;
 
 /** Cheap guard: the skill is a pointer, not a second copy of the CLI docs. */
-const MAX_SKILL_LINES = 120;
+const MAX_SKILL_LINES = 135;
 
 const repo = resolveRepoContext(import.meta.dirname);
 const read = (relative: string): string =>
@@ -36,6 +37,39 @@ describe(SKILL, () => {
     const skill = read(SKILL);
     expect(skill).toContain('references/query-cookbook.md');
     expect(skill).not.toContain('```graphql');
+  });
+
+  it('points at the browser guide', () => {
+    expect(read(SKILL)).toContain('references/webui-browser.md');
+  });
+});
+
+describe(BROWSER_GUIDE, () => {
+  const guide = read(BROWSER_GUIDE);
+
+  it('names every app-shell tool the WebUI registers', () => {
+    const source = read('react/src/components/WebMCPGlobalTools.tsx');
+    const names = [...source.matchAll(/name: '(bai_[a-z_]+)'/g)].map(
+      (match) => match[1],
+    );
+    expect(names.length).toBeGreaterThan(0);
+    for (const name of names) expect(guide).toContain(`\`${name}\``);
+  });
+
+  it('describes page tools by the ADR 0009 name patterns', () => {
+    for (const pattern of [
+      'bai_list_visible_<noun>',
+      'bai_get_current_<noun>',
+      'bai_get_<noun>_filter',
+      'bai_prepare_<noun>',
+    ]) {
+      expect(guide).toContain(pattern);
+    }
+  });
+
+  it('points at a smoke script that exists', () => {
+    expect(guide).toContain('scripts/webmcp-smoke.sh');
+    expect(() => read('scripts/webmcp-smoke.sh')).not.toThrow();
   });
 });
 
