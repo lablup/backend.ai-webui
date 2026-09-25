@@ -6,14 +6,13 @@
   "dependencies": {
     "@ai-sdk/openai-compatible": "^1.0.47",
     "@ai-sdk/react": "^2.0.230",
-    "@astryxdesign/core": "catalog:",
     "@astryxdesign/lab": "catalog:",
-    "@astryxdesign/theme-neutral": "catalog:",
     "@cloudscape-design/board-components": "3.0.176",
     "@cloudscape-design/components": "^3.0.1341",
     "@dicebear/collection": "^9.4.2",
     "@dicebear/core": "^9.4.3",
     "@dicebear/shapes": "^9.4.2",
+    "@lablup/ui-common": "catalog:",
     "@lexical/code": "0.46.0",
     "@lexical/headless": "0.46.0",
     "@lexical/html": "0.46.0",
@@ -120,6 +119,7 @@
   },
   "devDependencies": {
     "@astryxdesign/cli": "catalog:",
+    "@astryxdesign/core": "catalog:",
     "@babel/core": "catalog:",
     "@babel/plugin-syntax-import-attributes": "^7.29.7",
     "@babel/plugin-transform-private-property-in-object": "^7.29.7",

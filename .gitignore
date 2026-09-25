@@ -58,6 +58,8 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+# ...except the pre-publish @lablup/ui-common tarball (ADR 0009, vendor/README.md)
+!vendor/*.tgz
 
 # Yarn Integrity file
 .yarn-integrity
