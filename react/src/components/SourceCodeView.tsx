@@ -4,9 +4,16 @@
  */
 import { theme } from '../theme-shim';
 import CopyButton from './Chat/CopyButton';
-import { SyntaxHighlighter } from './Chat/SyntaxHighlighter';
 import './SourceCodeView.css';
 import { BAIFlex, BAIText } from 'backend.ai-ui';
+import React, { Suspense } from 'react';
+
+// shiki is ~200 KB; keep it out of the chunks that merely render this view.
+const SyntaxHighlighter = React.lazy(() =>
+  import('./Chat/SyntaxHighlighter').then((m) => ({
+    default: m.SyntaxHighlighter,
+  })),
+);
 
 interface SourceCodeViewProps {
   children: string;
@@ -92,7 +99,9 @@ const SourceCodeView: React.FC<SourceCodeViewProps> = ({
           overflow: 'auto',
         }}
       >
-        <SyntaxHighlighter language={language}>{children}</SyntaxHighlighter>
+        <Suspense fallback={<pre style={{ margin: 0 }}>{children}</pre>}>
+          <SyntaxHighlighter language={language}>{children}</SyntaxHighlighter>
+        </Suspense>
       </div>
     </div>
   );

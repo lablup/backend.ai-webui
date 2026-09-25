@@ -38,11 +38,11 @@ import { useControllableValue } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
+import BAIModal from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
 import BAIPaginationInfoText from './BAIPaginationInfoText';
 import './BAITable.css';
 import BAITableColumnCSVExportModal from './BAITableColumnCSVExportModal';
-import BAITableSettingModal from './BAITableSettingModal';
 import type {
   BAIAnyObject,
   BAIColumnType,
@@ -89,7 +89,9 @@ import {
   Inbox,
   Settings,
 } from 'lucide-react';
-import React, { useRef, useState, type ReactNode } from 'react';
+import React, { Suspense, useRef, useState, type ReactNode } from 'react';
+
+const BAITableSettingModal = React.lazy(() => import('./BAITableSettingModal'));
 
 /** Internal row shape Astryx's generic constraint requires. */
 type AnyRow = Record<string, unknown>;
@@ -1408,49 +1410,62 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
       ) : null}
 
       {tableSettings ? (
-        <BAIUnmountAfterClose>
-          <BAITableSettingModal
-            open={isSettingModalOpen}
-            columns={_.map(flatColumns, (flat) => ({
-              key: flat.key,
-              label: columnPlainLabel(flat),
-              required: !!flat.column.required,
-            }))}
-            visibleColumnKeys={_.without(activeColumnKeys, EXPAND_COLUMN_KEY)}
-            disableReorder={!isColumnReorderEnabled}
-            onRequestClose={(result) => {
-              setIsSettingModalOpen(false);
-              if (!result) return;
-              const naturalOrder = _.map(flatColumns, ({ key }) => key);
-              const isReordered =
-                isColumnReorderEnabled &&
-                !_.isEqual(result.columnOrder, naturalOrder);
-              const next: Record<string, BAITableColumnOverrideItem> = {};
-              _.forEach(flatColumns, ({ key, column }) => {
-                const override: BAITableColumnOverrideItem = {};
-                const shouldBeVisible = _.includes(
-                  result.selectedColumnKeys,
-                  key,
-                );
-                if (shouldBeVisible === !!column.defaultHidden) {
-                  override.hidden = !shouldBeVisible;
-                }
-                if (isReordered) {
-                  const orderIndex = _.indexOf(result.columnOrder, key);
-                  if (orderIndex !== -1) override.order = orderIndex;
-                }
-                // Resized widths are persisted in the same record; a settings
-                // save must not silently reset them.
-                const persistedWidth = effectiveColumnOverrides[key]?.width;
-                if (typeof persistedWidth === 'number') {
-                  override.width = persistedWidth;
-                }
-                if (!_.isEmpty(override)) next[key] = override;
-              });
-              setColumnOverrides(next);
-            }}
-          />
-        </BAIUnmountAfterClose>
+        <Suspense
+          fallback={
+            <BAIModal
+              open={isSettingModalOpen}
+              width={420}
+              title={String(t('comp:BAITable.SettingTable'))}
+              footer={null}
+              loading
+              onCancel={() => setIsSettingModalOpen(false)}
+            />
+          }
+        >
+          <BAIUnmountAfterClose>
+            <BAITableSettingModal
+              open={isSettingModalOpen}
+              columns={_.map(flatColumns, (flat) => ({
+                key: flat.key,
+                label: columnPlainLabel(flat),
+                required: !!flat.column.required,
+              }))}
+              visibleColumnKeys={_.without(activeColumnKeys, EXPAND_COLUMN_KEY)}
+              disableReorder={!isColumnReorderEnabled}
+              onRequestClose={(result) => {
+                setIsSettingModalOpen(false);
+                if (!result) return;
+                const naturalOrder = _.map(flatColumns, ({ key }) => key);
+                const isReordered =
+                  isColumnReorderEnabled &&
+                  !_.isEqual(result.columnOrder, naturalOrder);
+                const next: Record<string, BAITableColumnOverrideItem> = {};
+                _.forEach(flatColumns, ({ key, column }) => {
+                  const override: BAITableColumnOverrideItem = {};
+                  const shouldBeVisible = _.includes(
+                    result.selectedColumnKeys,
+                    key,
+                  );
+                  if (shouldBeVisible === !!column.defaultHidden) {
+                    override.hidden = !shouldBeVisible;
+                  }
+                  if (isReordered) {
+                    const orderIndex = _.indexOf(result.columnOrder, key);
+                    if (orderIndex !== -1) override.order = orderIndex;
+                  }
+                  // Resized widths are persisted in the same record; a settings
+                  // save must not silently reset them.
+                  const persistedWidth = effectiveColumnOverrides[key]?.width;
+                  if (typeof persistedWidth === 'number') {
+                    override.width = persistedWidth;
+                  }
+                  if (!_.isEmpty(override)) next[key] = override;
+                });
+                setColumnOverrides(next);
+              }}
+            />
+          </BAIUnmountAfterClose>
+        </Suspense>
       ) : null}
 
       {exportSettings ? (

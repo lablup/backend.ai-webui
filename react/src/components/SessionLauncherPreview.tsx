@@ -17,12 +17,12 @@ import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
 import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import {
   SessionLauncherFormValue,
-  ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import { PortToken } from './PortSelectFormItem';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
 import { Banner } from '@astryxdesign/core/Banner';
