@@ -3025,6 +3025,8 @@
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
       "AdvancedSettings": "Advanced Settings",
       "AgentNode": "Agent ",
+      "AgentPrefilledDescription": "An AI agent filled in this form. Review every value before you press {{launch}}.",
+      "AgentPrefilledTitle": "Filled in by an AI agent",
       "AllocateNode": "Cluster mode",
       "ApplicationMemory": "Application MEM {{value}}",
       "Architecture": "Architecture",
