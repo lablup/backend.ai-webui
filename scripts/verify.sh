@@ -319,6 +319,13 @@ check_astryx_integration() {
   bin react astryx doctor integration validate backend.ai-ui
 }
 
+check_ui_common_agents() {
+  # Both UI-COMMON blocks are `ui-common agents` output (ADR 0009), so a
+  # ui-common bump fails here until they are regenerated.
+  bin react ui-common agents --check --write AGENTS.md || return 1
+  bin react ui-common agents --check --write ../AGENTS.md
+}
+
 check_agent_mappings() {
   # `mappings/<Type>.yaml` references types, fields, enum values, terminology
   # concepts and manual headings that other changes can orphan; `doctor
@@ -379,6 +386,7 @@ start_lane gate "Vite warmup paths" check_warmup_paths
 start_lane gate "StyleX cssInjectionTarget" check_stylex_injection
 start_lane gate "Astryx theme build" check_astryx_theme_built
 start_lane gate "Astryx integration (backend.ai-ui)" check_astryx_integration
+start_lane gate "ui-common agent blocks" check_ui_common_agents
 start_lane gate "Cascade-layer order" check_layer_order
 # vitest.yml's path filter never fires for an index.html-only PR, so the
 # ladder mirrors are checked here, always.
