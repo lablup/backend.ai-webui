@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Nomor halaman tidak valid",
     "NoDataToDisplay": "Tidak ada data untuk ditampilkan",
     "Pagination": "Penomoran halaman",
+    "RowNumber": "baris {{number}}",
     "SearchTableColumn": "Kolom Tabel Cari",
     "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
     "SettingTable": "Pengaturan Tabel"

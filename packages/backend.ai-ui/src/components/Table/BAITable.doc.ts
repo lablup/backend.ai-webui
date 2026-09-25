@@ -108,7 +108,7 @@ export const docs = {
       name: 'rowSelection',
       type: 'BAITableRowSelection<RecordType>',
       description:
-        'Enables the checkbox column and reports selection through onChange. Only checkbox selection exists; getCheckboxProps honours disabled, and preserveSelectedRowKeys keeps rows selected across pages.',
+        'Enables the checkbox column and reports selection through onChange. Only checkbox selection exists; getCheckboxProps honours disabled, preserveSelectedRowKeys keeps rows selected across pages, and getRowLabel names each checkbox after the row ("Select <name>") instead of its position ("Select row 3").',
     },
     {
       name: 'pagination',

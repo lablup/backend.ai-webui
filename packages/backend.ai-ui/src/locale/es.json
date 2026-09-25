@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Número de página no válido",
     "NoDataToDisplay": "No hay datos para mostrar",
     "Pagination": "Paginación",
+    "RowNumber": "fila {{number}}",
     "SearchTableColumn": "Columnas de la tabla de búsqueda",
     "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
     "SettingTable": "Configuración de tabla"

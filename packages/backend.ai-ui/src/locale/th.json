@@ -599,6 +599,7 @@
     "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
     "NoDataToDisplay": "ไม่มีข้อมูลที่จะแสดง",
     "Pagination": "การแบ่งหน้า",
+    "RowNumber": "แถวที่ {{number}}",
     "SearchTableColumn": "คอลัมน์ตารางค้นหา",
     "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
     "SettingTable": "การตั้งค่าตาราง"

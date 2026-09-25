@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Nieprawidłowy numer strony",
     "NoDataToDisplay": "Brak danych do wyświetlenia",
     "Pagination": "Paginacja",
+    "RowNumber": "wiersz {{number}}",
     "SearchTableColumn": "Wyszukaj kolumny tabeli",
     "SelectColumnToDisplay": "Wybierz kolumny do wyświetlenia",
     "SettingTable": "Ustawienia tabeli"

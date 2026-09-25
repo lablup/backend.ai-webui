@@ -599,6 +599,7 @@
     "InvalidPageNumber": "Хуудасны дугаар буруу байна",
     "NoDataToDisplay": "Харуулах өгөгдөл алга",
     "Pagination": "Хуудаслалт",
+    "RowNumber": "{{number}}-р мөр",
     "SearchTableColumn": "Хүснэгтийн баганыг хайх",
     "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
     "SettingTable": "Хүснэгтийн тохиргоо"

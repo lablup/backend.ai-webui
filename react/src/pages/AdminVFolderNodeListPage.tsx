@@ -10,7 +10,7 @@ import type {
 import { AstryxAdminTheme } from '../astryx-theme';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
-import BAITabs from '../components/BAITabs';
+import BAITabs, { baiTabPanelProps } from '../components/BAITabs';
 import DeleteVFolderModal from '../components/DeleteVFolderModal';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
 import RestoreVFolderModal from '../components/RestoreVFolderModal';
@@ -40,7 +40,13 @@ import {
 import * as _ from 'lodash-es';
 import { PlusIcon, RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { useDeferredValue, useEffect, useRef, useState } from 'react';
+import React, {
+  useDeferredValue,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -82,6 +88,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const [selectedFolderList, setSelectedFolderList] = useState<
     Array<VFolderNodesType>
   >([]);
+  const tabPanelId = useId();
 
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
@@ -236,6 +243,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           title={t('data.Folders')}
         >
           <BAITabs
+            panelId={tabPanelId}
             activeKey={queryParams.statusCategory}
             onChange={(key: string) => {
               const storedQuery = queryMapRef.current[key] || {
@@ -286,7 +294,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               },
             )}
           />
-          <VStack align="stretch" gap={3}>
+          <VStack
+            align="stretch"
+            gap={3}
+            {...baiTabPanelProps(tabPanelId, queryParams.statusCategory)}
+          >
             <HStack justify="between" wrap="wrap" gap={3}>
               <HStack
                 gap={3}

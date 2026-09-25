@@ -599,6 +599,7 @@
     "InvalidPageNumber": "無効なページ番号です",
     "NoDataToDisplay": "表示するデータがありません",
     "Pagination": "ページネーション",
+    "RowNumber": "{{number}} 行目",
     "SearchTableColumn": "テーブル列を検索します",
     "SelectColumnToDisplay": "表示する列を選択します",
     "SettingTable": "テーブル設定"

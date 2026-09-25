@@ -605,6 +605,7 @@
     "InvalidPageNumber": "Número de página inválido",
     "NoDataToDisplay": "Nenhum dado para exibir",
     "Pagination": "Paginação",
+    "RowNumber": "linha {{number}}",
     "SearchTableColumn": "Pesquisar colunas da tabela",
     "SelectColumnToDisplay": "Selecione colunas para exibir",
     "SettingTable": "Configurações da tabela"

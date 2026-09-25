@@ -17,7 +17,7 @@
 */
 import BAITable from './BAITable';
 import type { BAIColumnsType } from './tableTypes';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 interface Row {
@@ -26,6 +26,9 @@ interface Row {
 }
 
 const ROWS: Array<Row> = [{ id: '1', cpu: '2' }];
+
+// Scoped to the modal: the table's own column headers carry the same label.
+const settingsModal = () => within(screen.getByRole('dialog'));
 
 const openSettings = async (columns: BAIColumnsType<Row>) => {
   render(
@@ -53,14 +56,14 @@ describe('BAITable column labels in the settings modal', () => {
       },
     ]);
 
-    expect(screen.getByLabelText('CPU (cores)')).toBeInTheDocument();
+    expect(settingsModal().getByLabelText('CPU (cores)')).toBeInTheDocument();
     expect(screen.queryByText(/\[object Object\]/)).not.toBeInTheDocument();
   });
 
   it('keeps a plain string title as-is', async () => {
     await openSettings([{ key: 'cpu', dataIndex: 'cpu', title: 'CPU' }]);
 
-    expect(screen.getByLabelText('CPU')).toBeInTheDocument();
+    expect(settingsModal().getByLabelText('CPU')).toBeInTheDocument();
   });
 
   it('flattens a fragment / array title', async () => {
@@ -76,7 +79,7 @@ describe('BAITable column labels in the settings modal', () => {
       },
     ]);
 
-    expect(screen.getByLabelText('Allocated CPU')).toBeInTheDocument();
+    expect(settingsModal().getByLabelText('Allocated CPU')).toBeInTheDocument();
   });
 
   it('resolves a function title before flattening it', async () => {
@@ -88,7 +91,7 @@ describe('BAITable column labels in the settings modal', () => {
       } as BAIColumnsType<Row>[number],
     ]);
 
-    expect(screen.getByLabelText('CPU')).toBeInTheDocument();
+    expect(settingsModal().getByLabelText('CPU')).toBeInTheDocument();
   });
 
   it('prefixes a nested column with its group title', async () => {
@@ -100,7 +103,9 @@ describe('BAITable column labels in the settings modal', () => {
       } as BAIColumnsType<Row>[number],
     ]);
 
-    expect(screen.getByLabelText('Resources / CPU')).toBeInTheDocument();
+    expect(
+      settingsModal().getByLabelText('Resources / CPU'),
+    ).toBeInTheDocument();
   });
 
   it('falls back to the column key when the header carries no text', async () => {
@@ -112,6 +117,6 @@ describe('BAITable column labels in the settings modal', () => {
       },
     ]);
 
-    expect(screen.getByLabelText('actions')).toBeInTheDocument();
+    expect(settingsModal().getByLabelText('actions')).toBeInTheDocument();
   });
 });
