@@ -139,12 +139,12 @@ function isLoopbackOrigin(origin) {
 }
 
 // Decide whether a browser request from `origin` may read the proxy response.
-// `undefined` (no Origin header → non-browser or same-origin request) and
-// `'null'` (the Electron file:// renderer) are always allowed. Every other
-// cross-origin request must be loopback or explicitly configured. This
-// replaces the previous `cors()` default of reflecting any origin as `*`.
+// `undefined` (no Origin header → non-browser or same-origin request) and the
+// Electron renderer `es6://app` (ADR 0010) are always allowed. `'null'` is not:
+// any local file opened in a browser sends it. Every other cross-origin request
+// must be loopback or explicitly configured.
 function isAllowedOrigin(origin) {
-  if (!origin || origin === 'null') return true;
+  if (!origin || origin === 'es6://app') return true;
   if (isLoopbackOrigin(origin)) return true;
   return configuredOrigins.includes(origin);
 }
