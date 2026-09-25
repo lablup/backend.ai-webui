@@ -8,6 +8,7 @@ import {
   createViewStateTool,
   hiddenRowFields,
   openedItem,
+  overridesFromHiddenKeys,
   pathWithSearchParam,
   pruneRow,
   viewLagsUrl,
@@ -40,10 +41,11 @@ describe('hiddenRowFields', () => {
 
   it('always hides a column the table does not render', () => {
     expect(
-      hiddenRowFields([{ key: 'agent', fields: ['agentIds'], absent: true }], {
-        agent: { hidden: false },
-      }),
-    ).toEqual(['agentIds']);
+      hiddenRowFields(
+        [{ key: 'owner', fields: ['ownerEmail'], absent: true }],
+        { owner: { hidden: false } },
+      ),
+    ).toEqual(['ownerEmail']);
   });
 
   it('follows the user overrides, but never hides a required column', () => {
@@ -54,6 +56,19 @@ describe('hiddenRowFields', () => {
         created_at: { hidden: false },
       }),
     ).toEqual(['running', 'desired']);
+  });
+});
+
+describe('overridesFromHiddenKeys', () => {
+  it('turns a hiddenColumnKeys setting into column overrides', () => {
+    expect(overridesFromHiddenKeys(['status', 'created_at'])).toEqual({
+      status: { hidden: true },
+      created_at: { hidden: true },
+    });
+    expect(
+      hiddenRowFields(COLUMNS, overridesFromHiddenKeys(['status'])),
+    ).toEqual(['status', 'createdAt']);
+    expect(overridesFromHiddenKeys(undefined)).toEqual({});
   });
 });
 
@@ -199,6 +214,10 @@ describe('openedItem', () => {
       id: 'b',
       path: '/x?d=b',
     });
+  });
+
+  it('carries a null path for items without a deep link', () => {
+    expect(openedItem([ROW], 'a', null)).toMatchObject({ id: 'a', path: null });
   });
 });
 
