@@ -3,12 +3,14 @@ packages:
   - packages/*
 
 catalog:
-  # Astryx pins are exact and move as one set: theme-neutral peer-requires the
-  # exact core version, and the CLI generates artifacts read by that same core.
+  # Astryx pins are exact and move as one set with @lablup/ui-common, which
+  # pins the same versions (ADR 0009): a mismatch installs a second core.
   "@astryxdesign/cli": 0.6.2
   "@astryxdesign/core": 0.6.2
   "@astryxdesign/lab": 0.6.2-canary.c9fb1ad
-  "@astryxdesign/theme-neutral": 0.6.2
+  # Registry spec; until 0.2.0 is published, `overrides` below points it at
+  # the packed tarball in vendor/ (ADR 0009, vendor/README.md).
+  "@lablup/ui-common": 0.2.0-alpha.0
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -139,6 +141,10 @@ allowBuilds:
   utf-8-validate: true
 
 overrides:
+  # Pre-publish ui-common (ADR 0009): catalogs reject `file:` specs, so the
+  # vendored tarball is pinned here. Swapping the tarball is this one line;
+  # the 0.2.0 cut-over deletes it. See vendor/README.md.
+  "@lablup/ui-common": file:vendor/lablup-ui-common-0.2.0-alpha.0.tgz
   tar-fs@2: 2.1.4
   # Build-tooling override. `@electron/packager` and `electron`'s own
   # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
@@ -178,8 +184,10 @@ overrides:
   lodash: ^4.18.0 # _.template RCE + _.unset prototype pollution (#321, #322 high)
 
 patchedDependencies:
-  "@astryxdesign/core@0.6.2": react/patches/@astryxdesign__core@0.6.2.patch
-  "@astryxdesign/lab@0.6.2-canary.c9fb1ad": react/patches/@astryxdesign__lab@0.6.2-canary.c9fb1ad.patch
+  # Bare-name keys (FR-4059, ADR 0009): pnpm tries the patch on every copy in
+  # the graph, so a second core fails the install instead of slipping in.
+  "@astryxdesign/core": react/patches/@astryxdesign__core@0.6.2.patch
+  "@astryxdesign/lab": react/patches/@astryxdesign__lab@0.6.2-canary.c9fb1ad.patch
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch
