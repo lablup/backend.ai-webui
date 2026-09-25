@@ -21,10 +21,12 @@ import ResourceAllocationFormItems, {
   ResourceAllocationFormValue,
   isUnifiedAcceleratorSlot,
 } from '../components/SessionFormItems/ResourceAllocationFormItems';
+import SessionLauncherAgentPrefillNotice from '../components/SessionLauncherAgentPrefillNotice';
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from '../components/SessionLauncherPreview';
 import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep';
+import SessionLauncherWebMCPTool from '../components/SessionLauncherWebMCPTool';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -40,10 +42,15 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from '../components/astryxFormControls';
-import { Form } from '../form-engine';
+import { Form, type FormInstance } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
 import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
-import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
+import { AGENT_PREFILL_PARAM } from '../helper/webmcpSessionPrefill';
+import {
+  useSuspendedBackendaiClient,
+  useWebUILocation,
+  useWebUINavigate,
+} from '../hooks';
 import {
   useCurrentUserRole,
   useResourceSlotsDetails,
@@ -89,6 +96,7 @@ import {
   useErrorMessageResolver,
   useToggle,
   useUpdatableState,
+  useBAIWebMCPActive,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -113,6 +121,7 @@ import React, {
   useEffectEvent,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -280,7 +289,16 @@ const SessionTypeRadioList: React.FC<{
   );
 };
 
-const SessionLauncherPage = () => {
+/** The launcher's live form, tagged with the agent prefill it was opened for. */
+export interface LauncherFormHandle {
+  prefillId: string | null;
+  form: FormInstance<SessionLauncherFormValue>;
+}
+
+const SessionLauncherPageContent: React.FC<{
+  prefillId: string | null;
+  formHandleRef: React.RefObject<LauncherFormHandle | null>;
+}> = ({ prefillId, formHandleRef }) => {
   const app = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -330,6 +348,7 @@ const SessionLauncherPage = () => {
       formValues: FormValuesParam,
       redirectTo: parseAsString,
       appOption: AppOptionParam,
+      [AGENT_PREFILL_PARAM]: parseAsString,
     },
     { history: 'replace' },
   );
@@ -383,6 +402,13 @@ const SessionLauncherPage = () => {
   const screens = useBAIBreakpoint();
 
   const [form] = Form.useForm<SessionLauncherFormValue>();
+
+  useEffect(() => {
+    formHandleRef.current = { prefillId, form };
+    return () => {
+      if (formHandleRef.current?.form === form) formHandleRef.current = null;
+    };
+  }, [form, prefillId, formHandleRef]);
 
   useEffect(() => {
     if (!_.isEmpty(formValuesFromQueryParams)) {
@@ -630,6 +656,7 @@ const SessionLauncherPage = () => {
               />
             </BAIFlex>
           </BAIFlex>
+          <SessionLauncherAgentPrefillNotice />
           {/* <Suspense fallback={<FlexActivityIndicator />}> */}
           <Form.Provider
             onFormChange={() => {
@@ -1372,6 +1399,7 @@ const SessionLauncherPage = () => {
                           formValues: null,
                           redirectTo: null,
                           appOption: null,
+                          [AGENT_PREFILL_PARAM]: null,
                         });
                         setIsQueryReset(true);
                       }}
@@ -1818,6 +1846,51 @@ export const ResourceNumbersOfSession: React.FC<FormOrResourceRequired> = ({
           {node}
         </React.Fragment>
       ))}
+    </>
+  );
+};
+
+/**
+ * Keyed by the agent prefill id so each `bai_prepare_session` call opens a
+ * fresh form, exactly as loading its URL would.
+ */
+const SessionLauncherPage: React.FC = () => {
+  'use memo';
+  const { pathname, search } = useWebUILocation();
+  const webuiNavigate = useWebUINavigate();
+  const isWebMCPActive = useBAIWebMCPActive();
+  // ADR-0001: the page is the reader of the ambient current project.
+  const currentProjectContext = toProjectContext(useCurrentProjectValue());
+  const formHandleRef = useRef<LauncherFormHandle | null>(null);
+  const prefillId = new URLSearchParams(search).get(AGENT_PREFILL_PARAM);
+
+  return (
+    <>
+      {isWebMCPActive && currentProjectContext ? (
+        <Suspense fallback={null}>
+          <SessionLauncherWebMCPTool
+            project={currentProjectContext}
+            openLauncher={(nextSearch) =>
+              webuiNavigate({ pathname, search: nextSearch })
+            }
+            readEnvironment={(id) => {
+              const handle = formHandleRef.current;
+              if (!handle || handle.prefillId !== id) return null;
+              const environments = handle.form.getFieldValue('environments');
+              if (!environments?.image && !environments?.manual) return null;
+              return {
+                version: environments.version,
+                manual: environments.manual,
+              };
+            }}
+          />
+        </Suspense>
+      ) : null}
+      <SessionLauncherPageContent
+        key={prefillId ?? ''}
+        prefillId={prefillId}
+        formHandleRef={formHandleRef}
+      />
     </>
   );
 };
