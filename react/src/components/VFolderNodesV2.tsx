@@ -740,10 +740,9 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             ),
             sorter: isEnableSorter('host'),
           },
-          // TODO(needs-backend): V2 `VFolder` does not expose the legacy
-          // per-user `permissions` array. The Mount Permission column now
-          // derives RO/RW from `accessControl.permission` only; restore or
-          // augment once the backend re-introduces richer permission info.
+          // This column shows the folder default (`accessControl.permission`),
+          // not the caller's own level. `VFolder.permissions` (26.9.0) carries
+          // that, behind a `@since` gate (ADR 0006) — FR-3988.
           {
             key: 'permissions',
             title: t('data.folders.MountPermission'),

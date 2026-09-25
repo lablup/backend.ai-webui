@@ -854,6 +854,7 @@
     "NewFolderName": "ชื่อโฟลเดอร์ใหม่",
     "NoStorageDescriptionFound": "ไม่พบคำอธิบาย",
     "NotInProject": "โฟลเดอร์นี้เป็นของโปรเจกต์ '{{ projectName }}'",
+    "NotMountable": "ไม่สามารถต่อเชื่อมได้",
     "NumberOfFolders": "จำนวนโฟลเดอร์",
     "Permission": "สิทธิ์",
     "Pipeline": "โฟลเดอร์ไปป์ไลน์",

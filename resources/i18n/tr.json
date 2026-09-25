@@ -858,6 +858,7 @@
     "NewFolderName": "Yeni klasör adı",
     "NoStorageDescriptionFound": "Açıklama yok.",
     "NotInProject": "Bu klasör '{{ projectName }}' projesine aittir.",
+    "NotMountable": "Bağlanamaz",
     "NumberOfFolders": "Klasör sayısı",
     "Permission": "izin",
     "Pipeline": "Boru Hattı Klasörleri",

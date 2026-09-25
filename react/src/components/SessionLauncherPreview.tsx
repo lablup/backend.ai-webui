@@ -7,7 +7,6 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
-import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -106,11 +105,8 @@ const SessionLauncherPreview: React.FC<{
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
-  // `preserve` reads the raw store: `owner` has no registered Form.Item.
-  const owner = Form.useWatch('owner', { form, preserve: true });
   const mountableHosts = useMountableStorageHosts(currentProjectId);
   const autoMountedFolders = useSuspendedAutoMountedFolders({
-    ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
     mountableHosts,
   });

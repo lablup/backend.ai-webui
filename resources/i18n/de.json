@@ -858,6 +858,7 @@
     "NewFolderName": "Neuer Ordnername",
     "NoStorageDescriptionFound": "Keine Beschreibung.",
     "NotInProject": "Dieser Ordner gehört zum Projekt '{{ projectName }}'.",
+    "NotMountable": "Nicht einhängbar",
     "NumberOfFolders": "Anzahl von Ordnern",
     "Permission": "Genehmigung",
     "Pipeline": "Pipeline",

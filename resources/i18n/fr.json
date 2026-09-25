@@ -858,6 +858,7 @@
     "NewFolderName": "Nouveau nom de dossier",
     "NoStorageDescriptionFound": "Pas de description.",
     "NotInProject": "Ce dossier appartient au projet '{{ projectName }}'.",
+    "NotMountable": "Non montable",
     "NumberOfFolders": "Nombre de dossiers",
     "Permission": "Autorisation",
     "Pipeline": "Dossiers du pipeline",

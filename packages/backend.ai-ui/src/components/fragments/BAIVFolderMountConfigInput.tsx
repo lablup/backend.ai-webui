@@ -78,12 +78,10 @@ export interface BAIVFolderMountConfigInputProps {
   onChange?: (value: VFolderMountConfigValue[]) => void;
   currentProjectId?: string;
   /**
-   * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
-   * project folder's owner line needs it from the host.
+   * Name of `currentProjectId`, for a project folder's owner line when the
+   * node carries no `group_name`.
    */
   currentProjectName?: string;
-  /** Lists the folders of this user instead of the caller's own. */
-  ownerEmail?: string;
   /**
    * Hosts granting `mount-in-session`. Which policies merge into that list
    * is the host app's business, so it is supplied rather than queried here.
@@ -340,7 +338,12 @@ const useMountableLegacyFolders = (
 ) => {
   'use memo';
   const mountableFolders = allFolderList
-    .filter((folder) => isMountableLegacyVFolder(folder, scope))
+    // `permission` is the caller's own level, so a folder resolving to 'none'
+    // is one the manager would refuse to mount (backend.ai#14679).
+    .filter(
+      (folder) =>
+        isMountableLegacyVFolder(folder, scope) && folder.permission !== 'none',
+    )
     .map((folder) => ({ folder, uuid: convertToUUID(folder.id) }));
   const mountableIdSet = new Set(mountableFolders.map((entry) => entry.uuid));
   return { mountableFolders, mountableIdSet };
@@ -416,7 +419,6 @@ const VFolderOptionMeta: React.FC<{
 const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
   currentProjectId,
   currentProjectName,
-  ownerEmail,
   mountableHosts,
   filter,
   disabled,
@@ -440,7 +442,7 @@ const BAIVFolderMountConfigInput: React.FC<BAIVFolderMountConfigInputProps> = ({
     folders: allFolderList,
     refetch,
     isFetching,
-  } = useSuspendedLegacyVFolders({ ownerEmail, groupId: currentProjectId });
+  } = useSuspendedLegacyVFolders({ groupId: currentProjectId });
 
   useImperativeHandle(ref, () => ({ refetch }), [refetch]);
 

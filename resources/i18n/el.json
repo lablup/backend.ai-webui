@@ -858,6 +858,7 @@
     "NewFolderName": "Νέο όνομα φακέλου",
     "NoStorageDescriptionFound": "Χωρίς περιγραφή.",
     "NotInProject": "Αυτός ο φάκελος ανήκει στο έργο '{{ projectName }}'.",
+    "NotMountable": "Μη προσαρτήσιμο",
     "NumberOfFolders": "Αριθμός φακέλων",
     "Permission": "Αδεια",
     "Pipeline": "Γραμμή σωλήνων",

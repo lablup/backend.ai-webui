@@ -858,6 +858,7 @@
     "NewFolderName": "新文件夹名称",
     "NoStorageDescriptionFound": "沒有說明。",
     "NotInProject": "此資料夾屬於 '{{ projectName }}' 專案。",
+    "NotMountable": "無法掛載",
     "NumberOfFolders": "文件夹数量",
     "Permission": "允許",
     "Pipeline": "管道文件夹",

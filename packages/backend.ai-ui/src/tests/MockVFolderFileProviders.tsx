@@ -21,10 +21,18 @@ export interface MockVFolder {
   permissions?: Array<string>;
 }
 
+/** The mount verbs a row's resolved level carries, as the manager sends them. */
+const MOUNT_VERBS_FOR_LEVEL: Record<string, Array<string>> = {
+  rw: ['mount_ro', 'mount_rw', 'mount_wd'],
+  wd: ['mount_ro', 'mount_rw', 'mount_wd'],
+  ro: ['mount_ro'],
+  none: [],
+};
+
 export interface MockVFolderFileProvidersProps {
   vfolders?: Array<MockVFolder>;
   trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-  /** Rows the mocked REST `GET /folders` request answers with. */
+  /** Rows `vfolder_nodes` answers with, in the shape the mount select reads. */
   folders?: Array<LegacyVFolder>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
@@ -62,13 +70,42 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   );
   const [environment] = useState(() => {
     const env = createMockEnvironment();
-    const edges = vfolders.map((folder) => ({
-      node: {
-        id: toGlobalId('VirtualFolderNode', folder.row_id),
-        name: folder.name,
-        row_id: folder.row_id,
-      },
-    }));
+    // `vfolder_nodes` is what the mount select reads, so a `folders` row is
+    // answered whole — its `permission` back as the mount verbs the hook
+    // derives the caller's level from.
+    const nodesByRowId = new Map(
+      (folders ?? []).map((folder) => [convertToUUID(folder.id), folder]),
+    );
+    const edges = vfolders.map((folder) => {
+      const row = nodesByRowId.get(folder.row_id);
+      return {
+        node: {
+          id: toGlobalId('VirtualFolderNode', folder.row_id),
+          name: folder.name,
+          row_id: folder.row_id,
+          host: row?.host ?? 'local:volume1',
+          status: row?.status ?? 'ready',
+          usage_mode: row?.usage_mode ?? 'general',
+          created_at: row?.created_at ?? '2026-07-01T11:20:00+00:00',
+          quota_scope_id: row?.quota_scope_id ?? '',
+          user: row?.user ?? null,
+          user_email: row?.user_email ?? null,
+          group: row?.group ?? null,
+          group_name: row?.group_name ?? null,
+          creator: row?.creator ?? '',
+          ownership_type: row?.ownership_type ?? 'user',
+          cloneable: row?.cloneable ?? false,
+          max_files: row?.max_files ?? 1000,
+          max_size: row?.max_size ?? null,
+          cur_size: row?.cur_size ?? 0,
+          permissions: [
+            ...DEFAULT_PERMISSIONS,
+            ...(MOUNT_VERBS_FOR_LEVEL[row?.permission ?? 'rw'] ??
+              MOUNT_VERBS_FOR_LEVEL.rw),
+          ],
+        },
+      };
+    });
 
     const queuePickerOperation = (vfolderGlobalId: string) =>
       env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
