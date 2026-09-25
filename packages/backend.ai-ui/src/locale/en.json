@@ -563,7 +563,8 @@
     "CollapseAll": "Collapse all",
     "ExpandAll": "Expand all",
     "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options"
+    "ExpandOptions": "Expand options",
+    "RowNumber": "row {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "Test"

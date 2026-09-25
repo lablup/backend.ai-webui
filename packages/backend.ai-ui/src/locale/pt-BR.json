@@ -569,7 +569,8 @@
     "CollapseAll": "Recolher tudo",
     "ExpandAll": "Expandir tudo",
     "ExpandErrorsOnly": "Expandir somente erros",
-    "ExpandOptions": "Opções de expansão"
+    "ExpandOptions": "Opções de expansão",
+    "RowNumber": "linha {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "teste"

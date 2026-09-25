@@ -563,7 +563,8 @@
     "CollapseAll": "Alle einklappen",
     "ExpandAll": "Alle ausklappen",
     "ExpandErrorsOnly": "Nur Fehler ausklappen",
-    "ExpandOptions": "Ausklappoptionen"
+    "ExpandOptions": "Ausklappoptionen",
+    "RowNumber": "Zeile {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "test"

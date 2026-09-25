@@ -563,7 +563,8 @@
     "CollapseAll": "Runtuhkan semua",
     "ExpandAll": "Kembangkan semua",
     "ExpandErrorsOnly": "Kembangkan ralat sahaja",
-    "ExpandOptions": "Pilihan pengembangan"
+    "ExpandOptions": "Pilihan pengembangan",
+    "RowNumber": "baris {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "ujian"

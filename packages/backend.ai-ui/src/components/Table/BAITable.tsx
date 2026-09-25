@@ -27,6 +27,7 @@
  `expandedRowRender` rows span the table; `loading` dims without a spinner.
  Row virtualization is deferred by a product decision (2026-08-07).
 */
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import {
   flattenColumns,
   sortKeyOf,
@@ -62,7 +63,10 @@ export interface BAITableRowSelection<RecordType> {
   getCheckboxProps?: (record: RecordType) => { disabled?: boolean };
   /** Keys of rows that are not on the current page survive a select-all. */
   preserveSelectedRowKeys?: boolean;
-  /** Accessible per-row checkbox label, e.g. `record => record.name`. */
+  /**
+   * The row's display name for its checkbox label, e.g. `record => record.name`.
+   * Without it the checkbox is named by position ("row 3"), never the key.
+   */
   getRowLabel?: (record: RecordType) => string;
 }
 
@@ -213,6 +217,25 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   ...dataGridProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
+  const { t } = useBAIi18n();
+  const keyOf = (record: RecordType) =>
+    String(
+      typeof rowKey === 'function'
+        ? rowKey(record)
+        : (record as AnyRecord)[rowKey],
+    );
+  const positionByKey = new Map(
+    _.map(dataSource ?? [], (record, index) => [keyOf(record), index]),
+  );
+  // Never the row key: it is often an opaque global id, long and meaningless
+  // to assistive tech and agents reading the accessibility tree.
+  const rowLabelOf = (record: RecordType) =>
+    rowSelection?.getRowLabel?.(record) ||
+    String(
+      t('comp:BAITable.RowNumber', {
+        number: (positionByKey.get(keyOf(record)) ?? 0) + 1,
+      }),
+    );
 
   // A table that wires `onChangeOrder` or drives `order` is server-sorted: its
   // columns report intent only. Otherwise comparator `sorter`s sort locally.
@@ -292,7 +315,7 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
               getIsItemEnabled: rowSelection.getCheckboxProps
                 ? (record) => !rowSelection.getCheckboxProps!(record)?.disabled
                 : undefined,
-              getRowLabel: rowSelection.getRowLabel,
+              getRowLabel: rowLabelOf,
               isPreservingOtherPages: rowSelection.preserveSelectedRowKeys,
             }
           : undefined

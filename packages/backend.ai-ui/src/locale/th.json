@@ -563,7 +563,8 @@
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
-    "ExpandOptions": "ตัวเลือกการขยาย"
+    "ExpandOptions": "ตัวเลือกการขยาย",
+    "RowNumber": "แถวที่ {{number}}"
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"

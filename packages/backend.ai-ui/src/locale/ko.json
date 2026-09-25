@@ -563,7 +563,8 @@
     "CollapseAll": "모두 닫기",
     "ExpandAll": "모두 열기",
     "ExpandErrorsOnly": "오류만 펼치기",
-    "ExpandOptions": "펼치기 옵션"
+    "ExpandOptions": "펼치기 옵션",
+    "RowNumber": "{{number}}번째 행"
   },
   "comp:BAITestButton": {
     "Test": "테스트"
