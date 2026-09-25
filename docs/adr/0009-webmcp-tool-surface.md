@@ -132,7 +132,7 @@ flowchart LR
 - **Owner**: tool은 그 data나 그 form의 열림 상태를 이미 가진 component가 `useWebMCPTool(tool, deps)`로 등록한다. `bai_prepare_<noun>`은 form을 여는 state를 가진 page component가 등록한다. component는 tool 때문에 새 query를 보내지 않는다.
 - **Lifetime**: `useWebMCPTool`은 등록할 때 만든 `AbortController`를 unmount 때 abort한다. route가 바뀌면 이전 page의 tool이 사라지고 새 page의 tool이 등록된다.
 - **Re-registration**: `name`, `description`, `inputSchema`, `annotations`, `deps`(원시값 배열) 중 하나가 바뀌면 `useWebMCPTool`은 이전 등록을 abort하고 다시 등록한다.
-- **Latest closure**: `useWebMCPTool`은 `execute`를 `useEffectEvent`로 감싸 부른다. 그래서 `execute`는 항상 최신 render의 값을 읽고, 값만 바뀌는 closure는 `deps`에 넣지 않는다.
+- **Latest closure**: 브라우저는 effect가 끝난 한참 뒤에 `execute`를 부르므로 `useWebMCPTool`은 최신 tool을 ref에 담아 두고 거기서 읽는다(`useEffectEvent`는 effect 안에서만 안전하다). 그래서 `execute`는 항상 최신 render의 값을 읽고, 값만 바뀌는 closure는 `deps`에 넣지 않는다.
 - **Not ready**: 아직 준비되지 않은 tool은 component가 `null`을 넘겨 등록하지 않는다.
 
 ## 대안과 기각 사유
