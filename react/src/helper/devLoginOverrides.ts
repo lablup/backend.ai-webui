@@ -51,3 +51,21 @@ export const devPasswordOverride: string | undefined =
   import.meta.env.VITE_DEFAULT_PASSWORD !== ''
     ? import.meta.env.VITE_DEFAULT_PASSWORD
     : undefined;
+
+/**
+ * Submit the pre-filled SESSION credentials automatically, once, when the
+ * login panel first opens (dev only) — so a shared dev server opens straight
+ * into the app instead of a login modal the reader has to dismiss.
+ *
+ * Adds no secret of its own: the credentials are `devEmailOverride` /
+ * `devPasswordOverride` above, with their caveat. What it does add is that
+ * anyone who opens the dev URL is signed in as that account with no click, so
+ * only ever point it at a disposable test account.
+ */
+export const devAutoLoginEnabled: boolean =
+  import.meta.env.DEV &&
+  ['1', 'true', 'on', 'yes'].includes(
+    String(import.meta.env.VITE_AUTO_LOGIN ?? '')
+      .trim()
+      .toLowerCase(),
+  );

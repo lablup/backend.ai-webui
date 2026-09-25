@@ -29,6 +29,7 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import {
   devApiEndpointOverride,
+  devAutoLoginEnabled,
   devEmailOverride,
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
@@ -45,6 +46,7 @@ import {
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
+import { INTENTIONAL_LOGOUT_FLAG } from '../hooks/useLogout';
 import {
   useInitializeConfig,
   useConfigRefreshPageEffect,
@@ -63,7 +65,13 @@ import { BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Trash2Icon } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
@@ -909,6 +917,38 @@ const LoginView: React.FC<{
     notification,
     t,
   ]);
+
+  // Dev-only: with VITE_AUTO_LOGIN set, submit the credentials the pre-fill
+  // effect already wrote, so a shared dev server opens into the app instead of
+  // a login modal. Fires once — a failure leaves the error and the form for
+  // the human rather than retrying into the login_attempt limiter.
+  const autoLoginFiredRef = useRef(false);
+  // An intentional logout reloads the page, so without this the screen would
+  // remount and sign the same account straight back in — leaving no way to
+  // reach the form. Read at first render: useLoginOrchestration clears the
+  // flag from an effect.
+  const [followsIntentionalLogout] = useState(
+    () => sessionStorage.getItem(INTENTIONAL_LOGOUT_FLAG) === '1',
+  );
+  const fireAutoLogin = useEffectEvent(() => {
+    if (autoLoginFiredRef.current) return;
+    if (followsIntentionalLogout) return;
+    if (connectionMode !== 'SESSION') return;
+    if (!devEmailOverride || !devPasswordOverride) return;
+    autoLoginFiredRef.current = true;
+    handleLogin();
+  });
+
+  useEffect(() => {
+    if (!devAutoLoginEnabled) return;
+    // The panel is open only when the session check has already failed, and an
+    // endpoint is what handleLogin refuses without.
+    if (!isLoginPanelOpen || !apiEndpoint) return;
+    // Scheduled rather than called: handleLogin sets state synchronously,
+    // which an effect body may not do (react-hooks/set-state-in-effect).
+    const timer = setTimeout(fireAutoLogin, 0);
+    return () => clearTimeout(timer);
+  }, [isLoginPanelOpen, apiEndpoint]);
 
   // Resolve the effective API endpoint from state or localStorage.
   const resolveEndpoint = useCallback((): string => {

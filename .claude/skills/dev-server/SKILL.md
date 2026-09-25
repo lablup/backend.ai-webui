@@ -5,14 +5,15 @@ description: >
   discovered from README/package.json elsewhere), deriving the header color,
   app name, default backend endpoint and login pre-fill from this session's
   /color and /rename, the branch's PR description and user-supplied test
-  credentials, and advertising the server on the PRs it serves.
+  credentials (plus VITE_AUTO_LOGIN=1 when other people will open the server),
+  and advertising the server on the PRs it serves.
   Trigger on: "start dev server", "run dev", "pnpm dev 띄워", "개발 서버 띄워",
   "dev 서버 시작", "boot the dev environment", "실행해줘 dev".
 ---
 
 # Dev Server
 
-Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEV_TYPECHECK`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, and the user's stated test credentials.
+Starts the dev server with optional `VITE_THEME_HEADER_COLOR`, `PORTLESS_APP_NAME`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEV_TYPECHECK`, and (when the user supplies them) `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` / `VITE_AUTO_LOGIN`, derived from this Claude Code session's `/color` / `/rename` history, the current branch's PR description, and the user's stated test credentials.
 
 ## 1. Decide the command
 
@@ -42,6 +43,7 @@ Do not assume `pnpm dev`. Discover the right command:
 Scan the **current conversation** (this session's prior turns, including `<command-name>` blocks and your own messages) for the most recent successful `/color <name>` invocation.
 
 **What counts as "successful":**
+
 - A `<command-name>/color</command-name>` block whose `<command-args>` is exactly one of: `red`, `blue`, `green`, `yellow`, `purple`, `orange`, `pink`, `cyan`, `default`.
 - AND the accompanying `<local-command-stdout>` does NOT start with `Invalid color`.
 - If multiple `/color` calls appear, take the **most recent** one.
@@ -50,16 +52,16 @@ Scan the **current conversation** (this session's prior turns, including `<comma
 
 **Hex mapping** (use exactly these values):
 
-| Name | Hex |
-|------|-----|
-| `red` | `#DC2626` |
-| `blue` | `#2563EB` |
-| `green` | `#16A34A` |
+| Name     | Hex       |
+| -------- | --------- |
+| `red`    | `#DC2626` |
+| `blue`   | `#2563EB` |
+| `green`  | `#16A34A` |
 | `yellow` | `#CA8A04` |
 | `purple` | `#7C3AED` |
 | `orange` | `#EA580C` |
-| `pink` | `#DB2777` |
-| `cyan` | `#0891B2` |
+| `pink`   | `#DB2777` |
+| `cyan`   | `#0891B2` |
 
 Do not invent additional names or alternate hex values. If the user's `/color` arg doesn't match the table exactly, treat it as unset.
 
@@ -90,6 +92,7 @@ your string if you pass it anyway — so `PORTLESS_APP_NAME=fr-3665` just yields
 losing the descriptive part for nothing.
 
 **Slug rules** (apply to the `/rename` arg before passing as `PORTLESS_APP_NAME`):
+
 - Lowercase.
 - Replace any character that isn't `[a-z0-9-]` with `-` (spaces, underscores, dots, slashes, non-ASCII all become `-`).
 - Collapse repeated `-` into a single `-`.
@@ -128,12 +131,12 @@ This skill auto-derives the value from the current branch's PR description so de
 
 **Conversion rules** (apply to the candidate string before passing as `VITE_DEFAULT_API_ENDPOINT`):
 
-| Input | Output |
-|---|---|
-| `10.0.1.5` (bare IPv4) | `http://10.0.1.5:8090` |
-| `10.0.1.5:9090` (bare `host:port`) | `http://10.0.1.5:9090` |
-| `manager.example.com` (bare hostname) | `http://manager.example.com:8090` |
-| `manager.example.com:9090` | `http://manager.example.com:9090` |
+| Input                                   | Output                                    |
+| --------------------------------------- | ----------------------------------------- |
+| `10.0.1.5` (bare IPv4)                  | `http://10.0.1.5:8090`                    |
+| `10.0.1.5:9090` (bare `host:port`)      | `http://10.0.1.5:9090`                    |
+| `manager.example.com` (bare hostname)   | `http://manager.example.com:8090`         |
+| `manager.example.com:9090`              | `http://manager.example.com:9090`         |
 | `http://...` / `https://...` (full URL) | use as-is, with any trailing `/` stripped |
 
 The bare-IP-defaults-to-`8090` rule reflects the project convention that PR descriptions usually list just an IP and the WebUI talks to the manager on `:8090`.
@@ -152,7 +155,7 @@ The bare-IP-defaults-to-`8090` rule reflects the project convention that PR desc
 
 The IPv4 alternative is octet-bounded (rejects `999.999.999.999` and other invalid quads) but still matches version-shaped strings like `1.2.3.4` — Pass 1's contextual filter is what keeps version numbers in changelogs from being adopted. The hostname alternative accepts both 2-label hosts (`example.com`, `manager.com`) and longer ones (`api.staging.example.com`) — TLD is the trailing `[a-z]{2,}` segment.
 
-**Reject the following candidates** even if the regex matches them (apply *after* matching, *before* converting):
+**Reject the following candidates** even if the regex matches them (apply _after_ matching, _before_ converting):
 
 - **Documentation / source-control hosts**: any host equal to or ending in `github.com`, `gitlab.com`, `bitbucket.org`, `lablup.atlassian.net`, `readthedocs.io`, or any host starting with `docs.`. These are referenced from PR bodies all the time and are never the dev backend.
 - **Filename-shaped tails**: if the matched candidate's last segment (after the final `.`, before any `:port` or `/path`) is in this denylist, drop it: `ts | tsx | js | jsx | mjs | cjs | md | mdx | py | rs | go | json | yaml | yml | toml | html | htm | css | scss | svg | png | jpg | jpeg | gif | webp | sh | lock | txt | log`. Catches `app.test.ts`, `README.md`, `package-lock.json`, etc.
@@ -170,7 +173,9 @@ If the resolved value matches the existing default backend the WebUI would other
 
 ## 2d. Decide the default login credentials (webui only, optional)
 
-`LoginView.tsx` also reads `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` (dev only) and pre-fills the SESSION-mode email + password fields, so a local dev session can sign in without retyping test credentials. These are a pure convenience pre-fill — they do **not** auto-submit the login form.
+`LoginView.tsx` also reads `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD` (dev only) and pre-fills the SESSION-mode email + password fields, so a local dev session can sign in without retyping test credentials. On their own these are a pure convenience pre-fill: they fill the fields and stop there.
+
+`VITE_AUTO_LOGIN=1` is what submits them — once, the first time the login panel opens, in SESSION mode, and only when both credential vars are set. **Pass it whenever you pass the credentials for a server other people will open** (a per-PR review server, a walkthrough link), so the reader lands in the app instead of on a login modal. Omit it when the server is only for you and you want to pick the account by hand. A failed auto-login leaves the error and the form on screen and does not retry.
 
 **Resolve them conservatively — never guess:**
 
@@ -182,6 +187,7 @@ If the resolved value matches the existing default backend the WebUI would other
 
 - `VITE_DEFAULT_PASSWORD` bakes a **plaintext password into the dev bundle** at build time. It is dev-only (`import.meta.env.DEV`), but still: only ever pass it on the command line or via the user's git-ignored `.env.development.local` — never write it to a committed file, and never for a production build.
 - Prefer non-privileged / disposable test accounts. If the user asks to pre-fill a real admin password, confirm they intend the plaintext-in-dev-bundle tradeoff before doing it.
+- `VITE_AUTO_LOGIN` adds no new secret, but it does mean anyone who opens the dev URL is signed in as that account with no click. That is the point on a shared review server — and the reason the account must be a disposable one.
 
 ### 2e. Type checking (`VITE_DEV_TYPECHECK`) — off unless asked
 
@@ -193,16 +199,16 @@ Do not try to infer the answer from how many servers are running, whether the se
 
 `vite-plugin-checker` holds a resident TypeScript program so type errors appear in the dev terminal and as a browser overlay. That program is the single most expensive thing in a dev server — measured on this repo's `react/` server, module graph warmed:
 
-| | vite RSS |
-|---|---|
-| checker on | 2,195 MB |
-| checker off | 853 MB |
+|             | vite RSS |
+| ----------- | -------- |
+| checker on  | 2,195 MB |
+| checker off | 853 MB   |
 
 A dev server here is usually one of several, next to editors, agents, and other worktrees, so that ~1.3 GB decides how many fit on the machine.
 
 This is the behaviour of `react/vite.config.ts` itself, not something this skill imposes — a hand-typed `pnpm dev` is checker-less too.
 
-**Say which mode you started, in your reply, every time.** Checker off: name the fallback — e.g. *"Type checking is off in this server (the default); `bash scripts/verify.sh` before committing, or `pnpm --filter ./react exec tsc --noEmit` for a one-shot check."* Checker on: say so, and that it costs ~1.3 GB. Vite prints a matching warning on startup when the checker is off. Never let a checker-less server be reported as if it were type-clean.
+**Say which mode you started, in your reply, every time.** Checker off: name the fallback — e.g. _"Type checking is off in this server (the default); `bash scripts/verify.sh` before committing, or `pnpm --filter ./react exec tsc --noEmit` for a one-shot check."_ Checker on: say so, and that it costs ~1.3 GB. Vite prints a matching warning on startup when the checker is off. Never let a checker-less server be reported as if it were type-clean.
 
 Running without it costs no real type safety: `scripts/verify.sh`, the Husky pre-commit hook, and CI each run one-shot `tsc --noEmit` independently of the dev server, and the IDE's own tsserver still flags errors while editing. What is lost is only the in-terminal / in-browser feedback loop while the server runs. If a specific check is needed on a checker-less server, run `pnpm --filter ./react exec tsc --noEmit` once rather than restarting with the checker enabled — a one-shot check frees its memory when it exits, a resident watcher does not.
 
@@ -223,7 +229,7 @@ If step **2b** found a `/rename` to use, also prefix `PORTLESS_APP_NAME='<slug>'
 
 If step **2c** resolved a default API endpoint, also prefix `VITE_DEFAULT_API_ENDPOINT='<url>'`. If 2c resolved nothing, **omit** the variable entirely — do not pass an empty string.
 
-If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<email>'` and `VITE_DEFAULT_PASSWORD='<password>'`. If 2d resolved nothing, **omit** both. Never pass an empty string, and never fabricate a value to "fill the slot."
+If step **2d** resolved login credentials, also prefix `VITE_DEFAULT_EMAIL='<email>'` and `VITE_DEFAULT_PASSWORD='<password>'`, plus `VITE_AUTO_LOGIN=1` when the server is one other people will open. If 2d resolved nothing, **omit** all three. Never pass an empty string, and never fabricate a value to "fill the slot."
 
 Per step **2e**, prefix `VITE_DEV_TYPECHECK=on` **only** when the user explicitly asked for type checking; otherwise omit the variable entirely. Either way, say which mode you started in your reply.
 
@@ -235,7 +241,7 @@ empty stdout is the whole signal).
 **Shell-escape every interpolated value.** The endpoint, email, and especially the password come from user/conversation text and may contain an apostrophe or shell metacharacters — interpolating them raw inside `'...'` breaks the command and can turn the rest of the value into executable shell. Before building the command line, quote each value shell-safely (e.g. Bash `printf '%q'`), or set them via the user's git-ignored `.env.development.local` instead of the command line. Do not hand-concatenate an untrusted password into a single-quoted string.
 
 ```bash
-VITE_THEME_HEADER_COLOR='#2563EB' PORTLESS_APP_NAME='iphoto-disk-cleanup' VITE_DEFAULT_API_ENDPOINT='http://10.0.1.5:8090' VITE_DEFAULT_EMAIL='admin@lablup.com' VITE_DEFAULT_PASSWORD='wJalrXUt' pnpm dev
+VITE_THEME_HEADER_COLOR='#2563EB' PORTLESS_APP_NAME='iphoto-disk-cleanup' VITE_DEFAULT_API_ENDPOINT='http://10.0.1.5:8090' VITE_DEFAULT_EMAIL='admin@lablup.com' VITE_DEFAULT_PASSWORD='wJalrXUt' VITE_AUTO_LOGIN=1 pnpm dev
 ```
 
 For non-webui projects, substitute the discovered command and package manager. Use whatever color env var the project actually reads (check `vite.config.*`, `next.config.*`, etc., or grep for `*THEME_HEADER_COLOR` / `*_THEME_COLOR`). Apply the prefix only when (a) a color is actually resolved AND (b) the project really consumes that env var. If either is false, skip the prefix. `PORTLESS_APP_NAME` and `VITE_DEFAULT_API_ENDPOINT` are webui-specific.
@@ -343,9 +349,9 @@ Many projects don't use Portless. Read the dev server's stdout for whatever URL(
 
 ## 7. Edge cases
 
-- **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
+- **User overrides via env (webui)**: Vite's `loadEnv()` reads `VITE_THEME_HEADER_COLOR`, `VITE_DEFAULT_API_ENDPOINT`, `VITE_DEFAULT_EMAIL`, `VITE_DEFAULT_PASSWORD`, `VITE_AUTO_LOGIN` from `.env.development.local` and from the shell automatically. If the user already has any of them set, do not override — the user-set value wins. For `PORTLESS_APP_NAME`, the same rule applies: if it's already exported in the inherited env, treat the user-set value as authoritative.
 - **User overrides via prompt**: if the user says "use a green header" or "no color this time" or "name the dev URL <foo>" or "ignore the PR's IP, use 10.0.0.7 instead", honor their words over the conversation-history and PR-description values.
-- **Multiple Claude windows / worktrees**: each Claude Code session has its own conversation, so both color and app name are naturally session-scoped. Don't try to read either from disk — there's no shared state (built-in `/color` and `/rename` are in-memory only). For `VITE_DEFAULT_API_ENDPOINT`, the *PR* is the shared source of truth; reading it via `gh pr view` works the same from any worktree on that branch.
+- **Multiple Claude windows / worktrees**: each Claude Code session has its own conversation, so both color and app name are naturally session-scoped. Don't try to read either from disk — there's no shared state (built-in `/color` and `/rename` are in-memory only). For `VITE_DEFAULT_API_ENDPOINT`, the _PR_ is the shared source of truth; reading it via `gh pr view` works the same from any worktree on that branch.
 - **No `/color` in history but user mentioned a color**: treat the user's mention as the source of truth. If they said "use orange", map `orange` → `#EA580C` and prefix accordingly.
 - **PR description mentions multiple addresses or none**: take the **first** match for the multi-match case; for the no-match case, omit `VITE_DEFAULT_API_ENDPOINT` rather than guessing. The login form will fall back to `localStorage` / `config.toml` like before.
 
