@@ -14,10 +14,10 @@ import { expect, Locator, Page } from '@playwright/test';
  */
 export class NotificationHandler {
   private readonly page: Page;
-  // Each notice is `.bai-notification-stack-item`, carrying
+  // Each notice is `.uic-notification-stack__item`, carrying
   // `data-notification-key` / `data-status` / `data-exiting` / `data-paused`
-  // (BAINotificationStack.tsx:213-225), inside the single stack root
-  // `[data-testid="bai-notification-stack"]` (…:312).
+  // (ui-common `NotificationStack`), inside the single stack root
+  // `[data-testid="bai-notification-stack"]` (`BAINotificationStack`).
   private readonly notificationSelector =
     '[data-testid="bai-notification-stack"] [data-notification-key]';
 
