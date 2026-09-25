@@ -87,8 +87,9 @@ flowchart TB
 | CSS `@astryxdesign/lab/lab.css` | `@lablup/ui-common/lab/lab.css` |
 | CSS `@astryxdesign/theme-neutral/theme.css` | `@lablup/ui-common/theme/neutral/theme.css` |
 
-- **Excluded names**: ui-common은 core의 `Dialog` subpath를 [exclusion list](#용어)로 mirror에서 뺀다. `Dialog`, `DialogHeader`, `DialogProps` 대신 `@lablup/ui-common/Modal`의 `Modal`, `ModalHeader`, `ModalProps`를 쓴다.
+- **Excluded names**: ui-common은 core의 `Dialog`와 `AlertDialog` subpath를 [exclusion list](#용어)로 mirror에서 뺀다. `Dialog`, `DialogHeader`, `DialogProps` 대신 `@lablup/ui-common/Modal`의 `Modal`, `ModalHeader`, `ModalProps`를 쓰고, `AlertDialog` 대신 `@lablup/ui-common/AlertModal`의 `AlertModal`을 쓴다. `AlertDialog`는 top layer에 그려져 `Modal`의 level stack을 우회한다 (FR-4087).
 - **Dialog cluster**: `BAIDialog`의 동작, 즉 top layer로 올리지 않고 portal로 그려 notice가 위에 남게 하는 것(FR-3578)과 level stack은 ui-common `Modal`이 가져가고, `BAIDialog`는 지운다. `BAIModal`은 `Modal` 위의 adapter로 BUI에 남아 antd 모양 prop, 창 최소화, `confirmBeforeClose`를 맡는다. `BAIUnmountAfterClose`도 BUI에 남는다. ui-common에서 같은 일은 `Modal`의 `unmountOnClose`가 한다 (FR-4087).
+- **BAIFlex stays**: `BAIFlex`는 theme-shim 대신 Astryx spacing token(`--spacing-1`부터 `--spacing-12`)을 직접 쓰고, 모든 gap은 shim이 돌려주던 pixel과 같다. 약 290개 파일이 쓰는 frozen antd `Flex` 어휘이고 Astryx `Stack`, `HStack`, `VStack`이 같은 역할을 하므로 ui-common으로 옮기지 않는다. ui-common으로 옮긴 component는 `BAIFlex` 대신 이 Astryx layout component와 `@layer ui-common` CSS를 쓴다 (FR-4087).
 - **ui-common's own CSS**: ui-common custom component의 style은 각 component가 직접 import하고, 모든 rule이 `@layer ui-common` 안에 있다. 전역 scrollbar rule만 담은 `@lablup/ui-common/ui-common.css`는 webui의 모양을 바꾸므로 `react/src/index.css`도 Storybook도 import하지 않는다.
 - **Product theme stays**: `react/src/astryx-theme/`의 Backend.AI theme family는 webui의 제품 theme으로 남는다. 손으로 쓴 파일은 `defineTheme`과 `Theme`을 `@lablup/ui-common/theme`에서, `neutralTheme`을 `@lablup/ui-common/theme/neutral`에서 import한다.
 - **New code**: 새 webui code는 BUI에 `BAI*` adapter가 있으면 그것을, 없으면 ui-common component를 직접 쓴다.
@@ -202,10 +203,10 @@ flowchart TB
 | 용어 | 뜻 |
 |---|---|
 | mirror | ui-common이 generator로 `@astryxdesign/core`의 export map과 같은 subpath를 만들어 core를 그대로 re-export하는 것이다. `@lablup/ui-common/Button`은 core의 `Button`과 같은 module이다. |
-| exclusion list | ui-common의 `exports.exclude.json`이다. 여기 있는 core export는 mirror에 생기지 않고, 대신 쓸 ui-common component가 있다. `Dialog`가 빠지고 `Modal`이 대신한다. |
+| exclusion list | ui-common의 `exports.exclude.json`이다. 여기 있는 core export는 mirror에 생기지 않고, 대신 쓸 ui-common component가 있다. `Dialog`는 `Modal`이, `AlertDialog`는 `AlertModal`이 대신한다. |
 | packed tarball | `pnpm pack`으로 만든 `.tgz` package 파일이다. `file:` spec으로 설치하면 registry에서 받은 package와 같은 방식으로 풀린다. |
 | adapter | BUI에 남는 같은 이름의 `BAI*` component다. frozen antd-v6 props를 받아 ui-common component의 props로 옮겨 넘기는 일만 한다. |
 | catalog pin | `pnpm-workspace.yaml`의 `catalog:`에 적은 version이다. 각 `package.json`은 `"catalog:"`로 그 version을 가리킨다. |
 | autoInstallPeers | 요구된 peer dependency가 없으면 pnpm이 자동으로 설치하는 설정이다. 설치된 copy는 importer의 patch나 pin을 따르지 않는다. |
 | codemod | source의 import 문을 AST 단위로 고쳐 쓰는 script다. 이 ADR의 일회성 script와 `ui-common upgrade`가 싣는 version별 jscodeshift 변환이 있다. |
-| theme-shim | `packages/backend.ai-ui/src/theme-shim/`이다. antd 시절 `theme.useToken()` 값과 같은 JS 값을 돌려주는 BUI 내부 layer이고, 이것을 읽는 component(`BAIFlex`, `BAITable` 등)는 shim이 사라질 때까지 ui-common으로 옮길 수 없다. |
+| theme-shim | `packages/backend.ai-ui/src/theme-shim/`이다. antd 시절 `theme.useToken()` 값과 같은 JS 값을 돌려주는 BUI 내부 layer이고, 이것을 읽는 component(`BAITable` 등)는 shim이 사라지거나 읽는 값을 Astryx token으로 바꿀 때까지 ui-common으로 옮길 수 없다. |
