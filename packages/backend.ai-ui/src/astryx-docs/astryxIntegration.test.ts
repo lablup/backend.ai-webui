@@ -106,10 +106,20 @@ describe.each(componentDocs.map((file) => [stemOf(file), file]))(
       // `tsc` cover the shape — but it catches renamed and deleted props,
       // which is how these files go stale.
       const { docs } = await import(/* @vite-ignore */ file);
-      const source = readFileSync(
-        resolve(dirname(file), `${stem}.tsx`),
-        'utf-8',
-      );
+      let source = readFileSync(resolve(dirname(file), `${stem}.tsx`), 'utf-8');
+      // An adapter over a component moved to ui-common (ADR 0009) names only
+      // the props it maps; the rest are declared in ui-common's typings.
+      for (const [, name] of source.matchAll(
+        /from '@lablup\/ui-common\/components\/(\w+)'/g,
+      )) {
+        source += readFileSync(
+          resolve(
+            packageDir,
+            `node_modules/@lablup/ui-common/dist/components/${name}/${name}.d.ts`,
+          ),
+          'utf-8',
+        );
+      }
       for (const props of propLists(docs)) {
         for (const prop of props) {
           expect(
