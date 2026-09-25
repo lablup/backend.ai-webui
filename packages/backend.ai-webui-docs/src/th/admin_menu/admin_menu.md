@@ -259,7 +259,6 @@ superadmin สามารถลบบัญชีผู้ใช้ที่ถ
   แต่จะมอบหมายความเป็นเจ้าของแทน
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 หากผู้ใช้บางรายที่เลือกไว้ไม่สามารถลบถาวรได้ จะมีไดอะล็อกแจ้งความล้มเหลวที่แสดงอีเมลของผู้ใช้แต่ละราย พร้อมข้อความแสดงข้อผิดพลาด ส่วนผู้ใช้ที่เหลือจะถูกลบถาวรตามปกติ
 
