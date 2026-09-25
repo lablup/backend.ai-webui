@@ -9,25 +9,25 @@ section was (re)defined by the Astryx migration, ticket 30.
 
 ### Peer dependencies
 
-The design-system contract is **Astryx**:
+The design-system contract is **Astryx, reached through
+`@lablup/ui-common`** (ADR 0009, `docs/adr/0009-ui-common-as-the-single-entry-point-to-astryx.md`):
 
-| Peer                                        | Required?             | Why                                                                 |
-| ------------------------------------------- | --------------------- | ------------------------------------------------------------------- |
-| `@astryxdesign/core`                        | yes                   | Every component BUI renders. Must be a **single** copy — see below. |
-| `@astryxdesign/theme-neutral`               | yes                   | The token set `theme-shim` resolves `useToken()` against.           |
-| `react` / `react-dom`                       | yes                   | —                                                                   |
-| `react-relay` / `relay-runtime` / `graphql` | yes                   | The `fragments/` components are Relay-bound.                        |
-| `@tanstack/react-query`                     | yes                   | `BAIConfigProvider` owns the QueryClient.                           |
-| `react-router-dom`                          | yes                   | `BAILink` and friends.                                              |
+| Peer                                        | Required? | Why                                                             |
+| ------------------------------------------- | --------- | --------------------------------------------------------------- |
+| `@lablup/ui-common`                         | yes       | Every Astryx component BUI renders, as `@lablup/ui-common/<X>`. |
+| `@astryxdesign/lab`                         | yes       | Backs `@lablup/ui-common/lab` (`BAIDrawer`, tours).             |
+| `react` / `react-dom`                       | yes       | —                                                               |
+| `react-relay` / `relay-runtime` / `graphql` | yes       | The `fragments/` components are Relay-bound.                    |
+| `@tanstack/react-query`                     | yes       | `BAIConfigProvider` owns the QueryClient.                       |
+| `react-router-dom`                          | yes       | `BAILink` and friends.                                          |
 
-`@astryxdesign/core` and `@astryxdesign/theme-neutral` are peers, **not**
-dependencies and **not** bundled. They were `devDependencies` until ticket 30,
-which meant `rollupOptions.external` (derived from `peerDependencies`) did not
-cover them and BUI's `dist` carried its own inlined copy of Astryx. Two copies
-means two StyleX registries and two React contexts: a `<Theme>` mounted by the
-app would not be seen by BUI's components, and vice versa. If you ever see
-theme values diverge between app-level and BUI-level components, check for a
-duplicated `@astryxdesign/core` first.
+ui-common depends on `@astryxdesign/core` and `@astryxdesign/theme-neutral` at
+exact pins; neither is bundled into BUI's `dist` (`vite.config.ts` keeps every
+`@astryxdesign/*` import external). There must be a **single** copy of core: two
+copies means two StyleX registries and two React contexts, so a `<Theme>`
+mounted by the app would not be seen by BUI's components. If theme values
+diverge between app-level and BUI-level components, check for a duplicated
+`@astryxdesign/core` first.
 
 ### There is no antd surface any more
 
@@ -272,7 +272,7 @@ const App = ({ children }) => {
 ```
 
 > Until the to-astryx final switch this was `import en_US from
-> 'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
+'backend.ai-ui/dist/locale/en_US'`, one of 21 published per-language modules.
 > Each carried an `antd/es/locale/*` bundle in `BAILocale.antdLocale`, whose
 > only consumer was antd `ConfigProvider`'s `locale` prop. With that provider
 > gone the modules, the `./dist/locale/*` package export and the field were all
@@ -287,9 +287,12 @@ Two catalogs, one language.
   `<BAITrans>` bind to it explicitly rather than through React context, so BUI
   resolves its own keys no matter what i18n stack (or none) the host runs.
   That is FR-2986 and it stays.
-- **Astryx's resolver** (`@astryxdesign/core/i18n`) holds the strings baked
-  into Astryx components. It is not configurable as a catalog you own; it
-  takes a locale plus sparse per-locale `overrides`.
+- **Astryx's resolver** (`@lablup/ui-common/i18n`) holds the strings baked
+  into Astryx and ui-common components. It is not configurable as a catalog
+  you own; it takes a locale plus sparse per-locale `overrides`. Each
+  `src/locale/<lang>_<REGION>.ts` module merges ui-common's `uic.*` strings
+  for its language (`withUiCommonMessages`) under BUI's own `@astryx.*`
+  overrides into `BAILocale.astryxLocale`.
 
 `BAIConfigProvider` is the single place a language change lands. It drives
 `buiI18n.changeLanguage`, `dayjs.locale` **and** Astryx's

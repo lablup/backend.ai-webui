@@ -15,10 +15,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // `react-dom/client` bundled — a second renderer that blank-screens consumers
 // on any other React patch (#8595). i18next / react-i18next are dependencies
 // rather than peers, so they stay bundled and keep BUI's i18n isolated.
-const peerDependencyPatterns = Object.keys(peerDependencies).map(
-  // `.` is the only regex metacharacter an npm package name can hold.
-  (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
-);
+const externalPatterns = [
+  ...Object.keys(peerDependencies).map(
+    // `.` is the only regex metacharacter an npm package name can hold.
+    (name) => new RegExp(`^${name.replaceAll('.', '\\.')}(/.*)?$`),
+  ),
+  // Core is no longer a peer (ADR 0009), but the few files still importing it
+  // directly must not bundle a second copy of it.
+  /^@astryxdesign\//,
+];
 
 export default defineConfig(({ mode }) => {
   const isDevMode = mode === 'development';
@@ -50,7 +55,7 @@ export default defineConfig(({ mode }) => {
         formats: ['es'],
       },
       rollupOptions: {
-        external: peerDependencyPatterns,
+        external: externalPatterns,
       },
       sourcemap: true,
       outDir: 'dist',
