@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionLauncherPreviewQuery } from '../__generated__/SessionLauncherPreviewQuery.graphql';
 import { App } from '../app-shim';
 // FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
 // keep reading the antd form engine (locked SHIM decision).
@@ -48,6 +49,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * The review step's image row. A manually typed image has no parts to
@@ -109,6 +111,24 @@ const SessionLauncherPreview: React.FC<{
   // `preserve` reads the raw store: `owner` has no registered Form.Item.
   const owner = Form.useWatch('owner', { form, preserve: true });
   const mountableHosts = useMountableStorageHosts(currentProjectId);
+  // `allocationPreset` holds the preset's id; the store already has the
+  // list from `ResourcePresetSelect`, so this resolves without a request.
+  const { resource_presets } = useLazyLoadQuery<SessionLauncherPreviewQuery>(
+    graphql`
+      query SessionLauncherPreviewQuery {
+        resource_presets {
+          id
+          name
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  const allocationPreset = form.getFieldValue('allocationPreset');
+  const allocationPresetLabel =
+    _.find(resource_presets, (preset) => preset?.id === allocationPreset)
+      ?.name ?? allocationPreset;
   const autoMountedFolders = useSuspendedAutoMountedFolders({
     ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
@@ -331,7 +351,7 @@ const SessionLauncherPreview: React.FC<{
                   // t('session.launcher.CustomAllocation')
                   ''
                 ) : (
-                  <Token label={form.getFieldValue('allocationPreset')} />
+                  <Token label={allocationPresetLabel} />
                 )}
 
                 <ResourceNumbersOfSession
