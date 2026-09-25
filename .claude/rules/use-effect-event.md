@@ -24,9 +24,8 @@ inside an effect:
   silently captures stale closures.
 - Wrapping each one in `useCallback` and propagating that everywhere creates
   cascading dep arrays that are hard to maintain.
-- A "memoized fn" helper (the `ahooks` `useMemoizedFn` pattern) was the usual
-  pre-19.2 workaround, but is now redundant. `ahooks` is no longer a dependency
-  of this repo at all.
+- A "memoized fn" helper (the `ahooks` `useMemoizedFn` pattern) is not
+  available: `ahooks` is not a dependency of this repo.
 
 `useEffectEvent` solves all of these. It returns a stable function whose body
 always reads the *latest* values from the surrounding closure. The dep array
@@ -49,8 +48,8 @@ of the surrounding `useEffect` only needs the values that actually represent
    move the access into a `useEffectEvent` callback.
 4. `useEffectEvent` callbacks are **not** safe to call outside of effects.
    Treat them as effect-internal helpers, not as event handlers passed to JSX
-   (use a regular function or `useCallback` for that — though under the
-   `'use memo'` directive even those are unnecessary).
+   (use a plain function under `'use memo'` for that — see
+   `react-compiler-memoization.md`).
 5. Prefer `useEffectEvent` over any "stable callback that reads the latest
    closure" helper. BUI has one — `useLatestCallback` in
    `packages/backend.ai-ui/src/hooks/internal/useLatest.ts` — but it exists
@@ -130,8 +129,8 @@ prop to remount cleanly so identity is the synchronization key.
 - **For values the effect *should* react to**. Example: a query parameter that,
   when changed, must trigger a re-fetch. Keep these in deps.
 - **For event handlers passed to JSX** (`onClick`, `onChange`, etc.). The
-  React Compiler under `'use memo'` already memoizes regular functions; or
-  use `useCallback` if you must. `useEffectEvent` callbacks are documented
+  React Compiler under `'use memo'` already memoizes regular functions, so
+  write a plain function. `useEffectEvent` callbacks are documented
   as effect-internal and have undefined behavior outside of effects.
 - **In components without `'use memo'`**: prefer adding the directive (per
   `react.instructions.md`) before adopting `useEffectEvent`. The two work

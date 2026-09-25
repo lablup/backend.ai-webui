@@ -15,9 +15,9 @@ description: >
 
 The WebUI dev server runs under [Portless](https://github.com/vercel-labs/portless) on a `*.localhost:1355` URL.
 
-`scripts/dev.mjs` picks the subdomain from the current git branch:
-- Branch contains an `FR-XXXX` token → `http://fr-XXXX.localhost:1355` (e.g. `04-24-feat_fr-2701_...` → `fr-2701.localhost`).
-- Otherwise → `<branch>.<project>.localhost:1355` (Portless's default `run` form).
+`scripts/dev.mjs` names the app from the branch's issue key, its PR number and a
+descriptive word — e.g. `https://fr-3665-pr9049-statusline.localhost:1355`; off an FR
+branch Portless derives the name. Don't construct the URL — read it from a source below.
 
 **Never assume port `1355`**: when another Portless daemon is already bound there (another Claude session / worktree), the server lands on 1356, 1357, … — always confirm the real port from one of the sources below.
 
@@ -31,7 +31,7 @@ To find the actual URL for a running instance, check these sources in order:
 2. `portless list` — live routes on this box.
 3. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
 
-If no dev server is running, tell the user to start it with `pnpm run dev` (requires Portless: `npm install -g portless`).
+If no dev server is running, tell the user to start it with `pnpm run dev` (Portless is a devDependency and `dev.mjs` starts its daemon; no global install).
 
 ## API Endpoint & Credentials
 

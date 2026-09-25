@@ -12,11 +12,9 @@ Always use `BAICard` from `backend.ai-ui` for card containers in this project.
 
 Reaching for Astryx `Card` directly loses all three and produces visibly inconsistent headers — every card on a page should look the same.
 
-### `styles={{ body: { paddingTop: 0 } }}` is obsolete — do not add it
+### `styles={{ body: { paddingTop: 0 } }}` is inert
 
-This rule used to require that prop at every call site without `tabList`. It existed because `BAICard` wrapped **antd's** `Card`, whose `body.paddingTop` (≈24px) left a gap the Backend.AI design does not want, and baking the override into the component would have silently changed every existing call site.
-
-`BAICard` renders Astryx `Card` now (to-astryx W2-D). Astryx has ONE `padding` step for the whole surface — header and body live inside the same padded box — so the flush-body look is **structural**, and the override has nothing to remove. `BAICardProps` still accepts `styles` for source compatibility with the **subset of call sites that pass it** — a few dozen of the ~200 `<BAICard>` call sites in the app — and **ignores it** (see the PILOT-DECISION in `BAICard.tsx`, which records the count measured at migration time).
+Some existing call sites pass it. `BAICard` renders Astryx `Card`, whose single `padding` step covers header and body together, so the flush-body look is structural; `BAICardProps` accepts `styles` only for source compatibility and ignores it (PILOT-DECISION in `BAICard.tsx`).
 
 So: do not add `styles={{ body: { paddingTop: 0 } }}` to new call sites, and drop it from files you are editing anyway. Do not go on a dedicated sweep for it — it is inert, not wrong. If you need a per-card inset, use `padding` or `size="small"`, which are the supported knobs.
 
