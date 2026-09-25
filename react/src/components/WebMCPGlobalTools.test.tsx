@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import WebMCPGlobalTools, { createNavigateTool } from './WebMCPGlobalTools';
+import WebMCPGlobalTools, {
+  createNavigateTool,
+  displayedEmail,
+} from './WebMCPGlobalTools';
 import { render, waitFor } from '@testing-library/react';
 import { BAIWebMCPProvider, type WebMCPToolDescriptor } from 'backend.ai-ui';
 import { Suspense } from 'react';
@@ -207,5 +210,19 @@ describe('createNavigateTool', () => {
       tool.execute({ path: '/applauncher?app=jupyter' }),
     ).resolves.toMatchObject({ error: { code: 'path_not_allowed' } });
     expect(navigate).not.toHaveBeenCalled();
+  });
+});
+
+describe('displayedEmail', () => {
+  it('returns the email unchanged when masking is off', () => {
+    expect(displayedEmail('admin@lablup.com', false)).toBe('admin@lablup.com');
+  });
+
+  it('masks the local part like the header does when masking is on', () => {
+    expect(displayedEmail('admin@lablup.com', true)).toBe('ad***@lablup.com');
+  });
+
+  it('returns null without an email', () => {
+    expect(displayedEmail(undefined, true)).toBeNull();
   });
 });
