@@ -563,9 +563,6 @@
     "MultiNodeShort": "Đa",
     "SingleNodeShort": "Đơn"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Không giới hạn"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Chọn máy chủ lưu trữ"
   },
@@ -601,9 +598,6 @@
   },
   "comp:BAITestButton": {
     "Test": "kiểm tra"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "và {{rest}} mục khác"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Được tạo tại",

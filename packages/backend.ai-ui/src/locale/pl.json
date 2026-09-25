@@ -563,9 +563,6 @@
     "MultiNodeShort": "Wielo",
     "SingleNodeShort": "Pojedynczy"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Nieograniczony"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Wybierz host pamięci masowej"
   },
@@ -601,9 +598,6 @@
   },
   "comp:BAITestButton": {
     "Test": "test"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "i {{rest}} więcej"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Utworzono o godz",
