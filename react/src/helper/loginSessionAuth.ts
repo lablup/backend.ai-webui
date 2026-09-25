@@ -9,6 +9,11 @@
  * Handles post-authentication GQL connection and client setup.
  */
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import {
+  fetchLoginBootstrap,
+  probeLoginSession,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 
 /**
@@ -40,9 +45,11 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
   if (!apiEndpoint) return false;
   const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
   try {
-    await client.get_manager_version();
-    const isLogon = await client.check_login();
-    return !!isLogon;
+    const [, bootstrap] = await Promise.all([
+      client.get_manager_version(),
+      probeLoginSession(client),
+    ]);
+    return bootstrap !== null;
   } catch {
     return false;
   }
@@ -51,60 +58,43 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
 /**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, groups, and config.
+ * Pass the `bootstrap` a `probeLoginSession` call already fetched to skip
+ * the query.
  */
 export async function connectViaGQL(
   client: any,
   cfg: LoginConfigState,
   endpoints: string[],
+  bootstrap?: LoginBootstrap | null,
 ): Promise<string[]> {
-  const fields = ['user_id', 'resource_policy', 'user'];
-  const q = `query { keypair { ${fields.join(' ')} } }`;
-  const v = {};
-
-  const response = await client.query(q, v);
+  const response = bootstrap ?? (await fetchLoginBootstrap(client));
 
   (globalThis as any).backendaiclient = client;
 
-  if (!response['keypair']) {
+  if (!response?.keypair) {
     await client.logout();
     throw new Error('Keypair information is missing.');
   }
+  if (!response.user) {
+    await client.logout();
+    throw new Error('User information is missing.');
+  }
 
-  const resourcePolicy = response['keypair'].resource_policy;
+  const resourcePolicy = response.keypair.resource_policy;
   (globalThis as any).backendaiclient.resource_policy = resourcePolicy;
-  const user = response['keypair'].user;
 
-  // Get user details
-  const userFields = [
-    'username',
-    'email',
-    'full_name',
-    'is_active',
-    'role',
-    'domain_name',
-    'groups {name, id}',
-    'need_password_change',
-    'uuid',
-  ];
-  const userQuery = `query { user{ ${userFields.join(' ')} } }`;
-  const userResponse = await (globalThis as any).backendaiclient.query(
-    userQuery,
-    { uuid: user },
-  );
-
-  const email = userResponse['user'].email;
-  const userGroups = userResponse['user'].groups;
-  const role = userResponse['user'].role;
-  const domainName = userResponse['user'].domain_name;
+  const email = response.user.email;
+  const userGroups = response.user.groups;
+  const role = response.user.role;
+  const domainName = response.user.domain_name;
 
   (globalThis as any).backendaiclient.email = email;
-  (globalThis as any).backendaiclient.user_uuid = userResponse['user'].uuid;
-  (globalThis as any).backendaiclient.full_name =
-    userResponse['user'].full_name;
+  (globalThis as any).backendaiclient.user_uuid = response.user.uuid;
+  (globalThis as any).backendaiclient.full_name = response.user.full_name;
   (globalThis as any).backendaiclient.is_admin = false;
   (globalThis as any).backendaiclient.is_superadmin = false;
   (globalThis as any).backendaiclient.need_password_change =
-    userResponse['user'].need_password_change;
+    response.user.need_password_change;
 
   if (['superadmin', 'admin'].includes(role)) {
     (globalThis as any).backendaiclient.is_admin = true;
@@ -113,14 +103,7 @@ export async function connectViaGQL(
     (globalThis as any).backendaiclient.is_superadmin = true;
   }
 
-  // Get group list
-  const groupResponse = await (globalThis as any).backendaiclient.group.list(
-    true,
-    false,
-    ['id', 'name', 'description', 'is_active'],
-  );
-
-  const groups = groupResponse.groups;
+  const groups = response.groups;
   const userGroupIds = userGroups.map(({ id }: { id: string }) => id);
 
   if (groups !== null) {

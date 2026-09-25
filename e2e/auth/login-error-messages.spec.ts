@@ -6,7 +6,7 @@
  *
  * Mock strategy:
  *   - GET  /func/              -> mock server version
- *   - POST /server/login-check -> mock not-authenticated (show login form)
+ *   - POST /func/admin/gql   -> mock 401 auth-failed (no session; show login form)
  *   - POST /server/login       -> per-test mock response (envelope cases)
  *   - `BackendAIClient.prototype.login` is stubbed to throw an `isError`
  *     payload directly for server-error cases (429, 400). This is needed
@@ -58,11 +58,14 @@ async function setupBaseMocks(page: Page): Promise<void> {
     }
   });
 
-  await page.route('**/server/login-check', async (route) => {
+  await page.route('**/func/admin/gql', async (route) => {
     await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ authenticated: false }),
+      status: 401,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://api.backend.ai/probs/auth-failed',
+        title: 'Unauthorized access',
+      }),
     });
   });
 }

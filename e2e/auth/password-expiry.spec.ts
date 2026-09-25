@@ -9,7 +9,7 @@
 // Mock strategy:
 //   - POST /server/login → password-expired response (mocked in beforeEach)
 //   - POST /server/update-password-no-auth → success response (mocked per-test when needed)
-//   - All other requests (GET / for version, POST /server/login-check) hit the real cluster.
+//   - All other requests (GET / for version, the bootstrap POST /func/admin/gql) hit the real cluster.
 import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
 import {
   KeyPairModal,
@@ -105,7 +105,7 @@ test.beforeEach(async ({ page, request }) => {
 
   // Mock the login endpoint to return a password-expired response.
   // Must be registered before page.goto so the route is in place when the
-  // app makes its automatic login-check on load.
+  // app probes the session with the bootstrap GraphQL query on load.
   await page.route('**/server/login', async (route) => {
     await route.fulfill({
       status: 200,
@@ -301,7 +301,7 @@ test.describe('real account password change flow', () => {
 
       // ── Now register the mock: first user-initiated call → expired, rest → real backend ──
       // The mock is registered late (after page.goto and form fill) so that the app's
-      // automatic login-check on load hits the real backend instead of consuming our
+      // automatic silent login on load hits the real backend instead of consuming our
       // one-shot expired response meant for the explicit Login button click.
       let loginCallCount = 0;
       await page.route('**/server/login', async (route) => {

@@ -139,6 +139,19 @@ export type FeatureSet = Record<string, boolean>;
  */
 export type GraphQLVariables = Record<string, unknown>;
 
+/** One entry of a GraphQL response's `errors` array. */
+export interface GraphQLResponseError {
+  message: string;
+  path?: Array<string | number>;
+  extensions?: Record<string, unknown>;
+}
+
+/** The whole GraphQL response body, `errors` included. */
+export interface GraphQLEnvelope<TData = unknown> {
+  data: TData;
+  errors?: GraphQLResponseError[];
+}
+
 /**
  * Standard GraphQL response envelope returned by `/admin/gql`. The shape
  * is unchanged between Backend.AI manager versions.

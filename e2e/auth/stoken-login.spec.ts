@@ -38,7 +38,6 @@ const MOCK_SERVER_VERSION = {
 };
 
 /** Not-logged-in envelope for the fast-path session probe. */
-const MOCK_LOGIN_CHECK_NOT_AUTHED = { authenticated: false };
 
 const TOTP_REQUIRED_RESPONSE = {
   authenticated: false,
@@ -128,11 +127,14 @@ async function installBoundaryProbeMocks(page: Page): Promise<void> {
       body: JSON.stringify(MOCK_SERVER_VERSION),
     });
   });
-  await page.route('**/server/login-check', async (route) => {
+  await page.route('**/func/admin/gql', async (route) => {
     await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify(MOCK_LOGIN_CHECK_NOT_AUTHED),
+      status: 401,
+      contentType: 'application/problem+json',
+      body: JSON.stringify({
+        type: 'https://api.backend.ai/probs/auth-failed',
+        title: 'Unauthorized access',
+      }),
     });
   });
 }
