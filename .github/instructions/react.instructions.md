@@ -31,11 +31,13 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 - **Reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIButton`, `BAIModal`,
   `BAICard`, `BAIText`, `BAITable`, … They own this project's defaults and wrap the
   Astryx internals.
-- When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. Discover
+- When no BAI equivalent exists, use **Astryx** directly, imported through its
+  `@lablup/ui-common` mirror: `@lablup/ui-common/<Name>`, never `@astryxdesign/*`
+  (ESLint rejects it; ADR 0009). Discover
   before writing: `astryx search "<thing>"`, `astryx component <Name>`. The CLI lives in
   the `react` workspace, so run it as `pnpm exec astryx …` from `react/` or
   `pnpm run astryx …` from the repository root — `pnpm exec` finds no binary at the root.
-  See the `ASTRYX` block in `AGENTS.md` / `react/AGENTS.md`.
+  See the `UI-COMMON` block in `AGENTS.md` / `react/AGENTS.md`.
 - **antd is not a dependency.** `import … from 'antd'` does not resolve and fails `tsc`;
   the workspace is exact-pinned so it cannot re-enter transitively. Never add one.
 - `antd-style` (`createStyles` / `createGlobalStyle`) is also gone. Styling that props and
@@ -66,7 +68,7 @@ the `../` depth to the file; the same specifiers exist on both sides of the work
 - `Form` / `Form.Item` / `Form.List` / `Form.useForm` / `Form.useWatch` resolve to the
   self-hosted engine; `Form.Item` **is** `BAIFormItem`.
 - Everything else that used to come from antd is a `BAI*` wrapper from `backend.ai-ui` or an
-  Astryx primitive from `@astryxdesign/core/<Name>`.
+  Astryx primitive from `@lablup/ui-common/<Name>`.
 
 ### The antd-v6-shaped prop vocabulary is frozen deliberately
 
