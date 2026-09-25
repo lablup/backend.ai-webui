@@ -10,7 +10,7 @@ import {
   webMCPError,
   webMCPInvalidInput,
 } from '../validateWebMCPInput';
-import { use, useEffect, useEffectEvent } from 'react';
+import { use, useEffect, useEffectEvent, useRef } from 'react';
 
 export type WebMCPToolDep = string | number | boolean | null | undefined;
 
@@ -65,22 +65,11 @@ const useWebMCPTool = (
         ])
       : null;
 
-  const readTool = useEffectEvent(() => tool);
-
-  const run = useEffectEvent(async (input: unknown): Promise<unknown> => {
-    if (!tool) {
-      return webMCPError('tool_unavailable', 'This tool is not available.');
-    }
-    const parsed = validateWebMCPInput(tool.inputSchema, input);
-    if (!parsed.ok) return webMCPInvalidInput(parsed.issues);
-    try {
-      return await tool.execute(parsed.value);
-    } catch (error) {
-      return webMCPError(
-        'execution_failed',
-        error instanceof Error ? error.message : String(error),
-      );
-    }
+  // The browser calls `execute` long after the effect ran, so the latest tool
+  // is read from a ref: `useEffectEvent` is only safe inside effects.
+  const latestTool = useRef(tool);
+  useEffect(() => {
+    latestTool.current = tool;
   });
 
   const reportRegisterError = useEffectEvent((error: unknown) => {
@@ -90,7 +79,7 @@ const useWebMCPTool = (
   useEffect(() => {
     if (registrationKey === null) return;
     const modelContext = getWebMCPModelContext();
-    const definition = readTool();
+    const definition = latestTool.current;
     if (!modelContext || !definition) return;
 
     const controller = new AbortController();
@@ -101,7 +90,22 @@ const useWebMCPTool = (
       ...(definition.annotations
         ? { annotations: definition.annotations }
         : {}),
-      execute: (input) => run(input),
+      execute: async (input) => {
+        const current = latestTool.current;
+        if (!current) {
+          return webMCPError('tool_unavailable', 'This tool is not available.');
+        }
+        const parsed = validateWebMCPInput(current.inputSchema, input);
+        if (!parsed.ok) return webMCPInvalidInput(parsed.issues);
+        try {
+          return await current.execute(parsed.value);
+        } catch (error) {
+          return webMCPError(
+            'execution_failed',
+            error instanceof Error ? error.message : String(error),
+          );
+        }
+      },
     };
     try {
       Promise.resolve(
