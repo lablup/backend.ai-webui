@@ -1,43 +1,19 @@
-import type { AstryxBadgeVariant } from '../helper/astryxTagVariant';
-import './BAIDoubleToken.css';
-import { Badge } from '@lablup/ui-common/Badge';
-import { HStack } from '@lablup/ui-common/Stack';
-import * as _ from 'lodash-es';
-import React from 'react';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
-// A welded run of Badges for a live pair (status + detail, label + ticker);
-// the settled counterpart is `BAIDoubleToken`. Weld CSS: BAIDoubleToken.css.
-export type BAIDoubleBadgeValue = {
-  label: string;
-  variant?: AstryxBadgeVariant;
-};
+ ui-common `DoubleBadge` under its BUI name; the props are identical. The
+ settled counterpart is `BAIDoubleToken`.
+*/
+import {
+  DoubleBadge,
+  type DoubleBadgeProps,
+  type DoubleBadgeValue,
+} from '@lablup/ui-common/components/DoubleBadge';
 
-export interface BAIDoubleBadgeProps {
-  values?: Array<string> | Array<BAIDoubleBadgeValue>;
-}
+export type BAIDoubleBadgeValue = DoubleBadgeValue;
+export type BAIDoubleBadgeProps = DoubleBadgeProps;
 
-const BAIDoubleBadge: React.FC<BAIDoubleBadgeProps> = ({ values = [] }) => {
-  'use memo';
-  if (values.length === 0) return null;
-  const objectValues: Array<BAIDoubleBadgeValue> = _.map(
-    values,
-    (value: string | BAIDoubleBadgeValue): BAIDoubleBadgeValue =>
-      typeof value === 'string' ? { label: value, variant: 'neutral' } : value,
-  );
-
-  return (
-    <HStack gap={0} align="center" className="bai-double">
-      {_.map(objectValues, (objValue, idx) =>
-        !_.isEmpty(objValue.label) ? (
-          <Badge
-            key={idx}
-            variant={objValue.variant ?? 'neutral'}
-            label={objValue.label}
-          />
-        ) : null,
-      )}
-    </HStack>
-  );
-};
+const BAIDoubleBadge = DoubleBadge;
 
 export default BAIDoubleBadge;
