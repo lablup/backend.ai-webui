@@ -9,9 +9,12 @@ import {
 } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
+  AUTOMATIC_DEFAULT_SHMEM,
   getAllocatablePresetNames,
+  getAutomaticShmem,
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
+  pickChangedResourceValues,
 } from './ResourceAllocationFormItems';
 
 describe('isUnifiedAcceleratorSlot', () => {
@@ -195,5 +198,52 @@ describe('getAllocatablePresetNames', () => {
     );
     // Only compare with resource limits
     expect(result).toEqual(['cpu1_mem2g']);
+  });
+});
+
+describe('getAutomaticShmem', () => {
+  it('picks 1g once memory reaches 4g and the image minimum + 1g', () => {
+    expect(getAutomaticShmem('4g', '1g')).toBe('1g');
+    expect(getAutomaticShmem('8g', '2g')).toBe('1g');
+  });
+
+  it('falls back to the default below 4g or below the image minimum + 1g', () => {
+    expect(getAutomaticShmem('2g', '1g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
+    expect(getAutomaticShmem('4g', '4g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
+  });
+});
+
+describe('pickChangedResourceValues', () => {
+  it('returns nothing when every value already matches', () => {
+    expect(
+      pickChangedResourceValues(
+        { cpu: 2, mem: '4g', accelerator: 0, acceleratorType: 'cuda.device' },
+        { cpu: 2, mem: '4g', accelerator: 0, acceleratorType: 'cuda.device' },
+      ),
+    ).toEqual({});
+  });
+
+  it('treats equal memory sizes in different units as unchanged', () => {
+    expect(
+      pickChangedResourceValues(
+        { mem: '1g', shmem: '1024m' },
+        { mem: '1024m', shmem: '1g' },
+      ),
+    ).toEqual({});
+  });
+
+  it('keeps only the entries that differ', () => {
+    expect(
+      pickChangedResourceValues(
+        { cpu: 4, mem: '4g', accelerator: 1 },
+        { cpu: 2, mem: '4g', accelerator: 1 },
+      ),
+    ).toEqual({ cpu: 4 });
+  });
+
+  it('keeps every entry when there is no current value', () => {
+    expect(pickChangedResourceValues({ cpu: 1, mem: '2g' }, undefined)).toEqual(
+      { cpu: 1, mem: '2g' },
+    );
   });
 });
