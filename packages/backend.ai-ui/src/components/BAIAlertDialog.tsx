@@ -2,136 +2,23 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `BAIAlertDialog` — the WAI-ARIA alert-dialog pattern
- (https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/) on ui-common `Modal`'s
- portalled surface, so it leaves the top layer like every other BUI modal
- (FR-3578). Astryx `AlertDialog`'s own off-top-layer path is `isInline`, which
- hard-codes `role="group"` and hides the ids behind `useId` — see the commit.
+ `BAIAlertDialog` — ui-common `AlertModal` under its BUI name (FR-4087). Its
+ props were already Astryx-shaped, so nothing is mapped.
 
  NOT the irreversible-delete tier: that is `BAIDeleteConfirmModal` with
  `requireConfirmInput` (`.claude/rules/destructive-confirmation.md`).
-
- SYNC: the anatomy below is a copy of `@astryxdesign/core/AlertDialog`
- (no reachable ids on its inline path); on an Astryx bump diff its footer order,
- button variants and id wiring against this file.
 */
-import { useBAIi18n } from '../hooks/useBAIi18n';
-import type { AlertDialogProps } from '@lablup/ui-common/AlertDialog';
-import { Button } from '@lablup/ui-common/Button';
-import { Heading } from '@lablup/ui-common/Heading';
-import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
-import { Modal, type ModalProps } from '@lablup/ui-common/Modal';
-import { HStack } from '@lablup/ui-common/Stack';
-import { Text } from '@lablup/ui-common/Text';
-import React, { useId } from 'react';
+import {
+  AlertModal,
+  type AlertModalProps,
+} from '@lablup/ui-common/components/AlertModal';
+import React from 'react';
 
-export interface BAIAlertDialogProps
-  extends
-    Omit<
-      ModalProps,
-      | 'children'
-      | 'purpose'
-      | 'role'
-      | 'aria-labelledby'
-      | 'aria-describedby'
-      // Modal's generated header and footer: this component draws its own.
-      | 'title'
-      | 'subtitle'
-      | 'headerStartContent'
-      | 'headerEndContent'
-      | 'hasCloseButton'
-      | 'footer'
-      | 'onAction'
-      | 'actionLabel'
-      | 'actionVariant'
-      | 'isActionLoading'
-      | 'isActionDisabled'
-      | 'actionButtonProps'
-      | 'cancelLabel'
-      | 'hasCancelButton'
-      | 'isLoading'
-    >,
-    Pick<
-      AlertDialogProps,
-      | 'title'
-      | 'description'
-      | 'cancelLabel'
-      | 'actionLabel'
-      | 'actionVariant'
-      | 'isActionLoading'
-      | 'onAction'
-    > {
-  /** Escape still cancels even with both buttons disabled. */
-  isCancelDisabled?: boolean;
-  isActionDisabled?: boolean;
-}
+export type BAIAlertDialogProps = AlertModalProps;
 
-const BAIAlertDialog: React.FC<BAIAlertDialogProps> = ({
-  title,
-  description,
-  cancelLabel,
-  actionLabel,
-  actionVariant = 'destructive',
-  isActionLoading,
-  isActionDisabled,
-  isCancelDisabled,
-  onAction,
-  onOpenChange,
-  ...rest
-}) => {
+const BAIAlertDialog: React.FC<BAIAlertDialogProps> = (props) => {
   'use memo';
-  const { t } = useBAIi18n();
-  const id = useId();
-  const titleId = `${id}-title`;
-  const descriptionId = `${id}-description`;
-
-  return (
-    <Modal
-      {...rest}
-      onOpenChange={onOpenChange}
-      // The pattern's dismissal contract: Escape cancels, the backdrop does
-      // not. `purpose="required"` would buy the role by disabling Escape too.
-      purpose="form"
-      role="alertdialog"
-      aria-labelledby={titleId}
-      aria-describedby={descriptionId}
-    >
-      <Layout
-        content={
-          <LayoutContent>
-            <Heading level={2} id={titleId}>
-              {title}
-            </Heading>
-            <Text type="body" color="secondary" id={descriptionId}>
-              {description}
-            </Text>
-          </LayoutContent>
-        }
-        footer={
-          <LayoutFooter>
-            <HStack justify="end" gap={2} align="center">
-              <Button
-                label={cancelLabel ?? t('general.button.Cancel')}
-                variant="ghost"
-                isDisabled={isCancelDisabled}
-                onClick={() => onOpenChange(false)}
-                // The pattern preselects the least destructive choice;
-                // `Modal` focuses `[data-autofocus]` once open.
-                data-autofocus=""
-              />
-              <Button
-                label={actionLabel}
-                variant={actionVariant}
-                isLoading={isActionLoading}
-                isDisabled={isActionDisabled}
-                onClick={onAction}
-              />
-            </HStack>
-          </LayoutFooter>
-        }
-      />
-    </Modal>
-  );
+  return <AlertModal {...props} />;
 };
 
 BAIAlertDialog.displayName = 'BAIAlertDialog';

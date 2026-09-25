@@ -2,67 +2,51 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx PHASE 3 / ticket B — `BAIDeleteConfirmModal` rebuilt on Astryx.
+ `BAIDeleteConfirmModal` — adapter over ui-common `DeleteConfirmModal`
+ (FR-4087). It is the irreversible tier `.claude/rules/destructive-confirmation.md`
+ names; ui-common owns the typed-confirm gate, and
+ `app-shim/destructiveConfirmFlow.test.tsx` guards it through this adapter.
 
- This is the component `.claude/rules/destructive-confirmation.md` names: an
- irreversible delete must be gated behind a modal in which the user TYPES the
- resource name before the danger button enables. **That contract, and the
- antd-shaped prop surface the ~30 call sites pass, are reproduced exactly** —
- only the primitives change. `packages/backend.ai-ui/src/app-shim/
- destructiveConfirmFlow.test.tsx` guards the gate.
+ The props keep the frozen `BAIModal` vocabulary the ~35 call sites pass
+ (some spread a `BAIModalProps` bag):
 
- | before (antd)                          | after (Astryx)                       |
- |----------------------------------------|--------------------------------------|
- | `BAIModal` (antd `Modal`)              | `BAIModal` (Astryx `Dialog`)         |
- | `Form` + `Form.Item` + `Form.useWatch` | one `useState` + `TextInput`         |
- | antd `Input autoFocus allowClear`      | `TextInput hasAutoFocus hasClear`    |
- | `Typography.Text`                      | Astryx `Text`                        |
- | `Typography.Text type="danger"`        | `Banner status="error"`              |
- | `BAIText code` inside `<BAITrans>`     | Astryx `Text type="code"`            |
+ | BAIDeleteConfirmModal                     | ui-common `DeleteConfirmModal`      |
+ |-------------------------------------------|-------------------------------------|
+ | `open` / `isOpen`                         | `isOpen`                            |
+ | `onCancel` / `onOpenChange`               | `onOpenChange(false)`, via the guard |
+ | `afterClose` / `afterOpenChange`          | `afterOpenChange`                   |
+ | `onOk`, `okText`, `cancelText`            | `onAction`, `actionLabel`, `cancelLabel` |
+ | `confirmLoading` / `okButtonProps.loading` | `isActionLoading`                  |
+ | `okButtonProps.disabled`                  | `isActionDisabled` (cannot open the gate) |
+ | `maskClosable` / `mask.closable` / `keyboard` | `purpose`                       |
+ | `width` (incl. responsive record, `auto`) | `width`, default 520 as `BAIModal`  |
+ | `closable={false}` / `closeIcon={false}`  | `hasCloseButton={false}`            |
+ | `reversible`, `requireConfirmInput`, `plainItems`, `cannotBeUndoneText` | `isReversible`, `isConfirmInputRequired`, `hasPlainItems`, `warningText` |
+ | `inputProps.placeholder` / `.disabled`    | `inputPlaceholder` / `isInputDisabled` |
 
- PILOT-DECISIONs (see .specs/FR-3482-astryx-migration/issues/p3-b-modal-family.md):
-
- 1. **The typed-confirm gate does not need a form engine.** The antd version
-    reached for `Form` + `Form.useWatch` purely to observe one input, which is
-    also why this file was pulling in the PARKED form-engine. Astryx
-    `TextInput` is `value` / `onChange(value)`, so a `useState` is the whole
-    mechanism — and the form-engine import disappears with it. The locked
-    "Form stays" decision is about form STATE ENGINES; a single gate input is
-    not one.
- 2. **"This action cannot be undone." becomes a `Banner status="error"`.**
-    Astryx `Text` has no danger colour (its `color` set is
-    primary/secondary/disabled/placeholder/accent/inherit), and the banner
-    restores both the colour and an icon.
-
- 3. **`inputLabel` stays `ReactNode`.** `TextInput.label` is a plain `string`
-    that doubles as the accessible name, so a rich label is rendered above the
-    field and the field carries the flattened text with `isLabelHidden`.
- 4. **The item list keeps a hand-rolled surface.** Astryx has no "boxed,
-    scrollable list of arbitrary nodes" primitive; a plain `div` styled from
-    theme CSS variables follows the brand/admin themes and both colour schemes.
+ Accepted and ignored: the rest of `okButtonProps`, `cancelButtonProps`,
+ `okType`, `type`, `footer`, `headerContent`, `closeLabel`, `loading`,
+ `bodyRef`, `bodyProps`, window actions, `styles`, `classNames` and the antd
+ mechanisms `BAIModal` also ignores. None of the call sites passes them.
 */
-import { useBAIi18n } from '../hooks/useBAIi18n';
-import BAIModal, { type BAIModalProps } from './BAIModal';
-import { BAITrans } from './BAITrans';
-import { Banner } from '@lablup/ui-common/Banner';
-import { VStack } from '@lablup/ui-common/Stack';
-import { Text } from '@lablup/ui-common/Text';
-import { TextInput } from '@lablup/ui-common/TextInput';
-import { Token } from '@lablup/ui-common/Token';
+import type {
+  BAIModalActionButtonProps,
+  BAIModalProps,
+  BAIModalResponsiveWidth,
+} from './BAIModal';
+import './BAIModal.css';
+import {
+  DeleteConfirmModal,
+  type DeleteConfirmModalItem,
+} from '@lablup/ui-common/components/DeleteConfirmModal';
 import { CircleAlert } from 'lucide-react';
-import React, { isValidElement, useState } from 'react';
+import React from 'react';
 
-export interface BAIDeleteConfirmModalItem {
-  /** Unique key for React list rendering */
-  key: string;
-  /** Display label — accepts ReactNode for custom rendering (icons, tags, etc.) */
-  label: React.ReactNode;
-}
+export type BAIDeleteConfirmModalItem = DeleteConfirmModalItem;
 
 /**
- * The slice of the old antd `InputProps` the confirmation field honours. Every
- * call site in the repo passes `placeholder` only; the index signature keeps
- * the rest accepted-and-ignored so no call site needs an edit.
+ * The slice of the old antd `InputProps` the confirmation field honours. The
+ * index signature keeps the rest accepted-and-ignored.
  */
 export interface BAIDeleteConfirmModalInputProps {
   placeholder?: string;
@@ -80,250 +64,187 @@ export interface BAIDeleteConfirmModalProps extends Omit<
   items: BAIDeleteConfirmModalItem[];
   /** Custom modal title. Defaults to "Delete" / "Delete N items". */
   title?: React.ReactNode;
-  /** Description shown above the item list. If omitted, falls back to a `target`-based or generic default. */
+  /** Description shown above the item list. Defaults to a `target`-based or generic question. */
   description?: React.ReactNode;
-  /**
-   * Resource type label (e.g. "Credential", "Project"). When provided and `description` is not,
-   * the default description becomes "Are you sure you want to permanently delete {target}?".
-   */
+  /** Resource type label ("Credential"), named in the default description. */
   target?: React.ReactNode;
   /**
-   * Marks the confirmed action as reversible (e.g. revoke a role assignment,
-   * remove a permission from a role). When true the modal keeps the exact same
-   * header / footer / body design as the irreversible-delete modal, but never
-   * renders the typed-confirmation input (even for multiple items or when
-   * `requireConfirmInput` is set) and omits the "This action cannot be undone."
-   * warning. Use for actions the user can recover from in <30s without
-   * contacting support — see `.claude/rules/destructive-confirmation.md`.
-   * Default: false
+   * The action is reversible: no typed confirmation, no "cannot be undone"
+   * warning. Default: false
    */
   reversible?: boolean;
   /** Force text-input confirmation even for a single item. Default: false */
   requireConfirmInput?: boolean;
   /**
-   * Custom confirmation text the user must type.
-   * Defaults: single item → item label as string (falls back to localized "Delete" if label is ReactNode),
-   * multiple items → localized "Delete".
-   * When using ReactNode labels with requireConfirmInput, provide this prop explicitly.
+   * Text the user must type. Defaults to a single item's plain-text label,
+   * else the localized "Delete". Pass it when the label is a ReactNode.
    */
   confirmText?: string;
   /** Label above the confirmation input. Default: "Type {confirmText} to confirm." */
   inputLabel?: React.ReactNode;
   /** Additional props for the confirmation input. */
   inputProps?: BAIDeleteConfirmModalInputProps;
-  /** Content rendered between the input field and "cannot be undone" text (e.g. checkboxes). */
+  /** Content rendered after the input field (e.g. checkboxes). */
   extraContent?: React.ReactNode;
-  /** Override for "This action cannot be undone." Defaults to the localized string. */
+  /** Override for "This action cannot be undone." */
   cannotBeUndoneText?: string;
   /** Max height (px) of the scrollable item list. Default: 200. Set 0 for no limit. */
   itemListMaxHeight?: number;
-  /**
-   * Render items without the default surface (background / border / padding /
-   * scroll) container. Use when an item's `label` is already a self-contained
-   * block (e.g. a table) so the default box does not create a redundant
-   * double border. Default: false
-   */
+  /** Render items without the boxed surface. Default: false */
   plainItems?: boolean;
 }
 
-function extractTextFromNode(node: React.ReactNode): string | undefined {
-  if (typeof node === 'string') return node;
-  if (typeof node === 'number') return String(node);
-  return undefined;
+function resolveWidth(
+  width: number | string | BAIModalResponsiveWidth | undefined,
+): number | string {
+  if (width === undefined) return 520;
+  if (typeof width === 'object') return Object.values(width).at(-1) ?? 520;
+  return width === 'auto' ? 'fit-content' : width;
 }
 
-/** Flattens a ReactNode label to the plain string the a11y name needs. */
-function toText(node: React.ReactNode): string {
-  if (node == null || typeof node === 'boolean') return '';
-  if (typeof node === 'string') return node;
-  if (typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(toText).join('');
-  if (isValidElement(node)) {
-    return toText((node.props as { children?: React.ReactNode }).children);
-  }
-  return '';
-}
+const plainLabel = (node: React.ReactNode) =>
+  typeof node === 'string' ? node : undefined;
 
 const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
   items,
   title,
   description,
   target,
-  reversible = false,
-  requireConfirmInput = false,
-  confirmText: confirmTextProp,
+  reversible,
+  requireConfirmInput,
+  confirmText,
   inputLabel,
   inputProps,
   extraContent,
   cannotBeUndoneText,
-  itemListMaxHeight = 200,
-  plainItems = false,
-  onOk,
+  itemListMaxHeight,
+  plainItems,
+  open,
+  isOpen,
   onCancel,
+  onOpenChange,
+  afterClose,
+  afterOpenChange,
+  onOk,
   okText,
+  cancelText,
   okButtonProps,
-  ...restModalProps
+  confirmLoading,
+  maskClosable,
+  keyboard,
+  mask,
+  width,
+  closable,
+  closeIcon,
+  confirmBeforeClose,
+  onConfirmClose,
+  // Accepted and ignored; see the file header.
+  cancelButtonProps: _cancelButtonProps,
+  okType: _okType,
+  type: _type,
+  footer: _footer,
+  headerContent: _headerContent,
+  closeLabel: _closeLabel,
+  loading: _loading,
+  bodyRef: _bodyRef,
+  bodyProps: _bodyProps,
+  windowActions: _windowActions,
+  onWindowStateChange: _onWindowStateChange,
+  minimizedPlacement: _minimizedPlacement,
+  styles: _styles,
+  classNames: _classNames,
+  centered: _centered,
+  draggable: _draggable,
+  stickyTitle: _stickyTitle,
+  forceRender: _forceRender,
+  getContainer: _getContainer,
+  wrapClassName: _wrapClassName,
+  rootClassName: _rootClassName,
+  rootStyle: _rootStyle,
+  bodyStyle: _bodyStyle,
+  maskStyle: _maskStyle,
+  transitionName: _transitionName,
+  maskTransitionName: _maskTransitionName,
+  modalRender: _modalRender,
+  mousePosition: _mousePosition,
+  scrollLock: _scrollLock,
+  focusTriggerAfterClose: _focusTriggerAfterClose,
+  prefixCls: _prefixCls,
+  wrapProps: _wrapProps,
+  ...modalProps
 }) => {
   'use memo';
 
-  const { t } = useBAIi18n();
-  const [typedText, setTypedText] = useState('');
+  const handleClose = async () => {
+    if (confirmBeforeClose && onConfirmClose) {
+      try {
+        if ((await Promise.resolve(onConfirmClose())) === false) return;
+      } catch {
+        return;
+      }
+    }
+    onOpenChange?.(false);
+    // Escape and the backdrop have no React event; BAIModal passes none either.
+    onCancel?.(
+      undefined as unknown as Parameters<NonNullable<typeof onCancel>>[0],
+    );
+  };
 
-  // Reset the gate every time the dialog re-opens. Derived-state-from-props via
-  // the render-phase compare (React's documented alternative to an effect).
-  const isOpen = restModalProps.open ?? restModalProps.isOpen ?? false;
-  const [wasOpen, setWasOpen] = useState(isOpen);
-  if (isOpen !== wasOpen) {
-    setWasOpen(isOpen);
-    if (isOpen) setTypedText('');
-  }
+  const isMaskClosable =
+    (typeof mask === 'object' ? mask.closable : undefined) ??
+    maskClosable ??
+    true;
+  const purpose = isMaskClosable
+    ? 'info'
+    : keyboard !== false
+      ? 'form'
+      : 'required';
 
-  const resolvedTitle =
-    title ??
-    (items.length > 1
-      ? t('comp:BAIDeleteConfirmModal.DeleteNItems', {
-          count: items.length,
-        })
-      : t('comp:BAIDeleteConfirmModal.DeleteItem'));
-
-  const resolvedConfirmText =
-    confirmTextProp ??
-    (items.length === 1
-      ? (extractTextFromNode(items[0]?.label) ?? t('general.button.Delete'))
-      : t('general.button.Delete'));
-
-  // An explicitly empty `confirmText` (e.g. the target row is not resolved
-  // yet) must not arm the gate with an already-satisfied empty comparison —
-  // and must not enable OK without a gate either, so the input is hidden but
-  // the confirm stays disabled until a confirm text exists.
-  const wantsInput = !reversible && (items.length > 1 || requireConfirmInput);
-  const needsInput = wantsInput && !!resolvedConfirmText;
-
-  const resolvedWarning =
-    cannotBeUndoneText ?? t('comp:BAIDeleteConfirmModal.CannotBeUndone');
-
-  const resolvedDescription =
-    description ??
-    (target
-      ? t('comp:BAIDeleteConfirmModal.AreYouSureToPermanentlyDeleteTarget', {
-          target,
-        })
-      : t('comp:BAIDeleteConfirmModal.AreYouSureToDelete'));
-
-  const resolvedOkText = okText ?? t('general.button.Delete');
-
-  const resolvedInputLabel = inputLabel ?? (
-    <BAITrans
-      i18nKey="comp:BAIDeleteConfirmModal.TypeToConfirm"
-      values={{ confirmText: resolvedConfirmText }}
-      components={{ token: <Token label={resolvedConfirmText} size="sm" /> }}
-    />
-  );
-
-  const modalTitle = (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 'var(--spacing-1)',
-        overflowWrap: 'anywhere',
-        wordBreak: 'break-word',
-      }}
-    >
-      <CircleAlert
-        style={{ color: 'var(--color-warning)', flexShrink: 0 }}
-        size="1em"
-      />
-      {resolvedTitle}
-    </span>
-  );
-
-  const itemListContent =
-    items.length > 0 ? (
-      <div
-        role="list"
-        style={
-          plainItems
-            ? undefined
-            : {
-                maxHeight: itemListMaxHeight || undefined,
-                overflowY: itemListMaxHeight ? 'auto' : undefined,
-                backgroundColor: 'var(--color-background-muted)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-inner)',
-                padding: 'var(--spacing-2)',
-                paddingInline: 'var(--spacing-3)',
-              }
-        }
-      >
-        <VStack align="stretch" gap={1}>
-          {items.map((item) => (
-            <div key={item.key} role="listitem">
-              {item.label}
-            </div>
-          ))}
-        </VStack>
-      </div>
-    ) : null;
+  const actionButtonProps: BAIModalActionButtonProps = okButtonProps ?? {};
 
   return (
-    <BAIModal
-      {...restModalProps}
-      title={modalTitle}
-      okText={resolvedOkText}
-      okButtonProps={{
-        danger: true,
-        disabled: wantsInput
-          ? !resolvedConfirmText || typedText !== resolvedConfirmText
-          : items.length === 0,
-        ...okButtonProps,
+    <DeleteConfirmModal
+      {...modalProps}
+      isOpen={open ?? isOpen ?? false}
+      onOpenChange={(next) => {
+        if (!next) void handleClose();
       }}
-      onOk={(e) => {
-        setTypedText('');
-        onOk?.(e);
+      afterOpenChange={(next) => {
+        afterOpenChange?.(next);
+        if (!next) afterClose?.();
       }}
-      onCancel={(e) => {
-        setTypedText('');
-        onCancel?.(e);
+      purpose={purpose}
+      width={resolveWidth(width)}
+      hasCloseButton={closable !== false && closeIcon !== false}
+      // BAIModal's header and footer row height (FR-4069).
+      headerClassName="bai-modal__header"
+      footerClassName="bai-modal__footer"
+      items={items}
+      title={title}
+      titleIcon={<CircleAlert size="1em" />}
+      description={description}
+      target={target}
+      isReversible={reversible}
+      isConfirmInputRequired={requireConfirmInput}
+      confirmText={confirmText}
+      inputLabel={inputLabel}
+      inputPlaceholder={inputProps?.placeholder}
+      isInputDisabled={inputProps?.disabled}
+      extraContent={extraContent}
+      warningText={cannotBeUndoneText}
+      itemListMaxHeight={itemListMaxHeight}
+      hasPlainItems={plainItems}
+      // Not awaited: BAIModal's OK never showed a pending state of its own.
+      onAction={() => {
+        onOk?.(undefined as unknown as React.MouseEvent<HTMLButtonElement>);
       }}
-    >
-      <VStack align="stretch" gap={2}>
-        {resolvedDescription ? <Text>{resolvedDescription}</Text> : null}
-        {(needsInput ? items.length > 1 : true) ? itemListContent : null}
-        {needsInput ? (
-          <VStack align="stretch" gap={1}>
-            {/* PILOT-DECISION 3: `TextInput.label` is a plain string, so a rich
-                ReactNode label is rendered here and the field carries the
-                flattened text as its (hidden) accessible name. */}
-            <Text type="label">{resolvedInputLabel}</Text>
-            <TextInput
-              label={
-                toText(resolvedInputLabel) ||
-                `Type ${resolvedConfirmText} to confirm.`
-              }
-              isLabelHidden
-              value={typedText}
-              onChange={(value) => setTypedText(value ?? '')}
-              placeholder={inputProps?.placeholder}
-              isDisabled={inputProps?.disabled}
-              hasAutoFocus
-              hasClear
-              htmlName="confirmText"
-            />
-            {/* QA-FINDINGS Q-17: with the input present the warning is a danger
-                Text directly under it (legacy position), not a trailing Banner
-                below the option checkboxes. */}
-            <Text color="danger">{resolvedWarning}</Text>
-          </VStack>
-        ) : null}
-        {extraContent}
-        {/* A reversible-tier modal never had a warning; a non-input one has no
-            input to sit under, so it keeps the banner. */}
-        {!needsInput && !reversible ? (
-          <Banner status="error" title={resolvedWarning} />
-        ) : null}
-      </VStack>
-    </BAIModal>
+      actionLabel={plainLabel(okText)}
+      cancelLabel={plainLabel(cancelText)}
+      isActionLoading={
+        confirmLoading || actionButtonProps.loading === true || undefined
+      }
+      isActionDisabled={actionButtonProps.disabled}
+    />
   );
 };
 
