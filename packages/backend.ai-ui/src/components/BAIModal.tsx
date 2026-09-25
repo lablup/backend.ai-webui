@@ -2,81 +2,42 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- to-astryx PHASE 3 / ticket B — `BAIModal` rebuilt on Astryx `Dialog`, since
- FR-3578 through `BAIDialog` (same surface, portalled instead of promoted
- into the top layer, so notices stay above it).
+ `BAIModal` — the antd-`Modal`-shaped adapter over ui-common `Modal` (FR-4087,
+ ADR 0009). ui-common owns the surface: portal, mask, level stack, focus,
+ Escape/backdrop dismissal, accessible name and the mount lifecycle. This file
+ keeps the frozen antd-v6 vocabulary its ~140 call-site files use, and what
+ ui-common leaves to products: window controls (minimize / maximize /
+ fullscreen) and the `confirmBeforeClose` guard.
 
- This is an **in-place frontier rewrite**: the rendering stack underneath is
- entirely Astryx (`Dialog` + `Layout` + `DialogHeader` + `Button`), while the
- prop surface stays antd-`Modal`-shaped so the ~124 call sites that render
- `<BAIModal>` (and the `BAIModalProps`-extending prop interfaces they declare)
- need no edit at all.
+ The adapter composes its own header, body and footer from `ModalHeader` +
+ `Layout` and hands them to `Modal` as children (Modal's unstructured mode):
+ the header row takes window controls or a whole `headerContent` row, and a
+ minimized modal renders no body or footer, which Modal's generated chrome
+ cannot express.
 
- ## What antd supplied that is now re-implemented here
+ | antd-shaped prop (BAIModal)            | ui-common `Modal`                      |
+ |----------------------------------------|----------------------------------------|
+ | `open` (or `isOpen`)                   | `isOpen`                               |
+ | `onCancel` / `onOpenChange`            | `onOpenChange(false)`, via the guard   |
+ | `afterClose` / `afterOpenChange`       | `afterOpenChange`                      |
+ | `maskClosable` / `mask.closable` / `keyboard` | `purpose` (`info` / `form` / `required`) |
+ | `width` (incl. responsive record, `auto`) | `width`                             |
+ | `title` / `subtitle` / `closable` / `type` | `ModalHeader` in the adapter's `Layout` |
+ | `footer` / `onOk` / `okText` / `okType` / `okButtonProps` / `confirmLoading` / `cancelText` / `cancelButtonProps` | `LayoutFooter` in the adapter's `Layout` |
+ | `loading`                              | `BAISkeleton` in place of the body     |
+ | anything else `ModalProps` declares (`zIndex`, `unmountOnClose`, `ref`, …) | forwarded as is |
 
- antd's `Modal` is a *controller*: it owns the header, the OK/Cancel footer,
- `okText`/`okButtonProps`/`confirmLoading`, the mask, the scroll lock and the
- `afterClose` lifecycle. Astryx's `Dialog` is a *surface*: `isOpen`,
- `onOpenChange`, `width`, `purpose`, children. Everything between those two is
- this file.
-
- | antd `Modal`                       | Astryx                                              |
- |------------------------------------|-----------------------------------------------------|
- | `open`                             | `Dialog.isOpen`                                     |
- | `onCancel` (X / mask / Esc)        | `Dialog.onOpenChange(false)` + `DialogHeader` close |
- | `title` (ReactNode)                | `DialogHeader.title` (see "ReactNode title" below)  |
- | `okText`/`okType`/`okButtonProps`  | `Button variant primary|destructive`                |
- | `confirmLoading`                   | `Button.isLoading`                                  |
- | `cancelText`/`cancelButtonProps`   | `Button variant="secondary"`                        |
- | `footer` node / `null` / render fn | `LayoutFooter` (or nothing)                         |
- | `loading`                          | `BAISkeleton` in place of the body (FR-3513)        |
- | `maskClosable` / `keyboard`        | `Dialog.purpose` (`info` / `form` / `required`)     |
- | `styles.{header,body,footer,…}`    | inline styles on the matching Astryx slot           |
- | `.ant-modal-*` CSS                 | deleted — the slots are Astryx's own                |
-
- ## PILOT-DECISIONs (recorded in .specs/FR-3482-astryx-migration/issues/p3-b-modal-family.md)
-
- 1. **`draggable` is dropped.** `react-draggable` moved antd's positioned
-    wrapper, which no longer exists. Repo-wide usage before this change:
-    **zero** outside `BAIModal.stories.tsx`. Still accepted and ignored.
- 2. **`centered` is accepted and ignored** — Astryx dialogs are centred unless
-    `position` is set (same call as ticket 04 / the app-shim).
- 3. **Content mounts on first open and stays mounted while closed.** There is
-    no `destroyOnHidden`: wrap the modal in `BAIUnmountAfterClose` to drop it,
-    and its state, on close.
- 4. **A minimized modal stays modal.** antd dropped the mask so the page behind
-    stayed interactive; `BAIDialog` always paints one. Minimize therefore
-    collapses the dialog to a title bar parked at `minimizedPlacement` but does
-    not release the page.
- 5. **`mask={false}`, `getContainer`, `forceRender`, `wrapClassName`,
-    `rootClassName`, `modalRender`, `transitionName`, `mousePosition`,
-    `scrollLock`, `focusTriggerAfterClose`, `stickyTitle`** are accepted and
-    ignored: each names a mechanism antd owned (a portal target, a
-    rendered-but-hidden tree, a CSS-transition name) that `BAIDialog`
-    now owns. `stickyTitle` in particular is unconditionally true — Astryx
-    `Layout` keeps the header slot outside the scrolling content.
-    `zIndex` is the exception: the modal is a portalled div with a real
-    z-index since FR-3578, so a passed value is forwarded, not ignored.
- 6. **`afterClose` / `afterOpenChange` fire from `BAIDialog`'s `afterOpenChange`**
-    on the `open` transition. There is no exit animation to wait for, so this
-    is the end of the close. `BAIUnmountAfterClose` subscribes to it.
-
- ## ReactNode title
-
- `DialogHeader.title` is typed `string` but renders through `Heading`, whose
- children are `ReactNode`. 146 call sites pass JSX titles (icon + text rows),
- which antd rendered inside `.ant-modal-title`. Passing the node through with a
- documented cast keeps the whole a11y wiring `DialogHeader` owns — the
- `titleId` the parent `Dialog` points `aria-labelledby` at, the open-focus
- target, the close button and the divider — instead of hand-rolling a header
- that reproduces none of it.
+ Accepted and ignored (antd mechanisms with no destination): `centered`,
+ `draggable`, `stickyTitle`, `forceRender`, `getContainer`, `wrapClassName`,
+ `rootClassName`, `rootStyle`, `bodyStyle`, `maskStyle`, `transitionName`,
+ `maskTransitionName`, `modalRender`, `mousePosition`, `scrollLock`,
+ `focusTriggerAfterClose`, `prefixCls`, `wrapProps`, and `mask={false}` (the
+ mask is Modal's and always painted). A minimized modal stays modal.
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import BAIDialog from './BAIDialog';
+import '../styles/zIndexLadder';
 import './BAIModal.css';
 import BAISkeleton from './BAISkeleton';
-// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
-import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import {
@@ -85,6 +46,7 @@ import {
   LayoutFooter,
   LayoutHeader,
 } from '@lablup/ui-common/Layout';
+import { Modal, ModalHeader, type ModalProps } from '@lablup/ui-common/Modal';
 import { HStack } from '@lablup/ui-common/Stack';
 import cx from 'classnames';
 import {
@@ -197,7 +159,36 @@ export type BAIModalResponsiveWidth = Partial<
   Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', string | number>
 >;
 
-export interface BAIModalProps {
+/**
+ * `ModalProps` whose job the adapter does under an antd name, or whose type it
+ * widens. Modal's generated header/footer props are left out so each concept
+ * has one name here (`onOk`, `okText`, `closable`, `loading`, …).
+ */
+type BAIModalOwnedModalProps =
+  | 'isOpen'
+  | 'onOpenChange'
+  | 'onCancel'
+  | 'width'
+  | 'footer'
+  | 'purpose'
+  | 'isInline'
+  | 'headerStartContent'
+  | 'headerEndContent'
+  | 'hasCloseButton'
+  | 'onAction'
+  | 'actionLabel'
+  | 'actionVariant'
+  | 'isActionLoading'
+  | 'isActionDisabled'
+  | 'actionButtonProps'
+  | 'cancelLabel'
+  | 'hasCancelButton'
+  | 'isLoading';
+
+export interface BAIModalProps extends Omit<
+  ModalProps,
+  BAIModalOwnedModalProps
+> {
   /* ------------------------------------------------------------ visibility */
   /** Whether the modal is visible. */
   open?: boolean;
@@ -213,16 +204,11 @@ export interface BAIModalProps {
   onOpenChange?: (isOpen: boolean) => void;
   /** Called after the modal has closed. Drives `BAIUnmountAfterClose`. */
   afterClose?: () => void;
-  /** Called with the new visibility right after it changes. */
-  afterOpenChange?: (open: boolean) => void;
 
   /* ---------------------------------------------------------------- header */
-  title?: React.ReactNode;
-  /** Secondary line under the title. */
-  subtitle?: string;
   /**
-   * Replaces the whole header row (ticket 16, FolderExplorer). A close button
-   * is appended so dismissal stays reachable.
+   * Replaces the whole header row (FolderExplorer). A close button is
+   * appended so dismissal stays reachable.
    */
   headerContent?: React.ReactNode;
   /** Accessible name for the close button rendered next to `headerContent`. */
@@ -235,7 +221,6 @@ export interface BAIModalProps {
   type?: 'normal' | 'warning' | 'error';
 
   /* ------------------------------------------------------------------ body */
-  children?: React.ReactNode;
   /** Ref to the body wrapper — used as a file drag-and-drop container. */
   bodyRef?: React.Ref<HTMLDivElement>;
   /** Extra props spread onto the body wrapper element. */
@@ -268,19 +253,17 @@ export interface BAIModalProps {
   keyboard?: boolean;
   /**
    * antd's mask config. Only `closable` is honoured (as `maskClosable`); the
-   * backdrop itself is owned by `BAIDialog` and is never removable.
+   * backdrop itself is Modal's and is never removable.
    */
   mask?: boolean | { closable?: boolean; blur?: boolean };
 
   /* ------------------------------------------------------------ dimensions */
-  width?: number | string | BAIModalResponsiveWidth;
-  maxHeight?: number | string;
   /**
-   * `'fullscreen'` fills the viewport and makes `width` / `maxHeight` inert.
-   * It is the only way to reach edge-to-edge: Astryx caps the standard dialog
-   * at `maxWidth: 90vw`, so `width="90%"` and `width="100%"` render alike.
+   * A per-breakpoint record collapses to its largest entry; `'auto'` becomes
+   * `fit-content`. `variant="fullscreen"` is the only way to edge-to-edge:
+   * Astryx caps the standard dialog at 90vw.
    */
-  variant?: 'standard' | 'fullscreen';
+  width?: number | string | BAIModalResponsiveWidth;
 
   /* -------------------------------------------------------- window actions */
   /** When non-empty, window controls are rendered in the header. */
@@ -297,15 +280,9 @@ export interface BAIModalProps {
   confirmBeforeClose?: boolean;
   onConfirmClose?: () => void | boolean | Promise<boolean>;
 
-  /* ------------------------------------------------------------- passthrough */
-  className?: string;
-  style?: React.CSSProperties;
+  /* ------------------------------------------------------ per-slot styling */
   styles?: SemanticOrFn<BAIModalSemanticStyles>;
   classNames?: SemanticOrFn<BAIModalSemanticClassNames>;
-  'aria-label'?: string;
-  'data-testid'?: string;
-  /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
-  zIndex?: number;
 
   /* ------------------------------------- accepted and ignored (see header) */
   centered?: boolean;
@@ -391,22 +368,35 @@ const BAIModal: React.FC<BAIModalProps> = ({
   minimizedPlacement = 'bottomRight',
   confirmBeforeClose,
   onConfirmClose,
-  zIndex,
-  className,
-  style,
+  position,
   styles: stylesProp,
   classNames: classNamesProp,
-  ...rest
+  // Accepted and ignored; see the file header.
+  centered: _centered,
+  draggable: _draggable,
+  stickyTitle: _stickyTitle,
+  forceRender: _forceRender,
+  getContainer: _getContainer,
+  wrapClassName: _wrapClassName,
+  rootClassName: _rootClassName,
+  rootStyle: _rootStyle,
+  bodyStyle: _bodyStyle,
+  maskStyle: _maskStyle,
+  transitionName: _transitionName,
+  maskTransitionName: _maskTransitionName,
+  modalRender: _modalRender,
+  mousePosition: _mousePosition,
+  scrollLock: _scrollLock,
+  focusTriggerAfterClose: _focusTriggerAfterClose,
+  prefixCls: _prefixCls,
+  wrapProps: _wrapProps,
+  ...modalProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
   const [windowState, setWindowState] = useState<WindowState>('default');
 
   const isVisible = open ?? isOpen ?? false;
-  const [hasOpened, setHasOpened] = useState(isVisible);
-  if (isVisible && !hasOpened) {
-    setHasOpened(true);
-  }
 
   // The `(info) => ...` form of `styles` / `classNames` was already inert in
   // the antd-era component; keep it inert rather than half-supported.
@@ -427,7 +417,6 @@ const BAIModal: React.FC<BAIModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible]);
 
-  // `BAIDialog` stays mounted while closed so it can fire the close edge.
   const handleAfterOpenChange = (next: boolean) => {
     afterOpenChange?.(next);
     if (!next) afterClose?.();
@@ -691,10 +680,10 @@ const BAIModal: React.FC<BAIModalProps> = ({
       </HStack>
     </LayoutHeader>
   ) : (
-    <DialogHeader
+    <ModalHeader
       hasDivider
-      // See the "ReactNode title" note in the file header: `title` is typed
-      // `string` but renders through `Heading`, whose children are ReactNode.
+      // `title` is typed `string` but renders through `Heading`, whose children
+      // are a node; the cast keeps the header's title-id and close wiring.
       title={(decoratedTitle ?? '') as unknown as string}
       subtitle={subtitle}
       endContent={windowControls}
@@ -711,57 +700,49 @@ const BAIModal: React.FC<BAIModalProps> = ({
   );
 
   return (
-    <BAIDialog
+    <Modal
+      {...modalProps}
       isOpen={isVisible}
       onOpenChange={(next) => {
         if (!next) void handleCancel();
       }}
       afterOpenChange={handleAfterOpenChange}
       width={dialogWidth}
-      {...(zIndex !== undefined ? { zIndex } : undefined)}
-      {...(dialogMaxHeight !== undefined
-        ? { maxHeight: dialogMaxHeight }
-        : undefined)}
-      {...(minimizedPosition ? { position: minimizedPosition } : undefined)}
+      maxHeight={dialogMaxHeight}
+      position={minimizedPosition ?? position}
       variant={isFullscreen ? 'fullscreen' : 'standard'}
       purpose={purpose}
-      className={className}
-      style={style}
-      aria-label={rest['aria-label']}
-      data-testid={rest['data-testid']}
     >
-      {hasOpened ? (
-        <Layout
-          style={styles?.container ?? styles?.content}
-          header={headerNode}
-          content={
-            isMinimized ? undefined : (
-              <LayoutContent>
-                <div
-                  {...bodyProps}
-                  ref={bodyRef ?? bodyProps?.ref}
-                  className={classNames?.body ?? bodyProps?.className}
-                  style={{ ...styles?.body, ...bodyProps?.style }}
-                >
-                  {loading ? <BAISkeleton /> : children}
-                </div>
-              </LayoutContent>
-            )
-          }
-          footer={
-            isMinimized || !resolvedFooter ? undefined : (
-              <LayoutFooter
-                hasDivider
-                style={styles?.footer}
-                className={cx('bai-modal__footer', classNames?.footer)}
+      <Layout
+        style={styles?.container ?? styles?.content}
+        header={headerNode}
+        content={
+          isMinimized ? undefined : (
+            <LayoutContent>
+              <div
+                {...bodyProps}
+                ref={bodyRef ?? bodyProps?.ref}
+                className={classNames?.body ?? bodyProps?.className}
+                style={{ ...styles?.body, ...bodyProps?.style }}
               >
-                {resolvedFooter}
-              </LayoutFooter>
-            )
-          }
-        />
-      ) : null}
-    </BAIDialog>
+                {loading ? <BAISkeleton /> : children}
+              </div>
+            </LayoutContent>
+          )
+        }
+        footer={
+          isMinimized || !resolvedFooter ? undefined : (
+            <LayoutFooter
+              hasDivider
+              style={styles?.footer}
+              className={cx('bai-modal__footer', classNames?.footer)}
+            >
+              {resolvedFooter}
+            </LayoutFooter>
+          )
+        }
+      />
+    </Modal>
   );
 };
 
