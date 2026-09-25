@@ -19,6 +19,7 @@ import {
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
 import {
+  BAIModal,
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
@@ -275,7 +276,17 @@ const UserDropdownMenu: React.FC<{
               </BAIUnmountAfterClose>
             )}
           </Suspense>
-          <Suspense>
+          <Suspense
+            fallback={
+              <BAIModal
+                open={isDownloadModalOpen}
+                title={t('summary.Downloads')}
+                footer={null}
+                loading
+                onCancel={() => toggleDownloadModal()}
+              />
+            }
+          >
             <BAIUnmountAfterClose>
               <DownloadModal
                 open={isDownloadModalOpen}

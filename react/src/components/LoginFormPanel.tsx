@@ -45,6 +45,7 @@ import {
   BAI_Z_INDEX,
   BAIModal,
   type BAIModalProps,
+  BAISkeleton,
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
@@ -909,7 +910,7 @@ const TOTPActivateInline: React.FC<{
       {isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key ? (
         <BAIFlex>{t('totp.TotpSetupNotAvailable')}</BAIFlex>
       ) : (
-        <Suspense>
+        <Suspense fallback={<BAISkeleton />}>
           <TOTPActivateForm
             ref={formRef}
             totp_uri={initializedTotp.totp_uri}
