@@ -35,10 +35,10 @@ const RolePermissionDetailTab: React.FC<RolePermissionDetailTabProps> = ({
   const role = useFragment(
     graphql`
       fragment RolePermissionDetailTab_roleScopeFragment on Role {
-        totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0") {
+        totalScopes: scopes(first: 1) @deprecatedSince(version: "26.9.0a4") {
           count
         }
-        scopeId @since(version: "26.9.0")
+        scopeId @since(version: "26.9.0a4")
         ...ScopedRolePermissionCardFragment
       }
     `,

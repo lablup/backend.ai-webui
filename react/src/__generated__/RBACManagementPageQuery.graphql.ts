@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d1ccec68af0fce93ad63e17e5d292165>>
+ * @generated SignedSource<<4ba654b30a63fbc5f8ea859dfa9346aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -131,7 +131,7 @@ export type RBACManagementPageQuery$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
-        readonly " $fragmentSpreads": FragmentRefs<"RoleDetailDrawerFragment" | "RoleNodesFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"RoleDetailDrawerFragment" | "RoleDetailDrawerV2Fragment" | "RoleNodesFragment">;
       };
     }>;
   } | null | undefined;
@@ -202,125 +202,77 @@ v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "scopeType",
+  "name": "name",
   "storageKey": null
 },
 v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
   "name": "scopeId",
   "storageKey": null
 },
-v9 = [
-  (v6/*: any*/)
-],
 v10 = {
   "alias": null,
   "args": null,
-  "concreteType": null,
-  "kind": "LinkedField",
-  "name": "scope",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "__typename",
-      "storageKey": null
-    },
-    {
-      "kind": "InlineFragment",
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectBasicInfo",
-          "kind": "LinkedField",
-          "name": "basicInfo",
-          "plural": false,
-          "selections": [
-            {
-              "alias": "projectName",
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "type": "ProjectV2",
-      "abstractKey": null
-    },
-    {
-      "kind": "InlineFragment",
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "DomainBasicInfo",
-          "kind": "LinkedField",
-          "name": "basicInfo",
-          "plural": false,
-          "selections": [
-            {
-              "alias": "domainName",
-              "args": null,
-              "kind": "ScalarField",
-              "name": "name",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "type": "DomainV2",
-      "abstractKey": null
-    },
-    {
-      "kind": "InlineFragment",
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "UserV2BasicInfo",
-          "kind": "LinkedField",
-          "name": "basicInfo",
-          "plural": false,
-          "selections": [
-            {
-              "alias": "userEmail",
-              "args": null,
-              "kind": "ScalarField",
-              "name": "email",
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "type": "UserV2",
-      "abstractKey": null
-    },
-    {
-      "kind": "InlineFragment",
-      "selections": (v9/*: any*/),
-      "type": "Node",
-      "abstractKey": "__isNode"
-    },
-    {
-      "kind": "InlineFragment",
-      "selections": (v9/*: any*/),
-      "type": "ArtifactRegistry",
-      "abstractKey": null
-    }
-  ],
+  "kind": "ScalarField",
+  "name": "__typename",
   "storageKey": null
 },
-v11 = [
+v11 = {
+  "alias": "projectName",
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v12 = {
+  "alias": "domainName",
+  "args": null,
+  "kind": "ScalarField",
+  "name": "name",
+  "storageKey": null
+},
+v13 = {
+  "alias": "userEmail",
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v14 = [
+  (v6/*: any*/)
+],
+v15 = {
+  "kind": "InlineFragment",
+  "selections": (v14/*: any*/),
+  "type": "Node",
+  "abstractKey": "__isNode"
+},
+v16 = {
+  "kind": "InlineFragment",
+  "selections": (v14/*: any*/),
+  "type": "ArtifactRegistry",
+  "abstractKey": null
+},
+v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "email",
+  "storageKey": null
+},
+v18 = [
+  (v7/*: any*/)
+],
+v19 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -374,6 +326,11 @@ return {
                     "args": null,
                     "kind": "FragmentSpread",
                     "name": "RoleDetailDrawerFragment"
+                  },
+                  {
+                    "args": null,
+                    "kind": "FragmentSpread",
+                    "name": "RoleDetailDrawerV2Fragment"
                   }
                 ],
                 "storageKey": null
@@ -425,13 +382,7 @@ return {
                 "plural": false,
                 "selections": [
                   (v6/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "name",
-                    "storageKey": null
-                  },
+                  (v7/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -505,9 +456,79 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v7/*: any*/),
                               (v8/*: any*/),
-                              (v10/*: any*/),
+                              (v9/*: any*/),
+                              {
+                                "alias": null,
+                                "args": null,
+                                "concreteType": null,
+                                "kind": "LinkedField",
+                                "name": "scope",
+                                "plural": false,
+                                "selections": [
+                                  (v10/*: any*/),
+                                  {
+                                    "kind": "InlineFragment",
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "concreteType": "ProjectBasicInfo",
+                                        "kind": "LinkedField",
+                                        "name": "basicInfo",
+                                        "plural": false,
+                                        "selections": [
+                                          (v11/*: any*/)
+                                        ],
+                                        "storageKey": null
+                                      }
+                                    ],
+                                    "type": "ProjectV2",
+                                    "abstractKey": null
+                                  },
+                                  {
+                                    "kind": "InlineFragment",
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "concreteType": "DomainBasicInfo",
+                                        "kind": "LinkedField",
+                                        "name": "basicInfo",
+                                        "plural": false,
+                                        "selections": [
+                                          (v12/*: any*/)
+                                        ],
+                                        "storageKey": null
+                                      }
+                                    ],
+                                    "type": "DomainV2",
+                                    "abstractKey": null
+                                  },
+                                  {
+                                    "kind": "InlineFragment",
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "concreteType": "UserV2BasicInfo",
+                                        "kind": "LinkedField",
+                                        "name": "basicInfo",
+                                        "plural": false,
+                                        "selections": [
+                                          (v13/*: any*/)
+                                        ],
+                                        "storageKey": null
+                                      }
+                                    ],
+                                    "type": "UserV2",
+                                    "abstractKey": null
+                                  },
+                                  (v15/*: any*/),
+                                  (v16/*: any*/)
+                                ],
+                                "storageKey": null
+                              },
                               (v6/*: any*/)
                             ],
                             "storageKey": null
@@ -518,9 +539,165 @@ return {
                     ],
                     "storageKey": "scopes(first:3)"
                   },
-                  (v7/*: any*/),
                   (v8/*: any*/),
-                  (v10/*: any*/),
+                  (v9/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": null,
+                    "kind": "LinkedField",
+                    "name": "scope",
+                    "plural": false,
+                    "selections": [
+                      (v10/*: any*/),
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ProjectBasicInfo",
+                            "kind": "LinkedField",
+                            "name": "basicInfo",
+                            "plural": false,
+                            "selections": [
+                              (v11/*: any*/),
+                              (v7/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "ProjectV2",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "DomainBasicInfo",
+                            "kind": "LinkedField",
+                            "name": "basicInfo",
+                            "plural": false,
+                            "selections": [
+                              (v12/*: any*/),
+                              (v7/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "DomainV2",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "UserV2BasicInfo",
+                            "kind": "LinkedField",
+                            "name": "basicInfo",
+                            "plural": false,
+                            "selections": [
+                              (v13/*: any*/),
+                              (v17/*: any*/)
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "UserV2",
+                        "abstractKey": null
+                      },
+                      (v15/*: any*/),
+                      (v16/*: any*/),
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": "vfolderName",
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "name",
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "VirtualFolderNode",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "SessionV2MetadataInfo",
+                            "kind": "LinkedField",
+                            "name": "metadata",
+                            "plural": false,
+                            "selections": [
+                              {
+                                "alias": "sessionName",
+                                "args": null,
+                                "kind": "ScalarField",
+                                "name": "name",
+                                "storageKey": null
+                              }
+                            ],
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "SessionV2",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "concreteType": "ModelDeploymentMetadata",
+                            "kind": "LinkedField",
+                            "name": "metadata",
+                            "plural": false,
+                            "selections": (v18/*: any*/),
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "ModelDeployment",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": (v18/*: any*/),
+                        "type": "ResourceGroup",
+                        "abstractKey": null
+                      },
+                      {
+                        "kind": "InlineFragment",
+                        "selections": [
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "registryName",
+                            "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "project",
+                            "storageKey": null
+                          }
+                        ],
+                        "type": "ContainerRegistryV2",
+                        "abstractKey": null
+                      }
+                    ],
+                    "storageKey": null
+                  },
                   {
                     "alias": null,
                     "args": null,
@@ -530,7 +707,7 @@ return {
                   },
                   {
                     "alias": "firstScope",
-                    "args": (v11/*: any*/),
+                    "args": (v19/*: any*/),
                     "concreteType": "EntityConnection",
                     "kind": "LinkedField",
                     "name": "scopes",
@@ -552,8 +729,8 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v7/*: any*/),
                               (v8/*: any*/),
+                              (v9/*: any*/),
                               (v6/*: any*/)
                             ],
                             "storageKey": null
@@ -639,13 +816,7 @@ return {
                                     "name": "basicInfo",
                                     "plural": false,
                                     "selections": [
-                                      {
-                                        "alias": null,
-                                        "args": null,
-                                        "kind": "ScalarField",
-                                        "name": "email",
-                                        "storageKey": null
-                                      },
+                                      (v17/*: any*/),
                                       {
                                         "alias": null,
                                         "args": null,
@@ -670,7 +841,7 @@ return {
                   },
                   {
                     "alias": "totalScopes",
-                    "args": (v11/*: any*/),
+                    "args": (v19/*: any*/),
                     "concreteType": "EntityConnection",
                     "kind": "LinkedField",
                     "name": "scopes",
@@ -692,16 +863,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4b2c57e341b00b880a6bcff34e231a98",
+    "cacheID": "4e51dd19a293f8be9211f9c528f85e14",
     "id": null,
     "metadata": {},
     "name": "RBACManagementPageQuery",
     "operationKind": "query",
-    "text": "query RBACManagementPageQuery(\n  $filter: RoleFilter\n  $orderBy: [RoleOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RoleNodesFragment\n        ...RoleDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RoleAssignmentTabFragment on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0\")\n  scopeId @since(version: \"26.9.0\")\n  users(limit: 10, offset: 0) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment RoleDetailDrawerContentFragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n  deletedAt\n  ...RoleAssignmentTabFragment\n  ...RolePermissionDetailTab_roleScopeFragment\n}\n\nfragment RoleDetailDrawerFragment on Role {\n  name\n  source\n  ...RoleDetailDrawerContentFragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleFormModalFragment on Role {\n  id\n  name\n  description\n  autoAssign @since(version: \"26.4.4\")\n}\n\nfragment RoleNodesFragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n  scopes(first: 3) @deprecatedSince(version: \"26.9.0\") {\n    count\n    edges {\n      node {\n        scopeType\n        scopeId\n        scope {\n          __typename\n          ... on ProjectV2 {\n            basicInfo {\n              projectName: name\n            }\n          }\n          ... on DomainV2 {\n            basicInfo {\n              domainName: name\n            }\n          }\n          ... on UserV2 {\n            basicInfo {\n              userEmail: email\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0\")\n  scopeId @since(version: \"26.9.0\")\n  scope @since(version: \"26.9.0\") {\n    __typename\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        userEmail: email\n      }\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n\nfragment RolePermissionDetailTab_roleScopeFragment on Role {\n  totalScopes: scopes(first: 1) @deprecatedSince(version: \"26.9.0\") {\n    count\n  }\n  scopeId @since(version: \"26.9.0\")\n  ...ScopedRolePermissionCardFragment\n}\n\nfragment RoleScopePermissionEditModalFragment on Role {\n  id\n}\n\nfragment ScopedRolePermissionCardFragment on Role {\n  id\n  ...RoleScopePermissionEditModalFragment\n}\n"
+    "text": "query RBACManagementPageQuery(\n  $filter: RoleFilter\n  $orderBy: [RoleOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRoles(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RoleNodesFragment\n        ...RoleDetailDrawerFragment\n        ...RoleDetailDrawerV2Fragment\n      }\n    }\n  }\n}\n\nfragment RoleAssignmentTabFragment on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(limit: 10, offset: 0) {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedBy\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment RoleDetailDrawerContentFragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n  deletedAt\n  ...RoleAssignmentTabFragment\n  ...RolePermissionDetailTab_roleScopeFragment\n}\n\nfragment RoleDetailDrawerContentV2Fragment on Role {\n  name\n  description\n  source\n  status\n  autoAssign @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  scope @since(version: \"26.9.0a4\") {\n    __typename\n    ... on DomainV2 {\n      basicInfo {\n        name\n      }\n    }\n    ... on ProjectV2 {\n      basicInfo {\n        name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        email\n      }\n    }\n    ... on VirtualFolderNode {\n      vfolderName: name\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        name\n      }\n    }\n    ... on ResourceGroup {\n      name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n  ...RoleAssignmentTabFragment\n  ...RolePermissionSummaryTableFragment\n}\n\nfragment RoleDetailDrawerFragment on Role {\n  name\n  source\n  ...RoleDetailDrawerContentFragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleDetailDrawerV2Fragment on Role {\n  source\n  ...RoleDetailDrawerContentV2Fragment\n  ...RoleFormModalFragment\n  id\n}\n\nfragment RoleFormModalFragment on Role {\n  id\n  name\n  description\n  autoAssign @since(version: \"26.4.4\")\n}\n\nfragment RoleNodesFragment on Role {\n  id\n  name\n  description\n  source\n  status\n  autoAssign @since(version: \"26.4.4\")\n  createdAt\n  updatedAt\n  scopes(first: 3) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        scopeType\n        scopeId\n        scope {\n          __typename\n          ... on ProjectV2 {\n            basicInfo {\n              projectName: name\n            }\n          }\n          ... on DomainV2 {\n            basicInfo {\n              domainName: name\n            }\n          }\n          ... on UserV2 {\n            basicInfo {\n              userEmail: email\n            }\n          }\n          ... on Node {\n            __isNode: __typename\n            id\n          }\n          ... on ArtifactRegistry {\n            id\n          }\n        }\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  scope @since(version: \"26.9.0a4\") {\n    __typename\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        userEmail: email\n      }\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n\nfragment RolePermissionDetailTab_roleScopeFragment on Role {\n  totalScopes: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n  }\n  scopeId @since(version: \"26.9.0a4\")\n  ...ScopedRolePermissionCardFragment\n}\n\nfragment RolePermissionSummaryTableFragment on Role {\n  id\n  scopeType @since(version: \"26.9.0a4\")\n}\n\nfragment RoleScopePermissionEditModalFragment on Role {\n  id\n}\n\nfragment ScopedRolePermissionCardFragment on Role {\n  id\n  ...RoleScopePermissionEditModalFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0f6cab3b3c35f29ed0bcaddc6f17a156";
+(node as any).hash = "b5e05dd0164cc51a21a27a6d439c2e52";
 
 export default node;

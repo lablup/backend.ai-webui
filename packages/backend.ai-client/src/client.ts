@@ -988,6 +988,12 @@ export class Client {
       // filters must omit them.
       this._features['session-preemption-statuses'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
+      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
+      // `Role.scopes` and `RBACElementType` remain as deprecated. Gated on the
+      // 26.9 pre-release so its managers take the new path (FR-3905, FR-3957).
+      this._features['rbac-single-scope-role'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
@@ -1003,9 +1009,6 @@ export class Client {
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
       this._features['rbac-domain-scope-uuid'] = true;
-      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
-      // `Role.scopes` and `RBACElementType` remain as deprecated. FR-3905.
-      this._features['rbac-single-scope-role'] = true;
       // BA-7253 / backend PR #13562 — category/displayName/uiOption became
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.

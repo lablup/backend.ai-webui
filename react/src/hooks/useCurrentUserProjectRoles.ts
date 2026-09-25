@@ -93,7 +93,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
       ) {
         heldPermissions: myAtomicBulkScopePermissions(
           input: { targets: $targets }
-        ) @since(version: "26.9.0") @catch(to: RESULT) {
+        ) @since(version: "26.9.0a4") @catch(to: RESULT) {
           items {
             scopeId
             permissions
@@ -102,7 +102,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
         legacyRoles: myRoles(
           first: 100
           filter: { permission: $legacyPermissionFilter }
-        ) @deprecatedSince(version: "26.9.0") @catch(to: RESULT) {
+        ) @deprecatedSince(version: "26.9.0a4") @catch(to: RESULT) {
           edges {
             node {
               id

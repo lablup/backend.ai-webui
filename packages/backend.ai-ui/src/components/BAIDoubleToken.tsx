@@ -1,5 +1,6 @@
 import type { AstryxTokenColor } from '../helper/astryxTagVariant';
 import './BAIDoubleToken.css';
+import BAIText from './BAIText';
 import BAITextHighlighter from './BAITextHighlighter';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Token } from '@astryxdesign/core/Token';
@@ -11,6 +12,8 @@ import React from 'react';
 export type BAIDoubleTokenValue = {
   label: string;
   color?: AstryxTokenColor;
+  /** Appends the shared copy control (`BAIText copyable`) to this segment. */
+  copyable?: boolean;
 };
 
 export interface BAIDoubleTokenProps {
@@ -29,28 +32,39 @@ const BAIDoubleToken: React.FC<BAIDoubleTokenProps> = ({
     (value: string | BAIDoubleTokenValue): BAIDoubleTokenValue =>
       typeof value === 'string' ? { label: value, color: 'blue' } : value,
   );
+  const hasHighlight = !_.isUndefined(highlightKeyword);
 
   return (
     <HStack gap={0} align="center" className="bai-double">
-      {_.map(objectValues, (objValue, idx) =>
-        !_.isEmpty(objValue.label) ? (
-          // Token.label is string-only: highlight through a hidden label +
-          // endContent, which keeps the plain string as the accessible name.
+      {_.map(objectValues, (objValue, idx) => {
+        if (_.isEmpty(objValue.label)) return null;
+        // Token.label is string-only: a highlight or a copy control renders
+        // through a hidden label + endContent, which keeps the plain string
+        // as the accessible name.
+        const visibleLabel = hasHighlight ? (
+          <BAITextHighlighter keyword={highlightKeyword}>
+            {objValue.label}
+          </BAITextHighlighter>
+        ) : (
+          objValue.label
+        );
+        const endContent = objValue.copyable ? (
+          <BAIText copyable={{ text: objValue.label }} inheritColor>
+            {visibleLabel}
+          </BAIText>
+        ) : hasHighlight ? (
+          visibleLabel
+        ) : undefined;
+        return (
           <Token
             key={idx}
             color={objValue.color ?? 'blue'}
             label={objValue.label}
-            isLabelHidden={!_.isUndefined(highlightKeyword)}
-            endContent={
-              !_.isUndefined(highlightKeyword) ? (
-                <BAITextHighlighter keyword={highlightKeyword}>
-                  {objValue.label}
-                </BAITextHighlighter>
-              ) : undefined
-            }
+            isLabelHidden={!_.isUndefined(endContent)}
+            endContent={endContent}
           />
-        ) : null,
-      )}
+        );
+      })}
     </HStack>
   );
 };

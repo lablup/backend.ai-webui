@@ -60,6 +60,12 @@ export const docs = {
       description:
         'Search term marked inside every segment label through BAITextHighlighter. Left unset, labels render as plain text.',
     },
+    {
+      name: 'values[].copyable',
+      type: 'boolean',
+      description:
+        'Appends the shared copy control (BAIText copyable) to that segment, copying its label — for a raw id shown in place of a name the reader would otherwise retype.',
+    },
   ],
   examples: [
     {
