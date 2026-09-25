@@ -88,7 +88,7 @@ Every rule BUI ships lives in `@layer components`, and BUI's stylesheet opens
 with the full order statement:
 
 ```css
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
 ```
 
 Astryx ships its component CSS in `@layer astryx-base`, and an _unlayered_ rule

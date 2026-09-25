@@ -11,11 +11,12 @@
    first). Storybook never loads `react/src/index.css` — this file is its only
    entry point, which is why it needs its own copy.
    `scripts/migration-gates/layer-order-gate.mjs` fails on drift. */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;
 
 @import '@lablup/ui-common/reset.css';
 @import '@lablup/ui-common/astryx.css';
 @import '@lablup/ui-common/theme/neutral/theme.css';
+@import '@lablup/ui-common/ui-common.css';
 
 /* BUI's own stylesheet (ticket 30's `backend.ai-ui/styles.css` export). The
    host app gets this for free through `src/index.ts`'s first-statement
