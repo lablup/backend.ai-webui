@@ -1,0 +1,39 @@
+# Initial-load bundle budget (ADR 0009): builds the React app and fails when
+# the gzip size of what index.html loads before any lazy import exceeds
+# scripts/bundle-budget.json.
+#
+# Advisory until moved into a ruleset; see typecheck.yml for why the event-level
+# `paths:` filter must move inside the workflow before this becomes required.
+name: Bundle budget
+
+on:
+  pull_request:
+    paths:
+      - "react/**"
+      - "packages/backend.ai-ui/**"
+      - "packages/backend.ai-client/**"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "package.json"
+      - "scripts/check-bundle-budget.mjs"
+      - "scripts/bundle-budget.json"
+      - ".github/workflows/bundle-budget.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bundle-budget-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  bundle-budget:
+    name: bundle-budget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup-node-pnpm
+      - name: Build the React app
+        run: pnpm run build:react-only
+      - name: Check the initial-load budget
+        run: node scripts/check-bundle-budget.mjs
