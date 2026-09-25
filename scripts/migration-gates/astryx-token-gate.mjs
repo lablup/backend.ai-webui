@@ -18,9 +18,8 @@
  *   1. Astryx core (astryx.css + reset.css) and theme-neutral (theme.css),
  *      read through their @lablup/ui-common mirrors (ADR 0009), whose
  *      `@import`s are followed to the installed Astryx files
- *   2. ui-common's own global sheet (ui-common.css)
- *   3. the built brand theme (react/src/astryx-theme/built/*.css)
- *   4. the scanned source itself (CSS `--x: …` declarations and
+ *   2. the built brand theme (react/src/astryx-theme/built/*.css)
+ *   3. the scanned source itself (CSS `--x: …` declarations and
  *      JS/TSX object keys `'--x': …`, including inline setProperty maps)
  *
  * Dynamic constructions (`var(--token-${…}`) cannot be verified statically
@@ -58,7 +57,6 @@ export const DEFAULT_DECLARED_CSS = [
   `${UI_COMMON_DIST}/astryx/astryx.css`,
   `${UI_COMMON_DIST}/astryx/reset.css`,
   `${UI_COMMON_DIST}/astryx/theme/neutral/theme.css`,
-  `${UI_COMMON_DIST}/ui-common.css`,
   "react/src/astryx-theme/built/backendai-default-built.css",
 ];
 

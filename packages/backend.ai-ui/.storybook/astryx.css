@@ -16,7 +16,6 @@
 @import '@lablup/ui-common/reset.css';
 @import '@lablup/ui-common/astryx.css';
 @import '@lablup/ui-common/theme/neutral/theme.css';
-@import '@lablup/ui-common/ui-common.css';
 
 /* BUI's own stylesheet (ticket 30's `backend.ai-ui/styles.css` export). The
    host app gets this for free through `src/index.ts`'s first-statement
