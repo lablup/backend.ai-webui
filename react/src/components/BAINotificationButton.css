@@ -8,14 +8,14 @@
  for the opposite surface (FR-3610). The overlay is a status accent, not a
  foreground that needs to contrast the band, so this re-declares the app mode on
  that subtree — mirroring the theme's own `html[data-theme]` -> `color-scheme`
- mapping. Scoped to this call site rather than to `BAIBadgeCount` in BUI:
+ mapping. Scoped to this call site rather than to `BAIBadgeCount` (ui-common `CountBadge`):
  `html[data-theme]` is the host theme artifact's selector, and a deliberately
  inverted call site must stay able to opt in.
 */
-html[data-theme='light'] .bai-notification-badge .bai-badge-count-overlay {
+html[data-theme='light'] .bai-notification-badge .uic-count-badge__overlay {
   color-scheme: light;
 }
 
-html[data-theme='dark'] .bai-notification-badge .bai-badge-count-overlay {
+html[data-theme='dark'] .bai-notification-badge .uic-count-badge__overlay {
   color-scheme: dark;
 }
