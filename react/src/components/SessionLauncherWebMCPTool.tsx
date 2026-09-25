@@ -33,7 +33,7 @@ import { fetchQuery, graphql, useRelayEnvironment } from 'react-relay';
 export const LAUNCHER_REVIEW_STEP = 4;
 
 export const PREPARE_SESSION_NEXT_STEP =
-  'Review the form and press Launch (the user must do this)';
+  'Give webui_url to the user. They open it in their own signed-in browser, review the form and press Launch (the user must do this; nothing has been started).';
 
 export interface PrepareSessionToolDeps {
   /** Looks the requested names up among the folders this user can mount here. */
@@ -63,7 +63,7 @@ export const createPrepareSessionTool = ({
 }: PrepareSessionToolDeps): WebMCPTool => ({
   name: 'bai_prepare_session',
   description:
-    'Fill the session launcher form in this tab for the user to review. Reopens the launcher with the given values on its review step and marks the form as filled by an AI agent. Does NOT start the session and never submits: the user reviews the form and presses Launch. Returns { path, applied, rejected: [{ field, reason }], nextStep, unverified? }. Omitted fields keep the launcher defaults; the launcher auto-selects a resource preset when no amounts are given.',
+    'Fill the session launcher form in this tab for the user to review. Reopens the launcher with the given values on its review step and marks the form as filled by an AI agent. Does NOT start the session and never submits: the user reviews the form and presses Launch. Returns { path, webui_url, applied, rejected: [{ field, reason }], nextStep, unverified? }; webui_url reopens the same prefilled form in any browser signed in as this user. Omitted fields keep the launcher defaults; the launcher auto-selects a resource preset when no amounts are given.',
   inputSchema: PREPARE_SESSION_INPUT_SCHEMA,
   annotations: { untrustedContentHint: true },
   execute: async (input) => {
@@ -80,7 +80,10 @@ export const createPrepareSessionTool = ({
     params.set('step', String(LAUNCHER_REVIEW_STEP));
     params.set('formValues', JSON.stringify(formValues));
     params.set(AGENT_PREFILL_PARAM, prefillId);
-    openLauncher(`?${params.toString()}`);
+    const search = `?${params.toString()}`;
+    // The launcher's own browser path, so a router basename is kept.
+    const path = `${window.location.pathname}${search}`;
+    openLauncher(search);
 
     let environment: ResolvedEnvironment | null = null;
     for (let waited = 0; waited < timeoutMs; waited += pollMs) {
@@ -107,9 +110,9 @@ export const createPrepareSessionTool = ({
       }
     }
 
-    const { pathname, search } = window.location;
     return {
-      path: `${pathname}${search}`,
+      path,
+      webui_url: new URL(path, window.location.origin).href,
       applied,
       rejected,
       ...(unverified.length > 0 && { unverified }),
