@@ -17,7 +17,7 @@ export const docs = {
   hidden: true,
   usage: {
     description:
-      'The Suspense fallback for BAIResourceUnitGrid. It lays out Astryx Skeleton boxes in the three bands the real grid occupies — a toolbar row, a wrapped legend row, and the lattice — inside BAIFlex rows. The lattice stand-in is deliberately low fidelity, two wide blocks per row rather than per-session plates and cells, because a faithful lattice reads as data that is not there yet. Every box shares one running index, so the shimmer sweeps the whole block as a single wave instead of restarting per row. The rest of the props type is React.HTMLAttributes<HTMLDivElement> minus children, so style and the usual DOM attributes pass through to the wrapper.',
+      'The Suspense fallback for BAIResourceUnitGrid. It lays out Astryx Skeleton boxes in the three bands the real grid occupies — a toolbar row, a wrapped legend row, and the lattice — inside Astryx HStack rows. The lattice stand-in is deliberately low fidelity, two wide blocks per row rather than per-session plates and cells, because a faithful lattice reads as data that is not there yet. Every box shares one running index, so the shimmer sweeps the whole block as a single wave instead of restarting per row. The rest of the props type is React.HTMLAttributes<HTMLDivElement> minus children, so style and the usual DOM attributes pass through to the wrapper. It is ui-common `UnitGridSkeleton` under its BUI name.',
     bestPractices: [
       {
         guidance: true,

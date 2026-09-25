@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A unit-square grid: many groups of quantized cells packed onto one shared lattice, each group merged into a tinted rounded plate, with a hoverable popover frame, an optional palette picker and a legend row. It is domain-agnostic — callers hand it groups whose cells already carry resolved CSS colours, plus the legend entries and the popover body — so the same component draws session resource allocation, kernel occupancy, or any other "N units out of a pool" picture. Cell colours may be `var()` or `color-mix()` strings: the component resolves them against its own live cascade to pick the ink with the better WCAG contrast for the group initial. Lattice width is measured from the wrapper unless `columns` fixes it; the rest of the props type is `React.HTMLAttributes<HTMLDivElement>` minus `children`, so `aria-label`, `className` and the usual DOM attributes pass through to the wrapper.',
+      'A unit-square grid: many groups of quantized cells packed onto one shared lattice, each group merged into a tinted rounded plate, with a hoverable popover frame, an optional palette picker and a legend row. It is domain-agnostic — callers hand it groups whose cells already carry resolved CSS colours, plus the legend entries and the popover body — so the same component draws session resource allocation, kernel occupancy, or any other "N units out of a pool" picture. Cell colours may be `var()` or `color-mix()` strings: the component resolves them against its own live cascade to pick the ink with the better WCAG contrast for the group initial. Lattice width is measured from the wrapper unless `columns` fixes it; the rest of the props type is `React.HTMLAttributes<HTMLDivElement>` minus `children`, so `aria-label`, `className` and the usual DOM attributes pass through to the wrapper. It is ui-common `UnitGrid` under its BUI name, carrying the WebUI\'s seven-hue palette and letter inks from `BAIResourceUnitGrid.css`; its strings come from ui-common\'s catalog.',
     bestPractices: [
       {
         guidance: true,
@@ -70,7 +70,7 @@ export const docs = {
       name: 'groupPalette',
       type: 'string[]',
       description:
-        'Resolved hues assigned to groups in flow order. Falls back to the token-backed muted seven-colour set declared by the component stylesheet when omitted or empty.',
+        "Resolved hues assigned to groups in flow order. Falls back to the WebUI's muted seven-colour set (the `--uic-unit-grid-group-N` properties `BAIResourceUnitGrid.css` sets) when omitted or empty.",
     },
     {
       name: 'hueOverrides',
@@ -120,6 +120,18 @@ export const docs = {
       type: 'number',
       description:
         'Fixed lattice column count. Omitted, the count is derived from the measured wrapper width via a ResizeObserver — pass it for fixed layouts and for jsdom tests, where no real layout exists.',
+    },
+    {
+      name: 'changeGroupColorLabel',
+      type: 'string',
+      description:
+        'Accessible name of the popover control that opens the palette. Defaults to ui-common\'s translated "Change group color".',
+    },
+    {
+      name: 'colorSwatchLabel',
+      type: '(index: number) => string',
+      description:
+        'Accessible name of a palette swatch, given its 1-based position. Defaults to ui-common\'s translated "Use color {index}".',
     },
   ],
   examples: [
