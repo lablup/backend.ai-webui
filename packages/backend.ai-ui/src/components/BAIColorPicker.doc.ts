@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'A hex colour field for theme and branding settings. Astryx ships no colour picker, so this one is composed here: an Astryx `Popover` holds the platform\'s native `<input type="color">` for the colour area, an Astryx `TextInput` for the hex value and an optional clear `Button`, while the trigger is a swatch button styled by `BAIColorPicker.css`. The value is a `#rrggbb` string on both edges — anything `toHexColor` can normalise (`#rgb`, `#rrggbbaa`, `rgb()`, `rgba()`) is accepted in, and `onChangeComplete` always emits six-digit hex. It is deliberately narrow: no gradient canvas, no preset palettes, no alpha and no format switch.',
+      'A hex colour field for theme and branding settings. It is ui-common `ColorPicker` with the antd-shaped `onChangeComplete`, `showText`, `allowClear` and `disabled`: an Astryx `Popover` holds the platform\'s native `<input type="color">` for the colour area, an Astryx `TextInput` for the hex value and an optional clear `Button`, and the trigger is a swatch button with Astryx field chrome. The value is a `#rrggbb` string on both edges — anything `toHexColor` can normalise (`#rgb`, `#rrggbbaa`, `rgb()`, `rgba()`) is accepted in, and `onChangeComplete` always emits six-digit hex. It is deliberately narrow: no gradient canvas, no preset palettes, no alpha and no format switch.',
     bestPractices: [
       {
         guidance: true,
