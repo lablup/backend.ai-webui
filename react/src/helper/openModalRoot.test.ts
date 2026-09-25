@@ -3,11 +3,12 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 */
 import { queryWithinOpenModal } from './openModalRoot';
+import { MODAL_OPEN_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import { afterEach, describe, expect, it } from 'vitest';
 
 const openModal = (fieldValue: string): HTMLElement => {
   const root = document.createElement('div');
-  root.setAttribute('data-bai-modal-open', '');
+  root.setAttribute(MODAL_OPEN_ATTRIBUTE, '');
   root.innerHTML = `<input class="target" value="${fieldValue}" />`;
   document.body.appendChild(root);
   return root;

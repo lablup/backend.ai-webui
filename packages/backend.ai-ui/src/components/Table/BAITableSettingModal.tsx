@@ -24,9 +24,6 @@
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
-import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
-// eslint-disable-next-line no-restricted-imports -- TODO(FR-4086): switch to @lablup/ui-common/Modal
-import { DialogHeader } from '@astryxdesign/core/Dialog';
 import { DndContext, type DragEndEvent } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import {
@@ -39,6 +36,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@lablup/ui-common/Button';
 import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
+import { Modal, ModalHeader, type ModalProps } from '@lablup/ui-common/Modal';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import { TextInput } from '@lablup/ui-common/TextInput';
@@ -60,7 +58,7 @@ export interface BAITableSettingResult {
 }
 
 export interface BAITableSettingModalProps extends Pick<
-  BAIDialogProps,
+  ModalProps,
   'afterOpenChange'
 > {
   open: boolean;
@@ -199,7 +197,7 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
   );
 
   return (
-    <BAIDialog
+    <Modal
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose(undefined);
@@ -210,7 +208,7 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
     >
       <Layout
         header={
-          <DialogHeader
+          <ModalHeader
             title={String(t('comp:BAITable.SettingTable'))}
             subtitle={String(t('comp:BAITable.SelectColumnToDisplay'))}
             onOpenChange={(next) => {
@@ -278,7 +276,7 @@ const BAITableSettingModal: React.FC<BAITableSettingModalProps> = ({
         style={{ minWidth: 0 }}
       />
       <span style={{ display: 'none' }} data-token={token.colorText} />
-    </BAIDialog>
+    </Modal>
   );
 };
 

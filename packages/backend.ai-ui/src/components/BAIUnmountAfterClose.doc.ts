@@ -31,7 +31,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Make the child expose `open` and forward `afterClose` / `afterOpenChange` to the BAIModal, BAIDialog or BAIDrawer it renders (BAIDialog takes only `afterOpenChange`), and keep that shell mounted while closed — no `if (!open) return null`. The wrapper injects those callbacks and unmounts only when one fires, so a child that drops them never unmounts (this is how FR-3990 leaked state).',
+          'Make the child expose `open` and forward `afterClose` / `afterOpenChange` to the BAIModal, ui-common Modal or BAIDrawer it renders (Modal takes only `afterOpenChange`; it also has `unmountOnClose`, which needs no wrapper), and keep that shell mounted while closed — no `if (!open) return null`. The wrapper injects those callbacks and unmounts only when one fires, so a child that drops them never unmounts (this is how FR-3990 leaked state).',
       },
       {
         guidance: false,

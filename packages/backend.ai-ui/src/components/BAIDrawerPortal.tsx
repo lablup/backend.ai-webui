@@ -8,8 +8,9 @@
  the inner drawer therefore takes `hasScrim={false}` and opens with `show()`,
  which promotes nothing (FR-3585).
 */
+import '../styles/zIndexLadder';
 import './BAIDrawerPortal.css';
-import { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
+import { MODAL_OPEN_ATTRIBUTE, useModalLevel } from '@lablup/ui-common/Modal';
 import { useFocusTrap, useScrollLock } from '@lablup/ui-common/hooks';
 import { Drawer, type DrawerProps } from '@lablup/ui-common/lab';
 import { dataAttr } from '@lablup/ui-common/naming';
@@ -35,14 +36,14 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   'use memo';
 
   // Theme CSS is `@scope`d to `[data-astryx-theme]`, and the portal escapes DOM
-  // ancestry — re-emit the nearest theme's NAME as `BAIDialog` does.
+  // ancestry — re-emit the nearest theme's NAME as ui-common `Modal` does.
   const themeName = useThemeName();
 
   // Modality restored by hand: `show()` traps nothing. Escape stays lab's — its
   // dialog `keydown` already closes the top drawer, and a second handler here
   // would request the close twice.
   const rootRef = useRef<HTMLDivElement>(null);
-  const isTopmost = useDialogLevel(rootRef, isOpen);
+  const isTopmost = useModalLevel(rootRef, isOpen);
 
   const { containerRef, focusFirst } = useFocusTrap<HTMLDivElement>({
     isActive: isOpen && isTopmost,
@@ -113,7 +114,7 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
       onMouseDown={handleMouseDown}
       onClick={handleClick}
       {...{
-        [BAI_MODAL_OPEN_ATTRIBUTE]: isOpen ? '' : undefined,
+        [MODAL_OPEN_ATTRIBUTE]: isOpen ? '' : undefined,
         [dataAttr('theme')]: themeName ?? undefined,
       }}
     >

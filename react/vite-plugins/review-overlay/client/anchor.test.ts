@@ -271,7 +271,7 @@ describe('walkthrough stops at capture (FR-3949)', () => {
     expect(outside).not.toHaveProperty('dlg');
   });
 
-  // BAIDialog renders role="alertdialog"; Astryx's own is a native <dialog>.
+  // ui-common Modal renders role="alertdialog"; Astryx's own is a native <dialog>.
   it('records a pick inside an alertdialog or a native dialog as dlg', () => {
     mount(
       '<div role="alertdialog"><button data-testid="a">A</button></div><dialog open><button data-testid="b">B</button></dialog>',

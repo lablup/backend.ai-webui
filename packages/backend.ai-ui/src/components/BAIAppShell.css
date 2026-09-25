@@ -20,7 +20,7 @@
   }
 
   /* MobileNav's `::backdrop` blurs the page behind it. Every other overlay
-     (`BAIDialog`, `BAIDrawerPortal`) dims without blurring (FR-3585), so the
+     (ui-common `Modal`, `BAIDrawerPortal`) dims without blurring (FR-3585), so the
      nav drawer keeps only the tint. */
   .bai-app-shell-drawer::backdrop {
     backdrop-filter: none;

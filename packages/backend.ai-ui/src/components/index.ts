@@ -271,12 +271,8 @@ export { default as BAIVFolderIdenticon } from './BAIVFolderIdenticon';
 export type { BAIVFolderIdenticonProps } from './BAIVFolderIdenticon';
 export { default as BAIDrawer } from './BAIDrawer';
 export type { BAIDrawerProps } from './BAIDrawer';
-export { default as BAIDialog } from './BAIDialog';
-export type { BAIDialogProps } from './BAIDialog';
 export { default as BAIAlertDialog } from './BAIAlertDialog';
 export type { BAIAlertDialogProps } from './BAIAlertDialog';
-// `react/`'s `BAIDrawerPortal` joins this stack — one ladder for both (FR-3585).
-export { BAI_MODAL_OPEN_ATTRIBUTE, useDialogLevel } from './dialogLevelStack';
 export * from './Table';
 export * from './fragments';
 export * from './provider';
