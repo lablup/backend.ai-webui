@@ -64,6 +64,9 @@ protocol.registerSchemesAsPrivileged([
       bypassCSP: true,
       supportFetchAPI: true,
       corsEnabled: true,
+      // The renderer's JS bundles are served from es6:// (patch-electron-publicpath.js);
+      // without this V8 recompiles them on every launch. Requires `standard`.
+      codeCache: true,
     },
   },
 ]);
