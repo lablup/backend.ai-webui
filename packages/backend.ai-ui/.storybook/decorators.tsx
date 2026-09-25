@@ -2,7 +2,8 @@ import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
 import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
-import { i18n } from '../src/locale';
+import { i18n, type BAILocale } from '../src/locale';
+import { ThemeShimProvider, theme } from '../src/theme-shim';
 import { themePresets, type ThemeStyle } from './themeConfig';
 import {
   Theme as AstryxThemeProvider,
@@ -50,6 +51,17 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.extend(duration);
 
+// The published `backend.ai-ui/locale/*` modules, keyed by `lang`, so a story
+// gets the Astryx and ui-common strings the app gets for that language.
+const localeModules = Object.fromEntries(
+  Object.values(
+    import.meta.glob<BAILocale>('../src/locale/[a-z][a-z]_*.ts', {
+      eager: true,
+      import: 'default',
+    }),
+  ).map((module) => [module.lang, module]),
+);
+
 interface StorybookProviderProps {
   locale: string;
   themeStyle: ThemeStyle;
@@ -92,10 +104,18 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
       theme={preset.theme}
       mode={isDarkMode ? 'dark' : 'light'}
     >
-      {/* BAIConfigProvider carries only the locale — it drives BUI's i18next,
-          dayjs and Astryx's resolver from one `lang`, so Astryx chrome strings
-          and plurals follow the story's locale instead of the 'en' default. */}
-        <BAIConfigProvider locale={{ lang: locale }}>
+      {/* Astryx theme shim (ticket 10): BUI's legacy antd-consuming
+          components read tokens from ThemeShimProvider, so mirror the
+          story's mode/seeds here — without it they'd fall back to
+          light-mode default seeds. */}
+      <ThemeShimProvider
+        mode={isDarkMode ? 'dark' : 'light'}
+        seeds={isDarkMode ? preset.dark : preset.light}
+      >
+        {/* The real production wrapper with the app's locale module: BUI's
+            i18next, dayjs and Astryx's resolver (Astryx and ui-common
+            strings) all follow the story's locale. */}
+        <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
           {/* The `form.requiredMark` inversion — no asterisk on required
               fields, "(Optional)" appended to the rest — moved off
               `ConfigProvider form={{…}}` onto the self-hosted engine's own
