@@ -18,6 +18,7 @@ import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
   createBackendAIClient,
+  isKeypairUnavailableError,
   tokenLogin,
 } from '../helper/loginSessionAuth';
 import { useResolvedApiEndpoint } from '../hooks/useResolvedApiEndpoint';
@@ -71,6 +72,12 @@ export type STokenLoginError =
    * mirroring LoginView's `forceLoginApprovedRef`).
    */
   | { kind: 'concurrent-session'; cause: unknown }
+  /**
+   * Authentication succeeded but the manager returned no keypair for the
+   * account. The manager scopes keypairs by `allowed_client_ip`, so this is
+   * what an out-of-allow-list client sees (FR-3998).
+   */
+  | { kind: 'keypair-unavailable'; cause: unknown }
   | { kind: 'unknown'; cause: unknown };
 
 /**
@@ -105,6 +112,12 @@ const classifyTokenLoginFailure = (
   err: unknown,
   submittedOtp: string | null,
 ): STokenLoginError => {
+  // The post-authentication GQL bootstrap failed rather than the token
+  // exchange: the account authenticated, but no keypair came back.
+  if (isKeypairUnavailableError(err)) {
+    return { kind: 'keypair-unavailable', cause: err };
+  }
+
   const bag =
     typeof err === 'object' && err !== null
       ? (err as Record<string, unknown>)
@@ -592,6 +605,11 @@ const DefaultErrorCard: React.FC<{
   const isInteractiveKind =
     error.kind === 'totp-required' || error.kind === 'concurrent-session';
 
+  // Kinds whose cause message is an internal, untranslated constant the
+  // description already covers. It stays in the copy-details payload.
+  const isCauseDetailRedundant =
+    error.kind === 'totp-required' || error.kind === 'keypair-unavailable';
+
   // Wrap in a Promise so BAIButton.action triggers its async loading
   // state; the synchronous state reset completes before the next render,
   // which is visually indistinguishable from the live sequence restart.
@@ -630,7 +648,7 @@ const DefaultErrorCard: React.FC<{
           <Text as="p" display="block" style={{ margin: 0 }}>
             {description}
           </Text>
-          {causeDetail && error.kind !== 'totp-required' && (
+          {causeDetail && !isCauseDetailRedundant && (
             <Text
               as="div"
               display="block"

@@ -39,6 +39,7 @@ import {
 import {
   createBackendAIClient,
   connectViaGQL,
+  isKeypairUnavailableError,
   loadConfigFromWebServer,
   loginWithSAML,
   loginWithOpenID,
@@ -481,6 +482,19 @@ const LoginView: React.FC<{
         data?: Record<string, unknown>;
       };
 
+      // Not a login failure: `connectUsingSession` runs the post-auth GQL
+      // bootstrap inside the same try as `client.login()`, so an empty
+      // keypair lands here rather than in `handleGQLError`.
+      if (isKeypairUnavailableError(err)) {
+        if (showError) {
+          notification(
+            t('login.KeypairUnavailable'),
+            t('login.KeypairUnavailableDescription'),
+          );
+        }
+        return 'reopen';
+      }
+
       // --- Login errors (envelope responses from /server/login) ---
       if (e.isLoginError && e.data) {
         const errorType = extractErrorType(e.data.type as string);
@@ -674,7 +688,12 @@ const LoginView: React.FC<{
           message?: string;
           status?: number;
         };
-        if (e.message) {
+        if (isKeypairUnavailableError(err)) {
+          notification(
+            t('login.KeypairUnavailable'),
+            t('login.KeypairUnavailableDescription'),
+          );
+        } else if (e.message) {
           if (e.status === 408) {
             notification(
               t('error.LoginSucceededManagerNotResponding'),
@@ -797,8 +816,15 @@ const LoginView: React.FC<{
       try {
         await client.get_manager_version();
         await doGQLConnect(client);
-      } catch {
-        notification(t('error.CannotConnectToServer'));
+      } catch (err: unknown) {
+        if (isKeypairUnavailableError(err)) {
+          notification(
+            t('login.KeypairUnavailable'),
+            t('login.KeypairUnavailableDescription'),
+          );
+        } else {
+          notification(t('error.CannotConnectToServer'));
+        }
         setIsLoading(false);
       }
     },
