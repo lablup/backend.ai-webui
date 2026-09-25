@@ -57,24 +57,7 @@ export async function connectViaGQL(
   cfg: LoginConfigState,
   endpoints: string[],
 ): Promise<string[]> {
-  const fields = ['user_id', 'resource_policy', 'user'];
-  const q = `query { keypair { ${fields.join(' ')} } }`;
-  const v = {};
-
-  const response = await client.query(q, v);
-
-  (globalThis as any).backendaiclient = client;
-
-  if (!response['keypair']) {
-    await client.logout();
-    throw new Error('Keypair information is missing.');
-  }
-
-  const resourcePolicy = response['keypair'].resource_policy;
-  (globalThis as any).backendaiclient.resource_policy = resourcePolicy;
-  const user = response['keypair'].user;
-
-  // Get user details
+  const keypairQuery = `query { keypair { user_id resource_policy user } }`;
   const userFields = [
     'username',
     'email',
@@ -87,11 +70,31 @@ export async function connectViaGQL(
     'uuid',
   ];
   const userQuery = `query { user{ ${userFields.join(' ')} } }`;
-  const userResponse = await (globalThis as any).backendaiclient.query(
-    userQuery,
-    { uuid: user },
-  );
 
+  // The three reads are independent, so they share one round-trip of latency.
+  const [keypairResult, userResult, groupResult] = await Promise.allSettled([
+    client.query(keypairQuery, {}),
+    client.query(userQuery, {}),
+    client.group.list(true, false, ['id', 'name', 'description', 'is_active']),
+  ]);
+  const unwrap = <T>(result: PromiseSettledResult<T>): T => {
+    if (result.status === 'rejected') throw result.reason;
+    return result.value;
+  };
+
+  const response = unwrap(keypairResult);
+
+  (globalThis as any).backendaiclient = client;
+
+  if (!response['keypair']) {
+    await client.logout();
+    throw new Error('Keypair information is missing.');
+  }
+
+  (globalThis as any).backendaiclient.resource_policy =
+    response['keypair'].resource_policy;
+
+  const userResponse = unwrap(userResult);
   const email = userResponse['user'].email;
   const userGroups = userResponse['user'].groups;
   const role = userResponse['user'].role;
@@ -113,13 +116,7 @@ export async function connectViaGQL(
     (globalThis as any).backendaiclient.is_superadmin = true;
   }
 
-  // Get group list
-  const groupResponse = await (globalThis as any).backendaiclient.group.list(
-    true,
-    false,
-    ['id', 'name', 'description', 'is_active'],
-  );
-
+  const groupResponse = unwrap(groupResult);
   const groups = groupResponse.groups;
   const userGroupIds = userGroups.map(({ id }: { id: string }) => id);
 
