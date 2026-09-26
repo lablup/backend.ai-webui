@@ -166,7 +166,7 @@ check_lint() {
   fi
   local rc=0
   lint_changed react 'react/(src|vite-plugins)/' || rc=1
-  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/src/' || rc=1
+  lint_changed packages/backend.ai-ui 'packages/backend\.ai-ui/(src|\.storybook)/' || rc=1
   pnpm -r --stream --filter backend.ai-client --filter backend.ai-agent-cli lint:ci || rc=1
   return $rc
 }
@@ -387,6 +387,8 @@ start_lane gate "StyleX cssInjectionTarget" check_stylex_injection
 start_lane gate "Astryx theme build" check_astryx_theme_built
 start_lane gate "Astryx integration (backend.ai-ui)" check_astryx_integration
 start_lane gate "ui-common agent blocks" check_ui_common_agents
+# ADR 0009's import ban in ESLint covers JS/TS only; this also sees CSS @import.
+start_lane gate "ui-common import mirror" node scripts/ui-common-codemod.mjs --check
 start_lane gate "Cascade-layer order" check_layer_order
 # vitest.yml's path filter never fires for an index.html-only PR, so the
 # ladder mirrors are checked here, always.
