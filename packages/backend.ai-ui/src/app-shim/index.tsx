@@ -31,8 +31,17 @@ import {
 import { message, type MessageApi } from './message';
 import { AppShimModalHost, modal, type ModalApi } from './modal';
 import { LayerProvider, type LayerToastConfig } from '@lablup/ui-common/Layer';
+import {
+  MODAL_LIVE_ATTRIBUTE,
+  refreshModalBackground,
+} from '@lablup/ui-common/Modal';
 import { useToast } from '@lablup/ui-common/Toast';
-import React, { useEffect, type ReactNode } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  type ReactNode,
+} from 'react';
 
 export { message, modal };
 export type { MessageApi, ModalApi, AppShimMessageConfig };
@@ -90,6 +99,32 @@ const BAIAppBridgeMount: React.FC<{
   return null;
 };
 
+/**
+ * Keeps the toast viewport usable over an open ui-common `Modal`, which inerts
+ * everything outside `[data-uic-modal-live]`. `LayerProvider` renders the
+ * viewport right after its children and takes no props for it, so this
+ * `<template>` (never inerted, never painted) is rendered last to reach it.
+ */
+const ToastViewportLiveMark: React.FC = () => {
+  'use memo';
+  const anchorRef = useRef<HTMLTemplateElement>(null);
+
+  useLayoutEffect(() => {
+    const viewport = anchorRef.current?.nextElementSibling;
+    // Only the outermost LayerProvider owns a viewport; a nested one renders
+    // its children bare, and then there is nothing here to mark.
+    if (!viewport?.hasAttribute('popover')) return;
+    viewport.setAttribute(MODAL_LIVE_ATTRIBUTE, '');
+    refreshModalBackground();
+    return () => {
+      viewport.removeAttribute(MODAL_LIVE_ATTRIBUTE);
+      refreshModalBackground();
+    };
+  }, []);
+
+  return <template ref={anchorRef} data-bai-toast-viewport-anchor="" />;
+};
+
 export interface BAIAppProviderProps {
   children?: ReactNode;
   /** antd `AppProps['message']`-shaped global message config. */
@@ -113,6 +148,7 @@ export const BAIAppProvider: React.FC<BAIAppProviderProps> = ({
       <BAIAppBridgeMount messageConfig={messageConfig} />
       <AppShimModalHost />
       {children}
+      <ToastViewportLiveMark />
     </LayerProvider>
   );
 };
