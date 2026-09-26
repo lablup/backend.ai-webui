@@ -1,4 +1,4 @@
-import { findAnchorTarget, quickFindTarget } from './resolve.js';
+import { findAnchorTarget, isBehindModal, quickFindTarget } from './resolve.js';
 import type { AnchorV3 } from './types.js';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
@@ -529,5 +529,40 @@ describe('a hidden look-alike never beats a rendered one', () => {
 
     expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[0]);
     expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBe(copies()[0]);
+  });
+});
+
+describe('isBehindModal', () => {
+  const byId = (id: string) => document.getElementById(id) as Element;
+
+  beforeEach(() => {
+    document.body.innerHTML = '<button id="page">page</button>';
+  });
+
+  it('is false with no modal open, and under a non-modal dialog', () => {
+    expect(isBehindModal(byId('page'))).toBe(false);
+    document.body.insertAdjacentHTML('beforeend', '<div role="dialog"></div>');
+    expect(isBehindModal(byId('page'))).toBe(false);
+  });
+
+  it('holds for the page under a modal, not for what the modal contains', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="dialog" aria-modal="true"><div role="alertdialog" aria-modal="true"><button id="in">in</button></div><p id="frame">frame</p></div>',
+    );
+    expect(isBehindModal(byId('page'))).toBe(true);
+    // A modal nested in another is the same layer, not one above it.
+    expect(isBehindModal(byId('in'))).toBe(false);
+    expect(isBehindModal(byId('frame'))).toBe(false);
+  });
+
+  it('puts the first modal under the one opened after it', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="dialog" aria-modal="true"><button id="first">first</button></div>' +
+        '<div role="alertdialog" aria-modal="true"><button id="second">second</button></div>',
+    );
+    expect(isBehindModal(byId('first'))).toBe(true);
+    expect(isBehindModal(byId('second'))).toBe(false);
   });
 });

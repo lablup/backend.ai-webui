@@ -120,6 +120,31 @@ export const inScope = (element: Element, anchor: AnchorV3): boolean => {
   );
 };
 
+const ARIA_MODAL =
+  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
+
+/**
+ * Is an open modal painted over this element? The last outermost modal in
+ * document order stands in for the top layer's order. An engine without
+ * `:modal` throws on it, and any open `<dialog>` counts there.
+ */
+export function isBehindModal(element: Element): boolean {
+  const doc = element.ownerDocument;
+  let found: Element[];
+  try {
+    found = Array.from(doc.querySelectorAll(`dialog:modal, ${ARIA_MODAL}`));
+  } catch {
+    found = Array.from(doc.querySelectorAll(`dialog[open], ${ARIA_MODAL}`));
+  }
+  const layout = hasLayout(doc);
+  const open = found.filter((modal) => !layout || isRendered(modal));
+  const outer = open.filter(
+    (modal) => !open.some((other) => other !== modal && other.contains(modal)),
+  );
+  const top = outer[outer.length - 1];
+  return !!top && !top.contains(element);
+}
+
 /** A strict stop with a landmark accepts a selector hit only inside one. */
 const withinLandmark = (
   element: Element,

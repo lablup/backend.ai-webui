@@ -25,7 +25,7 @@ import {
   type PopoverModel,
   type PopoverPlace,
 } from './popover.js';
-import { findAnchorTarget } from './resolve.js';
+import { findAnchorTarget, isBehindModal } from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
 import type { ReviewServerState } from './types.js';
 import {
@@ -74,7 +74,8 @@ const BANNER_STYLE = `
 
 type Place =
   | { kind: 'located'; element: Element }
-  | { kind: 'waiting' }
+  /** `covered`: resolved, but under an open modal a mark would paint over. */
+  | { kind: 'waiting'; covered?: true }
   | { kind: 'away' };
 
 export interface GuidedModeOptions {
@@ -219,7 +220,10 @@ export function startGuidedMode(options: GuidedModeOptions) {
   function place(stop: WalkthroughStop): Place {
     if (pathNeedsChange(stop.anchor, location)) return { kind: 'away' };
     const element = findAnchorTarget(stop.anchor, { ignore: host });
-    return element ? { kind: 'located', element } : { kind: 'waiting' };
+    if (!element) return { kind: 'waiting' };
+    return isBehindModal(element)
+      ? { kind: 'waiting', covered: true }
+      : { kind: 'located', element };
   }
 
   const marks = createMarkLayer({
@@ -356,6 +360,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (at.kind === 'waiting')
       return {
         kind: 'waiting',
+        covered: !!at.covered,
         via: viaSentence(
           stopTextIn(stop.anchor, langOf(stop)).via,
           langOf(stop),
@@ -639,7 +644,13 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (records.every((record) => host.contains(record.target as Node))) return;
     onSettle();
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // A dialog that opens or closes in place flips an attribute, with no childList record.
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['open', 'role', 'aria-modal'],
+  });
   // A reload beats the debounce by ~400 ms otherwise, and the comment the
   // reader had just typed is the one thing they cannot retype from the page.
   window.addEventListener('pagehide', flushProgress);

@@ -123,7 +123,7 @@ const STYLE = `
 export type PopoverPlace =
   | { kind: 'located'; rect: { left: number; top: number; bottom: number } }
   /** Not rendered yet: `via` says how the reader makes it appear. */
-  | { kind: 'waiting'; via: string }
+  | { kind: 'waiting'; via: string; covered?: boolean }
   /** On another page, named so `›` is not a surprise. */
   | { kind: 'away'; page: string };
 
@@ -181,6 +181,7 @@ const LABELS: Record<string, Record<string, string>> = {
     ref: 'Copy ref',
     appears: '— the mark appears when it does.',
     waiting: 'Not on screen yet — the mark appears when it is.',
+    covered: 'Behind the open dialog — close it and the mark appears.',
     away: 'On {page} — › takes you there.',
   },
   ko: {
@@ -192,6 +193,7 @@ const LABELS: Record<string, Record<string, string>> = {
     ref: '링크 복사',
     appears: '— 그러면 표시가 나타납니다.',
     waiting: '아직 화면에 없습니다 — 나타나면 표시됩니다.',
+    covered: '열린 대화상자 뒤에 있습니다 — 닫으면 표시됩니다.',
     away: '{page} 페이지에 있습니다 — › 로 이동합니다.',
   },
 };
@@ -203,6 +205,8 @@ const words = (lang: string): Record<string, string> => ({
 
 const whereLine = (model: PopoverModel): string => {
   const say = words(model.lang);
+  if (model.place.kind === 'waiting' && model.place.covered)
+    return `<div class="via">${esc(say.covered)}</div>`;
   if (model.place.kind === 'waiting')
     return model.place.via
       ? `<div class="via">${esc(model.place.via)} ${esc(say.appears)}</div>`
