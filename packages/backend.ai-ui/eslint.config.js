@@ -20,6 +20,22 @@ const astryxImportBanExempt = [
   "src/astryx-docs/**",
   "src/astryx-theme-augmentations.d.ts",
 ];
+// `no-restricted-imports` sees only static imports and re-exports.
+const astryxDynamicImportBan = [
+  "ImportExpression[source.value=/^@astryxdesign\\u002F/]",
+  "ImportExpression > TemplateLiteral.source[quasis.0.value.cooked=/^@astryxdesign\\u002F/]",
+  "CallExpression[callee.name='require'][arguments.0.value=/^@astryxdesign\\u002F/]",
+  "TSImportType[argument.literal.value=/^@astryxdesign\\u002F/]",
+].map((selector) => ({
+  selector,
+  message:
+    "Import Astryx through @lablup/ui-common, dynamic imports and require() included (ADR 0009).",
+}));
+// A rule config replaces, never merges, so the shared config's own
+// `no-restricted-syntax` entries are carried into the block that adds these.
+const baseRestrictedSyntax = react.flatMap(
+  (config) => config.rules?.["no-restricted-syntax"]?.slice(1) ?? [],
+);
 
 const i18nSchema = JSON.parse(
   fs.readFileSync(new URL("./i18n.schema.json", import.meta.url), "utf8"),
@@ -67,7 +83,7 @@ export default [
   // (with explicit `{ i18n }` binding). Every other BUI source file routes
   // i18n access through them.
   {
-    files: ["src/**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx,js,jsx,mjs,cjs}"],
     ignores: [
       "src/hooks/useBAIi18n.ts",
       "src/components/BAITrans.tsx",
@@ -109,10 +125,26 @@ export default [
       "**/*.test.*",
       "**/*.stories.*",
       "**/__test__/**",
+      ".storybook/**/*.{ts,tsx,js,jsx,mjs,cjs}",
     ],
     ignores: astryxImportBanExempt,
     rules: {
       "no-restricted-imports": ["error", { patterns: [astryxImportBan] }],
+    },
+  },
+
+  {
+    files: [
+      "src/**/*.{ts,tsx,js,jsx,mjs,cjs}",
+      ".storybook/**/*.{ts,tsx,js,jsx,mjs,cjs}",
+    ],
+    ignores: astryxImportBanExempt,
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        ...baseRestrictedSyntax,
+        ...astryxDynamicImportBan,
+      ],
     },
   },
 
