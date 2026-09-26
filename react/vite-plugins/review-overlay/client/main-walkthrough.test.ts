@@ -645,7 +645,7 @@ describe('a stop under an open modal', () => {
   it('draws no mark over the modal, and marks itself when the modal closes in place', async () => {
     document.body.insertAdjacentHTML(
       'beforeend',
-      '<div role="dialog" aria-modal="true" id="modal"><button data-testid="confirm">confirm</button></div>',
+      '<div data-bai-modal-open id="modal"><div role="dialog"><button data-testid="confirm">confirm</button></div></div>',
     );
     const hash = [
       await part({ id: A, testid: 'confirm', check: 'Confirm is primary' }),
@@ -661,8 +661,8 @@ describe('a stop under an open modal', () => {
       'Behind the open dialog',
     );
 
-    // Closing in place drops the role, as BAIDialog does; no childList record.
-    document.getElementById('modal')?.removeAttribute('role');
+    // BAIDialog closes in place, dropping the attribute; no childList record.
+    document.getElementById('modal')?.removeAttribute('data-bai-modal-open');
     await ticks(30);
 
     expect(ordinals()).toEqual(['1', '2']);

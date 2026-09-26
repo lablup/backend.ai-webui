@@ -120,24 +120,30 @@ export const inScope = (element: Element, anchor: AnchorV3): boolean => {
   );
 };
 
-const ARIA_MODAL =
-  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"]';
+/**
+ * Modals the browser does not put in the top layer: ARIA modals, and the
+ * portal roots of this app's own dialogs and drawers, which carry neither
+ * (`BAI_MODAL_OPEN_ATTRIBUTE`, packages/backend.ai-ui dialogLevelStack.ts).
+ */
+export const PORTAL_MODAL =
+  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-bai-modal-open]';
 
 /**
- * Is an open modal painted over this element? The last outermost modal in
- * document order stands in for the top layer's order. An engine without
- * `:modal` throws on it, and any open `<dialog>` counts there.
+ * Is an open modal painted over this element? A covered modal is `inert`, so
+ * the topmost is the last one that is not; jsdom matches no `:modal`.
  */
 export function isBehindModal(element: Element): boolean {
   const doc = element.ownerDocument;
   let found: Element[];
   try {
-    found = Array.from(doc.querySelectorAll(`dialog:modal, ${ARIA_MODAL}`));
+    found = Array.from(doc.querySelectorAll(`dialog:modal, ${PORTAL_MODAL}`));
   } catch {
-    found = Array.from(doc.querySelectorAll(`dialog[open], ${ARIA_MODAL}`));
+    found = Array.from(doc.querySelectorAll(`dialog[open], ${PORTAL_MODAL}`));
   }
   const layout = hasLayout(doc);
-  const open = found.filter((modal) => !layout || isRendered(modal));
+  const open = found.filter(
+    (modal) => (!layout || isRendered(modal)) && !modal.closest('[inert]'),
+  );
   const outer = open.filter(
     (modal) => !open.some((other) => other !== modal && other.contains(modal)),
   );

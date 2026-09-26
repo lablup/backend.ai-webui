@@ -649,7 +649,13 @@ export function startGuidedMode(options: GuidedModeOptions) {
     childList: true,
     subtree: true,
     attributes: true,
-    attributeFilter: ['open', 'role', 'aria-modal'],
+    attributeFilter: [
+      'open',
+      'role',
+      'aria-modal',
+      'inert',
+      'data-bai-modal-open',
+    ],
   });
   // A reload beats the debounce by ~400 ms otherwise, and the comment the
   // reader had just typed is the one thing they cannot retype from the page.
