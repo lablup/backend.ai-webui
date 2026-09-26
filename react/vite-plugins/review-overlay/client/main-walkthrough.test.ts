@@ -640,3 +640,32 @@ describe('a stop behind a dialog', () => {
     expect(node('.bai-popover')?.className).toContain('shown');
   });
 });
+
+describe('a stop under an open modal', () => {
+  it('draws no mark over the modal, and marks itself when the modal closes in place', async () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-bai-modal-open id="modal"><div role="dialog"><button data-testid="confirm">confirm</button></div></div>',
+    );
+    const hash = [
+      await part({ id: A, testid: 'confirm', check: 'Confirm is primary' }),
+      await part({ id: B, testid: 'create', check: 'Create is renamed' }),
+    ].join('&');
+
+    await bootOn(hash);
+
+    expect(ordinals()).toEqual(['1']);
+    act('next')?.click();
+    expect(pillText()).toContain('waiting');
+    expect(node('.bai-popover .via')?.textContent).toContain(
+      'Behind the open dialog',
+    );
+
+    // BAIDialog closes in place, dropping the attribute; no childList record.
+    document.getElementById('modal')?.removeAttribute('data-bai-modal-open');
+    await ticks(30);
+
+    expect(ordinals()).toEqual(['1', '2']);
+    expect(pillText()).not.toContain('waiting');
+  });
+});

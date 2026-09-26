@@ -120,6 +120,37 @@ export const inScope = (element: Element, anchor: AnchorV3): boolean => {
   );
 };
 
+/**
+ * Modals the browser does not put in the top layer: ARIA modals, and the
+ * portal roots of this app's own dialogs and drawers, which carry neither
+ * (`BAI_MODAL_OPEN_ATTRIBUTE`, packages/backend.ai-ui dialogLevelStack.ts).
+ */
+export const PORTAL_MODAL =
+  '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-bai-modal-open]';
+
+/**
+ * Is an open modal painted over this element? A covered modal is `inert`, so
+ * the topmost is the last one that is not; jsdom matches no `:modal`.
+ */
+export function isBehindModal(element: Element): boolean {
+  const doc = element.ownerDocument;
+  let found: Element[];
+  try {
+    found = Array.from(doc.querySelectorAll(`dialog:modal, ${PORTAL_MODAL}`));
+  } catch {
+    found = Array.from(doc.querySelectorAll(`dialog[open], ${PORTAL_MODAL}`));
+  }
+  const layout = hasLayout(doc);
+  const open = found.filter(
+    (modal) => (!layout || isRendered(modal)) && !modal.closest('[inert]'),
+  );
+  const outer = open.filter(
+    (modal) => !open.some((other) => other !== modal && other.contains(modal)),
+  );
+  const top = outer[outer.length - 1];
+  return !!top && !top.contains(element);
+}
+
 /** A strict stop with a landmark accepts a selector hit only inside one. */
 const withinLandmark = (
   element: Element,
