@@ -13,10 +13,12 @@ import {
   registerBridge,
   setMessageConfig,
 } from './bridge';
+import { BAIAppProvider } from './index';
 import { message } from './message';
 import { AppShimModalHost, modal } from './modal';
+import { MODAL_LIVE_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import type { ShowToastFn, ToastOptions } from '@lablup/ui-common/Toast';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -180,5 +182,31 @@ describe('app-shim modal', () => {
         ?.style.getPropertyValue('--uic-modal-z'),
     ).toBe('10001');
     handle.destroy();
+  });
+});
+
+describe('app-shim toast viewport', () => {
+  // ui-common's Modal inerts every body child without a modal root or a
+  // `data-uic-modal-live` mark; the toast viewport has to carry the mark.
+  it('stays out of the inert background while a modal is open', () => {
+    const { container } = render(
+      <BAIAppProvider>
+        <button type="button">page</button>
+      </BAIAppProvider>,
+    );
+    const viewport = container.querySelector('[popover]');
+    expect(viewport).toHaveAttribute(MODAL_LIVE_ATTRIBUTE);
+
+    let handle: ReturnType<typeof modal.confirm> | undefined;
+    act(() => {
+      handle = modal.confirm({ title: 'T', content: 'C' });
+    });
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+
+    expect(viewport).not.toHaveAttribute('inert');
+    expect(screen.getByRole('button', { name: 'page' })).toHaveAttribute(
+      'inert',
+    );
+    act(() => handle?.destroy());
   });
 });
