@@ -24,6 +24,12 @@ import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
  */
 export const OVERLAY_MARKER_ATTR = 'data-bai-review-overlay';
 
+/**
+ * ui-common's `MODAL_LIVE_ATTRIBUTE`, spelled out because this client does not
+ * bundle ui-common. An open ui-common `Modal` inerts every other body child.
+ */
+export const MODAL_LIVE_ATTR = 'data-uic-modal-live';
+
 /** Everything the outline needs; a `DOMRect` and a projected region both fit. */
 type RectLike = { left: number; top: number; width: number; height: number };
 
@@ -251,6 +257,7 @@ export function createOverlayUI(
   const palette = options.palette ?? 'inherit';
   const host = document.createElement('div');
   host.setAttribute(OVERLAY_MARKER_ATTR, options.marker ?? '');
+  host.setAttribute(MODAL_LIVE_ATTR, '');
   host.setAttribute('data-react-grab-ignore-events', '');
   const root = host.attachShadow({ mode: 'open' });
   document.body.appendChild(host);
