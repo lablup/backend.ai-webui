@@ -3,7 +3,7 @@
 Project-specific guidance for AI coding agents.
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.6 · Astryx v0.6.2 · 164 components
+@lablup/ui-common v0.2.0-alpha.7 · Astryx v0.6.2 · 164 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -34,7 +34,7 @@ MORE CLI:
   swizzle <Name>     eject component source for deep customization
   upgrade --from <v> run after bumping @lablup/ui-common: ui-common's codemods, then Astryx's
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.6 wraps Astryx v0.6.2):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.7 wraps Astryx v0.6.2):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
