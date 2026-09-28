@@ -257,6 +257,20 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     );
   };
 
+  // The closed trigger keeps the group token, so two same-named presets read apart.
+  const renderSelectedValue = (option: SelectorOptionData) => {
+    const groupName = presetOptions.find((o) => o.value === option.value)
+      ?.preset?.scaling_group_name;
+    return groupName ? (
+      <BAIFlex direction="row" gap={'xs'} align="center">
+        {option.label}
+        <Token label={groupName} size="sm" />
+      </BAIFlex>
+    ) : (
+      option.label
+    );
+  };
+
   const options: SelectorOptionType[] = [
     ...(showCustom
       ? [
@@ -316,6 +330,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         hasSearch
         options={options}
         renderOption={renderResourceRow}
+        renderValue={renderSelectedValue}
         value={controllableValue ?? ''}
         onChange={(next) =>
           setControllableValue(
