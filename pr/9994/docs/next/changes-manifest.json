@@ -1,0 +1,218 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-28T09:51:14.634Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 2,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "Top Bar",
+          "status": "modified",
+          "url": "next/en/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "60da41bf4993"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "Login",
+          "status": "modified",
+          "url": "next/en/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "4d1693b9e15a",
+            "7f244c3c9137",
+            "4d1693b9e15a-2",
+            "60da41bf4993"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 2,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "トップバー",
+          "status": "modified",
+          "url": "next/ja/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "66e1edd083e5"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "ログイン",
+          "status": "modified",
+          "url": "next/ja/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "51e5e85aa09d",
+            "3aad2a892834",
+            "51e5e85aa09d-2",
+            "66e1edd083e5"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 2,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "상단 바",
+          "status": "modified",
+          "url": "next/ko/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "4a4cca3f5188"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "로그인",
+          "status": "modified",
+          "url": "next/ko/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "b8c19d18694a",
+            "d80dfdb15d6f",
+            "b8c19d18694a-2",
+            "4a4cca3f5188"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 2,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "header",
+          "title": "แถบด้านบน",
+          "status": "modified",
+          "url": "next/th/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "f3bdcdb15b8e"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "การเข้าสู่ระบบ",
+          "status": "modified",
+          "url": "next/th/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "089b9dc2e05d",
+            "e9623aab0880",
+            "089b9dc2e05d-2",
+            "f3bdcdb15b8e"
+          ]
+        }
+      ]
+    }
+  }
+}
