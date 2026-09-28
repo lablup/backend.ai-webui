@@ -6,6 +6,7 @@
     "DiskPerc": "การใช้ดิสก์ %",
     "Endpoint": "เอ็นด์พอยต์",
     "FailedToLoadCellData": "โหลดข้อมูลไม่สำเร็จ",
+    "LostAt": "สูญหายเมื่อ",
     "NoAvailableLiveStat": "ไม่มีสถิติเรียลไทม์ที่ใช้งานได้",
     "Region": "ภูมิภาค",
     "ResourceGroup": "กลุ่มทรัพยากร",
@@ -13,7 +14,8 @@
     "Schedulable": "ตั้งเวลาได้",
     "Starts": "เริ่ม",
     "Status": "สถานะ",
-    "Utilization": "การใช้งาน"
+    "Utilization": "การใช้งาน",
+    "Version": "เวอร์ชัน"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "อนุญาตแล้ว",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "DeleteItem": "ลบ",
     "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
+    "TypeToConfirm": "พิมพ์ <token>{{confirmText}}</token> เพื่อยืนยัน"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
     "Download": "ดาวน์โหลด",
+    "DownloadPopupBlocked": "เบราว์เซอร์บล็อกหน้าต่างดาวน์โหลด โปรดอนุญาตป๊อปอัปสำหรับเว็บไซต์นี้แล้วลองอีกครั้ง",
+    "DownloadRejected": "storage proxy ปฏิเสธการดาวน์โหลด (HTTP {{status}}) การดาวน์โหลดไม่ได้เริ่มต้น",
     "DownloadSelected": "ดาวน์โหลด",
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "DownloadUnreachable": "ไม่สามารถเชื่อมต่อ storage proxy ที่ {{origin}} ได้ การดาวน์โหลดไม่ได้เริ่มต้น",
     "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
     "DuplicatedFiles": "การยืนยันการเขียนทับ",
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",

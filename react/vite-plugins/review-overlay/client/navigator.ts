@@ -130,6 +130,14 @@ export interface NavigatorModel {
   groups: NavigatorGroup[];
 }
 
+export interface NavigatorOptions {
+  /**
+   * The host's answer to "may the overlay claim keys on this page" (ADR 0008).
+   * `false` unbinds guided mode's bare keys, so the pill names none of them.
+   */
+  pageChords: boolean;
+}
+
 export interface NavigatorCallbacks {
   onNext: () => void;
   onPrev: () => void;
@@ -140,7 +148,13 @@ export interface NavigatorCallbacks {
   onExit: () => void;
 }
 
-export function createNavigator(root: ShadowRoot, on: NavigatorCallbacks) {
+export function createNavigator(
+  root: ShadowRoot,
+  on: NavigatorCallbacks,
+  options: NavigatorOptions,
+) {
+  /** Never a key the host turned off: a hint nothing answers is a lie. */
+  const hint = (key: string) => (options.pageChords ? ` (${key})` : '');
   const style = document.createElement('style');
   style.textContent = STYLE;
   const pill = document.createElement('div');
@@ -185,8 +199,8 @@ export function createNavigator(root: ShadowRoot, on: NavigatorCallbacks) {
       <span class="n"><b>${model.index + 1}</b> / ${model.total} · ${model.viewed} viewed${model.waiting ? ' · <span class="waiting">waiting</span>' : ''}</span>
       <span class="sep"></span>
       <button class="copy" data-act="copyall"${comments ? '' : ' disabled title="No comments yet"'}>${copyLabel}</button>
-      <button data-act="prev" title="Previous stop (p)" aria-label="Previous stop">‹</button>
-      <button data-act="next" title="Next stop (n)" aria-label="Next stop">›</button>
+      <button data-act="prev" title="Previous stop${hint('p')}" aria-label="Previous stop">‹</button>
+      <button data-act="next" title="Next stop${hint('n')}" aria-label="Next stop">›</button>
       <button data-act="panel" class="${model.panelOpen ? 'on' : ''}" title="All stops" aria-label="All stops">☰</button>
     `;
   }

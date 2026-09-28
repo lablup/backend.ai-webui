@@ -143,7 +143,6 @@ const AgentLifeCycleControlModal: React.FC<AgentLifeCycleControlModalProps> = ({
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
-      destroyOnHidden
       width={400}
     >
       <BAIFlex direction="column" align="stretch" gap="xs">

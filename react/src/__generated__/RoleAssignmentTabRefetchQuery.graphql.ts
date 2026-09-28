@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0f2235a74248591d1616dada3214b643>>
+ * @generated SignedSource<<3cbb4ab9c93bc1bc339e4ebafe2aec67>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,7 +37,6 @@ export type RoleAssignmentRoleNestedFilter = {
   AND?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
   OR?: ReadonlyArray<RoleAssignmentRoleNestedFilter> | null | undefined;
-  mappedScope?: RoleMappedScopeNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   source?: RoleSourceFilter | null | undefined;
   status?: RoleStatusFilter | null | undefined;
@@ -75,13 +74,6 @@ export type RoleStatusFilter = {
   in?: ReadonlyArray<RoleStatus> | null | undefined;
   notEquals?: RoleStatus | null | undefined;
   notIn?: ReadonlyArray<RoleStatus> | null | undefined;
-};
-export type RoleMappedScopeNestedFilter = {
-  AND?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
-  NOT?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
-  OR?: ReadonlyArray<RoleMappedScopeNestedFilter> | null | undefined;
-  scopeId?: UUIDFilter | null | undefined;
-  scopeType?: StringFilter | null | undefined;
 };
 export type PermissionNestedFilter = {
   AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;

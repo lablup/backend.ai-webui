@@ -6,6 +6,7 @@
     "DiskPerc": "Dysk %",
     "Endpoint": "Punkt końcowy",
     "FailedToLoadCellData": "Nie udało się załadować danych.",
+    "LostAt": "Utracono",
     "NoAvailableLiveStat": "Brak statystyk na żywo",
     "Region": "Region",
     "ResourceGroup": "Grupa zasobów",
@@ -13,7 +14,8 @@
     "Schedulable": "Do zaplanowania",
     "Starts": "Uruchomienia",
     "Status": "Status",
-    "Utilization": "Wykorzystanie"
+    "Utilization": "Wykorzystanie",
+    "Version": "Wersja"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Dozwolone",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "Tej operacji nie można cofnąć.",
     "DeleteItem": "Usuń",
     "DeleteNItems": "Usuń {{count}} elementów",
-    "TypeToConfirm": "Wpisz <code>{{confirmText}}</code>, aby potwierdzić."
+    "TypeToConfirm": "Wpisz <token>{{confirmText}}</token>, aby potwierdzić."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Utworzono przez"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
     "Download": "Pobierz",
+    "DownloadPopupBlocked": "Przeglądarka zablokowała okno pobierania. Zezwól na wyskakujące okienka dla tej witryny i spróbuj ponownie.",
+    "DownloadRejected": "Storage proxy odrzucił pobieranie (HTTP {{status}}). Pobieranie nie zostało rozpoczęte.",
     "DownloadSelected": "Pobierz",
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
+    "DownloadUnreachable": "Nie można połączyć się ze storage proxy pod adresem {{origin}}. Pobieranie nie zostało rozpoczęte.",
     "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
     "DuplicatedFiles": "Nadpisz potwierdzenie",
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",

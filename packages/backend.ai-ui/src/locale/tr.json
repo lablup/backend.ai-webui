@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Uç Nokta",
     "FailedToLoadCellData": "Veriler yüklenemedi.",
+    "LostAt": "Kayıp Zamanı",
     "NoAvailableLiveStat": "Canlı istatistik yok",
     "Region": "Bölge",
     "ResourceGroup": "Kaynak Grubu",
@@ -13,7 +14,8 @@
     "Schedulable": "Zamanlanabilir",
     "Starts": "Başlangıçlar",
     "Status": "Durum",
-    "Utilization": "Kullanım"
+    "Utilization": "Kullanım",
+    "Version": "Sürüm"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "İzin verildi",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "Bu işlem geri alınamaz.",
     "DeleteItem": "Sil",
     "DeleteNItems": "{{count}} öğeyi sil",
-    "TypeToConfirm": "Onaylamak için <code>{{confirmText}}</code> yazın."
+    "TypeToConfirm": "Onaylamak için <token>{{confirmText}}</token> yazın."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Oluşturan"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
     "Download": "İndir",
+    "DownloadPopupBlocked": "Tarayıcı indirme penceresini engelledi. Bu site için açılır pencerelere izin verip yeniden deneyin.",
+    "DownloadRejected": "Storage proxy indirmeyi reddetti (HTTP {{status}}). İndirme başlatılmadı.",
     "DownloadSelected": "İndir",
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
+    "DownloadUnreachable": "{{origin}} adresindeki storage proxy sunucusuna ulaşılamadı. İndirme başlatılmadı.",
     "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
     "DuplicatedFiles": "Üzerine Yazın Onay",
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",

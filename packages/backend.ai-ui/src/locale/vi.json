@@ -6,6 +6,7 @@
     "DiskPerc": "Sử dụng đĩa (%)",
     "Endpoint": "Điểm cuối",
     "FailedToLoadCellData": "Không thể tải dữ liệu.",
+    "LostAt": "Mất lúc",
     "NoAvailableLiveStat": "Không có số liệu trực tiếp",
     "Region": "Khu vực",
     "ResourceGroup": "Nhóm tài nguyên",
@@ -13,7 +14,8 @@
     "Schedulable": "Có thể lên lịch",
     "Starts": "Bắt đầu",
     "Status": "Trạng thái",
-    "Utilization": "Mức sử dụng"
+    "Utilization": "Mức sử dụng",
+    "Version": "Phiên bản"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Được phép",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "Hành động này không thể hoàn tác.",
     "DeleteItem": "Xóa",
     "DeleteNItems": "Xóa {{count}} mục",
-    "TypeToConfirm": "Nhập <code>{{confirmText}}</code> để xác nhận."
+    "TypeToConfirm": "Nhập <token>{{confirmText}}</token> để xác nhận."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Được tạo bởi"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "Các tệp và thư mục đã xóa không thể được khôi phục. \nBạn có muốn tiếp tục không?",
     "DeleteSelectedItemsDialog": "Xóa xác nhận",
     "Download": "Tải xuống",
+    "DownloadPopupBlocked": "Trình duyệt đã chặn cửa sổ tải xuống. Hãy cho phép cửa sổ bật lên cho trang này rồi thử lại.",
+    "DownloadRejected": "Storage proxy đã từ chối yêu cầu tải xuống (HTTP {{status}}). Quá trình tải xuống chưa bắt đầu.",
     "DownloadSelected": "Tải xuống",
     "DownloadStarted": "Tệp \"{{fileName}}\" đã bắt đầu.",
+    "DownloadUnreachable": "Không thể kết nối tới storage proxy tại {{origin}}. Quá trình tải xuống chưa bắt đầu.",
     "DragAndDropDesc": "Kéo và thả các tập tin vào khu vực này để tải lên.",
     "DuplicatedFiles": "Ghi đè xác nhận",
     "DuplicatedFilesDesc": "Tệp hoặc thư mục có cùng tên đã tồn tại. \nBạn có muốn ghi đè lên?",

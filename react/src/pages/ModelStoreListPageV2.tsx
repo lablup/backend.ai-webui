@@ -11,6 +11,7 @@ import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
 import TextHighlighter from '../components/TextHighlighter';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { theme } from '../theme-shim';
@@ -210,6 +211,21 @@ const ModelCardV2Grid: React.FC<{
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+
+  // The store lists public cards only, whoever is looking; private ones live
+  // on the admin page. The manager never applies the access level itself, and
+  // the filter field exists from 26.9.0 (FR-4013 gate).
+  const effectiveFilter: ModelCardV2Filter | undefined = baiClient.supports(
+    'model-card-search-axes',
+  )
+    ? {
+        AND: [
+          { accessLevel: { equals: 'public' } },
+          ...(filter ? [filter] : []),
+        ],
+      }
+    : filter;
 
   const result = useLazyLoadQuery<ModelStoreListPageV2Query>(
     graphql`
@@ -239,7 +255,7 @@ const ModelCardV2Grid: React.FC<{
     `,
     {
       scope: { projectId },
-      filter: filter ?? undefined,
+      filter: effectiveFilter,
       orderBy: [{ field: sortField, direction: sortDirection }],
       limit: pageSize,
       offset,

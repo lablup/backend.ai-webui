@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3567576e69d02549dae99079c9fb84ac>>
+ * @generated SignedSource<<ddd073356c4bb5d0a4b63e0224fefe81>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,8 +16,12 @@ export type FolderExplorerModalV2Query$variables = {
 };
 export type FolderExplorerModalV2Query$data = {
   readonly legacyVFolderNode: {
+    readonly host: string | null | undefined;
     readonly id: string;
+    readonly name: string | null | undefined;
     readonly permissions: ReadonlyArray<any | null | undefined> | null | undefined;
+    readonly unmanaged_path: string | null | undefined;
+    readonly " $fragmentSpreads": FragmentRefs<"FolderExplorerHeaderFragment">;
   } | null | undefined;
   readonly vfolderNode: {
     readonly host: string;
@@ -53,84 +57,94 @@ v1 = {
   "kind": "LocalArgument",
   "name": "vfolderId"
 },
-v2 = {
+v2 = [
+  {
+    "kind": "Variable",
+    "name": "id",
+    "variableName": "vfolderGlobalId"
+  }
+],
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
-  "alias": "legacyVFolderNode",
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "id",
-      "variableName": "vfolderGlobalId"
-    }
-  ],
-  "concreteType": "VirtualFolderNode",
-  "kind": "LinkedField",
-  "name": "vfolder_node",
-  "plural": false,
-  "selections": [
-    (v2/*: any*/),
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "permissions",
-      "storageKey": null
-    }
-  ],
-  "storageKey": null
-},
-v4 = [
-  {
-    "kind": "Variable",
-    "name": "vfolderId",
-    "variableName": "vfolderId"
-  }
-],
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "unmanagedPath",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "host",
-  "storageKey": null
-},
-v7 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "host",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "unmanaged_path",
+  "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "permissions",
+  "storageKey": null
+},
 v8 = [
-  (v7/*: any*/)
+  {
+    "kind": "Variable",
+    "name": "vfolderId",
+    "variableName": "vfolderId"
+  }
 ],
 v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "unmanagedPath",
+  "storageKey": null
+},
+v10 = [
+  (v4/*: any*/)
+],
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "projectId",
   "storageKey": null
 },
-v10 = {
+v12 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
   "plural": false,
-  "selections": (v8/*: any*/),
+  "selections": (v10/*: any*/),
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "permission",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "status",
   "storageKey": null
 };
 return {
@@ -143,18 +157,38 @@ return {
     "metadata": null,
     "name": "FolderExplorerModalV2Query",
     "selections": [
-      (v3/*: any*/),
+      {
+        "alias": "legacyVFolderNode",
+        "args": (v2/*: any*/),
+        "concreteType": "VirtualFolderNode",
+        "kind": "LinkedField",
+        "name": "vfolder_node",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "FolderExplorerHeaderFragment"
+          }
+        ],
+        "storageKey": null
+      },
       {
         "alias": "vfolderNode",
-        "args": (v4/*: any*/),
+        "args": (v8/*: any*/),
         "concreteType": "VFolder",
         "kind": "LinkedField",
         "name": "vfolderV2",
         "plural": false,
         "selections": [
+          (v9/*: any*/),
           (v5/*: any*/),
-          (v6/*: any*/),
-          (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -162,7 +196,7 @@ return {
             "kind": "LinkedField",
             "name": "metadata",
             "plural": false,
-            "selections": (v8/*: any*/),
+            "selections": (v10/*: any*/),
             "storageKey": null
           },
           {
@@ -173,7 +207,7 @@ return {
             "name": "ownership",
             "plural": false,
             "selections": [
-              (v9/*: any*/),
+              (v11/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -182,7 +216,7 @@ return {
                 "name": "project",
                 "plural": false,
                 "selections": [
-                  (v10/*: any*/)
+                  (v12/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -215,18 +249,50 @@ return {
     "kind": "Operation",
     "name": "FolderExplorerModalV2Query",
     "selections": [
-      (v3/*: any*/),
+      {
+        "alias": "legacyVFolderNode",
+        "args": (v2/*: any*/),
+        "concreteType": "VirtualFolderNode",
+        "kind": "LinkedField",
+        "name": "vfolder_node",
+        "plural": false,
+        "selections": [
+          (v3/*: any*/),
+          (v4/*: any*/),
+          (v5/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "user",
+            "storageKey": null
+          },
+          (v13/*: any*/),
+          (v6/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "group",
+            "storageKey": null
+          },
+          (v14/*: any*/)
+        ],
+        "storageKey": null
+      },
       {
         "alias": "vfolderNode",
-        "args": (v4/*: any*/),
+        "args": (v8/*: any*/),
         "concreteType": "VFolder",
         "kind": "LinkedField",
         "name": "vfolderV2",
         "plural": false,
         "selections": [
+          (v9/*: any*/),
           (v5/*: any*/),
-          (v6/*: any*/),
-          (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -235,7 +301,7 @@ return {
             "name": "metadata",
             "plural": false,
             "selections": [
-              (v7/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -275,7 +341,7 @@ return {
             "name": "ownership",
             "plural": false,
             "selections": [
-              (v9/*: any*/),
+              (v11/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -284,8 +350,8 @@ return {
                 "name": "project",
                 "plural": false,
                 "selections": [
-                  (v10/*: any*/),
-                  (v2/*: any*/)
+                  (v12/*: any*/),
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               },
@@ -329,20 +395,14 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v2/*: any*/)
+                  (v3/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "status",
-            "storageKey": null
-          },
+          (v14/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -351,13 +411,7 @@ return {
             "name": "accessControl",
             "plural": false,
             "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "permission",
-                "storageKey": null
-              },
+              (v13/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -374,16 +428,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e0cb78d3435c107d9decf136f8057718",
+    "cacheID": "a39734525e93718d729f5eec109a599c",
     "id": null,
     "metadata": {},
     "name": "FolderExplorerModalV2Query",
     "operationKind": "query",
-    "text": "query FolderExplorerModalV2Query(\n  $vfolderId: UUID!\n  $vfolderGlobalId: String!\n) {\n  legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {\n    id\n    permissions\n  }\n  vfolderNode: vfolderV2(vfolderId: $vfolderId) {\n    unmanagedPath\n    host\n    id\n    metadata {\n      name\n    }\n    ownership {\n      projectId\n      project {\n        basicInfo {\n          name\n        }\n        id\n      }\n    }\n    ...FolderExplorerHeaderV2Fragment\n    ...VFolderNodeDescriptionV2Fragment\n  }\n}\n\nfragment EditableVFolderNameV2Fragment on VFolder {\n  id\n  status\n  metadata {\n    name\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n\nfragment FolderExplorerHeaderV2Fragment on VFolder {\n  id\n  unmanagedPath\n  ...VFolderNodeIdenticonV2Fragment\n  ...EditableVFolderNameV2Fragment\n  ...FileBrowserButtonV2Fragment\n  ...SFTPServerButtonV2Fragment\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n\nfragment VFolderNodeDescriptionV2Fragment on VFolder {\n  id\n  host\n  status\n  unmanagedPath\n  metadata {\n    name\n    usageMode\n    cloneable\n    createdAt\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n    creatorId\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  ...VFolderPermissionCellV2Fragment\n  ...useVirtualFolderNodePathV2Fragment\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n\nfragment VFolderPermissionCellV2Fragment on VFolder {\n  accessControl {\n    permission\n  }\n}\n\nfragment useVirtualFolderNodePathV2Fragment on VFolder {\n  id\n  metadata {\n    quotaScopeId\n  }\n}\n"
+    "text": "query FolderExplorerModalV2Query(\n  $vfolderId: UUID!\n  $vfolderGlobalId: String!\n) {\n  legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {\n    id\n    name\n    host\n    unmanaged_path\n    permissions\n    ...FolderExplorerHeaderFragment\n  }\n  vfolderNode: vfolderV2(vfolderId: $vfolderId) {\n    unmanagedPath\n    host\n    id\n    metadata {\n      name\n    }\n    ownership {\n      projectId\n      project {\n        basicInfo {\n          name\n        }\n        id\n      }\n    }\n    ...FolderExplorerHeaderV2Fragment\n    ...VFolderNodeDescriptionV2Fragment\n  }\n}\n\nfragment EditableVFolderNameFragment on VirtualFolderNode {\n  id\n  name\n  user\n  group\n  status\n}\n\nfragment EditableVFolderNameV2Fragment on VFolder {\n  id\n  status\n  metadata {\n    name\n  }\n  ownership {\n    userId\n    projectId\n  }\n}\n\nfragment FileBrowserButtonFragment on VirtualFolderNode {\n  id\n  host\n  name\n}\n\nfragment FileBrowserButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n\nfragment FolderExplorerHeaderFragment on VirtualFolderNode {\n  id\n  user\n  permission\n  unmanaged_path @since(version: \"25.04.0\")\n  ...VFolderNameTitleNodeFragment\n  ...VFolderNodeIdenticonFragment\n  ...EditableVFolderNameFragment\n  ...FileBrowserButtonFragment\n  ...SFTPServerButtonFragment\n}\n\nfragment FolderExplorerHeaderV2Fragment on VFolder {\n  id\n  unmanagedPath\n  ...VFolderNodeIdenticonV2Fragment\n  ...EditableVFolderNameV2Fragment\n  ...FileBrowserButtonV2Fragment\n  ...SFTPServerButtonV2Fragment\n}\n\nfragment SFTPServerButtonFragment on VirtualFolderNode {\n  id\n  host\n  name\n}\n\nfragment SFTPServerButtonV2Fragment on VFolder {\n  id\n  host\n  metadata {\n    name\n  }\n}\n\nfragment VFolderNameTitleNodeFragment on VirtualFolderNode {\n  name\n}\n\nfragment VFolderNodeDescriptionV2Fragment on VFolder {\n  id\n  host\n  status\n  unmanagedPath\n  metadata {\n    name\n    usageMode\n    cloneable\n    createdAt\n  }\n  accessControl {\n    permission\n    ownershipType\n  }\n  ownership {\n    userId\n    projectId\n    creatorId\n    user {\n      basicInfo {\n        email\n      }\n      id\n    }\n    project {\n      basicInfo {\n        name\n      }\n      id\n    }\n  }\n  ...VFolderPermissionCellV2Fragment\n  ...useVirtualFolderNodePathV2Fragment\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment VFolderNodeIdenticonV2Fragment on VFolder {\n  id\n}\n\nfragment VFolderPermissionCellV2Fragment on VFolder {\n  accessControl {\n    permission\n  }\n}\n\nfragment useVirtualFolderNodePathV2Fragment on VFolder {\n  id\n  metadata {\n    quotaScopeId\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3adbf5633fb4b71397777ccec0472a04";
+(node as any).hash = "9ceb42aa2a4d6fa2c36dd2327d7566b0";
 
 export default node;

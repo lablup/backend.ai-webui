@@ -9,12 +9,21 @@
  * it in a fresh page to check every stop really lands on its element.
  *
  *   mint.mjs --manifest <path> [--app <name>] [--endpoint <url>] [--sha <sha>]
- *            [--pr <n>] [--env-file <path>] [--report <path>] [--settle <ms>]
- *            [--dry-run]
+ *            [--pr <n>] [--repo <owner/repo>] [--env-file <path>]
+ *            [--report <path>] [--settle <ms>] [--dry-run]
+ *
+ * Without `--pr` the PR is the current branch's and the app is the name
+ * `dev-server` claims for it. With `--pr <n>` the PR is looked up on GitHub
+ * (`--repo`, default lablup/backend.ai-webui — never the cwd's remote), the
+ * app is the live boot record that serves it, and the sha is the PR head.
+ * Either way the server must serve that sha, or a commit that contains it (a
+ * stack layer above, unpushed commits): the comment stamps the sha, so a
+ * server behind it is refused. `--dry-run` needs no manifest.
  *
  * Exit: 0 a set link · 2 usage / bad manifest · 3 preflight (no walkthrough).
  */
 import { parseManifest, projectBasePath, stopLabel } from "./manifest.mjs";
+import { prFromRecord, readRecords, recordServingPr } from "./resolve.mjs";
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
@@ -27,6 +36,9 @@ const REPO_ROOT = resolve(HERE, "../../../..");
 const STATE_DIR =
   process.env.BAI_DEV_SERVER_STATE_DIR ??
   resolve(homedir(), ".local/state/fw/dev-servers");
+/** The repo the PR lives in — advertise.sh and comment.sh share this default. */
+const REPO_DEFAULT = "lablup/backend.ai-webui";
+const SHA_RE = /^[0-9a-f]{40}$/;
 /**
  * The overlay's ladder retries while the SPA renders, and guided mode may
  * fetch before it renders: 30 s is the whole budget a stop gets.
@@ -53,6 +65,7 @@ function parseArgs(argv) {
     endpoint: "",
     sha: "",
     pr: "",
+    repo: "",
     envFile: "",
     report: "",
     settle: "",
@@ -64,6 +77,7 @@ function parseArgs(argv) {
     "--endpoint": "endpoint",
     "--sha": "sha",
     "--pr": "pr",
+    "--repo": "repo",
     "--env-file": "envFile",
     "--report": "report",
     "--settle": "settle",
@@ -81,18 +95,30 @@ function parseArgs(argv) {
     flags[name] = value;
     i += 1;
   }
-  if (!flags.manifest) fail(2, "--manifest <path> is required");
+  if (!flags.manifest && !flags.dryRun)
+    fail(2, "--manifest <path> is required (only --dry-run runs without one)");
   return flags;
 }
 
-const git = (...args) => {
+const gitIn = (cwd, ...args) => {
   try {
     return execFileSync("git", args, {
-      cwd: REPO_ROOT,
+      cwd,
       encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
     }).trim();
   } catch {
     return "";
+  }
+};
+const git = (...args) => gitIn(REPO_ROOT, ...args);
+/** Whether `git <args>` exits 0 in `cwd` — for `merge-base --is-ancestor`. */
+const gitOk = (cwd, ...args) => {
+  try {
+    execFileSync("git", args, { cwd, stdio: "ignore" });
+    return true;
+  } catch {
+    return false;
   }
 };
 
@@ -124,18 +150,47 @@ function endpointFromProcess(pid) {
   return "";
 }
 
+const gh = (args) =>
+  JSON.parse(
+    execFileSync("gh", args, {
+      cwd: REPO_ROOT,
+      encoding: "utf8",
+      timeout: 8000,
+      stdio: ["ignore", "pipe", "ignore"],
+    }),
+  );
+
+/** The open PR `--pr` names, looked up in `repo`; anything else is a refusal. */
+function lookupPr(value, repo) {
+  const number = Number.parseInt(value, 10);
+  if (!Number.isInteger(number) || number <= 0)
+    fail(2, `--pr needs a PR number, not '${value}'`);
+  let pr;
+  try {
+    pr = gh([
+      "pr",
+      "view",
+      String(number),
+      "--repo",
+      repo,
+      "--json",
+      "number,title,state,headRefName,headRefOid,url",
+    ]);
+  } catch {
+    fail(3, `PR #${number} not found in ${repo} (or gh is offline)`);
+  }
+  if (pr.state !== "OPEN")
+    fail(3, `PR #${number} is ${pr.state.toLowerCase()} — no walkthrough`);
+  return pr;
+}
+
+/** The app name `dev-server` claims for the current branch. */
 async function resolveApp(flags) {
   if (flags.app) return flags.app;
   const branch = git("branch", "--show-current");
   let pr = null;
   try {
-    pr = JSON.parse(
-      execFileSync("gh", ["pr", "view", branch, "--json", "number,title"], {
-        encoding: "utf8",
-        timeout: 8000,
-        stdio: ["ignore", "pipe", "ignore"],
-      }),
-    );
+    pr = gh(["pr", "view", branch, "--json", "number,title"]);
   } catch {
     // Offline, or no PR yet: `resolveAppName` falls back to the branch alone.
   }
@@ -161,12 +216,6 @@ function readBootRecord(app) {
   }
 }
 
-function prFromRecord(record) {
-  const served = Array.isArray(record.served) ? record.served : [];
-  const mine = served.find((entry) => entry.branch === record.branch);
-  return (mine ?? served[served.length - 1])?.pr ?? null;
-}
-
 /** A Portless route answers a 2xx AND `X-Portless: 1`; the header alone is a 404. */
 async function probePortless(url) {
   try {
@@ -178,6 +227,27 @@ async function probePortless(url) {
   } catch {
     return false;
   }
+}
+
+/**
+ * The commit the server serves: `/__review/state.head` (the overlay reads its
+ * own checkout), else the record's worktree. "" when neither answers.
+ */
+async function servedHead(base, record) {
+  try {
+    const response = await fetch(`${base.replace(/\/$/, "")}/__review/state`, {
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
+    });
+    const head = (await response.json())?.head;
+    if (SHA_RE.test(head ?? "")) return head;
+  } catch {
+    // An overlay that cannot read its checkout; fall through to the record.
+  }
+  const local = record.worktree
+    ? gitIn(record.worktree, "rev-parse", "HEAD")
+    : "";
+  return SHA_RE.test(local) ? local : "";
 }
 
 /** Guided mode ships as `/__review/guided.js`; an older overlay answers 404. */
@@ -227,9 +297,9 @@ const OVERLAY_ROOT_JS = `() => {
   return host ? (host.shadowRoot ?? host) : null;
 }`;
 
-async function mintInPage(page, find, fields, at) {
+async function mintInPage(page, find, fields, at, texts = {}) {
   return page.evaluate(
-    async ([find, findJs, fields, at, maxPart]) => {
+    async ([find, findJs, fields, at, maxPart, texts]) => {
       const [anchorMod, codecMod, idMod] = await Promise.all(
         ["anchor", "codec", "id"].map(
           (name) => import(/* @vite-ignore */ `/__review/${name}.js`),
@@ -247,6 +317,20 @@ async function mintInPage(page, find, fields, at) {
       // drop on read must never leave here in the first place. `at` is not an
       // anchor field — it only seasons the id.
       const raw = { ...anchorMod.captureAnchorSignals(el), ...fields };
+      // A translated stop is read with the app in any of its languages, and
+      // every resolution tier ANDs `txt` (`resolve.ts`): so it travels per
+      // language — the base one in `txt`, each translation's in its `i18n`
+      // entry — as `mintStop` read them. A language it could not read resolves
+      // by selector, testid landmark and rect.
+      const captured = raw.txt;
+      if (raw.i18n) {
+        delete raw.txt;
+        if (texts[raw.lng]) raw.txt = texts[raw.lng];
+        const i18n = { ...raw.i18n };
+        for (const lang of Object.keys(i18n))
+          if (texts[lang]) i18n[lang] = { ...i18n[lang], txt: texts[lang] };
+        raw.i18n = i18n;
+      }
       const anchor = guard ? guard.stripInvalidStopFields(raw) : raw;
       const b64 = await codecMod.encodeAnchor(anchor);
       if (b64.length > maxPart)
@@ -267,14 +351,14 @@ async function mintInPage(page, find, fields, at) {
           q: anchor.q ?? "",
           tid: anchor.tid ?? "",
           tag: anchor.tag ?? "",
-          txt: anchor.txt ?? "",
+          txt: captured ?? "",
           dlg: anchor.dlg ?? 0,
         },
         kept,
         dropped,
       };
     },
-    [find, FIND_JS, fields, at, MAX_PART_B64],
+    [find, FIND_JS, fields, at, MAX_PART_B64, texts],
   );
 }
 
@@ -283,15 +367,150 @@ const waitForOverlay = (page) =>
     timeout: 30_000,
   });
 
-async function replayVia(page, via, settleMs) {
-  for (const step of via ?? []) {
-    const { text, tid } = step.click;
-    const target = tid
-      ? page.getByTestId(tid).first()
-      : page.getByText(text, { exact: true }).first();
-    await target.click({ timeout: 15_000 });
-    await page.waitForTimeout(settleMs);
+/** The overlay's `VIA_CONTROL` / `VIA_FIELD` / `VIA_SELECT` (resolve.ts). */
+const VIA_CONTROL =
+  'button, a[href], summary, label, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"]';
+const VIA_FIELD =
+  'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, [contenteditable="true"], [contenteditable=""], [role="textbox"], [role="searchbox"]';
+const VIA_SELECT = 'select, [role="combobox"]';
+
+/**
+ * The testid the overlay can find this control by: a clicked control's own,
+ * or a field's own or its wrapper's when the wrapper holds only that field.
+ * Kept only when no other rendered node shares it.
+ */
+function ownTestid(element, { control, field }) {
+  let node = control ? (element.closest(control) ?? element) : element;
+  if (field && !node.getAttribute("data-testid")) {
+    const wrap = node.closest("[data-testid]");
+    if (wrap && wrap.querySelectorAll(field).length === 1) node = wrap;
   }
+  const id = node.getAttribute("data-testid");
+  if (!id) return null;
+  const rendered = [
+    ...document.querySelectorAll(`[data-testid="${CSS.escape(id)}"]`),
+  ].filter((other) => other.getClientRects().length);
+  return rendered.length === 1 ? id : null;
+}
+
+/** The first of these locators to show a visible match, waiting as a click would. */
+async function firstVisible(page, locators, what) {
+  const deadline = Date.now() + 15_000;
+  do {
+    for (const locator of locators) {
+      const visible = locator.filter({ visible: true });
+      if (await visible.count()) return visible.first();
+    }
+    await page.waitForTimeout(250);
+  } while (Date.now() < deadline);
+  throw new Error(`no ${what} on the page`);
+}
+
+/** A field by the testid on it or around it, else by any of its names. */
+async function locateField(page, tid, labels, selector, roles) {
+  if (tid) {
+    const root = page.getByTestId(tid).first();
+    await root.waitFor({ timeout: 15_000 });
+    const inner = root.locator(selector);
+    return (await inner.count()) === 1 ? inner : root;
+  }
+  return firstVisible(
+    page,
+    labels.flatMap((label) => [
+      page.getByLabel(label, { exact: true }),
+      page.getByPlaceholder(label, { exact: true }),
+      ...roles.map((role) =>
+        page.getByRole(role, { name: label, exact: true }),
+      ),
+    ]),
+    `field named ${labels.map((l) => `"${l}"`).join(" / ")}`,
+  );
+}
+
+/**
+ * Replay each step, and hand the steps back with the control's testid added:
+ * the overlay points at the control by it, which survives the KO/EN toggle
+ * where the label does not. The page may be in any language the stop is
+ * written in, so each label is tried in all of them.
+ */
+async function replayVia(page, stop, settleMs) {
+  const replayed = [];
+  for (const [i, step] of (stop.via ?? []).entries()) {
+    const kind = step.fill ? "fill" : step.select ? "select" : "click";
+    const body = step[kind];
+    const alts = [
+      body,
+      ...Object.values(stop.i18n ?? {})
+        .map((text) => text.via?.[i]?.[kind])
+        .filter(Boolean),
+    ];
+    const words = (key) => [
+      ...new Set(alts.map((alt) => alt[key]).filter(Boolean)),
+    ];
+    let target;
+    let scope;
+    if (kind === "fill") {
+      scope = { field: VIA_FIELD };
+      target = await locateField(page, body.tid, words("label"), VIA_FIELD, [
+        "textbox",
+        "searchbox",
+        "combobox",
+      ]);
+    } else if (kind === "select") {
+      scope = { field: VIA_SELECT };
+      target = await locateField(page, body.tid, words("label"), VIA_SELECT, [
+        "combobox",
+      ]);
+    } else {
+      scope = { control: VIA_CONTROL };
+      target = body.tid
+        ? page.getByTestId(body.tid).first()
+        : await firstVisible(
+            page,
+            words("text").map((text) => page.getByText(text, { exact: true })),
+            `control reading ${words("text")
+              .map((t) => `"${t}"`)
+              .join(" / ")}`,
+          );
+    }
+    // Before acting, which may unmount the control.
+    const found = body.tid
+      ? null
+      : await target.evaluate(ownTestid, scope).catch(() => null);
+    const before = new URL(page.url()).search;
+    if (kind === "fill") {
+      await target.fill(body.value, { timeout: 15_000 });
+      if (body.enter === 1) await target.press("Enter");
+    } else if (kind === "select") {
+      if (await target.evaluate((el) => el.tagName === "SELECT"))
+        await target.selectOption({ label: body.option });
+      else {
+        await target.click({ timeout: 15_000 });
+        const option = await firstVisible(
+          page,
+          words("option").map((name) =>
+            page.getByRole("option", { name, exact: true }),
+          ),
+          `option ${words("option")
+            .map((o) => `"${o}"`)
+            .join(" / ")}`,
+        );
+        await option.click({ timeout: 15_000 });
+      }
+    } else {
+      await target.click({ timeout: 15_000 });
+    }
+    await page.waitForTimeout(settleMs);
+    // The stop records the URL it lands on, so a step that moves the query
+    // would land the reader on its outcome and then fight it on replay.
+    const after = new URL(page.url()).search;
+    if (kind !== "click" && after !== before)
+      throw new Error(
+        `via[${i}] ${kind} changes the URL query to "${after}": the page keeps that state in the URL, so put it in the stop's route instead`,
+      );
+    replayed.push(found ? { [kind]: { ...body, tid: found } } : step);
+  }
+  return replayed;
 }
 
 /**
@@ -363,43 +582,93 @@ async function main() {
   if (!Number.isInteger(settleMs) || settleMs < 0)
     fail(2, `--settle takes whole milliseconds, not '${flags.settle}'`);
 
-  let stops;
-  try {
-    stops = parseManifest(readFileSync(resolve(flags.manifest), "utf8"));
-  } catch (error) {
-    return fail(2, error.message);
+  let stops = [];
+  if (flags.manifest) {
+    try {
+      stops = parseManifest(readFileSync(resolve(flags.manifest), "utf8"));
+    } catch (error) {
+      return fail(2, error.message);
+    }
   }
 
-  const app = await resolveApp(flags);
-  const { file, record } = readBootRecord(app);
+  const repo = flags.repo || REPO_DEFAULT;
+  const target = flags.pr ? lookupPr(flags.pr, repo) : null;
+  let app = flags.app;
+  let file;
+  let record;
+  if (target) {
+    // The live record that serves the PR names the app: a `/rename` word in
+    // the claimed name cannot be predicted from the title. With `--app` the
+    // named record still has to be live and serve the PR.
+    const records = readRecords(STATE_DIR).filter(
+      (entry) => !app || entry.record?.app === app,
+    );
+    const hit = recordServingPr(records, target.number, {
+      repo,
+      branch: target.headRefName,
+    });
+    if (!hit)
+      fail(
+        3,
+        app
+          ? `${app} is not a live dev server that serves PR #${target.number}`
+          : `no live dev server serves PR #${target.number} (${target.headRefName}) — boot one for that branch with the dev-server skill, then re-run`,
+      );
+    ({ file, record } = hit);
+    app = record.app;
+  } else {
+    app = await resolveApp(flags);
+    ({ file, record } = readBootRecord(app));
+  }
   if (record.stoppedAt)
     fail(
       3,
       `${file} says the server stopped at ${record.stoppedAt} — boot it first`,
     );
-  const pr = Number.parseInt(
-    flags.pr || String(prFromRecord(record) ?? ""),
-    10,
-  );
+  const pr = target?.number ?? prFromRecord(record);
   if (!Number.isInteger(pr))
     fail(3, `no PR for '${app}' in ${file} — pass --pr <n>`);
-  const sha = flags.sha || git("rev-parse", "HEAD");
-  if (!/^[0-9a-f]{40}$/.test(sha))
-    fail(3, `'${sha}' is not a 40-char commit sha`);
+  const sha = flags.sha || target?.headRefOid || git("rev-parse", "HEAD");
+  if (!SHA_RE.test(sha)) fail(3, `'${sha}' is not a 40-char commit sha`);
 
   // advertise.sh refuses an unroutable server rather than publish a
   // `.localhost` URL; a set link goes in the same public comment.
   const base = record.url;
   if (!base) fail(3, `${file} carries no gateway URL — is the box joined?`);
-  if (!(await probePortless(base)))
+  const [routable, guided] = await Promise.all([
+    probePortless(base),
+    servesGuidedMode(base),
+  ]);
+  if (!routable)
     fail(3, `${base} is not a routable Portless 2xx — no walkthrough`);
   // An overlay without guided mode draws a stop as a bare pin and drops its
   // notes (a branch that predates FR-3950): a walkthrough there misleads.
-  if (!(await servesGuidedMode(base)))
+  if (!guided)
     fail(
       3,
       `${base} serves an overlay without guided mode (no /__review/guided.js) — rebase the branch onto a main that includes FR-3950, then re-run; no walkthrough`,
     );
+  // The comment stamps `sha`; the server must serve it, or a commit that
+  // contains it (the stack layer above, or commits not pushed yet).
+  const served = await servedHead(base, record);
+  if (!served)
+    fail(
+      3,
+      `cannot tell which commit ${base} serves (no /__review/state head, no readable checkout at ${record.worktree ?? "?"}) — no walkthrough`,
+    );
+  if (served !== sha) {
+    const contains =
+      !!record.worktree &&
+      gitOk(record.worktree, "merge-base", "--is-ancestor", sha, served);
+    if (!contains)
+      fail(
+        3,
+        `${base} serves ${served.slice(0, 7)}, which does not contain the PR head ${sha.slice(0, 7)} — update that checkout to the PR head or boot a server for it, then re-run`,
+      );
+    process.stderr.write(
+      `walkthrough: ${base} serves ${served.slice(0, 7)}, which contains the PR head ${sha.slice(0, 7)} — the stops are verified against that build\n`,
+    );
+  }
 
   const envFile =
     flags.envFile ||
@@ -579,7 +848,16 @@ const describeStop = (stop) =>
 /** The FR-3949 stop fields, minus the ones the manifest left out. */
 function stopFields(stop, { sha, pr }) {
   const fields = { ch: stop.ch, ck: stop.ck, sha, pr };
-  for (const key of ["old", "new", "type", "kind", "code", "via"]) {
+  for (const key of [
+    "old",
+    "new",
+    "type",
+    "kind",
+    "code",
+    "via",
+    "lng",
+    "i18n",
+  ]) {
     if (stop[key] !== undefined) fields[key] = stop[key];
   }
   return fields;
@@ -642,28 +920,131 @@ async function login(page, base, endpoint, env) {
   }
 }
 
+/** Put the app in `lang` through its own switch; false when it would not go. */
+function showIn(page, lang) {
+  return page.evaluate(async (lang) => {
+    const switchLanguage = window.switchLanguage;
+    if (typeof switchLanguage !== "function") return false;
+    for (let i = 0; i < 40 && document.documentElement.lang !== lang; i++) {
+      switchLanguage(lang);
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    return document.documentElement.lang === lang;
+  }, lang);
+}
+
+/**
+ * The element's text, with the overlay's own capture: by the stop's `find`, or
+ * in another language's pass by where it stood — the element of the same tag
+ * under its left edge, which a translated (longer, shorter) text keeps.
+ */
+function readElement(page, find, spot) {
+  return page.evaluate(
+    async ([find, findJs, spot]) => {
+      const anchorMod = await import(/* @vite-ignore */ "/__review/anchor.js");
+      const el = spot
+        ? document
+            .elementsFromPoint(spot.x, spot.y)
+            .find(
+              (node) =>
+                node.tagName === spot.tag &&
+                !node.closest("[data-bai-review-overlay]"),
+            )
+        : (0, eval)(findJs)(find);
+      if (!el) return null;
+      el.scrollIntoView({ block: "center" });
+      const box = el.getBoundingClientRect();
+      return {
+        txt: anchorMod.captureAnchorSignals(el).txt,
+        lang: document.documentElement.lang,
+        spot: {
+          x: box.left + Math.min(4, box.width / 2),
+          y: box.top + box.height / 2,
+          tag: el.tagName,
+        },
+      };
+    },
+    [find, FIND_JS, spot],
+  );
+}
+
 async function mintStop(
   page,
   { stop, origin, projectBase, settleMs, fields, at },
 ) {
   // Admin pages live outside `/project/<name>`; a stop says so with scope: "app".
   const prefix = stop.scope === "app" ? "" : projectBase;
-  await page.goto(`${origin}${prefix}${stop.route}`, {
-    waitUntil: "domcontentloaded",
-  });
-  await waitForOverlay(page);
-  await page.waitForTimeout(settleMs);
-  await replayVia(page, stop.via, settleMs);
+  /** Open the stop's page (in `lang`, when given) and replay its via. */
+  const reach = async (lang) => {
+    await page.goto(`${origin}${prefix}${stop.route}`, {
+      waitUntil: "domcontentloaded",
+    });
+    await waitForOverlay(page);
+    await page.waitForTimeout(settleMs);
+    // The app applies the account's language when its shell mounts, which
+    // undoes a switch made before it.
+    if (lang) {
+      await page
+        .locator('[data-testid="user-dropdown-button"]')
+        .waitFor({ timeout: 60_000 })
+        .catch(() => {});
+      await page.waitForTimeout(1_000);
+      if (!(await showIn(page, lang))) return null;
+    }
+    return replayVia(page, stop, settleMs);
+  };
+  const waitFor = () =>
+    page
+      .waitForFunction(
+        ([find, findJs]) => !!(0, eval)(findJs)(find),
+        [stop.find, FIND_JS],
+        { timeout: FIND_TIMEOUT_MS },
+      )
+      .catch(() => {});
+
+  // A translated stop's element text, per language: an element rendered in
+  // one language (a validation message) keeps that text when the app merely
+  // switches, so each language gets its own replay.
+  const texts = {};
+  if (stop.i18n) {
+    await reach();
+    await waitFor();
+    const home = await readElement(page, stop.find);
+    if (home) {
+      texts[home.lang] = home.txt;
+      for (const lang of [stop.lng, ...Object.keys(stop.i18n)]) {
+        if (!lang || lang === home.lang) continue;
+        // The account's language can still land after the switch; the same
+        // text as at home is worth another pass, and is kept after the last
+        // one, since a name reads the same in every language.
+        for (let attempt = 0; attempt < 3; attempt++) {
+          if (!(await reach(lang).catch(() => null))) continue;
+          await page.waitForTimeout(settleMs);
+          const there = await readElement(page, stop.find, home.spot);
+          if (there?.lang !== lang || !there.txt) continue;
+          texts[lang] = there.txt;
+          if (there.txt !== home.txt) break;
+        }
+      }
+    }
+  }
+
+  const via = await reach();
+  if (stop.via) fields.via = via;
   // A lazy route renders long after `domcontentloaded`, so wait for the
   // element itself rather than guessing how long the page needs.
-  await page
-    .waitForFunction(
-      ([find, findJs]) => !!(0, eval)(findJs)(find),
-      [stop.find, FIND_JS],
-      { timeout: FIND_TIMEOUT_MS },
-    )
-    .catch(() => {});
-  return mintInPage(page, stop.find, fields, at);
+  await waitFor();
+  const result = await mintInPage(page, stop.find, fields, at, texts);
+  // The testids replay added can push a stop past the part cap; the manifest's
+  // own via fit before them.
+  if (
+    result.error?.startsWith("anchor is") &&
+    stop.via &&
+    fields.via !== stop.via
+  )
+    return mintInPage(page, stop.find, { ...fields, via: stop.via }, at, texts);
+  return result;
 }
 
 /**
@@ -684,6 +1065,9 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       !stop.stop.via?.length;
     if (!samePage || !landed) {
       const query = stop.anchor.q ? `?${stop.anchor.q}` : "";
+      // A hash-only change is a same-document jump: the dialog a previous
+      // stop's via opened would stay open and cover this stop.
+      await page.goto("about:blank");
       await page.goto(
         `${origin}${samePage ? landing.p : stop.anchor.p}${query}#${fragment}`,
         { waitUntil: "domcontentloaded" },
@@ -691,8 +1075,7 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       await waitForOverlay(page);
       await page.waitForTimeout(settleMs);
       landed = samePage;
-      if (!samePage)
-        await replayVia(page, stop.stop.via, settleMs).catch(() => {});
+      if (!samePage) await replayVia(page, stop.stop, settleMs).catch(() => {});
     }
     // Only the focus pin is scrolled to; every other stop of a same-page set
     // would be measured docked-away rather than on its element.

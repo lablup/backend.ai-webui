@@ -6,6 +6,7 @@
     "DiskPerc": "Disco %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Impossibile caricare i dati.",
+    "LostAt": "Perso il",
     "NoAvailableLiveStat": "Nessuna statistica in tempo reale disponibile",
     "Region": "Regione",
     "ResourceGroup": "Gruppo di risorse",
@@ -13,7 +14,8 @@
     "Schedulable": "Pianificabile",
     "Starts": "Avvii",
     "Status": "Stato",
-    "Utilization": "Utilizzo"
+    "Utilization": "Utilizzo",
+    "Version": "Versione"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Consentito",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "Questa azione non può essere annullata.",
     "DeleteItem": "Elimina",
     "DeleteNItems": "Elimina {{count}} elementi",
-    "TypeToConfirm": "Digita <code>{{confirmText}}</code> per confermare."
+    "TypeToConfirm": "Digita <token>{{confirmText}}</token> per confermare."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Creato da"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "I file e le cartelle cancellati non possono essere ripristinati. \nVuoi procedere?",
     "DeleteSelectedItemsDialog": "Elimina la conferma",
     "Download": "Scarica",
+    "DownloadPopupBlocked": "Il browser ha bloccato la finestra di download. Consenti i pop-up per questo sito e riprova.",
+    "DownloadRejected": "Lo storage proxy ha rifiutato il download (HTTP {{status}}). Il download non è stato avviato.",
     "DownloadSelected": "Scarica",
     "DownloadStarted": "File \"{{fileName}}\" è stato avviato il download.",
+    "DownloadUnreachable": "Impossibile raggiungere lo storage proxy su {{origin}}. Il download non è stato avviato.",
     "DragAndDropDesc": "Trascina i file in quest'area da caricare.",
     "DuplicatedFiles": "Sovrascrivere la conferma",
     "DuplicatedFilesDesc": "Il file o la cartella con lo stesso nome esiste già. \nVuoi sovrascrivere?",

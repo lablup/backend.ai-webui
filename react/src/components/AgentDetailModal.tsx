@@ -67,7 +67,6 @@ const AgentDetailModal: React.FC<AgentDetailModalProps> = ({
       centered
       title={t('agent.DetailedInformation')}
       onCancel={onRequestClose}
-      destroyOnHidden
       footer={null}
     >
       <BAIFlex direction="column" align="stretch" gap={'md'}>

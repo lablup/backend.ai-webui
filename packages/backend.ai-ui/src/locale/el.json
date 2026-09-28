@@ -6,6 +6,7 @@
     "DiskPerc": "Χρήση δίσκου %",
     "Endpoint": "Σημείο τερματισμού",
     "FailedToLoadCellData": "Αποτυχία φόρτωσης δεδομένων.",
+    "LostAt": "Χάθηκε στις",
     "NoAvailableLiveStat": "Καμία διαθέσιμη ζωντανή στατιστική",
     "Region": "Περιοχή",
     "ResourceGroup": "Ομάδα πόρων",
@@ -13,7 +14,8 @@
     "Schedulable": "Προγραμματιζόμενο",
     "Starts": "Εκκινήσεις",
     "Status": "Κατάσταση",
-    "Utilization": "Χρήση"
+    "Utilization": "Χρήση",
+    "Version": "Έκδοση"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Επιτρέπεται",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
     "DeleteItem": "Διαγραφή",
     "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
-    "TypeToConfirm": "Πληκτρολογήστε <code>{{confirmText}}</code> για επιβεβαίωση."
+    "TypeToConfirm": "Πληκτρολογήστε <token>{{confirmText}}</token> για επιβεβαίωση."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
     "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
     "Download": "Λήψη",
+    "DownloadPopupBlocked": "Το πρόγραμμα περιήγησης απέκλεισε το παράθυρο λήψης. Επιτρέψτε τα αναδυόμενα παράθυρα για αυτόν τον ιστότοπο και δοκιμάστε ξανά.",
+    "DownloadRejected": "Ο storage proxy απέρριψε τη λήψη (HTTP {{status}}). Η λήψη δεν ξεκίνησε.",
     "DownloadSelected": "Λήψη",
     "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
+    "DownloadUnreachable": "Δεν ήταν δυνατή η σύνδεση με τον storage proxy στο {{origin}}. Η λήψη δεν ξεκίνησε.",
     "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση.",
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",

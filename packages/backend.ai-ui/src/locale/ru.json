@@ -6,6 +6,7 @@
     "DiskPerc": "Диск %",
     "Endpoint": "Конечная точка",
     "FailedToLoadCellData": "Не удалось загрузить данные.",
+    "LostAt": "Потерян",
     "NoAvailableLiveStat": "Живая статистика недоступна",
     "Region": "Регион",
     "ResourceGroup": "Группа ресурсов",
@@ -13,7 +14,8 @@
     "Schedulable": "Доступно для планирования",
     "Starts": "Запуски",
     "Status": "Статус",
-    "Utilization": "Использование"
+    "Utilization": "Использование",
+    "Version": "Версия"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Разрешено",
@@ -133,7 +135,7 @@
     "CannotBeUndone": "Это действие нельзя отменить.",
     "DeleteItem": "Удалить",
     "DeleteNItems": "Удалить {{count}} элементов",
-    "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
+    "TypeToConfirm": "Введите <token>{{confirmText}}</token> для подтверждения."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Создано"
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
     "Download": "Скачать",
+    "DownloadPopupBlocked": "Браузер заблокировал окно загрузки. Разрешите всплывающие окна для этого сайта и повторите попытку.",
+    "DownloadRejected": "Storage proxy отклонил загрузку (HTTP {{status}}). Загрузка не началась.",
     "DownloadSelected": "Скачать",
     "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "DownloadUnreachable": "Не удалось связаться со storage proxy по адресу {{origin}}. Загрузка не началась.",
     "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
     "DuplicatedFiles": "Перезаписать подтверждение",
     "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",

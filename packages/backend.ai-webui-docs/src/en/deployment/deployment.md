@@ -125,7 +125,7 @@ Runtime variants that read their configuration from the model folder — the **C
    * **Shell**: The command runs through a shell (`bash -c "..."`), so shell operators work. Recommended for most cases.
    * **Exec**: The command runs directly as arguments, with no shell involved. Use this only when the command has to run without a shell — for example, on an image that has no shell binary.
 - **Shell**: The shell binary used to run the command (for example, `/bin/bash`). Shown only in **Shell** mode, where it is required. The binary must exist in the container image, or the service fails to start.
-- **Command**: The command that launches the inference server, for example `python -m http.server 8000`. In **Shell** mode this is a multi-line box; in **Exec** mode the field is relabeled **Command (argv)** and becomes a single-line input.
+- **Command**: The command that launches the inference server, for example `python -m http.server 8000`. In **Shell** mode this is a multi-line box; in **Exec** mode the field is relabeled **Command (argv)** and becomes a single-line input. To pass a JSON string as a single argument, wrap the whole JSON in single quotes and keep the double quotes inside as they are — for example, `--override-generation-config '{"temperature": 0.7}'`.
 - **Port**: The container port that the inference server listens on (2–65535).
 
 :::tip[Shell operators only work in Shell mode]

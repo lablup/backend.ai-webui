@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f2f738e36f541efd714878082701cd67>>
+ * @generated SignedSource<<cffda9fdbb8053a571421c0d0049373e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,18 +11,39 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type SessionV2OrderField = "CREATED_AT" | "ID" | "NAME" | "STATUS" | "TERMINATED_AT" | "%future added value";
+export type SessionV2NetworkType = "HOST" | "PERSISTENT" | "VOLATILE" | "%future added value";
+export type SessionV2OrderField = "ACCESS_KEY" | "BATCH_TIMEOUT" | "CLUSTER_SIZE" | "CREATED_AT" | "CREATION_ID" | "DOMAIN_NAME" | "ID" | "IS_PREEMPTIBLE" | "JOB_PRIORITY" | "NAME" | "NETWORK_ID" | "NETWORK_TYPE" | "PRIORITY" | "PROJECT_ID" | "REPLICA_ID" | "RESOURCE_GROUP_NAME" | "RESULT" | "SESSION_TYPE" | "STARTS_AT" | "STATUS" | "TAG" | "TERMINATED_AT" | "TIER" | "USER_ID" | "USE_HOST_NETWORK" | "%future added value";
+export type SessionV2Result = "FAILURE" | "SUCCESS" | "UNDEFINED" | "%future added value";
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Type = "BATCH" | "INFERENCE" | "INTERACTIVE" | "SYSTEM" | "%future added value";
 export type SessionV2Filter = {
   AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
   NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;
   OR?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  batchTimeout?: IntFilter | null | undefined;
+  clusterSize?: IntFilter | null | undefined;
+  creationId?: StringFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  isPreemptible?: boolean | null | undefined;
+  jobPriority?: IntFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
+  networkId?: StringFilter | null | undefined;
+  networkType?: SessionV2NetworkTypeFilter | null | undefined;
+  priority?: IntFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
+  replicaId?: UUIDFilter | null | undefined;
+  resourceGroupName?: StringFilter | null | undefined;
+  result?: SessionV2ResultFilter | null | undefined;
+  sessionType?: SessionV2TypeFilter | null | undefined;
+  startsAt?: DateTimeFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
+  tag?: StringFilter | null | undefined;
+  terminatedAt?: DateTimeFilter | null | undefined;
+  tier?: IntFilter | null | undefined;
+  useHostNetwork?: boolean | null | undefined;
   userUuid?: UUIDFilter | null | undefined;
 };
 export type UUIDFilter = {
@@ -61,6 +82,7 @@ export type StringFilter = {
 };
 export type EntityLabelNestedFilter = {
   every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: EntityLabelFilter | null | undefined;
   some?: EntityLabelFilter | null | undefined;
 };
@@ -72,6 +94,38 @@ export type EntityLabelFilter = {
   entityType?: StringFilter | null | undefined;
   key?: StringFilter | null | undefined;
   value?: StringFilter | null | undefined;
+};
+export type SessionV2TypeFilter = {
+  equals?: SessionV2Type | null | undefined;
+  in?: ReadonlyArray<SessionV2Type> | null | undefined;
+  notEquals?: SessionV2Type | null | undefined;
+  notIn?: ReadonlyArray<SessionV2Type> | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type SessionV2ResultFilter = {
+  equals?: SessionV2Result | null | undefined;
+  in?: ReadonlyArray<SessionV2Result> | null | undefined;
+  notEquals?: SessionV2Result | null | undefined;
+  notIn?: ReadonlyArray<SessionV2Result> | null | undefined;
+};
+export type SessionV2NetworkTypeFilter = {
+  equals?: SessionV2NetworkType | null | undefined;
+  in?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
+  notEquals?: SessionV2NetworkType | null | undefined;
+  notIn?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
 };
 export type SessionV2OrderBy = {
   direction?: OrderDirection;
