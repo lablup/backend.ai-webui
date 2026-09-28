@@ -200,6 +200,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     `);
 
   // `usersV2` answers users, not assignment rows, so it has no grant time.
+  // TODO(needs-backend): BA-8188 — restore Granted At once usersV2 carries it.
   const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a1');
   const assignments: Array<{
     id: string;
