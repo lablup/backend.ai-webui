@@ -141,6 +141,49 @@ export class FolderExplorerModal {
     await expect(notification).toBeHidden({ timeout: 10000 });
   }
 
+  /**
+   * Side info panel tab (FR-4005). `BAITabs` renders the strip through Astryx
+   * `TabList`/`Tab` in the NAVIGATION pattern (a `<nav>` of `<button>`s, no
+   * `role="tab"`), where the selected tab is the one carrying
+   * `aria-current="true"` and each tab is keyed by `data-tab-value`.
+   */
+  getInfoPanelTab(key: 'metadata' | 'auditLog'): Locator {
+    return this.modal.locator(`[data-tab-value="${key}"]`);
+  }
+
+  async selectInfoPanelTab(key: 'metadata' | 'auditLog'): Promise<void> {
+    const tab = this.getInfoPanelTab(key);
+    await expect(tab).toBeVisible({ timeout: 10000 });
+    await tab.click();
+    await this.verifyInfoPanelTabSelected(key);
+  }
+
+  async verifyInfoPanelTabSelected(
+    key: 'metadata' | 'auditLog',
+  ): Promise<void> {
+    await expect(this.getInfoPanelTab(key)).toHaveAttribute(
+      'aria-current',
+      'true',
+      { timeout: 10000 },
+    );
+    const other = key === 'metadata' ? 'auditLog' : 'metadata';
+    await expect(this.getInfoPanelTab(other)).not.toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+  }
+
+  /**
+   * The Metadata panel's content, keyed on a description row only it renders.
+   * `BAIMetadataList` renders each label as a `<dt>` (role `term`); the folder
+   * toolbar also has a "Mount Permission" form label, hence the role scope.
+   */
+  async verifyMetadataPanelContent(): Promise<void> {
+    await expect(
+      this.modal.getByRole('term').filter({ hasText: /^Mount Permission$/ }),
+    ).toBeVisible({ timeout: 10000 });
+  }
+
   async verifyFileVisible(fileName: string): Promise<void> {
     // Two cells carry the file name per row (the selection checkbox cell,
     // named "Select <file>", and the name cell, named "<file> Rename"), so a
