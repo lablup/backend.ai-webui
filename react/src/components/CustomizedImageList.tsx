@@ -11,8 +11,9 @@ import { CustomizedImageListUntagMutation } from '../__generated__/CustomizedIma
 import { App } from '../app-shim';
 import TableColumnsSettingModal from '../components/TableColumnsSettingModal';
 import { getImageFullName, localeCompare } from '../helper';
-import { useBackendAIImageMetaData } from '../hooks';
+import { useBackendAIImageMetaData, useWebUINavigate } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
+import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import AliasedImageTagTokens from './AliasedImageTagTokens';
 import TextHighlighter from './TextHighlighter';
@@ -32,7 +33,7 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Trash2, RotateCw, Search, Settings } from 'lucide-react';
+import { Trash2, RotateCw, Search, Settings, PlayIcon } from 'lucide-react';
 import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
@@ -45,6 +46,8 @@ const CustomizedImageList: React.FC = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { message } = App.useApp();
+  const webuiNavigate = useWebUINavigate();
+  const buildProjectPath = useProjectPath();
 
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
     useToggle();
@@ -193,6 +196,26 @@ const CustomizedImageList: React.FC = () => {
       key: 'control',
       render: (_text, row) => (
         <BAIFlex direction="row" align="stretch" justify="center" gap="xxs">
+          <IconButton
+            variant="ghost"
+            className="bai-action-accent"
+            icon={<PlayIcon size="1em" />}
+            label={t('session.launcher.StartNewSession')}
+            tooltip={t('session.launcher.StartNewSession')}
+            onClick={() => {
+              const params = new URLSearchParams();
+              params.set('step', '0');
+              params.set(
+                'formValues',
+                JSON.stringify({
+                  environments: { version: getImageFullName(row) || '' },
+                }),
+              );
+              webuiNavigate(
+                `${buildProjectPath('session/start')}?${params.toString()}`,
+              );
+            }}
+          />
           {/* antd `type="text" danger` -> ghost IconButton + the shared
               `.bai-name-action-cell-danger` tint: Astryx IconButton has no
               `color` prop (P5) and `destructive` is a solid fill, too loud for
