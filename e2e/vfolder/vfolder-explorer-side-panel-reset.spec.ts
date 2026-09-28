@@ -30,8 +30,6 @@ test.describe(
   'FolderExplorerModal - Side Panel Session State',
   { tag: ['@regression', '@vfolder', '@functional'] },
   () => {
-    test.describe.configure({ mode: 'default' });
-
     const runId = Date.now();
     const folderA = `e2e-test-folder-panel-a-${runId}`;
     const folderB = `e2e-test-folder-panel-b-${runId}`;
