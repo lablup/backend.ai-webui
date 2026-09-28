@@ -128,7 +128,13 @@ const STYLE = `
 export type PopoverPlace =
   | { kind: 'located'; rect: { left: number; top: number; bottom: number } }
   /** Not rendered yet: `via` says how the reader makes it appear. */
-  | { kind: 'waiting'; via: string; covered?: boolean }
+  | {
+      kind: 'waiting';
+      via: string;
+      covered?: boolean;
+      /** The control the next `via` click needs, when it is on screen. */
+      rect?: { left: number; top: number; bottom: number };
+    }
   /** On another page, named so `›` is not a surprise. */
   | { kind: 'away'; page: string };
 
@@ -189,6 +195,7 @@ const LABELS: Record<string, Record<string, string>> = {
     covered: 'Behind the open dialog — close it and the mark appears.',
     away: 'On {page} — › takes you there.',
     waitBadge: 'Waiting',
+    clickHere: 'Click here',
   },
   ko: {
     changed: '무엇이 바뀌었나',
@@ -202,10 +209,11 @@ const LABELS: Record<string, Record<string, string>> = {
     covered: '열린 대화상자 뒤에 있습니다 — 닫으면 표시됩니다.',
     away: '{page} 페이지에 있습니다 — › 로 이동합니다.',
     waitBadge: '대기 중',
+    clickHere: '여기를 클릭',
   },
 };
 
-const words = (lang: string): Record<string, string> => ({
+export const words = (lang: string): Record<string, string> => ({
   ...LABELS.en,
   ...(LABELS[lang] ?? {}),
 });
@@ -325,7 +333,10 @@ export function createPopover(
     if (area) area.value = model.comment;
   }
 
-  /** Under the mark when it fits, above it when it does not, centred when away. */
+  /**
+   * Under the mark (or the control a waiting stop needs clicked) when it fits,
+   * above it when it does not, centred when there is neither.
+   */
   function place(where: PopoverPlace) {
     /*
      * The CSS cap is what the panel can actually be; measuring it and clamping
@@ -342,7 +353,8 @@ export function createPopover(
     const highest = Math.min(TOP_RESERVE, lowest);
     const clamp = (top: number) => Math.min(Math.max(top, highest), lowest);
 
-    if (where.kind !== 'located') {
+    const rect = where.kind === 'away' ? undefined : where.rect;
+    if (!rect) {
       Object.assign(pop.style, {
         left: '50%',
         top: `${clamp(Math.round((window.innerHeight - height) / 2))}px`,
@@ -350,7 +362,6 @@ export function createPopover(
       });
       return;
     }
-    const rect = where.rect;
     const width = Math.min(WIDTH, window.innerWidth * 0.92);
     const left = Math.min(
       Math.max(PAD, rect.left),

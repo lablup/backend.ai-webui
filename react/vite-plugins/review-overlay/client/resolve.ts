@@ -6,7 +6,7 @@
 import { TAG_RE } from './anchor-guard.js';
 import { normText } from './anchor.js';
 import { DIALOG_SELECTOR, isStop } from './stop-guard.js';
-import type { AnchorV3 } from './types.js';
+import type { AnchorV3, AnchorVia } from './types.js';
 import { OVERLAY_MARKER_ATTR } from './ui.js';
 
 /** How many candidates a text scan will look at before giving up. */
@@ -161,6 +161,41 @@ export function isBehindModal(element: Element): boolean {
   );
   const top = outer[outer.length - 1];
   return !!top && !top.contains(element);
+}
+
+/** What a `via` step clicks: a control, never the wrapper around its label. */
+export const VIA_CONTROL =
+  'button, a[href], summary, label, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"]';
+
+/**
+ * The control a `via` step clicks, when it is on screen and not under a modal.
+ * A unique testid wins; then each label in turn, the reader's language first,
+ * since the app switches language with it.
+ */
+export function findViaTarget(
+  step: AnchorVia,
+  labels: readonly (string | undefined)[],
+  { doc = document, ignore }: ResolveOptions = {},
+): Element | null {
+  const layout = hasLayout(doc);
+  const usable = (element: Element) =>
+    !isOurs(element, ignore) &&
+    (!layout || isRendered(element)) &&
+    !isBehindModal(element);
+  if (step.click.tid) {
+    const hits = Array.from(
+      doc.querySelectorAll(`[data-testid="${esc(step.click.tid)}"]`),
+    ).filter(usable);
+    if (hits.length === 1) return hits[0];
+  }
+  const controls = Array.from(doc.querySelectorAll(VIA_CONTROL)).filter(usable);
+  for (const label of labels) {
+    const want = normText(label);
+    if (!want) continue;
+    const hit = controls.find((element) => elementText(element) === want);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 /** A strict stop with a landmark accepts a selector hit only inside one. */

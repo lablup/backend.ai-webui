@@ -1,6 +1,7 @@
 import { BAI_MODAL_OPEN_ATTRIBUTE } from '../../../../packages/backend.ai-ui/src/components/dialogLevelStack';
 import {
   findAnchorTarget,
+  findViaTarget,
   isBehindModal,
   PORTAL_MODAL,
   quickFindTarget,
@@ -600,5 +601,43 @@ describe('isBehindModal', () => {
     );
     expect(isBehindModal(byId('first'))).toBe(true);
     expect(isBehindModal(byId('second'))).toBe(false);
+  });
+});
+
+describe('findViaTarget', () => {
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div data-testid="toolbar"><button data-testid="create">Create Folder</button>' +
+      '<button><span>Upload</span></button></div>';
+  });
+  const byTid = (tid: string) =>
+    document.querySelector(`[data-testid="${tid}"]`);
+
+  it('finds the control by its testid, whatever language it reads in', () => {
+    const step = { click: { text: 'Create Folder', tid: 'create' } };
+    byTid('create')!.textContent = '폴더 생성';
+    expect(findViaTarget(step, ['Create Folder'])).toBe(byTid('create'));
+  });
+
+  it('falls back to the label, the reader’s language first', () => {
+    const upload = document.querySelector('button:not([data-testid])');
+    expect(
+      findViaTarget({ click: { text: 'Upload' } }, ['업로드', 'Upload']),
+    ).toBe(upload);
+    // The label names the control, never the span inside it or the toolbar.
+    expect(
+      findViaTarget({ click: { text: 'Upload' } }, ['Upload'])?.tagName,
+    ).toBe('BUTTON');
+  });
+
+  it('points at nothing under an open modal, or when the label is gone', () => {
+    const step = { click: { text: 'Create Folder', tid: 'create' } };
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-bai-modal-open><div role="dialog">form</div></div>',
+    );
+    expect(findViaTarget(step, ['Create Folder'])).toBeNull();
+    document.querySelector('[data-bai-modal-open]')!.remove();
+    expect(findViaTarget({ click: { text: 'Delete' } }, ['Delete'])).toBeNull();
   });
 });
