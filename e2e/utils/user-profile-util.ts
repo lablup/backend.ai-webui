@@ -19,6 +19,19 @@ export function usersTabButton(page: Page): Locator {
 }
 
 /**
+ * Opens the Credential page and waits until the Users list has rendered.
+ * `page.goto` re-bootstraps the whole shell, and the lazy page plus its user
+ * query regularly land 6-9s after navigation — past the 5s expect default.
+ */
+export async function navigateToUsersPage(page: Page): Promise<void> {
+  await navigateTo(page, 'credential');
+  await expect(usersTabButton(page)).toBeVisible({ timeout: 20000 });
+  await expect(
+    page.getByRole('radio', { name: 'Active', exact: true }),
+  ).toBeChecked({ timeout: 20000 });
+}
+
+/**
  * The "My Account Information" profile dialog. Replaces the dead `.ant-modal`
  * selector — the modal is an Astryx dialog with an accessible name.
  */
@@ -162,12 +175,7 @@ export async function createDisposableUser(
   username: string,
   password: string,
 ): Promise<void> {
-  await navigateTo(adminPage, 'credential');
-  // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
-  // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
-  // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-  // which this app never does (see registry.spec.ts's identical pattern).
-  await expect(usersTabButton(adminPage)).toBeVisible();
+  await navigateToUsersPage(adminPage);
 
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   const userSettingModal = UserSettingModal.forCreate(adminPage);
