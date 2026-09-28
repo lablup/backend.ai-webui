@@ -516,10 +516,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             <Suspense fallback={<BAISkeleton rows={4} />}>
               <VFolderNodes
                 order={queryParams.order}
-                loading={
-                  deferredQueryVariables !== queryVariables ||
-                  deferredFetchKey !== fetchKey
-                }
+                loading={deferredQueryVariables !== queryVariables}
                 // ADR-0001: super-admin page — no ambient project context. The
                 // deployment-creation escalation modal embeds its own required
                 // project selector.

@@ -427,10 +427,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
         <Suspense fallback={<BAISkeleton rows={4} />}>
           <VFolderNodesV2
             order={queryParams.order}
-            loading={
-              deferredQueryVariables !== queryVariables ||
-              deferredFetchKey !== fetchKey
-            }
+            loading={deferredQueryVariables !== queryVariables}
             project={project}
             vfoldersFrgmt={filterOutNullAndUndefined(
               _.map(projectVfolders?.edges, 'node'),

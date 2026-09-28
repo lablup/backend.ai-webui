@@ -527,10 +527,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
           <Suspense fallback={<BAISkeleton rows={4} />}>
             <VFolderNodes
               order={queryParams.order}
-              loading={
-                deferredQueryVariables !== queryVariables ||
-                deferredFetchKey !== fetchKey
-              }
+              loading={deferredQueryVariables !== queryVariables}
               disableProjectFolderActions
               project={toProjectContext(currentProject)}
               vfoldersFrgmt={filterOutNullAndUndefined(
