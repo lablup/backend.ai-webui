@@ -989,6 +989,7 @@ async function mintStop(
         .locator('[data-testid="user-dropdown-button"]')
         .waitFor({ timeout: 60_000 })
         .catch(() => {});
+      await page.waitForTimeout(1_000);
       if (!(await showIn(page, lang))) return null;
     }
     return replayVia(page, stop, settleMs);
@@ -1014,10 +1015,17 @@ async function mintStop(
       texts[home.lang] = home.txt;
       for (const lang of [stop.lng, ...Object.keys(stop.i18n)]) {
         if (!lang || lang === home.lang) continue;
-        if (!(await reach(lang).catch(() => null))) continue;
-        await page.waitForTimeout(settleMs);
-        const there = await readElement(page, stop.find, home.spot);
-        if (there?.lang === lang && there.txt) texts[lang] = there.txt;
+        // The account's language can still land after the switch; the same
+        // text as at home is worth another pass, and is kept after the last
+        // one, since a name reads the same in every language.
+        for (let attempt = 0; attempt < 3; attempt++) {
+          if (!(await reach(lang).catch(() => null))) continue;
+          await page.waitForTimeout(settleMs);
+          const there = await readElement(page, stop.find, home.spot);
+          if (there?.lang !== lang || !there.txt) continue;
+          texts[lang] = there.txt;
+          if (there.txt !== home.txt) break;
+        }
       }
     }
   }
