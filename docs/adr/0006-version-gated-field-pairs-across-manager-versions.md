@@ -107,7 +107,7 @@ flowchart LR
 
 - **Role form flag**: `RoleFormModal`은 scope type 하나와 scope id 하나를 받는다. `rbac-single-scope-role`이 켜져 있으면 `CreateRoleInput.scope`로, 꺼져 있으면 항목 하나짜리 `CreateRoleInput.scopes`로 보낸다.
 - **Drawer switch**: `RBACManagementPage`는 `rbac-single-scope-role`이 켜져 있으면 `RoleDetailDrawerV2`를, 꺼져 있으면 `RoleDetailDrawer`를 mount한다. 두 drawer의 fragment는 모두 list query에 spread되므로 field는 directive로 가르고, component는 flag로 가른다. 26.9.0a4 미만의 26.9 pre-release는 flag가 꺼져 옛 drawer를 타고, 그 card의 `PermissionFilter.scopeType`(`RBACElementTypeFilter`)이 매니저가 답한 소문자 scope type을 거부한다.
-- **Assignment source**: `RoleAssignmentTab`은 assignment 행을 `Role.users`가 아니라 `adminRoleAssignments(filter: { roleId })`로 읽는다. `Role.users`는 26.9.0에서 `@deprecated`이고, 그 대체인 `Role.usersV2`는 표가 보여 주는 `grantedAt`·`grantedBy`를 답하지 않는다. `AssignRoleModalBulkAssignMutation`은 `failed`에 `@deprecatedSince(version: "26.9.0")`를 단다. 26.9 매니저는 거부된 사용자가 있으면 mutation 전체를 거부하므로, `AssignRoleModal`은 그 오류를 선택한 사용자 전부의 실패로 표에 적는다.
+- **Assignment source**: `RoleAssignmentTab`은 assignment 행을 `Role.users`가 아니라 `adminRoleAssignments(filter: { roleId })`로 읽는다. `Role.users`는 26.9.0에서 `@deprecated`이고, 그 대체인 `Role.usersV2`는 표가 보여 주는 `grantedAt`·`grantedBy`를 답하지 않는다. `AssignRoleModalBulkAssignMutation`은 `failed`에 `@deprecatedSince(version: "26.9.0a1")`를 단다. 26.9.0a1 이상 매니저는 모든 사용자를 한 트랜잭션으로 할당해 거부된 사용자가 하나라도 있으면 mutation 전체를 롤백하므로, `AssignRoleModal`은 그 오류를 선택한 사용자 전부의 실패로 표에 적는다.
 
 ### 5. 26.8 지원을 끝낼 때 함께 지운다
 

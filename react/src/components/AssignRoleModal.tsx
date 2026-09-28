@@ -87,7 +87,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           }
           # A manager >= 26.9.0 answers no per-user failures: a refused user
           # rejects the whole mutation, which the catch below handles.
-          failed @deprecatedSince(version: "26.9.0") {
+          failed @deprecatedSince(version: "26.9.0a1") {
             userId
             message
           }
