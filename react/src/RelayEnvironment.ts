@@ -2,7 +2,10 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
+import {
+  fillStrippedFields,
+  transformGraphQLQueryWithClientDirectives,
+} from './helper/graphql-transformer';
 import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';
 import {
@@ -71,11 +74,12 @@ const fetchFn: FetchFunction = async (
 ) => {
   await waitForBAIClient();
 
-  const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
-    request.text || '',
-    variables,
-    isNotCompatibleWithVersion,
-  );
+  const { query: transformedQuery, nullPaths } =
+    transformGraphQLQueryWithClientDirectives(
+      request.text || '',
+      variables,
+      isNotCompatibleWithVersion,
+    );
 
   const reqBody = {
     query: transformedQuery,
@@ -101,6 +105,8 @@ const fetchFn: FetchFunction = async (
         }
         throw err;
       })) || {};
+
+  fillStrippedFields(result.data, nullPaths);
 
   if (result.errors) {
     // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
@@ -143,11 +149,12 @@ function fetchForSubscribe(
     if (!operation.text) {
       return sink.error(new Error('Operation text cannot be empty'));
     }
-    const transformedOperation = manipulateGraphQLQueryWithClientDirectives(
-      operation.text || '',
-      variables,
-      isNotCompatibleWithVersion,
-    );
+    const { query: transformedOperation, nullPaths } =
+      transformGraphQLQueryWithClientDirectives(
+        operation.text || '',
+        variables,
+        isNotCompatibleWithVersion,
+      );
 
     return subscriptionsClient.subscribe(
       {
@@ -155,7 +162,14 @@ function fetchForSubscribe(
         query: transformedOperation,
         variables,
       },
-      sink as Parameters<typeof subscriptionsClient.subscribe>[1],
+      {
+        next: (value) => {
+          fillStrippedFields(value.data, nullPaths);
+          sink.next(value as GraphQLSingularResponse);
+        },
+        error: (error) => sink.error(error as Error),
+        complete: () => sink.complete(),
+      },
     );
   });
 }

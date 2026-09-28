@@ -2,7 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { manipulateGraphQLQueryWithClientDirectives } from './graphql-transformer';
+import {
+  fillStrippedFields,
+  manipulateGraphQLQueryWithClientDirectives,
+  transformGraphQLQueryWithClientDirectives,
+} from './graphql-transformer';
 
 describe('graphql-transformer', () => {
   it('should transform the GraphQL query correctly', () => {
@@ -401,6 +405,7 @@ fragment FragmentWithMixedFields on Node {
     const result = manipulateGraphQLQueryWithClientDirectives(
       `
     query TestQuery {
+      other
       node {
         ...ParentFragment
       }
@@ -427,7 +432,7 @@ fragment FragmentWithMixedFields on Node {
     // Expected: ParentFragment becomes empty and is removed along with ChildFragment.
     // The 'node' field also gets removed because it has no selection set after fragment removal.
     expect(result).toBe(`query TestQuery {
-  node
+  other
 }`);
   });
 
@@ -493,5 +498,216 @@ fragment FragmentWithMixedFields on Node {
     expect(onOld).toContain('scopes(first: 1)');
     expect(onOld.match(/scopeType/g)).toHaveLength(1);
     expect(onOld).not.toContain('scopeId');
+  });
+});
+
+describe('stripped field null paths', () => {
+  // `@since(version: "new")` is stripped, `@since(version: "old")` is kept
+  const onOldManager = (version: string | Array<string>) =>
+    Array.isArray(version) ? version.includes('new') : version === 'new';
+  const nullPathsOf = (query: string, variables = {}) =>
+    transformGraphQLQueryWithClientDirectives(query, variables, onOldManager)
+      .nullPaths;
+
+  it('records nested fields by response key, honouring aliases', () => {
+    expect(
+      nullPathsOf(`
+        query Q {
+          list: sessions {
+            edges { node { id renamed: newField @since(version: "new") kept @since(version: "old") } }
+          }
+          newRoot @since(version: "new") { id }
+        }
+      `),
+    ).toEqual([
+      ['list', 'edges', 'node', 'renamed'],
+      ['newRoot'],
+      ['newRoot', 'id'],
+    ]);
+  });
+
+  it('records the subtree of a stripped field, through its spreads, for a parent kept by another selection', () => {
+    const { query, nullPaths } = transformGraphQLQueryWithClientDirectives(
+      `
+        query Q { rev { image { id } ...Detail } }
+        fragment Detail on Rev { image @since(version: "new") { id ...Tags } }
+        fragment Tags on Image { metadata { tags } }
+      `,
+      {},
+      onOldManager,
+    );
+    expect(query).toBe(`query Q {
+  rev {
+    image {
+      id
+    }
+  }
+}`);
+    expect(nullPaths).toEqual([
+      ['rev', 'image'],
+      ['rev', 'image', 'id'],
+      ['rev', 'image', 'metadata'],
+      ['rev', 'image', 'metadata', 'tags'],
+    ]);
+
+    const data = { rev: { image: { id: '1' } } };
+    fillStrippedFields(data, nullPaths);
+    expect(data).toEqual({ rev: { image: { id: '1', metadata: null } } });
+  });
+
+  it('records a parent emptied by its stripped children, next to the children', () => {
+    expect(
+      nullPathsOf(`
+        query Q { a { b { c @since(version: "new") } d } }
+      `),
+    ).toEqual([
+      ['a', 'b', 'c'],
+      ['a', 'b'],
+    ]);
+  });
+
+  it('maps fragment fields through every spread, including nested spreads', () => {
+    expect(
+      nullPathsOf(`
+        query Q {
+          first { ...Outer }
+          second: other { nested { ...Inner } }
+        }
+        fragment Outer on T { id deep { ...Inner } }
+        fragment Inner on T { id x @since(version: "new") }
+      `),
+    ).toEqual([
+      ['first', 'deep', 'x'],
+      ['second', 'nested', 'x'],
+    ]);
+  });
+
+  it('maps a fragment that is emptied and dropped, and the field it empties', () => {
+    const { query, nullPaths } = transformGraphQLQueryWithClientDirectives(
+      `
+        query Q { a { id b { ...OnlyNew } } }
+        fragment OnlyNew on T { x @since(version: "new") y @since(version: "new") }
+      `,
+      {},
+      onOldManager,
+    );
+    expect(query).toBe(`query Q {
+  a {
+    id
+  }
+}`);
+    expect(nullPaths).toEqual([
+      ['a', 'b'],
+      ['a', 'b', 'x'],
+      ['a', 'b', 'y'],
+    ]);
+  });
+
+  it('drops an inline fragment emptied by stripping, and keeps its fields in the paths', () => {
+    const { query, nullPaths } = transformGraphQLQueryWithClientDirectives(
+      `
+        query Q {
+          node {
+            __typename
+            ... on A { a @since(version: "new") }
+            ... on B { b }
+          }
+          onlyInline { ... on A { a @since(version: "new") } }
+        }
+      `,
+      {},
+      onOldManager,
+    );
+    expect(query).toBe(`query Q {
+  node {
+    __typename
+    ... on B {
+      b
+    }
+  }
+}`);
+    expect(nullPaths).toEqual([
+      ['node', 'a'],
+      ['onlyInline', 'a'],
+      ['onlyInline'],
+    ]);
+  });
+
+  it('covers every client directive, including variable-driven ones', () => {
+    expect(
+      nullPathsOf(
+        `
+        query Q($skip: Boolean!, $versions: [String!]!) {
+          r {
+            s @skipOnClient(if: $skip)
+            m @sinceMultiple(versions: $versions)
+            d @deprecatedSince(version: "old")
+            dm @deprecatedSinceMultiple(versions: ["old"])
+            kept
+          }
+        }
+      `,
+        { skip: true, versions: ['new'] },
+      ),
+    ).toEqual([
+      ['r', 's'],
+      ['r', 'm'],
+      ['r', 'd'],
+      ['r', 'dm'],
+    ]);
+  });
+
+  it('returns no paths when nothing is stripped', () => {
+    expect(
+      nullPathsOf(
+        `query Q { a { b @since(version: "old") ...F } } fragment F on T { c }`,
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe('fillStrippedFields', () => {
+  it('fills absent keys with null through objects and (nested) lists', () => {
+    const data = {
+      list: {
+        edges: [{ node: { id: '1' } }, { node: { id: '2' } }, { node: null }],
+      },
+      matrix: [[{ id: 'a' }], [{ id: 'b' }]],
+    };
+    fillStrippedFields(data, [
+      ['list', 'edges', 'node', 'x'],
+      ['matrix', 'y'],
+      ['newRoot'],
+    ]);
+    expect(data).toEqual({
+      list: {
+        edges: [
+          { node: { id: '1', x: null } },
+          { node: { id: '2', x: null } },
+          { node: null },
+        ],
+      },
+      matrix: [[{ id: 'a', y: null }], [{ id: 'b', y: null }]],
+      newRoot: null,
+    });
+  });
+
+  it('never overwrites a returned value and stops at a null or absent parent', () => {
+    const data: Record<string, unknown> = {
+      a: { x: 0, y: false },
+      b: null,
+    };
+    fillStrippedFields(data, [
+      ['a', 'x'],
+      ['a', 'y'],
+      ['b', 'x'],
+      ['c', 'x'],
+    ]);
+    expect(data).toEqual({ a: { x: 0, y: false }, b: null });
+  });
+
+  it('tolerates a response without data', () => {
+    expect(() => fillStrippedFields(undefined, [['a']])).not.toThrow();
+    expect(() => fillStrippedFields(null, [['a']])).not.toThrow();
   });
 });
