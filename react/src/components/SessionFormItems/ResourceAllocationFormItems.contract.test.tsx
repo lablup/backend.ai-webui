@@ -48,6 +48,9 @@ vi.mock('react-i18next', async () => {
 // The preset check is the REST side of the contract: the hook must call it
 // with the PASSED project's name as `group`.
 const mockResourcePresetCheck = vi.fn().mockResolvedValue(null);
+const mockUseProjectResourceGroups = vi.fn((_projectName: string) => ({
+  resourceGroups: [{ name: 'mock-rg' }],
+}));
 
 vi.mock('../../hooks', async (importOriginal) => {
   const originalModule = await importOriginal<typeof import('../../hooks')>();
@@ -115,7 +118,8 @@ vi.mock('../../hooks/backendai', async (importOriginal) => {
 });
 
 // The resource-group select fetches its own per-project data internally;
-// stub it to a probe that surfaces the `projectName` it was scoped to.
+// stub it to a probe that surfaces the `projectName` it was scoped to, and
+// stub the group-list hook the preset select filters by.
 vi.mock('backend.ai-ui', async (importOriginal) => {
   const React = await import('react');
   const originalModule = await importOriginal<typeof import('backend.ai-ui')>();
@@ -127,6 +131,8 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         { 'data-testid': 'mock-resource-group-select' },
         props.projectName,
       ),
+    useProjectResourceGroups: (projectName: string) =>
+      mockUseProjectResourceGroups(projectName),
   };
 });
 
@@ -200,6 +206,13 @@ describe('ResourceAllocationFormItems project prop contract (ADR-0001)', () => {
     const select = await screen.findByTestId('mock-resource-group-select');
     expect(select).toHaveTextContent('passed-project-name');
     expect(select).not.toHaveTextContent('ambient-project-name');
+    // So is the group list the preset select filters by.
+    expect(mockUseProjectResourceGroups).toHaveBeenCalledWith(
+      'passed-project-name',
+    );
+    expect(mockUseProjectResourceGroups).not.toHaveBeenCalledWith(
+      'ambient-project-name',
+    );
 
     // The resource-limit preset check runs against the passed project, and
     // its scaling_group guard is satisfied by the passed project's resource
