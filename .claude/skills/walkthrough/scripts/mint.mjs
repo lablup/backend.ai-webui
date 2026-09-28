@@ -827,7 +827,16 @@ async function mintStop(
       { timeout: FIND_TIMEOUT_MS },
     )
     .catch(() => {});
-  return mintInPage(page, stop.find, fields, at);
+  const result = await mintInPage(page, stop.find, fields, at);
+  // The testids replay added can push a stop past the part cap; the manifest's
+  // own via fit before them.
+  if (
+    result.error?.startsWith("anchor is") &&
+    stop.via &&
+    fields.via !== stop.via
+  )
+    return mintInPage(page, stop.find, { ...fields, via: stop.via }, at);
+  return result;
 }
 
 /**

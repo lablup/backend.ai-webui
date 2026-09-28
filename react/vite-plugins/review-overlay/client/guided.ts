@@ -26,7 +26,12 @@ import {
   type PopoverPlace,
   words,
 } from './popover.js';
-import { findAnchorTarget, findViaTarget, isBehindModal } from './resolve.js';
+import {
+  findAnchorTarget,
+  findViaTarget,
+  isBehindModal,
+  nextViaControl,
+} from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
 import type { ReviewServerState } from './types.js';
 import {
@@ -324,15 +329,18 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (!stop || at?.kind !== 'waiting' || at.covered) return null;
     const steps = stop.anchor.via ?? [];
     const said = stopTextIn(stop.anchor, langOf(stop)).via ?? [];
-    for (let i = steps.length - 1; i >= 0; i--) {
-      const element = findViaTarget(
-        steps[i],
-        [said[i]?.click.text, steps[i].click.text],
-        { ignore: host },
-      );
-      if (element) return element;
-    }
-    return null;
+    const found = steps.map((step, i) =>
+      findViaTarget(step, [said[i]?.click.text, step.click.text], {
+        ignore: host,
+      }),
+    );
+    return nextViaControl(steps, found);
+  }
+
+  /** The hint's box, unless the page detached or hid it since `refresh`. */
+  function hintRect(): DOMRect | null {
+    const rect = hint?.isConnected ? hint.getBoundingClientRect() : null;
+    return rect && (rect.width || rect.height) ? rect : null;
   }
 
   const stateText = (id: string): string =>
@@ -386,7 +394,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       };
     }
     if (at.kind === 'waiting') {
-      const rect = hint?.getBoundingClientRect();
+      const rect = hintRect();
       return {
         kind: 'waiting',
         covered: !!at.covered,

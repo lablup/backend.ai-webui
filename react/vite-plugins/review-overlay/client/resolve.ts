@@ -189,11 +189,37 @@ export function findViaTarget(
     if (hits.length === 1) return hits[0];
   }
   const controls = Array.from(doc.querySelectorAll(VIA_CONTROL)).filter(usable);
-  for (const label of labels) {
-    const want = normText(label);
-    if (!want) continue;
-    const hit = controls.find((element) => elementText(element) === want);
-    if (hit) return hit;
+  const wants = labels.map((label) => normText(label)).filter(Boolean);
+  // `textContent` too: `innerText` applies `text-transform`. Then a control
+  // whose label sits beside other text (a tab's count), as a click matched it.
+  const own = (element: Element, want: string) =>
+    elementText(element) === want || normText(element.textContent) === want;
+  const inner = (element: Element, want: string) =>
+    Array.from(element.querySelectorAll('*')).some((child) => own(child, want));
+  for (const match of [own, inner])
+    for (const want of wants) {
+      const hit = controls.find((element) => match(element, want));
+      if (hit) return hit;
+    }
+  return null;
+}
+
+/**
+ * The furthest step whose control is on screen (`found[i]` for `steps[i]`):
+ * an earlier step's control often stays, under the dialog the later one is in.
+ * A label alone can be a look-alike elsewhere (a pager's "Next"), so a later
+ * step found without its testid counts only once no earlier control is left.
+ */
+export function nextViaControl(
+  steps: readonly AnchorVia[],
+  found: readonly (Element | null)[],
+): Element | null {
+  for (let i = steps.length - 1; i >= 0; i--) {
+    const element = found[i];
+    if (!element) continue;
+    const tid = steps[i].click.tid;
+    const byTid = !!tid && element.getAttribute('data-testid') === tid;
+    if (byTid || found.slice(0, i).every((earlier) => !earlier)) return element;
   }
   return null;
 }

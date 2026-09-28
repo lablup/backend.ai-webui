@@ -3,6 +3,7 @@ import {
   findAnchorTarget,
   findViaTarget,
   isBehindModal,
+  nextViaControl,
   PORTAL_MODAL,
   quickFindTarget,
 } from './resolve.js';
@@ -639,5 +640,46 @@ describe('findViaTarget', () => {
     expect(findViaTarget(step, ['Create Folder'])).toBeNull();
     document.querySelector('[data-bai-modal-open]')!.remove();
     expect(findViaTarget({ click: { text: 'Delete' } }, ['Delete'])).toBeNull();
+  });
+});
+
+describe('findViaTarget label matching', () => {
+  it('finds a control whose label sits beside other text, as a click would', () => {
+    document.body.innerHTML =
+      '<div role="tablist"><button role="tab" id="tab"><span>Sessions</span><span>3</span></button></div>';
+    expect(
+      findViaTarget({ click: { text: 'Sessions' } }, ['Sessions'])?.id,
+    ).toBe('tab');
+  });
+});
+
+describe('nextViaControl', () => {
+  const el = (id: string, tid?: string) => {
+    const button = document.createElement('button');
+    button.id = id;
+    if (tid) button.setAttribute('data-testid', tid);
+    return button;
+  };
+  const steps = [
+    { click: { text: 'Create' } },
+    { click: { text: 'Next', tid: 'wizard-next' } },
+  ];
+
+  it('stays on the first step while a later label only matches a look-alike', () => {
+    const create = el('create');
+    const pagerNext = el('pager-next');
+    expect(
+      nextViaControl(
+        [steps[0], { click: { text: 'Next' } }],
+        [create, pagerNext],
+      ),
+    ).toBe(create);
+  });
+
+  it('moves on once the earlier control is gone, or at once on a testid hit', () => {
+    const next = el('next', 'wizard-next');
+    expect(nextViaControl(steps, [null, next])).toBe(next);
+    expect(nextViaControl(steps, [el('create'), next])).toBe(next);
+    expect(nextViaControl(steps, [null, null])).toBeNull();
   });
 });

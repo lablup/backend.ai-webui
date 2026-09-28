@@ -200,6 +200,10 @@ export function createMarkLayer({ root, onSelect }: MarkLayerOptions) {
   function placeHint() {
     if (!hint) return;
     const box = hint.element.getBoundingClientRect();
+    // Detached or hidden since the last render: a ring at 0,0 points at nothing.
+    const gone = !hint.element.isConnected || (!box.width && !box.height);
+    hint.box.style.display = gone ? 'none' : '';
+    hint.badge.style.display = gone ? 'none' : '';
     Object.assign(hint.box.style, {
       left: `${box.left}px`,
       top: `${box.top}px`,
