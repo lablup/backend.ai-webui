@@ -761,7 +761,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       'role',
       'aria-modal',
       'inert',
-      'data-bai-modal-open',
+      'data-uic-modal-open',
     ],
   });
   // A reload beats the debounce by ~400 ms otherwise, and the comment the
