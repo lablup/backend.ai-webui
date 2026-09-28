@@ -1,0 +1,154 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-28T17:43:18.480Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "RBAC Management",
+          "status": "modified",
+          "url": "next/en/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "3a878ce35d3e",
+            "a1798fb07d0b",
+            "1c755e3ca4e8",
+            "90be889be391",
+            "5755ee51fcd1"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "RBAC管理",
+          "status": "modified",
+          "url": "next/ja/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "b5d503eecff3",
+            "8be8de9b1d36",
+            "6a4389ba6755",
+            "04a1ef7a8d0e",
+            "ed69e4fe38ce"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "RBAC 관리",
+          "status": "modified",
+          "url": "next/ko/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "fd104c466f38",
+            "b39ab20ba841",
+            "bc4bbba9eed8",
+            "66d2714b92e8",
+            "1dfd5ac0a059"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 5,
+        "added": 0,
+        "modified": 5,
+        "removed": 0,
+        "images": 5,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "rbac_management",
+          "title": "การจัดการ RBAC",
+          "status": "modified",
+          "url": "next/th/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "21ba9a3ea0b1",
+            "7f5eced6d4b1",
+            "3f386b5409f8",
+            "1966ec566136",
+            "84ce943df145"
+          ]
+        }
+      ]
+    }
+  }
+}
