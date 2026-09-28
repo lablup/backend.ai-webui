@@ -5,6 +5,7 @@ import {
   isBehindModal,
   nextViaControl,
   PORTAL_MODAL,
+  viaStepDone,
   quickFindTarget,
 } from './resolve.js';
 import type { AnchorV3 } from './types.js';
@@ -267,6 +268,25 @@ describe('the landmark’s rect projection', () => {
     // The landmark answer is what `pin.ts` escalates on, and the full ladder's
     // text scan then finds the node the decoy displaced.
     expect(findAnchorTarget(withName)?.textContent).toBe('Login');
+  });
+
+  it('looks through the overlay’s own chrome lying over the recorded spot', () => {
+    mount(
+      '<section data-testid="page-start"><button><svg></svg></button></section>',
+    );
+    const landmark = document.querySelector('[data-testid="page-start"]');
+    const iconOnly = document.querySelector('button') as Element;
+    const chrome = document.createElement('div');
+    chrome.setAttribute('data-bai-review-overlay', '');
+    document.body.append(chrome);
+    stubLayout(landmark as Element, chrome);
+    document.elementsFromPoint = () => [chrome, iconOnly, landmark as Element];
+    try {
+      const noText = projected({ tag: 'button', txt: undefined });
+      expect(findAnchorTarget(noText)).toBe(iconOnly);
+    } finally {
+      delete (document as Partial<Document>).elementsFromPoint;
+    }
   });
 
   it('still projects for an anchor that recorded no text', () => {
@@ -613,43 +633,87 @@ describe('findViaTarget', () => {
   });
   const byTid = (tid: string) =>
     document.querySelector(`[data-testid="${tid}"]`);
+  const click = (text: string, tid?: string) => ({
+    click: tid ? { text, tid } : { text },
+  });
 
   it('finds the control by its testid, whatever language it reads in', () => {
-    const step = { click: { text: 'Create Folder', tid: 'create' } };
     byTid('create')!.textContent = '폴더 생성';
-    expect(findViaTarget(step, ['Create Folder'])).toBe(byTid('create'));
+    expect(findViaTarget([click('Create Folder', 'create')])).toBe(
+      byTid('create'),
+    );
   });
 
   it('falls back to the label, the reader’s language first', () => {
     const upload = document.querySelector('button:not([data-testid])');
-    expect(
-      findViaTarget({ click: { text: 'Upload' } }, ['업로드', 'Upload']),
-    ).toBe(upload);
+    expect(findViaTarget([click('업로드'), click('Upload')])).toBe(upload);
     // The label names the control, never the span inside it or the toolbar.
-    expect(
-      findViaTarget({ click: { text: 'Upload' } }, ['Upload'])?.tagName,
-    ).toBe('BUTTON');
+    expect(findViaTarget([click('Upload')])?.tagName).toBe('BUTTON');
   });
 
   it('points at nothing under an open modal, or when the label is gone', () => {
-    const step = { click: { text: 'Create Folder', tid: 'create' } };
     document.body.insertAdjacentHTML(
       'beforeend',
       '<div data-bai-modal-open><div role="dialog">form</div></div>',
     );
-    expect(findViaTarget(step, ['Create Folder'])).toBeNull();
+    expect(findViaTarget([click('Create Folder', 'create')])).toBeNull();
     document.querySelector('[data-bai-modal-open]')!.remove();
-    expect(findViaTarget({ click: { text: 'Delete' } }, ['Delete'])).toBeNull();
+    expect(findViaTarget([click('Delete')])).toBeNull();
   });
-});
 
-describe('findViaTarget label matching', () => {
   it('finds a control whose label sits beside other text, as a click would', () => {
     document.body.innerHTML =
       '<div role="tablist"><button role="tab" id="tab"><span>Sessions</span><span>3</span></button></div>';
+    expect(findViaTarget([click('Sessions')])?.id).toBe('tab');
+  });
+});
+
+describe('findViaTarget for fill and select', () => {
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div data-testid="filter"><input id="search" placeholder="Search by name"></div>' +
+      '<label for="mode">Usage Mode</label><select id="mode"><option>General</option><option>Models</option></select>' +
+      '<div role="combobox" id="project" aria-labelledby="project-label">Select Project</div>' +
+      '<span id="project-label">Target Project</span>';
+  });
+  const byId = (id: string) => document.getElementById(id);
+
+  it('types into the field a testid wraps, or the one its placeholder names', () => {
+    expect(findViaTarget([{ fill: { tid: 'filter', value: 'x' } }])).toBe(
+      byId('search'),
+    );
     expect(
-      findViaTarget({ click: { text: 'Sessions' } }, ['Sessions'])?.id,
-    ).toBe('tab');
+      findViaTarget([{ fill: { label: 'Search by name', value: 'x' } }]),
+    ).toBe(byId('search'));
+  });
+
+  it('opens the select its label names, then points at the option once listed', () => {
+    const mode = { select: { label: 'Usage Mode', option: 'Models' } };
+    expect(findViaTarget([mode])).toBe(byId('mode'));
+    const project = { select: { label: 'Target Project', option: 'default' } };
+    expect(findViaTarget([project])).toBe(byId('project'));
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="listbox"><div role="option" id="opt">default</div></div>',
+    );
+    expect(findViaTarget([project])).toBe(byId('opt'));
+  });
+
+  it('reads a step as done once the field holds the value or the select shows it', () => {
+    const fill = { fill: { label: 'Search by name', value: 'abc' } };
+    const search = byId('search') as HTMLInputElement;
+    expect(viaStepDone(fill, search)).toBe(false);
+    search.value = 'abc';
+    expect(viaStepDone(fill, search)).toBe(true);
+    // Enter is not something a field can show afterwards.
+    expect(viaStepDone({ fill: { ...fill.fill, enter: 1 } }, search)).toBe(
+      false,
+    );
+    const mode = byId('mode') as HTMLSelectElement;
+    const models = { select: { label: 'Usage Mode', option: 'Models' } };
+    expect(viaStepDone(models, mode)).toBe(false);
+    mode.selectedIndex = 1;
+    expect(viaStepDone(models, mode)).toBe(true);
   });
 });
 
@@ -667,19 +731,31 @@ describe('nextViaControl', () => {
 
   it('stays on the first step while a later label only matches a look-alike', () => {
     const create = el('create');
-    const pagerNext = el('pager-next');
     expect(
       nextViaControl(
         [steps[0], { click: { text: 'Next' } }],
-        [create, pagerNext],
-      ),
+        [create, el('pager-next')],
+      )?.element,
     ).toBe(create);
   });
 
   it('moves on once the earlier control is gone, or at once on a testid hit', () => {
     const next = el('next', 'wizard-next');
-    expect(nextViaControl(steps, [null, next])).toBe(next);
-    expect(nextViaControl(steps, [el('create'), next])).toBe(next);
+    expect(nextViaControl(steps, [null, next])?.index).toBe(1);
+    expect(nextViaControl(steps, [el('create'), next])?.element).toBe(next);
     expect(nextViaControl(steps, [null, null])).toBeNull();
+  });
+
+  it('moves past a step the reader has already done', () => {
+    const input = document.createElement('input');
+    input.value = 'abc';
+    const apply = el('apply');
+    const fillThenApply = [
+      { fill: { label: 'Search', value: 'abc' } },
+      { click: { text: 'Apply' } },
+    ];
+    expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(apply);
+    input.value = 'ab';
+    expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(input);
   });
 });

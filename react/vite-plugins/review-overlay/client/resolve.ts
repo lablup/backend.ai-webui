@@ -8,6 +8,7 @@ import { normText } from './anchor.js';
 import { DIALOG_SELECTOR, isStop } from './stop-guard.js';
 import type { AnchorV3, AnchorVia } from './types.js';
 import { OVERLAY_MARKER_ATTR } from './ui.js';
+import { viaKind, viaLabel, viaTid } from './via.js';
 
 /** How many candidates a text scan will look at before giving up. */
 const SCAN_LIMIT = 5000;
@@ -166,34 +167,92 @@ export function isBehindModal(element: Element): boolean {
 /** What a `via` step clicks: a control, never the wrapper around its label. */
 export const VIA_CONTROL =
   'button, a[href], summary, label, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"]';
+/** What a `fill` step types into. */
+export const VIA_FIELD =
+  'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, [contenteditable="true"], [contenteditable=""], [role="textbox"], [role="searchbox"]';
+/** What a `select` step opens. */
+export const VIA_SELECT = 'select, [role="combobox"]';
+
+/** A field's accessible names: `aria-label`, placeholder, its labels. */
+function fieldNames(element: Element): string[] {
+  const names = [
+    element.getAttribute('aria-label'),
+    element.getAttribute('placeholder'),
+  ];
+  for (const id of (element.getAttribute('aria-labelledby') ?? '').split(/\s+/))
+    if (id)
+      names.push(element.ownerDocument.getElementById(id)?.textContent ?? '');
+  const labels = (element as HTMLInputElement).labels;
+  if (labels)
+    for (const label of Array.from(labels)) names.push(label.textContent);
+  return names.map((name) => normText(name)).filter(Boolean);
+}
+
+/** `root` when it is the field itself, else the one field inside it. */
+function fieldIn(root: Element, selector: string): Element | null {
+  if (root.matches(selector)) return root;
+  const inner = root.querySelectorAll(selector);
+  return inner.length === 1 ? inner[0] : null;
+}
 
 /**
- * The control a `via` step clicks, when it is on screen and not under a modal.
- * A unique testid wins; then each label in turn, the reader's language first,
- * since the app switches language with it.
+ * The control a `via` step acts on, when it is on screen and not under a modal.
+ * `alts` is the step in the reader's words, then in the base language. A
+ * unique testid wins; then the words, the reader's first. A `select` whose
+ * list is open points at the option itself.
  */
 export function findViaTarget(
-  step: AnchorVia,
-  labels: readonly (string | undefined)[],
+  alts: readonly (AnchorVia | undefined)[],
   { doc = document, ignore }: ResolveOptions = {},
 ): Element | null {
+  const step = alts[0];
+  if (!step) return null;
+  const kind = viaKind(step);
+  const same = alts.filter(
+    (alt): alt is AnchorVia => !!alt && viaKind(alt) === kind,
+  );
   const layout = hasLayout(doc);
   const usable = (element: Element) =>
     !isOurs(element, ignore) &&
     (!layout || isRendered(element)) &&
     !isBehindModal(element);
-  if (step.click.tid) {
-    const hits = Array.from(
-      doc.querySelectorAll(`[data-testid="${esc(step.click.tid)}"]`),
-    ).filter(usable);
-    if (hits.length === 1) return hits[0];
-  }
-  const controls = Array.from(doc.querySelectorAll(VIA_CONTROL)).filter(usable);
-  const wants = labels.map((label) => normText(label)).filter(Boolean);
-  // `textContent` too: `innerText` applies `text-transform`. Then a control
-  // whose label sits beside other text (a tab's count), as a click matched it.
+  // `textContent` too: `innerText` applies `text-transform`.
   const own = (element: Element, want: string) =>
     elementText(element) === want || normText(element.textContent) === want;
+  if (kind === 'select') {
+    const options = Array.from(doc.querySelectorAll('[role="option"]')).filter(
+      usable,
+    );
+    for (const alt of same) {
+      if (!('select' in alt)) continue;
+      const want = normText(alt.select.option);
+      const hit = options.find((option) => own(option, want));
+      if (hit) return hit;
+    }
+  }
+  const selector = kind === 'fill' ? VIA_FIELD : VIA_SELECT;
+  const tid = same.map(viaTid).find(Boolean);
+  if (tid) {
+    const hits = Array.from(
+      doc.querySelectorAll(`[data-testid="${esc(tid)}"]`),
+    ).filter(usable);
+    if (hits.length === 1)
+      return kind === 'click'
+        ? hits[0]
+        : (fieldIn(hits[0], selector) ?? hits[0]);
+  }
+  const wants = same.map((alt) => normText(viaLabel(alt))).filter(Boolean);
+  if (kind !== 'click') {
+    const fields = Array.from(doc.querySelectorAll(selector)).filter(usable);
+    for (const want of wants) {
+      const hit = fields.find((field) => fieldNames(field).includes(want));
+      if (hit) return hit;
+    }
+    return null;
+  }
+  const controls = Array.from(doc.querySelectorAll(VIA_CONTROL)).filter(usable);
+  // Then a control whose label sits beside other text (a tab's count), as a
+  // click on the text matched it.
   const inner = (element: Element, want: string) =>
     Array.from(element.querySelectorAll('*')).some((child) => own(child, want));
   for (const match of [own, inner])
@@ -205,21 +264,52 @@ export function findViaTarget(
 }
 
 /**
- * The furthest step whose control is on screen (`found[i]` for `steps[i]`):
- * an earlier step's control often stays, under the dialog the later one is in.
- * A label alone can be a look-alike elsewhere (a pager's "Next"), so a later
- * step found without its testid counts only once no earlier control is left.
+ * Has the reader already done this step? A field that holds the value, a
+ * select that shows the option. A click, or a fill that still has to press
+ * Enter, leaves nothing to read back.
+ */
+export function viaStepDone(step: AnchorVia, element: Element): boolean {
+  if ('fill' in step) {
+    if (step.fill.enter === 1) return false;
+    const value =
+      'value' in element
+        ? String((element as HTMLInputElement).value)
+        : element.textContent;
+    return normText(value) === normText(step.fill.value);
+  }
+  if ('select' in step) {
+    if (element.getAttribute('role') === 'option') return false;
+    const shown =
+      element.tagName === 'SELECT'
+        ? (element as HTMLSelectElement).options[
+            (element as HTMLSelectElement).selectedIndex
+          ]?.textContent
+        : element.textContent;
+    return normText(shown) === normText(step.select.option);
+  }
+  return false;
+}
+
+/**
+ * The furthest step still to do whose control is on screen (`found[i]` for
+ * `steps[i]`): an earlier step's control often stays, under the dialog the
+ * later one is in. A label alone can be a look-alike elsewhere (a pager's
+ * "Next"), so a later step found without its testid counts only once no
+ * earlier step is left to do.
  */
 export function nextViaControl(
   steps: readonly AnchorVia[],
   found: readonly (Element | null)[],
-): Element | null {
+  done: (step: AnchorVia, element: Element) => boolean = viaStepDone,
+): { element: Element; index: number } | null {
+  const left = (i: number) => !!found[i] && !done(steps[i], found[i]!);
   for (let i = steps.length - 1; i >= 0; i--) {
     const element = found[i];
-    if (!element) continue;
-    const tid = steps[i].click.tid;
-    const byTid = !!tid && element.getAttribute('data-testid') === tid;
-    if (byTid || found.slice(0, i).every((earlier) => !earlier)) return element;
+    if (!element || !left(i)) continue;
+    const tid = viaTid(steps[i]);
+    const byTid = !!tid && !!element.closest(`[data-testid="${esc(tid)}"]`);
+    const earlierLeft = steps.slice(0, i).some((_, j) => left(j));
+    if (byTid || !earlierLeft) return { element, index: i };
   }
   return null;
 }
@@ -287,7 +377,12 @@ function rectProjectedTarget(
   const y = box.top + (rect.y + rect.h / 2) * box.height;
   if (x < 0 || y < 0 || x >= view.innerWidth || y >= view.innerHeight)
     return null;
-  const hit = doc.elementFromPoint(x, y);
+  let hit = doc.elementFromPoint(x, y);
+  // The walkthrough's own popover can sit over the spot a stop waits on.
+  if (hit && isOurs(hit, ignore) && typeof doc.elementsFromPoint === 'function')
+    hit =
+      doc.elementsFromPoint(x, y).find((under) => !isOurs(under, ignore)) ??
+      null;
   if (!hit || isOurs(hit, ignore) || !container.contains(hit)) return null;
   return hit;
 }

@@ -19,6 +19,8 @@ const TOP_RESERVE = 60;
 const BOTTOM_RESERVE = 70;
 /** Under this the panel scrolls instead of shrinking out of readability. */
 const MIN_HEIGHT = 200;
+/** A side of the mark this short still shows the head, a few lines, the foot. */
+const MIN_FIT = 160;
 /** Stands in until the panel has been laid out and can be measured. */
 const ASSUMED_HEIGHT = 300;
 
@@ -196,6 +198,8 @@ const LABELS: Record<string, Record<string, string>> = {
     away: 'On {page} — › takes you there.',
     waitBadge: 'Waiting',
     clickHere: 'Click here',
+    typeHere: 'Type “{v}”',
+    chooseHere: 'Choose “{v}”',
   },
   ko: {
     changed: '무엇이 바뀌었나',
@@ -210,6 +214,8 @@ const LABELS: Record<string, Record<string, string>> = {
     away: '{page} 페이지에 있습니다 — › 로 이동합니다.',
     waitBadge: '대기 중',
     clickHere: '여기를 클릭',
+    typeHere: '“{v}” 입력',
+    chooseHere: '“{v}” 선택',
   },
 };
 
@@ -348,6 +354,8 @@ export function createPopover(
       MIN_HEIGHT,
       window.innerHeight - TOP_RESERVE - BOTTOM_RESERVE,
     );
+    // Measure the whole panel: a cap a previous placement set is not its size.
+    pop.style.maxHeight = '';
     const height = Math.min(pop.offsetHeight || ASSUMED_HEIGHT, cap);
     const lowest = Math.max(PAD, window.innerHeight - BOTTOM_RESERVE - height);
     const highest = Math.min(TOP_RESERVE, lowest);
@@ -369,10 +377,23 @@ export function createPopover(
     );
     const below = rect.bottom + GAP;
     const above = rect.top - height - GAP;
+    const roomBelow = window.innerHeight - BOTTOM_RESERVE - below;
+    const roomAbove = rect.top - GAP - TOP_RESERVE;
+    let top = clamp(below <= lowest ? below : above);
+    // On a short window the whole panel fits on neither side, and clamping it
+    // back on screen lays it over the very element it points at. Shorter is
+    // better: the larger side, capped to it, with the body scrolling.
+    if (height > roomBelow && height > roomAbove) {
+      const fit = Math.max(roomBelow, roomAbove);
+      if (fit >= MIN_FIT) {
+        pop.style.maxHeight = `${fit}px`;
+        top = roomBelow >= roomAbove ? below : rect.top - GAP - fit;
+      }
+    }
     Object.assign(pop.style, {
       transform: '',
       left: `${left}px`,
-      top: `${clamp(below <= lowest ? below : above)}px`,
+      top: `${top}px`,
     });
   }
 
