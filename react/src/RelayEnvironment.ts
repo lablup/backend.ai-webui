@@ -2,10 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  fillStrippedFields,
-  transformGraphQLQueryWithClientDirectives,
-} from './helper/graphql-transformer';
+import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';
 import {
@@ -74,12 +71,11 @@ const fetchFn: FetchFunction = async (
 ) => {
   await waitForBAIClient();
 
-  const { query: transformedQuery, nullPaths } =
-    transformGraphQLQueryWithClientDirectives(
-      request.text || '',
-      variables,
-      isNotCompatibleWithVersion,
-    );
+  const transformedQuery = manipulateGraphQLQueryWithClientDirectives(
+    request.text || '',
+    variables,
+    isNotCompatibleWithVersion,
+  );
 
   const reqBody = {
     query: transformedQuery,
@@ -105,8 +101,6 @@ const fetchFn: FetchFunction = async (
         }
         throw err;
       })) || {};
-
-  fillStrippedFields(result.data, nullPaths);
 
   if (result.errors) {
     // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
@@ -149,12 +143,11 @@ function fetchForSubscribe(
     if (!operation.text) {
       return sink.error(new Error('Operation text cannot be empty'));
     }
-    const { query: transformedOperation, nullPaths } =
-      transformGraphQLQueryWithClientDirectives(
-        operation.text || '',
-        variables,
-        isNotCompatibleWithVersion,
-      );
+    const transformedOperation = manipulateGraphQLQueryWithClientDirectives(
+      operation.text || '',
+      variables,
+      isNotCompatibleWithVersion,
+    );
 
     return subscriptionsClient.subscribe(
       {
@@ -162,14 +155,7 @@ function fetchForSubscribe(
         query: transformedOperation,
         variables,
       },
-      {
-        next: (value) => {
-          fillStrippedFields(value.data, nullPaths);
-          sink.next(value as GraphQLSingularResponse);
-        },
-        error: (error) => sink.error(error as Error),
-        complete: () => sink.complete(),
-      },
+      sink as Parameters<typeof subscriptionsClient.subscribe>[1],
     );
   });
 }
@@ -181,6 +167,9 @@ function createRelayEnvironment() {
       // FR-3430: retains step queries released during FairShare step navigation (default 10)
       gcReleaseBufferSize: 20,
     }),
+    // fetchFn strips version-gated fields (@since etc.); store them as null, not
+    // missing, so availability checks can serve the cache instead of refetching.
+    treatMissingFieldsAsNull: true,
   });
 }
 
