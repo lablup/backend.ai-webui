@@ -697,7 +697,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             : t('credential.CreateUser')
       }
       okText={user ? t('button.Save') : t('button.Create')}
-      destroyOnHidden
       onOk={() => formRef.current?.submit()}
       confirmLoading={isInFlight}
       // A bulk create that partially failed leaves this form open, so its

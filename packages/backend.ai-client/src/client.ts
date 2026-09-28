@@ -1021,6 +1021,10 @@ export class Client {
       // `type`, so the Projects page can hide the per-user PERSONAL projects
       // (BA-7659) behind a removable chip. FR-4015.
       this._features['group-nodes-type-filter'] = true;
+      // BA-8025 / backend PR #14811 — model card search moved onto searchable
+      // field declarations: `ModelCardV2Filter` gained the metadata axes and
+      // `ModelCardV2OrderField` the matching order members. FR-4013.
+      this._features['model-card-search-axes'] = true;
       // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.

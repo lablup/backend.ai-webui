@@ -6,6 +6,7 @@
     "DiskPerc": "Χρήση δίσκου %",
     "Endpoint": "Σημείο τερματισμού",
     "FailedToLoadCellData": "Αποτυχία φόρτωσης δεδομένων.",
+    "LostAt": "Χάθηκε στις",
     "NoAvailableLiveStat": "Καμία διαθέσιμη ζωντανή στατιστική",
     "Region": "Περιοχή",
     "ResourceGroup": "Ομάδα πόρων",
@@ -13,7 +14,8 @@
     "Schedulable": "Προγραμματιζόμενο",
     "Starts": "Εκκινήσεις",
     "Status": "Κατάσταση",
-    "Utilization": "Χρήση"
+    "Utilization": "Χρήση",
+    "Version": "Έκδοση"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Επιτρέπεται",

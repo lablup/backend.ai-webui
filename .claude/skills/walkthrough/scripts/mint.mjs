@@ -297,9 +297,9 @@ const OVERLAY_ROOT_JS = `() => {
   return host ? (host.shadowRoot ?? host) : null;
 }`;
 
-async function mintInPage(page, find, fields, at) {
+async function mintInPage(page, find, fields, at, texts = {}) {
   return page.evaluate(
-    async ([find, findJs, fields, at, maxPart]) => {
+    async ([find, findJs, fields, at, maxPart, texts]) => {
       const [anchorMod, codecMod, idMod] = await Promise.all(
         ["anchor", "codec", "id"].map(
           (name) => import(/* @vite-ignore */ `/__review/${name}.js`),
@@ -317,14 +317,20 @@ async function mintInPage(page, find, fields, at) {
       // drop on read must never leave here in the first place. `at` is not an
       // anchor field — it only seasons the id.
       const raw = { ...anchorMod.captureAnchorSignals(el), ...fields };
-      // A translated stop is read with the app in either language, and `txt`
-      // is the element's label in ONE of them: every resolution tier ANDs it
-      // (`resolve.ts`), so keeping it would unpin the stop the moment the
-      // reader switches. Without it a strict stop resolves by selector,
-      // testid landmark and rect, which no language changes. The label the
-      // comment shows still quotes the text captured here.
+      // A translated stop is read with the app in any of its languages, and
+      // every resolution tier ANDs `txt` (`resolve.ts`): so it travels per
+      // language — the base one in `txt`, each translation's in its `i18n`
+      // entry — as `mintStop` read them. A language it could not read resolves
+      // by selector, testid landmark and rect.
       const captured = raw.txt;
-      if (raw.i18n) delete raw.txt;
+      if (raw.i18n) {
+        delete raw.txt;
+        if (texts[raw.lng]) raw.txt = texts[raw.lng];
+        const i18n = { ...raw.i18n };
+        for (const lang of Object.keys(i18n))
+          if (texts[lang]) i18n[lang] = { ...i18n[lang], txt: texts[lang] };
+        raw.i18n = i18n;
+      }
       const anchor = guard ? guard.stripInvalidStopFields(raw) : raw;
       const b64 = await codecMod.encodeAnchor(anchor);
       if (b64.length > maxPart)
@@ -352,7 +358,7 @@ async function mintInPage(page, find, fields, at) {
         dropped,
       };
     },
-    [find, FIND_JS, fields, at, MAX_PART_B64],
+    [find, FIND_JS, fields, at, MAX_PART_B64, texts],
   );
 }
 
@@ -361,15 +367,150 @@ const waitForOverlay = (page) =>
     timeout: 30_000,
   });
 
-async function replayVia(page, via, settleMs) {
-  for (const step of via ?? []) {
-    const { text, tid } = step.click;
-    const target = tid
-      ? page.getByTestId(tid).first()
-      : page.getByText(text, { exact: true }).first();
-    await target.click({ timeout: 15_000 });
-    await page.waitForTimeout(settleMs);
+/** The overlay's `VIA_CONTROL` / `VIA_FIELD` / `VIA_SELECT` (resolve.ts). */
+const VIA_CONTROL =
+  'button, a[href], summary, label, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"]';
+const VIA_FIELD =
+  'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, [contenteditable="true"], [contenteditable=""], [role="textbox"], [role="searchbox"]';
+const VIA_SELECT = 'select, [role="combobox"]';
+
+/**
+ * The testid the overlay can find this control by: a clicked control's own,
+ * or a field's own or its wrapper's when the wrapper holds only that field.
+ * Kept only when no other rendered node shares it.
+ */
+function ownTestid(element, { control, field }) {
+  let node = control ? (element.closest(control) ?? element) : element;
+  if (field && !node.getAttribute("data-testid")) {
+    const wrap = node.closest("[data-testid]");
+    if (wrap && wrap.querySelectorAll(field).length === 1) node = wrap;
   }
+  const id = node.getAttribute("data-testid");
+  if (!id) return null;
+  const rendered = [
+    ...document.querySelectorAll(`[data-testid="${CSS.escape(id)}"]`),
+  ].filter((other) => other.getClientRects().length);
+  return rendered.length === 1 ? id : null;
+}
+
+/** The first of these locators to show a visible match, waiting as a click would. */
+async function firstVisible(page, locators, what) {
+  const deadline = Date.now() + 15_000;
+  do {
+    for (const locator of locators) {
+      const visible = locator.filter({ visible: true });
+      if (await visible.count()) return visible.first();
+    }
+    await page.waitForTimeout(250);
+  } while (Date.now() < deadline);
+  throw new Error(`no ${what} on the page`);
+}
+
+/** A field by the testid on it or around it, else by any of its names. */
+async function locateField(page, tid, labels, selector, roles) {
+  if (tid) {
+    const root = page.getByTestId(tid).first();
+    await root.waitFor({ timeout: 15_000 });
+    const inner = root.locator(selector);
+    return (await inner.count()) === 1 ? inner : root;
+  }
+  return firstVisible(
+    page,
+    labels.flatMap((label) => [
+      page.getByLabel(label, { exact: true }),
+      page.getByPlaceholder(label, { exact: true }),
+      ...roles.map((role) =>
+        page.getByRole(role, { name: label, exact: true }),
+      ),
+    ]),
+    `field named ${labels.map((l) => `"${l}"`).join(" / ")}`,
+  );
+}
+
+/**
+ * Replay each step, and hand the steps back with the control's testid added:
+ * the overlay points at the control by it, which survives the KO/EN toggle
+ * where the label does not. The page may be in any language the stop is
+ * written in, so each label is tried in all of them.
+ */
+async function replayVia(page, stop, settleMs) {
+  const replayed = [];
+  for (const [i, step] of (stop.via ?? []).entries()) {
+    const kind = step.fill ? "fill" : step.select ? "select" : "click";
+    const body = step[kind];
+    const alts = [
+      body,
+      ...Object.values(stop.i18n ?? {})
+        .map((text) => text.via?.[i]?.[kind])
+        .filter(Boolean),
+    ];
+    const words = (key) => [
+      ...new Set(alts.map((alt) => alt[key]).filter(Boolean)),
+    ];
+    let target;
+    let scope;
+    if (kind === "fill") {
+      scope = { field: VIA_FIELD };
+      target = await locateField(page, body.tid, words("label"), VIA_FIELD, [
+        "textbox",
+        "searchbox",
+        "combobox",
+      ]);
+    } else if (kind === "select") {
+      scope = { field: VIA_SELECT };
+      target = await locateField(page, body.tid, words("label"), VIA_SELECT, [
+        "combobox",
+      ]);
+    } else {
+      scope = { control: VIA_CONTROL };
+      target = body.tid
+        ? page.getByTestId(body.tid).first()
+        : await firstVisible(
+            page,
+            words("text").map((text) => page.getByText(text, { exact: true })),
+            `control reading ${words("text")
+              .map((t) => `"${t}"`)
+              .join(" / ")}`,
+          );
+    }
+    // Before acting, which may unmount the control.
+    const found = body.tid
+      ? null
+      : await target.evaluate(ownTestid, scope).catch(() => null);
+    const before = new URL(page.url()).search;
+    if (kind === "fill") {
+      await target.fill(body.value, { timeout: 15_000 });
+      if (body.enter === 1) await target.press("Enter");
+    } else if (kind === "select") {
+      if (await target.evaluate((el) => el.tagName === "SELECT"))
+        await target.selectOption({ label: body.option });
+      else {
+        await target.click({ timeout: 15_000 });
+        const option = await firstVisible(
+          page,
+          words("option").map((name) =>
+            page.getByRole("option", { name, exact: true }),
+          ),
+          `option ${words("option")
+            .map((o) => `"${o}"`)
+            .join(" / ")}`,
+        );
+        await option.click({ timeout: 15_000 });
+      }
+    } else {
+      await target.click({ timeout: 15_000 });
+    }
+    await page.waitForTimeout(settleMs);
+    // The stop records the URL it lands on, so a step that moves the query
+    // would land the reader on its outcome and then fight it on replay.
+    const after = new URL(page.url()).search;
+    if (kind !== "click" && after !== before)
+      throw new Error(
+        `via[${i}] ${kind} changes the URL query to "${after}": the page keeps that state in the URL, so put it in the stop's route instead`,
+      );
+    replayed.push(found ? { [kind]: { ...body, tid: found } } : step);
+  }
+  return replayed;
 }
 
 /**
@@ -779,28 +920,131 @@ async function login(page, base, endpoint, env) {
   }
 }
 
+/** Put the app in `lang` through its own switch; false when it would not go. */
+function showIn(page, lang) {
+  return page.evaluate(async (lang) => {
+    const switchLanguage = window.switchLanguage;
+    if (typeof switchLanguage !== "function") return false;
+    for (let i = 0; i < 40 && document.documentElement.lang !== lang; i++) {
+      switchLanguage(lang);
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    await new Promise((r) => setTimeout(r, 400));
+    return document.documentElement.lang === lang;
+  }, lang);
+}
+
+/**
+ * The element's text, with the overlay's own capture: by the stop's `find`, or
+ * in another language's pass by where it stood — the element of the same tag
+ * under its left edge, which a translated (longer, shorter) text keeps.
+ */
+function readElement(page, find, spot) {
+  return page.evaluate(
+    async ([find, findJs, spot]) => {
+      const anchorMod = await import(/* @vite-ignore */ "/__review/anchor.js");
+      const el = spot
+        ? document
+            .elementsFromPoint(spot.x, spot.y)
+            .find(
+              (node) =>
+                node.tagName === spot.tag &&
+                !node.closest("[data-bai-review-overlay]"),
+            )
+        : (0, eval)(findJs)(find);
+      if (!el) return null;
+      el.scrollIntoView({ block: "center" });
+      const box = el.getBoundingClientRect();
+      return {
+        txt: anchorMod.captureAnchorSignals(el).txt,
+        lang: document.documentElement.lang,
+        spot: {
+          x: box.left + Math.min(4, box.width / 2),
+          y: box.top + box.height / 2,
+          tag: el.tagName,
+        },
+      };
+    },
+    [find, FIND_JS, spot],
+  );
+}
+
 async function mintStop(
   page,
   { stop, origin, projectBase, settleMs, fields, at },
 ) {
   // Admin pages live outside `/project/<name>`; a stop says so with scope: "app".
   const prefix = stop.scope === "app" ? "" : projectBase;
-  await page.goto(`${origin}${prefix}${stop.route}`, {
-    waitUntil: "domcontentloaded",
-  });
-  await waitForOverlay(page);
-  await page.waitForTimeout(settleMs);
-  await replayVia(page, stop.via, settleMs);
+  /** Open the stop's page (in `lang`, when given) and replay its via. */
+  const reach = async (lang) => {
+    await page.goto(`${origin}${prefix}${stop.route}`, {
+      waitUntil: "domcontentloaded",
+    });
+    await waitForOverlay(page);
+    await page.waitForTimeout(settleMs);
+    // The app applies the account's language when its shell mounts, which
+    // undoes a switch made before it.
+    if (lang) {
+      await page
+        .locator('[data-testid="user-dropdown-button"]')
+        .waitFor({ timeout: 60_000 })
+        .catch(() => {});
+      await page.waitForTimeout(1_000);
+      if (!(await showIn(page, lang))) return null;
+    }
+    return replayVia(page, stop, settleMs);
+  };
+  const waitFor = () =>
+    page
+      .waitForFunction(
+        ([find, findJs]) => !!(0, eval)(findJs)(find),
+        [stop.find, FIND_JS],
+        { timeout: FIND_TIMEOUT_MS },
+      )
+      .catch(() => {});
+
+  // A translated stop's element text, per language: an element rendered in
+  // one language (a validation message) keeps that text when the app merely
+  // switches, so each language gets its own replay.
+  const texts = {};
+  if (stop.i18n) {
+    await reach();
+    await waitFor();
+    const home = await readElement(page, stop.find);
+    if (home) {
+      texts[home.lang] = home.txt;
+      for (const lang of [stop.lng, ...Object.keys(stop.i18n)]) {
+        if (!lang || lang === home.lang) continue;
+        // The account's language can still land after the switch; the same
+        // text as at home is worth another pass, and is kept after the last
+        // one, since a name reads the same in every language.
+        for (let attempt = 0; attempt < 3; attempt++) {
+          if (!(await reach(lang).catch(() => null))) continue;
+          await page.waitForTimeout(settleMs);
+          const there = await readElement(page, stop.find, home.spot);
+          if (there?.lang !== lang || !there.txt) continue;
+          texts[lang] = there.txt;
+          if (there.txt !== home.txt) break;
+        }
+      }
+    }
+  }
+
+  const via = await reach();
+  if (stop.via) fields.via = via;
   // A lazy route renders long after `domcontentloaded`, so wait for the
   // element itself rather than guessing how long the page needs.
-  await page
-    .waitForFunction(
-      ([find, findJs]) => !!(0, eval)(findJs)(find),
-      [stop.find, FIND_JS],
-      { timeout: FIND_TIMEOUT_MS },
-    )
-    .catch(() => {});
-  return mintInPage(page, stop.find, fields, at);
+  await waitFor();
+  const result = await mintInPage(page, stop.find, fields, at, texts);
+  // The testids replay added can push a stop past the part cap; the manifest's
+  // own via fit before them.
+  if (
+    result.error?.startsWith("anchor is") &&
+    stop.via &&
+    fields.via !== stop.via
+  )
+    return mintInPage(page, stop.find, { ...fields, via: stop.via }, at, texts);
+  return result;
 }
 
 /**
@@ -821,6 +1065,9 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       !stop.stop.via?.length;
     if (!samePage || !landed) {
       const query = stop.anchor.q ? `?${stop.anchor.q}` : "";
+      // A hash-only change is a same-document jump: the dialog a previous
+      // stop's via opened would stay open and cover this stop.
+      await page.goto("about:blank");
       await page.goto(
         `${origin}${samePage ? landing.p : stop.anchor.p}${query}#${fragment}`,
         { waitUntil: "domcontentloaded" },
@@ -828,8 +1075,7 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       await waitForOverlay(page);
       await page.waitForTimeout(settleMs);
       landed = samePage;
-      if (!samePage)
-        await replayVia(page, stop.stop.via, settleMs).catch(() => {});
+      if (!samePage) await replayVia(page, stop.stop, settleMs).catch(() => {});
     }
     // Only the focus pin is scrolled to; every other stop of a same-page set
     // would be measured docked-away rather than on its element.

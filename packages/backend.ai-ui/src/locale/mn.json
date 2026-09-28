@@ -6,6 +6,7 @@
     "DiskPerc": "Диск %",
     "Endpoint": "Эцсийн цэг",
     "FailedToLoadCellData": "Өгөгдөл ачааллахад алдаа гарлаа.",
+    "LostAt": "Тасарсан цаг",
     "NoAvailableLiveStat": "Амьд статистик байхгүй",
     "Region": "Бүс",
     "ResourceGroup": "Ресурсын бүлэг",
@@ -13,7 +14,8 @@
     "Schedulable": "Хуваарьчилж болох",
     "Starts": "Эхлэлт",
     "Status": "Төлөв",
-    "Utilization": "Ашиглалт"
+    "Utilization": "Ашиглалт",
+    "Version": "Хувилбар"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Зөвшөөрсөн",

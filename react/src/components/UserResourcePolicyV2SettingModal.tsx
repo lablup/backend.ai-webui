@@ -203,7 +203,6 @@ const UserResourcePolicyV2SettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onCancel()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateUserResourcePolicy ||
         isInFlightCommitModifyUserResourcePolicy

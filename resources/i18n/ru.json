@@ -227,6 +227,7 @@
     "DiskPerc": "Диск %",
     "ElapsedTime": "Прошедшее время",
     "Endpoint": "Конечная точка",
+    "LostAt": "Потерян",
     "Maintaining": "Поддержание",
     "NoAgentToDisplay": "Нет агентов для отображения",
     "NoAvailableLiveStat": "Нет доступной оперативной статистики",
@@ -243,8 +244,10 @@
     "StartsAt": "Запущено",
     "Status": "Статус",
     "StatusChanged": "Изменено",
+    "StatusChangedAt": "Статус изменён",
     "Terminated": "Прекращено",
     "Utilization": "Утилизация",
+    "Version": "Версия",
     "WatcherActionFailed": "Не удалось управлять агентом.",
     "WatcherActionWarning": "Запущенные сеансы на этом агенте могут быть затронуты.",
     "WatcherRestart": "Перезапустить агент",
@@ -257,6 +260,7 @@
   "agentStats": {
     "AgentStats": "Статистика агента",
     "AgentStatsDescription": "На этой панели показаны все используемые ресурсы всеми агентами в системе. \nЗначения представляют общий объем использованных ресурсов всеми активными сеансами.",
+    "SchedulableAgents": "Планируемые агенты",
     "UsedResources": "Использованные ресурсы"
   },
   "aiAgent": {

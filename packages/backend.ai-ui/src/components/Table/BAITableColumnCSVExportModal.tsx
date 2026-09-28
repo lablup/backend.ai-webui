@@ -30,7 +30,7 @@
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
-import BAIDialog from '../BAIDialog';
+import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -43,7 +43,10 @@ import { TextInput } from '@astryxdesign/core/TextInput';
 import * as _ from 'lodash-es';
 import React, { useMemo, useState } from 'react';
 
-export interface BAITableColumnCSVExportModalProps<T = unknown> {
+export interface BAITableColumnCSVExportModalProps<T = unknown> extends Pick<
+  BAIDialogProps,
+  'afterOpenChange'
+> {
   open: boolean;
   /** `true` when an export actually ran, `false` on cancel / dismiss. */
   onRequestClose?: (success: boolean) => void;
@@ -69,7 +72,8 @@ const BAITableColumnCSVExportModal = <T,>({
   supportedFields,
   columns,
   notice,
-}: BAITableColumnCSVExportModalProps<T>): React.JSX.Element | null => {
+  afterOpenChange,
+}: BAITableColumnCSVExportModalProps<T>): React.JSX.Element => {
   'use memo';
 
   const { t } = useBAIi18n();
@@ -177,14 +181,13 @@ const BAITableColumnCSVExportModal = <T,>({
     });
   };
 
-  if (!open) return null;
-
   return (
     <BAIDialog
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
       }}
+      afterOpenChange={afterOpenChange}
       width={500}
       purpose="form"
     >

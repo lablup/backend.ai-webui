@@ -6,6 +6,7 @@
     "DiskPerc": "Festplattenauslastung %",
     "Endpoint": "Endpunkt",
     "FailedToLoadCellData": "Daten konnten nicht geladen werden.",
+    "LostAt": "Verloren am",
     "NoAvailableLiveStat": "Keine Live-Statistik verfügbar",
     "Region": "Region",
     "ResourceGroup": "Ressourcengruppe",
@@ -13,7 +14,8 @@
     "Schedulable": "Planbar",
     "Starts": "Startvorgänge",
     "Status": "Status",
-    "Utilization": "Auslastung"
+    "Utilization": "Auslastung",
+    "Version": "Version"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Erlaubt",

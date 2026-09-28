@@ -330,7 +330,6 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onCancel()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateKeypairResourcePolicy ||
         isInFlightCommitModifyKeypairResourcePolicy

@@ -227,6 +227,7 @@
     "DiskPerc": "Disk %",
     "ElapsedTime": "Geçen Süre",
     "Endpoint": "uç nokta",
+    "LostAt": "Kayıp Zamanı",
     "Maintaining": "bakım",
     "NoAgentToDisplay": "Görüntülenecek Temsilci Yok",
     "NoAvailableLiveStat": "Mevcut canlı istatistik yok",
@@ -243,8 +244,10 @@
     "StartsAt": "Başlama Zamanı",
     "Status": "Durum",
     "StatusChanged": "Değiştirildi",
+    "StatusChangedAt": "Durum Değişim Zamanı",
     "Terminated": "Sonlandırılmış",
     "Utilization": "Kullanım",
+    "Version": "Sürüm",
     "WatcherActionFailed": "Ajan kontrol edilemedi.",
     "WatcherActionWarning": "Bu ajanda çalışan oturumlar etkilenebilir.",
     "WatcherRestart": "Ajanı Yeniden Başlat",
@@ -257,6 +260,7 @@
   "agentStats": {
     "AgentStats": "Temsilci İstatistikleri",
     "AgentStatsDescription": "Bu panel, sistemdeki tüm aracılarda kullanılan tüm kaynakları gösterir. \nDeğerler, tüm etkin oturumlar tarafından kullanılan toplam kaynakları temsil eder.",
+    "SchedulableAgents": "Zamanlanabilir Aracılar",
     "UsedResources": "Kullanılan Kaynaklar"
   },
   "aiAgent": {
