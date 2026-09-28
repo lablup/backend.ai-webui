@@ -4754,6 +4754,7 @@
         "projectSelect.ProjectAdminBadge",
         "resourcePreset.ExceedsAllocatableResources",
         "resourcePreset.OnlyAvailableInResourceGroup",
+        "resourcePreset.ResourcePreset",
         "resourcePreset.ResourcePresets",
         "resourcePreset.SHMEMShouldBeSmallerThanMemory",
         "session.GoToUploadSessionList",

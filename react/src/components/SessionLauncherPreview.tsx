@@ -126,9 +126,19 @@ const SessionLauncherPreview: React.FC<{
     { fetchPolicy: 'store-or-network' },
   );
   const allocationPreset = form.getFieldValue('allocationPreset');
-  const allocationPresetLabel =
-    _.find(resource_presets, (preset) => preset?.id === allocationPreset)
-      ?.name ?? allocationPreset;
+  // Names how the resources were allocated, ahead of the numbers.
+  const allocationMethodLabel = !allocationPreset
+    ? undefined
+    : allocationPreset === 'custom'
+      ? t('session.launcher.CustomAllocation')
+      : allocationPreset === 'minimum-required'
+        ? t('session.launcher.MiniumAllocation')
+        : `${t('resourcePreset.ResourcePreset')}: ${
+            _.find(
+              resource_presets,
+              (preset) => preset?.id === allocationPreset,
+            )?.name ?? allocationPreset
+          }`;
   const autoMountedFolders = useSuspendedAutoMountedFolders({
     ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
@@ -347,12 +357,9 @@ const SessionLauncherPreview: React.FC<{
                 wrap="wrap"
                 style={{ flex: 1 }}
               >
-                {form.getFieldValue('allocationPreset') === 'custom' ? (
-                  // t('session.launcher.CustomAllocation')
-                  ''
-                ) : (
-                  <Token label={allocationPresetLabel} />
-                )}
+                {allocationMethodLabel ? (
+                  <Token label={allocationMethodLabel} />
+                ) : null}
 
                 <ResourceNumbersOfSession
                   resource={form.getFieldValue('resource')}
