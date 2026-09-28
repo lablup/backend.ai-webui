@@ -588,9 +588,12 @@ async function retryWithTableRefresh(
 }
 
 export function getVFolderRow(page: Page, folderName: string) {
-  return page
-    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
-    .first();
+  // The folder glyph beside the name is decorative (`BAIVFolderIdenticon`
+  // renders `alt=""`), so the row's accessible name no longer starts with
+  // "VFolder Identicon" — it starts with the selection checkbox's
+  // "Select <global id>". Match the row by its text instead, which is what
+  // stays stable across the name column's renderers.
+  return page.getByRole('row').filter({ hasText: folderName }).first();
 }
 
 export async function verifyVFolder(
