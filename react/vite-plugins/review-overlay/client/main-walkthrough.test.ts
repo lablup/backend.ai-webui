@@ -605,6 +605,10 @@ describe('a stop behind a dialog', () => {
     expect(marks()).toHaveLength(1);
     expect(pillText()).toContain('waiting');
     expect(node('.bai-popover .via')?.textContent).toContain('Click “Upload”');
+    // The neighbour's mark must not read as the waiting stop's element.
+    expect(marks()[0].className).toContain('muted');
+    expect(node<HTMLElement>('.wt-badge.num')?.style.display).toBe('none');
+    expect(node('.bai-popover .wait')?.textContent).toBe('Waiting');
 
     // The dialog opens. No URL changed, so only the DOM settle can catch it.
     document.body.insertAdjacentHTML(
@@ -615,6 +619,10 @@ describe('a stop behind a dialog', () => {
 
     expect(marks()).toHaveLength(2);
     expect(pillText()).not.toContain('waiting');
+    expect(marks().some((mark) => mark.className.includes('muted'))).toBe(
+      false,
+    );
+    expect(node('.bai-popover .wait')?.textContent).toBe('');
   });
 
   it('keeps its popover open while the reader follows the via sentence', async () => {

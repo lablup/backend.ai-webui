@@ -289,6 +289,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   function renderMarks(where: Place[]) {
     const specs: MarkSpec[] = [];
+    const waiting = where[current]?.kind === 'waiting';
     stops.forEach((stop, index) => {
       const at = where[index];
       if (at.kind !== 'located') return;
@@ -302,6 +303,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
         viewed: progress.isViewed(stop.id),
         commented: !!progress.comment(stop.id).trim(),
         current: index === current,
+        muted: waiting,
       });
     });
     marks.render(specs);

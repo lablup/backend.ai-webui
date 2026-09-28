@@ -28,6 +28,11 @@ const STYLE = `
     outline-color: var(--bai-viewed-badge); outline-style: dotted;
   }
   .wt-mark.current { outline-width: 2.5px; }
+  /* The current stop is waiting: a neighbour must not read as its element. */
+  .wt-mark.muted {
+    background: transparent; box-shadow: none; outline-width: 1px;
+    outline-style: dotted; outline-color: var(--bai-review-text-dim);
+  }
   .wt-badge {
     position: absolute; z-index: 1; font-size: 10px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .04em; padding: 1px 6px;
@@ -56,6 +61,8 @@ export interface MarkSpec {
   viewed: boolean;
   commented: boolean;
   current: boolean;
+  /** Outline only, no badges: the current stop is waiting elsewhere. */
+  muted: boolean;
 }
 
 interface Mark {
@@ -163,13 +170,14 @@ export function createMarkLayer({ root, onSelect }: MarkLayerOptions) {
     mark.spec = spec;
     mark.box.className = `wt-mark${spec.type === 'added' ? ' added' : ''}${
       spec.viewed ? ' viewed' : ''
-    }${spec.current ? ' current' : ''}`;
+    }${spec.current ? ' current' : ''}${spec.muted ? ' muted' : ''}`;
+    mark.num.style.display = spec.muted ? 'none' : '';
     mark.num.textContent = String(spec.index + 1);
     mark.num.title = spec.label;
     const text = stateText(spec);
     mark.badge.textContent = text;
     mark.badge.className = `wt-badge${spec.commented ? ' comment' : ''}`;
-    mark.badge.style.display = text ? 'block' : 'none';
+    mark.badge.style.display = text && !spec.muted ? 'block' : 'none';
     place(mark);
   }
 

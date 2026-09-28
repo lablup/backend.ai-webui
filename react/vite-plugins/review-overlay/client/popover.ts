@@ -48,6 +48,11 @@ const STYLE = `
   }
   .bai-popover .type.added { background: var(--bai-add); }
   .bai-popover .kind { color: var(--bai-review-text-dim); }
+  .bai-popover .wait {
+    font-weight: 600; font-size: 11px; padding: 1px 7px; border-radius: 999px;
+    border: 1px dashed var(--bai-mod); color: var(--bai-mod-text);
+  }
+  .bai-popover .wait:empty { display: none; }
   .bai-popover .spacer { flex: 1; }
   .bai-popover button {
     border: 1px solid var(--bai-pop-border); background: transparent;
@@ -183,6 +188,7 @@ const LABELS: Record<string, Record<string, string>> = {
     waiting: 'Not on screen yet — the mark appears when it is.',
     covered: 'Behind the open dialog — close it and the mark appears.',
     away: 'On {page} — › takes you there.',
+    waitBadge: 'Waiting',
   },
   ko: {
     changed: '무엇이 바뀌었나',
@@ -195,6 +201,7 @@ const LABELS: Record<string, Record<string, string>> = {
     waiting: '아직 화면에 없습니다 — 나타나면 표시됩니다.',
     covered: '열린 대화상자 뒤에 있습니다 — 닫으면 표시됩니다.',
     away: '{page} 페이지에 있습니다 — › 로 이동합니다.',
+    waitBadge: '대기 중',
   },
 };
 
@@ -273,6 +280,7 @@ export function createPopover(
       <div class="head">
         <span class="type ${model.type}">${model.type}</span>
         <span class="kind">${esc(model.kind)}</span>
+        <span class="wait"></span>
         <span class="spacer"></span>
         ${
           langs.length
@@ -370,6 +378,10 @@ export function createPopover(
       }
       const where = pop.querySelector('.where');
       if (where) where.innerHTML = whereLine(model);
+      const wait = pop.querySelector('.wait');
+      if (wait)
+        wait.textContent =
+          model.place.kind === 'waiting' ? words(model.lang).waitBadge : '';
       const tick = pop.querySelector<HTMLInputElement>('[data-pact="viewed"]');
       if (tick) tick.checked = model.viewed;
       pop.classList.add('shown');
