@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d61d04afc8bd5d12af2f5c11ff9dcf09>>
+ * @generated SignedSource<<c2fa627758c6239d353692226c2da0f2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 export type ResourcePresetSelectQuery$variables = Record<PropertyKey, never>;
 export type ResourcePresetSelectQuery$data = {
   readonly resource_presets: ReadonlyArray<{
+    readonly id: string | null | undefined;
     readonly name: string | null | undefined;
     readonly resource_slots: string | null | undefined;
     readonly scaling_group_name: string | null | undefined;
@@ -33,6 +34,13 @@ var v0 = [
     "name": "resource_presets",
     "plural": true,
     "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -83,16 +91,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "771101ff4fc852306cbe9f9c79e4bfa3",
+    "cacheID": "bcb76595a9a67a0d0758376ab2ca4dc5",
     "id": null,
     "metadata": {},
     "name": "ResourcePresetSelectQuery",
     "operationKind": "query",
-    "text": "query ResourcePresetSelectQuery {\n  resource_presets {\n    name\n    resource_slots\n    shared_memory\n    scaling_group_name @since(version: \"25.4.0\")\n  }\n}\n"
+    "text": "query ResourcePresetSelectQuery {\n  resource_presets {\n    id\n    name\n    resource_slots\n    shared_memory\n    scaling_group_name @since(version: \"25.4.0\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dfa37ac6f9f8c11a92d885bf5d51af3e";
+(node as any).hash = "bd94dd4713c2196b6c2e326539eb5838";
 
 export default node;
