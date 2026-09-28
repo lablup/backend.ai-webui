@@ -311,7 +311,7 @@ const ResourceAllocationFormItems: React.FC<
       preserve: true,
     }) || form.getFieldValue('resourceGroup');
 
-  const { accessible_scaling_groups } =
+  const { accessible_scaling_groups, resource_presets } =
     useLazyLoadQuery<ResourceAllocationFormItemsQuery>(
       graphql`
         query ResourceAllocationFormItemsQuery($projectID: UUID!) {
@@ -320,6 +320,10 @@ const ResourceAllocationFormItems: React.FC<
             name
             is_active
             ...useResourceLimitAndRemainingFragment
+          }
+          resource_presets {
+            id
+            scaling_group_name @since(version: "25.4.0")
           }
         }
       `,
@@ -337,15 +341,15 @@ const ResourceAllocationFormItems: React.FC<
     accessible_scaling_groups,
     (group) => group?.name === currentResourceGroupInForm,
   );
-  // Names of the resource groups accessible to the PASSED project. Handed to
-  // `useResourceLimitAndRemaining` so its "is this resource group valid?"
-  // guard is keyed off the `project` prop instead of the ambient current
-  // project's derived resource-group atom (ADR-0001).
   // The groups the resource-group select offers; presets of any other group are hidden.
   const { resourceGroups: selectableResourceGroups } = useProjectResourceGroups(
     project.name,
     { includeSFTPResourceGroups },
   );
+  // Names of the resource groups accessible to the PASSED project. Handed to
+  // `useResourceLimitAndRemaining` so its "is this resource group valid?"
+  // guard is keyed off the `project` prop instead of the ambient current
+  // project's derived resource-group atom (ADR-0001).
   const accessibleResourceGroupNames = _.compact(
     _.map(accessible_scaling_groups, (group) => group?.name),
   );
@@ -810,10 +814,33 @@ const ResourceAllocationFormItems: React.FC<
           label={t('resourcePreset.ResourcePresets')}
           name="allocationPreset"
           style={{ marginBottom: token.marginXS }}
+          dependencies={['resourceGroup']}
           rules={[
             {
               required: true,
             },
+            ({ getFieldValue }) => ({
+              // Changing the resource group keeps the chosen preset; flag a
+              // preset scoped to another group instead of swapping it.
+              validator: async (_rule, value: string) => {
+                const presetGroup = _.find(
+                  resource_presets,
+                  (preset) => preset?.id === value,
+                )?.scaling_group_name;
+                const resourceGroup = getFieldValue('resourceGroup');
+                if (
+                  presetGroup &&
+                  resourceGroup &&
+                  presetGroup !== resourceGroup
+                ) {
+                  return Promise.reject(
+                    t('resourcePreset.OnlyAvailableInResourceGroup', {
+                      name: presetGroup,
+                    }),
+                  );
+                }
+              },
+            }),
           ]}
         >
           <ResourcePresetSelect
