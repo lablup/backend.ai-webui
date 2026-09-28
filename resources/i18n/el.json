@@ -2702,7 +2702,7 @@
     "Name": "Ονομα",
     "NoPresetName": "Προεπιλεγμένο όνομα εισαγωγής",
     "NoResourcePresetToDisplay": "Δεν εμφανίζονται Προεπιλογές πόρων",
-    "OnlyAvailableInResourceGroup": "Διαθέσιμο μόνο στην ομάδα πόρων <group/>",
+    "OnlyAvailableInResourceGroup": "Διαθέσιμο μόνο στην ομάδα πόρων \"{{name}}\"",
     "PresetName": "Προεπιλεγμένο όνομα",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Προεπιλογή πόρων",

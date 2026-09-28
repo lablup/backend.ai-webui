@@ -2705,7 +2705,7 @@
     "Name": "Nama",
     "NoPresetName": "Masukkan nama preset",
     "NoResourcePresetToDisplay": "Tidak ada Preset Sumber Daya yang akan ditampilkan",
-    "OnlyAvailableInResourceGroup": "Hanya tersedia di grup sumber daya <group/>",
+    "OnlyAvailableInResourceGroup": "Hanya tersedia di grup sumber daya \"{{name}}\"",
     "PresetName": "Nama Preset",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Preset Sumber Daya",

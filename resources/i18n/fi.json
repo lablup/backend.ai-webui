@@ -2702,7 +2702,7 @@
     "Name": "Nimi",
     "NoPresetName": "Tulo esiasetuksen nimi",
     "NoResourcePresetToDisplay": "Ei resurssien esiasetuksia näytettäväksi",
-    "OnlyAvailableInResourceGroup": "Käytettävissä vain resurssiryhmässä <group/>",
+    "OnlyAvailableInResourceGroup": "Käytettävissä vain resurssiryhmässä \"{{name}}\"",
     "PresetName": "Esiasetuksen nimi",
     "RAM": "RAM-MUISTI (GB)",
     "ResourcePreset": "Resurssien esiasetus",

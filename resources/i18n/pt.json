@@ -2704,7 +2704,7 @@
     "Name": "Nome",
     "NoPresetName": "Nome da predefinição de entrada",
     "NoResourcePresetToDisplay": "Não há predefinições de recursos a apresentar",
-    "OnlyAvailableInResourceGroup": "Disponível apenas no grupo de recursos <group/>",
+    "OnlyAvailableInResourceGroup": "Disponível apenas no grupo de recursos \"{{name}}\"",
     "PresetName": "Nome Predefinido",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Predefinição de recursos",

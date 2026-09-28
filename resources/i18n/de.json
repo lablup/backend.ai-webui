@@ -2704,7 +2704,7 @@
     "Name": "Name",
     "NoPresetName": "Voreinstellungsnamen eingeben",
     "NoResourcePresetToDisplay": "Keine Ressourcenvoreinstellungen anzeigen",
-    "OnlyAvailableInResourceGroup": "Nur in der Ressourcengruppe <group/> verfügbar",
+    "OnlyAvailableInResourceGroup": "Nur in der Ressourcengruppe \"{{name}}\" verfügbar",
     "PresetName": "Voreinstellungsname",
     "RAM": "Arbeitsspeicher (GB)",
     "ResourcePreset": "Ressourcenvoreinstellung",

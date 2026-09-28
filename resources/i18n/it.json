@@ -2702,7 +2702,7 @@
     "Name": "Nome",
     "NoPresetName": "Inserisci il nome del preset",
     "NoResourcePresetToDisplay": "Nessuna preimpostazione di risorse da visualizzare",
-    "OnlyAvailableInResourceGroup": "Disponibile solo nel gruppo di risorse <group/>",
+    "OnlyAvailableInResourceGroup": "Disponibile solo nel gruppo di risorse \"{{name}}\"",
     "PresetName": "Nome predefinito",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Preimpostazione delle risorse",

@@ -2703,7 +2703,7 @@
     "Name": "Нэр",
     "NoPresetName": "Урьдчилан тохируулсан нэрийг оруулах",
     "NoResourcePresetToDisplay": "Харуулах нөөцийн урьдчилсан тохиргоо байхгүй",
-    "OnlyAvailableInResourceGroup": "Зөвхөн <group/> нөөцийн бүлэгт ашиглах боломжтой",
+    "OnlyAvailableInResourceGroup": "Зөвхөн \"{{name}}\" нөөцийн бүлэгт ашиглах боломжтой",
     "PresetName": "Урьдчилан тохируулсан нэр",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Нөөцийн урьдчилж тохируулсан",

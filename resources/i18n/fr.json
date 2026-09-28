@@ -2704,7 +2704,7 @@
     "Name": "Nom",
     "NoPresetName": "Saisissez le nom du préréglage",
     "NoResourcePresetToDisplay": "Pas de préréglages de ressources à afficher",
-    "OnlyAvailableInResourceGroup": "Disponible uniquement dans le groupe de ressources <group/>",
+    "OnlyAvailableInResourceGroup": "Disponible uniquement dans le groupe de ressources \"{{name}}\"",
     "PresetName": "Nom du préréglage",
     "RAM": "RAM (Go)",
     "ResourcePreset": "Préréglage de ressource",

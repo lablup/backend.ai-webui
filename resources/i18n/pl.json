@@ -2704,7 +2704,7 @@
     "Name": "Nazwa",
     "NoPresetName": "Wprowadź nazwę ustawienia wstępnego",
     "NoResourcePresetToDisplay": "Brak ustawień wstępnych zasobów do wyświetlenia",
-    "OnlyAvailableInResourceGroup": "Dostępne tylko w grupie zasobów <group/>",
+    "OnlyAvailableInResourceGroup": "Dostępne tylko w grupie zasobów \"{{name}}\"",
     "PresetName": "Zaprogramowana nazwa",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Wstępne ustawienie zasobów",

@@ -2706,7 +2706,7 @@
     "Name": "名稱",
     "NoPresetName": "輸入預設名稱",
     "NoResourcePresetToDisplay": "无资源预置显示",
-    "OnlyAvailableInResourceGroup": "僅在 <group/> 資源組中可用",
+    "OnlyAvailableInResourceGroup": "僅在 \"{{name}}\" 資源組中可用",
     "PresetName": "預設名稱",
     "RAM": "內存 (GB)",
     "ResourcePreset": "資源預設",

@@ -2702,7 +2702,7 @@
     "Name": "Nama",
     "NoPresetName": "Masukkan nama pratetap",
     "NoResourcePresetToDisplay": "Tiada Pratetap Sumber untuk dipaparkan",
-    "OnlyAvailableInResourceGroup": "Hanya tersedia dalam kumpulan sumber <group/>",
+    "OnlyAvailableInResourceGroup": "Hanya tersedia dalam kumpulan sumber \"{{name}}\"",
     "PresetName": "Nama Pratetap",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Pratetap Sumber",

@@ -2702,7 +2702,7 @@
     "Name": "Имя",
     "NoPresetName": "Имя предустановки ввода",
     "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
-    "OnlyAvailableInResourceGroup": "Доступно только в группе ресурсов <group/>",
+    "OnlyAvailableInResourceGroup": "Доступно только в группе ресурсов \"{{name}}\"",
     "PresetName": "Название предустановки",
     "RAM": "RAM (ГБ)",
     "ResourcePreset": "Предустановка ресурса",

@@ -2702,7 +2702,7 @@
     "Name": "isim",
     "NoPresetName": "Ön ayar adını girin",
     "NoResourcePresetToDisplay": "Görüntülenecek Kaynak Ön Ayarı yok",
-    "OnlyAvailableInResourceGroup": "Yalnızca <group/> kaynak grubunda kullanılabilir",
+    "OnlyAvailableInResourceGroup": "Yalnızca \"{{name}}\" kaynak grubunda kullanılabilir",
     "PresetName": "Ön Ayar Adı",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Kaynak Ön Ayarı",
