@@ -131,7 +131,7 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
 
-  const { rbacPermissionMatrix, rbacEntityOperationCombinations } =
+  const { rbacPermissionMatrix } =
     useLazyLoadQuery<RBACPermissionGridMatrixQuery>(
       graphql`
         query RBACPermissionGridMatrixQuery {
@@ -142,12 +142,6 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
               actions {
                 requiredPermission
               }
-            }
-          }
-          rbacEntityOperationCombinations {
-            entityType
-            operations {
-              requiredPermission
             }
           }
         }
@@ -171,30 +165,18 @@ const RBACPermissionGrid: React.FC<RBACPermissionGridProps> = ({
   const bitLabel = (bit: string) =>
     t(`rbac.operations.${bit}`, { defaultValue: bit });
 
-  // The matrix lists only domain / project / user; a scope it omits (`global`)
-  // takes every entity type with the operations it supports in any scope.
-  const scopeEntities = (rbacPermissionMatrix ?? []).find(
-    (combination) =>
-      combination.scopeType.toUpperCase() === scopeType.toUpperCase(),
-  )?.entities;
-  const entityPermissions = scopeEntities
-    ? scopeEntities.map((entity) => ({
-        entityType: entity.entityType,
-        requiredPermissions: entity.actions.map(
-          (action) => action.requiredPermission,
-        ),
-      }))
-    : (rbacEntityOperationCombinations ?? []).map((entity) => ({
-        entityType: entity.entityType,
-        requiredPermissions: entity.operations.map(
-          (operation) => operation.requiredPermission,
-        ),
-      }));
-  const rows: EntityRow[] = entityPermissions
-    .filter((entity) => entity.requiredPermissions.length > 0)
+  const rows: EntityRow[] = (
+    (rbacPermissionMatrix ?? []).find(
+      (combination) =>
+        combination.scopeType.toUpperCase() === scopeType.toUpperCase(),
+    )?.entities ?? []
+  )
+    .filter((entity) => entity.actions.length > 0)
     .map((entity) => ({
       entityType: entity.entityType,
-      grantable: new Set<string>(entity.requiredPermissions),
+      grantable: new Set<string>(
+        entity.actions.map((action) => action.requiredPermission),
+      ),
       granted: grantedByEntity.get(entity.entityType) ?? new Map(),
     }));
 
