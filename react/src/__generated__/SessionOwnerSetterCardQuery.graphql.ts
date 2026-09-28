@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9c99ce884b092aebf0b0cd8aa58a51db>>
+ * @generated SignedSource<<5d946137cdf010f71d8d77bc087adcc7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -19,16 +19,6 @@ export type SessionOwnerSetterCardQuery$data = {
         readonly organization: {
           readonly domainName: string | null | undefined;
         };
-        readonly projects: {
-          readonly edges: ReadonlyArray<{
-            readonly node: {
-              readonly basicInfo: {
-                readonly name: string;
-              };
-              readonly id: string;
-            };
-          }>;
-        } | null | undefined;
       };
     }>;
   } | null | undefined;
@@ -111,64 +101,6 @@ v5 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": [
-    {
-      "kind": "Literal",
-      "name": "limit",
-      "value": 1000
-    }
-  ],
-  "concreteType": "ProjectV2Connection",
-  "kind": "LinkedField",
-  "name": "projects",
-  "plural": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": null,
-      "concreteType": "ProjectV2Edge",
-      "kind": "LinkedField",
-      "name": "edges",
-      "plural": true,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "ProjectV2",
-          "kind": "LinkedField",
-          "name": "node",
-          "plural": false,
-          "selections": [
-            (v5/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ProjectBasicInfo",
-              "kind": "LinkedField",
-              "name": "basicInfo",
-              "plural": false,
-              "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "name",
-                  "storageKey": null
-                }
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ],
-  "storageKey": "projects(limit:1000)"
 };
 return {
   "fragment": {
@@ -213,8 +145,7 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
-                  (v6/*: any*/)
+                  (v4/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -272,7 +203,6 @@ return {
                 "plural": false,
                 "selections": [
                   (v4/*: any*/),
-                  (v6/*: any*/),
                   (v5/*: any*/)
                 ],
                 "storageKey": null
@@ -286,16 +216,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0b99889d76edb2c8399e0554e913660c",
+    "cacheID": "865bff1041e1e8ae0d279fe92ead9472",
     "id": null,
     "metadata": {},
     "name": "SessionOwnerSetterCardQuery",
     "operationKind": "query",
-    "text": "query SessionOwnerSetterCardQuery(\n  $email: String!\n) {\n  keypairs(email: $email) {\n    access_key\n    id\n  }\n  adminUsersV2(filter: {email: {equals: $email}}, limit: 1) {\n    edges {\n      node {\n        organization {\n          domainName\n        }\n        projects(limit: 1000) {\n          edges {\n            node {\n              id\n              basicInfo {\n                name\n              }\n            }\n          }\n        }\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query SessionOwnerSetterCardQuery(\n  $email: String!\n) {\n  keypairs(email: $email) {\n    access_key\n    id\n  }\n  adminUsersV2(filter: {email: {equals: $email}}, limit: 1) {\n    edges {\n      node {\n        organization {\n          domainName\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7e04e8ffb1af8c7c440b92fb3dcd1eba";
+(node as any).hash = "39779d2d7a9c2afeb409c517e2e4a1f6";
 
 export default node;
