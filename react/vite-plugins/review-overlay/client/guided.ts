@@ -530,6 +530,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
   /** One resolution pass, and everything that reads it. */
   function refresh(): boolean {
     found = places();
+    // Shown once, the stop's clicks may be needed again when it hides.
+    if (found[current]?.kind === 'located') clickedSteps.clear();
     hint = viaHint(found);
     renderMarks(found);
     nav.render(navModel(found));

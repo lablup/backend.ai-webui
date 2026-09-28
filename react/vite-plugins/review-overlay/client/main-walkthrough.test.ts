@@ -682,6 +682,35 @@ describe('a stop behind a dialog', () => {
     act('next')?.click();
     expect(node('.wt-hint')).not.toBeNull();
   });
+
+  it('points at the via control again once the dialog it opened is closed', async () => {
+    const hash = [
+      await part({ id: A, testid: 'upload', check: 'Upload is renamed' }),
+      await part({
+        id: B,
+        testid: 'confirm',
+        check: 'The confirm button is primary',
+        dlg: true,
+        via: 'Upload',
+      }),
+    ].join('&');
+    mount('open-upload', 'Upload');
+    await bootOn(hash);
+    act('next')?.click();
+
+    document.querySelector<HTMLElement>('[data-testid="open-upload"]')?.click();
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="dialog" id="dlg"><button data-testid="confirm">confirm</button></div>',
+    );
+    await ticks(30);
+    expect(pillText()).not.toContain('waiting');
+
+    document.getElementById('dlg')?.remove();
+    await ticks(30);
+    expect(pillText()).toContain('waiting');
+    expect(node('.wt-hint')).not.toBeNull();
+  });
 });
 
 describe('a stop under an open modal', () => {
