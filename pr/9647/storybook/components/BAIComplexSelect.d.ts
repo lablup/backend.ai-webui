@@ -78,8 +78,11 @@ export interface BAIComplexSelectProps {
     total?: number;
     /** antd `BAISelect.header` (rendered above the option list). */
     header?: React.ReactNode;
-    /** antd `BAISelect.footer` (rendered below the option list). */
-    footer?: React.ReactNode;
+    /**
+     * antd `BAISelect.footer` (rendered below the option list). A function
+     * receives `close` so a footer action can dismiss the panel.
+     */
+    footer?: React.ReactNode | ((close: () => void) => React.ReactNode);
     /** antd `notFoundContent`. Overrides the loading row too. */
     emptyContent?: React.ReactNode;
     /**
