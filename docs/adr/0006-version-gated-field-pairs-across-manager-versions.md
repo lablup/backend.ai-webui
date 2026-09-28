@@ -107,12 +107,12 @@ flowchart LR
 
 - **Role form flag**: `RoleFormModal`은 scope type 하나와 scope id 하나를 받는다. `rbac-single-scope-role`이 켜져 있으면 `CreateRoleInput.scope`로, 꺼져 있으면 항목 하나짜리 `CreateRoleInput.scopes`로 보낸다.
 - **Drawer switch**: `RBACManagementPage`는 `rbac-single-scope-role`이 켜져 있으면 `RoleDetailDrawerV2`를, 꺼져 있으면 `RoleDetailDrawer`를 mount한다. 두 drawer의 fragment는 모두 list query에 spread되므로 field는 directive로 가르고, component는 flag로 가른다. 26.9.0a4 미만의 26.9 pre-release는 flag가 꺼져 옛 drawer를 타고, 그 card의 `PermissionFilter.scopeType`(`RBACElementTypeFilter`)이 매니저가 답한 소문자 scope type을 거부한다.
-- **Assignment source**: `RoleAssignmentTabFragment`는 `Role.users`에 `@deprecatedSince(version: "26.9.0a1")`를, `Role.usersV2`에 `@since(version: "26.9.0a1")`를 단다. 두 field는 filter·orderBy 타입이 달라 refetch 변수를 따로 받는다. `usersV2`는 assignment 행이 아니라 사용자를 답해 `grantedAt`이 없으므로, `RoleAssignmentTab`은 26.9.0a1 이상 매니저에서 Granted At 열을 그리지 않는다. `AssignRoleModalBulkAssignMutation`은 `failed`에 `@deprecatedSince(version: "26.9.0a1")`를 단다. 26.9.0a1 이상 매니저는 모든 사용자를 한 트랜잭션으로 할당해 거부된 사용자가 하나라도 있으면 mutation 전체를 롤백하므로, `AssignRoleModal`은 그 오류를 선택한 사용자 전부의 실패로 표에 적는다.
+- **Assignment source**: `RoleAssignmentTabFragment`는 `Role.users`에 `@deprecatedSince(version: "26.9.0a4")`를, `Role.usersV2`에 `@since(version: "26.9.0a4")`를 단다. 두 field는 filter·orderBy 타입이 달라 refetch 변수를 따로 받는다. `usersV2`는 assignment 행이 아니라 사용자를 답해 `grantedAt`이 없으므로, `RoleAssignmentTab`은 26.9.0a4 이상 매니저에서 Granted At 열을 그리지 않는다. `AssignRoleModalBulkAssignMutation`은 `failed`에 `@deprecatedSince(version: "26.9.0a4")`를 단다. 26.9.0a4 이상 매니저는 모든 사용자를 한 트랜잭션으로 할당해 거부된 사용자가 하나라도 있으면 mutation 전체를 롤백하므로, `AssignRoleModal`은 그 오류를 선택한 사용자 전부의 실패로 표에 적는다.
 
 ### 5. 26.8 지원을 끝낼 때 함께 지운다
 
-- **Removal set**: 26.8 매니저 지원을 끝내는 PR은 아래를 함께 지운다. RBAC document만 V를 `26.9.0a1`이나 `26.9.0a4`로 적으므로, 대상은 두 버전의 `@deprecatedSince`를 grep한 결과다.
-  - RBAC document의 `@deprecatedSince(version: "26.9.0a1")`·`@deprecatedSince(version: "26.9.0a4")` 선택과 그 결과를 읽는 코드.
+- **Removal set**: 26.8 매니저 지원을 끝내는 PR은 아래를 함께 지운다. RBAC document만 V를 `26.9.0a4`로 적으므로, 대상은 `@deprecatedSince(version: "26.9.0a4")`를 grep한 결과다.
+  - RBAC document의 `@deprecatedSince(version: "26.9.0a4")` 선택과 그 결과를 읽는 코드.
   - `rbac-single-scope-role` 분기: `useCurrentUserProjectRoles`, `RoleFormModal`, `RBACManagementPage`의 drawer 선택.
   - 옛 drawer 전부: `RoleDetailDrawer`, `RoleDetailDrawerContent`, `RolePermissionDetailTab`, `ScopedRolePermissionCard`, `RoleScopePermissionEditModal`. `RoleDetailDrawerV2`가 이름을 물려받는다.
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<634185e8c62d374b614315f6f311cf39>>
+ * @generated SignedSource<<d067e48368a957089870d360fdbc5743>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -617,16 +617,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "a34bf7c72e2ec720f01834efbdfce48c",
+    "cacheID": "15597cb5bb8ff4469d96ed6fef946e87",
     "id": null,
     "metadata": {},
     "name": "RoleAssignmentTabRefetchQuery",
     "operationKind": "query",
-    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $userFilter: UserV2Filter\n  $userOrderBy: [UserV2OrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_36l2j3\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_36l2j3 on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @deprecatedSince(version: \"26.9.0a1\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(filter: $userFilter, orderBy: $userOrderBy, limit: $limit, offset: $offset) @since(version: \"26.9.0a1\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query RoleAssignmentTabRefetchQuery(\n  $filter: RoleAssignmentFilter\n  $limit: Int = 10\n  $offset: Int = 0\n  $orderBy: [RoleAssignmentOrderBy!]\n  $userFilter: UserV2Filter\n  $userOrderBy: [UserV2OrderBy!]\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RoleAssignmentTabFragment_36l2j3\n    id\n  }\n}\n\nfragment RoleAssignmentTabFragment_36l2j3 on Role {\n  id\n  name\n  source\n  firstScope: scopes(first: 1) @deprecatedSince(version: \"26.9.0a4\") {\n    edges {\n      node {\n        scopeType\n        scopeId\n        id\n      }\n    }\n  }\n  scopeType @since(version: \"26.9.0a4\")\n  scopeId @since(version: \"26.9.0a4\")\n  users(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) @deprecatedSince(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        userId\n        grantedAt\n        user {\n          id\n          basicInfo {\n            email\n            fullName\n          }\n        }\n      }\n    }\n  }\n  usersV2(filter: $userFilter, orderBy: $userOrderBy, limit: $limit, offset: $offset) @since(version: \"26.9.0a4\") {\n    count\n    edges {\n      node {\n        id\n        entityId\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2bd3e46d75655e0121b0b6256f6a63b0";
+(node as any).hash = "c40588e5b4a36e7533b40d0bb2f41dc2";
 
 export default node;

@@ -119,7 +119,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) @deprecatedSince(version: "26.9.0a1") {
+        ) @deprecatedSince(version: "26.9.0a4") {
           count
           edges {
             node {
@@ -141,7 +141,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           orderBy: $userOrderBy
           limit: $limit
           offset: $offset
-        ) @since(version: "26.9.0a1") {
+        ) @since(version: "26.9.0a4") {
           count
           edges {
             node {
@@ -161,7 +161,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const roleId = toLocalId(data.id);
 
-  // Managers >= 26.9.0 answer the role's one scope directly; older ones
+  // Managers >= 26.9.0a4 answer the role's one scope directly; older ones
   // answer a scopes connection.
   const roleScope = data.scopeType
     ? { scopeType: data.scopeType, scopeId: data.scopeId }
@@ -201,7 +201,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   // `usersV2` answers users, not assignment rows, so it has no grant time.
   // TODO(needs-backend): BA-8188 — restore Granted At once usersV2 carries it.
-  const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a1');
+  const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a4');
   const assignments: Array<{
     id: string;
     userId: string;

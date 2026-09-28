@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a82a63ab7bd5a1c8eda94a84420236b3>>
+ * @generated SignedSource<<67827bed1eb70084f51f4cfa3fe25402>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -140,16 +140,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "a60da197acf87af42f4d630d07d5dc46",
+    "cacheID": "0a500b3f9d7c47505625df63ebd371b9",
     "id": null,
     "metadata": {},
     "name": "AssignRoleModalBulkAssignMutation",
     "operationKind": "mutation",
-    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed @deprecatedSince(version: \"26.9.0a1\") {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation AssignRoleModalBulkAssignMutation(\n  $input: BulkAssignRoleInput!\n) {\n  adminBulkAssignRole(input: $input) {\n    assigned {\n      id\n      userId\n      grantedBy\n      grantedAt\n    }\n    failed @deprecatedSince(version: \"26.9.0a4\") {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2564489868b1c32d187bb11dcce6dbb6";
+(node as any).hash = "8bb1cc806c943b8683dd8bd1546da563";
 
 export default node;
