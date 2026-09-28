@@ -584,6 +584,14 @@ describe('isBehindModal', () => {
     expect(isBehindModal(byId('under'))).toBe(true);
   });
 
+  it('does not count an open popover, which Astryx marks aria-modal', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div popover="auto"><div role="dialog" aria-modal="true"><button id="in">in</button></div></div>',
+    );
+    expect(isBehindModal(byId('page'))).toBe(false);
+  });
+
   it('puts the first modal under the one opened after it', () => {
     document.body.insertAdjacentHTML(
       'beforeend',

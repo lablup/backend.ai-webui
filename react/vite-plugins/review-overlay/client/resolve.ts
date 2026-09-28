@@ -129,6 +129,15 @@ export const PORTAL_MODAL =
   '[role="dialog"][aria-modal="true"], [role="alertdialog"][aria-modal="true"], [data-bai-modal-open]';
 
 /**
+ * Astryx renders every Popover (BAIPopconfirm included) as an `aria-modal`
+ * dialog inside a native `[popover]` layer, which dismisses on an outside click.
+ */
+const isLightDismissSurface = (modal: Element): boolean =>
+  modal.tagName !== 'DIALOG' &&
+  !modal.hasAttribute('data-bai-modal-open') &&
+  !!modal.closest('[popover]');
+
+/**
  * Is an open modal painted over this element? A covered modal is `inert`, so
  * the topmost is the last one that is not; jsdom matches no `:modal`.
  */
@@ -142,7 +151,10 @@ export function isBehindModal(element: Element): boolean {
   }
   const layout = hasLayout(doc);
   const open = found.filter(
-    (modal) => (!layout || isRendered(modal)) && !modal.closest('[inert]'),
+    (modal) =>
+      (!layout || isRendered(modal)) &&
+      !modal.closest('[inert]') &&
+      !isLightDismissSurface(modal),
   );
   const outer = open.filter(
     (modal) => !open.some((other) => other !== modal && other.contains(modal)),
