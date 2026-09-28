@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-09-08
+> **Last Updated:** 2026-09-28
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 348 / 505 features covered (69%)**
+**Overall (in-scope routes): 349 / 505 features covered (69%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -21,7 +21,7 @@
 | Start Page               | `/start`                                         |    8     |    6    | 🔶 75%  |
 | Dashboard                | `/dashboard`                                     |    11    |    9    | 🔶 82%  |
 | Session List             | `/session`                                       |    23    |   15    | 🔶 65%  |
-| Session Launcher         | `/session/start`                                 |    14    |    3    | 🔶 21%  |
+| Session Launcher         | `/session/start`                                 |    14    |    4    | 🔶 29%  |
 | Serving                  | `/serving`                                       |    7     |    2    | 🔶 29%  |
 | Endpoint Detail          | `/serving/:serviceId`                            |    20    |    9    | 🔶 45%  |
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
@@ -220,29 +220,29 @@
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
+**Test files:** [`e2e/session/session-launcher-minimum-preset.spec.ts`](session/session-launcher-minimum-preset.spec.ts); covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
 
-| Feature                                | Status | Test                                                                                                           |
-| -------------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------- |
-| Basic session creation                 | ✅     | Via session creation tests                                                                                     |
-| Multi-step form navigation (5 steps)   | ❌     | -                                                                                                              |
-| Environment/image selection            | 🔶     | Partial (used in creation tests)                                                                               |
-| Resource allocation (CPU/memory/GPU)   | ❌     | -                                                                                                              |
-| Resource presets                       | ❌     | -                                                                                                              |
-| HPC optimization settings              | ❌     | -                                                                                                              |
-| VFolder mounting (Step 3)              | ❌     | -                                                                                                              |
-| Port configuration (Step 4)            | ❌     | -                                                                                                              |
-| Batch schedule/timeout options         | ❌     | -                                                                                                              |
-| Session dependency via useStartSession | 🚧     | `Creates batch + interactive session with dependency` (fixme: requires running agent)                          |
-| Session owner selection (admin)        | ❌     | -                                                                                                              |
-| Form validation errors                 | ❌     | -                                                                                                              |
-| Cluster mode warning (multi-node x1)   | 🔶     | `session-cluster-mode.spec.ts` (10 tests: 5 active, 5 skipped due to cluster-size limits/capacity constraints) |
-| Session history → SessionTemplateModal | ✅     | `session-template-modal.spec.ts` (7 tests)                                                                     |
+| Feature                                | Status | Test                                                                                                                        |
+| -------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Basic session creation                 | ✅     | Via session creation tests                                                                                                  |
+| Multi-step form navigation (5 steps)   | ❌     | -                                                                                                                           |
+| Environment/image selection            | 🔶     | Partial (used in creation tests)                                                                                            |
+| Resource allocation (CPU/memory/GPU)   | ❌     | -                                                                                                                           |
+| Resource presets                       | ✅     | `session-launcher-minimum-preset.spec.ts` (2 tests: values settle under "Minimum requirements", launcher stays interactive) |
+| HPC optimization settings              | ❌     | -                                                                                                                           |
+| VFolder mounting (Step 3)              | 🔶     | Partial — `User can open the sub-path picker on Data & Storage with the Minimum requirements preset`                        |
+| Port configuration (Step 4)            | ❌     | -                                                                                                                           |
+| Batch schedule/timeout options         | ❌     | -                                                                                                                           |
+| Session dependency via useStartSession | 🚧     | `Creates batch + interactive session with dependency` (fixme: requires running agent)                                       |
+| Session owner selection (admin)        | ❌     | -                                                                                                                           |
+| Form validation errors                 | ❌     | -                                                                                                                           |
+| Cluster mode warning (multi-node x1)   | 🔶     | `session-cluster-mode.spec.ts` (10 tests: 5 active, 5 skipped due to cluster-size limits/capacity constraints)              |
+| Session history → SessionTemplateModal | ✅     | `session-template-modal.spec.ts` (7 tests)                                                                                  |
 
-**Coverage: 🔶 3/14 features (most only indirectly tested)**
+**Coverage: 🔶 4/14 features (most only indirectly tested)**
 
 ---
 
