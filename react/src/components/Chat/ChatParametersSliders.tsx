@@ -133,13 +133,8 @@ export const ChatParametersSliders = ({
   );
 
   return (
-    // PILOT-DECISION: the antd `ConfigProvider` Form component-token override
-    // (`verticalLabelPadding: 0`, `itemMarginBottom`) tightened antd
-    // `Form.Item`'s own spacing. `BAIFormItem` no longer renders antd's
-    // spacing at all (MAPPING.md §"SHIM" — the engine stays, the visuals are
-    // ours), so the override is moot; the equivalent hook is BAIFormItem's
-    // own `--bai-form-item-*` CSS custom properties, set here on the
-    // container instead.
+    // Tighter item spacing through the form item's own hooks
+    // (`--uic-form-item-*`, ui-common Form).
     <Form
       size="small"
       layout="vertical"
@@ -147,8 +142,8 @@ export const ChatParametersSliders = ({
       style={
         {
           width: 240,
-          '--bai-form-item-margin-bottom': 'var(--spacing-2, 8px)',
-          '--bai-form-item-gap': '4px',
+          '--uic-form-item-margin-bottom': 'var(--spacing-2, 8px)',
+          '--uic-form-item-gap': '4px',
         } as React.CSSProperties
       }
       initialValues={

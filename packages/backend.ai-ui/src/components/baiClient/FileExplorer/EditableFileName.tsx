@@ -19,7 +19,7 @@
  from `.ant-typography-edit` to the button's own class (P6: a selector that
  matches nothing must go). Ticket 35 applied the same rule to its
  `.ant-form-item` margin reset — the form engine is self-hosted now, so the
- item root is `[data-bai-form-item]`.
+ item root is `.uic-form-item`.
 
  PILOT-DECISION — **the `component` prop is dropped.** It let a caller swap
  `Typography.Text` for `Typography.Title`, typed through antd's `GetProps` —

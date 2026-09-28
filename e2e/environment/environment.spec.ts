@@ -166,20 +166,20 @@ test.describe(
       await expect(resourceLimitControlModal).toBeVisible();
 
       // `ManageImageResourceLimitModal.tsx` renders each slot as a
-      // `BAIFormItem` (`[data-bai-form-item]`). The value controls are Astryx
+      // `BAIFormItem` (`.uic-form-item`). The value controls are Astryx
       // now: `AstryxFormNumberInput` / `BAIDynamicUnitInputNumber` both end in
       // an Astryx `NumberInput`, which is `role="spinbutton"`
       // (`@astryxdesign/core/src/NumberInput/NumberInput.tsx`), and the memory
       // unit is an Astryx `Selector` labelled "Unit"
       // (`BAIDynamicUnitInputNumber.tsx`).
       const cpuFormItem = resourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("CPU")',
+        '.uic-form-item:has-text("CPU")',
       );
       const cpuFormItemInput = cpuFormItem.getByRole('spinbutton');
       const cpuValue = await cpuFormItemInput.inputValue();
 
       const memoryFormItem = resourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("Memory")',
+        '.uic-form-item:has-text("Memory")',
       );
       const memoryFormItemInput = memoryFormItem.getByRole('spinbutton');
       const memoryValue = await memoryFormItemInput.inputValue();
@@ -216,10 +216,10 @@ test.describe(
       });
       await expect(modifiedResourceLimitControlModal).toBeVisible();
       const modifiedCpuFormItem = modifiedResourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("CPU")',
+        '.uic-form-item:has-text("CPU")',
       );
       const modifiedMemoryFormItem = modifiedResourceLimitControlModal.locator(
-        '[data-bai-form-item]:has-text("Memory")',
+        '.uic-form-item:has-text("Memory")',
       );
       const modifiedCpuFormItemInput =
         modifiedCpuFormItem.getByRole('spinbutton');
@@ -269,11 +269,11 @@ test.describe(
         modal.getByRole('button', { name: 'Add', exact: true }),
       ).toBeVisible();
       // ManageAppsModal.tsx renders one un-`noStyle` outer `BAIFormItem` per
-      // app row (`[data-bai-form-item]`); the 3 nested per-field
+      // app row (`.uic-form-item`); the 3 nested per-field
       // BAIFormItems inside it are all `noStyle` and render no DOM of their
       // own, so this still counts exactly one element per row.
       const numberOfAppsBeforeAdd = await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .count();
       await modal.getByRole('button', { name: 'Add', exact: true }).click();
       const addInfo = {
@@ -286,7 +286,7 @@ test.describe(
       // "Protocol", "Port"); scope through the row's own form item so the
       // names stay unambiguous across rows.
       const addedAppRow = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .nth(numberOfAppsBeforeAdd);
       await addedAppRow.getByPlaceholder('App Name').fill(addInfo.app);
       await addedAppRow.getByPlaceholder('Protocol').fill(addInfo.protocol);
@@ -311,9 +311,9 @@ test.describe(
         await openManageAppsModal();
         const dialog = page.getByRole('dialog', { name: /Manage Apps/i });
         await expect(dialog).toBeVisible();
-        // One `[data-bai-form-item]` per app row (the 3 nested per-field
+        // One `.uic-form-item` per app row (the 3 nested per-field
         // items are `noStyle` and render no DOM of their own).
-        const count = await dialog.locator('[data-bai-form-item]').count();
+        const count = await dialog.locator('.uic-form-item').count();
         await dialog.getByRole('button', { name: 'Cancel' }).click();
         await expect(dialog).toBeHidden();
         return count;
@@ -333,12 +333,12 @@ test.describe(
       // Retry the count assertion: the freshly-reopened modal renders its
       // app form-items asynchronously, so a one-shot `.count()` can read the
       // old total before the added row mounts (flaky off by one).
-      await expect(modalAfterAdd.locator('[data-bai-form-item]')).toHaveCount(
+      await expect(modalAfterAdd.locator('.uic-form-item')).toHaveCount(
         numberOfAppsBeforeAdd + 1,
       );
       const numberOfApps = numberOfAppsBeforeAdd + 1;
       // Verify the last row has the added app info
-      const lastRow = modalAfterAdd.locator('[data-bai-form-item]').last();
+      const lastRow = modalAfterAdd.locator('.uic-form-item').last();
       await expect(lastRow.getByPlaceholder('App Name')).toHaveValue(
         addInfo.app,
       );
@@ -351,7 +351,7 @@ test.describe(
       // instead of indexing a flat button list (`ManageAppsModal.tsx` renders
       // one ghost IconButton `label={t('button.Delete')}` per app row).
       await modalAfterAdd
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .nth(numberOfApps - 1)
         .getByRole('button', { name: 'Delete' })
         .click();

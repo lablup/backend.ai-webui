@@ -1,17 +1,16 @@
 import { BAIAppProvider } from '../src/app-shim';
 import BAIText from '../src/components/BAIText';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
-import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
+import { FormConfigProvider } from '../src/form-engine';
 import { i18n, type BAILocale } from '../src/locale';
-import { ThemeShimProvider, theme } from '../src/theme-shim';
 import { themePresets, type ThemeStyle } from './themeConfig';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
 import {
   Theme as AstryxThemeProvider,
   useTheme,
 } from '@lablup/ui-common/theme';
 import type { Decorator } from '@storybook/react-vite';
 import { useDarkMode } from '@vueless/storybook-dark-mode';
-import { Skeleton } from '@lablup/ui-common/Skeleton';
 import dayjs from 'dayjs';
 import 'dayjs/locale/de';
 import 'dayjs/locale/el';
@@ -104,53 +103,43 @@ const GlobalConfigProvider: React.FC<StorybookProviderProps> = ({
       theme={preset.theme}
       mode={isDarkMode ? 'dark' : 'light'}
     >
-      {/* Astryx theme shim (ticket 10): BUI's legacy antd-consuming
-          components read tokens from ThemeShimProvider, so mirror the
-          story's mode/seeds here — without it they'd fall back to
-          light-mode default seeds. */}
-      <ThemeShimProvider
-        mode={isDarkMode ? 'dark' : 'light'}
-        seeds={isDarkMode ? preset.dark : preset.light}
-      >
-        {/* The real production wrapper with the app's locale module: BUI's
-            i18next, dayjs and Astryx's resolver (Astryx and ui-common
-            strings) all follow the story's locale. */}
-        <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
-          {/* The `form.requiredMark` inversion — no asterisk on required
-              fields, "(Optional)" appended to the rest — moved off
-              `ConfigProvider form={{…}}` onto the self-hosted engine's own
-              provider (tickets 34 + 35), mirroring what
+      {/* The real production wrapper with the app's locale module: BUI's
+          i18next, dayjs and Astryx's resolver (Astryx and ui-common strings)
+          all follow the story's locale. */}
+      <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
+        {/* The `form.requiredMark` inversion — no asterisk on required
+              fields, "(Optional)" appended to the rest — mirrors what
               `react/src/components/DefaultProviders.tsx` does in the app.
-              Still gated on the WebUI theme style, since it is Backend.AI
-              product behaviour rather than an engine default. */}
-          <FormConfigProvider
-            {...(isWebUIStyle && {
-              requiredMark: (label, { required }) => (
-                <>
-                  {label}
-                  {!required && (
-                    <BAIText
-                      type="secondary"
-                      style={{
-                        marginLeft: token('--spacing-1'),
-                        wordBreak: 'keep-all',
-                      }}
-                    >
-                      {`(${t('general.Optional')})`}
-                    </BAIText>
-                  )}
-                </>
-              ),
-            })}
-          >
-            {/* App.useApp shim (ticket 11): stories exercising imperative
+              Gated on the WebUI preset: it is Backend.AI product behaviour,
+              so the Astryx baseline keeps the engine default's asterisk. */}
+        <FormConfigProvider
+          {...(isWebUIStyle && {
+            requiredMark: (label, { required }) => (
+              <>
+                {label}
+                {!required && (
+                  <BAIText
+                    type="secondary"
+                    style={{
+                      marginLeft: token('--spacing-1'),
+                      wordBreak: 'keep-all',
+                    }}
+                  >
+                    {`(${t('general.Optional')})`}
+                  </BAIText>
+                )}
+              </>
+            ),
+          })}
+        >
+          {/* App.useApp shim (ticket 11): stories exercising imperative
                 message/modal flows read the shim's toast/dialog host from here
                 (replaces the per-story antd <App> wrappers). */}
-            <BAIAppProvider>
-              <ThemedContainer>{children}</ThemedContainer>
-            </BAIAppProvider>
-          </FormConfigProvider>
-        </BAIConfigProvider>
+          <BAIAppProvider>
+            <ThemedContainer>{children}</ThemedContainer>
+          </BAIAppProvider>
+        </FormConfigProvider>
+      </BAIConfigProvider>
     </AstryxThemeProvider>
   );
 };

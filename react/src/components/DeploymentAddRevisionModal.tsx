@@ -21,14 +21,13 @@ import type {
   DeploymentAddRevisionModal_revisionSource$key,
 } from '../__generated__/DeploymentAddRevisionModal_revisionSource.graphql';
 import { App } from '../app-shim';
-import { Form } from '../form-engine';
-import type { FormInstance } from '../form-engine';
+import { Form, type FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
-  type CommandExecutionMode,
   deriveCommandModeState,
   resolveCommandShell,
+  type CommandExecutionMode,
 } from '../helper/modelServiceCommand';
 import { queryWithinOpenModal } from '../helper/openModalRoot';
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
@@ -46,9 +45,9 @@ import {
 } from '../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
 import type { ProjectContextOrNull } from '../types/projectContext';
-import {
-  type ModelHealthCheckFormValue,
-  type PreStartActionFormValue,
+import type {
+  ModelHealthCheckFormValue,
+  PreStartActionFormValue,
 } from './AdminDeploymentPresetFormTypes';
 import BAIFormItem from './BAIFormItem';
 import BAIRadioGroup from './BAIRadioGroup';
@@ -90,13 +89,13 @@ import {
 } from '@lablup/ui-common/SegmentedControl';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAvailablePresetSelect,
+  BAIComplexSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIRuntimeVariantSelect,
-  BAIComplexSelect,
+  BAISkeleton,
   BAIVFolderPathPicker,
   BAIVFolderSelect,
   BAIVFolderSelectRef,
@@ -107,7 +106,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { Info, RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
+import { FolderOpenIcon, Info, PlusIcon, RotateCw } from 'lucide-react';
 import React, {
   Suspense,
   startTransition,
@@ -1311,7 +1310,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
   const handleFinishFailed = () => {
     requestAnimationFrame(() => {
       const firstErrorEl = queryWithinOpenModal(
-        '[data-bai-form-item][data-status="error"]',
+        '.uic-form-item[data-status="error"]',
       );
       if (firstErrorEl) {
         firstErrorEl.scrollIntoView({

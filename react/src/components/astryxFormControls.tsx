@@ -453,7 +453,7 @@ export const AstryxFormSegmented: React.FC<AstryxFormSegmentedProps> = ({
       onChange={(next) => onChange?.(next)}
       label={label}
       isDisabled={disabled}
-      // `Form.Item`'s `data-bai-field-id` rides through to the root, which is
+      // `Form.Item`'s `data-uic-field-id` rides through to the root, which is
       // what lets scroll-to-first-error find this field.
       {...(rest as object)}
     >

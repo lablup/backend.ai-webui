@@ -61,10 +61,8 @@ import { Divider } from '@lablup/ui-common/Divider';
 import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
 import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
 import { Heading } from '@lablup/ui-common/Heading';
-// FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
-// self-hosted replacement is parked (see form-engine/engine.ts). Everything
-// INSIDE the items is Astryx: the controls go through the shared
-// `astryxFormControls` adapters.
+// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
+// inside the items go through the shared `astryxFormControls` adapters.
 import { InputGroup } from '@lablup/ui-common/InputGroup';
 import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
 import { Step, Stepper } from '@lablup/ui-common/Stepper';
@@ -996,7 +994,7 @@ const SessionLauncherPage = () => {
                                                 engine COMPOSES a child's own
                                                 trigger handler after its own
                                                 (`originTriggerFunc` in
-                                                `form-engine/Field.tsx`), so
+                                                ui-common Form's `Field`), so
                                                 both run. */}
                                             <AstryxFormNumberInput
                                               label={t(
