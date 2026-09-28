@@ -53,7 +53,13 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
-import React, { Suspense, useEffect, useMemo, useTransition } from 'react';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useTransition,
+} from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -367,10 +373,13 @@ const ResourceAllocationFormItems: React.FC<
     preserve: true,
   });
 
+  // The preset check suspends per resource group; deferring the group keeps the
+  // launcher on screen while a group's first check loads, not a page fallback.
+  const deferredResourceGroup = useDeferredValue(currentResourceGroupInForm);
   const [{ currentImageMinM, remaining, resourceLimits, checkPresetInfo }] =
     useResourceLimitAndRemaining({
       currentProjectName: project.name,
-      currentResourceGroup: currentResourceGroupInForm || undefined, // global currentResourceGroup can be null
+      currentResourceGroup: deferredResourceGroup || undefined, // global currentResourceGroup can be null
       currentResourceGroupFrgmtForLimit: currentResourceGroupInfo,
       currentImage: currentImage,
       accessibleResourceGroupNames,
