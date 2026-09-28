@@ -821,6 +821,9 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       !stop.stop.via?.length;
     if (!samePage || !landed) {
       const query = stop.anchor.q ? `?${stop.anchor.q}` : "";
+      // A hash-only change is a same-document jump: the dialog a previous
+      // stop's via opened would stay open and cover this stop.
+      await page.goto("about:blank");
       await page.goto(
         `${origin}${samePage ? landing.p : stop.anchor.p}${query}#${fragment}`,
         { waitUntil: "domcontentloaded" },
