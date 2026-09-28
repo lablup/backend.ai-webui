@@ -31,6 +31,7 @@ import {
   findViaTarget,
   isBehindModal,
   nextViaControl,
+  viaStepDone,
 } from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
 import type { AnchorV3, AnchorVia, ReviewServerState } from './types.js';
@@ -147,7 +148,13 @@ export function startGuidedMode(options: GuidedModeOptions) {
   /** What the last resolution found, so a scroll re-places without re-resolving. */
   let found: Place[] = [];
   /** The control the current stop's next `via` click needs, when on screen. */
-  let hint: { element: Element; step: AnchorVia } | null = null;
+  let hint: { element: Element; step: AnchorVia; index: number } | null = null;
+  /**
+   * The current stop's `via` clicks the reader made on the hinted control. A
+   * plain button shows nothing afterwards, and the stop may never resolve on
+   * this server, so without this the hint pulses on a control already clicked.
+   */
+  const clickedSteps = new Set<number>();
 
   const servedPr = () => options.serverState()?.pr ?? 0;
   const flushProgress = () => progress.flush();
@@ -344,7 +351,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
    */
   function viaHint(
     where: Place[],
-  ): { element: Element; step: AnchorVia } | null {
+  ): { element: Element; step: AnchorVia; index: number } | null {
     const stop = stops[current];
     const at = where[current];
     if (!stop || at?.kind !== 'waiting' || at.covered) return null;
@@ -360,8 +367,15 @@ export function startGuidedMode(options: GuidedModeOptions) {
         ignore: host,
       }),
     );
-    const next = nextViaControl(said, found);
-    return next ? { element: next.element, step: said[next.index] } : null;
+    const next = nextViaControl(
+      said,
+      found,
+      (step, element, index) =>
+        clickedSteps.has(index) || viaStepDone(step, element),
+    );
+    return next
+      ? { element: next.element, step: said[next.index], index: next.index }
+      : null;
   }
 
   /** The base steps, in the words of the language the stop reads in. */
@@ -569,6 +583,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (index !== current) {
       const leaving = stops[current];
       if (leaving) flushPrepare(leaving);
+      clickedSteps.clear();
     }
     current = index;
     popOpen = true;
@@ -701,6 +716,14 @@ export function startGuidedMode(options: GuidedModeOptions) {
     refresh();
   }
 
+  /** The reader followed the hint's click: that step is done for this stop. */
+  function onClick(evt: Event) {
+    if (!hint || !('click' in hint.step)) return;
+    if (!evt.composedPath().includes(hint.element)) return;
+    clickedSteps.add(hint.index);
+    onSettle();
+  }
+
   function onSettle() {
     clearTimeout(settleTimer);
     settleTimer = window.setTimeout(refresh, SETTLE_MS);
@@ -747,6 +770,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
   document.addEventListener('input', onSettle, true);
   document.addEventListener('change', onSettle, true);
   document.addEventListener('mousedown', onPointerDown, true);
+  document.addEventListener('click', onClick, true);
   window.addEventListener('resize', placeSoon);
   window.addEventListener('scroll', placeSoon, {
     capture: true,
@@ -771,6 +795,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
     document.removeEventListener('input', onSettle, true);
     document.removeEventListener('change', onSettle, true);
     document.removeEventListener('mousedown', onPointerDown, true);
+    document.removeEventListener('click', onClick, true);
     window.removeEventListener('resize', placeSoon);
     window.removeEventListener('scroll', placeSoon, true);
     marks.destroy();
@@ -805,6 +830,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
   return {
     /** The route changed under us: re-resolve every stop from scratch. */
     onRoute() {
+      clickedSteps.clear();
       refresh();
       ladder();
     },
