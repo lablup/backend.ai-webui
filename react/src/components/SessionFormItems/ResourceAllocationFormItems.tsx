@@ -48,6 +48,7 @@ import {
   BAISegmentedControlItem,
   BAISelect,
   useEventNotStable,
+  useProjectResourceGroups,
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -300,6 +301,11 @@ const ResourceAllocationFormItems: React.FC<
   // `useResourceLimitAndRemaining` so its "is this resource group valid?"
   // guard is keyed off the `project` prop instead of the ambient current
   // project's derived resource-group atom (ADR-0001).
+  // The groups the resource-group select offers; presets of any other group are hidden.
+  const { resourceGroups: selectableResourceGroups } = useProjectResourceGroups(
+    project.name,
+    { includeSFTPResourceGroups },
+  );
   const accessibleResourceGroupNames = _.compact(
     _.map(accessible_scaling_groups, (group) => group?.name),
   );
@@ -780,6 +786,10 @@ const ResourceAllocationFormItems: React.FC<
               }
             }}
             allocatablePresetIds={allocatablePresetIds}
+            selectableResourceGroupNames={_.map(
+              selectableResourceGroups,
+              'name',
+            )}
             resourceGroup={currentResourceGroupInForm}
           />
         </Form.Item>

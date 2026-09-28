@@ -62,6 +62,8 @@ export interface ResourcePresetSelectProps {
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   resourceGroup?: string;
+  /** Presets scoped to a resource group outside this list are not listed. */
+  selectableResourceGroupNames?: string[];
   autoSelectDefault?: boolean;
   disabled?: boolean;
   style?: CSSProperties;
@@ -71,6 +73,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   showCustom,
   showMinimumRequired,
   resourceGroup,
+  selectableResourceGroupNames,
   autoSelectDefault,
   disabled,
   style,
@@ -94,23 +97,33 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     });
   };
 
-  const { resource_presets } = useLazyLoadQuery<ResourcePresetSelectQuery>(
-    graphql`
-      query ResourcePresetSelectQuery {
-        resource_presets {
-          id
-          name
-          resource_slots
-          shared_memory
-          scaling_group_name @since(version: "25.4.0")
+  const { resource_presets: allResourcePresets } =
+    useLazyLoadQuery<ResourcePresetSelectQuery>(
+      graphql`
+        query ResourcePresetSelectQuery {
+          resource_presets {
+            id
+            name
+            resource_slots
+            shared_memory
+            scaling_group_name @since(version: "25.4.0")
+          }
         }
-      }
-    `,
-    {},
-    {
-      fetchKey: fetchKey,
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
-    },
+      `,
+      {},
+      {
+        fetchKey: fetchKey,
+        fetchPolicy:
+          fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      },
+    );
+
+  const resource_presets = _.filter(
+    allResourcePresets,
+    (preset) =>
+      !preset?.scaling_group_name ||
+      !selectableResourceGroupNames ||
+      selectableResourceGroupNames.includes(preset.scaling_group_name),
   );
 
   const onlyInGroupText = (name: string) =>
