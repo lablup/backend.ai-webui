@@ -263,10 +263,22 @@ export function findViaTarget(
   return null;
 }
 
+/** A control that says it is already on: the selected tab, an open toggle. */
+function clickedOn(element: Element): boolean {
+  const on = (name: string) => element.getAttribute(name) === 'true';
+  return (
+    on('aria-selected') ||
+    on('aria-current') ||
+    on('aria-pressed') ||
+    on('aria-expanded') ||
+    (element.getAttribute('role') === 'radio' && on('aria-checked'))
+  );
+}
+
 /**
  * Has the reader already done this step? A field that holds the value, a
- * select that shows the option. A click, or a fill that still has to press
- * Enter, leaves nothing to read back.
+ * select that shows the option, a tab or toggle that is already on. A plain
+ * click, or a fill that still has to press Enter, leaves nothing to read back.
  */
 export function viaStepDone(step: AnchorVia, element: Element): boolean {
   if ('fill' in step) {
@@ -287,7 +299,7 @@ export function viaStepDone(step: AnchorVia, element: Element): boolean {
         : element.textContent;
     return normText(shown) === normText(step.select.option);
   }
-  return false;
+  return clickedOn(element);
 }
 
 /**
@@ -300,9 +312,13 @@ export function viaStepDone(step: AnchorVia, element: Element): boolean {
 export function nextViaControl(
   steps: readonly AnchorVia[],
   found: readonly (Element | null)[],
-  done: (step: AnchorVia, element: Element) => boolean = viaStepDone,
+  done: (
+    step: AnchorVia,
+    element: Element,
+    index: number,
+  ) => boolean = viaStepDone,
 ): { element: Element; index: number } | null {
-  const left = (i: number) => !!found[i] && !done(steps[i], found[i]!);
+  const left = (i: number) => !!found[i] && !done(steps[i], found[i]!, i);
   for (let i = steps.length - 1; i >= 0; i--) {
     const element = found[i];
     if (!element || !left(i)) continue;

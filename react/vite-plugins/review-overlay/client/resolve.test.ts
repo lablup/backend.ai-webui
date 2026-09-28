@@ -715,6 +715,22 @@ describe('findViaTarget for fill and select', () => {
     mode.selectedIndex = 1;
     expect(viaStepDone(models, mode)).toBe(true);
   });
+
+  it('reads a click as done once its tab or toggle is already on', () => {
+    const tab = document.createElement('button');
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-selected', 'false');
+    const click = { click: { text: 'Role Assignment' } };
+    expect(viaStepDone(click, tab)).toBe(false);
+    tab.setAttribute('aria-selected', 'true');
+    expect(viaStepDone(click, tab)).toBe(true);
+    const navTab = document.createElement('button');
+    expect(viaStepDone(click, navTab)).toBe(false);
+    navTab.setAttribute('aria-current', 'true');
+    expect(viaStepDone(click, navTab)).toBe(true);
+    // A plain button has no state to read back.
+    expect(viaStepDone(click, document.createElement('button'))).toBe(false);
+  });
 });
 
 describe('nextViaControl', () => {
