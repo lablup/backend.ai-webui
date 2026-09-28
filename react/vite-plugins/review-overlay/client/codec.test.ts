@@ -192,6 +192,20 @@ describe('walkthrough stop fields (FR-3949)', () => {
     }
   });
 
+  it('keeps a translation’s element text, and drops one over the cap', async () => {
+    const i18n = { en: { ch: 'c', ck: 'k', txt: 'Only letters are allowed.' } };
+    const withTxt = { ...stop, lng: 'ko', i18n } as AnchorV3;
+    const kept = await decodeAnchor(await encodeAnchor(withTxt));
+    expect(kept?.i18n?.en?.txt).toBe('Only letters are allowed.');
+    const long = {
+      ...stop,
+      lng: 'ko',
+      i18n: { en: { ...i18n.en, txt: 'x'.repeat(65) } },
+    };
+    const dropped = await decodeAnchor(await encodeAnchor(long as AnchorV3));
+    expect(dropped).not.toHaveProperty('i18n');
+  });
+
   it('drops a stop text over its cap, and a code list over three', async () => {
     const bad = {
       ...stop,

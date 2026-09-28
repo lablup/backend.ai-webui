@@ -33,7 +33,7 @@ import {
   nextViaControl,
 } from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
-import type { AnchorVia, ReviewServerState } from './types.js';
+import type { AnchorV3, AnchorVia, ReviewServerState } from './types.js';
 import { mergeVia } from './via.js';
 import {
   buildCommentCopy,
@@ -226,9 +226,24 @@ export function startGuidedMode(options: GuidedModeOptions) {
     );
   }
 
+  /**
+   * A translated stop carries its element's text per language; resolve with
+   * the one the app shows now, or without text when none was recorded for it.
+   */
+  function anchorInAppLanguage(anchor: AnchorV3): AnchorV3 {
+    if (!anchor.i18n) return anchor;
+    const lang = document.documentElement.lang;
+    const txt = lang === anchor.lng ? anchor.txt : anchor.i18n[lang]?.txt;
+    const rest: AnchorV3 = { ...anchor };
+    delete rest.txt;
+    return txt ? { ...rest, txt } : rest;
+  }
+
   function place(stop: WalkthroughStop): Place {
     if (pathNeedsChange(stop.anchor, location)) return { kind: 'away' };
-    const element = findAnchorTarget(stop.anchor, { ignore: host });
+    const element = findAnchorTarget(anchorInAppLanguage(stop.anchor), {
+      ignore: host,
+    });
     if (!element) return { kind: 'waiting' };
     return isBehindModal(element)
       ? { kind: 'waiting', covered: true }

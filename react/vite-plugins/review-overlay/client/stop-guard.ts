@@ -18,6 +18,8 @@ export const CODE_PATH_MAX = 256;
 export const CODE_REFS_MAX = 3;
 export const VIA_MAX = 8;
 export const VIA_TEXT_MAX = 120;
+/** An anchor's `txt`, and a translation's (FR-4103). */
+export const TXT_MAX = 64;
 /** A stop carries its own wording plus this many translations (FR-4057). */
 export const I18N_LANGS_MAX = 4;
 const SHA_RE = /^[0-9a-f]{40}$/;
@@ -102,6 +104,7 @@ const isI18nText = (value: unknown): value is AnchorI18nText => {
     return false;
   if (text.new !== undefined && !isText(text.new, STOP_LITERAL_MAX))
     return false;
+  if (text.txt !== undefined && !isText(text.txt, TXT_MAX)) return false;
   return text.via === undefined || list(isVia, VIA_MAX)(text.via);
 };
 

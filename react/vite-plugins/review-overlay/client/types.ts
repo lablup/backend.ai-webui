@@ -51,6 +51,8 @@ export interface AnchorI18nText {
   new?: string;
   /** Only the labels the sentence quotes; replay always uses the base `via`. */
   via?: AnchorVia[];
+  /** The element's own text with the app in this language (FR-4103). */
+  txt?: string;
 }
 
 /**
