@@ -1,3 +1,4 @@
+import { BAIDialogProps } from '../BAIDialog';
 import { default as React } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 export interface BAITableSettingColumn {
     key: string;
@@ -10,7 +11,7 @@ export interface BAITableSettingResult {
     /** Every column key, in the order the user left them. */
     columnOrder: Array<string>;
 }
-export interface BAITableSettingModalProps {
+export interface BAITableSettingModalProps extends Pick<BAIDialogProps, 'afterOpenChange'> {
     open: boolean;
     columns: Array<BAITableSettingColumn>;
     /** Currently visible keys, in current display order. */
