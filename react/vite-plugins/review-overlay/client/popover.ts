@@ -196,6 +196,8 @@ const LABELS: Record<string, Record<string, string>> = {
     away: 'On {page} — › takes you there.',
     waitBadge: 'Waiting',
     clickHere: 'Click here',
+    typeHere: 'Type “{v}”',
+    chooseHere: 'Choose “{v}”',
   },
   ko: {
     changed: '무엇이 바뀌었나',
@@ -210,6 +212,8 @@ const LABELS: Record<string, Record<string, string>> = {
     away: '{page} 페이지에 있습니다 — › 로 이동합니다.',
     waitBadge: '대기 중',
     clickHere: '여기를 클릭',
+    typeHere: '“{v}” 입력',
+    chooseHere: '“{v}” 선택',
   },
 };
 

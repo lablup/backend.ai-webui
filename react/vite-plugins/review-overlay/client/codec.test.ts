@@ -172,6 +172,26 @@ describe('walkthrough stop fields (FR-3949)', () => {
     expect(decoded?.ck).toBe(stop.ck);
   });
 
+  it('keeps fill and select steps, and drops a via list with a malformed one', async () => {
+    const via: AnchorV3['via'] = [
+      { click: { text: 'Upload' } },
+      { fill: { label: 'Search by name', value: 'abc', enter: 1 } },
+      { select: { tid: 'mode', option: 'Models' } },
+    ];
+    const kept = await decodeAnchor(await encodeAnchor({ ...stop, via }));
+    expect(kept?.via).toEqual(via);
+    for (const step of [
+      { fill: { label: 'Search' } },
+      { select: { option: 'Models' } },
+      { fill: { label: 'Search', value: 'x' }, click: { text: 'Go' } },
+      { hover: { text: 'Help' } },
+    ]) {
+      const bad = { ...stop, via: [step] } as unknown as AnchorV3;
+      const decoded = await decodeAnchor(await encodeAnchor(bad));
+      expect(decoded).not.toHaveProperty('via');
+    }
+  });
+
   it('drops a stop text over its cap, and a code list over three', async () => {
     const bad = {
       ...stop,

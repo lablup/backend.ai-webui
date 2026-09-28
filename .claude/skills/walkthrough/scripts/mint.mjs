@@ -361,39 +361,148 @@ const waitForOverlay = (page) =>
     timeout: 30_000,
   });
 
-/** The overlay's `VIA_CONTROL` (resolve.ts): what a via step's text lands in. */
+/** The overlay's `VIA_CONTROL` / `VIA_FIELD` / `VIA_SELECT` (resolve.ts). */
 const VIA_CONTROL =
   'button, a[href], summary, label, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"]';
+const VIA_FIELD =
+  'input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, [contenteditable="true"], [contenteditable=""], [role="textbox"], [role="searchbox"]';
+const VIA_SELECT = 'select, [role="combobox"]';
 
-/** The clicked control's own testid, when no other rendered node shares it. */
-function ownTestid(element, control) {
-  const id = (element.closest(control) ?? element).getAttribute("data-testid");
+/**
+ * The testid the overlay can find this control by: a clicked control's own,
+ * or a field's own or its wrapper's when the wrapper holds only that field.
+ * Kept only when no other rendered node shares it.
+ */
+function ownTestid(element, { control, field }) {
+  let node = control ? (element.closest(control) ?? element) : element;
+  if (field && !node.getAttribute("data-testid")) {
+    const wrap = node.closest("[data-testid]");
+    if (wrap && wrap.querySelectorAll(field).length === 1) node = wrap;
+  }
+  const id = node.getAttribute("data-testid");
   if (!id) return null;
   const rendered = [
     ...document.querySelectorAll(`[data-testid="${CSS.escape(id)}"]`),
-  ].filter((node) => node.getClientRects().length);
+  ].filter((other) => other.getClientRects().length);
   return rendered.length === 1 ? id : null;
 }
 
+/** The first of these locators to show a visible match, waiting as a click would. */
+async function firstVisible(page, locators, what) {
+  const deadline = Date.now() + 15_000;
+  do {
+    for (const locator of locators) {
+      const visible = locator.filter({ visible: true });
+      if (await visible.count()) return visible.first();
+    }
+    await page.waitForTimeout(250);
+  } while (Date.now() < deadline);
+  throw new Error(`no ${what} on the page`);
+}
+
+/** A field by the testid on it or around it, else by any of its names. */
+async function locateField(page, tid, labels, selector, roles) {
+  if (tid) {
+    const root = page.getByTestId(tid).first();
+    await root.waitFor({ timeout: 15_000 });
+    const inner = root.locator(selector);
+    return (await inner.count()) === 1 ? inner : root;
+  }
+  return firstVisible(
+    page,
+    labels.flatMap((label) => [
+      page.getByLabel(label, { exact: true }),
+      page.getByPlaceholder(label, { exact: true }),
+      ...roles.map((role) =>
+        page.getByRole(role, { name: label, exact: true }),
+      ),
+    ]),
+    `field named ${labels.map((l) => `"${l}"`).join(" / ")}`,
+  );
+}
+
 /**
- * Click each step, and hand the steps back with the control's testid added:
+ * Replay each step, and hand the steps back with the control's testid added:
  * the overlay points at the control by it, which survives the KO/EN toggle
- * where the label does not.
+ * where the label does not. The page may be in any language the stop is
+ * written in, so each label is tried in all of them.
  */
-async function replayVia(page, via, settleMs) {
+async function replayVia(page, stop, settleMs) {
   const replayed = [];
-  for (const step of via ?? []) {
-    const { text, tid } = step.click;
-    const target = tid
-      ? page.getByTestId(tid).first()
-      : page.getByText(text, { exact: true }).first();
-    // Before the click, which may unmount the control.
-    const found = tid
+  for (const [i, step] of (stop.via ?? []).entries()) {
+    const kind = step.fill ? "fill" : step.select ? "select" : "click";
+    const body = step[kind];
+    const alts = [
+      body,
+      ...Object.values(stop.i18n ?? {})
+        .map((text) => text.via?.[i]?.[kind])
+        .filter(Boolean),
+    ];
+    const words = (key) => [
+      ...new Set(alts.map((alt) => alt[key]).filter(Boolean)),
+    ];
+    let target;
+    let scope;
+    if (kind === "fill") {
+      scope = { field: VIA_FIELD };
+      target = await locateField(page, body.tid, words("label"), VIA_FIELD, [
+        "textbox",
+        "searchbox",
+        "combobox",
+      ]);
+    } else if (kind === "select") {
+      scope = { field: VIA_SELECT };
+      target = await locateField(page, body.tid, words("label"), VIA_SELECT, [
+        "combobox",
+      ]);
+    } else {
+      scope = { control: VIA_CONTROL };
+      target = body.tid
+        ? page.getByTestId(body.tid).first()
+        : await firstVisible(
+            page,
+            words("text").map((text) => page.getByText(text, { exact: true })),
+            `control reading ${words("text")
+              .map((t) => `"${t}"`)
+              .join(" / ")}`,
+          );
+    }
+    // Before acting, which may unmount the control.
+    const found = body.tid
       ? null
-      : await target.evaluate(ownTestid, VIA_CONTROL).catch(() => null);
-    await target.click({ timeout: 15_000 });
+      : await target.evaluate(ownTestid, scope).catch(() => null);
+    const before = new URL(page.url()).search;
+    if (kind === "fill") {
+      await target.fill(body.value, { timeout: 15_000 });
+      if (body.enter === 1) await target.press("Enter");
+    } else if (kind === "select") {
+      if (await target.evaluate((el) => el.tagName === "SELECT"))
+        await target.selectOption({ label: body.option });
+      else {
+        await target.click({ timeout: 15_000 });
+        const option = await firstVisible(
+          page,
+          words("option").map((name) =>
+            page.getByRole("option", { name, exact: true }),
+          ),
+          `option ${words("option")
+            .map((o) => `"${o}"`)
+            .join(" / ")}`,
+        );
+        await option.click({ timeout: 15_000 });
+      }
+    } else {
+      await target.click({ timeout: 15_000 });
+    }
     await page.waitForTimeout(settleMs);
-    replayed.push(found ? { click: { ...step.click, tid: found } } : step);
+    // The stop records the URL it lands on, so a step that moves the query
+    // would land the reader on its outcome and then fight it on replay.
+    const after = new URL(page.url()).search;
+    if (kind !== "click" && after !== before)
+      throw new Error(
+        `via[${i}] ${kind} changes the URL query to "${after}": the page keeps that state in the URL, so put it in the stop's route instead`,
+      );
+    replayed.push(found ? { [kind]: { ...body, tid: found } } : step);
   }
   return replayed;
 }
@@ -816,7 +925,7 @@ async function mintStop(
   });
   await waitForOverlay(page);
   await page.waitForTimeout(settleMs);
-  const via = await replayVia(page, stop.via, settleMs);
+  const via = await replayVia(page, stop, settleMs);
   if (stop.via) fields.via = via;
   // A lazy route renders long after `domcontentloaded`, so wait for the
   // element itself rather than guessing how long the page needs.
@@ -867,8 +976,7 @@ async function verify(context, { minted, origin, fragment, settleMs }) {
       await waitForOverlay(page);
       await page.waitForTimeout(settleMs);
       landed = samePage;
-      if (!samePage)
-        await replayVia(page, stop.stop.via, settleMs).catch(() => {});
+      if (!samePage) await replayVia(page, stop.stop, settleMs).catch(() => {});
     }
     // Only the focus pin is scrolled to; every other stop of a same-page set
     // would be measured docked-away rather than on its element.

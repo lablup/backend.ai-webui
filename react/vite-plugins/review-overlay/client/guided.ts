@@ -33,7 +33,8 @@ import {
   nextViaControl,
 } from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
-import type { ReviewServerState } from './types.js';
+import type { AnchorVia, ReviewServerState } from './types.js';
+import { mergeVia } from './via.js';
 import {
   buildCommentCopy,
   codeHref,
@@ -146,7 +147,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
   /** What the last resolution found, so a scroll re-places without re-resolving. */
   let found: Place[] = [];
   /** The control the current stop's next `via` click needs, when on screen. */
-  let hint: Element | null = null;
+  let hint: { element: Element; step: AnchorVia } | null = null;
 
   const servedPr = () => options.serverState()?.pr ?? 0;
   const flushProgress = () => progress.flush();
@@ -316,30 +317,55 @@ export function startGuidedMode(options: GuidedModeOptions) {
     });
     marks.render(specs);
     const stop = stops[current];
-    marks.hint(hint, stop ? words(langOf(stop)).clickHere : '');
+    marks.hint(
+      hint?.element ?? null,
+      stop && hint ? hintText(hint.step, langOf(stop)) : '',
+    );
   }
 
   /**
    * The furthest `via` step whose control is on screen: an earlier step's
    * control is often still there, under the dialog the later one lives in.
    */
-  function viaHint(where: Place[]): Element | null {
+  function viaHint(
+    where: Place[],
+  ): { element: Element; step: AnchorVia } | null {
     const stop = stops[current];
     const at = where[current];
     if (!stop || at?.kind !== 'waiting' || at.covered) return null;
-    const steps = stop.anchor.via ?? [];
-    const said = stopTextIn(stop.anchor, langOf(stop)).via ?? [];
-    const found = steps.map((step, i) =>
-      findViaTarget(step, [said[i]?.click.text, step.click.text], {
+    const base = stop.anchor.via ?? [];
+    const said = readerVia(stop);
+    // The app may not be in the stop's language yet: every translation's
+    // words are a fallback, the reader's first.
+    const others = Object.values(stop.anchor.i18n ?? {}).map((text) =>
+      mergeVia(base, text.via),
+    );
+    const found = said.map((step, i) =>
+      findViaTarget([step, base[i], ...others.map((via) => via[i])], {
         ignore: host,
       }),
     );
-    return nextViaControl(steps, found);
+    const next = nextViaControl(said, found);
+    return next ? { element: next.element, step: said[next.index] } : null;
+  }
+
+  /** The base steps, in the words of the language the stop reads in. */
+  const readerVia = (stop: WalkthroughStop): AnchorVia[] =>
+    mergeVia(stop.anchor.via, stopTextIn(stop.anchor, langOf(stop)).via);
+
+  /** What the hint's badge asks for: a click, a value to type, an option. */
+  function hintText(step: AnchorVia, lang: string): string {
+    const say = words(lang);
+    if ('fill' in step) return say.typeHere.split('{v}').join(step.fill.value);
+    if ('select' in step)
+      return say.chooseHere.split('{v}').join(step.select.option);
+    return say.clickHere;
   }
 
   /** The hint's box, unless the page detached or hid it since `refresh`. */
   function hintRect(): DOMRect | null {
-    const rect = hint?.isConnected ? hint.getBoundingClientRect() : null;
+    const element = hint?.element;
+    const rect = element?.isConnected ? element.getBoundingClientRect() : null;
     return rect && (rect.width || rect.height) ? rect : null;
   }
 
@@ -401,10 +427,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
         ...(rect
           ? { rect: { left: rect.left, top: rect.top, bottom: rect.bottom } }
           : {}),
-        via: viaSentence(
-          stopTextIn(stop.anchor, langOf(stop)).via,
-          langOf(stop),
-        ),
+        via: viaSentence(readerVia(stop), langOf(stop)),
       };
     }
     return { kind: 'away', page: stopPage(stop) };
@@ -542,7 +565,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
       where.element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
     refresh();
     if (where.kind === 'waiting')
-      hint?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+      hint?.element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   }
 
   // ---------------------------------------------------------------- copy
@@ -705,6 +728,9 @@ export function startGuidedMode(options: GuidedModeOptions) {
   // reader had just typed is the one thing they cannot retype from the page.
   window.addEventListener('pagehide', flushProgress);
   document.addEventListener('keydown', onKeydown);
+  // Typing sets a field's value without a DOM mutation; a fill step is done by it.
+  document.addEventListener('input', onSettle, true);
+  document.addEventListener('change', onSettle, true);
   document.addEventListener('mousedown', onPointerDown, true);
   window.addEventListener('resize', placeSoon);
   window.addEventListener('scroll', placeSoon, {
@@ -727,6 +753,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
     observer.disconnect();
     window.removeEventListener('pagehide', flushProgress);
     document.removeEventListener('keydown', onKeydown);
+    document.removeEventListener('input', onSettle, true);
+    document.removeEventListener('change', onSettle, true);
     document.removeEventListener('mousedown', onPointerDown, true);
     window.removeEventListener('resize', placeSoon);
     window.removeEventListener('scroll', placeSoon, true);

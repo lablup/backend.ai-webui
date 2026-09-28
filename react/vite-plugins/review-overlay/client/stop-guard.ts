@@ -52,13 +52,32 @@ const isCodeRef = (value: unknown): value is AnchorCodeRef => {
 };
 
 const isVia = (value: unknown): value is AnchorVia => {
-  if (!value || typeof value !== 'object') return false;
-  const click = (value as Record<string, unknown>).click;
-  if (!click || typeof click !== 'object') return false;
-  const c = click as Record<string, unknown>;
-  const text = c.text === undefined || isText(c.text, VIA_TEXT_MAX);
-  const tid = c.tid === undefined || isText(c.tid, VIA_TEXT_MAX);
-  return text && tid && (c.text !== undefined || c.tid !== undefined);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const keys = Object.keys(value);
+  if (keys.length !== 1) return false;
+  const body = (value as Record<string, unknown>)[keys[0]];
+  if (!body || typeof body !== 'object') return false;
+  const b = body as Record<string, unknown>;
+  const optional = (key: string) =>
+    b[key] === undefined || isText(b[key], VIA_TEXT_MAX);
+  const named = (key: string) =>
+    optional('tid') &&
+    optional(key) &&
+    (b.tid !== undefined || b[key] !== undefined);
+  switch (keys[0]) {
+    case 'click':
+      return named('text');
+    case 'fill':
+      return (
+        named('label') &&
+        isText(b.value, VIA_TEXT_MAX) &&
+        (b.enter === undefined || b.enter === 1)
+      );
+    case 'select':
+      return named('label') && isText(b.option, VIA_TEXT_MAX);
+    default:
+      return false;
+  }
 };
 
 type Check = (value: unknown) => boolean;

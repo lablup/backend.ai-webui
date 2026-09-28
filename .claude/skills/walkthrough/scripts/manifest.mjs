@@ -47,20 +47,45 @@ function checkCode(refs, where, errors) {
   });
 }
 
+/** A `fill` value travels in a public PR comment: never into one of these. */
+const SECRET_FIELD_RE =
+  /pass(word|wd|code)?|secret|token|api[-_ ]?key|credential|private[-_ ]?key/i;
+
 function checkVia(via, where, errors) {
   if (!Array.isArray(via)) return errors.push(`${where}: via must be an array`);
   if (via.length > VIA_MAX)
     errors.push(`${where}: via holds at most ${VIA_MAX} steps`);
   via.forEach((step, i) => {
     const at = `${where}.via[${i}]`;
-    const click = step && typeof step === "object" ? step.click : null;
-    if (!click || typeof click !== "object")
-      return errors.push(`${at}: only {click: {...}} steps are replayable`);
-    if (click.text === undefined && click.tid === undefined)
-      errors.push(`${at}: click needs text or tid`);
-    for (const key of ["text", "tid"]) {
-      if (click[key] !== undefined && !isText(click[key], VIA_TEXT_MAX))
-        errors.push(`${at}: click.${key} must be 1-${VIA_TEXT_MAX} chars`);
+    const kinds =
+      step && typeof step === "object" && !Array.isArray(step)
+        ? Object.keys(step)
+        : [];
+    const kind = kinds[0];
+    if (kinds.length !== 1 || !["click", "fill", "select"].includes(kind))
+      return errors.push(
+        `${at}: a step is exactly one replayable {click}, {fill} or {select}`,
+      );
+    const body = step[kind];
+    if (!body || typeof body !== "object")
+      return errors.push(`${at}: ${kind} must be an object`);
+    const name = kind === "click" ? "text" : "label";
+    if (body[name] === undefined && body.tid === undefined)
+      errors.push(`${at}: ${kind} needs ${name} or tid`);
+    const words = { click: [], fill: ["value"], select: ["option"] }[kind];
+    for (const key of ["tid", name, ...words]) {
+      if (body[key] !== undefined && !isText(body[key], VIA_TEXT_MAX))
+        errors.push(`${at}: ${kind}.${key} must be 1-${VIA_TEXT_MAX} chars`);
+    }
+    for (const key of words)
+      if (body[key] === undefined) errors.push(`${at}: ${kind} needs a ${key}`);
+    if (kind === "fill") {
+      if (body.enter !== undefined && body.enter !== 1)
+        errors.push(`${at}: fill.enter is 1 or absent`);
+      if (SECRET_FIELD_RE.test(`${body.label ?? ""} ${body.tid ?? ""}`))
+        errors.push(
+          `${at}: a fill into a password / secret / token / key field would publish its value in the PR comment`,
+        );
     }
   });
 }

@@ -35,10 +35,13 @@ export interface AnchorCodeRef {
   to?: number;
 }
 
-/** One replayable step on the way to a stop's element. */
-export interface AnchorVia {
-  click: { text?: string; tid?: string };
-}
+/** One replayable step on the way to a stop's element; exactly one key. */
+export type AnchorVia =
+  | { click: { text?: string; tid?: string } }
+  /** Type `value` into the field named by testid or label; `enter` presses Enter. */
+  | { fill: { tid?: string; label?: string; value: string; enter?: 1 } }
+  /** Open the select named by testid or label and choose `option`. */
+  | { select: { tid?: string; label?: string; option: string } };
 
 /** One stop's wording in a language other than the one it was written in. */
 export interface AnchorI18nText {
