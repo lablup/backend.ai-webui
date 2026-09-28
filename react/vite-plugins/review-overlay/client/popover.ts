@@ -7,7 +7,11 @@
  * the mark layer and the navigator re-render around it, and rewriting its
  * markup would take the caret with it.
  */
+import { createGrip, DRAG_STYLE, makeDraggable } from './drag.js';
 import { esc } from './escape-html.js';
+
+/** Where a dragged popover is parked, per tab; every stop then opens there. */
+export const POPOVER_POS_KEY = 'bai-review:popover-pos';
 
 /** Wide enough that a two-paragraph stop wraps into few enough lines to
     read without scrolling; still under half of a 1440px screen. */
@@ -250,10 +254,22 @@ export function createPopover(
   /** Never a key the host turned off: a hint nothing answers is a lie. */
   const hint = (key: string) => (options.pageChords ? ` (${key})` : '');
   const style = document.createElement('style');
-  style.textContent = STYLE;
+  style.textContent = STYLE + DRAG_STYLE;
   const pop = document.createElement('div');
   pop.className = 'bai-popover';
   root.append(style, pop);
+
+  /** The last anchor placement, so "put it back" has somewhere to go. */
+  let lastPlace: PopoverPlace | null = null;
+  const drag = makeDraggable({
+    box: pop,
+    storageKey: POPOVER_POS_KEY,
+    fallback: { width: WIDTH, height: ASSUMED_HEIGHT },
+    onMove: (pos) => {
+      if (!pos && lastPlace && pop.classList.contains('shown'))
+        place(lastPlace);
+    },
+  });
 
   /**
    * The stop AND the language the markup belongs to; a re-render of the same
@@ -291,7 +307,7 @@ export function createPopover(
     const say = words(model.lang);
     const langs = model.langs.length > 1 ? model.langs : [];
     pop.innerHTML = `
-      <div class="head">
+      <div class="head" data-drag-area>
         <span class="type ${model.type}">${model.type}</span>
         <span class="kind">${esc(model.kind)}</span>
         <span class="wait"></span>
@@ -335,15 +351,23 @@ export function createPopover(
         <span class="spacer"></span>
         <span>${options.pageChords ? BARE_KEYS : ''}<kbd>Esc</kbd></span>
       </div>`;
+    pop.querySelector('.head')?.prepend(createGrip());
     const area = textarea();
     if (area) area.value = model.comment;
   }
 
   /**
    * Under the mark (or the control a waiting stop needs clicked) when it fits,
-   * above it when it does not, centred when there is neither.
+   * above it when it does not, centred when there is neither — unless the
+   * reader dragged it somewhere, which then holds for every stop.
    */
   function place(where: PopoverPlace) {
+    lastPlace = where;
+    if (drag.placed()) {
+      pop.style.maxHeight = '';
+      drag.apply();
+      return;
+    }
     /*
      * The CSS cap is what the panel can actually be; measuring it and clamping
      * against the same number is what keeps both ends on screen. A viewport
@@ -435,6 +459,7 @@ export function createPopover(
     isTyping: () => !!textarea() && root.activeElement === textarea(),
     contains: (node: Node) => pop.contains(node),
     destroy() {
+      drag.destroy();
       pop.remove();
       style.remove();
     },
