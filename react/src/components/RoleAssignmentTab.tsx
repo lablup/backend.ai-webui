@@ -2,13 +2,14 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
+import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
 import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
-  RoleAssignmentTabAssignmentsQuery,
-} from '../__generated__/RoleAssignmentTabAssignmentsQuery.graphql';
-import { RoleAssignmentTabBulkRevokeMutation } from '../__generated__/RoleAssignmentTabBulkRevokeMutation.graphql';
-import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTabFragment.graphql';
+  UserV2Filter,
+  UserV2OrderBy,
+} from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
@@ -27,18 +28,16 @@ import {
   BAISelectionLabel,
   BAITable,
   BAIUnmountAfterClose,
-  INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
-  useFetchKey,
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Trash2, PlusIcon } from 'lucide-react';
-import React, { useDeferredValue, useState } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useRefetchableFragment } from 'react-relay';
 
 type AssignmentOrder =
   | 'EMAIL_ASC'
@@ -52,12 +51,6 @@ interface RoleAssignmentTabProps {
   roleNodeFrgmt: RoleAssignmentTabFragment$key;
 }
 
-/**
- * The drawer's "Role Assignments" tab. The assignment rows come from
- * `adminRoleAssignments` filtered by the role id: `Role.users` is deprecated
- * since 26.9.0 and its replacement `Role.usersV2` answers users without
- * `grantedAt` / `grantedBy`, which this table shows.
- */
 const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   roleNodeFrgmt,
 }) => {
@@ -73,7 +66,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const [revokingTargets, setRevokingTargets] = useState<
     { userId: string; label: string }[] | null
   >(null);
-  const [fetchKey, updateFetchKey] = useFetchKey();
+  const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   // Pagination / order / filter live in local React state (not the URL);
   // they reset whenever the drawer content remounts.
@@ -93,15 +86,24 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
   const offset =
     queryParams.current > 1 ? (queryParams.current - 1) * limit : 0;
 
-  const role = useFragment(
+  const [data, refetch] = useRefetchableFragment(
     graphql`
-      fragment RoleAssignmentTabFragment on Role {
+      fragment RoleAssignmentTabFragment on Role
+      @argumentDefinitions(
+        filter: { type: "RoleAssignmentFilter" }
+        orderBy: { type: "[RoleAssignmentOrderBy!]" }
+        userFilter: { type: "UserV2Filter" }
+        userOrderBy: { type: "[UserV2OrderBy!]" }
+        limit: { type: "Int", defaultValue: 10 }
+        offset: { type: "Int", defaultValue: 0 }
+      )
+      @refetchable(queryName: "RoleAssignmentTabRefetchQuery") {
         id
         name
         source
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
-        # nodes the drawer fragment composes with, and unaliased fields with
-        # different arguments conflict in one query.
+        # nodes the drawer fragment now composes with, and unaliased fields
+        # with different arguments conflict in one query.
         firstScope: scopes(first: 1) @deprecatedSince(version: "26.9.0a4") {
           edges {
             node {
@@ -112,69 +114,17 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
-      }
-    `,
-    roleNodeFrgmt,
-  );
-
-  const roleId = toLocalId(role.id);
-
-  // Managers >= 26.9.0 answer the role's one scope directly; older ones
-  // answer a scopes connection.
-  const roleScope = role.scopeType
-    ? { scopeType: role.scopeType, scopeId: role.scopeId }
-    : role.firstScope?.edges?.[0]?.node;
-  const projectScopeId =
-    roleScope?.scopeType?.toUpperCase() === 'PROJECT'
-      ? roleScope.scopeId
-      : undefined;
-
-  // System-generated project admin roles are managed through the project
-  // page's one-click admin setting, which requires manager >= 26.8.0
-  // (role-mapped-scope-filter). Show their assignments read-only there; on
-  // older managers direct assignment here is the only way to grant project
-  // admin, so keep the actions available (FR-3424).
-  const isReadOnly =
-    role.source === 'SYSTEM' &&
-    !!projectScopeId &&
-    !!role.name?.toLowerCase().includes('admin') &&
-    baiClient.supports('role-mapped-scope-filter');
-
-  const queryVariables: RoleAssignmentTabAssignmentsQuery['variables'] = {
-    // The role id pins the connection to this role; the user filter narrows
-    // it further (top-level filter fields are ANDed).
-    filter: { roleId: { equals: roleId }, ...queryParams.filter },
-    orderBy: convertToOrderBy<RoleAssignmentOrderBy>(queryParams.order),
-    limit,
-    offset,
-  };
-
-  // Defer the variables / fetchKey so a refresh / page change / search updates
-  // the table inline (previous rows stay visible) instead of re-suspending the
-  // tab.
-  const deferredQueryVariables = useDeferredValue(queryVariables);
-  const deferredFetchKey = useDeferredValue(fetchKey);
-
-  const data = useLazyLoadQuery<RoleAssignmentTabAssignmentsQuery>(
-    graphql`
-      query RoleAssignmentTabAssignmentsQuery(
-        $filter: RoleAssignmentFilter
-        $orderBy: [RoleAssignmentOrderBy!]
-        $limit: Int
-        $offset: Int
-      ) {
-        adminRoleAssignments(
+        users(
           filter: $filter
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @deprecatedSince(version: "26.9.0a1") {
           count
           edges {
             node {
               id
               userId
-              grantedBy
               grantedAt
               user {
                 id
@@ -186,20 +136,51 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             }
           }
         }
+        usersV2(
+          filter: $userFilter
+          orderBy: $userOrderBy
+          limit: $limit
+          offset: $offset
+        ) @since(version: "26.9.0a1") {
+          count
+          edges {
+            node {
+              id
+              entityId
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
       }
     `,
-    deferredQueryVariables,
-    {
-      fetchKey: deferredFetchKey,
-      fetchPolicy:
-        deferredFetchKey === INITIAL_FETCH_KEY
-          ? 'store-and-network'
-          : 'network-only',
-    },
+    roleNodeFrgmt,
   );
 
-  const isPendingRefetch =
-    deferredQueryVariables !== queryVariables || deferredFetchKey !== fetchKey;
+  const roleId = toLocalId(data.id);
+
+  // Managers >= 26.9.0 answer the role's one scope directly; older ones
+  // answer a scopes connection.
+  const roleScope = data.scopeType
+    ? { scopeType: data.scopeType, scopeId: data.scopeId }
+    : data.firstScope?.edges?.[0]?.node;
+  const projectScopeId =
+    roleScope?.scopeType?.toUpperCase() === 'PROJECT'
+      ? roleScope.scopeId
+      : undefined;
+
+  // System-generated project admin roles are managed through the project
+  // page's one-click admin setting, which requires manager >= 26.8.0
+  // (role-mapped-scope-filter). Show their assignments read-only there; on
+  // older managers direct assignment here is the only way to grant project
+  // admin, so keep the actions available (FR-3424).
+  const isReadOnly =
+    data.source === 'SYSTEM' &&
+    !!projectScopeId &&
+    !!data.name?.toLowerCase().includes('admin') &&
+    baiClient.supports('role-mapped-scope-filter');
 
   const mutateBulkRevokeRole =
     useMutationWithPromise<RoleAssignmentTabBulkRevokeMutation>(graphql`
@@ -218,8 +199,73 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  const assignments =
-    data.adminRoleAssignments?.edges?.map((edge) => edge?.node) ?? [];
+  // `usersV2` answers users, not assignment rows, so it has no grant time.
+  const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a1');
+  const assignments: Array<{
+    id: string;
+    userId: string;
+    email?: string | null;
+    fullName?: string | null;
+    grantedAt?: string | null;
+  }> = isUsersV2
+    ? _.compact(
+        _.map(data.usersV2?.edges, (edge) =>
+          edge?.node
+            ? {
+                id: edge.node.id,
+                userId: edge.node.entityId,
+                email: edge.node.basicInfo.email,
+                fullName: edge.node.basicInfo.fullName,
+              }
+            : null,
+        ),
+      )
+    : _.compact(
+        _.map(data.users?.edges, (edge) =>
+          edge?.node
+            ? {
+                id: edge.node.id,
+                userId: edge.node.userId,
+                email: edge.node.user?.basicInfo.email,
+                fullName: edge.node.user?.basicInfo.fullName,
+                grantedAt: edge.node.grantedAt,
+              }
+            : null,
+        ),
+      );
+  const totalCount = (isUsersV2 ? data.usersV2?.count : data.users?.count) ?? 0;
+
+  const doRefetch = (overrides?: {
+    filter?: RoleAssignmentFilter | null;
+    order?: string | null;
+    limit?: number;
+    offset?: number;
+  }) => {
+    const filter =
+      overrides?.filter !== undefined ? overrides.filter : queryParams.filter;
+    const order =
+      overrides?.order !== undefined ? overrides.order : queryParams.order;
+    startRefetchTransition(() => {
+      refetch(
+        {
+          ...(isUsersV2
+            ? {
+                // The filter UI only emits `email` / `username`, which
+                // UserV2Filter shares with RoleAssignmentFilter.
+                userFilter: filter as UserV2Filter | null,
+                userOrderBy: convertToOrderBy<UserV2OrderBy>(order),
+              }
+            : {
+                filter,
+                orderBy: convertToOrderBy<RoleAssignmentOrderBy>(order),
+              }),
+          limit: overrides?.limit ?? limit,
+          offset: overrides?.offset ?? offset,
+        },
+        { fetchPolicy: 'network-only' },
+      );
+    });
+  };
 
   const handleFilterChange = (newFilter: RoleAssignmentFilter | undefined) => {
     setQueryParams((prev) => ({
@@ -227,19 +273,17 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       filter: newFilter ?? null,
       current: 1,
     }));
+    doRefetch({ filter: newFilter ?? null, offset: 0 });
   };
 
   const handleRefresh = () => {
-    updateFetchKey();
+    doRefetch();
   };
 
   const handleBulkRevoke = (userIds: string[]) => {
     const targets = userIds.map((userId) => {
-      const assignment = assignments.find((a) => a?.userId === userId);
-      const label =
-        assignment?.user?.basicInfo?.email ||
-        assignment?.user?.basicInfo?.fullName ||
-        userId;
+      const assignment = assignments.find((a) => a.userId === userId);
+      const label = assignment?.email || assignment?.fullName || userId;
       return { userId, label };
     });
     setRevokingTargets(targets);
@@ -247,6 +291,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   return (
     <BAIFlex align="stretch" direction="column" gap="sm">
+      {/* `showIcon` dropped — Banner always shows its status icon (MAPPING §4). */}
       {isReadOnly && (
         <Banner status="warning" title={t('rbac.SystemRoleNoAssignments')} />
       )}
@@ -281,9 +326,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                   }
                   onClick={() => {
                     const userIds = assignments
-                      .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
-                      .map((a) => a?.userId)
-                      .filter(Boolean) as string[];
+                      .filter((a) => selectedRowKeys.includes(a.id))
+                      .map((a) => a.userId);
                     handleBulkRevoke(userIds);
                   }}
                 />
@@ -292,8 +336,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           )}
           <BAIFetchKeyButton
             loading={isPendingRefetch}
-            value={fetchKey}
-            onChange={updateFetchKey}
+            value=""
+            onChange={() => handleRefresh()}
           />
           {!isReadOnly && (
             <BAIButton
@@ -314,9 +358,11 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         pagination={{
           pageSize: queryParams.pageSize,
           current: queryParams.current,
-          total: data.adminRoleAssignments?.count ?? 0,
+          total: totalCount,
           onChange: (current, pageSize) => {
             setQueryParams((prev) => ({ ...prev, current, pageSize }));
+            const newOffset = current > 1 ? (current - 1) * pageSize : 0;
+            doRefetch({ limit: pageSize, offset: newOffset });
           },
         }}
         rowSelection={
@@ -334,6 +380,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             ...prev,
             order: (newOrder as AssignmentOrder) ?? null,
           }));
+          doRefetch({ order: newOrder ?? null });
         }}
         columns={[
           {
@@ -343,7 +390,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             fixed: 'left',
             render: (_, record) => (
               <BAINameActionCell
-                title={record?.user?.basicInfo?.email || '-'}
+                title={record.email || '-'}
                 showActions="always"
                 actions={
                   isReadOnly
@@ -354,7 +401,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                           title: t('rbac.RevokeUser'),
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
-                          onClick: () => handleBulkRevoke([record?.userId]),
+                          onClick: () => handleBulkRevoke([record.userId]),
                         },
                       ]
                 }
@@ -366,19 +413,23 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             key: 'username',
             dataIndex: 'username',
             title: t('credential.FullName'),
-            render: (_, record) => record?.user?.basicInfo?.fullName || '-',
+            render: (_, record) => record.fullName || '-',
             sorter: true,
           },
-          {
-            key: 'grantedAt',
-            dataIndex: 'grantedAt',
-            title: t('rbac.GrantedAt'),
-            render: (_, record) =>
-              record?.grantedAt
-                ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
-                : '-',
-            sorter: true,
-          },
+          ...(isUsersV2
+            ? []
+            : [
+                {
+                  key: 'grantedAt',
+                  dataIndex: 'grantedAt',
+                  title: t('rbac.GrantedAt'),
+                  render: (_: unknown, record: (typeof assignments)[number]) =>
+                    record.grantedAt
+                      ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
+                      : '-',
+                  sorter: true,
+                },
+              ]),
         ]}
       />
       <BAIUnmountAfterClose>
