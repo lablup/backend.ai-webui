@@ -109,18 +109,33 @@ describe.each(componentDocs.map((file) => [stemOf(file), file]))(
       let source = readFileSync(resolve(dirname(file), `${stem}.tsx`), 'utf-8');
       // An adapter over a component moved to ui-common (ADR 0009) names only
       // the props it maps; the rest are declared in ui-common's typings, one
-      // file per component in the subpath's directory.
+      // file per component in the subpath's directory, plus the sibling
+      // component directories those typings extend (`../Form`).
+      const componentsDir = resolve(
+        packageDir,
+        'node_modules/@lablup/ui-common/dist/components',
+      );
+      const readTypings = (name: string) => {
+        let typings = '';
+        for (const file of readdirSync(resolve(componentsDir, name))) {
+          if (file.endsWith('.d.ts')) {
+            typings += readFileSync(
+              resolve(componentsDir, name, file),
+              'utf-8',
+            );
+          }
+        }
+        return typings;
+      };
       for (const [, name] of source.matchAll(
         /from '@lablup\/ui-common\/components\/(\w+)'/g,
       )) {
-        const typings = resolve(
-          packageDir,
-          `node_modules/@lablup/ui-common/dist/components/${name}`,
-        );
-        for (const file of readdirSync(typings)) {
-          if (file.endsWith('.d.ts')) {
-            source += readFileSync(resolve(typings, file), 'utf-8');
-          }
+        const typings = readTypings(name);
+        source += typings;
+        for (const [, sibling] of typings.matchAll(
+          /from ['"]\.\.\/(\w+)['"]/g,
+        )) {
+          source += readTypings(sibling);
         }
       }
       for (const props of propLists(docs)) {
