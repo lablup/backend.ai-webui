@@ -132,11 +132,23 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
           keypairs(email: $email) {
             access_key
           }
-          user(email: $email) {
-            domain_name
-            groups {
-              name
-              id
+          adminUsersV2(filter: { email: { equals: $email } }, limit: 1) {
+            edges {
+              node {
+                organization {
+                  domainName
+                }
+                projects(limit: 1000) {
+                  edges {
+                    node {
+                      id
+                      basicInfo {
+                        name
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -151,7 +163,9 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
   const ownerKeypairs = form.getFieldValue(['owner', 'email'])
     ? data?.keypairs
     : undefined;
-  const owner = form.getFieldValue(['owner', 'email']) ? data?.user : undefined;
+  const owner = form.getFieldValue(['owner', 'email'])
+    ? data?.adminUsersV2?.edges?.[0]?.node
+    : undefined;
 
   const nonExistentOwner = !isFetching && fetchingEmail && !owner;
 
@@ -180,7 +194,7 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
         <div style={{ display: isActive ? 'block' : 'none' }}>
           <HiddenFormItem
             name={['owner', 'domainName']}
-            value={owner?.domain_name}
+            value={owner?.organization?.domainName}
           />
           <Form.Item dependencies={[['owner', 'enabled']]} noStyle>
             {({ getFieldValue }) => {
@@ -276,12 +290,10 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
                         ]}
                       >
                         <BAISelect
-                          options={_.map(owner?.groups, (g) => {
-                            return {
-                              label: g?.name,
-                              value: g?.name,
-                            };
-                          })}
+                          options={_.map(owner?.projects?.edges, (edge) => ({
+                            label: edge.node.basicInfo.name,
+                            value: edge.node.basicInfo.name,
+                          }))}
                           autoSelectOption
                           disabled={_.isEmpty(fetchingEmail) || isFetching}
                         />
