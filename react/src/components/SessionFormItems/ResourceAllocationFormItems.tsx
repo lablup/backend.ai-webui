@@ -806,6 +806,13 @@ const ResourceAllocationFormItems: React.FC<
           autoSelectDefault={autoSelectFirstResourceGroup}
           includeSFTPResourceGroups={includeSFTPResourceGroups}
           showSearch
+          // An auto-selected preset is untouched, so `dependencies` would not
+          // re-check it; validate it here, after the store has the new group.
+          onChange={() => {
+            if (form.getFieldValue('allocationPreset')) {
+              form.validateFields(['allocationPreset']).catch(() => {});
+            }
+          }}
         />
       </Form.Item>
 
@@ -814,14 +821,14 @@ const ResourceAllocationFormItems: React.FC<
           label={t('resourcePreset.ResourcePresets')}
           name="allocationPreset"
           style={{ marginBottom: token.marginXS }}
-          dependencies={['resourceGroup']}
           rules={[
             {
               required: true,
             },
             ({ getFieldValue }) => ({
               // Changing the resource group keeps the chosen preset; flag a
-              // preset scoped to another group instead of swapping it.
+              // preset scoped to another group instead of swapping it. Re-run
+              // from the resource-group select's `onChange`.
               validator: async (_rule, value: string) => {
                 const presetGroup = _.find(
                   resource_presets,
