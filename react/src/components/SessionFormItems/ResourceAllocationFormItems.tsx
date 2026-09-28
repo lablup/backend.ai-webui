@@ -379,8 +379,10 @@ const ResourceAllocationFormItems: React.FC<
   }, [currentImage, acceleratorSlotsInRG, currentEnvironmentManual]);
 
   useEffect(() => {
+    // Read the store, not the watch: `useWatch` is `undefined` on the first
+    // render, which would overwrite a preset restored from the URL.
     if (
-      !currentResourceValue &&
+      !form.getFieldValue('resource') &&
       form.getFieldValue('allocationPreset') !== 'custom'
     ) {
       form.setFieldsValue({
