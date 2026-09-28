@@ -361,15 +361,41 @@ const waitForOverlay = (page) =>
     timeout: 30_000,
   });
 
+/** The overlay's `VIA_CONTROL` (resolve.ts): what a via step's text lands in. */
+const VIA_CONTROL =
+  'button, a[href], summary, label, [role="button"], [role="link"], [role="tab"], [role="menuitem"], [role="option"], [role="radio"], [role="checkbox"], [role="switch"]';
+
+/** The clicked control's own testid, when no other rendered node shares it. */
+function ownTestid(element, control) {
+  const id = (element.closest(control) ?? element).getAttribute("data-testid");
+  if (!id) return null;
+  const rendered = [
+    ...document.querySelectorAll(`[data-testid="${CSS.escape(id)}"]`),
+  ].filter((node) => node.getClientRects().length);
+  return rendered.length === 1 ? id : null;
+}
+
+/**
+ * Click each step, and hand the steps back with the control's testid added:
+ * the overlay points at the control by it, which survives the KO/EN toggle
+ * where the label does not.
+ */
 async function replayVia(page, via, settleMs) {
+  const replayed = [];
   for (const step of via ?? []) {
     const { text, tid } = step.click;
     const target = tid
       ? page.getByTestId(tid).first()
       : page.getByText(text, { exact: true }).first();
+    // Before the click, which may unmount the control.
+    const found = tid
+      ? null
+      : await target.evaluate(ownTestid, VIA_CONTROL).catch(() => null);
     await target.click({ timeout: 15_000 });
     await page.waitForTimeout(settleMs);
+    replayed.push(found ? { click: { ...step.click, tid: found } } : step);
   }
+  return replayed;
 }
 
 /**
@@ -790,7 +816,8 @@ async function mintStop(
   });
   await waitForOverlay(page);
   await page.waitForTimeout(settleMs);
-  await replayVia(page, stop.via, settleMs);
+  const via = await replayVia(page, stop.via, settleMs);
+  if (stop.via) fields.via = via;
   // A lazy route renders long after `domcontentloaded`, so wait for the
   // element itself rather than guessing how long the page needs.
   await page
@@ -800,7 +827,16 @@ async function mintStop(
       { timeout: FIND_TIMEOUT_MS },
     )
     .catch(() => {});
-  return mintInPage(page, stop.find, fields, at);
+  const result = await mintInPage(page, stop.find, fields, at);
+  // The testids replay added can push a stop past the part cap; the manifest's
+  // own via fit before them.
+  if (
+    result.error?.startsWith("anchor is") &&
+    stop.via &&
+    fields.via !== stop.via
+  )
+    return mintInPage(page, stop.find, { ...fields, via: stop.via }, at);
+  return result;
 }
 
 /**

@@ -1,7 +1,9 @@
 import { BAI_MODAL_OPEN_ATTRIBUTE } from '../../../../packages/backend.ai-ui/src/components/dialogLevelStack';
 import {
   findAnchorTarget,
+  findViaTarget,
   isBehindModal,
+  nextViaControl,
   PORTAL_MODAL,
   quickFindTarget,
 } from './resolve.js';
@@ -600,5 +602,84 @@ describe('isBehindModal', () => {
     );
     expect(isBehindModal(byId('first'))).toBe(true);
     expect(isBehindModal(byId('second'))).toBe(false);
+  });
+});
+
+describe('findViaTarget', () => {
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div data-testid="toolbar"><button data-testid="create">Create Folder</button>' +
+      '<button><span>Upload</span></button></div>';
+  });
+  const byTid = (tid: string) =>
+    document.querySelector(`[data-testid="${tid}"]`);
+
+  it('finds the control by its testid, whatever language it reads in', () => {
+    const step = { click: { text: 'Create Folder', tid: 'create' } };
+    byTid('create')!.textContent = '폴더 생성';
+    expect(findViaTarget(step, ['Create Folder'])).toBe(byTid('create'));
+  });
+
+  it('falls back to the label, the reader’s language first', () => {
+    const upload = document.querySelector('button:not([data-testid])');
+    expect(
+      findViaTarget({ click: { text: 'Upload' } }, ['업로드', 'Upload']),
+    ).toBe(upload);
+    // The label names the control, never the span inside it or the toolbar.
+    expect(
+      findViaTarget({ click: { text: 'Upload' } }, ['Upload'])?.tagName,
+    ).toBe('BUTTON');
+  });
+
+  it('points at nothing under an open modal, or when the label is gone', () => {
+    const step = { click: { text: 'Create Folder', tid: 'create' } };
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-bai-modal-open><div role="dialog">form</div></div>',
+    );
+    expect(findViaTarget(step, ['Create Folder'])).toBeNull();
+    document.querySelector('[data-bai-modal-open]')!.remove();
+    expect(findViaTarget({ click: { text: 'Delete' } }, ['Delete'])).toBeNull();
+  });
+});
+
+describe('findViaTarget label matching', () => {
+  it('finds a control whose label sits beside other text, as a click would', () => {
+    document.body.innerHTML =
+      '<div role="tablist"><button role="tab" id="tab"><span>Sessions</span><span>3</span></button></div>';
+    expect(
+      findViaTarget({ click: { text: 'Sessions' } }, ['Sessions'])?.id,
+    ).toBe('tab');
+  });
+});
+
+describe('nextViaControl', () => {
+  const el = (id: string, tid?: string) => {
+    const button = document.createElement('button');
+    button.id = id;
+    if (tid) button.setAttribute('data-testid', tid);
+    return button;
+  };
+  const steps = [
+    { click: { text: 'Create' } },
+    { click: { text: 'Next', tid: 'wizard-next' } },
+  ];
+
+  it('stays on the first step while a later label only matches a look-alike', () => {
+    const create = el('create');
+    const pagerNext = el('pager-next');
+    expect(
+      nextViaControl(
+        [steps[0], { click: { text: 'Next' } }],
+        [create, pagerNext],
+      ),
+    ).toBe(create);
+  });
+
+  it('moves on once the earlier control is gone, or at once on a testid hit', () => {
+    const next = el('next', 'wizard-next');
+    expect(nextViaControl(steps, [null, next])).toBe(next);
+    expect(nextViaControl(steps, [el('create'), next])).toBe(next);
+    expect(nextViaControl(steps, [null, null])).toBeNull();
   });
 });

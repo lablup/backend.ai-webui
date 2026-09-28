@@ -24,8 +24,14 @@ import {
   createPopover,
   type PopoverModel,
   type PopoverPlace,
+  words,
 } from './popover.js';
-import { findAnchorTarget, isBehindModal } from './resolve.js';
+import {
+  findAnchorTarget,
+  findViaTarget,
+  isBehindModal,
+  nextViaControl,
+} from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
 import type { ReviewServerState } from './types.js';
 import {
@@ -139,6 +145,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
       : window.setTimeout(() => callback(0), 16);
   /** What the last resolution found, so a scroll re-places without re-resolving. */
   let found: Place[] = [];
+  /** The control the current stop's next `via` click needs, when on screen. */
+  let hint: Element | null = null;
 
   const servedPr = () => options.serverState()?.pr ?? 0;
   const flushProgress = () => progress.flush();
@@ -307,6 +315,32 @@ export function startGuidedMode(options: GuidedModeOptions) {
       });
     });
     marks.render(specs);
+    const stop = stops[current];
+    marks.hint(hint, stop ? words(langOf(stop)).clickHere : '');
+  }
+
+  /**
+   * The furthest `via` step whose control is on screen: an earlier step's
+   * control is often still there, under the dialog the later one lives in.
+   */
+  function viaHint(where: Place[]): Element | null {
+    const stop = stops[current];
+    const at = where[current];
+    if (!stop || at?.kind !== 'waiting' || at.covered) return null;
+    const steps = stop.anchor.via ?? [];
+    const said = stopTextIn(stop.anchor, langOf(stop)).via ?? [];
+    const found = steps.map((step, i) =>
+      findViaTarget(step, [said[i]?.click.text, step.click.text], {
+        ignore: host,
+      }),
+    );
+    return nextViaControl(steps, found);
+  }
+
+  /** The hint's box, unless the page detached or hid it since `refresh`. */
+  function hintRect(): DOMRect | null {
+    const rect = hint?.isConnected ? hint.getBoundingClientRect() : null;
+    return rect && (rect.width || rect.height) ? rect : null;
   }
 
   const stateText = (id: string): string =>
@@ -359,15 +393,20 @@ export function startGuidedMode(options: GuidedModeOptions) {
         rect: { left: rect.left, top: rect.top, bottom: rect.bottom },
       };
     }
-    if (at.kind === 'waiting')
+    if (at.kind === 'waiting') {
+      const rect = hintRect();
       return {
         kind: 'waiting',
         covered: !!at.covered,
+        ...(rect
+          ? { rect: { left: rect.left, top: rect.top, bottom: rect.bottom } }
+          : {}),
         via: viaSentence(
           stopTextIn(stop.anchor, langOf(stop)).via,
           langOf(stop),
         ),
       };
+    }
     return { kind: 'away', page: stopPage(stop) };
   }
 
@@ -439,6 +478,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
   /** One resolution pass, and everything that reads it. */
   function refresh(): boolean {
     found = places();
+    hint = viaHint(found);
     renderMarks(found);
     nav.render(navModel(found));
     pop.render(popModel(found));
@@ -501,6 +541,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
     else if (where.kind === 'located')
       where.element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
     refresh();
+    if (where.kind === 'waiting')
+      hint?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   }
 
   // ---------------------------------------------------------------- copy

@@ -599,12 +599,18 @@ describe('a stop behind a dialog', () => {
       }),
     ].join('&');
 
+    // The control the via sentence names.
+    mount('open-upload', 'Upload');
     await bootOn(hash);
     act('next')?.click();
 
     expect(marks()).toHaveLength(1);
     expect(pillText()).toContain('waiting');
     expect(node('.bai-popover .via')?.textContent).toContain('Click “Upload”');
+    // The button the via sentence names is pointed at, and the popover hangs
+    // from it rather than floating at the screen's middle.
+    expect(node('.wt-hint')).not.toBeNull();
+    expect(node('.wt-badge.hint')?.textContent).toBe('Click here');
     // The neighbour's mark must not read as the waiting stop's element.
     expect(marks()[0].className).toContain('muted');
     expect(node<HTMLElement>('.wt-badge.num')?.style.display).toBe('none');
@@ -623,6 +629,7 @@ describe('a stop behind a dialog', () => {
       false,
     );
     expect(node('.bai-popover .wait')?.textContent).toBe('');
+    expect(node('.wt-hint')).toBeNull();
   });
 
   it('keeps its popover open while the reader follows the via sentence', async () => {
