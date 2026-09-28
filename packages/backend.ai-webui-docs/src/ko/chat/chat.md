@@ -41,6 +41,14 @@ navTitle: 채팅
 
 아무것도 처리하지 않는 배포는 목록에 표시되지 않습니다. 예를 들어 중지된 배포나 목표 복제본 수가 0인 배포가 이에 해당합니다. 채팅 카드에 이미 선택되어 있는 배포는 목록에서 사라지더라도 선택된 상태와 이름이 그대로 유지되므로, 해당 카드가 어떤 배포를 가리키고 있는지 항상 확인할 수 있고 아래에 설명된 경고도 읽을 수 있습니다.
 
+<a id="connect-custom-endpoint"></a>
+
+### 커스텀 엔드포인트 연결하기
+
+Backend.AI에 배포되어 있지 않은 OpenAI 호환 서비스와도 대화할 수 있습니다. **배포** 드롭다운에서 **커스텀 엔드포인트 연결…**을 선택한 뒤, 해당 서비스의 **Base URL**과 서비스가 요구하는 경우 **API 키**를 입력하고 **연결**을 클릭합니다. 그러면 채팅 카드에 해당 서비스가 제공하는 모델이 표시되며, **커스텀 엔드포인트 수정**을 클릭하면 폼이 다시 열려 주소나 키를 변경할 수 있습니다.
+
+<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+
 <a id="model-connection-settings"></a>
 
 ### 모델 연결 설정
