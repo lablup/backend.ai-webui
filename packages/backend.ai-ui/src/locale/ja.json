@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "クリア",
-    "KeepAsIs": "そのまま維持",
-    "UndoChanges": "変更を元に戻す"
-  },
   "comp:BAIBulkErrorModal": {
     "ActionExecutionFailed": "実行エラー",
     "ErrorOccurred": "問題が発生しました。"
@@ -741,42 +736,6 @@
   },
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
-  },
-  "form": {
-    "Optional": "(オプション)",
-    "validateMessages": {
-      "Default": "${label}のフィールド検証エラー",
-      "Required": "${label}を入力してください",
-      "Whitespace": "${label}は空白文字にすることはできません",
-      "array": {
-        "Len": "${label}は${len}である必要があります",
-        "Max": "${label}の最大は${max}です",
-        "Min": "${label}の最小は${min}です",
-        "Range": "${label}の合計は${min}-${max}の範囲である必要があります"
-      },
-      "number": {
-        "Len": "${label}は${len}と等しい必要があります",
-        "Max": "${label}の最大値は${max}です",
-        "Min": "${label}の最小値は${min}です",
-        "Range": "${label}は${min}-${max}の範囲である必要があります"
-      },
-      "pattern": {
-        "Mismatch": "${label}はパターン${pattern}と一致しません"
-      },
-      "string": {
-        "Len": "${label}は${len}文字である必要があります",
-        "Max": "${label}は${max}文字以下である必要があります",
-        "Min": "${label}は${min}文字以上である必要があります",
-        "Range": "${label}は${min}-${max}文字の範囲である必要があります"
-      },
-      "types": {
-        "Email": "${label}は有効な${type}ではありません",
-        "Number": "${label}は有効な${type}ではありません",
-        "Object": "${label}は有効な${type}ではありません",
-        "String": "${label}は有効な${type}ではありません",
-        "Url": "${label}は有効な${type}ではありません"
-      }
-    }
   },
   "general": {
     "File": "ファイル",
