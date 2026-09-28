@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "権限を保存しました。",
     "PleaseSelectUsers": "少なくとも1人のユーザーを選択してください。",
     "PresetName": "プリセット名",
+    "PresetPermissionSyncWarning": "プリセットの権限を変更すると、このプリセットから自動生成されたすべてのシステムロールの権限も変更されます。",
     "Presets": "プリセット",
     "ProjectScopeTooltip": "任意。グローバルロールの場合は空のままにしてください。",
     "PurgeRole": "ロールを完全に削除",
@@ -2410,6 +2411,7 @@
     "Status": "ステータス",
     "System": "システム",
     "SystemRoleNoAssignments": "システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。",
+    "SystemRolePermissionReadOnly": "システムにより自動生成されたロールの権限は変更できません。変更するには、このロールのプリセットの権限を変更してください。",
     "UnsavedPermissionChanges": "未保存の権限変更 {{count}}件",
     "UserAlreadyAssigned": "ユーザーはすでにこのロールに割り当てられています。",
     "UserAssigned": "ユーザーがロールに正常に割り当てられました。",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "ユーザーはこのロールに割り当てられていません。",
     "UserRevoked": "ユーザーがロールから正常に削除されました。",
     "UsersAssigned": "ユーザーがロールに正常に割り当てられました。",
+    "ViewPresets": "プリセットを確認",
     "operationGroups": {
       "Delegate": "他ユーザーへ委任",
       "Direct": "直接実行"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "ドメイン管理者ページ",
       "ENTITY_SHARE": "エンティティ共有",
       "EVENT_LOG": "イベントログ",
+      "GLOBAL": "グローバル",
       "IDLE_CHECKER": "アイドルチェッカー",
       "IDLE_CHECKER_ASSIGNMENT": "アイドルチェッカー割り当て",
       "IMAGE": "イメージ",

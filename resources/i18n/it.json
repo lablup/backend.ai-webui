@@ -2379,6 +2379,7 @@
     "PermissionsSaved": "Permessi salvati correttamente.",
     "PleaseSelectUsers": "Seleziona almeno un utente.",
     "PresetName": "Nome della preimpostazione",
+    "PresetPermissionSyncWarning": "La modifica dei permessi della preimpostazione modifica anche i permessi di tutti i ruoli di sistema creati da questa preimpostazione.",
     "Presets": "Preimpostazioni",
     "ProjectScopeTooltip": "Facoltativo. Lasciare vuoto per un ruolo globale.",
     "PurgeRole": "Elimina ruolo definitivamente",
@@ -2408,6 +2409,7 @@
     "Status": "Stato",
     "System": "Sistema",
     "SystemRoleNoAssignments": "I ruoli creati automaticamente dal sistema non possono avere utenti assegnati o rimossi direttamente.",
+    "SystemRolePermissionReadOnly": "I permessi di un ruolo di sistema non possono essere modificati qui. Per cambiarli, modifica i permessi della preimpostazione da cui è stato creato questo ruolo.",
     "UnsavedPermissionChanges": "{{count}} modifiche ai permessi non salvate",
     "UserAlreadyAssigned": "L'utente è già assegnato a questo ruolo.",
     "UserAssigned": "Utente assegnato al ruolo con successo.",
@@ -2415,6 +2417,7 @@
     "UserNotAssigned": "L'utente non è assegnato a questo ruolo.",
     "UserRevoked": "Utente rimosso dal ruolo con successo.",
     "UsersAssigned": "Utenti assegnati al ruolo con successo.",
+    "ViewPresets": "Visualizza preimpostazioni",
     "operationGroups": {
       "Delegate": "Delega ad altri",
       "Direct": "Diretto"
@@ -2452,6 +2455,7 @@
       "DOMAIN_ADMIN_PAGE": "Pagina amministratore dominio",
       "ENTITY_SHARE": "Condivisione entità",
       "EVENT_LOG": "Log eventi",
+      "GLOBAL": "Globale",
       "IDLE_CHECKER": "Controllo inattività",
       "IDLE_CHECKER_ASSIGNMENT": "Assegnazione controllo inattività",
       "IMAGE": "Immagine",

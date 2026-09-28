@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "Đã lưu quyền thành công.",
     "PleaseSelectUsers": "Vui lòng chọn ít nhất một người dùng.",
     "PresetName": "Tên mẫu thiết lập",
+    "PresetPermissionSyncWarning": "Chỉnh sửa quyền của mẫu thiết lập cũng sẽ thay đổi quyền của tất cả vai trò hệ thống được tạo từ mẫu thiết lập này.",
     "Presets": "Mẫu thiết lập",
     "ProjectScopeTooltip": "Tùy chọn. Để trống để áp dụng cho toàn bộ hệ thống.",
     "PurgeRole": "Xóa vĩnh viễn vai trò",
@@ -2410,6 +2411,7 @@
     "Status": "Trạng thái",
     "System": "Hệ thống",
     "SystemRoleNoAssignments": "Các vai trò được hệ thống tự động tạo không thể có người dùng được phân công hoặc xóa trực tiếp.",
+    "SystemRolePermissionReadOnly": "Không thể chỉnh sửa quyền của vai trò hệ thống tại đây. Để thay đổi, hãy chỉnh sửa quyền của mẫu thiết lập đã tạo ra vai trò này.",
     "UnsavedPermissionChanges": "{{count}} thay đổi quyền chưa được lưu",
     "UserAlreadyAssigned": "Người dùng đã được phân công cho vai trò này.",
     "UserAssigned": "Người dùng đã được phân công cho vai trò thành công.",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "Người dùng chưa được phân công cho vai trò này.",
     "UserRevoked": "Người dùng đã được xóa khỏi vai trò thành công.",
     "UsersAssigned": "Người dùng đã được phân công cho vai trò thành công.",
+    "ViewPresets": "Xem mẫu thiết lập",
     "operationGroups": {
       "Delegate": "Ủy quyền cho người khác",
       "Direct": "Trực tiếp"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "Trang quản trị miền",
       "ENTITY_SHARE": "Chia sẻ thực thể",
       "EVENT_LOG": "Nhật ký sự kiện",
+      "GLOBAL": "Toàn cục",
       "IDLE_CHECKER": "Trình kiểm tra nhàn rỗi",
       "IDLE_CHECKER_ASSIGNMENT": "Phân công kiểm tra nhàn rỗi",
       "IMAGE": "Image",

@@ -2379,6 +2379,7 @@
     "PermissionsSaved": "Käyttöoikeudet tallennettu onnistuneesti.",
     "PleaseSelectUsers": "Valitse vähintään yksi käyttäjä.",
     "PresetName": "Esiasetuksen nimi",
+    "PresetPermissionSyncWarning": "Esiasetuksen käyttöoikeuksien muokkaaminen muuttaa myös kaikkien tästä esiasetuksesta luotujen järjestelmäroolien käyttöoikeudet.",
     "Presets": "Esiasetukset",
     "ProjectScopeTooltip": "Valinnainen. Jätä tyhjäksi globaalia roolia varten.",
     "PurgeRole": "Poista rooli pysyvästi",
@@ -2408,6 +2409,7 @@
     "Status": "Tila",
     "System": "Järjestelmä",
     "SystemRoleNoAssignments": "Järjestelmän automaattisesti luomiin rooleihin ei voi suoraan määrittää tai poistaa käyttäjiä.",
+    "SystemRolePermissionReadOnly": "Järjestelmäroolin käyttöoikeuksia ei voi muokata täällä. Muuta ne muokkaamalla sen esiasetuksen käyttöoikeuksia, josta tämä rooli luotiin.",
     "UnsavedPermissionChanges": "{{count}} tallentamatonta käyttöoikeusmuutosta",
     "UserAlreadyAssigned": "Käyttäjä on jo määritetty tähän rooliin.",
     "UserAssigned": "Käyttäjä määritetty rooliin onnistuneesti.",
@@ -2415,6 +2417,7 @@
     "UserNotAssigned": "Käyttäjää ei ole määritetty tähän rooliin.",
     "UserRevoked": "Käyttäjä poistettu roolista onnistuneesti.",
     "UsersAssigned": "Käyttäjät määritetty rooliin onnistuneesti.",
+    "ViewPresets": "Näytä esiasetukset",
     "operationGroups": {
       "Delegate": "Delegoi muille",
       "Direct": "Suora"
@@ -2452,6 +2455,7 @@
       "DOMAIN_ADMIN_PAGE": "Toimialueen ylläpitosivu",
       "ENTITY_SHARE": "Entiteetin jakaminen",
       "EVENT_LOG": "Tapahtumaloki",
+      "GLOBAL": "Globaali",
       "IDLE_CHECKER": "Joutoaikatarkistin",
       "IDLE_CHECKER_ASSIGNMENT": "Joutotilan tarkistimen määritys",
       "IMAGE": "Kuva",

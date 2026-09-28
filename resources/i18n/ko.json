@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "세부 권한이 저장되었습니다.",
     "PleaseSelectUsers": "사용자를 선택해 주세요.",
     "PresetName": "프리셋 이름",
+    "PresetPermissionSyncWarning": "프리셋 권한을 수정하면, 이 프리셋으로 자동 생성된 모든 시스템 역할의 권한도 함께 수정됩니다.",
     "Presets": "프리셋",
     "ProjectScopeTooltip": "선택 사항입니다. 전역 역할로 설정하려면 비워 두세요.",
     "PurgeRole": "역할 영구 삭제",
@@ -2410,6 +2411,7 @@
     "Status": "상태",
     "System": "시스템",
     "SystemRoleNoAssignments": "시스템에 의해 자동으로 생성된 역할은 사용자를 직접 할당하거나 할당 해제할 수 없습니다.",
+    "SystemRolePermissionReadOnly": "시스템으로 자동 생성된 역할의 권한은 수정할 수 없습니다. 수정하려면 이 역할의 프리셋 권한을 수정하세요.",
     "UnsavedPermissionChanges": "저장하지 않은 권한 변경 {{count}}개",
     "UserAlreadyAssigned": "사용자가 이미 이 역할에 할당되어 있습니다.",
     "UserAssigned": "사용자가 역할에 할당되었습니다.",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "사용자가 이 역할에 할당되어 있지 않습니다.",
     "UserRevoked": "사용자가 역할에서 제거되었습니다.",
     "UsersAssigned": "사용자들이 역할에 할당되었습니다.",
+    "ViewPresets": "프리셋 확인",
     "operationGroups": {
       "Delegate": "타인에게 위임",
       "Direct": "직접 수행"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "도메인 관리자 페이지",
       "ENTITY_SHARE": "엔티티 공유",
       "EVENT_LOG": "이벤트 로그",
+      "GLOBAL": "전역",
       "IDLE_CHECKER": "유휴 검사",
       "IDLE_CHECKER_ASSIGNMENT": "유휴 검사 할당",
       "IMAGE": "이미지",

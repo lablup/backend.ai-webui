@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a069e3e373baff5cb83325b9135cfd57>>
+ * @generated SignedSource<<b7d64671b4804f4f1ebe28faf71bcaf5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,8 +10,8 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type RolePermissionSummaryTableMatrixQuery$variables = Record<PropertyKey, never>;
-export type RolePermissionSummaryTableMatrixQuery$data = {
+export type RBACPermissionGridMatrixQuery$variables = Record<PropertyKey, never>;
+export type RBACPermissionGridMatrixQuery$data = {
   readonly rbacPermissionMatrix: ReadonlyArray<{
     readonly entities: ReadonlyArray<{
       readonly actions: ReadonlyArray<{
@@ -22,9 +22,9 @@ export type RolePermissionSummaryTableMatrixQuery$data = {
     readonly scopeType: string;
   }> | null | undefined;
 };
-export type RolePermissionSummaryTableMatrixQuery = {
-  response: RolePermissionSummaryTableMatrixQuery$data;
-  variables: RolePermissionSummaryTableMatrixQuery$variables;
+export type RBACPermissionGridMatrixQuery = {
+  response: RBACPermissionGridMatrixQuery$data;
+  variables: RBACPermissionGridMatrixQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -89,7 +89,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "RolePermissionSummaryTableMatrixQuery",
+    "name": "RBACPermissionGridMatrixQuery",
     "selections": (v0/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -98,20 +98,20 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "RolePermissionSummaryTableMatrixQuery",
+    "name": "RBACPermissionGridMatrixQuery",
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "4836a7061cd7923a6442b87c8458f41d",
+    "cacheID": "9580a47725b444ee510329cd965e57b4",
     "id": null,
     "metadata": {},
-    "name": "RolePermissionSummaryTableMatrixQuery",
+    "name": "RBACPermissionGridMatrixQuery",
     "operationKind": "query",
-    "text": "query RolePermissionSummaryTableMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    entities {\n      entityType\n      actions {\n        requiredPermission\n      }\n    }\n  }\n}\n"
+    "text": "query RBACPermissionGridMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    entities {\n      entityType\n      actions {\n        requiredPermission\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0ed0826d2501d6caefdea711f5fe304e";
+(node as any).hash = "cb11ce8cccf14a2e04880fbe3b1f9a71";
 
 export default node;

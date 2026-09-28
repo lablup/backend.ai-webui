@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "Permissions enregistrées avec succès.",
     "PleaseSelectUsers": "Veuillez sélectionner au moins un utilisateur.",
     "PresetName": "Nom du préréglage",
+    "PresetPermissionSyncWarning": "La modification des autorisations du préréglage modifie également les autorisations de tous les rôles système créés à partir de ce préréglage.",
     "Presets": "Préréglages",
     "ProjectScopeTooltip": "Facultatif. Laissez vide pour un rôle global.",
     "PurgeRole": "Supprimer définitivement le rôle",
@@ -2410,6 +2411,7 @@
     "Status": "Statut",
     "System": "Système",
     "SystemRoleNoAssignments": "Les rôles créés automatiquement par le système ne peuvent pas avoir d'utilisateurs directement attribués ou retirés.",
+    "SystemRolePermissionReadOnly": "Les autorisations d'un rôle système ne peuvent pas être modifiées ici. Pour les changer, modifiez les autorisations du préréglage à partir duquel ce rôle a été créé.",
     "UnsavedPermissionChanges": "{{count}} modification(s) de permission non enregistrée(s)",
     "UserAlreadyAssigned": "L'utilisateur est déjà attribué à ce rôle.",
     "UserAssigned": "Utilisateur attribué au rôle avec succès.",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "L'utilisateur n'est pas attribué à ce rôle.",
     "UserRevoked": "Utilisateur retiré du rôle avec succès.",
     "UsersAssigned": "Utilisateurs attribués au rôle avec succès.",
+    "ViewPresets": "Voir les préréglages",
     "operationGroups": {
       "Delegate": "Déléguer à d'autres",
       "Direct": "Direct"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "Page d'administration du domaine",
       "ENTITY_SHARE": "Partage d'entité",
       "EVENT_LOG": "Journal d'événements",
+      "GLOBAL": "Global",
       "IDLE_CHECKER": "Vérificateur d'inactivité",
       "IDLE_CHECKER_ASSIGNMENT": "Attribution du vérificateur d'inactivité",
       "IMAGE": "Image",

@@ -2379,6 +2379,7 @@
     "PermissionsSaved": "Permisos guardados correctamente.",
     "PleaseSelectUsers": "Por favor, seleccione al menos un usuario.",
     "PresetName": "Nombre del preajuste",
+    "PresetPermissionSyncWarning": "Al editar los permisos del preajuste también se modifican los permisos de todos los roles del sistema creados a partir de este preajuste.",
     "Presets": "Preajustes",
     "ProjectScopeTooltip": "Opcional. Déjelo vacío para un rol global.",
     "PurgeRole": "Eliminar rol permanentemente",
@@ -2408,6 +2409,7 @@
     "Status": "Estado",
     "System": "Sistema",
     "SystemRoleNoAssignments": "A los roles creados automáticamente por el sistema no se les pueden asignar ni quitar usuarios directamente.",
+    "SystemRolePermissionReadOnly": "Los permisos de un rol del sistema no se pueden editar aquí. Para cambiarlos, edite los permisos del preajuste a partir del cual se creó este rol.",
     "UnsavedPermissionChanges": "{{count}} cambio(s) de permiso sin guardar",
     "UserAlreadyAssigned": "El usuario ya está asignado a este rol.",
     "UserAssigned": "Usuario asignado al rol correctamente.",
@@ -2415,6 +2417,7 @@
     "UserNotAssigned": "El usuario no está asignado a este rol.",
     "UserRevoked": "Usuario eliminado del rol correctamente.",
     "UsersAssigned": "Usuarios asignados al rol correctamente.",
+    "ViewPresets": "Ver preajustes",
     "operationGroups": {
       "Delegate": "Delegar a otros",
       "Direct": "Directo"
@@ -2452,6 +2455,7 @@
       "DOMAIN_ADMIN_PAGE": "Página de administración del dominio",
       "ENTITY_SHARE": "Uso compartido de entidad",
       "EVENT_LOG": "Registro de eventos",
+      "GLOBAL": "Global",
       "IDLE_CHECKER": "Comprobador de inactividad",
       "IDLE_CHECKER_ASSIGNMENT": "Asignación del verificador de inactividad",
       "IMAGE": "Imagen",

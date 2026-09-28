@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "Uprawnienia zapisane pomyślnie.",
     "PleaseSelectUsers": "Proszę wybrać co najmniej jednego użytkownika.",
     "PresetName": "Nazwa ustawienia wstępnego",
+    "PresetPermissionSyncWarning": "Edycja uprawnień ustawienia wstępnego zmienia również uprawnienia wszystkich ról systemowych utworzonych z tego ustawienia wstępnego.",
     "Presets": "Ustawienia wstępne",
     "ProjectScopeTooltip": "Opcjonalne. Pozostaw puste dla roli globalnej.",
     "PurgeRole": "Trwale usuń rolę",
@@ -2410,6 +2411,7 @@
     "Status": "Status",
     "System": "System",
     "SystemRoleNoAssignments": "Rolom tworzonym automatycznie przez system nie można bezpośrednio przypisywać ani usuwać użytkowników.",
+    "SystemRolePermissionReadOnly": "Uprawnień roli systemowej nie można tu edytować. Aby je zmienić, edytuj uprawnienia ustawienia wstępnego, z którego utworzono tę rolę.",
     "UnsavedPermissionChanges": "Niezapisane zmiany uprawnień: {{count}}",
     "UserAlreadyAssigned": "Użytkownik jest już przypisany do tej roli.",
     "UserAssigned": "Użytkownik został pomyślnie przypisany do roli.",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "Użytkownik nie jest przypisany do tej roli.",
     "UserRevoked": "Użytkownik został pomyślnie usunięty z roli.",
     "UsersAssigned": "Użytkownicy zostali pomyślnie przypisani do roli.",
+    "ViewPresets": "Wyświetl ustawienia wstępne",
     "operationGroups": {
       "Delegate": "Deleguj do innych",
       "Direct": "Bezpośrednie"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "Strona administratora domeny",
       "ENTITY_SHARE": "Udostępnianie encji",
       "EVENT_LOG": "Dziennik zdarzeń",
+      "GLOBAL": "Globalny",
       "IDLE_CHECKER": "Kontroler bezczynności",
       "IDLE_CHECKER_ASSIGNMENT": "Przypisanie sprawdzania bezczynności",
       "IMAGE": "Obraz",

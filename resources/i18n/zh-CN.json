@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "权限保存成功。",
     "PleaseSelectUsers": "请至少选择一个用户。",
     "PresetName": "预设名称",
+    "PresetPermissionSyncWarning": "修改预设权限时，由此预设自动生成的所有系统角色的权限也会一并修改。",
     "Presets": "预设",
     "ProjectScopeTooltip": "可选。留空表示全局角色。",
     "PurgeRole": "永久删除角色",
@@ -2410,6 +2411,7 @@
     "Status": "状态",
     "System": "系统",
     "SystemRoleNoAssignments": "系统自动创建的角色不能直接分配或移除用户。",
+    "SystemRolePermissionReadOnly": "系统自动生成的角色权限无法修改。如需修改，请修改此角色所属预设的权限。",
     "UnsavedPermissionChanges": "{{count}} 项未保存的权限更改",
     "UserAlreadyAssigned": "用户已分配到此角色。",
     "UserAssigned": "用户已成功分配到角色。",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "用户未分配到此角色。",
     "UserRevoked": "用户已成功从角色中移除。",
     "UsersAssigned": "用户已成功分配到角色。",
+    "ViewPresets": "查看预设",
     "operationGroups": {
       "Delegate": "委派给他人",
       "Direct": "直接"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "域管理员页面",
       "ENTITY_SHARE": "实体共享",
       "EVENT_LOG": "事件日志",
+      "GLOBAL": "全局",
       "IDLE_CHECKER": "空闲检查器",
       "IDLE_CHECKER_ASSIGNMENT": "空闲检查分配",
       "IMAGE": "镜像",

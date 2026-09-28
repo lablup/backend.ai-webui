@@ -2379,6 +2379,7 @@
     "PermissionsSaved": "İzinler başarıyla kaydedildi.",
     "PleaseSelectUsers": "Lütfen en az bir kullanıcı seçin.",
     "PresetName": "Ön Ayar Adı",
+    "PresetPermissionSyncWarning": "Ön ayar izinlerini düzenlemek, bu ön ayardan oluşturulan tüm sistem rollerinin izinlerini de değiştirir.",
     "Presets": "Ön Ayarlar",
     "ProjectScopeTooltip": "İsteğe bağlı. Genel rol için boş bırakın.",
     "PurgeRole": "Rolü Kalıcı Olarak Sil",
@@ -2408,6 +2409,7 @@
     "Status": "Durum",
     "System": "Sistem",
     "SystemRoleNoAssignments": "Sistem tarafından otomatik olarak oluşturulan rollere kullanıcılar doğrudan atanamaz veya rolden çıkarılamaz.",
+    "SystemRolePermissionReadOnly": "Sistem rolünün izinleri burada düzenlenemez. Değiştirmek için bu rolün oluşturulduğu ön ayarın izinlerini düzenleyin.",
     "UnsavedPermissionChanges": "{{count}} kaydedilmemiş izin değişikliği",
     "UserAlreadyAssigned": "Kullanıcı zaten bu role atanmış.",
     "UserAssigned": "Kullanıcı role başarıyla atandı.",
@@ -2415,6 +2417,7 @@
     "UserNotAssigned": "Kullanıcı bu role atanmamış.",
     "UserRevoked": "Kullanıcı rolden başarıyla kaldırıldı.",
     "UsersAssigned": "Kullanıcılar role başarıyla atandı.",
+    "ViewPresets": "Ön Ayarları Görüntüle",
     "operationGroups": {
       "Delegate": "Başkalarına devret",
       "Direct": "Doğrudan"
@@ -2452,6 +2455,7 @@
       "DOMAIN_ADMIN_PAGE": "Alan adı yönetici sayfası",
       "ENTITY_SHARE": "Varlık paylaşımı",
       "EVENT_LOG": "Olay Günlüğü",
+      "GLOBAL": "Genel",
       "IDLE_CHECKER": "Boşta kalma denetleyicisi",
       "IDLE_CHECKER_ASSIGNMENT": "Boşta denetleyici ataması",
       "IMAGE": "Image",

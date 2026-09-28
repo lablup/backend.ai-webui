@@ -5,34 +5,27 @@
 import { RolePresetDetailDrawerFragment$key } from '../__generated__/RolePresetDetailDrawerFragment.graphql';
 import { RolePresetDetailDrawerRefetchQuery } from '../__generated__/RolePresetDetailDrawerRefetchQuery.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
+import { useBAIBreakpoint } from '../theme-shim';
+import RolePresetPermissionTable from './RolePresetPermissionTable';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Token } from '@astryxdesign/core/Token';
 import {
+  BAIAlert,
   BAICard,
   BAIDrawer,
   BAIFetchKeyButton,
   BAIFlex,
   BAIMetadataList,
-  BAITable,
+  BAISkeleton,
   BAIText,
   tokenColorForTagColor,
   useFetchKey,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
-import _ from 'lodash';
-import React, { useState, useTransition } from 'react';
+import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
-
-// The order the permission bits are listed in, matching the role permission grid.
-const PERMISSION_BIT_ORDER = [
-  'CREATE',
-  'READ',
-  'UPDATE',
-  'SOFT_DELETE',
-  'HARD_DELETE',
-];
 
 interface RolePresetDetailDrawerProps {
   open?: boolean;
@@ -48,11 +41,12 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
+  const { md } = useBAIBreakpoint();
   const [isPendingReload, startReloadTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const [activeTab, setActiveTab] = useState('permissions');
 
-  // Keeps the last preset painted while the drawer animates out after the
-  // parent clears its selection (same as RoleDetailDrawer).
+  // Keeps the last preset painted through the exit animation (same as RoleDetailDrawerV2).
   const [lastRolePresetFrgmt, setLastRolePresetFrgmt] =
     useState<RolePresetDetailDrawerFragment$key | null>(
       rolePresetFrgmt ?? null,
@@ -75,17 +69,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
         deleted
         createdAt
         updatedAt
-        # Without a limit the manager answers only the first 10 entries.
-        permissionEntries: permissionPresets(limit: 500) {
-          count
-          edges {
-            node {
-              id
-              entityType
-              permission
-            }
-          }
-        }
+        ...RolePresetPermissionTableFragment
       }
     `,
     effectiveRolePresetFrgmt,
@@ -94,40 +78,13 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
   const rbacTypeLabel = (type: string) =>
     t(rbacTypeI18nKey(type), { defaultValue: type });
 
-  const permissionsByEntityType = _.groupBy(
-    (rolePreset?.permissionEntries?.edges ?? []).map((edge) => edge.node),
-    (node) => node.entityType,
-  );
-  const permissionRows = _.sortBy(
-    Object.entries(permissionsByEntityType).map(([entityType, nodes]) => ({
-      entityType,
-      permissions: _.sortBy(
-        _.uniq(nodes.map((node) => node.permission as string)),
-        (permission) => PERMISSION_BIT_ORDER.indexOf(permission),
-      ),
-    })),
-    (row) => rbacTypeLabel(row.entityType),
-  );
-
   return (
     <BAIDrawer
       open={open}
       onClose={onClose}
       side="end"
-      size={736}
-      label={t('rbac.RolePresetDetailInfo')}
-      title={
-        <BAIText
-          strong
-          copyable
-          style={{
-            fontSize: 'var(--text-large-size)',
-            lineHeight: 'var(--text-large-leading)',
-          }}
-        >
-          {rolePreset?.name ?? t('rbac.RolePresetDetailInfo')}
-        </BAIText>
-      }
+      size={800}
+      title={t('rbac.RolePresetDetailInfo')}
       extra={
         <BAIFetchKeyButton
           loading={isPendingReload}
@@ -143,18 +100,12 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
       }
     >
       {rolePreset && (
-        <BAIFlex direction="column" gap="sm" align="stretch">
+        <BAIFlex direction="column" gap="lg" align="stretch">
+          <BAIText strong copyable size="2xl">
+            {rolePreset.name}
+          </BAIText>
           <BAICard>
-            <BAIMetadataList
-              columns={2}
-              label={{ position: 'start', width: 160 }}
-            >
-              <MetadataListItem label={t('rbac.ScopeType')}>
-                <Token
-                  color={tokenColorForTagColor('blue')}
-                  label={rbacTypeLabel(rolePreset.scopeType)}
-                />
-              </MetadataListItem>
+            <BAIMetadataList columns={md ? 2 : 1}>
               <MetadataListItem label={t('rbac.Status')}>
                 <Token
                   color={tokenColorForTagColor(
@@ -163,6 +114,12 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
                   label={
                     rolePreset.deleted ? t('rbac.Deleted') : t('rbac.Active')
                   }
+                />
+              </MetadataListItem>
+              <MetadataListItem label={t('rbac.ScopeType')}>
+                <Token
+                  color={tokenColorForTagColor('blue')}
+                  label={rbacTypeLabel(rolePreset.scopeType)}
                 />
               </MetadataListItem>
               <MetadataListItem label={t('rbac.AutoAssign')}>
@@ -185,40 +142,22 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
               </MetadataListItem>
             </BAIMetadataList>
           </BAICard>
-          <BAICard title={t('rbac.Permissions')}>
-            <BAITable
-              rowKey="entityType"
-              dataSource={permissionRows}
-              pagination={false}
-              locale={{ emptyText: t('rbac.NoPermissionsToDisplay') }}
-              columns={[
-                {
-                  key: 'entityType',
-                  title: t('rbac.PermissionType'),
-                  render: (_value, row) => (
-                    <Text>{rbacTypeLabel(row.entityType)}</Text>
-                  ),
-                },
-                {
-                  key: 'permissions',
-                  title: t('rbac.Permission'),
-                  render: (_value, row) => (
-                    <BAIFlex gap="xxs" wrap="wrap">
-                      {row.permissions.map((permission) => (
-                        <Token
-                          key={permission}
-                          color={tokenColorForTagColor('default')}
-                          label={t(`rbac.operations.${permission}`, {
-                            defaultValue: permission,
-                          })}
-                        />
-                      ))}
-                    </BAIFlex>
-                  ),
-                },
-              ]}
+          <BAIFlex direction="column" gap="sm" align="stretch">
+            {/* Same tab strip as the role drawer, minus Role Assignments: a preset has no users. */}
+            <TabList hasDivider value={activeTab} onChange={setActiveTab}>
+              <Tab value="permissions" label={t('rbac.Permissions')} />
+            </TabList>
+            <BAIAlert
+              type="warning"
+              showIcon
+              title={t('rbac.PresetPermissionSyncWarning')}
             />
-          </BAICard>
+            <Suspense fallback={<BAISkeleton />}>
+              {activeTab === 'permissions' && (
+                <RolePresetPermissionTable rolePresetFrgmt={rolePreset} />
+              )}
+            </Suspense>
+          </BAIFlex>
         </BAIFlex>
       )}
     </BAIDrawer>

@@ -2381,6 +2381,7 @@
     "PermissionsSaved": "Berechtigungen erfolgreich gespeichert.",
     "PleaseSelectUsers": "Bitte wählen Sie mindestens einen Benutzer aus.",
     "PresetName": "Name der Voreinstellung",
+    "PresetPermissionSyncWarning": "Wenn Sie die Berechtigungen der Voreinstellung bearbeiten, ändern sich auch die Berechtigungen aller Systemrollen, die aus dieser Voreinstellung erstellt wurden.",
     "Presets": "Voreinstellungen",
     "ProjectScopeTooltip": "Optional. Leer lassen für eine globale Rolle.",
     "PurgeRole": "Rolle dauerhaft löschen",
@@ -2410,6 +2411,7 @@
     "Status": "Status",
     "System": "System",
     "SystemRoleNoAssignments": "Bei Rollen, die automatisch vom System erstellt wurden, können Benutzer nicht direkt zugewiesen oder entfernt werden.",
+    "SystemRolePermissionReadOnly": "Die Berechtigungen einer Systemrolle können hier nicht bearbeitet werden. Bearbeiten Sie dazu die Berechtigungen der Voreinstellung, aus der diese Rolle erstellt wurde.",
     "UnsavedPermissionChanges": "{{count}} nicht gespeicherte Berechtigungsänderung(en)",
     "UserAlreadyAssigned": "Benutzer ist dieser Rolle bereits zugewiesen.",
     "UserAssigned": "Benutzer wurde der Rolle erfolgreich zugewiesen.",
@@ -2417,6 +2419,7 @@
     "UserNotAssigned": "Benutzer ist dieser Rolle nicht zugewiesen.",
     "UserRevoked": "Benutzer wurde erfolgreich aus der Rolle entfernt.",
     "UsersAssigned": "Benutzer wurden der Rolle erfolgreich zugewiesen.",
+    "ViewPresets": "Voreinstellungen anzeigen",
     "operationGroups": {
       "Delegate": "An andere delegieren",
       "Direct": "Direkt"
@@ -2454,6 +2457,7 @@
       "DOMAIN_ADMIN_PAGE": "Domain-Admin-Seite",
       "ENTITY_SHARE": "Entitätsfreigabe",
       "EVENT_LOG": "Ereignisprotokoll",
+      "GLOBAL": "Global",
       "IDLE_CHECKER": "Leerlaufprüfung",
       "IDLE_CHECKER_ASSIGNMENT": "Leerlaufprüfer-Zuweisung",
       "IMAGE": "Image",

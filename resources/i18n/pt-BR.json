@@ -2379,6 +2379,7 @@
     "PermissionsSaved": "Permissões salvas com sucesso.",
     "PleaseSelectUsers": "Selecione pelo menos um usuário.",
     "PresetName": "Nome da predefinição",
+    "PresetPermissionSyncWarning": "Editar as permissões da predefinição também altera as permissões de todas as funções do sistema criadas a partir desta predefinição.",
     "Presets": "Predefinições",
     "ProjectScopeTooltip": "Opcional. Deixe em branco para um papel global.",
     "PurgeRole": "Excluir função permanentemente",
@@ -2408,6 +2409,7 @@
     "Status": "Status",
     "System": "Sistema",
     "SystemRoleNoAssignments": "Funções criadas automaticamente pelo sistema não podem ter usuários atribuídos ou removidos diretamente.",
+    "SystemRolePermissionReadOnly": "As permissões de uma função do sistema não podem ser editadas aqui. Para alterá-las, edite as permissões da predefinição a partir da qual esta função foi criada.",
     "UnsavedPermissionChanges": "{{count}} alteração(ões) de permissão não salva(s)",
     "UserAlreadyAssigned": "O usuário já está atribuído a esta função.",
     "UserAssigned": "Usuário atribuído à função com sucesso.",
@@ -2415,6 +2417,7 @@
     "UserNotAssigned": "O usuário não está atribuído a esta função.",
     "UserRevoked": "Usuário removido da função com sucesso.",
     "UsersAssigned": "Usuários atribuídos à função com sucesso.",
+    "ViewPresets": "Ver predefinições",
     "operationGroups": {
       "Delegate": "Delegar para outros",
       "Direct": "Direto"
@@ -2452,6 +2455,7 @@
       "DOMAIN_ADMIN_PAGE": "Página de administração do domínio",
       "ENTITY_SHARE": "Compartilhamento de entidade",
       "EVENT_LOG": "Log de eventos",
+      "GLOBAL": "Global",
       "IDLE_CHECKER": "Verificador de inatividade",
       "IDLE_CHECKER_ASSIGNMENT": "Atribuição do verificador de inatividade",
       "IMAGE": "Imagem",

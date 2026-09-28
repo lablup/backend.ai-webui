@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4df18f535cab4607907196f9f9e05952>>
+ * @generated SignedSource<<1bfb852543c9396a045b4e7a1bc2a54e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -37,14 +37,7 @@ v1 = [
     "name": "id",
     "variableName": "id"
   }
-],
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+];
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
@@ -93,7 +86,13 @@ return {
             "name": "__typename",
             "storageKey": null
           },
-          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
           {
             "kind": "InlineFragment",
             "selections": [
@@ -138,67 +137,6 @@ return {
                 "kind": "ScalarField",
                 "name": "updatedAt",
                 "storageKey": null
-              },
-              {
-                "alias": "permissionEntries",
-                "args": [
-                  {
-                    "kind": "Literal",
-                    "name": "limit",
-                    "value": 500
-                  }
-                ],
-                "concreteType": "RolePermissionPresetConnection",
-                "kind": "LinkedField",
-                "name": "permissionPresets",
-                "plural": false,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "count",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "RolePermissionPresetEdge",
-                    "kind": "LinkedField",
-                    "name": "edges",
-                    "plural": true,
-                    "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "concreteType": "RolePermissionPreset",
-                        "kind": "LinkedField",
-                        "name": "node",
-                        "plural": false,
-                        "selections": [
-                          (v2/*: any*/),
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "entityType",
-                            "storageKey": null
-                          },
-                          {
-                            "alias": null,
-                            "args": null,
-                            "kind": "ScalarField",
-                            "name": "permission",
-                            "storageKey": null
-                          }
-                        ],
-                        "storageKey": null
-                      }
-                    ],
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": "permissionPresets(limit:500)"
               }
             ],
             "type": "RolePreset",
@@ -210,16 +148,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3fc0a2d2b398a7fc02099f562afd236e",
+    "cacheID": "8527e246a1f35cf8cb9b95ada4663608",
     "id": null,
     "metadata": {},
     "name": "RolePresetDetailDrawerRefetchQuery",
     "operationKind": "query",
-    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  permissionEntries: permissionPresets(limit: 500) {\n    count\n    edges {\n      node {\n        id\n        entityType\n        permission\n      }\n    }\n  }\n  id\n}\n"
+    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n  id\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0ca02691d31767a8a27d472cceec0f3b";
+(node as any).hash = "df82c6b0ed839ea7b9fab67127ca7020";
 
 export default node;

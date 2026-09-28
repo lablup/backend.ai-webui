@@ -8,6 +8,7 @@ import {
   RolePresetOrderBy,
 } from '../__generated__/RolePresetListTabQuery.graphql';
 import { convertToOrderBy } from '../helper';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import BAIRadioGroup from './BAIRadioGroup';
 import RolePresetDetailDrawer from './RolePresetDetailDrawer';
@@ -143,7 +144,15 @@ const RolePresetListTab: React.FC = () => {
               {
                 key: 'scopeType',
                 propertyLabel: t('rbac.ScopeType'),
-                type: 'string',
+                type: 'enum',
+                strictSelection: true,
+                // `scopeType` is a StringFilter over the stored lowercase value.
+                options: ['global', 'domain', 'project', 'user'].map(
+                  (scopeType) => ({
+                    label: t(rbacTypeI18nKey(scopeType)),
+                    value: scopeType,
+                  }),
+                ),
               },
             ]}
             value={queryParams.filter ?? undefined}

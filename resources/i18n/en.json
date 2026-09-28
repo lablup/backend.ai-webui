@@ -2366,6 +2366,7 @@
     "PermissionsSaved": "Permissions saved successfully.",
     "PleaseSelectUsers": "Please select at least one user.",
     "PresetName": "Preset Name",
+    "PresetPermissionSyncWarning": "Editing preset permissions also changes the permissions of all system roles created from this preset.",
     "Presets": "Presets",
     "ProjectScopeTooltip": "Optional. Leave empty for a global role.",
     "PurgeRole": "Purge Role",
@@ -2395,6 +2396,7 @@
     "Status": "Status",
     "System": "System",
     "SystemRoleNoAssignments": "Roles automatically created by the system cannot have users directly assigned or unassigned.",
+    "SystemRolePermissionReadOnly": "Permissions of a system role cannot be edited here. To change them, edit the permissions of the preset this role was created from.",
     "UnsavedPermissionChanges": "{{count}} unsaved permission change(s)",
     "UserAlreadyAssigned": "User is already assigned to this role.",
     "UserAssigned": "User assigned to role successfully.",
@@ -2402,6 +2404,7 @@
     "UserNotAssigned": "User is not assigned to this role.",
     "UserRevoked": "User removed from role successfully.",
     "UsersAssigned": "Users assigned to role successfully.",
+    "ViewPresets": "View Presets",
     "operationGroups": {
       "Delegate": "Delegate to Others",
       "Direct": "Direct"
@@ -2439,6 +2442,7 @@
       "DOMAIN_ADMIN_PAGE": "Domain Admin Page",
       "ENTITY_SHARE": "Entity Share",
       "EVENT_LOG": "Event Log",
+      "GLOBAL": "Global",
       "IDLE_CHECKER": "Idle Checker",
       "IDLE_CHECKER_ASSIGNMENT": "Idle Checker Assignment",
       "IMAGE": "Image",
