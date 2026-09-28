@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-28T13:16:01.865Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "cluster_session",
+          "title": "Cluster Session",
+          "status": "modified",
+          "url": "next/en/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "2b82130e5186",
+            "8f26c3caa650"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "cluster_session",
+          "title": "クラスターセッション",
+          "status": "modified",
+          "url": "next/ja/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "cd03d1e9595e",
+            "4c344700f813"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "cluster_session",
+          "title": "클러스터 세션",
+          "status": "modified",
+          "url": "next/ko/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "b3365067f545",
+            "ff96e4804f50"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "cluster_session",
+          "title": "เซสชันคลัสเตอร์",
+          "status": "modified",
+          "url": "next/th/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "8a1ea8e06d76",
+            "466b758dd418"
+          ]
+        }
+      ]
+    }
+  }
+}
