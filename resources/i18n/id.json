@@ -2711,6 +2711,7 @@
     "NoResourcePresetToDisplay": "Tidak ada Preset Sumber Daya yang akan ditampilkan",
     "OnlyAvailableInResourceGroup": "Hanya tersedia di grup sumber daya \"{{name}}\"",
     "PresetName": "Nama Preset",
+    "PresetOnlyAvailableInResourceGroup": "Preset \"{{preset}}\" hanya tersedia di grup sumber daya \"{{name}}\". Silakan pilih grup sumber daya lain.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Preset Sumber Daya",
     "ResourcePresets": "Preset Sumber Daya",

@@ -2695,6 +2695,7 @@
     "NoResourcePresetToDisplay": "No Resource Presets to display",
     "OnlyAvailableInResourceGroup": "Only available in the \"{{name}}\" resource group",
     "PresetName": "Preset Name",
+    "PresetOnlyAvailableInResourceGroup": "The \"{{preset}}\" preset is only available in the \"{{name}}\" resource group. Please select a different resource group.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Resource Preset",
     "ResourcePresets": "Resource Presets",

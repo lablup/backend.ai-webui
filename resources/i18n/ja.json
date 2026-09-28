@@ -2710,6 +2710,7 @@
     "NoResourcePresetToDisplay": "リソースプリセット情報がありません。",
     "OnlyAvailableInResourceGroup": "\"{{name}}\" リソースグループでのみ使用できます",
     "PresetName": "プリセット名",
+    "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" プリセットは \"{{name}}\" リソースグループでのみ使用できます。別のリソースグループを選択してください。",
     "RAM": "RAM（GB）",
     "ResourcePreset": "リソースプリセット",
     "ResourcePresets": "リソースプリセット",

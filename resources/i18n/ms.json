@@ -2708,6 +2708,7 @@
     "NoResourcePresetToDisplay": "Tiada Pratetap Sumber untuk dipaparkan",
     "OnlyAvailableInResourceGroup": "Hanya tersedia dalam kumpulan sumber \"{{name}}\"",
     "PresetName": "Nama Pratetap",
+    "PresetOnlyAvailableInResourceGroup": "Pratetap \"{{preset}}\" hanya tersedia dalam kumpulan sumber \"{{name}}\". Sila pilih kumpulan sumber yang lain.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Pratetap Sumber",
     "ResourcePresets": "Pratetap Sumber",

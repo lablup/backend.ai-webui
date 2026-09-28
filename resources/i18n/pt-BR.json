@@ -2708,6 +2708,7 @@
     "NoResourcePresetToDisplay": "Não há predefinições de recursos a apresentar",
     "OnlyAvailableInResourceGroup": "Disponível apenas no grupo de recursos \"{{name}}\"",
     "PresetName": "Nome Predefinido",
+    "PresetOnlyAvailableInResourceGroup": "A predefinição \"{{preset}}\" está disponível apenas no grupo de recursos \"{{name}}\". Selecione outro grupo de recursos.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Predefinição de recursos",
     "ResourcePresets": "Predefinições de recursos",

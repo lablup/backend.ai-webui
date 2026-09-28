@@ -2708,6 +2708,7 @@
     "NoResourcePresetToDisplay": "Δεν εμφανίζονται Προεπιλογές πόρων",
     "OnlyAvailableInResourceGroup": "Διαθέσιμο μόνο στην ομάδα πόρων \"{{name}}\"",
     "PresetName": "Προεπιλεγμένο όνομα",
+    "PresetOnlyAvailableInResourceGroup": "Η προεπιλογή \"{{preset}}\" είναι διαθέσιμη μόνο στην ομάδα πόρων \"{{name}}\". Επιλέξτε διαφορετική ομάδα πόρων.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Προεπιλογή πόρων",
     "ResourcePresets": "Προεπιλογές πόρων",

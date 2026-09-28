@@ -2710,6 +2710,7 @@
     "NoResourcePresetToDisplay": "无资源预置显示",
     "OnlyAvailableInResourceGroup": "仅在 \"{{name}}\" 资源组中可用",
     "PresetName": "预设名称",
+    "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" 预设仅在 \"{{name}}\" 资源组中可用。请选择其他资源组。",
     "RAM": "内存 (GB)",
     "ResourcePreset": "资源预设",
     "ResourcePresets": "资源预设",

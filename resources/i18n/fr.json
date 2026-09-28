@@ -2710,6 +2710,7 @@
     "NoResourcePresetToDisplay": "Pas de préréglages de ressources à afficher",
     "OnlyAvailableInResourceGroup": "Disponible uniquement dans le groupe de ressources \"{{name}}\"",
     "PresetName": "Nom du préréglage",
+    "PresetOnlyAvailableInResourceGroup": "Le préréglage \"{{preset}}\" est disponible uniquement dans le groupe de ressources \"{{name}}\". Veuillez sélectionner un autre groupe de ressources.",
     "RAM": "RAM (Go)",
     "ResourcePreset": "Préréglage de ressource",
     "ResourcePresets": "Préréglages de ressources",

@@ -2710,6 +2710,7 @@
     "NoResourcePresetToDisplay": "Brak ustawień wstępnych zasobów do wyświetlenia",
     "OnlyAvailableInResourceGroup": "Dostępne tylko w grupie zasobów \"{{name}}\"",
     "PresetName": "Zaprogramowana nazwa",
+    "PresetOnlyAvailableInResourceGroup": "Ustawienie wstępne \"{{preset}}\" jest dostępne tylko w grupie zasobów \"{{name}}\". Wybierz inną grupę zasobów.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Wstępne ustawienie zasobów",
     "ResourcePresets": "Predefiniowane ustawienia zasobów",

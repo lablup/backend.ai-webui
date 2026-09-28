@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<64eaa09b84d092a72e03a0eb8e9d662e>>
+ * @generated SignedSource<<dd2bdc7cce7dc2adf21e3fde82b39be2>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,6 +22,7 @@ export type ResourceAllocationFormItemsQuery$data = {
   } | null | undefined> | null | undefined;
   readonly resource_presets: ReadonlyArray<{
     readonly id: string | null | undefined;
+    readonly name: string | null | undefined;
     readonly scaling_group_name: string | null | undefined;
   } | null | undefined> | null | undefined;
 };
@@ -81,6 +82,7 @@ v5 = {
       "name": "id",
       "storageKey": null
     },
+    (v3/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -153,16 +155,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9a9f3a19c796bbf49aab559a24caff8d",
+    "cacheID": "4e7463a8e52fdb2abf70fb976dc8bfd2",
     "id": null,
     "metadata": {},
     "name": "ResourceAllocationFormItemsQuery",
     "operationKind": "query",
-    "text": "query ResourceAllocationFormItemsQuery(\n  $projectID: UUID!\n) {\n  accessible_scaling_groups(project_id: $projectID) {\n    accelerator_quantum_size\n    name\n    is_active\n    ...useResourceLimitAndRemainingFragment\n  }\n  resource_presets {\n    id\n    scaling_group_name @since(version: \"25.4.0\")\n  }\n}\n\nfragment useResourceLimitAndRemainingFragment on ScalingGroup {\n  name\n  resource_allocation_limit_for_sessions @since(version: \"25.6.0\")\n}\n"
+    "text": "query ResourceAllocationFormItemsQuery(\n  $projectID: UUID!\n) {\n  accessible_scaling_groups(project_id: $projectID) {\n    accelerator_quantum_size\n    name\n    is_active\n    ...useResourceLimitAndRemainingFragment\n  }\n  resource_presets {\n    id\n    name\n    scaling_group_name @since(version: \"25.4.0\")\n  }\n}\n\nfragment useResourceLimitAndRemainingFragment on ScalingGroup {\n  name\n  resource_allocation_limit_for_sessions @since(version: \"25.6.0\")\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9187ad312010d16b9c62530b610847cd";
+(node as any).hash = "90c600363701888f8e2c91dec882e5d4";
 
 export default node;

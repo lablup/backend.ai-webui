@@ -2710,6 +2710,7 @@
     "NoResourcePresetToDisplay": "Keine Ressourcenvoreinstellungen anzeigen",
     "OnlyAvailableInResourceGroup": "Nur in der Ressourcengruppe \"{{name}}\" verfügbar",
     "PresetName": "Voreinstellungsname",
+    "PresetOnlyAvailableInResourceGroup": "Die Voreinstellung \"{{preset}}\" ist nur in der Ressourcengruppe \"{{name}}\" verfügbar. Bitte wählen Sie eine andere Ressourcengruppe.",
     "RAM": "Arbeitsspeicher (GB)",
     "ResourcePreset": "Ressourcenvoreinstellung",
     "ResourcePresets": "Ressourcenvoreinstellungen",

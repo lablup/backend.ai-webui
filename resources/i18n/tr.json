@@ -2708,6 +2708,7 @@
     "NoResourcePresetToDisplay": "Görüntülenecek Kaynak Ön Ayarı yok",
     "OnlyAvailableInResourceGroup": "Yalnızca \"{{name}}\" kaynak grubunda kullanılabilir",
     "PresetName": "Ön Ayar Adı",
+    "PresetOnlyAvailableInResourceGroup": "\"{{preset}}\" ön ayarı yalnızca \"{{name}}\" kaynak grubunda kullanılabilir. Lütfen farklı bir kaynak grubu seçin.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Kaynak Ön Ayarı",
     "ResourcePresets": "Kaynak Ön Ayarları",

@@ -2708,6 +2708,7 @@
     "NoResourcePresetToDisplay": "Отсутствие отображения предустановок ресурсов",
     "OnlyAvailableInResourceGroup": "Доступно только в группе ресурсов \"{{name}}\"",
     "PresetName": "Название предустановки",
+    "PresetOnlyAvailableInResourceGroup": "Пресет \"{{preset}}\" доступен только в группе ресурсов \"{{name}}\". Выберите другую группу ресурсов.",
     "RAM": "RAM (ГБ)",
     "ResourcePreset": "Предустановка ресурса",
     "ResourcePresets": "Предустановки ресурсов",

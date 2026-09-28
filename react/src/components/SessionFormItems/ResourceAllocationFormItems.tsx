@@ -329,6 +329,7 @@ const ResourceAllocationFormItems: React.FC<
           }
           resource_presets {
             id
+            name
             scaling_group_name @since(version: "25.4.0")
           }
         }
@@ -839,10 +840,11 @@ const ResourceAllocationFormItems: React.FC<
               // preset scoped to another group instead of swapping it. Re-run
               // from the resource-group select's `onChange`.
               validator: async (_rule, value: string) => {
-                const presetGroup = _.find(
+                const preset = _.find(
                   resource_presets,
                   (preset) => preset?.id === value,
-                )?.scaling_group_name;
+                );
+                const presetGroup = preset?.scaling_group_name;
                 const resourceGroup = getFieldValue('resourceGroup');
                 if (
                   presetGroup &&
@@ -850,7 +852,8 @@ const ResourceAllocationFormItems: React.FC<
                   presetGroup !== resourceGroup
                 ) {
                   return Promise.reject(
-                    t('resourcePreset.OnlyAvailableInResourceGroup', {
+                    t('resourcePreset.PresetOnlyAvailableInResourceGroup', {
+                      preset: preset?.name,
                       name: presetGroup,
                     }),
                   );

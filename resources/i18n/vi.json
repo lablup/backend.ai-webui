@@ -2710,6 +2710,7 @@
     "NoResourcePresetToDisplay": "Không có cài đặt trước tài nguyên nào để hiển thị",
     "OnlyAvailableInResourceGroup": "Chỉ khả dụng trong nhóm tài nguyên \"{{name}}\"",
     "PresetName": "Tên đặt trước",
+    "PresetOnlyAvailableInResourceGroup": "Cấu hình sẵn \"{{preset}}\" chỉ khả dụng trong nhóm tài nguyên \"{{name}}\". Vui lòng chọn nhóm tài nguyên khác.",
     "RAM": "RAM (GB)",
     "ResourcePreset": "Đặt trước tài nguyên",
     "ResourcePresets": "Cài đặt trước tài nguyên",
