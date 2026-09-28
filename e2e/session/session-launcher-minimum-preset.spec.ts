@@ -13,7 +13,13 @@ import { test, expect, type Page } from '@playwright/test';
  * logged `Maximum update depth exceeded` and starved React transitions — the
  * sub-path picker on Data & Storage never opened.
  */
-const RENDER_LOOP_ERROR = /Maximum update depth exceeded/;
+/**
+ * A production React bundle — which is what a deployed WebUI serves — reports
+ * "Maximum update depth exceeded" as the minified code 185, so matching the
+ * prose alone would make this check pass on exactly the builds under test.
+ */
+const RENDER_LOOP_ERROR =
+  /Maximum update depth exceeded|Minified React error #185/;
 
 const MINIMUM_REQUIREMENTS_PRESET = 'Minimum requirements';
 

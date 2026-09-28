@@ -26,7 +26,9 @@ async function defaultStorageHost(api: APIRequestContext): Promise<string> {
     throw new Error(`Failed to list storage hosts (status=${res.status()})`);
   }
   const body = await res.json();
-  const host: string | undefined = body?.default ?? body?.allowed?.[0];
+  // `||`, not `??`: a deployment with no default host answers `default: ''`,
+  // and the first allowed host is still usable.
+  const host: string | undefined = body?.default || body?.allowed?.[0];
   if (!host) {
     throw new Error('No storage host is available for this account');
   }
@@ -75,6 +77,11 @@ export async function deleteVFolderViaApi(
 ): Promise<void> {
   const api = await createAdminApiContext();
   try {
+    // The two request bodies do NOT agree, and neither matches the `vfolder_id`
+    // that `packages/backend.ai-client/src/resources/vfolder.ts` still sends —
+    // that client is behind the manager. These keys were read off the manager's
+    // own 400s (`vfolderId Field required` / `id Field required`); do not
+    // "correct" them against the client without re-checking the response.
     const trashed = await api.delete('/func/folders', {
       data: { vfolderId: vfolder.id },
     });
@@ -82,8 +89,14 @@ export async function deleteVFolderViaApi(
       data: { id: vfolder.id },
     });
     if (!trashed.ok() || !purged.ok()) {
+      // Print the bodies: a silent warn is how a key drift like the one above
+      // would go unnoticed until the shared server filled up with leftovers.
       console.warn(
-        `[deleteVFolderViaApi] "${vfolder.name}" may be left behind (trash=${trashed.status()}, purge=${purged.status()})`,
+        `[deleteVFolderViaApi] "${vfolder.name}" may be left behind — trash=${trashed.status()} ${(
+          await trashed.text()
+        ).slice(0, 200)} / purge=${purged.status()} ${(
+          await purged.text()
+        ).slice(0, 200)}`,
       );
     }
   } catch (error) {
