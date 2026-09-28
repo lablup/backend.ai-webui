@@ -60,6 +60,11 @@ const RolePresetPermissionTable: React.FC<RolePresetPermissionTableProps> = ({
         $permissionLimit: Int
       ) {
         adminRolePreset(id: $rolePresetId) {
+          # The list row reads the unargumented field; refetching it here
+          # keeps its Permissions count current after a save.
+          permissionCount: permissionPresets {
+            count
+          }
           permissionPresets(limit: $permissionLimit) {
             edges {
               node {
