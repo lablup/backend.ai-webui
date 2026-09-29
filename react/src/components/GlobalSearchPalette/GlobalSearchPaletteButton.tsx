@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { OPEN_MODAL_ROOT_SELECTOR } from '../../helper/openModalRoot';
 import { useBAISettingUserState } from '../../hooks/useBAISetting';
 import { useThemeMode } from '../../hooks/useThemeMode';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -45,9 +46,19 @@ const GlobalSearchPaletteButton: React.FC<GlobalSearchPaletteButtonProps> = ({
 
   // `allowInInputs`: reachable from a focused form field. An empty array still
   // attaches the listener, but nothing matches, so the browser keeps `mod+k`.
+  // An open modal or scrimmed drawer keeps the keyboard: the press does nothing.
   useHotkeys(
     isExperimentalGlobalSearchEnabled
-      ? [{ keys: 'mod+k', allowInInputs: true, onPress: () => setIsOpen(true) }]
+      ? [
+          {
+            keys: 'mod+k',
+            allowInInputs: true,
+            onPress: () => {
+              if (document.querySelector(OPEN_MODAL_ROOT_SELECTOR)) return;
+              setIsOpen(true);
+            },
+          },
+        ]
       : [],
   );
 
