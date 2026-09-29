@@ -106,6 +106,9 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
+  // System role names end in their preset's kind (`role_domain_default_admin`,
+  // `project_member-1a2b3c4d`); the last match wins over a scope name holding the word.
+  const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
 
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
@@ -202,9 +205,12 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
                 }}
                 to={`/admin/rbac?${new URLSearchParams({
                   tab: 'presets',
-                  ...(role.scopeType && {
+                  ...((role.scopeType || roleKind) && {
                     filter: JSON.stringify({
-                      scopeType: { equals: role.scopeType.toLowerCase() },
+                      ...(role.scopeType && {
+                        scopeType: { equals: role.scopeType.toLowerCase() },
+                      }),
+                      ...(roleKind && { name: { iContains: roleKind } }),
                     }),
                   }),
                 }).toString()}`}
