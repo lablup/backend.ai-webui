@@ -14,6 +14,7 @@ import {
   BAIAlert,
   BAICard,
   BAIDrawer,
+  type BAIDrawerProps,
   BAIFetchKeyButton,
   BAIFlex,
   BAIMetadataList,
@@ -27,9 +28,10 @@ import React, { Suspense, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useRefetchableFragment } from 'react-relay';
 
-interface RolePresetDetailDrawerProps {
-  open?: boolean;
-  onClose?: () => void;
+interface RolePresetDetailDrawerProps extends Omit<
+  BAIDrawerProps,
+  'title' | 'extra' | 'label' | 'size' | 'side' | 'children'
+> {
   /** The preset selected in the list; the drawer issues no fetch of its own on open. */
   rolePresetFrgmt?: RolePresetDetailDrawerFragment$key | null;
 }
@@ -38,6 +40,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
   rolePresetFrgmt,
   open = false,
   onClose,
+  ...drawerProps
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -80,6 +83,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
 
   return (
     <BAIDrawer
+      {...drawerProps}
       open={open}
       onClose={onClose}
       side="end"

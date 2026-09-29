@@ -18,6 +18,7 @@ import RolePresetNodes, {
 } from './RolePresetNodes';
 import {
   BAIFetchKeyButton,
+  BAIUnmountAfterClose,
   BAIFlex,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
@@ -206,11 +207,13 @@ const RolePresetListTab: React.FC = () => {
           },
         }}
       />
-      <RolePresetDetailDrawer
-        open={!!selectedRolePreset}
-        rolePresetFrgmt={selectedRolePreset}
-        onClose={() => setPresetDetailParam({ presetDetail: null })}
-      />
+      <BAIUnmountAfterClose>
+        <RolePresetDetailDrawer
+          open={!!selectedRolePreset}
+          rolePresetFrgmt={selectedRolePreset}
+          onClose={() => setPresetDetailParam({ presetDetail: null })}
+        />
+      </BAIUnmountAfterClose>
     </BAIFlex>
   );
 };
