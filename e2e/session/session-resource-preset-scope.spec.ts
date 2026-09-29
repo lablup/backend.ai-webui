@@ -59,7 +59,9 @@ const globalPresetOption = (page: Page, fixture: ScopedPresetFixture) =>
 
 test.describe.serial(
   'Session launcher - resource-group-scoped presets',
-  { tag: ['@regression', '@session', '@requires-manager-v25.4'] },
+  {
+    tag: ['@regression', '@functional', '@session', '@requires-manager-v25.4'],
+  },
   () => {
     let fixture: ScopedPresetFixture;
 

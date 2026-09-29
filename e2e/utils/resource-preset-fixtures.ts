@@ -19,6 +19,15 @@ export interface ScopedPresetFixture {
   presetIds: string[];
 }
 
+interface MutationResult {
+  ok?: boolean;
+  msg?: string;
+}
+
+const assertOk = (mutation: string, result?: MutationResult) => {
+  if (!result?.ok) throw new Error(`${mutation} failed: ${result?.msg}`);
+};
+
 export async function createScopedPresetFixture(
   api: APIRequestContext,
   {
@@ -35,45 +44,62 @@ export async function createScopedPresetFixture(
     presetIds: [],
   };
 
-  await gqlAdmin(
-    api,
-    `mutation($name: String!, $props: CreateScalingGroupInput!) {
-      create_scaling_group(name: $name, props: $props) { ok msg }
-    }`,
-    {
-      name: fixture.resourceGroup,
-      props: { driver: 'static', scheduler: 'fifo', description: 'e2e' },
-    },
-  );
-  await gqlAdmin(
-    api,
-    `mutation($domain: String!, $sg: String!) {
-      associate_scaling_group_with_domain(domain: $domain, scaling_group: $sg) { ok msg }
-    }`,
-    { domain, sg: fixture.resourceGroup },
-  );
-
-  for (const scalingGroup of [null, baseResourceGroup, fixture.resourceGroup]) {
-    const data = await gqlAdmin<{
-      create_resource_preset?: { resource_preset?: { id?: string } };
-    }>(
+  // A half-built fixture is torn down here: the caller never receives it.
+  try {
+    const group = await gqlAdmin<{ create_scaling_group?: MutationResult }>(
       api,
-      `mutation($name: String!, $props: CreateResourcePresetInput!) {
-        create_resource_preset(name: $name, props: $props) {
-          ok msg resource_preset { id }
-        }
+      `mutation($name: String!, $props: CreateScalingGroupInput!) {
+        create_scaling_group(name: $name, props: $props) { ok msg }
       }`,
       {
-        name: fixture.presetName,
-        props: {
-          resource_slots: JSON.stringify({ cpu: '1', mem: '1073741824' }),
-          scaling_group_name: scalingGroup,
-        },
+        name: fixture.resourceGroup,
+        props: { driver: 'static', scheduler: 'fifo', description: 'e2e' },
       },
     );
-    const id = data.create_resource_preset?.resource_preset?.id;
-    if (!id) throw new Error(`Failed to create preset ${fixture.presetName}`);
-    fixture.presetIds.push(id);
+    assertOk('create_scaling_group', group.create_scaling_group);
+    const association = await gqlAdmin<{
+      associate_scaling_group_with_domain?: MutationResult;
+    }>(
+      api,
+      `mutation($domain: String!, $sg: String!) {
+        associate_scaling_group_with_domain(domain: $domain, scaling_group: $sg) { ok msg }
+      }`,
+      { domain, sg: fixture.resourceGroup },
+    );
+    assertOk(
+      'associate_scaling_group_with_domain',
+      association.associate_scaling_group_with_domain,
+    );
+
+    for (const scalingGroup of [
+      null,
+      baseResourceGroup,
+      fixture.resourceGroup,
+    ]) {
+      const data = await gqlAdmin<{
+        create_resource_preset?: { resource_preset?: { id?: string } };
+      }>(
+        api,
+        `mutation($name: String!, $props: CreateResourcePresetInput!) {
+          create_resource_preset(name: $name, props: $props) {
+            ok msg resource_preset { id }
+          }
+        }`,
+        {
+          name: fixture.presetName,
+          props: {
+            resource_slots: JSON.stringify({ cpu: '1', mem: '1073741824' }),
+            scaling_group_name: scalingGroup,
+          },
+        },
+      );
+      const id = data.create_resource_preset?.resource_preset?.id;
+      if (!id) throw new Error(`Failed to create preset ${fixture.presetName}`);
+      fixture.presetIds.push(id);
+    }
+  } catch (e) {
+    await deleteScopedPresetFixture(api, fixture);
+    throw e;
   }
   return fixture;
 }
