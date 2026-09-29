@@ -16,7 +16,7 @@
 
 - **What ui-common is**: `@lablup/ui-common`은 backend.ai-go, continuum-hub, mlxcel 같은 여러 Lablup 제품이 함께 쓰는 UI package다. 0.2.0부터 자체 component와 `--token-*` token contract를 버리고 Astryx 위의 얇은 layer가 된다. Astryx를 다시 구현하거나 bundle하지 않는다. ui-common은 precompiled JS와 CSS를 싣고, Astryx는 external로 두어 exact version으로 pin한다.
 - **What webui does today**: `react/`와 BUI는 `@astryxdesign/core`, `@astryxdesign/lab`, `@astryxdesign/theme-neutral`을 `pnpm-workspace.yaml`의 [catalog pin](#용어)으로 직접 dependency에 두고, source의 1,200곳 넘게 `@astryxdesign/core/<X>`를 import한다. `react/src/index.css`는 `@astryxdesign/core/reset.css` 같은 CSS를 직접 `@import`한다.
-- **Why a decision is needed**: BUI의 `BAIModal`처럼 BAI 의존성이 없는 component가 ui-common으로 옮겨 가면, webui는 같은 Astryx를 두 경로로 import하게 된다. ui-common은 core의 `Dialog`를 mirror에서 빼고 자기 `Modal`로 대신하는데, webui가 core를 직접 import하면 그 제외가 효력이 없다. 어느 경로가 정답인지, patch가 적용된 core 한 벌만 설치되려면 dependency를 어떻게 선언하는지, 문자열과 cascade layer를 어디서 맞추는지를 한 번 정해야 한다.
+- **Why a decision is needed**: BUI의 `BAIModal`처럼 BAI 의존성이 없는 component가 ui-common으로 옮겨 가면, webui는 같은 Astryx를 두 경로로 import하게 된다. ui-common은 core의 `Dialog`를 mirror에서 빼고 자기 `Modal`로 대신하는데, webui가 core를 직접 import하면 그 제외가 효력이 없다. 어느 경로가 정답인지, core 한 벌만 설치되려면 dependency를 어떻게 선언하는지, 문자열과 cascade layer를 어디서 맞추는지를 한 번 정해야 한다.
 
 ## 설계도
 
@@ -31,7 +31,7 @@ flowchart LR
     devdeps["react/ and BUI package.json<br/>core and cli as devDependencies, lab"]
   end
   uc["@lablup/ui-common<br/>registry, or vendor tarball before 0.2.0"]
-  core["@astryxdesign/core<br/>patched, one copy"]
+  core["@astryxdesign/core<br/>one copy"]
   neutral["@astryxdesign/theme-neutral"]
   lab["@astryxdesign/lab<br/>peer of ui-common, needs core as peer"]
   cli["@astryxdesign/cli"]
@@ -127,9 +127,9 @@ flowchart TB
 - **Tarball pin**: pnpm catalog는 `file:` spec을 받지 않는다(`ERR_PNPM_CATALOG_ENTRY_INVALID_SPEC`). 그래서 catalog의 `@lablup/ui-common`은 registry version을 적고, `pnpm-workspace.yaml`의 `overrides` 한 줄이 그것을 `file:vendor/lablup-ui-common-<version>.tgz`로 바꾼다. tarball 교체는 그 한 줄이고, 0.2.0 전환은 그 줄을 지운다. 절차는 `vendor/README.md`에 있다.
 - **Build externals**: BUI의 library build는 peer만 external로 두므로, `vite.config.ts`가 `@astryxdesign/*` 전체를 external로 더 둔다. core가 peer에서 빠져도 남은 core import가 `dist`에 두 번째 copy로 bundle되지 않는다.
 - **Test runner**: ui-common의 custom component는 자기 `.css`를 import한다. `react/vitest.config.ts`는 `server.deps.inline`에 ui-common을 두어 Vite가 그 CSS import를 처리하게 한다.
-- **Pinned core devDependency**: lab의 canary version은 core를 optional이 아닌 peer로 요구한다. webui의 importer에 core가 없으면 pnpm [`autoInstallPeers`](#용어)가 patch 없는 core를 하나 더 설치하고, `--frozen-lockfile`과 peer 검사는 통과한다. `react/`와 BUI가 같은 pin의 core를 devDependency로 두면 pnpm이 lab의 peer를 그 core로 채운다. CLI도 설치된 core를 읽으므로 core가 필요하다.
+- **Pinned core devDependency**: lab의 canary version은 core를 optional이 아닌 peer로 요구한다. webui의 importer에 core가 없으면 pnpm [`autoInstallPeers`](#용어)가 core를 하나 더 설치하고, `--frozen-lockfile`과 peer 검사는 통과한다. `react/`와 BUI가 같은 pin의 core를 devDependency로 두면 pnpm이 lab의 peer를 그 core로 채운다. CLI도 설치된 core를 읽으므로 core가 필요하다.
 - **Lab stays installed**: `@lablup/ui-common/lab`은 optional peer인 `@astryxdesign/lab`이 설치되어 있어야 해석된다. `scripts/migration-gates/z-index-ladder-gate.mjs`도 `react/node_modules/@astryxdesign/lab/dist/`를 읽는다. source는 lab을 `@lablup/ui-common/lab`과 `@lablup/ui-common/lab/lab.css`로만 import한다(`BAIDrawer`, `BAITour`, `Stat` 등).
-- **Bare-name patch keys**: `pnpm-workspace.yaml`의 `patchedDependencies` key `"@astryxdesign/core@0.6.2"`와 `"@astryxdesign/lab@0.6.2-canary.c9fb1ad"`는 version 없는 `"@astryxdesign/core"`와 `"@astryxdesign/lab"`이 된다. FR-4059는 이것을 tripwire로 정했다. key가 version 하나에 묶이지 않으므로 pnpm은 그래프에 있는 모든 version의 copy에 patch 적용을 시도한다.
+- **Single core gate**: webui는 Astryx를 patch하지 않는다. `ComplexSelector`, lab의 `Drawer`와 `Tour`에 필요한 수정은 ui-common이 같은 이름과 import 경로의 fork로 싣는다(FR-4098). FR-4059가 tripwire로 쓰던 version 없는 `patchedDependencies` key는 patch와 함께 사라졌고, 그 역할은 `scripts/migration-gates/single-astryx-core-gate.mjs`가 맡는다. 이 gate는 `pnpm-lock.yaml`에서 `@astryxdesign/core`와 `@astryxdesign/lab`이 `packages:`에 version 하나, `snapshots:`에 resolution 하나만 있고 그 version이 catalog pin과 같은지 검사한다. peer가 달라 같은 version이 두 번 resolve되어도 pnpm은 별도 copy를 설치하므로 `snapshots:`도 센다. `scripts/verify.sh`와 `.github/workflows/typecheck.yml`이 이 gate를 돌린다.
 - **Pins move together**: ui-common 한 version은 Astryx pin 한 벌에 묶인다. catalog의 `@astryxdesign/*` pin은 ui-common이 pin한 version과 같아야 하며, ui-common을 올릴 때 함께 올린다. 둘이 다르면 core가 두 벌 설치된다.
 
 ### 4. BUI의 `BAI*` component는 ui-common component의 adapter가 된다
@@ -195,7 +195,7 @@ flowchart TB
 - Jira: [FR-4086](https://lablup.atlassian.net/browse/FR-4086)(webui rollout), [FR-4046](https://lablup.atlassian.net/browse/FR-4046)(map).
 - [FR-4047](https://lablup.atlassian.net/browse/FR-4047): core export map의 1:1 mirror, exclusion list, `@lablup/ui-common/lab`, `theme/tokens.stylex`, `ui-common.css`.
 - [FR-4049](https://lablup.atlassian.net/browse/FR-4049): precompiled JS와 CSS, exact-pinned external Astryx, webui가 StyleX compiler dependency를 유지한다.
-- [FR-4059](https://lablup.atlassian.net/browse/FR-4059): core devDependency와 bare-name patch key.
+- [FR-4059](https://lablup.atlassian.net/browse/FR-4059): core devDependency와 bare-name patch key. [FR-4098](https://lablup.atlassian.net/browse/FR-4098): Astryx patch를 ui-common fork로 옮기고 lockfile gate로 대신한다.
 - [FR-4054](https://lablup.atlassian.net/browse/FR-4054): Astryx 모양 props와 BUI adapter. [FR-4055](https://lablup.atlassian.net/browse/FR-4055): `useTranslator`와 provider에서의 병합. [FR-4087](https://lablup.atlassian.net/browse/FR-4087): 이동 순서와 `theme-shim` track. [FR-4097](https://lablup.atlassian.net/browse/FR-4097): form engine의 ui-common 이동.
 - ui-common: [#40](https://github.com/lablup/ui-common/issues/40)(dependency form, theme, layer), [#41](https://github.com/lablup/ui-common/issues/41)(admission rule, 직접 import 금지), [#42](https://github.com/lablup/ui-common/issues/42)(`ui-common` CLI), [#52](https://github.com/lablup/ui-common/issues/52)(upgrade tool).
 - 결정일: 2026-09-25.
@@ -210,6 +210,6 @@ flowchart TB
 | packed tarball | `pnpm pack`으로 만든 `.tgz` package 파일이다. `file:` spec으로 설치하면 registry에서 받은 package와 같은 방식으로 풀린다. |
 | adapter | BUI에 남는 같은 이름의 `BAI*` component다. frozen antd-v6 props를 받아 ui-common component의 props로 옮겨 넘기는 일만 한다. |
 | catalog pin | `pnpm-workspace.yaml`의 `catalog:`에 적은 version이다. 각 `package.json`은 `"catalog:"`로 그 version을 가리킨다. |
-| autoInstallPeers | 요구된 peer dependency가 없으면 pnpm이 자동으로 설치하는 설정이다. 설치된 copy는 importer의 patch나 pin을 따르지 않는다. |
+| autoInstallPeers | 요구된 peer dependency가 없으면 pnpm이 자동으로 설치하는 설정이다. 설치된 copy는 importer의 pin을 따르지 않는다. |
 | codemod | source의 import 문을 AST 단위로 고쳐 쓰는 script다. 이 ADR의 일회성 script와 `ui-common upgrade`가 싣는 version별 jscodeshift 변환이 있다. |
 | theme-shim | `packages/backend.ai-ui/src/theme-shim/`이었다. antd 시절 `theme.useToken()` 값과 같은 JS 값을 돌려주던 BUI 내부 layer이고, FR-3605가 지웠다. component는 이제 token을 `var(--…)`나 Astryx `useTheme().token()`으로 읽는다. |

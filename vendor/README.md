@@ -24,8 +24,9 @@ pnpm install
 ```
 
 If the new ui-common pins a different Astryx version, move the
-`@astryxdesign/*` catalog pins (and the patch files) to it in the same change;
-otherwise a second core is installed.
+`@astryxdesign/*` catalog pins to it in the same change; otherwise a second
+core is installed, which `scripts/migration-gates/single-astryx-core-gate.mjs`
+(a `scripts/verify.sh` lane) reports.
 
 ## Cut over to the registry
 

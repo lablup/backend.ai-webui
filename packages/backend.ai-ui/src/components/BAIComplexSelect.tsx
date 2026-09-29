@@ -209,9 +209,8 @@ export interface BAIComplexSelectProps {
   maxTriggerTokens?: number;
   /**
    * antd `allowClear`: a clear button between the spinner and the chevron
-   * while something is selected (`ComplexSelector.hasClear`, added by
-   * react/patches/@astryxdesign__core@0.6.2.patch, upstream
-   * https://github.com/facebook/astryx/pull/6362).
+   * while something is selected (`ComplexSelector.hasClear`, from ui-common's
+   * fork; upstream https://github.com/facebook/astryx/pull/6362).
    */
   allowClear?: boolean;
   /**

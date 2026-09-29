@@ -392,6 +392,9 @@ start_lane gate "ui-common agent blocks" check_ui_common_agents
 # ADR 0009's import ban in ESLint covers JS/TS only; this also sees CSS @import.
 start_lane gate "ui-common import mirror" node scripts/ui-common-codemod.mjs --check
 start_lane gate "Cascade-layer order" check_layer_order
+# The bare-name Astryx patch keys used to trip a second core at install time;
+# with the patches gone (FR-4098) the lockfile is read instead (ADR 0009).
+start_lane gate "Single Astryx core" node scripts/migration-gates/single-astryx-core-gate.mjs
 # vitest.yml's path filter never fires for an index.html-only PR, so the
 # ladder mirrors are checked here, always.
 start_lane gate "z-index ladder mirrors" node scripts/migration-gates/z-index-ladder-gate.mjs

@@ -154,7 +154,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
             : (placeholder ?? t('comp:VFolderPathPicker.ClickToSelectPath'))
         }
         isDisabled={disabled}
-        // `hasClear` / `onClear`: react/patches/@astryxdesign__core@0.6.2.patch
+        // `hasClear` / `onClear`: ui-common's ComplexSelector fork
         // (upstream: https://github.com/facebook/astryx/pull/6362)
         hasClear={allowClear}
         onClear={() => setSelectedSubPath(undefined)}
