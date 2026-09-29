@@ -232,12 +232,12 @@ function reportPersistResult(
   switch (result.status) {
     case 'attachments-dropped':
       logger.warn(
-        'Chat history exceeded the browser storage quota; attachments were dropped from the stored history.',
+        'Chat history exceeded its browser storage budget or the storage quota; attachments were dropped from the stored history.',
       );
       break;
     case 'entries-unpersisted':
       logger.warn(
-        'Chat history exceeded the browser storage quota; these chats are no longer stored:',
+        'Chat history exceeded its browser storage budget or the storage quota; these chats are no longer stored:',
         result.unpersistedKeys,
       );
       break;
