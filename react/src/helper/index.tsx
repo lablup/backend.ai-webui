@@ -399,6 +399,19 @@ export const getImageFullName = (
 };
 
 /**
+ * `ImageRow.name` as the manager stores and looks it up (`ImageRef.canonical`):
+ * `<registry>/<namespace>:<tag>`, with the architecture carried separately.
+ * `ImageNode.name` is NOT this — it resolves to `row.image`, the namespace.
+ */
+export const getImageCanonical = (
+  image: DeepPartial<Image | CommittedImage | EnvironmentImage>,
+) => {
+  return image
+    ? `${image.registry}/${image.namespace ?? image.name}:${image.tag}`
+    : undefined;
+};
+
+/**
  * Parse an image string to extract its components.
  * Image string format: registry/namespace:tag@arch
  * - registry can include port (e.g., myregistry.org:5000)
