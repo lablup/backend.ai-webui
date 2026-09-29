@@ -138,6 +138,39 @@ const isLightDismissSurface = (modal: Element): boolean =>
   !modal.hasAttribute('data-bai-modal-open') &&
   !!modal.closest('[popover]');
 
+/** Where on its box an element is sampled for what the browser paints there. */
+const PAINT_SAMPLES: ReadonlyArray<readonly [number, number]> = [
+  [0.5, 0.5],
+  [0.2, 0.2],
+  [0.8, 0.2],
+  [0.2, 0.8],
+  [0.8, 0.8],
+];
+
+/**
+ * Does the browser paint this element above everything else at some point of
+ * its box? A notification the app raises over its own dialogs is outside the
+ * modal and still on top. Our own chrome is looked through.
+ */
+function paintsOnTop(element: Element): boolean {
+  const doc = element.ownerDocument;
+  if (!hasLayout(doc) || typeof doc.elementsFromPoint !== 'function')
+    return false;
+  const box = element.getBoundingClientRect();
+  const view = doc.defaultView;
+  const width = view?.innerWidth ?? 0;
+  const height = view?.innerHeight ?? 0;
+  return PAINT_SAMPLES.some(([fx, fy]) => {
+    const x = box.left + box.width * fx;
+    const y = box.top + box.height * fy;
+    if (x < 0 || y < 0 || x >= width || y >= height) return false;
+    const top = doc
+      .elementsFromPoint(x, y)
+      .find((hit) => !hit.closest(`[${OVERLAY_MARKER_ATTR}]`));
+    return !!top && (top === element || element.contains(top));
+  });
+}
+
 /**
  * Is an open modal painted over this element? A covered modal is `inert`, so
  * the topmost is the last one that is not; jsdom matches no `:modal`.
@@ -161,7 +194,7 @@ export function isBehindModal(element: Element): boolean {
     (modal) => !open.some((other) => other !== modal && other.contains(modal)),
   );
   const top = outer[outer.length - 1];
-  return !!top && !top.contains(element);
+  return !!top && !top.contains(element) && !paintsOnTop(element);
 }
 
 /** What a `via` step clicks: a control, never the wrapper around its label. */
