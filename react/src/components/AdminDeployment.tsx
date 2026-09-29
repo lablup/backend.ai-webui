@@ -30,7 +30,9 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
+  availableDeploymentSorterKeys,
   DeploymentOrderValue,
+  type DeploymentSorterKey,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
@@ -50,7 +52,7 @@ import {
   UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
-type DeploymentStatusCategory = 'running' | 'finished';
+export type DeploymentStatusCategory = 'running' | 'finished';
 
 export const AdminDeploymentQuery = graphql`
   query AdminDeploymentQuery(
@@ -96,12 +98,57 @@ export interface AdminDeploymentProps {
 }
 
 const finishedStatuses: ReadonlyArray<DeploymentStatus> = ['STOPPED'];
-const statusCategoryFilterFor = (
+// Every DeploymentStatus except STOPPED, in schema order.
+const runningStatuses: ReadonlyArray<DeploymentStatus> = [
+  'PENDING',
+  'SCALING',
+  'DEPLOYING',
+  'READY',
+  'STOPPING',
+];
+
+/**
+ * The hard-coded status scope behind the Running / Terminated toggle.
+ * `DeploymentStatusFilter.notIn` only exists from 26.4.3
+ * (`model-deployment-extended-filter`); below that the running scope has to be
+ * spelled out as the complementary `in` list.
+ */
+export const statusCategoryFilterFor = (
   category: DeploymentStatusCategory,
-): DeploymentFilter =>
-  category === 'finished'
-    ? { status: { in: finishedStatuses } }
-    : { status: { notIn: finishedStatuses } };
+  supportsExtendedFilter: boolean,
+): DeploymentFilter => {
+  if (category === 'finished') {
+    return { status: { in: finishedStatuses } };
+  }
+  return supportsExtendedFilter
+    ? { status: { notIn: finishedStatuses } }
+    : { status: { in: runningStatuses } };
+};
+
+/**
+ * DOMAIN / PROJECT / RESOURCE_GROUP / TAG joined `DeploymentOrderField` in
+ * 26.4.3, together with the filters behind the same flag. Shared with
+ * `AdminDeploymentPage`, which sanitizes URL-supplied `order` against it
+ * before the tab's first query runs.
+ */
+export const deploymentSorterKeysFor = (
+  supportsExtendedFilter: boolean,
+): ReadonlyArray<DeploymentSorterKey> =>
+  supportsExtendedFilter
+    ? availableDeploymentSorterKeys
+    : (['name', 'createdAt'] as const);
+
+/** `order` is `[-]<camelCaseKey>`; a key this manager cannot sort by is dropped. */
+export const sanitizeDeploymentOrder = (
+  order: string | null | undefined,
+  supportsExtendedFilter: boolean,
+): string | null => {
+  if (!order) return null;
+  const key = order.startsWith('-') ? order.slice(1) : order;
+  return _.includes(deploymentSorterKeysFor(supportsExtendedFilter), key)
+    ? order
+    : null;
+};
 
 const AdminDeployment = ({
   queryRef,
@@ -181,6 +228,8 @@ const AdminDeployment = ({
     message: t('general.InvalidUUID'),
     validate: (value: string) => isValidUUID(value.toLowerCase()),
   };
+
+  const sortableKeys = deploymentSorterKeysFor(supportsExtendedFilter);
 
   const filterProperties: Array<BAIGraphQLFilterProperty> = filterOutEmpty([
     {
@@ -264,7 +313,10 @@ const AdminDeployment = ({
                     ...queryRef.variables,
                     filter: {
                       ...userFilter,
-                      ...statusCategoryFilterFor(nextCategory),
+                      ...statusCategoryFilterFor(
+                        nextCategory,
+                        supportsExtendedFilter,
+                      ),
                     },
                     offset: 0,
                   },
@@ -288,7 +340,10 @@ const AdminDeployment = ({
                     ...queryRef.variables,
                     filter: {
                       ...(value ?? {}),
-                      ...statusCategoryFilterFor(statusCategory),
+                      ...statusCategoryFilterFor(
+                        statusCategory,
+                        supportsExtendedFilter,
+                      ),
                     },
                     offset: 0,
                   },
@@ -337,6 +392,7 @@ const AdminDeployment = ({
                 { fetchPolicy: 'network-only' },
               ),
           }}
+          sortableKeys={sortableKeys}
           tableSettings={tableSettings}
           // Drop the replicas / currentRevisionId / preferredDomainName /
           // strategyType columns entirely and show `owner` by default,
