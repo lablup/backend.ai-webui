@@ -500,9 +500,10 @@ const sampleData: DataType[] = [
 The real decorator lives in `./decorators.tsx` and is wired into `preview.tsx`
 as a single entry, `withGlobalProvider`. There is no antd `ConfigProvider` in
 this tree — antd is not a dependency of this project. `withGlobalProvider`
-mounts Astryx's own `Theme` provider, then the theme-shim, `BAIConfigProvider`
-(locale only now), the form engine's config provider, and the app-shim
-(`message`/`modal`) provider, in that order:
+mounts Astryx's own `Theme` provider (the "Theme" toolbar picks the preset),
+then `BAIConfigProvider` (with the app's locale module for the toolbar locale),
+the form engine's config provider, and the app-shim (`message`/`modal`)
+provider, in that order:
 
 ```typescript
 // packages/backend.ai-ui/.storybook/preview.tsx
@@ -520,19 +521,19 @@ const preview: Preview = {
 // packages/backend.ai-ui/.storybook/decorators.tsx (simplified)
 import { BAIAppProvider } from '../src/app-shim';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
-import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
-import { ThemeShimProvider } from '../src/theme-shim';
+import { FormConfigProvider } from '../src/form-engine';
 import { Theme as AstryxThemeProvider } from '@lablup/ui-common/theme';
 
-const GlobalConfigProvider = ({ locale, isDarkMode, seedToken, children }) => (
-  <AstryxThemeProvider theme={astryxBrandTheme} mode={isDarkMode ? 'dark' : 'light'}>
-    <ThemeShimProvider mode={isDarkMode ? 'dark' : 'light'} seeds={seedToken}>
-      <BAIConfigProvider locale={{ lang: locale }}>
-        <FormConfigProvider>
-          <BAIAppProvider>{children}</BAIAppProvider>
-        </FormConfigProvider>
-      </BAIConfigProvider>
-    </ThemeShimProvider>
+const GlobalConfigProvider = ({ locale, themeStyle, isDarkMode, children }) => (
+  <AstryxThemeProvider
+    theme={themePresets[themeStyle].theme}
+    mode={isDarkMode ? 'dark' : 'light'}
+  >
+    <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
+      <FormConfigProvider>
+        <BAIAppProvider>{children}</BAIAppProvider>
+      </FormConfigProvider>
+    </BAIConfigProvider>
   </AstryxThemeProvider>
 );
 

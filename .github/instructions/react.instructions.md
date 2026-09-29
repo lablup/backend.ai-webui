@@ -48,14 +48,13 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ### Shims — same call shape, different import
 
-Three antd surfaces were replaced by self-hosted shims that are drop-in compatible. Adjust
+Two antd surfaces were replaced by self-hosted shims that are drop-in compatible. Adjust
 the `../` depth to the file; the same specifiers exist on both sides of the workspace
 (`react/src/*` re-exports the implementation in `packages/backend.ai-ui/src/*`).
 
 | Was | Now (host `react/src/**` and BUI `packages/backend.ai-ui/src/**`) |
 |---|---|
 | `import { App } from 'antd'` | `import { App } from '../app-shim'` |
-| `import { theme } from 'antd'` | `import { theme } from '../theme-shim'` |
 | `import { Form } from 'antd'` | `import { Form } from '../form-engine'` |
 
 - `App.useApp()` gives `{ message, modal }` with antd's exact call shape — `modal.confirm()`
@@ -63,9 +62,11 @@ the `../` depth to the file; the same specifiers exist on both sides of the work
   shim; long-running notifications are the Jotai store in
   `react/src/hooks/useBAINotification.tsx`. `<BAIAppProvider>` is mounted once in
   `DefaultProviders`.
-- `theme.useToken()` returns the antd-shaped `{ token, hashId, theme }` (numbers for
-  dimensions, hex strings for colours) backed by Astryx tokens. Use tokens, never hard-coded
-  colours — every component must work in light and dark.
+- The antd `theme.useToken()` has no shim any more (FR-3605): read a token with
+  `useTheme().token('--color-text-secondary')` from `@lablup/ui-common/theme`, or better,
+  write `'var(--color-text-secondary)'` straight into the style. Use tokens, never
+  hard-coded colours — every component must work in light and dark. Responsive
+  breakpoints are `useBAIBreakpoint()` from `backend.ai-ui`.
 - `Form` / `Form.Item` / `Form.List` / `Form.useForm` / `Form.useWatch` resolve to the
   self-hosted engine; `Form.Item` **is** `BAIFormItem`.
 - Everything else that used to come from antd is a `BAI*` wrapper from `backend.ai-ui` or an
