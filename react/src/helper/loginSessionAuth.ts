@@ -9,6 +9,7 @@
  * Handles post-authentication GQL connection and client setup.
  */
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
+import { getActAsTarget } from './actAs';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 
 /**
@@ -30,6 +31,7 @@ export function createBackendAIClient(
     clientConfig,
     'Backend.AI Console.',
   );
+  client.actAsUserId = getActAsTarget()?.userId ?? null;
   return { client, clientConfig };
 }
 

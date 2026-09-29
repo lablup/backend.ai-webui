@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "이 탭의 모든 작업은 이 사용자로 실행되며 감사 로그에 기록됩니다. 다른 탭은 관리자 화면 그대로입니다.",
+    "BannerTitle": "{{name}}({{email}}) 님으로 이용 중",
+    "ConfirmDescription": "새 탭에서 {{email}} 님의 권한과 화면으로 작업합니다. 그 탭에서 하는 모든 작업은 이 사용자로 실행되며, 관리자 계정이 실행했다는 기록이 감사 로그에 함께 남습니다. 지금 탭은 관리자 화면 그대로 유지됩니다.",
+    "ConfirmTitle": "{{name}} 님으로 이용하기",
+    "Exit": "이용 종료",
+    "FailedToOpen": "새 탭을 열지 못했습니다.",
+    "OpenInNewTab": "새 탭에서 열기",
+    "UseAsThisUser": "이 사용자로 이용하기"
+  },
   "activeAgent": {
     "ActiveAgents": "활성 에이전트",
     "ActiveAgentsTooltip": "현재 시스템에서 실행 중인 모든 에이전트 개요를 표시합니다."
@@ -3143,10 +3153,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "클러스터 크기가 2 이상인 경우 정수만 허용됩니다.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "입력 값은 {{stepSize}}의 배수여야 합니다.",
       "OpenMPOptimization": "OpenMP/OpenBLAS 최적화",
-      "OwnerAccessKey": "소유자 액세스 키",
       "OwnerEmail": "사용자 이메일",
-      "OwnerGroup": "소유자 프로젝트",
-      "OwnerResourceGroup": "소유자 자원 그룹",
       "PinnedHistoryTooltip": "핀 아이콘을 클릭하면 기록을 고정할 수 있습니다. 고정된 기록은 유지됩니다.",
       "PleaseCompleteForm": "양식이 완성되지 않았거나 오류가 있습니다. 입력하신 내용을 확인해 주세요.",
       "PleaseWaitInitializing": "초기화 중입니다...",
@@ -3189,7 +3196,6 @@
       "SetBatchJobTimeoutDuration": "배치 작업 최대 실행 시간 설정",
       "SetEnvironmentVariable": "환경 변수 설정 (옵션)",
       "SetPreopenPorts": "사전 개방 포트 설정 (옵션)",
-      "SetSessionOwner": "세션 소유자 설정",
       "SettingUpProxyForApp": "애플리케이션을 위한 프록시를 설정합니다...",
       "SharedMemory": "공유 메모리 (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "공유 메모리 값이 할당된 메모리보다 적게 설정되었습니다.",

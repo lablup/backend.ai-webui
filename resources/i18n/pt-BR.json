@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tudo nesta aba é executado como este usuário e registrado no log de auditoria. Suas outras abas continuam na visão de administrador.",
+    "BannerTitle": "Usando como {{name}} ({{email}})",
+    "ConfirmDescription": "Trabalhe com as permissões e a visão de {{email}} em uma nova aba. Tudo o que você fizer nessa aba é executado como este usuário, e o log de auditoria também registra sua conta de administrador. Esta aba continua na sua visão de administrador.",
+    "ConfirmTitle": "Usar como {{name}}",
+    "Exit": "Sair",
+    "FailedToOpen": "Não foi possível abrir uma nova aba.",
+    "OpenInNewTab": "Abrir em nova aba",
+    "UseAsThisUser": "Usar como este usuário"
+  },
   "activeAgent": {
     "ActiveAgents": "Agentes ativos",
     "ActiveAgentsTooltip": "Mostra uma visão geral de todos os agentes atualmente em execução no sistema."
@@ -3140,10 +3150,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "O valor tem de ser um múltiplo de {{stepSize}}",
       "OpenMPOptimization": "Otimização OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Chave de acesso do proprietário",
       "OwnerEmail": "Email do proprietário",
-      "OwnerGroup": "Projeto do proprietário",
-      "OwnerResourceGroup": "Grupo de recursos do proprietário",
       "PinnedHistoryTooltip": "Clique no ícone de fixação para fixar o registo. Os registos fixados são mantidos.",
       "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
       "PleaseWaitInitializing": "Aguarde enquanto inicializando ...",
@@ -3186,7 +3193,6 @@
       "SetBatchJobTimeoutDuration": "Definir duração do tempo limite do trabalho em lote",
       "SetEnvironmentVariable": "Definir Variável de Ambiente",
       "SetPreopenPorts": "Portas pré-abertas (opcional)",
-      "SetSessionOwner": "Proprietário da sessão",
       "SettingUpProxyForApp": "Configurando proxy para o aplicativo ...",
       "SharedMemory": "Memória compartilhada (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "A configuração da memória compartilhada é reduzida para menos do que a memória alocada.",

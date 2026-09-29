@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tudo neste separador é executado como este utilizador e registado no registo de auditoria. Os seus outros separadores mantêm-se na vista de administrador.",
+    "BannerTitle": "A utilizar como {{name}} ({{email}})",
+    "ConfirmDescription": "Trabalhe com as permissões e a vista de {{email}} num novo separador. Tudo o que fizer nesse separador é executado como este utilizador, e o registo de auditoria também regista a sua conta de administrador. Este separador mantém-se na vista de administrador.",
+    "ConfirmTitle": "Utilizar como {{name}}",
+    "Exit": "Sair",
+    "FailedToOpen": "Não foi possível abrir um novo separador.",
+    "OpenInNewTab": "Abrir num novo separador",
+    "UseAsThisUser": "Utilizar como este utilizador"
+  },
   "activeAgent": {
     "ActiveAgents": "Agentes ativos",
     "ActiveAgentsTooltip": "Mostra uma visão geral de todos os agentes atualmente em execução no sistema."
@@ -3142,10 +3152,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Somente números inteiros são permitidos quando o tamanho do cluster não é menor que 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "O valor tem de ser um múltiplo de {{stepSize}}",
       "OpenMPOptimization": "Otimização OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Chave de acesso do proprietário",
       "OwnerEmail": "Email do proprietário",
-      "OwnerGroup": "Projeto do proprietário",
-      "OwnerResourceGroup": "Grupo de recursos do proprietário",
       "PinnedHistoryTooltip": "Clique no ícone de fixação para fixar o registo. Os registos fixados são mantidos.",
       "PleaseCompleteForm": "O formulário está incompleto ou contém erros. Por favor, verifique os seus dados.",
       "PleaseWaitInitializing": "Aguarde enquanto inicializando ...",
@@ -3188,7 +3195,6 @@
       "SetBatchJobTimeoutDuration": "Definir duração do tempo limite do trabalho em lote",
       "SetEnvironmentVariable": "Definir Variável de Ambiente",
       "SetPreopenPorts": "Portas pré-abertas (opcional)",
-      "SetSessionOwner": "Proprietário da sessão",
       "SettingUpProxyForApp": "Configurando proxy para o aplicativo ...",
       "SharedMemory": "Memória compartilhada (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "A configuração da memória compartilhada é reduzida para menos do que a memória alocada.",

@@ -87,6 +87,42 @@ In the Users list, columns that hold several values — **Allowed Client IPs** a
 show the first value inline and collapse the rest behind a `+N` tag. Hover over the tag to see the
 complete list without widening the column.
 
+<a id="use-as-another-user"></a>
+
+### Use the WebUI as another user
+
+A superadmin can open the WebUI as another user in a separate browser tab.
+In that tab, the WebUI works exactly as it does for that user — their menus,
+projects, storage folders, quotas, and images. Use this to create a compute
+session on the user's behalf with the regular session launcher, or to work
+with their storage folders and other resources.
+
+1. Go to **Admin Settings** > **Users**.
+2. In the row of the active user you want to act as, click the **Use as this user** action.
+   The action is not available on your own account.
+3. In the **Use as {name}** dialog, click **Open in new tab**.
+4. In the new tab, work as usual. For example, start a session from the
+   session launcher as described in [Start a new session](#start-a-new-session).
+
+<!-- TODO(screenshot): Capture the Users row action "Use as this user" and the "Using as {name} ({email})" banner in the new tab (FR-4111). -->
+
+The new tab shows a fixed **Using as {name} ({email})** banner stating that
+everything in the tab runs as this user and is recorded in the audit log, and
+the browser tab title is prefixed with `[name]` so you can tell the tab apart.
+
+To stop, click **Exit** on the banner. The tab closes, or returns to your admin
+view if the browser does not allow the tab to be closed.
+
+:::note
+- The mode applies only to that tab. It survives a page reload and ends when
+  you close the tab or the browser. Your other tabs stay in your superadmin view.
+- Logging out in that tab only exits the mode; it does not log you out of your
+  own account.
+- The audit log records you as the actor and the user as the account you acted as.
+- This feature requires **manager 26.9.0 or later**, is available to superadmins
+  only, and works in the web browser only (not in the desktop app).
+:::
+
 <a id="bulk-create-users"></a>
 
 ### Bulk create users

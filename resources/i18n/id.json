@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Semua di tab ini dijalankan sebagai pengguna ini dan dicatat di log audit. Tab Anda yang lain tetap dalam tampilan admin.",
+    "BannerTitle": "Digunakan sebagai {{name}} ({{email}})",
+    "ConfirmDescription": "Bekerja dengan izin dan tampilan {{email}} di tab baru. Semua yang Anda lakukan di tab tersebut dijalankan sebagai pengguna ini, dan log audit juga mencatat akun admin Anda. Tab ini tetap dalam tampilan admin Anda.",
+    "ConfirmTitle": "Gunakan sebagai {{name}}",
+    "Exit": "Keluar",
+    "FailedToOpen": "Tidak dapat membuka tab baru.",
+    "OpenInNewTab": "Buka di tab baru",
+    "UseAsThisUser": "Gunakan sebagai pengguna ini"
+  },
   "activeAgent": {
     "ActiveAgents": "Agen aktif",
     "ActiveAgentsTooltip": "Menunjukkan ikhtisar sekilas dari semua agen yang saat ini berjalan dalam sistem."
@@ -3144,10 +3154,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Hanya bilangan bulat yang diperbolehkan jika ukuran cluster tidak kurang dari 2.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Nilai harus merupakan kelipatan dari {{stepSize}}.",
       "OpenMPOptimization": "Pengoptimalan OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Kunci akses pemilik",
       "OwnerEmail": "Email Pemilik",
-      "OwnerGroup": "Proyek pemilik",
-      "OwnerResourceGroup": "Grup sumber daya pemilik",
       "PinnedHistoryTooltip": "Klik ikon pin untuk menyematkan catatan. Catatan yang disematkan akan disimpan.",
       "PleaseCompleteForm": "Formulir tidak lengkap atau mengandung kesalahan. Silakan periksa masukan Anda.",
       "PleaseWaitInitializing": "Harap tunggu saat inisialisasi...",
@@ -3190,7 +3197,6 @@
       "SetBatchJobTimeoutDuration": "Tetapkan durasi batas waktu tugas batch",
       "SetEnvironmentVariable": "Atur Variabel Lingkungan (opsional)",
       "SetPreopenPorts": "Port yang sudah dibuka sebelumnya (opsional)",
-      "SetSessionOwner": "Pemilik sesi",
       "SettingUpProxyForApp": "Menyiapkan proksi untuk aplikasi...",
       "SharedMemory": "Memori yang dibagikan (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Pengaturan memori bersama dikurangi hingga di bawah memori yang dialokasikan.",

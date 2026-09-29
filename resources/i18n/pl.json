@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Wszystko w tej karcie jest wykonywane jako ten użytkownik i zapisywane w dzienniku audytu. Pozostałe karty pozostają w widoku administratora.",
+    "BannerTitle": "Używasz jako {{name}} ({{email}})",
+    "ConfirmDescription": "Pracuj z uprawnieniami i widokiem {{email}} w nowej karcie. Wszystko, co zrobisz w tej karcie, zostanie wykonane jako ten użytkownik, a dziennik audytu odnotuje także Twoje konto administratora. Ta karta pozostaje w widoku administratora.",
+    "ConfirmTitle": "Używaj jako {{name}}",
+    "Exit": "Zakończ",
+    "FailedToOpen": "Nie udało się otworzyć nowej karty.",
+    "OpenInNewTab": "Otwórz w nowej karcie",
+    "UseAsThisUser": "Używaj jako ten użytkownik"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktywni agenci",
     "ActiveAgentsTooltip": "Pokazuje przegląd w skrócie wszystkich agentów obecnie działających w systemie."
@@ -3143,10 +3153,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "Jeśli rozmiar klastra jest nie mniejszy niż 2, dozwolona jest tylko liczba całkowita.",
       "OnlyAllowsDiscreteNumberByQuantumSize": "Wartość musi być wielokrotnością {{stepSize}}.",
       "OpenMPOptimization": "Optymalizacja OpenMP/OpenBLAS",
-      "OwnerAccessKey": "Klucz dostępu właściciela",
       "OwnerEmail": "E-mail właściciela",
-      "OwnerGroup": "Projekt właściciela",
-      "OwnerResourceGroup": "Grupa zasobów właściciela",
       "PinnedHistoryTooltip": "Kliknij ikonę przypięcia, aby przypiąć rekord. Przypięte rekordy są zachowywane.",
       "PleaseCompleteForm": "Formularz jest niekompletny lub zawiera błędy. Sprawdź wprowadzone dane.",
       "PleaseWaitInitializing": "Proszę czekać podczas inicjowania...",
@@ -3189,7 +3196,6 @@
       "SetBatchJobTimeoutDuration": "Ustaw limit czasu zadania wsadowego",
       "SetEnvironmentVariable": "Ustaw zmienną środowiskową",
       "SetPreopenPorts": "Wstępnie otwarte porty (opcjonalnie)",
-      "SetSessionOwner": "Właściciel sesji",
       "SettingUpProxyForApp": "Konfiguruję serwer proxy dla aplikacji...",
       "SharedMemory": "Udostępniona pamięć (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Ustawienie pamięci współdzielonej jest ograniczone do wartości poniżej przydzielonej pamięci.",

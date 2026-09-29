@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "此标签页中的所有操作都以此用户身份执行并记录在审计日志中。其他标签页保持管理员视图。",
+    "BannerTitle": "正在以 {{name}}（{{email}}）身份使用",
+    "ConfirmDescription": "将在新标签页中以 {{email}} 的权限和视图进行操作。在该标签页中的所有操作都将以此用户身份执行，审计日志中也会记录由您的管理员账户执行。当前标签页保持管理员视图。",
+    "ConfirmTitle": "以 {{name}} 身份使用",
+    "Exit": "退出",
+    "FailedToOpen": "无法打开新标签页。",
+    "OpenInNewTab": "在新标签页中打开",
+    "UseAsThisUser": "以此用户身份使用"
+  },
   "activeAgent": {
     "ActiveAgents": "活性代理",
     "ActiveAgentsTooltip": "显示了当前在系统中运行的所有代理的一目了然概述。"
@@ -3142,10 +3152,7 @@
       "OnlyAllowsDiscreteNumberByClusterSize": "当簇大小不小于 2 时，只允许使用整数。",
       "OnlyAllowsDiscreteNumberByQuantumSize": "数值必须是 {{stepSize}} 的倍数。",
       "OpenMPOptimization": "OpenMP/OpenBLAS 优化",
-      "OwnerAccessKey": "所有者访问密钥",
       "OwnerEmail": "所有者电子邮件",
-      "OwnerGroup": "业主项目",
-      "OwnerResourceGroup": "所有者资源组",
       "PinnedHistoryTooltip": "单击固定图标固定记录。钉住的记录将被保留。",
       "PleaseCompleteForm": "表格不完整或包含错误。请检查输入内容。",
       "PleaseWaitInitializing": "正在初始化，请稍候...",
@@ -3188,7 +3195,6 @@
       "SetBatchJobTimeoutDuration": "设置批处理作业超时时间",
       "SetEnvironmentVariable": "设置环境变量",
       "SetPreopenPorts": "预开放端口（可选）",
-      "SetSessionOwner": "会话所有者",
       "SettingUpProxyForApp": "为应用程序设置代理...",
       "SharedMemory": "共享内存（SHMEM）{{value}}",
       "SharedMemorySettingIsReduced": "共享内存设置减少到低于分配的内存。",
