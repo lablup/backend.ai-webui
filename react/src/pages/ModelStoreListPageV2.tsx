@@ -10,7 +10,6 @@ import { ModelStoreListPageV2_ModelCardV2Fragment$key } from '../__generated__/M
 import AuthorIcon from '../components/AuthorIcon';
 import ModelBrandIcon from '../components/ModelBrandIcon';
 import ModelCardDrawer from '../components/ModelCardDrawer';
-import TextHighlighter from '../components/TextHighlighter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useModelStoreProject } from '../hooks/useModelStoreProject';
@@ -30,6 +29,7 @@ import {
   BAIStorageHostSelect,
   safeDecodeUuid,
   useUpdatableState,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { ArrowUpDown } from 'lucide-react';
@@ -142,9 +142,9 @@ const ModelCardV2Card: React.FC<{
         <BAIFlex direction="row" align="center" gap="xs">
           <ModelBrandIcon modelName={modelCard.name} />
           <Text weight="semibold" maxLines={1} style={{ flex: 1 }}>
-            <TextHighlighter keyword={searchKeyword}>
+            <BAITextHighlighter keyword={searchKeyword}>
               {modelCard.metadata?.title || modelCard.name}
-            </TextHighlighter>
+            </BAITextHighlighter>
           </Text>
         </BAIFlex>
         <BAIFlex direction="row" justify="between" wrap="wrap" gap="xs">

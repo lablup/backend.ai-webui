@@ -14,7 +14,6 @@ import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import TextHighlighter from './TextHighlighter';
 import VFolderPermissionToken from './VFolderPermissionToken';
 import { VFolder } from './VFolderSelect';
 import { AstryxFormTextInput } from './astryxFormControls';
@@ -35,6 +34,7 @@ import {
   useUpdatableState,
   type BAIColumnsType,
   type BAITableProps,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -424,7 +424,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
                 display: 'block',
               }}
             >
-              <TextHighlighter keyword={searchKey}>{value}</TextHighlighter>
+              <BAITextHighlighter keyword={searchKey}>
+                {value}
+              </BAITextHighlighter>
             </BAILink>
             {showAliasInput && isCurrentRowSelected && (
               <Form.Item

@@ -22,7 +22,6 @@ import {
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
-import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Divider } from '@lablup/ui-common/Divider';
 import {
@@ -540,9 +539,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 height: 15,
               }}
             />
-            <TextHighlighter keyword={environmentSearch}>
+            <BAITextHighlighter keyword={environmentSearch}>
               {environmentGroup.displayName}
-            </TextHighlighter>
+            </BAITextHighlighter>
           </BAIFlex>
           <BAIFlex
             direction="row"
@@ -943,13 +942,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           ].join('\t')}
                         >
                           <BAIFlex direction="row" wrap="wrap" gap="xxs">
-                            <TextHighlighter keyword={versionSearch}>
+                            <BAITextHighlighter keyword={versionSearch}>
                               {image?.version}
-                            </TextHighlighter>
+                            </BAITextHighlighter>
                             <ImageMetaDivider />
-                            <TextHighlighter keyword={versionSearch}>
+                            <BAITextHighlighter keyword={versionSearch}>
                               {image?.architecture}
-                            </TextHighlighter>
+                            </BAITextHighlighter>
                             {!_.isEmpty(tagFacts) ? (
                               <>
                                 <ImageMetaDivider />
