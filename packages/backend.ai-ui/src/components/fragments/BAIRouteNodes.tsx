@@ -3,19 +3,17 @@ import {
   BAIRouteNodesFragment$key,
 } from '../../__generated__/BAIRouteNodesFragment.graphql';
 import {
-  SemanticColor,
+  badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
   safeDecodeUuid,
   toLocalId,
-  useSemanticColorMap,
 } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIButton from '../BAIButton';
 import BAIFlex from '../BAIFlex';
 import BAILink from '../BAILink';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import {
   BAIColumnsType,
@@ -24,6 +22,7 @@ import {
   BAITableProps,
 } from '../Table';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
+import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -45,25 +44,6 @@ export const availableRouteSorterValues = [
 
 const isEnableSorter = (key: string) => {
   return _.includes(availableRouteSorterKeys, key);
-};
-
-const routeStatusSemanticMap: Record<string, SemanticColor> = {
-  PROVISIONING: 'info',
-  RUNNING: 'success',
-  TERMINATING: 'warning',
-  TERMINATED: 'default',
-  FAILED_TO_START: 'error',
-  // Pre-26.4.0: health states were part of RouteStatus
-  HEALTHY: 'success',
-  UNHEALTHY: 'warning',
-  DEGRADED: 'warning',
-};
-
-const routeHealthStatusSemanticMap: Record<string, SemanticColor> = {
-  HEALTHY: 'success',
-  UNHEALTHY: 'warning',
-  DEGRADED: 'warning',
-  NOT_CHECKED: 'default',
 };
 
 export interface BAIRouteNodesProps extends Omit<
@@ -96,7 +76,6 @@ const BAIRouteNodes = ({
   'use memo';
   const { t } = useBAIi18n();
   const { token } = theme.useToken();
-  const semanticColorMap = useSemanticColorMap();
   const baiClient = useConnectedBAIClient();
   const isSupportRouteHealthStatus = baiClient.supports('route-health-status');
 
@@ -170,14 +149,10 @@ const BAIRouteNodes = ({
         render: (status, record) => (
           <BAIFlex align="center" gap="xs">
             {status && status !== '%future added value' ? (
-              <BAITag
-                color={
-                  semanticColorMap[routeStatusSemanticMap[status] ?? 'default']
-                }
-                style={{ marginRight: 0 }}
-              >
-                {status}
-              </BAITag>
+              <Badge
+                variant={badgeVariantForStatus('route', status)}
+                label={status}
+              />
             ) : null}
             {onClickSchedulingHistory && (
               <Tooltip content={t('comp:BAIRouteNodes.SchedulingHistory')}>
@@ -203,16 +178,10 @@ const BAIRouteNodes = ({
             key: 'healthStatus',
             render: (healthStatus) =>
               healthStatus && healthStatus !== '%future added value' ? (
-                <BAITag
-                  color={
-                    semanticColorMap[
-                      routeHealthStatusSemanticMap[healthStatus] ?? 'default'
-                    ]
-                  }
-                  style={{ marginRight: 0 }}
-                >
-                  {healthStatus}
-                </BAITag>
+                <Badge
+                  variant={badgeVariantForStatus('route', healthStatus)}
+                  label={healthStatus}
+                />
               ) : null,
           }
         : undefined,
@@ -223,16 +192,10 @@ const BAIRouteNodes = ({
       //   key: 'trafficStatus',
       //   render: (trafficStatus) =>
       //     trafficStatus && trafficStatus !== '%future added value' ? (
-      //       <BAITag
-      //         color={
-      //           semanticColorMap[
-      //             trafficStatusSemanticMap[trafficStatus] ?? 'default'
-      //           ]
-      //         }
-      //         style={{ marginRight: 0 }}
-      //       >
-      //         {trafficStatus}
-      //       </BAITag>
+      //       <Badge
+      //         variant={trafficStatus === 'ACTIVE' ? 'success' : 'neutral'}
+      //         label={trafficStatus}
+      //       />
       //     ) : null,
       // },
       // TODO(needs-backend): Uncomment when the backend supports traffic ratio for routes

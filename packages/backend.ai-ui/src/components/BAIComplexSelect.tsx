@@ -127,6 +127,14 @@ export interface BAIComplexSelectOption {
   value: string;
   /** MUST be a string (P26-3) — it is the trigger text and accessible name. */
   label: string;
+  /**
+   * Drawn in the popup in place of `label`, for an option whose row is richer
+   * than a string. `label` still carries the trigger text and the accessible
+   * name, so P26-3 holds.
+   */
+  labelContent?: React.ReactNode;
+  /** Leading visual (avatar, glyph), centered on the row beside its text. */
+  icon?: React.ReactNode;
   /** Secondary line under the label (antd `optionRender` subtitle shape). */
   description?: React.ReactNode;
   /** Trailing rich content (badges, tags, meta) — the other half of P26-3. */
@@ -152,7 +160,8 @@ export interface BAIComplexSelectProps {
   /** antd `onSearch` — fires on every keystroke; debounce upstream. */
   onSearch?: (value: string) => void;
   searchPlaceholder?: string;
-  /** antd `loading` — spinner on the trigger. */
+  /** antd `loading` — spinner on the trigger, and a loading row in an
+   * otherwise empty popup instead of "No results". */
   isLoading?: boolean;
   isDisabled?: boolean;
   isRequired?: boolean;
@@ -177,9 +186,12 @@ export interface BAIComplexSelectProps {
   total?: number;
   /** antd `BAISelect.header` (rendered above the option list). */
   header?: React.ReactNode;
-  /** antd `BAISelect.footer` (rendered below the option list). */
-  footer?: React.ReactNode;
-  /** antd `notFoundContent`. */
+  /**
+   * antd `BAISelect.footer` (rendered below the option list). A function
+   * receives `close` so a footer action can dismiss the panel.
+   */
+  footer?: React.ReactNode | ((close: () => void) => React.ReactNode);
+  /** antd `notFoundContent`. Overrides the loading row too. */
   emptyContent?: React.ReactNode;
   /**
    * Reports popup open/close. `BAIUserSelect` and friends use this to flip
@@ -195,6 +207,19 @@ export interface BAIComplexSelectProps {
   triggerDisplay?: BAIComplexSelectTriggerDisplay;
   /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
   maxTriggerTokens?: number;
+  /**
+   * antd `allowClear`: a clear button between the spinner and the chevron
+   * while something is selected (`ComplexSelector.hasClear`, added by
+   * react/patches/@astryxdesign__core@0.6.2.patch, upstream
+   * https://github.com/facebook/astryx/pull/6362).
+   */
+  allowClear?: boolean;
+  /**
+   * How a selected option is marked: `'check'` (default) draws the theme's
+   * check at the row's end; `'checkbox'` draws a checkbox at its start, which
+   * reads better for a `multiple` list with rich rows.
+   */
+  selectionMark?: 'check' | 'checkbox';
   'data-testid'?: string;
 }
 
@@ -344,6 +369,8 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   status,
   size,
   width = '100%',
+  allowClear = false,
+  selectionMark = 'check',
   endReached,
   atBottomThreshold = 30,
   atBottomStateChange,
@@ -365,6 +392,7 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
   // the same hook `Selector` uses, which is why its check is accent-coloured
   // and the hardcoded `lucide` glyph this replaced was not.
   const SelectionMark = useIndicator('check');
+  const CheckboxMark = useIndicator('checkbox');
   const selected = toArray(value);
   const listboxId = useId();
   const optionIdPrefix = useId();
@@ -556,6 +584,8 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
       status={status}
       size={size}
       width={width}
+      hasClear={allowClear}
+      onClear={() => onChange?.(multiple ? [] : null)}
       data-testid={testId}
     >
       {(_value, emit, close, state) => (
@@ -626,9 +656,19 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
             {options.length === 0
               ? (emptyContent ?? (
                   <div className="bai-complex-select__empty">
-                    <Text color="secondary">
-                      {t('comp:BAIComplexSelect.NoResults')}
-                    </Text>
+                    {isLoading ? (
+                      // An empty list while a fetch is in flight is not "no
+                      // results" — the open-triggered refetch lands here first
+                      // (FR-3724).
+                      <HStack gap={1} vAlign="center" hAlign="center">
+                        <Spinner size="sm" />
+                        <Text color="secondary">{t('general.Loading')}</Text>
+                      </HStack>
+                    ) : (
+                      <Text color="secondary">
+                        {t('comp:BAIComplexSelect.NoResults')}
+                      </Text>
+                    )}
                   </div>
                 ))
               : _.map(options, (option, index) => {
@@ -659,9 +699,19 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                         setHighlightedIndex(index);
                       }}
                     >
+                      {selectionMark === 'checkbox' && (
+                        <span className="bai-complex-select__option-mark">
+                          <CheckboxMark
+                            state={isSelected ? 'checked' : 'unchecked'}
+                            size="sm"
+                            isDisabled={option.disabled ?? false}
+                          />
+                        </span>
+                      )}
                       <span className="bai-complex-select__option-content">
                         <SelectorOption
-                          label={option.label}
+                          icon={option.icon}
+                          label={option.labelContent ?? option.label}
                           description={option.description}
                           endContent={option.extra}
                         />
@@ -670,19 +720,21 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
                           the default check draws nothing when unchecked, but a
                           theme that swaps `check` for a radio needs the
                           unselected state to draw its empty circle. */}
-                      <span className="bai-complex-select__option-mark">
-                        <SelectionMark
-                          state={isSelected ? 'checked' : 'unchecked'}
-                          size="sm"
-                          isDisabled={option.disabled ?? false}
-                          {...themeProps('selector-check')}
-                        />
-                      </span>
+                      {selectionMark === 'check' && (
+                        <span className="bai-complex-select__option-mark">
+                          <SelectionMark
+                            state={isSelected ? 'checked' : 'unchecked'}
+                            size="sm"
+                            isDisabled={option.disabled ?? false}
+                            {...themeProps('selector-check')}
+                          />
+                        </span>
+                      )}
                     </div>
                   );
                 })}
           </div>
-          {footer ??
+          {(typeof footer === 'function' ? footer(close) : footer) ??
             (_.isNumber(total) && total > 0 ? (
               <HStack
                 gap={1}
@@ -697,7 +749,9 @@ const BAIComplexSelect: React.FC<BAIComplexSelectProps> = ({
               </HStack>
             ) : null)}
           <VisuallyHidden as="div" aria-live="polite">
-            {t('general.TotalItems', { total: options.length })}
+            {options.length === 0 && isLoading
+              ? t('general.Loading')
+              : t('general.TotalItems', { total: options.length })}
           </VisuallyHidden>
         </div>
       )}

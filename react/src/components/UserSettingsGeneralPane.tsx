@@ -1,0 +1,506 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The General category of the user-settings modal. Lifted out of the former
+ `UserSettingsPage` unchanged — same setting groups, same `data-testid`s, same
+ child modals — so the move from page to modal stays a UI change only.
+*/
+import { App } from '../app-shim';
+import { useSuspendedBackendaiClient } from '../hooks';
+import {
+  useBAISettingGeneralState,
+  useBAISettingUserState,
+} from '../hooks/useBAISetting';
+import {
+  DEFAULT_THEME_FAMILY,
+  useCustomThemeConfig,
+} from '../hooks/useCustomThemeConfig';
+import { useThemeMode } from '../hooks/useThemeMode';
+import MyKeypairInfoModalLegacy from './MyKeypairInfoModalLegacy';
+import MyKeypairManagementModal from './MyKeypairManagementModal';
+import SSHKeypairManagementModal from './SSHKeypairManagementModal';
+import SettingList, { SettingGroup } from './SettingList';
+import ShellScriptEditModal, { ShellScriptType } from './ShellScriptEditModal';
+import ThemeAccentColorPicker from './ThemeAccentColorPicker';
+import { Button } from '@astryxdesign/core/Button';
+import {
+  filterOutEmpty,
+  useSessionStorageState,
+  useToggle,
+} from 'backend.ai-ui';
+import * as _ from 'lodash-es';
+import { Settings } from 'lucide-react';
+import { useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+
+const UserSettingsGeneralPane = () => {
+  'use memo';
+
+  const { t } = useTranslation();
+  const { message } = App.useApp();
+  const baiClient = useSuspendedBackendaiClient();
+
+  const { themeMode, setThemeMode } = useThemeMode();
+  const {
+    activeThemeFamily: themeFamily,
+    setActiveThemeFamily: setThemeFamily,
+    themeFamilies: families,
+  } = useCustomThemeConfig();
+  const [themeAccent, setThemeAccent] = useBAISettingUserState(
+    'custom_primary_color',
+  );
+  // Branding preview mode shows the edited default theme as-is, so the theme
+  // (family) and primary color settings are hidden there (useCustomThemeConfig
+  // ignores them in that mode).
+  const [isThemePreviewMode] = useSessionStorageState('isThemePreviewMode', {
+    defaultValue: false,
+  });
+
+  const [desktopNotification, setDesktopNotification] = useBAISettingUserState(
+    'desktop_notification',
+  );
+  const [compactSidebar, setCompactSidebar] =
+    useBAISettingUserState('compact_sidebar');
+  const [selectedLanguage, setSelectedLanguage] =
+    useBAISettingUserState('selected_language');
+  const [, setLanguage] = useBAISettingGeneralState('language');
+  const [autoAutomaticUpdateCheck, setAutoAutomaticUpdateCheck] =
+    useBAISettingUserState('automatic_update_check');
+  const [autoLogout, setAutoLogout] = useBAISettingUserState('auto_logout');
+  const [isOpenSSHKeypairInfoModal, { toggle: toggleSSHKeypairInfoModal }] =
+    useToggle(false);
+  const [
+    isOpenSSHKeypairManagementModal,
+    { toggle: toggleSSHKeypairManagementModal },
+  ] = useToggle(false);
+  const [preserveLogin, setPreserveLogin] =
+    useBAISettingUserState('preserve_login');
+  const [experimentalAIAgents, setExperimentalAIAgents] =
+    useBAISettingUserState('experimental_ai_agents');
+  const [experimentalCustomDashboard, setExperimentalCustomDashboard] =
+    useBAISettingUserState('experimental_custom_dashboard_panels');
+  const [experimentalGlobalSearch, setExperimentalGlobalSearch] =
+    useBAISettingUserState('experimental_global_search');
+  const [
+    experimentalImportFromHuggingFace,
+    setExperimentalImportFromHuggingFace,
+  ] = useBAISettingUserState('experimental_import_from_huggingface');
+  const [experimentalSessionResourceGrid, setExperimentalSessionResourceGrid] =
+    useBAISettingUserState('experimental_session_resource_grid');
+  const [shellInfo, setShellInfo] = useState<ShellScriptType>('bootstrap');
+  const [isOpenShellScriptEditModal, { toggle: toggleShellScriptEditModal }] =
+    useToggle(false);
+  const [maxConcurrentUpload, setMaxConcurrentUpload] = useBAISettingUserState(
+    'max_concurrent_uploads',
+  );
+
+  const languageOptions = [
+    { label: t('language.English'), value: 'en' },
+    { label: t('language.Korean'), value: 'ko' },
+    { label: t('language.Brazilian'), value: 'pt-BR' },
+    { label: t('language.SimplifiedChinese'), value: 'zh-CN' },
+    {
+      label: t('language.TraditionalChinese'),
+      value: 'zh-TW',
+    },
+    { label: t('language.French'), value: 'fr' },
+    { label: t('language.Finnish'), value: 'fi' },
+    { label: t('language.German'), value: 'de' },
+    { label: t('language.Greek'), value: 'el' },
+    { label: t('language.Indonesian'), value: 'id' },
+    { label: t('language.Italian'), value: 'it' },
+    { label: t('language.Japanese'), value: 'ja' },
+    { label: t('language.Mongolian'), value: 'mn' },
+    { label: t('language.Polish'), value: 'pl' },
+    { label: t('language.Portuguese'), value: 'pt' },
+    { label: t('language.Russian'), value: 'ru' },
+    { label: t('language.Spanish'), value: 'es' },
+    { label: t('language.Thai'), value: 'th' },
+    { label: t('language.Turkish'), value: 'tr' },
+    { label: t('language.Vietnamese'), value: 'vi' },
+  ];
+  let defaultLanguage = globalThis.navigator.language;
+  defaultLanguage = _.includes(['zh-CN', 'zh-TW', 'pt-BR'], defaultLanguage)
+    ? defaultLanguage
+    : defaultLanguage.split('-')[0];
+  defaultLanguage =
+    languageOptions.find((item) => item.value === defaultLanguage)?.value ??
+    'en';
+
+  const settingGroups: Array<SettingGroup> = [
+    {
+      'data-testid': 'group-preferences',
+      title: t('userSettings.Preferences'),
+      settingItems: filterOutEmpty([
+        {
+          'data-testid': 'items-theme-mode',
+          type: 'select',
+          title: t('userSettings.ThemeMode'),
+          description: t('userSettings.DescThemeMode'),
+          selectProps: {
+            options: [
+              {
+                label: t('userSettings.FollowSystem'),
+                value: 'system',
+              },
+              {
+                label: t('userSettings.LightTheme'),
+                value: 'light',
+              },
+              {
+                label: t('userSettings.DarkTheme'),
+                value: 'dark',
+              },
+            ],
+          },
+          defaultValue: 'system',
+          value: themeMode,
+          onChange: (value: string | number | undefined) => {
+            if (value === 'system' || value === 'light' || value === 'dark') {
+              setThemeMode(value);
+            }
+          },
+        },
+        // Theme (family) / primary color customization is operator-gated
+        // (config.toml `allowThemeMode`). The family selector additionally
+        // needs more than the `default` family in the catalog (a theme.json
+        // without a `families` block yields a single-entry catalog).
+        baiClient._config.allowThemeMode &&
+        !isThemePreviewMode &&
+        Object.keys(families).length > 1
+          ? {
+              'data-testid': 'items-theme-family',
+              type: 'select',
+              title: t('userSettings.ThemeFamily'),
+              description: t('userSettings.DescThemeFamily'),
+              selectProps: {
+                // Family display names come from theme.json `label` (operator-
+                // provided brand names like "Stained"); the built-in `default`
+                // family falls back to a humanized key ("Default").
+                options: _.map(families, (config, key) => ({
+                  label: config.label ?? _.startCase(key),
+                  value: key,
+                })),
+              },
+              defaultValue: DEFAULT_THEME_FAMILY,
+              value: themeFamily,
+              onChange: (value: string | number | undefined) => {
+                if (typeof value === 'string') {
+                  setThemeFamily(value);
+                }
+              },
+              // Clear the stored selection instead of writing the default key
+              // so resolution keeps following the `default` family.
+              onReset: () => setThemeFamily(undefined),
+            }
+          : null,
+        baiClient._config.allowThemeMode && !isThemePreviewMode
+          ? {
+              'data-testid': 'items-theme-accent',
+              type: 'custom',
+              title: t('userSettings.ThemeAccentColor'),
+              description: t('userSettings.DescThemeAccentColor'),
+              // No defaultValue: unset means "follow the theme.json colors";
+              // reset clears the per-scheme overrides back to that state.
+              value: themeAccent,
+              onReset: () => setThemeAccent(undefined),
+              children: <ThemeAccentColorPicker />,
+            }
+          : null,
+        {
+          'data-testid': 'items-desktop-notification',
+          type: 'checkbox',
+          title: t('userSettings.DesktopNotification'),
+          description: <Trans i18nKey="userSettings.DescDesktopNotification" />,
+          defaultValue: false,
+          value: desktopNotification,
+          onChange: (value) => {
+            setDesktopNotification(value);
+
+            // Request permission for desktop notifications
+            if (!value || Notification.permission === 'granted') return;
+            if (!('Notification' in window)) {
+              message.error(t('desktopNotification.NotSupported'));
+              setDesktopNotification(false);
+              return;
+            }
+            if (Notification.permission === 'denied') {
+              message.error(t('desktopNotification.PermissionDenied'));
+              setDesktopNotification(false);
+              return;
+            }
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'denied') {
+                message.error(t('desktopNotification.PermissionDenied'));
+                setDesktopNotification(false);
+              }
+            });
+          },
+        },
+        {
+          'data-testid': 'items-use-compact-sidebar',
+          type: 'checkbox',
+          title: t('userSettings.UseCompactSidebar'),
+          description: <Trans i18nKey="userSettings.DescUseCompactSidebar" />,
+          defaultValue: false,
+          value: compactSidebar,
+          onChange: setCompactSidebar,
+        },
+        {
+          'data-testid': 'items-language-select',
+          type: 'select',
+          title: t('userSettings.Language'),
+          description: t('userSettings.DescLanguage'),
+          selectProps: {
+            // PILOT-DECISION: antd's JSX option label (name + a grey
+            // `Typography.Text type="secondary"` "(Default)" suffix) is
+            // dropped for a plain string (Selector's `SelectorOptionData.
+            // label` is `string`-only, P2) — baked directly into the text
+            // instead of styled separately. `optionFilterProp: 'filterValue'`
+            // always targeted the same text as the label, so it's a no-op
+            // once search runs against the option label directly.
+            options: languageOptions.map((item) =>
+              item.value === defaultLanguage
+                ? {
+                    ...item,
+                    label: `${item.label} (${t('userSettings.Default')})`,
+                  }
+                : item,
+            ),
+            hasSearch: true,
+          },
+          defaultValue: defaultLanguage,
+          value: selectedLanguage || defaultLanguage,
+          onChange: (value: any) => {
+            setSelectedLanguage(value);
+            setLanguage(value);
+            const event = new CustomEvent('langChanged', {
+              detail: {
+                lang: value,
+              },
+            });
+            window.dispatchEvent(event);
+          },
+        },
+        globalThis.isElectron && {
+          'data-testid': 'items-keep-login-session-information',
+          type: 'checkbox',
+          title: t('userSettings.KeepLoginSessionInformation'),
+          description: (
+            <Trans i18nKey="userSettings.DescKeepLoginSessionInformation" />
+          ),
+          defaultValue: false,
+          value: preserveLogin,
+          onChange: setPreserveLogin,
+        },
+        {
+          'data-testid': 'items-automatic-update-check',
+          type: 'checkbox',
+          title: t('userSettings.AutomaticUpdateCheck'),
+          description: (
+            <Trans i18nKey="userSettings.DescAutomaticUpdateCheck" />
+          ),
+          defaultValue: false,
+          value: autoAutomaticUpdateCheck,
+          onChange: setAutoAutomaticUpdateCheck,
+        },
+        {
+          'data-testid': 'items-auto-logout',
+          type: 'checkbox',
+          title: t('userSettings.AutoLogout'),
+          description: t('userSettings.DescAutoLogout'),
+          defaultValue: false,
+          value: autoLogout,
+          onChange: setAutoLogout,
+        },
+        {
+          'data-testid': 'items-my-keypair-info',
+          type: 'custom',
+          title: t('userSettings.MyKeypairInfo'),
+          description: t('userSettings.DescMyKeypairInfo'),
+          children: (
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
+              onClick={() => toggleSSHKeypairInfoModal()}
+            />
+          ),
+          showResetButton: false,
+        },
+        {
+          'data-testid': 'items-ssh-keypair-management',
+          type: 'custom',
+          title: t('userSettings.SSHKeypairManagement'),
+          description: t('userSettings.DescSSHKeypairManagement'),
+          children: (
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
+              onClick={() => toggleSSHKeypairManagementModal()}
+            />
+          ),
+          showResetButton: false,
+        },
+        {
+          'data-testid': 'items-max-concurrent-uploads',
+          type: 'select',
+          title: t('userSettings.MaxConcurrentUploads'),
+          description: t('userSettings.DescMaxConcurrentUploads'),
+          selectProps: {
+            // PILOT-DECISION: option `value` narrows number -> string
+            // (Selector, P3/P4); the item's own `value`/`onChange` narrows
+            // to `string` too (SettingItem.tsx), so the numeric type is
+            // recovered at THIS boundary via `_.toNumber` on the way out
+            // (was already doing that) and `String(num)` on the way in.
+            options: _.map([2, 3, 4, 5], (num) =>
+              num === 2
+                ? {
+                    label: `${num} (${t('userSettings.Default')})`,
+                    value: String(num),
+                  }
+                : {
+                    label: num.toString(),
+                    value: String(num),
+                  },
+            ),
+          },
+          defaultValue: '2',
+          value: String(maxConcurrentUpload || 2),
+          onChange: (value) => setMaxConcurrentUpload(_.toNumber(value)),
+        },
+      ]),
+    },
+    {
+      'data-testid': 'group-shell-environments',
+      title: t('userSettings.ShellEnvironments'),
+      settingItems: [
+        {
+          'data-testid': 'items-edit-bootstrap-script',
+          type: 'custom',
+          title: t('userSettings.EditBootstrapScript'),
+          children: (
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
+              onClick={() => {
+                setShellInfo('bootstrap');
+                toggleShellScriptEditModal();
+              }}
+            />
+          ),
+          showResetButton: false,
+        },
+        {
+          'data-testid': 'items-edit-user-config-script',
+          type: 'custom',
+          title: t('userSettings.EditUserConfigScript'),
+          children: (
+            <Button
+              icon={<Settings size="1em" />}
+              label={t('button.Config')}
+              onClick={() => {
+                setShellInfo('userconfig');
+                toggleShellScriptEditModal();
+              }}
+            />
+          ),
+          showResetButton: false,
+        },
+      ],
+    },
+    {
+      'data-testid': 'group-experimental-features',
+      title: t('userSettings.ExperimentalFeatures'),
+      description: t('userSettings.ExperimentalFeaturesDesc'),
+      settingItems: [
+        {
+          'data-testid': 'items-experimental-ai-agents',
+          type: 'checkbox',
+          title: t('userSettings.AIAgents'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalAIAgents,
+          onChange: setExperimentalAIAgents,
+        },
+        {
+          'data-testid': 'items-experimental-custom-dashboard-panels',
+          type: 'checkbox',
+          title: t('userSettings.CustomDashboardPanels'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalCustomDashboard,
+          onChange: setExperimentalCustomDashboard,
+        },
+        {
+          'data-testid': 'items-experimental-command-palette',
+          type: 'checkbox',
+          title: t('userSettings.CommandPalette'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalGlobalSearch,
+          onChange: setExperimentalGlobalSearch,
+        },
+        {
+          'data-testid': 'items-experimental-import-from-huggingface',
+          type: 'checkbox',
+          title: t('userSettings.ImportFromHuggingFace'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalImportFromHuggingFace,
+          onChange: setExperimentalImportFromHuggingFace,
+        },
+        {
+          'data-testid': 'items-experimental-session-resource-grid',
+          type: 'checkbox',
+          title: t('userSettings.SessionResourceGrid'),
+          description: t('general.Enabled'),
+          defaultValue: false,
+          value: experimentalSessionResourceGrid,
+          onChange: setExperimentalSessionResourceGrid,
+        },
+      ],
+    },
+  ];
+
+  return (
+    <>
+      <SettingList
+        settingGroups={settingGroups}
+        showChangedOptionFilter
+        showResetButton
+        showSearchBar
+        hideGroupNav
+      />
+      {baiClient?.supports('my-keypairs') ? (
+        <MyKeypairManagementModal
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      ) : (
+        <MyKeypairInfoModalLegacy
+          open={isOpenSSHKeypairInfoModal}
+          onRequestClose={toggleSSHKeypairInfoModal}
+        />
+      )}
+      <SSHKeypairManagementModal
+        open={isOpenSSHKeypairManagementModal}
+        onRequestClose={toggleSSHKeypairManagementModal}
+      />
+      {shellInfo && (
+        <ShellScriptEditModal
+          open={isOpenShellScriptEditModal}
+          shellInfo={shellInfo}
+          onRequestClose={() => {
+            toggleShellScriptEditModal();
+          }}
+          afterClose={() => {
+            setShellInfo(undefined);
+          }}
+        />
+      )}
+    </>
+  );
+};
+
+export default UserSettingsGeneralPane;

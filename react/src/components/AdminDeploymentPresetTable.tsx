@@ -13,7 +13,7 @@ import {
   BAITable,
   BAITableProps,
   BAIText,
-  BooleanTag,
+  BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -217,7 +217,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         title: t('adminDeploymentPreset.OpenToPublic'),
         defaultHidden: true,
         render: (__, record) => (
-          <BooleanTag
+          <BAIBooleanToken
             value={record.deploymentDefaults?.openToPublic ?? false}
             trueLabel={t('deployment.Public')}
             falseLabel={t('deployment.Private')}

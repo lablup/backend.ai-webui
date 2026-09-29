@@ -113,13 +113,22 @@ applications:
             - nvm install
             - nvm use
             # Pin pnpm to the version declared by `package.json#packageManager`
-            # (currently `pnpm@11.1.0`). With that field present, `corepack
+            # (currently `pnpm@12.4.0`). With that field present, `corepack
             # enable` is sufficient — corepack auto-resolves the pinned
             # version on the first pnpm invocation. Do NOT add a
             # `corepack prepare pnpm@<major> --activate` line here: a stale
-            # major (e.g. `@10` left behind after `package.json` bumped to v11)
+            # major (e.g. `@11` left behind after `package.json` bumped to v12)
             # silently overrides `packageManager` and produces broken
             # workspace bin links (FR-2840 follow-up).
+            #
+            # pnpm v12 ships as a native (Rust) executable, which corepack
+            # cannot load into its own Node.js process. The `pnpm` package
+            # therefore ships a `bin/pnpm.mjs` shim that corepack starts and
+            # that fetches the matching native binary on first use (restored
+            # in pnpm 12.0.0-rc.6). This needs a corepack that knows the
+            # `.mjs` entry point — the one bundled with the `.nvmrc` Node
+            # (24.x → corepack 0.35.x) does; do not downgrade Node below it
+            # without re-testing `corepack enable` + `pnpm --version` here.
             - corepack enable
             # Reproducible installs only — never `--no-frozen-lockfile`.
             # `pnpm install` from anywhere in the workspace installs the
@@ -234,7 +243,7 @@ applications:
         # on the store cache plus a clean `pnpm install --frozen-lockfile`
         # (fast when the store is warm).
         paths:
-          - $HOME/.pnpm-store/**/*
+          - $HOME/.local/share/pnpm/store/**/*
           - $HOME/.cache/pnpm/**/*
 
   # ─────────────────────────────────────────────────────────────────
@@ -299,7 +308,18 @@ applications:
                   process.exit(1);
                 }
               '
-            - pnpm run build
+            # FR-3880: ship the review overlay (the pin / `#bai=v3` deep
+            # link) in this bundle. It is `apply: 'serve'` by default, so
+            # only the deployment that sets this flag gets it — release and
+            # self-hosted builds are unchanged. This app has exactly one
+            # branch (`main`, served at webui-nightly.lablup.ai), so the
+            # export needs no branch guard; add one here if that changes.
+            #
+            # Inline on the build command, not a separate `export` line:
+            # phase commands share one shell (which is what makes the `cd ..`
+            # above stick), so an export would leak the flag to everything
+            # after it.
+            - VITE_REVIEW_OVERLAY_BUILD=1 pnpm run build
       artifacts:
         # `..` resolves out of appRoot (`react/`) to the workspace
         # root, then into `build/web/`. Amplify accepts paths that
@@ -309,7 +329,7 @@ applications:
           - "**/*"
       cache:
         paths:
-          - $HOME/.pnpm-store/**/*
+          - $HOME/.local/share/pnpm/store/**/*
           - $HOME/.cache/pnpm/**/*
 
   # ─────────────────────────────────────────────────────────────────
@@ -352,5 +372,5 @@ applications:
           - "**/*"
       cache:
         paths:
-          - $HOME/.pnpm-store/**/*
+          - $HOME/.local/share/pnpm/store/**/*
           - $HOME/.cache/pnpm/**/*

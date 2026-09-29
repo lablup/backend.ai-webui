@@ -12,6 +12,10 @@
 .source-code-view-block .shiki.github-dark {
   margin: 0 !important;
   padding: var(--spacing-3) !important;
+  /* shiki paints the code background on this `<pre>`. Without a content-driven
+     width it stops at the scroll container's edge, leaving horizontally
+     scrolled-into-view code on the bare surface behind it. */
+  min-width: max-content;
 }
 
 .source-code-view-block pre {

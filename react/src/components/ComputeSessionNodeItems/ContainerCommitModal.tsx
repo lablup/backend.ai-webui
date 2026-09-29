@@ -113,7 +113,6 @@ const ContainerCommitModal: React.FC<ContainerCommitModalProps> = ({
       okButtonProps={{ loading: isConfirmLoading }}
       onCancel={onRequestClose}
       {...modalProps}
-      destroyOnHidden
     >
       <BAIFlex
         direction="column"

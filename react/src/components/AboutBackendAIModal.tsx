@@ -59,7 +59,6 @@ const AboutBackendAIModal = ({
         />
       }
       onCancel={onRequestClose}
-      destroyOnHidden
       footer={null}
       width={350}
       {...props}

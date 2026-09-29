@@ -73,7 +73,7 @@ const FALLBACK_SEEDS: BrandSeeds = {
   colorSuccess: '#00bd9b',
   colorWarning: '#faad14',
   colorInfo: '#028df2',
-  fontFamily: "'Ubuntu', Roboto, sans-serif",
+  fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
 };
 
 type Mode = 'light' | 'dark';

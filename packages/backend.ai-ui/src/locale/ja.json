@@ -6,6 +6,7 @@
     "DiskPerc": "ディスク使用率",
     "Endpoint": "エンドポイント",
     "FailedToLoadCellData": "データの読み込みに失敗しました。",
+    "LostAt": "切断日時",
     "NoAvailableLiveStat": "ライブ統計は利用できません",
     "Region": "リージョン",
     "ResourceGroup": "リソースグループ",
@@ -13,7 +14,8 @@
     "Schedulable": "スケジュール可能",
     "Starts": "起動回数",
     "Status": "ステータス",
-    "Utilization": "使用率"
+    "Utilization": "使用率",
+    "Version": "バージョン"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "許可済み",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "アクション ID",
     "Actor": "実行者",
+    "ClientIp": "クライアントIP",
     "Description": "説明",
     "Duration": "所要時間",
     "EntityId": "エンティティ ID",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "この操作は元に戻せません。",
     "DeleteItem": "削除",
     "DeleteNItems": "{{count}} 件を削除",
-    "TypeToConfirm": "<code>{{confirmText}}</code> と入力して確認してください。"
+    "TypeToConfirm": "<token>{{confirmText}}</token> と入力して確認してください。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "作成者"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "低下中",
     "Deploying": "デプロイ中",
     "Healthy": "正常",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "{{count}}バージョンのプルを正常に要求しました。",
     "Version": "バージョン"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI セッションを確認しています…",
+    "SignInWithBackendAI": "Backend.AI アカウントでログイン",
+    "failure": {
+      "CorsOrMixed": "ブラウザーが Backend.AI ウェブサーバーへのリクエストをブロックしました。通常は CORS または混在コンテンツの制限が原因です。",
+      "HttpError": "Backend.AI ウェブサーバーがエラーを返しました ({{status}})。",
+      "InvalidCallback": "{{appName}} に設定されたログイン後の戻り先アドレスが有効なウェブアドレスではありません。",
+      "InvalidResponse": "Backend.AI ウェブサーバーが予期しない応答を返しました。",
+      "NoEndpoint": "{{appName}} に Backend.AI ウェブサーバーのアドレスが設定されていません。",
+      "NoSessionId": "Backend.AI にログインしていますが、ウェブサーバーがセッション ID を返しませんでした。",
+      "NoSessionOverHttp": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} が HTTP で配信されているため、ブラウザーがウェブサーバーのセキュアなセッションクッキーを拒否している可能性があります。{{appName}} を HTTPS で開いてみてください。",
+      "NoSessionOverHttps": "まだ Backend.AI にログインしていません。すでにログインしている場合は、{{appName}} と Backend.AI ウェブサーバーが異なるサイトのため、ブラウザーがセッションクッキーを送信していない可能性があります。",
+      "RelayFailed": "Backend.AI にログインしていますが、{{appName}} でログインを完了できませんでした。",
+      "Timeout": "Backend.AI ウェブサーバーが時間内に応答しませんでした。",
+      "Title": "Backend.AI アカウントでログインできませんでした"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "クラスターサイズ",
     "Concurrency": "同時実行セッション数",
@@ -248,6 +268,7 @@
     "SelectKeypair": "キーペアを選択"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "クライアントIP",
     "Domain": "ドメイン",
     "FailReason": "失敗の理由",
     "LoginTime": "ログイン日時",
@@ -338,18 +359,22 @@
     "UpdateProject": "プロジェクトの更新"
   },
   "comp:BAIProjectTable": {
+    "Active": "アクティブ",
     "ContainerRegistry": "コンテナレジストリ",
     "ContainerRegistryProject": "コンテナレジストリプロジェクト",
     "CreatedAt": "作成日時",
     "Description": "説明",
     "Domain": "ドメイン",
+    "Inactive": "非アクティブ",
     "IntegrationID": "連携ID",
+    "ModifiedAt": "更新日時",
     "Name": "名前",
     "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
     "Registry": "レジストリ",
     "ResourcePolicy": "リソースポリシー",
     "ScalingGroups": "リソースグループ",
+    "Status": "ステータス",
     "StorageNodes": "ストレージノード",
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "テスト"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "他 {{rest}} 件"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "作成日",
     "MaxConcurrentLogins": "最大同時ログイン数",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "パスの形式が無効です。",
     "AliasOverlapping": "マウントパスが別のフォルダと重複しています。",
+    "AliasOverlappingWithAutoMount": "マウントパスが自動マウントフォルダと重複しています。",
     "AliasPlaceholder": "マウントパス",
     "AutoMountedFolders": "自動マウントフォルダ",
-    "Name": "名前",
-    "PathAndAlias": "パス & エイリアス",
+    "CreateFolder": "新規ストレージフォルダー作成",
+    "DestinationPath": "コンテナのパス (destination)",
+    "Folders": "フォルダー",
+    "OwnerProject": "プロジェクト",
+    "OwnerUser": "ユーザー",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
+    "Refresh": "更新",
     "RemoveFolder": "削除",
+    "SelectFolder": "フォルダを選択",
+    "SourcePath": "フォルダ内のパス (source)",
     "Subpath": "サブパス",
     "SubpathInvalid": "サブパスは相対パスである必要があり、'..' を含めることはできません。",
-    "SubpathPlaceholder": "例: dataset/train (省略可)",
-    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。ルートをマウントするには空欄にしてください。"
+    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。入力欄をクリックしてフォルダを参照し、選択してください。空のままにするとフォルダのルートをマウントします。",
+    "UnmountableFoldersRemoved": "マウントできなくなったフォルダーを選択から除外しました。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
     "Download": "ダウンロード",
+    "DownloadPopupBlocked": "ブラウザーがダウンロードウィンドウをブロックしました。このサイトのポップアップを許可してからもう一度お試しください。",
+    "DownloadRejected": "ストレージプロキシがダウンロードを拒否しました (HTTP {{status}})。ダウンロードは開始されませんでした。",
     "DownloadSelected": "ダウンロード",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "DownloadUnreachable": "{{origin}} のストレージプロキシに接続できません。ダウンロードは開始されませんでした。",
     "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
     "DuplicatedFiles": "確認の上書き",
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
     "EditFile": "ファイルを編集",
+    "ExistingItem": "既存",
     "FileCreatedSuccessfully": "ファイルは正常に作成されました。",
     "FileName": "ファイル名",
     "FileNamePlaceholder": "例: model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "で変更されました",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
+    "OtherItemsWillBeUploaded": "他の {{count}} 件の項目も一緒にアップロードされます。",
     "Path": "パス",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
     "RenameFile": "名前を変更",
     "RenameSuccess": "名前は正常に変更されました。",
+    "SelectItemsToOverwrite": "以下の項目はすでに存在します。上書きする項目を選択してください。選択しなかった項目はアップロードされません。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
     "TypeDeleteToConfirm": "「消去」と入力して確認します。",
@@ -652,13 +693,14 @@
     "UnsupportedFileFormat": "このファイル形式は編集をサポートしていません。",
     "UploadFiles": "ファイルをアップロードします",
     "UploadFolder": "フォルダーをアップロードします",
+    "UploadingItem": "アップロード",
     "error": {
       "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。",
       "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
     }
   },
   "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}}アイテム"
+    "Total": "{{total}}アイテム中 {{start}} - {{end}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
@@ -762,13 +804,14 @@
     "DeselectAll": "すべて選択解除",
     "File": "ファイル",
     "Increase": "増やす",
+    "Loading": "読み込み中...",
     "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
     "Search": "検索",
     "Select": "選択",
     "SelectPlaceholder": "{{label}}を選択してください",
-    "TotalItems": "Total {{total}}アイテム",
+    "TotalItems": "合計 {{total}}アイテム",
     "Unit": "単位",
     "button": {
       "Action": "アクション",

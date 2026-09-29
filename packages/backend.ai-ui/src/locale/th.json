@@ -6,6 +6,7 @@
     "DiskPerc": "การใช้ดิสก์ %",
     "Endpoint": "เอ็นด์พอยต์",
     "FailedToLoadCellData": "โหลดข้อมูลไม่สำเร็จ",
+    "LostAt": "สูญหายเมื่อ",
     "NoAvailableLiveStat": "ไม่มีสถิติเรียลไทม์ที่ใช้งานได้",
     "Region": "ภูมิภาค",
     "ResourceGroup": "กลุ่มทรัพยากร",
@@ -13,7 +14,8 @@
     "Schedulable": "ตั้งเวลาได้",
     "Starts": "เริ่ม",
     "Status": "สถานะ",
-    "Utilization": "การใช้งาน"
+    "Utilization": "การใช้งาน",
+    "Version": "เวอร์ชัน"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "อนุญาตแล้ว",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "รหัสการดำเนินการ",
     "Actor": "ผู้ดำเนินการ",
+    "ClientIp": "IP ของไคลเอ็นต์",
     "Description": "คำอธิบาย",
     "Duration": "ระยะเวลา",
     "EntityId": "รหัสเอนทิตี",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "การกระทำนี้ไม่สามารถยกเลิกได้",
     "DeleteItem": "ลบ",
     "DeleteNItems": "ลบ {{count}} รายการ",
-    "TypeToConfirm": "พิมพ์ <code>{{confirmText}}</code> เพื่อยืนยัน"
+    "TypeToConfirm": "พิมพ์ <token>{{confirmText}}</token> เพื่อยืนยัน"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "สร้างโดย"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "เลือกการปรับใช้"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "ลดลง",
     "Deploying": "กำลังปรับใช้",
     "Healthy": "ปกติ",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "ขอให้ดึงได้สำเร็จสำหรับรุ่น {{count}}",
     "Version": "รุ่น"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "กำลังตรวจสอบเซสชัน Backend.AI ของคุณ…",
+    "SignInWithBackendAI": "เข้าสู่ระบบด้วย Backend.AI",
+    "failure": {
+      "CorsOrMixed": "เบราว์เซอร์บล็อกคำขอไปยังเว็บเซิร์ฟเวอร์ Backend.AI โดยทั่วไปเกิดจากข้อจำกัด CORS หรือเนื้อหาแบบผสม",
+      "HttpError": "เว็บเซิร์ฟเวอร์ Backend.AI ส่งคืนข้อผิดพลาด ({{status}})",
+      "InvalidCallback": "ที่อยู่สำหรับกลับหลังลงชื่อเข้าใช้ที่ตั้งค่าไว้สำหรับ {{appName}} ไม่ใช่ที่อยู่เว็บที่ถูกต้อง",
+      "InvalidResponse": "เว็บเซิร์ฟเวอร์ Backend.AI ส่งคืนการตอบสนองที่ไม่คาดคิด",
+      "NoEndpoint": "ยังไม่ได้กำหนดที่อยู่เว็บเซิร์ฟเวอร์ Backend.AI สำหรับ {{appName}}",
+      "NoSessionId": "คุณเข้าสู่ระบบ Backend.AI แล้ว แต่เว็บเซิร์ฟเวอร์ไม่ได้ส่งคืนรหัสเซสชัน",
+      "NoSessionOverHttp": "คุณยังไม่ได้เข้าสู่ระบบ Backend.AI หากคุณเข้าสู่ระบบแล้ว เนื่องจาก {{appName}} ให้บริการผ่าน HTTP เบราว์เซอร์อาจปฏิเสธคุกกี้เซสชันแบบปลอดภัยของเว็บเซิร์ฟเวอร์ ลองเปิด {{appName}} ผ่าน HTTPS",
+      "NoSessionOverHttps": "คุณยังไม่ได้เข้าสู่ระบบ Backend.AI หากคุณเข้าสู่ระบบแล้ว {{appName}} กับเว็บเซิร์ฟเวอร์ Backend.AI อาจเป็นคนละไซต์ เบราว์เซอร์จึงไม่ส่งคุกกี้เซสชัน",
+      "RelayFailed": "คุณเข้าสู่ระบบ Backend.AI แล้ว แต่ {{appName}} ไม่สามารถดำเนินการเข้าสู่ระบบให้เสร็จสิ้นได้",
+      "Timeout": "เว็บเซิร์ฟเวอร์ Backend.AI ไม่ตอบสนองภายในเวลาที่กำหนด",
+      "Title": "ไม่สามารถเข้าสู่ระบบด้วย Backend.AI ได้"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "ขนาดคลัสเตอร์",
     "Concurrency": "เซสชันที่ทำงานพร้อมกัน",
@@ -248,6 +268,7 @@
     "SelectKeypair": "เลือกคู่คีย์"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP ของไคลเอ็นต์",
     "Domain": "โดเมน",
     "FailReason": "สาเหตุที่ล้มเหลว",
     "LoginTime": "เวลาเข้าสู่ระบบ",
@@ -338,18 +359,22 @@
     "UpdateProject": "อัปเดตโปรเจกต์"
   },
   "comp:BAIProjectTable": {
+    "Active": "คล่องแคล่ว",
     "ContainerRegistry": "รีจิสทรีคอนเทนเนอร์",
     "ContainerRegistryProject": "โปรเจ็กต์รีจิสทรีคอนเทนเนอร์",
     "CreatedAt": "สร้างเมื่อ",
     "Description": "คำอธิบาย",
     "Domain": "โดเมน",
+    "Inactive": "ไม่ทำงาน",
     "IntegrationID": "รหัสการผสานระบบ",
+    "ModifiedAt": "แก้ไขเมื่อ",
     "Name": "ชื่อ",
     "Project": "โปรเจ็กต์",
     "ProjectID": "รหัสโครงการ",
     "Registry": "รีจิสทรี",
     "ResourcePolicy": "นโยบายทรัพยากร",
     "ScalingGroups": "กลุ่มทรัพยากร",
+    "Status": "สถานะ",
     "StorageNodes": "โหนดจัดเก็บข้อมูล",
     "TotalResourceSlots": "ช่องทรัพยากรทั้งหมด",
     "Type": "ประเภท"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "และอีก {{rest}} รายการ"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "สร้างเมื่อ",
     "MaxConcurrentLogins": "จำนวนการเข้าสู่ระบบพร้อมกันสูงสุด",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "รูปแบบพาธไม่ถูกต้อง",
     "AliasOverlapping": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์อื่น",
+    "AliasOverlappingWithAutoMount": "พาธ mount ซ้ำซ้อนกับโฟลเดอร์ที่ mount อัตโนมัติ",
     "AliasPlaceholder": "พาธ mount",
     "AutoMountedFolders": "โฟลเดอร์ที่ mount อัตโนมัติ",
-    "Name": "ชื่อ",
-    "PathAndAlias": "พาธ & Alias",
+    "CreateFolder": "สร้างโฟลเดอร์จัดเก็บใหม่",
+    "DestinationPath": "พาธในคอนเทนเนอร์ (destination)",
+    "Folders": "โฟลเดอร์",
+    "OwnerProject": "โปรเจกต์",
+    "OwnerUser": "ผู้ใช้",
     "PathAndAliasTooltip": "พาธภายใน container ที่โฟลเดอร์จะถูก mount ปล่อยว่างเพื่อใช้พาธเริ่มต้น",
+    "Refresh": "รีเฟรช",
     "RemoveFolder": "ลบ",
+    "SelectFolder": "เลือกโฟลเดอร์",
+    "SourcePath": "พาธในโฟลเดอร์ (source)",
     "Subpath": "พาธย่อย",
     "SubpathInvalid": "Subpath ต้องเป็น relative path และต้องไม่มี '..'",
-    "SubpathPlaceholder": "เช่น dataset/train (ไม่บังคับ)",
-    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root ปล่อยว่างเพื่อ mount จาก root"
+    "SubpathTooltip": "mount โฟลเดอร์ย่อยภายในโฟลเดอร์เป็นแหล่งข้อมูลแทน root คลิกที่ช่องนี้เพื่อเรียกดูโฟลเดอร์และเลือกโฟลเดอร์ย่อย หากเว้นว่างไว้จะ mount root ของโฟลเดอร์",
+    "UnmountableFoldersRemoved": "โฟลเดอร์ที่คุณไม่สามารถเมานต์ได้อีกต่อไปถูกนำออกจากรายการที่เลือกแล้ว"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "เลือกโฟลเดอร์"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "ไม่สามารถกู้คืนไฟล์และโฟลเดอร์ที่ถูกลบได้ \nคุณต้องการดำเนินการต่อหรือไม่?",
     "DeleteSelectedItemsDialog": "ลบการยืนยัน",
     "Download": "ดาวน์โหลด",
+    "DownloadPopupBlocked": "เบราว์เซอร์บล็อกหน้าต่างดาวน์โหลด โปรดอนุญาตป๊อปอัปสำหรับเว็บไซต์นี้แล้วลองอีกครั้ง",
+    "DownloadRejected": "storage proxy ปฏิเสธการดาวน์โหลด (HTTP {{status}}) การดาวน์โหลดไม่ได้เริ่มต้น",
     "DownloadSelected": "ดาวน์โหลด",
     "DownloadStarted": "การดาวน์โหลดไฟล์ \"{{fileName}}\" เริ่มต้นแล้ว",
+    "DownloadUnreachable": "ไม่สามารถเชื่อมต่อ storage proxy ที่ {{origin}} ได้ การดาวน์โหลดไม่ได้เริ่มต้น",
     "DragAndDropDesc": "ลากและวางไฟล์ไปยังพื้นที่นี้เพื่ออัปโหลด",
     "DuplicatedFiles": "การยืนยันการเขียนทับ",
     "DuplicatedFilesDesc": "ไฟล์หรือโฟลเดอร์ที่มีชื่อเดียวกันมีอยู่แล้ว \nคุณต้องการเขียนทับ?",
     "EditFile": "แก้ไขไฟล์",
+    "ExistingItem": "ที่มีอยู่",
     "FileCreatedSuccessfully": "ไฟล์สร้างสำเร็จ",
     "FileName": "ชื่อไฟล์",
     "FileNamePlaceholder": "เช่น model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "ดัดแปลงที่",
     "Name": "ชื่อ",
     "NoUploadPermissionForHost": "คุณไม่มีสิทธิ์อัปโหลดสำหรับโฮสต์นี้",
+    "OtherItemsWillBeUploaded": "รายการอื่นอีก {{count}} รายการจะถูกอัปโหลดด้วย",
     "Path": "เส้นทาง",
     "PleaseEnterAFileName": "กรุณากรอกชื่อไฟล์",
     "PleaseEnterAFolderName": "กรุณากรอกชื่อโฟลเดอร์",
     "RenameFile": "เปลี่ยนชื่อ",
     "RenameSuccess": "ชื่อได้รับการเปลี่ยนแปลงสำเร็จ",
+    "SelectItemsToOverwrite": "รายการเหล่านี้มีอยู่แล้วที่นี่ เลือกรายการที่ต้องการเขียนทับ รายการที่ไม่ได้เลือกจะถูกข้าม",
     "SelectedItemsDeletedSuccessfully": "ไฟล์และโฟลเดอร์ที่เลือกได้ถูกลบไปแล้วสำเร็จ",
     "Size": "ขนาด",
     "TypeDeleteToConfirm": "พิมพ์ 'ลบ' เพื่อยืนยัน",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "รูปแบบไฟล์นี้ไม่รองรับการแก้ไข",
     "UploadFiles": "อัปโหลดไฟล์",
     "UploadFolder": "โฟลเดอร์อัปโหลด",
+    "UploadingItem": "ที่จะอัปโหลด",
     "error": {
       "DuplicatedName": "ชื่อนี้มีการใช้งานแล้ว \nกรุณากรอกชื่ออื่น",
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
@@ -762,6 +804,7 @@
     "DeselectAll": "ยกเลิกการเลือกทั้งหมด",
     "File": "ไฟล์",
     "Increase": "เพิ่ม",
+    "Loading": "กำลังโหลด...",
     "NSelected": "{{count}} เลือก",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",

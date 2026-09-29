@@ -13,6 +13,15 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 export const TCP_APPS = ['sshd', 'vscode-desktop', 'xrdp', 'vnc'];
+
+/**
+ * Trims the allowed-client-IP entries and drops blank ones, so a trailing
+ * token separator cannot produce an empty item in `allowed_client_ips`.
+ */
+export const normalizeAllowedClientIps = (
+  allowedClientIps?: Array<string> | null,
+): Array<string> => _.filter(_.map(allowedClientIps ?? [], _.trim), Boolean);
+
 export const useBackendAIAppLauncher = (
   sessionFrgmt?: useBackendAIAppLauncherFragment$key | null,
   debugOptions?: {
@@ -388,11 +397,9 @@ export const useBackendAIAppLauncher = (
     }
     if (openToPublic) {
       searchParams.set('open_to_public', 'true');
-      if (allowedClientIps?.length > 0) {
-        searchParams.set(
-          'allowed_client_ips',
-          _.map(allowedClientIps, _.trim).join(','),
-        );
+      const normalizedClientIps = normalizeAllowedClientIps(allowedClientIps);
+      if (normalizedClientIps.length > 0) {
+        searchParams.set('allowed_client_ips', normalizedClientIps.join(','));
       }
     }
     if (_.keys(envs).length > 0) {

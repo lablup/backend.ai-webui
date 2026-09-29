@@ -2,13 +2,14 @@ import {
   BAIProjectTableFragment$data,
   BAIProjectTableFragment$key,
 } from '../../__generated__/BAIProjectTableFragment.graphql';
-import { badgeVariantForTagColor, toLocalId } from '../../helper';
+import { tokenColorForTagColor, toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
+import BAIBadge from '../BAIBadge';
 import BAIResourceNumberWithIcon from '../BAIResourceNumberWithIcon';
 import BAIText from '../BAIText';
 import { BAIColumnsType, BAITable, BAITableProps } from '../Table';
 import AllowedVfolderHostsWithPermission from './BAIAllowedVfolderHostsWithPermission';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';
@@ -18,6 +19,7 @@ export const availableProjectSorterKeys = [
   'id',
   'domain_name',
   'created_at',
+  'modified_at',
   'is_active',
   'resource_policy',
 ] as const;
@@ -75,6 +77,7 @@ const BAIProjectTable = ({
         description
         is_active
         created_at
+        modified_at
         total_resource_slots
         integration_id
         resource_policy
@@ -115,14 +118,40 @@ const BAIProjectTable = ({
       sorter: isEnableSorter('created_at'),
     },
     {
+      key: 'modified_at',
+      title: t('comp:BAIProjectTable.ModifiedAt'),
+      dataIndex: 'modified_at',
+      render: (value) => (value ? dayjs(value).format('lll') : '-'),
+      sorter: isEnableSorter('modified_at'),
+      defaultHidden: true,
+    },
+    {
+      key: 'is_active',
+      title: t('comp:BAIProjectTable.Status'),
+      dataIndex: 'is_active',
+      render: (value) =>
+        _.isNil(value) ? (
+          '-'
+        ) : (
+          <BAIBadge
+            color={value ? 'success' : 'default'}
+            text={
+              value
+                ? t('comp:BAIProjectTable.Active')
+                : t('comp:BAIProjectTable.Inactive')
+            }
+          />
+        ),
+      sorter: isEnableSorter('is_active'),
+      defaultHidden: true,
+    },
+    {
       key: 'type',
       title: t('comp:BAIProjectTable.Type'),
       dataIndex: 'type',
-      // to-astryx W2-D: antd `Tag` -> Astryx `Badge`; the `blue` hue goes
-      // through the repo-global lookup (MAPPING §3.5).
       render: (value) => (
-        <Badge
-          variant={badgeVariantForTagColor(value === 'GENERAL' ? null : 'blue')}
+        <Token
+          color={tokenColorForTagColor(value === 'GENERAL' ? null : 'blue')}
           label={value}
         />
       ),

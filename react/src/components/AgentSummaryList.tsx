@@ -448,6 +448,7 @@ const AgentSummaryList: React.FC<AgentSummaryListProps> = ({
             }
           },
         }}
+        order={queryParams.order}
         onChangeOrder={(order) => {
           setQuery({ order: order ?? null });
         }}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5e1bf6250f4b350472d0020a7c8d5aae>>
+ * @generated SignedSource<<dc3970cf2285ab564a3dbffa551c72c1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,13 +12,14 @@ import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
-export type RuntimeVariantPresetOrderField = "CREATED_AT" | "NAME" | "RANK" | "%future added value";
+export type RuntimeVariantPresetOrderField = "ADDED_VERSION" | "CREATED_AT" | "DEPRECATED_VERSION" | "NAME" | "RANK" | "%future added value";
 export type RuntimeVariantPresetFilter = {
   AND?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   NOT?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   OR?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
+  runtimeVersion?: string | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;

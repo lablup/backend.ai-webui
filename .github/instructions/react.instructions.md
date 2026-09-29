@@ -179,13 +179,14 @@ interfaces, enum members.
 ## Verification
 
 `bash scripts/verify.sh` (Relay compile, ESLint, Prettier, TypeScript) must pass. Unit tests
-are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents in
-`.claude/agents/`).
+are Vitest — `VERIFY_TESTS=1 bash scripts/verify.sh` runs the suites CI runs; E2E is
+Playwright under `e2e/` (see the `playwright-test-*` agents in `.claude/agents/`).
 
-`verify.sh` does **not** run the Astryx token gate — run
-`node scripts/migration-gates/astryx-token-gate.mjs --strict` yourself after touching CSS,
-theme tokens, or any `var(--…)`. AGENTS.md § Verification Harness explains what it catches
-and why nothing else reports it.
+`verify.sh` prints the Astryx token gate **report-only** (it never fails the run). After
+touching CSS, theme tokens, or any `var(--…)`, make sure its findings list gained nothing
+and run `node scripts/migration-gates/astryx-token-gate.mjs --strict` yourself for the fix
+hints. AGENTS.md § Verification Harness explains what it catches and why nothing else
+reports it.
 
 ## On-demand skills
 

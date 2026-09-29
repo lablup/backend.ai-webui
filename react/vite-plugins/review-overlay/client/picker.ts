@@ -32,6 +32,18 @@ export interface PickerCallbacks {
   showHint: (message: string) => void;
   /** Repository root from `/__review/state`; null until it answers. */
   sourceRoot: () => string | null | undefined;
+  /**
+   * `false` when react-grab cannot arrive — a static build, where the app's
+   * dev-only import of it never runs (FR-3880). The fallback chord then binds
+   * straight away instead of after 20 s of polling for it.
+   */
+  expectReactGrab?: boolean;
+  /**
+   * `false` for a host that cannot afford to shadow ⌘C/Ctrl+C — on a page the
+   * overlay does not own, swallowing it breaks copying. That host brings its
+   * own entry point (`OverlayHandle.startPick`).
+   */
+  pickChord?: boolean;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
@@ -172,6 +184,7 @@ export function createPicker(callbacks: PickerCallbacks) {
    * load or is disabled offers no way into pick mode at all.
    */
   function armHotkey() {
+    if (callbacks.pickChord === false) return;
     if (hotkeyArmed) return;
     hotkeyArmed = true;
     window.addEventListener('keydown', onHotkey, true);
@@ -257,6 +270,10 @@ export function createPicker(callbacks: PickerCallbacks) {
    */
   function watchForReactGrab() {
     if (ensureGrabPlugin()) return;
+    if (callbacks.expectReactGrab === false) {
+      armHotkey();
+      return;
+    }
     let tries = 0;
     const timer = setInterval(() => {
       if (ensureGrabPlugin()) {
