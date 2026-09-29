@@ -1,11 +1,19 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 3.1 – 3.4, 4.1 – 4.4, 5.1 – 5.4, 6.2 – 6.3
 // (Role detail drawer, permissions management, user assignments, edge cases)
-import { createAdminApiContext, purgeUserViaApi } from '../utils/admin-api';
+import {
+  createAdminApiContext,
+  gqlAdmin,
+  purgeUserViaApi,
+} from '../utils/admin-api';
 import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
+import {
+  clientSupports,
+  skipUnlessClientFeature,
+} from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -135,6 +143,15 @@ function dataRows(page: Page, scope: Locator | Page = page) {
 // own "Add Permission" button.
 function selectorTrigger(scope: Locator, label: string) {
   return scope.getByRole('button', { name: `${label} ${label}`, exact: true });
+}
+
+// On managers >= 26.9.0a4 the Permissions tab is the in-place Read / Write
+// grid, covered by the single-scope describe block at the end of this file.
+async function skipOnSingleScopeRoleDrawer(page: Page) {
+  test.skip(
+    await clientSupports(page, 'rbac-single-scope-role'),
+    'The Add Permission flow is replaced by the Read / Write grid on manager >= 26.9.0a4 (FR-3957)',
+  );
 }
 
 // The role table (900+ roles in the shared nightly env) can take a while to
@@ -284,6 +301,7 @@ test.describe(
     }) => {
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -418,6 +436,7 @@ test.describe(
       test.setTimeout(60000);
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -527,6 +546,7 @@ test.describe(
       test.setTimeout(60000);
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -629,6 +649,7 @@ test.describe(
     }) => {
       // 1. Login as admin
       await loginAsAdmin(page, request);
+      await skipOnSingleScopeRoleDrawer(page);
 
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
@@ -966,6 +987,229 @@ test.describe(
       // Close the drawer and cleanup test role
       await drawer.getByRole('button', { name: 'close' }).click();
       await cleanupTestRole(page);
+    });
+  },
+);
+
+// Managers >= 26.9.0a4 render `RoleDetailDrawerV2`: a metadata card with the
+// role's one scope, and a Permissions tab that edits grants in place as a
+// Read / Write checkbox grid behind a floating save bar (#9849, ADR 0006).
+// The Create Role modal is not the subject here, so each test provisions its
+// custom role through the admin GraphQL API and purges it afterwards.
+const SINGLE_SCOPE_DOMAIN = 'default';
+
+async function createSingleScopeRoleViaApi(
+  api: APIRequestContext,
+  name: string,
+): Promise<string> {
+  const { domainV2 } = await gqlAdmin<{ domainV2: { entityId: string } }>(
+    api,
+    `query ($domainName: String!) { domainV2(domainName: $domainName) { entityId } }`,
+    { domainName: SINGLE_SCOPE_DOMAIN },
+  );
+  const { adminCreateRole } = await gqlAdmin<{
+    adminCreateRole: { id: string };
+  }>(
+    api,
+    `mutation ($input: CreateRoleInput!) { adminCreateRole(input: $input) { id } }`,
+    {
+      input: {
+        name,
+        description: ROLE_DESCRIPTION,
+        scope: { scopeType: 'domain', scopeId: domainV2.entityId },
+      },
+    },
+  );
+  // `adminCreateRole` returns the Relay global id ("Role:<uuid>" in base64);
+  // `adminPurgeRole` takes the bare UUID.
+  return Buffer.from(adminCreateRole.id, 'base64').toString().split(':')[1];
+}
+
+async function purgeRoleViaApi(api: APIRequestContext, roleId: string) {
+  await gqlAdmin(
+    api,
+    `mutation ($input: PurgeRoleInput!) { adminPurgeRole(input: $input) { __typename } }`,
+    { input: { id: roleId } },
+  );
+}
+
+async function openRoleDrawer(page: Page, roleName: string) {
+  await navigateTo(page, 'rbac');
+  await searchForRole(page, roleName);
+  await page
+    .getByRole('row')
+    .filter({ hasText: roleName })
+    .first()
+    .getByRole('button', { name: roleName, exact: true })
+    .click();
+  const drawer = roleDrawer(page);
+  await expect(drawer).toBeVisible({ timeout: 10000 });
+  return drawer;
+}
+
+// Each grid row is one permission type; its cells hold one checkbox per
+// permission bit, named after the bit ("Read", "Create", …). A `has` locator
+// resolves inside the row, so it must be page-rooted, not drawer-rooted.
+function permissionRow(drawer: Locator, permissionType: string) {
+  return drawer.getByRole('row').filter({
+    has: drawer.page().getByRole('cell', { name: permissionType, exact: true }),
+  });
+}
+
+function saveBarText(drawer: Locator) {
+  return drawer.getByText(/unsaved permission change\(s\)/);
+}
+
+test.describe(
+  'RBAC Role Detail Drawer for a single-scope role',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    let api: APIRequestContext;
+    let roleName: string;
+    let roleId: string | undefined;
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessClientFeature(
+        page,
+        'rbac-single-scope-role',
+        "The single-scope role drawer requires the 'rbac-single-scope-role' capability (manager >= 26.9.0a4, FR-3957)",
+      );
+      api = await createAdminApiContext();
+      roleName = `e2e-scope-role-${Date.now().toString(36)}${randomUUID().slice(0, 4)}`;
+      roleId = await createSingleScopeRoleViaApi(api, roleName);
+    });
+
+    test.afterEach(async () => {
+      try {
+        if (roleId) await purgeRoleViaApi(api, roleId);
+      } catch (error) {
+        console.warn(
+          `[rbac-role-detail] failed to purge role ${roleName}:`,
+          error,
+        );
+      } finally {
+        roleId = undefined;
+        await api?.dispose();
+      }
+    });
+
+    test('Superadmin can see the role scope as a type and target token in the role drawer', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+
+      await expect(
+        drawer.getByRole('heading', { name: 'RBAC Role Info' }),
+      ).toBeVisible();
+      await expect(drawer.getByText(roleName, { exact: true })).toBeVisible();
+      await expect(
+        drawer.getByRole('button', { name: 'Copy' }).first(),
+      ).toBeVisible();
+      await expect(
+        drawer.getByText(ROLE_DESCRIPTION, { exact: true }),
+      ).toBeVisible();
+
+      await expect(
+        drawer.getByRole('term').filter({ hasText: 'Scope Type / Target' }),
+      ).toBeVisible();
+      const scopeToken = drawer
+        .getByRole('definition')
+        .filter({ hasText: 'Domain' })
+        .filter({ hasText: SINGLE_SCOPE_DOMAIN });
+      await expect(scopeToken).toBeVisible();
+      await expect(
+        scopeToken.getByText('Domain', { exact: true }),
+      ).toBeVisible();
+      await expect(
+        scopeToken.getByText(SINGLE_SCOPE_DOMAIN, { exact: true }),
+      ).toBeVisible();
+    });
+
+    test('Superadmin can toggle role permissions in the Read and Write grid and save them', async ({
+      page,
+    }) => {
+      let drawer = await openRoleDrawer(page, roleName);
+      await expect(drawerTab(page, 'Permissions')).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+
+      let folderRow = permissionRow(drawer, 'Folder');
+      await expect(folderRow).toBeVisible({ timeout: 10000 });
+      const readCheckbox = () =>
+        permissionRow(drawer, 'Folder').getByRole('checkbox', {
+          name: 'Read',
+          exact: true,
+        });
+      const createCheckbox = () =>
+        permissionRow(drawer, 'Folder').getByRole('checkbox', {
+          name: 'Create',
+          exact: true,
+        });
+      await expect(readCheckbox()).not.toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+      await expect(saveBarText(drawer)).toBeHidden();
+
+      // Cancel discards every pending toggle.
+      await readCheckbox().check();
+      await createCheckbox().check();
+      await expect(saveBarText(drawer)).toHaveText(
+        '2 unsaved permission change(s)',
+      );
+      await drawer.getByRole('button', { name: 'Cancel' }).click();
+      await expect(saveBarText(drawer)).toBeHidden();
+      await expect(readCheckbox()).not.toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+
+      // Save ships the pending toggle and retires the save bar.
+      await readCheckbox().check();
+      await expect(saveBarText(drawer)).toHaveText(
+        '1 unsaved permission change(s)',
+      );
+      await drawer.getByRole('button', { name: 'Save' }).click();
+      await expect(
+        page.getByText('Permissions saved successfully.').first(),
+      ).toBeVisible({ timeout: 10000 });
+      await expect(saveBarText(drawer)).toBeHidden({ timeout: 10000 });
+      await expect(readCheckbox()).toBeChecked();
+
+      // The grant survives a reload.
+      await page.reload();
+      drawer = await openRoleDrawer(page, roleName);
+      folderRow = permissionRow(drawer, 'Folder');
+      await expect(folderRow).toBeVisible({ timeout: 10000 });
+      await expect(readCheckbox()).toBeChecked();
+      await expect(createCheckbox()).not.toBeChecked();
+      await expect(saveBarText(drawer)).toBeHidden();
+    });
+
+    test('Superadmin can filter the permission rows by permission type', async ({
+      page,
+    }) => {
+      const drawer = await openRoleDrawer(page, roleName);
+      await expect(permissionRow(drawer, 'Agent')).toBeVisible({
+        timeout: 10000,
+      });
+      await expect(permissionRow(drawer, 'Folder')).toBeVisible();
+
+      const filterInput = drawer.getByRole('textbox', {
+        name: 'Filter by permission type',
+      });
+      await filterInput.fill('folder');
+
+      await expect(permissionRow(drawer, 'Folder')).toBeVisible();
+      await expect(permissionRow(drawer, 'Agent')).toBeHidden();
+      const permissionTypeCells = dataRows(page, drawer).locator(
+        'td:first-child',
+      );
+      await expect(permissionTypeCells.first()).toBeVisible();
+      for (const text of await permissionTypeCells.allInnerTexts()) {
+        expect(text).toMatch(/folder/i);
+      }
+
+      await filterInput.fill('');
+      await expect(permissionRow(drawer, 'Agent')).toBeVisible();
     });
   },
 );
