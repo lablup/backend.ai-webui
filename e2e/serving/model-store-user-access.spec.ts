@@ -5,11 +5,15 @@
 import { loginAsUser, navigateTo } from '../utils/test-util';
 import { test, expect, type Page } from '@playwright/test';
 
+// PEP 440: a `26.9.0.devN` manager sorts before `a1` and is skipped.
 const SCOPED_PROJECTS_MIN_MANAGER_VERSION = '26.9.0a1';
 
 async function skipUnlessManagerSupportsScopedProjects(page: Page) {
   await page.waitForFunction(
-    () => (globalThis as any).backendaiclient?.ready === true,
+    () => {
+      const client = (globalThis as any).backendaiclient;
+      return client !== undefined && client !== null && client.ready === true;
+    },
     { timeout: 10000 },
   );
   const supported = await page.evaluate(
@@ -58,11 +62,9 @@ test.describe(
 
       const projectQueryBody = await (await projectQueryResponse).json();
       expect(projectQueryBody.errors).toBeUndefined();
-      const projectEdges =
-        projectQueryBody.data?.scopedProjectsV2?.edges ??
-        projectQueryBody.data?.domainV2?.projects?.edges ??
-        [];
-      expect(projectEdges.length).toBeGreaterThan(0);
+      expect(
+        projectQueryBody.data?.scopedProjectsV2?.edges?.length ?? 0,
+      ).toBeGreaterThan(0);
 
       await expect(
         page.getByRole('combobox', { name: 'Search filters' }),
@@ -80,7 +82,8 @@ test.describe(
       await expect(
         page
           .getByText(/^\d+–\d+ of \d+$/)
-          .or(page.getByText('No models found')),
+          .or(page.getByText('No models found'))
+          .first(),
       ).toBeVisible();
       await expect(page.getByText('Model Store project not found')).toHaveCount(
         0,
