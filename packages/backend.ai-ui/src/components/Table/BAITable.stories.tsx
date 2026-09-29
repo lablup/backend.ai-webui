@@ -436,6 +436,36 @@ export const RowSelection: Story = {
   },
 };
 
+export const RowSelectionWithDisabledRows: Story = {
+  name: 'Row Selection with Disabled Rows',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`rowSelection.getCheckboxProps` disables the inactive and pending rows; Jim Green starts selected. Select-all adds and removes only the enabled rows, so Jim Green stays selected either way, and the header is checked once every enabled row is.',
+      },
+    },
+  },
+  render: () => {
+    const [selectedRowKeys, setSelectedRowKeys] = useState<Array<Key>>(['2']);
+    return (
+      <BAITable
+        columns={sampleColumns}
+        dataSource={sampleData}
+        rowKey="key"
+        rowSelection={{
+          selectedRowKeys,
+          onChange: (keys) => setSelectedRowKeys([...keys]),
+          getCheckboxProps: (record) => ({
+            disabled: record.status !== 'active',
+          }),
+        }}
+        pagination={false}
+      />
+    );
+  },
+};
+
 export const Loading: Story = {
   name: 'Loading State',
   parameters: {
