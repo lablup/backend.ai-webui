@@ -13,7 +13,9 @@ const PROJECT_PREFIX = 'e2e-membership-';
 
 test.describe(
   'Header ProjectSelect - Project Membership',
-  { tag: ['@regression', '@project', '@requires-manager-v26.2'] },
+  {
+    tag: ['@regression', '@project', '@functional', '@requires-manager-v26.2'],
+  },
   () => {
     let api: APIRequestContext;
     const projectIds: string[] = [];
@@ -30,14 +32,19 @@ test.describe(
       memberProject = `${PROJECT_PREFIX}member-${suffix}`;
       inactiveMemberProject = `${PROJECT_PREFIX}inactive-${suffix}`;
       nonMemberProject = `${PROJECT_PREFIX}other-${suffix}`;
+      // Push each id as soon as it exists so a later failure cannot leak it.
       projectIds.push(
         await createProjectViaApi(api, memberProject, {
           memberEmails: [userInfo.user.email],
         }),
+      );
+      projectIds.push(
         await createProjectViaApi(api, inactiveMemberProject, {
           memberEmails: [userInfo.user.email],
           isActive: false,
         }),
+      );
+      projectIds.push(
         await createProjectViaApi(api, nonMemberProject, {
           domainName: 'default',
         }),
@@ -74,8 +81,8 @@ test.describe(
       ).toHaveCount(0);
 
       await projectList.getByRole('option', { name: memberProject }).click();
-      await expect(page).toHaveURL(
-        new RegExp(`/project/${memberProject}/session`),
+      await expect(page).toHaveURL((url) =>
+        url.pathname.endsWith(`/project/${memberProject}/session`),
       );
       await expect(selector).toHaveText(memberProject);
     });

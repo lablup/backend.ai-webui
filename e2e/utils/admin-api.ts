@@ -255,7 +255,7 @@ export async function sweepLeftoverDeploymentsViaApi(
 }
 
 /**
- * Creates a GENERAL project in the member's domain and adds `memberEmails`
+ * Creates a GENERAL project in `domainName` (default: the first member's domain) and adds `memberEmails`
  * to it. Returns the project's raw UUID for `purgeProjectViaApi`.
  */
 export async function createProjectViaApi(
@@ -369,11 +369,14 @@ export async function sweepStaleProjectsViaApi(
   const data = await gqlAdmin<{
     groups: Array<{ id: string; name: string; created_at: string }>;
   }>(api, `query { groups(is_active: null) { id name created_at } }`);
-  const stale = (data.groups ?? []).filter(
-    (g) =>
+  const stale = (data.groups ?? []).filter((g) => {
+    const createdAt = new Date(g.created_at).getTime();
+    return (
       pattern.test(g.name) &&
-      Date.now() - new Date(g.created_at).getTime() > minAgeMs,
-  );
+      Number.isFinite(createdAt) &&
+      Date.now() - createdAt > minAgeMs
+    );
+  });
   let purged = 0;
   for (const { id } of stale) {
     if (await purgeProjectViaApi(api, id)) purged++;

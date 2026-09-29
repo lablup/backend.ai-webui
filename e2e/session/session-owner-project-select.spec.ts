@@ -14,7 +14,9 @@ const PROJECT_PREFIX = 'e2e-owner-proj-';
 
 test.describe(
   'SessionLauncher - Session Owner Project',
-  { tag: ['@regression', '@session', '@requires-manager-v26.2'] },
+  {
+    tag: ['@regression', '@session', '@functional', '@requires-manager-v26.2'],
+  },
   () => {
     let api: APIRequestContext;
     let projectId: string | undefined;
@@ -63,6 +65,7 @@ test.describe(
       ).toBeVisible({ timeout: 15000 });
 
       await page
+        .getByRole('dialog', { name: 'Owner project' })
         .getByRole('combobox', { name: 'Search options' })
         .fill(projectName);
       await expect(projectList.getByRole('option')).toHaveCount(1, {
@@ -82,8 +85,11 @@ test.describe(
       // installed image, which the shared test cluster does not guarantee.
       await page.getByRole('button', { name: 'Skip to review' }).click();
       await expect(
-        page.getByRole('definition').filter({ hasText: projectName }),
-      ).toBeVisible({ timeout: 15000 });
+        page
+          .getByRole('term')
+          .filter({ hasText: /^Owner project$/ })
+          .locator('xpath=following-sibling::*[1]'),
+      ).toHaveText(projectName, { timeout: 15000 });
     });
   },
 );
