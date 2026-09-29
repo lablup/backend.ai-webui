@@ -7,6 +7,8 @@ import { RoleAssignmentTabFragment$key } from '../__generated__/RoleAssignmentTa
 import {
   RoleAssignmentFilter,
   RoleAssignmentOrderBy,
+  UserV2Filter,
+  UserV2OrderBy,
 } from '../__generated__/RoleAssignmentTabRefetchQuery.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
@@ -90,6 +92,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       @argumentDefinitions(
         filter: { type: "RoleAssignmentFilter" }
         orderBy: { type: "[RoleAssignmentOrderBy!]" }
+        userFilter: { type: "UserV2Filter" }
+        userOrderBy: { type: "[UserV2OrderBy!]" }
         limit: { type: "Int", defaultValue: 10 }
         offset: { type: "Int", defaultValue: 0 }
       )
@@ -115,13 +119,12 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
           orderBy: $orderBy
           limit: $limit
           offset: $offset
-        ) {
+        ) @deprecatedSince(version: "26.9.0a4") {
           count
           edges {
             node {
               id
               userId
-              grantedBy
               grantedAt
               user {
                 id
@@ -133,6 +136,24 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             }
           }
         }
+        usersV2(
+          filter: $userFilter
+          orderBy: $userOrderBy
+          limit: $limit
+          offset: $offset
+        ) @since(version: "26.9.0a4") {
+          count
+          edges {
+            node {
+              id
+              entityId
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
       }
     `,
     roleNodeFrgmt,
@@ -140,7 +161,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const roleId = toLocalId(data.id);
 
-  // Managers >= 26.9.0 answer the role's one scope directly; older ones
+  // Managers >= 26.9.0a4 answer the role's one scope directly; older ones
   // answer a scopes connection.
   const roleScope = data.scopeType
     ? { scopeType: data.scopeType, scopeId: data.scopeId }
@@ -178,7 +199,42 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
       }
     `);
 
-  const assignments = data.users?.edges?.map((edge) => edge?.node) ?? [];
+  // `usersV2` answers users, not assignment rows, so it has no grant time.
+  // TODO(needs-backend): BA-8188 — restore Granted At once usersV2 carries it.
+  const isUsersV2 = baiClient.isManagerVersionCompatibleWith('26.9.0a4');
+  const assignments: Array<{
+    id: string;
+    userId: string;
+    email?: string | null;
+    fullName?: string | null;
+    grantedAt?: string | null;
+  }> = isUsersV2
+    ? _.compact(
+        _.map(data.usersV2?.edges, (edge) =>
+          edge?.node
+            ? {
+                id: edge.node.id,
+                userId: edge.node.entityId,
+                email: edge.node.basicInfo.email,
+                fullName: edge.node.basicInfo.fullName,
+              }
+            : null,
+        ),
+      )
+    : _.compact(
+        _.map(data.users?.edges, (edge) =>
+          edge?.node
+            ? {
+                id: edge.node.id,
+                userId: edge.node.userId,
+                email: edge.node.user?.basicInfo.email,
+                fullName: edge.node.user?.basicInfo.fullName,
+                grantedAt: edge.node.grantedAt,
+              }
+            : null,
+        ),
+      );
+  const totalCount = (isUsersV2 ? data.usersV2?.count : data.users?.count) ?? 0;
 
   const doRefetch = (overrides?: {
     filter?: RoleAssignmentFilter | null;
@@ -186,18 +242,24 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
     limit?: number;
     offset?: number;
   }) => {
+    const filter =
+      overrides?.filter !== undefined ? overrides.filter : queryParams.filter;
+    const order =
+      overrides?.order !== undefined ? overrides.order : queryParams.order;
     startRefetchTransition(() => {
       refetch(
         {
-          filter:
-            overrides?.filter !== undefined
-              ? overrides.filter
-              : queryParams.filter,
-          orderBy: convertToOrderBy<RoleAssignmentOrderBy>(
-            overrides?.order !== undefined
-              ? overrides.order
-              : queryParams.order,
-          ),
+          ...(isUsersV2
+            ? {
+                // The filter UI only emits `email` / `username`, which
+                // UserV2Filter shares with RoleAssignmentFilter.
+                userFilter: filter as UserV2Filter | null,
+                userOrderBy: convertToOrderBy<UserV2OrderBy>(order),
+              }
+            : {
+                filter,
+                orderBy: convertToOrderBy<RoleAssignmentOrderBy>(order),
+              }),
           limit: overrides?.limit ?? limit,
           offset: overrides?.offset ?? offset,
         },
@@ -221,11 +283,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const handleBulkRevoke = (userIds: string[]) => {
     const targets = userIds.map((userId) => {
-      const assignment = assignments.find((a) => a?.userId === userId);
-      const label =
-        assignment?.user?.basicInfo?.email ||
-        assignment?.user?.basicInfo?.fullName ||
-        userId;
+      const assignment = assignments.find((a) => a.userId === userId);
+      const label = assignment?.email || assignment?.fullName || userId;
       return { userId, label };
     });
     setRevokingTargets(targets);
@@ -268,9 +327,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                   }
                   onClick={() => {
                     const userIds = assignments
-                      .filter((a) => selectedRowKeys.includes(a?.id ?? ''))
-                      .map((a) => a?.userId)
-                      .filter(Boolean) as string[];
+                      .filter((a) => selectedRowKeys.includes(a.id))
+                      .map((a) => a.userId);
                     handleBulkRevoke(userIds);
                   }}
                 />
@@ -301,7 +359,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         pagination={{
           pageSize: queryParams.pageSize,
           current: queryParams.current,
-          total: data.users?.count ?? 0,
+          total: totalCount,
           onChange: (current, pageSize) => {
             setQueryParams((prev) => ({ ...prev, current, pageSize }));
             const newOffset = current > 1 ? (current - 1) * pageSize : 0;
@@ -333,7 +391,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             fixed: 'left',
             render: (_, record) => (
               <BAINameActionCell
-                title={record?.user?.basicInfo?.email || '-'}
+                title={record.email || '-'}
                 showActions="always"
                 actions={
                   isReadOnly
@@ -344,7 +402,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
                           title: t('rbac.RevokeUser'),
                           icon: <Trash2 size="1em" />,
                           type: 'danger',
-                          onClick: () => handleBulkRevoke([record?.userId]),
+                          onClick: () => handleBulkRevoke([record.userId]),
                         },
                       ]
                 }
@@ -356,19 +414,23 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             key: 'username',
             dataIndex: 'username',
             title: t('credential.FullName'),
-            render: (_, record) => record?.user?.basicInfo?.fullName || '-',
+            render: (_, record) => record.fullName || '-',
             sorter: true,
           },
-          {
-            key: 'grantedAt',
-            dataIndex: 'grantedAt',
-            title: t('rbac.GrantedAt'),
-            render: (_, record) =>
-              record?.grantedAt
-                ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
-                : '-',
-            sorter: true,
-          },
+          ...(isUsersV2
+            ? []
+            : [
+                {
+                  key: 'grantedAt',
+                  dataIndex: 'grantedAt',
+                  title: t('rbac.GrantedAt'),
+                  render: (_: unknown, record: (typeof assignments)[number]) =>
+                    record.grantedAt
+                      ? dayjs(record.grantedAt).format('YYYY-MM-DD HH:mm')
+                      : '-',
+                  sorter: true,
+                },
+              ]),
         ]}
       />
       <BAIUnmountAfterClose>
