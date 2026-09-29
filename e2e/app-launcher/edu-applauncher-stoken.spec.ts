@@ -20,6 +20,8 @@
  * Valid-token happy-path is out of scope here for the same reason as
  * `stoken-login.spec.ts`: a customer-specific auth plugin is required
  * to mint real sTokens.
+ *
+ * The missing-token branch is covered below at route level.
  */
 import { webuiEndpoint } from '../utils/test-util';
 import { expect, test, type Page } from '@playwright/test';
@@ -252,6 +254,45 @@ test.describe(
         date,
         endpoint,
       });
+    });
+
+    /**
+     * Route-level guard for the `missing-token` branch: `/applauncher`
+     * mounts the boundary unconditionally with `sToken ?? ''`, so a launcher
+     * URL that lost its token must reach the error card instead of the
+     * launcher, and must not POST an empty token to the webserver.
+     */
+    test('User cannot launch an app from `/applauncher` without an sToken and sees the missing-token error card', async ({
+      page,
+    }) => {
+      await installBoundaryProbeMocks(page);
+
+      let tokenLoginCalled = false;
+      await page.route('**/server/token-login', async (route) => {
+        tokenLoginCalled = true;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(AUTH_FAILED_INERT_RESPONSE),
+        });
+      });
+
+      // Full LMS signing envelope, minus `sToken` / `stoken`.
+      const params = new URLSearchParams({
+        api_version: 'v9.20250722',
+        date: '2026-04-22T07:58:04.609420+00:00',
+        endpoint: '127.0.0.1',
+        session_id: 'd847ee6f-be1c-4e40-8cc4-0cb182f4ceff',
+        app: 'jupyterlab',
+      });
+      await page.goto(`${webuiEndpoint}/applauncher?${params.toString()}`);
+
+      // The heading distinguishes this card from the token-invalid one,
+      // which shares the Retry button.
+      await expect(
+        page.getByRole('heading', { name: 'No sign-in token was provided.' }),
+      ).toBeVisible({ timeout: 15_000 });
+      expect(tokenLoginCalled).toBe(false);
     });
   },
 );

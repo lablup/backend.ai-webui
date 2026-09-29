@@ -1,5 +1,5 @@
 import {
-  PRIMARY_TAG_VARIANT,
+  PRIMARY_TOKEN_COLOR,
   STATUS_BADGE_VARIANT,
   badgeVariantForStatus,
   badgeVariantForTagColor,
@@ -84,6 +84,27 @@ describe('badgeVariantForStatus', () => {
     expect(badgeVariantForStatus('session', 'PENDING')).toBe('neutral');
   });
 
+  it('maps preemption lifecycle states and reasons', () => {
+    // No new hue: RESERVED progresses toward RUNNING like SCHEDULED, the two
+    // victim states lose resources like TERMINATING.
+    expect(badgeVariantForStatus('session', 'RESERVED')).toBe('info');
+    expect(badgeVariantForStatus('session', 'PREEMPTED')).toBe('warning');
+    expect(badgeVariantForStatus('session', 'RESCHEDULING')).toBe('warning');
+    expect(badgeVariantForStatus('kernel', 'RESERVED')).toBe('success');
+    expect(
+      badgeVariantForStatus('sessionStatusInfo', 'PREEMPTED_BY_SCHEDULER'),
+    ).toBe('warning');
+    expect(badgeVariantForStatus('sessionStatusInfo', 'RESCHEDULED')).toBe(
+      'info',
+    );
+    expect(
+      badgeVariantForStatus('sessionStatusInfo', 'preemption-reservation'),
+    ).toBe('info');
+    expect(
+      badgeVariantForStatus('sessionStatusInfo', 'preempted-by-reservation'),
+    ).toBe('warning');
+  });
+
   it('maps deployment and route health states', () => {
     expect(badgeVariantForStatus('deployment', 'HEALTHY')).toBe('success');
     expect(badgeVariantForStatus('deployment', 'DEGRADED')).toBe('warning');
@@ -125,11 +146,20 @@ describe('tokenColorForStatus', () => {
     expect(tokenColorForStatus('session', 'ERROR')).toBe('red');
     expect(tokenColorForStatus('session', 'TERMINATED')).toBe('default');
   });
+
+  it('maps settled-value domains used by Token call sites', () => {
+    expect(tokenColorForStatus('loginHistory', 'SUCCESS')).toBe('green');
+    expect(tokenColorForStatus('loginHistory', 'REVOKED_BY_ADMIN')).toBe(
+      'orange',
+    );
+    expect(tokenColorForStatus('role', 'ACTIVE')).toBe('green');
+    expect(tokenColorForStatus('vfolderPermission', 'r')).toBe('green');
+  });
 });
 
 describe('module invariants', () => {
-  it('exposes a brand variant for token.colorPrimary call sites', () => {
-    expect(PRIMARY_TAG_VARIANT).toBe('green');
+  it('exposes the brand Token colour for the main-access-key marker', () => {
+    expect(PRIMARY_TOKEN_COLOR).toBe('green');
   });
 
   it('every domain map value is a valid Badge variant', () => {

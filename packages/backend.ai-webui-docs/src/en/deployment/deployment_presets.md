@@ -73,7 +73,7 @@ Older flat links such as `/admin-deployments/deployment-presets/new` still work 
 2. Fill in the fields. The form is a three-step wizard — **Basic Info**, **Model & Execution**, and **Review** — with the step list on the right and `Previous` / `Next` navigation at the bottom. Use `Skip to Review` to jump straight to the last step. The fields are organized into the following sections:
 
    - **Basic Info**:
-      * **Name**: A unique preset name (for example, `vLLM-GPU-Large`).
+      * **Name**: A unique preset name (for example, `vLLM-GPU-Large`). The name cannot contain whitespace.
       * **Description**: A short summary of the preset's intended use.
       * **Runtime**: The runtime variant (for example, vLLM, SGLang, or Custom).
       * **Rank**: Display ordering among presets of the same runtime. Lower values appear first.
@@ -175,7 +175,7 @@ The **Runtime Parameters** tab on the Admin Deployments page (`/admin/deployment
 ![](../images/runtime_variant_preset_list.png)
 <!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
-Above the table sit a property filter (**Name**, **Runtime Variant ID**), a refresh button, and the **Create Parameter** button. The following columns are shown by default:
+Above the table sit a property filter (**Name**, **Runtime**), a refresh button, and the **Create Parameter** button. The **Runtime** value is chosen from a dropdown of the runtimes defined on this server instead of being typed as an ID, and the resulting filter tag shows the runtime's name. The following columns are shown by default:
 
 - **Name**: The parameter's name. This column also carries the per-row edit and delete buttons.
 - **Runtime Variant (ID)**: The runtime the parameter belongs to, shown as the runtime's name followed by its ID in parentheses. The ID has a copy button next to it. On a server that does not serve the runtime variant name, the column is titled **Runtime Variant ID** and shows the ID on its own.

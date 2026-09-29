@@ -73,7 +73,7 @@
 2. 각 필드를 입력합니다. 이 화면은 **기본 정보**, **모델 & 실행**, **검토** 세 단계로 구성된 마법사이며, 오른쪽에 단계 목록이, 아래쪽에 `이전` / `다음` 버튼이 표시됩니다. `검토로 건너뛰기`를 클릭하면 마지막 단계로 바로 이동합니다. 필드는 다음 섹션으로 구성됩니다.
 
    - **기본 정보**:
-      * **이름**: 고유한 프리셋 이름(예: `vLLM-GPU-Large`).
+      * **이름**: 고유한 프리셋 이름(예: `vLLM-GPU-Large`). 이름에는 공백을 포함할 수 없습니다.
       * **설명**: 프리셋의 용도를 간략히 설명합니다.
       * **런타임**: 런타임 변형(예: vLLM, SGLang, Custom).
       * **정렬 순위**: 동일한 런타임의 프리셋 사이에서의 표시 순서입니다. 값이 작을수록 먼저 표시됩니다.
@@ -174,7 +174,7 @@
 ![](../images/runtime_variant_preset_list.png)
 <!-- TODO(screenshot): recaptured 2026-08-28 — UI Type and Default Value are now shown. The capture server runs manager 26.8.0rc1, which does not serve the runtime variant field, so the column appears in its bare-ID fallback form; recapture on a server that serves it to show the qualified "Runtime Variant (ID)" form. -->
 
-표 위에는 속성 필터(**이름**, **런타임 ID**)와 새로 고침 버튼, **파라미터 생성** 버튼이 있습니다. 기본으로 표시되는 컬럼은 다음과 같습니다.
+표 위에는 속성 필터(**이름**, **런타임**)와 새로 고침 버튼, **파라미터 생성** 버튼이 있습니다. **런타임** 값은 ID를 직접 입력하는 대신 이 서버에 정의된 런타임 목록에서 선택하며, 적용된 필터 태그에는 런타임 이름이 표시됩니다. 기본으로 표시되는 컬럼은 다음과 같습니다.
 
 - **이름**: 파라미터의 이름입니다. 이 컬럼에는 행별 편집/삭제 버튼도 함께 표시됩니다.
 - **런타임 (ID)**: 파라미터가 속한 런타임입니다. 런타임 이름 뒤에 괄호로 ID가 함께 표시되며, ID 옆에는 복사 버튼이 있습니다. 런타임 이름을 제공하지 않는 서버에서는 컬럼 제목이 **런타임 ID** 로 표시되고 ID만 나타납니다.

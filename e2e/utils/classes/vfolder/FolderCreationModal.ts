@@ -35,23 +35,32 @@ export class FolderCreationModal {
     return getFormItemControlByLabel(this.page, 'Location');
   }
 
+  /** Opens the Astryx `Selector` popup; its search input stays mounted but
+   * hidden until this click opens it. */
+  async openLocationSelector(): Promise<void> {
+    await (await this.getLocationSelector()).click();
+  }
+
   async getLocationSelectorInput(): Promise<Locator> {
-    const locationSelectorInput = (await this.getLocationSelector()).locator(
-      'input',
+    const locationSelectorInput = (await this.getLocationSelector()).getByRole(
+      'combobox',
+      { name: 'Search options' },
     );
     await expect(locationSelectorInput).toBeVisible();
     return locationSelectorInput;
   }
 
   async fillLocationSelector(text: string): Promise<void> {
+    await this.openLocationSelector();
     const locationSelectorInput = await this.getLocationSelectorInput();
     await locationSelectorInput.fill(text);
     await expect(locationSelectorInput).toHaveValue(text);
   }
 
   async getLocationOptionContainer(): Promise<Locator> {
-    await (await this.getLocationSelector()).click();
-    const locationOptionContainer = this.page.locator('.ant-select-dropdown');
+    // Assumes the popup is already open (via `openLocationSelector` /
+    // `fillLocationSelector`) — no `.ant-select-dropdown` wrapper exists.
+    const locationOptionContainer = this.page.getByRole('listbox');
     await expect(locationOptionContainer).toBeVisible();
     return locationOptionContainer;
   }
@@ -70,7 +79,10 @@ export class FolderCreationModal {
   async selectLocationOptionByText(text: string): Promise<void> {
     const locationOption = await this.getLocationOptionByText(text);
     await locationOption.click();
-    await expect(locationOption).toHaveAttribute('aria-selected', 'true');
+    // Single-select closes the popup on commit, detaching the option row —
+    // verify the trigger now shows the chosen value instead.
+    const locationSelector = await this.getLocationSelector();
+    await expect(locationSelector).toContainText(text);
   }
 
   async getFormItemByLabel(label: string): Promise<Locator> {
@@ -93,8 +105,14 @@ export class FolderCreationModal {
     return await this.getFormItemByLabel('Usage Mode');
   }
 
-  async getTypeFormItem(): Promise<Locator> {
-    return await this.getFormItemByLabel('Type');
+  /**
+   * FR-3441: folder ownership is derived from the page context, so the modal
+   * renders no Type (User/Project) row at all.
+   */
+  async expectTypeFormItemHidden(): Promise<void> {
+    await expect(
+      this.modal.locator('[data-bai-form-item]:has-text("Type")'),
+    ).toHaveCount(0);
   }
 
   async getPermissionFormItem(): Promise<Locator> {
@@ -134,20 +152,6 @@ export class FolderCreationModal {
   async getAutoMountUsageModeRadio(): Promise<Locator> {
     const usageModeFormItem = await this.getUsageModeFormItem();
     return usageModeFormItem.getByLabel('Auto Mount', { exact: true });
-  }
-
-  async getUserTypeRadio(): Promise<Locator> {
-    const typeFormItem = await this.getTypeFormItem();
-    return typeFormItem.getByLabel('User', {
-      exact: true,
-    });
-  }
-
-  async getProjectTypeRadio(): Promise<Locator> {
-    const typeFormItem = await this.getTypeFormItem();
-    return typeFormItem.getByLabel('Project', {
-      exact: true,
-    });
   }
 
   async getReadWritePermissionRadio(): Promise<Locator> {
@@ -207,14 +211,5 @@ export class FolderCreationModal {
     });
     await expect(cancelButton).toBeVisible();
     return cancelButton;
-  }
-
-  async getResetButton(): Promise<Locator> {
-    const resetButton = this.modal.getByRole('button', {
-      name: 'Reset',
-      exact: true,
-    });
-    await expect(resetButton).toBeVisible();
-    return resetButton;
   }
 }

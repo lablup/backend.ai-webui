@@ -6,6 +6,7 @@
     "DiskPerc": "Dysk %",
     "Endpoint": "Punkt końcowy",
     "FailedToLoadCellData": "Nie udało się załadować danych.",
+    "LostAt": "Utracono",
     "NoAvailableLiveStat": "Brak statystyk na żywo",
     "Region": "Region",
     "ResourceGroup": "Grupa zasobów",
@@ -13,7 +14,8 @@
     "Schedulable": "Do zaplanowania",
     "Starts": "Uruchomienia",
     "Status": "Status",
-    "Utilization": "Wykorzystanie"
+    "Utilization": "Wykorzystanie",
+    "Version": "Wersja"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Dozwolone",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID akcji",
     "Actor": "Aktor",
+    "ClientIp": "IP klienta",
     "Description": "Opis",
     "Duration": "Czas trwania",
     "EntityId": "ID encji",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "Tej operacji nie można cofnąć.",
     "DeleteItem": "Usuń",
     "DeleteNItems": "Usuń {{count}} elementów",
-    "TypeToConfirm": "Wpisz <code>{{confirmText}}</code>, aby potwierdzić."
+    "TypeToConfirm": "Wpisz <token>{{confirmText}}</token>, aby potwierdzić."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Utworzono przez"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Wybierz wdrożenie"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Zdegradowany",
     "Deploying": "Wdrażanie",
     "Healthy": "Sprawny",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "Pomyślnie żądane Pull dla wersji {{count}}.",
     "Version": "Wersja"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Sprawdzanie sesji Backend.AI…",
+    "SignInWithBackendAI": "Zaloguj się przez Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Przeglądarka zablokowała żądanie do serwera WWW Backend.AI. Zwykle jest to ograniczenie CORS lub mieszanej zawartości.",
+      "HttpError": "Serwer WWW Backend.AI zwrócił błąd ({{status}}).",
+      "InvalidCallback": "Adres powrotu logowania skonfigurowany dla {{appName}} nie jest prawidłowym adresem internetowym.",
+      "InvalidResponse": "Serwer WWW Backend.AI zwrócił nieoczekiwaną odpowiedź.",
+      "NoEndpoint": "Dla aplikacji {{appName}} nie skonfigurowano adresu serwera WWW Backend.AI.",
+      "NoSessionId": "Jesteś zalogowany w Backend.AI, ale serwer WWW nie zwrócił identyfikatora sesji.",
+      "NoSessionOverHttp": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} jest udostępniana przez HTTP, więc przeglądarka może odrzucać bezpieczne ciasteczko sesji serwera WWW. Spróbuj otworzyć {{appName}} przez HTTPS.",
+      "NoSessionOverHttps": "Nie zalogowano jeszcze w Backend.AI. Jeśli logowanie już nastąpiło, aplikacja {{appName}} i serwer WWW Backend.AI mogą być różnymi witrynami, więc przeglądarka nie wysyła ciasteczka sesji.",
+      "RelayFailed": "Jesteś zalogowany w Backend.AI, ale aplikacja {{appName}} nie mogła dokończyć logowania.",
+      "Timeout": "Serwer WWW Backend.AI nie odpowiedział na czas.",
+      "Title": "Nie udało się zalogować przez Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Wielkość klastra",
     "Concurrency": "Równoczesne sesje",
@@ -248,6 +268,7 @@
     "SelectKeypair": "Wybierz parę kluczy"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP klienta",
     "Domain": "Domena",
     "FailReason": "Przyczyna błędu",
     "LoginTime": "Czas logowania",
@@ -338,18 +359,22 @@
     "UpdateProject": "Aktualizuj projekt"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktywny",
     "ContainerRegistry": "Rejestr kontenerów",
     "ContainerRegistryProject": "Projekt rejestru kontenerów",
     "CreatedAt": "Utworzono",
     "Description": "Opis",
     "Domain": "Domena",
+    "Inactive": "Nieaktywny",
     "IntegrationID": "ID integracji",
+    "ModifiedAt": "Zmodyfikowano",
     "Name": "Nazwa",
     "Project": "Projekt",
     "ProjectID": "ID projektu",
     "Registry": "Rejestr",
     "ResourcePolicy": "Polityka zasobów",
     "ScalingGroups": "Grupy zasobów",
+    "Status": "Status",
     "StorageNodes": "Węzły pamięci masowej",
     "TotalResourceSlots": "Całkowita liczba slotów zasobów",
     "Type": "Typ"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "i {{rest}} więcej"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Utworzono o godz",
     "MaxConcurrentLogins": "Maks. liczba równoczesnych logowań",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Nieprawidłowy format ścieżki.",
     "AliasOverlapping": "Ścieżka montowania pokrywa się z innym folderem.",
+    "AliasOverlappingWithAutoMount": "Ścieżka montowania pokrywa się z automatycznie montowanym folderem.",
     "AliasPlaceholder": "Ścieżka montowania",
     "AutoMountedFolders": "Automatycznie montowane foldery",
-    "Name": "Nazwa",
-    "PathAndAlias": "Ścieżka & Alias",
+    "CreateFolder": "Utwórz nowy folder przechowywania",
+    "DestinationPath": "Ścieżka w kontenerze (destination)",
+    "Folders": "Foldery",
+    "OwnerProject": "Projekt",
+    "OwnerUser": "Użytkownik",
     "PathAndAliasTooltip": "Ścieżka wewnątrz kontenera, w której zostanie zamontowany folder. Pozostaw puste, aby użyć domyślnej ścieżki.",
+    "Refresh": "Odświeżać",
     "RemoveFolder": "Usuń",
+    "SelectFolder": "Wybierz folder",
+    "SourcePath": "Ścieżka w folderze (source)",
     "Subpath": "Podścieżka",
     "SubpathInvalid": "Podścieżka musi być ścieżką względną i nie może zawierać '..'.",
-    "SubpathPlaceholder": "np. dataset/train (opcjonalne)",
-    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Pozostaw puste, aby zamontować katalog główny."
+    "SubpathTooltip": "Montuje podfolder wewnątrz folderu jako źródło zamiast jego katalogu głównego. Kliknij pole, aby przeglądać folder i wybrać podfolder; pozostaw puste, aby zamontować katalog główny folderu.",
+    "UnmountableFoldersRemoved": "Foldery, których nie możesz już zamontować, zostały usunięte z zaznaczenia."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Wybierz folder"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "Usuniętych plików i folderów nie można przywrócić. \nChcesz kontynuować?",
     "DeleteSelectedItemsDialog": "Usuń potwierdzenie",
     "Download": "Pobierz",
+    "DownloadPopupBlocked": "Przeglądarka zablokowała okno pobierania. Zezwól na wyskakujące okienka dla tej witryny i spróbuj ponownie.",
+    "DownloadRejected": "Storage proxy odrzucił pobieranie (HTTP {{status}}). Pobieranie nie zostało rozpoczęte.",
     "DownloadSelected": "Pobierz",
     "DownloadStarted": "Plik „{{fileName}}” rozpoczęło się pobieranie.",
+    "DownloadUnreachable": "Nie można połączyć się ze storage proxy pod adresem {{origin}}. Pobieranie nie zostało rozpoczęte.",
     "DragAndDropDesc": "Przeciągnij i upuść pliki do tego obszaru, aby przesłać.",
     "DuplicatedFiles": "Nadpisz potwierdzenie",
     "DuplicatedFilesDesc": "Plik lub folder o tej samej nazwie już istnieje. \nChcesz zastąpić?",
     "EditFile": "Edytuj plik",
+    "ExistingItem": "Istniejący",
     "FileCreatedSuccessfully": "Plik został utworzony.",
     "FileName": "Nazwa pliku",
     "FileNamePlaceholder": "np. model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "Zmodyfikowany przy",
     "Name": "Nazwa",
     "NoUploadPermissionForHost": "Nie masz uprawnień do przesyłania plików na ten host.",
+    "OtherItemsWillBeUploaded": "Zostanie przesłanych także {{count}} innych elementów.",
     "Path": "Ścieżka",
     "PleaseEnterAFileName": "Wprowadź nazwę pliku.",
     "PleaseEnterAFolderName": "Wprowadź nazwę folderu.",
     "RenameFile": "Zmień nazwę",
     "RenameSuccess": "Nazwa została pomyślnie zmieniona.",
+    "SelectItemsToOverwrite": "Te elementy już tu istnieją. Wybierz te do nadpisania; niewybrane zostaną pominięte.",
     "SelectedItemsDeletedSuccessfully": "Wybrane pliki i foldery zostały pomyślnie usunięte.",
     "Size": "Rozmiar",
     "TypeDeleteToConfirm": "Wpisz „Usuwać”, aby potwierdzić.",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "Ten format pliku nie obsługuje edycji.",
     "UploadFiles": "Prześlij pliki",
     "UploadFolder": "Folder przesyłania",
+    "UploadingItem": "Do przesłania",
     "error": {
       "DuplicatedName": "Ta nazwa jest już używana. \nWprowadź inną nazwę.",
       "FileNameRequired": "Wprowadź nazwę pliku lub folderu."
@@ -762,6 +804,7 @@
     "DeselectAll": "Odznacz wszystko",
     "File": "Plik",
     "Increase": "Zwiększ",
+    "Loading": "Ładowanie...",
     "NSelected": "{{count}}",
     "Optional": "Opcjonalne",
     "Project": "Projekt",

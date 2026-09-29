@@ -242,6 +242,14 @@ const DeploymentAutoScalingCardContent: React.FC<
 
   const totalCount = data?.deployment?.autoScalingRules?.count ?? 0;
 
+  // The reason IS the flag (FR-3679): `undefined` enables, a string disables
+  // and names why, so "disabled with no reason" cannot be expressed.
+  const addRuleDisabledReason = isEndpointDestroying
+    ? t('deployment.DeploymentStopped')
+    : !isOwnedByCurrentUser
+      ? t('deployment.OnlyOwnerCanManage')
+      : undefined;
+
   const commitDeleteMutation =
     useMutationWithPromise<DeploymentAutoScalingCardDeleteMutation>(graphql`
       mutation DeploymentAutoScalingCardDeleteMutation(
@@ -304,7 +312,8 @@ const DeploymentAutoScalingCardContent: React.FC<
             <BAIButton
               type="primary"
               icon={<PlusIcon />}
-              disabled={isEndpointDestroying || !isOwnedByCurrentUser}
+              disabled={!!addRuleDisabledReason}
+              title={addRuleDisabledReason}
               onClick={() => {
                 setEditingRuleId(null);
                 setIsOpenEditorModal(true);

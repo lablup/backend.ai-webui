@@ -5,6 +5,7 @@
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { Form } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
@@ -14,15 +15,15 @@ import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import TextHighlighter from './TextHighlighter';
-import VFolderPermissionTag from './VFolderPermissionTag';
+import VFolderPermissionToken from './VFolderPermissionToken';
 import { VFolder } from './VFolderSelect';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIUserUnionIcon,
@@ -239,9 +240,9 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       allowedVFolderHostsByGroup,
       allowedVFolderHostsByKeypairResourcePolicy,
     );
-    // only allow mount if volume permission has 'mount-in-session'
+    // only allow mount if the volume permission grants mount-in-session
     return Object.keys(mergedVFolderPermissions).filter((volume) =>
-      mergedVFolderPermissions[volume].includes('mount-in-session'),
+      mergedVFolderPermissions[volume].includes(MOUNT_IN_SESSION_PERMISSION),
     );
   }, [domain, group, keypair_resource_policy]);
 
@@ -600,7 +601,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       dataIndex: 'permission',
       sorter: (a, b) => a.permission.localeCompare(b.permission),
       render: (_value, row) => {
-        return <VFolderPermissionTag permission={row.permission} />;
+        return <VFolderPermissionToken permission={row.permission} />;
       },
     },
     {
@@ -696,15 +697,11 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
       </Form>
       {showAutoMountedFoldersSection && autoMountedFolderNames.length > 0 ? (
         <>
-          {/* antd `Descriptions size="small"` -> `MetadataList` (MAPPING §4;
-              `size` has no destination and is dropped). Each auto-mounted
-              folder name was a colourless `<Tag>`, i.e. Astryx's default
-              `neutral` Badge. */}
           <BAIMetadataList columns="single">
             <MetadataListItem label={t('data.AutomountFolders')}>
               <BAIFlex gap="xxs" wrap="wrap">
                 {_.map(autoMountedFolderNames, (name) => {
-                  return <Badge key={name} label={name} />;
+                  return <Token key={name} label={name} />;
                 })}
               </BAIFlex>
             </MetadataListItem>

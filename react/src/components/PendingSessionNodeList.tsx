@@ -12,25 +12,26 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
 import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
-import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIAlert,
   BAIButton,
   BAIFlex,
+  BAIResourceGroupSelect,
   BAISelectionLabel,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   useFetchKey,
+  useResourceGroupNames,
   INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SettingsIcon } from 'lucide-react';
+import { parseAsString, useQueryState } from 'nuqs';
 import { useDeferredValue, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -52,9 +53,23 @@ const PendingSessionNodeList: React.FC = () => {
   const enablePriorityEditing =
     baiClient.isManagerVersionCompatibleWith('26.4.0');
   const [fetchKey, updateFetchKey] = useFetchKey();
-  // const [selectedResourceGroup, setSelectedResourceGroup] = useState<string>();
-  const currentResourceGroup = useCurrentResourceGroupValue();
+  const [selectedResourceGroup, setSelectedResourceGroup] = useQueryState(
+    'resourceGroup',
+    parseAsString.withOptions({ history: 'replace' }),
+  );
   const deferredFetchKey = useDeferredValue(fetchKey);
+
+  // Superadmin scope: every active resource group, not the current project's
+  // subset. Same query as the select below, so Relay issues it once.
+  const resourceGroupNames = useResourceGroupNames({ isActive: true });
+  // A stale, inactive or empty `resourceGroup` param must not reach
+  // `session_pending_queue` — fall back to the first active group.
+  const currentResourceGroup = _.includes(
+    resourceGroupNames,
+    selectedResourceGroup,
+  )
+    ? (selectedResourceGroup ?? undefined)
+    : _.first(resourceGroupNames);
   const deferredCurrentResourceGroup = useDeferredValue(currentResourceGroup);
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
@@ -136,16 +151,18 @@ const PendingSessionNodeList: React.FC = () => {
           label={t('session.ResourceGroup')}
           style={{ marginBottom: 0 }}
         >
-          <SharedResourceGroupSelectForCurrentProject
-            showSearch
+          <BAIResourceGroupSelect
+            filter={{ isActive: true }}
             style={{ minWidth: 100 }}
-            onChangeInTransition={() => {
-              setTablePaginationOption({ current: 1 });
-              setSelectedSessionList([]);
-            }}
             loading={currentResourceGroup !== deferredCurrentResourceGroup}
             popupMatchSelectWidth={false}
             tooltip={t('general.ResourceGroup')}
+            value={currentResourceGroup}
+            onChange={(value) => {
+              setSelectedResourceGroup(value ?? null);
+              setTablePaginationOption({ current: 1 });
+              setSelectedSessionList([]);
+            }}
           />
         </Form.Item>
         <BAIFlex gap="xs">

@@ -2,13 +2,13 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIPropertyFilter,
   BAIFlex,
   BAITable,
   BAIText,
-  badgeVariantForTagColor,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { Activity, CheckCircle, XCircle } from 'lucide-react';
@@ -123,10 +123,7 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             dataIndex: 'operation',
             key: 'operation',
             render: (operation: string) => (
-              <Badge
-                variant={badgeVariantForTagColor(undefined)}
-                label={operation.toUpperCase()}
-              />
+              <Token label={operation.toUpperCase()} />
             ),
             sorter: true,
           },
@@ -156,11 +153,8 @@ const ReservoirAuditLogList: React.FC<ReservoirAuditLogListProps> = ({
             <BAIFlex direction="column" gap="xs" style={{ padding: '8px 0' }}>
               <BAIFlex align="center" gap="xs">
                 <BAIText strong>Status:</BAIText>
-                {/* antd `Tag color` → Astryx `Badge variant` via the
-                    repo-global lookup (ticket 13); the leading glyph moves to
-                    `icon`, Badge's icon slot. */}
-                <Badge
-                  variant={badgeVariantForTagColor(
+                <Token
+                  color={tokenColorForTagColor(
                     record.status === 'success'
                       ? 'green'
                       : record.status === 'failed'

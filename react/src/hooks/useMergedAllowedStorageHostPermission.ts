@@ -101,7 +101,10 @@ export const useMergedAllowedStorageHostPermission = (
     staleTime: 1000 * 60 * 5,
     gcTime: 0,
   });
-  const unitedAllowedPermissionByVolume = Object.assign(
+  const unitedAllowedPermissionByVolume: Record<
+    string,
+    Array<string>
+  > = Object.assign(
     {},
     ...vhostInfo.allowed.map((volume: string) => {
       return {

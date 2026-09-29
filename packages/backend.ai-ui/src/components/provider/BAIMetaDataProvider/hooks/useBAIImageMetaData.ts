@@ -58,6 +58,14 @@ const useBAIImageMetaData = () => {
         'default.png';
       return resolveIconPath(iconFileName);
     },
+    /**
+     * Whether the metadata declares a vendor icon for the image, i.e.
+     * `getImageIcon` does not resolve to the generic `default.png` fallback.
+     */
+    hasImageIcon: (imageName?: string | null) =>
+      Boolean(
+        imageName && metadata?.imageInfo[getImageMeta(imageName).key]?.icon,
+      ),
     getBaseVersion: (imageName: string) => {
       return (
         _.first(_.split(_.last(_.split(imageName, ':')), /[^a-zA-Z\d.]+/)) || ''

@@ -1,0 +1,31 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The weld between neighbouring chips of BAIDoubleToken / BAIDoubleBadge
+ (FR-3687). `xstyle` is unavailable in BUI and a theme override is flat and
+ global, so squaring a corner only where there is a neighbour is CSS here.
+*/
+
+@layer components {
+  /* Both chips carry a 1px outline (theme `TOKEN_OUTLINED` / `BADGE_TINTED`),
+     so neighbours overlap by that width and the two strokes read as one seam. */
+  .bai-double > .astryx-badge:not(:first-child),
+  .bai-double > .astryx-token:not(:first-child) {
+    margin-inline-start: calc(var(--border-width) * -1);
+  }
+
+  /* Only the inner corners: restating the outer ones would pin the run to
+     the primitive's current radius. */
+  .bai-double > .astryx-badge:not(:first-child),
+  .bai-double > .astryx-token:not(:first-child) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+
+  .bai-double > .astryx-badge:not(:last-child),
+  .bai-double > .astryx-token:not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+}

@@ -40,8 +40,7 @@ import zh_TW from 'backend.ai-ui/locale/zh_TW';
 // The `satisfies` clause below is a compile-time guard that keeps this map
 // in exact two-way sync with `SUPPORTED_LANGUAGES` in
 // `helper/resolveInitialLanguage.ts` (a missing key or an extra key is a
-// type error). Type-only import, so the Vitest mock of this module is
-// unaffected.
+// type error).
 export const buiLanguages = {
   de: de_DE,
   el: el_GR,

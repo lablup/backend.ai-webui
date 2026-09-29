@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<61b0c8548945db7bfa197644463347cc>>
+ * @generated SignedSource<<c51d48542722bce9e06d91b4c97b2c0f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -32,7 +32,7 @@ export type CustomizedImageListQuery$data = {
       readonly value: string | null | undefined;
     } | null | undefined> | null | undefined;
     readonly version: string | null | undefined;
-    readonly " $fragmentSpreads": FragmentRefs<"AliasedImageDoubleTagsFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"AliasedImageTagTokensFragment">;
   } | null | undefined> | null | undefined;
 };
 export type CustomizedImageListQuery = {
@@ -185,7 +185,7 @@ return {
           {
             "args": null,
             "kind": "FragmentSpread",
-            "name": "AliasedImageDoubleTagsFragment"
+            "name": "AliasedImageTagTokensFragment"
           }
         ],
         "storageKey": null
@@ -227,16 +227,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9d2e928aef36de71b7da3ce796f74e22",
+    "cacheID": "50cbda445c963b469a875396d3290e3d",
     "id": null,
     "metadata": {},
     "name": "CustomizedImageListQuery",
     "operationKind": "query",
-    "text": "query CustomizedImageListQuery {\n  customized_images {\n    id\n    name @deprecatedSince(version: \"24.12.0\")\n    humanized_name\n    tag\n    registry\n    architecture\n    digest\n    labels {\n      key\n      value\n    }\n    supported_accelerators\n    namespace @since(version: \"24.12.0\")\n    base_image_name @since(version: \"24.12.0\")\n    tags @since(version: \"24.12.0\") {\n      key\n      value\n    }\n    version @since(version: \"24.12.0\")\n    ...AliasedImageDoubleTagsFragment\n  }\n}\n\nfragment AliasedImageDoubleTagsFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n"
+    "text": "query CustomizedImageListQuery {\n  customized_images {\n    id\n    name @deprecatedSince(version: \"24.12.0\")\n    humanized_name\n    tag\n    registry\n    architecture\n    digest\n    labels {\n      key\n      value\n    }\n    supported_accelerators\n    namespace @since(version: \"24.12.0\")\n    base_image_name @since(version: \"24.12.0\")\n    tags @since(version: \"24.12.0\") {\n      key\n      value\n    }\n    version @since(version: \"24.12.0\")\n    ...AliasedImageTagTokensFragment\n  }\n}\n\nfragment AliasedImageTagTokensFragment on ImageNode {\n  labels {\n    key\n    value\n  }\n  tags @since(version: \"24.12.0\") {\n    key\n    value\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0e0ff40aaf7c9d5c859389b31cd6762a";
+(node as any).hash = "535609860d95acb1ce01278408ad22eb";
 
 export default node;

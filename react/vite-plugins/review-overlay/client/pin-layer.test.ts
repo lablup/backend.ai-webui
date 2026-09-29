@@ -15,6 +15,7 @@ let host: HTMLElement;
 let layer: PinLayer;
 let toasts: string[];
 let hidden: string[];
+let editRequests: string[];
 let scrolled: string[];
 let pending: string[][];
 
@@ -84,6 +85,7 @@ beforeEach(() => {
   document.body.innerHTML = '';
   toasts = [];
   hidden = [];
+  editRequests = [];
   scrolled = [];
   pending = [];
   host = document.createElement('div');
@@ -108,12 +110,24 @@ beforeEach(() => {
       toast: 'Copied 1 pin',
     }),
     onHide: (pin) => hidden.push(pin.id),
+    onEdit: (pin) => editRequests.push(pin.id),
   });
 });
 
 afterEach(() => {
   layer.dispose();
+  delete (document.documentElement as Partial<HTMLElement>).getClientRects;
 });
+
+/**
+ * jsdom lays nothing out, and the client reads that as "no layout engine"
+ * rather than "everything is hidden". A test about hidden elements has to say
+ * the document does lay out.
+ */
+const laidOut = () => {
+  document.documentElement.getClientRects = () =>
+    [{ left: 0, top: 0, width: 1024, height: 800 }] as unknown as DOMRectList;
+};
 
 describe('createPinLayer', () => {
   it('draws one view per pin, tagged with its own id', () => {
@@ -248,6 +262,31 @@ describe('createPinLayer', () => {
     expect(toasts).toEqual([]);
   });
 
+  // …but holding is not unconditional. A page that swaps its visible copy for
+  // an identical hidden one (github.com re-renders its file list that way)
+  // would otherwise leave the pin on the hidden copy for good — a zero-size
+  // box in the page's corner, where the card cannot even say "scrolled below".
+  it('gives a held element back when the page hides it and draws another', async () => {
+    const one = mount('one');
+    layer.show([target('c_a', 'one')], { focusId: null });
+    layer.locate();
+    expect(layer.locatedElement('c_a')).toBe(one);
+
+    // The same anchor, re-rendered: the held copy loses its box, the new one
+    // has one. `getClientRects` is what tells them apart.
+    laidOut();
+    one.getClientRects = () => [] as unknown as DOMRectList;
+    const redrawn = one.cloneNode(true) as HTMLElement;
+    const rect = { left: 20, top: 100, width: 400, height: 200 } as DOMRect;
+    redrawn.getClientRects = () => [rect] as unknown as DOMRectList;
+    redrawn.getBoundingClientRect = () => rect;
+    document.body.append(redrawn);
+    // The layer repositions on a debounce, off a mutation record.
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    expect(layer.locatedElement('c_a')).toBe(redrawn);
+  });
+
   // The twin of the above, for a removal from the MIDDLE. Trimming the tail
   // to the new length first drops the LAST pin's card and re-seats that pin
   // onto its neighbour's, losing the element it had already located.
@@ -325,6 +364,26 @@ describe('createPinLayer', () => {
       expect(hidden).toEqual(['c_b']);
       expect(layer.ids()).toEqual(['c_a', 'c_b']);
       expect(markerOf('c_b').classList.contains('found')).toBe(true);
+    });
+
+    // FR-3930: the card's ✏️ hands the pin back, and a link's cannot be
+    // re-keyed — its own note is all it ever carried.
+    it('hands the whole target back from the card’s ✏️', () => {
+      layer.show([{ ...target('c_a', 'one'), editable: true }]);
+
+      cardOf('c_a').querySelector<HTMLButtonElement>('.edit')?.click();
+
+      expect(editRequests).toEqual(['c_a']);
+    });
+
+    it('disables ✏️ on a pin no note of ours can re-key', () => {
+      const edit = cardOf('c_b').querySelector<HTMLButtonElement>('.edit');
+
+      expect(edit?.disabled).toBe(true);
+      expect(edit?.getAttribute('aria-label')).toBe(
+        'This pin came from a link — pick the element again to write your own note',
+      );
+      expect(editRequests).toEqual([]);
     });
 
     it('renumbers what is left, so the heads still count the set', () => {

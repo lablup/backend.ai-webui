@@ -4,7 +4,7 @@ import BAIButton from './BAIButton';
 import BAICheckbox from './BAICheckbox';
 import BAIDeleteConfirmModal from './BAIDeleteConfirmModal';
 import BAIFlex from './BAIFlex';
-import BAITag from './BAITag';
+import { Token } from '@astryxdesign/core/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Trash2, Folder } from 'lucide-react';
 import { useState } from 'react';
@@ -234,7 +234,7 @@ export const CustomRenderedItems: Story = {
           <BAIFlex gap="xs" align="center">
             <Folder size="1em" />
             <span>shared-dataset</span>
-            <BAITag color="blue">Public</BAITag>
+            <Token color="blue" label="Public" />
           </BAIFlex>
         ),
       },
@@ -244,7 +244,7 @@ export const CustomRenderedItems: Story = {
           <BAIFlex gap="xs" align="center">
             <Folder size="1em" />
             <span>model-weights-v2</span>
-            <BAITag color="red">Private</BAITag>
+            <Token color="red" label="Private" />
           </BAIFlex>
         ),
       },
@@ -254,7 +254,7 @@ export const CustomRenderedItems: Story = {
           <BAIFlex gap="xs" align="center">
             <Folder size="1em" />
             <span>training-logs</span>
-            <BAITag color="green">Archived</BAITag>
+            <Token color="green" label="Archived" />
           </BAIFlex>
         ),
       },

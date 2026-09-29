@@ -5,9 +5,9 @@
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIMetadataList,
   BAIModal,
@@ -119,13 +119,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
               }}
             >
               {_.map(schedulerOpts?.allowed_session_types, (value) => {
-                return (
-                  <Badge
-                    key={value}
-                    variant="neutral"
-                    label={_.startCase(value)}
-                  />
-                );
+                return <Token key={value} label={_.startCase(value)} />;
               })}
             </BAIFlex>
           </MetadataListItem>
@@ -165,9 +159,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
                   {_.isArray(value) ? (
                     <BAIFlex direction="column">
                       {_.map(value, (item) => {
-                        return (
-                          <Badge key={item} variant="neutral" label={item} />
-                        );
+                        return <Token key={item} label={item} />;
                       })}
                     </BAIFlex>
                   ) : (

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c717a5eb31f722e09dd3476053bb9f03>>
+ * @generated SignedSource<<205c2c643e838d8f0f07a5098902a2f8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -21,7 +21,7 @@ export type UpdateDeploymentRevisionPresetInput = {
   environ?: ReadonlyArray<EnvironEntryInput> | null | undefined;
   id: string;
   imageId?: string | null | undefined;
-  modelDefinition?: PresetModelDefinitionInput | null | undefined;
+  modelDefinition?: UpdatePresetModelDefinitionInput | null | undefined;
   name?: string | null | undefined;
   openToPublic?: boolean | null | undefined;
   presetValues?: ReadonlyArray<RuntimeVariantPresetValueEntryInput> | null | undefined;
@@ -50,20 +50,20 @@ export type BlueGreenConfigInput = {
   autoPromote?: boolean;
   promoteDelaySeconds?: number;
 };
-export type PresetModelDefinitionInput = {
-  models: ReadonlyArray<PresetModelConfigInput>;
+export type UpdatePresetModelDefinitionInput = {
+  models?: ReadonlyArray<UpdatePresetModelConfigInput> | null | undefined;
 };
-export type PresetModelConfigInput = {
-  metadata?: PresetModelMetadataInput | null | undefined;
+export type UpdatePresetModelConfigInput = {
+  metadata?: UpdatePresetModelMetadataInput | null | undefined;
   modelPath?: string | null | undefined;
   name?: string | null | undefined;
-  service: PresetModelServiceConfigInput;
+  service?: UpdatePresetModelServiceConfigInput | null | undefined;
 };
-export type PresetModelServiceConfigInput = {
+export type UpdatePresetModelServiceConfigInput = {
   command?: string | null | undefined;
-  healthCheck?: PresetModelHealthCheckInput | null | undefined;
+  healthCheck?: UpdatePresetModelHealthCheckInput | null | undefined;
   port?: number | null | undefined;
-  preStartActions: ReadonlyArray<PreStartActionInput>;
+  preStartActions?: ReadonlyArray<PreStartActionInput> | null | undefined;
   shell?: string | null | undefined;
   startCommand?: ReadonlyArray<string> | null | undefined;
 };
@@ -71,16 +71,16 @@ export type PreStartActionInput = {
   action: string;
   args: any;
 };
-export type PresetModelHealthCheckInput = {
-  enable?: boolean;
-  expectedStatusCode?: number;
-  initialDelay?: number;
-  interval?: number;
-  maxRetries?: number;
-  maxWaitTime?: number;
-  path?: string;
+export type UpdatePresetModelHealthCheckInput = {
+  enable?: boolean | null | undefined;
+  expectedStatusCode?: number | null | undefined;
+  initialDelay?: number | null | undefined;
+  interval?: number | null | undefined;
+  maxRetries?: number | null | undefined;
+  maxWaitTime?: number | null | undefined;
+  path?: string | null | undefined;
 };
-export type PresetModelMetadataInput = {
+export type UpdatePresetModelMetadataInput = {
   architecture?: string | null | undefined;
   author?: string | null | undefined;
   category?: string | null | undefined;
@@ -88,7 +88,6 @@ export type PresetModelMetadataInput = {
   description?: string | null | undefined;
   framework?: ReadonlyArray<string> | null | undefined;
   label?: ReadonlyArray<string> | null | undefined;
-  lastModified?: string | null | undefined;
   license?: string | null | undefined;
   minResource?: any | null | undefined;
   task?: string | null | undefined;
