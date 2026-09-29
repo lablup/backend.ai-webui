@@ -12,9 +12,11 @@ import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Token } from '@astryxdesign/core/Token';
 import {
+  BAIAlert,
   BAICard,
   BAIDoubleToken,
   BAIFlex,
+  BAILink,
   BAIMetadataList,
   BAISkeleton,
   BAIText,
@@ -187,6 +189,31 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
           <Tab value="permissions" label={t('rbac.Permissions')} />
           <Tab value="assignments" label={t('rbac.RoleAssignments')} />
         </TabList>
+        {activeTab === 'permissions' && role.source === 'SYSTEM' && (
+          <BAIAlert
+            type="warning"
+            showIcon
+            title={t('rbac.SystemRolePermissionReadOnly')}
+            action={
+              <BAILink
+                style={{
+                  fontSize: 'var(--text-body-size)',
+                  marginTop: 'var(--spacing-1)',
+                }}
+                to={`/admin/rbac?${new URLSearchParams({
+                  tab: 'presets',
+                  ...(role.scopeType && {
+                    filter: JSON.stringify({
+                      scopeType: { equals: role.scopeType.toLowerCase() },
+                    }),
+                  }),
+                }).toString()}`}
+              >
+                {t('rbac.ViewPresets')}
+              </BAILink>
+            }
+          />
+        )}
         <Suspense fallback={<BAISkeleton />}>
           {activeTab === 'permissions' && (
             <RolePermissionSummaryTable

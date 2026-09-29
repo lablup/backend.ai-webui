@@ -1,6 +1,6 @@
-/* The floating save bar of RolePermissionSummaryTable and its changed-row
+/* The floating save bar of RBACPermissionGrid and its changed-row
    tint (P17: a co-located sheet for what props and xstyle cannot express). */
-.role-permission-summary-table__save-bar {
+.rbac-permission-grid__save-bar {
   z-index: 2;
   background-color: var(--color-background-card);
   border: 1px solid var(--color-border);
@@ -8,6 +8,6 @@
   box-shadow: var(--shadow-high);
 }
 
-.role-permission-summary-table__row--changed > td {
+.rbac-permission-grid__row--changed > td {
   background-color: var(--color-background-yellow);
 }
