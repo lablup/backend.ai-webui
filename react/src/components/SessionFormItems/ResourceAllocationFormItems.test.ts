@@ -11,6 +11,7 @@ import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
   AUTOMATIC_DEFAULT_SHMEM,
   getAllocatablePresetIds,
+  getSelectedAgentsRemainingSlots,
   getAutomaticShmem,
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
@@ -252,7 +253,7 @@ describe('getAllocatablePresetIds', () => {
         agentPresets,
         noResourceLimits,
         undefined,
-        { cpu: 2, mem: 4 * GiB, 'cuda.shares': 1 },
+        [{ cpu: 2, mem: 4 * GiB, 'cuda.shares': 1 }],
       );
       expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
     });
@@ -262,7 +263,7 @@ describe('getAllocatablePresetIds', () => {
         agentPresets,
         noResourceLimits,
         undefined,
-        { cpu: 8, mem: 64 * GiB },
+        [{ cpu: 8, mem: 64 * GiB }],
       );
       expect(result).toEqual(['cpu1_mem2g']);
     });
@@ -298,7 +299,7 @@ describe('getAllocatablePresetIds', () => {
         ],
         noResourceLimits,
         undefined,
-        { cpu: 4, mem: 8 * GiB },
+        [{ cpu: 4, mem: 8 * GiB }],
       );
       expect(result).toEqual(['cpu1_mem2g']);
     });
@@ -320,7 +321,7 @@ describe('getAllocatablePresetIds', () => {
         ],
         noResourceLimits,
         undefined,
-        { cpu: 1, mem: 2 * GiB },
+        [{ cpu: 1, mem: 2 * GiB }],
       );
       expect(result).toEqual(['cpu1_mem2g_shmem1g']);
     });
@@ -330,7 +331,7 @@ describe('getAllocatablePresetIds', () => {
         agentPresets,
         noResourceLimits,
         undefined,
-        { cpu: 0, mem: 0, 'cuda.shares': 0 },
+        [{ cpu: 0, mem: 0, 'cuda.shares': 0 }],
       );
       expect(result).toEqual([]);
     });
@@ -340,7 +341,40 @@ describe('getAllocatablePresetIds', () => {
         agentPresets,
         { cpu: { max: 2 }, mem: {}, accelerators: {} },
         undefined,
-        { cpu: 16, mem: 64 * GiB, 'cuda.shares': 16 },
+        [{ cpu: 16, mem: 64 * GiB, 'cuda.shares': 16 }],
+      );
+      expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
+    });
+
+    it('keeps a preset that fits on at least one of several selected agents', () => {
+      // Selected agents are scheduling candidates: the 4-CPU preset fits only
+      // the second agent, which is enough to keep it enabled.
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [
+          { cpu: 1, mem: 2 * GiB },
+          { cpu: 4, mem: 8 * GiB, 'cuda.shares': 2 },
+        ],
+      );
+      expect(result).toEqual([
+        'cpu4_mem8g_cuda2',
+        'cpu2_mem4g_cuda1',
+        'cpu1_mem2g',
+      ]);
+    });
+
+    it('excludes a preset that none of the selected agents can host', () => {
+      // Capacity is not pooled: two 2-CPU agents cannot host a 4-CPU kernel.
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [
+          { cpu: 2, mem: 8 * GiB, 'cuda.shares': 2 },
+          { cpu: 2, mem: 8 * GiB, 'cuda.shares': 2 },
+        ],
       );
       expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
     });
@@ -357,6 +391,71 @@ describe('getAllocatablePresetIds', () => {
         'cpu1_mem2g',
       ]);
     });
+  });
+});
+
+describe('getSelectedAgentsRemainingSlots', () => {
+  const remainingSlotsByAgentId = {
+    'agent-a': { cpu: 4, mem: 8 },
+    'agent-b': { cpu: 8, mem: 16 },
+  };
+
+  it('returns undefined for auto or an empty selection', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: 'auto',
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['auto', 'agent-a'],
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: [],
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('returns one entry per selected agent for a multi-agent selection', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['agent-a', 'agent-b'],
+        remainingSlotsByAgentId,
+        clusterMode: 'multi-node',
+        clusterSize: 2,
+      }),
+    ).toEqual([
+      { cpu: 4, mem: 8 },
+      { cpu: 8, mem: 16 },
+    ]);
+  });
+
+  it('splits every candidate across the containers of a single-node cluster', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['agent-a', 'agent-b'],
+        remainingSlotsByAgentId,
+        clusterMode: 'single-node',
+        clusterSize: 2,
+      }),
+    ).toEqual([
+      { cpu: 2, mem: 4 },
+      { cpu: 4, mem: 8 },
+    ]);
+  });
+
+  it('skips filtering when any selected agent has no loaded capacity', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['agent-a', 'agent-unloaded'],
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
   });
 });
 

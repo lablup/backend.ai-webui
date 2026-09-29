@@ -484,27 +484,15 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
-  // A concrete single agent bounds the allocation further than the
-  // keypair/group/resource-group limits do. "auto" and multi-agent picks are
-  // scheduled across agents, so they keep the unfiltered preset list.
-  const selectedAgentNames = _.compact(_.castArray(currentAgentInForm));
-  const pinnedAgentRemainingSlots =
-    enableAgentSelect &&
-    selectedAgentNames.length === 1 &&
-    selectedAgentNames[0] !== 'auto'
-      ? agentRemainingSlots[selectedAgentNames[0]]
-      : undefined;
-  // A single-node cluster puts every container on the pinned agent, so each
-  // container only gets its share of the agent's remaining slots.
-  const containersOnPinnedAgent =
-    currentClusterMode === 'single-node'
-      ? Math.max(_.toNumber(currentClusterSize) || 1, 1)
-      : 1;
-  const selectedAgentRemainingSlots = pinnedAgentRemainingSlots
-    ? _.mapValues(
-        pinnedAgentRemainingSlots,
-        (value) => value / containersOnPinnedAgent,
-      )
+  // Concrete agent picks bound the allocation further than the
+  // keypair/group/resource-group limits do; "auto" keeps the unfiltered list.
+  const selectedAgentsRemainingSlots = enableAgentSelect
+    ? getSelectedAgentsRemainingSlots({
+        selectedAgents: currentAgentInForm,
+        remainingSlotsByAgentId: agentRemainingSlots,
+        clusterMode: currentClusterMode,
+        clusterSize: currentClusterSize,
+      })
     : undefined;
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
@@ -514,7 +502,7 @@ const ResourceAllocationFormItems: React.FC<
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
-      selectedAgentRemainingSlots,
+      selectedAgentsRemainingSlots,
     ),
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
@@ -1999,8 +1987,12 @@ export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
   currentImage: Image,
-  /** Remaining slots of the single agent the session is pinned to, if any. */
-  agentRemainingSlots?: Record<string, number>,
+  /**
+   * Per-container remaining slots of each selected candidate agent (see
+   * `getSelectedAgentsRemainingSlots`). A preset stays allocatable when at
+   * least one of them can host it; omit to skip the agent check.
+   */
+  agentsRemainingSlots?: Array<Record<string, number>>,
 ) => {
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -2087,12 +2079,15 @@ export const getAllocatablePresetIds = (
       ? bySliderLimit
       : _.intersection(bySliderLimit, byImageAcceleratorLimits);
 
-  if (!agentRemainingSlots) {
+  if (!agentsRemainingSlots) {
     return byResourceLimit;
   }
 
-  const byAgentRemainingSlots = _.filter(presets, (preset) => {
-    return _.every(preset.resource_slots, (_value, key) => {
+  const fitsOnAgent = (
+    preset: ResourcePreset,
+    agentRemainingSlots: Record<string, number>,
+  ) =>
+    _.every(preset.resource_slots, (_value, key) => {
       // shmem comes out of the session's own mem, so the agent doesn't slot it.
       if (key === 'shmem') return true;
       const requested = preset.resource_slots[key];
@@ -2105,7 +2100,59 @@ export const getAllocatablePresetIds = (
         ? compareNumberWithUnits(requested, remaining) <= 0
         : (_.toNumber(requested) || 0) <= remaining;
     });
-  }).map((preset) => preset.id);
+
+  const byAgentRemainingSlots = _.filter(presets, (preset) =>
+    _.some(agentsRemainingSlots, (agentRemainingSlots) =>
+      fitsOnAgent(preset, agentRemainingSlots),
+    ),
+  ).map((preset) => preset.id);
 
   return _.intersection(byResourceLimit, byAgentRemainingSlots);
+};
+
+/**
+ * Resolves the agent field into the per-container remaining slots of every
+ * selected candidate agent, or `undefined` when the preset list must stay
+ * unfiltered.
+ *
+ * Selected agents are scheduling *candidates*: the session may land on any one
+ * of them, so the caller keeps a preset when at least one candidate fits it.
+ * The result is `undefined` (no filtering) for "auto", an empty selection, or
+ * when any selected agent has no loaded capacity: that agent cannot be proven
+ * unable to host a preset, so nothing may be disabled on its account.
+ *
+ * Single-node mode puts every container on whichever agent ends up hosting
+ * the session, so each candidate's slots are split across `cluster_size`
+ * containers. Multi-node spreads kernels across agents, so it is compared per
+ * kernel: the lenient reading of "some candidate fits".
+ */
+export const getSelectedAgentsRemainingSlots = ({
+  selectedAgents,
+  remainingSlotsByAgentId,
+  clusterMode,
+  clusterSize,
+}: {
+  selectedAgents: string | Array<string | null | undefined> | null | undefined;
+  remainingSlotsByAgentId: AgentRemainingSlotsMap;
+  clusterMode?: string | null;
+  clusterSize?: number | string | null;
+}): Array<Record<string, number>> | undefined => {
+  const selectedAgentIds = _.compact(_.castArray(selectedAgents));
+  if (selectedAgentIds.length === 0 || _.includes(selectedAgentIds, 'auto')) {
+    return undefined;
+  }
+  const candidates = _.map(
+    selectedAgentIds,
+    (agentId) => remainingSlotsByAgentId[agentId],
+  );
+  if (_.some(candidates, (slots) => !slots)) {
+    return undefined;
+  }
+  const containersPerAgent =
+    clusterMode === 'single-node'
+      ? Math.max(_.toNumber(clusterSize) || 1, 1)
+      : 1;
+  return _.map(candidates, (slots) =>
+    _.mapValues(slots, (value) => value / containersPerAgent),
+  );
 };
