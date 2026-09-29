@@ -13,6 +13,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import AgentDetailDrawer from './AgentDetailDrawer';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import BAIRadioGroup from './BAIRadioGroup';
+import WebMCPAgentListTools from './WebMCPAgentListTools';
 import { Token } from '@astryxdesign/core/Token';
 import {
   AgentNodeInList,
@@ -49,11 +50,14 @@ interface AgentListProps {
   headerProps?: BAIFlexProps;
   fetchKey?: string;
   onChangeFetchKey?: (key: string) => void;
+  /** Register the WebMCP agent tools; only the agent page owns them. */
+  registerWebMCPTools?: boolean;
 }
 
 const AgentList: React.FC<AgentListProps> = ({
   tableProps,
   headerProps,
+  registerWebMCPTools,
   ...otherProps
 }) => {
   'use memo';
@@ -124,6 +128,7 @@ const AgentList: React.FC<AgentListProps> = ({
             node {
               id
               ...BAIAgentTableFragment
+              ...WebMCPAgentListToolsFragment
               ...AgentDetailModalFragment
               ...AgentDetailDrawerFragment
             }
@@ -195,6 +200,9 @@ const AgentList: React.FC<AgentListProps> = ({
 
   const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
     'table_column_overrides.AgentList',
+  );
+  const agentNodes = filterOutEmpty(
+    agent_nodes?.edges.map((e) => e?.node) ?? [],
   );
 
   return (
@@ -313,11 +321,20 @@ const AgentList: React.FC<AgentListProps> = ({
           />
         </BAIFlex>
       </BAIFlex>
+      {registerWebMCPTools && (
+        <WebMCPAgentListTools
+          agentsFrgmt={agentNodes}
+          columnOverrides={columnOverrides}
+          page={tablePaginationOption.current}
+          pageSize={tablePaginationOption.pageSize}
+          total={agent_nodes?.count}
+          viewParams={{ tab: 'agents', ...queryParams }}
+          openedAgentId={currentAgentInfo?.id}
+        />
+      )}
       <BAIAgentTable
         resizable
-        agentsFragment={filterOutEmpty(
-          agent_nodes?.edges.map((e) => e?.node) ?? [],
-        )}
+        agentsFragment={agentNodes}
         onClickAgentName={(agent) => {
           const targetAgent = _.find(
             agent_nodes?.edges,
