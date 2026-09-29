@@ -323,7 +323,22 @@ async function mintInPage(page, find, fields, at, texts = {}) {
       // entry — as `mintStop` read them. A language it could not read resolves
       // by selector, testid landmark and rect.
       const captured = raw.txt;
-      if (raw.i18n) {
+      // A selector that is one testid, unique on the page, already names the
+      // element; its text (a notification's message) would only pin the stop
+      // to what happened to be on screen while minting.
+      const soleTestid =
+        /^\[data-testid="[^"]+"\]$/.test(raw.s) &&
+        document.querySelectorAll(raw.s).length === 1;
+      if (soleTestid) {
+        delete raw.txt;
+        if (raw.i18n)
+          raw.i18n = Object.fromEntries(
+            Object.entries(raw.i18n).map(([lang, entry]) => {
+              const { txt: _txt, ...rest } = entry ?? {};
+              return [lang, rest];
+            }),
+          );
+      } else if (raw.i18n) {
         delete raw.txt;
         if (texts[raw.lng]) raw.txt = texts[raw.lng];
         const i18n = { ...raw.i18n };
