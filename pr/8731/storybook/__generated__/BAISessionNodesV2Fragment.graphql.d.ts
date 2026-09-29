@@ -17,7 +17,7 @@ export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
     };
     readonly metadata: {
         readonly name: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAISessionClusterModeV2Fragment" | "BAISessionTypeTagV2Fragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAISessionClusterModeV2Fragment" | "BAISessionTypeTokenV2Fragment">;
     };
     readonly project: {
         readonly basicInfo: {

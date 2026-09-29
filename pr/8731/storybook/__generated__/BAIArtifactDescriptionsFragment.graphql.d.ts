@@ -6,7 +6,7 @@ export type BAIArtifactDescriptionsFragment$data = {
         readonly name: string | null | undefined;
         readonly url: string | null | undefined;
     };
-    readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTagFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTokenFragment">;
     readonly " $fragmentType": "BAIArtifactDescriptionsFragment";
 };
 export type BAIArtifactDescriptionsFragment$key = {

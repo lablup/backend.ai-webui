@@ -66,3 +66,5 @@ export type { UseToggleActions } from './useToggle';
 export { default as useUpdateEffect } from './useUpdateEffect';
 export { useProjectResourceGroups, StorageHostFetchError, } from './useProjectResourceGroups';
 export type { ScalingGroupItem } from './useProjectResourceGroups';
+export { isMountableLegacyVFolder, useSuspendedLegacyVFolders, } from './useSuspendedLegacyVFolders';
+export type { LegacyVFolderMountScope } from './useSuspendedLegacyVFolders';
