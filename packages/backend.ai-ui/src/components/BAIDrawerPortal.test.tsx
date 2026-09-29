@@ -176,7 +176,7 @@ describe('BAIDrawerPortal', () => {
   });
 
   // The non-scrim drawer (the notification drawer) skips the portal but goes
-  // through the same patched lab handler, so it needs the same guarantee.
+  // through the same lab `Drawer` fork handler, so it needs the same guarantee.
   it('routes Escape to a modal opened inside a non-scrim drawer', async () => {
     const user = userEvent.setup();
     const onDrawerClose = vi.fn();

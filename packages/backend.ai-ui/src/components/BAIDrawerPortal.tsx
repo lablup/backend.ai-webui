@@ -8,9 +8,9 @@
  the inner drawer therefore takes `hasScrim={false}` and opens with `show()`,
  which promotes nothing (FR-3585).
 
- Stays in BUI rather than ui-common (FR-4087): it relies on this repo's lab
- patch (`react/patches/@astryxdesign__lab@*.patch`: Escape containment and an
- `aria-modal` passthrough), which ui-common's consumers do not get.
+ Relies on the Escape containment and `aria-modal` passthrough of ui-common's
+ lab `Drawer` fork. Stays in BUI (FR-4098): the name `Drawer` is that fork's,
+ its styles need the optional lab peer, and the band is BUI's z-index ladder.
 */
 import '../styles/zIndexLadder';
 import './BAIDrawerPortal.css';

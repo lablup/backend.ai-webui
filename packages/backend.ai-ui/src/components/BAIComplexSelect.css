@@ -29,13 +29,10 @@
   /* --- Popup surface ------------------------------------------------------
 
      `ComplexSelector` wraps the render-prop body in a content box carrying
-     `padding: var(--spacing-3)`; `Selector` puts its panel content straight on
-     the popover surface. Our body IS a Selector-shaped panel — it brings the
-     same gutters `Selector`'s does — so that box added a second 12px inset on
-     top of them: every row sat 12px further in than the equivalent BAISelect
-     row, and the divider could not reach the panel edge. Zeroing it is safe
-     because `BAIComplexSelect` is the only consumer of `ComplexSelector` in
-     this app. */
+     `padding: var(--spacing-3)`, a second inset on top of the gutters this
+     Selector-shaped body brings. BAIComplexSelect is its only consumer here.
+     The prop route is `contentXstyle`, which needs a StyleX compiler BUI does
+     not have. */
   .astryx-complex-selector-popup > div {
     padding: 0;
   }
