@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Гүйцэтгэл амжилтгүй боллоо",
-    "ErrorOccurred": "Алдаа гарлаа"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
     "NoResults": "Үр дүн олдсонгүй",
@@ -563,22 +559,10 @@
     "Time": "Цаг"
   },
   "comp:BAITable": {
-    "Apply": "Хэрэглэх",
-    "Cancel": "Цуцлах",
     "CollapseAll": "Бүгдийг хураах",
     "ExpandAll": "Бүгдийг дэлгэх",
     "ExpandErrorsOnly": "Зөвхөн алдааг дэлгэх",
-    "ExpandOptions": "Дэлгэх сонголтууд",
-    "ExpandRow": "Мөрийг дэлгэх",
-    "Export": "Экспорт",
-    "ExportCSV": "CSV экспортлах",
-    "GoToFirstPage": "Эх хуудас руу шилжих",
-    "InvalidPageNumber": "Хуудасны дугаар буруу байна",
-    "NoDataToDisplay": "Харуулах өгөгдөл алга",
-    "Pagination": "Хуудаслалт",
-    "SearchTableColumn": "Хүснэгтийн баганыг хайх",
-    "SelectColumnToDisplay": "Дэлгэцийн баганыг сонгоно уу",
-    "SettingTable": "Хүснэгтийн тохиргоо"
+    "ExpandOptions": "Дэлгэх сонголтууд"
   },
   "comp:BAITestButton": {
     "Test": "турших"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Энэ нэр аль хэдийн ашиглагдаж байна. \nӨөр нэр оруулна уу.",
       "FileNameRequired": "Файл эсвэл хавтасны нэрийг оруулна уу."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{{end}} {{total}}}} зүйл"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Нөөцийн мэдээлэл байхгүй байна"

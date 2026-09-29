@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "실행 오류",
-    "ErrorOccurred": "문제가 발생했습니다."
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "옵션 검색 지우기",
     "NoResults": "결과 없음",
@@ -563,22 +559,10 @@
     "Time": "시간"
   },
   "comp:BAITable": {
-    "Apply": "적용",
-    "Cancel": "취소",
     "CollapseAll": "모두 닫기",
     "ExpandAll": "모두 열기",
     "ExpandErrorsOnly": "오류만 펼치기",
-    "ExpandOptions": "펼치기 옵션",
-    "ExpandRow": "행 펼치기",
-    "Export": "내보내기",
-    "ExportCSV": "CSV로 내보내기",
-    "GoToFirstPage": "첫 페이지로 이동하기",
-    "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
-    "NoDataToDisplay": "표시할 데이터가 없습니다",
-    "Pagination": "페이지 나누기",
-    "SearchTableColumn": "표시할 열 검색",
-    "SelectColumnToDisplay": "표시할 열 선택",
-    "SettingTable": "표 설정"
+    "ExpandOptions": "펼치기 옵션"
   },
   "comp:BAITestButton": {
     "Test": "테스트"
@@ -672,9 +656,6 @@
       "DuplicatedName": "중복된 이름이 있습니다. 다른 이름을 입력해주세요.",
       "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"

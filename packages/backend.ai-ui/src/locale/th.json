@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "การดำเนินการล้มเหลว",
-    "ErrorOccurred": "เกิดข้อผิดพลาด"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "ล้าง ค้นหาตัวเลือก",
     "NoResults": "ไม่พบผลลัพธ์",
@@ -563,22 +559,10 @@
     "Time": "เวลา"
   },
   "comp:BAITable": {
-    "Apply": "ใช้",
-    "Cancel": "ยกเลิก",
     "CollapseAll": "ยุบทั้งหมด",
     "ExpandAll": "ขยายทั้งหมด",
     "ExpandErrorsOnly": "ขยายเฉพาะข้อผิดพลาด",
-    "ExpandOptions": "ตัวเลือกการขยาย",
-    "ExpandRow": "ขยายแถว",
-    "Export": "ส่งออก",
-    "ExportCSV": "ส่งออก CSV",
-    "GoToFirstPage": "ไปยังหน้าแรก",
-    "InvalidPageNumber": "หมายเลขหน้าไม่ถูกต้อ",
-    "NoDataToDisplay": "ไม่มีข้อมูลที่จะแสดง",
-    "Pagination": "การแบ่งหน้า",
-    "SearchTableColumn": "คอลัมน์ตารางค้นหา",
-    "SelectColumnToDisplay": "เลือกคอลัมน์ที่จะแสดง",
-    "SettingTable": "การตั้งค่าตาราง"
+    "ExpandOptions": "ตัวเลือกการขยาย"
   },
   "comp:BAITestButton": {
     "Test": "ทดสอบ"
@@ -672,9 +656,6 @@
       "DuplicatedName": "ชื่อนี้มีการใช้งานแล้ว \nกรุณากรอกชื่ออื่น",
       "FileNameRequired": "กรุณากรอกชื่อไฟล์หรือโฟลเดอร์"
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "ไม่มีข้อมูลทรัพยากร"

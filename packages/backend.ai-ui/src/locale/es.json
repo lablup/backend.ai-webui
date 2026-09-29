@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Se produjo un error inesperado. Inténtelo de nuevo más tarde o contacte con el soporte si el problema persiste."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Error de ejecución",
-    "ErrorOccurred": "Se produjo un error"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Borrar Buscar opciones",
     "NoResults": "Sin resultados",
@@ -563,22 +559,10 @@
     "Time": "Hora"
   },
   "comp:BAITable": {
-    "Apply": "Aplicar",
-    "Cancel": "Cancelar",
     "CollapseAll": "Contraer todo",
     "ExpandAll": "Expandir todo",
     "ExpandErrorsOnly": "Expandir solo errores",
-    "ExpandOptions": "Opciones de expansión",
-    "ExpandRow": "Expandir fila",
-    "Export": "Exportar",
-    "ExportCSV": "Exportar CSV",
-    "GoToFirstPage": "Ir a la primera página",
-    "InvalidPageNumber": "Número de página no válido",
-    "NoDataToDisplay": "No hay datos para mostrar",
-    "Pagination": "Paginación",
-    "SearchTableColumn": "Columnas de la tabla de búsqueda",
-    "SelectColumnToDisplay": "Seleccionar columnas para mostrar",
-    "SettingTable": "Configuración de tabla"
+    "ExpandOptions": "Opciones de expansión"
   },
   "comp:BAITestButton": {
     "Test": "prueba"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Este nombre ya está en uso. \nIngrese un nombre diferente.",
       "FileNameRequired": "Ingrese un nombre de archivo o carpeta."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} de {{total}} elementos"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No hay datos de recursos disponibles"

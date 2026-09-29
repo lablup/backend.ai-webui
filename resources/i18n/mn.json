@@ -2239,9 +2239,6 @@
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
     "Visit": "Айлчлах"
   },
-  "pagination": {
-    "Total": "{{start}} - {{{End}} {{нийт}}}} зүйл"
-  },
   "project": {
     "Activate": "Идэвхжүүлэх",
     "ActivateProject": "Төслийг идэвхжүүлэх",

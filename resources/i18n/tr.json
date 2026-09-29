@@ -2238,9 +2238,6 @@
     "SuccessfullyUpdated": "Başarıyla güncellendi",
     "Visit": "Ziyaret etmek"
   },
-  "pagination": {
-    "Total": "{{start}} - {{total}} öğelerinin {{end}}"
-  },
   "project": {
     "Activate": "Etkinleştir",
     "ActivateProject": "Projeyi etkinleştir",

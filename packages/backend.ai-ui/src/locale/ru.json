@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Ошибка выполнения",
-    "ErrorOccurred": "Произошла ошибка"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Очистить Поиск по вариантам",
     "NoResults": "Нет результатов",
@@ -563,22 +559,10 @@
     "Time": "Время"
   },
   "comp:BAITable": {
-    "Apply": "Применить",
-    "Cancel": "Отмена",
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Развернуть только ошибки",
-    "ExpandOptions": "Параметры разворачивания",
-    "ExpandRow": "Развернуть строку",
-    "Export": "Экспорт",
-    "ExportCSV": "Экспорт в CSV",
-    "GoToFirstPage": "Перейти на первую страницу",
-    "InvalidPageNumber": "Неверный номер страницы",
-    "NoDataToDisplay": "Нет данных для отображения",
-    "Pagination": "Разбиение на страницы",
-    "SearchTableColumn": "Поиск таблицы столбцов",
-    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы"
+    "ExpandOptions": "Параметры разворачивания"
   },
   "comp:BAITestButton": {
     "Test": "тест"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Это имя уже используется. \nПожалуйста, введите другое имя.",
       "FileNameRequired": "Пожалуйста, введите имя файла или папки."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} элементы"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"

@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Eksekusi gagal",
-    "ErrorOccurred": "Terjadi kesalahan"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Hapus Cari opsi",
     "NoResults": "Tidak ada hasil",
@@ -563,22 +559,10 @@
     "Time": "Waktu"
   },
   "comp:BAITable": {
-    "Apply": "Terapkan",
-    "Cancel": "Batal",
     "CollapseAll": "Ciutkan semua",
     "ExpandAll": "Perluas semua",
     "ExpandErrorsOnly": "Perluas hanya kesalahan",
-    "ExpandOptions": "Opsi perluasan",
-    "ExpandRow": "Perluas baris",
-    "Export": "Ekspor",
-    "ExportCSV": "Ekspor CSV",
-    "GoToFirstPage": "Ke halaman pertama",
-    "InvalidPageNumber": "Nomor halaman tidak valid",
-    "NoDataToDisplay": "Tidak ada data untuk ditampilkan",
-    "Pagination": "Penomoran halaman",
-    "SearchTableColumn": "Kolom Tabel Cari",
-    "SelectColumnToDisplay": "Pilih kolom untuk ditampilkan",
-    "SettingTable": "Pengaturan Tabel"
+    "ExpandOptions": "Opsi perluasan"
   },
   "comp:BAITestButton": {
     "Test": "tes"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
       "FileNameRequired": "Harap masukkan file atau nama folder."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tidak ada data sumber daya yang tersedia"

@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "執行錯誤",
-    "ErrorOccurred": "發生錯誤"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "清除 搜尋選項",
     "NoResults": "無結果",
@@ -563,22 +559,10 @@
     "Time": "時間"
   },
   "comp:BAITable": {
-    "Apply": "套用",
-    "Cancel": "取消",
     "CollapseAll": "收合全部",
     "ExpandAll": "展開全部",
     "ExpandErrorsOnly": "僅展開錯誤",
-    "ExpandOptions": "展開選項",
-    "ExpandRow": "展開列",
-    "Export": "匯出",
-    "ExportCSV": "匯出 CSV",
-    "GoToFirstPage": "跳到第一頁",
-    "InvalidPageNumber": "無效的頁碼",
-    "NoDataToDisplay": "暫無資料",
-    "Pagination": "分頁",
-    "SearchTableColumn": "搜索表列",
-    "SelectColumnToDisplay": "選擇要顯示的列",
-    "SettingTable": "表設置"
+    "ExpandOptions": "展開選項"
   },
   "comp:BAITestButton": {
     "Test": "測試"
@@ -672,9 +656,6 @@
       "DuplicatedName": "此名稱已經在使用中。請輸入其他名稱。",
       "FileNameRequired": "請輸入文件或文件夾名稱。"
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} {{total}}項目"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"

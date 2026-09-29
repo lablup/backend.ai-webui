@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Suoritus epäonnistui",
-    "ErrorOccurred": "Tapahtui virhe"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
     "NoResults": "Ei tuloksia",
@@ -563,22 +559,10 @@
     "Time": "Aika"
   },
   "comp:BAITable": {
-    "Apply": "Käytä",
-    "Cancel": "Peruuta",
     "CollapseAll": "Tiivistä kaikki",
     "ExpandAll": "Laajenna kaikki",
     "ExpandErrorsOnly": "Laajenna vain virheet",
-    "ExpandOptions": "Laajenemisvaihtoehdot",
-    "ExpandRow": "Laajenna rivi",
-    "Export": "Vie",
-    "ExportCSV": "Vie CSV",
-    "GoToFirstPage": "Siirry ensimmäiselle sivulle",
-    "InvalidPageNumber": "Virheellinen sivunumero",
-    "NoDataToDisplay": "Ei näytettäviä tietoja",
-    "Pagination": "Sivutus",
-    "SearchTableColumn": "Hakutaulukon sarakkeet",
-    "SelectColumnToDisplay": "Valitse näytettävä sarakkeet",
-    "SettingTable": "Taulukon asetukset"
+    "ExpandOptions": "Laajenemisvaihtoehdot"
   },
   "comp:BAITestButton": {
     "Test": "testi"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi.",
       "FileNameRequired": "Anna tiedoston tai kansionimi."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Resurssitietoja ei ole käytettävissä"

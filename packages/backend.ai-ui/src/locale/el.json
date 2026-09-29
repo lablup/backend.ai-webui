@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
-    "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
     "NoResults": "Δεν βρέθηκαν αποτελέσματα",
@@ -563,22 +559,10 @@
     "Time": "Ώρα"
   },
   "comp:BAITable": {
-    "Apply": "Εφαρμογή",
-    "Cancel": "Άκυρο",
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
     "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
-    "ExpandOptions": "Επιλογές ανάπτυξης",
-    "ExpandRow": "Ανάπτυξη γραμμής",
-    "Export": "Εξαγωγή",
-    "ExportCSV": "Εξαγωγή CSV",
-    "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
-    "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
-    "NoDataToDisplay": "Δεν υπάρχουν δεδομένα για εμφάνιση",
-    "Pagination": "Σελιδοποίηση",
-    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
-    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
-    "SettingTable": "Ρυθμίσεις πίνακα"
+    "ExpandOptions": "Επιλογές ανάπτυξης"
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Αυτό το όνομα χρησιμοποιείται ήδη. \nΕισαγάγετε ένα διαφορετικό όνομα.",
       "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"

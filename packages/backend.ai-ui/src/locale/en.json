@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Action execution failed",
-    "ErrorOccurred": "Error Occurred"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Clear Search options",
     "NoResults": "No results",
@@ -563,22 +559,10 @@
     "Time": "Time"
   },
   "comp:BAITable": {
-    "Apply": "Apply",
-    "Cancel": "Cancel",
     "CollapseAll": "Collapse all",
     "ExpandAll": "Expand all",
     "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
-    "ExpandRow": "Expand row",
-    "Export": "Export",
-    "ExportCSV": "Export CSV",
-    "GoToFirstPage": "Go to first page",
-    "InvalidPageNumber": "Invalid page number",
-    "NoDataToDisplay": "No data to display",
-    "Pagination": "Pagination",
-    "SearchTableColumn": "Search table columns",
-    "SelectColumnToDisplay": "Select columns to display",
-    "SettingTable": "Table Settings"
+    "ExpandOptions": "Expand options"
   },
   "comp:BAITestButton": {
     "Test": "Test"
@@ -672,9 +656,6 @@
       "DuplicatedName": "This name is already in use. Please enter a different name.",
       "FileNameRequired": "Please enter a file or folder name."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"

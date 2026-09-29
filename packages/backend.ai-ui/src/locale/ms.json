@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ralat tidak dijangka berlaku. Sila cuba lagi nanti atau hubungi sokongan jika masalah berterusan."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Pelaksanaan gagal",
-    "ErrorOccurred": "Ralat berlaku"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Kosongkan Cari pilihan",
     "NoResults": "Tiada keputusan",
@@ -563,22 +559,10 @@
     "Time": "Masa"
   },
   "comp:BAITable": {
-    "Apply": "Guna",
-    "Cancel": "Batal",
     "CollapseAll": "Runtuhkan semua",
     "ExpandAll": "Kembangkan semua",
     "ExpandErrorsOnly": "Kembangkan ralat sahaja",
-    "ExpandOptions": "Pilihan pengembangan",
-    "ExpandRow": "Kembangkan baris",
-    "Export": "Eksport",
-    "ExportCSV": "Eksport CSV",
-    "GoToFirstPage": "Pergi ke halaman pertama",
-    "InvalidPageNumber": "Nombor halaman tidak sah",
-    "NoDataToDisplay": "Tiada data untuk dipaparkan",
-    "Pagination": "Penomboran halaman",
-    "SearchTableColumn": "Lajur jadual carian",
-    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SettingTable": "Tetapan Jadual"
+    "ExpandOptions": "Pilihan pengembangan"
   },
   "comp:BAITestButton": {
     "Test": "ujian"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza.",
       "FileNameRequired": "Sila masukkan fail atau nama folder."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"

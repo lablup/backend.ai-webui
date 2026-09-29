@@ -89,10 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Yürütme başarısız oldu",
-    "ErrorOccurred": "Bir hata oluştu"
-  },
   "comp:BAIComplexSelect": {
     "ClearSearch": "Seçenekleri ara alanını temizle",
     "NoResults": "Sonuç yok",
@@ -563,22 +559,10 @@
     "Time": "Zaman"
   },
   "comp:BAITable": {
-    "Apply": "Uygula",
-    "Cancel": "İptal",
     "CollapseAll": "Tümünü daralt",
     "ExpandAll": "Tümünü genişlet",
     "ExpandErrorsOnly": "Yalnızca hataları genişlet",
-    "ExpandOptions": "Genişletme seçenekleri",
-    "ExpandRow": "Satırı genişlet",
-    "Export": "Dışa aktar",
-    "ExportCSV": "CSV Dışa Aktar",
-    "GoToFirstPage": "İlk sayfaya git",
-    "InvalidPageNumber": "Geçersiz sayfa numarası",
-    "NoDataToDisplay": "Görüntülenecek veri yok",
-    "Pagination": "Sayfalama",
-    "SearchTableColumn": "Arama Tablosu sütunları",
-    "SelectColumnToDisplay": "Görüntülemek için sütunları seçin",
-    "SettingTable": "Masa Ayarları"
+    "ExpandOptions": "Genişletme seçenekleri"
   },
   "comp:BAITestButton": {
     "Test": "test"
@@ -672,9 +656,6 @@
       "DuplicatedName": "Bu isim zaten kullanılıyor. Lütfen farklı bir isim girin.",
       "FileNameRequired": "Lütfen bir dosya veya klasör adı girin."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} öğelerinin {{total}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Kaynak verisi yok"

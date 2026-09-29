@@ -2238,9 +2238,6 @@
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} of {{total}} элементы"
-  },
   "project": {
     "Activate": "Активировать",
     "ActivateProject": "Активировать проект",
