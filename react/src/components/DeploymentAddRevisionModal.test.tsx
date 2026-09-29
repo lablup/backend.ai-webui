@@ -371,6 +371,11 @@ describe('DeploymentAddRevisionModal folder-access gate (FR-2526)', () => {
     });
     // Disabled *with* the explanation, not silently dead.
     expect(screen.getByText(GATE_TOOLTIP)).toBeInTheDocument();
+    // Dismissal would unmount the in-flight state and let a reopen bypass
+    // the gate, so the footer Cancel waits for the request to settle.
+    expect(
+      screen.getByRole('button', { name: 'button.Cancel' }),
+    ).toBeDisabled();
 
     return { environment, openFolderButton };
   };

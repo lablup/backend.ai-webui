@@ -1884,6 +1884,7 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
             <Button
               label={t('button.Cancel')}
               onClick={() => onRequestClose()}
+              isDisabled={isSubmitInFlight}
             />
             <Button
               variant="primary"
@@ -1898,7 +1899,14 @@ const DeploymentAddRevisionModal: React.FC<DeploymentAddRevisionModalProps> = ({
           </BAIFlex>
         </BAIFlex>
       }
-      onCancel={() => onRequestClose()}
+      // Callers unmount on close, so dismissing mid-submit would drop the
+      // in-flight state and let a reopen bypass the folder-access gate.
+      onCancel={() => {
+        if (!isSubmitInFlight) onRequestClose();
+      }}
+      closable={!isSubmitInFlight}
+      mask={{ closable: !isSubmitInFlight }}
+      keyboard={!isSubmitInFlight}
       confirmLoading={isSubmitInFlight}
       {...restModalProps}
     >
