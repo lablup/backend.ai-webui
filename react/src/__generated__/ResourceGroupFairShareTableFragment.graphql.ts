@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4704e3e0ed44d07385a22c6ccb151950>>
+ * @generated SignedSource<<d5d471a648c0a17c1dc088e3832b65c8>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,6 +23,9 @@ export type ResourceGroupFairShareTableFragment$data = ReadonlyArray<{
     }>;
   } | null | undefined;
   readonly id: string;
+  readonly metadata: {
+    readonly createdAt: string;
+  };
   readonly name: string;
   readonly resourceInfo: {
     readonly capacity: {
@@ -38,6 +41,9 @@ export type ResourceGroupFairShareTableFragment$data = ReadonlyArray<{
       }>;
     };
   } | null | undefined;
+  readonly status: {
+    readonly isActive: boolean;
+  };
   readonly " $fragmentSpreads": FragmentRefs<"ResourceGroupFairShareSettingModalFragment">;
   readonly " $fragmentType": "ResourceGroupFairShareTableFragment";
 }>;
@@ -95,6 +101,42 @@ return {
       "args": null,
       "kind": "ScalarField",
       "name": "name",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ResourceGroupStatus",
+      "kind": "LinkedField",
+      "name": "status",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "isActive",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ResourceGroupMetadata",
+      "kind": "LinkedField",
+      "name": "metadata",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "createdAt",
+          "storageKey": null
+        }
+      ],
       "storageKey": null
     },
     {
@@ -204,6 +246,6 @@ return {
 };
 })();
 
-(node as any).hash = "762edf76f21c209e71c57226aa515b77";
+(node as any).hash = "9b0e1691363f8e769b703c3e13e87393";
 
 export default node;

@@ -13,6 +13,7 @@ import {
   pinUrl,
   readablePath,
   retryUntil,
+  ROUTE_EVENT,
   stripPinParts,
   watchRoute,
 } from './deeplink.js';
@@ -525,6 +526,23 @@ describe('watchRoute', () => {
     expect(seen).toHaveBeenCalledTimes(3);
   });
 
+  /**
+   * The `history` patch cannot reach the page from a content script's isolated
+   * world, but a DOM event crosses it — so a second host dispatches this one
+   * itself (ADR 0008). That path is the reason the name is exported.
+   */
+  it('reports the route event a host dispatches without any patch', () => {
+    const seen = vi.fn();
+    const stop = watchRoute(seen);
+
+    window.dispatchEvent(new Event(ROUTE_EVENT));
+
+    expect(seen).toHaveBeenCalledTimes(1);
+    stop();
+    window.dispatchEvent(new Event(ROUTE_EVENT));
+    expect(seen).toHaveBeenCalledTimes(1);
+  });
+
   it('patches the history once, however many overlays watch it', () => {
     const first = vi.fn();
     const second = vi.fn();
@@ -537,5 +555,34 @@ describe('watchRoute', () => {
     expect(second).toHaveBeenCalledTimes(1);
     stopFirst();
     stopSecond();
+  });
+});
+
+describe('pathNeedsChange ignores volatile query params (FR-3949)', () => {
+  it('counts the launcher URL as the pin’s page while formValues churns', () => {
+    const anchor = {
+      v: 3 as const,
+      s: 'button',
+      p: '/session/start',
+      q: 'tab=general',
+    };
+    expect(
+      pathNeedsChange(anchor, {
+        pathname: '/session/start',
+        search: '?tab=general&formValues=%7B%22name%22%3A%22exp%22%7D',
+      }),
+    ).toBe(false);
+    expect(
+      pathNeedsChange(
+        { ...anchor, q: 'formValues=%7B%7D&tab=general' },
+        { pathname: '/session/start', search: '?tab=general' },
+      ),
+    ).toBe(false);
+    expect(
+      pathNeedsChange(anchor, {
+        pathname: '/session/start',
+        search: '?tab=other&formValues=%7B%7D',
+      }),
+    ).toBe(true);
   });
 });

@@ -127,13 +127,15 @@ const ManageImageResourceLimitModal: React.FC<
 
   return (
     <BAIModal
-      destroyOnHidden
       open={open}
       maskClosable={false}
       onOk={handleOnClick}
       onCancel={() => onRequestClose(false)}
       confirmLoading={isInFlightModifyImageInput}
       centered
+      // 520px default overflows the 2-column NumberInput grid (min-content
+      // ~513px) and forces a horizontal scrollbar (FR-3887).
+      width={640}
       title={t('environment.ModifyMinimumImageResourceLimit')}
       okText={t('button.Save')}
       {...BAIModalProps}

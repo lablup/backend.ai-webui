@@ -12,8 +12,8 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
@@ -23,7 +23,8 @@ import {
   BAIPureStorageIcon,
   BAITable,
   BAIProgressWithLabel,
-  BAIDoubleTag,
+  BAIDoubleToken,
+  tokenColorForStatus,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
   useFetchKey,
@@ -34,49 +35,16 @@ import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-// Feeds BAIDoubleTag only, which still renders an antd `<Tag color>`
-// internally (frontier, unconverted — 16 consumers across the app). Legacy
-// antd color-preset strings are kept for that reason; the repo-global
-// `storageBackend` domain lookup (astryxTagVariant.ts, ticket 13) was
-// pre-built for this exact data and becomes the source of truth once
-// BAIDoubleTag itself is rebuilt on Astryx Badge.
-const backendType = {
-  xfs: {
-    color: 'blue',
-    icon: <Server />,
-  },
-  ceph: {
-    color: 'geekblue',
-    icon: <BAICephIcon />,
-  },
-  cephfs: {
-    color: 'geekblue',
-    icon: <BAICephIcon />,
-  },
-  vfs: {
-    color: 'green',
-    icon: <Server />,
-  },
-  nfs: {
-    color: 'green',
-    icon: <Server />,
-  },
-  purestorage: {
-    color: 'red',
-    icon: <BAIPureStorageIcon />,
-  },
-  dgx: {
-    color: 'green',
-    icon: <Server />,
-  },
-  spectrumscale: {
-    color: 'green',
-    icon: <Server />,
-  },
-  weka: {
-    color: 'purple',
-    icon: <Server />,
-  },
+const backendTypeIcon: Record<string, React.ReactNode> = {
+  xfs: <Server />,
+  ceph: <BAICephIcon />,
+  cephfs: <BAICephIcon />,
+  vfs: <Server />,
+  nfs: <Server />,
+  purestorage: <BAIPureStorageIcon />,
+  dgx: <Server />,
+  spectrumscale: <Server />,
+  weka: <Server />,
 };
 
 type StorageVolume = NonNullable<
@@ -163,22 +131,19 @@ const StorageProxyList = () => {
       key: 'backend',
       dataIndex: 'backend',
       render: (value) => {
-        const platform = backendType[value as keyof typeof backendType] ?? {
-          color: 'gold',
-          icon: <Server />,
-        };
+        const icon = backendTypeIcon[value];
 
         return (
           <BAIFlex gap="xxs">
-            {platform.icon}
-            <BAIDoubleTag
+            {icon ?? <Server />}
+            <BAIDoubleToken
               values={[
-                {
-                  label: 'Backend',
-                },
+                { label: 'Backend' },
                 {
                   label: value,
-                  color: platform.color,
+                  color: icon
+                    ? tokenColorForStatus('storageBackend', value)
+                    : 'yellow',
                 },
               ]}
             />
@@ -235,7 +200,7 @@ const StorageProxyList = () => {
         return (
           <BAIFlex gap="xxs" align="start" wrap="wrap">
             {_.map(value, (item) => (
-              <Badge key={item} variant="blue" label={item} />
+              <Token key={item} color="blue" label={item} />
             ))}
           </BAIFlex>
         );

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d310181c16674858c517ceed7eff4603>>
+ * @generated SignedSource<<beeabdcead0db4ab02cf93678294958c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
-export type VFolderMountPermission = "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
+export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type VFolderPermissionCellV2Fragment$data = {
   readonly accessControl: {

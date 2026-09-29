@@ -12,7 +12,9 @@ import * as stylex from '@stylexjs/stylex';
 import {
   useMemoizedJSONParse,
   BAIFlex,
-  BAIDoubleTag,
+  BAIDoubleBadge,
+  type AstryxBadgeVariant,
+  badgeVariantForTagColor,
   BAIIntervalView,
   BAIQuestionIconWithTooltip,
 } from 'backend.ai-ui';
@@ -59,31 +61,33 @@ const styles = stylex.create({
   },
 });
 
-export function getIdleChecksTagColor(
+export function getIdleChecksBadgeVariant(
   result: IdleCheckItem,
   criteria: 'remaining' | 'utilization',
-) {
+): AstryxBadgeVariant {
   // Determine color based on remaining time.
   if (criteria === 'remaining') {
     if (!result.remaining || result.remaining < 3600) {
-      return 'red';
+      return badgeVariantForTagColor('red');
     } else if (result.remaining < 3600 * 4) {
-      return 'orange';
+      return badgeVariantForTagColor('orange');
     } else {
-      return 'green';
+      return badgeVariantForTagColor('green');
     }
   }
 
   // Determine color based on utilization, matching the overall badge color
   // shown by SessionReclamationStatusCell.
   if (result.extra && (!result.remaining || result.remaining < 3600 * 4)) {
-    return getOverallReclamation(
-      result.extra.resources,
-      result.extra.thresholds_check_operator,
-    )?.color;
+    return badgeVariantForTagColor(
+      getOverallReclamation(
+        result.extra.resources,
+        result.extra.thresholds_check_operator,
+      )?.color,
+    );
   }
 
-  return undefined;
+  return 'neutral';
 }
 
 const SessionIdleCheckItem: React.FC<{
@@ -110,7 +114,7 @@ const SessionIdleCheckItem: React.FC<{
     }
   };
 
-  const tagColor = getIdleChecksTagColor(
+  const badgeVariant = getIdleChecksBadgeVariant(
     value,
     checkKey === 'utilization' ? 'utilization' : 'remaining',
   );
@@ -144,15 +148,15 @@ const SessionIdleCheckItem: React.FC<{
                 : '00:00:00'
             }
             render={(remainingTime) => (
-              <BAIDoubleTag
+              <BAIDoubleBadge
                 values={[
                   {
                     label: getRemainingTimeTypeLabel(value.remaining_time_type),
-                    color: tagColor,
+                    variant: badgeVariant,
                   },
                   {
                     label: remainingTime,
-                    color: tagColor,
+                    variant: badgeVariant,
                   },
                 ]}
               />

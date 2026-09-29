@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-09-04
+> **Last Updated:** 2026-09-08
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 317 / 462 features covered (68%)**
+**Overall (in-scope routes): 348 / 505 features covered (69%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -44,6 +44,7 @@
 | Reservoir                | `/reservoir`, `/reservoir/:artifactId`           |    18    |    0    |  ❌ 0%  |
 | Branding                 | `/branding`                                      |    14    |    0    |  ❌ 0%  |
 | App Launcher             | (modal)                                          |    19    |   11    | 🔶 58%  |
+| Edu App Launcher         | `/applauncher`, `/edu-applauncher`               |    8     |    5    | 🔶 63%  |
 | Chat                     | `/chat/:id?`                                     |    7     |    7    | ✅ 100% |
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    22    |   21    | 🔶 95%  |
@@ -52,7 +53,8 @@
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
-| **Total**                |                                                  | **482**  | **328** | **68%** |
+| Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
+| **Total**                |                                                  | **505**  | **348** | **69%** |
 
 ---
 
@@ -1003,6 +1005,27 @@
 
 ---
 
+### 26b. Edu App Launcher (`/applauncher`, `/edu-applauncher`)
+
+**Test files:** [`e2e/app-launcher/edu-applauncher-stoken.spec.ts`](app-launcher/edu-applauncher-stoken.spec.ts)
+
+External portals (LMS) open these routes with a signed `sToken` plus the app and session to launch. The spec is fully mock-driven (`config.toml`, `/func/`, `/server/login-check`, `/server/token-login`) and needs no cluster; the sToken-authenticated happy path is validated by an out-of-tree manager `AUTHORIZE` hook plugin and cannot be minted in-tree.
+
+| Feature                                                                  | Status | Test                                                                                                      |
+| ------------------------------------------------------------------------ | ------ | --------------------------------------------------------------------------------------------------------- |
+| Invalid sToken → boundary error card (`/edu-applauncher`)                | ✅     | ``invalid sToken on `/edu-applauncher` surfaces the boundary error card``                                 |
+| Invalid sToken → same error card on `/applauncher` (legacy alias)        | ✅     | ``invalid sToken on `/applauncher` (legacy alias) surfaces the same error card``                          |
+| Non-sToken URL params preserved in the error state                       | ✅     | `error state keeps non-sToken URL params intact (app, session_id)`                                        |
+| eduApp URL params forwarded to `token_login`                             | ✅     | `eduApp URL params (app, session_id, api_version, date, endpoint) all reach the token_login body`         |
+| Missing sToken → missing-token error card, no `token_login` call         | ✅     | ``User cannot launch an app from `/applauncher` without an sToken and sees the missing-token error card`` |
+| Launch app for an existing `session_id` while already logged in (#9488)  | ❌     | -                                                                                                         |
+| Create a session from `session_template` and launch (#9490)              | ❌     | -                                                                                                         |
+| sToken-authenticated launch (needs an out-of-tree AUTHORIZE hook plugin) | ❌     | -                                                                                                         |
+
+**Coverage: 🔶 5/8 features**
+
+---
+
 ### 27. Chat (`/chat/:id?`)
 
 **Test files:** [`e2e/chat/chat.spec.ts`](chat/chat.spec.ts), [`e2e/chat/chat-sync.spec.ts`](chat/chat-sync.spec.ts), [`e2e/chat/chat-attachment.spec.ts`](chat/chat-attachment.spec.ts)
@@ -1259,6 +1282,25 @@ is deliberately out of scope — operate above project scope — the header proj
 
 ---
 
+### 33. Global Search Palette (header, every route)
+
+**Test files:** [`e2e/global-search/global-search-palette.spec.ts`](global-search/global-search-palette.spec.ts)
+
+| Feature                                       | Status | Test                                                                        |
+| --------------------------------------------- | ------ | --------------------------------------------------------------------------- |
+| Open from the header button                   | ✅     | `user can open the palette from the header button and close it with Escape` |
+| Open with `mod+k`                             | ✅     | `user can open the palette with the keyboard shortcut`                      |
+| Escape closes                                 | ✅     | `user can open the palette from the header button and close it with Escape` |
+| Page hit → route                              | ✅     | `user can arrow-select a page hit and land on that page`                    |
+| Tab hit → `?tab=`                             | ✅     | `user can select a tab hit and land on the deep-linked tab`                 |
+| Setting hit → `?setting=` arrival + highlight | ✅     | `user can select a setting hit and arrive on the highlighted item`          |
+| Action hit (theme) → effect                   | ✅     | `user can run the theme action from the palette`                            |
+| Recents in the empty state                    | ✅     | `user sees the pages they picked under Recent when reopening`               |
+
+**Coverage: ✅ 8/8 features**
+
+---
+
 ## Visual Regression Tests
 
 Visual regression tests exist for most pages but only capture screenshots, not functional behavior.
@@ -1307,17 +1349,18 @@ These are core user workflows that affect the largest number of users.
 
 ### Priority 3: Nice to Have - Edge Cases, Admin Tools
 
-| #   | Page/Feature                                                        | Reason                                                                                    | Estimated Complexity |
-| --- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------- |
-| 7   | **Endpoint Detail - Auto-scaling & Tokens** (`/serving/:serviceId`) | 14 features with 5 modals. Complex admin feature, but lower user count.                   | High                 |
-| 8   | **Session - Filtering, Drawer** (`/session`)                        | Session list already has creation/lifecycle coverage. SessionDetailDrawer is significant. | Low                  |
-| 9   | **Environment - Presets** (`/environment`)                          | 4 uncovered features for Resource Presets tab. Each with CRUD modals.                     | Medium               |
-| 10  | **Resources - Resource Groups** (`/agent`)                          | 5 uncovered features with 3 modals (create/edit/info). Agent drawer also untested.        | Medium               |
-| 11  | **Model Store** (`/model-store`)                                    | Browse/search models. ModelCardModal for detail. Read-only interface.                     | Low                  |
-| 12  | **Scheduler** (`/scheduler`)                                        | 6 features. Pending session queue monitoring. Admin tool.                                 | Low                  |
-| 13  | **Branding** (`/branding`)                                          | 14 features. Theme/logo customization. Admin tool.                                        | Medium               |
-| 14  | **Storage Host Settings** (`/storage-settings/:hostname`)           | Niche admin feature.                                                                      | Low                  |
-| 15  | **Chat** (`/chat/:id?`)                                             | ✅ Covered. Mock-based tests for chat UI, history, multi-pane, sync.                      | -                    |
+| #   | Page/Feature                                                        | Reason                                                                                                     | Estimated Complexity |
+| --- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------- |
+| 7   | **Endpoint Detail - Auto-scaling & Tokens** (`/serving/:serviceId`) | 14 features with 5 modals. Complex admin feature, but lower user count.                                    | High                 |
+| 8   | **Session - Filtering, Drawer** (`/session`)                        | Session list already has creation/lifecycle coverage. SessionDetailDrawer is significant.                  | Low                  |
+| 9   | **Environment - Presets** (`/environment`)                          | 4 uncovered features for Resource Presets tab. Each with CRUD modals.                                      | Medium               |
+| 10  | **Resources - Resource Groups** (`/agent`)                          | 5 uncovered features with 3 modals (create/edit/info). Agent drawer also untested.                         | Medium               |
+| 11  | **Model Store** (`/model-store`)                                    | Browse/search models. ModelCardModal for detail. Read-only interface.                                      | Low                  |
+| 12  | **Scheduler** (`/scheduler`)                                        | 6 features. Pending session queue monitoring. Admin tool.                                                  | Low                  |
+| 13  | **Branding** (`/branding`)                                          | 14 features. Theme/logo customization. Admin tool.                                                         | Medium               |
+| 14  | **Storage Host Settings** (`/storage-settings/:hostname`)           | Niche admin feature.                                                                                       | Low                  |
+| 15  | **Chat** (`/chat/:id?`)                                             | ✅ Covered. Mock-based tests for chat UI, history, multi-pane, sync.                                       | -                    |
+| 16  | **Edu App Launcher - cluster-backed launch** (`/applauncher`)       | Already-logged-in `session_id` launch (#9488) and `session_template` creation (#9490) need a live cluster. | Medium               |
 
 ---
 
@@ -1396,6 +1439,8 @@ To efficiently build new E2E tests, these POMs should be created:
 | `/branding`                            |        ❌        |      ❌      |    P3    |
 | `/chat/:id?`                           |        ✅        |      ✅      |    -     |
 | App Launcher (modal)                   |        🔶        |      ❌      |    -     |
+| `/applauncher`, `/edu-applauncher`     |        🔶        |      ❌      |    -     |
+| Global Search Palette (header)         |        ✅        |      ❌      |    -     |
 | Plugin System (config-based)           |        ✅        |      ❌      |    -     |
 | `/admin-serving?tab=auto-scaling-rule` |        🔶        |      ❌      |    -     |
 

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<384831cf2b109d5d39aee6b08fa7178c>>
+ * @generated SignedSource<<e1c4cbdd3ec56f734a06e174ee89ae98>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 export type BulkUpdateUserV2Input = {
@@ -71,6 +72,7 @@ export type UpdateUsersModalBulkUpdateMutation$data = {
           readonly node: {
             readonly basicInfo: {
               readonly name: string;
+              readonly type: ProjectTypeV2;
             };
             readonly id: string;
           };
@@ -395,6 +397,13 @@ v2 = [
                             "kind": "ScalarField",
                             "name": "name",
                             "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "type",
+                            "storageKey": null
                           }
                         ],
                         "storageKey": null
@@ -458,16 +467,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "11d061cbbc5e951df4d0d031eb47059c",
+    "cacheID": "f3df911edf22339372cadf3f5e90f595",
     "id": null,
     "metadata": {},
     "name": "UpdateUsersModalBulkUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n            }\n          }\n        }\n      }\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0613fdef4073ea9555d27f0806b10dea";
+(node as any).hash = "2dd60710ca40abdfa0640a941ced81c6";
 
 export default node;

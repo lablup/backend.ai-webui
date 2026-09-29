@@ -21,7 +21,7 @@ import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { ExtractResultValue } from '../helper/resultTypes';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { useCurrentUserInfo, useCurrentUserRole } from '../hooks/backendai';
+import { useCurrentUserInfo } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
@@ -96,7 +96,6 @@ const ComputeSessionListPage = () => {
   'use memo';
   const currentProject = useCurrentProjectValue();
 
-  const userRole = useCurrentUserRole();
   const [currentUser] = useCurrentUserInfo();
   const baiClient = useSuspendedBackendaiClient();
 
@@ -115,7 +114,11 @@ const ComputeSessionListPage = () => {
     'table_column_overrides.ComputeSessionListPage',
   );
 
-  const { supportedFields, exportCSV } = useCSVExport('sessions');
+  // This page is strictly personal, so a non-superadmin exports through the
+  // auth_required `my` route instead of the superadmin-only admin one.
+  const { supportedFields, exportCSV } = useCSVExport('sessions', {
+    scope: 'my',
+  });
 
   const {
     baiPaginationOption,
@@ -654,8 +657,7 @@ const ComputeSessionListPage = () => {
                 onColumnOverridesChange: setColumnOverrides,
               }}
               exportSettings={
-                !_.isEmpty(supportedFields) &&
-                (userRole === 'superadmin' || userRole === 'admin')
+                !_.isEmpty(supportedFields)
                   ? {
                       supportedFields,
                       onExport: async (selectedExportKeys) => {

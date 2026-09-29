@@ -48,6 +48,7 @@ import {
   adminPresetRuntimeVariantsMock,
   adminPresetSelectedRuntimeVariantMock,
   MOCK_IMAGE_OPTION_LABEL,
+  MOCK_IMAGE_OPTION_ROW_NAME,
 } from './mocking/admin-preset-mock';
 import {
   test,
@@ -160,11 +161,17 @@ async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
  * `role="combobox"` named "Search options" (`comp:BAIComplexSelect.SearchOptions`,
  * FR-3603 / #8914) and a `role="listbox"` of plain, clickable `role="option"`
  * rows — so the option is clicked directly.
+ *
+ * `optionLabel` is the string label: it is what the search box filters on
+ * and what the closed trigger shows. `optionRowName` is the popup row's
+ * accessible name, which differs since #9606 draws each row with
+ * `BAIImageNodeSimpleTagV2` (`labelContent`) instead of the string label.
  */
 async function selectComplexSelectOption(
   page: Page,
   fieldLabel: string,
   optionLabel: string,
+  optionRowName: string,
 ): Promise<void> {
   await page.getByRole('button', { name: fieldLabel, exact: true }).click();
   const popup = page.getByRole('dialog', { name: fieldLabel, exact: true });
@@ -173,7 +180,10 @@ async function selectComplexSelectOption(
   await popup
     .getByRole('combobox', { name: 'Search options', exact: true })
     .fill(optionLabel);
-  const option = popup.getByRole('option', { name: optionLabel, exact: true });
+  const option = popup.getByRole('option', {
+    name: optionRowName,
+    exact: true,
+  });
   await expect(option).toBeVisible({ timeout: 15000 });
   await option.click();
   await expect(popup).toBeHidden({ timeout: 5000 });
@@ -254,7 +264,12 @@ async function setupPresetCreatePage(
   await resourcesCard
     .getByRole('spinbutton', { name: 'Select Select', exact: true })
     .fill('16');
-  await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
+  await selectComplexSelectOption(
+    page,
+    'Image',
+    MOCK_IMAGE_OPTION_LABEL,
+    MOCK_IMAGE_OPTION_ROW_NAME,
+  );
 
   return { capture };
 }
@@ -323,7 +338,12 @@ async function setupLegacyPresetCreatePage(
   await resourcesCard
     .getByRole('spinbutton', { name: 'Select Select', exact: true })
     .fill('16');
-  await selectComplexSelectOption(page, 'Image', MOCK_IMAGE_OPTION_LABEL);
+  await selectComplexSelectOption(
+    page,
+    'Image',
+    MOCK_IMAGE_OPTION_LABEL,
+    MOCK_IMAGE_OPTION_ROW_NAME,
+  );
 
   return { capture };
 }

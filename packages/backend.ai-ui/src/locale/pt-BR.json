@@ -6,6 +6,7 @@
     "DiskPerc": "Disco %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Falha ao carregar os dados.",
+    "LostAt": "Perdido em",
     "NoAvailableLiveStat": "Nenhuma estatística em tempo real disponível",
     "Region": "Região",
     "ResourceGroup": "Grupo de Recursos",
@@ -13,7 +14,8 @@
     "Schedulable": "Agendável",
     "Starts": "Inícios",
     "Status": "Status",
-    "Utilization": "Utilização"
+    "Utilization": "Utilização",
+    "Version": "Versão"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Permitido",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID de ação",
     "Actor": "Ator",
+    "ClientIp": "IP do cliente",
     "Description": "Descrição",
     "Duration": "Duração",
     "EntityId": "ID de entidade",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "Esta ação não pode ser desfeita.",
     "DeleteItem": "Excluir",
     "DeleteNItems": "Excluir {{count}} itens",
-    "TypeToConfirm": "Digite <code>{{confirmText}}</code> para confirmar."
+    "TypeToConfirm": "Digite <token>{{confirmText}}</token> para confirmar."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Criado por"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradado",
     "Deploying": "Implantando",
     "Healthy": "Saudável",
@@ -234,6 +237,23 @@
     "Type": "Tipo",
     "Version": "Versão"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Verificando sua sessão do Backend.AI…",
+    "SignInWithBackendAI": "Entrar com o Backend.AI",
+    "failure": {
+      "CorsOrMixed": "O navegador bloqueou a requisição ao servidor web do Backend.AI. Normalmente é uma restrição de CORS ou de conteúdo misto.",
+      "HttpError": "O servidor web do Backend.AI retornou um erro ({{status}}).",
+      "InvalidCallback": "O endereço de retorno de login configurado para {{appName}} não é um endereço web válido.",
+      "InvalidResponse": "O servidor web do Backend.AI retornou uma resposta inesperada.",
+      "NoEndpoint": "Nenhum endereço do servidor web do Backend.AI está configurado para {{appName}}.",
+      "NoSessionId": "Você está conectado ao Backend.AI, mas o servidor web não retornou um ID de sessão.",
+      "NoSessionOverHttp": "Você ainda não entrou no Backend.AI. Se você já entrou, o {{appName}} é servido por HTTP, então o navegador pode estar rejeitando o cookie de sessão seguro do servidor web. Tente abrir o {{appName}} por HTTPS.",
+      "NoSessionOverHttps": "Você ainda não entrou no Backend.AI. Se você já entrou, o {{appName}} e o servidor web do Backend.AI podem ser sites diferentes, então o navegador não envia o cookie de sessão.",
+      "RelayFailed": "Você está conectado ao Backend.AI, mas o {{appName}} não conseguiu concluir a entrada.",
+      "Timeout": "O servidor web do Backend.AI não respondeu a tempo.",
+      "Title": "Não foi possível entrar com o Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Tamanho do Cluster",
     "Concurrency": "Sessões simultâneas",
@@ -254,6 +274,7 @@
     "SelectKeypair": "Selecionar par de chaves"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP do cliente",
     "Domain": "Domínio",
     "FailReason": "Motivo da falha",
     "LoginTime": "Hora do login",
@@ -344,18 +365,22 @@
     "UpdateProject": "Atualizar Projeto"
   },
   "comp:BAIProjectTable": {
+    "Active": "Ativo",
     "ContainerRegistry": "Registro de Contêineres",
     "ContainerRegistryProject": "Projeto do Registro de Contêineres",
     "CreatedAt": "Criado em",
     "Description": "Descrição",
     "Domain": "Domínio",
+    "Inactive": "Inativo",
     "IntegrationID": "ID da Integração",
+    "ModifiedAt": "Modificado em",
     "Name": "Nome",
     "Project": "Projeto",
     "ProjectID": "ID do projeto",
     "Registry": "Registro",
     "ResourcePolicy": "Política de Recursos",
     "ScalingGroups": "Grupos de Recursos",
+    "Status": "Status",
     "StorageNodes": "Nós de Armazenamento",
     "TotalResourceSlots": "Total de slots de recursos",
     "Type": "Tipo"
@@ -587,6 +612,9 @@
   "comp:BAITestButton": {
     "Test": "teste"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "e mais {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Criado em",
     "MaxConcurrentLogins": "Máx. de logins simultâneos",
@@ -602,16 +630,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato de caminho inválido.",
     "AliasOverlapping": "O caminho de montagem se sobrepõe a outra pasta.",
+    "AliasOverlappingWithAutoMount": "O caminho de montagem se sobrepõe a uma pasta de montagem automática.",
     "AliasPlaceholder": "Caminho de montagem",
     "AutoMountedFolders": "Pastas de montagem automática",
-    "Name": "Nome",
-    "PathAndAlias": "Caminho & Alias",
+    "CreateFolder": "Crie uma nova pasta de armazenamento",
+    "DestinationPath": "Caminho do contêiner (destination)",
+    "Folders": "Pastas",
+    "OwnerProject": "Projeto",
+    "OwnerUser": "Usuário",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
+    "Refresh": "Atualizar",
     "RemoveFolder": "Remover",
+    "SelectFolder": "Selecionar pasta",
+    "SourcePath": "Caminho na pasta (source)",
     "Subpath": "Subcaminho",
     "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (opcional)",
-    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Deixe em branco para montar a raiz."
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; deixe vazio para montar a raiz da pasta.",
+    "UnmountableFoldersRemoved": "As pastas que você não pode mais montar foram removidas da seleção."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
@@ -628,12 +663,16 @@
     "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
     "DeleteSelectedItemsDialog": "Excluir confirmação",
     "Download": "Baixar",
+    "DownloadPopupBlocked": "O navegador bloqueou a janela de download. Permita pop-ups para este site e tente novamente.",
+    "DownloadRejected": "O storage proxy recusou o download (HTTP {{status}}). O download não foi iniciado.",
     "DownloadSelected": "Baixar",
     "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
+    "DownloadUnreachable": "Não foi possível acessar o storage proxy em {{origin}}. O download não foi iniciado.",
     "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
     "DuplicatedFiles": "Substituição de substituição",
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",
     "EditFile": "Editar arquivo",
+    "ExistingItem": "Existente",
     "FileCreatedSuccessfully": "Arquivo criado com sucesso.",
     "FileName": "Nome do arquivo",
     "FileNamePlaceholder": "ex.: model-definition.yaml",
@@ -646,11 +685,13 @@
     "ModifiedAt": "Modificado em",
     "Name": "Nome",
     "NoUploadPermissionForHost": "Você não tem permissão de upload para este host.",
+    "OtherItemsWillBeUploaded": "Também serão enviados {{count}} outro(s) item(ns).",
     "Path": "Caminho",
     "PleaseEnterAFileName": "Por favor, insira o nome do arquivo.",
     "PleaseEnterAFolderName": "Por favor, insira o nome da pasta.",
     "RenameFile": "Renomear",
     "RenameSuccess": "O nome foi alterado com sucesso.",
+    "SelectItemsToOverwrite": "Estes itens já existem aqui. Selecione os que deseja substituir; os não selecionados serão ignorados.",
     "SelectedItemsDeletedSuccessfully": "Arquivos e pastas selecionados foram excluídos com sucesso.",
     "Size": "Tamanho",
     "TypeDeleteToConfirm": "Digite 'Excluir' para confirmar.",
@@ -658,6 +699,7 @@
     "UnsupportedFileFormat": "Este formato de arquivo não suporta edição.",
     "UploadFiles": "Faça o upload de arquivos",
     "UploadFolder": "Faça o upload da pasta",
+    "UploadingItem": "A enviar",
     "error": {
       "DuplicatedName": "Este nome já está em uso. \nPor favor, insira um nome diferente.",
       "FileNameRequired": "Por favor, insira um nome de arquivo ou pasta."
@@ -768,6 +810,7 @@
     "DeselectAll": "Desmarcar tudo",
     "File": "Arquivo",
     "Increase": "Aumentar",
+    "Loading": "Carregando...",
     "NSelected": "{{count}} selecionado",
     "Optional": "Opcional",
     "Project": "Projeto",

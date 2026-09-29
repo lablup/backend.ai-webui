@@ -9,7 +9,6 @@ import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { theme } from '../theme-shim';
 import './AIAgentPage.css';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import {
@@ -18,12 +17,13 @@ import {
 } from '@astryxdesign/core/DropdownMenu';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAISkeleton,
   BAIFlex,
   BAIUnmountAfterClose,
   BAIDeleteConfirmModal,
-  badgeVariantForTagColor,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -153,26 +153,26 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
           wrap="wrap"
         >
           {endpointLabel && (
-            <Badge
+            <Token
               key={endpointLabel}
               label={endpointLabel}
-              variant={badgeVariantForTagColor('orange-inverse')}
+              color={tokenColorForTagColor('orange-inverse')}
             />
           )}
           {agent.isCustom && !isOverridden && (
-            <Badge
+            <Token
               label={t('aiAgent.Custom')}
-              variant={badgeVariantForTagColor('blue-inverse')}
+              color={tokenColorForTagColor('blue-inverse')}
             />
           )}
           {isOverridden && (
-            <Badge
+            <Token
               label={t('aiAgent.Edited')}
-              variant={badgeVariantForTagColor('orange')}
+              color={tokenColorForTagColor('orange')}
             />
           )}
           {tags.map((tag) => (
-            <Badge key={tag} label={tag} variant="neutral" />
+            <Token key={tag} label={tag} />
           ))}
         </BAIFlex>
       </BAIFlex>

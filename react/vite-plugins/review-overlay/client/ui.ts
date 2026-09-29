@@ -8,14 +8,21 @@
  * `--color-*` custom properties: `all: initial` does not reset custom
  * properties, so they inherit across the shadow boundary and the overlay
  * follows the page into dark mode. Each carries a literal fallback for a page
- * where the theme has not been applied yet.
+ * where the theme has not been applied yet. A host that is not this app asks
+ * for `palette: 'own'` instead — see `TONES`.
  *
  * `data-react-grab-ignore-events` makes react-grab skip our own chrome while
  * its select mode is on, so the composer stays clickable mid-pick.
  */
 import { icon, ICON_STYLE } from './icons.js';
 import { fractionWithin, projectFraction, type Box } from './selection.js';
-import type { AnchorRect, CopyPayload } from './types.js';
+import type { AnchorRect, CopyPayload, OverlayPalette } from './types.js';
+
+/**
+ * The attribute the shadow host carries, and the only mark a host — or another
+ * one deciding whether to stand down — has to recognise the overlay by.
+ */
+export const OVERLAY_MARKER_ATTR = 'data-bai-review-overlay';
 
 /** Everything the outline needs; a `DOMRect` and a projected region both fit. */
 type RectLike = { left: number; top: number; width: number; height: number };
@@ -46,6 +53,46 @@ export interface RefusedCopy {
 export const COPIED_ONE =
   'Copied — paste it into the PR comment, the Teams thread, or Claude';
 
+/** Said whenever the write did not land; the gesture is worth repeating. */
+export const COPY_FAILED = 'Could not reach the clipboard — try again';
+
+/**
+ * One clipboard write and the one line it says. `copyText` answers
+ * synchronously on the `execCommand` path and with a promise on the async
+ * one, and every caller owed the same three lines of branching.
+ */
+export function copyWithToast(
+  copy: (text: string, html?: string) => boolean | Promise<boolean>,
+  toast: (message: string) => void,
+  payload: { text: string; html?: string | undefined; toast?: string },
+): void {
+  const done = (ok: boolean) =>
+    toast(ok ? (payload.toast ?? COPIED_ONE) : COPY_FAILED);
+  const copied = copy(payload.text, payload.html);
+  if (typeof copied === 'boolean') done(copied);
+  else void copied.then(done);
+}
+
+/**
+ * A save re-keys the pin whenever the note the anchor carries changes, so the
+ * reviewer is told before they press it — a comment already pasted names the
+ * id this save may retire. Said every time: the cap makes the exception rare
+ * and not worth a second wording.
+ */
+export const EDIT_WARNING =
+  'Saving gives this pin a new id — a comment you already pasted keeps the old one. Copy all and paste again.';
+
+/** Nothing was written and the composer stays open, or it closes with a line. */
+export type SaveResult = RefusedCopy | { toast: string };
+
+/** Where an editor hangs from when its pin has no element on this page. */
+export interface EditorOpen {
+  /** Prefilled, and empty is allowed — the same as a pick. */
+  note: string;
+  /** The pin's own element, or a box to hang under (its dock row's). */
+  at: Element | RectLike;
+}
+
 export interface OverlayUICallbacks {
   /**
    * Render the block for this note, SYNCHRONOUSLY — everything async was done
@@ -53,6 +100,11 @@ export interface OverlayUICallbacks {
    * prevents by keeping the copy button disabled until it is.
    */
   onBuildBlock: (text: string) => ComposedCopy | RefusedCopy | null;
+  /**
+   * Edit mode's ⌘⏎: no clipboard at all — the owner re-keys the pin and says
+   * what happened. Synchronous, like `onBuildBlock`.
+   */
+  onSaveNote: (text: string) => SaveResult;
   /** Debounced: the note rides in the anchor, so it has to be re-encoded. */
   onNoteChanged: (text: string) => void;
   onComposeClosed: () => void;
@@ -70,9 +122,135 @@ const el = <K extends keyof HTMLElementTagNameMap>(
   return node;
 };
 
-export function createOverlayUI(callbacks: OverlayUICallbacks) {
+/**
+ * Every colour the overlay would rather take from the page it sits on: the
+ * app's own token, the light literal to fall back to, and — for a host that
+ * must not read the page at all — the dark half the app would have supplied.
+ */
+const TONES = {
+  surface: {
+    name: '--bai-review-surface',
+    from: '--color-background-popover',
+    light: '#fff',
+    dark: '#1a2529',
+  },
+  text: {
+    name: '--bai-review-text',
+    from: '--color-text-primary',
+    light: '#0a1317',
+    dark: '#e8eef1',
+  },
+  textDim: {
+    name: '--bai-review-text-dim',
+    from: '--color-text-secondary',
+    light: '#4e606f',
+    dark: '#9fb0bb',
+  },
+  border: {
+    name: '--bai-review-border',
+    from: '--color-border-emphasized',
+    light: '#ccd3db',
+    dark: '#3a4a53',
+  },
+  inverted: {
+    name: '--bai-review-inverted',
+    from: '--color-background-inverted',
+    light: '#0a1317',
+    dark: '#e8eef1',
+  },
+  onInverted: {
+    name: '--bai-review-on-inverted',
+    from: '--color-background-surface',
+    light: '#fff',
+    dark: '#0a1317',
+  },
+  field: {
+    name: '--bai-review-field',
+    from: '--color-background-surface',
+    light: '#fff',
+    dark: '#131c20',
+  },
+  error: {
+    name: '--bai-review-error',
+    from: '--color-text-red',
+    light: '#c0392b',
+    dark: '#ff8a80',
+  },
+  shadow: {
+    name: '--bai-review-shadow',
+    from: '--color-shadow',
+    light: 'rgba(5, 54, 89, .25)',
+    dark: 'rgba(0, 0, 0, .5)',
+  },
+  rowHover: {
+    name: '--bai-row-hover',
+    from: '--color-overlay-hover',
+    light: 'rgba(5, 54, 89, .05)',
+    dark: 'rgba(255, 255, 255, .06)',
+  },
+  focusText: {
+    name: '--bai-focus-text',
+    from: '--color-text-accent',
+    light: '#0064e0',
+    dark: '#7ab5ff',
+  },
+  modText: {
+    name: '--bai-mod-text',
+    from: '--color-text-orange',
+    light: '#6b2203',
+    dark: '#ffc65c',
+  },
+  addText: {
+    name: '--bai-add-text',
+    from: '--color-text-green',
+    light: '#09441f',
+    dark: '#6ee08a',
+  },
+  delText: {
+    name: '--bai-del-text',
+    from: '--color-text-red',
+    light: '#7b0210',
+    dark: '#ff9a90',
+  },
+} as const;
+
+/** One themed value: the page's token, or a literal for a host without one. */
+const tone = (palette: OverlayPalette, key: keyof typeof TONES): string => {
+  const spec = TONES[key];
+  return palette === 'own' ? spec.light : `var(${spec.from}, ${spec.light})`;
+};
+
+/**
+ * An `own` palette has no app to follow into dark mode, so it follows the OS.
+ * Empty for `inherit`, whose tokens already resolve to whatever the app is.
+ */
+const darkTones = (palette: OverlayPalette): string => {
+  if (palette === 'inherit') return '';
+  const lines = Object.values(TONES)
+    .map((spec) => `        ${spec.name}: ${spec.dark};`)
+    .join('\n');
+  return `
+    @media (prefers-color-scheme: dark) {
+      :host {
+${lines}
+      }
+    }`;
+};
+
+/** What differs between the hosts this client runs under (the OverlayHost). */
+export interface OverlayUIOptions {
+  /** The `OVERLAY_MARKER_ATTR` value, so hosts can be told apart. */
+  marker?: string;
+  palette?: OverlayPalette;
+}
+
+export function createOverlayUI(
+  callbacks: OverlayUICallbacks,
+  options: OverlayUIOptions = {},
+) {
+  const palette = options.palette ?? 'inherit';
   const host = document.createElement('div');
-  host.setAttribute('data-bai-review-overlay', '');
+  host.setAttribute(OVERLAY_MARKER_ATTR, options.marker ?? '');
   host.setAttribute('data-react-grab-ignore-events', '');
   const root = host.attachShadow({ mode: 'open' });
   document.body.appendChild(host);
@@ -81,25 +259,54 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
   style.textContent = `
     :host {
       all: initial;
-      --bai-review-surface: var(--color-background-popover, #fff);
-      --bai-review-text: var(--color-text-primary, #0a1317);
-      --bai-review-text-dim: var(--color-text-secondary, #4e606f);
-      --bai-review-border: var(--color-border-emphasized, #ccd3db);
+      /* all:initial resets color-scheme too, and the app's tokens are
+         light-dark() pairs — without this a dark app resolves to the light
+         half and the popover comes back white. An own palette has no app to
+         inherit from and says which schemes it has drawn itself for. */
+      color-scheme: ${palette === 'own' ? 'light dark' : 'inherit'};
+      --bai-review-surface: ${tone(palette, 'surface')};
+      --bai-review-text: ${tone(palette, 'text')};
+      --bai-review-text-dim: ${tone(palette, 'textDim')};
+      --bai-review-border: ${tone(palette, 'border')};
       /* The pin's own colour, not a theme token — no Astryx --color-* carries
          it. Dark on-accent: white measures 3.25:1 on it, #0a1317 5.78:1. */
       --bai-review-accent: #ff0de7;
       --bai-review-accent-rgb: 255, 13, 231;
       --bai-review-accent-soft: rgba(var(--bai-review-accent-rgb), .35);
       --bai-review-on-accent: #0a1317;
-      --bai-review-inverted: var(--color-background-inverted, #0a1317);
-      --bai-review-on-inverted: var(--color-background-surface, #fff);
-      --bai-review-error: var(--color-text-red, #c0392b);
-      --bai-review-shadow: var(--color-shadow, rgba(5, 54, 89, .25));
+      --bai-review-inverted: ${tone(palette, 'inverted')};
+      --bai-review-on-inverted: ${tone(palette, 'onInverted')};
+      /* The composer's textarea — a surface inside a surface. */
+      --bai-review-field: ${tone(palette, 'field')};
+      --bai-review-error: ${tone(palette, 'error')};
+      --bai-review-shadow: ${tone(palette, 'shadow')};
       /* react-grab 0.1.50's box STYLE — 1px stroke at α.5 over an α.08 fill —
          in our accent, so every surface of this tool is the one colour. */
       --bai-review-pick-line: rgba(var(--bai-review-accent-rgb), .5);
       --bai-review-pick-fill: rgba(var(--bai-review-accent-rgb), .08);
-    }
+      /* The docs PR-preview palette (FR-3950), split by what it paints.
+         MARKS keep the docs grammar literally — a change is green or amber
+         wherever it is read. CHROME goes through the palette above, so guided
+         mode follows the app's own theme toggle and not the OS — except under
+         an own palette, which has no app to follow. */
+      --bai-add: #16a34a; --bai-add-bg: rgba(34, 197, 94, .18);
+      --bai-mod: #ca8a04; --bai-mod-bg: rgba(250, 204, 21, .32);
+      --bai-del: #dc2626;
+      --bai-focus: #2563eb; --bai-accent: #ff7a00;
+      --bai-viewed-badge: #6b7280;
+      --bai-pop-bg: var(--bai-review-surface);
+      --bai-pop-fg: var(--bai-review-text);
+      --bai-pop-border: var(--bai-review-border);
+      --bai-row-hover: ${tone(palette, 'rowHover')};
+      /* The same three hues as INK on that surface. The docs literals are
+         mixed for white and drop to ~2.5:1 on the app's dark surface, so text
+         takes the app's own on-surface colours and the marks keep the docs
+         ones. Each is ≥4.5:1 in both themes. */
+      --bai-focus-text: ${tone(palette, 'focusText')};
+      --bai-mod-text: ${tone(palette, 'modText')};
+      --bai-add-text: ${tone(palette, 'addText')};
+      --bai-del-text: ${tone(palette, 'delText')};
+    }${darkTones(palette)}
     * { box-sizing: border-box; font-family: ui-sans-serif, system-ui, sans-serif; }
     .btn {
       border: 1px solid var(--bai-review-border);
@@ -135,7 +342,7 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
     }
     .compose textarea {
       width: 100%; height: 64px; font-size: 14px; padding: 6px;
-      background: var(--color-background-surface, #fff);
+      background: var(--bai-review-field);
       color: var(--bai-review-text);
       border: 1px solid var(--bai-review-border); border-radius: 6px;
       resize: vertical;
@@ -150,6 +357,12 @@ export function createOverlayUI(callbacks: OverlayUICallbacks) {
       color: var(--bai-review-error); font-size: 11px; margin-top: 4px;
       display: none;
     }
+    /* Said every time, not once: the id it retires is the one already pasted. */
+    .compose .warn {
+      color: var(--bai-review-text-dim); font-size: 11px; margin-top: 6px;
+      display: none;
+    }
+    .compose.editing .warn { display: block; }
     .toast {
       position: fixed; z-index: 2147483002; left: 50%; bottom: 64px;
       transform: translateX(-50%); background: var(--bai-review-inverted);
@@ -166,6 +379,7 @@ ${ICON_STYLE}
     <div class="pathlabel"></div>
     <textarea aria-label="Review comment on the picked element" placeholder="Comment on this element… (⌘⏎ to copy the block; may be empty)"></textarea>
     <div class="err"></div>
+    <div class="warn"></div>
     <div class="actions">
       <button class="btn" data-act="cancel">Cancel</button>
       <button class="btn primary" data-act="copy"><span class="lbl"></span></button>
@@ -182,9 +396,11 @@ ${ICON_STYLE}
   ) as HTMLButtonElement;
   const copyLabel = copyButton.querySelector('.lbl') as HTMLElement;
   copyButton.prepend(icon('copy'));
-  copyLabel.textContent = 'Copy block';
+  (compose.querySelector('.warn') as HTMLElement).textContent = EDIT_WARNING;
 
   let pickActive = false;
+  /** `edit` re-keys an existing pin and writes no clipboard at all. */
+  let mode: 'pick' | 'edit' = 'pick';
   let pickTarget: Element | null = null;
   /**
    * A box select's region as a fraction of `pickTarget`, so a scroll or a
@@ -256,13 +472,29 @@ ${ICON_STYLE}
   /** Bumped by every open: a settled copy may only close the composer it ran from. */
   let composeEpoch = 0;
   let draftFull = false;
+  let draftSize = 0;
 
   function syncCopyEnabled() {
     copyButton.disabled =
-      draftFull ||
+      (mode === 'pick' && draftFull) ||
       copyInFlight ||
       readyNote === null ||
       composeText.value.trim() !== readyNote;
+  }
+
+  /** The button says what ⌘⏎ does here; an edit only ever saves one note. */
+  function syncCopyLabel() {
+    copyButton
+      .querySelector('svg')
+      ?.replaceWith(icon(mode === 'edit' ? 'check' : 'copy'));
+    copyLabel.textContent =
+      mode === 'edit'
+        ? 'Save note'
+        : draftFull
+          ? `Set is full (${draftSize})`
+          : draftSize > 0
+            ? `Add & copy all (${draftSize + 1})`
+            : 'Copy block';
   }
 
   function setComposeReady(ready: boolean, note = '') {
@@ -304,19 +536,35 @@ ${ICON_STYLE}
     compose.style.top = `${Math.max(VIEWPORT_PAD, Math.min(top, vh - height - VIEWPORT_PAD))}px`;
   }
 
+  /** What both modes reset, before either says where the box hangs from. */
+  function beginCompose(next: 'pick' | 'edit', note: string) {
+    composeEpoch += 1;
+    mode = next;
+    compose.classList.toggle('editing', next === 'edit');
+    composeErr.style.display = 'none';
+    composeText.value = note;
+    clearTimeout(noteTimer);
+    setComposeReady(false);
+    syncCopyLabel();
+    compose.style.display = 'block';
+  }
+
+  /** Placement reads the box, so it runs once the box is displayed. */
+  function finishOpen() {
+    placeCompose();
+    syncPickHighlight();
+    focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
+    composeText.focus();
+  }
+
   function openCompose(
     target: Element,
     x: number,
     y: number,
     region?: Box | null,
   ) {
-    composeEpoch += 1;
+    beginCompose('pick', '');
     pickTarget = target;
-    composeErr.style.display = 'none';
-    composeText.value = '';
-    clearTimeout(noteTimer);
-    setComposeReady(false);
-    compose.style.display = 'block';
     const frame = target.getBoundingClientRect();
     pickRegion = region ? fractionWithin(region, frame) : null;
     // The composer follows what is outlined, so a box select opens under the
@@ -332,10 +580,28 @@ ${ICON_STYLE}
       top: measured ? box.top : y,
       bottom: measured ? box.bottom : y,
     };
-    placeCompose();
-    syncPickHighlight();
-    focusGuardUntil = Date.now() + FOCUS_GUARD_MS;
-    composeText.focus();
+    finishOpen();
+  }
+
+  /**
+   * The same box over a pin that already exists: its note comes back prefilled
+   * and ⌘⏎ saves instead of copying. An off-page pin has no element to outline,
+   * so its dock row's rect is what the box hangs from.
+   */
+  function openEditor({ note, at }: EditorOpen) {
+    beginCompose('edit', note);
+    const box = at instanceof Element ? at.getBoundingClientRect() : at;
+    pickTarget = at instanceof Element ? at : null;
+    pickRegion = null;
+    // A row's editor outlines nothing; an outline left by the editor it
+    // replaces would otherwise stay on that other pin's element.
+    if (!pickTarget) setHoverRect(null);
+    composeAnchor = {
+      left: box.left,
+      top: box.top,
+      bottom: box.top + box.height,
+    };
+    finishOpen();
   }
 
   // A drag on the textarea's resize handle changes the height too, and it goes
@@ -373,6 +639,9 @@ ${ICON_STYLE}
     if (!isComposeOpen()) return;
     clearTimeout(noteTimer);
     compose.style.display = 'none';
+    mode = 'pick';
+    compose.classList.remove('editing');
+    syncCopyLabel();
     pickTarget = null;
     pickRegion = null;
     composeAnchor = null;
@@ -391,8 +660,12 @@ ${ICON_STYLE}
     placeCompose();
   }
 
-  function getComposeTarget() {
-    return pickTarget;
+  /**
+   * Which open the composer is on, or 0 while it is closed. What was picked is
+   * not the identity — an edit opened from a dock row has no element at all.
+   */
+  function composeSession() {
+    return isComposeOpen() ? composeEpoch : 0;
   }
 
   function setPickActive(active: boolean) {
@@ -400,18 +673,17 @@ ${ICON_STYLE}
   }
 
   /**
-   * The button says what ⌘⏎ will do: with a set already going, the pick joins
-   * it; a full set says so instead of promising a copy it would refuse.
+   * With a set already going, the pick joins it; a full set says so instead of
+   * promising a copy it would refuse. An editor keeps its own label.
    */
   function setDraftSize(size: number, full = false) {
     draftFull = full;
-    copyLabel.textContent = full
-      ? `Set is full (${size})`
-      : size > 0
-        ? `Add & copy all (${size + 1})`
-        : 'Copy block';
+    draftSize = size;
+    syncCopyLabel();
     syncCopyEnabled();
   }
+  // The label the button carries before any set exists.
+  syncCopyLabel();
 
   // ------------------------------------------------------------- clipboard
 
@@ -490,6 +762,18 @@ ${ICON_STYLE}
       flushNote();
       composeErr.textContent = 'Still encoding that note — press ⌘⏎ again.';
       composeErr.style.display = 'block';
+      return;
+    }
+    // Editing writes no clipboard: the pin is re-keyed in place, and the set's
+    // own "Copy all" is what replaces a paste that names the retired id.
+    if (mode === 'edit') {
+      const saved = callbacks.onSaveNote(note);
+      if ('refused' in saved) {
+        showToast(saved.refused);
+        return;
+      }
+      closeCompose();
+      showToast(saved.toast);
       return;
     }
     let built: ComposedCopy | RefusedCopy | null;
@@ -590,19 +874,28 @@ ${ICON_STYLE}
     showToast,
     setHoverRect,
     openCompose,
+    openEditor,
     closeCompose,
     isComposeOpen,
     setComposeLabel,
     appendComposeLabel,
     setComposeReady,
     setDraftSize,
-    getComposeTarget,
+    composeSession,
+    /** An editor, not a pick: nothing is about to be clicked through. */
+    isEditing: () => isComposeOpen() && mode === 'edit',
     /** The reviewer is typing a note; a bare-letter chord is not for us. */
     isTyping: () => root.activeElement === composeText,
     currentNote: () => composeText.value.trim(),
     setPickActive,
     placeCompose,
     copyText,
+    /** `copyText` plus the line it says; the composer's own copy says more. */
+    copyWithToast: (payload: {
+      text: string;
+      html?: string | undefined;
+      toast?: string;
+    }) => copyWithToast(copyText, showToast, payload),
     isOwnEvent,
   };
 }

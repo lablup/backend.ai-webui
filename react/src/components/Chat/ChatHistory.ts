@@ -11,6 +11,7 @@ import {
   type ChatProviderData,
   type ChatMessage,
 } from './ChatModel';
+import { copyCustomEndpointApiKey } from './customEndpointKeyStore';
 import { useBAILogger, type BAILogger } from 'backend.ai-ui';
 import type { TFunction } from 'i18next';
 import * as _ from 'lodash-es';
@@ -305,6 +306,7 @@ export function useHistory(id: string, provider: ChatProviderData) {
       }
 
       const chatData = createChatData({ provider });
+      copyCustomEndpointApiKey(id, chatData.id);
 
       // find origin chat position to insert next to the origin chat
       const index = chat.chats.findIndex((chat) => chat.id === id);

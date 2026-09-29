@@ -26,7 +26,7 @@ import {
   BAIArtifactRevisionDeleteButton,
   BAIArtifactRevisionDownloadButton,
   BAIArtifactRevisionTable,
-  BAIArtifactTypeTag,
+  BAIArtifactTypeToken,
   BAICard,
   BAIColumnType,
   BAIDeleteArtifactRevisionsModal,
@@ -132,7 +132,7 @@ const ReservoirArtifactDetailPage = () => {
           artifact(id: $id) {
             id
             name
-            ...BAIArtifactTypeTagFragment
+            ...BAIArtifactTypeTokenFragment
             description
             registry {
               name
@@ -305,7 +305,7 @@ const ReservoirArtifactDetailPage = () => {
           {/* `Typography.Title level={3}` -> `Heading level={3}`. The
               `margin: 0` reset goes with antd's heading margins. */}
           <Heading level={3}>{artifact?.name}</Heading>
-          {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
+          {artifact && <BAIArtifactTypeToken artifactTypeFrgmt={artifact} />}
         </BAIFlex>
         <AutoUpdateFetchKeyButton
           settingId="reservoir-artifact-detail"
@@ -372,7 +372,7 @@ const ReservoirArtifactDetailPage = () => {
             {artifact?.name}
           </MetadataListItem>
           <MetadataListItem label={t('reservoirPage.Type')}>
-            {artifact && <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />}
+            {artifact && <BAIArtifactTypeToken artifactTypeFrgmt={artifact} />}
           </MetadataListItem>
           <MetadataListItem label={t('reservoirPage.Size')}>
             <BAIText monospace>

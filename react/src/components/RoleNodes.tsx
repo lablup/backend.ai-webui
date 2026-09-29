@@ -6,23 +6,26 @@ import {
   RoleNodesFragment$data,
   RoleNodesFragment$key,
 } from '../__generated__/RoleNodesFragment.graphql';
+import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
 import TableColumnsSettingModal from './TableColumnsSettingModal';
 import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIColumnType,
-  BAIDoubleTag,
+  BAIDoubleToken,
   BAIFlex,
   BAIId,
   BAITable,
   BAITableProps,
-  badgeVariantForStatus,
   badgeVariantForTagColor,
   filterOutEmpty,
   useToggle,
+  tokenColorForTagColor,
+  tokenColorForStatus,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import _ from 'lodash';
@@ -33,7 +36,9 @@ import { graphql, useFragment } from 'react-relay';
 
 export type RoleNodeInList = NonNullable<RoleNodesFragment$data[number]>;
 
-const availableRoleSorterKeys = ['name', 'created_at', 'updated_at'] as const;
+// The camelCase spellings the columns' `dataIndex` already emits;
+// `convertToOrderBy` snake-cases + uppercases them into RoleOrderField.
+const availableRoleSorterKeys = ['name', 'createdAt', 'updatedAt'] as const;
 
 export const availableRoleSorterValues = [
   ...availableRoleSorterKeys,
@@ -80,7 +85,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         autoAssign @since(version: "26.4.4")
         createdAt
         updatedAt
-        scopes(first: 3) {
+        scopes(first: 3) @deprecatedSince(version: "26.9.0") {
           count
           edges {
             node {
@@ -106,10 +111,56 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
             }
           }
         }
+        scopeType @since(version: "26.9.0")
+        scopeId @since(version: "26.9.0")
+        scope @since(version: "26.9.0") {
+          ... on ProjectV2 {
+            basicInfo {
+              projectName: name
+            }
+          }
+          ... on DomainV2 {
+            basicInfo {
+              domainName: name
+            }
+          }
+          ... on UserV2 {
+            basicInfo {
+              userEmail: email
+            }
+          }
+        }
       }
     `,
     rolesFrgmt,
   );
+
+  // Managers >= 26.9.0 answer the one scope a role belongs to; older ones
+  // answer a scopes connection, of which the first is shown and the rest counted.
+  const readRoleScope = (
+    record: RoleNodeInList,
+  ): {
+    scopeType?: string | null;
+    scopeId?: string | null;
+    scope?: RoleNodeInList['scope'];
+    extraCount: number;
+  } => {
+    if (record.scopeType) {
+      return {
+        scopeType: record.scopeType,
+        scopeId: record.scopeId,
+        scope: record.scope,
+        extraCount: 0,
+      };
+    }
+    const first = record.scopes?.edges?.[0]?.node;
+    return {
+      scopeType: first?.scopeType,
+      scopeId: first?.scopeId,
+      scope: first?.scope,
+      extraCount: Math.max((record.scopes?.count ?? 0) - 1, 0),
+    };
+  };
 
   const columns: BAIColumnType<RoleNodeInList>[] = filterOutEmpty([
     {
@@ -137,31 +188,29 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'scope',
       title: t('rbac.ScopeType'),
       render: (_, record: RoleNodeInList) => {
-        const scopeNodes =
-          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
-        const totalCount = record.scopes?.count ?? 0;
-        if (scopeNodes.length === 0) return '-';
-        const first = scopeNodes[0];
-        const scopeTypeLabel = t(`rbac.types.${first?.scopeType}`, {
-          defaultValue: first?.scopeType,
+        const { scopeType, scopeId, scope, extraCount } = readRoleScope(record);
+        if (!scopeType) return '-';
+        const scopeTypeLabel = t(rbacTypeI18nKey(scopeType), {
+          defaultValue: scopeType,
         });
         const scopeName =
-          first?.scope?.basicInfo?.projectName ??
-          first?.scope?.basicInfo?.domainName ??
-          first?.scope?.basicInfo?.userEmail ??
-          first?.scopeId;
+          scope?.basicInfo?.projectName ??
+          scope?.basicInfo?.domainName ??
+          scope?.basicInfo?.userEmail ??
+          scopeId ??
+          '-';
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
                 { label: scopeTypeLabel, color: 'blue' },
                 { label: scopeName, color: 'default' },
               ]}
             />
-            {totalCount > 1 && (
+            {extraCount > 0 && (
               <Badge
                 variant={badgeVariantForTagColor('default')}
-                label={`+${totalCount - 1}`}
+                label={`+${extraCount}`}
               />
             )}
           </BAIFlex>
@@ -172,17 +221,15 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'scopeId',
       title: t('rbac.ScopeRawId'),
       render: (_, record: RoleNodeInList) => {
-        const scopeNodes =
-          record.scopes?.edges?.map((edge) => edge?.node).filter(Boolean) ?? [];
-        const totalCount = record.scopes?.count ?? 0;
-        if (scopeNodes.length === 0) return '-';
+        const { scopeId, extraCount } = readRoleScope(record);
+        if (!scopeId) return '-';
         return (
           <BAIFlex gap="xxs" wrap="wrap" align="center">
-            <BAIId uuid={scopeNodes[0]?.scopeId} />
-            {totalCount > 1 && (
+            <BAIId uuid={scopeId} />
+            {extraCount > 0 && (
               <Badge
                 variant={badgeVariantForTagColor('default')}
-                label={`+${totalCount - 1}`}
+                label={`+${extraCount}`}
               />
             )}
           </BAIFlex>
@@ -193,12 +240,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       key: 'source',
       title: t('rbac.Source'),
       dataIndex: 'source',
-      // BUI `BAITag` DISSOLVES into Astryx `Badge` at the call site
-      // (MAPPING §8); the variant comes from the repo-global ticket-13 lookup.
       render: (source: string) => {
         return (
-          <Badge
-            variant={badgeVariantForStatus('role', source)}
+          <Token
+            color={tokenColorForStatus('role', source)}
             label={source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
           />
         );
@@ -209,8 +254,8 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
       title: t('rbac.AutoAssign'),
       dataIndex: 'autoAssign',
       render: (autoAssign: boolean) => (
-        <Badge
-          variant={badgeVariantForTagColor(autoAssign ? 'green' : 'default')}
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
           label={autoAssign ? t('general.Active') : t('general.Inactive')}
         />
       ),

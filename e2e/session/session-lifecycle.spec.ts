@@ -25,7 +25,13 @@ import { test, expect } from '@playwright/test';
 
 test.describe(
   'Session Lifecycle Management',
-  { tag: ['@critical', '@session', '@functional'] },
+  {
+    // NOTE: the describe itself is not smoke-tagged — multiple scenarios use
+    // 240s timeouts, too heavy for a 5–10 minute smoke run. Only the single
+    // core lifecycle test below carries a test-level ['@smoke','@smoke-admin']
+    // tag (MVP acceptance: create → RUNNING → terminate).
+    tag: ['@critical', '@session', '@functional'],
+  },
   () => {
     // Run tests sequentially to avoid resource exhaustion
     test.describe.configure({ mode: 'serial' });
@@ -62,63 +68,71 @@ test.describe(
       }
     });
 
-    test('Create, monitor, and terminate interactive session', async ({
-      page,
-    }) => {
-      // Sessions remain PENDING indefinitely in CI - no agents available to schedule them.
-      test.fixme(
-        noAgentAvailable,
-        'Requires Backend.AI agent with available resources. Sessions stay PENDING in this environment.',
-      );
-      // Increase timeout for this test due to slow termination in resource-constrained environments
-      test.setTimeout(120000);
-      // Create interactive session
-      const sessionLauncher = new SessionLauncher(page);
-      const sessionName = `lifecycle-test-${Date.now()}`;
-      await sessionLauncher
-        .withSessionName(sessionName)
-        .withWaitForRunning(false) // Don't wait in launcher - test will wait explicitly
-        .create();
-      createdSessionName = sessionLauncher.getSessionName();
+    test(
+      'Create, monitor, and terminate interactive session',
+      // Test-level smoke tag: this single core lifecycle test is the MVP
+      // acceptance signal (create → RUNNING → terminate). The smoke runner
+      // sets BACKEND_AI_AGENTS_AVAILABLE=true so the fixme guard below never
+      // silently skips under smoke — a cluster that cannot run sessions must
+      // show up RED in the smoke report. The heavier sibling scenarios in
+      // this describe stay out of the smoke set.
+      { tag: ['@smoke', '@smoke-admin'] },
+      async ({ page }) => {
+        // Sessions remain PENDING indefinitely in CI - no agents available to schedule them.
+        test.fixme(
+          noAgentAvailable,
+          'Requires Backend.AI agent with available resources. Sessions stay PENDING in this environment.',
+        );
+        // Increase timeout for this test due to slow termination in resource-constrained environments
+        test.setTimeout(120000);
+        // Create interactive session
+        const sessionLauncher = new SessionLauncher(page);
+        const sessionName = `lifecycle-test-${Date.now()}`;
+        await sessionLauncher
+          .withSessionName(sessionName)
+          .withWaitForRunning(false) // Don't wait in launcher - test will wait explicitly
+          .create();
+        createdSessionName = sessionLauncher.getSessionName();
 
-      // Monitor session status transitions
-      // PENDING → PREPARING → RUNNING
-      await sessionDetailPage.waitForStatus(
-        createdSessionName,
-        'RUNNING',
-        120000,
-      );
+        // Monitor session status transitions
+        // PENDING → PREPARING → RUNNING
+        await sessionDetailPage.waitForStatus(
+          createdSessionName,
+          'RUNNING',
+          120000,
+        );
 
-      const runningStatus =
-        await sessionDetailPage.getSessionStatus(createdSessionName);
-      expect(runningStatus).toBe('RUNNING');
+        const runningStatus =
+          await sessionDetailPage.getSessionStatus(createdSessionName);
+        expect(runningStatus).toBe('RUNNING');
 
-      // Verify session appears in running sessions
-      await sessionDetailPage.filterByStatusCategory('running');
-      const runningSessions = await sessionDetailPage.getVisibleSessionIds();
-      expect(runningSessions).toContain(createdSessionName);
+        // Verify session appears in running sessions
+        await sessionDetailPage.filterByStatusCategory('running');
+        const runningSessions = await sessionDetailPage.getVisibleSessionIds();
+        expect(runningSessions).toContain(createdSessionName);
 
-      // Terminate session
-      await sessionDetailPage.terminateSession(createdSessionName);
+        // Terminate session
+        await sessionDetailPage.terminateSession(createdSessionName);
 
-      // Wait for session to be terminated (termination can take some time)
-      // The method will automatically switch to "finished" category if needed
-      await sessionDetailPage.waitForStatus(
-        createdSessionName,
-        'TERMINATED',
-        60000, // 60 seconds timeout for termination
-      );
+        // Wait for session to be terminated (termination can take some time)
+        // The method will automatically switch to "finished" category if needed
+        await sessionDetailPage.waitForStatus(
+          createdSessionName,
+          'TERMINATED',
+          60000, // 60 seconds timeout for termination
+        );
 
-      // Verify session is terminated
-      const isTerminated =
-        await sessionDetailPage.verifySessionTerminated(createdSessionName);
-      expect(isTerminated).toBeTruthy();
+        // Verify session is terminated
+        const isTerminated =
+          await sessionDetailPage.verifySessionTerminated(createdSessionName);
+        expect(isTerminated).toBeTruthy();
 
-      // Verify session appears in finished sessions
-      await sessionDetailPage.filterByStatusCategory('finished');
-      const finishedSessions = await sessionDetailPage.getVisibleSessionIds();
-      expect(finishedSessions).toContain(createdSessionName);
-    });
+        // Verify session appears in finished sessions
+        await sessionDetailPage.filterByStatusCategory('finished');
+        const finishedSessions = await sessionDetailPage.getVisibleSessionIds();
+        expect(finishedSessions).toContain(createdSessionName);
+      },
+    );
 
     test('Batch session completes automatically', async ({ page }) => {
       // Sessions remain PENDING indefinitely in CI - no agents available to schedule them.

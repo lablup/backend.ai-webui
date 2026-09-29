@@ -15,14 +15,14 @@
 */
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import './DragAndDrop.css';
-import { useUploadVFolderFiles } from './hooks';
 import type { RcFile } from './hooks';
 import { FileInput } from '@astryxdesign/core/FileInput';
 import { useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 interface DragAndDropProps {
-  onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  /** Hands the drop to the explorer's duplicate-aware upload path. */
+  onUpload: (files: Array<RcFile>) => void;
   /** Optional container element for portal rendering */
   portalContainer?: HTMLElement | null;
   /** Dismisses the overlay once the drag is over. */
@@ -36,7 +36,6 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { uploadFiles } = useUploadVFolderFiles();
   const lastFileListRef = useRef<Array<RcFile>>([]);
 
   const overlay = (
@@ -79,7 +78,7 @@ const DragAndDrop: React.FC<DragAndDropProps> = ({
             Array.isArray(files) ? files : files ? [files] : []
           ) as Array<RcFile>;
           if (fileList !== lastFileListRef.current) {
-            uploadFiles(fileList, onUpload);
+            onUpload(fileList);
           }
           lastFileListRef.current = fileList;
         }}

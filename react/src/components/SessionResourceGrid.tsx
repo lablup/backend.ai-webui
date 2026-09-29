@@ -596,6 +596,11 @@ const SessionResourceGrid = ({
               width={180}
               options={metricOptions}
               value={metric}
+              placeholder={t('session.resourceGrid.NoLiveMetrics')}
+              isDisabled={metricOptions.length === 0}
+              disabledMessage={t(
+                'session.resourceGrid.NoLiveMetricsForSessionsInView',
+              )}
               onChange={(value) => setGridParams({ gridMetric: value ?? '' })}
             />
           )}

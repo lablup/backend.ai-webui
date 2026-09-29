@@ -6,6 +6,7 @@ import type { SessionV2Status } from 'backend.ai-ui';
 
 /** Gated behind the client's `session-preemption-statuses` feature flag. */
 const PREEMPTION_STATUSES: ReadonlyArray<SessionV2Status> = [
+  'RESERVED',
   'PREEMPTED',
   'RESCHEDULING',
 ];
@@ -13,6 +14,7 @@ const PREEMPTION_STATUSES: ReadonlyArray<SessionV2Status> = [
 /** Sessions still occupying (or about to occupy) agent resources. */
 const RUNNING_STATUSES: ReadonlyArray<SessionV2Status> = [
   'PENDING',
+  'RESERVED',
   'SCHEDULED',
   'PREPARING',
   'PREPARED',
