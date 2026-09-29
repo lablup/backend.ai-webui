@@ -46,6 +46,7 @@ enableImportFromHuggingFace = false     # Enable import from Hugging Face featur
 enableInteractiveLoginAccountSwitch = true  # If false, hide the "Sign in with a different account" button from the interactive login page.
 enableModelFolders = true               # Enable model folders feature. (From Backend.AI 23.03)
 enableReservoir = false                 # Enable reservoir page
+enableWebMCP = false                    # If true, register WebMCP tools (document.modelContext) so an AI agent in a WebMCP-capable browser can read pages, navigate and fill forms. Tools never submit or delete anything.
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
