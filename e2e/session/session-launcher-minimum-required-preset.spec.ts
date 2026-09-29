@@ -90,7 +90,7 @@ test.describe(
       api = undefined;
     });
 
-    test('User can open the sub-path picker for a mounted folder after choosing the Minimum requirements preset', async ({
+    test('User can open the sub-path picker after choosing the Minimum requirements preset', async ({
       page,
     }) => {
       const consoleErrors = collectConsoleErrors(page);
@@ -113,6 +113,9 @@ test.describe(
         .getByRole('option', { name: new RegExp(`^${folderName}\\b`) })
         .click();
       await page.keyboard.press('Escape');
+      await expect(
+        page.getByRole('listbox', { name: 'Select Folder' }),
+      ).toBeHidden();
 
       const mountRow = page
         .getByRole('listitem')
@@ -147,9 +150,11 @@ test.describe(
       // Let the image-minimum writes land, then require the step to stay put.
       await page.waitForTimeout(1500);
       const settledVisible = await readVisibleResourceValues(page);
-      const settledResource = readFormValuesFromUrl(page)?.resource;
-      expect(settledResource).toBeTruthy();
+      const settledResource = readFormValuesFromUrl(page)?.resource as
+        ResourceFormValues | undefined;
+      expect(String(settledResource?.mem)).toMatch(/^\d/);
 
+      // Sample over time on purpose: a render loop shows up as drift.
       for (let i = 0; i < 5; i++) {
         await page.waitForTimeout(1000);
         expect(await readVisibleResourceValues(page)).toEqual(settledVisible);
@@ -204,6 +209,7 @@ test.describe(
         { timeout: 15000 },
       );
 
+      // Sample over time on purpose: the pre-fix rewrite lands after restore.
       for (let i = 0; i < 5; i++) {
         await page.waitForTimeout(1000);
         const resource = readFormValuesFromUrl(page)?.resource as
