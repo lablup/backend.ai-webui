@@ -150,7 +150,7 @@ export const toDataGridColumns = <RecordType extends AnyRecord>(
         isHiddenByDefault: !!column.defaultHidden,
         exportKeys,
         getCellProps: column.onCell
-          ? (record) => column.onCell!(record, 0)
+          ? (record, index) => column.onCell!(record, index)
           : undefined,
       };
     },
