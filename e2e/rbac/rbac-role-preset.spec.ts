@@ -202,7 +202,15 @@ test.describe(
       await page
         .getByRole('button', { name: 'Clear all', exact: true })
         .click();
-      // Unfiltered, the list holds presets of more than one scope type.
+      await expect(
+        page.getByRole('button', {
+          name: 'Remove Scope Type: equals',
+          exact: true,
+        }),
+      ).toBeHidden();
+      await waitForTableSettled(page);
+      // Unfiltered, the list holds presets of more than one scope type (the
+      // manager seeds global/domain/project/user presets).
       await expect
         .poll(async () => {
           const scopeTypes = await dataRows(page).evaluateAll(
@@ -254,6 +262,8 @@ test.describe(
       // The oldest project-scoped system role: sorting by Created At keeps the
       // seed roles on top while parallel tests churn newer ones.
       await applyEnumFilter(page, 'Source', 'System');
+      // The role list's Scope Type value is a custom select (a `Scope Type`
+      // button), which commits only on Apply — unlike `applyEnumFilter`.
       await openFilterField(page, 'Scope Type');
       await page
         .getByRole('button', { name: 'Scope Type', exact: true })
