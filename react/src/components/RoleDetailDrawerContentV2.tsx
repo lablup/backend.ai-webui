@@ -47,6 +47,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   const role = useFragment(
     graphql`
       fragment RoleDetailDrawerContentV2Fragment on Role {
+        id
         name
         description
         source
@@ -189,6 +190,8 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
         <Suspense fallback={<BAISkeleton />}>
           {activeTab === 'permissions' && (
             <RolePermissionSummaryTable
+              // Keyed by role: history navigation swaps the role without closing the drawer.
+              key={role.id}
               roleNodeFrgmt={role}
               scopeName={scopeName}
               scopeId={role.scopeId ?? ''}

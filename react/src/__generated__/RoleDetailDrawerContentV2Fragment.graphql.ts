@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8661c8ca1a55a86868b627051bd0bc8c>>
+ * @generated SignedSource<<c355ab9ba436ecf6a02f79336546d71d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -16,6 +16,7 @@ export type RoleDetailDrawerContentV2Fragment$data = {
   readonly autoAssign: boolean;
   readonly createdAt: string;
   readonly description: string | null | undefined;
+  readonly id: string;
   readonly name: string;
   readonly scope: {
     readonly basicInfo?: {
@@ -61,6 +62,13 @@ return {
   "metadata": null,
   "name": "RoleDetailDrawerContentV2Fragment",
   "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
     (v0/*: any*/),
     {
       "alias": null,
@@ -287,6 +295,6 @@ return {
 };
 })();
 
-(node as any).hash = "e04b3177be0f79e5b6ba43776a82db7b";
+(node as any).hash = "05d81dabadedf0ac41eb34cd9d8c4fdc";
 
 export default node;
