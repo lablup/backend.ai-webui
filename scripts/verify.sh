@@ -307,7 +307,9 @@ check_astryx_theme_built() {
     note "backend.ai-ui dist missing — built it first (once per checkout)"
     pnpm --filter backend.ai-ui run build > /dev/null || return 1
   fi
-  bin react astryx theme build -c \
+  # ui-common's dist imports .css, which Node cannot load; the stub empties them.
+  NODE_OPTIONS="--import=$PWD/scripts/astryx-theme-css-stub.mjs" \
+    bin react astryx theme build -c \
     src/astryx-theme/built/backendai-default.ts \
     -o src/astryx-theme/built/backendai-default-built.css
 }
