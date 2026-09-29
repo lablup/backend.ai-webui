@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1bfb852543c9396a045b4e7a1bc2a54e>>
+ * @generated SignedSource<<05d5ea4780d45c29dd1c297c2477361f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -148,16 +148,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "8527e246a1f35cf8cb9b95ada4663608",
+    "cacheID": "bc25f8a881404199dee4b5278e6867f9",
     "id": null,
     "metadata": {},
     "name": "RolePresetDetailDrawerRefetchQuery",
     "operationKind": "query",
-    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n  id\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
+    "text": "query RolePresetDetailDrawerRefetchQuery(\n  $id: ID!\n) {\n  node(id: $id) {\n    __typename\n    ...RolePresetDetailDrawerFragment\n    id\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
   }
 };
 })();
 
-(node as any).hash = "df82c6b0ed839ea7b9fab67127ca7020";
+(node as any).hash = "0051280d148f5f65cf1eb3712a9de9b5";
 
 export default node;

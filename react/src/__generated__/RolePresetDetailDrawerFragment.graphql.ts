@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1d46235a03324bdf14343226218cc42d>>
+ * @generated SignedSource<<7740bdf80d4a09588683bd4fe4532b34>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -50,6 +50,13 @@ const node: ReaderFragment = {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
+      "name": "id",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
       "name": "name",
       "storageKey": null
     },
@@ -92,19 +99,12 @@ const node: ReaderFragment = {
       "args": null,
       "kind": "FragmentSpread",
       "name": "RolePresetPermissionTableFragment"
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "id",
-      "storageKey": null
     }
   ],
   "type": "RolePreset",
   "abstractKey": null
 };
 
-(node as any).hash = "df82c6b0ed839ea7b9fab67127ca7020";
+(node as any).hash = "0051280d148f5f65cf1eb3712a9de9b5";
 
 export default node;

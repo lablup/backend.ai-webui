@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e4b3b97e648984af5f246826cc77c4d>>
+ * @generated SignedSource<<d2c6c2f286366063d657ac28ab92caea>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -290,12 +290,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "af80ef98e5aaeebb967a892b721e7ab2",
+    "cacheID": "12186c8019e3eb51a39007790613ee06",
     "id": null,
     "metadata": {},
     "name": "RolePresetListTabQuery",
     "operationKind": "query",
-    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n  id\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
+    "text": "query RolePresetListTabQuery(\n  $filter: RolePresetFilter\n  $orderBy: [RolePresetOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminRolePresets(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        ...RolePresetNodesFragment\n        ...RolePresetDetailDrawerFragment\n      }\n    }\n  }\n}\n\nfragment RolePresetDetailDrawerFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  deleted\n  createdAt\n  updatedAt\n  ...RolePresetPermissionTableFragment\n}\n\nfragment RolePresetNodesFragment on RolePreset {\n  id\n  name\n  scopeType\n  autoAssign\n  createdAt\n  updatedAt\n  permissionPresets {\n    count\n  }\n}\n\nfragment RolePresetPermissionTableFragment on RolePreset {\n  id\n  scopeType\n}\n"
   }
 };
 })();

@@ -66,6 +66,7 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
     graphql`
       fragment RolePresetDetailDrawerFragment on RolePreset
       @refetchable(queryName: "RolePresetDetailDrawerRefetchQuery") {
+        id
         name
         scopeType
         autoAssign
@@ -158,7 +159,11 @@ const RolePresetDetailDrawer: React.FC<RolePresetDetailDrawerProps> = ({
             />
             <Suspense fallback={<BAISkeleton />}>
               {activeTab === 'permissions' && (
-                <RolePresetPermissionTable rolePresetFrgmt={rolePreset} />
+                <RolePresetPermissionTable
+                  // Keyed by preset: history navigation swaps the preset without closing the drawer.
+                  key={rolePreset.id}
+                  rolePresetFrgmt={rolePreset}
+                />
               )}
             </Suspense>
           </BAIFlex>
