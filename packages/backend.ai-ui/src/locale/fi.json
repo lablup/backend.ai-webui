@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Tyhjennä Hae vaihtoehdoista",
-    "NoResults": "Ei tuloksia",
-    "SearchOptions": "Hae vaihtoehdoista"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Valitse konttirekisteri"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Tiedosto",
-    "Loading": "Ladataan...",
     "Optional": "Valinnainen",
     "Project": "Projekti",
     "Search": "Hae",
     "Select": "Valitse",
-    "SelectPlaceholder": "Valitse {{label}}",
-    "TotalItems": "Yhteensä {{total}} kohteet",
     "Unit": "Yksikkö",
     "button": {
       "Action": "Toiminto",

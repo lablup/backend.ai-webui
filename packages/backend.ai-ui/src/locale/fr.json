@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Effacer Rechercher parmi les options",
-    "NoResults": "Aucun résultat",
-    "SearchOptions": "Rechercher parmi les options"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Sélectionner un registre de conteneurs"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Fichier",
-    "Loading": "Chargement...",
     "Optional": "Facultatif",
     "Project": "Projet",
     "Search": "Rechercher",
     "Select": "Sélectionner",
-    "SelectPlaceholder": "Sélectionnez {{label}}",
-    "TotalItems": "Éléments totaux {{total}}",
     "Unit": "Unité",
     "button": {
       "Action": "Action",

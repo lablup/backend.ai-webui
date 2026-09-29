@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "发生意外错误。请稍后重试，若问题仍然存在，请联系支持。"
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "清除 搜索选项",
-    "NoResults": "无结果",
-    "SearchOptions": "搜索选项"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "选择容器镜像仓库"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "文件",
-    "Loading": "加载中...",
     "Optional": "可选",
     "Project": "项目",
     "Search": "搜索",
     "Select": "选择",
-    "SelectPlaceholder": "请选择{{label}}",
-    "TotalItems": "总计{{total}}项目",
     "Unit": "单位",
     "button": {
       "Action": "操作",

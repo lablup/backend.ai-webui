@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองอีกครั้งภายหลัง หากปัญหายังคงมีอยู่ โปรดติดต่อฝ่ายสนับสนุน"
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "ล้าง ค้นหาตัวเลือก",
-    "NoResults": "ไม่พบผลลัพธ์",
-    "SearchOptions": "ค้นหาตัวเลือก"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "เลือกรีจิสทรีคอนเทนเนอร์"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "ไฟล์",
-    "Loading": "กำลังโหลด...",
     "Optional": "ไม่บังคับ",
     "Project": "โครงการ",
     "Search": "ค้นหา",
     "Select": "เลือก",
-    "SelectPlaceholder": "เลือก{{label}}",
-    "TotalItems": "รวม {{total}} รายการ",
     "Unit": "หน่วย",
     "button": {
       "Action": "การดำเนินการ",

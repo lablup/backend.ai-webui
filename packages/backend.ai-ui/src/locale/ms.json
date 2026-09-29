@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ralat tidak dijangka berlaku. Sila cuba lagi nanti atau hubungi sokongan jika masalah berterusan."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Kosongkan Cari pilihan",
-    "NoResults": "Tiada keputusan",
-    "SearchOptions": "Cari pilihan"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Fail",
-    "Loading": "Memuatkan...",
     "Optional": "Pilihan",
     "Project": "Projek",
     "Search": "Cari",
     "Select": "Pilih",
-    "SelectPlaceholder": "Pilih {{label}}",
-    "TotalItems": "Jumlah {{total}} item",
     "Unit": "Unit",
     "button": {
       "Action": "Tindakan",

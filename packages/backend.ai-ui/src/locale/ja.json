@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "オプションを検索 をクリア",
-    "NoResults": "結果がありません",
-    "SearchOptions": "オプションを検索"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "ファイル",
-    "Loading": "読み込み中...",
     "Optional": "任意",
     "Project": "プロジェクト",
     "Search": "検索",
     "Select": "選択",
-    "SelectPlaceholder": "{{label}}を選択してください",
-    "TotalItems": "合計 {{total}}アイテム",
     "Unit": "単位",
     "button": {
       "Action": "アクション",

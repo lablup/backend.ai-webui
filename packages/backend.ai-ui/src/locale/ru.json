@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Очистить Поиск по вариантам",
-    "NoResults": "Нет результатов",
-    "SearchOptions": "Поиск по вариантам"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Файл",
-    "Loading": "Загрузка...",
     "Optional": "Необязательно",
     "Project": "Проект",
     "Search": "Поиск",
     "Select": "Выбрать",
-    "SelectPlaceholder": "Выберите {{label}}",
-    "TotalItems": "Total {{total}} элементы",
     "Unit": "Единица",
     "button": {
       "Action": "Действие",

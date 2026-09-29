@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "清除 搜尋選項",
-    "NoResults": "無結果",
-    "SearchOptions": "搜尋選項"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "檔案",
-    "Loading": "載入中...",
     "Optional": "選填",
     "Project": "專案",
     "Search": "搜尋",
     "Select": "選擇",
-    "SelectPlaceholder": "請選擇{{label}}",
-    "TotalItems": "總計{{total}}項目",
     "Unit": "單位",
     "button": {
       "Action": "動作",

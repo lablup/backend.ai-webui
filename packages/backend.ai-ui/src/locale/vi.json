@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Đã xảy ra lỗi bất ngờ. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ nếu vấn đề vẫn tiếp diễn."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Xóa Tìm trong các tùy chọn",
-    "NoResults": "Không có kết quả",
-    "SearchOptions": "Tìm trong các tùy chọn"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Chọn kho lưu trữ container"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Tệp",
-    "Loading": "Đang tải...",
     "Optional": "Không bắt buộc",
     "Project": "Dự án",
     "Search": "Tìm kiếm",
     "Select": "Chọn",
-    "SelectPlaceholder": "Chọn {{label}}",
-    "TotalItems": "Tổng số {{total}} các mục",
     "Unit": "Đơn vị",
     "button": {
       "Action": "Hành động",

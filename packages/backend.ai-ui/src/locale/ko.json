@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "옵션 검색 지우기",
-    "NoResults": "결과 없음",
-    "SearchOptions": "옵션 검색"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
@@ -721,13 +716,10 @@
   },
   "general": {
     "File": "파일",
-    "Loading": "로딩 중...",
     "Optional": "선택",
     "Project": "프로젝트",
     "Search": "검색",
     "Select": "선택",
-    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
-    "TotalItems": "총 {{total}} 항목",
     "Unit": "단위",
     "button": {
       "Action": "동작",

@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Clear Search options",
-    "NoResults": "No results",
-    "SearchOptions": "Search options"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Select Container Registry"
   },
@@ -721,13 +716,10 @@
   },
   "general": {
     "File": "File",
-    "Loading": "Loading...",
     "Optional": "Optional",
     "Project": "Project",
     "Search": "Search",
     "Select": "Select",
-    "SelectPlaceholder": "Select {{label}}",
-    "TotalItems": "Total {{total}} items",
     "Unit": "Unit",
     "button": {
       "Action": "Action",

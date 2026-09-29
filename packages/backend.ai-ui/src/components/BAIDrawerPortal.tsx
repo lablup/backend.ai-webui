@@ -8,7 +8,7 @@
  the inner drawer therefore takes `hasScrim={false}` and opens with `show()`,
  which promotes nothing (FR-3585).
 
- Relies on the Escape containment and `aria-modal` passthrough of ui-common's
+ Relies on the layer-stack Escape and `aria-modal` passthrough of ui-common's
  lab `Drawer` fork. Stays in BUI (FR-4098): the name `Drawer` is that fork's,
  its styles need the optional lab peer, and the band is BUI's z-index ladder.
 */
@@ -43,9 +43,9 @@ const BAIDrawerPortal: React.FC<BAIDrawerPortalProps> = ({
   // ancestry — re-emit the nearest theme's NAME as ui-common `Modal` does.
   const themeName = useThemeName();
 
-  // Modality restored by hand: `show()` traps nothing. Escape stays lab's — its
-  // dialog `keydown` already closes the top drawer, and a second handler here
-  // would request the close twice.
+  // Modality restored by hand: `show()` traps nothing. Escape stays the fork's
+  // (Astryx's layer-dismissal stack closes the top layer); a second handler
+  // here would request the close twice.
   const rootRef = useRef<HTMLDivElement>(null);
   const isTopmost = useModalLevel(rootRef, isOpen);
 

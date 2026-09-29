@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Гэнэтийн алдаа гарлаа. Дахин оролдоно уу эсвэл асуудал үргэлжилбэл дэмжлэгт хандана уу."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Сонголтуудаас хайх-г цэвэрлэх",
-    "NoResults": "Үр дүн олдсонгүй",
-    "SearchOptions": "Сонголтуудаас хайх"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Контейнер бүртгэл сонгох"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Файл",
-    "Loading": "Ачаалж байна...",
     "Optional": "Заавал биш",
     "Project": "Төсөл",
     "Search": "Хайх",
     "Select": "Сонгох",
-    "SelectPlaceholder": "{{label}} сонгоно уу",
-    "TotalItems": "Нийт {{total}} зүйлүүд",
     "Unit": "Нэгж",
     "button": {
       "Action": "Үйлдэл",

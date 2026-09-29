@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Terjadi kesalahan tak terduga. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Hapus Cari opsi",
-    "NoResults": "Tidak ada hasil",
-    "SearchOptions": "Cari opsi"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Container"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Berkas",
-    "Loading": "Memuat...",
     "Optional": "Opsional",
     "Project": "Proyek",
     "Search": "Cari",
     "Select": "Pilih",
-    "SelectPlaceholder": "Pilih {{label}}",
-    "TotalItems": "Total {{total}} item",
     "Unit": "Satuan",
     "button": {
       "Action": "Tindakan",

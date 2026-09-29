@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
-    "NoResults": "Δεν βρέθηκαν αποτελέσματα",
-    "SearchOptions": "Αναζήτηση επιλογών"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Αρχείο",
-    "Loading": "Φόρτωση...",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
     "Search": "Αναζήτηση",
     "Select": "Επιλογή",
-    "SelectPlaceholder": "Επιλέξτε {{label}}",
-    "TotalItems": "Σύνολο {{total}} στοιχεία",
     "Unit": "Μονάδα",
     "button": {
       "Action": "Ενέργεια",

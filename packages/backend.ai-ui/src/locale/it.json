@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Si è verificato un errore imprevisto. Riprova più tardi o contatta l'assistenza se il problema persiste."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Cancella Cerca tra le opzioni",
-    "NoResults": "Nessun risultato",
-    "SearchOptions": "Cerca tra le opzioni"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Seleziona registro container"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "File",
-    "Loading": "Caricamento...",
     "Optional": "Opzionale",
     "Project": "Progetto",
     "Search": "Cerca",
     "Select": "Seleziona",
-    "SelectPlaceholder": "Seleziona {{label}}",
-    "TotalItems": "Totali {{total}} elementi",
     "Unit": "Unità",
     "button": {
       "Action": "Azione",

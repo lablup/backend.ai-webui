@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ocorreu um erro inesperado. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Limpar Pesquisar opções",
-    "NoResults": "Sem resultados",
-    "SearchOptions": "Pesquisar opções"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Selecionar registro de contêiner"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Arquivo",
-    "Loading": "A carregar...",
     "Optional": "Opcional",
     "Project": "Projeto",
     "Search": "Pesquisar",
     "Select": "Selecionar",
-    "SelectPlaceholder": "Selecione {{label}}",
-    "TotalItems": "Total {{total}} itens",
     "Unit": "Unidade",
     "button": {
       "Action": "Ação",

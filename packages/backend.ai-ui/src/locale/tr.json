@@ -89,11 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin veya sorun devam ederse destekle iletişime geçin."
   },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Seçenekleri ara alanını temizle",
-    "NoResults": "Sonuç yok",
-    "SearchOptions": "Seçenekleri ara"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Konteyner Kayıt Defteri Seç"
   },
@@ -720,13 +715,10 @@
   },
   "general": {
     "File": "Dosya",
-    "Loading": "Yükleniyor...",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",
     "Search": "Ara",
     "Select": "Seç",
-    "SelectPlaceholder": "{{label}} seçin",
-    "TotalItems": "Total {{total}} öğeleri",
     "Unit": "Birim",
     "button": {
       "Action": "Eylem",
