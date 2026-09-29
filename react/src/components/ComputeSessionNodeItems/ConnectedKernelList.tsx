@@ -18,7 +18,8 @@ import {
   filterOutNullAndUndefined,
   BAITable,
   BAIUnmountAfterClose,
-  BAIDoubleTag,
+  BAIDoubleBadge,
+  BAIFlex,
   BAIId,
   type BAIColumnType,
   BAIText,
@@ -38,28 +39,6 @@ interface ConnectedKernelListProps {
   // get the project id of the session for <= v24.12.0.
   // projectId?: string | null;
 }
-
-const kernelStatusTagColor = {
-  // prepare
-  PREPARING: 'blue',
-  BUILDING: 'blue',
-  PULLING: 'blue',
-  PREPARED: 'blue',
-  CREATING: 'blue',
-  // running
-  PENDING: 'green',
-  SCHEDULED: 'green',
-  RUNNING: 'green',
-  RESTARTING: 'green',
-  RESIZING: 'green',
-  SUSPENDED: 'green',
-  // terminated
-  TERMINATING: 'default',
-  TERMINATED: 'default',
-  CANCELLED: 'default',
-  // error
-  ERROR: 'red',
-};
 
 const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
   kernelsFrgmt,
@@ -91,7 +70,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
       dataIndex: 'cluster_hostname',
       render: (hostname, record) => {
         return (
-          <>
+          <BAIFlex gap="xxs">
             <Text>{hostname}</Text>
             <IconButton
               variant="ghost"
@@ -103,7 +82,7 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
                 record.row_id && setKernelIdForLogModal(record.row_id);
               }}
             />
-          </>
+          </BAIFlex>
         );
       },
     },
@@ -114,14 +93,17 @@ const ConnectedKernelList: React.FC<ConnectedKernelListProps> = ({
         return (
           <>
             {record?.status_info !== '' ? (
-              <BAIDoubleTag
+              <BAIDoubleBadge
                 values={[
-                  { label: status, color: _.get(kernelStatusTagColor, status) },
                   {
-                    label: record?.status_info,
-                    color: _.get(
-                      kernelStatusTagColor,
-                      record?.status_info ?? '',
+                    label: status,
+                    variant: badgeVariantForStatus('kernel', status),
+                  },
+                  {
+                    label: record?.status_info ?? '',
+                    variant: badgeVariantForStatus(
+                      'kernel',
+                      record?.status_info,
                     ),
                   },
                 ]}

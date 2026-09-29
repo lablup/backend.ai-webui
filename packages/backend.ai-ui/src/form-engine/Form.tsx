@@ -174,7 +174,10 @@ const InternalForm = <Values,>(
       if (scrollToFirstError && errorInfo.errorFields.length) {
         const options =
           typeof scrollToFirstError === 'object' ? scrollToFirstError : {};
-        formInstance.scrollToField(errorInfo.errorFields[0].name, options);
+        formInstance.scrollToField(errorInfo.errorFields[0].name, {
+          focus: true,
+          ...options,
+        });
       }
       onFinishFailed?.(errorInfo);
     },

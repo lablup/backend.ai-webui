@@ -33,47 +33,48 @@ test.describe(
     // 6. Widget Rendering
     // -----------------------------------------------------------------------
     test.describe('Widget Rendering', () => {
-      test('Admin can see all expected dashboard widgets', async ({
-        page,
-        request,
-      }) => {
-        // 1. Login as admin and navigate to /summary
-        await loginAsAdmin(page, request);
-        await navigateTo(page, 'summary');
+      test(
+        'Admin can see all expected dashboard widgets',
+        { tag: ['@smoke', '@smoke-admin'] },
+        async ({ page, request }) => {
+          // 1. Login as admin and navigate to /summary
+          await loginAsAdmin(page, request);
+          await navigateTo(page, 'summary');
 
-        // 2. Verify the "Active Sessions" widget is visible (superadmin sees "Active Sessions")
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Active Sessions' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          // 2. Verify the "Active Sessions" widget is visible (superadmin sees "Active Sessions")
+          await expect(
+            page
+              .locator('.bai_grid_item')
+              .filter({ hasText: 'Active Sessions' })
+              .first(),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 3. Verify the "My Resources" widget is visible with CPU and Memory statistics
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'My Total Resource Usage' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          // 3. Verify the "My Resources" widget is visible with CPU and Memory statistics
+          await expect(
+            page
+              .locator('.bai_grid_item')
+              .filter({ hasText: 'My Total Resource Usage' })
+              .first(),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 4. Verify the "My Resources in Resource Group" widget is visible
-        // The widget title is "My Resources in" followed by a resource group selector
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'My Resources in' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+          // 4. Verify the "My Resources in Resource Group" widget is visible
+          // The widget title is "My Resources in" followed by a resource group selector
+          await expect(
+            page
+              .locator('.bai_grid_item')
+              .filter({ hasText: 'My Resources in' })
+              .first(),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
 
-        // 5. Verify the "Recently Created Sessions" widget is visible
-        await expect(
-          page
-            .locator('.bai_grid_item')
-            .filter({ hasText: 'Recently Created Sessions' })
-            .first(),
-        ).toBeVisible({ timeout: WIDGET_TIMEOUT });
-      });
+          // 5. Verify the "Recently Created Sessions" widget is visible
+          await expect(
+            page
+              .locator('.bai_grid_item')
+              .filter({ hasText: 'Recently Created Sessions' })
+              .first(),
+          ).toBeVisible({ timeout: WIDGET_TIMEOUT });
+        },
+      );
 
       test('Regular user sees "My Sessions" title instead of "Active Sessions" on the session count widget', async ({
         page,

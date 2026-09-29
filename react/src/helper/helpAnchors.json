@@ -1,0 +1,239 @@
+{
+  "entries": [
+    { "path": "", "docPage": "dashboard.html" },
+    { "path": "start", "docPage": "start.html" },
+    { "path": "dashboard", "docPage": "dashboard.html" },
+    { "path": "summary", "docPage": "dashboard.html" },
+    { "path": "session", "docPage": "sessions_all.html" },
+    { "path": "job", "docPage": "sessions_all.html" },
+    { "path": "deployments", "docPage": "deployment.html" },
+    { "path": "serving", "docPage": "deployment.html" },
+    { "path": "service", "docPage": "deployment.html" },
+    {
+      "path": "model-store",
+      "docPage": "deployment.html",
+      "anchor": "model-store"
+    },
+    { "path": "import", "docPage": "start.html" },
+    { "path": "github", "docPage": "start.html" },
+    { "path": "chat", "docPage": "chat.html" },
+    { "path": "data", "docPage": "vfolder.html" },
+    { "path": "my-environment", "docPage": "my_environments.html" },
+    { "path": "agent-summary", "docPage": "agent_summary.html" },
+    { "path": "statistics", "docPage": "statistics.html" },
+    { "path": "usersettings", "docPage": "user_settings.html" },
+    { "path": "admin-dashboard", "docPage": "dashboard.html" },
+    {
+      "path": "admin-session",
+      "docPage": "project_admin.html",
+      "anchor": "sessions"
+    },
+    {
+      "path": "admin-deployments",
+      "docPage": "project_admin.html",
+      "anchor": "deployments"
+    },
+    {
+      "path": "admin-serving",
+      "docPage": "project_admin.html",
+      "anchor": "deployments"
+    },
+    {
+      "path": "admin-data",
+      "docPage": "project_admin.html",
+      "anchor": "data"
+    },
+    {
+      "path": "credential",
+      "docPage": "project_admin.html",
+      "anchor": "users"
+    },
+    {
+      "path": "environment",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-images"
+    },
+    {
+      "path": "scheduler",
+      "docPage": "admin_menu.html",
+      "anchor": "fair-share-scheduler"
+    },
+    {
+      "path": "agent",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-agent-nodes"
+    },
+    {
+      "path": "resource-policy",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-resource-policy"
+    },
+    {
+      "path": "storage-settings",
+      "docPage": "admin_menu.html",
+      "anchor": "storages"
+    },
+    {
+      "path": "settings",
+      "docPage": "admin_menu.html",
+      "anchor": "system-settings"
+    },
+    {
+      "path": "maintenance",
+      "docPage": "admin_menu.html",
+      "anchor": "server-management"
+    },
+    {
+      "path": "diagnostics",
+      "docPage": "admin_menu.html",
+      "anchor": "diagnostics"
+    },
+    {
+      "path": "branding",
+      "docPage": "admin_menu.html",
+      "anchor": "branding"
+    },
+    {
+      "path": "information",
+      "docPage": "admin_menu.html",
+      "anchor": "detailed-information"
+    },
+    { "path": "rbac", "docPage": "rbac_management.html" },
+    { "path": "project", "docPage": "project_admin.html" },
+    {
+      "path": "project-admin-users",
+      "docPage": "project_admin.html",
+      "anchor": "users"
+    },
+    {
+      "path": "project-data",
+      "docPage": "project_admin.html",
+      "anchor": "data"
+    },
+    {
+      "path": "project-admin-session",
+      "docPage": "project_admin.html",
+      "anchor": "sessions"
+    },
+    {
+      "path": "project-admin-deployments",
+      "docPage": "project_admin.html",
+      "anchor": "deployments"
+    },
+
+    {
+      "path": "agent",
+      "tab": "agents",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-agent-nodes"
+    },
+    {
+      "path": "agent",
+      "tab": "storages",
+      "docPage": "admin_menu.html",
+      "anchor": "storages"
+    },
+    {
+      "path": "agent",
+      "tab": "resourceGroup",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-resource-group"
+    },
+    {
+      "path": "environment",
+      "tab": "image",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-images"
+    },
+    {
+      "path": "environment",
+      "tab": "preset",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-resource-preset"
+    },
+    {
+      "path": "environment",
+      "tab": "registry",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-docker-registry"
+    },
+    {
+      "path": "usersettings",
+      "tab": "general",
+      "docPage": "user_settings.html",
+      "anchor": "general-tab"
+    },
+    {
+      "path": "usersettings",
+      "tab": "logs",
+      "docPage": "user_settings.html",
+      "anchor": "logs-tab"
+    },
+    {
+      "path": "resource-policy",
+      "tab": "keypair",
+      "docPage": "admin_menu.html",
+      "anchor": "keypair-resource-policy"
+    },
+    {
+      "path": "resource-policy",
+      "tab": "user",
+      "docPage": "admin_menu.html",
+      "anchor": "user-resource-policy"
+    },
+    {
+      "path": "resource-policy",
+      "tab": "project",
+      "docPage": "admin_menu.html",
+      "anchor": "project-resource-policy"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "deployments",
+      "docPage": "project_admin.html",
+      "anchor": "deployments"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "model-store-management",
+      "docPage": "admin_menu.html",
+      "anchor": "admin-model-store-management"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "prometheus-preset",
+      "docPage": "admin_menu.html",
+      "anchor": "prometheus-query-presets"
+    },
+    {
+      "path": "admin-deployments",
+      "tab": "deployment-presets",
+      "docPage": "admin_menu.html",
+      "anchor": "deployment-presets"
+    },
+    {
+      "path": "credential",
+      "tab": "users",
+      "docPage": "project_admin.html",
+      "anchor": "users"
+    },
+    {
+      "path": "credential",
+      "tab": "credentials",
+      "docPage": "admin_menu.html",
+      "anchor": "manage-users-keypairs"
+    },
+    {
+      "path": "statistics",
+      "tab": "allocation-history",
+      "docPage": "statistics.html",
+      "anchor": "allocation-history"
+    },
+    {
+      "path": "statistics",
+      "tab": "user-session-history",
+      "docPage": "statistics.html",
+      "anchor": "user-session-history"
+    }
+  ]
+}

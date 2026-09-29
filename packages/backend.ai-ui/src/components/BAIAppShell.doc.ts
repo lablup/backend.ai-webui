@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "The application frame: an optional full-width banner, an inline side navigation rail at and above the `md` breakpoint, a drawer below it, and the routed page as children. It wraps Astryx AppShell and owns the one piece AppShell leaves to the host — the drawer's open state. The drawer is an Astryx MobileNav, a native modal dialog, so focus trapping, body scroll lock and the backdrop come for free; no toggle bar is rendered because the host header's own hamburger opens it through AppShell's mobile context. Two resets are built in: a change of `pathname` closes the drawer, and leaving the mobile breakpoint clears the open state using AppShell's own breakpoint verdict rather than a second media query that could disagree at exactly the boundary.",
+      "The application frame: an optional full-width banner, an inline side navigation rail at and above the `md` breakpoint, a drawer below it, and the routed page as children. It wraps Astryx AppShell and owns the one piece AppShell leaves to the host — the drawer's open state. The drawer is an Astryx MobileNav, a native modal dialog, so focus trapping, body scroll lock and the backdrop come for free — the backdrop dims the page without the blur, as every other Backend.AI overlay does; no toggle bar is rendered because the host header's own hamburger opens it through AppShell's mobile context. Two resets are built in: a change of `pathname` closes the drawer, and leaving the mobile breakpoint clears the open state using AppShell's own breakpoint verdict rather than a second media query that could disagree at exactly the boundary.",
     bestPractices: [
       {
         guidance: true,

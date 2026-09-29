@@ -1,6 +1,7 @@
 # Per-package `tsc --noEmit`, the backend.ai-client package checks (lint/test/
-# build, formerly backend-ai-client-ci.yml), and the Relay drift check
-# (formerly relay-drift.yml) — one job, lanes run as parallel shell processes.
+# build, formerly backend-ai-client-ci.yml), the Relay drift check (formerly
+# relay-drift.yml) and the search-index drift check (ADR 0003) — one job, lanes
+# run as parallel shell processes.
 # The per-package naming the old 5-job matrix provided now comes from the
 # `::group::` / `::error title=` annotations each lane emits.
 #
@@ -27,6 +28,7 @@ on:
       - "relay.config.js"
       - "relay-base.config.js"
       - "package.json"
+      - "resources/i18n/en.json"
       - ".github/workflows/typecheck.yml"
   push:
     branches: [main]
@@ -45,6 +47,7 @@ on:
       - "relay.config.js"
       - "relay-base.config.js"
       - "package.json"
+      - "resources/i18n/en.json"
 
 permissions:
   contents: read
@@ -69,6 +72,9 @@ jobs:
       # tags actually produce, not a stale `__generated__`.
       - name: Run relay-compiler
         run: pnpm run relay
+      # A key the build cannot find in en.json fails here (ADR 0003).
+      - name: Build the search index
+        run: pnpm run search-index
       # Lanes:
       #   root       — root tsconfig.json covers src/** (client library +
       #                wsproxy); its `noEmit` is unset, hence the explicit flag.
@@ -115,22 +121,11 @@ jobs:
           exit $fail
       # Guarded !cancelled() so a tsc failure does not hide drift and drift
       # does not preempt the type errors. Mirrors `check_relay_drift` in
-      # scripts/verify.sh. Uses `git status --porcelain` (not `git diff`) so
-      # newly-added generated files — e.g. when a PR adds a new fragment — are
-      # detected too; plain diff only sees tracked files.
+      # scripts/verify.sh.
       - name: Check for drift in __generated__
         if: ${{ !cancelled() }}
-        run: |
-          dirty=$(git status --porcelain -- \
-            'react/src/__generated__' \
-            'packages/backend.ai-ui/src/__generated__')
-          if [ -n "$dirty" ]; then
-            echo "$dirty"
-            echo ""
-            echo "::error title=Relay drift::Relay generated artifacts are out of sync. Run \`pnpm relay\` locally and commit the changes under __generated__."
-            git diff -- \
-              'react/src/__generated__' \
-              'packages/backend.ai-ui/src/__generated__' || true
-            exit 1
-          fi
-          echo "Relay generated artifacts are up to date."
+        run: bash scripts/check-generated-drift.sh Relay "pnpm relay" react/src/__generated__ packages/backend.ai-ui/src/__generated__
+      # Mirrors check_search_index_drift in scripts/verify.sh.
+      - name: Check for drift in the search index
+        if: ${{ !cancelled() }}
+        run: bash scripts/check-generated-drift.sh "Search index" "pnpm run search-index" react/src/generated/searchIndex.json

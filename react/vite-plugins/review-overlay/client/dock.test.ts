@@ -21,6 +21,8 @@ let located: string[];
 let removed: string[];
 let unhidden: string[];
 let went: string[];
+let moved: Array<[string, number]>;
+let edited: string[];
 
 const pin = (id: string, label: string): SetPin => ({
   id,
@@ -83,20 +85,29 @@ beforeEach(() => {
   removed = [];
   unhidden = [];
   went = [];
+  moved = [];
+  edited = [];
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
-  dock = createSetDock({
+  dock = makeDock();
+});
+
+/** `pageChords` is the host's answer, so a second host's dock is one call away. */
+const makeDock = (pageChords = true) =>
+  createSetDock({
     root,
+    pageChords,
     onCopyAll: () => copied++,
     onClear: () => cleared++,
     onLocate: (id) => located.push(id),
     onRemove: (id) => removed.push(id),
+    onMove: (id, delta) => moved.push([id, delta]),
+    onEdit: (id) => edited.push(id),
     onUnhide: (id) => unhidden.push(id),
     onToggleCards: () => toggled++,
     onGo: (id) => went.push(id),
   });
-});
 
 afterEach(() => {
   dock.dispose();
@@ -146,6 +157,124 @@ describe('createSetDock', () => {
 
     expect(removed).toEqual(['c_a']);
     expect(located).toEqual([]);
+  });
+
+  describe('reordering rows', () => {
+    it('draws ▲/▼ on every row, disabled at the ends', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b'), pin('c_c', 'c')]);
+
+      expect(rows()[0].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        true,
+      );
+      expect(
+        rows()[0].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(false);
+      expect(rows()[1].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        false,
+      );
+      expect(
+        rows()[1].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(false);
+      expect(rows()[2].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        false,
+      );
+      expect(
+        rows()[2].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(true);
+    });
+
+    it('disables both ends of a single-pin set', () => {
+      dock.render([pin('c_a', 'a')]);
+
+      expect(rows()[0].querySelector<HTMLButtonElement>('.up')?.disabled).toBe(
+        true,
+      );
+      expect(
+        rows()[0].querySelector<HTMLButtonElement>('.down')?.disabled,
+      ).toBe(true);
+    });
+
+    it('hands back the id and the direction of the ▲ that was pressed', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      rows()[1].querySelector<HTMLButtonElement>('.up')?.click();
+
+      expect(moved).toEqual([['c_b', -1]]);
+    });
+
+    it('hands back the id and the direction of the ▼ that was pressed', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      rows()[0].querySelector<HTMLButtonElement>('.down')?.click();
+
+      expect(moved).toEqual([['c_a', 1]]);
+    });
+
+    it('keeps focus on the moved pin’s ▲ once the rows are rebuilt', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b'), pin('c_c', 'c')]);
+      rows()[2].querySelector<HTMLButtonElement>('.up')?.focus();
+
+      // The owner moved c_c up one and rendered the new order.
+      dock.render([pin('c_a', 'a'), pin('c_c', 'c'), pin('c_b', 'b')]);
+
+      expect(root.activeElement).toBe(rows()[1].querySelector('.up'));
+    });
+
+    it('hands focus to the other direction when the pin reaches an end', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+      rows()[1].querySelector<HTMLButtonElement>('.up')?.focus();
+
+      dock.render([pin('c_b', 'b'), pin('c_a', 'a')]);
+
+      expect(root.activeElement).toBe(rows()[0].querySelector('.down'));
+    });
+
+    it('names the action, not the state (R8.1)', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      expect(rows()[0].querySelector('.up')?.getAttribute('aria-label')).toBe(
+        'Move this pin up',
+      );
+      expect(rows()[0].querySelector('.down')?.getAttribute('aria-label')).toBe(
+        'Move this pin down',
+      );
+    });
+  });
+
+  // Editing re-keys the pin, and only a picked one carries the `at`/`pr` the
+  // new id would hash from.
+  describe('editing a row’s note', () => {
+    const linked = (id: string, label: string): SetPin => ({
+      ...pin(id, label),
+      origin: 'link',
+      at: undefined,
+      pr: undefined,
+    });
+
+    it('draws the ✏️ before the ▲/▼ and hands back the id', () => {
+      dock.render([pin('c_a', 'a'), pin('c_b', 'b')]);
+
+      expect(
+        Array.from(rows()[0].querySelectorAll('.act')).map(
+          (act) => act.className,
+        ),
+      ).toEqual(['act edit', 'act up', 'act down', 'act remove']);
+
+      rows()[1].querySelector<HTMLButtonElement>('.edit')?.click();
+
+      expect(edited).toEqual(['c_b']);
+    });
+
+    it('disables it on a link’s pin, and says why', () => {
+      dock.render([linked('c_a', 'a')]);
+
+      const edit = rows()[0].querySelector<HTMLButtonElement>('.edit');
+      expect(edit?.disabled).toBe(true);
+      expect(edit?.getAttribute('aria-label')).toBe(
+        'This pin came from a link — pick the element again to write your own note',
+      );
+      expect(edited).toEqual([]);
+    });
   });
 
   /**
@@ -407,6 +536,24 @@ describe('createSetDock', () => {
       );
       expect(head.indexOf('chord')).toBe(head.indexOf('act cards') + 1);
     });
+
+    // ADR 0008: `boot.ts` binds ⌘⇧H only where the host owns the page, so a
+    // dock that named it anyway would be advertising a dead key.
+    it('names no chord for a host that bound none', () => {
+      dock.dispose();
+      dock = makeDock(false);
+
+      dock.render([pin('c_a', 'a')]);
+
+      expect(node('.chord')).toBeNull();
+      expect(node('.cards').getAttribute('aria-label')).toBe('Hide every card');
+      expect(node('.cards').title).toBe('Hide every card');
+
+      dock.render([pin('c_a', 'a')], new Map(), true);
+
+      expect(node('.cards').getAttribute('aria-label')).toBe('Show every card');
+      expect(node('.setdock').textContent).not.toContain(CARDS_CHORD);
+    });
   });
 
   // The copy runs inside this click — `execCommand` is the only clipboard on
@@ -586,15 +733,7 @@ describe('createSetDock', () => {
         JSON.stringify({ left: 900, top: 700 }),
       );
       viewport(600, 400);
-      dock = createSetDock({
-        root,
-        onCopyAll: () => copied++,
-        onClear: () => cleared++,
-        onLocate: (id) => located.push(id),
-        onRemove: (id) => removed.push(id),
-        onUnhide: (id) => unhidden.push(id),
-        onToggleCards: () => toggled++,
-      });
+      dock = makeDock();
 
       expect(node('.setdock').style.left).toBe('332px');
       expect(node('.setdock').style.top).toBe('232px');
@@ -613,15 +752,7 @@ describe('createSetDock', () => {
           JSON.stringify({ left: 900, top: 740 }),
         );
         viewport(1280, 480);
-        dock = createSetDock({
-          root,
-          onCopyAll: () => copied++,
-          onClear: () => cleared++,
-          onLocate: (id) => located.push(id),
-          onRemove: (id) => removed.push(id),
-          onUnhide: (id) => unhidden.push(id),
-          onToggleCards: () => toggled++,
-        });
+        dock = makeDock();
         dock.render([pin('c_a', 'a')]);
 
         // 480 - 300 - 8: the whole dock, not the eight pixels of its top
@@ -947,6 +1078,22 @@ describe('createSetDock', () => {
       expect(away.classList.contains('away')).toBe(true);
       expect(away.querySelector('.where')?.textContent).toBe('Start');
       expect(away.querySelector('.go')).not.toBeNull();
+    });
+
+    /**
+     * `where` plus a fifth button next to a `flex: none` label left the note
+     * ~7px of the 260px dock. Nothing here can measure it — jsdom lays out
+     * nothing — so the rule itself is what the test holds on to.
+     */
+    it('drops `where` onto its own line instead of squeezing the note', () => {
+      const style = root.querySelector('style')?.textContent ?? '';
+
+      expect(style).toContain('.setdock .row.away { flex-wrap: wrap; }');
+      expect(style).toMatch(
+        /\.setdock \.row\.away \.where \{[^}]*flex: 1 0 100%/,
+      );
+      // Every other row keeps the single-line layout it has today.
+      expect(style).toMatch(/\.setdock \.where \{[^}]*flex: none/);
     });
 
     it('leaves the rows on this page scrolling to their own pin', () => {

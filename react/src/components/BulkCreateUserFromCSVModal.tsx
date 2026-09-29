@@ -44,12 +44,12 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { FileInput } from '@astryxdesign/core/FileInput';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
@@ -64,10 +64,10 @@ import {
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  badgeVariantForTagColor,
   filterOutNullAndUndefined,
   useBAILogger,
   useBAISignedRequestWithPromise,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
@@ -152,7 +152,7 @@ interface ValidatedRow {
 
 interface BulkCreateUserFromCSVModalProps extends Omit<
   BAIModalProps,
-  'footer' | 'onCancel' | 'title' | 'afterClose'
+  'footer' | 'onCancel' | 'title'
 > {
   onRequestClose: (success: boolean) => void;
 }
@@ -161,6 +161,7 @@ interface BulkCreateUserFromCSVModalProps extends Omit<
 
 const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   onRequestClose,
+  afterClose,
   ...baiModalProps
 }) => {
   'use memo';
@@ -977,7 +978,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   return (
     <BAIModal
       centered
-      destroyOnHidden
       title={
         <BAIFlex align="center" gap="xxs">
           {t('credential.BulkCreateUserFromCSV')}
@@ -1024,7 +1024,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       // per-attempt, file-scoped `createdCount`, so neither a retry that
       // creates nothing nor a Remove File can erase an earlier success.
       onCancel={() => onRequestClose(hasCreatedAny)}
-      afterClose={resetState}
+      afterClose={() => {
+        resetState();
+        afterClose?.();
+      }}
       {...baiModalProps}
     >
       {/* Left panel — Source file + Global defaults */}
@@ -1400,9 +1403,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     {t('credential.IssuesFound')}
                   </Text>
                   {errorCategories.map((cat) => (
-                    <Badge
+                    <Token
                       key={cat.key}
-                      variant={badgeVariantForTagColor('error')}
+                      color={tokenColorForTagColor('error')}
                       label={`${cat.label} · ${cat.count}`}
                     />
                   ))}

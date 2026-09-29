@@ -142,14 +142,32 @@ export async function login(
   await page.getByLabel('Password').fill(password);
   // Astryx Button exposes no aria-label — its accessible name is the visible text.
   const loginButton = page.getByRole('button', { name: 'Login', exact: true });
-  // Expand the endpoint section if it's not already visible. Must be the role
-  // locator: getByLabel('Endpoint') also matches the 'Endpoint History' /
-  // 'About Endpoint' controls once the section is open.
-  const endpointInput = page.getByRole('textbox', { name: 'Endpoint' });
+  // Expand the endpoint section if it's not already visible.
+  // `getByLabel('Endpoint')` matches on substring, so it also picks up the
+  // "Endpoint History" trigger and the "About Endpoint" button — three
+  // elements, so it throws. `exact` pins the role lookup to the input alone.
+  const endpointInput = page.getByRole('textbox', {
+    name: 'Endpoint',
+    exact: true,
+  });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
+    // Older login UIs hide the input behind an 'Advanced' toggle.
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) {
+      await advanced.click();
+    }
   }
-  await endpointInput.fill(endpoint);
+  // No endpoint input means the server pins `apiEndpoint` (the config.toml
+  // intercept above did not take — an installed cluster under
+  // `playwright.smoke.config.ts`). Wait briefly rather than probing once:
+  // `isVisible()` does not auto-wait, and a slow render must not submit an
+  // empty endpoint.
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
+    await endpointInput.fill(endpoint);
+  } catch {
+    // server-pinned endpoint: nothing to fill
+  }
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login
   // information mismatch"). Retry the submit a couple of times, with a fixed
@@ -630,11 +648,12 @@ export async function createVFolderAndVerify(
     await (await modal.getModelUsageModeRadio()).click();
   }
 
-  // Select type
-  if (type === 'user') {
-    await (await modal.getUserTypeRadio()).click();
-  } else if (type === 'project') {
-    await (await modal.getProjectTypeRadio()).click();
+  // Ownership is page-derived since FR-3441 (no in-form Type radio); this
+  // helper drives the user Data page, which creates user folders only.
+  if (type === 'project') {
+    throw new Error(
+      'createVFolderAndVerify drives the user Data page, which creates user folders only (FR-3441); drive the Project Admin Data page for project folders.',
+    );
   }
 
   // Select permission
@@ -720,10 +739,27 @@ export async function moveToTrashAndVerify(
   await removeSearchButton(page, folderName);
 }
 
+/**
+ * Trash statuses the UI can no longer act on: the backend is purging (or has
+ * purged) the folder, so the row's Restore/Delete buttons stay disabled for
+ * good and the row lingers until the manager garbage-collects it. A folder
+ * lands here without the test's help when its deletion cascades from another
+ * resource (e.g. a model card's "also delete folder" / bulk delete).
+ */
+const TERMINAL_TRASH_STATUS = /^DELETE-(ONGOING|COMPLETE)$/i;
+
 export async function deleteForeverAndVerifyFromTrash(
   page: Page,
   folderName: string,
   dataPath: string = 'data',
+  options: {
+    /**
+     * Return quietly (instead of throwing) when the row is already in a
+     * terminal DELETE-ONGOING / DELETE-COMPLETE status — for cleanup hooks,
+     * a folder the backend already purged is a success, not a failure.
+     */
+    skipIfAlreadyDeleted?: boolean;
+  } = {},
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
@@ -755,12 +791,45 @@ export async function deleteForeverAndVerifyFromTrash(
   const deleteForeverButton = folderRowToDelete.getByRole('button', {
     name: 'Delete',
   });
-  await retryWithTableRefresh(page, () =>
-    expect(deleteForeverButton).toBeEnabled({ timeout: 2500 }),
-  );
+  // A terminal status never enables the button, so polling for it would
+  // only burn the retry budget (and a 30s click after it): stop as soon as
+  // the status cell says the backend already took the folder.
+  const terminalStatusCell = folderRowToDelete.getByRole('cell', {
+    name: TERMINAL_TRASH_STATUS,
+  });
+  const isAlreadyDeleted = () =>
+    terminalStatusCell.isVisible().catch(() => false);
+  // Resolves true when the row is terminal and the caller opted to treat that
+  // as done; throws when it is terminal otherwise; false when it is not.
+  const settleIfAlreadyDeleted = async (): Promise<boolean> => {
+    if (!(await isAlreadyDeleted())) return false;
+    const status = (await terminalStatusCell.textContent())?.trim();
+    await removeSearchButton(page, folderName);
+    if (!options.skipIfAlreadyDeleted) {
+      throw new Error(
+        `Folder "${folderName}" is already ${status} in Trash; its Delete button will never enable.`,
+      );
+    }
+    console.log(
+      `[deleteForeverAndVerifyFromTrash] "${folderName}" is already ${status}; nothing to delete forever.`,
+    );
+    return true;
+  };
+  await retryWithTableRefresh(page, async () => {
+    if (await isAlreadyDeleted()) return;
+    await expect(deleteForeverButton).toBeEnabled({ timeout: 2500 });
+  });
+  if (await settleIfAlreadyDeleted()) return;
 
-  // Click the delete forever button
-  await deleteForeverButton.click();
+  // The status may still flip to a terminal one between the enabled check and
+  // the click (the purge is asynchronous), so bound the click and re-check: an
+  // unbounded click would wait the full actionTimeout on a disabled button.
+  const clickError = await deleteForeverButton
+    .click({ timeout: 10000 })
+    .then(() => null)
+    .catch((error: unknown) => error);
+  if (await settleIfAlreadyDeleted()) return;
+  if (clickError) throw clickError;
 
   // Wait for confirmation modal to appear before interacting with it.
   // Use fill() directly (it waits for actionability) to avoid flakiness from
@@ -1407,7 +1476,7 @@ export async function modifyThemeJson(
       theme = {
         light: {
           token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
+            fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
             colorPrimary: '#FF7A00',
             colorLink: '#FF7A00',
             colorText: '#141414',
@@ -1419,7 +1488,7 @@ export async function modifyThemeJson(
         },
         dark: {
           token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
+            fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
             colorPrimary: '#DC6B03',
             colorLink: '#DC6B03',
             colorText: '#FFF',

@@ -47,7 +47,7 @@ const meta: Meta<typeof BAIArtifactRevisionTable> = {
 | \`customizeColumns\` | \`(baseColumns) => BAIColumnType[]\` | - | Function to customize table columns |
 
 ## Pre-configured Columns
-- **Version**: Revision version with "Latest" badge and PULLED status tag
+- **Version**: Revision version with "Latest" badge and PULLED status badge
 - **Status**: Revision status (SCANNED, PULLING, VERIFYING, FAILED) with tag
 - **Size**: Revision size in human-readable format
 - **Updated**: Time since last update (relative time)

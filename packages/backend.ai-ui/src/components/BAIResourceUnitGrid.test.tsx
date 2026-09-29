@@ -108,6 +108,48 @@ describe('BAIResourceUnitGrid', () => {
     expect(screen.queryByText('popover: Alpha')).not.toBeInTheDocument();
   });
 
+  // A `position: fixed` popover resolves its offsets against the nearest
+  // transformed ancestor, not the viewport — a drawer panel is one, and the
+  // popover landed off-screen there before FR-3652.
+  it('rebases the popover onto the fixed-positioning containing block', () => {
+    const WRAPPER_LEFT = 1144;
+    const renderWithOrigin = (originLeft: number) => {
+      const spy = vi
+        .spyOn(Element.prototype, 'getBoundingClientRect')
+        .mockImplementation(function (this: Element) {
+          if (this.classList.contains('bai-resource-unit-grid-wrapper')) {
+            return { left: WRAPPER_LEFT, top: 0 } as DOMRect;
+          }
+          // The zero-size probe the component appends to measure the origin.
+          if (this.getAttribute('aria-hidden') === 'true') {
+            return { left: originLeft, top: 0 } as DOMRect;
+          }
+          return { left: 0, top: 0 } as DOMRect;
+        });
+      const { container, unmount } = render(
+        <BAIResourceUnitGrid
+          groups={GROUPS}
+          columns={8}
+          renderGroupPopover={(group) => <div>popover: {group.label}</div>}
+        />,
+      );
+      fireEvent.mouseMove(cellsOf(container, 'beta')[0]);
+      const popover = container.querySelector<HTMLElement>(
+        '.bai-resource-unit-grid-popover',
+      );
+      const left = parseFloat(popover?.style.left ?? 'NaN');
+      unmount();
+      spy.mockRestore();
+      return left;
+    };
+
+    const untransformed = renderWithOrigin(0);
+    const insideDrawer = renderWithOrigin(1120);
+
+    expect(untransformed).toBe(WRAPPER_LEFT);
+    expect(insideDrawer).toBe(WRAPPER_LEFT - 1120);
+  });
+
   it('keeps hover attribution keyed by group key when groups are reordered', () => {
     const renderPopover = (group: BAIUnitGridGroup) => (
       <div>popover: {group.label}</div>

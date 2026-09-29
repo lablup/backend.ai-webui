@@ -17,6 +17,7 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
@@ -24,8 +25,10 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
+  BAIAdminProjectSelect,
   BAIButton,
   BAIColumnType,
   BAIDeleteConfirmModal,
@@ -39,7 +42,7 @@ import {
   BAITable,
   type BAITableSettings,
   BAIText,
-  BAITag,
+  tokenColorForTagColor,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -65,7 +68,17 @@ type ModelCardNode = NonNullableNodeOnEdges<
   AdminModelCardQuery$data['adminModelCardsV2']
 >;
 
-const availableModelCardSorterKeys = ['name', 'created_at'] as const;
+const availableModelCardSorterKeys = [
+  'name',
+  'created_at',
+  // Opened by 26.9.0 (backend #14811); gated on `model-card-search-axes`.
+  'title',
+  'category',
+  'task',
+  'access_level',
+  'domain_name',
+  'project_id',
+] as const;
 
 export const availableModelCardSorterValues = [
   ...availableModelCardSorterKeys,
@@ -140,6 +153,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // 26.9.0 opened the metadata axes of the model card search (backend #14811).
+  const supportsSearchAxes = baiClient.supports('model-card-search-axes');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -254,6 +270,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     {
       key: 'title',
       title: t('adminModelCard.Title'),
+      sorter: supportsSearchAxes,
       render: (_, record) =>
         record.metadata?.title ? (
           <Text maxLines={1} style={{ maxWidth: 200 }}>
@@ -266,23 +283,31 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     {
       key: 'category',
       title: t('modelStore.Category'),
+      sorter: supportsSearchAxes,
       render: (_, record) => record.metadata?.category || '-',
     },
     {
       key: 'task',
       title: t('modelStore.Task'),
+      sorter: supportsSearchAxes,
       render: (_, record) => record.metadata?.task || '-',
     },
     {
       key: 'accessLevel',
       title: t('adminModelCard.AccessLevel'),
       dataIndex: 'accessLevel',
+      sorter: supportsSearchAxes,
       render: (accessLevel) => (
-        <BAITag color={accessLevel === 'PUBLIC' ? 'green' : 'default'}>
-          {accessLevel === 'PUBLIC'
-            ? t('adminModelCard.Public')
-            : t('adminModelCard.Private')}
-        </BAITag>
+        <Token
+          color={tokenColorForTagColor(
+            accessLevel === 'PUBLIC' ? 'green' : 'default',
+          )}
+          label={
+            accessLevel === 'PUBLIC'
+              ? t('adminModelCard.Public')
+              : t('adminModelCard.Private')
+          }
+        />
       ),
     },
     // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field
@@ -290,11 +315,13 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       key: 'domainName',
       title: t('adminModelCard.Domain'),
       dataIndex: 'domainName',
+      sorter: supportsSearchAxes,
     },
     {
       key: 'projectId',
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
+      sorter: supportsSearchAxes,
       render: (projectId) => (
         <BAIText
           copyable
@@ -320,10 +347,25 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
-            filterProperties={[
+            filterProperties={filterOutEmpty([
               {
                 key: 'name',
                 propertyLabel: t('adminModelCard.Name'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'title',
+                propertyLabel: t('adminModelCard.Title'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'category',
+                propertyLabel: t('modelStore.Category'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'task',
+                propertyLabel: t('modelStore.Task'),
                 type: 'string',
               },
               {
@@ -339,19 +381,42 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   message: t('project.ProjectIDFilterRuleMessage'),
                   validate: (value) => isValidUUID(value),
                 },
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
+                  <BAIAdminProjectSelect
+                    label={t('adminModelCard.Project')}
+                    isLabelHidden
+                    // A model card belongs to a MODEL_STORE project (see the
+                    // `groups(type: ["MODEL_STORE"])` query above).
+                    filter={{ type: { equals: 'MODEL_STORE' } }}
+                    value={value}
+                    isDisabled={isDisabled}
+                    onChange={(next, option) =>
+                      onAddCondition(
+                        next as string | undefined,
+                        Array.isArray(option)
+                          ? option[0]?.label
+                          : option?.label,
+                      )
+                    }
+                  />
+                ),
               },
               {
+                // Deprecated since 26.9.0 in favour of `usedBy.vfolder`, which
+                // a filter row cannot fill without an unbounded id fan-out.
+                // FR-4014 settles the replacement with CoreDev.
                 key: 'storageHost',
                 propertyLabel: t('import.StorageHost'),
                 type: 'string',
                 operators: ['equals', 'notEquals'],
                 defaultOperator: 'equals',
-                renderInput: ({ onAddCondition }) => (
+                renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIStorageHostSelect
                     // The filter row already prints the property label.
                     label={t('import.StorageHost')}
                     isLabelHidden
-                    value={null}
+                    value={value}
+                    isDisabled={isDisabled}
                     onChange={(value) =>
                       // Single-select mode (no `multiple` prop) always emits a
                       // single value.
@@ -360,7 +425,25 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   />
                 ),
               },
-            ]}
+              supportsSearchAxes && {
+                key: 'accessLevel',
+                propertyLabel: t('adminModelCard.AccessLevel'),
+                type: 'enum',
+                strictSelection: true,
+                // `accessLevel` is a StringFilter over the stored text, which is
+                // the lowercase enum value: 'public' / 'internal'.
+                options: [
+                  { label: t('adminModelCard.Public'), value: 'public' },
+                  { label: t('adminModelCard.Private'), value: 'internal' },
+                ],
+              },
+              supportsSearchAxes && {
+                key: 'createdAt',
+                propertyLabel: t('general.CreatedAt'),
+                type: 'datetime',
+                defaultOperator: 'after',
+              },
+            ])}
             value={filter}
             onChange={(value) => {
               onReload(

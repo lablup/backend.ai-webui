@@ -18,6 +18,7 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
+import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
@@ -29,6 +30,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIVFolderDeleteButton,
   BAICard,
+  BAISkeleton,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAITabCountBadge,
@@ -42,6 +44,7 @@ import * as _ from 'lodash-es';
 import { RotateCcwIcon } from 'lucide-react';
 import { parseAsString, useQueryState, useQueryStates } from 'nuqs';
 import React, {
+  Suspense,
   useDeferredValue,
   useEffect,
   useEffectEvent,
@@ -87,6 +90,8 @@ const VFOLDER_STATUSES = [
 
 interface VFolderNodeListPageProps {}
 
+const DEFAULT_ORDER = '-created_at';
+
 const FILTER_BY_STATUS_CATEGORY = {
   active:
     'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
@@ -122,7 +127,10 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
     setSelectedFolderList([]);
   }
 
-  const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [
+    isOpenCreateModal,
+    { toggle: toggleCreateModal, setRight: openCreateModal },
+  ] = useToggle(false);
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
 
@@ -137,7 +145,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsString.withDefault('-created_at'),
+      order: parseAsString,
       filter: parseAsString,
       statusCategory: parseAsString.withDefault('active'),
       mode: parseAsString.withDefault('all'),
@@ -186,7 +194,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
       queryParams.filter,
       usageModeFilter,
     ]),
-    order: queryParams.order,
+    order: queryParams.order || DEFAULT_ORDER,
     permission: 'read_attribute',
     filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
     filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
@@ -203,6 +211,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
   useEffect(() => {
     refetchOnInvitationChange();
   }, [invitations.length]);
+
+  useCreateActionArrival(openCreateModal);
 
   const { vfolder_nodes, ...folderCounts } =
     useLazyLoadQuery<VFolderNodeListPageQuery>(
@@ -512,59 +522,63 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
             </HStack>
           </HStack>
-          <VFolderNodes
-            order={queryParams.order}
-            loading={deferredQueryVariables !== queryVariables}
-            disableProjectFolderActions
-            project={toProjectContext(currentProject)}
-            vfoldersFrgmt={filterOutNullAndUndefined(
-              _.map(vfolder_nodes?.edges, 'node'),
-            )}
-            rowSelection={{
-              type: 'checkbox',
-              preserveSelectedRowKeys: true,
-              getCheckboxProps(record: VFolderNodeInList) {
-                return {
-                  disabled:
-                    isDeletedCategory(record.status) &&
-                    record.status !== 'delete-pending',
-                };
-              },
-              onChange: (selectedRowKeys) => {
-                handleRowSelectionChange(
-                  selectedRowKeys,
-                  filterOutNullAndUndefined(
-                    _.map(vfolder_nodes?.edges, 'node'),
-                  ),
-                  setSelectedFolderList,
+          {/* FR-4009: a query suspending inside the table (useCurrentUserProjectRoles
+              refetches after a folder mutation) must not blank the whole page. */}
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            <VFolderNodes
+              order={queryParams.order}
+              loading={deferredQueryVariables !== queryVariables}
+              disableProjectFolderActions
+              project={toProjectContext(currentProject)}
+              vfoldersFrgmt={filterOutNullAndUndefined(
+                _.map(vfolder_nodes?.edges, 'node'),
+              )}
+              rowSelection={{
+                type: 'checkbox',
+                preserveSelectedRowKeys: true,
+                getCheckboxProps(record: VFolderNodeInList) {
+                  return {
+                    disabled:
+                      isDeletedCategory(record.status) &&
+                      record.status !== 'delete-pending',
+                  };
+                },
+                onChange: (selectedRowKeys) => {
+                  handleRowSelectionChange(
+                    selectedRowKeys,
+                    filterOutNullAndUndefined(
+                      _.map(vfolder_nodes?.edges, 'node'),
+                    ),
+                    setSelectedFolderList,
+                  );
+                },
+                selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
+              }}
+              pagination={{
+                pageSize: tablePaginationOption.pageSize,
+                current: tablePaginationOption.current,
+                total: vfolder_nodes?.count ?? 0,
+                onChange(current, pageSize) {
+                  if (_.isNumber(current) && _.isNumber(pageSize)) {
+                    setTablePaginationOption({ current, pageSize });
+                  }
+                },
+              }}
+              onChangeOrder={(order) => {
+                setQuery({ order: order ?? null });
+              }}
+              onRemoveRow={(removedId) => {
+                setSelectedFolderList((prevSelected) =>
+                  _.filter(prevSelected, (folder) => folder.id !== removedId),
                 );
-              },
-              selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
-            }}
-            pagination={{
-              pageSize: tablePaginationOption.pageSize,
-              current: tablePaginationOption.current,
-              total: vfolder_nodes?.count ?? 0,
-              onChange(current, pageSize) {
-                if (_.isNumber(current) && _.isNumber(pageSize)) {
-                  setTablePaginationOption({ current, pageSize });
-                }
-              },
-            }}
-            onChangeOrder={(order) => {
-              setQuery({ order: order ?? null });
-            }}
-            onRemoveRow={(removedId) => {
-              setSelectedFolderList((prevSelected) =>
-                _.filter(prevSelected, (folder) => folder.id !== removedId),
-              );
-              updateFetchKey();
-            }}
-            tableSettings={{
-              columnOverrides: columnOverrides,
-              onColumnOverridesChange: setColumnOverrides,
-            }}
-          />
+                updateFetchKey();
+              }}
+              tableSettings={{
+                columnOverrides: columnOverrides,
+                onColumnOverridesChange: setColumnOverrides,
+              }}
+            />
+          </Suspense>
         </VStack>
       </BAICard>
       <FolderCreateModalV2

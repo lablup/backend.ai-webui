@@ -181,6 +181,23 @@ const resolveColorsInDOM = (
   return out;
 };
 
+/**
+ * Origin of the popover's `position: fixed` containing block, in viewport
+ * coordinates. An ancestor with a transform (a drawer panel is one) takes over
+ * from the viewport, so measured viewport rects have to be rebased onto it.
+ * Returns (0, 0) — a no-op — whenever the viewport really is the origin.
+ */
+const fixedOriginIn = (host: HTMLElement): { left: number; top: number } => {
+  const probe = document.createElement('div');
+  probe.setAttribute('aria-hidden', 'true');
+  probe.style.cssText =
+    'position:fixed;top:0;left:0;width:0;height:0;visibility:hidden;pointer-events:none';
+  host.appendChild(probe);
+  const r = probe.getBoundingClientRect();
+  host.removeChild(probe);
+  return { left: r.left, top: r.top };
+};
+
 const readMetricsFromDOM = (host: HTMLElement): UnitGridMetrics => {
   const cs = getComputedStyle(host);
   const len = (name: string, fallback: number): number => {
@@ -357,11 +374,24 @@ const BAIResourceUnitGrid: React.FC<BAIResourceUnitGridProps> = ({
   const [wrapperRect, setWrapperRect] = useState<{
     left: number;
     top: number;
+    originLeft: number;
+    originTop: number;
   } | null>(null);
   useEffect(() => {
     if (hoverKey !== null) {
-      const r = wrapperRef.current?.getBoundingClientRect();
-      setWrapperRect(r ? { left: r.left, top: r.top } : null);
+      const host = wrapperRef.current;
+      const r = host?.getBoundingClientRect();
+      const origin = host ? fixedOriginIn(host) : null;
+      setWrapperRect(
+        r && origin
+          ? {
+              left: r.left,
+              top: r.top,
+              originLeft: origin.left,
+              originTop: origin.top,
+            }
+          : null,
+      );
     }
   }, [hoverKey]);
 
@@ -608,7 +638,7 @@ const BAIResourceUnitGrid: React.FC<BAIResourceUnitGridProps> = ({
               style={{
                 borderColor: hueFor(hoverKey),
                 ...(() => {
-                  const left =
+                  const viewportLeft =
                     wrapperRect.left +
                     Math.max(
                       0,
@@ -618,21 +648,21 @@ const BAIResourceUnitGrid: React.FC<BAIResourceUnitGridProps> = ({
                       ),
                     );
                   const cellTop = wrapperRect.top + hoverAnchor.py;
-                  // Above the cell when there is viewport room, else below.
-                  return cellTop >= POPOVER_FLIP_MIN_TOP
-                    ? {
-                        left,
-                        top: cellTop - metrics.platePadY - POPOVER_OFFSET,
-                        transform: 'translateY(-100%)',
-                      }
-                    : {
-                        left,
-                        top:
-                          cellTop +
-                          metrics.cellPx +
-                          metrics.platePadY +
-                          POPOVER_OFFSET,
-                      };
+                  // Flip above the cell when there is viewport room, else
+                  // below — decided in viewport space, then rebased onto the
+                  // containing block the offsets actually resolve against.
+                  const flipAbove = cellTop >= POPOVER_FLIP_MIN_TOP;
+                  const viewportTop = flipAbove
+                    ? cellTop - metrics.platePadY - POPOVER_OFFSET
+                    : cellTop +
+                      metrics.cellPx +
+                      metrics.platePadY +
+                      POPOVER_OFFSET;
+                  const left = viewportLeft - wrapperRect.originLeft;
+                  const top = viewportTop - wrapperRect.originTop;
+                  return flipAbove
+                    ? { left, top, transform: 'translateY(-100%)' }
+                    : { left, top };
                 })(),
               }}
             >

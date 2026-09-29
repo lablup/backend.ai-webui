@@ -7,6 +7,9 @@ import {
   type V2AllowedVfolderHostEntry,
 } from 'backend.ai-ui';
 
+/** The permission a storage host must grant for a session to mount its folders. */
+export const MOUNT_IN_SESSION_PERMISSION = 'mount-in-session';
+
 /**
  * Display label mapping for the canonical 8 permission keys. The actual column
  * set is sourced from `vfolder_host_permissions.vfolder_host_permission_list`
@@ -33,7 +36,7 @@ export const PERMISSION_DISPLAY_MAP: Record<
     labelKey: 'storageHost.permission.Modify',
     categoryKey: 'storageHost.permission.Volume',
   },
-  'mount-in-session': {
+  [MOUNT_IN_SESSION_PERMISSION]: {
     labelKey: 'storageHost.permission.Mount',
     categoryKey: 'storageHost.permission.Folder',
   },
@@ -95,7 +98,7 @@ export const buildAllowedHostsPayload = (
 export const hasMountWithoutFileOps = (
   enabled: ReadonlySet<string>,
 ): boolean => {
-  if (!enabled.has('mount-in-session')) return false;
+  if (!enabled.has(MOUNT_IN_SESSION_PERMISSION)) return false;
   return !enabled.has('download-file') || !enabled.has('upload-file');
 };
 

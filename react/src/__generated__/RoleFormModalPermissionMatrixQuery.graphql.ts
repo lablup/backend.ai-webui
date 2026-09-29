@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<33d664bb49ed658b1db156b200ed94a7>>
+ * @generated SignedSource<<a41bf2f17160c142d7d3942f1ec33091>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,16 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RoleFormModalPermissionMatrixQuery$variables = Record<PropertyKey, never>;
 export type RoleFormModalPermissionMatrixQuery$data = {
   readonly rbacPermissionMatrix: ReadonlyArray<{
     readonly entities: ReadonlyArray<{
       readonly actions: ReadonlyArray<{
-        readonly requiredPermission: OperationType;
+        readonly requiredPermission: PermissionBit;
       }>;
     }>;
-    readonly scopeType: RBACElementType;
+    readonly scopeType: string;
   }> | null | undefined;
 };
 export type RoleFormModalPermissionMatrixQuery = {

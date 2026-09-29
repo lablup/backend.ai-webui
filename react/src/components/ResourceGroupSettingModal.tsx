@@ -178,7 +178,6 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnHidden
       title={
         resourceGroup
           ? t('resourceGroup.ModifyResourceGroup')
@@ -472,6 +471,7 @@ const ResourceGroupSettingModal: React.FC<ResourceGroupCreateModalProps> = ({
               layout="horizontal"
               label={t('resourceGroup.Public')}
               name="public"
+              tooltip={t('resourceGroup.PublicDesc')}
             >
               <AstryxFormSwitch label={t('resourceGroup.Public')} />
             </BAIFormItem>

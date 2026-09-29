@@ -59,9 +59,9 @@ export const docs = {
     },
     {
       name: 'onChange',
-      type: '(value: string | undefined) => void',
+      type: '(value: string | undefined, option?: BAILabeledValue) => void',
       description:
-        'Fired with the newly selected variant UUID. Never receives a label-in-value object.',
+        'Fired with the newly selected variant UUID; the optional second argument carries the picked `{ label, value }` pair.',
     },
     {
       name: 'onResolvedVariantsChange',

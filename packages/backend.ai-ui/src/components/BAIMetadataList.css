@@ -67,9 +67,27 @@
 }
 
 /* A side-label dt stretches to its grid row and Astryx centers it, so it
-   drifts off a multi-line value's first line — pin it to the top (FR-3667). */
+   drifts off a multi-line value's first line (FR-3667). Baseline alignment
+   still packs the flex line to the top, and it makes the LABEL TEXT the dt's
+   baseline — with flex-start the first item, i.e. the icon slot, supplied a
+   synthesized one, which pulled the value off the label by ~2px. */
 .bai-metadata-list > dl > dt {
-  align-items: flex-start;
+  align-items: baseline;
+}
+
+/* The icon slot has no text baseline, so it opts out of the baseline group
+   and centers itself on the first label line instead. `BAIMetadataListItem`
+   marks a node label so it is never mistaken for the slot. */
+.bai-metadata-list
+  > dl
+  > dt
+  > span:first-child:not(.bai-metadata-list-item__label) {
+  align-self: flex-start;
+  height: 1lh;
+}
+
+.bai-metadata-list-item__label {
+  display: contents;
 }
 
 .bai-metadata-list--bordered {

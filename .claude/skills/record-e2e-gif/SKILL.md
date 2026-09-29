@@ -1,10 +1,18 @@
+---
+name: record-e2e-gif
+description: >
+  Record Playwright e2e tests as one GIF per test case (video → ffmpeg palette
+  GIF) and return a markdown table for a PR description. Use when the user
+  wants e2e runs recorded as GIFs or attached to a PR.
+---
+
 # record-e2e-gif Skill
 
 Record Playwright e2e tests as GIF animations, one GIF per test case.
 
 ## Prerequisites
 
-- `ffmpeg` must be installed (`/opt/homebrew/bin/ffmpeg` on macOS)
+- `ffmpeg` must be on `PATH` (`command -v ffmpeg`)
 - Playwright dev server must be running. The endpoint is read from `e2e/envs/.env.playwright` (`E2E_WEBUI_ENDPOINT`). Do NOT hardcode the port — it varies per environment.
 
 ## How It Works
@@ -34,7 +42,7 @@ Videos are saved to `test-results/*/video.webm` (one directory per test).
 ## Conversion Command (per video)
 
 ```bash
-/opt/homebrew/bin/ffmpeg -y \
+ffmpeg -y \
   -i "{input.webm}" \
   -vf "fps=8,scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128[p];[s1][p]paletteuse=dither=bayer" \
   -loop 0 \
@@ -57,11 +65,10 @@ Parse the directory name to derive a slug for the GIF filename:
 
 ## Uploading GIFs to GitHub PR
 
-**IMPORTANT**: GIF files must NEVER be committed to git. `e2e/recordings/` is in `.gitignore`.
-
-**Image upload MUST use Chrome DevTools MCP** — do NOT use `gh` CLI, GitHub releases, or any other method.
-
-**CRITICAL: GIF table MUST be added to the PR body (본문), NEVER as a PR comment.**
+GIFs stay out of git (`e2e/recordings/` is in `.gitignore`). Upload them through the
+PR page's own attachment control via Chrome DevTools MCP — that is what yields
+`github.com/user-attachments` CDN URLs; `gh` and release assets do not. The GIF table
+goes in the PR body, not a comment.
 
 The workflow:
 

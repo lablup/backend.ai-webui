@@ -206,6 +206,7 @@ Context-qualified rows are skipped outright on prose because long-form text is f
 | 런타임 프리셋 | ko | 런타임 파라미터 | The admin tab and the user deployment form describe the same entity; the UI label is "런타임 파라미터" |
 | 레플리카 | ko | 복제본 | Use the Korean translation, not the transliteration, for consistency |
 | 리소스 그룹 | ko | 자원 그룹 | Use the Korean translation, not the transliteration, for consistency with "자원 정책" |
+| 리소스 정책 | ko | 자원 정책 | Use the Korean translation, not the transliteration, for consistency with "자원 그룹" |
 | 매개변수 | ko | 파라미터 | The UI standardizes on the transliteration "파라미터" (modelService.RuntimeParamTitle) |
 | 슈퍼관리자 | ko | 슈퍼 관리자 | Use the spaced form for consistency |
 | 슈퍼어드민 | ko | 슈퍼 관리자 | Use the Korean translation, not the transliteration |

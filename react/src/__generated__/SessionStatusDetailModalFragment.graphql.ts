@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0bf5a55120b301bd5d7b00e5220da45d>>
+ * @generated SignedSource<<8527adc94158384b72a14cb77d58a0c7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type SessionStatusDetailModalFragment$data = {
   readonly status: string | null | undefined;
   readonly status_data: string | null | undefined;
   readonly status_info: string | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"SessionStatusTagFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"SessionStatusBadgeFragment">;
   readonly " $fragmentType": "SessionStatusDetailModalFragment";
 };
 export type SessionStatusDetailModalFragment$key = {
@@ -76,13 +76,13 @@ const node: ReaderFragment = {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionStatusTagFragment"
+      "name": "SessionStatusBadgeFragment"
     }
   ],
   "type": "ComputeSessionNode",
   "abstractKey": null
 };
 
-(node as any).hash = "9fda416861ce96da9edb0c823baaa6b8";
+(node as any).hash = "fc37c9c14fb1727ab998612da8eb5eff";
 
 export default node;

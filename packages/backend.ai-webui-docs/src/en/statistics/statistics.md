@@ -4,6 +4,8 @@ navTitle: Statistics
 
 # Statistics Page
 
+<a id="allocation-history"></a>
+
 ## Allocation history
 
 On the Statistics page, under the Allocation History tab, you can check simple statistics related to the use of
@@ -26,6 +28,8 @@ Also, one week statistics may not be shown for users whose account was created l
 :::
 
 ![](../images/usage_panel.png)
+
+<a id="user-session-history"></a>
 
 ## User session history
 

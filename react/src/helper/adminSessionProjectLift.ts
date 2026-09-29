@@ -32,7 +32,8 @@ export const splitTopLevelAnd = (filter: string): string[] => {
   return segments.map((s) => s.trim()).filter(Boolean);
 };
 
-const hasTopLevelOr = (filter: string): boolean => {
+/** True when a `|` sits outside every quote and paren. */
+export const hasTopLevelOr = (filter: string): boolean => {
   let depth = 0;
   let inQuote = false;
   for (const ch of filter) {

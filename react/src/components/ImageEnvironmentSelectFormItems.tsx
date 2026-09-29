@@ -21,24 +21,19 @@ import {
 } from '../hooks';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
-// @ts-ignore
-import ImageMetaIcon from './ImageMetaIcon';
-import {
-  imageNodeTagFacts,
-  imageTagFacts,
-  ImageMetaDivider,
-  ImageTagBadges,
-  ImageTags,
-} from './ImageTags';
+import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Divider } from '@astryxdesign/core/Divider';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import { Token } from '@astryxdesign/core/Token';
 import {
-  badgeVariantForTagColor,
-  BAIDoubleTag,
+  BAIDoubleToken,
+  BAITextHighlighter,
+  tokenColorForTagColor,
   BAIFlex,
+  BAIImageMetaIcon,
+  imageNodeTagFacts,
   BAISelect,
   // BAISelect still accepts antd's children option API via BUI's render-null
   // carriers; the rich JSX option rows below survive through `renderOption`.
@@ -98,15 +93,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
   const baiClient = useSuspendedBackendaiClient();
-  const supportExtendedImageInfo = baiClient?.supports('extended-image-info');
 
   const [environmentSearch, setEnvironmentSearch] = useState(
     searchPrefill ?? '',
   );
   const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
-  const [metadata, { getBaseVersion, getImageMeta, getTags, tagAlias }] =
-    useBackendAIImageMetaData();
+  const [metadata, { getImageMeta, tagAlias }] = useBackendAIImageMetaData();
   const { token } = theme.useToken();
   const { isDarkMode } = useThemeMode();
 
@@ -221,9 +214,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   // metadata?.imageInfo[
                   //   getImageMeta(getImageFullName(image) || "").key
                   // ]?.name || image?.name
-                  `${image?.registry}/${
-                    supportExtendedImageInfo ? image?.namespace : image?.name
-                  }`
+                  `${image?.registry}/${image?.namespace}`
                 );
               }),
               (images, environmentName) => {
@@ -490,10 +481,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               if (fullNameMatchedImage) {
                 form.setFieldsValue({
                   environments: {
-                    environment:
-                      (supportExtendedImageInfo
-                        ? fullNameMatchedImage?.namespace
-                        : fullNameMatchedImage?.name) || '',
+                    environment: fullNameMatchedImage?.namespace || '',
                     version: getImageFullName(fullNameMatchedImage),
                     image: fullNameMatchedImage,
                   },
@@ -539,11 +527,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           >
             {fullNameMatchedImage ? (
               <SelectOption
-                value={
-                  supportExtendedImageInfo
-                    ? fullNameMatchedImage?.namespace
-                    : fullNameMatchedImage?.name
-                }
+                value={fullNameMatchedImage?.namespace}
                 filterValue={getImageFullName(fullNameMatchedImage)}
               >
                 <BAIFlex
@@ -552,7 +536,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   gap="xs"
                   style={{ display: 'inline-flex' }}
                 >
-                  <ImageMetaIcon
+                  <BAIImageMetaIcon
                     image={getImageFullName(fullNameMatchedImage) || ''}
                     style={{
                       width: 15,
@@ -582,15 +566,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         )
                       ) {
                         extraFilterValues.push(environmentGroup.prefix);
-                        // antd `Tag color` → Astryx `Badge variant` through the
-                        // repo-global lookup (ticket 13). Never a raw hue/hex.
                         environmentPrefixTag = (
-                          <Badge
-                            variant={badgeVariantForTagColor('purple')}
-                            label={
-                              <TextHighlighter keyword={environmentSearch}>
+                          <Token
+                            color="purple"
+                            label={environmentGroup.prefix}
+                            isLabelHidden
+                            endContent={
+                              <BAITextHighlighter keyword={environmentSearch}>
                                 {environmentGroup.prefix}
-                              </TextHighlighter>
+                              </BAITextHighlighter>
                             }
                           />
                         );
@@ -605,21 +589,20 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             label.color
                           ) {
                             extraFilterValues.push(label.tag);
-                            // `label.color` is a runtime-arbitrary string from
-                            // the image metadata JSON; the lookup normalises it
-                            // and falls back to `neutral` for anything it does
-                            // not recognise (ticket 13 §5).
+                            // `label.color` is a runtime string from the image
+                            // metadata JSON; unknown values fall back to default.
                             return (
-                              <Badge
+                              <Token
                                 key={label.tag}
-                                variant={badgeVariantForTagColor(label.color)}
-                                label={
-                                  <TextHighlighter
+                                color={tokenColorForTagColor(label.color)}
+                                label={label.tag}
+                                isLabelHidden
+                                endContent={
+                                  <BAITextHighlighter
                                     keyword={environmentSearch}
-                                    key={label.tag}
                                   >
                                     {label.tag}
-                                  </TextHighlighter>
+                                  </BAITextHighlighter>
                                 }
                               />
                             );
@@ -631,7 +614,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         <SelectOption
                           key={environmentGroup.environmentName}
                           value={environmentGroup.environmentName}
-                          // The prefix/meta badge texts live in Badge props, so
+                          // The prefix/meta token texts live in Token props, so
                           // the accessible/search label restates them (FR-3544).
                           label={_.compact([
                             environmentGroup.displayName,
@@ -645,7 +628,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         >
                           <BAIFlex direction="row" justify="between">
                             <BAIFlex direction="row" align="center" gap="xs">
-                              <ImageMetaIcon
+                              <BAIImageMetaIcon
                                 image={getImageFullName(firstImage) || ''}
                                 style={{
                                   width: 15,
@@ -793,17 +776,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             !requirement.startsWith('customized_'),
                         ),
                         (requirement, idx) => (
-                          <BAIDoubleTag
+                          <BAIDoubleToken
                             key={idx}
+                            highlightKeyword={versionSearch}
                             values={_.split(
                               metadata?.tagAlias[requirement] || requirement,
                               ':',
                             ).map((str) => {
                               extraFilterValues.push(str);
-                              return {
-                                label: str,
-                                highlightKeyword: versionSearch,
-                              };
+                              return { label: str, color: 'default' as const };
                             })}
                           />
                         ),
@@ -826,7 +807,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           extraFilterValues.push('Customized');
                           extraFilterValues.push(tag);
                           requirementTags.push(
-                            <BAIDoubleTag
+                            <BAIDoubleToken
                               key={requirementTags.length + 1}
                               highlightKeyword={versionSearch}
                               values={[
@@ -846,32 +827,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       // The closed trigger renders a plain string (BAISelect
                       // FR-3544): compute each tag's display facts once, then
                       // derive both the trigger text and the option row from them.
-                      const tagFacts = supportExtendedImageInfo
-                        ? imageNodeTagFacts(
-                            image?.tags as Array<{
-                              key: string;
-                              value: string;
-                            }>,
-                            image?.labels as Array<{
-                              key: string;
-                              value: string;
-                            }>,
-                            tagAlias,
-                          )
-                        : imageTagFacts(
-                            getTags(
-                              image?.tag || '',
-                              image?.labels as Array<{
-                                key: string;
-                                value: string;
-                              }>,
-                            ),
-                            tagAlias,
-                          );
+                      const tagFacts = imageNodeTagFacts(
+                        image?.tags as Array<{ key: string; value: string }>,
+                        image?.labels as Array<{ key: string; value: string }>,
+                        tagAlias,
+                      );
                       const selectedLabel = _.compact([
-                        supportExtendedImageInfo
-                          ? image?.version
-                          : getBaseVersion(imageFullName || ''),
+                        image?.version,
                         image?.architecture,
                         ..._.map(tagFacts, (fact) =>
                           fact.isDouble
@@ -893,45 +855,24 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             ...extraFilterValues,
                           ].join('\t')}
                         >
-                          {supportExtendedImageInfo ? (
-                            <BAIFlex direction="row">
-                              <TextHighlighter keyword={versionSearch}>
-                                {image?.version}
-                              </TextHighlighter>
-                              <ImageMetaDivider />
-                              <TextHighlighter keyword={versionSearch}>
-                                {image?.architecture}
-                              </TextHighlighter>
-                              <ImageMetaDivider />
-                              <ImageTagBadges
-                                facts={tagFacts}
-                                highlightKeyword={versionSearch}
-                              />
-                            </BAIFlex>
-                          ) : (
-                            <BAIFlex direction="row" justify="between">
-                              <BAIFlex direction="row" gap="xxs">
-                                <TextHighlighter keyword={versionSearch}>
-                                  {getBaseVersion(imageFullName || '')}
-                                </TextHighlighter>
+                          <BAIFlex direction="row" wrap="wrap" gap="xxs">
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.version}
+                            </TextHighlighter>
+                            <ImageMetaDivider />
+                            <TextHighlighter keyword={versionSearch}>
+                              {image?.architecture}
+                            </TextHighlighter>
+                            {!_.isEmpty(tagFacts) ? (
+                              <>
                                 <ImageMetaDivider />
-                                <TextHighlighter keyword={versionSearch}>
-                                  {image?.architecture}
-                                </TextHighlighter>
-                                <ImageMetaDivider />
-                                <ImageTags
-                                  tag={image?.tag || ''}
+                                <ImageTagTokens
+                                  facts={tagFacts}
                                   highlightKeyword={versionSearch}
-                                  labels={
-                                    image?.labels as Array<{
-                                      key: string;
-                                      value: string;
-                                    }>
-                                  }
                                 />
-                              </BAIFlex>
-                            </BAIFlex>
-                          )}
+                              </>
+                            ) : null}
+                          </BAIFlex>
                         </SelectOption>
                       );
                     },

@@ -23,6 +23,7 @@ const COMMANDS = [
   "preview:html",
   "build:web",
   "serve:web",
+  "diff:web",
   "init",
   "agents",
   "help",
@@ -42,6 +43,7 @@ Commands:
   preview:html   HTML preview server (live-reload, no PDF)
   build:web      Generate static multi-page website
   serve:web      Website dev server (live-reload)
+  diff:web       Mark a head website build against a base build (PR preview)
   init           Initialize a new documentation project
   agents         Generate Claude AI agent files from templates
   help           Show this help message
@@ -77,6 +79,15 @@ Options:
     --lang <en|ko|...>        Language (default: en)
     --port <number>            Port number (default: 3458)
 
+  diff:web:
+    --base <dir>              Base build root (dist/web layout, required)
+    --head <dir>              Head build root — written into (required)
+    --lang <all|en,ko>        Languages to diff (default: all)
+    --label <text>            PR label carried into the manifest
+    --src <dir>               Markdown source of the head build for file:line
+                              references (default: the configured srcDir)
+    --json                    Print the manifest to stdout
+
   agents:
     --force                    Overwrite existing agent files
 
@@ -91,6 +102,7 @@ Examples:
   docs-toolkit build:web --lang en
   docs-toolkit serve:web --lang en
   docs-toolkit serve:web --lang ko --port 3459
+  docs-toolkit diff:web --base dist/base --head dist/web --lang en,ko
   docs-toolkit init
   docs-toolkit agents
   docs-toolkit agents --force
@@ -447,6 +459,39 @@ async function main(): Promise<void> {
       const { startWebsitePreviewServer } =
         await import("./preview-server-website.js");
       await startWebsitePreviewServer(config);
+      break;
+    }
+
+    case "diff:web": {
+      const { generateWebDiff } = await import("./web-diff.js");
+      const base = getFlagValue(argv, "--base");
+      const head = getFlagValue(argv, "--head");
+      const json = hasFlag(argv, "--json");
+      for (const [flag, value] of [
+        ["--base", base],
+        ["--head", head],
+      ] as const) {
+        if (!value) {
+          console.error(
+            `Error: diff:web requires ${flag} <dir> (a dist/web build root).`,
+          );
+          process.exit(1);
+        }
+        const dir = path.resolve(config.projectRoot, value);
+        if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+          console.error(`Error: ${flag} is not a directory: ${dir}`);
+          process.exit(1);
+        }
+      }
+      const manifest = await generateWebDiff(config, {
+        base: base as string,
+        head: head as string,
+        lang: getFlagValue(argv, "--lang") ?? "all",
+        label: getFlagValue(argv, "--label"),
+        src: getFlagValue(argv, "--src"),
+        quiet: json,
+      });
+      if (json) console.log(JSON.stringify(manifest, null, 2));
       break;
     }
 
