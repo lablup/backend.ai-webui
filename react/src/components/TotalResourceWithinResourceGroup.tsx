@@ -133,7 +133,7 @@ const useRemainingAgents = ({
           remainingAgentsQuery,
           { ...variables, limit: AGENT_PAGE_SIZE, offset },
         ).toPromise();
-      if (isCancelled()) return;
+      if (isCancelled()) return agents;
       const items: ReadonlyArray<AgentSlots | null | undefined> =
         page?.agent_nodes
           ? page.agent_nodes.edges.map((edge) => edge?.node)
@@ -141,14 +141,16 @@ const useRemainingAgents = ({
       if (_.isEmpty(items)) break;
       agents.push(...filterOutNullAndUndefined(items));
     }
-    setRemaining({ key: firstPageKey, agents });
+    return agents;
   });
 
   useEffect(() => {
     if (!needsMore) return;
     let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- state is set after the awaited pages resolve, not synchronously
-    fetchRemaining(() => cancelled);
+    const requestKey = firstPageKey;
+    fetchRemaining(() => cancelled).then((agents) => {
+      if (!cancelled) setRemaining({ key: requestKey, agents });
+    });
     return () => {
       cancelled = true;
     };
