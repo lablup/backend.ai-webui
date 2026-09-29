@@ -150,7 +150,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.12 · Astryx v0.6.2 · 164 components
+@lablup/ui-common v0.2.0-alpha.13 · Astryx v0.6.2 · 164 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -181,11 +181,14 @@ MORE CLI:
   swizzle <Name>     eject component source for deep customization
   upgrade --from <v> run after bumping @lablup/ui-common: ui-common's codemods, then Astryx's
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.12 wraps Astryx v0.6.2):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.13 wraps Astryx v0.6.2):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
 - Use Modal (@lablup/ui-common/Modal), not Dialog: ui-common hides Dialog.
+- ComplexSelector (@lablup/ui-common/ComplexSelector) comes from ui-common: its own copy of Astryx's, same API and import path. Adds hasClear and onClear, a clear button as Selector has (facebook/astryx#6362).
+- Drawer (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. An Escape from a layer opened inside the drawer, or one that ends an IME composition, no longer closes it; aria-modal passes through.
+- Tour (@lablup/ui-common/lab) comes from ui-common: its own copy of Astryx's, same API and import path. A step's highlight is promoted into the top layer once, so under StrictMode the spotlight dim no longer covers the callout.
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
 - ui-common's own components: AlertModal, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, ProgressWithLabel, SelectionLabel, Skeleton composites, SmoothHeight, StatCard, Statistic, StepNumberInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.

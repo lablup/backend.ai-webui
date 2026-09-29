@@ -337,7 +337,7 @@ catalogs:
       version: 5.106.2
 
 overrides:
-  '@lablup/ui-common': file:vendor/lablup-ui-common-0.2.0-alpha.12.tgz
+  '@lablup/ui-common': file:vendor/lablup-ui-common-0.2.0-alpha.13.tgz
   tar-fs@2: 2.1.4
   yauzl: ^3.3.1
   js-cookie: ^3.0.7
@@ -677,8 +677,8 @@ importers:
         specifier: ^9.4.2
         version: 9.4.2(@dicebear/core@9.4.3)
       '@lablup/ui-common':
-        specifier: file:../../vendor/lablup-ui-common-0.2.0-alpha.12.tgz
-        version: file:vendor/lablup-ui-common-0.2.0-alpha.12.tgz(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@stylexjs/stylex@0.19.0)(gpt-tokenizer@3.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
+        specifier: file:../../vendor/lablup-ui-common-0.2.0-alpha.13.tgz
+        version: file:vendor/lablup-ui-common-0.2.0-alpha.13.tgz(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@stylexjs/stylex@0.19.0)(gpt-tokenizer@3.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.101.4(react@19.2.8)
@@ -930,8 +930,8 @@ importers:
         specifier: ^9.4.2
         version: 9.4.2(@dicebear/core@9.4.3)
       '@lablup/ui-common':
-        specifier: file:../vendor/lablup-ui-common-0.2.0-alpha.12.tgz
-        version: file:vendor/lablup-ui-common-0.2.0-alpha.12.tgz(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@stylexjs/stylex@0.19.0)(gpt-tokenizer@3.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
+        specifier: file:../vendor/lablup-ui-common-0.2.0-alpha.13.tgz
+        version: file:vendor/lablup-ui-common-0.2.0-alpha.13.tgz(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@stylexjs/stylex@0.19.0)(gpt-tokenizer@3.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)
       '@lexical/code':
         specifier: 0.46.0
         version: 0.46.0(typescript@6.0.3)
@@ -3437,9 +3437,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lablup/ui-common@file:vendor/lablup-ui-common-0.2.0-alpha.12.tgz':
-    resolution: {integrity: sha512-T/fK450foD3/mm3ui8uViZNSpyQCqlVGiLSInUYtqcHxq/vG47aLhzeEDl9eH8Zrv08Hhvp9Ad5YOqypIp+3Zg==, tarball: file:vendor/lablup-ui-common-0.2.0-alpha.12.tgz}
-    version: 0.2.0-alpha.12
+  '@lablup/ui-common@file:vendor/lablup-ui-common-0.2.0-alpha.13.tgz':
+    resolution: {integrity: sha512-MODKgLy6bPrBcOKA1JDlPiG2mWP3a2JNsLIH+atT7bAYeYl8cKi+wACHNFWUUOr7xVeDHHepk8P5bNYoQA6RNQ==, tarball: file:vendor/lablup-ui-common-0.2.0-alpha.13.tgz}
+    version: 0.2.0-alpha.13
     engines: {node: '>=20'}
     hasBin: true
     peerDependencies:
@@ -13623,7 +13623,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lablup/ui-common@file:vendor/lablup-ui-common-0.2.0-alpha.12.tgz(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@stylexjs/stylex@0.19.0)(gpt-tokenizer@3.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)':
+  '@lablup/ui-common@file:vendor/lablup-ui-common-0.2.0-alpha.13.tgz(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(@stylexjs/stylex@0.19.0)(gpt-tokenizer@3.4.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)':
     dependencies:
       '@astryxdesign/cli': 0.6.2(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/lab@0.6.2-canary.c9fb1ad(patch_hash=168c71010dea60d76b06d264ff380e93b7372190ec1a9cdaee89d8656960bc57)(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@astryxdesign/theme-neutral@0.6.2(@astryxdesign/core@0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8))(@babel/preset-env@7.29.7(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(gpt-tokenizer@3.4.0)(supports-color@8.1.1)
       '@astryxdesign/core': 0.6.2(patch_hash=ab1f5ecf353ed137ccd189fe3d38fbec7250a22af83cc3960a882adc32ca8473)(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
