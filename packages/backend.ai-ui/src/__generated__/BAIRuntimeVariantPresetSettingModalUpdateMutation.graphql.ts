@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<452a985bfeea7795a99cbca793bd57aa>>
+ * @generated SignedSource<<47e4a5b466b148b3de3f9f07519d3002>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,8 +13,10 @@ export type PresetTarget = "ARGS" | "ENV" | "%future added value";
 export type PresetValueType = "BOOL" | "FLAG" | "FLOAT" | "INT" | "STR" | "%future added value";
 export type RuntimeVariantPresetUIType = "CHECKBOX" | "NUMBER_INPUT" | "SELECT" | "SLIDER" | "TEXT_INPUT" | "%future added value";
 export type UpdateRuntimeVariantPresetInput = {
+  addedVersion?: string | null | undefined;
   category?: string | null | undefined;
   defaultValue?: string | null | undefined;
+  deprecatedVersion?: string | null | undefined;
   description?: string | null | undefined;
   displayName?: string | null | undefined;
   id: string;

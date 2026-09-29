@@ -76,11 +76,13 @@ e2e/
 ## Test Tags
 
 ### Execution Priority
+
 - `@smoke` - Most critical core paths (~5 min, for PR checks)
 - `@critical` - Important feature tests (~15 min, before merge)
 - `@regression` - Full regression tests (~1 hour, nightly)
 
 ### Feature Areas
+
 - `@auth` - Authentication
 - `@user` - User management
 - `@vfolder` - Virtual folders
@@ -93,6 +95,7 @@ e2e/
 - `@config` - Configuration and access control
 
 ### Test Types
+
 - `@functional` - Functional tests
 - `@visual` - Visual regression tests
 - `@integration` - Integration tests
@@ -100,11 +103,13 @@ e2e/
 ## Running Tests
 
 ### Run all tests
+
 ```bash
 pnpm exec playwright test
 ```
 
 ### Run by tag
+
 ```bash
 # Run smoke tests only (for PR checks)
 pnpm exec playwright test --grep @smoke
@@ -122,7 +127,37 @@ pnpm exec playwright test --grep @vfolder
 pnpm exec playwright test --grep @serving
 ```
 
+### Smoke run against an installed cluster
+
+`e2e/playwright.smoke.config.ts` runs the `@smoke` subset against an already
+installed WebUI with a single account — no dev fixtures, no
+`.env.playwright`. It selects bare `@smoke` tests plus `@smoke-<role>` and
+excludes the other role (see `E2E-TEST-NAMING-GUIDELINES.md` → "Smoke tags").
+
+```bash
+SMOKE_ROLE=admin \
+E2E_WEBUI_ENDPOINT=https://webui.example.com \
+E2E_ADMIN_EMAIL=admin@example.com E2E_ADMIN_PASSWORD='…' \
+  pnpm e2e:smoke
+# user role: SMOKE_ROLE=user + E2E_USER_EMAIL / E2E_USER_PASSWORD
+# the config refuses to start when the role's endpoint or credentials are
+# missing — otherwise the helpers would fall back to the dev-box defaults
+# E2E_WEBSERVER_ENDPOINT: what the login form's endpoint field is filled
+#   with; defaults to E2E_WEBUI_ENDPOINT (same host serves both)
+# self-signed certificate: SMOKE_INSECURE_TLS=1
+# reports: e2e/smoke-report/{html,results.json} (SMOKE_REPORT_DIR overrides)
+# runs with a single worker: one account, one live cluster
+```
+
+Limitations: no OTP step in `login()`, so 2FA-enabled clusters are not
+supported; the global `e2e-*` cleanup teardown is deliberately not wired in
+(its unscoped sweep would delete customer folders whose name contains
+`e2e-`), so a run killed mid-test can leave its own `e2e-`-prefixed
+artifacts; a failed login leaves the password in the retained trace — treat
+`smoke-report/` as sensitive.
+
 ### Run specific directory
+
 ```bash
 pnpm exec playwright test e2e/auth/
 pnpm exec playwright test e2e/session/
@@ -130,6 +165,7 @@ pnpm exec playwright test e2e/vfolder/
 ```
 
 ### Run specific file
+
 ```bash
 pnpm exec playwright test e2e/auth/login.spec.ts
 pnpm exec playwright test e2e/session/session-lifecycle.spec.ts
@@ -137,11 +173,13 @@ pnpm exec playwright test e2e/serving/endpoint-lifecycle.spec.ts
 ```
 
 ### Exclude visual regression
+
 ```bash
 pnpm exec playwright test --grep-invert @visual
 ```
 
 ### Parallel execution
+
 ```bash
 # Run with 4 shards
 pnpm exec playwright test --shard=1/4
@@ -159,6 +197,7 @@ All tests follow the Page Object Model (POM) pattern.
 #### Base Classes
 
 **BasePage** - Base class for all page classes
+
 ```typescript
 import { BasePage } from '../utils/classes/base/BasePage';
 
@@ -175,6 +214,7 @@ export class MyPage extends BasePage {
 ```
 
 **BaseModal** - Base class for all modal classes
+
 ```typescript
 import { BaseModal } from '../utils/classes/base/BaseModal';
 
@@ -194,26 +234,30 @@ export class MyModal extends BaseModal {
 ### Test Example
 
 ```typescript
-import { test, expect } from '@playwright/test';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import { MyPage } from '../utils/classes/MyPage';
+import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { test, expect } from '@playwright/test';
 
-test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] }, () => {
-  let myPage: MyPage;
+test.describe(
+  'My Feature',
+  { tag: ['@critical', '@myfeature', '@functional'] },
+  () => {
+    let myPage: MyPage;
 
-  test.beforeEach(async ({ page, request }) => {
-    await loginAsAdmin(page, request);
-    await navigateTo(page, 'mypage');
-    myPage = new MyPage(page);
-    await myPage.verifyPageLoaded();
-  });
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+      await navigateTo(page, 'mypage');
+      myPage = new MyPage(page);
+      await myPage.verifyPageLoaded();
+    });
 
-  test('Should do something', async () => {
-    // Test implementation
-    await myPage.doSomething();
-    expect(await myPage.getSomething()).toBe('expected');
-  });
-});
+    test('Should do something', async () => {
+      // Test implementation
+      await myPage.doSomething();
+      expect(await myPage.getSomething()).toBe('expected');
+    });
+  },
+);
 ```
 
 ### File Naming Convention
@@ -228,26 +272,31 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] },
 ### Completed
 
 #### Base Infrastructure
+
 - Feature-based directory structure (auth, user, vfolder, session, serving, etc.)
 - Base POM classes (BasePage, BaseModal)
 - Consistent tag strategy (@smoke, @critical, @regression)
 - Standardized naming conventions
 
 #### Authentication (@auth)
+
 - Login tests
 - Login failure cases
 
 #### User Management (@user)
+
 - User CRUD tests
 - User Purge tests
 
 #### VFolder Management (@vfolder)
+
 - VFolder CRUD tests
 - VFolder sharing tests
 - Folder explorer modal tests
 - Consecutive deletion tests
 
 #### Session Management (@session)
+
 - SessionDetailPage POM class
 - SessionLauncher POM class
 - Session creation tests (Interactive/Batch)
@@ -260,6 +309,7 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] },
   - Bulk operation constraints
 
 #### Serving/Endpoint Management (@serving)
+
 - EndpointPage POM class
 - Endpoint lifecycle tests
   - Endpoint creation
@@ -271,22 +321,27 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] },
   - Validation error handling
 
 #### App Launcher (@app-launcher)
+
 - App launcher basic interaction tests
 - App launch tests
 
 #### Environment Management (@environment)
+
 - Image list rendering
 - Resource limit modification
 - App management
 
 #### Agent Management (@agent)
+
 - Agent list tests
 
 #### Maintenance (@maintenance)
+
 - Recalculate Usage tests
 - Rescan Images tests
 
 #### Configuration (@config)
+
 - config.toml settings tests
 - Page access control tests (404/401)
 
@@ -295,23 +350,27 @@ test.describe('My Feature', { tag: ['@critical', '@myfeature', '@functional'] },
 Consider Backend.AI domain constraints when writing tests:
 
 ### Session Constraints
+
 - Sessions are **immutable after termination** (TERMINATED/CANCELLED state)
 - **No pause/restart** - only terminate is available
 - Only RUNNING sessions can be selected for bulk operations
 - State transitions: PENDING → PREPARING → RUNNING → TERMINATED
 
 ### VFolder Constraints
+
 - **Only READY state can be mounted**
 - Pipeline folders cannot be deleted/restored
 - Only DELETE_PENDING state can be restored
 - Permission-based operation control (delete_vfolder, update_attribute)
 
 ### Resource Constraints
+
 - **3-tier resource policy** (Keypair → User → Project)
 - Only activated scaling groups can be selected
 - Image minimum resource requirements must be met
 
 ### RBAC Constraints
+
 - Role-based permissions: superadmin, admin, monitor, user
 - UI visibility and operation restrictions per role
 
@@ -337,10 +396,15 @@ Follow these guidelines when writing new tests:
    - Follow feature-action format: `{feature}-{action}.spec.ts`
 
 3. **Add Tags**: Add appropriate tags to all `test.describe` blocks
+
    ```typescript
-   test.describe('Feature Name', { tag: ['@priority', '@feature', '@type'] }, () => {
-     // tests
-   });
+   test.describe(
+     'Feature Name',
+     { tag: ['@priority', '@feature', '@type'] },
+     () => {
+       // tests
+     },
+   );
    ```
    - Priority: `@smoke`, `@critical`, `@regression`
    - Feature: `@auth`, `@user`, `@vfolder`, `@session`, etc.

@@ -485,6 +485,182 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 5. **Test Coverage**: Easier to spot gaps in test coverage
 6. **AI Integration**: AI agents can better understand test intent and generate meaningful tests
 
+## Smoke tags
+
+The **`@smoke`** family identifies specs that are part of the post-install smoke
+suite run through `e2e/playwright.smoke.config.ts` (`pnpm e2e:smoke`, Epic
+FR-2871). Smoke specs
+are a curated subset of the full e2e suite that a Field-Ops engineer can run
+against a freshly installed Backend.AI cluster to verify the WebUI is
+functional — within 5–10 minutes, using only one account, against an endpoint
+that may be air-gapped.
+
+### Tags
+
+| Tag | Meaning |
+|-----|---------|
+| `@smoke` | Base smoke marker. A spec carrying ONLY `@smoke` (no role tag) must perform **no login at all** — it is included in every run regardless of role. |
+| `@smoke` + `@smoke-admin` | Requires admin credentials (`loginAsAdmin`). Excluded from user-role runs. |
+| `@smoke` + `@smoke-user` | Requires user credentials (`loginAsUser`). Excluded from admin-role runs — a smoke run has only ONE role's credentials, so `loginAsUser` under an admin run would fall back to dev-default credentials and fail on customer clusters. |
+
+Role selection is **exclusive**: the role tag must match the login helper the
+spec actually calls. The smoke config selects `@smoke` (bare) + `@smoke-<role>`
+and explicitly excludes the opposite role's tag via `grepInvert`.
+
+> `@smoke-any` and `@smoke-extended` are intentionally **not** part of the
+> MVP taxonomy. The first turned out unworkable in practice (every e2e
+> helper hard-codes a role via `loginAsAdmin` / `loginAsUser`, so no
+> describe is genuinely role-agnostic at the helper level), and the second
+> has no selection mechanism behind it.
+
+These are **additive metadata** — existing tags (`@critical`, `@regression`,
+`@functional`, etc.) are preserved. Existing CI jobs that grep by other tags
+are unaffected.
+
+### Rules for smoke specs
+
+A spec is only eligible for an `@smoke*` tag if it satisfies **all** of the
+following:
+
+1. **Single account.** The entire `describe` block must run with one logged-in
+   account. Specs that call `loginAsUser2`, `loginAsCreatedAccount`, or
+   otherwise switch identities mid-test are **not** smoke candidates. (Those
+   belong in the full e2e suite.)
+2. **Self-cleanup.** Any resource the spec creates (vfolder, session, user)
+   must be cleaned up in `afterEach` / `afterAll`, even on failure. Smoke runs
+   happen against customer clusters — leftover artifacts are not acceptable.
+3. **Bounded runtime.** Each tagged describe must finish in under ~2 minutes,
+   so the whole smoke run stays within the 5–10 minute envelope.
+4. **No visual regression.** Pixel diffs and screenshot comparisons depend on
+   theme and viewport assumptions that vary across customer installs.
+   `@smoke*` specs must rely on role/text/data-testid selectors and value
+   assertions only.
+5. **No outbound dependencies.** Smoke runs on air-gapped hosts. Specs must
+   not call `fetch('https://...')` for any host other than the WebUI endpoint
+   itself.
+6. **Describe-level tags apply to every nested test.** A describe that
+   mixes `loginAsAdmin` and `loginAsUser` is **not** taggable as smoke at
+   the describe level — split the describe so each one uses a single
+   account, then tag only the role-uniform half. This keeps rule 1
+   ("single account") consistent with the role tags.
+7. **OTP-robust selectors.** Many customer clusters enable 2FA, which adds a
+   `One-time password` input to the login form. Spec-local selectors that
+   touch login fields must use exact matching
+   (`getByLabel('Password', { exact: true })`) so they don't strict-mode-
+   collide with the OTP field. The shared `login()` helper in
+   `e2e/utils/test-util.ts` does not handle OTP at all today, so a
+   2FA-enabled cluster cannot be smoked yet (see `e2e/README.md`).
+8. **No ad-hoc environment-conditional skips in smoke.** In-body
+   `test.skip(featureNotAvailable)` probes give a false-green smoke report.
+   Version/environment dependencies must instead use the declarative
+   `@requires-*` tag + gate convention (see "Feature-gate tags (FR-3112)"
+   and "Environment-constraint tags (FR-3114)" above): the gate skips with
+   an auditable reason on incapable targets and *fails* (not skips) when
+   the UI is unexpectedly missing on capable ones.
+
+   Interaction with the smoke run:
+   - A smoke-tagged test that also carries `@requires-*` (e.g. the dashboard
+     Agent Stats tests, `@requires-manager-v25.15`) is still selected by the
+     smoke config; on an incapable target it reports an **auditable skip**
+     in the smoke report — acceptable, but keep such tests to a minimum
+     since every skip reduces the report's install-verification signal.
+   - The session-lifecycle agent guard is deliberately NOT a `@requires-*`
+     gate: `e2e/playwright.smoke.config.ts` force-enables it via
+     `BACKEND_AI_AGENTS_AVAILABLE=true` so a session-incapable cluster
+     shows up RED, not skipped — being able to run sessions is the point
+     of the install.
+   New smoke specs should prefer asserting on UI that exists across all
+   supported server versions.
+
+### How to apply
+
+Add the tag to the existing `tag: [...]` array on the outermost
+`test.describe` you want to include. Do not replace existing tags.
+
+```typescript
+// Before
+test.describe(
+  'Login',
+  { tag: ['@auth', '@functional'] },
+  () => { /* ... */ },
+);
+
+// After — added @smoke and @smoke-admin (beforeEach uses loginAsAdmin)
+test.describe(
+  'Login',
+  {
+    tag: ['@auth', '@functional', '@smoke', '@smoke-admin'],
+  },
+  () => { /* ... */ },
+);
+```
+
+A spec without a `tag:` option needs one added — never strip existing tags.
+
+**Test-level tags** are the sanctioned alternative to splitting when only a
+single test inside a heavier describe qualifies for smoke (see rule 6):
+
+```typescript
+test(
+  'Create, monitor, and terminate interactive session',
+  { tag: ['@smoke', '@smoke-admin'] }, // only this test joins the smoke set
+  async ({ page }) => { /* ... */ },
+);
+```
+
+Current test-level smoke tags: the dashboard widget-rendering admin test, the
+vfolder create-file happy path, the session-lifecycle core test, the
+cluster-mode single-node sanity test, the bulk-user-creation modal test, and
+the deployment-list render test.
+
+### Coverage targets (MVP)
+
+The initial smoke set covers the highest-signal flows:
+
+- Login form render (no login) → bare `@smoke` on the `Before Login` describe
+- Login / authentication → `@smoke` + `@smoke-admin` on the `Login` describe (`loginAsAdmin`)
+- Dashboard widget render → test-level `@smoke` + `@smoke-admin` on `Admin can see all expected dashboard widgets`; the sibling regular-user tests in the same describe stay out (a describe that mixes `loginAsAdmin` and `loginAsUser` cannot carry a role tag — rule 6)
+- VFolder file creation (folder explorer) → test-level `@smoke` + `@smoke-user` on the create-file happy path; the input-validation negatives stay out
+- Agent list (admin signal) → `@smoke` + `@smoke-admin`
+- Session lifecycle (create → RUNNING → terminate) → test-level `@smoke` + `@smoke-admin` on the single core test in `session-lifecycle.spec.ts`; the heavier sibling scenarios (240s timeouts) stay out
+- Session launcher cluster-mode sanity (single deterministic test) → test-level `@smoke` + `@smoke-admin` (the enclosing describe's `beforeEach` calls `loginAsAdmin`, so the role tag must be admin even though the test reads as a user flow)
+- Bulk-user-creation modal open/cancel → test-level `@smoke` + `@smoke-admin`
+- Deployment list render → test-level `@smoke` + `@smoke-admin` in `serving/deployment-lifecycle.spec.ts`
+
+Legacy bare-`@smoke` tags that predate this convention were removed from
+specs that don't qualify: `chat.spec.ts` (fully mocked backend and mocked SSE
+— zero install signal) and the two version-gated
+`session-cluster-mode.spec.ts` tests (`@requires-webui-v26.4`). The
+`forgot-password.spec.ts` tests keep their bare `@smoke`: they perform no
+login, which is exactly what the bare tag means.
+
+Pick **quality over quantity**: do not tag every spec in a folder. The smoke
+suite's value is its short runtime and high signal-to-noise ratio.
+
+The global cleanup teardown (`e2e/global-cleanup.teardown.ts`) is **not**
+part of a smoke run: its sweep matches every vfolder containing `e2e-` on
+whatever the account can see and delete-forevers it, which is acceptable on
+the shared test server it was written for and data loss on a customer
+cluster. Smoke specs reap their own artifacts (rule 2).
+
+### Listing and running the smoke set
+
+`pnpm exec playwright test --grep @smoke --list` from the repository root
+lists the **union** of both roles — every bare-`@smoke` test plus every
+`@smoke-admin` and `@smoke-user` test — because `@smoke` is a substring of
+the role-suffixed tags and nothing in the tag itself says which role a test
+needs. The role partition lives in `e2e/playwright.smoke.config.ts`, which
+reads `SMOKE_ROLE` and sets `grep` = bare `@smoke` OR `@smoke-<role>` and
+`grepInvert` = `@smoke-<opposite role>`. To list what one role actually runs:
+
+```bash
+SMOKE_ROLE=admin pnpm e2e:smoke --list
+SMOKE_ROLE=user  pnpm e2e:smoke --list
+```
+
+Running it against an installed cluster is documented in `e2e/README.md`
+("Smoke run against an installed cluster").
+
 ## References
 
 - Playwright Best Practices: https://playwright.dev/docs/best-practices
@@ -493,5 +669,5 @@ test.describe.serial('FolderExplorerModal - User VFolder Access', () => {
 
 ---
 
-**Last Updated**: 2025-11-26
+**Last Updated**: 2026-09-16
 **Applies to**: All E2E tests in `/e2e` directory, especially AI-generated tests using Playwright MCP server

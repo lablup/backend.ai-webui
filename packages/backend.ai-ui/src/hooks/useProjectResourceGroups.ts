@@ -58,11 +58,48 @@ interface UseProjectResourceGroupsOptions {
    * to keep it in the result.
    */
   filter?: (resourceGroupName: string) => boolean;
+  /**
+   * Keep the SFTP-designated resource groups in the result. They are reserved
+   * for SSH/SFTP system sessions, so every other surface leaves this off
+   * (FR-3996).
+   */
+  includeSFTPResourceGroups?: boolean;
 }
 
 /**
+ * The option list rule, kept pure so it can be exercised without a client:
+ * drop the resource groups any volume has designated for SFTP, then apply the
+ * caller's own filter. `includeSFTPResourceGroups` keeps the SFTP ones, for
+ * the SSH/SFTP system-session surfaces they are reserved for (FR-3996).
+ */
+export const selectProjectResourceGroups = (
+  scalingGroups: ScalingGroupItem[],
+  volumeInfo: StorageHostsResponse['volume_info'] | undefined,
+  options?: UseProjectResourceGroupsOptions,
+): ScalingGroupItem[] => {
+  const sftpResourceGroups = _.flatMap(
+    volumeInfo,
+    (item) => item?.sftp_scaling_groups ?? [],
+  );
+
+  return _.filter(scalingGroups, (item: ScalingGroupItem) => {
+    if (
+      !options?.includeSFTPResourceGroups &&
+      _.includes(sftpResourceGroups, item.name)
+    ) {
+      return false;
+    }
+    if (options?.filter) {
+      return options.filter(item.name);
+    }
+    return true;
+  });
+};
+
+/**
  * Fetches the resource groups accessible to the given project for the current
- * user, excluding SFTP-only scaling groups. Shared by
+ * user, excluding SFTP-only scaling groups unless
+ * `includeSFTPResourceGroups` is set. Shared by
  * `BAIProjectResourceGroupSelect` and any caller that needs to reason about
  * the available resource groups (e.g. to decide whether to show a selector or
  * auto-deploy). Both call sites use the same React Query key so a single
@@ -116,22 +153,10 @@ export const useProjectResourceGroups = (
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 
-  const sftpResourceGroups = _.flatMap(
-    data?.[1]?.volume_info,
-    (item) => item?.sftp_scaling_groups ?? [],
-  );
-
-  const resourceGroups = _.filter(
+  const resourceGroups = selectProjectResourceGroups(
     data?.[0]?.scaling_groups ?? [],
-    (item: ScalingGroupItem) => {
-      if (_.includes(sftpResourceGroups, item.name)) {
-        return false;
-      }
-      if (options?.filter) {
-        return options.filter(item.name);
-      }
-      return true;
-    },
+    data?.[1]?.volume_info,
+    options,
   );
 
   return { resourceGroups };

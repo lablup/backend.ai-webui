@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Uç Nokta",
     "FailedToLoadCellData": "Veriler yüklenemedi.",
+    "LostAt": "Kayıp Zamanı",
     "NoAvailableLiveStat": "Canlı istatistik yok",
     "Region": "Bölge",
     "ResourceGroup": "Kaynak Grubu",
@@ -13,7 +14,8 @@
     "Schedulable": "Zamanlanabilir",
     "Starts": "Başlangıçlar",
     "Status": "Durum",
-    "Utilization": "Kullanım"
+    "Utilization": "Kullanım",
+    "Version": "Sürüm"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "İzin verildi",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Eylem ID",
     "Actor": "Aktör",
+    "ClientIp": "İstemci IP'si",
     "Description": "Açıklama",
     "Duration": "Süre",
     "EntityId": "Varlık ID",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "Bu işlem geri alınamaz.",
     "DeleteItem": "Sil",
     "DeleteNItems": "{{count}} öğeyi sil",
-    "TypeToConfirm": "Onaylamak için <code>{{confirmText}}</code> yazın."
+    "TypeToConfirm": "Onaylamak için <token>{{confirmText}}</token> yazın."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Oluşturan"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Dağıtım seçin"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Bozulmuş",
     "Deploying": "Dağıtılıyor",
     "Healthy": "Sağlıklı",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "{{count}} sürümleri için başarıyla talep edildi.",
     "Version": "Versiyon"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Backend.AI oturumunuz denetleniyor…",
+    "SignInWithBackendAI": "Backend.AI ile oturum aç",
+    "failure": {
+      "CorsOrMixed": "Tarayıcı, Backend.AI web sunucusuna yapılan isteği engelledi. Bunun nedeni genellikle bir CORS veya karma içerik kısıtlamasıdır.",
+      "HttpError": "Backend.AI web sunucusu bir hata döndürdü ({{status}}).",
+      "InvalidCallback": "{{appName}} için yapılandırılan oturum açma dönüş adresi geçerli bir web adresi değil.",
+      "InvalidResponse": "Backend.AI web sunucusu beklenmeyen bir yanıt döndürdü.",
+      "NoEndpoint": "{{appName}} için yapılandırılmış bir Backend.AI web sunucusu adresi yok.",
+      "NoSessionId": "Backend.AI oturumunuz açık, ancak web sunucusu bir oturum kimliği döndürmedi.",
+      "NoSessionOverHttp": "Backend.AI oturumunuz henüz açık değil. Zaten oturum açtıysanız {{appName}} HTTP üzerinden sunulduğu için tarayıcı web sunucusunun güvenli oturum çerezini reddediyor olabilir. {{appName}} uygulamasını HTTPS üzerinden açmayı deneyin.",
+      "NoSessionOverHttps": "Backend.AI oturumunuz henüz açık değil. Zaten oturum açtıysanız {{appName}} ile Backend.AI web sunucusu farklı siteler olabilir, bu nedenle tarayıcı oturum çerezini göndermiyor.",
+      "RelayFailed": "Backend.AI oturumunuz açık, ancak {{appName}} oturum açma işlemini tamamlayamadı.",
+      "Timeout": "Backend.AI web sunucusu zamanında yanıt vermedi.",
+      "Title": "Backend.AI ile oturum açılamadı"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Küme boyutu",
     "Concurrency": "Eşzamanlı Oturumlar",
@@ -248,6 +268,7 @@
     "SelectKeypair": "Anahtar Çifti Seçin"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "İstemci IP'si",
     "Domain": "Alan Adı",
     "FailReason": "Hata Nedeni",
     "LoginTime": "Oturum Açma Zamanı",
@@ -338,18 +359,22 @@
     "UpdateProject": "Projeyi Güncelle"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Konteyner Kayıt Deposu",
     "ContainerRegistryProject": "Konteyner Kayıt Deposu Projesi",
     "CreatedAt": "Oluşturulma Tarihi",
     "Description": "Açıklama",
     "Domain": "Etki Alanı",
+    "Inactive": "Aktif olmayan",
     "IntegrationID": "Entegrasyon Kimliği",
+    "ModifiedAt": "Değiştirilme",
     "Name": "Ad",
     "Project": "Proje",
     "ProjectID": "Proje Kimliği",
     "Registry": "Kayıt Deposu",
     "ResourcePolicy": "Kaynak Politikası",
     "ScalingGroups": "Kaynak Grupları",
+    "Status": "Durum",
     "StorageNodes": "Depolama Düğümleri",
     "TotalResourceSlots": "Toplam Kaynak Slotları",
     "Type": "Tür"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "test"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ve {{rest}} tane daha"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Oluşturulma Tarihi",
     "MaxConcurrentLogins": "Maksimum eşzamanlı oturum açma",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Geçersiz yol biçimi.",
     "AliasOverlapping": "Bağlama yolu başka bir klasörle çakışıyor.",
+    "AliasOverlappingWithAutoMount": "Bağlama yolu otomatik bağlanan bir klasörle çakışıyor.",
     "AliasPlaceholder": "Bağlama yolu",
     "AutoMountedFolders": "Otomatik bağlanan klasörler",
-    "Name": "Ad",
-    "PathAndAlias": "Yol & Takma Ad",
+    "CreateFolder": "Yeni bir depolama klasörü oluşturun",
+    "DestinationPath": "Konteyner yolu (destination)",
+    "Folders": "klasörler",
+    "OwnerProject": "Proje",
+    "OwnerUser": "Kullanıcı",
     "PathAndAliasTooltip": "Klasörün bağlanacağı container içindeki yol. Varsayılan yolu kullanmak için boş bırakın.",
+    "Refresh": "Yenile",
     "RemoveFolder": "Kaldır",
+    "SelectFolder": "Klasör Seç",
+    "SourcePath": "Klasördeki yol (source)",
     "Subpath": "Alt yol",
     "SubpathInvalid": "Alt yol göreli bir yol olmalı ve '..' içermemelidir.",
-    "SubpathPlaceholder": "örn. dataset/train (isteğe bağlı)",
-    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Kökü bağlamak için boş bırakın."
+    "SubpathTooltip": "Kök yerine klasörün içindeki bir alt klasörü kaynak olarak bağlar. Klasöre göz atıp bir alt klasör seçmek için alana tıklayın; klasörün kökünü bağlamak için boş bırakın.",
+    "UnmountableFoldersRemoved": "Artık bağlayamayacağınız klasörler seçimden kaldırıldı."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Klasör Seç"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "Silinen dosyalar ve klasörler geri yüklenemez. \nDevam etmek ister misin?",
     "DeleteSelectedItemsDialog": "Onay Sil",
     "Download": "İndir",
+    "DownloadPopupBlocked": "Tarayıcı indirme penceresini engelledi. Bu site için açılır pencerelere izin verip yeniden deneyin.",
+    "DownloadRejected": "Storage proxy indirmeyi reddetti (HTTP {{status}}). İndirme başlatılmadı.",
     "DownloadSelected": "İndir",
     "DownloadStarted": "Dosya \"{{fileName}}\" indirme başlatıldı.",
+    "DownloadUnreachable": "{{origin}} adresindeki storage proxy sunucusuna ulaşılamadı. İndirme başlatılmadı.",
     "DragAndDropDesc": "Yüklemek için dosyaları bu alana sürükleyin ve bırakın.",
     "DuplicatedFiles": "Üzerine Yazın Onay",
     "DuplicatedFilesDesc": "Aynı ada sahip dosya veya klasör zaten mevcuttur. \nÜzerine yazmak ister misin?",
     "EditFile": "Dosyayı Düzenle",
+    "ExistingItem": "Mevcut",
     "FileCreatedSuccessfully": "Dosya başarıyla oluşturuldu.",
     "FileName": "Dosya Adı",
     "FileNamePlaceholder": "örn. model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "Değiştirildi",
     "Name": "İsim",
     "NoUploadPermissionForHost": "Bu depolama sunucusuna yükleme izniniz yok.",
+    "OtherItemsWillBeUploaded": "Ayrıca {{count}} öğe daha yüklenecek.",
     "Path": "Yol",
     "PleaseEnterAFileName": "Lütfen dosya adını girin.",
     "PleaseEnterAFolderName": "Lütfen klasör adını girin.",
     "RenameFile": "Yeniden adlandır",
     "RenameSuccess": "İsim başarıyla değiştirildi.",
+    "SelectItemsToOverwrite": "Bu öğeler burada zaten mevcut. Üzerine yazılacak olanları seçin; seçilmeyenler atlanır.",
     "SelectedItemsDeletedSuccessfully": "Seçilen dosyalar ve klasörler başarıyla silindi.",
     "Size": "Boyut",
     "TypeDeleteToConfirm": "Onaylamak için 'Silmek' yazın.",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "Bu dosya biçimi düzenlemeyi desteklemiyor.",
     "UploadFiles": "Dosyaları Yükle",
     "UploadFolder": "Klasörü Yükle",
+    "UploadingItem": "Yüklenecek",
     "error": {
       "DuplicatedName": "Bu isim zaten kullanılıyor. Lütfen farklı bir isim girin.",
       "FileNameRequired": "Lütfen bir dosya veya klasör adı girin."
@@ -762,6 +804,7 @@
     "DeselectAll": "Tüm seçimi kaldır",
     "File": "Dosya",
     "Increase": "Artır",
+    "Loading": "Yükleniyor...",
     "NSelected": "{{count}} seçildi",
     "Optional": "İsteğe bağlı",
     "Project": "Proje",

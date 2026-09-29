@@ -103,6 +103,8 @@ const availableVFolderSorterKeys = [
   'cloneable',
   'status',
   'cur_size',
+  'creator',
+  'permission',
 ] as const;
 
 const isEnableSorter = (key: string) => {
@@ -269,9 +271,11 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
                   projectFolderAdminHint ??
                   t('data.folders.NoDeletePermission'),
               }
-            : vfolder?.status !== 'delete-pending'
-              ? { reason: t('data.folders.DeletionAlreadyStarted') }
-              : false,
+            : !hasDeletePermission
+              ? { reason: t('data.folders.NoDeletePermission') }
+              : vfolder?.status !== 'delete-pending'
+                ? { reason: t('data.folders.DeletionAlreadyStarted') }
+                : false,
           onClick: onDeleteForever,
         }
       : null,
@@ -374,6 +378,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     graphql`
       fragment VFolderNodesFragment on VirtualFolderNode @relay(plural: true) {
         id @required(action: NONE)
+        row_id
         status
         name
         host
@@ -383,6 +388,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         user_email
         group
         group_name
+        creator
+        permission
         usage_mode
         max_files
         max_size
@@ -575,6 +582,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             },
           },
           {
+            // The scalar the `permission` queryfilter/order targets, unlike the
+            // Mount Permission column above which renders the RBAC verb list.
+            key: 'permission',
+            title: t('data.folders.Permission'),
+            dataIndex: 'permission',
+            defaultHidden: true,
+            sorter: isEnableSorter('permission'),
+            render: (value: string) =>
+              value ? <VFolderPermissionCell permission={value} /> : '-',
+          },
+          {
             key: 'ownership_type',
             title: t('data.folders.Type'),
             dataIndex: 'ownership_type',
@@ -601,6 +619,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               vfolder.ownership_type === 'user'
                 ? vfolder?.user_email
                 : vfolder?.group_name,
+          },
+          {
+            key: 'creator',
+            title: t('data.folders.Creator'),
+            dataIndex: 'creator',
+            defaultHidden: true,
+            sorter: isEnableSorter('creator'),
+            render: (value: string) => value || '-',
           },
           {
             key: 'usage_mode',
@@ -694,6 +720,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             sorter: isEnableSorter('created_at'),
             render: (value: string) =>
               value ? dayjs(value).format('ll LT') : '-',
+          },
+          {
+            key: 'row_id',
+            title: t('general.ID'),
+            dataIndex: 'row_id',
+            defaultHidden: true,
+            render: (value: string) =>
+              value ? <BAIText copyable>{value}</BAIText> : '-',
           },
         ]}
         {...tableProps}

@@ -4,17 +4,17 @@
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
-import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIMetadataList,
   BAIModal,
   type BAIModalProps,
-  PRIMARY_TAG_VARIANT,
-  badgeVariantForTagColor,
+  PRIMARY_TOKEN_COLOR,
   BAIText,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
@@ -77,8 +77,8 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
               title styling is accepted as-is (defaults-first). */}
           <Text>{t('credential.KeypairDetail')}</Text>
           {user?.main_access_key === keypair?.access_key && (
-            <Badge
-              variant={PRIMARY_TAG_VARIANT}
+            <Token
+              color={PRIMARY_TOKEN_COLOR}
               label={t('credential.MainAccessKey')}
             />
           )}
@@ -109,14 +109,11 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
           <MetadataListItem label={t('credential.Permission')}>
             {keypair?.is_admin ? (
               <HStack gap={1}>
-                <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
-                <Badge
-                  variant={badgeVariantForTagColor('green')}
-                  label="user"
-                />
+                <Token color={PRIMARY_TOKEN_COLOR} label="admin" />
+                <Token color={tokenColorForTagColor('green')} label="user" />
               </HStack>
             ) : (
-              <Badge variant={badgeVariantForTagColor('green')} label="user" />
+              <Token color={tokenColorForTagColor('green')} label="user" />
             )}
           </MetadataListItem>
           <MetadataListItem label={t('credential.CreatedAt')}>

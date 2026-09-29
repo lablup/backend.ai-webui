@@ -1,19 +1,22 @@
 import BAIAppShell from './BAIAppShell';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /**
  * The shared `matchMedia` mock answers `matches: false` to everything, which
  * puts AppShell above its `md` breakpoint — the inline-rail layout. The drawer
  * is only mounted BELOW the breakpoint (and only when a `sideNav` exists, which
  * is what turns AppShell's mobile nav on), so the drawer cases install a mock
- * that matches the `(max-width: …)` query instead.
+ * that matches AppShell's `(width < …px)` query instead (an exclusive bound
+ * since Astryx 0.6.0; it was `(max-width: …)` before).
  */
 const setViewportIsMobile = (isMobile: boolean) => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query: string) => ({
-      matches: isMobile && query.includes('max-width'),
+      matches: isMobile && query.includes('width <'),
       media: query,
       onchange: null,
       addListener: vi.fn(),
@@ -126,5 +129,20 @@ describe('BAIAppShell', () => {
     );
 
     expect(screen.getByTestId('drawer')).toBeInTheDocument();
+  });
+
+  // jsdom applies no stylesheet, so the drawer's scrim is checked at the source:
+  // MobileNav's `::backdrop` blur must be stood down like every other overlay's
+  // (FR-3900). Via a variable — a literal `new URL('./x.css', import.meta.url)`
+  // is rewritten by Vite into an asset URL that `fileURLToPath` rejects.
+  it('dims the page behind the drawer without blurring it', () => {
+    const relative = './BAIAppShell.css';
+    const css = readFileSync(
+      fileURLToPath(new URL(relative, import.meta.url)),
+      'utf8',
+    );
+    expect(css).toMatch(
+      /\.bai-app-shell-drawer::backdrop\s*\{[^}]*backdrop-filter:\s*none;/,
+    );
   });
 });

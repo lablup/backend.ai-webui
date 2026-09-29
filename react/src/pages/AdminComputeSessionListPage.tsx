@@ -19,7 +19,8 @@ import SessionResourceGrid from '../components/SessionResourceGrid';
 import { handleRowSelectionChange } from '../helper';
 import { liftProjectPredicate } from '../helper/adminSessionProjectLift';
 import { ExtractResultValue } from '../helper/resultTypes';
-import { useWebUINavigate } from '../hooks';
+import { buildSessionExportFilter } from '../helper/sessionExportFilter';
+import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -73,6 +74,9 @@ type SessionNode = NonNullableNodeOnEdges<ComputeSessionNodesData>;
 // escapes, and a tagged template whose cooked text differs from its raw text
 // makes the React Compiler bail out of the whole component (FR-3510 symptom).
 const NOT_FINISHED_FILTER = 'status != "TERMINATED" & status != "CANCELLED"';
+// `ComputeSessionNode.result` is `SessionResult.name` server-side.
+const SESSION_RESULTS = ['UNDEFINED', 'SUCCESS', 'FAILURE'];
+
 const COUNT_FILTERS = {
   all: NOT_FINISHED_FILTER,
   interactive: `${NOT_FINISHED_FILTER} & type == "interactive"`,
@@ -85,6 +89,7 @@ const AdminComputeSessionListPage = () => {
   'use memo';
 
   const userRole = useCurrentUserRole();
+  const baiClient = useSuspendedBackendaiClient();
 
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -350,19 +355,26 @@ const AdminComputeSessionListPage = () => {
             <BAIPropertyFilter
               filterProperties={filterOutEmpty([
                 {
+                  // Matches the session's row UUID (queryfilter `id`), not the
+                  // base64 GraphQL global ID the node exposes as `id`.
+                  key: 'id',
+                  propertyLabel: t('session.SessionId'),
+                  type: 'uuid',
+                },
+                {
                   // `project_id` is the compute_session queryfilter field
                   // mapped to the session's group (project) UUID.
                   key: 'project_id',
                   propertyLabel: t('data.Project'),
                   type: 'string',
                   defaultOperator: '==',
-                  renderInput: ({ onAddCondition }) => (
+                  renderInput: ({ onAddCondition, value, isDisabled }) => (
                     <BAIAdminProjectSelect
                       // The filter row already prints the property label.
                       label={t('data.Project')}
                       isLabelHidden
-                      value={null}
-                      width={200}
+                      value={value}
+                      isDisabled={isDisabled}
                       onChange={(value, option) => {
                         // P3C-1: the second argument survives on this wrapper so
                         // the condition tag stays human-readable (project name)
@@ -394,6 +406,81 @@ const AdminComputeSessionListPage = () => {
                   key: 'user_email',
                   propertyLabel: t('session.launcher.OwnerEmail'),
                   type: 'string',
+                },
+                {
+                  key: 'full_name',
+                  propertyLabel: t('credential.FullName'),
+                  type: 'string',
+                },
+                {
+                  // `group_name` matches the project's NAME; `project_id`
+                  // above matches its UUID through the project select.
+                  key: 'group_name',
+                  propertyLabel: t('session.ProjectName'),
+                  type: 'string',
+                },
+                {
+                  key: 'domain_name',
+                  propertyLabel: t('session.Domain'),
+                  type: 'string',
+                },
+                {
+                  key: 'access_key',
+                  propertyLabel: t('general.AccessKey'),
+                  type: 'string',
+                },
+                {
+                  key: 'images',
+                  propertyLabel: t('session.launcher.Environments'),
+                  type: 'string',
+                },
+                {
+                  key: 'status_info',
+                  propertyLabel: t('session.StatusInfo'),
+                  type: 'string',
+                },
+                {
+                  key: 'result',
+                  propertyLabel: t('session.Result'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: _.map(SESSION_RESULTS, (result) => ({
+                    label: result,
+                    value: result,
+                  })),
+                },
+                {
+                  key: 'cluster_mode',
+                  propertyLabel: t('session.ClusterMode'),
+                  type: 'string',
+                  strictSelection: true,
+                  defaultOperator: '==',
+                  options: [
+                    {
+                      label: t('session.launcher.SingleNode'),
+                      value: 'single-node',
+                    },
+                    {
+                      label: t('session.launcher.MultiNode'),
+                      value: 'multi-node',
+                    },
+                  ],
+                },
+                {
+                  key: 'priority',
+                  propertyLabel: t('session.Priority'),
+                  type: 'number',
+                },
+                {
+                  key: 'created_at',
+                  propertyLabel: t('session.CreatedAt'),
+                  type: 'datetime',
+                },
+                {
+                  key: 'terminated_at',
+                  propertyLabel: t('session.TerminatedAt'),
+                  type: 'datetime',
                 },
               ])}
               value={queryParams.filter || undefined}
@@ -545,12 +632,17 @@ const AdminComputeSessionListPage = () => {
             tableSettings={{
               columnOverrides: columnOverrides,
               defaultColumnOverrides: {
+                sessionId: { hidden: false },
                 environment: { hidden: false },
                 resourceGroup: { hidden: false },
                 type: { hidden: false },
                 cluster_mode: { hidden: false },
                 created_at: { hidden: false },
                 project_id: { hidden: false },
+                // Only the Finished category has a termination time to show.
+                ...(queryParams.statusCategory === 'finished'
+                  ? { terminated_at: { hidden: false } }
+                  : {}),
               },
               onColumnOverridesChange: setColumnOverrides,
             }}
@@ -580,6 +672,17 @@ const AdminComputeSessionListPage = () => {
                       if (queryParams.type && queryParams.type !== 'all') {
                         csvFilter.session_type = [queryParams.type];
                       }
+                      // Forward every table condition the export endpoint can
+                      // express; the rest is dropped, so the CSV stays a
+                      // superset of the table and never a subset (FR-3915).
+                      _.assign(
+                        csvFilter,
+                        buildSessionExportFilter(queryParams.filter, {
+                          supportsUserFilter: baiClient.supports(
+                            'session-export-user-filter',
+                          ),
+                        }),
+                      );
                       await exportCSV(selectedExportKeys, csvFilter).catch(
                         (err) => {
                           message.error(t('general.ErrorOccurred'));

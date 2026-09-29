@@ -13,6 +13,7 @@ import test, {
   Page,
   type APIRequestContext,
 } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
 
 const TEST_RUN_ID = Date.now().toString(36);
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
@@ -679,7 +680,7 @@ test.describe(
 // leftovers from colliding between runs, and the global-cleanup teardown
 // sweeps any `e2e-*` account a hard-killed run failed to purge.
 const ASSIGN_FIXTURE_RUN_ID =
-  Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  Date.now().toString(36) + randomUUID().slice(0, 4);
 const ASSIGN_FIXTURE_EMAIL = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}@lablup.com`;
 const ASSIGN_FIXTURE_USERNAME = `e2e-rbac-assign-${ASSIGN_FIXTURE_RUN_ID}`;
 const ASSIGN_FIXTURE_PASSWORD = 'testing@123';

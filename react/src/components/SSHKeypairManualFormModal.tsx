@@ -2,12 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextArea } from './astryxFormControls';
-import { BAIModal, BAIModalProps } from 'backend.ai-ui';
+import {
+  BAIModal,
+  BAIModalProps,
+  useErrorMessageResolver,
+} from 'backend.ai-ui';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -22,12 +27,24 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
+  const { message } = App.useApp();
+  const { getErrorMessage } = useErrorMessageResolver();
   const baiClient = useSuspendedBackendaiClient();
   const formRef = useRef<FormInstance>(null);
 
+  // Hook-level callbacks, not `mutate(…, { onSuccess })`: `BAIUnmountAfterClose`
+  // unmounts this modal on cancel, and per-call callbacks never fire after that.
   const mutationToPostSSHKeypair = useTanMutation({
     mutationFn: (values: { pubkey: string; privkey: string }) => {
       return baiClient.postSSHKeypair(values);
+    },
+    onSuccess: () => {
+      message.success(t('userSettings.SSHKeypairEnterManuallyFinished'));
+      onRequestRefresh();
+      onRequestClose();
+    },
+    onError: (error) => {
+      message.error(getErrorMessage(error));
     },
   });
 
@@ -39,16 +56,11 @@ const SSHKeypairManualFormModal: React.FC<SSHKeypairManualFormModalProps> = ({
         formRef.current
           ?.validateFields()
           .then((values) => {
-            mutationToPostSSHKeypair.mutate(values, {
-              onSuccess: () => {
-                onRequestRefresh();
-              },
-            });
-            onRequestClose();
+            mutationToPostSSHKeypair.mutate(values);
           })
           .catch(() => {});
       }}
-      destroyOnHidden={true}
+      confirmLoading={mutationToPostSSHKeypair.isPending}
       {...baiModalProps}
     >
       {/* PILOT-DECISION: the antd `Input.TextArea` sites carried a hand-rolled

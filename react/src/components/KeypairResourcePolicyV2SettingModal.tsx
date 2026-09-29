@@ -15,7 +15,10 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { v2PermissionToKey } from '../helper/storageHostPermission';
+import {
+  MOUNT_IN_SESSION_PERMISSION,
+  v2PermissionToKey,
+} from '../helper/storageHostPermission';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -51,7 +54,7 @@ const DEFAULT_VFOLDER_HOST_PERMISSIONS = [
   'create-vfolder',
   'modify-vfolder',
   'delete-vfolder',
-  'mount-in-session',
+  MOUNT_IN_SESSION_PERMISSION,
   'upload-file',
   'download-file',
   'invite-others',
@@ -314,7 +317,9 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
 
   return (
     <BAIModal
-      width={800}
+      // The widest cell holds a number input plus a unit selector; 800px left
+      // it colliding with the next column at the 3-column track width.
+      width={960}
       title={
         keypairResourcePolicy === null
           ? t('resourcePolicy.CreateKeypairResourcePolicy')
@@ -325,7 +330,6 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onCancel()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateKeypairResourcePolicy ||
         isInFlightCommitModifyKeypairResourcePolicy
@@ -388,7 +392,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
         </BAIFormItem>
         <BAIFormItem label={t('resourcePolicy.ResourcePolicy')}>
           <Card padding={4}>
-            <Grid columns={{ minWidth: 220, max: 3 }} gap={6}>
+            <Grid columns={{ minWidth: 240, max: 3 }} columnGap={8} rowGap={6}>
               {_.map(_.keys(resourceSlots), (resourceSlotKey) => (
                 <FormItemWithUnlimited
                   key={resourceSlotKey}
@@ -421,7 +425,10 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
                   ]}
                 >
                   {_.includes(resourceSlotKey, 'mem') ? (
-                    <BAIDynamicUnitInputNumber defaultUnit="g" />
+                    <BAIDynamicUnitInputNumber
+                      defaultUnit="g"
+                      style={{ width: '100%' }}
+                    />
                   ) : (
                     <AstryxFormNumberInput
                       label={
@@ -444,7 +451,7 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
         </BAIFormItem>
         <BAIFormItem label={t('resourcePolicy.Sessions')}>
           <Card padding={4}>
-            <Grid columns={{ minWidth: 220, max: 3 }} gap={6}>
+            <Grid columns={{ minWidth: 240, max: 3 }} columnGap={8} rowGap={6}>
               <FormItemWithUnlimited
                 label={t('resourcePolicy.ClusterSize')}
                 name="max_containers_per_session"

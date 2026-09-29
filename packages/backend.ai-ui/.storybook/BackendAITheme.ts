@@ -19,7 +19,7 @@ const commonStorybookTheme = {
 export const storybookLightTheme = create({
   base: 'light',
   ...commonStorybookTheme,
-  brandImage: '/backend.ai-logo-dark.svg',
+  brandImage: 'backend.ai-logo-dark.svg',
 
   // Primary colors
   colorPrimary: '#FF7A00',
@@ -51,7 +51,7 @@ export const storybookLightTheme = create({
 export const storybookDarkTheme = create({
   base: 'dark',
   ...commonStorybookTheme,
-  brandImage: '/backend.ai-logo.svg',
+  brandImage: 'backend.ai-logo.svg',
 
   // Primary colors
   colorPrimary: '#FF9D00',

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d10d623d36f02316e8e61a844863d52d>>
+ * @generated SignedSource<<04ad84d6b98377f65e86377c4fa59410>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -35,6 +35,7 @@ export type DeploymentRevisionDetail_revision$data = {
       readonly architecture: string;
       readonly canonicalName: string;
     };
+    readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagV2Fragment">;
   } | null | undefined;
   readonly modelDefinition: {
     readonly models: ReadonlyArray<{
@@ -464,6 +465,11 @@ return {
             }
           ],
           "storageKey": null
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIImageNodeSimpleTagV2Fragment"
         }
       ],
       "storageKey": null
@@ -621,6 +627,6 @@ return {
 };
 })();
 
-(node as any).hash = "4c2f94d9a40e3d061f87b3a18542fba0";
+(node as any).hash = "e02238f8ad15240354a9836125a3c742";
 
 export default node;

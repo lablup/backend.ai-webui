@@ -1159,7 +1159,6 @@ const LoginView: React.FC<{
         }
         closable={false}
         mask={{ closable: false }}
-        destroyOnHidden
       >
         <div style={{ textAlign: 'center', paddingTop: 15 }}>
           {blockMessage}

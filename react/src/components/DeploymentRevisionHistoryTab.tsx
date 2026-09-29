@@ -15,6 +15,7 @@ import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
+import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -22,15 +23,17 @@ import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { BAIPopconfirm } from 'backend.ai-ui';
 import {
+  BAIAdminImageSelect,
   type BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
+  type BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAITable,
-  BAITag,
   BAIUnmountAfterClose,
+  BAIVFolderSelect,
   BAIId,
   INITIAL_FETCH_KEY,
   type GraphQLFilter,
@@ -160,6 +163,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         id
         metadata {
           status
+          projectId
         }
         ...DeploymentAddRevisionModal_deployment
       }
@@ -425,7 +429,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   {')'}
                 </BAIFlex>
                 {isCurrent ? (
-                  <BAITag color="success">{t('deployment.Current')}</BAITag>
+                  <Badge variant="success" label={t('deployment.Current')} />
                 ) : null}
                 {isDeploying && !isCurrent ? (
                   // Skip the "Deploying" tag when this revision is also
@@ -433,12 +437,11 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // `deployingRevisionId` set after promotion until the
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
-                  <BAITag
-                    color="warning"
+                  <Badge
+                    variant="warning"
                     icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
-                  >
-                    {t('deployment.Applying')}
-                  </BAITag>
+                    label={t('deployment.Applying')}
+                  />
                 ) : null}
               </BAIFlex>
             }
@@ -615,6 +618,20 @@ const DeploymentRevisionHistoryTab: React.FC<
       type: 'uuid' as const,
       fixedOperator: 'equals' as const,
       rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIAdminImageSelect
+          label={t('deployment.Image')}
+          isLabelHidden
+          value={value}
+          isDisabled={isDisabled}
+          onChange={(next, option) =>
+            onAddCondition(
+              next as string | undefined,
+              Array.isArray(option) ? option[0]?.label : option?.label,
+            )
+          }
+        />
+      ),
     },
     {
       key: 'modelVfolderId',
@@ -622,8 +639,30 @@ const DeploymentRevisionHistoryTab: React.FC<
       type: 'uuid' as const,
       fixedOperator: 'equals' as const,
       rule: uuidRule,
+      renderInput: ({ onAddCondition, value, isDisabled }) => (
+        <BAIVFolderSelect
+          // `modelVfolderId` is a `UUIDFilter`, so the folder's `row_id` — not
+          // its Relay global id — is what serializes.
+          valuePropName="row_id"
+          label={t('deployment.ModelFolder')}
+          isLabelHidden
+          // Same scope as the revision creation picker: the deployment's own
+          // project, model folders only.
+          currentProjectId={deployment?.metadata?.projectId ?? undefined}
+          excludeDeleted
+          filter='usage_mode == "model"'
+          value={value}
+          isDisabled={isDisabled}
+          onChange={(next, option) =>
+            onAddCondition(
+              next as string | undefined,
+              Array.isArray(option) ? option[0]?.label : option?.label,
+            )
+          }
+        />
+      ),
     },
-  ];
+  ] satisfies Array<BAIGraphQLFilterProperty>;
 
   const filterValue: GraphQLFilter | undefined = queryParams.rvFilter
     ? (parseRevisionFilter(queryParams.rvFilter) ?? undefined)

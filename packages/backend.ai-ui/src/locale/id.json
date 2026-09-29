@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Gagal memuat data.",
+    "LostAt": "Hilang Pada",
     "NoAvailableLiveStat": "Tidak ada statistik langsung yang tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Grup Sumber Daya",
@@ -13,7 +14,8 @@
     "Schedulable": "Dapat dijadwalkan",
     "Starts": "Mulai",
     "Status": "Status",
-    "Utilization": "Utilisasi"
+    "Utilization": "Utilisasi",
+    "Version": "Versi"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Diizinkan",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID Tindakan",
     "Actor": "Pelaku",
+    "ClientIp": "IP Klien",
     "Description": "Deskripsi",
     "Duration": "Durasi",
     "EntityId": "ID Entitas",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
     "DeleteItem": "Hapus",
     "DeleteNItems": "Hapus {{count}} item",
-    "TypeToConfirm": "Ketik <code>{{confirmText}}</code> untuk mengonfirmasi."
+    "TypeToConfirm": "Ketik <token>{{confirmText}}</token> untuk mengonfirmasi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Terdegradasi",
     "Deploying": "Sedang Diterapkan",
     "Healthy": "Sehat",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "Berhasil meminta tarik untuk versi {{count}}.",
     "Version": "Versi"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Memeriksa sesi Backend.AI Anda…",
+    "SignInWithBackendAI": "Masuk dengan Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Peramban memblokir permintaan ke server web Backend.AI. Biasanya hal ini disebabkan oleh pembatasan CORS atau konten campuran.",
+      "HttpError": "Server web Backend.AI mengembalikan kesalahan ({{status}}).",
+      "InvalidCallback": "Alamat kembali masuk yang dikonfigurasi untuk {{appName}} bukan alamat web yang valid.",
+      "InvalidResponse": "Server web Backend.AI mengembalikan respons yang tidak terduga.",
+      "NoEndpoint": "Tidak ada alamat server web Backend.AI yang dikonfigurasi untuk {{appName}}.",
+      "NoSessionId": "Anda sudah masuk ke Backend.AI, tetapi server web tidak mengembalikan ID sesi.",
+      "NoSessionOverHttp": "Anda belum masuk ke Backend.AI. Jika Anda sudah masuk, {{appName}} disajikan melalui HTTP sehingga peramban mungkin menolak cookie sesi aman dari server web. Coba buka {{appName}} melalui HTTPS.",
+      "NoSessionOverHttps": "Anda belum masuk ke Backend.AI. Jika Anda sudah masuk, {{appName}} dan server web Backend.AI mungkin merupakan situs yang berbeda sehingga peramban tidak mengirim cookie sesi.",
+      "RelayFailed": "Anda sudah masuk ke Backend.AI, tetapi {{appName}} tidak dapat menyelesaikan proses masuk.",
+      "Timeout": "Server web Backend.AI tidak merespons tepat waktu.",
+      "Title": "Tidak dapat masuk dengan Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Ukuran Klaster",
     "Concurrency": "Sesi Serentak",
@@ -248,6 +268,7 @@
     "SelectKeypair": "Pilih Keypair"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP Klien",
     "Domain": "Domain",
     "FailReason": "Alasan Kegagalan",
     "LoginTime": "Waktu Login",
@@ -338,18 +359,22 @@
     "UpdateProject": "Perbarui Proyek"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Registri Kontainer",
     "ContainerRegistryProject": "Proyek Registri Kontainer",
     "CreatedAt": "Dibuat pada",
     "Description": "Deskripsi",
     "Domain": "Domain",
+    "Inactive": "Tidak aktif",
     "IntegrationID": "ID Integrasi",
+    "ModifiedAt": "Dimodifikasi pada",
     "Name": "Nama",
     "Project": "Proyek",
     "ProjectID": "ID Proyek",
     "Registry": "Registri",
     "ResourcePolicy": "Kebijakan Sumber Daya",
     "ScalingGroups": "Grup Sumber Daya",
+    "Status": "Status",
     "StorageNodes": "Node Penyimpanan",
     "TotalResourceSlots": "Jumlah Slot Sumber Daya",
     "Type": "Tipe"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "tes"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "dan {{rest}} lainnya"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Dibuat di",
     "MaxConcurrentLogins": "Login Bersamaan Maksimum",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format jalur tidak valid.",
     "AliasOverlapping": "Jalur mount bertumpang tindih dengan folder lain.",
+    "AliasOverlappingWithAutoMount": "Jalur mount bertumpang tindih dengan folder mount otomatis.",
     "AliasPlaceholder": "Jalur mount",
     "AutoMountedFolders": "Folder mount otomatis",
-    "Name": "Nama",
-    "PathAndAlias": "Jalur & Alias",
+    "CreateFolder": "Buat folder penyimpanan baru",
+    "DestinationPath": "Jalur kontainer (destination)",
+    "Folders": "Folder",
+    "OwnerProject": "Proyek",
+    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Jalur di dalam container tempat folder akan di-mount. Kosongkan untuk menggunakan jalur default.",
+    "Refresh": "Segarkan",
     "RemoveFolder": "Hapus",
+    "SelectFolder": "Pilih Folder",
+    "SourcePath": "Jalur di folder (source)",
     "Subpath": "Subjal",
     "SubpathInvalid": "Subjalur harus berupa jalur relatif dan tidak boleh mengandung '..'.",
-    "SubpathPlaceholder": "mis. dataset/train (opsional)",
-    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Kosongkan untuk mount dari root."
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber, bukan dari direktori root-nya. Klik kolom ini untuk menelusuri folder dan memilih salah satu; biarkan kosong untuk mount root folder.",
+    "UnmountableFoldersRemoved": "Folder yang tidak lagi dapat Anda pasang telah dihapus dari pilihan."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "File dan folder yang dihapus tidak dapat dipulihkan. \nApakah Anda ingin melanjutkan?",
     "DeleteSelectedItemsDialog": "Hapus Konfirmasi",
     "Download": "Unduh",
+    "DownloadPopupBlocked": "Peramban memblokir jendela unduhan. Izinkan pop-up untuk situs ini lalu coba lagi.",
+    "DownloadRejected": "Storage proxy menolak unduhan (HTTP {{status}}). Unduhan tidak dimulai.",
     "DownloadSelected": "Unduh",
     "DownloadStarted": "File \"{{fileName}}\" unduhan telah dimulai.",
+    "DownloadUnreachable": "Tidak dapat menjangkau storage proxy di {{origin}}. Unduhan tidak dimulai.",
     "DragAndDropDesc": "Seret dan jatuhkan file ke area ini untuk diunggah.",
     "DuplicatedFiles": "Timpa konfirmasi",
     "DuplicatedFilesDesc": "File atau folder dengan nama yang sama sudah ada. \nApakah Anda ingin menimpa?",
     "EditFile": "Edit File",
+    "ExistingItem": "Yang Ada",
     "FileCreatedSuccessfully": "File berhasil dibuat.",
     "FileName": "Nama File",
     "FileNamePlaceholder": "mis. model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "Dimodifikasi di",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak memiliki izin unggah untuk host ini.",
+    "OtherItemsWillBeUploaded": "{{count}} item lainnya juga akan diunggah.",
     "Path": "Jalur",
     "PleaseEnterAFileName": "Harap masukkan nama file.",
     "PleaseEnterAFolderName": "Harap masukkan nama folder.",
     "RenameFile": "Ganti nama",
     "RenameSuccess": "Namanya telah berhasil diubah.",
+    "SelectItemsToOverwrite": "Item berikut sudah ada di sini. Pilih item yang akan ditimpa; item yang tidak dipilih akan dilewati.",
     "SelectedItemsDeletedSuccessfully": "File dan folder yang dipilih telah berhasil dihapus.",
     "Size": "Ukuran",
     "TypeDeleteToConfirm": "Ketik 'Menghapus' untuk mengonfirmasi.",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "Format file ini tidak mendukung pengeditan.",
     "UploadFiles": "Unggah file",
     "UploadFolder": "Unggah folder",
+    "UploadingItem": "Akan Diunggah",
     "error": {
       "DuplicatedName": "Nama ini sudah digunakan. \nHarap masukkan nama yang berbeda.",
       "FileNameRequired": "Harap masukkan file atau nama folder."
@@ -762,6 +804,7 @@
     "DeselectAll": "Batalkan semua pilihan",
     "File": "Berkas",
     "Increase": "Tambah",
+    "Loading": "Memuat...",
     "NSelected": "{{count}} dipilih",
     "Optional": "Opsional",
     "Project": "Proyek",

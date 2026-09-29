@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b3ef72f115ff88af8eb50153636257c8>>
+ * @generated SignedSource<<a073f13f160d1cba77c9856eeddd1157>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,21 +11,16 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type EntityFilter = {
   AND?: ReadonlyArray<EntityFilter> | null | undefined;
   NOT?: ReadonlyArray<EntityFilter> | null | undefined;
   OR?: ReadonlyArray<EntityFilter> | null | undefined;
   entityId?: StringFilter | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
-  scopeType?: RBACElementTypeFilter | null | undefined;
-};
-export type RBACElementTypeFilter = {
-  equals?: RBACElementType | null | undefined;
-  in?: ReadonlyArray<RBACElementType> | null | undefined;
-  notEquals?: RBACElementType | null | undefined;
-  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
+  scopeType?: StringFilter | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -54,7 +49,8 @@ export type PermissionFilter = {
   NOT?: ReadonlyArray<PermissionFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  permission?: PermissionBitFilter | null | undefined;
   roleId?: UUIDFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
@@ -65,11 +61,23 @@ export type UUIDFilter = {
   notEquals?: string | null | undefined;
   notIn?: ReadonlyArray<string> | null | undefined;
 };
+export type PermissionBitFilter = {
+  equals?: PermissionBit | null | undefined;
+  in?: ReadonlyArray<PermissionBit> | null | undefined;
+  notEquals?: PermissionBit | null | undefined;
+  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
+};
 export type DateTimeFilter = {
   after?: string | null | undefined;
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type RBACElementTypeFilter = {
+  equals?: RBACElementType | null | undefined;
+  in?: ReadonlyArray<RBACElementType> | null | undefined;
+  notEquals?: RBACElementType | null | undefined;
+  notIn?: ReadonlyArray<RBACElementType> | null | undefined;
 };
 export type ScopedRolePermissionCardQuery$variables = {
   permissionFilter?: PermissionFilter | null | undefined;
@@ -84,9 +92,9 @@ export type ScopedRolePermissionCardQuery$data = {
     readonly permissions: {
       readonly edges: ReadonlyArray<{
         readonly node: {
-          readonly entityType: RBACElementType;
-          readonly operation: OperationType;
-          readonly scopeId: string;
+          readonly entityType: string;
+          readonly operation: OperationType | null | undefined;
+          readonly scopeId: string | null | undefined;
           readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_permissionsFragment">;
         };
       }>;
@@ -111,7 +119,7 @@ export type ScopedRolePermissionCardQuery$data = {
             readonly vfolderName?: string | null | undefined;
           } | null | undefined;
           readonly scopeId: string;
-          readonly scopeType: RBACElementType;
+          readonly scopeType: string;
           readonly " $fragmentSpreads": FragmentRefs<"RoleScopePermissionEditModal_scopesFragment">;
         };
       }>;

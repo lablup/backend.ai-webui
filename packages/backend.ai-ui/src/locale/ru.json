@@ -6,6 +6,7 @@
     "DiskPerc": "Диск %",
     "Endpoint": "Конечная точка",
     "FailedToLoadCellData": "Не удалось загрузить данные.",
+    "LostAt": "Потерян",
     "NoAvailableLiveStat": "Живая статистика недоступна",
     "Region": "Регион",
     "ResourceGroup": "Группа ресурсов",
@@ -13,7 +14,8 @@
     "Schedulable": "Доступно для планирования",
     "Starts": "Запуски",
     "Status": "Статус",
-    "Utilization": "Использование"
+    "Utilization": "Использование",
+    "Version": "Версия"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Разрешено",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID действия",
     "Actor": "Исполнитель",
+    "ClientIp": "IP клиента",
     "Description": "Описание",
     "Duration": "Длительность",
     "EntityId": "ID объекта",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "Это действие нельзя отменить.",
     "DeleteItem": "Удалить",
     "DeleteNItems": "Удалить {{count}} элементов",
-    "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
+    "TypeToConfirm": "Введите <token>{{confirmText}}</token> для подтверждения."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Создано"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Ухудшено",
     "Deploying": "Развёртывается",
     "Healthy": "Работает",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "Успешно запрошенные тяги для {{count}} версий.",
     "Version": "Версия"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Проверка сессии Backend.AI…",
+    "SignInWithBackendAI": "Войти через Backend.AI",
+    "failure": {
+      "CorsOrMixed": "Браузер заблокировал запрос к веб-серверу Backend.AI. Обычно это ограничение CORS или смешанного содержимого.",
+      "HttpError": "Веб-сервер Backend.AI вернул ошибку ({{status}}).",
+      "InvalidCallback": "Адрес возврата после входа, настроенный для {{appName}}, не является допустимым веб-адресом.",
+      "InvalidResponse": "Веб-сервер Backend.AI вернул неожиданный ответ.",
+      "NoEndpoint": "Для {{appName}} не настроен адрес веб-сервера Backend.AI.",
+      "NoSessionId": "Вы вошли в Backend.AI, но веб-сервер не вернул идентификатор сессии.",
+      "NoSessionOverHttp": "Вы ещё не вошли в Backend.AI. Если вход уже выполнен, {{appName}} доступен по HTTP, поэтому браузер может отклонять защищённый файл cookie сессии веб-сервера. Попробуйте открыть {{appName}} по HTTPS.",
+      "NoSessionOverHttps": "Вы ещё не вошли в Backend.AI. Если вход уже выполнен, {{appName}} и веб-сервер Backend.AI могут быть разными сайтами, поэтому браузер не отправляет файл cookie сессии.",
+      "RelayFailed": "Вы вошли в Backend.AI, но {{appName}} не смог завершить вход.",
+      "Timeout": "Веб-сервер Backend.AI не ответил вовремя.",
+      "Title": "Не удалось войти через Backend.AI"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Размер кластера",
     "Concurrency": "Одновременные сессии",
@@ -248,6 +268,7 @@
     "SelectKeypair": "Выберите пару ключей"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP клиента",
     "Domain": "Домен",
     "FailReason": "Причина сбоя",
     "LoginTime": "Время входа",
@@ -338,18 +359,22 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
+    "Active": "Активный",
     "ContainerRegistry": "Реестр контейнеров",
     "ContainerRegistryProject": "Проект реестра контейнеров",
     "CreatedAt": "Создано",
     "Description": "Описание",
     "Domain": "Домен",
+    "Inactive": "Неактивный",
     "IntegrationID": "ID интеграции",
+    "ModifiedAt": "Изменено",
     "Name": "Имя",
     "Project": "Проект",
     "ProjectID": "ID проекта",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
     "ScalingGroups": "Группы ресурсов",
+    "Status": "Статус",
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "тест"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "и ещё {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Создан в",
     "MaxConcurrentLogins": "Максимум одновременных входов",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Неверный формат пути.",
     "AliasOverlapping": "Путь монтирования перекрывается с другой папкой.",
+    "AliasOverlappingWithAutoMount": "Путь монтирования перекрывается с папкой автомонтирования.",
     "AliasPlaceholder": "Путь монтирования",
     "AutoMountedFolders": "Папки с автомонтированием",
-    "Name": "Имя",
-    "PathAndAlias": "Путь & Псевдоним",
+    "CreateFolder": "Создать новую папку для хранения",
+    "DestinationPath": "Путь в контейнере (destination)",
+    "Folders": "Папки",
+    "OwnerProject": "Проект",
+    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
+    "Refresh": "Обновить",
     "RemoveFolder": "Удалить",
+    "SelectFolder": "Выбрать папку",
+    "SourcePath": "Путь в папке (source)",
     "Subpath": "Подпуть",
     "SubpathInvalid": "Подпуть должен быть относительным путём и не должен содержать '..'.",
-    "SubpathPlaceholder": "напр. dataset/train (необязательно)",
-    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Оставьте пустым для монтирования корня."
+    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Нажмите на поле, чтобы просмотреть папку и выбрать подпапку; оставьте пустым, чтобы смонтировать корень папки.",
+    "UnmountableFoldersRemoved": "Папки, которые больше нельзя подключить, удалены из выбора."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Выбрать папку"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
     "Download": "Скачать",
+    "DownloadPopupBlocked": "Браузер заблокировал окно загрузки. Разрешите всплывающие окна для этого сайта и повторите попытку.",
+    "DownloadRejected": "Storage proxy отклонил загрузку (HTTP {{status}}). Загрузка не началась.",
     "DownloadSelected": "Скачать",
     "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "DownloadUnreachable": "Не удалось связаться со storage proxy по адресу {{origin}}. Загрузка не началась.",
     "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
     "DuplicatedFiles": "Перезаписать подтверждение",
     "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
     "EditFile": "Редактировать файл",
+    "ExistingItem": "Существующий",
     "FileCreatedSuccessfully": "Файл успешно создан.",
     "FileName": "Имя файла",
     "FileNamePlaceholder": "например, model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "Модифицирован в",
     "Name": "Имя",
     "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
+    "OtherItemsWillBeUploaded": "Также будет загружено ещё {{count}} элемент(ов).",
     "Path": "Путь",
     "PleaseEnterAFileName": "Пожалуйста, введите имя файла.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
     "RenameFile": "Переименовать",
     "RenameSuccess": "Имя было успешно изменено.",
+    "SelectItemsToOverwrite": "Эти элементы уже существуют здесь. Выберите те, которые нужно перезаписать; невыбранные будут пропущены.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
     "TypeDeleteToConfirm": "Введите «Удалить» для подтверждения.",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "Этот формат файла не поддерживает редактирование.",
     "UploadFiles": "Загрузить файлы",
     "UploadFolder": "Загрузить папку",
+    "UploadingItem": "Загружаемый",
     "error": {
       "DuplicatedName": "Это имя уже используется. \nПожалуйста, введите другое имя.",
       "FileNameRequired": "Пожалуйста, введите имя файла или папки."
@@ -762,6 +804,7 @@
     "DeselectAll": "Снять выделение",
     "File": "Файл",
     "Increase": "Увеличить",
+    "Loading": "Загрузка...",
     "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",

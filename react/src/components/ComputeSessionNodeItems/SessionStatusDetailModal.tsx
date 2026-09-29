@@ -5,10 +5,10 @@
 import { SessionStatusDetailModalFragment$key } from '../../__generated__/SessionStatusDetailModalFragment.graphql';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
-import SessionStatusTag from './SessionStatusTag';
-import { Badge } from '@astryxdesign/core/Badge';
+import SessionStatusBadge from './SessionStatusBadge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
@@ -88,7 +88,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
         status_info
         status_data
         starts_at
-        ...SessionStatusTagFragment
+        ...SessionStatusBadgeFragment
       }
     `,
     sessionFrgmt,
@@ -101,7 +101,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
         <>
           {t('session.StatusInfo')}
           <span style={{ fontWeight: 'normal' }}>
-            <SessionStatusTag
+            <SessionStatusBadge
               sessionFrgmt={session}
               showInfo
               showQueuePosition={false}
@@ -204,7 +204,7 @@ const SessionStatusDetailModal: React.FC<SessionStatusDetailModalProps> = ({
                       </MetadataListItem>
                     )}
                   <MetadataListItem label={t('dialog.error.Error')}>
-                    <Badge variant="error" label={collection.name} />
+                    <Token color="red" label={collection.name} />
                   </MetadataListItem>
                   <MetadataListItem label={t('session.Message')}>
                     {collection.repr}

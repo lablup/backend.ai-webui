@@ -6,6 +6,7 @@
     "DiskPerc": "磁盘使用率 %",
     "Endpoint": "端点",
     "FailedToLoadCellData": "数据加载失败。",
+    "LostAt": "失联时间",
     "NoAvailableLiveStat": "暂无可用实时统计",
     "Region": "区域",
     "ResourceGroup": "资源组",
@@ -13,7 +14,8 @@
     "Schedulable": "可调度",
     "Starts": "启动次数",
     "Status": "状态",
-    "Utilization": "利用率"
+    "Utilization": "利用率",
+    "Version": "版本"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "已允许",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "操作 ID",
     "Actor": "执行者",
+    "ClientIp": "客户端 IP",
     "Description": "描述",
     "Duration": "持续时间",
     "EntityId": "实体 ID",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "此操作无法撤销。",
     "DeleteItem": "删除",
     "DeleteNItems": "删除 {{count}} 个项目",
-    "TypeToConfirm": "输入 <code>{{confirmText}}</code> 以确认。"
+    "TypeToConfirm": "输入 <token>{{confirmText}}</token> 以确认。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "创建者"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "选择部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降级",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "成功请求{{count}}版本的拉动。",
     "Version": "版本"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "正在检查您的 Backend.AI 会话…",
+    "SignInWithBackendAI": "使用 Backend.AI 登录",
+    "failure": {
+      "CorsOrMixed": "浏览器阻止了对 Backend.AI 网页服务器的请求，通常是 CORS 或混合内容限制导致的。",
+      "HttpError": "Backend.AI 网页服务器返回了错误（{{status}}）。",
+      "InvalidCallback": "为 {{appName}} 配置的登录返回地址不是有效的网址。",
+      "InvalidResponse": "Backend.AI 网页服务器返回了意外的响应。",
+      "NoEndpoint": "尚未为 {{appName}} 配置 Backend.AI 网页服务器地址。",
+      "NoSessionId": "您已登录 Backend.AI，但网页服务器未返回会话 ID。",
+      "NoSessionOverHttp": "您尚未登录 Backend.AI。如果已经登录，可能是 {{appName}} 通过 HTTP 提供服务，浏览器拒绝了网页服务器的安全会话 Cookie。请尝试通过 HTTPS 打开 {{appName}}。",
+      "NoSessionOverHttps": "您尚未登录 Backend.AI。如果已经登录，可能是 {{appName}} 与 Backend.AI 网页服务器属于不同站点，浏览器因此不会发送会话 Cookie。",
+      "RelayFailed": "您已登录 Backend.AI，但 {{appName}} 无法完成登录。",
+      "Timeout": "Backend.AI 网页服务器未在规定时间内响应。",
+      "Title": "无法使用 Backend.AI 登录"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "簇的大小",
     "Concurrency": "并发会话数",
@@ -248,6 +268,7 @@
     "SelectKeypair": "选择密钥对"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "客户端 IP",
     "Domain": "域",
     "FailReason": "失败原因",
     "LoginTime": "登录时间",
@@ -338,18 +359,22 @@
     "UpdateProject": "更新项目"
   },
   "comp:BAIProjectTable": {
+    "Active": "积极的",
     "ContainerRegistry": "容器镜像仓库",
     "ContainerRegistryProject": "容器镜像仓库项目",
     "CreatedAt": "创建时间",
     "Description": "描述",
     "Domain": "域",
+    "Inactive": "不活动",
     "IntegrationID": "集成 ID",
+    "ModifiedAt": "修改时间",
     "Name": "名称",
     "Project": "项目",
     "ProjectID": "项目ID",
     "Registry": "镜像仓库",
     "ResourcePolicy": "资源策略",
     "ScalingGroups": "资源组",
+    "Status": "状态",
     "StorageNodes": "存储节点",
     "TotalResourceSlots": "资源插槽总数",
     "Type": "类型"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "测试"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "另有 {{rest}} 项"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "创建于",
     "MaxConcurrentLogins": "最大并发登录数",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路径格式无效。",
     "AliasOverlapping": "挂载路径与另一个文件夹重叠。",
+    "AliasOverlappingWithAutoMount": "挂载路径与自动挂载文件夹重叠。",
     "AliasPlaceholder": "挂载路径",
     "AutoMountedFolders": "自动挂载文件夹",
-    "Name": "名称",
-    "PathAndAlias": "路径 & 别名",
+    "CreateFolder": "创建一个新的存储文件夹",
+    "DestinationPath": "容器路径 (destination)",
+    "Folders": "文件夹",
+    "OwnerProject": "项目",
+    "OwnerUser": "用户",
     "PathAndAliasTooltip": "文件夹在容器内的挂载路径。留空则使用默认路径。",
+    "Refresh": "刷新",
     "RemoveFolder": "移除",
+    "SelectFolder": "选择文件夹",
+    "SourcePath": "文件夹内路径 (source)",
     "Subpath": "子路径",
     "SubpathInvalid": "子路径必须是相对路径，且不能包含 '..'。",
-    "SubpathPlaceholder": "例如 dataset/train（可选）",
-    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。留空则挂载根目录。"
+    "SubpathTooltip": "将文件夹内的子文件夹作为挂载源，而非文件夹根目录。点击该输入框浏览文件夹并选择；留空则挂载文件夹根目录。",
+    "UnmountableFoldersRemoved": "已从所选内容中移除您无法再挂载的文件夹。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "选择文件夹"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "删除的文件和文件夹无法恢复。\n你想继续吗？",
     "DeleteSelectedItemsDialog": "删除确认",
     "Download": "下载",
+    "DownloadPopupBlocked": "浏览器拦截了下载窗口。请允许本站点的弹出窗口后重试。",
+    "DownloadRejected": "存储代理拒绝了此次下载（HTTP {{status}}），下载未开始。",
     "DownloadSelected": "下载",
     "DownloadStarted": "文件“ {{fileName}}”下载已开始。",
+    "DownloadUnreachable": "无法连接到 {{origin}} 上的存储代理，下载未开始。",
     "DragAndDropDesc": "将文件拖到此区域上传。",
     "DuplicatedFiles": "覆盖确认",
     "DuplicatedFilesDesc": "具有相同名称的文件或文件夹已经存在。\n你想覆盖吗？",
     "EditFile": "编辑文件",
+    "ExistingItem": "现有",
     "FileCreatedSuccessfully": "文件创建成功。",
     "FileName": "文件名",
     "FileNamePlaceholder": "例如 model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "修改为",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您没有此存储主机的上传权限。",
+    "OtherItemsWillBeUploaded": "另外 {{count}} 个项目也将一并上传。",
     "Path": "路径",
     "PleaseEnterAFileName": "请输入文件名。",
     "PleaseEnterAFolderName": "请输入文件夹名称。",
     "RenameFile": "重命名",
     "RenameSuccess": "该名称已成功更改。",
+    "SelectItemsToOverwrite": "以下项目已存在。请选择要覆盖的项目，未选择的项目将被跳过。",
     "SelectedItemsDeletedSuccessfully": "选定的文件和文件夹已成功删除。",
     "Size": "尺寸",
     "TypeDeleteToConfirm": "输入“删除”进行确认。",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "此文件格式不支持编辑。",
     "UploadFiles": "上传文件",
     "UploadFolder": "上传文件夹",
+    "UploadingItem": "待上传",
     "error": {
       "DuplicatedName": "此名称已经在使用中。\n请输入其他名称。",
       "FileNameRequired": "请输入文件或文件夹名称。"
@@ -762,6 +804,7 @@
     "DeselectAll": "取消全选",
     "File": "文件",
     "Increase": "增加",
+    "Loading": "加载中...",
     "NSelected": "{{count}}选择",
     "Optional": "可选",
     "Project": "项目",

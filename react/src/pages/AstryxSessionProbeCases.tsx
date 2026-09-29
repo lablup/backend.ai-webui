@@ -6,7 +6,7 @@
  (nothing re-created) against a relay-test-utils mock environment, so the
  before/after screenshots compare the actual modules:
 
-   case=tags    SessionStatusTag variants + SessionReservation
+   case=tags    SessionStatusBadge variants + SessionReservation
    case=idle    SessionIdleChecks (network timeout + lifetime rows)
    case=detail  SessionStatusDetailModal (scheduler + error payload)
 
@@ -17,8 +17,8 @@
 import { AstryxSessionProbeCasesQuery } from '../__generated__/AstryxSessionProbeCasesQuery.graphql';
 import SessionIdleChecks from '../components/ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from '../components/ComputeSessionNodeItems/SessionReservation';
+import SessionStatusBadge from '../components/ComputeSessionNodeItems/SessionStatusBadge';
 import SessionStatusDetailModal from '../components/ComputeSessionNodeItems/SessionStatusDetailModal';
-import SessionStatusTag from '../components/ComputeSessionNodeItems/SessionStatusTag';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -34,15 +34,15 @@ export const AstryxSessionProbeCases: React.FC<{ caseName: string }> = ({
         $id3: GlobalIDField!
       ) {
         running: compute_session_node(id: $id1) {
-          ...SessionStatusTagFragment
+          ...SessionStatusBadgeFragment
           ...SessionReservationFragment
           ...SessionIdleChecksNodeFragment
         }
         pending: compute_session_node(id: $id2) {
-          ...SessionStatusTagFragment
+          ...SessionStatusBadgeFragment
         }
         error: compute_session_node(id: $id3) {
-          ...SessionStatusTagFragment
+          ...SessionStatusBadgeFragment
           ...SessionStatusDetailModalFragment
         }
       }
@@ -53,9 +53,9 @@ export const AstryxSessionProbeCases: React.FC<{ caseName: string }> = ({
   if (caseName === 'tags') {
     return (
       <BAIFlex direction="column" align="start" gap="md">
-        <SessionStatusTag sessionFrgmt={data.running} />
-        <SessionStatusTag sessionFrgmt={data.pending} />
-        <SessionStatusTag sessionFrgmt={data.error} showInfo />
+        <SessionStatusBadge sessionFrgmt={data.running} />
+        <SessionStatusBadge sessionFrgmt={data.pending} />
+        <SessionStatusBadge sessionFrgmt={data.error} showInfo />
         <BAIFlex gap="xs" wrap="wrap">
           {data.running && <SessionReservation sessionFrgmt={data.running} />}
         </BAIFlex>

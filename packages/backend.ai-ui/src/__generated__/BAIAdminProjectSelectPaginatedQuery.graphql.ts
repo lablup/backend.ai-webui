@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f0b8b5c6b602f081b41aa2aac962406f>>
+ * @generated SignedSource<<8514404b4eef5cea028911f2fc7a6208>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,15 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "%future added value";
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type ProjectV2Filter = {
   AND?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  description?: StringFilter | null | undefined;
   domain?: ProjectDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  integrationName?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   name?: StringFilter | null | undefined;
