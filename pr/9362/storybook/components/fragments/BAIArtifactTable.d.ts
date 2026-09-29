@@ -4,11 +4,16 @@ export declare const getStatusColor: (status: string) => "warning" | "error" | "
 export declare const getStatusIcon: (status: string) => import("react").JSX.Element | null;
 export declare const getTypeIcon: (type: string, size?: number) => import("react").JSX.Element | null;
 export type Artifact = NonNullable<BAIArtifactTableArtifactFragment$data>[number];
-export interface BAIArtifactTableProps extends Omit<BAITableProps<Artifact>, 'dataSource' | 'columns' | 'rowKey'> {
+export declare const availableArtifactSorterKeys: readonly ["name", "type", "size", "scannedAt", "updatedAt"];
+export type ArtifactSorterKey = (typeof availableArtifactSorterKeys)[number];
+export declare const availableArtifactSorterValues: readonly ["name", "type", "size", "scannedAt", "updatedAt", ...("-name" | "-type" | "-size" | "-updatedAt" | "-scannedAt")[]];
+export interface BAIArtifactTableProps extends Omit<BAITableProps<Artifact>, 'dataSource' | 'columns' | 'rowKey' | 'onChangeOrder'> {
     artifactFragment: BAIArtifactTableArtifactFragment$key;
     onClickPull: (artifactId: string, revisionId: string) => void;
     onClickDelete: (artifactId: string) => void;
     onClickRestore: (artifactId: string) => void;
+    disableSorter?: boolean;
+    onChangeOrder?: (order: (typeof availableArtifactSorterValues)[number] | null) => void;
 }
-declare const BAIArtifactTable: ({ artifactFragment, onClickPull, onClickDelete, onClickRestore, ...tableProps }: BAIArtifactTableProps) => import("react").JSX.Element;
+declare const BAIArtifactTable: ({ artifactFragment, onClickPull, onClickDelete, onClickRestore, disableSorter, onChangeOrder, ...tableProps }: BAIArtifactTableProps) => import("react").JSX.Element;
 export default BAIArtifactTable;
