@@ -93,6 +93,18 @@
   border-block-end-color: var(--color-background-card);
 }
 
+/* Paint the rail over an inactive tab's bottom corners, where its grey side
+   borders would otherwise cut through the accent line. */
+.bai-tab-list--card .astryx-tab:not([data-selected='selected'])::after {
+  content: '';
+  position: absolute;
+  inset-inline: calc(-1 * var(--border-width));
+  inset-block-end: calc(-1 * var(--border-width));
+  block-size: var(--border-width);
+  background-color: var(--color-accent);
+  pointer-events: none;
+}
+
 /* The sliding underline is the LINE style's selected-state device; the boxed
    tab carries that job here. */
 .bai-tab-list--card .astryx-tab-indicator {
