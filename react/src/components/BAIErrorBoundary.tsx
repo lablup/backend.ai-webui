@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
+import { isLoginSessionExpiredState } from '../hooks/useLoginSessionExpiration';
 import { theme } from '../theme-shim';
-import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
