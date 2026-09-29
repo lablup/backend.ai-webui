@@ -11,14 +11,16 @@ import MyResourceWithinResourceGroup from './MyResourceWithinResourceGroup';
 import TotalResourceWithinResourceGroup, {
   useIsAvailableTotalResourceWithinResourceGroup,
 } from './TotalResourceWithinResourceGroup';
-import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
-import type { DropdownMenuOption } from '@lablup/ui-common/DropdownMenu';
+import {
+  DropdownMenu,
+  type DropdownMenuOption,
+} from '@lablup/ui-common/DropdownMenu';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
-  filterOutEmpty,
   BAICard,
   BAICardProps,
+  BAISkeleton,
+  filterOutEmpty,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Settings } from 'lucide-react';
@@ -147,9 +149,6 @@ const ConfigurableResourceCard: React.FC<ConfigurableResourceCardProps> = ({
       fetchKey,
       style: { border: 'none', ...props.style },
       extra: settingsButton,
-      titleStyle: {
-        paddingLeft: 0,
-      },
       ..._.omit(props, ['style', 'title']),
     };
 
