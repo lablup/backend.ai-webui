@@ -362,7 +362,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         title={t('credential.MyKeypairManagement')}
         centered
         onCancel={onRequestClose}
-        destroyOnHidden
         width={1100}
         footer={null}
       >
@@ -664,7 +663,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         title={t('credential.KeypairCredentialInfo')}
         keyboard={false}
         onCancel={() => setCredentialResult(null)}
-        destroyOnHidden
         width={640}
         footer={
           <BAIFlex justify="end">
@@ -732,9 +730,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         }
         confirmText={t('credential.PermanentlyDelete')}
         requireConfirmInput
-        inputLabel={t('credential.TypePermanentlyDelete', {
-          text: t('credential.PermanentlyDelete'),
-        })}
         inputProps={{
           placeholder: t('credential.PermanentlyDelete'),
         }}

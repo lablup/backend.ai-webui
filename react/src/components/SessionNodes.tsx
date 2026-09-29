@@ -15,9 +15,9 @@ import SessionAccessKey from './ComputeSessionNodeItems/SessionAccessKey';
 import SessionReclamationStatusCell from './ComputeSessionNodeItems/SessionReclamationStatusCell';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
-import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
+import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   filterOutEmpty,
@@ -31,7 +31,7 @@ import {
   BAISessionAgentIds,
   BAIAppIcon,
   BAINameActionCell,
-  BAISessionTypeTag,
+  BAISessionTypeToken,
   BAISessionClusterMode,
   BAIUnmountAfterClose,
 } from 'backend.ai-ui';
@@ -115,14 +115,14 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         user_id
         agent_ids
         priority @since(version: "24.09.0")
-        ...SessionStatusTagFragment
+        ...SessionStatusBadgeFragment
         ...SessionReservationFragment
         ...SessionSlotCellFragment
         ...SessionReclamationStatusCellFragment
         ...SessionUsageMonitorFragment
         ...SessionDetailDrawerFragment
         ...BAISessionAgentIdsFragment
-        ...BAISessionTypeTagFragment
+        ...BAISessionTypeTokenFragment
         ...BAISessionClusterModeFragment
         ...AppLauncherModalFragment
         ...TerminateSessionModalFragment
@@ -249,7 +249,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         sorter: isEnableSorter('status'),
         render: (__, session) => {
           // TODO: Display idle checker if imminentExpirationTime as Icon(clock-alert).
-          return <SessionStatusTag sessionFrgmt={session} />;
+          return <SessionStatusBadge sessionFrgmt={session} />;
         },
       },
       {
@@ -354,7 +354,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
         defaultHidden: true,
         exportKey: 'session_type',
         sorter: isEnableSorter('type'),
-        render: (__, session) => <BAISessionTypeTag sessionFrgmt={session} />,
+        render: (__, session) => <BAISessionTypeToken sessionFrgmt={session} />,
       },
       {
         key: 'cluster_mode',
@@ -387,7 +387,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
             <BAIFlex gap="xs" wrap="wrap">
               {dependeeNodes?.map((node) => (
                 <Tooltip key={node?.row_id} content={t('session.DependsOn')}>
-                  <Badge label={`→ ${node?.name}`} />
+                  <Token label={`→ ${node?.name}`} />
                 </Tooltip>
               ))}
               {dependentNodes?.map((node) => (
@@ -395,7 +395,7 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
                   key={node?.row_id}
                   content={t('session.DependedByOthers')}
                 >
-                  <Badge label={`← ${node?.name}`} />
+                  <Token label={`← ${node?.name}`} />
                 </Tooltip>
               ))}
             </BAIFlex>

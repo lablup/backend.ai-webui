@@ -25,8 +25,10 @@
 
    `title`               -> `Heading level={5}` (string) / verbatim (JSX)
    `extra`               -> right-aligned in the title row
-   `size="small"`        -> `padding={3}` (12px, antd's small card padding);
-                            otherwise `padding={6}` (24px, antd's default)
+   `size="small"`        -> `padding={3}` (12px, antd's small card padding),
+                            a 12px stack gap, a 14px title and an sm extra
+                            button (`bai-card--compact`); otherwise `padding={6}`
+                            (24px, antd's default)
    `type="inner"`        -> `variant="muted"` (antd's inner card is the tinted,
                             nested one)
    `bordered={false}` /
@@ -227,6 +229,7 @@ const BAICard: React.FC<BAICardProps> = ({
         color={
           status === 'error' || status === 'warning' ? 'default' : undefined
         }
+        size={size === 'small' ? 'small' : undefined}
         className={
           status === 'error'
             ? 'bai-card-extra--error'
@@ -275,7 +278,8 @@ const BAICard: React.FC<BAICardProps> = ({
       padding={padding ?? (size === 'small' ? 3 : 6)}
       width={width}
     >
-      <VStack gap={4} align="stretch">
+      {/* A tabbed card keeps 16px under its tab rail at every size (BAICard.css). */}
+      <VStack gap={size === 'small' && !tabs.length ? 3 : 4} align="stretch">
         {cover}
         {hasTitleRow ? (
           // `bai-card__head` / `bai-card__extra` are ANCHORS, not styling
@@ -301,7 +305,14 @@ const BAICard: React.FC<BAICardProps> = ({
               // is `fontSizeLG` (16px), and on the restored antd ramp 16px is
               // heading-5. (It was `level={3}` while Astryx's own ramp put 17px
               // there.)
-              <Heading level={5}>{title}</Heading>
+              <Heading
+                level={5}
+                className={
+                  size === 'small' ? 'bai-card__title--compact' : undefined
+                }
+              >
+                {title}
+              </Heading>
             ) : (
               title
             )}
@@ -353,7 +364,7 @@ const BAICard: React.FC<BAICardProps> = ({
             })}
           </BAITabList>
         ) : showDivider ? (
-          <Divider />
+          <Divider className="bai-card__divider" />
         ) : null}
         {loading ? (
           <VStack gap={2} align="stretch">

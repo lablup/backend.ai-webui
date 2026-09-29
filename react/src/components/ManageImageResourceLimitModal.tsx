@@ -127,7 +127,6 @@ const ManageImageResourceLimitModal: React.FC<
 
   return (
     <BAIModal
-      destroyOnHidden
       open={open}
       maskClosable={false}
       onOk={handleOnClick}

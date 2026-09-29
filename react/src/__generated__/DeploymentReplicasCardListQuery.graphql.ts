@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0ad1539c2ac6f8d49ce2f73c4c708cd6>>
+ * @generated SignedSource<<7e58a4707eecc99e5044beb116b10cd4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,14 +12,18 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHEALTHY" | "%future added value";
-export type ReplicaOrderField = "CREATED_AT" | "ID" | "%future added value";
+export type ReplicaOrderField = "CREATED_AT" | "DEPLOYMENT_ID" | "HEALTH_STATUS" | "ID" | "REVISION_ID" | "SESSION_ID" | "STATUS" | "TRAFFIC_STATUS" | "%future added value";
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
 export type ReplicaFilter = {
   AND?: ReadonlyArray<ReplicaFilter> | null | undefined;
   NOT?: ReadonlyArray<ReplicaFilter> | null | undefined;
   OR?: ReadonlyArray<ReplicaFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   healthStatus?: ReplicaHealthStatusFilter | null | undefined;
+  revisionId?: UUIDFilter | null | undefined;
+  sessionId?: UUIDFilter | null | undefined;
   status?: ReplicaStatusFilter | null | undefined;
   trafficStatus?: TrafficStatusFilter | null | undefined;
 };
@@ -40,6 +44,18 @@ export type TrafficStatusFilter = {
   in?: ReadonlyArray<TrafficStatus> | null | undefined;
   notEquals?: TrafficStatus | null | undefined;
   notIn?: ReadonlyArray<TrafficStatus> | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type ReplicaOrderBy = {
   direction?: OrderDirection;

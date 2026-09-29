@@ -182,7 +182,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
         confirmLoading={isInFlightUpdateUser}
         onOk={() => onSubmit()}
         centered
-        destroyOnHidden
         title={t('webui.menu.MyAccountInformation')}
       >
         <Form

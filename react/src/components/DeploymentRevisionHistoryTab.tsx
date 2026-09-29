@@ -15,6 +15,7 @@ import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
+import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
@@ -31,7 +32,6 @@ import {
   BAINameActionCell,
   BAIQuestionIconWithTooltip,
   BAITable,
-  BAITag,
   BAIUnmountAfterClose,
   BAIVFolderSelect,
   BAIId,
@@ -429,7 +429,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   {')'}
                 </BAIFlex>
                 {isCurrent ? (
-                  <BAITag color="success">{t('deployment.Current')}</BAITag>
+                  <Badge variant="success" label={t('deployment.Current')} />
                 ) : null}
                 {isDeploying && !isCurrent ? (
                   // Skip the "Deploying" tag when this revision is also
@@ -437,12 +437,11 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // `deployingRevisionId` set after promotion until the
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
-                  <BAITag
-                    color="warning"
+                  <Badge
+                    variant="warning"
                     icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
-                  >
-                    {t('deployment.Applying')}
-                  </BAITag>
+                    label={t('deployment.Applying')}
+                  />
                 ) : null}
               </BAIFlex>
             }

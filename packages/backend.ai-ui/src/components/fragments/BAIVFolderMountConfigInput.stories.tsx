@@ -1,90 +1,109 @@
 import { Form } from '../../form-engine';
-import { RelayResolverProps } from '../../tests/RelayResolver';
+import { convertToUUID } from '../../helper';
+import MockVFolderFileProviders from '../../tests/MockVFolderFileProviders';
+import {
+  MOCK_LEGACY_PROJECT_ID,
+  MOCK_MOUNTABLE_HOSTS,
+  mockLegacyVFolder,
+  mockLegacyVFolders,
+  mockVFolderFile as entry,
+  type MockVFolderFileTrees,
+} from '../../tests/mockVFolderFileTree';
 import BAIButton from '../BAIButton';
 import BAIText from '../BAIText';
 import BAIVFolderMountConfigInput, {
   BAIVFolderMountConfigInputProps,
+  BAIVFolderMountConfigInputRef,
   VFolderMountConfigValue,
-  isVFolderMountConfigValid,
+  useVFolderMountConfigFormRule,
 } from './BAIVFolderMountConfigInput';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Suspense, useMemo, useState } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
-import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
+import { useRef, useState } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { action } from 'storybook/actions';
 
-/**
- * BAIVFolderMountConfigInput composes BAIVFolderSelect, which fires dual
- * GraphQL queries (ValueQuery + PaginatedQuery) and re-fetches on selection.
- * Queue enough resolvers to satisfy multiple operations during interaction.
- */
-const VFolderRelayResolver = ({
-  children,
-  mockResolvers = {},
-}: RelayResolverProps) => {
-  // Memoize so toggling a Storybook control (disabled, aliasBasePath, …) does
-  // not recreate the environment and reset the Relay store (Suspense re-flash).
-  const environment = useMemo(() => {
-    const env = createMockEnvironment();
-    for (let i = 0; i < 20; i++) {
-      env.mock.queueOperationResolver((operation) =>
-        MockPayloadGenerator.generate(operation, mockResolvers),
-      );
-    }
-    return env;
-  }, [mockResolvers]);
-  return (
-    <RelayEnvironmentProvider environment={environment}>
-      <Suspense fallback="Loading...">{children}</Suspense>
-    </RelayEnvironmentProvider>
-  );
-};
+const DEMO_WIDTH = 760;
 
-const sampleVFolders = [
-  { name: 'my-project-data', row_id: 'abcd1234-5678-90ef-1234-567890abcdef' },
-  { name: 'shared-datasets', row_id: 'wxyz9876-5432-10ab-cdef-001122334455' },
-  { name: 'model-checkpoints', row_id: 'aaaa1111-2222-3333-4444-555566667777' },
-  { name: 'training-logs', row_id: 'bbbb2222-3333-4444-5555-666677778888' },
-].map((folder) => ({
-  // The component runs BAIVFolderSelect in `row_id` mode, so `row_id` is the
-  // value used everywhere; `id` only needs to satisfy the query shape.
-  node: {
-    id: `vfolder-node-${folder.row_id}`,
-    name: folder.name,
-    row_id: folder.row_id,
-  },
-}));
-
-const sampleQueryResolvers = {
-  Query: () => ({
-    vfolder_nodes: {
-      count: sampleVFolders.length,
-      edges: sampleVFolders,
-    },
+// The shared REST fixture exercises every gate the select applies; a third
+// mountable folder is added here so the alias modes fit on one screen.
+const legacyFolders = [
+  ...mockLegacyVFolders,
+  mockLegacyVFolder({
+    id: 'aaaaaaaabbbbccccddddeeeeffff0006',
+    name: 'model-checkpoints',
   }),
-};
+];
+
+// The REST fixture keys folders by the 32-hex `id`; the select emits the
+// dashed UUID, which is what the row's path picker browses by.
+const folderId = (index: number) => convertToUUID(legacyFolders[index].id);
+const folderName = (index: number) => legacyFolders[index].name;
+
+// Directory trees keyed by vfolder UUID, then by the path notation
+// `useSearchVFolderFiles` uses ('.' = root, 'a/b' below it), so every row's
+// subpath picker browses a real tree.
+const createTrees = (): MockVFolderFileTrees => ({
+  [folderId(0)]: {
+    '.': [
+      entry('dataset', 'DIRECTORY', '2026-07-21T14:02:00'),
+      entry('scripts', 'DIRECTORY', '2026-07-18T09:45:00'),
+      entry('README.md', 'FILE', '2026-07-01T11:20:00'),
+    ],
+    dataset: [
+      entry('train', 'DIRECTORY', '2026-07-22T10:05:00'),
+      entry('validation', 'DIRECTORY', '2026-07-22T10:05:00'),
+    ],
+    'dataset/train': [],
+    'dataset/validation': [],
+    scripts: [],
+  },
+  [folderId(1)]: {
+    '.': [
+      entry('imagenet', 'DIRECTORY', '2026-07-10T08:00:00'),
+      entry('LICENSE', 'FILE', '2026-07-02T12:00:00'),
+    ],
+    imagenet: [],
+  },
+  [folderId(5)]: {
+    '.': [entry('epoch-001', 'DIRECTORY', '2026-07-27T03:12:00')],
+    'epoch-001': [],
+  },
+});
 
 /**
- * Controlled wrapper that renders the component and prints the current
- * form value as text, so the emitted `VFolderMountConfigValue[]` is visible
- * while selecting folders and editing alias / subpath. `mountDestination` is
- * stored as the raw alias; the resolved full path is shown inline per row.
+ * Controlled wrapper that renders the component the way the session launcher
+ * does — scoped to a project, with the host-supplied mount gates — and prints
+ * the current form value as text, so the emitted `VFolderMountConfigValue[]`
+ * is visible while selecting folders and picking aliases / subpaths.
+ * `mountDestination` is stored as the raw alias; the resolved full path is
+ * shown inline per row.
  */
 const ControlledDemo = ({
   initialValue = [],
   ...props
-}: BAIVFolderMountConfigInputProps & {
+}: Partial<BAIVFolderMountConfigInputProps> & {
   initialValue?: VFolderMountConfigValue[];
 }) => {
   const [value, setValue] = useState<VFolderMountConfigValue[]>(initialValue);
+  const inputRef = useRef<BAIVFolderMountConfigInputRef>(null);
   return (
-    <div style={{ width: 680 }}>
+    <div style={{ width: DEMO_WIDTH }}>
       <BAIVFolderMountConfigInput
+        ref={inputRef}
+        currentProjectId={MOCK_LEGACY_PROJECT_ID}
+        mountableHosts={MOCK_MOUNTABLE_HOSTS}
         {...props}
         value={value}
-        onChange={setValue}
+        onChange={(next) => {
+          setValue(next);
+          props.onChange?.(next);
+        }}
       />
-      {/* antd Typography.Paragraph has no direct Astryx equivalent; BAIText
-          wrapped in a block element reproduces the same paragraph layout. */}
+      <div style={{ marginTop: 16 }}>
+        <BAIButton onClick={() => inputRef.current?.refetch()}>
+          Refetch via ref
+        </BAIButton>
+      </div>
       <div style={{ marginTop: 24 }}>
         <BAIText strong>Form value (onChange result)</BAIText>
         <pre
@@ -103,6 +122,23 @@ const ControlledDemo = ({
   );
 };
 
+// Two folders aliased to the same `shared` segment, so both resolve to
+// `/home/work/shared` and are flagged as overlapping.
+const overlappingSharedAliases: VFolderMountConfigValue[] = [
+  {
+    vfolderId: folderId(0),
+    name: folderName(0),
+    mountDestination: 'shared',
+    subpath: '',
+  },
+  {
+    vfolderId: folderId(1),
+    name: folderName(1),
+    mountDestination: 'shared',
+    subpath: '',
+  },
+];
+
 const meta: Meta<typeof BAIVFolderMountConfigInput> = {
   title: 'Fragments/BAIVFolderMountConfigInput',
   component: BAIVFolderMountConfigInput,
@@ -115,29 +151,51 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Composes [BAIVFolderSelect](/?path=/docs/fragments-baivfolderselect--docs) to pick
-  vfolders (\`row_id\` mode, so the value is the vfolder UUID).
+- Picks folders from the REST \`GET /folders\` list rather than the \`vfolder_nodes\`
+  connection, because the session launcher's mount gates cannot be expressed as a
+  GraphQL filter: the host must be in \`mountableHosts\` (those granting
+  \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
+  folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
+  \`filter\` hides rows on top of that without shrinking the selection.
+- It **suspends** on that list, so the consumer owns the Suspense boundary. An entry
+  the mount gates reject is dropped from the value with a warning toast; one that
+  merely became auto-mounted is kept, since it is mounted anyway.
+- Beside the select sits a button group: **⟳** always re-runs the folder query (also
+  exposed imperatively as \`ref.refetch()\`), and **+** is rendered only when
+  \`onClickCreateFolder\` is given — the folder-creation modal belongs to the host app.
 - Each selected folder appears as a row with a **mount path (alias)** input and an
-  optional **subpath** input (which subfolder of the vfolder to mount as the source; empty = root).
+  optional **subpath** picker (which subfolder of the vfolder to mount as the source; \`/\` = root),
+  which opens a directory browser instead of accepting typed text.
 - \`mountDestination\` stores the **raw alias** the user typed — \`''\` mounts at the default
   \`/home/work/<name>\`, a relative segment like \`data\` resolves to \`/home/work/data\`, and an
   absolute path like \`/data\` is used as-is. Resolve it with the exported \`inputToMountDestination\`.
-- \`autoMountedFolderNames\` are folded into the overlap check (a user alias colliding with an
-  auto-mounted folder is flagged) and shown as read-only tags at the bottom.
+- \`autoMountedFolders\` drop out of the offered folder options, join the overlap check (a user
+  alias colliding with an auto-mounted folder is flagged) and are shown as read-only badges at the bottom.
+- \`folderExplorerPath\` turns every folder name the component renders — each mount row and each
+  auto-mounted badge — into a link into the host app's folder explorer (see **WithFolderExplorerLinks**).
 - Emits a single \`VFolderMountConfigValue[]\`. The inline per-row errors are advisory UX; to gate a
-  form, wrap the component in one named \`Form.Item\` and call \`isVFolderMountConfigValid\` from a
-  \`rules\` validator (see the **WithFormValidation** story).
+  form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
+  \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below use a mocked Relay environment so multiple sample folders can be selected.
+The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
+so of the six fixture folders \`cold-archive\` is dropped (its host is not in
+\`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
+dropped in the **WithAutoMountedFolders** story.
 `,
       },
     },
   },
   decorators: [
     (Story) => (
-      <VFolderRelayResolver mockResolvers={sampleQueryResolvers}>
-        <Story />
-      </VFolderRelayResolver>
+      <MemoryRouter>
+        <MockVFolderFileProviders
+          folders={legacyFolders}
+          trees={createTrees}
+          suspenseFallback="Loading..."
+        >
+          <Story />
+        </MockVFolderFileProviders>
+      </MemoryRouter>
     ),
   ],
   argTypes: {
@@ -154,10 +212,15 @@ The stories below use a mocked Relay environment so multiple sample folders can 
       description: 'Project ID to scope vfolder selection',
       table: { type: { summary: 'string' } },
     },
-    filter: {
+    ownerEmail: {
       control: { type: 'text' },
-      description: 'Additional filter string passed to BAIVFolderSelect',
+      description: "Lists this user's folders instead of the caller's own",
       table: { type: { summary: 'string' } },
+    },
+    filter: {
+      control: false,
+      description: 'Display-only folder filter, applied after the mount gates',
+      table: { type: { summary: '(folder: LegacyVFolder) => boolean' } },
     },
     disabled: {
       control: { type: 'boolean' },
@@ -175,44 +238,60 @@ The stories below use a mocked Relay environment so multiple sample folders can 
         defaultValue: { summary: '/home/work/' },
       },
     },
-    autoMountedFolderNames: {
+    autoMountedFolders: {
       control: { type: 'object' },
       description:
-        'Names of auto-mounted folders: folded into the overlap check and shown as read-only tags',
+        'Auto-mounted folders: dropped from the offered folder options, folded into the overlap check and shown as read-only badges',
+      table: {
+        type: { summary: 'Array<{ vfolderId: string; name: string }>' },
+      },
+    },
+    folderExplorerPath: {
+      control: false,
+      description:
+        "Route that opens a folder in the host app's folder explorer; given, folder names render as links",
+      table: { type: { summary: "(vfolderId: string) => LinkProps['to']" } },
+    },
+    mountableHosts: {
+      control: { type: 'object' },
+      description:
+        'Hosts granting `mount-in-session`, supplied by the host app',
       table: { type: { summary: 'string[]' } },
     },
+    onClickCreateFolder: {
+      control: false,
+      description:
+        "Opens the host app's folder-creation modal; the create button appears only when it is given",
+      table: { type: { summary: '() => void' } },
+    },
+  },
+  args: {
+    mountableHosts: MOCK_MOUNTABLE_HOSTS,
+    autoMountedFolders: [],
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof BAIVFolderMountConfigInput>;
 
-/**
- * Empty initial state. Select folders from the dropdown to add rows, then edit
- * each row's mount path and subpath. The live form value is shown below.
- */
 export const Interactive: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          "Empty initial state. Select folders from the dropdown to add rows, then edit each row's mount path and subpath. The live form value is shown below — note `mountDestination` holds the raw alias you typed.",
+          'Empty initial state. The dropdown offers only the mountable folders of the current project. Select one to add a row, then type its mount path and click its subpath field to browse the folder. New rows start at the folder root, shown as `/`. The live form value is shown below — note `mountDestination` holds the raw alias you typed, while `subpath` only ever comes from the picker.',
       },
     },
   },
   render: (args) => <ControlledDemo {...args} />,
 };
 
-/**
- * Prefilled showing all three alias modes: a relative alias, an absolute path,
- * and an empty alias that falls back to the default mount path.
- */
 export const Prefilled: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'Prefilled with three folders demonstrating each alias mode: a relative segment (`data` → `/home/work/data`), an absolute path (`/mnt/shared`, used as-is), and an empty alias (falls back to `/home/work/<name>`). The first also mounts a subpath.',
+          'Prefilled with three folders demonstrating each alias mode: a relative segment (`data` → `/home/work/data`), an absolute path (`/mnt/shared`, used as-is), and an empty alias (falls back to `/home/work/<name>`). The first mounts the `dataset/train` subpath; the other two mount the folder root, which the picker shows as `/`.',
       },
     },
   },
@@ -221,20 +300,20 @@ export const Prefilled: Story = {
       {...args}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].node.row_id,
-          name: sampleVFolders[0].node.name,
+          vfolderId: folderId(0),
+          name: folderName(0),
           mountDestination: 'data',
           subpath: 'dataset/train',
         },
         {
-          vfolderId: sampleVFolders[1].node.row_id,
-          name: sampleVFolders[1].node.name,
+          vfolderId: folderId(1),
+          name: folderName(1),
           mountDestination: '/mnt/shared',
           subpath: '',
         },
         {
-          vfolderId: sampleVFolders[2].node.row_id,
-          name: sampleVFolders[2].node.name,
+          vfolderId: folderId(5),
+          name: folderName(5),
           mountDestination: '',
           subpath: '',
         },
@@ -252,7 +331,7 @@ export const OverlappingPaths: Story = {
     docs: {
       description: {
         story:
-          'Two folders use the same alias (`shared`), so both resolve to `/home/work/shared` and are flagged with the overlap error. `isVFolderMountConfigValid` returns `false` for this value.',
+          'Two folders use the same alias (`shared`), so both resolve to `/home/work/shared` and are flagged with the overlap error. The third row types an alias the format check rejects. `useVFolderMountConfigFormRule` rejects this value.',
       },
     },
   },
@@ -260,16 +339,11 @@ export const OverlappingPaths: Story = {
     <ControlledDemo
       {...args}
       initialValue={[
+        ...overlappingSharedAliases,
         {
-          vfolderId: sampleVFolders[0].node.row_id,
-          name: sampleVFolders[0].node.name,
-          mountDestination: 'shared',
-          subpath: '',
-        },
-        {
-          vfolderId: sampleVFolders[1].node.row_id,
-          name: sampleVFolders[1].node.name,
-          mountDestination: 'shared',
+          vfolderId: folderId(5),
+          name: folderName(5),
+          mountDestination: 'bad path!',
           subpath: '',
         },
       ]}
@@ -282,28 +356,30 @@ export const OverlappingPaths: Story = {
  * alias that collides with one of them is flagged as an overlap.
  */
 export const WithAutoMountedFolders: Story = {
+  args: {
+    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
+  },
   parameters: {
     docs: {
       description: {
         story:
-          'Passing `autoMountedFolderNames={[".local", ".config"]}` renders them as read-only tags below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
+          '`autoMountedFolders` naming `.config` drops that folder from the select and renders it as a read-only badge below the rows. The first folder aliases to `.config`, colliding with the auto-mounted `/home/work/.config`, so it shows the overlap error.',
       },
     },
   },
   render: (args) => (
     <ControlledDemo
       {...args}
-      autoMountedFolderNames={['.local', '.config']}
       initialValue={[
         {
-          vfolderId: sampleVFolders[0].node.row_id,
-          name: sampleVFolders[0].node.name,
+          vfolderId: folderId(0),
+          name: folderName(0),
           mountDestination: '.config',
-          subpath: '',
+          subpath: 'dataset',
         },
         {
-          vfolderId: sampleVFolders[2].node.row_id,
-          name: sampleVFolders[2].node.name,
+          vfolderId: folderId(5),
+          name: folderName(5),
           mountDestination: 'checkpoints',
           subpath: '',
         },
@@ -313,16 +389,49 @@ export const WithAutoMountedFolders: Story = {
 };
 
 /**
+ * `folderExplorerPath` turns the folder names into links into the host app's
+ * folder explorer — both the mount rows and the auto-mounted badges.
+ */
+export const WithFolderExplorerLinks: Story = {
+  args: {
+    autoMountedFolders: [{ vfolderId: folderId(2), name: folderName(2) }],
+    // The host builds a real route; here the id just lands in the hash.
+    folderExplorerPath: (vfolderId) => `#folder=${vfolderId}`,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "With `folderExplorerPath` given, each row's folder name renders as a link (still truncating with a tooltip) and each auto-mounted badge becomes one too. Without it they stay plain text, as in the other stories.",
+      },
+    },
+  },
+  render: (args) => (
+    <ControlledDemo
+      {...args}
+      initialValue={[
+        {
+          vfolderId: folderId(0),
+          name: folderName(0),
+          mountDestination: 'data',
+          subpath: '',
+        },
+      ]}
+    />
+  ),
+};
+
+/**
  * Demonstrates the recommended form-gate pattern: a single named `Form.Item`
- * wrapping the component, with `isVFolderMountConfigValid` in a `rules`
- * validator so `form.validateFields()` rejects on invalid input.
+ * wrapping the component, with `useVFolderMountConfigFormRule` in `rules` so
+ * `form.validateFields()` rejects on invalid input.
  */
 export const WithFormValidation: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'The component is wrapped in one named `Form.Item`. The `rules` validator calls `isVFolderMountConfigValid`, so submitting with the two colliding `shared` aliases fails validation. Fix the aliases and submit again to pass.',
+          'The component is wrapped in one named `Form.Item` whose `rules` carry `useVFolderMountConfigFormRule`, so submitting with the two colliding `shared` aliases fails validation with the already-translated message. Fix the aliases and submit again to pass.',
       },
     },
   },
@@ -330,48 +439,26 @@ export const WithFormValidation: Story = {
     const FormValidationDemo = () => {
       const [form] = Form.useForm();
       const [result, setResult] = useState<string>('');
+      const mountConfigRule = useVFolderMountConfigFormRule({
+        aliasBasePath: args.aliasBasePath,
+        autoMountedFolders: args.autoMountedFolders,
+      });
       return (
         <Form
           form={form}
           layout="vertical"
-          style={{ width: 680 }}
-          initialValues={{
-            mounts: [
-              {
-                vfolderId: sampleVFolders[0].node.row_id,
-                name: sampleVFolders[0].node.name,
-                mountDestination: 'shared',
-                subpath: '',
-              },
-              {
-                vfolderId: sampleVFolders[1].node.row_id,
-                name: sampleVFolders[1].node.name,
-                mountDestination: 'shared',
-                subpath: '',
-              },
-            ],
-          }}
+          style={{ width: DEMO_WIDTH }}
+          initialValues={{ mounts: overlappingSharedAliases }}
         >
           <Form.Item
             name="mounts"
             label="VFolder mounts"
-            rules={[
-              {
-                validator: (_rule, value) =>
-                  isVFolderMountConfigValid(value, {
-                    aliasBasePath: args.aliasBasePath,
-                    autoMountedFolderNames: args.autoMountedFolderNames,
-                  })
-                    ? Promise.resolve()
-                    : Promise.reject(
-                        new Error(
-                          'Some mounts have an invalid or overlapping path.',
-                        ),
-                      ),
-              },
-            ]}
+            rules={[mountConfigRule]}
           >
-            <BAIVFolderMountConfigInput {...args} />
+            <BAIVFolderMountConfigInput
+              currentProjectId={MOCK_LEGACY_PROJECT_ID}
+              {...args}
+            />
           </Form.Item>
           <BAIButton
             type="primary"
@@ -397,13 +484,75 @@ export const WithFormValidation: Story = {
 };
 
 /**
- * Disabled state — selection and inputs are read-only.
+ * The create button next to the select appears only when the host supplies
+ * `onClickCreateFolder`, because the folder-creation modal is a host component.
  */
+export const WithCreateFolderButton: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs `GET /folders` on its own.',
+      },
+    },
+  },
+  render: (args) => (
+    <ControlledDemo
+      {...args}
+      onClickCreateFolder={action('createFolderClicked')}
+    />
+  ),
+};
+
+export const NoMountableHost: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`mountableHosts={[]}` — no host grants `mount-in-session`, so every folder is gated out and the popup shows the empty state. This is the case a launcher has to surface rather than letting the user pick a folder the session cannot mount.',
+      },
+    },
+  },
+  render: (args) => <ControlledDemo {...args} mountableHosts={[]} />,
+};
+
+export const PrunesUnmountableSelection: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A value restored from a template can name a folder this owner cannot mount. With `mountableHosts={[]}` nothing passes the host gate, so the prefilled entries are dropped from the value on mount and a warning toast explains the shrinking selection — the emitted `onChange` payload below goes straight to `[]`.',
+      },
+    },
+  },
+  render: (args) => (
+    <ControlledDemo
+      {...args}
+      mountableHosts={[]}
+      initialValue={[
+        {
+          vfolderId: folderId(0),
+          name: folderName(0),
+          mountDestination: '',
+          subpath: '',
+        },
+        {
+          vfolderId: folderId(1),
+          name: folderName(1),
+          mountDestination: 'shared',
+          subpath: '',
+        },
+      ]}
+    />
+  ),
+};
+
 export const Disabled: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Disabled state — selection and all row inputs are read-only.',
+        story:
+          'Disabled state — the select, the alias input, the subpath picker and the remove button are all inert; the picked subpath stays readable.',
       },
     },
   },
@@ -413,8 +562,8 @@ export const Disabled: Story = {
       disabled
       initialValue={[
         {
-          vfolderId: sampleVFolders[1].node.row_id,
-          name: sampleVFolders[1].node.name,
+          vfolderId: folderId(1),
+          name: folderName(1),
           mountDestination: 'shared',
           subpath: '',
         },

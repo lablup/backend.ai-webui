@@ -6,7 +6,7 @@ import {
   PrometheusQueryPresetTableFragment$data,
   PrometheusQueryPresetTableFragment$key,
 } from '../__generated__/PrometheusQueryPresetTableFragment.graphql';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIColumnsType,
   BAIFlex,
@@ -14,7 +14,6 @@ import {
   BAITable,
   BAITableProps,
   BAIText,
-  badgeVariantForTagColor,
   filterOutNullAndUndefined,
   toLocalId,
 } from 'backend.ai-ui';
@@ -205,14 +204,8 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
         if (!labels || labels.length === 0) return '-';
         return (
           <BAIFlex wrap="wrap" gap="xxs">
-            {/* antd `Tag` (no colour) → Astryx `Badge` through the
-                repo-global lookup (ticket 13). */}
             {_.map(labels, (label) => (
-              <Badge
-                key={label}
-                variant={badgeVariantForTagColor(undefined)}
-                label={label}
-              />
+              <Token key={label} label={label} />
             ))}
           </BAIFlex>
         );
@@ -229,14 +222,8 @@ const PrometheusQueryPresetTable: React.FC<PrometheusQueryPresetTableProps> = ({
         if (!labels || labels.length === 0) return '-';
         return (
           <BAIFlex wrap="wrap" gap="xxs">
-            {/* antd `Tag` (no colour) → Astryx `Badge` through the
-                repo-global lookup (ticket 13). */}
             {_.map(labels, (label) => (
-              <Badge
-                key={label}
-                variant={badgeVariantForTagColor(undefined)}
-                label={label}
-              />
+              <Token key={label} label={label} />
             ))}
           </BAIFlex>
         );

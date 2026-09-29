@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b78089aac8bc62c530ba4d92940b2647>>
+ * @generated SignedSource<<7fbb13cc38f76399a15a127cd0276025>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,13 +11,20 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { Result } from "relay-runtime";
 export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
+export type PermissionTarget = {
+  entityType: string;
+  scopeId: string;
+  scopeType: string;
+};
 export type PermissionNestedFilter = {
   AND?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   NOT?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
   OR?: ReadonlyArray<PermissionNestedFilter> | null | undefined;
-  entityType?: RBACElementTypeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
   operation?: OperationTypeFilter | null | undefined;
+  permission?: PermissionBitFilter | null | undefined;
   scopeId?: StringFilter | null | undefined;
   scopeType?: RBACElementTypeFilter | null | undefined;
 };
@@ -43,6 +50,12 @@ export type StringFilter = {
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
 };
+export type PermissionBitFilter = {
+  equals?: PermissionBit | null | undefined;
+  in?: ReadonlyArray<PermissionBit> | null | undefined;
+  notEquals?: PermissionBit | null | undefined;
+  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
+};
 export type RBACElementTypeFilter = {
   equals?: RBACElementType | null | undefined;
   in?: ReadonlyArray<RBACElementType> | null | undefined;
@@ -56,10 +69,18 @@ export type OperationTypeFilter = {
   notIn?: ReadonlyArray<OperationType> | null | undefined;
 };
 export type useCurrentUserProjectRolesQuery$variables = {
-  permissionFilter?: PermissionNestedFilter | null | undefined;
+  legacyPermissionFilter?: PermissionNestedFilter | null | undefined;
+  supportsHeldPermissions: boolean;
+  targets: ReadonlyArray<PermissionTarget>;
 };
 export type useCurrentUserProjectRolesQuery$data = {
-  readonly myRolesResult: Result<{
+  readonly heldPermissions?: Result<{
+    readonly items: ReadonlyArray<{
+      readonly permissions: ReadonlyArray<PermissionBit>;
+      readonly scopeId: string;
+    }>;
+  } | null | undefined, unknown>;
+  readonly legacyRoles?: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
@@ -69,7 +90,7 @@ export type useCurrentUserProjectRolesQuery$data = {
             readonly edges: ReadonlyArray<{
               readonly node: {
                 readonly scopeId: string;
-                readonly scopeType: RBACElementType;
+                readonly scopeType: string;
               };
             }>;
           } | null | undefined;
@@ -84,20 +105,77 @@ export type useCurrentUserProjectRolesQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "permissionFilter"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "legacyPermissionFilter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "supportsHeldPermissions"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "targets"
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
+},
+v4 = {
+  "alias": "heldPermissions",
+  "args": [
+    {
+      "fields": [
+        {
+          "kind": "Variable",
+          "name": "targets",
+          "variableName": "targets"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "input"
+    }
+  ],
+  "concreteType": "MyAtomicBulkScopePermissionsPayload",
+  "kind": "LinkedField",
+  "name": "myAtomicBulkScopePermissions",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ScopeEntityPermission",
+      "kind": "LinkedField",
+      "name": "items",
+      "plural": true,
+      "selections": [
+        (v3/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "permissions",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v5 = [
   {
     "fields": [
       {
         "kind": "Variable",
         "name": "permission",
-        "variableName": "permissionFilter"
+        "variableName": "legacyPermissionFilter"
       }
     ],
     "kind": "ObjectValue",
@@ -109,28 +187,21 @@ v1 = [
     "value": 100
   }
 ],
-v2 = {
+v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = [
+v7 = [
   {
     "kind": "Literal",
     "name": "first",
     "value": 1
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "scopeId",
-  "storageKey": null
-},
-v5 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -139,81 +210,105 @@ v5 = {
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "useCurrentUserProjectRolesQuery",
     "selections": [
       {
-        "kind": "CatchField",
-        "field": {
-          "alias": "myRolesResult",
-          "args": (v1/*: any*/),
-          "concreteType": "RoleAssignmentConnection",
-          "kind": "LinkedField",
-          "name": "myRoles",
-          "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "RoleAssignmentEdge",
+        "condition": "supportsHeldPermissions",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "kind": "CatchField",
+            "field": (v4/*: any*/),
+            "to": "RESULT"
+          }
+        ]
+      },
+      {
+        "condition": "supportsHeldPermissions",
+        "kind": "Condition",
+        "passingValue": false,
+        "selections": [
+          {
+            "kind": "CatchField",
+            "field": {
+              "alias": "legacyRoles",
+              "args": (v5/*: any*/),
+              "concreteType": "RoleAssignmentConnection",
               "kind": "LinkedField",
-              "name": "edges",
-              "plural": true,
+              "name": "myRoles",
+              "plural": false,
               "selections": [
                 {
                   "alias": null,
                   "args": null,
-                  "concreteType": "RoleAssignment",
+                  "concreteType": "RoleAssignmentEdge",
                   "kind": "LinkedField",
-                  "name": "node",
-                  "plural": false,
+                  "name": "edges",
+                  "plural": true,
                   "selections": [
-                    (v2/*: any*/),
                     {
                       "alias": null,
                       "args": null,
-                      "concreteType": "Role",
+                      "concreteType": "RoleAssignment",
                       "kind": "LinkedField",
-                      "name": "role",
+                      "name": "node",
                       "plural": false,
                       "selections": [
-                        (v2/*: any*/),
+                        (v6/*: any*/),
                         {
                           "alias": null,
-                          "args": (v3/*: any*/),
-                          "concreteType": "EntityConnection",
+                          "args": null,
+                          "concreteType": "Role",
                           "kind": "LinkedField",
-                          "name": "scopes",
+                          "name": "role",
                           "plural": false,
                           "selections": [
+                            (v6/*: any*/),
                             {
                               "alias": null,
-                              "args": null,
-                              "concreteType": "EntityRefEdge",
+                              "args": (v7/*: any*/),
+                              "concreteType": "EntityConnection",
                               "kind": "LinkedField",
-                              "name": "edges",
-                              "plural": true,
+                              "name": "scopes",
+                              "plural": false,
                               "selections": [
                                 {
                                   "alias": null,
                                   "args": null,
-                                  "concreteType": "EntityRef",
+                                  "concreteType": "EntityRefEdge",
                                   "kind": "LinkedField",
-                                  "name": "node",
-                                  "plural": false,
+                                  "name": "edges",
+                                  "plural": true,
                                   "selections": [
-                                    (v4/*: any*/),
-                                    (v5/*: any*/)
+                                    {
+                                      "alias": null,
+                                      "args": null,
+                                      "concreteType": "EntityRef",
+                                      "kind": "LinkedField",
+                                      "name": "node",
+                                      "plural": false,
+                                      "selections": [
+                                        (v3/*: any*/),
+                                        (v8/*: any*/)
+                                      ],
+                                      "storageKey": null
+                                    }
                                   ],
                                   "storageKey": null
                                 }
                               ],
-                              "storageKey": null
+                              "storageKey": "scopes(first:1)"
                             }
                           ],
-                          "storageKey": "scopes(first:1)"
+                          "storageKey": null
                         }
                       ],
                       "storageKey": null
@@ -223,11 +318,10 @@ return {
                 }
               ],
               "storageKey": null
-            }
-          ],
-          "storageKey": null
-        },
-        "to": "RESULT"
+            },
+            "to": "RESULT"
+          }
+        ]
       }
     ],
     "type": "Query",
@@ -235,79 +329,99 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v2/*: any*/),
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Operation",
     "name": "useCurrentUserProjectRolesQuery",
     "selections": [
       {
-        "alias": "myRolesResult",
-        "args": (v1/*: any*/),
-        "concreteType": "RoleAssignmentConnection",
-        "kind": "LinkedField",
-        "name": "myRoles",
-        "plural": false,
+        "condition": "supportsHeldPermissions",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          (v4/*: any*/)
+        ]
+      },
+      {
+        "condition": "supportsHeldPermissions",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
           {
-            "alias": null,
-            "args": null,
-            "concreteType": "RoleAssignmentEdge",
+            "alias": "legacyRoles",
+            "args": (v5/*: any*/),
+            "concreteType": "RoleAssignmentConnection",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "myRoles",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "RoleAssignment",
+                "concreteType": "RoleAssignmentEdge",
                 "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
+                "name": "edges",
+                "plural": true,
                 "selections": [
-                  (v2/*: any*/),
                   {
                     "alias": null,
                     "args": null,
-                    "concreteType": "Role",
+                    "concreteType": "RoleAssignment",
                     "kind": "LinkedField",
-                    "name": "role",
+                    "name": "node",
                     "plural": false,
                     "selections": [
-                      (v2/*: any*/),
+                      (v6/*: any*/),
                       {
                         "alias": null,
-                        "args": (v3/*: any*/),
-                        "concreteType": "EntityConnection",
+                        "args": null,
+                        "concreteType": "Role",
                         "kind": "LinkedField",
-                        "name": "scopes",
+                        "name": "role",
                         "plural": false,
                         "selections": [
+                          (v6/*: any*/),
                           {
                             "alias": null,
-                            "args": null,
-                            "concreteType": "EntityRefEdge",
+                            "args": (v7/*: any*/),
+                            "concreteType": "EntityConnection",
                             "kind": "LinkedField",
-                            "name": "edges",
-                            "plural": true,
+                            "name": "scopes",
+                            "plural": false,
                             "selections": [
                               {
                                 "alias": null,
                                 "args": null,
-                                "concreteType": "EntityRef",
+                                "concreteType": "EntityRefEdge",
                                 "kind": "LinkedField",
-                                "name": "node",
-                                "plural": false,
+                                "name": "edges",
+                                "plural": true,
                                 "selections": [
-                                  (v4/*: any*/),
-                                  (v5/*: any*/),
-                                  (v2/*: any*/)
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "EntityRef",
+                                    "kind": "LinkedField",
+                                    "name": "node",
+                                    "plural": false,
+                                    "selections": [
+                                      (v3/*: any*/),
+                                      (v8/*: any*/),
+                                      (v6/*: any*/)
+                                    ],
+                                    "storageKey": null
+                                  }
                                 ],
                                 "storageKey": null
                               }
                             ],
-                            "storageKey": null
+                            "storageKey": "scopes(first:1)"
                           }
                         ],
-                        "storageKey": "scopes(first:1)"
+                        "storageKey": null
                       }
                     ],
                     "storageKey": null
@@ -318,22 +432,21 @@ return {
             ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "5eded640065127c5714bd52980e64c02",
+    "cacheID": "d201629aae89eaff579e6c436291b768",
     "id": null,
     "metadata": {},
     "name": "useCurrentUserProjectRolesQuery",
     "operationKind": "query",
-    "text": "query useCurrentUserProjectRolesQuery(\n  $permissionFilter: PermissionNestedFilter\n) {\n  myRolesResult: myRoles(first: 100, filter: {permission: $permissionFilter}) {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useCurrentUserProjectRolesQuery(\n  $targets: [PermissionTarget!]!\n  $legacyPermissionFilter: PermissionNestedFilter\n  $supportsHeldPermissions: Boolean!\n) {\n  heldPermissions: myAtomicBulkScopePermissions(input: {targets: $targets}) @include(if: $supportsHeldPermissions) @since(version: \"26.9.0\") {\n    items {\n      scopeId\n      permissions\n    }\n  }\n  legacyRoles: myRoles(first: 100, filter: {permission: $legacyPermissionFilter}) @skip(if: $supportsHeldPermissions) @deprecatedSince(version: \"26.9.0\") {\n    edges {\n      node {\n        id\n        role {\n          id\n          scopes(first: 1) {\n            edges {\n              node {\n                scopeId\n                scopeType\n                id\n              }\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ac9b1935fcf340c2333c3e50f9623092";
+(node as any).hash = "980bff276095d5b37f8dbf497e0ebccc";
 
 export default node;

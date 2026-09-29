@@ -1,5 +1,5 @@
 /**
- * `pnpm run review-pins parse [--json] [file|-]` — the overlay's codec, run
+ * `pnpm run review-pins parse [--json] [--include-stops] [file|-]` — the overlay's codec, run
  * from a terminal, so every reader of a `#bai=v3` link or 📍 block (the
  * Claude-side review skill included) shares this one implementation instead of
  * keeping a reimplementation in step by hand. See ADR-0002.
@@ -9,6 +9,7 @@
 import { LINK_LABEL } from './client/block.js';
 import { PIN_BODY_SRC, decodeAnchor } from './client/codec.js';
 import { pinId } from './client/id.js';
+import { isStop, stripVolatileQuery } from './client/stop-guard.js';
 import type { AnchorV3 } from './client/types.js';
 import { readFileSync, realpathSync } from 'node:fs';
 import process from 'node:process';
@@ -34,6 +35,8 @@ export interface CliPin {
 export interface ParseResult {
   apiVersion: string;
   pins: CliPin[];
+  /** Walkthrough stops the default filter left out. */
+  stopsHidden: number;
 }
 
 /**
@@ -329,7 +332,9 @@ async function linkRank(link: string): Promise<[tier: number, pins: number]> {
   if (!anchor) return [1, pins];
   const [path, query = ''] = beforeHash(link).split('?');
   const pathname = path.replace(/^[a-zA-Z][\w+.-]*:\/\/[^/]*/, '');
-  const same = pathname === anchor.p && query === (anchor.q ?? '');
+  const same =
+    pathname === anchor.p &&
+    stripVolatileQuery(query) === stripVolatileQuery(anchor.q ?? '');
   return [same ? 2 : 1, pins];
 }
 
@@ -361,18 +366,38 @@ async function mergePins(pins: CliPin[]): Promise<CliPin[]> {
   return [...merged.values()];
 }
 
+export interface ParseOptions {
+  /** Walkthrough stops are what a session left to check, not findings to fix. */
+  includeStops?: boolean;
+}
+
 /** Every pin `text` carries, from its links and its blocks, merged by id. */
-export async function parsePins(text: string): Promise<CliPin[]> {
+export async function parsePins(
+  text: string,
+  options: ParseOptions = {},
+): Promise<CliPin[]> {
+  return (await collectPins(text, options)).pins;
+}
+
+async function collectPins(
+  text: string,
+  options: ParseOptions,
+): Promise<{ pins: CliPin[]; stopsHidden: number }> {
   const blocks = new Map<string, ParsedBlock>();
   for (const block of parseBlocks(text)) {
     if (!blocks.has(block.id)) blocks.set(block.id, block);
   }
   const pins: CliPin[] = [];
+  const hidden = new Set<string>();
   for (const ref of findPinRefs(text)) {
     const block = blocks.get(ref.id) ?? null;
     const idVerified = verifyId(ref, block);
     if (idVerified === false) continue;
     const anchor = await decodeAnchor(ref.anchorB64);
+    if (anchor && isStop(anchor) && !options.includeStops) {
+      hidden.add(ref.id);
+      continue;
+    }
     pins.push({
       id: ref.id,
       anchor,
@@ -387,22 +412,27 @@ export async function parsePins(text: string): Promise<CliPin[]> {
       url: await betterLink(block?.link ?? '', ref.url),
     });
   }
-  return mergePins(pins);
+  return { pins: await mergePins(pins), stopsHidden: hidden.size };
 }
 
-export const parseResult = async (text: string): Promise<ParseResult> => ({
+export const parseResult = async (
+  text: string,
+  options: ParseOptions = {},
+): Promise<ParseResult> => ({
   apiVersion: API_VERSION,
-  pins: await parsePins(text),
+  ...(await collectPins(text, options)),
 });
 
 // --------------------------------------------------------------------------
 // command line
 // --------------------------------------------------------------------------
 
-const USAGE = `usage: review-pins parse [--json] [file|-]
+const USAGE = `usage: review-pins parse [--json] [--include-stops] [file|-]
 
   Read every 📍 \`#bai=v3\` pin out of a prompt, a PR comment or a chat paste.
-  Reads stdin when no file is given, or when the file is \`-\`.`;
+  Reads stdin when no file is given, or when the file is \`-\`.
+  Walkthrough stops (a session's what-to-check pins) are left out unless
+  \`--include-stops\` is given.`;
 
 const record = (pin: CliPin): string => {
   const rows: Array<[string, string]> = [
@@ -441,8 +471,9 @@ export const renderText = (result: ParseResult): string =>
   result.pins.length ? result.pins.map(record).join('\n\n') : 'no pins found';
 
 export async function main(argv: string[]): Promise<number> {
-  const args = argv.filter((a) => a !== '--json');
+  const args = argv.filter((a) => a !== '--json' && a !== '--include-stops');
   const json = argv.includes('--json');
+  const includeStops = argv.includes('--include-stops');
   if (args.length === 0) {
     process.stderr.write(`${USAGE}\n`);
     return 2;
@@ -473,7 +504,11 @@ export async function main(argv: string[]): Promise<number> {
     );
     return 2;
   }
-  const result = await parseResult(text);
+  const result = await parseResult(text, { includeStops });
+  if (!result.pins.length && result.stopsHidden)
+    process.stderr.write(
+      `${result.stopsHidden} walkthrough stop(s) hidden; pass --include-stops to see them\n`,
+    );
   process.stdout.write(
     json ? `${JSON.stringify(result, null, 2)}\n` : `${renderText(result)}\n`,
   );

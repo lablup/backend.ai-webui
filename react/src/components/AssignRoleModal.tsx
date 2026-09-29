@@ -200,7 +200,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       // After a partial failure some assignments did reach the backend, so
       // even a cancel must report success=true — the parent then refetches.
       onCancel={() => onRequestClose(hasAssignedAny)}
-      destroyOnHidden
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">

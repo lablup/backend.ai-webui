@@ -116,7 +116,7 @@ const meta: Meta<typeof BAICard> = {
 | Subcategory | `Components/[Category]/[Name]` | `Components/Input/DynamicUnitInputNumber` |
 | Sub-component | `Components/[Parent]/[Name]` | `Components/BAITable/BAITableSettingModal` |
 | Layout | `Layout/[Name]` | `Layout/BAIFlex` |
-| Relay Fragment | `Fragments/[Name]` | `Fragments/BAISessionTypeTag` |
+| Relay Fragment | `Fragments/[Name]` | `Fragments/BAISessionTypeToken` |
 
 ### Layout Options
 
@@ -283,15 +283,15 @@ Use for components that consume GraphQL fragments:
 ```typescript
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import RelayResolver from '../../tests/RelayResolver';
-import type { BAISessionTypeTagStoriesQuery } from './__generated__/BAISessionTypeTagStoriesQuery.graphql';
+import type { BAISessionTypeTokenStoriesQuery } from './__generated__/BAISessionTypeTokenStoriesQuery.graphql';
 
 // Query resolver component
 const QueryResolver = () => {
-  const { compute_session_node } = useLazyLoadQuery<BAISessionTypeTagStoriesQuery>(
+  const { compute_session_node } = useLazyLoadQuery<BAISessionTypeTokenStoriesQuery>(
     graphql`
-      query BAISessionTypeTagStoriesQuery {
+      query BAISessionTypeTokenStoriesQuery {
         compute_session_node(id: "test-id") {
-          ...BAISessionTypeTagFragment
+          ...BAISessionTypeTokenFragment
         }
       }
     `,
@@ -300,7 +300,7 @@ const QueryResolver = () => {
 
   return (
     compute_session_node && (
-      <BAISessionTypeTag sessionFrgmt={compute_session_node} />
+      <BAISessionTypeToken sessionFrgmt={compute_session_node} />
     )
   );
 };

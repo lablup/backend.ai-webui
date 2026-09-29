@@ -45,19 +45,23 @@ const renderRow = (props: Partial<ImageNodeSimpleTagProps> = {}) =>
   );
 
 describe('ImageNodeSimpleTag', () => {
-  it('draws the three parts, a double tag and a single badge', () => {
+  it('draws the three parts, a double token and a single token', () => {
     const { container } = renderRow();
+
+    // Image tags are settled values, so every chip is a Token (ADR 0007).
+    expect(container.querySelectorAll('.astryx-token')).toHaveLength(3);
+    expect(container.querySelector('.astryx-badge')).not.toBeInTheDocument();
 
     expect(screen.getByText('3.9')).toBeInTheDocument();
     expect(screen.getByText('x86_64')).toBeInTheDocument();
-    // `Python` is both the base name and the double tag's key alias.
+    // `Python` is both the base name and the double token's key alias.
     expect(screen.getAllByText('Python')).toHaveLength(2);
     expect(screen.getByText('9')).toBeInTheDocument();
     expect(screen.getByText('Ubuntu 20.04')).toBeInTheDocument();
     expect(container.querySelector('.bai-text-copy')).toBeInTheDocument();
   });
 
-  it('drops the chips with withoutTag', () => {
+  it('drops the tokens with withoutTag', () => {
     renderRow({ withoutTag: true });
 
     expect(screen.getAllByText('Python')).toHaveLength(1);

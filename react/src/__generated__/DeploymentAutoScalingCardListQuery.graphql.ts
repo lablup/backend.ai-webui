@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c3c65e653e35f168ed3ced3cc5cffb7b>>
+ * @generated SignedSource<<dc971586936628f58fc248e3e895d8f7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,8 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type AutoScalingRuleOrderField = "CREATED_AT" | "%future added value";
+export type AutoScalingMetricSource = "INFERENCE_FRAMEWORK" | "KERNEL" | "PROMETHEUS" | "%future added value";
+export type AutoScalingRuleOrderField = "CREATED_AT" | "FIELD_ID" | "LAST_TRIGGERED_AT" | "MAX_REPLICAS" | "MAX_THRESHOLD" | "METRIC_NAME" | "METRIC_SOURCE" | "MIN_REPLICAS" | "MIN_THRESHOLD" | "PROMETHEUS_QUERY_PRESET_ID" | "STEP_SIZE" | "TIME_WINDOW" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type AutoScalingRuleOrderBy = {
   direction?: OrderDirection;
@@ -21,7 +22,17 @@ export type AutoScalingRuleFilter = {
   NOT?: ReadonlyArray<AutoScalingRuleFilter> | null | undefined;
   OR?: ReadonlyArray<AutoScalingRuleFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   lastTriggeredAt?: NullableDateTimeFilter | null | undefined;
+  maxReplicas?: IntFilter | null | undefined;
+  maxThreshold?: DecimalFilter | null | undefined;
+  metricName?: StringFilter | null | undefined;
+  metricSource?: AutoScalingMetricSourceFilter | null | undefined;
+  minReplicas?: IntFilter | null | undefined;
+  minThreshold?: DecimalFilter | null | undefined;
+  prometheusQueryPresetId?: UUIDFilter | null | undefined;
+  stepSize?: IntFilter | null | undefined;
+  timeWindow?: IntFilter | null | undefined;
 };
 export type DateTimeFilter = {
   after?: string | null | undefined;
@@ -35,6 +46,56 @@ export type NullableDateTimeFilter = {
   equals?: string | null | undefined;
   isNull?: boolean | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+};
+export type AutoScalingMetricSourceFilter = {
+  equals?: AutoScalingMetricSource | null | undefined;
+  in?: ReadonlyArray<AutoScalingMetricSource> | null | undefined;
+  notEquals?: AutoScalingMetricSource | null | undefined;
+  notIn?: ReadonlyArray<AutoScalingMetricSource> | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type DecimalFilter = {
+  equals?: any | null | undefined;
+  greaterThan?: any | null | undefined;
+  greaterThanOrEqual?: any | null | undefined;
+  lessThan?: any | null | undefined;
+  lessThanOrEqual?: any | null | undefined;
+  notEquals?: any | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
 };
 export type DeploymentAutoScalingCardListQuery$variables = {
   deploymentId: string;

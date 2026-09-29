@@ -4,6 +4,7 @@
  */
 import { SFTPServerButtonFragment$key } from '../__generated__/SFTPServerButtonFragment.graphql';
 import { App } from '../app-shim';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -82,6 +83,7 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
       fragment SFTPServerButtonFragment on VirtualFolderNode {
         id
         host
+        name
       }
     `,
     vfolderFrgmt,
@@ -93,10 +95,10 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
     vhostInfoByCurrentProject?.volume_info[vfolder?.host || '']
       ?.sftp_scaling_groups;
   // Verify that the current project has access to the volumes in the folder.
-  // Check the user has 'mount-in-session' permission united by domain, project, and keypair resource policy.
+  // Check the user has the mount-in-session permission united by domain, project, and keypair resource policy.
   const hasAccessPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolder?.host ?? ''],
-    'mount-in-session',
+    MOUNT_IN_SESSION_PERMISSION,
   );
 
   const getTooltipTitle = () => {
@@ -129,7 +131,12 @@ const SFTPServerButton: React.FC<SFTPServerButtonProps> = ({
         }),
     cluster_mode: 'single-node',
     cluster_size: 1,
-    mount_ids: [toLocalId(vfolder?.id || '').replaceAll('-', '')],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolder?.id || ''),
+        name: vfolder?.name ?? undefined,
+      },
+    ],
     resourceGroup: sftpScalingGroupByCurrentProject?.[0],
     reuseIfExists: true,
   });

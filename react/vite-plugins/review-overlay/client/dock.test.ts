@@ -90,8 +90,14 @@ beforeEach(() => {
   const host = document.createElement('div');
   document.body.append(host);
   root = host.attachShadow({ mode: 'open' });
-  dock = createSetDock({
+  dock = makeDock();
+});
+
+/** `pageChords` is the host's answer, so a second host's dock is one call away. */
+const makeDock = (pageChords = true) =>
+  createSetDock({
     root,
+    pageChords,
     onCopyAll: () => copied++,
     onClear: () => cleared++,
     onLocate: (id) => located.push(id),
@@ -102,7 +108,6 @@ beforeEach(() => {
     onToggleCards: () => toggled++,
     onGo: (id) => went.push(id),
   });
-});
 
 afterEach(() => {
   dock.dispose();
@@ -531,6 +536,24 @@ describe('createSetDock', () => {
       );
       expect(head.indexOf('chord')).toBe(head.indexOf('act cards') + 1);
     });
+
+    // ADR 0008: `boot.ts` binds ⌘⇧H only where the host owns the page, so a
+    // dock that named it anyway would be advertising a dead key.
+    it('names no chord for a host that bound none', () => {
+      dock.dispose();
+      dock = makeDock(false);
+
+      dock.render([pin('c_a', 'a')]);
+
+      expect(node('.chord')).toBeNull();
+      expect(node('.cards').getAttribute('aria-label')).toBe('Hide every card');
+      expect(node('.cards').title).toBe('Hide every card');
+
+      dock.render([pin('c_a', 'a')], new Map(), true);
+
+      expect(node('.cards').getAttribute('aria-label')).toBe('Show every card');
+      expect(node('.setdock').textContent).not.toContain(CARDS_CHORD);
+    });
   });
 
   // The copy runs inside this click — `execCommand` is the only clipboard on
@@ -710,17 +733,7 @@ describe('createSetDock', () => {
         JSON.stringify({ left: 900, top: 700 }),
       );
       viewport(600, 400);
-      dock = createSetDock({
-        root,
-        onCopyAll: () => copied++,
-        onClear: () => cleared++,
-        onLocate: (id) => located.push(id),
-        onRemove: (id) => removed.push(id),
-        onMove: (id, delta) => moved.push([id, delta]),
-        onEdit: (id) => edited.push(id),
-        onUnhide: (id) => unhidden.push(id),
-        onToggleCards: () => toggled++,
-      });
+      dock = makeDock();
 
       expect(node('.setdock').style.left).toBe('332px');
       expect(node('.setdock').style.top).toBe('232px');
@@ -739,17 +752,7 @@ describe('createSetDock', () => {
           JSON.stringify({ left: 900, top: 740 }),
         );
         viewport(1280, 480);
-        dock = createSetDock({
-          root,
-          onCopyAll: () => copied++,
-          onClear: () => cleared++,
-          onLocate: (id) => located.push(id),
-          onRemove: (id) => removed.push(id),
-          onMove: (id, delta) => moved.push([id, delta]),
-          onEdit: (id) => edited.push(id),
-          onUnhide: (id) => unhidden.push(id),
-          onToggleCards: () => toggled++,
-        });
+        dock = makeDock();
         dock.render([pin('c_a', 'a')]);
 
         // 480 - 300 - 8: the whole dock, not the eight pixels of its top
@@ -1075,6 +1078,22 @@ describe('createSetDock', () => {
       expect(away.classList.contains('away')).toBe(true);
       expect(away.querySelector('.where')?.textContent).toBe('Start');
       expect(away.querySelector('.go')).not.toBeNull();
+    });
+
+    /**
+     * `where` plus a fifth button next to a `flex: none` label left the note
+     * ~7px of the 260px dock. Nothing here can measure it — jsdom lays out
+     * nothing — so the rule itself is what the test holds on to.
+     */
+    it('drops `where` onto its own line instead of squeezing the note', () => {
+      const style = root.querySelector('style')?.textContent ?? '';
+
+      expect(style).toContain('.setdock .row.away { flex-wrap: wrap; }');
+      expect(style).toMatch(
+        /\.setdock \.row\.away \.where \{[^}]*flex: 1 0 100%/,
+      );
+      // Every other row keeps the single-line layout it has today.
+      expect(style).toMatch(/\.setdock \.where \{[^}]*flex: none/);
     });
 
     it('leaves the rows on this page scrolling to their own pin', () => {

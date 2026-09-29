@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d29ca38280592fe6c71f46de7cb712ef>>
+ * @generated SignedSource<<77f3254cbdbbc8209dfe9bb0d6381001>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 export type UpdateUserV2Input = {
@@ -61,6 +62,7 @@ export type UserSettingModalUpdateMutation$data = {
           readonly node: {
             readonly basicInfo: {
               readonly name: string;
+              readonly type: ProjectTypeV2;
             };
             readonly id: string;
           };
@@ -368,6 +370,13 @@ v4 = [
                             "kind": "ScalarField",
                             "name": "name",
                             "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "type",
+                            "storageKey": null
                           }
                         ],
                         "storageKey": null
@@ -439,16 +448,16 @@ return {
     "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "2aa05129af0dc82be17e61984a811903",
+    "cacheID": "9a61cba94ec3e26ebb6c12cfcf6ef361",
     "id": null,
     "metadata": {},
     "name": "UserSettingModalUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n            }\n          }\n        }\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
+    "text": "mutation UserSettingModalUpdateMutation(\n  $userId: UUID!\n  $input: UpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminUpdateUserV2(userId: $userId, input: $input) {\n    user {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0fbee48353f4af852e5e87ff28295e0d";
+(node as any).hash = "4745a71054dfb21be64ae8202fc3597b";
 
 export default node;

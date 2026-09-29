@@ -32,7 +32,7 @@ import { Heading } from '@astryxdesign/core/Heading';
 import {
   BAIButton,
   BAIDeploymentStatus,
-  BAIDeploymentStatusTag,
+  BAIDeploymentStatusBadge,
   BAIFlex,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
@@ -448,7 +448,7 @@ const DeploymentDetailPage: React.FC = () => {
         {/* `style={{ margin: 0 }}` dropped — it only reset antd's built-in
             Title margin; Astryx Heading has none. */}
         <Heading level={3}>{deploymentName}</Heading>
-        <BAIDeploymentStatusTag status={deploymentStatus} />
+        <BAIDeploymentStatusBadge status={deploymentStatus} />
       </BAIFlex>
       <DeploymentBasicInfoCard
         deploymentFrgmt={deployment}
