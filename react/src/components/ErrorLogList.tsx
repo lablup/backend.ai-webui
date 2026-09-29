@@ -4,13 +4,13 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import TextHighlighter from './TextHighlighter';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIFlex,
   BAIModal,
@@ -41,7 +41,7 @@ const ErrorLogList: React.FC<{
   onChangeSearch?: (value: string) => void;
 }> = () => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isOpenClearLogsModal, setIsOpenClearLogsModal] = useState(false);
   const [checkedShowOnlyError, setCheckedShowOnlyError] = useState(false);
   const [logSearch, setLogSearch] = useState('');
@@ -282,7 +282,7 @@ const ErrorLogList: React.FC<{
         }}
         onRow={(record) => {
           return {
-            style: { color: record.isError ? token.colorError : '' },
+            style: { color: record.isError ? token('--color-error') : '' },
           };
         }}
       />

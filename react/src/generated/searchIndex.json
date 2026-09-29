@@ -430,14 +430,6 @@
           "descriptionKeys": [
             "userSettings.theme.SuccessColorDesc"
           ]
-        },
-        {
-          "key": "userSettings.theme.TextColor",
-          "groupKey": "userSettings.Theme",
-          "groupId": "group-theme-customization",
-          "descriptionKeys": [
-            "userSettings.theme.TextColorDesc"
-          ]
         }
       ],
       "keys": [
@@ -466,6 +458,7 @@
         "userSettings.logo.CreateURLWithImage",
         "userSettings.logo.DetailLogoCustomizationDesc",
         "userSettings.logo.FailedToReadFile",
+        "userSettings.logo.FallbackFollowsItem",
         "userSettings.logo.ImagePath",
         "userSettings.logo.LogoCustomizationDesc",
         "userSettings.logo.UploadFileSizeExceed",
@@ -1866,7 +1859,18 @@
       "scope": "admin",
       "path": "/admin/rbac",
       "labelKey": "webui.menu.RBACManagement",
-      "tabs": [],
+      "tabs": [
+        {
+          "param": "tab",
+          "key": "presets",
+          "labelKey": "rbac.Presets"
+        },
+        {
+          "param": "tab",
+          "key": "roles",
+          "labelKey": "rbac.Roles"
+        }
+      ],
       "settings": [],
       "keys": [
         "button.Add",
@@ -1898,6 +1902,7 @@
         "rbac.Custom",
         "rbac.Deactivate",
         "rbac.DeactivateRole",
+        "rbac.Deleted",
         "rbac.DuplicatePermission",
         "rbac.DuplicateRoleName",
         "rbac.EditPermission",
@@ -1905,6 +1910,7 @@
         "rbac.EditScopePermissions",
         "rbac.EntityType",
         "rbac.ErrorMessage",
+        "rbac.FilterByPermissionType",
         "rbac.FullyAllowed",
         "rbac.GrantedAt",
         "rbac.Inactive",
@@ -1918,6 +1924,7 @@
         "rbac.Permission",
         "rbac.PermissionCreated",
         "rbac.PermissionNotAssignable",
+        "rbac.PermissionNotEditable",
         "rbac.PermissionRemoved",
         "rbac.PermissionType",
         "rbac.PermissionUpdated",
@@ -1926,6 +1933,8 @@
         "rbac.PermissionsPartialFailureDescription",
         "rbac.PermissionsSaved",
         "rbac.PleaseSelectUsers",
+        "rbac.PresetName",
+        "rbac.PresetPermissionSyncWarning",
         "rbac.PurgeRole",
         "rbac.RemovePermission",
         "rbac.RevokeUser",
@@ -1936,6 +1945,7 @@
         "rbac.RoleDescription",
         "rbac.RoleDetailInfo",
         "rbac.RoleName",
+        "rbac.RolePresetDetailInfo",
         "rbac.RolePurged",
         "rbac.RoleScopes",
         "rbac.RoleUpdated",
@@ -1948,9 +1958,12 @@
         "rbac.Status",
         "rbac.System",
         "rbac.SystemRoleNoAssignments",
+        "rbac.SystemRolePermissionReadOnly",
+        "rbac.UnsavedPermissionChanges",
         "rbac.UserAssignmentsPartialFailureDescription",
         "rbac.UserRevoked",
         "rbac.UsersAssigned",
+        "rbac.ViewPresets",
         "rbac.operationGroups.Delegate",
         "rbac.operationGroups.Direct",
         "table.SettingTable"
@@ -5293,16 +5306,6 @@
           ]
         },
         {
-          "key": "userSettings.ThemeAccentColor",
-          "tab": "general",
-          "groupKey": "userSettings.Preferences",
-          "groupId": "group-preferences",
-          "testId": "items-theme-accent",
-          "descriptionKeys": [
-            "userSettings.DescThemeAccentColor"
-          ]
-        },
-        {
           "key": "userSettings.ThemeFamily",
           "tab": "general",
           "groupKey": "userSettings.Preferences",
@@ -5438,7 +5441,6 @@
         "userSettings.BootstrapScriptUpdated",
         "userSettings.ClearSSHKeypairInput",
         "userSettings.CurrentSSHPublicKey",
-        "userSettings.DarkMode",
         "userSettings.DarkTheme",
         "userSettings.Default",
         "userSettings.DescAutomaticUpdateCheck",
@@ -5450,7 +5452,6 @@
         "userSettings.DescUseCompactSidebar",
         "userSettings.ExperimentalFeaturesDesc",
         "userSettings.FollowSystem",
-        "userSettings.LightMode",
         "userSettings.LightTheme",
         "userSettings.NoExistingSSHKeypair",
         "userSettings.PrivateKey",

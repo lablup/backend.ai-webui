@@ -14,7 +14,6 @@ import {
 import { Form, FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelectForAdminPage from './ProjectSelectForAdminPage';
@@ -29,6 +28,7 @@ import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIIconWithTooltip,
   BAIModal,
@@ -117,7 +117,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
 
@@ -370,7 +370,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       }}
     >
       {alertMessage ? (
-        <div style={{ marginBottom: token.marginMD }}>
+        <div style={{ marginBottom: token('--spacing-5') }}>
           <Banner status="warning" title={alertMessage} container="section" />
         </div>
       ) : null}
@@ -378,9 +378,9 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
       <VStack
         align="stretch"
         style={{
-          paddingLeft: token.paddingMD,
-          paddingRight: token.paddingMD,
-          paddingTop: alertMessage ? 0 : token.paddingMD,
+          paddingLeft: token('--spacing-5'),
+          paddingRight: token('--spacing-5'),
+          paddingTop: alertMessage ? 0 : token('--spacing-5'),
         }}
       >
         <Form
@@ -426,7 +426,7 @@ const FolderCreateModalV2: React.FC<FolderCreateModalProps> = ({
                 </Suspense>
               </BAIFormItem>
               {/* Match the 24px bottom margin form items carry (FR-3441). */}
-              <Divider style={{ marginBottom: token.marginLG }} />
+              <Divider style={{ marginBottom: token('--spacing-6') }} />
             </>
           )}
           <BAIFormItem

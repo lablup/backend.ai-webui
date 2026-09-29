@@ -1,8 +1,8 @@
 import BAIFlex from '../components/BAIFlex';
 import BAIText from '../components/BAIText';
-import { theme } from '../theme-shim';
 import * as Icons from './index';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { useTheme } from '@astryxdesign/core/theme';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 
@@ -18,7 +18,7 @@ const IconWrapper: React.FC<{
   icon: React.ReactNode;
   name: string;
 }> = ({ icon, name }) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -33,10 +33,10 @@ const IconWrapper: React.FC<{
         width: 140,
         height: 100,
         padding: 12,
-        borderRadius: token.borderRadius,
+        borderRadius: token('--radius-inner'),
         backgroundColor: isHovered
-          ? token.colorBgTextHover
-          : token.colorBgContainer,
+          ? token('--color-overlay-hover')
+          : token('--color-background-surface'),
         cursor: 'pointer',
         transition: 'background-color 0.2s',
       }}
@@ -47,7 +47,7 @@ const IconWrapper: React.FC<{
           fontSize: 11,
           textAlign: 'center',
           wordBreak: 'break-word',
-          color: token.colorTextSecondary,
+          color: token('--color-text-secondary'),
         }}
       >
         {name.replace('BAI', '').replace('Icon', '')}
@@ -58,7 +58,7 @@ const IconWrapper: React.FC<{
 
 const IconsOverview: React.FC = () => {
   const [filter, setFilter] = useState('');
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const filteredIcons = icons.filter((icon) =>
     icon.name.toLowerCase().includes(filter.toLowerCase()),
@@ -83,7 +83,7 @@ const IconsOverview: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           flexWrap: 'wrap',
-          gap: token.marginXS,
+          gap: token('--spacing-2'),
         }}
       >
         {filteredIcons.map((icon) => (

@@ -10,7 +10,6 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import './FolderCreateModal.css';
 import StorageSelect from './StorageSelect';
 import {
@@ -92,7 +91,6 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
 
@@ -207,7 +205,7 @@ const FolderCreateModal: React.FC<FolderCreateModalProps> = ({
           >
             {t('button.Reset')}
           </BAIButton>
-          <BAIFlex gap={token.marginSM}>
+          <BAIFlex gap="sm">
             <BAIButton
               onClick={() => {
                 onRequestClose();

@@ -7,7 +7,6 @@ import { downloadBlob } from '../../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import { useMemoWithPrevious } from '../../hooks/useMemoWithPrevious';
-import { useBAIBreakpoint } from '../../theme-shim';
 import AutoUpdateFetchKeyButton from '../AutoUpdateFetchKeyButton';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Heading } from '@astryxdesign/core/Heading';
@@ -20,6 +19,7 @@ import {
   BAIModal,
   BAIModalProps,
   BAISelect,
+  useBAIBreakpoint,
   useErrorMessageResolver,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

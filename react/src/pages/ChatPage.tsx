@@ -18,7 +18,6 @@ import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import './ChatPage.css';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Card } from '@astryxdesign/core/Card';
@@ -29,6 +28,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading, Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -148,7 +148,7 @@ const ChatHistoryPanel = ({
 }: ChatHistoryPanelProps) => {
   'use memo';
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -226,7 +226,7 @@ const ChatHistoryPanel = ({
                   </HStack>
                   <Text
                     color="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
+                    style={{ fontSize: token('--font-size-sm') }}
                   >
                     {dayjs(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
                   </Text>
@@ -236,11 +236,11 @@ const ChatHistoryPanel = ({
             {
               key: 'actions',
               align: 'right',
-              width: token.sizeXXL,
+              width: token('--spacing-12'),
               render: (_, record) => (
                 <IconButton
                   variant="ghost"
-                  icon={<TrashIcon size={token.size} />}
+                  icon={<TrashIcon size={token('--spacing-4')} />}
                   label={t('chatui.DeleteChattingSession')}
                   onClick={(e) => {
                     e.stopPropagation();
