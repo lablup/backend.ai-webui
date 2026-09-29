@@ -8,7 +8,9 @@ import type {
 } from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
 import {
   BAIColumnType,
+  BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAISessionClusterMode,
   BAITable,
   BAITableProps,
@@ -74,6 +76,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         id @required(action: NONE)
         name @required(action: NONE)
         description
+        rank
         runtimeVariantId
         runtimeVariant {
           id
@@ -150,6 +153,21 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         key: 'runtime',
         title: t('adminDeploymentPreset.Runtime'),
         render: (__, record) => record.runtimeVariant?.name ?? '-',
+      },
+      {
+        key: 'rank',
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('adminDeploymentPreset.Rank')}
+            <BAIQuestionIconWithTooltip
+              title={t('adminDeploymentPreset.RankTooltip')}
+            />
+          </BAIFlex>
+        ),
+        dataIndex: 'rank',
+        sorter: isEnableSorter('rank'),
+        render: (rank: number | null | undefined) =>
+          _.isNumber(rank) ? rank : '-',
       },
       {
         key: 'image',
