@@ -1,72 +1,24 @@
-import type { AstryxTokenColor } from '../helper/astryxTagVariant';
-import './BAIDoubleToken.css';
-import BAIText from './BAIText';
-import BAITextHighlighter from './BAITextHighlighter';
-import { HStack } from '@lablup/ui-common/Stack';
-import { Token } from '@lablup/ui-common/Token';
-import * as _ from 'lodash-es';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ ui-common `DoubleToken` under its BUI name (FR-4096): a welded run of Tokens
+ for a settled pair; the live counterpart is `BAIDoubleBadge`.
+*/
+import './BAITextHighlighter.css';
+import {
+  DoubleToken,
+  type DoubleTokenProps,
+  type DoubleTokenValue,
+} from '@lablup/ui-common/components/DoubleToken';
 import React from 'react';
 
-// A welded run of Tokens for a settled key/value pair; the live counterpart is
-// `BAIDoubleBadge`. The weld is CSS in BAIDoubleToken.css.
-export type BAIDoubleTokenValue = {
-  label: string;
-  color?: AstryxTokenColor;
-  /** Appends the shared copy control (`BAIText copyable`) to this segment. */
-  copyable?: boolean;
-};
+export type BAIDoubleTokenValue = DoubleTokenValue;
 
-export interface BAIDoubleTokenProps {
-  values?: Array<string> | Array<BAIDoubleTokenValue>;
-  highlightKeyword?: string;
-}
+export type BAIDoubleTokenProps = DoubleTokenProps;
 
-const BAIDoubleToken: React.FC<BAIDoubleTokenProps> = ({
-  values = [],
-  highlightKeyword,
-}) => {
-  'use memo';
-  if (values.length === 0) return null;
-  const objectValues: Array<BAIDoubleTokenValue> = _.map(
-    values,
-    (value: string | BAIDoubleTokenValue): BAIDoubleTokenValue =>
-      typeof value === 'string' ? { label: value, color: 'blue' } : value,
-  );
-  const hasHighlight = !_.isUndefined(highlightKeyword);
-
-  return (
-    <HStack gap={0} align="center" className="bai-double">
-      {_.map(objectValues, (objValue, idx) => {
-        if (_.isEmpty(objValue.label)) return null;
-        // Token.label is string-only: a highlight or a copy control renders
-        // through a hidden label + endContent, which keeps the plain string
-        // as the accessible name.
-        const visibleLabel = hasHighlight ? (
-          <BAITextHighlighter keyword={highlightKeyword}>
-            {objValue.label}
-          </BAITextHighlighter>
-        ) : (
-          objValue.label
-        );
-        const endContent = objValue.copyable ? (
-          <BAIText copyable={{ text: objValue.label }} inheritColor>
-            {visibleLabel}
-          </BAIText>
-        ) : hasHighlight ? (
-          visibleLabel
-        ) : undefined;
-        return (
-          <Token
-            key={idx}
-            color={objValue.color ?? 'blue'}
-            label={objValue.label}
-            isLabelHidden={!_.isUndefined(endContent)}
-            endContent={endContent}
-          />
-        );
-      })}
-    </HStack>
-  );
-};
+const BAIDoubleToken: React.FC<BAIDoubleTokenProps> = (props) => (
+  <DoubleToken {...props} />
+);
 
 export default BAIDoubleToken;

@@ -1,0 +1,12 @@
+/*
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ The WebUI's frame corner for BAIProgressWithLabel; ui-common's default is
+ the theme's --radius-inner.
+*/
+@layer components {
+  .bai-progress-with-label {
+    --uic-progress-with-label-radius: 3px;
+  }
+}

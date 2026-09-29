@@ -25,12 +25,19 @@ describe('BAIListAlert', () => {
   it('should apply the default maxHeight with vertical scroll', () => {
     render(<BAIListAlert items={[{ content: 'item' }]} />);
     const list = screen.getByRole('list');
-    expect(list).toHaveStyle({ maxHeight: '165px', overflowY: 'auto' });
+    expect(list).toHaveClass('uic-list-banner__list');
+    expect(list.style.getPropertyValue('--uic-list-banner-max-height')).toBe(
+      '165px',
+    );
   });
 
   it('should apply a custom maxHeight', () => {
     render(<BAIListAlert maxHeight={80} items={[{ content: 'item' }]} />);
-    expect(screen.getByRole('list')).toHaveStyle({ maxHeight: '80px' });
+    expect(
+      screen
+        .getByRole('list')
+        .style.getPropertyValue('--uic-list-banner-max-height'),
+    ).toBe('80px');
   });
 
   it('should render items without explicit keys (index fallback)', () => {

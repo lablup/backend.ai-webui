@@ -1,62 +1,38 @@
-import BAIAlert, { BAIAlertProps } from './BAIAlert';
-import './BAIListAlert.css';
-import { useTheme } from '@lablup/ui-common/theme';
-import * as _ from 'lodash-es';
-import React, { ReactNode } from 'react';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
-export interface BAIListAlertItem {
-  key?: React.Key | null;
-  content: ReactNode;
-}
+ ui-common `ListBanner` under its BUI name (FR-4096), with BAIAlert's
+ antd-shaped props mapped the way BAIAlert maps them (`toBannerProps`).
+*/
+import { toBannerProps, type BAIAlertProps } from './BAIAlert';
+import {
+  ListBanner,
+  type ListBannerItem,
+} from '@lablup/ui-common/components/ListBanner';
+import React from 'react';
+
+export type BAIListAlertItem = ListBannerItem;
 
 export interface BAIListAlertProps extends Omit<BAIAlertProps, 'description'> {
   items: Array<BAIListAlertItem>;
-  maxHeight?: React.CSSProperties['maxHeight'];
+  /** Height at which the list scrolls. Defaults to 165 (about seven rows). */
+  maxHeight?: number | string;
 }
 
 /**
- * Alert that summarizes a list of items (e.g. selected resources in a modal)
- * as a standardized `ul` inside the alert description. The list scrolls
- * vertically once it exceeds `maxHeight`, so the surrounding modal never
- * grows unbounded. Item count indication belongs in the consumer-provided
- * `title` prop (i18n `count` interpolation).
+ * An alert that lists items (e.g. the resources a modal acts on) and scrolls
+ * the list past `maxHeight`. Say how many items there are in `title`.
  */
 const BAIListAlert: React.FC<BAIListAlertProps> = ({
   items,
-  // ~7 rows of list content; inherited from the pre-extraction
-  // UpdateUsersModal style that this component standardizes.
-  maxHeight = 165,
+  maxHeight,
   ...alertProps
 }) => {
   'use memo';
-  const { token } = useTheme();
-  return (
-    <BAIAlert
-      {...alertProps}
-      description={
-        _.isEmpty(items) ? undefined : (
-          <ul
-            // make the scrollable region reachable by keyboard
-            tabIndex={0}
-            className="bai-list-alert-scroll"
-            style={{
-              margin: 0,
-              padding: 0,
-              paddingTop: token('--spacing-1'),
-              listStyle: 'circle',
-              listStylePosition: 'inside',
-              maxHeight,
-              overflowY: 'auto',
-            }}
-          >
-            {_.map(items, (item, index) => (
-              <li key={item.key ?? `__index-${index}`}>{item.content}</li>
-            ))}
-          </ul>
-        )
-      }
-    />
-  );
+  const { description: _description, ...bannerProps } =
+    toBannerProps(alertProps);
+  return <ListBanner {...bannerProps} items={items} maxHeight={maxHeight} />;
 };
 
 export default BAIListAlert;

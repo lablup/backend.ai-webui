@@ -1,37 +1,41 @@
-/*
- to-astryx W2-D: antd `Typography.Text` -> Astryx `Text`, and the antd
- `ProgressProps` type import is replaced by the single key call sites use.
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- `color: token('--color-text-disabled')` becomes `color="disabled"` — a real member of
- Astryx's closed `TextColor` enum, so it follows the theme instead of a
- resolved hex. The remaining `token.*` reads are the theme-shim's job
- (final-switch material) and stay.
+ ui-common `ProgressWithLabel` under its BUI name (FR-4096): `title` →
+ `label`, `percent` → `value`, `showInfo` → `hasValueLabel`, `strokeColor` →
+ `color`, `progressStyle` → `style`, antd sizes → sm / md / lg.
+ BAIProgressWithLabel.css keeps the WebUI's 3px frame corner.
 */
-import BAIFlex from './BAIFlex';
-import { Text } from '@lablup/ui-common/Text';
-import { useTheme } from '@lablup/ui-common/theme';
-import * as _ from 'lodash-es';
+import './BAIProgressWithLabel.css';
+import {
+  ProgressWithLabel,
+  type ProgressWithLabelProps,
+} from '@lablup/ui-common/components/ProgressWithLabel';
 import React from 'react';
 
-export interface BAIProgressWithLabelProps {
-  /**
-   * antd's `showInfo` — the only `ProgressProps` key any call site passes
-   * (measured across 44 sites in 7 files). The rest of antd's `ProgressProps`
-   * described a control this component never rendered: it draws its own fill
-   * bar, so `type`, `steps`, `strokeLinecap`, `trailColor`, `format` and
-   * friends were all inert. Restating just this key is what drops the module
-   * out of the antd import graph (P15).
-   */
+export interface BAIProgressWithLabelProps extends Pick<
+  ProgressWithLabelProps,
+  'valueLabel' | 'width' | 'labelStyle'
+> {
+  /** Whether the value label shows; its space stays reserved. */
   showInfo?: boolean;
   title?: React.ReactNode;
-  valueLabel?: React.ReactNode;
   percent?: number;
-  width?: React.CSSProperties['width'];
   strokeColor?: string;
-  labelStyle?: React.CSSProperties;
   progressStyle?: React.CSSProperties;
   size?: 'small' | 'middle' | 'large';
 }
+
+const SIZE: Record<
+  NonNullable<BAIProgressWithLabelProps['size']>,
+  ProgressWithLabelProps['size']
+> = {
+  small: 'sm',
+  middle: 'md',
+  large: 'lg',
+};
+
 const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
   title,
   valueLabel,
@@ -42,60 +46,19 @@ const BAIProgressWithLabel: React.FC<BAIProgressWithLabelProps> = ({
   progressStyle,
   showInfo = true,
   size = 'small',
-}) => {
-  const { token } = useTheme();
-
-  const fontSize =
-    size === 'small'
-      ? token('--font-size-sm')
-      : size === 'middle'
-        ? token('--font-size-base')
-        : token('--font-size-lg');
-  return (
-    <BAIFlex
-      style={{
-        padding: 1,
-        border: `1px solid ${token('--color-border-emphasized')}`,
-        borderRadius: 3,
-        backgroundColor: token('--color-bg-container-disabled'),
-        ...(_.isNumber(width) || _.isString(width)
-          ? { width: width }
-          : { flex: 1 }),
-        ...progressStyle,
-      }}
-      direction="column"
-      align="stretch"
-    >
-      <BAIFlex
-        style={{
-          height: '100%',
-          width: `${!percent || _.isNaN(percent) ? 0 : _.min([percent, 100])}%`,
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          backgroundColor: strokeColor ?? token('--color-success'),
-          opacity: 0.7,
-          zIndex: 0,
-          overflow: 'hidden',
-        }}
-      ></BAIFlex>
-      <BAIFlex direction="row" justify="between">
-        <Text style={{ fontSize, ...labelStyle }}>{title}</Text>
-        <Text
-          color={
-            _.isNaN(percent) || _.isUndefined(percent) ? 'disabled' : undefined
-          }
-          style={{
-            fontSize,
-            minHeight: token('--spacing-1'),
-            ...labelStyle,
-          }}
-        >
-          {showInfo ? valueLabel : ' '}
-        </Text>
-      </BAIFlex>
-    </BAIFlex>
-  );
-};
+}) => (
+  <ProgressWithLabel
+    className="bai-progress-with-label"
+    label={title}
+    valueLabel={valueLabel}
+    value={percent}
+    hasValueLabel={showInfo}
+    color={strokeColor}
+    width={width}
+    size={SIZE[size]}
+    style={progressStyle}
+    labelStyle={labelStyle}
+  />
+);
 
 export default BAIProgressWithLabel;
