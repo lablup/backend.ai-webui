@@ -84,7 +84,6 @@ const GeneratedKeypairListModal: React.FC<GeneratedKeypairListModalProps> = ({
       // access key plus its copy button; 780 clears the table's natural width
       // so the default view needs no horizontal scroll (FR-3519).
       width={780}
-      destroyOnHidden
       okText={t('button.Download')}
       onOk={handleDownload}
       okButtonProps={{

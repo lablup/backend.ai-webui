@@ -257,7 +257,6 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   return (
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
-      destroyOnHidden
       width={480}
       okText={t('modelStore.Deploy')}
       okButtonProps={{

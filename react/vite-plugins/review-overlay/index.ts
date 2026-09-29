@@ -5,6 +5,7 @@ import {
   reviewOverlayTags,
 } from './build-inject.js';
 import type { ReviewServerState } from './client/types.js';
+import { createHeadCache } from './served-head.js';
 import { execFile } from 'node:child_process';
 import { readFile, stat } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -149,13 +150,19 @@ export function devReviewOverlayPlugin(): Plugin {
 
   let cached: { state: ReviewServerState; at: number } | null = null;
   let inFlight: Promise<ReviewServerState> | null = null;
+  /**
+   * The head is NOT part of `cached`: that record is kept for the life of the
+   * server once a PR is known, and HEAD moves under a running server.
+   */
+  const servedHead = createHeadCache();
   /** Transpiled client modules, keyed by path and invalidated by mtime+size. */
   const transformed = new Map<
     string,
     { mtimeMs: number; size: number; code: string }
   >();
 
-  function reviewState(): Promise<ReviewServerState> {
+  /** The PR half: discovered once, then kept for the life of the server. */
+  function prState(): Promise<ReviewServerState> {
     const now = Date.now();
     if (
       cached &&
@@ -170,6 +177,12 @@ export function devReviewOverlayPlugin(): Plugin {
     });
     return inFlight;
   }
+
+  const reviewState = (): Promise<ReviewServerState> =>
+    Promise.all([prState(), servedHead()]).then(([state, head]) => ({
+      ...state,
+      head,
+    }));
 
   async function clientModule(file: string): Promise<string> {
     const info = await stat(file);

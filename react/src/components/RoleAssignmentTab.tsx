@@ -100,7 +100,7 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
         # Aliased: RoleNodesFragment selects scopes(first: 3) on the same list
         # nodes the drawer fragment now composes with, and unaliased fields
         # with different arguments conflict in one query.
-        firstScope: scopes(first: 1) {
+        firstScope: scopes(first: 1) @deprecatedSince(version: "26.9.0") {
           edges {
             node {
               scopeType
@@ -108,6 +108,8 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
             }
           }
         }
+        scopeType @since(version: "26.9.0")
+        scopeId @since(version: "26.9.0")
         users(
           filter: $filter
           orderBy: $orderBy
@@ -138,9 +140,14 @@ const RoleAssignmentTab: React.FC<RoleAssignmentTabProps> = ({
 
   const roleId = toLocalId(data.id);
 
+  // Managers >= 26.9.0 answer the role's one scope directly; older ones
+  // answer a scopes connection.
+  const roleScope = data.scopeType
+    ? { scopeType: data.scopeType, scopeId: data.scopeId }
+    : data.firstScope?.edges?.[0]?.node;
   const projectScopeId =
-    data.firstScope?.edges?.[0]?.node?.scopeType === 'PROJECT'
-      ? data.firstScope.edges[0].node.scopeId
+    roleScope?.scopeType?.toUpperCase() === 'PROJECT'
+      ? roleScope.scopeId
       : undefined;
 
   // System-generated project admin roles are managed through the project

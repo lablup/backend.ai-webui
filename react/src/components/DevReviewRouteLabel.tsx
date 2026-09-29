@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useWebUINavigate } from '../hooks';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches, type UIMatch } from 'react-router-dom';
@@ -37,11 +38,13 @@ const routeLabelFrom = (
  * Publishes the current route's ENGLISH label on `window.__BAI_REVIEW__` for
  * the review overlay (FR-3811), which lives outside React and so cannot
  * read `useMatches()` itself. English regardless of the user's language: the
- * label ends up in a PR comment other people read.
+ * label ends up in a PR comment other people read. `navigate` rides along so
+ * the overlay's guided mode (FR-3950) can cross pages without a full reload.
  */
 const DevReviewRouteLabel: React.FC = () => {
   'use memo';
   const matches = useMatches();
+  const navigate = useWebUINavigate();
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -49,6 +52,7 @@ const DevReviewRouteLabel: React.FC = () => {
       window.__BAI_REVIEW__ = {
         ...window.__BAI_REVIEW__,
         routeLabel: routeLabelFrom(matches, i18n.getFixedT('en')),
+        navigate: (to: string) => navigate(to),
       };
     };
     publish();
@@ -58,7 +62,7 @@ const DevReviewRouteLabel: React.FC = () => {
     return () => {
       i18n.off('loaded', publish);
     };
-  }, [matches, i18n]);
+  }, [matches, i18n, navigate]);
 
   return null;
 };

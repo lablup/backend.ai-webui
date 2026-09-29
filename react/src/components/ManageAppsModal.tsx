@@ -158,7 +158,6 @@ const ManageAppsModal: React.FC<ManageAppsModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnHidden
       open={open}
       onOk={handleOnClick}
       onCancel={() => onRequestClose(false)}

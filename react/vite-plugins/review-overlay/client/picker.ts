@@ -38,6 +38,12 @@ export interface PickerCallbacks {
    * straight away instead of after 20 s of polling for it.
    */
   expectReactGrab?: boolean;
+  /**
+   * `false` for a host that cannot afford to shadow ⌘C/Ctrl+C — on a page the
+   * overlay does not own, swallowing it breaks copying. That host brings its
+   * own entry point (`OverlayHandle.startPick`).
+   */
+  pickChord?: boolean;
 }
 
 const PLUGIN_NAME = 'bai-review-pick';
@@ -178,6 +184,7 @@ export function createPicker(callbacks: PickerCallbacks) {
    * load or is disabled offers no way into pick mode at all.
    */
   function armHotkey() {
+    if (callbacks.pickChord === false) return;
     if (hotkeyArmed) return;
     hotkeyArmed = true;
     window.addEventListener('keydown', onHotkey, true);

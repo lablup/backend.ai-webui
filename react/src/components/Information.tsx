@@ -5,13 +5,18 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import DescriptionLabel from './DescriptionLabel';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Grid } from '@astryxdesign/core/Grid';
 import { Icon } from '@astryxdesign/core/Icon';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
-import { BAICard, BAIDoubleTag, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
+import { Token } from '@astryxdesign/core/Token';
+import {
+  BAICard,
+  BAIDoubleToken,
+  BAIFlex,
+  BAIMetadataList,
+} from 'backend.ai-ui';
 import { Check, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -58,7 +63,7 @@ const Information: React.FC<InformationProps> = () => {
             <MetadataListItem label={t('information.ManagerVersion')}>
               <BAIFlex direction="column" gap="xxs" align="start">
                 Backend.AI {baiClient.managerVersion}
-                <BAIDoubleTag
+                <BAIDoubleToken
                   values={[
                     t('information.Installation'),
                     baiClient.managerVersion,
@@ -124,7 +129,7 @@ const Information: React.FC<InformationProps> = () => {
               <DescriptionLabel subtitle={t('information.DescDockerVersion')} />
             }
           >
-            <Badge label={t('information.Compatible')} variant="neutral" />
+            <Token label={t('information.Compatible')} />
           </MetadataListItem>
           <MetadataListItem
             label={t('information.PostgreSQLVersion')}
@@ -134,7 +139,7 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            <Badge label={t('information.Compatible')} variant="neutral" />
+            <Token label={t('information.Compatible')} />
           </MetadataListItem>
           <MetadataListItem
             label={t('information.ETCDVersion')}
@@ -142,7 +147,7 @@ const Information: React.FC<InformationProps> = () => {
               <DescriptionLabel subtitle={t('information.DescETCDVersion')} />
             }
           >
-            <Badge label={t('information.Compatible')} variant="neutral" />
+            <Token label={t('information.Compatible')} />
           </MetadataListItem>
           <MetadataListItem
             label={t('information.RedisVersion')}
@@ -150,7 +155,7 @@ const Information: React.FC<InformationProps> = () => {
               <DescriptionLabel subtitle={t('information.DescRedisVersion')} />
             }
           >
-            <Badge label={t('information.Compatible')} variant="neutral" />
+            <Token label={t('information.Compatible')} />
           </MetadataListItem>
         </BAIMetadataList>
       </BAICard>
@@ -190,13 +195,12 @@ const Information: React.FC<InformationProps> = () => {
                 <DescriptionLabel subtitle={t('information.DescLicenseType')} />
               }
             >
-              <Badge
+              <Token
                 label={
                   licenseInfo.type === 'fixed'
                     ? t('information.FixedLicense')
                     : t('information.DynamicLicense')
                 }
-                variant="neutral"
               />
             </MetadataListItem>
             <MetadataListItem
@@ -205,7 +209,7 @@ const Information: React.FC<InformationProps> = () => {
                 <DescriptionLabel subtitle={t('information.DescLicensee')} />
               }
             >
-              <Badge label={licenseInfo.licensee} variant="neutral" />
+              <Token label={licenseInfo.licensee} />
             </MetadataListItem>
             <MetadataListItem
               label={t('information.LicenseKey')}
@@ -213,7 +217,7 @@ const Information: React.FC<InformationProps> = () => {
                 <DescriptionLabel subtitle={t('information.DescLicenseKey')} />
               }
             >
-              <Badge label={licenseInfo.key} variant="neutral" />
+              <Token label={licenseInfo.key} />
             </MetadataListItem>
             <MetadataListItem
               label={t('information.Expiration')}
@@ -221,7 +225,7 @@ const Information: React.FC<InformationProps> = () => {
                 <DescriptionLabel subtitle={t('information.DescExpiration')} />
               }
             >
-              <Badge label={licenseInfo.expiration} variant="neutral" />
+              <Token label={licenseInfo.expiration} />
             </MetadataListItem>
           </BAIMetadataList>
         </Overlay>

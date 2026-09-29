@@ -26,8 +26,8 @@ import SessionIdleChecks, {
   IdleChecks,
 } from './ComputeSessionNodeItems/SessionIdleChecks';
 import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
+import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDetailModal';
-import SessionStatusTag from './ComputeSessionNodeItems/SessionStatusTag';
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
@@ -35,12 +35,12 @@ import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';
 import SessionUsageMonitor from './SessionUsageMonitor';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAICard,
@@ -51,7 +51,7 @@ import {
   BAIMetadataList,
   BAISessionAgentIds,
   BAISessionClusterMode,
-  BAISessionTypeTag,
+  BAISessionTypeToken,
   BAISkeleton,
   BAIText,
   filterOutNullAndUndefined,
@@ -250,9 +250,9 @@ const SessionDetailContent: React.FC<{
           count
         }
 
-        ...SessionStatusTagFragment
+        ...SessionStatusBadgeFragment
         ...SessionActionButtonsFragment
-        ...BAISessionTypeTagFragment
+        ...BAISessionTypeTokenFragment
         ...EditableSessionNameFragment
         ...SessionReservationFragment
         ...ContainerLogModalFragment
@@ -408,7 +408,7 @@ const SessionDetailContent: React.FC<{
             </MetadataListItem>
             <MetadataListItem label={t('session.Status')}>
               <BAIFlex>
-                <SessionStatusTag
+                <SessionStatusBadge
                   sessionFrgmt={session}
                   showInfo={!supportsSessionSchedulingHistory}
                 />
@@ -465,7 +465,7 @@ const SessionDetailContent: React.FC<{
                   laid the same pair out on the same baseline, so legacy was 4px
                   off too. */}
               <BAIFlex>
-                <BAISessionTypeTag sessionFrgmt={session} />
+                <BAISessionTypeToken sessionFrgmt={session} />
                 {/* QA-FINDINGS Q-37 — legacy `BAIButton type="link"`, so the
                     accent here is a straight parity restoration. */}
                 {session.type === 'batch' && session.startup_command && (
@@ -515,7 +515,7 @@ const SessionDetailContent: React.FC<{
                   />
                 )}
                 <Tooltip content={t('session.ResourceGroup')}>
-                  <Badge label={session.scaling_group} />
+                  <Token label={session.scaling_group ?? ''} />
                 </Tooltip>
                 <ResourceNumbersOfSession
                   resource={

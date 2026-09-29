@@ -6,6 +6,7 @@
     "DiskPerc": "Levy %",
     "Endpoint": "Päätepiste",
     "FailedToLoadCellData": "Tietojen lataaminen epäonnistui.",
+    "LostAt": "Menetetty",
     "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
     "Region": "Alue",
     "ResourceGroup": "Resurssiryhmä",
@@ -13,7 +14,8 @@
     "Schedulable": "Ajastettava",
     "Starts": "Käynnistykset",
     "Status": "Tila",
-    "Utilization": "Käyttöaste"
+    "Utilization": "Käyttöaste",
+    "Version": "Versio"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Sallittu",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Toiminnon ID",
     "Actor": "Suorittaja",
+    "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",
     "Duration": "Kesto",
     "EntityId": "Entiteetin ID",
@@ -82,9 +85,6 @@
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"
-  },
-  "comp:BAIBadgeList": {
-    "AndMore": "ja {{rest}} muuta"
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
@@ -135,7 +135,7 @@
     "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
     "DeleteItem": "Poista",
     "DeleteNItems": "Poista {{count}} kohdetta",
-    "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
+    "TypeToConfirm": "Kirjoita <token>{{confirmText}}</token> vahvistaaksesi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Luonut"
@@ -155,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Heikentynyt",
     "Deploying": "Käyttöönottaminen",
     "Healthy": "Terve",
@@ -268,6 +268,7 @@
     "SelectKeypair": "Valitse avainpari"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Asiakkaan IP",
     "Domain": "Toimialue",
     "FailReason": "Epäonnistumisen syy",
     "LoginTime": "Kirjautumisaika",
@@ -605,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ja {{rest}} muuta"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",
     "MaxConcurrentLogins": "Samanaikaisten kirjautumisten enimmäismäärä",
@@ -620,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Virheellinen polkumuoto.",
     "AliasOverlapping": "Liitospolku on päällekkäinen toisen kansion kanssa.",
+    "AliasOverlappingWithAutoMount": "Liitospolku on päällekkäinen automaattisesti liitetyn kansion kanssa.",
     "AliasPlaceholder": "Liitospolku",
     "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
-    "Name": "Nimi",
-    "PathAndAlias": "Polku & Alias",
+    "CreateFolder": "Luo uusi tallennuskansio",
+    "DestinationPath": "Kontin polku (destination)",
+    "Folders": "Kansiot",
+    "OwnerProject": "Projekti",
+    "OwnerUser": "Käyttäjä",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
+    "Refresh": "Päivitä",
     "RemoveFolder": "Poista",
+    "SelectFolder": "Valitse kansio",
+    "SourcePath": "Polku kansiossa (source)",
     "Subpath": "Alihakemisto",
     "SubpathInvalid": "Alihakemiston on oltava suhteellinen polku eikä se saa sisältää '..'.",
-    "SubpathPlaceholder": "esim. dataset/train (valinnainen)",
-    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Jätä tyhjäksi liittääksesi juuren."
+    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Napsauta kenttää selataksesi kansiota ja valitaksesi alikansion; jätä tyhjäksi, jos haluat liittää kansion juuren.",
+    "UnmountableFoldersRemoved": "Kansiot, joita et voi enää liittää, poistettiin valinnasta."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"
@@ -646,8 +657,11 @@
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
     "Download": "Lataa",
+    "DownloadPopupBlocked": "Selain esti latausikkunan. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
+    "DownloadRejected": "Storage proxy hylkäsi latauksen (HTTP {{status}}). Lataus ei käynnistynyt.",
     "DownloadSelected": "Lataa",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "DownloadUnreachable": "Storage proxy -palvelimeen osoitteessa {{origin}} ei saatu yhteyttä. Lataus ei käynnistynyt.",
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",

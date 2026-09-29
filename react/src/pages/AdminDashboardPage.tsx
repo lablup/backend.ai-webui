@@ -62,6 +62,8 @@ const AdminDashboardPage: React.FC = () => {
         $skipAgentStats: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $aliveAgentFilter: String!
+        $schedulableAgentFilter: String!
       ) {
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
@@ -73,7 +75,13 @@ const AdminDashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
-        ...AgentStatsFragment @skip(if: $skipAgentStats) @alias
+        ...AgentStatsFragment
+          @skip(if: $skipAgentStats)
+          @alias
+          @arguments(
+            aliveAgentFilter: $aliveAgentFilter
+            schedulableAgentFilter: $schedulableAgentFilter
+          )
       }
     `,
     {
@@ -83,6 +91,8 @@ const AdminDashboardPage: React.FC = () => {
       skipAgentStats: !isAgentStatsSupported,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      aliveAgentFilter: 'status == "ALIVE"',
+      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
     },
     {
       fetchPolicy:

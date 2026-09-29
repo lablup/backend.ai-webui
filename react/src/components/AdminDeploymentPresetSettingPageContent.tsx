@@ -53,7 +53,7 @@ import {
 import './collapsible-section.css';
 import { Button } from '@astryxdesign/core/Button';
 import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Step, Stepper } from '@astryxdesign/core/Stepper';
 import {
   BAISkeleton,
   BAIAdminImageSelect,
@@ -849,6 +849,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   required: true,
                   message: t('adminDeploymentPreset.NameRequired'),
                 },
+                {
+                  pattern: /^\S+$/,
+                  message: t(
+                    'adminDeploymentPreset.NameCannotContainWhitespace',
+                  ),
+                },
               ]}
             >
               <AstryxFormTextInput
@@ -1180,7 +1186,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="startupCommand"
               label={t('adminDeploymentPreset.StartupCommand')}
               tooltip={t('adminDeploymentPreset.StartupCommandTooltip')}
-              extra={t('modelService.StartCommandHelperShell')}
+              extra={
+                <BAIFlex direction="column" align="start">
+                  <span>{t('modelService.StartCommandHelperShell')}</span>
+                  <span>{t('modelService.CommandJsonArgumentHelper')}</span>
+                </BAIFlex>
+              }
             >
               <AstryxFormTextArea
                 label={t('adminDeploymentPreset.StartupCommand')}
@@ -1379,12 +1390,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
         <BAIFlex style={{ position: 'sticky', top: 80 }}>
-          {/* PILOT-DECISION: antd Steps → lab Stepper. `current`→`activeStep`,
-              `onChange`→`onStepClick`, `size="small"`→`density="compact"`;
-              antd's explicit 'process'/'wait' statuses are derived
-              automatically from `activeStep` and were dropped. Note Astryx
-              only makes completed/current steps clickable — forward jumps go
-              through the Next / Skip-to-Review buttons instead of the rail. */}
+          {/* Only completed and current steps are clickable; forward jumps go
+              through the Next / Skip-to-Review buttons. */}
           <Stepper
             activeStep={currentStepIndex}
             orientation="vertical"
@@ -1398,6 +1405,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Step
                 key={title}
                 step={idx}
+                // Only `auto` draws the error glyph on a step not yet reached.
+                indicator={stepErrors[idx] ? 'auto' : 'number'}
                 label={title}
                 status={stepErrors[idx] ? 'error' : undefined}
               />

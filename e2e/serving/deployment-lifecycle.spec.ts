@@ -317,7 +317,9 @@ test.describe(
       // 2. Inspect the alert banner, header, "Basic Information" card, revision
       // tabs, "Replicas" section, "Auto-scaling" section, and "Access Tokens"
       // section.
-      const alert = page.getByRole('alert');
+      // Scoped to the page banner — `page.getByRole('alert')` alone also
+      // matches Astryx's empty assertive live-region div.
+      const alert = page.getByTestId('page-deployments').getByRole('alert');
       await expect(alert).toContainText('No revision is deployed', {
         timeout: 20000,
       });
@@ -340,34 +342,35 @@ test.describe(
         timeout: 20000,
       });
       await expect(page.getByRole('button', { name: 'More' })).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Lifecycle' }),
-      ).toBeVisible();
+      // `BAIMetadataList` (Astryx `MetadataList`) renders each item as a
+      // `<dl>` term/definition pair, not a table row — role "term", not
+      // "rowheader". Its body hydrates via its own boundary independently of
+      // the header buttons above, same as the Auto-scaling/Access Tokens
+      // sections below — give the first item a generous timeout.
+      await expect(page.getByRole('term', { name: 'Lifecycle' })).toBeVisible({
+        timeout: 20000,
+      });
       await expect(
         page.getByRole('button', { name: /Scheduling History/ }),
       ).toBeVisible();
       await expect(
-        page.getByRole('rowheader', { name: 'Deployment ID' }),
+        page.getByRole('term', { name: 'Deployment ID' }),
+      ).toBeVisible();
+      await expect(page.getByRole('term', { name: 'Project' })).toBeVisible();
+      await expect(page.getByRole('term', { name: 'Domain' })).toBeVisible();
+      await expect(
+        page.getByRole('term', { name: 'Resource Group' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('rowheader', { name: 'Project' }),
+        page.getByRole('term', { name: 'Endpoint URL' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('rowheader', { name: 'Domain' }),
+        page.getByRole('term', { name: 'Visibility' }),
       ).toBeVisible();
       await expect(
-        page.getByRole('rowheader', { name: 'Resource Group' }),
+        page.getByRole('term', { name: 'Desired Replicas' }),
       ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Endpoint URL' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Visibility' }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole('rowheader', { name: 'Desired Replicas' }),
-      ).toBeVisible();
-      await expect(page.getByRole('rowheader', { name: 'Tags' })).toBeVisible();
+      await expect(page.getByRole('term', { name: 'Tags' })).toBeVisible();
 
       // Revision tabs
       await expect(

@@ -1,9 +1,9 @@
 # Dev review overlay
 
-The dev-server-only tool a reviewer uses to point at an element on a served PR,
-say something about it, and hand that to a PR comment, a Teams thread or a
-Claude prompt — without the receiving side needing any lookup to find the
-element again.
+The tool a reviewer uses to point at an element on a served PR — or on any page
+a host boots it on — say something about it, and hand that to a PR comment, a
+Teams thread or a Claude prompt, without the receiving side needing any lookup
+to find the element again.
 
 ## Language
 
@@ -92,3 +92,13 @@ The one implementation, owned by this overlay, that encodes and decodes anchors
 and parses links and blocks. Every reader of the format — the overlay itself and
 the Claude-side skill — runs this codec rather than its own copy.
 _Avoid_: parser (a reimplementation elsewhere), pin_parser
+
+**Host**:
+Whatever boots the client and answers what only a dev server otherwise could:
+the state endpoint, whether the page's keyboard shortcuts may be claimed,
+whether a link may navigate, where the colours come from, and what the shadow
+host's marker attribute says. The dev server, the static build and the Chrome
+extension are each one host; the answers are the `OverlayHostOptions` a host
+passes to `bootOverlay`, every field optional, and leaving one out means this
+app's own (ADR 0008).
+_Avoid_: platform, environment, adapter (the host's own code, not the seam)

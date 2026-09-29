@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a758fa9e7f813d4217ed07ccbbabe489>>
+ * @generated SignedSource<<a4e6f8cb6996f2e674e38fc61f207fe4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,11 +12,13 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type DashboardPageQuery$variables = {
   agentNodeFilter: string;
+  aliveAgentFilter: string;
   batchFilter?: string | null | undefined;
   inferenceFilter?: string | null | undefined;
   interactiveFilter?: string | null | undefined;
   isSuperAdmin: boolean;
   resourceGroup?: string | null | undefined;
+  schedulableAgentFilter: string;
   scopeId?: any | null | undefined;
   skipTotalResourceWithinResourceGroup: boolean;
   systemFilter?: string | null | undefined;
@@ -44,125 +46,135 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "batchFilter"
+  "name": "aliveAgentFilter"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "inferenceFilter"
+  "name": "batchFilter"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "interactiveFilter"
+  "name": "inferenceFilter"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isSuperAdmin"
+  "name": "interactiveFilter"
 },
 v5 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "resourceGroup"
+  "name": "isSuperAdmin"
 },
 v6 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "scopeId"
+  "name": "resourceGroup"
 },
 v7 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "skipTotalResourceWithinResourceGroup"
+  "name": "schedulableAgentFilter"
 },
 v8 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "systemFilter"
+  "name": "scopeId"
 },
 v9 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "skipTotalResourceWithinResourceGroup"
+},
+v10 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "systemFilter"
+},
+v11 = {
   "kind": "Variable",
   "name": "scopeId",
   "variableName": "scopeId"
 },
-v10 = {
+v12 = {
   "kind": "Literal",
   "name": "first",
   "value": 0
 },
-v11 = {
+v13 = {
   "kind": "Variable",
   "name": "scope_id",
   "variableName": "scopeId"
 },
-v12 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v13 = [
-  (v12/*: any*/)
+v15 = [
+  (v14/*: any*/)
 ],
-v14 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v15 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "row_id",
   "storageKey": null
 },
-v16 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v17 = {
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status",
   "storageKey": null
 },
-v18 = {
+v20 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "priority",
   "storageKey": null
 },
-v19 = {
+v21 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "status_info",
   "storageKey": null
 },
-v20 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "occupied_slots",
   "storageKey": null
 },
-v21 = {
+v23 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "tag",
   "storageKey": null
 },
-v22 = [
+v24 = [
   {
     "alias": null,
     "args": null,
@@ -178,21 +190,21 @@ v22 = [
     "storageKey": null
   }
 ],
-v23 = {
+v25 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "idle_checks",
   "storageKey": null
 },
-v24 = {
+v26 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "scaling_group",
   "storageKey": null
 },
-v25 = [
+v27 = [
   {
     "alias": null,
     "args": null,
@@ -209,21 +221,21 @@ v25 = [
         "name": "node",
         "plural": false,
         "selections": [
-          (v14/*: any*/),
-          (v15/*: any*/),
           (v16/*: any*/),
-          (v17/*: any*/)
+          (v17/*: any*/),
+          (v18/*: any*/),
+          (v19/*: any*/)
         ],
         "storageKey": null
       }
     ],
     "storageKey": null
   },
-  (v12/*: any*/)
+  (v14/*: any*/)
 ],
-v26 = [
-  (v14/*: any*/),
-  (v17/*: any*/),
+v28 = [
+  (v16/*: any*/),
+  (v19/*: any*/),
   {
     "alias": null,
     "args": null,
@@ -231,9 +243,14 @@ v26 = [
     "name": "available_slots",
     "storageKey": null
   },
-  (v20/*: any*/),
-  (v24/*: any*/)
-];
+  (v22/*: any*/),
+  (v26/*: any*/)
+],
+v29 = {
+  "kind": "Literal",
+  "name": "first",
+  "value": 1
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -245,7 +262,9 @@ return {
       (v5/*: any*/),
       (v6/*: any*/),
       (v7/*: any*/),
-      (v8/*: any*/)
+      (v8/*: any*/),
+      (v9/*: any*/),
+      (v10/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -268,7 +287,7 @@ return {
             "name": "interactiveFilter",
             "variableName": "interactiveFilter"
           },
-          (v9/*: any*/),
+          (v11/*: any*/),
           {
             "kind": "Variable",
             "name": "systemFilter",
@@ -280,7 +299,7 @@ return {
       },
       {
         "args": [
-          (v9/*: any*/)
+          (v11/*: any*/)
         ],
         "kind": "FragmentSpread",
         "name": "RecentlyCreatedSessionFragment"
@@ -334,7 +353,18 @@ return {
               "kind": "InlineFragment",
               "selections": [
                 {
-                  "args": null,
+                  "args": [
+                    {
+                      "kind": "Variable",
+                      "name": "aliveAgentFilter",
+                      "variableName": "aliveAgentFilter"
+                    },
+                    {
+                      "kind": "Variable",
+                      "name": "schedulableAgentFilter",
+                      "variableName": "schedulableAgentFilter"
+                    }
+                  ],
                   "kind": "FragmentSpread",
                   "name": "AgentStatsFragment"
                 }
@@ -354,15 +384,17 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v8/*: any*/),
       (v6/*: any*/),
+      (v9/*: any*/),
       (v5/*: any*/),
-      (v7/*: any*/),
-      (v4/*: any*/),
       (v0/*: any*/),
-      (v3/*: any*/),
-      (v1/*: any*/),
+      (v4/*: any*/),
       (v2/*: any*/),
-      (v8/*: any*/)
+      (v3/*: any*/),
+      (v10/*: any*/),
+      (v1/*: any*/),
+      (v7/*: any*/)
     ],
     "kind": "Operation",
     "name": "DashboardPageQuery",
@@ -375,14 +407,14 @@ return {
             "name": "filter",
             "variableName": "interactiveFilter"
           },
-          (v10/*: any*/),
-          (v11/*: any*/)
+          (v12/*: any*/),
+          (v13/*: any*/)
         ],
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": (v15/*: any*/),
         "storageKey": null
       },
       {
@@ -393,14 +425,14 @@ return {
             "name": "filter",
             "variableName": "batchFilter"
           },
-          (v10/*: any*/),
-          (v11/*: any*/)
+          (v12/*: any*/),
+          (v13/*: any*/)
         ],
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": (v15/*: any*/),
         "storageKey": null
       },
       {
@@ -411,14 +443,14 @@ return {
             "name": "filter",
             "variableName": "inferenceFilter"
           },
-          (v10/*: any*/),
-          (v11/*: any*/)
+          (v12/*: any*/),
+          (v13/*: any*/)
         ],
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": (v15/*: any*/),
         "storageKey": null
       },
       {
@@ -429,14 +461,14 @@ return {
             "name": "filter",
             "variableName": "systemFilter"
           },
-          (v10/*: any*/),
-          (v11/*: any*/)
+          (v12/*: any*/),
+          (v13/*: any*/)
         ],
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
         "name": "compute_session_nodes",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": (v15/*: any*/),
         "storageKey": null
       },
       {
@@ -457,7 +489,7 @@ return {
             "name": "order",
             "value": "-created_at"
           },
-          (v11/*: any*/)
+          (v13/*: any*/)
         ],
         "concreteType": "ComputeSessionConnection",
         "kind": "LinkedField",
@@ -480,10 +512,10 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v14/*: any*/),
-                  (v15/*: any*/),
                   (v16/*: any*/),
                   (v17/*: any*/),
+                  (v18/*: any*/),
+                  (v19/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -512,8 +544,8 @@ return {
                     "name": "agent_ids",
                     "storageKey": null
                   },
-                  (v18/*: any*/),
-                  (v19/*: any*/),
+                  (v20/*: any*/),
+                  (v21/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -549,7 +581,7 @@ return {
                     "name": "terminated_at",
                     "storageKey": null
                   },
-                  (v20/*: any*/),
+                  (v22/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -557,7 +589,7 @@ return {
                     "name": "requested_slots",
                     "storageKey": null
                   },
-                  (v21/*: any*/),
+                  (v23/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -596,7 +628,7 @@ return {
                                 "name": "cluster_role",
                                 "storageKey": null
                               },
-                              (v14/*: any*/),
+                              (v16/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -633,7 +665,7 @@ return {
                                     "kind": "LinkedField",
                                     "name": "tags",
                                     "plural": true,
-                                    "selections": (v22/*: any*/),
+                                    "selections": (v24/*: any*/),
                                     "storageKey": null
                                   },
                                   {
@@ -643,7 +675,7 @@ return {
                                     "kind": "LinkedField",
                                     "name": "labels",
                                     "plural": true,
-                                    "selections": (v22/*: any*/),
+                                    "selections": (v24/*: any*/),
                                     "storageKey": null
                                   },
                                   {
@@ -660,12 +692,12 @@ return {
                                     "name": "namespace",
                                     "storageKey": null
                                   },
-                                  (v21/*: any*/),
-                                  (v14/*: any*/)
+                                  (v23/*: any*/),
+                                  (v16/*: any*/)
                                 ],
                                 "storageKey": null
                               },
-                              (v15/*: any*/),
+                              (v17/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -680,8 +712,8 @@ return {
                                 "name": "cluster_idx",
                                 "storageKey": null
                               },
-                              (v17/*: any*/),
                               (v19/*: any*/),
+                              (v21/*: any*/),
                               {
                                 "alias": null,
                                 "args": null,
@@ -705,7 +737,7 @@ return {
                     ],
                     "storageKey": null
                   },
-                  (v23/*: any*/),
+                  (v25/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -728,7 +760,7 @@ return {
                         "name": "email",
                         "storageKey": null
                       },
-                      (v14/*: any*/)
+                      (v16/*: any*/)
                     ],
                     "storageKey": null
                   },
@@ -770,21 +802,21 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v15/*: any*/),
-                              (v16/*: any*/),
-                              (v14/*: any*/)
+                              (v17/*: any*/),
+                              (v18/*: any*/),
+                              (v16/*: any*/)
                             ],
                             "storageKey": null
                           }
                         ],
                         "storageKey": null
                       },
-                      (v12/*: any*/)
+                      (v14/*: any*/)
                     ],
                     "storageKey": null
                   },
-                  (v24/*: any*/),
-                  (v23/*: any*/),
+                  (v26/*: any*/),
+                  (v25/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -799,7 +831,7 @@ return {
                     "kind": "LinkedField",
                     "name": "dependees",
                     "plural": false,
-                    "selections": (v25/*: any*/),
+                    "selections": (v27/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -809,7 +841,7 @@ return {
                     "kind": "LinkedField",
                     "name": "dependents",
                     "plural": false,
-                    "selections": (v25/*: any*/),
+                    "selections": (v27/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -826,7 +858,7 @@ return {
                     "name": "commit_status",
                     "storageKey": null
                   },
-                  (v18/*: any*/),
+                  (v20/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -915,7 +947,7 @@ return {
                     "kind": "LinkedField",
                     "name": "items",
                     "plural": true,
-                    "selections": (v26/*: any*/),
+                    "selections": (v28/*: any*/),
                     "storageKey": null
                   },
                   {
@@ -969,13 +1001,13 @@ return {
                         "kind": "LinkedField",
                         "name": "node",
                         "plural": false,
-                        "selections": (v26/*: any*/),
+                        "selections": (v28/*: any*/),
                         "storageKey": null
                       }
                     ],
                     "storageKey": null
                   },
-                  (v12/*: any*/)
+                  (v14/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -1030,22 +1062,56 @@ return {
               }
             ],
             "storageKey": null
+          },
+          {
+            "alias": "aliveAgents",
+            "args": [
+              {
+                "kind": "Variable",
+                "name": "filter",
+                "variableName": "aliveAgentFilter"
+              },
+              (v29/*: any*/)
+            ],
+            "concreteType": "AgentConnection",
+            "kind": "LinkedField",
+            "name": "agent_nodes",
+            "plural": false,
+            "selections": (v15/*: any*/),
+            "storageKey": null
+          },
+          {
+            "alias": "schedulableAgents",
+            "args": [
+              {
+                "kind": "Variable",
+                "name": "filter",
+                "variableName": "schedulableAgentFilter"
+              },
+              (v29/*: any*/)
+            ],
+            "concreteType": "AgentConnection",
+            "kind": "LinkedField",
+            "name": "agent_nodes",
+            "plural": false,
+            "selections": (v15/*: any*/),
+            "storageKey": null
           }
         ]
       }
     ]
   },
   "params": {
-    "cacheID": "9f46db4945edd41e8e58b703546451cf",
+    "cacheID": "a087ef267b7ebcb55d0cb7c6376010af",
     "id": null,
     "metadata": {},
     "name": "DashboardPageQuery",
     "operationKind": "query",
-    "text": "query DashboardPageQuery(\n  $scopeId: ScopeField\n  $resourceGroup: String\n  $skipTotalResourceWithinResourceGroup: Boolean!\n  $isSuperAdmin: Boolean!\n  $agentNodeFilter: String!\n  $interactiveFilter: String\n  $batchFilter: String\n  $inferenceFilter: String\n  $systemFilter: String\n) {\n  ...SessionCountDashboardItemFragment_3INTnW\n  ...RecentlyCreatedSessionFragment_3vJUag\n  ...TotalResourceWithinResourceGroupFragment_2otDCj @skip(if: $skipTotalResourceWithinResourceGroup)\n  ...AgentStatsFragment @include(if: $isSuperAdmin)\n}\n\nfragment AgentStatsFragment on Query {\n  agentStats @since(version: \"25.15.0\") {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIImageNodeSimpleTagFragment on ImageNode {\n  base_image_name\n  version\n  architecture\n  tags {\n    key\n    value\n  }\n  labels {\n    key\n    value\n  }\n  registry\n  namespace\n  tag\n}\n\nfragment BAISessionAgentIdsFragment on ComputeSessionNode {\n  agent_ids\n}\n\nfragment BAISessionClusterModeFragment on ComputeSessionNode {\n  cluster_mode\n  cluster_size\n}\n\nfragment BAISessionTypeTagFragment on ComputeSessionNode {\n  type\n}\n\nfragment ConnectedKernelListFragment on KernelNode {\n  id\n  row_id\n  cluster_hostname\n  cluster_idx\n  cluster_role\n  status\n  status_info\n  agent_id\n  container_id\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment EditSessionPriorityModalFragment on ComputeSessionNode {\n  id\n  name\n  priority @since(version: \"24.09.0\")\n}\n\nfragment EditableSessionNameFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  priority\n  user_id\n  status\n  project_id\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment MountedVFolderLinksFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        ...FolderLink_vfolderNode\n        id\n      }\n    }\n  }\n  ...MountedVFolderLinksLegacyLazyFolderLinkFragment\n}\n\nfragment MountedVFolderLinksLegacyLazyFolderLinkFragment on ComputeSessionNode {\n  row_id\n  vfolder_mounts\n}\n\nfragment RecentlyCreatedSessionFragment_3vJUag on Query {\n  compute_session_nodes(first: 5, order: \"-created_at\", filter: \"status == \\\"running\\\"\", scope_id: $scopeId) {\n    edges {\n      node {\n        id\n        ...SessionNodesFragment\n      }\n    }\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionAccessKeyFragment on ComputeSessionNode {\n  access_key\n  user_id\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionCountDashboardItemFragment_3INTnW on Query {\n  myInteractive: compute_session_nodes(first: 0, filter: $interactiveFilter, scope_id: $scopeId) {\n    count\n  }\n  myBatch: compute_session_nodes(first: 0, filter: $batchFilter, scope_id: $scopeId) {\n    count\n  }\n  myInference: compute_session_nodes(first: 0, filter: $inferenceFilter, scope_id: $scopeId) {\n    count\n  }\n  myUpload: compute_session_nodes(first: 0, filter: $systemFilter, scope_id: $scopeId) {\n    count\n  }\n}\n\nfragment SessionDetailContentFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  project_id\n  user_id\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n  resource_opts\n  status\n  status_data\n  vfolder_mounts\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        ...FolderLink_vfolderNode\n        id\n      }\n    }\n    count\n  }\n  created_at\n  terminated_at\n  scaling_group\n  agent_ids\n  requested_slots\n  occupied_slots\n  tag\n  idle_checks @since(version: \"24.12.0\")\n  type\n  startup_command\n  kernel_nodes {\n    edges {\n      node {\n        image {\n          ...BAIImageNodeSimpleTagFragment\n          id\n        }\n        ...ConnectedKernelListFragment\n        id\n      }\n    }\n  }\n  dependees {\n    edges {\n      node {\n        id\n        row_id\n        name\n        status\n      }\n    }\n    count\n  }\n  dependents {\n    edges {\n      node {\n        id\n        row_id\n        name\n        status\n      }\n    }\n    count\n  }\n  ...SessionStatusTagFragment\n  ...SessionActionButtonsFragment\n  ...BAISessionTypeTagFragment\n  ...EditableSessionNameFragment\n  ...SessionReservationFragment\n  ...ContainerLogModalFragment\n  ...SessionUsageMonitorFragment\n  ...ContainerCommitModalFragment\n  ...SessionIdleChecksNodeFragment\n  ...SessionStatusDetailModalFragment\n  ...AppLauncherModalFragment\n  ...MountedVFolderLinksFragment\n  ...BAISessionAgentIdsFragment\n  ...BAISessionClusterModeFragment\n  ...SessionAccessKeyFragment\n}\n\nfragment SessionDetailDrawerFragment on ComputeSessionNode {\n  id\n  project_id\n  ...SessionDetailContentFragment\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionNodesFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  type\n  service_ports\n  user_id\n  agent_ids\n  priority @since(version: \"24.09.0\")\n  ...SessionStatusTagFragment\n  ...SessionReservationFragment\n  ...SessionSlotCellFragment\n  ...SessionReclamationStatusCellFragment\n  ...SessionUsageMonitorFragment\n  ...SessionDetailDrawerFragment\n  ...BAISessionAgentIdsFragment\n  ...BAISessionTypeTagFragment\n  ...BAISessionClusterModeFragment\n  ...AppLauncherModalFragment\n  ...TerminateSessionModalFragment\n  ...EditSessionPriorityModalFragment\n  ...SessionAccessKeyFragment\n  kernel_nodes {\n    edges {\n      node {\n        image {\n          ...BAIImageNodeSimpleTagFragment\n          id\n        }\n        id\n      }\n    }\n  }\n  created_at\n  terminated_at\n  status_info\n  result\n  domain_name\n  scaling_group\n  project_id\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n  dependees {\n    edges {\n      node {\n        row_id\n        name\n        id\n      }\n    }\n    count\n  }\n  dependents {\n    edges {\n      node {\n        row_id\n        name\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionSlotCellFragment on ComputeSessionNode {\n  id\n  status\n  occupied_slots\n  requested_slots\n  tag\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n\nfragment SessionUsageMonitorFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 1000, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) @since(version: \"24.12.0\") {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
+    "text": "query DashboardPageQuery(\n  $scopeId: ScopeField\n  $resourceGroup: String\n  $skipTotalResourceWithinResourceGroup: Boolean!\n  $isSuperAdmin: Boolean!\n  $agentNodeFilter: String!\n  $interactiveFilter: String\n  $batchFilter: String\n  $inferenceFilter: String\n  $systemFilter: String\n  $aliveAgentFilter: String!\n  $schedulableAgentFilter: String!\n) {\n  ...SessionCountDashboardItemFragment_3INTnW\n  ...RecentlyCreatedSessionFragment_3vJUag\n  ...TotalResourceWithinResourceGroupFragment_2otDCj @skip(if: $skipTotalResourceWithinResourceGroup)\n  ...AgentStatsFragment_rQkRq @include(if: $isSuperAdmin)\n}\n\nfragment AgentStatsFragment_rQkRq on Query {\n  agentStats @since(version: \"25.15.0\") {\n    totalResource {\n      free\n      used\n      capacity\n    }\n  }\n  aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1) @since(version: \"24.12.0\") {\n    count\n  }\n  schedulableAgents: agent_nodes(filter: $schedulableAgentFilter, first: 1) @since(version: \"24.12.0\") {\n    count\n  }\n}\n\nfragment AppLaunchConfirmationModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment AppLauncherModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  service_ports\n  access_key\n  ...useBackendAIAppLauncherFragment\n  ...SFTPConnectionInfoModalFragment\n  ...TensorboardPathModalFragment\n  ...AppLaunchConfirmationModalFragment\n}\n\nfragment BAIImageNodeSimpleTagFragment on ImageNode {\n  base_image_name\n  version\n  architecture\n  tags {\n    key\n    value\n  }\n  labels {\n    key\n    value\n  }\n  registry\n  namespace\n  tag\n}\n\nfragment BAISessionAgentIdsFragment on ComputeSessionNode {\n  agent_ids\n}\n\nfragment BAISessionClusterModeFragment on ComputeSessionNode {\n  cluster_mode\n  cluster_size\n}\n\nfragment BAISessionTypeTokenFragment on ComputeSessionNode {\n  type\n}\n\nfragment ConnectedKernelListFragment on KernelNode {\n  id\n  row_id\n  cluster_hostname\n  cluster_idx\n  cluster_role\n  status\n  status_info\n  agent_id\n  container_id\n}\n\nfragment ContainerCommitModalFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n}\n\nfragment ContainerLogModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  access_key\n  kernel_nodes {\n    edges {\n      node {\n        id\n        row_id\n        container_id\n        cluster_idx\n        cluster_role\n        cluster_hostname\n      }\n    }\n  }\n}\n\nfragment EditSessionPriorityModalFragment on ComputeSessionNode {\n  id\n  name\n  priority @since(version: \"24.09.0\")\n}\n\nfragment EditableSessionNameFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  priority\n  user_id\n  status\n  project_id\n}\n\nfragment FolderLink_vfolderNode on VirtualFolderNode {\n  row_id\n  name\n  ...VFolderNodeIdenticonFragment\n}\n\nfragment MountedVFolderLinksFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        ...FolderLink_vfolderNode\n        id\n      }\n    }\n  }\n  ...MountedVFolderLinksLegacyLazyFolderLinkFragment\n}\n\nfragment MountedVFolderLinksLegacyLazyFolderLinkFragment on ComputeSessionNode {\n  row_id\n  vfolder_mounts\n}\n\nfragment RecentlyCreatedSessionFragment_3vJUag on Query {\n  compute_session_nodes(first: 5, order: \"-created_at\", filter: \"status == \\\"running\\\"\", scope_id: $scopeId) {\n    edges {\n      node {\n        id\n        ...SessionNodesFragment\n      }\n    }\n  }\n}\n\nfragment SFTPConnectionInfoModalFragment on ComputeSessionNode {\n  row_id\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        name\n        id\n      }\n    }\n  }\n}\n\nfragment SessionAccessKeyFragment on ComputeSessionNode {\n  access_key\n  user_id\n}\n\nfragment SessionActionButtonsFragment on ComputeSessionNode {\n  id\n  name\n  row_id\n  type\n  status\n  access_key\n  service_ports\n  commit_status\n  user_id\n  ...TerminateSessionModalFragment\n  ...ContainerLogModalFragment\n  ...ContainerCommitModalFragment\n  ...AppLauncherModalFragment\n  ...SFTPConnectionInfoModalFragment\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment SessionCountDashboardItemFragment_3INTnW on Query {\n  myInteractive: compute_session_nodes(first: 0, filter: $interactiveFilter, scope_id: $scopeId) {\n    count\n  }\n  myBatch: compute_session_nodes(first: 0, filter: $batchFilter, scope_id: $scopeId) {\n    count\n  }\n  myInference: compute_session_nodes(first: 0, filter: $inferenceFilter, scope_id: $scopeId) {\n    count\n  }\n  myUpload: compute_session_nodes(first: 0, filter: $systemFilter, scope_id: $scopeId) {\n    count\n  }\n}\n\nfragment SessionDetailContentFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  project_id\n  user_id\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n  resource_opts\n  status\n  status_data\n  vfolder_mounts\n  vfolder_nodes @since(version: \"25.4.0\") {\n    edges {\n      node {\n        ...FolderLink_vfolderNode\n        id\n      }\n    }\n    count\n  }\n  created_at\n  terminated_at\n  scaling_group\n  agent_ids\n  requested_slots\n  occupied_slots\n  tag\n  idle_checks @since(version: \"24.12.0\")\n  type\n  startup_command\n  kernel_nodes {\n    edges {\n      node {\n        image {\n          ...BAIImageNodeSimpleTagFragment\n          id\n        }\n        ...ConnectedKernelListFragment\n        id\n      }\n    }\n  }\n  dependees {\n    edges {\n      node {\n        id\n        row_id\n        name\n        status\n      }\n    }\n    count\n  }\n  dependents {\n    edges {\n      node {\n        id\n        row_id\n        name\n        status\n      }\n    }\n    count\n  }\n  ...SessionStatusBadgeFragment\n  ...SessionActionButtonsFragment\n  ...BAISessionTypeTokenFragment\n  ...EditableSessionNameFragment\n  ...SessionReservationFragment\n  ...ContainerLogModalFragment\n  ...SessionUsageMonitorFragment\n  ...ContainerCommitModalFragment\n  ...SessionIdleChecksNodeFragment\n  ...SessionStatusDetailModalFragment\n  ...AppLauncherModalFragment\n  ...MountedVFolderLinksFragment\n  ...BAISessionAgentIdsFragment\n  ...BAISessionClusterModeFragment\n  ...SessionAccessKeyFragment\n}\n\nfragment SessionDetailDrawerFragment on ComputeSessionNode {\n  id\n  project_id\n  ...SessionDetailContentFragment\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionNodesFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  status\n  type\n  service_ports\n  user_id\n  agent_ids\n  priority @since(version: \"24.09.0\")\n  ...SessionStatusBadgeFragment\n  ...SessionReservationFragment\n  ...SessionSlotCellFragment\n  ...SessionReclamationStatusCellFragment\n  ...SessionUsageMonitorFragment\n  ...SessionDetailDrawerFragment\n  ...BAISessionAgentIdsFragment\n  ...BAISessionTypeTokenFragment\n  ...BAISessionClusterModeFragment\n  ...AppLauncherModalFragment\n  ...TerminateSessionModalFragment\n  ...EditSessionPriorityModalFragment\n  ...SessionAccessKeyFragment\n  kernel_nodes {\n    edges {\n      node {\n        image {\n          ...BAIImageNodeSimpleTagFragment\n          id\n        }\n        id\n      }\n    }\n  }\n  created_at\n  terminated_at\n  status_info\n  result\n  domain_name\n  scaling_group\n  project_id\n  owner @since(version: \"25.13.0\") {\n    email\n    id\n  }\n  dependees {\n    edges {\n      node {\n        row_id\n        name\n        id\n      }\n    }\n    count\n  }\n  dependents {\n    edges {\n      node {\n        row_id\n        name\n        id\n      }\n    }\n    count\n  }\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionSlotCellFragment on ComputeSessionNode {\n  id\n  status\n  occupied_slots\n  requested_slots\n  tag\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusBadgeFragment\n}\n\nfragment SessionUsageMonitorFragment on ComputeSessionNode {\n  occupied_slots\n  ...useSessionNodeLiveStatSessionFragment\n}\n\nfragment TensorboardPathModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  ...useBackendAIAppLauncherFragment\n}\n\nfragment TerminateSessionModalFragment on ComputeSessionNode {\n  id\n  row_id\n  name\n  scaling_group\n  access_key\n  project_id\n  kernel_nodes {\n    edges {\n      node {\n        container_id\n        agent_id\n        id\n      }\n    }\n  }\n}\n\nfragment TotalResourceWithinResourceGroupFragment_2otDCj on Query {\n  agent_summary_list(limit: 1000, offset: 0, status: \"ALIVE\", scaling_group: $resourceGroup, filter: \"schedulable == true\") @skip(if: $isSuperAdmin) {\n    items {\n      id\n      status\n      available_slots\n      occupied_slots\n      scaling_group\n    }\n    total_count\n  }\n  agent_nodes(filter: $agentNodeFilter, first: 100) @include(if: $isSuperAdmin) @since(version: \"24.12.0\") {\n    edges {\n      node {\n        id\n        status\n        available_slots\n        occupied_slots\n        scaling_group\n      }\n    }\n    count\n  }\n}\n\nfragment VFolderNodeIdenticonFragment on VirtualFolderNode {\n  id\n}\n\nfragment useBackendAIAppLauncherFragment on ComputeSessionNode {\n  name\n  row_id\n  vfolder_mounts\n  scaling_group\n  project_id\n  service_ports\n}\n\nfragment useSessionNodeLiveStatSessionFragment on ComputeSessionNode {\n  id\n  kernel_nodes {\n    edges {\n      node {\n        live_stat\n        cluster_role\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "66db8ba378294c96067135854af0550f";
+(node as any).hash = "da17888a1da955602d3144ba03c312ea";
 
 export default node;

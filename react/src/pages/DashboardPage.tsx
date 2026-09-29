@@ -166,6 +166,8 @@ const DashboardPage: React.FC = () => {
         $batchFilter: String
         $inferenceFilter: String
         $systemFilter: String
+        $aliveAgentFilter: String!
+        $schedulableAgentFilter: String!
       ) {
         ...SessionCountDashboardItemFragment
           @arguments(
@@ -184,7 +186,13 @@ const DashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
-        ...AgentStatsFragment @include(if: $isSuperAdmin) @alias
+        ...AgentStatsFragment
+          @include(if: $isSuperAdmin)
+          @alias
+          @arguments(
+            aliveAgentFilter: $aliveAgentFilter
+            schedulableAgentFilter: $schedulableAgentFilter
+          )
       }
     `,
     {
@@ -197,6 +205,8 @@ const DashboardPage: React.FC = () => {
       batchFilter: mySessionCountFilter('batch'),
       inferenceFilter: mySessionCountFilter('inference'),
       systemFilter: mySessionCountFilter('system'),
+      aliveAgentFilter: 'status == "ALIVE"',
+      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
     },
     {
       fetchPolicy:

@@ -15,6 +15,7 @@ navTitle: 프로젝트 관리자 기능
 헤더의 프로젝트 드롭다운을 열면 프로젝트 관리자 권한을 가진 프로젝트에는 이름 옆에 방패 모양의 배지가 표시됩니다. 배지 위에 마우스를 올리면 **프로젝트 관리자** 툴팁이 나타나며, 해당 프로젝트를 선택하면 아래에 설명된 프로젝트 관리자용 사이드바 항목들이 표시됩니다.
 
 ![](../images/header_project_selector_with_admin_badge.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 헤더의 프로젝트 선택기에서 다른 프로젝트로 전환하면 사용자의 역할이 다시 평가됩니다. 동일한 사용자가 한 로그인 세션 내에서 어떤 프로젝트에서는 프로젝트 관리자로, 다른 프로젝트에서는 일반 사용자로 동작할 수 있습니다. 프로젝트 관리자 역할을 부여하고 회수하는 방법은 RBAC 관리 장의 [프로젝트 관리자 권한 부여](#grant-project-admin) 섹션을 참고하세요.
 
@@ -23,6 +24,7 @@ navTitle: 프로젝트 관리자 기능
 :::
 
 ![](../images/forbidden_page.png)
+<!-- TODO(screenshot): recapture while logged in as a user who lacks project-admin rights on the requested project. This image was captured with the superadmin account. -->
 
 <a id="set-project-admin"></a>
 
@@ -66,10 +68,12 @@ navTitle: 프로젝트 관리자 기능
 - **배포** — 현재 프로젝트가 소유한 모델 배포
 
 ![](../images/project_admin_sidebar.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 프로젝트 관리자 페이지에서는 상단의 프로젝트 선택기로 선택한 프로젝트 하위의 항목들만 표기됩니다. 이 내용은 페이지 상단의 배너를 통해 확인할 수 있습니다.
 
 ![](../images/project_admin_scope_alert.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="refreshing-project-admin-pages"></a>
 
@@ -80,6 +84,7 @@ navTitle: 프로젝트 관리자 기능
 새로고침 버튼 옆의 드롭다운 버튼을 클릭하면 **자동 새로고침** 메뉴가 열리며, 자동 새로고침 주기를 선택할 수 있습니다.
 
 ![](../images/project_admin_auto_refresh_menu.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
 
@@ -88,6 +93,7 @@ navTitle: 프로젝트 관리자 기능
 **사용자** 페이지에는 현재 선택된 프로젝트에 속한 모든 사용자가 표시됩니다. 이 페이지를 사용하면 프로젝트의 멤버를 한눈에 검토할 수 있습니다. 예를 들어 프로젝트 리소스에 접근 가능한 사용자를 확인하거나 비활성 계정을 식별할 수 있습니다.
 
 ![](../images/project_admin_users_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 페이지는 다음 컨트롤을 제공합니다:
 
@@ -103,6 +109,7 @@ navTitle: 프로젝트 관리자 기능
 **데이터** 페이지에는 현재 선택된 프로젝트가 소유한 스토리지 폴더(vfolder)가 표시됩니다. 이 페이지에서 프로젝트 공유 폴더를 생성하거나, 실수로 삭제된 폴더를 복원하거나, 더 이상 보관할 필요가 없는 폴더를 영구 삭제할 수 있습니다.
 
 ![](../images/project_admin_data_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 페이지는 다음 컨트롤을 제공합니다:
 
@@ -122,6 +129,7 @@ navTitle: 프로젝트 관리자 기능
 3. **생성**을 클릭하여 폴더를 생성합니다.
 
 ![](../images/project_admin_create_folder_modal.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
 프로젝트 관리자용 데이터 페이지에서 생성한 폴더는 항상 **프로젝트 폴더**입니다. 생성 모달에는 폴더 유형을 선택하는 항목이 없으며, 이를 명확히 알리는 다음 메시지가 표시됩니다:
@@ -139,6 +147,7 @@ navTitle: 프로젝트 관리자 기능
 - **영구 삭제**: 선택한 폴더를 완전히 제거합니다. 이 작업은 되돌릴 수 없으며, 확인을 위해 폴더 이름을 직접 입력해야 합니다.
 
 ![](../images/project_admin_data_deleted_tab.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::danger
 스토리지 폴더를 영구 삭제하면 모든 콘텐츠가 제거되며 되돌릴 수 없습니다. 확인 모달에서는 삭제 버튼이 활성화되기 전에 폴더 이름을 정확히 입력해야 합니다.
@@ -151,6 +160,7 @@ navTitle: 프로젝트 관리자 기능
 **세션** 페이지에는 현재 선택된 프로젝트의 사용자들이 소유한 연산 세션이 표시됩니다. 이 페이지에서 활성 워크로드를 모니터링하거나, 장시간 실행 중인 세션을 식별하거나, 더 이상 필요하지 않은 세션을 종료할 수 있습니다.
 
 ![](../images/project_admin_sessions_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 페이지는 다음 컨트롤을 제공합니다:
 
@@ -168,6 +178,7 @@ navTitle: 프로젝트 관리자 기능
 5. 확인 버튼을 클릭하여 세션을 종료합니다.
 
 ![](../images/project_admin_terminate_session_modal.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::warning
 **강제 종료**는 세션이 멈춰 있고 비정상적으로 오랫동안 상태가 변하지 않을 때만 사용하세요. 강제 종료는 에이전트에 있는 실제 컨테이너를 삭제하지 않으므로, 이후 수동으로 컨테이너를 정리해야 할 수 있습니다.
@@ -184,6 +195,7 @@ navTitle: 프로젝트 관리자 기능
 **배포** 페이지에는 현재 선택된 프로젝트가 소유한 모델 배포가 표시됩니다. 이 페이지에서 추론 엔드포인트를 관리하거나, 배포 설정을 편집하거나, 더 이상 사용하지 않는 배포를 제거할 수 있습니다.
 
 ![](../images/project_admin_deployments_page.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 페이지는 다음 컨트롤을 제공합니다:
 
@@ -204,5 +216,6 @@ navTitle: 프로젝트 관리자 기능
 - **휴지통 아이콘**을 클릭하면 배포를 삭제할 수 있습니다. 삭제를 수행하려면 확인 모달에서 배포 이름을 직접 입력해야 합니다.
 
 ![](../images/project_admin_deployment_detail.png)
+<!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 배포 리비전, 복제본, 트래픽 라우팅에 대한 자세한 내용은 [배포](#model-serving) 장을 참고하세요.

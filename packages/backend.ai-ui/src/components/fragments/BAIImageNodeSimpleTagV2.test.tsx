@@ -8,7 +8,7 @@ const aliases: Record<string, string> = {
 const tagAlias = (tag: string) => aliases[tag] ?? preserveDotStartCase(tag);
 
 describe('imageNodeTagFacts', () => {
-  // `py3` has its own alias but `py39` does not, so the chip stays a two-part
+  // `py3` has its own alias but `py39` does not, so the token stays a two-part
   // double tag rather than collapsing into one badge.
   it('keeps a tag as a double tag when only its key has an alias', () => {
     const [fact] = imageNodeTagFacts(

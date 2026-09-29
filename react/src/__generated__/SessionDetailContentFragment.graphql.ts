@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c41611b633158c7c22a2fb89e495f28f>>
+ * @generated SignedSource<<1868f76a027e0f325387e55cc6cbd4aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -73,7 +73,7 @@ export type SessionDetailContentFragment$data = {
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusDetailModalFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTokenFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusBadgeFragment" | "SessionStatusDetailModalFragment" | "SessionUsageMonitorFragment">;
   readonly " $fragmentType": "SessionDetailContentFragment";
 } | null | undefined;
 export type SessionDetailContentFragment$key = {
@@ -399,7 +399,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionStatusTagFragment"
+      "name": "SessionStatusBadgeFragment"
     },
     {
       "args": null,
@@ -409,7 +409,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "BAISessionTypeTagFragment"
+      "name": "BAISessionTypeTokenFragment"
     },
     {
       "args": null,
@@ -477,6 +477,6 @@ return {
 };
 })();
 
-(node as any).hash = "2d8bdb2a78858803c038b1435d8f8798";
+(node as any).hash = "6fadc80e1af29a6361c08ced0a5c11f8";
 
 export default node;

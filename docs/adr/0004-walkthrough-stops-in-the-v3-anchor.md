@@ -81,18 +81,18 @@ flowchart LR
 Stop은 `AnchorV3`(`react/vite-plugins/review-overlay/client/types.ts`)에
 optional key를 추가하며, 각각의 cap은 `client/stop-guard.ts`에 있다:
 
-| field         | 의미                                                                                                 | cap           |
-| ------------- | ---------------------------------------------------------------------------------------------------- | ------------- |
-| `ch`          | 무엇이 바뀌었는지                                                                                    | ≤280자        |
-| `ck`          | 무엇을 확인해야 하는지, 기대되는 결과로 표현                                                         | ≤280자        |
-| `old` / `new` | popover의 diff 줄                                                                                    | 각각 ≤40자    |
-| `type`        | `'added'` 또는 `'modified'`                                                                          | 고정 enum     |
-| `kind`        | 짧은 element 종류                                                                                    | ≤64자         |
-| `code`        | 1–3개의 `{path, line, to?}` code reference                                                           | 1–3개 항목    |
-| `sha`         | stop이 만들어진 시점의 전체 head                                                                     | 40자리 16진수 |
-| `pr`          | stop이 minting된 PR                                                                                  | 양의 정수     |
-| `via`         | 재생 가능한 `{click: {text?, tid?}}` step list, overlay가 문장으로 렌더하며 절대 auto-click하지 않음 | ≤8개 항목     |
-| `dlg`         | 열린 dialog 안에서 pick됨                                                                            | 리터럴 `1`    |
+| field         | 의미                                                                                                                                                                                                                        | cap           |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| `ch`          | 무엇이 바뀌었는지                                                                                                                                                                                                           | ≤280자        |
+| `ck`          | 무엇을 확인해야 하는지, 기대되는 결과로 표현                                                                                                                                                                                | ≤280자        |
+| `old` / `new` | popover의 diff 줄                                                                                                                                                                                                           | 각각 ≤40자    |
+| `type`        | `'added'` 또는 `'modified'`                                                                                                                                                                                                 | 고정 enum     |
+| `kind`        | 짧은 element 종류                                                                                                                                                                                                           | ≤64자         |
+| `code`        | 1–3개의 `{path, line, to?}` code reference                                                                                                                                                                                  | 1–3개 항목    |
+| `sha`         | stop이 만들어진 시점의 전체 head                                                                                                                                                                                            | 40자리 16진수 |
+| `pr`          | stop이 minting된 PR                                                                                                                                                                                                         | 양의 정수     |
+| `via`         | 재생 가능한 step list — `{click: {text?, tid?}}`, `{fill: {tid?, label?, value, enter?}}`, `{select: {tid?, label?, option}}` 중 하나씩 (FR-4103). overlay는 문장과 화면 힌트로 안내할 뿐 절대 대신 클릭·입력·선택하지 않음 | ≤8개 항목     |
+| `dlg`         | 열린 dialog 안에서 pick됨                                                                                                                                                                                                   | 리터럴 `1`    |
 
 `pr`는 항상 존재하므로 boot record가 없는 static build도 code link를 만들
 수 있다. `decodeAnchor`는 anchor를 거부하는 대신 타입이 맞지 않는 optional

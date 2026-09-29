@@ -2,44 +2,54 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionLauncherPreviewQuery } from '../__generated__/SessionLauncherPreviewQuery.graphql';
 import { App } from '../app-shim';
 // FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
+import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
 } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
+import { useMountableStorageHosts } from '../hooks/useMountableStorageHosts';
+import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
 import {
   SessionLauncherFormValue,
   ResourceNumbersOfSession,
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
-import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
-import { PortTag } from './PortSelectFormItem';
+import { useFolderExplorerOpener } from './FolderExplorerOpener';
+import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
+import { PortToken } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Heading } from '@astryxdesign/core/Heading';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
   BAIImageMetaIcon,
+  BAILink,
   BAIMetadataList,
   BAITable,
+  BAIVFolderIdenticon,
   BAIText,
   imageNodeTagFacts,
+  filterOutEmpty,
+  resolveVFolderMounts,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * The review step's image row. A manually typed image has no parts to
@@ -79,7 +89,7 @@ const SessionLauncherImageRow: React.FC = () => {
       {!_.isEmpty(facts) ? (
         <>
           <ImageMetaDivider />
-          <ImageTagBadges facts={facts} />
+          <ImageTagTokens facts={facts} />
         </>
       ) : null}
       <BAIText copyable={{ text: fullName }} />
@@ -89,7 +99,8 @@ const SessionLauncherImageRow: React.FC = () => {
 
 const SessionLauncherPreview: React.FC<{
   onClickEditStep: (stepKey: SessionLauncherStepKey) => void;
-}> = ({ onClickEditStep }) => {
+  currentProjectId: string;
+}> = ({ onClickEditStep, currentProjectId }) => {
   const app = App.useApp();
   const { t } = useTranslation();
   const form = Form.useFormInstance<SessionLauncherFormValue>();
@@ -97,6 +108,45 @@ const SessionLauncherPreview: React.FC<{
   const sessionType = Form.useWatch('sessionType', { form, preserve: true });
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentProject = useCurrentProjectValue();
+  // `preserve` reads the raw store: `owner` has no registered Form.Item.
+  const owner = Form.useWatch('owner', { form, preserve: true });
+  const mountableHosts = useMountableStorageHosts(currentProjectId);
+  // `allocationPreset` holds the preset's id; the store already has the
+  // list from `ResourcePresetSelect`, so this resolves without a request.
+  const { resource_presets } = useLazyLoadQuery<SessionLauncherPreviewQuery>(
+    graphql`
+      query SessionLauncherPreviewQuery {
+        resource_presets {
+          id
+          name
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  const allocationPreset = form.getFieldValue('allocationPreset');
+  // Names how the resources were allocated, ahead of the numbers.
+  const allocationMethodLabel = !allocationPreset
+    ? undefined
+    : allocationPreset === 'custom'
+      ? t('session.launcher.CustomAllocation')
+      : allocationPreset === 'minimum-required'
+        ? t('session.launcher.MiniumAllocation')
+        : `${t('resourcePreset.ResourcePreset')}: ${
+            _.find(
+              resource_presets,
+              (preset) => preset?.id === allocationPreset,
+            )?.name ?? allocationPreset
+          }`;
+  const autoMountedFolders = useSuspendedAutoMountedFolders({
+    ownerEmail: ownerEmailFromOwner(owner),
+    currentProjectId,
+    mountableHosts,
+  });
+  const { generateFolderPath } = useFolderExplorerOpener();
+
+  const mountRows = resolveVFolderMounts(form.getFieldValue('vfolderMounts'));
 
   return (
     <>
@@ -307,12 +357,9 @@ const SessionLauncherPreview: React.FC<{
                 wrap="wrap"
                 style={{ flex: 1 }}
               >
-                {form.getFieldValue('allocationPreset') === 'custom' ? (
-                  // t('session.launcher.CustomAllocation')
-                  ''
-                ) : (
-                  <Badge label={form.getFieldValue('allocationPreset')} />
-                )}
+                {allocationMethodLabel ? (
+                  <Token label={allocationMethodLabel} />
+                ) : null}
 
                 <ResourceNumbersOfSession
                   resource={form.getFieldValue('resource')}
@@ -361,7 +408,7 @@ const SessionLauncherPreview: React.FC<{
         showDivider
         size="small"
         status={
-          form.getFieldError('mount_id_map').length > 0 ? 'error' : undefined
+          form.getFieldError('vfolderMounts').length > 0 ? 'error' : undefined
         }
         extraButtonTitle={t('button.Edit')}
         onClickExtraButton={() => {
@@ -369,37 +416,48 @@ const SessionLauncherPreview: React.FC<{
         }}
       >
         <BAIFlex direction="column" align="stretch" gap={'xs'}>
-          {form.getFieldValue('mount_ids')?.length > 0 ? (
+          {mountRows.length > 0 ? (
             <BAITable
-              rowKey="name"
+              rowKey="vfolderId"
               size="small"
               pagination={false}
-              columns={[
+              columns={filterOutEmpty([
                 {
                   dataIndex: 'name',
-                  title: t('data.folders.Name'),
+                  title: t('session.launcher.MountSourcePath'),
+                  render: (
+                    value: string,
+                    record: (typeof mountRows)[number],
+                  ) => (
+                    <BAIFlex gap="xs" align="center">
+                      <BAIVFolderIdenticon vfolderId={record.vfolderId} />
+                      <BAILink to={generateFolderPath(record.vfolderId)}>
+                        {value}
+                      </BAILink>
+                      {record.subpath ? (
+                        <>
+                          <Text color="secondary">/</Text>
+                          {record.subpath}
+                        </>
+                      ) : null}
+                    </BAIFlex>
+                  ),
                 },
                 {
-                  dataIndex: 'alias',
-                  title: t('session.launcher.FolderAlias'),
-                  render: (value, record) => {
-                    return _.isEmpty(value) ? (
-                      <Text color="placeholder">
-                        {`/home/work/${record.name}`}
-                      </Text>
+                  dataIndex: 'mountDestination',
+                  title: t('session.launcher.MountDestinationPath'),
+                  render: (
+                    value: string,
+                    record: (typeof mountRows)[number],
+                  ) =>
+                    record.isDefaultAlias ? (
+                      <Text color="placeholder">{value}</Text>
                     ) : (
                       value
-                    );
-                  },
+                    ),
                 },
-              ]}
-              dataSource={_.map(form.getFieldValue('mount_ids'), (v) => {
-                const name = form.getFieldValue('vfoldersNameMap')?.[v] || v;
-                return {
-                  name,
-                  alias: form.getFieldValue('mount_id_map')?.[v],
-                };
-              })}
+              ])}
+              dataSource={mountRows}
             />
           ) : (
             <Banner
@@ -407,16 +465,18 @@ const SessionLauncherPreview: React.FC<{
               title={t('session.launcher.NoFolderMounted')}
             />
           )}
-          {form.getFieldValue('autoMountedFolderNames')?.length > 0 ? (
+          {autoMountedFolders.length > 0 ? (
             <BAIMetadataList columns="single">
               <MetadataListItem label={t('data.AutomountFolders')}>
                 <BAIFlex gap="xs" wrap="wrap">
-                  {_.map(
-                    form.getFieldValue('autoMountedFolderNames'),
-                    (name) => {
-                      return <Badge key={name} label={name} />;
-                    },
-                  )}
+                  {_.map(autoMountedFolders, (folder) => (
+                    <BAILink
+                      key={folder.vfolderId}
+                      to={generateFolderPath(folder.vfolderId)}
+                    >
+                      <Token label={folder.name} />
+                    </BAILink>
+                  ))}
                 </BAIFlex>
               </MetadataListItem>
             </BAIMetadataList>
@@ -438,9 +498,9 @@ const SessionLauncherPreview: React.FC<{
             <BAIFlex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
                 (v, idx) => (
-                  <PortTag key={idx + v} value={v} style={{ margin: 0 }}>
+                  <PortToken key={idx + v} value={v} style={{ margin: 0 }}>
                     {v}
-                  </PortTag>
+                  </PortToken>
                 ),
               )}
 

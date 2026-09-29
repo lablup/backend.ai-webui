@@ -3,6 +3,7 @@ import {
   BAIAgentTableFragment$key,
 } from '../../__generated__/BAIAgentTableFragment.graphql';
 import {
+  badgeVariantForStatus,
   convertToBinaryUnit,
   convertToDecimalUnit,
   convertUnitValue,
@@ -12,13 +13,13 @@ import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { theme } from '../../theme-shim';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
-import BAIDoubleTag from '../BAIDoubleTag';
+import BAIDoubleBadge from '../BAIDoubleBadge';
+import BAIDoubleToken from '../BAIDoubleToken';
 import BAIFlex from '../BAIFlex';
 import BAIIntervalView from '../BAIIntervalView';
 import BAILink from '../BAILink';
 import BAIProgressWithLabel from '../BAIProgressWithLabel';
 import { ResourceTypeIcon } from '../BAIResourceNumberWithIcon';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import {
   BAIColumnType,
@@ -32,6 +33,7 @@ import {
   useConnectedBAIClient,
 } from '../provider';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus } from 'lucide-react';
@@ -46,11 +48,16 @@ export type AgentNodeInList = NonNullable<
   NonNullable<BAIAgentTableFragment$data>[number]
 >;
 
+// Mirrors `_queryorder_colmap` of the graphene `agent_nodes` resolver.
 export const availableAgentSorterKeys = [
+  'id',
   'first_contact',
   'scaling_group',
   'status',
   'schedulable',
+  'region',
+  'version',
+  'lost_at',
 ] as const;
 
 export const availableAgentSorterValues = [
@@ -525,24 +532,19 @@ const StatusCell: React.FC<{
   const parsedAvailableSlots = JSON.parse(record?.available_slots || '{}');
   return (
     <BAIFlex direction="column" gap="xxs" align="start">
-      <BAIDoubleTag
+      <BAIDoubleBadge
         values={[
           { label: 'Agent' },
           {
             label: record?.version || '',
-            color:
-              value === 'ALIVE'
-                ? 'green'
-                : value === 'TERMINATED'
-                  ? 'red'
-                  : 'blue',
+            variant: badgeVariantForStatus('agent', value),
           },
         ]}
       />
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
                 { label: 'CUDA' },
                 {
@@ -552,9 +554,9 @@ const StatusCell: React.FC<{
               ]}
             />
           ) : (
-            <BAITag color="green">CUDA Disabled</BAITag>
+            <Token color="green" label="CUDA Disabled" />
           )}
-          <BAIDoubleTag
+          <BAIDoubleToken
             values={[
               { label: 'CUDA Plugin' },
               {
@@ -564,9 +566,7 @@ const StatusCell: React.FC<{
             ]}
           />
           {_.includes(_.keys(parsedAvailableSlots), 'cuda.shares') ? (
-            <BAITag color="blue" style={{ borderRadius: 0 }}>
-              Fractional GPU™
-            </BAITag>
+            <Token color="blue" label="Fractional GPU™" />
           ) : null}
         </>
       ) : null}
@@ -617,6 +617,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         compute_plugins
         version
         schedulable
+        lost_at
       }
     `,
     agentsFragment,
@@ -647,7 +648,9 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
           </BAIFlex>
         );
       },
-      sorter: isEnableSorter('row_id'),
+      // The column shows `row_id`, but the server orders this entity by `id`.
+      sortKey: 'id',
+      sorter: isEnableSorter('id'),
     },
     {
       title: t('comp:AgentTable.Region'),
@@ -660,6 +663,15 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       key: 'architecture',
       dataIndex: 'architecture',
       sorter: isEnableSorter('architecture'),
+    },
+    {
+      title: t('comp:AgentTable.Version'),
+      key: 'version',
+      dataIndex: 'version',
+      // The status cell already prints the version; this column exists so the
+      // server-side `version` ordering is reachable.
+      defaultHidden: true,
+      sorter: isEnableSorter('version'),
     },
     {
       title: t('comp:AgentTable.Starts'),
@@ -676,7 +688,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                 }}
                 delay={1000}
                 render={(intervalValue) => (
-                  <BAIDoubleTag
+                  <BAIDoubleBadge
                     values={[
                       { label: t('comp:AgentTable.Running') },
                       { label: intervalValue },
@@ -689,6 +701,16 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         );
       },
       sorter: isEnableSorter('first_contact'),
+    },
+    {
+      title: t('comp:AgentTable.LostAt'),
+      key: 'lost_at',
+      dataIndex: 'lost_at',
+      defaultHidden: true,
+      render: (value) => (
+        <Text>{value ? dayjs(value).format('ll LTS') : '-'}</Text>
+      ),
+      sorter: isEnableSorter('lost_at'),
     },
     {
       title: t('comp:AgentTable.Allocation'),

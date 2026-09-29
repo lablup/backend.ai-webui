@@ -22,7 +22,7 @@ import { Text } from '@astryxdesign/core/Text';
 import {
   BAIAdminProjectSelect,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagChips,
+  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -441,7 +441,7 @@ const AdminDeployment = ({
                     ...col,
                     defaultHidden,
                     render: (_value, record) => (
-                      <BAIDeploymentTagChips
+                      <BAIDeploymentTagTokens
                         metadataFrgmt={record.metadata}
                         stopRowClick
                         onTagClick={(tag) => {

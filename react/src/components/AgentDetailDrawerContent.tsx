@@ -17,14 +17,14 @@ import AgentResources from './AgentNodeItems/AgentResources';
 import AgentSessions, {
   AgentSessionsQuery,
 } from './AgentNodeItems/AgentSessions';
-import AgentStatusTag from './AgentNodeItems/AgentStatusTag';
+import AgentStatusBadge from './AgentNodeItems/AgentStatusBadge';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Text } from '@astryxdesign/core/Text';
 import {
   BAICard,
-  BAIDoubleTag,
+  BAIDoubleBadge,
   BAIFlex,
   BAIIntervalView,
   BAIMetadataList,
@@ -74,7 +74,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
         first_contact
         region
         scaling_group
-        ...AgentStatusTagFragment
+        ...AgentStatusBadgeFragment
         ...AgentComputePluginsFragment
         ...AgentResourcesFragment
         ...AgentActionButtonsFragment
@@ -133,7 +133,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
             )}
           </MetadataListItem>
           <MetadataListItem label={t('agent.Status')}>
-            <AgentStatusTag agentNodeFrgmt={agent} />
+            <AgentStatusBadge agentNodeFrgmt={agent} />
           </MetadataListItem>
           <MetadataListItem label={t('agent.ComputePlugins')}>
             <BAIFlex gap="sm" wrap="wrap">
@@ -153,7 +153,7 @@ const AgentDetailDrawerContent: React.FC<AgentDetailDrawerContentProps> = ({
                   }}
                   delay={1000}
                   render={(intervalValue) => (
-                    <BAIDoubleTag
+                    <BAIDoubleBadge
                       values={[
                         { label: t('agent.ElapsedTime') },
                         { label: intervalValue },

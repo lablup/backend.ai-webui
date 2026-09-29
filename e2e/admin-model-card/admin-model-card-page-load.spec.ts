@@ -194,11 +194,12 @@ test.describe(
       // Same prerequisite as the pagination-navigation test above.
       await skipUnlessPaginated(page);
 
-      // Change page size from 10 to 20. The selector is Astryx `Select`
-      // (role="combobox" trigger, role="listbox"/"option" popup), not
-      // antd's `.ant-select-dropdown`.
+      // Change page size from 10 to 20. The selector is Astryx `Pagination`'s
+      // size `Select` (role="combobox" named "Items per page" via
+      // `@astryx.pagination.itemsPerPage`; role="option" rows labelled with
+      // the bare size, `String(opt)`).
       const pageSizeSelector = page.getByRole('combobox', {
-        name: 'Page Size',
+        name: 'Items per page',
       });
       await pageSizeSelector.click();
       await page.getByRole('option', { name: '20', exact: true }).click();

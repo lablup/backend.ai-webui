@@ -100,8 +100,8 @@ vi.mock(
   stubComponent('mock-session-action-buttons'),
 );
 vi.mock(
-  './ComputeSessionNodeItems/SessionStatusTag',
-  stubComponent('mock-session-status-tag'),
+  './ComputeSessionNodeItems/SessionStatusBadge',
+  stubComponent('mock-session-status-badge'),
 );
 vi.mock(
   './ComputeSessionNodeItems/SessionReservation',

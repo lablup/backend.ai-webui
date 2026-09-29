@@ -78,6 +78,7 @@ export type RemainingSlots = {
 };
 
 export type ResourcePreset = {
+  id: string;
   name: string;
   resource_slots: ResourceSlots;
   shared_memory: string | null;

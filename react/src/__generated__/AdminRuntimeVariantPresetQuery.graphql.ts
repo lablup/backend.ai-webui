@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f04bbcd018094f2cabfa7a5438e44b6e>>
+ * @generated SignedSource<<18b7b24227dd9d3bc4dd26afbbf0460d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,14 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type RuntimeVariantPresetOrderField = "CREATED_AT" | "NAME" | "RANK" | "%future added value";
+export type RuntimeVariantPresetOrderField = "ADDED_VERSION" | "CREATED_AT" | "DEPRECATED_VERSION" | "NAME" | "RANK" | "%future added value";
 export type RuntimeVariantPresetFilter = {
   AND?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   NOT?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   OR?: ReadonlyArray<RuntimeVariantPresetFilter> | null | undefined;
   name?: StringFilter | null | undefined;
   runtimeVariantId?: UUIDFilter | null | undefined;
+  runtimeVersion?: string | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;

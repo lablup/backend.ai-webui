@@ -6,6 +6,7 @@
     "DiskPerc": "Disco %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Falha ao carregar os dados.",
+    "LostAt": "Perdido em",
     "NoAvailableLiveStat": "Nenhuma estatística em tempo real disponível",
     "Region": "Região",
     "ResourceGroup": "Grupo de Recursos",
@@ -13,7 +14,8 @@
     "Schedulable": "Agendável",
     "Starts": "Inícios",
     "Status": "Status",
-    "Utilization": "Utilização"
+    "Utilization": "Utilização",
+    "Version": "Versão"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Permitido",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID de ação",
     "Actor": "Ator",
+    "ClientIp": "IP do cliente",
     "Description": "Descrição",
     "Duration": "Duração",
     "EntityId": "ID de entidade",
@@ -82,9 +85,6 @@
   },
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Selecionar preset"
-  },
-  "comp:BAIBadgeList": {
-    "AndMore": "e mais {{rest}}"
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ocorreu um erro inesperado. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir."
@@ -135,7 +135,7 @@
     "CannotBeUndone": "Esta ação não pode ser desfeita.",
     "DeleteItem": "Excluir",
     "DeleteNItems": "Excluir {{count}} itens",
-    "TypeToConfirm": "Digite <code>{{confirmText}}</code> para confirmar."
+    "TypeToConfirm": "Digite <token>{{confirmText}}</token> para confirmar."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Criado por"
@@ -155,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Selecionar implantação"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degradado",
     "Deploying": "Implantando",
     "Healthy": "Saudável",
@@ -274,6 +274,7 @@
     "SelectKeypair": "Selecionar par de chaves"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP do cliente",
     "Domain": "Domínio",
     "FailReason": "Motivo da falha",
     "LoginTime": "Hora do login",
@@ -611,6 +612,9 @@
   "comp:BAITestButton": {
     "Test": "teste"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "e mais {{rest}}"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Criado em",
     "MaxConcurrentLogins": "Máx. de logins simultâneos",
@@ -626,16 +630,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Formato de caminho inválido.",
     "AliasOverlapping": "O caminho de montagem se sobrepõe a outra pasta.",
+    "AliasOverlappingWithAutoMount": "O caminho de montagem se sobrepõe a uma pasta de montagem automática.",
     "AliasPlaceholder": "Caminho de montagem",
     "AutoMountedFolders": "Pastas de montagem automática",
-    "Name": "Nome",
-    "PathAndAlias": "Caminho & Alias",
+    "CreateFolder": "Crie uma nova pasta de armazenamento",
+    "DestinationPath": "Caminho do contêiner (destination)",
+    "Folders": "Pastas",
+    "OwnerProject": "Projeto",
+    "OwnerUser": "Usuário",
     "PathAndAliasTooltip": "O caminho dentro do container onde a pasta será montada. Deixe em branco para usar o caminho padrão.",
+    "Refresh": "Atualizar",
     "RemoveFolder": "Remover",
+    "SelectFolder": "Selecionar pasta",
+    "SourcePath": "Caminho na pasta (source)",
     "Subpath": "Subcaminho",
     "SubpathInvalid": "O subcaminho deve ser um caminho relativo e não deve conter '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (opcional)",
-    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Deixe em branco para montar a raiz."
+    "SubpathTooltip": "Monta uma subpasta dentro da pasta como origem em vez da raiz. Clique no campo para navegar pela pasta e escolher uma; deixe vazio para montar a raiz da pasta.",
+    "UnmountableFoldersRemoved": "As pastas que você não pode mais montar foram removidas da seleção."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Selecionar pasta"
@@ -652,8 +663,11 @@
     "DeleteSelectedItemDesc": "Arquivos e pastas excluídas não podem ser restauradas. \nVocê quer prosseguir?",
     "DeleteSelectedItemsDialog": "Excluir confirmação",
     "Download": "Baixar",
+    "DownloadPopupBlocked": "O navegador bloqueou a janela de download. Permita pop-ups para este site e tente novamente.",
+    "DownloadRejected": "O storage proxy recusou o download (HTTP {{status}}). O download não foi iniciado.",
     "DownloadSelected": "Baixar",
     "DownloadStarted": "Arquivo \"{{fileName}}\" o download foi iniciado.",
+    "DownloadUnreachable": "Não foi possível acessar o storage proxy em {{origin}}. O download não foi iniciado.",
     "DragAndDropDesc": "Arraste e solte arquivos para esta área para fazer upload.",
     "DuplicatedFiles": "Substituição de substituição",
     "DuplicatedFilesDesc": "O arquivo ou pasta com o mesmo nome já existe. \nVocê quer substituir?",

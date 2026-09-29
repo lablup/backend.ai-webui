@@ -6,6 +6,7 @@
  * repo pins Node 24 (`.nvmrc`), so the round-trip is unit-testable outside a
  * browser.
  */
+import { stripInvalidStopFields } from './stop-guard.js';
 import type { AnchorV3 } from './types.js';
 
 /**
@@ -104,7 +105,9 @@ export async function decodeAnchor(b64url: string): Promise<AnchorV3 | null> {
     if (typeof obj.s !== 'string' || !obj.s) return null;
     if (typeof obj.p !== 'string' || !isSafePath(obj.p)) return null;
     if (obj.n !== undefined && typeof obj.n !== 'string') return null;
-    return obj as AnchorV3;
+    // A stop field that fails its shape is dropped, not fatal: the element
+    // the link points at is worth more than its annotation.
+    return stripInvalidStopFields(obj) as AnchorV3;
   } catch {
     return null;
   }
