@@ -479,6 +479,24 @@
     border: 1px solid var(--color-border-emphasized);
   }
 
+  .astryx-button[data-variant="link"] {
+    color: var(--color-text-accent);
+    background-color: transparent;
+    padding-inline: 0;
+    padding-block: 0;
+    height: auto;
+    --button-focus-offset: 3px;
+  }
+
+  .astryx-button[data-variant="link"]:hover:where(:not(:disabled,[aria-disabled="true"])) {
+    text-decoration: underline;
+  }
+
+  .astryx-button[data-variant="link"]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: var(--button-focus-offset);
+  }
+
   .astryx-badge[data-variant="info"] {
     background-color: var(--color-background-blue);
     color: var(--color-on-accent);

@@ -344,6 +344,21 @@ export const baiR24DefaultBrandH1you1viTheme = {
       "variant:secondary": {
         "--color-neutral": "var(--color-background-surface)",
         "border": "1px solid var(--color-border-emphasized)"
+      },
+      "variant:link": {
+        "color": "var(--color-text-accent)",
+        "backgroundColor": "transparent",
+        "paddingInline": "0",
+        "paddingBlock": "0",
+        "height": "auto",
+        ":hover": {
+          "textDecoration": "underline"
+        },
+        "--button-focus-offset": "3px",
+        ":focus-visible": {
+          "outline": "2px solid var(--color-accent)",
+          "outlineOffset": "var(--button-focus-offset)"
+        }
       }
     },
     "badge": {
