@@ -7,7 +7,7 @@ catalog:
   # exact core version, and the CLI generates artifacts read by that same core.
   "@astryxdesign/cli": 0.6.2
   "@astryxdesign/core": 0.6.2
-  "@astryxdesign/lab": 0.3.0-canary.12db2a1
+  "@astryxdesign/lab": 0.6.2-canary.c9fb1ad
   "@astryxdesign/theme-neutral": 0.6.2
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
@@ -96,7 +96,7 @@ minimumReleaseAgeExclude:
   # canary adoption with an exact pin; canary releases never age past the
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
-  - "@astryxdesign/lab@0.3.0-canary.12db2a1"
+  - "@astryxdesign/lab@0.6.2-canary.c9fb1ad"
   # pnpm 12.4.0 is this repo's own `packageManager` pin: published 2026-09-08,
   # inside the 7-day window at adoption time. Without these, a contributor
   # still on pnpm 12.3.4 cannot provision the pin at all — 12.3.4 fetches the
@@ -179,7 +179,7 @@ overrides:
 
 patchedDependencies:
   "@astryxdesign/core@0.6.2": react/patches/@astryxdesign__core@0.6.2.patch
-  "@astryxdesign/lab@0.3.0-canary.12db2a1": react/patches/@astryxdesign__lab@0.3.0-canary.12db2a1.patch
+  "@astryxdesign/lab@0.6.2-canary.c9fb1ad": react/patches/@astryxdesign__lab@0.6.2-canary.c9fb1ad.patch
   "@cloudscape-design/board-components@3.0.176": react/patches/@cloudscape-design__board-components@3.0.176.patch
   portless@0.15.5: react/patches/portless@0.15.5.patch
   relay-runtime@20.1.1: react/patches/relay-runtime@20.1.1.patch

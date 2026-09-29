@@ -268,7 +268,6 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
 
   return (
     <BAIModal
-      destroyOnHidden
       {...restModalProps}
       title={modalTitle}
       okText={resolvedOkText}

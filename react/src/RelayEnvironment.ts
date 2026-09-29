@@ -167,6 +167,9 @@ function createRelayEnvironment() {
       // FR-3430: retains step queries released during FairShare step navigation (default 10)
       gcReleaseBufferSize: 20,
     }),
+    // fetchFn strips version-gated fields (@since etc.); store them as null, not
+    // missing, so availability checks can serve the cache instead of refetching.
+    treatMissingFieldsAsNull: true,
   });
 }
 

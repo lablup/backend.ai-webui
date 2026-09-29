@@ -94,6 +94,47 @@ test("code refs and via steps are shape-checked", () => {
   rejects([stop({ type: "renamed" })], "added");
 });
 
+test("fill and select steps are shape-checked", () => {
+  const ok = parseManifest([
+    stop({
+      via: [
+        { fill: { label: "Search by name", value: "abc", enter: 1 } },
+        { select: { tid: "usage-mode", option: "Models" } },
+      ],
+    }),
+  ]);
+  assert.equal(ok.length, 1);
+  rejects(
+    [stop({ via: [{ fill: { label: "Search" } }] })],
+    "fill needs a value",
+  );
+  rejects(
+    [stop({ via: [{ fill: { value: "x" } }] })],
+    "fill needs label or tid",
+  );
+  rejects(
+    [stop({ via: [{ select: { label: "Mode" } }] })],
+    "select needs a option",
+  );
+  rejects(
+    [stop({ via: [{ fill: { label: "Search", value: "x", enter: true } }] })],
+    "fill.enter",
+  );
+  rejects(
+    [stop({ via: [{ fill: { label: "x" }, click: { text: "y" } }] })],
+    "exactly one",
+  );
+});
+
+test("a fill into a secret field is refused", () => {
+  for (const field of [
+    { label: "Password", value: "hunter2" },
+    { tid: "api-key-input", value: "abc" },
+    { label: "Access Token", value: "abc" },
+  ])
+    rejects([stop({ via: [{ fill: field }] })], "publish its value");
+});
+
 test("every problem is reported at once", () => {
   assert.throws(
     () => parseManifest([stop({ ch: "" }), stop({ route: "x" })]),
@@ -223,7 +264,7 @@ test("a translation obeys the same caps as the stop it translates", () => {
   );
   rejects(
     [stop({ lng: "ko", i18n: { en: { ...EN, via: [{}] } } })],
-    "only {click: {...}} steps are replayable",
+    "exactly one replayable {click}, {fill} or {select}",
   );
 });
 

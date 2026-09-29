@@ -105,7 +105,6 @@ const SignupModal: React.FC<SignupModalProps> = ({
             : t('signUp.SignUpBETA')
         }
         onCancel={onRequestClose}
-        destroyOnHidden
         getContainer={false}
         width={400}
         styles={{
@@ -303,7 +302,6 @@ const SignupModal: React.FC<SignupModalProps> = ({
         open={showEmailSentDialog}
         title={t('signUp.ThankYou')}
         closable={false}
-        destroyOnHidden
         getContainer={false}
         footer={
           <Button

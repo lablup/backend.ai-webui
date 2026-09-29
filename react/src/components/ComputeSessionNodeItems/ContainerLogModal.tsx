@@ -41,10 +41,11 @@ interface ContainerLogModalProps extends BAIModalProps {
  * The body is measured against that same cap rather than the viewport, so the
  * two cannot cross over on a tall screen. It subtracts only the chrome above
  * it: the dialog's own block padding (a published theme token) and the header
- * row (measured 52px; this modal renders `footer={null}`).
+ * row (BAIModal's 57px header band, `BAIModal.css`; this modal renders
+ * `footer={null}`).
  */
 const LOG_MODAL_MAX_HEIGHT = '95vh';
-const LOG_MODAL_HEADER_HEIGHT = '52px';
+const LOG_MODAL_HEADER_HEIGHT = '57px';
 const LOG_BODY_HEIGHT = `calc(${LOG_MODAL_MAX_HEIGHT} - ${LOG_MODAL_HEADER_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`;
 
 const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
@@ -189,7 +190,6 @@ const ContainerLogModal: React.FC<ContainerLogModalProps> = ({
       }}
       {...modalProps}
       footer={null}
-      destroyOnHidden
     >
       <BAIFlex
         direction="column"

@@ -135,7 +135,6 @@ const DeploymentPresetDetailModal: React.FC<
     <BAIModal
       centered
       title={t('modelService.DeploymentPresetDetail')}
-      destroyOnHidden
       footer={null}
       width={720}
       {...modalProps}

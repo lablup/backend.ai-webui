@@ -6,6 +6,7 @@
     "DiskPerc": "Uso de disco (%)",
     "Endpoint": "Punto de enlace",
     "FailedToLoadCellData": "Error al cargar los datos.",
+    "LostAt": "Perdido el",
     "NoAvailableLiveStat": "No hay estadísticas en tiempo real disponibles",
     "Region": "Región",
     "ResourceGroup": "Grupo de recursos",
@@ -13,7 +14,8 @@
     "Schedulable": "Planificable",
     "Starts": "Inicios",
     "Status": "Estado",
-    "Utilization": "Uso"
+    "Utilization": "Uso",
+    "Version": "Versión"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Permitido",

@@ -1,6 +1,6 @@
 ---
 name: playwright-test-reviewer
-description: Use this agent to review newly written or modified Playwright e2e tests for code quality, locator robustness, test isolation, naming conventions, and project-specific best practices. Produces a review report and applies fixes. Examples: <example>Context: Developer has written new e2e tests and wants them reviewed before committing. user: 'Review the e2e tests I just wrote' assistant: 'I'll use the playwright-test-reviewer agent to review and improve the tests.' <commentary> The user wants quality review of newly written e2e tests, which is exactly what this reviewer agent does. </commentary></example><example>Context: After generator or healer agent has run, user wants a quality check. user: 'Check the e2e tests for issues before committing' assistant: 'I'll launch the playwright-test-reviewer to check for locator quality, isolation, and convention issues.' <commentary> Pre-commit review of e2e tests is the core purpose of this agent. </commentary></example>
+description: Review new or modified Playwright e2e tests for locator robustness, isolation and cleanup, naming and tag conventions, and project anti-patterns, write a report to e2e/.agent-output/, and apply the Critical/Warning fixes. Use before committing e2e test changes or after the generator/healer has run.
 tools: Glob, Grep, Read, Write, Edit, Bash
 model: sonnet
 color: orange
@@ -53,12 +53,9 @@ For each test file, check all items below.
 | `getByRole(...)`, `getByLabel(...)`, `getByText(...)` | ✅ Preferred |
 | `locator('[aria-label="..."]')` | ✅ Acceptable |
 | `locator('[data-testid="..."]')` | ✅ Acceptable |
-| `locator('.ant-modal-content')`, `.ant-table-row`, `.ant-btn` | ⚠️ Brittle — use role-based |
-| `locator('.anticon-*')` | ❌ Forbidden — use `[aria-label="..."]` |
+| `locator('.ant-*')` / `.anticon-*` (any antd class) | ❌ Dead — antd is not a dependency, so these never match; use role/aria-based |
 
-Exception: `.ant-spin-spinning` for loading spinner detection is acceptable when no semantic alternative exists, but prefer `waitFor` on a concrete element instead.
-
-**Ant Design specific migrations:**
+**Migrating leftover antd-class locators:**
 
 ```typescript
 // ❌ Brittle CSS class

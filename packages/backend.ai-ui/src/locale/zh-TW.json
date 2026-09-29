@@ -6,6 +6,7 @@
     "DiskPerc": "磁碟使用率 (%)",
     "Endpoint": "端點",
     "FailedToLoadCellData": "資料載入失敗。",
+    "LostAt": "失聯時間",
     "NoAvailableLiveStat": "沒有可用的即時統計",
     "Region": "區域",
     "ResourceGroup": "資源群組",
@@ -13,7 +14,8 @@
     "Schedulable": "可排程",
     "Starts": "開始時間",
     "Status": "狀態",
-    "Utilization": "使用率"
+    "Utilization": "使用率",
+    "Version": "版本"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "允許",

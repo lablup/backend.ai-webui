@@ -152,7 +152,7 @@ interface ValidatedRow {
 
 interface BulkCreateUserFromCSVModalProps extends Omit<
   BAIModalProps,
-  'footer' | 'onCancel' | 'title' | 'afterClose'
+  'footer' | 'onCancel' | 'title'
 > {
   onRequestClose: (success: boolean) => void;
 }
@@ -161,6 +161,7 @@ interface BulkCreateUserFromCSVModalProps extends Omit<
 
 const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   onRequestClose,
+  afterClose,
   ...baiModalProps
 }) => {
   'use memo';
@@ -977,7 +978,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   return (
     <BAIModal
       centered
-      destroyOnHidden
       title={
         <BAIFlex align="center" gap="xxs">
           {t('credential.BulkCreateUserFromCSV')}
@@ -1024,7 +1024,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       // per-attempt, file-scoped `createdCount`, so neither a retry that
       // creates nothing nor a Remove File can erase an earlier success.
       onCancel={() => onRequestClose(hasCreatedAny)}
-      afterClose={resetState}
+      afterClose={() => {
+        resetState();
+        afterClose?.();
+      }}
       {...baiModalProps}
     >
       {/* Left panel — Source file + Global defaults */}

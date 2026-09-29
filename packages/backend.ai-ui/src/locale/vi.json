@@ -6,6 +6,7 @@
     "DiskPerc": "Sử dụng đĩa (%)",
     "Endpoint": "Điểm cuối",
     "FailedToLoadCellData": "Không thể tải dữ liệu.",
+    "LostAt": "Mất lúc",
     "NoAvailableLiveStat": "Không có số liệu trực tiếp",
     "Region": "Khu vực",
     "ResourceGroup": "Nhóm tài nguyên",
@@ -13,7 +14,8 @@
     "Schedulable": "Có thể lên lịch",
     "Starts": "Bắt đầu",
     "Status": "Trạng thái",
-    "Utilization": "Mức sử dụng"
+    "Utilization": "Mức sử dụng",
+    "Version": "Phiên bản"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Được phép",

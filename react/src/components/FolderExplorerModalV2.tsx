@@ -116,8 +116,6 @@ interface FolderExplorerProps extends Omit<
   open?: boolean;
   vfolderID: string;
   onRequestClose: () => void;
-  /** Accepted and ignored — the Astryx modal always unmounts when closed. */
-  destroyOnHidden?: boolean;
 }
 
 // Read through the legacy `group_node`, which skips the RBAC own check that
@@ -162,7 +160,6 @@ const OwnershipProjectBanner: React.FC<{
 const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   vfolderID,
   onRequestClose,
-  destroyOnHidden: _destroyOnHidden,
   ...modalProps
 }) => {
   'use memo';
