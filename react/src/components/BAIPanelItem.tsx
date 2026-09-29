@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import usePrimaryColors from '../hooks/usePrimaryColors';
-import { theme } from '../theme-shim';
 import { ProgressBar } from '@astryxdesign/core/ProgressBar';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex, BAIFlexProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { ReactNode } from 'react';
@@ -29,8 +28,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
   progressLabel,
   ...props
 }) => {
-  const { token } = theme.useToken();
-  const primaryColors = usePrimaryColors();
+  const { token } = useTheme();
   return (
     <BAIFlex
       {...props}
@@ -46,7 +44,7 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
       {_.isString(title) ? (
         <Text
           style={{
-            fontSize: token.fontSizeHeading5,
+            fontSize: token('--font-size-lg'),
             textAlign: 'left',
           }}
         >
@@ -59,8 +57,8 @@ const BAIPanelItem: React.FC<BAIPanelItemProps> = ({
         {_.isString(value) || _.isNumber(value) ? (
           <Text
             style={{
-              fontSize: token.fontSizeHeading1,
-              color: color ?? primaryColors.primary5,
+              fontSize: token('--font-size-4xl'),
+              color: color ?? token('--primary-5'),
             }}
           >
             {value}

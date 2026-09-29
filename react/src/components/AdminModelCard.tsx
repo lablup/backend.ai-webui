@@ -19,7 +19,6 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -27,6 +26,7 @@ import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAdminProjectSelect,
   BAIButton,
@@ -149,7 +149,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
 
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
@@ -465,7 +465,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 onClearSelection={() => setSelectedModelCards([])}
               />
               <BAIButton
-                icon={<Trash2 style={{ color: token.colorError }} size="1em" />}
+                icon={
+                  <Trash2
+                    style={{ color: token('--color-error') }}
+                    size="1em"
+                  />
+                }
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />
@@ -583,7 +588,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                     vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
                     style={{
                       verticalAlign: 'middle',
-                      marginInline: token.marginXXS,
+                      marginInline: token('--spacing-1'),
                     }}
                   />
                   <BAILink
@@ -765,7 +770,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                               {/* PILOT-DECISION: antd `type="danger"` has no
                                   Astryx TextColor equivalent — the red tint is
                                   dropped; `type="supporting"` keeps the small
-                                  font (was token.fontSizeSM) and the failure
+                                  font (was token('--font-size-sm')) and the failure
                                   context is already carried by the warning
                                   notification. */}
                               <Text type="supporting" color="primary">

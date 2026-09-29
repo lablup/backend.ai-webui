@@ -98,7 +98,7 @@ const V = {
    * is the same measurement for the JS side.
    */
   descriptionColor:
-    'var(--bai-form-item-description-color, var(--bai-color-text-description, rgba(0,0,0,0.45)))',
+    'var(--bai-form-item-description-color, var(--color-text-description, rgba(0,0,0,0.45)))',
   // antd `-explain, -extra { fontSize: token.fontSize }`.
   explainFontSize:
     'var(--bai-form-item-explain-font-size, var(--font-size-base, 14px))',
