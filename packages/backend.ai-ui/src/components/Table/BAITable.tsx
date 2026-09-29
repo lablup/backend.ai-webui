@@ -210,7 +210,6 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   bordered,
   scroll,
   showHeader = true,
-  style,
   ...dataGridProps
 }: BAITableProps<RecordType>): React.ReactElement => {
   'use memo';
@@ -269,9 +268,6 @@ const BAITable = <RecordType extends AnyRecord = AnyRecord>({
   return (
     <DataGrid<RecordType>
       {...dataGridProps}
-      // FR-4007: as a flex/grid item the root must be allowed to shrink, or
-      // the grid's own horizontal scroll never engages.
-      style={{ minWidth: 0, maxWidth: '100%', ...style }}
       data={dataSource}
       columns={gridColumns}
       idKey={

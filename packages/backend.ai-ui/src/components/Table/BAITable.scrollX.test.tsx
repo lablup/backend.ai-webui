@@ -62,10 +62,12 @@ describe('BAITable scroll.x', () => {
     expect(rootOf(renderScrollTable().container)).toBeInTheDocument();
   });
 
-  it('lets the root shrink as a flex item, caller style winning', () => {
+  // FR-4007's reset (min-width: 0; max-width: 100%) is ui-common's
+  // `.uic-data-grid` rule; an inline copy here would outrank a caller's class.
+  it('leaves the root size to the DataGrid rule, caller style winning', () => {
     const root = rootOf(renderScrollTable().container);
-    expect(root.style.minWidth).toBe('0px');
-    expect(root.style.maxWidth).toBe('100%');
+    expect(root.style.minWidth).toBe('');
+    expect(root.style.maxWidth).toBe('');
     const custom = rootOf(
       renderScrollTable({ style: { maxWidth: '50%' } }).container,
     );
