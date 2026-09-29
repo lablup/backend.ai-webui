@@ -3,6 +3,8 @@ import { default as React } from '../../../../../../../setup-pnpm/node_modules/.
 export type BAIDoubleTokenValue = {
     label: string;
     color?: AstryxTokenColor;
+    /** Appends the shared copy control (`BAIText copyable`) to this segment. */
+    copyable?: boolean;
 };
 export interface BAIDoubleTokenProps {
     values?: Array<string> | Array<BAIDoubleTokenValue>;

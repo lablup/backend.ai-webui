@@ -3,6 +3,8 @@ export * from './astryxTagVariant';
 export * from './combineFilters';
 export * from './runtimeVariantPresetUI';
 export * from './vfolderHostPermission';
+/** The manager's "no limit" sentinel for count fields; rendered as ∞. */
+export declare const SIGNED_32BIT_MAX_INT = 2147483647;
 export declare function parseValueWithUnit(str: string): [number, string | undefined];
 export declare const GBToBytes: (value?: number) => number;
 export declare const bytesToGB: (bytes: number, decimalPoint?: number, nullStr?: string) => string | number;
@@ -195,8 +197,29 @@ export * from './newLineToBrElement';
 export * from './useDebouncedDeferredValue';
 export type SemanticColor = 'success' | 'info' | 'warning' | 'error' | 'default';
 export declare const useSemanticColorMap: () => Record<SemanticColor, string>;
+export type DownloadFailureReason = 'unreachable' | 'rejected' | 'popup-blocked';
+/**
+ * Thrown when a download never reached the browser's download manager.
+ *
+ * Handing a URL to `<a download>` (or `window.open`) tells the caller nothing
+ * about what the browser did with it, so without this the UI reports success
+ * for a file that never arrives — FR-3927.
+ */
+export declare class DownloadFailedError extends Error {
+    readonly reason: DownloadFailureReason;
+    readonly origin: string;
+    readonly status?: number;
+    readonly originalError?: unknown;
+    constructor(downloadURL: string, reason: DownloadFailureReason, { status, originalError, }?: {
+        status?: number;
+        originalError?: unknown;
+    });
+}
+export declare const DOWNLOAD_PROBE_TIMEOUT_MS = 15000;
 /**
  * Initiate a file download from a URL with a custom filename.
  * Handles iOS Safari separately by opening a new window.
+ *
+ * Rejects with a {@link DownloadFailedError} when the download did not start.
  */
 export declare const initiateDownload: (downloadURL: string, fileName: string) => Promise<void>;

@@ -78,8 +78,11 @@ export interface BAIComplexSelectProps {
     total?: number;
     /** antd `BAISelect.header` (rendered above the option list). */
     header?: React.ReactNode;
-    /** antd `BAISelect.footer` (rendered below the option list). */
-    footer?: React.ReactNode;
+    /**
+     * antd `BAISelect.footer` (rendered below the option list). A function
+     * receives `close` so a footer action can dismiss the panel.
+     */
+    footer?: React.ReactNode | ((close: () => void) => React.ReactNode);
     /** antd `notFoundContent`. Overrides the loading row too. */
     emptyContent?: React.ReactNode;
     /**
@@ -99,7 +102,7 @@ export interface BAIComplexSelectProps {
     /**
      * antd `allowClear`: a clear button between the spinner and the chevron
      * while something is selected (`ComplexSelector.hasClear`, added by
-     * react/patches/@astryxdesign__core@0.5.4.patch, upstream
+     * react/patches/@astryxdesign__core@0.6.2.patch, upstream
      * https://github.com/facebook/astryx/pull/6362).
      */
     allowClear?: boolean;
