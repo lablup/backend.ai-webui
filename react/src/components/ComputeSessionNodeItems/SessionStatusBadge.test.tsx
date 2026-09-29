@@ -43,7 +43,7 @@ vi.mock('../../hooks', async (importOriginal) => {
   };
 });
 
-const TestRenderer: React.FC = () => {
+const TestRenderer: React.FC<{ showTooltip?: boolean }> = ({ showTooltip }) => {
   'use memo';
   const data = useLazyLoadQuery<SessionStatusBadgeTestQuery>(
     graphql`
@@ -57,7 +57,12 @@ const TestRenderer: React.FC = () => {
     { id: 'session-id' },
   );
   if (!data.compute_session_node) return null;
-  return <SessionStatusBadge sessionFrgmt={data.compute_session_node} />;
+  return (
+    <SessionStatusBadge
+      sessionFrgmt={data.compute_session_node}
+      showTooltip={showTooltip}
+    />
+  );
 };
 
 const renderTag = (session: {
@@ -65,6 +70,7 @@ const renderTag = (session: {
   cluster_size: number;
   kernelStatuses?: Array<string>;
   kernelEdges?: Array<unknown>;
+  showTooltip?: boolean;
 }) => {
   const environment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
@@ -89,7 +95,7 @@ const renderTag = (session: {
   render(
     <RelayEnvironmentProvider environment={environment}>
       <Suspense fallback={null}>
-        <TestRenderer />
+        <TestRenderer showTooltip={session.showTooltip} />
       </Suspense>
     </RelayEnvironmentProvider>,
   );
@@ -208,6 +214,22 @@ describe('SessionStatusBadge kernel breakdown popover (FR-3924)', () => {
     });
 
     await userEvent.hover(await screen.findByText('TERMINATING'));
+
+    expect(breakdown()).toBeNull();
+  });
+
+  it('gives a badge rendered with showTooltip={false} no breakdown trigger', async () => {
+    // The notification item passes `showTooltip={false}` to stay overlay-free.
+    renderTag({
+      status: 'TERMINATING',
+      cluster_size: 120,
+      kernelStatuses: [...repeat('TERMINATED', 119), 'TERMINATING'],
+      showTooltip: false,
+    });
+
+    const label = await screen.findByText('TERMINATING');
+    expect(label.closest('[tabindex="0"]')).toBeNull();
+    await userEvent.hover(label);
 
     expect(breakdown()).toBeNull();
   });

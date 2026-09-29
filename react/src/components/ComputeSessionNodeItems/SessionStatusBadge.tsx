@@ -110,9 +110,12 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   // The breakdown only says something a cluster session's badge does not: one
   // kernel has no distribution, and a settled one is not moving. Edge COUNT is
   // not proof of data — Relay permits null edges and nodes, which the helper
-  // skips — so the buckets themselves decide.
+  // skips — so the buckets themselves decide. `showTooltip={false}` opts the
+  // badge out of every overlay (the notification item relies on that), so it
+  // opts out of the breakdown hover card too.
   const kernelBreakdown = getSessionKernelBreakdown(session);
   const kernelBreakdownPhase =
+    showTooltip &&
     phase !== null &&
     progress.total > 1 &&
     kernelBreakdown.some((bucket) => bucket.count > 0)

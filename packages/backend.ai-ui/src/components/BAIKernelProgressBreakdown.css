@@ -8,7 +8,8 @@
 
  The five `data-variant` values are everything `badgeVariantForStatus('session',
  …)` can return; there is no `--color-info`, so `info` resolves to the declared
- blue icon token, the same substitution BAIBadgeCount.css makes.
+ blue icon token, the same substitution BAIBadgeCount.css makes, and
+ `neutral` likewise resolves to the solid gray icon token.
 */
 
 @layer components {
@@ -39,9 +40,13 @@
     border-radius: var(--radius-full);
   }
 
+  /* Not --color-neutral: that is a translucent surface tint (20% white in dark
+     mode) and all but vanishes against --color-track, so TERMINATED and
+     PENDING segments were unreadable. The solid gray icon token contrasts with
+     the track in both themes. */
   .bai-kernel-progress-breakdown-segment[data-variant='neutral'],
   .bai-kernel-progress-breakdown-swatch[data-variant='neutral'] {
-    background: var(--color-neutral);
+    background: var(--color-icon-gray);
   }
 
   .bai-kernel-progress-breakdown-segment[data-variant='info'],
