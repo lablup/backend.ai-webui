@@ -996,6 +996,7 @@ test.describe(
 // Read / Write checkbox grid behind a floating save bar (#9849, ADR 0006).
 // The Create Role modal is not the subject here, so each test provisions its
 // custom role through the admin GraphQL API and purges it afterwards.
+// Every Backend.AI install ships the `default` domain.
 const SINGLE_SCOPE_DOMAIN = 'default';
 
 async function createSingleScopeRoleViaApi(
@@ -1064,7 +1065,7 @@ test.describe(
   'RBAC Role Detail Drawer for a single-scope role',
   { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
   () => {
-    let api: APIRequestContext;
+    let api: APIRequestContext | undefined;
     let roleName: string;
     let roleId: string | undefined;
 
@@ -1082,7 +1083,7 @@ test.describe(
 
     test.afterEach(async () => {
       try {
-        if (roleId) await purgeRoleViaApi(api, roleId);
+        if (api && roleId) await purgeRoleViaApi(api, roleId);
       } catch (error) {
         console.warn(
           `[rbac-role-detail] failed to purge role ${roleName}:`,
@@ -1091,6 +1092,7 @@ test.describe(
       } finally {
         roleId = undefined;
         await api?.dispose();
+        api = undefined;
       }
     });
 
@@ -1200,13 +1202,18 @@ test.describe(
 
       await expect(permissionRow(drawer, 'Folder')).toBeVisible();
       await expect(permissionRow(drawer, 'Agent')).toBeHidden();
-      const permissionTypeCells = dataRows(page, drawer).locator(
-        'td:first-child',
-      );
-      await expect(permissionTypeCells.first()).toBeVisible();
-      for (const text of await permissionTypeCells.allInnerTexts()) {
-        expect(text).toMatch(/folder/i);
-      }
+      const visibleRows = dataRows(page, drawer);
+      await expect(visibleRows.first()).toBeVisible();
+      await expect
+        .poll(async () => {
+          const types = await visibleRows.evaluateAll((rows) =>
+            rows.map((row) => row.querySelector('td')?.textContent ?? ''),
+          );
+          return (
+            types.length > 0 && types.every((type) => /folder/i.test(type))
+          );
+        })
+        .toBe(true);
 
       await filterInput.fill('');
       await expect(permissionRow(drawer, 'Agent')).toBeVisible();
