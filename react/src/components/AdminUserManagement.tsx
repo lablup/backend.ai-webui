@@ -227,7 +227,13 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
               title: t('actAs.UseAsThisUser'),
               icon: <UserRoundCheckIcon />,
               onClick: () =>
-                confirmActAs(userId, email, record.basicInfo?.fullName ?? ''),
+                confirmActAs(
+                  userId,
+                  email,
+                  record.basicInfo?.fullName ||
+                    record.basicInfo?.username ||
+                    '',
+                ),
             },
           {
             key: 'info',
