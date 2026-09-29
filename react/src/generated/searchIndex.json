@@ -4726,6 +4726,7 @@
         "data.usage.HostStatusTooltip",
         "data.usage.Insufficient",
         "data.usage.Unknown",
+        "dialog.ErrorOccurred",
         "dialog.ask.DoYouWantToProceed",
         "error.AllowsPositiveNumberOnly",
         "error.UnexpectedError",

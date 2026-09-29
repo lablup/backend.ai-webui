@@ -174,4 +174,29 @@ describe('ImageEnvironmentSelectFormItems refresh control', () => {
     ).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'pytorch' })).toBeInTheDocument();
   });
+  it('keeps the selector and the refresh button when the refresh fails', async () => {
+    const environment = createMockEnvironment();
+    renderFormItems(environment, true);
+    await resolveImageQuery(environment, ['pytorch']);
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'button.Refresh' }),
+    );
+    await waitFor(() => {
+      expect(environment.mock.getAllOperations()).toHaveLength(1);
+    });
+    await act(async () => {
+      environment.mock.rejectMostRecentOperation(new Error('network down'));
+    });
+
+    expect(screen.queryByText('loading')).not.toBeInTheDocument();
+    expect(
+      screen
+        .getAllByRole('button')
+        .some((button) => button.textContent === 'pytorch'),
+    ).toBe(true);
+    expect(
+      screen.getByRole('button', { name: 'button.Refresh' }),
+    ).toBeInTheDocument();
+  });
 });

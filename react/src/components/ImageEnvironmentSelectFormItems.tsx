@@ -6,6 +6,7 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
+import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import {
   compareImageVersions,
@@ -40,19 +41,17 @@ import {
   BAISelectOptionItem as SelectOption,
   BAISelectOptionGroup as SelectOptGroup,
   BAIText,
-  useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw } from 'lucide-react';
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useLazyLoadQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 export type Image = NonNullable<
   NonNullable<ImageEnvironmentSelectFormItemsQuery$data>['images']
@@ -138,52 +137,67 @@ const ImageEnvironmentSelectFormItems: React.FC<
     [searchPrefill],
   );
 
-  const [isRefetchPending, startRefetchTransition] = useTransition();
-  const [imageFetchKey, updateImageFetchKey] = useUpdatableState('initial');
+  const relayEnvironment = useRelayEnvironment();
+  const { message } = App.useApp();
+  const [isRefetchPending, setIsRefetchPending] = useState(false);
 
   const imageEnvironmentSelectFormItemsVariables = baiClient?._config
     ?.showNonInstalledImages
     ? {}
     : { installed: true };
-  const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
-    graphql`
-      query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
-        images(is_installed: $installed) {
-          id
-          name @deprecatedSince(version: "24.12.0")
-          humanized_name
-          tag
-          registry
-          architecture
-          digest
-          installed
-          resource_limits {
-            key
-            min
-            max
-          }
-          labels {
-            key
-            value
-          }
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
-            key
-            value
-          }
-          version @since(version: "24.12.0")
-          supported_accelerators
+  const imageQuery = graphql`
+    query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
+      images(is_installed: $installed) {
+        id
+        name @deprecatedSince(version: "24.12.0")
+        humanized_name
+        tag
+        registry
+        architecture
+        digest
+        installed
+        resource_limits {
+          key
+          min
+          max
         }
+        labels {
+          key
+          value
+        }
+        namespace @since(version: "24.12.0")
+        base_image_name @since(version: "24.12.0")
+        tags @since(version: "24.12.0") {
+          key
+          value
+        }
+        version @since(version: "24.12.0")
+        supported_accelerators
       }
-    `,
+    }
+  `;
+  const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
+    imageQuery,
     imageEnvironmentSelectFormItemsVariables,
-    {
-      fetchPolicy:
-        imageFetchKey === 'initial' ? 'store-and-network' : 'network-only',
-      fetchKey: imageFetchKey,
-    },
+    { fetchPolicy: 'store-and-network' },
   );
+
+  // Refetched outside render so a failed request keeps the current list and
+  // the button instead of throwing into the launcher's null-fallback boundary.
+  const refreshImages = () => {
+    setIsRefetchPending(true);
+    fetchQuery<ImageEnvironmentSelectFormItemsQuery>(
+      relayEnvironment,
+      imageQuery,
+      imageEnvironmentSelectFormItemsVariables,
+      { fetchPolicy: 'network-only' },
+    )
+      .toPromise()
+      .catch(() => {
+        message.error(t('dialog.ErrorOccurred'));
+      })
+      .finally(() => setIsRefetchPending(false));
+  };
 
   const imageGroups: ImageGroup[] = _.sortBy(
     _.map(
@@ -445,7 +459,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                     // The row lives inside the item's `<label htmlFor>`, whose
                     // default action would move focus into the select.
                     e.preventDefault();
-                    startRefetchTransition(() => updateImageFetchKey());
+                    refreshImages();
                   }}
                 />
               ) : null}
