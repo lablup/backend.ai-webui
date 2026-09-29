@@ -3,13 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { Form } from '../../form-engine';
-import { theme } from '../../theme-shim';
 import BAIFormItem from '../BAIFormItem';
 import { AstryxFormTextInput } from '../astryxFormControls';
 import { normalizeCustomEndpointURL, type ChatModel } from './ChatModel';
 import { fetchOpenAIModels, type ModelsFetchError } from './openAIModels';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { LinkIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -51,7 +51,7 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token: themeToken } = theme.useToken();
+  const { token } = useTheme();
   const [form] = Form.useForm<CustomEndpointFormValues>();
   const [isProbing, setIsProbing] = useState(false);
   const [failure, setFailure] = useState<
@@ -154,10 +154,10 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
       direction="column"
       align="stretch"
       style={{
-        padding: themeToken.paddingContentVerticalLG,
-        paddingInline: themeToken.paddingContentHorizontal,
-        backgroundColor: themeToken.colorBgContainer,
-        borderBottom: `1px solid ${themeToken.colorBorderSecondary}`,
+        padding: token('--spacing-4'),
+        paddingInline: token('--spacing-4'),
+        backgroundColor: token('--color-background-surface'),
+        borderBottom: `1px solid ${token('--color-border')}`,
       }}
     >
       <Form
@@ -183,13 +183,13 @@ const CustomEndpointForm: React.FC<CustomEndpointFormProps> = ({
                 />
               ) : undefined
             }
-            style={{ marginBottom: themeToken.size }}
+            style={{ marginBottom: token('--spacing-4') }}
           />
         ) : isApiKeyMissing ? (
           <Banner
             status="warning"
             title={t('chatui.customEndpoint.ApiKeyMissing')}
-            style={{ marginBottom: themeToken.size }}
+            style={{ marginBottom: token('--spacing-4') }}
           />
         ) : null}
         <BAIFormItem

@@ -5,7 +5,6 @@
 import { RoleDetailDrawerContentV2Fragment$key } from '../__generated__/RoleDetailDrawerContentV2Fragment.graphql';
 import { rbacTypeI18nKey } from '../helper/rbacElementTypes';
 import { resolveRBACScopeName } from '../helper/rbacScopeName';
-import { useBAIBreakpoint } from '../theme-shim';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionSummaryTable from './RolePermissionSummaryTable';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
@@ -22,6 +21,7 @@ import {
   BAIText,
   tokenColorForTagColor,
   tokenColorForStatus,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import React, { Suspense, useState } from 'react';
