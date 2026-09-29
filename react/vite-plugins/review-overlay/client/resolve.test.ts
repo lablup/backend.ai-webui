@@ -822,4 +822,20 @@ describe('nextViaControl', () => {
     input.value = 'ab';
     expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(input);
   });
+
+  it('never jumps a value still to type, even to a testid hit', () => {
+    const input = document.createElement('input');
+    const create = el('create', 'create-folder-button');
+    const fillThenCreate = [
+      { fill: { label: 'Folder name', value: 'demo' } },
+      { click: { text: 'Create', tid: 'create-folder-button' } },
+    ];
+    expect(nextViaControl(fillThenCreate, [input, create])?.element).toBe(
+      input,
+    );
+    input.value = 'demo';
+    expect(nextViaControl(fillThenCreate, [input, create])?.element).toBe(
+      create,
+    );
+  });
 });

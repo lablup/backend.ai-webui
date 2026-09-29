@@ -340,7 +340,8 @@ export function viaStepDone(step: AnchorVia, element: Element): boolean {
  * `steps[i]`): an earlier step's control often stays, under the dialog the
  * later one is in. A label alone can be a look-alike elsewhere (a pager's
  * "Next"), so a later step found without its testid counts only once no
- * earlier step is left to do.
+ * earlier step is left to do — and even a testid never jumps a value still to
+ * be typed or chosen, which the later click would submit without.
  */
 export function nextViaControl(
   steps: readonly AnchorVia[],
@@ -358,7 +359,10 @@ export function nextViaControl(
     const tid = viaTid(steps[i]);
     const byTid = !!tid && !!element.closest(`[data-testid="${esc(tid)}"]`);
     const earlierLeft = steps.slice(0, i).some((_, j) => left(j));
-    if (byTid || !earlierLeft) return { element, index: i };
+    const inputLeft = steps
+      .slice(0, i)
+      .some((step, j) => left(j) && viaKind(step) !== 'click');
+    if ((byTid && !inputLeft) || !earlierLeft) return { element, index: i };
   }
   return null;
 }
