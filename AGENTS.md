@@ -17,14 +17,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is a **React web application** using React 19 + Astryx (`@astryxdesign/core`) + Relay 20 (GraphQL).
 
 **Astryx is the component system, and the only one.** New UI is written against Astryx
-directly (see the `ASTRYX` block below for the discover-don't-guess workflow). Ant Design
-is **gone** — removed on the `to-astryx` branch, down to the dependency itself: no
-`package.json` declares it, no source file imports it, and there is no antd
-`ConfigProvider` in the tree. antd is not a dependency of this workspace at
-all — the workspace pins its dependency versions exactly, so it cannot
-re-enter as a transitive dependency, and any `from 'antd'` import fails
-`tsc` immediately. It is not migration debt any more; it is a regression
-that will not compile.
+directly (see the `ASTRYX` block below for the discover-don't-guess workflow). antd is not
+a dependency of this workspace, directly or transitively (versions are pinned exactly), so
+any `from 'antd'` import fails `tsc`.
 
 Tech stack, dependencies, and directory layout are what the manifests and the tree say —
 read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list here.

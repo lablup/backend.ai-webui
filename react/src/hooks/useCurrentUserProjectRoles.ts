@@ -42,6 +42,11 @@ export interface CurrentUserProjectRolesResult {
  * connected manager does not know, and `@catch(to: RESULT)` makes a manager
  * without either resolve to `{ ok: false }` so general pages continue to render.
  *
+ * `@include` / `@skip` mirror the `@since` / `@deprecatedSince` gates so Relay
+ * never expects the root field the transformer stripped: a field missing from
+ * the payload leaves the query "missing" in the store, and store-or-network
+ * then refetches (and suspends) on every mount instead of reading the cache.
+ *
  * Super-admin / domain-admin detection is sourced from the backendaiclient
  * (the legacy signals the existing codebase already relies on), since those
  * roles are outside the per-project scope this hook is concerned with.
@@ -90,10 +95,14 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
       query useCurrentUserProjectRolesQuery(
         $targets: [PermissionTarget!]!
         $legacyPermissionFilter: PermissionNestedFilter
+        $supportsHeldPermissions: Boolean!
       ) {
         heldPermissions: myAtomicBulkScopePermissions(
           input: { targets: $targets }
-        ) @since(version: "26.9.0") @catch(to: RESULT) {
+        )
+          @since(version: "26.9.0")
+          @include(if: $supportsHeldPermissions)
+          @catch(to: RESULT) {
           items {
             scopeId
             permissions
@@ -102,7 +111,10 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
         legacyRoles: myRoles(
           first: 100
           filter: { permission: $legacyPermissionFilter }
-        ) @deprecatedSince(version: "26.9.0") @catch(to: RESULT) {
+        )
+          @deprecatedSince(version: "26.9.0")
+          @skip(if: $supportsHeldPermissions)
+          @catch(to: RESULT) {
           edges {
             node {
               id
@@ -122,7 +134,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
         }
       }
     `,
-    { targets, legacyPermissionFilter },
+    { targets, legacyPermissionFilter, supportsHeldPermissions },
     {
       // store-or-network keeps the result cached across pages for the session.
       fetchPolicy: baiClient.supports('my-roles')

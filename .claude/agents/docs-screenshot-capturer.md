@@ -1,6 +1,6 @@
 ---
 name: docs-screenshot-capturer
-description: Use this agent to capture screenshots for the user manual documentation. It uses Playwright MCP to navigate the live application, take screenshots, and save them to the docs image directories. Works with TODO markers in docs or explicit capture requests. Examples: <example>Context: Documentation has TODO comments for missing screenshots. user: 'Capture the missing screenshots in the docs' assistant: 'I'll use the docs-screenshot-capturer agent to find TODO markers and capture the needed screenshots.' <commentary> The user wants to fill in missing screenshots flagged during documentation writing, which is exactly what this agent does. </commentary></example><example>Context: UI has been redesigned and screenshots need updating. user: 'Update the session page screenshots in the docs' assistant: 'I'll launch the docs-screenshot-capturer to recapture the session page screenshots.' <commentary> The user needs existing screenshots refreshed after a UI change, perfect for this agent. </commentary></example>
+description: Capture or refresh user manual screenshots by driving the live WebUI with Playwright MCP, one capture per UI language, saved to packages/backend.ai-webui-docs/src/{lang}/images/. Use for TODO screenshot markers in the docs or when a page's screenshots are stale after a UI change.
 tools: Glob, Grep, Read, Write, Edit, Bash, mcp__playwright-test__browser_click, mcp__playwright-test__browser_close, mcp__playwright-test__browser_drag, mcp__playwright-test__browser_evaluate, mcp__playwright-test__browser_file_upload, mcp__playwright-test__browser_fill_form, mcp__playwright-test__browser_handle_dialog, mcp__playwright-test__browser_hover, mcp__playwright-test__browser_navigate, mcp__playwright-test__browser_navigate_back, mcp__playwright-test__browser_network_requests, mcp__playwright-test__browser_open, mcp__playwright-test__browser_press_key, mcp__playwright-test__browser_resize, mcp__playwright-test__browser_select_option, mcp__playwright-test__browser_snapshot, mcp__playwright-test__browser_take_screenshot, mcp__playwright-test__browser_type, mcp__playwright-test__browser_wait_for, mcp__playwright-test__browser_tabs, mcp__playwright-test__browser_run_code
 model: opus
 color: yellow
@@ -25,7 +25,7 @@ cp .playwright-mcp/packages/backend.ai-webui-docs/src/{lang}/images/{file}.png \
    packages/backend.ai-webui-docs/src/{lang}/images/{file}.png
 ```
 
-After all captures are done, run a single batch copy and then verify with `md5` that per-language files are unique.
+After all captures are done, run a single batch copy and then verify with `md5sum` that per-language files are unique.
 
 ### File Upload Path Restriction
 
@@ -33,8 +33,8 @@ After all captures are done, run a single batch copy and then verify with `md5` 
 
 Always create temporary files under the project root directory:
 ```
-/Users/codejong/Workspace/lablup/webui-ai/sample_file.txt  ← works
-/tmp/sample_file.txt                                         ← fails
+./sample_file.txt       ← works (under the repository root)
+/tmp/sample_file.txt    ← fails
 ```
 
 Delete these temporary files during cleanup.
@@ -153,13 +153,11 @@ The filename of an existing screenshot encodes a contract about what it shows. S
    ```
 2. Open `/tmp/old.png` and identify its scope:
    - Header strip: very wide, ≤300 px tall (e.g., 2358×222) → use `ref` of `[data-testid="webui-header"]`
-   - Modal/dialog only: medium, no chrome (e.g., 988×804) → use `ref` of `.ant-modal-wrap .ant-modal` or `[role="dialog"]`
-   - Sidebar segment: narrow column → use `ref` of `.ant-layout-sider`
+   - Modal/dialog only: medium, no chrome (e.g., 988×804) → use `ref` of the `[role="dialog"]` element
+   - Sidebar segment: narrow column → use `ref` of the sidebar navigation element from the snapshot
    - Wizard step / panel: capture the specific panel `ref`, not the layout root
    - Full page (~viewport × viewport): `fullPage: true` is acceptable
 3. After capture, sanity-check dimensions match the same order of magnitude as the old. If new dimensions differ by more than ~2× in either axis, you broke the framing — recapture with `ref`.
-
-**Anti-pattern observed in PR #6708**: `header.png` was 2358×222 (header strip) on `main`, recaptured as 2880×1800 (full viewport including sidebar + main content). The filename promised "header" but the new image showed everything. Always run the preflight above before overwriting.
 
 If the framing genuinely needs to change, **rename the file** to reflect the new scope (e.g., `header.png` → `top_bar_with_session_timer.png`) and update all markdown references — never silently broaden an existing image.
 
@@ -186,13 +184,13 @@ done
 
 **Verify per-language uniqueness:**
 ```bash
-md5 packages/backend.ai-webui-docs/src/*/images/{filename}.png
+md5sum packages/backend.ai-webui-docs/src/*/images/{filename}.png
 ```
 All 4 hashes must be different (unless the screenshot has no translatable text).
 
 ### Step 6: Cleanup
 
-**This step is mandatory. Do NOT skip any item.**
+Complete every item: resources left in the live app and a non-English UI both leak into the next capture run.
 
 1. **Delete test resources from the live app** — any files, folders, or sessions created during capture:
    - Open the folder explorer, find the test file
@@ -217,27 +215,9 @@ After capturing and copying screenshots:
 2. **Verify image references** in the documentation match the saved filenames
 3. **Add image references** if the documentation doesn't yet reference the new screenshots
 
-## Available Application Routes
+## Finding the Route for a Page
 
-| Route | Page | Documentation Section |
-|-------|------|----------------------|
-| `/summary` | Summary | summary/summary.md |
-| `/session` | Sessions | session_page/session_page.md |
-| `/session/start` | Session Launcher | session_page/session_page.md |
-| `/data` | Data/Storage | vfolder/vfolder.md |
-| `/serving` | Model Serving | model_serving/model_serving.md |
-| `/import` | Import & Run | import_run/import_run.md |
-| `/my-environment` | My Environments | my_environments/my_environments.md |
-| `/agent-summary` | Agent Summary | agent_summary/agent_summary.md |
-| `/statistics` | Statistics | statistics/statistics.md |
-| `/usersettings` | User Settings | user_settings/user_settings.md |
-| `/credential` | Credentials (admin) | admin_menu/admin_menu.md |
-| `/environment` | Environments (admin) | admin_menu/admin_menu.md |
-| `/agent` | Agents (admin) | admin_menu/admin_menu.md |
-| `/settings` | Settings (admin) | admin_menu/admin_menu.md |
-| `/maintenance` | Maintenance (admin) | admin_menu/admin_menu.md |
-| `/information` | Information (admin) | admin_menu/admin_menu.md |
-| `/logs` | Logs (admin) | admin_menu/admin_menu.md |
+Routes are defined in `react/src/routes.tsx`; the documentation pages are listed in the `navigation` section of `packages/backend.ai-webui-docs/src/book.config.yaml`. Read both instead of assuming a route or page exists.
 
 ## Language Switching
 

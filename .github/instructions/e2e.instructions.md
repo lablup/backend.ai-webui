@@ -19,7 +19,7 @@ is the self-hosted engine in `packages/backend.ai-ui/src/form-engine/`. Nothing 
   `.ant-table-measure-row`, `.ant-form-item-control`, `.ant-popover`, `.ant-tabs-tab-active`
   now matches **zero** elements. It does not fail loudly — it burns its whole timeout and then
   reports a generic "element not found".
-- There are still ~690 such lines across ~65 files in `e2e/` (`git grep -n '\.ant-' -- e2e`).
+- Existing specs still contain many of them (`git grep -n '\.ant-' -- e2e`).
   That is a **known cleanup backlog**, not a pattern to copy. Some of them sit in shared
   helpers, so a helper that "looks official" can still be carrying a dead selector.
 - **New or edited tests must not add a single new `.ant-*` locator.** When you touch a spec or
