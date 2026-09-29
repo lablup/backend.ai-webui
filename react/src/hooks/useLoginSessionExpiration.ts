@@ -14,6 +14,10 @@ import { useEffect } from 'react';
 export const LOGIN_SESSION_EXPIRES_AT_STORAGE_KEY =
   'BackendAIWebUI.login.sessionExpiresAt';
 
+/** Webserver session the stored expiry belongs to (`/server/login-check`'s `session_id`). */
+export const LOGIN_SESSION_EXPIRES_AT_SESSION_ID_STORAGE_KEY =
+  'BackendAIWebUI.login.sessionExpiresAtSessionId';
+
 /** Expiry of the shared login session in epoch milliseconds, or null when unknown. */
 export const loginSessionExpiresAtState = atom<number | null>(null);
 
@@ -58,16 +62,48 @@ export const readLoginSessionExpiresAt = (): number | null => {
 };
 
 /**
+ * The stored expiry, but only when it was recorded for `sessionId`. A value left
+ * behind by a replaced session (re-login without logout) must not be reused.
+ */
+export const readReusableLoginSessionExpiresAt = (
+  sessionId?: string | null,
+): number | null => {
+  if (!sessionId) return null;
+  try {
+    if (
+      localStorage.getItem(LOGIN_SESSION_EXPIRES_AT_SESSION_ID_STORAGE_KEY) !==
+      sessionId
+    ) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+  return readLoginSessionExpiresAt();
+};
+
+/**
  * Publish an expiry to the sibling tabs. Writing an earlier value is skipped so
  * a slow response cannot roll the shared expiry back.
  */
-export const publishLoginSessionExpiresAt = (expires: string): void => {
+export const publishLoginSessionExpiresAt = (
+  expires: string,
+  sessionId?: string | null,
+): void => {
   const incoming = parseLoginSessionExpiresAt(expires);
   if (incoming === null) return;
   const stored = readLoginSessionExpiresAt();
   if (stored !== null && incoming <= stored) return;
   try {
     localStorage.setItem(LOGIN_SESSION_EXPIRES_AT_STORAGE_KEY, expires);
+    if (sessionId) {
+      localStorage.setItem(
+        LOGIN_SESSION_EXPIRES_AT_SESSION_ID_STORAGE_KEY,
+        sessionId,
+      );
+    } else {
+      localStorage.removeItem(LOGIN_SESSION_EXPIRES_AT_SESSION_ID_STORAGE_KEY);
+    }
   } catch {
     // Storage can be unavailable; the tab still counts down from its own value.
   }

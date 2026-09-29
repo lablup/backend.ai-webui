@@ -10,6 +10,7 @@ import {
   parseLoginSessionExpiresAt,
   publishLoginSessionExpiresAt,
   readLoginSessionExpiresAt,
+  readReusableLoginSessionExpiresAt,
   useSyncLoginSessionExpiresAt,
 } from './useLoginSessionExpiration';
 import { act, renderHook } from '@testing-library/react';
@@ -56,6 +57,27 @@ describe('publishLoginSessionExpiresAt', () => {
     expect(localStorage.getItem(LOGIN_SESSION_EXPIRES_AT_STORAGE_KEY)).toBe(
       later,
     );
+  });
+});
+
+describe('readReusableLoginSessionExpiresAt', () => {
+  it('reuses the stored expiry only for the session that recorded it', () => {
+    const expires = iso(60_000);
+    publishLoginSessionExpiresAt(expires, 'session-a');
+
+    expect(readReusableLoginSessionExpiresAt('session-a')).toBe(
+      Date.parse(expires),
+    );
+    // A re-login without logout replaces the session but not the stored key.
+    expect(readReusableLoginSessionExpiresAt('session-b')).toBeNull();
+  });
+
+  it('never reuses when the session id is unknown on either side', () => {
+    publishLoginSessionExpiresAt(iso(60_000));
+    expect(readReusableLoginSessionExpiresAt('session-a')).toBeNull();
+
+    publishLoginSessionExpiresAt(iso(600_000), 'session-a');
+    expect(readReusableLoginSessionExpiresAt(undefined)).toBeNull();
   });
 });
 

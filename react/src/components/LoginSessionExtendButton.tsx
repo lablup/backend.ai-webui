@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useBaiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import {
   isLoginSessionExpiredState,
@@ -10,7 +11,7 @@ import {
   loginSessionExpiresAtState,
   parseLoginSessionExpiresAt,
   publishLoginSessionExpiresAt,
-  readLoginSessionExpiresAt,
+  readReusableLoginSessionExpiresAt,
   useSyncLoginSessionExpiresAt,
 } from '../hooks/useLoginSessionExpiration';
 import { useBAIBreakpoint } from '../theme-shim';
@@ -35,6 +36,8 @@ const LoginSessionExtendButton: React.FC<
 > = () => {
   const { t } = useTranslation();
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+  const baiClient = useSuspendedBackendaiClient();
+  const loginSessionId: string | undefined = baiClient?._config?._session_id;
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
 
@@ -59,7 +62,7 @@ const LoginSessionExtendButton: React.FC<
       // `/server/login-check` reports none), so a tab that opens while a
       // sibling holds a live expiry reuses it rather than extending again.
       if (fetchKey === INITIAL_FETCH_KEY) {
-        const sharedExpires = readLoginSessionExpiresAt();
+        const sharedExpires = readReusableLoginSessionExpiresAt(loginSessionId);
         if (sharedExpires !== null && sharedExpires > Date.now()) {
           return { expires: new Date(sharedExpires).toISOString() };
         }
@@ -75,8 +78,8 @@ const LoginSessionExtendButton: React.FC<
   useEffect(() => {
     if (!data?.expires) return;
     learnExpiresAt(parseLoginSessionExpiresAt(data.expires));
-    publishLoginSessionExpiresAt(data.expires);
-  }, [data?.expires, learnExpiresAt]);
+    publishLoginSessionExpiresAt(data.expires, loginSessionId);
+  }, [data?.expires, learnExpiresAt, loginSessionId]);
 
   const queryExpiresAt = parseLoginSessionExpiresAt(data?.expires);
   const expiresAt =
