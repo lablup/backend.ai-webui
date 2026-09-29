@@ -25,10 +25,7 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import SignupModal from './SignupModal';
-import {
-  TOTPActivateForm,
-  type TOTPActivateFormData,
-} from './TOTPActivateModal';
+import type { TOTPActivateFormData } from './TOTPActivateModal';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -48,6 +45,7 @@ import {
   BAI_Z_INDEX,
   BAIModal,
   type BAIModalProps,
+  BAISkeleton,
   BAIFlex,
   useBAILogger,
   BAIUnmountAfterClose,
@@ -61,7 +59,7 @@ import {
   ChevronRight,
   TriangleAlert,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
@@ -97,6 +95,10 @@ interface LoginFormPanelProps {
   onSetNeedToResetPassword: (v: boolean) => void;
   onSetShowSignupModal: (v: boolean) => void;
 }
+
+const TOTPActivateForm = React.lazy(() =>
+  import('./TOTPActivateModal').then((m) => ({ default: m.TOTPActivateForm })),
+);
 
 const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   isOpen,
@@ -908,11 +910,13 @@ const TOTPActivateInline: React.FC<{
       {isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key ? (
         <BAIFlex>{t('totp.TotpSetupNotAvailable')}</BAIFlex>
       ) : (
-        <TOTPActivateForm
-          ref={formRef}
-          totp_uri={initializedTotp.totp_uri}
-          totp_key={initializedTotp.totp_key}
-        />
+        <Suspense fallback={<BAISkeleton />}>
+          <TOTPActivateForm
+            ref={formRef}
+            totp_uri={initializedTotp.totp_uri}
+            totp_key={initializedTotp.totp_key}
+          />
+        </Suspense>
       )}
     </BAIModal>
   );

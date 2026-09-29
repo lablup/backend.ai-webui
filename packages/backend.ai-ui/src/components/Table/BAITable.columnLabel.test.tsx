@@ -37,6 +37,8 @@ const openSettings = async (columns: BAIColumnsType<Row>) => {
     />,
   );
   await userEvent.click(screen.getByRole('button', { name: /setting/i }));
+  // The settings modal is lazy; its skeleton fallback shows first.
+  await screen.findByPlaceholderText(/search table column/i);
 };
 
 describe('BAITable column labels in the settings modal', () => {

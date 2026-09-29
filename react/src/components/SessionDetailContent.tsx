@@ -13,7 +13,6 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import { useBAIBreakpoint } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
@@ -31,6 +30,7 @@ import SessionStatusDetailModal from './ComputeSessionNodeItems/SessionStatusDet
 import IdleCheckDescriptionModal from './IdleCheckDescriptionModal';
 import { UNSAFELazySessionImageTag } from './ImageTags';
 import MountedVFolderLinks from './MountedVFolderLinks';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import { getUnifiedSlotNameFromTag } from './SessionFormItems/ResourceAllocationFormItems';
 import SessionSchedulingHistoryModal from './SessionSchedulingHistoryModal';

@@ -8,10 +8,8 @@ import {
   usePinnedSessionHistory,
   useRecentSessionHistory,
 } from '../hooks/useRecentSessionHistory';
-import {
-  ResourceNumbersOfSession,
-  SessionLauncherFormValue,
-} from '../pages/SessionLauncherPage';
+import { SessionLauncherFormValue } from '../pages/SessionLauncherPage';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';

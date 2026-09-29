@@ -6,11 +6,11 @@ import type { FormInstance } from '../form-engine';
 import { resolvesReadsVfolderConfigFiles } from '../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useAdminImageReference } from '../hooks/hooksUsingRelay';
-import { ResourceNumbersOfSession } from '../pages/SessionLauncherPage';
 import type {
   AdminDeploymentPresetFormValue,
   ModelServiceFormValue,
 } from './AdminDeploymentPresetFormTypes';
+import { ResourceNumbersOfSession } from './ResourceNumbersOfSession';
 import SourceCodeView from './SourceCodeView';
 import { Button } from '@astryxdesign/core/Button';
 import { Code } from '@astryxdesign/core/Code';

@@ -12,7 +12,6 @@ import {
 import { useThemeMode } from '../hooks/useThemeMode';
 import { useBAIBreakpoint } from '../theme-shim';
 import AboutBackendAIModal from './AboutBackendAIModal';
-import DownloadModal from './DownloadModal';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
@@ -20,6 +19,7 @@ import {
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
 import {
+  BAIModal,
   BAIUnmountAfterClose,
   filterOutEmpty,
   useFetchKey,
@@ -39,6 +39,8 @@ import {
 import React, { CSSProperties, Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+const DownloadModal = React.lazy(() => import('./DownloadModal'));
 
 const UserProfileSettingModal = React.lazy(
   () => import('./UserProfileSettingModal'),
@@ -274,12 +276,24 @@ const UserDropdownMenu: React.FC<{
               </BAIUnmountAfterClose>
             )}
           </Suspense>
-          <BAIUnmountAfterClose>
-            <DownloadModal
-              open={isDownloadModalOpen}
-              onRequestClose={() => toggleDownloadModal()}
-            />
-          </BAIUnmountAfterClose>
+          <Suspense
+            fallback={
+              <BAIModal
+                open={isDownloadModalOpen}
+                title={t('summary.Downloads')}
+                footer={null}
+                loading
+                onCancel={() => toggleDownloadModal()}
+              />
+            }
+          >
+            <BAIUnmountAfterClose>
+              <DownloadModal
+                open={isDownloadModalOpen}
+                onRequestClose={() => toggleDownloadModal()}
+              />
+            </BAIUnmountAfterClose>
+          </Suspense>
           <BAIUnmountAfterClose>
             <AboutBackendAIModal
               open={isOpenAboutBAIModal}

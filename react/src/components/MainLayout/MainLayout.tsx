@@ -19,7 +19,6 @@ import BAIErrorBoundary from '../BAIErrorBoundary';
 import { SIDER_WIDTH } from '../BAISider';
 import DevApiEndpointMismatchAlert from '../DevApiEndpointMismatchAlert';
 import ErrorBoundaryWithNullFallback from '../ErrorBoundaryWithNullFallback';
-import ForceTOTPChecker from '../ForceTOTPChecker';
 import NetworkStatusBanner from '../NetworkStatusBanner';
 import NoResourceGroupAlert from '../NoResourceGroupAlert';
 import PasswordChangeRequestAlert from '../PasswordChangeRequestAlert';
@@ -53,6 +52,8 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useMatches, useLocation } from 'react-router-dom';
+
+const ForceTOTPChecker = React.lazy(() => import('../ForceTOTPChecker'));
 
 export const mainContentDivRefState = atom<React.RefObject<HTMLElement | null>>(
   {
