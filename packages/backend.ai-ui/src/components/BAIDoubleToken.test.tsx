@@ -90,4 +90,18 @@ describe('BAIDoubleToken', () => {
     expect(tokens[0]).not.toContainElement(copyButton);
     expect(screen.getAllByRole('button')).toHaveLength(1);
   });
+
+  it('highlights a copyable label inside its copy control', () => {
+    const { container } = render(
+      <BAIDoubleToken
+        values={[{ label: 'python', copyable: true }]}
+        highlightKeyword="py"
+      />,
+    );
+    const token = root(container).children[0];
+    expect(token).toHaveAttribute('aria-label', 'python');
+    const match = token.querySelector('.uic-text-highlighter__match');
+    expect(match).toHaveTextContent('py');
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
+  });
 });
