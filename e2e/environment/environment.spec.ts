@@ -29,20 +29,20 @@ async function waitForImageListReady(page: Page) {
 }
 
 /**
- * `BAITable` has no spinner: while `loading` is true it dims its own wrapper
- * and marks it `aria-busy` (`BAITable.tsx`, the `bai-table-astryx-dim-layer`
- * div — a class this repo owns, not a framework-internal one).
+ * `BAITable` has no spinner: while `loading` is true ui-common `DataGrid`
+ * dims its rows wrapper and marks it `aria-busy` (the `uic-data-grid__body`
+ * div — a ui-common class, not a framework-internal one).
  */
 async function waitForImageListSettled(page: Page) {
   await expect(
-    page.locator('.bai-table-astryx-dim-layer[aria-busy="true"]'),
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
   ).toHaveCount(0, { timeout: 15000 });
 }
 
 /**
  * `BAITable`'s pagination bar: an Astryx `Pagination` in a
  * `navigation` landmark named "Pagination"
- * (`label={String(t('comp:BAITable.Pagination'))}`, `BAITable.tsx`), whose
+ * (ui-common `DataGrid`'s `uic.DataGrid.pagination` label), whose
  * page buttons are named "Go to page N" and whose current page carries
  * `aria-current="page"` (`@astryxdesign/core/src/Pagination/Pagination.tsx`).
  */
@@ -823,8 +823,8 @@ test.describe(
       { tag: ['@requires-seeded-data'] },
       async ({ page }) => {
         // 1. Check total row count to determine if there are enough images for page 2.
-        // `BAITable`'s bottom bar renders `BAIPaginationInfoText`, i.e.
-        // `comp:PaginationInfoText.Total` = "{{start}} - {{end}} of {{total}} items".
+        // `BAITable`'s bottom bar renders ui-common's `uic.DataGrid.range`,
+        // "{start} - {end} of {total} items".
         const paginationTotal = page.getByText(
           /^\d+\s*-\s*\d+\s+of\s+\d+\s+items$/,
         );
@@ -956,7 +956,7 @@ test.describe(
       ).toBeVisible();
 
       // 3. Verify the table shows its empty state. `BAITable` owns the node
-      // (an Astryx `EmptyState` titled `comp:BAITable.NoDataToDisplay` =
+      // (an Astryx `EmptyState` titled ui-common's `uic.DataGrid.noData` =
       // "No data to display") instead of Astryx's own `@astryx.table.noData`.
       // It renders as a single full-width `<tr><td colSpan>` inside the tbody
       // (`@astryxdesign/core/src/Table/BaseTable.tsx`), so it replaces — not

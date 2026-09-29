@@ -360,6 +360,33 @@ export const WithColumnSettings: Story = {
   },
 };
 
+export const WithCsvExport: Story = {
+  name: 'CSV Export',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Table with `exportSettings`. Click the download icon to open the CSV export dialog: every column whose export key is in `supportedFields` starts checked, the rest are disabled, and `notice` warns above the list.',
+      },
+    },
+  },
+  render: () => (
+    <BAITable
+      columns={sampleColumns}
+      dataSource={sampleData}
+      exportSettings={{
+        supportedFields: ['name', 'age'],
+        onExport: async () => {},
+        notice: 'Only the first 1,000 rows are exported.',
+      }}
+      pagination={{
+        total: sampleData.length,
+        pageSize: 10,
+      }}
+    />
+  ),
+};
+
 export const WithSorting: Story = {
   name: 'Sortable Columns',
   parameters: {

@@ -17,20 +17,24 @@ describe('BAITable scroll.x', () => {
   ])('maps scroll.x=%s onto the CSS variable as %s', (x, expected) => {
     const { container } = renderScrollTable({ scroll: { x } });
     const layer = dimLayerOf(container);
-    expect(layer).toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe(expected);
+    expect(layer).toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer.style.getPropertyValue('--uic-data-grid-scroll-width')).toBe(
+      expected,
+    );
   });
 
   it('stays off when scroll is absent or carries no x', () => {
     const { container: withoutScroll } = renderScrollTable();
     expect(dimLayerOf(withoutScroll)).not.toHaveClass(
-      'bai-table-astryx-scroll-x',
+      'uic-data-grid__body--scroll-x',
     );
 
     const { container: yOnly } = renderScrollTable({ scroll: { y: 500 } });
     const layer = dimLayerOf(yOnly);
-    expect(layer).not.toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe('');
+    expect(layer).not.toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer.style.getPropertyValue('--uic-data-grid-scroll-width')).toBe(
+      '',
+    );
   });
 
   it('releases max-width on auto columns only', () => {
