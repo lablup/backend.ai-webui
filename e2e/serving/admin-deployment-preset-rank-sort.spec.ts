@@ -30,7 +30,10 @@ const PRESET_RANKS: Array<{ suffix: string; rank: number }> = [
 async function createRankedPresets(
   api: APIRequestContext,
   prefix: string,
-): Promise<string[]> {
+  // Filled as each preset is created, so a mid-setup failure still leaves
+  // the already-created ids for afterEach to delete.
+  ids: string[],
+): Promise<void> {
   const rv = await gqlAdmin(
     api,
     `query { runtimeVariants(limit: 100) { edges { node { id name } } } }`,
@@ -51,7 +54,6 @@ async function createRankedPresets(
     );
   }
 
-  const ids: string[] = [];
   for (const { suffix, rank } of PRESET_RANKS) {
     const created = await gqlAdmin(
       api,
@@ -84,7 +86,6 @@ async function createRankedPresets(
       { input: { id, rank } },
     );
   }
-  return ids;
 }
 
 test.describe(
@@ -106,7 +107,7 @@ test.describe(
         "Deployment Presets require 'deployment-preset' (manager >= 26.4.2, FR-3914)",
       );
       api = await createAdminApiContext();
-      presetIds = await createRankedPresets(api, prefix);
+      await createRankedPresets(api, prefix, presetIds);
     });
 
     test.afterEach(async () => {

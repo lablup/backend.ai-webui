@@ -47,10 +47,8 @@ async function applyOwnerFilter(page: Page, email: string): Promise<void> {
   await expect(page).toHaveURL(/createdUserId/);
   // Committing hands focus back to the search bar, which reopens the field
   // typeahead over the table; close it so it does not cover the rows.
-  if (await typeahead.isVisible().catch(() => false)) {
-    await page.keyboard.press('Escape');
-    await expect(typeahead).toBeHidden();
-  }
+  await page.keyboard.press('Escape');
+  await expect(typeahead).toBeHidden();
 }
 
 test.describe(
