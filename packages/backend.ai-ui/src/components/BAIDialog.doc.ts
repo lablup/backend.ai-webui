@@ -58,6 +58,12 @@ export const docs = {
       required: true,
     },
     {
+      name: 'afterOpenChange',
+      type: '(open: boolean) => void',
+      description:
+        'Called with the new visibility right after `isOpen` changes. Not called on mount. The dialog has no exit animation, so `false` marks the end of the close. This is what `BAIUnmountAfterClose` listens to, so a dialog component it wraps must stay mounted while closed and forward this prop.',
+    },
+    {
       name: 'children',
       type: 'ReactNode',
       description:

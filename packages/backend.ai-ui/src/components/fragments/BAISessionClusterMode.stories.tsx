@@ -177,7 +177,7 @@ export const TagMode: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Displays cluster mode as a tag instead of plain text.',
+        story: 'Displays cluster mode as a Token instead of plain text.',
       },
     },
   },

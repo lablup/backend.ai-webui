@@ -94,7 +94,7 @@ export const docs = {
       name: 'onUpload',
       type: '(files: Array<RcFile>, currentPath: string) => void',
       description:
-        'Receives files chosen through the upload control or dropped onto the container, together with the path they belong in. The explorer performs no transfer of its own — the caller runs the upload.',
+        'Receives files chosen through the upload control or dropped onto the container, together with the path they belong in. Entries whose name is already taken are confirmed first, and only the ones the user chose to overwrite are included. The explorer performs no transfer of its own — the caller runs the upload.',
     },
     {
       name: 'tableProps',

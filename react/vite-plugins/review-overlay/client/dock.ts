@@ -10,14 +10,20 @@
  */
 import { icon, ICON_STYLE, type IconName } from './icons.js';
 import { isMac } from './picker.js';
+import { EDIT_LABEL, LINK_NOT_EDITABLE } from './pin.js';
 import type { SetPin } from './types.js';
 
 /** ⌘⇧H / Ctrl⇧H — plain ⌘H hides the app and Ctrl+H opens history. */
 export const CARDS_CHORD = isMac() ? '⌘⇧H' : 'Ctrl⇧H';
 
-/** A toggle is named for what pressing it DOES, never for its state (R8.1). */
-const HIDE_CARDS_LABEL = `Hide every card (${CARDS_CHORD})`;
-const SHOW_CARDS_LABEL = `Show every card (${CARDS_CHORD})`;
+/**
+ * A toggle is named for what pressing it DOES, never for its state (R8.1).
+ * The chord is named only where the host bound one (ADR 0008).
+ */
+const hideCardsLabel = (chord: boolean) =>
+  chord ? `Hide every card (${CARDS_CHORD})` : 'Hide every card';
+const showCardsLabel = (chord: boolean) =>
+  chord ? `Show every card (${CARDS_CHORD})` : 'Show every card';
 
 /** Where a dragged dock is parked, per tab. Cleared with the tab, not the set. */
 export const DOCK_POS_KEY = 'bai-review:dock-pos';
@@ -148,6 +154,8 @@ const STYLE = `
     display: inline-flex; align-items: center; gap: 4px;
   }
   .setdock .act:hover { color: var(--bai-review-text); }
+  .setdock .act:disabled { opacity: 0.35; cursor: default; }
+  .setdock .act:disabled:hover { color: var(--bai-review-text-dim); }
   .setdock .confirm { display: none; align-items: center; gap: 4px; }
   .setdock.confirming .confirm { display: flex; }
   .setdock.confirming .clear { display: none; }
@@ -183,12 +191,24 @@ const STYLE = `
     flex: none; max-width: 50%; overflow: hidden; text-overflow: ellipsis;
     white-space: nowrap; font-size: 11px; color: var(--bai-review-text-dim);
   }
+  /* An away row carries a "where" AND a fifth button, which left the note ~7px
+     of the 260px dock: the where drops to a line of its own, indented past the
+     index to start under the label. */
+  .setdock .row.away { flex-wrap: wrap; }
+  .setdock .row.away .where {
+    order: 1; flex: 1 0 100%; max-width: none; padding-left: 22px;
+  }
 ${ICON_STYLE}
 `;
 
 export interface SetDockOptions {
   /** The overlay's shadow root — the dock is a sibling of the pin layer. */
   root: ShadowRoot;
+  /**
+   * The host's answer to "may the overlay claim keys on this page" (ADR 0008).
+   * `false` and `boot.ts` binds no ⌘⇧H, so the dock names none either.
+   */
+  pageChords: boolean;
   /** Runs inside the click: build and write the set, synchronously. */
   onCopyAll: () => void;
   onClear: () => void;
@@ -196,6 +216,10 @@ export interface SetDockOptions {
   onLocate: (id: string) => void;
   /** A row's remove button: that pin leaves the set. No confirm — it is one pin. */
   onRemove: (id: string) => void;
+  /** A row's ▲/▼: reorder by one position. Order only — the id does not move. */
+  onMove: (id: string, delta: -1 | 1) => void;
+  /** A row's ✏️: that pin's note goes back in the composer. */
+  onEdit: (id: string) => void;
   /** Its card comes back: the row's eye button, or the row itself. */
   onUnhide: (id: string) => void;
   /** The header switch: every card off, or on again. */
@@ -298,17 +322,22 @@ export function createSetDock(options: SetDockOptions) {
     'Copy all',
   );
   const clear = button('clear', 'trash-2', 'Clear the whole set', 'Clear all');
-  const cards = button('cards', 'eye-off', HIDE_CARDS_LABEL, 'Cards');
-  const chord = document.createElement('span');
-  chord.className = 'chord';
-  chord.textContent = CARDS_CHORD;
+  const chords = options.pageChords;
+  const cards = button('cards', 'eye-off', hideCardsLabel(chords), 'Cards');
   const confirm = document.createElement('span');
   confirm.className = 'confirm';
   const confirmText = document.createElement('span');
   const yes = button('yes', 'check', 'Yes, clear the whole set');
   const no = button('no', 'x', 'Keep the set');
   confirm.append(confirmText, yes, no);
-  head.append(grip, title, cards, chord, copyAll, clear, confirm);
+  head.append(grip, title, cards);
+  if (chords) {
+    const chord = document.createElement('span');
+    chord.className = 'chord';
+    chord.textContent = CARDS_CHORD;
+    head.append(chord);
+  }
+  head.append(copyAll, clear, confirm);
   const rows = document.createElement('div');
   rows.className = 'rows';
   dock.append(head, rows);
@@ -492,6 +521,35 @@ export function createSetDock(options: SetDockOptions) {
   /** The set the rows were last built from, as ids: what a re-render compares. */
   let listed = '';
 
+  /** The row control holding focus, so a rebuild of the rows can hand it back. */
+  function focusedRowAction(): { id: string; act: string } | null {
+    const active = options.root.activeElement;
+    const control =
+      active instanceof HTMLElement
+        ? active.closest<HTMLElement>('.row .act')
+        : null;
+    const id = control?.closest<HTMLElement>('.row')?.dataset.pinId;
+    // `Array.from`, not a spread: the extension's `lib` has no `DOM.Iterable`
+    // and a `DOMTokenList` is not iterable there (ADR 0008).
+    const act =
+      control && Array.from(control.classList).find((c) => c !== 'act');
+    return id && act ? { id, act } : null;
+  }
+
+  /**
+   * The same control on the same pin; a ▲ that just reached the top (or a ▼
+   * the bottom) is disabled now, so the other direction takes the focus.
+   */
+  function refocusRowAction({ id, act }: { id: string; act: string }) {
+    const row = rows.querySelector<HTMLElement>(`.row[data-pin-id="${id}"]`);
+    if (!row) return;
+    const other = act === 'up' ? 'down' : act === 'down' ? 'up' : null;
+    for (const name of other ? [act, other] : [act]) {
+      const control = row.querySelector<HTMLButtonElement>(`.${name}`);
+      if (control && !control.disabled) return control.focus();
+    }
+  }
+
   copyAll.addEventListener('click', () => options.onCopyAll());
   cards.addEventListener('click', () => options.onToggleCards());
   clear.addEventListener('click', () => setConfirming(true));
@@ -526,7 +584,13 @@ export function createSetDock(options: SetDockOptions) {
     // `aria-pressed` on a name that changes with the action reads out as its
     // own contradiction — "Show every card, pressed" while they are hidden.
     setIcon(cards, cardsHidden ? 'eye' : 'eye-off');
-    setLabel(cards, cardsHidden ? SHOW_CARDS_LABEL : HIDE_CARDS_LABEL);
+    setLabel(
+      cards,
+      cardsHidden ? showCardsLabel(chords) : hideCardsLabel(chords),
+    );
+    // A row action re-renders every row, which would drop the focus it was
+    // pressed with — a keyboard user repeating ▲ must not tab back each time.
+    const focused = focusedRowAction();
     rows.replaceChildren(
       ...pins.map((pin, index) => {
         const row = document.createElement('div');
@@ -592,16 +656,31 @@ export function createSetDock(options: SetDockOptions) {
           unhide.addEventListener('click', () => options.onUnhide(pin.id));
           row.append(unhide);
         }
+        // Before the ▲/▼: what a row says is its note, and this is what
+        // changes it. A link's pin has no `at`/`pr` to re-key it with.
+        const edit = button('edit', 'pencil', EDIT_LABEL);
+        if (pin.origin !== 'pick') {
+          edit.disabled = true;
+          setLabel(edit, LINK_NOT_EDITABLE);
+        }
+        edit.addEventListener('click', () => options.onEdit(pin.id));
+        const up = button('up', 'chevron-up', 'Move this pin up');
+        up.disabled = index === 0;
+        up.addEventListener('click', () => options.onMove(pin.id, -1));
+        const down = button('down', 'chevron-down', 'Move this pin down');
+        down.disabled = index === pins.length - 1;
+        down.addEventListener('click', () => options.onMove(pin.id, 1));
         const remove = button(
           'remove',
           'trash-2',
           'Remove this pin from the set',
         );
         remove.addEventListener('click', () => options.onRemove(pin.id));
-        row.append(remove);
+        row.append(edit, up, down, remove);
         return row;
       }),
     );
+    if (focused) refocusRowAction(focused);
     // The restore clamped against the stand-in height, with the dock still
     // `display: none`; shown and filled, it has a real box to clamp against.
     reclamp();
@@ -609,6 +688,11 @@ export function createSetDock(options: SetDockOptions) {
 
   return {
     render,
+    /** Where a row is right now, so an editor can hang its box under it. */
+    rowRect(id: string): DOMRect | null {
+      const row = rows.querySelector<HTMLElement>(`.row[data-pin-id="${id}"]`);
+      return row?.getBoundingClientRect() ?? null;
+    },
     /**
      * Mid-pick the dock is 260px of the page the reviewer cannot pick through,
      * the same way the cards are — so it folds away with them. Adding a pin

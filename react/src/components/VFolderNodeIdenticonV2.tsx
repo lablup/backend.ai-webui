@@ -3,8 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderNodeIdenticonV2Fragment$key } from '../__generated__/VFolderNodeIdenticonV2Fragment.graphql';
-import { createAvatar } from '@dicebear/core';
-import * as shapes from '@dicebear/shapes';
+import { BAIVFolderIdenticon } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
 
@@ -26,30 +25,7 @@ const VFolderNodeIdenticonV2: React.FC<VFolderNodeIdenticonV2Props> = ({
     vfolderNodeIdenticonFrgmt,
   );
 
-  return (
-    <img
-      draggable={false}
-      onDragStart={(e) => e.preventDefault()}
-      style={{
-        borderRadius: '0.25em',
-        width: '1em',
-        height: '1em',
-        borderWidth: 0.5,
-        borderStyle: 'solid',
-        // Astryx theme var (ticket 16) — replaces `token.colorBorder`.
-        borderColor: 'var(--color-border)',
-        userSelect: 'none',
-        ...style,
-      }}
-      src={createAvatar(shapes, {
-        seed: vfolder?.id,
-        shape3: [],
-      })?.toDataUri()}
-      // Identicon is purely decorative next to the folder name — empty
-      // alt text prevents screen readers from announcing redundant content.
-      alt=""
-    />
-  );
+  return <BAIVFolderIdenticon seed={vfolder?.id} style={style} />;
 };
 
 export default VFolderNodeIdenticonV2;

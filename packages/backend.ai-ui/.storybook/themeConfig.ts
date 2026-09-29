@@ -23,28 +23,28 @@ export interface ThemePreset {
 
 /**
  * Astryx theme-neutral's own palette, read off `@astryxdesign/theme-neutral`'s
- * `theme.css` (0.5.2) — a monochrome accent, deliberately not a brand hue.
+ * `theme.css` (0.6.2) — a monochrome accent, deliberately not a brand hue.
  * The shim re-runs antd's dark ramp over these seeds, so the dark shades land
  * near, not exactly on, Astryx's own; the point is the absent brand hue.
  */
 const ASTRYX_NEUTRAL_SEEDS: { light: Seeds; dark: Seeds } = {
   light: {
-    colorPrimary: '#262626',
-    colorLink: '#262626',
-    colorInfo: '#00458c',
-    colorError: '#a50c25',
-    colorSuccess: '#007004',
-    colorWarning: '#745b00',
+    colorPrimary: '#1b1b1b',
+    colorLink: '#1b1b1b',
+    colorInfo: '#003978',
+    colorError: '#76000c',
+    colorSuccess: '#00490b',
+    colorWarning: '#4b3900',
     fontFamily:
       'Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },
   dark: {
-    colorPrimary: '#ebebeb',
-    colorLink: '#ebebeb',
-    colorInfo: '#c7d3ff',
-    colorError: '#ffc6c1',
-    colorSuccess: '#9fe59b',
-    colorWarning: '#fdcf4f',
+    colorPrimary: '#f1f1f1',
+    colorLink: '#f1f1f1',
+    colorInfo: '#a1caff',
+    colorError: '#ffc4be',
+    colorSuccess: '#a4d6a3',
+    colorWarning: '#f8d36a',
     fontFamily:
       'Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },

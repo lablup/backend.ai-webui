@@ -4,18 +4,13 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
+import SSHKeyBlock from './SSHKeyBlock';
 import { Button } from '@astryxdesign/core/Button';
 import { Overlay } from '@astryxdesign/core/Overlay';
 import { Spinner } from '@astryxdesign/core/Spinner';
+import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import {
-  BAIPopconfirm,
-  BAIModal,
-  BAIModalProps,
-  BAIFlex,
-  BAIText,
-} from 'backend.ai-ui';
+import { BAIPopconfirm, BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -30,7 +25,6 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
 
   const { data } = useTanQuery<{
@@ -47,16 +41,18 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
     <BAIModal
       title={t('userSettings.SSHKeypairGeneration')}
       closeIcon={false}
-      footer={[
-        <BAIPopconfirm
-          key="close"
-          title={t('button.Confirm')}
-          description={t('userSettings.ClearSSHKeypairInput')}
-          onConfirm={onRequestClose}
-        >
-          <Button variant="secondary" label={t('button.Close')} />
-        </BAIPopconfirm>,
-      ]}
+      // Same row as BAIModal's generated footer (see SSHKeypairManagementModal).
+      footer={
+        <HStack justify="end" gap={2} align="center">
+          <BAIPopconfirm
+            title={t('button.Confirm')}
+            description={t('userSettings.ClearSSHKeypairInput')}
+            onConfirm={onRequestClose}
+          >
+            <Button variant="secondary" label={t('button.Close')} />
+          </BAIPopconfirm>
+        </HStack>
+      }
       {...baiModalProps}
     >
       <Overlay
@@ -64,50 +60,22 @@ const SSHKeypairGenerationModal: React.FC<SSHKeypairGenerationModalProps> = ({
         scrim="light"
         content={<Spinner />}
       >
-        <Text weight="semibold">{t('userSettings.PublicKey')}</Text>
-        <BAIFlex direction="row" align="start" justify="between">
-          <pre
-            style={{
-              width: 430,
-              maxHeight: 100,
-              overflowY: 'scroll',
-              scrollbarWidth: 'none', // Firefox
-            }}
-          >
-            {data?.ssh_public_key}
-          </pre>
-          {data?.ssh_public_key ? (
-            <BAIFlex style={{ marginTop: token.margin }}>
-              <BAIText copyable={{ text: data.ssh_public_key }} />
-            </BAIFlex>
-          ) : null}
-        </BAIFlex>
-        <Text weight="semibold">{t('userSettings.PrivateKey')}</Text>
-        <BAIFlex direction="row" align="start" justify="between">
-          <BAIFlex direction="column" align="start" style={{ flex: 1 }}>
-            <pre
-              style={{
-                width: 430,
-                maxHeight: 100,
-                overflowY: 'scroll',
-                scrollbarWidth: 'none', // Firefox
-              }}
-            >
-              {data?.ssh_private_key}
-            </pre>
-            {/* PILOT-DECISION: antd `Typography.Text type="danger"` has no
-                Astryx TextColor equivalent (MAPPING §3.4) — same drop as
-                AdminModelCard.tsx: red tint dropped, `type="supporting"`
-                keeps the small caption size. */}
-            <Text type="supporting" color="primary">
-              {t('userSettings.SSHKeypairGenerationWarning')}
-            </Text>
-          </BAIFlex>
-          {data?.ssh_private_key ? (
-            <BAIFlex style={{ marginTop: token.margin }}>
-              <BAIText copyable={{ text: data.ssh_private_key }} />
-            </BAIFlex>
-          ) : null}
+        <BAIFlex direction="column" align="stretch" gap="md">
+          <SSHKeyBlock
+            label={t('userSettings.PublicKey')}
+            value={data?.ssh_public_key}
+          />
+          <SSHKeyBlock
+            label={t('userSettings.PrivateKey')}
+            value={data?.ssh_private_key}
+            extra={
+              // PILOT-DECISION: no Astryx red-text step for antd's danger
+              // text (MAPPING §3.4); `supporting` keeps the caption size.
+              <Text type="supporting" color="primary">
+                {t('userSettings.SSHKeypairGenerationWarning')}
+              </Text>
+            }
+          />
         </BAIFlex>
       </Overlay>
     </BAIModal>

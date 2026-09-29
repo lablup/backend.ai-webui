@@ -39,6 +39,11 @@ export const docs = {
           'Set `minVisibleActions` when an action must never hide, and `showInMenu: "always"` for secondary actions that should only ever live in the more menu.',
       },
       {
+        guidance: true,
+        description:
+          'Mark destructive row actions with `type: "danger"` — the red carries into the more menu, where the row renders as an Astryx destructive item.',
+      },
+      {
         guidance: false,
         description:
           'Add a parallel actions column beside this cell — the overflow measurement assumes the actions share the cell with the title.',
@@ -94,6 +99,13 @@ export const docs = {
       description:
         'Lower bound on how many action buttons stay outside the more menu, even when the cell is too narrow for them.',
       default: '0',
+    },
+    {
+      name: 'minTitleWidth',
+      type: 'number',
+      description:
+        'Width (px) the title keeps before an action may claim space; actions that no longer fit fold into the more menu. Applies to `showActions="always"` only — hover mode collapses its actions to zero width at rest, so nothing competes for the title there. Raise it where the title is long and the cell is narrow — the file explorer passes 120 so a file name stays readable.',
+      default: '40',
     },
     {
       name: 'moreMenuDisabled',

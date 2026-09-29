@@ -12,17 +12,16 @@ import type {
   ModelServiceFormValue,
 } from './AdminDeploymentPresetFormTypes';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { Code } from '@astryxdesign/core/Code';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
   BAIMetadataList,
-  badgeVariantForTagColor,
   BAIText,
   toLocalId,
 } from 'backend.ai-ui';
@@ -539,11 +538,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     >
                       <HStack gap={2} wrap="wrap">
                         {m.metadata!.framework!.map((f, fi) => (
-                          <Badge
-                            key={fi}
-                            variant={badgeVariantForTagColor('default')}
-                            label={f}
-                          />
+                          <Token key={fi} label={f} />
                         ))}
                       </HStack>
                     </MetadataListItem>
@@ -554,11 +549,7 @@ const PresetReviewSummary: React.FC<PresetReviewSummaryProps> = ({
                     >
                       <HStack gap={2} wrap="wrap">
                         {m.metadata!.label!.map((l, li) => (
-                          <Badge
-                            key={li}
-                            variant={badgeVariantForTagColor('default')}
-                            label={l}
-                          />
+                          <Token key={li} label={l} />
                         ))}
                       </HStack>
                     </MetadataListItem>

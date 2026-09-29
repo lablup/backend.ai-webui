@@ -140,3 +140,81 @@ describe('an anchor carrying the reviewer note', () => {
     expect(decoded?.n).toBeUndefined();
   });
 });
+
+describe('walkthrough stop fields (FR-3949)', () => {
+  const stop: AnchorV3 = {
+    ...anchor,
+    ch: '업로드 버튼이 카드 헤더로 옮겨졌습니다.',
+    ck: '목록 위 오른쪽 상단에 "Upload" 버튼이 보여야 합니다.',
+    old: '행마다 ⬆ 아이콘',
+    new: '헤더의 "Upload" 버튼',
+    type: 'modified',
+    kind: 'button',
+    code: [{ path: 'react/src/pages/VFolderListPage.tsx', line: 120, to: 131 }],
+    sha: 'c61efbf21a4d9e0b7f3c2d8e5a6b1c0d9e8f7a6b',
+    pr: 9605,
+    via: [{ click: { text: 'Upload' } }],
+    dlg: 1,
+  };
+
+  it('round-trips every stop field', async () => {
+    await expect(decodeAnchor(await encodeAnchor(stop))).resolves.toEqual(stop);
+  });
+
+  // The element the link points at outranks its annotation: a bad field is
+  // dropped, the pin survives.
+  it('drops an ill-typed stop field instead of refusing the anchor', async () => {
+    const bad = { ...stop, code: 'react/src/x.tsx:1', dlg: 2 } as unknown;
+    const decoded = await decodeAnchor(await encodeAnchor(bad as AnchorV3));
+    expect(decoded).not.toBeNull();
+    expect(decoded).not.toHaveProperty('code');
+    expect(decoded).not.toHaveProperty('dlg');
+    expect(decoded?.ck).toBe(stop.ck);
+  });
+
+  it('keeps fill and select steps, and drops a via list with a malformed one', async () => {
+    const via: AnchorV3['via'] = [
+      { click: { text: 'Upload' } },
+      { fill: { label: 'Search by name', value: 'abc', enter: 1 } },
+      { select: { tid: 'mode', option: 'Models' } },
+    ];
+    const kept = await decodeAnchor(await encodeAnchor({ ...stop, via }));
+    expect(kept?.via).toEqual(via);
+    for (const step of [
+      { fill: { label: 'Search' } },
+      { select: { option: 'Models' } },
+      { fill: { label: 'Search', value: 'x' }, click: { text: 'Go' } },
+      { hover: { text: 'Help' } },
+    ]) {
+      const bad = { ...stop, via: [step] } as unknown as AnchorV3;
+      const decoded = await decodeAnchor(await encodeAnchor(bad));
+      expect(decoded).not.toHaveProperty('via');
+    }
+  });
+
+  it('keeps a translation’s element text, and drops one over the cap', async () => {
+    const i18n = { en: { ch: 'c', ck: 'k', txt: 'Only letters are allowed.' } };
+    const withTxt = { ...stop, lng: 'ko', i18n } as AnchorV3;
+    const kept = await decodeAnchor(await encodeAnchor(withTxt));
+    expect(kept?.i18n?.en?.txt).toBe('Only letters are allowed.');
+    const long = {
+      ...stop,
+      lng: 'ko',
+      i18n: { en: { ...i18n.en, txt: 'x'.repeat(65) } },
+    };
+    const dropped = await decodeAnchor(await encodeAnchor(long as AnchorV3));
+    expect(dropped).not.toHaveProperty('i18n');
+  });
+
+  it('drops a stop text over its cap, and a code list over three', async () => {
+    const bad = {
+      ...stop,
+      ch: 'x'.repeat(281),
+      code: Array.from({ length: 4 }, () => ({ path: 'a.ts', line: 1 })),
+    };
+    const decoded = await decodeAnchor(await encodeAnchor(bad));
+    expect(decoded).not.toHaveProperty('ch');
+    expect(decoded).not.toHaveProperty('code');
+    expect(decoded?.ck).toBe(stop.ck);
+  });
+});

@@ -124,14 +124,19 @@ test.describe(
       await expect(
         table.getByRole('columnheader', { name: 'Type' }),
       ).toBeVisible();
+      // Header names carry a "Resize column <key>" suffix, so anchor 'Project'
+      // at the start: a bare substring also matches "Allowed Projects".
       await expect(
-        table.getByRole('columnheader', { name: 'Project' }),
+        table.getByRole('columnheader', { name: /^Project\b/ }),
       ).toBeVisible();
       await expect(
         table.getByRole('columnheader', { name: 'Username' }),
       ).toBeVisible();
       await expect(
         table.getByRole('columnheader', { name: 'Password' }),
+      ).toBeVisible();
+      await expect(
+        table.getByRole('columnheader', { name: 'Allowed Projects' }),
       ).toBeVisible();
       await expect(
         table.getByRole('columnheader', { name: 'Enabled' }),

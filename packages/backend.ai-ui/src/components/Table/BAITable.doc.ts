@@ -126,7 +126,7 @@ export const docs = {
       name: 'exportSettings',
       type: 'BAIExportSettings',
       description:
-        'Turns on the CSV export button. supportedFields limits what the modal offers and onExport receives the field keys the user picked.',
+        'Turns on the CSV export button. supportedFields limits what the modal offers, onExport receives the field keys the user picked, and notice is a warning the modal shows above the column list before the user commits (e.g. a row cap).',
     },
     {
       name: 'expandable',

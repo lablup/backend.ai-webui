@@ -9,6 +9,7 @@ import './BAINameActionCell.css';
 import { Button } from '@astryxdesign/core/Button';
 import {
   DropdownMenu,
+  type DropdownMenuItemData,
   type DropdownMenuOption,
 } from '@astryxdesign/core/DropdownMenu';
 import { Popover } from '@astryxdesign/core/Popover';
@@ -124,6 +125,15 @@ export interface BAINameActionCellProps {
   showActions?: 'hover' | 'always';
   /** Minimum number of action buttons to keep visible before overflow. Default: 0 */
   minVisibleActions?: number;
+  /**
+   * Width (px) the title keeps before an action may claim space; actions that
+   * no longer fit fold into the more menu. `showActions="always"` only —
+   * hover mode collapses its actions to zero width at rest, so nothing
+   * competes for the title there. The default suits an identifier a few
+   * characters of which already identify the row; raise it where the title is
+   * long and the cell narrow (FR-3926).
+   */
+  minTitleWidth?: number;
   /** Disable the overflow More (…) button. Individual menu items remain visible. */
   moreMenuDisabled?: boolean;
   /** Show a copy-to-clipboard icon on hover next to the title text */
@@ -136,6 +146,7 @@ export interface BAINameActionCellProps {
 const ACTION_BUTTON_WIDTH = 24;
 const MORE_BUTTON_WIDTH = 24;
 const ACTIONS_GAP = 2;
+const DEFAULT_MIN_TITLE_WIDTH = 40;
 
 /**
  * The anchored confirmation an antd `Popconfirm` used to provide.
@@ -227,6 +238,7 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
   actions,
   showActions = 'hover',
   minVisibleActions = 0,
+  minTitleWidth = DEFAULT_MIN_TITLE_WIDTH,
   moreMenuDisabled,
   copyable,
   style,
@@ -265,10 +277,12 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
         '.bai-name-action-cell-title-icon',
       );
       const titleIconWidth = titleIcon ? titleIcon.clientWidth : 0;
-      const minTitleReserve = titleIconWidth + token.marginXXS + 40;
+      const minTitleReserve = titleIconWidth + token.marginXXS + minTitleWidth;
       // Account for the more button which is always shown when menuOnlyActions exist
       const moreButtonReserve =
         menuOnlyActions.length > 0 ? MORE_BUTTON_WIDTH + ACTIONS_GAP : 0;
+      // Hover mode keeps the whole width: its action group is `max-width: 0`
+      // until the row is hovered, so the title never competes with it at rest.
       const availableWidth =
         (showActions === 'hover'
           ? containerWidth
@@ -326,48 +340,38 @@ const BAINameActionCell: React.FC<BAINameActionCellProps> = ({
       ro.disconnect();
       cancelAnimationFrame(rafId);
     };
-  }, [autoActionCount, calculateVisibleActions]);
+  }, [autoActionCount, minTitleWidth, calculateVisibleActions]);
 
   const hasOverflow = visibleCount < autoActionCount;
   const visibleActions = autoActions.slice(0, visibleCount);
 
   // More menu: overflowed auto actions + menu-only actions
   const hasMoreMenu = hasOverflow || menuOnlyActions.length > 0;
-  // PILOT-DECISION (to-astryx W2-D): `DropdownMenuItemData` has no `danger`
-  // flag AND its `label` is typed `string`, not `ReactNode` — its rows are
-  // uniform (P5). A destructive overflow row therefore relies on its icon and
-  // label alone, exactly as it already does inside the `modal.confirm` it
-  // escalates to. The visible (non-overflowed) button keeps its danger tint
-  // through `bai-nac-action-button-danger`.
-  //
-  // Re-examined for QA-FINDINGS Q-15 ("더보기 버튼을 눌렀을 때 버튼 색상이 모두
-  // default 색상으로 처리됨", measured #141414/#FFFFFF where antd set
-  // `danger: action.type === 'danger'` and drew #FF4D4F/#BE3D3F). The colour IS
-  // reachable — but only through `DropdownMenu`'s COMPOUND mode, whose
-  // `DropdownMenuItem` takes `label: ReactNode` plus `style`. That means
-  // rewriting this menu's whole render path (data `items` -> children),
-  // carrying the divider, disabled and keyboard behaviour across with it, for a
-  // change the reporter themselves marked optional. Left as-is and reported
-  // rather than taken on inside a QA row.
-  const toMenuItem = (action: BAINameActionCellAction) => ({
+  // An overflowed action keeps the colour its inline button has (FR-3721).
+  // The default row's tint is inline because the menu renders in a Layer
+  // outside the container that publishes `--bai-nac-*`.
+  const toMenuItem = (
+    action: BAINameActionCellAction,
+  ): DropdownMenuItemData => ({
     // FR-3423: a disabled action must still explain itself once it overflows
-    // into this menu — otherwise a narrow viewport turns "disabled with a
-    // reason" into "disabled for no visible reason".
-    //
-    // PILOT-DECISION (to-astryx): the antd original wrapped the label in a
-    // `Tooltip` (a disabled antd menu item swallows hover, so the tooltip had
-    // to sit on the label). Astryx's DATA mode types
-    // `DropdownMenuItemData.label` as `string`, and `DropdownMenuItem`'s
-    // `description` slot is reachable only through the compound render path —
-    // which `items` disables outright (`DropdownMenu.js`: `children` is
-    // ignored whenever `items` is passed). Rewriting this menu to the
-    // compound path would have to carry the divider / disabled / keyboard
-    // behaviour across with it. The reason is folded into the label text
-    // instead: still visible, still read out, no tooltip needed.
+    // into this menu. The reason is folded into the label text rather than a
+    // tooltip, which a disabled menu row swallows.
     label: disabledReason(action.disabled)
       ? `${action.title} — ${disabledReason(action.disabled)}`
       : action.title,
-    icon: action.icon,
+    variant: action.type === 'danger' ? 'destructive' : 'default',
+    // Both rows use the same wrapper so the icon box is identical; only the
+    // default one needs a colour, a danger row inherits `--color-error`.
+    icon: action.icon ? (
+      <span
+        className="bai-nac-menu-icon"
+        style={
+          action.type === 'danger' ? undefined : { color: token.colorInfo }
+        }
+      >
+        {action.icon}
+      </span>
+    ) : undefined,
     isDisabled: !!action.disabled,
     onClick: () => {
       if (action.onClick || action.action) {

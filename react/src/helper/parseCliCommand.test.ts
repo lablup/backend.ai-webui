@@ -9,6 +9,20 @@ import {
 } from './parseCliCommand';
 
 describe('tokenizeShellCommand', () => {
+  it('keeps a single-quoted JSON string as one argument', () => {
+    expect(
+      tokenizeShellCommand(
+        `vllm serve /models --override-generation-config '{"temperature": 0.7}'`,
+      ),
+    ).toEqual([
+      'vllm',
+      'serve',
+      '/models',
+      '--override-generation-config',
+      '{"temperature": 0.7}',
+    ]);
+  });
+
   it('should split basic whitespace-separated tokens', () => {
     expect(tokenizeShellCommand('vllm serve /models/my-model')).toEqual([
       'vllm',

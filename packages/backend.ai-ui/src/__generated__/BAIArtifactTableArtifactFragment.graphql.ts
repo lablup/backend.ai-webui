@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<51756aae9a8802d86f348ae39b184142>>
+ * @generated SignedSource<<3d1d5f3583c071a95321de805165cdba>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -23,7 +23,7 @@ export type BAIArtifactTableArtifactFragment$data = ReadonlyArray<{
         readonly size: any | null | undefined;
         readonly status: ArtifactStatus;
         readonly version: string;
-        readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusTagFragment">;
+        readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusBadgeFragment">;
       };
     }>;
   } | null | undefined;
@@ -38,7 +38,7 @@ export type BAIArtifactTableArtifactFragment$data = ReadonlyArray<{
     readonly url: string | null | undefined;
   };
   readonly updatedAt: string;
-  readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTagFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTokenFragment">;
   readonly " $fragmentType": "BAIArtifactTableArtifactFragment";
 }>;
 export type BAIArtifactTableArtifactFragment$key = ReadonlyArray<{
@@ -132,7 +132,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "BAIArtifactTypeTagFragment"
+      "name": "BAIArtifactTypeTokenFragment"
     },
     {
       "alias": "latestVersion",
@@ -203,7 +203,7 @@ return {
                 {
                   "args": null,
                   "kind": "FragmentSpread",
-                  "name": "BAIArtifactStatusTagFragment"
+                  "name": "BAIArtifactStatusBadgeFragment"
                 },
                 {
                   "args": null,
@@ -225,6 +225,6 @@ return {
 };
 })();
 
-(node as any).hash = "db5f2e64d1a54eb2ff5aeeb289f39e34";
+(node as any).hash = "11911e07d43f4d7957f60fac6f53d56b";
 
 export default node;

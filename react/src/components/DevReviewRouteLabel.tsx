@@ -2,14 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { useWebUINavigate } from '../hooks';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMatches, type UIMatch } from 'react-router-dom';
 
 /**
  * The same switch the Vite plugin reads: on by default, off for
- * `0` / `false` / `off`. Paired with `import.meta.env.DEV` at the call site so
- * a production build folds the branch — and this module with it — away.
+ * `0` / `false` / `off`. Paired with `import.meta.env.DEV` at the call site,
+ * whose build-mode arm is a pair of literal comparisons on
+ * `VITE_REVIEW_OVERLAY_BUILD` (FR-3880) — so a release build, which sets
+ * neither, still folds the branch and this module away.
  */
 export const isDevReviewOverlayEnabled = (): boolean =>
   !['0', 'false', 'off'].includes(
@@ -33,13 +36,15 @@ const routeLabelFrom = (
 
 /**
  * Publishes the current route's ENGLISH label on `window.__BAI_REVIEW__` for
- * the dev review overlay (FR-3811), which lives outside React and so cannot
+ * the review overlay (FR-3811), which lives outside React and so cannot
  * read `useMatches()` itself. English regardless of the user's language: the
- * label ends up in a PR comment other people read.
+ * label ends up in a PR comment other people read. `navigate` rides along so
+ * the overlay's guided mode (FR-3950) can cross pages without a full reload.
  */
 const DevReviewRouteLabel: React.FC = () => {
   'use memo';
   const matches = useMatches();
+  const navigate = useWebUINavigate();
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -47,6 +52,7 @@ const DevReviewRouteLabel: React.FC = () => {
       window.__BAI_REVIEW__ = {
         ...window.__BAI_REVIEW__,
         routeLabel: routeLabelFrom(matches, i18n.getFixedT('en')),
+        navigate: (to: string) => navigate(to),
       };
     };
     publish();
@@ -56,7 +62,7 @@ const DevReviewRouteLabel: React.FC = () => {
     return () => {
       i18n.off('loaded', publish);
     };
-  }, [matches, i18n]);
+  }, [matches, i18n, navigate]);
 
   return null;
 };

@@ -24,15 +24,15 @@ The Role List page displays all roles in a table format. You can filter, search,
    * **Source**: A typed selector that exposes the available values (**System** / **Custom**) rather than a free-form text box.
    * **Assigned User**: A user picker that filters the list to the roles assigned to the chosen user. The user's email is shown on the resulting condition tag.
    * **Scope Type**: A typed selector of RBAC scope types (for example, Domain, Project, or User).
-   * **Scope ID**: Free-text search by the raw scope UUID.
+   * **Scope ID**: Filters the list by an exact scope UUID.
 - **Create Role**: A button to create a new custom role.
 
 The table displays the following columns:
 
 - **Role Name**: The name of the role. Click the name to open the role detail drawer.
 - **Description**: A brief description of the role's purpose.
-- **Scope Type**: The scope type of the role's first assigned scope, with a `+N` indicator when the role has multiple scopes.
-- **Scope ID**: The raw scope ID of the role's first assigned scope, with a `+N` indicator when the role has multiple scopes.
+- **Scope Type**: The scope type of the role's scope, shown together with the scope name.
+- **Scope ID**: The raw scope ID of the role's scope.
 - **Source**: Indicates whether the role is **System** (pre-defined) or **Custom** (user-created).
 - **Auto Assign**: Indicates whether the role is automatically assigned to a user when they are added to a scope the role is registered in. Displays **Active** when auto-assignment is enabled, or **Inactive** when disabled.
 - **Created At**: The date and time when the role was created.
@@ -43,11 +43,11 @@ The table displays the following columns:
 Roles are categorized into two source types:
 
 - **System**: Automatically generated roles. You cannot edit their name or description, but you can manage their user assignments and permissions.
-- **Custom**: Roles created by superadmins. These are fully editable, including name, description, assignments, scopes, and permissions.
+- **Custom**: Roles created by superadmins. Their name, description, user assignments, and permissions are all editable.
 
 ## Create a role
 
-Creating a role requires you to define its **scopes** upfront. A scope binds the role to a specific resource entity (such as a domain, project, or user) so that every permission you later add to the role is confined to the scopes defined here.
+Creating a role requires you to define its **scope** upfront. The scope binds the role to a specific resource entity (such as a domain, project, or user) so that every permission you later add to the role is confined to the scope defined here.
 
 To create a new custom role:
 
@@ -56,17 +56,18 @@ To create a new custom role:
    - **Role Name** (required): Enter a unique name for the role
    - **Description** (optional): Enter a description of the role's purpose
    - **Auto Assign** (optional): When enabled, the role is automatically granted to users when they are added to a scope the role is registered in. Disabled by default.
-   - **Scope Type / Target** (required, at least one): For each scope row, select a **Scope Type** and then choose the specific **Target** within that scope type. Click **Add** to add more scope rows, or the delete icon to remove a row. You must add at least one scope.
+   - **Scope Type** (required): Select the scope type the role applies to (for example, Domain, Project, or User)
+   - **Target** (required): Choose the specific entity within that scope type. A role is bound to exactly one scope.
 3. Click **OK** to create the role
 
 ![](../images/rbac_create_role_modal.png)
 
 :::info
-The **Scope Type** and **Target** you define when creating a role do not grant any permissions on their own. Instead, they pre-define the **Scope Type / Target** options that become available when you later add [permissions](#manage-permissions) to this role. In other words, role creation only narrows down the range of scope types and targets this role's permissions can use — each permission can then be configured only within the scope types and targets defined here.
+The **Scope Type** and **Target** you define when creating a role do not grant any permissions on their own. Instead, they pre-define the **Scope Type / Target** that becomes available when you later add [permissions](#manage-permissions) to this role. In other words, role creation only narrows down the scope type and target this role's permissions can use — each permission can then be configured only within the scope type and target defined here.
 :::
 
 :::warning
-Scopes are defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scopes carefully before creating the role.
+The scope is defined at role creation time and cannot be edited afterwards through the role detail drawer. Plan the scope carefully before creating the role.
 :::
 
 ## View role details
@@ -101,7 +102,7 @@ To edit a custom role's name, description, or auto-assignment setting:
 ![](../images/rbac_edit_role_modal.png)
 
 :::note
-The Edit button is only available for Custom roles. System roles cannot have their name or description modified. Scopes cannot be modified after role creation in either case.
+The Edit button is only available for Custom roles. System roles cannot have their name or description modified. The scope cannot be modified after role creation in either case.
 :::
 
 <a id="view-role-scopes"></a>
@@ -115,7 +116,7 @@ The **Permissions** tab in the role detail drawer is a merged, detailed view tha
 ![](../images/rbac_permissions_tab.png)
 
 :::info
-The scopes a role can reference are defined when the role is created and are **read-only** afterward — you cannot change them from the role detail drawer. In the Permissions tab, scopes appear as the rows inside each scope-type card. To change a role's scopes, create a new role with the desired scopes.
+The scope a role can reference is defined when the role is created and is **read-only** afterward — you cannot change it from the role detail drawer. In the Permissions tab, scopes appear as the rows inside each scope-type card. To change a role's scope, create a new role with the desired scope.
 :::
 
 ### Scope-type cards
@@ -158,7 +159,7 @@ Each permission consists of four components:
    * **Delegate to Others**: Delegate All, Delegate Read, Delegate Update, Delegate Soft Delete, Delegate Hard Delete
 
 :::info
-The combined **Scope Type / Target** of each permission is inherited from the role's scope entries. You can only grant permissions on scopes that were defined when the role was created. To broaden a role's reach, create a new role with additional scopes.
+The combined **Scope Type / Target** of each permission is inherited from the role's scope. You can only grant permissions on the scope that was defined when the role was created. To broaden a role's reach, create another role with the scope you need.
 :::
 
 ### Permission examples
@@ -251,7 +252,7 @@ Adding users is a bulk operation — you can select several users in a single pa
 
 ### System roles and assignment restrictions
 
-The system-generated project-admin role (the `role_project_<project_id>_admin` role, whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
+The system-generated project-admin role (whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
 
 ![](../images/rbac_system_role_assignments_readonly.png)
 
@@ -288,11 +289,11 @@ Revoking a role assignment can be reversed by re-adding the user to the role fro
 
 ## Grant Project Admin authority
 
-Creating a project also creates a dedicated role named `role_project_<project_id>_admin`, where `<project_id>` is the first 8 characters of that project's UUID. A user assigned to this role gains [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
+Creating a project also creates a dedicated project-admin role bound to that project. A user assigned to this role gains [Project Admin](#project-admin-features) authority over that specific project — they can manage the project's users, sessions, deployments, and storage folders without holding system-wide superadmin privileges.
 
 ![](../images/rbac_project_admin_role_in_list.png)
 
-Grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. The `role_project_<project_id>_admin` role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
+Grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. The project-admin role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
 
 ![](../images/rbac_project_admin_role_detail.png)
 

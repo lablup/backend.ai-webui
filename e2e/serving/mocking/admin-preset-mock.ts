@@ -41,8 +41,18 @@ export const MOCK_CREATED_PRESET_UUID = '66666666-6666-6666-6666-666666666666';
 export const MOCK_IMAGE_CANONICAL_NAME =
   'cr.backend.ai/testing/mock-fr3474:1.0';
 export const MOCK_IMAGE_ARCHITECTURE = 'x86_64';
-/** The option label the Image select renders for the mocked image. */
+/**
+ * The string label the Image select keeps on its closed trigger and filter
+ * chips for the mocked image.
+ */
 export const MOCK_IMAGE_OPTION_LABEL = `${MOCK_IMAGE_CANONICAL_NAME}@${MOCK_IMAGE_ARCHITECTURE}`;
+/**
+ * The popup row's accessible name (#9606): `BAIImageNodeSimpleTagV2` draws
+ * "<aliased base image> <version> <architecture>", and an un-aliased base
+ * image is start-cased (`mock-fr3474` -> "Mock Fr 3474"). Empty
+ * `metadata.tags` (below) means no trailing tag chips.
+ */
+export const MOCK_IMAGE_OPTION_ROW_NAME = `Mock Fr 3474 1.0 ${MOCK_IMAGE_ARCHITECTURE}`;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Runtime variant (page-level list query + selected-value point lookup)
@@ -126,6 +136,9 @@ function buildImageNode() {
       canonicalName: MOCK_IMAGE_CANONICAL_NAME,
       architecture: MOCK_IMAGE_ARCHITECTURE,
     },
+    // `...BAIImageNodeSimpleTagV2Fragment` (spread by the paginated query
+    // since #9606) selects `metadata { tags labels }`.
+    metadata: { tags: [], labels: [] },
   };
 }
 

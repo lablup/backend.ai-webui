@@ -212,7 +212,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateProjectResourcePolicy ||
         isInFlightCommitModifyProjectResourcePolicy

@@ -15,7 +15,7 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
-import { useUploadVFolderFiles } from './hooks';
+import { useDownloadErrorMessage } from './hooks';
 import type { RcFile } from './hooks';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -34,7 +34,8 @@ interface ExplorerActionControlsProps {
     success: boolean,
     modifiedItems?: Array<VFolderFile>,
   ) => void;
-  onUpload: (files: Array<RcFile>, currentPath: string) => void;
+  /** Hands the pick to the explorer's duplicate-aware upload path. */
+  onUpload: (files: Array<RcFile>) => void;
   onDeleteFilesInBackground: DeleteSelectedItemsModalProps['onDeleteFilesInBackground'];
   onClearSelection?: () => void;
   enableDownload?: boolean;
@@ -82,7 +83,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   const { lg } = useBAIBreakpoint();
   const { token } = theme.useToken();
   const { message } = App.useApp();
-  const { uploadFiles } = useUploadVFolderFiles();
+  const getDownloadErrorMessage = useDownloadErrorMessage();
   const { targetVFolderId, targetVFolderName, currentPath } =
     use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -116,7 +117,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
     if (!fileList || fileList.length === 0) return;
     const files = Array.from(fileList) as Array<RcFile>;
     if (files !== lastFileListRef.current) {
-      uploadFiles(files, onUpload);
+      onUpload(files);
     }
     lastFileListRef.current = files;
     // Q-28: an explicit close, not a flip — the menu is already closed by the
@@ -150,11 +151,10 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }),
       );
     },
-    onError: (err: any) => {
-      if (err && err.message) {
-        message.error(err.message);
-      } else if (err && err.title) {
-        message.error(err.title);
+    onError: (err: unknown) => {
+      const text = getDownloadErrorMessage(err);
+      if (text) {
+        message.error(text);
       }
     },
   });
@@ -199,6 +199,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               >
                 <BAIButton
                   disabled={!enableDownload}
+                  aria-label={t('comp:FileExplorer.DownloadSelected')}
                   icon={
                     <DownloadIcon
                       style={{
@@ -214,7 +215,11 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                         ? file.name
                         : `${currentPath}/${file.name}`,
                     );
-                    await downloadArchiveMutation.mutateAsync(filePaths);
+                    // onError already toasted; an escaping rejection would
+                    // hit the page's error boundary and unmount the modal.
+                    await downloadArchiveMutation
+                      .mutateAsync(filePaths)
+                      .catch(() => {});
                   }}
                 />
               </Tooltip>
@@ -315,7 +320,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
       </BAIFlex>
       <DeleteSelectedItemsModal
-        destroyOnHidden
         open={openDeleteModal}
         selectedFiles={selectedFiles}
         onDeleteFilesInBackground={onDeleteFilesInBackground}
@@ -327,7 +331,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateDirectoryModal
-        destroyOnHidden
         open={openCreateModal}
         onRequestClose={(success: boolean, createdFolderName?: string) => {
           if (success) {
@@ -340,7 +343,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateFileModal
-        destroyOnHidden
         open={openCreateFileModal}
         onRequestClose={(success: boolean) => {
           if (success) {

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<49aca026c19390b4dd8f89fb47cfa3d2>>
+ * @generated SignedSource<<11a3eabf256fff94a0dc095f9bafa664>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type RolePermissionDetailTab_roleScopeFragment$data = {
+  readonly scopeId: string;
   readonly totalScopes: {
     readonly count: number;
   } | null | undefined;
@@ -53,6 +54,13 @@ const node: ReaderFragment = {
       "storageKey": "scopes(first:1)"
     },
     {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "scopeId",
+      "storageKey": null
+    },
+    {
       "args": null,
       "kind": "FragmentSpread",
       "name": "ScopedRolePermissionCardFragment"
@@ -62,6 +70,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "7d771e3b5f52484dd7fa26bf5749f88d";
+(node as any).hash = "7ef5e3fd56ac75ecabfb5e7e6e2a5972";
 
 export default node;
