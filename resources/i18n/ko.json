@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "이 탭의 모든 작업은 이 사용자로 실행되며 감사 로그에 기록됩니다. 다른 탭은 관리자 화면 그대로입니다.",
+    "BannerTitle": "{{name}}({{email}}) 님으로 이용 중",
+    "ConfirmDescription": "새 탭에서 {{email}} 님의 권한과 화면으로 작업합니다. 그 탭에서 하는 모든 작업은 이 사용자로 실행되며, 관리자 계정이 실행했다는 기록이 감사 로그에 함께 남습니다. 지금 탭은 관리자 화면 그대로 유지됩니다.",
+    "ConfirmTitle": "{{name}} 님으로 이용하기",
+    "Exit": "이용 종료",
+    "FailedToOpen": "새 탭을 열지 못했습니다.",
+    "OpenInNewTab": "새 탭에서 열기",
+    "UseAsThisUser": "이 사용자로 이용하기"
+  },
   "activeAgent": {
     "ActiveAgents": "활성 에이전트",
     "ActiveAgentsTooltip": "현재 시스템에서 실행 중인 모든 에이전트 개요를 표시합니다."

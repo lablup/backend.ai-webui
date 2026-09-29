@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Mọi thao tác trong tab này được thực hiện với tư cách người dùng này và được ghi vào nhật ký kiểm tra. Các tab khác của bạn vẫn giữ giao diện quản trị.",
+    "BannerTitle": "Đang sử dụng với tư cách {{name}} ({{email}})",
+    "ConfirmDescription": "Làm việc với quyền và giao diện của {{email}} trong một tab mới. Mọi thao tác trong tab đó được thực hiện với tư cách người dùng này, và nhật ký kiểm tra cũng ghi lại tài khoản quản trị của bạn. Tab này vẫn giữ giao diện quản trị.",
+    "ConfirmTitle": "Sử dụng với tư cách {{name}}",
+    "Exit": "Thoát",
+    "FailedToOpen": "Không thể mở tab mới.",
+    "OpenInNewTab": "Mở trong tab mới",
+    "UseAsThisUser": "Sử dụng với tư cách người dùng này"
+  },
   "activeAgent": {
     "ActiveAgents": "Đại lý tích cực",
     "ActiveAgentsTooltip": "Hiển thị tổng quan at-a-glance của tất cả các tác nhân hiện đang chạy trong hệ thống."

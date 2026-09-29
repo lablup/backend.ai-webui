@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Everything in this tab runs as this user and is recorded in the audit log. Your other tabs stay in your admin view.",
+    "BannerTitle": "Using as {{name}} ({{email}})",
+    "ConfirmDescription": "Work with {{email}}'s permissions and view in a new tab. Everything you do in that tab runs as this user, and the audit log also records that your admin account did it. This tab stays in your admin view.",
+    "ConfirmTitle": "Use as {{name}}",
+    "Exit": "Exit",
+    "FailedToOpen": "Could not open a new tab.",
+    "OpenInNewTab": "Open in new tab",
+    "UseAsThisUser": "Use as this user"
+  },
   "activeAgent": {
     "ActiveAgents": "Active Agents",
     "ActiveAgentsTooltip": "Shows an at-a-glance overview of all agents currently running in the system."

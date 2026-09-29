@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tudo neste separador é executado como este utilizador e registado no registo de auditoria. Os seus outros separadores mantêm-se na vista de administrador.",
+    "BannerTitle": "A utilizar como {{name}} ({{email}})",
+    "ConfirmDescription": "Trabalhe com as permissões e a vista de {{email}} num novo separador. Tudo o que fizer nesse separador é executado como este utilizador, e o registo de auditoria também regista a sua conta de administrador. Este separador mantém-se na vista de administrador.",
+    "ConfirmTitle": "Utilizar como {{name}}",
+    "Exit": "Sair",
+    "FailedToOpen": "Não foi possível abrir um novo separador.",
+    "OpenInNewTab": "Abrir num novo separador",
+    "UseAsThisUser": "Utilizar como este utilizador"
+  },
   "activeAgent": {
     "ActiveAgents": "Agentes ativos",
     "ActiveAgentsTooltip": "Mostra uma visão geral de todos os agentes atualmente em execução no sistema."

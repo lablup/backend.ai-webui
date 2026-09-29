@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Semua dalam tab ini dijalankan sebagai pengguna ini dan direkodkan dalam log audit. Tab anda yang lain kekal dalam paparan pentadbir.",
+    "BannerTitle": "Digunakan sebagai {{name}} ({{email}})",
+    "ConfirmDescription": "Bekerja dengan kebenaran dan paparan {{email}} dalam tab baharu. Semua yang anda lakukan dalam tab itu dijalankan sebagai pengguna ini, dan log audit juga merekodkan akaun pentadbir anda. Tab ini kekal dalam paparan pentadbir anda.",
+    "ConfirmTitle": "Guna sebagai {{name}}",
+    "Exit": "Keluar",
+    "FailedToOpen": "Tidak dapat membuka tab baharu.",
+    "OpenInNewTab": "Buka dalam tab baharu",
+    "UseAsThisUser": "Guna sebagai pengguna ini"
+  },
   "activeAgent": {
     "ActiveAgents": "Ejen aktif",
     "ActiveAgentsTooltip": "Menunjukkan gambaran keseluruhan sepintas lalu semua ejen yang sedang berjalan dalam sistem."

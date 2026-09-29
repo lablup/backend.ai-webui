@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Bu sekmedeki her şey bu kullanıcı olarak çalıştırılır ve denetim günlüğüne kaydedilir. Diğer sekmeleriniz yönetici görünümünde kalır.",
+    "BannerTitle": "{{name}} ({{email}}) olarak kullanılıyor",
+    "ConfirmDescription": "Yeni bir sekmede {{email}} kullanıcısının izinleri ve görünümüyle çalışın. O sekmede yaptığınız her şey bu kullanıcı olarak çalıştırılır ve denetim günlüğü yönetici hesabınızı da kaydeder. Bu sekme yönetici görünümünüzde kalır.",
+    "ConfirmTitle": "{{name}} olarak kullan",
+    "Exit": "Çık",
+    "FailedToOpen": "Yeni sekme açılamadı.",
+    "OpenInNewTab": "Yeni sekmede aç",
+    "UseAsThisUser": "Bu kullanıcı olarak kullan"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktif ajanlar",
     "ActiveAgentsTooltip": "Şu anda sistemde çalışan tüm ajanlara bir bakışta genel bir bakış gösterir."

@@ -2759,6 +2759,11 @@
       ],
       "settings": [],
       "keys": [
+        "actAs.ConfirmDescription",
+        "actAs.ConfirmTitle",
+        "actAs.FailedToOpen",
+        "actAs.OpenInNewTab",
+        "actAs.UseAsThisUser",
         "button.Create",
         "button.Download",
         "button.Info",

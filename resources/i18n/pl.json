@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Wszystko w tej karcie jest wykonywane jako ten użytkownik i zapisywane w dzienniku audytu. Pozostałe karty pozostają w widoku administratora.",
+    "BannerTitle": "Używasz jako {{name}} ({{email}})",
+    "ConfirmDescription": "Pracuj z uprawnieniami i widokiem {{email}} w nowej karcie. Wszystko, co zrobisz w tej karcie, zostanie wykonane jako ten użytkownik, a dziennik audytu odnotuje także Twoje konto administratora. Ta karta pozostaje w widoku administratora.",
+    "ConfirmTitle": "Używaj jako {{name}}",
+    "Exit": "Zakończ",
+    "FailedToOpen": "Nie udało się otworzyć nowej karty.",
+    "OpenInNewTab": "Otwórz w nowej karcie",
+    "UseAsThisUser": "Używaj jako ten użytkownik"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktywni agenci",
     "ActiveAgentsTooltip": "Pokazuje przegląd w skrócie wszystkich agentów obecnie działających w systemie."

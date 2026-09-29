@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "此分頁中的所有操作都以此使用者身分執行並記錄於稽核日誌。其他分頁維持管理員畫面。",
+    "BannerTitle": "正在以 {{name}}（{{email}}）身分使用",
+    "ConfirmDescription": "將在新分頁中以 {{email}} 的權限與畫面進行操作。在該分頁中的所有操作都會以此使用者身分執行，稽核日誌也會記錄由您的管理員帳戶執行。目前分頁維持管理員畫面。",
+    "ConfirmTitle": "以 {{name}} 身分使用",
+    "Exit": "結束",
+    "FailedToOpen": "無法開啟新分頁。",
+    "OpenInNewTab": "在新分頁中開啟",
+    "UseAsThisUser": "以此使用者身分使用"
+  },
   "activeAgent": {
     "ActiveAgents": "活性代理",
     "ActiveAgentsTooltip": "顯示了當前在系統中運行的所有代理的一目了然的概述。"

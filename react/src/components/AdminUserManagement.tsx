@@ -11,6 +11,7 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import { openActAsTab } from '../helper/actAs';
 import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -51,6 +52,7 @@ import {
   PlusIcon,
   SquarePenIcon,
   UndoIcon,
+  UserRoundCheckIcon,
 } from 'lucide-react';
 import React, { useState, useDeferredValue } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -119,7 +121,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const { token } = theme.useToken();
 
   const bailClient = useSuspendedBackendaiClient();
-  const { message } = App.useApp();
+  const { message, modal } = App.useApp();
 
   const [selectedUserForInfoModal, setSelectedUserForInfoModal] = useState<
     UserNode['node'] | null
@@ -190,14 +192,43 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   const findUserNode = (id: string) =>
     adminUsersV2?.edges?.find((edge) => edge?.node?.id === id)?.node ?? null;
 
+  const canActAs =
+    bailClient.supports('act-as') &&
+    bailClient.is_superadmin &&
+    !globalThis.isElectron;
+
+  const confirmActAs = (userId: string, email: string, name: string) => {
+    modal.confirm({
+      title: t('actAs.ConfirmTitle', { name: name || email }),
+      content: t('actAs.ConfirmDescription', { email }),
+      okText: t('actAs.OpenInNewTab'),
+      cancelText: t('button.Cancel'),
+      onOk: () => {
+        if (!openActAsTab({ userId, email, name })) {
+          message.error(t('actAs.FailedToOpen'));
+        }
+      },
+    });
+  };
+
   const renderEmailWithActions = (__: unknown, record: UserV2InList) => {
     const email = record.basicInfo?.email ?? '';
     const isActive = record.status?.status === 'ACTIVE';
+    const userId = toLocalId(record.id);
     return (
       <BAINameActionCell
         title={email}
         showActions="always"
         actions={filterOutEmpty([
+          canActAs &&
+            isActive &&
+            userId !== bailClient.user_uuid && {
+              key: 'act-as',
+              title: t('actAs.UseAsThisUser'),
+              icon: <UserRoundCheckIcon />,
+              onClick: () =>
+                confirmActAs(userId, email, record.basicInfo?.fullName ?? ''),
+            },
           {
             key: 'info',
             title: t('credential.UserDetail'),

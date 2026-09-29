@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tutto in questa scheda viene eseguito come questo utente e registrato nel registro di audit. Le altre schede restano nella vista amministratore.",
+    "BannerTitle": "In uso come {{name}} ({{email}})",
+    "ConfirmDescription": "Lavora con i permessi e la vista di {{email}} in una nuova scheda. Tutto ciò che fai in quella scheda viene eseguito come questo utente e il registro di audit annota anche il tuo account amministratore. Questa scheda resta nella vista amministratore.",
+    "ConfirmTitle": "Usa come {{name}}",
+    "Exit": "Esci",
+    "FailedToOpen": "Impossibile aprire una nuova scheda.",
+    "OpenInNewTab": "Apri in una nuova scheda",
+    "UseAsThisUser": "Usa come questo utente"
+  },
   "activeAgent": {
     "ActiveAgents": "Agenti attivi",
     "ActiveAgentsTooltip": "Mostra una panoramica a colpo d'occhio di tutti gli agenti attualmente in esecuzione nel sistema."

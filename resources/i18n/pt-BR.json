@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Tudo nesta aba é executado como este usuário e registrado no log de auditoria. Suas outras abas continuam na visão de administrador.",
+    "BannerTitle": "Usando como {{name}} ({{email}})",
+    "ConfirmDescription": "Trabalhe com as permissões e a visão de {{email}} em uma nova aba. Tudo o que você fizer nessa aba é executado como este usuário, e o log de auditoria também registra sua conta de administrador. Esta aba continua na sua visão de administrador.",
+    "ConfirmTitle": "Usar como {{name}}",
+    "Exit": "Sair",
+    "FailedToOpen": "Não foi possível abrir uma nova aba.",
+    "OpenInNewTab": "Abrir em nova aba",
+    "UseAsThisUser": "Usar como este usuário"
+  },
   "activeAgent": {
     "ActiveAgents": "Agentes ativos",
     "ActiveAgentsTooltip": "Mostra uma visão geral de todos os agentes atualmente em execução no sistema."

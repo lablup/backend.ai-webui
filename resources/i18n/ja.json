@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "このタブでの操作はすべてこのユーザーとして実行され、監査ログに記録されます。他のタブは管理者画面のままです。",
+    "BannerTitle": "{{name}}（{{email}}）として利用中",
+    "ConfirmDescription": "新しいタブで {{email}} の権限と画面で作業します。そのタブでの操作はすべてこのユーザーとして実行され、管理者アカウントが実行したことも監査ログに記録されます。このタブは管理者画面のままです。",
+    "ConfirmTitle": "{{name}} として利用",
+    "Exit": "利用を終了",
+    "FailedToOpen": "新しいタブを開けませんでした。",
+    "OpenInNewTab": "新しいタブで開く",
+    "UseAsThisUser": "このユーザーとして利用"
+  },
   "activeAgent": {
     "ActiveAgents": "アクティブなエージェント",
     "ActiveAgentsTooltip": "現在システムで実行されているすべてのエージェントの概要を示しています。"

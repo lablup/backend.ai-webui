@@ -1,5 +1,15 @@
 {
   "$schema": "../i18n.schema.json",
+  "actAs": {
+    "BannerDescription": "Kaikki tässä välilehdessä suoritetaan tämän käyttäjän nimissä ja kirjataan tarkastuslokiin. Muut välilehtesi pysyvät järjestelmänvalvojan näkymässä.",
+    "BannerTitle": "Käytössä käyttäjänä {{name}} ({{email}})",
+    "ConfirmDescription": "Työskentele käyttäjän {{email}} oikeuksilla ja näkymällä uudessa välilehdessä. Kaikki tuossa välilehdessä tehty suoritetaan tämän käyttäjän nimissä, ja tarkastuslokiin kirjataan myös järjestelmänvalvojan tilisi. Tämä välilehti pysyy järjestelmänvalvojan näkymässä.",
+    "ConfirmTitle": "Käytä käyttäjänä {{name}}",
+    "Exit": "Lopeta",
+    "FailedToOpen": "Uutta välilehteä ei voitu avata.",
+    "OpenInNewTab": "Avaa uudessa välilehdessä",
+    "UseAsThisUser": "Käytä tämän käyttäjän nimissä"
+  },
   "activeAgent": {
     "ActiveAgents": "Aktiiviset edustajat",
     "ActiveAgentsTooltip": "Näyttää yleiskatsauksen kaikista järjestelmässä tällä hetkellä toimivista edustajista."
