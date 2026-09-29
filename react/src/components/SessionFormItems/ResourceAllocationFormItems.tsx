@@ -378,6 +378,14 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+  const currentClusterMode = Form.useWatch(['cluster_mode'], {
+    form,
+    preserve: true,
+  });
+  const currentClusterSize = Form.useWatch(['cluster_size'], {
+    form,
+    preserve: true,
+  });
 
   // Reported by `AgentSelect`, which already computes it for its option rows.
   // Merged rather than replaced: the select re-queries with a search filter, so
@@ -480,12 +488,24 @@ const ResourceAllocationFormItems: React.FC<
   // keypair/group/resource-group limits do. "auto" and multi-agent picks are
   // scheduled across agents, so they keep the unfiltered preset list.
   const selectedAgentNames = _.compact(_.castArray(currentAgentInForm));
-  const selectedAgentRemainingSlots =
+  const pinnedAgentRemainingSlots =
     enableAgentSelect &&
     selectedAgentNames.length === 1 &&
     selectedAgentNames[0] !== 'auto'
       ? agentRemainingSlots[selectedAgentNames[0]]
       : undefined;
+  // A single-node cluster puts every container on the pinned agent, so each
+  // container only gets its share of the agent's remaining slots.
+  const containersOnPinnedAgent =
+    currentClusterMode === 'single-node'
+      ? Math.max(_.toNumber(currentClusterSize) || 1, 1)
+      : 1;
+  const selectedAgentRemainingSlots = pinnedAgentRemainingSlots
+    ? _.mapValues(
+        pinnedAgentRemainingSlots,
+        (value) => value / containersOnPinnedAgent,
+      )
+    : undefined;
 
   // `resourceLimits` is rebuilt on every render, so key the array by its
   // contents; a fresh identity would re-run the auto-select effect each render.

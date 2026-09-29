@@ -172,13 +172,14 @@ const AgentSelect: React.FC<Props> = ({
       } = JSON.parse(agent?.occupied_slots ?? '{}');
       const remainingSlotsInfo: {
         [key in string]: number;
-      } = _.mapValues(availableSlotsInfo, (value, key) => {
-        if (key.endsWith('.shares')) {
-          return parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? 0);
-        } else {
-          return parseInt(value) - parseInt(occupiedSlotsInfo[key] ?? 0);
-        }
-      });
+      } = _.mapValues(availableSlotsInfo, (value, key) =>
+        // Slots are decimals (e.g. `0.3 - 0.2` shares); round away the float
+        // error so a fitting `0.1` request is not rejected.
+        _.round(
+          parseFloat(value) - parseFloat(occupiedSlotsInfo[key] ?? '0'),
+          6,
+        ),
+      );
       return { id: agent.id, remainingSlotsInfo };
     }),
   );
