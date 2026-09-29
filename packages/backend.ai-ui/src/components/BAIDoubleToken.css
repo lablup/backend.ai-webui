@@ -23,8 +23,10 @@
     border-end-start-radius: 0;
   }
 
-  .bai-double > .astryx-badge:not(:last-child),
-  .bai-double > .astryx-token:not(:last-child) {
+  /* `last-of-type`, not `last-child`: a copyable segment's tooltip bubble
+     is rendered as a trailing `div` sibling of the chips. */
+  .bai-double > .astryx-badge:not(:last-of-type),
+  .bai-double > .astryx-token:not(:last-of-type) {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
   }

@@ -100,7 +100,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
         heldPermissions: myAtomicBulkScopePermissions(
           input: { targets: $targets }
         )
-          @since(version: "26.9.0")
+          @since(version: "26.9.0a4")
           @include(if: $supportsHeldPermissions)
           @catch(to: RESULT) {
           items {
@@ -112,7 +112,7 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
           first: 100
           filter: { permission: $legacyPermissionFilter }
         )
-          @deprecatedSince(version: "26.9.0")
+          @deprecatedSince(version: "26.9.0a4")
           @skip(if: $supportsHeldPermissions)
           @catch(to: RESULT) {
           edges {
