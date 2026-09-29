@@ -12,14 +12,14 @@
 */
 @layer components {
   .bai-resource-unit-grid {
-    --uic-unit-grid-group-1: light-dark(#8c50bc, #be81ef);
-    --uic-unit-grid-group-2: light-dark(#3469d6, #749ded);
-    --uic-unit-grid-group-3: light-dark(#42825c, #74cb9a);
-    --uic-unit-grid-group-4: light-dark(#417c99, #83c2de);
-    --uic-unit-grid-group-5: light-dark(#b05f1d, #e9d149);
-    --uic-unit-grid-group-6: light-dark(#b84134, #e6786d);
-    --uic-unit-grid-group-7: light-dark(#6c6e76, #8d8f97);
-    --uic-unit-grid-ink-dark: #262626;
-    --uic-unit-grid-ink-light: #fafafa;
+    --unit-grid-group-1: light-dark(#8c50bc, #be81ef);
+    --unit-grid-group-2: light-dark(#3469d6, #749ded);
+    --unit-grid-group-3: light-dark(#42825c, #74cb9a);
+    --unit-grid-group-4: light-dark(#417c99, #83c2de);
+    --unit-grid-group-5: light-dark(#b05f1d, #e9d149);
+    --unit-grid-group-6: light-dark(#b84134, #e6786d);
+    --unit-grid-group-7: light-dark(#6c6e76, #8d8f97);
+    --unit-grid-ink-dark: #262626;
+    --unit-grid-ink-light: #fafafa;
   }
 }

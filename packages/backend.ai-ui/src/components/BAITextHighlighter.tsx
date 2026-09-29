@@ -3,10 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  ui-common `TextHighlighter` under its BUI name (FR-4096); `style` styles each
- mark. BAITextHighlighter.css gives every ui-common highlighter the WebUI's
- mark colour.
+ mark. The mark colour is the theme's `--color-warning-border-hover`, which
+ ui-common reads itself.
 */
-import './BAITextHighlighter.css';
 import { TextHighlighter } from '@lablup/ui-common/components/TextHighlighter';
 import React from 'react';
 

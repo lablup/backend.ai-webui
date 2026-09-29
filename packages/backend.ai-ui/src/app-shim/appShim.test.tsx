@@ -179,7 +179,7 @@ describe('app-shim modal', () => {
       screen
         .getByRole('alertdialog')
         .closest<HTMLElement>('.uic-modal')
-        ?.style.getPropertyValue('--uic-modal-z'),
+        ?.style.getPropertyValue('--modal-z'),
     ).toBe('10001');
     handle.destroy();
   });

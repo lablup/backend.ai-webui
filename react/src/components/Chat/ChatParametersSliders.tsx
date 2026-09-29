@@ -134,7 +134,7 @@ export const ChatParametersSliders = ({
 
   return (
     // Tighter item spacing through the form item's own hooks
-    // (`--uic-form-item-*`, ui-common Form).
+    // (`--form-item-*`, ui-common Form).
     <Form
       size="small"
       layout="vertical"
@@ -142,8 +142,8 @@ export const ChatParametersSliders = ({
       style={
         {
           width: 240,
-          '--uic-form-item-margin-bottom': 'var(--spacing-2, 8px)',
-          '--uic-form-item-gap': '4px',
+          '--form-item-margin-bottom': 'var(--spacing-2, 8px)',
+          '--form-item-gap': '4px',
         } as React.CSSProperties
       }
       initialValues={

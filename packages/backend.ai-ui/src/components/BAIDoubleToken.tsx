@@ -5,7 +5,6 @@
  ui-common `DoubleToken` under its BUI name (FR-4096): a welded run of Tokens
  for a settled pair; the live counterpart is `BAIDoubleBadge`.
 */
-import './BAITextHighlighter.css';
 import {
   DoubleToken,
   type DoubleTokenProps,

@@ -7,6 +7,6 @@
 */
 @layer components {
   .bai-overlay-scrollbar {
-    --uic-overlay-scrollbar-z: calc(var(--bai-z-app-header) + 1);
+    --overlay-scrollbar-z: calc(var(--bai-z-app-header) + 1);
   }
 }

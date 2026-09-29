@@ -7,6 +7,6 @@
 */
 @layer components {
   .bai-progress-with-label {
-    --uic-progress-with-label-radius: 3px;
+    --progress-with-label-radius: 3px;
   }
 }

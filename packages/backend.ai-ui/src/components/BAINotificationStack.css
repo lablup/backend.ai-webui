@@ -10,7 +10,7 @@
 */
 @layer components {
   .bai-notification-stack {
-    --uic-notification-stack-z: var(--bai-z-notification);
-    --uic-notification-stack-inset-top: var(--webui-header-height, 60px);
+    --notification-stack-z: var(--bai-z-notification);
+    --notification-stack-inset-top: var(--webui-header-height, 60px);
   }
 }

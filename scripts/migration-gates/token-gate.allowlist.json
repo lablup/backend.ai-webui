@@ -3,7 +3,7 @@
   "prefixes": [],
   "names": [
     {
-      "name": "--uic-modal-z",
+      "name": "--modal-z",
       "reason": "ui-common's modal level stack (useModalLevel in @lablup/ui-common/Modal) writes it inline on each open portal root when it claims a level; BAIDrawerPortal.css reads it with the ladder's modal base as the fallback for a root that has not claimed one yet."
     }
   ]

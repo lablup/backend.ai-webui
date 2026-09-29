@@ -17,7 +17,7 @@ describe('BAITable scroll.y', () => {
     const { container } = renderScrollTable({ scroll: { y } });
     const layer = dimLayerOf(container);
     expect(layer).toHaveClass('uic-data-grid__body--scroll-y');
-    expect(layer.style.getPropertyValue('--uic-data-grid-max-height')).toBe(
+    expect(layer.style.getPropertyValue('--data-grid-max-height')).toBe(
       expected,
     );
   });
@@ -33,7 +33,7 @@ describe('BAITable scroll.y', () => {
     });
     const layer = dimLayerOf(xOnly);
     expect(layer).not.toHaveClass('uic-data-grid__body--scroll-y');
-    expect(layer.style.getPropertyValue('--uic-data-grid-max-height')).toBe('');
+    expect(layer.style.getPropertyValue('--data-grid-max-height')).toBe('');
   });
 
   it('carries both axes at once', () => {
@@ -43,10 +43,10 @@ describe('BAITable scroll.y', () => {
     const layer = dimLayerOf(container);
     expect(layer).toHaveClass('uic-data-grid__body--scroll-x');
     expect(layer).toHaveClass('uic-data-grid__body--scroll-y');
-    expect(layer.style.getPropertyValue('--uic-data-grid-scroll-width')).toBe(
+    expect(layer.style.getPropertyValue('--data-grid-scroll-width')).toBe(
       'max-content',
     );
-    expect(layer.style.getPropertyValue('--uic-data-grid-max-height')).toBe(
+    expect(layer.style.getPropertyValue('--data-grid-max-height')).toBe(
       '500px',
     );
   });

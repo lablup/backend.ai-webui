@@ -26,7 +26,7 @@ describe('BAIListAlert', () => {
     render(<BAIListAlert items={[{ content: 'item' }]} />);
     const list = screen.getByRole('list');
     expect(list).toHaveClass('uic-list-banner__list');
-    expect(list.style.getPropertyValue('--uic-list-banner-max-height')).toBe(
+    expect(list.style.getPropertyValue('--list-banner-max-height')).toBe(
       '165px',
     );
   });
@@ -36,7 +36,7 @@ describe('BAIListAlert', () => {
     expect(
       screen
         .getByRole('list')
-        .style.getPropertyValue('--uic-list-banner-max-height'),
+        .style.getPropertyValue('--list-banner-max-height'),
     ).toBe('80px');
   });
 

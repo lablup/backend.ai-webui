@@ -30,7 +30,7 @@ describe('BAIResourceUnitGrid', () => {
     expect(
       container.querySelector<SVGPathElement>('path[data-group-key="beta"]')!
         .style.fill,
-    ).toBe('var(--uic-unit-grid-group-2)');
+    ).toBe('var(--unit-grid-group-2)');
   });
 
   it("names the picker controls from ui-common's catalog", () => {
@@ -59,11 +59,11 @@ describe('BAIResourceUnitGrid', () => {
     for (let i = 1; i <= 7; i++) {
       expect(css).toMatch(
         new RegExp(
-          `--uic-unit-grid-group-${i}: light-dark\\(#[0-9a-f]{6}, #[0-9a-f]{6}\\);`,
+          `--unit-grid-group-${i}: light-dark\\(#[0-9a-f]{6}, #[0-9a-f]{6}\\);`,
         ),
       );
     }
-    expect(css).toMatch(/--uic-unit-grid-ink-dark: #262626;/);
-    expect(css).toMatch(/--uic-unit-grid-ink-light: #fafafa;/);
+    expect(css).toMatch(/--unit-grid-ink-dark: #262626;/);
+    expect(css).toMatch(/--unit-grid-ink-light: #fafafa;/);
   });
 });

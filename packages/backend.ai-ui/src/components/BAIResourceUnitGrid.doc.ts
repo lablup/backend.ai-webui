@@ -70,7 +70,7 @@ export const docs = {
       name: 'groupPalette',
       type: 'string[]',
       description:
-        "Resolved hues assigned to groups in flow order. Falls back to the WebUI's muted seven-colour set (the `--uic-unit-grid-group-N` properties `BAIResourceUnitGrid.css` sets) when omitted or empty.",
+        "Resolved hues assigned to groups in flow order. Falls back to the WebUI's muted seven-colour set (the `--unit-grid-group-N` properties `BAIResourceUnitGrid.css` sets) when omitted or empty.",
     },
     {
       name: 'hueOverrides',

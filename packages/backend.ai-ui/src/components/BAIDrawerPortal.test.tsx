@@ -137,14 +137,12 @@ describe('BAIDrawerPortal', () => {
     const modalRoot = document.querySelector<HTMLElement>(
       '.uic-modal',
     ) as HTMLElement;
-    expect(drawerRoot.style.getPropertyValue('--uic-modal-level')).toBe('0');
-    expect(modalRoot.style.getPropertyValue('--uic-modal-level')).toBe('1');
+    expect(drawerRoot.style.getPropertyValue('--modal-level')).toBe('0');
+    expect(modalRoot.style.getPropertyValue('--modal-level')).toBe('1');
     // One stack, so the later claim also paints higher.
     expect(
-      Number(modalRoot.style.getPropertyValue('--uic-modal-z')),
-    ).toBeGreaterThan(
-      Number(drawerRoot.style.getPropertyValue('--uic-modal-z')),
-    );
+      Number(modalRoot.style.getPropertyValue('--modal-z')),
+    ).toBeGreaterThan(Number(drawerRoot.style.getPropertyValue('--modal-z')));
     expect(drawerRoot.hasAttribute('inert')).toBe(true);
     expect(modalRoot.hasAttribute('inert')).toBe(false);
 
