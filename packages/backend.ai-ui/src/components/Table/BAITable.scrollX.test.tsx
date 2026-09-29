@@ -62,6 +62,16 @@ describe('BAITable scroll.x', () => {
     expect(rootOf(renderScrollTable().container)).toBeInTheDocument();
   });
 
+  it('lets the root shrink as a flex item, caller style winning', () => {
+    const root = rootOf(renderScrollTable().container);
+    expect(root.style.minWidth).toBe('0px');
+    expect(root.style.maxWidth).toBe('100%');
+    const custom = rootOf(
+      renderScrollTable({ style: { maxWidth: '50%' } }).container,
+    );
+    expect(custom.style.maxWidth).toBe('50%');
+  });
+
   it('keeps a caller className alongside the root class', () => {
     const { container } = renderScrollTable({ className: 'my-table' });
     expect(rootOf(container)).toHaveClass('my-table');
