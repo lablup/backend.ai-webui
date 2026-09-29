@@ -1584,6 +1584,7 @@ const SessionLauncherPage = () => {
                   accesskey: '',
                   domainName: '',
                   email: undefined,
+                  projectId: '',
                   project: '',
                   resourceGroup: '',
                 },

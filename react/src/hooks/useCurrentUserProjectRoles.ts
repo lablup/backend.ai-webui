@@ -11,6 +11,7 @@ import {
 } from '../__generated__/useCurrentUserProjectRolesQuery.graphql';
 import { useCurrentProjectValue } from './useCurrentProject';
 import { useUrlProjectValidity } from './useUrlProjectValidity';
+import { toLocalId } from 'backend.ai-ui';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 // `myAtomicBulkScopePermissions` refuses more than this many targets
@@ -59,22 +60,28 @@ export const useCurrentUserProjectRoles = (): CurrentUserProjectRolesResult => {
 
   const projects = useLazyLoadQuery<useCurrentUserProjectRolesProjectsQuery>(
     graphql`
-      query useCurrentUserProjectRolesProjectsQuery($email: String) {
-        user(email: $email) {
-          groups {
-            id
+      query useCurrentUserProjectRolesProjectsQuery {
+        myUserV2 {
+          projects(limit: 100) {
+            edges {
+              node {
+                id
+              }
+            }
           }
         }
       }
     `,
-    { email: baiClient.email },
+    {},
     {
       fetchPolicy: supportsHeldPermissions ? 'store-or-network' : 'store-only',
     },
   );
 
-  const targets: Array<PermissionTarget> = (projects.user?.groups ?? [])
-    .flatMap((group) => (group?.id ? [group.id] : []))
+  const targets: Array<PermissionTarget> = (
+    projects.myUserV2?.projects?.edges ?? []
+  )
+    .map((edge) => toLocalId(edge.node.id))
     .slice(0, MAX_SCOPE_PERMISSION_TARGETS)
     .map((scopeId) => ({
       scopeType: 'project',
