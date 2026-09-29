@@ -90,7 +90,9 @@ const ManageImageResourceLimitModal: React.FC<
     useMutation<ManageImageResourceLimitModalClearMutation>(graphql`
       mutation ManageImageResourceLimitModalClearMutation(
         $imageCanonical: String!
-        $architecture: String
+        # Required until manager 26.1 (nullable from 26.1), so declare it
+        # non-null to stay valid against the 25.6-25.x schema as well.
+        $architecture: String!
       ) {
         clear_image_custom_resource_limit(
           key: { image_canonical: $imageCanonical, architecture: $architecture }
@@ -111,7 +113,10 @@ const ManageImageResourceLimitModal: React.FC<
   // so every part of that key has to be present before it can be called.
   const imageCanonical = `${image?.registry}/${image?.name ?? image?.namespace}:${image?.tag}`;
   const canResetResourceLimit =
-    !!image?.registry && !!(image?.name ?? image?.namespace) && !!image?.tag;
+    !!image?.registry &&
+    !!(image?.name ?? image?.namespace) &&
+    !!image?.tag &&
+    !!image?.architecture;
   const supportsResetResourceLimit =
     baiClient.isManagerVersionCompatibleWith('25.6.0');
 
@@ -120,7 +125,7 @@ const ManageImageResourceLimitModal: React.FC<
       commitClearResourceLimit({
         variables: {
           imageCanonical,
-          architecture: image?.architecture,
+          architecture: image?.architecture ?? '',
         },
         onCompleted: (_res, errors) => {
           // The payload carries only `image_node`, so a failure can only show
@@ -186,12 +191,23 @@ const ManageImageResourceLimitModal: React.FC<
     });
   };
 
+  // A pending mutation calls `onRequestClose(true)` when it settles; if the
+  // modal could be dismissed and reopened for another image in the meantime,
+  // that late call would close the newly opened one. Block dismissal instead.
+  const isMutating = isInFlightModifyImageInput || isInFlightClearResourceLimit;
+
   return (
     <BAIModal
       open={open}
       maskClosable={false}
+      keyboard={!isMutating}
+      closable={!isMutating}
+      cancelButtonProps={{ disabled: isMutating }}
       onOk={handleOnClick}
-      onCancel={() => onRequestClose(false)}
+      onCancel={() => {
+        if (isMutating) return;
+        onRequestClose(false);
+      }}
       confirmLoading={isInFlightModifyImageInput}
       // Mirror of the reset trigger's own guard: the two mutations write the
       // same resource_limits, so neither may start while the other is in flight.

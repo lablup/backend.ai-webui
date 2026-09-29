@@ -150,6 +150,7 @@ describe('ManageImageResourceLimitModal reset action (FR-854)', () => {
   it.each([
     ['registry', { ...IMAGE_NODE, registry: null }],
     ['tag', { ...IMAGE_NODE, tag: null }],
+    ['architecture', { ...IMAGE_NODE, architecture: null }],
     ['name and namespace', { ...IMAGE_NODE, name: null, namespace: null }],
   ])(
     'disables the reset action when %s is missing from the canonical key',
