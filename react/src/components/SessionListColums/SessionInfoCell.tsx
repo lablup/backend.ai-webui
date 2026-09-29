@@ -145,7 +145,10 @@ const SessionInfoCell: React.FC<{
             hasAutoFocus
             onEnter={save}
             onKeyDown={(e) => {
-              if (e.key === 'Escape') setEditing(false);
+              if (e.key !== 'Escape') return;
+              // Claims the press, so an open scrimless drawer stays open.
+              e.preventDefault();
+              setEditing(false);
             }}
           />
         </Form.Item>

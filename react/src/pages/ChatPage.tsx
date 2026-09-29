@@ -5,10 +5,10 @@
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import ChatCard from '../components/Chat/ChatCard';
 import {
-  type ChatHistoryData,
   generateChatId,
   getChatById,
   useHistory,
+  type ChatHistoryData,
 } from '../components/Chat/ChatHistory';
 import {
   normalizeCustomEndpointURL,
@@ -313,6 +313,8 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
         onEnter={commit}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
+            // Claims the press, so an open scrimless drawer stays open.
+            e.preventDefault();
             setDraft(label);
             setIsEditing(false);
           }
