@@ -12,17 +12,17 @@ import {
   useSuspenseTanQuery,
   useTanMutation,
 } from '../../hooks/reactQueryAlias';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { EmptyState } from '@astryxdesign/core/EmptyState';
 import { Heading } from '@astryxdesign/core/Heading';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
   BAIMetadataList,
-  badgeVariantForStatus,
   useErrorMessageResolver,
+  tokenColorForStatus,
 } from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -81,9 +81,9 @@ const SummaryItemInvitation: React.FC = () => {
       // The local r/w/d/o -> colour array is gone: ticket 13's global lookup
       // already carries this exact map as the `vfolderPermission` domain.
       return (
-        <Badge
+        <Token
           key={p}
-          variant={badgeVariantForStatus('vfolderPermission', p)}
+          color={tokenColorForStatus('vfolderPermission', p)}
           label={text}
         />
       );

@@ -159,7 +159,6 @@ const StoragePermissionEditModal: React.FC<Props> = ({
       className="storage-permission-edit-modal-header"
       title={resolvedTitle}
       open={open}
-      destroyOnHidden
       okText={t('storageHost.permission.Update')}
       confirmLoading={isSaving}
       onOk={handleOk}

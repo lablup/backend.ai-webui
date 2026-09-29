@@ -10,10 +10,17 @@ import useConnectedBAIClient from '../../provider/BAIClientProvider/hooks/useCon
 import { VFolderFile } from '../../provider/BAIClientProvider/types';
 import { FolderInfoContext } from './BAIFileExplorer';
 import EditableFileName from './EditableFileName';
+import { useDownloadErrorMessage } from './hooks';
 import { Trash2, DownloadIcon, EditIcon } from 'lucide-react';
 import { use } from 'react';
 
 const MAX_EDITABLE_FILE_SIZE = 1024 * 1024; // 1 MB
+
+// A file name is the whole point of this cell, and the ones users have are
+// long. Below this the row actions fold into the more menu rather than take
+// the last of the name's width (FR-3926) — the cell's default reserve is 40px,
+// which the type icon alone nearly fills.
+const MIN_FILE_NAME_WIDTH = 120;
 
 interface FileNameCellProps {
   selectedItem: VFolderFile;
@@ -48,19 +55,24 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
   const { message } = App.useApp();
   const { targetVFolderId, currentPath } = use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
+  const getDownloadErrorMessage = useDownloadErrorMessage();
 
   const downloadFileMutation = useTanMutation({
     mutationFn: async ({
+      filePath,
       fileName,
       currentFolder,
       archive = false,
     }: {
+      // Path inside the vfolder, which the token request needs; `fileName` is
+      // the bare name the user sees in the toast and the saved file.
+      filePath: string;
       fileName: string;
       currentFolder: string;
       archive?: boolean;
     }): Promise<{ success: boolean; fileName: string }> => {
       const tokenResponse = await baiClient.vfolder.request_download_token(
-        fileName,
+        filePath,
         currentFolder,
         archive,
       );
@@ -76,11 +88,10 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
     onSuccess: ({ fileName }) => {
       message.success(t('comp:FileExplorer.DownloadStarted', { fileName }));
     },
-    onError: (err: any) => {
-      if (err && err.message) {
-        message.error(err.message);
-      } else if (err && err.title) {
-        message.error(err.title);
+    onError: (err: unknown) => {
+      const text = getDownloadErrorMessage(err);
+      if (text) {
+        message.error(text);
       }
     },
   });
@@ -95,11 +106,16 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
       icon: <DownloadIcon size="1em" />,
       disabled: !enableDownload,
       action: async () => {
-        await downloadFileMutation.mutateAsync({
-          fileName: `${currentPath}/${selectedItem.name}`,
-          currentFolder: targetVFolderId,
-          archive: isDirectory,
-        });
+        // onError already toasted; an escaping rejection would hit the
+        // page's error boundary and unmount the modal.
+        await downloadFileMutation
+          .mutateAsync({
+            filePath: `${currentPath}/${selectedItem.name}`,
+            fileName: selectedItem.name,
+            currentFolder: targetVFolderId,
+            archive: isDirectory,
+          })
+          .catch(() => {});
       },
     },
     {
@@ -146,6 +162,7 @@ const FileNameCell: React.FC<FileNameCellProps> = ({
     >
       <BAINameActionCell
         showActions="always"
+        minTitleWidth={MIN_FILE_NAME_WIDTH}
         title={
           <EditableFileName
             fileInfo={selectedItem}

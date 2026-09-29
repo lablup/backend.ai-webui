@@ -4,11 +4,11 @@
  */
 import { StorageHostResourcePanelFragment$key } from '../__generated__/StorageHostResourcePanelFragment.graphql';
 import { convertToDecimalUnit } from '../helper/index';
-import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { ProgressBar } from '@astryxdesign/core/ProgressBar';
 import { HStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { BAICard, BAIFlex, BAIMetadataList } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -86,7 +86,7 @@ const StorageHostResourcePanel: React.FC<{
         <MetadataListItem label={t('agent.Capabilities')}>
           <BAIFlex gap="xs" wrap="wrap">
             {_.map(resource?.capabilities, (cap) => (
-              <Badge key={cap} variant="neutral" label={cap} />
+              <Token key={cap} label={cap ?? ''} />
             ))}
           </BAIFlex>
         </MetadataListItem>

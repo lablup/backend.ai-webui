@@ -30,6 +30,7 @@ import { useLazyPaginatedQuery } from '../../hooks/usePaginatedQuery';
 import BAIComplexSelect, {
   type BAIComplexSelectProps,
   type BAIComplexSelectValue,
+  type BAILabeledValue,
 } from '../BAIComplexSelect';
 import * as _ from 'lodash-es';
 import {
@@ -58,7 +59,9 @@ export interface BAIRuntimeVariantSelectProps extends Omit<
 > {
   /** Plain key, as the antd `BAIRuntimeVariantSelect` exposes. */
   value?: string | null;
-  onChange?: (value: string | undefined) => void;
+  /** The second argument is the picked option, so a `renderInput` filter can
+   * label its token with the variant name while the UUID serializes. */
+  onChange?: (value: string | undefined, option?: BAILabeledValue) => void;
   /**
    * Notifies the parent of resolved variant metadata as the paginated list
    * and selected-value point lookup fan in, keyed by runtime variant UUID (the
@@ -287,7 +290,7 @@ const BAIRuntimeVariantSelect: React.FC<BAIRuntimeVariantSelectProps> = ({
       value={labeledValue}
       onChange={(next) => {
         const v = _.isArray(next) ? next[0] : next;
-        setControllableValue(v?.value, undefined);
+        setControllableValue(v?.value, v ?? undefined);
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

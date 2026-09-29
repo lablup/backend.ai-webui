@@ -20,10 +20,14 @@ import RouteAccessGuard from './components/RouteAccessGuard';
 import RouteErrorBoundary from './components/RouteErrorBoundary';
 import { STokenLoginBoundary } from './components/STokenLoginBoundary';
 import StorageHostFetchErrorBoundary from './components/StorageHostFetchErrorBoundary';
+import UserSettingsRouteRedirect from './components/UserSettingsRouteRedirect';
 import WebUINavigate from './components/WebUINavigate';
 import { persistPostLoginState } from './helper/loginSessionAuth';
 import { useSuspendedBackendaiClient } from './hooks';
-import { useAutoDiagnostics } from './hooks/useAutoDiagnostics';
+import {
+  diagnosticsBadgeSeverityAtom,
+  useAutoDiagnostics,
+} from './hooks/useAutoDiagnostics';
 import { useBAISettingUserState } from './hooks/useBAISetting';
 import { useCurrentProjectValue } from './hooks/useCurrentProject';
 import { LogoutEventHandler } from './hooks/useLogout';
@@ -45,7 +49,7 @@ import { toProjectContext } from './types/projectContext';
 import { BAISkeleton, BAIFlex, BAICard } from 'backend.ai-ui';
 import { useSetAtom } from 'jotai';
 import { parseAsString, useQueryStates } from 'nuqs';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteObject, useParams } from 'react-router-dom';
 
@@ -63,7 +67,6 @@ const AdminDashboardPage = React.lazy(
 );
 const EnvironmentPage = React.lazy(() => import('./pages/EnvironmentPage'));
 const MyEnvironmentPage = React.lazy(() => import('./pages/MyEnvironmentPage'));
-const UserSettingsPage = React.lazy(() => import('./pages/UserSettingsPage'));
 const SessionLauncherPage = React.lazy(
   () => import('./pages/SessionLauncherPage'),
 );
@@ -79,6 +82,9 @@ const FolderInvitationResponseModalOpener = React.lazy(
 );
 const FileUploadManager = React.lazy(
   () => import('./components/FileUploadManager'),
+);
+const UserSettingsModalOpener = React.lazy(
+  () => import('./components/UserSettingsModalOpener'),
 );
 
 const DeploymentListPage = React.lazy(
@@ -1392,13 +1398,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
   },
   // --- Global, no-prefix, unchanged ---
   {
+    // The settings surface is a modal now (`UserSettingsModalOpener`); this
+    // route survives only to convert legacy `?tab=` deep links into it.
     path: '/usersettings',
     handle: { labelKey: 'webui.menu.Settings&Logs' },
-    element: (
-      <Suspense fallback={<BAISkeleton rows={4} />}>
-        <UserSettingsPage />
-      </Suspense>
-    ),
+    element: <UserSettingsRouteRedirect />,
   },
   {
     path: '/logs',
@@ -1420,11 +1424,27 @@ export const mainLayoutChildRoutes: RouteObject[] = [
 ];
 
 /**
- * Component that runs auto-diagnostics checks after login and shows
- * a notification if any critical issues are detected.
- * Wraps the hook in a Suspense boundary so it won't block rendering.
+ * Runs auto-diagnostics after login, superadmin only — the diagnostics hooks
+ * fire superadmin-scoped requests (e.g. storage_volume_list) as soon as they
+ * run, so non-superadmins must not mount the runner (FR-3892).
  */
 const AutoDiagnosticsEffect = () => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const setDiagnosticsBadgeSeverity = useSetAtom(diagnosticsBadgeSeverityAtom);
+  const isSuperAdmin = !!baiClient?.is_superadmin;
+
+  useEffect(() => {
+    if (!isSuperAdmin) {
+      setDiagnosticsBadgeSeverity(null);
+    }
+  }, [isSuperAdmin, setDiagnosticsBadgeSeverity]);
+
+  return isSuperAdmin ? <AutoDiagnosticsRunner /> : null;
+};
+
+const AutoDiagnosticsRunner = () => {
+  'use memo';
   useAutoDiagnostics();
   return null;
 };
@@ -1665,12 +1685,19 @@ export const routes: RouteObject[] = [
             <ErrorBoundaryWithNullFallback>
               <RoutingEventHandler />
             </ErrorBoundaryWithNullFallback>
-            {/* Dev-only handoff to the review overlay (FR-3811), on unless
-                VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite plugin.
-                `import.meta.env.DEV` is the literal `false` in a production
-                build, so the whole branch — and the imported module — is dead
-                code there. */}
-            {import.meta.env.DEV && isDevReviewOverlayEnabled() ? (
+            {/* Handoff to the review overlay (FR-3811). Dev servers: on
+                unless VITE_DEV_REVIEW_OVERLAY opts out, as in the Vite
+                plugin. Built bundles: only where VITE_REVIEW_OVERLAY_BUILD
+                opts IN (FR-3880 — the nightly deployment). Every operand is
+                a literal after Vite's env substitution, so a release build,
+                which sets neither, folds the whole branch — and the imported
+                module — away. */}
+            {(
+              import.meta.env.DEV
+                ? isDevReviewOverlayEnabled()
+                : import.meta.env.VITE_REVIEW_OVERLAY_BUILD === '1' ||
+                  import.meta.env.VITE_REVIEW_OVERLAY_BUILD === 'true'
+            ) ? (
               <ErrorBoundaryWithNullFallback>
                 <DevReviewRouteLabel />
               </ErrorBoundaryWithNullFallback>
@@ -1692,6 +1719,14 @@ export const routes: RouteObject[] = [
               </ErrorBoundaryWithNullFallback>
               <ErrorBoundaryWithNullFallback>
                 <FileUploadManager />
+              </ErrorBoundaryWithNullFallback>
+            </Suspense>
+            {/* Its own boundary: the opener suspends on the client, and
+                sharing the block above would unmount `FileUploadManager`
+                and drop in-flight uploads. */}
+            <Suspense fallback={null}>
+              <ErrorBoundaryWithNullFallback>
+                <UserSettingsModalOpener />
               </ErrorBoundaryWithNullFallback>
             </Suspense>
           </STokenGuard>

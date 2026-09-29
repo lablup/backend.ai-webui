@@ -9,7 +9,6 @@ import {
 } from '../__generated__/ResourcePresetListQuery.graphql';
 import { ResourcePresetSettingModalFragment$key } from '../__generated__/ResourcePresetSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import { localeCompare } from '../helper';
 import { reasonMessage } from '../helper/mutationError';
 import ResourcePresetSettingModal from './ResourcePresetSettingModal';
 import { Button } from '@astryxdesign/core/Button';
@@ -19,6 +18,7 @@ import {
   BAITable,
   BAIFlex,
   BAINumberWithUnit,
+  BAIPropertyFilter,
   useUpdatableState,
   BAIResourceNumberWithIcon,
   BAINameActionCell,
@@ -27,13 +27,27 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw, Trash2, PlusIcon, SquarePenIcon } from 'lucide-react';
-import React, { Suspense, useState, useTransition } from 'react';
+import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
+import React, {
+  Suspense,
+  useDeferredValue,
+  useState,
+  useTransition,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 type ResourcePreset = NonNullable<
   NonNullable<ResourcePresetListQuery$data['resource_presets']>[number]
 >;
+
+// Keys of the backend's `_queryorder_colmap` for `resource_presets`; anything
+// else — including from a hand-edited URL — would raise server-side.
+const availableSorterKeys = ['name', 'scaling_group_name'] as const;
+const availableSorterValues = [
+  ...availableSorterKeys,
+  ...availableSorterKeys.map((key) => `-${key}` as const),
+] as const;
 
 interface ResourcePresetListProps {}
 
@@ -49,10 +63,24 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [deletingPresetId, setDeletingPresetId] = useState<string | null>(null);
 
+  const [queryParams, setQueryParams] = useQueryStates(
+    {
+      filter: parseAsString,
+      order: parseAsStringLiteral(availableSorterValues),
+    },
+    { history: 'replace' },
+  );
+
+  const queryVariables = {
+    filter: queryParams.filter || undefined,
+    order: queryParams.order || undefined,
+  };
+  const deferredQueryVariables = useDeferredValue(queryVariables);
+
   const { resource_presets } = useLazyLoadQuery<ResourcePresetListQuery>(
     graphql`
-      query ResourcePresetListQuery {
-        resource_presets {
+      query ResourcePresetListQuery($filter: String, $order: String) {
+        resource_presets(filter: $filter, order: $order) {
           id
           name
           resource_slots
@@ -62,7 +90,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         }
       }
     `,
-    {},
+    deferredQueryVariables,
     {
       fetchPolicy:
         resourcePresetsFetchKey === 'initial-fetch'
@@ -87,7 +115,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     {
       title: t('resourcePreset.Name'),
       dataIndex: 'name',
-      sorter: (a, b) => localeCompare(a?.name, b?.name),
+      sorter: true,
       render: (name: string, record) => (
         <BAINameActionCell
           title={name}
@@ -148,8 +176,7 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
     {
       title: t('general.ResourceGroup'),
       dataIndex: 'scaling_group_name',
-      sorter: (a, b) =>
-        localeCompare(a?.scaling_group_name, b?.scaling_group_name),
+      sorter: true,
       render: (text) => text ?? '-',
     },
   ];
@@ -159,7 +186,25 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
 
   return (
     <BAIFlex direction="column" align="stretch" gap="sm">
-      <BAIFlex direction="row" gap={'xs'} justify="end" wrap="wrap">
+      <BAIFlex direction="row" gap={'xs'} justify="between" wrap="wrap">
+        <BAIPropertyFilter
+          filterProperties={[
+            {
+              key: 'name',
+              propertyLabel: t('resourcePreset.Name'),
+              type: 'string',
+            },
+            {
+              key: 'scaling_group_name',
+              propertyLabel: t('general.ResourceGroup'),
+              type: 'string',
+            },
+          ]}
+          value={queryParams.filter ?? undefined}
+          onChange={(value) => {
+            setQueryParams({ filter: value || null });
+          }}
+        />
         <BAIFlex
           direction="row"
           gap={'xs'}
@@ -192,6 +237,13 @@ const ResourcePresetList: React.FC<ResourcePresetListProps> = () => {
         rowKey="id"
         dataSource={presets}
         columns={columns}
+        loading={deferredQueryVariables !== queryVariables}
+        order={queryParams.order}
+        onChangeOrder={(order) => {
+          setQueryParams({
+            order: order as (typeof availableSorterValues)[number] | null,
+          });
+        }}
       />
       <BAIDeleteConfirmModal
         open={!!deletingPresetId}

@@ -32,6 +32,9 @@
     right: 0;
     bottom: 0;
     width: 8px;
+    /* The thumb is placed by transform from integer scroll metrics; a sub-pixel
+       overshoot past the track must not become the host panel's overflow (FR-4024). */
+    overflow: clip;
     /* Never intercept clicks meant for content under it — only the thumb does. */
     pointer-events: none;
     /* Must clear the host's sticky content chrome (the Backend.AI shell's

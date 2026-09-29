@@ -20,6 +20,37 @@ function getTableRefreshButton(page: Page) {
   return page.getByRole('button', { name: 'Refresh', exact: true }).first();
 }
 
+export interface SweepOptions {
+  /**
+   * `Date.now()`-based wall-clock deadline. A sweep checks it before each
+   * iteration and stops gracefully (logging what it leaves behind) instead
+   * of running into the caller's test timeout, which would abort the whole
+   * cleanup mid-flight. Whatever is left is collected on the next run.
+   */
+  deadline?: number;
+}
+
+/** True when `options.deadline` has passed; logs the rows still matching. */
+async function stopAtDeadline(
+  page: Page,
+  options: SweepOptions,
+  pattern: RegExp,
+  label: string,
+): Promise<boolean> {
+  if (options.deadline === undefined || Date.now() < options.deadline) {
+    return false;
+  }
+  const remaining = await page
+    .getByRole('row')
+    .filter({ hasText: pattern })
+    .count()
+    .catch(() => -1);
+  console.warn(
+    `[${label}] time budget exhausted; stopping with ${remaining < 0 ? 'an unknown number of' : remaining} matching row(s) still listed on the current page (pattern ${pattern}).`,
+  );
+  return true;
+}
+
 /**
  * Deletes all services matching the given pattern from the serving page.
  * Uses the table refresh button + delete icon button + the Astryx confirm dialog.
@@ -28,6 +59,7 @@ export async function sweepServices(
   page: Page,
   pattern: RegExp = /e2e-svc-/i,
   maxIterations = 20,
+  options: SweepOptions = {},
 ): Promise<number> {
   await navigateTo(page, 'serving');
 
@@ -35,6 +67,7 @@ export async function sweepServices(
   let deleted = 0;
 
   while (deleted < maxIterations) {
+    if (await stopAtDeadline(page, options, pattern, 'sweepServices')) break;
     if (await refreshButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       await refreshButton.click();
       await page.waitForTimeout(2000);
@@ -196,8 +229,10 @@ export async function sweepVFolders(
   pattern: RegExp = /e2e-mod-/i,
   dataPath: string = 'data',
   maxIterations = 20,
+  options: SweepOptions = {},
 ): Promise<number> {
   let removed = 0;
+  const label = `sweepVFolders:${dataPath}`;
 
   // Phase 1: fully remove each Active folder (trash + delete forever). Skip
   // rows whose move-to-trash button is disabled (e.g. project folders the
@@ -205,6 +240,7 @@ export async function sweepVFolders(
   // orphan never strands the rest of the sweep.
   const activeSkip = new Set<string>();
   for (let i = 0; i < maxIterations; i++) {
+    if (await stopAtDeadline(page, options, pattern, label)) break;
     await navigateTo(page, dataPath);
     await page
       .getByRole('tab', { name: /^Active/ })
@@ -231,10 +267,14 @@ export async function sweepVFolders(
   }
 
   // Phase 2: delete forever any leftover Trash orphans. Same skip-and-continue
-  // policy; `deleteForeverAndVerifyFromTrash` already bounds its own enabled
-  // check, so a stuck trash row fails fast and is skipped.
+  // policy. Only rows whose Delete button is ENABLED qualify: the nightly
+  // Trash carries well over a thousand DELETE-COMPLETE ghosts (purged by the
+  // backend, never garbage-collected) whose buttons are disabled for good —
+  // handing each one to `deleteForeverAndVerifyFromTrash` only to have it
+  // fail and be skipped cost ~20s apiece and blew the teardown budget.
   const trashSkip = new Set<string>();
   for (let i = 0; i < maxIterations; i++) {
+    if (await stopAtDeadline(page, options, pattern, label)) break;
     await navigateTo(page, dataPath);
     await page
       .getByRole('tab', { name: /^Trash/ })
@@ -244,7 +284,7 @@ export async function sweepVFolders(
       .catch(() => {});
     const name = await firstActionableVFolderName(page, pattern, trashSkip, {
       buttonName: 'Delete',
-      requireEnabled: false,
+      requireEnabled: true,
     });
     if (!name) break;
     try {

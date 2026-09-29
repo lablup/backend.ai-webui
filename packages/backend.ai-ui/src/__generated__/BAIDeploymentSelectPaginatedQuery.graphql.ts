@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8c3f43ac4a98fbf4bf08f3a681f2dc52>>
+ * @generated SignedSource<<502f111bb47fd481190e0639ae434db4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,7 @@ import { ConcreteRequest } from 'relay-runtime';
 export type DeploymentStatus = "DEPLOYING" | "PENDING" | "READY" | "SCALING" | "STOPPED" | "STOPPING" | "%future added value";
 export type ReplicaHealthStatus = "DEGRADED" | "HEALTHY" | "NOT_CHECKED" | "UNHEALTHY" | "%future added value";
 export type ReplicaStatus = "FAILED_TO_START" | "PROVISIONING" | "RUNNING" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type ScalingState = "SCALING" | "STABLE" | "%future added value";
 export type TrafficStatus = "ACTIVE" | "INACTIVE" | "%future added value";
 export type DeploymentFilter = {
   AND?: ReadonlyArray<DeploymentFilter> | null | undefined;
@@ -19,14 +20,18 @@ export type DeploymentFilter = {
   OR?: ReadonlyArray<DeploymentFilter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   createdUserId?: UUIDFilter | null | undefined;
+  desiredReplicas?: IntFilter | null | undefined;
   destroyedAt?: NullableDateTimeFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   endpointUrl?: StringFilter | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   openToPublic?: boolean | null | undefined;
   projectId?: UUIDFilter | null | undefined;
   replicas?: ReplicaNestedFilter | null | undefined;
   resourceGroup?: StringFilter | null | undefined;
+  scalingState?: ScalingStateFilter | null | undefined;
   status?: DeploymentStatusFilter | null | undefined;
   tags?: StringFilter | null | undefined;
 };
@@ -79,6 +84,7 @@ export type NullableDateTimeFilter = {
 };
 export type ReplicaNestedFilter = {
   every?: ReplicaFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: ReplicaFilter | null | undefined;
   some?: ReplicaFilter | null | undefined;
 };
@@ -86,7 +92,11 @@ export type ReplicaFilter = {
   AND?: ReadonlyArray<ReplicaFilter> | null | undefined;
   NOT?: ReadonlyArray<ReplicaFilter> | null | undefined;
   OR?: ReadonlyArray<ReplicaFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  fieldId?: UUIDFilter | null | undefined;
   healthStatus?: ReplicaHealthStatusFilter | null | undefined;
+  revisionId?: UUIDFilter | null | undefined;
+  sessionId?: UUIDFilter | null | undefined;
   status?: ReplicaStatusFilter | null | undefined;
   trafficStatus?: TrafficStatusFilter | null | undefined;
 };
@@ -107,6 +117,35 @@ export type TrafficStatusFilter = {
   in?: ReadonlyArray<TrafficStatus> | null | undefined;
   notEquals?: TrafficStatus | null | undefined;
   notIn?: ReadonlyArray<TrafficStatus> | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type ScalingStateFilter = {
+  equals?: ScalingState | null | undefined;
+  in?: ReadonlyArray<ScalingState> | null | undefined;
+  notEquals?: ScalingState | null | undefined;
+  notIn?: ReadonlyArray<ScalingState> | null | undefined;
 };
 export type BAIDeploymentSelectPaginatedQuery$variables = {
   filter?: DeploymentFilter | null | undefined;

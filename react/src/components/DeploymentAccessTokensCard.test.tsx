@@ -76,9 +76,9 @@ const TOKEN_ROW = {
 };
 
 let lastEnvironment: RelayMockEnvironment;
-let resolvePayload: (operation: any) => ReturnType<
-  typeof MockPayloadGenerator.generate
->;
+let resolvePayload: (
+  operation: any,
+) => ReturnType<typeof MockPayloadGenerator.generate>;
 
 const renderCard = ({
   endpointUrl = 'https://endpoint.example',
@@ -161,7 +161,7 @@ describe('DeploymentAccessTokensCard — disabled create button states (FR-3679)
     const button = await waitFor(createButton);
     expect(button).toHaveAttribute('aria-disabled', 'true');
     expect(
-      screen.getByText('deployment.accessToken.DeploymentStopped'),
+      screen.getByText('deployment.DeploymentStopped'),
     ).toBeInTheDocument();
     expect(
       screen.queryByText('deployment.accessToken.EndpointNotIssuedYet'),

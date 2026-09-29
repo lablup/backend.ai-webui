@@ -4,7 +4,9 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import type { DeploymentAddRevisionModalTestQuery } from '../__generated__/DeploymentAddRevisionModalTestQuery.graphql';
-import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
+import DeploymentAddRevisionModal, {
+  toImageFullName,
+} from './DeploymentAddRevisionModal';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -165,6 +167,8 @@ vi.mock('./ModelCardSelect', async () => {
   };
 });
 
+let presetSelectMounts = 0;
+
 // The model-folder picker is the probe for the folder-picker side of the
 // contract: it surfaces the `currentProjectId` it was scoped to, and the
 // value it holds (the mode-transfer assertions read that).
@@ -185,7 +189,29 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
         },
         'select-model-folder',
       ),
-    BAIAvailablePresetSelect: () => null,
+    // The preset picker is the probe for the single-select contract: it
+    // surfaces the model-card scope it was given, its disabled hint, and a
+    // per-instance mount id (the select owns a search string, so a source
+    // switch must remount it rather than reuse the instance).
+    BAIAvailablePresetSelect: (props: any) => {
+      const mountId = React.useRef<number | null>(null);
+      if (mountId.current === null) {
+        presetSelectMounts += 1;
+        mountId.current = presetSelectMounts;
+      }
+      return React.createElement(
+        'button',
+        {
+          'data-testid': 'mock-preset-select',
+          'data-model-card-id': props.modelCardId ?? '',
+          'data-description': props.description ?? '',
+          'data-mount-id': String(mountId.current),
+          disabled: props.isDisabled ?? false,
+          type: 'button',
+        },
+        'select-preset',
+      );
+    },
     BAIRuntimeVariantSelect: () => null,
   };
 });
@@ -349,5 +375,65 @@ describe('DeploymentAddRevisionModal model source mode transfer (FR-3316)', () =
         btoa(`VirtualFolderNode:${MOCK_CARD_VFOLDER_ID}`),
       );
     });
+  });
+});
+
+// The Preset -> Custom prefill matches this string against the environment
+// select's image full names (`registry/namespace:tag@architecture`).
+describe('toImageFullName', () => {
+  it('appends the architecture so the environment select can exact-match', () => {
+    expect(
+      toImageFullName({
+        canonicalName: 'cr.backend.ai/stable/python:3.9-ubuntu20.04',
+        architecture: 'x86_64',
+      }),
+    ).toBe('cr.backend.ai/stable/python:3.9-ubuntu20.04@x86_64');
+  });
+
+  it('falls back to the canonical name when no architecture is known', () => {
+    expect(
+      toImageFullName({ canonicalName: 'cr.backend.ai/stable/python:3.9' }),
+    ).toBe('cr.backend.ai/stable/python:3.9');
+  });
+
+  it('resolves to undefined when the preset carries no image', () => {
+    expect(toImageFullName(null)).toBeUndefined();
+    expect(toImageFullName(undefined)).toBeUndefined();
+  });
+});
+
+describe('DeploymentAddRevisionModal preset select (FR-3346)', () => {
+  it('serves both model sources from one select, scoped by the chosen source', async () => {
+    const user = userEvent.setup();
+    renderModal(DEPLOYMENT_METADATA);
+
+    // Folder source (default): project-wide options, no card scope, enabled.
+    const folderModePreset = await screen.findByTestId('mock-preset-select');
+    expect(folderModePreset).toHaveAttribute('data-model-card-id', '');
+    expect(folderModePreset).toHaveAttribute('data-description', '');
+    expect(folderModePreset).toBeEnabled();
+    const folderModeMountId =
+      folderModePreset.getAttribute('data-mount-id') ?? '';
+
+    await user.click(
+      screen.getByRole('radio', { name: 'deployment.ModelCard' }),
+    );
+
+    // Card source without a card yet: still ONE select, now disabled + hinted.
+    await waitFor(() => {
+      expect(screen.getAllByTestId('mock-preset-select')).toHaveLength(1);
+      expect(screen.getByTestId('mock-preset-select')).toBeDisabled();
+    });
+    expect(screen.getByTestId('mock-preset-select')).toHaveAttribute(
+      'data-description',
+      'deployment.SelectModelCardFirst',
+    );
+    // One element type now serves both sources, so the source switch has to
+    // remount it explicitly — otherwise a folder-mode search string would
+    // survive and filter the card's compatible presets.
+    expect(screen.getByTestId('mock-preset-select')).not.toHaveAttribute(
+      'data-mount-id',
+      folderModeMountId,
+    );
   });
 });

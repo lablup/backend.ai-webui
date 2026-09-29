@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<41a29c6b31017fcf9cccdcef8d37a634>>
+ * @generated SignedSource<<1868f76a027e0f325387e55cc6cbd4aa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,7 +41,7 @@ export type SessionDetailContentFragment$data = {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly image: {
-          readonly " $fragmentSpreads": FragmentRefs<"ImageNodeSimpleTagFragment">;
+          readonly " $fragmentSpreads": FragmentRefs<"BAIImageNodeSimpleTagFragment">;
         } | null | undefined;
         readonly " $fragmentSpreads": FragmentRefs<"ConnectedKernelListFragment">;
       } | null | undefined;
@@ -73,7 +73,7 @@ export type SessionDetailContentFragment$data = {
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
-  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTagFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusDetailModalFragment" | "SessionStatusTagFragment" | "SessionUsageMonitorFragment">;
+  readonly " $fragmentSpreads": FragmentRefs<"AppLauncherModalFragment" | "BAISessionAgentIdsFragment" | "BAISessionClusterModeFragment" | "BAISessionTypeTokenFragment" | "ContainerCommitModalFragment" | "ContainerLogModalFragment" | "EditableSessionNameFragment" | "MountedVFolderLinksFragment" | "SessionAccessKeyFragment" | "SessionActionButtonsFragment" | "SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusBadgeFragment" | "SessionStatusDetailModalFragment" | "SessionUsageMonitorFragment">;
   readonly " $fragmentType": "SessionDetailContentFragment";
 } | null | undefined;
 export type SessionDetailContentFragment$key = {
@@ -357,7 +357,7 @@ return {
                     {
                       "args": null,
                       "kind": "FragmentSpread",
-                      "name": "ImageNodeSimpleTagFragment"
+                      "name": "BAIImageNodeSimpleTagFragment"
                     }
                   ],
                   "storageKey": null
@@ -399,7 +399,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "SessionStatusTagFragment"
+      "name": "SessionStatusBadgeFragment"
     },
     {
       "args": null,
@@ -409,7 +409,7 @@ return {
     {
       "args": null,
       "kind": "FragmentSpread",
-      "name": "BAISessionTypeTagFragment"
+      "name": "BAISessionTypeTokenFragment"
     },
     {
       "args": null,
@@ -477,6 +477,6 @@ return {
 };
 })();
 
-(node as any).hash = "a6ab9f7d99863931c4fa11da127bb44c";
+(node as any).hash = "6fadc80e1af29a6361c08ced0a5c11f8";
 
 export default node;

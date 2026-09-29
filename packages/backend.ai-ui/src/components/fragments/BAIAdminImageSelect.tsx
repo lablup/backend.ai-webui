@@ -44,6 +44,7 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
+import BAIImageNodeSimpleTagV2 from './BAIImageNodeSimpleTagV2';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,
@@ -69,7 +70,12 @@ export interface BAIAdminImageSelectProps extends Omit<
 > {
   /** Plain key(s), as the antd `BAIAdminImageSelect` exposes. */
   value?: string | Array<string> | null;
-  onChange?: (value: string | Array<string> | undefined) => void;
+  /** The second argument is the picked option, so a `renderInput` filter can
+   * label its token with the image name while the UUID serializes. */
+  onChange?: (
+    value: string | Array<string> | undefined,
+    option?: BAILabeledValue | Array<BAILabeledValue>,
+  ) => void;
   /** Additional GraphQL filter to narrow the image list. */
   filter?: ImageV2Filter;
   open?: boolean;
@@ -175,6 +181,7 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
                   canonicalName
                   architecture
                 }
+                ...BAIImageNodeSimpleTagV2Fragment
               }
             }
           }
@@ -221,10 +228,22 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
     architecture: string;
   }) => (identity ? `${identity.canonicalName}@${identity.architecture}` : '');
 
+  // The option row is the project-wide image row (ADR 0005), so the picker
+  // reads like the session launcher. `label` stays the canonical reference —
+  // the trigger text, the accessible name and the filter chip's text — while
+  // the popup draws the row in its place.
   const options = _.compact(
     _.map(paginationData, (item) => {
       const key = item?.id ? toLocalId(item.id) : undefined;
-      return key ? { value: key, label: getImageLabel(item?.identity) } : null;
+      return key
+        ? {
+            value: key,
+            label: getImageLabel(item?.identity),
+            labelContent: item ? (
+              <BAIImageNodeSimpleTagV2 imageFrgmt={item} copyable={false} />
+            ) : undefined,
+          }
+        : null;
     }),
   );
 
@@ -257,8 +276,12 @@ const BAIAdminImageSelect: React.FC<BAIAdminImageSelectProps> = ({
       options={options}
       value={labeledValue}
       onChange={(next) => {
-        const keys = _.map(_.compact(_.castArray(next ?? [])), (v) => v.value);
-        setControllableValue(multiple ? keys : keys[0], undefined);
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
       }}
       searchValue={searchStr}
       onSearch={setSearchStr}

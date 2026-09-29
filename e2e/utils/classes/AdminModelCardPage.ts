@@ -34,9 +34,12 @@ export class AdminModelCardPage {
   }
 
   getDataRows(): Locator {
-    return this.page.locator(
-      'tbody tr:not(.ant-table-measure-row):not(.ant-table-placeholder)',
-    );
+    // Astryx `Table`'s empty state is a real `<tr>` ("No data to display"),
+    // not a dead antd `.ant-table-placeholder` row — filter by the row
+    // checkbox that only real data rows carry.
+    return this.page
+      .locator('tbody tr')
+      .filter({ has: this.page.getByRole('checkbox') });
   }
 
   private escapeRegExp(value: string): string {
@@ -51,6 +54,21 @@ export class AdminModelCardPage {
 
   getPaginationInfo(): Locator {
     return this.page.getByText(/\d+ - \d+ of \d+ items/);
+  }
+
+  // Astryx's ToastViewport renders every toast twice: once in the visible
+  // stack (`role="region"`, named "Notifications") and once in a singleton
+  // screen-reader announcer — an unscoped getByText() strict-mode-violates.
+  getToastRegion(): Locator {
+    return this.page.getByRole('region', { name: 'Notifications' });
+  }
+
+  // Link-bearing notices (`notification.*` / `upsertNotification`) render in
+  // `BAINotificationStack`, not the toast region; its root is `role=
+  // "presentation"`, so scope by the stack's test id
+  // (`packages/backend.ai-ui/src/components/BAINotificationStack.tsx`).
+  getNotificationStack(): Locator {
+    return this.page.getByTestId('bai-notification-stack');
   }
 
   // ── Toolbar / actions ────────────────────────────────────────────────────
@@ -73,23 +91,25 @@ export class AdminModelCardPage {
     return this.page.getByRole('combobox', { name: 'Search' });
   }
 
-  getFilterSearchButton(): Locator {
-    return this.page.getByRole('button', { name: 'search' });
+  getFilterSearchResultOption(value: string): Locator {
+    return this.page.getByRole('option', {
+      name: new RegExp(`^"${this.escapeRegExp(value)}"$`),
+    });
   }
 
   async applyNameFilter(value: string): Promise<void> {
+    // PowerSearch has no submit button — typing opens a quoted free-text
+    // suggestion, and clicking it commits the condition.
     await this.getFilterSearchInput().fill(value);
-    await this.getFilterSearchButton().click();
+    await this.getFilterSearchResultOption(value).click();
     await this.page.waitForURL(new RegExp(`filter=`));
   }
 
   async clearFilter(): Promise<void> {
-    // The filter chip's close affordance is a button labeled "Close" (not an
-    // icon-only `img` role) as of the row-action UI refresh in FR-3331.
-    const closeButton = this.page
-      .getByRole('button', { name: 'Close' })
-      .first();
-    await closeButton.click();
+    // PowerSearch's chip-remove button is named "Remove <Field>: <operator>",
+    // so "Clear all" is the stable target regardless of which field/operator
+    // was applied.
+    await this.page.getByRole('button', { name: 'Clear all' }).click();
   }
 
   // ── Row actions ──────────────────────────────────────────────────────────
@@ -133,12 +153,18 @@ export class AdminModelCardPage {
   }
 
   getBulkDeleteButton(): Locator {
-    // Delete button in the toolbar area (sibling of the selection label, not inside table rows)
+    // Delete button in the toolbar area (sibling of the selection label, not
+    // inside table rows). It is an icon-only `BAIButton`, whose accessible
+    // name is the generic "Action" placeholder (`BAIButton.tsx`), not
+    // "delete" — key on the trash icon, as `bulk-user-creation.spec.ts` does.
     return this.page
       .getByText(/\d+ selected/)
       .locator('..')
       .locator('..')
-      .getByRole('button', { name: 'delete' });
+      .getByRole('button', { name: 'Action', exact: true })
+      .filter({
+        has: this.page.locator('svg.lucide-trash2, svg.lucide-trash-2'),
+      });
   }
 
   // ── Modals ───────────────────────────────────────────────────────────────
@@ -494,8 +520,12 @@ export class AdminModelCardPage {
   }
 
   getDeleteConfirmButton(): Locator {
+    // `exact` — the confirm input's clear button is named "Clear Type <card
+    // name> to confirm.", which substring-matches 'Delete' for any fixture
+    // whose name contains "delete".
     return this.getDeleteConfirmDialog().getByRole('button', {
       name: 'Delete',
+      exact: true,
     });
   }
 
@@ -568,7 +598,7 @@ export class AdminModelCardPage {
     await expect(this.getDeleteConfirmButton()).toBeEnabled({ timeout: 10000 });
     await this.getDeleteConfirmButton().click();
     await expect(
-      this.page.getByText(/Model card has been deleted/),
+      this.getToastRegion().getByText(/Model card has been deleted/),
     ).toBeVisible({ timeout: 30000 });
   }
 }

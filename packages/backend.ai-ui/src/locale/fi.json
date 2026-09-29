@@ -6,6 +6,7 @@
     "DiskPerc": "Levy %",
     "Endpoint": "Päätepiste",
     "FailedToLoadCellData": "Tietojen lataaminen epäonnistui.",
+    "LostAt": "Menetetty",
     "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
     "Region": "Alue",
     "ResourceGroup": "Resurssiryhmä",
@@ -13,7 +14,8 @@
     "Schedulable": "Ajastettava",
     "Starts": "Käynnistykset",
     "Status": "Tila",
-    "Utilization": "Käyttöaste"
+    "Utilization": "Käyttöaste",
+    "Version": "Versio"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Sallittu",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Toiminnon ID",
     "Actor": "Suorittaja",
+    "ClientIp": "Asiakkaan IP",
     "Description": "Kuvaus",
     "Duration": "Kesto",
     "EntityId": "Entiteetin ID",
@@ -132,7 +135,7 @@
     "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
     "DeleteItem": "Poista",
     "DeleteNItems": "Poista {{count}} kohdetta",
-    "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
+    "TypeToConfirm": "Kirjoita <token>{{confirmText}}</token> vahvistaaksesi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Luonut"
@@ -152,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Heikentynyt",
     "Deploying": "Käyttöönottaminen",
     "Healthy": "Terve",
@@ -228,6 +231,23 @@
     "SuccessFullyPulled": "Onnistuneesti pyydetty veto {{count}} versioille.",
     "Version": "Versio"
   },
+  "comp:BAIInteractiveLoginButton": {
+    "CheckingSession": "Tarkistetaan Backend.AI-istuntoasi…",
+    "SignInWithBackendAI": "Kirjaudu sisään Backend.AI-tunnuksella",
+    "failure": {
+      "CorsOrMixed": "Selain esti pyynnön Backend.AI-verkkopalvelimelle. Syynä on yleensä CORS- tai sekasisältörajoitus.",
+      "HttpError": "Backend.AI-verkkopalvelin palautti virheen ({{status}}).",
+      "InvalidCallback": "Sovellukselle {{appName}} määritetty kirjautumisen paluuosoite ei ole kelvollinen verkko-osoite.",
+      "InvalidResponse": "Backend.AI-verkkopalvelin palautti odottamattoman vastauksen.",
+      "NoEndpoint": "Sovellukselle {{appName}} ei ole määritetty Backend.AI-verkkopalvelimen osoitetta.",
+      "NoSessionId": "Olet kirjautunut Backend.AI:hin, mutta verkkopalvelin ei palauttanut istuntotunnusta.",
+      "NoSessionOverHttp": "Et ole vielä kirjautunut Backend.AI:hin. Jos olet jo kirjautunut, {{appName}} tarjoillaan HTTP:n kautta, joten selain saattaa hylätä verkkopalvelimen suojatun istuntoevästeen. Avaa {{appName}} HTTPS:n kautta.",
+      "NoSessionOverHttps": "Et ole vielä kirjautunut Backend.AI:hin. Jos olet jo kirjautunut, {{appName}} ja Backend.AI-verkkopalvelin voivat olla eri sivustoja, jolloin selain ei lähetä istuntoevästettä.",
+      "RelayFailed": "Olet kirjautunut Backend.AI:hin, mutta {{appName}} ei voinut viimeistellä kirjautumista.",
+      "Timeout": "Backend.AI-verkkopalvelin ei vastannut ajoissa.",
+      "Title": "Backend.AI-kirjautuminen ei onnistunut"
+    }
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Klusterin koko",
     "Concurrency": "Samanaikaiset istunnot",
@@ -248,6 +268,7 @@
     "SelectKeypair": "Valitse avainpari"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Asiakkaan IP",
     "Domain": "Toimialue",
     "FailReason": "Epäonnistumisen syy",
     "LoginTime": "Kirjautumisaika",
@@ -338,18 +359,22 @@
     "UpdateProject": "Päivitä projekti"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktiivinen",
     "ContainerRegistry": "Säiliörekisteri",
     "ContainerRegistryProject": "Säiliörekisteriprojekti",
     "CreatedAt": "Luotu",
     "Description": "Kuvaus",
     "Domain": "Toimialue",
+    "Inactive": "Passiivinen",
     "IntegrationID": "Integraation tunnus",
+    "ModifiedAt": "Muokattu",
     "Name": "Nimi",
     "Project": "Projekti",
     "ProjectID": "Projektin tunnus",
     "Registry": "Rekisteri",
     "ResourcePolicy": "Resurssipolitiikka",
     "ScalingGroups": "Resurssiryhmät",
+    "Status": "Tila",
     "StorageNodes": "Tallennussolmut",
     "TotalResourceSlots": "Resurssipaikat yhteensä",
     "Type": "Tyyppi"
@@ -581,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ja {{rest}} muuta"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",
     "MaxConcurrentLogins": "Samanaikaisten kirjautumisten enimmäismäärä",
@@ -596,16 +624,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Virheellinen polkumuoto.",
     "AliasOverlapping": "Liitospolku on päällekkäinen toisen kansion kanssa.",
+    "AliasOverlappingWithAutoMount": "Liitospolku on päällekkäinen automaattisesti liitetyn kansion kanssa.",
     "AliasPlaceholder": "Liitospolku",
     "AutoMountedFolders": "Automaattisesti liitetyt kansiot",
-    "Name": "Nimi",
-    "PathAndAlias": "Polku & Alias",
+    "CreateFolder": "Luo uusi tallennuskansio",
+    "DestinationPath": "Kontin polku (destination)",
+    "Folders": "Kansiot",
+    "OwnerProject": "Projekti",
+    "OwnerUser": "Käyttäjä",
     "PathAndAliasTooltip": "Polku säilön sisällä, johon kansio liitetään. Jätä tyhjäksi käyttääksesi oletuspolkua.",
+    "Refresh": "Päivitä",
     "RemoveFolder": "Poista",
+    "SelectFolder": "Valitse kansio",
+    "SourcePath": "Polku kansiossa (source)",
     "Subpath": "Alihakemisto",
     "SubpathInvalid": "Alihakemiston on oltava suhteellinen polku eikä se saa sisältää '..'.",
-    "SubpathPlaceholder": "esim. dataset/train (valinnainen)",
-    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Jätä tyhjäksi liittääksesi juuren."
+    "SubpathTooltip": "Liittää kansion sisällä olevan alikansion lähteeksi juuren sijaan. Napsauta kenttää selataksesi kansiota ja valitaksesi alikansion; jätä tyhjäksi, jos haluat liittää kansion juuren.",
+    "UnmountableFoldersRemoved": "Kansiot, joita et voi enää liittää, poistettiin valinnasta."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Valitse kansio"
@@ -622,12 +657,16 @@
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
     "Download": "Lataa",
+    "DownloadPopupBlocked": "Selain esti latausikkunan. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
+    "DownloadRejected": "Storage proxy hylkäsi latauksen (HTTP {{status}}). Lataus ei käynnistynyt.",
     "DownloadSelected": "Lataa",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "DownloadUnreachable": "Storage proxy -palvelimeen osoitteessa {{origin}} ei saatu yhteyttä. Lataus ei käynnistynyt.",
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",
     "EditFile": "Muokkaa tiedostoa",
+    "ExistingItem": "Nykyinen",
     "FileCreatedSuccessfully": "Tiedosto luotiin onnistuneesti.",
     "FileName": "Tiedoston nimi",
     "FileNamePlaceholder": "esim. model-definition.yaml",
@@ -640,11 +679,13 @@
     "ModifiedAt": "Muutettu",
     "Name": "Nimi",
     "NoUploadPermissionForHost": "Sinulla ei ole latausoikeutta tälle tallennuspalvelimelle.",
+    "OtherItemsWillBeUploaded": "Myös {{count}} muuta kohdetta ladataan.",
     "Path": "Polku",
     "PleaseEnterAFileName": "Anna tiedoston nimi.",
     "PleaseEnterAFolderName": "Anna kansionimi.",
     "RenameFile": "Nimeä uudelleen",
     "RenameSuccess": "Nimi on muutettu onnistuneesti.",
+    "SelectItemsToOverwrite": "Nämä kohteet ovat jo täällä. Valitse korvattavat kohteet; valitsemattomat ohitetaan.",
     "SelectedItemsDeletedSuccessfully": "Valitut tiedostot ja kansiot on poistettu onnistuneesti.",
     "Size": "Koko",
     "TypeDeleteToConfirm": "Kirjoita 'Poistaa' vahvistaaksesi.",
@@ -652,6 +693,7 @@
     "UnsupportedFileFormat": "Tämä tiedostomuoto ei tue muokkaamista.",
     "UploadFiles": "Lähetä tiedostot",
     "UploadFolder": "Lataa kansio",
+    "UploadingItem": "Ladattava",
     "error": {
       "DuplicatedName": "Tämä nimi on jo käytössä. \nAnna erilainen nimi.",
       "FileNameRequired": "Anna tiedoston tai kansionimi."
@@ -762,6 +804,7 @@
     "DeselectAll": "Poista kaikki valinnat",
     "File": "Tiedosto",
     "Increase": "Lisää",
+    "Loading": "Ladataan...",
     "NSelected": "{{count}} valittu",
     "Optional": "Valinnainen",
     "Project": "Projekti",

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a33e775be03842b1fe9d2e3351e28178>>
+ * @generated SignedSource<<3fe9e9176b1c9a5cb6c96bdca28a5d08>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -18,6 +18,7 @@ export type VFolderFilter = {
   cloneable?: boolean | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
   host?: StringFilter | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
   status?: VFolderOperationStatusFilter | null | undefined;
   usageMode?: VFolderUsageModeFilter | null | undefined;
@@ -61,6 +62,27 @@ export type DateTimeFilter = {
   before?: string | null | undefined;
   equals?: string | null | undefined;
   notEquals?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIProjectVfolderSelectPaginatedQuery$variables = {
   filter?: VFolderFilter | null | undefined;

@@ -4,9 +4,9 @@ import {
   BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
-  BAITagList,
+  BAITokenList,
   BAIText,
-  BooleanTag,
+  BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
   toLocalId,
@@ -30,6 +30,7 @@ const availableUserV2SorterKeys = [
   'username',
   'status',
   'domainName',
+  'projectName',
   'createdAt',
   'modifiedAt',
 ] as const;
@@ -52,6 +53,12 @@ interface BAIAdminUserV2TableProps extends Omit<
     baseColumns: BAIColumnType<UserV2InList>[],
   ) => BAIColumnType<UserV2InList>[];
   disableSorter?: boolean;
+  /**
+   * Mirrors the fragment's `withProjects` argument. Both must be set together:
+   * the argument decides whether the memberships are fetched, this decides
+   * whether the column exists, and a project-scoped surface leaves both off.
+   */
+  withProjects?: boolean;
   onChangeOrder?: (
     order: (typeof availableUserV2SorterValues)[number] | null,
   ) => void;
@@ -61,6 +68,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
   usersFrgmt,
   customizeColumns,
   disableSorter,
+  withProjects,
   onChangeOrder,
   ...tableProps
 }) => {
@@ -69,7 +77,11 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
 
   const users = useFragment(
     graphql`
-      fragment BAIAdminUserV2TableFragment on UserV2 @relay(plural: true) {
+      fragment BAIAdminUserV2TableFragment on UserV2
+      @argumentDefinitions(
+        withProjects: { type: "Boolean", defaultValue: false }
+      )
+      @relay(plural: true) {
         id @required(action: NONE)
         basicInfo {
           email
@@ -83,6 +95,20 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           role
           resourcePolicy
           mainAccessKey
+        }
+        # Unpaginated: Relay requires identical arguments across fragments on
+        # one parent, and the modals spread alongside this one take none.
+        # Opt-in so a project-scoped surface never fetches a member's
+        # memberships of OTHER projects.
+        projects @include(if: $withProjects) {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+              }
+            }
+          }
         }
         security {
           # @skipOnClient strips the field from the request text; the standard
@@ -166,6 +192,25 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         sorter: isEnableSorter('domainName'),
         render: (__, record) => record.organization?.domainName || '-',
       },
+      withProjects && {
+        key: 'projects',
+        title: t('comp:UserNodes.Projects'),
+        sortKey: 'projectName',
+        sorter: isEnableSorter('projectName'),
+        defaultHidden: true,
+        render: (__, record) => (
+          <BAITokenList
+            variant="text"
+            maxInline={2}
+            items={_.compact(
+              _.map(
+                record.projects?.edges,
+                (edge) => edge?.node?.basicInfo?.name,
+              ),
+            )}
+          />
+        ),
+      },
       {
         key: 'integration_name',
         title: t('comp:UserNodes.IntegrationName'),
@@ -205,14 +250,16 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'sudo_session_enabled',
         title: t('comp:UserNodes.SudoSessionEnabled'),
         render: (__, record) => (
-          <BooleanTag value={record.security?.sudoSessionEnabled ?? false} />
+          <BAIBooleanToken
+            value={record.security?.sudoSessionEnabled ?? false}
+          />
         ),
       },
       {
         key: 'totp_activated',
         title: t('comp:UserNodes.TwoFA'),
         render: (__, record) => (
-          <BooleanTag
+          <BAIBooleanToken
             value={record.security?.totpActivated ?? false}
             trueLabel={t('comp:UserNodes.Enabled')}
             falseLabel={t('comp:UserNodes.Disabled')}
@@ -231,7 +278,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'allowed_client_ip',
         title: t('comp:UserNodes.AllowedClientIps'),
         render: (__, record) => (
-          <BAITagList
+          <BAITokenList
             variant="text"
             maxInline={1}
             items={record.security?.allowedClientIp ?? []}
@@ -254,7 +301,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
         key: 'need_password_change',
         title: t('comp:UserNodes.NeedPasswordChange'),
         render: (__, record) => (
-          <BooleanTag value={record.status?.needPasswordChange} />
+          <BAIBooleanToken value={record.status?.needPasswordChange} />
         ),
       },
       {
@@ -297,7 +344,7 @@ const BAIAdminUserV2Table: React.FC<BAIAdminUserV2TableProps> = ({
           </BAIFlex>
         ),
         render: (__, record) => (
-          <BAITagList
+          <BAITokenList
             variant="text"
             maxInline={1}
             items={record.container?.containerGids ?? []}

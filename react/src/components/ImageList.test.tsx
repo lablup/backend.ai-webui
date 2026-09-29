@@ -4,7 +4,10 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import '../../__test__/resizeObserver.mock.js';
-import ImageList from './ImageList';
+import ImageList, {
+  ALL_IMAGE_STATUSES,
+  filterByStatusesFor,
+} from './ImageList';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -353,7 +356,9 @@ describe('ImageList private marker (FR-70)', () => {
   it('leaves an image without the label unmarked', async () => {
     renderWithImages([{ id: 'img-public', installed: true }]);
 
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
   });
 
@@ -362,7 +367,9 @@ describe('ImageList private marker (FR-70)', () => {
       { id: 'img-private', installed: true, features: 'private' },
     ]);
 
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.getByText('environment.Private')).toBeInTheDocument();
   });
 
@@ -373,7 +380,52 @@ describe('ImageList private marker (FR-70)', () => {
 
     // Await the row's own badge first — asserting absence while the list is
     // still suspended would pass without ever rendering the fixture.
-    expect(await screen.findByText('environment.Installed')).toBeInTheDocument();
+    expect(
+      await screen.findByText('environment.Installed'),
+    ).toBeInTheDocument();
     expect(screen.queryByText('environment.Private')).not.toBeInTheDocument();
+  });
+});
+
+/**
+ * `filter_by_statuses` defaults to `[ALIVE]` server-side and is ANDed with the
+ * queryfilter, so a `status` condition matches nothing until the argument
+ * widens. Widening on anything else would leak deleted images into a list that
+ * did not ask for them, and the field name is also ordinary text a user may
+ * search for.
+ */
+describe('ImageList status filter argument (FR-3911)', () => {
+  it('widens to every status when the filter carries a status condition', () => {
+    expect(filterByStatusesFor('status == "DELETED"')).toEqual([
+      ...ALL_IMAGE_STATUSES,
+    ]);
+    expect(filterByStatusesFor('status == "DELETED"')).toHaveLength(4);
+  });
+
+  it('widens when the status condition is not the first one', () => {
+    expect(
+      filterByStatusesFor('(name ilike "%a%") & (status != "ALIVE")'),
+    ).toEqual([...ALL_IMAGE_STATUSES]);
+    expect(
+      filterByStatusesFor('project ilike "%stable%" & status == "PURGING"'),
+    ).toEqual([...ALL_IMAGE_STATUSES]);
+  });
+
+  it('leaves the server default alone when no status condition is present', () => {
+    expect(filterByStatusesFor('')).toBeUndefined();
+    expect(filterByStatusesFor('is_local == true')).toBeUndefined();
+    expect(filterByStatusesFor('name ilike "%ubuntu%"')).toBeUndefined();
+  });
+
+  it('does not widen for the word "status" inside a quoted value', () => {
+    // A quoted value is opaque: it may contain the field name, an operator, or
+    // a conjunction, and none of them are syntax.
+    expect(filterByStatusesFor('name ilike "%status%"')).toBeUndefined();
+    expect(
+      filterByStatusesFor('name ilike "%foo& status bar%"'),
+    ).toBeUndefined();
+    expect(
+      filterByStatusesFor('base_image_name ilike "%(status ==%"'),
+    ).toBeUndefined();
   });
 });

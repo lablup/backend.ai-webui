@@ -18,7 +18,15 @@ import {
   profileModal,
   usersTabButton,
 } from '../utils/user-profile-util';
-import test, { expect } from '@playwright/test';
+import test, { expect, type Page } from '@playwright/test';
+
+// PowerSearch has no submit button: clicking the quoted free-text suggestion
+// commits the filter (same as AdminModelCardPage.applyNameFilter()).
+async function applyEmailFilter(page: Page, email: string): Promise<void> {
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.fill(email);
+  await page.getByRole('option', { name: new RegExp(`^"${email}"$`) }).click();
+}
 
 // Generate unique identifiers for this test run
 const TEST_RUN_ID = Date.now().toString(36);
@@ -205,14 +213,7 @@ test.describe.serial(
       await page.getByText('Active', { exact: true }).click();
 
       // Use the filter to search for this specific user's email.
-      // BAIPropertyFilter renders Input.Search inside AutoComplete; in antd v6
-      // the aria-label on Input.Search is dropped from the underlying input,
-      // so target the input directly via the .ant-input-search wrapper.
-      const filterValueInput = page
-        .locator('.ant-input-search input[type="search"]')
-        .first();
-      await filterValueInput.fill(EMAIL);
-      await page.getByRole('button', { name: 'search' }).click();
+      await applyEmailFilter(page, EMAIL);
 
       // 3. Check if the user is in the Active list
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
@@ -234,10 +235,12 @@ test.describe.serial(
         // 3b. Deactivate the user — confirm the Popconfirm that appears
         await expect(userRow).toBeVisible();
         await clickRowAction(page, userRow, 'Deactivate');
-        const deactivatePopconfirm = page.locator('.ant-popconfirm');
+        const deactivatePopconfirm = page.getByRole('dialog', {
+          name: 'Deactivate',
+        });
         await expect(deactivatePopconfirm).toBeVisible({ timeout: 5000 });
         await deactivatePopconfirm
-          .getByRole('button', { name: 'Deactivate' })
+          .getByRole('button', { name: 'Deactivate', exact: true })
           .click();
         await expect(userRow).toBeHidden({ timeout: 10000 });
       }
@@ -249,11 +252,7 @@ test.describe.serial(
       await expect(usersTabButton(page)).toBeVisible();
 
       // Apply the same email filter on the Inactive tab
-      const inactiveFilterInput = page
-        .locator('.ant-input-search input[type="search"]')
-        .first();
-      await inactiveFilterInput.fill(EMAIL);
-      await page.getByRole('button', { name: 'search' }).click();
+      await applyEmailFilter(page, EMAIL);
 
       // Wait for the filtered Inactive table to load and show this specific user
       await expect(page.getByRole('cell', { name: EMAIL })).toBeVisible({
@@ -262,15 +261,15 @@ test.describe.serial(
 
       const inactiveUserRow = page.getByRole('row').filter({ hasText: EMAIL });
       await inactiveUserRow.getByRole('checkbox').click();
-      // Wait for the selection action bar to appear, then click the purge button.
-      // The purge button uses DeleteFilled icon (accessible name "delete").
-      // Scope to the first "delete" button (the header purge button); the row-level
-      // per-row delete action also uses "delete" aria-label and would cause strict
-      // mode violation if unscoped.
+      // Both bulk-toolbar IconButtons are named "Action"; key on the trash icon
+      // (name: 'delete' would hit the row-level "Permanently Delete" buttons).
       await expect(page.getByText(/\d+ selected/)).toBeVisible({
         timeout: 5000,
       });
-      await page.getByRole('button', { name: 'delete' }).first().click();
+      await page
+        .getByRole('button', { name: 'Action', exact: true })
+        .filter({ has: page.locator('svg.lucide-trash2') })
+        .click();
 
       const purgeModal = new PurgeUsersModal(page);
       await purgeModal.waitForVisible();

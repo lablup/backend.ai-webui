@@ -7,15 +7,15 @@ import { MyKeypairInfoModalLegacyQuery } from '../__generated__/MyKeypairInfoMod
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanQuery } from '../hooks/reactQueryAlias';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAITable,
-  badgeVariantForTagColor,
   BAIText,
+  PRIMARY_TOKEN_COLOR,
 } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -68,7 +68,6 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
       title={t('userSettings.MyKeypairInfo')}
       centered
       onCancel={onRequestClose}
-      destroyOnHidden
       width={'auto'}
       footer={[
         <Button
@@ -96,9 +95,9 @@ const MyKeypairInfoModalLegacy: React.FC<MyKeypairInfoModalLegacyProps> = ({
                   {value}
                 </BAIText>
                 {value === user?.main_access_key && (
-                  <Badge
+                  <Token
                     label={t('credential.MainAccessKey')}
-                    variant={badgeVariantForTagColor('red')}
+                    color={PRIMARY_TOKEN_COLOR}
                   />
                 )}
               </BAIFlex>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7c217021eacb1aa06f12d8cc39ba9de9>>
+ * @generated SignedSource<<f18711e7a9facbcbab4992c79101dad6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,7 +14,6 @@ export type BAIImageNodeSimpleTagV2Fragment$data = {
   readonly identity: {
     readonly architecture: string;
     readonly canonicalName: string;
-    readonly namespace: string;
   };
   readonly metadata: {
     readonly labels: ReadonlyArray<{
@@ -75,13 +74,6 @@ return {
           "alias": null,
           "args": null,
           "kind": "ScalarField",
-          "name": "namespace",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
           "name": "architecture",
           "storageKey": null
         }
@@ -125,6 +117,6 @@ return {
 };
 })();
 
-(node as any).hash = "56f20360b700b9a175cc1583a5f1d5d8";
+(node as any).hash = "e3dde7ee17d6aaa214fe4e4781e52629";
 
 export default node;

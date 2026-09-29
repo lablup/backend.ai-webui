@@ -19,7 +19,7 @@ is the self-hosted engine in `packages/backend.ai-ui/src/form-engine/`. Nothing 
   `.ant-table-measure-row`, `.ant-form-item-control`, `.ant-popover`, `.ant-tabs-tab-active`
   now matches **zero** elements. It does not fail loudly — it burns its whole timeout and then
   reports a generic "element not found".
-- There are still ~690 such lines across ~65 files in `e2e/` (`git grep -n '\.ant-' -- e2e`).
+- Existing specs still contain many of them (`git grep -n '\.ant-' -- e2e`).
   That is a **known cleanup backlog**, not a pattern to copy. Some of them sit in shared
   helpers, so a helper that "looks official" can still be carrying a dead selector.
 - **New or edited tests must not add a single new `.ant-*` locator.** When you touch a spec or
@@ -115,6 +115,14 @@ Naming (full rules in `e2e/E2E-TEST-NAMING-GUIDELINES.md`):
   `'user can create an interactive session with a mounted folder'`.
 - Tag every describe block: priority (`@smoke` / `@critical` / `@regression`), feature
   (`@vfolder`, `@session`, …) and type (`@functional`, `@visual`, `@integration`).
+- `@smoke` carries a role suffix for the post-install smoke run
+  (`e2e/playwright.smoke.config.ts`, `pnpm e2e:smoke`): a test with **only** `@smoke` must perform
+  no login, `@smoke @smoke-admin` needs `loginAsAdmin`, `@smoke @smoke-user` needs
+  `loginAsUser`. The role tag must match the login helper the test actually calls —
+  a smoke run has one role's credentials only. A describe that mixes both helpers
+  cannot carry a role tag; tag the individual tests instead. `--grep @smoke --list`
+  shows the union of both roles; the smoke config does the partition. Full rules:
+  `e2e/E2E-TEST-NAMING-GUIDELINES.md` → "Smoke tags".
 - POM classes go in `e2e/utils/classes/{feature}/`, extending `BasePage` / `BaseModal`.
 
 ---
