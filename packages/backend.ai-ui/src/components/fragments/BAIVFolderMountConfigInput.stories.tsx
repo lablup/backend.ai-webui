@@ -151,8 +151,9 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders from the REST \`GET /folders\` list rather than the \`vfolder_nodes\`
-  connection, because the session launcher's mount gates cannot be expressed as a
+- Picks folders from the whole folder list (\`myVfolders\`, or REST \`GET /folders\`
+  on managers below 26.4.2) and gates it client side, because the session
+  launcher's mount gates cannot be expressed as a
   GraphQL filter: the host must be in \`mountableHosts\` (those granting
   \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
   folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
@@ -492,7 +493,7 @@ export const WithCreateFolderButton: Story = {
     docs: {
       description: {
         story:
-          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs `GET /folders` on its own.',
+          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs the folder list on its own.',
       },
     },
   },
