@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { BAIUnmountAfterClose } from 'backend.ai-ui';
 import { parseAsString, useQueryState } from 'nuqs';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
@@ -19,19 +18,17 @@ const FolderExplorerOpener = () => {
   const [, setCurrentPath] = useQueryState('path', explorerParam);
   const normalizedFolderId = folderId?.replaceAll('-', '');
 
-  // Unmount on close so explorer state (e.g. the side panel tab) starts fresh
-  // per session; uploads live in the global `FileUploadManager`, not here.
+  // Rendered while closed too, so the lazy chunk is resolved before the first
+  // click; the modal unmounts its own content after each close (FR-4005).
   return (
-    <BAIUnmountAfterClose>
-      <FolderExplorerModal
-        vfolderID={normalizedFolderId || ''}
-        open={!!normalizedFolderId}
-        onRequestClose={() => {
-          setFolderId(null);
-          setCurrentPath(null);
-        }}
-      />
-    </BAIUnmountAfterClose>
+    <FolderExplorerModal
+      vfolderID={normalizedFolderId || ''}
+      open={!!normalizedFolderId}
+      onRequestClose={() => {
+        setFolderId(null);
+        setCurrentPath(null);
+      }}
+    />
   );
 };
 
