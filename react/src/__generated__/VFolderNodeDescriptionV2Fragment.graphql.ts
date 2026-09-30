@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3288b2d30b225e6bac8e57e8f0f133ee>>
+ * @generated SignedSource<<ebe89ab3c08ac8d3f380db850993458b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -41,6 +41,13 @@ export type VFolderNodeDescriptionV2Fragment$data = {
       };
     } | null | undefined;
     readonly userId: string | null | undefined;
+  };
+  readonly quota: {
+    readonly maxFiles: number;
+    readonly maxSize: {
+      readonly display: string;
+      readonly expr: string;
+    } | null | undefined;
   };
   readonly status: VFolderOperationStatus;
   readonly unmanagedPath: string | null | undefined;
@@ -155,6 +162,49 @@ return {
     {
       "alias": null,
       "args": null,
+      "concreteType": "VFolderQuotaInfo",
+      "kind": "LinkedField",
+      "name": "quota",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "maxFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
+          "kind": "LinkedField",
+          "name": "maxSize",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "display",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "expr",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderOwnershipInfo",
       "kind": "LinkedField",
       "name": "ownership",
@@ -252,6 +302,6 @@ return {
 };
 })();
 
-(node as any).hash = "38f8809b455b0643ff7fdb45dfd0aa89";
+(node as any).hash = "962b1a89c2c5f5eb0417cd7bf1ce4b65";
 
 export default node;

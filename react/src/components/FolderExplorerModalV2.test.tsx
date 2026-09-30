@@ -55,7 +55,9 @@ const { fileExplorerProps } = vi.hoisted(() => ({
   fileExplorerProps: [] as any[],
 }));
 
-const { mockBaiClient, mockListHosts } = vi.hoisted(() => {
+const { mockBaiClient, mockListHosts, mockFeatures } = vi.hoisted(() => {
+  // Manager feature flags the modal reads; pinned per scenario.
+  const mockFeatures: Record<string, boolean> = {};
   const mockListHosts = vi.fn(() =>
     Promise.resolve({
       allowed: ['local:volume1'],
@@ -74,12 +76,12 @@ const { mockBaiClient, mockListHosts } = vi.hoisted(() => {
       accessKey: 'test-access-key',
       domainName: 'default',
     },
-    supports: () => false,
+    supports: (feature: string) => mockFeatures[feature] ?? false,
     vfolder: {
       list_hosts: mockListHosts,
     },
   };
-  return { mockBaiClient, mockListHosts };
+  return { mockBaiClient, mockListHosts, mockFeatures };
 });
 
 vi.mock('../hooks', async (importOriginal) => {
@@ -249,12 +251,15 @@ const renderModal = ({
   ownershipProjectId,
   ownershipProjectType,
   legacyPermissions,
+  permissionBits,
   hostPermissions,
   nullResolvers,
 }: {
   ownershipProjectId: string | null;
   ownershipProjectType?: 'GENERAL' | 'PERSONAL';
   legacyPermissions?: string[];
+  /** The 26.9.0 `VFolder.permissions` bits (FR-4114). */
+  permissionBits?: string[];
   hostPermissions?: string[];
   /** Root fields the manager resolves to `null` for this folder (FR-3997). */
   nullResolvers?: Array<'vfolderNode' | 'legacyVFolderNode'>;
@@ -283,6 +288,7 @@ const renderModal = ({
           unmanagedPath: null,
           status: 'ready',
           metadata: { name: 'test-folder' },
+          permissions: permissionBits ?? ['READ', 'UPDATE'],
           ownership: {
             userId: 'someone-else-uuid',
             projectId: ownershipProjectId,
@@ -653,6 +659,64 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
       // Download is host-only: the folder-level grants are unaffected.
       expect(props.enableUpload).toBe(true);
       expect(props.enableWrite).toBe(true);
+    });
+  });
+});
+
+describe('FolderExplorerModalV2 permission bits from 26.9.0 (FR-4114)', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+    fileExplorerProps.length = 0;
+    mockFeatures['vfolder-v2-permission-bits'] = true;
+  });
+
+  afterEach(() => {
+    delete mockFeatures['vfolder-v2-permission-bits'];
+  });
+
+  const findExplorerOperation = (
+    seenOperations: Array<{ name: string; variables: any }>,
+  ) => seenOperations.find((op) => op.name === 'FolderExplorerModalV2Query');
+
+  it('gates write, delete, upload and edit on the UPDATE bit, ignoring the legacy list', async () => {
+    const { seenOperations } = renderModal({
+      ownershipProjectId: null,
+      permissionBits: ['READ'],
+      // Would enable everything if the legacy list were still consulted.
+      legacyPermissions: ['read_content', 'write_content', 'delete_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    expect(
+      findExplorerOperation(seenOperations)?.variables.supportsPermissionBits,
+    ).toBe(true);
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableWrite).toBe(false);
+      expect(props.enableDelete).toBe(false);
+      expect(props.enableUpload).toBe(false);
+      expect(props.enableEdit).toBe(false);
+      expect(props.enableDownload).toBe(true);
+    });
+  });
+
+  it('the UPDATE bit enables write, delete, upload and edit', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      permissionBits: ['READ', 'UPDATE'],
+      legacyPermissions: ['read_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    await waitFor(() => {
+      const props = fileExplorerProps.at(-1);
+      expect(props.enableWrite).toBe(true);
+      expect(props.enableDelete).toBe(true);
+      expect(props.enableUpload).toBe(true);
+      expect(props.enableEdit).toBe(true);
     });
   });
 });

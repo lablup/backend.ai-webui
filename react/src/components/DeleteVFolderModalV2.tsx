@@ -6,10 +6,12 @@ import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolder
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
+import { VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,
+  BAIListAlert,
   BAIModal,
   type BAIModalProps,
   toLocalId,
@@ -45,11 +47,15 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
+  const baiClient = useSuspendedBackendaiClient();
   // Older managers have no `items` / `failed` on the payload and reject the
   // whole document, so the per-id selections are gated and the deprecated
   // count is selected instead.
-  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
+  const supportsPerIdResults = baiClient.supports(
     'bulk-mutation-per-id-results',
+  );
+  const supportsPermissionBits = baiClient.supports(
+    'vfolder-v2-permission-bits',
   );
   // Per-folder failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
@@ -65,6 +71,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         metadata {
           name
         }
+        permissions @since(version: "26.9.0")
       }
     `,
     vfolderFrgmts,
@@ -88,13 +95,15 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
       }
     `);
 
-  // TODO(needs-backend): V2 `VFolder` does not expose a per-user action
-  // permission (legacy `VirtualFolderNode.permissions` had `delete_vfolder`).
-  // `accessControl.permission` is a mount-level enum (RO/RW/RW_DELETE), not
-  // an entity-level action permission, so it cannot be used to filter out
-  // undeletable folders here. Send all selected folders and let the backend
-  // reject unauthorized ones until a proper permission field is exposed.
-  const folders = vfolders ?? [];
+  // Below 26.9.0 there is no per-user bit to read, so every selected folder
+  // is sent and the backend rejects the unauthorized ones.
+  const { deletable: folders = [], undeletable = [] } = _.groupBy(
+    vfolders ?? [],
+    (vfolder) =>
+      !supportsPermissionBits || _.includes(vfolder.permissions, 'SOFT_DELETE')
+        ? 'deletable'
+        : 'undeletable',
+  );
 
   const failureColumns: BAIColumnsType<DeleteFailure> = [
     { key: 'name', title: t('data.folders.Name'), dataIndex: 'name' },
@@ -188,15 +197,29 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         }}
         {...baiModalProps}
       >
-        <Text>
-          {folders.length === 1
-            ? t('data.folders.MoveToTrashDescription', {
-                folderName: folders[0]?.metadata?.name,
-              })
-            : t('data.folders.MoveToTrashMultipleDescription', {
-                folderLength: folders.length,
+        <VStack gap={3} align="stretch">
+          {undeletable.length > 0 && (
+            <BAIListAlert
+              banner
+              title={t('data.folders.ExcludedFolders', {
+                count: undeletable.length,
               })}
-        </Text>
+              items={_.map(undeletable, (vfolder) => ({
+                key: vfolder.id,
+                content: vfolder.metadata?.name,
+              }))}
+            />
+          )}
+          <Text>
+            {folders.length === 1
+              ? t('data.folders.MoveToTrashDescription', {
+                  folderName: folders[0]?.metadata?.name,
+                })
+              : t('data.folders.MoveToTrashMultipleDescription', {
+                  folderLength: folders.length,
+                })}
+          </Text>
+        </VStack>
       </BAIModal>
       <BAIBulkErrorModal<DeleteFailure>
         open={!!failureReport}

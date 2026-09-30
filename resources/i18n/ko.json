@@ -995,6 +995,7 @@
       "LeaveFolder": "초대된 폴더 나가기",
       "Location": "위치",
       "ManageProjectFolderInAdmin": "프로젝트 폴더 관리는 관리자 설정에서 가능합니다.",
+      "MaxFiles": "최대 파일 개수",
       "MaxFolderQuota": "최대 할당 가능 용량",
       "MaxSize": "최대 크기",
       "ModelProjectFolderRestrictedToReadOnly": "모델 스토어 폴더에 대해 '읽기 및 쓰기' 권한이 허용되지 않습니다. ",

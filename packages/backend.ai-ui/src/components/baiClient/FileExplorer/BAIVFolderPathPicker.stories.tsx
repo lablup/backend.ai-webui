@@ -255,10 +255,12 @@ const DirectoryPickerModalDemo: React.FC = () => {
           startOpenTransition(() => {
             loadQuery(
               {
+                vfolderId: MOCK_VFOLDERS[0].row_id,
                 vfolderGlobalId: toGlobalId(
                   'VirtualFolderNode',
                   MOCK_VFOLDERS[0].row_id,
                 ),
+                supportsPermissionBits: false,
               },
               { fetchPolicy: 'store-and-network' },
             );

@@ -21,6 +21,7 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
+import { formatBinarySizeInfo } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@lablup/ui-common/Badge';
 import { Selector } from '@lablup/ui-common/Selector';
@@ -67,6 +68,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const relayEnv = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
+  const supportsUsageQuota = baiClient.supports('vfolder-v2-usage-quota');
   const [currentUser] = useCurrentUserInfo();
   // Not `useEffectiveAdminRole` — it resolves its target from the ambient
   // project. Authorization here is derived from the folder's own ownership.
@@ -98,6 +100,13 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         accessControl {
           permission
           ownershipType
+        }
+        quota @since(version: "26.4.4") {
+          maxFiles
+          maxSize {
+            display
+            expr @since(version: "26.8.0")
+          }
         }
         ownership {
           userId
@@ -319,9 +328,19 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         </HStack>
       ),
     },
-    // TODO(needs-backend): V2 `VFolder` does not yet expose quota limits
-    // (`max_size`, `max_files`). Hide the MaxSize row until the backend
-    // catches up — see FR-2573 follow-up.
+    // A null `maxSize` / a zero `maxFiles` is "no limit".
+    supportsUsageQuota && {
+      key: 'max_size',
+      label: t('data.folders.MaxSize'),
+      children: formatBinarySizeInfo(vfolderNode.quota?.maxSize) ?? '∞',
+    },
+    supportsUsageQuota && {
+      key: 'max_files',
+      label: t('data.folders.MaxFiles'),
+      children: vfolderNode.quota?.maxFiles
+        ? vfolderNode.quota.maxFiles.toLocaleString()
+        : '∞',
+    },
     {
       key: 'usage',
       label: t('data.UsageMode'),

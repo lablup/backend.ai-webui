@@ -918,6 +918,9 @@ export class Client {
       // AND/OR/NOT sub-filter combinators in 26.4.4, while the tab itself is
       // gated on `prometheus-query-preset` (26.4.2).
       this._features['prometheus-query-preset-extended-filter'] = true;
+      // `VFolder.quota` (maxSize / maxFiles) and `VFolder.usage` (numFiles /
+      // usedBytes, a storage-proxy round trip per selection). FR-4114.
+      this._features['vfolder-v2-usage-quota'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
       // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
@@ -1067,6 +1070,9 @@ export class Client {
       // `KeyPairV2.isDefault` / `KeyPair.is_default` mark the owner's main
       // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
       this._features['keypair-is-default'] = true;
+      // `VFolder.permissions: [PermissionBit!]!` — the caller's own bits on the
+      // folder, replacing the legacy `vfolder_node.permissions` read. FR-4114.
+      this._features['vfolder-v2-permission-bits'] = true;
     }
   }
 
@@ -1253,10 +1259,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
         }
         return this.check_login();
       } else if (result.authenticated === false) {
