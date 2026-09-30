@@ -4,7 +4,7 @@ export * from './hooks';
 export * from './icons';
 export * from './tests';
 export * from './styles/zIndexLadder';
-export * from './theme-shim';
+export * from './theme';
 export * from './app-shim';
 export * from './form-engine';
 export type { BAILocale } from './locale';
