@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<01484c822cee5123d9902d193c8daea4>>
+ * @generated SignedSource<<19eb654ef53eff64e4a34945ebd19adb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,18 +9,22 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
-export type UserResourcePolicySelectQuery$variables = Record<PropertyKey, never>;
+export type UserResourcePolicySelectQuery$variables = {
+  limit: number;
+  supportsResourcePolicyV2: boolean;
+};
 export type UserResourcePolicySelectQuery$data = {
-  readonly user_resource_policies: ReadonlyArray<{
-    readonly created_at: string;
+  readonly adminUserResourcePoliciesV2?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly id: string;
+        readonly name: string;
+      };
+    }>;
+  } | null | undefined;
+  readonly user_resource_policies?: ReadonlyArray<{
     readonly id: string;
-    readonly max_customized_image_count: number | null | undefined;
-    readonly max_quota_scope_size: any | null | undefined;
-    readonly max_session_count_per_model_session: number | null | undefined;
-    readonly max_vfolder_count: number | null | undefined;
     readonly name: string;
-    readonly " $fragmentSpreads": FragmentRefs<"UserResourcePolicySettingModalFragment">;
   } | null | undefined> | null | undefined;
 };
 export type UserResourcePolicySelectQuery = {
@@ -29,126 +33,136 @@ export type UserResourcePolicySelectQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v1 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v2 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "created_at",
-  "storageKey": null
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_vfolder_count",
-  "storageKey": null
-},
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_session_count_per_model_session",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_quota_scope_size",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_customized_image_count",
-  "storageKey": null
-};
-return {
-  "fragment": {
-    "argumentDefinitions": [],
-    "kind": "Fragment",
-    "metadata": null,
-    "name": "UserResourcePolicySelectQuery",
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "supportsResourcePolicyV2"
+  }
+],
+v1 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "id",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+],
+v2 = [
+  {
+    "condition": "supportsResourcePolicyV2",
+    "kind": "Condition",
+    "passingValue": true,
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "concreteType": "UserResourcePolicy",
-        "kind": "LinkedField",
-        "name": "user_resource_policies",
-        "plural": true,
-        "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/),
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          (v5/*: any*/),
-          (v6/*: any*/),
+        "args": [
           {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "UserResourcePolicySettingModalFragment"
+            "kind": "Variable",
+            "name": "limit",
+            "variableName": "limit"
+          },
+          {
+            "kind": "Literal",
+            "name": "orderBy",
+            "value": [
+              {
+                "direction": "ASC",
+                "field": "NAME"
+              }
+            ]
           }
         ],
-        "storageKey": null
-      }
-    ],
-    "type": "Query",
-    "abstractKey": null
-  },
-  "kind": "Request",
-  "operation": {
-    "argumentDefinitions": [],
-    "kind": "Operation",
-    "name": "UserResourcePolicySelectQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "UserResourcePolicy",
+        "concreteType": "UserResourcePolicyV2Connection",
         "kind": "LinkedField",
-        "name": "user_resource_policies",
-        "plural": true,
+        "name": "adminUserResourcePoliciesV2",
+        "plural": false,
         "selections": [
-          (v0/*: any*/),
-          (v1/*: any*/),
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          (v5/*: any*/),
-          (v6/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "UserResourcePolicyV2Edge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserResourcePolicyV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": (v1/*: any*/),
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
+  {
+    "condition": "supportsResourcePolicyV2",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserResourcePolicy",
+        "kind": "LinkedField",
+        "name": "user_resource_policies",
+        "plural": true,
+        "selections": (v1/*: any*/),
+        "storageKey": null
+      }
+    ]
+  }
+];
+return {
+  "fragment": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Fragment",
+    "metadata": null,
+    "name": "UserResourcePolicySelectQuery",
+    "selections": (v2/*: any*/),
+    "type": "Query",
+    "abstractKey": null
+  },
+  "kind": "Request",
+  "operation": {
+    "argumentDefinitions": (v0/*: any*/),
+    "kind": "Operation",
+    "name": "UserResourcePolicySelectQuery",
+    "selections": (v2/*: any*/)
+  },
   "params": {
-    "cacheID": "21fc24af5d2c1f66b16e026ee4f67086",
+    "cacheID": "32bd03892fcbd0c2c2ec1f7289dbd0fa",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicySelectQuery",
     "operationKind": "query",
-    "text": "query UserResourcePolicySelectQuery {\n  user_resource_policies {\n    id\n    name\n    created_at\n    max_vfolder_count\n    max_session_count_per_model_session\n    max_quota_scope_size\n    max_customized_image_count\n    ...UserResourcePolicySettingModalFragment\n  }\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  max_vfolder_count\n  max_session_count_per_model_session\n  max_quota_scope_size\n  max_customized_image_count\n}\n"
+    "text": "query UserResourcePolicySelectQuery(\n  $limit: Int!\n  $supportsResourcePolicyV2: Boolean!\n) {\n  adminUserResourcePoliciesV2(limit: $limit, orderBy: [{field: NAME, direction: ASC}]) @include(if: $supportsResourcePolicyV2) @since(version: \"26.4.2\") {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  user_resource_policies @skip(if: $supportsResourcePolicyV2) @deprecatedSince(version: \"26.4.2\") {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "650dac37b7fa07c0eaaa289b70cb9831";
+(node as any).hash = "dfd7c1e93c9c0da3591b7f866896fff1";
 
 export default node;

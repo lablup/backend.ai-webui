@@ -49,20 +49,40 @@ export const useKeyPairLazyLoadQuery = (
   return [keypair, { refresh }] as const;
 };
 
+/** The legacy field names, kept so V2 and legacy managers read the same. */
+interface CurrentKeyPairResourcePolicy {
+  max_containers_per_session: number | null | undefined;
+  max_concurrent_sessions: number | null | undefined;
+}
+
 export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
   options: FetchOptions = {
     fetchPolicy: 'store-and-network',
   },
 ) => {
+  'use memo';
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
+  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
+  // Still needed on V2 for `concurrency_used`, which has no V2 counterpart.
   const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
 
-  const { keypair_resource_policy } =
+  const { myKeypairResourcePolicyV2, keypair_resource_policy } =
     useLazyLoadQuery<hooksUsingRelay_KeyPairResourcePolicyQuery>(
       graphql`
-        query hooksUsingRelay_KeyPairResourcePolicyQuery($name: String!) {
-          keypair_resource_policy(name: $name) {
+        query hooksUsingRelay_KeyPairResourcePolicyQuery(
+          $name: String!
+          $supportsResourcePolicyV2: Boolean!
+        ) {
+          myKeypairResourcePolicyV2
+            @since(version: "26.4.2")
+            @include(if: $supportsResourcePolicyV2) {
+            maxContainersPerSession
+            maxConcurrentSessions
+          }
+          keypair_resource_policy(name: $name)
+            @deprecatedSince(version: "26.4.2")
+            @skip(if: $supportsResourcePolicyV2) {
             max_containers_per_session
             max_concurrent_sessions
           }
@@ -70,6 +90,7 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
       `,
       {
         name: keypair?.resource_policy || '',
+        supportsResourcePolicyV2,
       },
       {
         ...options,
@@ -77,23 +98,30 @@ export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
       },
     );
 
-  const refresh = useCallback(() => {
+  const keypairResourcePolicy: CurrentKeyPairResourcePolicy | null | undefined =
+    supportsResourcePolicyV2
+      ? myKeypairResourcePolicyV2 && {
+          max_containers_per_session:
+            myKeypairResourcePolicyV2.maxContainersPerSession,
+          max_concurrent_sessions:
+            myKeypairResourcePolicyV2.maxConcurrentSessions,
+        }
+      : keypair_resource_policy;
+  const maxConcurrentSessions =
+    keypairResourcePolicy?.max_concurrent_sessions || SIGNED_32BIT_MAX_INT;
+
+  const refresh = () => {
     updateFetchKey();
-  }, [updateFetchKey]);
+  };
 
   return [
     {
-      keypairResourcePolicy: (keypair_resource_policy || {}) as NonNullable<
-        typeof keypair_resource_policy
-      >,
+      keypairResourcePolicy: (keypairResourcePolicy ||
+        {}) as CurrentKeyPairResourcePolicy,
       keypair: (keypair || {}) as NonNullable<typeof keypair>,
       sessionLimitAndRemaining: {
-        max:
-          (keypair_resource_policy || {}).max_concurrent_sessions ||
-          SIGNED_32BIT_MAX_INT,
-        remaining:
-          ((keypair_resource_policy || {}).max_concurrent_sessions ||
-            SIGNED_32BIT_MAX_INT) - ((keypair || {}).concurrency_used || 0),
+        max: maxConcurrentSessions,
+        remaining: maxConcurrentSessions - (keypair?.concurrency_used || 0),
       },
     },
     { refresh },

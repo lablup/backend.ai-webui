@@ -1,6 +1,25 @@
 import RelayResolver from '../../tests/RelayResolver';
+import { BAIConfigProvider } from '../provider';
+import type { BAIClient } from '../provider/BAIClientProvider';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+
+// The mock resolvers below answer the legacy list, so the client reports no
+// `resource-policy-v2` support.
+const mockClientPromise = Promise.resolve({
+  supports: () => false,
+} as Partial<BAIClient> as BAIClient);
+const mockAnonymousClientFactory = () => ({}) as unknown as BAIClient;
+
+const withMockClient: Decorator = (Story) => (
+  <BAIConfigProvider
+    locale={{ lang: 'en' }}
+    clientPromise={mockClientPromise}
+    anonymousClientFactory={mockAnonymousClientFactory}
+  >
+    <Story />
+  </BAIConfigProvider>
+);
 
 const samplePolicies = [
   { id: 'policy-1', name: 'default' },
@@ -30,6 +49,7 @@ const meta: Meta<typeof BAIProjectResourcePolicySelect> = {
   title: 'Fragments/BAIProjectResourcePolicySelect',
   component: BAIProjectResourcePolicySelect,
   tags: ['autodocs'],
+  decorators: [withMockClient],
   parameters: {
     layout: 'centered',
     docs: {
@@ -39,14 +59,20 @@ const meta: Meta<typeof BAIProjectResourcePolicySelect> = {
 
 ## Features
 - Fetches project resource policies from GraphQL query \`BAIProjectResourcePolicySelectQuery\`
+- Reads \`adminProjectResourcePoliciesV2\` on managers with \`resource-policy-v2\` (26.4.2) and the legacy \`project_resource_policies\` list below that
 - Policies are automatically sorted alphabetically by name
 - Built-in search functionality enabled by default
 - Uses policy \`name\` as both label and value
 
 ## GraphQL Query
 \`\`\`graphql
-query BAIProjectResourcePolicySelectQuery {
-  project_resource_policies {
+query BAIProjectResourcePolicySelectQuery($limit: Int!, $supportsResourcePolicyV2: Boolean!) {
+  adminProjectResourcePoliciesV2(limit: $limit, orderBy: [{ field: NAME, direction: ASC }])
+    @since(version: "26.4.2") @include(if: $supportsResourcePolicyV2) {
+    edges { node { id name } }
+  }
+  project_resource_policies
+    @deprecatedSince(version: "26.4.2") @skip(if: $supportsResourcePolicyV2) {
     id
     name
   }

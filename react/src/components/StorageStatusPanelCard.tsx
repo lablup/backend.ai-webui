@@ -60,6 +60,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     updateInvitations();
   }, [fetchKey]);
 
+  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
+  const supportsVfolderV2 = baiClient.supports('vfolder-v2');
+
   const isExcludedCount = (status: string) => {
     return _.includes(
       ['delete-ongoing', 'delete-complete', 'delete-error'],
@@ -67,23 +70,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     );
   };
 
-  // TODO(FR-2691 v2-migration): the counts below are derived from the legacy
-  // REST call `baiClient.vfolder.list()` and then filtered in JS. Migrate to
-  // the Strawberry V2 GraphQL `myVfolders` / `projectVfolders` connections
-  // (with `filter` + `count`) so the server returns the counts directly.
-  //
-  // Scoping notes for the V2 rewrite:
-  //   - ProjectFolders (`projectCount`): must be scoped to the project
-  //     currently selected in the global header project selector (i.e.
-  //     `currentProject.id`). `projectVfolders(projectId: …, filter: { ... })`
-  //     already takes a required `projectId`, so the count must use that —
-  //     not an aggregate across every project the user can see.
-  //   - InvitedFolders (`invitedCount`): defer migration. The V2 vfolder
-  //     filter input does not yet expose an "invited only / received-share"
-  //     predicate, so we cannot reproduce the current `!is_owner &&
-  //     ownership_type === 'user'` filter with a single server-side count.
-  //     Keep this one on the legacy REST list until the backend adds the
-  //     filter field; revisit in a follow-up issue.
+  // The REST list stays for the invited count on every manager (`VFolderFilter`
+  // has no invited / received-share predicate) and for the other two counts
+  // below `vfolder-v2`.
   const { data: vfolders } = useSuspenseTanQuery({
     queryKey: ['vfolders', { deferredFetchKey, id: currentProject.id }],
     queryFn: () => {
@@ -93,15 +82,13 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       return baiClient.vfolder.list(currentProject.id);
     },
   });
-  // FIXME: vfolder_node query does not provide a information about the vfolder's owner.
-  // So, even if we use fragment, we still need to filter the vfolders by each conditions in client side.
-  const createdCount = vfolders?.filter(
+  const legacyCreatedCount = vfolders?.filter(
     (item: any) =>
       item.is_owner &&
       item.ownership_type === 'user' &&
       !isExcludedCount(item.status),
   ).length;
-  const projectCount = vfolders?.filter(
+  const legacyProjectCount = vfolders?.filter(
     (item: any) =>
       item.ownership_type === 'group' && !isExcludedCount(item.status),
   ).length;
@@ -112,25 +99,76 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       !isExcludedCount(item.status),
   ).length;
 
-  // TODO(FR-2691 v2-migration): `user_resource_policy` and
-  // `project_resource_policy` are legacy (V1) root fields. Port this to the V2
-  // schema once it exposes per-user / per-project vfolder count limits.
-  const { user_resource_policy, project_resource_policy } =
-    useLazyLoadQuery<StorageStatusPanelCardQuery>(
-      graphql`
-        query StorageStatusPanelCardQuery($name: String!) {
-          user_resource_policy {
-            max_vfolder_count
-          }
-          project_resource_policy(name: $name) {
-            max_vfolder_count
-          }
+  // TODO(FR-2691 v2-migration): only the project half remains legacy —
+  // `project_resource_policy(name)` has no non-admin V2 counterpart.
+  const {
+    myUserResourcePolicyV2,
+    user_resource_policy,
+    project_resource_policy,
+    myVfolders,
+    projectVfolders,
+  } = useLazyLoadQuery<StorageStatusPanelCardQuery>(
+    graphql`
+      query StorageStatusPanelCardQuery(
+        $name: String!
+        $projectId: UUID!
+        $activeFilter: VFolderFilter
+        $supportsResourcePolicyV2: Boolean!
+        $supportsVfolderV2: Boolean!
+      ) {
+        myUserResourcePolicyV2
+          @since(version: "26.4.2")
+          @include(if: $supportsResourcePolicyV2) {
+          maxVfolderCount
         }
-      `,
-      {
-        name: currentProject.name,
+        user_resource_policy
+          @deprecatedSince(version: "26.4.2")
+          @skip(if: $supportsResourcePolicyV2) {
+          max_vfolder_count
+        }
+        project_resource_policy(name: $name) {
+          max_vfolder_count
+        }
+        myVfolders(filter: $activeFilter)
+          @since(version: "26.4.2")
+          @include(if: $supportsVfolderV2) {
+          count
+        }
+        projectVfolders(projectId: $projectId, filter: $activeFilter)
+          @since(version: "26.4.2")
+          @include(if: $supportsVfolderV2) {
+          count
+        }
+      }
+    `,
+    {
+      name: currentProject.name,
+      projectId: currentProject.id,
+      // Same exclusion as `isExcludedCount`: a trash-bin (DELETE_PENDING)
+      // folder still counts toward the quota.
+      activeFilter: {
+        status: {
+          notIn: ['DELETE_ONGOING', 'DELETE_COMPLETE', 'DELETE_ERROR'],
+        },
       },
-    );
+      supportsResourcePolicyV2,
+      supportsVfolderV2,
+    },
+    {
+      fetchPolicy: 'store-and-network',
+      fetchKey: deferredFetchKey,
+    },
+  );
+
+  const maxVfolderCount = supportsResourcePolicyV2
+    ? myUserResourcePolicyV2?.maxVfolderCount
+    : user_resource_policy?.max_vfolder_count;
+  const createdCount = supportsVfolderV2
+    ? myVfolders?.count
+    : legacyCreatedCount;
+  const projectCount = supportsVfolderV2
+    ? projectVfolders?.count
+    : legacyProjectCount;
 
   return (
     <BAIFlex
@@ -154,11 +192,7 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
         <BAIPanelItem
           title={t('data.MyFolders')}
           value={createdCount}
-          unit={
-            user_resource_policy?.max_vfolder_count
-              ? `/ ${user_resource_policy?.max_vfolder_count}`
-              : undefined
-          }
+          unit={maxVfolderCount ? `/ ${maxVfolderCount}` : undefined}
           style={{
             maxWidth: PANEL_ITEM_MAX_WIDTH,
           }}
