@@ -68,7 +68,7 @@ export interface AutoMountedFolder {
 }
 
 export interface BAIVFolderMountConfigInputRef {
-  /** Re-runs the `GET /folders` query behind the folder select. */
+  /** Re-runs the folder list query behind the folder select. */
   refetch: () => Promise<unknown>;
 }
 
@@ -78,7 +78,7 @@ export interface BAIVFolderMountConfigInputProps {
   onChange?: (value: VFolderMountConfigValue[]) => void;
   currentProjectId?: string;
   /**
-   * Name of `currentProjectId`. `GET /folders` leaves `group_name` empty, so a
+   * Name of `currentProjectId`. The folder list carries no project name, so a
    * project folder's owner line needs it from the host.
    */
   currentProjectName?: string;
@@ -405,11 +405,10 @@ const VFolderOptionMeta: React.FC<{
 /**
  * Reusable, schema-agnostic input for configuring vfolder mounts.
  *
- * The folder list comes from REST `GET /folders` rather than the
- * `vfolder_nodes` connection because the `mountableHosts` /
- * `autoMountedFolders` gates the host supplies cannot be expressed there.
- * The component suspends on that fetch, so the consumer owns the Suspense
- * boundary.
+ * The whole folder list is fetched (`useSuspendedLegacyVFolders`) and gated
+ * here, because the `mountableHosts` / `autoMountedFolders` gates the host
+ * supplies cannot be expressed as a server-side filter. The component
+ * suspends on that fetch, so the consumer owns the Suspense boundary.
  *
  * Props, form gating and usage: `BAIVFolderMountConfigInput.doc.ts`.
  */

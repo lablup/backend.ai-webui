@@ -4,18 +4,15 @@
  */
 import { VFolderTableProjectQuery } from '../__generated__/VFolderTableProjectQuery.graphql';
 import { Form } from '../form-engine';
-import { useBaiSignedRequestWithPromise } from '../helper';
 import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
-import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderPermissionToken from './VFolderPermissionToken';
-import { VFolder } from './VFolderSelect';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import { IconButton } from '@lablup/ui-common/IconButton';
@@ -31,10 +28,12 @@ import {
   BAIMetadataList,
   BAITable,
   useEventNotStable,
+  useSuspendedLegacyVFolders,
   useUpdatableState,
   type BAIColumnsType,
   type BAITableProps,
   BAITextHighlighter,
+  type LegacyVFolder,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -68,29 +67,29 @@ export interface AliasMap {
   [key: string]: string;
 }
 
-type DataIndex = keyof VFolder;
+type DataIndex = keyof LegacyVFolder;
 
 export interface VFolderTableProps extends Omit<
-  BAITableProps<VFolder>,
+  BAITableProps<LegacyVFolder>,
   'rowKey'
 > {
   showAliasInput?: boolean;
   selectedRowKeys?: VFolderKey[];
   onChangeSelectedRowKeys?: (
     selectedKeys: VFolderKey[],
-    selectedVFolders: VFolder[],
+    selectedVFolders: LegacyVFolder[],
   ) => void;
   aliasBasePath?: string;
   aliasMap?: AliasMap;
   onChangeAliasMap?: (aliasMap: AliasMap) => void;
-  rowFilter?: (vFolder: VFolder) => boolean;
+  rowFilter?: (vFolder: LegacyVFolder) => boolean;
   rowKey: string | number;
   onChangeAutoMountedFolders?: (names: Array<string>) => void;
   showAutoMountedFoldersSection?: boolean;
   ownerEmail?: string;
   onValidateSelectedRowKeys?: (
     invalidKeys: VFolderKey[],
-    validVFolders: VFolder[],
+    validVFolders: LegacyVFolder[],
   ) => void;
 }
 
@@ -114,7 +113,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   'use memo';
   const { generateFolderPath } = useFolderExplorerOpener();
   const getRowKey = React.useMemo(() => {
-    return (record: VFolder) => {
+    return (record: LegacyVFolder) => {
       const key = record && record[rowKey as DataIndex];
       return key as VFolderKey;
     };
@@ -169,7 +168,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   }, [aliasMap, internalForm, aliasBasePath]);
 
   const { t } = useTranslation();
-  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const currentProject = useCurrentProjectValue();
 
   if (!currentProject.id) {
@@ -178,20 +176,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  const { data: allFolderList } = useSuspenseTanQuery({
-    queryKey: ['VFolderSelectQuery', fetchKey, currentProject.id, ownerEmail],
-    queryFn: () => {
-      const search = new URLSearchParams();
-      // FIXME: filter by group_id does not work
-      // search.set('group_id', currentProject.id);
-      ownerEmail && search.set('owner_user_email', ownerEmail);
-      return baiRequestWithPromise({
-        method: 'GET',
-        url: `/folders?${search.toString()}`,
-      }) as Promise<VFolder[]>;
-    },
-    staleTime: 1000,
-  });
+  // Unscoped on purpose: the project gate is applied client side below.
+  const {
+    folders: allFolderList,
+    refetch: refetchFolders,
+    isFetching: isFetchingFolders,
+  } = useSuspendedLegacyVFolders({ ownerEmail });
 
   const { domain, group, keypair_resource_policy } =
     useLazyLoadQuery<VFolderTableProjectQuery>(
@@ -373,7 +363,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(selectedRowKeys), handleAliasUpdate]);
 
-  const columns: BAIColumnsType<VFolder> = [
+  const columns: BAIColumnsType<LegacyVFolder> = [
     {
       title: (
         <BAIFlex direction="row" gap="xxs">
@@ -662,11 +652,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
             }}
           />
           <IconButton
-            isLoading={isPendingRefetch}
+            isLoading={isPendingRefetch || isFetchingFolders}
             icon={<RotateCw size="1em" />}
             label={t('button.Refresh')}
             tooltip={t('button.Refresh')}
             onClick={() => {
+              void refetchFolders();
               startRefetchTransition(() => {
                 updateFetchKey();
               });
@@ -716,6 +707,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
         onRequestClose={(result) => {
           setIsOpenCreateModal(false);
           if (result) {
+            void refetchFolders();
             startRefetchTransition(() => {
               updateFetchKey();
               setSelectedRowKeys((x) => [
