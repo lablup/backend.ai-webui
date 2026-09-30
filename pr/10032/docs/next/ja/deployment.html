@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="デプロイ" />
   <meta name="twitter:description" content="Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-23T00:43:49.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-23T03:21:49.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (dc808f5)">v26.9.0-alpha.0 (dc808f5)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (3224cd8)">v26.9.0-alpha.0 (3224cd8)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-revision-の追加">Revision の追加<a class="hash-link" href="#deployment-revision-の追加" aria-label="Direct link to Revision の追加">#</a></h3>
 <p data-bai-block="32">Revision には、推論サーバを実行するために必要なすべての設定（イメージ、起動コマンド、リソース、モデルマウント、環境変数）が含まれます。デプロイ詳細ページで <code>Revision を追加</code> ボタンをクリックしてモーダルを開きます。</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="956" /><figcaption>図 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>図 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">モーダルのタイトル部にある <strong>プリセットモード</strong> / <strong>高度な設定モード</strong> の切り替えスイッチで、Revision の構成方法を選択します。</p>
 <p data-bai-block="35">デプロイに現在の Revision がある場合、両方のモードの上部に <strong>現在の Revision を読み込む</strong> バナーが表示されます。<strong>現在の Revision を読み込む</strong> をクリックすると、現在適用中の Revision の設定を開始点としてフォームに事前入力します（必要に応じて自動的に高度な設定モードに切り替わります）。現在の Revision がまだないデプロイではバナーは表示されず、設定を一度読み込むとバナーは消えます。</p>
@@ -855,7 +855,7 @@
 <li data-bai-block="346"><p><strong>最小レプリカ（Min Replicas）および最大レプリカ（Max Replicas）</strong>: 自動スケーリングがレプリカ数に対して強制する下限と上限です。自動スケーリングは、レプリカ数を最小レプリカより下げたり、最大レプリカより上げたりすることはありません。</p>
 </li>
 </ul>
-<p><figure data-bai-block="347" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="814" /><figcaption>図 12.24</figcaption></figure>
+<p><figure data-bai-block="347" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>図 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="348" id="deployment-トークンの生成">トークンの生成<a class="hash-link" href="#deployment-トークンの生成" aria-label="Direct link to トークンの生成">#</a></h3>
@@ -874,7 +874,7 @@
 </li>
 <li data-bai-block="358"><code>アクセストークンを作成</code> をクリックして発行します。</li>
 </ol>
-<p><figure data-bai-block="359" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>図 12.26</figcaption></figure>
+<p><figure data-bai-block="359" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>図 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="360">マネージャーがまだネットワークエンドポイントを発行していない間、<code>アクセストークンを作成</code> ボタンは無効になり、ツールチップに <em>「ネットワークエンドポイントはまだ発行されていません。」</em> と表示されます。自分が所有していないデプロイメントでは <em>「アクセストークンを管理できるのはデプロイのオーナーのみです。」</em>、停止中またはすでに稼働していないデプロイメントでは <em>「デプロイは停止中か、すでに稼働していません。」</em> と表示され、ボタンは無効になります。この 2 つの条件では、トークンの削除も無効になります。</p>
@@ -918,7 +918,7 @@
 
 <h3 data-bai-block="376" id="deployment-デプロイの終了">デプロイの終了<a class="hash-link" href="#deployment-デプロイの終了" aria-label="Direct link to デプロイの終了">#</a></h3>
 <p data-bai-block="377">デプロイが不要になった場合は、終了することを推奨します。デプロイを終了するには、サービス情報カードの <strong>その他</strong> メニューを開き、<strong>デプロイを削除</strong> を選択します。入力確認モーダルが表示されるため、デプロイ名を入力すると <strong>完全に削除</strong> ボタンが有効になります。終了したデプロイは <strong>破壊された</strong> フィルタービューに表示されます。</p>
-<p><figure data-bai-block="378" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>図 12.28</figcaption></figure>
+<p><figure data-bai-block="378" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>図 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="379" id="deployment-デプロイへのアクセス">デプロイへのアクセス<a class="hash-link" href="#deployment-デプロイへのアクセス" aria-label="Direct link to デプロイへのアクセス">#</a></h2>
 <p data-bai-block="380">デプロイへのアクセスを可能にするため、デプロイ URL をエンドユーザーと共有します。<strong>公開</strong> が有効の場合、デプロイ詳細ページの <strong>サービスエンドポイント</strong> URL をそのまま共有できます。非公開デプロイの場合は、URL とアクセストークンを併せて共有します。</p>
@@ -940,7 +940,7 @@
 <h3 data-bai-block="386" id="deployment-llmチャットテスト">LLMチャットテスト<a class="hash-link" href="#deployment-llmチャットテスト" aria-label="Direct link to LLMチャットテスト">#</a></h3>
 <p data-bai-block="387">大規模言語モデル（LLM）サービスを作成した場合、リアルタイムでLLMをテストできます。
 デプロイの準備が完了すると、デプロイ詳細ページ上部の <strong>デプロイの準備が完了しました</strong> バナーに <code>チャットでテスト</code> ボタンが表示されます。このボタンをクリックしてテストを開始します。</p>
-<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="292" /><figcaption>図 12.29</figcaption></figure>
+<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="336" /><figcaption>図 12.29</figcaption></figure>
 </p>
 <p data-bai-block="389">作成したモデルが自動的に選択されたChatページにリダイレクトされます。
 Chatページで提供されるチャットインターフェースを使用して、LLMモデルをテストできます。
