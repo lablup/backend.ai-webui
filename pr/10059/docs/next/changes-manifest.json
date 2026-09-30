@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-30T16:28:34.627Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "login",
+          "title": "Login",
+          "status": "modified",
+          "url": "next/en/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "97f6b1656173",
+            "97f6b1656173-2"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "login",
+          "title": "ログイン",
+          "status": "modified",
+          "url": "next/ja/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "5b5563c9ee3b",
+            "5b5563c9ee3b-2"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "login",
+          "title": "로그인",
+          "status": "modified",
+          "url": "next/ko/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "d4bedf872c86",
+            "d4bedf872c86-2"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 2,
+        "added": 0,
+        "modified": 2,
+        "removed": 0,
+        "images": 2,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "login",
+          "title": "การเข้าสู่ระบบ",
+          "status": "modified",
+          "url": "next/th/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "1db95f6ade06",
+            "1db95f6ade06-2"
+          ]
+        }
+      ]
+    }
+  }
+}
