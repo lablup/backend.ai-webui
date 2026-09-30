@@ -142,7 +142,7 @@ export async function connectViaGQL(
 
   const email = response.user.email;
   const userGroups = response.user.groups;
-  const role = response.user.role;
+  const role = response.user.role ?? '';
   const domainName = response.user.domain_name;
 
   (globalThis as any).backendaiclient.email = email;
@@ -161,17 +161,17 @@ export async function connectViaGQL(
   }
 
   const groups = response.groups;
-  const userGroupIds = userGroups.map(({ id }: { id: string }) => id);
+  const userGroupIds = (userGroups ?? []).map((group) => group?.id);
 
-  if (groups !== null) {
+  if (groups != null) {
     (globalThis as any).backendaiclient.groups = groups
-      .filter((item: any) => userGroupIds.includes(item.id))
-      .map((item: any) => item.name)
+      .filter((item) => item?.name && userGroupIds.includes(item.id))
+      .map((item) => item!.name)
       .sort();
 
     const groupMap: Record<string, string> = {};
-    groups.forEach((element: any) => {
-      groupMap[element.name] = element.id;
+    groups.forEach((element) => {
+      if (element?.name && element.id) groupMap[element.name] = element.id;
     });
     (globalThis as any).backendaiclient.groupIds = groupMap;
   } else {
@@ -191,7 +191,7 @@ export async function connectViaGQL(
   };
 
   // Apply config
-  const updatedConfig = { ...cfg, domain_name: domainName };
+  const updatedConfig = { ...cfg, domain_name: domainName ?? '' };
   applyConfigToClient(updatedConfig);
 
   // Manage endpoint history

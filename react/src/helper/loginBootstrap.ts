@@ -2,49 +2,61 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { createFetchFn, createRelayEnvironment } from '../RelayEnvironment';
+import type {
+  loginBootstrapQuery,
+  loginBootstrapQuery$data,
+} from '../__generated__/loginBootstrapQuery.graphql';
+import type { BackendAIClient } from '../hooks';
+import { graphql } from 'react-relay';
+import {
+  fetchQuery,
+  type FetchFunction,
+  type GraphQLResponse,
+} from 'relay-runtime';
 
 /**
  * Everything the app needs to come up as the signed-in user, in one GraphQL
- * round trip. The webserver answers 401 for a session it does not hold, so
- * the same document doubles as the login check (FR-2367). `keypair` and
- * `user` resolve to the requester when called without arguments.
+ * round trip. The webserver refuses it for a session it does not hold, so the
+ * same document doubles as the login check (FR-2367). `keypair` and `user`
+ * resolve to the requester when called without arguments.
+ *
+ * No version directives (`@since` …) here: the probe runs alongside
+ * `get_manager_version`, so the manager version is unknown while this is
+ * sent and any gated field would be stripped.
  */
-export const LOGIN_BOOTSTRAP_QUERY = `query LoginBootstrap {
-  keypair { access_key user_id resource_policy user }
-  user {
-    username email full_name is_active role domain_name
-    groups { name id } need_password_change uuid
+const loginBootstrapQueryNode = graphql`
+  query loginBootstrapQuery {
+    keypair {
+      access_key
+      user_id
+      resource_policy
+      user
+    }
+    user {
+      username
+      email
+      full_name
+      is_active
+      role
+      domain_name
+      groups {
+        name
+        id
+      }
+      need_password_change
+      uuid
+    }
+    groups(is_active: true, type: ["GENERAL"]) {
+      id
+      name
+      description
+      is_active
+    }
   }
-  groups(is_active: true, type: ["GENERAL"]) {
-    id name description is_active
-  }
-}`;
+`;
 
-export interface LoginBootstrap {
-  keypair: {
-    access_key: string;
-    user_id: string;
-    resource_policy: string;
-    user: string;
-  } | null;
-  user: {
-    username: string;
-    email: string;
-    full_name: string;
-    is_active: boolean;
-    role: string;
-    domain_name: string;
-    groups: Array<{ name: string; id: string }>;
-    need_password_change: boolean;
-    uuid: string;
-  } | null;
-  groups: Array<{
-    id: string;
-    name: string;
-    description: string | null;
-    is_active: boolean;
-  }> | null;
-}
+export type LoginBootstrap = loginBootstrapQuery$data;
 
 const AUTH_FAILED_TYPE = 'https://api.backend.ai/probs/auth-failed';
 
@@ -79,11 +91,55 @@ export function isSessionAuthFailure(err: unknown): boolean {
   );
 }
 
+export class SessionAuthFailureError extends Error {
+  readonly cause: unknown;
+  constructor(cause: unknown) {
+    super('The webserver holds no session for this browser.');
+    this.name = 'SessionAuthFailureError';
+    this.cause = cause;
+  }
+}
+
+/**
+ * A throwaway Relay environment bound to `client`. The app environment waits
+ * for the global client, which is exactly what signing in has yet to create.
+ * Same fetch as the app's; only the refusal is reported differently.
+ */
+function createLoginEnvironment(client: BackendAIClient) {
+  const fetch = createFetchFn(async () => client);
+  const loginFetch: FetchFunction = async (...args) => {
+    let result: GraphQLResponse;
+    try {
+      result = (await fetch(...args)) as GraphQLResponse;
+    } catch (err) {
+      if (
+        isSessionAuthFailure(err) ||
+        (err as Error | null)?.name === 'AuthorizationError'
+      ) {
+        throw new SessionAuthFailureError(err);
+      }
+      throw err;
+    }
+    if (isSessionAuthFailure(result)) {
+      throw new SessionAuthFailureError(result);
+    }
+    return result;
+  };
+  return createRelayEnvironment(loginFetch, undefined);
+}
+
 export async function fetchLoginBootstrap(
-  client: any,
+  client: BackendAIClient,
 ): Promise<LoginBootstrap> {
-  const envelope = await client.queryEnvelope(LOGIN_BOOTSTRAP_QUERY, null);
-  return envelope.data;
+  const data = await fetchQuery<loginBootstrapQuery>(
+    createLoginEnvironment(client),
+    loginBootstrapQueryNode,
+    {},
+  ).toPromise();
+  if (!data) {
+    throw new Error('The login bootstrap query returned no data.');
+  }
+  return data;
 }
 
 /**
@@ -93,18 +149,16 @@ export async function fetchLoginBootstrap(
  * calling `check_login` only when the session id is not known locally.
  */
 export async function probeLoginSession(
-  client: any,
+  client: BackendAIClient,
 ): Promise<LoginBootstrap | null> {
-  let envelope: { data: LoginBootstrap; errors?: unknown };
+  let bootstrap: LoginBootstrap;
   try {
-    envelope = await client.queryEnvelope(LOGIN_BOOTSTRAP_QUERY, null);
+    bootstrap = await fetchLoginBootstrap(client);
   } catch (err) {
-    if (isSessionAuthFailure(err)) return null;
+    if (err instanceof SessionAuthFailureError) return null;
     throw err;
   }
-  if (isSessionAuthFailure(envelope)) return null;
-  const bootstrap = envelope.data;
-  if (!client.adoptLoginSession(bootstrap?.keypair?.access_key)) {
+  if (!client.adoptLoginSession(bootstrap.keypair?.access_key)) {
     await client.check_login();
   }
   return bootstrap;

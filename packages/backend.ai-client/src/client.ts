@@ -36,7 +36,6 @@ import {
 import { safeStorage } from './safe-storage';
 import type {
   FeatureSet,
-  GraphQLEnvelope,
   GraphQLVariables,
   LoginEnvelope,
   RequestBody,
@@ -1976,26 +1975,14 @@ export class Client {
     }
     return result.data as TData;
   }
-
-  /**
-   * `query` with the whole response body. The GraphQL router reports a
-   * subgraph's 401 as a 200 whose `errors[]` carry the refusal, so a caller
-   * that needs the auth outcome reads it from here rather than from `data`.
-   */
-  async queryEnvelope<TData = unknown>(
-    q: string,
-    v: GraphQLVariables | null,
-    signal: AbortSignal | null = null,
-    timeout: number = 0,
-    retry: number = 0,
-    secure: boolean = false,
-  ): Promise<GraphQLEnvelope<TData>> {
     let query = {
       query: q,
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry);
+    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
+      (r: { data: TData }) => r.data,
+    );
   }
 
   /**
