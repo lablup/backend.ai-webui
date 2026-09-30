@@ -17,10 +17,6 @@ import { useLocation } from 'react-router-dom';
 
 const UserSettingsModal = React.lazy(() => import('./UserSettingsModal'));
 
-// Category switches and closing replace history so Back closes the modal in one
-// press; `useUserSettingsModal` opts into push for the opening transition.
-const settingsParam = parseAsString.withOptions({ history: 'replace' });
-
 /**
  * Mounts the user-settings modal app-wide and drives it from `?settings=`, so
  * it opens over the current page instead of navigating to one.
@@ -34,11 +30,11 @@ const UserSettingsModalOpener = () => {
   const location = useLocation();
   const navigate = useWebUINavigate();
   const { defaultMenuPath } = useWebUIMenuItems();
-  const [rawCategory, setRawCategory] = useQueryState(
-    USER_SETTINGS_PARAM,
-    settingsParam,
+  // Read from the router, not nuqs: nuqs applies a URL change it did not make
+  // in a transition, which React holds back while any async action is pending.
+  const category = coerceUserSettingsCategory(
+    new URLSearchParams(location.search).get(USER_SETTINGS_PARAM),
   );
-  const category = coerceUserSettingsCategory(rawCategory);
 
   useEffect(
     function trackBackgroundLocation() {
@@ -47,6 +43,19 @@ const UserSettingsModalOpener = () => {
     [location],
   );
 
+  // Replaces history, so Back closes the modal in one press (the opening in
+  // `useUserSettingsModal` pushed); `state` rides along because the page
+  // underneath may keep fetched data in it.
+  const setCategory = (next: UserSettingsCategory | null) => {
+    const searchParams = new URLSearchParams(location.search);
+    if (next === null) searchParams.delete(USER_SETTINGS_PARAM);
+    else searchParams.set(USER_SETTINGS_PARAM, next);
+    navigate(
+      { search: searchParams.toString(), hash: location.hash },
+      { replace: true, state: location.state },
+    );
+  };
+
   const close = () => {
     // A cold deep link leaves the modal over an empty shell; closing there has
     // to land on a real page.
@@ -54,7 +63,7 @@ const UserSettingsModalOpener = () => {
       navigate(defaultMenuPath, { replace: true });
       return;
     }
-    setRawCategory(null);
+    setCategory(null);
   };
 
   // A closed `BAIModal` keeps its children mounted, so the gate is here:
@@ -65,7 +74,7 @@ const UserSettingsModalOpener = () => {
     <Suspense fallback={null}>
       <UserSettingsModal
         category={category}
-        onCategoryChange={(next) => setRawCategory(next)}
+        onCategoryChange={setCategory}
         onRequestClose={close}
       />
     </Suspense>
