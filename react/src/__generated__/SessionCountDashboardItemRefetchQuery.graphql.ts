@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f6883a616899087b74a9d782ced06f4f>>
+ * @generated SignedSource<<922d3470225c508d75bffab3c753b94f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,7 +11,11 @@
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type SessionCountDashboardItemRefetchQuery$variables = {
+  batchFilter?: string | null | undefined;
+  inferenceFilter?: string | null | undefined;
+  interactiveFilter?: string | null | undefined;
   scopeId?: any | null | undefined;
+  systemFilter?: string | null | undefined;
 };
 export type SessionCountDashboardItemRefetchQuery$data = {
   readonly " $fragmentSpreads": FragmentRefs<"SessionCountDashboardItemFragment">;
@@ -24,9 +28,29 @@ export type SessionCountDashboardItemRefetchQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
+    "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\"",
+    "kind": "LocalArgument",
+    "name": "batchFilter"
+  },
+  {
+    "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\"",
+    "kind": "LocalArgument",
+    "name": "inferenceFilter"
+  },
+  {
+    "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\"",
+    "kind": "LocalArgument",
+    "name": "interactiveFilter"
+  },
+  {
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "scopeId"
+  },
+  {
+    "defaultValue": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\"",
+    "kind": "LocalArgument",
+    "name": "systemFilter"
   }
 ],
 v1 = {
@@ -59,8 +83,28 @@ return {
         "args": [
           {
             "kind": "Variable",
+            "name": "batchFilter",
+            "variableName": "batchFilter"
+          },
+          {
+            "kind": "Variable",
+            "name": "inferenceFilter",
+            "variableName": "inferenceFilter"
+          },
+          {
+            "kind": "Variable",
+            "name": "interactiveFilter",
+            "variableName": "interactiveFilter"
+          },
+          {
+            "kind": "Variable",
             "name": "scopeId",
             "variableName": "scopeId"
+          },
+          {
+            "kind": "Variable",
+            "name": "systemFilter",
+            "variableName": "systemFilter"
           }
         ],
         "kind": "FragmentSpread",
@@ -80,9 +124,9 @@ return {
         "alias": "myInteractive",
         "args": [
           {
-            "kind": "Literal",
+            "kind": "Variable",
             "name": "filter",
-            "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"interactive\""
+            "variableName": "interactiveFilter"
           },
           (v1/*: any*/),
           (v2/*: any*/)
@@ -98,9 +142,9 @@ return {
         "alias": "myBatch",
         "args": [
           {
-            "kind": "Literal",
+            "kind": "Variable",
             "name": "filter",
-            "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"batch\""
+            "variableName": "batchFilter"
           },
           (v1/*: any*/),
           (v2/*: any*/)
@@ -116,9 +160,9 @@ return {
         "alias": "myInference",
         "args": [
           {
-            "kind": "Literal",
+            "kind": "Variable",
             "name": "filter",
-            "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"inference\""
+            "variableName": "inferenceFilter"
           },
           (v1/*: any*/),
           (v2/*: any*/)
@@ -134,9 +178,9 @@ return {
         "alias": "myUpload",
         "args": [
           {
-            "kind": "Literal",
+            "kind": "Variable",
             "name": "filter",
-            "value": "status != \"TERMINATED\" & status != \"CANCELLED\" & type == \"system\""
+            "variableName": "systemFilter"
           },
           (v1/*: any*/),
           (v2/*: any*/)
@@ -151,16 +195,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "4e2a7d64eccfa5e512354e770190e051",
+    "cacheID": "e6cc3327cd077002dec6704b3313653a",
     "id": null,
     "metadata": {},
     "name": "SessionCountDashboardItemRefetchQuery",
     "operationKind": "query",
-    "text": "query SessionCountDashboardItemRefetchQuery(\n  $scopeId: ScopeField\n) {\n  ...SessionCountDashboardItemFragment_3vJUag\n}\n\nfragment SessionCountDashboardItemFragment_3vJUag on Query {\n  myInteractive: compute_session_nodes(first: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"interactive\\\"\", scope_id: $scopeId) {\n    count\n  }\n  myBatch: compute_session_nodes(first: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"batch\\\"\", scope_id: $scopeId) {\n    count\n  }\n  myInference: compute_session_nodes(first: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"inference\\\"\", scope_id: $scopeId) {\n    count\n  }\n  myUpload: compute_session_nodes(first: 0, filter: \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"system\\\"\", scope_id: $scopeId) {\n    count\n  }\n}\n"
+    "text": "query SessionCountDashboardItemRefetchQuery(\n  $batchFilter: String = \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"batch\\\"\"\n  $inferenceFilter: String = \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"inference\\\"\"\n  $interactiveFilter: String = \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"interactive\\\"\"\n  $scopeId: ScopeField\n  $systemFilter: String = \"status != \\\"TERMINATED\\\" & status != \\\"CANCELLED\\\" & type == \\\"system\\\"\"\n) {\n  ...SessionCountDashboardItemFragment_3INTnW\n}\n\nfragment SessionCountDashboardItemFragment_3INTnW on Query {\n  myInteractive: compute_session_nodes(first: 0, filter: $interactiveFilter, scope_id: $scopeId) {\n    count\n  }\n  myBatch: compute_session_nodes(first: 0, filter: $batchFilter, scope_id: $scopeId) {\n    count\n  }\n  myInference: compute_session_nodes(first: 0, filter: $inferenceFilter, scope_id: $scopeId) {\n    count\n  }\n  myUpload: compute_session_nodes(first: 0, filter: $systemFilter, scope_id: $scopeId) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "19e666cf346850c01eda18c6889928ae";
+(node as any).hash = "62fd6c06a208e3f17511370116de6c21";
 
 export default node;
