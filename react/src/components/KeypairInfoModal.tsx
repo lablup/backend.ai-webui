@@ -4,6 +4,7 @@
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
 import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -30,6 +31,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  const baiClient = useSuspendedBackendaiClient();
   const keypair = useFragment(
     graphql`
       fragment KeypairInfoModalFragment on KeyPair {
@@ -43,28 +45,43 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         num_queries
         rate_limit
         concurrency_used @since(version: "24.09.0")
+        is_default @since(version: "26.9.0")
       }
     `,
     keypairInfoModalFrgmt,
   );
 
-  // FIXME: Keypair query does not support main_access_key info.
+  // Below 26.9.0 the keypair does not carry `is_default`, so the owner's main
+  // key is looked up instead; `@skip` keeps that the only root field, so the
+  // document is never emptied.
+  const supportsKeypairIsDefault = baiClient.supports('keypair-is-default');
   const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
     graphql`
-      query KeypairInfoModalQuery($domain_name: String, $email: String) {
-        user(domain_name: $domain_name, email: $email) {
+      query KeypairInfoModalQuery(
+        $domain_name: String
+        $email: String
+        $supportsKeypairIsDefault: Boolean!
+      ) {
+        user(domain_name: $domain_name, email: $email)
+          @skip(if: $supportsKeypairIsDefault) {
           main_access_key @since(version: "24.03.0")
         }
       }
     `,
     {
       email: keypair?.user_id,
+      supportsKeypairIsDefault,
     },
     {
       fetchPolicy:
-        modalProps.open && keypair?.user_id ? 'network-only' : 'store-only',
+        modalProps.open && keypair?.user_id && !supportsKeypairIsDefault
+          ? 'network-only'
+          : 'store-only',
     },
   );
+  const isMainAccessKey = supportsKeypairIsDefault
+    ? keypair?.is_default === true
+    : user?.main_access_key === keypair?.access_key;
 
   return (
     <BAIModal
@@ -76,7 +93,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
               inline `style`/fontSize override (P5) — dropped, BAIModal's own
               title styling is accepted as-is (defaults-first). */}
           <Text>{t('credential.KeypairDetail')}</Text>
-          {user?.main_access_key === keypair?.access_key && (
+          {isMainAccessKey && (
             <Token
               color={PRIMARY_TOKEN_COLOR}
               label={t('credential.MainAccessKey')}

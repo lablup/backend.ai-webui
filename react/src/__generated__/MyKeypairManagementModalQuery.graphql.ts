@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0e8f0af9c482e667fc574b53c379a2b5>>
+ * @generated SignedSource<<29cbae3ce335dafac82d3fc319b8e160>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -67,8 +67,17 @@ export type MyKeypairManagementModalQuery$variables = {
   limit?: number | null | undefined;
   offset?: number | null | undefined;
   orderBy?: ReadonlyArray<KeypairOrderBy> | null | undefined;
+  supportsKeypairIsDefault: boolean;
 };
 export type MyKeypairManagementModalQuery$data = {
+  readonly defaultKeypair?: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly accessKey: string;
+        readonly id: string;
+      };
+    }>;
+  } | null | undefined;
   readonly myKeypairs: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
@@ -78,6 +87,7 @@ export type MyKeypairManagementModalQuery$data = {
         readonly id: string;
         readonly isActive: boolean | null | undefined;
         readonly isAdmin: boolean | null | undefined;
+        readonly isDefault?: boolean;
         readonly lastUsed: string | null | undefined;
         readonly modifiedAt: string | null | undefined;
         readonly numQueries: number;
@@ -87,7 +97,7 @@ export type MyKeypairManagementModalQuery$data = {
       };
     }>;
   } | null | undefined;
-  readonly user: {
+  readonly user?: {
     readonly main_access_key: string | null | undefined;
   } | null | undefined;
 };
@@ -118,13 +128,25 @@ v3 = {
   "name": "orderBy"
 },
 v4 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "supportsKeypairIsDefault"
+},
+v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v5 = {
+v6 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "accessKey",
+  "storageKey": null
+},
+v7 = {
   "alias": null,
   "args": [
     {
@@ -169,14 +191,8 @@ v5 = {
           "name": "node",
           "plural": false,
           "selections": [
-            (v4/*: any*/),
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "accessKey",
-              "storageKey": null
-            },
+            (v5/*: any*/),
+            (v6/*: any*/),
             {
               "alias": null,
               "args": null,
@@ -190,6 +206,20 @@ v5 = {
               "kind": "ScalarField",
               "name": "isAdmin",
               "storageKey": null
+            },
+            {
+              "condition": "supportsKeypairIsDefault",
+              "kind": "Condition",
+              "passingValue": true,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "isDefault",
+                  "storageKey": null
+                }
+              ]
             },
             {
               "alias": null,
@@ -256,7 +286,62 @@ v5 = {
   ],
   "storageKey": null
 },
-v6 = {
+v8 = {
+  "condition": "supportsKeypairIsDefault",
+  "kind": "Condition",
+  "passingValue": true,
+  "selections": [
+    {
+      "alias": "defaultKeypair",
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "filter",
+          "value": {
+            "isDefault": true
+          }
+        },
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 1
+        }
+      ],
+      "concreteType": "KeyPairConnection",
+      "kind": "LinkedField",
+      "name": "myKeypairs",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "KeyPairV2Edge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "KeyPairV2",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v5/*: any*/),
+                (v6/*: any*/)
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": "myKeypairs(filter:{\"isDefault\":true},limit:1)"
+    }
+  ]
+},
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -269,24 +354,33 @@ return {
       (v0/*: any*/),
       (v1/*: any*/),
       (v2/*: any*/),
-      (v3/*: any*/)
+      (v3/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "MyKeypairManagementModalQuery",
     "selections": [
-      (v5/*: any*/),
+      (v7/*: any*/),
+      (v8/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "User",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
+        "condition": "supportsKeypairIsDefault",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v6/*: any*/)
-        ],
-        "storageKey": null
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v9/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
       }
     ],
     "type": "Query",
@@ -298,38 +392,47 @@ return {
       (v0/*: any*/),
       (v3/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v4/*: any*/)
     ],
     "kind": "Operation",
     "name": "MyKeypairManagementModalQuery",
     "selections": [
-      (v5/*: any*/),
+      (v7/*: any*/),
+      (v8/*: any*/),
       {
-        "alias": null,
-        "args": null,
-        "concreteType": "User",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
+        "condition": "supportsKeypairIsDefault",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v6/*: any*/),
-          (v4/*: any*/)
-        ],
-        "storageKey": null
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v9/*: any*/),
+              (v5/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "bbebbb8246e19369777929f10c8553f7",
+    "cacheID": "0925c3f851dbc4cb7303dd071ede8884",
     "id": null,
     "metadata": {},
     "name": "MyKeypairManagementModalQuery",
     "operationKind": "query",
-    "text": "query MyKeypairManagementModalQuery(\n  $filter: KeypairFilter\n  $orderBy: [KeypairOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myKeypairs(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    edges {\n      node {\n        id\n        accessKey\n        isActive\n        isAdmin\n        createdAt\n        modifiedAt\n        lastUsed\n        rateLimit\n        numQueries\n        resourcePolicy\n        sshPublicKey\n      }\n    }\n    count\n  }\n  user {\n    main_access_key\n    id\n  }\n}\n"
+    "text": "query MyKeypairManagementModalQuery(\n  $filter: KeypairFilter\n  $orderBy: [KeypairOrderBy!]\n  $limit: Int\n  $offset: Int\n  $supportsKeypairIsDefault: Boolean!\n) {\n  myKeypairs(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    edges {\n      node {\n        id\n        accessKey\n        isActive\n        isAdmin\n        isDefault @include(if: $supportsKeypairIsDefault) @since(version: \"26.9.0\")\n        createdAt\n        modifiedAt\n        lastUsed\n        rateLimit\n        numQueries\n        resourcePolicy\n        sshPublicKey\n      }\n    }\n    count\n  }\n  defaultKeypair: myKeypairs(filter: {isDefault: true}, limit: 1) @include(if: $supportsKeypairIsDefault) @since(version: \"26.9.0\") {\n    edges {\n      node {\n        id\n        accessKey\n      }\n    }\n  }\n  user @skip(if: $supportsKeypairIsDefault) @deprecatedSince(version: \"26.9.0\") {\n    main_access_key\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1107e47776213c5730d4d4bb3407152a";
+(node as any).hash = "9f762108dc80051b23c794417306af4f";
 
 export default node;

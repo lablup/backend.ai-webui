@@ -1061,6 +1061,12 @@ export class Client {
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
+      // V2 nodes expose their raw UUID as `entityId` (UserV2, Role, ...), so
+      // self-scoped reads no longer need the legacy graphene root fields.
+      this._features['v2-entity-id'] = true;
+      // `KeyPairV2.isDefault` / `KeyPair.is_default` mark the owner's main
+      // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
+      this._features['keypair-is-default'] = true;
     }
   }
 

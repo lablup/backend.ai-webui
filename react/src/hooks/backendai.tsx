@@ -3,7 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '.';
+import { backendaiCurrentUserRoleQuery } from '../__generated__/backendaiCurrentUserRoleQuery.graphql';
 import { maskString } from '../helper';
+import { roleFromV2, type UserRole } from '../helper/userRole';
 import {
   useSuspenseTanQuery,
   useTanMutation,
@@ -19,6 +21,7 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { useEffect, useState } from 'react';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export const baseResourceSlotNames = ['cpu', 'mem'] as const;
 export type BaseResourceSlotName = (typeof baseResourceSlotNames)[number];
@@ -269,28 +272,30 @@ export const useCurrentUserInfo = () => {
   ] as const;
 };
 
-type UserRole = 'superadmin' | 'admin' | 'user' | 'monitor';
-
 export const useCurrentUserRole = () => {
-  const [userInfo] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
-
   const { decodedUserRole } = useViewer();
 
-  const { data: roleData } = useTanQuery<{
-    user: {
-      role: UserRole;
-    };
-  }>({
-    queryKey: ['getUserRole', userInfo.email],
-    queryFn: () => {
-      return baiClient.user.get(userInfo.email, ['role']);
+  // Fallback for managers without `viewer.encoded_user_role`; store-only
+  // otherwise so the primary path never issues a request.
+  const { myUserV2 } = useLazyLoadQuery<backendaiCurrentUserRoleQuery>(
+    graphql`
+      query backendaiCurrentUserRoleQuery {
+        myUserV2 {
+          organization {
+            role
+          }
+        }
+      }
+    `,
+    {},
+    {
+      fetchPolicy: decodedUserRole === null ? 'store-or-network' : 'store-only',
     },
-    staleTime: Infinity,
-    enabled: decodedUserRole === null,
-  });
+  );
+  const v2Role = myUserV2?.organization?.role;
 
-  return (decodedUserRole ?? roleData?.user.role) as UserRole;
+  return (decodedUserRole ??
+    (v2Role ? roleFromV2[v2Role] : undefined)) as UserRole;
 };
 
 export const useTOTPSupported = () => {

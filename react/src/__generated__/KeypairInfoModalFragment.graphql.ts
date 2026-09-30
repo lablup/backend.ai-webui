@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d21430b94b671f8fe916f823f76c7b4a>>
+ * @generated SignedSource<<d64c2ab9cfc118e42de8e781c537a18d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type KeypairInfoModalFragment$data = {
   readonly concurrency_used: number | null | undefined;
   readonly created_at: string | null | undefined;
   readonly is_admin: boolean | null | undefined;
+  readonly is_default: boolean | null | undefined;
   readonly last_used: string | null | undefined;
   readonly num_queries: number | null | undefined;
   readonly rate_limit: number | null | undefined;
@@ -103,12 +104,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "concurrency_used",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "is_default",
+      "storageKey": null
     }
   ],
   "type": "KeyPair",
   "abstractKey": null
 };
 
-(node as any).hash = "11d6baebc6283f59151dab410a2a80d2";
+(node as any).hash = "3e822826643116ad31568c155cec6bbb";
 
 export default node;

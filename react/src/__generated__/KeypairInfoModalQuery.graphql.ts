@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9246471cf6c0a31317078c7273c3e60b>>
+ * @generated SignedSource<<6f38b5643af9db792daaef9213e23b17>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,9 +12,10 @@ import { ConcreteRequest } from 'relay-runtime';
 export type KeypairInfoModalQuery$variables = {
   domain_name?: string | null | undefined;
   email?: string | null | undefined;
+  supportsKeypairIsDefault: boolean;
 };
 export type KeypairInfoModalQuery$data = {
-  readonly user: {
+  readonly user?: {
     readonly main_access_key: string | null | undefined;
   } | null | undefined;
 };
@@ -34,6 +35,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "email"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "supportsKeypairIsDefault"
   }
 ],
 v1 = [
@@ -63,16 +69,23 @@ return {
     "name": "KeypairInfoModalQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
+        "condition": "supportsKeypairIsDefault",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v2/*: any*/)
-        ],
-        "storageKey": null
+          {
+            "alias": null,
+            "args": (v1/*: any*/),
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
       }
     ],
     "type": "Query",
@@ -85,37 +98,44 @@ return {
     "name": "KeypairInfoModalQuery",
     "selections": [
       {
-        "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
-        "kind": "LinkedField",
-        "name": "user",
-        "plural": false,
+        "condition": "supportsKeypairIsDefault",
+        "kind": "Condition",
+        "passingValue": false,
         "selections": [
-          (v2/*: any*/),
           {
             "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
+            "args": (v1/*: any*/),
+            "concreteType": "User",
+            "kind": "LinkedField",
+            "name": "user",
+            "plural": false,
+            "selections": [
+              (v2/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              }
+            ],
             "storageKey": null
           }
-        ],
-        "storageKey": null
+        ]
       }
     ]
   },
   "params": {
-    "cacheID": "ae75c283d1803be0e160390a438f1ef0",
+    "cacheID": "baa29a112df91300e2aeaf6872c748ad",
     "id": null,
     "metadata": {},
     "name": "KeypairInfoModalQuery",
     "operationKind": "query",
-    "text": "query KeypairInfoModalQuery(\n  $domain_name: String\n  $email: String\n) {\n  user(domain_name: $domain_name, email: $email) {\n    main_access_key @since(version: \"24.03.0\")\n    id\n  }\n}\n"
+    "text": "query KeypairInfoModalQuery(\n  $domain_name: String\n  $email: String\n  $supportsKeypairIsDefault: Boolean!\n) {\n  user(domain_name: $domain_name, email: $email) @skip(if: $supportsKeypairIsDefault) {\n    main_access_key @since(version: \"24.03.0\")\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4e1858d8f369f238aa329976b4678e7b";
+(node as any).hash = "0edfe099f5e4f88747f7632ff90f51c1";
 
 export default node;

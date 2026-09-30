@@ -59,23 +59,36 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
 
+  const supportsEntityId = baiClient.supports('v2-entity-id');
+
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  const { user } = useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
-    graphql`
-      query QuotaPerStorageVolumePanelCardUserQuery(
-        $domain_name: String
-        $email: String
-      ) {
-        user(domain_name: $domain_name, email: $email) {
-          id
+  // The quota scope id needs the raw user UUID: `entityId` from 26.9.0, the
+  // legacy `user.id` below it.
+  const { myUserV2, legacyUser } =
+    useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
+      graphql`
+        query QuotaPerStorageVolumePanelCardUserQuery(
+          $domain_name: String
+          $email: String
+          $supportsEntityId: Boolean!
+        ) {
+          myUserV2 {
+            entityId @since(version: "26.9.0") @include(if: $supportsEntityId)
+          }
+          legacyUser: user(domain_name: $domain_name, email: $email)
+            @deprecatedSince(version: "26.9.0")
+            @skip(if: $supportsEntityId) {
+            id
+          }
         }
-      }
-    `,
-    {
-      domain_name: useCurrentDomainValue(),
-      email: baiClient?.email,
-    },
-  );
+      `,
+      {
+        domain_name: useCurrentDomainValue(),
+        email: baiClient?.email,
+        supportsEntityId,
+      },
+    );
+  const userId = myUserV2?.entityId ?? legacyUser?.id ?? undefined;
   const { project_quota_scope, user_quota_scope } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardQuery>(
       graphql`
@@ -110,11 +123,11 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
           'project',
           currentProject?.id || '',
         ),
-        user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
+        user_quota_scope_id: addQuotaScopeTypePrefix('user', userId || ''),
         storage_host_name: selectedVolumeInfo?.id || '',
         skipQuotaScope:
           currentProject?.id === undefined ||
-          user?.id === undefined ||
+          userId === undefined ||
           !selectedVolumeInfo?.id,
       },
     );

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f75928fa0495272f7316ebaa2629c4ce>>
+ * @generated SignedSource<<f28e66cadeb2ec980642b4e57c8a9886>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,33 +9,34 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type PasswordChangeRequestAlertQuery$variables = Record<PropertyKey, never>;
-export type PasswordChangeRequestAlertQuery$data = {
+export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
+export type backendaiCurrentUserRoleQuery$variables = Record<PropertyKey, never>;
+export type backendaiCurrentUserRoleQuery$data = {
   readonly myUserV2: {
-    readonly status: {
-      readonly needPasswordChange: boolean | null | undefined;
+    readonly organization: {
+      readonly role: UserRoleV2 | null | undefined;
     };
   } | null | undefined;
 };
-export type PasswordChangeRequestAlertQuery = {
-  response: PasswordChangeRequestAlertQuery$data;
-  variables: PasswordChangeRequestAlertQuery$variables;
+export type backendaiCurrentUserRoleQuery = {
+  response: backendaiCurrentUserRoleQuery$data;
+  variables: backendaiCurrentUserRoleQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = {
   "alias": null,
   "args": null,
-  "concreteType": "UserV2StatusInfo",
+  "concreteType": "UserV2OrganizationInfo",
   "kind": "LinkedField",
-  "name": "status",
+  "name": "organization",
   "plural": false,
   "selections": [
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "needPasswordChange",
+      "name": "role",
       "storageKey": null
     }
   ],
@@ -46,7 +47,7 @@ return {
     "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
-    "name": "PasswordChangeRequestAlertQuery",
+    "name": "backendaiCurrentUserRoleQuery",
     "selections": [
       {
         "alias": null,
@@ -68,7 +69,7 @@ return {
   "operation": {
     "argumentDefinitions": [],
     "kind": "Operation",
-    "name": "PasswordChangeRequestAlertQuery",
+    "name": "backendaiCurrentUserRoleQuery",
     "selections": [
       {
         "alias": null,
@@ -92,16 +93,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "acd9f75ed99d084c67edaf42d6f1f5ba",
+    "cacheID": "e7cddb046a9083010225fa38eb84df24",
     "id": null,
     "metadata": {},
-    "name": "PasswordChangeRequestAlertQuery",
+    "name": "backendaiCurrentUserRoleQuery",
     "operationKind": "query",
-    "text": "query PasswordChangeRequestAlertQuery {\n  myUserV2 {\n    status {\n      needPasswordChange\n    }\n    id\n  }\n}\n"
+    "text": "query backendaiCurrentUserRoleQuery {\n  myUserV2 {\n    organization {\n      role\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4c28db8fbde7fcbdd47b63bb48b363ea";
+(node as any).hash = "6b33d28c350d7c2dfc3c3417419409a9";
 
 export default node;
