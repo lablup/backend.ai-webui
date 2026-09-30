@@ -139,8 +139,8 @@ const RolePresetListTab: React.FC = () => {
           />
           <BAIGraphQLPropertyFilter<RolePresetFilter>
             filterProperties={[
-              // The role drawer's View Presets link filters by id (26.9.0+).
-              ...(baiClient.isManagerVersionCompatibleWith('26.9.0')
+              // The role drawer's View Presets link filters by id (26.9.0rc1+).
+              ...(baiClient.isManagerVersionCompatibleWith('26.9.0rc1')
                 ? [
                     {
                       key: 'id',

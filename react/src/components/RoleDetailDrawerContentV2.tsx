@@ -100,7 +100,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             project
           }
         }
-        rolePreset @since(version: "26.9.0") {
+        rolePreset @since(version: "26.9.0rc1") {
           id
         }
         ...RoleAssignmentTabFragment
@@ -111,7 +111,7 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
-  // Before 26.9.0 a role does not name its preset, so the link falls back to the
+  // Before 26.9.0rc1 a role does not name its preset, so the link falls back to the
   // kind in the name (`project_member-1a2b3c4d`); the last match beats a scope name.
   const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
   const presetFilter = role.rolePreset
