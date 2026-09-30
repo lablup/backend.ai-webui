@@ -1,0 +1,170 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-30T02:50:55.165Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 9,
+        "added": 0,
+        "modified": 1,
+        "removed": 8,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "User Settings",
+          "status": "modified",
+          "url": "next/en/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 8,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "4c045f5a363c",
+            "35e2b12c878c",
+            "451299478b1e",
+            "24cc0b8562b4",
+            "571e8f628878",
+            "d4ed0637b1ba",
+            "566a064a4582",
+            "e97f3a03e575",
+            "94da902e8ba1"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 9,
+        "added": 0,
+        "modified": 1,
+        "removed": 8,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "ユーザー設定",
+          "status": "modified",
+          "url": "next/ja/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 8,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "8af66b2af1be",
+            "cafc0a01d94b",
+            "43e59b430d3e",
+            "2d89040c61b6",
+            "69e07e8eb4e9",
+            "3e01f61e2dca",
+            "3656c0d00a1b",
+            "69b459ec1c36",
+            "e7c8d6be268c"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 9,
+        "added": 0,
+        "modified": 1,
+        "removed": 8,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "사용자 설정",
+          "status": "modified",
+          "url": "next/ko/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 8,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "13192d0d9f31",
+            "74622a742585",
+            "34ad0dedb245",
+            "671218d7b38c",
+            "adc4bbc08b33",
+            "e185ad02e42d",
+            "4a4bb3e607cd",
+            "023768f2ae05",
+            "c425ac400d02"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 9,
+        "added": 0,
+        "modified": 1,
+        "removed": 8,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "user_settings",
+          "title": "ตั้งค่าผู้ใช้",
+          "status": "modified",
+          "url": "next/th/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 8,
+            "images": 1,
+            "total": 9
+          },
+          "fingerprints": [
+            "464b6826fdf9",
+            "9a9701e3fb53",
+            "1a6fa3517fe2",
+            "55a08f535264",
+            "ccac4faaff19",
+            "2cc51ba17995",
+            "419d4be5283a",
+            "35fddd9ac610",
+            "d0293eb51b25"
+          ]
+        }
+      ]
+    }
+  }
+}
