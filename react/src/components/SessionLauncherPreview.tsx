@@ -8,6 +8,7 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import {
   useBackendAIImageMetaData,
   useSuspendedBackendaiClient,
@@ -192,7 +193,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('session.SessionType')}>
-            {form.getFieldValue('sessionType')}
+            {getSessionTypeLabel(t, form.getFieldValue('sessionType'))}
           </MetadataListItem>
           {!_.isEmpty(form.getFieldValue('sessionName')) && (
             <MetadataListItem label={t('session.launcher.SessionName')}>

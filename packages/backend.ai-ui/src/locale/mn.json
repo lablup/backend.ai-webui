@@ -538,6 +538,12 @@
     "MultiNodeShort": "Олон-нүдэт",
     "SingleNodeShort": "Нэг-нүдэт"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Багц",
+    "Inference": "Дүгнэлт",
+    "Interactive": "Интерактив",
+    "System": "Байршуулалт"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Хадгалах хост сонгох"
   },
