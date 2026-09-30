@@ -85,25 +85,6 @@ customization and more than one theme is available for your installation. The
 set of themes offered can therefore differ from the list above.
 :::
 
-### Primary color
-
-**Primary Color** overrides the main accent color of the selected theme. Two
-color pickers are provided — one for **Light mode** and one for **Dark mode** —
-so each display mode can use a different accent color.
-
-1. Click the color swatch of the mode you want to change
-2. Choose a color from the picker, or enter a hex value
-3. The new accent color is applied to the WebUI immediately
-
-Clear a picker to fall back to the color that the selected theme provides for
-that mode. Clicking the setting's reset button clears both modes and restores
-the theme's own colors.
-
-:::note
-Like the **Theme** setting, **Primary Color** appears only when your
-administrator has enabled theme customization.
-:::
-
 ### Enables desktop notifications
 
 Enables or disables the desktop notification feature. When turned on, Backend.AI
