@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4e898e8)">v26.9.0-alpha.0 (4e898e8)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a52e5a9)">v26.9.0-alpha.0 (a52e5a9)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -1527,7 +1527,7 @@ modal ประวัติการใช้งานจะเปิดขึ�
 <p data-bai-block="642">คอลัมน์ <strong>ค่าเริ่มต้น</strong> ระบุกลุ่มทรัพยากรเริ่มต้น ซึ่งมีได้เพียงกลุ่มเดียวในแต่ละครั้ง และเอเจนต์ที่ลงทะเบียนโดยไม่มีชื่อกลุ่มทรัพยากรที่ระบุได้จะถูกจัดเข้ากลุ่มนี้</p>
 <p><a id="scheduling-methods"></a></p>
 <p data-bai-block="643">คุณสามารถแก้ไขกลุ่มทรัพยากรได้โดยคลิกการกระทำ <strong>แก้ไข</strong> (ดินสอ) ในคอลัมน์ชื่อ ซึ่งจะเปิดไดอะล็อก <strong>แก้ไขกลุ่มทรัพยากร</strong> ในฟิลด์ <strong>ตัวจัดกำหนดการ</strong> คุณสามารถเลือกวิธีการจัดตารางสำหรับการสร้างเซสชันการคำนวณ ปัจจุบันมีสี่ประเภท: <code>FIFO</code>, <code>LIFO</code>, <code>DRF</code> และ <code>FAIR_SHARE</code> <code>FIFO</code> และ <code>LIFO</code> เป็นวิธีการจัดตารางที่สร้างเซสชันที่เข้าคิวเป็นลำดับแรกหรือลำดับสุดท้ายในคิวงาน <code>DRF</code> ย่อมาจาก Dominant Resource Fairness มีเป้าหมายเพื่อจัดสรรทรัพยากรอย่างเท่าเทียมที่สุดสำหรับแต่ละผู้ใช้ <code>FAIR_SHARE</code> จัดสรรทรัพยากรตามรูปแบบการใช้งานในอดีต สำหรับรายละเอียดเพิ่มเติม โปรดดูที่ส่วน <a href="#fair-share-scheduler">Fair Share Scheduler</a> คุณสามารถปิดใช้งานกลุ่มทรัพยากรได้โดยปิด <strong>ใช้งาน</strong> คลิก <strong>บันทึก</strong> เพื่อใช้การเปลี่ยนแปลง</p>
-<p><figure data-bai-block="644" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>รูปที่ 24.78</figcaption></figure>
+<p><figure data-bai-block="644" class="doc-figure"><img src="./images/modify_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2276" /><figcaption>รูปที่ 24.78</figcaption></figure>
 </p>
 <p data-bai-block="645">กลุ่มทรัพยากรมีตัวเลือกเพิ่มเติมดังนี้:</p>
 <ul>
@@ -1543,7 +1543,7 @@ modal ประวัติการใช้งานจะเปิดขึ�
 <li data-bai-block="653"><strong>จำนวนครั้งที่พยายามข้ามเซสชันที่รออยู่</strong>: จำนวนครั้งที่ scheduler พยายามก่อนข้ามเซสชัน PENDING</li>
 </ul>
 <p data-bai-block="654">คุณสามารถสร้างกลุ่มทรัพยากรใหม่ได้โดยคลิกปุ่ม <strong>สร้างกลุ่มทรัพยากร</strong> เช่นเดียวกับตัวเลือกการสร้างอื่นๆ คุณไม่สามารถสร้างกลุ่มทรัพยากรที่มีชื่อเดียวกันกับที่มีอยู่แล้วได้ เนื่องจากชื่อเป็นค่าคีย์</p>
-<p><figure data-bai-block="655" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>รูปที่ 24.79</figcaption></figure>
+<p><figure data-bai-block="655" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2448" /><figcaption>รูปที่ 24.79</figcaption></figure>
 </p>
 <p><a id="bulk-edit-resource-groups"></a></p>
 <h3 data-bai-block="656" id="admin_menu-แกไขกลมทรพยากรหลายกลมพรอมกน">แก้ไขกลุ่มทรัพยากรหลายกลุ่มพร้อมกัน<a class="hash-link" href="#admin_menu-แกไขกลมทรพยากรหลายกลมพรอมกน" aria-label="Direct link to แก้ไขกลุ่มทรัพยากรหลายกลุ่มพร้อมกัน">#</a></h3>
