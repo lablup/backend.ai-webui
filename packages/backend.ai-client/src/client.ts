@@ -1922,9 +1922,32 @@ export class Client {
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: { data: TData }) => r.data,
+    const result = await this._wrapWithPromise(
+      rqst,
+      false,
+      signal,
+      timeout,
+      retry,
     );
+    // A gateway reports an upstream HTTP failure as a 200 with `errors` and
+    // null data; throw it the way `_wrapWithPromise` throws an HTTP error.
+    const hasData = Object.values(result?.data ?? {}).some((v) => v != null);
+    if (result?.errors?.length && !hasData) {
+      const upstream = result.errors.find(
+        (e: { extensions?: { response?: unknown } }) => e?.extensions?.response,
+      )?.extensions?.response;
+      const detail = upstream?.body?.msg ?? result.errors[0]?.message;
+      throw {
+        isError: true,
+        ...upstream?.body,
+        statusCode: upstream?.status,
+        statusText: upstream?.statusText,
+        message: detail,
+        description: detail,
+        response: result,
+      };
+    }
+    return result.data as TData;
   }
 
   /**
