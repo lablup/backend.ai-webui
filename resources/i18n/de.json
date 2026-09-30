@@ -3097,6 +3097,7 @@
       "ImageDoesNotProvideModelPath": "Das Containerbild enthält keinen Modellpfad. Er sollte geändert werden.",
       "ImageFilter": "Image-Filter",
       "InferenceMode": "Inferenz",
+      "InferenceModeConfig": "Inferenz-Modus Konfiguration",
       "InfiniteTime": "Unendlich",
       "InsufficientAllocationOfResourcesWarning": "Die zuweisbaren Ressourcen liegen unter der im ausgewählten Bild erforderlichen Mindestressource.",
       "InteractiveMode": "Interaktiv",

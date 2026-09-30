@@ -3097,6 +3097,7 @@
       "ImageDoesNotProvideModelPath": "모델 경로를 지정하지 않은 컨테이너 이미지입니다. 수정이 필요합니다.",
       "ImageFilter": "이미지 필터",
       "InferenceMode": "추론",
+      "InferenceModeConfig": "추론 모드 설정",
       "InfiniteTime": "미정",
       "InsufficientAllocationOfResourcesWarning": "할당 가능한 자원이 선택된 이미지에서 요구되는 최소 자원보다 부족합니다.",
       "InteractiveMode": "대화형",

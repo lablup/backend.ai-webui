@@ -3080,6 +3080,7 @@
       "ImageDoesNotProvideModelPath": "อิมเมจคอนเทนเนอร์ไม่ได้ให้เส้นทางโมเดล ควรแก้ไข",
       "ImageFilter": "ตัวกรองอิมเมจ",
       "InferenceMode": "การอนุมาน",
+      "InferenceModeConfig": "การกำหนดค่าโหมดการอนุมาน",
       "InfiniteTime": "ไม่จำกัดเวลา",
       "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก",
       "InteractiveMode": "แบบโต้ตอบ",

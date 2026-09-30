@@ -3095,6 +3095,7 @@
       "ImageDoesNotProvideModelPath": "В образе контейнера не указан путь к модели. Его необходимо изменить.",
       "ImageFilter": "Фильтр образов",
       "InferenceMode": "Вывод",
+      "InferenceModeConfig": "Настройка режима инференса",
       "InfiniteTime": "Бесконечность",
       "InsufficientAllocationOfResourcesWarning": "Выделяемые ресурсы ниже минимального ресурса, необходимого для выбранного изображения.",
       "InteractiveMode": "Интерактивный",

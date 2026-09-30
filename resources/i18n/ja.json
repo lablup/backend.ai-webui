@@ -3097,6 +3097,7 @@
       "ImageDoesNotProvideModelPath": "モデルパスを指定していないコンテナイメージです。修正が必要です。",
       "ImageFilter": "イメージフィルター",
       "InferenceMode": "推論",
+      "InferenceModeConfig": "推論モード設定",
       "InfiniteTime": "未定",
       "InsufficientAllocationOfResourcesWarning": "割り当て可能なリソースが、選択したイメージに必要な最小リソースを下回ります。",
       "InteractiveMode": "インタラクティブ",
