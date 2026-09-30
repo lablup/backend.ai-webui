@@ -41,11 +41,14 @@ export interface LegacyVFolderListOptions {
   groupId?: string;
 }
 
+// `GET /folders` never returns a DELETE_COMPLETE row (it does return the
+// other deletion states), so the V2 page drops them server side to match.
 const myVfoldersQuery = graphql`
   query useSuspendedLegacyVFoldersQuery($limit: Int!, $offset: Int!) {
     myVfolders(
       limit: $limit
       offset: $offset
+      filter: { status: { notIn: [DELETE_COMPLETE] } }
       orderBy: [{ field: CREATED_AT, direction: DESC }]
     ) @since(version: "26.4.2") {
       count
