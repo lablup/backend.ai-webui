@@ -217,271 +217,6 @@ describe('BAIText ellipsis', () => {
     expect(box.parentElement).toBe(screen.getByTestId('t'));
   });
 
-  it('re-measures when the children change without a resize', () => {
-    // A fixed-width cell whose value changes does not resize, so the
-    // ResizeObserver never fires; the hook must re-check on new children.
-    setOverflow(false);
-    const { rerender } = render(
-      <BAIText ellipsis={{ expandable: true }}>short</BAIText>,
-    );
-    expect(screen.queryByText('Expand')).toBeNull();
-
-    setOverflow(true);
-    rerender(
-      <BAIText ellipsis={{ expandable: true }}>a much longer value</BAIText>,
-    );
-    expect(screen.getByText('Expand')).toBeInTheDocument();
-
-    setOverflow(false);
-    rerender(<BAIText ellipsis={{ expandable: true }}>short</BAIText>);
-    expect(screen.queryByText('Expand')).toBeNull();
-  });
-
-  it('re-measures when the ResizeObserver fires', () => {
-    const original = global.ResizeObserver;
-    let notify: (() => void) | undefined;
-    global.ResizeObserver = class {
-      constructor(cb: ResizeObserverCallback) {
-        notify = () => cb([], this as unknown as ResizeObserver);
-      }
-      observe() {}
-      unobserve() {}
-      disconnect() {}
-    } as unknown as typeof ResizeObserver;
-    try {
-      setOverflow(false);
-      render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-      expect(screen.queryByText('Expand')).toBeNull();
-      setOverflow(true);
-      act(() => notify?.());
-      expect(screen.getByText('Expand')).toBeInTheDocument();
-    } finally {
-      global.ResizeObserver = original;
-    }
-  });
-
-  it('shows the Expand link only when the text overflows', () => {
-    setOverflow(false);
-    const { unmount } = render(
-      <BAIText ellipsis={{ expandable: true }}>long</BAIText>,
-    );
-    expect(screen.queryByText('Expand')).toBeNull();
-    unmount();
-
-    setOverflow(true);
-    render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-    expect(screen.getByText('Expand')).toBeInTheDocument();
-  });
-
-  it('toggles between Expand and Collapse and reports it', () => {
-    setOverflow(true);
-    const onExpand = vi.fn();
-    render(
-      <BAIText ellipsis={{ rows: 2, expandable: true, onExpand }}>
-        long
-      </BAIText>,
-    );
-    fireEvent.click(screen.getByText('Expand'));
-    expect(onExpand).toHaveBeenLastCalledWith(expect.anything(), {
-      expanded: true,
-    });
-    const box = screen.getByText('long');
-    expect(box).toHaveClass('bai-text-content-expanded');
-    expect(box).not.toHaveClass('bai-text-content-clamp');
-    expect(box.style.webkitLineClamp).toBe('');
-
-    fireEvent.click(screen.getByText('Collapse'));
-    expect(onExpand).toHaveBeenLastCalledWith(expect.anything(), {
-      expanded: false,
-    });
-    expect(screen.getByText('long')).toHaveClass('bai-text-content-clamp');
-  });
-
-  // The link ends the text (antd): beside a CSS-clipped single line, inside
-  // the box after `…` on a multi-line clamp and after the last word once
-  // expanded (FR-3733). Astryx `Link` wraps its label, so address the link
-  // element by class.
-  const expandLink = (label: string) =>
-    screen.getByText(label).closest('.bai-text-expand') as HTMLElement;
-
-  it('keeps the Expand link beside a single-line clip box', () => {
-    setOverflow(true);
-    render(
-      <BAIText data-testid="t" ellipsis={{ expandable: true }}>
-        long
-      </BAIText>,
-    );
-    const box = screen.getByText('long');
-    const link = expandLink('Expand');
-    expect(box).not.toContainElement(link);
-    expect(link.parentElement).toBe(screen.getByTestId('t'));
-  });
-
-  it('puts the Expand link inside a multi-line clamp box', () => {
-    setOverflow(true);
-    render(<BAIText ellipsis={{ rows: 2, expandable: true }}>long</BAIText>);
-    expect(screen.getByText('long')).toContainElement(expandLink('Expand'));
-  });
-
-  it('puts the Collapse link after the last word once expanded', () => {
-    setOverflow(true);
-    render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-    fireEvent.click(screen.getByText('Expand'));
-    const box = screen.getByText('long');
-    const link = expandLink('Collapse');
-    expect(box).toContainElement(link);
-    expect(box.lastElementChild).toBe(link);
-  });
-
-  it('cuts a multi-line clamp so `…` and the link fit on the last line', () => {
-    // A layout stand-in: every line holds ten characters and is 20px tall.
-    const rect = vi
-      .spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: Element) {
-        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
-        return { height } as DOMRect;
-      });
-    try {
-      render(
-        <BAIText ellipsis={{ rows: 2, expandable: true }}>
-          {'a'.repeat(30)}
-        </BAIText>,
-      );
-      const link = expandLink('Expand');
-      const box = link.parentElement as HTMLElement;
-      // 13 chars + `…` + "Expand" = 20 chars = two lines.
-      expect(box.textContent).toBe(`${'a'.repeat(13)}…Expand`);
-      expect(box).toHaveClass('bai-text-content-clamp');
-
-      fireEvent.click(link);
-      expect(expandLink('Collapse').parentElement?.textContent).toBe(
-        `${'a'.repeat(30)}Collapse`,
-      );
-      fireEvent.click(screen.getByText('Collapse'));
-      expect(expandLink('Expand').parentElement?.textContent).toBe(
-        `${'a'.repeat(13)}…Expand`,
-      );
-    } finally {
-      rect.mockRestore();
-    }
-  });
-
-  it('slices a multi-line clamp through styled children', () => {
-    const rect = vi
-      .spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: Element) {
-        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
-        return { height } as DOMRect;
-      });
-    try {
-      render(
-        <BAIText ellipsis={{ rows: 2, expandable: true }}>
-          {'a'.repeat(8)}
-          <strong>{'b'.repeat(22)}</strong>
-        </BAIText>,
-      );
-      const box = expandLink('Expand').parentElement as HTMLElement;
-      expect(box.textContent).toBe(`${'a'.repeat(8)}${'b'.repeat(5)}…Expand`);
-      expect(box.querySelector('strong')?.textContent).toBe('b'.repeat(5));
-    } finally {
-      rect.mockRestore();
-    }
-  });
-
-  it('shrinks the cut until a styled prefix fits the rendered box', () => {
-    // The probe reads plain text (ten characters per line), but the rendered
-    // box counts <strong> text double, so the first cut of 13 still spills.
-    const weighted = (el: Element) =>
-      Array.from(el.childNodes).reduce((sum, node) => {
-        const length = node.textContent?.length ?? 0;
-        return sum + (node.nodeName === 'STRONG' ? length * 2 : length);
-      }, 0);
-    const rect = vi
-      .spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: Element) {
-        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
-        return { height } as DOMRect;
-      });
-    Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {
-      configurable: true,
-      get() {
-        return Math.ceil(weighted(this) / 10) * 20;
-      },
-    });
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
-      configurable: true,
-      get: () => 40,
-    });
-    try {
-      render(
-        <BAIText ellipsis={{ rows: 2, expandable: true }}>
-          <strong>{'b'.repeat(30)}</strong>
-        </BAIText>,
-      );
-      const box = expandLink('Expand').parentElement as HTMLElement;
-      // 13 → 11 → 9 → 8 → 7 → 6: the first prefix whose doubled width plus
-      // `…Expand` fits two lines.
-      expect(box.querySelector('strong')?.textContent).toBe('b'.repeat(6));
-      expect(box.textContent).toBe(`${'b'.repeat(6)}…Expand`);
-    } finally {
-      rect.mockRestore();
-    }
-  });
-
-  it('never cuts a multi-line clamp inside a surrogate pair', () => {
-    const rect = vi
-      .spyOn(Element.prototype, 'getBoundingClientRect')
-      .mockImplementation(function (this: Element) {
-        const height = Math.ceil((this.textContent?.length ?? 0) / 10) * 20;
-        return { height } as DOMRect;
-      });
-    try {
-      render(
-        <BAIText ellipsis={{ rows: 2, expandable: true }}>
-          {`${'a'.repeat(12)}😀${'b'.repeat(20)}`}
-        </BAIText>,
-      );
-      const box = expandLink('Expand').parentElement as HTMLElement;
-      // 13 units would split the emoji, so the cut steps back to 12.
-      expect(box.textContent).toBe(`${'a'.repeat(12)}…Expand`);
-      expect(box.textContent).not.toContain('\uFFFD');
-    } finally {
-      rect.mockRestore();
-    }
-  });
-
-  it('keeps a keyboard clamp on CSS with the link beside the box', () => {
-    setOverflow(true);
-    render(
-      <BAIText
-        data-testid="t"
-        keyboard
-        ellipsis={{ rows: 2, expandable: true }}
-      >
-        shift+F5
-      </BAIText>,
-    );
-    const root = screen.getByTestId('t');
-    const box = root.querySelector('.bai-text-content') as HTMLElement;
-    const link = expandLink('Expand');
-    expect(box.querySelector('.astryx-kbd')).not.toBeNull();
-    expect(box).not.toContainElement(link);
-    expect(link.parentElement).toBe(root);
-  });
-
-  it('follows BUI i18next for the expand link', async () => {
-    setOverflow(true);
-    await act(async () => {
-      await buiI18n.changeLanguage('ko');
-    });
-    render(<BAIText ellipsis={{ expandable: true }}>long</BAIText>);
-    // ko.json -> general.button.Expand = "펼치기"
-    expect(screen.getByText('펼치기')).toBeInTheDocument();
-    await act(async () => {
-      await buiI18n.changeLanguage('en');
-    });
-  });
-
   describe('tooltip', () => {
     beforeEach(() => {
       vi.useFakeTimers();
@@ -551,6 +286,61 @@ describe('BAIText ellipsis', () => {
       render(<BAIText ellipsis={{ tooltip: false }}>clipped</BAIText>);
       hover(box('clipped'));
       expect(screen.queryByRole('tooltip')).toBeNull();
+    });
+
+    const unhover = (node: HTMLElement) => {
+      fireEvent.mouseLeave(node);
+      act(() => {
+        vi.runAllTimers();
+      });
+    };
+
+    it('re-measures when the children change without a resize', () => {
+      // A fixed-width cell whose value changes does not resize, so the
+      // ResizeObserver never fires; the hook must re-check on new children.
+      setOverflow(false);
+      const { rerender } = render(
+        <BAIText ellipsis={{ tooltip: true }}>short</BAIText>,
+      );
+      hover(box('short'));
+      expect(screen.queryByRole('tooltip')).toBeNull();
+      unhover(box('short'));
+
+      setOverflow(true);
+      rerender(
+        <BAIText ellipsis={{ tooltip: true }}>a much longer value</BAIText>,
+      );
+      hover(box('a much longer value'));
+      expect(screen.getByRole('tooltip')).toHaveTextContent(
+        'a much longer value',
+      );
+    });
+
+    it('re-measures when the ResizeObserver fires', () => {
+      const original = global.ResizeObserver;
+      let notify: (() => void) | undefined;
+      global.ResizeObserver = class {
+        constructor(cb: ResizeObserverCallback) {
+          notify = () => cb([], this as unknown as ResizeObserver);
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      } as unknown as typeof ResizeObserver;
+      try {
+        setOverflow(false);
+        render(<BAIText ellipsis={{ tooltip: true }}>long</BAIText>);
+        hover(box('long'));
+        expect(screen.queryByRole('tooltip')).toBeNull();
+        unhover(box('long'));
+
+        setOverflow(true);
+        act(() => notify?.());
+        hover(box('long'));
+        expect(screen.getByRole('tooltip')).toHaveTextContent('long');
+      } finally {
+        global.ResizeObserver = original;
+      }
     });
   });
 });

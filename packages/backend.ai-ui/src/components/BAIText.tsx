@@ -11,13 +11,12 @@
 
    plain          <span.bai-text>children</span>
    ellipsis/copy  <span.bai-text.bai-text-row>
-                    <span.bai-text-content>children [… Expand]</span>
-                    [Tooltip]  [Expand: single-line clip only]  [Copy]
+                    <span.bai-text-content>children</span>
+                    [Tooltip]  [Copy]
                   </span>
 
- The expand link ends the text itself (antd): after `…` on the last clamped
- line — measured in JS for `rows > 1` (FR-3733) — and after the last word
- once expanded. Only a CSS-clipped single line keeps it beside the box.
+ `ellipsis` clamps in CSS only — one line, or `rows` lines. antd's
+ `expandable` expand/collapse link is deliberately not offered (FR-3733).
 
  The component owns its span rather than rendering Astryx `Text`: `Text`
  paints its own type scale and colour, turns `display: block` under
@@ -28,7 +27,6 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Kbd } from '@astryxdesign/core/Kbd';
-import { Link } from '@astryxdesign/core/Link';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import classNames from 'classnames';
 import { CheckIcon, CopyIcon } from 'lucide-react';
@@ -64,16 +62,11 @@ export interface BAITextTooltipConfig {
   [antdTooltipProp: string]: unknown;
 }
 
-/** antd `EllipsisConfig`. */
+/** antd `EllipsisConfig`, without its `expandable` / `onExpand` pair. */
 export interface BAITextEllipsisConfig {
   rows?: number;
-  expandable?: boolean;
   /** `true` shows the children; a node shows that node; `{ title }` its title. */
   tooltip?: ReactNode | BAITextTooltipConfig;
-  onExpand?: (
-    e: React.MouseEvent<HTMLElement>,
-    info: { expanded: boolean },
-  ) => void;
 }
 
 /** antd `CopyConfig`. Tuples are `[resting, copied]`. */
@@ -156,127 +149,6 @@ const resolveTooltipContent = (
   return tooltip as ReactNode;
 };
 
-const ELLIPSIS = '…';
-
-/** `index` moved back one unit when it would split a surrogate pair. */
-const toCodePointBoundary = (text: string, index: number) => {
-  const code = text.charCodeAt(index - 1);
-  return code >= 0xd800 && code <= 0xdbff ? index - 1 : index;
-};
-
-/**
- * The first `length` UTF-16 units of `nodes` as `nodeToText` counts them,
- * never cutting inside a surrogate pair.
- */
-const sliceNodes = (nodes: ReactNode[], length: number): ReactNode[] => {
-  const out: ReactNode[] = [];
-  let remaining = length;
-  for (const node of nodes) {
-    if (remaining <= 0) break;
-    if (typeof node === 'string' || typeof node === 'number') {
-      const text = String(node);
-      out.push(
-        text.length <= remaining
-          ? node
-          : text.slice(0, toCodePointBoundary(text, remaining)),
-      );
-      remaining -= text.length;
-    } else if (React.isValidElement<{ children?: ReactNode }>(node)) {
-      const textLength = nodeToText(node).length;
-      out.push(
-        textLength <= remaining
-          ? node
-          : React.cloneElement(
-              node,
-              undefined,
-              ...sliceNodes(
-                React.Children.toArray(node.props.children),
-                remaining,
-              ),
-            ),
-      );
-      remaining -= textLength;
-    }
-  }
-  return out;
-};
-
-interface ClampMeasure {
-  overflow: boolean;
-  /** Characters of the text shown before `…` and the link; `null` = all. */
-  cut: number | null;
-}
-
-const NO_CLAMP: ClampMeasure = { overflow: false, cut: null };
-
-/**
- * antd's JS ellipsis: a hidden probe in the box finds, by binary search, the
- * longest prefix that leaves room for `…` and the expand link on line `rows`.
- * The link is measured as a clone of the rendered one, so the first pass only
- * reports the overflow and the cut follows once the link exists.
- */
-const measureClamp = (
-  box: HTMLElement,
-  rows: number,
-  text: string,
-): ClampMeasure => {
-  const probe = document.createElement('span');
-  const boxStyle = getComputedStyle(box);
-  const width =
-    box.clientWidth -
-    (parseFloat(boxStyle.paddingLeft) || 0) -
-    (parseFloat(boxStyle.paddingRight) || 0);
-  Object.assign(probe.style, {
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    display: 'block',
-    visibility: 'hidden',
-    pointerEvents: 'none',
-    whiteSpace: 'normal',
-    overflowWrap: 'anywhere',
-    wordBreak: 'break-word',
-    width: `${width}px`,
-  } satisfies Partial<CSSStyleDeclaration>);
-  probe.setAttribute('aria-hidden', 'true');
-  box.appendChild(probe);
-  try {
-    probe.textContent = '\u00a0';
-    const lineHeight = probe.getBoundingClientRect().height;
-    if (!lineHeight) {
-      // No layout engine (jsdom): the clamped scrollHeight is all there is.
-      return {
-        overflow: box.scrollHeight > box.clientHeight + 1,
-        cut: null,
-      };
-    }
-    const limit = (rows + 0.5) * lineHeight;
-    probe.textContent = text;
-    if (probe.getBoundingClientRect().height <= limit) return NO_CLAMP;
-    const link = box.querySelector('.bai-text-expand');
-    if (!link) return { overflow: true, cut: null };
-    const fits = (length: number) => {
-      probe.replaceChildren(
-        document.createTextNode(
-          text.slice(0, toCodePointBoundary(text, length)) + ELLIPSIS,
-        ),
-        link.cloneNode(true),
-      );
-      return probe.getBoundingClientRect().height <= limit;
-    };
-    let low = 0;
-    let high = text.length - 1;
-    while (low < high) {
-      const mid = Math.ceil((low + high) / 2);
-      if (fits(mid)) low = mid;
-      else high = mid - 1;
-    }
-    return { overflow: true, cut: toCodePointBoundary(text, low) };
-  } finally {
-    probe.remove();
-  }
-};
-
 /** Whether the content of a clamp box is taller than the box itself. */
 const contentOverflows = (element: HTMLElement) => {
   // `-webkit-line-clamp` can report the clamped height as scrollHeight, so
@@ -295,57 +167,6 @@ const contentOverflows = (element: HTMLElement) => {
     contentHeight = element.scrollHeight;
   }
   return contentHeight > element.clientHeight + 1;
-};
-
-/**
- * The multi-line expandable clamp, re-measured on resize, on new text and
- * once the link is in the DOM. If the rendered prefix still spills (styled
- * inline children measure wider than their plain text) the cut shrinks by a
- * tenth until it fits.
- */
-const useMeasuredClamp = (
-  ref: React.RefObject<HTMLElement | null>,
-  enabled: boolean,
-  rows: number,
-  text: string,
-  linkLabel: string,
-): ClampMeasure => {
-  'use memo';
-  const [measure, setMeasure] = useState<ClampMeasure>(NO_CLAMP);
-  const hasLink = measure.overflow;
-
-  useLayoutEffect(() => {
-    const element = ref.current;
-    if (!enabled || !element) {
-      setMeasure(NO_CLAMP);
-      return;
-    }
-    const check = () => {
-      const next = measureClamp(element, rows, text);
-      setMeasure((prev) =>
-        prev.overflow === next.overflow && prev.cut === next.cut ? prev : next,
-      );
-    };
-    check();
-    if (typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(check);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [ref, enabled, rows, text, linkLabel, hasLink]);
-
-  useLayoutEffect(() => {
-    const element = ref.current;
-    const { cut } = measure;
-    if (!enabled || !element || cut === null || cut === 0) return;
-    if (contentOverflows(element)) {
-      setMeasure({
-        overflow: true,
-        cut: toCodePointBoundary(text, cut - Math.max(1, Math.ceil(cut / 10))),
-      });
-    }
-  }, [ref, enabled, text, measure]);
-
-  return measure;
 };
 
 /**
@@ -481,12 +302,8 @@ const BAIText: React.FC<BAITextProps> = ({
   ...restProps
 }) => {
   'use memo';
-  const { t } = useBAIi18n();
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const ellipsisConfig = typeof ellipsis === 'object' ? ellipsis : undefined;
   const rows = ellipsisConfig?.rows || 1;
-  const expandable = ellipsisConfig?.expandable ?? false;
   const tooltipContent = resolveTooltipContent(ellipsis, children);
 
   // antd wrapped the children in the matching element; the box treatment
@@ -500,30 +317,8 @@ const BAIText: React.FC<BAITextProps> = ({
       : undefined;
   const content = keyboard ? <Kbd keys={nodeToText(children)} /> : children;
 
-  // A multi-line expandable clamp is measured in JS so `…` and the link end
-  // the last visible line; a single line clips in CSS with the link after it.
-  // `Kbd` takes its text as the `keys` prop, which cannot be sliced, so it
-  // keeps the CSS clamp with the link beside the box.
-  const isMeasured =
-    !!ellipsis && expandable && rows > 1 && !isExpanded && !keyboard;
-  const expandLabel = isExpanded
-    ? t('general.button.Collapse')
-    : t('general.button.Expand');
   const contentRef = useRef<HTMLElement | null>(null);
-  const clamp = useMeasuredClamp(
-    contentRef,
-    isMeasured,
-    rows,
-    nodeToText(content),
-    expandLabel,
-  );
-  const cssOverflow = useOverflow(
-    contentRef,
-    !!ellipsis && !isExpanded && !isMeasured,
-    rows,
-    children,
-  );
-  const isOverflowing = isMeasured ? clamp.overflow : cssOverflow;
+  const isOverflowing = useOverflow(contentRef, !!ellipsis, rows, children);
 
   const rootClassName = classNames(
     'bai-text',
@@ -557,26 +352,6 @@ const BAIText: React.FC<BAITextProps> = ({
     );
   }
 
-  const handleExpand = (e: React.MouseEvent<HTMLElement>) => {
-    const next = !isExpanded;
-    setIsExpanded(next);
-    ellipsisConfig?.onExpand?.(e, { expanded: next });
-  };
-
-  const expandLink =
-    expandable && (isOverflowing || isExpanded) ? (
-      <Link className="bai-text-expand" onClick={handleExpand}>
-        {expandLabel}
-      </Link>
-    ) : null;
-  // Inline after the text (antd), except beside a CSS-clipped box, which
-  // would clip it.
-  const isLinkInline = isExpanded || isMeasured;
-  const visibleContent =
-    isMeasured && clamp.cut !== null
-      ? [...sliceNodes(React.Children.toArray(content), clamp.cut), ELLIPSIS]
-      : content;
-
   return (
     <span
       {...restProps}
@@ -586,20 +361,14 @@ const BAIText: React.FC<BAITextProps> = ({
       <ContentTag
         ref={contentRef}
         className={classNames('bai-text-content', boxClassName, {
-          'bai-text-content-expanded': !!ellipsis && isExpanded,
-          'bai-text-content-clip': !!ellipsis && !isExpanded && rows === 1,
-          'bai-text-content-clamp': !!ellipsis && !isExpanded && rows > 1,
+          'bai-text-content-clip': !!ellipsis && rows === 1,
+          'bai-text-content-clamp': !!ellipsis && rows > 1,
         })}
-        style={
-          ellipsis && !isExpanded && rows > 1
-            ? { WebkitLineClamp: rows }
-            : undefined
-        }
+        style={ellipsis && rows > 1 ? { WebkitLineClamp: rows } : undefined}
       >
-        {visibleContent}
-        {isLinkInline ? expandLink : null}
+        {content}
       </ContentTag>
-      {tooltipContent !== undefined && isOverflowing && !isExpanded ? (
+      {tooltipContent !== undefined && isOverflowing ? (
         <Tooltip
           anchorRef={contentRef}
           // The bubble is a DOM sibling, so it inherits a table cell's
@@ -607,7 +376,6 @@ const BAIText: React.FC<BAITextProps> = ({
           content={<span className="bai-text-tooltip">{tooltipContent}</span>}
         />
       ) : null}
-      {isLinkInline ? null : expandLink}
       {copyable ? (
         <CopyControl copyable={copyable}>{children}</CopyControl>
       ) : null}
