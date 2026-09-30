@@ -583,7 +583,11 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                     </BAIFormItem>
                     {endpointHistory.length > 0 &&
                       endpointHistoryPopover.render(
-                        <List density="compact" hasDividers>
+                        <List
+                          density="compact"
+                          hasDividers
+                          aria-label={t('login.EndpointHistory')}
+                        >
                           {endpointHistory.map(({ endpoint, isFromEnv }) => (
                             <ListItem
                               key={endpoint}
