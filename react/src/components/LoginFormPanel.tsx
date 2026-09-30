@@ -42,6 +42,8 @@ import {
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
 import { useTheme } from '@astryxdesign/core/theme';
+import { focusVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
   BAIModal,
@@ -63,6 +65,29 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
+
+// Item rings the row on any focused descendant; ring it only for the row's own
+// select button (one outline per tab stop), inset so the scrolling list can't clip it.
+const styles = stylex.create({
+  endpointRow: {
+    outlineWidth: {
+      default: '0',
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-width'],
+    },
+    outlineStyle: {
+      default: 'none',
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-style'],
+    },
+    outlineColor: {
+      default: null,
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-color'],
+    },
+    outlineOffset: {
+      default: '0',
+      ':has(> :first-child:focus-visible)': `calc(-1 * ${focusVars['--focus-outline-width']})`,
+    },
+  },
+});
 
 /** One row of the endpoint history list. */
 export interface EndpointHistoryEntry {
@@ -551,6 +576,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                             <ListItem
                               key={endpoint}
                               label={isFromEnv ? `${endpoint} (env)` : endpoint}
+                              xstyle={styles.endpointRow}
                               onClick={() => {
                                 onSelectEndpoint(endpoint);
                                 setIsEndpointHistoryOpen(false);
