@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="프로젝트 관리자 기능" />
   <meta name="twitter:description" content="프로젝트 관리자는 특정 프로젝트에 대해 관리 권한을 부여받은 사용자입니다. 프로젝트 관리자는 시스템 전체의 슈퍼 관리자 권한 없이도 자신이 관리하는 프로젝트에 속한 사용자를 확인하고, 연산 세션과 모델 배포를 관리하며, 스토리지 폴더를 운영할 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"프로젝트 관리자 기능","inLanguage":"ko","description":"프로젝트 관리자는 특정 프로젝트에 대해 관리 권한을 부여받은 사용자입니다. 프로젝트 관리자는 시스템 전체의 슈퍼 관리자 권한 없이도 자신이 관리하는 프로젝트에 속한 사용자를 확인하고, 연산 세션과 모델 배포를 관리하며, 스토리지 폴더를 운영할 수 있습니다.","dateModified":"2026-09-23T01:03:06.000Z","url":"https://webui.docs.backend.ai/next/ko/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"프로젝트 관리자 기능","inLanguage":"ko","description":"프로젝트 관리자는 특정 프로젝트에 대해 관리 권한을 부여받은 사용자입니다. 프로젝트 관리자는 시스템 전체의 슈퍼 관리자 권한 없이도 자신이 관리하는 프로젝트에 속한 사용자를 확인하고, 연산 세션과 모델 배포를 관리하며, 스토리지 폴더를 운영할 수 있습니다.","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/ko/project_admin.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/project_admin.html" />
   <link rel="alternate" hreflang="en" href="../en/project_admin.html" />
   <link rel="alternate" hreflang="ja" href="../ja/project_admin.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (420d91e)">v26.9.0-alpha.0 (420d91e)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (47c560d)">v26.9.0-alpha.0 (47c560d)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -250,7 +250,7 @@
 <li data-bai-block="16"><strong>사용자 선택 및 추가</strong>: 한 명 이상의 사용자를 선택하는 다중 선택기와, 현재 프로젝트에 대한 프로젝트 관리자 권한을 부여하는 <strong>추가</strong> 버튼입니다.</li>
 <li data-bai-block="17"><strong>현재 관리자 테이블</strong>: 프로젝트의 현재 관리자 목록으로, 각 항목에는 해당 사용자의 프로젝트 관리자 권한을 제거하는 <strong>관리자 권한 해제</strong>(X) 동작이 있습니다.</li>
 </ul>
-<p><figure data-bai-block="18" class="doc-figure"><img src="./images/project_admin_set_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="600" height="550" /><figcaption>그림 20.4</figcaption></figure>
+<p><figure data-bai-block="18" class="doc-figure"><img src="./images/project_admin_set_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="600" height="392" /><figcaption>그림 20.4</figcaption></figure>
 </p>
 <p data-bai-block="19">이 모달에는 할당하거나 회수하기 전에 읽어야 하는 두 개의 알림이 표시됩니다:</p>
 <ul>
@@ -377,7 +377,7 @@
 <li data-bai-block="79">필요한 경우 <strong>강제 종료</strong> 체크박스를 선택하여 현재 상태와 상관없이 세션을 종료하거나 취소합니다. 이 옵션을 활성화하면 경고가 표시되고 확인 버튼 레이블이 <strong>종료</strong>에서 <strong>강제 종료</strong>로 변경됩니다.</li>
 <li data-bai-block="80">확인 버튼을 클릭하여 세션을 종료합니다.</li>
 </ol>
-<p><figure data-bai-block="81" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1060" height="516" /><figcaption>그림 20.13</figcaption></figure>
+<p><figure data-bai-block="81" class="doc-figure"><img src="./images/project_admin_terminate_session_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="468" /><figcaption>그림 20.13</figcaption></figure>
 </p>
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 

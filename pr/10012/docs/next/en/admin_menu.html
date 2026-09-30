@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Admin Features" />
   <meta name="twitter:description" content="Logging in with an admin account adds an Admin Settings menu at the top of the sidebar." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-09-23T01:57:11.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Admin Features","inLanguage":"en","description":"Logging in with an admin account adds an Admin Settings menu at the top of the sidebar.","dateModified":"2026-09-30T05:35:35.000Z","url":"https://webui.docs.backend.ai/next/en/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (420d91e)">v26.9.0-alpha.0 (420d91e)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (47c560d)">v26.9.0-alpha.0 (47c560d)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -230,12 +230,12 @@ create a user account. Please try other email and username.</p>
 <p data-bai-block="9">Click the info icon in the user&#39;s <strong>Email</strong> column row for more detailed user
 information. You can also check the domain and project information where the
 user belongs.</p>
-<p><figure data-bai-block="10" class="doc-figure"><img src="./images/user_detail_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1030" /><figcaption>Figure 24.4</figcaption></figure>
+<p><figure data-bai-block="10" class="doc-figure"><img src="./images/user_detail_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1108" /><figcaption>Figure 24.4</figcaption></figure>
 </p>
 <p data-bai-block="11">Click the <strong>Edit</strong> (pencil) icon in the user&#39;s <strong>Email</strong> column row to change the settings of a user who
 already exists. User&#39;s name, password, activation state, etc. can be changed. User ID (email) cannot be changed.
 Click <strong>Save</strong> to apply your changes.</p>
-<p><figure data-bai-block="12" class="doc-figure"><img src="./images/user_update_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="3520" /><figcaption>Figure 24.5</figcaption></figure>
+<p><figure data-bai-block="12" class="doc-figure"><img src="./images/user_update_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="3524" /><figcaption>Figure 24.5</figcaption></figure>
 </p>
 <p data-bai-block="13">The user create/edit dialog contains the following fields:</p>
 <ul>
@@ -323,7 +323,7 @@ special character, and number).</li>
 each user will be prompted to change their password on first login.</li>
 <li data-bai-block="43">All other fields (<strong>Status</strong>, <strong>Role</strong>, <strong>Enable sudo session</strong>, <strong>Resource Policy</strong>, <strong>Domain</strong>, <strong>Projects</strong>, <strong>Allowed Client IPs</strong>, etc.) work the same as in single user creation. See the <a href="#create-and-update-users">Browse and manage users</a> section.</li>
 </ul>
-<p><figure data-bai-block="44" class="doc-figure"><img src="./images/bulk_create_user_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="1452" /><figcaption>Figure 24.8</figcaption></figure>
+<p><figure data-bai-block="44" class="doc-figure"><img src="./images/bulk_create_user_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="1466" /><figcaption>Figure 24.8</figcaption></figure>
 </p>
 <p data-bai-block="45">Usernames and email addresses are auto-generated based on the prefix and suffix you
 provide. For example, if you set the email prefix to <code>student</code> and the email suffix to
@@ -409,7 +409,7 @@ covers <strong>Domain</strong>, <strong>Project</strong>, <strong>Resource Polic
 <li data-bai-block="78">Rows with formatting or validation errors are highlighted with inline error messages so you can correct the source file before retrying.</li>
 <li data-bai-block="79">A summary at the top of the preview shows the total number of valid and invalid rows.</li>
 </ul>
-<p><figure data-bai-block="80" class="doc-figure"><img src="./images/bulk_create_user_csv_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1572" height="892" /><figcaption>Figure 24.10</figcaption></figure>
+<p><figure data-bai-block="80" class="doc-figure"><img src="./images/bulk_create_user_csv_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1572" height="750" /><figcaption>Figure 24.10</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="81" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -425,7 +425,7 @@ live: the errors clear and the button enables, with no need to re-upload the fil
 <h4 data-bai-block="83" id="admin_menu-creating-the-users">Creating the users<a class="hash-link" href="#admin_menu-creating-the-users" aria-label="Direct link to Creating the users">#</a></h4>
 <p data-bai-block="84">Once you have reviewed the preview and confirmed that all rows are valid, click <strong>Create N user(s)</strong> to submit. If some rows fail on the server side (for example, because an email or username already exists), the dialog remains open and lists the per-row errors so you can identify and resolve the conflicts.</p>
 <p data-bai-block="85">When only some of the rows succeed, a message reports <code>N user(s) created. M user(s) failed.</code>, and a failure list opens on top of the dialog showing every user that could not be created — the email, the username, and the error returned for each. If some accounts were created, the generated keypair list appears first and the failure list follows once you close it. The accounts that were created are kept, so you only need to correct the rows that were reported.</p>
-<p><figure data-bai-block="86" class="doc-figure"><img src="./images/bulk_create_user_partial_failure.png" alt="" class="doc-image" loading="lazy" decoding="async" width="720" height="251" /><figcaption>Figure 24.11</figcaption></figure>
+<p><figure data-bai-block="86" class="doc-figure"><img src="./images/bulk_create_user_partial_failure.png" alt="" class="doc-image" loading="lazy" decoding="async" width="720" height="258" /><figcaption>Figure 24.11</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
 <div data-bai-block="87" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
@@ -445,7 +445,7 @@ user in turn.</p>
 <li data-bai-block="92">A selection count appears in the toolbar. Click the edit (pencil) button next to it.</li>
 <li data-bai-block="93">The <strong>Bulk Edit Users</strong> dialog opens.</li>
 </ol>
-<p><figure data-bai-block="94" class="doc-figure"><img src="./images/bulk_edit_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1860" /><figcaption>Figure 24.12</figcaption></figure>
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/bulk_edit_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1728" /><figcaption>Figure 24.12</figcaption></figure>
 </p>
 <p data-bai-block="95">An alert at the top of the dialog lists every user the change will be applied to, by email address, so
 you can confirm the selection before committing. The alert also warns that setting a UID or GID may
@@ -518,10 +518,8 @@ left in place.</li>
 the purged users are deleted as well. When unchecked, ownership of those
 deployments is delegated instead of deleting them.</li>
 </ul>
-<p><figure data-bai-block="120" class="doc-figure"><img src="./images/purge_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="644" /><figcaption>Figure 24.16</figcaption></figure>
+<p><figure data-bai-block="120" class="doc-figure"><img src="./images/purge_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="640" /><figcaption>Figure 24.16</figcaption></figure>
 </p>
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
-
 <p data-bai-block="121">If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
 user&#39;s email together with the error message, while the remaining users are purged normally.</p>
 <div class="admonition admonition-danger">
@@ -553,7 +551,7 @@ keypairs are shown immediately, and to see the inactive keypairs, click
 <p data-bai-block="129">Like in Users tab, you can use the inline buttons in the keypair&#39;s row to view or
 edit keypair details. Click the info icon button to see specific details of the keypair.
 If necessary, you can copy the secret key by clicking the copy button.</p>
-<p><figure data-bai-block="130" class="doc-figure"><img src="./images/keypair_detail_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="948" /><figcaption>Figure 24.18</figcaption></figure>
+<p><figure data-bai-block="130" class="doc-figure"><img src="./images/keypair_detail_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="964" /><figcaption>Figure 24.18</figcaption></figure>
 </p>
 <p data-bai-block="131">You can change the resource policy and rate limit of the keypair by clicking the <strong>Edit</strong> (pencil) button
 in the keypair&#39;s row. The dialog is titled <strong>Edit Keypair Resource Policy</strong>; click <strong>Save</strong> to apply your
@@ -591,7 +589,7 @@ filter, sort the table, or move to another page.</p>
 <h3 data-bai-block="144" id="admin_menu-create-a-credential">Create a credential<a class="hash-link" href="#admin_menu-create-a-credential" aria-label="Direct link to Create a credential">#</a></h3>
 <p data-bai-block="145">If you accidentally deleted a keypair, you can create a new one for the user by clicking the
 <strong>Create Credential</strong> button at the upper right corner.</p>
-<p><figure data-bai-block="146" class="doc-figure"><img src="./images/add_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1000" height="676" /><figcaption>Figure 24.23</figcaption></figure>
+<p><figure data-bai-block="146" class="doc-figure"><img src="./images/add_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1000" height="636" /><figcaption>Figure 24.23</figcaption></figure>
 </p>
 <p data-bai-block="147">The dialog contains the following fields:</p>
 <ul>
@@ -751,13 +749,13 @@ URL changes to this path so that the deployment detail can be linked to or bookm
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="223" class="doc-figure"><img src="./images/model_card_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="672" /><figcaption>Figure 24.28</figcaption></figure>
+<p><figure data-bai-block="223" class="doc-figure"><img src="./images/model_card_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="3180" /><figcaption>Figure 24.28</figcaption></figure>
 </p>
 <h4 data-bai-block="224" id="admin_menu-editing-a-model-card">Editing a model card<a class="hash-link" href="#admin_menu-editing-a-model-card" aria-label="Direct link to Editing a model card">#</a></h4>
 <p data-bai-block="225">Click the edit icon next to the model card name to modify an existing model card. The edit modal opens with previously entered fields already filled in.</p>
 <h4 data-bai-block="226" id="admin_menu-deleting-model-cards">Deleting model cards<a class="hash-link" href="#admin_menu-deleting-model-cards" aria-label="Direct link to Deleting model cards">#</a></h4>
 <p data-bai-block="227">You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.</p>
-<p><figure data-bai-block="228" class="doc-figure"><img src="./images/model_card_delete_with_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="640" /><figcaption>Figure 24.29</figcaption></figure>
+<p><figure data-bai-block="228" class="doc-figure"><img src="./images/model_card_delete_with_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="716" /><figcaption>Figure 24.29</figcaption></figure>
 </p>
 <p data-bai-block="229">The deletion confirmation dialog includes an <strong>Also delete the associated model folder</strong> option:</p>
 <ul>
@@ -799,7 +797,7 @@ URL changes to this path so that the deployment detail can be linked to or bookm
 <p><a id="prometheus-preset-create"></a></p>
 <h3 data-bai-block="252" id="admin_menu-create-a-preset">Create a preset<a class="hash-link" href="#admin_menu-create-a-preset" aria-label="Direct link to Create a preset">#</a></h3>
 <p data-bai-block="253">Click <strong>Add Preset</strong> at the top right of the table to open the <strong>Create Preset</strong> modal.</p>
-<p><figure data-bai-block="254" class="doc-figure"><img src="./images/admin_prometheus_preset_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1980" /><figcaption>Figure 24.31</figcaption></figure>
+<p><figure data-bai-block="254" class="doc-figure"><img src="./images/admin_prometheus_preset_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1940" /><figcaption>Figure 24.31</figcaption></figure>
 </p>
 <p data-bai-block="255">The modal contains the following fields:</p>
 <ul>
@@ -826,7 +824,7 @@ or <strong>Edit Preset</strong> dialog.</p>
 <p><a id="prometheus-preset-edit"></a></p>
 <h3 data-bai-block="267" id="admin_menu-edit-a-preset">Edit a preset<a class="hash-link" href="#admin_menu-edit-a-preset" aria-label="Direct link to Edit a preset">#</a></h3>
 <p data-bai-block="268">Click the <strong>Edit</strong> action in the <strong>Name</strong> cell of a preset row to open the <strong>Edit Preset</strong> modal. The modal is pre-populated with the preset&#39;s current values and exposes the same fields as the Create dialog, including the live preview area for the Query Template.</p>
-<p><figure data-bai-block="269" class="doc-figure"><img src="./images/admin_prometheus_preset_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1980" /><figcaption>Figure 24.32</figcaption></figure>
+<p><figure data-bai-block="269" class="doc-figure"><img src="./images/admin_prometheus_preset_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2048" /><figcaption>Figure 24.32</figcaption></figure>
 </p>
 <p data-bai-block="270">Click <strong>Save</strong> to apply your changes. Consumers of the preset (for example, auto-scaling rules referencing it) automatically pick up the new query template the next time they evaluate the metric.</p>
 <p><a id="prometheus-preset-delete"></a></p>
@@ -1072,7 +1070,7 @@ assignments before choosing a policy.</p>
 <p data-bai-block="389">You can also delete each of resource keypairs by clicking trash can icon
 in the Name column. When you click the icon, a confirmation dialog appears. Type the
 policy name in the confirmation field, then click the <code>Delete</code> button to erase.</p>
-<p><figure data-bai-block="390" class="doc-figure"><img src="./images/resource_policy_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="532" /><figcaption>Figure 24.42</figcaption></figure>
+<p><figure data-bai-block="390" class="doc-figure"><img src="./images/resource_policy_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>Figure 24.42</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="391" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -1105,7 +1103,7 @@ to hide the columns you do not need; your choice is kept per browser.</p>
 clusters with many policies. Click a column header to change the sort order, and
 use the pager below the table to move through the results.</p>
 <p data-bai-block="400">To create a new user resource policy, click the <strong>Create</strong> button.</p>
-<p><figure data-bai-block="401" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1432" /><figcaption>Figure 24.45</figcaption></figure>
+<p><figure data-bai-block="401" class="doc-figure"><img src="./images/create_user_resource_policy.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1656" /><figcaption>Figure 24.45</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="402">Name: The name of the user resource policy.</li>
@@ -1244,7 +1242,7 @@ to <code>FAIR_SHARE</code>. To configure the scheduler type for a resource group
 
 <p data-bai-block="444">To access this feature, click the <strong>Scheduler</strong> menu item under <strong>Admin Settings</strong> in the sidebar.
 The page displays a Fair Share Setting tab with a 4-step drill-down interface.</p>
-<p><figure data-bai-block="445" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2828" height="500" /><figcaption>Figure 24.49</figcaption></figure>
+<p><figure data-bai-block="445" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="564" /><figcaption>Figure 24.49</figcaption></figure>
 </p>
 <p data-bai-block="446">The page is organized into four hierarchical steps:</p>
 <ol>
@@ -1256,7 +1254,7 @@ The page displays a Fair Share Setting tab with a 4-step drill-down interface.</
 <p data-bai-block="451">A step indicator bar at the top of the page shows your current position in the hierarchy.
 Completed steps display the name of the selected item. You can click on any completed step
 to navigate back to that level.</p>
-<p><figure data-bai-block="452" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1102" height="54" /><figcaption>Figure 24.50</figcaption></figure>
+<p><figure data-bai-block="452" class="doc-figure"><img src="./images/fair_share_step_indicator.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2728" height="90" /><figcaption>Figure 24.50</figcaption></figure>
 </p>
 <p data-bai-block="453">If the selected resource group does not have its scheduler type set to <code>FAIR_SHARE</code>, a
 warning alert is displayed indicating that the Fair Share Scheduler is not enabled for that
@@ -1288,7 +1286,7 @@ conditions, only <strong>Name</strong> is offered and one condition can be appli
 </ul>
 <h3 data-bai-block="463" id="admin_menu-resource-group">Resource group<a class="hash-link" href="#admin_menu-resource-group" aria-label="Direct link to Resource group">#</a></h3>
 <p data-bai-block="464">The Resource Group step displays a table of all resource groups with their fair share configuration.</p>
-<p><figure data-bai-block="465" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2828" height="500" /><figcaption>Figure 24.52</figcaption></figure>
+<p><figure data-bai-block="465" class="doc-figure"><img src="./images/fair_share_resource_group_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="564" /><figcaption>Figure 24.52</figcaption></figure>
 </p>
 <p data-bai-block="466">The table includes the following columns:</p>
 <ul>
@@ -1306,7 +1304,7 @@ conditions, only <strong>Name</strong> is offered and one condition can be appli
 <h3 data-bai-block="477" id="admin_menu-resource-group-fair-share-settings">Resource group fair share settings<a class="hash-link" href="#admin_menu-resource-group-fair-share-settings" aria-label="Direct link to Resource group fair share settings">#</a></h3>
 <p data-bai-block="478">Click the settings (gear) button in the Control column of a resource group to open the
 Fair Share Settings modal.</p>
-<p><figure data-bai-block="479" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="726" /><figcaption>Figure 24.53</figcaption></figure>
+<p><figure data-bai-block="479" class="doc-figure"><img src="./images/fair_share_resource_group_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1684" /><figcaption>Figure 24.53</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
 <div data-bai-block="480" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
@@ -1328,7 +1326,7 @@ approximately 5 minutes due to the calculation cycle.</p>
 <h3 data-bai-block="488" id="admin_menu-domain">Domain<a class="hash-link" href="#admin_menu-domain" aria-label="Direct link to Domain">#</a></h3>
 <p data-bai-block="489">After selecting a resource group, the Domain step displays a table of domains with their
 fair share weights and usage within that resource group.</p>
-<p><figure data-bai-block="490" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2828" height="548" /><figcaption>Figure 24.54</figcaption></figure>
+<p><figure data-bai-block="490" class="doc-figure"><img src="./images/fair_share_domain_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="546" /><figcaption>Figure 24.54</figcaption></figure>
 </p>
 <p data-bai-block="491">The table includes the following columns:</p>
 <ul>
@@ -1350,7 +1348,7 @@ are selected, two additional buttons appear:</p>
 <h3 data-bai-block="503" id="admin_menu-project">Project<a class="hash-link" href="#admin_menu-project" aria-label="Direct link to Project">#</a></h3>
 <p data-bai-block="504">After selecting a domain, the Project step displays a table of projects with the same
 column structure as the Domain step. Click a project name to drill into the User step.</p>
-<p><figure data-bai-block="505" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="534" /><figcaption>Figure 24.55</figcaption></figure>
+<p><figure data-bai-block="505" class="doc-figure"><img src="./images/fair_share_project_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="744" /><figcaption>Figure 24.55</figcaption></figure>
 </p>
 <!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
@@ -1358,7 +1356,7 @@ column structure as the Domain step. Click a project name to drill into the User
 <h3 data-bai-block="507" id="admin_menu-user">User<a class="hash-link" href="#admin_menu-user" aria-label="Direct link to User">#</a></h3>
 <p data-bai-block="508">After selecting a project, the User step displays a table of individual users with their
 fair share weights and usage.</p>
-<p><figure data-bai-block="509" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2248" height="732" /><figcaption>Figure 24.56</figcaption></figure>
+<p><figure data-bai-block="509" class="doc-figure"><img src="./images/fair_share_user_page.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2824" height="810" /><figcaption>Figure 24.56</figcaption></figure>
 </p>
 <p data-bai-block="510">The table includes the following columns:</p>
 <ul>
@@ -1375,7 +1373,7 @@ fair share weights and usage.</p>
 <h3 data-bai-block="520" id="admin_menu-editing-fair-share-weights">Editing fair share weights<a class="hash-link" href="#admin_menu-editing-fair-share-weights" aria-label="Direct link to Editing fair share weights">#</a></h3>
 <p data-bai-block="521">To edit the fair share weight for a domain, project, or user, click the settings (gear) button
 in the Control column of the desired row. This opens the weight setting modal.</p>
-<p><figure data-bai-block="522" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="524" /><figcaption>Figure 24.57</figcaption></figure>
+<p><figure data-bai-block="522" class="doc-figure"><img src="./images/fair_share_weight_setting_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1076" /><figcaption>Figure 24.57</figcaption></figure>
 </p>
 <div class="admonition admonition-warning">
 <div data-bai-block="523" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 16 16"><path d="M8.893 1.5c-.183-.31-.52-.5-.887-.5s-.703.19-.886.5L.138 13.499a.98.98 0 0 0 0 1.001c.193.31.53.501.886.501h13.964c.367 0 .704-.19.877-.5a1.03 1.03 0 0 0 .01-1.002L8.893 1.5zm.133 11.497H6.987v-2.003h2.039v2.003zm0-3.004H6.987V5.987h2.039v4.006z"/></svg></span>WARNING</div>
@@ -1393,7 +1391,7 @@ approximately 5 minutes due to the calculation cycle.</p>
 <p data-bai-block="527">To edit weights for multiple items at once, select the desired rows using the checkboxes in the
 table, then click the Bulk Edit (gear icon) button. In bulk-edit mode, the modal displays a
 tag list of all selected entities and a single weight input that will be applied to all of them.</p>
-<p><figure data-bai-block="528" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="524" /><figcaption>Figure 24.58</figcaption></figure>
+<p><figure data-bai-block="528" class="doc-figure"><img src="./images/fair_share_weight_bulk_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1076" /><figcaption>Figure 24.58</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="529" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -1408,8 +1406,10 @@ a warning alert is displayed in the modal.</p>
 <p data-bai-block="532">To view the usage history for domains, projects, or users, select the desired rows using
 the checkboxes in the table, then click the Usage Graph (chart icon) button. This opens
 the Usage History modal.</p>
-<p><figure data-bai-block="533" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1260" /><figcaption>Figure 24.59</figcaption></figure>
+<p><figure data-bai-block="533" class="doc-figure"><img src="./images/fair_share_usage_bucket_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1800" height="1268" /><figcaption>Figure 24.59</figcaption></figure>
 </p>
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
+
 <p data-bai-block="534">The modal displays the following:</p>
 <ul>
 <li data-bai-block="535"><strong>Date range picker</strong>: Select a date range for the usage history. Presets are available for Last 7 Days, Last 30 Days, and Last 90 Days.</li>
@@ -1537,7 +1537,7 @@ button. The registry creation dialog contains the following fields:</p>
 <li data-bai-block="586"><strong>Set as Global Registry</strong>: A toggle that, when enabled, allows access to the registry from all projects.</li>
 <li data-bai-block="587"><strong>Allowed Projects</strong>: When <strong>Set as Global Registry</strong> is turned off, use this field to select the specific projects that are allowed to use the registry.</li>
 </ul>
-<p><figure data-bai-block="588" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="544" height="1244" /><figcaption>Figure 24.66</figcaption></figure>
+<p><figure data-bai-block="588" class="doc-figure"><img src="./images/container_registry_editor_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="1200" /><figcaption>Figure 24.66</figcaption></figure>
 </p>
 <!-- TODO: Re-capture container_registry_editor_modal.png to show the Set as Global Registry toggle and the Allowed Projects field -->
 
@@ -1610,13 +1610,13 @@ would not be shown.</p>
 <li data-bai-block="613"><strong>Resource Preset</strong>: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (<code>MiB</code>, <code>GiB</code>, <code>TiB</code>, <code>PiB</code>).</li>
 <li data-bai-block="614"><strong>Shared Memory</strong>: The amount of shared memory allocated for the preset. This value must be less than the <strong>Memory</strong> value.</li>
 </ul>
-<p><figure data-bai-block="615" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>Figure 24.69</figcaption></figure>
+<p><figure data-bai-block="615" class="doc-figure"><img src="./images/modify_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1432" /><figcaption>Figure 24.69</figcaption></figure>
 </p>
 <p data-bai-block="616">You can also create a resource preset by clicking the <strong>Create Preset</strong> button in the
 right top of the Resource Presets tab. Resource preset names must still be
 unique. If you enter a name that already exists, the server rejects the request
 when you click <strong>Create</strong> and an error message is displayed.</p>
-<p><figure data-bai-block="617" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1352" /><figcaption>Figure 24.70</figcaption></figure>
+<p><figure data-bai-block="617" class="doc-figure"><img src="./images/create_resource_preset_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1432" /><figcaption>Figure 24.70</figcaption></figure>
 </p>
 <p><a id="manage-agent-nodes"></a></p>
 <h2 data-bai-block="618" id="admin_menu-manage-agent-nodes">Manage agent nodes<a class="hash-link" href="#admin_menu-manage-agent-nodes" aria-label="Direct link to Manage agent nodes">#</a></h2>
@@ -1685,7 +1685,7 @@ instead of the success message.</p>
 service without stopping it. In this case, you can disable the Schedulable
 status of the Agent from the <strong>Settings</strong> button in the Agent Info drawer. Then, you can block the
 creation of a new session while preserving the existing sessions on the Agent.</p>
-<p><figure data-bai-block="641" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="338" /><figcaption>Figure 24.76</figcaption></figure>
+<p><figure data-bai-block="641" class="doc-figure"><img src="./images/agent_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="400" height="318" /><figcaption>Figure 24.76</figcaption></figure>
 </p>
 <p><a id="manage-resource-group"></a></p>
 <h2 data-bai-block="642" id="admin_menu-manage-resource-group">Manage resource group<a class="hash-link" href="#admin_menu-manage-resource-group" aria-label="Direct link to Manage resource group">#</a></h2>
@@ -1748,7 +1748,7 @@ HOL). If no value is specified, the global value in Etcd will be used (<code>num
 <p data-bai-block="659">You can create a new resource group by clicking the <strong>Create Resource Group</strong> button.
 Likewise other creating options, you cannot create a resource group with the name
 that already exists, since name is the key value.</p>
-<p><figure data-bai-block="660" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2196" /><figcaption>Figure 24.79</figcaption></figure>
+<p><figure data-bai-block="660" class="doc-figure"><img src="./images/create_resource_group.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2448" /><figcaption>Figure 24.79</figcaption></figure>
 </p>
 <p><a id="bulk-edit-resource-groups"></a></p>
 <h3 data-bai-block="661" id="admin_menu-edit-several-resource-groups-at-once">Edit several resource groups at once<a class="hash-link" href="#admin_menu-edit-several-resource-groups-at-once" aria-label="Direct link to Edit several resource groups at once">#</a></h3>
@@ -1758,7 +1758,7 @@ that already exists, since name is the key value.</p>
 <li data-bai-block="664">A selection count appears in the toolbar. Click the <strong>Bulk Edit</strong> (gear) button next to it.</li>
 <li data-bai-block="665">The <strong>Bulk Edit Resource Groups</strong> dialog opens.</li>
 </ol>
-<p><figure data-bai-block="666" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="792" /><figcaption>Figure 24.80</figcaption></figure>
+<p><figure data-bai-block="666" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="684" /><figcaption>Figure 24.80</figcaption></figure>
 </p>
 <p data-bai-block="667">An alert at the top of the dialog lists every resource group that will be changed. Below it sits the
 <strong>SFTP Storage Proxies</strong> field, pre-filled with the union of the proxies that already serve any of the
@@ -1784,7 +1784,7 @@ Detail Drawer</strong>, where capacity (quota) and folder permissions are config
 storage host. You can open it by clicking the host name in the Storages list. The
 top displays basic information about the host, while the bottom provides tabs for
 configuring folder permissions and capacity (quota).</p>
-<p><figure data-bai-block="677" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="1855" /><figcaption>Figure 24.82</figcaption></figure>
+<p><figure data-bai-block="677" class="doc-figure"><img src="./images/storage_host_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1798" height="2392" /><figcaption>Figure 24.82</figcaption></figure>
 </p>
 <p data-bai-block="678">The drawer contains the following tabs:</p>
 <ul>
@@ -1973,7 +1973,7 @@ guarantee the Integrity of the image.</p>
 private inter-node communication. Admins can set the value of the Maximum
 Transmission Unit (MTU) for the overlay network, if it is certain that the value
 will enhance the network speed.</p>
-<p><figure data-bai-block="762" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="604" height="504" /><figcaption>Figure 24.91</figcaption></figure>
+<p><figure data-bai-block="762" class="doc-figure"><img src="./images/overlay_network_setting_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="720" height="464" /><figcaption>Figure 24.91</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="763" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -1994,7 +1994,7 @@ Scheduler options include session creation retries. Session creation retries ref
 of retries to create a session if it fails. If the session cannot be created within the trials,
 the request will be ignored and Backend.AI will process the next request. Currently, changes are
 only possible when the scheduler is FIFO.</p>
-<p><figure data-bai-block="767" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="568" height="768" /><figcaption>Figure 24.92</figcaption></figure>
+<p><figure data-bai-block="767" class="doc-figure"><img src="./images/system_setting_dialog_scheduler_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="720" height="728" /><figcaption>Figure 24.92</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="768" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -2060,7 +2060,7 @@ even when no announcement exists yet, so it is the way to publish the first one.
 <li data-bai-block="787">From the announcement banner itself, when one is already published. Because the banner sits at the top
 of every page, a superadmin can open the editor from anywhere in the WebUI.</li>
 </ul>
-<p><figure data-bai-block="788" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1696" /><figcaption>Figure 24.94</figcaption></figure>
+<p><figure data-bai-block="788" class="doc-figure"><img src="./images/announcement_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2592" height="1740" /><figcaption>Figure 24.94</figcaption></figure>
 </p>
 <p data-bai-block="789">The <strong>Edit Announcement</strong> dialog is split into two panes:</p>
 <ul>
@@ -2117,7 +2117,7 @@ administrators directly from the project list.</p>
 projects.</li>
 <li data-bai-block="811">The <strong>Set Project Admin</strong> dialog opens.</li>
 </ol>
-<p><figure data-bai-block="812" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="880" /><figcaption>Figure 24.97</figcaption></figure>
+<p><figure data-bai-block="812" class="doc-figure"><img src="./images/set_project_admin_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1200" height="876" /><figcaption>Figure 24.97</figcaption></figure>
 </p>
 <p data-bai-block="813">The dialog contains:</p>
 <ul>
@@ -2205,7 +2205,7 @@ placeholder reading <code>No failed items. All diagnostics passed.</code>, so a 
 </ul>
 <p data-bai-block="852">The settings are divided into the following groups:</p>
 <ul>
-<li data-bai-block="853"><strong>Theme</strong>: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.</li>
+<li data-bai-block="853"><strong>Theme</strong>: Color pickers for the primary, header background, link, info, error, and success colors. Each color can be set independently for light and dark mode and reset individually.</li>
 <li data-bai-block="854"><strong>Logo CI</strong>: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.</li>
 <li data-bai-block="855"><strong>Detail Logo CI</strong>: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.</li>
 <li data-bai-block="856"><strong>Font</strong>: Select the font family used throughout the interface.</li>
@@ -2222,7 +2222,7 @@ placeholder reading <code>No failed items. All diagnostics passed.</code>, so a 
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 23, 2026</span>
+  <span class="last-updated">Last updated on Sep 30, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

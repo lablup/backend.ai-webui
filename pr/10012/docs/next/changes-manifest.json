@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-28T17:43:18.480Z",
+  "generatedAt": "2026-09-30T15:52:29.535Z",
   "languages": [
     "en",
     "ja",
@@ -36,11 +36,11 @@
             "total": 5
           },
           "fingerprints": [
-            "3a878ce35d3e",
-            "a1798fb07d0b",
-            "1c755e3ca4e8",
-            "90be889be391",
-            "5755ee51fcd1"
+            "129a04b80e06",
+            "fed69ec4dcdd",
+            "ca2482eadc6e",
+            "280f8723f427",
+            "7e05260ee8f6"
           ]
         }
       ]
@@ -71,11 +71,11 @@
             "total": 5
           },
           "fingerprints": [
-            "b5d503eecff3",
-            "8be8de9b1d36",
-            "6a4389ba6755",
-            "04a1ef7a8d0e",
-            "ed69e4fe38ce"
+            "6d3ccfaf5196",
+            "dce6958fa349",
+            "048cf5f99fdb",
+            "249bb4d99461",
+            "e7f15bb776d0"
           ]
         }
       ]
@@ -106,11 +106,11 @@
             "total": 5
           },
           "fingerprints": [
-            "fd104c466f38",
-            "b39ab20ba841",
-            "bc4bbba9eed8",
-            "66d2714b92e8",
-            "1dfd5ac0a059"
+            "76bb26f0c079",
+            "8b2cb2b8fb5f",
+            "9c6dd883c799",
+            "2e228770a221",
+            "833463587258"
           ]
         }
       ]
@@ -141,11 +141,11 @@
             "total": 5
           },
           "fingerprints": [
-            "21ba9a3ea0b1",
-            "7f5eced6d4b1",
-            "3f386b5409f8",
-            "1966ec566136",
-            "84ce943df145"
+            "7e47128b429f",
+            "cdebbf9bd121",
+            "9fbb5c10e850",
+            "302401b4fd02",
+            "0f5697eac06d"
           ]
         }
       ]
