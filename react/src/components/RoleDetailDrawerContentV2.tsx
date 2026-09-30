@@ -21,9 +21,11 @@ import {
   BAIText,
   tokenColorForTagColor,
   tokenColorForStatus,
+  toLocalId,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -98,6 +100,9 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             project
           }
         }
+        rolePreset @since(version: "26.9.0") {
+          id
+        }
         ...RoleAssignmentTabFragment
         ...RolePermissionSummaryTableFragment
       }
@@ -106,9 +111,17 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
-  // System role names end in their preset's kind (`role_domain_default_admin`,
-  // `project_member-1a2b3c4d`); the last match wins over a scope name holding the word.
+  // Before 26.9.0 a role does not name its preset, so the link falls back to the
+  // kind in the name (`project_member-1a2b3c4d`); the last match beats a scope name.
   const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
+  const presetFilter = role.rolePreset
+    ? { id: { equals: toLocalId(role.rolePreset.id) } }
+    : {
+        ...(role.scopeType && {
+          scopeType: { equals: role.scopeType.toLowerCase() },
+        }),
+        ...(roleKind && { name: { iContains: roleKind } }),
+      };
 
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
@@ -205,13 +218,8 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
                 }}
                 to={`/admin/rbac?${new URLSearchParams({
                   tab: 'presets',
-                  ...((role.scopeType || roleKind) && {
-                    filter: JSON.stringify({
-                      ...(role.scopeType && {
-                        scopeType: { equals: role.scopeType.toLowerCase() },
-                      }),
-                      ...(roleKind && { name: { iContains: roleKind } }),
-                    }),
+                  ...(!_.isEmpty(presetFilter) && {
+                    filter: JSON.stringify(presetFilter),
                   }),
                 }).toString()}`}
               >
