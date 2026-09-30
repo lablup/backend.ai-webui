@@ -2,10 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import {
-  SessionStatusBadgeFragment$data,
-  SessionStatusBadgeFragment$key,
-} from '../../__generated__/SessionStatusBadgeFragment.graphql';
+import { SessionStatusBadgeFragment$key } from '../../__generated__/SessionStatusBadgeFragment.graphql';
+import { isTransitionalSessionStatus } from '../../helper/sessionStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -31,22 +29,6 @@ interface SessionStatusBadgeProps {
   showQueuePosition?: boolean;
   showTooltip?: boolean;
 }
-
-const isTransitional = (session: SessionStatusBadgeFragment$data) => {
-  return [
-    'RESERVED',
-    'PREEMPTED',
-    'RESCHEDULING',
-    'SCHEDULED',
-    'RESTARTING',
-    'TERMINATING',
-    'PENDING',
-    'PREPARING',
-    'PREPARED',
-    'CREATING',
-    'PULLING',
-  ].includes(session?.status || '');
-};
 
 const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   sessionFrgmt,
@@ -87,14 +69,15 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     <Badge
       variant={badgeVariantForStatus('session', session.status)}
       icon={
-        isTransitional(session) ? (
+        isTransitionalSessionStatus(session.status) ? (
           <LoaderCircle className="bai-icon-spin" size="1em" />
         ) : undefined
       }
       label={
         <>
           {session.status || ' '}
-          {session.status_info && isTransitional(session) ? (
+          {session.status_info &&
+          isTransitionalSessionStatus(session.status) ? (
             <CircleAlertIcon
               size="1em"
               style={{
@@ -120,7 +103,7 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
       <Badge
         variant={badgeVariantForStatus('session', session.status)}
         icon={
-          isTransitional(session) ? (
+          isTransitionalSessionStatus(session.status) ? (
             <LoaderCircle className="bai-icon-spin" size="1em" />
           ) : undefined
         }
@@ -168,7 +151,7 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
         <Badge
           variant={badgeVariantForStatus('session', session.status)}
           icon={
-            isTransitional(session) ? (
+            isTransitionalSessionStatus(session.status) ? (
               <LoaderCircle className="bai-icon-spin" size="1em" />
             ) : undefined
           }

@@ -4,6 +4,7 @@
  */
 import { SessionSlotCellFragment$key } from '../../__generated__/SessionSlotCellFragment.graphql';
 import { convertToBinaryUnit } from '../../helper';
+import { isTransitionalSessionStatus } from '../../helper/sessionStatus';
 import {
   UTILIZATION_ERROR_PERCENT,
   UTILIZATION_WARNING_PERCENT,
@@ -31,6 +32,23 @@ const styles = stylex.create({
   },
 });
 
+/**
+ * `occupied_slots` only counts kernel allocations the manager has not freed
+ * yet, so it shrinks toward one node's worth while a session transitions.
+ */
+export const selectDisplaySlots = (
+  status: string | null | undefined,
+  occupiedSlots: string | null | undefined,
+  requestedSlots: string | null | undefined,
+): { [key in ResourceSlotName]?: string } => {
+  const parsedOccupied = JSON.parse(occupiedSlots || '{}');
+  const parsedRequested = JSON.parse(requestedSlots || '{}');
+  const [preferred, fallback] = isTransitionalSessionStatus(status)
+    ? [parsedRequested, parsedOccupied]
+    : [parsedOccupied, parsedRequested];
+  return Object.keys(preferred).length > 0 ? preferred : fallback;
+};
+
 interface OccupiedSlotViewProps {
   sessionFrgmt: SessionSlotCellFragment$key;
   type: 'cpu' | 'mem' | 'accelerator';
@@ -57,13 +75,11 @@ const SessionSlotCell: React.FC<OccupiedSlotViewProps> = ({
 
   const { liveStat } = useSessionLiveStat(session);
 
-  const parsedOccupiedSlots = JSON.parse(session.occupied_slots || '{}');
-  const occupiedSlots: {
-    [key in ResourceSlotName]?: string;
-  } =
-    Object.keys(parsedOccupiedSlots).length > 0
-      ? parsedOccupiedSlots
-      : JSON.parse(session.requested_slots || '{}');
+  const occupiedSlots = selectDisplaySlots(
+    session.status,
+    session.occupied_slots,
+    session.requested_slots,
+  );
 
   if (type === 'cpu') {
     const CPUOccupiedSlot = parseFloat(occupiedSlots.cpu ?? '1');
