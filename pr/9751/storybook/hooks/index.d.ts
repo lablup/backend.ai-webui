@@ -68,3 +68,4 @@ export { useProjectResourceGroups, StorageHostFetchError, } from './useProjectRe
 export type { ScalingGroupItem } from './useProjectResourceGroups';
 export { isMountableLegacyVFolder, useSuspendedLegacyVFolders, } from './useSuspendedLegacyVFolders';
 export type { LegacyVFolderMountScope } from './useSuspendedLegacyVFolders';
+export * from './useBAIBreakpoint';
