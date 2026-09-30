@@ -9,11 +9,7 @@
  * Handles post-authentication GQL connection and client setup.
  */
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
-import {
-  fetchLoginBootstrap,
-  probeLoginSession,
-  type LoginBootstrap,
-} from './loginBootstrap';
+import { fetchLoginBootstrap, type LoginBootstrap } from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 
 /**
@@ -84,23 +80,6 @@ export async function probeManager(client: any): Promise<void> {
   } finally {
     clearTimeout(timer);
     if (activeProbe === controller) activeProbe = null;
-  }
-}
-
-/**
- * Check if the current session is already logged in.
- */
-export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
-  if (!apiEndpoint) return false;
-  const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
-  try {
-    const [, bootstrap] = await Promise.all([
-      probeManager(client),
-      probeLoginSession(client),
-    ]);
-    return bootstrap !== null;
-  } catch {
-    return false;
   }
 }
 

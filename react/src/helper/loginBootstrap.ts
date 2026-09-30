@@ -73,21 +73,25 @@ interface GraphQLErrorEntry {
  */
 export function isSessionAuthFailure(err: unknown): boolean {
   if (!err || typeof err !== 'object') return false;
-  const { statusCode, response, errors } = err as {
+  const { statusCode, response, errors, data } = err as {
     statusCode?: unknown;
     response?: { type?: unknown } | null;
     errors?: unknown;
+    data?: Record<string, unknown> | null;
   };
   if (statusCode === 401 || response?.type === AUTH_FAILED_TYPE) return true;
+  if (!Array.isArray(errors)) return false;
+  const refused = errors.some((e: GraphQLErrorEntry) => {
+    const downstream = e?.extensions?.response;
+    return (
+      downstream?.status === 401 || downstream?.body?.type === AUTH_FAILED_TYPE
+    );
+  });
+  // A refusal empties every root field; anything resolved means the session
+  // is live and one subgraph failed on its own.
   return (
-    Array.isArray(errors) &&
-    errors.some((e: GraphQLErrorEntry) => {
-      const downstream = e?.extensions?.response;
-      return (
-        downstream?.status === 401 ||
-        downstream?.body?.type === AUTH_FAILED_TYPE
-      );
-    })
+    refused &&
+    (data == null || Object.values(data).every((value) => value == null))
   );
 }
 
@@ -125,7 +129,7 @@ function createLoginEnvironment(client: BackendAIClient) {
     }
     return result;
   };
-  return createRelayEnvironment(loginFetch, undefined);
+  return createRelayEnvironment(loginFetch, null);
 }
 
 export async function fetchLoginBootstrap(
@@ -145,8 +149,9 @@ export async function fetchLoginBootstrap(
 /**
  * Ask the manager for the signed-in user's bootstrap data. `null` means the
  * webserver holds no session for this browser; any other failure is thrown.
- * On success the client adopts the identity `login-check` used to supply,
- * calling `check_login` only when the session id is not known locally.
+ * On success the client adopts the identity `login-check` used to supply;
+ * when the session id is not known locally, `check_login` supplies it and
+ * its verdict wins.
  */
 export async function probeLoginSession(
   client: BackendAIClient,
@@ -159,7 +164,7 @@ export async function probeLoginSession(
     throw err;
   }
   if (!client.adoptLoginSession(bootstrap.keypair?.access_key)) {
-    await client.check_login();
+    if (!(await client.check_login())) return null;
   }
   return bootstrap;
 }

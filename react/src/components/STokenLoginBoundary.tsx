@@ -314,22 +314,17 @@ const STokenLoginBoundaryInner: React.FC<STokenLoginBoundaryProps> = ({
 
     const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
 
-    // Reachability and the cookie-session fast-path settle in one round
-    // trip. A browser the webserver already knows (a prior login in the
-    // same browser) skips `token_login` entirely; this also covers a
-    // caller that mounts the boundary without a URL token.
-    const [managerProbe, sessionProbe] = await Promise.allSettled([
-      client.get_manager_version(),
-      probeLoginSession(client),
-    ]);
-    if (managerProbe.status === 'rejected') {
-      const cause = managerProbe.reason;
+    // The session probe runs alongside the reachability check; a browser the
+    // webserver already knows skips `token_login` (also without a URL token).
+    const sessionProbe = probeLoginSession(client).catch(() => null);
+    try {
+      await client.get_manager_version();
+    } catch (cause) {
       logger.error('[STokenLoginBoundary] server unreachable', cause);
       surfaceError({ kind: 'server-unreachable', cause });
       return;
     }
-    const bootstrap =
-      sessionProbe.status === 'fulfilled' ? (sessionProbe.value ?? null) : null;
+    const bootstrap = (await sessionProbe) ?? null;
     const alreadyLoggedIn = bootstrap !== null;
 
     // Only after the session check do we surface `missing-token`: a bare

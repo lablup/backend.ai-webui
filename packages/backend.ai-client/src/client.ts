@@ -1108,11 +1108,8 @@ export class Client {
   }
 
   /**
-   * Adopt the live webserver session without a `/server/login-check` round
-   * trip: the access key comes from a login envelope or the bootstrap
-   * GraphQL query, the session id from the last `X-BackendAI-SessionID`
-   * header. Returns false when either is missing so the caller can fall
-   * back to `check_login`.
+   * Take the access key and the last `X-BackendAI-SessionID` as the live
+   * session; false when either is missing (then `check_login` still applies).
    */
   adoptLoginSession(accessKey: string | null | undefined): boolean {
     if (!accessKey || !this._loginSessionId) {
@@ -1124,10 +1121,8 @@ export class Client {
   }
 
   /**
-   * Ask the webserver whether it holds a session for this browser. Page load
-   * no longer calls this (FR-2367): the bootstrap GraphQL query answers 401
-   * for an unknown session instead. Kept as the fallback for a session whose
-   * id is not known locally (`adoptLoginSession` returned false).
+   * Ask the webserver whether it holds a session for this browser; the
+   * fallback when `adoptLoginSession` has no session id to adopt.
    */
   async check_login() {
     let rqst = this.newSignedRequest('POST', `/server/login-check`, null, null);
