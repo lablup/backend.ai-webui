@@ -32,19 +32,19 @@ import {
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
-import {
-  DropdownMenu,
-  type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
 import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
+import { List, ListItem } from '@astryxdesign/core/List';
+import { usePopover } from '@astryxdesign/core/Popover';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
 import { useTheme } from '@astryxdesign/core/theme';
+import { focusVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
   BAIModal,
@@ -56,16 +56,59 @@ import {
 import DOMPurify from 'dompurify';
 import {
   X,
-  Cloud,
   ChevronDown,
   Info,
   ChevronRight,
+  Trash2,
   TriangleAlert,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
+
+const styles = stylex.create({
+  endpointPopover: {
+    width: 'anchor-size(width)',
+  },
+  // Scroll inside the popover surface, so the scrollbar stays within its rounded edge.
+  endpointList: {
+    maxHeight: 140,
+    overflowY: 'auto',
+  },
+  // ListItem drops the last divider with a shorthand that its longhand default
+  // outranks in StyleX, so the line under the last row survives; drop it here.
+  endpointLastRow: {
+    borderBlockEndWidth: 0,
+  },
+  // Item rings the row on any focused descendant; ring it only for the row's own
+  // select button (one outline per tab stop), inset so the scrolling list can't clip it.
+  endpointRow: {
+    outlineWidth: {
+      default: '0',
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-width'],
+    },
+    outlineStyle: {
+      default: 'none',
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-style'],
+    },
+    outlineColor: {
+      default: null,
+      ':has(> :first-child:focus-visible)': focusVars['--focus-outline-color'],
+    },
+    outlineOffset: {
+      default: '0',
+      ':has(> :first-child:focus-visible)': `calc(-1 * ${focusVars['--focus-outline-width']})`,
+    },
+  },
+});
+
+/** One row of the endpoint history list. */
+export interface EndpointHistoryEntry {
+  endpoint: string;
+  /** Pinned from `VITE_DEFAULT_API_ENDPOINT`; tagged, but deletable like the rest. */
+  isFromEnv?: boolean;
+}
 
 interface LoginFormPanelProps {
   isOpen: boolean;
@@ -85,7 +128,9 @@ interface LoginFormPanelProps {
   showEndpointInput: boolean;
   isEndpointDisabled: boolean;
   form: FormInstance;
-  endpointMenuItems: DropdownMenuOption[];
+  endpointHistory: EndpointHistoryEntry[];
+  onSelectEndpoint: (ep: string) => void;
+  onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
@@ -117,7 +162,9 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   showEndpointInput,
   isEndpointDisabled,
   form,
-  endpointMenuItems,
+  endpointHistory,
+  onSelectEndpoint,
+  onDeleteEndpoint,
   onKeyDown,
   onLogin,
   onConnectionModeChange,
@@ -140,6 +187,35 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
+  // The saved endpoints are the field's autofill, floating so the form never
+  // reflows. Focus decides when it closes: a text input cannot be the layer's
+  // invoker, so light dismiss would shut it on every click into the field.
+  const endpointHistoryPopover = usePopover({
+    hasLightDismiss: false,
+    hasCloseButton: false,
+    hasAutoFocus: false,
+    role: 'none',
+  });
+  const endpointAnchorRef = useRef<HTMLDivElement | null>(null);
+  // Hiding returns focus to the field; that focus must not reopen the list.
+  const isReturningFocusRef = useRef(false);
+  const showEndpointHistory = () => {
+    if (isReturningFocusRef.current) {
+      isReturningFocusRef.current = false;
+      return;
+    }
+    if (endpointHistory.length > 0 && !endpointHistoryPopover.isOpen) {
+      endpointHistoryPopover.show();
+    }
+  };
+  const selectEndpoint = (endpoint: string) => {
+    onSelectEndpoint(endpoint);
+    isReturningFocusRef.current = true;
+    endpointHistoryPopover.hide();
+    requestAnimationFrame(() => {
+      isReturningFocusRef.current = false;
+    });
+  };
   const [helpPanel, setHelpPanel] = useState<{
     title: string;
     content: string;
@@ -450,44 +526,121 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
               {isEndpointExpanded && (
                 <BAIFlex
                   gap="xs"
-                  align="center"
+                  align="start"
                   style={{ marginTop: token('--spacing-2') }}
                 >
-                  {/* antd `Dropdown` wrapped an arbitrary trigger element;
-                      Astryx `DropdownMenu` renders its own trigger from
-                      `button` props and binds `onClick` per ITEM, so the
-                      endpoint-select handler is attached where the items are
-                      built (LoginView). The `overlayStyle` z-index and the
-                      hand-painted info-blue icon tint have no destination
-                      (P5). */}
-                  <DropdownMenu
-                    hasChevron={false}
-                    menuWidth={340}
-                    button={{
-                      variant: 'ghost',
-                      isIconOnly: true,
-                      icon: <Cloud size="1em" />,
-                      label: t('login.EndpointHistory'),
+                  <div
+                    ref={(el) => {
+                      endpointAnchorRef.current = el;
+                      endpointHistoryPopover.triggerRef(el);
                     }}
-                    items={endpointMenuItems}
-                  />
-                  <BAIFormItem
-                    name="api_endpoint"
-                    style={{ flex: 1, marginBottom: 0 }}
-                    rules={[
-                      {
-                        pattern: /^https?:\/\/(.*)/,
-                        message: t('login.EndpointStartWith'),
-                      },
-                    ]}
+                    onFocus={showEndpointHistory}
+                    onClick={showEndpointHistory}
+                    onBlur={(e) => {
+                      const next = e.relatedTarget as Node | null;
+                      if (
+                        !e.currentTarget.contains(next) &&
+                        !endpointHistoryPopover.contentRef.current?.contains(
+                          next,
+                        )
+                      ) {
+                        endpointHistoryPopover.hide();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (!endpointHistoryPopover.isOpen) {
+                        if (e.key === 'ArrowDown') showEndpointHistory();
+                        return;
+                      }
+                      const list = endpointHistoryPopover.contentRef.current;
+                      // The layer is its own focus scope, so Tab from the field
+                      // skips it; ArrowDown enters it as in a combobox.
+                      if (
+                        e.key === 'ArrowDown' &&
+                        !list?.contains(e.target as Node)
+                      ) {
+                        e.preventDefault();
+                        list?.querySelector('button')?.focus();
+                      } else if (e.key === 'Escape') {
+                        e.stopPropagation();
+                        endpointHistoryPopover.hide();
+                        endpointAnchorRef.current
+                          ?.querySelector('input')
+                          ?.focus();
+                      }
+                    }}
+                    style={{ flex: 1, minWidth: 0 }}
                   >
-                    <AstryxFormTextInput
-                      label={t('login.Endpoint', { postProcess: [] })}
-                      placeholder={t('login.Endpoint', { postProcess: [] })}
-                      disabled={isEndpointDisabled || isLoading}
-                      onChange={(value) => onSetApiEndpoint(value)}
-                    />
-                  </BAIFormItem>
+                    <BAIFormItem
+                      name="api_endpoint"
+                      style={{ marginBottom: 0 }}
+                      rules={[
+                        {
+                          pattern: /^https?:\/\/(.*)/,
+                          message: t('login.EndpointStartWith'),
+                        },
+                      ]}
+                    >
+                      <AstryxFormTextInput
+                        label={t('login.Endpoint', { postProcess: [] })}
+                        placeholder={t('login.Endpoint', { postProcess: [] })}
+                        disabled={isEndpointDisabled || isLoading}
+                        onChange={(value) => onSetApiEndpoint(value)}
+                      />
+                    </BAIFormItem>
+                    {endpointHistory.length > 0 &&
+                      endpointHistoryPopover.render(
+                        <List
+                          density="compact"
+                          hasDividers
+                          aria-label={t('login.EndpointHistory')}
+                          xstyle={styles.endpointList}
+                        >
+                          {endpointHistory.map(({ endpoint, isFromEnv }, i) => (
+                            <ListItem
+                              key={endpoint}
+                              label={isFromEnv ? `${endpoint} (env)` : endpoint}
+                              xstyle={[
+                                styles.endpointRow,
+                                i === endpointHistory.length - 1 &&
+                                  styles.endpointLastRow,
+                              ]}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                selectEndpoint(endpoint);
+                              }}
+                              endContent={
+                                <IconButton
+                                  variant="ghost"
+                                  size="sm"
+                                  icon={<Trash2 size="1em" />}
+                                  label={`${t('button.Delete')}: ${endpoint}`}
+                                  onClick={(e) => {
+                                    // The row is the select target; deleting
+                                    // must not also select it.
+                                    e.stopPropagation();
+                                    if (endpointHistory.length === 1) {
+                                      endpointHistoryPopover.hide();
+                                    }
+                                    onDeleteEndpoint(endpoint);
+                                    // The pressed row unmounts with focus in it.
+                                    endpointAnchorRef.current
+                                      ?.querySelector('input')
+                                      ?.focus();
+                                  }}
+                                />
+                              }
+                            />
+                          ))}
+                        </List>,
+                        {
+                          placement: 'below',
+                          alignment: 'start',
+                          offset: spacingVars['--spacing-1'],
+                          xstyle: styles.endpointPopover,
+                        },
+                      )}
+                  </div>
                   <IconButton
                     icon={<Info size="1em" />}
                     variant="ghost"
