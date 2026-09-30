@@ -12,7 +12,7 @@ import React, { use, useRef } from 'react';
 // `Dialog` under an antd-`Modal`-shaped surface, ticket p3-b), matching its
 // `CreateFileModal` sibling, and the field is the shared Astryx form adapter.
 interface CreateDirectoryModalProps extends BAIModalProps {
-  onRequestClose: (success: boolean) => void;
+  onRequestClose: (success: boolean, createdFolderName?: string) => void;
 }
 
 const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
@@ -41,7 +41,7 @@ const CreateDirectoryModal: React.FC<CreateDirectoryModalProps> = ({
             name: targetVFolderId,
           })
           .then(() => {
-            onRequestClose(true);
+            onRequestClose(true, values.folderName);
             message.success(t('comp:FileExplorer.FolderCreatedSuccessfully'));
           })
           .catch((err) => {
