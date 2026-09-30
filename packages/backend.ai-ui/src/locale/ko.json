@@ -541,7 +541,7 @@
   "comp:BAISessionTypeToken": {
     "Batch": "배치",
     "Inference": "추론",
-    "Interactive": "대화형",
+    "Interactive": "인터랙티브",
     "System": "업로드"
   },
   "comp:BAIStorageHostSelect": {
