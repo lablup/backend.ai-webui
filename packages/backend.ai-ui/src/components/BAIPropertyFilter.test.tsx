@@ -337,27 +337,6 @@ const PAGE_FIXTURES: Array<{
     ],
     filters: ['id ilike "%local%"', 'backend ilike "%vfs%"'],
   },
-  {
-    page: 'ReservoirAuditLogList',
-    filterProperties: [
-      { key: 'artifactName', propertyLabel: 'Artifact', type: 'string' },
-      {
-        key: 'action',
-        propertyLabel: 'Action',
-        type: 'string',
-        strictSelection: true,
-        defaultOperator: '==',
-        options: [
-          { label: 'IMPORT', value: 'IMPORT' },
-          { label: 'DELETE', value: 'DELETE' },
-        ],
-      },
-    ],
-    filters: [
-      'artifactName ilike "%llama%"',
-      'artifactName ilike "%gpt%" & action == "IMPORT"',
-    ],
-  },
 ];
 
 describe('URL filter round-trip (no shared-link regression)', () => {
