@@ -5,7 +5,6 @@
 import type { DeploymentRevisionDetail_revision$key } from '../__generated__/DeploymentRevisionDetail_revision.graphql';
 import { convertToBinaryUnit } from '../helper';
 import { formatShellCommand } from '../helper/parseCliCommand';
-import { useBAIBreakpoint } from '../theme-shim';
 // Co-located CSS (P17): keeps long values (model paths, image refs, shell
 // commands) wrapping inside their MetadataList cell instead of overflowing
 // the drawer, and provides the spinner animation for the "Applying" badge
@@ -16,6 +15,7 @@ import SourceCodeView from './SourceCodeView';
 import { Badge } from '@astryxdesign/core/Badge';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
@@ -26,6 +26,7 @@ import {
   BAIText,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { LoaderCircle } from 'lucide-react';
@@ -387,9 +388,7 @@ const DeploymentRevisionDetail: React.FC<{
                   {mount.mountDestination && (
                     <Text color="secondary">{mount.mountDestination}</Text>
                   )}
-                  {mount.mountPerm && (
-                    <Badge variant="neutral" label={mount.mountPerm} />
-                  )}
+                  {mount.mountPerm && <Token label={mount.mountPerm} />}
                 </BAIFlex>
               </BAIFlex>
             ))}

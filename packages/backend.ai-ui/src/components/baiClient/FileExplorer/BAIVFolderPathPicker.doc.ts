@@ -74,7 +74,7 @@ export const docs = {
       name: 'allowClear',
       type: 'boolean',
       description:
-        "Shows a clear button between the loading spinner and the chevron while a non-root path is picked (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.5.4.patch`). Clearing emits `undefined` (nothing picked), which is distinct from the vfolder root `''`.",
+        "Shows a clear button between the loading spinner and the chevron while a non-root path is picked (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.6.2.patch`). Clearing emits `undefined` (nothing picked), which is distinct from the vfolder root `''`.",
     },
     {
       name: 'placeholder',

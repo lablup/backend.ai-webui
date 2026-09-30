@@ -6,8 +6,8 @@ import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleMo
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { theme } from '../theme-shim';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAdminUserV2Select,
   BAIBulkErrorModal,
@@ -41,7 +41,9 @@ interface FailedAssignment {
  * failure the modal stays open: successfully assigned users are deselected,
  * only the failed users remain in the select (marked with an error border),
  * and the shared `BAIBulkErrorModal` lists each failure — pressing Assign
- * again retries just the remaining users.
+ * again retries just the remaining users. A manager >= 26.9.0a4 reports no
+ * partial failure (a refused user rejects the whole request), so there every
+ * selected user stays in the select for the retry.
  */
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   roleId,
@@ -51,7 +53,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
@@ -83,7 +85,9 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             grantedBy
             grantedAt
           }
-          failed {
+          # A manager >= 26.9.0a4 answers no per-user failures: a refused user
+          # rejects the whole mutation, which the catch below handles.
+          failed @deprecatedSince(version: "26.9.0a4") {
             userId
             message
           }
@@ -200,7 +204,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       // After a partial failure some assignments did reach the backend, so
       // even a cancel must report success=true — the parent then refetches.
       onCancel={() => onRequestClose(hasAssignedAny)}
-      destroyOnHidden
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
@@ -235,7 +238,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         alertDescription={
           <>
             {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
                 failed: failedAssignments.length,

@@ -1,7 +1,7 @@
 /**
  * One-line identity of a v2 `ImageV2` (ADR 0005), drawn by the shared
  * `ImageNodeSimpleTag` row. `BAIImageNodeSimpleTag` reads the v1 schema into
- * the same row; both take their chips from `imageNodeTagFacts`.
+ * the same row; both take their tokens from `imageNodeTagFacts`.
  */
 import { BAIImageNodeSimpleTagV2Fragment$key } from '../../__generated__/BAIImageNodeSimpleTagV2Fragment.graphql';
 import { preserveDotStartCase } from '../../helper';
@@ -18,7 +18,7 @@ type TagAlias = (tag: string) => string;
 type RawTag = { key?: string | null; value?: string | null } | null | undefined;
 type KeyedTag = { key: string; value?: string | null };
 
-/** A tag with no key has nothing to alias, so it is not a chip. */
+/** A tag with no key has nothing to alias, so it is not a token. */
 const keyedTags = (tags: ReadonlyArray<RawTag> | null | undefined) =>
   _.filter(
     _.compact(tags ?? []),

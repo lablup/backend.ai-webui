@@ -34,13 +34,62 @@ export function createBackendAIClient(
 }
 
 /**
+ * Dev-only escape from a hung login. A reviewer's dev server is usually pinned
+ * to a backend they cannot reach, and the reachability probe then holds the
+ * screen for the client-wide timeout; Esc (see LoginView) aborts it. The
+ * production path is untouched — `import.meta.env.DEV` is statically false.
+ */
+export class LoginProbeCancelledError extends Error {
+  constructor() {
+    super('The login reachability probe was aborted with Esc.');
+    this.name = 'LoginProbeCancelledError';
+  }
+}
+
+const LOGIN_PROBE_ESCAPED = 'login-probe-escaped';
+let activeProbe: AbortController | null = null;
+
+/** Abort the in-flight reachability probe, if any. Dev builds only. */
+export function escapeLoginProbe(): boolean {
+  if (!import.meta.env.DEV || activeProbe === null) return false;
+  activeProbe.abort(LOGIN_PROBE_ESCAPED);
+  return true;
+}
+
+/**
+ * The login screen's reachability probe. In a dev build it runs under an
+ * AbortController that `escapeLoginProbe` can fire; a caller-supplied signal
+ * replaces the client-wide timer, so the same deadline is re-created here.
+ */
+export async function probeManager(client: any): Promise<void> {
+  if (!import.meta.env.DEV) {
+    await client.get_manager_version();
+    return;
+  }
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), client.requestTimeout);
+  activeProbe = controller;
+  try {
+    await client.get_manager_version(controller.signal);
+  } catch (err) {
+    if (controller.signal.reason === LOGIN_PROBE_ESCAPED) {
+      throw new LoginProbeCancelledError();
+    }
+    throw err;
+  } finally {
+    clearTimeout(timer);
+    if (activeProbe === controller) activeProbe = null;
+  }
+}
+
+/**
  * Check if the current session is already logged in.
  */
 export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
   if (!apiEndpoint) return false;
   const { client } = createBackendAIClient('', '', apiEndpoint, 'SESSION');
   try {
-    await client.get_manager_version();
+    await probeManager(client);
     const isLogon = await client.check_login();
     return !!isLogon;
   } catch {

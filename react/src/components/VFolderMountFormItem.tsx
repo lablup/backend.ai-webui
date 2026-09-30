@@ -5,7 +5,6 @@
 import { Form } from '../form-engine';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useSuspendedAutoMountedFolders } from '../hooks/useSuspendedAutoMountedFolders';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
@@ -14,10 +13,11 @@ import {
   DEFAULT_ALIAS_BASE_PATH,
 } from './VFolderTable';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIFlex,
@@ -68,7 +68,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const form = Form.useFormInstance();
   const currentProject = useCurrentProjectValue();
   const { open: openFolderExplorer } = useFolderExplorerOpener();
@@ -147,10 +147,10 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
             footer={
               <BAIFlex
                 justify="end"
-                gap={token.sizeXXS}
+                gap="xxs"
                 style={{
-                  padding: token.paddingXXS,
-                  borderTop: `1px solid ${token.colorBorderSecondary}`,
+                  padding: token('--spacing-1'),
+                  borderTop: `1px solid ${token('--color-border')}`,
                 }}
               >
                 {/* MAPPING §3.3: `type="text"` icon-only buttons wrapped in
@@ -204,7 +204,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
             <BAIFlex
               direction="column"
               gap="xxs"
-              style={{ marginBottom: token.marginLG }}
+              style={{ marginBottom: token('--spacing-6') }}
             >
               {mountIds.map((globalId: string) => {
                 const localId = toLocalId(globalId);
@@ -214,7 +214,7 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                     key={globalId}
                     direction="row"
                     align="start"
-                    gap={token.sizeXXS}
+                    gap="xxs"
                   >
                     {/* `ellipsis={{tooltip:true}}` -> `maxLines` +
                         `hasTruncateTooltip` (MAPPING §3.4). */}
@@ -273,8 +273,8 @@ const VFolderMountFormItem: React.FC<VFolderMountFormItemProps> = ({
                       size={16}
                       style={{
                         cursor: 'pointer',
-                        color: token.colorTextQuaternary,
-                        marginTop: token.marginXXS,
+                        color: token('--color-text-quaternary'),
+                        marginTop: token('--spacing-1'),
                         flexShrink: 0,
                       }}
                       onClick={() => handleRemoveFolder(globalId)}
@@ -333,13 +333,12 @@ const AutoMountFolderSection: React.FC<{ currentProjectId: string }> = ({
 
   return (
     // antd `Descriptions size="small"` -> `MetadataList` (MAPPING §4; `size`
-    // has no destination). The colourless `<Tag>`s are Astryx's default
-    // `neutral` Badge.
+    // has no destination).
     <BAIMetadataList columns="single">
       <MetadataListItem label={t('data.AutomountFolders')}>
         <BAIFlex gap="xxs" wrap="wrap">
           {autoMountNames.map((name) => (
-            <Badge key={name} label={name} />
+            <Token key={name} label={name} />
           ))}
         </BAIFlex>
       </MetadataListItem>

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<99bdccbe04e97785e1504afef94cd266>>
+ * @generated SignedSource<<2efe008761811f00d792cbcedab5432d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,13 +17,13 @@ export type AstryxSessionProbeCasesQuery$variables = {
 };
 export type AstryxSessionProbeCasesQuery$data = {
   readonly error: {
-    readonly " $fragmentSpreads": FragmentRefs<"SessionStatusDetailModalFragment" | "SessionStatusTagFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"SessionStatusBadgeFragment" | "SessionStatusDetailModalFragment">;
   } | null | undefined;
   readonly pending: {
-    readonly " $fragmentSpreads": FragmentRefs<"SessionStatusTagFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"SessionStatusBadgeFragment">;
   } | null | undefined;
   readonly running: {
-    readonly " $fragmentSpreads": FragmentRefs<"SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusTagFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"SessionIdleChecksNodeFragment" | "SessionReservationFragment" | "SessionStatusBadgeFragment">;
   } | null | undefined;
 };
 export type AstryxSessionProbeCasesQuery = {
@@ -59,7 +59,7 @@ v1 = [
 v2 = {
   "args": null,
   "kind": "FragmentSpread",
-  "name": "SessionStatusTagFragment"
+  "name": "SessionStatusBadgeFragment"
 },
 v3 = [
   {
@@ -111,6 +111,48 @@ v9 = {
   "storageKey": null
 },
 v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "cluster_size",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "KernelConnection",
+  "kind": "LinkedField",
+  "name": "kernel_nodes",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "KernelEdge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "KernelNode",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v5/*: any*/),
+            (v6/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -198,6 +240,8 @@ return {
           (v7/*: any*/),
           (v8/*: any*/),
           (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -205,7 +249,7 @@ return {
             "name": "created_at",
             "storageKey": null
           },
-          (v10/*: any*/),
+          (v12/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -235,7 +279,9 @@ return {
           (v6/*: any*/),
           (v7/*: any*/),
           (v8/*: any*/),
-          (v9/*: any*/)
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/)
         ],
         "storageKey": null
       },
@@ -252,6 +298,8 @@ return {
           (v7/*: any*/),
           (v8/*: any*/),
           (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -259,23 +307,23 @@ return {
             "name": "name",
             "storageKey": null
           },
-          (v10/*: any*/)
+          (v12/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "34f258c08b6db62df953842ebe3f5c1d",
+    "cacheID": "38a3425ae8eae7f0fb2d94c100462c47",
     "id": null,
     "metadata": {},
     "name": "AstryxSessionProbeCasesQuery",
     "operationKind": "query",
-    "text": "query AstryxSessionProbeCasesQuery(\n  $id1: GlobalIDField!\n  $id2: GlobalIDField!\n  $id3: GlobalIDField!\n) {\n  running: compute_session_node(id: $id1) {\n    ...SessionStatusTagFragment\n    ...SessionReservationFragment\n    ...SessionIdleChecksNodeFragment\n    id\n  }\n  pending: compute_session_node(id: $id2) {\n    ...SessionStatusTagFragment\n    id\n  }\n  error: compute_session_node(id: $id3) {\n    ...SessionStatusTagFragment\n    ...SessionStatusDetailModalFragment\n    id\n  }\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusTagFragment\n}\n\nfragment SessionStatusTagFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n}\n"
+    "text": "query AstryxSessionProbeCasesQuery(\n  $id1: GlobalIDField!\n  $id2: GlobalIDField!\n  $id3: GlobalIDField!\n) {\n  running: compute_session_node(id: $id1) {\n    ...SessionStatusBadgeFragment\n    ...SessionReservationFragment\n    ...SessionIdleChecksNodeFragment\n    id\n  }\n  pending: compute_session_node(id: $id2) {\n    ...SessionStatusBadgeFragment\n    id\n  }\n  error: compute_session_node(id: $id3) {\n    ...SessionStatusBadgeFragment\n    ...SessionStatusDetailModalFragment\n    id\n  }\n}\n\nfragment SessionIdleChecksNodeFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusCellFragment\n}\n\nfragment SessionReclamationStatusCellFragment on ComputeSessionNode {\n  id\n  idle_checks\n  ...SessionReclamationStatusPopoverFragment\n}\n\nfragment SessionReclamationStatusPopoverFragment on ComputeSessionNode {\n  id\n  idle_checks\n}\n\nfragment SessionReservationFragment on ComputeSessionNode {\n  id\n  created_at\n  starts_at\n  terminated_at\n}\n\nfragment SessionStatusBadgeFragment on ComputeSessionNode {\n  id\n  status\n  status_info\n  status_data\n  queue_position @since(version: \"25.13.0\")\n  cluster_size\n  kernel_nodes {\n    edges {\n      node {\n        id\n        status\n      }\n    }\n  }\n}\n\nfragment SessionStatusDetailModalFragment on ComputeSessionNode {\n  id\n  name\n  status\n  status_info\n  status_data\n  starts_at\n  ...SessionStatusBadgeFragment\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2f3faa634d657f1b01bf9cb1df432a32";
+(node as any).hash = "95f47d6e4f043d0518c971595813100f";
 
 export default node;

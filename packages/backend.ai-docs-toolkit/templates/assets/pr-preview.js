@@ -40,6 +40,7 @@
     return e;
   };
   const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const escAttr = (s) => esc(s).replace(/"/g, "&quot;");
 
   // Inline / side-by-side choice, remembered across pages.
   let modeOverride = null;
@@ -503,7 +504,12 @@
       document.body.classList.add("bai-pr-preview");
       document.body.classList.toggle("bai-marks-off", !marksOn);
       marks = [];
-      if (page.status !== "modified" || !section) return;
+      if (page.status !== "modified" || !section) {
+        // The index and the unchanged pages carry the navigator too, so the
+        // badge still has to say where the reader is.
+        updatePos();
+        return;
+      }
       // Consecutive removals share an anchor; each follows the previous one so
       // they keep their source order instead of stacking up reversed.
       const lastAt = new Map();
@@ -782,12 +788,120 @@
       `<button data-nav="comments" class="bai-nav__comments" title="Copy every comment in this preview as one PR comment" hidden></button>` +
       `<button data-nav="prev" title="Previous change (p) — wraps to the previous changed page">‹</button>` +
       `<button data-nav="next" title="Next change (n) — wraps to the next changed page">›</button>` +
-      `<button data-nav="panel" title="Changed pages">☰</button></div>`;
+      `<button data-nav="panel" title="Changed pages and their pins (click a pin to open it)">☰</button></div>`;
     document.body.appendChild(nav);
     const panel = $(".bai-nav__panel", nav);
     const posEl = $(".bai-nav__pos", nav);
     const commentsBtn = $('[data-nav="comments"]', nav);
     const pageIdx = summary.pages.findIndex((p) => p.slug === slug);
+
+    // ---------------------------------------------------------- pin list
+    // The panel lists every change of this language, not just the pages that
+    // carry them: a reviewer who landed on the index sees what changed
+    // everywhere and opens a pin straight from its row. The other pages'
+    // sidecars load the first time the panel opens and are then kept.
+    const sidecars = new Map([[slug, page]]);
+    const pendingPins = new Set();
+    let repaintTimer = 0;
+    const repaintPanel = () => {
+      clearTimeout(repaintTimer);
+      repaintTimer = setTimeout(() => {
+        if (!panel.hidden) renderPanel();
+      }, 30);
+    };
+    function loadPins() {
+      for (const p of summary.pages) {
+        if (p.status !== "modified") continue;
+        if (sidecars.has(p.slug) || pendingPins.has(p.slug)) continue;
+        pendingPins.add(p.slug);
+        fetch(`./${p.slug}.changes.json`)
+          .then((r) => (r.ok ? r.json() : null))
+          .then((data) => sidecars.set(p.slug, data || { changes: [] }))
+          .catch(() => sidecars.set(p.slug, { changes: [] }))
+          .then(() => {
+            pendingPins.delete(p.slug);
+            repaintPanel();
+          });
+      }
+    }
+
+    const PIN_EXCERPT = 72;
+    // What the row says a pin is: its own text. An image has none a reader
+    // would know, so it borrows the section it sits in and falls back to its
+    // file name.
+    const pinText = (c, pageTitle) => {
+      const raw = (c.newText || c.oldText || "").replace(/\s+/g, " ").trim();
+      const section = c.section && c.section.text;
+      const text =
+        c.blockKind === "image"
+          ? (section === pageTitle ? "" : section) ||
+            raw.split("/").pop() ||
+            raw
+          : raw;
+      return text.length > PIN_EXCERPT
+        ? `${text.slice(0, PIN_EXCERPT)}…`
+        : text || KIND_LABEL[c.blockKind] || c.blockKind;
+    };
+    const pinTitle = (c) =>
+      `#${c.id} ${c.type} ${KIND_LABEL[c.blockKind] || c.blockKind}` +
+      `${c.section ? ` — ${c.section.text}` : ""}`;
+    function pinRows(p) {
+      if (p.status !== "modified") return "";
+      const sc = sidecars.get(p.slug);
+      const n = p.counts.total;
+      if (!sc)
+        return `<div class="bai-nav__pins"><div class="bai-nav__pin bai-nav__pin--empty">Loading ${n} pin${n === 1 ? "" : "s"}…</div></div>`;
+      const seen = p.slug === slug ? viewed : readViewed(lang, p.slug);
+      const notes = p.slug === slug ? comments : readComments(lang, p.slug);
+      const rows = (sc.changes || [])
+        .map((c) => {
+          const isSeen = seen.has(c.fingerprint);
+          const noted = !!(notes[c.fingerprint] || {}).text;
+          return (
+            `<a class="bai-nav__pin${isSeen ? " bai-nav__pin--viewed" : ""}"` +
+            ` href="./${p.slug}.html#bai-change-${c.id}"` +
+            ` data-pin-slug="${escAttr(p.slug)}" data-pin-id="${c.id}"` +
+            ` title="${escAttr(pinTitle(c))}">` +
+            `<span class="bai-nav__pin-id bai-nav__pin-id--${c.type}">${c.id}</span>` +
+            `<span class="bai-nav__pin-text">${esc(pinText(c, p.title))}</span>` +
+            (noted
+              ? `<span class="bai-nav__pin-flag bai-nav__pin-flag--note" title="has a comment">✎</span>`
+              : "") +
+            (isSeen
+              ? `<span class="bai-nav__pin-flag" title="viewed">✓</span>`
+              : "") +
+            `</a>`
+          );
+        })
+        .join("");
+      return `<div class="bai-nav__pins">${rows}</div>`;
+    }
+    // A plain left click is ours; every other one belongs to the browser, so a
+    // middle-click or a modified click opens the pin's page in its own tab.
+    function wirePins() {
+      panel.querySelectorAll("[data-pin-slug]").forEach((a) =>
+        a.addEventListener("click", (e) => {
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+            return;
+          if (a.dataset.pinSlug === slug) {
+            e.preventDefault();
+            const i = marks.findIndex(
+              (m) => String(m.change.id) === a.dataset.pinId,
+            );
+            if (i < 0) return;
+            panel.hidden = true;
+            jumpTo(i, true, true);
+            return;
+          }
+          // The popover opens on landing, the way stepping across pages does.
+          try {
+            sessionStorage.setItem(LAND_KEY, "1");
+          } catch {
+            /* private mode */
+          }
+        }),
+      );
+    }
 
     function updateCommentBadge() {
       const n = allComments().length;
@@ -797,6 +911,8 @@
     updateCommentBadge();
 
     function renderPanel() {
+      loadPins();
+      const scroll = panel.scrollTop;
       const rows = summary.pages
         .map((p, i) => {
           const tag =
@@ -818,7 +934,10 @@
           // A deleted page has no copy in this build, so it is not a link.
           if (p.status === "deleted")
             return `<div class="bai-nav__row bai-nav__row--deleted">${inner}</div>`;
-          return `<a class="bai-nav__row${i === pageIdx ? " bai-nav__row--current" : ""}" href="./${p.slug}.html#bai-change-1">${inner}</a>`;
+          return (
+            `<a class="bai-nav__row${i === pageIdx ? " bai-nav__row--current" : ""}" href="./${p.slug}.html#bai-change-1">${inner}</a>` +
+            pinRows(p)
+          );
         })
         .join("");
       const langs = Object.entries(manifest.langs)
@@ -839,7 +958,10 @@
         (all.length
           ? `<button data-act="copy-comments">Copy ${all.length} comment${all.length === 1 ? "" : "s"}</button><button data-act="clear-comments">Clear comments</button>`
           : "") +
-        `<button data-act="marks">${marksOn ? "Hide marks" : "Show marks"}</button></div>`;
+        (marks.length
+          ? `<button data-act="marks">${marksOn ? "Hide marks" : "Show marks"}</button>`
+          : "") +
+        `</div>`;
       const stale =
         (staleViewed
           ? `<div class="bai-nav__stale">${staleViewed} change${staleViewed > 1 ? "s" : ""} you had viewed ${staleViewed > 1 ? "have" : "has"} changed since — shown as unviewed again</div>`
@@ -848,9 +970,11 @@
           ? `<div class="bai-nav__stale">${staleComments} comment${staleComments > 1 ? "s" : ""} refer${staleComments > 1 ? "" : "s"} to a block that changed since — copied with a note</div>`
           : "");
       panel.innerHTML =
-        `<div class="bai-nav__section">Changed pages${manifest.label ? ` — ${esc(manifest.label)}` : ""}</div>` +
+        `<div class="bai-nav__section">Changed pages and pins${manifest.label ? ` — ${esc(manifest.label)}` : ""}</div>` +
         `${rows || '<div class="bai-nav__row"><em>No page changed</em></div>'}${stale}${actions}` +
         `<div class="bai-nav__section">Languages</div><div class="bai-nav__lang">${langs}</div>`;
+      panel.scrollTop = scroll;
+      wirePins();
       panel.querySelectorAll("[data-act]").forEach((b) =>
         b.addEventListener("click", (e) => {
           const act = b.dataset.act;
@@ -887,7 +1011,9 @@
         ? `${current < 0 ? "–" : current + 1} / ${marks.length}${v ? ` · ${v} viewed` : ""}`
         : page.status === "new"
           ? "new page"
-          : "no marks";
+          : pageIdx < 0
+            ? "unchanged"
+            : "no marks";
       posEl.classList.toggle(
         "bai-nav__pos--done",
         marks.length > 0 && v === marks.length,
@@ -923,6 +1049,8 @@
       updatePos();
     }
     const LAND_KEY = "bai-pr-preview:open-on-land";
+    /** The list opens by itself once a tab, on a page with nothing marked. */
+    const PANEL_KEY = "bai-pr-preview:panel-shown";
     function step(dir) {
       const next = current + dir;
       if (marks.length && next >= 0 && next < marks.length)
@@ -1051,6 +1179,22 @@
     });
 
     apply();
+    // A page with nothing marked on it — the language index a reviewer lands
+    // on, an unchanged page — has only the list to offer, so it opens once per
+    // tab rather than staying behind a button nobody knew to press.
+    if (!marks.length && summary.pages.length) {
+      let shown = false;
+      try {
+        shown = sessionStorage.getItem(PANEL_KEY) === "1";
+        sessionStorage.setItem(PANEL_KEY, "1");
+      } catch {
+        /* private mode */
+      }
+      if (!shown) {
+        renderPanel();
+        panel.hidden = false;
+      }
+    }
     const m = location.hash.match(/^#bai-change-(\d+|last)$/);
     if (m && marks.length) {
       // Resolve by change id, the number Copy ref and the popover both show.

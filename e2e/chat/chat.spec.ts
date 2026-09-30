@@ -310,7 +310,7 @@ test.describe(
       await historyButton.first().click();
 
       // The history drawer opens
-      const drawer = page.getByRole('dialog', { name: 'History' });
+      const drawer = page.getByRole('complementary', { name: 'History' });
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // At least one history entry appears (rendered as table rows in BAITable)
@@ -347,7 +347,7 @@ test.describe(
       await historyButton.first().click();
 
       // The history drawer opens
-      const drawer = page.getByRole('dialog', { name: 'History' });
+      const drawer = page.getByRole('complementary', { name: 'History' });
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // The history entry label should contain "This is my first message"
@@ -398,7 +398,7 @@ test.describe(
       const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
-      const drawer = page.getByRole('dialog', { name: 'History' });
+      const drawer = page.getByRole('complementary', { name: 'History' });
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // Both history entries appear in the drawer
@@ -456,7 +456,7 @@ test.describe(
       const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
-      const drawer = page.getByRole('dialog', { name: 'History' });
+      const drawer = page.getByRole('complementary', { name: 'History' });
       await expect(drawer).toBeVisible({ timeout: 10000 });
       await expect(drawer.getByText('My Renamed Session')).toBeVisible({
         timeout: 10000,
@@ -500,7 +500,7 @@ test.describe(
       const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
-      const drawer = page.getByRole('dialog', { name: 'History' });
+      const drawer = page.getByRole('complementary', { name: 'History' });
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // Both entries visible
@@ -549,7 +549,7 @@ test.describe(
       const historyButton = page.getByRole('button', { name: 'History' });
       await historyButton.first().click();
 
-      const drawer = page.getByRole('dialog', { name: 'History' });
+      const drawer = page.getByRole('complementary', { name: 'History' });
       await expect(drawer).toBeVisible({ timeout: 10000 });
 
       // Click the trash icon on the only visible history entry (current session)

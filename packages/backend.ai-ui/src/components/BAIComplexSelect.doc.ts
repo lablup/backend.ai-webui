@@ -249,7 +249,7 @@ export const docs = {
       name: 'allowClear',
       type: 'boolean',
       description:
-        'Shows a clear button between the loading spinner and the chevron while something is selected (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.5.4.patch`); it emits `[]` in `multiple` mode and `null` otherwise.',
+        'Shows a clear button between the loading spinner and the chevron while something is selected (Astryx `ComplexSelector.hasClear`, added by `react/patches/@astryxdesign__core@0.6.2.patch`); it emits `[]` in `multiple` mode and `null` otherwise.',
       default: 'false',
     },
     {

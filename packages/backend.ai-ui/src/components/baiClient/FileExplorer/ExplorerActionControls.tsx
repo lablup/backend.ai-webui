@@ -2,8 +2,8 @@ import { App } from '../../../app-shim';
 import { initiateDownload } from '../../../helper';
 import { useTanMutation } from '../../../helper/reactQueryAlias';
 import { useToggle } from '../../../hooks';
+import { useBAIBreakpoint } from '../../../hooks/useBAIBreakpoint';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme, useBAIBreakpoint } from '../../../theme-shim';
 import BAIButton from '../../BAIButton';
 import BAIFlex from '../../BAIFlex';
 import BAISelectionLabel from '../../BAISelectionLabel';
@@ -15,9 +15,11 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
+import { useDownloadErrorMessage } from './hooks';
 import type { RcFile } from './hooks';
 import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   DownloadIcon,
   FilePlus,
@@ -80,8 +82,9 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   // SSR safety — which would make every label here flash in and out. The shim
   // exists for exactly this (RESPONSIVE-POLICY §2) and is a pure import swap.
   const { lg } = useBAIBreakpoint();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
+  const getDownloadErrorMessage = useDownloadErrorMessage();
   const { targetVFolderId, targetVFolderName, currentPath } =
     use(FolderInfoContext);
   const baiClient = useConnectedBAIClient();
@@ -149,11 +152,10 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }),
       );
     },
-    onError: (err: any) => {
-      if (err && err.message) {
-        message.error(err.message);
-      } else if (err && err.title) {
-        message.error(err.title);
+    onError: (err: unknown) => {
+      const text = getDownloadErrorMessage(err);
+      if (text) {
+        message.error(text);
       }
     },
   });
@@ -180,8 +182,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                     size="1em"
                     style={{
                       color: enableDelete
-                        ? token.colorError
-                        : token.colorTextDisabled,
+                        ? token('--color-error')
+                        : token('--color-text-disabled'),
                     }}
                   />
                 }
@@ -198,12 +200,13 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
               >
                 <BAIButton
                   disabled={!enableDownload}
+                  aria-label={t('comp:FileExplorer.DownloadSelected')}
                   icon={
                     <DownloadIcon
                       style={{
                         color: enableDownload
-                          ? token.colorInfo
-                          : token.colorTextDisabled,
+                          ? token('--color-info')
+                          : token('--color-text-disabled'),
                       }}
                     />
                   }
@@ -213,7 +216,11 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
                         ? file.name
                         : `${currentPath}/${file.name}`,
                     );
-                    await downloadArchiveMutation.mutateAsync(filePaths);
+                    // onError already toasted; an escaping rejection would
+                    // hit the page's error boundary and unmount the modal.
+                    await downloadArchiveMutation
+                      .mutateAsync(filePaths)
+                      .catch(() => {});
                   }}
                 />
               </Tooltip>
@@ -314,7 +321,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
       </BAIFlex>
       <DeleteSelectedItemsModal
-        destroyOnHidden
         open={openDeleteModal}
         selectedFiles={selectedFiles}
         onDeleteFilesInBackground={onDeleteFilesInBackground}
@@ -326,7 +332,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateDirectoryModal
-        destroyOnHidden
         open={openCreateModal}
         onRequestClose={(success: boolean, createdFolderName?: string) => {
           if (success) {
@@ -339,7 +344,6 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         }}
       />
       <CreateFileModal
-        destroyOnHidden
         open={openCreateFileModal}
         onRequestClose={(success: boolean) => {
           if (success) {

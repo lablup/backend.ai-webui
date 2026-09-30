@@ -4,7 +4,9 @@ import {
 } from '../../__generated__/BAIAuditLogNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIAuditLogStatusTag, { AuditLogStatus } from '../BAIAuditLogStatusTag';
+import BAIAuditLogStatusBadge, {
+  AuditLogStatus,
+} from '../BAIAuditLogStatusBadge';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
 import {
@@ -128,7 +130,7 @@ const BAIAuditLogNodes = ({
         dataIndex: 'status',
         sorter: isEnableSorter('status'),
         render: (__, record) => (
-          <BAIAuditLogStatusTag status={toAuditLogStatus(record.status)} />
+          <BAIAuditLogStatusBadge status={toAuditLogStatus(record.status)} />
         ),
       },
       {

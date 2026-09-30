@@ -418,7 +418,7 @@
   position: absolute;
   right: 0;
   bottom: 44px;
-  width: 320px;
+  width: 360px;
   max-height: 60vh;
   overflow: auto;
   background: var(--bai-pop-bg);
@@ -462,6 +462,40 @@ a.bai-nav__row:hover { background: var(--bai-row-hover); }
 }
 .bai-nav__count--done { background: var(--bai-add); color: #fff; }
 .bai-nav__count--note { background: var(--bai-focus); color: #fff; }
+/* the pins of one page, listed under its row */
+.bai-nav__pins { margin: 0 14px 4px 22px; border-left: 1px solid var(--bai-pop-border); }
+.bai-nav__pin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px 3px 8px;
+  font-size: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+a.bai-nav__pin:hover { background: var(--bai-row-hover); }
+.bai-nav__pin--viewed { opacity: 0.55; }
+.bai-nav__pin--empty { opacity: 0.6; font-style: italic; }
+.bai-nav__pin-id {
+  flex: none;
+  min-width: 18px;
+  text-align: center;
+  font: 700 10px/15px system-ui, sans-serif;
+  border-radius: 3px;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  background: var(--bai-mod);
+}
+.bai-nav__pin-id--added { background: var(--bai-add); }
+.bai-nav__pin-id--removed { background: var(--bai-del); }
+.bai-nav__pin-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bai-nav__pin-flag { flex: none; font-size: 11px; opacity: 0.8; }
+.bai-nav__pin-flag--note { color: var(--bai-focus); opacity: 1; }
 .bai-nav__actions {
   display: flex;
   gap: 6px;

@@ -5,7 +5,7 @@
 import { ResourceSlotName, useResourceSlotsDetails } from '../hooks/backendai';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useResourceLimitAndRemaining } from '../hooks/useResourceLimitAndRemaining';
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIBoardItemTitle,
   BAIFlex,
@@ -34,7 +34,7 @@ const MyResource: React.FC<MyResourceProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const currentProject = useCurrentProjectValue();
 
   const [internalFetchKey, updateInternalFetchKey] = useFetchKey();
@@ -155,8 +155,8 @@ const MyResource: React.FC<MyResourceProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

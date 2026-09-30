@@ -56,6 +56,8 @@ export interface BAICheckboxProps {
   label?: string;
   /** Hide the inline label but keep it as the accessible name. */
   isLabelHidden?: boolean;
+  /** Box size; `sm` for dense grids. */
+  size?: 'sm' | 'md';
   onChange?: (checked: boolean, e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   style?: React.CSSProperties;

@@ -112,8 +112,11 @@ describe.each(componentDocs.map((file) => [stemOf(file), file]))(
       );
       for (const props of propLists(docs)) {
         for (const prop of props) {
+          // A nested field is documented as a path (`values[].copyable`);
+          // the source names only its last segment.
+          const leaf = prop.name.split('.').pop()!.replace(/\[\]$/, '');
           expect(
-            new RegExp(`\\b${prop.name}\\b`).test(source),
+            new RegExp(`\\b${leaf}\\b`).test(source),
             `${stem}.doc.ts documents a prop \`${prop.name}\` that ${stem}.tsx never names`,
           ).toBe(true);
         }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b3429e7405e500fee4b598b5887f5d0e>>
+ * @generated SignedSource<<5d946137cdf010f71d8d77bc087adcc7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,16 +13,18 @@ export type SessionOwnerSetterCardQuery$variables = {
   email: string;
 };
 export type SessionOwnerSetterCardQuery$data = {
+  readonly adminUsersV2: {
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly organization: {
+          readonly domainName: string | null | undefined;
+        };
+      };
+    }>;
+  } | null | undefined;
   readonly keypairs: ReadonlyArray<{
     readonly access_key: string | null | undefined;
   } | null | undefined> | null | undefined;
-  readonly user: {
-    readonly domain_name: string | null | undefined;
-    readonly groups: ReadonlyArray<{
-      readonly id: string | null | undefined;
-      readonly name: string | null | undefined;
-    } | null | undefined> | null | undefined;
-  } | null | undefined;
 };
 export type SessionOwnerSetterCardQuery = {
   response: SessionOwnerSetterCardQuery$data;
@@ -51,37 +53,53 @@ v2 = {
   "name": "access_key",
   "storageKey": null
 },
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "domain_name",
-  "storageKey": null
-},
+v3 = [
+  {
+    "fields": [
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "equals",
+            "variableName": "email"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "email"
+      }
+    ],
+    "kind": "ObjectValue",
+    "name": "filter"
+  },
+  {
+    "kind": "Literal",
+    "name": "limit",
+    "value": 1
+  }
+],
 v4 = {
   "alias": null,
   "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "concreteType": "UserGroup",
+  "concreteType": "UserV2OrganizationInfo",
   "kind": "LinkedField",
-  "name": "groups",
-  "plural": true,
+  "name": "organization",
+  "plural": false,
   "selections": [
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "name",
+      "name": "domainName",
       "storageKey": null
-    },
-    (v4/*: any*/)
+    }
   ],
+  "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
   "storageKey": null
 };
 return {
@@ -105,14 +123,35 @@ return {
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
+        "args": (v3/*: any*/),
+        "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "adminUsersV2",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
-          (v5/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "UserV2Edge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v4/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
@@ -135,37 +174,58 @@ return {
         "plural": true,
         "selections": [
           (v2/*: any*/),
-          (v4/*: any*/)
+          (v5/*: any*/)
         ],
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
+        "args": (v3/*: any*/),
+        "concreteType": "UserV2Connection",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "adminUsersV2",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
-          (v5/*: any*/),
-          (v4/*: any*/)
+          {
+            "alias": null,
+            "args": null,
+            "concreteType": "UserV2Edge",
+            "kind": "LinkedField",
+            "name": "edges",
+            "plural": true,
+            "selections": [
+              {
+                "alias": null,
+                "args": null,
+                "concreteType": "UserV2",
+                "kind": "LinkedField",
+                "name": "node",
+                "plural": false,
+                "selections": [
+                  (v4/*: any*/),
+                  (v5/*: any*/)
+                ],
+                "storageKey": null
+              }
+            ],
+            "storageKey": null
+          }
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "a8de553c14d6730a6825cba2f409be0d",
+    "cacheID": "865bff1041e1e8ae0d279fe92ead9472",
     "id": null,
     "metadata": {},
     "name": "SessionOwnerSetterCardQuery",
     "operationKind": "query",
-    "text": "query SessionOwnerSetterCardQuery(\n  $email: String!\n) {\n  keypairs(email: $email) {\n    access_key\n    id\n  }\n  user(email: $email) {\n    domain_name\n    groups {\n      name\n      id\n    }\n    id\n  }\n}\n"
+    "text": "query SessionOwnerSetterCardQuery(\n  $email: String!\n) {\n  keypairs(email: $email) {\n    access_key\n    id\n  }\n  adminUsersV2(filter: {email: {equals: $email}}, limit: 1) {\n    edges {\n      node {\n        organization {\n          domainName\n        }\n        id\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ba086835ea654ab889e0e6aaefa0abfe";
+(node as any).hash = "39779d2d7a9c2afeb409c517e2e4a1f6";
 
 export default node;

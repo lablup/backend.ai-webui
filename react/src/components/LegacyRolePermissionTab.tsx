@@ -16,7 +16,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import LegacyCreatePermissionModal, {
   PermissionMatrixQuery,
 } from './LegacyCreatePermissionModal';
-import { Badge } from '@astryxdesign/core/Badge';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAIButton,
   BAIDeleteConfirmModal,
@@ -31,7 +31,7 @@ import {
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
-  badgeVariantForTagColor,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import { Trash2, EditIcon, PlusIcon } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
@@ -423,8 +423,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
             title: t('rbac.ScopeType'),
             dataIndex: 'scopeType',
             render: (value: string) => (
-              <Badge
-                variant={badgeVariantForTagColor(undefined)}
+              <Token
                 label={t(`rbac.types.${value}`, { defaultValue: value })}
               />
             ),
@@ -465,8 +464,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
             title: t('rbac.EntityType'),
             sorter: true,
             render: (value: string) => (
-              <Badge
-                variant={badgeVariantForTagColor(undefined)}
+              <Token
                 label={t(`rbac.types.${value}`, { defaultValue: value })}
               />
             ),
@@ -476,8 +474,8 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
             title: t('rbac.Operation'),
             dataIndex: 'operation',
             render: (value: string) => (
-              <Badge
-                variant={badgeVariantForTagColor('blue')}
+              <Token
+                color={tokenColorForTagColor('blue')}
                 label={t(`rbac.operations.${value}`, { defaultValue: value })}
               />
             ),
@@ -525,8 +523,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
                           title: t('rbac.ScopeType'),
                           dataIndex: 'scopeType',
                           render: (v: string) => (
-                            <Badge
-                              variant={badgeVariantForTagColor(undefined)}
+                            <Token
                               label={t(`rbac.types.${v}`, { defaultValue: v })}
                             />
                           ),
@@ -541,8 +538,7 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
                           title: t('rbac.EntityType'),
                           dataIndex: 'entityType',
                           render: (v: string) => (
-                            <Badge
-                              variant={badgeVariantForTagColor(undefined)}
+                            <Token
                               label={t(`rbac.types.${v}`, { defaultValue: v })}
                             />
                           ),
@@ -552,8 +548,8 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
                           title: t('rbac.Operation'),
                           dataIndex: 'operation',
                           render: (v: string) => (
-                            <Badge
-                              variant={badgeVariantForTagColor('blue')}
+                            <Token
+                              color={tokenColorForTagColor('blue')}
                               label={t(`rbac.operations.${v}`, {
                                 defaultValue: v,
                               })}

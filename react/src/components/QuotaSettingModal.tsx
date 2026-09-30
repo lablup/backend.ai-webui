@@ -102,7 +102,6 @@ const QuotaSettingModal: React.FC<Props> = ({
   return (
     <BAIModal
       {...baiModalProps}
-      destroyOnHidden
       onOk={_onOk}
       confirmLoading={isInFlightCommitSetQuotaScope}
       onCancel={onRequestClose}

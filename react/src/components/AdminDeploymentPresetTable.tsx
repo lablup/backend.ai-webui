@@ -8,12 +8,14 @@ import type {
 } from '../__generated__/AdminDeploymentPresetTableFragment.graphql';
 import {
   BAIColumnType,
+  BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAISessionClusterMode,
   BAITable,
   BAITableProps,
   BAIText,
-  BooleanTag,
+  BAIBooleanToken,
   filterOutEmpty,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
@@ -74,6 +76,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         id @required(action: NONE)
         name @required(action: NONE)
         description
+        rank
         runtimeVariantId
         runtimeVariant {
           id
@@ -152,6 +155,21 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         render: (__, record) => record.runtimeVariant?.name ?? '-',
       },
       {
+        key: 'rank',
+        title: (
+          <BAIFlex gap="xxs" align="center">
+            {t('adminDeploymentPreset.Rank')}
+            <BAIQuestionIconWithTooltip
+              title={t('adminDeploymentPreset.RankTooltip')}
+            />
+          </BAIFlex>
+        ),
+        dataIndex: 'rank',
+        sorter: isEnableSorter('rank'),
+        render: (rank: number | null | undefined) =>
+          _.isNumber(rank) ? rank : '-',
+      },
+      {
         key: 'image',
         title: t('adminDeploymentPreset.Image'),
         render: (__, record) => {
@@ -217,7 +235,7 @@ const AdminDeploymentPresetTable: React.FC<AdminDeploymentPresetTableProps> = ({
         title: t('adminDeploymentPreset.OpenToPublic'),
         defaultHidden: true,
         render: (__, record) => (
-          <BooleanTag
+          <BAIBooleanToken
             value={record.deploymentDefaults?.openToPublic ?? false}
             trueLabel={t('deployment.Public')}
             falseLabel={t('deployment.Private')}

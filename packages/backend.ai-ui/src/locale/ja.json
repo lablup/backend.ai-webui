@@ -6,6 +6,7 @@
     "DiskPerc": "ディスク使用率",
     "Endpoint": "エンドポイント",
     "FailedToLoadCellData": "データの読み込みに失敗しました。",
+    "LostAt": "切断日時",
     "NoAvailableLiveStat": "ライブ統計は利用できません",
     "Region": "リージョン",
     "ResourceGroup": "リソースグループ",
@@ -13,7 +14,8 @@
     "Schedulable": "スケジュール可能",
     "Starts": "起動回数",
     "Status": "ステータス",
-    "Utilization": "使用率"
+    "Utilization": "使用率",
+    "Version": "バージョン"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "許可済み",
@@ -84,9 +86,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "プリセットを選択"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "他 {{rest}} 件"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
@@ -136,7 +135,7 @@
     "CannotBeUndone": "この操作は元に戻せません。",
     "DeleteItem": "削除",
     "DeleteNItems": "{{count}} 件を削除",
-    "TypeToConfirm": "<code>{{confirmText}}</code> と入力して確認してください。"
+    "TypeToConfirm": "<token>{{confirmText}}</token> と入力して確認してください。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "作成者"
@@ -156,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "低下中",
     "Deploying": "デプロイ中",
     "Healthy": "正常",
@@ -607,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "テスト"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "他 {{rest}} 件"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "作成日",
     "MaxConcurrentLogins": "最大同時ログイン数",
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
     "Download": "ダウンロード",
+    "DownloadPopupBlocked": "ブラウザーがダウンロードウィンドウをブロックしました。このサイトのポップアップを許可してからもう一度お試しください。",
+    "DownloadRejected": "ストレージプロキシがダウンロードを拒否しました (HTTP {{status}})。ダウンロードは開始されませんでした。",
     "DownloadSelected": "ダウンロード",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "DownloadUnreachable": "{{origin}} のストレージプロキシに接続できません。ダウンロードは開始されませんでした。",
     "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
     "DuplicatedFiles": "確認の上書き",
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
@@ -695,7 +700,7 @@
     }
   },
   "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}}アイテム"
+    "Total": "{{total}}アイテム中 {{start}} - {{end}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
@@ -806,7 +811,7 @@
     "Search": "検索",
     "Select": "選択",
     "SelectPlaceholder": "{{label}}を選択してください",
-    "TotalItems": "Total {{total}}アイテム",
+    "TotalItems": "合計 {{total}}アイテム",
     "Unit": "単位",
     "button": {
       "Action": "アクション",

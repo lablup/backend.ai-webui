@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<02c78a52982ae6ef9bc9f504f2f7a445>>
+ * @generated SignedSource<<3fe9e9176b1c9a5cb6c96bdca28a5d08>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -65,6 +65,7 @@ export type DateTimeFilter = {
 };
 export type EntityLabelNestedFilter = {
   every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: EntityLabelFilter | null | undefined;
   some?: EntityLabelFilter | null | undefined;
 };

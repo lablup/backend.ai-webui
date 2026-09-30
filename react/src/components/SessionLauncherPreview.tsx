@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionLauncherPreviewQuery } from '../__generated__/SessionLauncherPreviewQuery.graphql';
 import { App } from '../app-shim';
 // FRONTIER (ticket 17 / ticket 34): `Form.useFormInstance` / `Form.useWatch`
 // keep reading the antd form engine (locked SHIM decision).
@@ -21,17 +22,17 @@ import {
   SessionLauncherStepKey,
 } from '../pages/SessionLauncherPage';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ImageMetaDivider, ImageTagBadges } from './ImageTags';
-import { PortTag } from './PortSelectFormItem';
+import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
+import { PortToken } from './PortSelectFormItem';
 import { SessionOwnerSetterPreviewCard } from './SessionOwnerSetterCard';
 import SourceCodeView from './SourceCodeView';
-import { Badge } from '@astryxdesign/core/Badge';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Heading } from '@astryxdesign/core/Heading';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import {
   BAICard,
   BAIFlex,
@@ -48,6 +49,7 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
+import { graphql, useLazyLoadQuery } from 'react-relay';
 
 /**
  * The review step's image row. A manually typed image has no parts to
@@ -87,7 +89,7 @@ const SessionLauncherImageRow: React.FC = () => {
       {!_.isEmpty(facts) ? (
         <>
           <ImageMetaDivider />
-          <ImageTagBadges facts={facts} />
+          <ImageTagTokens facts={facts} />
         </>
       ) : null}
       <BAIText copyable={{ text: fullName }} />
@@ -109,6 +111,34 @@ const SessionLauncherPreview: React.FC<{
   // `preserve` reads the raw store: `owner` has no registered Form.Item.
   const owner = Form.useWatch('owner', { form, preserve: true });
   const mountableHosts = useMountableStorageHosts(currentProjectId);
+  // `allocationPreset` holds the preset's id; the store already has the
+  // list from `ResourcePresetSelect`, so this resolves without a request.
+  const { resource_presets } = useLazyLoadQuery<SessionLauncherPreviewQuery>(
+    graphql`
+      query SessionLauncherPreviewQuery {
+        resource_presets {
+          id
+          name
+        }
+      }
+    `,
+    {},
+    { fetchPolicy: 'store-or-network' },
+  );
+  const allocationPreset = form.getFieldValue('allocationPreset');
+  // Names how the resources were allocated, ahead of the numbers.
+  const allocationMethodLabel = !allocationPreset
+    ? undefined
+    : allocationPreset === 'custom'
+      ? t('session.launcher.CustomAllocation')
+      : allocationPreset === 'minimum-required'
+        ? t('session.launcher.MiniumAllocation')
+        : `${t('resourcePreset.ResourcePreset')}: ${
+            _.find(
+              resource_presets,
+              (preset) => preset?.id === allocationPreset,
+            )?.name ?? allocationPreset
+          }`;
   const autoMountedFolders = useSuspendedAutoMountedFolders({
     ownerEmail: ownerEmailFromOwner(owner),
     currentProjectId,
@@ -327,12 +357,9 @@ const SessionLauncherPreview: React.FC<{
                 wrap="wrap"
                 style={{ flex: 1 }}
               >
-                {form.getFieldValue('allocationPreset') === 'custom' ? (
-                  // t('session.launcher.CustomAllocation')
-                  ''
-                ) : (
-                  <Badge label={form.getFieldValue('allocationPreset')} />
-                )}
+                {allocationMethodLabel ? (
+                  <Token label={allocationMethodLabel} />
+                ) : null}
 
                 <ResourceNumbersOfSession
                   resource={form.getFieldValue('resource')}
@@ -447,7 +474,7 @@ const SessionLauncherPreview: React.FC<{
                       key={folder.vfolderId}
                       to={generateFolderPath(folder.vfolderId)}
                     >
-                      <Badge label={folder.name} />
+                      <Token label={folder.name} />
                     </BAILink>
                   ))}
                 </BAIFlex>
@@ -471,9 +498,9 @@ const SessionLauncherPreview: React.FC<{
             <BAIFlex direction="row" gap="xs" style={{ flex: 1 }} wrap="wrap">
               {_.sortBy(form.getFieldValue('ports'), (v) => parseInt(v)).map(
                 (v, idx) => (
-                  <PortTag key={idx + v} value={v} style={{ margin: 0 }}>
+                  <PortToken key={idx + v} value={v} style={{ margin: 0 }}>
                     {v}
-                  </PortTag>
+                  </PortToken>
                 ),
               )}
 

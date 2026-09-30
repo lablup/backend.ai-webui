@@ -29,9 +29,9 @@
    same way the pilot modal did it.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
-import BAIDialog from '../BAIDialog';
+import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
+import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { DialogHeader } from '@astryxdesign/core/Dialog';
@@ -39,16 +39,22 @@ import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import React, { useMemo, useState } from 'react';
 
-export interface BAITableColumnCSVExportModalProps<T = unknown> {
+export interface BAITableColumnCSVExportModalProps<T = unknown> extends Pick<
+  BAIDialogProps,
+  'afterOpenChange'
+> {
   open: boolean;
   /** `true` when an export actually ran, `false` on cancel / dismiss. */
   onRequestClose?: (success: boolean) => void;
   onExport: (selectedExportKeys: string[]) => Promise<void>;
   supportedFields: string[];
   columns: BAIColumnsType<T>;
+  /** Warning shown above the column list — see `BAIExportSettings.notice`. */
+  notice?: React.ReactNode;
 }
 
 /** Pulls the plain-text part out of a JSX column title (icons etc. dropped). */
@@ -65,11 +71,13 @@ const BAITableColumnCSVExportModal = <T,>({
   onExport,
   supportedFields,
   columns,
-}: BAITableColumnCSVExportModalProps<T>): React.JSX.Element | null => {
+  notice,
+  afterOpenChange,
+}: BAITableColumnCSVExportModalProps<T>): React.JSX.Element => {
   'use memo';
 
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const columnOptions = useMemo(
     () =>
@@ -173,14 +181,13 @@ const BAITableColumnCSVExportModal = <T,>({
     });
   };
 
-  if (!open) return null;
-
   return (
     <BAIDialog
       isOpen={open}
       onOpenChange={(next) => {
         if (!next) onRequestClose?.(false);
       }}
+      afterOpenChange={afterOpenChange}
       width={500}
       purpose="form"
     >
@@ -197,6 +204,13 @@ const BAITableColumnCSVExportModal = <T,>({
         content={
           <LayoutContent>
             <VStack gap={2} align="stretch">
+              {notice ? (
+                <Banner
+                  status="warning"
+                  title={notice}
+                  data-testid="bai-table-export-notice"
+                />
+              ) : null}
               <TextInput
                 label={String(t('comp:BAITable.SearchTableColumn'))}
                 isLabelHidden
@@ -210,7 +224,7 @@ const BAITableColumnCSVExportModal = <T,>({
                   {_.map(visibleOptions, (option) => (
                     <div
                       key={option.key}
-                      style={{ paddingBlock: token.paddingXXS }}
+                      style={{ paddingBlock: token('--spacing-1') }}
                     >
                       <CheckboxInput
                         label={option.label || option.key}

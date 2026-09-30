@@ -8,6 +8,9 @@ import type { UIMessage } from 'ai';
 
 export interface ChatProviderData {
   basePath?: string;
+  // A custom OpenAI-compatible endpoint. Set together with an empty
+  // `deploymentId`; its API key is kept out of this (persisted) record — see
+  // `customEndpointKeyStore.ts`.
   baseURL?: string;
   deploymentId?: string;
   agentId?: string;
@@ -73,6 +76,33 @@ export const DEFAULT_CHAT_PARAMETERS = {
   frequencyPenalty: 1,
   presencePenalty: 1,
 };
+
+export function isCustomEndpointProvider(provider: ChatProviderData) {
+  return !!provider.baseURL;
+}
+
+export function normalizeCustomEndpointURL(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      return undefined;
+    }
+    return url.toString().replace(/\/+$/, '');
+  } catch {
+    return undefined;
+  }
+}
+
+export function getCustomEndpointHost(baseURL?: string) {
+  if (!baseURL) return undefined;
+  try {
+    return new URL(baseURL).host;
+  } catch {
+    return baseURL;
+  }
+}
 
 export function getLatestUserMessage(messages: Array<ChatMessage>) {
   const userMessages = messages.filter((message) => message.role === 'user');

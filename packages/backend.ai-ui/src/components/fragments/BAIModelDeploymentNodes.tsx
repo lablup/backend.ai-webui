@@ -4,13 +4,13 @@ import {
 } from '../../__generated__/BAIModelDeploymentNodesFragment.graphql';
 import { filterOutEmpty, filterOutNullAndUndefined } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import BAIDeploymentStatusTag, {
+import BAIBooleanToken from '../BAIBooleanToken';
+import BAIDeploymentStatusBadge, {
   BAIDeploymentStatus,
-} from '../BAIDeploymentStatusTag';
+} from '../BAIDeploymentStatusBadge';
 import BAIFlex from '../BAIFlex';
 import BAIId from '../BAIId';
 import BAIText from '../BAIText';
-import BooleanTag from '../BooleanTag';
 import {
   BAIColumnType,
   BAIColumnsType,
@@ -19,7 +19,7 @@ import {
   BAITableProps,
 } from '../Table';
 import BAIDeploymentOwnerInfo from './BAIDeploymentOwnerInfo';
-import BAIDeploymentTagChips from './BAIDeploymentTagChips';
+import BAIDeploymentTagTokens from './BAIDeploymentTagTokens';
 import { Link } from '@astryxdesign/core/Link';
 import { Text } from '@astryxdesign/core/Text';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
@@ -41,7 +41,7 @@ export type ModelDeploymentNodeInList = NonNullable<
  * (`createdAt` → `CREATED_AT`, `tag` → `TAG`, …). `updatedAt` is
  * intentionally omitted because the server enum does not include it.
  */
-const availableDeploymentSorterKeys = [
+export const availableDeploymentSorterKeys = [
   'name',
   'createdAt',
   'domain',
@@ -50,6 +50,9 @@ const availableDeploymentSorterKeys = [
   'tag',
 ] as const;
 
+export type DeploymentSorterKey =
+  (typeof availableDeploymentSorterKeys)[number];
+
 export const availableDeploymentSorterValues = [
   ...availableDeploymentSorterKeys,
   ...availableDeploymentSorterKeys.map((key) => `-${key}` as const),
@@ -57,10 +60,6 @@ export const availableDeploymentSorterValues = [
 
 export type DeploymentOrderValue =
   (typeof availableDeploymentSorterValues)[number];
-
-const isEnableSorter = (key: string) => {
-  return _.includes(availableDeploymentSorterKeys, key);
-};
 
 export interface BAIModelDeploymentNodesProps extends Omit<
   BAITableProps<ModelDeploymentNodeInList>,
@@ -71,6 +70,12 @@ export interface BAIModelDeploymentNodesProps extends Omit<
     baseColumns: BAIColumnsType<ModelDeploymentNodeInList>,
   ) => BAIColumnsType<ModelDeploymentNodeInList>;
   disableSorter?: boolean;
+  /**
+   * Which columns may be sorted. Defaults to every key the current server enum
+   * has; a caller on an older manager narrows it (`DOMAIN`/`PROJECT`/
+   * `RESOURCE_GROUP`/`TAG` only exist from 26.4.3).
+   */
+  sortableKeys?: ReadonlyArray<DeploymentSorterKey>;
   onChangeOrder?: (
     order: (typeof availableDeploymentSorterValues)[number] | null,
   ) => void;
@@ -80,11 +85,14 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
   deploymentsFrgmt,
   customizeColumns,
   disableSorter,
+  sortableKeys = availableDeploymentSorterKeys,
   onChangeOrder,
   ...tableProps
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+
+  const isEnableSorter = (key: string) => _.includes(sortableKeys, key);
 
   const deployments = useFragment<BAIModelDeploymentNodesFragment$key>(
     graphql`
@@ -107,7 +115,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             }
             id
           }
-          ...BAIDeploymentTagChips_metadata
+          ...BAIDeploymentTagTokens_metadata
         }
         networkAccess {
           endpointUrl
@@ -187,7 +195,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
             return '-';
           }
           return (
-            <BAIDeploymentStatusTag status={status as BAIDeploymentStatus} />
+            <BAIDeploymentStatusBadge status={status as BAIDeploymentStatus} />
           );
         },
       },
@@ -262,7 +270,7 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         dataIndex: 'tag',
         sorter: isEnableSorter('tag'),
         render: (__, record) => (
-          <BAIDeploymentTagChips
+          <BAIDeploymentTagTokens
             metadataFrgmt={record.metadata}
             stopRowClick
             fallback={<Text color="secondary">-</Text>}
@@ -353,7 +361,9 @@ const BAIModelDeploymentNodes: React.FC<BAIModelDeploymentNodesProps> = ({
         title: t('comp:BAIModelDeploymentNodes.OpenToPublic'),
         defaultHidden: true,
         render: (__, record) => (
-          <BooleanTag value={record.networkAccess?.openToPublic ?? false} />
+          <BAIBooleanToken
+            value={record.networkAccess?.openToPublic ?? false}
+          />
         ),
       },
       {

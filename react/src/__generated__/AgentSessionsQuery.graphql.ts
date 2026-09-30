@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a6ce7c7c36067b2b21594260277a30ec>>
+ * @generated SignedSource<<1203f78990532b29d47173558e4e4d9f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,8 +12,11 @@ import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type AgentStatusEnum = "ALIVE" | "LOST" | "RESTARTING" | "TERMINATED" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
-export type SessionV2OrderField = "CREATED_AT" | "ID" | "NAME" | "STATUS" | "TERMINATED_AT" | "%future added value";
+export type SessionV2NetworkType = "HOST" | "PERSISTENT" | "VOLATILE" | "%future added value";
+export type SessionV2OrderField = "ACCESS_KEY" | "BATCH_TIMEOUT" | "CLUSTER_SIZE" | "CREATED_AT" | "CREATION_ID" | "DOMAIN_NAME" | "ID" | "IS_PREEMPTIBLE" | "JOB_PRIORITY" | "NAME" | "NETWORK_ID" | "NETWORK_TYPE" | "PRIORITY" | "PROJECT_ID" | "REPLICA_ID" | "RESOURCE_GROUP_NAME" | "RESULT" | "SESSION_TYPE" | "STARTS_AT" | "STATUS" | "TAG" | "TERMINATED_AT" | "TIER" | "USER_ID" | "USE_HOST_NETWORK" | "%future added value";
+export type SessionV2Result = "FAILURE" | "SUCCESS" | "UNDEFINED" | "%future added value";
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
+export type SessionV2Type = "BATCH" | "INFERENCE" | "INTERACTIVE" | "SYSTEM" | "%future added value";
 export type AgentFilter = {
   AND?: ReadonlyArray<AgentFilter> | null | undefined;
   NOT?: ReadonlyArray<AgentFilter> | null | undefined;
@@ -52,6 +55,7 @@ export type AgentStatusFilter = {
 };
 export type EntityLabelNestedFilter = {
   every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
   none?: EntityLabelFilter | null | undefined;
   some?: EntityLabelFilter | null | undefined;
 };
@@ -74,12 +78,30 @@ export type SessionV2Filter = {
   AND?: ReadonlyArray<SessionV2Filter> | null | undefined;
   NOT?: ReadonlyArray<SessionV2Filter> | null | undefined;
   OR?: ReadonlyArray<SessionV2Filter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  batchTimeout?: IntFilter | null | undefined;
+  clusterSize?: IntFilter | null | undefined;
+  creationId?: StringFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  isPreemptible?: boolean | null | undefined;
+  jobPriority?: IntFilter | null | undefined;
   labels?: EntityLabelNestedFilter | null | undefined;
   name?: StringFilter | null | undefined;
+  networkId?: StringFilter | null | undefined;
+  networkType?: SessionV2NetworkTypeFilter | null | undefined;
+  priority?: IntFilter | null | undefined;
   projectId?: UUIDFilter | null | undefined;
+  replicaId?: UUIDFilter | null | undefined;
+  resourceGroupName?: StringFilter | null | undefined;
+  result?: SessionV2ResultFilter | null | undefined;
+  sessionType?: SessionV2TypeFilter | null | undefined;
+  startsAt?: DateTimeFilter | null | undefined;
   status?: SessionV2StatusFilter | null | undefined;
+  tag?: StringFilter | null | undefined;
+  terminatedAt?: DateTimeFilter | null | undefined;
+  tier?: IntFilter | null | undefined;
+  useHostNetwork?: boolean | null | undefined;
   userUuid?: UUIDFilter | null | undefined;
 };
 export type SessionV2StatusFilter = {
@@ -87,6 +109,38 @@ export type SessionV2StatusFilter = {
   in?: ReadonlyArray<SessionV2Status> | null | undefined;
   notEquals?: SessionV2Status | null | undefined;
   notIn?: ReadonlyArray<SessionV2Status> | null | undefined;
+};
+export type SessionV2TypeFilter = {
+  equals?: SessionV2Type | null | undefined;
+  in?: ReadonlyArray<SessionV2Type> | null | undefined;
+  notEquals?: SessionV2Type | null | undefined;
+  notIn?: ReadonlyArray<SessionV2Type> | null | undefined;
+};
+export type IntFilter = {
+  equals?: number | null | undefined;
+  greaterThan?: number | null | undefined;
+  greaterThanOrEqual?: number | null | undefined;
+  lessThan?: number | null | undefined;
+  lessThanOrEqual?: number | null | undefined;
+  notEquals?: number | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type SessionV2ResultFilter = {
+  equals?: SessionV2Result | null | undefined;
+  in?: ReadonlyArray<SessionV2Result> | null | undefined;
+  notEquals?: SessionV2Result | null | undefined;
+  notIn?: ReadonlyArray<SessionV2Result> | null | undefined;
+};
+export type SessionV2NetworkTypeFilter = {
+  equals?: SessionV2NetworkType | null | undefined;
+  in?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
+  notEquals?: SessionV2NetworkType | null | undefined;
+  notIn?: ReadonlyArray<SessionV2NetworkType> | null | undefined;
 };
 export type SessionV2OrderBy = {
   direction?: OrderDirection;
@@ -679,12 +733,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "ee30959dceb32ca6c6c825bd6e9940ad",
+    "cacheID": "b86c63d112d9f8d9a385ad841de2c877",
     "id": null,
     "metadata": {},
     "name": "AgentSessionsQuery",
     "operationKind": "query",
-    "text": "query AgentSessionsQuery(\n  $agentFilter: AgentFilter\n  $sessionFilter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  agentsV2(filter: $agentFilter, limit: 1) {\n    edges {\n      node {\n        id\n        sessions(filter: $sessionFilter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              ...BAISessionNodesV2Fragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTagV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTagV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
+    "text": "query AgentSessionsQuery(\n  $agentFilter: AgentFilter\n  $sessionFilter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  agentsV2(filter: $agentFilter, limit: 1) {\n    edges {\n      node {\n        id\n        sessions(filter: $sessionFilter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              ...BAISessionNodesV2Fragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
   }
 };
 })();

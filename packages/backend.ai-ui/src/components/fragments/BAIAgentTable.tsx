@@ -3,6 +3,7 @@ import {
   BAIAgentTableFragment$key,
 } from '../../__generated__/BAIAgentTableFragment.graphql';
 import {
+  badgeVariantForStatus,
   convertToBinaryUnit,
   convertToDecimalUnit,
   convertUnitValue,
@@ -10,15 +11,14 @@ import {
 } from '../../helper';
 import { useBAILogger } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIAlertIconWithTooltip from '../BAIAlertIconWithTooltip';
-import BAIDoubleTag from '../BAIDoubleTag';
+import BAIDoubleBadge from '../BAIDoubleBadge';
+import BAIDoubleToken from '../BAIDoubleToken';
 import BAIFlex from '../BAIFlex';
 import BAIIntervalView from '../BAIIntervalView';
 import BAILink from '../BAILink';
 import BAIProgressWithLabel from '../BAIProgressWithLabel';
 import { ResourceTypeIcon } from '../BAIResourceNumberWithIcon';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import {
   BAIColumnType,
@@ -32,6 +32,8 @@ import {
   useConnectedBAIClient,
 } from '../provider';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { CircleCheck, CircleMinus } from 'lucide-react';
@@ -46,11 +48,16 @@ export type AgentNodeInList = NonNullable<
   NonNullable<BAIAgentTableFragment$data>[number]
 >;
 
+// Mirrors `_queryorder_colmap` of the graphene `agent_nodes` resolver.
 export const availableAgentSorterKeys = [
+  'id',
   'first_contact',
   'scaling_group',
   'status',
   'schedulable',
+  'region',
+  'version',
+  'lost_at',
 ] as const;
 
 export const availableAgentSorterValues = [
@@ -92,7 +99,7 @@ const CellErrorBoundary: React.FC<
 
 const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useBAIResourceSlots();
   const parsedOccupiedSlots: {
     [key in ResourceSlotName]: string | undefined;
@@ -131,14 +138,19 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                       0,
                     )}
                   </Text>
-                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                  <Text
+                    color="secondary"
+                    style={{ fontSize: token('--spacing-2') }}
+                  >
                     {mergedResourceSlots.cpu?.display_unit}
                   </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={cpuPercent}
                   strokeColor={
-                    cpuPercent > 80 ? token.colorError : token.colorSuccess
+                    cpuPercent > 80
+                      ? token('--color-error')
+                      : token('--color-success')
                   }
                   width={120}
                   valueLabel={
@@ -169,14 +181,19 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                     {convertToBinaryUnit(parsedAvailableSlots.mem, 'g', 0)
                       ?.numberFixed ?? 0}
                   </Text>
-                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                  <Text
+                    color="secondary"
+                    style={{ fontSize: token('--spacing-2') }}
+                  >
                     GiB
                   </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={memPercent}
                   strokeColor={
-                    memPercent > 80 ? token.colorError : token.colorSuccess
+                    memPercent > 80
+                      ? token('--color-error')
+                      : token('--color-success')
                   }
                   width={120}
                   valueLabel={
@@ -211,14 +228,19 @@ const AllocationCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
                       2,
                     )}
                   </Text>
-                  <Text color="secondary" style={{ fontSize: token.sizeXS }}>
+                  <Text
+                    color="secondary"
+                    style={{ fontSize: token('--spacing-2') }}
+                  >
                     {mergedResourceSlots[key]?.display_unit}
                   </Text>
                 </BAIFlex>
                 <BAIProgressWithLabel
                   percent={percent}
                   strokeColor={
-                    percent > 80 ? token.colorError : token.colorSuccess
+                    percent > 80
+                      ? token('--color-error')
+                      : token('--color-success')
                   }
                   width={120}
                   valueLabel={
@@ -490,11 +512,11 @@ const UtilizationCell: React.FC<{
 
 const DiskPctCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const parsedDisk = JSON.parse(record?.live_stat || '{}')?.node?.disk ?? {};
   const pctValue = _.toFinite(parsedDisk.pct) || 0;
   const pct = _.toFinite(toFixedFloorWithoutTrailingZeros(pctValue, 2));
-  const color = pct > 80 ? token.colorError : token.colorSuccess;
+  const color = pct > 80 ? token('--color-error') : token('--color-success');
   const baseUnit =
     convertUnitValue(parsedDisk?.capacity, 'auto', { base: 1000 })?.unit || 'g';
   return (
@@ -506,7 +528,7 @@ const DiskPctCell: React.FC<{ record: AgentNodeInList }> = ({ record }) => {
         width={120}
       />
       {!_.isEmpty(parsedDisk) && (
-        <Text style={{ fontSize: token.fontSizeSM }}>
+        <Text style={{ fontSize: token('--font-size-sm') }}>
           {convertToDecimalUnit(parsedDisk?.current, baseUnit)?.numberFixed}
           &nbsp;/&nbsp;
           {convertToDecimalUnit(parsedDisk?.capacity, baseUnit)?.displayValue}
@@ -525,24 +547,19 @@ const StatusCell: React.FC<{
   const parsedAvailableSlots = JSON.parse(record?.available_slots || '{}');
   return (
     <BAIFlex direction="column" gap="xxs" align="start">
-      <BAIDoubleTag
+      <BAIDoubleBadge
         values={[
           { label: 'Agent' },
           {
             label: record?.version || '',
-            color:
-              value === 'ALIVE'
-                ? 'green'
-                : value === 'TERMINATED'
-                  ? 'red'
-                  : 'blue',
+            variant: badgeVariantForStatus('agent', value),
           },
         ]}
       />
       {parsedComputePlugins?.cuda ? (
         <>
           {parsedComputePlugins?.cuda?.cuda_version ? (
-            <BAIDoubleTag
+            <BAIDoubleToken
               values={[
                 { label: 'CUDA' },
                 {
@@ -552,9 +569,9 @@ const StatusCell: React.FC<{
               ]}
             />
           ) : (
-            <BAITag color="green">CUDA Disabled</BAITag>
+            <Token color="green" label="CUDA Disabled" />
           )}
-          <BAIDoubleTag
+          <BAIDoubleToken
             values={[
               { label: 'CUDA Plugin' },
               {
@@ -564,9 +581,7 @@ const StatusCell: React.FC<{
             ]}
           />
           {_.includes(_.keys(parsedAvailableSlots), 'cuda.shares') ? (
-            <BAITag color="blue" style={{ borderRadius: 0 }}>
-              Fractional GPU™
-            </BAITag>
+            <Token color="blue" label="Fractional GPU™" />
           ) : null}
         </>
       ) : null}
@@ -597,7 +612,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useConnectedBAIClient();
 
   const agents = useFragment(
@@ -617,6 +632,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         compute_plugins
         version
         schedulable
+        lost_at
       }
     `,
     agentsFragment,
@@ -647,7 +663,9 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
           </BAIFlex>
         );
       },
-      sorter: isEnableSorter('row_id'),
+      // The column shows `row_id`, but the server orders this entity by `id`.
+      sortKey: 'id',
+      sorter: isEnableSorter('id'),
     },
     {
       title: t('comp:AgentTable.Region'),
@@ -660,6 +678,15 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
       key: 'architecture',
       dataIndex: 'architecture',
       sorter: isEnableSorter('architecture'),
+    },
+    {
+      title: t('comp:AgentTable.Version'),
+      key: 'version',
+      dataIndex: 'version',
+      // The status cell already prints the version; this column exists so the
+      // server-side `version` ordering is reachable.
+      defaultHidden: true,
+      sorter: isEnableSorter('version'),
     },
     {
       title: t('comp:AgentTable.Starts'),
@@ -676,7 +703,7 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
                 }}
                 delay={1000}
                 render={(intervalValue) => (
-                  <BAIDoubleTag
+                  <BAIDoubleBadge
                     values={[
                       { label: t('comp:AgentTable.Running') },
                       { label: intervalValue },
@@ -689,6 +716,16 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
         );
       },
       sorter: isEnableSorter('first_contact'),
+    },
+    {
+      title: t('comp:AgentTable.LostAt'),
+      key: 'lost_at',
+      dataIndex: 'lost_at',
+      defaultHidden: true,
+      render: (value) => (
+        <Text>{value ? dayjs(value).format('ll LTS') : '-'}</Text>
+      ),
+      sorter: isEnableSorter('lost_at'),
     },
     {
       title: t('comp:AgentTable.Allocation'),
@@ -749,16 +786,16 @@ const BAIAgentTable: React.FC<BAIAgentTableProps> = ({
             {value === true ? (
               <CircleCheck
                 style={{
-                  color: token.colorSuccess,
-                  fontSize: token.fontSizeXL,
+                  color: token('--color-success'),
+                  fontSize: token('--font-size-xl'),
                 }}
                 size="1em"
               />
             ) : (
               <CircleMinus
                 style={{
-                  color: token.colorTextDisabled,
-                  fontSize: token.fontSizeXL,
+                  color: token('--color-text-disabled'),
+                  fontSize: token('--font-size-xl'),
                 }}
                 size="1em"
               />

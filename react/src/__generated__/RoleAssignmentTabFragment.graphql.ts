@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bb2b6eeef22b0f76c52504a68f35b44c>>
+ * @generated SignedSource<<310ad2123f891b9a7b42c2724bfe2795>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,13 +22,14 @@ export type RoleAssignmentTabFragment$data = {
   } | null | undefined;
   readonly id: string;
   readonly name: string;
+  readonly scopeId: string;
+  readonly scopeType: string;
   readonly source: RoleSource;
   readonly users: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly grantedAt: string;
-        readonly grantedBy: string | null | undefined;
         readonly id: string;
         readonly user: {
           readonly basicInfo: {
@@ -38,6 +39,19 @@ export type RoleAssignmentTabFragment$data = {
           readonly id: string;
         } | null | undefined;
         readonly userId: string;
+      };
+    }>;
+  } | null | undefined;
+  readonly usersV2: {
+    readonly count: number;
+    readonly edges: ReadonlyArray<{
+      readonly node: {
+        readonly basicInfo: {
+          readonly email: string;
+          readonly fullName: string | null | undefined;
+        };
+        readonly entityId: string;
+        readonly id: string;
       };
     }>;
   } | null | undefined;
@@ -56,6 +70,62 @@ var v0 = {
   "args": null,
   "kind": "ScalarField",
   "name": "id",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeType",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "scopeId",
+  "storageKey": null
+},
+v3 = {
+  "kind": "Variable",
+  "name": "limit",
+  "variableName": "limit"
+},
+v4 = {
+  "kind": "Variable",
+  "name": "offset",
+  "variableName": "offset"
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "count",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "UserV2BasicInfo",
+  "kind": "LinkedField",
+  "name": "basicInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "email",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "fullName",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
@@ -79,6 +149,16 @@ return {
       "defaultValue": null,
       "kind": "LocalArgument",
       "name": "orderBy"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "userFilter"
+    },
+    {
+      "defaultValue": null,
+      "kind": "LocalArgument",
+      "name": "userOrderBy"
     }
   ],
   "kind": "Fragment",
@@ -142,20 +222,8 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeType",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "scopeId",
-                  "storageKey": null
-                }
+                (v1/*: any*/),
+                (v2/*: any*/)
               ],
               "storageKey": null
             }
@@ -165,6 +233,8 @@ return {
       ],
       "storageKey": "scopes(first:1)"
     },
+    (v1/*: any*/),
+    (v2/*: any*/),
     {
       "alias": null,
       "args": [
@@ -173,16 +243,8 @@ return {
           "name": "filter",
           "variableName": "filter"
         },
-        {
-          "kind": "Variable",
-          "name": "limit",
-          "variableName": "limit"
-        },
-        {
-          "kind": "Variable",
-          "name": "offset",
-          "variableName": "offset"
-        },
+        (v3/*: any*/),
+        (v4/*: any*/),
         {
           "kind": "Variable",
           "name": "orderBy",
@@ -194,13 +256,7 @@ return {
       "name": "users",
       "plural": false,
       "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "count",
-          "storageKey": null
-        },
+        (v5/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -229,13 +285,6 @@ return {
                   "alias": null,
                   "args": null,
                   "kind": "ScalarField",
-                  "name": "grantedBy",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
                   "name": "grantedAt",
                   "storageKey": null
                 },
@@ -248,34 +297,66 @@ return {
                   "plural": false,
                   "selections": [
                     (v0/*: any*/),
-                    {
-                      "alias": null,
-                      "args": null,
-                      "concreteType": "UserV2BasicInfo",
-                      "kind": "LinkedField",
-                      "name": "basicInfo",
-                      "plural": false,
-                      "selections": [
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "email",
-                          "storageKey": null
-                        },
-                        {
-                          "alias": null,
-                          "args": null,
-                          "kind": "ScalarField",
-                          "name": "fullName",
-                          "storageKey": null
-                        }
-                      ],
-                      "storageKey": null
-                    }
+                    (v6/*: any*/)
                   ],
                   "storageKey": null
                 }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "filter",
+          "variableName": "userFilter"
+        },
+        (v3/*: any*/),
+        (v4/*: any*/),
+        {
+          "kind": "Variable",
+          "name": "orderBy",
+          "variableName": "userOrderBy"
+        }
+      ],
+      "concreteType": "UserV2Connection",
+      "kind": "LinkedField",
+      "name": "usersV2",
+      "plural": false,
+      "selections": [
+        (v5/*: any*/),
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "UserV2Edge",
+          "kind": "LinkedField",
+          "name": "edges",
+          "plural": true,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "UserV2",
+              "kind": "LinkedField",
+              "name": "node",
+              "plural": false,
+              "selections": [
+                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "entityId",
+                  "storageKey": null
+                },
+                (v6/*: any*/)
               ],
               "storageKey": null
             }
@@ -291,6 +372,6 @@ return {
 };
 })();
 
-(node as any).hash = "1686ca5dcae81b1949d2704e9d05ec20";
+(node as any).hash = "c40588e5b4a36e7533b40d0bb2f41dc2";
 
 export default node;

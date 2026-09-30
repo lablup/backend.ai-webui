@@ -6,6 +6,7 @@
     "DiskPerc": "Levy %",
     "Endpoint": "Päätepiste",
     "FailedToLoadCellData": "Tietojen lataaminen epäonnistui.",
+    "LostAt": "Menetetty",
     "NoAvailableLiveStat": "Reaaliaikaisia tilastoja ei ole saatavilla",
     "Region": "Alue",
     "ResourceGroup": "Resurssiryhmä",
@@ -13,7 +14,8 @@
     "Schedulable": "Ajastettava",
     "Starts": "Käynnistykset",
     "Status": "Tila",
-    "Utilization": "Käyttöaste"
+    "Utilization": "Käyttöaste",
+    "Version": "Versio"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Sallittu",
@@ -84,9 +86,6 @@
   "comp:BAIAvailablePresetSelect": {
     "SelectPreset": "Valitse esiasetus"
   },
-  "comp:BAIBadgeList": {
-    "AndMore": "ja {{rest}} muuta"
-  },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Tapahtui odottamaton virhe. Yritä uudelleen myöhemmin tai ota yhteyttä tukeen, jos ongelma jatkuu."
   },
@@ -136,7 +135,7 @@
     "CannotBeUndone": "Tätä toimintoa ei voi peruuttaa.",
     "DeleteItem": "Poista",
     "DeleteNItems": "Poista {{count}} kohdetta",
-    "TypeToConfirm": "Kirjoita <code>{{confirmText}}</code> vahvistaaksesi."
+    "TypeToConfirm": "Kirjoita <token>{{confirmText}}</token> vahvistaaksesi."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Luonut"
@@ -156,7 +155,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Valitse käyttöönotto"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Heikentynyt",
     "Deploying": "Käyttöönottaminen",
     "Healthy": "Terve",
@@ -607,6 +606,9 @@
   "comp:BAITestButton": {
     "Test": "testi"
   },
+  "comp:BAITokenRow": {
+    "AndMore": "ja {{rest}} muuta"
+  },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Luotu klo",
     "MaxConcurrentLogins": "Samanaikaisten kirjautumisten enimmäismäärä",
@@ -655,8 +657,11 @@
     "DeleteSelectedItemDesc": "Poistettuja tiedostoja ja kansioita ei voida palauttaa. \nHaluatko edetä?",
     "DeleteSelectedItemsDialog": "Poista vahvistus",
     "Download": "Lataa",
+    "DownloadPopupBlocked": "Selain esti latausikkunan. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
+    "DownloadRejected": "Storage proxy hylkäsi latauksen (HTTP {{status}}). Lataus ei käynnistynyt.",
     "DownloadSelected": "Lataa",
     "DownloadStarted": "Tiedosto \"{{fileName}}\" lataus on alkanut.",
+    "DownloadUnreachable": "Storage proxy -palvelimeen osoitteessa {{origin}} ei saatu yhteyttä. Lataus ei käynnistynyt.",
     "DragAndDropDesc": "Vedä ja pudota tiedostoja tälle alueelle ladataksesi.",
     "DuplicatedFiles": "Korvata vahvistus",
     "DuplicatedFilesDesc": "Tiedosto tai kansio, jolla on sama nimi, on jo olemassa. \nHaluatko korvata?",

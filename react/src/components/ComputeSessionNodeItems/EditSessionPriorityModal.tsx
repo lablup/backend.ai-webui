@@ -13,7 +13,7 @@ import {
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAITagList,
+  BAITokenList,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -158,7 +158,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
               requiredMark's "(Optional)" label on non-required items. */}
           <Form.Item label={t('session.SessionName')} required>
             {isBulkEdit ? (
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   filteredSessions,
                   (session) => session.name || session.id,

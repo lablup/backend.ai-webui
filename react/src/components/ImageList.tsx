@@ -15,9 +15,8 @@ import {
 } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useHiddenColumnKeysSetting } from '../hooks/useHiddenColumnKeysSetting';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
-import AliasedImageDoubleTags from './AliasedImageDoubleTags';
+import AliasedImageTagTokens from './AliasedImageTagTokens';
 import ImageInstallModal from './ImageInstallModal';
 import ManageAppsModal from './ManageAppsModal';
 import ManageImageResourceLimitModal from './ManageImageResourceLimitModal';
@@ -27,19 +26,19 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Text } from '@astryxdesign/core/Text';
+import { Token } from '@astryxdesign/core/Token';
 import { BAISkeleton } from 'backend.ai-ui';
 import {
-  BAIBadgeList,
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
   BAITable,
   BAIText,
-  BooleanTag,
+  BAIBooleanToken,
+  BAITokenRow,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
-  badgeVariantForTagColor,
   convertToBinaryUnit,
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -224,7 +223,6 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
   const { t } = useTranslation();
   const [selectedRows, setSelectedRows] = useState<EnvironmentImage[]>([]);
   const [, { tagAlias }] = useBackendAIImageMetaData();
-  const { token } = theme.useToken();
   const [managingApp, setManagingApp] = useState<EnvironmentImage | null>(null);
   const [managingResourceLimit, setManagingResourceLimit] =
     useState<EnvironmentImage | null>(null);
@@ -324,7 +322,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               status
               type
               aliases
-              ...AliasedImageDoubleTagsFragment
+              ...AliasedImageTagTokensFragment
               ...ManageImageResourceLimitModal_image
               ...ManageAppsModal_image
             }
@@ -352,28 +350,17 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       title: t('environment.Status'),
       dataIndex: 'installed',
       key: 'installed',
-      // antd `Tag color="gold"` -> Astryx Badge via the repo-global Tag
-      // lookup (ticket 13 policy): gold -> yellow.
       render: (_text, row) => (
         <BAIFlex direction="row" gap="xxs" wrap="wrap">
           {row?.id && installingImages.includes(row.id) ? (
-            <Badge
-              variant={badgeVariantForTagColor('gold')}
-              label={t('environment.Installing')}
-            />
+            <Badge variant="info" label={t('environment.Installing')} />
           ) : row?.installed ? (
-            <Badge
-              variant={badgeVariantForTagColor('gold')}
-              label={t('environment.Installed')}
-            />
+            <Badge variant="success" label={t('environment.Installed')} />
           ) : null}
           {/* An installed private image cannot be picked in the session
               launcher, so surface the label here (FR-70). */}
           {isPrivateImage(row) ? (
-            <Badge
-              variant={badgeVariantForTagColor('red')}
-              label={t('environment.Private')}
-            />
+            <Token color="red" label={t('environment.Private')} />
           ) : null}
         </BAIFlex>
       ),
@@ -397,7 +384,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // built from, so it is the closest ordering the backend colmap offers.
       sorter: isEnableSorter('name'),
       sortKey: 'name',
-      width: token.screenXS,
+      width: 480,
     },
     {
       title: t('environment.Registry'),
@@ -436,7 +423,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       // The backend orders by the raw `tag` column, not the parsed KV list.
       sorter: isEnableSorter('tag'),
       sortKey: 'tag',
-      render: (_text, row) => <AliasedImageDoubleTags imageFrgmt={row} />,
+      render: (_text, row) => <AliasedImageTagTokens imageFrgmt={row} />,
     },
     {
       title: t('environment.ImageStatus'),
@@ -446,13 +433,13 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       render: (value) =>
         value ? (
           <Badge
-            variant={badgeVariantForTagColor(
+            variant={
               value === 'ALIVE'
-                ? 'green'
+                ? 'success'
                 : value === 'DELETED'
-                  ? 'red'
-                  : 'gold',
-            )}
+                  ? 'error'
+                  : 'warning'
+            }
             label={value}
           />
         ) : (
@@ -472,7 +459,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       key: 'is_local',
       dataIndex: 'is_local',
       sorter: isEnableSorter('is_local'),
-      render: (value) => <BooleanTag value={value} />,
+      render: (value) => <BAIBooleanToken value={value} />,
     },
     {
       title: t('environment.Size'),
@@ -494,7 +481,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
       key: 'aliases',
       dataIndex: 'aliases',
       render: (_text, row) => (
-        <BAIBadgeList
+        <BAITokenRow
           items={_.map(_.compact(row.aliases), (alias) => ({
             key: alias,
             label: alias,
@@ -560,7 +547,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
             e.stopPropagation();
           }}
         >
-          {/* PILOT-DECISION: antd text Buttons with token.colorInfo-tinted
+          {/* PILOT-DECISION: antd text Buttons with token('--color-info')-tinted
               icons -> Astryx ghost IconButtons. IconButton's variant enum is
               closed, so the info-blue icon tint is dropped (P5/P11);
               accessible labels reuse the modal titles they open (P8).
@@ -742,7 +729,7 @@ const ImageListInScope: React.FC<ImageListInScopeProps> = ({
               }}
             />
             {/* PILOT-DECISION: the hand-painted primary button
-                (style backgroundColor token.colorPrimary) becomes Astryx
+                (style backgroundColor token('--color-accent')) becomes Astryx
                 `Button variant="primary"` — the brand accent comes from the
                 theme layer, not an inline style (P5). */}
             <Button

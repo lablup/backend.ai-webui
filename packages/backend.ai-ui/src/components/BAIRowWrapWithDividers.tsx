@@ -1,5 +1,5 @@
 // BAIRowWrapWithDividers.tsx
-import { theme } from '../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 export interface BAIRowWrapWithDividersProps {
@@ -32,10 +32,10 @@ const BAIRowWrapWithDividers: React.FC<BAIRowWrapWithDividersProps> = ({
   style,
   className,
 }) => {
-  const { token } = theme.useToken();
-  const resolvedRowGap = rowGap ?? token.marginXL;
-  const resolvedColumnGap = columnGap ?? token.marginXXL;
-  const color = dividerColor ?? token.colorBorderSecondary;
+  const { token } = useTheme();
+  const resolvedRowGap = rowGap ?? token('--spacing-8');
+  const resolvedColumnGap = columnGap ?? token('--spacing-12');
+  const color = dividerColor ?? token('--color-border');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);

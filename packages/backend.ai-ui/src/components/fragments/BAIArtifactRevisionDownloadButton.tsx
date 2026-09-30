@@ -1,6 +1,6 @@
 import { BAIArtifactRevisionDownloadButtonFragment$key } from '../../__generated__/BAIArtifactRevisionDownloadButtonFragment.graphql';
-import { theme } from '../../theme-shim';
 import BAIButton, { BAIButtonProps } from '../BAIButton';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import { Download } from 'lucide-react';
 import { graphql, useFragment } from 'react-relay';
@@ -17,7 +17,7 @@ const BAIArtifactRevisionDownloadButton = ({
   revisionsFrgmt,
   ...buttonProps
 }: BAIArtifactRevisionDownloadButtonProps) => {
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const revisions = useFragment<BAIArtifactRevisionDownloadButtonFragment$key>(
     graphql`
       fragment BAIArtifactRevisionDownloadButtonFragment on ArtifactRevision
@@ -41,10 +41,12 @@ const BAIArtifactRevisionDownloadButton = ({
       disabled={isDisabled}
       type="text"
       style={{
-        color: isDisabled ? token.colorTextDisabled : token.colorInfo,
+        color: isDisabled
+          ? token('--color-text-disabled')
+          : token('--color-info'),
         background: isDisabled
-          ? token.colorBgContainerDisabled
-          : token.colorInfoBg,
+          ? token('--color-bg-container-disabled')
+          : token('--color-info-bg'),
       }}
       {..._.omit(buttonProps, ['disabled', 'loading'])}
     />

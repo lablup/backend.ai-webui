@@ -4,15 +4,16 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIBoardItemTitle,
+  BAIDoubleBadge,
   BAIFetchKeyButton,
   BAIFlex,
   BAIFlexProps,
@@ -42,7 +43,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -57,6 +58,10 @@ const AgentStats: React.FC<AgentStatsProps> = ({
   const [data, refetch] = useRefetchableFragment(
     graphql`
       fragment AgentStatsFragment on Query
+      @argumentDefinitions(
+        aliveAgentFilter: { type: "String!" }
+        schedulableAgentFilter: { type: "String!" }
+      )
       @refetchable(queryName: "AgentStatsRefetchQuery") {
         agentStats @since(version: "25.15.0") {
           totalResource {
@@ -64,6 +69,16 @@ const AgentStats: React.FC<AgentStatsProps> = ({
             used
             capacity
           }
+        }
+        aliveAgents: agent_nodes(filter: $aliveAgentFilter, first: 1)
+          @since(version: "24.12.0") {
+          count
+        }
+        schedulableAgents: agent_nodes(
+          filter: $schedulableAgentFilter
+          first: 1
+        ) @since(version: "24.12.0") {
+          count
         }
       }
     `,
@@ -165,19 +180,29 @@ const AgentStats: React.FC<AgentStatsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}
     >
       <BAIBoardItemTitle
         title={
-          // antd Typography.Text styled to fontSizeHeading5 (16px) +
-          // fontWeightStrong. On the restored antd type ramp 16px is
-          // heading-5; `level={3}` tracked the same 16px back when Astryx's
-          // own ramp put 17px there.
-          <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
+          <BAIFlex gap="xs" align="center" wrap="wrap">
+            {/* antd Typography.Text styled to fontSizeHeading5 (16px). On the
+                restored antd type ramp 16px is heading-5. */}
+            <Heading level={5}>{t('agentStats.AgentStats')}</Heading>
+            <BAIDoubleBadge
+              values={[
+                { label: t('agentStats.SchedulableAgents') },
+                {
+                  label: `${data.schedulableAgents?.count ?? 0} / ${
+                    data.aliveAgents?.count ?? 0
+                  }`,
+                },
+              ]}
+            />
+          </BAIFlex>
         }
         tooltip={t('agentStats.AgentStatsDescription')}
         extra={

@@ -893,6 +893,12 @@ export class Client {
       this._features['my-roles'] = true;
       this._features['prometheus-auto-scaling-rule'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.1')) {
+      // ModelCardV2Filter gained the AND/OR/NOT sub-filter combinators
+      // (backend ab705371, fix(BA-5672)). Older managers reject them, so the
+      // model-store filter is restricted to a single condition below 26.4.1.
+      this._features['model-card-v2-sub-filter'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
@@ -908,6 +914,19 @@ export class Client {
       // its root. Older managers reject the unknown input field, so the key is
       // omitted from the mutation entirely on them.
       this._features['model-mount-subpath'] = true;
+      // QueryDefinitionFilter gained `categoryId: UUIDFilter` and the
+      // AND/OR/NOT sub-filter combinators in 26.4.4, while the tab itself is
+      // gated on `prometheus-query-preset` (26.4.2).
+      this._features['prometheus-query-preset-extended-filter'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
+      // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
+      // fields in their *Filter inputs: ModelCardV2Filter.domainName
+      // String -> StringFilter / .projectId UUID -> UUIDFilter, and
+      // RuntimeVariantPresetFilter / DeploymentRevisionPresetFilter
+      // .runtimeVariantId UUID -> UUIDFilter. `BAIGraphQLPropertyFilter` only
+      // emits the wrapper shape, so those properties are hidden below this.
+      this._features['v2-filter-wrapper-inputs'] = true;
     }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
@@ -988,6 +1007,17 @@ export class Client {
       // filters must omit them.
       this._features['session-preemption-statuses'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
+      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
+      // `Role.scopes` and `RBACElementType` remain as deprecated. Gated on the
+      // 26.9 pre-release so its managers take the new path (FR-3905, FR-3957).
+      this._features['rbac-single-scope-role'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
+      // `adminRolePresets` answers the 26.9 preset shape from 26.9.0a4 on;
+      // the RBAC page's Presets tab is hidden below it (FR-4065).
+      this._features['rbac-role-presets'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
@@ -999,15 +1029,10 @@ export class Client {
       // returning the old non-null shape, so call sites must not treat an
       // omitted field as "inherit from variant" unless this flag is set.
       this._features['preset-model-config-type'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7234 / backend #13538 — DomainV2 `id` became the domain uuid, and
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
       this._features['rbac-domain-scope-uuid'] = true;
-      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
-      // `Role.scopes` and `RBACElementType` remain as deprecated. FR-3905.
-      this._features['rbac-single-scope-role'] = true;
       // BA-7253 / backend PR #13562 — category/displayName/uiOption became
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.
@@ -1015,11 +1040,21 @@ export class Client {
       // LoginHistoryV2 / AuditLogV2 gained `clientIp`. FR-3661.
       this._features['client-ip-of-login-history'] = true;
       this._features['client-ip-of-audit-log'] = true;
-    }
-    // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
-    // requested id (`items` / `successes` plus `failed`) instead of a bare
-    // count, and the counts became `@deprecated`. FR-3820.
-    if (this.isManagerVersionCompatibleWith('26.9.0')) {
+      // An audit-log scope names its entity by the manager's EntityType name
+      // (`vfolder`), not the `RBACElementType` enum spelling (`VFOLDER`) that
+      // 26.4.4-26.8.x expect there. FR-3982.
+      this._features['audit-log-entity-type-name'] = true;
+      // BA-8075 / backend PR #14867 — the legacy `group_nodes` filter accepts
+      // `type`, so the Projects page can hide the per-user PERSONAL projects
+      // (BA-7659) behind a removable chip. FR-4015.
+      this._features['group-nodes-type-filter'] = true;
+      // BA-8025 / backend PR #14811 — model card search moved onto searchable
+      // field declarations: `ModelCardV2Filter` gained the metadata axes and
+      // `ModelCardV2OrderField` the matching order members. FR-4013.
+      this._features['model-card-search-axes'] = true;
+      // BA-7511 / backend PR #14040 — the three bulk mutations answer for every
+      // requested id (`items` / `successes` plus `failed`) instead of a bare
+      // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
     }
   }

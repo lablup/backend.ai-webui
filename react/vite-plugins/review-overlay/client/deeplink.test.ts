@@ -13,6 +13,7 @@ import {
   pinUrl,
   readablePath,
   retryUntil,
+  ROUTE_EVENT,
   stripPinParts,
   watchRoute,
 } from './deeplink.js';
@@ -523,6 +524,23 @@ describe('watchRoute', () => {
     stop();
     history.pushState({}, '', '/c');
     expect(seen).toHaveBeenCalledTimes(3);
+  });
+
+  /**
+   * The `history` patch cannot reach the page from a content script's isolated
+   * world, but a DOM event crosses it — so a second host dispatches this one
+   * itself (ADR 0008). That path is the reason the name is exported.
+   */
+  it('reports the route event a host dispatches without any patch', () => {
+    const seen = vi.fn();
+    const stop = watchRoute(seen);
+
+    window.dispatchEvent(new Event(ROUTE_EVENT));
+
+    expect(seen).toHaveBeenCalledTimes(1);
+    stop();
+    window.dispatchEvent(new Event(ROUTE_EVENT));
+    expect(seen).toHaveBeenCalledTimes(1);
   });
 
   it('patches the history once, however many overlays watch it', () => {

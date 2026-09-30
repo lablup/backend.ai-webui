@@ -299,7 +299,6 @@ options:
   deployments is delegated instead of deleting them.
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
 user's email together with the error message, while the remaining users are purged normally.
@@ -1225,6 +1224,7 @@ the checkboxes in the table, then click the Usage Graph (chart icon) button. Thi
 the Usage History modal.
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 The modal displays the following:
 
@@ -1262,6 +1262,12 @@ The image list displays additional columns for more detailed image information:
 - **Base Image Name**: The base name of the image, with alias tags for easier identification.
 - **Version**: The version tag of the image.
 - **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
+- **Image Status**: The image's lifecycle status — `ALIVE`, `DELETED`, `PURGING`, or `PURGE_ERROR`.
+- **Type**: The image's type — `COMPUTE`, `SERVICE`, or `SYSTEM`.
+- **Local**: Whether the image comes from an agent's local Docker daemon instead of a registry.
+- **Size**: The image size, shown in binary units.
+- **Aliases**: The aliases registered for the image.
+- **Supported Accelerators**: The accelerator types the image can run on.
 
 You can select multiple uninstalled images and click the **Install Image** button to install them in
 bulk. Installing an image enqueues a short-lived session that pulls the image, so the dialog asks
@@ -1557,7 +1563,11 @@ The resource group edit dialog contains the following additional fields:
   proxies is left untouched. When no proxy is selected for a group, that group is not restricted to a
   particular proxy.
 - **Active**: Toggle the active status of the resource group.
-- **Public**: When enabled, the resource group is visible to all users.
+- **Public**: When disabled, the resource group is reserved for system sessions such as SFTP uploads.
+  It is hidden from regular users' resource group lists and regular session creation in it is rejected,
+  but it stays visible to administrators. Enabling it does not widen access by itself — which domains,
+  projects, and keypairs can use the resource group is decided by their respective association
+  settings.
 - **Pending timeout**:
   A compute session will be canceled if it stays `PENDING` status for longer
   than the Pending timeout. When you wish to prevent a session from remaining
@@ -1919,6 +1929,9 @@ This page is only for showing current information.
 Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
 
+The list excludes personal projects by default; remove the pre-applied **Type** filter to include them.
+
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
 ![](../images/projects_page.png)
 
 The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
@@ -2027,7 +2040,7 @@ The toolbar provides:
 
 The settings are divided into the following groups:
 
-- **Theme**: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.
+- **Theme**: Color pickers for the primary, header background, link, info, error, and success colors. Each color can be set independently for light and dark mode and reset individually.
 - **Logo CI**: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.
 - **Detail Logo CI**: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.
 - **Font**: Select the font family used throughout the interface.

@@ -14,8 +14,8 @@ To preserve data inside a container regardless of the container's lifecycle, a s
 
 Go to 'Sessions' page and click the `Start` button.
 After filling out the 'Session Type', 'Environments & Resource allocation' steps,
-navigate to the 'Data & Storage' step to see a list of folders that users can mount.
-From this list, choose the folders to mount and add them, or select multiple folders to mount more.
+navigate to the 'Data & Storage' step and open the **Select Folder** dropdown to see the folders that users can mount.
+Choose one or more folders from this dropdown; each selected folder is added to the list of folders to mount.
 The documentation will explain how to mount two folders, `user1-ml-test` and `user2-vfolder`,
 and then create a session.
 
@@ -55,9 +55,14 @@ and `user2-vfolder` folders are mounted under the home directory.
 :::note
 The selected folder will be mounted with its name under `/home/work/` inside the compute session, by its default.
 For example, if folder's name is `test`, it is mounted on `/home/work/test`.
-To customize the mount path, write an absolute path in the 'Path and Alias' input fields.
-Writing `/workspace` in the input field of the `test` folder will mount to `/workspace` inside the session.
+To customize the mount path, write an absolute path in the **Container path (destination)** field on the folder's row.
+Writing `/workspace` in the field of the `test` folder will mount to `/workspace` inside the session.
 Writing a relative path will mount the folder under `/home/work/` with the path.
+:::
+
+:::note
+To mount a subfolder instead of the whole folder, fill in the **Path in folder (source)** field on the folder's row.
+Click the field to browse the folder and pick a path; leaving it empty mounts the folder root.
 :::
 
 Backend.AI gives an option to preserve files in folders when a compute session is deleted.
