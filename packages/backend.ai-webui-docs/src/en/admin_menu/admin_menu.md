@@ -299,7 +299,6 @@ options:
   deployments is delegated instead of deleting them.
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
 user's email together with the error message, while the remaining users are purged normally.

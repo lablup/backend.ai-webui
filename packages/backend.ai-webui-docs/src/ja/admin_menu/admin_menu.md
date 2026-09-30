@@ -274,7 +274,6 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
   削除されず、所有権が委任されます。
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 選択したユーザーの一部を完全に削除できなかった場合は、対象ユーザーのEメールとエラーメッセージを一覧表示する
 失敗ダイアログが開き、残りのユーザーは通常どおり完全に削除されます。
