@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="クラスターセッション" />
   <meta name="twitter:description" content="Backend.AIは、分散コンピューティング／トレーニングタスクをサポートするためにクラスターコンピュートセッションを提供しています。クラスターセッションは複数のコンテナで構成され、それぞれが複数の物理ノードにわたって作成されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"クラスターセッション","inLanguage":"ja","description":"Backend.AIは、分散コンピューティング／トレーニングタスクをサポートするためにクラスターコンピュートセッションを提供しています。クラスターセッションは複数のコンテナで構成され、それぞれが複数の物理ノードにわたって作成されます。","dateModified":"2026-09-23T00:17:49.000Z","url":"https://webui.docs.backend.ai/next/ja/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"クラスターセッション","inLanguage":"ja","description":"Backend.AIは、分散コンピューティング／トレーニングタスクをサポートするためにクラスターコンピュートセッションを提供しています。クラスターセッションは複数のコンテナで構成され、それぞれが複数の物理ノードにわたって作成されます。","dateModified":"2026-09-23T03:21:49.000Z","url":"https://webui.docs.backend.ai/next/ja/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/cluster_session.html" />
   <link rel="alternate" hreflang="en" href="../en/cluster_session.html" />
   <link rel="alternate" hreflang="ja" href="../ja/cluster_session.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (73944a3)">v26.9.0-alpha.0 (73944a3)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (6f34791)">v26.9.0-alpha.0 (6f34791)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -261,7 +261,7 @@
 <h3 data-bai-block="30" id="cluster_session-backendai-クラスターコンピュートセッションの使用">Backend.AI クラスターコンピュートセッションの使用<a class="hash-link" href="#cluster_session-backendai-クラスターコンピュートセッションの使用" aria-label="Direct link to Backend.AI クラスターコンピュートセッションの使用">#</a></h3>
 <p data-bai-block="31">このセクションでは、ユーザーGUIを通じて実際にクラスタコンピュートセッションを作成および使用する方法を見ていきます。</p>
 <p data-bai-block="32">セッションページで、セッション作成ダイアログを開き、通常の計算セッションを作成するのと同じ方法で設定します。このときに設定するリソース量は、<strong>1つのコンテナ</strong>に割り当てられる量です。例えば、4つのCPUを設定した場合、クラスタセッションの下で各コンテナに4コアが割り当てられます。これは、クラスタ計算セッション全体に割り当てられるリソース量ではないことに注意してください。クラスタ計算セッションを作成するには、ここで設定したリソース量のN倍に相当するサーバーリソースが必要です（Nはクラスタのサイズです）。データの安全保存のためにストレージフォルダをマウントすることを忘れないでください。</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/session_launch_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="2936" /><figcaption>図 11.2</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/session_launch_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="3124" /><figcaption>図 11.2</figcaption></figure>
 </p>
 <p data-bai-block="34">下部にある「クラスターモード」フィールドで、作成したいクラスターのタイプを選択できます。</p>
 <ul>
@@ -282,7 +282,7 @@
 <p><a id="see-logs-per-container"></a></p>
 <h3 data-bai-block="45" id="cluster_session-コンテナごとのログを表示">コンテナごとのログを表示<a class="hash-link" href="#cluster_session-コンテナごとのログを表示" aria-label="Direct link to コンテナごとのログを表示">#</a></h3>
 <p data-bai-block="46">ログモーダルで各コンテナのログを確認できます。これにより、<code>main</code> コンテナだけでなく <code>sub</code> コンテナで何が起こっているかを把握するのに役立ちます。</p>
-<p><figure data-bai-block="47" class="doc-figure"><img src="./images/log_modal_per_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1780" height="980" /><figcaption>図 11.6</figcaption></figure>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/log_modal_per_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2856" height="1712" /><figcaption>図 11.6</figcaption></figure>
 </p>
 
 </section>
