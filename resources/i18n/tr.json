@@ -3112,6 +3112,7 @@
       "ImageDoesNotProvideModelPath": "Konteyner görüntüsü model yolunu sağlamıyor. Değiştirilmelidir.",
       "ImageFilter": "İmaj filtresi",
       "InferenceMode": "Çıkarım",
+      "InferenceModeConfig": "Çıkarım modu Yapılandırması",
       "InfiniteTime": "Sonsuz",
       "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
       "InteractiveMode": "İnteraktif",

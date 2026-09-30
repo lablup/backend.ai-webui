@@ -3116,6 +3116,7 @@
       "ImageDoesNotProvideModelPath": "Gambar kontainer tidak menyediakan jalur model. Ini harus dimodifikasi.",
       "ImageFilter": "Filter image",
       "InferenceMode": "Kesimpulan",
+      "InferenceModeConfig": "Konfigurasi mode inferensi",
       "InfiniteTime": "Tak terbatas",
       "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih.",
       "InteractiveMode": "Interaktif",

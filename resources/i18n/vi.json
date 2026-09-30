@@ -3114,6 +3114,7 @@
       "ImageDoesNotProvideModelPath": "Hình ảnh vùng chứa không cung cấp đường dẫn mô hình. \nNó nên được sửa đổi.",
       "ImageFilter": "Bộ lọc image",
       "InferenceMode": "Sự suy luận",
+      "InferenceModeConfig": "Cấu hình chế độ suy luận",
       "InfiniteTime": "vô hạn",
       "InsufficientAllocationOfResourcesWarning": "Tài nguyên có thể phân bổ giảm xuống dưới mức tài nguyên tối thiểu được yêu cầu trong hình ảnh đã chọn.",
       "InteractiveMode": "Tương tác",
