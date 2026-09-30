@@ -191,10 +191,10 @@ function fetchForSubscribe(
 
 export function createRelayEnvironment(
   fetch: FetchFunction = fetchFn,
-  subscribe: SubscribeFunction | undefined = fetchForSubscribe,
+  subscribe: SubscribeFunction | null = fetchForSubscribe,
 ) {
   return new Environment({
-    network: Network.create(fetch, subscribe),
+    network: Network.create(fetch, subscribe ?? undefined),
     store: new Store(new RecordSource(), {
       // FR-3430: retains step queries released during FairShare step navigation (default 10)
       gcReleaseBufferSize: 20,

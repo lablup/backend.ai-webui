@@ -99,6 +99,19 @@ describe('isSessionAuthFailure', () => {
     expect(isSessionAuthFailure(routerAuthFailed)).toBe(true);
   });
 
+  it('does not mistake one refused subgraph on a live session for a refusal', () => {
+    expect(
+      isSessionAuthFailure({
+        data: {
+          keypair: bootstrap.keypair,
+          user: bootstrap.user,
+          groups: null,
+        },
+        errors: routerAuthFailed.errors.slice(2),
+      }),
+    ).toBe(false);
+  });
+
   it('leaves every other failure alone', () => {
     expect(isSessionAuthFailure({ statusCode: 500 })).toBe(false);
     expect(
@@ -169,5 +182,13 @@ describe('probeLoginSession', () => {
       keypair: { access_key: 'AKIATEST' },
     });
     expect(client.check_login).toHaveBeenCalledTimes(1);
+  });
+
+  it('reports no session when the check_login fallback refuses', async () => {
+    const client = makeClient({
+      adoptLoginSession: vi.fn().mockReturnValue(false),
+      check_login: vi.fn().mockResolvedValue(false),
+    });
+    await expect(probeLoginSession(client)).resolves.toBeNull();
   });
 });
