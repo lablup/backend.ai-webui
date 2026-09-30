@@ -248,7 +248,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 - **생성된 배포도 함께 삭제하시겠습니까?**: 선택하면 영구 삭제되는 사용자가 생성한 배포도 함께 삭제됩니다. 선택하지 않으면 해당 배포는 삭제되지 않고 소유권이 위임됩니다.
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 선택한 사용자 중 일부를 영구 삭제하지 못한 경우, 해당 사용자의 이메일과 오류 메시지를 함께 보여 주는 실패 대화
 상자가 열리며, 나머지 사용자는 정상적으로 영구 삭제됩니다.
