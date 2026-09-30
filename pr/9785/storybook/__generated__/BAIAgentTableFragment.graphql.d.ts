@@ -7,6 +7,7 @@ export type BAIAgentTableFragment$data = ReadonlyArray<{
     readonly first_contact: string | null | undefined;
     readonly id: string;
     readonly live_stat: string | null | undefined;
+    readonly lost_at: string | null | undefined;
     readonly occupied_slots: string | null | undefined;
     readonly region: string | null | undefined;
     readonly row_id: string | null | undefined;

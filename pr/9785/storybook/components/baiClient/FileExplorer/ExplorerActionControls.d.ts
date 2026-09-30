@@ -13,6 +13,7 @@ interface ExplorerActionControlsProps {
     enableWrite?: boolean;
     enableUpload?: boolean;
     mode?: 'explorer' | 'directoryPicker';
+    onFolderCreated?: (folderName: string) => void;
     extra?: React.ReactNode;
 }
 declare const ExplorerActionControls: React.FC<ExplorerActionControlsProps>;

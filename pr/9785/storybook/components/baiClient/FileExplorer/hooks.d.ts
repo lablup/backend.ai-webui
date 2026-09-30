@@ -60,6 +60,12 @@ export declare const useSearchVFolderFiles: (vfolder: string, fetchKey?: string)
     isFetching: boolean;
     isLoading: boolean;
 };
+/**
+ * Turns a failed download into the message shown to the user. Both download
+ * paths — the per-row action and the toolbar archive — share it so a proxy the
+ * browser cannot reach reads the same either way.
+ */
+export declare const useDownloadErrorMessage: () => (error: unknown) => string | undefined;
 /** One top-level entry a picked file list will create in the target directory. */
 export interface UploadEntry {
     name: string;
