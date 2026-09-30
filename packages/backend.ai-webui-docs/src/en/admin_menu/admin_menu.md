@@ -1224,6 +1224,7 @@ the checkboxes in the table, then click the Usage Graph (chart icon) button. Thi
 the Usage History modal.
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 The modal displays the following:
 

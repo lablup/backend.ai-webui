@@ -1126,6 +1126,7 @@ Fair Share และการใช้งาน
 modal ประวัติการใช้งานจะเปิดขึ้น
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 modal จะแสดงข้อมูลต่อไปนี้:
 

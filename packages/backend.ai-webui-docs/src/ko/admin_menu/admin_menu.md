@@ -1040,6 +1040,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 열립니다.
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 모달에는 다음 내용이 표시됩니다:
 
