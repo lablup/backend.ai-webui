@@ -36,13 +36,14 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Link } from '@astryxdesign/core/Link';
 import { List, ListItem } from '@astryxdesign/core/List';
+import { usePopover } from '@astryxdesign/core/Popover';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Text } from '@astryxdesign/core/Text';
 import { useTheme } from '@astryxdesign/core/theme';
-import { focusVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { focusVars, spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAI_Z_INDEX,
@@ -66,9 +67,15 @@ import { useTranslation } from 'react-i18next';
 
 type ConnectionMode = 'SESSION' | 'API';
 
-// Item rings the row on any focused descendant; ring it only for the row's own
-// select button (one outline per tab stop), inset so the scrolling list can't clip it.
 const styles = stylex.create({
+  endpointPopover: {
+    width: 'anchor-size(width)',
+    maxHeight: 140,
+    overflowY: 'auto',
+    padding: spacingVars['--spacing-1'],
+  },
+  // Item rings the row on any focused descendant; ring it only for the row's own
+  // select button (one outline per tab stop), inset so the scrolling list can't clip it.
   endpointRow: {
     outlineWidth: {
       default: '0',
@@ -173,41 +180,35 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   const [isEndpointExpanded, setIsEndpointExpanded] = useState(
     () => showEndpointInput && !isEndpointDisabled && apiEndpoint === '',
   );
-  const [isEndpointHistoryOpen, setIsEndpointHistoryOpen] = useState(false);
-  const endpointHistoryRef = useRef<HTMLDivElement>(null);
-  // Set while a pointer press outside the list is in progress (see below).
-  const isPointerPressOutsideRef = useRef(false);
-
-  // Closing the list on the input's blur re-centres the dialog between a
-  // pointer's down and up, so the pressed button moves out from under it and
-  // its click never fires. A press outside therefore defers the close to the
-  // click that follows it; keyboard blur and Escape still close at once.
-  useEffect(() => {
-    if (!isEndpointHistoryOpen) return;
-    const isInside = (e: Event) =>
-      !!endpointHistoryRef.current &&
-      e.composedPath().includes(endpointHistoryRef.current);
-    const onPointerDown = (e: PointerEvent) => {
-      isPointerPressOutsideRef.current = !isInside(e);
-    };
-    // Focus has already moved by pointerup, so a press that ends without a
-    // click (released off-window) must not leave the flag set.
-    const onPointerUp = () => {
-      isPointerPressOutsideRef.current = false;
-    };
-    const onClick = (e: MouseEvent) => {
-      if (!isInside(e)) setIsEndpointHistoryOpen(false);
-    };
-    document.addEventListener('pointerdown', onPointerDown, true);
-    document.addEventListener('pointerup', onPointerUp, true);
-    document.addEventListener('click', onClick);
-    return () => {
-      isPointerPressOutsideRef.current = false;
-      document.removeEventListener('pointerdown', onPointerDown, true);
-      document.removeEventListener('pointerup', onPointerUp, true);
-      document.removeEventListener('click', onClick);
-    };
-  }, [isEndpointHistoryOpen]);
+  // The saved endpoints are the field's autofill, floating so the form never
+  // reflows. Focus decides when it closes: a text input cannot be the layer's
+  // invoker, so light dismiss would shut it on every click into the field.
+  const endpointHistoryPopover = usePopover({
+    hasLightDismiss: false,
+    hasCloseButton: false,
+    hasAutoFocus: false,
+    role: 'none',
+  });
+  const endpointAnchorRef = useRef<HTMLDivElement | null>(null);
+  // Hiding returns focus to the field; that focus must not reopen the list.
+  const isReturningFocusRef = useRef(false);
+  const showEndpointHistory = () => {
+    if (isReturningFocusRef.current) {
+      isReturningFocusRef.current = false;
+      return;
+    }
+    if (endpointHistory.length > 0 && !endpointHistoryPopover.isOpen) {
+      endpointHistoryPopover.show();
+    }
+  };
+  const selectEndpoint = (endpoint: string) => {
+    onSelectEndpoint(endpoint);
+    isReturningFocusRef.current = true;
+    endpointHistoryPopover.hide();
+    requestAnimationFrame(() => {
+      isReturningFocusRef.current = false;
+    });
+  };
   const [helpPanel, setHelpPanel] = useState<{
     title: string;
     content: string;
@@ -522,21 +523,44 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                   style={{ marginTop: token('--spacing-2') }}
                 >
                   <div
-                    ref={endpointHistoryRef}
-                    // The saved endpoints behave as the field's own autofill:
-                    // focus opens the list; a pointer press outside closes it
-                    // on the following click (see the effect above).
-                    onFocus={() => setIsEndpointHistoryOpen(true)}
+                    ref={(el) => {
+                      endpointAnchorRef.current = el;
+                      endpointHistoryPopover.triggerRef(el);
+                    }}
+                    onFocus={showEndpointHistory}
+                    onClick={showEndpointHistory}
                     onBlur={(e) => {
+                      const next = e.relatedTarget as Node | null;
                       if (
-                        !isPointerPressOutsideRef.current &&
-                        !e.currentTarget.contains(e.relatedTarget as Node)
+                        !e.currentTarget.contains(next) &&
+                        !endpointHistoryPopover.contentRef.current?.contains(
+                          next,
+                        )
                       ) {
-                        setIsEndpointHistoryOpen(false);
+                        endpointHistoryPopover.hide();
                       }
                     }}
                     onKeyDown={(e) => {
-                      if (e.key === 'Escape') setIsEndpointHistoryOpen(false);
+                      if (!endpointHistoryPopover.isOpen) {
+                        if (e.key === 'ArrowDown') showEndpointHistory();
+                        return;
+                      }
+                      const list = endpointHistoryPopover.contentRef.current;
+                      // The layer is its own focus scope, so Tab from the field
+                      // skips it; ArrowDown enters it as in a combobox.
+                      if (
+                        e.key === 'ArrowDown' &&
+                        !list?.contains(e.target as Node)
+                      ) {
+                        e.preventDefault();
+                        list?.querySelector('button')?.focus();
+                      } else if (e.key === 'Escape') {
+                        e.stopPropagation();
+                        endpointHistoryPopover.hide();
+                        endpointAnchorRef.current
+                          ?.querySelector('input')
+                          ?.focus();
+                      }
                     }}
                     style={{ flex: 1, minWidth: 0 }}
                   >
@@ -557,29 +581,17 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                         onChange={(value) => onSetApiEndpoint(value)}
                       />
                     </BAIFormItem>
-                    {isEndpointHistoryOpen && endpointHistory.length > 0 && (
-                      <div
-                        // In flow under the input, not floating: a positioned
-                        // panel overflowed the dialog's scroll box. Height is
-                        // capped so a long history scrolls inside the list.
-                        style={{
-                          marginTop: 'var(--spacing-1)',
-                          maxHeight: 140,
-                          overflowY: 'auto',
-                          background: 'var(--color-background-surface)',
-                          border: '1px solid var(--color-border)',
-                          borderRadius: 'var(--radius-element)',
-                        }}
-                      >
+                    {endpointHistory.length > 0 &&
+                      endpointHistoryPopover.render(
                         <List density="compact" hasDividers>
                           {endpointHistory.map(({ endpoint, isFromEnv }) => (
                             <ListItem
                               key={endpoint}
                               label={isFromEnv ? `${endpoint} (env)` : endpoint}
                               xstyle={styles.endpointRow}
-                              onClick={() => {
-                                onSelectEndpoint(endpoint);
-                                setIsEndpointHistoryOpen(false);
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                selectEndpoint(endpoint);
                               }}
                               endContent={
                                 <IconButton
@@ -591,15 +603,27 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                                     // The row is the select target; deleting
                                     // must not also select it.
                                     e.stopPropagation();
+                                    if (endpointHistory.length === 1) {
+                                      endpointHistoryPopover.hide();
+                                    }
                                     onDeleteEndpoint(endpoint);
+                                    // The pressed row unmounts with focus in it.
+                                    endpointAnchorRef.current
+                                      ?.querySelector('input')
+                                      ?.focus();
                                   }}
                                 />
                               }
                             />
                           ))}
-                        </List>
-                      </div>
-                    )}
+                        </List>,
+                        {
+                          placement: 'below',
+                          alignment: 'start',
+                          offset: spacingVars['--spacing-1'],
+                          xstyle: styles.endpointPopover,
+                        },
+                      )}
                   </div>
                   <IconButton
                     icon={<Info size="1em" />}
