@@ -1,6 +1,7 @@
 import { RcFile } from './hooks';
 interface DragAndDropProps {
-    onUpload: (files: Array<RcFile>, currentPath: string) => void;
+    /** Hands the drop to the explorer's duplicate-aware upload path. */
+    onUpload: (files: Array<RcFile>) => void;
     /** Optional container element for portal rendering */
     portalContainer?: HTMLElement | null;
     /** Dismisses the overlay once the drag is over. */

@@ -2,6 +2,7 @@ import { ReaderFragment, FragmentRefs } from 'relay-runtime';
 export type AuditLogStatus = "DENIED" | "ERROR" | "RUNNING" | "SUCCESS" | "UNKNOWN" | "%future added value";
 export type BAIAuditLogNodesFragment$data = ReadonlyArray<{
     readonly actionId: string;
+    readonly clientIp: string | null | undefined;
     readonly createdAt: string;
     readonly description: string;
     readonly duration: string | null | undefined;

@@ -12,7 +12,7 @@ export type BAIArtifactTableArtifactFragment$data = ReadonlyArray<{
                 readonly size: any | null | undefined;
                 readonly status: ArtifactStatus;
                 readonly version: string;
-                readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusTagFragment">;
+                readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactRevisionDownloadButtonFragment" | "BAIArtifactStatusBadgeFragment">;
             };
         }>;
     } | null | undefined;
@@ -27,7 +27,7 @@ export type BAIArtifactTableArtifactFragment$data = ReadonlyArray<{
         readonly url: string | null | undefined;
     };
     readonly updatedAt: string;
-    readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTagFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"BAIArtifactTypeTokenFragment">;
     readonly " $fragmentType": "BAIArtifactTableArtifactFragment";
 }>;
 export type BAIArtifactTableArtifactFragment$key = ReadonlyArray<{

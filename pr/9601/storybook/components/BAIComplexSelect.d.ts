@@ -20,6 +20,14 @@ export interface BAIComplexSelectOption {
     value: string;
     /** MUST be a string (P26-3) — it is the trigger text and accessible name. */
     label: string;
+    /**
+     * Drawn in the popup in place of `label`, for an option whose row is richer
+     * than a string. `label` still carries the trigger text and the accessible
+     * name, so P26-3 holds.
+     */
+    labelContent?: React.ReactNode;
+    /** Leading visual (avatar, glyph), centered on the row beside its text. */
+    icon?: React.ReactNode;
     /** Secondary line under the label (antd `optionRender` subtitle shape). */
     description?: React.ReactNode;
     /** Trailing rich content (badges, tags, meta) — the other half of P26-3. */
@@ -70,8 +78,11 @@ export interface BAIComplexSelectProps {
     total?: number;
     /** antd `BAISelect.header` (rendered above the option list). */
     header?: React.ReactNode;
-    /** antd `BAISelect.footer` (rendered below the option list). */
-    footer?: React.ReactNode;
+    /**
+     * antd `BAISelect.footer` (rendered below the option list). A function
+     * receives `close` so a footer action can dismiss the panel.
+     */
+    footer?: React.ReactNode | ((close: () => void) => React.ReactNode);
     /** antd `notFoundContent`. Overrides the loading row too. */
     emptyContent?: React.ReactNode;
     /**
@@ -88,6 +99,19 @@ export interface BAIComplexSelectProps {
     triggerDisplay?: BAIComplexSelectTriggerDisplay;
     /** Labels/chips shown in the trigger before collapsing to "+N" (P26-4). */
     maxTriggerTokens?: number;
+    /**
+     * antd `allowClear`: a clear button between the spinner and the chevron
+     * while something is selected (`ComplexSelector.hasClear`, added by
+     * react/patches/@astryxdesign__core@0.6.2.patch, upstream
+     * https://github.com/facebook/astryx/pull/6362).
+     */
+    allowClear?: boolean;
+    /**
+     * How a selected option is marked: `'check'` (default) draws the theme's
+     * check at the row's end; `'checkbox'` draws a checkbox at its start, which
+     * reads better for a `multiple` list with rich rows.
+     */
+    selectionMark?: 'check' | 'checkbox';
     'data-testid'?: string;
 }
 declare const BAIComplexSelect: React.FC<BAIComplexSelectProps>;

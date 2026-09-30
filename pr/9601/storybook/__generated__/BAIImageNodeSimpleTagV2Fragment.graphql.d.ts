@@ -3,7 +3,6 @@ export type BAIImageNodeSimpleTagV2Fragment$data = {
     readonly identity: {
         readonly architecture: string;
         readonly canonicalName: string;
-        readonly namespace: string;
     };
     readonly metadata: {
         readonly labels: ReadonlyArray<{
