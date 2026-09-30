@@ -37,11 +37,14 @@ import {
   type LoginConfigState,
 } from '../helper/loginConfig';
 import {
-  createBackendAIClient,
+  LoginProbeCancelledError,
   connectViaGQL,
+  createBackendAIClient,
+  escapeLoginProbe,
   loadConfigFromWebServer,
-  loginWithSAML,
   loginWithOpenID,
+  loginWithSAML,
+  probeManager,
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
@@ -710,12 +713,12 @@ const LoginView: React.FC<{
       clientRef.current = client;
 
       try {
-        await client.get_manager_version();
-      } catch {
+        await probeManager(client);
+      } catch (err: unknown) {
         setIsBlockPanelOpen(false);
         open();
         setIsLoading(false);
-        if (showError) {
+        if (showError && !(err instanceof LoginProbeCancelledError)) {
           notification(t('error.CannotConnectToServer'));
         }
         return;
@@ -795,10 +798,12 @@ const LoginView: React.FC<{
       client.ready = false;
 
       try {
-        await client.get_manager_version();
+        await probeManager(client);
         await doGQLConnect(client);
-      } catch {
-        notification(t('error.CannotConnectToServer'));
+      } catch (err: unknown) {
+        if (!(err instanceof LoginProbeCancelledError)) {
+          notification(t('error.CannotConnectToServer'));
+        }
         setIsLoading(false);
       }
     },
@@ -960,7 +965,7 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
       try {
-        await client.get_manager_version();
+        await probeManager(client);
         const isLogon = await client.check_login();
         return !!isLogon;
       } catch {
@@ -1084,6 +1089,20 @@ const LoginView: React.FC<{
       ],
     },
   ];
+
+  // Dev-only: Esc aborts a login probe stuck on an unreachable endpoint (a
+  // reviewer's dev server pinned to a backend outside their VPN) so the form
+  // comes back without waiting out the client-wide timeout.
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && escapeLoginProbe()) {
+        logger.info('[dev] login probe aborted with Esc');
+      }
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [logger]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
