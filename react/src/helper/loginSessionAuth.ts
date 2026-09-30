@@ -49,27 +49,6 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
 }
 
 /**
- * Thrown when the post-authentication `keypair` query succeeds but returns no
- * keypair. A server-reported failure is thrown by `client.query` instead.
- */
-export class KeypairUnavailableError extends Error {
-  /** Duck-typing marker: survives module duplication (HMR, mocked imports). */
-  readonly isKeypairUnavailable = true;
-  constructor() {
-    super('Keypair information is missing.');
-    this.name = 'KeypairUnavailableError';
-  }
-}
-
-/** Duck-typed check for `KeypairUnavailableError` crossing module boundaries. */
-export const isKeypairUnavailableError = (
-  err: unknown,
-): err is KeypairUnavailableError =>
-  typeof err === 'object' &&
-  err !== null &&
-  (err as { isKeypairUnavailable?: unknown }).isKeypairUnavailable === true;
-
-/**
  * Perform GQL connection after successful authentication.
  * Sets up globalThis.backendaiclient with user info, groups, and config.
  */
@@ -82,31 +61,21 @@ export async function connectViaGQL(
   const q = `query { keypair { ${fields.join(' ')} } }`;
   const v = {};
 
-  // Best-effort cleanup: a rejecting logout must not replace the error the
-  // caller classifies.
-  const logoutQuietly = async () => {
-    try {
-      await client.logout();
-    } catch {
-      /* empty */
-    }
-  };
-
   let response;
   try {
     response = await client.query(q, v);
   } catch (err) {
-    // Only a server refusal ends the session; a network blip must not.
+    // A refused session is cleaned up like an empty keypair; a network blip is not.
     const status = (err as { statusCode?: unknown } | null)?.statusCode;
-    if (status === 401 || status === 403) await logoutQuietly();
+    if (status === 401 || status === 403) await client.logout().catch(() => {});
     throw err;
   }
 
   (globalThis as any).backendaiclient = client;
 
   if (!response['keypair']) {
-    await logoutQuietly();
-    throw new KeypairUnavailableError();
+    await client.logout();
+    throw new Error('Keypair information is missing.');
   }
 
   const resourcePolicy = response['keypair'].resource_policy;

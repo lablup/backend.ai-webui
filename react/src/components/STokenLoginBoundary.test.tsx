@@ -22,7 +22,6 @@
  */
 import '../../__test__/matchMedia.mock.js';
 import {
-  KeypairUnavailableError,
   connectViaGQL,
   createBackendAIClient,
   tokenLogin,
@@ -69,20 +68,12 @@ vi.mock('../hooks/useResolvedApiEndpoint', () => {
   };
 });
 
-vi.mock('../helper/loginSessionAuth', async () => {
-  // The keypair-error helpers stay real: the classifier duck-types on the
-  // marker they set, so mocking them would test nothing.
-  const actual = await vi.importActual<
-    typeof import('../helper/loginSessionAuth')
-  >('../helper/loginSessionAuth');
-  return {
-    ...actual,
-    __esModule: true,
-    createBackendAIClient: vi.fn(),
-    tokenLogin: vi.fn(),
-    connectViaGQL: vi.fn(),
-  };
-});
+vi.mock('../helper/loginSessionAuth', () => ({
+  __esModule: true,
+  createBackendAIClient: vi.fn(),
+  tokenLogin: vi.fn(),
+  connectViaGQL: vi.fn(),
+}));
 
 vi.mock('backend.ai-ui', async () => {
   const actual =
@@ -270,70 +261,6 @@ describe('STokenLoginBoundary', () => {
         cause: tokenErr,
       });
     });
-    expect(connectedEventCount).toBe(0);
-  });
-
-  test('reports keypair-unavailable when the post-login keypair query comes back empty (FR-3998)', async () => {
-    const keypairErr = new KeypairUnavailableError();
-    mockedTokenLogin.mockRejectedValue(keypairErr);
-    const onError = vi.fn();
-    renderBoundary({ onError });
-
-    await waitFor(() => {
-      expect(onError).toHaveBeenCalledWith({
-        kind: 'keypair-unavailable',
-        cause: keypairErr,
-      });
-    });
-    expect(connectedEventCount).toBe(0);
-  });
-
-  test('reports keypair-unavailable on the existing-session fast path too (FR-3998)', async () => {
-    const client = buildFakeClient({
-      check_login: vi.fn().mockResolvedValue(true),
-    });
-    mockedCreateBackendAIClient.mockImplementation(() => ({
-      client,
-      clientConfig: {},
-    }));
-    const keypairErr = new KeypairUnavailableError();
-    mockedConnectViaGQL.mockRejectedValue(keypairErr);
-    const onError = vi.fn();
-    renderBoundary({ onError });
-
-    await waitFor(() => {
-      expect(onError).toHaveBeenCalledWith({
-        kind: 'keypair-unavailable',
-        cause: keypairErr,
-      });
-    });
-    expect(connectedEventCount).toBe(0);
-  });
-
-  test('reports the server error from the keypair query as unknown and shows its message (FR-3998)', async () => {
-    const serverErr = {
-      isError: true,
-      type: 'https://api.backend.ai/probs/auth-failed',
-      statusCode: 401,
-      title: '401 Unauthorized - Credential/signature mismatch.',
-      msg: "'10.42.22.120' is not allowed IP address",
-      message:
-        "server responded failure: 401 Unauthorized - '10.42.22.120' is not allowed IP address",
-      description: "'10.42.22.120' is not allowed IP address",
-    };
-    mockedTokenLogin.mockRejectedValue(serverErr);
-    const onError = vi.fn();
-    renderBoundary({ onError });
-
-    await waitFor(() => {
-      expect(onError).toHaveBeenCalledWith({
-        kind: 'unknown',
-        cause: serverErr,
-      });
-    });
-    expect(
-      await screen.findByText(/'10\.42\.22\.120' is not allowed IP address/),
-    ).toBeInTheDocument();
     expect(connectedEventCount).toBe(0);
   });
 

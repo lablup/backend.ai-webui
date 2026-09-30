@@ -39,7 +39,6 @@ import {
 import {
   createBackendAIClient,
   connectViaGQL,
-  isKeypairUnavailableError,
   loadConfigFromWebServer,
   loginWithSAML,
   loginWithOpenID,
@@ -61,7 +60,7 @@ import LoginFormPanel from './LoginFormPanel';
 import { Button } from '@astryxdesign/core/Button';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
 import { BAIModal, useBAILogger } from 'backend.ai-ui';
-import i18n, { type TFunction } from 'i18next';
+import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Trash2Icon } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -77,33 +76,6 @@ const extractErrorType = (typeUrl?: string): string => {
   if (!typeUrl) return '';
   const parts = typeUrl.split('/');
   return parts[parts.length - 1] || '';
-};
-
-// Post-login bootstrap errors every connect path reports the same way.
-const notifyBootstrapError = (
-  err: unknown,
-  notify: (text: string, detail?: string) => void,
-  t: TFunction,
-): boolean => {
-  if (isKeypairUnavailableError(err)) {
-    notify(
-      t('login.KeypairUnavailable'),
-      t('login.KeypairUnavailableDescription'),
-    );
-    return true;
-  }
-  const e = err as {
-    isError?: boolean;
-    type?: string;
-    msg?: string;
-    description?: string;
-    message?: string;
-  } | null;
-  if (e?.isError && extractErrorType(e.type) === 'auth-failed') {
-    notify(t('error.LoginFailed'), e.msg || e.description || e.message);
-    return true;
-  }
-  return false;
 };
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
@@ -649,11 +621,6 @@ const LoginView: React.FC<{
         }
       }
 
-      // `connectUsingSession` runs the GQL bootstrap in the same try as
-      // `client.login()`, so its errors land here too.
-      if (showError && notifyBootstrapError(err, notification, t))
-        return 'reopen';
-
       // --- Server errors (429, 502, 503, etc. from _wrapWithPromise) ---
       if (e.isError && e.type) {
         const errorType = extractErrorType(e.type);
@@ -701,7 +668,7 @@ const LoginView: React.FC<{
   const handleGQLError = useCallback(
     (err: unknown, showError: boolean) => {
       setIsBlockPanelOpen(false);
-      if (showError && !notifyBootstrapError(err, notification, t)) {
+      if (showError) {
         const e = err as {
           title?: string;
           message?: string;
@@ -829,17 +796,9 @@ const LoginView: React.FC<{
 
       try {
         await client.get_manager_version();
+        await doGQLConnect(client);
       } catch {
         notification(t('error.CannotConnectToServer'));
-        setIsLoading(false);
-        return;
-      }
-      try {
-        await doGQLConnect(client);
-      } catch (err: unknown) {
-        if (!notifyBootstrapError(err, notification, t)) {
-          notification(t('error.CannotConnectToServer'));
-        }
         setIsLoading(false);
       }
     },
