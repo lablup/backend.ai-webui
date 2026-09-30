@@ -2,22 +2,36 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import type { BackendAIClient } from '../hooks';
 import {
-  LOGIN_BOOTSTRAP_QUERY,
+  SessionAuthFailureError,
   isSessionAuthFailure,
   probeLoginSession,
 } from './loginBootstrap';
 import { describe, expect, it, vi } from 'vitest';
 
+// A full response for the bootstrap document, as the manager returns it.
 const bootstrap = {
   keypair: {
     access_key: 'AKIATEST',
     user_id: 'user@example.com',
     resource_policy: 'default',
     user: 'uuid-1',
+    id: 'KeyPair:AKIATEST',
   },
-  user: null,
-  groups: [],
+  user: {
+    username: 'user',
+    email: 'user@example.com',
+    full_name: 'Test User',
+    is_active: true,
+    role: 'user',
+    domain_name: 'default',
+    groups: [{ name: 'default', id: 'g-1' }],
+    need_password_change: false,
+    uuid: 'uuid-1',
+    id: 'User:uuid-1',
+  },
+  groups: [{ id: 'g-1', name: 'default', description: null, is_active: true }],
 };
 
 // The shape `_wrapWithPromise` throws for a webserver 401.
@@ -50,12 +64,23 @@ const routerAuthFailed = {
 };
 
 function makeClient(overrides: Record<string, unknown> = {}) {
-  return {
-    queryEnvelope: vi.fn().mockResolvedValue({ data: bootstrap }),
+  const client = {
+    newSignedRequest: vi.fn((method: string, path: string, body: unknown) => ({
+      method,
+      path,
+      body,
+    })),
+    _wrapWithPromise: vi.fn().mockResolvedValue({ data: bootstrap }),
+    // A real method that reads `this`, as the client's own does.
+    _managerVersion: '26.9.0',
+    isManagerVersionCompatibleWith(this: { _managerVersion: string }) {
+      return this._managerVersion !== '';
+    },
     adoptLoginSession: vi.fn().mockReturnValue(true),
     check_login: vi.fn().mockResolvedValue(true),
     ...overrides,
   };
+  return client as typeof client & BackendAIClient;
 }
 
 describe('isSessionAuthFailure', () => {
@@ -88,13 +113,18 @@ describe('isSessionAuthFailure', () => {
 });
 
 describe('probeLoginSession', () => {
-  it('returns the bootstrap and adopts the session in one query', async () => {
+  it('sends the compiled bootstrap document once and adopts the session', async () => {
     const client = makeClient();
-    await expect(probeLoginSession(client)).resolves.toBe(bootstrap);
-    expect(client.queryEnvelope).toHaveBeenCalledTimes(1);
-    expect(client.queryEnvelope).toHaveBeenCalledWith(
-      LOGIN_BOOTSTRAP_QUERY,
-      null,
+    const data = await probeLoginSession(client);
+    expect(data?.keypair?.access_key).toBe('AKIATEST');
+    expect(data?.user?.email).toBe('user@example.com');
+    expect(data?.groups?.[0]?.name).toBe('default');
+    expect(client._wrapWithPromise).toHaveBeenCalledTimes(1);
+    const [method, path, body] = client.newSignedRequest.mock.calls[0];
+    expect(method).toBe('POST');
+    expect(path).toBe('/admin/gql');
+    expect((body as { query: string }).query).toMatch(
+      /^query loginBootstrapQuery\b/,
     );
     expect(client.adoptLoginSession).toHaveBeenCalledWith('AKIATEST');
     expect(client.check_login).not.toHaveBeenCalled();
@@ -102,7 +132,7 @@ describe('probeLoginSession', () => {
 
   it('returns null for a session the webserver does not hold', async () => {
     const client = makeClient({
-      queryEnvelope: vi.fn().mockRejectedValue(authFailed),
+      _wrapWithPromise: vi.fn().mockRejectedValue(authFailed),
     });
     await expect(probeLoginSession(client)).resolves.toBeNull();
     expect(client.adoptLoginSession).not.toHaveBeenCalled();
@@ -111,7 +141,7 @@ describe('probeLoginSession', () => {
 
   it('returns null when the router wraps the manager 401 in a 200', async () => {
     const client = makeClient({
-      queryEnvelope: vi.fn().mockResolvedValue(routerAuthFailed),
+      _wrapWithPromise: vi.fn().mockResolvedValue(routerAuthFailed),
     });
     await expect(probeLoginSession(client)).resolves.toBeNull();
     expect(client.adoptLoginSession).not.toHaveBeenCalled();
@@ -121,16 +151,23 @@ describe('probeLoginSession', () => {
   it('rethrows failures that are not an auth refusal', async () => {
     const boom = { isError: true, statusCode: 502 };
     const client = makeClient({
-      queryEnvelope: vi.fn().mockRejectedValue(boom),
+      _wrapWithPromise: vi.fn().mockRejectedValue(boom),
     });
-    await expect(probeLoginSession(client)).rejects.toBe(boom);
+    await expect(probeLoginSession(client)).rejects.toMatchObject({
+      statusCode: 502,
+    });
+    await expect(probeLoginSession(client)).rejects.not.toBeInstanceOf(
+      SessionAuthFailureError,
+    );
   });
 
   it('falls back to check_login when the session id is not known locally', async () => {
     const client = makeClient({
       adoptLoginSession: vi.fn().mockReturnValue(false),
     });
-    await expect(probeLoginSession(client)).resolves.toBe(bootstrap);
+    await expect(probeLoginSession(client)).resolves.toMatchObject({
+      keypair: { access_key: 'AKIATEST' },
+    });
     expect(client.check_login).toHaveBeenCalledTimes(1);
   });
 });
