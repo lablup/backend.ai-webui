@@ -77,6 +77,46 @@ test.describe(
       }
     });
 
+    test('user can open the list without moving the rest of the login form', async ({
+      page,
+    }) => {
+      const input = await endpointField(page);
+      const loginButton = page.getByRole('button', {
+        name: 'Login',
+        exact: true,
+      });
+      const before = {
+        login: await loginButton.boundingBox(),
+        input: await input.boundingBox(),
+      };
+
+      await input.focus();
+      await expect(endpointRow(page, SAVED_ENDPOINTS[0])).toBeVisible();
+
+      // The list floats over the dialog, so opening it must not re-centre it.
+      expect(await loginButton.boundingBox()).toEqual(before.login);
+      expect(await input.boundingBox()).toEqual(before.input);
+    });
+
+    test('user can move from the field into the list with the arrow key', async ({
+      page,
+    }) => {
+      const input = await endpointField(page);
+      await input.focus();
+      await expect(endpointRow(page, SAVED_ENDPOINTS[0])).toBeVisible();
+
+      await page.keyboard.press('ArrowDown');
+      await expect(input).not.toBeFocused();
+      await expect(
+        page.getByRole('listitem').getByRole('button').first(),
+      ).toBeFocused();
+
+      // Escape leaves the list for the field and closes it.
+      await page.keyboard.press('Escape');
+      await expect(input).toBeFocused();
+      await expect(deleteButton(page, SAVED_ENDPOINTS[0])).toBeHidden();
+    });
+
     test('user can fill the field by picking a saved endpoint', async ({
       page,
     }) => {
