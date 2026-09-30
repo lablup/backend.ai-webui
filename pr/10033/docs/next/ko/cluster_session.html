@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="클러스터 세션" />
   <meta name="twitter:description" content="Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 클러스터 연산 세션을 지원합니다. 클러스터 세션은 여러 개의 컨테이너로 구성되며, 각 컨테이너는 여러 물리 노드에 걸쳐 생성됩니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"클러스터 세션","inLanguage":"ko","description":"Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 클러스터 연산 세션을 지원합니다. 클러스터 세션은 여러 개의 컨테이너로 구성되며, 각 컨테이너는 여러 물리 노드에 걸쳐 생성됩니다.","dateModified":"2026-09-23T00:43:49.000Z","url":"https://webui.docs.backend.ai/next/ko/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"클러스터 세션","inLanguage":"ko","description":"Backend.AI는 분산 컴퓨팅 및 분산 학습 작업을 지원하기 위해 클러스터 연산 세션을 지원합니다. 클러스터 세션은 여러 개의 컨테이너로 구성되며, 각 컨테이너는 여러 물리 노드에 걸쳐 생성됩니다.","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/ko/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/cluster_session.html" />
   <link rel="alternate" hreflang="en" href="../en/cluster_session.html" />
   <link rel="alternate" hreflang="ja" href="../ja/cluster_session.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (ae6b8e3)">v26.9.0-alpha.0 (ae6b8e3)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (18702af)">v26.9.0-alpha.0 (18702af)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -266,7 +266,7 @@
 <h3 data-bai-block="30" id="cluster_session-backendai-클러스터-연산-세션의-사용">Backend.AI 클러스터 연산 세션의 사용<a class="hash-link" href="#cluster_session-backendai-클러스터-연산-세션의-사용" aria-label="Direct link to Backend.AI 클러스터 연산 세션의 사용">#</a></h3>
 <p data-bai-block="31">이번 절에서는 실제로 사용자 GUI를 통해 클러스터 연산 세션을 생성하고 사용하는 방법에 관해 알아보겠습니다.</p>
 <p data-bai-block="32">세션 페이지에서 연산 세션 생성 다이얼로그를 띄운 후 일반 연산 세션을 생성하는 것과 같은 방식으로 설정합니다. 이 때 설정한 자원의 양은 <strong>하나의 컨테이너에</strong> 할당되는 양입니다. 예를 들어, CPU를 4개로 설정한 경우 클러스터 세션을 구성하는 각 컨테이너에 4 코어 CPU가 할당됩니다. 클러스터 연산 세션 전체에 할당되는 자원 양이 아니라는 점에 유의하십시오. 클러스터 연산 세션을 생성하기 위해서는 여기서 설정한 자원 양의 N배에 해당하는 서버 자원이 필요합니다 (N은 클러스터 크기). 데이터 보존을 위해 스토리지 폴더를 마운트하는 것도 잊지 마십시오.</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/session_launch_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="2936" /><figcaption>그림 11.2</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/session_launch_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="3124" /><figcaption>그림 11.2</figcaption></figure>
 </p>
 <p data-bai-block="34">아래쪽에 있는 &quot;클러스터 모드&quot; 필드에서 원하는 클러스터 생성 형태를 결정할 수 있습니다.</p>
 <ul>
@@ -287,7 +287,7 @@
 <p><a id="see-logs-per-container"></a></p>
 <h3 data-bai-block="45" id="cluster_session-컨테이너-별-로그-확인하기">컨테이너 별 로그 확인하기<a class="hash-link" href="#cluster_session-컨테이너-별-로그-확인하기" aria-label="Direct link to 컨테이너 별 로그 확인하기">#</a></h3>
 <p data-bai-block="46">로그 모달에서 각 컨테이너의 로그를 확인할 수 있습니다. 이 기능을 통해 <code>main</code> 컨테이너뿐만 아니라 <code>sub</code> 컨테이너에서 어떤 일이 일어나고 있는지 파악하는 데 도움이 됩니다.</p>
-<p><figure data-bai-block="47" class="doc-figure"><img src="./images/log_modal_per_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1780" height="980" /><figcaption>그림 11.6</figcaption></figure>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/log_modal_per_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2856" height="1712" /><figcaption>그림 11.6</figcaption></figure>
 </p>
 
 </section>

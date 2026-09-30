@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ストレージフォルダのマウント" />
   <meta name="twitter:description" content="Backend.AIは、コンピュートセッション作成時にストレージフォルダをマウントする機能を提供しています。新しいコンピュートセッションが開始されると、ユーザーは /home/work/ ディレクトリにアクセスできます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダのマウント","inLanguage":"ja","description":"Backend.AIは、コンピュートセッション作成時にストレージフォルダをマウントする機能を提供しています。新しいコンピュートセッションが開始されると、ユーザーは /home/work/ ディレクトリにアクセスできます。","dateModified":"2026-09-23T00:43:49.000Z","url":"https://webui.docs.backend.ai/next/ja/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ストレージフォルダのマウント","inLanguage":"ja","description":"Backend.AIは、コンピュートセッション作成時にストレージフォルダをマウントする機能を提供しています。新しいコンピュートセッションが開始されると、ユーザーは /home/work/ ディレクトリにアクセスできます。","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/ja/mount_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/mount_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/mount_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/mount_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (ae6b8e3)">v26.9.0-alpha.0 (ae6b8e3)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (18702af)">v26.9.0-alpha.0 (18702af)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -219,7 +219,7 @@
 「データとストレージ」ステップに進み、<strong>フォルダを選択</strong> ドロップダウンを開くと、ユーザーがマウントできるフォルダが表示されます。
 このドロップダウンから1つ以上のフォルダを選択すると、選択したフォルダがマウントするフォルダの一覧に追加されます。
 このドキュメントでは、<code>user1-ml-test</code> と <code>user2-vfolder</code> の2つのフォルダをマウントしてセッションを作成する方法を説明します。</p>
-<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2032" height="824" /><figcaption>図 16.1</figcaption></figure>
+<p><figure data-bai-block="3" class="doc-figure"><img src="./images/create_session_with_folders.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2032" height="982" /><figcaption>図 16.1</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="4" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
