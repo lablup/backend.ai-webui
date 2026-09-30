@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-28T13:15:57.646Z",
+  "generatedAt": "2026-09-30T01:35:34.505Z",
   "languages": [
     "en",
     "ja",
@@ -13,8 +13,8 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 0,
+        "changes": 8,
+        "added": 2,
         "modified": 6,
         "removed": 0,
         "images": 6,
@@ -29,13 +29,15 @@
           "url": "next/en/chat.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/en/chat/chat.md",
           "counts": {
-            "added": 0,
+            "added": 2,
             "modified": 6,
             "removed": 0,
             "images": 6,
-            "total": 6
+            "total": 8
           },
           "fingerprints": [
+            "56ec28b6948f",
+            "4971472fa25e",
             "d89a34f1cd27",
             "8659d2d3ceb1",
             "8659d2d3ceb1-2",
@@ -49,8 +51,8 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 0,
+        "changes": 8,
+        "added": 2,
         "modified": 6,
         "removed": 0,
         "images": 6,
@@ -65,13 +67,15 @@
           "url": "next/ja/chat.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/chat/chat.md",
           "counts": {
-            "added": 0,
+            "added": 2,
             "modified": 6,
             "removed": 0,
             "images": 6,
-            "total": 6
+            "total": 8
           },
           "fingerprints": [
+            "f35d912504f7",
+            "de8d9e372ea9",
             "44d83560936e",
             "3bbd190e00db",
             "3bbd190e00db-2",
@@ -85,9 +89,9 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 0,
-        "modified": 6,
+        "changes": 9,
+        "added": 2,
+        "modified": 7,
         "removed": 0,
         "images": 6,
         "newPages": 0,
@@ -101,13 +105,16 @@
           "url": "next/ko/chat.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/chat/chat.md",
           "counts": {
-            "added": 0,
-            "modified": 6,
+            "added": 2,
+            "modified": 7,
             "removed": 0,
             "images": 6,
-            "total": 6
+            "total": 9
           },
           "fingerprints": [
+            "6803e2b05b31",
+            "bc2156679bef",
+            "f5675d1d2713",
             "ed66242a99d4",
             "e11405a77aec",
             "e11405a77aec-2",
@@ -121,8 +128,8 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 6,
-        "added": 0,
+        "changes": 8,
+        "added": 2,
         "modified": 6,
         "removed": 0,
         "images": 6,
@@ -137,13 +144,15 @@
           "url": "next/th/chat.html",
           "sourcePath": "packages/backend.ai-webui-docs/src/th/chat/chat.md",
           "counts": {
-            "added": 0,
+            "added": 2,
             "modified": 6,
             "removed": 0,
             "images": 6,
-            "total": 6
+            "total": 8
           },
           "fingerprints": [
+            "9bc1eeb797bf",
+            "d22bba9b0a87",
             "9bf9da597c7f",
             "a60e7d66ae93",
             "a60e7d66ae93-2",
