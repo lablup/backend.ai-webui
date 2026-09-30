@@ -4,10 +4,15 @@
  */
 import { UserResourcePolicySelectQuery } from '../__generated__/UserResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { AstryxFormSelector } from './astryxFormControls';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
+
+// Every policy in one page: the V2 connection has no server-side cap and the
+// legacy list it replaces was unpaginated.
+const POLICY_PAGE_LIMIT = 1000;
 
 /**
  * PILOT-DECISION: the props no longer `extend SelectProps` (antd). MAPPING
@@ -44,46 +49,54 @@ const UserResourcePolicySelect: React.FC<Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { user_resource_policies } =
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
+  const { adminUserResourcePoliciesV2, user_resource_policies } =
     useLazyLoadQuery<UserResourcePolicySelectQuery>(
       graphql`
-        query UserResourcePolicySelectQuery {
-          user_resource_policies {
+        query UserResourcePolicySelectQuery(
+          $limit: Int!
+          $supportsResourcePolicyV2: Boolean!
+        ) {
+          adminUserResourcePoliciesV2(
+            limit: $limit
+            orderBy: [{ field: NAME, direction: ASC }]
+          ) @since(version: "26.4.2") @include(if: $supportsResourcePolicyV2) {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+          user_resource_policies
+            @deprecatedSince(version: "26.4.2")
+            @skip(if: $supportsResourcePolicyV2) {
             id
             name
-            created_at
-            # follows version of https://github.com/lablup/backend.ai/pull/1993
-            # --------------- START --------------------
-            max_vfolder_count @since(version: "23.09.6")
-            max_session_count_per_model_session @since(version: "23.09.10")
-            max_quota_scope_size @since(version: "23.09.2")
-            # ---------------- END ---------------------
-            max_customized_image_count @since(version: "24.03.0")
-            ...UserResourcePolicySettingModalFragment
           }
         }
       `,
-      {},
+      { limit: POLICY_PAGE_LIMIT, supportsResourcePolicyV2 },
       {
         fetchPolicy: 'store-and-network',
       },
     );
+  const policyNames = supportsResourcePolicyV2
+    ? _.map(adminUserResourcePoliciesV2?.edges, (edge) => edge.node.name)
+    : _.map(user_resource_policies, (policy) => policy?.name ?? '');
 
   return (
     <AstryxFormSelector
-      // `showSearch` -> `hasSearch`: user_resource_policy has no server-side
-      // filter, so the search stays client-side exactly as before.
+      // `showSearch` -> `hasSearch`: the search stays client-side, as before.
       hasSearch
       hasClear={allowClear}
       label={t('resourcePolicy.ResourcePolicy')}
       placeholder={t('credential.SelectPolicy')}
       onChange={(next) => onChange?.(next ?? undefined)}
-      options={_.map(user_resource_policies, (policy) => {
-        return {
-          value: policy?.name ?? '',
-          label: policy?.name ?? '',
-        };
-      }).sort((a, b) => localeCompare(a?.label, b?.label))}
+      options={policyNames
+        .map((name) => ({ value: name, label: name }))
+        .sort((a, b) => localeCompare(a.label, b.label))}
       {...selectProps}
     />
   );
