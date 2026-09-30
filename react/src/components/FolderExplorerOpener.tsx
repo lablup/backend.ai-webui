@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { parseAsString, useQueryState } from 'nuqs';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const FolderExplorerModal = React.lazy(() => import('./FolderExplorerModalV2'));
@@ -20,15 +20,19 @@ const FolderExplorerOpener = () => {
 
   // Rendered while closed too, so the lazy chunk is resolved before the first
   // click; the modal unmounts its own content after each close (FR-4005).
+  // Its own boundary, so the chunk never holds back the login view it shares
+  // a boundary with in routes.tsx.
   return (
-    <FolderExplorerModal
-      vfolderID={normalizedFolderId || ''}
-      open={!!normalizedFolderId}
-      onRequestClose={() => {
-        setFolderId(null);
-        setCurrentPath(null);
-      }}
-    />
+    <Suspense fallback={null}>
+      <FolderExplorerModal
+        vfolderID={normalizedFolderId || ''}
+        open={!!normalizedFolderId}
+        onRequestClose={() => {
+          setFolderId(null);
+          setCurrentPath(null);
+        }}
+      />
+    </Suspense>
   );
 };
 
