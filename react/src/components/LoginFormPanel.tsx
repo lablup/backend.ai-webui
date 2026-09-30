@@ -70,9 +70,16 @@ type ConnectionMode = 'SESSION' | 'API';
 const styles = stylex.create({
   endpointPopover: {
     width: 'anchor-size(width)',
+  },
+  // Scroll inside the popover surface, so the scrollbar stays within its rounded edge.
+  endpointList: {
     maxHeight: 140,
     overflowY: 'auto',
-    padding: spacingVars['--spacing-1'],
+  },
+  // ListItem drops the last divider with a shorthand that its longhand default
+  // outranks in StyleX, so the line under the last row survives; drop it here.
+  endpointLastRow: {
+    borderBlockEndWidth: 0,
   },
   // Item rings the row on any focused descendant; ring it only for the row's own
   // select button (one outline per tab stop), inset so the scrolling list can't clip it.
@@ -587,12 +594,17 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
                           density="compact"
                           hasDividers
                           aria-label={t('login.EndpointHistory')}
+                          xstyle={styles.endpointList}
                         >
-                          {endpointHistory.map(({ endpoint, isFromEnv }) => (
+                          {endpointHistory.map(({ endpoint, isFromEnv }, i) => (
                             <ListItem
                               key={endpoint}
                               label={isFromEnv ? `${endpoint} (env)` : endpoint}
-                              xstyle={styles.endpointRow}
+                              xstyle={[
+                                styles.endpointRow,
+                                i === endpointHistory.length - 1 &&
+                                  styles.endpointLastRow,
+                              ]}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 selectEndpoint(endpoint);
