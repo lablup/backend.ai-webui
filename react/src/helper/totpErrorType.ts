@@ -2,16 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-
-/**
- * Extract the error type suffix from a Backend.AI problem type URL.
- * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
- */
-export const extractErrorType = (typeUrl?: string | null): string => {
-  if (!typeUrl) return '';
-  const parts = typeUrl.split('/');
-  return parts[parts.length - 1] || '';
-};
+import { extractErrorType } from '.';
 
 export type TotpActivationErrorMessageKey =
   | 'totp.RegistrationTokenExpired'

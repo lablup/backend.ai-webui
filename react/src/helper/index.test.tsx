@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import {
+  extractErrorType,
   getImageFullName,
   isOutsideRange,
   isOutsideRangeWithUnits,
@@ -1323,5 +1324,24 @@ describe('resolveImageFullName', () => {
         portImages,
       ),
     ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
+  });
+});
+
+describe('extractErrorType', () => {
+  it('returns the last segment of a problem type URL', () => {
+    expect(extractErrorType('https://api.backend.ai/probs/auth-failed')).toBe(
+      'auth-failed',
+    );
+  });
+
+  it('returns an empty string for missing or empty input', () => {
+    expect(extractErrorType(undefined)).toBe('');
+    expect(extractErrorType(null)).toBe('');
+    expect(extractErrorType('')).toBe('');
+    expect(extractErrorType('https://api.backend.ai/probs/')).toBe('');
+  });
+
+  it('returns the input itself when it is not a URL', () => {
+    expect(extractErrorType('expired-token')).toBe('expired-token');
   });
 });

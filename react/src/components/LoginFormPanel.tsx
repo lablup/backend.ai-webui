@@ -17,11 +17,11 @@ import { App } from '../app-shim';
 // are the Astryx form-control adapters.
 import { Form, type FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
+import type { LoginConfigState } from '../helper/loginConfig';
 import {
   getTotpActivationErrorMessageKey,
   isTotpRegistrationTokenError,
-} from '../helper/backendErrorType';
-import type { LoginConfigState } from '../helper/loginConfig';
+} from '../helper/totpErrorType';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';

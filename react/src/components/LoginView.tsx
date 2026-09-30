@@ -27,7 +27,7 @@ import { App } from '../app-shim';
 //     served by the Astryx app-shim (see the header comment), so no antd
 //     Message is rendered here at all and the override was already dead.
 import { Form } from '../form-engine';
-import { extractErrorType } from '../helper/backendErrorType';
+import { extractErrorType } from '../helper';
 import {
   devApiEndpointOverride,
   devEmailOverride,

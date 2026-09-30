@@ -5,10 +5,9 @@
 import { Client } from '../../../packages/backend.ai-client/src/client';
 import { ClientConfig } from '../../../packages/backend.ai-client/src/client-config';
 import {
-  extractErrorType,
   getTotpActivationErrorMessageKey,
   isTotpRegistrationTokenError,
-} from './backendErrorType';
+} from './totpErrorType';
 
 /**
  * The shape `Client._wrapWithPromise` actually rejects with: its catch block
@@ -63,25 +62,6 @@ const activateTotpRejection = async (problemType: string): Promise<unknown> => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
-});
-
-describe('extractErrorType', () => {
-  it('returns the last segment of a problem type URL', () => {
-    expect(extractErrorType('https://api.backend.ai/probs/auth-failed')).toBe(
-      'auth-failed',
-    );
-  });
-
-  it('returns an empty string for missing or empty input', () => {
-    expect(extractErrorType(undefined)).toBe('');
-    expect(extractErrorType(null)).toBe('');
-    expect(extractErrorType('')).toBe('');
-    expect(extractErrorType('https://api.backend.ai/probs/')).toBe('');
-  });
-
-  it('returns the input itself when it is not a URL', () => {
-    expect(extractErrorType('expired-token')).toBe('expired-token');
-  });
 });
 
 describe('getTotpActivationErrorMessageKey', () => {

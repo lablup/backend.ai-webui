@@ -14,7 +14,7 @@
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
 import { Form } from '../form-engine';
-import { extractErrorType } from '../helper/backendErrorType';
+import { extractErrorType } from '../helper';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,

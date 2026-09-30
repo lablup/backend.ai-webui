@@ -5,7 +5,7 @@
 import { TOTPActivateModalFragment$key } from '../__generated__/TOTPActivateModalFragment.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { getTotpActivationErrorMessageKey } from '../helper/backendErrorType';
+import { getTotpActivationErrorMessageKey } from '../helper/totpErrorType';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { theme } from '../theme-shim';
