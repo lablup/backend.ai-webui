@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-09-30T01:53:01.481Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "a7357e81b7fb"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 2,
+        "changes": 3,
+        "added": 0,
+        "modified": 3,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "session_page",
+          "title": "セッションページ",
+          "status": "modified",
+          "url": "next/ja/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "4bd74fd525be"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "ad0b40664a7d",
+            "358d27a77602"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 2,
+        "changes": 3,
+        "added": 0,
+        "modified": 3,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "57826d995bfc"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "시작 페이지",
+          "status": "modified",
+          "url": "next/ko/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/start/start.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "9d978737c2e3",
+            "d4551ae3e527"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "3cdacafc975c"
+          ]
+        }
+      ]
+    }
+  }
+}
