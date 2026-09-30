@@ -65,6 +65,7 @@ export interface UserSettings {
   sessionResourceGridHueOverrides?: Record<string, number>;
   schedulingHistoryExpandMode?: 'expand-all' | 'collapse-all' | 'errors-only';
   chat_intro_alert_dismissed?: boolean;
+  show_accelerator_dedicated_images_first?: boolean;
 }
 
 export type SessionHistory = {

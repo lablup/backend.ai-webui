@@ -3016,6 +3016,7 @@
     "launcher": {
       "AIAccelerator": "Pemecut AI",
       "Accelerator": "Pemecut",
+      "AcceleratorDedicatedImages": "Imej khusus pemecut",
       "AddEnvironmentVariable": "Tambah pembolehubah persekitaran",
       "AddingKernelToSocketQueue": "Menambah kernel ke soket barisan ...",
       "AdvancedSettings": "Tetapan Lanjutan",
@@ -3093,6 +3094,7 @@
       "HPCOptimization": "Pengoptimuman Pengkomputeran Berprestasi Tinggi",
       "HomeDirectoryDeletionDialog": "Direktori rumah dalam sesi akan dihapus secara automatik apabila sesi berakhir.",
       "ImageDoesNotProvideModelPath": "Imej bekas tidak menyediakan laluan model. \nIa harus diubah suai.",
+      "ImageFilter": "Penapis imej",
       "InferenceMode": "Inferens",
       "InfiniteTime": "tak terhingga",
       "InsufficientAllocationOfResourcesWarning": "Sumber yang boleh diperuntukkan berada di bawah sumber minimum yang diperlukan dalam imej yang dipilih.",
@@ -3193,6 +3195,7 @@
       "SettingUpProxyForApp": "Menyiapkan proksi untuk aplikasi ...",
       "SharedMemory": "Memori berkongsi (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Tetapan memori bersama dikurangkan menjadi di bawah memori yang diperuntukkan.",
+      "ShowAcceleratorDedicatedImagesFirst": "Tunjukkan imej khusus pemecut dahulu",
       "ShuttingDownExistTensorBoard": "Hentikan instans TensorBoard jika wujud...",
       "SingleNode": "Bujang",
       "SingleNodeShort": "Tunggal",

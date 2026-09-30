@@ -3001,6 +3001,7 @@
     "launcher": {
       "AIAccelerator": "ตัวเร่ง AI",
       "Accelerator": "ตัวเร่งความเร็ว",
+      "AcceleratorDedicatedImages": "อิมเมจเฉพาะสำหรับตัวเร่ง",
       "AddEnvironmentVariable": "เพิ่มตัวแปรสภาพแวดล้อม",
       "AddingKernelToSocketQueue": "กำลังเพิ่มเคอร์เนลเข้าคิวซ็อกเก็ต...",
       "AdvancedSettings": "การตั้งค่าขั้นสูง",
@@ -3078,6 +3079,7 @@
       "HPCOptimization": "การปรับแต่งการคำนวณประสิทธิภาพสูง",
       "HomeDirectoryDeletionDialog": "ไดเรกทอรีหลักในเซสชันจะถูกลบโดยอัตโนมัติเมื่อเซสชันสิ้นสุด",
       "ImageDoesNotProvideModelPath": "อิมเมจคอนเทนเนอร์ไม่ได้ให้เส้นทางโมเดล ควรแก้ไข",
+      "ImageFilter": "ตัวกรองอิมเมจ",
       "InferenceMode": "การอนุมาน",
       "InfiniteTime": "ไม่จำกัดเวลา",
       "InsufficientAllocationOfResourcesWarning": "ทรัพยากรที่จัดสรรได้อยู่ต่ำกว่าทรัพยากรขั้นต่ำที่จำเป็นในรูปภาพที่เลือก",
@@ -3178,6 +3180,7 @@
       "SettingUpProxyForApp": "กำลังตั้งค่าพร็อกซีสำหรับแอป...",
       "SharedMemory": "หน่วยความจำที่ใช้ร่วมกัน (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "การตั้งค่าหน่วยความจำร่วมถูกลดลงให้ต่ำกว่าหน่วยความจำที่จัดสรร",
+      "ShowAcceleratorDedicatedImagesFirst": "แสดงอิมเมจเฉพาะสำหรับตัวเร่งก่อน",
       "ShuttingDownExistTensorBoard": "ปิดอินสแตนซ์ TensorBoard หากมีอยู่...",
       "SingleNode": "โหนดเดี่ยว",
       "SingleNodeShort": "เดี่ยว",

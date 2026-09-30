@@ -3003,6 +3003,7 @@
     "launcher": {
       "AIAccelerator": "AI Accelerator",
       "Accelerator": "Accelerator",
+      "AcceleratorDedicatedImages": "Accelerator-dedicated images",
       "AddEnvironmentVariable": "Add environment variables",
       "AddingKernelToSocketQueue": "Adding kernel to socket queue...",
       "AdvancedSettings": "Advanced Settings",
@@ -3080,6 +3081,7 @@
       "HPCOptimization": "High-Performance Computing Optimizations",
       "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
       "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified.",
+      "ImageFilter": "Image filter",
       "InferenceMode": "Inference",
       "InfiniteTime": "Infinite",
       "InsufficientAllocationOfResourcesWarning": "Allocatable resources falls below the minimum resource required in the selected image.",
@@ -3180,6 +3182,7 @@
       "SettingUpProxyForApp": "Setting up proxy for the app...",
       "SharedMemory": "Shared Memory (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Shared memory setting is reduced to below the allocated memory.",
+      "ShowAcceleratorDedicatedImagesFirst": "Show accelerator-dedicated images first",
       "ShuttingDownExistTensorBoard": "Shutdown TensorBoard instance if exist...",
       "SingleNode": "Single Node",
       "SingleNodeShort": "Single",

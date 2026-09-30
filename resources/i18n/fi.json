@@ -3016,6 +3016,7 @@
     "launcher": {
       "AIAccelerator": "AI-kiihdyttämö",
       "Accelerator": "Kiihdytin",
+      "AcceleratorDedicatedImages": "Kiihdytinkohtaiset kuvat",
       "AddEnvironmentVariable": "Lisää ympäristömuuttujia",
       "AddingKernelToSocketQueue": "Ytimen lisääminen socket-jonoon...",
       "AdvancedSettings": "Lisäasetukset",
@@ -3093,6 +3094,7 @@
       "HPCOptimization": "Korkean suorituskyvyn tietojenkäsittelyn optimoinnit",
       "HomeDirectoryDeletionDialog": "Istunnon kotihakemisto poistetaan automaattisesti, kun istunto päättyy.",
       "ImageDoesNotProvideModelPath": "Säiliön kuva ei anna mallipolkua. Se on muutettava.",
+      "ImageFilter": "Kuvasuodatin",
       "InferenceMode": "Päättely",
       "InfiniteTime": "Rajoittamaton",
       "InsufficientAllocationOfResourcesWarning": "Allokoitavat resurssit jäävät alle valitussa kuvassa vaaditun vähimmäisresurssin.",
@@ -3193,6 +3195,7 @@
       "SettingUpProxyForApp": "Sovelluksen välityspalvelimen määrittäminen...",
       "SharedMemory": "Jaettu muisti (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Jaetun muistin asetusta pienennetään alle jaetun muistin.",
+      "ShowAcceleratorDedicatedImagesFirst": "Näytä kiihdytinkohtaiset kuvat ensin",
       "ShuttingDownExistTensorBoard": "Sammuta olemassa oleva TensorBoard-instanssi...",
       "SingleNode": "Yksi solmu",
       "SingleNodeShort": "Yksittäinen",

@@ -3019,6 +3019,7 @@
     "launcher": {
       "AIAccelerator": "Akselerator AI",
       "Accelerator": "Akselerator",
+      "AcceleratorDedicatedImages": "Image khusus akselerator",
       "AddEnvironmentVariable": "Menambahkan variabel lingkungan",
       "AddingKernelToSocketQueue": "Menambahkan kernel ke antrian soket...",
       "AdvancedSettings": "Pengaturan Lanjutan",
@@ -3097,6 +3098,7 @@
       "HPCOptimization": "Pengoptimalan Komputasi Berkinerja Tinggi",
       "HomeDirectoryDeletionDialog": "Direktori home di sesi akan dihapus secara otomatis saat sesi berakhir.",
       "ImageDoesNotProvideModelPath": "Gambar kontainer tidak menyediakan jalur model. Ini harus dimodifikasi.",
+      "ImageFilter": "Filter image",
       "InferenceMode": "Kesimpulan",
       "InfiniteTime": "Tak terbatas",
       "InsufficientAllocationOfResourcesWarning": "Sumber daya yang dapat dialokasikan berada di bawah sumber daya minimum yang diperlukan pada gambar yang dipilih.",
@@ -3197,6 +3199,7 @@
       "SettingUpProxyForApp": "Menyiapkan proksi untuk aplikasi...",
       "SharedMemory": "Memori yang dibagikan (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Pengaturan memori bersama dikurangi hingga di bawah memori yang dialokasikan.",
+      "ShowAcceleratorDedicatedImagesFirst": "Tampilkan image khusus akselerator terlebih dahulu",
       "ShuttingDownExistTensorBoard": "Matikan instance TensorBoard jika ada...",
       "SingleNode": "Tunggal",
       "SingleNodeShort": "Tunggal",

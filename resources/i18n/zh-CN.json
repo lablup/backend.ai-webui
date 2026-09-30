@@ -3018,6 +3018,7 @@
     "launcher": {
       "AIAccelerator": "人工智能加速器",
       "Accelerator": "加速器",
+      "AcceleratorDedicatedImages": "加速器专用镜像",
       "AddEnvironmentVariable": "添加环境变量",
       "AddingKernelToSocketQueue": "将内核添加到套接字队列...",
       "AdvancedSettings": "高级设置",
@@ -3095,6 +3096,7 @@
       "HPCOptimization": "高性能计算优化",
       "HomeDirectoryDeletionDialog": "会话结束时会自动删除会话中的主目录。",
       "ImageDoesNotProvideModelPath": "容器映像未提供模型路径。应进行修改。",
+      "ImageFilter": "镜像筛选",
       "InferenceMode": "推论",
       "InfiniteTime": "无限",
       "InsufficientAllocationOfResourcesWarning": "可分配资源低于所选映像所需的最低资源。",
@@ -3195,6 +3197,7 @@
       "SettingUpProxyForApp": "为应用程序设置代理...",
       "SharedMemory": "共享内存（SHMEM）{{value}}",
       "SharedMemorySettingIsReduced": "共享内存设置减少到低于分配的内存。",
+      "ShowAcceleratorDedicatedImagesFirst": "优先显示加速器专用镜像",
       "ShuttingDownExistTensorBoard": "如果存在 TensorBoard 实例，正在关闭...",
       "SingleNode": "单身的",
       "SingleNodeShort": "单节点",

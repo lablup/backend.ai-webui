@@ -26,6 +26,7 @@ import {
   subNumberWithUnits,
   compareImageVersions,
   resolveImageFullName,
+  getDedicatedAccelerators,
   convertToOrderBy,
   convertFirstOrderByToString,
 } from './index';
@@ -1323,5 +1324,37 @@ describe('resolveImageFullName', () => {
         portImages,
       ),
     ).toBe('127.0.0.1:5000/stable/python:3.13-ubuntu24.04@x86_64');
+  });
+});
+
+describe('getDedicatedAccelerators', () => {
+  it('returns the explicit accelerator names without duplicates', () => {
+    expect(
+      getDedicatedAccelerators({
+        supported_accelerators: ['atom', 'cuda', 'atom'],
+      }),
+    ).toEqual(['atom', 'cuda']);
+  });
+
+  it('treats `*` and empty entries as generic', () => {
+    expect(getDedicatedAccelerators({ supported_accelerators: ['*'] })).toEqual(
+      [],
+    );
+    expect(getDedicatedAccelerators({ supported_accelerators: [''] })).toEqual(
+      [],
+    );
+    expect(
+      getDedicatedAccelerators({ supported_accelerators: ['*', 'cuda'] }),
+    ).toEqual([]);
+    expect(
+      getDedicatedAccelerators({ supported_accelerators: ['cuda', null] }),
+    ).toEqual(['cuda']);
+  });
+
+  it('returns an empty list for a missing image or field', () => {
+    expect(getDedicatedAccelerators(undefined)).toEqual([]);
+    expect(getDedicatedAccelerators({ supported_accelerators: null })).toEqual(
+      [],
+    );
   });
 });

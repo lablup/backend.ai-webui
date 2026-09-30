@@ -533,6 +533,30 @@ export const isPrivateImage = (
 };
 
 /**
+ * The accelerators an image is built for, i.e. its explicit
+ * `supported_accelerators` names. Empty for a generic image: one listing `*`
+ * (or `''`, which managers before BA-2358 returned instead).
+ */
+export const getDedicatedAccelerators = (
+  image:
+    | {
+        supported_accelerators?: ReadonlyArray<
+          string | null | undefined
+        > | null;
+      }
+    | null
+    | undefined,
+): string[] => {
+  if (_.includes(image?.supported_accelerators, '*')) return [];
+  return _.uniq(
+    _.filter(
+      image?.supported_accelerators,
+      (accelerator): accelerator is string => !!accelerator,
+    ),
+  );
+};
+
+/**
  * Resolve a possibly-partial image reference from `config.toml` against the
  * registered image list, following the formats documented in
  * `config.toml.sample` for `defaultSessionEnvironment` /
