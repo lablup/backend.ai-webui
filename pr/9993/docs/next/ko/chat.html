@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="채팅" />
   <meta name="twitter:description" content="채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"채팅","inLanguage":"ko","description":"채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.","dateModified":"2026-09-28T09:49:45.000Z","url":"https://webui.docs.backend.ai/next/ko/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"채팅","inLanguage":"ko","description":"채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.","dateModified":"2026-09-30T01:34:02.000Z","url":"https://webui.docs.backend.ai/next/ko/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/chat.html" />
   <link rel="alternate" hreflang="en" href="../en/chat.html" />
   <link rel="alternate" hreflang="ja" href="../ja/chat.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a726673)">v26.9.0-alpha.0 (a726673)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (c924bfc)">v26.9.0-alpha.0 (c924bfc)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -232,7 +232,7 @@
 <p><figure data-bai-block="7" class="doc-figure"><img src="./images/chat_deployment_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="390" height="570" /><figcaption>그림 13.2</figcaption></figure>
 </p>
 <p data-bai-block="8"><strong>배포</strong> 선택란 옆의 정보 아이콘 버튼(<strong>배포 자세히 보기</strong>)을 클릭하면 선택한 배포의 상세 페이지가 열립니다. 배포가 선택되어 있지 않은 동안에는 이 버튼이 비활성화됩니다.
-선택한 배포가 현재 활성화된 프로젝트가 아닌 다른 프로젝트에 속해 있는 경우에는 상세 페이지를 열기 전에 **다른 프로젝트로 전환할까요?**라는 확인 대화상자가 먼저 표시됩니다.</p>
+선택한 배포가 현재 활성화된 프로젝트가 아닌 다른 프로젝트에 속해 있는 경우에는 상세 페이지를 열기 전에 <strong>다른 프로젝트로 전환할까요?</strong> 라는 확인 대화상자가 먼저 표시됩니다.</p>
 <p><a id="deployments-listed-in-chat"></a></p>
 <h3 data-bai-block="9" id="chat-목록에-표시되는-배포">목록에 표시되는 배포<a class="hash-link" href="#chat-목록에-표시되는-배포" aria-label="Direct link to 목록에 표시되는 배포">#</a></h3>
 <p data-bai-block="10"><strong>배포</strong> 드롭다운에는 프로젝트의 모든 배포가 표시되지 않고, 지금 바로 응답할 수 있는 배포만 표시됩니다. 배포는 복제본 중 하나 이상이 실제로 트래픽을 처리하고 있을 때, 즉 복제본의 <strong>라이프사이클 상태</strong>가 <em>실행 중</em>이고 <strong>트래픽 상태</strong>가 <em>활성</em>일 때 목록에 표시됩니다. 두 상태는 서로 독립적인 축이므로 두 조건이 모두 충족되어야 합니다. <em>실행 중</em>인 복제본이라도 트래픽 대상에서 제외되어 있을 수 있고, <em>활성</em>으로 표시된 복제본이라도 더 이상 실행 중이 아닐 수 있기 때문입니다. 복제본의 상태 축에 대한 자세한 내용은 <a href="./deployment.html#model-serving">배포</a> 장을 참고하세요.</p>
@@ -240,7 +240,7 @@
 <p data-bai-block="12">아무것도 처리하지 않는 배포는 목록에 표시되지 않습니다. 예를 들어 중지된 배포나 목표 복제본 수가 0인 배포가 이에 해당합니다. 채팅 카드에 이미 선택되어 있는 배포는 목록에서 사라지더라도 선택된 상태와 이름이 그대로 유지되므로, 해당 카드가 어떤 배포를 가리키고 있는지 항상 확인할 수 있고 아래에 설명된 경고도 읽을 수 있습니다.</p>
 <p><a id="connect-custom-endpoint"></a></p>
 <h3 data-bai-block="13" id="chat-커스텀-엔드포인트-연결하기">커스텀 엔드포인트 연결하기<a class="hash-link" href="#chat-커스텀-엔드포인트-연결하기" aria-label="Direct link to 커스텀 엔드포인트 연결하기">#</a></h3>
-<p data-bai-block="14">Backend.AI에 배포되어 있지 않은 OpenAI 호환 서비스와도 대화할 수 있습니다. <strong>배포</strong> 드롭다운에서 **커스텀 엔드포인트 연결…**을 선택한 뒤, 해당 서비스의 <strong>Base URL</strong>과 서비스가 요구하는 경우 <strong>API 키</strong>를 입력하고 <strong>연결</strong>을 클릭합니다. 그러면 채팅 카드에 해당 서비스가 제공하는 모델이 표시되며, <strong>커스텀 엔드포인트 수정</strong>을 클릭하면 폼이 다시 열려 주소나 키를 변경할 수 있습니다.</p>
+<p data-bai-block="14">Backend.AI에 배포되어 있지 않은 OpenAI 호환 서비스와도 대화할 수 있습니다. <strong>배포</strong> 드롭다운에서 <strong>커스텀 엔드포인트 연결…</strong> 을 선택한 뒤, 해당 서비스의 <strong>Base URL</strong>과 서비스가 요구하는 경우 <strong>API 키</strong>를 입력하고 <strong>연결</strong>을 클릭합니다. 그러면 채팅 카드에 해당 서비스가 제공하는 모델이 표시되며, <strong>커스텀 엔드포인트 수정</strong>을 클릭하면 폼이 다시 열려 주소나 키를 변경할 수 있습니다.</p>
 <!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
 
 <p><a id="model-connection-settings"></a></p>
@@ -312,7 +312,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/chat/chat.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 28일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 30일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./deployment.html">

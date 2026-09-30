@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="管理者機能" />
   <meta name="twitter:description" content="管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-09-29T09:01:28.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"管理者機能","inLanguage":"ja","description":"管理者アカウントでログインすると、サイドバー上部に管理者設定メニューが追加されます。これを選択すると、サイドバーは管理者向けメニューのみを表示するように切り替わります。Backend.AIに登録されたユーザー情報は、ユーザー管理メニューに一覧表示されます。","dateModified":"2026-09-30T01:16:23.000Z","url":"https://webui.docs.backend.ai/next/ja/admin_menu.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/admin_menu.html" />
   <link rel="alternate" hreflang="en" href="../en/admin_menu.html" />
   <link rel="alternate" hreflang="ja" href="../ja/admin_menu.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (a726673)">v26.9.0-alpha.0 (a726673)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (c924bfc)">v26.9.0-alpha.0 (c924bfc)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -420,7 +420,7 @@
 <li data-bai-block="92">ツールバーに選択件数が表示されます。その横の編集（鉛筆）ボタンをクリックします。</li>
 <li data-bai-block="93"><strong>ユーザーを一括編集</strong> ダイアログが開きます。</li>
 </ol>
-<p><figure data-bai-block="94" class="doc-figure"><img src="./images/bulk_edit_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1904" /><figcaption>図 24.12</figcaption></figure>
+<p><figure data-bai-block="94" class="doc-figure"><img src="./images/bulk_edit_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1728" /><figcaption>図 24.12</figcaption></figure>
 </p>
 <p data-bai-block="95">ダイアログ上部のアラートには、変更が適用されるすべてのユーザーのメールアドレスが並ぶため、実行前に選択内容を
 確認できます。あわせて、UID または GID を設定すると既存のフォルダマウントの使用が制限される場合があるという
@@ -497,8 +497,6 @@
 </ul>
 <p><figure data-bai-block="120" class="doc-figure"><img src="./images/purge_users_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="644" /><figcaption>図 24.16</figcaption></figure>
 </p>
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
-
 <p data-bai-block="121">選択したユーザーの一部を完全に削除できなかった場合は、対象ユーザーのEメールとエラーメッセージを一覧表示する
 失敗ダイアログが開き、残りのユーザーは通常どおり完全に削除されます。</p>
 <div class="admonition admonition-danger">
@@ -566,7 +564,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 <h3 data-bai-block="144" id="admin_menu-資格情報の作成">資格情報の作成<a class="hash-link" href="#admin_menu-資格情報の作成" aria-label="Direct link to 資格情報の作成">#</a></h3>
 <p data-bai-block="145">誤ってキーペアを削除してしまった場合は、右上の<strong>資格情報を作成</strong>ボタンをクリックして、
 ユーザーのキーペアを新たに作成できます。</p>
-<p><figure data-bai-block="146" class="doc-figure"><img src="./images/add_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1000" height="676" /><figcaption>図 24.23</figcaption></figure>
+<p><figure data-bai-block="146" class="doc-figure"><img src="./images/add_keypair_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1000" height="636" /><figcaption>図 24.23</figcaption></figure>
 </p>
 <p data-bai-block="147">ダイアログには次のフィールドがあります。</p>
 <ul>
@@ -730,7 +728,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 <p data-bai-block="225">モデルカード名の横にある編集アイコンをクリックして、既存のモデルカードを変更します。以前に入力したフィールドが入力された状態で編集モーダルが開きます。作成時と同様に、<strong>ラベル（Label）</strong> フィールドではカンマ（<code>,</code>）でタグを区切り、<strong>ドメイン（Domain）</strong> フィールドには現在のユーザーのドメインが既定で入力されます。</p>
 <h4 data-bai-block="226" id="admin_menu-モデルカードの削除">モデルカードの削除<a class="hash-link" href="#admin_menu-モデルカードの削除" aria-label="Direct link to モデルカードの削除">#</a></h4>
 <p data-bai-block="227">モデルカード名の横にある削除アイコンをクリックして個別のモデルカードを削除するか、行のチェックボックスで複数のモデルカードを選択したうえで、選択件数の横にある赤色のゴミ箱ボタンをクリックして一括削除を実行できます。</p>
-<p><figure data-bai-block="228" class="doc-figure"><img src="./images/model_card_delete_with_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="640" /><figcaption>図 24.29</figcaption></figure>
+<p><figure data-bai-block="228" class="doc-figure"><img src="./images/model_card_delete_with_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="668" /><figcaption>図 24.29</figcaption></figure>
 </p>
 <p data-bai-block="229">削除確認ダイアログには <strong>関連するモデルフォルダも削除する</strong> オプションが含まれています：</p>
 <ul>
@@ -772,7 +770,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 <p><a id="prometheus-preset-create"></a></p>
 <h3 data-bai-block="252" id="admin_menu-プリセットを作成する">プリセットを作成する<a class="hash-link" href="#admin_menu-プリセットを作成する" aria-label="Direct link to プリセットを作成する">#</a></h3>
 <p data-bai-block="253">テーブル右上の <strong>プリセットを追加</strong> をクリックして <strong>プリセットを作成</strong> モーダルを開きます。</p>
-<p><figure data-bai-block="254" class="doc-figure"><img src="./images/admin_prometheus_preset_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2020" /><figcaption>図 24.31</figcaption></figure>
+<p><figure data-bai-block="254" class="doc-figure"><img src="./images/admin_prometheus_preset_create_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1940" /><figcaption>図 24.31</figcaption></figure>
 </p>
 <p data-bai-block="255">モーダルには次のフィールドがあります。</p>
 <ul>
@@ -798,7 +796,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 <p><a id="prometheus-preset-edit"></a></p>
 <h3 data-bai-block="267" id="admin_menu-プリセットを編集する">プリセットを編集する<a class="hash-link" href="#admin_menu-プリセットを編集する" aria-label="Direct link to プリセットを編集する">#</a></h3>
 <p data-bai-block="268">プリセット行の <strong>名前</strong> セルにある <strong>編集</strong> アクションをクリックすると、<strong>プリセットを編集</strong> モーダルが開きます。モーダルにはプリセットの現在の値があらかじめ入力されており、クエリテンプレートのライブプレビュー領域を含めて作成ダイアログと同じフィールドが提供されます。</p>
-<p><figure data-bai-block="269" class="doc-figure"><img src="./images/admin_prometheus_preset_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2020" /><figcaption>図 24.32</figcaption></figure>
+<p><figure data-bai-block="269" class="doc-figure"><img src="./images/admin_prometheus_preset_edit_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="2048" /><figcaption>図 24.32</figcaption></figure>
 </p>
 <p data-bai-block="270"><strong>セーブ</strong> をクリックして変更を適用します。プリセットを参照しているコンシューマー（例: オートスケーリングルール）は、次にメトリクスを評価する際に新しいクエリテンプレートを自動的に取り込みます。</p>
 <p><a id="prometheus-preset-delete"></a></p>
@@ -1035,7 +1033,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 <p data-bai-block="385">名前列のゴミ箱アイコンをクリックして、各リソースキーペアを削除することも
 できます。アイコンをクリックすると、確認ダイアログが表示されます。確認用の入力欄にポリシー名を
 入力してから「削除」ボタンをクリックすると削除されます。</p>
-<p><figure data-bai-block="386" class="doc-figure"><img src="./images/resource_policy_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="532" /><figcaption>図 24.42</figcaption></figure>
+<p><figure data-bai-block="386" class="doc-figure"><img src="./images/resource_policy_delete_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="524" /><figcaption>図 24.42</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="387" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>注記</div>
@@ -1637,7 +1635,7 @@ Harborが提供するレジストリです。</p>
 <li data-bai-block="660">ツールバーに選択件数が表示されます。その横の <strong>一括編集</strong>（歯車）ボタンをクリックします。</li>
 <li data-bai-block="661"><strong>リソースグループを更新</strong> ダイアログが開きます。</li>
 </ol>
-<p><figure data-bai-block="662" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="796" /><figcaption>図 24.80</figcaption></figure>
+<p><figure data-bai-block="662" class="doc-figure"><img src="./images/bulk_edit_resource_groups_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="684" /><figcaption>図 24.80</figcaption></figure>
 </p>
 <p data-bai-block="663">ダイアログ上部のアラートには、変更対象となるすべてのリソースグループが並びます。その下には
 <strong>SFTPストレージプロキシ</strong> フィールドがあり、選択したリソースグループのいずれかが既に利用しているプロキシが
@@ -2102,7 +2100,7 @@ Backend.AIの各コンポーネントに互換性があるかどうかを確認�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月29日</span>
+  <span class="last-updated">最終更新日 2026年9月30日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./statistics.html">

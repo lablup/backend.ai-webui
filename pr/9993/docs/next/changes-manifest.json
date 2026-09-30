@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-30T01:05:44.056Z",
+  "generatedAt": "2026-09-30T01:35:18.388Z",
   "languages": [
     "en",
     "ja",
@@ -69,7 +69,7 @@
           },
           "fingerprints": [
             "f35d912504f7",
-            "770c2d1e19b2"
+            "de8d9e372ea9"
           ]
         }
       ]
@@ -77,9 +77,9 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 2,
+        "changes": 3,
         "added": 2,
-        "modified": 0,
+        "modified": 1,
         "removed": 0,
         "images": 0,
         "newPages": 0,
@@ -94,14 +94,15 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/chat/chat.md",
           "counts": {
             "added": 2,
-            "modified": 0,
+            "modified": 1,
             "removed": 0,
             "images": 0,
-            "total": 2
+            "total": 3
           },
           "fingerprints": [
+            "6803e2b05b31",
             "bc2156679bef",
-            "d66619a48a3a"
+            "f5675d1d2713"
           ]
         }
       ]
