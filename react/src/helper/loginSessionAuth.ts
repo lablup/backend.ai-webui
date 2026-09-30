@@ -49,11 +49,8 @@ export async function checkLoginSession(apiEndpoint: string): Promise<boolean> {
 }
 
 /**
- * Thrown when the post-authentication `keypair` query comes back empty.
- * The manager scopes keypairs by `allowed_client_ip`, so a client outside
- * the allow-list authenticates fine and then sees no keypair at all — the
- * `isKeypairUnavailable` flag lets callers say that instead of the generic
- * "login failed" (FR-3998).
+ * Thrown when the post-authentication `keypair` query succeeds but returns no
+ * keypair. A server-reported failure is thrown by `client.query` instead.
  */
 export class KeypairUnavailableError extends Error {
   /** Duck-typing marker: survives module duplication (HMR, mocked imports). */
@@ -85,18 +82,30 @@ export async function connectViaGQL(
   const q = `query { keypair { ${fields.join(' ')} } }`;
   const v = {};
 
-  const response = await client.query(q, v);
-
-  (globalThis as any).backendaiclient = client;
-
-  if (!response['keypair']) {
-    // Best-effort cleanup: a rejecting logout must not replace the typed
-    // error with an unclassifiable one.
+  // Best-effort cleanup: a rejecting logout must not replace the error the
+  // caller classifies.
+  const logoutQuietly = async () => {
     try {
       await client.logout();
     } catch {
       /* empty */
     }
+  };
+
+  let response;
+  try {
+    response = await client.query(q, v);
+  } catch (err) {
+    // Only a server refusal ends the session; a network blip must not.
+    const status = (err as { statusCode?: unknown } | null)?.statusCode;
+    if (status === 401 || status === 403) await logoutQuietly();
+    throw err;
+  }
+
+  (globalThis as any).backendaiclient = client;
+
+  if (!response['keypair']) {
+    await logoutQuietly();
     throw new KeypairUnavailableError();
   }
 

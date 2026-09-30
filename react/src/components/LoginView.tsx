@@ -61,7 +61,7 @@ import LoginFormPanel from './LoginFormPanel';
 import { Button } from '@astryxdesign/core/Button';
 import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
 import { BAIModal, useBAILogger } from 'backend.ai-ui';
-import i18n from 'i18next';
+import i18n, { type TFunction } from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Trash2Icon } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -77,6 +77,33 @@ const extractErrorType = (typeUrl?: string): string => {
   if (!typeUrl) return '';
   const parts = typeUrl.split('/');
   return parts[parts.length - 1] || '';
+};
+
+// Post-login bootstrap errors every connect path reports the same way.
+const notifyBootstrapError = (
+  err: unknown,
+  notify: (text: string, detail?: string) => void,
+  t: TFunction,
+): boolean => {
+  if (isKeypairUnavailableError(err)) {
+    notify(
+      t('login.KeypairUnavailable'),
+      t('login.KeypairUnavailableDescription'),
+    );
+    return true;
+  }
+  const e = err as {
+    isError?: boolean;
+    type?: string;
+    msg?: string;
+    description?: string;
+    message?: string;
+  } | null;
+  if (e?.isError && extractErrorType(e.type) === 'auth-failed') {
+    notify(t('error.LoginFailed'), e.msg || e.description || e.message);
+    return true;
+  }
+  return false;
 };
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
@@ -482,19 +509,6 @@ const LoginView: React.FC<{
         data?: Record<string, unknown>;
       };
 
-      // Not a login failure: `connectUsingSession` runs the post-auth GQL
-      // bootstrap inside the same try as `client.login()`, so an empty
-      // keypair lands here rather than in `handleGQLError`.
-      if (isKeypairUnavailableError(err)) {
-        if (showError) {
-          notification(
-            t('login.KeypairUnavailable'),
-            t('login.KeypairUnavailableDescription'),
-          );
-        }
-        return 'reopen';
-      }
-
       // --- Login errors (envelope responses from /server/login) ---
       if (e.isLoginError && e.data) {
         const errorType = extractErrorType(e.data.type as string);
@@ -635,6 +649,11 @@ const LoginView: React.FC<{
         }
       }
 
+      // `connectUsingSession` runs the GQL bootstrap in the same try as
+      // `client.login()`, so its errors land here too.
+      if (showError && notifyBootstrapError(err, notification, t))
+        return 'reopen';
+
       // --- Server errors (429, 502, 503, etc. from _wrapWithPromise) ---
       if (e.isError && e.type) {
         const errorType = extractErrorType(e.type);
@@ -682,18 +701,13 @@ const LoginView: React.FC<{
   const handleGQLError = useCallback(
     (err: unknown, showError: boolean) => {
       setIsBlockPanelOpen(false);
-      if (showError) {
+      if (showError && !notifyBootstrapError(err, notification, t)) {
         const e = err as {
           title?: string;
           message?: string;
           status?: number;
         };
-        if (isKeypairUnavailableError(err)) {
-          notification(
-            t('login.KeypairUnavailable'),
-            t('login.KeypairUnavailableDescription'),
-          );
-        } else if (e.message) {
+        if (e.message) {
           if (e.status === 408) {
             notification(
               t('error.LoginSucceededManagerNotResponding'),
@@ -815,14 +829,15 @@ const LoginView: React.FC<{
 
       try {
         await client.get_manager_version();
+      } catch {
+        notification(t('error.CannotConnectToServer'));
+        setIsLoading(false);
+        return;
+      }
+      try {
         await doGQLConnect(client);
       } catch (err: unknown) {
-        if (isKeypairUnavailableError(err)) {
-          notification(
-            t('login.KeypairUnavailable'),
-            t('login.KeypairUnavailableDescription'),
-          );
-        } else {
+        if (!notifyBootstrapError(err, notification, t)) {
           notification(t('error.CannotConnectToServer'));
         }
         setIsLoading(false);

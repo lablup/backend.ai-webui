@@ -73,9 +73,8 @@ export type STokenLoginError =
    */
   | { kind: 'concurrent-session'; cause: unknown }
   /**
-   * Authentication succeeded but the manager returned no keypair for the
-   * account. The manager scopes keypairs by `allowed_client_ip`, so this is
-   * what an out-of-allow-list client sees (FR-3998).
+   * Authentication succeeded but the `keypair` query returned no keypair
+   * without reporting an error (FR-3998).
    */
   | { kind: 'keypair-unavailable'; cause: unknown }
   | { kind: 'unknown'; cause: unknown };
@@ -116,6 +115,11 @@ const classifyTokenLoginFailure = (
   // exchange: the account authenticated, but no keypair came back.
   if (isKeypairUnavailableError(err)) {
     return { kind: 'keypair-unavailable', cause: err };
+  }
+  // `token_login` rewrites its own failures, so a structured server error
+  // comes from the bootstrap queries; its `message` is the server's text.
+  if ((err as { isError?: unknown } | null)?.isError === true) {
+    return { kind: 'unknown', cause: err };
   }
 
   const bag =

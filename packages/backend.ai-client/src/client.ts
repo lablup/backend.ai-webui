@@ -114,6 +114,123 @@ export function redactRequestParameters(params: unknown): unknown {
   return redactSensitiveValues(params);
 }
 
+type GraphQLResultError = {
+  message?: string;
+  extensions?: {
+    response?: {
+      status?: number;
+      statusText?: string;
+      body?: {
+        type?: string;
+        title?: string;
+        msg?: string;
+        error_code?: string;
+      };
+    };
+  };
+};
+
+type GraphQLResult<TData> = {
+  data?: TData | null;
+  errors?: GraphQLResultError[];
+};
+
+type RequestErrorFields = {
+  type: unknown;
+  statusCode: unknown;
+  statusText: unknown;
+  title: string;
+  msg: string | undefined;
+  message: string | undefined;
+  description: string;
+  error_code: string;
+  traceback: string;
+  response: unknown;
+};
+
+function buildRequestError(rqst: requestInfo, fields: RequestErrorFields) {
+  return {
+    isError: true,
+    timestamp: new Date().toUTCString(),
+    type: fields.type,
+    requestUrl: rqst.uri,
+    requestMethod: rqst.method,
+    requestParameters: rqst.body,
+    statusCode: fields.statusCode,
+    statusText: fields.statusText,
+    title: fields.title,
+    // `msg` field was introduced in v24.09.0
+    msg: fields.msg,
+    // `message` is deprecated, but it is kept for backward compatibility.
+    // use `msg` field instead.
+    message: fields.message,
+    description: fields.description,
+    error_code: fields.error_code,
+    traceback: fields.traceback,
+    // Include response body for GraphQL errors
+    response: fields.response,
+  };
+}
+
+function formatServerError(
+  status: unknown,
+  statusText: unknown,
+  body: { title?: string; msg?: string } | undefined,
+): { title: string; message: string; description: string } {
+  const prefix = `${status} ${statusText} - `;
+  const detail = body?.msg ? body.msg : body?.title;
+  return {
+    title: `${prefix}${body?.title}`,
+    message: `server responded failure: ${prefix}${detail}`,
+    description: detail ?? '',
+  };
+}
+
+/**
+ * A gateway reports an upstream HTTP failure as a 200 with `errors` and null
+ * data; rebuild the error `_wrapWithPromise` would have thrown for it.
+ */
+function graphQLResultToError<TData>(
+  result: GraphQLResult<TData>,
+  rqst: requestInfo,
+): ReturnType<typeof buildRequestError> | null {
+  const errors = result?.errors;
+  if (!Array.isArray(errors) || errors.length === 0) return null;
+  const data = result.data as Record<string, unknown> | null | undefined;
+  const hasData =
+    data != null && Object.values(data).some((value) => value != null);
+  if (hasData) return null;
+
+  const upstream = errors.find((e) => e?.extensions?.response)?.extensions
+    ?.response;
+  if (!upstream) {
+    const gqlMessage = errors[0]?.message ?? '';
+    return buildRequestError(rqst, {
+      type: 'https://api.backend.ai/probs/graphql-error',
+      statusCode: 200,
+      statusText: 'OK',
+      title: gqlMessage,
+      msg: undefined,
+      message: gqlMessage,
+      description: gqlMessage,
+      error_code: '',
+      traceback: '',
+      response: result,
+    });
+  }
+  const body = upstream.body;
+  return buildRequestError(rqst, {
+    type: body?.type ?? 'https://api.backend.ai/probs/server-error',
+    statusCode: upstream.status,
+    statusText: upstream.statusText,
+    ...formatServerError(upstream.status, upstream.statusText, body),
+    msg: body?.msg,
+    error_code: body?.error_code ?? '',
+    traceback: '',
+    response: result,
+  });
+}
+
 export class Client {
   public code: string | null;
   public sessionId: string | null;
@@ -431,19 +548,15 @@ export class Client {
           break;
         case Client.ERR_SERVER:
           errorType = 'https://api.backend.ai/probs/server-error';
-          errorTitle = `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess?.title}`;
-          errorMsg = 'server responded failure: ';
-          if (bodyAccess?.msg) {
-            errorMsg =
-              errorMsg +
-              `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess.msg}`;
-            errorDesc = bodyAccess.msg;
-          } else {
-            errorMsg =
-              errorMsg +
-              `${respOverlay.status} ${respOverlay.statusText} - ${bodyAccess?.title}`;
-            errorDesc = bodyAccess?.title ?? '';
-          }
+          ({
+            title: errorTitle,
+            message: errorMsg,
+            description: errorDesc,
+          } = formatServerError(
+            respOverlay.status,
+            respOverlay.statusText,
+            bodyAccess,
+          ));
           break;
         case Client.ERR_ABORT:
           errorType = 'https://api.backend.ai/probs/request-abort-error';
@@ -479,27 +592,18 @@ export class Client {
             errorDesc = bodyAccess?.title ?? '';
           }
       }
-      throw {
-        isError: true,
-        timestamp: new Date().toUTCString(),
+      throw buildRequestError(rqst, {
         type: errorType,
-        requestUrl: rqst.uri,
-        requestMethod: rqst.method,
-        requestParameters: rqst.body,
         statusCode: respOverlay.status,
         statusText: respOverlay.statusText,
         title: errorTitle,
-        // `msg` field was introduced in v24.09.0
         msg: respOverlay.msg,
-        // `message` is deprecated, but it is kept for backward compatibility.
-        // use `msg` field instead.
         message: errorMsg,
         description: errorDesc,
         error_code: errorCode,
         traceback: traceback,
-        // Include response body for GraphQL errors
         response: body,
-      };
+      });
     }
 
     let previous_log = JSON.parse(
@@ -1887,9 +1991,16 @@ export class Client {
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: { data: TData }) => r.data,
+    const result: GraphQLResult<TData> = await this._wrapWithPromise(
+      rqst,
+      false,
+      signal,
+      timeout,
+      retry,
     );
+    const error = graphQLResultToError(result, rqst);
+    if (error) throw error;
+    return result.data as TData;
   }
 
   /**

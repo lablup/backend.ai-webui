@@ -310,6 +310,33 @@ describe('STokenLoginBoundary', () => {
     expect(connectedEventCount).toBe(0);
   });
 
+  test('reports the server error from the keypair query as unknown and shows its message (FR-3998)', async () => {
+    const serverErr = {
+      isError: true,
+      type: 'https://api.backend.ai/probs/auth-failed',
+      statusCode: 401,
+      title: '401 Unauthorized - Credential/signature mismatch.',
+      msg: "'10.42.22.120' is not allowed IP address",
+      message:
+        "server responded failure: 401 Unauthorized - '10.42.22.120' is not allowed IP address",
+      description: "'10.42.22.120' is not allowed IP address",
+    };
+    mockedTokenLogin.mockRejectedValue(serverErr);
+    const onError = vi.fn();
+    renderBoundary({ onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith({
+        kind: 'unknown',
+        cause: serverErr,
+      });
+    });
+    expect(
+      await screen.findByText(/'10\.42\.22\.120' is not allowed IP address/),
+    ).toBeInTheDocument();
+    expect(connectedEventCount).toBe(0);
+  });
+
   test('skips token_login when the browser already holds a valid session', async () => {
     // Reuse the existing session: check_login resolves truthy.
     const client = buildFakeClient({

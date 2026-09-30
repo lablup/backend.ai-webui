@@ -72,3 +72,45 @@ describe('connectViaGQL — empty keypair (FR-3998)', () => {
     expect(isKeypairUnavailableError(null)).toBe(false);
   });
 });
+
+describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
+  const serverError = {
+    isError: true,
+    type: 'https://api.backend.ai/probs/auth-failed',
+    statusCode: 401,
+    title: '401 Unauthorized - Credential/signature mismatch.',
+    msg: "'10.42.22.120' is not allowed IP address",
+    message:
+      "server responded failure: 401 Unauthorized - '10.42.22.120' is not allowed IP address",
+    description: "'10.42.22.120' is not allowed IP address",
+  };
+
+  test('logs out once and rethrows the server error unchanged', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = { query: vi.fn().mockRejectedValue(serverError), logout };
+
+    const error = await connectViaGQL(client, cfg, []).catch((e) => e);
+
+    expect(error).toBe(serverError);
+    expect(isKeypairUnavailableError(error)).toBe(false);
+    expect(logout).toHaveBeenCalledTimes(1);
+  });
+
+  test('rethrows the server error when the cleanup logout also rejects', async () => {
+    const client = {
+      query: vi.fn().mockRejectedValue(serverError),
+      logout: vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
+    };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(serverError);
+  });
+
+  test('keeps the session when the query fails without a server refusal', async () => {
+    const timeout = { isError: true, statusCode: 408, message: 'Timeout' };
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = { query: vi.fn().mockRejectedValue(timeout), logout };
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    expect(logout).not.toHaveBeenCalled();
+  });
+});
