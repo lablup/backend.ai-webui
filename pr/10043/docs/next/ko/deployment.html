@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="배포" />
   <meta name="twitter:description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-09-22T00:22:42.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91a3474)">v26.9.0-alpha.0 (91a3474)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4492ead)">v26.9.0-alpha.0 (4492ead)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-리비전-추가">리비전 추가<a class="hash-link" href="#deployment-리비전-추가" aria-label="Direct link to 리비전 추가">#</a></h3>
 <p data-bai-block="32">리비전에는 추론 서버를 실행하는 데 필요한 모든 설정(이미지, 시작 명령, 자원, 모델 마운트, 환경 변수)이 포함됩니다. 배포 상세 페이지에서 <code>리비전 추가</code> 버튼을 클릭하여 모달을 엽니다.</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="956" /><figcaption>그림 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>그림 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">리비전 추가 모달 제목 영역의 <strong>프리셋 모드</strong> / <strong>고급 모드</strong> 전환기로 리비전 구성 방식을 선택합니다.</p>
 <p data-bai-block="35">배포에 현재 리비전이 있으면 두 모드 위에 <strong>현재 리비전 불러오기</strong> 안내 배너가 표시됩니다. <strong>현재 리비전 불러오기</strong>를 클릭하면 현재 적용 중인 리비전의 설정을 시작점으로 폼에 미리 채웁니다(필요한 경우 자동으로 고급 모드로 전환됩니다). 아직 현재 리비전이 없는 배포에서는 배너가 표시되지 않으며, 설정을 한 번 불러오면 배너는 사라집니다.</p>
@@ -834,7 +834,7 @@
 <li data-bai-block="338"><p><strong>최소 복제본 수(Min Replicas) 및 최대 복제본 수(Max Replicas)</strong>: 오토스케일링이 복제본 수에 대해 강제하는 하한과 상한입니다. 오토스케일링은 복제본 수를 최소 복제본 수 아래로 줄이거나 최대 복제본 수 위로 늘리지 않습니다.</p>
 </li>
 </ul>
-<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>그림 12.24</figcaption></figure>
+<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>그림 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="340" id="deployment-토큰-생성">토큰 생성<a class="hash-link" href="#deployment-토큰-생성" aria-label="Direct link to 토큰 생성">#</a></h3>
@@ -853,7 +853,7 @@
 </li>
 <li data-bai-block="350"><code>액세스 토큰 생성</code>을 클릭하여 토큰을 발급합니다.</li>
 </ol>
-<p><figure data-bai-block="351" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>그림 12.26</figcaption></figure>
+<p><figure data-bai-block="351" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>그림 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="352">매니저가 아직 네트워크 엔드포인트를 발급하지 않았다면 <code>액세스 토큰 생성</code> 버튼은 비활성화되며, 툴팁에 <em>&quot;아직 네트워크 엔드포인트가 발급되지 않았습니다.&quot;</em> 라고 표시됩니다. 본인이 소유하지 않은 배포에서는 <em>&quot;배포 소유자만 액세스 토큰을 관리할 수 있습니다.&quot;</em>, 중지 중이거나 더 이상 활성 상태가 아닌 배포에서는 <em>&quot;배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.&quot;</em> 라고 표시되며 버튼이 비활성화됩니다. 이 두 조건에서는 토큰 삭제도 비활성화됩니다.</p>
@@ -897,7 +897,7 @@
 
 <h3 data-bai-block="368" id="deployment-배포-종료">배포 종료<a class="hash-link" href="#deployment-배포-종료" aria-label="Direct link to 배포 종료">#</a></h3>
 <p data-bai-block="369">배포가 더 이상 필요하지 않으면 종료하는 것이 좋습니다. 배포를 종료하려면 <strong>기본 정보</strong> 카드의 <strong>더보기</strong> 메뉴를 열고 <strong>배포 삭제</strong>를 선택합니다. 유형 확인 모달이 나타나면 배포 이름을 입력하여 <strong>영구 삭제</strong> 버튼을 활성화합니다. 종료된 배포는 <strong>삭제됨</strong> 필터 뷰에 표시됩니다.</p>
-<p><figure data-bai-block="370" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>그림 12.28</figcaption></figure>
+<p><figure data-bai-block="370" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>그림 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="371" id="deployment-배포에-접근하기">배포에 접근하기<a class="hash-link" href="#deployment-배포에-접근하기" aria-label="Direct link to 배포에 접근하기">#</a></h2>
 <p data-bai-block="372">배포에 접근할 수 있도록 배포 URL을 최종 사용자와 공유합니다. <strong>외부에 공개</strong>가 활성화된 경우 배포 상세 페이지의 <strong>서비스 엔드포인트</strong> URL을 그대로 공유할 수 있습니다. 비공개 배포의 경우 URL과 액세스 토큰을 함께 공유합니다.</p>
@@ -920,7 +920,7 @@
 <h3 data-bai-block="378" id="deployment-llm-채팅-테스트">LLM 채팅 테스트<a class="hash-link" href="#deployment-llm-채팅-테스트" aria-label="Direct link to LLM 채팅 테스트">#</a></h3>
 <p data-bai-block="379">대형 언어 모델(LLM) 서비스를 생성한 경우, 실시간으로 LLM을 테스트할 수 있습니다.
 배포가 준비되면 배포 상세 페이지 상단의 <strong>배포가 준비되었습니다</strong> 배너에 <code>채팅으로 테스트하기</code> 버튼이 나타납니다. 이 버튼을 클릭하여 테스트를 시작합니다.</p>
-<p><figure data-bai-block="380" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>그림 12.29</figcaption></figure>
+<p><figure data-bai-block="380" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="336" /><figcaption>그림 12.29</figcaption></figure>
 </p>
 <p data-bai-block="381">생성한 모델이 자동으로 선택된 채팅 페이지로 리디렉션되며, 여기서 바로 LLM 모델을 테스트할 수 있습니다.
 채팅 기능에 대한 자세한 내용은 <a href="./chat.html#chat-page">채팅 페이지</a>를 참조하세요.</p>
@@ -1024,7 +1024,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 22일</span>
+  <span class="last-updated">마지막 업데이트 2026년 9월 23일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

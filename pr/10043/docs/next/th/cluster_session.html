@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="เซสชันคลัสเตอร์" />
   <meta name="twitter:description" content="Backend.AI รองรับเซสชันการคำนวณคลัสเตอร์เพื่อสนับสนุนงานคำนวณ/การฝึกสอนแบบกระจาย เซสชันคลัสเตอร์ประกอบด้วยคอนเทนเนอร์หลายรายการ…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันคลัสเตอร์","inLanguage":"th","description":"Backend.AI รองรับเซสชันการคำนวณคลัสเตอร์เพื่อสนับสนุนงานคำนวณ/การฝึกสอนแบบกระจาย เซสชันคลัสเตอร์ประกอบด้วยคอนเทนเนอร์หลายรายการ…","dateModified":"2026-09-22T00:22:42.000Z","url":"https://webui.docs.backend.ai/next/th/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"เซสชันคลัสเตอร์","inLanguage":"th","description":"Backend.AI รองรับเซสชันการคำนวณคลัสเตอร์เพื่อสนับสนุนงานคำนวณ/การฝึกสอนแบบกระจาย เซสชันคลัสเตอร์ประกอบด้วยคอนเทนเนอร์หลายรายการ…","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/th/cluster_session.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/cluster_session.html" />
   <link rel="alternate" hreflang="en" href="../en/cluster_session.html" />
   <link rel="alternate" hreflang="ja" href="../ja/cluster_session.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91a3474)">v26.9.0-alpha.0 (91a3474)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (4492ead)">v26.9.0-alpha.0 (4492ead)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -266,7 +266,7 @@
 <h3 data-bai-block="30" id="cluster_session-การใชเซสชนการคอมพวเตอรของคลสเตอร-backendai">การใช้เซสชันการคอมพิวเตอร์ของคลัสเตอร์ Backend.AI<a class="hash-link" href="#cluster_session-การใชเซสชนการคอมพวเตอรของคลสเตอร-backendai" aria-label="Direct link to การใช้เซสชันการคอมพิวเตอร์ของคลัสเตอร์ Backend.AI">#</a></h3>
 <p data-bai-block="31">ในส่วนนี้ เราจะดูว่าจริง ๆ แล้วจะสร้างและใช้เซสชันการคำนวณคลัสเตอร์ผ่าน GUI ของผู้ใช้ได้อย่างไร</p>
 <p data-bai-block="32">ในหน้าสมาชิก ให้เปิดกล่องสร้างเซสชันและตั้งค่าในลักษณะเดียวกับการสร้างเซสชันการคอมพิวเตอร์ปกติ จำนวนทรัพยากรที่ตั้งค่าในครั้งนี้คือจำนวนที่จัดสรรให้กับ <strong>หนึ่งคอนเทนเนอร์</strong> ตัวอย่างเช่น หากคุณตั้งค่า 4 CPUs จะมีการจัดสรร 4 คอร์ให้กับแต่ละคอนเทนเนอร์ภายใต้เซสชันคลัสเตอร์ โปรดทราบว่านี่ไม่ใช่จำนวนทรัพยากรที่จัดสรรให้กับเซสชันการคอมพิวเตอร์คลัสเตอร์ทั้งหมด สำหรับการสร้างเซสชันการคอมพิวเตอร์คลัสเตอร์ ต้องการทรัพยากรเซิร์ฟเวอร์เท่ากับ N เท่าของจำนวนทรัพยากรที่ตั้งค่าไว้ที่นี่ (N คือขนาดของคลัสเตอร์) นอกจากนี้ยังอย่าลืมเชื่อมต่อโฟลเดอร์จัดเก็บสำหรับการเก็บรักษาข้อมูลอีกด้วย</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/session_launch_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="2936" /><figcaption>รูปที่ 11.2</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/session_launch_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="3124" /><figcaption>รูปที่ 11.2</figcaption></figure>
 </p>
 <p data-bai-block="34">ในฟิลด์ &quot;โหมดคลัสเตอร์&quot; ที่ด้านล่าง คุณสามารถเลือกประเภทของคลัสเตอร์ที่คุณต้องการสร้างได้</p>
 <ul>
@@ -287,14 +287,14 @@
 <p><a id="see-logs-per-container"></a></p>
 <h3 data-bai-block="45" id="cluster_session-ดบนทกตอคอนเทนเนอร">ดูบันทึกต่อคอนเทนเนอร์<a class="hash-link" href="#cluster_session-ดบนทกตอคอนเทนเนอร" aria-label="Direct link to ดูบันทึกต่อคอนเทนเนอร์">#</a></h3>
 <p data-bai-block="46">คุณสามารถตรวจสอบบันทึก (log) ของแต่ละคอนเทนเนอร์ได้ในโมดัลบันทึก ซึ่งจะช่วยให้คุณเข้าใจว่ากำลังเกิดอะไรขึ้น ไม่เฉพาะในคอนเทนเนอร์ <code>main</code> เท่านั้น แต่รวมถึงคอนเทนเนอร์ <code>sub</code> ด้วย</p>
-<p><figure data-bai-block="47" class="doc-figure"><img src="./images/log_modal_per_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1780" height="980" /><figcaption>รูปที่ 11.6</figcaption></figure>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/log_modal_per_container.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2856" height="1712" /><figcaption>รูปที่ 11.6</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/cluster_session/cluster_session.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 22 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 23 ก.ย. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./sessions_all.html">

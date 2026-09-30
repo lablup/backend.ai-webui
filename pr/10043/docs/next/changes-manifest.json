@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-30T04:51:01.191Z",
+  "generatedAt": "2026-09-30T15:52:17.995Z",
   "languages": [
     "en",
     "ja",
@@ -13,11 +13,11 @@
     "en": {
       "totals": {
         "pages": 1,
-        "changes": 73,
+        "changes": 77,
         "added": 10,
-        "modified": 12,
+        "modified": 16,
         "removed": 51,
-        "images": 10,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -30,18 +30,20 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/en/rbac_management/rbac_management.md",
           "counts": {
             "added": 10,
-            "modified": 12,
+            "modified": 16,
             "removed": 51,
-            "images": 10,
-            "total": 73
+            "images": 14,
+            "total": 77
           },
           "fingerprints": [
             "0cb2f3d206f9",
             "f9eb81e436c9",
             "9b4463614c1f",
+            "129a04b80e06",
             "6225c8b0f539",
             "228c75387c83",
             "33d27a78a0b1",
+            "fed69ec4dcdd",
             "527e22538c94",
             "e7736d429e2e",
             "9df8509aeccc",
@@ -106,7 +108,9 @@
             "fb2852b378af",
             "ce3e2a1f38e7",
             "14ec0867422d",
-            "f8417f815fc7",
+            "ca2482eadc6e",
+            "60945ba20783",
+            "7e05260ee8f6",
             "dc6904e2c573",
             "6fdaba550fe4"
           ]
@@ -116,11 +120,11 @@
     "ja": {
       "totals": {
         "pages": 1,
-        "changes": 73,
+        "changes": 77,
         "added": 10,
-        "modified": 12,
+        "modified": 16,
         "removed": 51,
-        "images": 10,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -133,18 +137,20 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ja/rbac_management/rbac_management.md",
           "counts": {
             "added": 10,
-            "modified": 12,
+            "modified": 16,
             "removed": 51,
-            "images": 10,
-            "total": 73
+            "images": 14,
+            "total": 77
           },
           "fingerprints": [
             "25094351c326",
             "ac67702f6ea9",
             "9038d5c1146c",
+            "6d3ccfaf5196",
             "1709c4b78a4e",
             "b01f25a82239",
             "d23ea482d850",
+            "dce6958fa349",
             "85a1b9835fa0",
             "d2f812f2f426",
             "c09d5a57e956",
@@ -209,7 +215,9 @@
             "b497ed002ea2",
             "7a9dd04f0c56",
             "4cdb49123150",
-            "150e4542e12a",
+            "048cf5f99fdb",
+            "347ec88da753",
+            "e7f15bb776d0",
             "91bb352af2c8",
             "8b935783ff96"
           ]
@@ -219,11 +227,11 @@
     "ko": {
       "totals": {
         "pages": 1,
-        "changes": 73,
+        "changes": 77,
         "added": 10,
-        "modified": 12,
+        "modified": 16,
         "removed": 51,
-        "images": 10,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -236,18 +244,20 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md",
           "counts": {
             "added": 10,
-            "modified": 12,
+            "modified": 16,
             "removed": 51,
-            "images": 10,
-            "total": 73
+            "images": 14,
+            "total": 77
           },
           "fingerprints": [
             "faaeb98ca843",
             "6448877b6f67",
             "e590a1b78d1a",
+            "76bb26f0c079",
             "8691f85890df",
             "9e78300d9487",
             "c4db2d91e870",
+            "8b2cb2b8fb5f",
             "082ce158a7e9",
             "366f2a675444",
             "96f9fdbc4a6f",
@@ -312,7 +322,9 @@
             "65e2183657c9",
             "d7dc7453af91",
             "24dfc22c72a9",
-            "1c3f8a3627bf",
+            "9c6dd883c799",
+            "2018d1421701",
+            "833463587258",
             "9e202e48c9aa",
             "a33d19876b5f"
           ]
@@ -322,11 +334,11 @@
     "th": {
       "totals": {
         "pages": 1,
-        "changes": 73,
+        "changes": 77,
         "added": 10,
-        "modified": 12,
+        "modified": 16,
         "removed": 51,
-        "images": 10,
+        "images": 14,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -339,18 +351,20 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md",
           "counts": {
             "added": 10,
-            "modified": 12,
+            "modified": 16,
             "removed": 51,
-            "images": 10,
-            "total": 73
+            "images": 14,
+            "total": 77
           },
           "fingerprints": [
             "18c69cd6cbc2",
             "a1bf0e7a1693",
             "b49041e5c81f",
+            "7e47128b429f",
             "f2b99d15fa24",
             "d90a5918d358",
             "915ee036f2fe",
+            "cdebbf9bd121",
             "676237843e19",
             "477b3a5924aa",
             "fea6511f3562",
@@ -415,7 +429,9 @@
             "ffd63c3b6dbb",
             "65286c5e95a6",
             "808b6f1fa052",
-            "89584974343d",
+            "9fbb5c10e850",
+            "d66ef4fffdd4",
+            "0f5697eac06d",
             "f10c7335da7f",
             "6905544f75b3"
           ]
