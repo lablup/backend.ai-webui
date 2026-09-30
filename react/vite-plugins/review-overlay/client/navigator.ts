@@ -5,8 +5,19 @@
  *
  * Above the set dock, which shares the corner: a walkthrough is what the
  * reader is doing right now, and the dock is theirs to open when they are not.
+ * The reader can drag it anywhere else; a parked pill ignores the dodge.
  */
+import { createGrip, DRAG_STYLE, makeDraggable } from './drag.js';
 import { esc } from './escape-html.js';
+
+/** Where a dragged pill is parked, per tab. */
+export const NAV_POS_KEY = 'bai-review:nav-pos';
+/** Stand-ins for the pill and panel while jsdom has no layout to read. */
+const PILL_SIZE = { width: 560, height: 40 };
+const PANEL_WIDTH = 380;
+const PANEL_HEIGHT = 300;
+const PANEL_GAP = 8;
+const EDGE_PAD = 8;
 
 const STYLE = `
   .bai-nav {
@@ -18,6 +29,7 @@ const STYLE = `
     pointer-events: auto;
   }
   .bai-nav.shown { display: flex; }
+  .bai-nav .cnt { display: contents; }
   /* The set dock owns the bottom-right corner while it is up. */
   .bai-nav.dodge, .bai-panel.dodge { right: auto; left: 16px; }
   .bai-nav .sep { width: 1px; height: 18px; background: var(--bai-pop-border); }
@@ -156,14 +168,57 @@ export function createNavigator(
   /** Never a key the host turned off: a hint nothing answers is a lie. */
   const hint = (key: string) => (options.pageChords ? ` (${key})` : '');
   const style = document.createElement('style');
-  style.textContent = STYLE;
+  style.textContent = STYLE + DRAG_STYLE;
   const pill = document.createElement('div');
   pill.className = 'bai-nav';
   pill.setAttribute('role', 'toolbar');
   pill.setAttribute('aria-label', 'Walkthrough navigator');
+  pill.dataset.dragArea = '';
+  // The grip outlives every render, so a drag or a keyboard move keeps it.
+  const content = document.createElement('span');
+  content.className = 'cnt';
+  pill.append(createGrip(), content);
   const panel = document.createElement('div');
   panel.className = 'bai-panel';
   root.append(style, pill, panel);
+
+  /** A moved pill takes its panel along: above it when it fits, else below. */
+  function placePanel() {
+    const clear = { left: '', top: '', right: '', bottom: '' };
+    if (!drag.placed() || !panel.classList.contains('shown'))
+      return void Object.assign(panel.style, clear);
+    const at = pill.getBoundingClientRect();
+    const width = panel.offsetWidth || PANEL_WIDTH;
+    const height = panel.offsetHeight || PANEL_HEIGHT;
+    const left = Math.min(
+      Math.max(EDGE_PAD, at.right - width),
+      Math.max(EDGE_PAD, window.innerWidth - width - EDGE_PAD),
+    );
+    const above = at.top - PANEL_GAP - height;
+    const top =
+      above >= EDGE_PAD
+        ? above
+        : Math.max(
+            EDGE_PAD,
+            Math.min(
+              at.bottom + PANEL_GAP,
+              window.innerHeight - height - EDGE_PAD,
+            ),
+          );
+    Object.assign(panel.style, {
+      left: `${left}px`,
+      top: `${top}px`,
+      right: 'auto',
+      bottom: 'auto',
+    });
+  }
+
+  const drag = makeDraggable({
+    box: pill,
+    storageKey: NAV_POS_KEY,
+    fallback: PILL_SIZE,
+    onMove: placePanel,
+  });
 
   const ACTS: Record<string, () => void> = {
     next: on.onNext,
@@ -193,7 +248,7 @@ export function createNavigator(
       ? `✎ Copy ${comments} comment${comments === 1 ? '' : 's'}`
       : '✎ Copy comments';
     pill.classList.add('shown');
-    pill.innerHTML = `
+    content.innerHTML = `
       <span class="n">${model.pages} page${model.pages === 1 ? '' : 's'} · <b>${model.total}</b> change${model.total === 1 ? '' : 's'}</span>
       <span class="sep"></span>
       <span class="n"><b>${model.index + 1}</b> / ${model.total} · ${model.viewed} viewed${model.waiting ? ' · <span class="waiting">waiting</span>' : ''}</span>
@@ -234,8 +289,12 @@ export function createNavigator(
     render(model: NavigatorModel) {
       renderPill(model);
       renderPanel(model);
+      // The pill's width follows its counts, so a parked one is re-clamped.
+      drag.apply();
+      placePanel();
     },
     destroy() {
+      drag.destroy();
       pill.remove();
       panel.remove();
       style.remove();
