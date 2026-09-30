@@ -1173,6 +1173,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 します。利用履歴モーダルが開きます。
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 モーダルには以下が表示されます：
 
