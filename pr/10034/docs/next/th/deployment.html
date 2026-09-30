@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การปรับใช้" />
   <meta name="twitter:description" content="Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-09-23T00:43:49.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (d6e6020)">v26.9.0-alpha.0 (d6e6020)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91d4501)">v26.9.0-alpha.0 (91d4501)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-การเพม-revision">การเพิ่ม Revision<a class="hash-link" href="#deployment-การเพม-revision" aria-label="Direct link to การเพิ่ม Revision">#</a></h3>
 <p data-bai-block="32">Revision รวบรวมการตั้งค่าที่จำเป็นทั้งหมดสำหรับการรัน inference server ได้แก่ image, start command, ทรัพยากร, การ mount โมเดล และ environment variables จากหน้าข้อมูลรายละเอียดการปรับใช้ ให้คลิก <code>เพิ่ม Revision</code> เพื่อเปิดหน้าต่าง</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="956" /><figcaption>รูปที่ 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>รูปที่ 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">ใช้ตัวสลับ <strong>โหมดพรีเซต</strong> / <strong>โหมดขั้นสูง</strong> ในส่วนหัวของหน้าต่างเพื่อเลือกวิธีกำหนดค่า Revision</p>
 <p data-bai-block="35">เมื่อการปรับใช้มี Revision ปัจจุบันอยู่แล้ว จะมีแบนเนอร์ <strong>โหลด Revision ปัจจุบัน</strong> แสดงอยู่เหนือฟอร์มในทั้งสองโหมด คลิก <strong>โหลด Revision ปัจจุบัน</strong> เพื่อกรอกข้อมูลในฟอร์มล่วงหน้าด้วยการกำหนดค่าของ Revision ปัจจุบันเป็นจุดเริ่มต้น (หน้าต่างจะสลับไปยังโหมดขั้นสูงโดยอัตโนมัติหากจำเป็น) แบนเนอร์นี้จะไม่แสดงเมื่อการปรับใช้ยังไม่มี Revision ปัจจุบัน และจะหายไปเมื่อคุณโหลดการกำหนดค่าแล้ว</p>
@@ -848,7 +848,7 @@
 <li data-bai-block="345"><p><strong>เรพลิกาขั้นต่ำ (Min Replicas) และเรพลิกาสูงสุด (Max Replicas)</strong>: ขอบเขตล่างและบนที่การปรับขนาดอัตโนมัติบังคับใช้กับจำนวนเรพลิกา การปรับขนาดอัตโนมัติจะไม่ลดจำนวนเรพลิกาต่ำกว่าเรพลิกาขั้นต่ำ หรือเพิ่มให้มากกว่าเรพลิกาสูงสุด</p>
 </li>
 </ul>
-<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>รูปที่ 12.24</figcaption></figure>
+<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>รูปที่ 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="347" id="deployment-การสรางโทเคน">การสร้างโทเค็น<a class="hash-link" href="#deployment-การสรางโทเคน" aria-label="Direct link to การสร้างโทเค็น">#</a></h3>
@@ -867,7 +867,7 @@
 </li>
 <li data-bai-block="357">คลิก <code>สร้างโทเค็นการเข้าถึง</code> เพื่อออกโทเค็น</li>
 </ol>
-<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>รูปที่ 12.26</figcaption></figure>
+<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>รูปที่ 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="359">ปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> จะถูกปิดใช้งานจนกว่า manager จะออก endpoint ของเครือข่ายให้การปรับใช้นี้ ระหว่างที่ปิดใช้งาน คำแนะนำของปุ่มจะระบุว่า <em>&quot;ยังไม่ได้ออก endpoint ของเครือข่าย&quot;</em> ปุ่มนี้ยังถูกปิดใช้งานสำหรับการปรับใช้ที่คุณไม่ได้เป็นเจ้าของ (<em>&quot;เฉพาะเจ้าของการปรับใช้เท่านั้นที่สามารถจัดการโทเค็นการเข้าถึงได้&quot;</em>) และการปรับใช้ที่กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป (<em>&quot;การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป&quot;</em>) สองเงื่อนไขหลังนี้ทำให้การลบโทเค็นถูกปิดใช้งานด้วยเช่นกัน</p>
@@ -911,7 +911,7 @@
 
 <h3 data-bai-block="375" id="deployment-การยตการปรบใช">การยุติการปรับใช้<a class="hash-link" href="#deployment-การยตการปรบใช" aria-label="Direct link to การยุติการปรับใช้">#</a></h3>
 <p data-bai-block="376">หากไม่จำเป็นต้องใช้การปรับใช้แล้ว แนะนำให้ยุติการปรับใช้นั้น หากต้องการยุติการปรับใช้ ให้เปิดเมนู <strong>เพิ่มเติม</strong> บนการ์ดข้อมูลบริการ และเลือก <strong>ลบการปรับใช้</strong> หน้าต่างยืนยันแบบพิมพ์จะปรากฏขึ้น — พิมพ์ชื่อการปรับใช้เพื่อเปิดใช้งานปุ่ม <strong>ลบถาวร</strong> การปรับใช้ที่ยุติแล้วจะปรากฏในมุมมองตัวกรอง <strong>ถูกทำลาย</strong></p>
-<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>รูปที่ 12.28</figcaption></figure>
+<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>รูปที่ 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="378" id="deployment-การเขาถงการปรบใชของคณ">การเข้าถึงการปรับใช้ของคุณ<a class="hash-link" href="#deployment-การเขาถงการปรบใชของคณ" aria-label="Direct link to การเข้าถึงการปรับใช้ของคุณ">#</a></h2>
 <h3 data-bai-block="379" id="deployment-การสงคำขอ-api">การส่งคำขอ API<a class="hash-link" href="#deployment-การสงคำขอ-api" aria-label="Direct link to การส่งคำขอ API">#</a></h3>
@@ -933,7 +933,7 @@ endpoint ได้ หากบริการถูกสร้างในเ�
 <h3 data-bai-block="385" id="deployment-การทดสอบ-llm-chat">การทดสอบ LLM Chat<a class="hash-link" href="#deployment-การทดสอบ-llm-chat" aria-label="Direct link to การทดสอบ LLM Chat">#</a></h3>
 <p data-bai-block="386">หากคุณสร้างบริการ Large Language Model (LLM) คุณสามารถทดสอบ LLM แบบเรียลไทม์
 เมื่อการปรับใช้พร้อมแล้ว ปุ่ม <code>ทดสอบในแชท</code> จะปรากฏในแบนเนอร์ <strong>การปรับใช้พร้อมแล้ว</strong> ที่ด้านบนของหน้าข้อมูลรายละเอียดการปรับใช้ คลิกปุ่มดังกล่าวเพื่อเริ่มการทดสอบ</p>
-<p><figure data-bai-block="387" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>รูปที่ 12.29</figcaption></figure>
+<p><figure data-bai-block="387" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="336" /><figcaption>รูปที่ 12.29</figcaption></figure>
 </p>
 <p data-bai-block="388">คุณจะถูกเปลี่ยนเส้นทางไปยังหน้า Chat ซึ่งโมเดลที่คุณสร้างจะถูกเลือกโดยอัตโนมัติ
 โดยใช้อินเทอร์เฟซแชทที่ให้บริการในหน้า Chat คุณสามารถทดสอบโมเดล LLM

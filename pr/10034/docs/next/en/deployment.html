@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Deployments" />
   <meta name="twitter:description" content="Backend.AI lets you deploy AI models as inference services through the Deployments feature." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-09-23T00:43:49.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Deployments","inLanguage":"en","description":"Backend.AI lets you deploy AI models as inference services through the Deployments feature.","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/en/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (d6e6020)">v26.9.0-alpha.0 (d6e6020)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (91d4501)">v26.9.0-alpha.0 (91d4501)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-add-revision">Add revision<a class="hash-link" href="#deployment-add-revision" aria-label="Direct link to Add revision">#</a></h3>
 <p data-bai-block="32">A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Deployment Detail Page, click <code>Add Revision</code> to open the modal.</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="956" /><figcaption>Figure 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>Figure 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">Use the <strong>Preset Mode</strong> / <strong>Advanced Mode</strong> switcher in the modal title to select how to configure the revision.</p>
 <p data-bai-block="35">When the deployment already has a current revision, a <strong>Load current revision</strong> banner appears above the form in both modes. Click <strong>Load current revision</strong> to pre-fill the form with the current revision&#39;s configuration as a starting point; the modal switches to Advanced Mode automatically if needed. The banner is not shown when the deployment has no current revision yet, and it disappears once you load the configuration.</p>
@@ -867,7 +867,7 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 <li data-bai-block="346"><p><strong>Min Replicas</strong> and <strong>Max Replicas</strong>: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below <strong>Min Replicas</strong> or increase it above <strong>Max Replicas</strong>.</p>
 </li>
 </ul>
-<p><figure data-bai-block="347" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="520" height="812" /><figcaption>Figure 12.24</figcaption></figure>
+<p><figure data-bai-block="347" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>Figure 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="348" id="deployment-generating-tokens">Generating tokens<a class="hash-link" href="#deployment-generating-tokens" aria-label="Direct link to Generating tokens">#</a></h3>
@@ -886,7 +886,7 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 </li>
 <li data-bai-block="358">Click <code>Create Access Token</code> to issue it.</li>
 </ol>
-<p><figure data-bai-block="359" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="872" height="678" /><figcaption>Figure 12.26</figcaption></figure>
+<p><figure data-bai-block="359" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>Figure 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="360">The <code>Create Access Token</code> button is disabled until the manager has issued a network endpoint for the deployment; while it is disabled, its tooltip reads <em>&quot;The network endpoint has not been issued yet.&quot;</em> It is also disabled for a deployment you do not own (<em>&quot;Only the deployment owner can manage access tokens.&quot;</em>) and for a deployment that is stopping or no longer active (<em>&quot;The deployment is stopping or no longer active.&quot;</em>). Those last two conditions disable deleting a token as well.</p>
@@ -930,7 +930,7 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 
 <h3 data-bai-block="376" id="deployment-terminating-a-deployment">Terminating a deployment<a class="hash-link" href="#deployment-terminating-a-deployment" aria-label="Direct link to Terminating a deployment">#</a></h3>
 <p data-bai-block="377">When a deployment is no longer needed, it is recommended to terminate it to free up scheduler resources. To terminate the deployment, open the <strong>More</strong> menu on the Service Info card and select <strong>Delete Deployment</strong>. A typed-confirmation modal appears — type the deployment name to enable the <strong>Permanently Delete</strong> button. The terminated deployment then appears in the <strong>Destroyed</strong> filter view.</p>
-<p><figure data-bai-block="378" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="576" /><figcaption>Figure 12.28</figcaption></figure>
+<p><figure data-bai-block="378" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>Figure 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="379" id="deployment-accessing-your-deployment">Accessing your deployment<a class="hash-link" href="#deployment-accessing-your-deployment" aria-label="Direct link to Accessing your deployment">#</a></h2>
 <h3 data-bai-block="380" id="deployment-making-api-requests">Making API requests<a class="hash-link" href="#deployment-making-api-requests" aria-label="Direct link to Making API requests">#</a></h3>
@@ -950,7 +950,7 @@ please refer to the <a href="./vfolder.html#explore-folder">Explore Folder</a> s
 <h3 data-bai-block="386" id="deployment-llm-chat-test">LLM chat test<a class="hash-link" href="#deployment-llm-chat-test" aria-label="Direct link to LLM chat test">#</a></h3>
 <p data-bai-block="387">If you have created a Large Language Model (LLM) service, you can test the LLM in real-time.
 When the deployment is ready, a <code>Test in Chat</code> button appears in the <strong>Deployment is ready</strong> banner at the top of the Deployment Detail Page. Click it to start the test.</p>
-<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2720" height="336" /><figcaption>Figure 12.29</figcaption></figure>
+<p><figure data-bai-block="388" class="doc-figure"><img src="./images/LLM_chat_test.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2424" height="336" /><figcaption>Figure 12.29</figcaption></figure>
 </p>
 <p data-bai-block="389">You will be redirected to the Chat page, where the model you created is automatically selected.
 Using the chat interface provided on the Chat page, you can test the LLM model.

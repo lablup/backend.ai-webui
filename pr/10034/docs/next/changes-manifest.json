@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-30T02:50:55.165Z",
+  "generatedAt": "2026-09-30T16:19:17.265Z",
   "languages": [
     "en",
     "ja",
@@ -36,7 +36,7 @@
             "total": 9
           },
           "fingerprints": [
-            "4c045f5a363c",
+            "874cbdd5860f",
             "35e2b12c878c",
             "451299478b1e",
             "24cc0b8562b4",
@@ -75,7 +75,7 @@
             "total": 9
           },
           "fingerprints": [
-            "8af66b2af1be",
+            "80c444b76f9f",
             "cafc0a01d94b",
             "43e59b430d3e",
             "2d89040c61b6",
@@ -114,7 +114,7 @@
             "total": 9
           },
           "fingerprints": [
-            "13192d0d9f31",
+            "fd500506c526",
             "74622a742585",
             "34ad0dedb245",
             "671218d7b38c",
@@ -153,7 +153,7 @@
             "total": 9
           },
           "fingerprints": [
-            "464b6826fdf9",
+            "dc07fbef070b",
             "9a9701e3fb53",
             "1a6fa3517fe2",
             "55a08f535264",
