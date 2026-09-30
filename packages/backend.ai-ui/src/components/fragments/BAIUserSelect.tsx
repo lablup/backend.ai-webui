@@ -2,36 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- BAIUserSelect — the ticket-26 demonstration consumer of
- `BAIComplexSelect`.
-
- `BAIUserSelect` is the hardest select in this repo and the template the other
- ~17 Relay-backed `*Select` wrappers follow: Relay OFFSET pagination with
- scroll-driven `loadNext`, server-side search, `labelInValue`, and
- single/multiple modes all at once (cn-oss-removal ticket 12 §"이식 대상 선정").
- Porting it first is what proves the foundation; ticket 27 converts the rest.
-
- FRONTIER RULE (MIGRATION-SPEC §0 "번역 프런티어" / 래퍼 정책): the antd
- `BAIUserSelect` is NOT touched. It keeps serving every unmigrated call site
- until ticket 27 moves them. This file is the Astryx-native sibling, and its
- OUTER value contract is deliberately the same plain key (`string` /
- `string[]`) the antd wrapper exposes — labelInValue lives strictly between
- the wrapper and `BAIComplexSelect`, exactly as it does between
- `BAIUserSelect` and `BAISelect` today.
-
- PILOT-DECISIONs:
-  - P26-5 `useControllableValue` (BUI) is kept for the value/open pair, so
-    the wrapper stays drop-in for both controlled and uncontrolled callers.
-  - P26-6 The `open ? 'network-only' : 'store-only'` fetchPolicy switch
-    survives — `BAIComplexSelect.onOpenChange` re-exposes the open state that
-    `ComplexSelector` otherwise keeps private.
-  - P26-7 antd's `notFoundContent={<Skeleton.Input/>}` first-load placeholder
-    stays dropped, but the empty popup is no longer unconditionally "No
-    results": `BAIComplexSelect` draws a spinner row while `isLoading` (FR-3724).
+ The user picker the admin and project-admin forms share, built on
+ `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
+ server-side search, and a plain-key (`string` / `string[]`) value with
+ label-in-value kept inside the wrapper. `scope` picks the V2 connection —
+ `adminUsersV2`, `domainUsersV2` or `projectUsersV2` (managers >= 26.2.0) —
+ and the legacy `user_nodes` connection serves older managers.
 */
 import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
 import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
-import { toLocalId } from '../../helper';
+import { combineFilters, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
@@ -42,6 +22,7 @@ import BAIComplexSelect, {
   type BAILabeledValue,
 } from '../BAIComplexSelect';
 import { mergeFilterValues } from '../BAIPropertyFilter';
+import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,
@@ -51,11 +32,24 @@ import {
 } from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type AstryxUserNode = NonNullable<
-  NonNullable<
-    BAIUserSelectPaginatedQuery['response']['user_nodes']
-  >['edges'][number]
->['node'];
+export type BAIUserSelectFilter = NonNullable<
+  BAIUserSelectPaginatedQuery['variables']['filter']
+>;
+
+/**
+ * Which users the picker lists. `admin` needs a super-admin, `domain` a
+ * domain admin of that domain, `project` a member of that project.
+ */
+export type BAIUserSelectScope =
+  | { type: 'admin' }
+  | { type: 'domain'; domainName: string }
+  | { type: 'project'; projectId: string };
+
+export interface BAIUserSelectUser {
+  id: string;
+  email: string | null | undefined;
+  fullName: string | null | undefined;
+}
 
 export interface BAIUserSelectRef {
   refetch: () => void;
@@ -65,21 +59,23 @@ export interface BAIUserSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
-  /** Plain key(s), as the antd `BAIUserSelect` exposes. */
+  /** Plain key(s) — the email, or the local user id under `valuePropName="id"`. */
   value?: string | Array<string> | null;
   /**
-   * P3C-1: the second `option` argument survives here (and only here). antd's
-   * `onChange(value, option)` was dropped wholesale by ticket 27, but
-   * `BAIGraphQLPropertyFilter.renderInput` needs the human-readable label to
-   * put on the filter chip while the raw UUID goes into the GraphQL filter —
-   * and the label is not derivable at the call site. Shape is the
-   * `labelInValue` pair the wrapper already holds, so nothing is rebuilt.
+   * The second argument carries the labelInValue pair(s), so a caller can
+   * show the email while the raw UUID goes into a filter or mutation input.
    */
   onChange?: (
     value: string | Array<string> | undefined,
     option?: BAILabeledValue | Array<BAILabeledValue>,
   ) => void;
-  filter?: string;
+  /**
+   * Defaults to every user the caller may administer: all users for a
+   * super-admin, the caller's own domain otherwise.
+   */
+  scope?: BAIUserSelectScope;
+  /** Typed V2 filter; managers below 26.2.0 list without it. */
+  filter?: BAIUserSelectFilter;
   excludeInactive?: boolean;
   valuePropName?: 'id' | 'email';
   open?: boolean;
@@ -87,11 +83,56 @@ export interface BAIUserSelectProps extends Omit<
   ref?: React.Ref<BAIUserSelectRef>;
 }
 
-/** Same rationale as `BAIUserSelect`: `user_nodes` filters on the enum. */
-const defaultActiveUserFilter = 'status == "active"';
+const NIL_UUID = '00000000-0000-0000-0000-000000000000';
+
+type PaginatedResponse = BAIUserSelectPaginatedQuery['response'];
+type ValueResponse = BAIUserSelectValueQuery['response'];
+
+const readV2Connection = (result: PaginatedResponse | ValueResponse) =>
+  result.adminUsersV2 ?? result.domainUsersV2 ?? result.projectUsersV2;
+
+const readCount = (result: PaginatedResponse) =>
+  (
+    result.adminUsersV2 ??
+    result.domainUsersV2 ??
+    result.projectUsersV2 ??
+    result.user_nodes
+  )?.count ?? undefined;
+
+/** Both connections, folded into one row shape. */
+const readUsers = (
+  result: PaginatedResponse | ValueResponse,
+): Array<BAIUserSelectUser> => {
+  const v2 = readV2Connection(result);
+  if (v2) {
+    return _.compact(
+      _.map(v2.edges, (edge) =>
+        edge?.node
+          ? {
+              id: edge.node.id,
+              email: edge.node.basicInfo?.email,
+              fullName: edge.node.basicInfo?.fullName,
+            }
+          : null,
+      ),
+    );
+  }
+  return _.compact(
+    _.map(result.user_nodes?.edges, (edge) =>
+      edge?.node
+        ? {
+            id: edge.node.id,
+            email: edge.node.email,
+            fullName: edge.node.full_name,
+          }
+        : null,
+    ),
+  );
+};
 
 const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
-  filter,
+  scope: scopeFromProps,
+  filter: filterFromProps,
   excludeInactive = false,
   valuePropName = 'email',
   multiple = false,
@@ -101,6 +142,24 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const baiClient = useConnectedBAIClient();
+  const supportsV2 = baiClient.supports('user-v2-query');
+  const scope: BAIUserSelectScope =
+    scopeFromProps ??
+    (baiClient.is_superadmin
+      ? { type: 'admin' }
+      : { type: 'domain', domainName: baiClient._config.domainName });
+  // The scope arguments are non-null, so the two unused ones carry a
+  // placeholder; their field is `@include`d out and never reads it.
+  const scopeVariables = {
+    useAdmin: supportsV2 && scope.type === 'admin',
+    useDomain: supportsV2 && scope.type === 'domain',
+    useProject: supportsV2 && scope.type === 'project',
+    useLegacy: !supportsV2,
+    domainName: scope.type === 'domain' ? scope.domainName : '',
+    projectId: scope.type === 'project' ? scope.projectId : NIL_UUID,
+  };
+
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
   >(selectProps as Record<string, unknown>, {
@@ -123,9 +182,14 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const mergedFilter = mergeFilterValues([
-    excludeInactive ? defaultActiveUserFilter : null,
-    filter,
+  const baseFilter = combineFilters<BAIUserSelectFilter>([
+    excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
+    filterFromProps,
+  ]);
+  // `user_nodes` has no project column, so a project scope lists unscoped there.
+  const legacyBaseFilter = mergeFilterValues([
+    excludeInactive ? 'status == "active"' : null,
+    scope.type === 'domain' ? `domain_name == "${scope.domainName}"` : null,
   ]);
 
   // Deferred so a fresh selection does not immediately re-run the value query.
@@ -133,81 +197,198 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
 
   /**
-   * The selected-key -> label resolution query. In antd this was a NICETY
-   * (antd renders the raw value when no option matches); on Astryx it is
-   * MANDATORY infrastructure — the trigger reads its text from the VALUE, and
-   * a value chosen on page 1 is not in `options` after `loadNext` has paged
-   * past it (cn-oss-removal ticket 12 §2b).
+   * The selected-key -> label resolution query. Mandatory on Astryx: the
+   * trigger reads its text from the VALUE, and a value chosen on page 1 is
+   * not in `options` after `loadNext` has paged past it. Under
+   * `valuePropName="email"` the key already IS the label, so it is skipped.
    */
-  const { user_nodes: selectedUserNodes } =
-    useLazyLoadQuery<BAIUserSelectValueQuery>(
-      graphql`
-        query BAIUserSelectValueQuery(
-          $selectedFilter: String
-          $first: Int!
-          $skipSelected: Boolean!
-        ) {
-          user_nodes(filter: $selectedFilter, first: $first)
-            @skip(if: $skipSelected) {
-            edges {
-              node {
-                id
+  const shouldResolveSelected =
+    valuePropName === 'id' && selectedKeys.length > 0;
+  const selectedUsersResult = useLazyLoadQuery<BAIUserSelectValueQuery>(
+    graphql`
+      query BAIUserSelectValueQuery(
+        $selectedFilter: UserV2Filter
+        $limit: Int!
+        $domainName: String!
+        $projectId: UUID!
+        $useAdmin: Boolean!
+        $useDomain: Boolean!
+        $useProject: Boolean!
+        $legacySelectedFilter: String
+        $useLegacy: Boolean!
+      ) {
+        adminUsersV2(filter: $selectedFilter, limit: $limit)
+          @since(version: "26.2.0")
+          @include(if: $useAdmin) {
+          edges {
+            node {
+              id
+              basicInfo {
                 email
+                fullName
               }
             }
           }
         }
-      `,
-      {
-        selectedFilter: mergeFilterValues(
-          [
-            selectedKeys.length
-              ? mergeFilterValues(
-                  _.map(selectedKeys, (value) =>
-                    valuePropName === 'id'
-                      ? `uuid == "${value}"`
-                      : `email == "${value}"`,
-                  ),
-                  '|',
-                )
-              : null,
-            mergedFilter,
-          ],
-          '&',
-        ),
-        first: Math.max(selectedKeys.length, 1),
-        skipSelected: selectedKeys.length === 0,
-      },
-      {
-        fetchPolicy: selectedKeys.length ? 'store-or-network' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-    );
+        domainUsersV2(
+          scope: { domainName: $domainName }
+          filter: $selectedFilter
+          limit: $limit
+        ) @since(version: "26.2.0") @include(if: $useDomain) {
+          edges {
+            node {
+              id
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
+        projectUsersV2(
+          scope: { projectId: $projectId }
+          filter: $selectedFilter
+          limit: $limit
+        ) @since(version: "26.2.0") @include(if: $useProject) {
+          edges {
+            node {
+              id
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
+        user_nodes(filter: $legacySelectedFilter, first: $limit)
+          @deprecatedSince(version: "26.2.0")
+          @include(if: $useLegacy) {
+          edges {
+            node {
+              id
+              email
+              full_name
+            }
+          }
+        }
+      }
+    `,
+    {
+      ...scopeVariables,
+      useAdmin: shouldResolveSelected && scopeVariables.useAdmin,
+      useDomain: shouldResolveSelected && scopeVariables.useDomain,
+      useProject: shouldResolveSelected && scopeVariables.useProject,
+      useLegacy: shouldResolveSelected && scopeVariables.useLegacy,
+      selectedFilter: shouldResolveSelected
+        ? combineFilters<BAIUserSelectFilter>([
+            { uuid: { in: selectedKeys } },
+            baseFilter,
+          ])
+        : null,
+      legacySelectedFilter: shouldResolveSelected
+        ? mergeFilterValues(
+            [
+              mergeFilterValues(
+                _.map(selectedKeys, (value) => `uuid == "${value}"`),
+                '|',
+              ),
+              legacyBaseFilter,
+            ],
+            '&',
+          )
+        : null,
+      limit: Math.max(selectedKeys.length, 1),
+    },
+    {
+      fetchPolicy: shouldResolveSelected ? 'store-or-network' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
+  );
 
+  // Legacy `user_nodes` has no `limit`: `first` + `offset` is its own offset
+  // mode (graphql-pagination rule); the V2 fields take `limit` + `offset`.
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, AstryxUserNode>(
+    useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, BAIUserSelectUser>(
       graphql`
         query BAIUserSelectPaginatedQuery(
           $offset: Int!
           $limit: Int!
-          $filter: String
-          $order: String
+          $filter: UserV2Filter
+          $orderBy: [UserV2OrderBy!]
+          $domainName: String!
+          $projectId: UUID!
+          $useAdmin: Boolean!
+          $useDomain: Boolean!
+          $useProject: Boolean!
+          $legacyFilter: String
+          $legacyOrder: String
+          $useLegacy: Boolean!
         ) {
+          adminUsersV2(
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: $orderBy
+          ) @since(version: "26.2.0") @include(if: $useAdmin) {
+            count
+            edges {
+              node {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+          domainUsersV2(
+            scope: { domainName: $domainName }
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: $orderBy
+          ) @since(version: "26.2.0") @include(if: $useDomain) {
+            count
+            edges {
+              node {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+          projectUsersV2(
+            scope: { projectId: $projectId }
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: $orderBy
+          ) @since(version: "26.2.0") @include(if: $useProject) {
+            count
+            edges {
+              node {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
           user_nodes(
             offset: $offset
             first: $limit
-            filter: $filter
-            order: $order
-          ) {
+            filter: $legacyFilter
+            order: $legacyOrder
+          ) @deprecatedSince(version: "26.2.0") @include(if: $useLegacy) {
             count
             edges {
               node {
                 id
                 email
-                username
                 full_name
-                status
-                role
               }
             }
           }
@@ -215,22 +396,30 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       `,
       { limit: 10 },
       {
-        filter: mergeFilterValues([
-          mergedFilter,
+        ...scopeVariables,
+        filter: combineFilters<BAIUserSelectFilter>([
+          baseFilter,
+          debouncedDeferredValue
+            ? { email: { iContains: debouncedDeferredValue } }
+            : null,
+        ]),
+        orderBy: [{ field: 'EMAIL', direction: 'ASC' }],
+        legacyFilter: mergeFilterValues([
+          legacyBaseFilter,
           debouncedDeferredValue
             ? `email ilike "%${debouncedDeferredValue}%"`
             : null,
         ]),
-        order: 'email',
+        legacyOrder: 'email',
       },
       {
-        // P26-6: the open state comes back out of the Astryx popup.
+        // The open state comes back out of the Astryx popup.
         fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
         fetchKey: deferredFetchKey,
       },
       {
-        getTotal: (r) => r.user_nodes?.count ?? undefined,
-        getItem: (r) => r.user_nodes?.edges?.map((edge) => edge?.node),
+        getTotal: readCount,
+        getItem: readUsers,
         getId: (item) => item?.id,
       },
     );
@@ -247,23 +436,23 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
-  const keyOfNode = (
-    node: { id: string; email?: string | null } | null | undefined,
+  const keyOfUser = (
+    user: BAIUserSelectUser | null | undefined,
   ): string | undefined => {
-    if (!node) return undefined;
+    if (!user) return undefined;
     return valuePropName === 'id'
-      ? toLocalId(node.id)
-      : (node.email ?? undefined);
+      ? toLocalId(user.id)
+      : (user.email ?? undefined);
   };
 
   const options = _.compact(
     _.map(paginationData, (item) => {
-      const key = keyOfNode(item);
+      const key = keyOfUser(item);
       return key
         ? {
             value: key,
             label: item?.email ?? key,
-            description: item?.full_name ?? undefined,
+            description: item?.fullName ?? undefined,
           }
         : null;
     }),
@@ -271,14 +460,19 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
 
   /** Plain keys -> labelInValue, resolving each label where we can. */
   const labeledValue: BAIComplexSelectValue = (() => {
-    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => {
-      const edge = _.find(
-        selectedUserNodes?.edges,
-        (e) => keyOfNode(e?.node) === key,
-      );
+    const emailByKey = new Map(
+      _.compact(
+        _.map(readUsers(selectedUsersResult), (user) => {
+          const key = keyOfUser(user);
+          return key ? ([key, user.email] as const) : null;
+        }),
+      ),
+    );
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => ({
       // Echoing the key as its own label is the antd fallback, made explicit.
-      return { label: edge?.node?.email ?? key, value: key };
-    });
+      label: emailByKey.get(key) ?? key,
+      value: key,
+    }));
     if (multiple) return labeled;
     return labeled[0] ?? null;
   })();
@@ -291,21 +485,19 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       isLoading={
         isLoading ||
         // The open-driven `network-only` refetch is a deferred update and
-        // raises no pending flag of its own (FR-3724). Only the opening
-        // half counts; closing would flash the spinner for nothing.
+        // raises no pending flag of its own (FR-3724); only opening counts.
         (!!controllableOpen && !deferredOpen) ||
         controllableValue !== deferredControllableValue ||
         searchStr !== debouncedDeferredValue ||
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={result.user_nodes?.count ?? undefined}
+      total={readCount(result)}
       options={options}
       value={labeledValue}
       onChange={(next) => {
         const labeled = _.compact(_.castArray(next ?? []));
         const keys = _.map(labeled, (v) => v.value);
-        // P3C-1: second argument carries the labelInValue pair(s).
         setControllableValue(
           multiple ? keys : keys[0],
           multiple ? labeled : labeled[0],

@@ -133,11 +133,6 @@ export { default as BAITextHighlighter } from './BAITextHighlighter';
 export { default as BAIBooleanToken } from './BAIBooleanToken';
 export type { BAIBooleanTokenProps } from './BAIBooleanToken';
 export {
-  default as BAIUserNodes,
-  availableUserSorterValues,
-} from './BAIUserNodes';
-export type { UserNodeInList } from './BAIUserNodes';
-export {
   default as BAIAdminUserV2Table,
   availableUserV2SorterValues,
 } from './BAIAdminUserV2Table';

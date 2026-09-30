@@ -876,6 +876,8 @@ export class Client {
       this._features['fair-share-scheduling'] = true;
       this._features['export-csv'] = true;
       this._features['bulk-create-user'] = true;
+      // adminUsersV2 / domainUsersV2 / projectUsersV2 (BAIUserSelect). FR-4119.
+      this._features['user-v2-query'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;

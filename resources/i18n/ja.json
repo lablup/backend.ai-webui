@@ -3530,7 +3530,6 @@
       "SelectDomain": "ドメインの選択",
       "SelectFirst": "上記のセレクターからユーザーまたはプロジェクトを選択してください。",
       "SelectProject": "プロジェクト選択",
-      "SelectUser": "ユーザー検索と選択",
       "UnsetCustomSettings": "ユーザー設定の初期化"
     },
     "tab": {
