@@ -1,5 +1,6 @@
 import type { DomainResourceGroupAlertFragment$key } from '../../__generated__/DomainResourceGroupAlertFragment.graphql';
 import type { DomainResourceGroupAlertQuery } from '../../__generated__/DomainResourceGroupAlertQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -25,6 +26,10 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsAllowedResourceGroupsV2 = baiClient.supports(
+    'allowed-resource-groups-v2',
+  );
 
   const { domainName, resourceGroupName } = useFragment(
     graphql`
@@ -36,23 +41,39 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
     domainFairShareFrgmt,
   );
 
-  const { domain } = useLazyLoadQuery<DomainResourceGroupAlertQuery>(
-    graphql`
-      query DomainResourceGroupAlertQuery($domainName: String) {
-        domain(name: $domainName) {
-          scaling_groups
+  const { adminAllowedResourceGroupsForDomainV2, domain } =
+    useLazyLoadQuery<DomainResourceGroupAlertQuery>(
+      graphql`
+        query DomainResourceGroupAlertQuery(
+          $domainName: String!
+          $supportsAllowedResourceGroupsV2: Boolean!
+        ) {
+          adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
+            @since(version: "26.4.2")
+            @include(if: $supportsAllowedResourceGroupsV2) {
+            items
+          }
+          domain(name: $domainName)
+            @deprecatedSince(version: "26.4.2")
+            @skip(if: $supportsAllowedResourceGroupsV2) {
+            scaling_groups
+          }
         }
-      }
-    `,
-    { domainName },
-    {
-      fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
-    },
-  );
+      `,
+      { domainName, supportsAllowedResourceGroupsV2 },
+      {
+        fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
+      },
+    );
+
+  const allowedResourceGroups =
+    adminAllowedResourceGroupsForDomainV2?.items ??
+    domain?.scaling_groups ??
+    [];
 
   if (
     !resourceGroupName ||
-    _.includes(domain?.scaling_groups ?? [], resourceGroupName)
+    _.includes(allowedResourceGroups, resourceGroupName)
   ) {
     return null;
   }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d4d962163c0dab791c88d816d2dd9041>>
+ * @generated SignedSource<<7deedfeb21e945d1d9234b536fc674ed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type ContainerRegistryListQuery$variables = {
   first?: number | null | undefined;
   offset?: number | null | undefined;
   order?: string | null | undefined;
+  supportsDomainV2: boolean;
 };
 export type ContainerRegistryListQuery$data = {
   readonly container_registry_nodes: {
@@ -47,9 +48,13 @@ export type ContainerRegistryListQuery$data = {
       } | null | undefined;
     } | null | undefined>;
   } | null | undefined;
-  readonly domain: {
+  readonly domain?: {
     readonly allowed_docker_registries: ReadonlyArray<string | null | undefined> | null | undefined;
-    readonly name: string | null | undefined;
+  } | null | undefined;
+  readonly domainV2?: {
+    readonly registry: {
+      readonly allowedDockerRegistries: ReadonlyArray<string>;
+    };
   } | null | undefined;
 };
 export type ContainerRegistryListQuery = {
@@ -88,7 +93,12 @@ v5 = {
   "kind": "LocalArgument",
   "name": "order"
 },
-v6 = [
+v6 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "supportsDomainV2"
+},
+v7 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -110,91 +120,91 @@ v6 = [
     "variableName": "order"
   }
 ],
-v7 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v8 = {
+v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "row_id",
   "storageKey": null
 },
-v9 = {
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "registry_name",
   "storageKey": null
 },
-v10 = {
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v11 = {
+v12 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "url",
   "storageKey": null
 },
-v12 = {
+v13 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "type",
   "storageKey": null
 },
-v13 = {
+v14 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "project",
   "storageKey": null
 },
-v14 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "username",
   "storageKey": null
 },
-v15 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "password",
   "storageKey": null
 },
-v16 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "ssl_verify",
   "storageKey": null
 },
-v17 = {
+v18 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "is_global",
   "storageKey": null
 },
-v18 = {
+v19 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v19 = {
+v20 = {
   "alias": "allowed_groups_preview",
   "args": [
     {
@@ -208,7 +218,7 @@ v19 = {
   "name": "allowed_groups",
   "plural": false,
   "selections": [
-    (v18/*: any*/),
+    (v19/*: any*/),
     {
       "alias": null,
       "args": null,
@@ -225,8 +235,8 @@ v19 = {
           "name": "node",
           "plural": false,
           "selections": [
-            (v7/*: any*/),
-            (v10/*: any*/)
+            (v8/*: any*/),
+            (v11/*: any*/)
           ],
           "storageKey": null
         }
@@ -236,30 +246,61 @@ v19 = {
   ],
   "storageKey": null
 },
-v20 = {
+v21 = [
+  {
+    "kind": "Variable",
+    "name": "domainName",
+    "variableName": "domain"
+  }
+],
+v22 = {
   "alias": null,
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "name",
-      "variableName": "domain"
-    }
-  ],
-  "concreteType": "Domain",
+  "args": null,
+  "concreteType": "DomainRegistryInfo",
   "kind": "LinkedField",
-  "name": "domain",
+  "name": "registry",
   "plural": false,
   "selections": [
-    (v10/*: any*/),
     {
       "alias": null,
       "args": null,
       "kind": "ScalarField",
-      "name": "allowed_docker_registries",
+      "name": "allowedDockerRegistries",
       "storageKey": null
     }
   ],
   "storageKey": null
+},
+v23 = {
+  "condition": "supportsDomainV2",
+  "kind": "Condition",
+  "passingValue": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "name",
+          "variableName": "domain"
+        }
+      ],
+      "concreteType": "Domain",
+      "kind": "LinkedField",
+      "name": "domain",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "allowed_docker_registries",
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ]
 };
 return {
   "fragment": {
@@ -269,7 +310,8 @@ return {
       (v2/*: any*/),
       (v3/*: any*/),
       (v4/*: any*/),
-      (v5/*: any*/)
+      (v5/*: any*/),
+      (v6/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -277,7 +319,7 @@ return {
     "selections": [
       {
         "alias": null,
-        "args": (v6/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "ContainerRegistryConnection",
         "kind": "LinkedField",
         "name": "container_registry_nodes",
@@ -304,7 +346,6 @@ return {
                     "kind": "FragmentSpread",
                     "name": "ContainerRegistryEditorModalFragment"
                   },
-                  (v7/*: any*/),
                   (v8/*: any*/),
                   (v9/*: any*/),
                   (v10/*: any*/),
@@ -315,18 +356,38 @@ return {
                   (v15/*: any*/),
                   (v16/*: any*/),
                   (v17/*: any*/),
-                  (v19/*: any*/)
+                  (v18/*: any*/),
+                  (v20/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v18/*: any*/)
+          (v19/*: any*/)
         ],
         "storageKey": null
       },
-      (v20/*: any*/)
+      {
+        "condition": "supportsDomainV2",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v21/*: any*/),
+            "concreteType": "DomainV2",
+            "kind": "LinkedField",
+            "name": "domainV2",
+            "plural": false,
+            "selections": [
+              (v22/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
+      },
+      (v23/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -339,14 +400,15 @@ return {
       (v5/*: any*/),
       (v3/*: any*/),
       (v4/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v6/*: any*/)
     ],
     "kind": "Operation",
     "name": "ContainerRegistryListQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v6/*: any*/),
+        "args": (v7/*: any*/),
         "concreteType": "ContainerRegistryConnection",
         "kind": "LinkedField",
         "name": "container_registry_nodes",
@@ -368,15 +430,15 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v7/*: any*/),
                   (v8/*: any*/),
-                  (v10/*: any*/),
                   (v9/*: any*/),
                   (v11/*: any*/),
+                  (v10/*: any*/),
                   (v12/*: any*/),
                   (v13/*: any*/),
                   (v14/*: any*/),
-                  (v16/*: any*/),
+                  (v15/*: any*/),
+                  (v17/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -384,7 +446,7 @@ return {
                     "name": "extra",
                     "storageKey": null
                   },
-                  (v17/*: any*/),
+                  (v18/*: any*/),
                   {
                     "alias": null,
                     "args": [
@@ -415,9 +477,9 @@ return {
                             "name": "node",
                             "plural": false,
                             "selections": [
-                              (v7/*: any*/),
                               (v8/*: any*/),
-                              (v10/*: any*/)
+                              (v9/*: any*/),
+                              (v11/*: any*/)
                             ],
                             "storageKey": null
                           }
@@ -427,33 +489,53 @@ return {
                     ],
                     "storageKey": "allowed_groups(first:100)"
                   },
-                  (v15/*: any*/),
-                  (v17/*: any*/),
-                  (v19/*: any*/)
+                  (v16/*: any*/),
+                  (v18/*: any*/),
+                  (v20/*: any*/)
                 ],
                 "storageKey": null
               }
             ],
             "storageKey": null
           },
-          (v18/*: any*/)
+          (v19/*: any*/)
         ],
         "storageKey": null
       },
-      (v20/*: any*/)
+      {
+        "condition": "supportsDomainV2",
+        "kind": "Condition",
+        "passingValue": true,
+        "selections": [
+          {
+            "alias": null,
+            "args": (v21/*: any*/),
+            "concreteType": "DomainV2",
+            "kind": "LinkedField",
+            "name": "domainV2",
+            "plural": false,
+            "selections": [
+              (v22/*: any*/),
+              (v8/*: any*/)
+            ],
+            "storageKey": null
+          }
+        ]
+      },
+      (v23/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "bbed6052b5f812ca90dfe28f05a44f63",
+    "cacheID": "d329fec4764184cbc74a0774a4ff1602",
     "id": null,
     "metadata": {},
     "name": "ContainerRegistryListQuery",
     "operationKind": "query",
-    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n  $allowedProjectPreviewCount: Int\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n        is_global\n        allowed_groups_preview: allowed_groups(first: $allowedProjectPreviewCount) {\n          count\n          edges {\n            node {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n    count\n  }\n  domain(name: $domain) {\n    name\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups(first: 100) @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
+    "text": "query ContainerRegistryListQuery(\n  $domain: String!\n  $filter: String\n  $order: String\n  $first: Int\n  $offset: Int\n  $allowedProjectPreviewCount: Int\n  $supportsDomainV2: Boolean!\n) {\n  container_registry_nodes(filter: $filter, order: $order, first: $first, offset: $offset) {\n    edges {\n      node {\n        ...ContainerRegistryEditorModalFragment\n        id\n        row_id\n        registry_name\n        name\n        url\n        type\n        project\n        username\n        password\n        ssl_verify\n        is_global\n        allowed_groups_preview: allowed_groups(first: $allowedProjectPreviewCount) {\n          count\n          edges {\n            node {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n    count\n  }\n  domainV2(domainName: $domain) @include(if: $supportsDomainV2) @since(version: \"26.2.0\") {\n    registry {\n      allowedDockerRegistries\n    }\n    id\n  }\n  domain(name: $domain) @skip(if: $supportsDomainV2) @deprecatedSince(version: \"26.2.0\") {\n    allowed_docker_registries\n  }\n}\n\nfragment ContainerRegistryEditorModalFragment on ContainerRegistryNode {\n  id\n  row_id\n  name\n  registry_name\n  url\n  type\n  project\n  username\n  ssl_verify\n  extra @since(version: \"24.09.3\")\n  is_global @since(version: \"24.09.0\")\n  allowed_groups(first: 100) @since(version: \"25.3.0\") {\n    edges {\n      node {\n        id\n        row_id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d9a698f1064474787f290df2a33ce915";
+(node as any).hash = "e8f744852846a239c588fbaadd2a5d26";
 
 export default node;

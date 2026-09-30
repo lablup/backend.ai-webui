@@ -876,6 +876,10 @@ export class Client {
       this._features['fair-share-scheduling'] = true;
       this._features['export-csv'] = true;
       this._features['bulk-create-user'] = true;
+      // Strawberry scope lookups: `projectV2`, `domainProjectsV2`,
+      // `myUserV2.projects` and `domainV2` (schema: "Added in 26.2.0"). FR-4117.
+      this._features['project-v2'] = true;
+      this._features['domain-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;
@@ -902,6 +906,9 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
+      // `adminAllowedResourceGroupsForDomainV2` / `...ForProjectV2` answer the
+      // resource groups a scope may schedule on (admin only). FR-4117.
+      this._features['allowed-resource-groups-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
@@ -1241,10 +1248,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
         }
         return this.check_login();
       } else if (result.authenticated === false) {

@@ -65,6 +65,7 @@ import {
   BAIText,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
+  toLocalId,
   useBAILogger,
   useBAISignedRequestWithPromise,
   tokenColorForTagColor,
@@ -260,13 +261,20 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // state whenever the domain changes so the preview can display names and the
   // mutation can convert them to ids.
   const groupsQuery = graphql`
-    query BulkCreateUserFromCSVModalGroupsQuery(
-      $domain_name: String
-      $type: [String]
-    ) {
-      groups(domain_name: $domain_name, is_active: true, type: $type) {
-        id
-        name
+    query BulkCreateUserFromCSVModalGroupsQuery($domainName: String!) {
+      domainProjectsV2(
+        scope: { domainName: $domainName }
+        filter: { isActive: true, type: { in_: [GENERAL, MODEL_STORE] } }
+        limit: 1000
+      ) {
+        edges {
+          node {
+            id
+            basicInfo {
+              name
+            }
+          }
+        }
       }
     }
   `;
@@ -275,15 +283,16 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
     fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
       relayEnvironment,
       groupsQuery,
-      { domain_name: domainName, type: ['GENERAL', 'MODEL_STORE'] },
+      { domainName },
       { fetchPolicy: 'store-or-network' },
     )
       .toPromise()
       .then((result) => {
         setGroupList(
-          _.compact(result?.groups).flatMap((g) =>
-            g.id ? [{ id: g.id, name: g.name ?? g.id }] : [],
-          ),
+          _.map(result?.domainProjectsV2?.edges, (edge) => ({
+            id: toLocalId(edge.node.id),
+            name: edge.node.basicInfo.name,
+          })),
         );
         // Only mark loaded on success — on failure leave validation disabled so
         // we degrade to the prior behaviour instead of flagging every project.

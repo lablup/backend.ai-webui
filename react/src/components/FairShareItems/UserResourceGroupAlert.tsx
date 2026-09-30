@@ -1,4 +1,5 @@
 import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -25,23 +26,55 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsAllowedResourceGroupsV2 = baiClient.supports(
+    'allowed-resource-groups-v2',
+  );
 
-  const { domain, group } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
+  const {
+    adminAllowedResourceGroupsForDomainV2,
+    adminAllowedResourceGroupsForProjectV2,
+    projectV2,
+    domain,
+    group,
+  } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
     graphql`
       query UserResourceGroupAlertQuery(
         $projectId: UUID!
-        $domainName: String
+        $domainName: String!
+        $supportsAllowedResourceGroupsV2: Boolean!
       ) {
-        domain(name: $domainName) {
+        adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
+          @since(version: "26.4.2")
+          @include(if: $supportsAllowedResourceGroupsV2) {
+          items
+        }
+        adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
+          @since(version: "26.4.2")
+          @include(if: $supportsAllowedResourceGroupsV2) {
+          items
+        }
+        projectV2(projectId: $projectId)
+          @since(version: "26.2.0")
+          @include(if: $supportsAllowedResourceGroupsV2) {
+          basicInfo {
+            name
+          }
+        }
+        domain(name: $domainName)
+          @deprecatedSince(version: "26.4.2")
+          @skip(if: $supportsAllowedResourceGroupsV2) {
           scaling_groups
         }
-        group(id: $projectId, domain_name: $domainName) {
+        group(id: $projectId, domain_name: $domainName)
+          @deprecatedSince(version: "26.4.2")
+          @skip(if: $supportsAllowedResourceGroupsV2) {
           name
           scaling_groups
         }
       }
     `,
-    { projectId, domainName },
+    { projectId, domainName, supportsAllowedResourceGroupsV2 },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -51,13 +84,20 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
-  const domainScalingGroups = domain?.scaling_groups ?? [];
-  const projectScalingGroups = group?.scaling_groups ?? [];
+  const domainResourceGroups =
+    adminAllowedResourceGroupsForDomainV2?.items ??
+    domain?.scaling_groups ??
+    [];
+  const projectResourceGroups =
+    adminAllowedResourceGroupsForProjectV2?.items ??
+    group?.scaling_groups ??
+    [];
+  const projectName = projectV2?.basicInfo?.name ?? group?.name;
 
   if (
     !resourceGroupName ||
-    _.includes(domainScalingGroups, resourceGroupName) ||
-    _.includes(projectScalingGroups, resourceGroupName)
+    _.includes(domainResourceGroups, resourceGroupName) ||
+    _.includes(projectResourceGroups, resourceGroupName)
   ) {
     return null;
   }
@@ -66,7 +106,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     <Banner
       status="warning"
       title={t('fairShare.UserNotAllowedInResourceGroup', {
-        project: group?.name,
+        project: projectName,
         resourceGroup: resourceGroupName,
       })}
       {...bannerProps}

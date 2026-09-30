@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<127511c3e4b85dd9dc6a9de1b0b967c6>>
+ * @generated SignedSource<<20d6d74fcfd6209d944e218b2033fe32>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,14 +10,21 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type ProjectResourceGroupWarningIconQuery$variables = {
-  domainName?: string | null | undefined;
+  domainName: string;
   projectId: string;
+  supportsAllowedResourceGroupsV2: boolean;
 };
 export type ProjectResourceGroupWarningIconQuery$data = {
-  readonly domain: {
+  readonly adminAllowedResourceGroupsForDomainV2?: {
+    readonly items: ReadonlyArray<string>;
+  } | null | undefined;
+  readonly adminAllowedResourceGroupsForProjectV2?: {
+    readonly items: ReadonlyArray<string>;
+  } | null | undefined;
+  readonly domain?: {
     readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
-  readonly group: {
+  readonly group?: {
     readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
@@ -37,7 +44,21 @@ v1 = {
   "kind": "LocalArgument",
   "name": "projectId"
 },
-v2 = [
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "supportsAllowedResourceGroupsV2"
+},
+v3 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "items",
+    "storageKey": null
+  }
+],
+v4 = [
   {
     "alias": null,
     "args": null,
@@ -46,55 +67,102 @@ v2 = [
     "storageKey": null
   }
 ],
-v3 = [
+v5 = [
   {
-    "alias": null,
-    "args": [
+    "condition": "supportsAllowedResourceGroupsV2",
+    "kind": "Condition",
+    "passingValue": true,
+    "selections": [
       {
-        "kind": "Variable",
-        "name": "domain_name",
-        "variableName": "domainName"
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "projectId",
+            "variableName": "projectId"
+          }
+        ],
+        "concreteType": "AllowedResourceGroupsPayload",
+        "kind": "LinkedField",
+        "name": "adminAllowedResourceGroupsForProjectV2",
+        "plural": false,
+        "selections": (v3/*: any*/),
+        "storageKey": null
       },
       {
-        "kind": "Variable",
-        "name": "id",
-        "variableName": "projectId"
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "domainName",
+            "variableName": "domainName"
+          }
+        ],
+        "concreteType": "AllowedResourceGroupsPayload",
+        "kind": "LinkedField",
+        "name": "adminAllowedResourceGroupsForDomainV2",
+        "plural": false,
+        "selections": (v3/*: any*/),
+        "storageKey": null
       }
-    ],
-    "concreteType": "Group",
-    "kind": "LinkedField",
-    "name": "group",
-    "plural": false,
-    "selections": (v2/*: any*/),
-    "storageKey": null
+    ]
   },
   {
-    "alias": null,
-    "args": [
+    "condition": "supportsAllowedResourceGroupsV2",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
       {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "domainName"
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "domain_name",
+            "variableName": "domainName"
+          },
+          {
+            "kind": "Variable",
+            "name": "id",
+            "variableName": "projectId"
+          }
+        ],
+        "concreteType": "Group",
+        "kind": "LinkedField",
+        "name": "group",
+        "plural": false,
+        "selections": (v4/*: any*/),
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "name",
+            "variableName": "domainName"
+          }
+        ],
+        "concreteType": "Domain",
+        "kind": "LinkedField",
+        "name": "domain",
+        "plural": false,
+        "selections": (v4/*: any*/),
+        "storageKey": null
       }
-    ],
-    "concreteType": "Domain",
-    "kind": "LinkedField",
-    "name": "domain",
-    "plural": false,
-    "selections": (v2/*: any*/),
-    "storageKey": null
+    ]
   }
 ];
 return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v1/*: any*/)
+      (v1/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectResourceGroupWarningIconQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -102,23 +170,24 @@ return {
   "operation": {
     "argumentDefinitions": [
       (v1/*: any*/),
-      (v0/*: any*/)
+      (v0/*: any*/),
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectResourceGroupWarningIconQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "5f9b9b5f991a25f621b704689daacc25",
+    "cacheID": "f2c299ac95521fa2f4dfa8f94c70b75d",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String\n) {\n  group(id: $projectId, domain_name: $domainName) {\n    scaling_groups\n  }\n  domain(name: $domainName) {\n    scaling_groups\n  }\n}\n"
+    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $supportsAllowedResourceGroupsV2: Boolean!\n) {\n  adminAllowedResourceGroupsForProjectV2(projectId: $projectId) @include(if: $supportsAllowedResourceGroupsV2) @since(version: \"26.4.2\") {\n    items\n  }\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $supportsAllowedResourceGroupsV2) @since(version: \"26.4.2\") {\n    items\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $supportsAllowedResourceGroupsV2) @deprecatedSince(version: \"26.4.2\") {\n    scaling_groups\n  }\n  domain(name: $domainName) @skip(if: $supportsAllowedResourceGroupsV2) @deprecatedSince(version: \"26.4.2\") {\n    scaling_groups\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "98245b3b56fdbf24ef2e876349e1344a";
+(node as any).hash = "4d6a1bfd25944ef63d009ffca2ad047e";
 
 export default node;

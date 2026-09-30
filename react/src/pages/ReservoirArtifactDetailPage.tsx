@@ -16,6 +16,7 @@ import ImportArtifactRevisionToFolderModal from '../components/ImportArtifactRev
 import { buildPath } from '../helper/pathBuilder';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import { Button } from '@astryxdesign/core/Button';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Link } from '@astryxdesign/core/Link';
@@ -120,111 +121,108 @@ const ReservoirArtifactDetailPage = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { artifact, groups } =
-    useLazyLoadQuery<ReservoirArtifactDetailPageQuery>(
-      graphql`
-        query ReservoirArtifactDetailPageQuery(
-          $id: ID!
-          $offset: Int!
-          $limit: Int!
-          $filter: ArtifactRevisionFilter!
-        ) {
-          artifact(id: $id) {
-            id
+  const modelStoreProject = useModelStoreProject();
+  const { artifact } = useLazyLoadQuery<ReservoirArtifactDetailPageQuery>(
+    graphql`
+      query ReservoirArtifactDetailPageQuery(
+        $id: ID!
+        $offset: Int!
+        $limit: Int!
+        $filter: ArtifactRevisionFilter!
+      ) {
+        artifact(id: $id) {
+          id
+          name
+          ...BAIArtifactTypeTokenFragment
+          description
+          registry {
             name
-            ...BAIArtifactTypeTokenFragment
-            description
-            registry {
-              name
-              url
-            }
-            source {
-              name
-              url
-            }
-            updatedAt
-            pullingArtifactRevisions: revisions(
-              first: null
-              last: null
-              filter: { status: { equals: PULLING } }
-              orderBy: [
-                { field: VERSION, direction: DESC }
-                { field: UPDATED_AT, direction: DESC }
-              ]
-            )
-              @connection(
-                key: "ReservoirArtifactDetailPage_pullingArtifactRevisions"
-              ) {
-              __id
-              count
-              edges {
-                node {
-                  id
-                  status
-                  ...BAIPullingArtifactRevisionAlertFragment
-                }
-              }
-            }
-            latestVersion: revisions(
-              limit: 1
-              orderBy: [
-                { field: VERSION, direction: DESC }
-                { field: UPDATED_AT, direction: DESC }
-              ]
-            ) {
-              edges {
-                node {
-                  id
-                  size
-                  version
-                  status
-                  ...BAIImportArtifactModalArtifactRevisionFragment
-                  ...BAIArtifactRevisionTableLatestRevisionFragment
-                }
-              }
-            }
-            revisions(
-              offset: $offset
-              limit: $limit
-              orderBy: [
-                { field: VERSION, direction: DESC }
-                { field: UPDATED_AT, direction: DESC }
-              ]
-              filter: $filter
-            ) {
-              count
-              edges {
-                node {
-                  id
-                  status
-                  ...BAIArtifactRevisionTableArtifactRevisionFragment
-                  ...BAIImportArtifactModalArtifactRevisionFragment
-                  ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment
-                  ...BAIArtifactRevisionDeleteButtonFragment
-                  ...BAIArtifactRevisionDownloadButtonFragment
-                  ...ImportArtifactRevisionToFolderButtonFragment
-                  ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment
-                }
-              }
-            }
-            ...BAIImportArtifactModalArtifactFragment
-            ...BAIDeleteArtifactRevisionsModalArtifactFragment
+            url
           }
-          groups(is_active: true, type: ["MODEL_STORE"]) {
-            ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment
+          source {
+            name
+            url
           }
+          updatedAt
+          pullingArtifactRevisions: revisions(
+            first: null
+            last: null
+            filter: { status: { equals: PULLING } }
+            orderBy: [
+              { field: VERSION, direction: DESC }
+              { field: UPDATED_AT, direction: DESC }
+            ]
+          )
+            @connection(
+              key: "ReservoirArtifactDetailPage_pullingArtifactRevisions"
+            ) {
+            __id
+            count
+            edges {
+              node {
+                id
+                status
+                ...BAIPullingArtifactRevisionAlertFragment
+              }
+            }
+          }
+          latestVersion: revisions(
+            limit: 1
+            orderBy: [
+              { field: VERSION, direction: DESC }
+              { field: UPDATED_AT, direction: DESC }
+            ]
+          ) {
+            edges {
+              node {
+                id
+                size
+                version
+                status
+                ...BAIImportArtifactModalArtifactRevisionFragment
+                ...BAIArtifactRevisionTableLatestRevisionFragment
+              }
+            }
+          }
+          revisions(
+            offset: $offset
+            limit: $limit
+            orderBy: [
+              { field: VERSION, direction: DESC }
+              { field: UPDATED_AT, direction: DESC }
+            ]
+            filter: $filter
+          ) {
+            count
+            edges {
+              node {
+                id
+                status
+                ...BAIArtifactRevisionTableArtifactRevisionFragment
+                ...BAIImportArtifactModalArtifactRevisionFragment
+                ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment
+                ...BAIArtifactRevisionDeleteButtonFragment
+                ...BAIArtifactRevisionDownloadButtonFragment
+                ...ImportArtifactRevisionToFolderButtonFragment
+                ...ImportArtifactRevisionToFolderModalArtifactRevisionFragment
+              }
+            }
+          }
+          ...BAIImportArtifactModalArtifactFragment
+          ...BAIDeleteArtifactRevisionsModalArtifactFragment
         }
-      `,
-      deferredQueryVariables,
-      {
-        fetchKey:
-          deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
-        fetchPolicy:
-          deferredFetchKey === INITIAL_FETCH_KEY
-            ? 'store-and-network'
-            : 'network-only',
-      },
-    );
+      }
+    `,
+    deferredQueryVariables,
+    {
+      fetchKey:
+        deferredFetchKey === INITIAL_FETCH_KEY ? undefined : deferredFetchKey,
+      fetchPolicy:
+        deferredFetchKey === INITIAL_FETCH_KEY
+          ? 'store-and-network'
+          : 'network-only',
+    },
+  );
 
   const latestArtifact = artifact?.latestVersion?.edges[0]?.node;
   const pullingArtifacts = filterOutNullAndUndefined(
@@ -700,11 +698,13 @@ const ReservoirArtifactDetailPage = () => {
       />
       <ImportArtifactRevisionToFolderModal
         selectedArtifactRevisionFrgmt={selectedImportRevisions}
-        // ADR-0001 (FR-3415): every model-store project is handed to the
-        // modal so it can pick the destination in-modal. It used to read the
-        // ambient project — and offer a confirmation that WROTE the global
-        // selection — which an admin surface must never do.
-        modelStoreProjectsFrgmt={filterOutNullAndUndefined(groups ?? [])}
+        // ADR-0001 (FR-3415): the model-store project is handed to the modal
+        // so it picks the destination itself, never the ambient project.
+        modelStoreProjects={
+          modelStoreProject.id && modelStoreProject.name
+            ? [{ id: modelStoreProject.id, name: modelStoreProject.name }]
+            : []
+        }
         onOk={(_e, tasks, vfolderId) => {
           setSelectedImportRevisions([]);
           updateFetchKey();

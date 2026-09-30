@@ -17,7 +17,17 @@ import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockEnvironment';
 import { describe, expect, it, vi } from 'vitest';
 
-const { switchProject } = vi.hoisted(() => ({ switchProject: vi.fn() }));
+const { switchProject, managerFlags } = vi.hoisted(() => ({
+  switchProject: vi.fn(),
+  managerFlags: { supportsProjectV2: true },
+}));
+
+vi.mock('../hooks', () => ({
+  useSuspendedBackendaiClient: () => ({
+    supports: (feature: string) =>
+      feature === 'project-v2' && managerFlags.supportsProjectV2,
+  }),
+}));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -81,7 +91,37 @@ describe('SwitchToProjectButton', () => {
     });
   });
 
-  it('falls back to the group_node lookup when no project name is given', async () => {
+  it('falls back to the projectV2 lookup when no project name is given', async () => {
+    managerFlags.supportsProjectV2 = true;
+    const environment = createMockEnvironment();
+    let variables: Record<string, unknown> | undefined;
+    environment.mock.queueOperationResolver((operation) => {
+      variables = operation.request.variables;
+      return MockPayloadGenerator.generate(operation, {
+        ProjectV2: () => ({
+          basicInfo: { name: 'beta' },
+        }),
+      });
+    });
+    renderButton(environment);
+
+    expect(
+      await screen.findByText('modelService.SwitchToProject:beta'),
+    ).toBeInTheDocument();
+    expect(variables).toMatchObject({
+      projectId: 'project-0000',
+      supportsProjectV2: true,
+    });
+
+    fireEvent.click(screen.getByRole('button'));
+    expect(switchProject).toHaveBeenCalledWith({
+      projectId: 'project-0000',
+      projectName: 'beta',
+    });
+  });
+
+  it('keeps the group_node lookup on managers before 26.2.0', async () => {
+    managerFlags.supportsProjectV2 = false;
     const environment = createMockEnvironment();
     environment.mock.queueOperationResolver((operation) =>
       MockPayloadGenerator.generate(operation, {

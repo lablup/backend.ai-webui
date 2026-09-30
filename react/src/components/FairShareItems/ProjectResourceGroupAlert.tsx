@@ -1,5 +1,6 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -22,6 +23,10 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsAllowedResourceGroupsV2 = baiClient.supports(
+    'allowed-resource-groups-v2',
+  );
 
   const { projectId, domainName, resourceGroupName } = useFragment(
     graphql`
@@ -34,26 +39,41 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
     projectFairShareFrgmt,
   );
 
-  const { group } = useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
-    graphql`
-      query ProjectResourceGroupAlertQuery(
-        $projectId: UUID!
-        $domainName: String
-      ) {
-        group(id: $projectId, domain_name: $domainName) {
-          scaling_groups
+  const { adminAllowedResourceGroupsForProjectV2, group } =
+    useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
+      graphql`
+        query ProjectResourceGroupAlertQuery(
+          $projectId: UUID!
+          $domainName: String!
+          $supportsAllowedResourceGroupsV2: Boolean!
+        ) {
+          adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
+            @since(version: "26.4.2")
+            @include(if: $supportsAllowedResourceGroupsV2) {
+            items
+          }
+          group(id: $projectId, domain_name: $domainName)
+            @deprecatedSince(version: "26.4.2")
+            @skip(if: $supportsAllowedResourceGroupsV2) {
+            scaling_groups
+          }
         }
-      }
-    `,
-    { projectId, domainName },
-    {
-      fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
-    },
-  );
+      `,
+      { projectId, domainName, supportsAllowedResourceGroupsV2 },
+      {
+        fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
+      },
+    );
 
-  const scalingGroups = group?.scaling_groups ?? [];
+  const allowedResourceGroups =
+    adminAllowedResourceGroupsForProjectV2?.items ??
+    group?.scaling_groups ??
+    [];
 
-  if (!resourceGroupName || _.includes(scalingGroups, resourceGroupName)) {
+  if (
+    !resourceGroupName ||
+    _.includes(allowedResourceGroups, resourceGroupName)
+  ) {
     return null;
   }
 

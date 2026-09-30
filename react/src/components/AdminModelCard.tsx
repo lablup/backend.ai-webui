@@ -19,6 +19,7 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
+import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -90,7 +91,6 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
-    $domainName: String
   ) {
     adminModelCardsV2(
       filter: $filter
@@ -129,10 +129,6 @@ export const AdminModelCardQuery = graphql`
           ...AdminModelCardSettingModalFragment
         }
       }
-    }
-    groups(domain_name: $domainName, is_active: true, type: ["MODEL_STORE"]) {
-      id
-      name
     }
   }
 `;
@@ -193,11 +189,11 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
 
-  const { adminModelCardsV2, groups } =
-    usePreloadedQuery<AdminModelCardQueryType>(
-      AdminModelCardQuery,
-      deferredQueryRef,
-    );
+  const { adminModelCardsV2 } = usePreloadedQuery<AdminModelCardQueryType>(
+    AdminModelCardQuery,
+    deferredQueryRef,
+  );
+  const modelStoreProject = useModelStoreProject();
 
   const [commitDeleteModelCard] = useMutation<AdminModelCardDeleteMutation>(
     graphql`
@@ -412,8 +408,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   <BAIAdminProjectSelect
                     label={t('adminModelCard.Project')}
                     isLabelHidden
-                    // A model card belongs to a MODEL_STORE project (see the
-                    // `groups(type: ["MODEL_STORE"])` query above).
+                    // A model card belongs to a MODEL_STORE project.
                     filter={{ type: { equals: 'MODEL_STORE' } }}
                     value={value}
                     isDisabled={isDisabled}
@@ -568,7 +563,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         <AdminModelCardSettingModal
           open={isSettingModalOpen}
           modelCardFrgmt={editingModelCard ?? null}
-          modelStoreProject={groups?.[0] ?? null}
+          modelStoreProject={modelStoreProject}
           onRequestClose={(success) => {
             setIsSettingModalOpen(false);
             setEditingModelCardId(null);

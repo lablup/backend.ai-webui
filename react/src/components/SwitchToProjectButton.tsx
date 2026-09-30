@@ -3,13 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { SwitchToProjectButtonQuery } from '../__generated__/SwitchToProjectButtonQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSwitchProject } from '../hooks/useRouteScope';
-import {
-  BAIButton,
-  BAIButtonProps,
-  toGlobalId,
-  toLocalId,
-} from 'backend.ai-ui';
+import { BAIButton, BAIButtonProps, toGlobalId } from 'backend.ai-ui';
 import React, { Suspense, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -19,7 +15,7 @@ interface SwitchToProjectButtonProps extends Omit<BAIButtonProps, 'onClick'> {
   /**
    * Project name the caller already resolved (e.g. from
    * `ModelDeploymentMetadata.projectV2`). When omitted, the name is looked up
-   * with an extra `group_node` round-trip.
+   * with an extra `projectV2` round-trip.
    */
   projectName?: string | null;
 }
@@ -62,22 +58,42 @@ const SwitchToProjectButtonWithQuery: React.FC<
   Omit<SwitchToProjectButtonProps, 'projectName'>
 > = ({ projectId, ...buttonProps }) => {
   'use memo';
-  const { group_node } = useLazyLoadQuery<SwitchToProjectButtonQuery>(
-    graphql`
-      query SwitchToProjectButtonQuery($projectId: String!) {
-        group_node(id: $projectId) @since(version: "24.03.0") {
-          id
-          name
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsProjectV2 = baiClient.supports('project-v2');
+  const { projectV2, group_node } =
+    useLazyLoadQuery<SwitchToProjectButtonQuery>(
+      graphql`
+        query SwitchToProjectButtonQuery(
+          $projectId: UUID!
+          $legacyProjectId: String!
+          $supportsProjectV2: Boolean!
+        ) {
+          projectV2(projectId: $projectId)
+            @since(version: "26.2.0")
+            @include(if: $supportsProjectV2) {
+            basicInfo {
+              name
+            }
+          }
+          group_node(id: $legacyProjectId)
+            @since(version: "24.03.0")
+            @deprecatedSince(version: "26.2.0")
+            @skip(if: $supportsProjectV2) {
+            name
+          }
         }
-      }
-    `,
-    { projectId: toGlobalId('GroupNode', projectId) },
-  );
+      `,
+      {
+        projectId,
+        legacyProjectId: toGlobalId('GroupNode', projectId),
+        supportsProjectV2,
+      },
+    );
 
   return (
     <SwitchToProjectButtonView
-      projectId={toLocalId(group_node?.id || '')}
-      projectName={group_node?.name}
+      projectId={projectId}
+      projectName={projectV2?.basicInfo?.name ?? group_node?.name}
       {...buttonProps}
     />
   );
