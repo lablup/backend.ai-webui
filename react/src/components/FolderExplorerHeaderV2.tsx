@@ -16,12 +16,22 @@ import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
 import { HStack } from '@astryxdesign/core/Stack';
-import { BAISkeleton, useBAIBreakpoint } from 'backend.ai-ui';
+import { Heading } from '@astryxdesign/core/Text';
+import {
+  BAISkeleton,
+  BAIVFolderIdenticon,
+  useBAIBreakpoint,
+} from 'backend.ai-ui';
 import React, { Suspense } from 'react';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
+  /**
+   * Drawn (identicon + read-only title, no launch buttons) when `vfolderV2`
+   * nulls the whole node and only the legacy node answers (FR-3997).
+   */
+  legacyVFolder?: { id: string; name?: string | null } | null;
   titleStyle?: React.CSSProperties;
   /**
    * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
@@ -36,6 +46,7 @@ interface FolderExplorerHeaderV2Props {
 
 const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   vfolderNodeFrgmt,
+  legacyVFolder,
   titleStyle,
   project,
   noProjectTooltip,
@@ -87,6 +98,11 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
               fontSize: 'var(--font-size-xl)',
             }}
           />
+        ) : legacyVFolder ? (
+          <BAIVFolderIdenticon
+            seed={legacyVFolder.id}
+            style={{ fontSize: 'var(--font-size-xl)' }}
+          />
         ) : (
           <span
             style={{
@@ -112,6 +128,11 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
             }}
             editable
           />
+        )}
+        {!vfolderNode && legacyVFolder && (
+          <Heading level={3} maxLines={1}>
+            {legacyVFolder.name}
+          </Heading>
         )}
       </HStack>
       <HStack

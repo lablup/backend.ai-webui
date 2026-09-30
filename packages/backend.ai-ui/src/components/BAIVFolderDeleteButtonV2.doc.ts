@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The delete affordance for a selection of virtual folders on pages whose rows are the V2 `VFolder` GraphQL type, such as the project admin data page. It renders a ghost Astryx IconButton with a trash glyph, tinted through the shared `bai-name-action-cell-danger` class so the danger colour follows the theme. Unlike BAIVFolderDeleteButton, its plural fragment selects only `id`: V2 `VFolder` exposes no per-user action permission yet, so the button is always enabled and the backend rejects an unauthorized request. It only opens the flow — the caller owns the confirmation, which for a permanent delete means BAIDeleteConfirmModal with `requireConfirmInput`.',
+      'The delete affordance for a selection of virtual folders on pages whose rows are the V2 `VFolder` GraphQL type, such as the project admin data page. It renders a ghost Astryx IconButton with a trash glyph, tinted through the shared `bai-name-action-cell-danger` class so the danger colour follows the theme. Like BAIVFolderDeleteButton it gates itself on data: from manager 26.9.0 its plural fragment reads the `permissions` bits the caller holds on each selected `VFolder` and the button stays disabled unless at least one grants `SOFT_DELETE`; on older managers there is no per-user bit to read, so it stays enabled and the backend rejects an unauthorized request. It only opens the flow — the caller owns the confirmation, which for a permanent delete means BAIDeleteConfirmModal with `requireConfirmInput`.',
     bestPractices: [
       {
         guidance: true,
@@ -36,7 +36,7 @@ export const docs = {
       {
         guidance: false,
         description:
-          'Assume the enabled state means the user may delete — there is no permission gate here, so hide or disable the control yourself where the page already knows the action is unavailable.',
+          'Assume the enabled state means the user may delete on a manager older than 26.9.0 — the permission gate only exists from that version, so hide or disable the control yourself where the page already knows the action is unavailable.',
       },
       {
         guidance: false,
@@ -50,7 +50,7 @@ export const docs = {
       name: 'vfolderFrgmt',
       type: 'BAIVFolderDeleteButtonV2Fragment$key',
       description:
-        'Plural fragment reference for the selected V2 `VFolder` rows. The fragment selects only `id`, so it identifies the selection rather than gating the button.',
+        'Plural fragment reference for the selected V2 `VFolder` rows. The fragment selects `id` and, from manager 26.9.0, the `permissions` bits that gate the button.',
       required: true,
     },
     {
@@ -70,7 +70,7 @@ export const docs = {
       name: 'isDisabled',
       type: 'boolean',
       description:
-        'Disables the button. It is the only way to switch the control off, since the component applies no permission check of its own.',
+        'Disables the button regardless of the permission gate, e.g. while a delete is in flight.',
     },
     {
       name: 'onClick',

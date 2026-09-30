@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<bd9e310b9e5820218d070c75c17b6d77>>
+ * @generated SignedSource<<a2a57557a388017f0821960f13a4c7ba>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,9 +9,11 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAIVFolderDeleteButtonV2Fragment$data = ReadonlyArray<{
   readonly id: string;
+  readonly permissions: ReadonlyArray<PermissionBit>;
   readonly " $fragmentType": "BAIVFolderDeleteButtonV2Fragment";
 }>;
 export type BAIVFolderDeleteButtonV2Fragment$key = ReadonlyArray<{
@@ -33,12 +35,19 @@ const node: ReaderFragment = {
       "kind": "ScalarField",
       "name": "id",
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
     }
   ],
   "type": "VFolder",
   "abstractKey": null
 };
 
-(node as any).hash = "4d44e5f0482b6a1b21c4aac58aa7d9f2";
+(node as any).hash = "547f843da415a3d9d78089d6a2851576";
 
 export default node;

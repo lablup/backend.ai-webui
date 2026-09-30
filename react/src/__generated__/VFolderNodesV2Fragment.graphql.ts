@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<de816130e4eb0edd55176f51b3250b04>>
+ * @generated SignedSource<<a76057f8d43890b97b3fd95b4769f35b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type VFolderMountPermission = "NONE" | "READ_ONLY" | "READ_WRITE" | "RW_DELETE" | "%future added value";
 export type VFolderOperationStatus = "CLONING" | "DELETE_COMPLETE" | "DELETE_ERROR" | "DELETE_ONGOING" | "DELETE_PENDING" | "READY" | "%future added value";
 export type VFolderOwnershipType = "GROUP" | "USER" | "%future added value";
@@ -46,6 +47,14 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
       };
     } | null | undefined;
     readonly userId: string | null | undefined;
+  };
+  readonly permissions: ReadonlyArray<PermissionBit>;
+  readonly quota: {
+    readonly maxFiles: number;
+    readonly maxSize: {
+      readonly display: string;
+      readonly expr: string;
+    } | null | undefined;
   };
   readonly unmanagedPath: string | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
@@ -180,6 +189,56 @@ return {
     {
       "alias": null,
       "args": null,
+      "kind": "ScalarField",
+      "name": "permissions",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderQuotaInfo",
+      "kind": "LinkedField",
+      "name": "quota",
+      "plural": false,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "kind": "ScalarField",
+          "name": "maxFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
+          "kind": "LinkedField",
+          "name": "maxSize",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "display",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "expr",
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
       "concreteType": "VFolderOwnershipInfo",
       "kind": "LinkedField",
       "name": "ownership",
@@ -303,6 +362,6 @@ return {
 };
 })();
 
-(node as any).hash = "07611fcd2a8e6b5fb66ca14bf652e541";
+(node as any).hash = "2e8620991461da2932828e1197da62ad";
 
 export default node;

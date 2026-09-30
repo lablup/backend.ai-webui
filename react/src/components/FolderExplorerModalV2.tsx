@@ -34,7 +34,6 @@ import BAITabs from './BAITabs';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
-import FolderExplorerHeader from './FolderExplorerHeader';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -165,24 +164,29 @@ const toVFolderUuid = (vfolderID: string) =>
 // boundary; Relay serves the two readers from one request.
 const useFolderExplorerQuery = (vfolderID: string) => {
   'use memo';
-  return useLazyLoadQuery<FolderExplorerModalV2Query>(
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsPermissionBits = baiClient.supports(
+    'vfolder-v2-permission-bits',
+  );
+  const result = useLazyLoadQuery<FolderExplorerModalV2Query>(
     graphql`
       query FolderExplorerModalV2Query(
         $vfolderId: UUID!
         $vfolderGlobalId: String!
+        $supportsPermissionBits: Boolean!
       ) {
-        # TODO(needs-backend): stopgap for FR-3800 — vfolderV2 exposes only
-        # the mount permission (accessControl.permission), not the caller's
-        # effective permission set, so write/delete gating reads the legacy
-        # per-user RBAC list here. Replace with the V2 field once the
-        # backend adds it (FR-2619 follow-up).
+        # The legacy node decides readability when vfolderV2 nulls the whole
+        # node (FR-3997) and carries the per-user permission list below
+        # 26.9.0. @skip / @include mirror the version directives so the
+        # store never reports the stripped field as missing.
         legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
           id
           name
           host
           unmanaged_path
           permissions
-          ...FolderExplorerHeaderFragment
+            @deprecatedSince(version: "26.9.0")
+            @skip(if: $supportsPermissionBits)
         }
         vfolderNode: vfolderV2(vfolderId: $vfolderId) {
           unmanagedPath
@@ -191,6 +195,9 @@ const useFolderExplorerQuery = (vfolderID: string) => {
           metadata {
             name
           }
+          permissions
+            @since(version: "26.9.0")
+            @include(if: $supportsPermissionBits)
           ownership {
             projectId
             project {
@@ -207,9 +214,11 @@ const useFolderExplorerQuery = (vfolderID: string) => {
     {
       vfolderId: toVFolderUuid(vfolderID),
       vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
+      supportsPermissionBits,
     },
     { fetchPolicy: 'store-and-network' },
   );
+  return { ...result, supportsPermissionBits };
 };
 
 // This modal is globally mounted (no page parent), so it is the sanctioned
@@ -251,9 +260,11 @@ const FolderExplorerHeaderContent: React.FC<{ vfolderID: string }> = ({
       }
     />
   ) : legacyVFolderNode ? (
-    // FR-3997 fallback: the V1 header draws the same identicon, title,
-    // rename and session buttons from the legacy node's own fragments.
-    <FolderExplorerHeader vfolderNodeFrgmt={legacyVFolderNode} />
+    <FolderExplorerHeaderV2
+      vfolderNodeFrgmt={null}
+      legacyVFolder={legacyVFolderNode}
+      project={pageProject}
+    />
   ) : (
     <span />
   );
@@ -312,7 +323,8 @@ const FolderExplorerBody: React.FC<{
   });
 
   const vfolderUuid = toVFolderUuid(vfolderID);
-  const { vfolderNode, legacyVFolderNode } = useFolderExplorerQuery(vfolderID);
+  const { vfolderNode, legacyVFolderNode, supportsPermissionBits } =
+    useFolderExplorerQuery(vfolderID);
 
   // FR-3997: any one of `VFolder`'s eight non-nullable fields coming back null
   // nulls the whole node, so the legacy node decides readability instead.
@@ -419,16 +431,14 @@ const FolderExplorerBody: React.FC<{
     unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
-  // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
-  // see the TODO(needs-backend) on the query above.
-  const hasDeleteContentPermission = _.includes(
-    legacyVFolderNode?.permissions,
-    'delete_content',
-  );
-  const hasWriteContentPermission = _.includes(
-    legacyVFolderNode?.permissions,
-    'write_content',
-  );
+  // Share-permission gating (FR-3800): the folder's `UPDATE` bit covers both
+  // legacy content permissions, since neither deletes the folder itself.
+  const hasDeleteContentPermission = supportsPermissionBits
+    ? _.includes(vfolderNode?.permissions, 'UPDATE')
+    : _.includes(legacyVFolderNode?.permissions, 'delete_content');
+  const hasWriteContentPermission = supportsPermissionBits
+    ? _.includes(vfolderNode?.permissions, 'UPDATE')
+    : _.includes(legacyVFolderNode?.permissions, 'write_content');
   // Upload/editor write through the upload API: both the host capability and
   // the folder-level write permission are required.
   const hasUploadContentPermission =
