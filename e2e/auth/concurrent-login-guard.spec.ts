@@ -127,12 +127,21 @@ async function gotoLoginPage(
     },
   });
   await setupBaseMocks(page);
+  // The app attempts a silent re-login on load; let that request finish
+  // before a test installs its own /server/login mock or spy.
+  const silentLogin = page.waitForResponse(
+    (response) =>
+      response.url().endsWith('/server/login') &&
+      response.request().method() === 'POST',
+    { timeout: 30_000 },
+  );
   await page.goto(webuiEndpoint);
   await page
     .evaluate(() => {
       document.getElementById('webpack-dev-server-client-overlay')?.remove();
     })
     .catch(() => {});
+  await silentLogin;
 }
 
 // ---------------------------------------------------------------------------
@@ -169,7 +178,7 @@ test.describe(
       await fillLoginForm(page);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -206,7 +215,7 @@ test.describe(
       await fillLoginForm(page);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -278,7 +287,7 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Modal appears
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -369,7 +378,7 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // Step 1: Concurrent session modal
-      const concurrentModal = page.getByRole('dialog', {
+      const concurrentModal = page.getByRole('alertdialog', {
         name: 'Logged in elsewhere',
       });
       await expect(concurrentModal).toBeVisible({
@@ -450,7 +459,7 @@ test.describe(
 
       // Concurrent session modal must NOT appear (showError=false path)
       await expect(
-        page.getByRole('dialog', { name: 'Logged in elsewhere' }),
+        page.getByRole('alertdialog', { name: 'Logged in elsewhere' }),
       ).toBeHidden();
     });
   },
