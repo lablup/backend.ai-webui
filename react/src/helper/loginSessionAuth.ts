@@ -61,7 +61,15 @@ export async function connectViaGQL(
   const q = `query { keypair { ${fields.join(' ')} } }`;
   const v = {};
 
-  const response = await client.query(q, v);
+  let response;
+  try {
+    response = await client.query(q, v);
+  } catch (err) {
+    // A refused session is cleaned up like an empty keypair; a network blip is not.
+    const status = (err as { statusCode?: unknown } | null)?.statusCode;
+    if (status === 401 || status === 403) await client.logout().catch(() => {});
+    throw err;
+  }
 
   (globalThis as any).backendaiclient = client;
 
