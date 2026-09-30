@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-09-30T02:27:11.779Z",
+  "generatedAt": "2026-09-30T03:16:56.372Z",
   "languages": [
     "en",
     "ja",
@@ -115,12 +115,12 @@
     },
     "ko": {
       "totals": {
-        "pages": 3,
-        "changes": 9,
+        "pages": 6,
+        "changes": 25,
         "added": 0,
-        "modified": 9,
+        "modified": 25,
         "removed": 0,
-        "images": 6,
+        "images": 13,
         "newPages": 0,
         "deletedPages": 0
       },
@@ -133,14 +133,68 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
           "counts": {
             "added": 0,
-            "modified": 2,
+            "modified": 3,
             "removed": 0,
             "images": 2,
+            "total": 3
+          },
+          "fingerprints": [
+            "4a22c24cea9d",
+            "b47cc33770d0",
+            "a7c436ef4977"
+          ]
+        },
+        {
+          "slug": "dashboard",
+          "title": "대시보드",
+          "status": "modified",
+          "url": "next/ko/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 1,
             "total": 2
           },
           "fingerprints": [
-            "4356ea5ad50d",
-            "87771dd1f07f"
+            "62f02e9befa7",
+            "fed3f9ab4f2c"
+          ]
+        },
+        {
+          "slug": "overview",
+          "title": "개요",
+          "status": "modified",
+          "url": "next/ko/overview.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/overview/overview.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 0,
+            "total": 1
+          },
+          "fingerprints": [
+            "17a17dc5f1d6"
+          ]
+        },
+        {
+          "slug": "session_page",
+          "title": "세션 페이지",
+          "status": "modified",
+          "url": "next/ko/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 1,
+            "total": 2
+          },
+          "fingerprints": [
+            "fe50001eadda",
+            "3526b5b1c063"
           ]
         },
         {
@@ -151,16 +205,26 @@
           "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
           "counts": {
             "added": 0,
-            "modified": 4,
+            "modified": 14,
             "removed": 0,
-            "images": 3,
-            "total": 4
+            "images": 8,
+            "total": 14
           },
           "fingerprints": [
-            "7d17fe1d0a3d",
-            "da9906df2784",
-            "d4818daafe01",
-            "57826d995bfc"
+            "fe50001eadda",
+            "951badeb7bef",
+            "4c6b2acf4a37",
+            "8c733f0e716d",
+            "b0b47fb3483c",
+            "5bfa68a2c70f",
+            "c0f1c731ab80",
+            "d19c982f5bb0",
+            "76be44fefdb4",
+            "79eeb93abc99",
+            "5d5004afa720",
+            "208f06408f53",
+            "323fae9398cd",
+            "f793bb7ad35b"
           ]
         },
         {
@@ -177,8 +241,8 @@
             "total": 3
           },
           "fingerprints": [
-            "b02c26e06e7b",
-            "9d978737c2e3",
+            "082ccd98fe34",
+            "bd850fa6b3aa",
             "d4551ae3e527"
           ]
         }

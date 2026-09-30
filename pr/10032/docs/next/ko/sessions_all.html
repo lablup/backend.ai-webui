@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="연산 세션" />
   <meta name="twitter:description" content="여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션","inLanguage":"ko","description":"여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다.","dateModified":"2026-09-30T01:26:06.000Z","url":"https://webui.docs.backend.ai/next/ko/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션","inLanguage":"ko","description":"여기서는 세션 페이지에서 컨테이너 기반의 연산 세션을 생성하고 각종 웹 애플리케이션을 활용하는 방법을 알아봅니다.","dateModified":"2026-09-30T02:37:13.000Z","url":"https://webui.docs.backend.ai/next/ko/sessions_all.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sessions_all.html" />
   <link rel="alternate" hreflang="en" href="../en/sessions_all.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sessions_all.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (01834ea)">v26.9.0-alpha.0 (01834ea)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (dc808f5)">v26.9.0-alpha.0 (dc808f5)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -223,17 +223,17 @@
 </p>
 <p><a id="session-type"></a></p>
 <h3 data-bai-block="8" id="sessions_all-세션-타입">세션 타입<a class="hash-link" href="#sessions_all-세션-타입" aria-label="Direct link to 세션 타입">#</a></h3>
-<p data-bai-block="9">첫 번째 페이지에서는 세션 형태로 Interactive 세션 또는 Batch 세션을 선택합니다. 세션 이름은 선택적으로 지정할 수 있습니다.</p>
+<p data-bai-block="9">첫 번째 페이지에서는 세션 형태로 인터랙티브 세션 또는 배치 세션을 선택합니다. 세션 이름은 선택적으로 지정할 수 있습니다.</p>
 <ul>
-<li data-bai-block="10"><p>세션 타입: 세션의 형태를 결정합니다. 현재 가능한 세션 형태는 &quot;Interactive&quot; 와 &quot;Batch&quot; 두 가지가 있습니다. 두 형태의 주요한 차이점은 다음과 같습니다:</p>
+<li data-bai-block="10"><p>세션 타입: 세션의 형태를 결정합니다. 현재 가능한 세션 형태는 &quot;인터랙티브&quot;와 &quot;배치&quot; 두 가지가 있습니다. 두 형태의 주요한 차이점은 다음과 같습니다:</p>
 <ul>
-<li data-bai-block="11"><p>Interactive 형태 연산 세션</p>
+<li data-bai-block="11"><p>인터랙티브 형태 연산 세션</p>
 <ul>
 <li data-bai-block="12">사용자가 별도의 실행 스크립트를 지정하지 않고 일단 세션을 생성한 후 상호 작용하는 방식으로 세션을 사용하게 됩니다.</li>
 <li data-bai-block="13">사용자가 명시적으로 삭제하지 않는 한 세션은 자동 삭제되지 않습니다. 다만, 관리자가 별도의 세션 자동 수거 설정을 켜둔 경우에는, 그 조건에 따라 자동으로 삭제될 수도 있습니다.</li>
 </ul>
 </li>
-<li data-bai-block="14"><p>Batch 형태 연산 세션</p>
+<li data-bai-block="14"><p>배치 형태 연산 세션</p>
 <ul>
 <li data-bai-block="15">사용자가 연산 세션을 생성할 때 실행할 스크립트를 미리 지정합니다.</li>
 <li data-bai-block="16">자원이 할당되는 즉시 해당 스크립트를 실행하고, 스크립트가 종료되는 그 즉시 연산 세션을 자동으로 삭제합니다. 따라서, 실행할 코드가 사전에 정의되어 있거나 작업을 파이프라이닝 하는 경우에는, 연산 서버 팜(server farm)의 자원을 보다 효율적으로 활용할 수 있는 장점이 있습니다.</li>
@@ -444,7 +444,7 @@
 
 <p><a id="session-list-view-and-refresh"></a></p>
 <h2 data-bai-block="99" id="sessions_all-세션-목록-보기">세션 목록 보기<a class="hash-link" href="#sessions_all-세션-목록-보기" aria-label="Direct link to 세션 목록 보기">#</a></h2>
-<p data-bai-block="100">세션 목록은 세션 타입에 따라 <strong>전체</strong>, <strong>Interactive</strong>, <strong>Batch</strong>, <strong>Inference</strong>,
+<p data-bai-block="100">세션 목록은 세션 타입에 따라 <strong>전체</strong>, <strong>인터랙티브</strong>, <strong>배치</strong>, <strong>추론</strong>,
 <strong>업로드 세션</strong> 탭으로 구분되며 각 탭에는 <strong>실행 중</strong> / <strong>종료됨</strong> 전환 버튼과
 <strong>세션 이름</strong>, <strong>자원 그룹</strong>, <strong>실행 노드</strong> 속성 필터가 함께 제공됩니다.</p>
 <p><a id="session-resource-grid"></a></p>
@@ -454,7 +454,7 @@
 전환할 수 있습니다. 기능을 활성화하는 방법은 <a href="./user_settings.html#experimental-features">실험적 기능</a>
 섹션을 참고하세요. 그리드 보기는 테이블과 동일한 타입 탭, <strong>실행 중</strong> / <strong>종료됨</strong>
 전환 버튼, 속성 필터를 사용하므로 목록을 먼저 좁힌 다음 보기 모드를 전환할 수 있습니다.</p>
-<p><figure data-bai-block="103" class="doc-figure"><img src="./images/session_resource_grid.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="582" /><figcaption>그림 10.25</figcaption></figure>
+<p><figure data-bai-block="103" class="doc-figure"><img src="./images/session_resource_grid.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="580" /><figcaption>그림 10.25</figcaption></figure>
 </p>
 <p data-bai-block="104">그리드에서 각 세션은 작은 셀로 이루어진 판 형태로 표시되며, 셀의 색상은 해당 세션의
 실시간 자원 사용률을 나타냅니다. 사용률이 50% 미만이면 기본 색상, 50% 이상 80% 미만
@@ -827,7 +827,7 @@
 <div data-bai-block="285" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>참고</div>
 <div class="admonition-content">
 
-<p data-bai-block="286">현재 Backend.AI는 세션 타입이 <code>대화형</code>일 때만 &quot;세션을 이미지로 변환&quot; 기능을 지원합니다. 예기치 않은 오류를 방지하기 위해, 커밋 진행 중에는 세션을 종료하지 못할 수 있습니다. 진행 중인 프로세스를 중단하려면, 해당 세션을 확인하고 강제 종료하세요.</p>
+<p data-bai-block="286">현재 Backend.AI는 세션 타입이 <code>인터랙티브</code>일 때만 &quot;세션을 이미지로 변환&quot; 기능을 지원합니다. 예기치 않은 오류를 방지하기 위해, 커밋 진행 중에는 세션을 종료하지 못할 수 있습니다. 진행 중인 프로세스를 중단하려면, 해당 세션을 확인하고 강제 종료하세요.</p>
 </div></div>
 
 
