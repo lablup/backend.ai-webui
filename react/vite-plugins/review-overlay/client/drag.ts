@@ -3,8 +3,9 @@
  * popover sit where the page often keeps its own controls (a sticky save bar,
  * a row at the bottom of a table), so the reader drags them elsewhere.
  *
- * A drop is kept per tab and outlives stop changes and reloads; a double-click
- * on the drag area sends the box back to where it places itself.
+ * A drop is kept per tab and outlives reloads — the popover's per stop, so a
+ * stop never dragged still opens by its element; a double-click on the drag
+ * area sends the box back to where it places itself.
  */
 import { icon } from './icons.js';
 
@@ -84,7 +85,8 @@ export interface DraggableOptions {
 }
 
 export function makeDraggable(options: DraggableOptions) {
-  const { box, storageKey, fallback } = options;
+  const { box, fallback } = options;
+  let storageKey = options.storageKey;
   /**
    * Where the reader dropped it. The paint clamps a COPY, so a window too
    * small for that spot borrows it only while it is small.
@@ -129,17 +131,19 @@ export function makeDraggable(options: DraggableOptions) {
     }
   }
 
+  const unpaint = () =>
+    Object.assign(box.style, {
+      left: '',
+      top: '',
+      right: '',
+      bottom: '',
+      transform: '',
+    });
+
   function moveTo(next: DragPos | null) {
     wanted = next;
     if (next) apply();
-    else
-      Object.assign(box.style, {
-        left: '',
-        top: '',
-        right: '',
-        bottom: '',
-        transform: '',
-      });
+    else unpaint();
     options.onMove(next);
   }
 
@@ -233,6 +237,16 @@ export function makeDraggable(options: DraggableOptions) {
     placed: (): DragPos | null => wanted,
     /** Re-paints the parked spot, e.g. after the box changed size. */
     apply,
+    /**
+     * Keep the spot under another key from now on — one box that stands for
+     * different things (a popover per stop) remembers a spot per thing.
+     */
+    useKey(key: string) {
+      if (key === storageKey) return;
+      storageKey = key;
+      wanted = readPos(key);
+      if (!wanted) unpaint();
+    },
     destroy() {
       window.removeEventListener('resize', onResize);
     },

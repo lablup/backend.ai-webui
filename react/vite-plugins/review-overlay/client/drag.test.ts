@@ -188,20 +188,24 @@ describe('dragging the navigator', () => {
 });
 
 describe('dragging the popover', () => {
-  it('holds a dropped popover there for every stop after it', () => {
+  it('keeps a drop to its own stop; another stop opens by its element', () => {
     const pop = makePop();
     pop.render(popModel());
+    const anchored = q('.bai-popover').style.top;
     dragTo(q('.bai-popover .head'), 200, 100);
 
     pop.render({ ...popModel(), id: 'c_bbbbbbb' });
-    pop.reposition({
-      kind: 'located',
-      rect: { left: 500, top: 20, bottom: 60 },
-    });
+    expect(q('.bai-popover').style.left).not.toBe('200px');
+    expect(q('.bai-popover').style.top).toBe(anchored);
+    expect(q('.bai-popover').style.right).toBe('');
 
+    pop.render(popModel());
     expect(q('.bai-popover').style.left).toBe('200px');
     expect(q('.bai-popover').style.top).toBe('100px');
-    expect(sessionStorage.getItem(POPOVER_POS_KEY)).not.toBeNull();
+    expect(
+      sessionStorage.getItem(`${POPOVER_POS_KEY}:c_aaaaaaa`),
+    ).not.toBeNull();
+    expect(sessionStorage.getItem(`${POPOVER_POS_KEY}:c_bbbbbbb`)).toBeNull();
   });
 
   it('keeps its header buttons clickable', () => {

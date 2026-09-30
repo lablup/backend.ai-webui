@@ -10,7 +10,7 @@
 import { createGrip, DRAG_STYLE, makeDraggable } from './drag.js';
 import { esc } from './escape-html.js';
 
-/** Where a dragged popover is parked, per tab; every stop then opens there. */
+/** Where a stop's dragged popover is parked, per tab: `<key>:<stop id>`. */
 export const POPOVER_POS_KEY = 'bai-review:popover-pos';
 
 /** Wide enough that a two-paragraph stop wraps into few enough lines to
@@ -359,7 +359,7 @@ export function createPopover(
   /**
    * Under the mark (or the control a waiting stop needs clicked) when it fits,
    * above it when it does not, centred when there is neither — unless the
-   * reader dragged it somewhere, which then holds for every stop.
+   * reader dragged this stop's popover somewhere.
    */
   function place(where: PopoverPlace) {
     lastPlace = where;
@@ -441,6 +441,7 @@ export function createPopover(
       const tick = pop.querySelector<HTMLInputElement>('[data-pact="viewed"]');
       if (tick) tick.checked = model.viewed;
       pop.classList.add('shown');
+      drag.useKey(`${POPOVER_POS_KEY}:${model.id}`);
       place(model.place);
     },
     /**
