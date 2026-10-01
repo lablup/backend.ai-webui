@@ -1,0 +1,1 @@
+import{j as e}from"./iframe-CLJoncrG.js";import{T as r}from"./Token-YLr5kvc7.js";const f=({value:o,fallback:t="-",trueLabel:l="True",falseLabel:n="False"})=>typeof o!="boolean"?t:o?e.jsx(r,{color:"green",label:l}):e.jsx(r,{color:"default",label:n});export{f as B};

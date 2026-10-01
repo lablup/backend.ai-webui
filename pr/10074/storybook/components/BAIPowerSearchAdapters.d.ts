@@ -1,4 +1,4 @@
-import { CustomOperatorValue, EnumItem, OperatorValue, PowerSearchComponentOverride, PowerSearchEditorProps } from '@astryxdesign/core/PowerSearch';
+import { CustomOperatorValue, EnumItem, OperatorValue, PowerSearchComponentOverride, PowerSearchEditorProps, PowerSearchFilter } from '@astryxdesign/core/PowerSearch';
 import { SearchSource } from '@astryxdesign/core/Typeahead';
 import { default as React, ReactNode } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /**
@@ -92,3 +92,10 @@ export declare const BAIPowerSearchEditor: (props: PowerSearchEditorProps) => Re
  * same editor; the full `Record` makes a new Astryx type a compile error.
  */
 export declare const baiPowerSearchComponents: Record<OperatorValue['type'], PowerSearchComponentOverride>;
+/**
+ * Removes a token on a mouse click of its X without moving focus into the
+ * search input. Astryx's Tokenizer refocuses the input there, leaving it
+ * focused with the menu closed so the next click opens nothing (FR-4130).
+ * Keyboard removal is left to Astryx. Returns the ref for `PowerSearch`.
+ */
+export declare function useMouseTokenRemoval(filters: ReadonlyArray<PowerSearchFilter>, onChange: (next: ReadonlyArray<PowerSearchFilter>) => void): React.RefObject<HTMLDivElement | null>;
