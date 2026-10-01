@@ -83,7 +83,10 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     graphql`
       fragment ModelCardDeployModalFragment on ModelCardV2 {
         id
-        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+        availablePresets(
+          orderBy: [{ field: RANK, direction: "ASC" }]
+          limit: 100
+        ) {
           edges {
             node {
               id

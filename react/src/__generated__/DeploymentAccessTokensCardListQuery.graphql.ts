@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<845b566b21002728cf444c71dafd0578>>
+ * @generated SignedSource<<5357af9987e4a4f5de41698b4da365b5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,8 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type DeploymentAccessTokensCardListQuery$variables = {
   deploymentId: string;
+  limit: number;
+  offset: number;
 };
 export type DeploymentAccessTokensCardListQuery$data = {
   readonly deployment: {
@@ -38,6 +40,16 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "deploymentId"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "offset"
   }
 ],
 v1 = [
@@ -57,6 +69,16 @@ v2 = {
 v3 = {
   "alias": null,
   "args": [
+    {
+      "kind": "Variable",
+      "name": "limit",
+      "variableName": "limit"
+    },
+    {
+      "kind": "Variable",
+      "name": "offset",
+      "variableName": "offset"
+    },
     {
       "kind": "Literal",
       "name": "orderBy",
@@ -125,7 +147,7 @@ v3 = {
       "storageKey": null
     }
   ],
-  "storageKey": "accessTokens(orderBy:[{\"direction\":\"DESC\",\"field\":\"CREATED_AT\"}])"
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -172,16 +194,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fe0599e3ca582035a0afb69f61751a53",
+    "cacheID": "2d33f8bad9d8cf4cb452aaab7304922f",
     "id": null,
     "metadata": {},
     "name": "DeploymentAccessTokensCardListQuery",
     "operationKind": "query",
-    "text": "query DeploymentAccessTokensCardListQuery(\n  $deploymentId: ID!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}]) {\n      count\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query DeploymentAccessTokensCardListQuery(\n  $deploymentId: ID!\n  $limit: Int!\n  $offset: Int!\n) {\n  deployment(id: $deploymentId) {\n    accessTokens(orderBy: [{field: CREATED_AT, direction: DESC}], limit: $limit, offset: $offset) {\n      count\n      edges {\n        node {\n          id\n          token\n          createdAt\n          expiresAt\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b43bdbd02f49d9e5a3e3b15dac4c1b90";
+(node as any).hash = "32017b93a3ea54d62f79fa78a6bb438f";
 
 export default node;

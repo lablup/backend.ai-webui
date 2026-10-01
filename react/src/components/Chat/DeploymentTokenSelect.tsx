@@ -6,6 +6,7 @@ import type {
   DeploymentTokenSelectQuery,
   DeploymentTokenSelectQuery$data,
 } from '../../__generated__/DeploymentTokenSelectQuery.graphql';
+import { CATALOG_FETCH_LIMIT } from '../../helper/const-vars';
 import WebUILink from '../WebUILink';
 import { Code } from '@astryxdesign/core/Code';
 import type { SelectorOptionData } from '@astryxdesign/core/Selector';
@@ -76,12 +77,16 @@ const DeploymentTokenSelectWithQuery: React.FC<
   const { t } = useTranslation();
   const [controllableValue, setControllableValue] =
     useControllableValue<string>(props);
-
   const { deployment } = useLazyLoadQuery<DeploymentTokenSelectQuery>(
     graphql`
-      query DeploymentTokenSelectQuery($deploymentId: ID!) {
+      query DeploymentTokenSelectQuery($deploymentId: ID!, $limit: Int!) {
         deployment(id: $deploymentId) @catch {
-          accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
+          # Expiry is filtered client-side: DateTimeFilter cannot match a NULL
+          # expiresAt, so an after-filter would drop never-expiring tokens.
+          accessTokens(
+            orderBy: [{ field: CREATED_AT, direction: DESC }]
+            limit: $limit
+          ) {
             edges {
               node {
                 id
@@ -100,6 +105,7 @@ const DeploymentTokenSelectWithQuery: React.FC<
       // mounts with a non-empty deploymentId (the outer DeploymentTokenSelect
       // renders a plain Input otherwise), so no client-skip guard is needed.
       deploymentId: toGlobalId('ModelDeployment', deploymentId),
+      limit: CATALOG_FETCH_LIMIT,
     },
     // Refetch on mount so returning from token creation (e.g. via the Access
     // Token Settings shortcut) does not render a stale cached list. This reads
