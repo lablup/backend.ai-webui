@@ -39,7 +39,6 @@ import {
   INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  isColumnVisible,
   useFetchKey,
   useToggle,
 } from 'backend.ai-ui';
@@ -165,12 +164,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
 
-  // Drives VFolderNodesV2Fragment's $showUsage: fetch usage with the list
-  // only when a usage column is actually visible (review comment on FR-4114).
-  const showUsage =
-    isColumnVisible({ defaultHidden: true }, 'num_files', columnOverrides) ||
-    isColumnVisible({ defaultHidden: true }, 'cur_size', columnOverrides);
-
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const statusFilter =
@@ -200,7 +193,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     ),
     filterForActiveCount: STATUS_FILTER_ACTIVE,
     filterForDeletedCount: STATUS_FILTER_DELETED,
-    showUsage,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -215,7 +207,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
           $orderBy: [VFolderOrderBy!]
           $filterForActiveCount: VFolderFilter
           $filterForDeletedCount: VFolderFilter
-          $showUsage: Boolean!
         ) {
           adminVfoldersV2(
             offset: $offset
@@ -227,7 +218,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               node @required(action: THROW) {
                 id @required(action: THROW)
                 vfolderStatus: status
-                ...VFolderNodesV2Fragment @arguments(showUsage: $showUsage)
+                ...VFolderNodesV2Fragment
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
