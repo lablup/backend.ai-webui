@@ -102,6 +102,11 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
           isExpiredLoginSession ||
           (error as Error)?.name === 'AuthorizationError' ||
           (error as any)?.statusCode === 401;
+        // Set by RelayEnvironment's fetchFn only for a disallowed-client-IP 401.
+        const ipBlockedMessage =
+          (error as Error)?.name === 'AuthorizationError'
+            ? (error as { description?: string }).description
+            : undefined;
         return (
           <BAIFlex
             style={{ margin: 'auto', ...style }}
@@ -111,14 +116,10 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
             <EmptyState
               icon={<TriangleAlertIcon size={40} />}
               title={
-                isLoginSessionExpiredError
+                ipBlockedMessage ||
+                (isLoginSessionExpiredError
                   ? t('errorBoundary.ExpiredLoginSessionTitle')
-                  : t('errorBoundary.Title')
-              }
-              description={
-                isLoginSessionExpiredError
-                  ? (error as { description?: string })?.description
-                  : undefined
+                  : t('errorBoundary.Title'))
               }
               actions={
                 <BAIFlex direction="column" gap="md">
