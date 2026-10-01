@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="SFTP to Container" />
   <meta name="twitter:description" content="Backend.AI supports SSH/SFTP connection to the created compute sessions (containers). In this section, we will learn how to do it." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SFTP to Container","inLanguage":"en","description":"Backend.AI supports SSH/SFTP connection to the created compute sessions (containers). In this section, we will learn how to do it.","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/en/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SFTP to Container","inLanguage":"en","description":"Backend.AI supports SSH/SFTP connection to the created compute sessions (containers). In this section, we will learn how to do it.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/en/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sftp_to_container.html" />
   <link rel="alternate" hreflang="en" href="../en/sftp_to_container.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sftp_to_container.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (ad76441)">v26.9.0-alpha.0 (ad76441)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e210c46)">v26.9.0-alpha.0 (e210c46)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -237,7 +237,7 @@ automatically generated SSH private key. Instead of using the button, you can
 also download the <code>id_container</code> file located under <code>/home/work/</code> with your web
 terminal or Jupyter Notebook. The auto-generated SSH key may change when new
 session is created. In that case, it must be downloaded again.</p>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1696" /><figcaption>Figure 18.1</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1696" /><figcaption>Figure 18.1</figcaption></figure>
 </p>
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="913" height="1000" /><figcaption>Figure 18.2</figcaption></figure>
 </p>
@@ -346,15 +346,15 @@ name <code>id_container.ppk</code>.</p>
 <p data-bai-block="29">After launching the FileZilla client, go to the Settings-Connection-SFTP
 and register the key file <code>id_container.ppk</code> (<code>id_container</code> for clients
 supporting OpenSSH).</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>Figure 18.5</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>Figure 18.5</figcaption></figure>
 </p>
 <p data-bai-block="31">Open Site Manager, create a new site, and enter the connection information as
 follows.</p>
-<p><figure data-bai-block="32" class="doc-figure"><img src="./images/filezilla_site_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1596" height="901" /><figcaption>Figure 18.6</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/filezilla_site_setting.png" alt="" class="doc-image" style="width:798px" loading="lazy" decoding="async" width="1596" height="901" /><figcaption>Figure 18.6</figcaption></figure>
 </p>
 <p data-bai-block="33">When connecting to a container for the first time, the following confirmation
 popup may appear. Click the OK button to save the host key.</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/unknown_host_key.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1002" height="527" /><figcaption>Figure 18.7</figcaption></figure>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/unknown_host_key.png" alt="" class="doc-image" style="width:501px" loading="lazy" decoding="async" width="1002" height="527" /><figcaption>Figure 18.7</figcaption></figure>
 </p>
 <p data-bai-block="35">After a while, you can see that the connection is established as follows. You
 can now transfer large files to <code>/home/work/</code> or other mounted storage folder
@@ -376,7 +376,7 @@ extension pack.</p>
 compute session. In the VSCode Remote Connection dialog, click the copy icon button
 to copy the Visual Studio Code remote SSH password. Also, remember the host and
 the port number shown in the dialog.</p>
-<p><figure data-bai-block="43" class="doc-figure"><img src="./images/download_ssh_key.png" alt="" class="doc-image" loading="lazy" decoding="async" width="836" height="1270" /><figcaption>Figure 18.10</figcaption></figure>
+<p><figure data-bai-block="43" class="doc-figure"><img src="./images/download_ssh_key.png" alt="" class="doc-image" style="width:418px" loading="lazy" decoding="async" width="836" height="1270" /><figcaption>Figure 18.10</figcaption></figure>
 </p>
 <p data-bai-block="44">Then, set the SSH config file. Edit the <code>~/.ssh/config</code> file (for Linux/Mac)
 or <code>C:\Users\[user name]\.ssh\config</code> (for Windows) and add the following block.
@@ -403,10 +403,10 @@ connect, in this case, <code>vscode</code>.</p>
 <p data-bai-block="52">Selecting the host name will lead you to access the remote compute session.
 After you are connected, you will see an empty window. You can always refer to
 the Status bar to see which host you are connected to.</p>
-<p><figure data-bai-block="53" class="doc-figure"><img src="./images/vscode_connect_finish.png" alt="" class="doc-image" loading="lazy" decoding="async" width="666" height="94" /><figcaption>Figure 18.14</figcaption></figure>
+<p><figure data-bai-block="53" class="doc-figure"><img src="./images/vscode_connect_finish.png" alt="" class="doc-image" style="width:333px" loading="lazy" decoding="async" width="666" height="94" /><figcaption>Figure 18.14</figcaption></figure>
 </p>
 <p data-bai-block="54">You can then open any folder or workspace on the remote host by accessing <code>File &gt; Open...</code> or <code>File &gt; Open Workspace...</code> menu just as you usually would do!</p>
-<p><figure data-bai-block="55" class="doc-figure"><img src="./images/vscode_connected_host_file_open.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1228" height="740" /><figcaption>Figure 18.15</figcaption></figure>
+<p><figure data-bai-block="55" class="doc-figure"><img src="./images/vscode_connected_host_file_open.png" alt="" class="doc-image" style="width:614px" loading="lazy" decoding="async" width="1228" height="740" /><figcaption>Figure 18.15</figcaption></figure>
 </p>
 <p><a id="establish-ssh-connection-with-backendai-client-package"></a></p>
 <h2 data-bai-block="56" id="sftp_to_container-establish-ssh-connection-with-backendai-client-package">Establish SSH connection with Backend.AI client package<a class="hash-link" href="#sftp_to_container-establish-ssh-connection-with-backendai-client-package" aria-label="Direct link to Establish SSH connection with Backend.AI client package">#</a></h2>
@@ -428,7 +428,7 @@ image from the Docker Hub with the following command:</p>
 <span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> pull</span><span style="color:#9ECBFF"> lablup/backend.ai-client:</span><span style="color:#E1E4E8">${VERSION}</span></span></code></pre></div>
 <p data-bai-block="63">The version of Backend.AI server can be found in &quot;About Backend.AI&quot; menu that
 appears when you click on the person icon on the top right corner of the Web UI.</p>
-<p><figure data-bai-block="64" class="doc-figure"><img src="./images/check_backend_server_version.png" alt="" class="doc-image" loading="lazy" decoding="async" width="700" height="610" /><figcaption>Figure 18.16</figcaption></figure>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/check_backend_server_version.png" alt="" class="doc-image" style="width:350px" loading="lazy" decoding="async" width="700" height="610" /><figcaption>Figure 18.16</figcaption></figure>
 </p>
 <p data-bai-block="65">Run the Docker image with the following command:</p>
 <div data-bai-block="66" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --rm</span><span style="color:#79B8FF"> -it</span><span style="color:#9ECBFF"> lablup/backend.ai-client</span><span style="color:#9ECBFF"> bash</span></span></code></pre></div>
@@ -544,7 +544,7 @@ cancel the local proxy service.</p>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/sftp_to_container/sftp_to_container.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 23, 2026</span>
+  <span class="last-updated">Last updated on Oct 1, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./share_vfolder.html">

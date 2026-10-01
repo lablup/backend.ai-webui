@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="ภาคผนวก" />
   <meta name="twitter:description" content="Backend.AI รองรับเทคโนโลยีการจำลอง GPU (GPU virtualization) ซึ่งช่วยให้ GPU ทางกายภาพเพียงตัวเดียวสามารถถูกแบ่งและแชร์ให้ผู้ใช้หลายคนใช้งานพร้อมกันได้…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ภาคผนวก","inLanguage":"th","description":"Backend.AI รองรับเทคโนโลยีการจำลอง GPU (GPU virtualization) ซึ่งช่วยให้ GPU ทางกายภาพเพียงตัวเดียวสามารถถูกแบ่งและแชร์ให้ผู้ใช้หลายคนใช้งานพร้อมกันได้…","dateModified":"2026-09-23T13:54:05.000Z","url":"https://webui.docs.backend.ai/next/th/appendix.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"ภาคผนวก","inLanguage":"th","description":"Backend.AI รองรับเทคโนโลยีการจำลอง GPU (GPU virtualization) ซึ่งช่วยให้ GPU ทางกายภาพเพียงตัวเดียวสามารถถูกแบ่งและแชร์ให้ผู้ใช้หลายคนใช้งานพร้อมกันได้…","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/th/appendix.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/appendix.html" />
   <link rel="alternate" hreflang="en" href="../en/appendix.html" />
   <link rel="alternate" hreflang="ja" href="../ja/appendix.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (ad76441)">v26.9.0-alpha.0 (ad76441)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (e210c46)">v26.9.0-alpha.0 (e210c46)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -214,10 +214,10 @@
 <p data-bai-block="2">Backend.AI รองรับเทคโนโลยีการจำลอง GPU (GPU virtualization) ซึ่งช่วยให้ GPU ทางกายภาพเพียงตัวเดียวสามารถถูกแบ่งและแชร์ให้ผู้ใช้หลายคนใช้งานพร้อมกันได้ ดังนั้น หากคุณต้องการดำเนินงานที่ไม่ต้องใช้กำลังการประมวลผล GPU มากนัก คุณสามารถสร้างเซสชันการคำนวณโดยการจัดสรร GPU เพียงบางส่วนได้ ปริมาณทรัพยากร GPU ที่ 1 fGPU จัดสรรให้จริงอาจแตกต่างกันไปในแต่ละระบบ ขึ้นอยู่กับการตั้งค่าของผู้ดูแลระบบ ตัวอย่างเช่น หากผู้ดูแลระบบตั้งค่าให้หนึ่ง GPU ทางกายภาพถูกแบ่งออกเป็นห้าส่วน 5 fGPU จะหมายถึง 1 GPU ทางกายภาพ หรือ 1 fGPU จะเท่ากับ 0.2 GPU ทางกายภาพ หากคุณตั้งค่า 1 fGPU เมื่อสร้างเซสชันการคำนวณ เซสชันนั้นจะสามารถใช้งานสตรีมมิงมัลติโปรเซสเซอร์ (SM) และหน่วยความจำ GPU เทียบเท่ากับ 0.2 GPU ทางกายภาพได้</p>
 <p data-bai-block="3">ในส่วนนี้ เราจะสร้างเซสชันการคำนวณโดยการจัดสรรส่วนหนึ่งของ GPU แล้วตรวจสอบว่า GPU ที่ถูกตรวจพบภายในคอนเทนเนอร์การคำนวณนั้นตรงกับ GPU ฟิสิกส์บางส่วนจริงหรือไม่</p>
 <p data-bai-block="4">ก่อนอื่น ให้ตรวจสอบประเภทของ GPU ทางกายภาพที่ติดตั้งอยู่บนโหนดโฮสต์ รวมถึงปริมาณหน่วยความจำ โหนด GPU ที่ใช้ในคู่มือนี้มี GPU ที่มีหน่วยความจำ 8 GB ติดตั้งอยู่ ดังที่แสดงในภาพต่อไปนี้ และด้วยการตั้งค่าของผู้ดูแลระบบ 1 fGPU ถูกกำหนดให้เท่ากับ 0.5 GPU ทางกายภาพ (หรือ 1 GPU ทางกายภาพเท่ากับ 2 fGPU)</p>
-<p><figure data-bai-block="5" class="doc-figure"><img src="./images/host_gpu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1444" height="738" /><figcaption>รูปที่ 26.1</figcaption></figure>
+<p><figure data-bai-block="5" class="doc-figure"><img src="./images/host_gpu.png" alt="" class="doc-image" style="width:722px" loading="lazy" decoding="async" width="1444" height="738" /><figcaption>รูปที่ 26.1</figcaption></figure>
 </p>
 <p data-bai-block="6">ตอนนี้ ให้ไปที่หน้าเซสชันและสร้างเซสชันการคำนวณโดยจัดสรร 0.5 fGPU ดังนี้:</p>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/session_launch_dialog_with_gpu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1480" height="2264" /><figcaption>รูปที่ 26.2</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/session_launch_dialog_with_gpu.png" alt="" class="doc-image" style="width:740px" loading="lazy" decoding="async" width="1480" height="2264" /><figcaption>รูปที่ 26.2</figcaption></figure>
 </p>
 <p data-bai-block="8">ในแผง AI Accelerator ของรายการเซสชัน คุณจะเห็นว่ามีการจัดสรร 0.5 fGPU</p>
 <p><figure data-bai-block="9" class="doc-figure"><img src="./images/session_list_with_gpu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="580" /><figcaption>รูปที่ 26.3</figcaption></figure>
@@ -229,14 +229,14 @@
 <p><figure data-bai-block="13" class="doc-figure"><img src="./images/mnist_train.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1900" height="1228" /><figcaption>รูปที่ 26.5</figcaption></figure>
 </p>
 <p data-bai-block="14">ในระหว่างที่กำลังฝึกสอน ให้เชื่อมต่อเข้ากับเชลล์ของโหนดโฮสต์ GPU และรันคำสั่ง <code>nvidia-smi</code> คุณจะเห็นว่ามี GPU หนึ่งตัวเชื่อมต่ออยู่กับโปรเซส และโปรเซสนี้กำลังใช้ทรัพยากรประมาณ 25% ของ GPU ทางกายภาพ (อัตราการใช้งาน GPU อาจแตกต่างกันมากขึ้นอยู่กับโค้ดการฝึกสอนและรุ่นของ GPU)</p>
-<p><figure data-bai-block="15" class="doc-figure"><img src="./images/host_nvidia_smi.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1434" height="730" /><figcaption>รูปที่ 26.6</figcaption></figure>
+<p><figure data-bai-block="15" class="doc-figure"><img src="./images/host_nvidia_smi.png" alt="" class="doc-image" style="width:717px" loading="lazy" decoding="async" width="1434" height="730" /><figcaption>รูปที่ 26.6</figcaption></figure>
 </p>
 <p data-bai-block="16">อีกวิธีหนึ่ง คุณสามารถรันคำสั่ง <code>nvidia-smi</code> จากเว็บเทอร์มินัลเพื่อเรียกดูประวัติการใช้งาน GPU ภายในคอนเทนเนอร์ได้</p>
 <p><a id="automated-job-scheduling"></a></p>
 <h2 data-bai-block="17" id="appendix-การกำหนดตารางงานอตโนมต">การกำหนดตารางงานอัตโนมัติ<a class="hash-link" href="#appendix-การกำหนดตารางงานอตโนมต" aria-label="Direct link to การกำหนดตารางงานอัตโนมัติ">#</a></h2>
 <p data-bai-block="18">เซิร์ฟเวอร์ Backend.AI มีตัวจัดตารางงานที่พัฒนาขึ้นเองในตัว มันจะตรวจสอบทรัพยากรที่มีอยู่ของโหนดเอเจนต์ทั้งหมดโดยอัตโนมัติและมอบหมายคำขอในการสร้างเซสชันการคอมพิวเตอร์ไปยังเอเจนต์ที่ตรงตามคำขอทรัพยากรของผู้ใช้ นอกจากนี้ เมื่อทรัพยากรไม่เพียงพอ คำขอของผู้ใช้ในการสร้างเซสชันการคอมพิวเตอร์จะถูกลงทะเบียนในสถานะ PENDING ในคิวงาน ภายหลัง เมื่อทรัพยากรมีให้ใช้งานอีกครั้ง คำขอที่ถูกระงับจะถูกดำเนินการต่อเพื่อสร้างเซสชันการคอมพิวเตอร์</p>
 <p data-bai-block="19">คุณสามารถตรวจสอบการทำงานของตัวจัดกำหนดงานได้ในลักษณะง่าย ๆ จากผู้ใช้ WebUI เมื่อโฮสต์ GPU สามารถจัดสรร fGPU ได้สูงสุด 2 ตัว ให้เราสร้างเซสชันการคำนวณ 3 เซสชันพร้อมกันโดยขอจัดสรร fGPU 1 ตัวตามลำดับ ในขั้นตอน สภาพแวดล้อม &amp; การจัดสรรทรัพยากร ของตัวเปิดเซสชัน ให้ตั้งค่า ตัวเร่ง AI เป็น 1 จากนั้นในขั้นตอน ยืนยันและเริ่ม ให้เปิดเมนูข้างปุ่ม เริ่ม แล้วเลือก เริ่มหลายเซสชัน ตั้งค่า จำนวนเซสชัน เป็น 3 แล้วคลิก เริ่ม ทั้งสามเซสชันจะถูกร้องขอพร้อมกัน นี่คือสถานการณ์ที่มีเซสชัน 3 เซสชันที่ขอ fGPU ทั้งหมด 3 ตัว ในขณะที่มี fGPU เพียง 2 ตัวเท่านั้น</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/session_launch_dialog_2_sessions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1120" height="832" /><figcaption>รูปที่ 26.7</figcaption></figure>
+<p><figure data-bai-block="20" class="doc-figure"><img src="./images/session_launch_dialog_2_sessions.png" alt="" class="doc-image" style="width:560px" loading="lazy" decoding="async" width="1120" height="832" /><figcaption>รูปที่ 26.7</figcaption></figure>
 </p>
 <p data-bai-block="21">รอครู่หนึ่งแล้วคุณจะเห็นการเซสชันการคอมพิวเตอร์สามรายการถูกแสดงอยู่ ถ้าคุณสังเกตอย่างใกล้ชิดที่แผงสถานะ คุณจะเห็นว่าการเซสชันการคอมพิวเตอร์สองจากสามรายการอยู่ในสถานะ RUNNING แต่การเซสชันการคอมพิวเตอร์อีกหนึ่งรายการยังคงอยู่ในสถานะ PENDING การเซสชัน PENDING นี้ถูกลงทะเบียนในคิวงานเท่านั้นและยังไม่ได้ถูกจัดสรรคอนเทนเนอร์จริงเนื่องจากทรัพยากร GPU ไม่เพียงพอ</p>
 <p><figure data-bai-block="22" class="doc-figure"><img src="./images/pending_session_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2676" height="712" /><figcaption>รูปที่ 26.8</figcaption></figure>
@@ -248,22 +248,22 @@
 <h2 data-bai-block="25" id="appendix-การสนบสนนคอนเทนเนอรการเรยนรของเครองหลายเวอรชน">การสนับสนุนคอนเทนเนอร์การเรียนรู้ของเครื่องหลายเวอร์ชัน<a class="hash-link" href="#appendix-การสนบสนนคอนเทนเนอรการเรยนรของเครองหลายเวอรชน" aria-label="Direct link to การสนับสนุนคอนเทนเนอร์การเรียนรู้ของเครื่องหลายเวอร์ชัน">#</a></h2>
 <p data-bai-block="26">Backend.AI มีภาพเคอร์เนล ML และ HPC ที่สร้างไว้ล่วงหน้าหลายแบบ ผู้ใช้จึงสามารถใช้ห้องสมุดและแพ็คเกจหลักได้ทันทีโดยไม่ต้องติดตั้งแพ็คเกจด้วยตนเอง ที่นี่เราจะแสดงตัวอย่างที่ใช้ประโยชน์จากหลายเวอร์ชันของห้องสมุด ML หลายตัวทันที</p>
 <p data-bai-block="27">ไปที่หน้า เซสชัน และเปิดกล่องสนทนาเริ่มต้นเซสชัน อาจมีภาพเคอร์เนลหลายประเภทขึ้นอยู่กับการตั้งค่าการติดตั้ง</p>
-<p><figure data-bai-block="28" class="doc-figure"><img src="./images/various_kernel_images.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="930" /><figcaption>รูปที่ 26.10</figcaption></figure>
+<p><figure data-bai-block="28" class="doc-figure"><img src="./images/various_kernel_images.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="930" /><figcaption>รูปที่ 26.10</figcaption></figure>
 </p>
 <p data-bai-block="29">ที่นี่ ให้เลือกสภาพแวดล้อม TensorFlow 2.3 และสร้างเซสชัน</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/session_launch_dialog_tf23.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>รูปที่ 26.11</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/session_launch_dialog_tf23.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>รูปที่ 26.11</figcaption></figure>
 </p>
 <p data-bai-block="31">เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้น และรันคำสั่ง Python ต่อไปนี้ คุณจะเห็นว่ามีการติดตั้ง TensorFlow เวอร์ชัน 2.3 อยู่</p>
 <p><figure data-bai-block="32" class="doc-figure"><img src="./images/tf23_version_print.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3806" height="530" /><figcaption>รูปที่ 26.12</figcaption></figure>
 </p>
 <p data-bai-block="33">คราวนี้ ให้เลือกสภาพแวดล้อม TensorFlow 1.15 เพื่อสร้างเซสชันการคำนวณ หากทรัพยากรไม่เพียงพอ ให้ลบเซสชันก่อนหน้าออก</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/session_launch_dialog_tf115.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>รูปที่ 26.13</figcaption></figure>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/session_launch_dialog_tf115.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>รูปที่ 26.13</figcaption></figure>
 </p>
 <p data-bai-block="35">เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้นแล้วรันคำสั่ง Python เดียวกันกับที่ทำก่อนหน้านี้ คุณจะเห็นว่ามีการติดตั้ง TensorFlow เวอร์ชัน 1.15(.4) อยู่</p>
 <p><figure data-bai-block="36" class="doc-figure"><img src="./images/tf115_version_print.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2522" height="470" /><figcaption>รูปที่ 26.14</figcaption></figure>
 </p>
 <p data-bai-block="37">สุดท้าย ให้สร้างเซสชันการคำนวณโดยใช้ PyTorch เวอร์ชัน 1.9</p>
-<p><figure data-bai-block="38" class="doc-figure"><img src="./images/session_launch_dialog_pytorch17.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1480" height="890" /><figcaption>รูปที่ 26.15</figcaption></figure>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/session_launch_dialog_pytorch17.png" alt="" class="doc-image" style="width:740px" loading="lazy" decoding="async" width="1480" height="890" /><figcaption>รูปที่ 26.15</figcaption></figure>
 </p>
 <p data-bai-block="39">เปิดเว็บเทอร์มินัลของเซสชันที่สร้างขึ้น และรันคำสั่ง Python ต่อไปนี้ คุณจะเห็นว่ามีการติดตั้ง PyTorch เวอร์ชัน 1.9 อยู่</p>
 <p><figure data-bai-block="40" class="doc-figure"><img src="./images/pytorch17_version_print.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2852" height="552" /><figcaption>รูปที่ 26.16</figcaption></figure>
@@ -290,7 +290,7 @@
 <li data-bai-block="49"><p>ผู้ดูแลระบบจะแปลงเซสชันการคอมพิวเตอร์ของคุณเป็นอิมเมจ Docker ใหม่และส่งชื่ออิมเมจเต็มและแท็กให้คุณ</p>
 </li>
 <li data-bai-block="50"><p>คุณสามารถป้อนชื่ออิมเมจในกล่องโต้ตอบเปิดเซสชันด้วยตนเอง อิมเมจนี้เป็นส่วนตัวและจะไม่แสดงให้ผู้ใช้อื่นเห็น</p>
-<p><figure data-bai-block="51" class="doc-figure"><img src="./images/session-creation-by-specifying-image-name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>รูปที่ 26.17</figcaption></figure>
+<p><figure data-bai-block="51" class="doc-figure"><img src="./images/session-creation-by-specifying-image-name.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>รูปที่ 26.17</figcaption></figure>
 </p>
 </li>
 <li data-bai-block="52"><p>เซสชันการคอมพิวเตอร์ใหม่จะถูกสร้างขึ้นโดยใช้อิมเมจ Docker ใหม่</p>
@@ -345,7 +345,7 @@
 <p data-bai-block="85">ก่อนอื่น เปิดแอปเทอร์มินัล &quot;console&quot; และรันคำสั่งด้านล่าง ซึ่งจะเริ่มเซิร์ฟเวอร์ MLFlow tracking UI</p>
 <div data-bai-block="86" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">mlflow</span><span style="color:#9ECBFF"> ui</span><span style="color:#79B8FF"> --host</span><span style="color:#79B8FF"> 0.0.0.0</span></span></code></pre></div>
 <p data-bai-block="87">จากนั้น คลิกแอป &quot;MLFlow UI&quot; ในกล่องโต้ตอบตัวเปิดแอป</p>
-<p><figure data-bai-block="88" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>รูปที่ 26.18</figcaption></figure>
+<p><figure data-bai-block="88" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" style="width:450px" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>รูปที่ 26.18</figcaption></figure>
 </p>
 <p data-bai-block="89">หลังจากสักครู่ คุณจะเห็นหน้าใหม่สำหรับ MLFlow UI</p>
 <p><figure data-bai-block="90" class="doc-figure"><img src="./images/mlflow_UI.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3808" height="1930" /><figcaption>รูปที่ 26.19</figcaption></figure>
@@ -366,7 +366,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/appendix/appendix.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 23 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 1 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./trouble_shooting.html">
