@@ -31,7 +31,6 @@ import { Badge } from '@astryxdesign/core/Badge';
 import { Button } from '@astryxdesign/core/Button';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
@@ -356,7 +355,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           <HStack gap={2}>
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'active' && (
-                <>
+                <HStack gap={1} align="center">
                   <BAISelectionLabel
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
@@ -371,24 +370,24 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                       toggleDeleteModal();
                     }}
                   />
-                </>
+                </HStack>
               )}
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'deleted' && (
-                <>
+                <HStack gap={1} align="center">
                   <BAISelectionLabel
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <Tooltip content={t('data.folders.Restore')}>
-                    <IconButton
-                      label={t('data.folders.Restore')}
-                      icon={<RotateCcwIcon />}
-                      onClick={() => {
-                        toggleRestoreModal();
-                      }}
-                    />
-                  </Tooltip>
+                  <IconButton
+                    label={t('data.folders.Restore')}
+                    tooltip={t('data.folders.Restore')}
+                    icon={<RotateCcwIcon />}
+                    variant="ghost"
+                    onClick={() => {
+                      toggleRestoreModal();
+                    }}
+                  />
                   <IconButton
                     label={t('data.folders.Delete')}
                     tooltip={t('data.folders.Delete')}
@@ -399,7 +398,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                       toggleDeleteForeverModal();
                     }}
                   />
-                </>
+                </HStack>
               )}
             <AutoUpdateFetchKeyButton
               settingId="project-admin-data"
