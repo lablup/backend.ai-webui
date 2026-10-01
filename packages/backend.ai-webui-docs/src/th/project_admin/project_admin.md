@@ -14,7 +14,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 
 เมื่อคุณเปิดดรอปดาวน์โปรเจกต์ในส่วนหัว โปรเจกต์ที่คุณมีบทบาทผู้ดูแลโปรเจกต์จะมีตราสัญลักษณ์รูปโล่ปรากฏข้างชื่อโปรเจกต์ การวางเคอร์เซอร์เหนือตราสัญลักษณ์จะแสดงคำแนะนำ **ผู้ดูแลโปรเจกต์** ซึ่งยืนยันว่าการเลือกโปรเจกต์นี้จะเปิดเผยรายการในแถบด้านข้างสำหรับผู้ดูแลโปรเจกต์ตามที่อธิบายไว้ด้านล่าง
 
-![](../images/header_project_selector_with_admin_badge.png)
+![=266px](../images/header_project_selector_with_admin_badge.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 การสลับไปยังโปรเจกต์อื่นจากตัวเลือกโปรเจกต์ในส่วนหัวจะประเมินบทบาทของผู้ใช้ใหม่ ผู้ใช้คนเดียวกันอาจทำหน้าที่เป็นผู้ดูแลโปรเจกต์ในโปรเจกต์หนึ่งและเป็นผู้ใช้ทั่วไปในอีกโปรเจกต์หนึ่งภายในเซสชันการเข้าสู่ระบบเดียวกันได้ สำหรับวิธีการมอบและเพิกถอนบทบาทผู้ดูแลโปรเจกต์ ดูที่ส่วน[การมอบสิทธิ์ผู้ดูแลโปรเจกต์](#grant-project-admin)ในบทการจัดการ RBAC
@@ -67,7 +67,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 - **เซสชัน** — เซสชันการคำนวณที่ผู้ใช้ในโปรเจกต์ปัจจุบันเป็นเจ้าของ
 - **การปรับใช้** — การปรับใช้โมเดลที่โปรเจกต์ปัจจุบันเป็นเจ้าของ
 
-![](../images/project_admin_sidebar.png)
+![=240px](../images/project_admin_sidebar.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 ในหน้าผู้ดูแลโปรเจกต์ จะแสดงเฉพาะรายการภายใต้โปรเจกต์ที่เลือกด้วยตัวเลือกโปรเจกต์ที่ด้านบนเท่านั้น คุณสามารถตรวจสอบเนื้อหานี้ได้จากแบนเนอร์ที่ด้านบนของหน้า
@@ -83,7 +83,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 
 ปุ่มดรอปดาวน์ที่อยู่ข้างปุ่มรีเฟรชจะเปิดเมนู **รีเฟรชอัตโนมัติ** ซึ่งคุณสามารถเลือกช่วงเวลาการรีเฟรชอัตโนมัติได้
 
-![](../images/project_admin_auto_refresh_menu.png)
+![=88px](../images/project_admin_auto_refresh_menu.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
@@ -128,7 +128,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 2. กรอกข้อมูลโฟลเดอร์ในโมดอลการสร้าง
 3. คลิก **สร้าง** เพื่อสร้างโฟลเดอร์
 
-![](../images/project_admin_create_folder_modal.png)
+![=650px](../images/project_admin_create_folder_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
@@ -177,7 +177,7 @@ navTitle: ฟีเจอร์ผู้ดูแลโปรเจกต์
 4. หากต้องการ ให้เลือกช่องทำเครื่องหมาย **บังคับยุติ** เพื่อยุติหรือยกเลิกเซสชันโดยไม่คำนึงถึงสถานะปัจจุบัน การเปิดใช้งานตัวเลือกนี้จะแสดงคำเตือนและเปลี่ยนป้ายกำกับปุ่มยืนยันจาก **ยุติ** เป็น **บังคับยุติ**
 5. คลิกปุ่มยืนยันเพื่อยุติเซสชัน
 
-![](../images/project_admin_terminate_session_modal.png)
+![=520px](../images/project_admin_terminate_session_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::warning

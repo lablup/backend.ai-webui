@@ -26,7 +26,7 @@ Users can select the deployment and model from the top left corner of each chat 
 Clicking the **Deployment** field opens a dropdown listing the available deployments, along with the total number of deployments.
 Once a deployment is selected, the model dropdown header updates to show "{deployment name}'s Models", listing the models associated with that deployment.
 
-![](../images/chat_deployment_select.png)
+![=195px](../images/chat_deployment_select.png)
 
 Next to the **Deployment** field, a button with an info icon (**View Deployment Details**) opens the selected deployment's detail page; the button is disabled while no deployment is selected.
 If the selected deployment belongs to a project other than the currently active one, a confirmation dialog titled **Switch to another project?** appears before opening the detail page.
@@ -82,7 +82,7 @@ Refer to the description below for the necessary inputs to configure custom mode
    * Expired tokens are not listed. When the field is empty, the most recently created valid token is selected for you.
    * The gear icon beside the field (**Access Token Settings**) opens the Access Tokens section of the deployment's detail page, where you can issue a new token. The list is read again when you return, so a token you just created is immediately selectable. For instructions, refer to the [Generating Tokens](#generating-tokens) section.
 
-![](../images/chat_token_select.png)
+![=379px](../images/chat_token_select.png)
 
 <a id="add-or-remove-comparison-chat-cards"></a>
 
@@ -96,7 +96,7 @@ To remove a chat session, click on the `more` button located in the upper right 
 Then a dropdown menu will appear, and users can select `Delete Chat` to remove a chat session.
 Please be cautious as this will delete all entered content.
 
-![](../images/delete_chatting_session.png)
+![=171px](../images/delete_chatting_session.png)
 
 <a id="clear-chat-history"></a>
 
@@ -106,7 +106,7 @@ Clicking the `more` button will reveal the `Clear Chat` option.
 By selecting this, users will erase all chat history associated with the card,
 although the card session itself will remain active.
 
-![](../images/delete_chatting_session.png)
+![=171px](../images/delete_chatting_session.png)
 
 <a id="synchronize-input"></a>
 
@@ -117,7 +117,7 @@ Enabling 'Sync chat input' means that pressing `Enter` or clicking the `Send` bu
 any card will submit the input from the card users are currently working on.
 This functionality is beneficial for comparing the outputs of various models using identical input data.
 
-![](../images/synchronized_input.png)
+![=775px](../images/synchronized_input.png)
 
 <a id="parameter-adjustment"></a>
 

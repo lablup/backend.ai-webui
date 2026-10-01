@@ -68,7 +68,7 @@ Backend.AI では、**デプロイ（Deployments）** 機能を通じて AI モ�
 
 Revision には、推論サーバを実行するために必要なすべての設定（イメージ、起動コマンド、リソース、モデルマウント、環境変数）が含まれます。デプロイ詳細ページで `Revision を追加` ボタンをクリックしてモーダルを開きます。
 
-![](../images/model_serving_add_revision_modal.png)
+![=800px](../images/model_serving_add_revision_modal.png)
 
 モーダルのタイトル部にある **プリセットモード** / **高度な設定モード** の切り替えスイッチで、Revision の構成方法を選択します。
 
@@ -109,7 +109,7 @@ Revision には、推論サーバを実行するために必要なすべての�
 
 Revision ごとに 1 つのモデルストレージフォルダーが各レプリカにマウントされます。フォルダーセレクタのすぐ下にあるフィールドで、そのフォルダーをコンテナ内のどこに配置するかを指定します。
 
-![](../images/add_revision_model_folder_mount.png)
+![=780px](../images/add_revision_model_folder_mount.png)
 
 - **モデルフォルダー**: 各レプリカにマウントするモデルストレージフォルダーです。
 - **モデルフォルダーのマウント先**: コンテナ内でモデルストレージフォルダーがマウントされるパスです（デフォルト: `/models`）。
@@ -192,7 +192,7 @@ vLLM は次のパラメータタブを提供します: **Model Loading**、**Res
 
 **SGLang ランタイムパラメータ**
 
-![](../images/service_launcher_runtime_params_sglang.png)
+![=648px](../images/service_launcher_runtime_params_sglang.png)
 
 SGLang は次のパラメータタブを提供します: **Model Loading**、**Resource Memory**、**Serving Performance**、**Tool Reasoning** など。
 
@@ -386,7 +386,7 @@ models:
 デフォルトの `general` タイプではなく `model` タイプを選択してください。
 フォルダーの作成方法については、データページの[ストレージフォルダーの作成](#create-storage-folder)セクションを参照してください。
 
-![](../images/model_type_folder_creation.png)
+![=650px](../images/model_type_folder_creation.png)
 
 フォルダーを作成した後、データページの「MODELS」タブを選択し、
 最近作成したモデルタイプフォルダーアイコンをクリックしてフォルダーエクスプローラーを開き、
@@ -511,7 +511,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 
 サービス情報カードのヘッダーには、**編集** ボタンに加えて **その他** メニューが表示されます。**編集** ボタンをクリックすると、[デプロイメント作成モーダル](#create-deployment) で説明した **デプロイを編集** モーダルが開きます。その他メニューには現在 **デプロイを削除** アクションが含まれます。
 
-![](../images/endpoint_detail_more_menu.png)
+![=164px](../images/endpoint_detail_more_menu.png)
 
 <a id="scheduling-history"></a>
 
@@ -646,7 +646,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 
 レプリカでエラーが発生した場合、行のエラーインジケータをクリックすると JSON ビューアーモーダルが開き、生のエラーデータが表示されます。個別のレプリカの問題を診断する際に役立ちます。
 
-![](../images/route_error_json_viewer.png)
+![=492px](../images/route_error_json_viewer.png)
 
 ### 自動スケーリングルール
 
@@ -674,7 +674,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
    * **スケールアウト**: メトリックがしきい値を上回るとレプリカを増やします。`Metric > [しきい値]` の条件を設定します。
    * **スケールイン＆アウト**: メトリックが設定した範囲のどちら側を超えたかに応じて、自動的に縮小または拡張します。`Metric < Min Threshold` または `Metric > Max Threshold` の条件を設定します。
 
-![](../images/auto_scaling_condition_selector.png)
+![=472px](../images/auto_scaling_condition_selector.png)
 
 - **ステップサイズ（Step Size）**: スケーリングイベントごとに追加または削除するレプリカ数を指定する正の整数です。選択したコンディション（スケールイン / スケールアウト / スケールイン＆アウト）に応じて `-`、`+`、`±` の符号が自動的に表示されます。
 
@@ -685,7 +685,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 - **クールダウン秒（Cooldown Sec.）**: スケーリングイベント後、次の評価まで待機する時間（秒単位）です。
 - **最小レプリカ（Min Replicas）および最大レプリカ（Max Replicas）**: 自動スケーリングがレプリカ数に対して強制する下限と上限です。自動スケーリングは、レプリカ数を最小レプリカより下げたり、最大レプリカより上げたりすることはありません。
 
-![](../images/auto_scaling_rules_modal_v2.png)
+![=520px](../images/auto_scaling_rules_modal_v2.png)
 
 <a id="generating-tokens"></a>
 
@@ -706,7 +706,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
    * **有効期限なし**: 有効期限を遠い未来の日付（`2099年12月31日`）に設定し、実質的に失効しないトークンを作成します。以降、トークンダイアログ、アクセストークン一覧、チャットのトークン選択欄には「有効期限なし」という文言ではなく、この日付が表示されます。
 3. `アクセストークンを作成` をクリックして発行します。
 
-![](../images/token_generation_dialog.png)
+![=460px](../images/token_generation_dialog.png)
 
    マネージャーがまだネットワークエンドポイントを発行していない間、`アクセストークンを作成` ボタンは無効になり、ツールチップに *「ネットワークエンドポイントはまだ発行されていません。」* と表示されます。自分が所有していないデプロイメントでは *「アクセストークンを管理できるのはデプロイのオーナーのみです。」*、停止中またはすでに稼働していないデプロイメントでは *「デプロイは停止中か、すでに稼働していません。」* と表示され、ボタンは無効になります。この 2 つの条件では、トークンの削除も無効になります。
 
@@ -741,7 +741,7 @@ vLLM デプロイメントの場合、ルートのデフォルト値は `vllm` �
 
 デプロイが不要になった場合は、終了することを推奨します。デプロイを終了するには、サービス情報カードの **その他** メニューを開き、**デプロイを削除** を選択します。入力確認モーダルが表示されるため、デプロイ名を入力すると **完全に削除** ボタンが有効になります。終了したデプロイは **破壊された** フィルタービューに表示されます。
 
-![](../images/terminate_model_service_dialog.png)
+![=520px](../images/terminate_model_service_dialog.png)
 
 ## デプロイへのアクセス
 
@@ -849,7 +849,7 @@ API接続に問題が発生した場合、Chatページにモデル設定を手�
 
 モデルカードに README が含まれている場合は、ドロワーの下部に `README.md` カードとしてレンダリングされます。
 
-![](../images/model_card_detail_drawer.png)
+![=800px](../images/model_card_detail_drawer.png)
 
 ### モデルのデプロイ
 

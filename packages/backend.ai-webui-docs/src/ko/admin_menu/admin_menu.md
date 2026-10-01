@@ -29,11 +29,11 @@ navTitle: 관리자 기능
 
 해당 사용자의 **이메일** 컬럼 행에 있는 정보 아이콘을 클릭하면 더 자세한 사용자 정보를 확인할 수 있습니다. 사용자가 속한 도메인과 프로젝트 정보도 확인할 수 있습니다.
 
-![](../images/user_detail_dialog.png)
+![=520px](../images/user_detail_dialog.png)
 
 해당 사용자의 **이메일** 컬럼 행에 있는 **수정**(연필) 아이콘을 클릭하면 이미 존재하는 사용자의 설정을 변경할 수 있습니다. 사용자의 이름, 비밀번호, 활성화 상태 등을 변경할 수 있습니다. 사용자 ID(이메일)는 변경할 수 없습니다. 변경 내용을 적용하려면 **저장**을 클릭합니다.
 
-![](../images/user_update_dialog.png)
+![=520px](../images/user_update_dialog.png)
 
 
 사용자 생성/수정 대화 상자에는 다음과 같은 필드가 포함되어 있습니다.
@@ -192,7 +192,7 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 2. 툴바에 선택 개수가 표시됩니다. 그 옆의 수정(연필) 버튼을 클릭합니다.
 3. **사용자 일괄 수정** 대화 상자가 열립니다.
 
-![](../images/bulk_edit_users_modal.png)
+![=520px](../images/bulk_edit_users_modal.png)
 
 대화 상자 상단의 알림에는 변경이 적용될 모든 사용자의 이메일 주소가 나열되므로, 실행 전에 선택 내용을 확인할 수
 있습니다. 또한 UID 또는 GID를 설정하면 기존에 생성된 폴더 마운트의 사용이 제한될 수 있다는 경고도 함께
@@ -215,12 +215,12 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 
 사용자별 사용 통계 추적, 메트릭 보존, 실수로 인한 계정 손실 방지를 위해, 사용자가 로그인하지 못하도록 하는 권장 방법은 계정을 삭제하는 것이 아니라 **비활성화**하는 것입니다. 비활성화는 사용자의 레코드를 그대로 유지하면서 로그인만 차단합니다. 사용자를 비활성화하려면 해당 사용자의 **이메일** 컬럼 행에 있는 비활성화 아이콘을 클릭합니다. 확인 팝오버가 나타나면 **비활성화** 버튼을 클릭하여 사용자를 비활성화합니다.
 
-![](../images/user_deactivate_confirmation.png)
+![=588px](../images/user_deactivate_confirmation.png)
 <!-- TODO: Re-capture user_deactivate_confirmation.png in this locale's UI language, reflecting the new flow: the deactivate icon in the user's Email column row and the confirmation popover. -->
 
 사용자를 다시 활성화하려면 사용자 페이지의 **비활성** 탭으로 이동한 뒤, 해당 사용자의 **이메일** 컬럼 행에 있는 복원(재활성화) 아이콘을 클릭합니다. 확인 팝오버가 나타나면 **활성화** 버튼을 클릭하여 사용자를 다시 활성화합니다.
 
-![](../images/user_inactivate_confirmation.png)
+![=562px](../images/user_inactivate_confirmation.png)
 <!-- TODO: Re-capture user_inactivate_confirmation.png in this locale's UI language, reflecting the new flow: the reactivate (restore) icon in the Email column row on the Inactive tab and the activate popover. -->
 
 :::note
@@ -247,7 +247,7 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 - **공유된 가상 폴더도 함께 삭제하시겠습니까?**: 선택하면 영구 삭제되는 사용자가 공유한 가상 폴더도 함께 삭제됩니다. 선택하지 않으면 해당 폴더는 그대로 유지됩니다.
 - **생성된 배포도 함께 삭제하시겠습니까?**: 선택하면 영구 삭제되는 사용자가 생성한 배포도 함께 삭제됩니다. 선택하지 않으면 해당 배포는 삭제되지 않고 소유권이 위임됩니다.
 
-![](../images/purge_users_modal.png)
+![=520px](../images/purge_users_modal.png)
 
 선택한 사용자 중 일부를 영구 삭제하지 못한 경우, 해당 사용자의 이메일과 오류 메시지를 함께 보여 주는 실패 대화
 상자가 열리며, 나머지 사용자는 정상적으로 영구 삭제됩니다.
@@ -270,17 +270,17 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 
 사용자 탭과 마찬가지로 키페어 행에 있는 인라인 버튼을 사용하여 키페어 세부 정보를 보거나 수정할 수 있습니다. 정보 아이콘 버튼을 클릭하면 키페어의 구체적인 세부 정보를 확인할 수 있습니다. 필요한 경우 복사 버튼을 클릭하여 secret key를 복사할 수 있습니다.
 
-![](../images/keypair_detail_dialog.png)
+![=520px](../images/keypair_detail_dialog.png)
 
 키페어 행의 **수정**(연필) 버튼을 클릭하면 키페어의 자원 정책과 최대 요청수를 변경할 수 있습니다. 대화 상자의 제목은 **키페어 자원 정책 수정**이며, **저장**을 클릭하면 변경 내용이 적용됩니다. **최대 요청수** 값이 작으면 로그인과 같은 API 작업이 차단될 수 있으므로 주의하시기 바랍니다.
 
-![](../images/keypair_update_dialog.png)
+![=500px](../images/keypair_update_dialog.png)
 
 키페어 행의 `비활성화` 버튼이나 `활성화` 버튼을 클릭하여 키페어를 비활성화하거나 다시 활성화할 수도 있습니다. 사용자 탭과 달리 비활성 탭에서는 키페어를 영구적으로 삭제할 수 있습니다. 그러나 현재 사용자의 주요 액세스 키로 사용 중인 키페어는 영구적으로 삭제할 수 없습니다.
 
 ![](../images/keypair_delete_button.png)
 
-![](../images/keypair_delete_confirmation.png)
+![=520px](../images/keypair_delete_confirmation.png)
 <!-- TODO: Re-capture keypair_delete_confirmation.png — shows the old UI. -->
 
 <a id="bulk-activate-deactivate-credentials"></a>
@@ -306,7 +306,7 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 
 실수로 키페어를 삭제한 경우, 오른쪽 상단의 **자격증명 생성** 버튼을 클릭하여 사용자를 위한 키페어를 새로 만들 수 있습니다.
 
-![](../images/add_keypair_dialog.png)
+![=500px](../images/add_keypair_dialog.png)
 
 대화 상자에는 다음 필드가 있습니다.
 
@@ -334,7 +334,7 @@ Backend.AI는 사용자 자신의 스토리지 폴더 외에도 프로젝트를 
 
 먼저 관리자 계정으로 로그인하여 프로젝트 폴더를 생성합니다. 관리자용 데이터 페이지로 이동한 후 `폴더 생성`을 클릭하여 폴더 생성 대화 상자를 엽니다. 관리자용 데이터 페이지에서는 프로젝트 폴더만 생성할 수 있으므로, 이 대화 상자에는 폴더 종류를 선택하는 항목이 표시되지 않습니다. 대화 상자 상단의 **대상 프로젝트** 항목에서 폴더를 소유할 프로젝트를 선택한 다음, 폴더 이름을 입력하고 **마운트 권한**을 설정합니다.
 
-![](../images/group_folder_creation.png)
+![=650px](../images/group_folder_creation.png)
 
 폴더가 생성되었는지 확인한 후 사용자 B의 계정으로 로그인하여 데이터 페이지에 방금 생성한 프로젝트 폴더가 별도의 초대 절차 없이 표시되는지 확인합니다. 마운트 권한 패널에도 읽기 전용 (R)이 표시되는 것을 확인할 수 있습니다.
 
@@ -441,7 +441,7 @@ Backend.AI는 사용자 자신의 스토리지 폴더 외에도 프로젝트를 
    * `Internal`: 모델 카드를 소유한 도메인과 프로젝트의 관리자에게만 표시됩니다. 일반 사용자는 모델 스토어에서 Internal 모델 카드를 볼 수 없습니다.
    * `Public`: 해당 프로젝트에 접근 권한이 있는 모든 사용자에게 표시됩니다.
 
-![](../images/model_card_create_modal.png)
+![=520px](../images/model_card_create_modal.png)
 
 #### 모델 카드 수정
 
@@ -451,7 +451,7 @@ Backend.AI는 사용자 자신의 스토리지 폴더 외에도 프로젝트를 
 
 모델 카드 이름 옆의 삭제 아이콘을 클릭하여 개별 모델 카드를 삭제하거나, 행 체크박스로 여러 모델 카드를 선택한 후 선택 개수 옆의 빨간색 휴지통 버튼을 클릭하여 일괄 삭제를 수행할 수 있습니다.
 
-![](../images/model_card_delete_with_folder.png)
+![=520px](../images/model_card_delete_with_folder.png)
 
 삭제 확인 대화 상자에는 **연결된 모델 폴더도 함께 삭제** 옵션이 포함되어 있습니다:
 
@@ -503,7 +503,7 @@ Backend.AI는 관리자가 재사용 가능한 **프로메테우스 쿼리 프�
 
 테이블 우측 상단의 **프리셋 추가** 버튼을 클릭하여 **프리셋 생성** 모달을 엽니다.
 
-![](../images/admin_prometheus_preset_create_modal.png)
+![=520px](../images/admin_prometheus_preset_create_modal.png)
 
 모달에는 다음 필드가 있습니다.
 
@@ -529,7 +529,7 @@ Backend.AI는 관리자가 재사용 가능한 **프로메테우스 쿼리 프�
 
 프리셋 행의 **이름** 셀에서 **수정** 액션을 클릭하면 **프리셋 수정** 모달이 열립니다. 모달에는 프리셋의 현재 값이 미리 채워져 있으며, 쿼리 템플릿의 라이브 프리뷰 영역을 포함하여 생성 다이얼로그와 동일한 필드가 제공됩니다.
 
-![](../images/admin_prometheus_preset_edit_modal.png)
+![=520px](../images/admin_prometheus_preset_edit_modal.png)
 
 **저장**을 클릭하여 변경 사항을 적용합니다. 해당 프리셋을 참조하는 소비자(예: 오토스케일링 규칙)는 다음 메트릭 평가 시 자동으로 새 쿼리 템플릿을 적용합니다.
 
@@ -613,7 +613,7 @@ Backend.AI는 관리자가 재사용 가능한 **프로메테우스 쿼리 프�
 
 모든 카드를 입력한 뒤 **프리셋 생성** 버튼을 클릭하여 저장합니다. 성공 알림이 표시됩니다.
 
-![](../images/deployment_preset_create_modal.png)
+![=800px](../images/deployment_preset_create_modal.png)
 
 :::note
 **헬스 체크 활성화** 토글은 vLLM 및 SGLang의 고급 모드(Advanced Mode)에도 동일하게 적용됩니다.
@@ -676,7 +676,7 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 
 이 가이드에서 사용되는 사용자 계정은 현재 default 자원 정책에 할당되어 있습니다. 이는 사용자 페이지의 자격 증명 탭에서 확인할 수 있습니다. 자원 정책 패널에서 모든 자원 정책이 default로 설정되어 있음을 확인할 수도 있습니다.
 
-![](../images/credentials.png)
+![=520px](../images/credentials.png)
 
 키페어 자원 정책 테이블에는 다음 컬럼이 표시됩니다. 이 중 두 컬럼은 제한 값이 아니라 정책이 적용되는 방식을
 설명합니다.
@@ -723,7 +723,7 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 
 키페어 자원 정책 목록에서 default 정책의 Resources 값이 업데이트되었는지 확인합니다.
 
-![](../images/keypair_resource_policy_update_check.png)
+![=425px](../images/keypair_resource_policy_update_check.png)
 
 테이블 오른쪽 상단의 **생성** 버튼을 클릭하여 새 자원 정책을 생성할 수 있습니다. 각 설정 값은 위에서 설명한 것과 동일합니다.
 
@@ -733,7 +733,7 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 
 이름 열의 휴지통 아이콘을 클릭하여 각 자원 키페어를 삭제할 수도 있습니다. 아이콘을 클릭하면 확인 대화 상자가 나타납니다. 확인 입력란에 정책 이름을 입력한 다음 `삭제` 버튼을 클릭하여 삭제합니다.
 
-![](../images/resource_policy_delete_dialog.png)
+![=520px](../images/resource_policy_delete_dialog.png)
 
 :::note
 삭제할 자원 정책을 따르는 사용자(비활성 사용자 포함)가 있으면 삭제할 수 없습니다. 자원 정책을 삭제하기 전에 해당 자원 정책 아래에 남아있는 사용자가 없는지 확인하십시오.
@@ -741,7 +741,7 @@ Backend.AI에서 관리자는 각 키페어, 사용자, 프로젝트에 사용 �
 
 특정 열을 숨기거나 표시하려면 테이블 오른쪽 하단의 `설정 (톱니바퀴)`를 클릭합니다. 표시하려는 열을 선택할 수 있는 대화 상자가 나타납니다.
 
-![](../images/keypair_resource_policy_table_setting.png)
+![=420px](../images/keypair_resource_policy_table_setting.png)
 
 <a id="user-resource-policy"></a>
 
@@ -760,7 +760,7 @@ Backend.AI는 사용자 자원 정책 관리를 지원합니다. 각 사용자�
 
 새 사용자 자원 정책을 생성하려면 **생성** 버튼을 클릭합니다.
 
-![](../images/create_user_resource_policy.png)
+![=520px](../images/create_user_resource_policy.png)
 
 - 이름: 사용자 자원 정책의 이름입니다.
 - 최대 폴더 수: 사용자가 생성할 수 있는 최대 폴더 수입니다. 사용자의 폴더 수가 이 값을 초과하면 새 폴더를 생성할 수 없습니다. 무제한으로 설정하면 "∞"로 표시됩니다.
@@ -792,7 +792,7 @@ Backend.AI는 프로젝트 자원 정책 관리를 지원합니다. 프로젝트
 
 새 프로젝트 자원 정책을 생성하려면 테이블 오른쪽 상단의 **생성** 버튼을 클릭합니다.
 
-![](../images/create_project_resource_policy.png)
+![=520px](../images/create_project_resource_policy.png)
 
 - **이름**: 프로젝트 자원 정책의 이름입니다.
 - **최대 폴더 수**: 관리자가 생성할 수 있는 최대 프로젝트 폴더 수입니다. 프로젝트 폴더 수가 이 값을 초과하면 관리자는 새 프로젝트 폴더를 생성할 수 없습니다. 무제한으로 설정하면 "∞"로 표시됩니다.
@@ -937,7 +937,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 자원 그룹의 제어 컬럼에 있는 설정(톱니바퀴) 버튼을 클릭하면 Fair Share 설정
 모달이 열립니다.
 
-![](../images/fair_share_resource_group_setting_modal.png)
+![=520px](../images/fair_share_resource_group_setting_modal.png)
 
 :::warning
 변경사항은 Fair Share 계산에 바로 반영되지 않으며, 계산 주기에 따라 약 5분
@@ -1011,7 +1011,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 도메인, 프로젝트 또는 사용자의 Fair Share 가중치를 편집하려면 해당 행의 제어 컬럼에
 있는 설정(톱니바퀴) 버튼을 클릭합니다. 가중치 설정 모달이 열립니다.
 
-![](../images/fair_share_weight_setting_modal.png)
+![=520px](../images/fair_share_weight_setting_modal.png)
 
 :::warning
 변경사항은 Fair Share 계산에 바로 반영되지 않으며, 계산 주기에 따라 약 5분
@@ -1026,7 +1026,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 일괄 편집(톱니바퀴 아이콘) 버튼을 클릭합니다. 일괄 편집 모드에서는 모달에 선택한
 모든 항목의 태그 목록과 모든 항목에 적용될 단일 가중치 입력 필드가 표시됩니다.
 
-![](../images/fair_share_weight_bulk_edit_modal.png)
+![=520px](../images/fair_share_weight_bulk_edit_modal.png)
 
 :::note
 선택한 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`로 설정되어 있지 않은 경우,
@@ -1092,11 +1092,11 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 
 두 항목은 모두 필수이며, 프로젝트와 자원 그룹을 선택하기 전까지 대화 상자의 **설치** 버튼은 비활성화 상태로 유지됩니다. 선택한 이미지 중 이미 설치된 이미지는 요청에서 제외됩니다.
 
-![](../images/image_install_modal.png)
+![=520px](../images/image_install_modal.png)
 
 `제어` 패널의 **수정**(연필) 액션을 클릭하면 **최소 이미지 리소스 제한 수정** 대화 상자가 열려 각 이미지의 최소 자원 요구 사항을 변경할 수 있습니다. 각 이미지에는 최소 작동을 위한 하드웨어 및 자원 요구 사항이 있습니다. (예를 들어 GPU 전용 이미지의 경우 최소 할당 GPU가 있어야 합니다.) 최소 자원 양의 기본값은 이미지의 메타데이터에 포함되어 제공됩니다. 각 이미지에 지정된 자원 양보다 적은 자원으로 연산 세션을 생성하려고 하면 요청이 취소되지 않고 이미지의 최소 자원 요구 사항으로 자동 조정된 후 생성됩니다.
 
-![](../images/update_image_resource_setting.png)
+![=640px](../images/update_image_resource_setting.png)
 
 :::note
 이미지 메타데이터에 포함된 최소 자원 요구 사항은 테스트를 거쳐 결정된 값이므로, 변경하려는 최소 자원 양에 대해 확실한 이유가 없다면 기본값을 사용하는 것을 권장합니다.
@@ -1104,14 +1104,14 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 
 또한 `제어` 열의 `앱` 아이콘을 클릭하여 각 이미지에 지원되는 앱을 추가하거나 수정할 수 있습니다. 아이콘을 클릭하면 앱 이름과 해당 포트 번호가 표시됩니다.
 
-![](../images/manage_app_dialog.png)
+![=700px](../images/manage_app_dialog.png)
 
 이 인터페이스에서 아래의 `+ 추가` 버튼을 클릭하여 지원되는 커스텀 애플리케이션을 추가할 수 있습니다. 애플리케이션을 삭제하려면 각 행의 오른쪽에 있는 `휴지통` 버튼을 클릭하기만 하면 됩니다.
 
 :::note
 
 
-![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
+![=520px](../images/confirmation_dialog_for_manage_app_change_in_image.png)
 :::
 
 <a id="manage-docker-registry"></a>
@@ -1197,11 +1197,11 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 - **자원 프리셋**: 사용 가능한 각 자원 유형(CPU, 메모리, GPU 등)에 대한 동적 필드 묶음입니다. 메모리 필드는 동적 단위 입력(MiB, GiB, TiB, PiB)을 지원합니다.
 - **공유 메모리**: 프리셋에 할당된 공유 메모리 양입니다. 이 값은 **메모리** 값보다 작아야 합니다.
 
-![](../images/modify_resource_preset_dialog.png)
+![=520px](../images/modify_resource_preset_dialog.png)
 
 또한 자원 프리셋 탭 오른쪽 상단의 **프리셋 생성** 버튼을 클릭하여 자원 프리셋을 생성할 수 있습니다. 자원 프리셋 이름은 여전히 고유해야 합니다. 이미 존재하는 이름을 입력하면 **생성**을 클릭할 때 서버에서 요청을 거부하고 오류 메시지가 표시됩니다.
 
-![](../images/create_resource_preset_dialog.png)
+![=520px](../images/create_resource_preset_dialog.png)
 
 <a id="manage-agent-nodes"></a>
 
@@ -1229,7 +1229,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 **실행 중** / **종료됨** 선택기로 아직 노드의 자원을 점유하고 있는 세션과 이미 종료된 세션을 전환하며 볼 수 있으며,
 세션 이름을 클릭하면 해당 세션의 상세 정보가 표시됩니다.
 
-![](../images/detailed_agent_node_usage_information.png)
+![=800px](../images/detailed_agent_node_usage_information.png)
 
 사용자 설정에서 실험적 기능인 **세션 리소스 그리드 뷰**를 활성화하면([실험적 기능](#experimental-features) 섹션 참고)
 **세션** 탭의 새로고침 버튼 옆에 **테이블**과 **그리드**를 전환하는 **보기 모드** 컨트롤도 함께 표시됩니다. 그리드는
@@ -1237,7 +1237,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 정해지고 현재 선택된 **실행 중** / **종료됨** 조건을 그대로 따릅니다. 그리드 자체의 컨트롤에 대한 자세한 내용은
 [세션 목록 보기](#session-list-view-and-refresh) 섹션을 참고하세요.
 
-![](../images/agent_info_sessions_view_mode.png)
+![=800px](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 
@@ -1249,7 +1249,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 - **에이전트 중지**: 에이전트 서비스를 종료합니다. 에이전트가 `ALIVE` 상태일 때만 사용할 수 있습니다.
 - **에이전트 재시작**: 에이전트 서비스를 재시작합니다.
 
-![](../images/agent_watcher_actions.png)
+![=800px](../images/agent_watcher_actions.png)
 
 각 동작을 선택하면 대상 에이전트를 명시하고 이 에이전트에서 실행 중인 세션이 영향을 받을 수 있다고 경고하는 확인
 대화 상자가 열립니다. 확인하면 요청이 전송되고, 시작·중지·재시작이 요청되었다는 메시지가 표시된 뒤 에이전트 상태를
@@ -1293,7 +1293,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 
 이름 열의 **수정**(연필) 액션을 클릭하면 **자원 그룹 수정** 대화 상자가 열려 자원 그룹을 편집할 수 있습니다. **스케줄** 필드에서 연산 세션을 생성하기 위한 스케줄링 방법을 선택할 수 있습니다. 현재 `FIFO`, `LIFO`, `DRF`, `FAIR_SHARE` 네 가지 유형이 있습니다. `FIFO`와 `LIFO`는 작업 대기열에서 먼저 또는 마지막으로 대기열에 등록된 연산 세션을 생성하는 스케줄링 방법입니다. `DRF`는 Dominant Resource Fairness의 약자로, 각 사용자에게 가능한 한 공정하게 자원을 제공하는 것을 목표로 합니다. `FAIR_SHARE`는 과거 사용 패턴을 기반으로 연산 자원을 할당합니다. 자세한 내용은 [Fair Share 스케줄러](#fair-share-scheduler) 섹션을 참고하세요. **활성** 상태를 끄면 자원 그룹을 비활성화할 수 있습니다. **저장**을 클릭하면 변경 내용이 적용됩니다.
 
-![](../images/modify_resource_group.png)
+![=520px](../images/modify_resource_group.png)
 
 
 자원 그룹 편집 대화 상자에는 다음과 같은 추가 필드가 포함되어 있습니다:
@@ -1318,7 +1318,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 
 **자원 그룹 추가** 버튼을 클릭하여 새 자원 그룹을 생성할 수 있습니다. 다른 생성 옵션과 마찬가지로 이미 존재하는 이름으로는 자원 그룹을 생성할 수 없습니다. 이름은 키 값이기 때문입니다.
 
-![](../images/create_resource_group.png)
+![=520px](../images/create_resource_group.png)
 
 <a id="bulk-edit-resource-groups"></a>
 
@@ -1330,7 +1330,7 @@ GitLab 컨테이너 레지스트리를 추가할 때는 추가 정보 필드에 
 2. 툴바에 선택 개수가 표시됩니다. 그 옆의 **일괄 수정**(톱니바퀴) 버튼을 클릭합니다.
 3. **자원 그룹 일괄 수정** 대화 상자가 열립니다.
 
-![](../images/bulk_edit_resource_groups_modal.png)
+![=520px](../images/bulk_edit_resource_groups_modal.png)
 
 대화 상자 상단의 알림에는 변경 대상이 되는 모든 자원 그룹이 나열됩니다. 그 아래에는 **SFTP 스토리지 프록시**
 필드가 있으며, 선택한 자원 그룹 중 하나라도 이미 사용 중인 프록시가 모두 미리 채워집니다.
@@ -1504,7 +1504,7 @@ Backend.AI는 다양한 벤더의 AI 가속기를 폭넓게 지원합니다:
 
 사용자가 멀티 노드 클러스터 세션을 시작하면 Backend.AI는 private 노드 간 통신을 지원하기 위해 오버레이 네트워크를 동적으로 생성합니다. 관리자는 해당 값이 네트워크 속도를 향상시킬 것이 확실한 경우 오버레이 네트워크의 Maximum Transmission Unit (MTU) 값을 설정할 수 있습니다.
 
-![](../images/overlay_network_setting_dialog.png)
+![=374px](../images/overlay_network_setting_dialog.png)
 
 :::note
 Backend.AI Cluster 세션에 대한 자세한 내용은 [Backend.AI 클러스터 연산 세션](#backendai-cluster-compute-session) 섹션을 참고하세요.
@@ -1514,7 +1514,7 @@ Scheduler의 config 버튼을 클릭하여 작업 스케줄러별 구성을 편�
 
 현재 지원되는 스케줄링 방법에는 `FIFO`, `LIFO`, `DRF`가 있습니다. 각 스케줄링 방법은 위의 [스케줄링 방법](#scheduling-methods)과 정확히 동일합니다. 스케줄러 옵션에는 세션 생성 재시도가 포함됩니다. 세션 생성 재시도는 실패한 경우 세션을 생성하기 위한 재시도 횟수를 나타냅니다. 시도 횟수 내에 세션을 생성할 수 없으면 요청이 무시되고 Backend.AI가 다음 요청을 처리합니다. 현재 스케줄러가 `FIFO`인 경우에만 변경이 가능합니다.
 
-![](../images/system_setting_dialog_scheduler_settings.png)
+![=374px](../images/system_setting_dialog_scheduler_settings.png)
 
 :::note
 더 광범위한 설정 컨트롤을 계속 추가할 예정입니다.
@@ -1629,7 +1629,7 @@ RBAC 관리 페이지에서 프로젝트의 역할을 찾지 않고도, 프로�
    없습니다.
 3. **프로젝트 관리자 권한 설정** 대화 상자가 열립니다.
 
-![](../images/set_project_admin_modal.png)
+![=600px](../images/set_project_admin_modal.png)
 
 대화 상자는 다음으로 구성됩니다.
 
