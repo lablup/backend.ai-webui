@@ -16,6 +16,7 @@ import {
   convertToOrderBy,
   handleRowSelectionChange,
 } from '../helper';
+import { unscopeModelCardListFilter } from '../helper/modelCardListFilter';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -182,7 +183,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
 
-  const filter = queryRef.variables.filter ?? undefined;
+  const filter = unscopeModelCardListFilter(queryRef.variables.filter);
   const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;

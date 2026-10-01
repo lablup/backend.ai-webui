@@ -43,6 +43,10 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import {
+  scopeModelCardListFilter,
+  unscopeModelCardListFilter,
+} from '../helper/modelCardListFilter';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -192,6 +196,27 @@ const AdminDeploymentPage: React.FC = () => {
   const [modelCardColumnOverrides, setModelCardColumnOverrides] =
     useBAISettingUserState('table_column_overrides.AdminModelCard');
 
+  // `domainName` is a StringFilter only from BA-5918; older managers list
+  // every domain, as they did before.
+  const modelCardScopeDomain = baiClient.supports('v2-filter-wrapper-inputs')
+    ? currentDomain
+    : undefined;
+  // Every model card load goes through here, so none can drop the domain.
+  const loadScopedModelCardQuery = (
+    variables: AdminModelCardQueryType['variables'],
+    options?: UseQueryLoaderLoadQueryOptions,
+  ) =>
+    loadModelCardQuery(
+      {
+        ...variables,
+        filter: scopeModelCardListFilter(
+          variables.filter,
+          modelCardScopeDomain,
+        ),
+      },
+      options,
+    );
+
   const reloadModelCards = (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
@@ -199,14 +224,14 @@ const AdminDeploymentPage: React.FC = () => {
     const nextLimit = variables.limit ?? 10;
     const nextOffset = variables.offset ?? 0;
     setQueryParams({
-      filter: variables.filter ?? null,
+      filter: unscopeModelCardListFilter(variables.filter) ?? null,
       order: convertFirstOrderByToString(variables.orderBy),
     });
     setTablePaginationOption({
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadModelCardQuery(variables, options);
+    loadScopedModelCardQuery(variables, options);
   };
 
   // --- Prometheus preset tab ---
@@ -323,7 +348,7 @@ const AdminDeploymentPage: React.FC = () => {
       case 'model-store-management': {
         // No longer project-scoped, so loading once is enough.
         if (!modelCardQueryRef) {
-          loadModelCardQuery(
+          loadScopedModelCardQuery(
             {
               filter:
                 (params.filter as AdminModelCardQueryType['variables']['filter']) ??
