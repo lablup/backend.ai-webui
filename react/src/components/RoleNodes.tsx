@@ -69,6 +69,7 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // Auto-assign is only supported on managers >= 26.4.4.
   const supportsAutoAssign = baiClient.supports('role-auto-assign');
+  const supportsRolePreset = baiClient.supports('role-preset-reference');
   const [hiddenColumnKeys, setHiddenColumnKeys] =
     useHiddenColumnKeysSetting('RoleList');
   const [visibleColumnSettingModal, { toggle: toggleColumnSettingModal }] =
@@ -113,6 +114,10 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         }
         scopeType @since(version: "26.9.0a4")
         scopeId @since(version: "26.9.0a4")
+        rolePresetId @since(version: "26.9.0rc3")
+        rolePreset @since(version: "26.9.0rc3") {
+          name
+        }
         scope @since(version: "26.9.0a4") {
           ... on ProjectV2 {
             basicInfo {
@@ -236,6 +241,17 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
+    supportsAutoAssign && {
+      key: 'autoAssign',
+      title: t('rbac.AutoAssign'),
+      dataIndex: 'autoAssign',
+      render: (autoAssign: boolean) => (
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
+          label={autoAssign ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
+    },
     {
       key: 'source',
       title: t('rbac.Source'),
@@ -249,16 +265,22 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
-    supportsAutoAssign && {
-      key: 'autoAssign',
-      title: t('rbac.AutoAssign'),
-      dataIndex: 'autoAssign',
-      render: (autoAssign: boolean) => (
-        <Token
-          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
-          label={autoAssign ? t('general.Active') : t('general.Inactive')}
-        />
-      ),
+    supportsRolePreset && {
+      key: 'rolePreset',
+      title: t('rbac.RolePreset'),
+      render: (_, record: RoleNodeInList) => {
+        if (!record.rolePresetId) return '-';
+        return (
+          <BAIFlex gap="xxs" align="center" wrap="nowrap">
+            {record.rolePreset?.name && <Text>{record.rolePreset.name}</Text>}
+            <BAIFlex align="center" wrap="nowrap">
+              <Text>(</Text>
+              <BAIId uuid={record.rolePresetId} />
+              <Text>)</Text>
+            </BAIFlex>
+          </BAIFlex>
+        );
+      },
     },
     {
       key: 'createdAt',
