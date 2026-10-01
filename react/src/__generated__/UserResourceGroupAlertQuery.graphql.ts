@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0a8ac336d250da198e5089ac7b46d844>>
+ * @generated SignedSource<<11cf209ab191d3f926e3c75c585d2796>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,12 +13,13 @@ export type UserResourceGroupAlertQuery$variables = {
   domainName: string;
   isSuperAdmin: boolean;
   projectId: string;
+  resourceGroupName: string;
 };
 export type UserResourceGroupAlertQuery$data = {
-  readonly adminAllowedResourceGroupsForDomainV2?: {
+  readonly adminAllowedProjectsForResourceGroupV2?: {
     readonly items: ReadonlyArray<string>;
   } | null | undefined;
-  readonly adminAllowedResourceGroupsForProjectV2?: {
+  readonly adminAllowedResourceGroupsForDomainV2?: {
     readonly items: ReadonlyArray<string>;
   } | null | undefined;
   readonly domain?: {
@@ -54,20 +55,18 @@ v2 = {
   "kind": "LocalArgument",
   "name": "projectId"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "resourceGroupName"
+},
+v4 = [
   {
     "alias": null,
     "args": null,
     "kind": "ScalarField",
     "name": "items",
     "storageKey": null
-  }
-],
-v4 = [
-  {
-    "kind": "Variable",
-    "name": "projectId",
-    "variableName": "projectId"
   }
 ],
 v5 = {
@@ -88,17 +87,23 @@ v5 = {
       "kind": "LinkedField",
       "name": "adminAllowedResourceGroupsForDomainV2",
       "plural": false,
-      "selections": (v3/*: any*/),
+      "selections": (v4/*: any*/),
       "storageKey": null
     },
     {
       "alias": null,
-      "args": (v4/*: any*/),
-      "concreteType": "AllowedResourceGroupsPayload",
+      "args": [
+        {
+          "kind": "Variable",
+          "name": "resourceGroupName",
+          "variableName": "resourceGroupName"
+        }
+      ],
+      "concreteType": "AllowedProjectsPayload",
       "kind": "LinkedField",
-      "name": "adminAllowedResourceGroupsForProjectV2",
+      "name": "adminAllowedProjectsForResourceGroupV2",
       "plural": false,
-      "selections": (v3/*: any*/),
+      "selections": (v4/*: any*/),
       "storageKey": null
     }
   ]
@@ -156,7 +161,14 @@ v7 = {
     }
   ]
 },
-v8 = {
+v8 = [
+  {
+    "kind": "Variable",
+    "name": "projectId",
+    "variableName": "projectId"
+  }
+],
+v9 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
@@ -179,7 +191,8 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -189,13 +202,13 @@ return {
       (v7/*: any*/),
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v8/*: any*/),
         "concreteType": "ProjectV2",
         "kind": "LinkedField",
         "name": "projectV2",
         "plural": false,
         "selections": [
-          (v8/*: any*/)
+          (v9/*: any*/)
         ],
         "storageKey": null
       }
@@ -208,6 +221,7 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v0/*: any*/),
+      (v3/*: any*/),
       (v1/*: any*/)
     ],
     "kind": "Operation",
@@ -217,13 +231,13 @@ return {
       (v7/*: any*/),
       {
         "alias": null,
-        "args": (v4/*: any*/),
+        "args": (v8/*: any*/),
         "concreteType": "ProjectV2",
         "kind": "LinkedField",
         "name": "projectV2",
         "plural": false,
         "selections": [
-          (v8/*: any*/),
+          (v9/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -237,16 +251,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "178c1fbd8019faae1b62a8aa8ba2d712",
+    "cacheID": "0124f35eb1e61217a353aa04f7e7d16e",
     "id": null,
     "metadata": {},
     "name": "UserResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query UserResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  adminAllowedResourceGroupsForProjectV2(projectId: $projectId) @include(if: $isSuperAdmin) {\n    items\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
+    "text": "query UserResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  adminAllowedProjectsForResourceGroupV2(resourceGroupName: $resourceGroupName) @include(if: $isSuperAdmin) {\n    items\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7e1bedf7f563775119bb492456959a49";
+(node as any).hash = "45fd1b9ccfab09b6b7a7ae1024222b88";
 
 export default node;

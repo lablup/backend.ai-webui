@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e2df971e4ee3ebc8b214685ea65c1e18>>
+ * @generated SignedSource<<6406e9fcf7f5a4d959c0ba96dbbfbf3f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,12 +13,13 @@ export type ProjectResourceGroupWarningIconQuery$variables = {
   domainName: string;
   isSuperAdmin: boolean;
   projectId: string;
+  resourceGroupName: string;
 };
 export type ProjectResourceGroupWarningIconQuery$data = {
-  readonly adminAllowedResourceGroupsForDomainV2?: {
+  readonly adminAllowedProjectsForResourceGroupV2?: {
     readonly items: ReadonlyArray<string>;
   } | null | undefined;
-  readonly adminAllowedResourceGroupsForProjectV2?: {
+  readonly adminAllowedResourceGroupsForDomainV2?: {
     readonly items: ReadonlyArray<string>;
   } | null | undefined;
   readonly domain?: {
@@ -49,7 +50,12 @@ v2 = {
   "kind": "LocalArgument",
   "name": "projectId"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "resourceGroupName"
+},
+v4 = [
   {
     "alias": null,
     "args": null,
@@ -58,7 +64,7 @@ v3 = [
     "storageKey": null
   }
 ],
-v4 = [
+v5 = [
   {
     "alias": null,
     "args": null,
@@ -67,7 +73,7 @@ v4 = [
     "storageKey": null
   }
 ],
-v5 = [
+v6 = [
   {
     "condition": "isSuperAdmin",
     "kind": "Condition",
@@ -78,15 +84,15 @@ v5 = [
         "args": [
           {
             "kind": "Variable",
-            "name": "projectId",
-            "variableName": "projectId"
+            "name": "resourceGroupName",
+            "variableName": "resourceGroupName"
           }
         ],
-        "concreteType": "AllowedResourceGroupsPayload",
+        "concreteType": "AllowedProjectsPayload",
         "kind": "LinkedField",
-        "name": "adminAllowedResourceGroupsForProjectV2",
+        "name": "adminAllowedProjectsForResourceGroupV2",
         "plural": false,
-        "selections": (v3/*: any*/),
+        "selections": (v4/*: any*/),
         "storageKey": null
       },
       {
@@ -102,7 +108,7 @@ v5 = [
         "kind": "LinkedField",
         "name": "adminAllowedResourceGroupsForDomainV2",
         "plural": false,
-        "selections": (v3/*: any*/),
+        "selections": (v4/*: any*/),
         "storageKey": null
       }
     ]
@@ -130,7 +136,7 @@ v5 = [
         "kind": "LinkedField",
         "name": "group",
         "plural": false,
-        "selections": (v4/*: any*/),
+        "selections": (v5/*: any*/),
         "storageKey": null
       },
       {
@@ -146,7 +152,7 @@ v5 = [
         "kind": "LinkedField",
         "name": "domain",
         "plural": false,
-        "selections": (v4/*: any*/),
+        "selections": (v5/*: any*/),
         "storageKey": null
       }
     ]
@@ -157,12 +163,13 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectResourceGroupWarningIconQuery",
-    "selections": (v5/*: any*/),
+    "selections": (v6/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -171,23 +178,24 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v0/*: any*/),
+      (v3/*: any*/),
       (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectResourceGroupWarningIconQuery",
-    "selections": (v5/*: any*/)
+    "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "624929937312bd5b5872f8ad08194712",
+    "cacheID": "78656bb05f907ef4e5cbf3b803ab8ff5",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedResourceGroupsForProjectV2(projectId: $projectId) @include(if: $isSuperAdmin) {\n    items\n  }\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n}\n"
+    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedProjectsForResourceGroupV2(resourceGroupName: $resourceGroupName) @include(if: $isSuperAdmin) {\n    items\n  }\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "830b385a110f4d551541fea1fb5a4d05";
+(node as any).hash = "d034dd8e163d1f7e11b077665e91ac1a";
 
 export default node;

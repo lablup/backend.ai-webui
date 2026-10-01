@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8ebc1eb98e64290c52ab02ebda4e22e4>>
+ * @generated SignedSource<<dedcb328055cfdd9e59836cedc054dd9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,9 +13,10 @@ export type ProjectResourceGroupAlertQuery$variables = {
   domainName: string;
   isSuperAdmin: boolean;
   projectId: string;
+  resourceGroupName: string;
 };
 export type ProjectResourceGroupAlertQuery$data = {
-  readonly adminAllowedResourceGroupsForProjectV2?: {
+  readonly adminAllowedProjectsForResourceGroupV2?: {
     readonly items: ReadonlyArray<string>;
   } | null | undefined;
   readonly group?: {
@@ -43,7 +44,12 @@ v2 = {
   "kind": "LocalArgument",
   "name": "projectId"
 },
-v3 = [
+v3 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "resourceGroupName"
+},
+v4 = [
   {
     "condition": "isSuperAdmin",
     "kind": "Condition",
@@ -54,13 +60,13 @@ v3 = [
         "args": [
           {
             "kind": "Variable",
-            "name": "projectId",
-            "variableName": "projectId"
+            "name": "resourceGroupName",
+            "variableName": "resourceGroupName"
           }
         ],
-        "concreteType": "AllowedResourceGroupsPayload",
+        "concreteType": "AllowedProjectsPayload",
         "kind": "LinkedField",
-        "name": "adminAllowedResourceGroupsForProjectV2",
+        "name": "adminAllowedProjectsForResourceGroupV2",
         "plural": false,
         "selections": [
           {
@@ -117,12 +123,13 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/)
+      (v2/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectResourceGroupAlertQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v4/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
@@ -131,23 +138,24 @@ return {
     "argumentDefinitions": [
       (v2/*: any*/),
       (v0/*: any*/),
+      (v3/*: any*/),
       (v1/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectResourceGroupAlertQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "1886dfec35fa2291b1e36c520e929322",
+    "cacheID": "2a203eeabef3fd7c27b1e5fdc78a0c50",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedResourceGroupsForProjectV2(projectId: $projectId) @include(if: $isSuperAdmin) {\n    items\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n}\n"
+    "text": "query ProjectResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedProjectsForResourceGroupV2(resourceGroupName: $resourceGroupName) @include(if: $isSuperAdmin) {\n    items\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3279f8ca0c602eb2d6d7074fdc1e84b9";
+(node as any).hash = "166a2ba10c6a0eb7770e7ce0aa6325f0";
 
 export default node;

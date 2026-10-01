@@ -24,8 +24,8 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // `adminAllowedResourceGroups*V2` is superadmin-only; a domain admin reads
-  // the legacy field (FR-4117 role probe).
+  // The V2 project list is superadmin-only; a domain admin reads the legacy
+  // field (FR-4117 role probe).
   const isSuperAdmin = !!baiClient.is_superadmin;
 
   const { projectId, domainName, resourceGroupName } = useFragment(
@@ -39,16 +39,21 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
     projectFairShareFrgmt,
   );
 
-  const { adminAllowedResourceGroupsForProjectV2, group } =
+  // `adminAllowedResourceGroupsForProjectV2` answers the caller's reachable
+  // set, not the project's association (BA-7921); the association is only
+  // exposed from the resource group's side.
+  const { adminAllowedProjectsForResourceGroupV2, group } =
     useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
       graphql`
         query ProjectResourceGroupAlertQuery(
           $projectId: UUID!
           $domainName: String!
+          $resourceGroupName: String!
           $isSuperAdmin: Boolean!
         ) {
-          adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
-            @include(if: $isSuperAdmin) {
+          adminAllowedProjectsForResourceGroupV2(
+            resourceGroupName: $resourceGroupName
+          ) @include(if: $isSuperAdmin) {
             items
           }
           group(id: $projectId, domain_name: $domainName)
@@ -57,21 +62,17 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
           }
         }
       `,
-      { projectId, domainName, isSuperAdmin },
+      { projectId, domainName, resourceGroupName, isSuperAdmin },
       {
         fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
       },
     );
 
-  const allowedResourceGroups =
-    adminAllowedResourceGroupsForProjectV2?.items ??
-    group?.scaling_groups ??
-    [];
+  const isAllowed = isSuperAdmin
+    ? _.includes(adminAllowedProjectsForResourceGroupV2?.items, projectId)
+    : _.includes(group?.scaling_groups, resourceGroupName);
 
-  if (
-    !resourceGroupName ||
-    _.includes(allowedResourceGroups, resourceGroupName)
-  ) {
+  if (!resourceGroupName || isAllowed) {
     return null;
   }
 

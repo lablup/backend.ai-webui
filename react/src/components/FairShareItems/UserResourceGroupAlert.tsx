@@ -27,13 +27,16 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // `adminAllowedResourceGroups*V2` is superadmin-only; a domain admin reads
-  // the legacy fields (FR-4117 role probe). `projectV2` answers both roles.
+  // The V2 lists are superadmin-only; a domain admin reads the legacy fields
+  // (FR-4117 role probe). `projectV2` answers both roles.
   const isSuperAdmin = !!baiClient.is_superadmin;
 
+  // `adminAllowedResourceGroupsForProjectV2` answers the caller's reachable
+  // set, not the project's association (BA-7921); the association is only
+  // exposed from the resource group's side.
   const {
     adminAllowedResourceGroupsForDomainV2,
-    adminAllowedResourceGroupsForProjectV2,
+    adminAllowedProjectsForResourceGroupV2,
     domain,
     group,
     projectV2,
@@ -42,14 +45,16 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
       query UserResourceGroupAlertQuery(
         $projectId: UUID!
         $domainName: String!
+        $resourceGroupName: String!
         $isSuperAdmin: Boolean!
       ) {
         adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
           @include(if: $isSuperAdmin) {
           items
         }
-        adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
-          @include(if: $isSuperAdmin) {
+        adminAllowedProjectsForResourceGroupV2(
+          resourceGroupName: $resourceGroupName
+        ) @include(if: $isSuperAdmin) {
           items
         }
         domain(name: $domainName) @skip(if: $isSuperAdmin) {
@@ -66,7 +71,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
         }
       }
     `,
-    { projectId, domainName, isSuperAdmin },
+    { projectId, domainName, resourceGroupName, isSuperAdmin },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -76,20 +81,15 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
-  const domainResourceGroups =
-    adminAllowedResourceGroupsForDomainV2?.items ??
-    domain?.scaling_groups ??
-    [];
-  const projectResourceGroups =
-    adminAllowedResourceGroupsForProjectV2?.items ??
-    group?.scaling_groups ??
-    [];
+  const isDomainAllowed = _.includes(
+    adminAllowedResourceGroupsForDomainV2?.items ?? domain?.scaling_groups,
+    resourceGroupName,
+  );
+  const isProjectAllowed = isSuperAdmin
+    ? _.includes(adminAllowedProjectsForResourceGroupV2?.items, projectId)
+    : _.includes(group?.scaling_groups, resourceGroupName);
 
-  if (
-    !resourceGroupName ||
-    _.includes(domainResourceGroups, resourceGroupName) ||
-    _.includes(projectResourceGroups, resourceGroupName)
-  ) {
+  if (!resourceGroupName || isDomainAllowed || isProjectAllowed) {
     return null;
   }
 
