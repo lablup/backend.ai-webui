@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e0e8ac2722fb667ae9c07fe58ee07404>>
+ * @generated SignedSource<<2b242027746c3529490390517bd4dc86>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,16 +10,11 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type useGetAvailableFolderNameQuery$variables = {
-  legacyFilter: string;
   name: string;
-  readsV2: boolean;
 };
 export type useGetAvailableFolderNameQuery$data = {
-  readonly myVfolders?: {
+  readonly myVfolders: {
     readonly count: number;
-  } | null | undefined;
-  readonly vfolder_nodes?: {
-    readonly count: number | null | undefined;
   } | null | undefined;
 };
 export type useGetAvailableFolderNameQuery = {
@@ -28,138 +23,86 @@ export type useGetAvailableFolderNameQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "legacyFilter"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "name"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "readsV2"
-},
-v3 = [
+var v0 = [
   {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "count",
-    "storageKey": null
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "name"
   }
 ],
-v4 = [
+v1 = [
   {
-    "condition": "readsV2",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
+    "alias": null,
+    "args": [
       {
-        "alias": null,
-        "args": [
+        "fields": [
           {
             "fields": [
               {
-                "fields": [
-                  {
-                    "kind": "Variable",
-                    "name": "equals",
-                    "variableName": "name"
-                  }
-                ],
-                "kind": "ObjectValue",
-                "name": "name"
-              },
-              {
-                "kind": "Literal",
-                "name": "status",
-                "value": {
-                  "notEquals": "DELETE_COMPLETE"
-                }
+                "kind": "Variable",
+                "name": "equals",
+                "variableName": "name"
               }
             ],
             "kind": "ObjectValue",
-            "name": "filter"
-          }
-        ],
-        "concreteType": "VFolderConnection",
-        "kind": "LinkedField",
-        "name": "myVfolders",
-        "plural": false,
-        "selections": (v3/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
-  {
-    "condition": "readsV2",
-    "kind": "Condition",
-    "passingValue": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "filter",
-            "variableName": "legacyFilter"
+            "name": "name"
           },
           {
             "kind": "Literal",
-            "name": "permission",
-            "value": "read_attribute"
+            "name": "status",
+            "value": {
+              "notEquals": "DELETE_COMPLETE"
+            }
           }
         ],
-        "concreteType": "VirtualFolderConnection",
-        "kind": "LinkedField",
-        "name": "vfolder_nodes",
-        "plural": false,
-        "selections": (v3/*: any*/),
+        "kind": "ObjectValue",
+        "name": "filter"
+      }
+    ],
+    "concreteType": "VFolderConnection",
+    "kind": "LinkedField",
+    "name": "myVfolders",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "count",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "useGetAvailableFolderNameQuery",
-    "selections": (v4/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "useGetAvailableFolderNameQuery",
-    "selections": (v4/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "b5e933e49c50c1a8b0377db1835f511f",
+    "cacheID": "34241e6cf2072260c2f4f5a6fb7513a5",
     "id": null,
     "metadata": {},
     "name": "useGetAvailableFolderNameQuery",
     "operationKind": "query",
-    "text": "query useGetAvailableFolderNameQuery(\n  $name: String!\n  $legacyFilter: String!\n  $readsV2: Boolean!\n) {\n  myVfolders(filter: {name: {equals: $name}, status: {notEquals: DELETE_COMPLETE}}) @include(if: $readsV2) @since(version: \"26.4.2\") {\n    count\n  }\n  vfolder_nodes(filter: $legacyFilter, permission: \"read_attribute\") @skip(if: $readsV2) @deprecatedSince(version: \"26.4.2\") {\n    count\n  }\n}\n"
+    "text": "query useGetAvailableFolderNameQuery(\n  $name: String!\n) {\n  myVfolders(filter: {name: {equals: $name}, status: {notEquals: DELETE_COMPLETE}}) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c297edce2f6bc2b65806e05809dbf78c";
+(node as any).hash = "b9ae41e4d9135d59c63afcd071429829";
 
 export default node;

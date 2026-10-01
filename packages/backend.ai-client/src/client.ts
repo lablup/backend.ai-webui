@@ -906,10 +906,6 @@ export class Client {
       this._features['deployment-preset'] = true;
       // `adminUnblockUser` clears a failed-login block (FR-4150).
       this._features['admin-unblock-user'] = true;
-      // Strawberry `myVfolders` / `projectVfolders` / `vfolderV2` connections
-      // (schema: "Added in 26.4.2"); below this the vfolder lists stay on REST
-      // `GET /folders` and the Graphene `vfolder_nodes` connection. FR-4116.
-      this._features['vfolder-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;

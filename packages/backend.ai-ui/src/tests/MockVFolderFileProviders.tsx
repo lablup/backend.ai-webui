@@ -32,7 +32,7 @@ export interface MockVFolder {
 export interface MockVFolderFileProvidersProps {
   vfolders?: Array<MockVFolder>;
   trees?: MockVFolderFileTrees | (() => MockVFolderFileTrees);
-  /** Rows the mocked REST `GET /folders` request answers with. */
+  /** Rows both `myVfolders` and the mocked REST `GET /folders` answer with. */
   folders?: Array<LegacyVFolder>;
   /** Fallback for a Suspense boundary around `children`; omit to render bare. */
   suspenseFallback?: React.ReactNode;
@@ -41,9 +41,10 @@ export interface MockVFolderFileProvidersProps {
 
 /**
  * Everything a vfolder file-browsing story needs without a backend: a mock
- * Relay environment answering `vfolder_nodes` / the picker's `vfolderV2` from
- * `vfolders`, and a mock `BAIClient` whose file APIs read and write `trees`
- * and whose signed `GET /folders` request answers `folders`.
+ * Relay environment answering `myVfolders` from `folders` and
+ * `vfolder_nodes` / the picker's `vfolderV2` from `vfolders`, and a mock
+ * `BAIClient` whose file APIs read and write `trees` and whose signed
+ * `GET /folders` request answers `folders`.
  */
 const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
   folders,
@@ -78,6 +79,38 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
       },
     }));
 
+    // The REST rows as `myVfolders` nodes — the inverse of `toLegacyVFolder`,
+    // so the mount select reads the same fixture from either source.
+    const MOUNT_LEVEL_BY_REST_PERMISSION: Record<string, string> = {
+      ro: 'READ_ONLY',
+      rw: 'READ_WRITE',
+      wd: 'RW_DELETE',
+    };
+    const myVfolderEdges = (folders ?? []).map((folder) => ({
+      node: {
+        id: toGlobalId('VFolder', convertToUUID(folder.id)),
+        status: folder.status.toUpperCase().replace(/-/g, '_'),
+        host: folder.host,
+        metadata: {
+          name: folder.name,
+          usageMode: folder.usage_mode.toUpperCase(),
+          quotaScopeId: folder.quota_scope_id,
+          createdAt: folder.created_at,
+          cloneable: folder.cloneable,
+        },
+        accessControl: {
+          permission:
+            MOUNT_LEVEL_BY_REST_PERMISSION[folder.permission] ?? 'NONE',
+          ownershipType: folder.ownership_type.toUpperCase(),
+        },
+        ownership: {
+          userId: folder.user,
+          projectId: folder.group,
+          creatorEmail: folder.creator || null,
+        },
+      },
+    }));
+
     const queuePickerOperation = (rowId: string) =>
       env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
         vfolderId: rowId,
@@ -96,6 +129,10 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
           vfolders.find((folder) => folder.row_id === vfolderId) ?? vfolders[0];
         return MockPayloadGenerator.generate(operation, {
           Query: () => ({
+            myVfolders: {
+              count: myVfolderEdges.length,
+              edges: myVfolderEdges,
+            },
             vfolder_nodes: { count: edges.length, edges },
             vfolderV2: requested
               ? {
