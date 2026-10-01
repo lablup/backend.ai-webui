@@ -99,7 +99,7 @@ const mockClient = {
   supports: () => true,
   is_superadmin: true,
   _config: { domainName: 'default' },
-} as Partial<BAIClient> as BAIClient;
+} as unknown as BAIClient;
 
 const Sandbox: React.FC<
   Omit<ComponentProps<typeof BAIUserSelect>, 'value' | 'onChange'> & {
