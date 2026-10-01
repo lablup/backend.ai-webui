@@ -399,9 +399,8 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
               />
               <BAIGraphQLPropertyFilter<VFolderFilter>
                 data-testid="vfolder-filter"
-                // TODO(needs-backend): V2 `VFolderFilter` does not expose
-                // ownership_type, permission, or quota_scope_id filters; only
-                // name/host/status/cloneable are supported.
+                // TODO(needs-backend): V2 `VFolderFilter` has no ownership_type,
+                // permission or quota_scope_id filter (FR-4142).
                 filterProperties={[
                   {
                     key: 'name',

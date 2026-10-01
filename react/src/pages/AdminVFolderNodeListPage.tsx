@@ -63,17 +63,12 @@ const DELETE_STATUSES = [
   'DELETE_ERROR',
   'DELETE_COMPLETE',
 ] as const;
-const VISIBLE_DELETED_STATUSES = [
-  'DELETE_PENDING',
-  'DELETE_ONGOING',
-  'DELETE_ERROR',
-] as const;
 
 const STATUS_FILTER_ACTIVE = {
   status: { notIn: DELETE_STATUSES },
 } as const;
 const STATUS_FILTER_DELETED = {
-  status: { in: VISIBLE_DELETED_STATUSES },
+  status: { in: DELETE_STATUSES },
 } as const;
 
 const DEFAULT_ORDER = '-created_at';
