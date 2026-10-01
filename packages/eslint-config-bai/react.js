@@ -2,13 +2,13 @@ import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
 import importPlugin from "eslint-plugin-import";
 
-// Without `to`, BAILink renders a <button> whose text sits in an inner Text, so
-// root `textOverflow` never reaches it and the name hard-clips (FR-3686).
+// Without `to`, or with `type="disabled"`, BAILink renders a <button> whose text
+// sits in an inner Text, so root `textOverflow` never reaches it (FR-3686).
 export const bailinkEllipsisRestriction = {
   selector:
-    "JSXOpeningElement[name.name='BAILink']:not(:has(JSXAttribute[name.name='to'])) > JSXAttribute[name.name='style'] Property[key.name='textOverflow']",
+    "JSXOpeningElement[name.name='BAILink']:matches(:not(:has(JSXAttribute[name.name='to'])), :has(JSXAttribute[name.name='type'][value.value='disabled'])) > JSXAttribute[name.name='style'] Property[key.name='textOverflow']",
   message:
-    "`textOverflow` in a BAILink's `style` cannot ellipsize a link without `to` — its text lives in an inner element. Use the `ellipsis` prop instead (FR-3686).",
+    "`textOverflow` in a BAILink's `style` cannot ellipsize a link rendered as a button (no `to`, or `type=\"disabled\"`) — its text lives in an inner element. Use the `ellipsis` prop instead (FR-3686).",
 };
 
 export const react = [
