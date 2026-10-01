@@ -110,7 +110,7 @@ export interface FormItemProps<Values = any> extends Omit<
   tooltip?: React.ReactNode | FormItemTooltipConfig;
   /**
    * Actions for the label row: far end in vertical layout, right after the
-   * label in horizontal / inline layout.
+   * label in horizontal / inline layout. Needs a `label`.
    */
   labelExtra?: React.ReactNode;
   extra?: React.ReactNode;
