@@ -93,11 +93,33 @@ const fetchFn: FetchFunction = async (
     // @ts-ignore
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo)
+      .then((res: any) => {
+        // A gateway reports an upstream HTTP failure as a 200 with all-null root
+        // fields; throw it so the `.catch` below handles it like a direct one.
+        const upstream = res?.errors?.find(
+          (e: any) => e?.extensions?.response?.status >= 400,
+        )?.extensions?.response;
+        if (upstream && !Object.values(res.data ?? {}).some((v) => v != null)) {
+          const detail = upstream.body?.msg ?? res.errors[0]?.message;
+          throw {
+            isError: true,
+            ...upstream.body,
+            statusCode: upstream.status,
+            statusText: upstream.statusText,
+            message: detail,
+            description: detail,
+          };
+        }
+        return res;
+      })
       .catch((err: any) => {
         if (err.isError && err.statusCode === 401) {
-          const error = new Error('GraphQL Authorization Error');
-          error.name = 'AuthorizationError';
-          throw error;
+          // The manager's IP-block 401 has no distinct error code, only this msg.
+          const isIpBlocked = /is not allowed IP address/.test(err.description);
+          throw Object.assign(new Error('GraphQL Authorization Error'), {
+            name: 'AuthorizationError',
+            description: isIpBlocked ? err.description : undefined,
+          });
         }
         throw err;
       })) || {};
