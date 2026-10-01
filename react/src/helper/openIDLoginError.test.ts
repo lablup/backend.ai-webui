@@ -53,7 +53,10 @@ describe('resolveOpenIDLoginErrorKey', () => {
     );
   });
 
-  it('truncates an overly long unknown code', () => {
-    expect(resolveOpenIDLoginErrorKey('x'.repeat(200)).code).toHaveLength(64);
+  it('does not echo values that are not code-shaped', () => {
+    expect(resolveOpenIDLoginErrorKey('x'.repeat(65)).code).toBe('invalid');
+    expect(
+      resolveOpenIDLoginErrorKey('Account locked. Call 1-800-000').code,
+    ).toBe('invalid');
   });
 });

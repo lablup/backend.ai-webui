@@ -18,11 +18,12 @@ const OPENID_LOGIN_ERROR_KEYS: Record<string, string> = {
   'internal-server-error': 'login.singleSignOn.OpenIDInternalServerError',
 };
 
-const MAX_DISPLAYED_CODE_LENGTH = 64;
+// Only echo code-shaped values, so a crafted link cannot put prose in the banner.
+const DISPLAYABLE_CODE = /^[A-Za-z0-9_-]{1,64}$/;
 
 /**
  * Resolve a `bai_error` value to the i18n key of its description. Unknown
- * values fall back to a generic message that shows the (truncated) code.
+ * values fall back to a generic message that shows the code.
  */
 export const resolveOpenIDLoginErrorKey = (
   code: string,
@@ -33,6 +34,6 @@ export const resolveOpenIDLoginErrorKey = (
   }
   return {
     key: 'login.singleSignOn.OpenIDUnknownError',
-    code: trimmed.slice(0, MAX_DISPLAYED_CODE_LENGTH),
+    code: DISPLAYABLE_CODE.test(trimmed) ? trimmed : 'invalid',
   };
 };
