@@ -760,7 +760,41 @@
       "scope": "admin",
       "path": "/admin/data",
       "labelKey": "webui.menu.Data",
-      "tabs": [],
+      "tabs": [
+        {
+          "param": "mode",
+          "key": "all",
+          "labelKey": "data.All"
+        },
+        {
+          "param": "mode",
+          "key": "automount",
+          "labelKey": "data.AutoMount"
+        },
+        {
+          "param": "mode",
+          "key": "data",
+          "labelKey": "data.Pipeline"
+        },
+        {
+          "param": "mode",
+          "key": "general",
+          "labelKey": "data.General"
+        },
+        {
+          "param": "mode",
+          "key": "model",
+          "labelKey": "data.Models"
+        },
+        {
+          "param": "statusCategory",
+          "key": "active"
+        },
+        {
+          "param": "statusCategory",
+          "key": "deleted"
+        }
+      ],
       "settings": [],
       "keys": [
         "adminDeploymentPreset.ClusterMode",
@@ -783,7 +817,6 @@
         "adminDeploymentPreset.modelDef.HealthCheckMaxRetries",
         "adminDeploymentPreset.modelDef.HealthCheckMaxWaitTime",
         "adminDeploymentPreset.modelDef.HealthCheckPath",
-        "button.Apply",
         "button.Confirm",
         "button.DontSave",
         "button.No",
@@ -791,9 +824,7 @@
         "button.Yes",
         "credential.LastUsed",
         "data.Active",
-        "data.All",
         "data.AllowsLettersNumbersAnd-_Dot",
-        "data.AutoMount",
         "data.AutomountFolderCreationDesc",
         "data.AutomountFolderNameMustStartWithDot",
         "data.BelongsToDifferentProject",
@@ -808,21 +839,18 @@
         "data.FolderNameTooLong",
         "data.Foldername",
         "data.Folders",
-        "data.General",
         "data.Host",
+        "data.HostDetails",
         "data.InvalidEmail",
         "data.ModelStore",
-        "data.Models",
         "data.NotInProject",
         "data.Permission",
-        "data.Pipeline",
+        "data.QuotaPerStorageVolume",
         "data.QuotaScopeId",
         "data.ReadOnly",
         "data.ReadWrite",
-        "data.SearchByName",
         "data.SelectStorageHost",
         "data.SharedFolderPermission",
-        "data.Type",
         "data.UsageMode",
         "data.User",
         "data.explorer.EditFile",
@@ -850,11 +878,12 @@
         "data.folders.Control",
         "data.folders.CreateModelFolderOnlyInExclusiveProject",
         "data.folders.CreatedAt",
-        "data.folders.Creator",
         "data.folders.Delete",
+        "data.folders.DeleteFailureDescription",
         "data.folders.DeleteForever",
         "data.folders.DeleteForeverDescription",
         "data.folders.DeletionAlreadyStarted",
+        "data.folders.ErrorMessage",
         "data.folders.ExcludedFolders",
         "data.folders.FailedToDeleteFolders",
         "data.folders.FileRenamed",
@@ -868,7 +897,6 @@
         "data.folders.KickOut",
         "data.folders.KickOutConfirm",
         "data.folders.Location",
-        "data.folders.ManageProjectFolderInAdmin",
         "data.folders.MaxFiles",
         "data.folders.MaxFolderQuota",
         "data.folders.MaxSize",
@@ -880,10 +908,10 @@
         "data.folders.MoveToTrashMultipleDescription",
         "data.folders.MovedToTrashBin",
         "data.folders.MultipleFolderDeleted",
+        "data.folders.MultipleFolderDeletedForever",
         "data.folders.MultipleFolderRestored",
         "data.folders.Name",
         "data.folders.NoDeletePermission",
-        "data.folders.NoRestorePermission",
         "data.folders.NumberOfFiles",
         "data.folders.OpenAFolder",
         "data.folders.Owner",
@@ -936,7 +964,6 @@
         "general.Disabled",
         "general.E-Mail",
         "general.General",
-        "general.ID",
         "maxLength.64chars",
         "modelService.CreateNewDeploymentWithPreset",
         "modelService.DeployAsService",
@@ -954,7 +981,7 @@
         "projectSelect.PersonalProjectCannotBeRemoved",
         "projectSelect.ProjectAdminBadge",
         "session.GoToUploadSessionList",
-        "settings.SearchPlaceholder",
+        "storageHost.QuotaDoesNotSupported",
         "storageHost.quotaSettings.SelectProject",
         "webui.menu.InvalidBlankEmail"
       ]
