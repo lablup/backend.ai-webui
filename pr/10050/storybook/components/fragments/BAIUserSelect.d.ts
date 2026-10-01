@@ -1,19 +1,6 @@
-import { BAIUserSelectAdminPaginatedQuery } from '../../__generated__/BAIUserSelectAdminPaginatedQuery.graphql';
+import { BAIUserSelectScopedPaginatedQuery } from '../../__generated__/BAIUserSelectScopedPaginatedQuery.graphql';
 import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
-export type BAIUserSelectFilter = NonNullable<BAIUserSelectAdminPaginatedQuery['variables']['filter']>;
-/**
- * Which users the picker lists. `admin` needs a super-admin, `domain` a
- * domain admin of that domain, `project` a member of that project.
- */
-export type BAIUserSelectScope = {
-    type: 'admin';
-} | {
-    type: 'domain';
-    domainName: string;
-} | {
-    type: 'project';
-    projectId: string;
-};
+export type BAIUserSelectFilter = NonNullable<BAIUserSelectScopedPaginatedQuery['variables']['filter']>;
 export interface BAIUserSelectUser {
     id: string;
     email: string | null | undefined;
@@ -22,7 +9,7 @@ export interface BAIUserSelectUser {
 export interface BAIUserSelectRef {
     refetch: () => void;
 }
-export interface BAIUserSelectProps extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'> {
+export interface BAIUserSelectBaseProps extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'> {
     /** Plain key(s) — the email, or the local user id under `valuePropName="id"`. */
     value?: string | Array<string> | null;
     /**
@@ -30,14 +17,21 @@ export interface BAIUserSelectProps extends Omit<BAIComplexSelectProps, 'options
      * show the email while the raw UUID goes into a filter or mutation input.
      */
     onChange?: (value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void;
-    /** Required: an admin page takes it from `useAdminUserSelectScope()`. */
-    scope: BAIUserSelectScope;
     filter?: BAIUserSelectFilter;
     excludeInactive?: boolean;
     valuePropName?: 'id' | 'email';
     open?: boolean;
     defaultOpen?: boolean;
     ref?: React.Ref<BAIUserSelectRef>;
+}
+type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
+/** The picker over `scopedUsersV2`; the scope is the only thing callers vary. */
+export declare const ScopedUserOptions: React.FC<BAIUserSelectBaseProps & {
+    userScope: UserScope;
+}>;
+export interface BAIUserSelectProps extends BAIUserSelectBaseProps {
+    /** The project whose members are listed. */
+    projectId: string;
 }
 declare const BAIUserSelect: React.FC<BAIUserSelectProps>;
 export default BAIUserSelect;

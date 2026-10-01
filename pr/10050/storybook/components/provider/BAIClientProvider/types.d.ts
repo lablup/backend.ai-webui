@@ -20,7 +20,6 @@ export interface BAIClient {
     };
     current_group_id: () => string;
     current_group: string;
-    is_superadmin?: boolean;
     user_uuid: string;
     email: string;
     accessKey: string;

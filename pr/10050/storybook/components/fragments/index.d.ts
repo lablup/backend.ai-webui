@@ -78,8 +78,9 @@ export type { BAIAvailablePresetSelectProps, BAIAvailablePresetSelectRef, Astryx
 export { default as BAIRuntimeVariantSelect } from './BAIRuntimeVariantSelect';
 export type { BAIRuntimeVariantSelectProps, BAIRuntimeVariantSelectRef, RuntimeVariantNode, } from './BAIRuntimeVariantSelect';
 export { default as BAIUserSelect } from './BAIUserSelect';
-export type { BAIUserSelectProps, BAIUserSelectFilter, BAIUserSelectScope, BAIUserSelectUser, BAIUserSelectRef, } from './BAIUserSelect';
-export { default as useAdminUserSelectScope } from './useAdminUserSelectScope';
+export type { BAIUserSelectProps, BAIUserSelectBaseProps, BAIUserSelectFilter, BAIUserSelectUser, BAIUserSelectRef, } from './BAIUserSelect';
+export { default as BAIAdminUserSelect } from './BAIAdminUserSelect';
+export type { BAIAdminUserSelectProps } from './BAIAdminUserSelect';
 export { default as BAIProjectSelect } from './BAIProjectSelect';
 export type { BAIProjectSelectProps, AstryxProjectNode, BAIProjectSelectRef, } from './BAIProjectSelect';
 export { default as BAIKeypairSelect } from './BAIKeypairSelect';
