@@ -27,7 +27,12 @@ describe('sanitizeDeploymentOrder', () => {
   it('keeps a known sorter, in either direction', () => {
     expect(sanitizeDeploymentOrder('name')).toBe('name');
     expect(sanitizeDeploymentOrder('-createdAt')).toBe('-createdAt');
-    expect(sanitizeDeploymentOrder('-domain')).toBe('-domain');
+    expect(sanitizeDeploymentOrder('-project')).toBe('-project');
+  });
+
+  it('drops a domain sorter: the WebUI works in one domain', () => {
+    expect(sanitizeDeploymentOrder('domain')).toBeNull();
+    expect(sanitizeDeploymentOrder('-domain')).toBeNull();
   });
 
   it('drops an order naming no sorter at all', () => {
