@@ -579,9 +579,18 @@ const ImageEnvironmentSelectFormItems: React.FC<
               <DropdownMenu
                 button={{
                   label: t('session.launcher.ImageFilter'),
-                  icon: <ListFilter size="1em" />,
+                  icon: (
+                    <ListFilter
+                      size="1em"
+                      style={
+                        showDedicatedFirst
+                          ? { color: 'var(--color-accent)' }
+                          : undefined
+                      }
+                    />
+                  ),
                   isIconOnly: true,
-                  variant: showDedicatedFirst ? 'secondary' : 'ghost',
+                  variant: 'ghost',
                   size: 'sm',
                 }}
                 hasChevron={false}
