@@ -49,7 +49,7 @@ export const resolveRBACScopeName = (
     case 'USER':
       return scope.basicInfo?.email ?? scope.basicInfo?.userEmail ?? null;
     case 'VFOLDER':
-      return scope.vfolderName ?? scope.name ?? null;
+      return scope.vfolderName ?? scope.metadata?.name ?? scope.name ?? null;
     case 'SESSION':
       return scope.metadata?.sessionName ?? scope.metadata?.name ?? null;
     case 'MODEL_DEPLOYMENT':
