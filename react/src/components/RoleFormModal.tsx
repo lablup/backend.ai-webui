@@ -31,11 +31,10 @@ import {
   BAIModalProps,
   BAISelect,
   BAIStorageHostSelect,
-  BAIUserSelect,
+  BAIAdminUserSelect,
   BAIVFolderSelect,
   toLocalId,
   useBAILogger,
-  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { Suspense } from 'react';
@@ -125,7 +124,6 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const scopeType = rawScopeType?.toUpperCase();
-  const userSelectScope = useAdminUserSelectScope();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
   const branchProps: ScopeIdBranchProps = {
@@ -172,11 +170,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'USER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIUserSelect
-          scope={userSelectScope}
-          valuePropName="id"
-          {...branchProps}
-        />
+        <BAIAdminUserSelect valuePropName="id" {...branchProps} />
       </Suspense>
     );
   }

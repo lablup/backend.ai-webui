@@ -9,14 +9,13 @@ import { reasonMessage } from '../helper/mutationError';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIUserSelect,
+  BAIAdminUserSelect,
   BAIBulkErrorModal,
   BAIModal,
   BAIModalProps,
   useBAILogger,
   useMutationWithPromise,
   type BAIColumnsType,
-  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
@@ -56,7 +55,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message } = App.useApp();
-  const userSelectScope = useAdminUserSelectScope();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
@@ -214,8 +212,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           label={t('credential.Users')}
           rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
-          <BAIUserSelect
-            scope={userSelectScope}
+          <BAIAdminUserSelect
             multiple
             valuePropName="id"
             label={t('credential.Users')}

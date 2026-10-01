@@ -5,13 +5,11 @@
  The user picker the admin and project-admin forms share, built on
  `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
  server-side search, and a plain-key (`string` / `string[]`) value with
- label-in-value kept inside the wrapper. The required `scope` picks the V2
- connection: `adminUsersV2` for a super-admin, `scopedUsersV2` (manager
- >= 26.9.0) for a domain or a project.
+ label-in-value kept inside the wrapper. Lists the members of one project
+ through `scopedUsersV2` (manager >= 26.9.0), which any member may read.
+ Admin pages use `BAIAdminUserSelect`, which shares everything below but the
+ scope.
 */
-import { BAIUserSelectAdminPaginatedQuery } from '../../__generated__/BAIUserSelectAdminPaginatedQuery.graphql';
-import { BAIUserSelectAdminValueQuery } from '../../__generated__/BAIUserSelectAdminValueQuery.graphql';
-import { BAIUserSelectDomainIdQuery } from '../../__generated__/BAIUserSelectDomainIdQuery.graphql';
 import { BAIUserSelectScopedPaginatedQuery } from '../../__generated__/BAIUserSelectScopedPaginatedQuery.graphql';
 import { BAIUserSelectScopedValueQuery } from '../../__generated__/BAIUserSelectScopedValueQuery.graphql';
 import { combineFilters, toLocalId } from '../../helper';
@@ -34,17 +32,8 @@ import {
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type BAIUserSelectFilter = NonNullable<
-  BAIUserSelectAdminPaginatedQuery['variables']['filter']
+  BAIUserSelectScopedPaginatedQuery['variables']['filter']
 >;
-
-/**
- * Which users the picker lists. `admin` needs a super-admin, `domain` a
- * domain admin of that domain, `project` a member of that project.
- */
-export type BAIUserSelectScope =
-  | { type: 'admin' }
-  | { type: 'domain'; domainName: string }
-  | { type: 'project'; projectId: string };
 
 export interface BAIUserSelectUser {
   id: string;
@@ -56,7 +45,7 @@ export interface BAIUserSelectRef {
   refetch: () => void;
 }
 
-export interface BAIUserSelectProps extends Omit<
+export interface BAIUserSelectBaseProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
@@ -70,8 +59,6 @@ export interface BAIUserSelectProps extends Omit<
     value: string | Array<string> | undefined,
     option?: BAILabeledValue | Array<BAILabeledValue>,
   ) => void;
-  /** Required: an admin page takes it from `useAdminUserSelectScope()`. */
-  scope: BAIUserSelectScope;
   filter?: BAIUserSelectFilter;
   excludeInactive?: boolean;
   valuePropName?: 'id' | 'email';
@@ -110,8 +97,6 @@ const readUsers = (
 
 const PAGE_SIZE = 10;
 
-type ScopedProps = Omit<BAIUserSelectProps, 'scope'>;
-
 /** Everything a scope variant feeds its two queries from, and the view reads. */
 const useUserSelectState = ({
   filter: filterFromProps,
@@ -121,7 +106,7 @@ const useUserSelectState = ({
   isLoading,
   ref,
   ...selectProps
-}: ScopedProps) => {
+}: BAIUserSelectBaseProps) => {
   'use memo';
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
@@ -332,88 +317,12 @@ const UserSelectView: React.FC<UserSelectViewProps> = ({
   );
 };
 
-const AdminUserOptions: React.FC<ScopedProps> = (props) => {
-  'use memo';
-  const state = useUserSelectState(props);
-  const selected = useLazyLoadQuery<BAIUserSelectAdminValueQuery>(
-    graphql`
-      query BAIUserSelectAdminValueQuery(
-        $selectedFilter: UserV2Filter
-        $limit: Int!
-        $skipSelected: Boolean!
-      ) {
-        adminUsersV2(filter: $selectedFilter, limit: $limit)
-          @skip(if: $skipSelected) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-      }
-    `,
-    state.valueVariables,
-    state.valueOptions,
-  );
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIUserSelectAdminPaginatedQuery, BAIUserSelectUser>(
-      graphql`
-        query BAIUserSelectAdminPaginatedQuery(
-          $offset: Int!
-          $limit: Int!
-          $filter: UserV2Filter
-          $orderBy: [UserV2OrderBy!]
-        ) {
-          adminUsersV2(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: $orderBy
-          ) {
-            count
-            edges {
-              node {
-                id
-                basicInfo {
-                  email
-                  fullName
-                }
-              }
-            }
-          }
-        }
-      `,
-      { limit: PAGE_SIZE },
-      state.listVariables,
-      state.listOptions,
-      {
-        getTotal: (r) => r.adminUsersV2?.count ?? undefined,
-        getItem: (r) => readUsers(r.adminUsersV2?.edges),
-        getId: (item) => item?.id,
-      },
-    );
-  return (
-    <UserSelectView
-      state={state}
-      users={paginationData}
-      selectedUsers={readUsers(selected.adminUsersV2?.edges)}
-      total={result.adminUsersV2?.count}
-      loadNext={loadNext}
-      isLoadingNext={isLoadingNext}
-    />
-  );
-};
-
 type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
 
-const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
-  userScope,
-  ...props
-}) => {
+/** The picker over `scopedUsersV2`; the scope is the only thing callers vary. */
+export const ScopedUserOptions: React.FC<
+  BAIUserSelectBaseProps & { userScope: UserScope }
+> = ({ userScope, ...props }) => {
   'use memo';
   const state = useUserSelectState(props);
   const selected = useLazyLoadQuery<BAIUserSelectScopedValueQuery>(
@@ -492,47 +401,22 @@ const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
   );
 };
 
-/** `UserScope.domain` takes the domain UUID; the client only knows its name. */
-const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
-  domainName,
+export interface BAIUserSelectProps extends BAIUserSelectBaseProps {
+  /** The project whose members are listed. */
+  projectId: string;
+}
+
+const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
+  projectId,
   ...props
 }) => {
   'use memo';
-  const { domainV2 } = useLazyLoadQuery<BAIUserSelectDomainIdQuery>(
-    graphql`
-      query BAIUserSelectDomainIdQuery($domainName: String!) {
-        domainV2(domainName: $domainName) {
-          entityId
-        }
-      }
-    `,
-    { domainName },
-  );
-  if (!domainV2) {
-    throw new Error(`Domain not found: ${domainName}`);
-  }
   return (
     <ScopedUserOptions
-      userScope={{ domain: [{ value: domainV2.entityId }] }}
+      userScope={{ project: [{ value: projectId }] }}
       {...props}
     />
   );
-};
-
-const BAIUserSelect: React.FC<BAIUserSelectProps> = ({ scope, ...props }) => {
-  'use memo';
-  if (scope.type === 'project') {
-    return (
-      <ScopedUserOptions
-        userScope={{ project: [{ value: scope.projectId }] }}
-        {...props}
-      />
-    );
-  }
-  if (scope.type === 'domain') {
-    return <DomainUserOptions domainName={scope.domainName} {...props} />;
-  }
-  return <AdminUserOptions {...props} />;
 };
 
 export default BAIUserSelect;

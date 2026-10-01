@@ -15,10 +15,9 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
-  BAIUserSelect,
+  BAIAdminUserSelect,
   INITIAL_FETCH_KEY,
   useFetchKey,
-  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, {
@@ -39,7 +38,6 @@ const UserFolderPermissionPanelV2: React.FC<
 > = ({ storageVolumeFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
-  const userSelectScope = useAdminUserSelectScope();
 
   const storageVolume = useFragment(
     graphql`
@@ -158,8 +156,7 @@ const UserFolderPermissionPanelV2: React.FC<
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIUserSelect
-                      scope={userSelectScope}
+                    <BAIAdminUserSelect
                       // The filter row already prints the property label.
                       label={t('storageHost.permission.User')}
                       isLabelHidden

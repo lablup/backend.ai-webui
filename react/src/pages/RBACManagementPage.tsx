@@ -37,14 +37,13 @@ import {
   type BAISelectProps,
   BAISkeleton,
   BAIUnmountAfterClose,
-  BAIUserSelect,
+  BAIAdminUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
   useBAILogger,
   useFetchKey,
   useMutationWithPromise,
-  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import { Trash2, BanIcon, PlusIcon, UndoIcon } from 'lucide-react';
 import {
@@ -98,7 +97,6 @@ const RoleListTab: React.FC = () => {
 
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  const userSelectScope = useAdminUserSelectScope();
   const {
     baiPaginationOption,
     tablePaginationOption,
@@ -311,8 +309,7 @@ const RoleListTab: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIUserSelect
-                      scope={userSelectScope}
+                    <BAIAdminUserSelect
                       valuePropName="id"
                       value={value}
                       isDisabled={isDisabled}

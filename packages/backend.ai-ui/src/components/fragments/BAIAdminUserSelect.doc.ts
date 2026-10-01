@@ -2,8 +2,8 @@ import type { ComponentDoc } from '@astryxdesign/cli/authoring';
 
 export const docs = {
   type: 'component',
-  name: 'BAIUserSelect',
-  displayName: 'BAI User Select',
+  name: 'BAIAdminUserSelect',
+  displayName: 'BAI Admin User Select',
   category: 'Data Input',
   keywords: [
     'user',
@@ -14,27 +14,23 @@ export const docs = {
     'combobox',
     'paginated select',
     'relay',
-    'project members',
+    'admin',
+    'domain users',
     'scopedUsersV2',
   ],
   usage: {
     description:
-      'The user picker for screens outside the admin menu, and the reference consumer of BAIComplexSelect: it lists the members of the project named by the required projectId through scopedUsersV2 with a project UserScope, which any member of that project may read. Admin pages use BAIAdminUserSelect instead, which shares the option list, search and value handling and differs only in listing the signed-in admin\'s whole domain. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      'The user picker for the admin menu — the keypair, credential, RBAC, deployment, project-admin and storage-permission forms. It lists every user of the signed-in admin\'s domain (the WebUI assumes a single domain) through scopedUsersV2 with a domain UserScope. UserScope takes the domain UUID while the client only knows the domain name, so it first resolves the name through domainV2 (BAIAdminUserSelectDomainIdQuery); that lookup suspends on first mount. It takes no scope prop: a super-admin and a domain admin both get their own domain. It shares the option list, search and value handling with BAIUserSelect, which lists one project\'s members for screens outside the admin menu. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
     bestPractices: [
       {
         guidance: true,
         description:
-          "Use it on screens outside the admin menu, passing the current project id; the list is that project's members.",
-      },
-      {
-        guidance: false,
-        description:
-          'Use it on an admin page to list the users of the domain — that is BAIAdminUserSelect.',
+          'Use it on pages under the admin menu; outside it, use BAIUserSelect with the current project id.',
       },
       {
         guidance: true,
         description:
-          'Wrap it, or the form item holding it, in a Suspense boundary — the value query suspends when valuePropName="id" starts with a value.',
+          'Wrap it, or the form item holding it, in a Suspense boundary — the domain lookup suspends on first mount, and so does the value query when valuePropName="id" starts with a value.',
       },
       {
         guidance: true,
@@ -80,13 +76,6 @@ export const docs = {
       type: '(value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void',
       description:
         'Fired with the new key, or array of keys under multiple. The second argument is the matching label/value pair — an array in multiple mode — so a caller can display the email without a second lookup.',
-    },
-    {
-      name: 'projectId',
-      type: 'string',
-      required: true,
-      description:
-        'The project whose members are listed — the project UUID, sent as the project UserScope of scopedUsersV2.',
     },
     {
       name: 'valuePropName',
@@ -148,20 +137,16 @@ export const docs = {
   ],
   examples: [
     {
-      label: 'Owner filter on a project-admin page',
-      code: `<BAIUserSelect
-  projectId={projectId}
-  valuePropName="id"
-  label={t('session.Owner')}
-  isLabelHidden
-  value={value}
-  onChange={(next, option) =>
-    onAddCondition(
-      next as string | undefined,
-      _.castArray(option ?? [])[0]?.label,
-    )
-  }
-/>`,
+      label: 'Multi-user field in an assign-role modal',
+      code: `<Form.Item name="userIds" label={t('credential.Users')}>
+  <BAIAdminUserSelect
+    multiple
+    valuePropName="id"
+    label={t('credential.Users')}
+    isLabelHidden
+    placeholder={t('rbac.SelectUsers')}
+  />
+</Form.Item>`,
     },
   ],
 } satisfies ComponentDoc;

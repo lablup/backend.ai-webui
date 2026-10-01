@@ -1,11 +1,11 @@
-// FR-4119: the user picker lists only the users the signed-in role may read.
-// A super-admin pages every user, a domain admin the users of their domain,
-// and a project admin the members of their project.
+// FR-4119: admin pages list the signed-in admin's domain (the WebUI assumes a
+// single domain); the project-admin session page lists the project's members.
 import { createAdminApiContext, gqlAdmin } from '../utils/admin-api';
 import {
   loginAsAdmin,
   loginAsDomainAdmin,
   loginAsUser,
+  logout,
   navigateTo,
   userInfo,
 } from '../utils/test-util';
@@ -22,7 +22,7 @@ type UserSelectOperation = {
   response: Record<string, any> | null;
 };
 
-/** Records every `BAIUserSelect*` GraphQL operation the page sends. */
+/** Records every `BAIUserSelect*` / `BAIAdminUserSelect*` operation the page sends. */
 function recordUserSelectOperations(page: Page): Array<UserSelectOperation> {
   const operations: Array<UserSelectOperation> = [];
   page.on('response', async (response) => {
@@ -34,7 +34,9 @@ function recordUserSelectOperations(page: Page): Array<UserSelectOperation> {
     } catch {
       return;
     }
-    const name = body?.query?.match(/query\s+(BAIUserSelect\w+)/)?.[1];
+    const name = body?.query?.match(
+      /query\s+(BAI(?:Admin)?UserSelect\w+)/,
+    )?.[1];
     if (!name) return;
     operations.push({
       name,
@@ -125,79 +127,57 @@ test.describe(
     ],
   },
   () => {
-    test('Superadmin can pick any user from the credential form user picker', async ({
-      page,
-      request,
-    }) => {
-      const operations = recordUserSelectOperations(page);
-      await loginAsAdmin(page, request);
-      await skipUnlessManager269(page);
+    for (const [role, login] of [
+      ['Superadmin', loginAsAdmin],
+      ['Domain admin', loginAsDomainAdmin],
+    ] as const) {
+      test(`${role} can pick users of their domain from the credential form user picker`, async ({
+        page,
+        request,
+      }) => {
+        const operations = recordUserSelectOperations(page);
+        await login(page, request);
+        await skipUnlessManager269(page);
 
-      const { modal, trigger } = await openCreateCredentialUserPicker(page);
-      await searchAndPickUser(page, trigger, 'User', userInfo.user2.email);
-      await expect(trigger).toHaveText(userInfo.user2.email);
+        const domainName = await page.evaluate(
+          () => (globalThis as any).backendaiclient._config.domainName,
+        );
+        const api = await createAdminApiContext();
+        const { domainV2 } = await gqlAdmin<{
+          domainV2: { entityId: string };
+        }>(
+          api,
+          `query ($name: String!) { domainV2(domainName: $name) { entityId } }`,
+          { name: domainName },
+        ).finally(() => api.dispose());
 
-      // A super-admin reads every user, not a domain or project slice.
-      expect(operationNames(operations)).toContain(
-        'BAIUserSelectAdminPaginatedQuery',
-      );
-      expect(operationNames(operations)).not.toContain(
-        'BAIUserSelectScopedPaginatedQuery',
-      );
-      expect(operationNames(operations)).not.toContain(
-        'BAIUserSelectDomainIdQuery',
-      );
-      const searched = operations.filter(
-        (op) =>
-          op.name === 'BAIUserSelectAdminPaginatedQuery' &&
-          JSON.stringify(op.variables.filter ?? {}).includes('iContains'),
-      );
-      expect(searched.length).toBeGreaterThan(0);
+        const { modal, trigger } = await openCreateCredentialUserPicker(page);
+        await searchAndPickUser(page, trigger, 'User', userInfo.user2.email);
+        await expect(trigger).toHaveText(userInfo.user2.email);
 
-      await modal.getByRole('button', { name: 'Cancel' }).click();
-    });
+        // Both admin roles resolve the domain UUID, then read that domain only.
+        expect(operationNames(operations)).toContain(
+          'BAIAdminUserSelectDomainIdQuery',
+        );
+        const scoped = operations.filter(
+          (op) => op.name === 'BAIUserSelectScopedPaginatedQuery',
+        );
+        expect(scoped.length).toBeGreaterThan(0);
+        for (const op of scoped) {
+          expect(op.variables.scope).toEqual({
+            domain: [{ value: domainV2.entityId }],
+          });
+          expect(op.response?.errors).toBeUndefined();
+        }
+        expect(
+          scoped.some((op) =>
+            JSON.stringify(op.variables.filter ?? {}).includes('iContains'),
+          ),
+        ).toBe(true);
 
-    test('Domain admin can pick only users of their own domain from the credential form user picker', async ({
-      page,
-      request,
-    }) => {
-      const operations = recordUserSelectOperations(page);
-      await loginAsDomainAdmin(page, request);
-      await skipUnlessManager269(page);
-
-      const domainName = await page.evaluate(
-        () => (globalThis as any).backendaiclient._config.domainName,
-      );
-      const api = await createAdminApiContext();
-      const { domainV2 } = await gqlAdmin<{
-        domainV2: { entityId: string };
-      }>(
-        api,
-        `query ($name: String!) { domainV2(domainName: $name) { entityId } }`,
-        { name: domainName },
-      ).finally(() => api.dispose());
-
-      const { modal, trigger } = await openCreateCredentialUserPicker(page);
-      await searchAndPickUser(page, trigger, 'User', userInfo.user2.email);
-      await expect(trigger).toHaveText(userInfo.user2.email);
-
-      // A domain admin resolves the domain UUID, then reads that domain only.
-      const names = operationNames(operations);
-      expect(names).toContain('BAIUserSelectDomainIdQuery');
-      expect(names).not.toContain('BAIUserSelectAdminPaginatedQuery');
-      const scoped = operations.filter(
-        (op) => op.name === 'BAIUserSelectScopedPaginatedQuery',
-      );
-      expect(scoped.length).toBeGreaterThan(0);
-      for (const op of scoped) {
-        expect(op.variables.scope).toEqual({
-          domain: [{ value: domainV2.entityId }],
-        });
-        expect(op.response?.errors).toBeUndefined();
-      }
-
-      await modal.getByRole('button', { name: 'Cancel' }).click();
-    });
+        await modal.getByRole('button', { name: 'Cancel' }).click();
+      });
+    }
 
     test.describe('Project admin', () => {
       const projectName = `e2e-user-select-${Date.now()}`;
@@ -207,7 +187,8 @@ test.describe(
       let projectAdminId: string;
       let memberIds: Array<string> = [];
 
-      test.beforeAll(async () => {
+      /** Creates the project, adds two members and makes the first its admin. */
+      async function seedProject() {
         api = await createAdminApiContext();
         const created = await gqlAdmin<{
           create_group: { group: { id: string } };
@@ -282,10 +263,10 @@ test.describe(
           }`,
           { input: { roleId, userIds: [projectAdminId], projectId } },
         );
-      });
+      }
 
       test.afterAll(async () => {
-        if (!api) return;
+        if (!api || !projectId) return;
         const steps: Array<[string, Record<string, unknown>]> = [
           [
             `mutation ($input: RevokeRoleInput!) { adminRevokeRole(input: $input) { id } }`,
@@ -322,6 +303,11 @@ test.describe(
         const operations = recordUserSelectOperations(page);
         await loginAsUser(page, request);
         await skipUnlessManager269(page);
+        // Seeded after the version check so an older manager skips cleanly, and
+        // before a fresh login so the new project is in the user's project list.
+        await seedProject();
+        await logout(page);
+        await loginAsUser(page, request);
 
         await navigateTo(page, `project/${projectName}/admin/session`);
         await page.getByRole('combobox', { name: 'Search filters' }).click();
@@ -344,8 +330,7 @@ test.describe(
         ).toContainText(userInfo.user2.email);
 
         const names = operationNames(operations);
-        expect(names).not.toContain('BAIUserSelectAdminPaginatedQuery');
-        expect(names).not.toContain('BAIUserSelectDomainIdQuery');
+        expect(names).not.toContain('BAIAdminUserSelectDomainIdQuery');
         const scoped = operations.filter(
           (op) => op.name === 'BAIUserSelectScopedPaginatedQuery',
         );

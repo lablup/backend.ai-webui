@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<29e64a50b6e9938aa76b11df51f90156>>
+ * @generated SignedSource<<3711debf28a8f6ab7b06c417bf6b55d5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,17 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type BAIUserSelectDomainIdQuery$variables = {
+export type BAIAdminUserSelectDomainIdQuery$variables = {
   domainName: string;
 };
-export type BAIUserSelectDomainIdQuery$data = {
+export type BAIAdminUserSelectDomainIdQuery$data = {
   readonly domainV2: {
     readonly entityId: string;
   } | null | undefined;
 };
-export type BAIUserSelectDomainIdQuery = {
-  response: BAIUserSelectDomainIdQuery$data;
-  variables: BAIUserSelectDomainIdQuery$variables;
+export type BAIAdminUserSelectDomainIdQuery = {
+  response: BAIAdminUserSelectDomainIdQuery$data;
+  variables: BAIAdminUserSelectDomainIdQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -49,7 +49,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIUserSelectDomainIdQuery",
+    "name": "BAIAdminUserSelectDomainIdQuery",
     "selections": [
       {
         "alias": null,
@@ -71,7 +71,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "BAIUserSelectDomainIdQuery",
+    "name": "BAIAdminUserSelectDomainIdQuery",
     "selections": [
       {
         "alias": null,
@@ -95,16 +95,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fed69b10d0f2a068001edc680059b5ac",
+    "cacheID": "9c8907824a806b5a08554c0e53a1ff0b",
     "id": null,
     "metadata": {},
-    "name": "BAIUserSelectDomainIdQuery",
+    "name": "BAIAdminUserSelectDomainIdQuery",
     "operationKind": "query",
-    "text": "query BAIUserSelectDomainIdQuery(\n  $domainName: String!\n) {\n  domainV2(domainName: $domainName) {\n    entityId\n    id\n  }\n}\n"
+    "text": "query BAIAdminUserSelectDomainIdQuery(\n  $domainName: String!\n) {\n  domainV2(domainName: $domainName) {\n    entityId\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a11d3e9cd28a5e499cb75c1819cf744f";
+(node as any).hash = "faaac11062d5382c01164439d6192723";
 
 export default node;

@@ -157,12 +157,13 @@ export type {
 export { default as BAIUserSelect } from './BAIUserSelect';
 export type {
   BAIUserSelectProps,
+  BAIUserSelectBaseProps,
   BAIUserSelectFilter,
-  BAIUserSelectScope,
   BAIUserSelectUser,
   BAIUserSelectRef,
 } from './BAIUserSelect';
-export { default as useAdminUserSelectScope } from './useAdminUserSelectScope';
+export { default as BAIAdminUserSelect } from './BAIAdminUserSelect';
+export type { BAIAdminUserSelectProps } from './BAIAdminUserSelect';
 export { default as BAIProjectSelect } from './BAIProjectSelect';
 export type {
   BAIProjectSelectProps,

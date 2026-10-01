@@ -1,5 +1,5 @@
 import RelayResolver from '../../tests/RelayResolver';
-import BAIUserSelect, { type BAIUserSelectScope } from './BAIUserSelect';
+import BAIUserSelect from './BAIUserSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ComponentProps, useState } from 'react';
 import type { MockResolvers } from 'relay-test-utils';
@@ -21,12 +21,12 @@ const meta: Meta<typeof BAIUserSelect> = {
     docs: {
       description: {
         component: `
-**BAIUserSelect** — the user picker the admin and project-admin forms share. Built on \`BAIComplexSelect\`.
+**BAIUserSelect** — the user picker for screens outside the admin menu: the members of one project. Built on \`BAIComplexSelect\`. Admin pages use \`BAIAdminUserSelect\`.
 
-- \`scope\` (required): \`{ type: 'admin' }\` (\`adminUsersV2\`), \`{ type: 'domain', domainName }\` or \`{ type: 'project', projectId }\`, both paged through \`scopedUsersV2\`; a domain name is first resolved to its UUID through \`domainV2\`. Admin pages take theirs from \`useAdminUserSelectScope()\`.
+- \`projectId\` (required): the project whose members are listed, through \`scopedUsersV2\` with a project scope.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
 - \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
-- Needs a manager >= 26.9.0, where \`scopedUsersV2\` and \`DomainV2.entityId\` exist.
+- Needs a manager >= 26.9.0, where \`scopedUsersV2\` exists.
 
 See \`BAIComplexSelect.stories.tsx\` for the underlying popup-body component with static options.
         `,
@@ -37,7 +37,7 @@ See \`BAIComplexSelect.stories.tsx\` for the underlying popup-body component wit
     value: { control: false },
     onChange: { control: false },
     filter: { control: false },
-    scope: { control: false },
+    projectId: { control: false },
     multiple: { control: { type: 'boolean' } },
     excludeInactive: { control: { type: 'boolean' } },
     valuePropName: {
@@ -80,30 +80,23 @@ const connection = (users: typeof mockUsers) => ({
 
 const mockResolvers: MockResolvers = {
   Query: () => ({
-    adminUsersV2: connection(mockUsers),
-    scopedUsersV2: connection(mockUsers.slice(1, 3)),
-    domainV2: { entityId: '5c3b5a9e-0000-4000-8000-0000000000d0' },
+    scopedUsersV2: connection(mockUsers),
   }),
 };
 
 const emptyResolvers: MockResolvers = {
-  Query: () => ({ adminUsersV2: connection([]) }),
+  Query: () => ({ scopedUsersV2: connection([]) }),
 };
 
-const adminScope: BAIUserSelectScope = { type: 'admin' };
-
 const Sandbox: React.FC<
-  Omit<ComponentProps<typeof BAIUserSelect>, 'value' | 'onChange' | 'scope'> & {
-    scope?: BAIUserSelectScope;
+  Omit<
+    ComponentProps<typeof BAIUserSelect>,
+    'value' | 'onChange' | 'projectId'
+  > & {
     initialValue?: string | Array<string> | null;
     resolvers?: MockResolvers;
   }
-> = ({
-  scope = adminScope,
-  initialValue = null,
-  resolvers = mockResolvers,
-  ...args
-}) => {
+> = ({ initialValue = null, resolvers = mockResolvers, ...args }) => {
   const [value, setValue] = useState<string | Array<string> | null | undefined>(
     initialValue,
   );
@@ -111,7 +104,7 @@ const Sandbox: React.FC<
     <RelayResolver mockResolvers={resolvers}>
       <BAIUserSelect
         {...args}
-        scope={scope}
+        projectId="5c3b5a9e-0000-4000-8000-000000000001"
         value={value}
         onChange={(next) => setValue(next ?? null)}
       />
@@ -119,57 +112,16 @@ const Sandbox: React.FC<
   );
 };
 
-export const AdminScope: Story = {
+export const ProjectMembers: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          '`scope={{ type: "admin" }}` reads `adminUsersV2` — every user, which only a super-admin may list.',
+          'Reads `scopedUsersV2` with a project scope: the members of the project `projectId` names.',
       },
     },
   },
-  render: (args) => <Sandbox {...args} label="User" />,
-};
-
-export const DomainScope: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          '`scope={{ type: "domain", domainName }}` resolves the domain UUID through `domainV2`, then reads `scopedUsersV2` — the users of one domain, which a domain admin may list. `useAdminUserSelectScope()` picks this scope for a non-super-admin caller.',
-      },
-    },
-  },
-  render: (args) => (
-    <Sandbox
-      {...args}
-      label="User"
-      scope={{ type: 'domain', domainName: 'default' }}
-      defaultOpen
-    />
-  ),
-};
-
-export const ProjectScope: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          '`scope={{ type: "project", projectId }}` reads `scopedUsersV2` with a project scope, the members of one project — what a project admin may list.',
-      },
-    },
-  },
-  render: (args) => (
-    <Sandbox
-      {...args}
-      label="Owner"
-      scope={{
-        type: 'project',
-        projectId: '5c3b5a9e-0000-4000-8000-000000000001',
-      }}
-      defaultOpen
-    />
-  ),
+  render: (args) => <Sandbox {...args} label="Owner" defaultOpen />,
 };
 
 export const Multiple: Story = {

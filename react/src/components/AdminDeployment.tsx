@@ -30,7 +30,7 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
-  BAIUserSelect,
+  BAIAdminUserSelect,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   type DeploymentSorterKey,
@@ -40,7 +40,6 @@ import {
   isValidUUID,
   toLocalId,
   useBAILogger,
-  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Trash2, SquarePenIcon } from 'lucide-react';
@@ -163,7 +162,6 @@ const AdminDeployment = ({
   const { logger } = useBAILogger();
   const baiClient = useSuspendedBackendaiClient();
   const webUINavigate = useWebUINavigate();
-  const userSelectScope = useAdminUserSelectScope();
 
   const [editingDeploymentId, setEditingDeploymentId] = useState<string | null>(
     null,
@@ -310,8 +308,7 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIUserSelect
-          scope={userSelectScope}
+        <BAIAdminUserSelect
           valuePropName="id"
           label={t('deployment.Owner')}
           isLabelHidden

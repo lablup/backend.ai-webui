@@ -19,12 +19,11 @@ import {
   BAIModalProps,
   BAISelect,
   BAITable,
-  BAIUserSelect,
+  BAIAdminUserSelect,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
   useMutationWithPromise,
-  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { ShieldCheckIcon, XIcon } from 'lucide-react';
@@ -192,7 +191,6 @@ const ProjectAdminSettingModal = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
-  const userSelectScope = useAdminUserSelectScope();
   const { upsertNotification } = useSetBAINotification();
   const webuiNavigate = useWebUINavigate();
   const baiClient = useSuspendedBackendaiClient();
@@ -397,8 +395,7 @@ const ProjectAdminSettingModal = ({
                 ]}
                 style={{ flex: 1, marginBottom: 0 }}
               >
-                <BAIUserSelect
-                  scope={userSelectScope}
+                <BAIAdminUserSelect
                   multiple
                   valuePropName="id"
                   label={t('rbac.SelectUsers')}

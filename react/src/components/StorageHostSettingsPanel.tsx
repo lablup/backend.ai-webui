@@ -10,8 +10,7 @@ import {
   BAISkeleton,
   BAIAdminProjectSelect,
   BAIFlex,
-  BAIUserSelect,
-  useAdminUserSelectScope,
+  BAIAdminUserSelect,
 } from 'backend.ai-ui';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -26,7 +25,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const userSelectScope = useAdminUserSelectScope();
   const storageVolume = useFragment(
     graphql`
       fragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {
@@ -82,8 +80,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         ) : (
           // valuePropName="id" makes the picked value the user's id (used as
           // the quota scope entity id), not the email.
-          <BAIUserSelect
-            scope={userSelectScope}
+          <BAIAdminUserSelect
             label={t('storageHost.ForUser')}
             isLabelHidden
             valuePropName="id"

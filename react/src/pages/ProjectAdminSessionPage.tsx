@@ -211,7 +211,7 @@ const ProjectAdminSessionContent: React.FC<ProjectAdminSessionContentProps> = ({
                 type: 'uuid',
                 renderInput: ({ onAddCondition, value, isDisabled }) => (
                   <BAIUserSelect
-                    scope={{ type: 'project', projectId }}
+                    projectId={projectId}
                     valuePropName="id"
                     label={t('session.Owner')}
                     isLabelHidden
