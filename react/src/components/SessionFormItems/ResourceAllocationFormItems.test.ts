@@ -11,6 +11,7 @@ import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
   AUTOMATIC_DEFAULT_SHMEM,
   getAllocatablePresetIds,
+  getSelectedAgentsRemainingSlots,
   getAutomaticShmem,
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
@@ -205,6 +206,256 @@ describe('getAllocatablePresetIds', () => {
     );
     // Only compare with resource limits
     expect(result).toEqual(['id-cpu1_mem2g']);
+  });
+
+  describe('with a selected agent', () => {
+    const noResourceLimits: MergedResourceLimits = {
+      cpu: {},
+      mem: {},
+      accelerators: {},
+    };
+    const GiB = 1024 ** 3;
+    // The manager reports both preset `mem` and agent slots as byte strings.
+    const agentPresets: Array<ResourcePreset> = [
+      {
+        id: 'cpu4_mem8g_cuda2',
+        name: 'cpu4_mem8g_cuda2',
+        resource_slots: {
+          cpu: '4',
+          mem: String(8 * GiB),
+          'cuda.shares': '2',
+        },
+        shared_memory: String(GiB),
+        allocatable: true,
+      },
+      {
+        id: 'cpu2_mem4g_cuda1',
+        name: 'cpu2_mem4g_cuda1',
+        resource_slots: {
+          cpu: '2',
+          mem: String(4 * GiB),
+          'cuda.shares': '1',
+        },
+        shared_memory: String(GiB),
+        allocatable: true,
+      },
+      {
+        id: 'cpu1_mem2g',
+        name: 'cpu1_mem2g',
+        resource_slots: { cpu: '1', mem: String(2 * GiB) },
+        shared_memory: String(GiB),
+        allocatable: true,
+      },
+    ];
+
+    it('keeps only the presets that fit the remaining slots of the agent', () => {
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [{ cpu: 2, mem: 4 * GiB, 'cuda.shares': 1 }],
+      );
+      expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
+    });
+
+    it('excludes a preset asking for a slot the agent does not provide', () => {
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [{ cpu: 8, mem: 64 * GiB }],
+      );
+      expect(result).toEqual(['cpu1_mem2g']);
+    });
+
+    it('keeps a preset whose accelerator request is zero on an agent without that slot', () => {
+      // `check-presets` zero-fills every preset with all cluster-known slot
+      // types, so on a heterogeneous cluster a CPU preset still carries
+      // `cuda.shares: "0"` while a CPU-only agent reports no `cuda.shares`.
+      const result = getAllocatablePresetIds(
+        [
+          {
+            id: 'cpu1_mem2g',
+            name: 'cpu1_mem2g',
+            resource_slots: {
+              cpu: '1',
+              mem: String(2 * GiB),
+              'cuda.shares': '0',
+            },
+            shared_memory: String(GiB),
+            allocatable: true,
+          },
+          {
+            id: 'cpu1_mem2g_cuda1',
+            name: 'cpu1_mem2g_cuda1',
+            resource_slots: {
+              cpu: '1',
+              mem: String(2 * GiB),
+              'cuda.shares': '1',
+            },
+            shared_memory: String(GiB),
+            allocatable: true,
+          },
+        ],
+        noResourceLimits,
+        undefined,
+        [{ cpu: 4, mem: 8 * GiB }],
+      );
+      expect(result).toEqual(['cpu1_mem2g']);
+    });
+
+    it('ignores shmem, which is carved out of the session memory', () => {
+      const result = getAllocatablePresetIds(
+        [
+          {
+            id: 'cpu1_mem2g_shmem1g',
+            name: 'cpu1_mem2g_shmem1g',
+            resource_slots: {
+              cpu: '1',
+              mem: String(2 * GiB),
+              shmem: String(GiB),
+            },
+            shared_memory: String(GiB),
+            allocatable: true,
+          },
+        ],
+        noResourceLimits,
+        undefined,
+        [{ cpu: 1, mem: 2 * GiB }],
+      );
+      expect(result).toEqual(['cpu1_mem2g_shmem1g']);
+    });
+
+    it('excludes every preset when the agent has no room left', () => {
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [{ cpu: 0, mem: 0, 'cuda.shares': 0 }],
+      );
+      expect(result).toEqual([]);
+    });
+
+    it('still applies the resource limits on top of the agent slots', () => {
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        { cpu: { max: 2 }, mem: {}, accelerators: {} },
+        undefined,
+        [{ cpu: 16, mem: 64 * GiB, 'cuda.shares': 16 }],
+      );
+      expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
+    });
+
+    it('keeps a preset that fits on at least one of several selected agents', () => {
+      // Selected agents are scheduling candidates: the 4-CPU preset fits only
+      // the second agent, which is enough to keep it enabled.
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [
+          { cpu: 1, mem: 2 * GiB },
+          { cpu: 4, mem: 8 * GiB, 'cuda.shares': 2 },
+        ],
+      );
+      expect(result).toEqual([
+        'cpu4_mem8g_cuda2',
+        'cpu2_mem4g_cuda1',
+        'cpu1_mem2g',
+      ]);
+    });
+
+    it('excludes a preset that none of the selected agents can host', () => {
+      // Capacity is not pooled: two 2-CPU agents cannot host a 4-CPU kernel.
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+        [
+          { cpu: 2, mem: 8 * GiB, 'cuda.shares': 2 },
+          { cpu: 2, mem: 8 * GiB, 'cuda.shares': 2 },
+        ],
+      );
+      expect(result).toEqual(['cpu2_mem4g_cuda1', 'cpu1_mem2g']);
+    });
+
+    it('returns the unfiltered list when no agent is pinned', () => {
+      const result = getAllocatablePresetIds(
+        agentPresets,
+        noResourceLimits,
+        undefined,
+      );
+      expect(result).toEqual([
+        'cpu4_mem8g_cuda2',
+        'cpu2_mem4g_cuda1',
+        'cpu1_mem2g',
+      ]);
+    });
+  });
+});
+
+describe('getSelectedAgentsRemainingSlots', () => {
+  const remainingSlotsByAgentId = {
+    'agent-a': { cpu: 4, mem: 8 },
+    'agent-b': { cpu: 8, mem: 16 },
+  };
+
+  it('returns undefined for auto or an empty selection', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: 'auto',
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['auto', 'agent-a'],
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: [],
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('returns one entry per selected agent for a multi-agent selection', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['agent-a', 'agent-b'],
+        remainingSlotsByAgentId,
+        clusterMode: 'multi-node',
+        clusterSize: 2,
+      }),
+    ).toEqual([
+      { cpu: 4, mem: 8 },
+      { cpu: 8, mem: 16 },
+    ]);
+  });
+
+  it('splits every candidate across the containers of a single-node cluster', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['agent-a', 'agent-b'],
+        remainingSlotsByAgentId,
+        clusterMode: 'single-node',
+        clusterSize: 2,
+      }),
+    ).toEqual([
+      { cpu: 2, mem: 4 },
+      { cpu: 4, mem: 8 },
+    ]);
+  });
+
+  it('skips filtering when any selected agent has no loaded capacity', () => {
+    expect(
+      getSelectedAgentsRemainingSlots({
+        selectedAgents: ['agent-a', 'agent-unloaded'],
+        remainingSlotsByAgentId,
+      }),
+    ).toBeUndefined();
   });
 });
 

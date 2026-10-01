@@ -21,7 +21,7 @@ import {
   useResourceLimitAndRemaining,
 } from '../../hooks/useResourceLimitAndRemaining';
 import { ProjectContext } from '../../types/projectContext';
-import AgentSelect from '../AgentSelect';
+import AgentSelect, { type AgentRemainingSlotsMap } from '../AgentSelect';
 import {
   Image,
   ImageEnvironmentFormInput,
@@ -58,6 +58,7 @@ import React, {
   useDeferredValue,
   useEffect,
   useMemo,
+  useState,
   useTransition,
 } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -373,6 +374,24 @@ const ResourceAllocationFormItems: React.FC<
     form,
     preserve: true,
   });
+  const currentAgentInForm = Form.useWatch(['agent'], {
+    form,
+    preserve: true,
+  });
+  const currentClusterMode = Form.useWatch(['cluster_mode'], {
+    form,
+    preserve: true,
+  });
+  const currentClusterSize = Form.useWatch(['cluster_size'], {
+    form,
+    preserve: true,
+  });
+
+  // Reported by `AgentSelect`, which already computes it for its option rows.
+  // Merged rather than replaced: the select re-queries with a search filter, so
+  // a narrowed result must not drop the agent the form still holds.
+  const [agentRemainingSlots, setAgentRemainingSlots] =
+    useState<AgentRemainingSlotsMap>({});
 
   // The preset check suspends per resource group; deferring the group keeps the
   // launcher on screen while a group's first check loads, not a page fallback.
@@ -465,6 +484,17 @@ const ResourceAllocationFormItems: React.FC<
     }
   }, [supportedAcceleratorTypesInRGByImage, form, currentResourceValue]);
 
+  // Concrete agent picks bound the allocation further than the
+  // keypair/group/resource-group limits do; "auto" keeps the unfiltered list.
+  const selectedAgentsRemainingSlots = enableAgentSelect
+    ? getSelectedAgentsRemainingSlots({
+        selectedAgents: currentAgentInForm,
+        remainingSlotsByAgentId: agentRemainingSlots,
+        clusterMode: currentClusterMode,
+        clusterSize: currentClusterSize,
+      })
+    : undefined;
+
   // `resourceLimits` is rebuilt on every render, so key the array by its
   // contents; a fresh identity would re-run the auto-select effect each render.
   const allocatablePresetIdsKey = JSON.stringify(
@@ -472,6 +502,7 @@ const ResourceAllocationFormItems: React.FC<
       checkPresetInfo?.presets,
       resourceLimits,
       currentImage,
+      selectedAgentsRemainingSlots,
     ),
   );
   const allocatablePresetIds: string[] = JSON.parse(allocatablePresetIdsKey);
@@ -1659,6 +1690,12 @@ const ResourceAllocationFormItems: React.FC<
                   fetchKey={agentFetchKey}
                   mode={supportMultiAgents ? 'multiple' : undefined}
                   fallbackToAuto
+                  onRemainingSlotsChange={(next) =>
+                    setAgentRemainingSlots((prev) => {
+                      const merged = { ...prev, ...next };
+                      return _.isEqual(prev, merged) ? prev : merged;
+                    })
+                  }
                   labelRender={
                     supportMultiAgents
                       ? ({ label, value }) => {
@@ -1950,6 +1987,12 @@ export const getAllocatablePresetIds = (
   presets: Array<ResourcePreset> | undefined,
   resourceLimits: MergedResourceLimits,
   currentImage: Image,
+  /**
+   * Per-container remaining slots of each selected candidate agent (see
+   * `getSelectedAgentsRemainingSlots`). A preset stays allocatable when at
+   * least one of them can host it; omit to skip the agent check.
+   */
+  agentsRemainingSlots?: Array<Record<string, number>>,
 ) => {
   const currentImageAcceleratorLimits = _.filter(
     currentImage?.resource_limits,
@@ -2031,7 +2074,85 @@ export const getAllocatablePresetIds = (
       );
     }
   }).map((preset) => preset.id);
-  return currentImageAcceleratorLimits.length === 0
-    ? bySliderLimit
-    : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+  const byResourceLimit =
+    currentImageAcceleratorLimits.length === 0
+      ? bySliderLimit
+      : _.intersection(bySliderLimit, byImageAcceleratorLimits);
+
+  if (!agentsRemainingSlots) {
+    return byResourceLimit;
+  }
+
+  const fitsOnAgent = (
+    preset: ResourcePreset,
+    agentRemainingSlots: Record<string, number>,
+  ) =>
+    _.every(preset.resource_slots, (_value, key) => {
+      // shmem comes out of the session's own mem, so the agent doesn't slot it.
+      if (key === 'shmem') return true;
+      const requested = preset.resource_slots[key];
+      // `check-presets` zero-fills every preset with every cluster-known slot
+      // type, while an agent only reports the slots it physically has. So a
+      // missing slot means 0 remaining, not "disqualify the preset": compare
+      // numerically and let a zero request pass.
+      const remaining = agentRemainingSlots[key] ?? 0;
+      return key === 'mem'
+        ? compareNumberWithUnits(requested, remaining) <= 0
+        : (_.toNumber(requested) || 0) <= remaining;
+    });
+
+  const byAgentRemainingSlots = _.filter(presets, (preset) =>
+    _.some(agentsRemainingSlots, (agentRemainingSlots) =>
+      fitsOnAgent(preset, agentRemainingSlots),
+    ),
+  ).map((preset) => preset.id);
+
+  return _.intersection(byResourceLimit, byAgentRemainingSlots);
+};
+
+/**
+ * Resolves the agent field into the per-container remaining slots of every
+ * selected candidate agent, or `undefined` when the preset list must stay
+ * unfiltered.
+ *
+ * Selected agents are scheduling *candidates*: the session may land on any one
+ * of them, so the caller keeps a preset when at least one candidate fits it.
+ * The result is `undefined` (no filtering) for "auto", an empty selection, or
+ * when any selected agent has no loaded capacity: that agent cannot be proven
+ * unable to host a preset, so nothing may be disabled on its account.
+ *
+ * Single-node mode puts every container on whichever agent ends up hosting
+ * the session, so each candidate's slots are split across `cluster_size`
+ * containers. Multi-node spreads kernels across agents, so it is compared per
+ * kernel: the lenient reading of "some candidate fits".
+ */
+export const getSelectedAgentsRemainingSlots = ({
+  selectedAgents,
+  remainingSlotsByAgentId,
+  clusterMode,
+  clusterSize,
+}: {
+  selectedAgents: string | Array<string | null | undefined> | null | undefined;
+  remainingSlotsByAgentId: AgentRemainingSlotsMap;
+  clusterMode?: string | null;
+  clusterSize?: number | string | null;
+}): Array<Record<string, number>> | undefined => {
+  const selectedAgentIds = _.compact(_.castArray(selectedAgents));
+  if (selectedAgentIds.length === 0 || _.includes(selectedAgentIds, 'auto')) {
+    return undefined;
+  }
+  const candidates = _.map(
+    selectedAgentIds,
+    (agentId) => remainingSlotsByAgentId[agentId],
+  );
+  if (_.some(candidates, (slots) => !slots)) {
+    return undefined;
+  }
+  const containersPerAgent =
+    clusterMode === 'single-node'
+      ? Math.max(_.toNumber(clusterSize) || 1, 1)
+      : 1;
+  return _.map(candidates, (slots) =>
+    _.mapValues(slots, (value) => value / containersPerAgent),
+  );
 };
