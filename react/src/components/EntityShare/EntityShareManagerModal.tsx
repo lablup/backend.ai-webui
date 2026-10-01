@@ -89,6 +89,7 @@ const EntityShareManagerList: React.FC<{
       onShareChanged={onShareChanged}
       pagination={{
         pageSize: PAGE_SIZE,
+        showSizeChanger: false,
         current,
         total: entityShares?.count ?? 0,
         onChange: (next) => setCurrent(next),
