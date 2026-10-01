@@ -14,7 +14,6 @@ import {
   VFolderNodesV2Fragment$key,
 } from '../__generated__/VFolderNodesV2Fragment.graphql';
 import { VFolderNodesV2RestoreMutation } from '../__generated__/VFolderNodesV2RestoreMutation.graphql';
-import { VFolderNodesV2UsageQuery } from '../__generated__/VFolderNodesV2UsageQuery.graphql';
 import { App } from '../app-shim';
 import { convertToDecimalUnit } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
@@ -25,7 +24,6 @@ import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
 import { ProjectContextOrNull } from '../types/projectContext';
 import DeleteForeverVFolderModalV2 from './DeleteForeverVFolderModalV2';
-import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
 import QuotaPerStorageVolumePanelCard, {
@@ -71,13 +69,7 @@ import {
 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  graphql,
-  useFragment,
-  useLazyLoadQuery,
-  useMutation,
-  useQueryLoader,
-} from 'react-relay';
+import { graphql, useFragment, useMutation, useQueryLoader } from 'react-relay';
 
 export type VFolderNodeInList = NonNullable<
   VFolderNodesV2Fragment$data[number]
@@ -375,52 +367,6 @@ const HostQuotaTrigger: React.FC<HostQuotaTriggerProps> = (props) => (
   </Suspense>
 );
 
-interface VFolderUsageCellProps {
-  vfolderId: string;
-  field: 'numFiles' | 'usedBytes';
-}
-
-// `VFolder.usage` is measured through the storage proxy on every selection,
-// so it is fetched per cell — only when its column is shown — instead of
-// riding the list fragment. Both usage columns share one cached query per row.
-const VFolderUsageCellInner: React.FC<VFolderUsageCellProps> = ({
-  vfolderId,
-  field,
-}) => {
-  'use memo';
-  const { vfolderV2 } = useLazyLoadQuery<VFolderNodesV2UsageQuery>(
-    graphql`
-      query VFolderNodesV2UsageQuery($vfolderId: UUID!) {
-        vfolderV2(vfolderId: $vfolderId) {
-          id
-          usage {
-            numFiles
-            usedBytes {
-              expr @since(version: "26.8.0")
-            }
-          }
-        }
-      }
-    `,
-    { vfolderId },
-    { fetchPolicy: 'store-or-network' },
-  );
-
-  const usage = vfolderV2?.usage;
-  if (!usage) return '-';
-  return field === 'numFiles'
-    ? usage.numFiles.toLocaleString()
-    : (formatBinarySizeInfo(usage.usedBytes) ?? '-');
-};
-
-const VFolderUsageCell: React.FC<VFolderUsageCellProps> = (props) => (
-  <ErrorBoundaryWithNullFallback>
-    <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
-      <VFolderUsageCellInner {...props} />
-    </Suspense>
-  </ErrorBoundaryWithNullFallback>
-);
-
 const HostQuotaModalContent: React.FC = () => {
   'use memo';
   const baiClient = useSuspendedBackendaiClient();
@@ -550,11 +496,19 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   // The Status column key + V2 OrderField sort value stay `status`.
   const vfolders = useFragment(
     graphql`
-      fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
+      fragment VFolderNodesV2Fragment on VFolder
+      @argumentDefinitions(showUsage: { type: "Boolean!", defaultValue: false })
+      @relay(plural: true) {
         id @required(action: NONE)
         vfolderStatus: status
         host
         unmanagedPath
+        usage @include(if: $showUsage) {
+          numFiles
+          usedBytes {
+            expr @since(version: "26.8.0")
+          }
+        }
         metadata {
           name
           usageMode
@@ -842,14 +796,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             defaultHidden: true,
             sorter: false,
             render: (__, vfolder) =>
-              vfolder.unmanagedPath ? (
-                '-'
-              ) : (
-                <VFolderUsageCell
-                  vfolderId={toLocalId(vfolder.id)}
-                  field="numFiles"
-                />
-              ),
+              vfolder.usage ? vfolder.usage.numFiles.toLocaleString() : '-',
           },
           {
             key: 'cur_size',
@@ -857,14 +804,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             defaultHidden: true,
             sorter: false,
             render: (__, vfolder) =>
-              vfolder.unmanagedPath ? (
-                '-'
-              ) : (
-                <VFolderUsageCell
-                  vfolderId={toLocalId(vfolder.id)}
-                  field="usedBytes"
-                />
-              ),
+              formatBinarySizeInfo(vfolder.usage?.usedBytes) ?? '-',
           },
           {
             key: 'max_files',

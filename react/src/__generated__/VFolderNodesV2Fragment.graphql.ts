@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8df754d827205318ab4f783d9fb92e4e>>
+ * @generated SignedSource<<150054d5b341119d8e71f4ce4865a9f5>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,6 +56,12 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     } | null | undefined;
   };
   readonly unmanagedPath: string | null | undefined;
+  readonly usage?: {
+    readonly numFiles: number;
+    readonly usedBytes: {
+      readonly expr: string;
+    };
+  } | null | undefined;
   readonly vfolderStatus: VFolderOperationStatus;
   readonly " $fragmentSpreads": FragmentRefs<"DeleteForeverVFolderModalV2Fragment" | "SharedFolderPermissionInfoModalV2Fragment" | "VFolderNodeIdenticonV2Fragment" | "VFolderPermissionCellV2Fragment">;
   readonly " $fragmentType": "VFolderNodesV2Fragment";
@@ -66,7 +72,16 @@ export type VFolderNodesV2Fragment$key = ReadonlyArray<{
 }>;
 
 const node: ReaderFragment = (function(){
-var v0 = {
+var v0 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "expr",
+    "storageKey": null
+  }
+],
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -74,7 +89,13 @@ var v0 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [],
+  "argumentDefinitions": [
+    {
+      "defaultValue": false,
+      "kind": "LocalArgument",
+      "name": "showUsage"
+    }
+  ],
   "kind": "Fragment",
   "metadata": {
     "plural": true
@@ -114,6 +135,41 @@ return {
       "storageKey": null
     },
     {
+      "condition": "showUsage",
+      "kind": "Condition",
+      "passingValue": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "VFolderUsageInfo",
+          "kind": "LinkedField",
+          "name": "usage",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "numFiles",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "BinarySizeInfo",
+              "kind": "LinkedField",
+              "name": "usedBytes",
+              "plural": false,
+              "selections": (v0/*: any*/),
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ]
+    },
+    {
       "alias": null,
       "args": null,
       "concreteType": "VFolderMetadataInfo",
@@ -121,7 +177,7 @@ return {
       "name": "metadata",
       "plural": false,
       "selections": [
-        (v0/*: any*/),
+        (v1/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -214,15 +270,7 @@ return {
           "kind": "LinkedField",
           "name": "maxSize",
           "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "expr",
-              "storageKey": null
-            }
-          ],
+          "selections": (v0/*: any*/),
           "storageKey": null
         }
       ],
@@ -302,7 +350,7 @@ return {
               "name": "basicInfo",
               "plural": false,
               "selections": [
-                (v0/*: any*/)
+                (v1/*: any*/)
               ],
               "storageKey": null
             }
@@ -354,6 +402,6 @@ return {
 };
 })();
 
-(node as any).hash = "b025e5278acdeb1ce5d34d6098720e09";
+(node as any).hash = "bf6b78832456b38f0977eb208bdadc79";
 
 export default node;
