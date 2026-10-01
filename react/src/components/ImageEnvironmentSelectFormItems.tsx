@@ -6,6 +6,7 @@ import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
 } from '../__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
+import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import {
   compareImageVersions,
@@ -24,6 +25,7 @@ import { ImageMetaDivider, ImageTagTokens } from './ImageTags';
 import TextHighlighter from './TextHighlighter';
 import { AstryxFormTextInput } from './astryxFormControls';
 import { Divider } from '@astryxdesign/core/Divider';
+import { IconButton } from '@astryxdesign/core/IconButton';
 import { Token } from '@astryxdesign/core/Token';
 import { useTheme } from '@astryxdesign/core/theme';
 import {
@@ -41,9 +43,15 @@ import {
   BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
+import { RotateCw } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import {
+  fetchQuery,
+  graphql,
+  useLazyLoadQuery,
+  useRelayEnvironment,
+} from 'react-relay';
 
 export type Image = NonNullable<
   NonNullable<ImageEnvironmentSelectFormItemsQuery$data>['images']
@@ -73,11 +81,13 @@ interface ImageEnvironmentSelectFormItemsProps {
   filter?: (image: Image) => boolean;
   showPrivate?: boolean;
   searchPrefill?: string;
+  /** Show a refresh button that re-fetches the image list. */
+  showRefreshButton?: boolean;
 }
 
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
-> = ({ filter, showPrivate, searchPrefill }) => {
+> = ({ filter, showPrivate, searchPrefill, showRefreshButton }) => {
   'use memo';
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
   const environments = Form.useWatch('environments', { form, preserve: true });
@@ -127,47 +137,67 @@ const ImageEnvironmentSelectFormItems: React.FC<
     [searchPrefill],
   );
 
+  const relayEnvironment = useRelayEnvironment();
+  const { message } = App.useApp();
+  const [isRefetchPending, setIsRefetchPending] = useState(false);
+
   const imageEnvironmentSelectFormItemsVariables = baiClient?._config
     ?.showNonInstalledImages
     ? {}
     : { installed: true };
-  const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
-    graphql`
-      query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
-        images(is_installed: $installed) {
-          id
-          name @deprecatedSince(version: "24.12.0")
-          humanized_name
-          tag
-          registry
-          architecture
-          digest
-          installed
-          resource_limits {
-            key
-            min
-            max
-          }
-          labels {
-            key
-            value
-          }
-          namespace @since(version: "24.12.0")
-          base_image_name @since(version: "24.12.0")
-          tags @since(version: "24.12.0") {
-            key
-            value
-          }
-          version @since(version: "24.12.0")
-          supported_accelerators
+  const imageQuery = graphql`
+    query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
+      images(is_installed: $installed) {
+        id
+        name @deprecatedSince(version: "24.12.0")
+        humanized_name
+        tag
+        registry
+        architecture
+        digest
+        installed
+        resource_limits {
+          key
+          min
+          max
         }
+        labels {
+          key
+          value
+        }
+        namespace @since(version: "24.12.0")
+        base_image_name @since(version: "24.12.0")
+        tags @since(version: "24.12.0") {
+          key
+          value
+        }
+        version @since(version: "24.12.0")
+        supported_accelerators
       }
-    `,
+    }
+  `;
+  const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
+    imageQuery,
     imageEnvironmentSelectFormItemsVariables,
-    {
-      fetchPolicy: 'store-and-network',
-    },
+    { fetchPolicy: 'store-and-network' },
   );
+
+  // Refetched outside render so a failed request keeps the current list and
+  // the button instead of throwing into the launcher's null-fallback boundary.
+  const refreshImages = () => {
+    setIsRefetchPending(true);
+    fetchQuery<ImageEnvironmentSelectFormItemsQuery>(
+      relayEnvironment,
+      imageQuery,
+      imageEnvironmentSelectFormItemsVariables,
+      { fetchPolicy: 'network-only' },
+    )
+      .toPromise()
+      .catch(() => {
+        message.error(t('dialog.ErrorOccurred'));
+      })
+      .finally(() => setIsRefetchPending(false));
+  };
 
   const imageGroups: ImageGroup[] = _.sortBy(
     _.map(
@@ -406,16 +436,34 @@ const ImageEnvironmentSelectFormItems: React.FC<
           style={{ marginBottom: 0 }}
           name={['environments', 'environment']}
           label={
-            <BAIText
-              copyable={{
-                text: getImageFullName(
-                  form.getFieldValue(['environments', 'image']),
-                ),
-              }}
-            >
-              {t('session.launcher.Environments')} /{' '}
-              {t('session.launcher.Version')}
-            </BAIText>
+            <BAIFlex direction="row" align="center" gap="xxs">
+              <BAIText
+                copyable={{
+                  text: getImageFullName(
+                    form.getFieldValue(['environments', 'image']),
+                  ),
+                }}
+              >
+                {t('session.launcher.Environments')} /{' '}
+                {t('session.launcher.Version')}
+              </BAIText>
+              {showRefreshButton ? (
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  icon={<RotateCw size="1em" />}
+                  label={t('button.Refresh')}
+                  tooltip={t('button.Refresh')}
+                  isLoading={isRefetchPending}
+                  onClick={(e) => {
+                    // The row lives inside the item's `<label htmlFor>`, whose
+                    // default action would move focus into the select.
+                    e.preventDefault();
+                    refreshImages();
+                  }}
+                />
+              ) : null}
+            </BAIFlex>
           }
           rules={[
             {
