@@ -170,8 +170,11 @@ async function firstActionableVFolderName(
   const count = await rows.count();
   for (let i = 0; i < count; i++) {
     const row = rows.nth(i);
+    // The name cell is the one holding the row's action buttons; the
+    // identicon renders `alt=""`, so it no longer names the cell.
     const nameCell = row
-      .getByRole('cell', { name: /VFolder Identicon/ })
+      .getByRole('cell')
+      .filter({ has: page.getByRole('button', { name: action.buttonName }) })
       .first();
     const name = (await nameCell.textContent().catch(() => null))?.trim();
     if (!name || skip.has(name)) continue;

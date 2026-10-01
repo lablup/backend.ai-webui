@@ -73,6 +73,7 @@ test.describe(
   { tag: ['@regression', '@admin', '@vfolder', '@functional'] },
   () => {
     let folderName: string;
+    let folderCreated: boolean;
 
     test.beforeEach(async ({ page, request }) => {
       folderName =
@@ -80,10 +81,12 @@ test.describe(
         Date.now() +
         '-' +
         Math.random().toString(36).slice(2, 6);
+      folderCreated = false;
       await loginAsAdmin(page, request);
     });
 
     test.afterEach(async ({ page }) => {
+      if (!folderCreated) return;
       await cleanupVFolderSafely(page, folderName, 'admin-data');
     });
 
@@ -131,6 +134,7 @@ test.describe(
         .click();
       await folderCreationModal.fillFolderName(folderName);
       await (await folderCreationModal.getCreateButton()).click();
+      folderCreated = true;
       await page
         .getByRole('dialog')
         .filter({ hasText: 'Create a new storage folder' })

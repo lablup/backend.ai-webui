@@ -592,8 +592,11 @@ async function retryWithTableRefresh(
 
 export function getVFolderRow(page: Page, folderName: string) {
   // The identicon renders `alt=""`, so the row's accessible name starts with
-  // the checkbox's "Select <global id>" — match the row by its text instead.
-  return page.getByRole('row').filter({ hasText: folderName }).first();
+  // the checkbox's "Select <global id>" — match the row by its exact name text.
+  return page
+    .getByRole('row')
+    .filter({ has: page.getByText(folderName, { exact: true }) })
+    .first();
 }
 
 export async function verifyVFolder(
