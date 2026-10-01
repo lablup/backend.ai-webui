@@ -170,16 +170,13 @@ const EditableFileName: React.FC<EditableFileNameProps> = ({
               />
               <BAILink
                 type="hover"
+                ellipsis
                 style={{
                   minWidth: 0,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
                   color: isPendingRenamingAndRefreshing
                     ? token('--color-text-tertiary')
                     : undefined,
                 }}
-                title={fileInfo.name}
               >
                 {displayName}
               </BAILink>

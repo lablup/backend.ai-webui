@@ -1,4 +1,4 @@
-import { base, react } from 'eslint-config-bai';
+import { base, bailinkEllipsisRestriction, react } from 'eslint-config-bai';
 import jsonSchemaValidator from 'eslint-plugin-json-schema-validator';
 import relayPlugin from 'eslint-plugin-relay';
 import globals from 'globals';
@@ -89,6 +89,7 @@ export default [
           message:
             'Direct <style> elements are forbidden (CSP nonce safety). Import a co-located .css file instead, and drive runtime-variable values through CSS custom properties.',
         },
+        bailinkEllipsisRestriction,
       ],
     },
   },
