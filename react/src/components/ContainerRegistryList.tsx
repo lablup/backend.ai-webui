@@ -100,7 +100,6 @@ const ContainerRegistryList: React.FC<{
     pageSize: 20,
   });
 
-  const supportsDomainV2 = baiClient.supports('domain-v2');
   const queryVariables = useMemo(
     () => ({
       domain: baiClient._config.domainName,
@@ -109,7 +108,6 @@ const ContainerRegistryList: React.FC<{
       first: baiPaginationOption.limit,
       offset: baiPaginationOption.offset,
       allowedProjectPreviewCount: ALLOWED_PROJECT_PREVIEW_COUNT,
-      supportsDomainV2,
     }),
     [
       baiClient._config.domainName,
@@ -117,14 +115,13 @@ const ContainerRegistryList: React.FC<{
       queryParams.order,
       baiPaginationOption.limit,
       baiPaginationOption.offset,
-      supportsDomainV2,
     ],
   );
 
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { container_registry_nodes, domainV2, domain } =
+  const { container_registry_nodes, domainV2 } =
     useLazyLoadQuery<ContainerRegistryListQuery>(
       graphql`
         query ContainerRegistryListQuery(
@@ -134,7 +131,6 @@ const ContainerRegistryList: React.FC<{
           $first: Int
           $offset: Int
           $allowedProjectPreviewCount: Int
-          $supportsDomainV2: Boolean!
         ) {
           container_registry_nodes(
             filter: $filter
@@ -171,17 +167,10 @@ const ContainerRegistryList: React.FC<{
             }
             count
           }
-          domainV2(domainName: $domain)
-            @since(version: "26.2.0")
-            @include(if: $supportsDomainV2) {
+          domainV2(domainName: $domain) {
             registry {
               allowedDockerRegistries
             }
-          }
-          domain(name: $domain)
-            @deprecatedSince(version: "26.2.0")
-            @skip(if: $supportsDomainV2) {
-            allowed_docker_registries
           }
         }
       `,
@@ -195,11 +184,9 @@ const ContainerRegistryList: React.FC<{
       },
     );
   const containerRegistries = _.map(container_registry_nodes?.edges, 'node');
-  const allowedDockerRegistries = _.compact(
-    domainV2?.registry?.allowedDockerRegistries ??
-      domain?.allowed_docker_registries ??
-      [],
-  );
+  const allowedDockerRegistries: string[] = [
+    ...(domainV2?.registry?.allowedDockerRegistries ?? []),
+  ];
 
   const [commitDeleteMutation, isInFlightDeleteMutation] =
     useMutation<ContainerRegistryListDeleteMutation>(graphql`

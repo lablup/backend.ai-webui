@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<53f56048daadf4925a1f276b234c88bf>>
+ * @generated SignedSource<<70072cc8e24a415f2daa3042d05c54dc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,15 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type SwitchToProjectButtonQuery$variables = {
-  legacyProjectId: string;
   projectId: string;
-  supportsProjectV2: boolean;
 };
 export type SwitchToProjectButtonQuery$data = {
-  readonly group_node?: {
-    readonly name: string | null | undefined;
-  } | null | undefined;
-  readonly projectV2?: {
+  readonly projectV2: {
     readonly basicInfo: {
       readonly name: string;
     };
@@ -30,108 +25,56 @@ export type SwitchToProjectButtonQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "legacyProjectId"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "projectId"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "supportsProjectV2"
-},
-v3 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "projectId"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "projectId",
     "variableName": "projectId"
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "name",
-  "storageKey": null
-},
-v5 = [
-  (v4/*: any*/)
-],
-v6 = {
+v2 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
   "kind": "LinkedField",
   "name": "basicInfo",
   "plural": false,
-  "selections": (v5/*: any*/),
-  "storageKey": null
-},
-v7 = [
-  {
-    "kind": "Variable",
-    "name": "id",
-    "variableName": "legacyProjectId"
-  }
-],
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    }
+  ],
   "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "SwitchToProjectButtonQuery",
     "selections": [
       {
-        "condition": "supportsProjectV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": (v3/*: any*/),
-            "concreteType": "ProjectV2",
-            "kind": "LinkedField",
-            "name": "projectV2",
-            "plural": false,
-            "selections": [
-              (v6/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      },
-      {
-        "condition": "supportsProjectV2",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v7/*: any*/),
-            "concreteType": "GroupNode",
-            "kind": "LinkedField",
-            "name": "group_node",
-            "plural": false,
-            "selections": (v5/*: any*/),
-            "storageKey": null
-          }
-        ]
+          (v2/*: any*/)
+        ],
+        "storageKey": null
       }
     ],
     "type": "Query",
@@ -139,67 +82,42 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/),
-      (v2/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "SwitchToProjectButtonQuery",
     "selections": [
       {
-        "condition": "supportsProjectV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
         "selections": [
+          (v2/*: any*/),
           {
             "alias": null,
-            "args": (v3/*: any*/),
-            "concreteType": "ProjectV2",
-            "kind": "LinkedField",
-            "name": "projectV2",
-            "plural": false,
-            "selections": [
-              (v6/*: any*/),
-              (v8/*: any*/)
-            ],
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
             "storageKey": null
           }
-        ]
-      },
-      {
-        "condition": "supportsProjectV2",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v7/*: any*/),
-            "concreteType": "GroupNode",
-            "kind": "LinkedField",
-            "name": "group_node",
-            "plural": false,
-            "selections": [
-              (v4/*: any*/),
-              (v8/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
+        ],
+        "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "9ef8844fe4f57c3941a3b5eb175716b8",
+    "cacheID": "a7697d7f2a21b2507530a2ef76f6f572",
     "id": null,
     "metadata": {},
     "name": "SwitchToProjectButtonQuery",
     "operationKind": "query",
-    "text": "query SwitchToProjectButtonQuery(\n  $projectId: UUID!\n  $legacyProjectId: String!\n  $supportsProjectV2: Boolean!\n) {\n  projectV2(projectId: $projectId) @include(if: $supportsProjectV2) @since(version: \"26.2.0\") {\n    basicInfo {\n      name\n    }\n    id\n  }\n  group_node(id: $legacyProjectId) @skip(if: $supportsProjectV2) @since(version: \"24.03.0\") @deprecatedSince(version: \"26.2.0\") {\n    name\n    id\n  }\n}\n"
+    "text": "query SwitchToProjectButtonQuery(\n  $projectId: UUID!\n) {\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9390a68545735d61f562ffeac50183bf";
+(node as any).hash = "09041346300a3620e13e069352b220a7";
 
 export default node;

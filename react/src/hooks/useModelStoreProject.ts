@@ -10,8 +10,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 /**
  * Returns the id and name of the caller's active MODEL_STORE project, or nulls
  * when the domain has none. Assumes one model store per domain (ADR 0006 pair:
- * 26.9.0a1+ reads the caller's memberships, 26.2.0+ reads the domain, older
- * managers read the legacy `groups` list).
+ * 26.9.0a1+ reads the caller's memberships, older managers read the domain).
  */
 export const useModelStoreProject = () => {
   const baiClient = useSuspendedBackendaiClient();
@@ -35,7 +34,6 @@ export const useModelStoreProject = () => {
           }
         }
         domainV2(domainName: $domainName)
-          @since(version: "26.2.0")
           @deprecatedSince(version: "26.9.0a1")
           @catch(to: RESULT) {
           projects(filter: { type: { equals: MODEL_STORE }, isActive: true }) {
@@ -48,14 +46,6 @@ export const useModelStoreProject = () => {
               }
             }
           }
-        }
-        legacyGroups: groups(
-          domain_name: $domainName
-          is_active: true
-          type: ["MODEL_STORE"]
-        ) @deprecatedSince(version: "26.2.0") @catch(to: RESULT) {
-          id
-          name
         }
       }
     `,
@@ -73,17 +63,9 @@ export const useModelStoreProject = () => {
       ? data.domainV2.value?.projects?.edges?.[0]?.node
       : null) ??
     null;
-  if (modelStoreProject) {
-    return {
-      id: toLocalId(modelStoreProject.id),
-      name: modelStoreProject.basicInfo?.name ?? null,
-    };
-  }
-  // Legacy `Group.id` is already the raw UUID.
-  const legacyGroup =
-    data.legacyGroups?.ok === true ? data.legacyGroups.value?.[0] : null;
+
   return {
-    id: legacyGroup?.id ?? null,
-    name: legacyGroup?.name ?? null,
+    id: modelStoreProject ? toLocalId(modelStoreProject.id) : null,
+    name: modelStoreProject?.basicInfo?.name ?? null,
   };
 };

@@ -876,10 +876,6 @@ export class Client {
       this._features['fair-share-scheduling'] = true;
       this._features['export-csv'] = true;
       this._features['bulk-create-user'] = true;
-      // Strawberry scope lookups: `projectV2`, `domainProjectsV2`,
-      // `myUserV2.projects` and `domainV2` (schema: "Added in 26.2.0"). FR-4117.
-      this._features['project-v2'] = true;
-      this._features['domain-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.3.0')) {
       this._features['session-scheduling-history'] = true;

@@ -1,6 +1,5 @@
 import type { DomainResourceGroupWarningIconFragment$key } from '../../__generated__/DomainResourceGroupWarningIconFragment.graphql';
 import type { DomainResourceGroupWarningIconQuery } from '../../__generated__/DomainResourceGroupWarningIconQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTheme } from '@astryxdesign/core/theme';
 import { BAIIconWithTooltip } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -19,10 +18,6 @@ const DomainResourceGroupWarningIcon: React.FC<
 
   const { t } = useTranslation();
   const { token } = useTheme();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsAllowedResourceGroupsV2 = baiClient.supports(
-    'allowed-resource-groups-v2',
-  );
 
   const { domainName, resourceGroupName } = useFragment(
     graphql`
@@ -34,35 +29,23 @@ const DomainResourceGroupWarningIcon: React.FC<
     domainFairShareFrgmt,
   );
 
-  const { adminAllowedResourceGroupsForDomainV2, domain } =
+  const { adminAllowedResourceGroupsForDomainV2 } =
     useLazyLoadQuery<DomainResourceGroupWarningIconQuery>(
       graphql`
-        query DomainResourceGroupWarningIconQuery(
-          $domainName: String!
-          $supportsAllowedResourceGroupsV2: Boolean!
-        ) {
-          adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
-            @since(version: "26.4.2")
-            @include(if: $supportsAllowedResourceGroupsV2) {
+        query DomainResourceGroupWarningIconQuery($domainName: String!) {
+          adminAllowedResourceGroupsForDomainV2(domainName: $domainName) {
             items
-          }
-          domain(name: $domainName)
-            @deprecatedSince(version: "26.4.2")
-            @skip(if: $supportsAllowedResourceGroupsV2) {
-            scaling_groups
           }
         }
       `,
-      { domainName, supportsAllowedResourceGroupsV2 },
+      { domainName },
       {
         fetchPolicy: 'store-and-network',
       },
     );
 
   const allowedResourceGroups =
-    adminAllowedResourceGroupsForDomainV2?.items ??
-    domain?.scaling_groups ??
-    [];
+    adminAllowedResourceGroupsForDomainV2?.items ?? [];
 
   if (
     !resourceGroupName ||

@@ -96,20 +96,6 @@ describe('useModelStoreProject (FR-4058)', () => {
     });
   });
 
-  it('falls back to the legacy groups list before 26.2.0', async () => {
-    // Both V2 fields were pruned; only the Graphene `groups` read answers,
-    // and its `id` is already the raw UUID.
-    const { result } = await renderWithPayload({
-      data: {
-        legacyGroups: [{ id: MODEL_STORE_UUID, name: 'model-store' }],
-      },
-    });
-    expect(result.current).toEqual({
-      id: MODEL_STORE_UUID,
-      name: 'model-store',
-    });
-  });
-
   it('returns nulls when the domain has no model store project', async () => {
     const { result } = await renderWithPayload({
       data: {

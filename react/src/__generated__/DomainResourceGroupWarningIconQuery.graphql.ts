@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<044958a239fca53f43cbbe9fbd490009>>
+ * @generated SignedSource<<96b7561643f9868bad8eaad95839624c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,14 +11,10 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type DomainResourceGroupWarningIconQuery$variables = {
   domainName: string;
-  supportsAllowedResourceGroupsV2: boolean;
 };
 export type DomainResourceGroupWarningIconQuery$data = {
-  readonly adminAllowedResourceGroupsForDomainV2?: {
+  readonly adminAllowedResourceGroupsForDomainV2: {
     readonly items: ReadonlyArray<string>;
-  } | null | undefined;
-  readonly domain?: {
-    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
 export type DomainResourceGroupWarningIconQuery = {
@@ -32,75 +28,32 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "domainName"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "supportsAllowedResourceGroupsV2"
   }
 ],
 v1 = [
   {
-    "condition": "supportsAllowedResourceGroupsV2",
-    "kind": "Condition",
-    "passingValue": true,
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "domainName",
+        "variableName": "domainName"
+      }
+    ],
+    "concreteType": "AllowedResourceGroupsPayload",
+    "kind": "LinkedField",
+    "name": "adminAllowedResourceGroupsForDomainV2",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "domainName",
-            "variableName": "domainName"
-          }
-        ],
-        "concreteType": "AllowedResourceGroupsPayload",
-        "kind": "LinkedField",
-        "name": "adminAllowedResourceGroupsForDomainV2",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "items",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "items",
         "storageKey": null
       }
-    ]
-  },
-  {
-    "condition": "supportsAllowedResourceGroupsV2",
-    "kind": "Condition",
-    "passingValue": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "name",
-            "variableName": "domainName"
-          }
-        ],
-        "concreteType": "Domain",
-        "kind": "LinkedField",
-        "name": "domain",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "scaling_groups",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -121,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c0e8565c641839c1cf65dd327b1297b2",
+    "cacheID": "065b8add679d608934a5392be016fc5b",
     "id": null,
     "metadata": {},
     "name": "DomainResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query DomainResourceGroupWarningIconQuery(\n  $domainName: String!\n  $supportsAllowedResourceGroupsV2: Boolean!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $supportsAllowedResourceGroupsV2) @since(version: \"26.4.2\") {\n    items\n  }\n  domain(name: $domainName) @skip(if: $supportsAllowedResourceGroupsV2) @deprecatedSince(version: \"26.4.2\") {\n    scaling_groups\n  }\n}\n"
+    "text": "query DomainResourceGroupWarningIconQuery(\n  $domainName: String!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) {\n    items\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d185f5d2838b42edc5dac0edc8cdd74e";
+(node as any).hash = "2626f22516604986db4a8c632f2cf97c";
 
 export default node;
