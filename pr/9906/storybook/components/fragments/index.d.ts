@@ -99,8 +99,8 @@ export { default as BAIRuntimeVariantPresetTable, availablePresetSorterValues, }
 export type { BAIRuntimeVariantPresetTableProps, RuntimeVariantPresetNodeInList, } from './BAIRuntimeVariantPresetTable';
 export { default as BAIRuntimeVariantPresetSettingModal } from './BAIRuntimeVariantPresetSettingModal';
 export type { BAIRuntimeVariantPresetSettingModalProps } from './BAIRuntimeVariantPresetSettingModal';
-export { default as BAIModelDeploymentNodes, availableDeploymentSorterValues, } from './BAIModelDeploymentNodes';
-export type { BAIModelDeploymentNodesProps, ModelDeploymentNodeInList, DeploymentOrderValue, } from './BAIModelDeploymentNodes';
+export { default as BAIModelDeploymentNodes, availableDeploymentSorterKeys, availableDeploymentSorterValues, } from './BAIModelDeploymentNodes';
+export type { BAIModelDeploymentNodesProps, ModelDeploymentNodeInList, DeploymentOrderValue, DeploymentSorterKey, } from './BAIModelDeploymentNodes';
 export { default as BAIDeploymentTagTokens } from './BAIDeploymentTagTokens';
 export type { BAIDeploymentTagTokensProps } from './BAIDeploymentTagTokens';
 export { default as BAIDeploymentOwnerInfo } from './BAIDeploymentOwnerInfo';
