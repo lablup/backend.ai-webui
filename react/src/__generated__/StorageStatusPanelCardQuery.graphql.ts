@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<42d836162712a28b099f11947df3d937>>
+ * @generated SignedSource<<2c20c55be6eb2afbad2a63f630eadc8c>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -86,8 +86,8 @@ export type UUIDFilter = {
 };
 export type StorageStatusPanelCardQuery$variables = {
   activeFilter?: VFolderFilter | null | undefined;
-  name: string;
   projectId: string;
+  projectIdForPolicy: string;
 };
 export type StorageStatusPanelCardQuery$data = {
   readonly myUserResourcePolicyV2: {
@@ -99,8 +99,8 @@ export type StorageStatusPanelCardQuery$data = {
   readonly projectVfolders: {
     readonly count: number;
   } | null | undefined;
-  readonly project_resource_policy: {
-    readonly max_vfolder_count: number | null | undefined;
+  readonly scopedProjectResourcePolicyV2: {
+    readonly maxVfolderCount: number;
   } | null | undefined;
 };
 export type StorageStatusPanelCardQuery = {
@@ -117,12 +117,12 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "name"
+  "name": "projectId"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectId"
+  "name": "projectIdForPolicy"
 },
 v3 = {
   "alias": null,
@@ -132,19 +132,15 @@ v3 = {
   "storageKey": null
 },
 v4 = [
+  (v3/*: any*/)
+],
+v5 = [
   {
     "kind": "Variable",
-    "name": "name",
-    "variableName": "name"
+    "name": "projectId",
+    "variableName": "projectIdForPolicy"
   }
 ],
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_vfolder_count",
-  "storageKey": null
-},
 v6 = {
   "kind": "Variable",
   "name": "filter",
@@ -188,13 +184,16 @@ v9 = {
   "selections": (v7/*: any*/),
   "storageKey": null
 },
-v10 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+v10 = [
+  (v3/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "id",
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -213,21 +212,17 @@ return {
         "kind": "LinkedField",
         "name": "myUserResourcePolicyV2",
         "plural": false,
-        "selections": [
-          (v3/*: any*/)
-        ],
+        "selections": (v4/*: any*/),
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v4/*: any*/),
-        "concreteType": "ProjectResourcePolicy",
+        "args": (v5/*: any*/),
+        "concreteType": "ProjectResourcePolicyV2",
         "kind": "LinkedField",
-        "name": "project_resource_policy",
+        "name": "scopedProjectResourcePolicyV2",
         "plural": false,
-        "selections": [
-          (v5/*: any*/)
-        ],
+        "selections": (v4/*: any*/),
         "storageKey": null
       },
       (v8/*: any*/),
@@ -253,23 +248,17 @@ return {
         "kind": "LinkedField",
         "name": "myUserResourcePolicyV2",
         "plural": false,
-        "selections": [
-          (v3/*: any*/),
-          (v10/*: any*/)
-        ],
+        "selections": (v10/*: any*/),
         "storageKey": null
       },
       {
         "alias": null,
-        "args": (v4/*: any*/),
-        "concreteType": "ProjectResourcePolicy",
+        "args": (v5/*: any*/),
+        "concreteType": "ProjectResourcePolicyV2",
         "kind": "LinkedField",
-        "name": "project_resource_policy",
+        "name": "scopedProjectResourcePolicyV2",
         "plural": false,
-        "selections": [
-          (v5/*: any*/),
-          (v10/*: any*/)
-        ],
+        "selections": (v10/*: any*/),
         "storageKey": null
       },
       (v8/*: any*/),
@@ -277,16 +266,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9e3067ae0bc64af138bf0ed0db16acc4",
+    "cacheID": "ff3f7c668317694920e9fb02607f5599",
     "id": null,
     "metadata": {},
     "name": "StorageStatusPanelCardQuery",
     "operationKind": "query",
-    "text": "query StorageStatusPanelCardQuery(\n  $name: String!\n  $projectId: UUID!\n  $activeFilter: VFolderFilter\n) {\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n  project_resource_policy(name: $name) {\n    max_vfolder_count\n    id\n  }\n  myVfolders(filter: $activeFilter) {\n    count\n  }\n  projectVfolders(projectId: $projectId, filter: $activeFilter) {\n    count\n  }\n}\n"
+    "text": "query StorageStatusPanelCardQuery(\n  $projectId: UUID!\n  $projectIdForPolicy: ID!\n  $activeFilter: VFolderFilter\n) {\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n  scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy) {\n    maxVfolderCount\n    id\n  }\n  myVfolders(filter: $activeFilter) {\n    count\n  }\n  projectVfolders(projectId: $projectId, filter: $activeFilter) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "99b424672830d2087c346fffa5de97bf";
+(node as any).hash = "d7cfdd02d25042785dd056f79586ef46";
 
 export default node;

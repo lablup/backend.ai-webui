@@ -45,9 +45,6 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
   const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
-  if (!currentProject.name) {
-    throw new Error('Project name is required for StorageStatusPanelCard');
-  }
   if (!currentProject.id) {
     throw new Error('Project ID is required for StorageStatusPanelCard');
   }
@@ -81,25 +78,23 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       ),
   ).length;
 
-  // TODO(FR-2691 v2-migration): only the project half remains legacy —
-  // `project_resource_policy(name)` has no non-admin V2 counterpart.
   const {
     myUserResourcePolicyV2,
-    project_resource_policy,
+    scopedProjectResourcePolicyV2,
     myVfolders,
     projectVfolders,
   } = useLazyLoadQuery<StorageStatusPanelCardQuery>(
     graphql`
       query StorageStatusPanelCardQuery(
-        $name: String!
         $projectId: UUID!
+        $projectIdForPolicy: ID!
         $activeFilter: VFolderFilter
       ) {
         myUserResourcePolicyV2 {
           maxVfolderCount
         }
-        project_resource_policy(name: $name) {
-          max_vfolder_count
+        scopedProjectResourcePolicyV2(projectId: $projectIdForPolicy) {
+          maxVfolderCount
         }
         myVfolders(filter: $activeFilter) {
           count
@@ -110,8 +105,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       }
     `,
     {
-      name: currentProject.name,
       projectId: currentProject.id,
+      // Same UUID; the field types its argument as ID.
+      projectIdForPolicy: currentProject.id,
       // A trash-bin (DELETE_PENDING) folder still counts toward the quota.
       activeFilter: {
         status: {
@@ -161,8 +157,8 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
           title={t('data.ProjectFolders')}
           value={projectCount}
           unit={
-            project_resource_policy?.max_vfolder_count
-              ? `/ ${project_resource_policy?.max_vfolder_count}`
+            scopedProjectResourcePolicyV2?.maxVfolderCount
+              ? `/ ${scopedProjectResourcePolicyV2.maxVfolderCount}`
               : undefined
           }
           style={{
