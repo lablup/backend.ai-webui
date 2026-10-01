@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<43e4268a23db5e4a1fe01a39dba2dec7>>
+ * @generated SignedSource<<42d836162712a28b099f11947df3d937>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -88,23 +88,18 @@ export type StorageStatusPanelCardQuery$variables = {
   activeFilter?: VFolderFilter | null | undefined;
   name: string;
   projectId: string;
-  supportsResourcePolicyV2: boolean;
-  supportsVfolderV2: boolean;
 };
 export type StorageStatusPanelCardQuery$data = {
-  readonly myUserResourcePolicyV2?: {
+  readonly myUserResourcePolicyV2: {
     readonly maxVfolderCount: number;
   } | null | undefined;
-  readonly myVfolders?: {
+  readonly myVfolders: {
     readonly count: number;
   } | null | undefined;
-  readonly projectVfolders?: {
+  readonly projectVfolders: {
     readonly count: number;
   } | null | undefined;
   readonly project_resource_policy: {
-    readonly max_vfolder_count: number | null | undefined;
-  } | null | undefined;
-  readonly user_resource_policy?: {
     readonly max_vfolder_count: number | null | undefined;
   } | null | undefined;
 };
@@ -130,45 +125,32 @@ v2 = {
   "name": "projectId"
 },
 v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "supportsResourcePolicyV2"
-},
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "supportsVfolderV2"
-},
-v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxVfolderCount",
   "storageKey": null
 },
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_vfolder_count",
-  "storageKey": null
-},
-v7 = [
-  (v6/*: any*/)
-],
-v8 = [
+v4 = [
   {
     "kind": "Variable",
     "name": "name",
     "variableName": "name"
   }
 ],
-v9 = {
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "max_vfolder_count",
+  "storageKey": null
+},
+v6 = {
   "kind": "Variable",
   "name": "filter",
   "variableName": "activeFilter"
 },
-v10 = [
+v7 = [
   {
     "alias": null,
     "args": null,
@@ -177,113 +159,79 @@ v10 = [
     "storageKey": null
   }
 ],
-v11 = {
-  "condition": "supportsVfolderV2",
-  "kind": "Condition",
-  "passingValue": true,
-  "selections": [
-    {
-      "alias": null,
-      "args": [
-        (v9/*: any*/)
-      ],
-      "concreteType": "VFolderConnection",
-      "kind": "LinkedField",
-      "name": "myVfolders",
-      "plural": false,
-      "selections": (v10/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": [
-        (v9/*: any*/),
-        {
-          "kind": "Variable",
-          "name": "projectId",
-          "variableName": "projectId"
-        }
-      ],
-      "concreteType": "VFolderConnection",
-      "kind": "LinkedField",
-      "name": "projectVfolders",
-      "plural": false,
-      "selections": (v10/*: any*/),
-      "storageKey": null
-    }
-  ]
+v8 = {
+  "alias": null,
+  "args": [
+    (v6/*: any*/)
+  ],
+  "concreteType": "VFolderConnection",
+  "kind": "LinkedField",
+  "name": "myVfolders",
+  "plural": false,
+  "selections": (v7/*: any*/),
+  "storageKey": null
 },
-v12 = {
+v9 = {
+  "alias": null,
+  "args": [
+    (v6/*: any*/),
+    {
+      "kind": "Variable",
+      "name": "projectId",
+      "variableName": "projectId"
+    }
+  ],
+  "concreteType": "VFolderConnection",
+  "kind": "LinkedField",
+  "name": "projectVfolders",
+  "plural": false,
+  "selections": (v7/*: any*/),
+  "storageKey": null
+},
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-},
-v13 = [
-  (v6/*: any*/),
-  (v12/*: any*/)
-];
+};
 return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "StorageStatusPanelCardQuery",
     "selections": [
       {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "UserResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myUserResourcePolicyV2",
+        "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserResourcePolicyV2",
-            "kind": "LinkedField",
-            "name": "myUserResourcePolicyV2",
-            "plural": false,
-            "selections": [
-              (v5/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      },
-      {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserResourcePolicy",
-            "kind": "LinkedField",
-            "name": "user_resource_policy",
-            "plural": false,
-            "selections": (v7/*: any*/),
-            "storageKey": null
-          }
-        ]
+          (v3/*: any*/)
+        ],
+        "storageKey": null
       },
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "ProjectResourcePolicy",
         "kind": "LinkedField",
         "name": "project_resource_policy",
         "plural": false,
-        "selections": (v7/*: any*/),
+        "selections": [
+          (v5/*: any*/)
+        ],
         "storageKey": null
       },
-      (v11/*: any*/)
+      (v8/*: any*/),
+      (v9/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -293,74 +241,52 @@ return {
     "argumentDefinitions": [
       (v1/*: any*/),
       (v2/*: any*/),
-      (v0/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
+      (v0/*: any*/)
     ],
     "kind": "Operation",
     "name": "StorageStatusPanelCardQuery",
     "selections": [
       {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "UserResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myUserResourcePolicyV2",
+        "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserResourcePolicyV2",
-            "kind": "LinkedField",
-            "name": "myUserResourcePolicyV2",
-            "plural": false,
-            "selections": [
-              (v5/*: any*/),
-              (v12/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      },
-      {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserResourcePolicy",
-            "kind": "LinkedField",
-            "name": "user_resource_policy",
-            "plural": false,
-            "selections": (v13/*: any*/),
-            "storageKey": null
-          }
-        ]
+          (v3/*: any*/),
+          (v10/*: any*/)
+        ],
+        "storageKey": null
       },
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v4/*: any*/),
         "concreteType": "ProjectResourcePolicy",
         "kind": "LinkedField",
         "name": "project_resource_policy",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": [
+          (v5/*: any*/),
+          (v10/*: any*/)
+        ],
         "storageKey": null
       },
-      (v11/*: any*/)
+      (v8/*: any*/),
+      (v9/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "90561a49566759d7d0a2e1ffcbcb93a8",
+    "cacheID": "9e3067ae0bc64af138bf0ed0db16acc4",
     "id": null,
     "metadata": {},
     "name": "StorageStatusPanelCardQuery",
     "operationKind": "query",
-    "text": "query StorageStatusPanelCardQuery(\n  $name: String!\n  $projectId: UUID!\n  $activeFilter: VFolderFilter\n  $supportsResourcePolicyV2: Boolean!\n  $supportsVfolderV2: Boolean!\n) {\n  myUserResourcePolicyV2 @include(if: $supportsResourcePolicyV2) @since(version: \"26.4.2\") {\n    maxVfolderCount\n    id\n  }\n  user_resource_policy @skip(if: $supportsResourcePolicyV2) @deprecatedSince(version: \"26.4.2\") {\n    max_vfolder_count\n    id\n  }\n  project_resource_policy(name: $name) {\n    max_vfolder_count\n    id\n  }\n  myVfolders(filter: $activeFilter) @include(if: $supportsVfolderV2) @since(version: \"26.4.2\") {\n    count\n  }\n  projectVfolders(projectId: $projectId, filter: $activeFilter) @include(if: $supportsVfolderV2) @since(version: \"26.4.2\") {\n    count\n  }\n}\n"
+    "text": "query StorageStatusPanelCardQuery(\n  $name: String!\n  $projectId: UUID!\n  $activeFilter: VFolderFilter\n) {\n  myUserResourcePolicyV2 {\n    maxVfolderCount\n    id\n  }\n  project_resource_policy(name: $name) {\n    max_vfolder_count\n    id\n  }\n  myVfolders(filter: $activeFilter) {\n    count\n  }\n  projectVfolders(projectId: $projectId, filter: $activeFilter) {\n    count\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "79c8a3c1bb19d6fd941edc765c24231e";
+(node as any).hash = "99b424672830d2087c346fffa5de97bf";
 
 export default node;

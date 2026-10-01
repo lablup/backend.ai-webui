@@ -4,12 +4,15 @@ import type { BAIClient } from '../provider/BAIClientProvider';
 import BAIProjectResourcePolicySelect from './BAIProjectResourcePolicySelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-// The mock resolvers below answer the legacy list, so the client reports no
-// `resource-policy-v2` support.
+// The stories exercise the superadmin branch, whose
+// `adminProjectResourcePoliciesV2` answers a connection.
 const mockClientPromise = Promise.resolve({
-  supports: () => false,
+  is_superadmin: true,
 } as Partial<BAIClient> as BAIClient);
 const mockAnonymousClientFactory = () => ({}) as unknown as BAIClient;
+const toConnection = (policies: Array<{ id: string; name: string }>) => ({
+  edges: policies.map((node) => ({ node })),
+});
 
 const samplePolicies = [
   { id: 'policy-1', name: 'default' },
@@ -59,20 +62,19 @@ const meta: Meta<typeof BAIProjectResourcePolicySelect> = {
 
 ## Features
 - Fetches project resource policies from GraphQL query \`BAIProjectResourcePolicySelectQuery\`
-- Reads \`adminProjectResourcePoliciesV2\` on managers with \`resource-policy-v2\` (26.4.2) and the legacy \`project_resource_policies\` list below that
+- A superadmin reads \`adminProjectResourcePoliciesV2\` (manager 26.4.2 or later); the field is superadmin-only, so a domain admin reads the legacy \`project_resource_policies\` list
 - Policies are automatically sorted alphabetically by name
 - Built-in search functionality enabled by default
 - Uses policy \`name\` as both label and value
 
 ## GraphQL Query
 \`\`\`graphql
-query BAIProjectResourcePolicySelectQuery($limit: Int!, $supportsResourcePolicyV2: Boolean!) {
+query BAIProjectResourcePolicySelectQuery($limit: Int!, $isSuperAdmin: Boolean!) {
   adminProjectResourcePoliciesV2(limit: $limit, orderBy: [{ field: NAME, direction: ASC }])
-    @since(version: "26.4.2") @include(if: $supportsResourcePolicyV2) {
+    @include(if: $isSuperAdmin) {
     edges { node { id name } }
   }
-  project_resource_policies
-    @deprecatedSince(version: "26.4.2") @skip(if: $supportsResourcePolicyV2) {
+  project_resource_policies @skip(if: $isSuperAdmin) {
     id
     name
   }
@@ -144,7 +146,7 @@ export const Default: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          project_resource_policies: samplePolicies,
+          adminProjectResourcePoliciesV2: toConnection(samplePolicies),
         }),
       }}
     >
@@ -171,7 +173,7 @@ export const Empty: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          project_resource_policies: [],
+          adminProjectResourcePoliciesV2: toConnection([]),
         }),
       }}
     >
@@ -200,7 +202,7 @@ export const Disabled: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          project_resource_policies: samplePolicies,
+          adminProjectResourcePoliciesV2: toConnection(samplePolicies),
         }),
       }}
     >
@@ -229,7 +231,7 @@ export const WithClearButton: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          project_resource_policies: samplePolicies,
+          adminProjectResourcePoliciesV2: toConnection(samplePolicies),
         }),
       }}
     >
@@ -257,7 +259,7 @@ export const WithCustomPlaceholder: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          project_resource_policies: samplePolicies,
+          adminProjectResourcePoliciesV2: toConnection(samplePolicies),
         }),
       }}
     >
@@ -286,7 +288,7 @@ export const ManyPolicies: Story = {
     <RelayResolver
       mockResolvers={{
         Query: () => ({
-          project_resource_policies: sampleManyPolicies,
+          adminProjectResourcePoliciesV2: toConnection(sampleManyPolicies),
         }),
       }}
     >

@@ -902,10 +902,6 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
-      // Strawberry resource-policy reads: my*/admin*ResourcePolic(y|ies)V2.
-      this._features['resource-policy-v2'] = true;
-      // Strawberry vfolder connections: myVfolders / projectVfolders.
-      this._features['vfolder-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;

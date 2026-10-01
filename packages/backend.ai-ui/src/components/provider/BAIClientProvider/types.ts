@@ -53,6 +53,7 @@ export interface BAIClient {
   accessKey: string;
   _config: BackendAIConfig;
   supports: (feature: string) => boolean;
+  is_superadmin: boolean;
   utils: {
     elapsedTime: (
       start: string | Date | number,

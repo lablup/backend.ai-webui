@@ -310,7 +310,7 @@ const renderModal = ({
           }),
         }),
         Group: () => ({ allowed_vfolder_hosts: '{}' }),
-        KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
+        KeypairResourcePolicyV2: () => ({ allowedVfolderHosts: [] }),
       }),
       nullResolvers ?? [],
     );

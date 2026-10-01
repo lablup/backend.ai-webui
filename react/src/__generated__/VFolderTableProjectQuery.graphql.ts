@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5e0ad4892b107ad83489e2e8178e261e>>
+ * @generated SignedSource<<5b1d417d69b356456b7ae36b8c7709b1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,8 +13,6 @@ export type VFolderHostPermissionV2 = "CREATE_VFOLDER" | "DELETE_VFOLDER" | "DOW
 export type VFolderTableProjectQuery$variables = {
   domain_name: string;
   group_id: string;
-  keypair_resource_policy_name: string;
-  supportsResourcePolicyV2: boolean;
 };
 export type VFolderTableProjectQuery$data = {
   readonly domain: {
@@ -23,10 +21,7 @@ export type VFolderTableProjectQuery$data = {
   readonly group: {
     readonly allowed_vfolder_hosts: string | null | undefined;
   } | null | undefined;
-  readonly keypair_resource_policy?: {
-    readonly allowed_vfolder_hosts: string | null | undefined;
-  } | null | undefined;
-  readonly myKeypairResourcePolicyV2?: {
+  readonly myKeypairResourcePolicyV2: {
     readonly allowedVfolderHosts: ReadonlyArray<{
       readonly host: string;
       readonly permissions: ReadonlyArray<VFolderHostPermissionV2>;
@@ -49,16 +44,6 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "group_id"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "keypair_resource_policy_name"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "supportsResourcePolicyV2"
   }
 ],
 v1 = [
@@ -131,29 +116,6 @@ v4 = {
     }
   ],
   "storageKey": null
-},
-v5 = {
-  "condition": "supportsResourcePolicyV2",
-  "kind": "Condition",
-  "passingValue": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "name",
-          "variableName": "keypair_resource_policy_name"
-        }
-      ],
-      "concreteType": "KeyPairResourcePolicy",
-      "kind": "LinkedField",
-      "name": "keypair_resource_policy",
-      "plural": false,
-      "selections": (v1/*: any*/),
-      "storageKey": null
-    }
-  ]
 };
 return {
   "fragment": {
@@ -165,25 +127,17 @@ return {
       (v2/*: any*/),
       (v3/*: any*/),
       {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "KeypairResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myKeypairResourcePolicyV2",
+        "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KeypairResourcePolicyV2",
-            "kind": "LinkedField",
-            "name": "myKeypairResourcePolicyV2",
-            "plural": false,
-            "selections": [
-              (v4/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      },
-      (v5/*: any*/)
+          (v4/*: any*/)
+        ],
+        "storageKey": null
+      }
     ],
     "type": "Query",
     "abstractKey": null
@@ -197,45 +151,37 @@ return {
       (v2/*: any*/),
       (v3/*: any*/),
       {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "KeypairResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myKeypairResourcePolicyV2",
+        "plural": false,
         "selections": [
+          (v4/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "KeypairResourcePolicyV2",
-            "kind": "LinkedField",
-            "name": "myKeypairResourcePolicyV2",
-            "plural": false,
-            "selections": [
-              (v4/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "id",
             "storageKey": null
           }
-        ]
-      },
-      (v5/*: any*/)
+        ],
+        "storageKey": null
+      }
     ]
   },
   "params": {
-    "cacheID": "d5b48ff239276c761eeb49e2a4599c77",
+    "cacheID": "a6737b60877a1ddb1635aaa5e97a4c23",
     "id": null,
     "metadata": {},
     "name": "VFolderTableProjectQuery",
     "operationKind": "query",
-    "text": "query VFolderTableProjectQuery(\n  $domain_name: String!\n  $group_id: UUID!\n  $keypair_resource_policy_name: String!\n  $supportsResourcePolicyV2: Boolean!\n) {\n  domain(name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  group(id: $group_id, domain_name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  myKeypairResourcePolicyV2 @include(if: $supportsResourcePolicyV2) @since(version: \"26.4.2\") {\n    allowedVfolderHosts {\n      host\n      permissions\n    }\n    id\n  }\n  keypair_resource_policy(name: $keypair_resource_policy_name) @skip(if: $supportsResourcePolicyV2) @deprecatedSince(version: \"26.4.2\") {\n    allowed_vfolder_hosts\n  }\n}\n"
+    "text": "query VFolderTableProjectQuery(\n  $domain_name: String!\n  $group_id: UUID!\n) {\n  domain(name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  group(id: $group_id, domain_name: $domain_name) {\n    allowed_vfolder_hosts\n  }\n  myKeypairResourcePolicyV2 {\n    allowedVfolderHosts {\n      host\n      permissions\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bd3bad5de24afbe33bf6298b9d808713";
+(node as any).hash = "bfa5125600b18b607f5444c5f2f840fd";
 
 export default node;

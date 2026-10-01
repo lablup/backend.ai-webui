@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<466b1fd84e697bddb8f896395f3bf151>>
+ * @generated SignedSource<<46dbc4e374b3dc3cd97fa8f5c645290e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,16 +9,9 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type hooksUsingRelay_KeyPairResourcePolicyQuery$variables = {
-  name: string;
-  supportsResourcePolicyV2: boolean;
-};
+export type hooksUsingRelay_KeyPairResourcePolicyQuery$variables = Record<PropertyKey, never>;
 export type hooksUsingRelay_KeyPairResourcePolicyQuery$data = {
-  readonly keypair_resource_policy?: {
-    readonly max_concurrent_sessions: number | null | undefined;
-    readonly max_containers_per_session: number | null | undefined;
-  } | null | undefined;
-  readonly myKeypairResourcePolicyV2?: {
+  readonly myKeypairResourcePolicyV2: {
     readonly maxConcurrentSessions: number;
     readonly maxContainersPerSession: number;
   } | null | undefined;
@@ -29,149 +22,83 @@ export type hooksUsingRelay_KeyPairResourcePolicyQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "name"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "supportsResourcePolicyV2"
-  }
-],
-v1 = {
+var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxContainersPerSession",
   "storageKey": null
 },
-v2 = {
+v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "maxConcurrentSessions",
   "storageKey": null
-},
-v3 = {
-  "condition": "supportsResourcePolicyV2",
-  "kind": "Condition",
-  "passingValue": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "name",
-          "variableName": "name"
-        }
-      ],
-      "concreteType": "KeyPairResourcePolicy",
-      "kind": "LinkedField",
-      "name": "keypair_resource_policy",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "max_containers_per_session",
-          "storageKey": null
-        },
-        {
-          "alias": null,
-          "args": null,
-          "kind": "ScalarField",
-          "name": "max_concurrent_sessions",
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ]
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "hooksUsingRelay_KeyPairResourcePolicyQuery",
     "selections": [
       {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "KeypairResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myKeypairResourcePolicyV2",
+        "plural": false,
         "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "KeypairResourcePolicyV2",
-            "kind": "LinkedField",
-            "name": "myKeypairResourcePolicyV2",
-            "plural": false,
-            "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/)
-            ],
-            "storageKey": null
-          }
-        ]
-      },
-      (v3/*: any*/)
+          (v0/*: any*/),
+          (v1/*: any*/)
+        ],
+        "storageKey": null
+      }
     ],
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "hooksUsingRelay_KeyPairResourcePolicyQuery",
     "selections": [
       {
-        "condition": "supportsResourcePolicyV2",
-        "kind": "Condition",
-        "passingValue": true,
+        "alias": null,
+        "args": null,
+        "concreteType": "KeypairResourcePolicyV2",
+        "kind": "LinkedField",
+        "name": "myKeypairResourcePolicyV2",
+        "plural": false,
         "selections": [
+          (v0/*: any*/),
+          (v1/*: any*/),
           {
             "alias": null,
             "args": null,
-            "concreteType": "KeypairResourcePolicyV2",
-            "kind": "LinkedField",
-            "name": "myKeypairResourcePolicyV2",
-            "plural": false,
-            "selections": [
-              (v1/*: any*/),
-              (v2/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "id",
-                "storageKey": null
-              }
-            ],
+            "kind": "ScalarField",
+            "name": "id",
             "storageKey": null
           }
-        ]
-      },
-      (v3/*: any*/)
+        ],
+        "storageKey": null
+      }
     ]
   },
   "params": {
-    "cacheID": "a557238fcaf2535955758c199ca3c482",
+    "cacheID": "373d922f8adbf8f5db5799c6d3216165",
     "id": null,
     "metadata": {},
     "name": "hooksUsingRelay_KeyPairResourcePolicyQuery",
     "operationKind": "query",
-    "text": "query hooksUsingRelay_KeyPairResourcePolicyQuery(\n  $name: String!\n  $supportsResourcePolicyV2: Boolean!\n) {\n  myKeypairResourcePolicyV2 @include(if: $supportsResourcePolicyV2) @since(version: \"26.4.2\") {\n    maxContainersPerSession\n    maxConcurrentSessions\n    id\n  }\n  keypair_resource_policy(name: $name) @skip(if: $supportsResourcePolicyV2) @deprecatedSince(version: \"26.4.2\") {\n    max_containers_per_session\n    max_concurrent_sessions\n  }\n}\n"
+    "text": "query hooksUsingRelay_KeyPairResourcePolicyQuery {\n  myKeypairResourcePolicyV2 {\n    maxContainersPerSession\n    maxConcurrentSessions\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "56cb6c4015aa24bae2ddbdbf2b5ba1d1";
+(node as any).hash = "8aa03eb436268e338b235b0b621ffa2b";
 
 export default node;

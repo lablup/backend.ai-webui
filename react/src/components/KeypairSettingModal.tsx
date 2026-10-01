@@ -44,7 +44,9 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   const formRef = useRef<FormInstance<KeypairSettingModalFormInput>>(null);
 
   const baiClient = useSuspendedBackendaiClient();
-  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
+  // `adminKeypairResourcePoliciesV2` is superadmin-only; a domain admin (this
+  // modal is reachable from `/admin/users`) still reads the legacy list.
+  const isSuperAdmin = !!baiClient.is_superadmin;
   const keypair = useFragment(
     graphql`
       fragment KeypairSettingModalFragment on KeyPair {
@@ -225,7 +227,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   },
                 ]}
               >
-                {supportsResourcePolicyV2 ? (
+                {isSuperAdmin ? (
                   <BAIAdminKeypairResourcePolicySelect
                     label={t('credential.ResourcePolicy')}
                     isLabelHidden

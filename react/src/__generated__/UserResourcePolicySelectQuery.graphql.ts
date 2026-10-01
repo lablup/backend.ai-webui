@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<19eb654ef53eff64e4a34945ebd19adb>>
+ * @generated SignedSource<<945c29ac3aa5c74a1837416cd20a7a93>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,8 +10,8 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type UserResourcePolicySelectQuery$variables = {
+  isSuperAdmin: boolean;
   limit: number;
-  supportsResourcePolicyV2: boolean;
 };
 export type UserResourcePolicySelectQuery$data = {
   readonly adminUserResourcePoliciesV2?: {
@@ -33,19 +33,17 @@ export type UserResourcePolicySelectQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "supportsResourcePolicyV2"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "isSuperAdmin"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = [
   {
     "alias": null,
     "args": null,
@@ -61,9 +59,9 @@ v1 = [
     "storageKey": null
   }
 ],
-v2 = [
+v3 = [
   {
-    "condition": "supportsResourcePolicyV2",
+    "condition": "isSuperAdmin",
     "kind": "Condition",
     "passingValue": true,
     "selections": [
@@ -106,7 +104,7 @@ v2 = [
                 "kind": "LinkedField",
                 "name": "node",
                 "plural": false,
-                "selections": (v1/*: any*/),
+                "selections": (v2/*: any*/),
                 "storageKey": null
               }
             ],
@@ -118,7 +116,7 @@ v2 = [
     ]
   },
   {
-    "condition": "supportsResourcePolicyV2",
+    "condition": "isSuperAdmin",
     "kind": "Condition",
     "passingValue": false,
     "selections": [
@@ -129,7 +127,7 @@ v2 = [
         "kind": "LinkedField",
         "name": "user_resource_policies",
         "plural": true,
-        "selections": (v1/*: any*/),
+        "selections": (v2/*: any*/),
         "storageKey": null
       }
     ]
@@ -137,32 +135,38 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "UserResourcePolicySelectQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "UserResourcePolicySelectQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "32bd03892fcbd0c2c2ec1f7289dbd0fa",
+    "cacheID": "d387a40f72b0c99e7443ae87d0d69561",
     "id": null,
     "metadata": {},
     "name": "UserResourcePolicySelectQuery",
     "operationKind": "query",
-    "text": "query UserResourcePolicySelectQuery(\n  $limit: Int!\n  $supportsResourcePolicyV2: Boolean!\n) {\n  adminUserResourcePoliciesV2(limit: $limit, orderBy: [{field: NAME, direction: ASC}]) @include(if: $supportsResourcePolicyV2) @since(version: \"26.4.2\") {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  user_resource_policies @skip(if: $supportsResourcePolicyV2) @deprecatedSince(version: \"26.4.2\") {\n    id\n    name\n  }\n}\n"
+    "text": "query UserResourcePolicySelectQuery(\n  $limit: Int!\n  $isSuperAdmin: Boolean!\n) {\n  adminUserResourcePoliciesV2(limit: $limit, orderBy: [{field: NAME, direction: ASC}]) @include(if: $isSuperAdmin) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  user_resource_policies @skip(if: $isSuperAdmin) {\n    id\n    name\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dfd7c1e93c9c0da3591b7f866896fff1";
+(node as any).hash = "8444c4609ea91f69eca2669043c29025";
 
 export default node;
