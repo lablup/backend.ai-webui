@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b6d4f68689289842f857c639189a4ad7>>
+ * @generated SignedSource<<a0f758bddb9257c090f788825580fbdd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,13 +17,10 @@ export type RetentionPolicyOrderBy = {
   field: RetentionPolicyOrderField;
 };
 export type RetentionPolicyListQuery$variables = {
-  limit?: number | null | undefined;
-  offset?: number | null | undefined;
   orderBy?: ReadonlyArray<RetentionPolicyOrderBy> | null | undefined;
 };
 export type RetentionPolicyListQuery$data = {
   readonly adminRetentionPolicies: {
-    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly category: RetentionCategory;
@@ -48,30 +45,10 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "offset"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
     "name": "orderBy"
   }
 ],
 v1 = [
-  {
-    "kind": "Variable",
-    "name": "limit",
-    "variableName": "limit"
-  },
-  {
-    "kind": "Variable",
-    "name": "offset",
-    "variableName": "offset"
-  },
   {
     "kind": "Variable",
     "name": "orderBy",
@@ -82,52 +59,45 @@ v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "count",
+  "name": "id",
   "storageKey": null
 },
 v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "category",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "category",
+  "name": "retentionPeriodDays",
   "storageKey": null
 },
 v5 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "retentionPeriodDays",
+  "name": "enabled",
   "storageKey": null
 },
 v6 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "enabled",
+  "name": "lastSweptAt",
   "storageKey": null
 },
 v7 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "lastSweptAt",
-  "storageKey": null
-},
-v8 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
   "name": "createdAt",
   "storageKey": null
 },
-v9 = {
+v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -149,7 +119,6 @@ return {
         "name": "adminRetentionPolicies",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -166,13 +135,13 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
                   (v8/*: any*/),
-                  (v9/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -205,7 +174,6 @@ return {
         "name": "adminRetentionPolicies",
         "plural": false,
         "selections": [
-          (v2/*: any*/),
           {
             "alias": null,
             "args": null,
@@ -222,13 +190,13 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
+                  (v2/*: any*/),
                   (v3/*: any*/),
                   (v4/*: any*/),
                   (v5/*: any*/),
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  (v8/*: any*/),
-                  (v9/*: any*/)
+                  (v8/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -241,16 +209,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "5942940e8c0f3d00b825fc23760fc251",
+    "cacheID": "c2a7f42ee8545a7f5d56c7d77e8e7edc",
     "id": null,
     "metadata": {},
     "name": "RetentionPolicyListQuery",
     "operationKind": "query",
-    "text": "query RetentionPolicyListQuery(\n  $limit: Int\n  $offset: Int\n  $orderBy: [RetentionPolicyOrderBy!]\n) {\n  adminRetentionPolicies(limit: $limit, offset: $offset, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n}\n"
+    "text": "query RetentionPolicyListQuery(\n  $orderBy: [RetentionPolicyOrderBy!]\n) {\n  adminRetentionPolicies(orderBy: $orderBy) {\n    edges {\n      node {\n        id\n        category\n        retentionPeriodDays\n        enabled\n        lastSweptAt\n        createdAt\n        updatedAt\n        ...RetentionPolicySettingModalFragment\n      }\n    }\n  }\n}\n\nfragment RetentionPolicySettingModalFragment on RetentionPolicy {\n  id\n  category\n  retentionPeriodDays\n  enabled\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6b6388204453415a3c8b24ec17b7c61a";
+(node as any).hash = "cc5b6aa8ac262c288a1846cd76e94bf9";
 
 export default node;

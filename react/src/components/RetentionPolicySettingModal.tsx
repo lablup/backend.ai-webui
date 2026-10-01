@@ -26,7 +26,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
-const RETENTION_CATEGORIES: ReadonlyArray<RetentionCategory> = [
+export const RETENTION_CATEGORIES: ReadonlyArray<RetentionCategory> = [
   'LOGS',
   'LOGIN',
   'RECONCILE_HISTORY',
@@ -66,12 +66,19 @@ interface RetentionPolicySettingModalProps extends Omit<
   'onOk' | 'onCancel'
 > {
   policyFrgmt?: RetentionPolicySettingModalFragment$key | null;
+  /** Categories that already have a policy; the backend allows one each. */
+  configuredCategories?: ReadonlyArray<string>;
   onRequestClose: (success?: boolean) => void;
 }
 
 const RetentionPolicySettingModal: React.FC<
   RetentionPolicySettingModalProps
-> = ({ policyFrgmt, onRequestClose, ...baiModalProps }) => {
+> = ({
+  policyFrgmt,
+  configuredCategories,
+  onRequestClose,
+  ...baiModalProps
+}) => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
@@ -218,6 +225,9 @@ const RetentionPolicySettingModal: React.FC<
             options={_.map(RETENTION_CATEGORIES, (category) => ({
               value: category,
               label: getCategoryLabel(category),
+              disabled:
+                category !== policy?.category &&
+                _.includes(configuredCategories, category),
             }))}
           />
         </Form.Item>
