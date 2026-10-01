@@ -101,7 +101,7 @@ flowchart LR
 
 | flag | 켜지는 버전 | 켜졌을 때 | 꺼졌을 때 |
 |---|---|---|---|
-| `rbac-single-scope-role` | 26.9.0a4 | `useCurrentUserProjectRolesProjectsQuery`를 `store-or-network`로 읽어 `$targets`를 만든다. | 같은 query를 `store-only`로 읽어 요청을 보내지 않는다. |
+| `rbac-single-scope-role` | 26.9.0a4 | `$supportsMyRolesV2`를 `true`로 보내 `projectAdminRoles: myRolesV2`를 `@include`하고 `legacyRoles: myRoles`를 `@skip`한다. | `$supportsMyRolesV2`를 `false`로 보내 `legacyRoles`만 남기고 `projectAdminRoles`는 뺀다. |
 | `my-roles` | 26.4.0 | 주 query를 `store-or-network`로 읽는다. | 주 query를 `store-only`로 읽는다. |
 | `rbac-filter-wrapper` | 26.4.4rc9 | `$legacyPermissionFilter.entityType`을 `{ equals: 'PROJECT_ADMIN_PAGE' }`로 보낸다. | 같은 값을 문자열 그대로 보낸다. |
 
@@ -157,4 +157,4 @@ flowchart LR
 | feature flag | `backend.ai-client`의 `Client`가 연결된 매니저 버전으로 켜는 이름 붙은 boolean이다. `baiClient.supports(name)`으로 읽는다. |
 | `@catch(to: RESULT)` | Relay directive로, field 오류를 throw하지 않고 `{ ok: false, errors }` 또는 `{ ok: true, value }`로 돌려준다. |
 | `PermissionBit` | 26.9.0에서 permission 하나가 갖는 권한 종류 enum이다. `READ`, `UPDATE`, `CREATE`, `SOFT_DELETE`, `HARD_DELETE`가 있다. |
-| `scope_admin` | 26.9.0 매니저에서 scope 관리 권한을 나타내는 entity type 문자열이다. 프로젝트 scope에 대해 이 entity의 `READ`를 가진 사용자를 hook이 프로젝트 관리자로 본다. |
+| `scope_admin` | 26.9.0 매니저에서 scope 관리 권한을 나타내는 entity type 문자열이다. hook은 이 entity의 permission을 하나라도 가진 활성 project-scoped role을 직접 가진 사용자를 그 프로젝트의 관리자로 본다. permission bit는 따지지 않는다. |
