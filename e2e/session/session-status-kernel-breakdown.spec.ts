@@ -2,7 +2,8 @@
 //
 // A cluster session only sits in CREATING/TERMINATING for seconds on a live
 // cluster, so the session list is mocked: one 3-kernel session mid-startup and
-// one single-node session, both transitional.
+// one single-node session, both CREATING so the single-node case reaches the
+// kernel-count guard rather than the phase guard.
 import { loginAsUser, navigateTo } from '../utils/test-util';
 import { setupGraphQLMocks } from './mocking/graphql-interceptor';
 import {
@@ -12,7 +13,7 @@ import {
 import { test, expect, type Page } from '@playwright/test';
 
 const MULTI_NODE_SESSION_NAME = 'e2e-mock-multi-node-creating';
-const SINGLE_NODE_SESSION_NAME = 'e2e-mock-single-node-pending';
+const SINGLE_NODE_SESSION_NAME = 'e2e-mock-single-node-creating';
 const RESCHEDULED_REASON =
   'This session was preempted and returned to the queue; it will be scheduled again automatically.';
 
@@ -74,8 +75,8 @@ async function openSessionListWithMockedSessions(page: Page) {
         mockSessionNode(
           'single',
           SINGLE_NODE_SESSION_NAME,
-          'PENDING',
-          ['PENDING'],
+          'CREATING',
+          ['CREATING'],
           { status_info: 'RESCHEDULED' },
         ),
       ]),
@@ -134,20 +135,24 @@ test.describe(
         const legendRow = breakdown
           .getByText(status, { exact: true })
           .locator('xpath=../..');
-        await expect(legendRow).toContainText(count);
+        await expect(legendRow).toHaveText(
+          new RegExp(`^${status}\\s*${count}$`),
+        );
       }
     });
 
-    test('User can see only the status reason tooltip when hovering a single-node session badge', async ({
+    test('User can see the status reason tooltip but no kernel breakdown when hovering a creating single-node session badge', async ({
       page,
     }) => {
       await openSessionListWithMockedSessions(page);
 
-      const badge = statusBadgeOf(page, SINGLE_NODE_SESSION_NAME, 'PENDING');
+      const badge = statusBadgeOf(page, SINGLE_NODE_SESSION_NAME, 'CREATING');
       await expect(badge).toBeVisible({ timeout: 15000 });
       await badge.hover();
 
-      await expect(page.getByText(RESCHEDULED_REASON)).toBeVisible();
+      await expect(
+        page.getByRole('tooltip').getByText(RESCHEDULED_REASON),
+      ).toBeVisible();
       await expect(
         page.getByRole('group', { name: 'Kernel startup progress' }),
       ).toHaveCount(0);
