@@ -67,3 +67,53 @@ index f259046cdeff159dcf913734a643acd7eab02fef..b0b004782bf230e0c4d65fae019c25dd
        }), /*#__PURE__*/_jsx(Icon, {
          icon: "chevronDown",
          size: "sm",
+diff --git a/dist/Token/Token.js b/dist/Token/Token.js
+--- a/dist/Token/Token.js
++++ b/dist/Token/Token.js
+@@ -227,6 +227,10 @@
+     "aria-label": t('@astryx.token.remove', {
+       label
+     }),
++    onMouseDown: e => {
++      // Keep a mouse click from moving focus onto the button.
++      e.preventDefault();
++    },
+     onClick: e => {
+       e.stopPropagation();
+       onRemove(e);
+diff --git a/dist/Tokenizer/Tokenizer.js b/dist/Tokenizer/Tokenizer.js
+--- a/dist/Tokenizer/Tokenizer.js
++++ b/dist/Tokenizer/Tokenizer.js
+@@ -503,7 +503,7 @@
+   // Handle removing an item. Single removal path: both Backspace on an empty
+   // input and the per-token remove buttons route through here, so the
+   // announcement covers both.
+-  const handleRemove = useCallback(item => {
++  const handleRemove = useCallback((item, shouldFocusInput = true) => {
+     const newItems = value.filter(v => v.id !== item.id);
+     onChange(newItems, {
+       item,
+@@ -512,7 +512,11 @@
+     announce(t('@astryx.tokenizer.tokenRemoved', {
+       label: item.label
+     }));
+-    inputRef.current?.focus();
++    if (shouldFocusInput) {
++      inputRef.current?.focus();
++    } else {
++      inputRef.current?.blur();
++    }
+   }, [value, onChange, announce, t]);
+ 
+   // Handle clearing all items
+@@ -558,7 +562,9 @@
+ 
+   // Render tokens
+   const tokens = value.map(item => {
+-    const onRemoveItem = () => handleRemove(item);
++    // A mouse click on a token's remove button (detail > 0) leaves the field
++    // unfocused so the next click opens the menu; keyboard removal refocuses.
++    const onRemoveItem = e => handleRemove(item, !(e?.detail > 0));
+     if (renderToken) {
+       return /*#__PURE__*/_jsx("span", {
+         ...{
