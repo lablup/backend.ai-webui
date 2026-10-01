@@ -117,7 +117,7 @@ export declare function addNumberWithUnits(size1: string, size2: string, targetU
 export declare function subNumberWithUnits(size1: string, size2: string, targetUnit?: InputSizeUnit): string | undefined;
 export declare function divideNumberWithUnits(size1: string, size2: string, targetUnit?: InputSizeUnit): string | undefined;
 export declare const localeCompare: (a?: string | null, b?: string | null) => number;
-type KnownGlobalIdType = 'VirtualFolderNode' | 'ComputeSessionNode' | 'GroupNode' | 'UserNode' | 'ProjectNode' | 'ModelDeployment' | 'ImageV2';
+type KnownGlobalIdType = 'VirtualFolderNode' | 'VFolder' | 'ComputeSessionNode' | 'GroupNode' | 'UserNode' | 'ProjectNode' | 'ModelDeployment' | 'ImageV2';
 export declare const toGlobalId: (type: KnownGlobalIdType, id: string) => string;
 export declare const toLocalId: (globalId: string) => string;
 /**
