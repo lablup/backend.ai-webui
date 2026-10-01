@@ -17,6 +17,11 @@ import test, {
 import { randomUUID } from 'node:crypto';
 
 const TEST_RUN_ID = Date.now().toString(36);
+
+// Relay global ids are base64 `Type:uuid`; filters and URLs carry the uuid.
+function toLocalId(globalId: string) {
+  return Buffer.from(globalId, 'base64').toString('utf8').split(':')[1];
+}
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E detail test role created at ${new Date().toISOString()}`;
 
@@ -973,7 +978,7 @@ test.describe(
 
 test.describe(
   'RBAC Role Detail Drawer - View Presets link',
-  { tag: ['@rbac', '@regression', '@requires-manager-v26.9'] },
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
   () => {
     test('Superadmin can open exactly the preset of a system role from the role detail drawer', async ({
       page,
@@ -996,6 +1001,23 @@ test.describe(
         'Role.rolePreset, which the View Presets link filters by, requires manager >= 26.9.0rc1 (FR-4109)',
       );
 
+      // The role list query carries each role's `rolePreset.id` (a Relay
+      // global id), the identity the link must land on.
+      const rolePresetIdByRoleName = new Map<string, string>();
+      page.on('response', async (response) => {
+        if (!response.request().postData()?.includes('RBACManagementPageQuery'))
+          return;
+        const body = await response.json().catch(() => null);
+        for (const edge of body?.data?.adminRoles?.edges ?? []) {
+          if (edge?.node?.name && edge.node.rolePreset?.id) {
+            rolePresetIdByRoleName.set(
+              edge.node.name,
+              toLocalId(edge.node.rolePreset.id),
+            );
+          }
+        }
+      });
+
       // Land on the Roles tab already filtered to SYSTEM roles, the only
       // source whose Permissions tab carries the View Presets link.
       await navigateTo(
@@ -1016,12 +1038,26 @@ test.describe(
         .getByRole('button')
         .first();
       const roleName = (await roleNameButton.innerText()).trim();
+      await expect
+        .poll(() => rolePresetIdByRoleName.get(roleName), {
+          message: `role list response names the preset of ${roleName}`,
+        })
+        .toBeTruthy();
+      const expectedPresetId = rolePresetIdByRoleName.get(roleName);
       await roleNameButton.click();
 
       const drawer = roleDrawer(page);
       await expect(drawer).toBeVisible({ timeout: 10000 });
       const viewPresetsLink = drawer.getByText('View Presets', { exact: true });
       await expect(viewPresetsLink).toBeVisible({ timeout: 10000 });
+      const presetListResponse = page.waitForResponse(
+        (response) =>
+          !!response.request().postData()?.includes('RolePresetListTabQuery') &&
+          !!response
+            .request()
+            .postData()
+            ?.includes(expectedPresetId ?? ''),
+      );
       await viewPresetsLink.click();
 
       await expect(drawer).toBeHidden({ timeout: 10000 });
@@ -1031,13 +1067,10 @@ test.describe(
           .getByRole('button', { name: 'Presets', exact: true }),
       ).toHaveAttribute('aria-current', 'true');
 
-      const url = new URL(page.url());
-      expect(url.searchParams.get('tab')).toBe('presets');
-      const presetId = JSON.parse(url.searchParams.get('filter') ?? '{}')?.id
-        ?.equals;
-      expect(presetId).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
-      );
+      await expect(page).toHaveURL(/[?&]tab=presets(&|$)/);
+      expect(
+        JSON.parse(new URL(page.url()).searchParams.get('filter') ?? '{}'),
+      ).toEqual({ id: { equals: expectedPresetId } });
 
       // The id condition shows as a removable chip in the Presets filter.
       const searchFilters = page.getByRole('group', { name: 'Search filters' });
@@ -1051,16 +1084,18 @@ test.describe(
         }),
       ).toBeVisible();
 
-      // Exactly one preset, and it is the role's own kind (admin vs member).
-      const presetRows = dataRows(page);
-      await expect(presetRows).toHaveCount(1, { timeout: SLOW_PAGE_TIMEOUT });
-      const presetName = (
-        await presetRows.first().getByRole('cell').first().innerText()
-      ).trim();
-      const roleKind = roleName.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
-      if (roleKind) {
-        expect(presetName.toLowerCase()).toContain(roleKind);
-      }
+      // Exactly one preset is listed, and it is the role's own preset.
+      const presetEdges =
+        (await (await presetListResponse).json())?.data?.adminRolePresets
+          ?.edges ?? [];
+      expect(
+        presetEdges.map((edge: { node: { id: string } }) =>
+          toLocalId(edge.node.id),
+        ),
+      ).toEqual([expectedPresetId]);
+      await expect(dataRows(page)).toHaveCount(1, {
+        timeout: SLOW_PAGE_TIMEOUT,
+      });
     });
   },
 );
