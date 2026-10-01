@@ -161,13 +161,15 @@ const toVFolderUuid = (vfolderID: string) =>
   vfolderID.length === 32 ? formatToUUID(vfolderID) : vfolderID;
 
 // Called by both the header and the body, each under its own Suspense
-// boundary; Relay serves the two readers from one request.
+// boundary; Relay serves the two readers from one request. `@catch` tells a
+// field error that nulled the node (FR-3997) apart from a folder the caller
+// cannot see, which comes back as a plain `null`.
 const useFolderExplorerQuery = (vfolderID: string) => {
   'use memo';
-  return useLazyLoadQuery<FolderExplorerModalV2Query>(
+  const { vfolderNode } = useLazyLoadQuery<FolderExplorerModalV2Query>(
     graphql`
       query FolderExplorerModalV2Query($vfolderId: UUID!) {
-        vfolderNode: vfolderV2(vfolderId: $vfolderId) {
+        vfolderNode: vfolderV2(vfolderId: $vfolderId) @catch(to: RESULT) {
           unmanagedPath
           host
           id
@@ -191,6 +193,10 @@ const useFolderExplorerQuery = (vfolderID: string) => {
     { vfolderId: toVFolderUuid(vfolderID) },
     { fetchPolicy: 'store-and-network' },
   );
+  return {
+    vfolderNode: vfolderNode.ok ? vfolderNode.value : null,
+    hasDetailError: !vfolderNode.ok,
+  };
 };
 
 // This modal is globally mounted (no page parent), so it is the sanctioned
@@ -289,7 +295,7 @@ const FolderExplorerBody: React.FC<{
   });
 
   const vfolderUuid = toVFolderUuid(vfolderID);
-  const { vfolderNode } = useFolderExplorerQuery(vfolderID);
+  const { vfolderNode, hasDetailError } = useFolderExplorerQuery(vfolderID);
 
   const isFolderReadable = !!vfolderNode;
   const folderName = vfolderNode?.metadata?.name;
@@ -570,7 +576,11 @@ const FolderExplorerBody: React.FC<{
       >
         {!isFolderReadable ? (
           <Banner
-            title={t('explorer.FolderNotFoundOrNoAccess')}
+            title={
+              hasDetailError
+                ? t('explorer.FolderDetailUnavailable')
+                : t('explorer.FolderNotFoundOrNoAccess')
+            }
             status="error"
           />
         ) : hasNoPermissions ? (
