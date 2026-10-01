@@ -5,17 +5,22 @@
 import type {
   AdminVFolderNodeListPageQuery,
   AdminVFolderNodeListPageQuery$data,
-  AdminVFolderNodeListPageQuery$variables,
+  VFolderFilter,
+  VFolderOrderBy,
 } from '../__generated__/AdminVFolderNodeListPageQuery.graphql';
 import { AstryxAdminTheme } from '../astryx-theme';
 import AutoUpdateFetchKeyButton from '../components/AutoUpdateFetchKeyButton';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import BAITabs from '../components/BAITabs';
-import DeleteVFolderModal from '../components/DeleteVFolderModal';
+import DeleteForeverVFolderModalV2 from '../components/DeleteForeverVFolderModalV2';
+import DeleteVFolderModalV2 from '../components/DeleteVFolderModalV2';
 import FolderCreateModalV2 from '../components/FolderCreateModalV2';
-import RestoreVFolderModal from '../components/RestoreVFolderModal';
-import VFolderNodes, { VFolderNodeInList } from '../components/VFolderNodes';
-import { handleRowSelectionChange } from '../helper';
+import RestoreVFolderModalV2 from '../components/RestoreVFolderModalV2';
+import VFolderNodesV2, {
+  VFolderNodeInList,
+  availableVFolderSorterValues,
+} from '../components/VFolderNodesV2';
+import { convertToOrderBy, handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -27,20 +32,20 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
-  BAIVFolderDeleteButton,
-  BAIAdminProjectSelect,
+  BAIVFolderDeleteButtonV2,
   BAICard,
-  BAIPropertyFilter,
+  BAIGraphQLPropertyFilter,
   BAISelectionLabel,
+  INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  mergeFilterValues,
+  isColumnVisible,
+  useFetchKey,
   useToggle,
-  useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, RotateCcwIcon } from 'lucide-react';
-import { parseAsString, useQueryStates } from 'nuqs';
+import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
+import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
   useDeferredValue,
@@ -52,29 +57,56 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 type VFolderNodesType = NonNullableNodeOnEdges<
-  AdminVFolderNodeListPageQuery$data['vfolder_nodes']
+  AdminVFolderNodeListPageQuery$data['adminVfoldersV2']
 >;
 
-const VFOLDER_STATUSES = [
+const DELETE_STATUSES = [
+  'DELETE_PENDING',
+  'DELETE_ONGOING',
+  'DELETE_ERROR',
+  'DELETE_COMPLETE',
+] as const;
+const VISIBLE_DELETED_STATUSES = [
+  'DELETE_PENDING',
+  'DELETE_ONGOING',
+  'DELETE_ERROR',
+] as const;
+
+const STATUS_FILTER_ACTIVE = {
+  status: { notIn: DELETE_STATUSES },
+} as const;
+const STATUS_FILTER_DELETED = {
+  status: { in: VISIBLE_DELETED_STATUSES },
+} as const;
+
+const DEFAULT_ORDER = '-created_at';
+const statusCategoryValues = ['active', 'deleted'] as const;
+const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
+
+// Module constants so each mode's filter keeps a stable identity (FR-3594);
+// see ProjectAdminDataPage, this page's V2 reference.
+const USAGE_MODE_FILTERS: Partial<
+  Record<(typeof modeValues)[number], VFolderFilter>
+> = {
+  general: {
+    AND: [
+      { name: { iNotStartsWith: '.' } },
+      { usageMode: { equals: 'GENERAL' } },
+    ],
+  },
+  data: { usageMode: { equals: 'DATA' } },
+  automount: { name: { iStartsWith: '.' } },
+  model: { usageMode: { equals: 'MODEL' } },
+};
+
+const VFOLDER_STATUS_OPTIONS = [
   'READY',
-  'PERFORMING',
   'CLONING',
-  'MOUNTED',
-  'ERROR',
   'DELETE_PENDING',
   'DELETE_ONGOING',
   'DELETE_COMPLETE',
   'DELETE_ERROR',
-];
-
-const DEFAULT_ORDER = '-created_at';
-
-const FILTER_BY_STATUS_CATEGORY = {
-  active:
-    'status != "DELETE_PENDING" & status != "DELETE_ONGOING" & status != "DELETE_ERROR" & status != "DELETE_COMPLETE"',
-  deleted:
-    'status in ["DELETE_PENDING", "DELETE_ONGOING", "DELETE_ERROR", "DELETE_COMPLETE"]',
-};
+] as const;
 
 const AdminVFolderNodeListPage: React.FC = (props) => {
   'use memo';
@@ -93,6 +125,8 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
   const [isOpenDeleteModal, { toggle: toggleDeleteModal }] = useToggle(false);
   const [isOpenRestoreModal, { toggle: toggleRestoreModal }] = useToggle(false);
   const [isOpenCreateModal, { toggle: toggleCreateModal }] = useToggle(false);
+  const [isOpenDeleteForeverModal, { toggle: toggleDeleteForeverModal }] =
+    useToggle(false);
 
   const {
     baiPaginationOption,
@@ -105,10 +139,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsString,
-      filter: parseAsString,
-      statusCategory: parseAsString.withDefault('active'),
-      mode: parseAsString.withDefault('all'),
+      order: parseAsStringLiteral(availableVFolderSorterValues),
+      filter: parseAsJson<VFolderFilter>((value) => value as VFolderFilter),
+      statusCategory:
+        parseAsStringLiteral(statusCategoryValues).withDefault('active'),
+      mode: parseAsStringLiteral(modeValues).withDefault('all'),
     },
     { history: 'replace' },
   );
@@ -128,94 +163,83 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
     };
   }, [queryParams, tablePaginationOption]);
 
-  function getUsageModeFilter(mode: string) {
-    switch (mode) {
-      case 'all':
-      case undefined:
-        return undefined;
-      case 'general':
-        return `(! name ilike ".%")&(usage_mode == "${mode}")`;
-      case 'pipeline':
-        return `usage_mode == "data"`;
-      case 'automount':
-        return `name ilike ".%"`;
-      default:
-        return `usage_mode == "${mode}"`;
-    }
-  }
-  const usageModeFilter = getUsageModeFilter(queryParams.mode);
+  const usageModeFilter = USAGE_MODE_FILTERS[queryParams.mode];
 
-  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
+  // Drives VFolderNodesV2Fragment's $showUsage: fetch usage with the list
+  // only when a usage column is actually visible (review comment on FR-4114).
+  const showUsage =
+    isColumnVisible({ defaultHidden: true }, 'num_files', columnOverrides) ||
+    isColumnVisible({ defaultHidden: true }, 'cur_size', columnOverrides);
 
-  // scope_id is intentionally omitted so superadmin sees all vfolders across all projects/domains
-  const queryVariables: AdminVFolderNodeListPageQuery$variables = {
+  const [fetchKey, updateFetchKey] = useFetchKey();
+
+  const statusFilter =
+    queryParams.statusCategory === 'deleted'
+      ? STATUS_FILTER_DELETED
+      : STATUS_FILTER_ACTIVE;
+
+  // Built from literals and stable references only (no helper call): the
+  // compiler keeps unknown calls with mutable arguments un-memoized, and any
+  // per-render identity here re-fires the deferred-value loading flash.
+  const combinedFilter: VFolderFilter = {
+    AND: [
+      statusFilter,
+      ...(usageModeFilter ? [usageModeFilter] : []),
+      ...(queryParams.filter ? [queryParams.filter] : []),
+    ],
+  };
+
+  // scope is intentionally omitted: `adminVfoldersV2` (superadmin only) has
+  // no project/domain argument, so this page always sees every vfolder.
+  const queryVariables = {
     offset: baiPaginationOption.offset,
-    first: baiPaginationOption.first,
-    filter: mergeFilterValues([
-      queryParams.statusCategory === 'active' ||
-      queryParams.statusCategory === undefined
-        ? FILTER_BY_STATUS_CATEGORY['active']
-        : FILTER_BY_STATUS_CATEGORY['deleted'],
-      queryParams.filter,
-      usageModeFilter,
-    ]),
-    order: queryParams.order || DEFAULT_ORDER,
-    permission: 'read_attribute',
-    filterForActiveCount: FILTER_BY_STATUS_CATEGORY['active'],
-    filterForDeletedCount: FILTER_BY_STATUS_CATEGORY['deleted'],
+    limit: baiPaginationOption.limit,
+    filter: combinedFilter,
+    orderBy: convertToOrderBy<VFolderOrderBy>(
+      queryParams.order || DEFAULT_ORDER,
+    ),
+    filterForActiveCount: STATUS_FILTER_ACTIVE,
+    filterForDeletedCount: STATUS_FILTER_DELETED,
+    showUsage,
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const { vfolder_nodes, ...folderCounts } =
+  const { adminVfoldersV2, ...folderCounts } =
     useLazyLoadQuery<AdminVFolderNodeListPageQuery>(
       graphql`
         query AdminVFolderNodeListPageQuery(
           $offset: Int
-          $first: Int
-          $filter: String
-          $order: String
-          $permission: VFolderPermissionValueField
-          $filterForActiveCount: String
-          $filterForDeletedCount: String
+          $limit: Int
+          $filter: VFolderFilter
+          $orderBy: [VFolderOrderBy!]
+          $filterForActiveCount: VFolderFilter
+          $filterForDeletedCount: VFolderFilter
+          $showUsage: Boolean!
         ) {
-          vfolder_nodes(
+          adminVfoldersV2(
             offset: $offset
-            first: $first
+            limit: $limit
             filter: $filter
-            order: $order
-            permission: $permission
+            orderBy: $orderBy
           ) {
             edges @required(action: THROW) {
               node @required(action: THROW) {
                 id @required(action: THROW)
-                status
-                permissions
-                ...VFolderNodesFragment
-                ...DeleteVFolderModalFragment
-                ...EditableVFolderNameFragment
-                ...RestoreVFolderModalFragment
-                ...VFolderNodeIdenticonFragment
-                ...SharedFolderPermissionInfoModalFragment
-                ...BAIVFolderDeleteButtonFragment
+                vfolderStatus: status
+                ...VFolderNodesV2Fragment @arguments(showUsage: $showUsage)
+                ...DeleteVFolderModalV2Fragment
+                ...DeleteForeverVFolderModalV2Fragment
+                ...RestoreVFolderModalV2Fragment
+                ...BAIVFolderDeleteButtonV2Fragment
               }
             }
             count
           }
-          active: vfolder_nodes(
-            first: 0
-            offset: 0
-            filter: $filterForActiveCount
-            permission: $permission
-          ) {
+          active: adminVfoldersV2(filter: $filterForActiveCount) {
             count
           }
-          deleted: vfolder_nodes(
-            first: 0
-            offset: 0
-            filter: $filterForDeletedCount
-            permission: $permission
-          ) {
+          deleted: adminVfoldersV2(filter: $filterForDeletedCount) {
             count
           }
         }
@@ -223,11 +247,10 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
       deferredQueryVariables,
       {
         fetchPolicy:
-          deferredFetchKey === 'initial-fetch'
+          deferredFetchKey === INITIAL_FETCH_KEY
             ? 'store-and-network'
             : 'network-only',
-        fetchKey:
-          deferredFetchKey === 'initial-fetch' ? undefined : deferredFetchKey,
+        fetchKey: deferredFetchKey,
       },
     );
 
@@ -252,10 +275,13 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               // without this the previous tab's filter/order/mode leak into a
               // tab that has no cached state (legacy 'replace' cleared them).
               setQuery(null);
-              setQuery({
-                ...storedQuery.queryParams,
-                statusCategory: key as 'active' | 'deleted',
-              });
+              setQuery(
+                {
+                  ...storedQuery.queryParams,
+                  statusCategory: key as 'active' | 'deleted',
+                },
+                { history: 'replace' },
+              );
               setTablePaginationOption(
                 storedQuery.tablePaginationOption || { current: 1 },
               );
@@ -332,13 +358,13 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                     },
                   ])}
                 />
-                <BAIPropertyFilter
+                <BAIGraphQLPropertyFilter<VFolderFilter>
                   data-testid="vfolder-filter"
-                  style={{ minWidth: 320, flex: 1 }}
-                  label={t('settings.SearchPlaceholder')}
-                  placeholder={t('data.SearchByName')}
-                  applyLabel={t('button.Apply')}
-                  contentSearchFieldKey="name"
+                  // TODO(needs-backend): V2 `VFolderFilter` does not expose
+                  // group/project, creator, last_used, max_size,
+                  // ownership_type, or permission filters — only
+                  // name/host/status/usageMode/cloneable/createdAt are
+                  // supported (FR-4114).
                   filterProperties={[
                     {
                       key: 'name',
@@ -346,97 +372,24 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                       type: 'string',
                     },
                     {
-                      // `group` is the vfolder queryfilter field holding the
-                      // owning project UUID.
-                      key: 'group',
-                      propertyLabel: t('data.Project'),
-                      type: 'string',
-                      defaultOperator: '==',
-                      renderInput: ({ onAddCondition, value, isDisabled }) => (
-                        <BAIAdminProjectSelect
-                          // The filter row already prints the property label.
-                          label={t('data.Project')}
-                          isLabelHidden
-                          value={value}
-                          isDisabled={isDisabled}
-                          onChange={(value, option) => {
-                            onAddCondition(
-                              value as string | undefined,
-                              _.castArray(option ?? [])[0]?.label,
-                            );
-                          }}
-                        />
-                      ),
-                    },
-                    {
-                      key: 'creator',
-                      propertyLabel: t('data.folders.Creator'),
-                      type: 'string',
-                    },
-                    {
-                      key: 'status',
-                      propertyLabel: t('data.folders.Status'),
-                      type: 'string',
-                      strictSelection: true,
-                      defaultOperator: '==',
-                      options: _.map(VFOLDER_STATUSES, (status) => ({
-                        label: status,
-                        value: status,
-                      })),
-                    },
-                    {
                       key: 'host',
                       propertyLabel: t('data.folders.Location'),
                       type: 'string',
                     },
                     {
-                      key: 'ownership_type',
-                      propertyLabel: t('data.Type'),
-                      type: 'string',
+                      key: 'status',
+                      propertyLabel: t('data.folders.Status'),
+                      type: 'enum',
                       strictSelection: true,
-                      defaultOperator: '==',
-                      options: [
-                        {
-                          label: t('data.User'),
-                          value: 'user',
-                        },
-                        {
-                          label: t('data.Project'),
-                          value: 'group',
-                        },
-                      ],
+                      options: _.map([...VFOLDER_STATUS_OPTIONS], (status) => ({
+                        label: status,
+                        value: status,
+                      })),
                     },
                     {
-                      key: 'permission',
-                      propertyLabel: t('data.Permission'),
-                      type: 'string',
-                      strictSelection: true,
-                      defaultOperator: '==',
-                      options: [
-                        {
-                          label: t('data.ReadOnly'),
-                          value: 'ro',
-                        },
-                        {
-                          label: t('data.ReadWrite'),
-                          value: 'rw',
-                        },
-                      ],
-                    },
-                    {
-                      key: 'created_at',
+                      key: 'createdAt',
                       propertyLabel: t('data.folders.CreatedAt'),
                       type: 'datetime',
-                    },
-                    {
-                      key: 'last_used',
-                      propertyLabel: t('credential.LastUsed'),
-                      type: 'datetime',
-                    },
-                    {
-                      key: 'max_size',
-                      propertyLabel: t('data.folders.MaxSize'),
-                      type: 'number',
                     },
                     {
                       key: 'cloneable',
@@ -460,7 +413,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                         count={selectedFolderList.length}
                         onClearSelection={() => setSelectedFolderList([])}
                       />
-                      <BAIVFolderDeleteButton
+                      <BAIVFolderDeleteButtonV2
                         vfolderFrgmt={selectedFolderList}
                         // P8: the accessible name is now on the control itself.
                         label={t('data.folders.MoveToTrash')}
@@ -488,6 +441,16 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                           }}
                         />
                       </Tooltip>
+                      <IconButton
+                        label={t('data.folders.Delete')}
+                        tooltip={t('data.folders.Delete')}
+                        icon={<Trash2Icon />}
+                        className="bai-name-action-cell-danger"
+                        variant="ghost"
+                        onClick={() => {
+                          toggleDeleteForeverModal();
+                        }}
+                      />
                     </>
                   )}
                 <AutoUpdateFetchKeyButton
@@ -514,7 +477,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             {/* FR-4009: a query suspending inside the table (useCurrentUserProjectRoles
                 refetches after a folder mutation) must not blank the whole page. */}
             <Suspense fallback={<BAISkeleton rows={4} />}>
-              <VFolderNodes
+              <VFolderNodesV2
                 order={queryParams.order}
                 loading={deferredQueryVariables !== queryVariables}
                 // ADR-0001: super-admin page — no ambient project context. The
@@ -529,7 +492,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 // applied to this page (FR-3412).
                 noDeployTooltip={t('data.folders.CannotDeployFromAdminMenu')}
                 vfoldersFrgmt={filterOutNullAndUndefined(
-                  _.map(vfolder_nodes?.edges, 'node'),
+                  _.map(adminVfoldersV2?.edges, 'node'),
                 )}
                 rowSelection={{
                   type: 'checkbox',
@@ -537,15 +500,15 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   getCheckboxProps(record: VFolderNodeInList) {
                     return {
                       disabled:
-                        isDeletedCategory(record.status) &&
-                        record.status !== 'delete-pending',
+                        isDeletedCategory(record.vfolderStatus) &&
+                        record.vfolderStatus !== 'DELETE_PENDING',
                     };
                   },
                   onChange: (selectedRowKeys) => {
                     handleRowSelectionChange(
                       selectedRowKeys,
                       filterOutNullAndUndefined(
-                        _.map(vfolder_nodes?.edges, 'node'),
+                        _.map(adminVfoldersV2?.edges, 'node'),
                       ),
                       setSelectedFolderList,
                     );
@@ -555,7 +518,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 pagination={{
                   pageSize: tablePaginationOption.pageSize,
                   current: tablePaginationOption.current,
-                  total: vfolder_nodes?.count ?? 0,
+                  total: adminVfoldersV2?.count ?? 0,
                   onChange(current, pageSize) {
                     if (_.isNumber(current) && _.isNumber(pageSize)) {
                       setTablePaginationOption({ current, pageSize });
@@ -563,7 +526,11 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   },
                 }}
                 onChangeOrder={(order) => {
-                  setQuery({ order: order ?? null });
+                  setQuery({
+                    order:
+                      (order as (typeof availableVFolderSorterValues)[number]) ??
+                      null,
+                  });
                 }}
                 onRemoveRow={(removedId) => {
                   setSelectedFolderList((prevSelected) =>
@@ -576,7 +543,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                   // Storage oversight is this page's job, so the quota/usage and
                   // creation columns start visible here but stay hidden on /data.
                   defaultColumnOverrides: {
-                    creator: { hidden: false },
                     cur_size: { hidden: false },
                     max_size: { hidden: false },
                     created_at: { hidden: false },
@@ -587,7 +553,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             </Suspense>
           </VStack>
         </BAICard>
-        <DeleteVFolderModal
+        <DeleteVFolderModalV2
           vfolderFrgmts={selectedFolderList}
           open={isOpenDeleteModal}
           onRequestClose={(success) => {
@@ -598,7 +564,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
             toggleDeleteModal();
           }}
         />
-        <RestoreVFolderModal
+        <RestoreVFolderModalV2
           vfolderFrgmts={selectedFolderList}
           open={isOpenRestoreModal}
           onRequestClose={(success) => {
@@ -607,6 +573,17 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               setSelectedFolderList([]);
             }
             toggleRestoreModal();
+          }}
+        />
+        <DeleteForeverVFolderModalV2
+          vfolderFrgmts={selectedFolderList}
+          open={isOpenDeleteForeverModal}
+          onRequestClose={(success) => {
+            if (success) {
+              updateFetchKey();
+              setSelectedFolderList([]);
+            }
+            toggleDeleteForeverModal();
           }}
         />
         <FolderCreateModalV2
