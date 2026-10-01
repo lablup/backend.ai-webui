@@ -114,10 +114,11 @@ const fetchFn: FetchFunction = async (
       })
       .catch((err: any) => {
         if (err.isError && err.statusCode === 401) {
-          // `description` carries the server's reason, e.g. a disallowed client IP.
+          // The manager's IP-block 401 has no distinct error code, only this msg.
+          const isIpBlocked = /is not allowed IP address/.test(err.description);
           throw Object.assign(new Error('GraphQL Authorization Error'), {
             name: 'AuthorizationError',
-            description: err.description,
+            description: isIpBlocked ? err.description : undefined,
           });
         }
         throw err;
