@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ff24fdf479acc5ca19635951a15609d7>>
+ * @generated SignedSource<<163516a0245e00b695d86b548da813df>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -104,16 +104,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0ecd9ab142334b76f96ecaccac7efa67",
+    "cacheID": "3190062f81d256225b8d3e26ef8cdff5",
     "id": null,
     "metadata": {},
     "name": "BAIDirectoryPickerModalQuery",
     "operationKind": "query",
-    "text": "query BAIDirectoryPickerModalQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    metadata {\n      name\n    }\n    permissions\n  }\n}\n"
+    "text": "query BAIDirectoryPickerModalQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    metadata {\n      name\n    }\n    permissions @since(version: \"26.9.0rc1\")\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "69aabc5622dbe4b3381764af4a7bdc70";
+(node as any).hash = "35256714c03179b67282204d7ae3c8be";
 
 export default node;

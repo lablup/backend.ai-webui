@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c3d69805b5e0d663e738692347b98141>>
+ * @generated SignedSource<<4252a7a4cdb941ded0504ef34cb3e19b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -119,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "06aca2c10e87c5bfa5e01efb4d884431",
+    "cacheID": "ff1fcb49e157075a455231242a113339",
     "id": null,
     "metadata": {},
     "name": "DeleteVFolderModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteVFolderModalV2Mutation(\n  $input: BulkDeleteVFoldersV2Input!\n) {\n  bulkDeleteVfoldersV2(input: $input) {\n    items {\n      id\n    }\n    failed {\n      vfolderId\n      message\n    }\n  }\n}\n"
+    "text": "mutation DeleteVFolderModalV2Mutation(\n  $input: BulkDeleteVFoldersV2Input!\n) {\n  bulkDeleteVfoldersV2(input: $input) {\n    items @since(version: \"26.9.0rc1\") {\n      id\n    }\n    failed @since(version: \"26.9.0rc1\") {\n      vfolderId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0ae09dca6246f8530ce80b7a9bc40d1d";
+(node as any).hash = "28e1ac3a34af553dd31bf25aa15805aa";
 
 export default node;
