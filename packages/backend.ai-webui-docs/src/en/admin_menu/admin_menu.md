@@ -1908,6 +1908,28 @@ The footer holds three actions:
 - **Delete**: Removes the published announcement so the banner disappears for everyone. A confirmation
   dialog appears first. The action is unavailable when nothing is currently published.
 
+<a id="data-retention"></a>
+
+### Data retention
+
+Superadmins can control how long Backend.AI keeps each kind of record on the **Data Retention** tab of the
+Maintenance page. The tab appears only when the connected manager supports retention policies (26.8.0 or
+later). Old records are cleaned up only for categories whose policy is enabled.
+
+Each row of the list is the policy for one category and shows its **Category**, **Retention Period (Days)**,
+an **Enabled** switch, the **Last Cleanup** time (or "Not run yet"), and the creation and update times. The
+available categories are Logs, Login History, Reconcile History, Roles & Invitations, Deployments, Sessions,
+Usage Records, and Usage Buckets. The list can be sorted by **Category**, **Last Cleanup**, or **Created At**.
+
+- **Create Policy**: Click **Create Policy**, choose a category, enter a retention period of at least 1 day,
+  and choose whether the policy is enabled. Only one policy can exist per category, so categories that
+  already have a policy are disabled in the category list.
+- **Edit**: Use the edit action in the row to change the retention period or the enabled setting. The
+  category of an existing policy cannot be changed.
+- **Enabled switch**: Turn a policy on or off directly from the list, without opening the editor.
+- **Delete**: Use the delete action in the row. Because the policy is removed permanently, you must type
+  the category name shown in the dialog before the delete button is enabled.
+
 <a id="detailed-information"></a>
 
 ## Detailed information
