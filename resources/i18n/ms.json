@@ -2396,6 +2396,7 @@
     "RoleDetailInfo": "Maklumat Peranan RBAC",
     "RoleName": "Nama Peranan",
     "RoleNotFound": "Peranan tidak ditemui.",
+    "RolePreset": "Pratetap Peranan",
     "RolePresetDetailInfo": "Maklumat Pratetap Peranan RBAC",
     "RolePurged": "Peranan dialih keluar secara kekal.",
     "RoleScopes": "Skop",

@@ -2398,6 +2398,7 @@
     "RoleDetailInfo": "RBACロール情報",
     "RoleName": "ロール名",
     "RoleNotFound": "ロールが見つかりません。",
+    "RolePreset": "ロールプリセット",
     "RolePresetDetailInfo": "RBACロールプリセット情報",
     "RolePurged": "ロールが完全に削除されました。",
     "RoleScopes": "スコープ",

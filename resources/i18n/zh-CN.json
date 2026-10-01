@@ -2398,6 +2398,7 @@
     "RoleDetailInfo": "RBAC 角色信息",
     "RoleName": "角色名称",
     "RoleNotFound": "角色未找到。",
+    "RolePreset": "角色预设",
     "RolePresetDetailInfo": "RBAC 角色预设信息",
     "RolePurged": "角色已永久删除。",
     "RoleScopes": "范围",

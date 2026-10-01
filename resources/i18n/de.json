@@ -2398,6 +2398,7 @@
     "RoleDetailInfo": "RBAC-Rolleninformationen",
     "RoleName": "Rollenname",
     "RoleNotFound": "Rolle nicht gefunden.",
+    "RolePreset": "Rollenvorlage",
     "RolePresetDetailInfo": "RBAC-Rollenvoreinstellungsinformationen",
     "RolePurged": "Rolle dauerhaft entfernt.",
     "RoleScopes": "Geltungsbereiche",

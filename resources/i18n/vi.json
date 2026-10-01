@@ -2398,6 +2398,7 @@
     "RoleDetailInfo": "Thông tin vai trò RBAC",
     "RoleName": "Tên vai trò",
     "RoleNotFound": "Không tìm thấy vai trò.",
+    "RolePreset": "Mẫu vai trò",
     "RolePresetDetailInfo": "Thông tin mẫu thiết lập vai trò RBAC",
     "RolePurged": "Vai trò đã bị xóa vĩnh viễn.",
     "RoleScopes": "Phạm vi",

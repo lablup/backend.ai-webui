@@ -2398,6 +2398,7 @@
     "RoleDetailInfo": "Informações sobre função RBAC",
     "RoleName": "Nome da função",
     "RoleNotFound": "Função não encontrada.",
+    "RolePreset": "Predefinição de função",
     "RolePresetDetailInfo": "Informações sobre predefinição de função RBAC",
     "RolePurged": "Função removida permanentemente.",
     "RoleScopes": "Âmbitos",

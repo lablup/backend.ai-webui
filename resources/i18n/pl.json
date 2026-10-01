@@ -2398,6 +2398,7 @@
     "RoleDetailInfo": "Informacje o roli RBAC",
     "RoleName": "Nazwa roli",
     "RoleNotFound": "Rola nie została znaleziona.",
+    "RolePreset": "Szablon roli",
     "RolePresetDetailInfo": "Informacje o ustawieniu wstępnym roli RBAC",
     "RolePurged": "Rola została trwale usunięta.",
     "RoleScopes": "Zakresy",

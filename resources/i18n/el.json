@@ -2396,6 +2396,7 @@
     "RoleDetailInfo": "Πληροφορίες ρόλου RBAC",
     "RoleName": "Όνομα ρόλου",
     "RoleNotFound": "Ο ρόλος δεν βρέθηκε.",
+    "RolePreset": "Προκαθορισμένος ρόλος",
     "RolePresetDetailInfo": "Πληροφορίες προεπιλογής ρόλου RBAC",
     "RolePurged": "Ο ρόλος αφαιρέθηκε οριστικά.",
     "RoleScopes": "Πεδία εφαρμογής",

@@ -2399,6 +2399,7 @@
     "RoleDetailInfo": "Info Peran RBAC",
     "RoleName": "Nama Peran",
     "RoleNotFound": "Peran tidak ditemukan.",
+    "RolePreset": "Preset Peran",
     "RolePresetDetailInfo": "Info Preset Peran RBAC",
     "RolePurged": "Peran dihapus secara permanen.",
     "RoleScopes": "Cakupan",

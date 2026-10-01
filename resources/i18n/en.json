@@ -2383,6 +2383,7 @@
     "RoleDetailInfo": "RBAC Role Info",
     "RoleName": "Role Name",
     "RoleNotFound": "Role not found.",
+    "RolePreset": "Role Preset",
     "RolePresetDetailInfo": "RBAC Role Preset Info",
     "RolePurged": "Role permanently removed.",
     "RoleScopes": "Scopes",

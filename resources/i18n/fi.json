@@ -2396,6 +2396,7 @@
     "RoleDetailInfo": "RBAC-roolitiedot",
     "RoleName": "Roolin nimi",
     "RoleNotFound": "Roolia ei löydy.",
+    "RolePreset": "Roolin esiasetus",
     "RolePresetDetailInfo": "RBAC-rooliesiasetuksen tiedot",
     "RolePurged": "Rooli poistettu pysyvästi.",
     "RoleScopes": "Laajuudet",

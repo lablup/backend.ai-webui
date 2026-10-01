@@ -2397,6 +2397,7 @@
     "RoleDetailInfo": "RBAC үүргийн мэдээлэл",
     "RoleName": "Үүргийн нэр",
     "RoleNotFound": "Үүрэг олдсонгүй.",
+    "RolePreset": "Үүргийн урьдчилсан тохиргоо",
     "RolePresetDetailInfo": "RBAC үүргийн урьдчилсан тохиргооны мэдээлэл",
     "RolePurged": "Үүрэг бүрмөсөн устгагдлаа.",
     "RoleScopes": "Хамрах хүрээнүүд",
