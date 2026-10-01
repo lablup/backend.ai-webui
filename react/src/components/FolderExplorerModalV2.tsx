@@ -399,11 +399,11 @@ const FolderExplorerBody: React.FC<{
     unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
-  // Share-permission gating (FR-3800). The manager checks file deletion against
-  // `SOFT_DELETE`.
+  // Share-permission gating (FR-3800). File deletion is gated on the folder's
+  // `UPDATE` bit, same as write (backend decision; FR-4114).
   const hasDeleteContentPermission = _.includes(
     vfolderNode?.permissions,
-    'SOFT_DELETE',
+    'UPDATE',
   );
   const hasWriteContentPermission = _.includes(
     vfolderNode?.permissions,

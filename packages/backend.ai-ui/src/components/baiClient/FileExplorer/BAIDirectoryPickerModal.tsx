@@ -79,8 +79,8 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   );
 
   // Folder CRUD inside the picker follows the caller's effective permissions
-  // on this vfolder, same as FolderExplorerModalV2: `UPDATE` to write,
-  // `SOFT_DELETE` to delete.
+  // on this vfolder, same as FolderExplorerModalV2: `UPDATE` gates both write
+  // and delete (backend decision; FR-4114).
   const { vfolderV2 } = usePreloadedQuery<BAIDirectoryPickerModalQuery>(
     BAIDirectoryPickerQuery,
     queryRef,
@@ -91,7 +91,7 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   );
   const hasDeleteContentPermission = _.includes(
     vfolderV2?.permissions,
-    'SOFT_DELETE',
+    'UPDATE',
   );
   const folderName = vfolderV2?.metadata?.name;
 

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The delete affordance for a selection of virtual folders, used in the bulk-action row of the folder list pages. It renders a ghost Astryx IconButton with a trash glyph, tinted through the shared `bai-name-action-cell-danger` class so the danger colour follows the theme, and it gates itself on data: a plural Relay fragment reads `permissions` on the selected VirtualFolderNode records and the button stays disabled unless at least one of them grants `delete_vfolder`. It only opens the flow — the caller owns the confirmation, which for a permanent delete means BAIDeleteConfirmModal with `requireConfirmInput`. For pages whose selection rows are the V2 `VFolder` type, use BAIVFolderDeleteButtonV2 instead.',
+      'The delete affordance for a selection of virtual folders, used in the bulk-action row of the folder list pages. It renders a ghost Astryx IconButton with a trash glyph, tinted through the shared `bai-name-action-cell-danger` class so the danger colour follows the theme, and it gates itself on data: a plural Relay fragment reads `permissions` on the selected VirtualFolderNode records and the button stays disabled unless at least one of them grants `delete_vfolder`. It only opens the flow — the caller owns the confirmation, which for a permanent delete means BAIDeleteConfirmModal with `requireConfirmInput`.',
     bestPractices: [
       {
         guidance: true,

@@ -32,7 +32,6 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAISkeleton,
-  BAIVFolderDeleteButtonV2,
   BAICard,
   BAIGraphQLPropertyFilter,
   BAISelectionLabel,
@@ -43,7 +42,7 @@ import {
   useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
+import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -222,7 +221,6 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
-                ...BAIVFolderDeleteButtonV2Fragment
               }
             }
             count
@@ -404,10 +402,12 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                         count={selectedFolderList.length}
                         onClearSelection={() => setSelectedFolderList([])}
                       />
-                      <BAIVFolderDeleteButtonV2
-                        vfolderFrgmt={selectedFolderList}
-                        // P8: the accessible name is now on the control itself.
+                      <IconButton
                         label={t('data.folders.MoveToTrash')}
+                        tooltip={t('data.folders.MoveToTrash')}
+                        icon={<TrashIcon />}
+                        variant="ghost"
+                        className="bai-name-action-cell-danger"
                         onClick={() => {
                           toggleDeleteModal();
                         }}
