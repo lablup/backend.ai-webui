@@ -2028,7 +2028,17 @@
     "TooManyAttempt": "Terlalu banyak percubaan log masuk. Percubaan masuk telah disekat sebentar.",
     "singleSignOn": {
       "LoginWithRealm": "Log masuk dengan {{ realmName }}",
-      "LoginWithSAML": "Log masuk dengan SAML"
+      "LoginWithRealmFailed": "Gagal log masuk dengan {{ realmName }}",
+      "LoginWithSAML": "Log masuk dengan SAML",
+      "OpenIDAccessDenied": "Pembekal identiti menolak log masuk. Log masuk atau persetujuan mungkin telah dibatalkan, atau pembekal memerlukan anda log masuk semula atau memilih akaun. Sila cuba lagi.",
+      "OpenIDDomainNotFound": "Tiada domain Backend.AI yang dipautkan dengan kumpulan anda. Hubungi pentadbir anda.",
+      "OpenIDGroupNotAllowed": "Akaun anda bukan ahli kumpulan yang dibenarkan mengakses Backend.AI. Minta pentadbir anda menyemak keahlian kumpulan anda.",
+      "OpenIDInternalServerError": "Ralat pelayan berlaku semasa log masuk. Sila cuba lagi kemudian. Jika masalah berterusan, hubungi pentadbir anda.",
+      "OpenIDNotAuthenticated": "Pembekal identiti tidak dapat mengesahkan anda. Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda.",
+      "OpenIDProviderMisconfigured": "Pembekal identiti menolak konfigurasi klien Backend.AI. Hubungi pentadbir anda.",
+      "OpenIDProviderUnavailable": "Pembekal identiti tidak tersedia buat sementara waktu. Sila cuba lagi kemudian.",
+      "OpenIDSessionInvalid": "Sesi log masuk anda tiada atau telah tamat tempoh. Sila log masuk semula.",
+      "OpenIDUnknownError": "Ralat yang tidak diketahui berlaku semasa log masuk ({{ code }}). Sila cuba lagi. Jika masalah berterusan, hubungi pentadbir anda."
     }
   },
   "loginHistory": {

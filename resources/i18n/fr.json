@@ -2029,7 +2029,17 @@
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
     "singleSignOn": {
       "LoginWithRealm": "Se connecter avec {{ realmName }}",
-      "LoginWithSAML": "Se connecter avec SAML"
+      "LoginWithRealmFailed": "Échec de la connexion avec {{ realmName }}",
+      "LoginWithSAML": "Se connecter avec SAML",
+      "OpenIDAccessDenied": "Le fournisseur d'identité a refusé la connexion. La connexion ou le consentement a peut-être été annulé, ou le fournisseur exige une nouvelle connexion ou le choix d'un compte. Veuillez réessayer.",
+      "OpenIDDomainNotFound": "Aucun domaine Backend.AI n'est associé à votre groupe. Contactez votre administrateur.",
+      "OpenIDGroupNotAllowed": "Votre compte n'appartient à aucun groupe autorisé à accéder à Backend.AI. Demandez à votre administrateur de vérifier votre appartenance aux groupes.",
+      "OpenIDInternalServerError": "Une erreur serveur s'est produite lors de la connexion. Veuillez réessayer plus tard. Si le problème persiste, contactez votre administrateur.",
+      "OpenIDNotAuthenticated": "Le fournisseur d'identité n'a pas pu vous authentifier. Veuillez réessayer. Si le problème persiste, contactez votre administrateur.",
+      "OpenIDProviderMisconfigured": "Le fournisseur d'identité a rejeté la configuration client de Backend.AI. Contactez votre administrateur.",
+      "OpenIDProviderUnavailable": "Le fournisseur d'identité est temporairement indisponible. Veuillez réessayer plus tard.",
+      "OpenIDSessionInvalid": "Votre session de connexion est absente ou a expiré. Veuillez vous reconnecter.",
+      "OpenIDUnknownError": "Une erreur inconnue s'est produite lors de la connexion ({{ code }}). Veuillez réessayer. Si le problème persiste, contactez votre administrateur."
     }
   },
   "loginHistory": {

@@ -47,6 +47,10 @@ import {
   loginWithSAML,
   probeManager,
 } from '../helper/loginSessionAuth';
+import {
+  OPENID_LOGIN_ERROR_PARAM,
+  resolveOpenIDLoginErrorKey,
+} from '../helper/openIDLoginError';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
@@ -63,6 +67,7 @@ import { Button } from '@astryxdesign/core/Button';
 import { BAIModal, useBAILogger } from 'backend.ai-ui';
 import i18n from 'i18next';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { parseAsString, useQueryState } from 'nuqs';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -148,6 +153,10 @@ const LoginView: React.FC<{
     message: string;
     description?: string;
   } | null>(null);
+  const [, setOpenIDLoginErrorParam] = useQueryState(
+    OPENID_LOGIN_ERROR_PARAM,
+    parseAsString,
+  );
   const [endpoints, setEndpoints] = useState<string[]>(() => {
     return (globalThis as any).backendaioptions?.get('endpoints', []) ?? [];
   });
@@ -341,7 +350,27 @@ const LoginView: React.FC<{
       setSignupPreloadedToken(tokenParam);
       setShowSignupModal(true);
     }
-  }, [loginConfig.signup_support, apiEndpoint]);
+
+    // The manager's OpenID plugin reports a failed login as `?bai_error=`;
+    // drop it once shown so a reload does not repeat the message.
+    const openIDLoginError = urlParams.get(OPENID_LOGIN_ERROR_PARAM);
+    if (openIDLoginError) {
+      const { key, code } = resolveOpenIDLoginErrorKey(openIDLoginError);
+      setLoginError({
+        message: t('login.singleSignOn.LoginWithRealmFailed', {
+          realmName: loginConfig.ssoRealmName || 'OpenID',
+        }),
+        description: t(key, { code }),
+      });
+      setOpenIDLoginErrorParam(null);
+    }
+  }, [
+    loginConfig.signup_support,
+    loginConfig.ssoRealmName,
+    apiEndpoint,
+    setOpenIDLoginErrorParam,
+    t,
+  ]);
 
   const close = useCallback(() => {
     // Cancel any pending block timer so a delayed timer from block()

@@ -2030,7 +2030,17 @@
     "TooManyAttempt": "Es gab zu viele Anmeldeversuche. Anmeldeversuche sind seit einiger Zeit blockiert.",
     "singleSignOn": {
       "LoginWithRealm": "Anmeldung mit {{ realmName }}",
-      "LoginWithSAML": "Anmeldung mit SAML"
+      "LoginWithRealmFailed": "Anmeldung mit {{ realmName }} fehlgeschlagen",
+      "LoginWithSAML": "Anmeldung mit SAML",
+      "OpenIDAccessDenied": "Der Identitätsanbieter hat die Anmeldung abgelehnt. Die Anmeldung oder Zustimmung wurde möglicherweise abgebrochen, oder der Anbieter verlangt eine erneute Anmeldung oder Kontoauswahl. Bitte versuchen Sie es erneut.",
+      "OpenIDDomainNotFound": "Mit Ihrer Gruppe ist keine Backend.AI-Domain verknüpft. Wenden Sie sich an Ihren Administrator.",
+      "OpenIDGroupNotAllowed": "Ihr Konto gehört keiner Gruppe an, die auf Backend.AI zugreifen darf. Bitten Sie Ihren Administrator, Ihre Gruppenzugehörigkeit zu prüfen.",
+      "OpenIDInternalServerError": "Bei der Anmeldung ist ein Serverfehler aufgetreten. Bitte versuchen Sie es später erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihren Administrator.",
+      "OpenIDNotAuthenticated": "Der Identitätsanbieter konnte Sie nicht authentifizieren. Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihren Administrator.",
+      "OpenIDProviderMisconfigured": "Der Identitätsanbieter hat die Backend.AI-Clientkonfiguration abgelehnt. Wenden Sie sich an Ihren Administrator.",
+      "OpenIDProviderUnavailable": "Der Identitätsanbieter ist vorübergehend nicht verfügbar. Bitte versuchen Sie es später erneut.",
+      "OpenIDSessionInvalid": "Ihre Anmeldesitzung fehlt oder ist abgelaufen. Bitte melden Sie sich erneut an.",
+      "OpenIDUnknownError": "Bei der Anmeldung ist ein unbekannter Fehler aufgetreten ({{ code }}). Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, wenden Sie sich an Ihren Administrator."
     }
   },
   "loginHistory": {

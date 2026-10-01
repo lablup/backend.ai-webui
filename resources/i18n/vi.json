@@ -2030,7 +2030,17 @@
     "TooManyAttempt": "Đã có quá nhiều lần đăng nhập. Nỗ lực đăng nhập đã bị chặn trong một thời gian.",
     "singleSignOn": {
       "LoginWithRealm": "Đăng nhập bằng {{realmName }}",
-      "LoginWithSAML": "Đăng nhập bằng SAML"
+      "LoginWithRealmFailed": "Đăng nhập bằng {{ realmName }} không thành công",
+      "LoginWithSAML": "Đăng nhập bằng SAML",
+      "OpenIDAccessDenied": "Nhà cung cấp danh tính đã từ chối đăng nhập. Có thể việc đăng nhập hoặc đồng ý đã bị hủy, hoặc nhà cung cấp yêu cầu bạn đăng nhập lại hoặc chọn tài khoản. Vui lòng thử lại.",
+      "OpenIDDomainNotFound": "Không có miền Backend.AI nào được liên kết với nhóm của bạn. Hãy liên hệ với quản trị viên.",
+      "OpenIDGroupNotAllowed": "Tài khoản của bạn không thuộc nhóm được phép truy cập Backend.AI. Hãy liên hệ với quản trị viên để kiểm tra nhóm của bạn.",
+      "OpenIDInternalServerError": "Đã xảy ra lỗi máy chủ khi đăng nhập. Vui lòng thử lại sau. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên.",
+      "OpenIDNotAuthenticated": "Nhà cung cấp danh tính không thể xác thực bạn. Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên.",
+      "OpenIDProviderMisconfigured": "Nhà cung cấp danh tính đã từ chối cấu hình máy khách của Backend.AI. Hãy liên hệ với quản trị viên.",
+      "OpenIDProviderUnavailable": "Nhà cung cấp danh tính tạm thời không khả dụng. Vui lòng thử lại sau.",
+      "OpenIDSessionInvalid": "Phiên đăng nhập không tồn tại hoặc đã hết hạn. Vui lòng đăng nhập lại.",
+      "OpenIDUnknownError": "Đã xảy ra lỗi không xác định khi đăng nhập ({{ code }}). Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên."
     }
   },
   "loginHistory": {

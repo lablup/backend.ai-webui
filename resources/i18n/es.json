@@ -2028,7 +2028,17 @@
     "TooManyAttempt": "Ha habido demasiados intentos de inicio de sesión. Los intentos de inicio de sesión se han bloqueado durante un tiempo.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sesión con {{ realmName }}",
-      "LoginWithSAML": "Inicio de sesión con SAML"
+      "LoginWithRealmFailed": "Error al iniciar sesión con {{ realmName }}",
+      "LoginWithSAML": "Inicio de sesión con SAML",
+      "OpenIDAccessDenied": "El proveedor de identidad rechazó el inicio de sesión. Es posible que se haya cancelado el inicio de sesión o el consentimiento, o que el proveedor requiera volver a iniciar sesión o elegir una cuenta. Inténtelo de nuevo.",
+      "OpenIDDomainNotFound": "No hay ningún dominio de Backend.AI vinculado a su grupo. Póngase en contacto con su administrador.",
+      "OpenIDGroupNotAllowed": "Su cuenta no pertenece a un grupo con acceso permitido a Backend.AI. Pida a su administrador que compruebe su pertenencia a grupos.",
+      "OpenIDInternalServerError": "Se produjo un error del servidor al iniciar sesión. Inténtelo de nuevo más tarde. Si el problema persiste, póngase en contacto con su administrador.",
+      "OpenIDNotAuthenticated": "El proveedor de identidad no pudo autenticarle. Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador.",
+      "OpenIDProviderMisconfigured": "El proveedor de identidad rechazó la configuración de cliente de Backend.AI. Póngase en contacto con su administrador.",
+      "OpenIDProviderUnavailable": "El proveedor de identidad no está disponible temporalmente. Inténtelo de nuevo más tarde.",
+      "OpenIDSessionInvalid": "Su sesión de inicio de sesión no existe o ha caducado. Vuelva a iniciar sesión.",
+      "OpenIDUnknownError": "Se produjo un error desconocido al iniciar sesión ({{ code }}). Inténtelo de nuevo. Si el problema persiste, póngase en contacto con su administrador."
     }
   },
   "loginHistory": {

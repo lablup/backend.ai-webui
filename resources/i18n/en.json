@@ -2015,7 +2015,17 @@
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
     "singleSignOn": {
       "LoginWithRealm": "Login with {{ realmName }}",
-      "LoginWithSAML": "Login with SAML"
+      "LoginWithRealmFailed": "Login with {{ realmName }} failed",
+      "LoginWithSAML": "Login with SAML",
+      "OpenIDAccessDenied": "The identity provider denied the login. The login or consent may have been canceled, or the provider may require you to sign in or choose an account again. Please try again.",
+      "OpenIDDomainNotFound": "No Backend.AI domain is linked to your group. Contact your administrator.",
+      "OpenIDGroupNotAllowed": "Your account does not belong to a group that is allowed to access Backend.AI. Contact your administrator to check your group membership.",
+      "OpenIDInternalServerError": "A server error occurred while logging in. Please try again later. If the problem persists, contact your administrator.",
+      "OpenIDNotAuthenticated": "The identity provider could not authenticate you. Please try again. If the problem persists, contact your administrator.",
+      "OpenIDProviderMisconfigured": "The identity provider rejected the Backend.AI client configuration. Contact your administrator.",
+      "OpenIDProviderUnavailable": "The identity provider is temporarily unavailable. Please try again later.",
+      "OpenIDSessionInvalid": "Your login session is missing or has expired. Please log in again.",
+      "OpenIDUnknownError": "An unknown error occurred while logging in ({{ code }}). Please try again. If the problem persists, contact your administrator."
     }
   },
   "loginHistory": {

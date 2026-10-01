@@ -2028,7 +2028,17 @@
     "TooManyAttempt": "Çok fazla giriş denemesi oldu. Giriş denemeleri bir süreliğine engellendi.",
     "singleSignOn": {
       "LoginWithRealm": "{{realmName }} ile giriş yapın",
-      "LoginWithSAML": "SAML ile Oturum Açma"
+      "LoginWithRealmFailed": "{{ realmName }} ile giriş başarısız oldu",
+      "LoginWithSAML": "SAML ile Oturum Açma",
+      "OpenIDAccessDenied": "Kimlik sağlayıcı girişi reddetti. Giriş veya onay iptal edilmiş olabilir ya da sağlayıcı yeniden giriş yapmanızı veya bir hesap seçmenizi istiyor olabilir. Lütfen tekrar deneyin.",
+      "OpenIDDomainNotFound": "Grubunuza bağlı bir Backend.AI etki alanı yok. Yöneticinize başvurun.",
+      "OpenIDGroupNotAllowed": "Hesabınız Backend.AI erişimine izin verilen bir gruba ait değil. Grup üyeliğinizi kontrol etmesi için yöneticinize başvurun.",
+      "OpenIDInternalServerError": "Giriş sırasında bir sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin. Sorun devam ederse yöneticinize başvurun.",
+      "OpenIDNotAuthenticated": "Kimlik sağlayıcı kimliğinizi doğrulayamadı. Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun.",
+      "OpenIDProviderMisconfigured": "Kimlik sağlayıcı Backend.AI istemci yapılandırmasını reddetti. Yöneticinize başvurun.",
+      "OpenIDProviderUnavailable": "Kimlik sağlayıcı geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.",
+      "OpenIDSessionInvalid": "Giriş oturumunuz yok veya süresi dolmuş. Lütfen tekrar giriş yapın.",
+      "OpenIDUnknownError": "Giriş sırasında bilinmeyen bir hata oluştu ({{ code }}). Lütfen tekrar deneyin. Sorun devam ederse yöneticinize başvurun."
     }
   },
   "loginHistory": {

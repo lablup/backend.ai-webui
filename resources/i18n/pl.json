@@ -2029,7 +2029,17 @@
     "TooManyAttempt": "Zbyt wiele prób logowania. Próby logowania zostały na jakiś czas zablokowane.",
     "singleSignOn": {
       "LoginWithRealm": "Zaloguj się za pomocą {{ realmName }}.",
-      "LoginWithSAML": "Logowanie za pomocą SAML"
+      "LoginWithRealmFailed": "Logowanie przez {{ realmName }} nie powiodło się",
+      "LoginWithSAML": "Logowanie za pomocą SAML",
+      "OpenIDAccessDenied": "Dostawca tożsamości odrzucił logowanie. Logowanie lub zgoda mogły zostać anulowane albo dostawca wymaga ponownego zalogowania lub wybrania konta. Spróbuj ponownie.",
+      "OpenIDDomainNotFound": "Z Twoją grupą nie jest powiązana żadna domena Backend.AI. Skontaktuj się z administratorem.",
+      "OpenIDGroupNotAllowed": "Twoje konto nie należy do grupy, która ma dostęp do Backend.AI. Poproś administratora o sprawdzenie przynależności do grup.",
+      "OpenIDInternalServerError": "Podczas logowania wystąpił błąd serwera. Spróbuj ponownie później. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem.",
+      "OpenIDNotAuthenticated": "Dostawca tożsamości nie mógł Cię uwierzytelnić. Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem.",
+      "OpenIDProviderMisconfigured": "Dostawca tożsamości odrzucił konfigurację klienta Backend.AI. Skontaktuj się z administratorem.",
+      "OpenIDProviderUnavailable": "Dostawca tożsamości jest tymczasowo niedostępny. Spróbuj ponownie później.",
+      "OpenIDSessionInvalid": "Sesja logowania nie istnieje lub wygasła. Zaloguj się ponownie.",
+      "OpenIDUnknownError": "Podczas logowania wystąpił nieznany błąd ({{ code }}). Spróbuj ponownie. Jeśli problem będzie się powtarzał, skontaktuj się z administratorem."
     }
   },
   "loginHistory": {
