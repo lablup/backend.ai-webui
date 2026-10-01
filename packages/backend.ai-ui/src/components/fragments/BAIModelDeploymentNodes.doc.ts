@@ -66,6 +66,13 @@ export const docs = {
         'Strips the `sorter` flag from every base column, making the headers non-sortable — use it where sorting is not wired to the query.',
     },
     {
+      name: 'sortableKeys',
+      type: 'ReadonlyArray<DeploymentSorterKey>',
+      description:
+        'Which columns carry a sorter. Defaults to every key the current `DeploymentOrderField` enum has; narrow it on an older manager (domain / project / resourceGroup / tag arrived in 26.4.3).',
+      default: 'availableDeploymentSorterKeys',
+    },
+    {
       name: 'onChangeOrder',
       type: '(order: (typeof availableDeploymentSorterValues)[number] | null) => void',
       description:

@@ -274,7 +274,6 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
   削除されず、所有権が委任されます。
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 選択したユーザーの一部を完全に削除できなかった場合は、対象ユーザーのEメールとエラーメッセージを一覧表示する
 失敗ダイアログが開き、残りのユーザーは通常どおり完全に削除されます。
@@ -1174,6 +1173,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 します。利用履歴モーダルが開きます。
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 モーダルには以下が表示されます：
 
@@ -1918,7 +1918,7 @@ RBAC（ロールベースアクセス制御）管理では、スーパー管理�
 
 設定は次のグループに分かれています。
 
-- **テーマ**: 主要色、ヘッダー背景色、リンク色、情報色、エラー色、成功色、テキスト色のカラーピッカーです。各色はライトモードとダークモードで個別に設定し、リセットできます。
+- **テーマ**: 主要色、ヘッダー背景色、リンク色、情報色、エラー色、成功色のカラーピッカーです。各色はライトモードとダークモードで個別に設定し、リセットできます。
 - **CIロゴ**: ライトモードとダークモードのメインサイドバーロゴ、折りたたみ時のサイドバーロゴをアップロードし、表示サイズを設定します。
 - **詳細ロゴ CI**: ログインページと About モーダルに表示されるロゴを、ライト/ダークモードごとにアップロードし、サイズを設定します。
 - **フォント**: インターフェイス全体で使用されるフォントファミリーを選択します。

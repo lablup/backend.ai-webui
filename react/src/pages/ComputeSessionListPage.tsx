@@ -27,7 +27,6 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { useBAIBreakpoint } from '../theme-shim';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
 import { Grid, GridSpan } from '@astryxdesign/core/Grid';
@@ -54,6 +53,7 @@ import {
   mergeFilterValues,
   useBAILogger,
   useFetchKey,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { LayoutGridIcon, PowerOffIcon, TableIcon } from 'lucide-react';

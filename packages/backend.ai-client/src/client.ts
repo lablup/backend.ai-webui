@@ -893,6 +893,12 @@ export class Client {
       this._features['my-roles'] = true;
       this._features['prometheus-auto-scaling-rule'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.1')) {
+      // ModelCardV2Filter gained the AND/OR/NOT sub-filter combinators
+      // (backend ab705371, fix(BA-5672)). Older managers reject them, so the
+      // model-store filter is restricted to a single condition below 26.4.1.
+      this._features['model-card-v2-sub-filter'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
@@ -908,6 +914,19 @@ export class Client {
       // its root. Older managers reject the unknown input field, so the key is
       // omitted from the mutation entirely on them.
       this._features['model-mount-subpath'] = true;
+      // QueryDefinitionFilter gained `categoryId: UUIDFilter` and the
+      // AND/OR/NOT sub-filter combinators in 26.4.4, while the tab itself is
+      // gated on `prometheus-query-preset` (26.4.2).
+      this._features['prometheus-query-preset-extended-filter'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
+      // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
+      // fields in their *Filter inputs: ModelCardV2Filter.domainName
+      // String -> StringFilter / .projectId UUID -> UUIDFilter, and
+      // RuntimeVariantPresetFilter / DeploymentRevisionPresetFilter
+      // .runtimeVariantId UUID -> UUIDFilter. `BAIGraphQLPropertyFilter` only
+      // emits the wrapper shape, so those properties are hidden below this.
+      this._features['v2-filter-wrapper-inputs'] = true;
     }
     // ModelHealthCheck gained an `enable` flag in 26.4.4 (BA-6242): health
     // checks are opt-in via `enable: true/false` instead of nulling the whole
@@ -988,6 +1007,17 @@ export class Client {
       // filters must omit them.
       this._features['session-preemption-statuses'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
+      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
+      // `Role.scopes` and `RBACElementType` remain as deprecated. Gated on the
+      // 26.9 pre-release so its managers take the new path (FR-3905, FR-3957).
+      this._features['rbac-single-scope-role'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('26.9.0a4')) {
+      // `adminRolePresets` answers the 26.9 preset shape from 26.9.0a4 on;
+      // the RBAC page's Presets tab is hidden below it (FR-4065).
+      this._features['rbac-role-presets'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new
@@ -1003,9 +1033,6 @@ export class Client {
       // the RBAC layer parses a DOMAIN scope's scopeId as a UUID. Older
       // managers expect the domain name there instead. FR-3618.
       this._features['rbac-domain-scope-uuid'] = true;
-      // BA-7796 (#14478): one scope per role, project admin is `scope_admin`;
-      // `Role.scopes` and `RBACElementType` remain as deprecated. FR-3905.
-      this._features['rbac-single-scope-role'] = true;
       // BA-7253 / backend PR #13562 — category/displayName/uiOption became
       // writable on Create/UpdateRuntimeVariantPresetInput (previously
       // read-only on the RuntimeVariantPreset type). FR-3476.
@@ -1895,9 +1922,32 @@ export class Client {
       variables: v,
     };
     let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: { data: TData }) => r.data,
+    const result = await this._wrapWithPromise(
+      rqst,
+      false,
+      signal,
+      timeout,
+      retry,
     );
+    // A gateway reports an upstream HTTP failure as a 200 with `errors` and
+    // null data; throw it the way `_wrapWithPromise` throws an HTTP error.
+    const hasData = Object.values(result?.data ?? {}).some((v) => v != null);
+    if (result?.errors?.length && !hasData) {
+      const upstream = result.errors.find(
+        (e: { extensions?: { response?: unknown } }) => e?.extensions?.response,
+      )?.extensions?.response;
+      const detail = upstream?.body?.msg ?? result.errors[0]?.message;
+      throw {
+        isError: true,
+        ...upstream?.body,
+        statusCode: upstream?.status,
+        statusText: upstream?.statusText,
+        message: detail,
+        description: detail,
+        response: result,
+      };
+    }
+    return result.data as TData;
   }
 
   /**

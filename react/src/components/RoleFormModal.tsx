@@ -267,11 +267,6 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
         query RoleFormModalPermissionMatrixQuery {
           rbacPermissionMatrix {
             scopeType
-            entities {
-              actions {
-                requiredPermission
-              }
-            }
           }
         }
       `,
@@ -279,13 +274,11 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
       { fetchPolicy: 'store-and-network' },
     );
 
-  // The scope types a role may be created in, in the manager's own spelling:
-  // the reported ones that have a scope-id picker and an actionable entity.
+  // The scope types the manager reports, in its own spelling, that have a
+  // scope-id picker.
   const scopeTypeOptions = _.uniqBy(
-    (rbacPermissionMatrix ?? []).filter(
-      (combination) =>
-        RBAC_ELEMENT_TYPES.includes(combination.scopeType.toUpperCase()) &&
-        combination.entities.some((entity) => entity.actions.length > 0),
+    (rbacPermissionMatrix ?? []).filter((combination) =>
+      RBAC_ELEMENT_TYPES.includes(combination.scopeType.toUpperCase()),
     ),
     (combination) => combination.scopeType.toUpperCase(),
   ).map((combination) => ({

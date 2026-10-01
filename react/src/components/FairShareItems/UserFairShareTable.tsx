@@ -7,8 +7,8 @@ import {
   UserFairShareTableFragment$data,
   UserFairShareTableFragment$key,
 } from '../../__generated__/UserFairShareTableFragment.graphql';
-import { theme } from '../../theme-shim';
 import { Divider } from '@astryxdesign/core/Divider';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIQuestionIconWithTooltip,
   BAIColumnsType,
@@ -75,7 +75,7 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -176,7 +176,10 @@ const UserFairShareTable: React.FC<UserFairShareTableProps> = ({
               ? '-'
               : toFixedFloorWithoutTrailingZeros(weight, 1)}
           </BAIText>
-          <BAIText type="secondary" style={{ fontSize: token.fontSizeSM }}>
+          <BAIText
+            type="secondary"
+            style={{ fontSize: token('--font-size-sm') }}
+          >
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
           </BAIText>
         </BAIFlex>

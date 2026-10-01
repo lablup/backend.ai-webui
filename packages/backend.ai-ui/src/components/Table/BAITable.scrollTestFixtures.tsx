@@ -40,3 +40,6 @@ export const renderScrollTable = (
 
 export const dimLayerOf = (container: HTMLElement) =>
   container.querySelector<HTMLElement>('.bai-table-astryx-dim-layer')!;
+
+export const rootOf = (container: HTMLElement) =>
+  container.querySelector<HTMLElement>('.bai-table-astryx-root')!;

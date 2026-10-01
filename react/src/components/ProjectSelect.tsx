@@ -5,7 +5,6 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { theme } from '../theme-shim';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
 import {
   BAIFlex,
@@ -48,7 +47,6 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const { projectAdminIds } = useCurrentUserProjectRoles();
@@ -125,7 +123,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
           // covers single mode, whose disabled Item sets `none` (FR-3837).
           const row = (
             <BAIFlex
-              gap={token.marginXS}
+              gap="xs"
               align="center"
               style={
                 isPersonal ? { flexGrow: 1, pointerEvents: 'auto' } : undefined

@@ -29,7 +29,6 @@
    same way the pilot modal did it.
 */
 import { useBAIi18n } from '../../hooks/useBAIi18n';
-import { theme } from '../../theme-shim';
 import BAIDialog, { type BAIDialogProps } from '../BAIDialog';
 import type { BAIColumnsType } from './tableTypes';
 import { Banner } from '@astryxdesign/core/Banner';
@@ -40,6 +39,7 @@ import { Layout, LayoutContent, LayoutFooter } from '@astryxdesign/core/Layout';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
+import { useTheme } from '@astryxdesign/core/theme';
 import * as _ from 'lodash-es';
 import React, { useMemo, useState } from 'react';
 
@@ -77,7 +77,7 @@ const BAITableColumnCSVExportModal = <T,>({
   'use memo';
 
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const columnOptions = useMemo(
     () =>
@@ -224,7 +224,7 @@ const BAITableColumnCSVExportModal = <T,>({
                   {_.map(visibleOptions, (option) => (
                     <div
                       key={option.key}
-                      style={{ paddingBlock: token.paddingXXS }}
+                      style={{ paddingBlock: token('--spacing-1') }}
                     >
                       <CheckboxInput
                         label={option.label || option.key}

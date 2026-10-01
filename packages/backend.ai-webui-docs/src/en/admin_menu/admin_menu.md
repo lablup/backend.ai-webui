@@ -299,7 +299,6 @@ options:
   deployments is delegated instead of deleting them.
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
 user's email together with the error message, while the remaining users are purged normally.
@@ -1225,6 +1224,7 @@ the checkboxes in the table, then click the Usage Graph (chart icon) button. Thi
 the Usage History modal.
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 The modal displays the following:
 
@@ -2040,7 +2040,7 @@ The toolbar provides:
 
 The settings are divided into the following groups:
 
-- **Theme**: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.
+- **Theme**: Color pickers for the primary, header background, link, info, error, and success colors. Each color can be set independently for light and dark mode and reset individually.
 - **Logo CI**: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.
 - **Detail Logo CI**: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.
 - **Font**: Select the font family used throughout the interface.

@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../../theme-shim';
 import './ChatMessageContent.css';
 import CopyButton from './CopyButton';
 import { SyntaxHighlighter } from './SyntaxHighlighter';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 // `rehype-katex` does not import the CSS file, so we need to import it manually.
 import 'katex/dist/katex.min.css';
@@ -24,14 +24,14 @@ function parseMarkdownIntoBlocks(markdown: string): string[] {
 
 const CodeHead = memo<{ lang: string; extra?: React.ReactNode }>(
   ({ lang, extra }) => {
-    const { token } = theme.useToken();
+    const { token } = useTheme();
 
     return (
       <BAIFlex
         style={{
           margin: 0,
           minHeight: 38,
-          padding: `0 ${token.paddingSM}px`,
+          padding: `0 ${token('--spacing-3')}`,
           background: 'rgba(0, 0, 0, 0.02)',
           width: '100%',
         }}
@@ -59,6 +59,7 @@ CodeHead.displayName = 'CodeHead';
 
 const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
   ({ block, isStreaming }) => {
+    const { token } = useTheme();
     const renderPre = useCallback((props: React.HTMLProps<HTMLPreElement>) => {
       return <pre {...props} style={{ overflow: 'auto', marginTop: 0 }} />;
     }, []);
@@ -68,7 +69,6 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
         const { children, className, node, ref: _ref, ...rest } = props;
         const match = /language-(\w+)/.exec(className || '');
         const content = String(children ?? '').replace(/\n$/, '');
-        const { token } = theme.useToken();
 
         const isOneLine =
           node.position?.start?.line === node.position?.end?.line || false;
@@ -77,10 +77,10 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
           <BAIFlex
             direction={'column'}
             style={{
-              border: `1px solid ${token.colorBorder}`,
+              border: `1px solid ${token('--color-border-emphasized')}`,
               margin: '0',
               padding: '0',
-              borderRadius: token.borderRadiusLG,
+              borderRadius: token('--radius-element'),
               overflow: 'hidden',
             }}
             align="stretch"
@@ -101,7 +101,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               style={{
                 width: '100%',
                 paddingTop: 0,
-                borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
+                borderRadius: `0 0 ${token('--radius-element')} ${token('--radius-element')}`,
                 overflow: 'auto',
               }}
             >
@@ -123,10 +123,10 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
               whiteSpace: 'pre-wrap',
               ...(isOneLine
                 ? {
-                    backgroundColor: token.colorBgContainerDisabled,
-                    border: `1px solid ${token.colorBorder}`,
+                    backgroundColor: token('--color-bg-container-disabled'),
+                    border: `1px solid ${token('--color-border-emphasized')}`,
                     padding: '2px 6px',
-                    borderRadius: token.borderRadiusSM,
+                    borderRadius: token('--radius-none'),
                     fontSize: '0.875em',
                   }
                 : {}),
@@ -138,7 +138,7 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
           </code>
         );
       },
-      [isStreaming],
+      [isStreaming, token],
     );
 
     const renderParagraph = useCallback(({ node: _node, ...props }: any) => {
@@ -170,80 +170,88 @@ const ChatMessageContentBlock = memo<{ block?: string; isStreaming?: boolean }>(
       return <li {...props} />;
     }, []);
 
-    const renderTable = useCallback((props: any) => {
-      const { token } = theme.useToken();
-      return (
-        <div
-          style={{
-            overflow: 'auto',
-            border: `1px solid ${token.colorBorderSecondary}`,
-            borderRadius: token.borderRadiusSM,
-          }}
-        >
-          <table
-            {...props}
-            className="chat-markdown-table"
+    const renderTable = useCallback(
+      (props: any) => {
+        return (
+          <div
             style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              fontSize: token.fontSizeSM,
-              lineHeight: token.lineHeight,
-              backgroundColor: token.colorBgContainer,
+              overflow: 'auto',
+              border: `1px solid ${token('--color-border')}`,
+              borderRadius: token('--radius-none'),
+            }}
+          >
+            <table
+              {...props}
+              className="chat-markdown-table"
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: token('--font-size-sm'),
+                lineHeight: 1.5714285714285714,
+                backgroundColor: token('--color-background-surface'),
+              }}
+            />
+          </div>
+        );
+      },
+      [token],
+    );
+
+    const renderTableRow = useCallback(
+      (props: any) => {
+        return (
+          <tr
+            {...props}
+            style={{
+              borderBottom: `${token('--border-width')} solid ${token('--color-border')}`,
+              transition: `background-color ${token('--duration-slow')}`,
             }}
           />
-        </div>
-      );
-    }, []);
+        );
+      },
+      [token],
+    );
 
-    const renderTableRow = useCallback((props: any) => {
-      const { token } = theme.useToken();
-      return (
-        <tr
-          {...props}
-          style={{
-            borderBottom: `${token.lineWidth}px solid ${token.colorBorderSecondary}`,
-            transition: `background-color ${token.motionDurationSlow}`,
-          }}
-        />
-      );
-    }, []);
+    const renderTableHeader = useCallback(
+      (props: any) => {
+        return (
+          <th
+            {...props}
+            style={{
+              padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+              textAlign: 'left',
+              fontWeight: token('--font-weight-semibold'),
+              fontSize: token('--font-size-sm'),
+              backgroundColor: token('--color-fill-tertiary'),
+              borderBottom: `${token('--border-width')} solid ${token('--color-border-emphasized')}`,
+              borderRight: `${token('--border-width')} solid ${token('--color-border')}`,
+              color: token('--color-text-secondary'),
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}
+          />
+        );
+      },
+      [token],
+    );
 
-    const renderTableHeader = useCallback((props: any) => {
-      const { token } = theme.useToken();
-      return (
-        <th
-          {...props}
-          style={{
-            padding: `${token.paddingXS}px ${token.paddingSM}px`,
-            textAlign: 'left',
-            fontWeight: token.fontWeightStrong,
-            fontSize: token.fontSizeSM,
-            backgroundColor: token.colorFillTertiary,
-            borderBottom: `${token.lineWidth}px solid ${token.colorBorder}`,
-            borderRight: `${token.lineWidth}px solid ${token.colorBorderSecondary}`,
-            color: token.colorTextSecondary,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-          }}
-        />
-      );
-    }, []);
-
-    const renderTableCell = useCallback((props: any) => {
-      const { token } = theme.useToken();
-      return (
-        <td
-          {...props}
-          style={{
-            padding: `${token.paddingXS}px ${token.paddingSM}px`,
-            borderRight: `${token.lineWidth}px solid ${token.colorBorderSecondary}`,
-            color: token.colorText,
-            fontSize: token.fontSizeSM,
-            verticalAlign: 'top',
-          }}
-        />
-      );
-    }, []);
+    const renderTableCell = useCallback(
+      (props: any) => {
+        return (
+          <td
+            {...props}
+            style={{
+              padding: `${token('--spacing-2')} ${token('--spacing-3')}`,
+              borderRight: `${token('--border-width')} solid ${token('--color-border')}`,
+              color: token('--color-text-primary'),
+              fontSize: token('--font-size-sm'),
+              verticalAlign: 'top',
+            }}
+          />
+        );
+      },
+      [token],
+    );
 
     return (
       <Markdown

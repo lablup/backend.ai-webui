@@ -41,6 +41,14 @@ Because availability is judged per replica rather than per deployment, a deploym
 
 A deployment that is not serving anything is not offered: for example, one that has been stopped, or whose desired replica count is 0. A deployment that a chat card already has selected stays selected and keeps its name in the field even when it is no longer offered, so you can always see which deployment the card is pointing at and read the warnings described below.
 
+<a id="connect-custom-endpoint"></a>
+
+### Connecting a custom endpoint
+
+You can also chat with an OpenAI-compatible service that is not deployed on Backend.AI. Select **Connect a custom endpoint…** in the **Deployment** dropdown, enter the service's **Base URL** and, if the service requires one, an **API key**, then click **Connect**. The chat card then lists the models that service offers, and **Edit custom endpoint** reopens the form so you can change the address or the key.
+
+<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+
 <a id="model-connection-settings"></a>
 
 ### Model connection settings

@@ -1,7 +1,7 @@
-import { BAIIconWithTooltip } from 'backend.ai-ui';
 import type { DomainResourceGroupWarningIconFragment$key } from '../../__generated__/DomainResourceGroupWarningIconFragment.graphql';
 import type { DomainResourceGroupWarningIconQuery } from '../../__generated__/DomainResourceGroupWarningIconQuery.graphql';
-import { theme } from '../../theme-shim';
+import { useTheme } from '@astryxdesign/core/theme';
+import { BAIIconWithTooltip } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +17,7 @@ const DomainResourceGroupWarningIcon: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { domainName, resourceGroupName } = useFragment(
     graphql`
@@ -54,7 +54,7 @@ const DomainResourceGroupWarningIcon: React.FC<
       content={t('fairShare.DomainNotAllowedInResourceGroup', {
         resourceGroup: resourceGroupName,
       })}
-      icon={<TriangleAlert style={{ color: token.colorWarning }} />}
+      icon={<TriangleAlert style={{ color: token('--color-warning') }} />}
     />
   );
 };

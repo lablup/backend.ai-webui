@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { theme } from '../theme-shim';
 import AgentList from './AgentList';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIBoardItemTitle, BAIFetchKeyButton, BAIFlex } from 'backend.ai-ui';
 import { useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
   onChangeFetchKey,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
   return (
@@ -28,7 +28,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
+        paddingInline: token('--spacing-8'),
         height: '100%',
       }}
     >
@@ -62,7 +62,7 @@ const ActiveAgents: React.FC<ActiveAgentsProps> = ({
           flex: 1,
           overflowY: 'auto',
           overflowX: 'hidden',
-          marginBottom: token.margin,
+          marginBottom: token('--spacing-4'),
         }}
       >
         <AgentList
