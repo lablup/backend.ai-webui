@@ -15,30 +15,13 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { IconButton } from '@astryxdesign/core/IconButton';
 import { HStack } from '@astryxdesign/core/Stack';
-import { Heading } from '@astryxdesign/core/Text';
-import {
-  BAISkeleton,
-  BAIVFolderIdenticon,
-  useBAIBreakpoint,
-} from 'backend.ai-ui';
-import { PencilIcon } from 'lucide-react';
+import { BAISkeleton, useBAIBreakpoint } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
-  /**
-   * Drawn when `vfolderV2` nulls the whole node and only the legacy node
-   * answers (FR-3997): rename and launch buttons stay, disabled with a reason.
-   */
-  legacyVFolder?: {
-    id: string;
-    name?: string | null;
-    unmanaged_path?: string | null;
-  } | null;
   titleStyle?: React.CSSProperties;
   /**
    * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
@@ -53,14 +36,12 @@ interface FolderExplorerHeaderV2Props {
 
 const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
   vfolderNodeFrgmt,
-  legacyVFolder,
   titleStyle,
   project,
   noProjectTooltip,
 }) => {
   'use memo';
 
-  const { t } = useTranslation();
   const { lg } = useBAIBreakpoint();
 
   const vfolderNode = useFragment(
@@ -76,10 +57,6 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
     `,
     vfolderNodeFrgmt ?? null,
   );
-
-  const disabledTooltip = vfolderNode
-    ? noProjectTooltip
-    : t('explorer.FolderDetailUnavailable');
 
   return (
     <HStack
@@ -110,11 +87,6 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
               fontSize: 'var(--font-size-xl)',
             }}
           />
-        ) : legacyVFolder ? (
-          <BAIVFolderIdenticon
-            seed={legacyVFolder.id}
-            style={{ fontSize: 'var(--font-size-xl)' }}
-          />
         ) : (
           <span
             style={{
@@ -141,21 +113,6 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
             editable
           />
         )}
-        {!vfolderNode && legacyVFolder && (
-          <HStack gap={1} align="center" style={{ minWidth: 0 }}>
-            <Heading level={3} maxLines={1}>
-              {legacyVFolder.name}
-            </Heading>
-            <IconButton
-              label={t('button.Edit')}
-              tooltip={t('explorer.FolderDetailUnavailable')}
-              icon={<PencilIcon />}
-              size="sm"
-              variant="ghost"
-              isDisabled
-            />
-          </HStack>
-        )}
       </HStack>
       <HStack
         justify="end"
@@ -167,23 +124,22 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
         style={{ marginLeft: 'auto' }}
         {...({ 'data-testid': 'folder-explorer-actions' } as object)}
       >
-        {(vfolderNode && !vfolderNode.unmanagedPath) ||
-        (!vfolderNode && legacyVFolder && !legacyVFolder.unmanaged_path) ? (
+        {vfolderNode && !vfolderNode?.unmanagedPath ? (
           <Suspense fallback={<BAISkeleton variant="button" />}>
             <ErrorBoundaryWithNullFallback>
               <FileBrowserButtonV2
-                vfolderNodeFrgmt={vfolderNode ?? null}
+                vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
                 project={project}
-                disabledTooltip={disabledTooltip}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <SFTPServerButtonV2
-                vfolderNodeFrgmt={vfolderNode ?? null}
+                vfolderNodeFrgmt={vfolderNode}
                 showTitle={lg}
                 project={project}
-                disabledTooltip={disabledTooltip}
+                noProjectTooltip={noProjectTooltip}
               />
             </ErrorBoundaryWithNullFallback>
           </Suspense>

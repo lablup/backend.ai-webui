@@ -24,27 +24,13 @@ const toSubPath = (explorerPath: string) =>
 // (e.g. BAIVFolderPathPicker's select `loading`) instead of hiding it behind a
 // Suspense gap. Operation name must match the generated artifact; the const
 // name only differs to avoid clashing with the imported generated type.
-// `@skip` / `@include` mirror the version directives so the store never
-// reports the stripped field as missing; below 26.9.0 the legacy node still
-// carries the per-user permission list.
 export const BAIDirectoryPickerQuery = graphql`
-  query BAIDirectoryPickerModalQuery(
-    $vfolderId: UUID!
-    $vfolderGlobalId: String!
-    $supportsPermissionBits: Boolean!
-  ) {
+  query BAIDirectoryPickerModalQuery($vfolderId: UUID!) {
     vfolderV2(vfolderId: $vfolderId) {
       id
       metadata {
         name
       }
-      permissions
-        @since(version: "26.9.0")
-        @include(if: $supportsPermissionBits)
-    }
-    legacyVFolderNode: vfolder_node(id: $vfolderGlobalId)
-      @deprecatedSince(version: "26.9.0")
-      @skip(if: $supportsPermissionBits) {
       permissions
     }
   }
@@ -95,18 +81,18 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   // Folder CRUD inside the picker follows the caller's effective permissions
   // on this vfolder, same as FolderExplorerModalV2: `UPDATE` to write,
   // `SOFT_DELETE` to delete.
-  const { vfolderV2, legacyVFolderNode } =
-    usePreloadedQuery<BAIDirectoryPickerModalQuery>(
-      BAIDirectoryPickerQuery,
-      queryRef,
-    );
-  const supportsPermissionBits = queryRef.variables.supportsPermissionBits;
-  const hasWriteContentPermission = supportsPermissionBits
-    ? _.includes(vfolderV2?.permissions, 'UPDATE')
-    : _.includes(legacyVFolderNode?.permissions, 'write_content');
-  const hasDeleteContentPermission = supportsPermissionBits
-    ? _.includes(vfolderV2?.permissions, 'SOFT_DELETE')
-    : _.includes(legacyVFolderNode?.permissions, 'delete_content');
+  const { vfolderV2 } = usePreloadedQuery<BAIDirectoryPickerModalQuery>(
+    BAIDirectoryPickerQuery,
+    queryRef,
+  );
+  const hasWriteContentPermission = _.includes(
+    vfolderV2?.permissions,
+    'UPDATE',
+  );
+  const hasDeleteContentPermission = _.includes(
+    vfolderV2?.permissions,
+    'SOFT_DELETE',
+  );
   const folderName = vfolderV2?.metadata?.name;
 
   return (

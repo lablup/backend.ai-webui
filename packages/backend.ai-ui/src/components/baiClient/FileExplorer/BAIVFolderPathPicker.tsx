@@ -3,11 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
-import { toGlobalId } from '../../../helper';
 import { useControllableValue } from '../../../hooks';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
-import { useConnectedBAIClient } from '../../provider/BAIClientProvider';
 import BAIDirectoryPickerModal, {
   BAIDirectoryPickerQuery,
 } from './BAIDirectoryPickerModal';
@@ -105,9 +103,6 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     placeholder,
   } = props;
   const { t } = useBAIi18n();
-  const supportsPermissionBits = useConnectedBAIClient().supports(
-    'vfolder-v2-permission-bits',
-  );
   const [selectedSubPath, setSelectedSubPath] = useControllableValue<
     string | undefined
   >(props);
@@ -127,11 +122,7 @@ const BAIVFolderPathPicker: React.FC<BAIVFolderPathPickerProps> = (props) => {
     // `loading` (isPickerPending) instead of a blank Suspense gap.
     startPickerTransition(() => {
       loadPickerQuery(
-        {
-          vfolderId: vfolderUuid,
-          vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderUuid),
-          supportsPermissionBits,
-        },
+        { vfolderId: vfolderUuid },
         { fetchPolicy: 'store-and-network' },
       );
       setIsPickerOpen(true);

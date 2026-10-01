@@ -83,18 +83,10 @@ export type VFolderNodeInList = NonNullable<
   VFolderNodesV2Fragment$data[number]
 >;
 
-/**
- * Formats a `BinarySizeInfo`. `expr` (exact bytes) exists from 26.8.0; older
- * managers only serve the backend-rounded `display` ('1g').
- */
+/** Formats a `BinarySizeInfo` from its exact byte count. */
 export const formatBinarySizeInfo = (
-  size: { display: string; expr?: string | null } | null | undefined,
-) => {
-  if (!size) return null;
-  return size.expr
-    ? convertToDecimalUnit(size.expr, 'auto', 2)?.displayValue
-    : size.display;
-};
+  size: { expr: string } | null | undefined,
+) => (size ? convertToDecimalUnit(size.expr, 'auto', 2)?.displayValue : null);
 
 // V2 `VFolderOrderField` enum values. Legacy fields not present in V2
 // (last_used, cloneable, ownership_type, quota_scope_id, num_files, cur_size,
@@ -156,16 +148,11 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
   const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
-  const baiClient = useSuspendedBackendaiClient();
 
   const isPipelineFolder = vfolder?.metadata?.usageMode === 'DATA';
   const isModelFolder = vfolder?.metadata?.usageMode === 'MODEL';
   const isDeleted = isDeletedCategory(vfolder?.vfolderStatus);
-  // Below 26.9.0 there is no per-user bit to read, so the backend is what
-  // rejects an unauthorized delete.
-  const hasDeletePermission =
-    !baiClient.supports('vfolder-v2-permission-bits') ||
-    _.includes(vfolder?.permissions, 'SOFT_DELETE');
+  const hasDeletePermission = _.includes(vfolder?.permissions, 'SOFT_DELETE');
 
   const vfolderId = toLocalId(vfolder.id ?? '');
   const folderPath = generateFolderPath(vfolderId);
@@ -401,31 +388,21 @@ const VFolderUsageCellInner: React.FC<VFolderUsageCellProps> = ({
   field,
 }) => {
   'use memo';
-  // `@include` mirrors `@since` so the store never reports the stripped
-  // field as missing and re-measures on every mount.
-  const supportsBinarySizeExpr =
-    useSuspendedBackendaiClient().supports('binary-size-expr');
   const { vfolderV2 } = useLazyLoadQuery<VFolderNodesV2UsageQuery>(
     graphql`
-      query VFolderNodesV2UsageQuery(
-        $vfolderId: UUID!
-        $supportsBinarySizeExpr: Boolean!
-      ) {
+      query VFolderNodesV2UsageQuery($vfolderId: UUID!) {
         vfolderV2(vfolderId: $vfolderId) {
           id
           usage {
             numFiles
             usedBytes {
-              display
               expr
-                @since(version: "26.8.0")
-                @include(if: $supportsBinarySizeExpr)
             }
           }
         }
       }
     `,
-    { vfolderId, supportsBinarySizeExpr },
+    { vfolderId },
     { fetchPolicy: 'store-or-network' },
   );
 
@@ -590,12 +567,11 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           permission
           ownershipType
         }
-        permissions @since(version: "26.9.0")
+        permissions
         quota {
           maxFiles
           maxSize {
-            display
-            expr @since(version: "26.8.0")
+            expr
           }
         }
         ownership {

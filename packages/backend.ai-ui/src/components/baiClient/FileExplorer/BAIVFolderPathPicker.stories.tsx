@@ -1,6 +1,5 @@
 import type { BAIDirectoryPickerModalQuery } from '../../../__generated__/BAIDirectoryPickerModalQuery.graphql';
 import { Form } from '../../../form-engine';
-import { toGlobalId } from '../../../helper';
 import MockVFolderFileProviders from '../../../tests/MockVFolderFileProviders';
 import {
   mockVFolderFile as entry,
@@ -29,7 +28,7 @@ const MOCK_VFOLDERS = [
     // (create / rename / delete) is disabled inside the picker modal.
     name: 'team-shared-data',
     row_id: '22222222-2222-2222-2222-222222222222',
-    permissions: ['read_content'],
+    permissions: ['READ'],
   },
 ];
 
@@ -254,14 +253,7 @@ const DirectoryPickerModalDemo: React.FC = () => {
         onClick={() => {
           startOpenTransition(() => {
             loadQuery(
-              {
-                vfolderId: MOCK_VFOLDERS[0].row_id,
-                vfolderGlobalId: toGlobalId(
-                  'VirtualFolderNode',
-                  MOCK_VFOLDERS[0].row_id,
-                ),
-                supportsPermissionBits: false,
-              },
+              { vfolderId: MOCK_VFOLDERS[0].row_id },
               { fetchPolicy: 'store-and-network' },
             );
             setIsOpen(true);

@@ -1056,9 +1056,6 @@ export class Client {
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
-      // `VFolder.permissions: [PermissionBit!]!` — the caller's own bits on the
-      // folder, replacing the legacy `vfolder_node.permissions` read. FR-4114.
-      this._features['vfolder-v2-permission-bits'] = true;
     }
   }
 

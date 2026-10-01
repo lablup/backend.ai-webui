@@ -3,17 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
  V2 counterpart of `BAIVFolderDeleteButton` for pages whose selection rows
- are the V2 `VFolder` GraphQL type (`ProjectAdminDataPage`). From manager
- 26.9.0 the fragment reads the caller's `permissions` bits and the button
- stays disabled unless one selected folder grants `SOFT_DELETE`; below that
- there is no per-user bit to read, so it stays enabled and the backend
- rejects unauthorized requests.
+ are the V2 `VFolder` GraphQL type (`ProjectAdminDataPage`). The button stays
+ disabled unless one selected folder grants the caller `SOFT_DELETE`.
 
  P8: Astryx forces a real accessible `label`; the antd original was
  icon-only and relied on a wrapping Tooltip for its name.
 */
 import { BAIVFolderDeleteButtonV2Fragment$key } from '../__generated__/BAIVFolderDeleteButtonV2Fragment.graphql';
-import { useConnectedBAIClient } from './provider/BAIClientProvider';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import * as _ from 'lodash-es';
 import { TrashIcon } from 'lucide-react';
@@ -39,25 +35,20 @@ const BAIVFolderDeleteButtonV2: React.FC<BAIVFolderDeleteButtonV2Props> = ({
   size = 'md',
 }) => {
   'use memo';
-  const supportsPermissionBits = useConnectedBAIClient().supports(
-    'vfolder-v2-permission-bits',
-  );
   const vfolders = useFragment<BAIVFolderDeleteButtonV2Fragment$key>(
     graphql`
       fragment BAIVFolderDeleteButtonV2Fragment on VFolder
       @relay(plural: true) {
         id
-        permissions @since(version: "26.9.0")
+        permissions
       }
     `,
     vfolderFrgmt,
   );
 
-  const isDeletable =
-    !supportsPermissionBits ||
-    _.some(vfolders, (vfolder) =>
-      _.includes(vfolder.permissions, 'SOFT_DELETE'),
-    );
+  const isDeletable = _.some(vfolders, (vfolder) =>
+    _.includes(vfolder.permissions, 'SOFT_DELETE'),
+  );
 
   return (
     <IconButton

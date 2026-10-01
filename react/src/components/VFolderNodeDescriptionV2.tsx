@@ -103,8 +103,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         quota {
           maxFiles
           maxSize {
-            display
-            expr @since(version: "26.8.0")
+            expr
           }
         }
         ownership {

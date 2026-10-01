@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c88d01a0a1b6de1e5264a3c8c866a5c0>>
+ * @generated SignedSource<<ef2b84c796fc72698452daeb66c010af>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,6 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type VFolderNodesV2UsageQuery$variables = {
-  supportsBinarySizeExpr: boolean;
   vfolderId: string;
 };
 export type VFolderNodesV2UsageQuery$data = {
@@ -19,8 +18,7 @@ export type VFolderNodesV2UsageQuery$data = {
     readonly usage: {
       readonly numFiles: number;
       readonly usedBytes: {
-        readonly display: string;
-        readonly expr?: string;
+        readonly expr: string;
       };
     } | null | undefined;
   } | null | undefined;
@@ -31,17 +29,14 @@ export type VFolderNodesV2UsageQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "supportsBinarySizeExpr"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "vfolderId"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "vfolderId"
+  }
+],
+v1 = [
   {
     "alias": null,
     "args": [
@@ -90,22 +85,8 @@ v2 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "display",
+                "name": "expr",
                 "storageKey": null
-              },
-              {
-                "condition": "supportsBinarySizeExpr",
-                "kind": "Condition",
-                "passingValue": true,
-                "selections": [
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "expr",
-                    "storageKey": null
-                  }
-                ]
               }
             ],
             "storageKey": null
@@ -119,38 +100,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "VFolderNodesV2UsageQuery",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "VFolderNodesV2UsageQuery",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "57c118e1cb977ed66865011972d3ec8d",
+    "cacheID": "0444466fd782d21e1ab59599ab4b63e0",
     "id": null,
     "metadata": {},
     "name": "VFolderNodesV2UsageQuery",
     "operationKind": "query",
-    "text": "query VFolderNodesV2UsageQuery(\n  $vfolderId: UUID!\n  $supportsBinarySizeExpr: Boolean!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    usage {\n      numFiles\n      usedBytes {\n        display\n        expr @include(if: $supportsBinarySizeExpr) @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
+    "text": "query VFolderNodesV2UsageQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    usage {\n      numFiles\n      usedBytes {\n        expr\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "45a10ad928e2270c88894fd0698126d3";
+(node as any).hash = "6a2651b50a7049d45a52fa6663eea2f2";
 
 export default node;

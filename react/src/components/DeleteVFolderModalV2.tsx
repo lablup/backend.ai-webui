@@ -5,7 +5,6 @@
 import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolderModalV2Fragment.graphql';
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
 import {
@@ -47,16 +46,6 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const { getErrorMessage } = useErrorMessageResolver();
-  const baiClient = useSuspendedBackendaiClient();
-  // Older managers have no `items` / `failed` on the payload and reject the
-  // whole document, so the per-id selections are gated and the deprecated
-  // count is selected instead.
-  const supportsPerIdResults = baiClient.supports(
-    'bulk-mutation-per-id-results',
-  );
-  const supportsPermissionBits = baiClient.supports(
-    'vfolder-v2-permission-bits',
-  );
   // Per-folder failures of the last request; `total` is what the request
   // carried, kept apart from the selection the parent clears on success.
   const [failureReport, setFailureReport] = useState<{
@@ -71,7 +60,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         metadata {
           name
         }
-        permissions @since(version: "26.9.0")
+        permissions
       }
     `,
     vfolderFrgmts,
@@ -83,24 +72,21 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         $input: BulkDeleteVFoldersV2Input!
       ) {
         bulkDeleteVfoldersV2(input: $input) {
-          items @since(version: "26.9.0") {
+          items {
             id
           }
-          failed @since(version: "26.9.0") {
+          failed {
             vfolderId
             message
           }
-          deletedCount @deprecatedSince(version: "26.9.0")
         }
       }
     `);
 
-  // Below 26.9.0 there is no per-user bit to read, so every selected folder
-  // is sent and the backend rejects the unauthorized ones.
   const { deletable: folders = [], undeletable = [] } = _.groupBy(
     vfolders ?? [],
     (vfolder) =>
-      !supportsPermissionBits || _.includes(vfolder.permissions, 'SOFT_DELETE')
+      _.includes(vfolder.permissions, 'SOFT_DELETE')
         ? 'deletable'
         : 'undeletable',
   );
@@ -142,9 +128,8 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
                 );
                 return;
               }
-              const deletedCount = supportsPerIdResults
-                ? (data?.bulkDeleteVfoldersV2?.items?.length ?? 0)
-                : (data?.bulkDeleteVfoldersV2?.deletedCount ?? 0);
+              const deletedCount =
+                data?.bulkDeleteVfoldersV2?.items?.length ?? 0;
               const failed = data?.bulkDeleteVfoldersV2?.failed ?? [];
               // The mutation answers per id, so a partial failure arrives as a
               // success with `failed` populated rather than as a top-level error.
