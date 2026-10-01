@@ -114,9 +114,11 @@ const fetchFn: FetchFunction = async (
       })
       .catch((err: any) => {
         if (err.isError && err.statusCode === 401) {
-          const error = new Error('GraphQL Authorization Error');
-          error.name = 'AuthorizationError';
-          throw error;
+          // `description` carries the server's reason, e.g. a disallowed client IP.
+          throw Object.assign(new Error('GraphQL Authorization Error'), {
+            name: 'AuthorizationError',
+            description: err.description,
+          });
         }
         throw err;
       })) || {};

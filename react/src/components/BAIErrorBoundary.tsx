@@ -108,18 +108,17 @@ const BAIErrorBoundary: React.FC<BAIErrorBoundaryProps> = ({
             justify="center"
             align="center"
           >
-            {/* PILOT-DECISION: antd `Result status="warning"` → Astryx
-                `EmptyState` (MAPPING §"Also COMPOSITION": `subTitle`→
-                `description`, `extra`→`actions`, `status="warning"`→ an icon
-                you choose). antd drew a warning illustration; the Astryx
-                equivalent is an explicit `icon`, so the lucide
-                `TriangleAlertIcon` stands in. */}
             <EmptyState
               icon={<TriangleAlertIcon size={40} />}
               title={
                 isLoginSessionExpiredError
                   ? t('errorBoundary.ExpiredLoginSessionTitle')
                   : t('errorBoundary.Title')
+              }
+              description={
+                isLoginSessionExpiredError
+                  ? (error as { description?: string })?.description
+                  : undefined
               }
               actions={
                 <BAIFlex direction="column" gap="md">
