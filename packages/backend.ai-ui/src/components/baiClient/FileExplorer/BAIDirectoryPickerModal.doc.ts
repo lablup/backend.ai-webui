@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      "A directory-only browser in a dialog, built on BAIFileExplorer's `directoryPicker` mode: files are listed but not selectable, a directory row click descends, folder create, rename and delete follow the caller's permissions, and the footer shows the current location next to the button that confirms it. It does not run its own query — the opener loads the exported `BAIDirectoryPickerQuery` (`vfolderV2` name and the caller's `permissions` bits) through `useQueryLoader` and passes the resulting reference as `queryRef`, which the modal reads with `usePreloadedQuery` to title itself and derive the write and delete flags. Because it suspends on that query and on the BAIClient promise consumed inside the explorer, the opener must mount it inside a transition or provide a Suspense boundary. The picker speaks sub paths (`''` is the vfolder root) while the explorer uses `.`, and the modal translates between the two. All other props pass through to BAIModal except `onOk`, `onCancel`, `footer` and `title`, which it owns.",
+      "A directory-only browser in a dialog, built on BAIFileExplorer's `directoryPicker` mode: files are listed but not selectable, a directory row click descends, folder create, rename and delete follow the caller's permissions, and the footer shows the current location next to the button that confirms it. It does not run its own query — the opener loads the exported `BAIDirectoryPickerQuery` (`vfolderV2` name, host and the caller's `permissions` bits, plus `myStorageHostPermissions`) through `useQueryLoader` and passes the resulting reference as `queryRef`, which the modal reads with `usePreloadedQuery` to title itself and derive the write and delete flags. Because it suspends on that query and on the BAIClient promise consumed inside the explorer, the opener must mount it inside a transition or provide a Suspense boundary. The picker speaks sub paths (`''` is the vfolder root) while the explorer uses `.`, and the modal translates between the two. All other props pass through to BAIModal except `onOk`, `onCancel`, `footer` and `title`, which it owns.",
     bestPractices: [
       {
         guidance: true,
@@ -57,7 +57,7 @@ export const docs = {
       name: 'queryRef',
       type: 'PreloadedQuery<BAIDirectoryPickerModalQuery>',
       description:
-        "Preloaded reference to `BAIDirectoryPickerQuery`, keyed by this vfolder's id. Supplies the folder name for the title and the permission bits that gate folder CRUD inside the picker: `UPDATE` to write, `SOFT_DELETE` to delete.",
+        "Preloaded reference to `BAIDirectoryPickerQuery`, keyed by this vfolder's id. Supplies the folder name for the title and the permissions that gate folder CRUD inside the picker: the `UPDATE` bit plus the storage host's `CREATE_VFOLDER` to create, `MODIFY_VFOLDER` to rename and `DELETE_VFOLDER` to delete.",
       required: true,
     },
     {

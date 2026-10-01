@@ -41,13 +41,10 @@ interface ExplorerActionControlsProps {
   onClearSelection?: () => void;
   enableDownload?: boolean;
   enableDelete?: boolean;
-  enableWrite?: boolean;
-  // Gates the upload entry points (dropdown + drag-drop). The corresponding
-  // server operation is `upload-file` on the storage host, which is distinct
-  // from generic write capability (mkdir / create-file / rename) and from
-  // file edit (which is also an upload underneath). Defaults to `enableWrite`
-  // so callers that don't pass it explicitly keep the previous bundled
-  // behavior.
+  // Gates "Create Folder" / "Create File".
+  enableCreate?: boolean;
+  // Gates the upload entry points. "Create File" also needs it: it writes
+  // through the upload API.
   enableUpload?: boolean;
   // 'directoryPicker' keeps only the directory-relevant actions (create
   // folder); file creation and upload entry points are hidden entirely
@@ -68,8 +65,8 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
   onClearSelection,
   enableDownload = false,
   enableDelete = false,
-  enableWrite = false,
-  enableUpload = enableWrite,
+  enableCreate = false,
+  enableUpload = false,
   mode = 'explorer',
   onFolderCreated,
   extra,
@@ -228,7 +225,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         )}
         <Tooltip content={t('comp:FileExplorer.CreateFolder')} isEnabled={!lg}>
           <BAIButton
-            disabled={!enableWrite}
+            disabled={!enableCreate}
             aria-label={t('comp:FileExplorer.CreateFolder')}
             icon={<FolderPlus size="1em" />}
             onClick={() => {
@@ -241,7 +238,7 @@ const ExplorerActionControls: React.FC<ExplorerActionControlsProps> = ({
         {mode !== 'directoryPicker' && (
           <Tooltip content={t('comp:FileExplorer.CreateFile')} isEnabled={!lg}>
             <BAIButton
-              disabled={!enableWrite}
+              disabled={!enableCreate || !enableUpload}
               aria-label={t('comp:FileExplorer.CreateFile')}
               icon={<FilePlus size="1em" />}
               onClick={() => {
