@@ -14,7 +14,7 @@ WebUI ได้ คุณสามารถเปิดได้โดยคล�
 ตรวจสอบบันทึกฝั่งไคลเอนต์ เซสชันเข้าสู่ระบบที่เชื่อมโยงกับบัญชีของคุณ
 และประวัติการเข้าสู่ระบบได้อีกด้วย
 
-![](../images/preferences.png)
+![=175px](../images/preferences.png)
 
 กล่องโต้ตอบนี้แบ่งออกเป็นสี่หมวดที่แสดงอยู่ทางด้านซ้าย ได้แก่ **ทั่วไป**,
 **บันทึก**, **เซสชันเข้าสู่ระบบ** และ **ประวัติการเข้าสู่ระบบ**
@@ -196,7 +196,7 @@ https://github.com/lablup/backend.ai-webui.
 กล่องโต้ตอบ **ข้อมูลรับรองคู่คีย์** จะปรากฏขึ้น โดยแสดงข้อมูลรับรองใหม่
 เพียงครั้งเดียวเท่านั้น
 
-![](../images/keypair_credential_info.png)
+![=640px](../images/keypair_credential_info.png)
 
 กล่องโต้ตอบจะแสดงค่าต่อไปนี้ พร้อมปุ่มคัดลอกสำหรับแต่ละค่า:
 
@@ -251,7 +251,7 @@ https://github.com/lablup/backend.ai-webui.
 อนุญาตให้ลบ
 :::
 
-![](../images/keypair_delete_confirm.png)
+![=548px](../images/keypair_delete_confirm.png)
 
 <a id="user-ssh-keypair-management"></a>
 
@@ -267,7 +267,7 @@ https://github.com/lablup/backend.ai-webui.
 โปรดทราบว่าคีย์ลับจะไม่สามารถตรวจสอบได้อีกหากไม่ได้บันทึกด้วยตนเองทันที
 หลังจากการสร้าง
 
-![](../images/ssh_keypair_dialog.png)
+![=528px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI ใช้คู่คีย์ SSH ที่อิงตาม OpenSSH บน Windows คุณอาจต้องแปลงเป็น
@@ -279,7 +279,7 @@ Backend.AI WebUI รองรับการเพิ่มคู่คีย์
 ให้คลิกปุ่ม `ป้อนด้วยตนเอง` จากนั้นคุณจะเห็นพื้นที่ข้อความสองช่อง
 คือ **คีย์สาธารณะ** และ **คีย์ส่วนตัว**
 
-![](../images/add_ssh_keypair_manually_dialog.png)
+![=528px](../images/add_ssh_keypair_manually_dialog.png)
 
 กรอกคีย์และคลิกปุ่ม `บันทึก` เมื่อลงทะเบียนคู่คีย์สำเร็จ ระบบจะแสดงข้อความ
 *"ลงทะเบียนคู่คีย์ SSH สำเร็จแล้ว"* กล่องโต้ตอบจะปิดลง และคุณสามารถเข้าถึง
@@ -288,7 +288,7 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 กล่องโต้ตอบจะยังคงเปิดอยู่และแสดงข้อความข้อผิดพลาดที่เซิร์ฟเวอร์ส่งกลับมา
 เพื่อให้คุณแก้ไขคีย์แล้วบันทึกอีกครั้ง
 
-![](../images/ssh_keypair_dialog_after.png)
+![=528px](../images/ssh_keypair_dialog_after.png)
 
 ### ขีดจำกัดการอัพโหลดไฟล์สูงสุดพร้อมกัน
 
@@ -300,7 +300,7 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 หากคุณต้องการเรียกใช้สคริปต์ครั้งเดียวหลังจากที่เซสชันการคำนวณของคุณ
 เริ่มต้นขึ้น ให้เขียนเนื้อหาที่นี่
 
-![](../images/edit_bootstrap_script.png)
+![=720px](../images/edit_bootstrap_script.png)
 
 :::note
 เซสชันการคำนวณจะอยู่ในสถานะ `PREPARING` จนกว่าสคริปต์บูตสแตรปจะทำงานเสร็จ
@@ -324,7 +324,7 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 เปิดกล่องโต้ตอบไว้ ปุ่มทางด้านซ้ายของกล่องโต้ตอบใช้สำหรับลบสคริปต์หรือ
 รีเซ็ตการเปลี่ยนแปลงที่ยังไม่ได้บันทึก
 
-![](../images/edit_user_config_script.png)
+![=720px](../images/edit_user_config_script.png)
 
 <a id="experimental-features"></a>
 
@@ -388,7 +388,7 @@ session ของ Backend.AI โดยใช้คีย์ของคุณเ
 ล่างของตาราง จากนั้นกล่องโต้ตอบจะปรากฏขึ้นเพื่อให้คุณเลือกคอลัมน์ที่
 ต้องการเห็น
 
-![](../images/logs_table_setting.png)
+![=420px](../images/logs_table_setting.png)
 
 <a id="login-sessions-tab"></a>
 

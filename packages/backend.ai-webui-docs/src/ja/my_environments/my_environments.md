@@ -44,7 +44,7 @@ navTitle: マイ環境
 2. セッションページに移動して、新しいセッションの作成を開始します
 3. コピーしたイメージパスを手動イメージの入力欄に貼り付けます
 
-![](../images/copy_image_name_manual.png)
+![=700px](../images/copy_image_name_manual.png)
 
 <a id="delete-customized-image"></a>
 
@@ -62,4 +62,4 @@ navTitle: マイ環境
 特定の列を非表示にしたり表示したりするには、テーブルの右下にある歯車アイコン
 をクリックしてください。表示する列を選択できるダイアログが表示されます。
 
-![](../images/table_setting.png)
+![=420px](../images/table_setting.png)
