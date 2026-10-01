@@ -540,9 +540,6 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [currentUser] = useCurrentUserInfo();
-  const supportsUsageQuota = useSuspendedBackendaiClient().supports(
-    'vfolder-v2-usage-quota',
-  );
   const [inviteFolderId, setInviteFolderId] = useState<string | null>(null);
   const { getErrorMessage } = useErrorMessageResolver();
   const navigate = useWebUINavigate();
@@ -594,7 +591,7 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           ownershipType
         }
         permissions @since(version: "26.9.0")
-        quota @since(version: "26.4.4") {
+        quota {
           maxFiles
           maxSize {
             display
@@ -869,13 +866,13 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             defaultHidden: true,
             sorter: false,
             render: (__, vfolder) =>
-              supportsUsageQuota && !vfolder.unmanagedPath ? (
+              vfolder.unmanagedPath ? (
+                '-'
+              ) : (
                 <VFolderUsageCell
                   vfolderId={toLocalId(vfolder.id)}
                   field="numFiles"
                 />
-              ) : (
-                '-'
               ),
           },
           {
@@ -884,13 +881,13 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
             defaultHidden: true,
             sorter: false,
             render: (__, vfolder) =>
-              supportsUsageQuota && !vfolder.unmanagedPath ? (
+              vfolder.unmanagedPath ? (
+                '-'
+              ) : (
                 <VFolderUsageCell
                   vfolderId={toLocalId(vfolder.id)}
                   field="usedBytes"
                 />
-              ) : (
-                '-'
               ),
           },
           {
