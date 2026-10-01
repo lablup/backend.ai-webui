@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9afbab8199bdcebc69bc6203b8b6ab6b>>
+ * @generated SignedSource<<c3d69805b5e0d663e738692347b98141>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,6 @@ export type DeleteVFolderModalV2Mutation$variables = {
 };
 export type DeleteVFolderModalV2Mutation$data = {
   readonly bulkDeleteVfoldersV2: {
-    readonly deletedCount: number;
     readonly failed: ReadonlyArray<{
       readonly message: string;
       readonly vfolderId: string;
@@ -97,13 +96,6 @@ v1 = [
           }
         ],
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "deletedCount",
-        "storageKey": null
       }
     ],
     "storageKey": null
@@ -127,16 +119,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ee3e97a85af9c6b5d681ea26074a160b",
+    "cacheID": "06aca2c10e87c5bfa5e01efb4d884431",
     "id": null,
     "metadata": {},
     "name": "DeleteVFolderModalV2Mutation",
     "operationKind": "mutation",
-    "text": "mutation DeleteVFolderModalV2Mutation(\n  $input: BulkDeleteVFoldersV2Input!\n) {\n  bulkDeleteVfoldersV2(input: $input) {\n    items @since(version: \"26.9.0\") {\n      id\n    }\n    failed @since(version: \"26.9.0\") {\n      vfolderId\n      message\n    }\n    deletedCount @deprecatedSince(version: \"26.9.0\")\n  }\n}\n"
+    "text": "mutation DeleteVFolderModalV2Mutation(\n  $input: BulkDeleteVFoldersV2Input!\n) {\n  bulkDeleteVfoldersV2(input: $input) {\n    items {\n      id\n    }\n    failed {\n      vfolderId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "43ec619764a3c87bdd5b6bf723e7080c";
+(node as any).hash = "0ae09dca6246f8530ce80b7a9bc40d1d";
 
 export default node;

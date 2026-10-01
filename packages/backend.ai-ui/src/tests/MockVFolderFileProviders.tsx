@@ -12,12 +12,12 @@ import { Suspense, useState } from 'react';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
-const DEFAULT_PERMISSIONS = ['read_content', 'write_content', 'delete_content'];
+const DEFAULT_PERMISSIONS = ['READ', 'UPDATE', 'SOFT_DELETE'];
 
 export interface MockVFolder {
   name: string;
   row_id: string;
-  /** Defaults to full read/write/delete content permissions. */
+  /** `VFolder.permissions` bits; defaults to read, write and delete. */
   permissions?: Array<string>;
 }
 
@@ -70,13 +70,9 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
       },
     }));
 
-    // The mock client answers `supports()` with false, so the picker reads
-    // the legacy permission list; the variables must match what it loads.
     const queuePickerOperation = (rowId: string) =>
       env.mock.queuePendingOperation(BAIDirectoryPickerQuery, {
         vfolderId: rowId,
-        vfolderGlobalId: toGlobalId('VirtualFolderNode', rowId),
-        supportsPermissionBits: false,
       });
 
     const queueResolver = () => {
@@ -97,10 +93,6 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
               ? {
                   id: btoa(`VFolder:${requested.row_id}`),
                   metadata: { name: requested.name },
-                }
-              : undefined,
-            legacyVFolderNode: requested
-              ? {
                   permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
                 }
               : undefined,

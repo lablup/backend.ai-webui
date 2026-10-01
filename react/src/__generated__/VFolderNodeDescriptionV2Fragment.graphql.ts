@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<07e52ec566efebd59d14f30b487f2f7d>>
+ * @generated SignedSource<<ac2a0f16ac9b570ccf2937ba442cb622>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -45,7 +45,6 @@ export type VFolderNodeDescriptionV2Fragment$data = {
   readonly quota: {
     readonly maxFiles: number;
     readonly maxSize: {
-      readonly display: string;
       readonly expr: string;
     } | null | undefined;
   };
@@ -186,13 +185,6 @@ return {
               "alias": null,
               "args": null,
               "kind": "ScalarField",
-              "name": "display",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
               "name": "expr",
               "storageKey": null
             }
@@ -302,6 +294,6 @@ return {
 };
 })();
 
-(node as any).hash = "30de6c9e5328dc5d7c07f883c0d6b453";
+(node as any).hash = "26f5809c6d76f95c26bebe6f3f28e231";
 
 export default node;

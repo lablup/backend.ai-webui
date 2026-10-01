@@ -1067,9 +1067,6 @@ export class Client {
       // `KeyPairV2.isDefault` / `KeyPair.is_default` mark the owner's main
       // key; `UserV2OrganizationInfo.mainAccessKey` is deprecated.
       this._features['keypair-is-default'] = true;
-      // `VFolder.permissions: [PermissionBit!]!` — the caller's own bits on the
-      // folder, replacing the legacy `vfolder_node.permissions` read. FR-4114.
-      this._features['vfolder-v2-permission-bits'] = true;
     }
   }
 

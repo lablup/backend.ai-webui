@@ -24,7 +24,7 @@ import type { RelayMockEnvironment } from 'relay-test-utils/lib/RelayModernMockE
  * Contract tests for the explicit project prop contract (ADR-0001, FR-3412).
  *
  * FileBrowserButtonV2 is button tier: `project` is required; `null` renders
- * the button disabled with the caller-provided `disabledTooltip`, a
+ * the button disabled with the caller-provided `noProjectTooltip`, a
  * non-null project keys the storage-host permission lookup and the created
  * session to exactly that project. These tests exercise external behavior
  * only: rendered output, query variables, and REST call payloads.
@@ -144,8 +144,8 @@ const VFOLDER_GLOBAL_ID = btoa('VFolder:folder-0000');
 
 const TestRenderer: React.FC<{
   project: ProjectContextOrNull;
-  disabledTooltip?: string;
-}> = ({ project, disabledTooltip }) => {
+  noProjectTooltip?: string;
+}> = ({ project, noProjectTooltip }) => {
   'use memo';
   const data = useLazyLoadQuery<FileBrowserButtonV2TestQuery>(
     graphql`
@@ -163,14 +163,14 @@ const TestRenderer: React.FC<{
     <FileBrowserButtonV2
       vfolderNodeFrgmt={data.vfolderV2}
       project={project}
-      disabledTooltip={disabledTooltip}
+      noProjectTooltip={noProjectTooltip}
     />
   );
 };
 
 const renderButton = (
   project: ProjectContextOrNull,
-  disabledTooltip?: string,
+  noProjectTooltip?: string,
 ) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const resolver = (operation: any) =>
@@ -218,7 +218,10 @@ const renderButton = (
       <QueryClientProvider client={queryClient}>
         <>
           <Suspense fallback={null}>
-            <TestRenderer project={project} disabledTooltip={disabledTooltip} />
+            <TestRenderer
+              project={project}
+              noProjectTooltip={noProjectTooltip}
+            />
           </Suspense>
         </>
       </QueryClientProvider>
