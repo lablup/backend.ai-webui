@@ -1935,6 +1935,7 @@
         "rbac.RoleDescription",
         "rbac.RoleDetailInfo",
         "rbac.RoleName",
+        "rbac.RolePreset",
         "rbac.RolePresetDetailInfo",
         "rbac.RolePurged",
         "rbac.RoleScopes",
