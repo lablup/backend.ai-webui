@@ -46,7 +46,7 @@ import {
   BAIText,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { ListFilter } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -592,7 +592,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                 button={{
                   label: t('session.launcher.ImageFilter'),
                   icon: (
-                    <ListFilter
+                    <ArrowUpDown
                       size="1em"
                       style={
                         showDedicatedFirst
