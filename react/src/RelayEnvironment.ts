@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { gatewayWrappedError } from './helper/gatewayWrappedError';
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';
@@ -94,10 +93,23 @@ const fetchFn: FetchFunction = async (
     // @ts-ignore
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo)
-      .then((res: Parameters<typeof gatewayWrappedError>[0]) => {
-        // Thrown here so the `.catch` below maps a wrapped 401 like a direct one.
-        const error = gatewayWrappedError(res);
-        if (error) throw error;
+      .then((res: any) => {
+        // A gateway reports an upstream HTTP failure as a 200 with all-null root
+        // fields; throw it so the `.catch` below handles it like a direct one.
+        const upstream = res?.errors?.find(
+          (e: any) => e?.extensions?.response?.status >= 400,
+        )?.extensions?.response;
+        if (upstream && !Object.values(res.data ?? {}).some((v) => v != null)) {
+          const detail = upstream.body?.msg ?? res.errors[0]?.message;
+          throw {
+            isError: true,
+            ...upstream.body,
+            statusCode: upstream.status,
+            statusText: upstream.statusText,
+            message: detail,
+            description: detail,
+          };
+        }
         return res;
       })
       .catch((err: any) => {
