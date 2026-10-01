@@ -19,6 +19,10 @@ import { Form, type FormInstance } from '../form-engine';
 import { baiSignedRequestWithPromise } from '../helper';
 import type { LoginConfigState } from '../helper/loginConfig';
 import { resolveDetailLogoSrc } from '../helper/logoSource';
+import {
+  getTotpActivationErrorMessageKey,
+  isTotpRegistrationTokenError,
+} from '../helper/totpErrorType';
 import { useAnonymousBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
@@ -998,10 +1002,11 @@ const TOTPActivateInline: React.FC<{
     data: initializedTotp,
     isSuccess,
     isError,
+    error: initError,
     mutate,
   } = useTanMutation<
     { totp_key: string; totp_uri: string },
-    null,
+    unknown,
     { registration_token: string }
   >({
     mutationFn: ({ registration_token }) => {
@@ -1017,7 +1022,7 @@ const TOTPActivateInline: React.FC<{
 
   const activateMutation = useTanMutation<
     NonNullable<unknown>,
-    null,
+    unknown,
     { registration_token: string; otp: number }
   >({
     mutationFn: (values: TOTPActivateFormData) => {
@@ -1039,8 +1044,13 @@ const TOTPActivateInline: React.FC<{
               message.success(t('totp.TotpSetupCompleted'));
               onOk();
             },
-            onError: () => {
-              message.error(t('totp.InvalidTotpCode'));
+            onError: (error) => {
+              message.error(t(getTotpActivationErrorMessageKey(error)));
+              // A dead registration token cannot be retried here: send the
+              // user back to the login form to get a fresh one.
+              if (isTotpRegistrationTokenError(error)) {
+                onCancel();
+              }
             },
           },
         );
@@ -1050,6 +1060,10 @@ const TOTPActivateInline: React.FC<{
       });
   };
 
+  const isInitPending = !isSuccess && !isError;
+  const isInitFailed =
+    isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key;
+
   return (
     <BAIModal
       title={t('webui.menu.SetupTotp')}
@@ -1057,11 +1071,20 @@ const TOTPActivateInline: React.FC<{
       confirmLoading={activateMutation.isPending}
       open={open}
       onCancel={onCancel}
-      onOk={handleOk}
-      loading={!isSuccess}
+      // Nothing to submit once initialization failed, so OK returns to the
+      // login form — the only place a fresh setup link comes from.
+      onOk={!isInitPending && isInitFailed ? onCancel : handleOk}
+      loading={isInitPending}
     >
-      {isError || !initializedTotp?.totp_uri || !initializedTotp?.totp_key ? (
-        <BAIFlex>{t('totp.TotpSetupNotAvailable')}</BAIFlex>
+      {isInitFailed ? (
+        <BAIFlex>
+          {t(
+            getTotpActivationErrorMessageKey(
+              initError,
+              'totp.TotpSetupNotAvailable',
+            ),
+          )}
+        </BAIFlex>
       ) : (
         <TOTPActivateForm
           ref={formRef}

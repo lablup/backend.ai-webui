@@ -3015,7 +3015,6 @@
         "storageHost.quotaSettings.SelectProject",
         "totp.ConfirmTotpRemovalBody",
         "totp.EnterConfirmationCode",
-        "totp.InvalidTotpCode",
         "totp.OTP",
         "totp.RemoveTotpSetupCompleted",
         "totp.RequireOTP",
