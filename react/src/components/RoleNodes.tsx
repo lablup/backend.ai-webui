@@ -189,17 +189,6 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         </Text>
       ),
     },
-    supportsAutoAssign && {
-      key: 'autoAssign',
-      title: t('rbac.AutoAssign'),
-      dataIndex: 'autoAssign',
-      render: (autoAssign: boolean) => (
-        <Token
-          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
-          label={autoAssign ? t('general.Active') : t('general.Inactive')}
-        />
-      ),
-    },
     {
       key: 'scope',
       title: t('rbac.ScopeType'),
@@ -251,6 +240,17 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           </BAIFlex>
         );
       },
+    },
+    supportsAutoAssign && {
+      key: 'autoAssign',
+      title: t('rbac.AutoAssign'),
+      dataIndex: 'autoAssign',
+      render: (autoAssign: boolean) => (
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
+          label={autoAssign ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
     },
     {
       key: 'source',
