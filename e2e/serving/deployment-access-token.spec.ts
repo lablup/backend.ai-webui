@@ -278,12 +278,13 @@ test.describe(
   { tag: ['@regression', '@serving', '@functional'] },
   () => {
     let deploymentId: string | null = null;
+    let deploymentName: string | null = null;
 
     test.beforeEach(async ({ page, request }) => {
       await loginAsAdmin(page, request);
     });
 
-    test.afterEach(async () => {
+    test.afterEach(async ({ page }) => {
       if (deploymentId) {
         const api = await createAdminApiContext();
         try {
@@ -291,8 +292,11 @@ test.describe(
         } finally {
           await api.dispose();
         }
-        deploymentId = null;
+      } else if (deploymentName) {
+        await cleanupDeploymentSafely(page, deploymentName);
       }
+      deploymentId = null;
+      deploymentName = null;
     });
 
     test('Admin can page through more than 10 access tokens on a deployment', async ({
@@ -328,8 +332,10 @@ test.describe(
       });
 
       await navigateTo(page, 'deployments');
-      await createDeploymentShell(page, `e2e-token-page-${Date.now()}`);
-      deploymentId = page.url().split('?')[0].split('/').pop() ?? null;
+      deploymentName = `e2e-token-page-${Date.now()}`;
+      await createDeploymentShell(page, deploymentName);
+      await page.waitForURL(/\/deployments\/[0-9a-f-]{36}(?:[?#]|$)/);
+      deploymentId = page.url().split(/[?#]/)[0].split('/').pop() ?? null;
 
       const card = page.locator('.bai-card').filter({
         has: page.getByRole('button', { name: 'Create Access Token' }),

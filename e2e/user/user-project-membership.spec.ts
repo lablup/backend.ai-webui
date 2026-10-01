@@ -10,6 +10,7 @@ import {
 import { loginAsAdmin } from '../utils/test-util';
 import { navigateToUsersPage } from '../utils/user-profile-util';
 import { test, expect, type APIRequestContext, Page } from '@playwright/test';
+import { randomBytes } from 'node:crypto';
 
 const EXTRA_PROJECT_COUNT = 11;
 
@@ -28,9 +29,8 @@ async function listUserProjectIds(
 async function openEditUserModal(page: Page, email: string) {
   const userRow = page.getByRole('row').filter({ hasText: email });
   await expect(userRow).toBeVisible({ timeout: 20000 });
-  // The edit action is the 2nd button in the hover-revealed action cell.
   await userRow.hover();
-  await userRow.locator('.bai-name-action-cell-actions button').nth(1).click();
+  await userRow.getByRole('button', { name: 'Edit', exact: true }).click();
   const dialog = page.getByRole('dialog', { name: 'Edit User Detail' });
   await expect(dialog).toBeVisible();
   return dialog;
@@ -52,19 +52,20 @@ test.describe(
   'User project membership',
   { tag: ['@regression', '@user', '@functional'] },
   () => {
-    let api: APIRequestContext;
+    let api: APIRequestContext | null = null;
     let email: string;
     const projectIds: string[] = [];
 
     test.beforeEach(async () => {
-      const runId = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+      const runId = `${Date.now().toString(36)}${randomBytes(3).toString('hex')}`;
       email = `e2e-many-proj-${runId}@lablup.com`;
       api = await createAdminApiContext();
+      const adminApi = api;
       for (let i = 0; i < EXTRA_PROJECT_COUNT; i++) {
         const data = await gqlAdmin<{
           create_group: { ok: boolean; msg: string; group: { id: string } };
         }>(
-          api,
+          adminApi,
           `mutation($name: String!, $props: GroupInput!) {
             create_group(name: $name, props: $props) { ok msg group { id } }
           }`,
@@ -73,10 +74,13 @@ test.describe(
             props: { domain_name: 'default' },
           },
         );
+        expect(data.create_group.ok, data.create_group.msg).toBe(true);
         projectIds.push(data.create_group.group.id);
       }
-      await gqlAdmin(
-        api,
+      const created = await gqlAdmin<{
+        create_user: { ok: boolean; msg: string };
+      }>(
+        adminApi,
         `mutation($email: String!, $props: UserInput!) {
           create_user(email: $email, props: $props) { ok msg }
         }`,
@@ -84,43 +88,56 @@ test.describe(
           email,
           props: {
             username: `e2e-many-proj-${runId}`,
-            password: `e2e-${runId}@Pw`,
+            password: `e2e-${randomBytes(12).toString('hex')}@Pw`,
             need_password_change: false,
             domain_name: 'default',
             group_ids: projectIds,
           },
         },
       );
+      expect(created.create_user.ok, created.create_user.msg).toBe(true);
     });
 
     test.afterEach(async () => {
-      await purgeUserViaApi(api, email).catch((error) =>
+      if (!api) return;
+      const adminApi = api;
+      api = null;
+      await purgeUserViaApi(adminApi, email).catch((error) =>
         console.warn(`could not purge ${email}:`, error),
       );
       for (const gid of projectIds.splice(0)) {
         try {
           await gqlAdmin(
-            api,
+            adminApi,
             `mutation($gid: UUID!) { delete_group(gid: $gid) { ok } }`,
             { gid },
           );
-          await gqlAdmin(
-            api,
+          const purged = await gqlAdmin<{
+            purge_group: { ok: boolean; msg: string };
+          }>(
+            adminApi,
             `mutation($gid: UUID!) { purge_group(gid: $gid) { ok msg } }`,
             { gid },
           );
+          if (!purged.purge_group?.ok) {
+            console.warn(
+              `could not purge project ${gid}: ${purged.purge_group?.msg}`,
+            );
+          }
         } catch (error) {
           console.warn(`could not purge project ${gid}:`, error);
         }
       }
-      await api.dispose();
+      await adminApi.dispose();
     });
 
     test('Admin can save a user in more than 10 projects without losing memberships', async ({
       page,
       request,
     }) => {
-      const membershipBefore = await listUserProjectIds(api, email);
+      const adminApi = api;
+      if (!adminApi) throw new Error('admin API context was not created');
+      const membershipBefore = await listUserProjectIds(adminApi, email);
       expect(membershipBefore).toEqual(expect.arrayContaining(projectIds));
       expect(membershipBefore.length).toBeGreaterThan(10);
 
@@ -143,7 +160,7 @@ test.describe(
 
       // The manager still has every membership.
       await expect
-        .poll(() => listUserProjectIds(api, email))
+        .poll(() => listUserProjectIds(adminApi, email))
         .toEqual(membershipBefore);
 
       // Reopening the modal shows the same full project list.
