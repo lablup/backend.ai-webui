@@ -43,7 +43,7 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BAISkeleton } from 'backend.ai-ui';
@@ -186,6 +186,7 @@ const AdminDeploymentPage: React.FC = () => {
   };
 
   // --- Model store management tab ---
+  const currentDomain = useCurrentDomainValue();
   const [modelCardQueryRef, loadModelCardQuery] =
     useQueryLoader<AdminModelCardQueryType>(AdminModelCardQuery);
   const [modelCardColumnOverrides, setModelCardColumnOverrides] =
@@ -330,6 +331,8 @@ const AdminDeploymentPage: React.FC = () => {
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
+              // Every domain has its own MODEL_STORE project.
+              domainName: currentDomain,
             },
             { fetchPolicy: 'store-and-network' },
           );
