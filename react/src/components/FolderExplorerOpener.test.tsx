@@ -8,33 +8,27 @@ import FolderExplorerOpener, {
   useFolderExplorerOpener,
 } from './FolderExplorerOpener';
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { BAIModal } from 'backend.ai-ui';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
-// Stands in for the explorer: local state that must not survive a close, and a
-// real `BAIModal` so the close lifecycle reaches `BAIUnmountAfterClose`.
+// Stands in for the explorer: reports the props the opener hands it.
 vi.mock('./FolderExplorerModalV2', () => {
   const FakeExplorer = ({
     vfolderID,
     onRequestClose,
-    ...modalProps
+    open,
   }: {
     vfolderID: string;
     onRequestClose: () => void;
     open?: boolean;
-  }) => {
-    const [tab, setTab] = useState<'metadata' | 'auditLog'>('metadata');
-    return (
-      <BAIModal {...modalProps} title={vfolderID} onCancel={onRequestClose}>
-        <span data-testid="active-tab">{tab}</span>
-        <button onClick={() => setTab('auditLog')}>select-audit-log</button>
-        <button onClick={onRequestClose}>close-explorer</button>
-      </BAIModal>
-    );
-  };
+  }) => (
+    <div data-testid="explorer" data-open={String(!!open)}>
+      <span data-testid="explorer-folder">{vfolderID}</span>
+      <button onClick={onRequestClose}>close-explorer</button>
+    </div>
+  );
   return { default: FakeExplorer };
 });
 
@@ -51,7 +45,11 @@ const OpenButtons = () => {
 const renderOpener = () =>
   render(
     <MemoryRouter>
-      <NuqsTestingAdapter searchParams="" hasMemory>
+      <NuqsTestingAdapter
+        searchParams=""
+        hasMemory
+        resetUrlUpdateQueueOnMount={false}
+      >
         <OpenButtons />
         <Suspense fallback={null}>
           <FolderExplorerOpener />
@@ -60,22 +58,43 @@ const renderOpener = () =>
     </MemoryRouter>,
   );
 
-describe('FolderExplorerOpener (FR-4005)', () => {
-  it('starts every explorer session with fresh state', async () => {
+describe('FolderExplorerOpener', () => {
+  it('keeps the explorer mounted while closed, so its lazy chunk is resolved before the first open', async () => {
     renderOpener();
 
-    fireEvent.click(screen.getByText('open-a'));
-    expect(await screen.findByTestId('active-tab')).toHaveTextContent(
-      'metadata',
+    expect(await screen.findByTestId('explorer')).toHaveAttribute(
+      'data-open',
+      'false',
     );
-    fireEvent.click(screen.getByText('select-audit-log'));
-    expect(screen.getByTestId('active-tab')).toHaveTextContent('auditLog');
+  });
+
+  it('opens the explorer on the requested folder and closes it on request', async () => {
+    renderOpener();
+    await screen.findByTestId('explorer');
+
+    fireEvent.click(screen.getByText('open-a'));
+    await waitFor(() =>
+      expect(screen.getByTestId('explorer')).toHaveAttribute(
+        'data-open',
+        'true',
+      ),
+    );
+    // Dashes are stripped for the explorer's id form.
+    expect(screen.getByTestId('explorer-folder')).toHaveTextContent('foldera');
 
     fireEvent.click(screen.getByText('close-explorer'));
-    fireEvent.click(screen.getByText('open-b'));
+    await waitFor(() =>
+      expect(screen.getByTestId('explorer')).toHaveAttribute(
+        'data-open',
+        'false',
+      ),
+    );
 
-    expect(await screen.findByTestId('active-tab')).toHaveTextContent(
-      'metadata',
+    fireEvent.click(screen.getByText('open-b'));
+    await waitFor(() =>
+      expect(screen.getByTestId('explorer-folder')).toHaveTextContent(
+        'folderb',
+      ),
     );
   });
 });
