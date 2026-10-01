@@ -200,6 +200,63 @@
   visibility: hidden;
 }
 
+/* `labelExtra`: the label col becomes a flex row and the colon moves from the
+   label to the end of the extra slot. Vertical pushes the slot to the far end. */
+[data-bai-form-item-label-col][data-has-label-extra] {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+[data-bai-form-item-label-col][data-has-label-extra][data-align='left'] {
+  justify-content: flex-start;
+}
+
+/* `overflow: visible` keeps the flush-right button's focus ring unclipped. */
+[data-bai-form-item][data-layout='vertical']
+  [data-bai-form-item-label-col][data-has-label-extra] {
+  justify-content: space-between;
+  overflow: visible;
+}
+
+[data-bai-form-item-label-col][data-has-label-extra]
+  > [data-bai-form-item-label] {
+  min-width: 0;
+}
+
+/* A too-narrow column clips the label text instead of painting it over the slot. */
+[data-bai-form-item-label-col][data-has-label-extra]:not([data-wrap])
+  > [data-bai-form-item-label] {
+  overflow: hidden;
+}
+
+[data-bai-form-item-label-col][data-has-label-extra]
+  > [data-bai-form-item-label]::after {
+  content: none;
+}
+
+[data-bai-form-item-label-extra] {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  margin-inline-start: var(--bai-form-item-mark-gap, var(--spacing-1, 4px));
+}
+
+[data-bai-form-item-label-extra]::after {
+  content: ':';
+  margin-inline-start: 2px;
+  margin-inline-end: var(--bai-form-item-colon-gap, var(--spacing-2, 8px));
+}
+
+[data-bai-form-item-label-extra][data-no-colon]::after {
+  content: '\a0';
+}
+
+[data-bai-form-item][data-layout='vertical']
+  [data-bai-form-item-label-extra]::after {
+  content: none;
+}
+
 /* antd `-item-optional { display: inline-block; margin-inline-start: marginXXS;
    color: colorTextDescription }` */
 [data-bai-form-item-optional] {

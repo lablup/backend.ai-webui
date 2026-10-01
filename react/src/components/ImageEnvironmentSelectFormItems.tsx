@@ -577,46 +577,46 @@ const ImageEnvironmentSelectFormItems: React.FC<
           style={{ marginBottom: 0 }}
           name={['environments', 'environment']}
           label={
-            <BAIFlex direction="row" align="center" gap="xxs">
-              <BAIText
-                copyable={{
-                  text: getImageFullName(
-                    form.getFieldValue(['environments', 'image']),
-                  ),
-                }}
-              >
-                {t('session.launcher.Environments')} /{' '}
-                {t('session.launcher.Version')}
-              </BAIText>
-              <DropdownMenu
-                button={{
-                  label: t('session.launcher.ImageFilter'),
-                  icon: (
-                    <ArrowUpDown
-                      size="1em"
-                      style={
-                        showDedicatedFirst
-                          ? { color: 'var(--color-accent)' }
-                          : undefined
-                      }
-                    />
-                  ),
-                  isIconOnly: true,
-                  variant: 'ghost',
-                  size: 'sm',
-                }}
-                hasChevron={false}
-                alignment="start"
-              >
-                <DropdownMenuCheckboxItem
-                  label={t(
-                    'session.launcher.ShowAcceleratorDedicatedImagesFirst',
-                  )}
-                  value={!!showDedicatedFirst}
-                  onChange={setShowDedicatedFirst}
-                />
-              </DropdownMenu>
-            </BAIFlex>
+            <BAIText
+              copyable={{
+                text: getImageFullName(
+                  form.getFieldValue(['environments', 'image']),
+                ),
+              }}
+            >
+              {t('session.launcher.Environments')} /{' '}
+              {t('session.launcher.Version')}
+            </BAIText>
+          }
+          labelExtra={
+            <DropdownMenu
+              button={{
+                label: t('session.launcher.ImageFilter'),
+                icon: (
+                  <ArrowUpDown
+                    size="1em"
+                    style={
+                      showDedicatedFirst
+                        ? { color: 'var(--color-accent)' }
+                        : undefined
+                    }
+                  />
+                ),
+                isIconOnly: true,
+                variant: 'ghost',
+                size: 'sm',
+              }}
+              hasChevron={false}
+              alignment="end"
+            >
+              <DropdownMenuCheckboxItem
+                label={t(
+                  'session.launcher.ShowAcceleratorDedicatedImagesFirst',
+                )}
+                value={!!showDedicatedFirst}
+                onChange={setShowDedicatedFirst}
+              />
+            </DropdownMenu>
           }
           rules={[
             {

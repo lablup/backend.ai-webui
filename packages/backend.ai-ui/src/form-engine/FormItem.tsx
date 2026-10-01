@@ -108,6 +108,11 @@ export interface FormItemProps<Values = any> extends Omit<
    * describe antd's overlay, which Astryx replaces wholesale.
    */
   tooltip?: React.ReactNode | FormItemTooltipConfig;
+  /**
+   * Actions for the label row: far end in vertical layout, right after the
+   * label in horizontal / inline layout. Needs a `label`.
+   */
+  labelExtra?: React.ReactNode;
   extra?: React.ReactNode;
   /** `false` also suppresses meta bubbling to an ancestor item. */
   help?: React.ReactNode;
@@ -175,6 +180,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
     name,
     label,
     tooltip,
+    labelExtra,
     extra,
     help,
     required,
@@ -355,6 +361,7 @@ const FormItem = <Values,>(props: FormItemProps<Values>) => {
           labelTitle={typeof label === 'string' ? label : undefined}
           tooltip={normalizeTooltip(tooltip)}
           tooltipIcon={tooltipIcon(tooltip)}
+          labelExtra={labelExtra}
           extra={extra}
           help={help}
           required={mergedRequired}
