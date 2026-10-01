@@ -995,6 +995,7 @@
       "LeaveFolder": "Ordner verlassen",
       "Location": "Ort",
       "ManageProjectFolderInAdmin": "Die Verwaltung von Projektordnern ist in den Admin-Einstellungen verfügbar.",
+      "MaxFiles": "Maximale Anzahl der Dateien",
       "MaxFolderQuota": "Maximale Ordner-Quote",
       "MaxSize": "Maximale Größe",
       "ModelProjectFolderRestrictedToReadOnly": "Die Berechtigung 'Lesen & Schreiben' wird für Model-Store-Ordner nicht unterstützt.",

@@ -995,6 +995,7 @@
       "LeaveFolder": "Lasciare la cartella",
       "Location": "Posizione",
       "ManageProjectFolderInAdmin": "La gestione delle cartelle di progetto è disponibile nelle impostazioni di amministrazione.",
+      "MaxFiles": "Numero massimo di file",
       "MaxFolderQuota": "Quota massima della cartella",
       "MaxSize": "Dimensione massima",
       "ModelProjectFolderRestrictedToReadOnly": "Il permesso 'Read & Write' non è supportato per la cartella del model store",
