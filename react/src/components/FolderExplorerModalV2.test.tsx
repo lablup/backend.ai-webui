@@ -327,24 +327,26 @@ const renderModal = ({
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  render(
+  const ui = (open: boolean) => (
     <RelayEnvironmentProvider environment={environment}>
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
           <>
             <Suspense fallback={null}>
               <FolderExplorerModalV2
-                vfolderID={VFOLDER_UUID.replaceAll('-', '')}
-                open
+                // The opener clears the id as it closes.
+                vfolderID={open ? VFOLDER_UUID.replaceAll('-', '') : ''}
+                open={open}
                 onRequestClose={vi.fn()}
               />
             </Suspense>
           </>
         </MemoryRouter>
       </QueryClientProvider>
-    </RelayEnvironmentProvider>,
+    </RelayEnvironmentProvider>
   );
-  return { seenOperations };
+  const { rerender } = render(ui(true));
+  return { seenOperations, setOpen: (open: boolean) => rerender(ui(open)) };
 };
 
 const findPermissionOperation = (
@@ -362,6 +364,66 @@ const findOwnershipProjectOperation = (
   seenOperations.find(
     (op) => op.name === 'FolderExplorerModalV2OwnershipProjectQuery',
   );
+
+describe('FolderExplorerModalV2 open feedback', () => {
+  beforeEach(() => {
+    mockIsProjectAgnosticPage = false;
+    mockListHosts.mockClear();
+  });
+
+  it('paints the dialog before the folder query resolves', () => {
+    // No resolver queued: the folder query stays in flight.
+    const environment: RelayMockEnvironment = createMockEnvironment();
+    render(
+      <RelayEnvironmentProvider environment={environment}>
+        <QueryClientProvider client={new QueryClient()}>
+          <MemoryRouter>
+            <Suspense fallback={null}>
+              <FolderExplorerModalV2
+                vfolderID={VFOLDER_UUID.replaceAll('-', '')}
+                open
+                onRequestClose={vi.fn()}
+              />
+            </Suspense>
+          </MemoryRouter>
+        </QueryClientProvider>
+      </RelayEnvironmentProvider>,
+    );
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'button.Close' })).toBeEnabled();
+    expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
+    expect(
+      environment.mock
+        .getAllOperations()
+        .map((operation) => operation.request.node.params.name),
+    ).toEqual(['FolderExplorerModalV2Query']);
+  });
+
+  it('starts every explorer session with fresh state (FR-4005)', async () => {
+    const { setOpen } = renderModal({ ownershipProjectId: null });
+    await screen.findByTestId('mock-file-explorer');
+
+    // Leave the default tab; the mocked description is the metadata panel.
+    fireEvent.click(screen.getAllByText('auditLog.AuditLog')[0]);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('mock-vfolder-description'),
+      ).not.toBeInTheDocument(),
+    );
+
+    setOpen(false);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('mock-file-explorer'),
+      ).not.toBeInTheDocument(),
+    );
+
+    setOpen(true);
+    await screen.findByTestId('mock-file-explorer');
+    expect(screen.getByTestId('mock-vfolder-description')).toBeInTheDocument();
+  });
+});
 
 describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
   beforeEach(() => {
@@ -434,8 +496,17 @@ describe('FolderExplorerModalV2 project context (ADR-0001, FR-3413)', () => {
 
     // Permission calculation now follows the folder's own project (FR-3413
     // acceptance criterion) instead of the header selection.
-    const permissionOperation = findPermissionOperation(seenOperations);
-    expect(permissionOperation?.variables.projectId).toBe('folder-project-id');
+    // The header's session buttons issue their own lookup for the page
+    // project, so match the explorer's by its variables, not by order.
+    expect(
+      seenOperations
+        .filter(
+          (op) =>
+            op.name ===
+            'useMergedAllowedStorageHostPermission_AllowedVFolderHostsQuery',
+        )
+        .map((op) => op.variables.projectId),
+    ).toContain('folder-project-id');
 
     // The banner decided after looking the owning project up by its id.
     expect(
