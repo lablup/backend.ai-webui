@@ -314,6 +314,14 @@ export const STATUS_BADGE_VARIANT = {
     spectrumscale: 'green',
     weka: 'purple',
   },
+  /** Entity share status (EntityShareNodes). */
+  entityShare: {
+    PENDING: 'warning',
+    ACCEPTED: 'success',
+    REJECTED: 'error',
+    CANCELED: 'neutral',
+    REVOKED: 'neutral',
+  },
   /** VFolder permission letters (VFolderPermissionToken, SummaryItemInvitation). */
   vfolderPermission: {
     r: 'green',

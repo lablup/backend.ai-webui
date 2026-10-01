@@ -17,6 +17,7 @@ export const USER_SETTINGS_CATEGORIES = [
   'logs',
   'login-sessions',
   'login-history',
+  'shares',
 ] as const;
 
 export type UserSettingsCategory = (typeof USER_SETTINGS_CATEGORIES)[number];

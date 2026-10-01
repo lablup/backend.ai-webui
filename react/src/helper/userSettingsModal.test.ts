@@ -25,6 +25,7 @@ describe('coerceUserSettingsCategory', () => {
     expect(coerceUserSettingsCategory('logs')).toBe('logs');
     expect(coerceUserSettingsCategory('login-sessions')).toBe('login-sessions');
     expect(coerceUserSettingsCategory('login-history')).toBe('login-history');
+    expect(coerceUserSettingsCategory('shares')).toBe('shares');
   });
 
   it('falls back to general for an unknown value, as the old tab parser did', () => {
