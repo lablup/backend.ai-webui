@@ -9,7 +9,6 @@ import {
 import { Form } from '../form-engine';
 import {
   compareImageVersions,
-  getDedicatedAccelerators,
   getImageFullName,
   isPrivateImage,
   localeCompare,
@@ -69,6 +68,18 @@ type ImageGroup = {
 
 // Quick-pick options repeat an environment listed below, so they need their own value.
 const DEDICATED_OPTION_VALUE_PREFIX = 'accelerator-dedicated:';
+
+// An image's explicit `supported_accelerators`; empty for a generic image
+// (`*`, or `''` from pre-BA-2358 managers).
+const getDedicatedAccelerators = (image: Image | undefined): string[] => {
+  if (_.includes(image?.supported_accelerators, '*')) return [];
+  return _.uniq(
+    _.filter(
+      image?.supported_accelerators,
+      (accelerator): accelerator is string => !!accelerator,
+    ),
+  );
+};
 
 export type ImageEnvironmentFormInput = {
   environments: {
