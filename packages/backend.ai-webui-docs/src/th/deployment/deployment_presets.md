@@ -110,9 +110,9 @@
       toggle **เปิดใช้การตรวจสอบสุขภาพ (Enable Health Check)** ใช้กับ Advanced Mode ของ runtime variant vLLM และ SGLang ด้วย
       :::
 
-   ![](../images/deployment_preset_create_modal.png)
+   ![=800px](../images/deployment_preset_create_modal.png)
 
-   ![](../images/deployment_preset_service_configuration.png)
+   ![=768px](../images/deployment_preset_service_configuration.png)
 
 3. ในขั้นตอน **การทบทวน** ให้ตรวจสอบสรุปข้อมูล แล้วคลิก `สร้าง` เพื่อบันทึก ระบบจะแสดงการแจ้งเตือนเมื่อสร้างพรีเซ็ตสำเร็จ
 
@@ -140,7 +140,7 @@
 
    แถว **Runtime** จะแสดงทั้งตอนที่คุณสร้างพรีเซ็ต **และ** ตอนที่คุณแก้ไขพรีเซ็ต เนื่องจากฟิลด์นี้แก้ไขได้ในขั้นตอนที่ 1 ทั้งสองกรณี ใช้แถวนี้เพื่อยืนยันว่าพรีเซ็ตจะใช้ runtime ใดก่อนบันทึก
 
-![](../images/deployment_preset_review_step.png)
+![=800px](../images/deployment_preset_review_step.png)
 
 ### แก้ไขพรีเซ็ตการดีพลอย
 

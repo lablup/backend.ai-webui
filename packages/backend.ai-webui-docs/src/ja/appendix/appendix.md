@@ -14,11 +14,11 @@ Backend.AIは、1つの物理GPUを複数のユーザーで分割して同時に
 
 まず、ホストノードにインストールされている物理GPUの種類とメモリ容量を確認しましょう。本ガイドで使用するGPUノードは、以下の図のように8 GBのメモリを搭載したGPUを備えています。また、管理者の設定により、1 fGPUは0.5物理GPUに相当する量（または1物理GPUは2 fGPU）に設定されています。
 
-![](../images/host_gpu.png)
+![=722px](../images/host_gpu.png)
 
 それでは、セッションページに移動し、以下のように0.5 fGPUを割り当ててコンピュートセッションを作成してみましょう。
 
-![](../images/session_launch_dialog_with_gpu.png)
+![=740px](../images/session_launch_dialog_with_gpu.png)
 
 セッション一覧のAIアクセラレータパネルで、0.5 fGPUが割り当てられていることを確認できます。
 
@@ -34,7 +34,7 @@ Jupyter Notebookを開いて、シンプルなMLトレーニングコードを�
 
 トレーニング実行中に、GPUホストノードのシェルに接続し、`nvidia-smi` コマンドを実行します。プロセスに1つのGPUがアタッチされており、このプロセスが物理GPUのリソースの約25%を占有していることを確認できます。（GPU占有率はトレーニングコードやGPUモデルによって大きく異なる場合があります。）
 
-![](../images/host_nvidia_smi.png)
+![=717px](../images/host_nvidia_smi.png)
 
 あるいは、Webターミナルから `nvidia-smi` コマンドを実行して、コンテナ内のGPU使用履歴を確認することもできます。
 
@@ -47,7 +47,7 @@ Backend.AIサーバーには、独自開発されたタスクスケジューラ�
 
 ジョブスケジューラの動作は、ユーザーWebUIから簡単に確認することができます。GPUホストが最大2つのfGPUを割り当てることができる場合、それぞれ1つのfGPUの割り当てを要求する3つのコンピュートセッションを同時に作成してみましょう。セッションランチャーの環境 & リソース配分ステップで、AIアクセラレータを1に設定します。続いてレビューと開始ステップで、ローンチボタンの横にあるメニューを開いて複数セッションを起動を選択します。セッション数を3に指定して開始をクリックすると、3つのセッションが同時に要求されます。これは、合計3つのfGPUを要求する3つのセッションが、2つのfGPUしか存在しないときに作成される状況です。
 
-![](../images/session_launch_dialog_2_sessions.png)
+![=560px](../images/session_launch_dialog_2_sessions.png)
 
 しばらく待つと、3つのコンピュートセッションが一覧表示されるのが見えます。ステータスパネルをよく見ると、3つのコンピュートセッションのうち2つはRUNNING状態ですが、もう1つのコンピュートセッションはPENDING状態のままであることがわかります。このPENDINGセッションはジョブキューに登録されているだけで、不十分なGPUリソースのために実際にはコンテナが割り当てられていません。
 
@@ -66,11 +66,11 @@ Backend.AIは、さまざまなプリビルドのMLおよびHPCカーネルイ�
 
 セッションページに移動し、セッション起動ダイアログを開きます。インストール設定によっては、さまざまなカーネルイメージがあるかもしれません。
 
-![](../images/various_kernel_images.png)
+![=700px](../images/various_kernel_images.png)
 
 ここでは、TensorFlow 2.3 環境を選択してセッションを作成してみましょう。
 
-![](../images/session_launch_dialog_tf23.png)
+![=700px](../images/session_launch_dialog_tf23.png)
 
 作成したセッションのWebターミナルを開き、以下のPythonコマンドを実行します。TensorFlow 2.3 がインストールされていることを確認できます。
 
@@ -78,7 +78,7 @@ Backend.AIは、さまざまなプリビルドのMLおよびHPCカーネルイ�
 
 今度は、TensorFlow 1.15 環境を選択してコンピュートセッションを作成しましょう。リソースが不足している場合は、先に作成したセッションを削除してください。
 
-![](../images/session_launch_dialog_tf115.png)
+![=700px](../images/session_launch_dialog_tf115.png)
 
 作成したセッションのWebターミナルを開き、先ほどと同じPythonコマンドを実行します。TensorFlow 1.15(.4) がインストールされていることを確認できます。
 
@@ -86,7 +86,7 @@ Backend.AIは、さまざまなプリビルドのMLおよびHPCカーネルイ�
 
 最後に、PyTorch 1.9 を使用してコンピュートセッションを作成します。
 
-![](../images/session_launch_dialog_pytorch17.png)
+![=740px](../images/session_launch_dialog_pytorch17.png)
 
 作成したセッションのWebターミナルを開き、以下のPythonコマンドを実行します。PyTorch 1.9 がインストールされていることを確認できます。
 
@@ -113,7 +113,7 @@ Pythonパッケージをインストールする際は、[自動マウントフ�
 - 管理者がコンピュートセッションを新しいDockerイメージに変換すると、完全なイメージ名とタグが通知されます。
 - セッション起動ダイアログでイメージ名を手動で入力できます。このイメージはプライベートであり、他のユーザーには表示されません。
 
-  ![](../images/session-creation-by-specifying-image-name.png)
+  ![=700px](../images/session-creation-by-specifying-image-name.png)
 
 - 新しいDockerイメージを使用して、新しいコンピュートセッションが作成されます。
 
@@ -178,7 +178,7 @@ mlflow ui --host 0.0.0.0
 
 次に、アプリランチャーダイアログで「MLFlow UI」アプリをクリックします。
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 しばらくすると、MLFlow UIの新しいページが表示されます。
 

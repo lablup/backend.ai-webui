@@ -14,7 +14,7 @@ navTitle: 프로젝트 관리자 기능
 
 헤더의 프로젝트 드롭다운을 열면 프로젝트 관리자 권한을 가진 프로젝트에는 이름 옆에 방패 모양의 배지가 표시됩니다. 배지 위에 마우스를 올리면 **프로젝트 관리자** 툴팁이 나타나며, 해당 프로젝트를 선택하면 아래에 설명된 프로젝트 관리자용 사이드바 항목들이 표시됩니다.
 
-![](../images/header_project_selector_with_admin_badge.png)
+![=262px](../images/header_project_selector_with_admin_badge.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 헤더의 프로젝트 선택기에서 다른 프로젝트로 전환하면 사용자의 역할이 다시 평가됩니다. 동일한 사용자가 한 로그인 세션 내에서 어떤 프로젝트에서는 프로젝트 관리자로, 다른 프로젝트에서는 일반 사용자로 동작할 수 있습니다. 프로젝트 관리자 역할을 부여하고 회수하는 방법은 RBAC 관리 장의 [프로젝트 관리자 권한 부여](#grant-project-admin) 섹션을 참고하세요.
@@ -67,7 +67,7 @@ navTitle: 프로젝트 관리자 기능
 - **세션** — 현재 프로젝트의 사용자들이 소유한 연산 세션
 - **배포** — 현재 프로젝트가 소유한 모델 배포
 
-![](../images/project_admin_sidebar.png)
+![=240px](../images/project_admin_sidebar.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 프로젝트 관리자 페이지에서는 상단의 프로젝트 선택기로 선택한 프로젝트 하위의 항목들만 표기됩니다. 이 내용은 페이지 상단의 배너를 통해 확인할 수 있습니다.
@@ -83,7 +83,7 @@ navTitle: 프로젝트 관리자 기능
 
 새로고침 버튼 옆의 드롭다운 버튼을 클릭하면 **자동 새로고침** 메뉴가 열리며, 자동 새로고침 주기를 선택할 수 있습니다.
 
-![](../images/project_admin_auto_refresh_menu.png)
+![=94px](../images/project_admin_auto_refresh_menu.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
@@ -128,7 +128,7 @@ navTitle: 프로젝트 관리자 기능
 2. 생성 모달에서 폴더 정보를 입력합니다.
 3. **생성**을 클릭하여 폴더를 생성합니다.
 
-![](../images/project_admin_create_folder_modal.png)
+![=650px](../images/project_admin_create_folder_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
@@ -177,7 +177,7 @@ navTitle: 프로젝트 관리자 기능
 4. 필요한 경우 **강제 종료** 체크박스를 선택하여 현재 상태와 상관없이 세션을 종료하거나 취소합니다. 이 옵션을 활성화하면 경고가 표시되고 확인 버튼 레이블이 **종료**에서 **강제 종료**로 변경됩니다.
 5. 확인 버튼을 클릭하여 세션을 종료합니다.
 
-![](../images/project_admin_terminate_session_modal.png)
+![=520px](../images/project_admin_terminate_session_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::warning
