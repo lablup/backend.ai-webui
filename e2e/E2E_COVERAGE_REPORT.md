@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-09-08
+> **Last Updated:** 2026-10-02
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -220,7 +220,7 @@
 
 ### 5. Session Launcher (`/session/start`)
 
-**Test files:** Covered indirectly via [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts), [`e2e/session/session-launcher-subpath-picker.spec.ts`](session/session-launcher-subpath-picker.spec.ts)
+**Test files:** Coverage provided by [`e2e/session/session-creation.spec.ts`](session/session-creation.spec.ts), [`e2e/session/session-template-modal.spec.ts`](session/session-template-modal.spec.ts), [`e2e/session/session-cluster-mode.spec.ts`](session/session-cluster-mode.spec.ts), [`e2e/session/session-dependency.spec.ts`](session/session-dependency.spec.ts), [`e2e/session/session-launcher-subpath-picker.spec.ts`](session/session-launcher-subpath-picker.spec.ts)
 
 **Steps:** 1.Session Type → 2.Environments & Resource → 3.Data & Storage → 4.Network → 5.Confirm
 **Modals:** `SessionTemplateModal` (recent history)
