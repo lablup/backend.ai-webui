@@ -637,7 +637,6 @@
     "DescRequirePasswordChange": "Şifre değişikliği gerekli",
     "Description": "Açıklama",
     "Domain": "Alan adı",
-    "DomainIsActive": "Alan adı aktif",
     "DownloadCSV": "CSV indir",
     "DownloadCSVTemplate": "CSV Şablonunu İndir",
     "EmailPrefix": "E-posta ön eki (@ öncesi)",
@@ -1295,7 +1294,6 @@
     "filter": {
       "CreatedAt": "Oluşturulma Tarihi",
       "DestroyedAt": "Silinme Tarihi",
-      "DomainName": "Etki Alanı",
       "EndpointUrl": "Uç Nokta URL'si",
       "Name": "Ad",
       "OpenToPublic": "Herkese Açık",
@@ -2032,7 +2030,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Alan adı",
     "LoginTime": "Oturum Açma Zamanı",
     "Result": "Sonuç"
   },
@@ -2248,7 +2245,6 @@
     "DeactivateProject": "Projeyi devre dışı bırak",
     "DescRevokeProjectAdmin": "Proje yöneticisi izni geri alındığında, proje kullanıcının izin verilen projeler listesinden otomatik olarak kaldırılmaz. Projeye erişimi geri almak için projeyi listeden manuel olarak kaldırın.",
     "DescSetProjectAdmin": "Proje yöneticisi izni verildiğinde, proje otomatik olarak kullanıcının izin verilen projeler listesine eklenir ve kullanıcı bu projeye erişebilir hale gelir.",
-    "Domain": "Etki Alanı",
     "EditProject": "Düzenle",
     "FailedToActivateProject": "Proje etkinleştirilemedi.",
     "FailedToDeactivateProject": "Proje devre dışı bırakılamadı.",

@@ -637,7 +637,6 @@
     "DescRequirePasswordChange": "Passwortänderung erforderlich",
     "Description": "Beschreibung",
     "Domain": "Domain",
-    "DomainIsActive": "Domain aktiv",
     "DownloadCSV": "CSV herunterladen",
     "DownloadCSVTemplate": "CSV-Vorlage herunterladen",
     "EmailPrefix": "E-Mail-Präfix (vor dem @)",
@@ -1295,7 +1294,6 @@
     "filter": {
       "CreatedAt": "Erstellt am",
       "DestroyedAt": "Gelöscht am",
-      "DomainName": "Domäne",
       "EndpointUrl": "Endpunkt-URL",
       "Name": "Name",
       "OpenToPublic": "Öffentlich",
@@ -2034,7 +2032,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Domain",
     "LoginTime": "Anmeldezeit",
     "Result": "Ergebnis"
   },
@@ -2250,7 +2247,6 @@
     "DeactivateProject": "Projekt deaktivieren",
     "DescRevokeProjectAdmin": "Durch den Entzug der Projektadministrator-Berechtigung wird das Projekt nicht automatisch aus der Liste der zugelassenen Projekte des Benutzers entfernt. Um den Zugriff auf das Projekt zu entziehen, entfernen Sie es manuell aus der Liste.",
     "DescSetProjectAdmin": "Durch die Vergabe der Projektadministrator-Berechtigung wird das Projekt automatisch zur Liste der zugelassenen Projekte des Benutzers hinzugefügt, und der Benutzer kann anschließend auf dieses Projekt zugreifen.",
-    "Domain": "Domäne",
     "EditProject": "Bearbeiten",
     "FailedToActivateProject": "Fehler beim Aktivieren des Projekts.",
     "FailedToDeactivateProject": "Fehler beim Deaktivieren des Projekts.",

@@ -384,16 +384,6 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       type: 'boolean',
     },
     {
-      key: 'domainName',
-      propertyLabel: t('credential.Domain'),
-      type: 'string',
-    },
-    {
-      key: 'domain.isActive',
-      propertyLabel: t('credential.DomainIsActive'),
-      type: 'boolean',
-    },
-    {
       key: 'integrationName',
       propertyLabel: t('credential.IntegrationName'),
       type: 'string',

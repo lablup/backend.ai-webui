@@ -637,7 +637,6 @@
     "DescRequirePasswordChange": "需要更改密码",
     "Description": "描述",
     "Domain": "领域",
-    "DomainIsActive": "域已启用",
     "DownloadCSV": "下载 CSV",
     "DownloadCSVTemplate": "下载 CSV 模板",
     "EmailPrefix": "邮箱前缀（@前）",
@@ -1295,7 +1294,6 @@
     "filter": {
       "CreatedAt": "创建时间",
       "DestroyedAt": "删除时间",
-      "DomainName": "域",
       "EndpointUrl": "端点 URL",
       "Name": "名称",
       "OpenToPublic": "公开",
@@ -2034,7 +2032,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "域",
     "LoginTime": "登录时间",
     "Result": "结果"
   },
@@ -2250,7 +2247,6 @@
     "DeactivateProject": "停用项目",
     "DescRevokeProjectAdmin": "撤销项目管理员权限后，系统不会自动将该项目从用户的允许项目列表中移除。如需撤销对该项目的访问，请手动将其从列表中移除。",
     "DescSetProjectAdmin": "授予项目管理员权限后，系统会自动将该项目添加到用户的允许项目列表中，此后该用户即可访问该项目。",
-    "Domain": "域",
     "EditProject": "编辑",
     "FailedToActivateProject": "无法激活该项目。",
     "FailedToDeactivateProject": "无法停用该项目。",

@@ -44,7 +44,6 @@ export type ModelDeploymentNodeInList = NonNullable<
 export const availableDeploymentSorterKeys = [
   'name',
   'createdAt',
-  'domain',
   'project',
   'resourceGroup',
   'tag',

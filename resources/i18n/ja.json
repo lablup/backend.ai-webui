@@ -637,7 +637,6 @@
     "DescRequirePasswordChange": "パスワードの変更が必要です",
     "Description": "説明",
     "Domain": "ドメイン",
-    "DomainIsActive": "ドメイン有効",
     "DownloadCSV": "CSVをダウンロード",
     "DownloadCSVTemplate": "CSVテンプレートをダウンロード",
     "EmailPrefix": "メールアドレスの@より前の部分",
@@ -1295,7 +1294,6 @@
     "filter": {
       "CreatedAt": "作成日時",
       "DestroyedAt": "削除日時",
-      "DomainName": "ドメイン",
       "EndpointUrl": "エンドポイントURL",
       "Name": "名前",
       "OpenToPublic": "公開",
@@ -2034,7 +2032,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "ドメイン",
     "LoginTime": "ログイン日時",
     "Result": "結果"
   },
@@ -2250,7 +2247,6 @@
     "DeactivateProject": "プロジェクトを無効化",
     "DescRevokeProjectAdmin": "プロジェクト管理者権限を解除しても、そのプロジェクトはユーザーの許可されたプロジェクトリストから自動的には削除されません。プロジェクトへのアクセスを取り消すには、リストから手動で削除してください。",
     "DescSetProjectAdmin": "プロジェクト管理者権限を付与すると、そのプロジェクトがユーザーの許可されたプロジェクトリストに自動的に追加され、以降そのユーザーはそのプロジェクトにアクセスできるようになります。",
-    "Domain": "ドメイン",
     "EditProject": "編集",
     "FailedToActivateProject": "プロジェクトの有効化に失敗しました。",
     "FailedToDeactivateProject": "プロジェクトの無効化に失敗しました。",
