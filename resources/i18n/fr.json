@@ -2415,7 +2415,7 @@
     "Status": "Statut",
     "System": "Système",
     "SystemRoleNoAssignments": "Les rôles créés automatiquement par le système ne peuvent pas avoir d'utilisateurs directement attribués ou retirés.",
-    "SystemRolePermissionReadOnly": "Les autorisations d'un rôle système ne peuvent pas être modifiées ici. Pour les changer, modifiez les autorisations du préréglage à partir duquel ce rôle a été créé.",
+    "SystemRolePermissionReadOnly": "Les rôles créés automatiquement à partir d'un préréglage héritent des autorisations de ce préréglage. Pour modifier les autorisations, consultez le préréglage.",
     "UnsavedPermissionChanges": "{{count}} modification(s) de permission non enregistrée(s)",
     "UserAlreadyAssigned": "L'utilisateur est déjà attribué à ce rôle.",
     "UserAssigned": "Utilisateur attribué au rôle avec succès.",

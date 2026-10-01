@@ -2413,7 +2413,7 @@
     "Status": "Tila",
     "System": "Järjestelmä",
     "SystemRoleNoAssignments": "Järjestelmän automaattisesti luomiin rooleihin ei voi suoraan määrittää tai poistaa käyttäjiä.",
-    "SystemRolePermissionReadOnly": "Järjestelmäroolin käyttöoikeuksia ei voi muokata täällä. Muuta ne muokkaamalla sen esiasetuksen käyttöoikeuksia, josta tämä rooli luotiin.",
+    "SystemRolePermissionReadOnly": "Esiasetuksesta automaattisesti luodut roolit perivät kyseisen esiasetuksen oikeudet. Muuta oikeuksia tarkistamalla esiasetus.",
     "UnsavedPermissionChanges": "{{count}} tallentamatonta käyttöoikeusmuutosta",
     "UserAlreadyAssigned": "Käyttäjä on jo määritetty tähän rooliin.",
     "UserAssigned": "Käyttäjä määritetty rooliin onnistuneesti.",

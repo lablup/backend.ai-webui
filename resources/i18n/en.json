@@ -2400,7 +2400,7 @@
     "Status": "Status",
     "System": "System",
     "SystemRoleNoAssignments": "Roles automatically created by the system cannot have users directly assigned or unassigned.",
-    "SystemRolePermissionReadOnly": "Permissions of a system role cannot be edited here. To change them, edit the permissions of the preset this role was created from.",
+    "SystemRolePermissionReadOnly": "Roles automatically created from a preset inherit that preset's permissions. To change the permissions, check the preset.",
     "UnsavedPermissionChanges": "{{count}} unsaved permission change(s)",
     "UserAlreadyAssigned": "User is already assigned to this role.",
     "UserAssigned": "User assigned to role successfully.",

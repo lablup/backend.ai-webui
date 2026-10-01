@@ -2415,7 +2415,7 @@
     "Status": "Status",
     "System": "System",
     "SystemRoleNoAssignments": "Rolom tworzonym automatycznie przez system nie można bezpośrednio przypisywać ani usuwać użytkowników.",
-    "SystemRolePermissionReadOnly": "Uprawnień roli systemowej nie można tu edytować. Aby je zmienić, edytuj uprawnienia ustawienia wstępnego, z którego utworzono tę rolę.",
+    "SystemRolePermissionReadOnly": "Role utworzone automatycznie na podstawie szablonu dziedziczą jego uprawnienia. Aby zmienić uprawnienia, sprawdź szablon.",
     "UnsavedPermissionChanges": "Niezapisane zmiany uprawnień: {{count}}",
     "UserAlreadyAssigned": "Użytkownik jest już przypisany do tej roli.",
     "UserAssigned": "Użytkownik został pomyślnie przypisany do roli.",

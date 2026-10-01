@@ -2415,7 +2415,7 @@
     "Status": "ステータス",
     "System": "システム",
     "SystemRoleNoAssignments": "システムによって自動的に作成されたロールには、ユーザーを直接割り当てたり外したりすることはできません。",
-    "SystemRolePermissionReadOnly": "システムにより自動生成されたロールの権限は変更できません。変更するには、このロールのプリセットの権限を変更してください。",
+    "SystemRolePermissionReadOnly": "プリセットから自動生成されたロールは、そのプリセットの権限を継承します。権限を変更するには、プリセットを確認してください。",
     "UnsavedPermissionChanges": "未保存の権限変更 {{count}}件",
     "UserAlreadyAssigned": "ユーザーはすでにこのロールに割り当てられています。",
     "UserAssigned": "ユーザーがロールに正常に割り当てられました。",

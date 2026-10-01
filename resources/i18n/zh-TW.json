@@ -2417,7 +2417,7 @@
     "Status": "狀態",
     "System": "系統",
     "SystemRoleNoAssignments": "系統自動建立的角色不能直接分配或移除使用者。",
-    "SystemRolePermissionReadOnly": "系統自動產生的角色權限無法修改。如需修改，請修改此角色所屬預設的權限。",
+    "SystemRolePermissionReadOnly": "依預設自動建立的角色會繼承該預設的權限。如需修改權限，請檢查預設。",
     "UnsavedPermissionChanges": "{{count}} 項未儲存的權限變更",
     "UserAlreadyAssigned": "使用者已分配到此角色。",
     "UserAssigned": "使用者已成功分配到角色。",

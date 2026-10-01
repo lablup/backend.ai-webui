@@ -2416,7 +2416,7 @@
     "Status": "Status",
     "System": "Sistem",
     "SystemRoleNoAssignments": "Peran yang dibuat secara otomatis oleh sistem tidak dapat memiliki pengguna yang ditetapkan atau dihapus secara langsung.",
-    "SystemRolePermissionReadOnly": "Izin peran sistem tidak dapat diubah di sini. Untuk mengubahnya, ubah izin preset tempat peran ini dibuat.",
+    "SystemRolePermissionReadOnly": "Peran yang dibuat otomatis dari preset mewarisi izin preset tersebut. Untuk mengubah izin, periksa preset.",
     "UnsavedPermissionChanges": "{{count}} perubahan izin belum disimpan",
     "UserAlreadyAssigned": "Pengguna sudah ditetapkan ke peran ini.",
     "UserAssigned": "Pengguna berhasil ditetapkan ke peran.",
