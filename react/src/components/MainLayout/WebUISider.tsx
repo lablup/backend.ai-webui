@@ -62,24 +62,24 @@ const WebUISider: React.FC<WebUISiderProps> = (props) => {
 };
 
 /**
- * Whether the operator's `sider.theme` override asks for the polarity
+ * Whether the operator's `theme.siderMode` override asks for the polarity
  * opposite the app's resolved mode. Shared by the rail and the mobile nav
  * drawer so both navigation surfaces follow the operator's choice.
  */
 export const useSiderThemeReversed = (): boolean => {
   'use memo';
-  const { themeConfig } = useCustomThemeConfig();
+  const { rawThemeConfig } = useCustomThemeConfig();
   const { mode } = useTheme();
   const isParentDark = mode === 'dark';
 
   return (
-    (isParentDark && themeConfig?.sider?.theme === 'light') ||
-    (!isParentDark && themeConfig?.sider?.theme === 'dark')
+    (isParentDark && rawThemeConfig?.theme?.siderMode === 'light') ||
+    (!isParentDark && rawThemeConfig?.theme?.siderMode === 'dark')
   );
 };
 
 /**
- * Applies the operator's `sider.theme` override — a nested `<Theme>` with the
+ * Applies the operator's `theme.siderMode` override — a nested `<Theme>` with the
  * inverted resolved mode (`AstryxReverseTheme`).
  */
 const WebUISiderWithCustomTheme: React.FC<WebUISiderProps> = (props) => {

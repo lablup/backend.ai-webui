@@ -28,6 +28,11 @@ const STYLE = `
     outline-color: var(--bai-viewed-badge); outline-style: dotted;
   }
   .wt-mark.current { outline-width: 2.5px; }
+  /* The current stop is waiting: a neighbour must not read as its element. */
+  .wt-mark.muted {
+    background: transparent; box-shadow: none; outline-width: 1px;
+    outline-style: dotted; outline-color: var(--bai-review-text-dim);
+  }
   .wt-badge {
     position: absolute; z-index: 1; font-size: 10px; font-weight: 700;
     text-transform: uppercase; letter-spacing: .04em; padding: 1px 6px;
@@ -35,6 +40,20 @@ const STYLE = `
     white-space: nowrap; pointer-events: none;
   }
   .wt-badge.comment { background: var(--bai-focus); }
+  /* The control a waiting stop's next via click needs. Never takes the click. */
+  .wt-hint {
+    position: absolute; border-radius: 4px; pointer-events: none;
+    outline: 2px solid var(--bai-accent); outline-offset: 3px;
+    animation: wt-hint-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes wt-hint-pulse {
+    50% { outline-offset: 6px; outline-color: transparent; }
+  }
+  @media (prefers-reduced-motion: reduce) { .wt-hint { animation: none; } }
+  .wt-badge.hint {
+    color: var(--bai-review-on-accent); background: var(--bai-accent);
+    text-transform: none; letter-spacing: 0;
+  }
   .wt-badge.num {
     /* White is 2.49:1 on the docs orange at 10px bold; the dark ink clears AA
        and keeps the fill the docs colour. */
@@ -56,6 +75,8 @@ export interface MarkSpec {
   viewed: boolean;
   commented: boolean;
   current: boolean;
+  /** Outline only, no badges: the current stop is waiting elsewhere. */
+  muted: boolean;
 }
 
 interface Mark {
@@ -88,6 +109,8 @@ export function createMarkLayer({ root, onSelect }: MarkLayerOptions) {
   root.append(style, layer);
 
   const marks = new Map<string, Mark>();
+  let hint: { element: Element; box: HTMLElement; badge: HTMLElement } | null =
+    null;
   /** Every element we stamped, so exit takes the attributes back off. */
   const stamped = new Set<Element>();
 
@@ -163,14 +186,40 @@ export function createMarkLayer({ root, onSelect }: MarkLayerOptions) {
     mark.spec = spec;
     mark.box.className = `wt-mark${spec.type === 'added' ? ' added' : ''}${
       spec.viewed ? ' viewed' : ''
-    }${spec.current ? ' current' : ''}`;
+    }${spec.current ? ' current' : ''}${spec.muted ? ' muted' : ''}`;
+    mark.num.style.display = spec.muted ? 'none' : '';
     mark.num.textContent = String(spec.index + 1);
     mark.num.title = spec.label;
     const text = stateText(spec);
     mark.badge.textContent = text;
     mark.badge.className = `wt-badge${spec.commented ? ' comment' : ''}`;
-    mark.badge.style.display = text ? 'block' : 'none';
+    mark.badge.style.display = text && !spec.muted ? 'block' : 'none';
     place(mark);
+  }
+
+  function placeHint() {
+    if (!hint) return;
+    const box = hint.element.getBoundingClientRect();
+    // Detached or hidden since the last render: a ring at 0,0 points at nothing.
+    const gone = !hint.element.isConnected || (!box.width && !box.height);
+    hint.box.style.display = gone ? 'none' : '';
+    hint.badge.style.display = gone ? 'none' : '';
+    Object.assign(hint.box.style, {
+      left: `${box.left}px`,
+      top: `${box.top}px`,
+      width: `${box.width}px`,
+      height: `${box.height}px`,
+    });
+    Object.assign(hint.badge.style, {
+      left: `${box.left}px`,
+      top: `${box.top - 24}px`,
+    });
+  }
+
+  function dropHint() {
+    hint?.box.remove();
+    hint?.badge.remove();
+    hint = null;
   }
 
   function drop(id: string) {
@@ -199,12 +248,29 @@ export function createMarkLayer({ root, onSelect }: MarkLayerOptions) {
         apply(mark, spec);
       }
     },
+    /** Point at the control to click next, or at nothing. */
+    hint(element: Element | null, text: string) {
+      if (!element) return dropHint();
+      if (!hint) {
+        const box = document.createElement('div');
+        box.className = 'wt-hint';
+        const badge = document.createElement('span');
+        badge.className = 'wt-badge hint';
+        layer.append(box, badge);
+        hint = { element, box, badge };
+      }
+      hint.element = element;
+      hint.badge.textContent = text;
+      placeHint();
+    },
     /** A scroll or a resize moves the elements, not what they mean. */
     reposition() {
       for (const mark of marks.values()) place(mark);
+      placeHint();
     },
     destroy() {
       for (const id of [...marks.keys()]) drop(id);
+      dropHint();
       // A stamped element the last render dropped its mark for still carries
       // the attributes; exit owes the page a clean DOM.
       for (const element of [...stamped]) unstamp(element);

@@ -4,10 +4,10 @@
  */
 import { ImageTagsUNSAFELazySessionImageTagQuery } from '../__generated__/ImageTagsUNSAFELazySessionImageTagQuery.graphql';
 import { useBackendAIImageMetaData } from '../hooks';
-import { theme } from '../theme-shim';
 import { Divider } from '@astryxdesign/core/Divider';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIDoubleToken,
   BAIFlex,
@@ -25,14 +25,14 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 export const ImageMetaDivider: React.FC = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   return (
     <Divider
       orientation="vertical"
       style={{
         alignSelf: 'center',
         height: '0.9em',
-        marginInline: token.marginXXS,
+        marginInline: token('--spacing-1'),
       }}
     />
   );

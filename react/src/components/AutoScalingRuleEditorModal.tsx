@@ -17,7 +17,6 @@ import {
 } from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import PrometheusQueryTemplatePreview from './PrometheusQueryTemplatePreview';
 import {
@@ -28,6 +27,7 @@ import {
   type AstryxFormSelectorOptions,
 } from './astryxFormControls';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIFlex,
@@ -112,7 +112,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
 }> = ({ autoScalingRule, formRef }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const currentUserRole = useCurrentUserRole();
   const isSupportPrometheusAutoScalingRule = baiClient.supports(
@@ -407,7 +407,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
             the form adapter (MAPPING §3.10). `onChange` takes the VALUE, not
             the event (P3), and the `marginBottom` moves to a wrapper because
             Astryx controls take no `style` escape hatch for layout. */}
-        <div style={{ marginBottom: token.marginSM }}>
+        <div style={{ marginBottom: token('--spacing-3') }}>
           <Form.Item name={'conditionMode'} noStyle>
             <AstryxFormSegmented
               label={t('autoScalingRule.Condition')}

@@ -47,6 +47,17 @@
     display: none;
   }
 
+  /*
+   This root div is the flex item when a caller lays a table out with BAIFlex;
+   unclamped, it sizes to the table and Astryx's scroll wrapper never scrolls.
+   No block-axis twin is needed: `scroll.y` has no `true` form (BAITable.tsx),
+   so the `max-height` cap below is always an explicit length. FR-4007.
+  */
+  .bai-table-astryx-root {
+    min-width: 0;
+    max-width: 100%;
+  }
+
   .bai-table-astryx-dim-layer {
     --container-padding-block-start: 0px;
     --container-padding-block-end: 0px;

@@ -2,16 +2,17 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionStatusBadgeFragment$key } from '../../__generated__/SessionStatusBadgeFragment.graphql';
 import {
-  SessionStatusBadgeFragment$data,
-  SessionStatusBadgeFragment$key,
-} from '../../__generated__/SessionStatusBadgeFragment.graphql';
+  getSessionKernelProgress,
+  isTransitionalSessionStatus,
+} from '../../helper/sessionStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { BAIFlex, badgeVariantForStatus } from 'backend.ai-ui';
+import { BAIFlex, BAIProgressRing, badgeVariantForStatus } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { LoaderCircle, CircleAlertIcon } from 'lucide-react';
+import { CircleAlertIcon } from 'lucide-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -32,22 +33,6 @@ interface SessionStatusBadgeProps {
   showTooltip?: boolean;
 }
 
-const isTransitional = (session: SessionStatusBadgeFragment$data) => {
-  return [
-    'RESERVED',
-    'PREEMPTED',
-    'RESCHEDULING',
-    'SCHEDULED',
-    'RESTARTING',
-    'TERMINATING',
-    'PENDING',
-    'PREPARING',
-    'PREPARED',
-    'CREATING',
-    'PULLING',
-  ].includes(session?.status || '');
-};
-
 const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
   sessionFrgmt,
   showInfo,
@@ -65,6 +50,18 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
         status_info
         status_data
         queue_position @since(version: "25.13.0")
+        cluster_size
+        # No pagination args: the manager ignores them and returns every
+        # kernel, and the list already selects this connection, so Relay
+        # merges the two selections into one request.
+        kernel_nodes {
+          edges {
+            node {
+              id
+              status
+            }
+          }
+        }
       }
     `,
     sessionFrgmt,
@@ -83,18 +80,32 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     return null;
   }
 
+  // One icon for all three render paths below, so they cannot drift apart. The
+  // ring is determinate only where `getSessionKernelProgress` can trust the
+  // fraction; elsewhere it spins like the glyph it replaces.
+  const progressPercent = getSessionKernelProgress(session).percent;
+  const statusIcon = isTransitionalSessionStatus(session.status) ? (
+    <BAIProgressRing
+      percent={progressPercent}
+      // Only the determinate ring is a `progressbar`, and a progressbar needs
+      // a name; naming the indeterminate one would announce a decoration.
+      aria-label={
+        progressPercent === undefined
+          ? undefined
+          : (session.status ?? undefined)
+      }
+    />
+  ) : undefined;
+
   const statusBadge = (
     <Badge
       variant={badgeVariantForStatus('session', session.status)}
-      icon={
-        isTransitional(session) ? (
-          <LoaderCircle className="bai-icon-spin" size="1em" />
-        ) : undefined
-      }
+      icon={statusIcon}
       label={
         <>
           {session.status || ' '}
-          {session.status_info && isTransitional(session) ? (
+          {session.status_info &&
+          isTransitionalSessionStatus(session.status) ? (
             <CircleAlertIcon
               size="1em"
               style={{
@@ -119,11 +130,7 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
     const schedulingHistoryBadge = (
       <Badge
         variant={badgeVariantForStatus('session', session.status)}
-        icon={
-          isTransitional(session) ? (
-            <LoaderCircle className="bai-icon-spin" size="1em" />
-          ) : undefined
-        }
+        icon={statusIcon}
         label={session.status || ' '}
       />
     );
@@ -167,11 +174,7 @@ const SessionStatusBadge: React.FC<SessionStatusBadgeProps> = ({
       <BAIFlex gap="xxs">
         <Badge
           variant={badgeVariantForStatus('session', session.status)}
-          icon={
-            isTransitional(session) ? (
-              <LoaderCircle className="bai-icon-spin" size="1em" />
-            ) : undefined
-          }
+          icon={statusIcon}
           label={session.status || ' '}
         />
         {statusInfoDescriptionKey ? (

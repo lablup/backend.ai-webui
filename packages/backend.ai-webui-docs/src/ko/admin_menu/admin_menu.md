@@ -248,7 +248,6 @@ CSV 파일을 선택하면 대화 상자에 다음 표시와 함께 모든 행�
 - **생성된 배포도 함께 삭제하시겠습니까?**: 선택하면 영구 삭제되는 사용자가 생성한 배포도 함께 삭제됩니다. 선택하지 않으면 해당 배포는 삭제되지 않고 소유권이 위임됩니다.
 
 ![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
 
 선택한 사용자 중 일부를 영구 삭제하지 못한 경우, 해당 사용자의 이메일과 오류 메시지를 함께 보여 주는 실패 대화
 상자가 열리며, 나머지 사용자는 정상적으로 영구 삭제됩니다.
@@ -1041,6 +1040,7 @@ Fair Share 스케줄러는 자원 그룹의 스케줄러 타입이 `FAIR_SHARE`�
 열립니다.
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 모달에는 다음 내용이 표시됩니다:
 
@@ -1714,7 +1714,7 @@ Backend.AI에서 내보낸 CSV 파일은 파일 맨 앞에 UTF-8 BOM(Byte Order 
 
 설정은 다음과 같이 그룹으로 나뉩니다.
 
-- **테마**: 주요 색상, 헤더 배경 색상, 링크 색상, 안내 색상, 오류 색상, 완료 색상, 텍스트 색상에 대한 색상 선택기입니다. 각 색상은 라이트 모드와 다크 모드에 대해 개별적으로 설정하고 초기화할 수 있습니다.
+- **테마**: 주요 색상, 헤더 배경 색상, 링크 색상, 안내 색상, 오류 색상, 완료 색상에 대한 색상 선택기입니다. 각 색상은 라이트 모드와 다크 모드에 대해 개별적으로 설정하고 초기화할 수 있습니다.
 - **로고 CI**: 라이트 모드와 다크 모드의 기본 사이드바 로고, 축소된 사이드바 로고를 업로드하고 표시 크기를 설정합니다.
 - **세부 로고 CI**: 로그인 페이지와 소개 팝업에 표시되는 로고를 라이트/다크 모드별로 업로드하고 크기를 설정합니다.
 - **폰트**: 인터페이스 전반에 사용되는 폰트 패밀리를 선택합니다.

@@ -7,7 +7,11 @@
  * the mark layer and the navigator re-render around it, and rewriting its
  * markup would take the caret with it.
  */
+import { createGrip, DRAG_STYLE, makeDraggable } from './drag.js';
 import { esc } from './escape-html.js';
+
+/** Where a stop's dragged popover is parked, per tab: `<key>:<stop id>`. */
+export const POPOVER_POS_KEY = 'bai-review:popover-pos';
 
 /** Wide enough that a two-paragraph stop wraps into few enough lines to
     read without scrolling; still under half of a 1440px screen. */
@@ -19,6 +23,8 @@ const TOP_RESERVE = 60;
 const BOTTOM_RESERVE = 70;
 /** Under this the panel scrolls instead of shrinking out of readability. */
 const MIN_HEIGHT = 200;
+/** A side of the mark this short still shows the head, a few lines, the foot. */
+const MIN_FIT = 160;
 /** Stands in until the panel has been laid out and can be measured. */
 const ASSUMED_HEIGHT = 300;
 
@@ -48,6 +54,11 @@ const STYLE = `
   }
   .bai-popover .type.added { background: var(--bai-add); }
   .bai-popover .kind { color: var(--bai-review-text-dim); }
+  .bai-popover .wait {
+    font-weight: 600; font-size: 11px; padding: 1px 7px; border-radius: 999px;
+    border: 1px dashed var(--bai-mod); color: var(--bai-mod-text);
+  }
+  .bai-popover .wait:empty { display: none; }
   .bai-popover .spacer { flex: 1; }
   .bai-popover button {
     border: 1px solid var(--bai-pop-border); background: transparent;
@@ -123,7 +134,13 @@ const STYLE = `
 export type PopoverPlace =
   | { kind: 'located'; rect: { left: number; top: number; bottom: number } }
   /** Not rendered yet: `via` says how the reader makes it appear. */
-  | { kind: 'waiting'; via: string }
+  | {
+      kind: 'waiting';
+      via: string;
+      covered?: boolean;
+      /** The control the next `via` click needs, when it is on screen. */
+      rect?: { left: number; top: number; bottom: number };
+    }
   /** On another page, named so `›` is not a surprise. */
   | { kind: 'away'; page: string };
 
@@ -181,7 +198,12 @@ const LABELS: Record<string, Record<string, string>> = {
     ref: 'Copy ref',
     appears: '— the mark appears when it does.',
     waiting: 'Not on screen yet — the mark appears when it is.',
+    covered: 'Behind the open dialog — close it and the mark appears.',
     away: 'On {page} — › takes you there.',
+    waitBadge: 'Waiting',
+    clickHere: 'Click here',
+    typeHere: 'Type “{v}”',
+    chooseHere: 'Choose “{v}”',
   },
   ko: {
     changed: '무엇이 바뀌었나',
@@ -192,17 +214,24 @@ const LABELS: Record<string, Record<string, string>> = {
     ref: '링크 복사',
     appears: '— 그러면 표시가 나타납니다.',
     waiting: '아직 화면에 없습니다 — 나타나면 표시됩니다.',
+    covered: '열린 대화상자 뒤에 있습니다 — 닫으면 표시됩니다.',
     away: '{page} 페이지에 있습니다 — › 로 이동합니다.',
+    waitBadge: '대기 중',
+    clickHere: '여기를 클릭',
+    typeHere: '“{v}” 입력',
+    chooseHere: '“{v}” 선택',
   },
 };
 
-const words = (lang: string): Record<string, string> => ({
+export const words = (lang: string): Record<string, string> => ({
   ...LABELS.en,
   ...(LABELS[lang] ?? {}),
 });
 
 const whereLine = (model: PopoverModel): string => {
   const say = words(model.lang);
+  if (model.place.kind === 'waiting' && model.place.covered)
+    return `<div class="via">${esc(say.covered)}</div>`;
   if (model.place.kind === 'waiting')
     return model.place.via
       ? `<div class="via">${esc(model.place.via)} ${esc(say.appears)}</div>`
@@ -225,10 +254,22 @@ export function createPopover(
   /** Never a key the host turned off: a hint nothing answers is a lie. */
   const hint = (key: string) => (options.pageChords ? ` (${key})` : '');
   const style = document.createElement('style');
-  style.textContent = STYLE;
+  style.textContent = STYLE + DRAG_STYLE;
   const pop = document.createElement('div');
   pop.className = 'bai-popover';
   root.append(style, pop);
+
+  /** The last anchor placement, so "put it back" has somewhere to go. */
+  let lastPlace: PopoverPlace | null = null;
+  const drag = makeDraggable({
+    box: pop,
+    storageKey: POPOVER_POS_KEY,
+    fallback: { width: WIDTH, height: ASSUMED_HEIGHT },
+    onMove: (pos) => {
+      if (!pos && lastPlace && pop.classList.contains('shown'))
+        place(lastPlace);
+    },
+  });
 
   /**
    * The stop AND the language the markup belongs to; a re-render of the same
@@ -266,9 +307,10 @@ export function createPopover(
     const say = words(model.lang);
     const langs = model.langs.length > 1 ? model.langs : [];
     pop.innerHTML = `
-      <div class="head">
+      <div class="head" data-drag-area>
         <span class="type ${model.type}">${model.type}</span>
         <span class="kind">${esc(model.kind)}</span>
+        <span class="wait"></span>
         <span class="spacer"></span>
         ${
           langs.length
@@ -309,12 +351,23 @@ export function createPopover(
         <span class="spacer"></span>
         <span>${options.pageChords ? BARE_KEYS : ''}<kbd>Esc</kbd></span>
       </div>`;
+    pop.querySelector('.head')?.prepend(createGrip());
     const area = textarea();
     if (area) area.value = model.comment;
   }
 
-  /** Under the mark when it fits, above it when it does not, centred when away. */
+  /**
+   * Under the mark (or the control a waiting stop needs clicked) when it fits,
+   * above it when it does not, centred when there is neither — unless the
+   * reader dragged this stop's popover somewhere.
+   */
   function place(where: PopoverPlace) {
+    lastPlace = where;
+    if (drag.placed()) {
+      pop.style.maxHeight = '';
+      drag.apply();
+      return;
+    }
     /*
      * The CSS cap is what the panel can actually be; measuring it and clamping
      * against the same number is what keeps both ends on screen. A viewport
@@ -325,12 +378,15 @@ export function createPopover(
       MIN_HEIGHT,
       window.innerHeight - TOP_RESERVE - BOTTOM_RESERVE,
     );
+    // Measure the whole panel: a cap a previous placement set is not its size.
+    pop.style.maxHeight = '';
     const height = Math.min(pop.offsetHeight || ASSUMED_HEIGHT, cap);
     const lowest = Math.max(PAD, window.innerHeight - BOTTOM_RESERVE - height);
     const highest = Math.min(TOP_RESERVE, lowest);
     const clamp = (top: number) => Math.min(Math.max(top, highest), lowest);
 
-    if (where.kind !== 'located') {
+    const rect = where.kind === 'away' ? undefined : where.rect;
+    if (!rect) {
       Object.assign(pop.style, {
         left: '50%',
         top: `${clamp(Math.round((window.innerHeight - height) / 2))}px`,
@@ -338,7 +394,6 @@ export function createPopover(
       });
       return;
     }
-    const rect = where.rect;
     const width = Math.min(WIDTH, window.innerWidth * 0.92);
     const left = Math.min(
       Math.max(PAD, rect.left),
@@ -346,10 +401,23 @@ export function createPopover(
     );
     const below = rect.bottom + GAP;
     const above = rect.top - height - GAP;
+    const roomBelow = window.innerHeight - BOTTOM_RESERVE - below;
+    const roomAbove = rect.top - GAP - TOP_RESERVE;
+    let top = clamp(below <= lowest ? below : above);
+    // On a short window the whole panel fits on neither side, and clamping it
+    // back on screen lays it over the very element it points at. Shorter is
+    // better: the larger side, capped to it, with the body scrolling.
+    if (height > roomBelow && height > roomAbove) {
+      const fit = Math.max(roomBelow, roomAbove);
+      if (fit >= MIN_FIT) {
+        pop.style.maxHeight = `${fit}px`;
+        top = roomBelow >= roomAbove ? below : rect.top - GAP - fit;
+      }
+    }
     Object.assign(pop.style, {
       transform: '',
       left: `${left}px`,
-      top: `${clamp(below <= lowest ? below : above)}px`,
+      top: `${top}px`,
     });
   }
 
@@ -366,9 +434,14 @@ export function createPopover(
       }
       const where = pop.querySelector('.where');
       if (where) where.innerHTML = whereLine(model);
+      const wait = pop.querySelector('.wait');
+      if (wait)
+        wait.textContent =
+          model.place.kind === 'waiting' ? words(model.lang).waitBadge : '';
       const tick = pop.querySelector<HTMLInputElement>('[data-pact="viewed"]');
       if (tick) tick.checked = model.viewed;
       pop.classList.add('shown');
+      drag.useKey(`${POPOVER_POS_KEY}:${model.id}`);
       place(model.place);
     },
     /**
@@ -387,6 +460,7 @@ export function createPopover(
     isTyping: () => !!textarea() && root.activeElement === textarea(),
     contains: (node: Node) => pop.contains(node),
     destroy() {
+      drag.destroy();
       pop.remove();
       style.remove();
     },

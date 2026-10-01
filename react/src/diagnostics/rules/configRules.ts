@@ -251,8 +251,7 @@ export function checkUrlFields(rawConfig: Record<string, unknown>): {
 
   for (const { section, field } of URL_FIELDS) {
     const sectionObj = rawConfig[section] as
-      | Record<string, unknown>
-      | undefined;
+      Record<string, unknown> | undefined;
     const value = sectionObj?.[field];
     if (!value || typeof value !== 'string' || value.trim() === '') continue;
     // Placeholders are reported separately by checkPlaceholderValues

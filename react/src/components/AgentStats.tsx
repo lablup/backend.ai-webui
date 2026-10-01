@@ -4,12 +4,12 @@
  */
 import { AgentStatsFragment$key } from '../__generated__/AgentStatsFragment.graphql';
 import { useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAISkeleton,
   BAIBoardItemTitle,
@@ -43,7 +43,7 @@ const AgentStats: React.FC<AgentStatsProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [isPendingRefetch, startRefetchTransition] = useTransition();
 
@@ -180,8 +180,8 @@ const AgentStats: React.FC<AgentStatsProps> = ({
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

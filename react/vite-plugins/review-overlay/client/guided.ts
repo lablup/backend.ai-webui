@@ -24,10 +24,18 @@ import {
   createPopover,
   type PopoverModel,
   type PopoverPlace,
+  words,
 } from './popover.js';
-import { findAnchorTarget } from './resolve.js';
+import {
+  findAnchorTarget,
+  findViaTarget,
+  isBehindModal,
+  nextViaControl,
+  viaStepDone,
+} from './resolve.js';
 import { stopLanguages, stopTextIn } from './stop-guard.js';
-import type { ReviewServerState } from './types.js';
+import type { AnchorV3, AnchorVia, ReviewServerState } from './types.js';
+import { mergeVia } from './via.js';
 import {
   buildCommentCopy,
   codeHref,
@@ -74,7 +82,8 @@ const BANNER_STYLE = `
 
 type Place =
   | { kind: 'located'; element: Element }
-  | { kind: 'waiting' }
+  /** `covered`: resolved, but under an open modal a mark would paint over. */
+  | { kind: 'waiting'; covered?: true }
   | { kind: 'away' };
 
 export interface GuidedModeOptions {
@@ -138,6 +147,14 @@ export function startGuidedMode(options: GuidedModeOptions) {
       : window.setTimeout(() => callback(0), 16);
   /** What the last resolution found, so a scroll re-places without re-resolving. */
   let found: Place[] = [];
+  /** The control the current stop's next `via` click needs, when on screen. */
+  let hint: { element: Element; step: AnchorVia; index: number } | null = null;
+  /**
+   * The current stop's `via` clicks the reader made on the hinted control. A
+   * plain button shows nothing afterwards, and the stop may never resolve on
+   * this server, so without this the hint pulses on a control already clicked.
+   */
+  const clickedSteps = new Set<number>();
 
   const servedPr = () => options.serverState()?.pr ?? 0;
   const flushProgress = () => progress.flush();
@@ -216,10 +233,28 @@ export function startGuidedMode(options: GuidedModeOptions) {
     );
   }
 
+  /**
+   * A translated stop carries its element's text per language; resolve with
+   * the one the app shows now, or without text when none was recorded for it.
+   */
+  function anchorInAppLanguage(anchor: AnchorV3): AnchorV3 {
+    if (!anchor.i18n) return anchor;
+    const lang = document.documentElement.lang;
+    const txt = lang === anchor.lng ? anchor.txt : anchor.i18n[lang]?.txt;
+    const rest: AnchorV3 = { ...anchor };
+    delete rest.txt;
+    return txt ? { ...rest, txt } : rest;
+  }
+
   function place(stop: WalkthroughStop): Place {
     if (pathNeedsChange(stop.anchor, location)) return { kind: 'away' };
-    const element = findAnchorTarget(stop.anchor, { ignore: host });
-    return element ? { kind: 'located', element } : { kind: 'waiting' };
+    const element = findAnchorTarget(anchorInAppLanguage(stop.anchor), {
+      ignore: host,
+    });
+    if (!element) return { kind: 'waiting' };
+    return isBehindModal(element)
+      ? { kind: 'waiting', covered: true }
+      : { kind: 'located', element };
   }
 
   const marks = createMarkLayer({
@@ -285,6 +320,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
 
   function renderMarks(where: Place[]) {
     const specs: MarkSpec[] = [];
+    const waiting = where[current]?.kind === 'waiting';
     stops.forEach((stop, index) => {
       const at = where[index];
       if (at.kind !== 'located') return;
@@ -298,9 +334,68 @@ export function startGuidedMode(options: GuidedModeOptions) {
         viewed: progress.isViewed(stop.id),
         commented: !!progress.comment(stop.id).trim(),
         current: index === current,
+        muted: waiting,
       });
     });
     marks.render(specs);
+    const stop = stops[current];
+    marks.hint(
+      hint?.element ?? null,
+      stop && hint ? hintText(hint.step, langOf(stop)) : '',
+    );
+  }
+
+  /**
+   * The furthest `via` step whose control is on screen: an earlier step's
+   * control is often still there, under the dialog the later one lives in.
+   */
+  function viaHint(
+    where: Place[],
+  ): { element: Element; step: AnchorVia; index: number } | null {
+    const stop = stops[current];
+    const at = where[current];
+    if (!stop || at?.kind !== 'waiting' || at.covered) return null;
+    const base = stop.anchor.via ?? [];
+    const said = readerVia(stop);
+    // The app may not be in the stop's language yet: every translation's
+    // words are a fallback, the reader's first.
+    const others = Object.values(stop.anchor.i18n ?? {}).map((text) =>
+      mergeVia(base, text.via),
+    );
+    const found = said.map((step, i) =>
+      findViaTarget([step, base[i], ...others.map((via) => via[i])], {
+        ignore: host,
+      }),
+    );
+    const next = nextViaControl(
+      said,
+      found,
+      (step, element, index) =>
+        clickedSteps.has(index) || viaStepDone(step, element),
+    );
+    return next
+      ? { element: next.element, step: said[next.index], index: next.index }
+      : null;
+  }
+
+  /** The base steps, in the words of the language the stop reads in. */
+  const readerVia = (stop: WalkthroughStop): AnchorVia[] =>
+    mergeVia(stop.anchor.via, stopTextIn(stop.anchor, langOf(stop)).via);
+
+  /** What the hint's badge asks for: a click, a value to type, an option. */
+  function hintText(step: AnchorVia, lang: string): string {
+    const say = words(lang);
+    if ('fill' in step) return say.typeHere.split('{v}').join(step.fill.value);
+    if ('select' in step)
+      return say.chooseHere.split('{v}').join(step.select.option);
+    return say.clickHere;
+  }
+
+  /** The hint's box, unless the page detached or hid it since `refresh`. */
+  function hintRect(): DOMRect | null {
+    const element = hint?.element;
+    const rect = element?.isConnected ? element.getBoundingClientRect() : null;
+    return rect && (rect.width || rect.height) ? rect : null;
   }
 
   const stateText = (id: string): string =>
@@ -353,14 +448,17 @@ export function startGuidedMode(options: GuidedModeOptions) {
         rect: { left: rect.left, top: rect.top, bottom: rect.bottom },
       };
     }
-    if (at.kind === 'waiting')
+    if (at.kind === 'waiting') {
+      const rect = hintRect();
       return {
         kind: 'waiting',
-        via: viaSentence(
-          stopTextIn(stop.anchor, langOf(stop)).via,
-          langOf(stop),
-        ),
+        covered: !!at.covered,
+        ...(rect
+          ? { rect: { left: rect.left, top: rect.top, bottom: rect.bottom } }
+          : {}),
+        via: viaSentence(readerVia(stop), langOf(stop)),
       };
+    }
     return { kind: 'away', page: stopPage(stop) };
   }
 
@@ -432,6 +530,9 @@ export function startGuidedMode(options: GuidedModeOptions) {
   /** One resolution pass, and everything that reads it. */
   function refresh(): boolean {
     found = places();
+    // Shown once, the stop's clicks may be needed again when it hides.
+    if (found[current]?.kind === 'located') clickedSteps.clear();
+    hint = viaHint(found);
     renderMarks(found);
     nav.render(navModel(found));
     pop.render(popModel(found));
@@ -484,6 +585,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (index !== current) {
       const leaving = stops[current];
       if (leaving) flushPrepare(leaving);
+      clickedSteps.clear();
     }
     current = index;
     popOpen = true;
@@ -494,6 +596,8 @@ export function startGuidedMode(options: GuidedModeOptions) {
     else if (where.kind === 'located')
       where.element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
     refresh();
+    if (where.kind === 'waiting')
+      hint?.element.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
   }
 
   // ---------------------------------------------------------------- copy
@@ -614,6 +718,14 @@ export function startGuidedMode(options: GuidedModeOptions) {
     refresh();
   }
 
+  /** The reader followed the hint's click: that step is done for this stop. */
+  function onClick(evt: Event) {
+    if (!hint || !('click' in hint.step)) return;
+    if (!evt.composedPath().includes(hint.element)) return;
+    clickedSteps.add(hint.index);
+    onSettle();
+  }
+
   function onSettle() {
     clearTimeout(settleTimer);
     settleTimer = window.setTimeout(refresh, SETTLE_MS);
@@ -639,12 +751,28 @@ export function startGuidedMode(options: GuidedModeOptions) {
     if (records.every((record) => host.contains(record.target as Node))) return;
     onSettle();
   });
-  observer.observe(document.body, { childList: true, subtree: true });
+  // A dialog that opens or closes in place flips an attribute, with no childList record.
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: [
+      'open',
+      'role',
+      'aria-modal',
+      'inert',
+      'data-bai-modal-open',
+    ],
+  });
   // A reload beats the debounce by ~400 ms otherwise, and the comment the
   // reader had just typed is the one thing they cannot retype from the page.
   window.addEventListener('pagehide', flushProgress);
   document.addEventListener('keydown', onKeydown);
+  // Typing sets a field's value without a DOM mutation; a fill step is done by it.
+  document.addEventListener('input', onSettle, true);
+  document.addEventListener('change', onSettle, true);
   document.addEventListener('mousedown', onPointerDown, true);
+  document.addEventListener('click', onClick, true);
   window.addEventListener('resize', placeSoon);
   window.addEventListener('scroll', placeSoon, {
     capture: true,
@@ -666,7 +794,10 @@ export function startGuidedMode(options: GuidedModeOptions) {
     observer.disconnect();
     window.removeEventListener('pagehide', flushProgress);
     document.removeEventListener('keydown', onKeydown);
+    document.removeEventListener('input', onSettle, true);
+    document.removeEventListener('change', onSettle, true);
     document.removeEventListener('mousedown', onPointerDown, true);
+    document.removeEventListener('click', onClick, true);
     window.removeEventListener('resize', placeSoon);
     window.removeEventListener('scroll', placeSoon, true);
     marks.destroy();
@@ -701,6 +832,7 @@ export function startGuidedMode(options: GuidedModeOptions) {
   return {
     /** The route changed under us: re-resolve every stop from scratch. */
     onRoute() {
+      clickedSteps.clear();
       refresh();
       ladder();
     },

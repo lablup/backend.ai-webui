@@ -9,11 +9,11 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   filterOutNullAndUndefined,
   BAICephIcon,
@@ -55,7 +55,7 @@ type StorageVolume = NonNullable<
 
 const StorageProxyList = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const [drawerStorageHostId, setDrawerStorageHostId] = useState<string | null>(
     null,
@@ -164,7 +164,8 @@ const StorageProxyList = () => {
         const percent = _.toFinite(
           toFixedFloorWithoutTrailingZeros(ratio * 100, 2),
         );
-        const color = percent > 80 ? token.colorError : token.colorSuccess;
+        const color =
+          percent > 80 ? token('--color-error') : token('--color-success');
         const baseUnit =
           convertUnitValue(_.toString(usage?.capacity_bytes), 'auto', {
             base: 1000,

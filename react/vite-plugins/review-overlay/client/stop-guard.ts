@@ -18,6 +18,8 @@ export const CODE_PATH_MAX = 256;
 export const CODE_REFS_MAX = 3;
 export const VIA_MAX = 8;
 export const VIA_TEXT_MAX = 120;
+/** An anchor's `txt`, and a translation's (FR-4103). */
+export const TXT_MAX = 64;
 /** A stop carries its own wording plus this many translations (FR-4057). */
 export const I18N_LANGS_MAX = 4;
 const SHA_RE = /^[0-9a-f]{40}$/;
@@ -52,13 +54,32 @@ const isCodeRef = (value: unknown): value is AnchorCodeRef => {
 };
 
 const isVia = (value: unknown): value is AnchorVia => {
-  if (!value || typeof value !== 'object') return false;
-  const click = (value as Record<string, unknown>).click;
-  if (!click || typeof click !== 'object') return false;
-  const c = click as Record<string, unknown>;
-  const text = c.text === undefined || isText(c.text, VIA_TEXT_MAX);
-  const tid = c.tid === undefined || isText(c.tid, VIA_TEXT_MAX);
-  return text && tid && (c.text !== undefined || c.tid !== undefined);
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const keys = Object.keys(value);
+  if (keys.length !== 1) return false;
+  const body = (value as Record<string, unknown>)[keys[0]];
+  if (!body || typeof body !== 'object') return false;
+  const b = body as Record<string, unknown>;
+  const optional = (key: string) =>
+    b[key] === undefined || isText(b[key], VIA_TEXT_MAX);
+  const named = (key: string) =>
+    optional('tid') &&
+    optional(key) &&
+    (b.tid !== undefined || b[key] !== undefined);
+  switch (keys[0]) {
+    case 'click':
+      return named('text');
+    case 'fill':
+      return (
+        named('label') &&
+        isText(b.value, VIA_TEXT_MAX) &&
+        (b.enter === undefined || b.enter === 1)
+      );
+    case 'select':
+      return named('label') && isText(b.option, VIA_TEXT_MAX);
+    default:
+      return false;
+  }
 };
 
 type Check = (value: unknown) => boolean;
@@ -83,6 +104,7 @@ const isI18nText = (value: unknown): value is AnchorI18nText => {
     return false;
   if (text.new !== undefined && !isText(text.new, STOP_LITERAL_MAX))
     return false;
+  if (text.txt !== undefined && !isText(text.txt, TXT_MAX)) return false;
   return text.via === undefined || list(isVia, VIA_MAX)(text.via);
 };
 

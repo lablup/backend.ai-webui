@@ -19,11 +19,11 @@ import {
   v2PermissionToKey,
 } from '../helper/storageHostPermission';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
-import { theme } from '../theme-shim';
 import StoragePermissionEditModal, {
   type PermissionEditTarget,
 } from './StoragePermissionEditModal';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIButton,
   BAIFetchKeyButton,
@@ -90,7 +90,7 @@ const ProjectStoragePermissionTable: React.FC<
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const storageVolume = useFragment(
     graphql`
@@ -340,7 +340,9 @@ const ProjectStoragePermissionTable: React.FC<
                 content={t('storageHost.permission.EditPermissionsAction')}
               >
                 <BAIButton
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
                   onClick={() =>
                     setEditingRows(
                       rows.filter((row) => selectedRowKeys.includes(row.id)),
@@ -442,19 +444,22 @@ const ProjectStoragePermissionTable: React.FC<
                 if (enabledKeysOf(row).has(permKey)) {
                   return (
                     <CircleCheck
-                      style={{ color: token.colorSuccess }}
+                      style={{ color: token('--color-success') }}
                       size="1em"
                     />
                   );
                 }
                 if (domainPermissions.has(permKey)) {
                   return (
-                    <CircleCheck style={{ color: token.purple5 }} size="1em" />
+                    <CircleCheck
+                      style={{ color: token('--preset-purple-5') }}
+                      size="1em"
+                    />
                   );
                 }
                 return (
                   <CircleX
-                    style={{ color: token.colorTextDisabled }}
+                    style={{ color: token('--color-text-disabled') }}
                     size="1em"
                   />
                 );

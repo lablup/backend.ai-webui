@@ -10,13 +10,13 @@ import {
   useResourceSlotsDetails,
 } from '../hooks/backendai';
 import { useCurrentResourceGroupValue } from '../hooks/useCurrentProject';
-import { theme } from '../theme-shim';
 import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSelectForCurrentProject';
 import {
   SegmentedControl,
   SegmentedControlItem,
 } from '@astryxdesign/core/SegmentedControl';
 import { Heading } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
@@ -192,7 +192,7 @@ const TotalResourceWithinResourceGroup: React.FC<
   const currentResourceGroup = useCurrentResourceGroupValue();
   const deferredSelectedResourceGroup = useDeferredValue(currentResourceGroup);
   const userRole = useCurrentUserRole();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [{ agent_nodes, agent_summary_list }, refetch] = useRefetchableFragment(
     graphql`
@@ -423,8 +423,8 @@ const TotalResourceWithinResourceGroup: React.FC<
       direction="column"
       align="stretch"
       style={{
-        paddingInline: token.paddingXL,
-        paddingBottom: token.padding,
+        paddingInline: token('--spacing-8'),
+        paddingBottom: token('--spacing-4'),
         ...props.style,
       }}
       {..._.omit(props, ['style'])}

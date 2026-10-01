@@ -22,7 +22,7 @@ A walkthrough is the reviewer's guided tour of a PR: one `#bai=v3` set link
 that opens the dev server on the first stop and walks the rest. Each stop is a
 pin the **implementing session** authored, carrying the FR-3949 stop fields —
 `ch` (what changed), `ck` (what to check), `old`/`new`, `type`, `kind`, `code`
-and the `via` clicks that reveal it.
+and the `via` steps (clicks, typing, a select) that reveal it.
 
 You write the stop manifest; `scripts/mint.mjs` does the mechanical half (log
 in, replay, mint, verify, link) and `scripts/comment.sh` posts it.
@@ -144,9 +144,22 @@ A JSON file — `{"stops": [...]}` or a bare array — one object per stop:
   `/project/<name>/data`). `mint.mjs` prepends the base the app lands on.
   A page outside the project scope — the admin pages under `/admin/…` —
   says `"scope": "app"` and is opened as written.
-- `via` — the clicks that reveal the element, replayed in order; `{"click":
-{"text": "…"}}` matches exact visible text, `{"click": {"tid": "…"}}` a
-  testid. At most 8.
+- `via` — the steps that reveal the element, replayed in order. At most 8,
+  each exactly one of:
+  - `{"click": {"text": "…"}}` (exact visible text) or `{"click": {"tid": "…"}}`;
+  - `{"fill": {"label": "…", "value": "…", "enter": 1}}` — type `value` into
+    the field its label, `aria-label` or placeholder names (or `"tid"`, on the
+    field or on a wrapper holding only it); `enter: 1` presses Enter after;
+  - `{"select": {"label": "…", "option": "…"}}` — open the select (or
+    `"tid"`) and choose the option with that text.
+
+  A `fill` value is published in the PR comment's link, so the manifest
+  refuses one aimed at a password / secret / token / key field. Prefer a
+  `route` query over a `fill` when the page keeps the state in the URL (list
+  filters, sort, tabs): the reader lands on it with nothing to do. In an
+  `i18n` entry, a step lends the reader-language `text` / `label` / `option`
+  and the base keeps the testid; write the whole step, `value` included.
+
 - `find` — `{"testid": "…"}` (preferred), `{"text": "…"}` on a control, or
   `{"selector": "…"}` (a CSS selector, optionally with `"text"` to pick the
   node whose text matches — an SVG label, a table cell).

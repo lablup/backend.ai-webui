@@ -26,10 +26,6 @@ vi.mock('react-i18next', () => ({
   initReactI18next: { type: '3rdParty', init: () => {} },
 }));
 
-vi.mock('../theme-shim', () => ({
-  theme: { useToken: () => ({ token: { marginXS: 8 } }) },
-}));
-
 vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
   useCurrentUserProjectRoles: () => ({ projectAdminIds: [] }),
 }));

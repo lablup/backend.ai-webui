@@ -10,11 +10,10 @@ import {
   loginAsCreatedAccount,
   logout,
   modifyConfigToml,
-  navigateTo,
   webServerEndpoint,
   webuiEndpoint,
 } from '../utils/test-util';
-import { usersTabButton } from '../utils/user-profile-util';
+import { navigateToUsersPage } from '../utils/user-profile-util';
 import test, { expect } from '@playwright/test';
 
 // FR-3331/FR-3339 (PRs #8303/#8315) renamed the User Setting modal's submit
@@ -108,14 +107,7 @@ test.describe.serial(
       await loginAsAdmin(page, request);
 
       // 2. Navigate to credential page
-      await navigateTo(page, 'credential');
-
-      // 3. Wait for Users tab to be visible.
-      // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
-      // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
-      // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
-      // which this app never does (see registry.spec.ts's identical pattern).
-      await expect(usersTabButton(page)).toBeVisible();
+      await navigateToUsersPage(page);
 
       // 4. Clean up any existing test user from previous runs
       await cleanupTestUser(page);
@@ -158,10 +150,7 @@ test.describe.serial(
       await loginAsAdmin(page, request);
 
       // 2. Navigate to credential page
-      await navigateTo(page, 'credential');
-
-      // 3. Wait for the Users tab to confirm the page has fully loaded
-      await expect(usersTabButton(page)).toBeVisible();
+      await navigateToUsersPage(page);
 
       // 4. Locate the user in the table
       const userRow = page.getByRole('row').filter({ hasText: EMAIL });
@@ -218,11 +207,7 @@ test.describe.serial(
       await loginAsAdmin(page, request);
 
       // 2. Navigate to credential page
-      await navigateTo(page, 'credential');
-
-      // 3. Ensure "Active" filter is selected (should be default)
-      // Wait for Users tab to confirm page has fully loaded before interacting with filter
-      await expect(usersTabButton(page)).toBeVisible();
+      await navigateToUsersPage(page);
       await page.getByText('Active', { exact: true }).click();
 
       // 4. Locate the user to deactivate in the table
@@ -269,7 +254,7 @@ test.describe.serial(
       await loginAsAdmin(page, request);
 
       // 2. Navigate to credential page
-      await navigateTo(page, 'credential');
+      await navigateToUsersPage(page);
 
       // 3. Switch to "Inactive" filter
       await page.getByText('Inactive', { exact: true }).click();
@@ -324,7 +309,7 @@ test.describe.serial(
       await loginAsAdmin(page, request);
 
       // 2. Navigate to credential page
-      await navigateTo(page, 'credential');
+      await navigateToUsersPage(page);
 
       // 3. Deactivate the user first (required before purging).
       // The Deactivate action uses a lucide BanIcon which has no accessible name,
@@ -403,9 +388,15 @@ test.describe.serial(
       await page.goto(webuiEndpoint);
       await page.getByLabel('Email or Username').fill(EMAIL);
       await page.getByRole('textbox', { name: 'Password' }).fill(NEW_PASSWORD);
-      await page
-        .getByRole('textbox', { name: 'Endpoint' })
-        .fill(webServerEndpoint);
+      // The endpoint input is collapsed under "Advanced" on the login form.
+      const endpointInput = page.getByRole('textbox', {
+        name: 'Endpoint',
+        exact: true,
+      });
+      if (!(await endpointInput.isVisible())) {
+        await page.getByText('Advanced').click();
+      }
+      await endpointInput.fill(webServerEndpoint);
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       // 3. Verify "Login information mismatch" error notification appears

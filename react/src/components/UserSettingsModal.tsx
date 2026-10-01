@@ -12,7 +12,6 @@ import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
-import { useBAIBreakpoint } from '../theme-shim';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import ErrorLogList from './ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
@@ -25,7 +24,7 @@ import { Icon } from '@astryxdesign/core/Icon';
 import { List, ListItem } from '@astryxdesign/core/List';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
-import { BAIModal, BAISkeleton } from 'backend.ai-ui';
+import { BAIModal, BAISkeleton, useBAIBreakpoint } from 'backend.ai-ui';
 import {
   ArrowLeft,
   ChevronRight,
@@ -95,7 +94,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  // RESPONSIVE-POLICY R3 — the theme-shim hook, never Astryx `useMediaQuery`.
+  // RESPONSIVE-POLICY R3 — the BUI breakpoint hook, never Astryx `useMediaQuery`.
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');

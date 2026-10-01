@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<dd03830ff95e6e081555f7c3c2338b99>>
+ * @generated SignedSource<<5a2342a66387b6298ed9c8c10d60a3cf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,14 +9,16 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type useCurrentUserProjectRolesProjectsQuery$variables = {
-  email?: string | null | undefined;
-};
+export type useCurrentUserProjectRolesProjectsQuery$variables = Record<PropertyKey, never>;
 export type useCurrentUserProjectRolesProjectsQuery$data = {
-  readonly user: {
-    readonly groups: ReadonlyArray<{
-      readonly id: string | null | undefined;
-    } | null | undefined> | null | undefined;
+  readonly myUserV2: {
+    readonly projects: {
+      readonly edges: ReadonlyArray<{
+        readonly node: {
+          readonly id: string;
+        };
+      }>;
+    } | null | undefined;
   } | null | undefined;
 };
 export type useCurrentUserProjectRolesProjectsQuery = {
@@ -25,55 +27,69 @@ export type useCurrentUserProjectRolesProjectsQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "email"
-  }
-],
-v1 = [
-  {
-    "kind": "Variable",
-    "name": "email",
-    "variableName": "email"
-  }
-],
-v2 = {
+var v0 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v3 = {
+v1 = {
   "alias": null,
-  "args": null,
-  "concreteType": "UserGroup",
-  "kind": "LinkedField",
-  "name": "groups",
-  "plural": true,
-  "selections": [
-    (v2/*: any*/)
+  "args": [
+    {
+      "kind": "Literal",
+      "name": "limit",
+      "value": 100
+    }
   ],
-  "storageKey": null
+  "concreteType": "ProjectV2Connection",
+  "kind": "LinkedField",
+  "name": "projects",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ProjectV2Edge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectV2",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            (v0/*: any*/)
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
+  ],
+  "storageKey": "projects(limit:100)"
 };
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Fragment",
     "metadata": null,
     "name": "useCurrentUserProjectRolesProjectsQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
+        "args": null,
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v3/*: any*/)
+          (v1/*: any*/)
         ],
         "storageKey": null
       }
@@ -83,36 +99,36 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [],
     "kind": "Operation",
     "name": "useCurrentUserProjectRolesProjectsQuery",
     "selections": [
       {
         "alias": null,
-        "args": (v1/*: any*/),
-        "concreteType": "User",
+        "args": null,
+        "concreteType": "UserV2",
         "kind": "LinkedField",
-        "name": "user",
+        "name": "myUserV2",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
-          (v2/*: any*/)
+          (v1/*: any*/),
+          (v0/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "0392c93157265ac8e17f795bb37ac2a0",
+    "cacheID": "4c00d99b8f5f4668e1e3d6886dfc1109",
     "id": null,
     "metadata": {},
     "name": "useCurrentUserProjectRolesProjectsQuery",
     "operationKind": "query",
-    "text": "query useCurrentUserProjectRolesProjectsQuery(\n  $email: String\n) {\n  user(email: $email) {\n    groups {\n      id\n    }\n    id\n  }\n}\n"
+    "text": "query useCurrentUserProjectRolesProjectsQuery {\n  myUserV2 {\n    projects(limit: 100) {\n      edges {\n        node {\n          id\n        }\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0847bcd3b7ea01235e956fec505c7eea";
+(node as any).hash = "c7d4253c3df45db0d489e37e341d3ceb";
 
 export default node;

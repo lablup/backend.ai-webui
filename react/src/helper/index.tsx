@@ -1122,3 +1122,13 @@ export const convertFirstOrderByToString = (
   if (!first?.field) return null;
   return `${first.direction === 'DESC' ? '-' : ''}${_.camelCase(first.field)}`;
 };
+
+/**
+ * Extract the error type suffix from a Backend.AI problem type URL.
+ * e.g., "https://api.backend.ai/probs/auth-failed" → "auth-failed"
+ */
+export const extractErrorType = (typeUrl?: string | null): string => {
+  if (!typeUrl) return '';
+  const parts = typeUrl.split('/');
+  return parts[parts.length - 1] || '';
+};

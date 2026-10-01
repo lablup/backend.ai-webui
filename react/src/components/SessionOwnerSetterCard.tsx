@@ -21,6 +21,7 @@ import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Heading } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import {
+  BAIAdminProjectSelect,
   BAICard,
   BAICardProps,
   BAIFlex,
@@ -39,6 +40,7 @@ export interface SessionOwnerSetterFormValues {
     | {
         email: string;
         accesskey: string;
+        projectId: string;
         project: string;
         resourceGroup: string;
         enabled: true;
@@ -47,6 +49,7 @@ export interface SessionOwnerSetterFormValues {
     | {
         email?: string;
         accesskey?: string;
+        projectId?: string;
         project?: string;
         resourceGroup?: string;
         enabled: false;
@@ -119,6 +122,9 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
   const isActive = Form.useWatch(['owner', 'enabled'], form);
 
   const [fetchingEmail, setFetchingEmail] = useState<string>();
+  // The select is keyed by project UUID (`projectId`); the launcher submits
+  // the name (`project`), which the select's onChange writes alongside it.
+  const ownerProjectName = Form.useWatch(['owner', 'project'], form);
   const relayEvn = useRelayEnvironment();
 
   const { data, isFetching } = useTanQuery({
@@ -132,11 +138,13 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
           keypairs(email: $email) {
             access_key
           }
-          user(email: $email) {
-            domain_name
-            groups {
-              name
-              id
+          adminUsersV2(filter: { email: { equals: $email } }, limit: 1) {
+            edges {
+              node {
+                organization {
+                  domainName
+                }
+              }
             }
           }
         }
@@ -151,7 +159,9 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
   const ownerKeypairs = form.getFieldValue(['owner', 'email'])
     ? data?.keypairs
     : undefined;
-  const owner = form.getFieldValue(['owner', 'email']) ? data?.user : undefined;
+  const owner = form.getFieldValue(['owner', 'email'])
+    ? data?.adminUsersV2?.edges?.[0]?.node
+    : undefined;
 
   const nonExistentOwner = !isFetching && fetchingEmail && !owner;
 
@@ -180,7 +190,7 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
         <div style={{ display: isActive ? 'block' : 'none' }}>
           <HiddenFormItem
             name={['owner', 'domainName']}
-            value={owner?.domain_name}
+            value={owner?.organization?.domainName}
           />
           <Form.Item dependencies={[['owner', 'enabled']]} noStyle>
             {({ getFieldValue }) => {
@@ -231,6 +241,7 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
                           form.setFieldsValue({
                             owner: {
                               accesskey: '',
+                              projectId: undefined,
                               project: undefined,
                               resourceGroup: undefined,
                             },
@@ -266,29 +277,57 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
                   columns={12}` (Astryx spells antd's `span` as `columns`). */}
                   <Grid columns={24} gap={3}>
                     <GridSpan columns={12}>
-                      <Form.Item
-                        name={['owner', 'project']}
-                        label={t('session.launcher.OwnerGroup')}
-                        rules={[
-                          {
-                            required: getFieldValue(['owner', 'enabled']),
-                          },
-                        ]}
-                      >
-                        <BAISelect
-                          options={_.map(owner?.groups, (g) => {
-                            return {
-                              label: g?.name,
-                              value: g?.name,
-                            };
-                          })}
-                          autoSelectOption
-                          disabled={_.isEmpty(fetchingEmail) || isFetching}
-                        />
+                      <Form.Item name={['owner', 'project']} hidden>
+                        <div />
                       </Form.Item>
+                      <Suspense
+                        fallback={
+                          <Form.Item label={t('session.launcher.OwnerGroup')}>
+                            <Selector
+                              label={t('session.launcher.OwnerGroup')}
+                              isLabelHidden
+                              isLoading
+                              options={[]}
+                              width="100%"
+                            />
+                          </Form.Item>
+                        }
+                      >
+                        <Form.Item
+                          name={['owner', 'projectId']}
+                          label={t('session.launcher.OwnerGroup')}
+                          rules={[
+                            {
+                              required: getFieldValue(['owner', 'enabled']),
+                            },
+                          ]}
+                        >
+                          <BAIAdminProjectSelect
+                            label={t('session.launcher.OwnerGroup')}
+                            isLabelHidden
+                            filter={{
+                              user: { email: { equals: fetchingEmail } },
+                            }}
+                            onChange={(_value, option) => {
+                              form.setFieldValue(
+                                ['owner', 'project'],
+                                _.isArray(option) ? undefined : option?.label,
+                              );
+                              form.setFieldValue(
+                                ['owner', 'resourceGroup'],
+                                undefined,
+                              );
+                            }}
+                            isDisabled={!owner || isFetching}
+                          />
+                        </Form.Item>
+                      </Suspense>
                     </GridSpan>
                     <GridSpan columns={12}>
-                      <Form.Item dependencies={[['owner', 'project']]} noStyle>
+                      <Form.Item
+                        dependencies={[['owner', 'projectId']]}
+                        noStyle
+                      >
                         {({ getFieldValue }) => {
                           return (
                             <Suspense
@@ -332,12 +371,9 @@ const SessionOwnerSetterCard: React.FC<SessionOwnerSetterCardProps> = (
                                   },
                                 ]}
                               >
-                                {getFieldValue(['owner', 'project']) ? (
+                                {ownerProjectName ? (
                                   <BAIProjectResourceGroupSelect
-                                    projectName={getFieldValue([
-                                      'owner',
-                                      'project',
-                                    ])}
+                                    projectName={ownerProjectName}
                                     disabled={
                                       _.isEmpty(fetchingEmail) || isFetching
                                     }
@@ -388,7 +424,7 @@ export const SessionOwnerSetterPreviewCard: React.FC<BAICardProps> = (
         status={
           form.getFieldError(['owner', 'email']).length > 0 ||
           form.getFieldError(['owner', 'accesskey']).length > 0 ||
-          form.getFieldError(['owner', 'project']).length > 0 ||
+          form.getFieldError(['owner', 'projectId']).length > 0 ||
           form.getFieldError(['owner', 'resourceGroup']).length > 0
             ? 'error'
             : undefined

@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useThemeMode } from '../hooks/useThemeMode';
-import { theme } from '../theme-shim';
 import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
+import { useTheme } from '@astryxdesign/core/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 
@@ -44,7 +44,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
   extra,
 }) => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { isDarkMode } = useThemeMode();
 
   // Splash-derived warm palette: the broken-segment ink needs ~4.5:1 on the
@@ -53,7 +53,9 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
   const brokenInk = isDarkMode ? '#F2A045' : '#B25400';
 
   const separator = (
-    <span style={{ color: token.colorTextQuaternary, opacity: 0.6 }}>/</span>
+    <span style={{ color: token('--color-text-quaternary'), opacity: 0.6 }}>
+      /
+    </span>
   );
 
   return (
@@ -70,7 +72,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
       <BAIFlex
         direction="column"
         align="center"
-        style={{ maxWidth: 640, padding: token.paddingLG }}
+        style={{ maxWidth: 640, padding: token('--spacing-6') }}
       >
         {segments?.length ? (
           <BAIFlex
@@ -80,13 +82,13 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
             justify="center"
             aria-hidden="true"
             style={{
-              marginBottom: token.marginLG,
+              marginBottom: token('--spacing-6'),
               padding: '9px 18px',
               borderRadius: 999,
-              backgroundColor: token.colorBgContainer,
-              border: `1px solid ${token.colorBorderSecondary}`,
-              fontFamily: token.fontFamilyCode,
-              fontSize: token.fontSize,
+              backgroundColor: token('--color-background-surface'),
+              border: `1px solid ${token('--color-border')}`,
+              fontFamily: token('--font-family-code'),
+              fontSize: token('--font-size-base'),
             }}
           >
             {separator}
@@ -113,7 +115,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
                     {segment.text}
                   </span>
                 ) : (
-                  <span style={{ color: token.colorTextQuaternary }}>
+                  <span style={{ color: token('--color-text-quaternary') }}>
                     {segment.text}
                   </span>
                 )}
@@ -123,7 +125,7 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
         ) : null}
 
         {/* antd `Typography.Title level={4}` overridden to
-            `fontSize: token.fontSizeHeading3`, i.e. the headline RENDERED at
+            `fontSize: token('--font-size-2xl')`, i.e. the headline RENDERED at
             24px. The letter-spacing / line-height hand-tuning is still dropped
             (Astryx's heading scale is theme-owned), but the SIZE is restored:
             on the antd type ramp (`ANTD_ALIGN_TOKENS`) 24px is heading-3.
@@ -142,14 +144,14 @@ const RouteErrorContent: React.FC<RouteErrorContentProps> = ({
             color="secondary"
             justify="center"
             display="block"
-            style={{ marginTop: token.marginSM }}
+            style={{ marginTop: token('--spacing-3') }}
           >
             {description}
           </Text>
         ) : null}
 
         {extra ? (
-          <div style={{ marginTop: token.marginXL }}>{extra}</div>
+          <div style={{ marginTop: token('--spacing-8') }}>{extra}</div>
         ) : null}
       </BAIFlex>
     </BAIFlex>

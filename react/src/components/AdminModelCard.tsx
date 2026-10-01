@@ -19,7 +19,6 @@ import {
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
@@ -27,6 +26,7 @@ import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
 import { Text } from '@astryxdesign/core/Text';
 import { Token } from '@astryxdesign/core/Token';
 import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { useTheme } from '@astryxdesign/core/theme';
 import {
   BAIAdminProjectSelect,
   BAIButton,
@@ -113,8 +113,15 @@ export const AdminModelCardQuery = graphql`
           }
           domainName
           projectId
+          project @since(version: "26.4.3") {
+            id
+            basicInfo {
+              name
+            }
+          }
           accessLevel
           createdAt
+          updatedAt
           metadata {
             title
             category
@@ -149,13 +156,19 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
 
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
   const supportsSearchAxes = baiClient.supports('model-card-search-axes');
+  // BA-5918 (26.4.4rc3) turned `domainName` into a StringFilter and
+  // `projectId` into a UUIDFilter; the control only emits the wrapper shape.
+  const supportsFilterWrapperInputs = baiClient.supports(
+    'v2-filter-wrapper-inputs',
+  );
+  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -322,15 +335,30 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
       sorter: supportsSearchAxes,
-      render: (projectId) => (
-        <BAIText
-          copyable
-          ellipsis={{ tooltip: true }}
-          style={{ maxWidth: 150 }}
-        >
-          {projectId}
-        </BAIText>
-      ),
+      // `project` is @since(26.4.3); fall back to the raw UUID on older
+      // managers, which is all this column used to show.
+      render: (projectId, record) => {
+        const projectName = record.project?.basicInfo?.name;
+        if (!projectName) {
+          return (
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              style={{ maxWidth: 150 }}
+            >
+              {projectId}
+            </BAIText>
+          );
+        }
+        return (
+          <BAIText
+            ellipsis={{ tooltip: projectName }}
+            style={{ maxWidth: 150 }}
+          >
+            {projectName}
+          </BAIText>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -340,6 +368,14 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       render: (createdAt) =>
         createdAt ? dayjs(createdAt).format('YYYY-MM-DD HH:mm') : '-',
     },
+    {
+      key: 'updatedAt',
+      title: t('general.ModifiedAt'),
+      dataIndex: 'updatedAt',
+      defaultHidden: true,
+      render: (updatedAt) =>
+        updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
+    },
   ]);
 
   return (
@@ -347,6 +383,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
+            maxConditions={supportsSubFilter ? undefined : 1}
             filterProperties={filterOutEmpty([
               {
                 key: 'name',
@@ -368,15 +405,15 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 propertyLabel: t('modelStore.Task'),
                 type: 'string',
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'domainName',
                 propertyLabel: t('adminModelCard.Domain'),
-                type: 'string',
+                type: 'string' as const,
               },
-              {
+              supportsFilterWrapperInputs && {
                 key: 'projectId',
                 propertyLabel: t('adminModelCard.Project'),
-                type: 'uuid',
+                type: 'uuid' as const,
                 rule: {
                   message: t('project.ProjectIDFilterRuleMessage'),
                   validate: (value) => isValidUUID(value),
@@ -465,7 +502,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 onClearSelection={() => setSelectedModelCards([])}
               />
               <BAIButton
-                icon={<Trash2 style={{ color: token.colorError }} size="1em" />}
+                icon={
+                  <Trash2
+                    style={{ color: token('--color-error') }}
+                    size="1em"
+                  />
+                }
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />
@@ -583,7 +625,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                     vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
                     style={{
                       verticalAlign: 'middle',
-                      marginInline: token.marginXXS,
+                      marginInline: token('--spacing-1'),
                     }}
                   />
                   <BAILink
@@ -765,7 +807,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                               {/* PILOT-DECISION: antd `type="danger"` has no
                                   Astryx TextColor equivalent — the red tint is
                                   dropped; `type="supporting"` keeps the small
-                                  font (was token.fontSizeSM) and the failure
+                                  font (was token('--font-size-sm')) and the failure
                                   context is already carried by the warning
                                   notification. */}
                               <Text type="supporting" color="primary">

@@ -7,13 +7,13 @@
  `VFolder` GraphQL type (`ProjectAdminDataPage`).
 
  BUI's `BAIVFolderDeleteButtonV2` is `BAIButton` + a lucide `Trash` coloured
- from `theme.useToken().colorError`. Its fragment intentionally selects only
+ from `useTheme().token('--color-error')`. Its fragment intentionally selects only
  `id`: V2 `VFolder` does not expose a per-user action permission
  (TODO(needs-backend) in the BUI original), so the button is always enabled
  and the backend rejects unauthorized requests. That contract is preserved.
 
  PILOT-DECISIONs (same as the V1 Astryx rebuild):
- - The icon colour moves from a `token.colorError` prop to the shared
+ - The icon colour moves from a `token('--color-error')` prop to the shared
    `.bai-name-action-cell-danger` CSS-var class — one rule, theme-following.
  - P8: Astryx forces a real accessible `label`; the antd original was
    icon-only and relied on a wrapping Tooltip for its name.
