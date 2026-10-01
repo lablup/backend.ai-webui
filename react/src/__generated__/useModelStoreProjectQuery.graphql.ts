@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<5d96c676b585fb82181829b7d4bd8b91>>
+ * @generated SignedSource<<d89fb233e94f17ecd107879c645c7b3e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,18 +15,6 @@ export type useModelStoreProjectQuery$variables = {
   userId: string;
 };
 export type useModelStoreProjectQuery$data = {
-  readonly domainV2: Result<{
-    readonly projects: {
-      readonly edges: ReadonlyArray<{
-        readonly node: {
-          readonly basicInfo: {
-            readonly name: string;
-          };
-          readonly id: string;
-        };
-      }>;
-    } | null | undefined;
-  } | null | undefined, unknown>;
   readonly scopedProjectsV2: Result<{
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -55,69 +43,37 @@ v1 = {
   "name": "userId"
 },
 v2 = {
-  "kind": "Literal",
-  "name": "filter",
-  "value": {
-    "isActive": true,
-    "type": {
-      "equals": "MODEL_STORE"
-    }
-  }
-},
-v3 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v4 = [
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "ProjectV2Edge",
-    "kind": "LinkedField",
-    "name": "edges",
-    "plural": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ProjectV2",
-        "kind": "LinkedField",
-        "name": "node",
-        "plural": false,
-        "selections": [
-          (v3/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "ProjectBasicInfo",
-            "kind": "LinkedField",
-            "name": "basicInfo",
-            "plural": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
-  }
-],
-v5 = {
   "alias": null,
   "args": [
-    (v2/*: any*/),
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "equals",
+              "variableName": "domainName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "domainName"
+        },
+        {
+          "kind": "Literal",
+          "name": "isActive",
+          "value": true
+        },
+        {
+          "kind": "Literal",
+          "name": "type",
+          "value": {
+            "equals": "MODEL_STORE"
+          }
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "filter"
+    },
     {
       "fields": [
         {
@@ -146,27 +102,56 @@ v5 = {
   "kind": "LinkedField",
   "name": "scopedProjectsV2",
   "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": null
-},
-v6 = [
-  {
-    "kind": "Variable",
-    "name": "domainName",
-    "variableName": "domainName"
-  }
-],
-v7 = {
-  "alias": null,
-  "args": [
-    (v2/*: any*/)
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "ProjectV2Edge",
+      "kind": "LinkedField",
+      "name": "edges",
+      "plural": true,
+      "selections": [
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "ProjectV2",
+          "kind": "LinkedField",
+          "name": "node",
+          "plural": false,
+          "selections": [
+            {
+              "alias": null,
+              "args": null,
+              "kind": "ScalarField",
+              "name": "id",
+              "storageKey": null
+            },
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "ProjectBasicInfo",
+              "kind": "LinkedField",
+              "name": "basicInfo",
+              "plural": false,
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "kind": "ScalarField",
+                  "name": "name",
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            }
+          ],
+          "storageKey": null
+        }
+      ],
+      "storageKey": null
+    }
   ],
-  "concreteType": "ProjectV2Connection",
-  "kind": "LinkedField",
-  "name": "projects",
-  "plural": false,
-  "selections": (v4/*: any*/),
-  "storageKey": "projects(filter:{\"isActive\":true,\"type\":{\"equals\":\"MODEL_STORE\"}})"
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -180,23 +165,7 @@ return {
     "selections": [
       {
         "kind": "CatchField",
-        "field": (v5/*: any*/),
-        "to": "RESULT"
-      },
-      {
-        "kind": "CatchField",
-        "field": {
-          "alias": null,
-          "args": (v6/*: any*/),
-          "concreteType": "DomainV2",
-          "kind": "LinkedField",
-          "name": "domainV2",
-          "plural": false,
-          "selections": [
-            (v7/*: any*/)
-          ],
-          "storageKey": null
-        },
+        "field": (v2/*: any*/),
         "to": "RESULT"
       }
     ],
@@ -212,33 +181,20 @@ return {
     "kind": "Operation",
     "name": "useModelStoreProjectQuery",
     "selections": [
-      (v5/*: any*/),
-      {
-        "alias": null,
-        "args": (v6/*: any*/),
-        "concreteType": "DomainV2",
-        "kind": "LinkedField",
-        "name": "domainV2",
-        "plural": false,
-        "selections": [
-          (v7/*: any*/),
-          (v3/*: any*/)
-        ],
-        "storageKey": null
-      }
+      (v2/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "cfbcff38c4659acdc5ba05a27e13a461",
+    "cacheID": "9ce33d5ff597c0d1628b63b0f8e137bd",
     "id": null,
     "metadata": {},
     "name": "useModelStoreProjectQuery",
     "operationKind": "query",
-    "text": "query useModelStoreProjectQuery(\n  $userId: UUID!\n  $domainName: String!\n) {\n  scopedProjectsV2(scope: {user: [{value: $userId}]}, filter: {type: {equals: MODEL_STORE}, isActive: true}) @since(version: \"26.9.0a1\") {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n  domainV2(domainName: $domainName) @deprecatedSince(version: \"26.9.0a1\") {\n    projects(filter: {type: {equals: MODEL_STORE}, isActive: true}) {\n      edges {\n        node {\n          id\n          basicInfo {\n            name\n          }\n        }\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query useModelStoreProjectQuery(\n  $userId: UUID!\n  $domainName: String!\n) {\n  scopedProjectsV2(scope: {user: [{value: $userId}]}, filter: {type: {equals: MODEL_STORE}, isActive: true, domainName: {equals: $domainName}}) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "72e6b16bbeffe81aafe3f2357db7ea0d";
+(node as any).hash = "0f1ef5fc0ae0de2e320b5cbd265f5b4d";
 
 export default node;
