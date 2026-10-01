@@ -40,7 +40,7 @@ const BAIVFolderDeleteButtonV2: React.FC<BAIVFolderDeleteButtonV2Props> = ({
       fragment BAIVFolderDeleteButtonV2Fragment on VFolder
       @relay(plural: true) {
         id
-        permissions
+        permissions @since(version: "26.9.0rc1")
       }
     `,
     vfolderFrgmt,

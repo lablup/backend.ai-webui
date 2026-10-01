@@ -60,7 +60,7 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         metadata {
           name
         }
-        permissions
+        permissions @since(version: "26.9.0rc1")
       }
     `,
     vfolderFrgmts,
@@ -72,10 +72,10 @@ const DeleteVFolderModalV2: React.FC<DeleteVFolderModalV2Props> = ({
         $input: BulkDeleteVFoldersV2Input!
       ) {
         bulkDeleteVfoldersV2(input: $input) {
-          items {
+          items @since(version: "26.9.0rc1") {
             id
           }
-          failed {
+          failed @since(version: "26.9.0rc1") {
             vfolderId
             message
           }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ef2b84c796fc72698452daeb66c010af>>
+ * @generated SignedSource<<46a2cecaf42fdf9b6d05174ebe6a4ad1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -116,16 +116,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "0444466fd782d21e1ab59599ab4b63e0",
+    "cacheID": "99baab5688441171e806c5853ea8e31b",
     "id": null,
     "metadata": {},
     "name": "VFolderNodesV2UsageQuery",
     "operationKind": "query",
-    "text": "query VFolderNodesV2UsageQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    usage {\n      numFiles\n      usedBytes {\n        expr\n      }\n    }\n  }\n}\n"
+    "text": "query VFolderNodesV2UsageQuery(\n  $vfolderId: UUID!\n) {\n  vfolderV2(vfolderId: $vfolderId) {\n    id\n    usage {\n      numFiles\n      usedBytes {\n        expr @since(version: \"26.8.0\")\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "6a2651b50a7049d45a52fa6663eea2f2";
+(node as any).hash = "a318324448cb328870c6cc8549363004";
 
 export default node;

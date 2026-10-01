@@ -396,7 +396,7 @@ const VFolderUsageCellInner: React.FC<VFolderUsageCellProps> = ({
           usage {
             numFiles
             usedBytes {
-              expr
+              expr @since(version: "26.8.0")
             }
           }
         }
@@ -567,11 +567,11 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
           permission
           ownershipType
         }
-        permissions
+        permissions @since(version: "26.9.0rc1")
         quota {
           maxFiles
           maxSize {
-            expr
+            expr @since(version: "26.8.0")
           }
         }
         ownership {

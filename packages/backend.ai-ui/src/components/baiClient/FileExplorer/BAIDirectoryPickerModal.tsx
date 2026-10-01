@@ -31,7 +31,7 @@ export const BAIDirectoryPickerQuery = graphql`
       metadata {
         name
       }
-      permissions
+      permissions @since(version: "26.9.0rc1")
     }
   }
 `;
