@@ -68,7 +68,6 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
 
   const relayEnv = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
-  const supportsUsageQuota = baiClient.supports('vfolder-v2-usage-quota');
   const [currentUser] = useCurrentUserInfo();
   // Not `useEffectiveAdminRole` — it resolves its target from the ambient
   // project. Authorization here is derived from the folder's own ownership.
@@ -101,7 +100,7 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
           permission
           ownershipType
         }
-        quota @since(version: "26.4.4") {
+        quota {
           maxFiles
           maxSize {
             display
@@ -329,15 +328,15 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
       ),
     },
     // A null `maxSize` / a zero `maxFiles` is "no limit".
-    supportsUsageQuota && {
+    {
       key: 'max_size',
       label: t('data.folders.MaxSize'),
-      children: formatBinarySizeInfo(vfolderNode.quota?.maxSize) ?? '∞',
+      children: formatBinarySizeInfo(vfolderNode.quota.maxSize) ?? '∞',
     },
-    supportsUsageQuota && {
+    {
       key: 'max_files',
       label: t('data.folders.MaxFiles'),
-      children: vfolderNode.quota?.maxFiles
+      children: vfolderNode.quota.maxFiles
         ? vfolderNode.quota.maxFiles.toLocaleString()
         : '∞',
     },

@@ -918,9 +918,6 @@ export class Client {
       // AND/OR/NOT sub-filter combinators in 26.4.4, while the tab itself is
       // gated on `prometheus-query-preset` (26.4.2).
       this._features['prometheus-query-preset-extended-filter'] = true;
-      // `VFolder.quota` (maxSize / maxFiles) and `VFolder.usage` (numFiles /
-      // usedBytes, a storage-proxy round trip per selection). FR-4114.
-      this._features['vfolder-v2-usage-quota'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
       // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
