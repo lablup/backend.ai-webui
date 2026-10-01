@@ -248,6 +248,10 @@
       "Title": "Não foi possível iniciar sessão com o Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Progresso do arranque dos kernels",
+    "KernelTerminationProgress": "Progresso da terminação dos kernels"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Tamanho do Cluster",
     "Concurrency": "Sessões simultâneas",
