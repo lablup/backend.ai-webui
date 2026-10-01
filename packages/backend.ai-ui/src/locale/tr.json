@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Görüntü commit işlemi için konteyner kayıt defteri",
     "CreateProject": "Proje Oluştur",
     "Description": "Açıklama",
-    "Domain": "Etki Alanı",
     "FailedToCreateProject": "Proje oluşturulamadı",
     "FailedToUpdateProject": "Proje güncellenemedi",
     "IsActive": "Etkin mi?",

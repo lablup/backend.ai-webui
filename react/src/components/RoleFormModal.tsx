@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { RoleFormModalCreateMutation } from '../__generated__/RoleFormModalCreateMutation.graphql';
+import { RoleFormModalCurrentDomainQuery } from '../__generated__/RoleFormModalCurrentDomainQuery.graphql';
 import { RoleFormModalFragment$key } from '../__generated__/RoleFormModalFragment.graphql';
 import { RoleFormModalPermissionMatrixQuery } from '../__generated__/RoleFormModalPermissionMatrixQuery.graphql';
 import { RoleFormModalResourceGroupQuery } from '../__generated__/RoleFormModalResourceGroupQuery.graphql';
@@ -23,8 +24,6 @@ import {
   BAIAdminProjectSelect,
   BAIAdminResourceGroupSelect,
   BAIAdminSessionSelect,
-  BAIDomainSelect,
-  BAIDomainSelectV2,
   BAIFlex,
   BAIKeypairSelect,
   BAIModal,
@@ -37,7 +36,7 @@ import {
   useBAILogger,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -116,13 +115,52 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
   return <BAIAdminResourceGroupSelect queryRef={queryRef} {...props} />;
 };
 
+/** True for the DOMAIN scope, whose id is the signed-in domain and is never shown. */
+export const isDomainScopeType = (scopeType?: string) =>
+  scopeType?.toUpperCase() === 'DOMAIN';
+
+/**
+ * Fills the DOMAIN scope id with the signed-in domain: the WebUI has no domain
+ * picker. Managers >= 26.9.0 (BA-7234) take the domain uuid, older ones the name.
+ */
+const CurrentDomainScopeId: React.FC<
+  Pick<ScopeIdSelectProps, 'value' | 'onChange'>
+> = ({ value, onChange }) => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const domainName: string = baiClient._config.domainName;
+  const needsUuid = baiClient.supports('rbac-domain-scope-uuid');
+  const { domainV2 } = useLazyLoadQuery<RoleFormModalCurrentDomainQuery>(
+    graphql`
+      query RoleFormModalCurrentDomainQuery(
+        $domainName: String!
+        $skipUuid: Boolean!
+      ) {
+        domainV2(domainName: $domainName) @skip(if: $skipUuid) {
+          id
+        }
+      }
+    `,
+    { domainName, skipUuid: !needsUuid },
+    { fetchPolicy: 'store-or-network' },
+  );
+  const scopeId = needsUuid
+    ? domainV2?.id
+      ? toLocalId(domainV2.id)
+      : undefined
+    : domainName;
+  useEffect(() => {
+    if (scopeId && value !== scopeId) onChange?.(scopeId);
+  }, [scopeId, value, onChange]);
+  return null;
+};
+
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   scopeType: rawScopeType,
   ...selectProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
   const scopeType = rawScopeType?.toUpperCase();
   // The surrounding `Form.Item` already prints "Scope ID", so the Astryx
   // field's own label is the accessible name only.
@@ -141,22 +179,12 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
     />
   );
   if (scopeType === 'DOMAIN') {
-    // Managers >= 26.9.0 (BA-7234) parse a DOMAIN scopeId as the domain uuid;
-    // older managers expect the domain name. FR-3618.
-    const domainSelectProps = {
-      showSearch: true,
-      placeholder: selectProps.placeholder,
-      disabled: selectProps.isDisabled,
-      value: selectProps.value,
-      onChange: selectProps.onChange,
-    };
     return (
-      <Suspense fallback={fallback}>
-        {baiClient.supports('rbac-domain-scope-uuid') ? (
-          <BAIDomainSelectV2 {...domainSelectProps} />
-        ) : (
-          <BAIDomainSelect {...domainSelectProps} />
-        )}
+      <Suspense fallback={null}>
+        <CurrentDomainScopeId
+          value={selectProps.value}
+          onChange={selectProps.onChange}
+        />
       </Suspense>
     );
   }
@@ -541,6 +569,7 @@ const RoleFormModal: React.FC<RoleFormModalProps> = ({
             <Form.Item
               name="scopeId"
               label={t('rbac.ScopeId')}
+              hidden={isDomainScopeType(scopeType)}
               style={{ flex: 1 }}
               rules={[
                 {

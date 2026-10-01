@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "請輸入小於 2^31 的正數",
       "PleaseEnterPositiveInteger": "請輸入正數。",
       "PleaseEnterUniqueNumbers": "請輸入不重複的數字",
-      "PleaseEnterValidNumber": "請輸入有效的數字",
-      "PleaseSelectDomain": "請先選擇網域。"
+      "PleaseEnterValidNumber": "請輸入有效的數字"
     }
   },
   "dashboard": {

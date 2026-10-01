@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Lütfen 2^31'den küçük pozitif bir değer girin.",
       "PleaseEnterPositiveInteger": "Lütfen pozitif bir değer girin.",
       "PleaseEnterUniqueNumbers": "Lütfen benzersiz sayılar girin",
-      "PleaseEnterValidNumber": "Lütfen geçerli bir sayı girin",
-      "PleaseSelectDomain": "Lütfen önce bir domain seçin."
+      "PleaseEnterValidNumber": "Lütfen geçerli bir sayı girin"
     }
   },
   "dashboard": {

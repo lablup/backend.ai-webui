@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Παρακαλώ εισαγάγετε μια θετική τιμή μικρότερη από 2^31",
       "PleaseEnterPositiveInteger": "Εισαγάγετε μια θετική τιμή.",
       "PleaseEnterUniqueNumbers": "Παρακαλώ εισάγετε μοναδικούς αριθμούς",
-      "PleaseEnterValidNumber": "Παρακαλώ εισάγετε έγκυρο αριθμό",
-      "PleaseSelectDomain": "Παρακαλώ επιλέξτε πρώτα το domain."
+      "PleaseEnterValidNumber": "Παρακαλώ εισάγετε έγκυρο αριθμό"
     }
   },
   "dashboard": {

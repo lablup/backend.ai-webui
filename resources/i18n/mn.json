@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "2^31-аас бага эерэг утга оруулна уу",
       "PleaseEnterPositiveInteger": "Эерэг утга оруулна уу.",
       "PleaseEnterUniqueNumbers": "Давтагдаагүй тоо оруулна уу",
-      "PleaseEnterValidNumber": "Зөв тоо оруулна уу",
-      "PleaseSelectDomain": "Эхлээд доменээ сонгоно уу."
+      "PleaseEnterValidNumber": "Зөв тоо оруулна уу"
     }
   },
   "dashboard": {

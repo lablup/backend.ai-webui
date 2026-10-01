@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Inserisci un valore positivo inferiore a 2^31",
       "PleaseEnterPositiveInteger": "Inserisci un valore positivo.",
       "PleaseEnterUniqueNumbers": "Inserisci numeri univoci",
-      "PleaseEnterValidNumber": "Inserisci un numero valido",
-      "PleaseSelectDomain": "Seleziona prima un dominio."
+      "PleaseEnterValidNumber": "Inserisci un numero valido"
     }
   },
   "dashboard": {

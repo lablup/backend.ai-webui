@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "이미지 커밋용 컨테이너 레지스트리",
     "CreateProject": "프로젝트 생성",
     "Description": "설명",
-    "Domain": "도메인",
     "FailedToCreateProject": "프로젝트 생성에 실패했습니다.",
     "FailedToUpdateProject": "프로젝트 업데이트에 실패했습니다.",
     "IsActive": "활성화 여부",

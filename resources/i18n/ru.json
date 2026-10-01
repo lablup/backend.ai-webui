@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Введите положительное значение меньше 2^31",
       "PleaseEnterPositiveInteger": "Введите положительное значение.",
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",
-      "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число",
-      "PleaseSelectDomain": "Пожалуйста, сначала выберите домен."
+      "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число"
     }
   },
   "dashboard": {

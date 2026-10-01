@@ -10,6 +10,7 @@ import { UpdateUsersModalFragment$key } from '../__generated__/UpdateUsersModalF
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { useCurrentDomainValue } from '../hooks';
 import { useTOTPSupported } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import ProjectSelect from './ProjectSelect';
@@ -20,7 +21,6 @@ import {
 } from './astryxFormControls';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIDomainSelect,
   BAIFlex,
   BAIListAlert,
   BAIModal,
@@ -35,7 +35,6 @@ import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 interface UpdateUsersFormValues {
-  domain_name?: string;
   group_ids?: string[];
   status?: 'active' | 'inactive' | 'before-verification' | 'deleted';
   resource_policy?: string;
@@ -65,6 +64,7 @@ const UpdateUsersModal = ({
 }: UpdateUsersModalProps) => {
   'use memo';
   const { t } = useTranslation();
+  const currentDomain = useCurrentDomainValue();
   const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -167,7 +167,6 @@ const UpdateUsersModal = ({
             // camelCase keys and the UserStatusV2 enum.
             const input = _.omitBy(
               {
-                domainName: values.domain_name,
                 groupIds: values.group_ids,
                 status: values.status ? statusToV2[values.status] : undefined,
                 resourcePolicy: values.resource_policy,
@@ -248,55 +247,17 @@ const UpdateUsersModal = ({
         <Form ref={formRef} layout="vertical" preserve={false}>
           <Suspense
             fallback={
-              <BAIFormItem label={t('credential.Domain')}>
-                <BAISelect loading />
-              </BAIFormItem>
-            }
-          >
-            <BAIFormItem name="domain_name" label={t('credential.Domain')}>
-              <BAIDomainSelect
-                onChange={() => {
-                  formRef.current?.setFieldValue('group_ids', []);
-                }}
-                allowClear
-              />
-            </BAIFormItem>
-          </Suspense>
-          <Suspense
-            fallback={
               <BAIFormItem label={t('credential.Projects')}>
                 <BAISelect loading />
               </BAIFormItem>
             }
           >
-            <BAIFormItem noStyle dependencies={['domain_name']}>
-              {(form) => {
-                // BAIFormItem render-prop children receive `unknown` (antd
-                // typed this as FormInstance); narrow it back.
-                const { getFieldValue } =
-                  form as FormInstance<UpdateUsersFormValues>;
-                return (
-                  <BAIFormItem
-                    name="group_ids"
-                    label={t('credential.Projects')}
-                    validateStatus={
-                      !getFieldValue('domain_name') ? 'warning' : undefined
-                    }
-                    help={
-                      !getFieldValue('domain_name')
-                        ? t('credential.validation.PleaseSelectDomain')
-                        : undefined
-                    }
-                  >
-                    <ProjectSelect
-                      mode="multiple"
-                      domain={getFieldValue('domain_name')}
-                      disableDefaultFilter
-                      disabled={!getFieldValue('domain_name')}
-                    />
-                  </BAIFormItem>
-                );
-              }}
+            <BAIFormItem name="group_ids" label={t('credential.Projects')}>
+              <ProjectSelect
+                mode="multiple"
+                domain={currentDomain}
+                disableDefaultFilter
+              />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem name="status" label={t('credential.UserStatus')}>

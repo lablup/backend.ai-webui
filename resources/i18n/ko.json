@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "2^31보다 작은 양수를 입력하세요.",
       "PleaseEnterPositiveInteger": "양수를 입력하세요.",
       "PleaseEnterUniqueNumbers": "중복되지 않는 숫자를 입력하세요",
-      "PleaseEnterValidNumber": "유효한 숫자를 입력하세요",
-      "PleaseSelectDomain": "도메인을 먼저 선택해 주세요."
+      "PleaseEnterValidNumber": "유효한 숫자를 입력하세요"
     }
   },
   "dashboard": {

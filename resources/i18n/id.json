@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Silakan masukkan nilai positif kurang dari 2^31",
       "PleaseEnterPositiveInteger": "Harap masukkan nilai positif.",
       "PleaseEnterUniqueNumbers": "Silakan masukkan angka yang unik",
-      "PleaseEnterValidNumber": "Silakan masukkan angka yang valid",
-      "PleaseSelectDomain": "Silakan pilih domain terlebih dahulu."
+      "PleaseEnterValidNumber": "Silakan masukkan angka yang valid"
     }
   },
   "dashboard": {

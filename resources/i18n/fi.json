@@ -777,8 +777,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Syötä positiivinen arvo, joka on pienempi kuin 2^31",
       "PleaseEnterPositiveInteger": "Syötä positiivinen arvo.",
       "PleaseEnterUniqueNumbers": "Syötä yksilöllisiä numeroita",
-      "PleaseEnterValidNumber": "Syötä kelvollinen numero",
-      "PleaseSelectDomain": "Valitse ensin toimialue."
+      "PleaseEnterValidNumber": "Syötä kelvollinen numero"
     }
   },
   "dashboard": {
