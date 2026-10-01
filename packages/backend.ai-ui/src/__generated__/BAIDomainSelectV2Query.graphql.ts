@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<74f1288ffaef2660eec29b8e014035e9>>
+ * @generated SignedSource<<ca8e943d9453698ab0e8871217f19326>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,6 +11,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type BAIDomainSelectV2Query$variables = {
   isActive?: boolean | null | undefined;
+  limit: number;
 };
 export type BAIDomainSelectV2Query$data = {
   readonly adminDomainsV2: {
@@ -35,6 +36,11 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "isActive"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
   }
 ],
 v1 = [
@@ -51,6 +57,11 @@ v1 = [
         ],
         "kind": "ObjectValue",
         "name": "filter"
+      },
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
       }
     ],
     "concreteType": "DomainV2Connection",
@@ -127,16 +138,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c4e5c8625a449e2f1e0f14d42ea01c95",
+    "cacheID": "0b5bb508d51161552756e262c1a9fd88",
     "id": null,
     "metadata": {},
     "name": "BAIDomainSelectV2Query",
     "operationKind": "query",
-    "text": "query BAIDomainSelectV2Query(\n  $isActive: Boolean\n) {\n  adminDomainsV2(filter: {isActive: $isActive}) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIDomainSelectV2Query(\n  $isActive: Boolean\n  $limit: Int!\n) {\n  adminDomainsV2(filter: {isActive: $isActive}, limit: $limit) {\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "41a40f7df72ed61abf78b3b4e5550fc0";
+(node as any).hash = "875b72e929bb265848338c98f4698fa7";
 
 export default node;

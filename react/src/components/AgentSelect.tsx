@@ -30,8 +30,8 @@
   - `allowClear` is not offered (P26-8); the field always holds a value, and
     `fallbackToAuto` is what resets it.
 */
-import { AgentSelectQuery } from '../__generated__/AgentSelectQuery.graphql';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
+import { AgentSelectPaginatedQuery } from '../__generated__/AgentSelectPaginatedQuery.graphql';
+import { useLazyPaginatedQuery } from '../hooks/usePaginatedQuery';
 import {
   BAIComplexSelect,
   BAIFlex,
@@ -51,7 +51,15 @@ import React, {
   useState,
 } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql } from 'react-relay';
+
+type AgentSummaryItem = NonNullable<
+  NonNullable<
+    NonNullable<
+      AgentSelectPaginatedQuery['response']['agent_summary_list']
+    >['items']
+  >[number]
+>;
 
 interface Props {
   fallbackToAuto?: boolean;
@@ -99,57 +107,59 @@ const AgentSelect: React.FC<Props> = ({
   const deferredSearchStr = useDeferredValue(searchStr);
   const multiple = mode === 'multiple';
 
-  const { baiPaginationOption } = useBAIPaginationOptionState({
-    current: 1,
-    pageSize: 50,
-  });
-
-  const { agent_summary_list } = useLazyLoadQuery<AgentSelectQuery>(
-    graphql`
-      query AgentSelectQuery(
-        $limit: Int!
-        $offset: Int!
-        $status: String
-        $filter: String
-        $scaling_group: String
-      ) {
-        agent_summary_list(
-          limit: $limit
-          offset: $offset
-          status: $status
-          filter: $filter
-          scaling_group: $scaling_group
+  // Offset pages accumulate as the popup scrolls (`endReached` -> `loadNext`);
+  // a new search string or resource group starts over from page one.
+  const { paginationData, result, loadNext, isLoadingNext } =
+    useLazyPaginatedQuery<AgentSelectPaginatedQuery, AgentSummaryItem>(
+      graphql`
+        query AgentSelectPaginatedQuery(
+          $limit: Int!
+          $offset: Int!
+          $status: String
+          $filter: String
+          $scaling_group: String
         ) {
-          items {
-            id
-            status
-            schedulable
-            available_slots
-            occupied_slots
-            architecture
+          agent_summary_list(
+            limit: $limit
+            offset: $offset
+            status: $status
+            filter: $filter
+            scaling_group: $scaling_group
+          ) {
+            items {
+              id
+              status
+              schedulable
+              available_slots
+              occupied_slots
+              architecture
+            }
+            total_count
           }
-          total_count
         }
-      }
-    `,
-    {
-      limit: baiPaginationOption.limit,
-      offset: baiPaginationOption.offset,
-      status: 'ALIVE',
-      filter: mergeFilterValues([
-        'schedulable is true',
-        deferredSearchStr ? `id ilike "%${deferredSearchStr}%"` : null,
-      ]),
-      scaling_group: resourceGroup,
-    },
-    {
-      fetchPolicy: 'network-only',
-      fetchKey,
-    },
-  );
+      `,
+      { limit: 50 },
+      {
+        status: 'ALIVE',
+        filter: mergeFilterValues([
+          'schedulable is true',
+          deferredSearchStr ? `id ilike "%${deferredSearchStr}%"` : null,
+        ]),
+        scaling_group: resourceGroup,
+      },
+      {
+        fetchPolicy: 'network-only',
+        fetchKey,
+      },
+      {
+        getTotal: (r) => r.agent_summary_list?.total_count ?? undefined,
+        getItem: (r) => r.agent_summary_list?.items,
+        getId: (item) => item?.id,
+      },
+    );
 
   const agentOptions: Array<BAIComplexSelectOption> = _.compact(
-    _.map(agent_summary_list?.items, (agent) => {
+    _.map(paginationData, (agent) => {
       if (!agent?.id) return null;
       const availableSlotsInfo: {
         [key in string]: string;
@@ -245,7 +255,9 @@ const AgentSelect: React.FC<Props> = ({
       isLoading={searchStr !== deferredSearchStr}
       searchValue={searchStr}
       onSearch={setSearchStr}
-      total={agent_summary_list?.total_count ?? undefined}
+      total={result.agent_summary_list?.total_count ?? undefined}
+      isLoadingNext={isLoadingNext}
+      endReached={loadNext}
       options={options}
       value={labeledValue}
       onChange={(next) => {

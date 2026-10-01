@@ -310,7 +310,9 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           containerMainGid
           containerGids
         }
-        projects {
+        # groupIds on save REPLACES the membership list, so the form must
+        # start from every project rather than the connection's default page.
+        projects(limit: 1000) {
           edges {
             node {
               id
@@ -385,7 +387,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerMainGid
               containerGids
             }
-            projects {
+            projects(limit: 1000) {
               edges {
                 node {
                   id
