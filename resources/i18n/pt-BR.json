@@ -2764,7 +2764,7 @@
     "CreatePolicy": "Criar política",
     "DataRetention": "Retenção de dados",
     "DeletePolicy": "Excluir política de retenção",
-    "Description": "Defina por quanto tempo cada tipo de registro é mantido antes de ser limpo. Uma categoria sem política mantém o padrão do sistema.",
+    "Description": "Defina por quanto tempo cada tipo de registro é mantido. Os registros antigos só são limpos nas categorias cuja política está ativada.",
     "EditPolicy": "Editar política",
     "LastSweptAt": "Última limpeza",
     "NotSweptYet": "Ainda não executado",

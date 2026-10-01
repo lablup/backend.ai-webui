@@ -2766,7 +2766,7 @@
     "CreatePolicy": "Utwórz zasadę",
     "DataRetention": "Przechowywanie danych",
     "DeletePolicy": "Usuń zasadę przechowywania",
-    "Description": "Określ, jak długo każdy rodzaj rekordów jest przechowywany przed wyczyszczeniem. Kategoria bez zasady zachowuje domyślne ustawienie systemu.",
+    "Description": "Określ, jak długo przechowywany jest każdy rodzaj rekordów. Stare rekordy są czyszczone tylko w kategoriach z włączoną zasadą.",
     "EditPolicy": "Edytuj zasadę",
     "LastSweptAt": "Ostatnie czyszczenie",
     "NotSweptYet": "Jeszcze nie uruchomiono",

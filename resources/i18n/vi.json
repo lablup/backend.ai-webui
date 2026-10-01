@@ -2766,7 +2766,7 @@
     "CreatePolicy": "Tạo chính sách",
     "DataRetention": "Lưu giữ dữ liệu",
     "DeletePolicy": "Xóa chính sách lưu giữ",
-    "Description": "Đặt thời gian lưu giữ mỗi loại bản ghi trước khi được dọn dẹp. Danh mục không có chính sách sẽ dùng mặc định của hệ thống.",
+    "Description": "Đặt thời gian lưu giữ cho từng loại bản ghi. Bản ghi cũ chỉ được dọn dẹp ở các danh mục có chính sách đang bật.",
     "EditPolicy": "Sửa chính sách",
     "LastSweptAt": "Lần dọn dẹp gần nhất",
     "NotSweptYet": "Chưa chạy",

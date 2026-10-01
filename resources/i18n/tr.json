@@ -2764,7 +2764,7 @@
     "CreatePolicy": "Politika oluştur",
     "DataRetention": "Veri saklama",
     "DeletePolicy": "Saklama politikasını sil",
-    "Description": "Her kayıt türünün temizlenmeden önce ne kadar süre saklanacağını belirleyin. Politikası olmayan bir kategori sistem varsayılanını kullanır.",
+    "Description": "Her kayıt türünün ne kadar süre saklanacağını belirleyin. Eski kayıtlar yalnızca politikası etkin olan kategorilerde temizlenir.",
     "EditPolicy": "Politikayı düzenle",
     "LastSweptAt": "Son temizlik",
     "NotSweptYet": "Henüz çalıştırılmadı",

@@ -2768,7 +2768,7 @@
     "CreatePolicy": "建立政策",
     "DataRetention": "資料保留",
     "DeletePolicy": "刪除保留政策",
-    "Description": "設定每類記錄在清理前保留的時長。沒有政策的類別使用系統預設值。",
+    "Description": "設定每類記錄的保留時長。僅對政策已啟用的類別清理舊記錄。",
     "EditPolicy": "編輯政策",
     "LastSweptAt": "上次清理",
     "NotSweptYet": "尚未執行",

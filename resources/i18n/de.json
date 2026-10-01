@@ -2766,7 +2766,7 @@
     "CreatePolicy": "Richtlinie erstellen",
     "DataRetention": "Datenaufbewahrung",
     "DeletePolicy": "Aufbewahrungsrichtlinie löschen",
-    "Description": "Legen Sie fest, wie lange jede Art von Eintrag aufbewahrt wird, bevor sie bereinigt wird. Eine Kategorie ohne Richtlinie behält den Systemstandard.",
+    "Description": "Legen Sie fest, wie lange jede Art von Eintrag aufbewahrt wird. Alte Einträge werden nur für Kategorien mit aktivierter Richtlinie bereinigt.",
     "EditPolicy": "Richtlinie bearbeiten",
     "LastSweptAt": "Letzte Bereinigung",
     "NotSweptYet": "Noch nicht ausgeführt",

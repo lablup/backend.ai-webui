@@ -2766,7 +2766,7 @@
     "CreatePolicy": "Créer une politique",
     "DataRetention": "Conservation des données",
     "DeletePolicy": "Supprimer la politique de conservation",
-    "Description": "Définissez la durée de conservation de chaque type d'enregistrement avant son nettoyage. Une catégorie sans politique conserve la valeur par défaut du système.",
+    "Description": "Définissez la durée de conservation de chaque type d'enregistrement. Les anciens enregistrements ne sont nettoyés que pour les catégories dont la politique est activée.",
     "EditPolicy": "Modifier la politique",
     "LastSweptAt": "Dernier nettoyage",
     "NotSweptYet": "Pas encore exécuté",

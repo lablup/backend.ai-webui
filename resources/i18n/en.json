@@ -2751,7 +2751,7 @@
     "CreatePolicy": "Create Policy",
     "DataRetention": "Data Retention",
     "DeletePolicy": "Delete Retention Policy",
-    "Description": "Set how long each kind of record is kept before it is cleaned up. A category without a policy keeps the system default.",
+    "Description": "Set how long each kind of record is kept. Old records are cleaned up only for categories whose policy is enabled.",
     "EditPolicy": "Edit Policy",
     "LastSweptAt": "Last Cleanup",
     "NotSweptYet": "Not run yet",

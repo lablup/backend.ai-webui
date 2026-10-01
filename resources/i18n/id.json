@@ -2767,7 +2767,7 @@
     "CreatePolicy": "Buat kebijakan",
     "DataRetention": "Retensi data",
     "DeletePolicy": "Hapus kebijakan retensi",
-    "Description": "Atur berapa lama setiap jenis catatan disimpan sebelum dibersihkan. Kategori tanpa kebijakan tetap memakai bawaan sistem.",
+    "Description": "Atur berapa lama setiap jenis catatan disimpan. Catatan lama hanya dibersihkan untuk kategori yang kebijakannya aktif.",
     "EditPolicy": "Edit kebijakan",
     "LastSweptAt": "Pembersihan terakhir",
     "NotSweptYet": "Belum dijalankan",

@@ -2764,7 +2764,7 @@
     "CreatePolicy": "Luo käytäntö",
     "DataRetention": "Tietojen säilytys",
     "DeletePolicy": "Poista säilytyskäytäntö",
-    "Description": "Määritä, kuinka kauan kutakin tietuetyyppiä säilytetään ennen siivousta. Luokka ilman käytäntöä käyttää järjestelmän oletusta.",
+    "Description": "Määritä, kuinka kauan kutakin tietuetyyppiä säilytetään. Vanhat tietueet siivotaan vain luokista, joiden käytäntö on käytössä.",
     "EditPolicy": "Muokkaa käytäntöä",
     "LastSweptAt": "Viimeisin siivous",
     "NotSweptYet": "Ei vielä ajettu",

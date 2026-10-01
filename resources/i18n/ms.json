@@ -2764,7 +2764,7 @@
     "CreatePolicy": "Cipta dasar",
     "DataRetention": "Pengekalan data",
     "DeletePolicy": "Padam dasar pengekalan",
-    "Description": "Tetapkan tempoh setiap jenis rekod disimpan sebelum dibersihkan. Kategori tanpa dasar kekal menggunakan lalai sistem.",
+    "Description": "Tetapkan tempoh setiap jenis rekod disimpan. Rekod lama hanya dibersihkan bagi kategori yang dasarnya didayakan.",
     "EditPolicy": "Edit dasar",
     "LastSweptAt": "Pembersihan terakhir",
     "NotSweptYet": "Belum dijalankan",

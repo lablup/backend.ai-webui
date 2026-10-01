@@ -2766,7 +2766,7 @@
     "CreatePolicy": "ポリシーを作成",
     "DataRetention": "データ保持",
     "DeletePolicy": "保持ポリシーを削除",
-    "Description": "記録の種類ごとに、整理されるまでの保持期間を設定します。ポリシーのない種類はシステムのデフォルトに従います。",
+    "Description": "記録の種類ごとに保持期間を設定します。古い記録は、ポリシーが有効な種類でのみ整理されます。",
     "EditPolicy": "ポリシーを編集",
     "LastSweptAt": "最終クリーンアップ",
     "NotSweptYet": "未実行",
