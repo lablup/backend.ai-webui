@@ -189,6 +189,17 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         </Text>
       ),
     },
+    supportsAutoAssign && {
+      key: 'autoAssign',
+      title: t('rbac.AutoAssign'),
+      dataIndex: 'autoAssign',
+      render: (autoAssign: boolean) => (
+        <Token
+          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
+          label={autoAssign ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
+    },
     {
       key: 'scope',
       title: t('rbac.ScopeType'),
@@ -241,6 +252,19 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
         );
       },
     },
+    {
+      key: 'source',
+      title: t('rbac.Source'),
+      dataIndex: 'source',
+      render: (source: string) => {
+        return (
+          <Token
+            color={tokenColorForStatus('role', source)}
+            label={source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
+          />
+        );
+      },
+    },
     supportsRolePreset && {
       key: 'rolePreset',
       title: t('rbac.RolePreset'),
@@ -257,30 +281,6 @@ const RoleNodes: React.FC<RoleNodesProps> = ({
           </BAIFlex>
         );
       },
-    },
-    {
-      key: 'source',
-      title: t('rbac.Source'),
-      dataIndex: 'source',
-      render: (source: string) => {
-        return (
-          <Token
-            color={tokenColorForStatus('role', source)}
-            label={source === 'SYSTEM' ? t('rbac.System') : t('rbac.Custom')}
-          />
-        );
-      },
-    },
-    supportsAutoAssign && {
-      key: 'autoAssign',
-      title: t('rbac.AutoAssign'),
-      dataIndex: 'autoAssign',
-      render: (autoAssign: boolean) => (
-        <Token
-          color={tokenColorForTagColor(autoAssign ? 'green' : 'default')}
-          label={autoAssign ? t('general.Active') : t('general.Inactive')}
-        />
-      ),
     },
     {
       key: 'createdAt',
