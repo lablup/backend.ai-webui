@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Chat" />
   <meta name="twitter:description" content="Chat page enables users to conveniently compare and interact with different LLM models all in one location." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Chat","inLanguage":"en","description":"Chat page enables users to conveniently compare and interact with different LLM models all in one location.","dateModified":"2026-09-23T03:21:49.000Z","url":"https://webui.docs.backend.ai/next/en/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Chat","inLanguage":"en","description":"Chat page enables users to conveniently compare and interact with different LLM models all in one location.","dateModified":"2026-09-30T07:28:18.000Z","url":"https://webui.docs.backend.ai/next/en/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/chat.html" />
   <link rel="alternate" hreflang="en" href="../en/chat.html" />
   <link rel="alternate" hreflang="ja" href="../ja/chat.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (3224cd8)">v26.9.0-alpha.0 (3224cd8)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (17955af)">v26.9.0-alpha.0 (17955af)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -238,84 +238,89 @@ If the selected deployment belongs to a project other than the currently active 
 <p data-bai-block="10">The <strong>Deployment</strong> dropdown does not offer every deployment in the project — only the ones that can answer a message right now. A deployment is offered when at least one of its replicas is currently serving traffic: the replica&#39;s <strong>Lifecycle Status</strong> is <em>Running</em> and its <strong>Traffic Status</strong> is <em>Active</em>. Both conditions have to hold, because the two statuses are independent axes — a <em>Running</em> replica may have been taken out of rotation, and a replica marked <em>Active</em> may no longer be running. The replica status axes are described in the <a href="./deployment.html#model-serving">Deployments</a> chapter.</p>
 <p data-bai-block="11">Because availability is judged per replica rather than per deployment, a deployment stays available while a new revision is rolling out. After you apply a new revision, its inference session may stay pending for a while — for example, while it waits for resources — but the previous revision&#39;s replica keeps serving during that time. The deployment therefore remains in the dropdown, and you can keep chatting with the replica that is still alive.</p>
 <p data-bai-block="12">A deployment that is not serving anything is not offered: for example, one that has been stopped, or whose desired replica count is 0. A deployment that a chat card already has selected stays selected and keeps its name in the field even when it is no longer offered, so you can always see which deployment the card is pointing at and read the warnings described below.</p>
+<p><a id="connect-custom-endpoint"></a></p>
+<h3 data-bai-block="13" id="chat-connecting-a-custom-endpoint">Connecting a custom endpoint<a class="hash-link" href="#chat-connecting-a-custom-endpoint" aria-label="Direct link to Connecting a custom endpoint">#</a></h3>
+<p data-bai-block="14">You can also chat with an OpenAI-compatible service that is not deployed on Backend.AI. Select <strong>Connect a custom endpoint…</strong> in the <strong>Deployment</strong> dropdown, enter the service&#39;s <strong>Base URL</strong> and, if the service requires one, an <strong>API key</strong>, then click <strong>Connect</strong>. The chat card then lists the models that service offers, and <strong>Edit custom endpoint</strong> reopens the form so you can change the address or the key.</p>
+<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+
 <p><a id="model-connection-settings"></a></p>
-<h3 data-bai-block="13" id="chat-model-connection-settings">Model connection settings<a class="hash-link" href="#chat-model-connection-settings" aria-label="Direct link to Model connection settings">#</a></h3>
-<p data-bai-block="14">When a chat card has no model list yet, a configuration panel appears above the message area. This happens both while the model list is still being fetched from the deployment and after that fetch has failed.</p>
-<p><figure data-bai-block="15" class="doc-figure"><img src="./images/custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>Figure 13.3</figcaption></figure>
+<h3 data-bai-block="15" id="chat-model-connection-settings">Model connection settings<a class="hash-link" href="#chat-model-connection-settings" aria-label="Direct link to Model connection settings">#</a></h3>
+<p data-bai-block="16">When a chat card has no model list yet, a configuration panel appears above the message area. This happens both while the model list is still being fetched from the deployment and after that fetch has failed.</p>
+<p><figure data-bai-block="17" class="doc-figure"><img src="./images/custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>Figure 13.3</figcaption></figure>
 </p>
-<p data-bai-block="16">The chat card header — the deployment, model, and sync controls — is rendered right away and does not wait for the model list, so the panel is reachable while the fetch is still in progress. During the fetch, <strong>Refresh Model Information</strong> shows a loading indicator, the <strong>Base Path</strong> and <strong>Token</strong> fields are disabled, and the message input at the bottom of the card is disabled. All of them become usable again once the fetch settles. A deployment that never answers eventually times out and is reported as a failed fetch, so you can correct the settings and retry instead of waiting indefinitely.</p>
-<p><figure data-bai-block="17" class="doc-figure"><img src="./images/chat_model_loading.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>Figure 13.4</figcaption></figure>
+<p data-bai-block="18">The chat card header — the deployment, model, and sync controls — is rendered right away and does not wait for the model list, so the panel is reachable while the fetch is still in progress. During the fetch, <strong>Refresh Model Information</strong> shows a loading indicator, the <strong>Base Path</strong> and <strong>Token</strong> fields are disabled, and the message input at the bottom of the card is disabled. All of them become usable again once the fetch settles. A deployment that never answers eventually times out and is reported as a failed fetch, so you can correct the settings and retry instead of waiting indefinitely.</p>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/chat_model_loading.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>Figure 13.4</figcaption></figure>
 </p>
-<p data-bai-block="18">The panel can carry the following warnings:</p>
+<p data-bai-block="20">The panel can carry the following warnings:</p>
 <ul>
-<li data-bai-block="19"><strong>LLM models not found</strong> (warning): The model list could not be retrieved from the deployment&#39;s endpoint. Adjust the base path or token in the panel and click <strong>Refresh Model Information</strong> to retry. This warning is part of the panel, so it is also on screen during the initial fetch — wait until <strong>Refresh Model Information</strong> stops loading before acting on it.</li>
-<li data-bai-block="20"><strong>Desired replica count is 0</strong> (warning): The selected deployment has its desired replica count set to 0 and cannot respond. Set the desired replica count to 1 or more in the Deployment settings to enable it.</li>
+<li data-bai-block="21"><strong>LLM models not found</strong> (warning): The model list could not be retrieved from the deployment&#39;s endpoint. Adjust the base path or token in the panel and click <strong>Refresh Model Information</strong> to retry. This warning is part of the panel, so it is also on screen during the initial fetch — wait until <strong>Refresh Model Information</strong> stops loading before acting on it.</li>
+<li data-bai-block="22"><strong>Desired replica count is 0</strong> (warning): The selected deployment has its desired replica count set to 0 and cannot respond. Set the desired replica count to 1 or more in the Deployment settings to enable it.</li>
 </ul>
-<p data-bai-block="21">The following alerts may also appear in the chat card:</p>
+<p data-bai-block="23">The following alerts may also appear in the chat card:</p>
 <ul>
-<li data-bai-block="22"><strong>Endpoint URL is not valid</strong> (error): The endpoint URL for the selected deployment could not be resolved. Verify that the deployment is properly configured and has a reachable URL.</li>
-<li data-bai-block="23"><strong>Streaming error</strong> (error): An error occurred while communicating with the model. The message describes the cause. Dismiss the alert and retry your message after resolving the issue.</li>
+<li data-bai-block="24"><strong>Endpoint URL is not valid</strong> (error): The endpoint URL for the selected deployment could not be resolved. Verify that the deployment is properly configured and has a reachable URL.</li>
+<li data-bai-block="25"><strong>Streaming error</strong> (error): An error occurred while communicating with the model. The message describes the cause. Dismiss the alert and retry your message after resolving the issue.</li>
 </ul>
-<p data-bai-block="24">Refer to the description below for the necessary inputs to configure custom model settings:</p>
+<p data-bai-block="26">Refer to the description below for the necessary inputs to configure custom model settings:</p>
 <ul>
-<li data-bai-block="25"><strong>Base Path</strong> (optional): The path suffix appended to the deployment&#39;s endpoint URL when sending requests.
+<li data-bai-block="27"><strong>Base Path</strong> (optional): The path suffix appended to the deployment&#39;s endpoint URL when sending requests.
 Make sure to include the version information.
 For instance, when utilizing the OpenAI API, enter <code>v1</code>.</li>
-<li data-bai-block="26"><strong>Token</strong> (optional): The authentication key used to access the model service. When a deployment is selected, this field is a dropdown labeled <strong>Select Token</strong> that lists that deployment&#39;s access tokens. When no deployment is selected, it is a plain text field you can paste a token into — tokens can be generated by services other than Backend.AI, and their format and generation process vary by service, so refer to that service&#39;s own guide.<ul>
-<li data-bai-block="27">Each option is labeled with the last six characters of the token and its expiry date. All tokens begin with the same header text and are truncated to the width of the field, so this tail is what tells otherwise identical-looking options apart. A token that never expires is labeled <strong>No Expiration</strong> instead of a date.</li>
-<li data-bai-block="28">Point at an option to see its full issue and expiry timestamps.</li>
-<li data-bai-block="29">Expired tokens are not listed. When the field is empty, the most recently created valid token is selected for you.</li>
-<li data-bai-block="30">The gear icon beside the field (<strong>Access Token Settings</strong>) opens the Access Tokens section of the deployment&#39;s detail page, where you can issue a new token. The list is read again when you return, so a token you just created is immediately selectable. For instructions, refer to the <a href="./deployment.html#generating-tokens">Generating Tokens</a> section.</li>
+<li data-bai-block="28"><strong>Token</strong> (optional): The authentication key used to access the model service. When a deployment is selected, this field is a dropdown labeled <strong>Select Token</strong> that lists that deployment&#39;s access tokens. When no deployment is selected, it is a plain text field you can paste a token into — tokens can be generated by services other than Backend.AI, and their format and generation process vary by service, so refer to that service&#39;s own guide.<ul>
+<li data-bai-block="29">Each option is labeled with the last six characters of the token and its expiry date. All tokens begin with the same header text and are truncated to the width of the field, so this tail is what tells otherwise identical-looking options apart. A token that never expires is labeled <strong>No Expiration</strong> instead of a date.</li>
+<li data-bai-block="30">Point at an option to see its full issue and expiry timestamps.</li>
+<li data-bai-block="31">Expired tokens are not listed. When the field is empty, the most recently created valid token is selected for you.</li>
+<li data-bai-block="32">The gear icon beside the field (<strong>Access Token Settings</strong>) opens the Access Tokens section of the deployment&#39;s detail page, where you can issue a new token. The list is read again when you return, so a token you just created is immediately selectable. For instructions, refer to the <a href="./deployment.html#generating-tokens">Generating Tokens</a> section.</li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="31" class="doc-figure"><img src="./images/chat_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="758" height="302" /><figcaption>Figure 13.5</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/chat_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="758" height="302" /><figcaption>Figure 13.5</figcaption></figure>
 </p>
 <p><a id="add-or-remove-comparison-chat-cards"></a></p>
-<h2 data-bai-block="32" id="chat-add-or-remove-comparison-chat-cards">Add or remove comparison chat cards<a class="hash-link" href="#chat-add-or-remove-comparison-chat-cards" aria-label="Direct link to Add or remove comparison chat cards">#</a></h2>
-<p data-bai-block="33">To add new comparison chat cards, click the comparison icon button located in the top right corner.</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/add_cards.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>Figure 13.6</figcaption></figure>
+<h2 data-bai-block="34" id="chat-add-or-remove-comparison-chat-cards">Add or remove comparison chat cards<a class="hash-link" href="#chat-add-or-remove-comparison-chat-cards" aria-label="Direct link to Add or remove comparison chat cards">#</a></h2>
+<p data-bai-block="35">To add new comparison chat cards, click the comparison icon button located in the top right corner.</p>
+<p><figure data-bai-block="36" class="doc-figure"><img src="./images/add_cards.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>Figure 13.6</figcaption></figure>
 </p>
-<p data-bai-block="35">To remove a chat session, click on the <code>more</code> button located in the upper right corner of the chat card.
+<p data-bai-block="37">To remove a chat session, click on the <code>more</code> button located in the upper right corner of the chat card.
 Then a dropdown menu will appear, and users can select <code>Delete Chat</code> to remove a chat session.
 Please be cautious as this will delete all entered content.</p>
-<p><figure data-bai-block="36" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="546" height="272" /><figcaption>Figure 13.7</figcaption></figure>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="342" height="314" /><figcaption>Figure 13.7</figcaption></figure>
 </p>
 <p><a id="clear-chat-history"></a></p>
-<h2 data-bai-block="37" id="chat-clear-chat-history">Clear chat history<a class="hash-link" href="#chat-clear-chat-history" aria-label="Direct link to Clear chat history">#</a></h2>
-<p data-bai-block="38">Clicking the <code>more</code> button will reveal the <code>Clear Chat</code> option.
+<h2 data-bai-block="39" id="chat-clear-chat-history">Clear chat history<a class="hash-link" href="#chat-clear-chat-history" aria-label="Direct link to Clear chat history">#</a></h2>
+<p data-bai-block="40">Clicking the <code>more</code> button will reveal the <code>Clear Chat</code> option.
 By selecting this, users will erase all chat history associated with the card,
 although the card session itself will remain active.</p>
-<p><figure data-bai-block="39" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="546" height="272" /><figcaption>Figure 13.8</figcaption></figure>
+<p><figure data-bai-block="41" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="342" height="314" /><figcaption>Figure 13.8</figcaption></figure>
 </p>
 <p><a id="synchronize-input"></a></p>
-<h2 data-bai-block="40" id="chat-synchronize-input">Synchronize input<a class="hash-link" href="#chat-synchronize-input" aria-label="Direct link to Synchronize input">#</a></h2>
-<p data-bai-block="41">The <code>Sync chat input</code> button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
+<h2 data-bai-block="42" id="chat-synchronize-input">Synchronize input<a class="hash-link" href="#chat-synchronize-input" aria-label="Direct link to Synchronize input">#</a></h2>
+<p data-bai-block="43">The <code>Sync chat input</code> button, located at the top right, enables the synchronization of input across chat cards where the option is enabled.
 Enabling &#39;Sync chat input&#39; means that pressing <code>Enter</code> or clicking the <code>Send</code> button on
 any card will submit the input from the card users are currently working on.
 This functionality is beneficial for comparing the outputs of various models using identical input data.</p>
-<p><figure data-bai-block="42" class="doc-figure"><img src="./images/synchronized_input.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1550" height="958" /><figcaption>Figure 13.9</figcaption></figure>
+<p><figure data-bai-block="44" class="doc-figure"><img src="./images/synchronized_input.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1550" height="958" /><figcaption>Figure 13.9</figcaption></figure>
 </p>
 <p><a id="parameter-adjustment"></a></p>
-<h2 data-bai-block="43" id="chat-parameter-adjustment">Parameter adjustment<a class="hash-link" href="#chat-parameter-adjustment" aria-label="Direct link to Parameter adjustment">#</a></h2>
-<p data-bai-block="44">Click the parameter button in the top-right corner to adjust the parameters for each model. Users can set various values such as Max Tokens, Temperature, Top P, and Top K.
+<h2 data-bai-block="45" id="chat-parameter-adjustment">Parameter adjustment<a class="hash-link" href="#chat-parameter-adjustment" aria-label="Direct link to Parameter adjustment">#</a></h2>
+<p data-bai-block="46">Click the parameter button in the top-right corner to adjust the parameters for each model. Users can set various values such as Max Tokens, Temperature, Top P, and Top K.
 Using the synchronize feature, users can apply different parameters to the same model and then compare the results.</p>
-<p><figure data-bai-block="45" class="doc-figure"><img src="./images/parameter_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="264" height="447" /><figcaption>Figure 13.10</figcaption></figure>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/parameter_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="256" height="478" /><figcaption>Figure 13.10</figcaption></figure>
 </p>
 <p><a id="chat-history"></a></p>
-<h2 data-bai-block="46" id="chat-chat-history">Chat history<a class="hash-link" href="#chat-chat-history" aria-label="Direct link to Chat history">#</a></h2>
-<p data-bai-block="47">To start new chat, click the <code>+</code> button located in the top right corner.</p>
-<p><figure data-bai-block="48" class="doc-figure"><img src="./images/new_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>Figure 13.11</figcaption></figure>
+<h2 data-bai-block="48" id="chat-chat-history">Chat history<a class="hash-link" href="#chat-chat-history" aria-label="Direct link to Chat history">#</a></h2>
+<p data-bai-block="49">To start new chat, click the <code>+</code> button located in the top right corner.</p>
+<p><figure data-bai-block="50" class="doc-figure"><img src="./images/new_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>Figure 13.11</figcaption></figure>
 </p>
-<p data-bai-block="49">All chat history is stored in local storage, and users can access previous chats by clicking the history button in the top-right corner.</p>
-<p><figure data-bai-block="50" class="doc-figure"><img src="./images/history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1800" /><figcaption>Figure 13.12</figcaption></figure>
+<p data-bai-block="51">All chat history is stored in local storage, and users can access previous chats by clicking the history button in the top-right corner.</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1800" /><figcaption>Figure 13.12</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/chat/chat.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 23, 2026</span>
+  <span class="last-updated">Last updated on Sep 30, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./deployment.html">
@@ -337,6 +342,7 @@ Using the synchronize feature, users can apply different parameters to the same 
   <ul class="doc-toc__list">
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-selecting-models" data-toc-target="chat-selecting-models">Selecting models</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-which-deployments-are-listed" data-toc-target="chat-which-deployments-are-listed">Which deployments are listed</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-connecting-a-custom-endpoint" data-toc-target="chat-connecting-a-custom-endpoint">Connecting a custom endpoint</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-model-connection-settings" data-toc-target="chat-model-connection-settings">Model connection settings</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-add-or-remove-comparison-chat-cards" data-toc-target="chat-add-or-remove-comparison-chat-cards">Add or remove comparison chat cards</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-clear-chat-history" data-toc-target="chat-clear-chat-history">Clear chat history</a></li>
