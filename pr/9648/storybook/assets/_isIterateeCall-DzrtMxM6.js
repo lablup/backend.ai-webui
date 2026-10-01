@@ -1,1 +1,0 @@
-import{X as i,k as t,Y as f,Z as n}from"./iframe-B_mnzb7w.js";function u(e,s,r){if(!i(r))return!1;var a=typeof s;return(a=="number"?t(r)&&f(s,r.length):a=="string"&&s in r)?n(r[s],e):!1}export{u as i};
