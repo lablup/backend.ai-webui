@@ -1,6 +1,5 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -23,52 +22,34 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  const supportsAllowedResourceGroupsV2 = baiClient.supports(
-    'allowed-resource-groups-v2',
-  );
 
-  const { projectId, domainName, resourceGroupName } = useFragment(
+  const { projectId, resourceGroupName } = useFragment(
     graphql`
       fragment ProjectResourceGroupAlertFragment on ProjectFairShare {
         projectId
-        domainName
         resourceGroupName
       }
     `,
     projectFairShareFrgmt,
   );
 
-  const { adminAllowedResourceGroupsForProjectV2, group } =
+  const { adminAllowedResourceGroupsForProjectV2 } =
     useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
       graphql`
-        query ProjectResourceGroupAlertQuery(
-          $projectId: UUID!
-          $domainName: String!
-          $supportsAllowedResourceGroupsV2: Boolean!
-        ) {
-          adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
-            @since(version: "26.4.2")
-            @include(if: $supportsAllowedResourceGroupsV2) {
+        query ProjectResourceGroupAlertQuery($projectId: UUID!) {
+          adminAllowedResourceGroupsForProjectV2(projectId: $projectId) {
             items
-          }
-          group(id: $projectId, domain_name: $domainName)
-            @deprecatedSince(version: "26.4.2")
-            @skip(if: $supportsAllowedResourceGroupsV2) {
-            scaling_groups
           }
         }
       `,
-      { projectId, domainName, supportsAllowedResourceGroupsV2 },
+      { projectId },
       {
         fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
       },
     );
 
   const allowedResourceGroups =
-    adminAllowedResourceGroupsForProjectV2?.items ??
-    group?.scaling_groups ??
-    [];
+    adminAllowedResourceGroupsForProjectV2?.items ?? [];
 
   if (
     !resourceGroupName ||

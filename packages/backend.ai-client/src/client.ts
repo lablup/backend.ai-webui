@@ -902,9 +902,6 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
-      // `adminAllowedResourceGroupsForDomainV2` / `...ForProjectV2` answer the
-      // resource groups a scope may schedule on (admin only). FR-4117.
-      this._features['allowed-resource-groups-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
