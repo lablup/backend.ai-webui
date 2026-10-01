@@ -1,7 +1,7 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type BAIProjectResourcePolicySelectQuery$variables = {
+    isSuperAdmin: boolean;
     limit: number;
-    supportsResourcePolicyV2: boolean;
 };
 export type BAIProjectResourcePolicySelectQuery$data = {
     readonly adminProjectResourcePoliciesV2?: {
