@@ -60,19 +60,8 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     updateInvitations();
   }, [fetchKey]);
 
-  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
-  const supportsVfolderV2 = baiClient.supports('vfolder-v2');
-
-  const isExcludedCount = (status: string) => {
-    return _.includes(
-      ['delete-ongoing', 'delete-complete', 'delete-error'],
-      status,
-    );
-  };
-
-  // The REST list stays for the invited count on every manager (`VFolderFilter`
-  // has no invited / received-share predicate) and for the other two counts
-  // below `vfolder-v2`.
+  // The REST list stays only for the invited count: `VFolderFilter` has no
+  // invited / received-share predicate.
   const { data: vfolders } = useSuspenseTanQuery({
     queryKey: ['vfolders', { deferredFetchKey, id: currentProject.id }],
     queryFn: () => {
@@ -82,28 +71,20 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
       return baiClient.vfolder.list(currentProject.id);
     },
   });
-  const legacyCreatedCount = vfolders?.filter(
-    (item: any) =>
-      item.is_owner &&
-      item.ownership_type === 'user' &&
-      !isExcludedCount(item.status),
-  ).length;
-  const legacyProjectCount = vfolders?.filter(
-    (item: any) =>
-      item.ownership_type === 'group' && !isExcludedCount(item.status),
-  ).length;
   const invitedCount = vfolders?.filter(
     (item: any) =>
       !item.is_owner &&
       item.ownership_type === 'user' &&
-      !isExcludedCount(item.status),
+      !_.includes(
+        ['delete-ongoing', 'delete-complete', 'delete-error'],
+        item.status,
+      ),
   ).length;
 
   // TODO(FR-2691 v2-migration): only the project half remains legacy —
   // `project_resource_policy(name)` has no non-admin V2 counterpart.
   const {
     myUserResourcePolicyV2,
-    user_resource_policy,
     project_resource_policy,
     myVfolders,
     projectVfolders,
@@ -113,30 +94,17 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
         $name: String!
         $projectId: UUID!
         $activeFilter: VFolderFilter
-        $supportsResourcePolicyV2: Boolean!
-        $supportsVfolderV2: Boolean!
       ) {
-        myUserResourcePolicyV2
-          @since(version: "26.4.2")
-          @include(if: $supportsResourcePolicyV2) {
+        myUserResourcePolicyV2 {
           maxVfolderCount
-        }
-        user_resource_policy
-          @deprecatedSince(version: "26.4.2")
-          @skip(if: $supportsResourcePolicyV2) {
-          max_vfolder_count
         }
         project_resource_policy(name: $name) {
           max_vfolder_count
         }
-        myVfolders(filter: $activeFilter)
-          @since(version: "26.4.2")
-          @include(if: $supportsVfolderV2) {
+        myVfolders(filter: $activeFilter) {
           count
         }
-        projectVfolders(projectId: $projectId, filter: $activeFilter)
-          @since(version: "26.4.2")
-          @include(if: $supportsVfolderV2) {
+        projectVfolders(projectId: $projectId, filter: $activeFilter) {
           count
         }
       }
@@ -144,15 +112,12 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     {
       name: currentProject.name,
       projectId: currentProject.id,
-      // Same exclusion as `isExcludedCount`: a trash-bin (DELETE_PENDING)
-      // folder still counts toward the quota.
+      // A trash-bin (DELETE_PENDING) folder still counts toward the quota.
       activeFilter: {
         status: {
           notIn: ['DELETE_ONGOING', 'DELETE_COMPLETE', 'DELETE_ERROR'],
         },
       },
-      supportsResourcePolicyV2,
-      supportsVfolderV2,
     },
     {
       fetchPolicy: 'store-and-network',
@@ -160,15 +125,9 @@ const StorageStatusPanelCard: React.FC<StorageStatusPanelProps> = ({
     },
   );
 
-  const maxVfolderCount = supportsResourcePolicyV2
-    ? myUserResourcePolicyV2?.maxVfolderCount
-    : user_resource_policy?.max_vfolder_count;
-  const createdCount = supportsVfolderV2
-    ? myVfolders?.count
-    : legacyCreatedCount;
-  const projectCount = supportsVfolderV2
-    ? projectVfolders?.count
-    : legacyProjectCount;
+  const maxVfolderCount = myUserResourcePolicyV2?.maxVfolderCount;
+  const createdCount = myVfolders?.count;
+  const projectCount = projectVfolders?.count;
 
   return (
     <BAIFlex

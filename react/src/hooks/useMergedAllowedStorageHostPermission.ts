@@ -26,12 +26,9 @@ export const useMergedAllowedStorageHostPermission = (
   userAccessKey: string,
 ) => {
   const baiClient = useSuspendedBackendaiClient();
-  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
-  const isCurrentUser = userAccessKey === baiClient._config.accessKey;
   // The current user's policy needs no name; another user's (admin-only)
-  // and the legacy field still resolve it through the keypair.
-  const useMyPolicyV2 = supportsResourcePolicyV2 && isCurrentUser;
-  const useAdminPolicyV2 = supportsResourcePolicyV2 && !isCurrentUser;
+  // is still resolved through the keypair.
+  const isCurrentUser = userAccessKey === baiClient._config.accessKey;
 
   const { keypair } =
     useLazyLoadQuery<useMergedAllowedStorageHostPermission_KeypairQuery>(
@@ -50,13 +47,13 @@ export const useMergedAllowedStorageHostPermission = (
       {
         domainName: domain,
         accessKey: userAccessKey,
-        skipKeypair: useMyPolicyV2,
+        skipKeypair: isCurrentUser,
       },
       {
         fetchPolicy: 'store-or-network',
       },
     );
-  if (!useMyPolicyV2 && !keypair?.resource_policy) {
+  if (!isCurrentUser && !keypair?.resource_policy) {
     throw new Error(
       `Keypair ${userAccessKey} has no resource policy to read storage host permissions from`,
     );
@@ -71,9 +68,7 @@ export const useMergedAllowedStorageHostPermission = (
           $projectId: UUID!
           $resourcePolicyName: String!
           $skipProjectScope: Boolean!
-          $useMyPolicyV2: Boolean!
-          $useAdminPolicyV2: Boolean!
-          $supportsResourcePolicyV2: Boolean!
+          $isCurrentUser: Boolean!
         ) {
           domain(name: $domainName) {
             allowed_vfolder_hosts
@@ -82,26 +77,18 @@ export const useMergedAllowedStorageHostPermission = (
             @skip(if: $skipProjectScope) {
             allowed_vfolder_hosts
           }
-          myKeypairResourcePolicyV2
-            @since(version: "26.4.2")
-            @include(if: $useMyPolicyV2) {
+          myKeypairResourcePolicyV2 @include(if: $isCurrentUser) {
             allowedVfolderHosts {
               host
               permissions
             }
           }
           adminKeypairResourcePolicyV2(name: $resourcePolicyName)
-            @since(version: "26.4.2")
-            @include(if: $useAdminPolicyV2) {
+            @skip(if: $isCurrentUser) {
             allowedVfolderHosts {
               host
               permissions
             }
-          }
-          keypair_resource_policy(name: $resourcePolicyName)
-            @deprecatedSince(version: "26.4.2")
-            @skip(if: $supportsResourcePolicyV2) {
-            allowed_vfolder_hosts
           }
         }
       `,
@@ -110,9 +97,7 @@ export const useMergedAllowedStorageHostPermission = (
         projectId: projectId ?? NIL_UUID,
         resourcePolicyName,
         skipProjectScope: projectId === null,
-        useMyPolicyV2,
-        useAdminPolicyV2,
-        supportsResourcePolicyV2,
+        isCurrentUser,
       },
       {
         fetchPolicy: 'store-or-network',
@@ -125,19 +110,14 @@ export const useMergedAllowedStorageHostPermission = (
   const allowedPermissionForGroupsByVolume = JSON.parse(
     mergedAllowedVFolderHosts?.group?.allowed_vfolder_hosts || '{}',
   );
-  const allowedPermissionForResourcePolicyByVolume: Record<string, string[]> =
-    supportsResourcePolicyV2
-      ? v2AllowedVfolderHostsToRecord(
-          useMyPolicyV2
-            ? mergedAllowedVFolderHosts?.myKeypairResourcePolicyV2
-                ?.allowedVfolderHosts
-            : mergedAllowedVFolderHosts?.adminKeypairResourcePolicyV2
-                ?.allowedVfolderHosts,
-        )
-      : JSON.parse(
-          mergedAllowedVFolderHosts?.keypair_resource_policy
-            ?.allowed_vfolder_hosts || '{}',
-        );
+  const allowedPermissionForResourcePolicyByVolume =
+    v2AllowedVfolderHostsToRecord(
+      isCurrentUser
+        ? mergedAllowedVFolderHosts?.myKeypairResourcePolicyV2
+            ?.allowedVfolderHosts
+        : mergedAllowedVFolderHosts?.adminKeypairResourcePolicyV2
+            ?.allowedVfolderHosts,
+    );
 
   const _mergeDedupe = (arr: any[]) => [
     ...new Set([].concat(...arr.filter(Boolean))),

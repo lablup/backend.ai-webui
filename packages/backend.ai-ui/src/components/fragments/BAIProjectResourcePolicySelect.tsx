@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 // Every policy in one page: the V2 connection has no server-side cap and the
-// legacy list it replaces was unpaginated.
+// list it replaced was unpaginated.
 const POLICY_PAGE_LIMIT = 1000;
 
 export interface BAIProjectResourcePolicySelectProps extends Omit<
@@ -18,18 +18,20 @@ const BAIProjectResourcePolicySelect = ({
 }: BAIProjectResourcePolicySelectProps) => {
   'use memo';
   const baiClient = useConnectedBAIClient();
-  const supportsResourcePolicyV2 = baiClient.supports('resource-policy-v2');
+  // `adminProjectResourcePoliciesV2` is superadmin-only; a domain admin still
+  // reads the legacy list.
+  const isSuperAdmin = !!baiClient.is_superadmin;
   const { adminProjectResourcePoliciesV2, project_resource_policies } =
     useLazyLoadQuery<BAIProjectResourcePolicySelectQuery>(
       graphql`
         query BAIProjectResourcePolicySelectQuery(
           $limit: Int!
-          $supportsResourcePolicyV2: Boolean!
+          $isSuperAdmin: Boolean!
         ) {
           adminProjectResourcePoliciesV2(
             limit: $limit
             orderBy: [{ field: NAME, direction: ASC }]
-          ) @since(version: "26.4.2") @include(if: $supportsResourcePolicyV2) {
+          ) @include(if: $isSuperAdmin) {
             edges {
               node {
                 id
@@ -37,18 +39,16 @@ const BAIProjectResourcePolicySelect = ({
               }
             }
           }
-          project_resource_policies
-            @deprecatedSince(version: "26.4.2")
-            @skip(if: $supportsResourcePolicyV2) {
+          project_resource_policies @skip(if: $isSuperAdmin) {
             id
             name
           }
         }
       `,
-      { limit: POLICY_PAGE_LIMIT, supportsResourcePolicyV2 },
+      { limit: POLICY_PAGE_LIMIT, isSuperAdmin },
       {},
     );
-  const policyNames = supportsResourcePolicyV2
+  const policyNames = isSuperAdmin
     ? _.map(adminProjectResourcePoliciesV2?.edges, (edge) => edge.node.name)
     : _.map(project_resource_policies, (policy) => policy?.name);
 
