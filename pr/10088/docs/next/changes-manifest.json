@@ -1,0 +1,2069 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-01T10:26:16.430Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 19,
+        "changes": 194,
+        "added": 2,
+        "modified": 192,
+        "removed": 0,
+        "images": 192,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 56,
+            "removed": 0,
+            "images": 56,
+            "total": 56
+          },
+          "fingerprints": [
+            "8619c5e3bba0",
+            "7716fd6d8407",
+            "bff4be973928",
+            "5ee511343ac4",
+            "622137af05b8",
+            "ea8522344cdd",
+            "f24d9eecfc4f",
+            "01c81af49a56",
+            "9aea55476b94",
+            "e0c841a8f820",
+            "9729274edb95",
+            "5f1729753ab5",
+            "3c5de4cacb55",
+            "d68811619f1a",
+            "e4039d99ce71",
+            "690e83f66896",
+            "ad6b1da72c4e",
+            "1498dfaa122e",
+            "a7cbd27e1b51",
+            "aa6694bac282",
+            "4871e0cccabd",
+            "439e55cdb575",
+            "97c1520b9c29",
+            "8040ea5682dc",
+            "6ade238da97e",
+            "3dd5d1138b67",
+            "dbab13af5a46",
+            "b9bb13bd01e2",
+            "949d3be642d1",
+            "b9bb13bd01e2-2",
+            "bc1640c96197",
+            "2f1d9b255ca1",
+            "0068b426210d",
+            "52034d4ee250",
+            "eab3284f9136",
+            "fe15979cd51d",
+            "7dbfc063ccef",
+            "909e56625ce0",
+            "f9cb8fe58f1d",
+            "6dfbc3f3eddc",
+            "14b1ba8c51e6",
+            "0d2bd018c317",
+            "2c26b885848b",
+            "4ec2d3da2e1a",
+            "00e2e68a9423",
+            "04eee0a595b1",
+            "fb6bf5da3391",
+            "20350f31ce39",
+            "e645707940b7",
+            "1bef983641e8",
+            "cc684bcd3be8",
+            "aadfb91dee9c",
+            "8243c2c47c61",
+            "ccc48ebb7ec3",
+            "1a5bf207a712",
+            "7a09491eefd2"
+          ]
+        },
+        {
+          "slug": "appendix",
+          "title": "Appendix",
+          "status": "modified",
+          "url": "next/en/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "1be0b80b3181",
+            "6eded77eb25c",
+            "a374a1bb64bf",
+            "7b410fca1a88",
+            "10df4daedbda",
+            "b1e20a4ca9ef",
+            "734de3a814b3",
+            "c455765c443c",
+            "fccd5c092fa3",
+            "daabda9a40b6"
+          ]
+        },
+        {
+          "slug": "chat",
+          "title": "Chat",
+          "status": "modified",
+          "url": "next/en/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/chat/chat.md",
+          "counts": {
+            "added": 2,
+            "modified": 9,
+            "removed": 0,
+            "images": 9,
+            "total": 11
+          },
+          "fingerprints": [
+            "18c1b70606f5",
+            "56ec28b6948f",
+            "4971472fa25e",
+            "a4fe68397196",
+            "d89a34f1cd27",
+            "b6aecec2d432",
+            "b6aecec2d432-2",
+            "68d03eabcb7b",
+            "aac1f7a3ef21",
+            "951134a8b8d5",
+            "25609c17a921"
+          ]
+        },
+        {
+          "slug": "cluster_session",
+          "title": "Cluster Session",
+          "status": "modified",
+          "url": "next/en/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "2b82130e5186",
+            "521e4c4a04a0",
+            "092d98d509fc",
+            "0eb5f2027157",
+            "8f26c3caa650"
+          ]
+        },
+        {
+          "slug": "dashboard",
+          "title": "Dashboard",
+          "status": "modified",
+          "url": "next/en/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/dashboard/dashboard.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "f216b0d4e9e9"
+          ]
+        },
+        {
+          "slug": "deployment",
+          "title": "Deployments",
+          "status": "modified",
+          "url": "next/en/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/deployment/deployment.md",
+          "counts": {
+            "added": 0,
+            "modified": 13,
+            "removed": 0,
+            "images": 13,
+            "total": 13
+          },
+          "fingerprints": [
+            "cc57db1d8aaf",
+            "ef279b75c195",
+            "c6b0b8f71312",
+            "09c2837a0d59",
+            "952e7d998ca5",
+            "f9dc6cd4e1af",
+            "48af9ddc3732",
+            "af6c508236c5",
+            "15a325eb6127",
+            "e0dea8271e20",
+            "dfd0d17e9097",
+            "3625c0f2e32c",
+            "0d498b715f98"
+          ]
+        },
+        {
+          "slug": "header",
+          "title": "Top Bar",
+          "status": "modified",
+          "url": "next/en/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "75eb68531475",
+            "56a67d873c67",
+            "6334a05a994b",
+            "60da41bf4993",
+            "89f70fee02e7",
+            "4ff444324274",
+            "9ccf366250c1"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "Login",
+          "status": "modified",
+          "url": "next/en/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "4d1693b9e15a",
+            "c801c744f940",
+            "4d1693b9e15a-2",
+            "60da41bf4993",
+            "35a7561c8d29",
+            "67a88e4c9a20",
+            "518818eb5736"
+          ]
+        },
+        {
+          "slug": "mount_vfolder",
+          "title": "Mount Storage Folders",
+          "status": "modified",
+          "url": "next/en/mount_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/mount_vfolder/mount_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "79fbeb0076cf",
+            "6c6bad09ef6c"
+          ]
+        },
+        {
+          "slug": "my_environments",
+          "title": "My Environments",
+          "status": "modified",
+          "url": "next/en/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "76ff1b064ade",
+            "d8d6f1bbf03e"
+          ]
+        },
+        {
+          "slug": "project_admin",
+          "title": "Project Admin Features",
+          "status": "modified",
+          "url": "next/en/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 0,
+            "images": 6,
+            "total": 6
+          },
+          "fingerprints": [
+            "88b655748888",
+            "966cdda3847d",
+            "f59beffcfaf7",
+            "e47ea464e4e1",
+            "dbf579e56391",
+            "77a4ee2031e1"
+          ]
+        },
+        {
+          "slug": "rbac_management",
+          "title": "RBAC Management",
+          "status": "modified",
+          "url": "next/en/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "129a04b80e06",
+            "fed69ec4dcdd",
+            "635047767e10",
+            "b507b891ecbb",
+            "ca2482eadc6e",
+            "321bf857624e",
+            "e29228b3774d",
+            "e7d0fd1aeb82"
+          ]
+        },
+        {
+          "slug": "session_page",
+          "title": "Session Page",
+          "status": "modified",
+          "url": "next/en/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "b4fa3bd34ca7",
+            "8117a031981a"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "Compute Sessions",
+          "status": "modified",
+          "url": "next/en/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 28,
+            "removed": 0,
+            "images": 28,
+            "total": 28
+          },
+          "fingerprints": [
+            "1e95a17d5e36",
+            "8e0a4ce8ca2e",
+            "47d910a87511",
+            "2b08ed3da4cf",
+            "326d1d05b05e",
+            "84005dc21f6c",
+            "b528d6a8ed36",
+            "1d0ac31560ee",
+            "c13aaee7666a",
+            "6503a719ae02",
+            "b1bd590440da",
+            "7dff1c1b8603",
+            "8b81acc5bd98",
+            "9c775be7da86",
+            "84310dfe85b8",
+            "22720049b07f",
+            "daabda9a40b6",
+            "5f1ed252057a",
+            "63640020d96a",
+            "daabda9a40b6-2",
+            "76a2a889c117",
+            "b1d512e92cf5",
+            "dcdeeffc841a",
+            "d896c2069344",
+            "860f8515ff33",
+            "d902010667e8",
+            "afade739d674",
+            "8c52d2fae434"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "SFTP to Container",
+          "status": "modified",
+          "url": "next/en/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "583cb724defe",
+            "8187ded21b8e",
+            "62cb5b8e20cd",
+            "1ed0e6810769",
+            "3279c6bc478e",
+            "2c9a063b9844",
+            "498b8d5d8e29",
+            "c37870b21b51"
+          ]
+        },
+        {
+          "slug": "share_vfolder",
+          "title": "Share Storage Folders",
+          "status": "modified",
+          "url": "next/en/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "ac6baa852d7a",
+            "a72929c6f33e",
+            "d78ad7fc49e8",
+            "36b9679a3750",
+            "6f2d4e415127",
+            "366d325cad27",
+            "34ff33f9b847"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "Start",
+          "status": "modified",
+          "url": "next/en/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/start/start.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "0287cda8cdaf",
+            "13f6bc513dc9",
+            "6cb4966d5b69",
+            "72555b1d099a"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "User Settings",
+          "status": "modified",
+          "url": "next/en/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "676db27999f5",
+            "4d844d2ecb1f",
+            "aa8a3a4e1ee6",
+            "4af6bf292c67",
+            "fd5bcb15fd20",
+            "8088b7a2d583",
+            "d0adc7a4ea80"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "Storage Folders",
+          "status": "modified",
+          "url": "next/en/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "32b31868054e",
+            "cd5b99af0cf6",
+            "5cfa879db2b5",
+            "ee7c1dda5777",
+            "7d9824e56978",
+            "602da362ade7",
+            "36d0b5aed344",
+            "c346f941b662",
+            "1f37777250f1",
+            "583cb724defe"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 19,
+        "changes": 196,
+        "added": 2,
+        "modified": 194,
+        "removed": 0,
+        "images": 194,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 56,
+            "removed": 0,
+            "images": 56,
+            "total": 56
+          },
+          "fingerprints": [
+            "0451d781d712",
+            "5e064754a810",
+            "154656223c45",
+            "3dad5d2e80b8",
+            "77920c1db7c4",
+            "6599b5c2feeb",
+            "3458dd6d5d0a",
+            "498a06333318",
+            "518b7cdedbca",
+            "16875dc4ddc6",
+            "7d573cfd29dc",
+            "5a85a67a6f1c",
+            "66dacad57bbe",
+            "c841acef46ab",
+            "c70f45c8eccc",
+            "5d339f78b4d9",
+            "b87f7ff099e2",
+            "3d53476e359c",
+            "ebe67e22407e",
+            "8f6e8754c194",
+            "bd634e76efaf",
+            "0359951d212a",
+            "0d4607db9fbb",
+            "528ade49491f",
+            "5842dd0e5811",
+            "51ad913d8819",
+            "4f4c60ce6d2c",
+            "963807f258dd",
+            "f6a0aa719ba6",
+            "963807f258dd-2",
+            "53a359949bf8",
+            "87a0088e74ff",
+            "1436def4cc50",
+            "4c50d5cb4696",
+            "05be31869e29",
+            "3d476507181d",
+            "15c8b0b50689",
+            "846cf785c1a9",
+            "6f36c0d3980a",
+            "a332dce9aee0",
+            "8529007ae64d",
+            "a9a4d95baf83",
+            "0b472e0f93eb",
+            "1d229111e49d",
+            "55ca1a0ed5d4",
+            "ac467e118e94",
+            "9237251cb796",
+            "8c96f3a137e8",
+            "b98aa10edfa6",
+            "df586e764b2d",
+            "9b95719f58dc",
+            "907e9793c479",
+            "427564beb3d1",
+            "11c81bde4413",
+            "9882e245c5f2",
+            "a9e9c703927a"
+          ]
+        },
+        {
+          "slug": "appendix",
+          "title": "付録",
+          "status": "modified",
+          "url": "next/ja/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "1be0b80b3181",
+            "b39fa4855794",
+            "a374a1bb64bf",
+            "77149124b9d7",
+            "fcacb48f72a6",
+            "7fc17fc79b50",
+            "b82c35293eb2",
+            "06bf1594218b",
+            "dd4d9a2ac591",
+            "66818f4df245"
+          ]
+        },
+        {
+          "slug": "chat",
+          "title": "チャット",
+          "status": "modified",
+          "url": "next/ja/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/chat/chat.md",
+          "counts": {
+            "added": 2,
+            "modified": 9,
+            "removed": 0,
+            "images": 9,
+            "total": 11
+          },
+          "fingerprints": [
+            "c9e84405df7d",
+            "f35d912504f7",
+            "de8d9e372ea9",
+            "8291c1fe7adf",
+            "44d83560936e",
+            "fd33c6538375",
+            "fd33c6538375-2",
+            "68d03eabcb7b",
+            "8b501ce835ae",
+            "0102d1481b0f",
+            "41bbfa5c2b36"
+          ]
+        },
+        {
+          "slug": "cluster_session",
+          "title": "クラスターセッション",
+          "status": "modified",
+          "url": "next/ja/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "cd03d1e9595e",
+            "a2f9e40101c5",
+            "092d98d509fc",
+            "0eb5f2027157",
+            "4c344700f813"
+          ]
+        },
+        {
+          "slug": "dashboard",
+          "title": "ダッシュボード",
+          "status": "modified",
+          "url": "next/ja/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/dashboard/dashboard.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "e4a93f63a9e8"
+          ]
+        },
+        {
+          "slug": "deployment",
+          "title": "デプロイ",
+          "status": "modified",
+          "url": "next/ja/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/deployment/deployment.md",
+          "counts": {
+            "added": 0,
+            "modified": 13,
+            "removed": 0,
+            "images": 13,
+            "total": 13
+          },
+          "fingerprints": [
+            "5a52117dc410",
+            "fbea32b39351",
+            "50b9b84f743f",
+            "7ef60a397616",
+            "7234a2c03c9e",
+            "e2fc0a800020",
+            "22d85045b081",
+            "4e58d71a3f28",
+            "23de986ed631",
+            "14e1b3bdf9c5",
+            "9eca0189ebb5",
+            "fd42d71e7e48",
+            "9f91dd2940e7"
+          ]
+        },
+        {
+          "slug": "header",
+          "title": "トップバー",
+          "status": "modified",
+          "url": "next/ja/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "14c6337b9ab5",
+            "3f201453b986",
+            "19744280ef7f",
+            "66e1edd083e5",
+            "d6c0a1d55329",
+            "a920d163cfdf",
+            "4272d89edf87"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "ログイン",
+          "status": "modified",
+          "url": "next/ja/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "51e5e85aa09d",
+            "a169ab9904fe",
+            "51e5e85aa09d-2",
+            "66e1edd083e5",
+            "76a57cdaeffb",
+            "83fff757c25f",
+            "e6d5874a30b4"
+          ]
+        },
+        {
+          "slug": "mount_vfolder",
+          "title": "ストレージフォルダのマウント",
+          "status": "modified",
+          "url": "next/ja/mount_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/mount_vfolder/mount_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "9c1ccdf96c5a",
+            "6c6bad09ef6c"
+          ]
+        },
+        {
+          "slug": "my_environments",
+          "title": "マイ環境",
+          "status": "modified",
+          "url": "next/ja/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "760c276cef7b",
+            "99fae327bd09"
+          ]
+        },
+        {
+          "slug": "project_admin",
+          "title": "プロジェクト管理者機能",
+          "status": "modified",
+          "url": "next/ja/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 0,
+            "images": 6,
+            "total": 6
+          },
+          "fingerprints": [
+            "c173fea91456",
+            "a4a47df82255",
+            "e3dd270d351a",
+            "d93e99c7ae81",
+            "819f9cad030b",
+            "b804d8eeea85"
+          ]
+        },
+        {
+          "slug": "rbac_management",
+          "title": "RBAC管理",
+          "status": "modified",
+          "url": "next/ja/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "6d3ccfaf5196",
+            "dce6958fa349",
+            "ab5687abe144",
+            "91a711f80c1a",
+            "048cf5f99fdb",
+            "e580f52257c1",
+            "5b208362dfee",
+            "49764058f86d"
+          ]
+        },
+        {
+          "slug": "session_page",
+          "title": "セッションページ",
+          "status": "modified",
+          "url": "next/ja/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "d431e468a1f2",
+            "5b94b6884657"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "コンピュートセッション",
+          "status": "modified",
+          "url": "next/ja/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 28,
+            "removed": 0,
+            "images": 28,
+            "total": 28
+          },
+          "fingerprints": [
+            "f1b81ed90449",
+            "2e22ad5e7cac",
+            "3bfb11ccb740",
+            "03084eb16522",
+            "8e87361cb438",
+            "a71a21e9e43a",
+            "76bd8bc2be32",
+            "91c4540f3ed4",
+            "1b1034fb2990",
+            "867d9936d017",
+            "29496e4bcd88",
+            "60107505187b",
+            "24caa29ff696",
+            "c09017ac277e",
+            "ecc63bce38b1",
+            "3d9b2ad21cf6",
+            "66818f4df245",
+            "28e601782011",
+            "36fecac449b2",
+            "66818f4df245-2",
+            "76a2a889c117",
+            "8942e844ee78",
+            "f1d4fc4b9555",
+            "b3a9177c018e",
+            "35a63fde141a",
+            "d4a4850956ae",
+            "afade739d674",
+            "8c52d2fae434"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "コンピュートセッションへのSFTP接続",
+          "status": "modified",
+          "url": "next/ja/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "58dced79ac30",
+            "8187ded21b8e",
+            "62cb5b8e20cd",
+            "1ed0e6810769",
+            "3279c6bc478e",
+            "2c9a063b9844",
+            "498b8d5d8e29",
+            "c37870b21b51"
+          ]
+        },
+        {
+          "slug": "share_vfolder",
+          "title": "ストレージフォルダの共有",
+          "status": "modified",
+          "url": "next/ja/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "634aedb8adeb",
+            "43ad223e90c6",
+            "9080c3256a30",
+            "36b9679a3750",
+            "40d04f36438d",
+            "7352e761bc7a",
+            "a6be8128b3bd"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "スタート",
+          "status": "modified",
+          "url": "next/ja/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/start/start.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "a3aadd73abfd",
+            "592c7b857893",
+            "2821d91c7ff5",
+            "e0e29ad6241a"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ユーザー設定",
+          "status": "modified",
+          "url": "next/ja/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 9,
+            "removed": 0,
+            "images": 9,
+            "total": 9
+          },
+          "fingerprints": [
+            "de508215b2d0",
+            "156f6051433f",
+            "ab50fde455ba",
+            "459c2acc8f33",
+            "934054665b5b",
+            "00d40d72f9fb",
+            "2e345c5b3514",
+            "e51c09e46486",
+            "dae854fa0575"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "ストレージフォルダ",
+          "status": "modified",
+          "url": "next/ja/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "46796b79bfb5",
+            "98689f92004c",
+            "37137865ec9b",
+            "89914e0f8f10",
+            "4bc773d47758",
+            "602da362ade7",
+            "36d0b5aed344",
+            "c346f941b662",
+            "1f37777250f1",
+            "58dced79ac30"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 19,
+        "changes": 197,
+        "added": 2,
+        "modified": 195,
+        "removed": 0,
+        "images": 194,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 56,
+            "removed": 0,
+            "images": 56,
+            "total": 56
+          },
+          "fingerprints": [
+            "9eab40d69a4b",
+            "d67195994a86",
+            "ee430e6c4ab0",
+            "1b5161c96fbb",
+            "52c350771271",
+            "c383815e2a24",
+            "a1bf9276325f",
+            "c36e183b3a4e",
+            "03ff058494f8",
+            "ec4cbeb99f24",
+            "f17f3aed6094",
+            "7fd3dd4e4f3b",
+            "867344cbf856",
+            "3aa3833317d7",
+            "4ed92a14fa71",
+            "7c6894813c19",
+            "e52ee315edf3",
+            "8b0d497bb286",
+            "029f86c85dfd",
+            "239741986b29",
+            "d93fbaa908a1",
+            "37d370f4afd2",
+            "de77e6b5ed72",
+            "b36c8535d235",
+            "a8544e5aafa2",
+            "65c3f870ed0e",
+            "261455f14ebe",
+            "84a74ed08935",
+            "8e771f27f519",
+            "84a74ed08935-2",
+            "f84c5c008930",
+            "0d42aa4ff952",
+            "38bc3c108dc5",
+            "cd2e30a26ad7",
+            "4630fa531cd9",
+            "9a5bc77f8e1a",
+            "f77657a4631b",
+            "ec0b59d29e44",
+            "cb6001f3e60b",
+            "9d7356334346",
+            "56a4c94bd210",
+            "9a4a720ed8c7",
+            "b2fd40771af4",
+            "175f9744ffe6",
+            "0ef1cfade4a0",
+            "4af59507871d",
+            "a646f0810464",
+            "542beb616295",
+            "7c0874c0e53b",
+            "dce38ad0ae3b",
+            "980f6e0b9eb6",
+            "13bfd06a1002",
+            "2c6fbc4c02b2",
+            "955d22ffef5c",
+            "48c982c979e7",
+            "2cd31aecfdfb"
+          ]
+        },
+        {
+          "slug": "appendix",
+          "title": "부록",
+          "status": "modified",
+          "url": "next/ko/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "1be0b80b3181",
+            "96441184112f",
+            "a374a1bb64bf",
+            "9786a29b60fa",
+            "218d2b2151a8",
+            "547873ccf8b7",
+            "ea27069975ba",
+            "78ff1fd11e8b",
+            "bc8726634cd5",
+            "9ef9c258d81a"
+          ]
+        },
+        {
+          "slug": "chat",
+          "title": "채팅",
+          "status": "modified",
+          "url": "next/ko/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/chat/chat.md",
+          "counts": {
+            "added": 2,
+            "modified": 10,
+            "removed": 0,
+            "images": 9,
+            "total": 12
+          },
+          "fingerprints": [
+            "483fccf0e7d7",
+            "6803e2b05b31",
+            "bc2156679bef",
+            "f5675d1d2713",
+            "42e28ac8d6ef",
+            "ed66242a99d4",
+            "9074f026fc72",
+            "9074f026fc72-2",
+            "68d03eabcb7b",
+            "ef2c09c9d01e",
+            "fa4e10abe608",
+            "de1e7395f634"
+          ]
+        },
+        {
+          "slug": "cluster_session",
+          "title": "클러스터 세션",
+          "status": "modified",
+          "url": "next/ko/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "b3365067f545",
+            "afe1d737c387",
+            "092d98d509fc",
+            "0eb5f2027157",
+            "ff96e4804f50"
+          ]
+        },
+        {
+          "slug": "dashboard",
+          "title": "대시보드",
+          "status": "modified",
+          "url": "next/ko/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/dashboard/dashboard.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "2a18bab47eeb"
+          ]
+        },
+        {
+          "slug": "deployment",
+          "title": "배포",
+          "status": "modified",
+          "url": "next/ko/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/deployment/deployment.md",
+          "counts": {
+            "added": 0,
+            "modified": 13,
+            "removed": 0,
+            "images": 13,
+            "total": 13
+          },
+          "fingerprints": [
+            "e5ea38629256",
+            "4db40e896788",
+            "64d715a4f322",
+            "802c3ba08ae7",
+            "9d6ee530ddbb",
+            "05b105f006d2",
+            "e5d11736cd8d",
+            "459cdf0b1d0c",
+            "7354aae7059b",
+            "dce2b2f99fc9",
+            "00c464d82c09",
+            "4f7249f0f232",
+            "ec7dae2c62af"
+          ]
+        },
+        {
+          "slug": "header",
+          "title": "상단 바",
+          "status": "modified",
+          "url": "next/ko/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "57616e7c4972",
+            "200ad0a1b572",
+            "091737a1372c",
+            "4a4cca3f5188",
+            "ac1946dd832b",
+            "650c869332e5",
+            "ed678da6e133"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "로그인",
+          "status": "modified",
+          "url": "next/ko/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "b8c19d18694a",
+            "506eee2abf68",
+            "b8c19d18694a-2",
+            "4a4cca3f5188",
+            "c6a4efedd363",
+            "229022aead64",
+            "b46c15df1681"
+          ]
+        },
+        {
+          "slug": "mount_vfolder",
+          "title": "스토리지 폴더 마운트",
+          "status": "modified",
+          "url": "next/ko/mount_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/mount_vfolder/mount_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "fd32c30ad591",
+            "6c6bad09ef6c"
+          ]
+        },
+        {
+          "slug": "my_environments",
+          "title": "내 환경",
+          "status": "modified",
+          "url": "next/ko/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "6b4e315d94bc",
+            "5fb1e90ef43d"
+          ]
+        },
+        {
+          "slug": "project_admin",
+          "title": "프로젝트 관리자 기능",
+          "status": "modified",
+          "url": "next/ko/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 0,
+            "images": 6,
+            "total": 6
+          },
+          "fingerprints": [
+            "9985c7208dd3",
+            "e14fd1a38edd",
+            "f57e1ae2bbd5",
+            "9f0b49e45c45",
+            "7222bf51df3e",
+            "2088ad196831"
+          ]
+        },
+        {
+          "slug": "rbac_management",
+          "title": "RBAC 관리",
+          "status": "modified",
+          "url": "next/ko/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "76bb26f0c079",
+            "8b2cb2b8fb5f",
+            "f3e77070a25d",
+            "22c6816ccefe",
+            "9c6dd883c799",
+            "cfe952933f4a",
+            "38f534f537af",
+            "173489a76984"
+          ]
+        },
+        {
+          "slug": "session_page",
+          "title": "세션 페이지",
+          "status": "modified",
+          "url": "next/ko/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "42a8654ba63d",
+            "e1c4702dcdba"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "연산 세션",
+          "status": "modified",
+          "url": "next/ko/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 28,
+            "removed": 0,
+            "images": 28,
+            "total": 28
+          },
+          "fingerprints": [
+            "36bf370e2dcd",
+            "6139459d425e",
+            "6ddb388dd0fe",
+            "87f5b58e3372",
+            "41128fff7711",
+            "b64ac642eadc",
+            "f5b90f89af88",
+            "568aac7488d0",
+            "ae9d434f3193",
+            "cc3a99ccaf26",
+            "b93612ed8a5e",
+            "90958adf6c9b",
+            "69b05cc2a332",
+            "65024525e799",
+            "c7ba794dcdc2",
+            "d7a9f126f9be",
+            "9ef9c258d81a",
+            "216ec51b95e4",
+            "23261f075664",
+            "9ef9c258d81a-2",
+            "76a2a889c117",
+            "a9475f8cfbf2",
+            "aa18343015c5",
+            "e411c7260a98",
+            "f2e77a34f62a",
+            "d80800902f79",
+            "afade739d674",
+            "8c52d2fae434"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "연산 세션에 대한 SFTP 연결",
+          "status": "modified",
+          "url": "next/ko/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "95ccc51cecf9",
+            "8187ded21b8e",
+            "62cb5b8e20cd",
+            "1ed0e6810769",
+            "cb9d32247e0c",
+            "2c9a063b9844",
+            "498b8d5d8e29",
+            "c37870b21b51"
+          ]
+        },
+        {
+          "slug": "share_vfolder",
+          "title": "스토리지 폴더 공유",
+          "status": "modified",
+          "url": "next/ko/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "d5e79d004c84",
+            "c7fad2e38fa9",
+            "14e1a3ced249",
+            "36b9679a3750",
+            "3e4f24a1c6a1",
+            "87beeebefaac",
+            "c36f18d2dfbd"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "시작 페이지",
+          "status": "modified",
+          "url": "next/ko/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/start/start.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "fcc77d051b3f",
+            "c55900f7d168",
+            "cac4789d9eab",
+            "5e281fe29c8f"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "사용자 설정",
+          "status": "modified",
+          "url": "next/ko/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 9,
+            "removed": 0,
+            "images": 9,
+            "total": 9
+          },
+          "fingerprints": [
+            "eb8c1f4b9c1f",
+            "d204ca775336",
+            "530597161e01",
+            "b28e2c5f2390",
+            "1f5ac91f7e8b",
+            "e118b36f137a",
+            "f2b2c6238bad",
+            "6f5b9c8d96a7",
+            "30613e09ca20"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "스토리지 폴더",
+          "status": "modified",
+          "url": "next/ko/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "3e56589af1fc",
+            "72ddf6716b5e",
+            "501d3df9f52d",
+            "f4d4e60a5d06",
+            "100fe521b3e6",
+            "602da362ade7",
+            "36d0b5aed344",
+            "c346f941b662",
+            "1f37777250f1",
+            "95ccc51cecf9"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 19,
+        "changes": 196,
+        "added": 2,
+        "modified": 194,
+        "removed": 0,
+        "images": 194,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 56,
+            "removed": 0,
+            "images": 56,
+            "total": 56
+          },
+          "fingerprints": [
+            "32bc19e10c3a",
+            "189113747d4b",
+            "7817582510cd",
+            "56e51469f7dc",
+            "3d10882b879c",
+            "ea2f4f67de1c",
+            "ef1585fb6d80",
+            "11cd8fe54216",
+            "52b2e9411ac9",
+            "65ead2be39b6",
+            "3e71cfba37ab",
+            "d53222e8f8ad",
+            "a0a24c21a1b3",
+            "0020cd822f4d",
+            "354e894a0ef9",
+            "57a739c8bd6c",
+            "4fcd784bc10c",
+            "a209b723cd15",
+            "263e79454401",
+            "d87721a0f205",
+            "41dda468098a",
+            "9ed24da7b3e3",
+            "d1bdda1eae6e",
+            "ef10cd1c2b45",
+            "2b19343778b7",
+            "c4555158b5d8",
+            "d97e64f3e6d5",
+            "6849a540131e",
+            "57cbfc79226b",
+            "6849a540131e-2",
+            "65afe2058ad6",
+            "3c0a5b3eaab6",
+            "affd5b64f96b",
+            "fa6820cdc7a8",
+            "f9d1a052a18d",
+            "c919da5c83a8",
+            "8e433fb05a70",
+            "c3c157b162f2",
+            "1b82b06c95e1",
+            "069817ac0d53",
+            "5d0f09b494d1",
+            "5de48f49052b",
+            "9ad1806f28a8",
+            "080c1e51725f",
+            "1749444fb201",
+            "60445b2f8800",
+            "5fe9d54bb099",
+            "cdb54d2b5618",
+            "50e34e32b2a0",
+            "9e4513de179b",
+            "c34c2051a50a",
+            "969c72157f1c",
+            "5d816630f032",
+            "8f1e325c2007",
+            "92f86f652474",
+            "f957e20882db"
+          ]
+        },
+        {
+          "slug": "appendix",
+          "title": "ภาคผนวก",
+          "status": "modified",
+          "url": "next/th/appendix.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/appendix/appendix.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "1be0b80b3181",
+            "7a5048208e96",
+            "a374a1bb64bf",
+            "d9aff5dbca22",
+            "9c14256fbbea",
+            "5ac6f5947fdc",
+            "01e77df2ea8d",
+            "bb8ab27ad21d",
+            "a266667aa8c5",
+            "edd22d378ca6"
+          ]
+        },
+        {
+          "slug": "chat",
+          "title": "แชท",
+          "status": "modified",
+          "url": "next/th/chat.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/chat/chat.md",
+          "counts": {
+            "added": 2,
+            "modified": 9,
+            "removed": 0,
+            "images": 9,
+            "total": 11
+          },
+          "fingerprints": [
+            "19fd275d1395",
+            "9bc1eeb797bf",
+            "d22bba9b0a87",
+            "f323f55a8667",
+            "9bf9da597c7f",
+            "f1c63a810b49",
+            "f1c63a810b49-2",
+            "68d03eabcb7b",
+            "88903f2ff240",
+            "dec965dcc100",
+            "ce759321c2fb"
+          ]
+        },
+        {
+          "slug": "cluster_session",
+          "title": "เซสชันคลัสเตอร์",
+          "status": "modified",
+          "url": "next/th/cluster_session.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/cluster_session/cluster_session.md",
+          "counts": {
+            "added": 0,
+            "modified": 5,
+            "removed": 0,
+            "images": 5,
+            "total": 5
+          },
+          "fingerprints": [
+            "8a1ea8e06d76",
+            "1a4cf05cdb52",
+            "092d98d509fc",
+            "0eb5f2027157",
+            "466b758dd418"
+          ]
+        },
+        {
+          "slug": "dashboard",
+          "title": "แดชบอร์ด",
+          "status": "modified",
+          "url": "next/th/dashboard.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/dashboard/dashboard.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "2fb0748b3f3d"
+          ]
+        },
+        {
+          "slug": "deployment",
+          "title": "การปรับใช้",
+          "status": "modified",
+          "url": "next/th/deployment.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/deployment/deployment.md",
+          "counts": {
+            "added": 0,
+            "modified": 13,
+            "removed": 0,
+            "images": 13,
+            "total": 13
+          },
+          "fingerprints": [
+            "9a38e1aebaed",
+            "4d0197ef1352",
+            "73226a5b6379",
+            "1d9e1aa21f53",
+            "166bd5fe1930",
+            "634bd44331e9",
+            "c6790cfe88cd",
+            "84934b5d2212",
+            "59e10b3c670a",
+            "d35b7b8f3b7c",
+            "cbfbb08b4f83",
+            "247a87199122",
+            "60b86fea0362"
+          ]
+        },
+        {
+          "slug": "header",
+          "title": "แถบด้านบน",
+          "status": "modified",
+          "url": "next/th/header.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/header/header.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "d444b9a4ae05",
+            "3dfcc4b6c04d",
+            "330b4c043ce1",
+            "f3bdcdb15b8e",
+            "a384b19437a3",
+            "ce96cf461e9e",
+            "0e9f7b794329"
+          ]
+        },
+        {
+          "slug": "login",
+          "title": "การเข้าสู่ระบบ",
+          "status": "modified",
+          "url": "next/th/login.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/login/login.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "089b9dc2e05d",
+            "5a91c40ac157",
+            "089b9dc2e05d-2",
+            "f3bdcdb15b8e",
+            "8d970af8b283",
+            "ce8b09906940",
+            "908fc9d501b9"
+          ]
+        },
+        {
+          "slug": "mount_vfolder",
+          "title": "การเมาท์โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/mount_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/mount_vfolder/mount_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "038809e5daf5",
+            "6c6bad09ef6c"
+          ]
+        },
+        {
+          "slug": "my_environments",
+          "title": "สภาพแวดล้อมของฉัน",
+          "status": "modified",
+          "url": "next/th/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "18795716c9a9",
+            "c54a31f54c78"
+          ]
+        },
+        {
+          "slug": "project_admin",
+          "title": "ฟีเจอร์ผู้ดูแลโปรเจกต์",
+          "status": "modified",
+          "url": "next/th/project_admin.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/project_admin/project_admin.md",
+          "counts": {
+            "added": 0,
+            "modified": 6,
+            "removed": 0,
+            "images": 6,
+            "total": 6
+          },
+          "fingerprints": [
+            "f054ef764e3a",
+            "626bf3941074",
+            "45cc020413f7",
+            "28aa65e81c34",
+            "b29c8548dbf4",
+            "ee29c39419ca"
+          ]
+        },
+        {
+          "slug": "rbac_management",
+          "title": "การจัดการ RBAC",
+          "status": "modified",
+          "url": "next/th/rbac_management.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "7e47128b429f",
+            "cdebbf9bd121",
+            "467f59add200",
+            "e8e3e7a65d93",
+            "9fbb5c10e850",
+            "e52e63d54f3f",
+            "8b124fe728e3",
+            "f657eaada7d7"
+          ]
+        },
+        {
+          "slug": "session_page",
+          "title": "หน้าเซสชัน",
+          "status": "modified",
+          "url": "next/th/session_page.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/session_page/session_page.md",
+          "counts": {
+            "added": 0,
+            "modified": 2,
+            "removed": 0,
+            "images": 2,
+            "total": 2
+          },
+          "fingerprints": [
+            "6a284ecb1a75",
+            "95358c66177e"
+          ]
+        },
+        {
+          "slug": "sessions_all",
+          "title": "เซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sessions_all.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sessions_all/sessions_all.md",
+          "counts": {
+            "added": 0,
+            "modified": 28,
+            "removed": 0,
+            "images": 28,
+            "total": 28
+          },
+          "fingerprints": [
+            "7258d358d729",
+            "7a327aa8a15d",
+            "799e39594b8d",
+            "e8550a9cabab",
+            "af664204680b",
+            "c79a58115501",
+            "e4a146e4f459",
+            "b378b4e7a7b1",
+            "1e82fb4d7e14",
+            "dcfebb4f952a",
+            "b3c88d4adeb1",
+            "078280df024e",
+            "ea801903c295",
+            "89dd5583abfe",
+            "143b3fdfafe9",
+            "b8437df1adba",
+            "edd22d378ca6",
+            "b373c0390ecf",
+            "bfa018ebc926",
+            "edd22d378ca6-2",
+            "76a2a889c117",
+            "33fa93430b00",
+            "6eb8041b62b0",
+            "fdaf22ce5c26",
+            "4a94e6c1fb5e",
+            "697b2af605d0",
+            "afade739d674",
+            "8c52d2fae434"
+          ]
+        },
+        {
+          "slug": "sftp_to_container",
+          "title": "การเชื่อมต่อ SFTP ไปยังเซสชันการคำนวณ",
+          "status": "modified",
+          "url": "next/th/sftp_to_container.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/sftp_to_container/sftp_to_container.md",
+          "counts": {
+            "added": 0,
+            "modified": 8,
+            "removed": 0,
+            "images": 8,
+            "total": 8
+          },
+          "fingerprints": [
+            "a9b6381eda18",
+            "8187ded21b8e",
+            "62cb5b8e20cd",
+            "1ed0e6810769",
+            "3279c6bc478e",
+            "2c9a063b9844",
+            "498b8d5d8e29",
+            "c37870b21b51"
+          ]
+        },
+        {
+          "slug": "share_vfolder",
+          "title": "การแชร์โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/share_vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/share_vfolder/share_vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 0,
+            "images": 7,
+            "total": 7
+          },
+          "fingerprints": [
+            "eded659ec7aa",
+            "fcd4ff0b7c6f",
+            "1890b0ac9eae",
+            "36b9679a3750",
+            "47c69be84dd0",
+            "af83879dd129",
+            "d2404e2d009e"
+          ]
+        },
+        {
+          "slug": "start",
+          "title": "เริ่มต้น",
+          "status": "modified",
+          "url": "next/th/start.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/start/start.md",
+          "counts": {
+            "added": 0,
+            "modified": 4,
+            "removed": 0,
+            "images": 4,
+            "total": 4
+          },
+          "fingerprints": [
+            "4d6ec0ff22ab",
+            "6f41928476b6",
+            "f1a39d3cf526",
+            "d7e515d16477"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ตั้งค่าผู้ใช้",
+          "status": "modified",
+          "url": "next/th/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 9,
+            "removed": 0,
+            "images": 9,
+            "total": 9
+          },
+          "fingerprints": [
+            "b86d67fe6d75",
+            "b33b54519a15",
+            "0adc141f8309",
+            "a2b72ce0c00e",
+            "5c4ebf6674b7",
+            "a3f10cc92b70",
+            "baef797c8709",
+            "ad6561b63061",
+            "a3c4cc7ec20e"
+          ]
+        },
+        {
+          "slug": "vfolder",
+          "title": "โฟลเดอร์จัดเก็บ",
+          "status": "modified",
+          "url": "next/th/vfolder.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/vfolder/vfolder.md",
+          "counts": {
+            "added": 0,
+            "modified": 10,
+            "removed": 0,
+            "images": 10,
+            "total": 10
+          },
+          "fingerprints": [
+            "94533a1be60e",
+            "50acb6c90988",
+            "a3e51f77adb3",
+            "a0d2186486a9",
+            "c34177e8d678",
+            "602da362ade7",
+            "36d0b5aed344",
+            "c346f941b662",
+            "1f37777250f1",
+            "a9b6381eda18"
+          ]
+        }
+      ]
+    }
+  }
+}
