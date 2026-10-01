@@ -1988,15 +1988,6 @@ export class Client {
     }
     return result.data as TData;
   }
-    let query = {
-      query: q,
-      variables: v,
-    };
-    let rqst = this.newSignedRequest('POST', `/admin/gql`, query, null, secure);
-    return this._wrapWithPromise(rqst, false, signal, timeout, retry).then(
-      (r: { data: TData }) => r.data,
-    );
-  }
 
   /**
    * Generate a RequestInfo object that can be passed to fetch() API,

@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { SessionAuthFailureError } from './loginBootstrap';
 import type { LoginConfigState } from './loginConfig';
 import {
   LoginProbeCancelledError,
@@ -89,29 +90,47 @@ describe('connectViaGQL — keypair query rejects (FR-3998)', () => {
 
   const refusal = { isError: true, statusCode: 401, message: 'not allowed' };
 
-  it('logs out and rethrows a 401 refusal unchanged', async () => {
-    const logout = vi.fn().mockResolvedValue(undefined);
-    const client = { query: vi.fn().mockRejectedValue(refusal), logout };
+  // The bootstrap goes through the login Relay environment, which signs
+  // and sends with these two client methods.
+  const failingClient = (
+    failure: unknown,
+    logout: ReturnType<typeof vi.fn>,
+  ) => ({
+    newSignedRequest: vi.fn(() => ({})),
+    _wrapWithPromise: vi.fn().mockRejectedValue(failure),
+    isManagerVersionCompatibleWith: () => true,
+    logout,
+  });
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+  it('logs out and rethrows a 401 refusal as a session failure', async () => {
+    const logout = vi.fn().mockResolvedValue(undefined);
+    const client = failingClient(refusal, logout);
+
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      SessionAuthFailureError,
+    );
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
   it('rethrows the refusal when the cleanup logout also rejects', async () => {
-    const client = {
-      query: vi.fn().mockRejectedValue(refusal),
-      logout: vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
-    };
+    const client = failingClient(
+      refusal,
+      vi.fn().mockRejectedValue(new Error('401 Unauthorized')),
+    );
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(refusal);
+    await expect(connectViaGQL(client, cfg, [])).rejects.toBeInstanceOf(
+      SessionAuthFailureError,
+    );
   });
 
   it('keeps the session when the query fails without a refusal', async () => {
     const timeout = { isError: true, statusCode: 408, message: 'Timeout' };
     const logout = vi.fn().mockResolvedValue(undefined);
-    const client = { query: vi.fn().mockRejectedValue(timeout), logout };
+    const client = failingClient(timeout, logout);
 
-    await expect(connectViaGQL(client, cfg, [])).rejects.toBe(timeout);
+    await expect(connectViaGQL(client, cfg, [])).rejects.toMatchObject({
+      statusCode: 408,
+    });
     expect(logout).not.toHaveBeenCalled();
   });
 });

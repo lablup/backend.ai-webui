@@ -10,7 +10,11 @@
  */
 import { fetchAndParseConfig } from '../hooks/useWebUIConfig';
 import { getActAsTarget } from './actAs';
-import { fetchLoginBootstrap, type LoginBootstrap } from './loginBootstrap';
+import {
+  SessionAuthFailureError,
+  fetchLoginBootstrap,
+  type LoginBootstrap,
+} from './loginBootstrap';
 import { applyConfigToClient, type LoginConfigState } from './loginConfig';
 
 /**
@@ -107,8 +111,14 @@ export async function connectViaGQL(
   } catch (err) {
     // A refused session is cleaned up like an empty keypair; a network blip is not.
     const status = (err as { statusCode?: unknown } | null)?.statusCode;
-    if (!isActingAs && (status === 401 || status === 403))
+    if (
+      !isActingAs &&
+      (err instanceof SessionAuthFailureError ||
+        status === 401 ||
+        status === 403)
+    ) {
       await client.logout().catch(() => {});
+    }
     throw err;
   }
 
