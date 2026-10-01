@@ -1,5 +1,6 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -22,34 +23,50 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // `adminAllowedResourceGroups*V2` is superadmin-only; a domain admin reads
+  // the legacy field (FR-4117 role probe).
+  const isSuperAdmin = !!baiClient.is_superadmin;
 
-  const { projectId, resourceGroupName } = useFragment(
+  const { projectId, domainName, resourceGroupName } = useFragment(
     graphql`
       fragment ProjectResourceGroupAlertFragment on ProjectFairShare {
         projectId
+        domainName
         resourceGroupName
       }
     `,
     projectFairShareFrgmt,
   );
 
-  const { adminAllowedResourceGroupsForProjectV2 } =
+  const { adminAllowedResourceGroupsForProjectV2, group } =
     useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
       graphql`
-        query ProjectResourceGroupAlertQuery($projectId: UUID!) {
-          adminAllowedResourceGroupsForProjectV2(projectId: $projectId) {
+        query ProjectResourceGroupAlertQuery(
+          $projectId: UUID!
+          $domainName: String!
+          $isSuperAdmin: Boolean!
+        ) {
+          adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
+            @include(if: $isSuperAdmin) {
             items
+          }
+          group(id: $projectId, domain_name: $domainName)
+            @skip(if: $isSuperAdmin) {
+            scaling_groups
           }
         }
       `,
-      { projectId },
+      { projectId, domainName, isSuperAdmin },
       {
         fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
       },
     );
 
   const allowedResourceGroups =
-    adminAllowedResourceGroupsForProjectV2?.items ?? [];
+    adminAllowedResourceGroupsForProjectV2?.items ??
+    group?.scaling_groups ??
+    [];
 
   if (
     !resourceGroupName ||

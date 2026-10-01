@@ -1,5 +1,6 @@
 import type { DomainResourceGroupAlertFragment$key } from '../../__generated__/DomainResourceGroupAlertFragment.graphql';
 import type { DomainResourceGroupAlertQuery } from '../../__generated__/DomainResourceGroupAlertQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -25,6 +26,10 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // `adminAllowedResourceGroups*V2` is superadmin-only; a domain admin reads
+  // the legacy field (FR-4117 role probe).
+  const isSuperAdmin = !!baiClient.is_superadmin;
 
   const { domainName, resourceGroupName } = useFragment(
     graphql`
@@ -36,23 +41,32 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
     domainFairShareFrgmt,
   );
 
-  const { adminAllowedResourceGroupsForDomainV2 } =
+  const { adminAllowedResourceGroupsForDomainV2, domain } =
     useLazyLoadQuery<DomainResourceGroupAlertQuery>(
       graphql`
-        query DomainResourceGroupAlertQuery($domainName: String!) {
-          adminAllowedResourceGroupsForDomainV2(domainName: $domainName) {
+        query DomainResourceGroupAlertQuery(
+          $domainName: String!
+          $isSuperAdmin: Boolean!
+        ) {
+          adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
+            @include(if: $isSuperAdmin) {
             items
+          }
+          domain(name: $domainName) @skip(if: $isSuperAdmin) {
+            scaling_groups
           }
         }
       `,
-      { domainName },
+      { domainName, isSuperAdmin },
       {
         fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
       },
     );
 
   const allowedResourceGroups =
-    adminAllowedResourceGroupsForDomainV2?.items ?? [];
+    adminAllowedResourceGroupsForDomainV2?.items ??
+    domain?.scaling_groups ??
+    [];
 
   if (
     !resourceGroupName ||

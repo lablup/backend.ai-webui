@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<96b7561643f9868bad8eaad95839624c>>
+ * @generated SignedSource<<63b5230536266fdad2de1697cf3b857a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,14 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type DomainResourceGroupWarningIconQuery$variables = {
   domainName: string;
+  isSuperAdmin: boolean;
 };
 export type DomainResourceGroupWarningIconQuery$data = {
-  readonly adminAllowedResourceGroupsForDomainV2: {
+  readonly adminAllowedResourceGroupsForDomainV2?: {
     readonly items: ReadonlyArray<string>;
+  } | null | undefined;
+  readonly domain?: {
+    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
   } | null | undefined;
 };
 export type DomainResourceGroupWarningIconQuery = {
@@ -28,32 +32,75 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "domainName"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "isSuperAdmin"
   }
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "domainName",
-        "variableName": "domainName"
-      }
-    ],
-    "concreteType": "AllowedResourceGroupsPayload",
-    "kind": "LinkedField",
-    "name": "adminAllowedResourceGroupsForDomainV2",
-    "plural": false,
+    "condition": "isSuperAdmin",
+    "kind": "Condition",
+    "passingValue": true,
     "selections": [
       {
         "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "items",
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "domainName",
+            "variableName": "domainName"
+          }
+        ],
+        "concreteType": "AllowedResourceGroupsPayload",
+        "kind": "LinkedField",
+        "name": "adminAllowedResourceGroupsForDomainV2",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "items",
+            "storageKey": null
+          }
+        ],
         "storageKey": null
       }
-    ],
-    "storageKey": null
+    ]
+  },
+  {
+    "condition": "isSuperAdmin",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "name",
+            "variableName": "domainName"
+          }
+        ],
+        "concreteType": "Domain",
+        "kind": "LinkedField",
+        "name": "domain",
+        "plural": false,
+        "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "scaling_groups",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   }
 ];
 return {
@@ -74,16 +121,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "065b8add679d608934a5392be016fc5b",
+    "cacheID": "8e28f1a53bb0137f376a01d42330d25d",
     "id": null,
     "metadata": {},
     "name": "DomainResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query DomainResourceGroupWarningIconQuery(\n  $domainName: String!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) {\n    items\n  }\n}\n"
+    "text": "query DomainResourceGroupWarningIconQuery(\n  $domainName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2626f22516604986db4a8c632f2cf97c";
+(node as any).hash = "121c7c14cc0d2017430e34a83100b65f";
 
 export default node;

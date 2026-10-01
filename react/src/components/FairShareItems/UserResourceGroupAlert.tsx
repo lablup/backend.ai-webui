@@ -1,4 +1,5 @@
 import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
+import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -25,22 +26,38 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
+  const baiClient = useSuspendedBackendaiClient();
+  // `adminAllowedResourceGroups*V2` is superadmin-only; a domain admin reads
+  // the legacy fields (FR-4117 role probe). `projectV2` answers both roles.
+  const isSuperAdmin = !!baiClient.is_superadmin;
 
   const {
     adminAllowedResourceGroupsForDomainV2,
     adminAllowedResourceGroupsForProjectV2,
+    domain,
+    group,
     projectV2,
   } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
     graphql`
       query UserResourceGroupAlertQuery(
         $projectId: UUID!
         $domainName: String!
+        $isSuperAdmin: Boolean!
       ) {
-        adminAllowedResourceGroupsForDomainV2(domainName: $domainName) {
+        adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
+          @include(if: $isSuperAdmin) {
           items
         }
-        adminAllowedResourceGroupsForProjectV2(projectId: $projectId) {
+        adminAllowedResourceGroupsForProjectV2(projectId: $projectId)
+          @include(if: $isSuperAdmin) {
           items
+        }
+        domain(name: $domainName) @skip(if: $isSuperAdmin) {
+          scaling_groups
+        }
+        group(id: $projectId, domain_name: $domainName)
+          @skip(if: $isSuperAdmin) {
+          scaling_groups
         }
         projectV2(projectId: $projectId) {
           basicInfo {
@@ -49,7 +66,7 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
         }
       }
     `,
-    { projectId, domainName },
+    { projectId, domainName, isSuperAdmin },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -60,9 +77,13 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   );
 
   const domainResourceGroups =
-    adminAllowedResourceGroupsForDomainV2?.items ?? [];
+    adminAllowedResourceGroupsForDomainV2?.items ??
+    domain?.scaling_groups ??
+    [];
   const projectResourceGroups =
-    adminAllowedResourceGroupsForProjectV2?.items ?? [];
+    adminAllowedResourceGroupsForProjectV2?.items ??
+    group?.scaling_groups ??
+    [];
 
   if (
     !resourceGroupName ||
