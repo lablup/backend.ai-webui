@@ -1,6 +1,6 @@
-import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
+import { BAIUserSelectAdminPaginatedQuery } from '../../__generated__/BAIUserSelectAdminPaginatedQuery.graphql';
 import { BAIComplexSelectProps, BAILabeledValue } from '../BAIComplexSelect';
-export type BAIUserSelectFilter = NonNullable<BAIUserSelectPaginatedQuery['variables']['filter']>;
+export type BAIUserSelectFilter = NonNullable<BAIUserSelectAdminPaginatedQuery['variables']['filter']>;
 /**
  * Which users the picker lists. `admin` needs a super-admin, `domain` a
  * domain admin of that domain, `project` a member of that project.
@@ -30,11 +30,8 @@ export interface BAIUserSelectProps extends Omit<BAIComplexSelectProps, 'options
      * show the email while the raw UUID goes into a filter or mutation input.
      */
     onChange?: (value: string | Array<string> | undefined, option?: BAILabeledValue | Array<BAILabeledValue>) => void;
-    /**
-     * Defaults to every user the caller may administer: all users for a
-     * super-admin, the caller's own domain otherwise.
-     */
-    scope?: BAIUserSelectScope;
+    /** Required: an admin page takes it from `useAdminUserSelectScope()`. */
+    scope: BAIUserSelectScope;
     filter?: BAIUserSelectFilter;
     excludeInactive?: boolean;
     valuePropName?: 'id' | 'email';
