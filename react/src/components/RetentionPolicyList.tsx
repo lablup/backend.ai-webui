@@ -115,7 +115,7 @@ const RetentionPolicyList = () => {
       }
     `);
 
-  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [togglingIds, setTogglingIds] = useState<ReadonlyArray<string>>([]);
   const [isOpenSettingModal, setIsOpenSettingModal] = useState(false);
   const [editingPolicy, setEditingPolicy] =
     useState<RetentionPolicyNode | null>(null);
@@ -132,11 +132,13 @@ const RetentionPolicyList = () => {
   );
 
   const toggleEnabled = (policy: RetentionPolicyNode, enabled: boolean) => {
-    setTogglingId(policy.id);
+    setTogglingIds((ids) => [...ids, policy.id]);
+    const clearToggling = () =>
+      setTogglingIds((ids) => _.without(ids, policy.id));
     commitToggle({
       variables: { input: { id: toLocalId(policy.id), enabled } },
       onCompleted: (_res, errors) => {
-        setTogglingId(null);
+        clearToggling();
         if (errors && errors.length > 0) {
           _.forEach(errors, (err) => message.error(err.message));
           return;
@@ -144,7 +146,7 @@ const RetentionPolicyList = () => {
         message.success(t('retentionPolicy.SuccessfullyUpdated'));
       },
       onError: (error) => {
-        setTogglingId(null);
+        clearToggling();
         message.error(error.message);
       },
     });
@@ -198,8 +200,8 @@ const RetentionPolicyList = () => {
           isLabelHidden
           size="sm"
           value={row.enabled}
-          isLoading={togglingId === row.id}
-          isDisabled={togglingId === row.id}
+          isLoading={_.includes(togglingIds, row.id)}
+          isDisabled={_.includes(togglingIds, row.id)}
           onChange={(next) => toggleEnabled(row, next)}
         />
       ),
