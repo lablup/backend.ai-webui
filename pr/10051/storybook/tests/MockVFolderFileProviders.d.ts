@@ -3,7 +3,7 @@ import { MockVFolderFileTrees } from './mockVFolderFileTree';
 export interface MockVFolder {
     name: string;
     row_id: string;
-    /** Defaults to full read/write/delete content permissions. */
+    /** `VFolder.permissions` bits; defaults to read, write and delete. */
     permissions?: Array<string>;
 }
 export interface MockVFolderFileProvidersProps {

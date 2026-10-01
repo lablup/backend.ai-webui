@@ -7,6 +7,7 @@ export type ResourceGroupFilter = {
     isActive?: boolean | null | undefined;
     isDefault?: boolean | null | undefined;
     isPublic?: boolean | null | undefined;
+    labels?: EntityLabelNestedFilter | null | undefined;
     name?: StringFilter | null | undefined;
 };
 export type StringFilter = {
@@ -30,6 +31,27 @@ export type StringFilter = {
     notIn?: ReadonlyArray<string> | null | undefined;
     notStartsWith?: string | null | undefined;
     startsWith?: string | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+    every?: EntityLabelFilter | null | undefined;
+    exists?: boolean | null | undefined;
+    none?: EntityLabelFilter | null | undefined;
+    some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+    AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+    NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+    OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+    entityId?: UUIDFilter | null | undefined;
+    entityType?: StringFilter | null | undefined;
+    key?: StringFilter | null | undefined;
+    value?: StringFilter | null | undefined;
+};
+export type UUIDFilter = {
+    equals?: string | null | undefined;
+    in?: ReadonlyArray<string> | null | undefined;
+    notEquals?: string | null | undefined;
+    notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type BAIAdminResourceGroupSelectPaginationQuery$variables = {
     after?: string | null | undefined;
