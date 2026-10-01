@@ -51,9 +51,3 @@
 .main-layout-alert-wrapper > *:last-child {
   margin-bottom: var(--spacing-4);
 }
-
-/* No macOS rubber-band on the main column: the sticky header lives inside it
-   and would bounce with the content. */
-.main-layout-content-scroll {
-  overscroll-behavior-y: none;
-}
