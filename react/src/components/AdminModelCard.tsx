@@ -16,7 +16,6 @@ import {
   convertToOrderBy,
   handleRowSelectionChange,
 } from '../helper';
-import { unscopeModelCardListFilter } from '../helper/modelCardListFilter';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
@@ -140,6 +139,8 @@ export const AdminModelCardQuery = graphql`
 
 export interface AdminModelCardProps {
   queryRef: PreloadedQuery<AdminModelCardQueryType>;
+  /** The user's conditions, without the page's domain scoping. */
+  filter?: ModelCardV2Filter;
   onReload: (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
@@ -149,6 +150,7 @@ export interface AdminModelCardProps {
 
 const AdminModelCard: React.FC<AdminModelCardProps> = ({
   queryRef,
+  filter,
   onReload,
   tableSettings,
 }) => {
@@ -183,7 +185,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
 
-  const filter = unscopeModelCardListFilter(queryRef.variables.filter);
   const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
