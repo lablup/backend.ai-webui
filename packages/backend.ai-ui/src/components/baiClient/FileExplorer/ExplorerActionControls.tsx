@@ -53,8 +53,7 @@ interface ExplorerActionControlsProps {
   // instead of rendered disabled.
   mode?: 'explorer' | 'directoryPicker';
   // Fired with the new folder's name right after a successful mkdir, in
-  // addition to onRequestClose(true). The directory picker uses this to jump
-  // straight into the created folder.
+  // addition to onRequestClose(true).
   onFolderCreated?: (folderName: string) => void;
   // onClickRefresh?: (key: string) => void;
   extra?: React.ReactNode;
