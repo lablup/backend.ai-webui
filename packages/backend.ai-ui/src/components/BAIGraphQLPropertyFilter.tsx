@@ -46,6 +46,7 @@ import {
   baiPowerSearchComponents,
   toEnumItems,
   toSearchSource,
+  useMouseTokenRemoval,
   useRenderInputEditors,
   type BAIPowerSearchChromeProps,
   type FilterPropertyOption,
@@ -790,8 +791,11 @@ const BAIGraphQLPropertyFilter = <
     );
   };
 
+  const powerSearchRef = useMouseTokenRemoval(filters, handleChange);
+
   return (
     <PowerSearch
+      ref={powerSearchRef}
       config={config}
       components={baiPowerSearchComponents}
       filters={filters}

@@ -52,6 +52,7 @@ import {
   baiPowerSearchComponents,
   toEnumItems,
   toSearchSource,
+  useMouseTokenRemoval,
   useRenderInputEditors,
   type BAIPowerSearchChromeProps,
   type FilterPropertyOption,
@@ -582,8 +583,14 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
     }),
   );
 
+  const handleChange = (next: ReadonlyArray<PowerSearchFilter>) => {
+    setValue(serializeFilters(next, specs, rawValues));
+  };
+  const powerSearchRef = useMouseTokenRemoval(filters, handleChange);
+
   return (
     <PowerSearch
+      ref={powerSearchRef}
       config={config}
       components={baiPowerSearchComponents}
       filters={filters}
@@ -600,9 +607,7 @@ const BAIPropertyFilter: React.FC<BAIPropertyFilterProps> = ({
       status={
         ruleViolation ? { type: 'error', message: ruleViolation } : undefined
       }
-      onChange={(next) => {
-        setValue(serializeFilters(next, specs, rawValues));
-      }}
+      onChange={handleChange}
     />
   );
 };

@@ -645,3 +645,25 @@ describe('BAIPropertyFilter dismissal (FR-3739)', () => {
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 });
+
+describe('token removal focus (FR-4130)', () => {
+  const filterProperties = [
+    { key: 'name', propertyLabel: 'Name', type: 'string' as const },
+  ];
+
+  it('leaves the search input unfocused when a token is removed by mouse click', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <BAIPropertyFilter
+        label="Search"
+        filterProperties={filterProperties}
+        value='name ilike "%abc%"'
+        onChange={onChange}
+      />,
+    );
+    await user.click(screen.getByRole('button', { name: /remove/i }));
+    expect(onChange).toHaveBeenCalledWith(undefined);
+    expect(screen.getByRole('combobox', { name: 'Search' })).not.toHaveFocus();
+  });
+});

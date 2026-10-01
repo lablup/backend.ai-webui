@@ -36,10 +36,11 @@ import type {
   OperatorValue,
   PowerSearchComponentOverride,
   PowerSearchEditorProps,
+  PowerSearchFilter,
 } from '@astryxdesign/core/PowerSearch';
 import type { SearchSource } from '@astryxdesign/core/Typeahead';
 import * as _ from 'lodash-es';
-import React, { useRef } from 'react';
+import React, { useEffect, useEffectEvent, useRef } from 'react';
 import type { ComponentType, ReactNode } from 'react';
 
 /**
@@ -277,3 +278,48 @@ export const baiPowerSearchComponents: Record<
   custom: BAI_EDITOR_OVERRIDE,
   nested: BAI_EDITOR_OVERRIDE,
 };
+
+/**
+ * Removes a token on a mouse click of its X without moving focus into the
+ * search input. Astryx's Tokenizer refocuses the input there, leaving it
+ * focused with the menu closed so the next click opens nothing (FR-4130).
+ * Keyboard removal is left to Astryx. Returns the ref for `PowerSearch`.
+ */
+export function useMouseTokenRemoval(
+  filters: ReadonlyArray<PowerSearchFilter>,
+  onChange: (next: ReadonlyArray<PowerSearchFilter>) => void,
+) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const removeFilterAt = useEffectEvent((index: number) => {
+    onChange(filters.filter((_filter, i) => i !== index));
+  });
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const removeButtonOf = (target: EventTarget | null) =>
+      target instanceof Element
+        ? target.closest<HTMLButtonElement>('.astryx-token button')
+        : null;
+    const onMouseDown = (event: MouseEvent) => {
+      if (removeButtonOf(event.target)) event.preventDefault();
+    };
+    const onClick = (event: MouseEvent) => {
+      const button = removeButtonOf(event.target);
+      if (!button || event.detail === 0) return;
+      event.stopPropagation();
+      const tokens = Array.from(root.querySelectorAll('.astryx-token'));
+      const index = tokens.indexOf(button.closest('.astryx-token')!);
+      if (index >= 0) removeFilterAt(index);
+      // The click light-dismissed the menu; an input left focused would not reopen it.
+      const active = document.activeElement;
+      if (active instanceof HTMLElement && root.contains(active)) active.blur();
+    };
+    root.addEventListener('mousedown', onMouseDown, true);
+    root.addEventListener('click', onClick, true);
+    return () => {
+      root.removeEventListener('mousedown', onMouseDown, true);
+      root.removeEventListener('click', onClick, true);
+    };
+  }, []);
+  return rootRef;
+}
