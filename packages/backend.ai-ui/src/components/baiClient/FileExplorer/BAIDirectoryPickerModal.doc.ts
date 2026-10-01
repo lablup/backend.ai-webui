@@ -57,7 +57,7 @@ export const docs = {
       name: 'queryRef',
       type: 'PreloadedQuery<BAIDirectoryPickerModalQuery>',
       description:
-        "Preloaded reference to `BAIDirectoryPickerQuery`, keyed by this vfolder's id (plus its legacy global id and the `supportsPermissionBits` flag from `baiClient.supports('vfolder-v2-permission-bits')`). Supplies the folder name for the title and the permissions that gate folder CRUD inside the picker: the `UPDATE` bit from 26.9.0, `write_content` / `delete_content` before.",
+        "Preloaded reference to `BAIDirectoryPickerQuery`, keyed by this vfolder's id (plus its legacy global id and the `supportsPermissionBits` flag from `baiClient.supports('vfolder-v2-permission-bits')`). Supplies the folder name for the title and the permissions that gate folder CRUD inside the picker: the `UPDATE` (write) and `SOFT_DELETE` (delete) bits from 26.9.0, `write_content` / `delete_content` before.",
       required: true,
     },
     {

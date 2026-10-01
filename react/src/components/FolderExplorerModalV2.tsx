@@ -431,10 +431,10 @@ const FolderExplorerBody: React.FC<{
     unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
-  // Share-permission gating (FR-3800): the folder's `UPDATE` bit covers both
-  // legacy content permissions, since neither deletes the folder itself.
+  // Share-permission gating (FR-3800). The manager checks file deletion against
+  // `SOFT_DELETE`; a nulled node (FR-3997) carries no bits, so it is read-only.
   const hasDeleteContentPermission = supportsPermissionBits
-    ? _.includes(vfolderNode?.permissions, 'UPDATE')
+    ? _.includes(vfolderNode?.permissions, 'SOFT_DELETE')
     : _.includes(legacyVFolderNode?.permissions, 'delete_content');
   const hasWriteContentPermission = supportsPermissionBits
     ? _.includes(vfolderNode?.permissions, 'UPDATE')
