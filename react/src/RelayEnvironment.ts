@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
+import { getGatewayWrappedError } from './helper/gatewayWrappedError';
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
 import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';
@@ -101,6 +102,9 @@ const fetchFn: FetchFunction = async (
         }
         throw err;
       })) || {};
+
+  const gatewayError = getGatewayWrappedError(result);
+  if (gatewayError) throw gatewayError;
 
   if (result.errors) {
     // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,
