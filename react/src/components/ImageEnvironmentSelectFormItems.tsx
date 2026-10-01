@@ -67,7 +67,8 @@ type ImageGroup = {
 };
 
 // Quick-pick options repeat an environment listed below, so they need their own value.
-const DEDICATED_OPTION_VALUE_PREFIX = 'accelerator-dedicated:';
+// `~` cannot start a registry host, so no real `registry/namespace` carries this prefix.
+const DEDICATED_OPTION_VALUE_PREFIX = '~accelerator-dedicated:';
 
 // An image's explicit `supported_accelerators`; empty for a generic image
 // (`*`, or `''` from pre-BA-2358 managers).
