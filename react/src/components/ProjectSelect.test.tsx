@@ -13,9 +13,16 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import { isValidElement, type ReactElement, type ReactNode } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const captured = vi.hoisted(() => ({ options: undefined as unknown }));
+const roles = vi.hoisted(() => ({
+  current: {
+    isSuperAdmin: false,
+    domainAdminDomains: [] as Array<string>,
+    projectAdminIds: [] as Array<string>,
+  },
+}));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -27,7 +34,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('../hooks/useCurrentUserProjectRoles', () => ({
-  useCurrentUserProjectRoles: () => ({ projectAdminIds: [] }),
+  useCurrentUserProjectRoles: () => roles.current,
 }));
 
 const groups = [
@@ -163,5 +170,45 @@ describe('ProjectSelect personalProject', () => {
     expect(
       options.filter((option) => option.value === 'project-general'),
     ).toHaveLength(1);
+  });
+});
+
+describe('ProjectSelect project admin badge', () => {
+  afterEach(() => {
+    roles.current = {
+      isSuperAdmin: false,
+      domainAdminDomains: [],
+      projectAdminIds: [],
+    };
+  });
+
+  const generalLabel = () => {
+    renderSelect({ value: [] });
+    const general = readGroups()
+      .flatMap((group) => group.options)
+      .find((option) => option.value === 'project-general');
+    return general?.label;
+  };
+
+  it('badges a project the user administers', () => {
+    roles.current.projectAdminIds = ['project-general'];
+
+    const { container } = render(<>{generalLabel()}</>);
+    expect(container.textContent).toContain('projectSelect.ProjectAdminBadge');
+    expect(container.querySelector('svg')).not.toBeNull();
+  });
+
+  it('does not badge any project for a super-admin', () => {
+    roles.current.isSuperAdmin = true;
+    roles.current.projectAdminIds = ['project-general'];
+
+    expect(generalLabel()).toBe('coredev');
+  });
+
+  it('does not badge any project for a domain admin', () => {
+    roles.current.domainAdminDomains = ['default'];
+    roles.current.projectAdminIds = ['project-general'];
+
+    expect(generalLabel()).toBe('coredev');
   });
 });

@@ -49,7 +49,11 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   const { t } = useTranslation();
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
-  const { projectAdminIds } = useCurrentUserProjectRoles();
+  const { isSuperAdmin, domainAdminDomains, projectAdminIds } =
+    useCurrentUserProjectRoles();
+  // Super/domain admins inherit scope_admin on every project, so the badge
+  // would mark them all (FR-4128).
+  const showsProjectAdminBadge = !isSuperAdmin && !domainAdminDomains.length;
   // Shared accessible-project source (FR-3388): the same hook backs
   // `useUrlProjectValidity`, so the selector and URL validation cannot
   // disagree. `network-only` keeps the selector's refresh-on-mount behavior.
@@ -116,7 +120,10 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
         label: getLabel(key),
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
-          const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
+          const isAdmin =
+            showsProjectAdminBadge &&
+            !!project?.id &&
+            projectAdminIds.includes(project.id);
           const isPersonal =
             !!personalProject && project?.id === personalProject.id;
           // Fills the option row so the whole item opens the hint; `pointerEvents`
