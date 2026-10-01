@@ -8,11 +8,16 @@
 */
 import type { LoginHistoryQuery as LoginHistoryQueryType } from '../__generated__/LoginHistoryQuery.graphql';
 import type { LoginSessionQuery as LoginSessionQueryType } from '../__generated__/LoginSessionQuery.graphql';
+import type { MyEntityShareListQuery as MyEntityShareListQueryType } from '../__generated__/MyEntityShareListQuery.graphql';
 import {
   USER_SETTINGS_CATEGORIES,
   type UserSettingsCategory,
 } from '../helper/userSettingsModal';
+import { useSuspendedBackendaiClient } from '../hooks';
 import BAIErrorBoundary from './BAIErrorBoundary';
+import MyEntityShareList, {
+  MyEntityShareListQuery,
+} from './EntityShare/MyEntityShareList';
 import ErrorLogList from './ErrorLogList';
 import LoginHistory, { LoginHistoryQuery } from './LoginHistory';
 import LoginSession, { LoginSessionQuery } from './LoginSession';
@@ -31,6 +36,7 @@ import {
   History,
   MonitorSmartphone,
   ScrollText,
+  Share2,
   SlidersHorizontal,
 } from 'lucide-react';
 import React, {
@@ -72,6 +78,7 @@ const CATEGORY_ICONS: Record<
   logs: ScrollText,
   'login-sessions': MonitorSmartphone,
   'login-history': History,
+  shares: Share2,
 };
 
 const CATEGORY_LABEL_KEYS: Record<UserSettingsCategory, string> = {
@@ -79,6 +86,7 @@ const CATEGORY_LABEL_KEYS: Record<UserSettingsCategory, string> = {
   logs: 'userSettings.Logs',
   'login-sessions': 'userSettings.LoginSessions',
   'login-history': 'userSettings.LoginHistory',
+  shares: 'userSettings.Shares',
 };
 
 export interface UserSettingsModalProps {
@@ -98,11 +106,15 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const { md } = useBAIBreakpoint();
   const isNarrow = !md;
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
+  const baiClient = useSuspendedBackendaiClient();
+  const supportsEntityShare = baiClient.supports('entity-share');
 
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
   const [loginHistoryQueryRef, loadLoginHistoryQuery] =
     useQueryLoader<LoginHistoryQueryType>(LoginHistoryQuery);
+  const [entityShareQueryRef, loadEntityShareQuery] =
+    useQueryLoader<MyEntityShareListQueryType>(MyEntityShareListQuery);
   // Lazily fetch a category's data only once it becomes active (covers both a
   // rail click and a direct `?settings=...` URL restore), so neither query runs
   // while the General/Logs categories are shown.
@@ -124,6 +136,12 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
           limit: 10,
           offset: 0,
         },
+        { fetchPolicy: 'store-and-network' },
+      );
+    }
+    if (category === 'shares' && supportsEntityShare && !entityShareQueryRef) {
+      loadEntityShareQuery(
+        { sides: ['RECIPIENT'], limit: 10, offset: 0 },
         { fetchPolicy: 'store-and-network' },
       );
     }
@@ -159,22 +177,23 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
       </List>
       <Divider />
       <List density="spacious">
-        {USER_SETTINGS_CATEGORIES.filter((key) => key !== 'general').map(
-          (key) => (
-            <ListItem
-              key={key}
-              label={t(CATEGORY_LABEL_KEYS[key])}
-              startContent={<Icon icon={CATEGORY_ICONS[key]} size="sm" />}
-              endContent={
-                isNarrow ? (
-                  <Icon icon={ChevronRight} size="sm" color="secondary" />
-                ) : undefined
-              }
-              isSelected={!isNarrow && category === key}
-              onClick={() => selectCategory(key)}
-            />
-          ),
-        )}
+        {USER_SETTINGS_CATEGORIES.filter(
+          (key) =>
+            key !== 'general' && (key !== 'shares' || supportsEntityShare),
+        ).map((key) => (
+          <ListItem
+            key={key}
+            label={t(CATEGORY_LABEL_KEYS[key])}
+            startContent={<Icon icon={CATEGORY_ICONS[key]} size="sm" />}
+            endContent={
+              isNarrow ? (
+                <Icon icon={ChevronRight} size="sm" color="secondary" />
+              ) : undefined
+            }
+            isSelected={!isNarrow && category === key}
+            onClick={() => selectCategory(key)}
+          />
+        ))}
       </List>
     </VStack>
   );
@@ -193,10 +212,21 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
       ) : (
         <BAISkeleton />
       )
-    ) : loginHistoryQueryRef ? (
-      <LoginHistory
-        queryRef={loginHistoryQueryRef}
-        onReload={loadLoginHistoryQuery}
+    ) : category === 'login-history' ? (
+      loginHistoryQueryRef ? (
+        <LoginHistory
+          queryRef={loginHistoryQueryRef}
+          onReload={loadLoginHistoryQuery}
+        />
+      ) : (
+        <BAISkeleton />
+      )
+    ) : !supportsEntityShare ? (
+      <UserSettingsGeneralPane />
+    ) : entityShareQueryRef ? (
+      <MyEntityShareList
+        queryRef={entityShareQueryRef}
+        onReload={loadEntityShareQuery}
       />
     ) : (
       <BAISkeleton />

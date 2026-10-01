@@ -40,6 +40,7 @@ export type FetchKeyAutoUpdateSettingId =
   | 'scoped-audit-log'
   | 'login-history'
   | 'login-session'
+  | 'entity-shares'
   // Expensive / heavy views — default to the longer interval presets
   | 'fair-share-list'
   | 'user-sessions-metrics'

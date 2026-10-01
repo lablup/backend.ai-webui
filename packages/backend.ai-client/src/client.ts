@@ -1061,6 +1061,9 @@ export class Client {
       // requested id (`items` / `successes` plus `failed`) instead of a bare
       // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
+      // Entity-type-agnostic sharing: `createEntityShare` and its answers,
+      // `myEntityShares` / `entityShares`, and `entityTypes`. FR-4132.
+      this._features['entity-share'] = true;
     }
   }
 
