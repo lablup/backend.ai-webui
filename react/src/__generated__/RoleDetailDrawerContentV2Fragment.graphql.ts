@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f203e8061a11f81c6554b12075faf13c>>
+ * @generated SignedSource<<2265004a079d25d4daa86c21ccebe3bb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -27,8 +27,8 @@ export type RoleDetailDrawerContentV2Fragment$data = {
       readonly name: string;
     };
     readonly metadata?: {
-      readonly name?: string;
-      readonly sessionName: string;
+      readonly name: string;
+      readonly sessionName?: string;
     };
     readonly name?: string;
     readonly project?: string | null | undefined;
@@ -215,6 +215,30 @@ return {
           "kind": "InlineFragment",
           "selections": [
             {
+              "kind": "InlineFragment",
+              "selections": [
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "VFolderMetadataInfo",
+                  "kind": "LinkedField",
+                  "name": "metadata",
+                  "plural": false,
+                  "selections": (v2/*: any*/),
+                  "storageKey": null
+                }
+              ],
+              "type": "VFolder",
+              "abstractKey": null
+            }
+          ],
+          "type": "Node",
+          "abstractKey": "__isNode"
+        },
+        {
+          "kind": "InlineFragment",
+          "selections": [
+            {
               "alias": null,
               "args": null,
               "concreteType": "SessionV2MetadataInfo",
@@ -311,6 +335,6 @@ return {
 };
 })();
 
-(node as any).hash = "f35016987c0d1ef8b2d0388bd9bec55e";
+(node as any).hash = "e2b01d28b993ce1fe149666878589ea4";
 
 export default node;

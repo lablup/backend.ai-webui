@@ -124,6 +124,14 @@ const LegacyCreatePermissionModal: React.FC<
                 ... on VirtualFolderNode {
                   vfolderName: name
                 }
+                # Nested in Node: 26.4 managers do not list VFolder in EntityNode.
+                ... on Node {
+                  ... on VFolder {
+                    metadata {
+                      vfolderName: name
+                    }
+                  }
+                }
                 ... on SessionV2 {
                   metadata {
                     sessionName: name
@@ -426,7 +434,8 @@ const LegacyCreatePermissionModal: React.FC<
                       resolvedName = scope.basicInfo?.email;
                       break;
                     case 'VFOLDER':
-                      resolvedName = scope.vfolderName;
+                      resolvedName =
+                        scope.vfolderName ?? scope.metadata?.vfolderName;
                       break;
                     case 'SESSION':
                       resolvedName = scope.metadata?.sessionName;
