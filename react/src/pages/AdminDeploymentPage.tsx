@@ -196,25 +196,6 @@ const AdminDeploymentPage: React.FC = () => {
   // The URL holds only the user's conditions; the domain is added per load.
   const modelCardUserFilter =
     (queryParams.filter as ModelCardV2Filter | null) ?? undefined;
-  // AND-nesting keeps a user OR/NOT from widening past the domain.
-  const loadScopedModelCardQuery = (
-    variables: AdminModelCardQueryType['variables'],
-    userFilter: ModelCardV2Filter | null | undefined,
-    options?: UseQueryLoaderLoadQueryOptions,
-  ) =>
-    loadModelCardQuery(
-      {
-        ...variables,
-        filter: currentDomain
-          ? {
-              domainName: { equals: currentDomain },
-              ...(userFilter ? { AND: [userFilter] } : {}),
-            }
-          : userFilter,
-      },
-      options,
-    );
-
   const reloadModelCards = (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
@@ -234,7 +215,19 @@ const AdminDeploymentPage: React.FC = () => {
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadScopedModelCardQuery(variables, userFilter, options);
+    loadModelCardQuery(
+      {
+        ...variables,
+        // AND-nesting keeps a user OR/NOT from widening past the domain.
+        filter: currentDomain
+          ? {
+              domainName: { equals: currentDomain },
+              ...(userFilter ? { AND: [userFilter] } : {}),
+            }
+          : userFilter,
+      },
+      options,
+    );
   };
 
   // --- Prometheus preset tab ---
@@ -351,15 +344,21 @@ const AdminDeploymentPage: React.FC = () => {
       case 'model-store-management': {
         // No longer project-scoped, so loading once is enough.
         if (!modelCardQueryRef) {
-          loadScopedModelCardQuery(
+          const userFilter = params.filter as ModelCardV2Filter | null;
+          loadModelCardQuery(
             {
+              filter: currentDomain
+                ? {
+                    domainName: { equals: currentDomain },
+                    ...(userFilter ? { AND: [userFilter] } : {}),
+                  }
+                : userFilter,
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
               // Every domain has its own MODEL_STORE project.
               domainName: currentDomain,
             },
-            params.filter as ModelCardV2Filter | null,
             { fetchPolicy: 'store-and-network' },
           );
         }
