@@ -496,14 +496,12 @@ const VFolderNodesV2: React.FC<VFolderNodesV2Props> = ({
   // The Status column key + V2 OrderField sort value stay `status`.
   const vfolders = useFragment(
     graphql`
-      fragment VFolderNodesV2Fragment on VFolder
-      @argumentDefinitions(showUsage: { type: "Boolean!", defaultValue: false })
-      @relay(plural: true) {
+      fragment VFolderNodesV2Fragment on VFolder @relay(plural: true) {
         id @required(action: NONE)
         vfolderStatus: status
         host
         unmanagedPath
-        usage @include(if: $showUsage) {
+        usage {
           numFiles
           usedBytes {
             expr @since(version: "26.8.0")

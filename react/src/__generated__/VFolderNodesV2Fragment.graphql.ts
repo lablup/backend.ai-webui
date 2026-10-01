@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<150054d5b341119d8e71f4ce4865a9f5>>
+ * @generated SignedSource<<fd65e92099e32d96c0d98a3adf4c1342>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -56,7 +56,7 @@ export type VFolderNodesV2Fragment$data = ReadonlyArray<{
     } | null | undefined;
   };
   readonly unmanagedPath: string | null | undefined;
-  readonly usage?: {
+  readonly usage: {
     readonly numFiles: number;
     readonly usedBytes: {
       readonly expr: string;
@@ -89,13 +89,7 @@ v1 = {
   "storageKey": null
 };
 return {
-  "argumentDefinitions": [
-    {
-      "defaultValue": false,
-      "kind": "LocalArgument",
-      "name": "showUsage"
-    }
-  ],
+  "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": {
     "plural": true
@@ -135,39 +129,32 @@ return {
       "storageKey": null
     },
     {
-      "condition": "showUsage",
-      "kind": "Condition",
-      "passingValue": true,
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderUsageInfo",
+      "kind": "LinkedField",
+      "name": "usage",
+      "plural": false,
       "selections": [
         {
           "alias": null,
           "args": null,
-          "concreteType": "VFolderUsageInfo",
+          "kind": "ScalarField",
+          "name": "numFiles",
+          "storageKey": null
+        },
+        {
+          "alias": null,
+          "args": null,
+          "concreteType": "BinarySizeInfo",
           "kind": "LinkedField",
-          "name": "usage",
+          "name": "usedBytes",
           "plural": false,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "kind": "ScalarField",
-              "name": "numFiles",
-              "storageKey": null
-            },
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "BinarySizeInfo",
-              "kind": "LinkedField",
-              "name": "usedBytes",
-              "plural": false,
-              "selections": (v0/*: any*/),
-              "storageKey": null
-            }
-          ],
+          "selections": (v0/*: any*/),
           "storageKey": null
         }
-      ]
+      ],
+      "storageKey": null
     },
     {
       "alias": null,
@@ -402,6 +389,6 @@ return {
 };
 })();
 
-(node as any).hash = "bf6b78832456b38f0977eb208bdadc79";
+(node as any).hash = "cd364f2546922ed4be6b125691a25588";
 
 export default node;
