@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d6b2978c5d1aaef6b1dc1c395550553e>>
+ * @generated SignedSource<<e9bc08c7847a18ab2a382bb9d52457fc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,13 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
+import { FragmentRefs, Result } from "relay-runtime";
 export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type FolderExplorerModalV2Query$variables = {
   vfolderId: string;
 };
 export type FolderExplorerModalV2Query$data = {
-  readonly vfolderNode: {
+  readonly vfolderNode: Result<{
     readonly host: string;
     readonly id: string;
     readonly metadata: {
@@ -32,7 +32,7 @@ export type FolderExplorerModalV2Query$data = {
     readonly permissions: ReadonlyArray<PermissionBit>;
     readonly unmanagedPath: string | null | undefined;
     readonly " $fragmentSpreads": FragmentRefs<"FolderExplorerHeaderV2Fragment" | "VFolderNodeDescriptionV2Fragment">;
-  } | null | undefined;
+  } | null | undefined, unknown>;
 };
 export type FolderExplorerModalV2Query = {
   response: FolderExplorerModalV2Query$data;
@@ -117,63 +117,67 @@ return {
     "name": "FolderExplorerModalV2Query",
     "selections": [
       {
-        "alias": "vfolderNode",
-        "args": (v1/*: any*/),
-        "concreteType": "VFolder",
-        "kind": "LinkedField",
-        "name": "vfolderV2",
-        "plural": false,
-        "selections": [
-          (v2/*: any*/),
-          (v3/*: any*/),
-          (v4/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VFolderMetadataInfo",
-            "kind": "LinkedField",
-            "name": "metadata",
-            "plural": false,
-            "selections": (v6/*: any*/),
-            "storageKey": null
-          },
-          (v7/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "VFolderOwnershipInfo",
-            "kind": "LinkedField",
-            "name": "ownership",
-            "plural": false,
-            "selections": [
-              (v8/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "ProjectV2",
-                "kind": "LinkedField",
-                "name": "project",
-                "plural": false,
-                "selections": [
-                  (v9/*: any*/)
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "FolderExplorerHeaderV2Fragment"
-          },
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "VFolderNodeDescriptionV2Fragment"
-          }
-        ],
-        "storageKey": null
+        "kind": "CatchField",
+        "field": {
+          "alias": "vfolderNode",
+          "args": (v1/*: any*/),
+          "concreteType": "VFolder",
+          "kind": "LinkedField",
+          "name": "vfolderV2",
+          "plural": false,
+          "selections": [
+            (v2/*: any*/),
+            (v3/*: any*/),
+            (v4/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "VFolderMetadataInfo",
+              "kind": "LinkedField",
+              "name": "metadata",
+              "plural": false,
+              "selections": (v6/*: any*/),
+              "storageKey": null
+            },
+            (v7/*: any*/),
+            {
+              "alias": null,
+              "args": null,
+              "concreteType": "VFolderOwnershipInfo",
+              "kind": "LinkedField",
+              "name": "ownership",
+              "plural": false,
+              "selections": [
+                (v8/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectV2",
+                  "kind": "LinkedField",
+                  "name": "project",
+                  "plural": false,
+                  "selections": [
+                    (v9/*: any*/)
+                  ],
+                  "storageKey": null
+                }
+              ],
+              "storageKey": null
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "FolderExplorerHeaderV2Fragment"
+            },
+            {
+              "args": null,
+              "kind": "FragmentSpread",
+              "name": "VFolderNodeDescriptionV2Fragment"
+            }
+          ],
+          "storageKey": null
+        },
+        "to": "RESULT"
       }
     ],
     "type": "Query",
@@ -390,6 +394,6 @@ return {
 };
 })();
 
-(node as any).hash = "73eae7a2595d00881a859868cc7a8e54";
+(node as any).hash = "a9fec6748bef35edd9092fbcf973d79c";
 
 export default node;

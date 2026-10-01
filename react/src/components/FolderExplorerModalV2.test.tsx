@@ -223,6 +223,7 @@ const withNullRootFields = (
   operation: any,
   payload: any,
   nullRootFields: Array<string> = [],
+  withFieldError = false,
 ) => {
   if (
     nullRootFields.length === 0 ||
@@ -236,6 +237,16 @@ const withNullRootFields = (
       ...payload.data,
       ...Object.fromEntries(nullRootFields.map((field) => [field, null])),
     },
+    // A non-nullable child that resolved to null nulls its parent and
+    // reports the error at the child's path (FR-3997).
+    ...(withFieldError
+      ? {
+          errors: nullRootFields.map((field) => ({
+            message: `Cannot return null for non-nullable field VFolderAccessControlInfo.permission.`,
+            path: [field, 'accessControl', 'permission'],
+          })),
+        }
+      : {}),
   };
 };
 
@@ -245,6 +256,7 @@ const renderModal = ({
   permissionBits,
   hostPermissions,
   nullResolvers,
+  withFieldError,
 }: {
   ownershipProjectId: string | null;
   ownershipProjectType?: 'GENERAL' | 'PERSONAL';
@@ -253,6 +265,8 @@ const renderModal = ({
   hostPermissions?: string[];
   /** Root fields the manager resolves to `null` for this folder. */
   nullResolvers?: Array<'vfolderNode'>;
+  /** Report the null as a field error, the way a broken resolver does. */
+  withFieldError?: boolean;
 }) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   const resolver = (operation: any) =>
@@ -296,6 +310,7 @@ const renderModal = ({
         KeyPairResourcePolicy: () => ({ allowed_vfolder_hosts: '{}' }),
       }),
       nullResolvers ?? [],
+      withFieldError,
     );
   const seenOperations: Array<{ name: string; variables: any }> = [];
   for (let i = 0; i < 16; i++) {
@@ -656,5 +671,24 @@ describe('FolderExplorerModalV2 unreadable folder', () => {
     ).toBeInTheDocument();
     expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
     expect(screen.queryByText('explorer.Metadata')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderDetailUnavailable'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('tells a field error apart from an unreadable folder (FR-3997)', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      nullResolvers: ['vfolderNode'],
+      withFieldError: true,
+    });
+
+    expect(
+      await screen.findByText('explorer.FolderDetailUnavailable'),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText('explorer.FolderNotFoundOrNoAccess'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('mock-file-explorer')).not.toBeInTheDocument();
   });
 });
