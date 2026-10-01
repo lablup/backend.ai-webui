@@ -22,8 +22,10 @@ import {
   BAIText,
   tokenColorForTagColor,
   tokenColorForStatus,
+  toLocalId,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import _ from 'lodash';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -98,6 +100,9 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
             project
           }
         }
+        rolePreset @since(version: "26.9.0rc1") {
+          id
+        }
         ...RoleAssignmentTabFragment
         ...RolePermissionSummaryTableFragment
       }
@@ -106,6 +111,17 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
   );
 
   const scopeName = resolveRBACScopeName(role);
+  // Before 26.9.0rc1 a role does not name its preset, so the link falls back to the
+  // kind in the name (`project_member-1a2b3c4d`); the last match beats a scope name.
+  const roleKind = role.name?.match(/.*(admin|member)/i)?.[1]?.toLowerCase();
+  const presetFilter = role.rolePreset
+    ? { id: { equals: toLocalId(role.rolePreset.id) } }
+    : {
+        ...(role.scopeType && {
+          scopeType: { equals: role.scopeType.toLowerCase() },
+        }),
+        ...(roleKind && { name: { iContains: roleKind } }),
+      };
 
   return (
     <BAIFlex direction="column" gap="lg" align="stretch">
@@ -202,10 +218,8 @@ const RoleDetailDrawerContentV2: React.FC<RoleDetailDrawerContentV2Props> = ({
                 }}
                 to={`/admin/rbac?${new URLSearchParams({
                   tab: 'presets',
-                  ...(role.scopeType && {
-                    filter: JSON.stringify({
-                      scopeType: { equals: role.scopeType.toLowerCase() },
-                    }),
+                  ...(!_.isEmpty(presetFilter) && {
+                    filter: JSON.stringify(presetFilter),
                   }),
                 }).toString()}`}
               >
