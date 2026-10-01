@@ -137,6 +137,12 @@ export interface BAIFormItemVisualProps {
   tooltip?: React.ReactNode;
   /** antd's `tooltip.icon` — the trigger glyph. Defaults to a question mark. */
   tooltipIcon?: React.ReactNode;
+  /**
+   * Actions that belong to the label row (e.g. a filter button). Rendered
+   * outside the `<label>`: at the far end of the row in vertical layout,
+   * right after the label otherwise. Needs a `label`.
+   */
+  labelExtra?: React.ReactNode;
   extra?: React.ReactNode;
   help?: React.ReactNode;
   /** Renders the required marker. Independent of the `required` RULE. */
@@ -216,6 +222,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
   labelTitle,
   tooltip,
   tooltipIcon,
+  labelExtra,
   extra,
   help,
   required,
@@ -287,6 +294,8 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
   // that is what antd does and it is what makes the label's measured width
   // match.
   const computedColon = colon !== false;
+  const hasLabelExtra =
+    labelExtra !== undefined && labelExtra !== null && labelExtra !== false;
 
   const labelNode =
     label === undefined || label === null ? null : (
@@ -294,6 +303,7 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
         data-bai-form-item-label-col=""
         data-align={labelAlign === 'left' ? 'left' : undefined}
         data-wrap={labelWrap ? '' : undefined}
+        data-has-label-extra={hasLabelExtra ? '' : undefined}
         className={labelCol?.className}
         style={colStyle(labelCol, 'label')}
       >
@@ -336,6 +346,15 @@ export const BAIFormItemVisual: React.FC<BAIFormItemVisualProps> = ({
             </Tooltip>
           ) : null}
         </label>
+        {hasLabelExtra ? (
+          // The colon moves here so it still ends the row in horizontal layout.
+          <span
+            data-bai-form-item-label-extra=""
+            data-no-colon={computedColon ? undefined : ''}
+          >
+            {labelExtra}
+          </span>
+        ) : null}
       </div>
     );
 
