@@ -51,7 +51,7 @@ test.describe(
       api = undefined;
     });
 
-    test('User sees the Metadata tab again when opening another folder after viewing the Audit Log', async ({
+    test('User can see the side panel start on Metadata when opening another folder after viewing the Audit Log', async ({
       page,
     }) => {
       test.setTimeout(120000);
