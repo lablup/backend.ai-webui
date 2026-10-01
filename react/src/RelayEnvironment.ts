@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { getGatewayWrappedError } from './helper/gatewayWrappedError';
 import { manipulateGraphQLQueryWithClientDirectives } from './helper/graphql-transformer';
+import { gatewayWrappedError } from 'backend.ai-client';
 import { GraphQLFormattedError } from 'graphql';
 import { createClient } from 'graphql-sse';
 import {
@@ -94,6 +94,12 @@ const fetchFn: FetchFunction = async (
     // @ts-ignore
     (await globalThis.backendaiclient
       ?._wrapWithPromise(reqInfo)
+      .then((res: Parameters<typeof gatewayWrappedError>[0]) => {
+        // Only a wrapped upstream HTTP failure; plain field errors stay with Relay.
+        const error = gatewayWrappedError(res);
+        if ((error?.statusCode ?? 0) >= 400) throw error;
+        return res;
+      })
       .catch((err: any) => {
         if (err.isError && err.statusCode === 401) {
           const error = new Error('GraphQL Authorization Error');
@@ -102,9 +108,6 @@ const fetchFn: FetchFunction = async (
         }
         throw err;
       })) || {};
-
-  const gatewayError = getGatewayWrappedError(result);
-  if (gatewayError) throw gatewayError;
 
   if (result.errors) {
     // NOTE: Starting from Relay 18.1.0, the error returned by @catch directive no longer has a message field,

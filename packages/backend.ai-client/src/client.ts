@@ -1,4 +1,5 @@
 import { ClientConfig } from './client-config';
+import { gatewayWrappedError } from './gateway-error';
 import {
   comparePEP440Versions,
   isCompatibleMultipleConditions,
@@ -1236,10 +1237,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
         }
         return this.check_login();
       } else if (result.authenticated === false) {
@@ -1929,24 +1927,8 @@ export class Client {
       timeout,
       retry,
     );
-    // A gateway reports an upstream HTTP failure as a 200 with `errors` and
-    // null data; throw it the way `_wrapWithPromise` throws an HTTP error.
-    const hasData = Object.values(result?.data ?? {}).some((v) => v != null);
-    if (result?.errors?.length && !hasData) {
-      const upstream = result.errors.find(
-        (e: { extensions?: { response?: unknown } }) => e?.extensions?.response,
-      )?.extensions?.response;
-      const detail = upstream?.body?.msg ?? result.errors[0]?.message;
-      throw {
-        isError: true,
-        ...upstream?.body,
-        statusCode: upstream?.status,
-        statusText: upstream?.statusText,
-        message: detail,
-        description: detail,
-        response: result,
-      };
-    }
+    const gatewayError = gatewayWrappedError(result);
+    if (gatewayError) throw gatewayError;
     return result.data as TData;
   }
 

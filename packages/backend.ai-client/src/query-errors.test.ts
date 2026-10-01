@@ -1,4 +1,4 @@
-import { Client, ClientConfig } from './index';
+import { Client, ClientConfig, gatewayWrappedError } from './index';
 import { describe, expect, it, vi } from 'vitest';
 
 const makeClient = (result: unknown) => {
@@ -69,5 +69,25 @@ describe('Client.query GraphQL errors (FR-3998)', () => {
     await expect(
       makeClient({ data }).query('{keypair{user_id}}', {}),
     ).resolves.toEqual(data);
+  });
+});
+
+describe('gatewayWrappedError (FR-4124)', () => {
+  it('carries the upstream status for a gateway-wrapped failure', () => {
+    expect(gatewayWrappedError(gatewayIpRejection)?.statusCode).toBe(401);
+  });
+
+  it('has no status for a plain GraphQL field error, so Relay keeps it', () => {
+    const error = gatewayWrappedError({
+      data: { user: null },
+      errors: [{ message: 'not found' }],
+    });
+    expect(error).toMatchObject({ message: 'not found' });
+    expect(error?.statusCode).toBeUndefined();
+  });
+
+  it('ignores a result without errors', () => {
+    expect(gatewayWrappedError({ data: { user: null } })).toBeNull();
+    expect(gatewayWrappedError(undefined)).toBeNull();
   });
 });
