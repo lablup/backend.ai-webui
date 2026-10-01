@@ -1393,7 +1393,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       {/* Right-side vertical Steps panel — mirrors DeploymentLauncherPageContent.
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
-        <BAIFlex style={{ position: 'sticky', top: 80 }}>
+        <BAIFlex style={{ position: 'sticky', top: 20 }}>
           {/* Only completed and current steps are clickable; forward jumps go
               through the Next / Skip-to-Review buttons. */}
           <Stepper

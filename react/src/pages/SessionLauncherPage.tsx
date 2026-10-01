@@ -1514,7 +1514,7 @@ const SessionLauncherPage = () => {
         {screens.lg && (
           <BAIFlex
             data-test-id="neo-session-launcher-tour-step"
-            style={{ position: 'sticky', top: 80 }}
+            style={{ position: 'sticky', top: 20 }}
           >
             <Stepper
               orientation="vertical"
