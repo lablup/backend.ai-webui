@@ -16,6 +16,7 @@ import {
   useBAILogger,
   useMutationWithPromise,
   type BAIColumnsType,
+  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import _ from 'lodash';
 import React, { useRef, useState } from 'react';
@@ -55,6 +56,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   const { t } = useTranslation();
   const { token } = useTheme();
   const { message } = App.useApp();
+  const userSelectScope = useAdminUserSelectScope();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
@@ -213,6 +215,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
           <BAIUserSelect
+            scope={userSelectScope}
             multiple
             valuePropName="id"
             label={t('credential.Users')}

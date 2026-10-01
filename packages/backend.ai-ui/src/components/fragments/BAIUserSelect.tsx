@@ -5,11 +5,17 @@
  The user picker the admin and project-admin forms share, built on
  `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
  server-side search, and a plain-key (`string` / `string[]`) value with
- label-in-value kept inside the wrapper. `scope` picks the V2 connection —
- `adminUsersV2`, `domainUsersV2` or `projectUsersV2` (managers >= 26.2.0).
+ label-in-value kept inside the wrapper. The required `scope` picks the V2
+ connection — `adminUsersV2`, `domainUsersV2` or `projectUsersV2` (managers
+ >= 26.2.0) — and each scope owns its two Relay documents, so a scope id is
+ a required variable rather than a placeholder.
 */
-import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
-import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
+import { BAIUserSelectAdminPaginatedQuery } from '../../__generated__/BAIUserSelectAdminPaginatedQuery.graphql';
+import { BAIUserSelectAdminValueQuery } from '../../__generated__/BAIUserSelectAdminValueQuery.graphql';
+import { BAIUserSelectDomainPaginatedQuery } from '../../__generated__/BAIUserSelectDomainPaginatedQuery.graphql';
+import { BAIUserSelectDomainValueQuery } from '../../__generated__/BAIUserSelectDomainValueQuery.graphql';
+import { BAIUserSelectProjectPaginatedQuery } from '../../__generated__/BAIUserSelectProjectPaginatedQuery.graphql';
+import { BAIUserSelectProjectValueQuery } from '../../__generated__/BAIUserSelectProjectValueQuery.graphql';
 import { combineFilters, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
@@ -20,7 +26,6 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import * as _ from 'lodash-es';
 import {
   useDeferredValue,
@@ -31,7 +36,7 @@ import {
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
 export type BAIUserSelectFilter = NonNullable<
-  BAIUserSelectPaginatedQuery['variables']['filter']
+  BAIUserSelectAdminPaginatedQuery['variables']['filter']
 >;
 
 /**
@@ -67,11 +72,8 @@ export interface BAIUserSelectProps extends Omit<
     value: string | Array<string> | undefined,
     option?: BAILabeledValue | Array<BAILabeledValue>,
   ) => void;
-  /**
-   * Defaults to every user the caller may administer: all users for a
-   * super-admin, the caller's own domain otherwise.
-   */
-  scope?: BAIUserSelectScope;
+  /** Required: an admin page takes it from `useAdminUserSelectScope()`. */
+  scope: BAIUserSelectScope;
   filter?: BAIUserSelectFilter;
   excludeInactive?: boolean;
   valuePropName?: 'id' | 'email';
@@ -80,19 +82,24 @@ export interface BAIUserSelectProps extends Omit<
   ref?: React.Ref<BAIUserSelectRef>;
 }
 
-const NIL_UUID = '00000000-0000-0000-0000-000000000000';
-
-type PaginatedResponse = BAIUserSelectPaginatedQuery['response'];
-type ValueResponse = BAIUserSelectValueQuery['response'];
-
-const readConnection = (result: PaginatedResponse | ValueResponse) =>
-  result.adminUsersV2 ?? result.domainUsersV2 ?? result.projectUsersV2;
+type UserV2Edge =
+  | {
+      readonly node?: {
+        readonly id: string;
+        readonly basicInfo?: {
+          readonly email?: string | null;
+          readonly fullName?: string | null;
+        } | null;
+      } | null;
+    }
+  | null
+  | undefined;
 
 const readUsers = (
-  result: PaginatedResponse | ValueResponse,
+  edges: ReadonlyArray<UserV2Edge> | null | undefined,
 ): Array<BAIUserSelectUser> =>
   _.compact(
-    _.map(readConnection(result)?.edges, (edge) =>
+    _.map(edges, (edge) =>
       edge?.node
         ? {
             id: edge.node.id,
@@ -103,12 +110,12 @@ const readUsers = (
     ),
   );
 
-const readCount = (result: PaginatedResponse) =>
-  (result.adminUsersV2 ?? result.domainUsersV2 ?? result.projectUsersV2)
-    ?.count ?? undefined;
+const PAGE_SIZE = 10;
 
-const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
-  scope: scopeFromProps,
+type ScopedProps = Omit<BAIUserSelectProps, 'scope'>;
+
+/** Everything a scope variant feeds its two queries from, and the view reads. */
+const useUserSelectState = ({
   filter: filterFromProps,
   excludeInactive = false,
   valuePropName = 'email',
@@ -116,25 +123,8 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   isLoading,
   ref,
   ...selectProps
-}) => {
+}: ScopedProps) => {
   'use memo';
-  const { t } = useBAIi18n();
-  const baiClient = useConnectedBAIClient();
-  const scope: BAIUserSelectScope =
-    scopeFromProps ??
-    (baiClient.is_superadmin
-      ? { type: 'admin' }
-      : { type: 'domain', domainName: baiClient._config.domainName });
-  // The scope arguments are non-null, so the two unused ones carry a
-  // placeholder; their field is `@include`d out and never reads it.
-  const scopeVariables = {
-    useAdmin: scope.type === 'admin',
-    useDomain: scope.type === 'domain',
-    useProject: scope.type === 'project',
-    domainName: scope.type === 'domain' ? scope.domainName : '',
-    projectId: scope.type === 'project' ? scope.projectId : NIL_UUID,
-  };
-
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
   >(selectProps as Record<string, unknown>, {
@@ -157,189 +147,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const baseFilter = combineFilters<BAIUserSelectFilter>([
-    excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
-    filterFromProps,
-  ]);
-
-  // Deferred so a fresh selection does not immediately re-run the value query.
-  const deferredControllableValue = useDeferredValue(controllableValue);
-  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
-
-  /**
-   * The selected-key -> label resolution query. Mandatory on Astryx: the
-   * trigger reads its text from the VALUE, and a value chosen on page 1 is
-   * not in `options` after `loadNext` has paged past it. Under
-   * `valuePropName="email"` the key already IS the label, so it is skipped.
-   */
-  const shouldResolveSelected =
-    valuePropName === 'id' && selectedKeys.length > 0;
-  const selectedUsersResult = useLazyLoadQuery<BAIUserSelectValueQuery>(
-    graphql`
-      query BAIUserSelectValueQuery(
-        $selectedFilter: UserV2Filter
-        $limit: Int!
-        $domainName: String!
-        $projectId: UUID!
-        $useAdmin: Boolean!
-        $useDomain: Boolean!
-        $useProject: Boolean!
-      ) {
-        adminUsersV2(filter: $selectedFilter, limit: $limit)
-          @include(if: $useAdmin) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-        domainUsersV2(
-          scope: { domainName: $domainName }
-          filter: $selectedFilter
-          limit: $limit
-        ) @include(if: $useDomain) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-        projectUsersV2(
-          scope: { projectId: $projectId }
-          filter: $selectedFilter
-          limit: $limit
-        ) @include(if: $useProject) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      ...scopeVariables,
-      useAdmin: shouldResolveSelected && scopeVariables.useAdmin,
-      useDomain: shouldResolveSelected && scopeVariables.useDomain,
-      useProject: shouldResolveSelected && scopeVariables.useProject,
-      selectedFilter: shouldResolveSelected
-        ? combineFilters<BAIUserSelectFilter>([
-            { uuid: { in: selectedKeys } },
-            baseFilter,
-          ])
-        : null,
-      limit: Math.max(selectedKeys.length, 1),
-    },
-    {
-      fetchPolicy: shouldResolveSelected ? 'store-or-network' : 'store-only',
-      fetchKey: deferredFetchKey,
-    },
-  );
-
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, BAIUserSelectUser>(
-      graphql`
-        query BAIUserSelectPaginatedQuery(
-          $offset: Int!
-          $limit: Int!
-          $filter: UserV2Filter
-          $orderBy: [UserV2OrderBy!]
-          $domainName: String!
-          $projectId: UUID!
-          $useAdmin: Boolean!
-          $useDomain: Boolean!
-          $useProject: Boolean!
-        ) {
-          adminUsersV2(
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: $orderBy
-          ) @include(if: $useAdmin) {
-            count
-            edges {
-              node {
-                id
-                basicInfo {
-                  email
-                  fullName
-                }
-              }
-            }
-          }
-          domainUsersV2(
-            scope: { domainName: $domainName }
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: $orderBy
-          ) @include(if: $useDomain) {
-            count
-            edges {
-              node {
-                id
-                basicInfo {
-                  email
-                  fullName
-                }
-              }
-            }
-          }
-          projectUsersV2(
-            scope: { projectId: $projectId }
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: $orderBy
-          ) @include(if: $useProject) {
-            count
-            edges {
-              node {
-                id
-                basicInfo {
-                  email
-                  fullName
-                }
-              }
-            }
-          }
-        }
-      `,
-      { limit: 10 },
-      {
-        ...scopeVariables,
-        filter: combineFilters<BAIUserSelectFilter>([
-          baseFilter,
-          debouncedDeferredValue
-            ? { email: { iContains: debouncedDeferredValue } }
-            : null,
-        ]),
-        orderBy: [{ field: 'EMAIL', direction: 'ASC' }],
-      },
-      {
-        // The open state comes back out of the Astryx popup.
-        fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
-        fetchKey: deferredFetchKey,
-      },
-      {
-        getTotal: readCount,
-        getItem: readUsers,
-        getId: (item) => item?.id,
-      },
-    );
-
   useImperativeHandle(
     ref,
     () => ({
@@ -352,6 +159,106 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
     [updateFetchKey, startRefetchTransition],
   );
 
+  const baseFilter = combineFilters<BAIUserSelectFilter>([
+    excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
+    filterFromProps,
+  ]);
+
+  // Deferred so a fresh selection does not immediately re-run the value query.
+  const deferredControllableValue = useDeferredValue(controllableValue);
+  const selectedKeys = _.compact(_.castArray(deferredControllableValue ?? []));
+  // The trigger reads its text from the VALUE, and a user chosen on page 1 is
+  // not in `options` once `loadNext` paged past it, so ids are re-resolved.
+  // Under `valuePropName="email"` the key already IS the label.
+  const shouldResolveSelected =
+    valuePropName === 'id' && selectedKeys.length > 0;
+
+  return {
+    multiple,
+    isLoading,
+    valuePropName,
+    selectProps,
+    selectedKeys,
+    controllableValue,
+    setControllableValue,
+    controllableOpen,
+    setControllableOpen,
+    deferredOpen,
+    deferredControllableValue,
+    searchStr,
+    setSearchStr,
+    debouncedDeferredValue,
+    isPendingRefetch,
+    listVariables: {
+      filter: combineFilters<BAIUserSelectFilter>([
+        baseFilter,
+        debouncedDeferredValue
+          ? { email: { iContains: debouncedDeferredValue } }
+          : null,
+      ]),
+      orderBy: [{ field: 'EMAIL', direction: 'ASC' }] as const,
+    },
+    listOptions: {
+      // The open state comes back out of the Astryx popup.
+      fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
+      fetchKey: deferredFetchKey,
+    } as const,
+    valueVariables: {
+      selectedFilter: shouldResolveSelected
+        ? combineFilters<BAIUserSelectFilter>([
+            { uuid: { in: selectedKeys } },
+            baseFilter,
+          ])
+        : null,
+      limit: Math.max(selectedKeys.length, 1),
+      skipSelected: !shouldResolveSelected,
+    },
+    valueOptions: {
+      fetchPolicy: shouldResolveSelected ? 'store-or-network' : 'store-only',
+      fetchKey: deferredFetchKey,
+    } as const,
+  };
+};
+
+type UserSelectState = ReturnType<typeof useUserSelectState>;
+
+interface UserSelectViewProps {
+  state: UserSelectState;
+  users: Array<BAIUserSelectUser> | undefined;
+  selectedUsers: Array<BAIUserSelectUser>;
+  total: number | null | undefined;
+  loadNext: () => void;
+  isLoadingNext: boolean;
+}
+
+const UserSelectView: React.FC<UserSelectViewProps> = ({
+  state,
+  users,
+  selectedUsers,
+  total,
+  loadNext,
+  isLoadingNext,
+}) => {
+  'use memo';
+  const { t } = useBAIi18n();
+  const {
+    multiple,
+    isLoading,
+    valuePropName,
+    selectProps,
+    selectedKeys,
+    controllableValue,
+    setControllableValue,
+    controllableOpen,
+    setControllableOpen,
+    deferredOpen,
+    deferredControllableValue,
+    searchStr,
+    setSearchStr,
+    debouncedDeferredValue,
+    isPendingRefetch,
+  } = state;
+
   const keyOfUser = (
     user: BAIUserSelectUser | null | undefined,
   ): string | undefined => {
@@ -362,7 +269,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   };
 
   const options = _.compact(
-    _.map(paginationData, (item) => {
+    _.map(users, (item) => {
       const key = keyOfUser(item);
       return key
         ? {
@@ -378,7 +285,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   const labeledValue: BAIComplexSelectValue = (() => {
     const emailByKey = new Map(
       _.compact(
-        _.map(readUsers(selectedUsersResult), (user) => {
+        _.map(selectedUsers, (user) => {
           const key = keyOfUser(user);
           return key ? ([key, user.email] as const) : null;
         }),
@@ -408,7 +315,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
         isPendingRefetch
       }
       isLoadingNext={isLoadingNext}
-      total={readCount(result)}
+      total={total ?? undefined}
       options={options}
       value={labeledValue}
       onChange={(next) => {
@@ -425,6 +332,266 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       endReached={loadNext}
     />
   );
+};
+
+const AdminUserOptions: React.FC<ScopedProps> = (props) => {
+  'use memo';
+  const state = useUserSelectState(props);
+  const selected = useLazyLoadQuery<BAIUserSelectAdminValueQuery>(
+    graphql`
+      query BAIUserSelectAdminValueQuery(
+        $selectedFilter: UserV2Filter
+        $limit: Int!
+        $skipSelected: Boolean!
+      ) {
+        adminUsersV2(filter: $selectedFilter, limit: $limit)
+          @skip(if: $skipSelected) {
+          edges {
+            node {
+              id
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
+      }
+    `,
+    state.valueVariables,
+    state.valueOptions,
+  );
+  const { paginationData, result, loadNext, isLoadingNext } =
+    useLazyPaginatedQuery<BAIUserSelectAdminPaginatedQuery, BAIUserSelectUser>(
+      graphql`
+        query BAIUserSelectAdminPaginatedQuery(
+          $offset: Int!
+          $limit: Int!
+          $filter: UserV2Filter
+          $orderBy: [UserV2OrderBy!]
+        ) {
+          adminUsersV2(
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: $orderBy
+          ) {
+            count
+            edges {
+              node {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+        }
+      `,
+      { limit: PAGE_SIZE },
+      state.listVariables,
+      state.listOptions,
+      {
+        getTotal: (r) => r.adminUsersV2?.count ?? undefined,
+        getItem: (r) => readUsers(r.adminUsersV2?.edges),
+        getId: (item) => item?.id,
+      },
+    );
+  return (
+    <UserSelectView
+      state={state}
+      users={paginationData}
+      selectedUsers={readUsers(selected.adminUsersV2?.edges)}
+      total={result.adminUsersV2?.count}
+      loadNext={loadNext}
+      isLoadingNext={isLoadingNext}
+    />
+  );
+};
+
+const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
+  domainName,
+  ...props
+}) => {
+  'use memo';
+  const state = useUserSelectState(props);
+  const selected = useLazyLoadQuery<BAIUserSelectDomainValueQuery>(
+    graphql`
+      query BAIUserSelectDomainValueQuery(
+        $domainName: String!
+        $selectedFilter: UserV2Filter
+        $limit: Int!
+        $skipSelected: Boolean!
+      ) {
+        domainUsersV2(
+          scope: { domainName: $domainName }
+          filter: $selectedFilter
+          limit: $limit
+        ) @skip(if: $skipSelected) {
+          edges {
+            node {
+              id
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { ...state.valueVariables, domainName },
+    state.valueOptions,
+  );
+  const { paginationData, result, loadNext, isLoadingNext } =
+    useLazyPaginatedQuery<BAIUserSelectDomainPaginatedQuery, BAIUserSelectUser>(
+      graphql`
+        query BAIUserSelectDomainPaginatedQuery(
+          $domainName: String!
+          $offset: Int!
+          $limit: Int!
+          $filter: UserV2Filter
+          $orderBy: [UserV2OrderBy!]
+        ) {
+          domainUsersV2(
+            scope: { domainName: $domainName }
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: $orderBy
+          ) {
+            count
+            edges {
+              node {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+        }
+      `,
+      { limit: PAGE_SIZE },
+      { ...state.listVariables, domainName },
+      state.listOptions,
+      {
+        getTotal: (r) => r.domainUsersV2?.count ?? undefined,
+        getItem: (r) => readUsers(r.domainUsersV2?.edges),
+        getId: (item) => item?.id,
+      },
+    );
+  return (
+    <UserSelectView
+      state={state}
+      users={paginationData}
+      selectedUsers={readUsers(selected.domainUsersV2?.edges)}
+      total={result.domainUsersV2?.count}
+      loadNext={loadNext}
+      isLoadingNext={isLoadingNext}
+    />
+  );
+};
+
+const ProjectUserOptions: React.FC<ScopedProps & { projectId: string }> = ({
+  projectId,
+  ...props
+}) => {
+  'use memo';
+  const state = useUserSelectState(props);
+  const selected = useLazyLoadQuery<BAIUserSelectProjectValueQuery>(
+    graphql`
+      query BAIUserSelectProjectValueQuery(
+        $projectId: UUID!
+        $selectedFilter: UserV2Filter
+        $limit: Int!
+        $skipSelected: Boolean!
+      ) {
+        projectUsersV2(
+          scope: { projectId: $projectId }
+          filter: $selectedFilter
+          limit: $limit
+        ) @skip(if: $skipSelected) {
+          edges {
+            node {
+              id
+              basicInfo {
+                email
+                fullName
+              }
+            }
+          }
+        }
+      }
+    `,
+    { ...state.valueVariables, projectId },
+    state.valueOptions,
+  );
+  const { paginationData, result, loadNext, isLoadingNext } =
+    useLazyPaginatedQuery<
+      BAIUserSelectProjectPaginatedQuery,
+      BAIUserSelectUser
+    >(
+      graphql`
+        query BAIUserSelectProjectPaginatedQuery(
+          $projectId: UUID!
+          $offset: Int!
+          $limit: Int!
+          $filter: UserV2Filter
+          $orderBy: [UserV2OrderBy!]
+        ) {
+          projectUsersV2(
+            scope: { projectId: $projectId }
+            offset: $offset
+            limit: $limit
+            filter: $filter
+            orderBy: $orderBy
+          ) {
+            count
+            edges {
+              node {
+                id
+                basicInfo {
+                  email
+                  fullName
+                }
+              }
+            }
+          }
+        }
+      `,
+      { limit: PAGE_SIZE },
+      { ...state.listVariables, projectId },
+      state.listOptions,
+      {
+        getTotal: (r) => r.projectUsersV2?.count ?? undefined,
+        getItem: (r) => readUsers(r.projectUsersV2?.edges),
+        getId: (item) => item?.id,
+      },
+    );
+  return (
+    <UserSelectView
+      state={state}
+      users={paginationData}
+      selectedUsers={readUsers(selected.projectUsersV2?.edges)}
+      total={result.projectUsersV2?.count}
+      loadNext={loadNext}
+      isLoadingNext={isLoadingNext}
+    />
+  );
+};
+
+const BAIUserSelect: React.FC<BAIUserSelectProps> = ({ scope, ...props }) => {
+  'use memo';
+  if (scope.type === 'project') {
+    return <ProjectUserOptions projectId={scope.projectId} {...props} />;
+  }
+  if (scope.type === 'domain') {
+    return <DomainUserOptions domainName={scope.domainName} {...props} />;
+  }
+  return <AdminUserOptions {...props} />;
 };
 
 export default BAIUserSelect;

@@ -20,12 +20,22 @@ export const docs = {
   ],
   usage: {
     description:
-      'The user picker behind the keypair, project-admin, RBAC, deployment and storage-permission forms, and the reference consumer of BAIComplexSelect. The scope prop decides which V2 connection it pages: adminUsersV2 for every user (super-admin), domainUsersV2 for one domain, or projectUsersV2 for the members of one project; left out, a super-admin lists everyone and anyone else lists their own domain. It runs two Relay queries of its own: BAIUserSelectPaginatedQuery pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; BAIUserSelectValueQuery re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. The three connections exist on managers 26.2.0 and later; there is no legacy fallback. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      'The user picker behind the keypair, project-admin, RBAC, deployment and storage-permission forms, and the reference consumer of BAIComplexSelect. The required scope prop decides which V2 connection it pages: adminUsersV2 for every user (super-admin), domainUsersV2 for one domain, or projectUsersV2 for the members of one project. Each scope owns its own pair of Relay documents — BAIUserSelectAdminPaginatedQuery / BAIUserSelectAdminValueQuery, and the Domain and Project twins — so a scope id is a required query variable, never a placeholder, and a caller that cannot supply one cannot render the select. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. The three connections exist on managers 26.2.0 and later; there is no legacy fallback. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
     bestPractices: [
       {
         guidance: true,
         description:
+          'On an admin page, call useAdminUserSelectScope() at the top of the component and pass its result as scope — it is { type: "admin" } for a super-admin and the caller\'s own domain otherwise, which is what each may list.',
+      },
+      {
+        guidance: true,
+        description:
           'Pass scope={{ type: "project", projectId }} on a project-admin screen: adminUsersV2 needs a super-admin, and projectUsersV2 is what a project member may read.',
+      },
+      {
+        guidance: false,
+        description:
+          'Expect a default scope. There is none on purpose: the component cannot know which users the caller may list, so the caller states it, and a missing id is a type error rather than a placeholder query.',
       },
       {
         guidance: true,
@@ -80,8 +90,9 @@ export const docs = {
     {
       name: 'scope',
       type: 'BAIUserSelectScope',
+      required: true,
       description:
-        'Which users to list: { type: "admin" } pages adminUsersV2, { type: "domain", domainName } pages domainUsersV2, { type: "project", projectId } pages projectUsersV2. Omitted, a super-admin lists every user and anyone else their own domain.',
+        'Which users to list: { type: "admin" } pages adminUsersV2, { type: "domain", domainName } pages domainUsersV2, { type: "project", projectId } pages projectUsersV2. Each scope has its own Relay documents, so the id is a required variable. Admin pages take the value from useAdminUserSelectScope().',
     },
     {
       name: 'valuePropName',
@@ -144,8 +155,11 @@ export const docs = {
   examples: [
     {
       label: 'Multi-user field in an assign-role modal',
-      code: `<Form.Item name="userIds" label={t('credential.Users')}>
+      code: `const userSelectScope = useAdminUserSelectScope();
+
+<Form.Item name="userIds" label={t('credential.Users')}>
   <BAIUserSelect
+    scope={userSelectScope}
     multiple
     valuePropName="id"
     label={t('credential.Users')}

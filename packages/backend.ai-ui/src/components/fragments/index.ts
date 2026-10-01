@@ -162,6 +162,7 @@ export type {
   BAIUserSelectUser,
   BAIUserSelectRef,
 } from './BAIUserSelect';
+export { default as useAdminUserSelectScope } from './useAdminUserSelectScope';
 export { default as BAIProjectSelect } from './BAIProjectSelect';
 export type {
   BAIProjectSelectProps,

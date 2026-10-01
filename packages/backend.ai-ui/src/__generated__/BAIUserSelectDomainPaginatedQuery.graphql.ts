@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<f8da423baca99f6cae64a155553ba7e7>>
+ * @generated SignedSource<<564c0d2dc05d9ecab94c40aeb78252c6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -139,43 +139,15 @@ export type UserV2OrderBy = {
   direction?: OrderDirection;
   field?: UserV2OrderField;
 };
-export type BAIUserSelectPaginatedQuery$variables = {
+export type BAIUserSelectDomainPaginatedQuery$variables = {
   domainName: string;
   filter?: UserV2Filter | null | undefined;
   limit: number;
   offset: number;
   orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
-  projectId: string;
-  useAdmin: boolean;
-  useDomain: boolean;
-  useProject: boolean;
 };
-export type BAIUserSelectPaginatedQuery$data = {
-  readonly adminUsersV2?: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly basicInfo: {
-          readonly email: string;
-          readonly fullName: string | null | undefined;
-        };
-        readonly id: string;
-      };
-    }>;
-  } | null | undefined;
-  readonly domainUsersV2?: {
-    readonly count: number;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly basicInfo: {
-          readonly email: string;
-          readonly fullName: string | null | undefined;
-        };
-        readonly id: string;
-      };
-    }>;
-  } | null | undefined;
-  readonly projectUsersV2?: {
+export type BAIUserSelectDomainPaginatedQuery$data = {
+  readonly domainUsersV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -188,9 +160,9 @@ export type BAIUserSelectPaginatedQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIUserSelectPaginatedQuery = {
-  response: BAIUserSelectPaginatedQuery$data;
-  variables: BAIUserSelectPaginatedQuery$variables;
+export type BAIUserSelectDomainPaginatedQuery = {
+  response: BAIUserSelectDomainPaginatedQuery$data;
+  variables: BAIUserSelectDomainPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -219,97 +191,100 @@ v4 = {
   "kind": "LocalArgument",
   "name": "orderBy"
 },
-v5 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "projectId"
-},
-v6 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useAdmin"
-},
-v7 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useDomain"
-},
-v8 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useProject"
-},
-v9 = {
-  "kind": "Variable",
-  "name": "filter",
-  "variableName": "filter"
-},
-v10 = {
-  "kind": "Variable",
-  "name": "limit",
-  "variableName": "limit"
-},
-v11 = {
-  "kind": "Variable",
-  "name": "offset",
-  "variableName": "offset"
-},
-v12 = {
-  "kind": "Variable",
-  "name": "orderBy",
-  "variableName": "orderBy"
-},
-v13 = [
+v5 = [
   {
     "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "count",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "concreteType": "UserV2Edge",
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
+      },
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      },
+      {
+        "kind": "Variable",
+        "name": "offset",
+        "variableName": "offset"
+      },
+      {
+        "kind": "Variable",
+        "name": "orderBy",
+        "variableName": "orderBy"
+      },
+      {
+        "fields": [
+          {
+            "kind": "Variable",
+            "name": "domainName",
+            "variableName": "domainName"
+          }
+        ],
+        "kind": "ObjectValue",
+        "name": "scope"
+      }
+    ],
+    "concreteType": "UserV2Connection",
     "kind": "LinkedField",
-    "name": "edges",
-    "plural": true,
+    "name": "domainUsersV2",
+    "plural": false,
     "selections": [
       {
         "alias": null,
         "args": null,
-        "concreteType": "UserV2",
+        "kind": "ScalarField",
+        "name": "count",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "UserV2Edge",
         "kind": "LinkedField",
-        "name": "node",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserV2BasicInfo",
+            "concreteType": "UserV2",
             "kind": "LinkedField",
-            "name": "basicInfo",
+            "name": "node",
             "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "email",
+                "name": "id",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
-                "kind": "ScalarField",
-                "name": "fullName",
+                "concreteType": "UserV2BasicInfo",
+                "kind": "LinkedField",
+                "name": "basicInfo",
+                "plural": false,
+                "selections": [
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "email",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
+                    "name": "fullName",
+                    "storageKey": null
+                  }
+                ],
                 "storageKey": null
               }
             ],
@@ -320,96 +295,6 @@ v13 = [
       }
     ],
     "storageKey": null
-  }
-],
-v14 = [
-  {
-    "condition": "useAdmin",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          (v9/*: any*/),
-          (v10/*: any*/),
-          (v11/*: any*/),
-          (v12/*: any*/)
-        ],
-        "concreteType": "UserV2Connection",
-        "kind": "LinkedField",
-        "name": "adminUsersV2",
-        "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
-  {
-    "condition": "useDomain",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          (v9/*: any*/),
-          (v10/*: any*/),
-          (v11/*: any*/),
-          (v12/*: any*/),
-          {
-            "fields": [
-              {
-                "kind": "Variable",
-                "name": "domainName",
-                "variableName": "domainName"
-              }
-            ],
-            "kind": "ObjectValue",
-            "name": "scope"
-          }
-        ],
-        "concreteType": "UserV2Connection",
-        "kind": "LinkedField",
-        "name": "domainUsersV2",
-        "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
-  {
-    "condition": "useProject",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          (v9/*: any*/),
-          (v10/*: any*/),
-          (v11/*: any*/),
-          (v12/*: any*/),
-          {
-            "fields": [
-              {
-                "kind": "Variable",
-                "name": "projectId",
-                "variableName": "projectId"
-              }
-            ],
-            "kind": "ObjectValue",
-            "name": "scope"
-          }
-        ],
-        "concreteType": "UserV2Connection",
-        "kind": "LinkedField",
-        "name": "projectUsersV2",
-        "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": null
-      }
-    ]
   }
 ];
 return {
@@ -419,47 +304,39 @@ return {
       (v1/*: any*/),
       (v2/*: any*/),
       (v3/*: any*/),
-      (v4/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v7/*: any*/),
-      (v8/*: any*/)
+      (v4/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIUserSelectPaginatedQuery",
-    "selections": (v14/*: any*/),
+    "name": "BAIUserSelectDomainPaginatedQuery",
+    "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
+      (v0/*: any*/),
       (v3/*: any*/),
       (v2/*: any*/),
       (v1/*: any*/),
-      (v4/*: any*/),
-      (v0/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v7/*: any*/),
-      (v8/*: any*/)
+      (v4/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIUserSelectPaginatedQuery",
-    "selections": (v14/*: any*/)
+    "name": "BAIUserSelectDomainPaginatedQuery",
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "b55cfe106012b73591f9bb622f5d9ff6",
+    "cacheID": "b3f6bb2011f0d61b53037dba109fa89a",
     "id": null,
     "metadata": {},
-    "name": "BAIUserSelectPaginatedQuery",
+    "name": "BAIUserSelectDomainPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIUserSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $domainName: String!\n  $projectId: UUID!\n  $useAdmin: Boolean!\n  $useDomain: Boolean!\n  $useProject: Boolean!\n) {\n  adminUsersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useAdmin) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  domainUsersV2(scope: {domainName: $domainName}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useDomain) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  projectUsersV2(scope: {projectId: $projectId}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useProject) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIUserSelectDomainPaginatedQuery(\n  $domainName: String!\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  domainUsersV2(scope: {domainName: $domainName}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "774c356d5c02b46e6dcd3b1c92287d87";
+(node as any).hash = "e9f729d4c4241e2131a8833e03456c89";
 
 export default node;

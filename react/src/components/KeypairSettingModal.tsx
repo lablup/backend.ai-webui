@@ -16,6 +16,7 @@ import {
   type BAIModalProps,
   BAISelect,
   BAIUserSelect,
+  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import { Suspense, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
+  const userSelectScope = useAdminUserSelectScope();
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<KeypairSettingModalFormInput>>(null);
 
@@ -182,6 +184,7 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
               ]}
             >
               <BAIUserSelect
+                scope={userSelectScope}
                 label={t('general.User')}
                 isLabelHidden
                 placeholder={t('credential.SelectUser')}

@@ -1,11 +1,7 @@
 import RelayResolver from '../../tests/RelayResolver';
-import {
-  BAIClientContext,
-  type BAIClient,
-} from '../provider/BAIClientProvider';
-import BAIUserSelect from './BAIUserSelect';
+import BAIUserSelect, { type BAIUserSelectScope } from './BAIUserSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { ComponentProps, useMemo, useState } from 'react';
+import { ComponentProps, useState } from 'react';
 import type { MockResolvers } from 'relay-test-utils';
 
 /**
@@ -14,8 +10,7 @@ import type { MockResolvers } from 'relay-test-utils';
  * `labelInValue` semantics behind a plain-key (`string`/`string[]`) value.
  *
  * Storybook can't reproduce real scroll-driven pagination against a live
- * backend, so this mocks a single page's worth of users via `RelayResolver`
- * and a mock client that reports a super-admin.
+ * backend, so this mocks a single page's worth of users via `RelayResolver`.
  */
 const meta: Meta<typeof BAIUserSelect> = {
   title: 'Fragments/BAIUserSelect',
@@ -28,7 +23,7 @@ const meta: Meta<typeof BAIUserSelect> = {
         component: `
 **BAIUserSelect** — the user picker the admin and project-admin forms share. Built on \`BAIComplexSelect\`.
 
-- \`scope\`: \`{ type: 'admin' }\` (\`adminUsersV2\`), \`{ type: 'domain', domainName }\` (\`domainUsersV2\`) or \`{ type: 'project', projectId }\` (\`projectUsersV2\`). Omitted, it lists every user the caller may administer: all users for a super-admin, the caller's own domain otherwise.
+- \`scope\` (required): \`{ type: 'admin' }\` (\`adminUsersV2\`), \`{ type: 'domain', domainName }\` (\`domainUsersV2\`) or \`{ type: 'project', projectId }\` (\`projectUsersV2\`). Each scope owns its own Relay documents, so a scope id is a required variable. Admin pages take theirs from \`useAdminUserSelectScope()\`.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
 - \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
 - Needs a manager >= 26.2.0, where the three V2 connections exist.
@@ -86,7 +81,7 @@ const connection = (users: typeof mockUsers) => ({
 const mockResolvers: MockResolvers = {
   Query: () => ({
     adminUsersV2: connection(mockUsers),
-    domainUsersV2: connection(mockUsers),
+    domainUsersV2: connection(mockUsers.slice(0, 3)),
     projectUsersV2: connection(mockUsers.slice(1, 3)),
   }),
 };
@@ -95,44 +90,86 @@ const emptyResolvers: MockResolvers = {
   Query: () => ({ adminUsersV2: connection([]) }),
 };
 
-const mockClient = {
-  is_superadmin: true,
-  _config: { domainName: 'default' },
-} as unknown as BAIClient;
+const adminScope: BAIUserSelectScope = { type: 'admin' };
 
 const Sandbox: React.FC<
-  Omit<ComponentProps<typeof BAIUserSelect>, 'value' | 'onChange'> & {
+  Omit<ComponentProps<typeof BAIUserSelect>, 'value' | 'onChange' | 'scope'> & {
+    scope?: BAIUserSelectScope;
     initialValue?: string | Array<string> | null;
     resolvers?: MockResolvers;
   }
-> = ({ initialValue = null, resolvers = mockResolvers, ...args }) => {
+> = ({
+  scope = adminScope,
+  initialValue = null,
+  resolvers = mockResolvers,
+  ...args
+}) => {
   const [value, setValue] = useState<string | Array<string> | null | undefined>(
     initialValue,
   );
-  const clientPromise = useMemo(() => Promise.resolve(mockClient), []);
   return (
-    <BAIClientContext.Provider value={clientPromise}>
-      <RelayResolver mockResolvers={resolvers}>
-        <BAIUserSelect
-          {...args}
-          value={value}
-          onChange={(next) => setValue(next ?? null)}
-        />
-      </RelayResolver>
-    </BAIClientContext.Provider>
+    <RelayResolver mockResolvers={resolvers}>
+      <BAIUserSelect
+        {...args}
+        scope={scope}
+        value={value}
+        onChange={(next) => setValue(next ?? null)}
+      />
+    </RelayResolver>
   );
 };
 
-export const Default: Story = {
-  name: 'Single Select',
+export const AdminScope: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Single user select, `valuePropName="email"` (default).',
+        story:
+          '`scope={{ type: "admin" }}` reads `adminUsersV2` — every user, which only a super-admin may list.',
       },
     },
   },
   render: (args) => <Sandbox {...args} label="User" />,
+};
+
+export const DomainScope: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`scope={{ type: "domain", domainName }}` reads `domainUsersV2` — the users of one domain, which a domain admin may list. `useAdminUserSelectScope()` picks this scope for a non-super-admin caller.',
+      },
+    },
+  },
+  render: (args) => (
+    <Sandbox
+      {...args}
+      label="User"
+      scope={{ type: 'domain', domainName: 'default' }}
+      defaultOpen
+    />
+  ),
+};
+
+export const ProjectScope: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`scope={{ type: "project", projectId }}` reads `projectUsersV2`, the members of one project — what a project admin may list.',
+      },
+    },
+  },
+  render: (args) => (
+    <Sandbox
+      {...args}
+      label="Owner"
+      scope={{
+        type: 'project',
+        projectId: '5c3b5a9e-0000-4000-8000-000000000001',
+      }}
+      defaultOpen
+    />
+  ),
 };
 
 export const Multiple: Story = {
@@ -151,29 +188,6 @@ export const Multiple: Story = {
       label="Users"
       multiple
       initialValue={['admin@example.com']}
-    />
-  ),
-};
-
-export const ProjectScoped: Story = {
-  name: 'Project Scope',
-  parameters: {
-    docs: {
-      description: {
-        story:
-          '`scope={{ type: "project", projectId }}` reads `projectUsersV2`, the members of one project — what a project admin may list.',
-      },
-    },
-  },
-  render: (args) => (
-    <Sandbox
-      {...args}
-      label="Owner"
-      scope={{
-        type: 'project',
-        projectId: '5c3b5a9e-0000-4000-8000-000000000001',
-      }}
-      defaultOpen
     />
   ),
 };

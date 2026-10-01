@@ -29,6 +29,7 @@ import {
   BAIUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
+  useAdminUserSelectScope,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -144,6 +145,7 @@ const KeypairResourcePolicyV2 = ({
   const { t } = useTranslation();
   const { message } = App.useApp();
   const [fetchKey, updateFetchKey] = useFetchKey();
+  const userSelectScope = useAdminUserSelectScope();
   const relayEnvironment = useRelayEnvironment();
   const exportPagedCSV = usePagedCSVExport();
 
@@ -318,6 +320,7 @@ const KeypairResourcePolicyV2 = ({
                   fallback={<BAISkeleton variant="input" width={200} />}
                 >
                   <BAIUserSelect
+                    scope={userSelectScope}
                     valuePropName="id"
                     value={value}
                     isDisabled={isDisabled}
