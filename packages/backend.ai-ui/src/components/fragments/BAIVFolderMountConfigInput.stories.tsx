@@ -151,9 +151,8 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders from the whole folder list (\`myVfolders\`, or REST \`GET /folders\`
-  on managers below 26.4.2) and gates it client side, because the session
-  launcher's mount gates cannot be expressed as a
+- Picks folders from the whole folder list (\`myVfolders\`) and gates it client
+  side, because the session launcher's mount gates cannot be expressed as a
   GraphQL filter: the host must be in \`mountableHosts\` (those granting
   \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
   folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
@@ -178,7 +177,7 @@ for configuring vfolder mounts.
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
+The stories below mock the folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
 \`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
 dropped in the **WithAutoMountedFolders** story.
