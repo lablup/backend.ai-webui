@@ -76,7 +76,6 @@ const availableModelCardSorterKeys = [
   'category',
   'task',
   'access_level',
-  'domain_name',
   'project_id',
 ] as const;
 
@@ -91,6 +90,7 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
+    $domainName: String
   ) {
     adminModelCardsV2(
       filter: $filter
@@ -111,7 +111,6 @@ export const AdminModelCardQuery = graphql`
             }
             ...VFolderNodeIdenticonV2Fragment
           }
-          domainName
           projectId
           accessLevel
           createdAt
@@ -124,7 +123,7 @@ export const AdminModelCardQuery = graphql`
         }
       }
     }
-    groups(is_active: true, type: ["MODEL_STORE"]) {
+    groups(domain_name: $domainName, is_active: true, type: ["MODEL_STORE"]) {
       id
       name
     }
@@ -133,6 +132,8 @@ export const AdminModelCardQuery = graphql`
 
 export interface AdminModelCardProps {
   queryRef: PreloadedQuery<AdminModelCardQueryType>;
+  /** The user's conditions, without the page's domain scoping. */
+  filter?: ModelCardV2Filter;
   onReload: (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
@@ -142,6 +143,7 @@ export interface AdminModelCardProps {
 
 const AdminModelCard: React.FC<AdminModelCardProps> = ({
   queryRef,
+  filter,
   onReload,
   tableSettings,
 }) => {
@@ -170,7 +172,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
 
-  const filter = queryRef.variables.filter ?? undefined;
   const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
@@ -312,12 +313,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     },
     // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field
     {
-      key: 'domainName',
-      title: t('adminModelCard.Domain'),
-      dataIndex: 'domainName',
-      sorter: supportsSearchAxes,
-    },
-    {
       key: 'projectId',
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
@@ -366,11 +361,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
               supportsSearchAxes && {
                 key: 'task',
                 propertyLabel: t('modelStore.Task'),
-                type: 'string',
-              },
-              {
-                key: 'domainName',
-                propertyLabel: t('adminModelCard.Domain'),
                 type: 'string',
               },
               {
@@ -762,12 +752,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                             <div key={f.cardId}>
                               <Text weight="semibold">{cardName}</Text>
                               <Text color="secondary">{' — '}</Text>
-                              {/* PILOT-DECISION: antd `type="danger"` has no
-                                  Astryx TextColor equivalent — the red tint is
-                                  dropped; `type="supporting"` keeps the small
-                                  font (was token.fontSizeSM) and the failure
-                                  context is already carried by the warning
-                                  notification. */}
                               <Text type="supporting" color="primary">
                                 {f.message}
                               </Text>
