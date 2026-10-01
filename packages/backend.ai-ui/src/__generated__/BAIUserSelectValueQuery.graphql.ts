@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8ed5b0b3d06760465bda6bc9662c2b17>>
+ * @generated SignedSource<<e0ac784d37645be0dec1dde0ffc4dc3e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -135,13 +135,11 @@ export type UserProjectNestedFilter = {
 };
 export type BAIUserSelectValueQuery$variables = {
   domainName: string;
-  legacySelectedFilter?: string | null | undefined;
   limit: number;
   projectId: string;
   selectedFilter?: UserV2Filter | null | undefined;
   useAdmin: boolean;
   useDomain: boolean;
-  useLegacy: boolean;
   useProject: boolean;
 };
 export type BAIUserSelectValueQuery$data = {
@@ -178,15 +176,6 @@ export type BAIUserSelectValueQuery$data = {
       };
     }>;
   } | null | undefined;
-  readonly user_nodes?: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly email: string | null | undefined;
-        readonly full_name: string | null | undefined;
-        readonly id: string;
-      } | null | undefined;
-    } | null | undefined>;
-  } | null | undefined;
 };
 export type BAIUserSelectValueQuery = {
   response: BAIUserSelectValueQuery$data;
@@ -202,68 +191,44 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "legacySelectedFilter"
+  "name": "limit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "projectId"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectId"
+  "name": "selectedFilter"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "selectedFilter"
+  "name": "useAdmin"
 },
 v5 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "useAdmin"
+  "name": "useDomain"
 },
 v6 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "useDomain"
-},
-v7 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useLegacy"
-},
-v8 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "useProject"
 },
-v9 = {
+v7 = {
   "kind": "Variable",
   "name": "filter",
   "variableName": "selectedFilter"
 },
-v10 = {
+v8 = {
   "kind": "Variable",
   "name": "limit",
   "variableName": "limit"
 },
-v11 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v12 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-},
-v13 = [
+v9 = [
   {
     "alias": null,
     "args": null,
@@ -280,7 +245,13 @@ v13 = [
         "name": "node",
         "plural": false,
         "selections": [
-          (v11/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -289,7 +260,13 @@ v13 = [
             "name": "basicInfo",
             "plural": false,
             "selections": [
-              (v12/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "email",
+                "storageKey": null
+              },
               {
                 "alias": null,
                 "args": null,
@@ -307,7 +284,7 @@ v13 = [
     "storageKey": null
   }
 ],
-v14 = [
+v10 = [
   {
     "condition": "useAdmin",
     "kind": "Condition",
@@ -316,14 +293,14 @@ v14 = [
       {
         "alias": null,
         "args": [
-          (v9/*: any*/),
-          (v10/*: any*/)
+          (v7/*: any*/),
+          (v8/*: any*/)
         ],
         "concreteType": "UserV2Connection",
         "kind": "LinkedField",
         "name": "adminUsersV2",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": (v9/*: any*/),
         "storageKey": null
       }
     ]
@@ -336,8 +313,8 @@ v14 = [
       {
         "alias": null,
         "args": [
-          (v9/*: any*/),
-          (v10/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "fields": [
               {
@@ -354,7 +331,7 @@ v14 = [
         "kind": "LinkedField",
         "name": "domainUsersV2",
         "plural": false,
-        "selections": (v13/*: any*/),
+        "selections": (v9/*: any*/),
         "storageKey": null
       }
     ]
@@ -367,8 +344,8 @@ v14 = [
       {
         "alias": null,
         "args": [
-          (v9/*: any*/),
-          (v10/*: any*/),
+          (v7/*: any*/),
+          (v8/*: any*/),
           {
             "fields": [
               {
@@ -385,67 +362,7 @@ v14 = [
         "kind": "LinkedField",
         "name": "projectUsersV2",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
-  {
-    "condition": "useLegacy",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "filter",
-            "variableName": "legacySelectedFilter"
-          },
-          {
-            "kind": "Variable",
-            "name": "first",
-            "variableName": "limit"
-          }
-        ],
-        "concreteType": "UserConnection",
-        "kind": "LinkedField",
-        "name": "user_nodes",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "UserNode",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v11/*: any*/),
-                  (v12/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "full_name",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
+        "selections": (v9/*: any*/),
         "storageKey": null
       }
     ]
@@ -460,45 +377,41 @@ return {
       (v3/*: any*/),
       (v4/*: any*/),
       (v5/*: any*/),
-      (v6/*: any*/),
-      (v7/*: any*/),
-      (v8/*: any*/)
+      (v6/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIUserSelectValueQuery",
-    "selections": (v14/*: any*/),
+    "selections": (v10/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v4/*: any*/),
-      (v2/*: any*/),
-      (v0/*: any*/),
       (v3/*: any*/),
-      (v5/*: any*/),
-      (v6/*: any*/),
-      (v8/*: any*/),
       (v1/*: any*/),
-      (v7/*: any*/)
+      (v0/*: any*/),
+      (v2/*: any*/),
+      (v4/*: any*/),
+      (v5/*: any*/),
+      (v6/*: any*/)
     ],
     "kind": "Operation",
     "name": "BAIUserSelectValueQuery",
-    "selections": (v14/*: any*/)
+    "selections": (v10/*: any*/)
   },
   "params": {
-    "cacheID": "e7fca0174d0f1a00145ecfccc68f9305",
+    "cacheID": "9b690ca1194feda8417c81a35c792d6f",
     "id": null,
     "metadata": {},
     "name": "BAIUserSelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIUserSelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $domainName: String!\n  $projectId: UUID!\n  $useAdmin: Boolean!\n  $useDomain: Boolean!\n  $useProject: Boolean!\n  $legacySelectedFilter: String\n  $useLegacy: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @include(if: $useAdmin) @since(version: \"26.2.0\") {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  domainUsersV2(scope: {domainName: $domainName}, filter: $selectedFilter, limit: $limit) @include(if: $useDomain) @since(version: \"26.2.0\") {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  projectUsersV2(scope: {projectId: $projectId}, filter: $selectedFilter, limit: $limit) @include(if: $useProject) @since(version: \"26.2.0\") {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  user_nodes(filter: $legacySelectedFilter, first: $limit) @include(if: $useLegacy) @deprecatedSince(version: \"26.2.0\") {\n    edges {\n      node {\n        id\n        email\n        full_name\n      }\n    }\n  }\n}\n"
+    "text": "query BAIUserSelectValueQuery(\n  $selectedFilter: UserV2Filter\n  $limit: Int!\n  $domainName: String!\n  $projectId: UUID!\n  $useAdmin: Boolean!\n  $useDomain: Boolean!\n  $useProject: Boolean!\n) {\n  adminUsersV2(filter: $selectedFilter, limit: $limit) @include(if: $useAdmin) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  domainUsersV2(scope: {domainName: $domainName}, filter: $selectedFilter, limit: $limit) @include(if: $useDomain) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  projectUsersV2(scope: {projectId: $projectId}, filter: $selectedFilter, limit: $limit) @include(if: $useProject) {\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "46357e6017da80524eded690f1602bd7";
+(node as any).hash = "b7b40edc043c69fd6849506e1ad90da9";
 
 export default node;

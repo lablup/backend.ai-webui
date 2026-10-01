@@ -15,7 +15,7 @@ import type { MockResolvers } from 'relay-test-utils';
  *
  * Storybook can't reproduce real scroll-driven pagination against a live
  * backend, so this mocks a single page's worth of users via `RelayResolver`
- * and a mock client that reports a V2 manager.
+ * and a mock client that reports a super-admin.
  */
 const meta: Meta<typeof BAIUserSelect> = {
   title: 'Fragments/BAIUserSelect',
@@ -31,7 +31,7 @@ const meta: Meta<typeof BAIUserSelect> = {
 - \`scope\`: \`{ type: 'admin' }\` (\`adminUsersV2\`), \`{ type: 'domain', domainName }\` (\`domainUsersV2\`) or \`{ type: 'project', projectId }\` (\`projectUsersV2\`). Omitted, it lists every user the caller may administer: all users for a super-admin, the caller's own domain otherwise.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
 - \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
-- Managers below 26.2.0 fall back to the legacy \`user_nodes\` connection (\`user-v2-query\` client flag).
+- Needs a manager >= 26.2.0, where the three V2 connections exist.
 
 See \`BAIComplexSelect.stories.tsx\` for the underlying popup-body component with static options.
         `,
@@ -96,7 +96,6 @@ const emptyResolvers: MockResolvers = {
 };
 
 const mockClient = {
-  supports: () => true,
   is_superadmin: true,
   _config: { domainName: 'default' },
 } as unknown as BAIClient;

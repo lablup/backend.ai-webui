@@ -6,8 +6,7 @@
  `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
  server-side search, and a plain-key (`string` / `string[]`) value with
  label-in-value kept inside the wrapper. `scope` picks the V2 connection —
- `adminUsersV2`, `domainUsersV2` or `projectUsersV2` (managers >= 26.2.0) —
- and the legacy `user_nodes` connection serves older managers.
+ `adminUsersV2`, `domainUsersV2` or `projectUsersV2` (managers >= 26.2.0).
 */
 import { BAIUserSelectPaginatedQuery } from '../../__generated__/BAIUserSelectPaginatedQuery.graphql';
 import { BAIUserSelectValueQuery } from '../../__generated__/BAIUserSelectValueQuery.graphql';
@@ -21,7 +20,6 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
-import { mergeFilterValues } from '../BAIPropertyFilter';
 import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import * as _ from 'lodash-es';
 import {
@@ -74,7 +72,6 @@ export interface BAIUserSelectProps extends Omit<
    * super-admin, the caller's own domain otherwise.
    */
   scope?: BAIUserSelectScope;
-  /** Typed V2 filter; managers below 26.2.0 list without it. */
   filter?: BAIUserSelectFilter;
   excludeInactive?: boolean;
   valuePropName?: 'id' | 'email';
@@ -88,47 +85,27 @@ const NIL_UUID = '00000000-0000-0000-0000-000000000000';
 type PaginatedResponse = BAIUserSelectPaginatedQuery['response'];
 type ValueResponse = BAIUserSelectValueQuery['response'];
 
-const readV2Connection = (result: PaginatedResponse | ValueResponse) =>
+const readConnection = (result: PaginatedResponse | ValueResponse) =>
   result.adminUsersV2 ?? result.domainUsersV2 ?? result.projectUsersV2;
 
-const readCount = (result: PaginatedResponse) =>
-  (
-    result.adminUsersV2 ??
-    result.domainUsersV2 ??
-    result.projectUsersV2 ??
-    result.user_nodes
-  )?.count ?? undefined;
-
-/** Both connections, folded into one row shape. */
 const readUsers = (
   result: PaginatedResponse | ValueResponse,
-): Array<BAIUserSelectUser> => {
-  const v2 = readV2Connection(result);
-  if (v2) {
-    return _.compact(
-      _.map(v2.edges, (edge) =>
-        edge?.node
-          ? {
-              id: edge.node.id,
-              email: edge.node.basicInfo?.email,
-              fullName: edge.node.basicInfo?.fullName,
-            }
-          : null,
-      ),
-    );
-  }
-  return _.compact(
-    _.map(result.user_nodes?.edges, (edge) =>
+): Array<BAIUserSelectUser> =>
+  _.compact(
+    _.map(readConnection(result)?.edges, (edge) =>
       edge?.node
         ? {
             id: edge.node.id,
-            email: edge.node.email,
-            fullName: edge.node.full_name,
+            email: edge.node.basicInfo?.email,
+            fullName: edge.node.basicInfo?.fullName,
           }
         : null,
     ),
   );
-};
+
+const readCount = (result: PaginatedResponse) =>
+  (result.adminUsersV2 ?? result.domainUsersV2 ?? result.projectUsersV2)
+    ?.count ?? undefined;
 
 const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   scope: scopeFromProps,
@@ -143,7 +120,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   'use memo';
   const { t } = useBAIi18n();
   const baiClient = useConnectedBAIClient();
-  const supportsV2 = baiClient.supports('user-v2-query');
   const scope: BAIUserSelectScope =
     scopeFromProps ??
     (baiClient.is_superadmin
@@ -152,10 +128,9 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
   // The scope arguments are non-null, so the two unused ones carry a
   // placeholder; their field is `@include`d out and never reads it.
   const scopeVariables = {
-    useAdmin: supportsV2 && scope.type === 'admin',
-    useDomain: supportsV2 && scope.type === 'domain',
-    useProject: supportsV2 && scope.type === 'project',
-    useLegacy: !supportsV2,
+    useAdmin: scope.type === 'admin',
+    useDomain: scope.type === 'domain',
+    useProject: scope.type === 'project',
     domainName: scope.type === 'domain' ? scope.domainName : '',
     projectId: scope.type === 'project' ? scope.projectId : NIL_UUID,
   };
@@ -186,11 +161,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
     excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
     filterFromProps,
   ]);
-  // `user_nodes` has no project column, so a project scope lists unscoped there.
-  const legacyBaseFilter = mergeFilterValues([
-    excludeInactive ? 'status == "active"' : null,
-    scope.type === 'domain' ? `domain_name == "${scope.domainName}"` : null,
-  ]);
 
   // Deferred so a fresh selection does not immediately re-run the value query.
   const deferredControllableValue = useDeferredValue(controllableValue);
@@ -214,11 +184,8 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
         $useAdmin: Boolean!
         $useDomain: Boolean!
         $useProject: Boolean!
-        $legacySelectedFilter: String
-        $useLegacy: Boolean!
       ) {
         adminUsersV2(filter: $selectedFilter, limit: $limit)
-          @since(version: "26.2.0")
           @include(if: $useAdmin) {
           edges {
             node {
@@ -234,7 +201,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           scope: { domainName: $domainName }
           filter: $selectedFilter
           limit: $limit
-        ) @since(version: "26.2.0") @include(if: $useDomain) {
+        ) @include(if: $useDomain) {
           edges {
             node {
               id
@@ -249,7 +216,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           scope: { projectId: $projectId }
           filter: $selectedFilter
           limit: $limit
-        ) @since(version: "26.2.0") @include(if: $useProject) {
+        ) @include(if: $useProject) {
           edges {
             node {
               id
@@ -260,17 +227,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
             }
           }
         }
-        user_nodes(filter: $legacySelectedFilter, first: $limit)
-          @deprecatedSince(version: "26.2.0")
-          @include(if: $useLegacy) {
-          edges {
-            node {
-              id
-              email
-              full_name
-            }
-          }
-        }
       }
     `,
     {
@@ -278,24 +234,11 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
       useAdmin: shouldResolveSelected && scopeVariables.useAdmin,
       useDomain: shouldResolveSelected && scopeVariables.useDomain,
       useProject: shouldResolveSelected && scopeVariables.useProject,
-      useLegacy: shouldResolveSelected && scopeVariables.useLegacy,
       selectedFilter: shouldResolveSelected
         ? combineFilters<BAIUserSelectFilter>([
             { uuid: { in: selectedKeys } },
             baseFilter,
           ])
-        : null,
-      legacySelectedFilter: shouldResolveSelected
-        ? mergeFilterValues(
-            [
-              mergeFilterValues(
-                _.map(selectedKeys, (value) => `uuid == "${value}"`),
-                '|',
-              ),
-              legacyBaseFilter,
-            ],
-            '&',
-          )
         : null,
       limit: Math.max(selectedKeys.length, 1),
     },
@@ -305,8 +248,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
     },
   );
 
-  // Legacy `user_nodes` has no `limit`: `first` + `offset` is its own offset
-  // mode (graphql-pagination rule); the V2 fields take `limit` + `offset`.
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<BAIUserSelectPaginatedQuery, BAIUserSelectUser>(
       graphql`
@@ -320,16 +261,13 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
           $useAdmin: Boolean!
           $useDomain: Boolean!
           $useProject: Boolean!
-          $legacyFilter: String
-          $legacyOrder: String
-          $useLegacy: Boolean!
         ) {
           adminUsersV2(
             offset: $offset
             limit: $limit
             filter: $filter
             orderBy: $orderBy
-          ) @since(version: "26.2.0") @include(if: $useAdmin) {
+          ) @include(if: $useAdmin) {
             count
             edges {
               node {
@@ -347,7 +285,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
             limit: $limit
             filter: $filter
             orderBy: $orderBy
-          ) @since(version: "26.2.0") @include(if: $useDomain) {
+          ) @include(if: $useDomain) {
             count
             edges {
               node {
@@ -365,7 +303,7 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
             limit: $limit
             filter: $filter
             orderBy: $orderBy
-          ) @since(version: "26.2.0") @include(if: $useProject) {
+          ) @include(if: $useProject) {
             count
             edges {
               node {
@@ -374,21 +312,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
                   email
                   fullName
                 }
-              }
-            }
-          }
-          user_nodes(
-            offset: $offset
-            first: $limit
-            filter: $legacyFilter
-            order: $legacyOrder
-          ) @deprecatedSince(version: "26.2.0") @include(if: $useLegacy) {
-            count
-            edges {
-              node {
-                id
-                email
-                full_name
               }
             }
           }
@@ -404,13 +327,6 @@ const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
             : null,
         ]),
         orderBy: [{ field: 'EMAIL', direction: 'ASC' }],
-        legacyFilter: mergeFilterValues([
-          legacyBaseFilter,
-          debouncedDeferredValue
-            ? `email ilike "%${debouncedDeferredValue}%"`
-            : null,
-        ]),
-        legacyOrder: 'email',
       },
       {
         // The open state comes back out of the Astryx popup.

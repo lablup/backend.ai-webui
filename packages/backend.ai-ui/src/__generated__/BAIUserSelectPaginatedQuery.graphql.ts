@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<525733982cef7dc1f40af7a83e577e45>>
+ * @generated SignedSource<<f8da423baca99f6cae64a155553ba7e7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -142,15 +142,12 @@ export type UserV2OrderBy = {
 export type BAIUserSelectPaginatedQuery$variables = {
   domainName: string;
   filter?: UserV2Filter | null | undefined;
-  legacyFilter?: string | null | undefined;
-  legacyOrder?: string | null | undefined;
   limit: number;
   offset: number;
   orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
   projectId: string;
   useAdmin: boolean;
   useDomain: boolean;
-  useLegacy: boolean;
   useProject: boolean;
 };
 export type BAIUserSelectPaginatedQuery$data = {
@@ -190,16 +187,6 @@ export type BAIUserSelectPaginatedQuery$data = {
       };
     }>;
   } | null | undefined;
-  readonly user_nodes?: {
-    readonly count: number | null | undefined;
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly email: string | null | undefined;
-        readonly full_name: string | null | undefined;
-        readonly id: string;
-      } | null | undefined;
-    } | null | undefined>;
-  } | null | undefined;
 };
 export type BAIUserSelectPaginatedQuery = {
   response: BAIUserSelectPaginatedQuery$data;
@@ -220,96 +207,66 @@ v1 = {
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "legacyFilter"
+  "name": "limit"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "legacyOrder"
+  "name": "offset"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "orderBy"
 },
 v5 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "projectId"
 },
 v6 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "orderBy"
+  "name": "useAdmin"
 },
 v7 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectId"
+  "name": "useDomain"
 },
 v8 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "useAdmin"
-},
-v9 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useDomain"
-},
-v10 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "useLegacy"
-},
-v11 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "useProject"
 },
-v12 = {
+v9 = {
   "kind": "Variable",
   "name": "filter",
   "variableName": "filter"
 },
-v13 = {
+v10 = {
   "kind": "Variable",
   "name": "limit",
   "variableName": "limit"
 },
-v14 = {
+v11 = {
   "kind": "Variable",
   "name": "offset",
   "variableName": "offset"
 },
-v15 = {
+v12 = {
   "kind": "Variable",
   "name": "orderBy",
   "variableName": "orderBy"
 },
-v16 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "count",
-  "storageKey": null
-},
-v17 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v18 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "email",
-  "storageKey": null
-},
-v19 = [
-  (v16/*: any*/),
+v13 = [
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "count",
+    "storageKey": null
+  },
   {
     "alias": null,
     "args": null,
@@ -326,7 +283,13 @@ v19 = [
         "name": "node",
         "plural": false,
         "selections": [
-          (v17/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -335,7 +298,13 @@ v19 = [
             "name": "basicInfo",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "email",
+                "storageKey": null
+              },
               {
                 "alias": null,
                 "args": null,
@@ -353,7 +322,7 @@ v19 = [
     "storageKey": null
   }
 ],
-v20 = [
+v14 = [
   {
     "condition": "useAdmin",
     "kind": "Condition",
@@ -362,16 +331,16 @@ v20 = [
       {
         "alias": null,
         "args": [
-          (v12/*: any*/),
-          (v13/*: any*/),
-          (v14/*: any*/),
-          (v15/*: any*/)
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
+          (v12/*: any*/)
         ],
         "concreteType": "UserV2Connection",
         "kind": "LinkedField",
         "name": "adminUsersV2",
         "plural": false,
-        "selections": (v19/*: any*/),
+        "selections": (v13/*: any*/),
         "storageKey": null
       }
     ]
@@ -384,10 +353,10 @@ v20 = [
       {
         "alias": null,
         "args": [
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
           (v12/*: any*/),
-          (v13/*: any*/),
-          (v14/*: any*/),
-          (v15/*: any*/),
           {
             "fields": [
               {
@@ -404,7 +373,7 @@ v20 = [
         "kind": "LinkedField",
         "name": "domainUsersV2",
         "plural": false,
-        "selections": (v19/*: any*/),
+        "selections": (v13/*: any*/),
         "storageKey": null
       }
     ]
@@ -417,10 +386,10 @@ v20 = [
       {
         "alias": null,
         "args": [
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
           (v12/*: any*/),
-          (v13/*: any*/),
-          (v14/*: any*/),
-          (v15/*: any*/),
           {
             "fields": [
               {
@@ -437,74 +406,7 @@ v20 = [
         "kind": "LinkedField",
         "name": "projectUsersV2",
         "plural": false,
-        "selections": (v19/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
-  {
-    "condition": "useLegacy",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "filter",
-            "variableName": "legacyFilter"
-          },
-          {
-            "kind": "Variable",
-            "name": "first",
-            "variableName": "limit"
-          },
-          (v14/*: any*/),
-          {
-            "kind": "Variable",
-            "name": "order",
-            "variableName": "legacyOrder"
-          }
-        ],
-        "concreteType": "UserConnection",
-        "kind": "LinkedField",
-        "name": "user_nodes",
-        "plural": false,
-        "selections": [
-          (v16/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "UserEdge",
-            "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "concreteType": "UserNode",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": [
-                  (v17/*: any*/),
-                  (v18/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "full_name",
-                    "storageKey": null
-                  }
-                ],
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
+        "selections": (v13/*: any*/),
         "storageKey": null
       }
     ]
@@ -521,49 +423,43 @@ return {
       (v5/*: any*/),
       (v6/*: any*/),
       (v7/*: any*/),
-      (v8/*: any*/),
-      (v9/*: any*/),
-      (v10/*: any*/),
-      (v11/*: any*/)
+      (v8/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIUserSelectPaginatedQuery",
-    "selections": (v20/*: any*/),
+    "selections": (v14/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v5/*: any*/),
-      (v4/*: any*/),
-      (v1/*: any*/),
-      (v6/*: any*/),
-      (v0/*: any*/),
-      (v7/*: any*/),
-      (v8/*: any*/),
-      (v9/*: any*/),
-      (v11/*: any*/),
-      (v2/*: any*/),
       (v3/*: any*/),
-      (v10/*: any*/)
+      (v2/*: any*/),
+      (v1/*: any*/),
+      (v4/*: any*/),
+      (v0/*: any*/),
+      (v5/*: any*/),
+      (v6/*: any*/),
+      (v7/*: any*/),
+      (v8/*: any*/)
     ],
     "kind": "Operation",
     "name": "BAIUserSelectPaginatedQuery",
-    "selections": (v20/*: any*/)
+    "selections": (v14/*: any*/)
   },
   "params": {
-    "cacheID": "9d4706317e1b7197bce9fa1b481123a9",
+    "cacheID": "b55cfe106012b73591f9bb622f5d9ff6",
     "id": null,
     "metadata": {},
     "name": "BAIUserSelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIUserSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $domainName: String!\n  $projectId: UUID!\n  $useAdmin: Boolean!\n  $useDomain: Boolean!\n  $useProject: Boolean!\n  $legacyFilter: String\n  $legacyOrder: String\n  $useLegacy: Boolean!\n) {\n  adminUsersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useAdmin) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  domainUsersV2(scope: {domainName: $domainName}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useDomain) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  projectUsersV2(scope: {projectId: $projectId}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useProject) @since(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  user_nodes(offset: $offset, first: $limit, filter: $legacyFilter, order: $legacyOrder) @include(if: $useLegacy) @deprecatedSince(version: \"26.2.0\") {\n    count\n    edges {\n      node {\n        id\n        email\n        full_name\n      }\n    }\n  }\n}\n"
+    "text": "query BAIUserSelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n  $domainName: String!\n  $projectId: UUID!\n  $useAdmin: Boolean!\n  $useDomain: Boolean!\n  $useProject: Boolean!\n) {\n  adminUsersV2(offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useAdmin) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  domainUsersV2(scope: {domainName: $domainName}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useDomain) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n  projectUsersV2(scope: {projectId: $projectId}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) @include(if: $useProject) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ee2a071f665da6589da36d21bf67e0f3";
+(node as any).hash = "774c356d5c02b46e6dcd3b1c92287d87";
 
 export default node;
