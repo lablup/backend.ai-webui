@@ -176,8 +176,8 @@ export const useSuspendedLegacyVFolders = ({
       if (!ownerEmail) {
         return fetchAllMyVfolders(relayEnv, baiClient.user_uuid);
       }
-      // No V2 twin lists another user's folders by email, so launch-on-behalf
-      // stays on REST `GET /folders?owner_user_email=`.
+      // Owner (launch-on-behalf) is replaced by Act-As (FR-4111); this REST
+      // path is removed with it rather than migrated.
       const search = new URLSearchParams();
       search.set('owner_user_email', ownerEmail);
       if (groupId) search.set('group_id', groupId);
