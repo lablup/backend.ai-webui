@@ -15,6 +15,7 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButtonV2 from './FileBrowserButtonV2';
 import SFTPServerButtonV2 from './SFTPServerButtonV2';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack } from '@lablup/ui-common/Stack';
 import { Heading } from '@lablup/ui-common/Text';
 import {
@@ -22,16 +23,22 @@ import {
   BAIVFolderIdenticon,
   useBAIBreakpoint,
 } from 'backend.ai-ui';
+import { PencilIcon } from 'lucide-react';
 import React, { Suspense } from 'react';
+import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
 
 interface FolderExplorerHeaderV2Props {
   vfolderNodeFrgmt?: FolderExplorerHeaderV2Fragment$key | null;
   /**
-   * Drawn (identicon + read-only title, no launch buttons) when `vfolderV2`
-   * nulls the whole node and only the legacy node answers (FR-3997).
+   * Drawn when `vfolderV2` nulls the whole node and only the legacy node
+   * answers (FR-3997): rename and launch buttons stay, disabled with a reason.
    */
-  legacyVFolder?: { id: string; name?: string | null } | null;
+  legacyVFolder?: {
+    id: string;
+    name?: string | null;
+    unmanaged_path?: string | null;
+  } | null;
   titleStyle?: React.CSSProperties;
   /**
    * Explicit project prop contract (ADR-0001, FR-3412/FR-3413): pass-through
@@ -53,6 +60,7 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
 }) => {
   'use memo';
 
+  const { t } = useTranslation();
   const { lg } = useBAIBreakpoint();
 
   const vfolderNode = useFragment(
@@ -68,6 +76,10 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
     `,
     vfolderNodeFrgmt ?? null,
   );
+
+  const disabledTooltip = vfolderNode
+    ? noProjectTooltip
+    : t('explorer.FolderDetailUnavailable');
 
   return (
     <HStack
@@ -130,9 +142,19 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
           />
         )}
         {!vfolderNode && legacyVFolder && (
-          <Heading level={3} maxLines={1}>
-            {legacyVFolder.name}
-          </Heading>
+          <HStack gap={1} align="center" style={{ minWidth: 0 }}>
+            <Heading level={3} maxLines={1}>
+              {legacyVFolder.name}
+            </Heading>
+            <IconButton
+              label={t('button.Edit')}
+              tooltip={t('explorer.FolderDetailUnavailable')}
+              icon={<PencilIcon />}
+              size="sm"
+              variant="ghost"
+              isDisabled
+            />
+          </HStack>
         )}
       </HStack>
       <HStack
@@ -145,22 +167,23 @@ const FolderExplorerHeaderV2: React.FC<FolderExplorerHeaderV2Props> = ({
         style={{ marginLeft: 'auto' }}
         {...({ 'data-testid': 'folder-explorer-actions' } as object)}
       >
-        {vfolderNode && !vfolderNode?.unmanagedPath ? (
+        {(vfolderNode && !vfolderNode.unmanagedPath) ||
+        (!vfolderNode && legacyVFolder && !legacyVFolder.unmanaged_path) ? (
           <Suspense fallback={<BAISkeleton variant="button" />}>
             <ErrorBoundaryWithNullFallback>
               <FileBrowserButtonV2
-                vfolderNodeFrgmt={vfolderNode}
+                vfolderNodeFrgmt={vfolderNode ?? null}
                 showTitle={lg}
                 project={project}
-                noProjectTooltip={noProjectTooltip}
+                disabledTooltip={disabledTooltip}
               />
             </ErrorBoundaryWithNullFallback>
             <ErrorBoundaryWithNullFallback>
               <SFTPServerButtonV2
-                vfolderNodeFrgmt={vfolderNode}
+                vfolderNodeFrgmt={vfolderNode ?? null}
                 showTitle={lg}
                 project={project}
-                noProjectTooltip={noProjectTooltip}
+                disabledTooltip={disabledTooltip}
               />
             </ErrorBoundaryWithNullFallback>
           </Suspense>

@@ -93,8 +93,8 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
   );
 
   // Folder CRUD inside the picker follows the caller's effective permissions
-  // on this vfolder, same as FolderExplorerModalV2: the `UPDATE` bit covers
-  // both legacy content permissions.
+  // on this vfolder, same as FolderExplorerModalV2: `UPDATE` to write,
+  // `SOFT_DELETE` to delete.
   const { vfolderV2, legacyVFolderNode } =
     usePreloadedQuery<BAIDirectoryPickerModalQuery>(
       BAIDirectoryPickerQuery,
@@ -105,7 +105,7 @@ const BAIDirectoryPickerModal: React.FC<BAIDirectoryPickerModalProps> = ({
     ? _.includes(vfolderV2?.permissions, 'UPDATE')
     : _.includes(legacyVFolderNode?.permissions, 'write_content');
   const hasDeleteContentPermission = supportsPermissionBits
-    ? _.includes(vfolderV2?.permissions, 'UPDATE')
+    ? _.includes(vfolderV2?.permissions, 'SOFT_DELETE')
     : _.includes(legacyVFolderNode?.permissions, 'delete_content');
   const folderName = vfolderV2?.metadata?.name;
 

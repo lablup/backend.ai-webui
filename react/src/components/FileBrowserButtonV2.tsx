@@ -38,30 +38,32 @@ import { graphql, useFragment } from 'react-relay';
 
 interface FileBrowserButtonV2Props extends BAIButtonProps {
   showTitle?: boolean;
-  vfolderNodeFrgmt: FileBrowserButtonV2Fragment$key;
+  /** `null` when the folder's details are unavailable (FR-3997). */
+  vfolderNodeFrgmt: FileBrowserButtonV2Fragment$key | null;
   /**
    * Explicit project prop contract (ADR-0001, FR-3412): the project the
    * FileBrowser session is created in. With `null` the button renders
-   * disabled and shows the caller-provided `noProjectTooltip` — this
+   * disabled and shows the caller-provided `disabledTooltip` — this
    * component never knows WHY the project is absent.
    */
   project: ProjectContextOrNull;
-  noProjectTooltip?: string;
+  /** Shown on the disabled button: no project, or no folder node. */
+  disabledTooltip?: string;
 }
 
 const FileBrowserButtonV2: React.FC<FileBrowserButtonV2Props> = ({
   showTitle = true,
   vfolderNodeFrgmt,
   project,
-  noProjectTooltip,
+  disabledTooltip,
   ...buttonProps
 }) => {
   'use memo';
   const { t } = useTranslation();
 
-  if (project === null) {
+  if (project === null || vfolderNodeFrgmt === null) {
     return (
-      <Tooltip content={noProjectTooltip} isEnabled={!!noProjectTooltip}>
+      <Tooltip content={disabledTooltip} isEnabled={!!disabledTooltip}>
         <ButtonGroup label={t('data.explorer.ExecuteFileBrowser')}>
           <BAIButton
             icon={

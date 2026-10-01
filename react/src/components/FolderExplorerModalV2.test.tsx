@@ -679,7 +679,7 @@ describe('FolderExplorerModalV2 permission bits from 26.9.0 (FR-4114)', () => {
     seenOperations: Array<{ name: string; variables: any }>,
   ) => seenOperations.find((op) => op.name === 'FolderExplorerModalV2Query');
 
-  it('gates write, delete, upload and edit on the UPDATE bit, ignoring the legacy list', async () => {
+  it('gates write, upload and edit on UPDATE and delete on SOFT_DELETE, ignoring the legacy list', async () => {
     const { seenOperations } = renderModal({
       ownershipProjectId: null,
       permissionBits: ['READ'],
@@ -702,7 +702,7 @@ describe('FolderExplorerModalV2 permission bits from 26.9.0 (FR-4114)', () => {
     });
   });
 
-  it('the UPDATE bit enables write, delete, upload and edit', async () => {
+  it('the UPDATE bit enables write, upload and edit but not delete', async () => {
     renderModal({
       ownershipProjectId: null,
       permissionBits: ['READ', 'UPDATE'],
@@ -714,9 +714,23 @@ describe('FolderExplorerModalV2 permission bits from 26.9.0 (FR-4114)', () => {
     await waitFor(() => {
       const props = fileExplorerProps.at(-1);
       expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(true);
+      expect(props.enableDelete).toBe(false);
       expect(props.enableUpload).toBe(true);
       expect(props.enableEdit).toBe(true);
+    });
+  });
+
+  it('the SOFT_DELETE bit enables delete', async () => {
+    renderModal({
+      ownershipProjectId: null,
+      permissionBits: ['READ', 'UPDATE', 'SOFT_DELETE'],
+      legacyPermissions: ['read_content'],
+    });
+
+    await screen.findByTestId('mock-file-explorer');
+
+    await waitFor(() => {
+      expect(fileExplorerProps.at(-1).enableDelete).toBe(true);
     });
   });
 });
@@ -735,9 +749,10 @@ describe('FolderExplorerModalV2 v2-resolver fallback (FR-3997)', () => {
     });
 
     expect(await screen.findByTestId('mock-file-explorer')).toBeInTheDocument();
+    // The banner, plus the disabled header buttons' tooltips.
     expect(
-      screen.getByText('explorer.FolderDetailUnavailable'),
-    ).toBeInTheDocument();
+      screen.getAllByText('explorer.FolderDetailUnavailable').length,
+    ).toBeGreaterThan(0);
     expect(
       screen.queryByText('explorer.FolderNotFoundOrNoAccess'),
     ).not.toBeInTheDocument();
@@ -755,7 +770,24 @@ describe('FolderExplorerModalV2 v2-resolver fallback (FR-3997)', () => {
       }),
     ).toBeInTheDocument();
     expect(title.querySelector('img.bai-vfolder-identicon')).not.toBeNull();
-    expect(screen.getByTestId('folder-explorer-actions')).toBeInTheDocument();
+    // Rename and the session launchers stay visible but disabled.
+    expect(
+      within(title).getByRole('button', { name: 'button.Edit' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+    const actions = screen.getByTestId('folder-explorer-actions');
+    for (const name of [
+      'data.explorer.ExecuteFileBrowser',
+      'data.explorer.RunSSH/SFTPserver',
+    ]) {
+      const group = within(actions).getByRole('group', { name });
+      for (const button of within(group).getAllByRole('button')) {
+        // BAIButton disables natively; Astryx IconButton via aria-disabled.
+        expect(
+          button.hasAttribute('disabled') ||
+            button.getAttribute('aria-disabled') === 'true',
+        ).toBe(true);
+      }
+    }
     // The warning replaces the metadata content, not the whole modal: the info
     // panel keeps its tabs, and the audit log runs off its own query.
     expect(
