@@ -11,7 +11,10 @@ import { AutoScalingRuleEditorModalPresetsQuery } from '../__generated__/AutoSca
 import { AutoScalingRuleEditorModalUpdateMutation } from '../__generated__/AutoScalingRuleEditorModalUpdateMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import {
+  CATALOG_FETCH_LIMIT,
+  SIGNED_32BIT_MAX_INT,
+} from '../helper/const-vars';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole } from '../hooks/backendai';
 import { theme } from '../theme-shim';
@@ -119,8 +122,8 @@ const AutoScalingRuleEditorModalContent: React.FC<{
   const { prometheusQueryPresets } =
     useLazyLoadQuery<AutoScalingRuleEditorModalPresetsQuery>(
       graphql`
-        query AutoScalingRuleEditorModalPresetsQuery {
-          prometheusQueryPresets {
+        query AutoScalingRuleEditorModalPresetsQuery($limit: Int!) {
+          prometheusQueryPresets(limit: $limit) {
             edges {
               node {
                 id
@@ -140,7 +143,7 @@ const AutoScalingRuleEditorModalContent: React.FC<{
           }
         }
       `,
-      {},
+      { limit: CATALOG_FETCH_LIMIT },
     );
 
   const presetNodes = React.useMemo(

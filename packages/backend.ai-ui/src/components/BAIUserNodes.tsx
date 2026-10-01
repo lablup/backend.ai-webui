@@ -90,7 +90,7 @@ const BAIUserNodes: React.FC<BAIUserNodesProps> = ({
         sudo_session_enabled
         need_password_change
         totp_activated
-        project_nodes {
+        project_nodes(first: 100) {
           count
           edges {
             node {
