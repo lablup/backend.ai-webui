@@ -13,6 +13,7 @@ import type {
 } from '../__generated__/AdminDeploymentQuery.graphql';
 import type {
   AdminModelCardQuery as AdminModelCardQueryType,
+  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardQuery.graphql';
 import type {
@@ -43,10 +44,6 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import {
-  scopeModelCardListFilter,
-  unscopeModelCardListFilter,
-} from '../helper/modelCardListFilter';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
@@ -196,23 +193,24 @@ const AdminDeploymentPage: React.FC = () => {
   const [modelCardColumnOverrides, setModelCardColumnOverrides] =
     useBAISettingUserState('table_column_overrides.AdminModelCard');
 
-  // `domainName` is a StringFilter only from BA-5918; older managers list
-  // every domain, as they did before.
-  const modelCardScopeDomain = baiClient.supports('v2-filter-wrapper-inputs')
-    ? currentDomain
-    : undefined;
-  // Every model card load goes through here, so none can drop the domain.
+  // The URL holds only the user's conditions; the domain is added per load.
+  const modelCardUserFilter =
+    (queryParams.filter as ModelCardV2Filter | null) ?? undefined;
+  // AND-nesting keeps a user OR/NOT from widening past the domain.
   const loadScopedModelCardQuery = (
     variables: AdminModelCardQueryType['variables'],
+    userFilter: ModelCardV2Filter | null | undefined,
     options?: UseQueryLoaderLoadQueryOptions,
   ) =>
     loadModelCardQuery(
       {
         ...variables,
-        filter: scopeModelCardListFilter(
-          variables.filter,
-          modelCardScopeDomain,
-        ),
+        filter: currentDomain
+          ? {
+              domainName: { equals: currentDomain },
+              ...(userFilter ? { AND: [userFilter] } : {}),
+            }
+          : userFilter,
       },
       options,
     );
@@ -221,17 +219,22 @@ const AdminDeploymentPage: React.FC = () => {
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
+    // A reload that keeps the loaded (scoped) filter keeps the URL's one.
+    const userFilter =
+      variables.filter === modelCardQueryRef?.variables.filter
+        ? modelCardUserFilter
+        : variables.filter;
     const nextLimit = variables.limit ?? 10;
     const nextOffset = variables.offset ?? 0;
     setQueryParams({
-      filter: unscopeModelCardListFilter(variables.filter) ?? null,
+      filter: userFilter ?? null,
       order: convertFirstOrderByToString(variables.orderBy),
     });
     setTablePaginationOption({
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadScopedModelCardQuery(variables, options);
+    loadScopedModelCardQuery(variables, userFilter, options);
   };
 
   // --- Prometheus preset tab ---
@@ -350,15 +353,13 @@ const AdminDeploymentPage: React.FC = () => {
         if (!modelCardQueryRef) {
           loadScopedModelCardQuery(
             {
-              filter:
-                (params.filter as AdminModelCardQueryType['variables']['filter']) ??
-                undefined,
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
               // Every domain has its own MODEL_STORE project.
               domainName: currentDomain,
             },
+            params.filter as ModelCardV2Filter | null,
             { fetchPolicy: 'store-and-network' },
           );
         }
@@ -518,6 +519,7 @@ const AdminDeploymentPage: React.FC = () => {
             {modelCardQueryRef ? (
               <AdminModelCard
                 queryRef={modelCardQueryRef}
+                filter={modelCardUserFilter}
                 onReload={reloadModelCards}
                 tableSettings={{
                   columnOverrides: modelCardColumnOverrides,
