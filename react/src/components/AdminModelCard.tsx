@@ -333,7 +333,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       key: 'minResource',
       title: t('modelStore.MinResource'),
       dataIndex: 'minResource',
-      defaultHidden: true,
       render: (minResource: ModelCardNode['minResource']) =>
         minResource && minResource.length > 0 ? (
           <BAIFlex gap="sm" wrap="wrap">
