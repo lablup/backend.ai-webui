@@ -76,7 +76,6 @@ const availableModelCardSorterKeys = [
   'category',
   'task',
   'access_level',
-  'domain_name',
   'project_id',
 ] as const;
 
@@ -91,6 +90,7 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
+    $domainName: String
   ) {
     adminModelCardsV2(
       filter: $filter
@@ -111,7 +111,6 @@ export const AdminModelCardQuery = graphql`
             }
             ...VFolderNodeIdenticonV2Fragment
           }
-          domainName
           projectId
           project @since(version: "26.4.3") {
             id
@@ -131,7 +130,7 @@ export const AdminModelCardQuery = graphql`
         }
       }
     }
-    groups(is_active: true, type: ["MODEL_STORE"]) {
+    groups(domain_name: $domainName, is_active: true, type: ["MODEL_STORE"]) {
       id
       name
     }
@@ -163,8 +162,8 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   // 26.9.0 opened the metadata axes of the model card search (backend #14811).
   const supportsSearchAxes = baiClient.supports('model-card-search-axes');
-  // BA-5918 (26.4.4rc3) turned `domainName` into a StringFilter and
-  // `projectId` into a UUIDFilter; the control only emits the wrapper shape.
+  // BA-5918 (26.4.4rc3) turned `projectId` into a UUIDFilter; the control
+  // only emits the wrapper shape.
   const supportsFilterWrapperInputs = baiClient.supports(
     'v2-filter-wrapper-inputs',
   );
@@ -325,12 +324,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     },
     // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field
     {
-      key: 'domainName',
-      title: t('adminModelCard.Domain'),
-      dataIndex: 'domainName',
-      sorter: supportsSearchAxes,
-    },
-    {
       key: 'projectId',
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
@@ -404,11 +397,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 key: 'task',
                 propertyLabel: t('modelStore.Task'),
                 type: 'string',
-              },
-              supportsFilterWrapperInputs && {
-                key: 'domainName',
-                propertyLabel: t('adminModelCard.Domain'),
-                type: 'string' as const,
               },
               supportsFilterWrapperInputs && {
                 key: 'projectId',
@@ -804,12 +792,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                             <div key={f.cardId}>
                               <Text weight="semibold">{cardName}</Text>
                               <Text color="secondary">{' — '}</Text>
-                              {/* PILOT-DECISION: antd `type="danger"` has no
-                                  Astryx TextColor equivalent — the red tint is
-                                  dropped; `type="supporting"` keeps the small
-                                  font (was token('--font-size-sm')) and the failure
-                                  context is already carried by the warning
-                                  notification. */}
                               <Text type="supporting" color="primary">
                                 {f.message}
                               </Text>

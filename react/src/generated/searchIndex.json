@@ -1036,7 +1036,6 @@
         "adminModelCard.DeleteModelCard",
         "adminModelCard.Description",
         "adminModelCard.DescriptionTooltip",
-        "adminModelCard.Domain",
         "adminModelCard.EditModelCard",
         "adminModelCard.Framework",
         "adminModelCard.FrameworkTooltip",
