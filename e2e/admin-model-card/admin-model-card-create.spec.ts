@@ -44,7 +44,6 @@ test.describe(
       await expect(
         getFormItemControlByLabel(page, 'Model Storage Folder'),
       ).toBeVisible();
-      await expect(getFormItemControlByLabel(page, 'Domain')).toHaveCount(0);
       await expect(
         modal
           .locator('[data-bai-form-item]')

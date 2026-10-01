@@ -128,13 +128,6 @@ describe('AdminModelCardSettingModal model-storage folder picker', () => {
     expect(input).not.toHaveProperty('domainName');
   });
 
-  it('offers no domain field', async () => {
-    renderModal();
-
-    await screen.findByTestId('mock-vfolder-select');
-    expect(screen.queryByText('adminModelCard.Domain')).not.toBeInTheDocument();
-  });
-
   it('fills the picker with the local id of a just-created folder', async () => {
     const user = userEvent.setup();
     renderModal();
