@@ -86,6 +86,7 @@ const BAIComputeSessionNodeNotificationItem: React.FC<
     node && (
       <>
         <BAINotificationItem
+          styles={{ title: { marginBottom: 0 } }}
           title={
             <BAIText ellipsis>
               {t('general.Session')}:&nbsp;
