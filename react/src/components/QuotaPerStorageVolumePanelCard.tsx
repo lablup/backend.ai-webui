@@ -5,7 +5,7 @@
 import { QuotaPerStorageVolumePanelCardQuery } from '../__generated__/QuotaPerStorageVolumePanelCardQuery.graphql';
 import { QuotaPerStorageVolumePanelCardUserQuery } from '../__generated__/QuotaPerStorageVolumePanelCardUserQuery.graphql';
 import { addQuotaScopeTypePrefix, convertToDecimalUnit } from '../helper';
-import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import BAIProgress from './BAIProgress';
 import StorageSelect from './StorageSelect';
@@ -59,36 +59,20 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
   const currentProject = useCurrentProjectValue();
   const baiClient = useSuspendedBackendaiClient();
 
-  const supportsEntityId = baiClient.supports('v2-entity-id');
-
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  // The quota scope id needs the raw user UUID: `entityId` from 26.9.0, the
-  // legacy `user.id` below it.
-  const { myUserV2, legacyUser } =
+  // The quota scope id needs the raw user UUID, which is `entityId`.
+  const { myUserV2 } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
       graphql`
-        query QuotaPerStorageVolumePanelCardUserQuery(
-          $domain_name: String
-          $email: String
-          $supportsEntityId: Boolean!
-        ) {
+        query QuotaPerStorageVolumePanelCardUserQuery {
           myUserV2 {
-            entityId @since(version: "26.9.0") @include(if: $supportsEntityId)
-          }
-          legacyUser: user(domain_name: $domain_name, email: $email)
-            @deprecatedSince(version: "26.9.0")
-            @skip(if: $supportsEntityId) {
-            id
+            entityId
           }
         }
       `,
-      {
-        domain_name: useCurrentDomainValue(),
-        email: baiClient?.email,
-        supportsEntityId,
-      },
+      {},
     );
-  const userId = myUserV2?.entityId ?? legacyUser?.id ?? undefined;
+  const userId = myUserV2?.entityId;
   const { project_quota_scope, user_quota_scope } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardQuery>(
       graphql`

@@ -3,8 +3,6 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
-import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Text } from '@astryxdesign/core/Text';
@@ -19,7 +17,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface KeypairInfoModalProps extends BAIModalProps {
   keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;
@@ -31,7 +29,6 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
-  const baiClient = useSuspendedBackendaiClient();
   const keypair = useFragment(
     graphql`
       fragment KeypairInfoModalFragment on KeyPair {
@@ -44,44 +41,13 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         resource_policy
         num_queries
         rate_limit
-        concurrency_used @since(version: "24.09.0")
-        is_default @since(version: "26.9.0")
+        concurrency_used
+        is_default
       }
     `,
     keypairInfoModalFrgmt,
   );
-
-  // Below 26.9.0 the keypair does not carry `is_default`, so the owner's main
-  // key is looked up instead; `@skip` keeps that the only root field, so the
-  // document is never emptied.
-  const supportsKeypairIsDefault = baiClient.supports('keypair-is-default');
-  const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
-    graphql`
-      query KeypairInfoModalQuery(
-        $domain_name: String
-        $email: String
-        $supportsKeypairIsDefault: Boolean!
-      ) {
-        user(domain_name: $domain_name, email: $email)
-          @skip(if: $supportsKeypairIsDefault) {
-          main_access_key @since(version: "24.03.0")
-        }
-      }
-    `,
-    {
-      email: keypair?.user_id,
-      supportsKeypairIsDefault,
-    },
-    {
-      fetchPolicy:
-        modalProps.open && keypair?.user_id && !supportsKeypairIsDefault
-          ? 'network-only'
-          : 'store-only',
-    },
-  );
-  const isMainAccessKey = supportsKeypairIsDefault
-    ? keypair?.is_default === true
-    : user?.main_access_key === keypair?.access_key;
+  const isMainAccessKey = keypair?.is_default === true;
 
   return (
     <BAIModal
