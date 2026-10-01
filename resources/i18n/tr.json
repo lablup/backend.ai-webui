@@ -3017,6 +3017,7 @@
     "launcher": {
       "AIAccelerator": "Yapay Zeka Hızlandırıcı",
       "Accelerator": "Gaz pedalı",
+      "AcceleratorDedicatedImages": "Hızlandırıcıya özel imajlar",
       "AddEnvironmentVariable": "Ortam değişkenleri ekleme",
       "AddingKernelToSocketQueue": "Soket kuyruğuna çekirdek ekleniyor...",
       "AdvancedSettings": "Gelişmiş Ayarlar",
@@ -3094,6 +3095,7 @@
       "HPCOptimization": "Yüksek Performanslı Bilgi İşlem Optimizasyonları",
       "HomeDirectoryDeletionDialog": "Oturum sona erdiğinde oturumdaki ev dizini otomatik olarak silinir.",
       "ImageDoesNotProvideModelPath": "Konteyner görüntüsü model yolunu sağlamıyor. Değiştirilmelidir.",
+      "ImageFilter": "İmaj filtresi",
       "InferenceMode": "Çıkarım",
       "InfiniteTime": "Sonsuz",
       "InsufficientAllocationOfResourcesWarning": "Tahsis edilebilir kaynaklar, seçilen görüntüde gereken minimum kaynağın altına düşüyor.",
@@ -3194,6 +3196,7 @@
       "SettingUpProxyForApp": "Uygulama için proxy ayarlanıyor...",
       "SharedMemory": "Paylaşılan Bellek (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Paylaşılan bellek ayarı, ayrılan belleğin altına düşürülür.",
+      "ShowAcceleratorDedicatedImagesFirst": "Hızlandırıcıya özel imajları önce göster",
       "ShuttingDownExistTensorBoard": "Varsa TensorBoard örneğini kapatın",
       "SingleNode": "Tek",
       "SingleNodeShort": "Tek",

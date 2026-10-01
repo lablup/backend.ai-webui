@@ -3020,6 +3020,7 @@
     "launcher": {
       "AIAccelerator": "Akcelerator AI",
       "Accelerator": "Akcelerator",
+      "AcceleratorDedicatedImages": "Obrazy dedykowane akceleratorom",
       "AddEnvironmentVariable": "Dodaj zmienne środowiskowe",
       "AddingKernelToSocketQueue": "Dodawanie jądra do kolejki gniazda...",
       "AdvancedSettings": "Ustawienia zaawansowane",
@@ -3097,6 +3098,7 @@
       "HPCOptimization": "Optymalizacje obliczeń o wysokiej wydajności",
       "HomeDirectoryDeletionDialog": "Katalog domowy w sesji jest automatycznie usuwany po zakończeniu sesji.",
       "ImageDoesNotProvideModelPath": "Obraz kontenera nie zawiera ścieżki modelu. Należy ją zmodyfikować.",
+      "ImageFilter": "Filtr obrazów",
       "InferenceMode": "Wnioskowanie",
       "InfiniteTime": "Nieskończony",
       "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie.",
@@ -3197,6 +3199,7 @@
       "SettingUpProxyForApp": "Konfiguruję serwer proxy dla aplikacji...",
       "SharedMemory": "Udostępniona pamięć (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Ustawienie pamięci współdzielonej jest ograniczone do wartości poniżej przydzielonej pamięci.",
+      "ShowAcceleratorDedicatedImagesFirst": "Pokaż najpierw obrazy dedykowane akceleratorom",
       "ShuttingDownExistTensorBoard": "Zatrzymaj instancję TensorBoard, jeśli istnieje...",
       "SingleNode": "Pojedynczy",
       "SingleNodeShort": "Pojedynczy",

@@ -3019,6 +3019,7 @@
     "launcher": {
       "AIAccelerator": "Máy gia tốc AI",
       "Accelerator": "Máy gia tốc",
+      "AcceleratorDedicatedImages": "Image dành riêng cho bộ tăng tốc",
       "AddEnvironmentVariable": "Thêm biến môi trường",
       "AddingKernelToSocketQueue": "Thêm hạt nhân vào hàng đợi socket ...",
       "AdvancedSettings": "Cài đặt nâng cao",
@@ -3096,6 +3097,7 @@
       "HPCOptimization": "Tối ưu hóa điện toán hiệu suất cao",
       "HomeDirectoryDeletionDialog": "Thư mục chính trong phiên sẽ tự động bị xóa khi phiên kết thúc.",
       "ImageDoesNotProvideModelPath": "Hình ảnh vùng chứa không cung cấp đường dẫn mô hình. \nNó nên được sửa đổi.",
+      "ImageFilter": "Bộ lọc image",
       "InferenceMode": "Sự suy luận",
       "InfiniteTime": "vô hạn",
       "InsufficientAllocationOfResourcesWarning": "Tài nguyên có thể phân bổ giảm xuống dưới mức tài nguyên tối thiểu được yêu cầu trong hình ảnh đã chọn.",
@@ -3196,6 +3198,7 @@
       "SettingUpProxyForApp": "Thiết lập proxy cho ứng dụng ...",
       "SharedMemory": "Bộ nhớ chia sẻ (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Cài đặt bộ nhớ dùng chung được giảm xuống dưới bộ nhớ được cấp phát.",
+      "ShowAcceleratorDedicatedImagesFirst": "Hiển thị image dành riêng cho bộ tăng tốc trước",
       "ShuttingDownExistTensorBoard": "Tắt phiên bản TensorBoard nếu tồn tại...",
       "SingleNode": "Độc thân",
       "SingleNodeShort": "Đơn",
