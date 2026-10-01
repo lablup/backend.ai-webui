@@ -57,7 +57,7 @@ export const docs = {
       name: 'queryRef',
       type: 'PreloadedQuery<BAIDirectoryPickerModalQuery>',
       description:
-        "Preloaded reference to `BAIDirectoryPickerQuery`, keyed by this vfolder's id. Supplies the folder name for the title and the permission bits that gate folder CRUD inside the picker: `UPDATE` to write, `SOFT_DELETE` to delete.",
+        "Preloaded reference to `BAIDirectoryPickerQuery`, keyed by this vfolder's id. Supplies the folder name for the title and the `UPDATE` permission bit that gates folder CRUD inside the picker, for both write and delete.",
       required: true,
     },
     {

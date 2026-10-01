@@ -33,7 +33,6 @@ import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
-  BAIVFolderDeleteButtonV2,
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
@@ -48,7 +47,7 @@ import {
   useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
+import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -227,7 +226,6 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
-                ...BAIVFolderDeleteButtonV2Fragment
               }
             }
             count
@@ -363,10 +361,12 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <BAIVFolderDeleteButtonV2
-                    vfolderFrgmt={selectedFolderList}
-                    // P8: the accessible name is now on the control itself.
+                  <IconButton
                     label={t('data.folders.MoveToTrash')}
+                    tooltip={t('data.folders.MoveToTrash')}
+                    icon={<TrashIcon />}
+                    variant="ghost"
+                    className="bai-name-action-cell-danger"
                     onClick={() => {
                       toggleDeleteModal();
                     }}

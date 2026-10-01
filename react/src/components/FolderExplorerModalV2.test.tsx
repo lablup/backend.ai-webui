@@ -539,7 +539,7 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
     fileExplorerProps.length = 0;
   });
 
-  it('a read-only share (no UPDATE / SOFT_DELETE) disables write, delete, upload and edit', async () => {
+  it('a read-only share (no UPDATE) disables write, delete, upload and edit', async () => {
     renderModal({
       ownershipProjectId: null,
       permissionBits: ['READ'],
@@ -558,10 +558,10 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
     });
   });
 
-  it('UPDATE and SOFT_DELETE enable the corresponding actions', async () => {
+  it('UPDATE enables write, delete, upload and edit', async () => {
     renderModal({
       ownershipProjectId: null,
-      permissionBits: ['READ', 'UPDATE', 'SOFT_DELETE'],
+      permissionBits: ['READ', 'UPDATE'],
     });
 
     await screen.findByTestId('mock-file-explorer');
@@ -577,27 +577,8 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
     });
   });
 
-  // The two cases above turn UPDATE and SOFT_DELETE on together, so
-  // they pass just as well when the two gates are cross-wired. These separate
-  // them.
-  it('UPDATE without SOFT_DELETE enables write but not delete', async () => {
-    renderModal({
-      ownershipProjectId: null,
-      permissionBits: ['READ', 'UPDATE'],
-    });
-
-    await screen.findByTestId('mock-file-explorer');
-
-    await waitFor(() => {
-      const props = fileExplorerProps.at(-1);
-      expect(props.enableWrite).toBe(true);
-      expect(props.enableDelete).toBe(false);
-      expect(props.enableUpload).toBe(true);
-      expect(props.enableEdit).toBe(true);
-    });
-  });
-
-  it('SOFT_DELETE without UPDATE enables delete but not write, upload or edit', async () => {
+  // Delete is gated on UPDATE, not SOFT_DELETE (backend decision; FR-4114).
+  it('SOFT_DELETE without UPDATE does not enable delete', async () => {
     renderModal({
       ownershipProjectId: null,
       permissionBits: ['READ', 'SOFT_DELETE'],
@@ -607,7 +588,7 @@ describe('FolderExplorerModalV2 share-permission gating (FR-3800)', () => {
 
     await waitFor(() => {
       const props = fileExplorerProps.at(-1);
-      expect(props.enableDelete).toBe(true);
+      expect(props.enableDelete).toBe(false);
       expect(props.enableWrite).toBe(false);
       expect(props.enableUpload).toBe(false);
       expect(props.enableEdit).toBe(false);
