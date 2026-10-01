@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-09-08
+> **Last Updated:** 2026-10-02
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 348 / 505 features covered (69%)**
+**Overall (in-scope routes): 350 / 507 features covered (69%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -34,7 +34,7 @@
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                                    |    22    |   15    | 🔶 68%  |
+| User Credentials         | `/credential`                                    |    23    |   16    | 🔶 70%  |
 | Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
@@ -49,12 +49,12 @@
 | Plugin System            | (config-based)                                   |    12    |   12    | ✅ 100% |
 | RBAC Management          | `/rbac`                                          |    22    |   21    | 🔶 95%  |
 | Auto Scaling Rule Preset | `/admin-serving?tab=auto-scaling-rule`           |    33    |   32    | 🔶 97%  |
-| Deployments              | `/deployments`, `/deployments/:id`               |    17    |   14    | 🔶 82%  |
+| Deployments              | `/deployments`, `/deployments/:id`               |    18    |   15    | 🔶 83%  |
 | Admin Deployment Preset  | `/admin/deployments/deployment-presets/new`      |    4     |    4    | ✅ 100% |
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **505**  | **348** | **69%** |
+| **Total**                |                                                  | **507**  | **350** | **69%** |
 
 ---
 
@@ -720,7 +720,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts), [`e2e/user/user-project-membership.spec.ts`](user/user-project-membership.spec.ts)
 
 **Tabs:** Users | Credentials
 
@@ -741,6 +741,7 @@
 | Bulk create users from CSV (client-side validation)      | ✅     | `bulk-create-from-csv.spec.ts` (preview stats + submit enable/disable)                                                      |
 | Bulk create users from CSV → real submit + purge cleanup | ✅     | `bulk-create-from-csv-submit.spec.ts` (creates users on backend, then deactivates + purges)                                 |
 | Update user → UserSettingModal                           | ✅     | `Admin can update user information`                                                                                         |
+| Update user in >10 projects keeps every membership       | ✅     | `Admin can save a user in more than 10 projects without losing memberships`                                                 |
 | Deactivate user                                          | ✅     | `Admin can deactivate a user`                                                                                               |
 | Reactivate user                                          | ✅     | `Admin can reactivate an inactive user`                                                                                     |
 | Purge user → PurgeUsersModal                             | ✅     | `Admin can deactivate and permanently delete`                                                                               |
@@ -766,7 +767,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 15/22 features**
+**Coverage: 🔶 16/23 features**
 
 ---
 
@@ -1227,11 +1228,12 @@ External portals (LMS) open these routes with a signed `sToken` plus the app and
 | Feature                                                                            | Status | Test                                                                                                                     |
 | ---------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------ |
 | Create Access Token disabled without a revision → enabled after one → token issued | ✅     | `Admin can issue an access token after adding a revision to a deployment`                                                |
+| Access token table paginates past 10 tokens (mocked token list)                    | ✅     | `Admin can page through more than 10 access tokens on a deployment`                                                      |
 | Issued token appears as a table row / revoke                                       | ❌     | Deferred — list-refresh is non-deterministic while the deployment is still Deploying; belongs to backend-surface testing |
 | Replica scheduling completion (Lifecycle leaves Pending → replica scheduled)       | ❌     | Deferred — measured ~40s–20min+ on the shared cluster; out of scope for webui e2e                                        |
 | Revision rollback / promote from Revision History                                  | ❌     | -                                                                                                                        |
 
-**Coverage: 🔶 12/16 features (4 deferred to backend-surface testing or future work)**
+**Coverage: 🔶 13/17 features (4 deferred to backend-surface testing or future work)**
 
 ---
 

@@ -45,6 +45,11 @@
 //    anywhere from ~40s to over 20 minutes on this shared cluster, per
 //    deployment-lifecycle.spec.ts's investigation) -- it deletes the
 //    deployment immediately after verifying the token flow.
+import { setupGraphQLMocks } from '../session/mocking/graphql-interceptor';
+import {
+  createAdminApiContext,
+  deleteDeploymentViaApi,
+} from '../utils/admin-api';
 import {
   cleanupDeploymentFixtures,
   cleanupDeploymentSafely,
@@ -257,5 +262,105 @@ test.describe(
         fixtures = null;
       },
     );
+  },
+);
+
+// A deployment only issues real tokens once a revision gives it an endpoint,
+// and the revision path depends on folder provisioning, so the token list is
+// mocked onto a real deployment shell. The handler honours `limit`/`offset`
+// like the manager does, which is what the FR-4060 regression broke.
+const MOCK_TOKEN_TOTAL = 13;
+const mockTokenValue = (index: number) =>
+  `e2e-mock-token-${String(index + 1).padStart(2, '0')}`;
+
+test.describe(
+  'Deployment Access Token Pagination',
+  { tag: ['@regression', '@serving', '@functional'] },
+  () => {
+    let deploymentId: string | null = null;
+
+    test.beforeEach(async ({ page, request }) => {
+      await loginAsAdmin(page, request);
+    });
+
+    test.afterEach(async () => {
+      if (deploymentId) {
+        const api = await createAdminApiContext();
+        try {
+          await deleteDeploymentViaApi(api, deploymentId);
+        } finally {
+          await api.dispose();
+        }
+        deploymentId = null;
+      }
+    });
+
+    test('Admin can page through more than 10 access tokens on a deployment', async ({
+      page,
+    }) => {
+      const requestedPages: Array<{ limit: unknown; offset: unknown }> = [];
+      await setupGraphQLMocks(page, {
+        DeploymentAccessTokensCardListQuery: (variables) => {
+          const limit = Number(variables.limit);
+          const offset = Number(variables.offset);
+          requestedPages.push({
+            limit: variables.limit,
+            offset: variables.offset,
+          });
+          const now = Date.now();
+          const edges = Array.from({ length: MOCK_TOKEN_TOTAL }, (_, i) => ({
+            node: {
+              id: Buffer.from(
+                `AccessToken:00000000-0000-4000-8000-${String(i).padStart(12, '0')}`,
+              ).toString('base64'),
+              token: mockTokenValue(i),
+              createdAt: new Date(now - i * 60_000).toISOString(),
+              expiresAt: new Date(now + 7 * 86_400_000).toISOString(),
+            },
+          })).slice(offset, offset + limit);
+          return {
+            deployment: {
+              id: variables.deploymentId,
+              accessTokens: { count: MOCK_TOKEN_TOTAL, edges },
+            },
+          };
+        },
+      });
+
+      await navigateTo(page, 'deployments');
+      await createDeploymentShell(page, `e2e-token-page-${Date.now()}`);
+      deploymentId = page.url().split('?')[0].split('/').pop() ?? null;
+
+      const card = page.locator('.bai-card').filter({
+        has: page.getByRole('button', { name: 'Create Access Token' }),
+      });
+      const tokenRows = card
+        .getByRole('row')
+        .filter({ hasText: /e2e-mock-token-\d{2}/ });
+      const pagination = card.getByRole('navigation', { name: 'Pagination' });
+
+      // Page 1: the first 10 tokens, with the total from the connection count.
+      await expect(tokenRows).toHaveCount(10, { timeout: 20000 });
+      await expect(card.getByText('1 - 10 of 13 items')).toBeVisible();
+      await expect(
+        card.getByRole('row').filter({ hasText: mockTokenValue(0) }),
+      ).toBeVisible();
+      await expect(
+        card.getByRole('row').filter({ hasText: mockTokenValue(10) }),
+      ).toHaveCount(0);
+      expect(requestedPages[0]).toEqual({ limit: 10, offset: 0 });
+
+      // Page 2: the remaining 3 tokens, fetched with the next offset.
+      await pagination.getByRole('button', { name: 'Go to page 2' }).click();
+      await expect(pagination.locator('[aria-current="page"]')).toHaveText('2');
+      await expect(tokenRows).toHaveCount(3, { timeout: 20000 });
+      await expect(card.getByText('11 - 13 of 13 items')).toBeVisible();
+      for (const index of [10, 11, 12]) {
+        await expect(
+          card.getByRole('row').filter({ hasText: mockTokenValue(index) }),
+        ).toBeVisible();
+      }
+      expect(requestedPages).toContainEqual({ limit: 10, offset: 10 });
+    });
   },
 );
