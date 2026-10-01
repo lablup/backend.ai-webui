@@ -46,7 +46,6 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
   BAICompactGroup,
-  BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
@@ -88,7 +87,6 @@ type FormValues = {
   full_name?: string;
   description?: string;
   role: string;
-  domain_name: string;
   group_ids?: string[];
   status: string;
   allowed_client_ip?: string[];
@@ -503,7 +501,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           bulkValues.user_count,
         ),
         password: bulkValues.password as string,
-        domainName: bulkValues.domain_name,
+        domainName: currentDomainName,
         needPasswordChange: bulkValues.need_password_change || false,
         status: statusToV2[bulkValues.status] || 'ACTIVE',
         role: roleToV2[bulkValues.role] || 'USER',
@@ -590,7 +588,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               ? statusToV2[formValues.status]
               : undefined,
             role: formValues.role ? roleToV2[formValues.role] : undefined,
-            domainName: formValues.domain_name,
             groupIds: formValues.group_ids,
             allowedClientIp: formValues.allowed_client_ip,
             needPasswordChange: formValues.need_password_change || false,
@@ -626,7 +623,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             email: formValues.email,
             username: formValues.username,
             password: formValues.password as string,
-            domainName: formValues.domain_name,
+            domainName: currentDomainName,
             needPasswordChange: formValues.need_password_change || false,
             status: statusToV2[formValues.status] || 'ACTIVE',
             role: roleToV2[formValues.role] || 'USER',
@@ -722,7 +719,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   role: user.organization.role
                     ? roleFromV2[user.organization.role]
                     : undefined,
-                  domain_name: user.organization.domainName ?? undefined,
                   resource_policy: user.organization.resourcePolicy,
                   main_access_key: user.organization.mainAccessKey ?? undefined,
                   sudo_session_enabled: user.security.sudoSessionEnabled,
@@ -745,7 +741,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   need_password_change: bulkCreate ? true : false,
                   user_count: 1,
                   status: 'active',
-                  domain_name: currentDomainName,
                   role: 'user',
                   is_active: true,
                   resource_policy: 'default',
@@ -1130,17 +1125,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           >
             <UserResourcePolicySelect />
           </BAIFormItem>
-          <BAIFormItem
-            name="domain_name"
-            label={t('credential.Domain')}
-            rules={[{ required: true }]}
-          >
-            <BAIDomainSelect
-              onChange={() => {
-                formRef.current?.setFieldValue('group_ids', []);
-              }}
-            />
-          </BAIFormItem>
           <Suspense
             fallback={
               <BAIFormItem label={t('credential.Projects')}>
@@ -1148,30 +1132,21 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               </BAIFormItem>
             }
           >
-            <BAIFormItem noStyle dependencies={['domain_name']}>
-              {(form) => {
-                // BAIFormItem render-prop children receive `unknown` (antd
-                // typed this as FormInstance); narrow it back.
-                const { getFieldValue } = form as FormInstance<FormValues>;
-                return (
-                  <BAIFormItem
-                    name="group_ids"
-                    label={t('credential.Projects')}
-                    getValueFromEvent={(value) => value}
-                    getValueProps={(value) => ({
-                      value: _.isArray(value) ? value : projectMembershipIds,
-                    })}
-                  >
-                    <ProjectSelect
-                      mode="multiple"
-                      domain={getFieldValue('domain_name')}
-                      disableDefaultFilter
-                      lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
-                      personalProject={personalProject}
-                    />
-                  </BAIFormItem>
-                );
-              }}
+            <BAIFormItem
+              name="group_ids"
+              label={t('credential.Projects')}
+              getValueFromEvent={(value) => value}
+              getValueProps={(value) => ({
+                value: _.isArray(value) ? value : projectMembershipIds,
+              })}
+            >
+              <ProjectSelect
+                mode="multiple"
+                domain={user?.organization.domainName ?? currentDomainName}
+                disableDefaultFilter
+                lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                personalProject={personalProject}
+              />
             </BAIFormItem>
           </Suspense>
           <BAIFormItem
