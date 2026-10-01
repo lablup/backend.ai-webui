@@ -13,6 +13,14 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createMockEnvironment, MockPayloadGenerator } from 'relay-test-utils';
 
 const DEFAULT_PERMISSIONS = ['READ', 'UPDATE', 'SOFT_DELETE'];
+const MOCK_HOST = 'local:volume1';
+const MOCK_HOST_PERMISSIONS = [
+  'CREATE_VFOLDER',
+  'MODIFY_VFOLDER',
+  'DELETE_VFOLDER',
+  'UPLOAD_FILE',
+  'DOWNLOAD_FILE',
+];
 
 export interface MockVFolder {
   name: string;
@@ -92,10 +100,14 @@ const MockVFolderFileProviders: React.FC<MockVFolderFileProvidersProps> = ({
             vfolderV2: requested
               ? {
                   id: btoa(`VFolder:${requested.row_id}`),
+                  host: MOCK_HOST,
                   metadata: { name: requested.name },
                   permissions: requested.permissions ?? DEFAULT_PERMISSIONS,
                 }
               : undefined,
+            myStorageHostPermissions: {
+              items: [{ host: MOCK_HOST, permissions: MOCK_HOST_PERMISSIONS }],
+            },
           }),
         });
       });

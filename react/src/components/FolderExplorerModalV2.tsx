@@ -388,31 +388,20 @@ const FolderExplorerBody: React.FC<{
     }
   }, [uploadStatus, updateFetchKey]);
 
+  // Changing the folder's contents needs the folder's `UPDATE` bit plus the
+  // storage host permission matching the operation (FR-4140).
+  const hostPermissions = unitedAllowedPermissionByVolume[folderHost];
+  const canUpdateContent = _.includes(vfolderNode?.permissions, 'UPDATE');
+  const hasContentPermission = (hostPermission: string) =>
+    canUpdateContent && _.includes(hostPermissions, hostPermission);
   const hasDownloadContentPermission = _.includes(
-    unitedAllowedPermissionByVolume[folderHost],
+    hostPermissions,
     'download-file',
   );
-  // `upload-file` on the storage host gates the actual upload pipeline:
-  // upload buttons (file/folder), drag-drop, and the in-app text editor save
-  // (which overwrites the file via the upload API).
-  const hasUploadHostPermission = _.includes(
-    unitedAllowedPermissionByVolume[folderHost],
-    'upload-file',
-  );
-  // Share-permission gating (FR-3800). File deletion is gated on the folder's
-  // `UPDATE` bit, same as write (backend decision; FR-4114).
-  const hasDeleteContentPermission = _.includes(
-    vfolderNode?.permissions,
-    'UPDATE',
-  );
-  const hasWriteContentPermission = _.includes(
-    vfolderNode?.permissions,
-    'UPDATE',
-  );
-  // Upload/editor write through the upload API: both the host capability and
-  // the folder-level write permission are required.
-  const hasUploadContentPermission =
-    hasUploadHostPermission && hasWriteContentPermission;
+  const hasUploadContentPermission = hasContentPermission('upload-file');
+  const hasCreateContentPermission = hasContentPermission('create-vfolder');
+  const hasDeleteContentPermission = hasContentPermission('delete-vfolder');
+  const hasModifyContentPermission = hasContentPermission('modify-vfolder');
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
@@ -477,9 +466,11 @@ const FolderExplorerBody: React.FC<{
       }}
       enableDownload={hasDownloadContentPermission}
       enableDelete={hasDeleteContentPermission}
-      enableWrite={hasWriteContentPermission}
+      enableCreate={hasCreateContentPermission}
+      enableRename={hasModifyContentPermission}
       enableUpload={hasUploadContentPermission}
-      enableEdit={hasUploadContentPermission}
+      // The editor saves through the upload API.
+      enableEdit={hasModifyContentPermission && hasUploadContentPermission}
       // NOTE: the legacy `tableProps.scroll` ({x:'max-content'} at `xl`,
       // plus a `y: calc(100vh - 400px)` body cap below it) is gone on purpose:
       // `BAITable` accepts and ignores `scroll` (Astryx's own scroll
