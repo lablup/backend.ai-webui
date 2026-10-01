@@ -504,6 +504,7 @@ const VFolderNodeListPage: React.FC<VFolderNodeListPageProps> = ({
             <VFolderNodesV2
               order={queryParams.order}
               loading={deferredQueryVariables !== queryVariables}
+              disableProjectFolderActions
               project={projectContext}
               vfoldersFrgmt={filterOutNullAndUndefined(
                 _.map(scopedVFoldersV2?.edges, 'node'),
