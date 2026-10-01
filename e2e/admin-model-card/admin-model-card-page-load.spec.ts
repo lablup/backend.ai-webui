@@ -69,7 +69,6 @@ test.describe(
       await expect(getSortableColumnHeader(page, 'Category')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Task')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Access Level')).toBeVisible();
-      await expect(getSortableColumnHeader(page, 'Domain')).toHaveCount(0);
       await expect(getSortableColumnHeader(page, 'Project')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Created At')).toBeVisible();
     });

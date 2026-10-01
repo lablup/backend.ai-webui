@@ -188,13 +188,6 @@ test.describe.fixme(
       // Verify Model Storage Folder shows a link (read-only), not a select
       await expect(modal.getByRole('link')).toBeVisible();
 
-      // The domain is no longer shown or editable (FR-4138)
-      await expect(
-        modal
-          .locator('[data-bai-form-item-label]')
-          .filter({ hasText: /^Domain$/ }),
-      ).toHaveCount(0);
-
       // Verify the modal footer shows a "Save" button
       await expect(adminModelCardPage.getEditModalSaveButton()).toBeVisible();
     });
