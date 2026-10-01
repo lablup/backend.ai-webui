@@ -10,8 +10,8 @@ import {
 import { RetentionPolicyListToggleMutation } from '../__generated__/RetentionPolicyListToggleMutation.graphql';
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
-import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import RetentionPolicySettingModal, {
+  RETENTION_CATEGORIES,
   useRetentionCategoryLabel,
 } from './RetentionPolicySettingModal';
 import { Switch } from '@astryxdesign/core/Switch';
@@ -52,16 +52,9 @@ const RetentionPolicyList = () => {
   const getCategoryLabel = useRetentionCategoryLabel();
 
   const [order, setOrder] = useState<string | null>('category');
-  const {
-    baiPaginationOption,
-    tablePaginationOption,
-    setTablePaginationOption,
-  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
   const [fetchKey, updateFetchKey] = useFetchKey();
 
   const queryVariables = {
-    limit: baiPaginationOption.limit,
-    offset: baiPaginationOption.offset,
     orderBy: convertToOrderBy<RetentionPolicyOrderBy>(order),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
@@ -71,17 +64,10 @@ const RetentionPolicyList = () => {
 
   const { adminRetentionPolicies } = useLazyLoadQuery<RetentionPolicyListQuery>(
     graphql`
-      query RetentionPolicyListQuery(
-        $limit: Int
-        $offset: Int
-        $orderBy: [RetentionPolicyOrderBy!]
-      ) {
-        adminRetentionPolicies(
-          limit: $limit
-          offset: $offset
-          orderBy: $orderBy
-        ) {
-          count
+      # One policy per category caps the list at the enum size, so it is
+      # fetched whole: the create modal needs every taken category.
+      query RetentionPolicyListQuery($orderBy: [RetentionPolicyOrderBy!]) {
+        adminRetentionPolicies(orderBy: $orderBy) {
           edges {
             node {
               id
@@ -138,6 +124,11 @@ const RetentionPolicyList = () => {
 
   const policies = filterOutNullAndUndefined(
     _.map(adminRetentionPolicies?.edges, (edge) => edge?.node),
+  );
+  const configuredCategories = _.map(policies, (policy) => policy.category);
+  const unconfiguredCategories = _.difference(
+    RETENTION_CATEGORIES,
+    configuredCategories,
   );
 
   const toggleEnabled = (policy: RetentionPolicyNode, enabled: boolean) => {
@@ -255,6 +246,7 @@ const RetentionPolicyList = () => {
           <BAIButton
             type="primary"
             icon={<PlusIcon />}
+            disabled={unconfiguredCategories.length === 0}
             onClick={() => {
               setEditingPolicy(null);
               setIsOpenSettingModal(true);
@@ -278,23 +270,14 @@ const RetentionPolicyList = () => {
               ? nextOrder
               : null,
           );
-          setTablePaginationOption({ current: 1 });
         }}
-        pagination={{
-          pageSize: tablePaginationOption.pageSize,
-          current: tablePaginationOption.current,
-          total: adminRetentionPolicies?.count ?? 0,
-          onChange(current, pageSize) {
-            if (_.isNumber(current) && _.isNumber(pageSize)) {
-              setTablePaginationOption({ current, pageSize });
-            }
-          },
-        }}
+        pagination={false}
       />
       <BAIUnmountAfterClose>
         <RetentionPolicySettingModal
           open={isOpenSettingModal}
           policyFrgmt={editingPolicy}
+          configuredCategories={configuredCategories}
           onRequestClose={(success) => {
             setIsOpenSettingModal(false);
             // An update returns its fields and Relay patches the row in
@@ -302,7 +285,6 @@ const RetentionPolicyList = () => {
             if (success && editingPolicy === null) {
               updateFetchKey();
             }
-            setEditingPolicy(null);
           }}
         />
       </BAIUnmountAfterClose>
