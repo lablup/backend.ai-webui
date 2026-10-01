@@ -314,11 +314,11 @@ const RetentionPolicyList = () => {
           commitDelete({
             variables: { id: toLocalId(deletingPolicy.id) },
             onCompleted: (_res, errors) => {
-              setDeletingPolicy(null);
               if (errors && errors.length > 0) {
                 _.forEach(errors, (err) => message.error(err.message));
                 return;
               }
+              setDeletingPolicy(null);
               message.success(t('retentionPolicy.SuccessfullyDeleted'));
               updateFetchKey();
             },
