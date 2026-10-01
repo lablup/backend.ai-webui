@@ -28,11 +28,11 @@ navTitle: 管理者機能
 
 該当ユーザーの**メール**列の行にある情報アイコンをクリックすると、より詳細なユーザー情報を確認できます。ユーザーが所属するドメインやプロジェクトの情報も確認できます。
 
-![](../images/user_detail_dialog.png)
+![=520px](../images/user_detail_dialog.png)
 
 該当ユーザーの**メール**列の行にある**編集**（鉛筆）アイコンをクリックすると、既存のユーザーの設定を変更できます。ユーザー名、パスワード、有効化状態などを変更できます。ユーザーID（メールアドレス）は変更できません。変更を適用するには**保存**をクリックします。
 
-![](../images/user_update_dialog.png)
+![=520px](../images/user_update_dialog.png)
 
 
 ユーザー作成/編集ダイアログには、以下のフィールドが含まれています。
@@ -194,7 +194,7 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
 2. ツールバーに選択件数が表示されます。その横の編集（鉛筆）ボタンをクリックします。
 3. **ユーザーを一括編集** ダイアログが開きます。
 
-![](../images/bulk_edit_users_modal.png)
+![=520px](../images/bulk_edit_users_modal.png)
 
 ダイアログ上部のアラートには、変更が適用されるすべてのユーザーのメールアドレスが並ぶため、実行前に選択内容を
 確認できます。あわせて、UID または GID を設定すると既存のフォルダマウントの使用が制限される場合があるという
@@ -222,14 +222,14 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
 アイコンをクリックします。確認ポップオーバーが表示されるので、**非アクティブ化**ボタンを
 クリックすることでユーザーを無効化できます。
 
-![](../images/user_deactivate_confirmation.png)
+![=588px](../images/user_deactivate_confirmation.png)
 <!-- TODO: Re-capture user_deactivate_confirmation.png in this locale's UI language, reflecting the new flow: the deactivate icon in the user's Email column row and the confirmation popover. -->
 
 ユーザーを再度有効化するには、ユーザー管理ページの**非アクティブ**タブに移動し、対象ユーザーの
 **メール**列の行にある再有効化（復元）アイコンをクリックします。確認ポップオーバーが
 表示されるので、**アクティブ化**ボタンをクリックすることでユーザーを再有効化できます。
 
-![](../images/user_inactivate_confirmation.png)
+![=562px](../images/user_inactivate_confirmation.png)
 <!-- TODO: Re-capture user_inactivate_confirmation.png in this locale's UI language, reflecting the new flow: the reactivate (restore) icon in the Email column row on the Inactive tab and the activate popover. -->
 
 :::note
@@ -273,7 +273,7 @@ CSV ファイルを選択すると、ダイアログにすべての行を一覧�
   作成したデプロイメントも併せて削除されます。チェックしない場合、それらのデプロイメントは
   削除されず、所有権が委任されます。
 
-![](../images/purge_users_modal.png)
+![=520px](../images/purge_users_modal.png)
 
 選択したユーザーの一部を完全に削除できなかった場合は、対象ユーザーのEメールとエラーメッセージを一覧表示する
 失敗ダイアログが開き、残りのユーザーは通常どおり完全に削除されます。
@@ -309,14 +309,14 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 編集したりできます。情報アイコンボタンをクリックすると、キーペアの詳細情報を
 確認できます。必要に応じて、コピーボタンをクリックしてシークレットキーをコピーできます。
 
-![](../images/keypair_detail_dialog.png)
+![=520px](../images/keypair_detail_dialog.png)
 
 キーペアの行にある**編集**（鉛筆）ボタンをクリックすると、キーペアのリソースポリシーおよびレート制限を
 変更できます。ダイアログのタイトルは **キーペアリソースポリシーの更新** で、**保存** をクリックすると変更が
 適用されます。**レート制限** の値が小さいと、ログインなどのAPI操作がブロックされる
 可能性がある点にご注意ください。
 
-![](../images/keypair_update_dialog.png)
+![=500px](../images/keypair_update_dialog.png)
 
 キーペアの行にある「非アクティブ化」ボタンまたは「活性化」ボタンをクリックすると、
 キーペアを無効化または再有効化することもできます。ユーザー管理タブとは異なり、非アクティブタブでは
@@ -325,7 +325,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 
 ![](../images/keypair_delete_button.png)
 
-![](../images/keypair_delete_confirmation.png)
+![=520px](../images/keypair_delete_confirmation.png)
 <!-- TODO: Re-capture keypair_delete_confirmation.png — shows the old UI. -->
 
 <a id="bulk-activate-deactivate-credentials"></a>
@@ -352,7 +352,7 @@ Backend.AIサーバーに対するAPI認証に使用されます。ログイン�
 誤ってキーペアを削除してしまった場合は、右上の**資格情報を作成**ボタンをクリックして、
 ユーザーのキーペアを新たに作成できます。
 
-![](../images/add_keypair_dialog.png)
+![=500px](../images/add_keypair_dialog.png)
 
 ダイアログには次のフィールドがあります。
 
@@ -392,7 +392,7 @@ Backend.AIはユーザー独自のストレージフォルダに加えて、プ�
 ダイアログ上部の **対象プロジェクト** でフォルダを所有するプロジェクトを選択し、
 フォルダ名を入力して、**マウント許可** を設定します。
 
-![](../images/group_folder_creation.png)
+![=650px](../images/group_folder_creation.png)
 
 フォルダが作成されたことを確認した後、ユーザーBのアカウントでログインし、データページに
 招待手続きなしで作成したばかりのプロジェクトフォルダが表示されることを
@@ -501,7 +501,7 @@ Backend.AIはユーザー独自のストレージフォルダに加えて、プ�
    * `Internal`: モデルカードを所有するドメインとプロジェクトの管理者にのみ表示されます。一般ユーザーは、自分のモデルストアで Internal のモデルカードを閲覧できません。
    * `Public`: 該当プロジェクトにアクセス権を持つすべてのユーザーに表示されます。
 
-![](../images/model_card_create_modal.png)
+![=520px](../images/model_card_create_modal.png)
 
 #### モデルカードの編集
 
@@ -511,7 +511,7 @@ Backend.AIはユーザー独自のストレージフォルダに加えて、プ�
 
 モデルカード名の横にある削除アイコンをクリックして個別のモデルカードを削除するか、行のチェックボックスで複数のモデルカードを選択したうえで、選択件数の横にある赤色のゴミ箱ボタンをクリックして一括削除を実行できます。
 
-![](../images/model_card_delete_with_folder.png)
+![=520px](../images/model_card_delete_with_folder.png)
 
 削除確認ダイアログには **関連するモデルフォルダも削除する** オプションが含まれています：
 
@@ -563,7 +563,7 @@ Backend.AI では、管理者が再利用可能な **Prometheus クエリプリ�
 
 テーブル右上の **プリセットを追加** をクリックして **プリセットを作成** モーダルを開きます。
 
-![](../images/admin_prometheus_preset_create_modal.png)
+![=520px](../images/admin_prometheus_preset_create_modal.png)
 
 モーダルには次のフィールドがあります。
 
@@ -589,7 +589,7 @@ Backend.AI では、管理者が再利用可能な **Prometheus クエリプリ�
 
 プリセット行の **名前** セルにある **編集** アクションをクリックすると、**プリセットを編集** モーダルが開きます。モーダルにはプリセットの現在の値があらかじめ入力されており、クエリテンプレートのライブプレビュー領域を含めて作成ダイアログと同じフィールドが提供されます。
 
-![](../images/admin_prometheus_preset_edit_modal.png)
+![=520px](../images/admin_prometheus_preset_edit_modal.png)
 
 **セーブ** をクリックして変更を適用します。プリセットを参照しているコンシューマー（例: オートスケーリングルール）は、次にメトリクスを評価する際に新しいクエリテンプレートを自動的に取り込みます。
 
@@ -673,7 +673,7 @@ Prometheus クエリプリセットの削除は **完全な削除であり、元
    * **リビジョン履歴の保持数**：このプリセットから生成された各デプロイで保持される過去リビジョンの数。
    * **一般公開**：このプリセットから生成されたデプロイのエンドポイントを、アクセストークンなしで到達可能にするかの既定値（チェックボックス）。
 
-![](../images/deployment_preset_create_modal.png)
+![=800px](../images/deployment_preset_create_modal.png)
 
 入力が完了したら、**プリセットを作成** ボタンをクリックして保存します。成功通知が表示されます。
 
@@ -744,7 +744,7 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 います。これはユーザー管理ページの資格情報タブで確認できます。また、リソースポリシー
 パネルですべてのリソースポリシーがdefaultに設定されていることも確認できます。
 
-![](../images/credentials.png)
+![=520px](../images/credentials.png)
 
 キーペアリソースポリシーのテーブルには次の列が表示されます。そのうち2つは、制限値ではなくポリシーの適用方法を
 示します。
@@ -814,7 +814,7 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 キーペアリソースポリシーリストで、defaultポリシーの「リソース」の値が更新されたことを
 確認します。
 
-![](../images/keypair_resource_policy_update_check.png)
+![=496px](../images/keypair_resource_policy_update_check.png)
 
 テーブルの右上にある **作成** ボタンをクリックして新しいリソースポリシーを作成できます。各設定値は上記の
 説明と同じです。
@@ -831,7 +831,7 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 できます。アイコンをクリックすると、確認ダイアログが表示されます。確認用の入力欄にポリシー名を
 入力してから「削除」ボタンをクリックすると削除されます。
 
-![](../images/resource_policy_delete_dialog.png)
+![=520px](../images/resource_policy_delete_dialog.png)
 
 :::note
 削除予定のリソースポリシーに従うユーザー（非アクティブなユーザーを含む）が存在する場合、
@@ -842,7 +842,7 @@ Backend.AIでは、管理者は各キーペア、ユーザー、プロジェク�
 特定のカラムを表示または非表示にしたい場合は、テーブルの右下にある「設定（歯車）」を
 クリックします。表示したいカラムを選択するダイアログが表示されます。
 
-![](../images/keypair_resource_policy_table_setting.png)
+![=420px](../images/keypair_resource_policy_table_setting.png)
 
 <a id="user-resource-policy"></a>
 
@@ -865,7 +865,7 @@ Backend.AIはユーザーリソースポリシーの管理をサポートして�
 
 新しいユーザーリソースポリシーを作成するには、**作成** ボタンをクリックします。
 
-![](../images/create_user_resource_policy.png)
+![=520px](../images/create_user_resource_policy.png)
 
 - 名前: ユーザーリソースポリシーの名前です。
 - 最大フォルダ数: ユーザーが作成できるフォルダの最大数です。ユーザーのフォルダ数が
@@ -914,7 +914,7 @@ Backend.AIはプロジェクトリソースポリシーの管理をサポート�
 
 新しいプロジェクトリソースポリシーを作成するには、テーブルの右上にある **作成** ボタンをクリックします。
 
-![](../images/create_project_resource_policy.png)
+![=520px](../images/create_project_resource_policy.png)
 
 - **名前**: プロジェクトリソースポリシーの名前。
 - **最大フォルダ数**: 管理者が作成できるプロジェクトフォルダの最大数。プロジェクトフォルダ数がこの値を超えると、管理者は新しいプロジェクトフォルダを作成できません。Unlimitedに設定すると「∞」と表示されます。
@@ -1067,7 +1067,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 リソースグループの制御カラムにある設定（歯車）ボタンをクリックすると、フェアシェア設定
 モーダルが開きます。
 
-![](../images/fair_share_resource_group_setting_modal.png)
+![=520px](../images/fair_share_resource_group_setting_modal.png)
 
 :::warning
 変更はFair Shareの計算にすぐには反映されません。計算サイクルのため、反映までに
@@ -1142,7 +1142,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 ドメイン、プロジェクト、またはユーザーのフェアシェア重みを編集するには、対象の行の
 制御カラムにある設定（歯車）ボタンをクリックします。重み設定モーダルが開きます。
 
-![](../images/fair_share_weight_setting_modal.png)
+![=520px](../images/fair_share_weight_setting_modal.png)
 
 :::warning
 変更はFair Shareの計算にすぐには反映されません。計算サイクルのため、反映までに
@@ -1159,7 +1159,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 すべてのエンティティのタグリストと、すべてに適用される単一の重み入力フィールドが
 表示されます。
 
-![](../images/fair_share_weight_bulk_edit_modal.png)
+![=520px](../images/fair_share_weight_bulk_edit_modal.png)
 
 :::note
 選択したリソースグループのスケジューラタイプが`FAIR_SHARE`に設定されていない場合、
@@ -1222,7 +1222,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 どちらの項目も必須で、プロジェクトとリソースグループを選択するまでダイアログの **インストール** ボタンは無効のままです。
 選択したイメージのうち、すでにインストール済みのイメージはリクエストから除外されます。
 
-![](../images/image_install_modal.png)
+![=520px](../images/image_install_modal.png)
 
 コントロールパネルの **編集**（鉛筆）アクションをクリックすると **最小画像リソース制限を変更します** ダイアログが開き、各イメージの最小リソース要件を
 変更できます。各イメージには最小動作のためのハードウェアおよびリソース要件があります
@@ -1232,7 +1232,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 した場合、リクエストはキャンセルされず、イメージの最小リソース要件に自動的に調整されて
 作成されます。
 
-![](../images/update_image_resource_setting.png)
+![=640px](../images/update_image_resource_setting.png)
 
 :::note
 イメージメタデータに含まれる最小リソース要件は、テストされ決定された値です。変更したい最小リソース量について明確な理由がない限り、デフォルト値を使用することをお勧めします。
@@ -1242,7 +1242,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 サポートアプリを追加または変更できます。アイコンをクリックすると、アプリ名とその
 ポート番号が表示されます。
 
-![](../images/manage_app_dialog.png)
+![=700px](../images/manage_app_dialog.png)
 
 このインターフェースでは、下部の「追加」ボタンをクリックして、サポートされるカスタム
 アプリケーションを追加できます。アプリケーションを削除するには、各行の右側にある
@@ -1251,7 +1251,7 @@ Admin Sessionページには2つのタブがあります。**セッション** �
 :::note
 
 
-![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
+![=520px](../images/confirmation_dialog_for_manage_app_change_in_image.png)
 :::
 
 <a id="manage-docker-registry"></a>
@@ -1341,11 +1341,11 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 - **リソースプリセット**: 利用可能な各リソースタイプ（CPU、メモリ、GPUなど）を入力する動的フィールドのまとまりです。メモリフィールドは動的な単位入力（MiB、GiB、TiB、PiB）をサポートしています。
 - **共有メモリ**: プリセットに割り当てられた共有メモリの量です。この値は**メモリ**の値より少なくなければなりません。
 
-![](../images/modify_resource_preset_dialog.png)
+![=520px](../images/modify_resource_preset_dialog.png)
 
 「リソースプリセット」タブの右上にある **プリセットの作成** ボタンをクリックしてリソースプリセットを作成することもできます。リソースプリセット名は引き続き一意である必要があります。既に存在する名前を入力すると、**作成** をクリックした際にサーバーがリクエストを拒否し、エラーメッセージが表示されます。
 
-![](../images/create_resource_preset_dialog.png)
+![=520px](../images/create_resource_preset_dialog.png)
 
 <a id="manage-agent-nodes"></a>
 
@@ -1374,7 +1374,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 **実行中** / **終了セッション** のセレクターで、まだノードのリソースを占有しているセッションと、すでに終了した
 セッションを切り替えて表示でき、セッション名をクリックするとそのセッションの詳細が表示されます。
 
-![](../images/detailed_agent_node_usage_information.png)
+![=800px](../images/detailed_agent_node_usage_information.png)
 
 ユーザー設定で実験的機能の **Session resource grid view** を有効にすると（[実験的特徴](#experimental-features)
 セクションを参照）、**セッション** タブの更新ボタンの横に、**Table** と **Grid** を切り替える **View mode**
@@ -1383,7 +1383,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 **実行中** / **終了セッション** の選択に従います。グリッド自体のコントロールについては、
 [セッションリストの表示](#session-list-view-and-refresh) セクションを参照してください。
 
-![](../images/agent_info_sessions_view_mode.png)
+![=800px](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 
@@ -1395,7 +1395,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 - **エージェントを停止**: エージェントサービスを停止します。エージェントが `ALIVE` のときのみ利用できます。
 - **エージェントを再起動**: エージェントサービスを再起動します。
 
-![](../images/agent_watcher_actions.png)
+![=800px](../images/agent_watcher_actions.png)
 
 いずれの操作でも、対象のエージェントを明示し、このエージェントで実行中のセッションに影響する場合がある旨を警告する
 確認ダイアログが開きます。確認すると要求が送信され、起動・停止・再起動が要求された旨のメッセージが表示された後、
@@ -1439,7 +1439,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 
 名前列の **編集**（鉛筆）アクションをクリックすると **リソースグループの変更** ダイアログが開き、リソースグループを編集できます。**スケジューラー** フィールドで、コンピュートセッション作成のスケジューリング方法を選択できます。現在、`FIFO`、`LIFO`、`DRF`、`FAIR_SHARE`の4種類があります。`FIFO`と`LIFO`はジョブキューで最初または最後にキューイングされたコンピュートセッションを作成するスケジューリング方法です。`DRF`はDominant Resource Fairnessの略で、各ユーザーにできるだけ公平にリソースを提供することを目指します。`FAIR_SHARE`は過去の使用パターンに基づいてコンピュートリソースを割り当てます。詳細については、[フェアシェアスケジューラ](#fair-share-scheduler)セクションを参照してください。**アクティブ** をオフにすることでリソースグループを無効化できます。**保存** をクリックすると変更が適用されます。
 
-![](../images/modify_resource_group.png)
+![=520px](../images/modify_resource_group.png)
 
 
 リソースグループ編集ダイアログには以下の追加フィールドが含まれています：
@@ -1462,7 +1462,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 
 **リソースグループの作成** ボタンをクリックして新しいリソースグループを作成できます。他の作成オプションと同様に、既に存在する名前ではリソースグループを作成できません。名前はキー値です。
 
-![](../images/create_resource_group.png)
+![=520px](../images/create_resource_group.png)
 
 <a id="bulk-edit-resource-groups"></a>
 
@@ -1474,7 +1474,7 @@ GitLabコンテナレジストリを追加する場合、追加情報フィー�
 2. ツールバーに選択件数が表示されます。その横の **一括編集**（歯車）ボタンをクリックします。
 3. **リソースグループを更新** ダイアログが開きます。
 
-![](../images/bulk_edit_resource_groups_modal.png)
+![=520px](../images/bulk_edit_resource_groups_modal.png)
 
 ダイアログ上部のアラートには、変更対象となるすべてのリソースグループが並びます。その下には
 **SFTPストレージプロキシ** フィールドがあり、選択したリソースグループのいずれかが既に利用しているプロキシが
@@ -1690,7 +1690,7 @@ Backend.AIはプライベートなノード間通信をサポートするため�
 動的に作成します。管理者は、MTU（Maximum Transmission Unit）の値がネットワーク速度の
 向上に確実に寄与する場合、オーバーレイネットワークのMTU値を設定できます。
 
-![](../images/overlay_network_setting_dialog.png)
+![=376px](../images/overlay_network_setting_dialog.png)
 
 :::note
 Backend.AIクラスターセッションの詳細については、
@@ -1710,7 +1710,7 @@ Backend.AIクラスターセッションの詳細については、
 リクエストは無視され、Backend.AIは次のリクエストを処理します。現在、変更が可能なのは
 スケジューラがFIFOの場合のみです。
 
-![](../images/system_setting_dialog_scheduler_settings.png)
+![=376px](../images/system_setting_dialog_scheduler_settings.png)
 
 :::note
 今後も、より広範な設定コントロールを追加していきます。
@@ -1832,7 +1832,7 @@ RBAC管理ページでプロジェクトのロールを探さなくても、プ�
    利用できません。
 3. **プロジェクト管理者を設定** ダイアログが開きます。
 
-![](../images/set_project_admin_modal.png)
+![=600px](../images/set_project_admin_modal.png)
 
 ダイアログは次の要素で構成されます。
 

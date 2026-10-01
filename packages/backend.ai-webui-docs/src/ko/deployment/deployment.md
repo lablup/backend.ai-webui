@@ -68,7 +68,7 @@ Backend.AI는 **배포(Deployments)** 기능을 통해 AI 모델을 추론 서�
 
 리비전에는 추론 서버를 실행하는 데 필요한 모든 설정(이미지, 시작 명령, 자원, 모델 마운트, 환경 변수)이 포함됩니다. 배포 상세 페이지에서 `리비전 추가` 버튼을 클릭하여 모달을 엽니다.
 
-![](../images/model_serving_add_revision_modal.png)
+![=800px](../images/model_serving_add_revision_modal.png)
 
 리비전 추가 모달 제목 영역의 **프리셋 모드** / **고급 모드** 전환기로 리비전 구성 방식을 선택합니다.
 
@@ -109,7 +109,7 @@ Backend.AI는 **배포(Deployments)** 기능을 통해 AI 모델을 추론 서�
 
 리비전마다 하나의 모델 스토리지 폴더가 각 복제본에 마운트됩니다. 폴더 선택기 바로 아래의 필드에서 해당 폴더가 컨테이너 내부의 어느 위치에 나타날지 지정합니다.
 
-![](../images/add_revision_model_folder_mount.png)
+![=780px](../images/add_revision_model_folder_mount.png)
 
 - **모델 폴더**: 각 복제본에 마운트할 모델 스토리지 폴더입니다.
 - **모델 폴더 마운트할 경로**: 컨테이너 내부에 모델 스토리지 폴더가 마운트되는 경로입니다 (기본값: `/models`).
@@ -184,7 +184,7 @@ vLLM은 다음 파라미터 탭을 제공합니다: **Model Loading**, **Resourc
 
 **SGLang 런타임 파라미터**
 
-![](../images/service_launcher_runtime_params_sglang.png)
+![=648px](../images/service_launcher_runtime_params_sglang.png)
 
 SGLang은 다음 파라미터 탭을 제공합니다: **Model Loading**, **Resource Memory**, **Serving Performance**, **Tool Reasoning** 등.
 
@@ -376,7 +376,7 @@ models:
 `model` 타입을 선택하세요. 폴더 생성 방법에 대한 지침은 데이터 페이지의
 [스토리지 폴더 생성](#create-storage-folder) 섹션을 참조하세요.
 
-![](../images/model_type_folder_creation.png)
+![=650px](../images/model_type_folder_creation.png)
 
 폴더를 생성한 후, 데이터 페이지에서 `MODELS` 탭을 선택하고
 최근에 생성한 모델 타입 폴더 아이콘을 클릭하여 폴더 탐색기를 열고
@@ -496,7 +496,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 
 **기본 정보** 카드 헤더에는 새로 고침 버튼, **수정** 버튼, **더보기** 메뉴가 있습니다. **수정** 버튼을 클릭하면 [배포 생성 모달](#create-deployment)에서 설명한 **배포 수정** 모달이 열립니다. 더보기 메뉴에는 현재 **배포 삭제** 동작이 포함됩니다.
 
-![](../images/endpoint_detail_more_menu.png)
+![=160px](../images/endpoint_detail_more_menu.png)
 
 <a id="scheduling-history"></a>
 
@@ -631,7 +631,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 
 복제본에서 오류가 발생한 경우 행의 오류 표시를 클릭하면 JSON 뷰어 모달이 열리며, 원시 오류 데이터를 표시합니다. 개별 복제본의 문제를 진단할 때 유용합니다.
 
-![](../images/route_error_json_viewer.png)
+![=492px](../images/route_error_json_viewer.png)
 
 ### 오토스케일링 규칙
 
@@ -659,7 +659,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
    * **스케일 아웃**: 메트릭이 임계값 위로 올라가면 복제본을 늘립니다. `Metric > [임계값]` 조건을 설정합니다.
    * **스케일 인 & 아웃**: 메트릭이 설정한 범위를 벗어나는 방향에 따라 자동으로 축소 또는 확장합니다. `Metric < Min Threshold` 또는 `Metric > Max Threshold` 조건을 설정합니다.
 
-![](../images/auto_scaling_condition_selector.png)
+![=472px](../images/auto_scaling_condition_selector.png)
 
 - **단계 크기(Step Size)**: 스케일링 이벤트마다 추가하거나 제거할 복제본 수를 지정하는 양의 정수입니다. 선택한 조건(스케일 인 / 스케일 아웃 / 스케일 인 & 아웃)에 따라 `-`, `+`, `±` 부호가 자동으로 표시됩니다.
 
@@ -670,7 +670,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 - **쿨다운 초(Cooldown Sec.)**: 스케일링 이벤트 이후 다음 평가까지 대기하는 시간(초 단위)입니다.
 - **최소 복제본 수(Min Replicas) 및 최대 복제본 수(Max Replicas)**: 오토스케일링이 복제본 수에 대해 강제하는 하한과 상한입니다. 오토스케일링은 복제본 수를 최소 복제본 수 아래로 줄이거나 최대 복제본 수 위로 늘리지 않습니다.
 
-![](../images/auto_scaling_rules_modal_v2.png)
+![=520px](../images/auto_scaling_rules_modal_v2.png)
 
 <a id="generating-tokens"></a>
 
@@ -691,7 +691,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
    * **만료 없음**: 만료일을 먼 미래 날짜(`2099년 12월 31일`)로 설정하여 사실상 만료되지 않는 토큰을 생성합니다. 이후 토큰 대화 상자, 액세스 토큰 목록, 채팅 토큰 선택기에는 "만료 없음"이라는 문구 대신 이 날짜가 표시됩니다.
 3. `액세스 토큰 생성`을 클릭하여 토큰을 발급합니다.
 
-![](../images/token_generation_dialog.png)
+![=460px](../images/token_generation_dialog.png)
 
    매니저가 아직 네트워크 엔드포인트를 발급하지 않았다면 `액세스 토큰 생성` 버튼은 비활성화되며, 툴팁에 *"아직 네트워크 엔드포인트가 발급되지 않았습니다."* 라고 표시됩니다. 본인이 소유하지 않은 배포에서는 *"배포 소유자만 액세스 토큰을 관리할 수 있습니다."*, 중지 중이거나 더 이상 활성 상태가 아닌 배포에서는 *"배포가 중지 중이거나 더 이상 활성 상태가 아닙니다."* 라고 표시되며 버튼이 비활성화됩니다. 이 두 조건에서는 토큰 삭제도 비활성화됩니다.
 
@@ -726,7 +726,7 @@ vLLM 배포의 경우 루트 기본값이 `vllm` 섹션과 병합되며(변형 �
 
 배포가 더 이상 필요하지 않으면 종료하는 것이 좋습니다. 배포를 종료하려면 **기본 정보** 카드의 **더보기** 메뉴를 열고 **배포 삭제**를 선택합니다. 유형 확인 모달이 나타나면 배포 이름을 입력하여 **영구 삭제** 버튼을 활성화합니다. 종료된 배포는 **삭제됨** 필터 뷰에 표시됩니다.
 
-![](../images/terminate_model_service_dialog.png)
+![=520px](../images/terminate_model_service_dialog.png)
 
 ## 배포에 접근하기
 
@@ -834,7 +834,7 @@ API 연결에 문제가 발생하면, 채팅 페이지에 모델 설정을 수�
 
 모델 카드에 README가 포함된 경우, Drawer 하단에 `README.md` 카드로 렌더링됩니다.
 
-![](../images/model_card_detail_drawer.png)
+![=800px](../images/model_card_detail_drawer.png)
 
 ### 모델 배포
 

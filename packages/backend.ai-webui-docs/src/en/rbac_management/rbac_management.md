@@ -145,7 +145,7 @@ In the **Permissions** column, each permission-type tag is colored by how many o
 
 Hover over a tag to see its state label.
 
-![](../images/rbac_permissions_card_grant_tags.png)
+![=751px](../images/rbac_permissions_card_grant_tags.png)
 
 ### Understanding permissions
 
@@ -191,7 +191,7 @@ Permissions are edited per scope through a grid-based modal, where each row is a
 3. Each checkbox is **pre-checked** to the scope's currently granted operations. Tick or untick cells to change what is allowed.
 4. Click **Save**. The changes are reconciled against the scope's current grants — newly ticked cells are granted and cleared cells are removed.
 
-![](../images/rbac_permission_edit_modal_single.png)
+![=760px](../images/rbac_permission_edit_modal_single.png)
 
 :::note
 Editing permissions is **reversible** — you can re-open the modal and change the grid again at any time — so saving uses a normal **Save** button rather than a typed-name confirmation.
@@ -254,7 +254,7 @@ Adding users is a bulk operation — you can select several users in a single pa
 
 The system-generated project-admin role (whose **Source** is **System**) cannot have users assigned or revoked directly from the Role Assignments tab. The tab shows a warning alert, **Roles automatically created by the system cannot have users directly assigned or unassigned.**, and the assignment table is read-only (the **Add User** and revoke controls are hidden).
 
-![](../images/rbac_system_role_assignments_readonly.png)
+![=800px](../images/rbac_system_role_assignments_readonly.png)
 
 To manage who administers a project, use **Set Project Admin** on the Project page instead. See [Set Project Admin](#set-project-admin) in the Project Admin Features chapter and [Grant Project Admin authority](#grant-project-admin) below.
 
@@ -269,7 +269,7 @@ To revoke a single user:
 1. In the **Role Assignments** tab, hover over the user row and click the revoke (trash) icon next to the user.
 2. A **Revoke User** confirmation modal opens. Review the listed user(s) and click **Revoke User** to confirm, or **Cancel** to dismiss.
 
-![](../images/rbac_revoke_confirm_modal.png)
+![=520px](../images/rbac_revoke_confirm_modal.png)
 
 To revoke multiple users at once:
 
@@ -295,6 +295,6 @@ Creating a project also creates a dedicated project-admin role bound to that pro
 
 Grant and revoke project admin through the **Set Project Admin** one-click flow on the **Project** admin page, described in [Set Project Admin](#set-project-admin) in the Project Admin Features chapter. The project-admin role is a system role, so its Role Assignments tab here is **read-only** and provided for inspection — you can still open the role to review who currently holds project admin. The **Set Project Admin** modal also links back to this role's detail drawer through its RBAC shortcut.
 
-![](../images/rbac_project_admin_role_detail.png)
+![=799px](../images/rbac_project_admin_role_detail.png)
 
 Once granted, the user gains Project Admin authority immediately. The next time they open the header's project dropdown they will see the project-admin badge next to the corresponding project, and the project-admin sidebar entries described in the [Project Admin Features](#project-admin-features) chapter.

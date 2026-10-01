@@ -20,7 +20,7 @@ Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원
 
 다음으로 SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. 이 대화상자에는 접속에 사용할 **사용자**, **호스트**, **포트** 값과 바로 사용할 수 있는 `sftp`, `scp`, `rsync` 예시 명령, 그리고 `id_container` 파일을 로컬 머신에 저장하는 **SSH 키 다운로드** 버튼이 표시됩니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 버튼을 쓰는 대신 웹 터미널이나 Jupyter Notebook을 통해 이 파일을 직접 다운로드해도 됩니다. `id_container` 파일은 `/home/work/` 아래에 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 바뀔 수 있으며, 그 경우 다시 다운로드해야 합니다.
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 ![](../images/sftp_app.png)
 
@@ -76,15 +76,15 @@ Linux/Mac에서의 접속 방법을 참고하여, 연산 세션을 생성하고 
 
 FileZilla 클라이언트를 실행한 후, 설정-연결-SFTP로 이동하여 키 파일 `id_container.ppk`(OpenSSH를 지원하는 클라이언트의 경우 `id_container`)를 등록합니다.
 
-![](../images/filezilla_setting.png)
+![=628px](../images/filezilla_setting.png)
 
 사이트 관리자를 열고, 새 사이트를 생성한 후 다음과 같이 접속 정보를 입력합니다.
 
-![](../images/filezilla_site_setting.png)
+![=798px](../images/filezilla_site_setting.png)
 
 컨테이너에 처음 접속할 때 다음과 같은 확인 팝업이 나타날 수 있습니다. OK 버튼을 클릭하여 호스트 키를 저장합니다.
 
-![](../images/unknown_host_key.png)
+![=501px](../images/unknown_host_key.png)
 
 잠시 후 다음과 같이 접속이 완료된 것을 확인할 수 있습니다. 이 SFTP 접속을 통해 `/home/work/` 또는 마운트된 스토리지 폴더로 대용량 파일을 전송합니다.
 
@@ -104,7 +104,7 @@ Backend.AI는 연산 세션에 대한 SSH/SFTP 접속을 통해 로컬 Visual St
 
 확장을 설치한 후, 연산 세션에 대한 SSH 접속을 설정합니다. VSCode Remote Connection 대화상자에서 복사 아이콘 버튼을 클릭하여 Visual Studio Code 원격 SSH 비밀번호를 복사합니다. 대화상자에 표시된 호스트와 포트 번호도 기억해 둡니다.
 
-![](../images/download_ssh_key.png)
+![=622px](../images/download_ssh_key.png)
 
 그런 다음 SSH config 파일을 설정합니다. `~/.ssh/config` 파일(Linux/Mac의 경우) 또는 `C:\Users\[사용자 이름]\.ssh\config` 파일(Windows의 경우)을 편집하고 다음 블록을 추가합니다. `Hostname`과 `Port` 항목에는 대화상자에 표시된 호스트와 포트 번호를 입력합니다. 편의를 위해 호스트 이름을 `bai-vscode`로 설정합니다. 원하는 별칭으로 바꿔도 됩니다.
 
@@ -132,11 +132,11 @@ Visual Studio Code는 접속하려는 호스트 유형을 자동으로 감지합
 
 호스트 이름을 선택하면 원격 연산 세션에 접속됩니다. 접속이 완료되면 빈 창이 표시됩니다. 상태 표시줄에서 접속된 호스트를 항상 확인할 수 있습니다.
 
-![](../images/vscode_connect_finish.png)
+![=333px](../images/vscode_connect_finish.png)
 
 이제 평소처럼 `File > Open...` 또는 `File > Open Workspace...` 메뉴로 원격 호스트의 폴더나 워크스페이스를 엽니다.
 
-![](../images/vscode_connected_host_file_open.png)
+![=614px](../images/vscode_connected_host_file_open.png)
 
 <a id="establish-ssh-connection-with-backendai-client-package"></a>
 
@@ -165,7 +165,7 @@ docker pull lablup/backend.ai-client:${VERSION}
 
 Backend.AI 서버 버전은 Web UI 우측 상단의 사람 아이콘을 클릭하면 나타나는 "Backend.AI에 대하여" 메뉴에서 확인합니다.
 
-![](../images/check_backend_server_version.png)
+![=350px](../images/check_backend_server_version.png)
 
 다음 명령으로 Docker 이미지를 실행합니다.
 
