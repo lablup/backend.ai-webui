@@ -29,7 +29,6 @@ import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAISkeleton,
   BAICard,
@@ -397,7 +396,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
               <HStack gap={2}>
                 {selectedFolderList.length > 0 &&
                   queryParams.statusCategory === 'active' && (
-                    <>
+                    <HStack gap={1} align="center">
                       <BAISelectionLabel
                         count={selectedFolderList.length}
                         onClearSelection={() => setSelectedFolderList([])}
@@ -412,26 +411,24 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                           toggleDeleteModal();
                         }}
                       />
-                    </>
+                    </HStack>
                   )}
                 {selectedFolderList.length > 0 &&
                   queryParams.statusCategory === 'deleted' && (
-                    <>
+                    <HStack gap={1} align="center">
                       <BAISelectionLabel
                         count={selectedFolderList.length}
                         onClearSelection={() => setSelectedFolderList([])}
                       />
-                      <Tooltip content={t('data.folders.Restore')}>
-                        <IconButton
-                          // Astryx requires a real accessible name; the antd
-                          // original had none (only the wrapping tooltip).
-                          label={t('data.folders.Restore')}
-                          icon={<RotateCcwIcon />}
-                          onClick={() => {
-                            toggleRestoreModal();
-                          }}
-                        />
-                      </Tooltip>
+                      <IconButton
+                        label={t('data.folders.Restore')}
+                        tooltip={t('data.folders.Restore')}
+                        icon={<RotateCcwIcon />}
+                        variant="ghost"
+                        onClick={() => {
+                          toggleRestoreModal();
+                        }}
+                      />
                       <IconButton
                         label={t('data.folders.Delete')}
                         tooltip={t('data.folders.Delete')}
@@ -442,7 +439,7 @@ const AdminVFolderNodeListPage: React.FC = (props) => {
                           toggleDeleteForeverModal();
                         }}
                       />
-                    </>
+                    </HStack>
                   )}
                 <AutoUpdateFetchKeyButton
                   settingId="admin-vfolder-list"
