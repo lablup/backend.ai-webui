@@ -354,7 +354,7 @@ const LoginView: React.FC<{
     // The manager's OpenID plugin reports a failed login as `?bai_error=`;
     // drop it once shown so a reload does not repeat the message.
     const openIDLoginError = urlParams.get(OPENID_LOGIN_ERROR_PARAM);
-    if (openIDLoginError) {
+    if (openIDLoginError !== null) {
       const { key, code } = resolveOpenIDLoginErrorKey(openIDLoginError);
       setLoginError({
         message: t('login.singleSignOn.LoginWithRealmFailed', {

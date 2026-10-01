@@ -59,4 +59,11 @@ describe('resolveOpenIDLoginErrorKey', () => {
       resolveOpenIDLoginErrorKey('Account locked. Call 1-800-000').code,
     ).toBe('invalid');
   });
+
+  it('falls back to the unknown-error key for an empty value', () => {
+    expect(resolveOpenIDLoginErrorKey('')).toEqual({
+      key: 'login.singleSignOn.OpenIDUnknownError',
+      code: 'invalid',
+    });
+  });
 });
