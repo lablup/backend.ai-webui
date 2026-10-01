@@ -132,15 +132,12 @@ export type UserV2OrderBy = {
 export type BAIUserSelectPaginatedQuery$variables = {
     domainName: string;
     filter?: UserV2Filter | null | undefined;
-    legacyFilter?: string | null | undefined;
-    legacyOrder?: string | null | undefined;
     limit: number;
     offset: number;
     orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
     projectId: string;
     useAdmin: boolean;
     useDomain: boolean;
-    useLegacy: boolean;
     useProject: boolean;
 };
 export type BAIUserSelectPaginatedQuery$data = {
@@ -179,16 +176,6 @@ export type BAIUserSelectPaginatedQuery$data = {
                 readonly id: string;
             };
         }>;
-    } | null | undefined;
-    readonly user_nodes?: {
-        readonly count: number | null | undefined;
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly email: string | null | undefined;
-                readonly full_name: string | null | undefined;
-                readonly id: string;
-            } | null | undefined;
-        } | null | undefined>;
     } | null | undefined;
 };
 export type BAIUserSelectPaginatedQuery = {

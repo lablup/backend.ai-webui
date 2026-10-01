@@ -125,13 +125,11 @@ export type UserProjectNestedFilter = {
 };
 export type BAIUserSelectValueQuery$variables = {
     domainName: string;
-    legacySelectedFilter?: string | null | undefined;
     limit: number;
     projectId: string;
     selectedFilter?: UserV2Filter | null | undefined;
     useAdmin: boolean;
     useDomain: boolean;
-    useLegacy: boolean;
     useProject: boolean;
 };
 export type BAIUserSelectValueQuery$data = {
@@ -167,15 +165,6 @@ export type BAIUserSelectValueQuery$data = {
                 readonly id: string;
             };
         }>;
-    } | null | undefined;
-    readonly user_nodes?: {
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly email: string | null | undefined;
-                readonly full_name: string | null | undefined;
-                readonly id: string;
-            } | null | undefined;
-        } | null | undefined>;
     } | null | undefined;
 };
 export type BAIUserSelectValueQuery = {

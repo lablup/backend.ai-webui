@@ -35,7 +35,6 @@ export interface BAIUserSelectProps extends Omit<BAIComplexSelectProps, 'options
      * super-admin, the caller's own domain otherwise.
      */
     scope?: BAIUserSelectScope;
-    /** Typed V2 filter; managers below 26.2.0 list without it. */
     filter?: BAIUserSelectFilter;
     excludeInactive?: boolean;
     valuePropName?: 'id' | 'email';
