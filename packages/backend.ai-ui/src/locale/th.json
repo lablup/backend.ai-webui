@@ -248,6 +248,10 @@
       "Title": "ไม่สามารถเข้าสู่ระบบด้วย Backend.AI ได้"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "ความคืบหน้าการเริ่มเคอร์เนล",
+    "KernelTerminationProgress": "ความคืบหน้าการยุติเคอร์เนล"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "ขนาดคลัสเตอร์",
     "Concurrency": "เซสชันที่ทำงานพร้อมกัน",

@@ -248,6 +248,10 @@
       "Title": "Tidak dapat masuk dengan Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Progres startup kernel",
+    "KernelTerminationProgress": "Progres terminasi kernel"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Ukuran Klaster",
     "Concurrency": "Sesi Serentak",
