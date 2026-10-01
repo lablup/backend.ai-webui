@@ -181,4 +181,22 @@ describe('app-shim modal', () => {
     ).toBe('10001');
     handle.destroy();
   });
+
+  // A fullscreen element paints only its own subtree (FastTrack #6004).
+  it.each([
+    ['alertdialog', 'confirm'],
+    ['dialog', 'error'],
+  ] as const)('forwards getContainer to the %s branch', (role, kind) => {
+    const container = document.body.appendChild(document.createElement('div'));
+    const handle = modal[kind]({
+      title: 'T',
+      content: 'C',
+      getContainer: container,
+    });
+    render(<AppShimModalHost />);
+
+    expect(container.contains(screen.getByRole(role))).toBe(true);
+    handle.destroy();
+    container.remove();
+  });
 });

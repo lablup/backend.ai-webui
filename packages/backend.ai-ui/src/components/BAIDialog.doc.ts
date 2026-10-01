@@ -117,6 +117,12 @@ export const docs = {
         'Requests a higher position inside the modal band; the level stack resolves it, still placing later dialogs above this one and ignoring values outside the band. Pass a `BAI_Z_INDEX` layer, never a literal.',
     },
     {
+      name: 'getContainer',
+      type: 'HTMLElement | (() => HTMLElement)',
+      description:
+        'Element the portal mounts into instead of `document.body`. Pass the fullscreen element while one is up: the browser paints only its subtree, so a body-level dialog stays hidden.',
+    },
+    {
       name: 'role',
       type: 'string',
       description:

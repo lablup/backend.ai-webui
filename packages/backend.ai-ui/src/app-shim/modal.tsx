@@ -69,6 +69,8 @@ export interface ModalShimFuncProps {
   width?: number | string;
   /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
   zIndex?: number;
+  /** Forwarded to `BAIDialog`'s `getContainer`: mount inside a fullscreen element. */
+  getContainer?: HTMLElement | (() => HTMLElement);
   /**
    * PILOT-DECISION: the following antd props are accepted for call-site
    * compatibility but have no Astryx destination and are ignored:
@@ -266,6 +268,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
         onOpenChange={handleOpenChange}
         width={options.width}
         zIndex={options.zIndex}
+        getContainer={options.getContainer}
         title={toText(options.title)}
         description={toText(options.content)}
         cancelLabel={cancelLabel}
@@ -285,6 +288,7 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
       onOpenChange={handleOpenChange}
       width={options.width}
       zIndex={options.zIndex}
+      getContainer={options.getContainer}
       purpose="form"
     >
       <Layout
