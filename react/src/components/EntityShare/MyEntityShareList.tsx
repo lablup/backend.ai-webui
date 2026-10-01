@@ -82,9 +82,9 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [managingTarget, setManagingTarget] =
     useState<EntityShareTarget | null>(null);
+  // Kept apart from the target so the modal body survives its close animation.
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
 
-  const side: EntityShareViewerSide =
-    _.first(queryRef.variables.sides) === 'SHARER' ? 'SHARER' : 'RECIPIENT';
   const filter = queryRef.variables.filter ?? undefined;
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
@@ -92,6 +92,12 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
 
   const deferredQueryRef = useDeferredValue(queryRef);
   const isRefetching = deferredQueryRef !== queryRef;
+  // From the deferred ref so the row actions never run ahead of the rows.
+  const side: EntityShareViewerSide =
+    _.first(deferredQueryRef.variables.sides) === 'SHARER'
+      ? 'SHARER'
+      : 'RECIPIENT';
+  const requestedSide = _.first(queryRef.variables.sides) ?? 'RECIPIENT';
 
   const { myEntityShares } = usePreloadedQuery<MyEntityShareListQueryType>(
     MyEntityShareListQuery,
@@ -106,7 +112,7 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap="sm">
         <BAIFlex gap="sm" wrap="wrap">
           <SegmentedControl
-            value={side}
+            value={requestedSide}
             label={t('entityShare.Side')}
             onChange={(next) =>
               onReload(
@@ -128,7 +134,9 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
               label={t('entityShare.Sent')}
             />
           </SegmentedControl>
+          {/* `EntityShareFilter` takes plain values and has no AND. */}
           <BAIGraphQLPropertyFilter
+            maxConditions={1}
             value={filter}
             onChange={(next) =>
               onReload(
@@ -141,7 +149,7 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
                 key: 'status',
                 propertyLabel: t('entityShare.Status'),
                 type: 'enum',
-                fixedOperator: 'equals',
+                valueMode: 'scalar',
                 strictSelection: true,
                 options: ENTITY_SHARE_STATUSES.map((status) => ({
                   value: status,
@@ -152,7 +160,7 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
                 key: 'recipientEmail',
                 propertyLabel: t('entityShare.RecipientEmail'),
                 type: 'string',
-                fixedOperator: 'equals',
+                valueMode: 'scalar',
               },
             ]}
           />
@@ -179,7 +187,14 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
           _.map(myEntityShares?.edges, 'node'),
         )}
         onShareChanged={filter?.status ? reload : undefined}
-        onManageTarget={side === 'SHARER' ? setManagingTarget : undefined}
+        onManageTarget={
+          side === 'SHARER'
+            ? (target) => {
+                setManagingTarget(target);
+                setIsManagerOpen(true);
+              }
+            : undefined
+        }
         pagination={{
           pageSize,
           current,
@@ -206,10 +221,10 @@ const MyEntityShareList: React.FC<MyEntityShareListProps> = ({
       </BAIUnmountAfterClose>
       <BAIUnmountAfterClose>
         <EntityShareManagerModal
-          open={!!managingTarget}
+          open={isManagerOpen}
           target={managingTarget}
           onRequestClose={() => {
-            setManagingTarget(null);
+            setIsManagerOpen(false);
             reload();
           }}
         />

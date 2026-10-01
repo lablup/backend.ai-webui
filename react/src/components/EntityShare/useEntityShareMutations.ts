@@ -8,12 +8,13 @@ import type { useEntityShareMutationsLeaveMutation } from '../../__generated__/u
 import type { useEntityShareMutationsRejectMutation } from '../../__generated__/useEntityShareMutationsRejectMutation.graphql';
 import type { useEntityShareMutationsRevokeMutation } from '../../__generated__/useEntityShareMutationsRevokeMutation.graphql';
 import { App } from '../../app-shim';
-import { useMutationWithPromise } from 'backend.ai-ui';
+import {
+  useBAILogger,
+  useErrorMessageResolver,
+  useMutationWithPromise,
+} from 'backend.ai-ui';
 import { useTranslation } from 'react-i18next';
 import { graphql } from 'react-relay';
-
-const errorMessageOf = (error: unknown): string | undefined =>
-  Array.isArray(error) ? error[0]?.message : (error as Error)?.message;
 
 /**
  * The five answers a share takes. Each returns the share's new `status`, so
@@ -24,6 +25,8 @@ const useEntityShareMutations = () => {
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
+  const { logger } = useBAILogger();
+  const { getErrorMessage } = useErrorMessageResolver();
 
   const acceptMutation =
     useMutationWithPromise<useEntityShareMutationsAcceptMutation>(graphql`
@@ -96,7 +99,12 @@ const useEntityShareMutations = () => {
         await mutate({ id: shareId });
         message.success(t(successKey));
       } catch (error) {
-        message.error(errorMessageOf(error) ?? t('dialog.ErrorOccurred'));
+        logger.error(error);
+        // `useMutationWithPromise` rejects with the GraphQL error array.
+        message.error(
+          getErrorMessage(Array.isArray(error) ? error[0] : error) ||
+            t('dialog.ErrorOccurred'),
+        );
         throw error;
       }
     };

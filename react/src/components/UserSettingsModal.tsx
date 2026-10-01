@@ -96,7 +96,7 @@ export interface UserSettingsModalProps {
 }
 
 const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
-  category,
+  category: requestedCategory,
   onCategoryChange,
   onRequestClose,
 }) => {
@@ -108,6 +108,10 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
   const [narrowView, setNarrowView] = useState<'nav' | 'detail'>('detail');
   const baiClient = useSuspendedBackendaiClient();
   const supportsEntityShare = baiClient.supports('entity-share');
+  const category: UserSettingsCategory =
+    requestedCategory === 'shares' && !supportsEntityShare
+      ? 'general'
+      : requestedCategory;
 
   const [loginSessionQueryRef, loadLoginSessionQuery] =
     useQueryLoader<LoginSessionQueryType>(LoginSessionQuery);
@@ -139,7 +143,7 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
         { fetchPolicy: 'store-and-network' },
       );
     }
-    if (category === 'shares' && supportsEntityShare && !entityShareQueryRef) {
+    if (category === 'shares' && !entityShareQueryRef) {
       loadEntityShareQuery(
         { sides: ['RECIPIENT'], limit: 10, offset: 0 },
         { fetchPolicy: 'store-and-network' },
@@ -221,8 +225,6 @@ const UserSettingsModal: React.FC<UserSettingsModalProps> = ({
       ) : (
         <BAISkeleton />
       )
-    ) : !supportsEntityShare ? (
-      <UserSettingsGeneralPane />
     ) : entityShareQueryRef ? (
       <MyEntityShareList
         queryRef={entityShareQueryRef}

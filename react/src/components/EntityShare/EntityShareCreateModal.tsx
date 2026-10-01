@@ -30,6 +30,15 @@ import { graphql, useLazyLoadQuery, useMutation } from 'react-relay';
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Validates the trimmed value, since that is what `handleOk` submits.
+const trimmedPatternRule = (pattern: RegExp, message: string) => ({
+  validator: (__: unknown, value?: string) =>
+    !value?.trim() || pattern.test(value.trim())
+      ? Promise.resolve()
+      : Promise.reject(new Error(message)),
+});
 
 type RecipientKind = 'email' | 'userId' | 'projectId';
 
@@ -169,7 +178,7 @@ const EntityShareCreateModal: React.FC<EntityShareCreateModalProps> = ({
               label={t('entityShare.EntityId')}
               rules={[
                 { required: true },
-                { pattern: UUID_PATTERN, message: t('entityShare.InvalidId') },
+                trimmedPatternRule(UUID_PATTERN, t('entityShare.InvalidId')),
               ]}
             >
               <AstryxFormTextInput label={t('entityShare.EntityId')} />
@@ -206,8 +215,8 @@ const EntityShareCreateModal: React.FC<EntityShareCreateModalProps> = ({
           rules={[
             { required: true },
             recipientKind === 'email'
-              ? { type: 'email', message: t('entityShare.InvalidEmail') }
-              : { pattern: UUID_PATTERN, message: t('entityShare.InvalidId') },
+              ? trimmedPatternRule(EMAIL_PATTERN, t('entityShare.InvalidEmail'))
+              : trimmedPatternRule(UUID_PATTERN, t('entityShare.InvalidId')),
           ]}
         >
           <AstryxFormTextInput
