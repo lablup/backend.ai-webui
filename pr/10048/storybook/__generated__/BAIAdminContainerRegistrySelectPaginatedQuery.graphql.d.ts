@@ -37,14 +37,12 @@ export type ContainerRegistryTypeFilter = {
     notIn?: ReadonlyArray<ContainerRegistryType> | null | undefined;
 };
 export type BAIAdminContainerRegistrySelectPaginatedQuery$variables = {
-    filter?: string | null | undefined;
-    filterV2?: ContainerRegistryV2Filter | null | undefined;
+    filter?: ContainerRegistryV2Filter | null | undefined;
     limit: number;
     offset: number;
-    useV2: boolean;
 };
 export type BAIAdminContainerRegistrySelectPaginatedQuery$data = {
-    readonly adminContainerRegistriesV2?: {
+    readonly adminContainerRegistriesV2: {
         readonly count: number;
         readonly edges: ReadonlyArray<{
             readonly node: {
@@ -54,17 +52,6 @@ export type BAIAdminContainerRegistrySelectPaginatedQuery$data = {
                 readonly registryName: string;
             };
         }>;
-    } | null | undefined;
-    readonly container_registry_nodes?: {
-        readonly count: number | null | undefined;
-        readonly edges: ReadonlyArray<{
-            readonly node: {
-                readonly id: string;
-                readonly project: string | null | undefined;
-                readonly registry_name: string;
-                readonly row_id: string | null | undefined;
-            } | null | undefined;
-        } | null | undefined>;
     } | null | undefined;
 };
 export type BAIAdminContainerRegistrySelectPaginatedQuery = {

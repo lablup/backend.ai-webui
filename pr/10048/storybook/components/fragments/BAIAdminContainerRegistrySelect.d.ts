@@ -1,11 +1,6 @@
+import { BAIAdminContainerRegistrySelectPaginatedQuery } from '../../__generated__/BAIAdminContainerRegistrySelectPaginatedQuery.graphql';
 import { BAIComplexSelectProps } from '../BAIComplexSelect';
-/** One registry, normalized across the V2 and the legacy node shapes. */
-export interface AstryxContainerRegistryNode {
-    id: string;
-    rowId: string;
-    registryName: string;
-    project: string | null;
-}
+export type AstryxContainerRegistryNode = NonNullable<BAIAdminContainerRegistrySelectPaginatedQuery['response']['adminContainerRegistriesV2']>['edges'][number]['node'];
 export interface BAIAdminContainerRegistrySelectRef {
     refetch: () => void;
 }
