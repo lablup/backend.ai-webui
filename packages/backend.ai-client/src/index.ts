@@ -4,7 +4,6 @@ import { ClientConfig } from './client-config';
 
 export { Client } from './client';
 export { ClientConfig } from './client-config';
-export { gatewayWrappedError } from './gateway-error';
 export type { SessionResources, requestInfo } from './types';
 export * from './resources';
 
