@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c757a38b21d2b3c584b4a37fb25aff4f>>
+ * @generated SignedSource<<f147506128a14fbd4b2bc0078b669228>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -24,6 +24,7 @@ export type ImageV2Filter = {
   id?: UUIDFilter | null | undefined;
   image?: StringFilter | null | undefined;
   isLocal?: boolean | null | undefined;
+  labels?: EntityLabelNestedFilter | null | undefined;
   lastUsed?: DateTimeFilter | null | undefined;
   name?: StringFilter | null | undefined;
   project?: StringFilter | null | undefined;
@@ -90,6 +91,21 @@ export type DateTimeFilter = {
 };
 export type ImageAliasNestedFilter = {
   alias?: StringFilter | null | undefined;
+};
+export type EntityLabelNestedFilter = {
+  every?: EntityLabelFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: EntityLabelFilter | null | undefined;
+  some?: EntityLabelFilter | null | undefined;
+};
+export type EntityLabelFilter = {
+  AND?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  NOT?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  OR?: ReadonlyArray<EntityLabelFilter> | null | undefined;
+  entityId?: UUIDFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  key?: StringFilter | null | undefined;
+  value?: StringFilter | null | undefined;
 };
 export type BAIAdminImageSelectPaginatedQuery$variables = {
   filter?: ImageV2Filter | null | undefined;
