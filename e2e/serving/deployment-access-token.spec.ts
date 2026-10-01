@@ -274,7 +274,7 @@ const mockTokenValue = (index: number) =>
   `e2e-mock-token-${String(index + 1).padStart(2, '0')}`;
 
 test.describe(
-  'Deployment Access Token Pagination',
+  'Deployment Access Tokens - Pagination',
   { tag: ['@regression', '@serving', '@functional'] },
   () => {
     let deploymentId: string | null = null;

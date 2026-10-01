@@ -49,7 +49,7 @@ function countSummarisedProjects(summary: string): number {
 }
 
 test.describe(
-  'User project membership',
+  'User Credentials - Project Membership',
   { tag: ['@regression', '@user', '@functional'] },
   () => {
     let api: APIRequestContext | null = null;
