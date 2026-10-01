@@ -995,6 +995,7 @@
       "LeaveFolder": "Jätä kansio",
       "Location": "Sijainti",
       "ManageProjectFolderInAdmin": "Projektikansioiden hallinta on käytettävissä järjestelmänvalvojan asetuksissa.",
+      "MaxFiles": "Tiedostojen enimmäismäärä",
       "MaxFolderQuota": "Kansioiden enimmäiskiintiö",
       "MaxSize": "Enimmäiskoko",
       "ModelProjectFolderRestrictedToReadOnly": "Luku- ja kirjoitusoikeutta ei tueta mallivaraston kansiolle.",

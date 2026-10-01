@@ -21,6 +21,7 @@ import { useCurrentUserInfo } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
 import { useVirtualFolderPathV2 } from '../hooks/useVirtualFolderNodePathV2';
+import { formatBinarySizeInfo } from './VFolderNodesV2';
 import VirtualFolderPathV2 from './VirtualFolderNodeItems/VirtualFolderPathV2';
 import { Badge } from '@astryxdesign/core/Badge';
 import { Selector } from '@astryxdesign/core/Selector';
@@ -98,6 +99,12 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         accessControl {
           permission
           ownershipType
+        }
+        quota {
+          maxFiles
+          maxSize {
+            expr @since(version: "26.8.0")
+          }
         }
         ownership {
           userId
@@ -319,9 +326,19 @@ const VFolderNodeDescriptionV2: React.FC<VFolderNodeDescriptionV2Props> = ({
         </HStack>
       ),
     },
-    // TODO(needs-backend): V2 `VFolder` does not yet expose quota limits
-    // (`max_size`, `max_files`). Hide the MaxSize row until the backend
-    // catches up — see FR-2573 follow-up.
+    // A null `maxSize` / a zero `maxFiles` is "no limit".
+    {
+      key: 'max_size',
+      label: t('data.folders.MaxSize'),
+      children: formatBinarySizeInfo(vfolderNode.quota.maxSize) ?? '∞',
+    },
+    {
+      key: 'max_files',
+      label: t('data.folders.MaxFiles'),
+      children: vfolderNode.quota.maxFiles
+        ? vfolderNode.quota.maxFiles.toLocaleString()
+        : '∞',
+    },
     {
       key: 'usage',
       label: t('data.UsageMode'),

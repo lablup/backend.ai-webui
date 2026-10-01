@@ -995,6 +995,7 @@
       "LeaveFolder": "Папка-скоросшиватель",
       "Location": "Место расположения",
       "ManageProjectFolderInAdmin": "Управление папками проекта доступно в настройках администратора.",
+      "MaxFiles": "Максимальное количество файлов",
       "MaxFolderQuota": "Максимальная квота на папки",
       "MaxSize": "Максимальный размер",
       "ModelProjectFolderRestrictedToReadOnly": "Разрешение 'Read & Write' не поддерживается для папки хранилища моделей",

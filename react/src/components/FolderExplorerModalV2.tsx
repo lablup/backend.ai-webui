@@ -34,7 +34,6 @@ import BAITabs from './BAITabs';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
-import FolderExplorerHeader from './FolderExplorerHeader';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
@@ -162,35 +161,22 @@ const toVFolderUuid = (vfolderID: string) =>
   vfolderID.length === 32 ? formatToUUID(vfolderID) : vfolderID;
 
 // Called by both the header and the body, each under its own Suspense
-// boundary; Relay serves the two readers from one request.
+// boundary; Relay serves the two readers from one request. `@catch` tells a
+// field error that nulled the node (FR-3997) apart from a folder the caller
+// cannot see, which comes back as a plain `null`.
 const useFolderExplorerQuery = (vfolderID: string) => {
   'use memo';
-  return useLazyLoadQuery<FolderExplorerModalV2Query>(
+  const { vfolderNode } = useLazyLoadQuery<FolderExplorerModalV2Query>(
     graphql`
-      query FolderExplorerModalV2Query(
-        $vfolderId: UUID!
-        $vfolderGlobalId: String!
-      ) {
-        # TODO(needs-backend): stopgap for FR-3800 — vfolderV2 exposes only
-        # the mount permission (accessControl.permission), not the caller's
-        # effective permission set, so write/delete gating reads the legacy
-        # per-user RBAC list here. Replace with the V2 field once the
-        # backend adds it (FR-2619 follow-up).
-        legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
-          id
-          name
-          host
-          unmanaged_path
-          permissions
-          ...FolderExplorerHeaderFragment
-        }
-        vfolderNode: vfolderV2(vfolderId: $vfolderId) {
+      query FolderExplorerModalV2Query($vfolderId: UUID!) {
+        vfolderNode: vfolderV2(vfolderId: $vfolderId) @catch(to: RESULT) {
           unmanagedPath
           host
           id
           metadata {
             name
           }
+          permissions @since(version: "26.9.0rc1")
           ownership {
             projectId
             project {
@@ -204,12 +190,13 @@ const useFolderExplorerQuery = (vfolderID: string) => {
         }
       }
     `,
-    {
-      vfolderId: toVFolderUuid(vfolderID),
-      vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
-    },
+    { vfolderId: toVFolderUuid(vfolderID) },
     { fetchPolicy: 'store-and-network' },
   );
+  return {
+    vfolderNode: vfolderNode.ok ? vfolderNode.value : null,
+    hasDetailError: !vfolderNode.ok,
+  };
 };
 
 // This modal is globally mounted (no page parent), so it is the sanctioned
@@ -234,7 +221,7 @@ const FolderExplorerHeaderContent: React.FC<{ vfolderID: string }> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { vfolderNode, legacyVFolderNode } = useFolderExplorerQuery(vfolderID);
+  const { vfolderNode } = useFolderExplorerQuery(vfolderID);
   const { isProjectAgnosticPage, pageProject } = usePageProject();
 
   return vfolderNode ? (
@@ -250,10 +237,6 @@ const FolderExplorerHeaderContent: React.FC<{ vfolderID: string }> = ({
           : undefined
       }
     />
-  ) : legacyVFolderNode ? (
-    // FR-3997 fallback: the V1 header draws the same identicon, title,
-    // rename and session buttons from the legacy node's own fragments.
-    <FolderExplorerHeader vfolderNodeFrgmt={legacyVFolderNode} />
   ) : (
     <span />
   );
@@ -312,15 +295,12 @@ const FolderExplorerBody: React.FC<{
   });
 
   const vfolderUuid = toVFolderUuid(vfolderID);
-  const { vfolderNode, legacyVFolderNode } = useFolderExplorerQuery(vfolderID);
+  const { vfolderNode, hasDetailError } = useFolderExplorerQuery(vfolderID);
 
-  // FR-3997: any one of `VFolder`'s eight non-nullable fields coming back null
-  // nulls the whole node, so the legacy node decides readability instead.
-  const isFolderReadable = !!vfolderNode || !!legacyVFolderNode;
-  const folderName = vfolderNode?.metadata?.name ?? legacyVFolderNode?.name;
-  const folderHost = vfolderNode?.host ?? legacyVFolderNode?.host ?? '';
-  const folderUnmanagedPath =
-    vfolderNode?.unmanagedPath ?? legacyVFolderNode?.unmanaged_path;
+  const isFolderReadable = !!vfolderNode;
+  const folderName = vfolderNode?.metadata?.name;
+  const folderHost = vfolderNode?.host ?? '';
+  const folderUnmanagedPath = vfolderNode?.unmanagedPath;
 
   // Permission calculation follows the folder's own ownership project when
   // the folder is project-owned (what the user can do must not depend on the
@@ -391,7 +371,7 @@ const FolderExplorerBody: React.FC<{
   };
 
   const { uploadStatus, uploadFiles } = useFileUploadManager(
-    vfolderNode?.id ?? legacyVFolderNode?.id,
+    vfolderNode?.id,
     folderName || undefined,
   );
   // Polling to update fetchKey when there are pending uploads
@@ -419,15 +399,15 @@ const FolderExplorerBody: React.FC<{
     unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
-  // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
-  // see the TODO(needs-backend) on the query above.
+  // Share-permission gating (FR-3800). The manager checks file deletion against
+  // `SOFT_DELETE`.
   const hasDeleteContentPermission = _.includes(
-    legacyVFolderNode?.permissions,
-    'delete_content',
+    vfolderNode?.permissions,
+    'SOFT_DELETE',
   );
   const hasWriteContentPermission = _.includes(
-    legacyVFolderNode?.permissions,
-    'write_content',
+    vfolderNode?.permissions,
+    'UPDATE',
   );
   // Upload/editor write through the upload API: both the host capability and
   // the folder-level write permission are required.
@@ -549,12 +529,7 @@ const FolderExplorerBody: React.FC<{
             <div style={infoPanelPanelStyle}>
               {vfolderNode ? (
                 <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
-              ) : (
-                <Banner
-                  title={t('explorer.FolderDetailUnavailable')}
-                  status="warning"
-                />
-              )}
+              ) : null}
             </div>
           ),
         },
@@ -601,7 +576,11 @@ const FolderExplorerBody: React.FC<{
       >
         {!isFolderReadable ? (
           <Banner
-            title={t('explorer.FolderNotFoundOrNoAccess')}
+            title={
+              hasDetailError
+                ? t('explorer.FolderDetailUnavailable')
+                : t('explorer.FolderNotFoundOrNoAccess')
+            }
             status="error"
           />
         ) : hasNoPermissions ? (

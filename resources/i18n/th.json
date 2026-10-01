@@ -990,6 +990,7 @@
       "LeaveFolder": "ออกจากโฟลเดอร์",
       "Location": "ตำแหน่ง",
       "ManageProjectFolderInAdmin": "การจัดการโฟลเดอร์โครงการสามารถทำได้ในการตั้งค่าผู้ดูแลระบบ",
+      "MaxFiles": "จำนวนไฟล์สูงสุด",
       "MaxFolderQuota": "โควตาโฟลเดอร์สูงสุด",
       "MaxSize": "ขนาดสูงสุด",
       "ModelProjectFolderRestrictedToReadOnly": "สิทธิ์ 'อ่านและเขียน' ไม่รองรับสำหรับโฟลเดอร์ Model Store",

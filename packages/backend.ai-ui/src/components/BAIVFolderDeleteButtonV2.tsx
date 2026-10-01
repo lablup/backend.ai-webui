@@ -2,24 +2,16 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
 
- Ticket 16 (Data/VFolder pages) — V2 counterpart of
- `BAIVFolderDeleteButton` for pages whose selection rows are the V2
- `VFolder` GraphQL type (`ProjectAdminDataPage`).
+ V2 counterpart of `BAIVFolderDeleteButton` for pages whose selection rows
+ are the V2 `VFolder` GraphQL type (`ProjectAdminDataPage`). The button stays
+ disabled unless one selected folder grants the caller `SOFT_DELETE`.
 
- BUI's `BAIVFolderDeleteButtonV2` is `BAIButton` + a lucide `Trash` coloured
- from `useTheme().token('--color-error')`. Its fragment intentionally selects only
- `id`: V2 `VFolder` does not expose a per-user action permission
- (TODO(needs-backend) in the BUI original), so the button is always enabled
- and the backend rejects unauthorized requests. That contract is preserved.
-
- PILOT-DECISIONs (same as the V1 Astryx rebuild):
- - The icon colour moves from a `token('--color-error')` prop to the shared
-   `.bai-name-action-cell-danger` CSS-var class — one rule, theme-following.
- - P8: Astryx forces a real accessible `label`; the antd original was
-   icon-only and relied on a wrapping Tooltip for its name.
+ P8: Astryx forces a real accessible `label`; the antd original was
+ icon-only and relied on a wrapping Tooltip for its name.
 */
 import { BAIVFolderDeleteButtonV2Fragment$key } from '../__generated__/BAIVFolderDeleteButtonV2Fragment.graphql';
 import { IconButton } from '@astryxdesign/core/IconButton';
+import * as _ from 'lodash-es';
 import { TrashIcon } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';
@@ -43,14 +35,19 @@ const BAIVFolderDeleteButtonV2: React.FC<BAIVFolderDeleteButtonV2Props> = ({
   size = 'md',
 }) => {
   'use memo';
-  useFragment<BAIVFolderDeleteButtonV2Fragment$key>(
+  const vfolders = useFragment<BAIVFolderDeleteButtonV2Fragment$key>(
     graphql`
       fragment BAIVFolderDeleteButtonV2Fragment on VFolder
       @relay(plural: true) {
         id
+        permissions @since(version: "26.9.0rc1")
       }
     `,
     vfolderFrgmt,
+  );
+
+  const isDeletable = _.some(vfolders, (vfolder) =>
+    _.includes(vfolder.permissions, 'SOFT_DELETE'),
   );
 
   return (
@@ -61,7 +58,7 @@ const BAIVFolderDeleteButtonV2: React.FC<BAIVFolderDeleteButtonV2Props> = ({
       variant="ghost"
       size={size}
       className="bai-name-action-cell-danger"
-      isDisabled={isDisabled}
+      isDisabled={isDisabled || !isDeletable}
       onClick={onClick}
     />
   );

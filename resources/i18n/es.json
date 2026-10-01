@@ -995,6 +995,7 @@
       "LeaveFolder": "Dejar carpeta",
       "Location": "Ubicación",
       "ManageProjectFolderInAdmin": "La gestión de carpetas de proyecto está disponible en la configuración de administrador.",
+      "MaxFiles": "Número máximo de ficheros",
       "MaxFolderQuota": "Cuota máxima de carpetas",
       "MaxSize": "Tamaño máximo",
       "ModelProjectFolderRestrictedToReadOnly": "El permiso 'Lectura y escritura' no es compatible con la carpeta del almacén de modelos",
