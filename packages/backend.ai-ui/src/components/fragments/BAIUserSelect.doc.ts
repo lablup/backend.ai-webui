@@ -15,12 +15,11 @@ export const docs = {
     'paginated select',
     'relay',
     'adminUsersV2',
-    'projectUsersV2',
-    'domainUsersV2',
+    'scopedUsersV2',
   ],
   usage: {
     description:
-      'The user picker behind the keypair, project-admin, RBAC, deployment and storage-permission forms, and the reference consumer of BAIComplexSelect. The required scope prop decides which V2 connection it pages: adminUsersV2 for every user (super-admin), domainUsersV2 for one domain, or projectUsersV2 for the members of one project. Each scope owns its own pair of Relay documents — BAIUserSelectAdminPaginatedQuery / BAIUserSelectAdminValueQuery, and the Domain and Project twins — so a scope id is a required query variable, never a placeholder, and a caller that cannot supply one cannot render the select. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. The three connections exist on managers 26.2.0 and later; there is no legacy fallback. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      'The user picker behind the keypair, project-admin, RBAC, deployment and storage-permission forms, and the reference consumer of BAIComplexSelect. The required scope prop decides which V2 connection it pages: adminUsersV2 for every user (super-admin), or scopedUsersV2 for the users of one domain or the members of one project. The admin scope owns BAIUserSelectAdminPaginatedQuery / BAIUserSelectAdminValueQuery; the domain and project scopes share BAIUserSelectScopedPaginatedQuery / BAIUserSelectScopedValueQuery, whose UserScope takes UUIDs, so a domain scope first resolves its name to the domain UUID through domainV2 (BAIUserSelectDomainIdQuery). A scope id is a required prop, never a placeholder, and a caller that cannot supply one cannot render the select. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. scopedUsersV2 and DomainV2.entityId exist on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
     bestPractices: [
       {
         guidance: true,
@@ -30,7 +29,7 @@ export const docs = {
       {
         guidance: true,
         description:
-          'Pass scope={{ type: "project", projectId }} on a project-admin screen: adminUsersV2 needs a super-admin, and projectUsersV2 is what a project member may read.',
+          'Pass scope={{ type: "project", projectId }} on a project-admin screen: adminUsersV2 needs a super-admin, and a project scope on scopedUsersV2 is what a project member may read.',
       },
       {
         guidance: false,
@@ -92,7 +91,7 @@ export const docs = {
       type: 'BAIUserSelectScope',
       required: true,
       description:
-        'Which users to list: { type: "admin" } pages adminUsersV2, { type: "domain", domainName } pages domainUsersV2, { type: "project", projectId } pages projectUsersV2. Each scope has its own Relay documents, so the id is a required variable. Admin pages take the value from useAdminUserSelectScope().',
+        'Which users to list: { type: "admin" } pages adminUsersV2, { type: "domain", domainName } and { type: "project", projectId } page scopedUsersV2 (the domain name is resolved to its UUID first). Admin pages take the value from useAdminUserSelectScope().',
     },
     {
       name: 'valuePropName',

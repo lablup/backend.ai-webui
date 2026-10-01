@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<564c0d2dc05d9ecab94c40aeb78252c6>>
+ * @generated SignedSource<<39ce5b016d70719e580cfe0bd62e6c4d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,6 +13,14 @@ export type OrderDirection = "ASC" | "DESC" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 export type UserV2OrderField = "CONTAINER_MAIN_GID" | "CONTAINER_UID" | "CREATED_AT" | "DESCRIPTION" | "DOMAIN_ID" | "DOMAIN_NAME" | "EMAIL" | "ENTITY_ID" | "FULL_NAME" | "INTEGRATION_NAME" | "MODIFIED_AT" | "NEED_PASSWORD_CHANGE" | "PROJECT_NAME" | "RESOURCE_POLICY" | "ROLE" | "STATUS" | "STATUS_INFO" | "SUDO_SESSION_ENABLED" | "TOTP_ACTIVATED" | "TOTP_ACTIVATED_AT" | "USERNAME" | "%future added value";
+export type UserScope = {
+  domain?: ReadonlyArray<UUIDScope> | null | undefined;
+  project?: ReadonlyArray<UUIDScope> | null | undefined;
+  role?: ReadonlyArray<UUIDScope> | null | undefined;
+};
+export type UUIDScope = {
+  value: string;
+};
 export type UserV2Filter = {
   AND?: ReadonlyArray<UserV2Filter> | null | undefined;
   NOT?: ReadonlyArray<UserV2Filter> | null | undefined;
@@ -139,15 +147,15 @@ export type UserV2OrderBy = {
   direction?: OrderDirection;
   field?: UserV2OrderField;
 };
-export type BAIUserSelectDomainPaginatedQuery$variables = {
-  domainName: string;
+export type BAIUserSelectScopedPaginatedQuery$variables = {
   filter?: UserV2Filter | null | undefined;
   limit: number;
   offset: number;
   orderBy?: ReadonlyArray<UserV2OrderBy> | null | undefined;
+  scope: UserScope;
 };
-export type BAIUserSelectDomainPaginatedQuery$data = {
-  readonly domainUsersV2: {
+export type BAIUserSelectScopedPaginatedQuery$data = {
+  readonly scopedUsersV2: {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
@@ -160,36 +168,36 @@ export type BAIUserSelectDomainPaginatedQuery$data = {
     }>;
   } | null | undefined;
 };
-export type BAIUserSelectDomainPaginatedQuery = {
-  response: BAIUserSelectDomainPaginatedQuery$data;
-  variables: BAIUserSelectDomainPaginatedQuery$variables;
+export type BAIUserSelectScopedPaginatedQuery = {
+  response: BAIUserSelectScopedPaginatedQuery$data;
+  variables: BAIUserSelectScopedPaginatedQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "domainName"
+  "name": "filter"
 },
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "filter"
+  "name": "limit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "offset"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "offset"
+  "name": "orderBy"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "orderBy"
+  "name": "scope"
 },
 v5 = [
   {
@@ -216,20 +224,14 @@ v5 = [
         "variableName": "orderBy"
       },
       {
-        "fields": [
-          {
-            "kind": "Variable",
-            "name": "domainName",
-            "variableName": "domainName"
-          }
-        ],
-        "kind": "ObjectValue",
-        "name": "scope"
+        "kind": "Variable",
+        "name": "scope",
+        "variableName": "scope"
       }
     ],
     "concreteType": "UserV2Connection",
     "kind": "LinkedField",
-    "name": "domainUsersV2",
+    "name": "scopedUsersV2",
     "plural": false,
     "selections": [
       {
@@ -308,7 +310,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "BAIUserSelectDomainPaginatedQuery",
+    "name": "BAIUserSelectScopedPaginatedQuery",
     "selections": (v5/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -316,27 +318,27 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v0/*: any*/),
-      (v3/*: any*/),
+      (v4/*: any*/),
       (v2/*: any*/),
       (v1/*: any*/),
-      (v4/*: any*/)
+      (v0/*: any*/),
+      (v3/*: any*/)
     ],
     "kind": "Operation",
-    "name": "BAIUserSelectDomainPaginatedQuery",
+    "name": "BAIUserSelectScopedPaginatedQuery",
     "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "b3f6bb2011f0d61b53037dba109fa89a",
+    "cacheID": "ffe0bdc5e4c13ffc25631d55383ba84a",
     "id": null,
     "metadata": {},
-    "name": "BAIUserSelectDomainPaginatedQuery",
+    "name": "BAIUserSelectScopedPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIUserSelectDomainPaginatedQuery(\n  $domainName: String!\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  domainUsersV2(scope: {domainName: $domainName}, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query BAIUserSelectScopedPaginatedQuery(\n  $scope: UserScope!\n  $offset: Int!\n  $limit: Int!\n  $filter: UserV2Filter\n  $orderBy: [UserV2OrderBy!]\n) {\n  scopedUsersV2(scope: $scope, offset: $offset, limit: $limit, filter: $filter, orderBy: $orderBy) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n          fullName\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "e9f729d4c4241e2131a8833e03456c89";
+(node as any).hash = "a1168201ee93ae3a8f43897a1ca2fbb7";
 
 export default node;

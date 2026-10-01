@@ -6,16 +6,14 @@
  `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
  server-side search, and a plain-key (`string` / `string[]`) value with
  label-in-value kept inside the wrapper. The required `scope` picks the V2
- connection — `adminUsersV2`, `domainUsersV2` or `projectUsersV2` (managers
- >= 26.2.0) — and each scope owns its two Relay documents, so a scope id is
- a required variable rather than a placeholder.
+ connection: `adminUsersV2` for a super-admin, `scopedUsersV2` (manager
+ >= 26.9.0) for a domain or a project.
 */
 import { BAIUserSelectAdminPaginatedQuery } from '../../__generated__/BAIUserSelectAdminPaginatedQuery.graphql';
 import { BAIUserSelectAdminValueQuery } from '../../__generated__/BAIUserSelectAdminValueQuery.graphql';
-import { BAIUserSelectDomainPaginatedQuery } from '../../__generated__/BAIUserSelectDomainPaginatedQuery.graphql';
-import { BAIUserSelectDomainValueQuery } from '../../__generated__/BAIUserSelectDomainValueQuery.graphql';
-import { BAIUserSelectProjectPaginatedQuery } from '../../__generated__/BAIUserSelectProjectPaginatedQuery.graphql';
-import { BAIUserSelectProjectValueQuery } from '../../__generated__/BAIUserSelectProjectValueQuery.graphql';
+import { BAIUserSelectDomainIdQuery } from '../../__generated__/BAIUserSelectDomainIdQuery.graphql';
+import { BAIUserSelectScopedPaginatedQuery } from '../../__generated__/BAIUserSelectScopedPaginatedQuery.graphql';
+import { BAIUserSelectScopedValueQuery } from '../../__generated__/BAIUserSelectScopedValueQuery.graphql';
 import { combineFilters, toLocalId } from '../../helper';
 import useDebouncedDeferredValue from '../../helper/useDebouncedDeferredValue';
 import { useControllableValue, useFetchKey } from '../../hooks';
@@ -410,25 +408,24 @@ const AdminUserOptions: React.FC<ScopedProps> = (props) => {
   );
 };
 
-const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
-  domainName,
+type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
+
+const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
+  userScope,
   ...props
 }) => {
   'use memo';
   const state = useUserSelectState(props);
-  const selected = useLazyLoadQuery<BAIUserSelectDomainValueQuery>(
+  const selected = useLazyLoadQuery<BAIUserSelectScopedValueQuery>(
     graphql`
-      query BAIUserSelectDomainValueQuery(
-        $domainName: String!
+      query BAIUserSelectScopedValueQuery(
+        $scope: UserScope!
         $selectedFilter: UserV2Filter
         $limit: Int!
         $skipSelected: Boolean!
       ) {
-        domainUsersV2(
-          scope: { domainName: $domainName }
-          filter: $selectedFilter
-          limit: $limit
-        ) @skip(if: $skipSelected) {
+        scopedUsersV2(scope: $scope, filter: $selectedFilter, limit: $limit)
+          @skip(if: $skipSelected) {
           edges {
             node {
               id
@@ -441,21 +438,21 @@ const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
         }
       }
     `,
-    { ...state.valueVariables, domainName },
+    { ...state.valueVariables, scope: userScope },
     state.valueOptions,
   );
   const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<BAIUserSelectDomainPaginatedQuery, BAIUserSelectUser>(
+    useLazyPaginatedQuery<BAIUserSelectScopedPaginatedQuery, BAIUserSelectUser>(
       graphql`
-        query BAIUserSelectDomainPaginatedQuery(
-          $domainName: String!
+        query BAIUserSelectScopedPaginatedQuery(
+          $scope: UserScope!
           $offset: Int!
           $limit: Int!
           $filter: UserV2Filter
           $orderBy: [UserV2OrderBy!]
         ) {
-          domainUsersV2(
-            scope: { domainName: $domainName }
+          scopedUsersV2(
+            scope: $scope
             offset: $offset
             limit: $limit
             filter: $filter
@@ -475,11 +472,11 @@ const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
         }
       `,
       { limit: PAGE_SIZE },
-      { ...state.listVariables, domainName },
+      { ...state.listVariables, scope: userScope },
       state.listOptions,
       {
-        getTotal: (r) => r.domainUsersV2?.count ?? undefined,
-        getItem: (r) => readUsers(r.domainUsersV2?.edges),
+        getTotal: (r) => r.scopedUsersV2?.count ?? undefined,
+        getItem: (r) => readUsers(r.scopedUsersV2?.edges),
         getId: (item) => item?.id,
       },
     );
@@ -487,98 +484,37 @@ const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
     <UserSelectView
       state={state}
       users={paginationData}
-      selectedUsers={readUsers(selected.domainUsersV2?.edges)}
-      total={result.domainUsersV2?.count}
+      selectedUsers={readUsers(selected.scopedUsersV2?.edges)}
+      total={result.scopedUsersV2?.count}
       loadNext={loadNext}
       isLoadingNext={isLoadingNext}
     />
   );
 };
 
-const ProjectUserOptions: React.FC<ScopedProps & { projectId: string }> = ({
-  projectId,
+/** `UserScope.domain` takes the domain UUID; the client only knows its name. */
+const DomainUserOptions: React.FC<ScopedProps & { domainName: string }> = ({
+  domainName,
   ...props
 }) => {
   'use memo';
-  const state = useUserSelectState(props);
-  const selected = useLazyLoadQuery<BAIUserSelectProjectValueQuery>(
+  const { domainV2 } = useLazyLoadQuery<BAIUserSelectDomainIdQuery>(
     graphql`
-      query BAIUserSelectProjectValueQuery(
-        $projectId: UUID!
-        $selectedFilter: UserV2Filter
-        $limit: Int!
-        $skipSelected: Boolean!
-      ) {
-        projectUsersV2(
-          scope: { projectId: $projectId }
-          filter: $selectedFilter
-          limit: $limit
-        ) @skip(if: $skipSelected) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
+      query BAIUserSelectDomainIdQuery($domainName: String!) {
+        domainV2(domainName: $domainName) {
+          entityId
         }
       }
     `,
-    { ...state.valueVariables, projectId },
-    state.valueOptions,
+    { domainName },
   );
-  const { paginationData, result, loadNext, isLoadingNext } =
-    useLazyPaginatedQuery<
-      BAIUserSelectProjectPaginatedQuery,
-      BAIUserSelectUser
-    >(
-      graphql`
-        query BAIUserSelectProjectPaginatedQuery(
-          $projectId: UUID!
-          $offset: Int!
-          $limit: Int!
-          $filter: UserV2Filter
-          $orderBy: [UserV2OrderBy!]
-        ) {
-          projectUsersV2(
-            scope: { projectId: $projectId }
-            offset: $offset
-            limit: $limit
-            filter: $filter
-            orderBy: $orderBy
-          ) {
-            count
-            edges {
-              node {
-                id
-                basicInfo {
-                  email
-                  fullName
-                }
-              }
-            }
-          }
-        }
-      `,
-      { limit: PAGE_SIZE },
-      { ...state.listVariables, projectId },
-      state.listOptions,
-      {
-        getTotal: (r) => r.projectUsersV2?.count ?? undefined,
-        getItem: (r) => readUsers(r.projectUsersV2?.edges),
-        getId: (item) => item?.id,
-      },
-    );
+  if (!domainV2) {
+    throw new Error(`Domain not found: ${domainName}`);
+  }
   return (
-    <UserSelectView
-      state={state}
-      users={paginationData}
-      selectedUsers={readUsers(selected.projectUsersV2?.edges)}
-      total={result.projectUsersV2?.count}
-      loadNext={loadNext}
-      isLoadingNext={isLoadingNext}
+    <ScopedUserOptions
+      userScope={{ domain: [{ value: domainV2.entityId }] }}
+      {...props}
     />
   );
 };
@@ -586,7 +522,12 @@ const ProjectUserOptions: React.FC<ScopedProps & { projectId: string }> = ({
 const BAIUserSelect: React.FC<BAIUserSelectProps> = ({ scope, ...props }) => {
   'use memo';
   if (scope.type === 'project') {
-    return <ProjectUserOptions projectId={scope.projectId} {...props} />;
+    return (
+      <ScopedUserOptions
+        userScope={{ project: [{ value: scope.projectId }] }}
+        {...props}
+      />
+    );
   }
   if (scope.type === 'domain') {
     return <DomainUserOptions domainName={scope.domainName} {...props} />;

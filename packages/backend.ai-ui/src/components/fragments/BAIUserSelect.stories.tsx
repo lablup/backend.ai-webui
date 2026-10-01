@@ -23,10 +23,10 @@ const meta: Meta<typeof BAIUserSelect> = {
         component: `
 **BAIUserSelect** — the user picker the admin and project-admin forms share. Built on \`BAIComplexSelect\`.
 
-- \`scope\` (required): \`{ type: 'admin' }\` (\`adminUsersV2\`), \`{ type: 'domain', domainName }\` (\`domainUsersV2\`) or \`{ type: 'project', projectId }\` (\`projectUsersV2\`). Each scope owns its own Relay documents, so a scope id is a required variable. Admin pages take theirs from \`useAdminUserSelectScope()\`.
+- \`scope\` (required): \`{ type: 'admin' }\` (\`adminUsersV2\`), \`{ type: 'domain', domainName }\` or \`{ type: 'project', projectId }\`, both paged through \`scopedUsersV2\`; a domain name is first resolved to its UUID through \`domainV2\`. Admin pages take theirs from \`useAdminUserSelectScope()\`.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
 - \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
-- Needs a manager >= 26.2.0, where the three V2 connections exist.
+- Needs a manager >= 26.9.0, where \`scopedUsersV2\` and \`DomainV2.entityId\` exist.
 
 See \`BAIComplexSelect.stories.tsx\` for the underlying popup-body component with static options.
         `,
@@ -81,8 +81,8 @@ const connection = (users: typeof mockUsers) => ({
 const mockResolvers: MockResolvers = {
   Query: () => ({
     adminUsersV2: connection(mockUsers),
-    domainUsersV2: connection(mockUsers.slice(0, 3)),
-    projectUsersV2: connection(mockUsers.slice(1, 3)),
+    scopedUsersV2: connection(mockUsers.slice(1, 3)),
+    domainV2: { entityId: '5c3b5a9e-0000-4000-8000-0000000000d0' },
   }),
 };
 
@@ -136,7 +136,7 @@ export const DomainScope: Story = {
     docs: {
       description: {
         story:
-          '`scope={{ type: "domain", domainName }}` reads `domainUsersV2` — the users of one domain, which a domain admin may list. `useAdminUserSelectScope()` picks this scope for a non-super-admin caller.',
+          '`scope={{ type: "domain", domainName }}` resolves the domain UUID through `domainV2`, then reads `scopedUsersV2` — the users of one domain, which a domain admin may list. `useAdminUserSelectScope()` picks this scope for a non-super-admin caller.',
       },
     },
   },
@@ -155,7 +155,7 @@ export const ProjectScope: Story = {
     docs: {
       description: {
         story:
-          '`scope={{ type: "project", projectId }}` reads `projectUsersV2`, the members of one project — what a project admin may list.',
+          '`scope={{ type: "project", projectId }}` reads `scopedUsersV2` with a project scope, the members of one project — what a project admin may list.',
       },
     },
   },
