@@ -964,9 +964,6 @@ export class Client {
       // `BAIGraphQLPropertyFilter` emits when conditions are combined. Older
       // managers reject those arguments.
       this._features['sub-filter'] = true;
-      // `adminContainerRegistriesV2` (26.4.2) has no id filter, so resolving
-      // a selected registry's label needs the `node(id:)` root field (26.7.0).
-      this._features['container-registry-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.8.0')) {
       // BinarySizeInfo replaced `value: Int!` with `expr: String!` (exact

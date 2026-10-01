@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4acfff5da945392005ff1c5add90d68f>>
+ * @generated SignedSource<<89597bd7885f0a1829469ac4b0f68bfa>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,23 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type BAIAdminContainerRegistrySelectValueQuery$variables = {
-  first: number;
   nodeId: string;
-  selectedFilter?: string | null | undefined;
-  skipLegacy: boolean;
-  skipV2: boolean;
+  skipSelected: boolean;
 };
 export type BAIAdminContainerRegistrySelectValueQuery$data = {
-  readonly container_registry_nodes?: {
-    readonly edges: ReadonlyArray<{
-      readonly node: {
-        readonly id: string;
-        readonly project: string | null | undefined;
-        readonly registry_name: string;
-        readonly row_id: string | null | undefined;
-      } | null | undefined;
-    } | null | undefined>;
-  } | null | undefined;
   readonly node?: {
     readonly entityId?: string;
     readonly id?: string;
@@ -40,155 +27,68 @@ export type BAIAdminContainerRegistrySelectValueQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "first"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "nodeId"
-},
-v2 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "selectedFilter"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "skipLegacy"
-},
-v4 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "skipV2"
-},
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-},
-v6 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "project",
-  "storageKey": null
-},
-v7 = {
-  "condition": "skipLegacy",
-  "kind": "Condition",
-  "passingValue": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "filter",
-          "variableName": "selectedFilter"
-        },
-        {
-          "kind": "Variable",
-          "name": "first",
-          "variableName": "first"
-        }
-      ],
-      "concreteType": "ContainerRegistryConnection",
-      "kind": "LinkedField",
-      "name": "container_registry_nodes",
-      "plural": false,
-      "selections": [
-        {
-          "alias": null,
-          "args": null,
-          "concreteType": "ContainerRegistryEdge",
-          "kind": "LinkedField",
-          "name": "edges",
-          "plural": true,
-          "selections": [
-            {
-              "alias": null,
-              "args": null,
-              "concreteType": "ContainerRegistryNode",
-              "kind": "LinkedField",
-              "name": "node",
-              "plural": false,
-              "selections": [
-                (v5/*: any*/),
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "row_id",
-                  "storageKey": null
-                },
-                {
-                  "alias": null,
-                  "args": null,
-                  "kind": "ScalarField",
-                  "name": "registry_name",
-                  "storageKey": null
-                },
-                (v6/*: any*/)
-              ],
-              "storageKey": null
-            }
-          ],
-          "storageKey": null
-        }
-      ],
-      "storageKey": null
-    }
-  ]
-},
-v8 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "nodeId"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "skipSelected"
+  }
+],
+v1 = [
   {
     "kind": "Variable",
     "name": "id",
     "variableName": "nodeId"
   }
 ],
-v9 = {
+v2 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
   "storageKey": null
 },
-v10 = {
+v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "registryName",
   "storageKey": null
+},
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "project",
+  "storageKey": null
 };
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIAdminContainerRegistrySelectValueQuery",
     "selections": [
-      (v7/*: any*/),
       {
-        "condition": "skipV2",
+        "condition": "skipSelected",
         "kind": "Condition",
         "passingValue": false,
         "selections": [
           {
             "alias": null,
-            "args": (v8/*: any*/),
+            "args": (v1/*: any*/),
             "concreteType": null,
             "kind": "LinkedField",
             "name": "node",
@@ -197,10 +97,10 @@ return {
               {
                 "kind": "InlineFragment",
                 "selections": [
-                  (v5/*: any*/),
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v6/*: any*/)
+                  (v2/*: any*/),
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "type": "ContainerRegistryV2",
                 "abstractKey": null
@@ -216,25 +116,18 @@ return {
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v2/*: any*/),
-      (v0/*: any*/),
-      (v1/*: any*/),
-      (v3/*: any*/),
-      (v4/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIAdminContainerRegistrySelectValueQuery",
     "selections": [
-      (v7/*: any*/),
       {
-        "condition": "skipV2",
+        "condition": "skipSelected",
         "kind": "Condition",
         "passingValue": false,
         "selections": [
           {
             "alias": null,
-            "args": (v8/*: any*/),
+            "args": (v1/*: any*/),
             "concreteType": null,
             "kind": "LinkedField",
             "name": "node",
@@ -247,13 +140,13 @@ return {
                 "name": "__typename",
                 "storageKey": null
               },
-              (v5/*: any*/),
+              (v2/*: any*/),
               {
                 "kind": "InlineFragment",
                 "selections": [
-                  (v9/*: any*/),
-                  (v10/*: any*/),
-                  (v6/*: any*/)
+                  (v3/*: any*/),
+                  (v4/*: any*/),
+                  (v5/*: any*/)
                 ],
                 "type": "ContainerRegistryV2",
                 "abstractKey": null
@@ -266,16 +159,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "7767067b220b09451f348e2abaaa6934",
+    "cacheID": "847a5351fe4bfab1761c60c12b8ca3dc",
     "id": null,
     "metadata": {},
     "name": "BAIAdminContainerRegistrySelectValueQuery",
     "operationKind": "query",
-    "text": "query BAIAdminContainerRegistrySelectValueQuery(\n  $selectedFilter: String\n  $first: Int!\n  $nodeId: ID!\n  $skipLegacy: Boolean!\n  $skipV2: Boolean!\n) {\n  container_registry_nodes(filter: $selectedFilter, first: $first) @skip(if: $skipLegacy) {\n    edges {\n      node {\n        id\n        row_id\n        registry_name\n        project\n      }\n    }\n  }\n  node(id: $nodeId) @skip(if: $skipV2) @since(version: \"26.7.0\") {\n    __typename\n    ... on ContainerRegistryV2 {\n      id\n      entityId @since(version: \"26.9.0\")\n      registryName\n      project\n    }\n    id\n  }\n}\n"
+    "text": "query BAIAdminContainerRegistrySelectValueQuery(\n  $nodeId: ID!\n  $skipSelected: Boolean!\n) {\n  node(id: $nodeId) @skip(if: $skipSelected) {\n    __typename\n    ... on ContainerRegistryV2 {\n      id\n      entityId\n      registryName\n      project\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "1743702937c0c263d234f98a1e169043";
+(node as any).hash = "3480370346a28204f1b8290ddfecd819";
 
 export default node;
