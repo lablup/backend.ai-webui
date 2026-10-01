@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0bf66fc1d1bac16d7b5e690fa12e8ff>>
+ * @generated SignedSource<<033af697c4c33d610f639d06918e5c18>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -279,16 +279,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "fc5dbda4e29e23df7e54ae42cc06746f",
+    "cacheID": "2cf779a935cb4f27ceeb1495053e3f74",
     "id": null,
     "metadata": {},
     "name": "useSuspendedLegacyVFoldersQuery",
     "operationKind": "query",
-    "text": "query useSuspendedLegacyVFoldersQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  myVfolders(limit: $limit, offset: $offset, filter: {status: {notIn: [DELETE_COMPLETE]}}, orderBy: [{field: CREATED_AT, direction: DESC}]) @since(version: \"26.4.2\") {\n    count\n    edges {\n      node {\n        id\n        status\n        host\n        metadata {\n          name\n          usageMode\n          quotaScopeId\n          createdAt\n          cloneable\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          userId\n          projectId\n          creatorEmail\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query useSuspendedLegacyVFoldersQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  myVfolders(limit: $limit, offset: $offset, filter: {status: {notIn: [DELETE_COMPLETE]}}, orderBy: [{field: CREATED_AT, direction: DESC}]) {\n    count\n    edges {\n      node {\n        id\n        status\n        host\n        metadata {\n          name\n          usageMode\n          quotaScopeId\n          createdAt\n          cloneable\n        }\n        accessControl {\n          permission\n          ownershipType\n        }\n        ownership {\n          userId\n          projectId\n          creatorEmail\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "cb5a7cf91f08043c44671911bd2b2d4a";
+(node as any).hash = "b155ce46e47cc6f49d64923cc4721b96";
 
 export default node;

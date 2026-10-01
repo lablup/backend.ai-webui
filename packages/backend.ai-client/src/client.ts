@@ -902,10 +902,6 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
-      // Strawberry `myVfolders` / `projectVfolders` / `vfolderV2` connections
-      // (schema: "Added in 26.4.2"); below this the vfolder lists stay on REST
-      // `GET /folders` and the Graphene `vfolder_nodes` connection. FR-4116.
-      this._features['vfolder-v2'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;

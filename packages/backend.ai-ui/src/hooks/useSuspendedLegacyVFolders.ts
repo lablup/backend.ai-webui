@@ -50,7 +50,7 @@ const myVfoldersQuery = graphql`
       offset: $offset
       filter: { status: { notIn: [DELETE_COMPLETE] } }
       orderBy: [{ field: CREATED_AT, direction: DESC }]
-    ) @since(version: "26.4.2") {
+    ) {
       count
       edges {
         node {
@@ -163,25 +163,23 @@ export const useSuspendedLegacyVFolders = ({
   const baiClient = useConnectedBAIClient();
   const relayEnv = useRelayEnvironment();
   const baiRequestWithPromise = useBAISignedRequestWithPromise();
-  // `myVfolders` is the caller's own reach, so a list on someone else's
-  // behalf stays on REST, which takes `owner_user_email`.
-  const readsV2 = !ownerEmail && baiClient.supports('vfolder-v2');
 
   const { data, refetch, isFetching } = useSuspenseTanQuery<
     Array<LegacyVFolder>
   >({
     queryKey: [
       'BAIVFolderMountConfigInputFolders',
-      readsV2 ? 'v2' : 'rest',
       ownerEmail ?? '',
-      readsV2 ? '' : (groupId ?? ''),
+      ownerEmail ? (groupId ?? '') : '',
     ],
     queryFn: () => {
-      if (readsV2) {
+      if (!ownerEmail) {
         return fetchAllMyVfolders(relayEnv, baiClient.user_uuid);
       }
+      // No V2 twin lists another user's folders by email, so launch-on-behalf
+      // stays on REST `GET /folders?owner_user_email=`.
       const search = new URLSearchParams();
-      if (ownerEmail) search.set('owner_user_email', ownerEmail);
+      search.set('owner_user_email', ownerEmail);
       if (groupId) search.set('group_id', groupId);
       const query = search.toString();
       return baiRequestWithPromise({
