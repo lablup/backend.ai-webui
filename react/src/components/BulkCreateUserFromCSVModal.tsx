@@ -54,7 +54,6 @@ import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
   BAIButton,
-  BAIDomainSelect,
   BAIFlex,
   BAIModal,
   BAIModalProps,
@@ -785,9 +784,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // whether a default value is *always* applied:
   //   - need_password_change always sends a value (true or false), so its
   //     column is always shown.
-  //   - domain and resource policy always carry a value (current-domain
-  //     fallback / the server-side "default" policy), so they are shown
-  //     whenever a value is selected — including the plain "default" policy.
+  //   - resource policy always carries a value (the server-side "default"
+  //     policy), so it is shown whenever a value is selected — including the
+  //     plain "default" policy.
   //   - description and project become null when empty, so their columns
   //     appear only when the admin actually configures a default.
   const showFullName = presentColumns.has('full_name');
@@ -796,10 +795,8 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   // A need_password_change value is always applied to every row (true or
   // false), so this column is always relevant.
   const showNeedPasswordChange = true;
-  // Domain is always applied (per-row, global default, or current domain),
-  // so it is always relevant to preview.
-  const showDomain =
-    presentColumns.has('domain_name') || !!globalDefaults.domainName;
+  // Rows without a CSV domain go to the current domain, which is not shown.
+  const showDomain = presentColumns.has('domain_name');
   // A resource policy value is always applied — the admin may explicitly
   // select "default" (which delegates to the server default), and that is
   // still a configured global default worth showing.
@@ -1183,25 +1180,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           </BAIFlex>
 
           <Form layout="vertical" requiredMark={false} component={false}>
-            <BAIFormItem
-              label={t('credential.Domain')}
-              style={{ marginBottom: token('--spacing-3') }}
-            >
-              <Suspense fallback={<BAISkeleton />}>
-                <BAIDomainSelect
-                  value={globalDefaults.domainName}
-                  onChange={(v) => {
-                    setGlobalDefaults((prev) => ({
-                      ...prev,
-                      domainName: v ? String(v) : '',
-                      groupIds: [],
-                    }));
-                  }}
-                  style={{ width: '100%' }}
-                />
-              </Suspense>
-            </BAIFormItem>
-
             <BAIFormItem
               label={t('session.launcher.Project')}
               style={{ marginBottom: token('--spacing-3') }}
