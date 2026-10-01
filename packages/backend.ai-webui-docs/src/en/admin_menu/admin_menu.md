@@ -479,7 +479,7 @@ You can filter entries by **Status**, **Operation**, **Triggered By**, and a **T
 
 ### Admin Model Store management
 
-Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page.
+Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page. The list shows the model cards of your current domain, and new model cards are created in that domain's Model Store project.
 
 ![](../images/admin_model_card_list_v2.png)
 
@@ -490,14 +490,12 @@ The list provides the following columns:
 - **Category**: The model category (e.g., LLM).
 - **Task**: The inference task type (e.g., text-generation).
 - **Access Level**: Shows a green `Public` tag when the model card is publicly accessible, or a default `Private` tag otherwise.
-- **Domain**: The domain that owns the model card.
 - **Project**: The project that owns the model card.
 - **Created At**: The timestamp when the model card was created.
 
 You can narrow the list using the property filter bar at the top, which supports filtering by the following properties:
 
 - **Name**: Filter by the model card's name (string match).
-- **Domain**: Filter by the owning domain (string match).
 - **Project**: Filter by the owning project. Instead of typing a project identifier, you can pick from a searchable dropdown of the Model Store projects.
 - **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
@@ -521,9 +519,7 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 - **License**: The license under which the model is distributed.
 - **Architecture**: The model architecture (e.g., Transformer).
 - **README**: A markdown README for the model.
-- **Domain**: The domain to associate the model card with. When creating a new model card, this field is pre-filled with your current domain; you can change it if needed.
-- **Project ID** (required): The project that owns the model card.
-- **VFolder** (required): The storage folder containing the model files.
+- **Model Storage Folder** (required): The storage folder containing the model files.
 - **Access Level**: Controls who can see the model card in the user-facing Model Store.
 
    * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
