@@ -11,9 +11,13 @@ import { test, expect, Page, APIRequestContext } from '@playwright/test';
 
 // Narrow the Data list to this folder by name before clicking it: on a shared
 // server the folder may not be on the first page. Clear first, so a filter left
-// over from the previous folder does not hide this one.
+// over from the previous folder does not hide this one. Removing a token
+// leaves focus on the search bar, where a click no longer opens the field
+// list, so blur it before searching again. No reload here: reloading would
+// reset the explorer state this spec checks.
 const openFolderExplorer = async (page: Page, folderName: string) => {
   await clearAllFilters(page);
+  await page.getByTestId('vfolder-filter').getByRole('combobox').first().blur();
   await selectPropertyFilter(page, 'Name', folderName);
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await expect(folderLink).toBeVisible({ timeout: 15000 });
