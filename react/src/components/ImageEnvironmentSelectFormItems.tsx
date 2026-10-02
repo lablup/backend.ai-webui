@@ -981,6 +981,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       </BAIFlex>
       <Form.Item
         label={t('session.launcher.ManualImageName')}
+        tooltip={t('session.launcher.ManualImageNameTooltip')}
         name={['environments', 'manual']}
         style={{
           display: baiClient._config.allow_manual_image_name_for_session
