@@ -1,10 +1,20 @@
 // spec: FR-4005 (#9793) — the explorer's side panel starts on Metadata every time it opens
 import { createAdminApiContext } from '../utils/admin-api';
 import { FolderExplorerModal } from '../utils/classes/vfolder/FolderExplorerModal';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import {
+  clearAllFilters,
+  loginAsAdmin,
+  navigateTo,
+  selectPropertyFilter,
+} from '../utils/test-util';
 import { test, expect, Page, APIRequestContext } from '@playwright/test';
 
+// Narrow the Data list to this folder by name before clicking it: on a shared
+// server the folder may not be on the first page. Clear first, so a filter left
+// over from the previous folder does not hide this one.
 const openFolderExplorer = async (page: Page, folderName: string) => {
+  await clearAllFilters(page);
+  await selectPropertyFilter(page, 'Name', folderName);
   const folderLink = page.getByRole('link', { name: folderName }).first();
   await expect(folderLink).toBeVisible({ timeout: 15000 });
   await folderLink.click();
