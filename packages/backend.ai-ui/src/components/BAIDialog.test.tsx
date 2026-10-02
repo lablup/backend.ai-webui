@@ -111,6 +111,17 @@ describe('BAIDialog', () => {
     expect(root?.hasAttribute('data-bai-modal-open')).toBe(true);
   });
 
+  it('portals into getContainer, given as an element or a function', () => {
+    const container = document.body.appendChild(document.createElement('div'));
+    const { unmount } = renderPortal({ getContainer: container });
+    expect(container.querySelector('.bai-dialog')).not.toBeNull();
+    unmount();
+
+    renderPortal({ getContainer: () => container });
+    expect(container.querySelector('.bai-dialog')).not.toBeNull();
+    container.remove();
+  });
+
   // FR-3578 exists because `showModal()` made the whole document inert. Keeping
   // the page reachable is therefore a DELIBERATE non-feature, and the obvious
   // way to restore the a11y containment the native element gave — `inert` or

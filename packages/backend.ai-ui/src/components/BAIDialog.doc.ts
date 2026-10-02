@@ -8,7 +8,7 @@ export const docs = {
   keywords: ['dialog', 'modal', 'overlay', 'popup', 'alertdialog', 'portal'],
   usage: {
     description:
-      'The dialog surface every Backend.AI overlay is built on — BAIModal, BAIAlertDialog and BAIDrawerPortal all render one. It renders Astryx `Dialog` in its `isInline` mode inside a portal on `document.body` instead of a native `<dialog>` promoted with `showModal()`: staying out of the browser top layer is the point, because it lets the notification stack paint above an open dialog and stay clickable. On top of the Astryx surface it adds a level stack that resolves z-index, inertness and topmost-only Escape across nested dialogs, a focus trap with trigger-focus restore, scroll lock, an accessible name wired from the dialog title, a direction-aware entry animation measured from the trigger, and a backdrop-click policy derived from `purpose`. Props not listed here come from Astryx `DialogProps` and reach the element carrying `role="dialog"` as plain DOM attributes; `isInline`, `aria-modal` and the Astryx `ref` type are Omitted.',
+      'The dialog surface every Backend.AI overlay is built on — BAIModal, BAIAlertDialog and BAIDrawerPortal all render one. It renders Astryx `Dialog` in its `isInline` mode inside a portal (on `document.body` by default, or `getContainer`) instead of a native `<dialog>` promoted with `showModal()`: staying out of the browser top layer is the point, because it lets the notification stack paint above an open dialog and stay clickable. On top of the Astryx surface it adds a level stack that resolves z-index, inertness and topmost-only Escape across nested dialogs, a focus trap with trigger-focus restore, scroll lock, an accessible name wired from the dialog title, a direction-aware entry animation measured from the trigger, and a backdrop-click policy derived from `purpose`. Props not listed here come from Astryx `DialogProps` and reach the element carrying `role="dialog"` as plain DOM attributes; `isInline`, `aria-modal` and the Astryx `ref` type are Omitted.',
     bestPractices: [
       {
         guidance: true,
@@ -115,6 +115,12 @@ export const docs = {
       type: 'number',
       description:
         'Requests a higher position inside the modal band; the level stack resolves it, still placing later dialogs above this one and ignoring values outside the band. Pass a `BAI_Z_INDEX` layer, never a literal.',
+    },
+    {
+      name: 'getContainer',
+      type: 'HTMLElement | (() => HTMLElement)',
+      description:
+        'Element the portal mounts into instead of `document.body`. Pass the fullscreen element while one is up: the browser paints only its subtree, so a body-level dialog stays hidden.',
     },
     {
       name: 'role',

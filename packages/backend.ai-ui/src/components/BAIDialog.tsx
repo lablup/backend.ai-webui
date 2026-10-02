@@ -120,6 +120,11 @@ export interface BAIDialogProps extends Omit<
    * close. Drives `BAIUnmountAfterClose`.
    */
   afterOpenChange?: (open: boolean) => void;
+  /**
+   * Where the portal mounts; defaults to `document.body`. Pass the fullscreen
+   * element while one is up — the browser paints only its subtree.
+   */
+  getContainer?: HTMLElement | (() => HTMLElement);
 }
 
 const BAIDialog: React.FC<BAIDialogProps> = ({
@@ -133,6 +138,7 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
   padding,
   zIndex,
   afterOpenChange,
+  getContainer,
   role,
   children,
   xstyle,
@@ -366,7 +372,8 @@ const BAIDialog: React.FC<BAIDialogProps> = ({
         </Dialog>
       </div>
     </div>,
-    document.body,
+    (typeof getContainer === 'function' ? getContainer() : getContainer) ??
+      document.body,
   );
 };
 
