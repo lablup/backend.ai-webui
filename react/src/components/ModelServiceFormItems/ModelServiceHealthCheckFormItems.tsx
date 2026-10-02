@@ -9,7 +9,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from '../astryxFormControls';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

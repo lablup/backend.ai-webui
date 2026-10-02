@@ -2240,9 +2240,6 @@
     "SuccessfullyUpdated": "正常に更新されました",
     "Visit": "訪問"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} of {{attol}}アイテム"
-  },
   "project": {
     "Activate": "有効化",
     "ActivateProject": "プロジェクトを有効化",

@@ -8,32 +8,32 @@ import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
-import { Button } from '@astryxdesign/core/Button';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Markdown } from '@astryxdesign/core/Markdown';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Markdown } from '@lablup/ui-common/Markdown';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  BAISkeleton,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
-  useErrorMessageResolver,
+  BAISkeleton,
   useBAILogger,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import {
+  ALargeSmall,
   Bold,
   Code,
-  ALargeSmall,
+  Image,
   Italic,
   Link,
-  ListOrdered,
-  Image,
-  Strikethrough,
   List,
+  ListOrdered,
+  Strikethrough,
 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -9,10 +9,10 @@ import {
   isTransitionalSessionStatus,
 } from '../../helper/sessionStatus';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { Badge } from '@astryxdesign/core/Badge';
-import { HoverCard } from '@astryxdesign/core/HoverCard';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { HoverCard } from '@lablup/ui-common/HoverCard';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIKernelProgressBreakdown,

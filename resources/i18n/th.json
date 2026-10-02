@@ -2229,9 +2229,6 @@
     "SuccessfullyUpdated": "อัปเดตสำเร็จแล้ว",
     "Visit": "เยี่ยมชม"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} ของ {{total}} รายการ"
-  },
   "project": {
     "Activate": "เปิดใช้งาน",
     "ActivateProject": "เปิดใช้งานโครงการ",

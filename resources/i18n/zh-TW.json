@@ -2242,9 +2242,6 @@
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} {{total}}項目"
-  },
   "project": {
     "Activate": "啟用",
     "ActivateProject": "啟用專案",

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The header row of a dashboard board item: a title on the leading edge, an optional help tooltip beside it, and an action slot pushed to the trailing edge. It is a `BAIFlex` row that sticks to the top of its scroll container and paints the container background behind itself, so a long panel body scrolls under the title instead of past it. A string `title` is rendered as a level-5 heading; anything else is rendered as given, which is how panels put a heading next to an inline control such as a resource-group selector. Use it for the panel sections that make up a dashboard board — `BAICard` remains the container for standalone cards.',
+      'The header row of a dashboard board item: a title on the leading edge, an optional help tooltip beside it, and an action slot pushed to the trailing edge. It is ui-common `BoardItemTitle`, a row that sticks to the top of its scroll container and paints the container background behind itself, so a long panel body scrolls under the title instead of past it. A string `title` is rendered as a level-5 heading; anything else is rendered as given, which is how panels put a heading next to an inline control such as a resource-group selector. Use it for the panel sections that make up a dashboard board — `BAICard` remains the container for standalone cards.',
     bestPractices: [
       {
         guidance: true,
@@ -58,6 +58,12 @@ export const docs = {
       type: 'React.ReactNode',
       description:
         'Explanatory content shown from a question-mark icon next to the title. Nothing is rendered when it is omitted.',
+    },
+    {
+      name: 'tooltipIcon',
+      type: 'React.ReactNode',
+      description:
+        'Glyph of the help tooltip. Defaults to the lucide CircleHelp question mark.',
     },
     {
       name: 'extra',

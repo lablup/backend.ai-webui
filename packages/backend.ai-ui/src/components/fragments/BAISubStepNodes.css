@@ -7,9 +7,8 @@
  Design 3a — the sub-steps of a scheduling-history row as a compact inline
  table, one 32px row per step, with an order connector in a narrow rail column.
 
- Deliberately UNLAYERED. Wrapped in `@layer`, `BAITable.css`'s unguarded
- `.bai-table-astryx-no-header thead` / dim-layer `thead th` rules would outrank
- the nested header's own tint.
+ Deliberately UNLAYERED: the nested header's own tint must beat the header
+ band ui-common DataGrid paints on every `thead th` inside it.
 
  Geometry only — every colour and every font size comes from the theme.
 */

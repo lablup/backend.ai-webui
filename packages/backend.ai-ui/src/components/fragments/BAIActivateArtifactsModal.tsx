@@ -5,7 +5,7 @@ import { toLocalId } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIModal, { type BAIModalProps } from '../BAIModal';
 import BAIUnmountAfterClose from '../BAIUnmountAfterClose';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import { graphql, useFragment, useMutation } from 'react-relay';
 
 export type BAIActivateArtifactsModalArtifactsFragmentKey =

@@ -11,7 +11,7 @@ onto Astryx, and most locator habits inherited from older specs no longer match 
 ## Read this first: `.ant-*` classes do not exist anymore
 
 antd is not a dependency of this repository. The component system is Astryx
-(`@astryxdesign/core`) plus the BUI wrappers in `packages/backend.ai-ui/`, and the form layer
+(through `@lablup/ui-common`) plus the BUI wrappers in `packages/backend.ai-ui/`, and the form layer
 is the self-hosted engine in `packages/backend.ai-ui/src/form-engine/`. Nothing renders an
 `ant-` prefixed class.
 

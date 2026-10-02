@@ -5,7 +5,7 @@
 import { useCustomThemeConfig } from '../../hooks/useCustomThemeConfig';
 import { useWebUIMenuItems } from '../../hooks/useWebUIMenuItems';
 import WebUILink from '../WebUILink';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 interface WebUISiderLogoProps {

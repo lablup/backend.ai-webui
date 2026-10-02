@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Button, type ButtonProps } from '@astryxdesign/core/Button';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Button, type ButtonProps } from '@lablup/ui-common/Button';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';

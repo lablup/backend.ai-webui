@@ -2,14 +2,13 @@ import BAIDoubleToken from './BAIDoubleToken';
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 
-// The weld is CSS (vitest does not evaluate it), so these pin the DOM contract
-// BAIDoubleToken.css is written against: the `bai-double` anchor, direct-child
-// tokens in source order, and `gap: 0`.
+// The adapter over ui-common DoubleToken: its DOM contract (the
+// `uic-double-token` run of direct-child tokens, in source order, gap 0).
 describe('BAIDoubleToken', () => {
   const root = (c: HTMLElement) =>
-    c.querySelector('.bai-double') as HTMLElement;
+    c.querySelector('.uic-double-token') as HTMLElement;
 
-  it('anchors the stylesheet on `bai-double` and pins gap to 0', () => {
+  it('renders the ui-common run with gap 0', () => {
     const { container } = render(<BAIDoubleToken values={['User', 'admin']} />);
     expect(root(container)).toBeInTheDocument();
     expect(root(container)).toHaveAttribute('data-gap', '0');
@@ -90,5 +89,19 @@ describe('BAIDoubleToken', () => {
     expect(tokens[1]).toContainElement(copyButton);
     expect(tokens[0]).not.toContainElement(copyButton);
     expect(screen.getAllByRole('button')).toHaveLength(1);
+  });
+
+  it('highlights a copyable label inside its copy control', () => {
+    const { container } = render(
+      <BAIDoubleToken
+        values={[{ label: 'python', copyable: true }]}
+        highlightKeyword="py"
+      />,
+    );
+    const token = root(container).children[0];
+    expect(token).toHaveAttribute('aria-label', 'python');
+    const match = token.querySelector('.uic-text-highlighter__match');
+    expect(match).toHaveTextContent('py');
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
   });
 });

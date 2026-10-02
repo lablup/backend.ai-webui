@@ -5,10 +5,10 @@
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import ChatCard from '../components/Chat/ChatCard';
 import {
-  type ChatHistoryData,
   generateChatId,
   getChatById,
   useHistory,
+  type ChatHistoryData,
 } from '../components/Chat/ChatHistory';
 import {
   normalizeCustomEndpointURL,
@@ -19,16 +19,16 @@ import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
 import './ChatPage.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { Divider } from '@astryxdesign/core/Divider';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { Divider } from '@lablup/ui-common/Divider';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
@@ -313,6 +313,8 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
         onEnter={commit}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
+            // Claims the press, so an open scrimless drawer stays open.
+            e.preventDefault();
             setDraft(label);
             setIsEditing(false);
           }

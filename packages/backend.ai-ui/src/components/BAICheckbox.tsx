@@ -39,7 +39,7 @@
 import { FormItemInputContext } from '../form-engine';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import React, { use } from 'react';
 import type { ChangeEvent, ReactNode } from 'react';
 

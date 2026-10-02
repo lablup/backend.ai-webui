@@ -7,8 +7,8 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import QuotaPerStorageVolumePanelCard, {
   type VolumeInfo,
 } from './QuotaPerStorageVolumePanelCard';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { useTheme } from '@astryxdesign/core/theme';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIBoardItemTitle, BAIFlex } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

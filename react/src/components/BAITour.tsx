@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Tour, type TourProps, useTour } from '@astryxdesign/lab';
+import { Tour, type TourProps, useTour } from '@lablup/ui-common/lab';
 import React, { useEffect, useEffectEvent } from 'react';
 
 export interface BAITourProps extends TourProps {

@@ -14,9 +14,9 @@ import SharedResourceGroupSelectForCurrentProject from './SharedResourceGroupSel
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Heading } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+} from '@lablup/ui-common/SegmentedControl';
+import { Heading } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBoardItemTitle,
   BAIFetchKeyButton,
@@ -32,12 +32,12 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  useTransition,
+  ReactNode,
   useDeferredValue,
   useEffect,
   useEffectEvent,
   useState,
-  ReactNode,
+  useTransition,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {

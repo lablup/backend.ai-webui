@@ -2241,9 +2241,6 @@
     "SuccessfullyUpdated": "Berhasil Diperbarui",
     "Visit": "Kunjungi"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
-  },
   "project": {
     "Activate": "Aktifkan",
     "ActivateProject": "Aktifkan Proyek",

@@ -664,7 +664,7 @@ export async function cleanupDeploymentFixtures(
  * (`aria-haspopup="dialog"`, NOT a combobox), and its popup is a
  * `role="dialog"` (aria-labelled with the same field label) hosting a search
  * `TextInput` with `role="combobox"` named "Search options"
- * (`comp:BAIComplexSelect.SearchOptions`, FR-3603 / #8914) plus a
+ * (ui-common `uic.PagedSelector.searchOptions`, FR-3603 / #8914) plus a
  * `role="listbox"` of plain, clickable `role="option"` rows.
  *
  * Both selects search SERVER-side (the search text drives a refetch), so

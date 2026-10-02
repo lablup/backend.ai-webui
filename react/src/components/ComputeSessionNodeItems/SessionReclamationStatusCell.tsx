@@ -8,8 +8,8 @@ import SessionReclamationStatusPopover, {
   getOverallReclamation,
   useReclamationColorMap,
 } from './SessionReclamationStatusPopover';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { Text } from '@astryxdesign/core/Text';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
+import { Text } from '@lablup/ui-common/Text';
 import { useMemoizedJSONParse, BAIFlex } from 'backend.ai-ui';
 import { graphql, useFragment } from 'react-relay';
 

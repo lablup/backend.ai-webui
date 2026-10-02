@@ -17,8 +17,8 @@ import SessionReservation from './ComputeSessionNodeItems/SessionReservation';
 import SessionSlotCell from './ComputeSessionNodeItems/SessionSlotCell';
 import SessionStatusBadge from './ComputeSessionNodeItems/SessionStatusBadge';
 import TerminateSessionModal from './ComputeSessionNodeItems/TerminateSessionModal';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,

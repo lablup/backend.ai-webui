@@ -6,9 +6,9 @@ import { SFTPConnectionInfoModalFragment$key } from '../../__generated__/SFTPCon
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Heading } from '@astryxdesign/core/Heading';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Heading } from '@lablup/ui-common/Heading';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAIFlex,
   BAIMetadataList,

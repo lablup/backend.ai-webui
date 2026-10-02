@@ -4,15 +4,15 @@
  */
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Check, X } from 'lucide-react';

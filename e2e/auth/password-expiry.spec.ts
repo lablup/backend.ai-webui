@@ -177,10 +177,10 @@ test(
 
     // Validation error message appears for the required password field.
     // `ChangePasswordView.tsx` renders its fields via `BAIFormItem`, whose
-    // error line carries `data-bai-form-item-explain-error`
+    // error line carries `uic-form-item__explain-error`
     // (`BAIFormItem.tsx`; the same element also has `role="alert"`).
     await expect(
-      page.locator('[data-bai-form-item-explain-error]').first(),
+      page.locator('.uic-form-item__explain-error').first(),
     ).toBeVisible();
   },
 );

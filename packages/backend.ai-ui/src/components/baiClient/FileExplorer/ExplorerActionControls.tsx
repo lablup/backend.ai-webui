@@ -15,11 +15,10 @@ import CreateFileModal from './CreateFileModal';
 import DeleteSelectedItemsModal, {
   DeleteSelectedItemsModalProps,
 } from './DeleteSelectedItemsModal';
-import { useDownloadErrorMessage } from './hooks';
-import type { RcFile } from './hooks';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useDownloadErrorMessage, type RcFile } from './hooks';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   DownloadIcon,
   FilePlus,

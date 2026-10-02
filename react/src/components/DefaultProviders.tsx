@@ -20,7 +20,7 @@ import {
 import { useDeviceMetaData, useImageMetaData } from '../hooks/backendai';
 import '../index.css';
 import NotificationHost from './NotificationHost';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   BAIConfigProvider,
