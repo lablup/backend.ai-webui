@@ -225,6 +225,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               accessKey
               isActive
               isAdmin
+              isDefault
               createdAt
               modifiedAt
               lastUsed
@@ -236,8 +237,15 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
           }
           count
         }
-        user {
-          main_access_key
+        # The banner shows the main key even when the table page or filter
+        # leaves it out, so it is read on its own.
+        defaultKeypair: myKeypairs(filter: { isDefault: true }, limit: 1) {
+          edges {
+            node {
+              id
+              accessKey
+            }
+          }
         }
       }
     `,
@@ -251,7 +259,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     },
   );
 
-  const mainAccessKey = data.user?.main_access_key;
+  const mainAccessKey = data.defaultKeypair?.edges?.[0]?.node?.accessKey;
   const keypairNodes = filterOutNullAndUndefined(
     data.myKeypairs?.edges?.map((edge) => edge?.node),
   );
@@ -472,12 +480,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 title: t('credential.AccessKey'),
                 dataIndex: 'accessKey',
                 sorter: true,
-                render: (value: string) => (
+                render: (value: string, record: KeypairNode) => (
                   <BAIFlex gap="xs" align="center">
                     <BAIText monospace copyable>
                       {value}
                     </BAIText>
-                    {value === mainAccessKey && (
+                    {record.isDefault && (
                       <BAIIconWithTooltip
                         content={t('credential.MainAccessKey')}
                         icon={
@@ -498,7 +506,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 fixed: 'right' as const,
                 render: (_: unknown, record: KeypairNode) => {
                   if (deferredActiveFilter === 'active') {
-                    const isMain = record.accessKey === mainAccessKey;
+                    const isMain = record.isDefault;
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (

@@ -15,6 +15,7 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { roleFromV2 } from '../helper/userRole';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
@@ -127,13 +128,6 @@ const statusFromV2: Record<string, string> = {
   INACTIVE: 'inactive',
   BEFORE_VERIFICATION: 'before-verification',
   DELETED: 'deleted',
-};
-
-const roleFromV2: Record<string, string> = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-  MONITOR: 'monitor',
 };
 
 const formatBulkEmail = (
