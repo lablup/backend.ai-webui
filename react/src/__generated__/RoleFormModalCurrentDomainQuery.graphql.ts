@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ebfe2a5d44189df50e696d234c6b7cd1>>
+ * @generated SignedSource<<ac44fa822e4ee5e54290b6eca3a5316f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,9 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type RoleFormModalCurrentDomainQuery$variables = {
   domainName: string;
-  skipUuid: boolean;
 };
 export type RoleFormModalCurrentDomainQuery$data = {
-  readonly domainV2?: {
+  readonly domainV2: {
     readonly id: string;
   } | null | undefined;
 };
@@ -29,44 +28,32 @@ var v0 = [
     "defaultValue": null,
     "kind": "LocalArgument",
     "name": "domainName"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "skipUuid"
   }
 ],
 v1 = [
   {
-    "condition": "skipUuid",
-    "kind": "Condition",
-    "passingValue": false,
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "domainName",
+        "variableName": "domainName"
+      }
+    ],
+    "concreteType": "DomainV2",
+    "kind": "LinkedField",
+    "name": "domainV2",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "domainName",
-            "variableName": "domainName"
-          }
-        ],
-        "concreteType": "DomainV2",
-        "kind": "LinkedField",
-        "name": "domainV2",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
-        ],
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
         "storageKey": null
       }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
@@ -87,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f987a553103a1119f8d35c708e4464e6",
+    "cacheID": "d1984d5bc1f542d7e95d98d728b58cfd",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalCurrentDomainQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalCurrentDomainQuery(\n  $domainName: String!\n  $skipUuid: Boolean!\n) {\n  domainV2(domainName: $domainName) @skip(if: $skipUuid) {\n    id\n  }\n}\n"
+    "text": "query RoleFormModalCurrentDomainQuery(\n  $domainName: String!\n) {\n  domainV2(domainName: $domainName) {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "5cc9b3e612ce29cde3865155ca1695b6";
+(node as any).hash = "1a7caf1fa68c4d32c599d0b15cbde63f";
 
 export default node;

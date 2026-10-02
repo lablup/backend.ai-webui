@@ -119,40 +119,57 @@ const ResourceGroupScopeIdSelect: React.FC<ScopeIdBranchProps> = (props) => {
 export const isDomainScopeType = (scopeType?: string) =>
   scopeType?.toUpperCase() === 'DOMAIN';
 
-/**
- * Fills the DOMAIN scope id with the signed-in domain: the WebUI has no domain
- * picker. Managers >= 26.9.0 (BA-7234) take the domain uuid, older ones the name.
- */
-const CurrentDomainScopeId: React.FC<
-  Pick<ScopeIdSelectProps, 'value' | 'onChange'>
-> = ({ value, onChange }) => {
+type DomainScopeIdProps = Pick<ScopeIdSelectProps, 'value' | 'onChange'>;
+
+/** Hands `scopeId` to the form once it is known and differs from `value`. */
+const useSyncScopeId = (
+  scopeId: string | undefined,
+  { value, onChange }: DomainScopeIdProps,
+) => {
+  useEffect(() => {
+    if (scopeId && value !== scopeId) onChange?.(scopeId);
+  }, [scopeId, value, onChange]);
+};
+
+/** Managers >= 26.9.0 (BA-7234) take the domain uuid as a DOMAIN scope id. */
+const CurrentDomainUuidScopeId: React.FC<
+  DomainScopeIdProps & { domainName: string }
+> = ({ domainName, ...props }) => {
   'use memo';
-  const baiClient = useSuspendedBackendaiClient();
-  const domainName: string = baiClient._config.domainName;
-  const needsUuid = baiClient.supports('rbac-domain-scope-uuid');
   const { domainV2 } = useLazyLoadQuery<RoleFormModalCurrentDomainQuery>(
     graphql`
-      query RoleFormModalCurrentDomainQuery(
-        $domainName: String!
-        $skipUuid: Boolean!
-      ) {
-        domainV2(domainName: $domainName) @skip(if: $skipUuid) {
+      query RoleFormModalCurrentDomainQuery($domainName: String!) {
+        domainV2(domainName: $domainName) {
           id
         }
       }
     `,
-    { domainName, skipUuid: !needsUuid },
+    { domainName },
     { fetchPolicy: 'store-or-network' },
   );
-  const scopeId = needsUuid
-    ? domainV2?.id
-      ? toLocalId(domainV2.id)
-      : undefined
-    : domainName;
-  useEffect(() => {
-    if (scopeId && value !== scopeId) onChange?.(scopeId);
-  }, [scopeId, value, onChange]);
+  useSyncScopeId(domainV2?.id ? toLocalId(domainV2.id) : undefined, props);
   return null;
+};
+
+/** Older managers take the domain name; no query, since `domainV2` may not exist. */
+const CurrentDomainNameScopeId: React.FC<
+  DomainScopeIdProps & { domainName: string }
+> = ({ domainName, ...props }) => {
+  'use memo';
+  useSyncScopeId(domainName, props);
+  return null;
+};
+
+/** Fills the DOMAIN scope id with the signed-in domain: the WebUI has no domain picker. */
+const CurrentDomainScopeId: React.FC<DomainScopeIdProps> = (props) => {
+  'use memo';
+  const baiClient = useSuspendedBackendaiClient();
+  const domainName: string = baiClient._config.domainName;
+  return baiClient.supports('rbac-domain-scope-uuid') ? (
+    <CurrentDomainUuidScopeId domainName={domainName} {...props} />
+  ) : (
+    <CurrentDomainNameScopeId domainName={domainName} {...props} />
+  );
 };
 
 export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
