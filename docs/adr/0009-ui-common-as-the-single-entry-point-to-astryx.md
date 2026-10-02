@@ -6,7 +6,7 @@
 
 - **Single entry point**: `react/`와 `packages/backend.ai-ui/`(BUI)의 source는 Astryx를 `@lablup/ui-common`으로만 import한다. ui-common은 `@astryxdesign/core`의 export map을 1:1로 [mirror](#용어)하고, `@astryxdesign/lab`은 `@lablup/ui-common/lab`으로, theme와 token과 CSS는 같은 이름의 ui-common subpath로 내보낸다.
 - **Guardrail**: 두 source tree에서 ESLint `no-restricted-imports`가 `@astryxdesign/*` import를 막는다. Astryx CLI가 만들거나 읽는 파일 몇 개만 예외다.
-- **Dependency form**: `react/`와 BUI는 registry의 `@lablup/ui-common`을 설치한다. 0.2.0이 publish되기 전에는 `vendor/`의 [packed tarball](#용어)을 `file:` spec으로 설치하고, ui-common checkout을 link하지 않는다. `@astryxdesign/core`와 `@astryxdesign/cli`는 exact-pinned devDependency로 남아 core가 한 벌만 설치되게 한다.
+- **Dependency form**: `react/`와 BUI는 registry의 `@lablup/ui-common`을 exact version으로 설치하고, ui-common checkout을 link하지 않는다. `ui-common` CLI는 같은 version으로 함께 release되는 별도 package `@lablup/ui-common-cli`이고, `react/`의 devDependency다. `@astryxdesign/core`와 `@astryxdesign/cli`는 exact-pinned devDependency로 남아 core가 한 벌만 설치되게 한다.
 - **BAI adapters**: BUI에서 ui-common으로 옮긴 component는 ui-common에서 Astryx 모양의 props를 갖는다. BUI는 같은 이름의 `BAI*` component를 frozen antd-v6 prop vocabulary를 ui-common props로 옮기는 얇은 [adapter](#용어)로 남기고, call site는 바뀌지 않는다.
 - **Strings**: ui-common component의 문자열은 Astryx `useTranslator()`가 찾는다. BUI의 locale module이 ui-common 번역을 `BAILocale.astryxLocale`에 합치고, `BAIConfigProvider`가 그것을 Astryx `InternationalizationProvider`에 한 번 넘긴다.
 - **Layers and agent docs**: cascade layer 순서에는 `astryx-theme` 다음에 `ui-common`이 들어간다. agent 지침의 `ASTRYX` block은 `ui-common agents`가 만드는 `UI-COMMON` block으로 바뀐다.
@@ -28,9 +28,10 @@ flowchart LR
     react["react/ source"]
     bui["packages/backend.ai-ui/src"]
     lint["ESLint no-restricted-imports"]
-    devdeps["react/ and BUI package.json<br/>core and cli as devDependencies, lab"]
+    devdeps["react/ and BUI package.json<br/>core, cli, ui-common-cli as devDependencies, lab"]
   end
-  uc["@lablup/ui-common<br/>registry, or vendor tarball before 0.2.0"]
+  uc["@lablup/ui-common<br/>registry, exact version"]
+  uccli["@lablup/ui-common-cli<br/>the ui-common bin, same version"]
   core["@astryxdesign/core<br/>one copy"]
   neutral["@astryxdesign/theme-neutral"]
   lab["@astryxdesign/lab<br/>peer of ui-common, needs core as peer"]
@@ -42,7 +43,9 @@ flowchart LR
   lint -. "rejects @astryxdesign/* imports" .-> bui
   uc -- "exact-pinned dependency" --> core
   uc -- "exact-pinned dependency" --> neutral
-  uc -- "exact-pinned dependency, wrapped by the ui-common bin" --> cli
+  uccli -- "exact-pinned dependency, wrapped by the ui-common bin" --> cli
+  uccli -- "exact peer" --> uc
+  devdeps -- "react/ devDependency" --> uccli
   uc -. "optional peer, @lablup/ui-common/lab" .-> lab
   devdeps -- "installs lab at the catalog pin" --> lab
   devdeps -- "same pin, fills lab's core peer" --> core
@@ -122,11 +125,13 @@ flowchart TB
 | `@lablup/ui-common` | `dependencies`에 추가 | `peerDependencies`와 `devDependencies`에 추가 |
 | `@astryxdesign/core` | `dependencies`에서 `devDependencies`로 이동 | `peerDependencies`에서 삭제, `devDependencies`에 유지 |
 | `@astryxdesign/cli` | `devDependencies`에 유지 | `devDependencies`에 유지 |
+| `@lablup/ui-common-cli` | `devDependencies`에 추가 | 없음 |
 | `@astryxdesign/lab` | `dependencies`에 유지 | `peerDependencies`와 `devDependencies`에 유지 |
 | `@astryxdesign/theme-neutral` | 삭제 | 삭제 |
 
-- **Version spec**: `@lablup/ui-common`의 spec은 registry version이다. 0.2.0이 publish되기 전에는 저장소 루트의 `vendor/lablup-ui-common-<version>.tgz`를 `file:` spec으로 가리킨다. `workspace:`나 `link:` spec은 쓰지 않는다. packed tarball은 registry package와 같은 방식으로 설치되어, link가 가리는 두 번째 core 문제가 설치 단계에서 그대로 드러난다.
-- **Tarball pin**: pnpm catalog는 `file:` spec을 받지 않는다(`ERR_PNPM_CATALOG_ENTRY_INVALID_SPEC`). 그래서 catalog의 `@lablup/ui-common`은 registry version을 적고, `pnpm-workspace.yaml`의 `overrides` 한 줄이 그것을 `file:vendor/lablup-ui-common-<version>.tgz`로 바꾼다. tarball 교체는 그 한 줄이고, 0.2.0 전환은 그 줄을 지운다. 절차는 `vendor/README.md`에 있다.
+- **Version spec**: `@lablup/ui-common`과 `@lablup/ui-common-cli`의 spec은 `pnpm-workspace.yaml` catalog의 exact registry version이고, 두 package는 같은 version으로 함께 올린다. `workspace:`나 `link:` spec은 쓰지 않는다. registry package로 설치해야 link가 가리는 두 번째 core 문제가 설치 단계에서 그대로 드러난다.
+- **CLI package**: ui-common 0.2.0-alpha.15부터 `@lablup/ui-common`에는 `bin`이 없고 `@astryxdesign/cli`에 의존하지 않는다. `ui-common` bin은 `@lablup/ui-common-cli`가 싣고, 이 package는 `@astryxdesign/cli`를 exact-pinned dependency로, `@lablup/ui-common`을 같은 version의 peer로 둔다. `scripts/verify.sh`와 루트 `package.json`의 `ui-common` script가 `react/`에서 이 bin을 실행하므로 `react/`만 devDependency로 둔다. Node 22.13 이상이 필요하다.
+- **Release quarantine**: 새 version은 publish 후 7일 동안 `minimumReleaseAge`에 걸리므로, 올릴 때 두 package를 `minimumReleaseAgeExclude`에 날짜와 함께 넣고 7일 뒤 지운다.
 - **Build externals**: BUI의 library build는 peer만 external로 두므로, `vite.config.ts`가 `@astryxdesign/*` 전체를 external로 더 둔다. core가 peer에서 빠져도 남은 core import가 `dist`에 두 번째 copy로 bundle되지 않는다.
 - **Test runner**: ui-common의 custom component는 자기 `.css`를 import한다. `react/vitest.config.ts`는 `server.deps.inline`에 ui-common을 두어 Vite가 그 CSS import를 처리하게 한다.
 - **Pinned core devDependency**: lab의 canary version은 core를 optional이 아닌 peer로 요구한다. webui의 importer에 core가 없으면 pnpm [`autoInstallPeers`](#용어)가 core를 하나 더 설치하고, `--frozen-lockfile`과 peer 검사는 통과한다. `react/`와 BUI가 같은 pin의 core를 devDependency로 두면 pnpm이 lab의 peer를 그 core로 채운다. CLI도 설치된 core를 읽으므로 core가 필요하다.
@@ -188,7 +193,7 @@ flowchart TB
 - **One import path**: agent와 사람이 Astryx component를 찾을 때 경로는 `@lablup/ui-common/<X>` 하나다. `ui-common component`, `ui-common search` 같은 CLI 명령이 `astryx` 출력을 같은 경로로 고쳐 보여 주고, 제외된 이름에는 대신 쓸 이름을 붙인다.
 - **Upgrade through ui-common**: Astryx version을 올리는 일은 ui-common의 `sync-astryx` 명령이 먼저 한다. webui는 그 뒤 ui-common version과 catalog pin을 함께 올리고 `ui-common upgrade`로 codemod를 돌린다. webui가 Astryx만 따로 올릴 수는 없다.
 - **Global scrollbar**: webui는 `ui-common.css`를 싣지 않으므로 scrollbar 모양은 계속 `MainLayout.css`의 unlayered rule이 정한다.
-- **Tarball refresh**: 0.2.0 publish 전에는 ui-common을 고칠 때마다 누군가 tarball을 다시 pack해 `vendor/`에 넣어야 webui가 그 변경을 본다.
+- **Release before use**: webui는 ui-common의 변경을 release된 version으로만 받는다. ui-common을 고친 뒤 release하고, webui에서 catalog의 두 pin을 올려야 그 변경이 보인다.
 - **Component home narrows**: `.claude/rules/bui-component-home.md`의 "새 재사용 component는 BUI"는 BAI 의존성이 있는 component에만 남는다. 제품 중립인 component는 ui-common으로 가고, BUI에는 adapter가 남는다.
 - **Exempt files track core**: 2항의 예외 파일은 계속 `@astryxdesign/*` 경로를 쓰므로, Astryx를 올릴 때 codemod가 아니라 `astryx theme build` 재실행과 손 수정으로 따라간다.
 
@@ -200,6 +205,7 @@ flowchart TB
 - [FR-4059](https://lablup.atlassian.net/browse/FR-4059): core devDependency와 bare-name patch key. [FR-4098](https://lablup.atlassian.net/browse/FR-4098): Astryx patch를 ui-common fork로 옮기고 lockfile gate로 대신하며, `BAIComplexSelect`의 본체를 ui-common `PagedSelector`로 옮긴다.
 - [FR-4054](https://lablup.atlassian.net/browse/FR-4054): Astryx 모양 props와 BUI adapter. [FR-4055](https://lablup.atlassian.net/browse/FR-4055): `useTranslator`와 provider에서의 병합. [FR-4087](https://lablup.atlassian.net/browse/FR-4087): 이동 순서와 `theme-shim` track. [FR-4097](https://lablup.atlassian.net/browse/FR-4097): form engine의 ui-common 이동.
 - ui-common: [#40](https://github.com/lablup/ui-common/issues/40)(dependency form, theme, layer), [#41](https://github.com/lablup/ui-common/issues/41)(admission rule, 직접 import 금지), [#42](https://github.com/lablup/ui-common/issues/42)(`ui-common` CLI), [#52](https://github.com/lablup/ui-common/issues/52)(upgrade tool).
+- [FR-4099](https://lablup.atlassian.net/browse/FR-4099): vendor tarball에서 registry의 `@lablup/ui-common` 0.2.0-alpha.15로 옮기고 CLI package `@lablup/ui-common-cli`를 더한다.
 - 결정일: 2026-09-25.
 - 관련: [ADR 0007](0007-badge-for-live-values-and-token-for-settled-values.md)의 `Badge`·`Token`은 이제 `@lablup/ui-common/Badge`·`@lablup/ui-common/Token`에서 import하고, 그 ADR의 STATUS SEMANTICS 줄은 UI-COMMON block 바로 뒤의 PROJECT LINES로 옮겨 간다. `.claude/rules/component-props-extension.md`가 adapter props의 base를 정한다.
 
@@ -209,7 +215,6 @@ flowchart TB
 |---|---|
 | mirror | ui-common이 generator로 `@astryxdesign/core`의 export map과 같은 subpath를 만들어 core를 그대로 re-export하는 것이다. `@lablup/ui-common/Button`은 core의 `Button`과 같은 module이다. |
 | exclusion list | ui-common의 `exports.exclude.json`이다. 여기 있는 core export는 mirror에 생기지 않고, 대신 쓸 ui-common component가 있다. `Dialog`는 `Modal`이, `AlertDialog`는 `AlertModal`이 대신한다. |
-| packed tarball | `pnpm pack`으로 만든 `.tgz` package 파일이다. `file:` spec으로 설치하면 registry에서 받은 package와 같은 방식으로 풀린다. |
 | adapter | BUI에 남는 같은 이름의 `BAI*` component다. frozen antd-v6 props를 받아 ui-common component의 props로 옮겨 넘기는 일만 한다. |
 | catalog pin | `pnpm-workspace.yaml`의 `catalog:`에 적은 version이다. 각 `package.json`은 `"catalog:"`로 그 version을 가리킨다. |
 | autoInstallPeers | 요구된 peer dependency가 없으면 pnpm이 자동으로 설치하는 설정이다. 설치된 copy는 importer의 pin을 따르지 않는다. |

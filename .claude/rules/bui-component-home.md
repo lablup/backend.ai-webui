@@ -20,8 +20,8 @@ products share.
 
 1. **New product-neutral component → ui-common** (the `lablup/ui-common`
    repository), with Astryx-shaped props and `uic.<Component>.<key>` strings.
-   It reaches webui through the next ui-common release (a `vendor/` tarball
-   until 0.2.0 is published). Moving an existing BUI component there follows
+   It reaches webui through the next ui-common release, when the catalog
+   pins of `@lablup/ui-common` and `@lablup/ui-common-cli` move to it. Moving an existing BUI component there follows
    the order in FR-4087.
 2. **New component that depends on Backend.AI → BUI**
    (`packages/backend.ai-ui/src/components/`) — domain types, Relay fragments,

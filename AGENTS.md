@@ -150,7 +150,7 @@ When reviewing PRs (especially agent-generated ones), check:
 - No hardcoded strings, magic numbers, or debug artifacts left behind
 
 <!-- UI-COMMON:START -->
-@lablup/ui-common v0.2.0-alpha.14 · Astryx v0.6.2 · 164 components
+@lablup/ui-common v0.2.0-alpha.15 · Astryx v0.6.2 · 164 components
 CLI: run every command as `pnpm exec ui-common <cmd>` (shown below as `ui-common ...`).
 
 SETUP (once, first in your entry stylesheet) — without these, components render unstyled:
@@ -181,7 +181,7 @@ MORE CLI:
   swizzle <Name>     eject component source for deep customization
   upgrade --from <v> run after bumping @lablup/ui-common: ui-common's codemods, then Astryx's
 
-UI-COMMON (@lablup/ui-common v0.2.0-alpha.14 wraps Astryx v0.6.2):
+UI-COMMON (@lablup/ui-common v0.2.0-alpha.15 wraps Astryx v0.6.2):
 - Import only from @lablup/ui-common: the root, or the same subpath Astryx uses (@lablup/ui-common/Button, /theme/tokens.stylex, /lab). Never import @astryxdesign/* directly.
 - Layers: declare `@layer reset, theme, base, astryx-base, astryx-theme, ui-common, components, utilities;` once, first, in the entry stylesheet. ui-common's styles sit in `ui-common`; yours go in `components` / `utilities`.
 - Use AlertModal (@lablup/ui-common/AlertModal), not AlertDialog: ui-common hides AlertDialog.
@@ -192,16 +192,17 @@ UI-COMMON (@lablup/ui-common v0.2.0-alpha.14 wraps Astryx v0.6.2):
 - Theme: <Theme theme={lablupTheme}> with lablupTheme from @lablup/ui-common/theme/lablup/built, plus @lablup/ui-common/theme/lablup/theme.css. A product palette is its own defineTheme over lablupTheme.
 - Strings: every built-in string is a prop; defaults come from ui-common's catalog. Pass uiCommonMessages from @lablup/ui-common/i18n-catalog to Astryx's InternationalizationProvider. Never a product i18n runtime.
 - ui-common's own components: AlertModal, BoardItemTitle, BooleanToken, BulkEditFormItem, BulkErrorModal, ColorPicker, ConfirmPopover, CountBadge, CountdownBorder, DataGrid, DeleteConfirmModal, DigitPopIn, DividedRow, DoubleBadge, DoubleToken, ErrorState, Form, IconWithTooltip, ImageWithFallback, ListBanner, Modal, NotificationItem, NotificationStack, OverlayScrollbar, PageHeader, PageLayout, PagedSelector, ProgressWithLabel, SelectionLabel, Skeleton composites, SmoothHeight, StatCard, Statistic, StepNumberInput, TextHighlighter, TokenList, TokenRow, UncontrolledInput, UnitGrid. `pnpm exec ui-common docs ui-common` explains them.
-- After bumping @lablup/ui-common: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
+- The `ui-common` bin is @lablup/ui-common-cli, a devDependency pinned to the same version as @lablup/ui-common; bump both together. Without it installed, `pnpm dlx @lablup/ui-common-cli@next <cmd>` (or `npx @lablup/ui-common-cli@next <cmd>`); drop `@next` once 0.2.0 is published.
+- After bumping @lablup/ui-common and @lablup/ui-common-cli: `pnpm exec ui-common upgrade --from <old version>`, then read ui-common-upgrade-report.md.
 <!-- UI-COMMON:END -->
 PROJECT LINES (this repo; outside the generated markers so `ui-common agents --write` keeps them, and they win where they disagree with the block):
 - SETUP (this repo): `react/src/index.css` declares the layer order and imports only `reset.css` and `astryx.css`. The theme is webui's own Backend.AI theme family (`react/src/astryx-theme/`, a `defineTheme` over `neutralTheme`), not `lablupTheme` and not `theme/lablup/theme.css`. `ui-common.css` is not imported either: it holds only global scrollbar rules, and each ui-common component imports its own CSS.
-- CLI (this repo): `pnpm exec ui-common <cmd>` works inside `react/` and `packages/backend.ai-ui/`, where `@lablup/ui-common` is a dependency. From the repository root run `pnpm run ui-common <cmd>` (root `package.json` proxies it into `react/`). `ui-common astryx <cmd>` runs the Astryx CLI without rewriting its output.
+- CLI (this repo): the `ui-common` bin comes from `@lablup/ui-common-cli`, a `react/` devDependency pinned in the catalog next to `@lablup/ui-common`, so `pnpm exec ui-common <cmd>` works inside `react/`. From the repository root run `pnpm run ui-common <cmd>` (root `package.json` proxies it into `react/`); from `packages/backend.ai-ui/`, `pnpm -w run ui-common <cmd>`. `ui-common astryx <cmd>` runs the Astryx CLI without rewriting its output.
 - MIGRATION RELAXATION (antd → Astryx): the className=/style={{…}} part of the SELF-CHECK is relaxed for files carried over from the antd era, which are still full of `className` / inline `style` and `useTheme().token('--…')` reads (the former `theme.useToken()` reads; FR-3605 retired the theme-shim). Do not rewrite those wholesale — convert a file's idioms when you are already changing it for another reason. A style that props/xstyle cannot express goes in a co-located `.css` file the component imports (P17), with `var(--…)` Astryx tokens; never a runtime style engine. In a style position, prefer `'var(--…)'` over a `token()` read: `token()` is for values JS must compute with (numeric props, SVG attributes).
 - STATUS SEMANTICS (this repo; overrides "Status = StatusDot/Token; Badge = counts only" above — ADR 0007): Badge = a value the system changes on its own over time (lifecycle/health status, in-progress markers, live tickers, counts). Token = a value that changes only when a user edits it, or a category/classification label (names, types, permissions, tags, versions, on/off settings, recorded outcomes). StatusDot stays for dot-only status. BUI chips are named *Badge / *Token by the primitive they render; "Tag" is only a domain noun. Rule: .claude/rules/badge-vs-token.md.
 - BUI INTEGRATION (this repo): `backend.ai-ui` is registered as an Astryx integration, so `ui-common component`, `ui-common search` and `ui-common component --list` cover the `BAI*` wrappers next to ui-common's and core's components, and `ui-common docs backend-ai-ui` explains the layer. The component count in the block's first line is core's own, so the live catalog is larger; run the command to see it. When a `BAI*` component and a ui-common or core component both fit, use the `BAI*` one — it carries the project defaults, and it imports from `backend.ai-ui`. A new `BAI*` component ships a same-stem `{Name}.doc.ts` beside its source; a new product-neutral component goes to ui-common instead (.claude/rules/bui-component-home.md).
 
-The UI-COMMON block above is `ui-common agents` output, generated from `react/` (StyleX mode is detected there) — **do not hand-edit it**. After every `@lablup/ui-common` bump, regenerate both copies from `react/`: `pnpm exec ui-common agents --write ../AGENTS.md` and `pnpm exec ui-common agents --write AGENTS.md`. `scripts/verify.sh` fails when either is stale (`ui-common agents --check`). The PROJECT LINES right after the markers are this repository's and survive a rewrite (ADR 0009). The different markers keep `astryx init` / `astryx upgrade` from overwriting the block — do not re-add an `ASTRYX` block.
+The UI-COMMON block above is `ui-common agents` output, generated from `react/` (StyleX mode is detected there) — **do not hand-edit it**. After every `@lablup/ui-common` / `@lablup/ui-common-cli` bump (they move together), regenerate both copies from `react/`: `pnpm exec ui-common agents --write ../AGENTS.md` and `pnpm exec ui-common agents --write AGENTS.md`. `scripts/verify.sh` fails when either is stale (`ui-common agents --check`). The PROJECT LINES right after the markers are this repository's and survive a rewrite (ADR 0009). The different markers keep `astryx init` / `astryx upgrade` from overwriting the block — do not re-add an `ASTRYX` block.
 
 <!-- BAI-AGENT:start -->
 bai-agent · 14 commands
