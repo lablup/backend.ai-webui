@@ -1,5 +1,5 @@
 import { BAIPowerSearchChromeProps, FilterPropertyOption, FilterRenderInput } from './BAIPowerSearchAdapters';
-import { FilterValue, PowerSearchFilter } from '@astryxdesign/core/PowerSearch';
+import { FilterValue, PowerSearchFilter } from '@lablup/ui-common/PowerSearch';
 export type StringFilter = {
     contains?: string | null;
     startsWith?: string | null;
