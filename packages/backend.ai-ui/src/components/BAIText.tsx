@@ -11,9 +11,12 @@
 
    plain          <span.bai-text>children</span>
    ellipsis/copy  <span.bai-text.bai-text-row>
-                    <span.bai-text-content>children</span>   the clamp box
-                    [Tooltip]  [Expand]  [Copy]
+                    <span.bai-text-content>children</span>
+                    [Tooltip]  [Copy]
                   </span>
+
+ `ellipsis` clamps in CSS only — one line, or `rows` lines. antd's
+ `expandable` expand/collapse link is deliberately not offered (FR-3733).
 
  The component owns its span rather than rendering Astryx `Text`: `Text`
  paints its own type scale and colour, turns `display: block` under
@@ -24,7 +27,6 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Kbd } from '@lablup/ui-common/Kbd';
-import { Link } from '@lablup/ui-common/Link';
 import { Tooltip } from '@lablup/ui-common/Tooltip';
 import classNames from 'classnames';
 import { CheckIcon, CopyIcon } from 'lucide-react';
@@ -60,16 +62,11 @@ export interface BAITextTooltipConfig {
   [antdTooltipProp: string]: unknown;
 }
 
-/** antd `EllipsisConfig`. */
+/** antd `EllipsisConfig`, without its `expandable` / `onExpand` pair. */
 export interface BAITextEllipsisConfig {
   rows?: number;
-  expandable?: boolean;
   /** `true` shows the children; a node shows that node; `{ title }` its title. */
   tooltip?: ReactNode | BAITextTooltipConfig;
-  onExpand?: (
-    e: React.MouseEvent<HTMLElement>,
-    info: { expanded: boolean },
-  ) => void;
 }
 
 /** antd `CopyConfig`. Tuples are `[resting, copied]`. */
@@ -152,6 +149,26 @@ const resolveTooltipContent = (
   return tooltip as ReactNode;
 };
 
+/** Whether the content of a clamp box is taller than the box itself. */
+const contentOverflows = (element: HTMLElement) => {
+  // `-webkit-line-clamp` can report the clamped height as scrollHeight, so
+  // measure the content itself as well.
+  let contentHeight = element.scrollHeight;
+  try {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    contentHeight = Math.max(
+      contentHeight,
+      range.getBoundingClientRect().height,
+    );
+    range.detach();
+  } catch {
+    // No Range layout (jsdom): the clamped scrollHeight is all there is.
+    contentHeight = element.scrollHeight;
+  }
+  return contentHeight > element.clientHeight + 1;
+};
+
 /**
  * Overflow of the clamp box, re-measured on resize and on new children — a
  * fixed-width cell whose value changes does not resize, so a ResizeObserver
@@ -170,26 +187,11 @@ const useOverflow = (
     const element = ref.current;
     if (!enabled || !element) return;
     const check = () => {
-      if (rows === 1) {
-        setIsOverflowing(element.scrollWidth > element.clientWidth);
-        return;
-      }
-      // `-webkit-line-clamp` can report the clamped height as scrollHeight, so
-      // measure the content itself as well.
-      let contentHeight = element.scrollHeight;
-      try {
-        const range = document.createRange();
-        range.selectNodeContents(element);
-        contentHeight = Math.max(
-          contentHeight,
-          range.getBoundingClientRect().height,
-        );
-        range.detach();
-      } catch {
-        // No Range layout (jsdom): the clamped scrollHeight is all there is.
-        contentHeight = element.scrollHeight;
-      }
-      setIsOverflowing(contentHeight > element.clientHeight + 1);
+      setIsOverflowing(
+        rows === 1
+          ? element.scrollWidth > element.clientWidth
+          : contentOverflows(element),
+      );
     };
     check();
     if (typeof ResizeObserver === 'undefined') return;
@@ -300,21 +302,23 @@ const BAIText: React.FC<BAITextProps> = ({
   ...restProps
 }) => {
   'use memo';
-  const { t } = useBAIi18n();
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const ellipsisConfig = typeof ellipsis === 'object' ? ellipsis : undefined;
   const rows = ellipsisConfig?.rows || 1;
-  const expandable = ellipsisConfig?.expandable ?? false;
   const tooltipContent = resolveTooltipContent(ellipsis, children);
 
+  // antd wrapped the children in the matching element; the box treatment
+  // rides on it, and under `ellipsis` it is also the clamp box. `keyboard`
+  // is Astryx `Kbd`, which takes the children's text as its `keys` spec.
+  const ContentTag = code ? 'code' : mark ? 'mark' : 'span';
+  const boxClassName = code
+    ? 'bai-text-code'
+    : mark
+      ? 'bai-text-mark'
+      : undefined;
+  const content = keyboard ? <Kbd keys={nodeToText(children)} /> : children;
+
   const contentRef = useRef<HTMLElement | null>(null);
-  const isOverflowing = useOverflow(
-    contentRef,
-    !!ellipsis && !isExpanded,
-    rows,
-    children,
-  );
+  const isOverflowing = useOverflow(contentRef, !!ellipsis, rows, children);
 
   const rootClassName = classNames(
     'bai-text',
@@ -336,17 +340,6 @@ const BAIText: React.FC<BAITextProps> = ({
     className,
   );
 
-  // antd wrapped the children in the matching element; the box treatment
-  // rides on it, and under `ellipsis` it is also the clamp box. `keyboard`
-  // is Astryx `Kbd`, which takes the children's text as its `keys` spec.
-  const ContentTag = code ? 'code' : mark ? 'mark' : 'span';
-  const boxClassName = code
-    ? 'bai-text-code'
-    : mark
-      ? 'bai-text-mark'
-      : undefined;
-  const content = keyboard ? <Kbd keys={nodeToText(children)} /> : children;
-
   if (!ellipsis && !copyable) {
     return (
       <span {...restProps} className={rootClassName} style={style}>
@@ -359,12 +352,6 @@ const BAIText: React.FC<BAITextProps> = ({
     );
   }
 
-  const handleExpand = (e: React.MouseEvent<HTMLElement>) => {
-    const next = !isExpanded;
-    setIsExpanded(next);
-    ellipsisConfig?.onExpand?.(e, { expanded: next });
-  };
-
   return (
     <span
       {...restProps}
@@ -374,32 +361,20 @@ const BAIText: React.FC<BAITextProps> = ({
       <ContentTag
         ref={contentRef}
         className={classNames('bai-text-content', boxClassName, {
-          'bai-text-content-expanded': !!ellipsis && isExpanded,
-          'bai-text-content-clip': !!ellipsis && !isExpanded && rows === 1,
-          'bai-text-content-clamp': !!ellipsis && !isExpanded && rows > 1,
+          'bai-text-content-clip': !!ellipsis && rows === 1,
+          'bai-text-content-clamp': !!ellipsis && rows > 1,
         })}
-        style={
-          ellipsis && !isExpanded && rows > 1
-            ? { WebkitLineClamp: rows }
-            : undefined
-        }
+        style={ellipsis && rows > 1 ? { WebkitLineClamp: rows } : undefined}
       >
         {content}
       </ContentTag>
-      {tooltipContent !== undefined && isOverflowing && !isExpanded ? (
+      {tooltipContent !== undefined && isOverflowing ? (
         <Tooltip
           anchorRef={contentRef}
           // The bubble is a DOM sibling, so it inherits a table cell's
           // `white-space: nowrap`; the wrapper lets the full text wrap.
           content={<span className="bai-text-tooltip">{tooltipContent}</span>}
         />
-      ) : null}
-      {expandable && (isOverflowing || isExpanded) ? (
-        <Link className="bai-text-expand" onClick={handleExpand}>
-          {isExpanded
-            ? t('general.button.Collapse')
-            : t('general.button.Expand')}
-        </Link>
       ) : null}
       {copyable ? (
         <CopyControl copyable={copyable}>{children}</CopyControl>
