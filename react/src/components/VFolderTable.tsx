@@ -7,7 +7,6 @@ import { Form } from '../form-engine';
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { useKeyPairLazyLoadQuery } from '../hooks/hooksUsingRelay';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
@@ -32,6 +31,7 @@ import {
   BAITable,
   useEventNotStable,
   useUpdatableState,
+  v2AllowedVfolderHostsToRecord,
   type BAIColumnsType,
   type BAITableProps,
   BAITextHighlighter,
@@ -150,7 +150,6 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
   );
 
   const baiClient = useSuspendedBackendaiClient();
-  const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
 
   const [internalForm] = Form.useForm<AliasMap>();
   useEffect(() => {
@@ -193,13 +192,12 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     staleTime: 1000,
   });
 
-  const { domain, group, keypair_resource_policy } =
+  const { domain, group, myKeypairResourcePolicyV2 } =
     useLazyLoadQuery<VFolderTableProjectQuery>(
       graphql`
         query VFolderTableProjectQuery(
           $domain_name: String!
           $group_id: UUID!
-          $keypair_resource_policy_name: String!
         ) {
           domain(name: $domain_name) {
             allowed_vfolder_hosts
@@ -207,15 +205,17 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
           group(id: $group_id, domain_name: $domain_name) {
             allowed_vfolder_hosts
           }
-          keypair_resource_policy(name: $keypair_resource_policy_name) {
-            allowed_vfolder_hosts
+          myKeypairResourcePolicyV2 {
+            allowedVfolderHosts {
+              host
+              permissions
+            }
           }
         }
       `,
       {
         domain_name: baiClient._config.domainName,
         group_id: currentProject.id,
-        keypair_resource_policy_name: keypair?.resource_policy || '',
       },
       {
         fetchPolicy: 'store-and-network',
@@ -230,9 +230,10 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     const allowedVFolderHostsByGroup = JSON.parse(
       group?.allowed_vfolder_hosts || '{}',
     );
-    const allowedVFolderHostsByKeypairResourcePolicy = JSON.parse(
-      keypair_resource_policy?.allowed_vfolder_hosts || '{}',
-    );
+    const allowedVFolderHostsByKeypairResourcePolicy =
+      v2AllowedVfolderHostsToRecord(
+        myKeypairResourcePolicyV2?.allowedVfolderHosts,
+      );
 
     const mergedVFolderPermissions = _.merge(
       {}, // start with empty object
@@ -244,7 +245,7 @@ const VFolderTable: React.FC<VFolderTableProps> = ({
     return Object.keys(mergedVFolderPermissions).filter((volume) =>
       mergedVFolderPermissions[volume].includes(MOUNT_IN_SESSION_PERMISSION),
     );
-  }, [domain, group, keypair_resource_policy]);
+  }, [domain, group, myKeypairResourcePolicyV2]);
 
   const accessibleFoldersByCurrentProject = useMemo(() => {
     return (

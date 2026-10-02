@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "เลือกบริการโมเดล"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "เลือกนโยบายทรัพยากรโครงการ"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "เลือกกลุ่มทรัพยากร"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "เลือกเซสชัน"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "เลือกนโยบายทรัพยากรผู้ใช้"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "คำอธิบาย",

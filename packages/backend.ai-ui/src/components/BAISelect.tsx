@@ -9,7 +9,7 @@
  BAISelectProps`** and spread the bag straight through — `StorageSelect`,
  `AccessKeySelect`, `ProjectSelect`, `PrometheusCategorySelect`,
  `Chat/ModelSelect`, `SettingItem`, `SharedResourceGroupSelectForCurrentProject`,
- `BAIProjectResourceGroupSelect`, `BAIProjectResourcePolicySelect`,
+ `BAIProjectResourceGroupSelect`,
  `BAIResourceGroupSelect`, `BAIStorageProxySelect`, `BAIVFolderPathPicker`.
  None of those are in this ticket's scope, so the public prop surface stays
  antd `Select`-SHAPED and translates internally. `SelectProps` /

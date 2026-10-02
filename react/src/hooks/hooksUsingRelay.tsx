@@ -49,51 +49,61 @@ export const useKeyPairLazyLoadQuery = (
   return [keypair, { refresh }] as const;
 };
 
+/** Snake-case field names kept so the session-form callers stay unchanged. */
+interface CurrentKeyPairResourcePolicy {
+  max_containers_per_session: number | null | undefined;
+  max_concurrent_sessions: number | null | undefined;
+}
+
 export const useCurrentKeyPairResourcePolicyLazyLoadQuery = (
   options: FetchOptions = {
     fetchPolicy: 'store-and-network',
   },
 ) => {
+  'use memo';
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
   const baiClient = useSuspendedBackendaiClient();
+  // Only for `concurrency_used`, which has no V2 counterpart.
   const [keypair] = useKeyPairLazyLoadQuery(baiClient?._config.accessKey);
 
-  const { keypair_resource_policy } =
+  const { myKeypairResourcePolicyV2 } =
     useLazyLoadQuery<hooksUsingRelay_KeyPairResourcePolicyQuery>(
       graphql`
-        query hooksUsingRelay_KeyPairResourcePolicyQuery($name: String!) {
-          keypair_resource_policy(name: $name) {
-            max_containers_per_session
-            max_concurrent_sessions
+        query hooksUsingRelay_KeyPairResourcePolicyQuery {
+          myKeypairResourcePolicyV2 {
+            maxContainersPerSession
+            maxConcurrentSessions
           }
         }
       `,
-      {
-        name: keypair?.resource_policy || '',
-      },
+      {},
       {
         ...options,
         fetchKey: fetchKey + options.fetchKey,
       },
     );
 
-  const refresh = useCallback(() => {
+  const keypairResourcePolicy: CurrentKeyPairResourcePolicy | null | undefined =
+    myKeypairResourcePolicyV2 && {
+      max_containers_per_session:
+        myKeypairResourcePolicyV2.maxContainersPerSession,
+      max_concurrent_sessions: myKeypairResourcePolicyV2.maxConcurrentSessions,
+    };
+  const maxConcurrentSessions =
+    keypairResourcePolicy?.max_concurrent_sessions || SIGNED_32BIT_MAX_INT;
+
+  const refresh = () => {
     updateFetchKey();
-  }, [updateFetchKey]);
+  };
 
   return [
     {
-      keypairResourcePolicy: (keypair_resource_policy || {}) as NonNullable<
-        typeof keypair_resource_policy
-      >,
+      keypairResourcePolicy: (keypairResourcePolicy ||
+        {}) as CurrentKeyPairResourcePolicy,
       keypair: (keypair || {}) as NonNullable<typeof keypair>,
       sessionLimitAndRemaining: {
-        max:
-          (keypair_resource_policy || {}).max_concurrent_sessions ||
-          SIGNED_32BIT_MAX_INT,
-        remaining:
-          ((keypair_resource_policy || {}).max_concurrent_sessions ||
-            SIGNED_32BIT_MAX_INT) - ((keypair || {}).concurrency_used || 0),
+        max: maxConcurrentSessions,
+        remaining: maxConcurrentSessions - (keypair?.concurrency_used || 0),
       },
     },
     { refresh },
