@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="연산 세션에 대한 SFTP 연결" />
   <meta name="twitter:description" content="Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원합니다. 이번 절에서는 그 방법을 알아봅니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션에 대한 SFTP 연결","inLanguage":"ko","description":"Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원합니다. 이번 절에서는 그 방법을 알아봅니다.","dateModified":"2026-09-28T05:53:16.000Z","url":"https://webui.docs.backend.ai/next/ko/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"연산 세션에 대한 SFTP 연결","inLanguage":"ko","description":"Backend.AI는 생성된 연산 세션(컨테이너)에 SSH/SFTP 접속을 지원합니다. 이번 절에서는 그 방법을 알아봅니다.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/ko/sftp_to_container.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/sftp_to_container.html" />
   <link rel="alternate" hreflang="en" href="../en/sftp_to_container.html" />
   <link rel="alternate" hreflang="ja" href="../ja/sftp_to_container.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (7f300ee)">v26.9.0-alpha.0 (7f300ee)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (9f19007)">v26.9.0-alpha.0 (9f19007)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -223,7 +223,7 @@
 
 
 <p data-bai-block="6">다음으로 SSH/SFTP 접속 정보가 담긴 대화상자가 팝업됩니다. 이 대화상자에는 접속에 사용할 <strong>사용자</strong>, <strong>호스트</strong>, <strong>포트</strong> 값과 바로 사용할 수 있는 <code>sftp</code>, <code>scp</code>, <code>rsync</code> 예시 명령, 그리고 <code>id_container</code> 파일을 로컬 머신에 저장하는 <strong>SSH 키 다운로드</strong> 버튼이 표시됩니다. 이 파일은 자동으로 생성된 SSH 개인 키입니다. 버튼을 쓰는 대신 웹 터미널이나 Jupyter Notebook을 통해 이 파일을 직접 다운로드해도 됩니다. <code>id_container</code> 파일은 <code>/home/work/</code> 아래에 있습니다. 자동 생성된 SSH 키는 새 세션이 생성되면 바뀔 수 있으며, 그 경우 다시 다운로드해야 합니다.</p>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1652" /><figcaption>그림 18.1</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/SSH_SFTP_connection.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1652" /><figcaption>그림 18.1</figcaption></figure>
 </p>
 <p><figure data-bai-block="8" class="doc-figure"><img src="./images/sftp_app.png" alt="" class="doc-image" loading="lazy" decoding="async" width="930" height="1608" /><figcaption>그림 18.2</figcaption></figure>
 </p>
@@ -274,13 +274,13 @@
 <p><figure data-bai-block="28" class="doc-figure"><img src="./images/puttygen_conversion.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1758" height="898" /><figcaption>그림 18.4</figcaption></figure>
 </p>
 <p data-bai-block="29">FileZilla 클라이언트를 실행한 후, 설정-연결-SFTP로 이동하여 키 파일 <code>id_container.ppk</code>(OpenSSH를 지원하는 클라이언트의 경우 <code>id_container</code>)를 등록합니다.</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>그림 18.5</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/filezilla_setting.png" alt="" class="doc-image" style="width:628px" loading="lazy" decoding="async" width="1257" height="910" /><figcaption>그림 18.5</figcaption></figure>
 </p>
 <p data-bai-block="31">사이트 관리자를 열고, 새 사이트를 생성한 후 다음과 같이 접속 정보를 입력합니다.</p>
-<p><figure data-bai-block="32" class="doc-figure"><img src="./images/filezilla_site_setting.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1596" height="901" /><figcaption>그림 18.6</figcaption></figure>
+<p><figure data-bai-block="32" class="doc-figure"><img src="./images/filezilla_site_setting.png" alt="" class="doc-image" style="width:798px" loading="lazy" decoding="async" width="1596" height="901" /><figcaption>그림 18.6</figcaption></figure>
 </p>
 <p data-bai-block="33">컨테이너에 처음 접속할 때 다음과 같은 확인 팝업이 나타날 수 있습니다. OK 버튼을 클릭하여 호스트 키를 저장합니다.</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/unknown_host_key.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1002" height="527" /><figcaption>그림 18.7</figcaption></figure>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/unknown_host_key.png" alt="" class="doc-image" style="width:501px" loading="lazy" decoding="async" width="1002" height="527" /><figcaption>그림 18.7</figcaption></figure>
 </p>
 <p data-bai-block="35">잠시 후 다음과 같이 접속이 완료된 것을 확인할 수 있습니다. 이 SFTP 접속을 통해 <code>/home/work/</code> 또는 마운트된 스토리지 폴더로 대용량 파일을 전송합니다.</p>
 <p><figure data-bai-block="36" class="doc-figure"><img src="./images/filezilla_connection_established.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1775" height="1114" /><figcaption>그림 18.8</figcaption></figure>
@@ -293,7 +293,7 @@
 <p><figure data-bai-block="41" class="doc-figure"><img src="./images/vscode_install_remote_ssh.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1471" height="327" /><figcaption>그림 18.9</figcaption></figure>
 </p>
 <p data-bai-block="42">확장을 설치한 후, 연산 세션에 대한 SSH 접속을 설정합니다. VSCode Remote Connection 대화상자에서 복사 아이콘 버튼을 클릭하여 Visual Studio Code 원격 SSH 비밀번호를 복사합니다. 대화상자에 표시된 호스트와 포트 번호도 기억해 둡니다.</p>
-<p><figure data-bai-block="43" class="doc-figure"><img src="./images/download_ssh_key.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1244" height="1684" /><figcaption>그림 18.10</figcaption></figure>
+<p><figure data-bai-block="43" class="doc-figure"><img src="./images/download_ssh_key.png" alt="" class="doc-image" style="width:622px" loading="lazy" decoding="async" width="1244" height="1684" /><figcaption>그림 18.10</figcaption></figure>
 </p>
 <p data-bai-block="44">그런 다음 SSH config 파일을 설정합니다. <code>~/.ssh/config</code> 파일(Linux/Mac의 경우) 또는 <code>C:\Users\[사용자 이름]\.ssh\config</code> 파일(Windows의 경우)을 편집하고 다음 블록을 추가합니다. <code>Hostname</code>과 <code>Port</code> 항목에는 대화상자에 표시된 호스트와 포트 번호를 입력합니다. 편의를 위해 호스트 이름을 <code>bai-vscode</code>로 설정합니다. 원하는 별칭으로 바꿔도 됩니다.</p>
 <pre data-bai-block="45" class="shiki-host"><code><span class="line">Host bai-vscode</span>
@@ -312,10 +312,10 @@
 <p><figure data-bai-block="51" class="doc-figure"><img src="./images/vscode_remote_ssh_select_host.png" alt="" class="doc-image" loading="lazy" decoding="async" width="609" height="211" /><figcaption>그림 18.13</figcaption></figure>
 </p>
 <p data-bai-block="52">호스트 이름을 선택하면 원격 연산 세션에 접속됩니다. 접속이 완료되면 빈 창이 표시됩니다. 상태 표시줄에서 접속된 호스트를 항상 확인할 수 있습니다.</p>
-<p><figure data-bai-block="53" class="doc-figure"><img src="./images/vscode_connect_finish.png" alt="" class="doc-image" loading="lazy" decoding="async" width="666" height="94" /><figcaption>그림 18.14</figcaption></figure>
+<p><figure data-bai-block="53" class="doc-figure"><img src="./images/vscode_connect_finish.png" alt="" class="doc-image" style="width:333px" loading="lazy" decoding="async" width="666" height="94" /><figcaption>그림 18.14</figcaption></figure>
 </p>
 <p data-bai-block="54">이제 평소처럼 <code>File &gt; Open...</code> 또는 <code>File &gt; Open Workspace...</code> 메뉴로 원격 호스트의 폴더나 워크스페이스를 엽니다.</p>
-<p><figure data-bai-block="55" class="doc-figure"><img src="./images/vscode_connected_host_file_open.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1228" height="740" /><figcaption>그림 18.15</figcaption></figure>
+<p><figure data-bai-block="55" class="doc-figure"><img src="./images/vscode_connected_host_file_open.png" alt="" class="doc-image" style="width:614px" loading="lazy" decoding="async" width="1228" height="740" /><figcaption>그림 18.15</figcaption></figure>
 </p>
 <p><a id="establish-ssh-connection-with-backendai-client-package"></a></p>
 <h2 data-bai-block="56" id="sftp_to_container-backendai-클라이언트-패키지로-ssh-접속-설정">Backend.AI 클라이언트 패키지로 SSH 접속 설정<a class="hash-link" href="#sftp_to_container-backendai-클라이언트-패키지로-ssh-접속-설정" aria-label="Direct link to Backend.AI 클라이언트 패키지로 SSH 접속 설정">#</a></h2>
@@ -330,7 +330,7 @@
 <span class="line"></span>
 <span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> pull</span><span style="color:#9ECBFF"> lablup/backend.ai-client:</span><span style="color:#E1E4E8">${VERSION}</span></span></code></pre></div>
 <p data-bai-block="63">Backend.AI 서버 버전은 Web UI 우측 상단의 사람 아이콘을 클릭하면 나타나는 &quot;Backend.AI에 대하여&quot; 메뉴에서 확인합니다.</p>
-<p><figure data-bai-block="64" class="doc-figure"><img src="./images/check_backend_server_version.png" alt="" class="doc-image" loading="lazy" decoding="async" width="700" height="610" /><figcaption>그림 18.16</figcaption></figure>
+<p><figure data-bai-block="64" class="doc-figure"><img src="./images/check_backend_server_version.png" alt="" class="doc-image" style="width:350px" loading="lazy" decoding="async" width="700" height="610" /><figcaption>그림 18.16</figcaption></figure>
 </p>
 <p data-bai-block="65">다음 명령으로 Docker 이미지를 실행합니다.</p>
 <div data-bai-block="66" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> run</span><span style="color:#79B8FF"> --rm</span><span style="color:#79B8FF"> -it</span><span style="color:#9ECBFF"> lablup/backend.ai-client</span><span style="color:#9ECBFF"> bash</span></span></code></pre></div>
@@ -409,7 +409,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/sftp_to_container/sftp_to_container.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 28일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 1일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./share_vfolder.html">

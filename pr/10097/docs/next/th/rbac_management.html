@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การจัดการ RBAC" />
   <meta name="twitter:description" content="การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การจัดการ RBAC","inLanguage":"th","description":"การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…","dateModified":"2026-09-30T04:48:26.000Z","url":"https://webui.docs.backend.ai/next/th/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การจัดการ RBAC","inLanguage":"th","description":"การจัดการ RBAC (Role-Based Access Control) ช่วยให้ผู้ดูแลระบบระดับสูงสามารถกำหนดบทบาทที่มีสิทธิ์แบบละเอียดและมอบหมายให้กับผู้ใช้ได้ ด้วย RBAC…","dateModified":"2026-10-02T01:41:48.000Z","url":"https://webui.docs.backend.ai/next/th/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
   <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
   <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (7f300ee)">v26.9.0-alpha.0 (7f300ee)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (9f19007)">v26.9.0-alpha.0 (9f19007)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -408,7 +408,7 @@
 <p><a id="system-roles-and-assignment-restrictions"></a></p>
 <h3 data-bai-block="99" id="rbac_management-บทบาทระบบและขอจำกดในการมอบหมาย">บทบาทระบบและข้อจำกัดในการมอบหมาย<a class="hash-link" href="#rbac_management-บทบาทระบบและขอจำกดในการมอบหมาย" aria-label="Direct link to บทบาทระบบและข้อจำกัดในการมอบหมาย">#</a></h3>
 <p data-bai-block="100">บทบาทผู้ดูแลโปรเจกต์ที่ระบบสร้างขึ้น (บทบาทที่มี<strong>แหล่งที่มา</strong>เป็น<strong>ระบบ</strong>) ไม่สามารถมอบหมายหรือเพิกถอนผู้ใช้ได้โดยตรงจากแท็บการมอบหมายบทบาท แท็บนี้จะแสดงการแจ้งเตือน <strong>บทบาทที่ระบบสร้างขึ้นโดยอัตโนมัติไม่สามารถมอบหมายหรือนำผู้ใช้ออกได้โดยตรง</strong> และตารางการมอบหมายจะเป็นแบบอ่านอย่างเดียว (ตัวควบคุม <strong>เพิ่มผู้ใช้</strong> และการเพิกถอนจะถูกซ่อนไว้)</p>
-<p><figure data-bai-block="101" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 21.10</figcaption></figure>
+<p><figure data-bai-block="101" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 21.10</figcaption></figure>
 </p>
 <p data-bai-block="102">หากต้องการจัดการผู้ที่ดูแลโปรเจกต์ ให้ใช้ <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> บนหน้าโปรเจกต์แทน ดูที่<a href="./project_admin.html#set-project-admin">ตั้งค่าผู้ดูแลโปรเจกต์</a>ในบทฟีเจอร์สำหรับผู้ดูแลโปรเจกต์ และ<a href="#grant-project-admin">การมอบสิทธิ์ผู้ดูแลโปรเจกต์</a>ด้านล่าง</p>
 <p><a id="revoke-users-from-a-role"></a></p>
@@ -419,7 +419,7 @@
 <li data-bai-block="106">ในแท็บ <strong>การมอบหมายบทบาท</strong> วางเมาส์เหนือแถวผู้ใช้แล้วคลิกไอคอนเพิกถอน (ถังขยะ) ถัดจากผู้ใช้</li>
 <li data-bai-block="107">โมดอลยืนยัน <strong>นำผู้ใช้ออกจากบทบาท</strong> จะเปิดขึ้น ตรวจสอบผู้ใช้ที่แสดงในรายการ จากนั้นคลิก <strong>นำผู้ใช้ออกจากบทบาท</strong> เพื่อยืนยัน หรือ <strong>ยกเลิก</strong> เพื่อปิด</li>
 </ol>
-<p><figure data-bai-block="108" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="436" /><figcaption>รูปที่ 21.11</figcaption></figure>
+<p><figure data-bai-block="108" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="436" /><figcaption>รูปที่ 21.11</figcaption></figure>
 </p>
 <p data-bai-block="109">ในการเพิกถอนผู้ใช้หลายคนพร้อมกัน:</p>
 <ol>
@@ -444,7 +444,7 @@
 <p><figure data-bai-block="119" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 21.13</figcaption></figure>
 </p>
 <p data-bai-block="120">มอบและเพิกถอนสิทธิ์ผู้ดูแลโปรเจกต์ผ่านขั้นตอนคลิกเดียว <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> บนหน้าผู้ดูแล<strong>โปรเจกต์</strong> ตามที่อธิบายไว้ใน<a href="./project_admin.html#set-project-admin">ตั้งค่าผู้ดูแลโปรเจกต์</a>ในบทฟีเจอร์สำหรับผู้ดูแลโปรเจกต์ บทบาทผู้ดูแลโปรเจกต์เป็นบทบาทระบบ ดังนั้นแท็บการมอบหมายบทบาทที่นี่จึงเป็นแบบ<strong>อ่านอย่างเดียว</strong>และมีไว้เพื่อการตรวจสอบ คุณยังสามารถเปิดบทบาทเพื่อดูว่าใครถือสิทธิ์ผู้ดูแลโปรเจกต์อยู่ในปัจจุบัน โมดอล <strong>ตั้งค่าผู้ดูแลโปรเจกต์</strong> ยังลิงก์กลับไปยังแผงรายละเอียดของบทบาทนี้ผ่านทางลัด RBAC ด้วย</p>
-<p><figure data-bai-block="121" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 21.14</figcaption></figure>
+<p><figure data-bai-block="121" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 21.14</figcaption></figure>
 </p>
 <p data-bai-block="122">เมื่อมอบสิทธิ์แล้ว ผู้ใช้จะได้รับสิทธิ์ผู้ดูแลโปรเจกต์ทันที เมื่อผู้ใช้เปิดดรอปดาวน์โปรเจกต์ในส่วนหัวในครั้งถัดไป ผู้ใช้จะเห็นป้ายผู้ดูแลโปรเจกต์ถัดจากโปรเจกต์ที่เกี่ยวข้อง รวมถึงรายการแถบด้านข้างสำหรับผู้ดูแลโปรเจกต์ที่อธิบายไว้ในบท <a href="./project_admin.html#project-admin-features">ฟีเจอร์สำหรับผู้ดูแลโปรเจกต์</a></p>
 
@@ -452,7 +452,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 30 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 2 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">
