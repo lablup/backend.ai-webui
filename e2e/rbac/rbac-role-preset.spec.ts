@@ -43,10 +43,11 @@ async function openFilterField(page: Page, fieldLabel: string) {
 }
 
 // While a filter/sort change is in flight, `BAITable` keeps the previous rows
-// on screen and marks its dim layer `aria-busy` (see environment.spec.ts).
+// on screen and ui-common `DataGrid` marks its rows wrapper `aria-busy`
+// (see environment.spec.ts).
 async function waitForTableSettled(page: Page) {
   await expect(
-    page.locator('.bai-table-astryx-dim-layer[aria-busy="true"]'),
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
   ).toHaveCount(0, { timeout: 20000 });
 }
 
