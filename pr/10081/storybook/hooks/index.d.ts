@@ -15,8 +15,7 @@ type UseMemoizedJsonParseOptions<T> = {
  * const data = useMemoizedJSONParse<MyType>(jsonString, { fallbackValue: defaultValue });
  */
 export declare function useMemoizedJSONParse<T = any>(jsonString: string | undefined | null, options?: UseMemoizedJsonParseOptions<T>): T;
-export declare const useDateISOState: (initialValue?: string) => readonly [string, (newValue?: string | undefined) => void];
-export declare const useUpdatableState: (initialValue: string) => readonly [string, (newValue?: string | undefined) => void];
+export { useDateISOState, useUpdatableState } from './useUpdatableState';
 export declare const INITIAL_FETCH_KEY = "first";
 export declare const useFetchKey: () => readonly [string, (newValue?: string | undefined) => void, "first"];
 export declare const useAllowedHostNames: () => string[];
