@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3848ed0926bc9964b6ebdb3772c96e5c>>
+ * @generated SignedSource<<70072cc8e24a415f2daa3042d05c54dc>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,9 +13,10 @@ export type SwitchToProjectButtonQuery$variables = {
   projectId: string;
 };
 export type SwitchToProjectButtonQuery$data = {
-  readonly group_node: {
-    readonly id: string;
-    readonly name: string | null | undefined;
+  readonly projectV2: {
+    readonly basicInfo: {
+      readonly name: string;
+    };
   } | null | undefined;
 };
 export type SwitchToProjectButtonQuery = {
@@ -33,44 +34,49 @@ var v0 = [
 ],
 v1 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "id",
-        "variableName": "projectId"
-      }
-    ],
-    "concreteType": "GroupNode",
-    "kind": "LinkedField",
-    "name": "group_node",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "name",
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "projectId",
+    "variableName": "projectId"
   }
-];
+],
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ProjectBasicInfo",
+  "kind": "LinkedField",
+  "name": "basicInfo",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "name",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "SwitchToProjectButtonQuery",
-    "selections": (v1/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
@@ -79,19 +85,39 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "SwitchToProjectButtonQuery",
-    "selections": (v1/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v1/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "id",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "d9b043a52eacadb018a0097fe3c1f3c2",
+    "cacheID": "a7697d7f2a21b2507530a2ef76f6f572",
     "id": null,
     "metadata": {},
     "name": "SwitchToProjectButtonQuery",
     "operationKind": "query",
-    "text": "query SwitchToProjectButtonQuery(\n  $projectId: String!\n) {\n  group_node(id: $projectId) @since(version: \"24.03.0\") {\n    id\n    name\n  }\n}\n"
+    "text": "query SwitchToProjectButtonQuery(\n  $projectId: UUID!\n) {\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "4618e2aed2bc3c75a1d0a91f0b01c28c";
+(node as any).hash = "09041346300a3620e13e069352b220a7";
 
 export default node;

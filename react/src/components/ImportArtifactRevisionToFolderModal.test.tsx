@@ -89,13 +89,12 @@ vi.mock('backend.ai-ui', async (importOriginal) => {
 
 type GroupMock = { id: string; name: string };
 
-const TestRenderer: React.FC = () => {
+const TestRenderer: React.FC<{ modelStoreProjects: Array<GroupMock> }> = ({
+  modelStoreProjects,
+}) => {
   const data = useLazyLoadQuery<ImportArtifactRevisionToFolderModalTestQuery>(
     graphql`
       query ImportArtifactRevisionToFolderModalTestQuery @relay_test_operation {
-        groups(is_active: true, type: ["MODEL_STORE"]) {
-          ...ImportArtifactRevisionToFolderModalModelStoreProjectsFragment
-        }
         artifact(id: "test-artifact-id") {
           revisions(limit: 1) {
             edges {
@@ -110,12 +109,12 @@ const TestRenderer: React.FC = () => {
     {},
   );
   const revisions = data.artifact?.revisions?.edges?.map((edge) => edge.node);
-  if (!data.groups || !revisions) return null;
+  if (!revisions) return null;
   return (
     <ImportArtifactRevisionToFolderModal
       open
       selectedArtifactRevisionFrgmt={revisions}
-      modelStoreProjectsFrgmt={data.groups.filter((group) => !!group)}
+      modelStoreProjects={modelStoreProjects}
     />
   );
 };
@@ -124,9 +123,6 @@ const renderModal = (groups: Array<GroupMock>) => {
   const environment: RelayMockEnvironment = createMockEnvironment();
   environment.mock.queueOperationResolver((operation) =>
     MockPayloadGenerator.generate(operation, {
-      // Pin the list length explicitly — the default generator would always
-      // produce exactly one Group.
-      Query: () => ({ groups }),
       ArtifactRevision: () => ({ id: 'test-revision-id' }),
     }),
   );
@@ -134,7 +130,7 @@ const renderModal = (groups: Array<GroupMock>) => {
     <RelayEnvironmentProvider environment={environment}>
       <>
         <Suspense fallback={null}>
-          <TestRenderer />
+          <TestRenderer modelStoreProjects={groups} />
         </Suspense>
       </>
     </RelayEnvironmentProvider>,
