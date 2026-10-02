@@ -28,6 +28,7 @@
     "build:react-only": "pnpm run --prefix ./react build:only",
     "server:p": "serve build/web",
     "dev": "node scripts/dev.mjs",
+    "dev-env": "node scripts/dev-env.mjs",
     "electron:d": "electron build/electron-app --dev",
     "electron:d:hmr": "LIVE_DEBUG=1 electron build/electron-app --dev",
     "relay": "relay-compiler",

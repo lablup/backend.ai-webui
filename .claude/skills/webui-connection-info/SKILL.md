@@ -35,7 +35,22 @@ If no dev server is running, tell the user to start it with `pnpm run dev` (Port
 
 ## API Endpoint & Credentials
 
-Read `e2e/envs/.env.playwright` to get the current server endpoint and login credentials.
+The source of truth is the team's Bitwarden collection, read through `pnpm run dev-env` (`DEV_ENVIRONMENT.md`, "Dev servers and test accounts"). It lists every dev API server and test account together with the notes that say what each is good for.
+
+### Choosing a server and an account
+
+1. `pnpm run dev-env list --json` — servers and accounts with `tags`, `notes`, `verifiedAt` and `stale`. It carries no passwords, so it is safe to quote.
+2. Match the task against it: filter by `tags` first (`multi-project`, `plugin:<name>`, `no-destructive`, …), then read `notes` to decide between what is left. Prefer the least-privileged role that can do the task, and never run a destructive flow on an account or server tagged `no-destructive`.
+3. Say which server and account you picked and why, in one line, before using them.
+4. `pnpm run dev-env get <server> <role> --json` for that account's endpoint, email and password — or `pnpm run dev-env use <server> [role]` to write the pick into `.env.development.local` and `e2e/envs/.env.playwright` when a dev server or the E2E suite should use it.
+
+Treat an entry with `stale: true` as a hint, not a fact: confirm what the note claims against the live server (the `bai-agent` skill) before relying on it. When a note turns out wrong or missing, tell the user what should change — the account is read-only, so a human edits Bitwarden.
+
+If `dev-env` reports that `bw` or its config is missing, the machine is not set up: tell the user to run `pnpm run dev-env setup` (it asks for secrets interactively, so you cannot run it), and fall back to the file below.
+
+### The file fallback
+
+Read `e2e/envs/.env.playwright` to get the server endpoint and login credentials the last `dev-env use` (or a human) wrote.
 
 Key variables:
 - `E2E_WEBSERVER_ENDPOINT` — Backend.AI API server URL

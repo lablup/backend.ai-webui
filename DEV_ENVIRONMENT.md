@@ -93,6 +93,51 @@ Notes:
 - `dev.mjs` also exposes the URL to the React bundle as `VITE_DEV_SHARE_URL`. Set `DEV_GW_CONFIG` to read the config from a different path.
 - When the app name is auto-derived by `portless run` (no `FR-XXXX` branch, no `PORTLESS_APP_NAME`), `dev.mjs` prints the pattern instead of a concrete URL — substitute the name Portless prints.
 
+## Dev servers and test accounts (`pnpm run dev-env`)
+
+Which API server a dev session talks to, and which test account it logs in with, live in the team's Bitwarden collection — not in this repository and not in anyone's notes. `pnpm run dev-env` reads that collection and writes the pick into the two git-ignored files that already consume it:
+
+- `.env.development.local` — `VITE_DEFAULT_API_ENDPOINT` / `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, the login-screen pre-fill.
+- `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
+
+```bash
+pnpm run dev-env list              # servers, accounts, tags and notes — no passwords
+pnpm run dev-env use main          # pre-fill as main's "user" account, point E2E at main
+pnpm run dev-env use main admin --no-password
+pnpm run dev-env get main project-admin   # one account, password included
+pnpm run dev-env status            # bw binary, stored config, login
+```
+
+Every command syncs the vault first, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
+
+`--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
+
+### One-time setup per machine
+
+The box logs in as a **dedicated read-only Bitwarden account** whose only access is that collection, so nothing else in anyone's vault is reachable from a dev box. The Bitwarden CLI cannot scope a personal login to one collection; a separate account is how the scope is enforced.
+
+```bash
+npm install -g @bitwarden/cli
+pnpm run dev-env setup
+```
+
+`setup` asks for the Bitwarden server URL, the account's API key (`client_id` / `client_secret`) and its master password — the team keeps them in the same collection, so read them from your own vault. It writes `~/.config/fw/webui-dev-env.json` (mode 600) and keeps the CLI's state in `~/.config/fw/webui-dev-env-bw`, apart from any personal `bw` login. An API-key login goes through neither SSO nor two-step login, so it does not expire into a browser prompt.
+
+When someone leaves the team, rotate that account's master password and API key, and re-run `setup` on each box.
+
+### Conventions in the collection
+
+| Item                                   | Name                        | Carries                                         |
+| -------------------------------------- | --------------------------- | ----------------------------------------------- |
+| A server (Secure Note)                 | `webui-dev/<server>`        | custom field `endpoint`; notes about the server |
+| An account on that server (Login item) | `webui-dev/<server>/<role>` | username, password; notes about the account     |
+
+Both kinds take two optional custom fields: `tags` (space- or comma-separated, e.g. `multi-project plugin:fair-share no-destructive`) and `verified_at` (`YYYY-MM-DD`, the last time someone checked the notes against the server). Notes older than 90 days, or never verified, are listed as stale.
+
+The roles `admin`, `user`, `user2`, `monitor` and `domain-admin` fill the matching `E2E_*` variables; `use` removes the pair of a role the server does not have. Any other role (`project-admin`, …) is available to `use` and `get` only. An item whose name does not start with `webui-dev/` is ignored.
+
+Write in the notes what cannot be queried: what the server is for, what must not be touched, known breakage, why the account exists. What the manager can answer — its version, an account's projects — is better asked of it (`bai-agent query`) than copied here.
+
 ## Theme color for visual differentiation
 
 Create `.env.development.local` (copy from `.env.development.local.sample`) and set:
@@ -174,3 +219,4 @@ Runs behind Portless on a fixed internal port 6006. Open the printed `*.localhos
 | `pnpm --filter backend.ai-ui run storybook`                  | Storybook under Portless                                            |
 | `pnpm exec portless list`                                    | Show active Portless routes                                         |
 | `pnpm exec portless proxy stop` / `start -p 1355 [--no-tls]` | Daemon control (project-local binary)                               |
+| `pnpm run dev-env list` / `use <server> [role]`              | Pick a dev API server and test account from Bitwarden               |
