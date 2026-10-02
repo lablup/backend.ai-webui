@@ -2654,6 +2654,7 @@
     "EditDefaultSessionOptions": "Edit Pilihan Sesi Lalai",
     "EnterAPIToken": "Masukkan token API",
     "EnterValidResourceGroupName": "Masukkan nama kumpulan Sumber yang sah",
+    "FailedToLoadDefaultOptions": "Gagal memuatkan pilihan lalai.",
     "FailurePolicy": "Polisi Kegagalan",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Kesan kegagalan permulaan kumpulan kernel terhadap sesi apabila sesi dan kumpulan kernel tidak menetapkan polisi sendiri.\nStrict: sebarang kegagalan kernel menamatkan sesi.\nBoot all: semua replika mesti bermula sebelum sesi berjalan.\nTolerant: sesi terus berjalan selagi sekurang-kurangnya satu replika setiap kumpulan aktif.",

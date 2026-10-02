@@ -2657,6 +2657,7 @@
     "EditDefaultSessionOptions": "Edit Opsi Sesi Default",
     "EnterAPIToken": "Masukkan token API",
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
+    "FailedToLoadDefaultOptions": "Gagal memuat opsi default.",
     "FailurePolicy": "Kebijakan Kegagalan",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Pengaruh kegagalan startup grup kernel terhadap sesi ketika sesi maupun grup kernel tidak menetapkan kebijakannya sendiri.\nStrict: kegagalan kernel mana pun menghentikan sesi.\nBoot all: semua replika harus berjalan sebelum sesi dijalankan.\nTolerant: sesi tetap berjalan selama setidaknya satu replika per grup aktif.",

@@ -2656,6 +2656,7 @@
     "EditDefaultSessionOptions": "기본 세션 옵션 수정",
     "EnterAPIToken": "API 토큰 입력",
     "EnterValidResourceGroupName": "올바른 자원 그룹 이름을 입력해 주세요.",
+    "FailedToLoadDefaultOptions": "기본 옵션을 불러오지 못했습니다.",
     "FailurePolicy": "실패 정책",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "세션과 커널 그룹 모두 정책을 지정하지 않았을 때, 커널 그룹의 시작 실패가 세션에 미치는 영향입니다.\nStrict: 커널 하나라도 실패하면 세션을 종료합니다.\nBoot all: 모든 replica가 부팅되어야 세션이 실행됩니다.\nTolerant: 그룹마다 replica가 하나 이상 살아 있으면 세션을 유지합니다.",

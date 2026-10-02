@@ -2654,6 +2654,7 @@
     "EditDefaultSessionOptions": "Modifica opzioni di sessione predefinite",
     "EnterAPIToken": "Inserisci token API",
     "EnterValidResourceGroupName": "Inserisci un nome del gruppo di risorse valido",
+    "FailedToLoadDefaultOptions": "Impossibile caricare le opzioni predefinite.",
     "FailurePolicy": "Criterio di errore",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Effetto di un errore di avvio di un gruppo di kernel sulla sessione quando né la sessione né il gruppo impostano un proprio criterio.\nStrict: qualsiasi errore di kernel termina la sessione.\nBoot all: tutte le repliche devono avviarsi prima che la sessione sia in esecuzione.\nTolerant: la sessione continua finché almeno una replica per gruppo è attiva.",

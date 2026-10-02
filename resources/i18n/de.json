@@ -2656,6 +2656,7 @@
     "EditDefaultSessionOptions": "Standard-Sitzungsoptionen bearbeiten",
     "EnterAPIToken": "API-Token eingeben",
     "EnterValidResourceGroupName": "Geben Sie einen gültigen Ressourcengruppennamen ein",
+    "FailedToLoadDefaultOptions": "Die Standardoptionen konnten nicht geladen werden.",
     "FailurePolicy": "Fehlerrichtlinie",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Wie sich ein Startfehler einer Kernelgruppe auf die Sitzung auswirkt, wenn weder die Sitzung noch die Kernelgruppe eine eigene Richtlinie festlegt.\nStrict: Jeder Kernelfehler beendet die Sitzung.\nBoot all: Alle Replikate müssen starten, bevor die Sitzung läuft.\nTolerant: Die Sitzung läuft weiter, solange pro Gruppe mindestens ein Replikat aktiv ist.",

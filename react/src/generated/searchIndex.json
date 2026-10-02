@@ -110,6 +110,7 @@
         "resourceGroup.EditDefaultDeploymentOptions",
         "resourceGroup.EditDefaultSessionOptions",
         "resourceGroup.EnterAPIToken",
+        "resourceGroup.FailedToLoadDefaultOptions",
         "resourceGroup.FailurePolicy",
         "resourceGroup.FailurePolicyBootAll",
         "resourceGroup.FailurePolicyDesc",

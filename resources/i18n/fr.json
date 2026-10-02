@@ -2656,6 +2656,7 @@
     "EditDefaultSessionOptions": "Modifier les options de session par défaut",
     "EnterAPIToken": "Saisissez le jeton API",
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
+    "FailedToLoadDefaultOptions": "Impossible de charger les options par défaut.",
     "FailurePolicy": "Politique d'échec",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Effet d'un échec de démarrage d'un groupe de noyaux sur la session lorsque ni la session ni le groupe ne définit sa propre politique.\nStrict : tout échec de noyau termine la session.\nBoot all : toutes les répliques doivent démarrer avant que la session ne s'exécute.\nTolerant : la session continue tant qu'au moins une réplique par groupe fonctionne.",

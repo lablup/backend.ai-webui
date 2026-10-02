@@ -2641,6 +2641,7 @@
     "EditDefaultSessionOptions": "Edit Default Session Options",
     "EnterAPIToken": "Enter API Token",
     "EnterValidResourceGroupName": "Enter valid Resource group name",
+    "FailedToLoadDefaultOptions": "Failed to load the default options.",
     "FailurePolicy": "Failure Policy",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "How a kernel group's startup failure affects the session when neither the session nor the kernel group sets its own policy.\nStrict: any kernel failure terminates the session.\nBoot all: every replica must boot before the session runs.\nTolerant: the session keeps running while at least one replica per group is up.",

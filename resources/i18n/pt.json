@@ -2656,6 +2656,7 @@
     "EditDefaultSessionOptions": "Editar opções de sessão padrão",
     "EnterAPIToken": "Insira o token da API",
     "EnterValidResourceGroupName": "Insira um nome de grupo de recursos válido",
+    "FailedToLoadDefaultOptions": "Não foi possível carregar as opções padrão.",
     "FailurePolicy": "Política de falha",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Como uma falha de arranque de um grupo de kernels afeta a sessão quando nem a sessão nem o grupo definem a sua própria política.\nStrict: qualquer falha de kernel termina a sessão.\nBoot all: todas as réplicas devem arrancar antes de a sessão ser executada.\nTolerant: a sessão continua enquanto pelo menos uma réplica por grupo estiver ativa.",

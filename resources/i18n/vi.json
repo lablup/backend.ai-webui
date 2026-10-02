@@ -2656,6 +2656,7 @@
     "EditDefaultSessionOptions": "Chỉnh sửa tùy chọn phiên mặc định",
     "EnterAPIToken": "Nhập token API",
     "EnterValidResourceGroupName": "Nhập tên nhóm tài nguyên hợp lệ",
+    "FailedToLoadDefaultOptions": "Không thể tải tùy chọn mặc định.",
     "FailurePolicy": "Chính sách lỗi",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Ảnh hưởng của lỗi khởi động nhóm kernel đến phiên khi cả phiên và nhóm kernel đều không đặt chính sách riêng.\nStrict: bất kỳ lỗi kernel nào cũng kết thúc phiên.\nBoot all: mọi bản sao phải khởi động xong trước khi phiên chạy.\nTolerant: phiên tiếp tục chạy miễn là mỗi nhóm còn ít nhất một bản sao hoạt động.",
