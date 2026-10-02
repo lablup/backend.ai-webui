@@ -157,16 +157,10 @@ export type {
 export { default as BAIUserSelect } from './BAIUserSelect';
 export type {
   BAIUserSelectProps,
-  AstryxUserNode,
+  BAIUserSelectFilter,
+  BAIUserSelectUser,
   BAIUserSelectRef,
 } from './BAIUserSelect';
-export { default as BAIAdminUserV2Select } from './BAIAdminUserV2Select';
-export type {
-  BAIAdminUserV2SelectProps,
-  BAIAdminUserV2SelectFilter,
-  AdminUserV2Node,
-  BAIAdminUserV2SelectRef,
-} from './BAIAdminUserV2Select';
 export { default as BAIProjectSelect } from './BAIProjectSelect';
 export type {
   BAIProjectSelectProps,

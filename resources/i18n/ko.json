@@ -3531,7 +3531,6 @@
       "SelectDomain": "도메인 선택",
       "SelectFirst": "위의 선택기에서 사용자 또는 프로젝트를 선택하세요.",
       "SelectProject": "프로젝트 선택",
-      "SelectUser": "사용자 검색 및 선택",
       "UnsetCustomSettings": "사용자 설정 초기화"
     },
     "tab": {

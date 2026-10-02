@@ -4,23 +4,23 @@
 
  to-astryx TICKET 25 probe orchestrator — lives under `react/src` (not
  `theme-probe/`) because Relay only compiles `graphql` tags inside the
- configured source roots (`relay.config.js` -> `react/src`). The theme-probe
- harness page (`react/theme-probe/table25.tsx`) mounts these against a
- relay-test-utils mock environment; they render nothing in the app itself.
+ configured source roots (`relay.config.js` -> `react/src`). A theme-probe
+ harness mounts these against a relay-test-utils mock environment; they
+ render nothing in the app itself.
 
  Each case exercises a different corner of the Astryx-native `BAITable`:
 
-   users       BAIUserNodes  — sorting, resize, row selection, column settings,
-                               CSV export, pagination bar
+   users       BAIAdminUserV2Table — sorting, resize, row selection, column
+                               settings, CSV export, pagination bar
    scheduling  BAISchedulingHistoryTable — controlled `expandable` with the
                                `BAISubStepNodes` timeline in the detail row
 */
 import type { TableAstryxProbeSchedulingQuery } from '../__generated__/TableAstryxProbeSchedulingQuery.graphql';
 import type { TableAstryxProbeUsersQuery } from '../__generated__/TableAstryxProbeUsersQuery.graphql';
 import {
+  BAIAdminUserV2Table,
   BAISchedulingHistoryTable,
   BAITableColumnOverrideRecord,
-  BAIUserNodes,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useState } from 'react';
@@ -30,28 +30,28 @@ export const TableProbeUsers: React.FC = () => {
   'use memo';
   const data = useLazyLoadQuery<TableAstryxProbeUsersQuery>(
     graphql`
-      query TableAstryxProbeUsersQuery {
-        user_nodes(first: 10, offset: 0) {
+      query TableAstryxProbeUsersQuery($isNotSupportTotp: Boolean!) {
+        adminUsersV2(limit: 10, offset: 0) {
           edges {
             node {
-              ...BAIUserNodesFragment
+              ...BAIAdminUserV2TableFragment
             }
           }
         }
       }
     `,
-    {},
+    { isNotSupportTotp: false },
   );
   const [selectedRowKeys, setSelectedRowKeys] = useState<Array<React.Key>>([]);
   const [order, setOrder] = useState<string | null>('-created_at');
   const [columnOverrides, setColumnOverrides] =
     useState<BAITableColumnOverrideRecord>({});
 
-  const users = _.compact(_.map(data.user_nodes?.edges, 'node'));
+  const users = _.compact(_.map(data.adminUsersV2?.edges, 'node'));
 
   return (
     <div style={{ padding: 24 }}>
-      <BAIUserNodes
+      <BAIAdminUserV2Table
         usersFrgmt={users}
         order={order}
         onChangeOrder={(next) => setOrder(next)}
