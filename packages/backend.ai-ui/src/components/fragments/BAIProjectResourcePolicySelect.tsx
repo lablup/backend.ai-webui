@@ -1,6 +1,5 @@
 import { BAIProjectResourcePolicySelectQuery } from '../../__generated__/BAIProjectResourcePolicySelectQuery.graphql';
 import BAISelect, { BAISelectProps } from '../BAISelect';
-import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import * as _ from 'lodash-es';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -17,21 +16,14 @@ const BAIProjectResourcePolicySelect = ({
   ...selectProps
 }: BAIProjectResourcePolicySelectProps) => {
   'use memo';
-  const baiClient = useConnectedBAIClient();
-  // `adminProjectResourcePoliciesV2` is superadmin-only; a domain admin still
-  // reads the legacy list.
-  const isSuperAdmin = !!baiClient.is_superadmin;
-  const { adminProjectResourcePoliciesV2, project_resource_policies } =
+  const { adminProjectResourcePoliciesV2 } =
     useLazyLoadQuery<BAIProjectResourcePolicySelectQuery>(
       graphql`
-        query BAIProjectResourcePolicySelectQuery(
-          $limit: Int!
-          $isSuperAdmin: Boolean!
-        ) {
+        query BAIProjectResourcePolicySelectQuery($limit: Int!) {
           adminProjectResourcePoliciesV2(
             limit: $limit
             orderBy: [{ field: NAME, direction: ASC }]
-          ) @include(if: $isSuperAdmin) {
+          ) {
             edges {
               node {
                 id
@@ -39,18 +31,15 @@ const BAIProjectResourcePolicySelect = ({
               }
             }
           }
-          project_resource_policies @skip(if: $isSuperAdmin) {
-            id
-            name
-          }
         }
       `,
-      { limit: POLICY_PAGE_LIMIT, isSuperAdmin },
+      { limit: POLICY_PAGE_LIMIT },
       {},
     );
-  const policyNames = isSuperAdmin
-    ? _.map(adminProjectResourcePoliciesV2?.edges, (edge) => edge.node.name)
-    : _.map(project_resource_policies, (policy) => policy?.name);
+  const policyNames = _.map(
+    adminProjectResourcePoliciesV2?.edges,
+    (edge) => edge.node.name,
+  );
 
   return (
     <BAISelect
