@@ -160,13 +160,19 @@ overrides:
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
   dompurify: ^3.4.12 # align transitives with catalog bump
+  # FR-4149. fast-uri ships in the bundle via `ajv` (latest 8.20.0 still
+  # ranges ^3.0.1). Was ^3.1.2 under the dev-only block (FR-3014).
+  "fast-uri@^3": ^3.1.8 # GHSA-qw65-cvwx-89v3 et al. (high, <3.1.7)
+  # FR-4149. `@ai-sdk/provider-utils@3` (ai v5 line) ranges undici ^5; it only
+  # requires it from Node via createRequire, never in the browser bundle. Same
+  # Agent/fetch usage as provider-utils@4, which ranges undici ^6.28.0.
+  "undici@^5": ^6.28.1 # GHSA-vxpw-j846-p89q et al. (high, <6.27.0)
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
   # the patched version on its own.
   qs: ^6.15.2 # crash on null in comma-format arrays (alert #388)
   "@babel/plugin-transform-modules-systemjs": ^7.29.4 # arbitrary code on malicious input (#378 high)
-  "fast-uri@^3": ^3.1.2 # host confusion + path traversal (#376, #377 high)
   postcss: ^8.5.10 # XSS via unescaped </style> (#372)
   "@xmldom/xmldom": ^0.8.13 # XML injection (#318, #368, #369, #371 high)
   "picomatch@^2": ^2.3.2 # method injection in POSIX char classes (#296)
