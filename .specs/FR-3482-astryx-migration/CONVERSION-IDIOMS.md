@@ -38,7 +38,7 @@ lookup cannot.
 
 ### The composition
 
-`pnpm exec ui-common template settings-sidebar` (reference code — follow it):
+`pnpm run ui-common template settings-sidebar` from the repository root (reference code — follow it):
 
 ```tsx
 <Layout
