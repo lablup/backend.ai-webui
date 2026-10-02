@@ -31,9 +31,7 @@ import { Badge } from '@lablup/ui-common/Badge';
 import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
-import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
-  BAIVFolderDeleteButtonV2,
   BAISkeleton,
   // Translating frontier (ticket 28): the GraphQL-object property filter is a
   // BUI antd composite shared with unmigrated pages; it keeps its contract
@@ -48,7 +46,7 @@ import {
   useToggle,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { PlusIcon, RotateCcwIcon, Trash2Icon } from 'lucide-react';
+import { PlusIcon, RotateCcwIcon, Trash2Icon, TrashIcon } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
 import React, {
   Suspense,
@@ -227,7 +225,6 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                 ...DeleteVFolderModalV2Fragment
                 ...DeleteForeverVFolderModalV2Fragment
                 ...RestoreVFolderModalV2Fragment
-                ...BAIVFolderDeleteButtonV2Fragment
               }
             }
             count
@@ -358,37 +355,39 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
           <HStack gap={2}>
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'active' && (
-                <>
+                <HStack gap={1} align="center">
                   <BAISelectionLabel
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <BAIVFolderDeleteButtonV2
-                    vfolderFrgmt={selectedFolderList}
-                    // P8: the accessible name is now on the control itself.
+                  <IconButton
                     label={t('data.folders.MoveToTrash')}
+                    tooltip={t('data.folders.MoveToTrash')}
+                    icon={<TrashIcon />}
+                    variant="ghost"
+                    className="bai-name-action-cell-danger"
                     onClick={() => {
                       toggleDeleteModal();
                     }}
                   />
-                </>
+                </HStack>
               )}
             {selectedFolderList.length > 0 &&
               queryParams.statusCategory === 'deleted' && (
-                <>
+                <HStack gap={1} align="center">
                   <BAISelectionLabel
                     count={selectedFolderList.length}
                     onClearSelection={() => setSelectedFolderList([])}
                   />
-                  <Tooltip content={t('data.folders.Restore')}>
-                    <IconButton
-                      label={t('data.folders.Restore')}
-                      icon={<RotateCcwIcon />}
-                      onClick={() => {
-                        toggleRestoreModal();
-                      }}
-                    />
-                  </Tooltip>
+                  <IconButton
+                    label={t('data.folders.Restore')}
+                    tooltip={t('data.folders.Restore')}
+                    icon={<RotateCcwIcon />}
+                    variant="ghost"
+                    onClick={() => {
+                      toggleRestoreModal();
+                    }}
+                  />
                   <IconButton
                     label={t('data.folders.Delete')}
                     tooltip={t('data.folders.Delete')}
@@ -399,7 +398,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
                       toggleDeleteForeverModal();
                     }}
                   />
-                </>
+                </HStack>
               )}
             <AutoUpdateFetchKeyButton
               settingId="project-admin-data"

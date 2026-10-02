@@ -995,6 +995,7 @@
       "LeaveFolder": "Dossier de sortie",
       "Location": "Emplacement",
       "ManageProjectFolderInAdmin": "La gestion des dossiers de projet est disponible dans les paramètres d'administration.",
+      "MaxFiles": "Nombre maximal de fichiers",
       "MaxFolderQuota": "Quota maximum de dossiers",
       "MaxSize": "Taille maximale",
       "ModelProjectFolderRestrictedToReadOnly": "La permission 'Lecture et écriture' n'est pas prise en charge pour le dossier du référentiel de modèles.",
