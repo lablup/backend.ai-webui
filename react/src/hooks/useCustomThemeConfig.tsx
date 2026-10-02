@@ -24,8 +24,8 @@ export const DEFAULT_THEME_FAMILY = 'default';
 /**
  * localStorage key of the selected family. Mirrors `themeMode` (NOT under
  * the `.user.` namespace) because the FOUC bootstrap in `index.html` reads it
- * before paint. A server-side `userConfig.themeFamily` store arrives with
- * FR-1964; until then this key is the only store.
+ * before paint. The authoritative store is the server-side
+ * `userConfig.themeFamily`; this key is its FOUC mirror, synced after login.
  */
 export const THEME_FAMILY_STORAGE_KEY = 'backendaiwebui.settings.themeFamily';
 
