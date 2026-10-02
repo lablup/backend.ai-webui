@@ -1,3 +1,4 @@
+version: 2
 updates:
 - allow:
   - dependency-name: "actions/*"
@@ -6,4 +7,30 @@ updates:
   schedule:
     day: saturday
     interval: weekly
-version: 2
+
+# npm (pnpm workspace) — security updates only (FR-4147).
+# The root pnpm-lock.yaml covers every workspace package, so "/" is enough.
+- package-ecosystem: npm
+  directory: /
+  schedule:
+    day: saturday
+    interval: weekly
+  # 0 disables routine version-update PRs; security-update PRs are not
+  # subject to this limit, so they keep flowing.
+  open-pull-requests-limit: 0
+  # Mirrors pnpm-workspace.yaml `minimumReleaseAge: 10080` (7 days). Dependabot
+  # applies cooldown to version updates only, never to security updates.
+  cooldown:
+    default-days: 7
+  groups:
+    npm-security-production:
+      applies-to: security-updates
+      dependency-type: production
+      patterns: ["*"]
+    npm-security-development:
+      applies-to: security-updates
+      dependency-type: development
+      patterns: ["*"]
+  labels:
+  - dependencies
+  - javascript

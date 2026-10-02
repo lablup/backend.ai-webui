@@ -6,7 +6,7 @@ import { RestoreVFolderModalV2Fragment$key } from '../__generated__/RestoreVFold
 import { RestoreVFolderModalV2Mutation } from '../__generated__/RestoreVFolderModalV2Mutation.graphql';
 import { message } from '../app-shim';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   type BAIModalProps,

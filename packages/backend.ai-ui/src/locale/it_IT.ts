@@ -1,9 +1,10 @@
 import type { BAILocale } from '.';
 import astryxLocale from './astryx/it.json';
+import { withUiCommonMessages } from './uiCommonMessages';
 
 const localeValue: BAILocale = {
   lang: 'it',
-  astryxLocale,
+  astryxLocale: withUiCommonMessages('it-IT', astryxLocale),
 };
 
 export default localeValue;

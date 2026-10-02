@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "지우기",
-    "KeepAsIs": "그대로 유지",
-    "UndoChanges": "변경 취소"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "실행 오류",
-    "ErrorOccurred": "문제가 발생했습니다."
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "지우기",
-    "HexValue": "16진수 값",
-    "NoColor": "색상 없음",
-    "SelectColor": "색상 선택"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "옵션 검색 지우기",
-    "NoResults": "결과 없음",
-    "SearchOptions": "옵션 검색"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
   },
@@ -128,14 +108,6 @@
     "Size": "크기",
     "SuccessFullyRemoved": "{{count}}개 버전을 제거했습니다.",
     "Version": "버전"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "정말 삭제하시겠습니까?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}을(를) 영구 삭제하시겠습니까?",
-    "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
-    "DeleteItem": "삭제",
-    "DeleteNItems": "{{count}}개 항목 삭제",
-    "TypeToConfirm": "<token>{{confirmText}}</token>을(를) 입력해주세요."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "생성자"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "할당 자원 / 요청 자원"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "그룹 색상 변경",
-    "ResourceGrid": "자원 그리드",
-    "UseColorN": "색상 {{n}} 사용"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
   },
@@ -571,9 +538,6 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "제한없음"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
   },
@@ -590,28 +554,13 @@
     "Time": "시간"
   },
   "comp:BAITable": {
-    "Apply": "적용",
-    "Cancel": "취소",
     "CollapseAll": "모두 닫기",
     "ExpandAll": "모두 열기",
     "ExpandErrorsOnly": "오류만 펼치기",
-    "ExpandOptions": "펼치기 옵션",
-    "ExpandRow": "행 펼치기",
-    "Export": "내보내기",
-    "ExportCSV": "CSV로 내보내기",
-    "GoToFirstPage": "첫 페이지로 이동하기",
-    "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
-    "NoDataToDisplay": "표시할 데이터가 없습니다",
-    "Pagination": "페이지 나누기",
-    "SearchTableColumn": "표시할 열 검색",
-    "SelectColumnToDisplay": "표시할 열 선택",
-    "SettingTable": "표 설정"
+    "ExpandOptions": "펼치기 옵션"
   },
   "comp:BAITestButton": {
     "Test": "테스트"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "외 {{rest}}개"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "생성 날짜",
@@ -703,9 +652,6 @@
       "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
   },
@@ -768,55 +714,12 @@
   "error": {
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
-  "form": {
-    "Optional": "(선택사항)",
-    "validateMessages": {
-      "Default": "필드 유효성 검사 오류 ${label}",
-      "Required": "${label} 값을 입력해 주세요",
-      "Whitespace": "${label} 비워둘 수 없습니다",
-      "array": {
-        "Len": "${len}이어야 합니다 ${label}",
-        "Max": "최대 ${max}이어야 합니다 ${label}",
-        "Min": "최소 ${min}이어야 합니다 ${label}",
-        "Range": "${label} ${min}-${max} 사이어야 합니다"
-      },
-      "number": {
-        "Len": "${label} 값은 ${len}이어야 합니다",
-        "Max": "${label} 최댓값은 ${max}입니다",
-        "Min": "${label} 최솟값은 ${min}입니다",
-        "Range": "${label} 값은 ${min}-${max} 사이어야 합니다"
-      },
-      "pattern": {
-        "Mismatch": "${label} ${pattern} 패턴과 일치하지 않습니다"
-      },
-      "string": {
-        "Len": "${label} ${len}글자여야 합니다",
-        "Max": "${label} ${max}글자 이하여야 합니다",
-        "Min": "${label} 적어도 ${min}글자 이상이어야 합니다",
-        "Range": "${label} ${min}-${max}글자 사이어야 합니다"
-      },
-      "types": {
-        "Email": "${label} 유효하지 않은 ${type}",
-        "Number": "${label} 유효하지 않은 ${type}",
-        "Object": "${label} 유효하지 않은 ${type}",
-        "String": "${label} 유효하지 않은 ${type}",
-        "Url": "${label} 유효하지 않은 ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "감소",
-    "DeselectAll": "선택 취소",
     "File": "파일",
-    "Increase": "증가",
-    "Loading": "로딩 중...",
-    "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
     "Search": "검색",
     "Select": "선택",
-    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
-    "TotalItems": "총 {{total}} 항목",
     "Unit": "단위",
     "button": {
       "Action": "동작",

@@ -5,8 +5,8 @@
 import { Form } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
 import {
-  RuntimeVariantPresetDef,
   RuntimeParameterGroup,
+  RuntimeVariantPresetDef,
   RuntimeVariantPresetValueEntry,
   useRuntimeParameterSchema,
 } from '../hooks/useRuntimeParameterSchema';
@@ -18,18 +18,18 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
+import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,
-  isValueTypeCompatibleWithUIType,
   READ_UI_TYPE_TO_FORM_UI_TYPE,
+  isValueTypeCompatibleWithUIType,
   toLocalId,
 } from 'backend.ai-ui';
 import { Undo2 } from 'lucide-react';

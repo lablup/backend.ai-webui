@@ -4,6 +4,7 @@
  */
 import { useSuspendedBackendaiClient } from '.';
 import { maskString } from '../helper';
+import { type UserRole } from '../helper/userRole';
 import {
   useSuspenseTanQuery,
   useTanMutation,
@@ -269,28 +270,9 @@ export const useCurrentUserInfo = () => {
   ] as const;
 };
 
-type UserRole = 'superadmin' | 'admin' | 'user' | 'monitor';
-
 export const useCurrentUserRole = () => {
-  const [userInfo] = useCurrentUserInfo();
-  const baiClient = useSuspendedBackendaiClient();
-
   const { decodedUserRole } = useViewer();
-
-  const { data: roleData } = useTanQuery<{
-    user: {
-      role: UserRole;
-    };
-  }>({
-    queryKey: ['getUserRole', userInfo.email],
-    queryFn: () => {
-      return baiClient.user.get(userInfo.email, ['role']);
-    },
-    staleTime: Infinity,
-    enabled: decodedUserRole === null,
-  });
-
-  return (decodedUserRole ?? roleData?.user.role) as UserRole;
+  return decodedUserRole as UserRole;
 };
 
 export const useTOTPSupported = () => {

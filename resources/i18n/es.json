@@ -1980,6 +1980,7 @@
     "APIEndpointEmpty": "El punto final de la API está vacío. Especifique el punto final de la API para iniciar sesión.",
     "APIKey": "Clave API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "El inicio de sesión por API necesita un endpoint de Manager. Esta WebUI está configurada para conectarse a través de un Backend.AI Webserver.",
     "ActiveSessionExists": "Ya existe una sesión de inicio de sesión activa.",
     "ActiveSessionExistsDescription": "Ya has iniciado sesión desde otro navegador o pestaña. Por favor, cierra la sesión desde la otra sesión primero o inténtalo de nuevo.",
     "AdvancedSettings": "Avanzado",
@@ -2237,9 +2238,6 @@
     "StepWarning": "Acción requerida",
     "SuccessfullyUpdated": "Actualizado con éxito",
     "Visit": "Visite"
-  },
-  "pagination": {
-    "Total": "{{inicio}} - {{end}} de {{Total}} elementos"
   },
   "project": {
     "Activate": "Activar",

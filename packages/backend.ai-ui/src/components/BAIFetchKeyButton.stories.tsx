@@ -1,6 +1,6 @@
 import BAIFetchKeyButton from './BAIFetchKeyButton';
 import BAIFlex from './BAIFlex';
-import { Switch } from '@astryxdesign/core/Switch';
+import { Switch } from '@lablup/ui-common/Switch';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 

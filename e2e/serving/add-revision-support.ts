@@ -166,12 +166,12 @@ export async function fillManualImageName(
   // we submit, or `validateFields()` can race it and fail on a
   // still-"required" empty field — silently blocking the mutation (no toast,
   // no visible error after the modal closes). The form engine marks a
-  // required item's label with `[data-bai-form-item-required]`; wait for the
+  // required item's label with `.uic-form-item__label--required`; wait for the
   // "Environments / Version" item's marker to clear.
   const environmentsRequiredMark = modal
-    .locator('[data-bai-form-item]')
+    .locator('.uic-form-item')
     .filter({ hasText: 'Environments / Version' })
-    .locator('[data-bai-form-item-required]');
+    .locator('.uic-form-item__label--required');
   await expect(environmentsRequiredMark).toHaveCount(0, { timeout: 10000 });
 }
 

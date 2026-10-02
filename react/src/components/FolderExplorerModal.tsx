@@ -7,30 +7,29 @@ import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
-import { useFileUploadManager } from './FileUploadManager';
-import type { RcFile } from './FileUploadManager';
+import { useFileUploadManager, type RcFile } from './FileUploadManager';
 import FolderExplorerHeader from './FolderExplorerHeader';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeDescription from './VFolderNodeDescription';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Divider } from '@astryxdesign/core/Divider';
-import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Divider } from '@lablup/ui-common/Divider';
+import { ResizeHandle, useResizable } from '@lablup/ui-common/Resizable';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIFileExplorer,
   BAIFileExplorerRef,
   BAIFlex,
   BAILink,
   BAIModal,
   BAIModalProps,
+  BAISkeleton,
   BAIUnmountAfterClose,
+  VFolderFile,
   toGlobalId,
+  useBAIBreakpoint,
   useFetchKey,
   useInterval,
-  VFolderFile,
-  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Suspense, useDeferredValue, useEffect, useRef, useState } from 'react';

@@ -13,9 +13,9 @@ import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
-import { useAppShellMobile } from '@astryxdesign/core/AppShell';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MediaTheme, useTheme } from '@astryxdesign/core/theme';
+import { useAppShellMobile } from '@lablup/ui-common/AppShell';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MediaTheme, useTheme } from '@lablup/ui-common/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
   BAIFlex,
@@ -43,7 +43,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
     ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'];
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
   const gridBreakpoint = useBAIBreakpoint();
   // FR-3414 (ADR-0001): the project-agnostic pages operate above project
   // scope, so the header's current-project selector (and the selector-bound

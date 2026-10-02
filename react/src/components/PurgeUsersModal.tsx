@@ -6,8 +6,8 @@ import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBul
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { VStack } from '@astryxdesign/core/Stack';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { VStack } from '@lablup/ui-common/Stack';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,

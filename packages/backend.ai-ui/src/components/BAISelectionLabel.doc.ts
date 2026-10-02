@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The "N selected" summary that sits in a table toolbar next to the bulk actions. It renders an Astryx HStack with a Text count and, when onClearSelection is given, an Astryx ghost IconButton that clears the selection — a real button, so the clear affordance has its own focus ring and accessible name. The count is translated through useBAIi18n, so plural forms follow the active language. It returns null while count is zero or less, so a call site can render it unconditionally and let the toolbar collapse on its own.',
+      'The "N selected" summary that sits in a table toolbar next to the bulk actions. It renders an Astryx HStack with a Text count and, when onClearSelection is given, an Astryx ghost IconButton that clears the selection — a real button, so the clear affordance has its own focus ring and accessible name. It is an adapter over ui-common SelectionLabel, whose "N selected" and "Deselect all" strings come from the ui-common catalog in the active language. It returns null while count is zero or less, so a call site can render it unconditionally and let the toolbar collapse on its own.',
     bestPractices: [
       {
         guidance: true,

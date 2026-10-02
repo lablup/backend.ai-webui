@@ -63,7 +63,7 @@
 
   - **Field surfaces** (`text-input` … `time-input`) are matched as SELF OR
     DESCENDANT, because at the reported call site each group child is a
-    `[data-bai-form-item]` that renders a label, the control and an error slot,
+    `.uic-form-item` that renders a label, the control and an error slot,
     so the bordered box is three levels down. None of these nests inside
     another one (`BaseTypeahead`, the input a `Tokenizer` embeds, does not
     carry `.astryx-typeahead` — only the standalone `Typeahead` does), so no
@@ -163,7 +163,7 @@
    width, the later sibling paints over the earlier one — so a focused FIRST
    field would show its accent edge everywhere except where it matters. The
    raise is written against the surface, not against the group child: the
-   `[data-bai-form-item]` wrapper is statically positioned and `z-index` on a
+   `.uic-form-item` wrapper is statically positioned and `z-index` on a
    static box does nothing.
   */
   .bai-compact-group

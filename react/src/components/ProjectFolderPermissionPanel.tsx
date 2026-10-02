@@ -8,9 +8,9 @@ import { ProjectFolderPermissionPanel_storageVolumeFrgmt$key } from '../__genera
 import { useCurrentDomainValue } from '../hooks';
 import DomainStoragePermissionTable from './DomainStoragePermissionTable';
 import ProjectStoragePermissionTable from './ProjectStoragePermissionTable';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIDomainSelect,

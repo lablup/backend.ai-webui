@@ -4,24 +4,24 @@
  */
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import TextHighlighter from './TextHighlighter';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIModal,
   BAITable,
-  type BAIColumnsType,
   useUpdatableState,
+  type BAIColumnsType,
+  BAITextHighlighter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, Search, RotateCw } from 'lucide-react';
-import React, { useState, useMemo, useTransition } from 'react';
+import { RotateCw, Search, Trash2 } from 'lucide-react';
+import React, { useMemo, useState, useTransition } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type LogType = {
@@ -61,7 +61,7 @@ const ErrorLogList: React.FC<{
           {_.isUndefined(value) ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+            <BAITextHighlighter keyword={logSearch}>{value}</BAITextHighlighter>
           )}
         </div>
       ),
@@ -76,9 +76,9 @@ const ErrorLogList: React.FC<{
           {_.isUndefined(value) ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>
+            <BAITextHighlighter keyword={logSearch}>
               {value + ' ' + record.statusText}
-            </TextHighlighter>
+            </BAITextHighlighter>
           )}
         </div>
       ),
@@ -92,9 +92,9 @@ const ErrorLogList: React.FC<{
           {_.isNil(value) || (_.isObject(value) && _.isEmpty(value)) ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>
+            <BAITextHighlighter keyword={logSearch}>
               {_.isObject(value) ? JSON.stringify(value) : _.toString(value)}
-            </TextHighlighter>
+            </BAITextHighlighter>
           )}
         </div>
       ),
@@ -108,7 +108,7 @@ const ErrorLogList: React.FC<{
           {!value ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+            <BAITextHighlighter keyword={logSearch}>{value}</BAITextHighlighter>
           )}
         </div>
       ),
@@ -122,7 +122,7 @@ const ErrorLogList: React.FC<{
           {!value ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+            <BAITextHighlighter keyword={logSearch}>{value}</BAITextHighlighter>
           )}
         </div>
       ),
@@ -136,7 +136,7 @@ const ErrorLogList: React.FC<{
           {!value ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+            <BAITextHighlighter keyword={logSearch}>{value}</BAITextHighlighter>
           )}
         </div>
       ),
@@ -150,7 +150,7 @@ const ErrorLogList: React.FC<{
           {!value ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+            <BAITextHighlighter keyword={logSearch}>{value}</BAITextHighlighter>
           )}
         </div>
       ),
@@ -164,7 +164,7 @@ const ErrorLogList: React.FC<{
           {!value ? (
             '-'
           ) : (
-            <TextHighlighter keyword={logSearch}>{value}</TextHighlighter>
+            <BAITextHighlighter keyword={logSearch}>{value}</BAITextHighlighter>
           )}
         </div>
       ),

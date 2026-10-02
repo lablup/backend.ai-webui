@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "クリア",
-    "KeepAsIs": "そのまま維持",
-    "UndoChanges": "変更を元に戻す"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "実行エラー",
-    "ErrorOccurred": "問題が発生しました。"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "クリア",
-    "HexValue": "16進数の値",
-    "NoColor": "色なし",
-    "SelectColor": "色を選択"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "オプションを検索 をクリア",
-    "NoResults": "結果がありません",
-    "SearchOptions": "オプションを検索"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"
   },
@@ -128,14 +108,6 @@
     "Size": "サイズ",
     "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
     "Version": "バージョン"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "本当に削除しますか？",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}を完全に削除してもよろしいですか？",
-    "CannotBeUndone": "この操作は元に戻せません。",
-    "DeleteItem": "削除",
-    "DeleteNItems": "{{count}} 件を削除",
-    "TypeToConfirm": "<token>{{confirmText}}</token> と入力して確認してください。"
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "作成者"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "割り当て / 要求"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "グループの色を変更",
-    "ResourceGrid": "リソースグリッド",
-    "UseColorN": "色{{n}}を使用"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無制限"
   },
@@ -571,9 +538,6 @@
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "無制限"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "ストレージホストを選択"
   },
@@ -590,28 +554,13 @@
     "Time": "時刻"
   },
   "comp:BAITable": {
-    "Apply": "適用",
-    "Cancel": "キャンセル",
     "CollapseAll": "すべて折りたたむ",
     "ExpandAll": "すべて展開",
     "ExpandErrorsOnly": "エラーのみ展開",
-    "ExpandOptions": "展開オプション",
-    "ExpandRow": "行を展開",
-    "Export": "エクスポート",
-    "ExportCSV": "CSV をエクスポート",
-    "GoToFirstPage": "最初のページへ",
-    "InvalidPageNumber": "無効なページ番号です",
-    "NoDataToDisplay": "表示するデータがありません",
-    "Pagination": "ページネーション",
-    "SearchTableColumn": "テーブル列を検索します",
-    "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定"
+    "ExpandOptions": "展開オプション"
   },
   "comp:BAITestButton": {
     "Test": "テスト"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "他 {{rest}} 件"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "作成日",
@@ -703,9 +652,6 @@
       "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{total}}アイテム中 {{start}} - {{end}}"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
   },
@@ -767,55 +713,12 @@
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
-  "form": {
-    "Optional": "(オプション)",
-    "validateMessages": {
-      "Default": "${label}のフィールド検証エラー",
-      "Required": "${label}を入力してください",
-      "Whitespace": "${label}は空白文字にすることはできません",
-      "array": {
-        "Len": "${label}は${len}である必要があります",
-        "Max": "${label}の最大は${max}です",
-        "Min": "${label}の最小は${min}です",
-        "Range": "${label}の合計は${min}-${max}の範囲である必要があります"
-      },
-      "number": {
-        "Len": "${label}は${len}と等しい必要があります",
-        "Max": "${label}の最大値は${max}です",
-        "Min": "${label}の最小値は${min}です",
-        "Range": "${label}は${min}-${max}の範囲である必要があります"
-      },
-      "pattern": {
-        "Mismatch": "${label}はパターン${pattern}と一致しません"
-      },
-      "string": {
-        "Len": "${label}は${len}文字である必要があります",
-        "Max": "${label}は${max}文字以下である必要があります",
-        "Min": "${label}は${min}文字以上である必要があります",
-        "Range": "${label}は${min}-${max}文字の範囲である必要があります"
-      },
-      "types": {
-        "Email": "${label}は有効な${type}ではありません",
-        "Number": "${label}は有効な${type}ではありません",
-        "Object": "${label}は有効な${type}ではありません",
-        "String": "${label}は有効な${type}ではありません",
-        "Url": "${label}は有効な${type}ではありません"
-      }
-    }
-  },
   "general": {
-    "Decrease": "減らす",
-    "DeselectAll": "すべて選択解除",
     "File": "ファイル",
-    "Increase": "増やす",
-    "Loading": "読み込み中...",
-    "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
     "Search": "検索",
     "Select": "選択",
-    "SelectPlaceholder": "{{label}}を選択してください",
-    "TotalItems": "合計 {{total}}アイテム",
     "Unit": "単位",
     "button": {
       "Action": "アクション",

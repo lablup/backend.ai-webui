@@ -24,11 +24,11 @@ import {
   AstryxFormSwitch,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIIconWithTooltip,
   BAIModal,

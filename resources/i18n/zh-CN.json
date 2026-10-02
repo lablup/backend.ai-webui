@@ -1982,6 +1982,7 @@
     "APIEndpointEmpty": "API 端点为空。请指定要登录的 API 端点。",
     "APIKey": "API 密钥",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API 登录需要 Manager 端点。此 WebUI 已配置为通过 Backend.AI Webserver 连接。",
     "ActiveSessionExists": "已存在活动的登录会话。",
     "ActiveSessionExistsDescription": "您已从其他浏览器或标签页登录。请先从其他会话注销，或重试。",
     "AdvancedSettings": "高级设置",
@@ -2239,9 +2240,6 @@
     "StepWarning": "需要操作",
     "SuccessfullyUpdated": "成功更新",
     "Visit": "访问"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} {{total}}项目"
   },
   "project": {
     "Activate": "激活",

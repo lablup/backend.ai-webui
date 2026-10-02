@@ -20,13 +20,19 @@ import { join, relative, isAbsolute } from 'node:path';
 export const BLOCK_START = '<!-- BAI-AGENT:start -->';
 export const BLOCK_END = '<!-- BAI-AGENT:end -->';
 
-/** The only `--features` value; the flag exists to mirror `astryx init`. */
+/** The only `--features` value. */
 export const FEATURE_AGENTS = 'agents';
 
 export const CLAUDE_MD = 'CLAUDE.md';
 export const AGENTS_MD = 'AGENTS.md';
 
-const ASTRYX_END = '<!-- ASTRYX:END -->';
+// The design-system agent block a first insert follows, and the anchor it
+// reports. `ASTRYX:END` is the marker older checkouts carry, before the
+// UI-COMMON block replaced it.
+const DESIGN_BLOCK_ENDS = [
+  { marker: '<!-- UI-COMMON:END -->', anchor: 'after-ui-common' },
+  { marker: '<!-- ASTRYX:END -->', anchor: 'after-astryx' },
+] as const;
 
 /** ATX headings only, and only outside a fenced block. */
 const HEADING = /^#{1,6} /;
@@ -154,7 +160,8 @@ export function findBlockRegion(source: string): BlockRegion | undefined {
   };
 }
 
-export type BlockAnchor = 'markers' | 'after-astryx' | 'append';
+export type BlockAnchor =
+  'markers' | 'after-ui-common' | 'after-astryx' | 'append';
 
 export interface BlockWriteResult {
   content: string;
@@ -163,13 +170,18 @@ export interface BlockWriteResult {
 }
 
 /**
- * Where a first insert goes: after the ASTRYX block *and* the prose explaining
- * it — i.e. before the next `#` heading, or at the end of the file.
+ * Where a first insert goes: after the UI-COMMON (or older ASTRYX) block *and*
+ * the prose explaining it — i.e. before the next `#` heading, or at the end of
+ * the file.
  */
 function insertOffset(source: string): { offset: number; anchor: BlockAnchor } {
   const lines = source.split('\n');
-  const marker = lines.findIndex((line) => line.trim() === ASTRYX_END);
-  if (marker < 0) return { offset: source.length, anchor: 'append' };
+  const found = DESIGN_BLOCK_ENDS.map(({ marker, anchor }) => ({
+    index: lines.findIndex((line) => line.trim() === marker),
+    anchor,
+  })).find(({ index }) => index >= 0);
+  if (!found) return { offset: source.length, anchor: 'append' };
+  const marker = found.index;
   let index = marker + 1;
   // The open fence; only a fence of the same character and at least the same
   // length closes it (CommonMark), so a ``` sample inside ```` stays inside.
@@ -190,7 +202,7 @@ function insertOffset(source: string): { offset: number; anchor: BlockAnchor } {
   }
   if (index >= lines.length) return { offset: source.length, anchor: 'append' };
   const offset = lines.slice(0, index).join('\n').length + 1;
-  return { offset, anchor: 'after-astryx' };
+  return { offset, anchor: found.anchor };
 }
 
 /** Idempotent: replaces the marked region, or inserts one when there is none. */

@@ -14,7 +14,7 @@
  * The selector itself is stubbed; its internals are not under test here.
  */
 import WebUIHeader from './WebUIHeader';
-import { AppShellMobileContext } from '@astryxdesign/core/AppShell';
+import { AppShellMobileContext } from '@lablup/ui-common/AppShell';
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';

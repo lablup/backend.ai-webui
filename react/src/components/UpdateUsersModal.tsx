@@ -18,7 +18,7 @@ import {
   AstryxFormNumberInput,
   AstryxFormTagsInput,
 } from './astryxFormControls';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDomainSelect,
   BAIFlex,
