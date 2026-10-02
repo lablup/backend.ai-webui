@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="デプロイ" />
   <meta name="twitter:description" content="Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-09-23T14:31:21.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"デプロイ","inLanguage":"ja","description":"Backend.AI では、デプロイ（Deployments） 機能を通じて AI モデルを推論サービスとしてデプロイできます。","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/ja/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">マニュアル</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (17955af)">v26.9.0-alpha.0 (17955af)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (7bb9922)">v26.9.0-alpha.0 (7bb9922)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ドキュメント検索...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-revision-の追加">Revision の追加<a class="hash-link" href="#deployment-revision-の追加" aria-label="Direct link to Revision の追加">#</a></h3>
 <p data-bai-block="32">Revision には、推論サーバを実行するために必要なすべての設定（イメージ、起動コマンド、リソース、モデルマウント、環境変数）が含まれます。デプロイ詳細ページで <code>Revision を追加</code> ボタンをクリックしてモーダルを開きます。</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>図 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>図 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">モーダルのタイトル部にある <strong>プリセットモード</strong> / <strong>高度な設定モード</strong> の切り替えスイッチで、Revision の構成方法を選択します。</p>
 <p data-bai-block="35">デプロイに現在の Revision がある場合、両方のモードの上部に <strong>現在の Revision を読み込む</strong> バナーが表示されます。<strong>現在の Revision を読み込む</strong> をクリックすると、現在適用中の Revision の設定を開始点としてフォームに事前入力します（必要に応じて自動的に高度な設定モードに切り替わります）。現在の Revision がまだないデプロイではバナーは表示されず、設定を一度読み込むとバナーは消えます。</p>
@@ -288,7 +288,7 @@
 <p data-bai-block="54">以下のサブセクションでは、Revision レベルのフィールドについて詳しく説明します。これらは <strong>高度な設定モード</strong> で手動で Revision を追加する場合と、各フィールドの動作を理解したい場合の両方に適用されます。</p>
 <h4 data-bai-block="55" id="deployment-モデルフォルダーのマウント">モデルフォルダーのマウント<a class="hash-link" href="#deployment-モデルフォルダーのマウント" aria-label="Direct link to モデルフォルダーのマウント">#</a></h4>
 <p data-bai-block="56">Revision ごとに 1 つのモデルストレージフォルダーが各レプリカにマウントされます。フォルダーセレクタのすぐ下にあるフィールドで、そのフォルダーをコンテナ内のどこに配置するかを指定します。</p>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>図 12.5</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" style="width:780px" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>図 12.5</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="58"><strong>モデルフォルダー</strong>: 各レプリカにマウントするモデルストレージフォルダーです。</li>
@@ -370,7 +370,7 @@
 <li data-bai-block="102"><strong>Trust Remote Code</strong>: モデルリポジトリのカスタムモデルコードの実行を許可します。</li>
 </ul>
 <p data-bai-block="103"><strong>SGLang ランタイムパラメータ</strong></p>
-<p><figure data-bai-block="104" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>図 12.7</figcaption></figure>
+<p><figure data-bai-block="104" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" style="width:648px" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>図 12.7</figcaption></figure>
 </p>
 <p data-bai-block="105">SGLang は次のパラメータタブを提供します: <strong>Model Loading</strong>、<strong>Resource Memory</strong>、<strong>Serving Performance</strong>、<strong>Tool Reasoning</strong> など。</p>
 <p data-bai-block="106"><strong>Model Loading</strong> タブの主要フィールド:</p>
@@ -569,7 +569,7 @@
 バーチャルフォルダーを作成する必要があります。バーチャルフォルダーを作成する際は、
 デフォルトの <code>general</code> タイプではなく <code>model</code> タイプを選択してください。
 フォルダーの作成方法については、データページの<a href="./vfolder.html#create-storage-folder">ストレージフォルダーの作成</a>セクションを参照してください。</p>
-<p><figure data-bai-block="188" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>図 12.10</figcaption></figure>
+<p><figure data-bai-block="188" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>図 12.10</figcaption></figure>
 </p>
 <p data-bai-block="189">フォルダーを作成した後、データページの「MODELS」タブを選択し、
 最近作成したモデルタイプフォルダーアイコンをクリックしてフォルダーエクスプローラーを開き、
@@ -687,7 +687,7 @@
 </p>
 <h4 data-bai-block="243" id="deployment-その他メニュー編集と削除">その他メニュー（編集と削除）<a class="hash-link" href="#deployment-その他メニュー編集と削除" aria-label="Direct link to その他メニュー（編集と削除）">#</a></h4>
 <p data-bai-block="244">サービス情報カードのヘッダーには、<strong>編集</strong> ボタンに加えて <strong>その他</strong> メニューが表示されます。<strong>編集</strong> ボタンをクリックすると、<a href="#create-deployment">デプロイメント作成モーダル</a> で説明した <strong>デプロイを編集</strong> モーダルが開きます。その他メニューには現在 <strong>デプロイを削除</strong> アクションが含まれます。</p>
-<p><figure data-bai-block="245" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="328" height="174" /><figcaption>図 12.14</figcaption></figure>
+<p><figure data-bai-block="245" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" style="width:164px" loading="lazy" decoding="async" width="328" height="174" /><figcaption>図 12.14</figcaption></figure>
 </p>
 <p><a id="scheduling-history"></a></p>
 <h4 data-bai-block="246" id="deployment-スケジュール履歴">スケジュール履歴<a class="hash-link" href="#deployment-スケジュール履歴" aria-label="Direct link to スケジュール履歴">#</a></h4>
@@ -810,7 +810,7 @@
 <p><figure data-bai-block="320" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>図 12.20</figcaption></figure>
 </p>
 <p data-bai-block="321">レプリカでエラーが発生した場合、行のエラーインジケータをクリックすると JSON ビューアーモーダルが開き、生のエラーデータが表示されます。個別のレプリカの問題を診断する際に役立ちます。</p>
-<p><figure data-bai-block="322" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>図 12.21</figcaption></figure>
+<p><figure data-bai-block="322" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" style="width:492px" loading="lazy" decoding="async" width="985" height="427" /><figcaption>図 12.21</figcaption></figure>
 </p>
 <h3 data-bai-block="323" id="deployment-自動スケーリングルール">自動スケーリングルール<a class="hash-link" href="#deployment-自動スケーリングルール" aria-label="Direct link to 自動スケーリングルール">#</a></h3>
 <p data-bai-block="324">自動スケーリングルール（Auto Scaling Rules）は、ライブメトリックに基づいてモデルサービスのレプリカ数を自動的に増減します。これにより、使用率が低いときはリソースを節約し、使用率が高いときはリクエストの遅延や失敗を防ぎます。</p>
@@ -840,7 +840,7 @@
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="340" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>図 12.23</figcaption></figure>
+<p><figure data-bai-block="340" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" style="width:472px" loading="lazy" decoding="async" width="944" height="292" /><figcaption>図 12.23</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="341"><p><strong>ステップサイズ（Step Size）</strong>: スケーリングイベントごとに追加または削除するレプリカ数を指定する正の整数です。選択したコンディション（スケールイン / スケールアウト / スケールイン＆アウト）に応じて <code>-</code>、<code>+</code>、<code>±</code> の符号が自動的に表示されます。</p>
@@ -855,7 +855,7 @@
 <li data-bai-block="346"><p><strong>最小レプリカ（Min Replicas）および最大レプリカ（Max Replicas）</strong>: 自動スケーリングがレプリカ数に対して強制する下限と上限です。自動スケーリングは、レプリカ数を最小レプリカより下げたり、最大レプリカより上げたりすることはありません。</p>
 </li>
 </ul>
-<p><figure data-bai-block="347" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>図 12.24</figcaption></figure>
+<p><figure data-bai-block="347" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>図 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="348" id="deployment-トークンの生成">トークンの生成<a class="hash-link" href="#deployment-トークンの生成" aria-label="Direct link to トークンの生成">#</a></h3>
@@ -874,7 +874,7 @@
 </li>
 <li data-bai-block="358"><code>アクセストークンを作成</code> をクリックして発行します。</li>
 </ol>
-<p><figure data-bai-block="359" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>図 12.26</figcaption></figure>
+<p><figure data-bai-block="359" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" style="width:460px" loading="lazy" decoding="async" width="920" height="704" /><figcaption>図 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="360">マネージャーがまだネットワークエンドポイントを発行していない間、<code>アクセストークンを作成</code> ボタンは無効になり、ツールチップに <em>「ネットワークエンドポイントはまだ発行されていません。」</em> と表示されます。自分が所有していないデプロイメントでは <em>「アクセストークンを管理できるのはデプロイのオーナーのみです。」</em>、停止中またはすでに稼働していないデプロイメントでは <em>「デプロイは停止中か、すでに稼働していません。」</em> と表示され、ボタンは無効になります。この 2 つの条件では、トークンの削除も無効になります。</p>
@@ -918,7 +918,7 @@
 
 <h3 data-bai-block="376" id="deployment-デプロイの終了">デプロイの終了<a class="hash-link" href="#deployment-デプロイの終了" aria-label="Direct link to デプロイの終了">#</a></h3>
 <p data-bai-block="377">デプロイが不要になった場合は、終了することを推奨します。デプロイを終了するには、サービス情報カードの <strong>その他</strong> メニューを開き、<strong>デプロイを削除</strong> を選択します。入力確認モーダルが表示されるため、デプロイ名を入力すると <strong>完全に削除</strong> ボタンが有効になります。終了したデプロイは <strong>破壊された</strong> フィルタービューに表示されます。</p>
-<p><figure data-bai-block="378" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>図 12.28</figcaption></figure>
+<p><figure data-bai-block="378" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>図 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="379" id="deployment-デプロイへのアクセス">デプロイへのアクセス<a class="hash-link" href="#deployment-デプロイへのアクセス" aria-label="Direct link to デプロイへのアクセス">#</a></h2>
 <p data-bai-block="380">デプロイへのアクセスを可能にするため、デプロイ URL をエンドユーザーと共有します。<strong>公開</strong> が有効の場合、デプロイ詳細ページの <strong>サービスエンドポイント</strong> URL をそのまま共有できます。非公開デプロイの場合は、URL とアクセストークンを併せて共有します。</p>
@@ -1015,7 +1015,7 @@ Backend.AIだけでなく、さまざまなサービスから生成できます�
 <li data-bai-block="426"><strong>最小リソース（Min Resource）</strong>: 最小リソース要件（CPU、メモリ、GPU）</li>
 </ul>
 <p data-bai-block="427">モデルカードに README が含まれている場合は、ドロワーの下部に <code>README.md</code> カードとしてレンダリングされます。</p>
-<p><figure data-bai-block="428" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>図 12.34</figcaption></figure>
+<p><figure data-bai-block="428" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>図 12.34</figcaption></figure>
 </p>
 <h3 data-bai-block="429" id="deployment-モデルのデプロイ">モデルのデプロイ<a class="hash-link" href="#deployment-モデルのデプロイ" aria-label="Direct link to モデルのデプロイ">#</a></h3>
 <p data-bai-block="430">ドロワーヘッダーの <code>デプロイ（Deploy）</code> ボタンをクリックすると、モデルがサービスとしてデプロイされます。デプロイフローは次の 2 通りのいずれかで動作します：</p>
@@ -1046,7 +1046,7 @@ Backend.AIだけでなく、さまざまなサービスから生成できます�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ja/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> このページを編集</a>
-  <span class="last-updated">最終更新日 2026年9月23日</span>
+  <span class="last-updated">最終更新日 2026年10月1日</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

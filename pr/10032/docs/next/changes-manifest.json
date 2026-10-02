@@ -2,7 +2,7 @@
   "version": 1,
   "channel": "next",
   "label": "PR preview",
-  "generatedAt": "2026-10-01T03:08:08.629Z",
+  "generatedAt": "2026-10-02T04:46:02.659Z",
   "languages": [
     "en",
     "ja",
@@ -36,8 +36,8 @@
             "total": 3
           },
           "fingerprints": [
-            "ad6db7751a64",
-            "35fc68e9990a",
+            "ac079cde63d0",
+            "75a52fc7d8a1",
             "a7357e81b7fb"
           ]
         }
@@ -69,8 +69,8 @@
             "total": 2
           },
           "fingerprints": [
-            "76e4611bdbdd",
-            "ff13e28826bc"
+            "67f877d43c68",
+            "1e553a2b3f6e"
           ]
         },
         {
@@ -105,9 +105,9 @@
           },
           "fingerprints": [
             "538060a89912",
-            "6f47c5799dc0",
+            "649cee6ff8e9",
             "ad0b40664a7d",
-            "b2f7eb02ba94",
+            "c7fd82309fc5",
             "358d27a77602"
           ]
         }
@@ -139,9 +139,9 @@
             "total": 3
           },
           "fingerprints": [
-            "4a22c24cea9d",
+            "0790fee16931",
             "b47cc33770d0",
-            "337fb01e71c7"
+            "dd0b38252231"
           ]
         },
         {
@@ -219,11 +219,11 @@
             "5bfa68a2c70f",
             "c0f1c731ab80",
             "d19c982f5bb0",
-            "76be44fefdb4",
+            "500905272880",
             "79eeb93abc99",
             "5d5004afa720",
             "208f06408f53",
-            "323fae9398cd",
+            "1c4ad97fb4ee",
             "f793bb7ad35b"
           ]
         },
@@ -274,8 +274,8 @@
             "total": 2
           },
           "fingerprints": [
-            "f73d195e68ed",
-            "1267882194b3"
+            "c667a5ebb4ab",
+            "b3eb5f384703"
           ]
         },
         {
@@ -292,8 +292,8 @@
             "total": 3
           },
           "fingerprints": [
-            "2c23b23c0537",
-            "46852db139a4",
+            "7aee7380bff6",
+            "b04f7acf69a2",
             "3cdacafc975c"
           ]
         }

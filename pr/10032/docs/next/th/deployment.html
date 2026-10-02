@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="การปรับใช้" />
   <meta name="twitter:description" content="Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…" />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-09-23T14:31:21.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"การปรับใช้","inLanguage":"th","description":"Backend.AI ให้คุณปรับใช้โมเดล AI เป็นบริการ inference ผ่านฟีเจอร์ การปรับใช้ (Deployments) การปรับใช้แต่ละรายการจะเปิดให้โมเดลเข้าถึงได้ผ่าน URL ของ…","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/th/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">คู่มือ</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (17955af)">v26.9.0-alpha.0 (17955af)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (7bb9922)">v26.9.0-alpha.0 (7bb9922)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="ค้นหาเอกสาร...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-การเพม-revision">การเพิ่ม Revision<a class="hash-link" href="#deployment-การเพม-revision" aria-label="Direct link to การเพิ่ม Revision">#</a></h3>
 <p data-bai-block="32">Revision รวบรวมการตั้งค่าที่จำเป็นทั้งหมดสำหรับการรัน inference server ได้แก่ image, start command, ทรัพยากร, การ mount โมเดล และ environment variables จากหน้าข้อมูลรายละเอียดการปรับใช้ ให้คลิก <code>เพิ่ม Revision</code> เพื่อเปิดหน้าต่าง</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>รูปที่ 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>รูปที่ 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">ใช้ตัวสลับ <strong>โหมดพรีเซต</strong> / <strong>โหมดขั้นสูง</strong> ในส่วนหัวของหน้าต่างเพื่อเลือกวิธีกำหนดค่า Revision</p>
 <p data-bai-block="35">เมื่อการปรับใช้มี Revision ปัจจุบันอยู่แล้ว จะมีแบนเนอร์ <strong>โหลด Revision ปัจจุบัน</strong> แสดงอยู่เหนือฟอร์มในทั้งสองโหมด คลิก <strong>โหลด Revision ปัจจุบัน</strong> เพื่อกรอกข้อมูลในฟอร์มล่วงหน้าด้วยการกำหนดค่าของ Revision ปัจจุบันเป็นจุดเริ่มต้น (หน้าต่างจะสลับไปยังโหมดขั้นสูงโดยอัตโนมัติหากจำเป็น) แบนเนอร์นี้จะไม่แสดงเมื่อการปรับใช้ยังไม่มี Revision ปัจจุบัน และจะหายไปเมื่อคุณโหลดการกำหนดค่าแล้ว</p>
@@ -288,7 +288,7 @@
 <p data-bai-block="54">ส่วนย่อยด้านล่างนี้อธิบายฟิลด์ระดับ Revision อย่างละเอียด ซึ่งใช้ได้ทั้งเมื่อเพิ่ม Revision ด้วยตนเองใน <strong>โหมดขั้นสูง</strong> และเมื่อต้องการทำความเข้าใจว่าแต่ละฟิลด์ควบคุมอะไร</p>
 <h4 data-bai-block="55" id="deployment-การเมาตโฟลเดอรโมเดล">การเมาต์โฟลเดอร์โมเดล<a class="hash-link" href="#deployment-การเมาตโฟลเดอรโมเดล" aria-label="Direct link to การเมาต์โฟลเดอร์โมเดล">#</a></h4>
 <p data-bai-block="56">ทุก Revision จะเมาต์โฟลเดอร์จัดเก็บโมเดลหนึ่งโฟลเดอร์ลงในแต่ละเรพลิกา ฟิลด์ที่อยู่ใต้ตัวเลือกโฟลเดอร์จะกำหนดว่าโฟลเดอร์นั้นจะปรากฏที่ตำแหน่งใดภายในคอนเทนเนอร์</p>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>รูปที่ 12.5</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" style="width:780px" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>รูปที่ 12.5</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="58"><strong>โฟลเดอร์โมเดล</strong>: โฟลเดอร์จัดเก็บโมเดลที่จะเมาต์ในแต่ละเรพลิกา</li>
@@ -370,7 +370,7 @@
 <li data-bai-block="102"><strong>Trust Remote Code</strong>: อนุญาตให้รันโค้ดโมเดลที่กำหนดเองจากคลังโมเดล</li>
 </ul>
 <p data-bai-block="103"><strong>พารามิเตอร์ Runtime ของ SGLang</strong></p>
-<p><figure data-bai-block="104" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>รูปที่ 12.7</figcaption></figure>
+<p><figure data-bai-block="104" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" style="width:648px" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>รูปที่ 12.7</figcaption></figure>
 </p>
 <p data-bai-block="105">SGLang มีแท็บพารามิเตอร์ดังต่อไปนี้: <strong>Model Loading</strong>, <strong>Resource Memory</strong>, <strong>Serving Performance</strong>, <strong>Tool Reasoning</strong> และอื่น ๆ</p>
 <p data-bai-block="106">ฟิลด์หลักในแท็บ <strong>Model Loading</strong>:</p>
@@ -566,7 +566,7 @@
 </ul>
 <h4 data-bai-block="186" id="deployment-การอปโหลดไฟลกำหนดโมเดลไปยงโฟลเดอรประเภทโมเดล">การอัปโหลดไฟล์กำหนดโมเดลไปยังโฟลเดอร์ประเภทโมเดล<a class="hash-link" href="#deployment-การอปโหลดไฟลกำหนดโมเดลไปยงโฟลเดอรประเภทโมเดล" aria-label="Direct link to การอัปโหลดไฟล์กำหนดโมเดลไปยังโฟลเดอร์ประเภทโมเดล">#</a></h4>
 <p data-bai-block="187">เพื่ออัปโหลดไฟล์กำหนดโมเดล (<code>model-definition.yml</code>) ไปยังโฟลเดอร์ประเภทโมเดล คุณต้องสร้างโฟลเดอร์เสมือน เมื่อสร้างโฟลเดอร์เสมือน ให้เลือกประเภท <code>model</code> แทนประเภท <code>general</code> เริ่มต้น โปรดดูส่วน <a href="./vfolder.html#create-storage-folder">การสร้างโฟลเดอร์จัดเก็บ</a> ในหน้า Data สำหรับคำแนะนำเกี่ยวกับวิธีสร้างโฟลเดอร์</p>
-<p><figure data-bai-block="188" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>รูปที่ 12.10</figcaption></figure>
+<p><figure data-bai-block="188" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>รูปที่ 12.10</figcaption></figure>
 </p>
 <p data-bai-block="189">หลังจากสร้างโฟลเดอร์แล้ว ให้เลือกแท็บ &#39;MODELS&#39; ในหน้า Data คลิกไอคอนโฟลเดอร์ประเภทโมเดลที่สร้างขึ้นล่าสุดเพื่อเปิดตัวสำรวจโฟลเดอร์ และอัปโหลดไฟล์กำหนดโมเดล สำหรับข้อมูลเพิ่มเติมเกี่ยวกับวิธีใช้ตัวสำรวจโฟลเดอร์ โปรดดูส่วน <a href="./vfolder.html#explore-folder">สำรวจโฟลเดอร์</a></p>
 <p><figure data-bai-block="190" class="doc-figure"><img src="./images/model_type_folder_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2344" height="650" /><figcaption>รูปที่ 12.11</figcaption></figure>
@@ -680,7 +680,7 @@
 </p>
 <h4 data-bai-block="242" id="deployment-เมนเพมเตม-แกไขและลบ">เมนูเพิ่มเติม (แก้ไขและลบ)<a class="hash-link" href="#deployment-เมนเพมเตม-แกไขและลบ" aria-label="Direct link to เมนูเพิ่มเติม (แก้ไขและลบ)">#</a></h4>
 <p data-bai-block="243">ส่วนหัวของการ์ดข้อมูลบริการมีปุ่ม <strong>แก้ไข</strong> ควบคู่ไปกับเมนู <strong>เพิ่มเติม</strong> ปุ่ม <strong>แก้ไข</strong> จะเปิดหน้าต่าง <strong>แก้ไขการปรับใช้</strong> ตามที่อธิบายไว้ใน <a href="#create-deployment">หน้าต่างสร้างการปรับใช้</a> ปัจจุบันเมนูเพิ่มเติมมีการกระทำ <strong>ลบการปรับใช้</strong></p>
-<p><figure data-bai-block="244" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="332" height="174" /><figcaption>รูปที่ 12.14</figcaption></figure>
+<p><figure data-bai-block="244" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" style="width:166px" loading="lazy" decoding="async" width="332" height="174" /><figcaption>รูปที่ 12.14</figcaption></figure>
 </p>
 <p><a id="scheduling-history"></a></p>
 <h4 data-bai-block="245" id="deployment-ประวตการจดตาราง">ประวัติการจัดตาราง<a class="hash-link" href="#deployment-ประวตการจดตาราง" aria-label="Direct link to ประวัติการจัดตาราง">#</a></h4>
@@ -803,7 +803,7 @@
 <p><figure data-bai-block="319" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>รูปที่ 12.20</figcaption></figure>
 </p>
 <p data-bai-block="320">หากเรพลิกาพบข้อผิดพลาด คลิกที่ตัวบ่งชี้ข้อผิดพลาดในแถวเพื่อเปิดหน้าต่าง JSON viewer ที่แสดงข้อมูลข้อผิดพลาดดิบ ซึ่งมีประโยชน์ในการวินิจฉัยปัญหาของเรพลิกาแต่ละตัว</p>
-<p><figure data-bai-block="321" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>รูปที่ 12.21</figcaption></figure>
+<p><figure data-bai-block="321" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" style="width:492px" loading="lazy" decoding="async" width="985" height="427" /><figcaption>รูปที่ 12.21</figcaption></figure>
 </p>
 <h3 data-bai-block="322" id="deployment-กฎการปรบขนาดอตโนมต">กฎการปรับขนาดอัตโนมัติ<a class="hash-link" href="#deployment-กฎการปรบขนาดอตโนมต" aria-label="Direct link to กฎการปรับขนาดอัตโนมัติ">#</a></h3>
 <p data-bai-block="323">กฎการปรับขนาดอัตโนมัติ (Auto Scaling Rules) จะเพิ่มหรือลดจำนวนเรพลิกาของบริการโมเดลโดยอัตโนมัติตามเมตริกสด ช่วยประหยัดทรัพยากรในช่วงการใช้งานต่ำ และป้องกันความล่าช้าหรือความล้มเหลวของคำขอในช่วงการใช้งานสูง</p>
@@ -833,7 +833,7 @@
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>รูปที่ 12.23</figcaption></figure>
+<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" style="width:472px" loading="lazy" decoding="async" width="944" height="292" /><figcaption>รูปที่ 12.23</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="340"><p><strong>ขนาดขั้นตอน (Step Size)</strong>: จำนวนเต็มบวกที่ระบุจำนวนเรพลิกาที่จะเพิ่มหรือลบต่อเหตุการณ์การปรับขนาด เครื่องหมาย <code>-</code>, <code>+</code>, หรือ <code>±</code> จะแสดงโดยอัตโนมัติตามเงื่อนไขที่เลือก (ย่อขนาด / ขยายแนวนอน / ขยายและย่อขนาด)</p>
@@ -848,7 +848,7 @@
 <li data-bai-block="345"><p><strong>เรพลิกาขั้นต่ำ (Min Replicas) และเรพลิกาสูงสุด (Max Replicas)</strong>: ขอบเขตล่างและบนที่การปรับขนาดอัตโนมัติบังคับใช้กับจำนวนเรพลิกา การปรับขนาดอัตโนมัติจะไม่ลดจำนวนเรพลิกาต่ำกว่าเรพลิกาขั้นต่ำ หรือเพิ่มให้มากกว่าเรพลิกาสูงสุด</p>
 </li>
 </ul>
-<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>รูปที่ 12.24</figcaption></figure>
+<p><figure data-bai-block="346" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>รูปที่ 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="347" id="deployment-การสรางโทเคน">การสร้างโทเค็น<a class="hash-link" href="#deployment-การสรางโทเคน" aria-label="Direct link to การสร้างโทเค็น">#</a></h3>
@@ -867,7 +867,7 @@
 </li>
 <li data-bai-block="357">คลิก <code>สร้างโทเค็นการเข้าถึง</code> เพื่อออกโทเค็น</li>
 </ol>
-<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>รูปที่ 12.26</figcaption></figure>
+<p><figure data-bai-block="358" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" style="width:460px" loading="lazy" decoding="async" width="920" height="704" /><figcaption>รูปที่ 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="359">ปุ่ม <code>สร้างโทเค็นการเข้าถึง</code> จะถูกปิดใช้งานจนกว่า manager จะออก endpoint ของเครือข่ายให้การปรับใช้นี้ ระหว่างที่ปิดใช้งาน คำแนะนำของปุ่มจะระบุว่า <em>&quot;ยังไม่ได้ออก endpoint ของเครือข่าย&quot;</em> ปุ่มนี้ยังถูกปิดใช้งานสำหรับการปรับใช้ที่คุณไม่ได้เป็นเจ้าของ (<em>&quot;เฉพาะเจ้าของการปรับใช้เท่านั้นที่สามารถจัดการโทเค็นการเข้าถึงได้&quot;</em>) และการปรับใช้ที่กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป (<em>&quot;การปรับใช้กำลังหยุดหรือไม่ได้ใช้งานอีกต่อไป&quot;</em>) สองเงื่อนไขหลังนี้ทำให้การลบโทเค็นถูกปิดใช้งานด้วยเช่นกัน</p>
@@ -911,7 +911,7 @@
 
 <h3 data-bai-block="375" id="deployment-การยตการปรบใช">การยุติการปรับใช้<a class="hash-link" href="#deployment-การยตการปรบใช" aria-label="Direct link to การยุติการปรับใช้">#</a></h3>
 <p data-bai-block="376">หากไม่จำเป็นต้องใช้การปรับใช้แล้ว แนะนำให้ยุติการปรับใช้นั้น หากต้องการยุติการปรับใช้ ให้เปิดเมนู <strong>เพิ่มเติม</strong> บนการ์ดข้อมูลบริการ และเลือก <strong>ลบการปรับใช้</strong> หน้าต่างยืนยันแบบพิมพ์จะปรากฏขึ้น — พิมพ์ชื่อการปรับใช้เพื่อเปิดใช้งานปุ่ม <strong>ลบถาวร</strong> การปรับใช้ที่ยุติแล้วจะปรากฏในมุมมองตัวกรอง <strong>ถูกทำลาย</strong></p>
-<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>รูปที่ 12.28</figcaption></figure>
+<p><figure data-bai-block="377" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>รูปที่ 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="378" id="deployment-การเขาถงการปรบใชของคณ">การเข้าถึงการปรับใช้ของคุณ<a class="hash-link" href="#deployment-การเขาถงการปรบใชของคณ" aria-label="Direct link to การเข้าถึงการปรับใช้ของคุณ">#</a></h2>
 <h3 data-bai-block="379" id="deployment-การสงคำขอ-api">การส่งคำขอ API<a class="hash-link" href="#deployment-การสงคำขอ-api" aria-label="Direct link to การส่งคำขอ API">#</a></h3>
@@ -1008,7 +1008,7 @@ endpoint ได้ หากบริการถูกสร้างในเ�
 <li data-bai-block="425"><strong>ทรัพยากรขั้นต่ำ (Min Resource)</strong>: ข้อกำหนดทรัพยากรขั้นต่ำ (CPU, หน่วยความจำ, GPU)</li>
 </ul>
 <p data-bai-block="426">หากการ์ดโมเดลมี README จะถูกเรนเดอร์เป็นการ์ด <code>README.md</code> ที่ด้านล่างของ Drawer</p>
-<p><figure data-bai-block="427" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 12.34</figcaption></figure>
+<p><figure data-bai-block="427" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>รูปที่ 12.34</figcaption></figure>
 </p>
 <h3 data-bai-block="428" id="deployment-การ-deploy-โมเดล">การ Deploy โมเดล<a class="hash-link" href="#deployment-การ-deploy-โมเดล" aria-label="Direct link to การ Deploy โมเดล">#</a></h3>
 <p data-bai-block="429">คลิกปุ่ม <code>Deploy</code> ในส่วนหัวของ Drawer เพื่อ deploy โมเดลเป็นบริการ ขั้นตอนการ deploy ทำงานได้ด้วยหนึ่งในสองรูปแบบ:</p>
@@ -1038,7 +1038,7 @@ endpoint ได้ หากบริการถูกสร้างในเ�
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/th/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> แก้ไขหน้านี้</a>
-  <span class="last-updated">อัปเดตล่าสุด 23 ก.ย. 2569</span>
+  <span class="last-updated">อัปเดตล่าสุด 1 ต.ค. 2569</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">
