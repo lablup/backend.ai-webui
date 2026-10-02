@@ -1,4 +1,4 @@
-import { Card } from '@astryxdesign/core/Card';
+import { Card } from '@lablup/ui-common/Card';
 import { default as React, CSSProperties, ReactNode, Ref } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /** antd `Card`'s `tabList` item, restated locally. */
 export interface BAICardTabItem {
