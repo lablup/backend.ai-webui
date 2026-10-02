@@ -174,8 +174,6 @@ A file that is missing one of these two columns is rejected, and the dialog expl
 - **resource_policy**: The name of the resource policy to assign.
 - **project**: The name of the project to add the user to.
 
-Users are always created in the domain you are signed in to. A domain column in the file is ignored.
-
 #### Uploading and reviewing
 
 The left side of the dialog holds a **Defaults** panel. Any value you set there fills in the matching
