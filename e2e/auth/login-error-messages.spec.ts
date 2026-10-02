@@ -347,7 +347,7 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
-        page.getByRole('dialog', { name: 'Logged in elsewhere' }),
+        page.getByRole('alertdialog', { name: 'Logged in elsewhere' }),
       ).toBeVisible({ timeout: 10_000 });
     });
   },
