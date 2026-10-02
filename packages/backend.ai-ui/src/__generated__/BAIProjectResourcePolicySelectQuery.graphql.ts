@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9866cc7d566efd495a414e23a9ebb50c>>
+ * @generated SignedSource<<6ba61de61f42335a61635371c223d47a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,11 +10,10 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 export type BAIProjectResourcePolicySelectQuery$variables = {
-  isSuperAdmin: boolean;
   limit: number;
 };
 export type BAIProjectResourcePolicySelectQuery$data = {
-  readonly adminProjectResourcePoliciesV2?: {
+  readonly adminProjectResourcePoliciesV2: {
     readonly edges: ReadonlyArray<{
       readonly node: {
         readonly id: string;
@@ -22,10 +21,6 @@ export type BAIProjectResourcePolicySelectQuery$data = {
       };
     }>;
   } | null | undefined;
-  readonly project_resource_policies?: ReadonlyArray<{
-    readonly id: string;
-    readonly name: string;
-  } | null | undefined> | null | undefined;
 };
 export type BAIProjectResourcePolicySelectQuery = {
   response: BAIProjectResourcePolicySelectQuery$data;
@@ -33,78 +28,66 @@ export type BAIProjectResourcePolicySelectQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "isSuperAdmin"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "limit"
-},
-v2 = [
+var v0 = [
   {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "id",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "name",
-    "storageKey": null
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "limit"
   }
 ],
-v3 = [
+v1 = [
   {
-    "condition": "isSuperAdmin",
-    "kind": "Condition",
-    "passingValue": true,
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      },
+      {
+        "kind": "Literal",
+        "name": "orderBy",
+        "value": [
+          {
+            "direction": "ASC",
+            "field": "NAME"
+          }
+        ]
+      }
+    ],
+    "concreteType": "ProjectResourcePolicyV2Connection",
+    "kind": "LinkedField",
+    "name": "adminProjectResourcePoliciesV2",
+    "plural": false,
     "selections": [
       {
         "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "limit",
-            "variableName": "limit"
-          },
-          {
-            "kind": "Literal",
-            "name": "orderBy",
-            "value": [
-              {
-                "direction": "ASC",
-                "field": "NAME"
-              }
-            ]
-          }
-        ],
-        "concreteType": "ProjectResourcePolicyV2Connection",
+        "args": null,
+        "concreteType": "ProjectResourcePolicyV2Edge",
         "kind": "LinkedField",
-        "name": "adminProjectResourcePoliciesV2",
-        "plural": false,
+        "name": "edges",
+        "plural": true,
         "selections": [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ProjectResourcePolicyV2Edge",
+            "concreteType": "ProjectResourcePolicyV2",
             "kind": "LinkedField",
-            "name": "edges",
-            "plural": true,
+            "name": "node",
+            "plural": false,
             "selections": [
               {
                 "alias": null,
                 "args": null,
-                "concreteType": "ProjectResourcePolicyV2",
-                "kind": "LinkedField",
-                "name": "node",
-                "plural": false,
-                "selections": (v2/*: any*/),
+                "kind": "ScalarField",
+                "name": "id",
+                "storageKey": null
+              },
+              {
+                "alias": null,
+                "args": null,
+                "kind": "ScalarField",
+                "name": "name",
                 "storageKey": null
               }
             ],
@@ -113,60 +96,38 @@ v3 = [
         ],
         "storageKey": null
       }
-    ]
-  },
-  {
-    "condition": "isSuperAdmin",
-    "kind": "Condition",
-    "passingValue": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "ProjectResourcePolicy",
-        "kind": "LinkedField",
-        "name": "project_resource_policies",
-        "plural": true,
-        "selections": (v2/*: any*/),
-        "storageKey": null
-      }
-    ]
+    ],
+    "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "BAIProjectResourcePolicySelectQuery",
-    "selections": (v3/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "BAIProjectResourcePolicySelectQuery",
-    "selections": (v3/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "6fa2930c993b5bab286f46d59d192a40",
+    "cacheID": "6a3fd80d898f34a903548c48ccf308ce",
     "id": null,
     "metadata": {},
     "name": "BAIProjectResourcePolicySelectQuery",
     "operationKind": "query",
-    "text": "query BAIProjectResourcePolicySelectQuery(\n  $limit: Int!\n  $isSuperAdmin: Boolean!\n) {\n  adminProjectResourcePoliciesV2(limit: $limit, orderBy: [{field: NAME, direction: ASC}]) @include(if: $isSuperAdmin) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n  project_resource_policies @skip(if: $isSuperAdmin) {\n    id\n    name\n  }\n}\n"
+    "text": "query BAIProjectResourcePolicySelectQuery(\n  $limit: Int!\n) {\n  adminProjectResourcePoliciesV2(limit: $limit, orderBy: [{field: NAME, direction: ASC}]) {\n    edges {\n      node {\n        id\n        name\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "133bc6b0a14a92d46be068cad9e85d90";
+(node as any).hash = "c0a5c2859443c7fc9caad17553e6b91b";
 
 export default node;

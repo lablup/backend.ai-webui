@@ -7,9 +7,7 @@ import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSetting
 import { KeypairSettingModalModifyMutation } from '../__generated__/KeypairSettingModalModifyMutation.graphql';
 import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
-import { useSuspendedBackendaiClient } from '../hooks';
 import BAIFormItem from './BAIFormItem';
-import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryxFormControls';
 import { Grid, GridSpan } from '@lablup/ui-common/Grid';
 import {
@@ -43,10 +41,6 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
   const { message } = App.useApp();
   const formRef = useRef<FormInstance<KeypairSettingModalFormInput>>(null);
 
-  const baiClient = useSuspendedBackendaiClient();
-  // `adminKeypairResourcePoliciesV2` is superadmin-only; a domain admin (this
-  // modal is reachable from `/admin/users`) still reads the legacy list.
-  const isSuperAdmin = !!baiClient.is_superadmin;
   const keypair = useFragment(
     graphql`
       fragment KeypairSettingModalFragment on KeyPair {
@@ -227,14 +221,10 @@ const KeypairSettingModal: React.FC<KeypairSettingModalProps> = ({
                   },
                 ]}
               >
-                {isSuperAdmin ? (
-                  <BAIAdminKeypairResourcePolicySelect
-                    label={t('credential.ResourcePolicy')}
-                    isLabelHidden
-                  />
-                ) : (
-                  <KeypairResourcePolicySelect />
-                )}
+                <BAIAdminKeypairResourcePolicySelect
+                  label={t('credential.ResourcePolicy')}
+                  isLabelHidden
+                />
               </BAIFormItem>
             </Suspense>
           </GridSpan>
