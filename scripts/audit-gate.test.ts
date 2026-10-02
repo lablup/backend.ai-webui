@@ -2,6 +2,7 @@
 import {
   collectFindings,
   evaluate,
+  isRootedIn,
   isValidDate,
   mergeFindings,
 } from "./audit-gate.mjs";
@@ -35,6 +36,7 @@ describe("collectFindings", () => {
     const findings = collectFindings(
       report({
         1: adv("GHSA-e", "electron", "high", [".>electron"]),
+        5: adv("GHSA-z", "extract-zip", "high", [".>electron>extract-zip"]),
         2: adv("GHSA-p", "path-to-regexp", "high", [
           ".>express>path-to-regexp",
           ".>webpack-dev-server>express>path-to-regexp",
@@ -42,13 +44,27 @@ describe("collectFindings", () => {
         3: adv("GHSA-t", "tar", "critical", [".>tar"]),
         4: adv("GHSA-x", "x", "high", [".>expressive>x"]),
       }),
-      { rootEntries: ["electron", "express"] },
+      {
+        rootEntries: [
+          { package: "electron", transitive: false },
+          { package: "express" },
+        ],
+      },
     );
     expect(findings.map((f) => f.package)).toEqual([
       "electron",
       "path-to-regexp",
     ]);
     expect([...findings[1].paths]).toEqual([".>express>path-to-regexp"]);
+  });
+
+  it("matches a transitive: false entry's own package only", () => {
+    const electron = { package: "electron", transitive: false };
+    expect(isRootedIn(".>electron", electron)).toBe(true);
+    expect(isRootedIn(".>electron>extract-zip", electron)).toBe(false);
+    expect(isRootedIn(".>express>path-to-regexp", { package: "express" })).toBe(
+      true,
+    );
   });
 
   it("merges findings of the same advisory across reports", () => {

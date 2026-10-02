@@ -160,6 +160,7 @@ overrides:
   "uuid@^11": ^11.1.1 # buffer bounds check (#387) v11 line
   "uuid@^13": ^13.0.1 # buffer bounds check (#374) v13 line
   dompurify: ^3.4.12 # align transitives with catalog bump
+  "path-to-regexp@~0.1": ^0.1.13 # ReDoS GHSA-37ch-88jc-xwx2 (FR-4146); ships in the pkg local proxy via express
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to

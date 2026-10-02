@@ -34,16 +34,24 @@ export function normalizeImporter(importer) {
   return importer === "" ? "." : importer.replaceAll("/", "__");
 }
 
-/** True if an audit path starts at the root importer's dependency `entry`. */
+/**
+ * True if an audit path starts at the root dependency `entry.package`.
+ * `transitive: false` matches the package itself only (Electron's deps are install-time tooling).
+ * @param {string} path
+ * @param {{ package: string, transitive?: boolean }} entry
+ */
 export function isRootedIn(path, entry) {
-  return path === `.>${entry}` || path.startsWith(`.>${entry}>`);
+  const root = `.>${entry.package}`;
+  return (
+    path === root || (entry.transitive !== false && path.startsWith(`${root}>`))
+  );
 }
 
 /**
  * Flatten a `pnpm audit --json` report into one finding per (advisory, module).
- * `rootEntries` keeps only paths rooted in those root dependencies, transitive ones included.
+ * `rootEntries` keeps only paths rooted in those root dependencies (see isRootedIn).
  * @param {any} report
- * @param {{ rootEntries?: string[] }} [opts]
+ * @param {{ rootEntries?: { package: string, transitive?: boolean }[] }} [opts]
  */
 export function collectFindings(report, opts = {}) {
   if (!report || typeof report.advisories !== "object") {
@@ -180,7 +188,7 @@ function main() {
   const allowlist = JSON.parse(
     readFileSync(args.allowlist ?? DEFAULT_ALLOWLIST, "utf8"),
   );
-  const shipped = (allowlist.shippedRootEntries ?? []).map((d) => d.package);
+  const shipped = allowlist.shippedRootEntries ?? [];
 
   const prodReport = JSON.parse(
     args["prod-report"]
