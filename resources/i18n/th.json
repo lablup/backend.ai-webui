@@ -2628,6 +2628,7 @@
     "EditDefaultSessionOptions": "แก้ไขตัวเลือกเซสชันเริ่มต้น",
     "EnterAPIToken": "กรอกโทเค็น API",
     "EnterValidResourceGroupName": "ป้อนชื่อกลุ่มทรัพยากรที่ถูกต้อง",
+    "FailedToLoadDefaultOptions": "โหลดตัวเลือกเริ่มต้นไม่สำเร็จ",
     "FailurePolicy": "นโยบายเมื่อล้มเหลว",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "ผลกระทบของการเริ่มต้นกลุ่มเคอร์เนลที่ล้มเหลวต่อเซสชัน เมื่อทั้งเซสชันและกลุ่มเคอร์เนลไม่ได้กำหนดนโยบายเอง\nStrict: เคอร์เนลใดล้มเหลวจะยุติเซสชัน\nBoot all: ทุก replica ต้องบูตสำเร็จก่อนเซสชันจะทำงาน\nTolerant: เซสชันทำงานต่อตราบที่แต่ละกลุ่มมี replica อย่างน้อยหนึ่งตัวทำงานอยู่",

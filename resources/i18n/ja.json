@@ -2640,6 +2640,7 @@
     "EditDefaultSessionOptions": "デフォルトセッションオプションを編集",
     "EnterAPIToken": "APIトークンを入力",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
+    "FailedToLoadDefaultOptions": "デフォルトオプションを読み込めませんでした。",
     "FailurePolicy": "失敗ポリシー",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "セッションとカーネルグループのどちらもポリシーを指定していない場合に、カーネルグループの起動失敗がセッションに与える影響。\nStrict: いずれかのカーネルが失敗するとセッションを終了します。\nBoot all: すべてのレプリカが起動してからセッションが実行されます。\nTolerant: グループごとに少なくとも1つのレプリカが稼働していればセッションを継続します。",

@@ -5,7 +5,7 @@
 import { ResourceGroupDetailDrawerQuery } from '../__generated__/ResourceGroupDetailDrawerQuery.graphql';
 import { ResourceGroupDetailDrawerSettingModalQuery } from '../__generated__/ResourceGroupDetailDrawerSettingModalQuery.graphql';
 import { useSuspendedBackendaiClient } from '../hooks';
-import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
+import BAIErrorBoundary from './BAIErrorBoundary';
 import ResourceGroupDefaultDeploymentOptionsPanel from './ResourceGroupDefaultDeploymentOptionsPanel';
 import ResourceGroupDefaultSessionOptionsPanel from './ResourceGroupDefaultSessionOptionsPanel';
 import type { ScalingGroupOpts } from './ResourceGroupList';
@@ -117,8 +117,6 @@ const ResourceGroupDetailDrawerContent: React.FC<{
                 scheduler {
                   type
                 }
-                ...ResourceGroupDefaultSessionOptionsPanelFragment
-                ...ResourceGroupDefaultDeploymentOptionsPanelFragment
               }
             }
           }
@@ -224,17 +222,21 @@ const ResourceGroupDetailDrawerContent: React.FC<{
               label={t('resourceGroup.DefaultDeploymentOptions')}
             />
           </TabList>
-          <ErrorBoundaryWithNullFallback>
-            {activeTab === 'defaultSessionOptions' ? (
-              <ResourceGroupDefaultSessionOptionsPanel
-                resourceGroupFrgmt={resourceGroup}
-              />
-            ) : (
-              <ResourceGroupDefaultDeploymentOptionsPanel
-                resourceGroupFrgmt={resourceGroup}
-              />
-            )}
-          </ErrorBoundaryWithNullFallback>
+          <BAIErrorBoundary>
+            <Suspense fallback={<BAISkeleton />}>
+              {activeTab === 'defaultSessionOptions' ? (
+                <ResourceGroupDefaultSessionOptionsPanel
+                  resourceGroupName={resourceGroupName}
+                  fetchKey={fetchKey}
+                />
+              ) : (
+                <ResourceGroupDefaultDeploymentOptionsPanel
+                  resourceGroupName={resourceGroupName}
+                  fetchKey={fetchKey}
+                />
+              )}
+            </Suspense>
+          </BAIErrorBoundary>
         </BAIFlex>
       ) : null}
     </BAIFlex>

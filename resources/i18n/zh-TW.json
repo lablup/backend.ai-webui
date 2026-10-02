@@ -2642,6 +2642,7 @@
     "EditDefaultSessionOptions": "編輯預設工作階段選項",
     "EnterAPIToken": "輸入 API 令牌",
     "EnterValidResourceGroupName": "輸入有效的資源組名稱",
+    "FailedToLoadDefaultOptions": "無法載入預設選項。",
     "FailurePolicy": "失敗策略",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "當工作階段和核心群組都未設定策略時，核心群組啟動失敗對工作階段的影響。\nStrict：任一核心失敗即終止工作階段。\nBoot all：所有副本啟動後工作階段才會執行。\nTolerant：只要每個群組至少有一個副本運作，工作階段就會繼續。",

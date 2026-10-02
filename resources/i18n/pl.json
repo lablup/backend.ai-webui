@@ -2640,6 +2640,7 @@
     "EditDefaultSessionOptions": "Edytuj domyślne opcje sesji",
     "EnterAPIToken": "Wprowadź token API",
     "EnterValidResourceGroupName": "Wpisz poprawną nazwę grupy zasobów",
+    "FailedToLoadDefaultOptions": "Nie udało się wczytać opcji domyślnych.",
     "FailurePolicy": "Zasada obsługi awarii",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Jak błąd uruchomienia grupy jąder wpływa na sesję, gdy ani sesja, ani grupa nie ustawia własnej zasady.\nStrict: każda awaria jądra kończy sesję.\nBoot all: wszystkie repliki muszą się uruchomić, zanim sesja zacznie działać.\nTolerant: sesja działa dalej, dopóki w każdej grupie działa co najmniej jedna replika.",

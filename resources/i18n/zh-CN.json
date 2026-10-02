@@ -2640,6 +2640,7 @@
     "EditDefaultSessionOptions": "编辑默认会话选项",
     "EnterAPIToken": "输入API令牌",
     "EnterValidResourceGroupName": "输入有效的资源组名称",
+    "FailedToLoadDefaultOptions": "无法加载默认选项。",
     "FailurePolicy": "失败策略",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "当会话和内核组都未设置策略时，内核组启动失败对会话的影响。\nStrict：任一内核失败即终止会话。\nBoot all：所有副本启动后会话才会运行。\nTolerant：只要每个组至少有一个副本运行，会话就会继续。",

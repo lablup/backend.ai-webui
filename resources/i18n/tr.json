@@ -2638,6 +2638,7 @@
     "EditDefaultSessionOptions": "Varsayılan Oturum Seçeneklerini Düzenle",
     "EnterAPIToken": "API jetonunu girin",
     "EnterValidResourceGroupName": "Geçerli Kaynak grubu adını girin",
+    "FailedToLoadDefaultOptions": "Varsayılan seçenekler yüklenemedi.",
     "FailurePolicy": "Hata Politikası",
     "FailurePolicyBootAll": "Boot all",
     "FailurePolicyDesc": "Ne oturum ne de çekirdek grubu kendi politikasını belirlediğinde, bir çekirdek grubunun başlatma hatasının oturumu nasıl etkilediği.\nStrict: herhangi bir çekirdek hatası oturumu sonlandırır.\nBoot all: oturum çalışmadan önce tüm kopyalar başlamalıdır.\nTolerant: her grupta en az bir kopya çalıştığı sürece oturum devam eder.",
