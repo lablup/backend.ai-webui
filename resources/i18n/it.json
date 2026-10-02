@@ -2035,7 +2035,17 @@
     "TooManyAttempt": "Ci sono stati troppi tentativi di accesso. I tentativi di accesso sono stati bloccati per un po'.",
     "singleSignOn": {
       "LoginWithRealm": "Accesso con {{ realmName }}",
-      "LoginWithSAML": "Accesso con SAML"
+      "LoginWithRealmFailed": "Accesso con {{ realmName }} non riuscito",
+      "LoginWithSAML": "Accesso con SAML",
+      "OpenIDAccessDenied": "Il provider di identità ha negato l'accesso. L'accesso o il consenso potrebbero essere stati annullati, oppure il provider richiede di accedere di nuovo o di scegliere un account. Riprova.",
+      "OpenIDDomainNotFound": "Nessun dominio Backend.AI è collegato al tuo gruppo. Contatta l'amministratore.",
+      "OpenIDGroupNotAllowed": "Il tuo account non appartiene a un gruppo autorizzato ad accedere a Backend.AI. Chiedi all'amministratore di verificare l'appartenenza ai gruppi.",
+      "OpenIDInternalServerError": "Si è verificato un errore del server durante l'accesso. Riprova più tardi. Se il problema persiste, contatta l'amministratore.",
+      "OpenIDNotAuthenticated": "Il provider di identità non è riuscito ad autenticarti. Riprova. Se il problema persiste, contatta l'amministratore.",
+      "OpenIDProviderMisconfigured": "Il provider di identità ha rifiutato la configurazione client di Backend.AI. Contatta l'amministratore.",
+      "OpenIDProviderUnavailable": "Il provider di identità è temporaneamente non disponibile. Riprova più tardi.",
+      "OpenIDSessionInvalid": "La sessione di accesso non esiste o è scaduta. Accedi di nuovo.",
+      "OpenIDUnknownError": "Si è verificato un errore sconosciuto durante l'accesso ({{ code }}). Riprova. Se il problema persiste, contatta l'amministratore."
     }
   },
   "loginHistory": {

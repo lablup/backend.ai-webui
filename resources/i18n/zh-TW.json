@@ -2038,7 +2038,17 @@
     "TooManyAttempt": "登錄嘗試次數過多。登錄嘗試已被阻止一段時間。",
     "singleSignOn": {
       "LoginWithRealm": "使用 {{ realmName }} 登录",
-      "LoginWithSAML": "使用 SAML 登录"
+      "LoginWithRealmFailed": "使用 {{ realmName }} 登入失敗",
+      "LoginWithSAML": "使用 SAML 登录",
+      "OpenIDAccessDenied": "身分提供者拒絕了登入。可能是登入或授權已被取消，或者提供者要求您重新登入或選擇帳戶。請重試。",
+      "OpenIDDomainNotFound": "沒有與您的群組連結的 Backend.AI 網域。請聯絡管理員。",
+      "OpenIDGroupNotAllowed": "您的帳戶不屬於允許存取 Backend.AI 的群組。請聯絡管理員確認您的群組成員資格。",
+      "OpenIDInternalServerError": "登入時發生伺服器錯誤。請稍後重試。如果問題持續發生，請聯絡管理員。",
+      "OpenIDNotAuthenticated": "身分提供者無法驗證您的身分。請重試。如果問題持續發生，請聯絡管理員。",
+      "OpenIDProviderMisconfigured": "身分提供者拒絕了 Backend.AI 的用戶端設定。請聯絡管理員。",
+      "OpenIDProviderUnavailable": "身分提供者暫時無法使用。請稍後重試。",
+      "OpenIDSessionInvalid": "登入工作階段不存在或已過期。請重新登入。",
+      "OpenIDUnknownError": "登入時發生未知錯誤（{{ code }}）。請重試。如果問題持續發生，請聯絡管理員。"
     }
   },
   "loginHistory": {

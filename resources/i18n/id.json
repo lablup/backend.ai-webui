@@ -2038,7 +2038,17 @@
     "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
     "singleSignOn": {
       "LoginWithRealm": "Masuk dengan {{ namaRealm }}",
-      "LoginWithSAML": "Masuk dengan SAML"
+      "LoginWithRealmFailed": "Gagal masuk dengan {{ realmName }}",
+      "LoginWithSAML": "Masuk dengan SAML",
+      "OpenIDAccessDenied": "Penyedia identitas menolak proses masuk. Proses masuk atau persetujuan mungkin dibatalkan, atau penyedia meminta Anda masuk lagi atau memilih akun. Silakan coba lagi.",
+      "OpenIDDomainNotFound": "Tidak ada domain Backend.AI yang terhubung dengan grup Anda. Hubungi administrator Anda.",
+      "OpenIDGroupNotAllowed": "Akun Anda tidak termasuk dalam grup yang diizinkan mengakses Backend.AI. Minta administrator Anda untuk memeriksa keanggotaan grup Anda.",
+      "OpenIDInternalServerError": "Terjadi kesalahan server saat masuk. Silakan coba lagi nanti. Jika masalah berlanjut, hubungi administrator Anda.",
+      "OpenIDNotAuthenticated": "Penyedia identitas tidak dapat mengautentikasi Anda. Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda.",
+      "OpenIDProviderMisconfigured": "Penyedia identitas menolak konfigurasi klien Backend.AI. Hubungi administrator Anda.",
+      "OpenIDProviderUnavailable": "Penyedia identitas untuk sementara tidak tersedia. Silakan coba lagi nanti.",
+      "OpenIDSessionInvalid": "Sesi masuk Anda tidak ada atau telah kedaluwarsa. Silakan masuk lagi.",
+      "OpenIDUnknownError": "Terjadi kesalahan yang tidak diketahui saat masuk ({{ code }}). Silakan coba lagi. Jika masalah berlanjut, hubungi administrator Anda."
     }
   },
   "loginHistory": {

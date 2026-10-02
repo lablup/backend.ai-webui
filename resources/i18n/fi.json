@@ -2035,7 +2035,17 @@
     "TooManyAttempt": "Kirjautumisyrityksiä oli liikaa. Kirjautumisyritykset on estetty jonkin aikaa.",
     "singleSignOn": {
       "LoginWithRealm": "Kirjaudu sisään {{ realmName }}",
-      "LoginWithSAML": "Kirjautuminen SAML:llä"
+      "LoginWithRealmFailed": "Kirjautuminen palvelulla {{ realmName }} epäonnistui",
+      "LoginWithSAML": "Kirjautuminen SAML:llä",
+      "OpenIDAccessDenied": "Tunnistautumispalvelu hylkäsi kirjautumisen. Kirjautuminen tai suostumus on ehkä peruttu, tai palvelu vaatii kirjautumaan uudelleen tai valitsemaan tilin. Yritä uudelleen.",
+      "OpenIDDomainNotFound": "Ryhmääsi ei ole liitetty Backend.AI-toimialuetta. Ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDGroupNotAllowed": "Tilisi ei kuulu ryhmään, jolla on pääsy Backend.AI:hin. Pyydä järjestelmänvalvojaa tarkistamaan ryhmäjäsenyytesi.",
+      "OpenIDInternalServerError": "Kirjautumisen aikana tapahtui palvelinvirhe. Yritä myöhemmin uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDNotAuthenticated": "Tunnistautumispalvelu ei pystynyt tunnistamaan sinua. Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDProviderMisconfigured": "Tunnistautumispalvelu hylkäsi Backend.AI:n asiakasmääritykset. Ota yhteyttä järjestelmänvalvojaan.",
+      "OpenIDProviderUnavailable": "Tunnistautumispalvelu ei ole tilapäisesti käytettävissä. Yritä myöhemmin uudelleen.",
+      "OpenIDSessionInvalid": "Kirjautumisistuntoa ei ole tai se on vanhentunut. Kirjaudu uudelleen.",
+      "OpenIDUnknownError": "Kirjautumisen aikana tapahtui tuntematon virhe ({{ code }}). Yritä uudelleen. Jos ongelma jatkuu, ota yhteyttä järjestelmänvalvojaan."
     }
   },
   "loginHistory": {

@@ -2037,7 +2037,17 @@
     "TooManyAttempt": "登录尝试次数过多。登录尝试已被阻止一段时间。",
     "singleSignOn": {
       "LoginWithRealm": "使用 {{ realmName }} 登录",
-      "LoginWithSAML": "使用 SAML 登录"
+      "LoginWithRealmFailed": "使用 {{ realmName }} 登录失败",
+      "LoginWithSAML": "使用 SAML 登录",
+      "OpenIDAccessDenied": "身份提供商拒绝了登录。可能是登录或授权已被取消，或者提供商要求您重新登录或选择账户。请重试。",
+      "OpenIDDomainNotFound": "没有与您的组关联的 Backend.AI 域。请联系管理员。",
+      "OpenIDGroupNotAllowed": "您的账户不属于允许访问 Backend.AI 的组。请联系管理员确认您的组成员身份。",
+      "OpenIDInternalServerError": "登录时发生服务器错误。请稍后重试。如果问题仍然存在，请联系管理员。",
+      "OpenIDNotAuthenticated": "身份提供商无法验证您的身份。请重试。如果问题仍然存在，请联系管理员。",
+      "OpenIDProviderMisconfigured": "身份提供商拒绝了 Backend.AI 的客户端配置。请联系管理员。",
+      "OpenIDProviderUnavailable": "身份提供商暂时不可用。请稍后重试。",
+      "OpenIDSessionInvalid": "登录会话不存在或已过期。请重新登录。",
+      "OpenIDUnknownError": "登录时发生未知错误（{{ code }}）。请重试。如果问题仍然存在，请联系管理员。"
     }
   },
   "loginHistory": {

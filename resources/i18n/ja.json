@@ -2037,7 +2037,17 @@
     "TooManyAttempt": "ログインの試行回数が多すぎました。ログインの試行はしばらくの間ブロックされています。",
     "singleSignOn": {
       "LoginWithRealm": "{{ realmName }}ログイン",
-      "LoginWithSAML": "SAMLログイン"
+      "LoginWithRealmFailed": "{{ realmName }} でのログインに失敗しました",
+      "LoginWithSAML": "SAMLログイン",
+      "OpenIDAccessDenied": "認証プロバイダーがログインを拒否しました。ログインまたは同意がキャンセルされたか、プロバイダーが再ログインやアカウントの選択を求めている可能性があります。もう一度お試しください。",
+      "OpenIDDomainNotFound": "お使いのグループに紐づく Backend.AI ドメインがありません。管理者に連絡してください。",
+      "OpenIDGroupNotAllowed": "お使いのアカウントは Backend.AI へのアクセスが許可されたグループに所属していません。管理者にグループの所属を確認してください。",
+      "OpenIDInternalServerError": "ログイン中にサーバーエラーが発生しました。しばらくしてからもう一度お試しください。問題が続く場合は管理者に連絡してください。",
+      "OpenIDNotAuthenticated": "認証プロバイダーがユーザーを認証できませんでした。もう一度お試しください。問題が続く場合は管理者に連絡してください。",
+      "OpenIDProviderMisconfigured": "認証プロバイダーが Backend.AI のクライアント設定を拒否しました。管理者に連絡してください。",
+      "OpenIDProviderUnavailable": "認証プロバイダーが一時的に利用できません。しばらくしてからもう一度お試しください。",
+      "OpenIDSessionInvalid": "ログインセッションが存在しないか、有効期限が切れています。もう一度ログインしてください。",
+      "OpenIDUnknownError": "ログイン中に不明なエラーが発生しました（{{ code }}）。もう一度お試しください。問題が続く場合は管理者に連絡してください。"
     }
   },
   "loginHistory": {

@@ -2037,7 +2037,17 @@
     "TooManyAttempt": "Houve muitas tentativas de login. As tentativas de login foram bloqueadas por um tempo.",
     "singleSignOn": {
       "LoginWithRealm": "Iniciar sessão com {{ realmName }}",
-      "LoginWithSAML": "Iniciar sessão com SAML"
+      "LoginWithRealmFailed": "Falha ao iniciar sessão com {{ realmName }}",
+      "LoginWithSAML": "Iniciar sessão com SAML",
+      "OpenIDAccessDenied": "O fornecedor de identidade recusou o início de sessão. O início de sessão ou o consentimento pode ter sido cancelado, ou o fornecedor pode exigir que inicie sessão ou escolha uma conta novamente. Tente novamente.",
+      "OpenIDDomainNotFound": "Não existe nenhum domínio Backend.AI associado ao seu grupo. Contacte o administrador.",
+      "OpenIDGroupNotAllowed": "A sua conta não pertence a um grupo com permissão para aceder ao Backend.AI. Peça ao administrador para verificar a sua associação a grupos.",
+      "OpenIDInternalServerError": "Ocorreu um erro no servidor ao iniciar sessão. Tente novamente mais tarde. Se o problema persistir, contacte o administrador.",
+      "OpenIDNotAuthenticated": "O fornecedor de identidade não conseguiu autenticá-lo. Tente novamente. Se o problema persistir, contacte o administrador.",
+      "OpenIDProviderMisconfigured": "O fornecedor de identidade rejeitou a configuração de cliente do Backend.AI. Contacte o administrador.",
+      "OpenIDProviderUnavailable": "O fornecedor de identidade está temporariamente indisponível. Tente novamente mais tarde.",
+      "OpenIDSessionInvalid": "A sua sessão de início de sessão não existe ou expirou. Inicie sessão novamente.",
+      "OpenIDUnknownError": "Ocorreu um erro desconhecido ao iniciar sessão ({{ code }}). Tente novamente. Se o problema persistir, contacte o administrador."
     }
   },
   "loginHistory": {
