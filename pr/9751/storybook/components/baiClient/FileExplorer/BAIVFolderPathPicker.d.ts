@@ -1,5 +1,5 @@
-import { ComplexSelectorSize } from '@astryxdesign/core/ComplexSelector';
-import { SizeValue } from '@astryxdesign/core/utils';
+import { ComplexSelectorSize } from '@lablup/ui-common/ComplexSelector';
+import { SizeValue } from '@lablup/ui-common/utils';
 export interface BAIVFolderPathPickerProps {
     /**
      * UUID of the vfolder to browse. Pair it with a separate vfolder select:

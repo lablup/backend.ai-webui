@@ -9,3 +9,9 @@ export declare const BAI_Z_INDEX: {
 };
 /** Each nested portal — dialog or scrimmed drawer — claims one step above `modalBase`. */
 export declare const BAI_Z_INDEX_MODAL_LEVEL_STEP = 10;
+/** ui-common's modal stack, fitted to this ladder: it stops under `notification`. */
+export declare const BAI_MODAL_Z_INDEX_BAND: {
+    readonly base: 1100;
+    readonly step: 10;
+    readonly max: number;
+};
