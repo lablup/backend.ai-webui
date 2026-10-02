@@ -3,14 +3,17 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '.';
+import type { useAccessibleProjectsDomainProjectsPaginationQuery } from '../__generated__/useAccessibleProjectsDomainProjectsPaginationQuery.graphql';
 import {
   ProjectTypeV2,
   useAccessibleProjectsQuery,
 } from '../__generated__/useAccessibleProjectsQuery.graphql';
+import type { useAccessibleProjects_domainProjectsFragment$key } from '../__generated__/useAccessibleProjects_domainProjectsFragment.graphql';
 import { useCurrentUserRole } from './backendai';
 import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { useEffect } from 'react';
+import { graphql, useLazyLoadQuery, usePaginationFragment } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
 
 interface UseAccessibleProjectsOptions {
@@ -90,19 +93,26 @@ export const useAccessibleProjects = (
       : ['GENERAL', 'MODEL_STORE'];
 
   // `domainProjectsV2` needs domain-admin rights, so only admins ask for it.
-  const { domainProjectsV2, myUserV2 } =
-    useLazyLoadQuery<useAccessibleProjectsQuery>(
-      graphql`
-        query useAccessibleProjectsQuery(
-          $domainName: String!
-          $types: [ProjectTypeV2!]!
-          $isAdmin: Boolean!
-        ) {
-          domainProjectsV2(
-            scope: { domainName: $domainName }
-            filter: { isActive: true, type: { in_: $types } }
+  const queryRef = useLazyLoadQuery<useAccessibleProjectsQuery>(
+    graphql`
+      query useAccessibleProjectsQuery(
+        $domainName: String!
+        $types: [ProjectTypeV2!]!
+        $isAdmin: Boolean!
+      ) {
+        ...useAccessibleProjects_domainProjectsFragment
+          @include(if: $isAdmin)
+          @alias(as: "adminDomainProjects")
+          @arguments(domainName: $domainName, types: $types)
+        myUserV2 {
+          projects(
+            filter: {
+              isActive: true
+              domainName: { equals: $domainName }
+              type: { in_: $types }
+            }
             limit: 1000
-          ) @include(if: $isAdmin) {
+          ) {
             edges {
               node {
                 id
@@ -119,46 +129,76 @@ export const useAccessibleProjects = (
               }
             }
           }
-          myUserV2 {
-            projects(
-              filter: {
-                isActive: true
-                domainName: { equals: $domainName }
-                type: { in_: $types }
+        }
+      }
+    `,
+    { domainName, types, isAdmin },
+    {
+      fetchPolicy: options?.fetchPolicy ?? 'store-or-network',
+    },
+  );
+  const { myUserV2, adminDomainProjects } = queryRef;
+
+  // The manager caps a page at 1000 rows; keep loading until the admin list is
+  // complete. Non-admins never spread the fragment, so `data` stays null.
+  const {
+    data: domainProjects,
+    hasNext,
+    isLoadingNext,
+    loadNext,
+  } = usePaginationFragment<
+    useAccessibleProjectsDomainProjectsPaginationQuery,
+    useAccessibleProjects_domainProjectsFragment$key
+  >(
+    graphql`
+      fragment useAccessibleProjects_domainProjectsFragment on Query
+      @refetchable(
+        queryName: "useAccessibleProjectsDomainProjectsPaginationQuery"
+      )
+      @argumentDefinitions(
+        domainName: { type: "String!" }
+        types: { type: "[ProjectTypeV2!]!" }
+        first: { type: "Int", defaultValue: 1000 }
+        after: { type: "String" }
+      ) {
+        domainProjectsV2(
+          scope: { domainName: $domainName }
+          filter: { isActive: true, type: { in_: $types } }
+          first: $first
+          after: $after
+        ) @connection(key: "useAccessibleProjects_domainProjectsV2") {
+          edges {
+            node {
+              id
+              basicInfo {
+                name
+                type
               }
-              limit: 1000
-            ) {
-              edges {
-                node {
-                  id
-                  basicInfo {
-                    name
-                    type
-                  }
-                  organization {
-                    resourcePolicy
-                  }
-                  lifecycle {
-                    isActive
-                  }
-                }
+              organization {
+                resourcePolicy
+              }
+              lifecycle {
+                isActive
               }
             }
           }
         }
-      `,
-      { domainName, types, isAdmin },
-      {
-        fetchPolicy: options?.fetchPolicy ?? 'store-or-network',
-      },
-    );
+      }
+    `,
+    adminDomainProjects ?? null,
+  );
+  useEffect(() => {
+    if (hasNext && !isLoadingNext) {
+      loadNext(1000);
+    }
+  }, [hasNext, isLoadingNext, loadNext]);
 
   const accessibleProjects = _.map(
     myUserV2?.projects?.edges,
     toAccessibleProject,
   );
-  const groups = domainProjectsV2
-    ? _.map(domainProjectsV2.edges, toAccessibleProject)
+  const groups = domainProjects?.domainProjectsV2
+    ? _.map(domainProjects.domainProjectsV2.edges, toAccessibleProject)
     : accessibleProjects;
 
   return { groups, accessibleProjects };
