@@ -20,7 +20,8 @@ export const tabGateKey = (
 /**
  * The one hand-maintained table in the search core: tabs whose strip is built
  * behind a runtime guard the extractor cannot see. Verified against the pages
- * themselves (`StatisticsPage`, `EnvironmentPage`, `AdminDeploymentPage`).
+ * themselves (`StatisticsPage`, `EnvironmentPage`, `AdminDeploymentPage`,
+ * `MaintenancePage`).
  */
 export const TAB_GATES: Readonly<Record<string, TabGate>> = {
   [tabGateKey('statistics', 'tab', 'user-session-history')]: (ctx) =>
@@ -30,6 +31,8 @@ export const TAB_GATES: Readonly<Record<string, TabGate>> = {
     ctx.supports('prometheus-query-preset'),
   [tabGateKey('admin-deployments', 'tab', 'deployment-presets')]: (ctx) =>
     ctx.supports('deployment-preset'),
+  [tabGateKey('maintenance', 'tab', 'retention-policy')]: (ctx) =>
+    ctx.supports('retention-policy'),
 };
 
 /** Whether the menu still offers the page, i.e. neither blocked nor inactive. */
