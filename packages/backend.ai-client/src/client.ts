@@ -1018,6 +1018,11 @@ export class Client {
       // the RBAC page's Presets tab is hidden below it (FR-4065).
       this._features['rbac-role-presets'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0rc3')) {
+      // `Role.rolePresetId` / `rolePreset` (BA-8221, backport #15144) — the
+      // role list's Role Preset column (FR-4125).
+      this._features['role-preset-reference'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.9.0')) {
       // BA-7210 / backend PR #13536, FR-3481. `DeploymentRevisionPreset
       // .modelDefinition` moves from `ModelDefinition` to a new

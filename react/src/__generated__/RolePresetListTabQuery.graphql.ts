@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d2c6c2f286366063d657ac28ab92caea>>
+ * @generated SignedSource<<5fd6870ef26d378b7b9fa31282e72ef6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,7 +10,9 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
+export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type OrderDirection = "ASC" | "DESC" | "%future added value";
+export type PermissionBit = "CREATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
 export type RolePresetOrderField = "CREATED_AT" | "NAME" | "SCOPE_TYPE" | "UPDATED_AT" | "%future added value";
 export type RolePresetFilter = {
   AND?: ReadonlyArray<RolePresetFilter> | null | undefined;
@@ -18,8 +20,16 @@ export type RolePresetFilter = {
   OR?: ReadonlyArray<RolePresetFilter> | null | undefined;
   autoAssign?: boolean | null | undefined;
   deleted?: boolean | null | undefined;
+  id?: UUIDFilter | null | undefined;
   name?: StringFilter | null | undefined;
+  permissions?: RolePresetPermissionNestedFilter | null | undefined;
   scopeType?: StringFilter | null | undefined;
+};
+export type UUIDFilter = {
+  equals?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
 };
 export type StringFilter = {
   contains?: string | null | undefined;
@@ -42,6 +52,40 @@ export type StringFilter = {
   notIn?: ReadonlyArray<string> | null | undefined;
   notStartsWith?: string | null | undefined;
   startsWith?: string | null | undefined;
+};
+export type RolePresetPermissionNestedFilter = {
+  every?: RolePermissionPresetFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: RolePermissionPresetFilter | null | undefined;
+  some?: RolePermissionPresetFilter | null | undefined;
+};
+export type RolePermissionPresetFilter = {
+  AND?: ReadonlyArray<RolePermissionPresetFilter> | null | undefined;
+  NOT?: ReadonlyArray<RolePermissionPresetFilter> | null | undefined;
+  OR?: ReadonlyArray<RolePermissionPresetFilter> | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  entityType?: StringFilter | null | undefined;
+  operation?: OperationTypeFilter | null | undefined;
+  permission?: PermissionBitFilter | null | undefined;
+  rolePresetId?: UUIDFilter | null | undefined;
+};
+export type PermissionBitFilter = {
+  equals?: PermissionBit | null | undefined;
+  in?: ReadonlyArray<PermissionBit> | null | undefined;
+  notEquals?: PermissionBit | null | undefined;
+  notIn?: ReadonlyArray<PermissionBit> | null | undefined;
+};
+export type OperationTypeFilter = {
+  equals?: OperationType | null | undefined;
+  in?: ReadonlyArray<OperationType> | null | undefined;
+  notEquals?: OperationType | null | undefined;
+  notIn?: ReadonlyArray<OperationType> | null | undefined;
+};
+export type DateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  notEquals?: string | null | undefined;
 };
 export type RolePresetOrderBy = {
   direction?: OrderDirection;

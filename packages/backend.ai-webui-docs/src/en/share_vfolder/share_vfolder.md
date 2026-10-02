@@ -44,7 +44,7 @@ dropdown. If you choose `Read only`, User B will be able to only view the
 folder but not modify it. If you select `Read & Write`, User B will be able to
 both view and modify the folder. Click the `Add` button to send the invitation.
 
-![](../images/send_vfolder_invitation.png)
+![=550px](../images/send_vfolder_invitation.png)
 
 Switch back to User B's account and go to the Data page. When invitations are
 waiting for a response, a **Pending invitations** link appears at the top right
@@ -55,7 +55,7 @@ of the folder list, showing the number of pending invitations.
 Clicking the link opens the **Invited Folders** modal, where pending folder
 invitations can be accepted or declined.
 
-![](../images/invitation_accept.png)
+![=520px](../images/invitation_accept.png)
 
 Go to the Data page and check that the `tests` folder is displayed in
 the list. If you don't see it on the list, try refreshing your browser page.
@@ -86,7 +86,7 @@ displayed, but attempts to create or delete files are not allowed. This is
 because User A shared it as read-only. User B can create a file in the `tests`
 folder if it has been shared including write access.
 
-![](../images/file_operations_on_shared_test_folder.png)
+![=480px](../images/file_operations_on_shared_test_folder.png)
 
 This way, you can share your personal storage folders with other users based on
 your Backend.AI email account.
@@ -109,7 +109,7 @@ level:
 - **Read only**: The invited user has read-only access to the folder.
 - **Read & Write**: The invited user has read and write access to the folder, including creating, modifying, and deleting files and folders within it.
 
-![](../images/modify_perm.png)
+![=566px](../images/modify_perm.png)
 
 :::note
 Renaming the folder itself is available only for the owner, even if the user has been
@@ -128,7 +128,7 @@ the permission dropdown in the row of the user you want to remove. A
 confirmation dialog will appear asking you to confirm. Click `Confirm` to
 revoke the user's access.
 
-![](../images/modify_permission_and_stop_sharing.png)
+![=652px](../images/modify_permission_and_stop_sharing.png)
 
 If access to a shared folder is no longer needed as an invitee, click the share
 button next to the folder in the folder list to open the Shared Folder
@@ -136,4 +136,4 @@ Permission modal. In the permission table, click the leave icon in the
 **Control** column to leave the shared folder. A confirmation dialog will appear
 before the action is completed.
 
-![](../images/leave_shared_folder.png)
+![=650px](../images/leave_shared_folder.png)
