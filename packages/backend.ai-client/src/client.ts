@@ -1062,6 +1062,12 @@ export class Client {
       // count, and the counts became `@deprecated`. FR-3820.
       this._features['bulk-mutation-per-id-results'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.9.0a1')) {
+      // RBAC permissions became role-scoped permission bits: the
+      // `PermissionNestedFilter.scopeId` / `scopeType` / `operation` filters are
+      // gone or ignored (BA-7938) in every 26.9.0 pre-release, hence a1. FR-3522.
+      this._features['rbac-permission-bit'] = true;
+    }
   }
 
   /**
@@ -1241,10 +1247,7 @@ export class Client {
         // Persist the login session ID so that the session survives a
         // page refresh — same as the regular login() path.
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
-          safeStorage.setItem(
-            'backendaiwebui.sessionid',
-            this._loginSessionId,
-          );
+          safeStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
         }
         return this.check_login();
       } else if (result.authenticated === false) {
