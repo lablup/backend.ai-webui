@@ -981,7 +981,8 @@ writes into the installed skill as `references/agent-block.md`.
 `--write` replaces everything between
 `<!-- BAI-AGENT:start -->` and `<!-- BAI-AGENT:end -->`; prose outside the
 markers survives, and a second run is a no-op (`outcome: unchanged`). With no
-markers in the file it inserts after the ASTRYX block and its notes.
+markers in the file it inserts after the UI-COMMON block and its notes (the
+`<!-- ASTRYX:END -->` block in an older checkout), or appends when there is neither.
 
 In this checkout `CLAUDE.md` is a symlink to `AGENTS.md`, so `--write` edits the
 file behind it and git reports `AGENTS.md` as the changed path.

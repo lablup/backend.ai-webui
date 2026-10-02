@@ -307,12 +307,56 @@ describe('findBlockRegion', () => {
 });
 
 describe('insertOffset', () => {
+  const uiCommonEnd = '<!-- UI-COMMON:END -->';
   const astryxEnd = '<!-- ASTRYX:END -->';
+
+  it('inserts after the UI-COMMON block and its prose', () => {
+    const source = [
+      '# Project',
+      '<!-- UI-COMMON:START -->',
+      'generated',
+      uiCommonEnd,
+      'PROJECT LINES',
+      '',
+      '## Next heading',
+      '',
+    ].join('\n');
+    const { content, anchor } = applyBlock(source, 'BLOCK');
+    expect(anchor).toBe('after-design-block');
+    expect(content.indexOf('BLOCK')).toBeGreaterThan(
+      content.indexOf('PROJECT LINES'),
+    );
+    expect(content.indexOf('BLOCK')).toBeLessThan(
+      content.indexOf('## Next heading'),
+    );
+  });
+
+  it('falls back to the ASTRYX block an older checkout carries', () => {
+    const source = [
+      '# Project',
+      astryxEnd,
+      'Notes.',
+      '## Next heading',
+      '',
+    ].join('\n');
+    const { content, anchor } = applyBlock(source, 'BLOCK');
+    expect(anchor).toBe('after-design-block');
+    expect(content.indexOf('BLOCK')).toBeGreaterThan(content.indexOf('Notes.'));
+    expect(content.indexOf('BLOCK')).toBeLessThan(
+      content.indexOf('## Next heading'),
+    );
+  });
+
+  it('appends when neither block is present', () => {
+    const { content, anchor } = applyBlock('# Project\n\n## Next\n', 'BLOCK');
+    expect(anchor).toBe('append');
+    expect(content.trimEnd().endsWith('BLOCK')).toBe(true);
+  });
 
   it('does not treat a `#` inside a fenced block as the next heading', () => {
     const source = [
       '# Project',
-      astryxEnd,
+      uiCommonEnd,
       'Prose about the block above.',
       '',
       '```bash',
@@ -326,7 +370,7 @@ describe('insertOffset', () => {
       '',
     ].join('\n');
     const { content, anchor } = applyBlock(source, 'BLOCK');
-    expect(anchor).toBe('after-astryx');
+    expect(anchor).toBe('after-design-block');
     expect(content.indexOf('BLOCK')).toBeGreaterThan(
       content.indexOf('# comment, not a heading'),
     );
@@ -337,12 +381,12 @@ describe('insertOffset', () => {
 });
 
 describe('insertOffset', () => {
-  const astryxEnd = '<!-- ASTRYX:END -->';
+  const uiCommonEnd = '<!-- UI-COMMON:END -->';
 
   it('keeps a ``` sample inside a ```` fence from closing it', () => {
     const source = [
       '# Project',
-      astryxEnd,
+      uiCommonEnd,
       'Prose.',
       '',
       '````markdown',
@@ -356,7 +400,7 @@ describe('insertOffset', () => {
       '',
     ].join('\n');
     const { content, anchor } = applyBlock(source, 'BLOCK');
-    expect(anchor).toBe('after-astryx');
+    expect(anchor).toBe('after-design-block');
     expect(content.indexOf('BLOCK')).toBeGreaterThan(
       content.indexOf('# still not a heading'),
     );
@@ -368,7 +412,7 @@ describe('insertOffset', () => {
   it('closes a fence only with the same character', () => {
     const source = [
       '# Project',
-      astryxEnd,
+      uiCommonEnd,
       '~~~',
       '```',
       '# not a heading',
