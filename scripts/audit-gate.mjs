@@ -3,8 +3,9 @@
 /**
  * audit-gate.mjs — fail CI on high/critical advisories in shipped dependencies.
  *
- * Runs `pnpm audit --prod --json`, plus a full audit filtered to the
- * devDependencies the desktop build ships (`pnpm audit --prod` skips them),
+ * Runs `pnpm audit --prod --json`, plus a full audit restricted to paths rooted
+ * in the root entries a release artifact ships (`shippedRootEntries`: Electron
+ * and the pkg-built local proxy's devDependencies, which `--prod` skips),
  * keeps high/critical advisories, subtracts the reviewed allowlist in
  * scripts/audit-allowlist.json, and exits 1 on anything left or on an expired
  * allowlist entry. Allowlisted advisories that are no longer reported are
@@ -33,10 +34,16 @@ export function normalizeImporter(importer) {
   return importer === "" ? "." : importer.replaceAll("/", "__");
 }
 
+/** True if an audit path starts at the root importer's dependency `entry`. */
+export function isRootedIn(path, entry) {
+  return path === `.>${entry}` || path.startsWith(`.>${entry}>`);
+}
+
 /**
  * Flatten a `pnpm audit --json` report into one finding per (advisory, module).
+ * `rootEntries` keeps only paths rooted in those root dependencies, transitive ones included.
  * @param {any} report
- * @param {{ onlyModules?: Set<string> }} [opts]
+ * @param {{ rootEntries?: string[] }} [opts]
  */
 export function collectFindings(report, opts = {}) {
   if (!report || typeof report.advisories !== "object") {
@@ -48,7 +55,6 @@ export function collectFindings(report, opts = {}) {
   const byKey = new Map();
   for (const adv of Object.values(report.advisories)) {
     if (!GATED_SEVERITIES.has(adv.severity)) continue;
-    if (opts.onlyModules && !opts.onlyModules.has(adv.module_name)) continue;
     const id = adv.github_advisory_id || `npm-${adv.id}`;
     const key = `${id}|${adv.module_name}`;
     const entry = byKey.get(key) ?? {
@@ -60,11 +66,40 @@ export function collectFindings(report, opts = {}) {
       paths: new Set(),
     };
     for (const f of adv.findings ?? []) {
-      for (const p of f.paths ?? []) entry.paths.add(p);
+      for (const p of f.paths ?? []) {
+        if (opts.rootEntries && !opts.rootEntries.some((e) => isRootedIn(p, e)))
+          continue;
+        entry.paths.add(p);
+      }
     }
-    byKey.set(key, entry);
+    if (entry.paths.size > 0 || !opts.rootEntries) byKey.set(key, entry);
   }
   return [...byKey.values()];
+}
+
+/** Merge finding lists, unioning the paths of the same (advisory, module). */
+export function mergeFindings(...lists) {
+  const byKey = new Map();
+  for (const f of lists.flat()) {
+    const key = `${f.id}|${f.package}`;
+    const prev = byKey.get(key);
+    if (prev) for (const p of f.paths) prev.paths.add(p);
+    else byKey.set(key, { ...f, paths: new Set(f.paths) });
+  }
+  return [...byKey.values()];
+}
+
+/** True for a real YYYY-MM-DD calendar date (rejects 2026-99-99, 2026-02-30). */
+export function isValidDate(s) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s);
+  if (!m) return false;
+  const [y, mo, d] = m.slice(1).map(Number);
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  return (
+    dt.getUTCFullYear() === y &&
+    dt.getUTCMonth() === mo - 1 &&
+    dt.getUTCDate() === d
+  );
 }
 
 /**
@@ -84,9 +119,9 @@ export function evaluate(findings, allowlist, today) {
     if (!e.id || !e.package || !e.reason) {
       errors.push(`allowlist entry #${i} needs id, package and reason`);
     }
-    if (e.expires && !/^\d{4}-\d{2}-\d{2}$/.test(e.expires)) {
+    if (e.expires !== undefined && !isValidDate(e.expires)) {
       errors.push(
-        `allowlist entry ${e.id} has a malformed expires "${e.expires}"`,
+        `allowlist entry ${e.id} has an invalid expires "${e.expires}" (need a real YYYY-MM-DD date)`,
       );
     } else if (e.expires && e.expires < today) {
       errors.push(
@@ -145,23 +180,24 @@ function main() {
   const allowlist = JSON.parse(
     readFileSync(args.allowlist ?? DEFAULT_ALLOWLIST, "utf8"),
   );
-  const shipped = new Set(
-    (allowlist.shippedDevDependencies ?? []).map((d) => d.package),
-  );
+  const shipped = (allowlist.shippedRootEntries ?? []).map((d) => d.package);
 
   const prodReport = JSON.parse(
     args["prod-report"]
       ? readFileSync(args["prod-report"], "utf8")
       : runAudit(["--prod"]),
   );
-  const findings = collectFindings(prodReport);
-  if (shipped.size > 0) {
+  let findings = collectFindings(prodReport);
+  if (shipped.length > 0) {
     const fullReport = JSON.parse(
       args["full-report"]
         ? readFileSync(args["full-report"], "utf8")
         : runAudit([]),
     );
-    findings.push(...collectFindings(fullReport, { onlyModules: shipped }));
+    findings = mergeFindings(
+      findings,
+      collectFindings(fullReport, { rootEntries: shipped }),
+    );
   }
 
   const today = new Date().toISOString().slice(0, 10);

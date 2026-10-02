@@ -1,9 +1,41 @@
 {
-  "$comment": "Reviewed exceptions for scripts/audit-gate.mjs. Each entry: id (GHSA), package, reason, optional expires (YYYY-MM-DD, gate fails after it), optional importers (exemption applies only to paths rooted in these workspace packages). Prefer upgrading over adding entries. shippedDevDependencies: root devDependencies that end up in a shipped artifact, which `pnpm audit --prod` does not see.",
-  "shippedDevDependencies": [
+  "$comment": "Reviewed exceptions for scripts/audit-gate.mjs. Each entry: id (GHSA), package, reason, optional expires (YYYY-MM-DD, gate fails after it), optional importers (exemption applies only to paths rooted in these workspace packages). Prefer upgrading over adding entries. shippedRootEntries: root dependencies a release artifact ships (Electron, the pkg-built local proxy's requires); every advisory on a path from them is gated, transitive ones included.",
+  "shippedRootEntries": [
     {
       "package": "electron",
       "reason": "Root devDependency, but @electron/packager bundles it as the Backend.AI Desktop runtime."
+    },
+    {
+      "package": "express",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "express-rate-limit",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "cors",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "ws",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "dotenv",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "winston",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "https-proxy-agent",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
+    },
+    {
+      "package": "backend.ai-client",
+      "reason": "Bundled by pkg into the backend.ai-local-proxy release binaries (src/wsproxy)."
     }
   ],
   "entries": [
@@ -122,6 +154,24 @@
       "package": "electron",
       "expires": "2026-10-31",
       "reason": "Backend.AI Desktop runtime; upgrade tracked in FR-4148. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-37ch-88jc-xwx2",
+      "package": "path-to-regexp",
+      "expires": "2026-10-31",
+      "reason": "Reaches the pkg-built local proxy via express; pending fix decision (FR-4146 review)"
+    },
+    {
+      "id": "GHSA-jmr9-qjv8-65gv",
+      "package": "extract-zip",
+      "expires": "2026-10-31",
+      "reason": "Reaches the shipped-entry set via electron (electron/install.js binary downloader); pending fix decision (FR-4146 review)"
+    },
+    {
+      "id": "GHSA-7pqw-9j4j-h8q3",
+      "package": "extract-zip",
+      "expires": "2026-10-31",
+      "reason": "Reaches the shipped-entry set via electron (electron/install.js binary downloader); pending fix decision (FR-4146 review)"
     }
   ]
 }

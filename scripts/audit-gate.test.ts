@@ -1,5 +1,10 @@
 // @ts-nocheck
-import { collectFindings, evaluate } from "./audit-gate.mjs";
+import {
+  collectFindings,
+  evaluate,
+  isValidDate,
+  mergeFindings,
+} from "./audit-gate.mjs";
 
 const report = (advisories) => ({ advisories, metadata: {} });
 const adv = (id, module_name, severity, paths) => ({
@@ -26,15 +31,36 @@ describe("collectFindings", () => {
     expect([...findings[0].paths]).toEqual(["react>pkg", "react>x>pkg"]);
   });
 
-  it("filters to the requested modules", () => {
+  it("keeps transitive advisories rooted in a shipped root entry", () => {
     const findings = collectFindings(
       report({
         1: adv("GHSA-e", "electron", "high", [".>electron"]),
-        2: adv("GHSA-t", "tar", "critical", [".>tar"]),
+        2: adv("GHSA-p", "path-to-regexp", "high", [
+          ".>express>path-to-regexp",
+          ".>webpack-dev-server>express>path-to-regexp",
+        ]),
+        3: adv("GHSA-t", "tar", "critical", [".>tar"]),
+        4: adv("GHSA-x", "x", "high", [".>expressive>x"]),
       }),
-      { onlyModules: new Set(["electron"]) },
+      { rootEntries: ["electron", "express"] },
     );
-    expect(findings.map((f) => f.package)).toEqual(["electron"]);
+    expect(findings.map((f) => f.package)).toEqual([
+      "electron",
+      "path-to-regexp",
+    ]);
+    expect([...findings[1].paths]).toEqual([".>express>path-to-regexp"]);
+  });
+
+  it("merges findings of the same advisory across reports", () => {
+    const a = collectFindings(
+      report({ 1: adv("GHSA-a", "p", "high", ["react>p"]) }),
+    );
+    const b = collectFindings(
+      report({ 1: adv("GHSA-a", "p", "high", [".>express>p"]) }),
+    );
+    const merged = mergeFindings(a, b);
+    expect(merged).toHaveLength(1);
+    expect([...merged[0].paths]).toEqual(["react>p", ".>express>p"]);
   });
 
   it("throws on output that is not an audit report", () => {
@@ -99,5 +125,25 @@ describe("evaluate", () => {
       "2026-10-02",
     );
     expect(r.errors).toEqual([]);
+  });
+
+  it.each(["2026-99-99", "2026-02-30", "2026-13-01", "26-10-31", ""])(
+    "fails on an invalid expires %j instead of extending the exception",
+    (expires) => {
+      const r = evaluate(
+        collectFindings(report({ 1: lintOnly })),
+        { entries: [{ ...scoped, expires }] },
+        "2026-10-02",
+      );
+      expect(r.errors[0]).toMatch(/invalid expires/);
+    },
+  );
+});
+
+describe("isValidDate", () => {
+  it("accepts real dates, including leap days", () => {
+    expect(isValidDate("2026-10-31")).toBe(true);
+    expect(isValidDate("2028-02-29")).toBe(true);
+    expect(isValidDate("2026-02-29")).toBe(false);
   });
 });
