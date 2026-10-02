@@ -75,8 +75,7 @@ The user create/edit dialog contains the following fields:
 - **Resource Policy**: Select the user resource policy
   to which the user belongs. For more information about user resource policies, please
   refer to the [user resource policy](#user-resource-policy) section.
-- **Domain**: The domain to which the user belongs. This field is shown in both the create and edit dialogs.
-- **Projects**: Select one or more projects for the user to belong to. The available projects depend on the domain shown in the dialog.
+- **Projects**: Select one or more projects for the user to belong to.
 - **Allowed Client IPs**: Restrict which IP addresses can access the system using this user account. Enter IP addresses or CIDR notation (e.g., `10.20.30.40`, `10.20.30.0/24`). If left empty, access from any IP is allowed.
 - **Container UID**: The numeric User ID assigned to processes inside the container. This is useful when the container needs to match a specific UID for file permission purposes.
 - **Container GID**: The default numeric Group ID assigned to processes inside the container.
@@ -116,7 +115,7 @@ sequential numbers to the prefix.
   special character, and number).
 - **Password change required**: Defaults to ON for bulk-created users. When enabled,
   each user will be prompted to change their password on first login.
-- All other fields (**Status**, **Role**, **Enable sudo session**, **Resource Policy**, **Domain**, **Projects**, **Allowed Client IPs**, etc.) work the same as in single user creation. See the [Browse and manage users](#create-and-update-users) section.
+- All other fields (**Status**, **Role**, **Enable sudo session**, **Resource Policy**, **Projects**, **Allowed Client IPs**, etc.) work the same as in single user creation. See the [Browse and manage users](#create-and-update-users) section.
 
 ![](../images/bulk_create_user_dialog.png)
 
@@ -169,7 +168,6 @@ A file that is missing one of these two columns is rejected, and the dialog expl
 - **full_name**: The user's display name.
 - **role**: The user's role (`user`, `admin`, or `superadmin`). Defaults to `user` if omitted.
 - **status**: The user's initial status (`active` or `inactive`). Defaults to `active` if omitted.
-- **domain_name**: The domain to assign the user to. Defaults to the current domain if omitted.
 - **description**: An optional description for the user.
 - **need_password_change**: Whether the user must change their password on first login (`true` or `false`). Defaults to `true` if omitted.
 - **resource_policy**: The name of the resource policy to assign.
@@ -179,7 +177,7 @@ A file that is missing one of these two columns is rejected, and the dialog expl
 
 The left side of the dialog holds a **Defaults** panel. Any value you set there fills in the matching
 field for every row that leaves it blank, so you do not have to repeat it in each CSV cell. The panel
-covers **Domain**, **Project**, **Resource Policy**, **Password**, **Password change required**, and
+covers **Project**, **Resource Policy**, **Password**, **Password change required**, and
 **Description**. Fields you leave alone read `No default`.
 
 After selecting your CSV file, the dialog shows a preview table listing all rows with the following indicators:
@@ -213,7 +211,7 @@ If some rows fail, only the successful rows result in new accounts. Failed rows 
 
 ### Bulk edit users
 
-When several accounts need the same change — moving them to another domain or project, switching their
+When several accounts need the same change — moving them to another project, switching their
 resource policy, or setting the container UID/GID — you can edit them in one pass instead of opening each
 user in turn.
 
@@ -230,8 +228,7 @@ restrict the use of folder mounts that were created earlier.
 The dialog exposes the following fields. A field you leave untouched is not changed on any of the
 selected users:
 
-- **Domain**: Move the selected users to another domain. Changing it clears the **Projects** selection.
-- **Projects**: Assign the selected users to one or more projects. A domain must be selected first.
+- **Projects**: Assign the selected users to one or more projects.
 - **User Status**: Set the accounts to Active, Inactive, Inactive (include keypair), or Before Verification.
 - **Resource Policy**: Apply a user resource policy to every selected account.
 - **Container UID**, **Container GID**, **Supplementary GID**: Set the numeric IDs assigned to processes inside the container.
@@ -1649,9 +1646,9 @@ The drawer contains the following tabs:
 The **Project Folder Permissions** tab of the [Storage Host Detail Drawer](#storage-host-detail-drawer) lets administrators view and manage the permissions of the project folders created on the selected storage host.
 
 ![](../images/project_folder_permission_tab.png)
-<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the domain selector and the tri-state effective-permission indicators -->
+<!-- TODO: Capture screenshot of project_folder_permission_tab.png — Project Folder Permissions tab with the tri-state effective-permission indicators -->
 
-Project folder permissions consist of permissions for the selected domain and permissions for the projects under that domain.
+Project folder permissions consist of permissions for the current domain and permissions for the projects under that domain.
 
 In the Backend.AI structure, a project belongs under a specific domain. Therefore, the storage permissions set on a project inherit the domain's permissions by default.
 
@@ -1935,7 +1932,7 @@ The list excludes personal projects by default; remove the pre-applied **Type** 
 ![](../images/projects_page.png)
 
 The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
-filter next to them narrows the list by **Name**, **Domain**, **Resource Policy**, **Project ID**,
+filter next to them narrows the list by **Name**, **Resource Policy**, **Project ID**,
 **Created At**, or **Modified At**. **Project ID** must be a full UUID, and **Created At** and
 **Modified At** take a date and time.
 

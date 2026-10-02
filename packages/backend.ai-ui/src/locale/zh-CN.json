@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "用于提交镜像的容器镜像仓库",
     "CreateProject": "创建项目",
     "Description": "描述",
-    "Domain": "域",
     "FailedToCreateProject": "创建项目失败",
     "FailedToUpdateProject": "更新项目失败",
     "IsActive": "是否启用？",

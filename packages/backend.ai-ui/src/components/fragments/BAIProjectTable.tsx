@@ -17,7 +17,6 @@ import { graphql, useFragment } from 'react-relay';
 export const availableProjectSorterKeys = [
   'name',
   'id',
-  'domain_name',
   'created_at',
   'modified_at',
   'is_active',

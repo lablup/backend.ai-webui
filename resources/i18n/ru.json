@@ -637,7 +637,6 @@
     "DescRequirePasswordChange": "Требуется смена пароля",
     "Description": "Описание",
     "Domain": "Домен",
-    "DomainIsActive": "Домен активен",
     "DownloadCSV": "Скачать CSV",
     "DownloadCSVTemplate": "Скачать шаблон CSV",
     "EmailPrefix": "Префикс электронной почты (до @)",
@@ -777,8 +776,7 @@
       "PleaseEnterPositiveAndUnder2_31": "Введите положительное значение меньше 2^31",
       "PleaseEnterPositiveInteger": "Введите положительное значение.",
       "PleaseEnterUniqueNumbers": "Пожалуйста, введите уникальные числа",
-      "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число",
-      "PleaseSelectDomain": "Пожалуйста, сначала выберите домен."
+      "PleaseEnterValidNumber": "Пожалуйста, введите допустимое число"
     }
   },
   "dashboard": {
@@ -1296,7 +1294,6 @@
     "filter": {
       "CreatedAt": "Создано",
       "DestroyedAt": "Удалено",
-      "DomainName": "Домен",
       "EndpointUrl": "URL конечной точки",
       "Name": "Имя",
       "OpenToPublic": "Публичное",
@@ -2033,7 +2030,6 @@
     }
   },
   "loginHistory": {
-    "Domain": "Домен",
     "LoginTime": "Время входа",
     "Result": "Результат"
   },
@@ -2249,7 +2245,6 @@
     "DeactivateProject": "Деактивировать проект",
     "DescRevokeProjectAdmin": "Отзыв разрешения администратора проекта не удаляет проект автоматически из списка разрешённых проектов пользователя. Чтобы отозвать доступ к проекту, удалите его из списка вручную.",
     "DescSetProjectAdmin": "Предоставление разрешения администратора проекта автоматически добавляет проект в список разрешённых проектов пользователя, после чего пользователь сможет получить доступ к этому проекту.",
-    "Domain": "Домен",
     "EditProject": "Изменить",
     "FailedToActivateProject": "Не удалось активировать проект.",
     "FailedToDeactivateProject": "Не удалось деактивировать проект.",

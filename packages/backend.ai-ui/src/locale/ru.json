@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Реестр контейнеров для сохранения образа",
     "CreateProject": "Создать проект",
     "Description": "Описание",
-    "Domain": "Домен",
     "FailedToCreateProject": "Не удалось создать проект",
     "FailedToUpdateProject": "Не удалось обновить проект",
     "IsActive": "Активно?",

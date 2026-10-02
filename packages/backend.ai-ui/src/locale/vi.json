@@ -319,7 +319,6 @@
     "ContainerRegistryForImageCommit": "Container Registry cho việc commit image",
     "CreateProject": "Tạo dự án",
     "Description": "Mô tả",
-    "Domain": "Miền",
     "FailedToCreateProject": "Không thể tạo dự án",
     "FailedToUpdateProject": "Không thể cập nhật dự án",
     "IsActive": "Đang hoạt động?",

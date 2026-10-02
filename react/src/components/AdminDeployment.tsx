@@ -257,11 +257,6 @@ const AdminDeployment = ({
       type: 'boolean',
     },
     supportsExtendedFilter && {
-      key: 'domainName',
-      propertyLabel: t('deployment.filter.DomainName'),
-      type: 'string' as const,
-    },
-    supportsExtendedFilter && {
       key: 'resourceGroup',
       propertyLabel: t('deployment.filter.ResourceGroup'),
       type: 'string' as const,
