@@ -140,8 +140,9 @@ allowBuilds:
 
 overrides:
   tar-fs@2: 2.1.4
-  # Build-tooling override. `@electron/packager` and `electron`'s own
-  # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
+  # Build-tooling override. `@electron/packager` extracts its downloaded ZIPs
+  # via `extract-zip` → `yauzl` (`electron` >= 41 uses its own
+  # `@electron-internal/extract-zip` and no longer goes through this path).
   # yauzl 2.10.0 extracts only the first entry and then lets the process exit
   # 0 with no error on Node >= 24.16.0 / >= 26.1.0, so desktop packaging
   # produces no app bundle and the Makefile fails later at the misleading
