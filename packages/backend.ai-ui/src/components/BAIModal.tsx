@@ -20,7 +20,7 @@
  | `open` (or `isOpen`)                   | `isOpen`                               |
  | `onCancel` / `onOpenChange`            | `onOpenChange(false)`, via the guard   |
  | `afterClose` / `afterOpenChange`       | `afterOpenChange`                      |
- | `maskClosable` / `mask.closable` / `keyboard` | `purpose` (`info` / `form` / `required`) |
+ | `maskClosable` / `mask.closable` / `keyboard` | `purpose`, plus an Escape block layer for `keyboard={false}` on a closable backdrop |
  | `width` (incl. responsive record, `auto`) | `width`                             |
  | `title` / `subtitle` / `closable` / `type` | `ModalHeader` in the adapter's `Layout` |
  | `footer` / `onOk` / `okText` / `okType` / `okButtonProps` / `confirmLoading` / `cancelText` / `cancelButtonProps` | `LayoutFooter` in the adapter's `Layout` |
@@ -34,6 +34,10 @@
  `focusTriggerAfterClose`, `prefixCls`, `wrapProps`, and `mask={false}` (the
  mask is Modal's and always painted). A minimized modal stays modal.
 */
+import {
+  toModalPurpose,
+  useBlockModalEscape,
+} from '../hooks/internal/useModalDismissal';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import '../styles/zIndexLadder';
 import './BAIModal.css';
@@ -465,13 +469,9 @@ const BAIModal: React.FC<BAIModalProps> = ({
     maskClosable ??
     true;
   const allowEscape = keyboard !== false;
-  // Astryx cannot express "backdrop closes but Escape does not"; whenever the
-  // backdrop is live we use `info`, which enables both.
-  const purpose = resolvedMaskClosable
-    ? 'info'
-    : allowEscape
-      ? 'form'
-      : 'required';
+  const purpose = toModalPurpose(resolvedMaskClosable, allowEscape);
+  // `info` closes on Escape as well as the backdrop.
+  useBlockModalEscape(isVisible && purpose === 'info' && !allowEscape);
 
   const showClose = closable !== false && closeIcon !== false;
 
