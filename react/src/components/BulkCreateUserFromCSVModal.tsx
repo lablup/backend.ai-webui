@@ -160,6 +160,9 @@ interface BulkCreateUserFromCSVModalProps extends Omit<
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
+// The manager rejects a V2 page larger than this (`MAX_PAGE_LIMIT`).
+const GROUPS_PAGE_SIZE = 1000;
+
 const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   onRequestClose,
   afterClose,
@@ -259,14 +262,22 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
   // Imperative query used to resolve project name <-> group id. Loaded into
   // state whenever the domain changes so the preview can display names and the
-  // mutation can convert them to ids.
+  // mutation can convert them to ids. The manager caps a page at 1000 rows, so
+  // `loadGroups` walks the pages until it has `count` of them.
   const groupsQuery = graphql`
-    query BulkCreateUserFromCSVModalGroupsQuery($domainName: String!) {
+    query BulkCreateUserFromCSVModalGroupsQuery(
+      $domainName: String!
+      $limit: Int!
+      $offset: Int!
+    ) {
       domainProjectsV2(
         scope: { domainName: $domainName }
         filter: { isActive: true, type: { in_: [GENERAL, MODEL_STORE] } }
-        limit: 1000
+        orderBy: [{ field: NAME, direction: ASC }]
+        limit: $limit
+        offset: $offset
       ) {
+        count
         edges {
           node {
             id
@@ -280,20 +291,33 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   `;
 
   const loadGroups = useEffectEvent((domainName: string) => {
-    fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
-      relayEnvironment,
-      groupsQuery,
-      { domainName },
-      { fetchPolicy: 'store-or-network' },
-    )
-      .toPromise()
-      .then((result) => {
-        setGroupList(
-          _.map(result?.domainProjectsV2?.edges, (edge) => ({
+    const fetchAllGroups = async () => {
+      const groups: Array<{ id: string; name: string }> = [];
+      for (let offset = 0; ; offset += GROUPS_PAGE_SIZE) {
+        const result = await fetchQuery<BulkCreateUserFromCSVModalGroupsQuery>(
+          relayEnvironment,
+          groupsQuery,
+          { domainName, limit: GROUPS_PAGE_SIZE, offset },
+          { fetchPolicy: 'store-or-network' },
+        ).toPromise();
+        const edges = result?.domainProjectsV2?.edges ?? [];
+        groups.push(
+          ..._.map(edges, (edge) => ({
             id: toLocalId(edge.node.id),
             name: edge.node.basicInfo.name,
           })),
         );
+        if (
+          _.isEmpty(edges) ||
+          groups.length >= (result?.domainProjectsV2?.count ?? 0)
+        ) {
+          return groups;
+        }
+      }
+    };
+    fetchAllGroups()
+      .then((groups) => {
+        setGroupList(groups);
         // Only mark loaded on success — on failure leave validation disabled so
         // we degrade to the prior behaviour instead of flagging every project.
         setGroupsLoaded(true);
