@@ -4,8 +4,7 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
-import { Form } from '../form-engine';
-import type { FormInstance } from '../form-engine';
+import { Form, type FormInstance } from '../form-engine';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
@@ -50,26 +49,26 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/core/Stepper';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAdminImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
+  BAISkeleton,
   toLocalId,
-  useDebounceFn,
   useBAIBreakpoint,
+  useDebounceFn,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  ChevronsRight,
   ChevronLeft,
-  CircleMinus,
   ChevronRight,
+  ChevronsRight,
+  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';

@@ -2240,9 +2240,6 @@
     "SuccessfullyUpdated": "수정되었습니다.",
     "Visit": "방문"
   },
-  "pagination": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
-  },
   "project": {
     "Activate": "활성화",
     "ActivateProject": "프로젝트 활성화",
@@ -3019,6 +3016,7 @@
     "launcher": {
       "AIAccelerator": "AI 가속기",
       "Accelerator": "가속기",
+      "AcceleratorDedicatedImages": "가속기 전용 이미지",
       "AddEnvironmentVariable": "환경 변수 추가",
       "AddingKernelToSocketQueue": "커널을 소켓 큐에 추가합니다...",
       "AdvancedSettings": "고급 설정",
@@ -3096,6 +3094,7 @@
       "HPCOptimization": "고성능 컴퓨팅 최적화",
       "HomeDirectoryDeletionDialog": "세션 안의 홈 디렉토리는 세션을 종료하면 자동으로 삭제됩니다.",
       "ImageDoesNotProvideModelPath": "모델 경로를 지정하지 않은 컨테이너 이미지입니다. 수정이 필요합니다.",
+      "ImageFilter": "이미지 필터",
       "InferenceMode": "추론",
       "InfiniteTime": "미정",
       "InsufficientAllocationOfResourcesWarning": "할당 가능한 자원이 선택된 이미지에서 요구되는 최소 자원보다 부족합니다.",
@@ -3197,6 +3196,7 @@
       "SettingUpProxyForApp": "애플리케이션을 위한 프록시를 설정합니다...",
       "SharedMemory": "공유 메모리 (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "공유 메모리 값이 할당된 메모리보다 적게 설정되었습니다.",
+      "ShowAcceleratorDedicatedImagesFirst": "가속기 전용 이미지 먼저 표시",
       "ShuttingDownExistTensorBoard": "TensorBoard 인스턴스 초기화 중...",
       "SingleNode": "단일 노드",
       "SingleNodeShort": "단일",

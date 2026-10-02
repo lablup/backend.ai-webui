@@ -14,7 +14,7 @@ A **Project Admin** is a user who has been granted administrative authority over
 
 When you open the project dropdown in the header, projects in which you have the project-admin role are marked with a shield-shaped badge next to the project name. Hovering the badge displays a **Project Admin** tooltip, confirming that selecting this project will reveal the project-admin sidebar entries described below.
 
-![](../images/header_project_selector_with_admin_badge.png)
+![=260px](../images/header_project_selector_with_admin_badge.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 Switching to a different project from the header's project selector re-evaluates the user's role: the same user may act as a project admin in one project and as a regular user in another within the same login session. To learn how project-admin roles are granted and revoked, see [Grant Project Admin Authority](#grant-project-admin) in the RBAC Management chapter.
@@ -67,7 +67,7 @@ When you select a project in which you are a project admin, the sidebar's **Oper
 - **Sessions** — the compute sessions owned by users in the current project
 - **Deployments** — the model deployments owned by the current project
 
-![](../images/project_admin_sidebar.png)
+![=240px](../images/project_admin_sidebar.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 On the project-admin pages, only the items under the project selected with the project selector at the top are shown. You can check this through the banner at the top of the page.
@@ -83,7 +83,7 @@ The project-admin pages provide the same refresh button. Click the refresh butto
 
 The dropdown button next to the refresh button opens the **Auto Refresh** menu, where you can choose the auto-refresh interval.
 
-![](../images/project_admin_auto_refresh_menu.png)
+![=86px](../images/project_admin_auto_refresh_menu.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 <a id="users"></a>
@@ -128,7 +128,7 @@ To create a new folder from this page:
 2. Fill in the folder details in the creation modal.
 3. Click **Create** to create the folder.
 
-![](../images/project_admin_create_folder_modal.png)
+![=650px](../images/project_admin_create_folder_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::info
@@ -177,7 +177,7 @@ To terminate one or more sessions:
 4. Optionally select the **Force Terminate** checkbox to terminate or cancel the sessions regardless of their current status. Enabling this option displays a warning and changes the confirm button label from **Terminate** to **Force Terminate**.
 5. Click the confirm button to terminate the sessions.
 
-![](../images/project_admin_terminate_session_modal.png)
+![=520px](../images/project_admin_terminate_session_modal.png)
 <!-- TODO(screenshot): recapture while logged in as a Project Admin. This image was captured with the superadmin account; no project-admin account exists on the capture backend (SHOT_PROJECT_ADMIN_EMAIL is empty). -->
 
 :::warning

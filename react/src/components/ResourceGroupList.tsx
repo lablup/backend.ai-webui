@@ -22,9 +22,9 @@ import BAIRadioGroup from './BAIRadioGroup';
 import ResourceGroupInfoModal from './ResourceGroupInfoModal';
 import ResourceGroupSettingModal from './ResourceGroupSettingModal';
 import UpdateResourceGroupsModal from './UpdateResourceGroupsModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAIColumnsType,
@@ -45,14 +45,14 @@ import {
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  Check,
-  X,
-  Trash2,
-  Info,
   BanIcon,
+  Check,
+  Info,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
+  X,
 } from 'lucide-react';
 import React, {
   Suspense,

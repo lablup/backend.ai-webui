@@ -2242,9 +2242,6 @@
     "SuccessfullyUpdated": "成功更新",
     "Visit": "訪問"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} {{total}}項目"
-  },
   "project": {
     "Activate": "啟用",
     "ActivateProject": "啟用專案",
@@ -3021,6 +3018,7 @@
     "launcher": {
       "AIAccelerator": "人工智能加速器",
       "Accelerator": "加速器",
+      "AcceleratorDedicatedImages": "加速器專用映像",
       "AddEnvironmentVariable": "添加环境变量",
       "AddingKernelToSocketQueue": "將內核添加到套接字隊列...",
       "AdvancedSettings": "進階設定",
@@ -3098,6 +3096,7 @@
       "HPCOptimization": "高性能计算优化",
       "HomeDirectoryDeletionDialog": "會話結束時會自動刪除會話中的主目錄。",
       "ImageDoesNotProvideModelPath": "容器映像未提供模型路径。应进行修改。",
+      "ImageFilter": "映像篩選",
       "InferenceMode": "推论",
       "InfiniteTime": "无限",
       "InsufficientAllocationOfResourcesWarning": "可分配資源低於所選映像所需的最低資源。",
@@ -3198,6 +3197,7 @@
       "SettingUpProxyForApp": "為應用程序設置代理...",
       "SharedMemory": "共享內存（SHMEM）{{value}}",
       "SharedMemorySettingIsReduced": "共享內存設置減少到低於分配的內存。",
+      "ShowAcceleratorDedicatedImagesFirst": "優先顯示加速器專用映像",
       "ShuttingDownExistTensorBoard": "關閉 TensorBoard 實例（如有）...",
       "SingleNode": "單身的",
       "SingleNodeShort": "單節點",

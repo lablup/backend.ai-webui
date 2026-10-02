@@ -1124,7 +1124,13 @@ export class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
-        this._config._session_id = result.session_id; // TODO: change to X-BackendAI-SessionID header-version. use this._loginSessionId instead.
+        this._config._session_id = result.session_id;
+        // A cookie-only login never sees the X-BackendAI-SessionID header, so
+        // adopt the id from the body to keep later requests and SSE carrying it.
+        if (result.session_id) {
+          this._loginSessionId = result.session_id;
+          safeStorage.setItem('backendaiwebui.sessionid', result.session_id);
+        }
         //console.log("login succeed");
       } else {
         //console.log("login failed");

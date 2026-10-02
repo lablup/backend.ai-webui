@@ -19,19 +19,19 @@ import {
   useDragOverlay,
   useSearchVFolderFiles,
   useUploadVFolderFiles,
+  type RcFile,
 } from './hooks';
-import type { RcFile } from './hooks';
-import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
-import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { BreadcrumbItem, Breadcrumbs } from '@lablup/ui-common/Breadcrumbs';
+import type { DropdownMenuOption } from '@lablup/ui-common/DropdownMenu';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { File, Folder, HouseIcon } from 'lucide-react';
 import {
-  createContext,
   Suspense,
+  createContext,
   useEffect,
   useEffectEvent,
   useImperativeHandle,
@@ -394,15 +394,6 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             enableWrite={enableWrite}
             enableUpload={enableUpload}
             onUpload={requestUpload}
-            onFolderCreated={
-              isDirectoryPicker
-                ? (folderName) => {
-                    // Jump straight into the created folder so "select this
-                    // location" picks it.
-                    navigateDown(folderName);
-                  }
-                : undefined
-            }
             onDeleteFilesInBackground={onDeleteFilesInBackground}
             onClearSelection={() => setSelectedItems([])}
             onRequestClose={(

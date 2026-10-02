@@ -13,9 +13,9 @@ import WEBUIHelpButton from '../WEBUIHelpButton';
 import WebUIThemeToggleButton from '../WebUIThemeToggleButton';
 import './WebUIHeader.css';
 import WebUIHeaderProjectSelect from './WebUIHeaderProjectSelect';
-import { useAppShellMobile } from '@astryxdesign/core/AppShell';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MediaTheme, useTheme } from '@astryxdesign/core/theme';
+import { useAppShellMobile } from '@lablup/ui-common/AppShell';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MediaTheme, useTheme } from '@lablup/ui-common/theme';
 import {
   ANTD_REVERSED_BAND_OVERLAYS,
   BAIFlex,

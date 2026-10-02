@@ -2,8 +2,8 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Badge } from '@astryxdesign/core/Badge';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { badgeVariantForStatus } from 'backend.ai-ui';
 import { LoaderCircle } from 'lucide-react';
 import React from 'react';

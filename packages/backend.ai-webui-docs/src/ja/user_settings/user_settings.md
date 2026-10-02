@@ -14,7 +14,7 @@ navTitle: ユーザー設定
 ログや、現在アカウントにログインしているログインセッション、ログイン履歴を
 確認することもできます。
 
-![](../images/preferences.png)
+![=180px](../images/preferences.png)
 
 このダイアログは、左側に並ぶ **一般**、**ログ**、**ログインセッション**、
 **ログイン履歴** の4つのカテゴリで構成されています。画面が狭い場合はリストが
@@ -181,7 +181,7 @@ https://github.com/lablup/backend.ai-webui.
 キーペアが発行されると、**キーペア資格情報** ダイアログが表示され、新しい資格
 情報が一度だけ表示されます。
 
-![](../images/keypair_credential_info.png)
+![=640px](../images/keypair_credential_info.png)
 
 ダイアログには次の値が、それぞれコピーボタンとともに表示されます:
 
@@ -236,7 +236,7 @@ https://github.com/lablup/backend.ai-webui.
 入力する必要があります。
 :::
 
-![](../images/keypair_delete_confirm.png)
+![=548px](../images/keypair_delete_confirm.png)
 
 <a id="user-ssh-keypair-management"></a>
 
@@ -251,7 +251,7 @@ WebUIアプリを使用する際、コンピュートセッションに直接SSH
 ユーザー情報として保存されます。秘密鍵は作成後すぐに手動で保存しない限り、
 再確認できないことに注意してください。
 
-![](../images/ssh_keypair_dialog.png)
+![=528px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AIはOpenSSHに基づいたSSHキーペアを使用します。Windowsでは、これを
@@ -263,7 +263,7 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 `直接入力する`ボタンをクリックしてください。
 **公開鍵**と**秘密鍵**の2つのテキストエリアが表示されます。
 
-![](../images/add_ssh_keypair_manually_dialog.png)
+![=528px](../images/add_ssh_keypair_manually_dialog.png)
 
 キーを入力して`保存`ボタンをクリックしてください。キーペアが正常に登録されると、
 *「SSHキーフェア登録が正常に完了しました。」*というメッセージが表示されて
@@ -272,7 +272,7 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 が一致しない場合）は、ダイアログは閉じずにサーバーが返したエラーメッセージが
 表示されるため、キーを修正して再度保存できます。
 
-![](../images/ssh_keypair_dialog_after.png)
+![=528px](../images/ssh_keypair_dialog_after.png)
 
 ### 最大同時ファイルアップロード制限
 
@@ -284,7 +284,7 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 コンピュートセッションが開始された直後に一度だけスクリプトを実行したい場合は、
 ここに内容を記述してください。
 
-![](../images/edit_bootstrap_script.png)
+![=720px](../images/edit_bootstrap_script.png)
 
 :::note
 ブートストラップスクリプトの実行が完了するまで、コンピュートセッションは
@@ -308,7 +308,7 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 隣の矢印から`閉じずに保存`を選択すると、ダイアログを開いたまま保存できます。
 ダイアログ左側のボタンでは、スクリプトの削除や未保存の変更のリセットができます。
 
-![](../images/edit_user_config_script.png)
+![=720px](../images/edit_user_config_script.png)
 
 <a id="experimental-features"></a>
 
@@ -372,7 +372,7 @@ Backend.AI WebUIは、プライベートリポジトリへのアクセスなど�
 アイコンをクリックしてください。表示したい列を選択するダイアログが表示
 されます。
 
-![](../images/logs_table_setting.png)
+![=420px](../images/logs_table_setting.png)
 
 <a id="login-sessions-tab"></a>
 

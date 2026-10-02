@@ -19,7 +19,7 @@ import {
   useWebUIPluginLoadedValue,
   useWebUIPluginValue,
 } from './useWebUIPluginState';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBadgeCount,
   BAIEndpointsIcon,

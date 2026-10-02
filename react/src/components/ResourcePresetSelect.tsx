@@ -9,14 +9,14 @@ import {
 import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import type {
-  SelectorOptionData,
-  SelectorOptionType,
-} from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import {
+  Selector,
+  type SelectorOptionData,
+  type SelectorOptionType,
+} from '@lablup/ui-common/Selector';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -25,9 +25,8 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePen, Info } from 'lucide-react';
-import React, { useEffect, useTransition } from 'react';
-import type { CSSProperties } from 'react';
+import { Info, SquarePen } from 'lucide-react';
+import React, { useEffect, useTransition, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 

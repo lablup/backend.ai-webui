@@ -15,8 +15,8 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
   BAIButton,
@@ -24,10 +24,10 @@ import {
   BAIResourceGroupSelect,
   BAISelectionLabel,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   useFetchKey,
   useResourceGroupNames,
-  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SettingsIcon } from 'lucide-react';

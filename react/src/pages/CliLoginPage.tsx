@@ -5,11 +5,11 @@
 import { CSSTokenVariables } from '../components/MainLayout/MainLayout';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserInfo } from '../hooks/backendai';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Code } from '@astryxdesign/core/Code';
-import { CodeBlock } from '@astryxdesign/core/CodeBlock';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Button } from '@lablup/ui-common/Button';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Code } from '@lablup/ui-common/Code';
+import { CodeBlock } from '@lablup/ui-common/CodeBlock';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAI_Z_INDEX,
   BAIAlert,

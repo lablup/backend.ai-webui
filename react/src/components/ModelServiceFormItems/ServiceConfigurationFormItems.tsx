@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form } from '../../form-engine';
-import type { FormInstance } from '../../form-engine';
+import { Form, type FormInstance } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
 import {
@@ -13,8 +12,8 @@ import {
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import '../collapsible-section.css';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

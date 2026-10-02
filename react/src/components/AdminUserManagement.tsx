@@ -21,10 +21,10 @@ import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminUserV2Table,
   BAIButton,
@@ -44,15 +44,15 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
+  BanIcon,
   Ellipsis,
   Info,
-  BanIcon,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
 } from 'lucide-react';
-import React, { useState, useDeferredValue } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderPermissionCellV2Fragment$key } from '../__generated__/VFolderPermissionCellV2Fragment.graphql';
-import { HStack } from '@astryxdesign/core/Stack';
+import { HStack } from '@lablup/ui-common/Stack';
 import { BAIText } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo } from 'react';

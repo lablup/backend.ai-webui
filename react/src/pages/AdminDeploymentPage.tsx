@@ -13,6 +13,7 @@ import type {
 } from '../__generated__/AdminDeploymentQuery.graphql';
 import type {
   AdminModelCardQuery as AdminModelCardQueryType,
+  ModelCardV2Filter,
   ModelCardV2OrderBy,
 } from '../__generated__/AdminModelCardQuery.graphql';
 import type {
@@ -43,7 +44,7 @@ import AdminRuntimeVariantPreset, {
 } from '../components/AdminRuntimeVariantPreset';
 import BAIErrorBoundary from '../components/BAIErrorBoundary';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
+import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { BAISkeleton } from 'backend.ai-ui';
@@ -186,26 +187,47 @@ const AdminDeploymentPage: React.FC = () => {
   };
 
   // --- Model store management tab ---
+  const currentDomain = useCurrentDomainValue();
   const [modelCardQueryRef, loadModelCardQuery] =
     useQueryLoader<AdminModelCardQueryType>(AdminModelCardQuery);
   const [modelCardColumnOverrides, setModelCardColumnOverrides] =
     useBAISettingUserState('table_column_overrides.AdminModelCard');
 
+  // The URL holds only the user's conditions; the domain is added per load.
+  const modelCardUserFilter =
+    (queryParams.filter as ModelCardV2Filter | null) ?? undefined;
   const reloadModelCards = (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
   ) => {
+    // A reload that keeps the loaded (scoped) filter keeps the URL's one.
+    const userFilter =
+      variables.filter === modelCardQueryRef?.variables.filter
+        ? modelCardUserFilter
+        : variables.filter;
     const nextLimit = variables.limit ?? 10;
     const nextOffset = variables.offset ?? 0;
     setQueryParams({
-      filter: variables.filter ?? null,
+      filter: userFilter ?? null,
       order: convertFirstOrderByToString(variables.orderBy),
     });
     setTablePaginationOption({
       pageSize: nextLimit,
       current: nextOffset > 0 ? Math.floor(nextOffset / nextLimit) + 1 : 1,
     });
-    loadModelCardQuery(variables, options);
+    loadModelCardQuery(
+      {
+        ...variables,
+        // AND-nesting keeps a user OR/NOT from widening past the domain.
+        filter: currentDomain
+          ? {
+              domainName: { equals: currentDomain },
+              ...(userFilter ? { AND: [userFilter] } : {}),
+            }
+          : userFilter,
+      },
+      options,
+    );
   };
 
   // --- Prometheus preset tab ---
@@ -322,14 +344,20 @@ const AdminDeploymentPage: React.FC = () => {
       case 'model-store-management': {
         // No longer project-scoped, so loading once is enough.
         if (!modelCardQueryRef) {
+          const userFilter = params.filter as ModelCardV2Filter | null;
           loadModelCardQuery(
             {
-              filter:
-                (params.filter as AdminModelCardQueryType['variables']['filter']) ??
-                undefined,
+              filter: currentDomain
+                ? {
+                    domainName: { equals: currentDomain },
+                    ...(userFilter ? { AND: [userFilter] } : {}),
+                  }
+                : userFilter,
               orderBy: convertToOrderBy<ModelCardV2OrderBy>(params.order),
               limit,
               offset,
+              // Every domain has its own MODEL_STORE project.
+              domainName: currentDomain,
             },
             { fetchPolicy: 'store-and-network' },
           );
@@ -490,6 +518,7 @@ const AdminDeploymentPage: React.FC = () => {
             {modelCardQueryRef ? (
               <AdminModelCard
                 queryRef={modelCardQueryRef}
+                filter={modelCardUserFilter}
                 onReload={reloadModelCards}
                 tableSettings={{
                   columnOverrides: modelCardColumnOverrides,

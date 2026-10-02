@@ -5,13 +5,13 @@
 import { Form } from '../../form-engine';
 import { compareNumberWithUnits, convertToBinaryUnit } from '../../helper';
 import { MergedResourceAllocationFormValue } from './ResourceAllocationFormItems';
-import { Switch } from '@astryxdesign/core/Switch';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Switch } from '@lablup/ui-common/Switch';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
   BAIDynamicUnitInputNumber,
   BAIDynamicUnitInputNumberProps,
   BAIFlex,
+  BAIQuestionIconWithTooltip,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React from 'react';

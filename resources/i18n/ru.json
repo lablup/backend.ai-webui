@@ -2238,9 +2238,6 @@
     "SuccessfullyUpdated": "Успешно обновлено",
     "Visit": "Посещение"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} of {{total}} элементы"
-  },
   "project": {
     "Activate": "Активировать",
     "ActivateProject": "Активировать проект",
@@ -3017,6 +3014,7 @@
     "launcher": {
       "AIAccelerator": "Ускоритель искусственного интеллекта",
       "Accelerator": "Ускоритель",
+      "AcceleratorDedicatedImages": "Образы для ускорителей",
       "AddEnvironmentVariable": "Добавьте переменные окружения",
       "AddingKernelToSocketQueue": "Добавление ядра в очередь сокетов ...",
       "AdvancedSettings": "Расширенные настройки",
@@ -3094,6 +3092,7 @@
       "HPCOptimization": "Оптимизация высокопроизводительных вычислений",
       "HomeDirectoryDeletionDialog": "Домашний каталог в сеансе автоматически удаляется по окончании сеанса.",
       "ImageDoesNotProvideModelPath": "В образе контейнера не указан путь к модели. Его необходимо изменить.",
+      "ImageFilter": "Фильтр образов",
       "InferenceMode": "Вывод",
       "InfiniteTime": "Бесконечность",
       "InsufficientAllocationOfResourcesWarning": "Выделяемые ресурсы ниже минимального ресурса, необходимого для выбранного изображения.",
@@ -3194,6 +3193,7 @@
       "SettingUpProxyForApp": "Настройка прокси для приложения ...",
       "SharedMemory": "Общая память (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Параметр общей памяти уменьшен до уровня ниже выделенной памяти.",
+      "ShowAcceleratorDedicatedImagesFirst": "Сначала показывать образы для ускорителей",
       "ShuttingDownExistTensorBoard": "Остановить экземпляр TensorBoard, если он существует...",
       "SingleNode": "Один",
       "SingleNodeShort": "Один",

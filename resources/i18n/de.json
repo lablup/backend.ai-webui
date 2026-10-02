@@ -2240,9 +2240,6 @@
     "SuccessfullyUpdated": "Erfolgreich aktualisiert",
     "Visit": "Besuch"
   },
-  "pagination": {
-    "Total": "{{Start}} - {{end}} von {{Total}} Elementen"
-  },
   "project": {
     "Activate": "Aktivieren",
     "ActivateProject": "Projekt aktivieren",
@@ -3019,6 +3016,7 @@
     "launcher": {
       "AIAccelerator": "KI-Beschleuniger",
       "Accelerator": "Beschleuniger",
+      "AcceleratorDedicatedImages": "Beschleunigerspezifische Images",
       "AddEnvironmentVariable": "Umgebungsvariablen hinzufügen",
       "AddingKernelToSocketQueue": "Kernel zur Socket-Warteschlange hinzugefügt...",
       "AdvancedSettings": "Erweiterte Einstellungen",
@@ -3096,6 +3094,7 @@
       "HPCOptimization": "Optimierungen für das Hochleistungsrechnen",
       "HomeDirectoryDeletionDialog": "Das Home-Verzeichnis in der Sitzung wird automatisch gelöscht, wenn die Sitzung beendet wird.",
       "ImageDoesNotProvideModelPath": "Das Containerbild enthält keinen Modellpfad. Er sollte geändert werden.",
+      "ImageFilter": "Image-Filter",
       "InferenceMode": "Inferenz",
       "InfiniteTime": "Unendlich",
       "InsufficientAllocationOfResourcesWarning": "Die zuweisbaren Ressourcen liegen unter der im ausgewählten Bild erforderlichen Mindestressource.",
@@ -3196,6 +3195,7 @@
       "SettingUpProxyForApp": "Proxy für die App einrichten...",
       "SharedMemory": "Gemeinsamer Speicher (SHMEM) {{value}}",
       "SharedMemorySettingIsReduced": "Die Einstellung für gemeinsam genutzten Speicher wird auf unter den zugewiesenen Speicher reduziert.",
+      "ShowAcceleratorDedicatedImagesFirst": "Beschleunigerspezifische Images zuerst anzeigen",
       "ShuttingDownExistTensorBoard": "TensorBoard-Instanz herunterfahren, falls vorhanden...",
       "SingleNode": "Single",
       "SingleNodeShort": "Einzel",

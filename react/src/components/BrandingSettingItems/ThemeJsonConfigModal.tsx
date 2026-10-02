@@ -8,15 +8,15 @@ import { pickValidAppearanceConfig } from '../../helper/customThemeConfig';
 import { loadMonacoEditor } from '../../helper/monacoEditor';
 import { useDefaultTheme } from '../../hooks/useDefaultTheme';
 import { useThemeMode } from '../../hooks/useThemeMode';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { Monaco } from '@monaco-editor/react';
 import {
-  BAISkeleton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
+  BAISkeleton,
   useBAILogger,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';

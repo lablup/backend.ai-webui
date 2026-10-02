@@ -28,12 +28,12 @@ import TensorboardPathModal from './TensorboardPathModal';
 import VNCConnectionInfoModal from './VNCConnectionInfoModal';
 import VSCodeDesktopConnectionModal from './VSCodeDesktopConnectionModal';
 import XRDPConnectionInfoModal from './XRDPConnectionInfoModal';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
 import * as stylex from '@stylexjs/stylex';
 // FRONTIER (ticket 17): the Form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS inside the items are Astryx now — the

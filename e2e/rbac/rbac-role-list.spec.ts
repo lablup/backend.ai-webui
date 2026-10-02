@@ -1,5 +1,6 @@
 // spec: e2e/.agent-output/test-plan-rbac-management.md
 // Scenarios: 1.1 – 1.4, 6.1, 6.4, 6.5 (Role list view, filtering, sorting, refresh)
+import { clientSupports } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, { expect, Page } from '@playwright/test';
 
@@ -7,10 +8,16 @@ import test, { expect, Page } from '@playwright/test';
 // `<button>`s (BAITabList / Astryx `TabList`), not ARIA `tab` elements —
 // `role="tab"` is never emitted unless `TabList` is given `role="tablist"`,
 // which this app never does (see registry.spec.ts's identical pattern).
-function rbacManagementTab(page: Page) {
+// The role list lives on the "Roles" tab (renamed from "RBAC Management" when
+// the Presets tab was added, #9924).
+function rbacPageTab(page: Page, name: 'Roles' | 'Presets') {
   return page
     .getByRole('navigation', { name: 'Tabs' })
-    .getByRole('button', { name: 'RBAC Management' });
+    .getByRole('button', { name, exact: true });
+}
+
+function rbacManagementTab(page: Page) {
+  return rbacPageTab(page, 'Roles');
 }
 
 // A BAITable column header's accessible NAME is overridden by its sort
@@ -55,7 +62,7 @@ test.describe(
   'RBAC Role List View',
   { tag: ['@rbac', '@critical', '@functional'] },
   () => {
-    test('Superadmin can view the RBAC management page with role list table', async ({
+    test('Superadmin can see the Roles tab with the role list table on the RBAC page', async ({
       page,
       request,
     }) => {
@@ -65,11 +72,21 @@ test.describe(
       // 2. Navigate to RBAC page
       await navigateTo(page, 'rbac');
 
-      // 3. Verify the page heading "RBAC Management" is visible
+      // 3. Verify the "Roles" tab is visible and selected by default
       // The role table (909 roles in the shared nightly env) can take a
       // while to render on a busy shared backend; give it more headroom
       // than the default page-chrome wait.
       await expect(rbacManagementTab(page)).toBeVisible({ timeout: 30000 });
+      await expect(rbacManagementTab(page)).toHaveAttribute(
+        'aria-current',
+        'true',
+      );
+      // The "Presets" tab is shown only on managers >= 26.9.0a4.
+      if (await clientSupports(page, 'rbac-role-presets')) {
+        await expect(rbacPageTab(page, 'Presets')).toBeVisible();
+      } else {
+        await expect(rbacPageTab(page, 'Presets')).toBeHidden();
+      }
 
       // 4. Verify the "Create Role" button is visible and enabled
       await expect(
@@ -98,7 +115,7 @@ test.describe(
       await expect(roleColumnHeader(page, 'Created At')).toBeVisible();
       await expect(roleColumnHeader(page, 'Updated At')).toBeVisible();
 
-      // 7. Verify the table contains at least one row (system roles like "superadmin" should exist)
+      // 7. Verify the table contains at least one row (system roles always exist)
       await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
     });
 
@@ -156,10 +173,12 @@ test.describe(
       await expect(page.getByRole('table')).toBeVisible();
 
       // 4-7. Apply a Role Name filter with a known partial name
-      await applyRoleFilter(page, 'Role Name', 'super');
+      // Every system-role family carries "admin" (role_*_admin,
+      // project_admin-*); the nightly server has no "super*" role.
+      await applyRoleFilter(page, 'Role Name', 'admin');
 
       // 8. Verify the table shows ONLY roles whose name matches the search.
-      // Asserting "some row contains super" would also pass on an unfiltered
+      // Asserting "some row contains admin" would also pass on an unfiltered
       // list, so require every returned row to match.
       await expect(roleDataRows(page).first()).toBeVisible({ timeout: 10000 });
       await expect(async () => {
@@ -168,7 +187,7 @@ test.describe(
         for (const row of rows) {
           // Role Name is the first column (RoleNodes.tsx column order).
           const name = await row.getByRole('cell').first().innerText();
-          expect(name.toLowerCase()).toContain('super');
+          expect(name.toLowerCase()).toContain('admin');
         }
       }).toPass({ timeout: 10000 });
 

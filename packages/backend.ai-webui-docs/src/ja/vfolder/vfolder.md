@@ -35,7 +35,7 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 
 新しいフォルダを作成するには、データページで「フォルダ作成」をクリックします。作成ダイアログのフィールドは以下のように入力します。
 
-![](../images/vfolder_create_modal.png)
+![=650px](../images/vfolder_create_modal.png)
 
 作成ダイアログの各フィールドの意味は以下のとおりです。
 
@@ -164,7 +164,7 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 （`{件数}選択`）とゴミ箱ボタンが現れます。ゴミ箱ボタンをクリックすると、選択した
 フォルダ全体に対する **ゴミ箱に移動します** の確認モーダルが開きます。
 
-![](../images/vfolder_bulk_move_to_trash.png)
+![=520px](../images/vfolder_bulk_move_to_trash.png)
 
 選択したフォルダの中に削除権限のないものが含まれている場合、モーダルには
 *「以下の削除権限のないフォルダーは除外されます。」* というタイトルのアラートが表示され、
@@ -184,7 +184,7 @@ Backend.AIは、ユーザーのファイルを安全に保管するための専�
 
 フォルダ名の入力を求める確認モーダルが表示されます。フォルダ名を正確に入力すると **永久に削除** ボタンが有効になり、クリックしてフォルダを完全に削除できます。
 
-![](../images/vfolder_delete_dialog.png)
+![=520px](../images/vfolder_delete_dialog.png)
 
 :::warning[モデルカードの連鎖削除]
 削除対象のフォルダが **モデルカード** に関連付けられている場合、確認モーダルには
@@ -237,7 +237,7 @@ FileBrowserが新しいウィンドウで開かれているのがわかります
 :::note
 誤ってFileBrowserウィンドウを閉じてしまい、再度開きたい場合は、セッションページに移動してFileBrowserコンピュートセッションのFileBrowserアプリケーションボタンをクリックします。
 
-![](../images/app_dialog_with_filebrowser.png)
+![=450px](../images/app_dialog_with_filebrowser.png)
 
 ストレージフォルダーエクスプローラーで `ファイルブラウザを実行する` ボタンを再度クリックすると、新しいコンピュートセッションが作成され、合計で2つのFileBrowserセッションが表示されます。
 :::
@@ -277,7 +277,7 @@ foo
 
 `foo` ディレクトリを選択すると、ディレクトリが正常にアップロードされたことを確認できます。
 
-![](../images/filebrowser_upload_finished.png)
+![=796px](../images/filebrowser_upload_finished.png)
 
 ドラッグ＆ドロップでローカルファイルやディレクトリをアップロードすることもできます。
 
@@ -287,7 +287,7 @@ FileBrowserからストレージフォルダ内のファイルやディレクト
 
 1. FileBrowserからディレクトリまたはファイルを選択します。
 
-![](../images/select_folders.png)
+![=694px](../images/select_folders.png)
 
 2. FileBrowser右上の「矢印」ボタンをクリックします。
 
@@ -295,13 +295,13 @@ FileBrowserからストレージフォルダ内のファイルやディレクト
 
 3. 移動先を選択します。
 
-![](../images/select_the_destination.png)
+![=266px](../images/select_the_destination.png)
 
 4. 「MOVE」ボタンをクリックします。
 
 移動操作が正常に完了したことを確認できます。
 
-![](../images/moving_operation_in_filebrowser_finished.png)
+![=708px](../images/moving_operation_in_filebrowser_finished.png)
 
 
 :::note
@@ -328,7 +328,7 @@ Backend.AIはデスクトップアプリとWebベースのWebUIの両方からSS
 
 SSH / SFTP接続ダイアログが表示されます。新しいSFTPセッションが自動的に作成されます。（このセッションはリソース占有には影響しません。）
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 接続のために、「SSHキーをダウンロード」ボタンをクリックしてSSH秘密鍵（`id_container`）をダウンロードします。また、ホスト名とポート番号を控えておいてください。その後、ダイアログに記載された接続例のコードを使用して、または以下のガイドを参照してファイルをセッションにコピーできます: [SFTP接続ガイド](#ssh-sftp-container)。ファイルを保持するには、ストレージフォルダにファイルを転送する必要があります。また、一定時間転送がない場合、セッションは終了します。
 

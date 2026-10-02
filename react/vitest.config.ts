@@ -119,6 +119,9 @@ export default defineConfig({
       'vite-plugins/**/*.{test,spec}.ts',
     ],
     exclude: ['**/node_modules/**', '**/build/**', '**/__generated__/**'],
+    // ui-common's own components import their `.css`, which Node cannot load
+    // when the package is externalized; let Vite transform it instead.
+    server: { deps: { inline: [/@lablup\/ui-common/] } },
 
     // CI-only: the transform cache (node_modules/.experimental-vitest-cache)
     // is persisted by actions/cache in vitest-react.yml, cutting warm re-push

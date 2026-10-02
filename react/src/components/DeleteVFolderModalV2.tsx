@@ -6,7 +6,7 @@ import { DeleteVFolderModalV2Fragment$key } from '../__generated__/DeleteVFolder
 import { DeleteVFolderModalV2Mutation } from '../__generated__/DeleteVFolderModalV2Mutation.graphql';
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkErrorModal,
   type BAIColumnsType,

@@ -1,5 +1,4 @@
 import BAIButton from './BAIButton';
-import BAIFlex from './BAIFlex';
 import BAINotificationItem from './BAINotificationItem';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -23,17 +22,7 @@ This component is designed to display structured notification content with title
 | \`description\` | \`ReactNode\` | - | Notification description content |
 | \`action\` | \`ReactNode\` | - | Action buttons or controls displayed at the bottom right |
 | \`footer\` | \`ReactNode\` | - | Footer content (e.g., timestamp) displayed at the bottom right with secondary text color |
-| \`styles\` | \`BAINotificationItemStyles\` | - | Custom styles for title, description, action, and footer sections |
 
-## BAINotificationItemStyles
-\`\`\`typescript
-interface BAINotificationItemStyles {
-  title?: React.CSSProperties;
-  description?: React.CSSProperties;
-  action?: React.CSSProperties;
-  footer?: React.CSSProperties;
-}
-\`\`\`
         `,
       },
     },
@@ -67,14 +56,6 @@ interface BAINotificationItemStyles {
         'Footer content (e.g., timestamp) displayed at the bottom right with secondary text color',
       table: {
         type: { summary: 'ReactNode' },
-      },
-    },
-    styles: {
-      control: false,
-      description:
-        'Custom styles for title, description, action, and footer sections',
-      table: {
-        type: { summary: 'BAINotificationItemStyles' },
       },
     },
   },
@@ -111,45 +92,5 @@ export const WithActions: Story = {
       }
       footer="5 minutes ago"
     />
-  ),
-};
-
-// With Custom Styles: Demonstrates styles prop for customizing wrapper elements
-export const WithCustomStyles: Story = {
-  render: () => (
-    <BAIFlex direction="column" gap="md">
-      <BAINotificationItem
-        title="Default styling"
-        description="This notification uses default styles."
-        footer="1 hour ago"
-      />
-      <BAINotificationItem
-        title="Custom styled notification"
-        description="This notification demonstrates custom styling capabilities."
-        action={
-          <BAIButton type="primary" size="small">
-            Acknowledge
-          </BAIButton>
-        }
-        footer="1 hour ago"
-        styles={{
-          title: {
-            backgroundColor: '#e6f7ff',
-            padding: '4px 8px',
-            borderRadius: '4px',
-          },
-          description: {
-            backgroundColor: '#f6ffed',
-            padding: '8px',
-            borderRadius: '4px',
-          },
-          footer: {
-            backgroundColor: '#fff7e6',
-            padding: '2px 6px',
-            borderRadius: '4px',
-          },
-        }}
-      />
-    </BAIFlex>
   ),
 };

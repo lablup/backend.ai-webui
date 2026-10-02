@@ -6,6 +6,7 @@ import {
   KeyPairModal,
   UserSettingModal,
 } from '../utils/classes/user/UserSettingModal';
+import { skipUnlessClientFeature } from '../utils/feature-gate-util';
 import { loginAsAdmin, navigateTo } from '../utils/test-util';
 import test, {
   expect,
@@ -16,6 +17,11 @@ import test, {
 import { randomUUID } from 'node:crypto';
 
 const TEST_RUN_ID = Date.now().toString(36);
+
+// Relay global ids are base64 `Type:uuid`; filters and URLs carry the uuid.
+function toLocalId(globalId: string) {
+  return Buffer.from(globalId, 'base64').toString('utf8').split(':')[1];
+}
 const ROLE_NAME = `e2e-detail-role-${TEST_RUN_ID}`;
 const ROLE_DESCRIPTION = `E2E detail test role created at ${new Date().toISOString()}`;
 
@@ -966,6 +972,130 @@ test.describe(
       // Close the drawer and cleanup test role
       await drawer.getByRole('button', { name: 'close' }).click();
       await cleanupTestRole(page);
+    });
+  },
+);
+
+test.describe(
+  'RBAC Role Detail Drawer - View Presets link',
+  { tag: ['@rbac', '@regression', '@functional', '@requires-manager-v26.9'] },
+  () => {
+    test('Superadmin can open exactly the preset of a system role from the role detail drawer', async ({
+      page,
+      request,
+    }) => {
+      await loginAsAdmin(page, request);
+      await skipUnlessClientFeature(
+        page,
+        'rbac-role-presets',
+        "The Presets tab requires the 'rbac-role-presets' capability (manager >= 26.9.0a4, FR-4065)",
+      );
+      const namesItsPreset = await page.evaluate(
+        () =>
+          !!(globalThis as any).backendaiclient?.isManagerVersionCompatibleWith(
+            '26.9.0rc1',
+          ),
+      );
+      test.skip(
+        !namesItsPreset,
+        'Role.rolePreset, which the View Presets link filters by, requires manager >= 26.9.0rc1 (FR-4109)',
+      );
+
+      // The role list query carries each role's `rolePreset.id` (a Relay
+      // global id), the identity the link must land on.
+      const rolePresetIdByRoleName = new Map<string, string>();
+      page.on('response', async (response) => {
+        if (!response.request().postData()?.includes('RBACManagementPageQuery'))
+          return;
+        const body = await response.json().catch(() => null);
+        for (const edge of body?.data?.adminRoles?.edges ?? []) {
+          if (edge?.node?.name && edge.node.rolePreset?.id) {
+            rolePresetIdByRoleName.set(
+              edge.node.name,
+              toLocalId(edge.node.rolePreset.id),
+            );
+          }
+        }
+      });
+
+      // Land on the Roles tab already filtered to SYSTEM roles, the only
+      // source whose Permissions tab carries the View Presets link.
+      await navigateTo(
+        page,
+        `admin/rbac?${new URLSearchParams({
+          tab: 'roles',
+          filter: JSON.stringify({ source: { equals: 'SYSTEM' } }),
+        })}`,
+      );
+      const roleRows = dataRows(page);
+      await expect(roleRows.first()).toBeVisible({
+        timeout: SLOW_PAGE_TIMEOUT,
+      });
+      const roleNameButton = roleRows
+        .first()
+        .getByRole('cell')
+        .first()
+        .getByRole('button')
+        .first();
+      const roleName = (await roleNameButton.innerText()).trim();
+      await expect
+        .poll(() => rolePresetIdByRoleName.get(roleName), {
+          message: `role list response names the preset of ${roleName}`,
+        })
+        .toBeTruthy();
+      const expectedPresetId = rolePresetIdByRoleName.get(roleName);
+      await roleNameButton.click();
+
+      const drawer = roleDrawer(page);
+      await expect(drawer).toBeVisible({ timeout: 10000 });
+      const viewPresetsLink = drawer.getByText('View Presets', { exact: true });
+      await expect(viewPresetsLink).toBeVisible({ timeout: 10000 });
+      const presetListResponse = page.waitForResponse(
+        (response) =>
+          !!response.request().postData()?.includes('RolePresetListTabQuery') &&
+          !!response
+            .request()
+            .postData()
+            ?.includes(expectedPresetId ?? ''),
+      );
+      await viewPresetsLink.click();
+
+      await expect(drawer).toBeHidden({ timeout: 10000 });
+      await expect(
+        page
+          .getByRole('navigation', { name: 'Tabs' })
+          .getByRole('button', { name: 'Presets', exact: true }),
+      ).toHaveAttribute('aria-current', 'true');
+
+      await expect(page).toHaveURL(/[?&]tab=presets(&|$)/);
+      expect(
+        JSON.parse(new URL(page.url()).searchParams.get('filter') ?? '{}'),
+      ).toEqual({ id: { equals: expectedPresetId } });
+
+      // The id condition shows as a removable chip in the Presets filter.
+      const searchFilters = page.getByRole('group', { name: 'Search filters' });
+      await expect(
+        searchFilters.getByRole('button', { name: 'ID: equals', exact: true }),
+      ).toBeVisible();
+      await expect(
+        searchFilters.getByRole('button', {
+          name: 'Remove ID: equals',
+          exact: true,
+        }),
+      ).toBeVisible();
+
+      // Exactly one preset is listed, and it is the role's own preset.
+      const presetEdges =
+        (await (await presetListResponse).json())?.data?.adminRolePresets
+          ?.edges ?? [];
+      expect(
+        presetEdges.map((edge: { node: { id: string } }) =>
+          toLocalId(edge.node.id),
+        ),
+      ).toEqual([expectedPresetId]);
+      await expect(dataRows(page)).toHaveCount(1, {
+        timeout: SLOW_PAGE_TIMEOUT,
+      });
     });
   },
 );

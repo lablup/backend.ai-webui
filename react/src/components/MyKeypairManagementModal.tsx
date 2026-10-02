@@ -5,9 +5,9 @@
 import { MyKeypairManagementModalDeactivateMyKeypairMutation } from '../__generated__/MyKeypairManagementModalDeactivateMyKeypairMutation.graphql';
 import { MyKeypairManagementModalIssueMyKeypairMutation } from '../__generated__/MyKeypairManagementModalIssueMyKeypairMutation.graphql';
 import {
+  KeypairOrderBy,
   MyKeypairManagementModalQuery,
   MyKeypairManagementModalQuery$data,
-  KeypairOrderBy,
 } from '../__generated__/MyKeypairManagementModalQuery.graphql';
 import { MyKeypairManagementModalRevokeMyKeypairMutation } from '../__generated__/MyKeypairManagementModalRevokeMyKeypairMutation.graphql';
 import { MyKeypairManagementModalSwitchMainKeyMutation } from '../__generated__/MyKeypairManagementModalSwitchMainKeyMutation.graphql';
@@ -17,29 +17,29 @@ import { csvLiteral, downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import BAIRadioGroup from './BAIRadioGroup';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIPopconfirm } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDeleteConfirmModal,
   BAIFetchKeyButton,
   BAIFlex,
   BAIGraphQLPropertyFilter,
+  BAIIconWithTooltip,
   BAIModal,
   BAIModalProps,
+  BAIPopconfirm,
   BAITable,
   BAIText,
+  INITIAL_FETCH_KEY,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  type GraphQLFilter,
-  INITIAL_FETCH_KEY,
-  BAIIconWithTooltip,
   useBAILogger,
   useErrorMessageResolver,
   useFetchKey,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import {

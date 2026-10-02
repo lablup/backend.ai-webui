@@ -5,7 +5,7 @@
 import PureChatTokenCounter from './ChatTokenCounter';
 import VirtualChatMessageList from './VirtualChatMessageList';
 import { UIMessage } from '@ai-sdk/react';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React, { memo } from 'react';
 

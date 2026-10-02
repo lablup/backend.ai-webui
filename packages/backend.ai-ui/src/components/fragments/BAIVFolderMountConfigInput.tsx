@@ -23,11 +23,11 @@ import BAIText from '../BAIText';
 import BAIVFolderIdenticon from '../BAIVFolderIdenticon';
 import BAIVFolderPathPicker from '../baiClient/FileExplorer/BAIVFolderPathPicker';
 import './BAIVFolderMountConfigInput.css';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { ArrowRight, PlusIcon, RotateCw, User, XIcon } from 'lucide-react';
@@ -37,7 +37,7 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import { type LinkProps } from 'react-router-dom';
+import type { LinkProps } from 'react-router-dom';
 
 // Lives with the query that returns it; re-exported here because this module
 // is where the rest of the mount vocabulary is published from.
