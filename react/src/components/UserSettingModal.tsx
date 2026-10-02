@@ -28,7 +28,6 @@ import {
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
 import TOTPActivateModal from './TOTPActivateModal';
-import UserResourcePolicySelect from './UserResourcePolicySelect';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -43,6 +42,7 @@ import { Tokenizer } from '@lablup/ui-common/Tokenizer';
 import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAdminUserResourcePolicySelect,
   BAIAlert,
   BAICompactGroup,
   BAIDomainSelect,
@@ -1134,7 +1134,10 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             label={t('resourcePolicy.ResourcePolicy')}
             rules={[{ required: !user }]}
           >
-            <UserResourcePolicySelect />
+            <BAIAdminUserResourcePolicySelect
+              label={t('resourcePolicy.ResourcePolicy')}
+              isLabelHidden
+            />
           </BAIFormItem>
           <BAIFormItem
             name="domain_name"
