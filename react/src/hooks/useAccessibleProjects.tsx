@@ -12,7 +12,7 @@ import type { useAccessibleProjects_domainProjectsFragment$key } from '../__gene
 import { useCurrentUserRole } from './backendai';
 import { toLocalId } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { graphql, useLazyLoadQuery, usePaginationFragment } from 'react-relay';
 import type { FetchPolicy } from 'relay-runtime';
 
@@ -187,11 +187,19 @@ export const useAccessibleProjects = (
     `,
     adminDomainProjects ?? null,
   );
+  // A failed page leaves `hasNext` true; latch the failure so the effect does
+  // not refetch it in a loop. A different domain or type set starts fresh.
+  const pagingKey = `${domainName}:${types.join(',')}`;
+  const [failedPagingKey, setFailedPagingKey] = useState<string | null>(null);
   useEffect(() => {
-    if (hasNext && !isLoadingNext) {
-      loadNext(1000);
+    if (hasNext && !isLoadingNext && failedPagingKey !== pagingKey) {
+      loadNext(1000, {
+        onComplete: (error) => {
+          if (error) setFailedPagingKey(pagingKey);
+        },
+      });
     }
-  }, [hasNext, isLoadingNext, loadNext]);
+  }, [hasNext, isLoadingNext, loadNext, failedPagingKey, pagingKey]);
 
   const accessibleProjects = _.map(
     myUserV2?.projects?.edges,

@@ -30,57 +30,103 @@ const projectEdge = (index: number) => ({
   },
 });
 
+const renderAsAdmin = () => {
+  const environment = createMockEnvironment();
+  const wrapper = ({ children }: { children: React.ReactNode }) => (
+    <RelayEnvironmentProvider environment={environment}>
+      <Suspense fallback={null}>{children}</Suspense>
+    </RelayEnvironmentProvider>
+  );
+  const rendered = renderHook(() => useAccessibleProjects(), { wrapper });
+  return { environment, ...rendered };
+};
+
+const page = (indexes: Array<number>, hasNextPage: boolean) => ({
+  edges: indexes.map(projectEdge),
+  pageInfo: {
+    hasNextPage,
+    endCursor: `cursor-${indexes[indexes.length - 1]}`,
+  },
+});
+
+const PAGINATION_QUERY = 'useAccessibleProjectsDomainProjectsPaginationQuery';
+
+const paginationOperations = (
+  environment: ReturnType<typeof createMockEnvironment>,
+) =>
+  environment.mock
+    .getAllOperations()
+    .filter((op) => op.request.node.params.name === PAGINATION_QUERY);
+
+const resolveFirstPage = async (
+  environment: ReturnType<typeof createMockEnvironment>,
+) => {
+  await act(async () => {
+    environment.mock.resolveMostRecentOperation({
+      data: {
+        domainProjectsV2: page([1, 2], true),
+        myUserV2: { id: 'dXNlcg==', projects: { edges: [] } },
+      },
+    });
+  });
+};
+
 describe('useAccessibleProjects', () => {
-  it('loads every page of the admin project list', async () => {
-    const environment = createMockEnvironment();
-    const wrapper = ({ children }: { children: React.ReactNode }) => (
-      <RelayEnvironmentProvider environment={environment}>
-        <Suspense fallback={null}>{children}</Suspense>
-      </RelayEnvironmentProvider>
-    );
-    const { result } = renderHook(() => useAccessibleProjects(), { wrapper });
+  it('keeps loading pages until the last one', async () => {
+    const { environment, result } = renderAsAdmin();
+    await resolveFirstPage(environment);
 
-    await act(async () => {
-      environment.mock.resolveMostRecentOperation({
-        data: {
-          domainProjectsV2: {
-            edges: [projectEdge(1), projectEdge(2)],
-            pageInfo: { hasNextPage: true, endCursor: 'cursor-2' },
-          },
-          myUserV2: { id: 'dXNlcg==', projects: { edges: [] } },
-        },
+    for (const [indexes, hasNextPage, after] of [
+      [[3, 4], true, 'cursor-2'],
+      [[5], false, 'cursor-4'],
+    ] as const) {
+      await waitFor(() =>
+        expect(paginationOperations(environment)).toHaveLength(1),
+      );
+      const next = paginationOperations(environment)[0];
+      expect(next.request.variables).toMatchObject({
+        after,
+        first: 1000,
+        domainName: 'default',
       });
-    });
-
-    await waitFor(() =>
-      expect(
-        environment.mock.getMostRecentOperation().request.node.params.name,
-      ).toBe('useAccessibleProjectsDomainProjectsPaginationQuery'),
-    );
-    const nextPage = environment.mock.getMostRecentOperation();
-    expect(nextPage.request.variables).toMatchObject({
-      after: 'cursor-2',
-      first: 1000,
-      domainName: 'default',
-    });
-
-    await act(async () => {
-      environment.mock.resolve(nextPage, {
-        data: {
-          domainProjectsV2: {
-            edges: [projectEdge(3)],
-            pageInfo: { hasNextPage: false, endCursor: 'cursor-3' },
-          },
-        },
+      await act(async () => {
+        environment.mock.resolve(next, {
+          data: { domainProjectsV2: page([...indexes], hasNextPage) },
+        });
       });
-    });
+    }
 
     await waitFor(() =>
       expect(result.current.groups.map((project) => project.name)).toEqual([
         'project-1',
         'project-2',
         'project-3',
+        'project-4',
+        'project-5',
       ]),
     );
+    expect(paginationOperations(environment)).toHaveLength(0);
+  });
+
+  it('does not refetch a page that failed', async () => {
+    const { environment, result } = renderAsAdmin();
+    await resolveFirstPage(environment);
+
+    await waitFor(() =>
+      expect(paginationOperations(environment)).toHaveLength(1),
+    );
+    await act(async () => {
+      environment.mock.reject(
+        paginationOperations(environment)[0],
+        new Error('boom'),
+      );
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    expect(paginationOperations(environment)).toHaveLength(0);
+    expect(result.current.groups.map((project) => project.name)).toEqual([
+      'project-1',
+      'project-2',
+    ]);
   });
 });
