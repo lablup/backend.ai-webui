@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="배포" />
   <meta name="twitter:description" content="Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-09-28T02:29:28.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"배포","inLanguage":"ko","description":"Backend.AI는 배포(Deployments) 기능을 통해 AI 모델을 추론 서비스로 배포할 수 있도록 지원합니다.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/ko/deployment.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/deployment.html" />
   <link rel="alternate" hreflang="en" href="../en/deployment.html" />
   <link rel="alternate" hreflang="ja" href="../ja/deployment.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (02f750b)">v26.9.0-alpha.0 (02f750b)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (8fad171)">v26.9.0-alpha.0 (8fad171)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -259,7 +259,7 @@
 <p><a id="add-revision"></a></p>
 <h3 data-bai-block="31" id="deployment-리비전-추가">리비전 추가<a class="hash-link" href="#deployment-리비전-추가" aria-label="Direct link to 리비전 추가">#</a></h3>
 <p data-bai-block="32">리비전에는 추론 서버를 실행하는 데 필요한 모든 설정(이미지, 시작 명령, 자원, 모델 마운트, 환경 변수)이 포함됩니다. 배포 상세 페이지에서 <code>리비전 추가</code> 버튼을 클릭하여 모달을 엽니다.</p>
-<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>그림 12.4</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/model_serving_add_revision_modal.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="940" /><figcaption>그림 12.4</figcaption></figure>
 </p>
 <p data-bai-block="34">리비전 추가 모달 제목 영역의 <strong>프리셋 모드</strong> / <strong>고급 모드</strong> 전환기로 리비전 구성 방식을 선택합니다.</p>
 <p data-bai-block="35">배포에 현재 리비전이 있으면 두 모드 위에 <strong>현재 리비전 불러오기</strong> 안내 배너가 표시됩니다. <strong>현재 리비전 불러오기</strong>를 클릭하면 현재 적용 중인 리비전의 설정을 시작점으로 폼에 미리 채웁니다(필요한 경우 자동으로 고급 모드로 전환됩니다). 아직 현재 리비전이 없는 배포에서는 배너가 표시되지 않으며, 설정을 한 번 불러오면 배너는 사라집니다.</p>
@@ -288,7 +288,7 @@
 <p data-bai-block="54">아래 하위 섹션에서는 리비전 단위 필드를 자세히 설명합니다. <strong>고급 모드</strong>에서 리비전을 수동으로 추가할 때와 각 필드가 무엇을 제어하는지 이해하고자 할 때 모두 적용됩니다.</p>
 <h4 data-bai-block="55" id="deployment-모델-폴더-마운트">모델 폴더 마운트<a class="hash-link" href="#deployment-모델-폴더-마운트" aria-label="Direct link to 모델 폴더 마운트">#</a></h4>
 <p data-bai-block="56">리비전마다 하나의 모델 스토리지 폴더가 각 복제본에 마운트됩니다. 폴더 선택기 바로 아래의 필드에서 해당 폴더가 컨테이너 내부의 어느 위치에 나타날지 지정합니다.</p>
-<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>그림 12.5</figcaption></figure>
+<p><figure data-bai-block="57" class="doc-figure"><img src="./images/add_revision_model_folder_mount.png" alt="" class="doc-image" style="width:780px" loading="lazy" decoding="async" width="1560" height="396" /><figcaption>그림 12.5</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="58"><strong>모델 폴더</strong>: 각 복제본에 마운트할 모델 스토리지 폴더입니다.</li>
@@ -360,7 +360,7 @@
 <li data-bai-block="98"><strong>Trust Remote Code</strong>: 모델 저장소의 커스텀 모델 코드 실행을 허용합니다.</li>
 </ul>
 <p data-bai-block="99"><strong>SGLang 런타임 파라미터</strong></p>
-<p><figure data-bai-block="100" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>그림 12.7</figcaption></figure>
+<p><figure data-bai-block="100" class="doc-figure"><img src="./images/service_launcher_runtime_params_sglang.png" alt="" class="doc-image" style="width:648px" loading="lazy" decoding="async" width="1296" height="1222" /><figcaption>그림 12.7</figcaption></figure>
 </p>
 <p data-bai-block="101">SGLang은 다음 파라미터 탭을 제공합니다: <strong>Model Loading</strong>, <strong>Resource Memory</strong>, <strong>Serving Performance</strong>, <strong>Tool Reasoning</strong> 등.</p>
 <p data-bai-block="102"><strong>Model Loading</strong> 탭의 주요 필드:</p>
@@ -551,7 +551,7 @@
 가상 폴더를 생성해야 합니다. 가상 폴더를 생성할 때 기본 <code>general</code> 타입 대신
 <code>model</code> 타입을 선택하세요. 폴더 생성 방법에 대한 지침은 데이터 페이지의
 <a href="./vfolder.html#create-storage-folder">스토리지 폴더 생성</a> 섹션을 참조하세요.</p>
-<p><figure data-bai-block="184" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>그림 12.10</figcaption></figure>
+<p><figure data-bai-block="184" class="doc-figure"><img src="./images/model_type_folder_creation.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="892" /><figcaption>그림 12.10</figcaption></figure>
 </p>
 <p data-bai-block="185">폴더를 생성한 후, 데이터 페이지에서 <code>MODELS</code> 탭을 선택하고
 최근에 생성한 모델 타입 폴더 아이콘을 클릭하여 폴더 탐색기를 열고
@@ -666,7 +666,7 @@
 </p>
 <h4 data-bai-block="235" id="deployment-더보기-메뉴-수정-및-삭제">더보기 메뉴 (수정 및 삭제)<a class="hash-link" href="#deployment-더보기-메뉴-수정-및-삭제" aria-label="Direct link to 더보기 메뉴 (수정 및 삭제)">#</a></h4>
 <p data-bai-block="236"><strong>기본 정보</strong> 카드 헤더에는 새로 고침 버튼, <strong>수정</strong> 버튼, <strong>더보기</strong> 메뉴가 있습니다. <strong>수정</strong> 버튼을 클릭하면 <a href="#create-deployment">배포 생성 모달</a>에서 설명한 <strong>배포 수정</strong> 모달이 열립니다. 더보기 메뉴에는 현재 <strong>배포 삭제</strong> 동작이 포함됩니다.</p>
-<p><figure data-bai-block="237" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="320" height="174" /><figcaption>그림 12.14</figcaption></figure>
+<p><figure data-bai-block="237" class="doc-figure"><img src="./images/endpoint_detail_more_menu.png" alt="" class="doc-image" style="width:160px" loading="lazy" decoding="async" width="320" height="174" /><figcaption>그림 12.14</figcaption></figure>
 </p>
 <p><a id="scheduling-history"></a></p>
 <h4 data-bai-block="238" id="deployment-스케줄링-기록">스케줄링 기록<a class="hash-link" href="#deployment-스케줄링-기록" aria-label="Direct link to 스케줄링 기록">#</a></h4>
@@ -789,7 +789,7 @@
 <p><figure data-bai-block="312" class="doc-figure"><img src="./images/replica_scheduling_history.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 12.20</figcaption></figure>
 </p>
 <p data-bai-block="313">복제본에서 오류가 발생한 경우 행의 오류 표시를 클릭하면 JSON 뷰어 모달이 열리며, 원시 오류 데이터를 표시합니다. 개별 복제본의 문제를 진단할 때 유용합니다.</p>
-<p><figure data-bai-block="314" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="985" height="427" /><figcaption>그림 12.21</figcaption></figure>
+<p><figure data-bai-block="314" class="doc-figure"><img src="./images/route_error_json_viewer.png" alt="" class="doc-image" style="width:492px" loading="lazy" decoding="async" width="985" height="427" /><figcaption>그림 12.21</figcaption></figure>
 </p>
 <h3 data-bai-block="315" id="deployment-오토스케일링-규칙">오토스케일링 규칙<a class="hash-link" href="#deployment-오토스케일링-규칙" aria-label="Direct link to 오토스케일링 규칙">#</a></h3>
 <p data-bai-block="316">오토스케일링 규칙(Auto Scaling Rules)은 실시간 메트릭을 기반으로 모델 서비스의 복제본 수를 자동으로 증감시킵니다. 이를 통해 낮은 사용량일 때는 리소스를 절약하고, 높은 사용량일 때는 요청 지연이나 실패를 방지할 수 있습니다.</p>
@@ -819,7 +819,7 @@
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="332" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" loading="lazy" decoding="async" width="944" height="292" /><figcaption>그림 12.23</figcaption></figure>
+<p><figure data-bai-block="332" class="doc-figure"><img src="./images/auto_scaling_condition_selector.png" alt="" class="doc-image" style="width:472px" loading="lazy" decoding="async" width="944" height="292" /><figcaption>그림 12.23</figcaption></figure>
 </p>
 <ul>
 <li data-bai-block="333"><p><strong>단계 크기(Step Size)</strong>: 스케일링 이벤트마다 추가하거나 제거할 복제본 수를 지정하는 양의 정수입니다. 선택한 조건(스케일 인 / 스케일 아웃 / 스케일 인 &amp; 아웃)에 따라 <code>-</code>, <code>+</code>, <code>±</code> 부호가 자동으로 표시됩니다.</p>
@@ -834,7 +834,7 @@
 <li data-bai-block="338"><p><strong>최소 복제본 수(Min Replicas) 및 최대 복제본 수(Max Replicas)</strong>: 오토스케일링이 복제본 수에 대해 강제하는 하한과 상한입니다. 오토스케일링은 복제본 수를 최소 복제본 수 아래로 줄이거나 최대 복제본 수 위로 늘리지 않습니다.</p>
 </li>
 </ul>
-<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>그림 12.24</figcaption></figure>
+<p><figure data-bai-block="339" class="doc-figure"><img src="./images/auto_scaling_rules_modal_v2.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="1584" /><figcaption>그림 12.24</figcaption></figure>
 </p>
 <p><a id="generating-tokens"></a></p>
 <h3 data-bai-block="340" id="deployment-토큰-생성">토큰 생성<a class="hash-link" href="#deployment-토큰-생성" aria-label="Direct link to 토큰 생성">#</a></h3>
@@ -853,7 +853,7 @@
 </li>
 <li data-bai-block="350"><code>액세스 토큰 생성</code>을 클릭하여 토큰을 발급합니다.</li>
 </ol>
-<p><figure data-bai-block="351" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="920" height="704" /><figcaption>그림 12.26</figcaption></figure>
+<p><figure data-bai-block="351" class="doc-figure"><img src="./images/token_generation_dialog.png" alt="" class="doc-image" style="width:460px" loading="lazy" decoding="async" width="920" height="704" /><figcaption>그림 12.26</figcaption></figure>
 </p>
 <blockquote>
 <p data-bai-block="352">매니저가 아직 네트워크 엔드포인트를 발급하지 않았다면 <code>액세스 토큰 생성</code> 버튼은 비활성화되며, 툴팁에 <em>&quot;아직 네트워크 엔드포인트가 발급되지 않았습니다.&quot;</em> 라고 표시됩니다. 본인이 소유하지 않은 배포에서는 <em>&quot;배포 소유자만 액세스 토큰을 관리할 수 있습니다.&quot;</em>, 중지 중이거나 더 이상 활성 상태가 아닌 배포에서는 <em>&quot;배포가 중지 중이거나 더 이상 활성 상태가 아닙니다.&quot;</em> 라고 표시되며 버튼이 비활성화됩니다. 이 두 조건에서는 토큰 삭제도 비활성화됩니다.</p>
@@ -897,7 +897,7 @@
 
 <h3 data-bai-block="368" id="deployment-배포-종료">배포 종료<a class="hash-link" href="#deployment-배포-종료" aria-label="Direct link to 배포 종료">#</a></h3>
 <p data-bai-block="369">배포가 더 이상 필요하지 않으면 종료하는 것이 좋습니다. 배포를 종료하려면 <strong>기본 정보</strong> 카드의 <strong>더보기</strong> 메뉴를 열고 <strong>배포 삭제</strong>를 선택합니다. 유형 확인 모달이 나타나면 배포 이름을 입력하여 <strong>영구 삭제</strong> 버튼을 활성화합니다. 종료된 배포는 <strong>삭제됨</strong> 필터 뷰에 표시됩니다.</p>
-<p><figure data-bai-block="370" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>그림 12.28</figcaption></figure>
+<p><figure data-bai-block="370" class="doc-figure"><img src="./images/terminate_model_service_dialog.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="520" /><figcaption>그림 12.28</figcaption></figure>
 </p>
 <h2 data-bai-block="371" id="deployment-배포에-접근하기">배포에 접근하기<a class="hash-link" href="#deployment-배포에-접근하기" aria-label="Direct link to 배포에 접근하기">#</a></h2>
 <p data-bai-block="372">배포에 접근할 수 있도록 배포 URL을 최종 사용자와 공유합니다. <strong>외부에 공개</strong>가 활성화된 경우 배포 상세 페이지의 <strong>서비스 엔드포인트</strong> URL을 그대로 공유할 수 있습니다. 비공개 배포의 경우 URL과 액세스 토큰을 함께 공유합니다.</p>
@@ -994,7 +994,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
 <li data-bai-block="418"><strong>최소 리소스(Min Resource)</strong>: 최소 리소스 요구 사항(CPU, 메모리, GPU)</li>
 </ul>
 <p data-bai-block="419">모델 카드에 README가 포함된 경우, Drawer 하단에 <code>README.md</code> 카드로 렌더링됩니다.</p>
-<p><figure data-bai-block="420" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 12.34</figcaption></figure>
+<p><figure data-bai-block="420" class="doc-figure"><img src="./images/model_card_detail_drawer.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 12.34</figcaption></figure>
 </p>
 <h3 data-bai-block="421" id="deployment-모델-배포">모델 배포<a class="hash-link" href="#deployment-모델-배포" aria-label="Direct link to 모델 배포">#</a></h3>
 <p data-bai-block="422">Drawer 헤더의 <code>배포(Deploy)</code> 버튼을 클릭하여 모델을 서비스로 배포합니다. 배포 흐름은 다음 두 가지 방식 중 하나로 동작합니다:</p>
@@ -1024,7 +1024,7 @@ Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있습니다.
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/deployment/deployment.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 28일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 1일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./cluster_session.html">

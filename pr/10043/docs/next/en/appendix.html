@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Appendix" />
   <meta name="twitter:description" content="Backend.AI supports GPU virtualization technology which allows single physical GPU can be divided and shared by multiple users simultaneously." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Appendix","inLanguage":"en","description":"Backend.AI supports GPU virtualization technology which allows single physical GPU can be divided and shared by multiple users simultaneously.","dateModified":"2026-09-28T02:29:28.000Z","url":"https://webui.docs.backend.ai/next/en/appendix.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Appendix","inLanguage":"en","description":"Backend.AI supports GPU virtualization technology which allows single physical GPU can be divided and shared by multiple users simultaneously.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/en/appendix.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/appendix.html" />
   <link rel="alternate" hreflang="en" href="../en/appendix.html" />
   <link rel="alternate" hreflang="ja" href="../ja/appendix.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (02f750b)">v26.9.0-alpha.0 (02f750b)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (8fad171)">v26.9.0-alpha.0 (8fad171)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -229,11 +229,11 @@ host node and the amount of memory. The GPU node used in this guide is equipped
 with a GPU with 8 GB of memory as in the following figure. And through the
 administrator settings, 1 fGPU is set to an amount equivalent to 0.5 physical
 GPU (or 1 physical GPU is 2 fGPU).</p>
-<p><figure data-bai-block="5" class="doc-figure"><img src="./images/host_gpu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1444" height="738" /><figcaption>Figure 26.1</figcaption></figure>
+<p><figure data-bai-block="5" class="doc-figure"><img src="./images/host_gpu.png" alt="" class="doc-image" style="width:722px" loading="lazy" decoding="async" width="1444" height="738" /><figcaption>Figure 26.1</figcaption></figure>
 </p>
 <p data-bai-block="6">Now let&#39;s go to the Sessions page and create a compute session by allocating 0.5
 fGPU as follows:</p>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/session_launch_dialog_with_gpu.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1480" height="2264" /><figcaption>Figure 26.2</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/session_launch_dialog_with_gpu.png" alt="" class="doc-image" style="width:740px" loading="lazy" decoding="async" width="1480" height="2264" /><figcaption>Figure 26.2</figcaption></figure>
 </p>
 <p data-bai-block="8">In the AI Accelerator panel of the session list, you can see that
 0.5 fGPU is allocated.</p>
@@ -255,7 +255,7 @@ execute the <code>nvidia-smi</code> command. You can see that there is one GPU a
 to the process and this process is occupying about 25% of the resources of the
 physical GPU. (GPU occupancy can vary greatly depending on training code and GPU
 model.)</p>
-<p><figure data-bai-block="15" class="doc-figure"><img src="./images/host_nvidia_smi.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1434" height="730" /><figcaption>Figure 26.6</figcaption></figure>
+<p><figure data-bai-block="15" class="doc-figure"><img src="./images/host_nvidia_smi.png" alt="" class="doc-image" style="width:717px" loading="lazy" decoding="async" width="1434" height="730" /><figcaption>Figure 26.6</figcaption></figure>
 </p>
 <p data-bai-block="16">Alternatively, you can run the <code>nvidia-smi</code> command from the web terminal to query the GPU usage history inside the container.</p>
 <p><a id="automated-job-scheduling"></a></p>
@@ -276,7 +276,7 @@ Launch step, open the menu next to the Launch button and select Launch Multiple
 Sessions. Set Number of sessions to 3 and click Start, and the three sessions
 are requested at the same time. This is the situation that 3 sessions requesting a
 total of 3 fGPUs are created when only 2 fGPUs exist.</p>
-<p><figure data-bai-block="20" class="doc-figure"><img src="./images/session_launch_dialog_2_sessions.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1120" height="832" /><figcaption>Figure 26.7</figcaption></figure>
+<p><figure data-bai-block="20" class="doc-figure"><img src="./images/session_launch_dialog_2_sessions.png" alt="" class="doc-image" style="width:560px" loading="lazy" decoding="async" width="1120" height="832" /><figcaption>Figure 26.7</figcaption></figure>
 </p>
 <p data-bai-block="21">Wait for a while and you will see three compute sessions being listed.
 If you look closely at the Status panel, you can see that two of the
@@ -301,10 +301,10 @@ install packages by themselves. Here, we&#39;ll walk through an example that tak
 advantage of multiple versions of the multiple ML library immediately.</p>
 <p data-bai-block="27">Go to the Sessions page and open the session launch dialog. There may be various
 kernel images depending on the installation settings.</p>
-<p><figure data-bai-block="28" class="doc-figure"><img src="./images/various_kernel_images.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="930" /><figcaption>Figure 26.10</figcaption></figure>
+<p><figure data-bai-block="28" class="doc-figure"><img src="./images/various_kernel_images.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="930" /><figcaption>Figure 26.10</figcaption></figure>
 </p>
 <p data-bai-block="29">Here, let&#39;s select the TensorFlow 2.3 environment and created a session.</p>
-<p><figure data-bai-block="30" class="doc-figure"><img src="./images/session_launch_dialog_tf23.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>Figure 26.11</figcaption></figure>
+<p><figure data-bai-block="30" class="doc-figure"><img src="./images/session_launch_dialog_tf23.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>Figure 26.11</figcaption></figure>
 </p>
 <p data-bai-block="31">Open the web terminal of the created session and run the following Python
 command. You can see that TensorFlow 2.3 version is installed.</p>
@@ -312,14 +312,14 @@ command. You can see that TensorFlow 2.3 version is installed.</p>
 </p>
 <p data-bai-block="33">This time, let&#39;s select the TensorFlow 1.15 environment to create a compute
 session. If resources are insufficient, delete the previous session.</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/session_launch_dialog_tf115.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>Figure 26.13</figcaption></figure>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/session_launch_dialog_tf115.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>Figure 26.13</figcaption></figure>
 </p>
 <p data-bai-block="35">Open the web terminal of the created session and run the same Python command as
 before. You can see that TensorFlow 1.15(.4) version is installed.</p>
 <p><figure data-bai-block="36" class="doc-figure"><img src="./images/tf115_version_print.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2522" height="470" /><figcaption>Figure 26.14</figcaption></figure>
 </p>
 <p data-bai-block="37">Finally, create a compute session using PyTorch version 1.9.</p>
-<p><figure data-bai-block="38" class="doc-figure"><img src="./images/session_launch_dialog_pytorch17.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1480" height="890" /><figcaption>Figure 26.15</figcaption></figure>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/session_launch_dialog_pytorch17.png" alt="" class="doc-image" style="width:740px" loading="lazy" decoding="async" width="1480" height="890" /><figcaption>Figure 26.15</figcaption></figure>
 </p>
 <p data-bai-block="39">Open the web terminal of the created session and run the following Python
 command. You can see that PyTorch 1.9 version is installed.</p>
@@ -363,7 +363,7 @@ send you the full image name and tag.</p>
 </li>
 <li data-bai-block="50"><p>You can manually enter the image name in the session launch dialog. The image
 is private and not be revealed to other users</p>
-<p><figure data-bai-block="51" class="doc-figure"><img src="./images/session-creation-by-specifying-image-name.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>Figure 26.17</figcaption></figure>
+<p><figure data-bai-block="51" class="doc-figure"><img src="./images/session-creation-by-specifying-image-name.png" alt="" class="doc-image" style="width:700px" loading="lazy" decoding="async" width="1400" height="798" /><figcaption>Figure 26.17</figcaption></figure>
 </p>
 </li>
 <li data-bai-block="52"><p>A new compute session will be created using the new Docker image.</p>
@@ -441,7 +441,7 @@ look through <a href="./sessions_all.html#start-a-new-session">How to create a s
 <p data-bai-block="85">First, launch the terminal app <code>Console</code> and execute the command below. It will start the MLflow Tracking UI server.</p>
 <div data-bai-block="86" class="code-block-wrapper"><div class="code-block-title"><span class="code-block-lang">bash</span><span class="code-block-title-text" aria-hidden="true"></span></div><pre class="language-bash shiki-host"><code><span class="line"><span style="color:#B392F0">mlflow</span><span style="color:#9ECBFF"> ui</span><span style="color:#79B8FF"> --host</span><span style="color:#79B8FF"> 0.0.0.0</span></span></code></pre></div>
 <p data-bai-block="87">Then, Click &quot;MLFlow UI&quot; app in app launcher dialog.</p>
-<p><figure data-bai-block="88" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>Figure 26.18</figcaption></figure>
+<p><figure data-bai-block="88" class="doc-figure"><img src="./images/app_dialog.png" alt="" class="doc-image" style="width:450px" loading="lazy" decoding="async" width="900" height="1402" /><figcaption>Figure 26.18</figcaption></figure>
 </p>
 <p data-bai-block="89">After few moment, you will see a new page for MLFlow UI.</p>
 <p><figure data-bai-block="90" class="doc-figure"><img src="./images/mlflow_UI.png" alt="" class="doc-image" loading="lazy" decoding="async" width="3808" height="1930" /><figcaption>Figure 26.19</figcaption></figure>
@@ -463,7 +463,7 @@ Let&#39;s start tracking experiments from simple example.</p>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/appendix/appendix.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 28, 2026</span>
+  <span class="last-updated">Last updated on Oct 1, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./trouble_shooting.html">

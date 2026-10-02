@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="RBAC 관리" />
   <meta name="twitter:description" content="RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RBAC 관리","inLanguage":"ko","description":"RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다.","dateModified":"2026-09-30T04:48:26.000Z","url":"https://webui.docs.backend.ai/next/ko/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"RBAC 관리","inLanguage":"ko","description":"RBAC(역할 기반 접근 제어) 관리를 통해 슈퍼 관리자는 세분화된 세부 권한을 묶은 역할을 정의하고 사용자에게 할당할 수 있습니다. RBAC를 사용하면 Backend.AI 시스템 전반에서 특정 사용자가 다양한 리소스에 대해 수행할 수 있는 동작을 제어할 수 있습니다.","dateModified":"2026-10-02T01:41:48.000Z","url":"https://webui.docs.backend.ai/next/ko/rbac_management.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/rbac_management.html" />
   <link rel="alternate" hreflang="en" href="../en/rbac_management.html" />
   <link rel="alternate" hreflang="ja" href="../ja/rbac_management.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (02f750b)">v26.9.0-alpha.0 (02f750b)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (8fad171)">v26.9.0-alpha.0 (8fad171)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -408,7 +408,7 @@
 <p><a id="system-roles-and-assignment-restrictions"></a></p>
 <h3 data-bai-block="99" id="rbac_management-시스템-역할과-할당-제한">시스템 역할과 할당 제한<a class="hash-link" href="#rbac_management-시스템-역할과-할당-제한" aria-label="Direct link to 시스템 역할과 할당 제한">#</a></h3>
 <p data-bai-block="100">시스템이 생성한 프로젝트 관리자 역할(<strong>소스</strong>가 <strong>시스템</strong>인 역할)에는 역할 할당 탭에서 사용자를 직접 할당하거나 해제할 수 없습니다. 이 탭에는 <strong>시스템에 의해 자동으로 생성된 역할은 사용자를 직접 할당하거나 할당 해제할 수 없습니다.</strong> 경고 알림이 표시되며 할당 테이블은 읽기 전용입니다(<strong>사용자 추가</strong> 및 해제 컨트롤이 숨겨집니다).</p>
-<p><figure data-bai-block="101" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 21.10</figcaption></figure>
+<p><figure data-bai-block="101" class="doc-figure"><img src="./images/rbac_system_role_assignments_readonly.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 21.10</figcaption></figure>
 </p>
 <p data-bai-block="102">프로젝트를 관리할 사용자를 지정하려면 대신 프로젝트 페이지의 <strong>프로젝트 관리자 권한 설정</strong>을 사용하세요. 프로젝트 관리자 기능 챕터의 <a href="./project_admin.html#set-project-admin">프로젝트 관리자 권한 설정</a>과 아래의 <a href="#grant-project-admin">프로젝트 관리자 권한 부여</a>를 참고하세요.</p>
 <p><a id="revoke-users-from-a-role"></a></p>
@@ -419,7 +419,7 @@
 <li data-bai-block="106"><strong>역할 할당</strong> 탭에서 사용자 행 위에 마우스를 올린 후 사용자 옆의 해제(휴지통) 아이콘을 클릭합니다.</li>
 <li data-bai-block="107"><strong>사용자 해제</strong> 확인 모달이 열립니다. 목록에 표시된 사용자를 확인한 후 <strong>사용자 해제</strong>를 클릭하여 확정하거나 <strong>취소</strong>를 눌러 닫습니다.</li>
 </ol>
-<p><figure data-bai-block="108" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="436" /><figcaption>그림 21.11</figcaption></figure>
+<p><figure data-bai-block="108" class="doc-figure"><img src="./images/rbac_revoke_confirm_modal.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="436" /><figcaption>그림 21.11</figcaption></figure>
 </p>
 <p data-bai-block="109">여러 명의 사용자를 한 번에 해제하려면:</p>
 <ol>
@@ -444,7 +444,7 @@
 <p><figure data-bai-block="119" class="doc-figure"><img src="./images/rbac_project_admin_role_in_list.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2920" height="1800" /><figcaption>그림 21.13</figcaption></figure>
 </p>
 <p data-bai-block="120">프로젝트 관리자 권한은 프로젝트 관리자 기능 챕터의 <a href="./project_admin.html#set-project-admin">프로젝트 관리자 권한 설정</a>에서 설명하는 <strong>프로젝트</strong> 관리자 페이지의 <strong>프로젝트 관리자 권한 설정</strong> 원클릭 흐름을 통해 부여하고 회수합니다. 프로젝트 관리자 역할은 시스템 역할이므로, 여기의 역할 할당 탭은 <strong>읽기 전용</strong>이며 확인용으로 제공됩니다. 역할을 열어 현재 프로젝트 관리자 권한을 가진 사용자를 검토할 수 있습니다. <strong>프로젝트 관리자 권한 설정</strong> 모달은 RBAC 바로 가기를 통해 이 역할의 상세 패널로 다시 연결됩니다.</p>
-<p><figure data-bai-block="121" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 21.14</figcaption></figure>
+<p><figure data-bai-block="121" class="doc-figure"><img src="./images/rbac_project_admin_role_detail.png" alt="" class="doc-image" style="width:800px" loading="lazy" decoding="async" width="1600" height="1800" /><figcaption>그림 21.14</figcaption></figure>
 </p>
 <p data-bai-block="122">권한이 부여되면 사용자에게는 즉시 프로젝트 관리자 권한이 적용됩니다. 다음에 헤더의 프로젝트 드롭다운을 열면 해당 프로젝트 옆에 프로젝트 관리자 배지가 표시되며 <a href="./project_admin.html#project-admin-features">프로젝트 관리자 기능</a> 챕터에서 설명한 프로젝트 관리자 전용 사이드바 항목도 함께 나타납니다.</p>
 
@@ -452,7 +452,7 @@
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/rbac_management/rbac_management.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 30일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 2일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./project_admin.html">
