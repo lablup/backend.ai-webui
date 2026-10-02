@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a073f13f160d1cba77c9856eeddd1157>>
+ * @generated SignedSource<<1204ff9f3a97cbc9dc2e5e10c29f0898>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -111,7 +111,8 @@ export type ScopedRolePermissionCardQuery$data = {
             };
             readonly metadata?: {
               readonly deploymentName?: string;
-              readonly sessionName: string;
+              readonly sessionName?: string;
+              readonly vfolderName: string;
             };
             readonly project?: string | null | undefined;
             readonly registryName?: string;
@@ -282,21 +283,39 @@ v13 = {
   "type": "UserV2",
   "abstractKey": null
 },
-v14 = {
+v14 = [
+  {
+    "alias": "vfolderName",
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  }
+],
+v15 = {
   "kind": "InlineFragment",
-  "selections": [
-    {
-      "alias": "vfolderName",
-      "args": null,
-      "kind": "ScalarField",
-      "name": "name",
-      "storageKey": null
-    }
-  ],
+  "selections": (v14/*: any*/),
   "type": "VirtualFolderNode",
   "abstractKey": null
 },
-v15 = {
+v16 = {
+  "kind": "InlineFragment",
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "concreteType": "VFolderMetadataInfo",
+      "kind": "LinkedField",
+      "name": "metadata",
+      "plural": false,
+      "selections": (v14/*: any*/),
+      "storageKey": null
+    }
+  ],
+  "type": "VFolder",
+  "abstractKey": null
+},
+v17 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -321,7 +340,7 @@ v15 = {
   "type": "SessionV2",
   "abstractKey": null
 },
-v16 = {
+v18 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -346,7 +365,7 @@ v16 = {
   "type": "ModelDeployment",
   "abstractKey": null
 },
-v17 = {
+v19 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -360,7 +379,7 @@ v17 = {
   "type": "ResourceGroup",
   "abstractKey": null
 },
-v18 = {
+v20 = {
   "kind": "InlineFragment",
   "selections": [
     {
@@ -381,7 +400,7 @@ v18 = {
   "type": "ContainerRegistryV2",
   "abstractKey": null
 },
-v19 = [
+v21 = [
   {
     "kind": "Variable",
     "name": "filter",
@@ -393,30 +412,27 @@ v19 = [
     "variableName": "permissionLimit"
   }
 ],
-v20 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "entityType",
   "storageKey": null
 },
-v21 = {
+v23 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "operation",
   "storageKey": null
 },
-v22 = {
+v24 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
-},
-v23 = [
-  (v22/*: any*/)
-];
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -482,11 +498,19 @@ return {
                           (v11/*: any*/),
                           (v12/*: any*/),
                           (v13/*: any*/),
-                          (v14/*: any*/),
                           (v15/*: any*/),
-                          (v16/*: any*/),
+                          {
+                            "kind": "InlineFragment",
+                            "selections": [
+                              (v16/*: any*/)
+                            ],
+                            "type": "Node",
+                            "abstractKey": "__isNode"
+                          },
                           (v17/*: any*/),
-                          (v18/*: any*/)
+                          (v18/*: any*/),
+                          (v19/*: any*/),
+                          (v20/*: any*/)
                         ],
                         "storageKey": null
                       }
@@ -501,7 +525,7 @@ return {
           },
           {
             "alias": null,
-            "args": (v19/*: any*/),
+            "args": (v21/*: any*/),
             "concreteType": "PermissionConnection",
             "kind": "LinkedField",
             "name": "permissions",
@@ -524,8 +548,8 @@ return {
                     "plural": false,
                     "selections": [
                       (v10/*: any*/),
-                      (v20/*: any*/),
-                      (v21/*: any*/),
+                      (v22/*: any*/),
+                      (v23/*: any*/),
                       {
                         "args": null,
                         "kind": "FragmentSpread",
@@ -613,27 +637,32 @@ return {
                           (v11/*: any*/),
                           (v12/*: any*/),
                           (v13/*: any*/),
-                          (v14/*: any*/),
                           (v15/*: any*/),
-                          (v16/*: any*/),
-                          (v17/*: any*/),
-                          (v18/*: any*/),
                           {
                             "kind": "InlineFragment",
-                            "selections": (v23/*: any*/),
+                            "selections": [
+                              (v16/*: any*/),
+                              (v24/*: any*/)
+                            ],
                             "type": "Node",
                             "abstractKey": "__isNode"
                           },
+                          (v17/*: any*/),
+                          (v18/*: any*/),
+                          (v19/*: any*/),
+                          (v20/*: any*/),
                           {
                             "kind": "InlineFragment",
-                            "selections": (v23/*: any*/),
+                            "selections": [
+                              (v24/*: any*/)
+                            ],
                             "type": "ArtifactRegistry",
                             "abstractKey": null
                           }
                         ],
                         "storageKey": null
                       },
-                      (v22/*: any*/)
+                      (v24/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -645,7 +674,7 @@ return {
           },
           {
             "alias": null,
-            "args": (v19/*: any*/),
+            "args": (v21/*: any*/),
             "concreteType": "PermissionConnection",
             "kind": "LinkedField",
             "name": "permissions",
@@ -668,9 +697,9 @@ return {
                     "plural": false,
                     "selections": [
                       (v10/*: any*/),
-                      (v20/*: any*/),
-                      (v21/*: any*/),
-                      (v22/*: any*/)
+                      (v22/*: any*/),
+                      (v23/*: any*/),
+                      (v24/*: any*/)
                     ],
                     "storageKey": null
                   }
@@ -680,23 +709,23 @@ return {
             ],
             "storageKey": null
           },
-          (v22/*: any*/)
+          (v24/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "754af13a9aab98bcdda0fc2b9679180f",
+    "cacheID": "c85d80c799cf2bd9b0a3041c7941775f",
     "id": null,
     "metadata": {},
     "name": "ScopedRolePermissionCardQuery",
     "operationKind": "query",
-    "text": "query ScopedRolePermissionCardQuery(\n  $roleId: UUID!\n  $scopeFilter: EntityFilter\n  $scopeLimit: Int\n  $scopeOffset: Int\n  $permissionFilter: PermissionFilter\n  $permissionLimit: Int\n) {\n  adminRole(id: $roleId) {\n    scopes(filter: $scopeFilter, limit: $scopeLimit, offset: $scopeOffset) {\n      count\n      edges {\n        node {\n          scopeType\n          scopeId\n          ...RoleScopePermissionEditModal_scopesFragment\n          scope {\n            __typename\n            ... on DomainV2 {\n              basicInfo {\n                domainName: name\n              }\n            }\n            ... on ProjectV2 {\n              basicInfo {\n                projectName: name\n              }\n            }\n            ... on UserV2 {\n              basicInfo {\n                email\n              }\n            }\n            ... on VirtualFolderNode {\n              vfolderName: name\n            }\n            ... on SessionV2 {\n              metadata {\n                sessionName: name\n              }\n            }\n            ... on ModelDeployment {\n              metadata {\n                deploymentName: name\n              }\n            }\n            ... on ResourceGroup {\n              resourceGroupName: name\n            }\n            ... on ContainerRegistryV2 {\n              registryName\n              project\n            }\n            ... on Node {\n              __isNode: __typename\n              id\n            }\n            ... on ArtifactRegistry {\n              id\n            }\n          }\n          id\n        }\n      }\n    }\n    permissions(filter: $permissionFilter, limit: $permissionLimit) {\n      edges {\n        node {\n          scopeId\n          entityType\n          operation\n          ...RoleScopePermissionEditModal_permissionsFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment RoleScopePermissionEditModal_permissionsFragment on Permission {\n  id\n  scopeId\n  entityType\n  operation\n}\n\nfragment RoleScopePermissionEditModal_scopesFragment on EntityRef {\n  scopeType\n  scopeId\n  scope {\n    __typename\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        email\n      }\n    }\n    ... on VirtualFolderNode {\n      vfolderName: name\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        deploymentName: name\n      }\n    }\n    ... on ResourceGroup {\n      resourceGroupName: name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on Node {\n      __isNode: __typename\n      id\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n"
+    "text": "query ScopedRolePermissionCardQuery(\n  $roleId: UUID!\n  $scopeFilter: EntityFilter\n  $scopeLimit: Int\n  $scopeOffset: Int\n  $permissionFilter: PermissionFilter\n  $permissionLimit: Int\n) {\n  adminRole(id: $roleId) {\n    scopes(filter: $scopeFilter, limit: $scopeLimit, offset: $scopeOffset) {\n      count\n      edges {\n        node {\n          scopeType\n          scopeId\n          ...RoleScopePermissionEditModal_scopesFragment\n          scope {\n            __typename\n            ... on DomainV2 {\n              basicInfo {\n                domainName: name\n              }\n            }\n            ... on ProjectV2 {\n              basicInfo {\n                projectName: name\n              }\n            }\n            ... on UserV2 {\n              basicInfo {\n                email\n              }\n            }\n            ... on VirtualFolderNode {\n              vfolderName: name\n            }\n            ... on Node {\n              __isNode: __typename\n              ... on VFolder {\n                metadata {\n                  vfolderName: name\n                }\n              }\n              id\n            }\n            ... on SessionV2 {\n              metadata {\n                sessionName: name\n              }\n            }\n            ... on ModelDeployment {\n              metadata {\n                deploymentName: name\n              }\n            }\n            ... on ResourceGroup {\n              resourceGroupName: name\n            }\n            ... on ContainerRegistryV2 {\n              registryName\n              project\n            }\n            ... on ArtifactRegistry {\n              id\n            }\n          }\n          id\n        }\n      }\n    }\n    permissions(filter: $permissionFilter, limit: $permissionLimit) {\n      edges {\n        node {\n          scopeId\n          entityType\n          operation\n          ...RoleScopePermissionEditModal_permissionsFragment\n          id\n        }\n      }\n    }\n    id\n  }\n}\n\nfragment RoleScopePermissionEditModal_permissionsFragment on Permission {\n  id\n  scopeId\n  entityType\n  operation\n}\n\nfragment RoleScopePermissionEditModal_scopesFragment on EntityRef {\n  scopeType\n  scopeId\n  scope {\n    __typename\n    ... on DomainV2 {\n      basicInfo {\n        domainName: name\n      }\n    }\n    ... on ProjectV2 {\n      basicInfo {\n        projectName: name\n      }\n    }\n    ... on UserV2 {\n      basicInfo {\n        email\n      }\n    }\n    ... on VirtualFolderNode {\n      vfolderName: name\n    }\n    ... on Node {\n      __isNode: __typename\n      ... on VFolder {\n        metadata {\n          vfolderName: name\n        }\n      }\n      id\n    }\n    ... on SessionV2 {\n      metadata {\n        sessionName: name\n      }\n    }\n    ... on ModelDeployment {\n      metadata {\n        deploymentName: name\n      }\n    }\n    ... on ResourceGroup {\n      resourceGroupName: name\n    }\n    ... on ContainerRegistryV2 {\n      registryName\n      project\n    }\n    ... on ArtifactRegistry {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "bcd211b0f515a5921d41af8cac282cf3";
+(node as any).hash = "21bb39cc53367927b05441b93e91664b";
 
 export default node;
