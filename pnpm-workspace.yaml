@@ -9,9 +9,9 @@ catalog:
   "@astryxdesign/cli": 0.6.2
   "@astryxdesign/core": 0.6.2
   "@astryxdesign/lab": 0.6.2-canary.c9fb1ad
-  # Registry spec; until 0.2.0 is published, `overrides` below points it at
-  # the packed tarball in vendor/ (ADR 0009, vendor/README.md).
-  "@lablup/ui-common": 0.2.0-alpha.14
+  # The library and its CLI release in lockstep; pin both exactly (ADR 0009).
+  "@lablup/ui-common": 0.2.0-alpha.15
+  "@lablup/ui-common-cli": 0.2.0-alpha.15
   "@babel/core": ^7.29.7
   "@babel/preset-typescript": ^7.29.7
   "@eslint/js": ^9.39.5
@@ -100,6 +100,10 @@ minimumReleaseAgeExclude:
   # quarantine window by design, so the exclusion is permanent while the
   # pin exists. Tarball-verified build (MAPPING.md header).
   - "@astryxdesign/lab@0.6.2-canary.c9fb1ad"
+  # ui-common 0.2.0-alpha.15 and its CLI: published 2026-10-02, inside the
+  # 7-day window at adoption time. Remove after 2026-10-09.
+  - "@lablup/ui-common@0.2.0-alpha.15"
+  - "@lablup/ui-common-cli@0.2.0-alpha.15"
   # pnpm 12.4.0 is this repo's own `packageManager` pin: published 2026-09-08,
   # inside the 7-day window at adoption time. Without these, a contributor
   # still on pnpm 12.3.4 cannot provision the pin at all — 12.3.4 fetches the
@@ -142,10 +146,6 @@ allowBuilds:
   utf-8-validate: true
 
 overrides:
-  # Pre-publish ui-common (ADR 0009): catalogs reject `file:` specs, so the
-  # vendored tarball is pinned here. Swapping the tarball is this one line;
-  # the 0.2.0 cut-over deletes it. See vendor/README.md.
-  "@lablup/ui-common": file:vendor/lablup-ui-common-0.2.0-alpha.14.tgz
   tar-fs@2: 2.1.4
   # Build-tooling override. `@electron/packager` and `electron`'s own
   # install.js both extract their downloaded ZIPs via `extract-zip` → `yauzl`.
