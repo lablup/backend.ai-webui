@@ -5,10 +5,10 @@
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useTanQuery } from '../../hooks/reactQueryAlias';
 import SourceCodeView from '../SourceCodeView';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIFlex,

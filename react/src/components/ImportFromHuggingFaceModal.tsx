@@ -11,12 +11,12 @@ import { useSuspenseTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAICard,
   BAIFlex,
@@ -28,12 +28,12 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  CloudUpload,
-  Filter,
-  Rocket,
   CheckIcon,
   CircleCheckBig,
   CircleX,
+  CloudUpload,
+  Filter,
+  Rocket,
 } from 'lucide-react';
 import Markdown from 'markdown-to-jsx';
 import React, {

@@ -8,9 +8,9 @@ import LegacyRolePermissionTab from './LegacyRolePermissionTab';
 import LegacyRoleScopeTab from './LegacyRoleScopeTab';
 import RoleAssignmentTab from './RoleAssignmentTab';
 import RolePermissionDetailTab from './RolePermissionDetailTab';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIMetadataList,

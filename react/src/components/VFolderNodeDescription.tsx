@@ -13,10 +13,10 @@ import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVirtualFolderPath } from '../hooks/useVirtualFolderNodePath';
 import VirtualFolderPath from './VirtualFolderNodeItems/VirtualFolderPath';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Selector } from '@astryxdesign/core/Selector';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Selector } from '@lablup/ui-common/Selector';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
 import {
   filterOutEmpty,
   BAIUserUnionIcon,

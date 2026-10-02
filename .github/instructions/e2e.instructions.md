@@ -11,7 +11,7 @@ onto Astryx, and most locator habits inherited from older specs no longer match 
 ## Read this first: `.ant-*` classes do not exist anymore
 
 antd is not a dependency of this repository. The component system is Astryx
-(`@astryxdesign/core`) plus the BUI wrappers in `packages/backend.ai-ui/`, and the form layer
+(through `@lablup/ui-common`) plus the BUI wrappers in `packages/backend.ai-ui/`, and the form layer
 is the self-hosted engine in `packages/backend.ai-ui/src/form-engine/`. Nothing renders an
 `ant-` prefixed class.
 
@@ -196,26 +196,37 @@ point for generated flows; do not turn it into a real test.
    `create-folder-button`. Adding a new one to a component is fair game when no semantic anchor
    exists — prefer that over reaching for a CSS class.
 
-4. **`data-bai-*` structural hooks** — the form engine's presentational shell exposes a stable
-   attribute at every level (`packages/backend.ai-ui/src/form-engine/FormItemVisual.tsx`):
+4. **`uic-*` structural classes** — the form engine (`@lablup/ui-common/Form`, which BUI
+   re-exports as `form-engine`) renders a stable class at every level of its presentational
+   shell (`FormItemVisual`). Prefer `getFormItemControlByLabel` from
+   `e2e/utils/test-util-antd.ts` over spelling these out:
 
-   | Attribute | Meaning |
+   | Class | Meaning |
    |---|---|
-   | `[data-bai-form-item]` | the form item root |
-   | `[data-bai-form-item-label]` | the `<label>` |
-   | `[data-bai-form-item-required]` | present when the item is required |
-   | `[data-bai-form-item-control]` / `[data-bai-form-item-control-input]` | the control column / input wrapper |
-   | `[data-bai-form-item-explain]`, `…-explain-error`, `…-explain-warning` | validation messages |
-   | `[data-bai-form-item-extra]` | the `extra` slot |
+   | `.uic-form` | the `<form>` root |
+   | `.uic-form-item` | the form item root |
+   | `.uic-form-item__label` | the `<label>` |
+   | `.uic-form-item__label--required` | modifier on the label when the item is required |
+   | `.uic-form-item__control` / `.uic-form-item__control-input` | the control column / input wrapper |
+   | `.uic-form-item__explain`, `.uic-form-item__explain-error`, `.uic-form-item__explain-warning` | validation messages |
+   | `.uic-form-item__extra` | the `extra` slot |
 
    The notification stack exposes `[data-testid="bai-notification-stack"]` with one
    `[data-notification-key]` per notice.
 
 5. **Text** for unique, stable copy: `page.getByText('Successfully left the shared folder')`.
 
-6. **CSS** only as a last resort, and only against a class the repo itself owns (e.g.
-   `bai-table-astryx-*`) or a plain structural selector such as `tbody tr`. Never against a
+6. **CSS** only as a last resort, and only against a class Lablup owns — the `uic-*` classes
+   of `@lablup/ui-common`, such as `.uic-data-grid__body[aria-busy="true"]` while a
+   `BAITable` (ui-common `DataGrid`) refetches — or a plain structural selector such as
+   `tbody tr`. Never against a
    framework-internal class, and never position-based (`div:nth-child(4) > …`).
+
+   The busy flag rises a few hundred milliseconds after the click that triggers the
+   refetch, so `toHaveCount(0)` on it right after the click passes before the refetch
+   starts. Arm `page.waitForResponse` for the list query before the action, await it, and
+   only then wait for `aria-busy` to clear (`settleTableAfter` in
+   `e2e/rbac/rbac-role-preset.spec.ts`).
 
 ### What replaced what
 
@@ -230,7 +241,7 @@ point for generated flows; do not turn it into a real test.
 | `.ant-table-thead th` | `page.getByRole('columnheader', { name })` |
 | `.ant-select`, `.ant-select-dropdown` | `page.getByRole('combobox')` → the listbox opens as `option` roles |
 | `.ant-select-item-option` | `page.getByRole('option', { name, exact: true })` |
-| `.ant-form-item-row`, `.ant-form-item-control` | `getFormItemControlByLabel(page, 'Label')` / `[data-bai-form-item]` |
+| `.ant-form-item-row`, `.ant-form-item-control` | `getFormItemControlByLabel(page, 'Label')` / `.uic-form-item` |
 | `.ant-tabs-tab-active` | `page.getByRole('tab', { selected: true })` or assert `aria-selected` |
 | `.ant-popover`, `.ant-popconfirm` | the confirm button by name: `page.getByRole('button', { name: 'Confirm' })` |
 | `.ant-message-notice-wrapper`, `.ant-notification-notice` | `[data-testid="bai-notification-stack"] [data-notification-key]`, or `page.getByRole('alert')` |
@@ -249,8 +260,8 @@ const modal = page.getByRole('dialog').filter({ hasText: 'Create a new storage f
 await expect(modal).toBeVisible();
 // Scope by form item when the control's own accessible name is not wired to the label.
 await modal
-  .locator('[data-bai-form-item]')
-  .filter({ has: page.locator('[data-bai-form-item-label]', { hasText: 'Folder Name' }) })
+  .locator('.uic-form-item')
+  .filter({ has: page.locator('.uic-form-item__label', { hasText: 'Folder Name' }) })
   .getByRole('textbox')
   .fill('e2e-my-folder');
 await modal.getByRole('button', { name: 'Create' }).click();
@@ -267,9 +278,8 @@ await location.getByRole('combobox').click();
 await page.getByRole('option', { name: 'local:volume1', exact: true }).click();
 ```
 
-`getFormItemControlByLabel` is `[data-bai-form-item]` filtered by its
-`[data-bai-form-item-label]` text, returning `[data-bai-form-item-control-input]` — no antd
-fallback remains in it.
+`getFormItemControlByLabel` is `.uic-form-item` filtered by its `.uic-form-item__label`
+text, returning `.uic-form-item__control-input` — no antd fallback remains in it.
 
 ### Selectors / comboboxes
 
@@ -402,7 +412,7 @@ are only reliable when `isLocalEnvironment` is true.
 
 | Helper | State |
 |---|---|
-| `getFormItemControlByLabel(page, label)` | current — `[data-bai-form-item]` based |
+| `getFormItemControlByLabel(page, label)` | current — `.uic-form-item` based |
 | `getNotificationMessageBox(page)` / `getNotificationDescriptionBox(page)` | current — testid based |
 | `getMenuItem(page, name)` | current — `getByRole('link', { exact: true })` |
 | `checkActiveTab(tabs, name)` | **stale** (`.ant-tabs-tab-active`) — use `getByRole('tab', { selected: true })` |

@@ -51,8 +51,8 @@ import type {
   BAIThemeConfig,
   BAIThemeSeedValue,
 } from '../helper/customThemeConfig';
-import { defineTheme, type DefinedTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import { defineTheme, type DefinedTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 import {
   ANTD_ALIGN_TOKENS,
   BAI_SELF_COLOR_TOKENS,
@@ -679,7 +679,7 @@ const COMMAND_PALETTE_ROW_OVERLAYS = {
  * All five are Astryx `DropdownMenu` component defaults, not call-site
  * decisions, and every dropdown in the app inherited the same drift from the
  * same antd baseline — so one `components:` block fixes the reported surface
- * and the other 34 `<DropdownMenu>` call sites at once. `astryx component
+ * and the other 34 `<DropdownMenu>` call sites at once. `ui-common component
  * DropdownMenu` documents exactly these two theming keys (`dropdown-menu`,
  * `dropdown-menu-item`), which is the sanctioned knob; the alternative was a
  * scoped `.astryx-item` override, which would have to be repeated per call
@@ -890,7 +890,7 @@ const ANTD_DROPDOWN_DENSITY = {
  * to the components that composite it over something that must survive —
  * `button` (which reflects
  * `data-variant`, so `variant:*` keys render) and `tab`. Both keys are the ones
- * `astryx component Button` / `astryx component TabList` document.
+ * `ui-common component Button` / `ui-common component TabList` document.
  *
  * PILOT-DECISION — the filled-button hover is a translucent WHITE WASH rather
  * than antd's exact `colorPrimaryHover`. antd derives that step from its palette

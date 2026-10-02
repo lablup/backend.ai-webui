@@ -13,7 +13,7 @@ import type {
 } from '../__generated__/BAILoginHistoryTableFragment.graphql';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import useConnectedBAIClient from './provider/BAIClientProvider/hooks/useConnectedBAIClient';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { graphql, useFragment } from 'react-relay';

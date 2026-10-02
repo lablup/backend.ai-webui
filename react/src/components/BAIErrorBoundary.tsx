@@ -4,11 +4,11 @@
  */
 import { useActiveErrorBoundaryControl } from '../hooks/useActiveErrorBoundary';
 import { isLoginSessionExpiredState } from './LoginSessionExtendButton';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import type { GraphQLFormattedError } from 'graphql';
 import { useAtomValue } from 'jotai';

@@ -18,7 +18,7 @@
 */
 import { useCustomThemeConfig } from '../hooks/useCustomThemeConfig';
 import { resolveRoleTheme } from './resolveRoleTheme';
-import { Theme as AstryxTheme, useTheme } from '@astryxdesign/core/theme';
+import { Theme as AstryxTheme, useTheme } from '@lablup/ui-common/theme';
 import React from 'react';
 
 export interface AstryxReverseThemeProps {

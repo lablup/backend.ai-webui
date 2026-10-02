@@ -7,7 +7,7 @@ review-only and should not duplicate build/dev/architecture content that lives t
 ## Stack
 
 Backend.AI WebUI is a **React web application** using React 19 + Astryx
-(`@astryxdesign/core`) + Relay 20 (GraphQL). Ant Design has been fully removed: it is not
+(imported through `@lablup/ui-common`, never `@astryxdesign/*`) + Relay 20 (GraphQL). Ant Design has been fully removed: it is not
 a dependency, the workspace pins exact versions, and any stray `antd` import fails
 `tsc`/build.
 

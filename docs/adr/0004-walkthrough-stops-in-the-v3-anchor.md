@@ -119,7 +119,7 @@ base-anchor field이지 Stop 전용이 아니다; 그래서 `tid`가 아예 없�
 맞춰 볼 landmark가 없으므로, 막혀서 실패하는 대신 제한 없는 문서 전체
 text scan으로 넘어간다. `dlg: 1`을 가진 stop은 후보가 `DIALOG_SELECTOR`
 (`dialog, [role="dialog"], [role="alertdialog"]` — Astryx 자체의 native
-`<dialog>`와 `BAIDialog`의 `alertdialog` 둘 다 해당) 안에 있을 때만
+`<dialog>`와 ui-common `Modal`의 `alertdialog` 둘 다 해당) 안에 있을 때만
 받아들인다. 이는 측정된 false positive를 따른 것이다: modal이 닫혀 있는
 동안 modal용 stop이 Data page의 Active 버튼에 "위치를 잡은" 사례로, text
 fallback이 landmark 확인 없이 look-alike를 매칭했고 modal을 열어도 mark가

@@ -17,7 +17,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'Renders a run of Astryx Tokens welded into one continuous pill, for a settled key/value fact such as an image tag ("python" + "3.11"), a location/platform pair or a permission set. Settled means the value changes only when someone edits it; a pair the system changes on its own (a live status and its detail, a ticking duration) is BAIDoubleBadge. The segments come in as data — plain strings, which all render blue, or objects carrying an Astryx Token color (convert a runtime or antd colour string with tokenColorForTagColor / tokenColorForStatus first). With highlightKeyword set, each label is rendered through BAITextHighlighter so the matching substring is marked in place while the plain label stays the accessible name. Empty labels are skipped and an empty values array renders nothing.',
+      'ui-common DoubleToken under its BUI name: a run of Astryx Tokens welded into one continuous pill, for a settled key/value fact such as an image tag ("python" + "3.11"), a location/platform pair or a permission set. Settled means the value changes only when someone edits it; a pair the system changes on its own (a live status and its detail, a ticking duration) is BAIDoubleBadge. The segments come in as data — plain strings, which all render blue, or objects carrying an Astryx Token color (convert a runtime or antd colour string with tokenColorForTagColor / tokenColorForStatus first). With highlightKeyword set, each label is rendered through ui-common TextHighlighter (with the WebUI mark colour) so the matching substring is marked in place while the plain label stays the accessible name. Empty labels are skipped and an empty values array renders nothing.',
     bestPractices: [
       {
         guidance: true,
@@ -58,7 +58,7 @@ export const docs = {
       name: 'highlightKeyword',
       type: 'string',
       description:
-        'Search term marked inside every segment label through BAITextHighlighter. Left unset, labels render as plain text.',
+        'Search term marked inside every segment label through ui-common TextHighlighter (BAITextHighlighter, the same component under its BUI name, on a copyable segment). Left unset, labels render as plain text.',
     },
     {
       name: 'values[].copyable',

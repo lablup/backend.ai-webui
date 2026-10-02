@@ -14,44 +14,44 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIPopconfirm } from 'backend.ai-ui';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminImageSelect,
-  type BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
-  type BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
+  BAIId,
   BAINameActionCell,
+  BAIPopconfirm,
   BAIQuestionIconWithTooltip,
   BAITable,
+  BAIText,
   BAIUnmountAfterClose,
   BAIVFolderSelect,
-  BAIId,
   INITIAL_FETCH_KEY,
-  type GraphQLFilter,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
   toLocalId,
   useBAILogger,
   useFetchKey,
-  BAIText,
+  type BAIColumnType,
+  type BAIGraphQLFilterProperty,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  LoaderCircle,
-  EllipsisVertical,
   CirclePlay,
   CopyPlusIcon,
+  EllipsisVertical,
+  LoaderCircle,
 } from 'lucide-react';
 import {
   parseAsInteger,

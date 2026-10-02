@@ -22,9 +22,9 @@ import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -68,6 +68,19 @@ export const WithHighlight: Story = {
   },
 };
 
+export const Copyable: Story = {
+  args: {
+    values: [
+      { label: 'Project', color: 'blue' },
+      {
+        label: '01a0c2f9-4e84-7f7c-a9b5-f24958a5f8fa',
+        color: 'default',
+        copyable: true,
+      },
+    ],
+  },
+};
+
 export const Colors: Story = {
   render: () => (
     <BAIFlex direction="column" gap="md" align="start">

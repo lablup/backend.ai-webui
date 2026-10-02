@@ -1,6 +1,6 @@
 import { astryxBrandTheme } from './astryxBrandTheme';
-import type { DefinedTheme } from '@astryxdesign/core/theme';
-import { neutralTheme } from '@astryxdesign/theme-neutral';
+import type { DefinedTheme } from '@lablup/ui-common/theme';
+import { neutralTheme } from '@lablup/ui-common/theme/neutral';
 
 export type ThemeStyle = 'astryx' | 'webui';
 

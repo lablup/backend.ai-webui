@@ -26,7 +26,7 @@
    decoration rather than the only affordance.
 */
 import { BAIVFolderDeleteButtonFragment$key } from '../__generated__/BAIVFolderDeleteButtonFragment.graphql';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import { TrashIcon } from 'lucide-react';
 import React from 'react';
 import { graphql, useFragment } from 'react-relay';

@@ -19,9 +19,9 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,

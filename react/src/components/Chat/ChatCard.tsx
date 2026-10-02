@@ -10,12 +10,12 @@ import PureChatHeader from './ChatHeader';
 import PureChatInput from './ChatInput';
 import ChatMessages from './ChatMessages';
 import {
-  getAIErrorMessage,
-  ChatProviderData,
   ChatData,
-  ChatModel,
-  getLatestUserMessage,
   ChatMessage,
+  ChatModel,
+  ChatProviderData,
+  getAIErrorMessage,
+  getLatestUserMessage,
   isCustomEndpointProvider,
 } from './ChatModel';
 import CustomEndpointForm from './CustomEndpointForm';
@@ -27,12 +27,12 @@ import {
 import { fetchOpenAIModels } from './openAIModels';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { useChat } from '@ai-sdk/react';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  convertToModelMessages,
   DefaultChatTransport,
+  convertToModelMessages,
   extractReasoningMiddleware,
   streamText,
   wrapLanguageModel,

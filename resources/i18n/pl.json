@@ -1985,6 +1985,7 @@
     "APIEndpointEmpty": "Punkt końcowy interfejsu API jest pusty. Określ punkt końcowy interfejsu API, aby się zalogować.",
     "APIKey": "Klucz API",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "Logowanie przez API wymaga endpointu Manager. Ta WebUI jest skonfigurowana do łączenia się przez Backend.AI Webserver.",
     "ActiveSessionExists": "Aktywna sesja logowania już istnieje.",
     "ActiveSessionExistsDescription": "Jesteś już zalogowany z innej przeglądarki lub karty. Najpierw wyloguj się z tamtej sesji lub spróbuj ponownie.",
     "AdvancedSettings": "Zaawansowane",
@@ -2243,9 +2244,6 @@
     "StepWarning": "Wymagane działanie",
     "SuccessfullyUpdated": "Pomyślnie zaktualizowano",
     "Visit": "Wizyta"
-  },
-  "pagination": {
-    "Total": "{{start}} - {{end}} z {{total}}"
   },
   "project": {
     "Activate": "Aktywuj",

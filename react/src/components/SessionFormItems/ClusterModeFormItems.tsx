@@ -11,8 +11,8 @@ import InputNumberWithSlider from '../InputNumberWithSlider';
 import RemainingMark from './RemainingMark';
 // FRONTIER (ticket 17): the form ENGINE is self-hosted since ticket 34 (live
 // again since ticket 35). The CONTROLS are Astryx now.
-import { SegmentedControl } from '@astryxdesign/core/SegmentedControl';
-import { spacingVars } from '@astryxdesign/core/theme/tokens.stylex';
+import { SegmentedControl } from '@lablup/ui-common/SegmentedControl';
+import { spacingVars } from '@lablup/ui-common/theme/tokens.stylex';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,

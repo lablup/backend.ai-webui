@@ -8,7 +8,7 @@ import {
   useRenderInputEditors,
   type FilterRenderInput,
 } from './BAIPowerSearchAdapters';
-import type { PowerSearchConfig } from '@astryxdesign/core/PowerSearch';
+import type { PowerSearchConfig } from '@lablup/ui-common/PowerSearch';
 import { render, renderHook, screen } from '@testing-library/react';
 import * as _ from 'lodash-es';
 import { describe, expect, it, vi } from 'vitest';

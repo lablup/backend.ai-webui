@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useSuspendedBackendaiClient } from '../hooks';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import { useDebounce, useNetwork } from 'backend.ai-ui';
 import { atom, useSetAtom } from 'jotai';
 import { useEffect, useEffectEvent, useState } from 'react';

@@ -33,7 +33,7 @@ So: do not add `styles={{ body: { paddingTop: 0 } }}` to new call sites, and dro
 ### ❌ Wrong — Astryx `Card` directly
 
 ```tsx
-import { Card } from '@astryxdesign/core/Card';
+import { Card } from '@lablup/ui-common/Card';
 
 <Card>
   <Content />

@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { InferenceSessionErrorModalFragment$key } from '../__generated__/InferenceSessionErrorModalFragment.graphql';
-import { Button } from '@astryxdesign/core/Button';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { Button } from '@lablup/ui-common/Button';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAIMetadataList,
   BAIModal,

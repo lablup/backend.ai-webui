@@ -3,23 +3,23 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { KeypairResourcePolicyInfoModalFragment$key } from '../__generated__/KeypairResourcePolicyInfoModalFragment.graphql';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
-  filterOutEmpty,
+  BAIAllowedVfolderHostsWithPermission,
   BAIFlex,
   BAIMetadataList,
-  BAIModalProps,
   BAIModal,
-  BAIAllowedVfolderHostsWithPermission,
+  BAIModalProps,
   BAIResourceNumberWithIcon,
   BAIText,
   BAI_BREAKPOINTS,
+  filterOutEmpty,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFragment, graphql } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface InfoModalProps extends BAIModalProps {
   open: boolean;

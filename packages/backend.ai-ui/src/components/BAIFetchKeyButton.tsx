@@ -4,13 +4,13 @@ import { useBAIi18n } from '../hooks/useBAIi18n';
 import { useInterval, useIntervalValue } from '../hooks/useIntervalValue';
 import BAIButton, { type BAIButtonProps } from './BAIButton';
 import BAICountdownBorder from './BAICountdownBorder';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
 import {
   DropdownMenu,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-} from '@astryxdesign/core/DropdownMenu';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/DropdownMenu';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import * as _ from 'lodash-es';

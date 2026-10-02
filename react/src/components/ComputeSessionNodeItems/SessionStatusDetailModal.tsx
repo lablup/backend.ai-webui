@@ -6,9 +6,9 @@ import { SessionStatusDetailModalFragment$key } from '../../__generated__/Sessio
 import { useSuspendedBackendaiClient } from '../../hooks';
 import { useCurrentUserRole } from '../../hooks/backendai';
 import SessionStatusBadge from './SessionStatusBadge';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import * as stylex from '@stylexjs/stylex';
 import {
   BAIFlex,

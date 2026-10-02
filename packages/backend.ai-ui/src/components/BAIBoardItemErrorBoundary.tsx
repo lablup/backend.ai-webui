@@ -3,7 +3,7 @@ import BAIAlertIconWithTooltip from './BAIAlertIconWithTooltip';
 import BAIBoardItemTitle, {
   type BAIBoardItemTitleProps,
 } from './BAIBoardItemTitle';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import React, { type PropsWithChildren } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 

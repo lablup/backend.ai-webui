@@ -1984,6 +1984,7 @@
     "APIEndpointEmpty": "API-päätepiste on tyhjä. Määritä API-päätepiste kirjautumista varten.",
     "APIKey": "API-avain",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API-kirjautuminen vaatii Manager-endpointin. Tämä WebUI on määritetty muodostamaan yhteys Backend.AI Webserverin kautta.",
     "ActiveSessionExists": "Aktiivinen kirjautumissessio on jo olemassa.",
     "ActiveSessionExistsDescription": "Olet jo kirjautunut sisään toisesta selaimesta tai välilehdestä. Kirjaudu ensin ulos toisesta sessiosta tai yritä uudelleen.",
     "AdvancedSettings": "Lisäasetukset",
@@ -2241,9 +2242,6 @@
     "StepWarning": "Toimenpide vaaditaan",
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"
-  },
-  "pagination": {
-    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
   },
   "project": {
     "Activate": "Ota käyttöön",

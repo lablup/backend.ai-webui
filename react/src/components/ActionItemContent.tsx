@@ -3,10 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import WebUILink from './WebUILink';
-import { Button } from '@astryxdesign/core/Button';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Button } from '@lablup/ui-common/Button';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import { ReactNode, useRef } from 'react';
 import { To } from 'react-router-dom';

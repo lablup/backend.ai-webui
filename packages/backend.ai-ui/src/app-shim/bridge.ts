@@ -18,7 +18,7 @@
 
  Design source: cn-oss-removal answers/07-imperative-answer.md §4.
 */
-import type { ShowToastFn } from '@astryxdesign/core/Toast';
+import type { ShowToastFn } from '@lablup/ui-common/Toast';
 
 export interface BridgeImpl {
   showToast: ShowToastFn;
