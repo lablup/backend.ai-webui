@@ -44,7 +44,6 @@ import {
   loginWithOpenID,
 } from '../helper/loginSessionAuth';
 import { resolveInitialLanguage } from '../helper/resolveInitialLanguage';
-import { isWebServerEndpoint } from '../helper/webServerEndpoint';
 import { useLoginOrchestration } from '../hooks/useLoginOrchestration';
 import {
   useInitializeConfig,
@@ -80,9 +79,6 @@ const extractErrorType = (typeUrl?: string): string => {
 };
 
 const STORED_API_ENDPOINT_KEY = 'backendaiwebui.api_endpoint';
-
-/** How long the endpoint field has to settle before it is asked what it is. */
-const ENDPOINT_PROBE_DEBOUNCE_MS = 500;
 
 const LoginView: React.FC<{
   /**
@@ -126,16 +122,6 @@ const LoginView: React.FC<{
   );
   const [connectionMode, setConnectionMode] =
     useState<ConnectionMode>('SESSION');
-  // FR-3562: a webserver proxies only session-authenticated `/func/*`, so an
-  // API-mode sign-in against one can never reach the manager. Asked of the
-  // endpoint rather than assumed from the page, because the desktop app and a
-  // dev server are served elsewhere while still pointing at a webserver.
-  // The answer is kept next to the endpoint it describes, so a changed
-  // endpoint stops applying the old verdict without another render.
-  const [webServerProbe, setWebServerProbe] = useState<{
-    endpoint: string;
-    isWebServer: boolean;
-  } | null>(null);
   const [apiEndpoint, setApiEndpoint] = useState(() => {
     // A stored endpoint means a session may be live against that backend, so
     // it wins over the dev override: silent re-login then reconnects to the
@@ -271,35 +257,14 @@ const LoginView: React.FC<{
     configRef.current = loginConfig;
   }, [loginConfig]);
 
-  const normalizedEndpoint = apiEndpoint.trim().replace(/\/+$/, '');
-  const isEndpointWebServer =
-    webServerProbe?.endpoint === normalizedEndpoint &&
-    webServerProbe.isWebServer;
+  // FR-3562: a configured `apiEndpoint` is a webserver (it renders its own
+  // origin into `config.toml`), and a webserver cannot serve API-mode sign-in.
   // Derived, never stored: a config refresh re-applies the configured mode at
-  // any time (`loadConfigFromWebServer` on the Electron login path does it
-  // mid-flight), so a value pinned once here would be silently reverted while
-  // the switch stayed disabled. Everything that acts on the mode reads this.
-  const effectiveConnectionMode: ConnectionMode = isEndpointWebServer
+  // any time, so a value pinned once here would be silently reverted.
+  const isApiSigninBlocked = !!loginConfig.api_endpoint;
+  const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
     ? 'SESSION'
     : connectionMode;
-
-  useEffect(() => {
-    // Only the login panel renders the switch this answers for, so a signed-in
-    // page has no use for the answer and does not ask.
-    if (!isLoginPanelOpen || !normalizedEndpoint) return;
-    let cancelled = false;
-    // The field reports every keystroke, so settle before asking the network.
-    const timer = setTimeout(() => {
-      isWebServerEndpoint(normalizedEndpoint).then((isWebServer) => {
-        if (cancelled) return;
-        setWebServerProbe({ endpoint: normalizedEndpoint, isWebServer });
-      });
-    }, ENDPOINT_PROBE_DEBOUNCE_MS);
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-    };
-  }, [isLoginPanelOpen, normalizedEndpoint]);
 
   // Sync apiEndpoint state changes to the form field.
   // Ant Design's initialValues only applies on first render, so subsequent
@@ -1035,7 +1000,7 @@ const LoginView: React.FC<{
   });
 
   const canChangeSigninMode =
-    loginConfig.change_signin_support && !isEndpointWebServer;
+    loginConfig.change_signin_support && !isApiSigninBlocked;
 
   const handleConnectionModeChange = useCallback(
     (mode: ConnectionMode) => {
@@ -1171,7 +1136,7 @@ const LoginView: React.FC<{
         onClearLoginError={() => setLoginError(null)}
         connectionMode={effectiveConnectionMode}
         signinModeDisabled={
-          isEndpointWebServer
+          isApiSigninBlocked
             ? { reason: t('login.APISigninNeedsManagerEndpoint') }
             : false
         }
