@@ -386,6 +386,12 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
           );
         }}
         {...tableProps}
+        rowSelection={
+          tableProps.rowSelection && {
+            getRowLabel: (session) => session.metadata?.name ?? '',
+            ...tableProps.rowSelection,
+          }
+        }
       />
     </BAIFlex>
   );

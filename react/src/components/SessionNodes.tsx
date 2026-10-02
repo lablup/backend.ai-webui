@@ -482,6 +482,12 @@ const SessionNodes: React.FC<SessionNodesProps> = ({
           );
         }}
         {...tableProps}
+        rowSelection={
+          tableProps.rowSelection && {
+            getRowLabel: (session) => session.name ?? '',
+            ...tableProps.rowSelection,
+          }
+        }
       />
       <Suspense fallback={null}>
         <BAIUnmountAfterClose>

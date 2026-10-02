@@ -731,6 +731,12 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
           },
         ]}
         {...tableProps}
+        rowSelection={
+          tableProps.rowSelection && {
+            getRowLabel: (vfolder) => vfolder.name ?? '',
+            ...tableProps.rowSelection,
+          }
+        }
       />
       {/* The typed-confirmation destructive modal, rebuilt on Astryx.
           `.claude/rules/destructive-confirmation.md` is the contract this call
