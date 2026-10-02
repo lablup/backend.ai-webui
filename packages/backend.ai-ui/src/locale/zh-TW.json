@@ -6,6 +6,7 @@
     "DiskPerc": "磁碟使用率 (%)",
     "Endpoint": "端點",
     "FailedToLoadCellData": "資料載入失敗。",
+    "LostAt": "失聯時間",
     "NoAvailableLiveStat": "沒有可用的即時統計",
     "Region": "區域",
     "ResourceGroup": "資源群組",
@@ -13,7 +14,8 @@
     "Schedulable": "可排程",
     "Starts": "開始時間",
     "Status": "狀態",
-    "Utilization": "使用率"
+    "Utilization": "使用率",
+    "Version": "版本"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "允許",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "操作 ID",
     "Actor": "執行者",
+    "ClientIp": "用戶端 IP",
     "Description": "描述",
     "Duration": "持續時間",
     "EntityId": "實體 ID",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "發生未預期的錯誤。請稍後再試，若問題持續，請聯絡支援。"
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "清除",
-    "KeepAsIs": "保持原樣",
-    "UndoChanges": "撤銷更改"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "執行錯誤",
-    "ErrorOccurred": "發生錯誤"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "清除",
-    "HexValue": "十六進位值",
-    "NoColor": "無顏色",
-    "SelectColor": "選擇顏色"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "清除 搜尋選項",
-    "NoResults": "無結果",
-    "SearchOptions": "搜尋選項"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "選擇容器映像倉庫"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "成功刪除了{{count}}版本。",
     "Version": "版本"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "您確定要刪除嗎？",
-    "AreYouSureToPermanentlyDeleteTarget": "確定要永久刪除{{target}}嗎？",
-    "CannotBeUndone": "此操作無法復原。",
-    "DeleteItem": "刪除",
-    "DeleteNItems": "刪除 {{count}} 個項目",
-    "TypeToConfirm": "輸入 <code>{{confirmText}}</code> 以確認。"
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "建立者"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "選擇部署"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "已降級",
     "Deploying": "部署中",
     "Healthy": "正常",
@@ -245,6 +220,10 @@
       "Title": "無法使用 Backend.AI 登入"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "核心啟動進度",
+    "KernelTerminationProgress": "核心終止進度"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "簇的大小",
     "Concurrency": "並發會話數",
@@ -265,6 +244,7 @@
     "SelectKeypair": "選擇金鑰對"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "用戶端 IP",
     "Domain": "網域",
     "FailReason": "失敗原因",
     "LoginTime": "登入時間",
@@ -355,18 +335,22 @@
     "UpdateProject": "更新專案"
   },
   "comp:BAIProjectTable": {
+    "Active": "積極的",
     "ContainerRegistry": "容器映像庫",
     "ContainerRegistryProject": "容器映像庫專案",
     "CreatedAt": "建立時間",
     "Description": "描述",
     "Domain": "網域",
+    "Inactive": "不活動",
     "IntegrationID": "整合識別碼",
+    "ModifiedAt": "修改時間",
     "Name": "名稱",
     "Project": "專案",
     "ProjectID": "專案ID",
     "Registry": "映像註冊表",
     "ResourcePolicy": "資源策略",
     "ScalingGroups": "資源群組",
+    "Status": "狀態",
     "StorageNodes": "儲存節點",
     "TotalResourceSlots": "資源總槽位",
     "Type": "類型"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "已分配 / 請求"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "變更群組顏色",
-    "ResourceGrid": "資源網格",
-    "UseColorN": "使用顏色 {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無限"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "多",
     "SingleNodeShort": "單節點"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "無限"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "選擇儲存主機"
   },
@@ -578,22 +554,10 @@
     "Time": "時間"
   },
   "comp:BAITable": {
-    "Apply": "套用",
-    "Cancel": "取消",
     "CollapseAll": "收合全部",
     "ExpandAll": "展開全部",
     "ExpandErrorsOnly": "僅展開錯誤",
-    "ExpandOptions": "展開選項",
-    "ExpandRow": "展開列",
-    "Export": "匯出",
-    "ExportCSV": "匯出 CSV",
-    "GoToFirstPage": "跳到第一頁",
-    "InvalidPageNumber": "無效的頁碼",
-    "NoDataToDisplay": "暫無資料",
-    "Pagination": "分頁",
-    "SearchTableColumn": "搜索表列",
-    "SelectColumnToDisplay": "選擇要顯示的列",
-    "SettingTable": "表設置"
+    "ExpandOptions": "展開選項"
   },
   "comp:BAITestButton": {
     "Test": "測試"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "路徑格式無效。",
     "AliasOverlapping": "掛載路徑與另一個資料夾重疊。",
+    "AliasOverlappingWithAutoMount": "掛載路徑與自動掛載資料夾重疊。",
     "AliasPlaceholder": "掛載路徑",
     "AutoMountedFolders": "自動掛載資料夾",
-    "Name": "名稱",
-    "PathAndAlias": "路徑 & 別名",
+    "CreateFolder": "創建一個新的存儲文件夾",
+    "DestinationPath": "容器路徑 (destination)",
+    "Folders": "文件夾",
+    "OwnerProject": "專案",
+    "OwnerUser": "使用者",
     "PathAndAliasTooltip": "資料夾在容器內的掛載路徑。留空則使用預設路徑。",
+    "Refresh": "刷新",
     "RemoveFolder": "移除",
+    "SelectFolder": "選擇資料夾",
+    "SourcePath": "資料夾內路徑 (source)",
     "Subpath": "子路徑",
     "SubpathInvalid": "子路徑必須是相對路徑，且不能包含 '..'。",
-    "SubpathPlaceholder": "例如 dataset/train（選填）",
-    "SubpathTooltip": "將資料夾內的子資料夾作為掛載來源，而非資料夾根目錄。留空則掛載根目錄。"
+    "SubpathTooltip": "將資料夾內的子資料夾作為掛載來源，而非資料夾根目錄。點擊該欄位瀏覽資料夾並選擇；留空則掛載資料夾根目錄。",
+    "UnmountableFoldersRemoved": "已從所選項目中移除您無法再掛載的資料夾。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "選擇資料夾"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "刪除的文件和文件夾無法恢復。你想繼續嗎？",
     "DeleteSelectedItemsDialog": "刪除確認",
     "Download": "下載",
+    "DownloadPopupBlocked": "瀏覽器封鎖了下載視窗。請允許本網站的彈出視窗後再試一次。",
+    "DownloadRejected": "儲存代理拒絕了此次下載（HTTP {{status}}），下載未開始。",
     "DownloadSelected": "下載",
     "DownloadStarted": "文件“ {{fileName}}”下載已開始。",
+    "DownloadUnreachable": "無法連線至 {{origin}} 的儲存代理，下載未開始。",
     "DragAndDropDesc": "將文件拖到此區域上傳。",
     "DuplicatedFiles": "覆蓋確認",
     "DuplicatedFilesDesc": "具有相同名稱的文件或文件夾已經存在。你想覆蓋嗎？",
     "EditFile": "編輯檔案",
+    "ExistingItem": "現有",
     "FileCreatedSuccessfully": "檔案建立成功。",
     "FileName": "檔案名稱",
     "FileNamePlaceholder": "例如 model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "修改為",
     "Name": "姓名",
     "NoUploadPermissionForHost": "您沒有此儲存主機的上傳權限。",
+    "OtherItemsWillBeUploaded": "另外 {{count}} 個項目也將一併上傳。",
     "Path": "路徑",
     "PleaseEnterAFileName": "請輸入檔案名稱。",
     "PleaseEnterAFolderName": "請輸入文件夾名稱。",
     "RenameFile": "重新命名",
     "RenameSuccess": "該名稱已成功更改。",
+    "SelectItemsToOverwrite": "以下項目已存在。請選擇要覆蓋的項目，未選擇的項目將被略過。",
     "SelectedItemsDeletedSuccessfully": "選定的文件和文件夾已成功刪除。",
     "Size": "尺寸",
     "TypeDeleteToConfirm": "輸入“刪除”進行確認。",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "此檔案格式不支援編輯。",
     "UploadFiles": "上傳文件",
     "UploadFolder": "上傳文件夾",
+    "UploadingItem": "待上傳",
     "error": {
       "DuplicatedName": "此名稱已經在使用中。請輸入其他名稱。",
       "FileNameRequired": "請輸入文件或文件夾名稱。"
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} {{total}}項目"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "沒有可用的資源數據"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "發生了未知錯誤。請重試。"
   },
-  "form": {
-    "Optional": "（可選）",
-    "validateMessages": {
-      "Default": "字段驗證錯誤${label}",
-      "Required": "請輸入${label}",
-      "Whitespace": "${label}不能為空字符",
-      "array": {
-        "Len": "須為${len}個${label}",
-        "Max": "最多${max}個${label}",
-        "Min": "最少${min}個${label}",
-        "Range": "${label}數量須在${min}-${max}之間"
-      },
-      "number": {
-        "Len": "${label}必須等於${len}",
-        "Max": "${label}最大值為${max}",
-        "Min": "${label}最小值為${min}",
-        "Range": "${label}須在${min}-${max}之間"
-      },
-      "pattern": {
-        "Mismatch": "${label}與模式不匹配${pattern}"
-      },
-      "string": {
-        "Len": "${label}須為${len}個字符",
-        "Max": "${label}最多${max}個字符",
-        "Min": "${label}最少${min}個字符",
-        "Range": "${label}須在${min}-${max}字符之間"
-      },
-      "types": {
-        "Email": "${label}不是一個有效的${type}",
-        "Number": "${label}不是一個有效的${type}",
-        "Object": "${label}不是一個有效的${type}",
-        "String": "${label}不是一個有效的${type}",
-        "Url": "${label}不是一個有效的${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "減少",
-    "DeselectAll": "取消全選",
     "File": "檔案",
-    "Increase": "增加",
-    "Loading": "載入中...",
-    "NSelected": "{{count}}選擇",
     "Optional": "選填",
     "Project": "專案",
     "Search": "搜尋",
     "Select": "選擇",
-    "SelectPlaceholder": "請選擇{{label}}",
-    "TotalItems": "總計{{total}}項目",
     "Unit": "單位",
     "button": {
       "Action": "動作",

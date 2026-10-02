@@ -3,14 +3,13 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 // `Form`/`FormInstance` state engine stays (SHIM); visuals are BAIFormItem.
-import { Form } from '../../form-engine';
-import type { FormInstance } from '../../form-engine';
-import { theme } from '../../theme-shim';
+import { Form, type FormInstance } from '../../form-engine';
 import BAIFormItem from '../BAIFormItem';
 import { AstryxFormTextInput } from '../astryxFormControls';
 import DeploymentTokenSelect from './DeploymentTokenSelect';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Button } from '@astryxdesign/core/Button';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Button } from '@lablup/ui-common/Button';
+import { useTheme } from '@lablup/ui-common/theme';
 import useResizeObserver from '@react-hook/resize-observer';
 import { BAIFlex } from 'backend.ai-ui';
 import { RotateCw } from 'lucide-react';
@@ -44,7 +43,7 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token: themeToken } = theme.useToken();
+  const { token: themeToken } = useTheme();
   const formRef = useRef<FormInstance>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -58,11 +57,11 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
     <BAIFlex
       direction="row"
       style={{
-        padding: themeToken.paddingContentVerticalLG,
-        paddingInline: themeToken.paddingContentHorizontal,
-        backgroundColor: themeToken.colorBgContainer,
+        padding: themeToken('--spacing-4'),
+        paddingInline: themeToken('--spacing-4'),
+        backgroundColor: themeToken('--color-background-surface'),
         overflow: 'hidden',
-        borderBottom: `1px solid ${themeToken.colorBorderSecondary}`,
+        borderBottom: `1px solid ${themeToken('--color-border')}`,
       }}
       ref={containerRef}
     >
@@ -81,13 +80,13 @@ const CustomModelForm: React.FC<CustomModelFormProps> = ({
           <Banner
             status="warning"
             title={t('chatui.NoDesiredReplicas')}
-            style={{ marginBottom: themeToken.size }}
+            style={{ marginBottom: themeToken('--spacing-4') }}
           />
         ) : null}
         <Banner
           status="warning"
           title={t('chatui.CannotFindModel')}
-          style={{ marginBottom: themeToken.size }}
+          style={{ marginBottom: themeToken('--spacing-4') }}
         />
         <BAIFormItem label={t('modelService.BasePath')} name="basePath">
           {/* PILOT-DECISION: antd `Input prefix={deploymentUrl}` showed the

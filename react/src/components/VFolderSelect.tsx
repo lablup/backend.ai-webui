@@ -11,14 +11,15 @@ import { toProjectContext } from '../types/projectContext';
 import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector } from '@astryxdesign/core/Selector';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Selector } from '@lablup/ui-common/Selector';
 import {
   useUpdatableState,
   BAIFlex,
   toGlobalId,
   toLocalId,
+  type LegacyVFolder,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { RotateCw, FolderOpenIcon, PlusIcon } from 'lucide-react';
@@ -32,28 +33,8 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-export type VFolder = {
-  name: string;
-  id: string;
-  quota_scope_id: string;
-  host: string;
-  status: string;
-  usage_mode: string;
-  created_at: string;
-  is_owner: boolean;
-  permission: string;
-  user: null;
-  group: string | null;
-  creator: string;
-  user_email: null;
-  group_name: string | null;
-  ownership_type: string;
-  type: string;
-  cloneable: boolean;
-  max_files: number;
-  max_size: null | number;
-  cur_size: number;
-};
+/** The REST `GET /folders` row; BUI owns the shape (`LegacyVFolder`). */
+export type VFolder = LegacyVFolder;
 
 /**
  * Probe that resolves a folder's name by UUID via Relay's `vfolder_node`

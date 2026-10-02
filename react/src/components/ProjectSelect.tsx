@@ -5,7 +5,7 @@
 import { useAccessibleProjects } from '../hooks/useAccessibleProjects';
 import useControllableState_deprecated from '../hooks/useControllableState';
 import { useCurrentUserProjectRoles } from '../hooks/useCurrentUserProjectRoles';
-import { theme } from '../theme-shim';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -30,6 +30,9 @@ export interface ProjectSelectProps extends BAISelectProps {
   autoSelectDefault?: boolean;
   disableDefaultFilter?: boolean;
   lockedProjectTypes?: string[];
+  /** The user's personal project, which the domain's option list never
+   * contains; shown as a locked option. */
+  personalProject?: { id: string; name: string };
   'aria-label'?: string;
 }
 
@@ -38,11 +41,12 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   domain,
   disableDefaultFilter,
   lockedProjectTypes,
+  personalProject,
   'aria-label': ariaLabel,
   ...selectProps
 }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const [value, setValue] = useControllableState_deprecated(selectProps);
   const { projectAdminIds } = useCurrentUserProjectRoles();
@@ -55,6 +59,21 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   });
 
   const accessibleProjects = disableDefaultFilter ? groups : memberProjects;
+
+  const optionProjects = [
+    ...(accessibleProjects ?? []),
+    ...(personalProject &&
+    !_.some(accessibleProjects, { id: personalProject.id })
+      ? [
+          {
+            ...personalProject,
+            type: 'PERSONAL',
+            is_active: null,
+            resource_policy: null,
+          },
+        ]
+      : []),
+  ];
 
   const lockedProjectIds = !lockedProjectTypes?.length
     ? []
@@ -87,27 +106,48 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
     ({
       GENERAL: t('general.General'),
       MODEL_STORE: t('data.ModelStore'),
+      PERSONAL: t('projectSelect.Personal'),
     })[key] || key;
 
   const groupOptions = _.map(
-    _.groupBy(accessibleProjects, 'type'),
+    _.groupBy(optionProjects, 'type'),
     (value, key) => {
       return {
         label: getLabel(key),
         title: key,
         options: _.map(_.sortBy(value, 'name'), (project) => {
-          const showBadge =
-            !!project?.id && projectAdminIds.includes(project.id);
-          return {
-            label: showBadge ? (
-              <BAIFlex gap={token.marginXS} align="center">
-                <span>{project?.name}</span>
+          const isAdmin = !!project?.id && projectAdminIds.includes(project.id);
+          const isPersonal =
+            !!personalProject && project?.id === personalProject.id;
+          // Fills the option row so the whole item opens the hint; `pointerEvents`
+          // covers single mode, whose disabled Item sets `none` (FR-3837).
+          const row = (
+            <BAIFlex
+              gap="xs"
+              align="center"
+              style={
+                isPersonal ? { flexGrow: 1, pointerEvents: 'auto' } : undefined
+              }
+            >
+              <span>{project?.name}</span>
+              {isAdmin && (
                 <BAIIconWithTooltip
                   content={t('projectSelect.ProjectAdminBadge')}
                   focusable={false}
                   icon={<ShieldUser />}
                 />
-              </BAIFlex>
+              )}
+            </BAIFlex>
+          );
+          return {
+            label: isPersonal ? (
+              <Tooltip
+                content={t('projectSelect.PersonalProjectCannotBeRemoved')}
+              >
+                {row}
+              </Tooltip>
+            ) : isAdmin ? (
+              row
             ) : (
               project?.name
             ),
@@ -115,7 +155,8 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
             projectId: project?.id,
             projectResourcePolicy: project?.resource_policy,
             projectName: project?.name,
-            disabled: lockedProjectIds.includes(project?.id ?? ''),
+            disabled:
+              isPersonal || lockedProjectIds.includes(project?.id ?? ''),
           };
         }),
       };
@@ -123,9 +164,7 @@ const ProjectSelect: React.FC<ProjectSelectProps> = ({
   );
 
   const showNoProjectError =
-    !accessibleProjects?.length &&
-    !selectProps.disabled &&
-    !selectProps.loading;
+    !optionProjects.length && !selectProps.disabled && !selectProps.loading;
 
   const noAccessibleProjectsMessage = t('projectSelect.NoAccessibleProjects');
 

@@ -44,7 +44,7 @@ list is reachable from the folder status summary.
 To create a new folder, click `Create Folder` on the Data page. Fill in the fields in
 the creation dialog as follows:
 
-![](../images/vfolder_create_modal.png)
+![=650px](../images/vfolder_create_modal.png)
 
 The meaning of each field in the creation dialog is as follows.
 
@@ -144,6 +144,7 @@ Saving from the editor uploads the modified file, so the **Edit File** action re
 The **Audit Log** tab in the right panel shows a chronological list of all operations performed on this storage folder (create, update, delete events, and more).
 
 ![](../images/vfolder_audit_log_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 The audit log shows the following columns, in order:
 
@@ -153,6 +154,7 @@ The audit log shows the following columns, in order:
 - **Description**: Additional details about the operation.
 - **Duration**: How long the operation took.
 - **Triggered By**: The user who performed the operation, shown in "email (id)" format.
+- **Client IP**: The IP address the operation was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
 You can filter the log by **Time**, **Operation**, **Status**, and **Triggered By**.
 
@@ -181,13 +183,17 @@ Select the checkboxes of the folders you want to remove. A selection summary
 the trash bin button to open the **Move to trash bin** confirmation for the
 whole selection.
 
-![](../images/vfolder_bulk_move_to_trash.png)
+![=520px](../images/vfolder_bulk_move_to_trash.png)
 
 If the selection contains folders you are not allowed to delete, the modal lists
 them in an alert titled *"The following folder(s) without delete permission will
 be excluded."* Check the list before proceeding with the deletion: only the
 remaining folders move to the Trash tab, and the confirmation message below the
 alert counts just the folders that are actually moved.
+
+If some of the selected folders still cannot be deleted, the folders that can be
+deleted are moved to the Trash tab as usual, and a failure dialog lists each
+folder that failed with the reason in the **Error Message** column.
 
 ### Restore or permanently delete
 
@@ -198,7 +204,7 @@ please click the `trash bin` button on the same row. Once permanent deletion has
 
 A confirmation modal will appear asking you to type the folder name. Once you enter the folder name correctly, the **Delete forever** button becomes active. Click it to permanently delete the folder.
 
-![](../images/vfolder_delete_dialog.png)
+![=520px](../images/vfolder_delete_dialog.png)
 
 :::warning[Cascading model card deletion]
 If the folder you are deleting is associated with a **model card**, the
@@ -263,7 +269,7 @@ If you accidentally close the FileBrowser window and want to reopen it, just
 go to Sessions page and click the FileBrowser application button of the
 FileBrowser compute session.
 
-![](../images/app_dialog_with_filebrowser.png)
+![=450px](../images/app_dialog_with_filebrowser.png)
 
 When you click `Execute filebrowser` button again in the storage folder
 explorer, a new compute session will be created and a total of two
@@ -317,7 +323,7 @@ foo
 After selecting `foo` directory, you can see the directory just uploaded
 successfully.
 
-![](../images/filebrowser_upload_finished.png)
+![=796px](../images/filebrowser_upload_finished.png)
 
 You can also upload local files and directories by drag and drop.
 
@@ -328,7 +334,7 @@ You can move files or directories by following steps below.
 
 1. Select directories or files from FileBrowser.
 
-![](../images/select_folders.png)
+![=694px](../images/select_folders.png)
 
 2. Click the `arrow` button in the upper right corner of FileBrowser
 
@@ -336,13 +342,13 @@ You can move files or directories by following steps below.
 
 3. Select the destination
 
-![](../images/select_the_destination.png)
+![=266px](../images/select_the_destination.png)
 
 4. Click `Move` button
 
 You will see that moving operation is successfully finished.
 
-![](../images/moving_operation_in_filebrowser_finished.png)
+![=708px](../images/moving_operation_in_filebrowser_finished.png)
 
 
 :::note
@@ -376,7 +382,7 @@ Click `Run SFTP server` button in the upper-right corner of the explorer.
 You can see the SSH / SFTP connection dialog. And a new SFTP session will be created
 automatically. (This session will not affect resource occupancy.)
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 For the connection, click `Download SSH Key` button to download the SSH private key
 (`id_container`). Also, remember the host and port number. Then, you can copy your

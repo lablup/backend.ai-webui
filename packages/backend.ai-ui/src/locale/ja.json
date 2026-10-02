@@ -6,6 +6,7 @@
     "DiskPerc": "ディスク使用率",
     "Endpoint": "エンドポイント",
     "FailedToLoadCellData": "データの読み込みに失敗しました。",
+    "LostAt": "切断日時",
     "NoAvailableLiveStat": "ライブ統計は利用できません",
     "Region": "リージョン",
     "ResourceGroup": "リソースグループ",
@@ -13,7 +14,8 @@
     "Schedulable": "スケジュール可能",
     "Starts": "起動回数",
     "Status": "ステータス",
-    "Utilization": "使用率"
+    "Utilization": "使用率",
+    "Version": "バージョン"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "許可済み",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "アクション ID",
     "Actor": "実行者",
+    "ClientIp": "クライアントIP",
     "Description": "説明",
     "Duration": "所要時間",
     "EntityId": "エンティティ ID",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "予期しないエラーが発生しました。しばらくしてから再度お試しください。それでも問題が解決しない場合はサポートにお問い合わせください。"
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "クリア",
-    "KeepAsIs": "そのまま維持",
-    "UndoChanges": "変更を元に戻す"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "実行エラー",
-    "ErrorOccurred": "問題が発生しました。"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "クリア",
-    "HexValue": "16進数の値",
-    "NoColor": "色なし",
-    "SelectColor": "色を選択"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "オプションを検索 をクリア",
-    "NoResults": "結果がありません",
-    "SearchOptions": "オプションを検索"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "コンテナレジストリを選択"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "{{count}}バージョンを正常に削除しました。",
     "Version": "バージョン"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "本当に削除しますか？",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}を完全に削除してもよろしいですか？",
-    "CannotBeUndone": "この操作は元に戻せません。",
-    "DeleteItem": "削除",
-    "DeleteNItems": "{{count}} 件を削除",
-    "TypeToConfirm": "<code>{{confirmText}}</code> と入力して確認してください。"
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "作成者"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "デプロイメントを選択"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "低下中",
     "Deploying": "デプロイ中",
     "Healthy": "正常",
@@ -245,6 +220,10 @@
       "Title": "Backend.AI アカウントでログインできませんでした"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "カーネル起動の進捗",
+    "KernelTerminationProgress": "カーネル終了の進捗"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "クラスターサイズ",
     "Concurrency": "同時実行セッション数",
@@ -265,6 +244,7 @@
     "SelectKeypair": "キーペアを選択"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "クライアントIP",
     "Domain": "ドメイン",
     "FailReason": "失敗の理由",
     "LoginTime": "ログイン日時",
@@ -355,18 +335,22 @@
     "UpdateProject": "プロジェクトの更新"
   },
   "comp:BAIProjectTable": {
+    "Active": "アクティブ",
     "ContainerRegistry": "コンテナレジストリ",
     "ContainerRegistryProject": "コンテナレジストリプロジェクト",
     "CreatedAt": "作成日時",
     "Description": "説明",
     "Domain": "ドメイン",
+    "Inactive": "非アクティブ",
     "IntegrationID": "連携ID",
+    "ModifiedAt": "更新日時",
     "Name": "名前",
     "Project": "プロジェクト",
     "ProjectID": "プロジェクトID",
     "Registry": "レジストリ",
     "ResourcePolicy": "リソースポリシー",
     "ScalingGroups": "リソースグループ",
+    "Status": "ステータス",
     "StorageNodes": "ストレージノード",
     "TotalResourceSlots": "合計リソーススロット数",
     "Type": "種類"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "割り当て / 要求"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "グループの色を変更",
-    "ResourceGrid": "リソースグリッド",
-    "UseColorN": "色{{n}}を使用"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "無制限"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "無制限"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "ストレージホストを選択"
   },
@@ -578,22 +554,10 @@
     "Time": "時刻"
   },
   "comp:BAITable": {
-    "Apply": "適用",
-    "Cancel": "キャンセル",
     "CollapseAll": "すべて折りたたむ",
     "ExpandAll": "すべて展開",
     "ExpandErrorsOnly": "エラーのみ展開",
-    "ExpandOptions": "展開オプション",
-    "ExpandRow": "行を展開",
-    "Export": "エクスポート",
-    "ExportCSV": "CSV をエクスポート",
-    "GoToFirstPage": "最初のページへ",
-    "InvalidPageNumber": "無効なページ番号です",
-    "NoDataToDisplay": "表示するデータがありません",
-    "Pagination": "ページネーション",
-    "SearchTableColumn": "テーブル列を検索します",
-    "SelectColumnToDisplay": "表示する列を選択します",
-    "SettingTable": "テーブル設定"
+    "ExpandOptions": "展開オプション"
   },
   "comp:BAITestButton": {
     "Test": "テスト"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "パスの形式が無効です。",
     "AliasOverlapping": "マウントパスが別のフォルダと重複しています。",
+    "AliasOverlappingWithAutoMount": "マウントパスが自動マウントフォルダと重複しています。",
     "AliasPlaceholder": "マウントパス",
     "AutoMountedFolders": "自動マウントフォルダ",
-    "Name": "名前",
-    "PathAndAlias": "パス & エイリアス",
+    "CreateFolder": "新規ストレージフォルダー作成",
+    "DestinationPath": "コンテナのパス (destination)",
+    "Folders": "フォルダー",
+    "OwnerProject": "プロジェクト",
+    "OwnerUser": "ユーザー",
     "PathAndAliasTooltip": "コンテナ内でフォルダがマウントされるパスです。デフォルトのパスを使用する場合は空欄にしてください。",
+    "Refresh": "更新",
     "RemoveFolder": "削除",
+    "SelectFolder": "フォルダを選択",
+    "SourcePath": "フォルダ内のパス (source)",
     "Subpath": "サブパス",
     "SubpathInvalid": "サブパスは相対パスである必要があり、'..' を含めることはできません。",
-    "SubpathPlaceholder": "例: dataset/train (省略可)",
-    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。ルートをマウントするには空欄にしてください。"
+    "SubpathTooltip": "フォルダのルートではなく、フォルダ内のサブフォルダをマウントソースとして使用します。入力欄をクリックしてフォルダを参照し、選択してください。空のままにするとフォルダのルートをマウントします。",
+    "UnmountableFoldersRemoved": "マウントできなくなったフォルダーを選択から除外しました。"
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "フォルダを選択"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "削除されたファイルとフォルダーを復元できません。\n先に進みたいですか？",
     "DeleteSelectedItemsDialog": "確認を削除します",
     "Download": "ダウンロード",
+    "DownloadPopupBlocked": "ブラウザーがダウンロードウィンドウをブロックしました。このサイトのポップアップを許可してからもう一度お試しください。",
+    "DownloadRejected": "ストレージプロキシがダウンロードを拒否しました (HTTP {{status}})。ダウンロードは開始されませんでした。",
     "DownloadSelected": "ダウンロード",
     "DownloadStarted": "ファイル \"{{fileName}}\"ダウンロードが開始されました。",
+    "DownloadUnreachable": "{{origin}} のストレージプロキシに接続できません。ダウンロードは開始されませんでした。",
     "DragAndDropDesc": "このエリアにファイルをドラッグアンドドロップしてアップロードします。",
     "DuplicatedFiles": "確認の上書き",
     "DuplicatedFilesDesc": "同じ名前のファイルまたはフォルダーはすでに存在しています。\n上書きしますか？",
     "EditFile": "ファイルを編集",
+    "ExistingItem": "既存",
     "FileCreatedSuccessfully": "ファイルは正常に作成されました。",
     "FileName": "ファイル名",
     "FileNamePlaceholder": "例: model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "で変更されました",
     "Name": "名前",
     "NoUploadPermissionForHost": "このホストへのアップロード権限がありません。",
+    "OtherItemsWillBeUploaded": "他の {{count}} 件の項目も一緒にアップロードされます。",
     "Path": "パス",
     "PleaseEnterAFileName": "ファイル名を入力してください。",
     "PleaseEnterAFolderName": "フォルダー名を入力してください。",
     "RenameFile": "名前を変更",
     "RenameSuccess": "名前は正常に変更されました。",
+    "SelectItemsToOverwrite": "以下の項目はすでに存在します。上書きする項目を選択してください。選択しなかった項目はアップロードされません。",
     "SelectedItemsDeletedSuccessfully": "選択したファイルとフォルダーは正常に削除されました。",
     "Size": "サイズ",
     "TypeDeleteToConfirm": "「消去」と入力して確認します。",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "このファイル形式は編集をサポートしていません。",
     "UploadFiles": "ファイルをアップロードします",
     "UploadFolder": "フォルダーをアップロードします",
+    "UploadingItem": "アップロード",
     "error": {
       "DuplicatedName": "この名前はすでに使用されています。\n別の名前を入力してください。",
       "FileNameRequired": "ファイルまたはフォルダー名を入力してください。"
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}}アイテム"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "利用可能なリソースデータはありません"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "不明なエラーが発生しました。\nもう一度やり直してください。"
   },
-  "form": {
-    "Optional": "(オプション)",
-    "validateMessages": {
-      "Default": "${label}のフィールド検証エラー",
-      "Required": "${label}を入力してください",
-      "Whitespace": "${label}は空白文字にすることはできません",
-      "array": {
-        "Len": "${label}は${len}である必要があります",
-        "Max": "${label}の最大は${max}です",
-        "Min": "${label}の最小は${min}です",
-        "Range": "${label}の合計は${min}-${max}の範囲である必要があります"
-      },
-      "number": {
-        "Len": "${label}は${len}と等しい必要があります",
-        "Max": "${label}の最大値は${max}です",
-        "Min": "${label}の最小値は${min}です",
-        "Range": "${label}は${min}-${max}の範囲である必要があります"
-      },
-      "pattern": {
-        "Mismatch": "${label}はパターン${pattern}と一致しません"
-      },
-      "string": {
-        "Len": "${label}は${len}文字である必要があります",
-        "Max": "${label}は${max}文字以下である必要があります",
-        "Min": "${label}は${min}文字以上である必要があります",
-        "Range": "${label}は${min}-${max}文字の範囲である必要があります"
-      },
-      "types": {
-        "Email": "${label}は有効な${type}ではありません",
-        "Number": "${label}は有効な${type}ではありません",
-        "Object": "${label}は有効な${type}ではありません",
-        "String": "${label}は有効な${type}ではありません",
-        "Url": "${label}は有効な${type}ではありません"
-      }
-    }
-  },
   "general": {
-    "Decrease": "減らす",
-    "DeselectAll": "すべて選択解除",
     "File": "ファイル",
-    "Increase": "増やす",
-    "Loading": "読み込み中...",
-    "NSelected": "{{count}}選択",
     "Optional": "任意",
     "Project": "プロジェクト",
     "Search": "検索",
     "Select": "選択",
-    "SelectPlaceholder": "{{label}}を選択してください",
-    "TotalItems": "Total {{total}}アイテム",
     "Unit": "単位",
     "button": {
       "Action": "アクション",

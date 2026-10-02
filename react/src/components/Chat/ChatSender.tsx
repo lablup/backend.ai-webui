@@ -13,10 +13,10 @@ import {
   ChatComposerInput,
   ChatSendButton,
   type ChatComposerInputHandle,
-} from '@astryxdesign/core/Chat';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Thumbnail } from '@astryxdesign/core/Thumbnail';
-import { Token } from '@astryxdesign/core/Token';
+} from '@lablup/ui-common/Chat';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Thumbnail } from '@lablup/ui-common/Thumbnail';
+import { Token } from '@lablup/ui-common/Token';
 import { isEmpty } from 'lodash-es';
 import { PaperclipIcon } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -152,6 +152,14 @@ const ChatSender: React.FC<ChatSenderProps> = ({
       // rather than spending another 28px on a header row.
       density="compact"
       elevation="none"
+      // This composer sits inside a chat card, not in a standalone chat app,
+      // so it takes the card's container radius over Astryx's 28px chat radius.
+      // Set on the root so the attachment drawer's corners and tuck follow it.
+      style={
+        {
+          '--radius-chat': 'var(--radius-container)',
+        } as React.CSSProperties
+      }
       value={value ?? ''}
       onChange={onInputChange}
       onSubmit={() => onInputSubmit?.()}

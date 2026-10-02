@@ -12,7 +12,8 @@ import './backendai-default-built.css';
  this wrapper instead, so a rebuild only touches this one import line.
 
  After changing seeds or bumping `THEME_NAME_REV`:
-   1. cd react && pnpm exec astryx theme build \
+   1. cd react && NODE_OPTIONS="--import=$PWD/../scripts/astryx-theme-css-stub.mjs" \
+        pnpm exec astryx theme build \
         src/astryx-theme/built/backendai-default.ts \
         -o src/astryx-theme/built/backendai-default-built.css
    2. Update the import below to the newly generated module, delete the old
@@ -21,4 +22,4 @@ import './backendai-default-built.css';
       drift apart (built name ≠ derived default name), and
       `scripts/verify.sh` runs the CLI's `--check` for artifact staleness.
  */
-export { baiR23DefaultBrandHv7b7uvTheme as builtBackendAiBrandTheme } from './bai-r23-default-brand-hv7b7uv';
+export { baiR28DefaultBrandHsutlj6Theme as builtBackendAiBrandTheme } from './bai-r28-default-brand-hsutlj6';

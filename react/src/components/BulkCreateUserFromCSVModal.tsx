@@ -15,25 +15,24 @@ import {
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import {
-  buildDynamicColumnAliases,
   CanonicalUserColumn,
+  RawUserRow,
+  TEMPLATE_CSV,
+  buildDynamicColumnAliases,
   extractRawUserRows,
   findMissingRequiredColumns,
   mapUserCSVColumns,
   mergeColumnAliases,
   parseBoolean,
-  RawUserRow,
-  TEMPLATE_CSV,
 } from '../helper/bulkUserCSV';
 import { downloadBlob, parseCSV } from '../helper/csv-util';
 import { useCurrentDomainValue } from '../hooks';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import BAIPanelItem from './BAIPanelItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import { passwordPattern } from './LoginFormPanel';
@@ -44,15 +43,15 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Badge } from '@astryxdesign/core/Badge';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { FileInput } from '@astryxdesign/core/FileInput';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { FileInput } from '@lablup/ui-common/FileInput';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAIButton,
   BAIDomainSelect,
@@ -61,24 +60,25 @@ import {
   BAIModalProps,
   BAIQuestionIconWithTooltip,
   BAIRowWrapWithDividers,
+  BAISkeleton,
   BAITable,
   BAIText,
   BAIUnmountAfterClose,
-  badgeVariantForTagColor,
   filterOutNullAndUndefined,
+  tokenColorForTagColor,
   useBAILogger,
   useBAISignedRequestWithPromise,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
+  CircleAlert,
   CircleCheck,
   CircleX,
-  Trash,
   Download,
-  CircleAlert,
   FileText,
   Plus,
   RotateCw,
+  Trash,
 } from 'lucide-react';
 import React, {
   Suspense,
@@ -152,7 +152,7 @@ interface ValidatedRow {
 
 interface BulkCreateUserFromCSVModalProps extends Omit<
   BAIModalProps,
-  'footer' | 'onCancel' | 'title' | 'afterClose'
+  'footer' | 'onCancel' | 'title'
 > {
   onRequestClose: (success: boolean) => void;
 }
@@ -161,11 +161,12 @@ interface BulkCreateUserFromCSVModalProps extends Omit<
 
 const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   onRequestClose,
+  afterClose,
   ...baiModalProps
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const currentDomainName = useCurrentDomainValue();
@@ -712,14 +713,17 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
   const cellStyle = (record: ValidatedRow, field: string) => ({
     style: record.fieldErrors[field]
-      ? { background: token.colorErrorBg, padding: `0 ${token.paddingXS}px` }
-      : { padding: `0 ${token.paddingXS}px` },
+      ? {
+          background: token('--color-error-bg'),
+          padding: `0 ${token('--spacing-2')}`,
+        }
+      : { padding: `0 ${token('--spacing-2')}` },
   });
 
   const requiredLabel = (label: string) => (
     <span>
       {label}
-      <span style={{ color: token.colorError, marginLeft: 2 }}>*</span>
+      <span style={{ color: token('--color-error'), marginLeft: 2 }}>*</span>
     </span>
   );
 
@@ -741,7 +745,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             <CircleAlert
               role="img"
               aria-label={errorMsg}
-              style={{ color: token.colorError, flexShrink: 0 }}
+              style={{ color: token('--color-error'), flexShrink: 0 }}
               size="1em"
             />
             {mask && val ? (
@@ -812,9 +816,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       width: 36,
       render: (_: unknown, record: ValidatedRow) =>
         record.isValid ? (
-          <CircleCheck style={{ color: token.colorSuccess }} size="1em" />
+          <CircleCheck style={{ color: token('--color-success') }} size="1em" />
         ) : (
-          <CircleX style={{ color: token.colorError }} size="1em" />
+          <CircleX style={{ color: token('--color-error') }} size="1em" />
         ),
     },
     {
@@ -977,7 +981,6 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
   return (
     <BAIModal
       centered
-      destroyOnHidden
       title={
         <BAIFlex align="center" gap="xxs">
           {t('credential.BulkCreateUserFromCSV')}
@@ -1024,7 +1027,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
       // per-attempt, file-scoped `createdCount`, so neither a retry that
       // creates nothing nor a Remove File can erase an earlier success.
       onCancel={() => onRequestClose(hasCreatedAny)}
-      afterClose={resetState}
+      afterClose={() => {
+        resetState();
+        afterClose?.();
+      }}
       {...baiModalProps}
     >
       {/* Left panel — Source file + Global defaults */}
@@ -1035,11 +1041,11 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
         style={{
           width: 340,
           flexShrink: 0,
-          borderRight: `1px solid ${token.colorBorderSecondary}`,
+          borderRight: `1px solid ${token('--color-border')}`,
           overflowY: 'auto',
           // The modal body is already inset on all four sides by Astryx
           // `LayoutContent`; only the gutter before the divider is ours.
-          paddingRight: token.paddingMD,
+          paddingRight: token('--spacing-5'),
         }}
       >
         {/* ── Source file section ── */}
@@ -1071,10 +1077,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
               align="stretch"
               gap="xs"
               style={{
-                border: `1px solid ${token.colorBorderSecondary}`,
-                borderRadius: token.borderRadius,
-                background: token.colorFillQuaternary,
-                padding: `${token.paddingSM}px ${token.paddingMD}px`,
+                border: `1px solid ${token('--color-border')}`,
+                borderRadius: token('--radius-inner'),
+                background: token('--color-fill-quaternary'),
+                padding: `${token('--spacing-3')} ${token('--spacing-5')}`,
               }}
             >
               {/* Row 1: icon + filename + row count */}
@@ -1085,10 +1091,10 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                   style={{
                     width: 36,
                     height: 36,
-                    borderRadius: token.borderRadius,
-                    background: token.colorPrimaryBg,
-                    color: token.colorPrimary,
-                    fontSize: token.fontSizeLG,
+                    borderRadius: token('--radius-inner'),
+                    background: token('--color-primary-bg'),
+                    color: token('--color-accent'),
+                    fontSize: token('--font-size-lg'),
                     flexShrink: 0,
                   }}
                 >
@@ -1179,7 +1185,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           <Form layout="vertical" requiredMark={false} component={false}>
             <BAIFormItem
               label={t('credential.Domain')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense fallback={<BAISkeleton />}>
                 <BAIDomainSelect
@@ -1198,7 +1204,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
             <BAIFormItem
               label={t('session.launcher.Project')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense
                 key={globalDefaults.domainName}
@@ -1229,7 +1235,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
             <BAIFormItem
               label={t('credential.UserResourcePolicy')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <Suspense fallback={<BAISkeleton />}>
                 <UserResourcePolicySelect
@@ -1250,7 +1256,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
 
             <BAIFormItem
               label={t('general.Password')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               {/* PILOT-DECISION: antd `Input.Password autoComplete="new-password"`
                   (the Chrome-autofill-suppression workaround) is dropped —
@@ -1276,7 +1282,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             <BAIFormItem
               label={t('credential.DescRequirePasswordChange')}
               tooltip={t('credential.TooltipForRequirePasswordChange')}
-              style={{ marginBottom: token.marginSM }}
+              style={{ marginBottom: token('--spacing-3') }}
             >
               <AstryxFormCheckbox
                 label={t('general.Enable')}
@@ -1320,7 +1326,7 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
           flex: 1,
           minWidth: 0,
           overflowY: 'auto',
-          paddingLeft: token.paddingMD,
+          paddingLeft: token('--spacing-5'),
         }}
       >
         <BAIFlex align="center" gap="xs">
@@ -1335,28 +1341,28 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
             {/* Stats bar */}
             <BAIFlex align="center" justify="between" gap="md" wrap="wrap">
               <BAIRowWrapWithDividers
-                rowGap={token.marginLG}
-                columnGap={token.marginLG}
-                dividerColor={token.colorBorder}
-                dividerInset={token.marginXS}
-                dividerWidth={token.lineWidth}
+                rowGap={token('--spacing-6')}
+                columnGap={token('--spacing-6')}
+                dividerColor={token('--color-border-emphasized')}
+                dividerInset={parseFloat(token('--spacing-2'))}
+                dividerWidth={parseFloat(token('--border-width'))}
               >
                 <BAIPanelItem
                   title={t('credential.RowsParsed')}
                   value={stats.total}
-                  color={token.colorText}
+                  color={token('--color-text-primary')}
                   style={{ minWidth: 60 }}
                 />
                 <BAIPanelItem
                   title={t('credential.ReadyToCreate')}
                   value={stats.valid}
-                  color={token.colorSuccess}
+                  color={token('--color-success')}
                   style={{ minWidth: 60 }}
                 />
                 <BAIPanelItem
                   title={t('credential.WithErrors')}
                   value={stats.withErrors}
-                  color={token.colorError}
+                  color={token('--color-error')}
                   style={{ minWidth: 60 }}
                 />
               </BAIRowWrapWithDividers>
@@ -1380,15 +1386,21 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                 align="stretch"
                 gap="xs"
                 style={{
-                  border: `1px solid ${token.colorErrorBorder}`,
-                  borderRadius: token.borderRadius,
-                  background: token.colorErrorBg,
-                  padding: `${token.paddingSM}px ${token.paddingMD}px`,
+                  border: `1px solid ${token('--color-error-border')}`,
+                  borderRadius: token('--radius-inner'),
+                  background: token('--color-error-bg'),
+                  padding: `${token('--spacing-3')} ${token('--spacing-5')}`,
                 }}
               >
                 <BAIFlex gap="xs" align="center">
-                  <CircleX style={{ color: token.colorError }} size="1em" />
-                  <Text weight="semibold" style={{ color: token.colorError }}>
+                  <CircleX
+                    style={{ color: token('--color-error') }}
+                    size="1em"
+                  />
+                  <Text
+                    weight="semibold"
+                    style={{ color: token('--color-error') }}
+                  >
                     {t('credential.NOfMRowsError', {
                       errorCount: stats.withErrors,
                       total: stats.total,
@@ -1400,9 +1412,9 @@ const BulkCreateUserFromCSVModal: React.FC<BulkCreateUserFromCSVModalProps> = ({
                     {t('credential.IssuesFound')}
                   </Text>
                   {errorCategories.map((cat) => (
-                    <Badge
+                    <Token
                       key={cat.key}
-                      variant={badgeVariantForTagColor('error')}
+                      color={tokenColorForTagColor('error')}
                       label={`${cat.label} · ${cat.count}`}
                     />
                   ))}

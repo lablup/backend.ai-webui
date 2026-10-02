@@ -7,15 +7,16 @@ import {
   ProjectFairShareTableFragment$data,
   ProjectFairShareTableFragment$key,
 } from '../../__generated__/ProjectFairShareTableFragment.graphql';
-import { theme } from '../../theme-shim';
 import ProjectResourceGroupWarningIcon from './ProjectResourceGroupWarningIcon';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
+  BAIBadge,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -34,6 +35,7 @@ export type ProjectFairShare = NonNullable<
 
 const availableProjectFairShareSorterKeys = [
   'projectName',
+  'projectIsActive',
   'fairShareFactor',
   'createdAt',
 ] as const;
@@ -42,6 +44,7 @@ export const projectFairShareOrderFieldMap: Record<
   ProjectFairShareOrderField
 > = {
   projectName: 'PROJECT_NAME',
+  projectIsActive: 'PROJECT_IS_ACTIVE',
   fairShareFactor: 'FAIR_SHARE_FACTOR',
   createdAt: 'CREATED_AT',
 };
@@ -75,7 +78,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -93,6 +96,9 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
         project {
           basicInfo {
             name
+          }
+          lifecycle {
+            isActive
           }
         }
         id
@@ -128,6 +134,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
       key: 'projectName',
       fixed: 'left',
       dataIndex: 'projectName',
+      sortKey: 'projectName',
       sorter: isEnableSorter('projectName'),
       render: (_name, record) => (
         <BAINameActionCell
@@ -168,7 +175,7 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
               ? '-'
               : toFixedFloorWithoutTrailingZeros(weight, 1)}
           </Text>
-          <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+          <Text color="secondary" style={{ fontSize: token('--font-size-sm') }}>
             {record.spec.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
           </Text>
         </BAIFlex>
@@ -228,6 +235,22 @@ const ProjectFairShareTable: React.FC<ProjectFairShareTableProps> = ({
           </BAIFlex>
         );
       },
+    },
+    {
+      title: t('general.Status'),
+      key: 'projectIsActive',
+      dataIndex: ['project', 'lifecycle', 'isActive'],
+      sortKey: 'projectIsActive',
+      sorter: isEnableSorter('projectIsActive'),
+      render: (isActive: boolean | null | undefined) =>
+        _.isNil(isActive) ? (
+          '-'
+        ) : (
+          <BAIBadge
+            color={isActive ? 'success' : 'default'}
+            text={isActive ? t('general.Active') : t('general.Inactive')}
+          />
+        ),
     },
     {
       title: t('general.ModifiedAt'),

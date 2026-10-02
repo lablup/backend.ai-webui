@@ -56,7 +56,7 @@ navTitle: 연산 세션
 
 세션 할당을 위한 사용자 이메일을 입력하고 `검색` 버튼을 클릭하면, 해당 사용자의 access key가 자동으로 등록됩니다. 추가적으로 프로젝트와 자원 그룹을 선택해 할당할 수 있습니다.
 
-![](../images/admin_launch_session_owner_project.png)
+![=740px](../images/admin_launch_session_owner_project.png)
 
 <a id="environments-and-resource-allocation"></a>
 
@@ -65,7 +65,7 @@ navTitle: 연산 세션
 
 다음 페이지로 진행하려면 아래쪽의 `다음` 버튼을 클릭하거나, 우측의 `실행 환경 & 자원 할당` 버튼을 클릭하십시오. 추가 설정 없이 세션을 생성하려면 `검토로 건너뛰기` 버튼을 누르십시오. 이 경우, 다른 페이지의 설정은 모두 기본값을 사용하게 됩니다.
 
-![](../images/launch_session_environments_and_resource.png)
+![=708px](../images/launch_session_environments_and_resource.png)
 
 ### 실행 환경
 
@@ -77,7 +77,7 @@ navTitle: 연산 세션
 - 환경 이름 (선택사항): 연산 세션에 사용할 이미지의 이름을 지정할 수 있습니다. 환경 설정에 따라 이 설정이 사용 불가능할 수도 있습니다.
 - 환경 변수 설정: 사용자에게 보다 편리한 작업 환경을 제공하기 위해, Backend.AI는 세션 생성 시 환경 변수 설정을 지원합니다. 이 기능을 통해 사용자는 환경 변수 설정 대화 상자에서 변수 이름과 값을 입력하여 `PATH` 등의 환경 변수를 추가할 수 있습니다.
 
-  ![](../images/launch_session_environments.png)
+  ![=700px](../images/launch_session_environments.png)
 
 ### 자원 할당
 
@@ -85,7 +85,7 @@ navTitle: 연산 세션
 - 자원 그룹: 연산 세션을 생성할 자원 그룹을 지정합니다. 자원 그룹은 각 사용자가 접근할 수 있는 호스트 서버를 묶은 단위이며, 주로 같은 종류의 GPU 자원을 보유하고 있는 서버들을 하나의 자원 그룹으로 설정합니다. 관리자는 서버를 종류별로 구분하여 자원 그룹으로 묶고, 사용자가 사용할 수 있는 자원 그룹의 종류를 지정할 수 있습니다. 사용자는 관리자가 허가한 자원 그룹 서버에만 연산 세션을 생성할 수 있습니다. 자원 그룹이 여러 개인 경우 원하는 그룹을 선택할 수 있지만, 하나만 있는 경우에는 변경할 수 없습니다.
 - 자원 프리셋: 이 템플릿은 연산 세션에 할당할 CPU, 메모리, GPU 등의 자원 세트를 미리 정의해 둔 것입니다. 관리자는 미리 자주 사용하는 자원 설정을 정의할 수 있습니다. 숫자 입력을 조정하거나 슬라이더를 움직이면 원하는 자원량을 할당할 수 있습니다.
 
-  ![](../images/launch_session_resource.png)
+  ![=700px](../images/launch_session_resource.png)
 
   각 항목의 의미는 다음과 같습니다. `도움 (?)` 버튼을 클릭하면 자세한 정보를 확인할 수 있습니다.
 
@@ -93,7 +93,7 @@ navTitle: 연산 세션
   * 메모리: 컴퓨터 메모리는 임시 저장 영역입니다. 중앙 처리 장치 (CPU)에 필요한 데이터와 명령들을 보관하는 역할을 합니다. 머신 러닝 워크로드를 처리할 때 GPU를 연산 장치로 사용하는 경우, GPU 메모리의 두 배 이상의 메모리를 할당해야 합니다. 그렇지 않으면 GPU의 유휴 시간이 증가하여 성능이 저하됩니다.
   * 공유 메모리: 연산 세션에 할당할 공유 메모리의 용량 (GB). RAM에 설정된 메모리 중 일부를 떼어 공유 메모리로 사용합니다. 따라서, RAM에 지정된 양보다 클 수 없습니다.
   * AI 가속기: AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 며칠로 줄입니다.
-  ![](../images/launch_session_resource_2.png)
+  ![=700px](../images/launch_session_resource_2.png)
 
 :::note
 일부 AI 가속기는 **통합 메모리**를 사용합니다. 전용 메모리를 별도로 갖지 않고
@@ -121,7 +121,7 @@ navTitle: 연산 세션
     자세한 내용은 [Backend.AI 클러스터 연산 세션 개요](#backendai-cluster-compute-session)를
     참고하세요.
 
-    ![](../images/cluster_mode.png)
+    ![=652px](../images/cluster_mode.png)
 
 :::note
 에이전트 선택 기능은 서버 환경에 따라 표시되지 않을 수 있습니다.
@@ -131,7 +131,7 @@ navTitle: 연산 세션
 
   Backend.AI는 `nthreads-var` 내부 제어 변수에 대한 설정 UI를 제공합니다. Backend.AI는 기본적으로 이 값을 세션의 CPU 코어 수와 동일하게 설정하며, 이는 일반적인 고성능 컴퓨팅 워크로드를 가속하는 효과가 있습니다. 그러나 일부 멀티 스레드 워크로드에서는 OpenMP를 사용하는 여러 프로세스가 동시에 실행되어 비정상적으로 많은 스레드가 생성되고 성능이 크게 저하될 수 있습니다. 이 문제를 해결하려면 스레드 수를 1 또는 2로 설정하면 됩니다.
 
-![](../images/session_hpc_optimization.png)
+![=700px](../images/session_hpc_optimization.png)
 
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
@@ -143,15 +143,24 @@ navTitle: 연산 세션
 
 연산 세션이 삭제되면 내부 데이터도 기본적으로 함께 삭제됩니다. 그러나 마운트된 폴더에 저장된 데이터는 보존됩니다. 마운트된 폴더의 데이터는 다른 연산 세션을 생성할 때 다시 마운트하여 재사용할 수도 있습니다.
 
-![](../images/launch_session_data.png)
+![=700px](../images/launch_session_data.png)
 
-연산 세션에 마운트할 스토리지 폴더를 지정할 수 있습니다. 폴더 이름을 클릭하면 폴더 탐색기를 사용할 수 있습니다. 자세한 내용은 [폴더 탐색](#explore-folder) 섹션을 참고하세요.
+폴더 선택기에서 연산 세션에 마운트할 스토리지 폴더를 지정합니다.
+
+선택한 폴더는 두 개의 경로 입력란을 가진 행으로 표시됩니다.
+
+- **폴더 안의 경로 (source)**: 마운트할 스토리지 폴더 내부의 하위 경로입니다. 입력란을 클릭하면 폴더를 탐색하여 디렉터리를 선택할 수 있으며, 비워 두면 폴더 루트가 마운트됩니다.
+- **컨테이너 경로 (destination)**: 폴더가 마운트되는 컨테이너 내부의 경로입니다. 비워 두면 `/home/work/<폴더 이름>`에 마운트되고, 절대 경로를 입력하면 해당 경로에, 상대 경로를 입력하면 `/home/work/` 아래에 마운트됩니다. 다른 마운트 폴더나 자동 마운트 폴더와 경로가 겹치면 오류로 표시되며, 겹침을 해결하기 전에는 세션을 시작할 수 없습니다.
+
+행 끝의 제거(`X`) 버튼을 클릭하면 해당 폴더를 마운트 목록에서 제외할 수 있습니다. 폴더 이름을 클릭하면 폴더 탐색기를 사용할 수 있습니다. 자세한 내용은 [폴더 탐색](#explore-folder) 섹션을 참고하세요.
 
 ![](../images/folder_explorer.png)
 
-검색 상자 옆의 `+` 버튼을 클릭하여 새 폴더를 생성할 수 있습니다. 새 폴더를 생성하면 자동으로 마운트할 폴더로 선택됩니다. 자세한 내용은 [스토리지 폴더 생성](#create-storage-folder) 섹션을 참고하세요.
+자동으로 마운트되는 폴더는 행 아래에 `자동 마운트 폴더`로 표시되며, 별도로 선택할 필요가 없습니다.
 
-![](../images/folder_create_modal.png)
+:::note
+공유가 해제되는 등의 이유로 선택한 폴더를 더 이상 마운트할 수 없게 되면 해당 폴더는 선택에서 제외되고 알림이 표시됩니다.
+:::
 
 <a id="network"></a>
 
@@ -162,7 +171,7 @@ navTitle: 연산 세션
 - 사전 개방 포트 설정: 연산 세션에서 사전 개방 포트를 설정할 수 있는 인터페이스를 제공합니다. 자세한 내용은 [세션 생성 전 사전 개방 포트 추가 방법](#set-preopen-ports)을 참고하세요.
 
 
-![](../images/launch_session_network.png)
+![=700px](../images/launch_session_network.png)
 
 <a id="confirm-and-launch"></a>
 
@@ -173,7 +182,7 @@ navTitle: 연산 세션
 
 마지막 페이지에서는 이전 페이지에서 설정한 연산 세션 환경, 자원 할당량, 마운트 정보, 설정된 환경 변수, 사전 개방 포트 등의 정보를 확인할 수 있습니다. 설정을 검토한 후 `시작` 버튼을 클릭하여 세션을 실행합니다. 각 카드 우측 상단에 있는 `수정` 버튼을 클릭하면 해당 페이지로 이동하여 설정을 변경할 수 있습니다.
 
-![](../images/launch_session_confirm.png)
+![=708px](../images/launch_session_confirm.png)
 
 동일한 설정으로 여러 세션을 한 번에 시작하려면 `시작` 버튼 옆의 더보기(`...`)
 아이콘을 클릭하여 드롭다운 메뉴를 열고 **복수 세션 동시 시작**을 선택합니다.
@@ -183,7 +192,7 @@ navTitle: 연산 세션
 
 ![](../images/session_start_multiple_dropdown.png)
 
-![](../images/session_start_dropdown.png)
+![=750px](../images/session_start_dropdown.png)
 
 :::note
 동시 세션 생성은 시스템 정책에 의해 제한됩니다. 요청한 총 세션 수가 남은 동시 세션
@@ -193,22 +202,22 @@ navTitle: 연산 세션
 
 설정에 문제가 있는 경우, 다음과 같이 오류가 표시됩니다. 설정을 수정하려면 `수정` 버튼을 클릭하십시오.
 
-![](../images/launch_session_error_card.png)
+![=700px](../images/launch_session_error_card.png)
 
 폴더 마운트 없이 시작 버튼을 클릭하면, 아무 폴더를 마운트하지 않았다는 경고 대화 상자가 나타납니다. 폴더를 마운트할 필요가 없는 경우, 경고 대화 상자의 `시작` 버튼을 클릭하여 세션을 생성합니다.
 
-![](../images/no_folder_notification_dialog.png)
+![=400px](../images/no_folder_notification_dialog.png)
 
 새로운 연산 세션이 **실행 중** 탭에 추가되면, 화면 우측 하단에 알림이 나타납니다. 알림의 좌측 하단 영역에는 세션 상태가 표시되고, 우측 하단 영역에는 앱 대화 상자 열기, 터미널 실행, 컨테이너 로그 보기, 세션 종료 버튼이 포함되어 있습니다. 헤더의 **알림** 을 클릭하여 이 세션 생성 알림을 다시 볼 수도 있습니다.
 
 ![](../images/session_created.png)
 
 
-![](../images/session_notification.png)
+![=384px](../images/session_notification.png)
 
 가장 왼쪽에 있는 앱 대화 상자 버튼을 클릭하면, 사용 가능한 앱 서비스를 확인할 수 있습니다.
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 
 ### 최근 기록
@@ -294,13 +303,35 @@ navTitle: 연산 세션
 
 '커널' 섹션의 '호스트명' 옆에 있는 `로그` 버튼을 클릭하면 해당 커널의 로그를 직접 확인할 수 있습니다.
 
-![](../images/session_detail.png)
+![=799px](../images/session_detail.png)
 
 Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대해 추가 정보를 제공합니다. 사용 가능한 경우 `정보` 버튼을 클릭하여 세부 사항을 확인할 수 있습니다.
 
 세션 상세 정보 패널의 세션 상태 태그 옆에 시계 아이콘 버튼이 표시됩니다. 이 아이콘을 클릭하면 세션 스케줄링 기록 모달이 열리며, 해당 세션에 대해 시스템이 내린 모든 스케줄링 결정의 상세 로그를 확인할 수 있습니다. 자세한 내용은 [세션 스케줄링 기록](#session-scheduling-history) 섹션을 참고하세요.
 
 ![](../images/session_scheduling_history_button.png)
+
+<a id="preemption-statuses"></a>
+
+### 선점 관련 상태
+
+세션이 `RESERVED`, `PREEMPTED`, `RESCHEDULING` 상태로도 표시될 수 있습니다. 스케줄러가 우선순위가 높은 작업을 위해 자원을 확보해야 할 때 사용하는 상태입니다.
+
+- `RESERVED`: 자원 예약을 보유한 채, 필요한 자원이 확보되기를 기다리는 세션입니다.
+- `PREEMPTED`: 우선순위가 높은 작업이 자원을 사용할 수 있도록 선점 대상으로 선택된 세션입니다.
+- `RESCHEDULING`: 선점되어 대기열로 돌아간 세션으로, 자동으로 다시 스케줄됩니다.
+
+세 가지 상태의 세션은 모두 여전히 자원을 점유하고 있으므로 **종료됨** 이 아니라 **실행 중** 목록에 표시됩니다.
+
+스케줄러가 세션에 선점 사유를 기록한 경우, 세션 상태 태그에 마우스를 올리면 내부 값 대신 다음과 같은 설명이 표시됩니다.
+
+| 사유 | 설명 |
+|------|------|
+| `PREEMPTED_BY_SCHEDULER` | 우선순위가 높은 작업에 자원을 양보하기 위해 스케줄러가 종료한 세션입니다. |
+| `preempted-by-reservation` | 우선순위가 높은 작업에 자원을 양보하기 위해 선점 대상으로 선택된 세션입니다. |
+| `preemption-reservation` | 자원 예약을 보유한 채 자원이 확보되기를 기다리는 세션입니다. |
+| `RESCHEDULED` | 선점되어 대기열로 돌아간 세션으로, 자동으로 다시 스케줄됩니다. |
+
 
 <a id="session-scheduling-history"></a>
 
@@ -380,7 +411,8 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 **감사 로그** 탭은 세션 상세 정보 패널 하단에 **커널** 탭과 나란히 표시됩니다. 상태 변경, 자원 수정, 관리 작업 등 세션에 대해 수행된 모든 작업의 시간순 기록을 제공하며, 각 작업을 수행한 사람과 수행 시각을 함께 표시합니다.
 
-![](../images/session_audit_log.png)
+![=799px](../images/session_audit_log.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 :::note
 감사 로그는 백엔드에 의해 적용되며, 슈퍼 관리자에게만 표시될 수 있습니다. 일반 사용자는 탭에 접근할 수 있더라도 결과가 비어 있을 수 있습니다.
@@ -391,8 +423,9 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 감사 로그 테이블에는 다음 컬럼이 포함됩니다:
 
 - **수행자**: 작업을 수행한 사용자의 이메일 주소와 계정 ID
+- **클라이언트 IP**: 작업을 요청한 IP 주소. 서버가 보고한 그대로 표시되며, 관리자의 클라이언트 IP 마스킹 정책에 따라 일부가 가려지거나 기록되지 않은 경우 `-`로 표시됨
 - **작업**: 수행된 작업의 유형 (예: 세션 생성, 종료 또는 자원 변경)
-- **상태**: 작업의 결과 (`SUCCESS`, `ERROR`, `RUNNING` 또는 `UNKNOWN`)
+- **상태**: 작업의 결과 (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED` 또는 `UNKNOWN`). `DENIED`는 오류로 실패한 것이 아니라 정책에 의해 의도적으로 거부되었음을 의미합니다
 - **시각**: 작업이 발생한 시각
 
 #### 감사 로그 필터
@@ -412,7 +445,7 @@ Backend.AI는 `PENDING`, `TERMINATED` 또는 `CANCELLED` 상태의 세션에 대
 
 이미 실행 중인 연산 세션을 어떻게 사용하고 관리하는지 살펴봅시다. 세션 상세 정보 패널 우측 상단의 첫 번째 아이콘을 클릭하여 앱 런처를 열면 해당 세션에서 사용할 수 있는 앱 서비스가 표시됩니다.
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 
 :::note
@@ -436,7 +469,7 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 우측 상단의 NEW 버튼을 클릭한 후 Backend.AI 용 Notebook 을 선택하면 새로운 코드를 입력할 수 있는 ipynb 창이 뜹니다.
 
-![](../images/backendai_notebook_menu.png)
+![=404px](../images/backendai_notebook_menu.png)
 
 이 창에서 세션 환경에 맞는 코드를 입력하고 실행해볼 수 있습니다. 코드는 Backend.AI 서버를 구성하는 노드 중 연산 세션이 실제로 생성된 노드에서 실행이 되며, 로컬 머신에는 별도 환경을 구성할 필요가 없습니다.
 
@@ -487,7 +520,7 @@ Notebook 의 파일 탐색기에서 `id_container file` 에는 개인 SSH 키가
 
 특정 세션을 종료하려면 빨간색 전원 버튼을 클릭한 후 대화 상자에서 `종료` 버튼을 클릭하십시오. 연산 세션이 종료되면 연산 세션 내부의 폴더에 있는 데이터가 함께 삭제되므로, 데이터를 마운트된 폴더로 옮기거나 처음부터 마운트된 폴더에 업로드하는 것을 권장합니다.
 
-![](../images/session_destroy_dialog.png)
+![=520px](../images/session_destroy_dialog.png)
 
 <a id="idleness-checks"></a>
 
@@ -499,7 +532,7 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 세션을 종료하기까지 남은 시간과 함께 표시됩니다. 이 항목은 세션이 실행 중이고 유휴 상태 검사
 중 하나 이상에 남은 시간이 표시될 때 나타나며 남은 시간이 며칠이든 몇 분이든 관계없습니다.
 
-![](../images/idle_checks_column.png)
+![=718px](../images/idle_checks_column.png)
 
 각 항목의 의미는 다음과 같습니다. **자원 수거 상태** 레이블 옆의 물음표(`?`) 아이콘을 클릭하면
 각 항목에 대한 자세한 설명이 담긴 대화 상자가 열립니다.
@@ -559,7 +592,7 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 
 ![](../images/session_reclamation_status_column.png)
 
-![](../images/session_reclamation_status_popover.png)
+![=436px](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
@@ -569,7 +602,7 @@ Backend.AI는 최대 세션 수명 시간, 네트워크 트래픽 기반 유휴 
 
 더 많은 환경 변수를 추가하고 싶을 경우, 입력 필드 첫번째 행의 오른쪽에 있는 `+ 환경 변수 추가` 버튼을 클릭하면 됩니다. 또한 환경 변수를 지우고 싶을 경우, 지우고자 하는 행의 `-` 버튼을 클릭하면 됩니다.
 
-![](../images/launch_session_env.png)
+![=700px](../images/launch_session_env.png)
 
 환경 변수 명과 값을 같은 행의 입력 필드에 입력할 수 있습니다.
 
@@ -581,7 +614,7 @@ Backend.AI는 컨테이너 시작 전 사전 개방 포트를 설정하는 것�
 
 사전 개방 포트를 추가하려면 쉼표(,)나 공백으로 구분하여 여러 값을 입력할 수 있습니다.
 
-![](../images/preopen-ports-config.png)
+![=700px](../images/preopen-ports-config.png)
 
 해당 다이얼로그에서 사전 개방 포트를 추가하거나, 작성한 사전 개방 포트를 갱신, 삭제할 수 있습니다. 더욱 자세한 설명이 필요한 경우, 다이얼로그 헤더 부분에 있는 `도움말 (?)` 버튼을 클릭해주세요.
 
@@ -619,11 +652,11 @@ Backend.AI는 "세션을 이미지로 변환" 기능을 지원합니다. `RUNNIN
 
 진행 중인 세션을 이미지로 변환하면, 새 세션을 생성할 때 세션 런처의 실행 환경에서 이 이미지를 선택할 수 있습니다. 이 이미지는 다른 사용자에게 노출되지 않으며, 현재 세션 상태를 그대로 계속 사용하려는 경우에 유용합니다. 변환된 이미지에는 `Customized<세션 이름>` 태그가 지정됩니다.
 
-![](../images/select_customized_image.png)
+![=674px](../images/select_customized_image.png)
 
 향후 세션 생성을 위해 환경 이름을 수동으로 입력하려면, 복사 아이콘을 누릅니다.
 
-![](../images/copy_customized_image.png)
+![=512px](../images/copy_customized_image.png)
 
 
 ## 웹 터미널 고급 사용법

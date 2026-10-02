@@ -15,7 +15,10 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { v2PermissionToKey } from '../helper/storageHostPermission';
+import {
+  MOUNT_IN_SESSION_PERMISSION,
+  v2PermissionToKey,
+} from '../helper/storageHostPermission';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
@@ -24,10 +27,10 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Card } from '@astryxdesign/core/Card';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Icon } from '@astryxdesign/core/Icon';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Card } from '@lablup/ui-common/Card';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Icon } from '@lablup/ui-common/Icon';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
@@ -51,7 +54,7 @@ const DEFAULT_VFOLDER_HOST_PERMISSIONS = [
   'create-vfolder',
   'modify-vfolder',
   'delete-vfolder',
-  'mount-in-session',
+  MOUNT_IN_SESSION_PERMISSION,
   'upload-file',
   'download-file',
   'invite-others',
@@ -327,7 +330,6 @@ const KeypairResourcePolicyV2SettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onCancel()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateKeypairResourcePolicy ||
         isInFlightCommitModifyKeypairResourcePolicy

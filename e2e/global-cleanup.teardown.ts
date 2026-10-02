@@ -108,6 +108,18 @@ async function safeSweep(
   }
 }
 
+/**
+ * Wall-clock budgets handed to the sweeps as `deadline`s, so a large backlog
+ * ends in a logged "stopping, N left" instead of the test timeout aborting
+ * the cleanup mid-flight (and reddening the run). They sum well under the
+ * 600s test budget because a sweep only checks its deadline between
+ * iterations, and one iteration (navigate + filter + bounded retries +
+ * confirm) can run ~60-90s in the worst case before the check fires.
+ */
+const USER_VFOLDER_SWEEP_BUDGET_MS = 420_000;
+const ADMIN_VFOLDER_SWEEP_BUDGET_MS = 300_000;
+const ADMIN_SERVICE_SWEEP_BUDGET_MS = 90_000;
+
 test.describe('Global e2e cleanup', () => {
   // The sweep may have to trash + delete-forever several leftover folders, each
   // a multi-step navigate/filter/confirm flow, and a stuck folder now fails its
@@ -117,14 +129,18 @@ test.describe('Global e2e cleanup', () => {
   // trip) the 300s budget can still be exhausted mid-sweep, leaving the rest of
   // the backlog behind. Give the cleanup more headroom than the default 180s
   // (and the previous 300s) so it can drain a larger backlog instead of timing
-  // out mid-sweep.
+  // out mid-sweep; the per-sweep deadlines above keep it from ever reaching
+  // this limit.
   test.describe.configure({ timeout: 600_000 });
 
   test('sweep leftover e2e vfolders (user)', async ({ page, request }) => {
     await loginAsUser(page, request);
     await safeSweep(
       'user /data',
-      (p) => sweepVFolders(p, E2E_VFOLDER_PATTERN, 'data'),
+      (p) =>
+        sweepVFolders(p, E2E_VFOLDER_PATTERN, 'data', undefined, {
+          deadline: Date.now() + USER_VFOLDER_SWEEP_BUDGET_MS,
+        }),
       page,
     );
   });
@@ -139,10 +155,20 @@ test.describe('Global e2e cleanup', () => {
     // any folder another sweep missed — using the same table component as /data.
     await safeSweep(
       'admin /admin-data',
-      (p) => sweepVFolders(p, E2E_VFOLDER_PATTERN, 'admin-data'),
+      (p) =>
+        sweepVFolders(p, E2E_VFOLDER_PATTERN, 'admin-data', undefined, {
+          deadline: Date.now() + ADMIN_VFOLDER_SWEEP_BUDGET_MS,
+        }),
       page,
     );
-    await safeSweep('admin services', (p) => sweepServices(p), page);
+    await safeSweep(
+      'admin services',
+      (p) =>
+        sweepServices(p, undefined, undefined, {
+          deadline: Date.now() + ADMIN_SERVICE_SWEEP_BUDGET_MS,
+        }),
+      page,
+    );
     // Purge any e2e-* fixture user a per-spec afterAll failed to reap. API-based,
     // so it does not use `page`; guard it directly so a failure never reds the run.
     try {

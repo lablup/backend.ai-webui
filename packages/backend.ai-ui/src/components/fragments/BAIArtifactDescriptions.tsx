@@ -18,9 +18,9 @@ import { BAIArtifactDescriptionsFragment$key } from '../../__generated__/BAIArti
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAILink from '../BAILink';
 import BAIMetadataList from '../BAIMetadataList';
-import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import BAIArtifactTypeToken from './BAIArtifactTypeToken';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { graphql, useFragment } from 'react-relay';
@@ -44,7 +44,7 @@ const BAIArtifactDescriptions = ({
           name
           url
         }
-        ...BAIArtifactTypeTagFragment
+        ...BAIArtifactTypeTokenFragment
       }
     `,
     artifactFrgmt,
@@ -56,7 +56,7 @@ const BAIArtifactDescriptions = ({
         {artifact.name}
       </MetadataListItem>
       <MetadataListItem label={t('comp:BAIArtifactDescriptions.Type')}>
-        <BAIArtifactTypeTag artifactTypeFrgmt={artifact} />
+        <BAIArtifactTypeToken artifactTypeFrgmt={artifact} />
       </MetadataListItem>
       <MetadataListItem label={t('comp:BAIArtifactDescriptions.Source')}>
         <BAILink to={artifact.source.url ?? ''} target="_blank">

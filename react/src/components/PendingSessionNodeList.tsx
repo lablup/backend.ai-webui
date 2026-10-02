@@ -12,11 +12,11 @@ import { handleRowSelectionChange } from '../helper';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import EditSessionPriorityModal from './ComputeSessionNodeItems/EditSessionPriorityModal';
 import SessionNodes from './SessionNodes';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAlert,
   BAIButton,
@@ -24,10 +24,10 @@ import {
   BAIResourceGroupSelect,
   BAISelectionLabel,
   BAIUnmountAfterClose,
+  INITIAL_FETCH_KEY,
   filterOutNullAndUndefined,
   useFetchKey,
   useResourceGroupNames,
-  INITIAL_FETCH_KEY,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { SettingsIcon } from 'lucide-react';
@@ -44,7 +44,7 @@ type PendingSessionNode = NonNullableNodeOnEdges<
 const PendingSessionNodeList: React.FC = () => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   // Editing priority is only safe on managers that sequence all pending
   // workloads in a single scheduling tick (BA-6788, backend.ai#12668,
@@ -178,7 +178,9 @@ const PendingSessionNodeList: React.FC = () => {
                 alignment="start"
               >
                 <BAIButton
-                  icon={<SettingsIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <SettingsIcon style={{ color: token('--color-info') }} />
+                  }
                   onClick={() => {
                     setOpenBulkEditPriorityModal(true);
                   }}

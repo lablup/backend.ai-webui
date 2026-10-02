@@ -74,26 +74,29 @@ type ThemeLogoConfig = {
   };
 };
 
-type ThemeSiderConfig = {
-  theme?: 'dark' | 'light' | 'auto';
+type ThemeSeedValue = string | [light: string, dark: string];
+
+type ThemeFamilyConfig = {
+  seeds?: Record<string, ThemeSeedValue | undefined>;
+  headerBg?: ThemeSeedValue;
 };
 
 type ThemeBrandingConfig = {
+  logo?: ThemeLogoConfig;
   companyName?: string;
   brandName?: string;
+  familyLabels?: Record<string, string>;
 };
 
-type AntdThemeConfig = {
-  token?: Record<string, any>;
-  components?: Record<string, any>;
-};
-
+/** The v2 `{theme, branding}` appearance document (FR-3605). */
 export type ThemeConfig = {
   $schema?: string;
-  light?: AntdThemeConfig;
-  dark?: AntdThemeConfig;
-  logo?: ThemeLogoConfig;
-  sider?: ThemeSiderConfig;
+  schemaVersion?: 2;
+  theme?: {
+    fontFamily?: string;
+    siderMode?: 'light' | 'dark';
+    families?: Record<string, ThemeFamilyConfig>;
+  };
   branding?: ThemeBrandingConfig;
 };
 
@@ -151,9 +154,23 @@ export async function login(
     exact: true,
   });
   if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
-    await page.getByText('Advanced').click();
+    // Older login UIs hide the input behind an 'Advanced' toggle.
+    const advanced = page.getByText('Advanced');
+    if (await advanced.isVisible().catch(() => false)) {
+      await advanced.click();
+    }
   }
-  await endpointInput.fill(endpoint);
+  // No endpoint input means the server pins `apiEndpoint` (the config.toml
+  // intercept above did not take — an installed cluster under
+  // `playwright.smoke.config.ts`). Wait briefly rather than probing once:
+  // `isVisible()` does not auto-wait, and a slow render must not submit an
+  // empty endpoint.
+  try {
+    await endpointInput.waitFor({ state: 'visible', timeout: 3000 });
+    await endpointInput.fill(endpoint);
+  } catch {
+    // server-pinned endpoint: nothing to fill
+  }
   // A busy shared test backend can transiently reject a *valid* login (the
   // manager surfaces an internal error, the UI renders it as "Login
   // information mismatch"). Retry the submit a couple of times, with a fixed
@@ -725,10 +742,27 @@ export async function moveToTrashAndVerify(
   await removeSearchButton(page, folderName);
 }
 
+/**
+ * Trash statuses the UI can no longer act on: the backend is purging (or has
+ * purged) the folder, so the row's Restore/Delete buttons stay disabled for
+ * good and the row lingers until the manager garbage-collects it. A folder
+ * lands here without the test's help when its deletion cascades from another
+ * resource (e.g. a model card's "also delete folder" / bulk delete).
+ */
+const TERMINAL_TRASH_STATUS = /^DELETE-(ONGOING|COMPLETE)$/i;
+
 export async function deleteForeverAndVerifyFromTrash(
   page: Page,
   folderName: string,
   dataPath: string = 'data',
+  options: {
+    /**
+     * Return quietly (instead of throwing) when the row is already in a
+     * terminal DELETE-ONGOING / DELETE-COMPLETE status — for cleanup hooks,
+     * a folder the backend already purged is a success, not a failure.
+     */
+    skipIfAlreadyDeleted?: boolean;
+  } = {},
 ) {
   // Use navigateTo to ensure a clean navigation to the data page regardless of current state
   await navigateTo(page, dataPath);
@@ -760,12 +794,45 @@ export async function deleteForeverAndVerifyFromTrash(
   const deleteForeverButton = folderRowToDelete.getByRole('button', {
     name: 'Delete',
   });
-  await retryWithTableRefresh(page, () =>
-    expect(deleteForeverButton).toBeEnabled({ timeout: 2500 }),
-  );
+  // A terminal status never enables the button, so polling for it would
+  // only burn the retry budget (and a 30s click after it): stop as soon as
+  // the status cell says the backend already took the folder.
+  const terminalStatusCell = folderRowToDelete.getByRole('cell', {
+    name: TERMINAL_TRASH_STATUS,
+  });
+  const isAlreadyDeleted = () =>
+    terminalStatusCell.isVisible().catch(() => false);
+  // Resolves true when the row is terminal and the caller opted to treat that
+  // as done; throws when it is terminal otherwise; false when it is not.
+  const settleIfAlreadyDeleted = async (): Promise<boolean> => {
+    if (!(await isAlreadyDeleted())) return false;
+    const status = (await terminalStatusCell.textContent())?.trim();
+    await removeSearchButton(page, folderName);
+    if (!options.skipIfAlreadyDeleted) {
+      throw new Error(
+        `Folder "${folderName}" is already ${status} in Trash; its Delete button will never enable.`,
+      );
+    }
+    console.log(
+      `[deleteForeverAndVerifyFromTrash] "${folderName}" is already ${status}; nothing to delete forever.`,
+    );
+    return true;
+  };
+  await retryWithTableRefresh(page, async () => {
+    if (await isAlreadyDeleted()) return;
+    await expect(deleteForeverButton).toBeEnabled({ timeout: 2500 });
+  });
+  if (await settleIfAlreadyDeleted()) return;
 
-  // Click the delete forever button
-  await deleteForeverButton.click();
+  // The status may still flip to a terminal one between the enabled check and
+  // the click (the purge is asynchronous), so bound the click and re-check: an
+  // unbounded click would wait the full actionTimeout on a disabled button.
+  const clickError = await deleteForeverButton
+    .click({ timeout: 10000 })
+    .then(() => null)
+    .catch((error: unknown) => error);
+  if (await settleIfAlreadyDeleted()) return;
+  if (clickError) throw clickError;
 
   // Wait for confirmation modal to appear before interacting with it.
   // Use fill() directly (it waits for actionability) to avoid flakiness from
@@ -1354,12 +1421,11 @@ export async function modifyConfigToml(
  * @param themeConfig - The theme configuration object to merge
  *
  * @example
- * // Modify light mode primary color
+ * // Rebrand the default family's accent (light, dark)
  * await modifyThemeJson(page, request, {
- *   light: {
- *     token: {
- *       colorPrimary: '#FF0000',
- *       colorLink: '#FF0000',
+ *   theme: {
+ *     families: {
+ *       default: { seeds: { accent: ['#FF0000', '#CC0000'] } },
  *     },
  *   },
  * });
@@ -1367,8 +1433,10 @@ export async function modifyConfigToml(
  * @example
  * // Remove logo href (set to undefined explicitly)
  * await modifyThemeJson(page, request, {
- *   logo: {
- *     href: undefined,
+ *   branding: {
+ *     logo: {
+ *       href: undefined,
+ *     },
  *   },
  * });
  *
@@ -1410,41 +1478,32 @@ export async function modifyThemeJson(
         error,
       );
       theme = {
-        light: {
-          token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
-            colorPrimary: '#FF7A00',
-            colorLink: '#FF7A00',
-            colorText: '#141414',
-            colorInfo: '#028DF2',
-            colorError: '#FF4D4F',
-            colorSuccess: '#00BD9B',
+        schemaVersion: 2,
+        theme: {
+          fontFamily: "'Ubuntu', Roboto, Pretendard, sans-serif",
+          families: {
+            default: {
+              seeds: {
+                accent: ['#FF7A00', '#DC6B03'],
+                link: ['#FF7A00', '#DC6B03'],
+                info: ['#028DF2', '#009BDD'],
+                error: ['#FF4D4F', '#DC4446'],
+                success: ['#00BD9B', '#03A487'],
+                warning: ['#FAAD14', '#FAAD14'],
+              },
+              headerBg: ['#FF9729', '#E88A28'],
+            },
           },
-          components: {},
         },
-        dark: {
-          token: {
-            fontFamily: "'Ubuntu', Roboto, sans-serif",
-            colorPrimary: '#DC6B03',
-            colorLink: '#DC6B03',
-            colorText: '#FFF',
-            colorInfo: '#009BDD',
-            colorError: '#DC4446',
-            colorSuccess: '#03A487',
-            colorFillSecondary: '#262626',
-          },
-          components: {},
-        },
-        logo: {
-          src: '/manifest/backend.ai-webui-white.svg',
-          srcCollapsed: '/manifest/backend.ai-brand-simple-white.svg',
-          srcDark: '/manifest/backend.ai-webui-black.svg',
-          srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
-          alt: 'Backend.AI Logo',
-          href: '/start',
-        },
-        sider: {},
         branding: {
+          logo: {
+            src: '/manifest/backend.ai-webui-white.svg',
+            srcCollapsed: '/manifest/backend.ai-brand-simple-white.svg',
+            srcDark: '/manifest/backend.ai-webui-black.svg',
+            srcCollapsedDark: '/manifest/backend.ai-brand-simple-black.svg',
+            alt: 'Backend.AI Logo',
+            href: '/start',
+          },
           companyName: 'Lablup Inc.',
           brandName: 'Backend.AI',
         },

@@ -18,7 +18,7 @@ import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   filterOutEmpty,
   filterOutNullAndUndefined,
@@ -208,7 +208,7 @@ const ProjectResourcePolicyList: React.FC<
     });
     exportCSVWithFormattingRules(
       responseData as ProjectResourcePolicies[],
-      'project_resource_polices',
+      'project_resource_policies',
       {
         max_vfolder_count: (text: ProjectResourcePolicies) =>
           _.toNumber(text) === 0 ? '-' : text,

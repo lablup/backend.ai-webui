@@ -6,9 +6,9 @@ import {
   AutoScalingRuleListNodesFragment$data,
   AutoScalingRuleListNodesFragment$key,
 } from '../__generated__/AutoScalingRuleListNodesFragment.graphql';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIQuestionIconWithTooltip,
   BAIFlex,
@@ -53,14 +53,14 @@ const renderCondition = (
     return (
       <BAIFlex direction="column" gap={'xxs'}>
         <BAIFlex gap={'xs'}>
-          <Badge label={tagLabel} />
+          <Token label={tagLabel} />
           {' < '}
           {minThreshold}
         </BAIFlex>
         <BAIFlex gap={'xs'}>
           {maxThreshold}
           {' < '}
-          <Badge label={tagLabel} />
+          <Token label={tagLabel} />
         </BAIFlex>
       </BAIFlex>
     );
@@ -73,7 +73,7 @@ const renderCondition = (
         <Tooltip content={t('autoScalingRule.MaxThreshold')}>
           <span>{'<'}</span>
         </Tooltip>
-        <Badge label={tagLabel} />
+        <Token label={tagLabel} />
       </BAIFlex>
     );
   }
@@ -81,7 +81,7 @@ const renderCondition = (
   if (minThreshold != null) {
     return (
       <BAIFlex gap={'xs'}>
-        <Badge label={tagLabel} />
+        <Token label={tagLabel} />
         <Tooltip content={t('autoScalingRule.MinThreshold')}>
           <span>{'<'}</span>
         </Tooltip>

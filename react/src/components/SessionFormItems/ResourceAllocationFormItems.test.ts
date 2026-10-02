@@ -9,9 +9,12 @@ import {
 } from '../../hooks/useResourceLimitAndRemaining';
 import { Image } from '../ImageEnvironmentSelectFormItems';
 import {
-  getAllocatablePresetNames,
+  AUTOMATIC_DEFAULT_SHMEM,
+  getAllocatablePresetIds,
+  getAutomaticShmem,
   getUnifiedSlotNameFromTag,
   isUnifiedAcceleratorSlot,
+  pickChangedResourceValues,
 } from './ResourceAllocationFormItems';
 
 describe('isUnifiedAcceleratorSlot', () => {
@@ -78,22 +81,25 @@ describe('getUnifiedSlotNameFromTag', () => {
   });
 });
 
-describe('getAllocatablePresetNames', () => {
+describe('getAllocatablePresetIds', () => {
   const presets: Array<ResourcePreset> = [
     {
-      name: 'cuda_shares_prest_10',
+      id: 'id-cuda_shares_prest_10',
+      name: 'id-cuda_shares_prest_10',
       resource_slots: { cpu: '2', mem: '4GB', 'cuda.shares': '10' },
       shared_memory: '1GB',
       allocatable: true,
     },
     {
-      name: 'cuda_shares_prest_1',
+      id: 'id-cuda_shares_prest_1',
+      name: 'id-cuda_shares_prest_1',
       resource_slots: { cpu: '4', mem: '8GB', 'cuda.shares': '1' },
       shared_memory: '1GB',
       allocatable: false,
     },
     {
-      name: 'cpu1_mem2g',
+      id: 'id-cpu1_mem2g',
+      name: 'id-cpu1_mem2g',
       resource_slots: { cpu: '1', mem: '2GB' },
       shared_memory: '1GB',
       allocatable: true,
@@ -125,25 +131,26 @@ describe('getAllocatablePresetNames', () => {
   };
 
   it('should return presets when currentImage has accelerator limits', () => {
-    const result = getAllocatablePresetNames(
+    const result = getAllocatablePresetIds(
       presets,
       resourceLimits_cpu4_mem8g_cudashares1,
       image_has_cuda_shares_min1_max1,
     );
     //  must compare the preset's resource slots with the resource limits even `check-preset` result has allocatable.
-    expect(result).toEqual(['cuda_shares_prest_1']);
+    expect(result).toEqual(['id-cuda_shares_prest_1']);
   });
 
   it('should return empty array when no presets match', () => {
     const noMatchPresets: Array<ResourcePreset> = [
       {
+        id: 'id-preset4',
         name: 'preset4',
         allocatable: false,
         shared_memory: '1GB',
         resource_slots: { cpu: '10', mem: '16GB', 'not_existed.device': '5' },
       },
     ];
-    const result = getAllocatablePresetNames(
+    const result = getAllocatablePresetIds(
       noMatchPresets,
       resourceLimits_cpu4_mem8g_cudashares1,
       image_has_cuda_shares_min1_max1,
@@ -152,7 +159,7 @@ describe('getAllocatablePresetNames', () => {
   });
 
   it('should handle empty presets array', () => {
-    const result = getAllocatablePresetNames(
+    const result = getAllocatablePresetIds(
       [],
       resourceLimits_cpu4_mem8g_cudashares1,
       image_has_cuda_shares_min1_max1,
@@ -161,7 +168,7 @@ describe('getAllocatablePresetNames', () => {
   });
 
   it('should handle empty resourceLimits', () => {
-    const result = getAllocatablePresetNames(
+    const result = getAllocatablePresetIds(
       presets,
       {
         cpu: {},
@@ -171,21 +178,24 @@ describe('getAllocatablePresetNames', () => {
       image_has_cuda_shares_min1_max1,
     );
     // Only presets that have cuda.shares minimum 1 should be returned.
-    expect(result).toEqual(['cuda_shares_prest_10', 'cuda_shares_prest_1']);
+    expect(result).toEqual([
+      'id-cuda_shares_prest_10',
+      'id-cuda_shares_prest_1',
+    ]);
   });
 
   it('should handle empty image', () => {
-    const result = getAllocatablePresetNames(
+    const result = getAllocatablePresetIds(
       presets,
       resourceLimits_cpu4_mem8g_cudashares1,
       undefined,
     );
     // Only compare with resource limits
-    expect(result).toEqual(['cuda_shares_prest_1', 'cpu1_mem2g']);
+    expect(result).toEqual(['id-cuda_shares_prest_1', 'id-cpu1_mem2g']);
   });
 
   it('should handle empty image and small mem limit', () => {
-    const result = getAllocatablePresetNames(
+    const result = getAllocatablePresetIds(
       presets,
       {
         ...resourceLimits_cpu4_mem8g_cudashares1,
@@ -194,6 +204,53 @@ describe('getAllocatablePresetNames', () => {
       undefined,
     );
     // Only compare with resource limits
-    expect(result).toEqual(['cpu1_mem2g']);
+    expect(result).toEqual(['id-cpu1_mem2g']);
+  });
+});
+
+describe('getAutomaticShmem', () => {
+  it('picks 1g once memory reaches 4g and the image minimum + 1g', () => {
+    expect(getAutomaticShmem('4g', '1g')).toBe('1g');
+    expect(getAutomaticShmem('8g', '2g')).toBe('1g');
+  });
+
+  it('falls back to the default below 4g or below the image minimum + 1g', () => {
+    expect(getAutomaticShmem('2g', '1g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
+    expect(getAutomaticShmem('4g', '4g')).toBe(AUTOMATIC_DEFAULT_SHMEM);
+  });
+});
+
+describe('pickChangedResourceValues', () => {
+  it('returns nothing when every value already matches', () => {
+    expect(
+      pickChangedResourceValues(
+        { cpu: 2, mem: '4g', accelerator: 0, acceleratorType: 'cuda.device' },
+        { cpu: 2, mem: '4g', accelerator: 0, acceleratorType: 'cuda.device' },
+      ),
+    ).toEqual({});
+  });
+
+  it('treats equal memory sizes in different units as unchanged', () => {
+    expect(
+      pickChangedResourceValues(
+        { mem: '1g', shmem: '1024m' },
+        { mem: '1024m', shmem: '1g' },
+      ),
+    ).toEqual({});
+  });
+
+  it('keeps only the entries that differ', () => {
+    expect(
+      pickChangedResourceValues(
+        { cpu: 4, mem: '4g', accelerator: 1 },
+        { cpu: 2, mem: '4g', accelerator: 1 },
+      ),
+    ).toEqual({ cpu: 4 });
+  });
+
+  it('keeps every entry when there is no current value', () => {
+    expect(pickChangedResourceValues({ cpu: 1, mem: '2g' }, undefined)).toEqual(
+      { cpu: 1, mem: '2g' },
+    );
   });
 });

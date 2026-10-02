@@ -5,15 +5,14 @@
 import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { ShellScriptType } from '../pages/UserSettingsPage';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIPopconfirm,
   BAIModal,
@@ -33,6 +32,8 @@ type UserConfigScript = {
   permission: string;
   data: string;
 };
+
+export type ShellScriptType = 'bootstrap' | 'userconfig' | undefined;
 
 interface BootstrapScriptEditModalProps extends BAIModalProps {
   onRequestClose: (success?: boolean) => void;
@@ -269,7 +270,6 @@ const ShellScriptEditModal: React.FC<BootstrapScriptEditModalProps> = ({
           </BAIFlex>
         </BAIFlex>
       }
-      destroyOnHidden
       {...modalProps}
     >
       <BAIFlex direction="column" align="stretch" gap={'sm'}>

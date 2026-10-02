@@ -13,7 +13,7 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';

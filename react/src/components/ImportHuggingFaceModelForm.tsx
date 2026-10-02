@@ -15,8 +15,8 @@ import FolderCreateModalV2 from './FolderCreateModalV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import HuggingFaceModelPreview from './HuggingFaceModelPreview';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   BAIButton,
   BAIFlex,
@@ -205,7 +205,9 @@ const ImportHuggingFaceModelForm: React.FC<ImportHuggingFaceModelFormProps> = ({
           shmem: '0g',
           accelerator: 0,
         },
-        mount_ids: [toLocalId(values.vfolderId)],
+        vfolderMounts: [
+          { vfolderId: toLocalId(values.vfolderId), name: folderName },
+        ],
         // Pass the token as an environment variable instead of interpolating
         // it into the shell command.
         ...(token ? { envvars: [{ variable: 'HF_TOKEN', value: token }] } : {}),

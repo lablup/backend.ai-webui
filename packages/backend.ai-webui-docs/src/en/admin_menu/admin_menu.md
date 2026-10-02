@@ -35,13 +35,13 @@ Click the info icon in the user's **Email** column row for more detailed user
 information. You can also check the domain and project information where the
 user belongs.
 
-![](../images/user_detail_dialog.png)
+![=520px](../images/user_detail_dialog.png)
 
 Click the **Edit** (pencil) icon in the user's **Email** column row to change the settings of a user who
 already exists. User's name, password, activation state, etc. can be changed. User ID (email) cannot be changed.
 Click **Save** to apply your changes.
 
-![](../images/user_update_dialog.png)
+![=520px](../images/user_update_dialog.png)
 
 
 The user create/edit dialog contains the following fields:
@@ -221,7 +221,7 @@ user in turn.
 2. A selection count appears in the toolbar. Click the edit (pencil) button next to it.
 3. The **Bulk Edit Users** dialog opens.
 
-![](../images/bulk_edit_users_modal.png)
+![=520px](../images/bulk_edit_users_modal.png)
 
 An alert at the top of the dialog lists every user the change will be applied to, by email address, so
 you can confirm the selection before committing. The alert also warns that setting a UID or GID may
@@ -248,12 +248,12 @@ account loss, the recommended way to stop a user from logging in is to
 **deactivate** the account rather than delete it. Deactivation keeps the user's
 records intact while blocking sign-in. To deactivate a user, click the deactivate icon in the user's **Email** column row. A confirmation popover appears; click the **Deactivate** button to deactivate the user.
 
-![](../images/user_deactivate_confirmation.png)
+![=588px](../images/user_deactivate_confirmation.png)
 <!-- TODO: Re-capture user_deactivate_confirmation.png in this locale's UI language, reflecting the new flow: the deactivate icon in the user's Email column row and the confirmation popover. -->
 
 To reactivate a user, go to the **Inactive** tab on the Users page and click the reactivate (restore) icon in the user's **Email** column row. A confirmation popover appears; click the **Activate** button to reactivate the user.
 
-![](../images/user_inactivate_confirmation.png)
+![=562px](../images/user_inactivate_confirmation.png)
 <!-- TODO: Re-capture user_inactivate_confirmation.png in this locale's UI language, reflecting the new flow: the reactivate (restore) icon in the Email column row on the Inactive tab and the activate popover. -->
 
 :::note
@@ -298,8 +298,10 @@ options:
   the purged users are deleted as well. When unchecked, ownership of those
   deployments is delegated instead of deleting them.
 
-![](../images/purge_users_modal.png)
-<!-- TODO: Capture screenshot of purge_users_modal.png — Permanently Delete Users confirmation modal with the two option checkboxes and the irreversibility alert -->
+![=520px](../images/purge_users_modal.png)
+
+If some of the selected users cannot be permanently deleted, a failure dialog lists each affected
+user's email together with the error message, while the remaining users are purged normally.
 
 :::danger
 Purging a user is **irreversible**. The user's virtual folders, kernel history,
@@ -332,14 +334,14 @@ Like in Users tab, you can use the inline buttons in the keypair's row to view o
 edit keypair details. Click the info icon button to see specific details of the keypair.
 If necessary, you can copy the secret key by clicking the copy button.
 
-![](../images/keypair_detail_dialog.png)
+![=520px](../images/keypair_detail_dialog.png)
 
 You can change the resource policy and rate limit of the keypair by clicking the **Edit** (pencil) button
 in the keypair's row. The dialog is titled **Edit Keypair Resource Policy**; click **Save** to apply your
 changes. Please keep in mind that if the **Rate Limit** value is small, API operations such as login may
 be blocked.
 
-![](../images/keypair_update_dialog.png)
+![=500px](../images/keypair_update_dialog.png)
 
 You can also deactivate or reactivate the keypair by clicking the `Deactivate` button or `Activate` button in the keypair's row.
 Unlike the User tab, the Inactive tab allows permanent deletion of keypairs.
@@ -347,7 +349,7 @@ However, you cannot permanently delete a keypair if it is currently being used a
 
 ![](../images/keypair_delete_button.png)
 
-![](../images/keypair_delete_confirmation.png)
+![=520px](../images/keypair_delete_confirmation.png)
 <!-- TODO: Re-capture keypair_delete_confirmation.png — shows the old UI. -->
 
 <a id="bulk-activate-deactivate-credentials"></a>
@@ -377,7 +379,7 @@ filter, sort the table, or move to another page.
 If you accidentally deleted a keypair, you can create a new one for the user by clicking the
 **Create Credential** button at the upper right corner.
 
-![](../images/add_keypair_dialog.png)
+![=500px](../images/add_keypair_dialog.png)
 
 The dialog contains the following fields:
 
@@ -417,7 +419,7 @@ selector.
 In the **Target Project** field at the top of the dialog, choose the project that will own the
 folder, then enter the folder name and set **Mount Permission**.
 
-![](../images/group_folder_creation.png)
+![=650px](../images/group_folder_creation.png)
 
 After confirming that the folder has been created, log in with the User B's
 account and check that the project folder just created on the Data & Storage page
@@ -442,7 +444,7 @@ Administrators and superadmins can access the Admin Deployments page at `/admin/
 
 The Admin Deployments page has up to four tabs:
 
-- **Deployments**: Displays the deployment list across all projects, with the same lifecycle and property filters as the user-facing Deployments page.
+- **Deployments**: Displays the deployment list across all projects and provides the same lifecycle and property filters as the user-facing Deployments page. This cross-project view additionally offers a **Project** filter property.
 - **Model Store Management**: See the [Admin Model Store Management](#admin-model-store-management) section below.
 - **Prometheus Preset**: Lets administrators manage reusable Prometheus query presets. See the [Prometheus Query Presets](#prometheus-query-presets) section below.
 - **Deployment Presets**: Lets administrators manage reusable deployment presets that end users can apply when deploying a model. See the [Deployment Presets](#deployment-presets) section below.
@@ -469,6 +471,7 @@ The **Audit Log** tab tracks all action history for the deployment. Each entry i
 - **Description**: Additional details about the operation.
 - **Duration**: The time taken to complete the operation.
 - **Triggered By**: The user who initiated the action.
+- **Client IP**: The IP address the action was requested from, shown exactly as the server reports it. It may be partially masked by the administrator's client IP masking policy, or `-` when it was not recorded.
 
 You can filter entries by **Status**, **Operation**, **Triggered By**, and a **Time** date-range picker.
 
@@ -495,7 +498,7 @@ You can narrow the list using the property filter bar at the top, which supports
 
 - **Name**: Filter by the model card's name (string match).
 - **Domain**: Filter by the owning domain (string match).
-- **Project**: Filter by the owning project's UUID. The value is checked before the filter is applied, so a malformed identifier is rejected with a message instead of returning an empty list.
+- **Project**: Filter by the owning project. Instead of typing a project identifier, you can pick from a searchable dropdown of the Model Store projects.
 - **Storage Host**: Filter by the storage host of the linked folder. Instead of typing a value, pick the host from a dropdown of the hosts registered on this cluster; the equals and not-equals operators are both available.
 
 Edit and delete action icons are shown directly in the **Name** cell of each row.
@@ -526,7 +529,7 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
    * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
    * `Public`: Visible to all users who have access to the owning project.
 
-![](../images/model_card_create_modal.png)
+![=520px](../images/model_card_create_modal.png)
 
 #### Editing a model card
 
@@ -536,7 +539,7 @@ Click the edit icon next to the model card name to modify an existing model card
 
 You can delete an individual model card by clicking the delete icon next to its name, or perform bulk deletion by selecting multiple model cards with the row checkboxes and clicking the red trash-bin button next to the selection count.
 
-![](../images/model_card_delete_with_folder.png)
+![=520px](../images/model_card_delete_with_folder.png)
 
 The deletion confirmation dialog includes an **Also delete the associated model folder** option:
 
@@ -574,7 +577,7 @@ The preset table lists all Prometheus query presets across the cluster. Each row
 - **Options**: The optional **Filter Labels** and **Group Labels** that consumers can apply on top of the preset.
 - **Created At** / **Updated At**: Timestamps maintained automatically by the server.
 
-You can search and narrow the list with the property filter above the table, and click any column header to change the sort order.
+You can search and narrow the list with the property filter above the table, and click any column header to change the sort order. The **Category** property can be selected from the categories defined on this cluster instead of typing a category ID.
 
 <a id="prometheus-preset-column-settings"></a>
 
@@ -588,7 +591,7 @@ The table includes a column-settings control that lets you hide columns you do n
 
 Click **Add Preset** at the top right of the table to open the **Create Preset** modal.
 
-![](../images/admin_prometheus_preset_create_modal.png)
+![=520px](../images/admin_prometheus_preset_create_modal.png)
 
 The modal contains the following fields:
 
@@ -615,7 +618,7 @@ or **Edit Preset** dialog.
 
 Click the **Edit** action in the **Name** cell of a preset row to open the **Edit Preset** modal. The modal is pre-populated with the preset's current values and exposes the same fields as the Create dialog, including the live preview area for the Query Template.
 
-![](../images/admin_prometheus_preset_edit_modal.png)
+![=520px](../images/admin_prometheus_preset_edit_modal.png)
 
 Click **Save** to apply your changes. Consumers of the preset (for example, auto-scaling rules referencing it) automatically pick up the new query template the next time they evaluate the metric.
 
@@ -701,7 +704,7 @@ Additional columns are hidden by default and can be shown using the column-setti
       * **Health Check**: An **Enable Health Check** toggle, which is **off** by default. When the toggle is off, the health check fields are hidden. When you turn it on, the health check fields appear and become configurable: Path, Interval, Max Retries, Max Wait Time, Status Code, and Startup Grace Period.
       * **Metadata**: Author, title, version, task, category, and other descriptive fields.
 
-   ![](../images/deployment_preset_create_modal.png)
+   ![=800px](../images/deployment_preset_create_modal.png)
 
 3. Click **Create Preset** to save. A success notification confirms the preset has been created.
 
@@ -774,7 +777,7 @@ The user account being used in this guide is currently assigned to the default
 resource policy. This can be verified in the Credentials tab on the Users page.
 You can also confirm that all resource policies are set to default in the Resource Policies panel.
 
-![](../images/credentials.png)
+![=520px](../images/credentials.png)
 
 The keypair resource policy table lists the following columns. Two of them describe how the policy is
 applied rather than what it limits:
@@ -847,7 +850,7 @@ About details of each option in resource policy dialog, see the description belo
 In the keypair resource policy list, check that the Resources value of the default
 policy has been updated.
 
-![](../images/keypair_resource_policy_update_check.png)
+![=527px](../images/keypair_resource_policy_update_check.png)
 
 You can create a new resource policy by clicking the **Create** button at the top right of the table.
 Each setting value is the same as described above.
@@ -866,7 +869,7 @@ You can also delete each of resource keypairs by clicking trash can icon
 in the Name column. When you click the icon, a confirmation dialog appears. Type the
 policy name in the confirmation field, then click the `Delete` button to erase.
 
-![](../images/resource_policy_delete_dialog.png)
+![=520px](../images/resource_policy_delete_dialog.png)
 
 :::note
 If there's any users (including inactive users) following a resource policy to be deleted,
@@ -877,7 +880,7 @@ no users remain under the resource policy.
 If you want to hide or show specific columns, click the `Setting (Gear)` at the bottom right of the
 table. This will bring up a dialog where you can select the columns you want to display.
 
-![](../images/keypair_resource_policy_table_setting.png)
+![=420px](../images/keypair_resource_policy_table_setting.png)
 
 <a id="user-resource-policy"></a>
 
@@ -902,7 +905,7 @@ use the pager below the table to move through the results.
 
 To create a new user resource policy, click the **Create** button.
 
-![](../images/create_user_resource_policy.png)
+![=520px](../images/create_user_resource_policy.png)
 
 - Name: The name of the user resource policy.
 - Max Folder Count: The maximum number of folders that the user can create.
@@ -953,7 +956,7 @@ controls to find policies quickly.
 
 To create a new project resource policy, click the **Create** button at the top right of the table.
 
-![](../images/create_project_resource_policy.png)
+![=520px](../images/create_project_resource_policy.png)
 
 - **Name**: The name of the project resource policy.
 - **Max Folder Count**: The maximum number of project folders that an administrator can create.
@@ -991,6 +994,11 @@ which the session will be created once sufficient resources become available.
 
 ![](../images/scheduler_page.png)
 
+Use the **Resource Group** selector above the list to choose which group's pending queue is shown. It
+is searchable and lists every active resource group in the cluster, sorted by name. Your choice is kept in the page URL as a `resourceGroup` query
+parameter, so you can bookmark or share the tab and come back to the same group; if the URL names a
+group that no longer exists or is no longer active, the first active resource group is shown instead.
+
 Similar to the Session page, you can click the session name to open a drawer that
 displays detailed information about the session.
 
@@ -1006,8 +1014,13 @@ The **Priority** column and the priority editing actions are shown only when the
 version 26.4.0 or later.
 :::
 
-On the **Sessions** tab, you can use the property filter to narrow the list, including by **Session ID**
-when needed.
+On the **Sessions** tab, you can use the property filter to narrow the list — by **Session ID** when
+needed, by the session's owner (email or full name), by its project or domain, and by session
+attributes such as result, cluster mode, priority, and creation or termination time.
+
+Exporting the list as a CSV file applies the property filter currently in effect, so you can narrow the
+list first and export only the sessions you need. Filter conditions the export does not support are
+ignored, so the exported file may contain more sessions than the table shows, never fewer.
 
 When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
 [Experimental features](#experimental-features) section), the **Sessions** tab shows a **View mode**
@@ -1078,6 +1091,10 @@ you edit a weight rather than only in the table.
 
 At each step, the following common features are available:
 
+- **Filter**: A property filter above the table narrows the rows. The Resource Group step filters by
+  **Name**, **Description**, **Active status**, and **Public Status**; the Domain and Project steps
+  filter by **Name** and **Active status**. On managers that do not support combined filter
+  conditions, only **Name** is offered and one condition can be applied at a time.
 - **Pagination**: Navigate through results with configurable page size.
 
 ### Resource group
@@ -1096,13 +1113,15 @@ The table includes the following columns:
 - **Decay Unit**: The period (in days) for aggregating usage.
 - **Half Life**: The period (in days) over which the usage reflection rate decreases by half.
 - **Lookback**: The range (in days) of usage history reflected in calculations.
+- **Status**: Whether the resource group is **Active** or **Inactive**.
+- **Created At**: The creation timestamp.
 
 ### Resource group fair share settings
 
 Click the settings (gear) button in the Control column of a resource group to open the
 Fair Share Settings modal.
 
-![](../images/fair_share_resource_group_setting_modal.png)
+![=520px](../images/fair_share_resource_group_setting_modal.png)
 
 :::warning
 Changes are not immediately reflected in Fair Share calculations and may take
@@ -1131,6 +1150,7 @@ The table includes the following columns:
 - **Weight**: The current weight value. Displays "default" if using the default weight.
 - **Fair Share Factor**: The scheduling priority calculated by the scheduler. Higher values indicate higher priority.
 - **Resource Allocation**: Average daily decayed resource usage per resource type (CPU, Memory, GPU / Day).
+- **Status**: Whether the domain is **Active** or **Inactive**.
 - **Modified At**: The last modification timestamp.
 - **Created At**: The creation timestamp.
 
@@ -1146,6 +1166,7 @@ After selecting a domain, the Project step displays a table of projects with the
 column structure as the Domain step. Click a project name to drill into the User step.
 
 ![](../images/fair_share_project_page.png)
+<!-- TODO(screenshot): refresh /scheduler (Fair Share Setting, Project step) — capture must show the Status column. Not recaptured on 2026-09-15: the capture backend currently lists no project fair share rows for the default domain, and replacing the populated image with an empty table would be a regression. -->
 
 The same bulk operations (Usage Graph and Bulk Edit) are available when rows are selected.
 
@@ -1174,7 +1195,7 @@ The same bulk operations (Usage Graph and Bulk Edit) are available when rows are
 To edit the fair share weight for a domain, project, or user, click the settings (gear) button
 in the Control column of the desired row. This opens the weight setting modal.
 
-![](../images/fair_share_weight_setting_modal.png)
+![=520px](../images/fair_share_weight_setting_modal.png)
 
 :::warning
 Changes are not immediately reflected in Fair Share calculations and may take
@@ -1189,7 +1210,7 @@ To edit weights for multiple items at once, select the desired rows using the ch
 table, then click the Bulk Edit (gear icon) button. In bulk-edit mode, the modal displays a
 tag list of all selected entities and a single weight input that will be applied to all of them.
 
-![](../images/fair_share_weight_bulk_edit_modal.png)
+![=520px](../images/fair_share_weight_bulk_edit_modal.png)
 
 :::note
 If the selected resource group does not have its scheduler type set to `FAIR_SHARE`,
@@ -1203,6 +1224,7 @@ the checkboxes in the table, then click the Usage Graph (chart icon) button. Thi
 the Usage History modal.
 
 ![](../images/fair_share_usage_bucket_modal.png)
+<!-- TODO: Re-capture fair_share_usage_bucket_modal.png once the usage graph actually renders in the modal (the 2026-09-28 capture showed no graph, so the previous screenshot is kept). -->
 
 The modal displays the following:
 
@@ -1240,6 +1262,12 @@ The image list displays additional columns for more detailed image information:
 - **Base Image Name**: The base name of the image, with alias tags for easier identification.
 - **Version**: The version tag of the image.
 - **Tags**: Detailed tags associated with the image, displayed as double tags with aliases.
+- **Image Status**: The image's lifecycle status — `ALIVE`, `DELETED`, `PURGING`, or `PURGE_ERROR`.
+- **Type**: The image's type — `COMPUTE`, `SERVICE`, or `SYSTEM`.
+- **Local**: Whether the image comes from an agent's local Docker daemon instead of a registry.
+- **Size**: The image size, shown in binary units.
+- **Aliases**: The aliases registered for the image.
+- **Supported Accelerators**: The accelerator types the image can run on.
 
 You can select multiple uninstalled images and click the **Install Image** button to install them in
 bulk. Installing an image enqueues a short-lived session that pulls the image, so the dialog asks
@@ -1254,7 +1282,7 @@ Both fields are required, and the dialog's own button — which reads **Install*
 you have chosen a project and a resource group. Images in your selection that are already installed
 are excluded from the request.
 
-![](../images/image_install_modal.png)
+![=520px](../images/image_install_modal.png)
 
 You can change the minimum resource requirements for each image by clicking the
 **Edit** (pencil) action in the `Controls` panel, which opens the
@@ -1266,7 +1294,7 @@ create a compute session with a resource that is less than the amount of
 resources specified in each image, the request is automatically adjusted to the
 minimum resource requirements for the image and then generated, not cancelled.
 
-![](../images/update_image_resource_setting.png)
+![=640px](../images/update_image_resource_setting.png)
 
 :::note
 The minimum resource requirements included in the image metadata are values
@@ -1277,14 +1305,14 @@ change the minimum resource amounts, it is recommended to keep the default value
 Additionally, you can add or modify the supported apps for each image by clicking the `Apps` icon located in the Controls column.
 Once you click the icon, the name of the app and its corresponding port number will be displayed accordingly.
 
-![](../images/manage_app_dialog.png)
+![=700px](../images/manage_app_dialog.png)
 
 In this interface, you can add supported custom applications by clicking the `+ Add` button below. To delete an application, simply click the `trash can` button on the right side of each row.
 
 :::note
 
 
-![](../images/confirmation_dialog_for_manage_app_change_in_image.png)
+![=520px](../images/confirmation_dialog_for_manage_app_change_in_image.png)
 :::
 
 <a id="manage-docker-registry"></a>
@@ -1396,14 +1424,14 @@ The resource preset dialog includes:
 - **Resource Preset**: Dynamic fields for each available resource type (CPU, Memory, GPU, etc.). Memory fields support dynamic unit input (`MiB`, `GiB`, `TiB`, `PiB`).
 - **Shared Memory**: The amount of shared memory allocated for the preset. This value must be less than the **Memory** value.
 
-![](../images/modify_resource_preset_dialog.png)
+![=520px](../images/modify_resource_preset_dialog.png)
 
 You can also create a resource preset by clicking the **Create Preset** button in the
 right top of the Resource Presets tab. Resource preset names must still be
 unique. If you enter a name that already exists, the server rejects the request
 when you click **Create** and an error message is displayed.
 
-![](../images/create_resource_preset_dialog.png)
+![=520px](../images/create_resource_preset_dialog.png)
 
 <a id="manage-agent-nodes"></a>
 
@@ -1436,7 +1464,16 @@ the node before stopping or restarting it. On the **Sessions** tab, use the **Ru
 selector to switch between sessions that still occupy the node's resources and sessions that have
 already finished, and click a session name to show that session's details.
 
-![](../images/detailed_agent_node_usage_information.png)
+![=800px](../images/detailed_agent_node_usage_information.png)
+
+When the experimental **Session resource grid view** feature is enabled in User Settings (refer to the
+[Experimental features](#experimental-features) section), the **Sessions** tab also shows a **View
+mode** control next to the refresh button that switches between **Table** and **Grid**. The grid
+replaces the session table with one cell per session on this agent, colored by that session's live
+resource utilization, and follows the current **Running** / **Finished** selection. For a description
+of the grid's own controls, refer to the [Session List View](#session-list-view-and-refresh) section.
+
+![=800px](../images/agent_info_sessions_view_mode.png)
 
 <a id="control-agent-service"></a>
 
@@ -1448,7 +1485,7 @@ The Agent Info drawer holds a group of action buttons for the agent service itse
 - **Stop Agent**: Shuts the agent service down. Available only while the agent is `ALIVE`.
 - **Restart Agent**: Restarts the agent service.
 
-![](../images/agent_watcher_actions.png)
+![=800px](../images/agent_watcher_actions.png)
 
 Each action opens a confirmation dialog that names the affected agent and warns that running sessions on
 this agent may be affected. Confirm to send the request; a message reports that the start, stop, or
@@ -1492,6 +1529,13 @@ possible in Resource Group tab of the Resource page.
 
 ![](../images/resource_group_page.png)
 
+The **Active** and **Inactive** buttons above the list choose which resource groups are listed, and the
+property filter next to them narrows the list by **Name**, **Description**, **Public**, or **Default**.
+On managers that do not support combined filter conditions, only one condition can be applied at a time.
+
+The **Default** column marks the default resource group. At most one resource group carries the marker,
+and an agent that registers without a resolvable resource group name falls back to it.
+
 <a id="scheduling-methods"></a>
 
 You can edit a resource group by clicking the **Edit** (pencil) action in the Name column, which opens
@@ -1504,7 +1548,7 @@ Fairness, and it aims to provide resources as fair as possible for each user.
 more details, refer to the [Fair Share Scheduler](#fair-share-scheduler) section.
 You can deactivate a resource group by turning off **Active**. Click **Save** to apply your changes.
 
-![](../images/modify_resource_group.png)
+![=520px](../images/modify_resource_group.png)
 
 
 The resource group edit dialog contains the following additional fields:
@@ -1519,7 +1563,11 @@ The resource group edit dialog contains the following additional fields:
   proxies is left untouched. When no proxy is selected for a group, that group is not restricted to a
   particular proxy.
 - **Active**: Toggle the active status of the resource group.
-- **Public**: When enabled, the resource group is visible to all users.
+- **Public**: When disabled, the resource group is reserved for system sessions such as SFTP uploads.
+  It is hidden from regular users' resource group lists and regular session creation in it is rejected,
+  but it stays visible to administrators. Enabling it does not widen access by itself — which domains,
+  projects, and keypairs can use the resource group is decided by their respective association
+  settings.
 - **Pending timeout**:
   A compute session will be canceled if it stays `PENDING` status for longer
   than the Pending timeout. When you wish to prevent a session from remaining
@@ -1536,7 +1584,7 @@ You can create a new resource group by clicking the **Create Resource Group** bu
 Likewise other creating options, you cannot create a resource group with the name
 that already exists, since name is the key value.
 
-![](../images/create_resource_group.png)
+![=520px](../images/create_resource_group.png)
 
 <a id="bulk-edit-resource-groups"></a>
 
@@ -1548,7 +1596,7 @@ Settings that apply the same way to a set of resource groups can be changed in o
 2. A selection count appears in the toolbar. Click the **Bulk Edit** (gear) button next to it.
 3. The **Bulk Edit Resource Groups** dialog opens.
 
-![](../images/bulk_edit_resource_groups_modal.png)
+![=520px](../images/bulk_edit_resource_groups_modal.png)
 
 An alert at the top of the dialog lists every resource group that will be changed. Below it sits the
 **SFTP Storage Proxies** field, pre-filled with the union of the proxies that already serve any of the
@@ -1764,7 +1812,7 @@ private inter-node communication. Admins can set the value of the Maximum
 Transmission Unit (MTU) for the overlay network, if it is certain that the value
 will enhance the network speed.
 
-![](../images/overlay_network_setting_dialog.png)
+![=360px](../images/overlay_network_setting_dialog.png)
 
 :::note
 For more information about Backend.AI Cluster session, please refer to
@@ -1783,7 +1831,7 @@ of retries to create a session if it fails. If the session cannot be created wit
 the request will be ignored and Backend.AI will process the next request. Currently, changes are
 only possible when the scheduler is FIFO.
 
-![](../images/system_setting_dialog_scheduler_settings.png)
+![=360px](../images/system_setting_dialog_scheduler_settings.png)
 
 :::note
 We will continue to add broader range of setting controls.
@@ -1881,6 +1929,20 @@ This page is only for showing current information.
 Superadmins can view every project in the cluster on the Projects page and create, edit, deactivate,
 activate, and purge them. Each row also carries a shortcut for granting Project Admin authority.
 
+The list excludes personal projects by default; remove the pre-applied **Type** filter to include them.
+
+<!-- TODO(screenshot): /project (Admin Settings > Projects) - recapture the default view showing the pre-applied Type filter and no personal projects; the capture backend runs manager 26.9.0-alpha, where the `group-nodes-type-filter` flag is off and the old unfiltered list is rendered. -->
+![](../images/projects_page.png)
+
+The **Active** and **Inactive** buttons above the list choose which projects are listed, and the property
+filter next to them narrows the list by **Name**, **Domain**, **Resource Policy**, **Project ID**,
+**Created At**, or **Modified At**. **Project ID** must be a full UUID, and **Created At** and
+**Modified At** take a date and time.
+
+The **Modified At** and **Status** columns are hidden by default and can be shown using the
+column-settings gear button (⚙) below the table, next to the pagination controls. **Status** shows whether a project is
+**Active** or **Inactive**. Your column choices are persisted per browser across sessions.
+
 <a id="set-project-admin"></a>
 
 ### Set project admins
@@ -1893,7 +1955,7 @@ administrators directly from the project list.
    projects.
 3. The **Set Project Admin** dialog opens.
 
-![](../images/set_project_admin_modal.png)
+![=600px](../images/set_project_admin_modal.png)
 
 The dialog contains:
 
@@ -1978,7 +2040,7 @@ The toolbar provides:
 
 The settings are divided into the following groups:
 
-- **Theme**: Color pickers for the primary, header background, link, info, error, success, and text colors. Each color can be set independently for light and dark mode and reset individually.
+- **Theme**: Color pickers for the primary, header background, link, info, error, and success colors. Each color can be set independently for light and dark mode and reset individually.
 - **Logo CI**: Upload the main sidebar logo for light and dark mode, along with the collapsed-sidebar logo, and configure their display sizes.
 - **Detail Logo CI**: Upload the logos shown on the login page and in the About modal, for both light and dark mode, with configurable sizes.
 - **Font**: Select the font family used throughout the interface.

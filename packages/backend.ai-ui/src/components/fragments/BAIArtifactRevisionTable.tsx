@@ -3,18 +3,13 @@ import {
   BAIArtifactRevisionTableArtifactRevisionFragment$key,
 } from '../../__generated__/BAIArtifactRevisionTableArtifactRevisionFragment.graphql';
 import { BAIArtifactRevisionTableLatestRevisionFragment$key } from '../../__generated__/BAIArtifactRevisionTableLatestRevisionFragment.graphql';
-import {
-  badgeVariantForTagColor,
-  convertToDecimalUnit,
-  filterOutEmpty,
-} from '../../helper';
+import { convertToDecimalUnit, filterOutEmpty } from '../../helper';
 import { useBAIi18n } from '../../hooks/useBAIi18n';
 import BAIFlex from '../BAIFlex';
-import BAITag from '../BAITag';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
-import BAIArtifactStatusTag from './BAIArtifactStatusTag';
-import { Badge } from '@astryxdesign/core/Badge';
+import BAIArtifactStatusBadge from './BAIArtifactStatusBadge';
+import { Badge } from '@lablup/ui-common/Badge';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
@@ -56,7 +51,7 @@ const BAIArtifactRevisionTable = ({
           size
           status
           updatedAt
-          ...BAIArtifactStatusTagFragment
+          ...BAIArtifactStatusBadgeFragment
           ...BAIArtifactRevisionDownloadButtonFragment
           ...BAIArtifactRevisionDeleteButtonFragment
         }
@@ -86,14 +81,11 @@ const BAIArtifactRevisionTable = ({
                 {version}
               </BAIText>
               {latestRevision && latestRevision.id === record.id && (
-                // to-astryx W2-D: antd `Tag` -> Astryx `Badge`, hue via the
-                // repo-global lookup (MAPPING §3.5).
-                <Badge
-                  variant={badgeVariantForTagColor('blue')}
-                  label="Latest"
-                />
+                <Badge variant="info" label="Latest" />
               )}
-              {record.status === 'PULLED' && <BAITag>{record.status}</BAITag>}
+              {record.status === 'PULLED' && (
+                <Badge variant="neutral" label={record.status} />
+              )}
             </BAIFlex>
           </div>
         ),
@@ -103,7 +95,7 @@ const BAIArtifactRevisionTable = ({
         dataIndex: 'status',
         key: 'status',
         render: (_value: string, record: ArtifactRevision) => {
-          return <BAIArtifactStatusTag artifactRevisionFrgmt={record} />;
+          return <BAIArtifactStatusBadge artifactRevisionFrgmt={record} />;
         },
       },
       {

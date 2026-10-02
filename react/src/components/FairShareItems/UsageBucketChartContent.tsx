@@ -5,24 +5,24 @@
 import {
   DomainV2Filter,
   ProjectV2Filter,
-  UserV2Filter,
   UsageBucketChartContentQuery,
   UsageBucketChartContentQuery$variables,
+  UserV2Filter,
 } from '../../__generated__/UsageBucketChartContentQuery.graphql';
 import { UsageBucketChartContent_DomainFragment$key } from '../../__generated__/UsageBucketChartContent_DomainFragment.graphql';
 import { UsageBucketChartContent_ProjectFragment$key } from '../../__generated__/UsageBucketChartContent_ProjectFragment.graphql';
 import { UsageBucketChartContent_UserFragment$key } from '../../__generated__/UsageBucketChartContent_UserFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { presetPalettes, theme } from '../../theme-shim';
 import './UsageBucketChartContent.css';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Tab, TabList } from '@astryxdesign/core/TabList';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Tab, TabList } from '@lablup/ui-common/TabList';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  convertToBinaryUnit,
-  INITIAL_FETCH_KEY,
-  toFixedFloorWithoutTrailingZeros,
   BAIFlex,
   BAIText,
+  INITIAL_FETCH_KEY,
+  convertToBinaryUnit,
+  toFixedFloorWithoutTrailingZeros,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
 import * as _ from 'lodash-es';
@@ -58,7 +58,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { mergedResourceSlots } = useResourceSlotsDetails();
   // antd `Tabs items` rendered the active panel itself; Astryx `TabList` is
   // navigation only (MAPPING §4), so the selected key becomes local state and
@@ -187,6 +187,10 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
       })),
     } satisfies UserV2Filter,
     limit: dateRange[1].diff(dateRange[0], 'day'),
+    // One row per selected id; without a bound the V2 connections return 10.
+    domainLimit: Math.max(selectedDomainNames.length, 1),
+    projectLimit: Math.max(selectedProjectIds.length, 1),
+    userLimit: Math.max(selectedUserUuids.length, 1),
   };
   const deferredQueryVariables = useDeferredValue(queryVariables);
 
@@ -205,6 +209,9 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
           $selectedResourceGroupName: String!
           $selectedProjectId: UUID!
           $limit: Int
+          $domainLimit: Int!
+          $projectLimit: Int!
+          $userLimit: Int!
         ) {
           resourceGroups: adminResourceGroups(
             filter: { name: { equals: $selectedResourceGroupName } }
@@ -223,7 +230,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
               }
             }
           }
-          domains: adminDomainsV2(filter: $domainFilter)
+          domains: adminDomainsV2(filter: $domainFilter, limit: $domainLimit)
             @skip(if: $skipDomain) {
             count
             edges {
@@ -254,8 +261,10 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
               }
             }
           }
-          projects: adminProjectsV2(filter: $projectFilter)
-            @skip(if: $skipProject) {
+          projects: adminProjectsV2(
+            filter: $projectFilter
+            limit: $projectLimit
+          ) @skip(if: $skipProject) {
             count
             edges {
               node {
@@ -289,7 +298,8 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
               }
             }
           }
-          users: adminUsersV2(filter: $userFilter) @skip(if: $skipUser) {
+          users: adminUsersV2(filter: $userFilter, limit: $userLimit)
+            @skip(if: $skipUser) {
             count
             edges {
               node {
@@ -405,7 +415,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
     return (
       <EmptyState
         title={t('fairShare.usageBucket.NoDataAvailable')}
-        style={{ padding: token.paddingLG }}
+        style={{ padding: token('--spacing-6') }}
       />
     );
   }
@@ -454,7 +464,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
           <AreaChart data={chartData.data}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke={token.colorBorderSecondary}
+              stroke={token('--color-border')}
             />
             <XAxis dataKey="periodStart" tick={{ fontSize: 12 }} />
             <YAxis
@@ -483,15 +493,15 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                     direction="column"
                     align="stretch"
                     style={{
-                      backgroundColor: token.colorBgBase,
-                      borderRadius: token.borderRadius,
-                      padding: token.paddingSM,
+                      backgroundColor: token('--color-background-body'),
+                      borderRadius: token('--radius-inner'),
+                      padding: token('--spacing-3'),
                     }}
                   >
                     <BAIText
                       style={{
                         color: 'inherit',
-                        marginBottom: token.marginSM,
+                        marginBottom: token('--spacing-3'),
                       }}
                     >
                       {`${label} - ${t('fairShare.usageBucket.AverageDailyUsage')}`}
@@ -501,7 +511,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                         direction="column"
                         align="stretch"
                         style={{
-                          marginBottom: token.marginXS,
+                          marginBottom: token('--spacing-2'),
                         }}
                       >
                         <BAIText style={{ color: 'inherit' }}>
@@ -509,7 +519,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                         </BAIText>
                         <BAIText
                           style={{
-                            color: token.colorTextTertiary,
+                            color: token('--color-text-tertiary'),
                           }}
                         >
                           {capacityName} :
@@ -525,7 +535,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                               )}
                           <BAIText
                             style={{
-                              fontSize: token.fontSizeSM,
+                              fontSize: token('--font-size-sm'),
                               color: 'inherit',
                             }}
                           >
@@ -554,7 +564,7 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                                 )}
                             <BAIText
                               style={{
-                                fontSize: token.fontSizeSM,
+                                fontSize: token('--font-size-sm'),
                                 color: 'inherit',
                               }}
                             >
@@ -574,8 +584,8 @@ const UsageBucketChartContent: React.FC<UsageBucketChartContentProps> = ({
                 type="monotone"
                 dataKey={CAPACITY_KEY}
                 name={`${parentScopeLabel} (${capacityName})`}
-                stroke={token.colorFill}
-                fill={token.colorFill}
+                stroke={token('--color-fill')}
+                fill={token('--color-fill')}
                 fillOpacity={0.75}
                 legendType="square"
               />
@@ -618,7 +628,24 @@ export default UsageBucketChartContent;
 
 type EntityType = 'domain' | 'project' | 'user';
 
-const CHART_COLORS = Object.values(presetPalettes).map((palette) => palette[2]);
+// antd preset palettes, step 3 (red, volcano, orange, gold, yellow, lime,
+// green, cyan, blue, geekblue, purple, magenta, grey) — the series colors
+// this chart has always used.
+const CHART_COLORS = [
+  '#ffa39e',
+  '#ffbb96',
+  '#ffd591',
+  '#ffe58f',
+  '#fffb8f',
+  '#eaff8f',
+  '#b7eb8f',
+  '#87e8de',
+  '#91caff',
+  '#adc6ff',
+  '#d3adf7',
+  '#ffadd2',
+  '#8c8c8c',
+];
 
 interface ChartDataPoint {
   periodStart: string;

@@ -6,6 +6,7 @@
     "DiskPerc": "Disk %",
     "Endpoint": "Endpoint",
     "FailedToLoadCellData": "Failed to load data.",
+    "LostAt": "Lost At",
     "NoAvailableLiveStat": "No available live stat",
     "Region": "Region",
     "ResourceGroup": "Resource Group",
@@ -13,7 +14,8 @@
     "Schedulable": "Schedulable",
     "Starts": "Starts",
     "Status": "Status",
-    "Utilization": "Utilization"
+    "Utilization": "Utilization",
+    "Version": "Version"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Allowed",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Action ID",
     "Actor": "Actor",
+    "ClientIp": "Client IP",
     "Description": "Description",
     "Duration": "Duration",
     "EntityId": "Entity ID",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "An unexpected error occurred. Please try again later or contact support if the problem persists."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Clear",
-    "KeepAsIs": "Keep as is",
-    "UndoChanges": "Undo changes"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Action execution failed",
-    "ErrorOccurred": "Error Occurred"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Clear",
-    "HexValue": "Hex value",
-    "NoColor": "No color",
-    "SelectColor": "Select color"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Clear Search options",
-    "NoResults": "No results",
-    "SearchOptions": "Search options"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Select Container Registry"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "Successfully removed {{count}} versions.",
     "Version": "Version"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Are you sure you want to delete?",
-    "AreYouSureToPermanentlyDeleteTarget": "Are you sure you want to permanently delete {{target}}?",
-    "CannotBeUndone": "This action cannot be undone.",
-    "DeleteItem": "Delete",
-    "DeleteNItems": "Delete {{count}} items",
-    "TypeToConfirm": "Type <code>{{confirmText}}</code> to confirm."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Created by"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Select Deployment"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Degraded",
     "Deploying": "Deploying",
     "Healthy": "Healthy",
@@ -245,6 +220,10 @@
       "Title": "Could not sign in with Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Kernel startup progress",
+    "KernelTerminationProgress": "Kernel termination progress"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Cluster Size",
     "Concurrency": "Concurrent Sessions",
@@ -265,6 +244,7 @@
     "SelectKeypair": "Select Keypair"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Client IP",
     "Domain": "Domain",
     "FailReason": "Failure Reason",
     "LoginTime": "Login Time",
@@ -355,18 +335,22 @@
     "UpdateProject": "Update Project"
   },
   "comp:BAIProjectTable": {
+    "Active": "Active",
     "ContainerRegistry": "Container Registry",
     "ContainerRegistryProject": "Container Registry Project",
     "CreatedAt": "Created At",
     "Description": "Description",
     "Domain": "Domain",
+    "Inactive": "Inactive",
     "IntegrationID": "Integration ID",
+    "ModifiedAt": "Modified At",
     "Name": "Name",
     "Project": "Project",
     "ProjectID": "Project ID",
     "Registry": "Registry",
     "ResourcePolicy": "Resource Policy",
     "ScalingGroups": "Resource Groups",
+    "Status": "Status",
     "StorageNodes": "Storage Nodes",
     "TotalResourceSlots": "Total Resource Slots",
     "Type": "Type"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Allocated / Requested"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Change group color",
-    "ResourceGrid": "Resource grid",
-    "UseColorN": "Use color {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unlimited"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Single"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Unlimited"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Select Storage Host"
   },
@@ -578,22 +554,10 @@
     "Time": "Time"
   },
   "comp:BAITable": {
-    "Apply": "Apply",
-    "Cancel": "Cancel",
     "CollapseAll": "Collapse all",
     "ExpandAll": "Expand all",
     "ExpandErrorsOnly": "Expand errors only",
-    "ExpandOptions": "Expand options",
-    "ExpandRow": "Expand row",
-    "Export": "Export",
-    "ExportCSV": "Export CSV",
-    "GoToFirstPage": "Go to first page",
-    "InvalidPageNumber": "Invalid page number",
-    "NoDataToDisplay": "No data to display",
-    "Pagination": "Pagination",
-    "SearchTableColumn": "Search table columns",
-    "SelectColumnToDisplay": "Select columns to display",
-    "SettingTable": "Table Settings"
+    "ExpandOptions": "Expand options"
   },
   "comp:BAITestButton": {
     "Test": "Test"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Invalid path format.",
     "AliasOverlapping": "Mount path overlaps with another folder.",
+    "AliasOverlappingWithAutoMount": "Mount path overlaps with an auto-mounted folder.",
     "AliasPlaceholder": "Mount path",
     "AutoMountedFolders": "Automount Folders",
-    "Name": "Name",
-    "PathAndAlias": "Path & Alias",
+    "CreateFolder": "Create a new storage folder",
+    "DestinationPath": "Container path (destination)",
+    "Folders": "Folders",
+    "OwnerProject": "Project",
+    "OwnerUser": "User",
     "PathAndAliasTooltip": "The path inside the container where the folder will be mounted. Leave empty to use the default path.",
+    "Refresh": "Refresh",
     "RemoveFolder": "Remove",
+    "SelectFolder": "Select Folder",
+    "SourcePath": "Path in folder (source)",
     "Subpath": "Subpath",
     "SubpathInvalid": "Subpath must be a relative path and must not contain '..'.",
-    "SubpathPlaceholder": "e.g. dataset/train (optional)",
-    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Leave empty to mount the root."
+    "SubpathTooltip": "Mount a subfolder inside the folder as the source instead of its root. Click the field to browse the folder and pick one; leave it empty to mount the folder root.",
+    "UnmountableFoldersRemoved": "Folders you can no longer mount were removed from the selection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Select Folder"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "Deleted files and folders cannot be restored. Do you want to proceed?",
     "DeleteSelectedItemsDialog": "Delete Confirmation",
     "Download": "Download",
+    "DownloadPopupBlocked": "The browser blocked the download window. Allow pop-ups for this site and try again.",
+    "DownloadRejected": "The storage proxy refused the download (HTTP {{status}}). The download did not start.",
     "DownloadSelected": "Download",
     "DownloadStarted": "File \"{{fileName}}\" download has started.",
+    "DownloadUnreachable": "Could not reach the storage proxy at {{origin}}. The download did not start.",
     "DragAndDropDesc": "Drag and drop files to this area to upload.",
     "DuplicatedFiles": "Overwrite Confirmation",
     "DuplicatedFilesDesc": "The file or folder with the same name already exists. Do you want to overwrite?",
     "EditFile": "Edit File",
+    "ExistingItem": "Existing",
     "FileCreatedSuccessfully": "File created successfully.",
     "FileName": "File Name",
     "FileNamePlaceholder": "e.g. model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "Modified At",
     "Name": "Name",
     "NoUploadPermissionForHost": "You don't have upload permission for this host.",
+    "OtherItemsWillBeUploaded": "{{count}} other item(s) will be uploaded as well.",
     "Path": "Path",
     "PleaseEnterAFileName": "Please enter the file name.",
     "PleaseEnterAFolderName": "Please enter the folder name.",
     "RenameFile": "Rename",
     "RenameSuccess": "The name has been successfully changed.",
+    "SelectItemsToOverwrite": "These items already exist here. Select the ones to overwrite; unselected items are skipped.",
     "SelectedItemsDeletedSuccessfully": "Selected files and folders have been deleted successfully.",
     "Size": "Size",
     "TypeDeleteToConfirm": "Type 'Delete' to confirm.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "This file format does not support editing.",
     "UploadFiles": "Upload Files",
     "UploadFolder": "Upload Folder",
+    "UploadingItem": "Uploading",
     "error": {
       "DuplicatedName": "This name is already in use. Please enter a different name.",
       "FileNameRequired": "Please enter a file or folder name."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "No resource data available"
@@ -717,6 +692,7 @@
     "ModifiedAt": "Modified At",
     "NeedPasswordChange": "Need Password Change",
     "Project": "Project",
+    "Projects": "Projects",
     "ResourcePolicy": "Resource Policy",
     "Role": "Role",
     "Status": "Status",
@@ -738,55 +714,12 @@
   "error": {
     "UnknownError": "An unknown error occurred. Please try again."
   },
-  "form": {
-    "Optional": "(optional)",
-    "validateMessages": {
-      "Default": "Field validation error for ${label}",
-      "Required": "Please enter ${label}",
-      "Whitespace": "${label} cannot be a blank character",
-      "array": {
-        "Len": "Must be ${len} ${label}",
-        "Max": "At most ${max} ${label}",
-        "Min": "At least ${min} ${label}",
-        "Range": "The amount of ${label} must be between ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} must be equal to ${len}",
-        "Max": "${label} must be maximum ${max}",
-        "Min": "${label} must be minimum ${min}",
-        "Range": "${label} must be between ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} does not match the pattern ${pattern}"
-      },
-      "string": {
-        "Len": "${label} must be ${len} characters",
-        "Max": "${label} must be up to ${max} characters",
-        "Min": "${label} must be at least ${min} characters",
-        "Range": "${label} must be between ${min}-${max} characters"
-      },
-      "types": {
-        "Email": "${label} is not a valid ${type}",
-        "Number": "${label} is not a valid ${type}",
-        "Object": "${label} is not a valid ${type}",
-        "String": "${label} is not a valid ${type}",
-        "Url": "${label} is not a valid ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Decrease",
-    "DeselectAll": "Deselect all",
     "File": "File",
-    "Increase": "Increase",
-    "Loading": "Loading...",
-    "NSelected": "{{count}} selected",
     "Optional": "Optional",
     "Project": "Project",
     "Search": "Search",
     "Select": "Select",
-    "SelectPlaceholder": "Select {{label}}",
-    "TotalItems": "Total {{total}} items",
     "Unit": "Unit",
     "button": {
       "Action": "Action",

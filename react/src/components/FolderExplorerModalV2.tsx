@@ -18,6 +18,7 @@
  - `BAIFileExplorer` / `ScopedAuditLog` / `BAILink` stay BUI (frontier:
    tickets 25/28 own their internals).
 */
+import { FolderExplorerModalV2OwnershipProjectQuery } from '../__generated__/FolderExplorerModalV2OwnershipProjectQuery.graphql';
 import { FolderExplorerModalV2Query } from '../__generated__/FolderExplorerModalV2Query.graphql';
 import type { ScopedAuditLogQuery as ScopedAuditLogQueryType } from '../__generated__/ScopedAuditLogQuery.graphql';
 import { formatToUUID } from '../helper';
@@ -27,20 +28,21 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useIsProjectAgnosticPage } from '../hooks/useIsProjectAgnosticPage';
 import { useMergedAllowedStorageHostPermission } from '../hooks/useMergedAllowedStorageHostPermission';
-import { useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
 import BAIErrorBoundary from './BAIErrorBoundary';
 import BAITabs from './BAITabs';
+import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import { useFileUploadManager } from './FileUploadManager';
 import type { RcFile } from './FileUploadManager';
+import FolderExplorerHeader from './FolderExplorerHeader';
 import FolderExplorerHeaderV2 from './FolderExplorerHeaderV2';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ScopedAuditLog, { ScopedAuditLogQuery } from './ScopedAuditLog';
 import VFolderNodeDescriptionV2 from './VFolderNodeDescriptionV2';
 import VFolderTextFileEditorModal from './VFolderTextFileEditorModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { ResizeHandle, useResizable } from '@astryxdesign/core/Resizable';
-import { VStack } from '@astryxdesign/core/Stack';
+import { Banner } from '@lablup/ui-common/Banner';
+import { ResizeHandle, useResizable } from '@lablup/ui-common/Resizable';
+import { VStack } from '@lablup/ui-common/Stack';
 import {
   BAISkeleton,
   BAIFileExplorer,
@@ -53,12 +55,12 @@ import {
   useFetchKey,
   useInterval,
   VFolderFile,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
   type ComponentProps,
   Suspense,
-  useDeferredValue,
   useEffect,
   useRef,
   useState,
@@ -113,16 +115,155 @@ interface FolderExplorerProps extends Omit<
   open?: boolean;
   vfolderID: string;
   onRequestClose: () => void;
-  /** Accepted and ignored — the Astryx modal always unmounts when closed. */
-  destroyOnHidden?: boolean;
 }
 
-const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
+// Read through the legacy `group_node`, which skips the RBAC own check that
+// `vfolderV2.ownership.project` runs, so a personal project is recognised even
+// when the caller holds no project role on it (FR-3983).
+const OwnershipProjectBanner: React.FC<{
+  projectId: string;
+  projectName?: string | null;
+}> = ({ projectId, projectName }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { group_node } =
+    useLazyLoadQuery<FolderExplorerModalV2OwnershipProjectQuery>(
+      graphql`
+        query FolderExplorerModalV2OwnershipProjectQuery($projectId: String!) {
+          group_node(id: $projectId) @since(version: "24.03.0") {
+            id
+            type
+          }
+        }
+      `,
+      { projectId: toGlobalId('GroupNode', projectId) },
+    );
+
+  // The header never offers a personal project, so a folder in one is not
+  // "in another project" — the mismatch is structural, not a user choice.
+  if (group_node?.type === 'PERSONAL') {
+    return null;
+  }
+  return (
+    <Banner
+      title={
+        projectName
+          ? t('data.NotInProject', { projectName })
+          : t('data.BelongsToDifferentProject')
+      }
+      status="info"
+    />
+  );
+};
+
+// `vfolderID` is the dash-less form the opener reads from `?folder=…`; the V2
+// `vfolderV2` resolver expects a canonical `UUID!`.
+const toVFolderUuid = (vfolderID: string) =>
+  vfolderID.length === 32 ? formatToUUID(vfolderID) : vfolderID;
+
+// Called by both the header and the body, each under its own Suspense
+// boundary; Relay serves the two readers from one request.
+const useFolderExplorerQuery = (vfolderID: string) => {
+  'use memo';
+  return useLazyLoadQuery<FolderExplorerModalV2Query>(
+    graphql`
+      query FolderExplorerModalV2Query(
+        $vfolderId: UUID!
+        $vfolderGlobalId: String!
+      ) {
+        # TODO(needs-backend): stopgap for FR-3800 — vfolderV2 exposes only
+        # the mount permission (accessControl.permission), not the caller's
+        # effective permission set, so write/delete gating reads the legacy
+        # per-user RBAC list here. Replace with the V2 field once the
+        # backend adds it (FR-2619 follow-up).
+        legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
+          id
+          name
+          host
+          unmanaged_path
+          permissions
+          ...FolderExplorerHeaderFragment
+        }
+        vfolderNode: vfolderV2(vfolderId: $vfolderId) {
+          unmanagedPath
+          host
+          id
+          metadata {
+            name
+          }
+          ownership {
+            projectId
+            project {
+              basicInfo {
+                name
+              }
+            }
+          }
+          ...FolderExplorerHeaderV2Fragment
+          ...VFolderNodeDescriptionV2Fragment
+        }
+      }
+    `,
+    {
+      vfolderId: toVFolderUuid(vfolderID),
+      vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
+    },
+    { fetchPolicy: 'store-and-network' },
+  );
+};
+
+// This modal is globally mounted (no page parent), so it is the sanctioned
+// exception (ADR-0001) that may consult the route to decide its project
+// context: on the project-agnostic routes there is no ambient project
+// context; elsewhere it narrows the ambient current project (interim state
+// until a page-owned opener exists).
+const usePageProject = () => {
+  'use memo';
+  const isProjectAgnosticPage = useIsProjectAgnosticPage();
+  const currentProject = useCurrentProjectValue();
+  return {
+    isProjectAgnosticPage,
+    pageProject: isProjectAgnosticPage
+      ? null
+      : toProjectContext(currentProject),
+  };
+};
+
+const FolderExplorerHeaderContent: React.FC<{ vfolderID: string }> = ({
   vfolderID,
-  onRequestClose,
-  destroyOnHidden: _destroyOnHidden,
-  ...modalProps
 }) => {
+  'use memo';
+  const { t } = useTranslation();
+  const { vfolderNode, legacyVFolderNode } = useFolderExplorerQuery(vfolderID);
+  const { isProjectAgnosticPage, pageProject } = usePageProject();
+
+  return vfolderNode ? (
+    <FolderExplorerHeaderV2
+      vfolderNodeFrgmt={vfolderNode}
+      // ADR-0001: on super-admin routes `pageProject` is `null` — the
+      // FileBrowser/SFTP buttons render disabled with the tooltip
+      // below, and rename gating falls back to owner/super-admin.
+      project={pageProject}
+      noProjectTooltip={
+        isProjectAgnosticPage
+          ? t('data.CannotLaunchSessionInAdminMenu')
+          : undefined
+      }
+    />
+  ) : legacyVFolderNode ? (
+    // FR-3997 fallback: the V1 header draws the same identicon, title,
+    // rename and session buttons from the legacy node's own fragments.
+    <FolderExplorerHeader vfolderNodeFrgmt={legacyVFolderNode} />
+  ) : (
+    <span />
+  );
+};
+
+const FolderExplorerBody: React.FC<{
+  vfolderID: string;
+  /** The modal body element, used as the file drag-and-drop container. */
+  bodyRef: React.RefObject<HTMLDivElement | null>;
+}> = ({ vfolderID, bodyRef }) => {
   'use memo';
 
   const { t } = useTranslation();
@@ -131,19 +272,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   const [fetchKey, updateFetchKey] = useFetchKey();
   const baiClient = useSuspendedBackendaiClient();
   const currentDomain = useCurrentDomainValue();
-  // This modal is globally mounted (no page parent), so it is the sanctioned
-  // exception (ADR-0001) that may consult the route to decide its project
-  // context: on the project-agnostic routes there is no ambient project
-  // context; elsewhere it narrows the ambient current project (interim state
-  // until a page-owned opener exists).
-  const isProjectAgnosticPage = useIsProjectAgnosticPage();
-  const currentProject = useCurrentProjectValue();
-  const pageProject = isProjectAgnosticPage
-    ? null
-    : toProjectContext(currentProject);
+  const { pageProject } = usePageProject();
   const currentUserAccessKey = baiClient?._config?.accessKey;
   const fileExplorerRef = useRef<BAIFileExplorerRef>(null);
-  const bodyRef = useRef<HTMLDivElement | null>(null);
 
   // Observed so the drag can be clamped against the real row width. Without a
   // `maxSizePx` the resizable's size keeps growing past what flexbox renders,
@@ -164,8 +295,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // The info panel keeps its antd-Splitter geometry: default 45%, min 550px.
   const infoPanel = useResizable({
     defaultSize: '45%',
-    minSizePx: 550,
-    maxSizePx:
+    minSize: 550,
+    maxSize:
       splitRowWidth > 0
         ? Math.max(550, splitRowWidth - EXPLORER_MIN_WIDTH - SPLIT_HANDLE_WIDTH)
         : undefined,
@@ -177,62 +308,19 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // axis here.
   const stackedInfoPanel = useResizable({
     defaultSize: STACKED_INFO_PANEL_DEFAULT_HEIGHT,
-    minSizePx: STACKED_INFO_PANEL_MIN_HEIGHT,
+    minSize: STACKED_INFO_PANEL_MIN_HEIGHT,
   });
 
-  const deferredOpen = useDeferredValue(modalProps.open);
-  // `vfolderID` comes from the URL query param `?folder=…` via
-  // `FolderExplorerOpener`, where dashes are stripped for a cleaner URL.
-  // The V2 `vfolderV2` resolver expects a canonical `UUID!`, so restore the
-  // dashed form via the shared `formatToUUID` helper.
-  const vfolderUuid =
-    vfolderID.length === 32 ? formatToUUID(vfolderID) : vfolderID;
-  const { vfolderNode, legacyVFolderNode } =
-    useLazyLoadQuery<FolderExplorerModalV2Query>(
-      graphql`
-        query FolderExplorerModalV2Query(
-          $vfolderId: UUID!
-          $vfolderGlobalId: String!
-        ) {
-          # TODO(needs-backend): stopgap for FR-3800 — vfolderV2 exposes only
-          # the mount permission (accessControl.permission), not the caller's
-          # effective permission set, so write/delete gating reads the legacy
-          # per-user RBAC list here. Replace with the V2 field once the
-          # backend adds it (FR-2619 follow-up).
-          legacyVFolderNode: vfolder_node(id: $vfolderGlobalId) {
-            id
-            permissions
-          }
-          vfolderNode: vfolderV2(vfolderId: $vfolderId) {
-            unmanagedPath
-            host
-            id
-            metadata {
-              name
-            }
-            ownership {
-              projectId
-              project {
-                basicInfo {
-                  name
-                }
-              }
-            }
-            ...FolderExplorerHeaderV2Fragment
-            ...VFolderNodeDescriptionV2Fragment
-          }
-        }
-      `,
-      {
-        vfolderId: vfolderUuid,
-        vfolderGlobalId: toGlobalId('VirtualFolderNode', vfolderID),
-      },
-      {
-        // Only fetch when both deferredOpen and modalProps.open are true to prevent unnecessary requests during React transitions
-        fetchPolicy:
-          deferredOpen && modalProps.open ? 'store-and-network' : 'store-only',
-      },
-    );
+  const vfolderUuid = toVFolderUuid(vfolderID);
+  const { vfolderNode, legacyVFolderNode } = useFolderExplorerQuery(vfolderID);
+
+  // FR-3997: any one of `VFolder`'s eight non-nullable fields coming back null
+  // nulls the whole node, so the legacy node decides readability instead.
+  const isFolderReadable = !!vfolderNode || !!legacyVFolderNode;
+  const folderName = vfolderNode?.metadata?.name ?? legacyVFolderNode?.name;
+  const folderHost = vfolderNode?.host ?? legacyVFolderNode?.host ?? '';
+  const folderUnmanagedPath =
+    vfolderNode?.unmanagedPath ?? legacyVFolderNode?.unmanaged_path;
 
   // Permission calculation follows the folder's own ownership project when
   // the folder is project-owned (what the user can do must not depend on the
@@ -277,13 +365,22 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   };
 
   const loadAuditLog = () => {
-    if (!vfolderNode?.id) {
+    if (!isFolderReadable) {
       return;
     }
     loadAuditLogQuery(
       {
         scope: {
-          entity: [{ entityType: 'VFOLDER', entityId: vfolderUuid }],
+          entity: [
+            {
+              // 26.9.0 names the entity by the manager's own `EntityType`;
+              // 26.4.4-26.8.x type this as the RBAC enum instead (FR-3982).
+              entityType: baiClient.supports('audit-log-entity-type-name')
+                ? 'vfolder'
+                : 'VFOLDER',
+              entityId: vfolderUuid,
+            },
+          ],
         },
         orderBy: [{ field: 'CREATED_AT', direction: 'DESC' }],
         limit: baiPaginationOption.limit,
@@ -294,8 +391,8 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   };
 
   const { uploadStatus, uploadFiles } = useFileUploadManager(
-    vfolderNode?.id,
-    vfolderNode?.metadata?.name || undefined,
+    vfolderNode?.id ?? legacyVFolderNode?.id,
+    folderName || undefined,
   );
   // Polling to update fetchKey when there are pending uploads
   useInterval(
@@ -312,14 +409,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   }, [uploadStatus, updateFetchKey]);
 
   const hasDownloadContentPermission = _.includes(
-    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    unitedAllowedPermissionByVolume[folderHost],
     'download-file',
   );
   // `upload-file` on the storage host gates the actual upload pipeline:
   // upload buttons (file/folder), drag-drop, and the in-app text editor save
   // (which overwrites the file via the upload API).
   const hasUploadHostPermission = _.includes(
-    unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
+    unitedAllowedPermissionByVolume[folderHost],
     'upload-file',
   );
   // Share-permission gating (FR-3800) reads the legacy per-user RBAC list —
@@ -339,16 +436,16 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   // TODO: Skip permission check due to inaccurate API response. Update when API is fixed.
   const hasNoPermissions = false;
 
-  const fileExplorerElement = vfolderNode?.unmanagedPath ? (
+  const fileExplorerElement = folderUnmanagedPath ? (
     <Banner
       status="info"
       title={t('explorer.NoExplorerSupportForUnmanagedFolder')}
     />
-  ) : !hasNoPermissions && vfolderNode ? (
+  ) : !hasNoPermissions && isFolderReadable ? (
     <BAIFileExplorer
       ref={fileExplorerRef}
       targetVFolderId={vfolderID}
-      targetVFolderName={vfolderNode?.metadata?.name ?? 'folder'}
+      targetVFolderName={folderName ?? 'folder'}
       deletingFilePaths={deletingFilePaths}
       fetchKey={fetchKey}
       onUpload={(files: RcFile[], currentPath: string) => {
@@ -374,7 +471,9 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
                 onClick={() => {
                   closeNotification(`delete:${bgTaskId}`);
                 }}
-              >{`${vfolderNode.metadata?.name}`}</BAILink>
+              >
+                {folderName}
+              </BAILink>
             </span>
           ),
           backgroundTask: {
@@ -428,7 +527,7 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
     paddingBlockEnd: 'var(--spacing-3)',
   };
 
-  const vFolderInfoPanelElement = vfolderNode ? (
+  const vFolderInfoPanelElement = isFolderReadable ? (
     <BAITabs
       // Restored (QA2-A): the legacy `type={xl ? 'card' : 'line'}` split. The
       // wide layout puts this panel beside the file list, where the boxed tabs
@@ -448,7 +547,14 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           label: t('explorer.Metadata'),
           children: (
             <div style={infoPanelPanelStyle}>
-              <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+              {vfolderNode ? (
+                <VFolderNodeDescriptionV2 vfolderNodeFrgmt={vfolderNode} />
+              ) : (
+                <Banner
+                  title={t('explorer.FolderDetailUnavailable')}
+                  status="warning"
+                />
+              )}
             </div>
           ),
         },
@@ -478,184 +584,119 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
   ) : null;
 
   return (
-    <BAIModal
-      width={'min(90%, 1900px)'}
-      maxHeight={EXPLORER_MAX_HEIGHT}
-      // FILL, don't shrink-wrap. The legacy antd modal pinned
-      // `styles.body = { height: '100vh' }`, which `BAIModal` then clamped with
-      // its own `maxHeight: calc(100vh - 174px)` — net effect: the explorer was
-      // ALWAYS a near-full-height panel. Astryx's `Dialog` is content-sized
-      // with `maxHeight` only as a cap, so the conversion turned it into a
-      // short box that grew with its content (measured 47% of the viewport at
-      // 1600px wide vs the legacy ~90%). Pushing the min-height onto the
-      // `Layout` restores the legacy proportion: the dialog cap minus the
-      // dialog's own block padding, which the theme publishes as
-      // `--astryx-dialog-padding-block-*` on `.astryx-dialog`.
-      styles={{
-        container: {
-          minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
-        },
-      }}
-      headerContent={
-        vfolderNode ? (
-          <FolderExplorerHeaderV2
-            vfolderNodeFrgmt={vfolderNode}
-            // ADR-0001: on super-admin routes `pageProject` is `null` — the
-            // FileBrowser/SFTP buttons render disabled with the tooltip
-            // below, and rename gating falls back to owner/super-admin.
-            project={pageProject}
-            noProjectTooltip={
-              isProjectAgnosticPage
-                ? t('data.CannotLaunchSessionInAdminMenu')
-                : undefined
-            }
+    <>
+      <VStack
+        gap={6}
+        align="stretch"
+        style={{
+          minHeight: '100%',
+          // Astryx's `Table` bleeds out by `--container-padding-*`, which
+          // `LayoutContent` sets to the dialog gutter; zeroed here so the file
+          // and audit-log tables stay inside the gutter and clear of the handle.
+          ['--container-padding-inline-start' as string]: '0px',
+          ['--container-padding-inline-end' as string]: '0px',
+          ['--container-padding-block-start' as string]: '0px',
+          ['--container-padding-block-end' as string]: '0px',
+        }}
+      >
+        {!isFolderReadable ? (
+          <Banner
+            title={t('explorer.FolderNotFoundOrNoAccess')}
+            status="error"
           />
-        ) : (
-          <span />
-        )
-      }
-      closeLabel={t('button.Close')}
-      bodyRef={bodyRef}
-      maskClosable={false}
-      footer={null}
-      isOpen={modalProps.open}
-      onOpenChange={(next) => {
-        if (!next) onRequestClose();
-      }}
-      {...modalProps}
-    >
-      <Suspense fallback={<BAISkeleton rows={4} />}>
-        {/* Use skeleton instead of `isLoading` because of layout alignment. */}
-        {deferredOpen !== modalProps.open || vfolderNode === undefined ? (
-          <BAISkeleton rows={4} />
-        ) : (
-          <VStack
-            gap={6}
-            align="stretch"
-            style={{
-              minHeight: '100%',
-              // Astryx's `Table` bleeds out of its container by design: its
-              // scroll wrapper carries
-              // `margin-inline: calc(-1 * var(--container-padding-inline-*))`
-              // so rows run edge-to-edge inside a padded surface. `LayoutContent`
-              // publishes the dialog's 24px gutter into those vars, so the file
-              // list and the audit-log table were pulled 24px past the modal's
-              // gutter on BOTH sides — and at `xl` the right bleed ran the file
-              // table 23px UNDER the resize handle and the info panel. The
-              // legacy antd tables sat inside the body gutter; zeroing the vars
-              // for this subtree restores that without touching the app-wide
-              // card/table look.
-              ['--container-padding-inline-start' as string]: '0px',
-              ['--container-padding-inline-end' as string]: '0px',
-              ['--container-padding-block-start' as string]: '0px',
-              ['--container-padding-block-end' as string]: '0px',
-            }}
-          >
-            {vfolderNode === null ? (
-              <Banner
-                title={t('explorer.FolderNotFoundOrNoAccess')}
-                status="error"
+        ) : hasNoPermissions ? (
+          <Banner title={t('explorer.NoPermissions')} status="error" />
+        ) : pageProject !== null &&
+          pageProject.id !== vfolderNode?.ownership?.projectId &&
+          !!vfolderNode?.ownership?.projectId ? (
+          <ErrorBoundaryWithNullFallback>
+            <Suspense fallback={null}>
+              <OwnershipProjectBanner
+                projectId={vfolderNode.ownership.projectId}
+                projectName={vfolderNode.ownership.project?.basicInfo?.name}
               />
-            ) : hasNoPermissions ? (
-              <Banner title={t('explorer.NoPermissions')} status="error" />
-            ) : pageProject !== null &&
-              pageProject.id !== vfolderNode?.ownership?.projectId &&
-              !!vfolderNode?.ownership?.projectId ? (
-              <Banner
-                title={
-                  vfolderNode.ownership?.project?.basicInfo?.name
-                    ? t('data.NotInProject', {
-                        projectName:
-                          vfolderNode.ownership.project.basicInfo.name,
-                      })
-                    : t('data.BelongsToDifferentProject')
-                }
-                status="info"
-              />
-            ) : null}
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        ) : null}
 
-            {vfolderNode && !hasNoPermissions ? (
-              xl ? (
-                // antd `Splitter` owned containment — panel sizes always summed
-                // to the container and each panel clipped. `useResizable` only
-                // yields a number, so the panes carry it themselves (FR-3590).
-                // `gap` applies on BOTH sides of the handle, so half the legacy
-                // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
-                <div
-                  ref={observeSplitRow}
-                  style={{
-                    display: 'flex',
-                    flex: 1,
-                    minWidth: 0,
-                    gap: 'var(--spacing-2)',
-                  }}
-                >
-                  <div
-                    style={{
-                      flex: 1,
-                      minWidth: EXPLORER_MIN_WIDTH,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {fileExplorerElement}
-                  </div>
-                  {/* The handle's own `height: 100%` resolves to `auto` here —
-                      this row is sized by `min-height` only, which makes the
-                      percentage indefinite, collapsing the handle (divider +
-                      pill) to ~30px pinned at the top, over the tab strip. A
-                      stretched flex wrapper gives it a definite height. */}
-                  <div style={{ display: 'flex', alignSelf: 'stretch' }}>
-                    <ResizeHandle
-                      direction="horizontal"
-                      isReversed
-                      hasDivider
-                      // `center` also routes the grab zone away from
-                      // `hitAreaOffsetX`, whose block-axis `-50%` shifts a
-                      // `top/bottom: 0` box off the divider (FR-3591).
-                      pillPlacement="center"
-                      label={t('explorer.Metadata')}
-                      resizable={infoPanel.props}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      width: infoPanel.size,
-                      flexShrink: 1,
-                      minWidth: 0,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    {vFolderInfoPanelElement}
-                  </div>
-                </div>
-              ) : (
-                <VStack align="stretch" gap={6}>
-                  {fileExplorerElement}
-                  <ResizeHandle
-                    direction="vertical"
-                    isReversed
-                    hasDivider
-                    // `center` routes the grab zone away from `hitAreaOffsetY`,
-                    // the inline-axis mirror of the FR-3591 offset bug.
-                    pillPlacement="center"
-                    label={t('explorer.Metadata')}
-                    resizable={stackedInfoPanel.props}
-                  />
-                  <div
-                    style={{
-                      height: stackedInfoPanel.size,
-                      flexShrink: 0,
-                      overflow: 'auto',
-                    }}
-                  >
-                    {vFolderInfoPanelElement}
-                  </div>
-                </VStack>
-              )
-            ) : null}
-          </VStack>
-        )}
-      </Suspense>
+        {isFolderReadable && !hasNoPermissions ? (
+          xl ? (
+            // antd `Splitter` owned containment — panel sizes always summed
+            // to the container and each panel clipped. `useResizable` only
+            // yields a number, so the panes carry it themselves (FR-3590).
+            // `gap` applies on BOTH sides of the handle, so half the legacy
+            // `Splitter style={{ gap: token.size }}` reproduces 8 + 1 + 8.
+            <div
+              ref={observeSplitRow}
+              style={{
+                display: 'flex',
+                flex: 1,
+                minWidth: 0,
+                gap: 'var(--spacing-2)',
+              }}
+            >
+              <div
+                style={{
+                  flex: 1,
+                  minWidth: EXPLORER_MIN_WIDTH,
+                  overflow: 'hidden',
+                }}
+              >
+                {fileExplorerElement}
+              </div>
+              {/* The row is sized by `min-height` only, so the handle's
+                  `height: 100%` is indefinite and collapses; a stretched flex
+                  wrapper gives it a definite height. */}
+              <div style={{ display: 'flex', alignSelf: 'stretch' }}>
+                <ResizeHandle
+                  direction="horizontal"
+                  isReversed
+                  hasDivider
+                  // `center` also routes the grab zone away from
+                  // `hitAreaOffsetX`, whose block-axis `-50%` shifts a
+                  // `top/bottom: 0` box off the divider (FR-3591).
+                  pillPlacement="center"
+                  label={t('explorer.Metadata')}
+                  resizable={infoPanel.props}
+                />
+              </div>
+              <div
+                style={{
+                  width: infoPanel.size,
+                  flexShrink: 1,
+                  minWidth: 0,
+                  overflow: 'hidden',
+                }}
+              >
+                {vFolderInfoPanelElement}
+              </div>
+            </div>
+          ) : (
+            <VStack align="stretch" gap={6}>
+              {fileExplorerElement}
+              <ResizeHandle
+                direction="vertical"
+                isReversed
+                hasDivider
+                // `center` routes the grab zone away from `hitAreaOffsetY`,
+                // the inline-axis mirror of the FR-3591 offset bug.
+                pillPlacement="center"
+                label={t('explorer.Metadata')}
+                resizable={stackedInfoPanel.props}
+              />
+              <div
+                style={{
+                  height: stackedInfoPanel.size,
+                  flexShrink: 0,
+                  overflow: 'auto',
+                }}
+              >
+                {vFolderInfoPanelElement}
+              </div>
+            </VStack>
+          )
+        ) : null}
+      </VStack>
       <BAIUnmountAfterClose>
         <VFolderTextFileEditorModal
           open={!!editingFile}
@@ -671,7 +712,87 @@ const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
           }}
         />
       </BAIUnmountAfterClose>
-    </BAIModal>
+    </>
+  );
+};
+
+const FolderExplorerModalV2: React.FC<FolderExplorerProps> = ({
+  vfolderID,
+  onRequestClose,
+  ...modalProps
+}) => {
+  'use memo';
+  const { t } = useTranslation();
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+
+  // The opener clears `vfolderID` as it closes; keep the last one so the
+  // content does not re-query an empty id on its way out.
+  const [shownVFolderID, setShownVFolderID] = useState(vfolderID);
+  if (vfolderID && vfolderID !== shownVFolderID) {
+    setShownVFolderID(vfolderID);
+  }
+
+  // Nothing here may suspend: the shell has to paint on the click, and every
+  // data read lives under the two boundaries below (keyed so another folder
+  // starts from the fallback instead of holding the previous one).
+  // Unmounted after close so explorer state (e.g. the side panel tab) starts
+  // fresh per session; uploads live in the global `FileUploadManager`.
+  return (
+    <BAIUnmountAfterClose>
+      <BAIModal
+        width={'min(90%, 1900px)'}
+        maxHeight={EXPLORER_MAX_HEIGHT}
+        // Astryx's `Dialog` is content-sized with `maxHeight` only as a cap, so
+        // the min-height fills it: the cap minus the dialog's own block padding
+        // (`--astryx-dialog-padding-block-*` on `.astryx-dialog`).
+        styles={{
+          container: {
+            minHeight: `calc(${EXPLORER_MAX_HEIGHT} - var(--astryx-dialog-padding-block-start) - var(--astryx-dialog-padding-block-end))`,
+          },
+        }}
+        headerContent={
+          <ErrorBoundaryWithNullFallback key={shownVFolderID}>
+            <Suspense
+              fallback={
+                <BAISkeleton
+                  variant="input"
+                  size="small"
+                  width="min(100%, 320px)"
+                />
+              }
+            >
+              {shownVFolderID ? (
+                <FolderExplorerHeaderContent vfolderID={shownVFolderID} />
+              ) : (
+                <span />
+              )}
+            </Suspense>
+          </ErrorBoundaryWithNullFallback>
+        }
+        closeLabel={t('button.Close')}
+        bodyRef={bodyRef}
+        maskClosable={false}
+        footer={null}
+        isOpen={modalProps.open}
+        onOpenChange={(next) => {
+          if (!next) onRequestClose();
+        }}
+        {...modalProps}
+      >
+        <BAIErrorBoundary key={shownVFolderID}>
+          <Suspense fallback={<BAISkeleton rows={4} />}>
+            {shownVFolderID ? (
+              <FolderExplorerBody
+                vfolderID={shownVFolderID}
+                bodyRef={bodyRef}
+              />
+            ) : (
+              <BAISkeleton rows={4} />
+            )}
+          </Suspense>
+        </BAIErrorBoundary>
+      </BAIModal>
+    </BAIUnmountAfterClose>
   );
 };
 

@@ -16,7 +16,7 @@ export const docs = {
   ],
   usage: {
     description:
-      'The application modal, built on BAIDialog (a portalled Astryx Dialog) with the controller behaviour a bare Dialog does not provide: a header with title, subtitle and close button, a generated OK and Cancel footer with loading and danger states, backdrop and Escape dismissal policy, a skeleton loading state, an afterClose lifecycle, optional window controls (minimize, maximize, fullscreen) and a close guard that can veto a dismissal. Use it for any modal surface in the app; reaching for Astryx Dialog directly means rebuilding the header, footer and dismissal wiring by hand. Nothing is rendered while closed, so children mount fresh on every open, and the built-in labels are translated through useBAIi18n.',
+      'The application modal, an adapter over ui-common Modal (a portalled dialog surface) that keeps the antd-shaped prop vocabulary and adds the controller behaviour the bare surface does not provide: a header with title, subtitle and close button, a generated OK and Cancel footer with loading and danger states, backdrop and Escape dismissal policy, a skeleton loading state, an afterClose lifecycle, optional window controls (minimize, maximize, fullscreen) and a close guard that can veto a dismissal. Use it for any modal surface in the app; reaching for Astryx Dialog directly means rebuilding the header, footer and dismissal wiring by hand. Children mount on the first open and stay mounted while closed; pass unmountOnClose, or wrap the modal in BAIUnmountAfterClose, to drop them and their state on close, and the built-in labels are translated through useBAIi18n.',
     bestPractices: [
       {
         guidance: true,
@@ -205,7 +205,7 @@ export const docs = {
       name: 'mask',
       type: 'boolean | { closable?: boolean; blur?: boolean }',
       description:
-        'Only closable is read, as an alias for maskClosable. The backdrop itself is owned by BAIDialog and cannot be removed.',
+        'Only closable is read, as an alias for maskClosable. The backdrop itself is owned by ui-common Modal and cannot be removed.',
     },
     {
       name: 'width',
@@ -271,7 +271,19 @@ export const docs = {
       name: 'zIndex',
       type: 'number',
       description:
-        'Forwarded to BAIDialog. The modal is a portalled element with a real z-index, so a passed value takes effect.',
+        'Forwarded to ui-common Modal as a request inside the modal band: a modal opened later still stacks above, and a value outside the band is ignored.',
+    },
+    {
+      name: 'unmountOnClose',
+      type: 'boolean',
+      description:
+        'Forwarded to ui-common Modal: unmounts the content, and drops its state, when the modal closes.',
+    },
+    {
+      name: 'ref',
+      type: 'React.Ref<HTMLDivElement>',
+      description:
+        'Forwarded to ui-common Modal: the element carrying role="dialog". Every other ModalProps key not listed here (position, padding, xstyle, aria-*, data-*) is forwarded as is.',
     },
   ],
   examples: [

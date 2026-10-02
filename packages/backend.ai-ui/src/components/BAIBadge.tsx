@@ -12,13 +12,13 @@
 
  FRONTIER COMPONENT — the public surface is unchanged (`color` as a BUI
  `SemanticColor`, `processing`, plus antd `Badge`'s `text` / `style` /
- `className`), so `BAIAuditLogStatusTag`, `BAISchedulingResultBadge`,
+ `className`), so `BAIAuditLogStatusBadge`, `BAISchedulingResultBadge`,
  `StorageUsageBadge` and `SessionSlotCell` stay at zero diff.
 */
 import { SemanticColor } from '../helper';
 import './BAIBadge.css';
-import { StatusDot } from '@astryxdesign/core/StatusDot';
-import { Text } from '@astryxdesign/core/Text';
+import { StatusDot } from '@lablup/ui-common/StatusDot';
+import { Text } from '@lablup/ui-common/Text';
 import React from 'react';
 import type { ReactNode } from 'react';
 

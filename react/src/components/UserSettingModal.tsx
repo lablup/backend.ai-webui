@@ -4,8 +4,8 @@
  */
 import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
-  UserSettingModalBulkCreateMutation,
   UserRoleV2,
+  UserSettingModalBulkCreateMutation,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
@@ -15,16 +15,16 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { isValidIPOrCidr } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { roleFromV2 } from '../helper/userRole';
 import { useCurrentDomainValue, useSuspendedBackendaiClient } from '../hooks';
 import { useCurrentUserRole, useTOTPSupported } from '../hooks/backendai';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import { theme } from '../theme-shim';
 import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
@@ -38,21 +38,19 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAICompactGroup,
   BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAISkeleton,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
@@ -64,7 +62,7 @@ import * as _ from 'lodash-es';
 import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];
@@ -130,13 +128,6 @@ const statusFromV2: Record<string, string> = {
   INACTIVE: 'inactive',
   BEFORE_VERIFICATION: 'before-verification',
   DELETED: 'deleted',
-};
-
-const roleFromV2: Record<string, string> = {
-  USER: 'user',
-  ADMIN: 'admin',
-  SUPERADMIN: 'superadmin',
-  MONITOR: 'monitor',
 };
 
 const formatBulkEmail = (
@@ -242,7 +233,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { modal, message } = App.useApp();
   const formRef = useRef<FormInstance<FormValues>>(null);
   const { logger } = useBAILogger();
@@ -310,10 +301,16 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
           containerMainGid
           containerGids
         }
-        projects {
+        # groupIds on save REPLACES the membership list, so the form must
+        # start from every project rather than the connection's default page.
+        projects(limit: 1000) {
           edges {
             node {
               id
+              basicInfo {
+                name
+                type
+              }
             }
           }
         }
@@ -322,6 +319,24 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
     `,
     userSettingFrgmt ?? null,
   );
+
+  // PERSONAL included: the manager ignores it in `groupIds`, and the selector
+  // shows it as a locked option.
+  const projectMembershipIds = _.compact(
+    _.map(user?.projects?.edges, (edge) =>
+      edge?.node?.id ? toLocalId(edge.node.id) : null,
+    ),
+  );
+  const personalProjectNode = _.find(
+    user?.projects?.edges,
+    (edge) => edge?.node?.basicInfo.type === 'PERSONAL',
+  )?.node;
+  const personalProject = personalProjectNode
+    ? {
+        id: toLocalId(personalProjectNode.id),
+        name: personalProjectNode.basicInfo.name,
+      }
+    : undefined;
 
   // >= 26.4.0: adminUpdateUserV2 — edit keyed by userId.
   const [commitUpdateUserV2, isInFlightUpdateUserV2] =
@@ -363,12 +378,13 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
               containerMainGid
               containerGids
             }
-            projects {
+            projects(limit: 1000) {
               edges {
                 node {
                   id
                   basicInfo {
                     name
+                    type
                   }
                 }
               }
@@ -674,7 +690,6 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
             : t('credential.CreateUser')
       }
       okText={user ? t('button.Save') : t('button.Create')}
-      destroyOnHidden
       onOk={() => formRef.current?.submit()}
       confirmLoading={isInFlight}
       // A bulk create that partially failed leaves this form open, so its
@@ -724,11 +739,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                   container_gids: user.container.containerGids
                     ? _.map(user.container.containerGids, (gid) => String(gid))
                     : undefined,
-                  group_ids: _.compact(
-                    _.map(user.projects?.edges, (edge) =>
-                      edge?.node?.id ? toLocalId(edge.node.id) : null,
-                    ),
-                  ),
+                  group_ids: projectMembershipIds,
                 }
               : ({
                   need_password_change: bulkCreate ? true : false,
@@ -749,7 +760,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                 ghostInfoBg={false}
                 showIcon
                 description={t('credential.BulkCreateUserDescription')}
-                style={{ marginBottom: token.marginMD }}
+                style={{ marginBottom: token('--spacing-5') }}
               />
               {/* QA-FINDINGS Q-32 — "email prefix 와 email suffix 사이의
                   input margin 이 없음". The gapless `HStack` this replaces put
@@ -1148,13 +1159,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                     label={t('credential.Projects')}
                     getValueFromEvent={(value) => value}
                     getValueProps={(value) => ({
-                      value: _.isArray(value)
-                        ? value
-                        : _.compact(
-                            _.map(user?.projects?.edges, (edge) =>
-                              edge?.node?.id ? toLocalId(edge.node.id) : null,
-                            ),
-                          ),
+                      value: _.isArray(value) ? value : projectMembershipIds,
                     })}
                   >
                     <ProjectSelect
@@ -1162,6 +1167,7 @@ const UserSettingModal: React.FC<UserSettingModalProps> = ({
                       domain={getFieldValue('domain_name')}
                       disableDefaultFilter
                       lockedProjectTypes={!user ? ['MODEL_STORE'] : undefined}
+                      personalProject={personalProject}
                     />
                   </BAIFormItem>
                 );

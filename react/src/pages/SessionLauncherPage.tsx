@@ -24,6 +24,7 @@ import ResourceAllocationFormItems, {
 import SessionLauncherValidationTour from '../components/SessionLauncherErrorTourProps';
 import SessionLauncherFormIncompatibleValueChecker from '../components/SessionLauncherFormIncompatibleValueChecker';
 import SessionLauncherPreview from '../components/SessionLauncherPreview';
+import SessionLauncherStorageStep from '../components/SessionLauncherStorageStep';
 import SessionNameFormItem, {
   SessionNameFormItemValue,
 } from '../components/SessionNameFormItem';
@@ -31,9 +32,6 @@ import SessionOwnerSetterCard, {
   SessionOwnerSetterFormValues,
 } from '../components/SessionOwnerSetterCard';
 import SessionTemplateModal from '../components/SessionTemplateModal';
-import VFolderTableFormItem, {
-  VFolderTableFormValues,
-} from '../components/VFolderTableFormItem';
 import {
   AstryxFormCheckbox,
   AstryxFormNumberInput,
@@ -44,6 +42,7 @@ import {
 } from '../components/astryxFormControls';
 import { Form } from '../form-engine';
 import { formatDuration, convertToBinaryUnit } from '../helper';
+import { normalizeLegacyMountFields } from '../helper/vfolderMounts';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import {
   useCurrentUserRole,
@@ -55,35 +54,32 @@ import {
 } from '../hooks/useCurrentProject';
 import { useRecentSessionHistory } from '../hooks/useRecentSessionHistory';
 import { useStartSession } from '../hooks/useStartSession';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { Card } from '@astryxdesign/core/Card';
-import { Divider } from '@astryxdesign/core/Divider';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Grid as AstryxGrid } from '@astryxdesign/core/Grid';
-import { Heading } from '@astryxdesign/core/Heading';
-// FRONTIER (ticket 17): the Form ENGINE is still antd's — ticket 34's
-// self-hosted replacement is parked (see form-engine/engine.ts). Everything
-// INSIDE the items is Astryx as of wave 3: the controls go through the shared
-// `astryxFormControls` adapters, and `Steps` is the lab `Stepper`, which is a
-// real dependency now (`@astryxdesign/lab@0.3.0-canary.12db2a1`, already in
-// the graph for Drawer/Tour and for `EduAppLauncher`'s own Stepper).
-import { InputGroup } from '@astryxdesign/core/InputGroup';
-import { RadioList, RadioListItem } from '@astryxdesign/core/RadioList';
-import { VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { Divider } from '@lablup/ui-common/Divider';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Grid as AstryxGrid } from '@lablup/ui-common/Grid';
+import { Heading } from '@lablup/ui-common/Heading';
+// The form engine is ui-common's (`@lablup/ui-common/Form`); the controls
+// inside the items go through the shared `astryxFormControls` adapters.
+import { InputGroup } from '@lablup/ui-common/InputGroup';
+import { RadioList, RadioListItem } from '@lablup/ui-common/RadioList';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import * as stylex from '@stylexjs/stylex';
+import type { SessionResources as ClientSessionResources } from 'backend.ai-client';
 import {
   BAIPopconfirm,
+  BAICard,
   BAIFlex,
   BAIIntervalView,
   BAIResourceNumberWithIcon,
   BAIUnmountAfterClose,
   ResourceTypeIcon,
+  type VFolderMountConfigValue,
   filterOutEmpty,
   generateRandomString,
   useBAILogger,
@@ -91,6 +87,7 @@ import {
   useErrorMessageResolver,
   useToggle,
   useUpdatableState,
+  useBAIBreakpoint,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useAtomValue } from 'jotai';
@@ -123,7 +120,7 @@ import { useLocation } from 'react-router-dom';
 
 type SessionLauncherFormData = Omit<
   Required<OptionalFieldsOnly<SessionLauncherFormValue>>,
-  'autoMountedFolderNames' | 'mounts'
+  'mounts'
 >;
 
 export interface SessionResources {
@@ -150,17 +147,16 @@ export interface SessionResources {
       shmem?: string;
       allow_fractional_resource_fragmentation?: boolean;
     };
-    mount_ids?: string[];
-    mount_id_map?: {
-      [key: string]: string;
-    };
     environ?: {
       [key: string]: string;
     };
     scaling_group?: string;
     preopen_ports?: number[];
     agent_list?: string[];
-  };
+  } & Pick<
+    NonNullable<ClientSessionResources['config']>,
+    'mount_ids' | 'mount_id_map' | 'mount_options'
+  >;
 }
 
 interface SessionLauncherValue {
@@ -184,11 +180,20 @@ interface SessionLauncherValue {
   reuseIfExists?: boolean;
 }
 
+export interface SessionLauncherVFolderMountValues {
+  vfolderMounts?: VFolderMountConfigValue[];
+  /**
+   * Deprecated mount-by-name field. Only `SessionLauncherFormIncompatibleValueChecker`
+   * still reads it, to warn about and clear a stale `?formValues=` param.
+   */
+  mounts?: string[];
+}
+
 export type SessionLauncherFormValue = SessionLauncherValue &
   SessionNameFormItemValue &
   ImageEnvironmentFormInput &
   ResourceAllocationFormValue &
-  VFolderTableFormValues &
+  SessionLauncherVFolderMountValues &
   PortSelectFormValues &
   SessionOwnerSetterFormValues;
 
@@ -208,11 +213,7 @@ export type AppOption = {
 export type SessionLauncherStepKey =
   'sessionType' | 'environment' | 'storage' | 'network' | 'review';
 
-/**
- * antd `StepsProps['items'][number]`, restated as the three fields this page
- * actually sets. `status` was assigned per item at render time (see the
- * Stepper below) and has no lab counterpart, so it is not part of the shape.
- */
+/** The fields this page sets on a `Stepper` step. */
 type StepItem = {
   title: string;
   icon?: React.ReactNode;
@@ -223,8 +224,7 @@ interface StepPropsWithKey extends StepItem {
 }
 
 /**
- * Step-section container: Astryx `Card` + `Heading` composition replacing the
- * antd `Card title` (MAPPING.md §5.1). `hidden` keeps the original
+ * Step-section container. `hidden` keeps the original
  * `style={{display:'none'}}` show/hide behaviour, which preserves mounted
  * form state across steps (the form engine requirement).
  */
@@ -235,12 +235,9 @@ const StepCard: React.FC<{
 }> = ({ title, hidden, children }) => {
   'use memo';
   return (
-    <Card style={{ display: hidden ? 'none' : undefined }}>
-      <VStack gap={4} align="stretch">
-        {title ? <Heading level={5}>{title}</Heading> : null}
-        {children}
-      </VStack>
-    </Card>
+    <BAICard title={title} style={{ display: hidden ? 'none' : undefined }}>
+      {children}
+    </BAICard>
   );
 };
 
@@ -289,7 +286,6 @@ const SessionLauncherPage = () => {
 
   const mainContentDivRef = useAtomValue(mainContentDivRefState);
   const baiClient = useSuspendedBackendaiClient();
-  const supportsMountById = baiClient.supports('mount-by-id');
   const supportBatchTimeout = baiClient?.supports('batch-timeout') ?? false;
   const currentUserRole = useCurrentUserRole();
   const [, setCurrentGlobalResourceGroup] = useCurrentResourceGroupState();
@@ -307,8 +303,13 @@ const SessionLauncherPage = () => {
   const { startSession, defaultFormValues, upsertSessionNotification } =
     useStartSession();
   const StepParam = parseAsInteger.withDefault(0);
+  // Migrate at the parser so every reader of `formValuesFromQueryParams` sees
+  // `vfolderMounts`, never the legacy mount fields.
   const FormValuesParam = parseAsJson<DeepPartial<SessionLauncherFormValue>>(
-    (value) => value as DeepPartial<SessionLauncherFormValue>,
+    (value) =>
+      normalizeLegacyMountFields(
+        value as DeepPartial<SessionLauncherFormValue>,
+      ),
   ).withDefault(defaultFormValues);
   const AppOptionParam = parseAsJson<AppOption>(
     (value) => value as AppOption,
@@ -350,7 +351,6 @@ const SessionLauncherPage = () => {
           _.omit(form.getFieldsValue(), [
             'environments.image',
             'environments.customizedTag',
-            'autoMountedFolderNames',
             'owner',
             'envvars',
           ]),
@@ -375,7 +375,7 @@ const SessionLauncherPage = () => {
       { history: 'push' },
     );
   };
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { t } = useTranslation();
 
@@ -532,7 +532,7 @@ const SessionLauncherPage = () => {
       return;
     }
 
-    if (_.isEmpty(values.mount_ids) || values.mount_ids?.length === 0) {
+    if (_.isEmpty(values.vfolderMounts)) {
       const isConfirmed = await app.modal.confirm({
         title: t('session.launcher.NoFolderMounted'),
         content: (
@@ -616,6 +616,7 @@ const SessionLauncherPage = () => {
         <BAIFlex
           direction="column"
           align="stretch"
+          gap="md"
           style={{ flex: 1, maxWidth: 700 }}
         >
           <BAIFlex direction="row" justify="between">
@@ -993,7 +994,7 @@ const SessionLauncherPage = () => {
                                                 engine COMPOSES a child's own
                                                 trigger handler after its own
                                                 (`originTriggerFunc` in
-                                                `form-engine/Field.tsx`), so
+                                                ui-common Form's `Field`), so
                                                 both run. */}
                                             <AstryxFormNumberInput
                                               label={t(
@@ -1168,6 +1169,9 @@ const SessionLauncherPage = () => {
                 >
                   <ResourceAllocationFormItems
                     project={currentProjectContext}
+                    // An SSH/SFTP system session runs in the SFTP resource
+                    // group the selector hides from every other session type.
+                    includeSFTPResourceGroups={sessionType === 'system'}
                     enableAgentSelect={
                       !baiClient._config.hideAgents &&
                       baiClient.supports('agent-select')
@@ -1254,7 +1258,7 @@ const SessionLauncherPage = () => {
                           width="100%"
                           style={{
                             display: enabled ? 'none' : undefined,
-                            marginTop: token.marginMD,
+                            marginTop: token('--spacing-5'),
                           }}
                         >
                           <Form.Item
@@ -1328,33 +1332,10 @@ const SessionLauncherPage = () => {
                   title={t('webui.menu.Data&Storage')}
                   hidden={currentStepKey !== 'storage'}
                 >
-                  <Form.Item noStyle dependencies={['owner']}>
-                    {({ getFieldValue }) => {
-                      const ownerInfo = getFieldValue('owner');
-                      const isValidOwner =
-                        ownerInfo?.enabled &&
-                        _.every(_.omit(ownerInfo, 'enabled'), (key) => {
-                          return key !== undefined;
-                        });
-
-                      return (
-                        <VFolderTableFormItem
-                          rowKey={supportsMountById ? 'id' : 'name'}
-                          rowFilter={(vfolder) => {
-                            return (
-                              vfolder.status === 'ready' &&
-                              !vfolder.name?.startsWith('.')
-                            );
-                          }}
-                          tableProps={{
-                            ownerEmail: isValidOwner
-                              ? ownerInfo?.email
-                              : undefined,
-                          }}
-                        />
-                      );
-                    }}
-                  </Form.Item>
+                  <SessionLauncherStorageStep
+                    form={form}
+                    project={currentProjectContext}
+                  />
                 </StepCard>
 
                 {/* Step Start*/}
@@ -1368,6 +1349,7 @@ const SessionLauncherPage = () => {
                 {/* Step Start*/}
                 {currentStepKey === 'review' && (
                   <SessionLauncherPreview
+                    currentProjectId={currentProjectContext.id}
                     onClickEditStep={(stepKey) => {
                       const nextStep = _.findIndex(steps, { key: stepKey });
                       setCurrentStep(nextStep);
@@ -1530,21 +1512,8 @@ const SessionLauncherPage = () => {
         {screens.lg && (
           <BAIFlex
             data-test-id="neo-session-launcher-tour-step"
-            style={{ position: 'sticky', top: 80 }}
+            style={{ position: 'sticky', top: 20 }}
           >
-            {/* antd `Steps` -> lab `Stepper` + `Step` (MAPPING §2 LAB; same
-                call W2A-15 made for `FairShareList` and ticket 23 for
-                `EduAppLauncher`).
-                - `current` -> `activeStep`, `onChange` -> `onStepClick`.
-                - The per-item `status: 'process' | 'wait'` mapping is DROPPED:
-                  lab derives completed / active / upcoming from `activeStep`,
-                  and its `status` is a SEMANTIC enum (accent/success/warning/
-                  error) layered on top. `process`/`wait` said nothing that
-                  `activeStep` does not already say.
-                - `size="small"` has no counterpart; `density` is the nearest
-                  axis and `compact` is the small rung.
-                - `Step.label` is a required STRING, which every step title
-                  here already is. */}
             <Stepper
               orientation="vertical"
               density="compact"
@@ -1561,7 +1530,12 @@ const SessionLauncherPage = () => {
               }}
             >
               {_.map(steps, (s, idx) => (
-                <Step key={s.key} step={idx} label={s.title} icon={s.icon} />
+                <Step
+                  key={s.key}
+                  step={idx}
+                  label={s.title}
+                  indicator={s.icon ?? 'number'}
+                />
               ))}
             </Stepper>
           </BAIFlex>
@@ -1601,9 +1575,7 @@ const SessionLauncherPage = () => {
                 // reset fields related to optional and nested fields
                 sessionName: '',
                 ports: [],
-                vfoldersNameMap: {},
-                mount_ids: [],
-                mount_id_map: {},
+                vfolderMounts: [],
                 bootstrap_script: '',
                 num_of_sessions: 1,
                 owner: {
@@ -1611,6 +1583,7 @@ const SessionLauncherPage = () => {
                   accesskey: '',
                   domainName: '',
                   email: undefined,
+                  projectId: '',
                   project: '',
                   resourceGroup: '',
                 },
@@ -1625,7 +1598,7 @@ const SessionLauncherPage = () => {
                 reuseIfExists: false,
                 agent: ['auto'], // Add the missing 'agent' property
               } as SessionLauncherFormData,
-              formValue,
+              normalizeLegacyMountFields(formValue),
             );
 
             if (!_.isEmpty(fieldsValue.sessionName)) {
@@ -1703,14 +1676,14 @@ const unifiedChipStyles = stylex.create({
 const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   // The description lives only in the backend slot-details response, not in
   // the local device_metadata.json, and is not scoped to a resource group.
   const { mergedResourceSlots } = useResourceSlotsDetails();
   const description = mergedResourceSlots[type]?.description ?? type;
   // One line of the description text, so the icon can be vertically centered
   // against the first line (not the whole wrapped block).
-  const lineHeightPx = token.fontSize * token.lineHeight;
+  const lineHeight = `calc(${token('--text-body-size')} * ${token('--text-body-leading')})`;
   return (
     <Tooltip
       content={t('session.launcher.UnifiedAcceleratorMemoryNote', {
@@ -1725,7 +1698,7 @@ const UnifiedAcceleratorChip: React.FC<{ type: string }> = ({ type }) => {
       >
         {/* Match the icon box to one text line and center the icon so it stays
             aligned with the first line when the description wraps. */}
-        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeightPx }}>
+        <BAIFlex align="center" style={{ flexShrink: 0, height: lineHeight }}>
           <ResourceTypeIcon type={type} showTooltip={false} />
         </BAIFlex>
         <Text xstyle={unifiedChipStyles.description}>{description}</Text>

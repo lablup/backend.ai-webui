@@ -9,7 +9,6 @@ import { App } from '../app-shim';
 import { Form } from '../form-engine';
 import { useCurrentDomainValue, useWebUINavigate } from '../hooks';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { ProjectContext } from '../types/projectContext';
 import BAIFormItem from './BAIFormItem';
 import {
@@ -17,16 +16,17 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIButton,
   BAIFlex,
   BAIModal,
   BAIModalProps,
   BAIProjectResourceGroupSelect,
+  BAISkeleton,
   toLocalId,
 } from 'backend.ai-ui';
 import React, { Suspense } from 'react';
@@ -102,7 +102,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [form] = Form.useForm<FormValues>();
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
@@ -267,7 +267,6 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
           : t('deployment.CreateDeployment')
       }
       onCancel={() => onRequestClose(false)}
-      destroyOnHidden
       width={520}
       confirmLoading={isCreating || isUpdating}
       footer={
@@ -307,7 +306,7 @@ const DeploymentSettingModal: React.FC<DeploymentSettingModalProps> = ({
                 }
               : { openToPublic: false, replicaCount: 1, tags: [] }
           }
-          style={{ marginTop: token.marginXS }}
+          style={{ marginTop: token('--spacing-2') }}
         >
           <BAIFormItem
             name="name"

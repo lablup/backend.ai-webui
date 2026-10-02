@@ -49,7 +49,7 @@ test.describe(
 
     test(
       'User sees warning when selecting Multi Node with cluster size 1',
-      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
+      { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: This test requires ClusterModeFormItems.tsx (feat/FR-2381),
         // which was introduced in the main branch after v26.3.0.
@@ -74,7 +74,7 @@ test.describe(
         // "Cluster mode" form item alongside the radio group; there is no
         // separate "Cluster size" label in the new UI.
         const clusterSizeInput = page
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
@@ -104,7 +104,7 @@ test.describe(
       await multiNodeLabel.click();
 
       const clusterSizeInput = page
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       const warningMessage = page.getByText(
@@ -142,7 +142,7 @@ test.describe(
 
       // Verify warning is initially visible (Multi Node + size 1)
       const clusterSizeInput = page
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       await expect(clusterSizeInput).toHaveValue('1');
@@ -166,7 +166,7 @@ test.describe(
 
     test(
       'User dismisses warning by switching from Multi Node to Single Node',
-      { tag: ['@smoke', '@regression', '@requires-webui-v26.4'] },
+      { tag: ['@regression', '@requires-webui-v26.4'] },
       async ({ page }) => {
         // NOTE: Requires ClusterModeFormItems.tsx (feat/FR-2381) — see note above.
         await navigateToClusterModeSection(page);
@@ -222,7 +222,7 @@ test.describe(
 
         // Cluster size should still be 1 (mode switch does not reset size)
         const clusterSizeInput = page
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
@@ -238,7 +238,7 @@ test.describe(
 
     test(
       'User sees no warning with Single Node mode and cluster size 1',
-      { tag: ['@smoke', '@regression'] },
+      { tag: ['@smoke', '@smoke-admin', '@regression'] },
       async ({ page }) => {
         // Navigate to step 2: Environments & Resource Allocation
         await navigateToClusterModeSection(page);
@@ -258,7 +258,7 @@ test.describe(
         // ClusterModeFormItems (FR-2381) renders the spinbutton inside the
         // "Cluster mode" form item; there is no separate "Cluster size" label.
         const clusterSizeInput = page
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Cluster mode' })
           .getByRole('spinbutton');
         await expect(clusterSizeInput).toHaveValue('1');
@@ -287,7 +287,7 @@ test.describe(
 
       // Set cluster size to 2 via direct input
       const clusterSizeInput = page
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Cluster mode' })
         .getByRole('spinbutton');
       await clusterSizeInput.fill('2');

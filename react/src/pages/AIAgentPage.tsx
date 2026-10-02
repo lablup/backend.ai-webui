@@ -7,31 +7,31 @@ import { FluentEmojiIcon } from '../components/FluentEmojiIcon';
 import { useWebUINavigate } from '../hooks';
 import { AIAgent, useAIAgent } from '../hooks/useAIAgent';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import './AIAgentPage.css';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
-import { Grid } from '@astryxdesign/core/Grid';
-import { Text } from '@astryxdesign/core/Text';
+} from '@lablup/ui-common/DropdownMenu';
+import { Grid } from '@lablup/ui-common/Grid';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
-  BAIFlex,
-  BAIUnmountAfterClose,
   BAIDeleteConfirmModal,
-  badgeVariantForTagColor,
+  BAIFlex,
+  BAISkeleton,
+  BAIUnmountAfterClose,
+  tokenColorForTagColor,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
   EllipsisVertical,
-  Undo2,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
+  Undo2,
 } from 'lucide-react';
 import React, { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +59,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
 }) => {
   const { t } = useTranslation();
   const tags = agent.tags || [];
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // PILOT-DECISION: antd `danger` (red text on "Delete Agent") has no
   // destination on Astryx `DropdownMenuItemData` (P5, closed shape, no
@@ -98,8 +98,8 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
         <div
           style={{
             position: 'absolute',
-            top: token.paddingXS,
-            right: token.paddingXS,
+            top: token('--spacing-2'),
+            right: token('--spacing-2'),
             zIndex: 1,
           }}
           onClick={(e) => e.stopPropagation()}
@@ -112,7 +112,7 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
               icon: <EllipsisVertical size="1em" />,
               label: t('button.MoreActions'),
               isIconOnly: true,
-              style: { color: token.colorTextSecondary, opacity: 0 },
+              style: { color: token('--color-text-secondary'), opacity: 0 },
             }}
           />
         </div>
@@ -153,26 +153,26 @@ const AIAgentCard: React.FC<AIAgentCardProps> = ({
           wrap="wrap"
         >
           {endpointLabel && (
-            <Badge
+            <Token
               key={endpointLabel}
               label={endpointLabel}
-              variant={badgeVariantForTagColor('orange-inverse')}
+              color={tokenColorForTagColor('orange-inverse')}
             />
           )}
           {agent.isCustom && !isOverridden && (
-            <Badge
+            <Token
               label={t('aiAgent.Custom')}
-              variant={badgeVariantForTagColor('blue-inverse')}
+              color={tokenColorForTagColor('blue-inverse')}
             />
           )}
           {isOverridden && (
-            <Badge
+            <Token
               label={t('aiAgent.Edited')}
-              variant={badgeVariantForTagColor('orange')}
+              color={tokenColorForTagColor('orange')}
             />
           )}
           {tags.map((tag) => (
-            <Badge key={tag} label={tag} variant="neutral" />
+            <Token key={tag} label={tag} />
           ))}
         </BAIFlex>
       </BAIFlex>

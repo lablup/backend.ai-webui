@@ -6,6 +6,7 @@
     "DiskPerc": "Диск %",
     "Endpoint": "Конечная точка",
     "FailedToLoadCellData": "Не удалось загрузить данные.",
+    "LostAt": "Потерян",
     "NoAvailableLiveStat": "Живая статистика недоступна",
     "Region": "Регион",
     "ResourceGroup": "Группа ресурсов",
@@ -13,7 +14,8 @@
     "Schedulable": "Доступно для планирования",
     "Starts": "Запуски",
     "Status": "Статус",
-    "Utilization": "Использование"
+    "Utilization": "Использование",
+    "Version": "Версия"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Разрешено",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID действия",
     "Actor": "Исполнитель",
+    "ClientIp": "IP клиента",
     "Description": "Описание",
     "Duration": "Длительность",
     "EntityId": "ID объекта",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Произошла непредвиденная ошибка. Попробуйте ещё раз позже или обратитесь в службу поддержки, если проблема сохраняется."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Очистить",
-    "KeepAsIs": "Оставить как есть",
-    "UndoChanges": "Отменить изменения"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Ошибка выполнения",
-    "ErrorOccurred": "Произошла ошибка"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Очистить",
-    "HexValue": "Шестнадцатеричное значение",
-    "NoColor": "Без цвета",
-    "SelectColor": "Выбрать цвет"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Очистить Поиск по вариантам",
-    "NoResults": "Нет результатов",
-    "SearchOptions": "Поиск по вариантам"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Выберите реестр контейнеров"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "Успешно удалено {{count}} версии.",
     "Version": "Версия"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Вы уверены, что хотите удалить?",
-    "AreYouSureToPermanentlyDeleteTarget": "Вы действительно хотите окончательно удалить {{target}}?",
-    "CannotBeUndone": "Это действие нельзя отменить.",
-    "DeleteItem": "Удалить",
-    "DeleteNItems": "Удалить {{count}} элементов",
-    "TypeToConfirm": "Введите <code>{{confirmText}}</code> для подтверждения."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Создано"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Выберите развёртывание"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Ухудшено",
     "Deploying": "Развёртывается",
     "Healthy": "Работает",
@@ -245,6 +220,10 @@
       "Title": "Не удалось войти через Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Прогресс запуска ядер",
+    "KernelTerminationProgress": "Прогресс завершения ядер"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Размер кластера",
     "Concurrency": "Одновременные сессии",
@@ -265,6 +244,7 @@
     "SelectKeypair": "Выберите пару ключей"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP клиента",
     "Domain": "Домен",
     "FailReason": "Причина сбоя",
     "LoginTime": "Время входа",
@@ -355,18 +335,22 @@
     "UpdateProject": "Обновить проект"
   },
   "comp:BAIProjectTable": {
+    "Active": "Активный",
     "ContainerRegistry": "Реестр контейнеров",
     "ContainerRegistryProject": "Проект реестра контейнеров",
     "CreatedAt": "Создано",
     "Description": "Описание",
     "Domain": "Домен",
+    "Inactive": "Неактивный",
     "IntegrationID": "ID интеграции",
+    "ModifiedAt": "Изменено",
     "Name": "Имя",
     "Project": "Проект",
     "ProjectID": "ID проекта",
     "Registry": "Реестр",
     "ResourcePolicy": "Политика ресурсов",
     "ScalingGroups": "Группы ресурсов",
+    "Status": "Статус",
     "StorageNodes": "Узлы хранения",
     "TotalResourceSlots": "Всего ресурсных слотов",
     "Type": "Тип"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Выделено / Запрошено"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Изменить цвет группы",
-    "ResourceGrid": "Сетка ресурсов",
-    "UseColorN": "Использовать цвет {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Неограниченный"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "Мульти",
     "SingleNodeShort": "Одинокий"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Неограниченный"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Выберите хост хранилища"
   },
@@ -578,22 +554,10 @@
     "Time": "Время"
   },
   "comp:BAITable": {
-    "Apply": "Применить",
-    "Cancel": "Отмена",
     "CollapseAll": "Свернуть все",
     "ExpandAll": "Развернуть все",
     "ExpandErrorsOnly": "Развернуть только ошибки",
-    "ExpandOptions": "Параметры разворачивания",
-    "ExpandRow": "Развернуть строку",
-    "Export": "Экспорт",
-    "ExportCSV": "Экспорт в CSV",
-    "GoToFirstPage": "Перейти на первую страницу",
-    "InvalidPageNumber": "Неверный номер страницы",
-    "NoDataToDisplay": "Нет данных для отображения",
-    "Pagination": "Разбиение на страницы",
-    "SearchTableColumn": "Поиск таблицы столбцов",
-    "SelectColumnToDisplay": "Выберите столбцы, чтобы отобразить",
-    "SettingTable": "Настройки таблицы"
+    "ExpandOptions": "Параметры разворачивания"
   },
   "comp:BAITestButton": {
     "Test": "тест"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Неверный формат пути.",
     "AliasOverlapping": "Путь монтирования перекрывается с другой папкой.",
+    "AliasOverlappingWithAutoMount": "Путь монтирования перекрывается с папкой автомонтирования.",
     "AliasPlaceholder": "Путь монтирования",
     "AutoMountedFolders": "Папки с автомонтированием",
-    "Name": "Имя",
-    "PathAndAlias": "Путь & Псевдоним",
+    "CreateFolder": "Создать новую папку для хранения",
+    "DestinationPath": "Путь в контейнере (destination)",
+    "Folders": "Папки",
+    "OwnerProject": "Проект",
+    "OwnerUser": "Пользователь",
     "PathAndAliasTooltip": "Путь внутри контейнера, в который будет смонтирована папка. Оставьте пустым для использования пути по умолчанию.",
+    "Refresh": "Обновить",
     "RemoveFolder": "Удалить",
+    "SelectFolder": "Выбрать папку",
+    "SourcePath": "Путь в папке (source)",
     "Subpath": "Подпуть",
     "SubpathInvalid": "Подпуть должен быть относительным путём и не должен содержать '..'.",
-    "SubpathPlaceholder": "напр. dataset/train (необязательно)",
-    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Оставьте пустым для монтирования корня."
+    "SubpathTooltip": "Монтирует подпапку внутри папки как источник вместо её корня. Нажмите на поле, чтобы просмотреть папку и выбрать подпапку; оставьте пустым, чтобы смонтировать корень папки.",
+    "UnmountableFoldersRemoved": "Папки, которые больше нельзя подключить, удалены из выбора."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Выбрать папку"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "Удаленные файлы и папки не могут быть восстановлены. \nВы хотите продолжить?",
     "DeleteSelectedItemsDialog": "Удалить подтверждение",
     "Download": "Скачать",
+    "DownloadPopupBlocked": "Браузер заблокировал окно загрузки. Разрешите всплывающие окна для этого сайта и повторите попытку.",
+    "DownloadRejected": "Storage proxy отклонил загрузку (HTTP {{status}}). Загрузка не началась.",
     "DownloadSelected": "Скачать",
     "DownloadStarted": "Файл \"{{fileName}}\" Загрузка началась.",
+    "DownloadUnreachable": "Не удалось связаться со storage proxy по адресу {{origin}}. Загрузка не началась.",
     "DragAndDropDesc": "Перетащите файлы в эту область, чтобы загрузить.",
     "DuplicatedFiles": "Перезаписать подтверждение",
     "DuplicatedFilesDesc": "Файл или папка с тем же именем уже существует. \nВы хотите перезаписать?",
     "EditFile": "Редактировать файл",
+    "ExistingItem": "Существующий",
     "FileCreatedSuccessfully": "Файл успешно создан.",
     "FileName": "Имя файла",
     "FileNamePlaceholder": "например, model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "Модифицирован в",
     "Name": "Имя",
     "NoUploadPermissionForHost": "У вас нет разрешения на загрузку для данного хоста.",
+    "OtherItemsWillBeUploaded": "Также будет загружено ещё {{count}} элемент(ов).",
     "Path": "Путь",
     "PleaseEnterAFileName": "Пожалуйста, введите имя файла.",
     "PleaseEnterAFolderName": "Пожалуйста, введите имя папки.",
     "RenameFile": "Переименовать",
     "RenameSuccess": "Имя было успешно изменено.",
+    "SelectItemsToOverwrite": "Эти элементы уже существуют здесь. Выберите те, которые нужно перезаписать; невыбранные будут пропущены.",
     "SelectedItemsDeletedSuccessfully": "Выбранные файлы и папки были успешно удалены.",
     "Size": "Размер",
     "TypeDeleteToConfirm": "Введите «Удалить» для подтверждения.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "Этот формат файла не поддерживает редактирование.",
     "UploadFiles": "Загрузить файлы",
     "UploadFolder": "Загрузить папку",
+    "UploadingItem": "Загружаемый",
     "error": {
       "DuplicatedName": "Это имя уже используется. \nПожалуйста, введите другое имя.",
       "FileNameRequired": "Пожалуйста, введите имя файла или папки."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} of {{total}} элементы"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Недоступные данные о ресурсах"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "Произошла неизвестная ошибка. \nПожалуйста, попробуйте еще раз."
   },
-  "form": {
-    "Optional": "(необязательно)",
-    "validateMessages": {
-      "Default": "Ошибка проверки поля ${label}",
-      "Required": "Пожалуйста, введите ${label}",
-      "Whitespace": "${label} не может быть пустым",
-      "array": {
-        "Len": "Количество элементов ${label} должно быть равно ${len}",
-        "Max": "Количество элементов ${label} должно быть меньше или равно ${max}",
-        "Min": "Количество элементов ${label} должно быть больше или равно ${min}",
-        "Range": "Количество элементов ${label} должно быть между ${min} и ${max}"
-      },
-      "number": {
-        "Len": "${label} должна быть равна ${len}",
-        "Max": "${label} должна быть меньше или равна ${max}",
-        "Min": "${label} должна быть больше или равна ${min}",
-        "Range": "${label} должна быть между ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} не соответствует шаблону ${pattern}"
-      },
-      "string": {
-        "Len": "${label} должна быть ${len} символов",
-        "Max": "${label} должна быть меньше или равна ${max} символов",
-        "Min": "${label} должна быть больше или равна ${min} символов",
-        "Range": "Длина ${label} должна быть между ${min}-${max} символами"
-      },
-      "types": {
-        "Email": "${label} не является типом ${type}",
-        "Number": "${label} не является типом ${type}",
-        "Object": "${label} не является типом ${type}",
-        "String": "${label} не является типом ${type}",
-        "Url": "${label} не является типом ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Уменьшить",
-    "DeselectAll": "Снять выделение",
     "File": "Файл",
-    "Increase": "Увеличить",
-    "Loading": "Загрузка...",
-    "NSelected": "{{count}} выбрал",
     "Optional": "Необязательно",
     "Project": "Проект",
     "Search": "Поиск",
     "Select": "Выбрать",
-    "SelectPlaceholder": "Выберите {{label}}",
-    "TotalItems": "Total {{total}} элементы",
     "Unit": "Единица",
     "button": {
       "Action": "Действие",

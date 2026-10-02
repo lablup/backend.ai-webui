@@ -4,6 +4,7 @@
  */
 import { FileBrowserButtonFragment$key } from '../__generated__/FileBrowserButtonFragment.graphql';
 import { App } from '../app-shim';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -18,9 +19,9 @@ import {
   useStartSession,
 } from '../hooks/useStartSession';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
@@ -76,6 +77,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
       fragment FileBrowserButtonFragment on VirtualFolderNode {
         id
         host
+        name
       }
     `,
     vfolderFrgmt,
@@ -83,7 +85,7 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
 
   const hasAccessPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolder?.host ?? ''],
-    'mount-in-session',
+    MOUNT_IN_SESSION_PERMISSION,
   );
 
   const getTooltipTitle = () => {
@@ -106,7 +108,12 @@ const FileBrowserButton: React.FC<FileBrowserButtonProps> = ({
     allocationPreset: 'minimum-required',
     cluster_mode: 'single-node',
     cluster_size: 1,
-    mount_ids: [toLocalId(vfolder.id || '').replaceAll('-', '')],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolder.id || ''),
+        name: vfolder.name ?? undefined,
+      },
+    ],
     reuseIfExists: true,
   });
 

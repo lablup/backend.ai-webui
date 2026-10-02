@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<22818a99b7ea3d62beff4881b2183184>>
+ * @generated SignedSource<<16f9ba842b6a5e614f39c31695957831>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -73,9 +73,11 @@ export type ProjectV2Filter = {
   NOT?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   OR?: ReadonlyArray<ProjectV2Filter> | null | undefined;
   createdAt?: DateTimeFilter | null | undefined;
+  description?: StringFilter | null | undefined;
   domain?: ProjectDomainNestedFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   id?: UUIDFilter | null | undefined;
+  integrationName?: StringFilter | null | undefined;
   isActive?: boolean | null | undefined;
   modifiedAt?: DateTimeFilter | null | undefined;
   name?: StringFilter | null | undefined;
@@ -108,10 +110,13 @@ export type UserV2Filter = {
   createdAt?: DateTimeFilter | null | undefined;
   description?: StringFilter | null | undefined;
   domain?: UserDomainNestedFilter | null | undefined;
+  domainId?: UUIDFilter | null | undefined;
   domainName?: StringFilter | null | undefined;
   email?: StringFilter | null | undefined;
   fullName?: StringFilter | null | undefined;
   integrationName?: StringFilter | null | undefined;
+  keypairs?: UserKeypairNestedFilter | null | undefined;
+  modifiedAt?: DateTimeFilter | null | undefined;
   needPasswordChange?: boolean | null | undefined;
   project?: UserProjectNestedFilter | null | undefined;
   resourcePolicy?: StringFilter | null | undefined;
@@ -120,6 +125,7 @@ export type UserV2Filter = {
   statusInfo?: StringFilter | null | undefined;
   sudoSessionEnabled?: boolean | null | undefined;
   totpActivated?: boolean | null | undefined;
+  totpActivatedAt?: NullableDateTimeFilter | null | undefined;
   username?: StringFilter | null | undefined;
   uuid?: UUIDFilter | null | undefined;
 };
@@ -148,6 +154,32 @@ export type IntArrayFilter = {
   containsAll?: ReadonlyArray<number> | null | undefined;
   containsAny?: ReadonlyArray<number> | null | undefined;
 };
+export type NullableDateTimeFilter = {
+  after?: string | null | undefined;
+  before?: string | null | undefined;
+  equals?: string | null | undefined;
+  isNull?: boolean | null | undefined;
+  notEquals?: string | null | undefined;
+};
+export type UserKeypairNestedFilter = {
+  every?: KeypairFilter | null | undefined;
+  exists?: boolean | null | undefined;
+  none?: KeypairFilter | null | undefined;
+  some?: KeypairFilter | null | undefined;
+};
+export type KeypairFilter = {
+  AND?: ReadonlyArray<KeypairFilter> | null | undefined;
+  NOT?: ReadonlyArray<KeypairFilter> | null | undefined;
+  OR?: ReadonlyArray<KeypairFilter> | null | undefined;
+  accessKey?: StringFilter | null | undefined;
+  createdAt?: DateTimeFilter | null | undefined;
+  isActive?: boolean | null | undefined;
+  isAdmin?: boolean | null | undefined;
+  isDefault?: boolean | null | undefined;
+  lastUsed?: DateTimeFilter | null | undefined;
+  resourcePolicy?: StringFilter | null | undefined;
+  userId?: UUIDFilter | null | undefined;
+};
 export type UserDomainNestedFilter = {
   isActive?: boolean | null | undefined;
   name?: StringFilter | null | undefined;
@@ -164,16 +196,19 @@ export type DateFilter = {
 };
 export type UsageBucketChartContentQuery$variables = {
   domainFilter?: DomainV2Filter | null | undefined;
+  domainLimit: number;
   limit?: number | null | undefined;
   periodEnd?: DateFilter | null | undefined;
   periodStart?: DateFilter | null | undefined;
   projectFilter?: ProjectV2Filter | null | undefined;
+  projectLimit: number;
   selectedProjectId: string;
   selectedResourceGroupName: string;
   skipDomain: boolean;
   skipProject: boolean;
   skipUser: boolean;
   userFilter?: UserV2Filter | null | undefined;
+  userLimit: number;
 };
 export type UsageBucketChartContentQuery$data = {
   readonly domains?: {
@@ -290,54 +325,69 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "limit"
+  "name": "domainLimit"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "periodEnd"
+  "name": "limit"
 },
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "periodStart"
+  "name": "periodEnd"
 },
 v4 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectFilter"
+  "name": "periodStart"
 },
 v5 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "selectedProjectId"
+  "name": "projectFilter"
 },
 v6 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "selectedResourceGroupName"
+  "name": "projectLimit"
 },
 v7 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "skipDomain"
+  "name": "selectedProjectId"
 },
 v8 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "skipProject"
+  "name": "selectedResourceGroupName"
 },
 v9 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "skipUser"
+  "name": "skipDomain"
 },
 v10 = {
   "defaultValue": null,
   "kind": "LocalArgument",
+  "name": "skipProject"
+},
+v11 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "skipUser"
+},
+v12 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
   "name": "userFilter"
 },
-v11 = [
+v13 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "userLimit"
+},
+v14 = [
   {
     "fields": [
       {
@@ -356,28 +406,28 @@ v11 = [
     "name": "filter"
   }
 ],
-v12 = {
+v15 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "name",
   "storageKey": null
 },
-v13 = {
+v16 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "quantity",
   "storageKey": null
 },
-v14 = {
+v17 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "resourceType",
   "storageKey": null
 },
-v15 = [
+v18 = [
   {
     "alias": null,
     "args": null,
@@ -386,13 +436,13 @@ v15 = [
     "name": "entries",
     "plural": true,
     "selections": [
-      (v13/*: any*/),
-      (v14/*: any*/)
+      (v16/*: any*/),
+      (v17/*: any*/)
     ],
     "storageKey": null
   }
 ],
-v16 = {
+v19 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceInfo",
@@ -407,34 +457,39 @@ v16 = {
       "kind": "LinkedField",
       "name": "capacity",
       "plural": false,
-      "selections": (v15/*: any*/),
+      "selections": (v18/*: any*/),
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v17 = [
+v20 = [
   {
     "kind": "Variable",
     "name": "filter",
     "variableName": "domainFilter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "domainLimit"
   }
 ],
-v18 = {
+v21 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "count",
   "storageKey": null
 },
-v19 = {
+v22 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
 },
-v20 = {
+v23 = {
   "fields": [
     {
       "kind": "Variable",
@@ -450,12 +505,12 @@ v20 = {
   "kind": "ObjectValue",
   "name": "filter"
 },
-v21 = {
+v24 = {
   "kind": "Variable",
   "name": "limit",
   "variableName": "limit"
 },
-v22 = {
+v25 = {
   "kind": "Literal",
   "name": "orderBy",
   "value": [
@@ -465,31 +520,31 @@ v22 = {
     }
   ]
 },
-v23 = {
+v26 = {
   "kind": "Variable",
   "name": "resourceGroupName",
   "variableName": "selectedResourceGroupName"
 },
-v24 = [
-  (v20/*: any*/),
-  (v21/*: any*/),
-  (v22/*: any*/),
+v27 = [
+  (v23/*: any*/),
+  (v24/*: any*/),
+  (v25/*: any*/),
   {
     "fields": [
-      (v23/*: any*/)
+      (v26/*: any*/)
     ],
     "kind": "ObjectValue",
     "name": "scope"
   }
 ],
-v25 = {
+v28 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "domainName",
   "storageKey": null
 },
-v26 = {
+v29 = {
   "alias": null,
   "args": null,
   "concreteType": "UsageBucketMetadata",
@@ -507,7 +562,7 @@ v26 = {
   ],
   "storageKey": null
 },
-v27 = {
+v30 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceSlot",
@@ -523,22 +578,27 @@ v27 = {
       "name": "entries",
       "plural": true,
       "selections": [
-        (v14/*: any*/),
-        (v13/*: any*/)
+        (v17/*: any*/),
+        (v16/*: any*/)
       ],
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v28 = [
+v31 = [
   {
     "kind": "Variable",
     "name": "filter",
     "variableName": "projectFilter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "projectLimit"
   }
 ],
-v29 = {
+v32 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
@@ -546,35 +606,40 @@ v29 = {
   "name": "basicInfo",
   "plural": false,
   "selections": [
-    (v12/*: any*/)
+    (v15/*: any*/)
   ],
   "storageKey": null
 },
-v30 = {
+v33 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
   "name": "projectId",
   "storageKey": null
 },
-v31 = {
+v34 = {
   "alias": null,
   "args": null,
   "concreteType": "ResourceSlot",
   "kind": "LinkedField",
   "name": "averageDailyUsage",
   "plural": false,
-  "selections": (v15/*: any*/),
+  "selections": (v18/*: any*/),
   "storageKey": null
 },
-v32 = [
+v35 = [
   {
     "kind": "Variable",
     "name": "filter",
     "variableName": "userFilter"
+  },
+  {
+    "kind": "Variable",
+    "name": "limit",
+    "variableName": "userLimit"
   }
 ],
-v33 = {
+v36 = {
   "alias": null,
   "args": null,
   "concreteType": "UserV2BasicInfo",
@@ -592,10 +657,10 @@ v33 = {
   ],
   "storageKey": null
 },
-v34 = [
-  (v20/*: any*/),
-  (v21/*: any*/),
-  (v22/*: any*/),
+v37 = [
+  (v23/*: any*/),
+  (v24/*: any*/),
+  (v25/*: any*/),
   {
     "fields": [
       {
@@ -603,13 +668,13 @@ v34 = [
         "name": "projectId",
         "variableName": "selectedProjectId"
       },
-      (v23/*: any*/)
+      (v26/*: any*/)
     ],
     "kind": "ObjectValue",
     "name": "scope"
   }
 ],
-v35 = {
+v38 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -629,7 +694,10 @@ return {
       (v7/*: any*/),
       (v8/*: any*/),
       (v9/*: any*/),
-      (v10/*: any*/)
+      (v10/*: any*/),
+      (v11/*: any*/),
+      (v12/*: any*/),
+      (v13/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
@@ -637,7 +705,7 @@ return {
     "selections": [
       {
         "alias": "resourceGroups",
-        "args": (v11/*: any*/),
+        "args": (v14/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
         "name": "adminResourceGroups",
@@ -659,8 +727,8 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v12/*: any*/),
-                  (v16/*: any*/)
+                  (v15/*: any*/),
+                  (v19/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -677,13 +745,13 @@ return {
         "selections": [
           {
             "alias": "domains",
-            "args": (v17/*: any*/),
+            "args": (v20/*: any*/),
             "concreteType": "DomainV2Connection",
             "kind": "LinkedField",
             "name": "adminDomainsV2",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -700,16 +768,16 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v19/*: any*/),
+                      (v22/*: any*/),
                       {
                         "alias": null,
-                        "args": (v24/*: any*/),
+                        "args": (v27/*: any*/),
                         "concreteType": "DomainUsageBucketConnection",
                         "kind": "LinkedField",
                         "name": "usageBuckets",
                         "plural": false,
                         "selections": [
-                          (v18/*: any*/),
+                          (v21/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -726,9 +794,9 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v25/*: any*/),
-                                  (v26/*: any*/),
-                                  (v27/*: any*/)
+                                  (v28/*: any*/),
+                                  (v29/*: any*/),
+                                  (v30/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -756,13 +824,13 @@ return {
         "selections": [
           {
             "alias": "projects",
-            "args": (v28/*: any*/),
+            "args": (v31/*: any*/),
             "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
             "name": "adminProjectsV2",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -779,17 +847,17 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v19/*: any*/),
-                      (v29/*: any*/),
+                      (v22/*: any*/),
+                      (v32/*: any*/),
                       {
                         "alias": null,
-                        "args": (v24/*: any*/),
+                        "args": (v27/*: any*/),
                         "concreteType": "ProjectUsageBucketConnection",
                         "kind": "LinkedField",
                         "name": "usageBuckets",
                         "plural": false,
                         "selections": [
-                          (v18/*: any*/),
+                          (v21/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -806,10 +874,10 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v25/*: any*/),
-                                  (v30/*: any*/),
-                                  (v26/*: any*/),
-                                  (v31/*: any*/)
+                                  (v28/*: any*/),
+                                  (v33/*: any*/),
+                                  (v29/*: any*/),
+                                  (v34/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -837,13 +905,13 @@ return {
         "selections": [
           {
             "alias": "users",
-            "args": (v32/*: any*/),
+            "args": (v35/*: any*/),
             "concreteType": "UserV2Connection",
             "kind": "LinkedField",
             "name": "adminUsersV2",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -860,17 +928,17 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v19/*: any*/),
-                      (v33/*: any*/),
+                      (v22/*: any*/),
+                      (v36/*: any*/),
                       {
                         "alias": null,
-                        "args": (v34/*: any*/),
+                        "args": (v37/*: any*/),
                         "concreteType": "UserUsageBucketConnection",
                         "kind": "LinkedField",
                         "name": "usageBuckets",
                         "plural": false,
                         "selections": [
-                          (v18/*: any*/),
+                          (v21/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -887,11 +955,11 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v25/*: any*/),
-                                  (v30/*: any*/),
-                                  (v35/*: any*/),
-                                  (v26/*: any*/),
-                                  (v27/*: any*/)
+                                  (v28/*: any*/),
+                                  (v33/*: any*/),
+                                  (v38/*: any*/),
+                                  (v29/*: any*/),
+                                  (v30/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -920,23 +988,26 @@ return {
   "operation": {
     "argumentDefinitions": [
       (v0/*: any*/),
-      (v4/*: any*/),
-      (v10/*: any*/),
-      (v7/*: any*/),
-      (v8/*: any*/),
-      (v9/*: any*/),
-      (v3/*: any*/),
-      (v2/*: any*/),
-      (v6/*: any*/),
       (v5/*: any*/),
-      (v1/*: any*/)
+      (v12/*: any*/),
+      (v9/*: any*/),
+      (v10/*: any*/),
+      (v11/*: any*/),
+      (v4/*: any*/),
+      (v3/*: any*/),
+      (v8/*: any*/),
+      (v7/*: any*/),
+      (v2/*: any*/),
+      (v1/*: any*/),
+      (v6/*: any*/),
+      (v13/*: any*/)
     ],
     "kind": "Operation",
     "name": "UsageBucketChartContentQuery",
     "selections": [
       {
         "alias": "resourceGroups",
-        "args": (v11/*: any*/),
+        "args": (v14/*: any*/),
         "concreteType": "ResourceGroupConnection",
         "kind": "LinkedField",
         "name": "adminResourceGroups",
@@ -958,9 +1029,9 @@ return {
                 "name": "node",
                 "plural": false,
                 "selections": [
-                  (v12/*: any*/),
-                  (v16/*: any*/),
-                  (v19/*: any*/)
+                  (v15/*: any*/),
+                  (v19/*: any*/),
+                  (v22/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -977,13 +1048,13 @@ return {
         "selections": [
           {
             "alias": "domains",
-            "args": (v17/*: any*/),
+            "args": (v20/*: any*/),
             "concreteType": "DomainV2Connection",
             "kind": "LinkedField",
             "name": "adminDomainsV2",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1000,16 +1071,16 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v19/*: any*/),
+                      (v22/*: any*/),
                       {
                         "alias": null,
-                        "args": (v24/*: any*/),
+                        "args": (v27/*: any*/),
                         "concreteType": "DomainUsageBucketConnection",
                         "kind": "LinkedField",
                         "name": "usageBuckets",
                         "plural": false,
                         "selections": [
-                          (v18/*: any*/),
+                          (v21/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -1026,10 +1097,10 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v25/*: any*/),
-                                  (v26/*: any*/),
-                                  (v27/*: any*/),
-                                  (v19/*: any*/)
+                                  (v28/*: any*/),
+                                  (v29/*: any*/),
+                                  (v30/*: any*/),
+                                  (v22/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -1057,13 +1128,13 @@ return {
         "selections": [
           {
             "alias": "projects",
-            "args": (v28/*: any*/),
+            "args": (v31/*: any*/),
             "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
             "name": "adminProjectsV2",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1080,17 +1151,17 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v19/*: any*/),
-                      (v29/*: any*/),
+                      (v22/*: any*/),
+                      (v32/*: any*/),
                       {
                         "alias": null,
-                        "args": (v24/*: any*/),
+                        "args": (v27/*: any*/),
                         "concreteType": "ProjectUsageBucketConnection",
                         "kind": "LinkedField",
                         "name": "usageBuckets",
                         "plural": false,
                         "selections": [
-                          (v18/*: any*/),
+                          (v21/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -1107,11 +1178,11 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v25/*: any*/),
-                                  (v30/*: any*/),
-                                  (v26/*: any*/),
-                                  (v31/*: any*/),
-                                  (v19/*: any*/)
+                                  (v28/*: any*/),
+                                  (v33/*: any*/),
+                                  (v29/*: any*/),
+                                  (v34/*: any*/),
+                                  (v22/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -1139,13 +1210,13 @@ return {
         "selections": [
           {
             "alias": "users",
-            "args": (v32/*: any*/),
+            "args": (v35/*: any*/),
             "concreteType": "UserV2Connection",
             "kind": "LinkedField",
             "name": "adminUsersV2",
             "plural": false,
             "selections": [
-              (v18/*: any*/),
+              (v21/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -1162,17 +1233,17 @@ return {
                     "name": "node",
                     "plural": false,
                     "selections": [
-                      (v19/*: any*/),
-                      (v33/*: any*/),
+                      (v22/*: any*/),
+                      (v36/*: any*/),
                       {
                         "alias": null,
-                        "args": (v34/*: any*/),
+                        "args": (v37/*: any*/),
                         "concreteType": "UserUsageBucketConnection",
                         "kind": "LinkedField",
                         "name": "usageBuckets",
                         "plural": false,
                         "selections": [
-                          (v18/*: any*/),
+                          (v21/*: any*/),
                           {
                             "alias": null,
                             "args": null,
@@ -1189,12 +1260,12 @@ return {
                                 "name": "node",
                                 "plural": false,
                                 "selections": [
-                                  (v25/*: any*/),
+                                  (v28/*: any*/),
+                                  (v33/*: any*/),
+                                  (v38/*: any*/),
+                                  (v29/*: any*/),
                                   (v30/*: any*/),
-                                  (v35/*: any*/),
-                                  (v26/*: any*/),
-                                  (v27/*: any*/),
-                                  (v19/*: any*/)
+                                  (v22/*: any*/)
                                 ],
                                 "storageKey": null
                               }
@@ -1218,16 +1289,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "e6efaed3d7a14f97c64adb5c3676714c",
+    "cacheID": "6cac203ff9b6713b1035686b3fbe5365",
     "id": null,
     "metadata": {},
     "name": "UsageBucketChartContentQuery",
     "operationKind": "query",
-    "text": "query UsageBucketChartContentQuery(\n  $domainFilter: DomainV2Filter\n  $projectFilter: ProjectV2Filter\n  $userFilter: UserV2Filter\n  $skipDomain: Boolean!\n  $skipProject: Boolean!\n  $skipUser: Boolean!\n  $periodStart: DateFilter\n  $periodEnd: DateFilter\n  $selectedResourceGroupName: String!\n  $selectedProjectId: UUID!\n  $limit: Int\n) {\n  resourceGroups: adminResourceGroups(filter: {name: {equals: $selectedResourceGroupName}}) {\n    edges {\n      node {\n        name\n        resourceInfo {\n          capacity {\n            entries {\n              quantity\n              resourceType\n            }\n          }\n        }\n        id\n      }\n    }\n  }\n  domains: adminDomainsV2(filter: $domainFilter) @skip(if: $skipDomain) {\n    count\n    edges {\n      node {\n        id\n        usageBuckets(scope: {resourceGroupName: $selectedResourceGroupName}, filter: {periodStart: $periodStart, periodEnd: $periodEnd}, orderBy: [{field: PERIOD_START, direction: ASC}], limit: $limit) {\n          count\n          edges {\n            node {\n              domainName\n              metadata {\n                periodStart\n              }\n              averageDailyUsage {\n                entries {\n                  resourceType\n                  quantity\n                }\n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n  projects: adminProjectsV2(filter: $projectFilter) @skip(if: $skipProject) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n        usageBuckets(scope: {resourceGroupName: $selectedResourceGroupName}, filter: {periodStart: $periodStart, periodEnd: $periodEnd}, orderBy: [{field: PERIOD_START, direction: ASC}], limit: $limit) {\n          count\n          edges {\n            node {\n              domainName\n              projectId\n              metadata {\n                periodStart\n              }\n              averageDailyUsage {\n                entries {\n                  quantity\n                  resourceType\n                }\n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n  users: adminUsersV2(filter: $userFilter) @skip(if: $skipUser) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        usageBuckets(scope: {resourceGroupName: $selectedResourceGroupName, projectId: $selectedProjectId}, filter: {periodStart: $periodStart, periodEnd: $periodEnd}, orderBy: [{field: PERIOD_START, direction: ASC}], limit: $limit) {\n          count\n          edges {\n            node {\n              domainName\n              projectId\n              userUuid\n              metadata {\n                periodStart\n              }\n              averageDailyUsage {\n                entries {\n                  resourceType\n                  quantity\n                }\n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query UsageBucketChartContentQuery(\n  $domainFilter: DomainV2Filter\n  $projectFilter: ProjectV2Filter\n  $userFilter: UserV2Filter\n  $skipDomain: Boolean!\n  $skipProject: Boolean!\n  $skipUser: Boolean!\n  $periodStart: DateFilter\n  $periodEnd: DateFilter\n  $selectedResourceGroupName: String!\n  $selectedProjectId: UUID!\n  $limit: Int\n  $domainLimit: Int!\n  $projectLimit: Int!\n  $userLimit: Int!\n) {\n  resourceGroups: adminResourceGroups(filter: {name: {equals: $selectedResourceGroupName}}) {\n    edges {\n      node {\n        name\n        resourceInfo {\n          capacity {\n            entries {\n              quantity\n              resourceType\n            }\n          }\n        }\n        id\n      }\n    }\n  }\n  domains: adminDomainsV2(filter: $domainFilter, limit: $domainLimit) @skip(if: $skipDomain) {\n    count\n    edges {\n      node {\n        id\n        usageBuckets(scope: {resourceGroupName: $selectedResourceGroupName}, filter: {periodStart: $periodStart, periodEnd: $periodEnd}, orderBy: [{field: PERIOD_START, direction: ASC}], limit: $limit) {\n          count\n          edges {\n            node {\n              domainName\n              metadata {\n                periodStart\n              }\n              averageDailyUsage {\n                entries {\n                  resourceType\n                  quantity\n                }\n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n  projects: adminProjectsV2(filter: $projectFilter, limit: $projectLimit) @skip(if: $skipProject) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          name\n        }\n        usageBuckets(scope: {resourceGroupName: $selectedResourceGroupName}, filter: {periodStart: $periodStart, periodEnd: $periodEnd}, orderBy: [{field: PERIOD_START, direction: ASC}], limit: $limit) {\n          count\n          edges {\n            node {\n              domainName\n              projectId\n              metadata {\n                periodStart\n              }\n              averageDailyUsage {\n                entries {\n                  quantity\n                  resourceType\n                }\n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n  users: adminUsersV2(filter: $userFilter, limit: $userLimit) @skip(if: $skipUser) {\n    count\n    edges {\n      node {\n        id\n        basicInfo {\n          email\n        }\n        usageBuckets(scope: {resourceGroupName: $selectedResourceGroupName, projectId: $selectedProjectId}, filter: {periodStart: $periodStart, periodEnd: $periodEnd}, orderBy: [{field: PERIOD_START, direction: ASC}], limit: $limit) {\n          count\n          edges {\n            node {\n              domainName\n              projectId\n              userUuid\n              metadata {\n                periodStart\n              }\n              averageDailyUsage {\n                entries {\n                  resourceType\n                  quantity\n                }\n              }\n              id\n            }\n          }\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "21e0bc965f48a12e11c57edafe66dec7";
+(node as any).hash = "a6262b294f65cb1622c11dcbeb5fa78a";
 
 export default node;

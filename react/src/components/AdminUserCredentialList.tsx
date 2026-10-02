@@ -10,36 +10,36 @@ import {
 } from '../__generated__/AdminUserCredentialListQuery.graphql';
 import { KeypairSettingModalFragment$key } from '../__generated__/KeypairSettingModalFragment.graphql';
 import { App } from '../app-shim';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import KeypairInfoModal from './KeypairInfoModal';
 import KeypairSettingModal from './KeypairSettingModal';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIButton,
+  BAIDeleteConfirmModal,
+  BAIFlex,
+  BAINameActionCell,
+  BAIPropertyFilter,
+  BAISelectionLabel,
+  BAITable,
+  BAIText,
+  PRIMARY_TOKEN_COLOR,
   filterOutEmpty,
   filterOutNullAndUndefined,
-  BAIButton,
-  BAITable,
-  BAIFlex,
-  BAIPropertyFilter,
-  BAINameActionCell,
-  BAIDeleteConfirmModal,
-  BAISelectionLabel,
   useBAILogger,
-  BAIText,
-  PRIMARY_TAG_VARIANT,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
-  Info,
-  RotateCw,
   BanIcon,
+  Info,
   PlusIcon,
+  RotateCw,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
 } from 'lucide-react';
 import { useDeferredValue, useState, useTransition } from 'react';
@@ -74,10 +74,12 @@ export const AdminUserCredentialListQuery = graphql`
       items {
         id
         user_id
+        full_name
         access_key
         is_admin
         resource_policy
         created_at
+        last_used
         rate_limit
         num_queries
         concurrency_used @since(version: "24.09.0")
@@ -112,7 +114,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message, modal } = App.useApp();
   const { logger } = useBAILogger();
 
@@ -299,9 +301,34 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
                 ],
               },
               {
+                key: 'full_name',
+                propertyLabel: t('credential.FullName'),
+                type: 'string',
+              },
+              {
                 key: 'resource_policy',
                 propertyLabel: t('credential.ResourcePolicy'),
                 type: 'string',
+              },
+              {
+                key: 'projects',
+                propertyLabel: t('credential.Projects'),
+                type: 'string',
+              },
+              {
+                key: 'rate_limit',
+                propertyLabel: t('credential.RateLimit'),
+                type: 'number',
+              },
+              {
+                key: 'num_queries',
+                propertyLabel: t('credential.NumberOfQueries'),
+                type: 'number',
+              },
+              {
+                key: 'created_at',
+                propertyLabel: t('credential.CreatedAt'),
+                type: 'datetime',
               },
             ]}
             value={variables.filter ?? undefined}
@@ -325,7 +352,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               {activeType === 'active' ? (
                 <Tooltip content={t('credential.Deactivate')}>
                   <BAIButton
-                    icon={<BanIcon style={{ color: token.colorError }} />}
+                    icon={<BanIcon style={{ color: token('--color-error') }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(false)}
                   />
@@ -333,7 +360,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
               ) : (
                 <Tooltip content={t('credential.Activate')}>
                   <BAIButton
-                    icon={<UndoIcon style={{ color: token.colorInfo }} />}
+                    icon={<UndoIcon style={{ color: token('--color-info') }} />}
                     loading={isBulkUpdating}
                     onClick={() => handleBulkStatusUpdate(true)}
                   />
@@ -544,10 +571,20 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           {
             key: 'accessKey',
             title: t('credential.AccessKey'),
+            // No `dataIndex` here (the cell renders from the record), so the
+            // order string has to be named explicitly.
+            sortKey: 'access_key',
             sorter: true,
             render: (_value, record) => {
               return <BAIText monospace>{record.access_key}</BAIText>;
             },
+          },
+          {
+            key: 'fullName',
+            title: t('credential.FullName'),
+            dataIndex: 'full_name',
+            sorter: true,
+            render: (fullName) => fullName || '-',
           },
           {
             key: 'permission',
@@ -556,11 +593,11 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             render: (isAdmin) =>
               isAdmin ? (
                 <BAIFlex gap="xs">
-                  <Badge variant={PRIMARY_TAG_VARIANT} label="admin" />
-                  <Badge variant="green" label="user" />
+                  <Token color={PRIMARY_TOKEN_COLOR} label="admin" />
+                  <Token color="green" label="user" />
                 </BAIFlex>
               ) : (
-                <Badge variant="green" label="user" />
+                <Token color="green" label="user" />
               ),
             sorter: true,
           },
@@ -579,6 +616,17 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
             dataIndex: 'created_at',
             render: (createdAt) => dayjs(createdAt).format('lll'),
             sorter: true,
+          },
+          {
+            key: 'lastUsed',
+            title: t('credential.LastUsed'),
+            dataIndex: 'last_used',
+            // Not sortable / filterable on purpose: this cell comes from
+            // Valkey (`KeyPair.resolve_last_used`) while the server's
+            // `last_used` order and filter read the `keypairs.last_used`
+            // column, which the manager leaves empty.
+            render: (lastUsed) =>
+              lastUsed ? dayjs(lastUsed).format('lll') : '-',
           },
           {
             key: 'resourcePolicy',
@@ -646,6 +694,7 @@ const AdminUserCredentialList: React.FC<AdminUserCredentialListProps> = ({
           });
           setSelectedKeypairs([]);
         }}
+        order={variables.order}
       />
       <KeypairInfoModal
         keypairInfoModalFrgmt={keypairInfoModalFrgmt}

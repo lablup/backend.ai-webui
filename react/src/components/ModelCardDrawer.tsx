@@ -10,12 +10,12 @@ import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import ModelBrandIcon from './ModelBrandIcon';
 import ModelCardDeployModal from './ModelCardDeployModal';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { Card } from '@astryxdesign/core/Card';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Card } from '@lablup/ui-common/Card';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAICard,
   BAIDrawer,
@@ -180,21 +180,17 @@ const ModelCardDrawer: React.FC<ModelCardDrawerProps> = ({
 
                 <BAIFlex direction="row" wrap="wrap" gap="xs">
                   {modelCard.metadata?.task && (
-                    <Badge variant="neutral" label={modelCard.metadata.task} />
+                    <Token label={modelCard.metadata.task} />
                   )}
                   {modelCard.metadata?.category && (
-                    <Badge
-                      variant="neutral"
-                      label={modelCard.metadata.category}
-                    />
+                    <Token label={modelCard.metadata.category} />
                   )}
                   {modelCard.metadata?.label &&
                     _.map(modelCard.metadata.label, (label) => (
-                      <Badge key={label} variant="neutral" label={label} />
+                      <Token key={label} label={label} />
                     ))}
                   {modelCard.metadata?.license && (
-                    <Badge
-                      variant="neutral"
+                    <Token
                       icon={<Landmark size="1em" />}
                       label={modelCard.metadata.license}
                     />

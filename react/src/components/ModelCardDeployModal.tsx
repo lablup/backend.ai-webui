@@ -9,20 +9,20 @@ import { Form } from '../form-engine';
 import { useWebUINavigate } from '../hooks';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import DeploymentPresetDetailModal from './DeploymentPresetDetailModal';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAvailablePresetSelect,
   BAIFlex,
   BAILink,
   BAIModal,
-  type BAIModalProps,
   BAIProjectResourceGroupSelect,
   toLocalId,
   useErrorMessageResolver,
   useProjectResourceGroups,
+  type BAIModalProps,
 } from 'backend.ai-ui';
 import { Info } from 'lucide-react';
 import React, {
@@ -70,7 +70,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   const { getErrorMessage } = useErrorMessageResolver();
   const webuiNavigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { id: projectId, name: projectName } = useCurrentProjectValue();
 
   // TODO(needs-backend): `availablePresets` here is the server-filtered list
@@ -83,7 +83,10 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
     graphql`
       fragment ModelCardDeployModalFragment on ModelCardV2 {
         id
-        availablePresets(orderBy: [{ field: RANK, direction: "ASC" }]) {
+        availablePresets(
+          orderBy: [{ field: RANK, direction: "ASC" }]
+          limit: 100
+        ) {
           edges {
             node {
               id
@@ -257,7 +260,6 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
   return (
     <BAIModal
       title={t('modelService.CreateNewDeploymentWithPreset')}
-      destroyOnHidden
       width={480}
       okText={t('modelStore.Deploy')}
       okButtonProps={{
@@ -294,7 +296,7 @@ const ModelCardDeployModal: React.FC<ModelCardDeployModalProps> = ({
               }}
             />
           }
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         />
       )}
       <Form form={form} layout="vertical">

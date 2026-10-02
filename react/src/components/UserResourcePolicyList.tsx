@@ -17,7 +17,7 @@ import {
 import { exportCSVWithFormattingRules } from '../helper/csv-util';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   useUpdatableState,
   filterOutEmpty,
@@ -210,7 +210,7 @@ const UserResourcePolicyList: React.FC<UserResourcePolicyListProps> = () => {
 
     exportCSVWithFormattingRules(
       responseData as UserResourcePolicies[],
-      'user-resource-policies',
+      'user_resource_policies',
       {
         max_vfolder_count: (text) => (_.toNumber(text) === 0 ? '-' : text),
         max_quota_scope_size: (text) => (text === -1 ? '-' : bytesToGB(text)),

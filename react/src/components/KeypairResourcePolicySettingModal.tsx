@@ -15,9 +15,9 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { convertToBinaryUnit } from '../helper';
 import { MAX_CPU_QUOTA, SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useResourceSlots, useResourceSlotsDetails } from '../hooks/backendai';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
@@ -25,10 +25,11 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Card } from '@astryxdesign/core/Card';
-import { Icon } from '@astryxdesign/core/Icon';
-import { HStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Card } from '@lablup/ui-common/Card';
+import { Icon } from '@lablup/ui-common/Icon';
+import { HStack } from '@lablup/ui-common/Stack';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIDynamicUnitInputNumber,
   BAIAllowedHostNamesSelect,
@@ -64,7 +65,7 @@ const KeypairResourcePolicySettingModal: React.FC<
   'use memo';
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const formRef = useRef<FormInstance>(null);
   const [resourceSlots] = useResourceSlots();
   const { mergedResourceSlots } = useResourceSlotsDetails();
@@ -201,7 +202,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   'create-vfolder',
                   'modify-vfolder',
                   'delete-vfolder',
-                  'mount-in-session',
+                  MOUNT_IN_SESSION_PERMISSION,
                   'upload-file',
                   'download-file',
                   'invite-others',
@@ -303,7 +304,6 @@ const KeypairResourcePolicySettingModal: React.FC<
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateUserSetting || isInFlightCommitModifyUserSetting
       }
@@ -404,7 +404,7 @@ const KeypairResourcePolicySettingModal: React.FC<
                   style={{
                     flex: '1 1 220px',
                     minWidth: 220,
-                    marginBottom: token.marginLG,
+                    marginBottom: token('--spacing-6'),
                   }}
                 >
                   <FormItemWithUnlimited

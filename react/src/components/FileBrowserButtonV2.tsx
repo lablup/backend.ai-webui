@@ -4,6 +4,7 @@
  */
 import { FileBrowserButtonV2Fragment$key } from '../__generated__/FileBrowserButtonV2Fragment.graphql';
 import { App } from '../app-shim';
+import { MOUNT_IN_SESSION_PERMISSION } from '../helper/storageHostPermission';
 import {
   useCurrentDomainValue,
   useSuspendedBackendaiClient,
@@ -18,10 +19,10 @@ import {
 } from '../hooks/useStartSession';
 import { ProjectContext, ProjectContextOrNull } from '../types/projectContext';
 import { PrimaryAppOption } from './ComputeSessionNodeItems/SessionActionButtons';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIButton,
   BAIButtonProps,
@@ -137,6 +138,9 @@ const FileBrowserButtonWithProject: React.FC<
       fragment FileBrowserButtonV2Fragment on VFolder {
         id
         host
+        metadata {
+          name
+        }
       }
     `,
     vfolderNodeFrgmt,
@@ -144,7 +148,7 @@ const FileBrowserButtonWithProject: React.FC<
 
   const hasAccessPermission = _.includes(
     unitedAllowedPermissionByVolume[vfolderNode?.host ?? ''],
-    'mount-in-session',
+    MOUNT_IN_SESSION_PERMISSION,
   );
 
   const getTooltipTitle = () => {
@@ -167,7 +171,12 @@ const FileBrowserButtonWithProject: React.FC<
     allocationPreset: 'minimum-required',
     cluster_mode: 'single-node',
     cluster_size: 1,
-    mount_ids: [toLocalId(vfolderNode.id || '').replaceAll('-', '')],
+    vfolderMounts: [
+      {
+        vfolderId: toLocalId(vfolderNode.id || ''),
+        name: vfolderNode.metadata.name,
+      },
+    ],
     reuseIfExists: true,
   });
 

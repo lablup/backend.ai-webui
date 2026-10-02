@@ -6,15 +6,8 @@ description: What a BAI wrapper component's props interface must extend — the 
 
 When creating a BAI wrapper component, the component's props interface **must** extend the props type of whatever it actually wraps.
 
-> **History.** This rule used to read "must extend the original Ant Design
-> component's props type", and its worked examples were
-> `BAICardProps extends Omit<CardProps, 'extra'>` and
-> `BAIBadgeProps extends Omit<BadgeProps, …>`. antd is no longer a dependency
-> of this project — an `antd` import does not resolve — so `CardProps` /
-> `BadgeProps` from `antd` do not exist and neither example compiles. The
-> **principle** is unchanged — only the base is. Note that a wrapper's
-> antd-shaped prop *vocabulary* is a separate, frozen concern — see "Frozen
-> antd-v6-shaped prop vocabulary" below.
+A wrapper's antd-shaped prop *vocabulary* is a separate, frozen concern — see
+"Frozen antd-v6-shaped prop vocabulary" below.
 
 ## Why
 
@@ -65,7 +58,7 @@ export interface BAIExampleProps {
 // (1) Astryx base — BAIPopconfirm wraps Astryx `Popover`; `content` is
 //     Omitted because this component OWNS the popover content.
 //     packages/backend.ai-ui/src/components/BAIPopconfirm.tsx
-import type { PopoverProps } from '@astryxdesign/core/Popover';
+import type { PopoverProps } from '@lablup/ui-common/Popover';
 
 export interface BAIPopconfirmProps extends Omit<
   PopoverProps,
@@ -80,7 +73,7 @@ export interface BAIPopconfirmProps extends Omit<
 //     NOTE: `BadgeProps` here is ASTRYX's, not antd's. It is the only live
 //     `BadgeProps` in the repo.
 //     packages/backend.ai-ui/src/components/BAIBadgeCount.tsx
-import type { BadgeProps } from '@astryxdesign/core/Badge';
+import type { BadgeProps } from '@lablup/ui-common/Badge';
 
 export interface BAIBadgeCountProps extends Omit<
   BadgeProps,
@@ -165,7 +158,7 @@ should also follow the frozen v6 spelling rather than inventing a third one.
 ## Verification
 
 - The wrapper's props interface names a base that actually exists in the repo:
-  an `@astryxdesign/core/*` props type, a `React.*HTMLAttributes<…>`, an
+  an Astryx props type (`@lablup/ui-common/*`), a `React.*HTMLAttributes<…>`, an
   exported `BAI*Props`, or the props type of whatever third-party component it
   renders. No `import … from 'antd'`.
 - `...rest` reaches the wrapped component.

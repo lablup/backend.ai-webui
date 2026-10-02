@@ -25,9 +25,9 @@
 */
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import './BAIText.css';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Kbd } from '@astryxdesign/core/Kbd';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Kbd } from '@lablup/ui-common/Kbd';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import classNames from 'classnames';
 import { CheckIcon, CopyIcon } from 'lucide-react';
 import React, {

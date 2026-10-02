@@ -6,6 +6,7 @@
     "DiskPerc": "Disque %",
     "Endpoint": "Point de terminaison",
     "FailedToLoadCellData": "Échec du chargement des données.",
+    "LostAt": "Perdu le",
     "NoAvailableLiveStat": "Aucune statistique en direct disponible",
     "Region": "Région",
     "ResourceGroup": "Groupe de ressources",
@@ -13,7 +14,8 @@
     "Schedulable": "Planifiable",
     "Starts": "Démarrages",
     "Status": "Statut",
-    "Utilization": "Utilisation"
+    "Utilization": "Utilisation",
+    "Version": "Version"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Autorisé",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID d'action",
     "Actor": "Acteur",
+    "ClientIp": "IP du client",
     "Description": "Description",
     "Duration": "Durée",
     "EntityId": "ID d'entité",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard ou contacter le support si le problème persiste."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Effacer",
-    "KeepAsIs": "Conserver tel quel",
-    "UndoChanges": "Annuler les modifications"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Échec de l'exécution",
-    "ErrorOccurred": "Une erreur s'est produite"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Effacer",
-    "HexValue": "Valeur hexadécimale",
-    "NoColor": "Aucune couleur",
-    "SelectColor": "Sélectionner une couleur"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Effacer Rechercher parmi les options",
-    "NoResults": "Aucun résultat",
-    "SearchOptions": "Rechercher parmi les options"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Sélectionner un registre de conteneurs"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "Suppression avec succès des versions {{count}}.",
     "Version": "Version"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Êtes-vous sûr de vouloir supprimer ?",
-    "AreYouSureToPermanentlyDeleteTarget": "Voulez-vous vraiment supprimer définitivement {{target}} ?",
-    "CannotBeUndone": "Cette action est irréversible.",
-    "DeleteItem": "Supprimer",
-    "DeleteNItems": "Supprimer {{count}} éléments",
-    "TypeToConfirm": "Saisissez <code>{{confirmText}}</code> pour confirmer."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Créé par"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Sélectionner un déploiement"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Dégradé",
     "Deploying": "En déploiement",
     "Healthy": "En bonne santé",
@@ -245,6 +220,10 @@
       "Title": "Impossible de se connecter avec Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Progression du démarrage des noyaux",
+    "KernelTerminationProgress": "Progression de l'arrêt des noyaux"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Taille de cluster",
     "Concurrency": "Sessions simultanées",
@@ -265,6 +244,7 @@
     "SelectKeypair": "Sélectionner une paire de clés"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP du client",
     "Domain": "Domaine",
     "FailReason": "Raison de l'échec",
     "LoginTime": "Heure de connexion",
@@ -355,18 +335,22 @@
     "UpdateProject": "Mettre à jour le projet"
   },
   "comp:BAIProjectTable": {
+    "Active": "actif",
     "ContainerRegistry": "Registre de conteneurs",
     "ContainerRegistryProject": "Projet du registre de conteneurs",
     "CreatedAt": "Créé le",
     "Description": "Description",
     "Domain": "Domaine",
+    "Inactive": "Inactif",
     "IntegrationID": "ID d'intégration",
+    "ModifiedAt": "Modifié le",
     "Name": "Nom",
     "Project": "Projet",
     "ProjectID": "ID du projet",
     "Registry": "Registre",
     "ResourcePolicy": "Politique des ressources",
     "ScalingGroups": "Groupes de ressources",
+    "Status": "Statut",
     "StorageNodes": "Nœuds de stockage",
     "TotalResourceSlots": "Nombre total de créneaux de ressources",
     "Type": "Type"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Alloué / Demandé"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Modifier la couleur du groupe",
-    "ResourceGrid": "Grille de ressources",
-    "UseColorN": "Utiliser la couleur {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Illimité"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Célibataire"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Illimité"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Sélectionner un hôte de stockage"
   },
@@ -578,22 +554,10 @@
     "Time": "Heure"
   },
   "comp:BAITable": {
-    "Apply": "Appliquer",
-    "Cancel": "Annuler",
     "CollapseAll": "Tout réduire",
     "ExpandAll": "Tout développer",
     "ExpandErrorsOnly": "Développer les erreurs uniquement",
-    "ExpandOptions": "Options de développement",
-    "ExpandRow": "Développer la ligne",
-    "Export": "Exporter",
-    "ExportCSV": "Exporter en CSV",
-    "GoToFirstPage": "Aller à la première page",
-    "InvalidPageNumber": "Numéro de page invalide",
-    "NoDataToDisplay": "Aucune donnée à afficher",
-    "Pagination": "Pagination",
-    "SearchTableColumn": "Colonnes de table de recherche",
-    "SelectColumnToDisplay": "Sélectionnez des colonnes à afficher",
-    "SettingTable": "Paramètres de la table"
+    "ExpandOptions": "Options de développement"
   },
   "comp:BAITestButton": {
     "Test": "test"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format de chemin invalide.",
     "AliasOverlapping": "Le chemin de montage chevauche un autre dossier.",
+    "AliasOverlappingWithAutoMount": "Le chemin de montage chevauche un dossier monté automatiquement.",
     "AliasPlaceholder": "Chemin de montage",
     "AutoMountedFolders": "Dossiers montés automatiquement",
-    "Name": "Nom",
-    "PathAndAlias": "Chemin & Alias",
+    "CreateFolder": "Créer un nouveau dossier de stockage",
+    "DestinationPath": "Chemin du conteneur (destination)",
+    "Folders": "Dossiers",
+    "OwnerProject": "Projet",
+    "OwnerUser": "Utilisateur",
     "PathAndAliasTooltip": "Le chemin à l'intérieur du conteneur où le dossier sera monté. Laissez vide pour utiliser le chemin par défaut.",
+    "Refresh": "Rafraîchir",
     "RemoveFolder": "Supprimer",
+    "SelectFolder": "Sélectionner un dossier",
+    "SourcePath": "Chemin dans le dossier (source)",
     "Subpath": "Sous-chemin",
     "SubpathInvalid": "Le sous-chemin doit être un chemin relatif et ne doit pas contenir '..'.",
-    "SubpathPlaceholder": "ex. dataset/train (facultatif)",
-    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Laissez vide pour monter la racine."
+    "SubpathTooltip": "Monte un sous-dossier à l'intérieur du dossier comme source au lieu de sa racine. Cliquez sur le champ pour parcourir le dossier et en choisir un ; laissez-le vide pour monter la racine du dossier.",
+    "UnmountableFoldersRemoved": "Les dossiers que vous ne pouvez plus monter ont été retirés de la sélection."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Sélectionner un dossier"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "Les fichiers et les dossiers supprimés ne peuvent pas être restaurés. \nVoulez-vous continuer?",
     "DeleteSelectedItemsDialog": "Supprimer la confirmation",
     "Download": "Télécharger",
+    "DownloadPopupBlocked": "Le navigateur a bloqué la fenêtre de téléchargement. Autorisez les fenêtres pop-up pour ce site, puis réessayez.",
+    "DownloadRejected": "Le storage proxy a refusé le téléchargement (HTTP {{status}}). Le téléchargement n'a pas démarré.",
     "DownloadSelected": "Télécharger",
     "DownloadStarted": "Fichier \"{{fileName}}\" Le téléchargement a commencé.",
+    "DownloadUnreachable": "Impossible de joindre le storage proxy à l'adresse {{origin}}. Le téléchargement n'a pas démarré.",
     "DragAndDropDesc": "Faites glisser et déposez les fichiers dans cette zone pour télécharger.",
     "DuplicatedFiles": "Écran de confirmation",
     "DuplicatedFilesDesc": "Le fichier ou le dossier avec le même nom existe déjà. \nVoulez-vous écraser?",
     "EditFile": "Modifier le fichier",
+    "ExistingItem": "Existant",
     "FileCreatedSuccessfully": "Fichier créé avec succès.",
     "FileName": "Nom du fichier",
     "FileNamePlaceholder": "p. ex. model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "Modifié à",
     "Name": "Nom",
     "NoUploadPermissionForHost": "Vous n'avez pas la permission de téléverser sur cet hôte.",
+    "OtherItemsWillBeUploaded": "{{count}} autre(s) élément(s) seront également téléversés.",
     "Path": "Chemin",
     "PleaseEnterAFileName": "Veuillez saisir le nom du fichier.",
     "PleaseEnterAFolderName": "Veuillez saisir le nom du dossier.",
     "RenameFile": "Renommer",
     "RenameSuccess": "Le nom a été modifié avec succès.",
+    "SelectItemsToOverwrite": "Ces éléments existent déjà ici. Sélectionnez ceux à écraser ; les éléments non sélectionnés seront ignorés.",
     "SelectedItemsDeletedSuccessfully": "Les fichiers et dossiers sélectionnés ont été supprimés avec succès.",
     "Size": "Taille",
     "TypeDeleteToConfirm": "Tapez « Supprimer » pour confirmer.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "Ce format de fichier ne prend pas en charge l'édition.",
     "UploadFiles": "Télécharger des fichiers",
     "UploadFolder": "Dossier de téléchargement",
+    "UploadingItem": "À téléverser",
     "error": {
       "DuplicatedName": "Ce nom est déjà utilisé. \nVeuillez saisir un autre nom.",
       "FileNameRequired": "Veuillez saisir un fichier ou un nom de dossier."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} des éléments {{total}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Aucune données de ressources disponibles"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "Une erreur inconnue s'est produite. \nVeuillez réessayer."
   },
-  "form": {
-    "Optional": "(optionnel)",
-    "validateMessages": {
-      "Default": "Erreur de validation pour le champ ${label}",
-      "Required": "Le champ ${label} est obligatoire",
-      "Whitespace": "La valeur du champ ${label} ne peut pas être vide",
-      "array": {
-        "Len": "La taille du tableau ${label} doit être de ${len}",
-        "Max": "La taille du tableau ${label} doit être au maximum de ${max}",
-        "Min": "La taille du tableau ${label} doit être au minimum de ${min}",
-        "Range": "La taille du tableau ${label} doit être entre ${min}-${max}"
-      },
-      "number": {
-        "Len": "La valeur du champ ${label} doit être égale à ${len}",
-        "Max": "La valeur du champ ${label} doit être plus petit que ${max}",
-        "Min": "La valeur du champ ${label} doit être plus grande que ${min}",
-        "Range": "La valeur du champ ${label} doit être entre ${min} et ${max}"
-      },
-      "pattern": {
-        "Mismatch": "La valeur du champ ${label} ne correspond pas au modèle ${pattern}"
-      },
-      "string": {
-        "Len": "La taille du champ ${label} doit être de ${len} caractères",
-        "Max": "La taille du champ ${label} doit être au maximum de ${max} caractères",
-        "Min": "La taille du champ ${label} doit être au minimum de ${min} caractères",
-        "Range": "La taille du champ ${label} doit être entre ${min} et ${max} caractères"
-      },
-      "types": {
-        "Email": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
-        "Number": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
-        "Object": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
-        "String": "La valeur du champ ${label} n'est pas valide pour le type ${type}",
-        "Url": "La valeur du champ ${label} n'est pas valide pour le type ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Diminuer",
-    "DeselectAll": "Tout désélectionner",
     "File": "Fichier",
-    "Increase": "Augmenter",
-    "Loading": "Chargement...",
-    "NSelected": "{{count}} sélectionné",
     "Optional": "Facultatif",
     "Project": "Projet",
     "Search": "Rechercher",
     "Select": "Sélectionner",
-    "SelectPlaceholder": "Sélectionnez {{label}}",
-    "TotalItems": "Éléments totaux {{total}}",
     "Unit": "Unité",
     "button": {
       "Action": "Action",

@@ -1,7 +1,7 @@
 import integration from '../../astryx.integration';
 import { parseDoc, parseReference } from '@astryxdesign/cli/authoring';
 import fg from 'fast-glob';
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
@@ -106,14 +106,45 @@ describe.each(componentDocs.map((file) => [stemOf(file), file]))(
       // `tsc` cover the shape — but it catches renamed and deleted props,
       // which is how these files go stale.
       const { docs } = await import(/* @vite-ignore */ file);
-      const source = readFileSync(
-        resolve(dirname(file), `${stem}.tsx`),
-        'utf-8',
+      let source = readFileSync(resolve(dirname(file), `${stem}.tsx`), 'utf-8');
+      // An adapter over a component moved to ui-common (ADR 0009) names only
+      // the props it maps; the rest are declared in ui-common's typings, one
+      // file per component in the subpath's directory, plus the sibling
+      // component directories those typings extend (`../Form`).
+      const componentsDir = resolve(
+        packageDir,
+        'node_modules/@lablup/ui-common/dist/components',
       );
+      const readTypings = (name: string) => {
+        let typings = '';
+        for (const file of readdirSync(resolve(componentsDir, name))) {
+          if (file.endsWith('.d.ts')) {
+            typings += readFileSync(
+              resolve(componentsDir, name, file),
+              'utf-8',
+            );
+          }
+        }
+        return typings;
+      };
+      for (const [, name] of source.matchAll(
+        /from '@lablup\/ui-common\/components\/(\w+)'/g,
+      )) {
+        const typings = readTypings(name);
+        source += typings;
+        for (const [, sibling] of typings.matchAll(
+          /from ['"]\.\.\/(\w+)['"]/g,
+        )) {
+          source += readTypings(sibling);
+        }
+      }
       for (const props of propLists(docs)) {
         for (const prop of props) {
+          // A nested field is documented as a path (`values[].copyable`);
+          // the source names only its last segment.
+          const leaf = prop.name.split('.').pop()!.replace(/\[\]$/, '');
           expect(
-            new RegExp(`\\b${prop.name}\\b`).test(source),
+            new RegExp(`\\b${leaf}\\b`).test(source),
             `${stem}.doc.ts documents a prop \`${prop.name}\` that ${stem}.tsx never names`,
           ).toBe(true);
         }

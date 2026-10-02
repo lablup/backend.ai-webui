@@ -2,9 +2,10 @@
 import { BulkCreateUserModal } from '../utils/classes/user/BulkCreateUserModal';
 import { PurgeUsersModal } from '../utils/classes/user/PurgeUsersModal';
 import { KeyPairModal } from '../utils/classes/user/UserSettingModal';
-import { loginAsAdmin, navigateTo } from '../utils/test-util';
+import { loginAsAdmin } from '../utils/test-util';
 import {
   createUserMoreButton,
+  navigateToUsersPage,
   usersTabButton,
 } from '../utils/user-profile-util';
 import test, { expect, type Page } from '@playwright/test';
@@ -37,7 +38,7 @@ async function cleanupBulkCreatedUsers(
   emails: string[],
 ): Promise<void> {
   // Ensure we start on the credential page regardless of where the test ended
-  await navigateTo(page, 'credential');
+  await navigateToUsersPage(page);
 
   // Phase 1: Deactivate all active users
   await page.getByText('Active', { exact: true }).click();
@@ -103,13 +104,13 @@ test.describe(
 
     test(
       'Admin can open bulk create modal from dropdown',
-      { tag: ['@smoke'] },
+      { tag: ['@smoke', '@smoke-admin'] },
       async ({ page, request }) => {
         // 1. Login as admin
         await loginAsAdmin(page, request);
 
         // 2. Navigate to credential page
-        await navigateTo(page, 'credential');
+        await navigateToUsersPage(page);
 
         // 3. Verify the "Users" tab is visible and selected.
         // `BAICard`'s `tabList` renders a `nav[aria-label="Tabs"]` of plain
@@ -190,12 +191,7 @@ test.describe(
           await loginAsAdmin(page, request);
 
           // 2. Navigate to credential page
-          await navigateTo(page, 'credential');
-
-          // 3. Verify the "Users" tab is active
-          await expect(
-            page.getByRole('radio', { name: 'Active', exact: true }),
-          ).toBeChecked();
+          await navigateToUsersPage(page);
 
           // 4. Click the "More" dropdown button next to "Create User"
           await createUserMoreButton(page).click();
@@ -311,7 +307,7 @@ test.describe(
         await loginAsAdmin(page, request);
 
         // 2. Navigate to credential page
-        await navigateTo(page, 'credential');
+        await navigateToUsersPage(page);
 
         // 3. Click the "More" dropdown button and select "Bulk Create Users"
         await createUserMoreButton(page).click();
@@ -368,7 +364,7 @@ test.describe(
           await loginAsAdmin(page, request);
 
           // 2. Navigate to credential page
-          await navigateTo(page, 'credential');
+          await navigateToUsersPage(page);
 
           // 3. Click the "More" dropdown button and select "Bulk Create Users"
           await createUserMoreButton(page).click();

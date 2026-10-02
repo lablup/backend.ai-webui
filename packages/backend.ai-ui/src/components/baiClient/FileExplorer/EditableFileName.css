@@ -11,16 +11,18 @@
  is re-pointed at the button's own class rather than left silently matching
  nothing (P6).
 
- Ticket 35 re-pointed the margin rule the same way. The rename field sits in
- the self-hosted form engine now, so its item root is `[data-bai-form-item]`
- and the old `ant-form-item*` selectors had stopped matching anything —
- which would have left this field with the shell's default 24px bottom margin
- inside a single-line inline editor. `!important` still wins over the shell's
- inline `marginBottom` (author `!important` beats a non-important inline
- style), so the collapse-to-zero behaviour is unchanged.
+ The rename field's form item (`.uic-form-item`, ui-common's form engine)
+ drops the shell's default 24px bottom margin inside this single-line editor.
 */
+
+/* The button shares the name cell with the row actions (FR-3670), so hiding it
+   has to give the width back too — `opacity: 0` alone left an invisible 28px
+   box holding half of what the name had left (FR-3926). Same collapse the
+   action group itself uses in `BAINameActionCell.css`. */
 .bai-editable-file-name-hover-edit .bai-editable-file-name-edit-button {
   opacity: 0;
+  max-width: 0;
+  overflow: hidden;
   transition: opacity 0.2s;
 }
 
@@ -28,9 +30,11 @@
 .bai-editable-file-name-hover-edit:focus-within
   .bai-editable-file-name-edit-button {
   opacity: 1;
+  max-width: none;
+  overflow: visible;
 }
 
-.bai-editable-file-name-form [data-bai-form-item] {
+.bai-editable-file-name-form .uic-form-item {
   margin-bottom: 0px !important;
 }
 

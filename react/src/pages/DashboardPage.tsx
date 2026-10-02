@@ -35,8 +35,8 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
 import { toProjectContext } from '../types/projectContext';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISkeleton,
   BAIBoardItemErrorBoundary,
@@ -62,7 +62,7 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
 
 const DashboardPage: React.FC = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
 
   const currentProject = useCurrentProjectValue();
@@ -151,6 +151,8 @@ const DashboardPage: React.FC = () => {
         $skipTotalResourceWithinResourceGroup: Boolean!
         $isSuperAdmin: Boolean!
         $agentNodeFilter: String!
+        $aliveAgentFilter: String!
+        $schedulableAgentFilter: String!
       ) {
         ...SessionCountDashboardItemFragment @arguments(scopeId: $scopeId)
         ...RecentlyCreatedSessionFragment @arguments(scopeId: $scopeId)
@@ -162,7 +164,13 @@ const DashboardPage: React.FC = () => {
             isSuperAdmin: $isSuperAdmin
             agentNodeFilter: $agentNodeFilter
           )
-        ...AgentStatsFragment @include(if: $isSuperAdmin) @alias
+        ...AgentStatsFragment
+          @include(if: $isSuperAdmin)
+          @alias
+          @arguments(
+            aliveAgentFilter: $aliveAgentFilter
+            schedulableAgentFilter: $schedulableAgentFilter
+          )
       }
     `,
     {
@@ -171,6 +179,8 @@ const DashboardPage: React.FC = () => {
       skipTotalResourceWithinResourceGroup: !isAvailableTotalResourcePanel,
       isSuperAdmin: _.isEqual(userRole, 'superadmin'),
       agentNodeFilter: `schedulable == true & status == "ALIVE" & scaling_group == "${currentResourceGroup}"`,
+      aliveAgentFilter: 'status == "ALIVE"',
+      schedulableAgentFilter: 'status == "ALIVE" & schedulable == true',
     },
     {
       fetchPolicy:
@@ -200,7 +210,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <SessionCountDashboardItem
@@ -231,7 +241,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <MyResource
                 fetchKey={deferredFetchKey}
@@ -257,7 +269,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <MyResourceWithinResourceGroup
                 fetchKey={deferredFetchKey}
@@ -283,7 +297,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <StorageStatusPanelCard
                 fetchKey={deferredFetchKey}
@@ -316,7 +332,9 @@ const DashboardPage: React.FC = () => {
             status="error"
           >
             <Suspense
-              fallback={<BAISkeleton style={{ padding: token.marginMD }} />}
+              fallback={
+                <BAISkeleton style={{ padding: token('--spacing-5') }} />
+              }
             >
               <QuotaPerStorageVolumeDashboardItem />
             </Suspense>
@@ -355,7 +373,9 @@ const DashboardPage: React.FC = () => {
           content: (
             <Suspense
               fallback={
-                <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+                <BAISkeleton
+                  style={{ padding: `0px ${token('--spacing-5')}` }}
+                />
               }
             >
               <AgentStats
@@ -378,7 +398,7 @@ const DashboardPage: React.FC = () => {
         content: (
           <Suspense
             fallback={
-              <BAISkeleton style={{ padding: `0px ${token.marginMD}px` }} />
+              <BAISkeleton style={{ padding: `0px ${token('--spacing-5')}` }} />
             }
           >
             <ActiveAgents

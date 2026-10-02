@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<89eb78960574c3bde8afc0c46b1f29bd>>
+ * @generated SignedSource<<b34835a887636fd31bc20bf51b701d8d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -287,12 +287,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2e0bb30a6e454cb5bf2ce24191a441ef",
+    "cacheID": "dce7be04285aeb014d5359c8a8e882f6",
     "id": null,
     "metadata": {},
     "name": "BAIDeleteArtifactRevisionsModalStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIDeleteArtifactRevisionsModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTagFragment\n}\n\nfragment BAIArtifactTypeTagFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
+    "text": "query BAIDeleteArtifactRevisionsModalStoriesQuery {\n  artifacts(offset: 0, first: 1) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactFragment\n        id\n      }\n    }\n  }\n  artifactRevisions(offset: 0, first: 10) {\n    edges {\n      node {\n        ...BAIDeleteArtifactRevisionsModalArtifactRevisionFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAIArtifactDescriptionsFragment on Artifact {\n  name\n  description\n  source {\n    name\n    url\n  }\n  ...BAIArtifactTypeTokenFragment\n}\n\nfragment BAIArtifactTypeTokenFragment on Artifact {\n  type\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactFragment on Artifact {\n  id\n  ...BAIArtifactDescriptionsFragment\n}\n\nfragment BAIDeleteArtifactRevisionsModalArtifactRevisionFragment on ArtifactRevision {\n  id\n  version\n  size\n  status\n}\n"
   }
 };
 })();

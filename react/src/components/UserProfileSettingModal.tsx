@@ -15,7 +15,7 @@ import {
   AstryxFormTagsInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIModal,
   BAIText,
@@ -182,7 +182,6 @@ const UserProfileSettingModal: React.FC<Props> = ({
         confirmLoading={isInFlightUpdateUser}
         onOk={() => onSubmit()}
         centered
-        destroyOnHidden
         title={t('webui.menu.MyAccountInformation')}
       >
         <Form

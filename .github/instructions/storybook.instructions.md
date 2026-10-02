@@ -116,7 +116,7 @@ const meta: Meta<typeof BAICard> = {
 | Subcategory | `Components/[Category]/[Name]` | `Components/Input/DynamicUnitInputNumber` |
 | Sub-component | `Components/[Parent]/[Name]` | `Components/BAITable/BAITableSettingModal` |
 | Layout | `Layout/[Name]` | `Layout/BAIFlex` |
-| Relay Fragment | `Fragments/[Name]` | `Fragments/BAISessionTypeTag` |
+| Relay Fragment | `Fragments/[Name]` | `Fragments/BAISessionTypeToken` |
 
 ### Layout Options
 
@@ -283,15 +283,15 @@ Use for components that consume GraphQL fragments:
 ```typescript
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import RelayResolver from '../../tests/RelayResolver';
-import type { BAISessionTypeTagStoriesQuery } from './__generated__/BAISessionTypeTagStoriesQuery.graphql';
+import type { BAISessionTypeTokenStoriesQuery } from './__generated__/BAISessionTypeTokenStoriesQuery.graphql';
 
 // Query resolver component
 const QueryResolver = () => {
-  const { compute_session_node } = useLazyLoadQuery<BAISessionTypeTagStoriesQuery>(
+  const { compute_session_node } = useLazyLoadQuery<BAISessionTypeTokenStoriesQuery>(
     graphql`
-      query BAISessionTypeTagStoriesQuery {
+      query BAISessionTypeTokenStoriesQuery {
         compute_session_node(id: "test-id") {
-          ...BAISessionTypeTagFragment
+          ...BAISessionTypeTokenFragment
         }
       }
     `,
@@ -300,7 +300,7 @@ const QueryResolver = () => {
 
   return (
     compute_session_node && (
-      <BAISessionTypeTag sessionFrgmt={compute_session_node} />
+      <BAISessionTypeToken sessionFrgmt={compute_session_node} />
     )
   );
 };
@@ -500,9 +500,10 @@ const sampleData: DataType[] = [
 The real decorator lives in `./decorators.tsx` and is wired into `preview.tsx`
 as a single entry, `withGlobalProvider`. There is no antd `ConfigProvider` in
 this tree — antd is not a dependency of this project. `withGlobalProvider`
-mounts Astryx's own `Theme` provider, then the theme-shim, `BAIConfigProvider`
-(locale only now), the form engine's config provider, and the app-shim
-(`message`/`modal`) provider, in that order:
+mounts Astryx's own `Theme` provider (the "Theme" toolbar picks the preset),
+then `BAIConfigProvider` (with the app's locale module for the toolbar locale),
+the form engine's config provider, and the app-shim (`message`/`modal`)
+provider, in that order:
 
 ```typescript
 // packages/backend.ai-ui/.storybook/preview.tsx
@@ -520,19 +521,19 @@ const preview: Preview = {
 // packages/backend.ai-ui/.storybook/decorators.tsx (simplified)
 import { BAIAppProvider } from '../src/app-shim';
 import BAIConfigProvider from '../src/components/provider/BAIConfigProvider/BAIConfigProvider';
-import { FormConfigProvider } from '../src/form-engine/FormConfigProvider';
-import { ThemeShimProvider } from '../src/theme-shim';
-import { Theme as AstryxThemeProvider } from '@astryxdesign/core/theme';
+import { FormConfigProvider } from '../src/form-engine';
+import { Theme as AstryxThemeProvider } from '@lablup/ui-common/theme';
 
-const GlobalConfigProvider = ({ locale, isDarkMode, seedToken, children }) => (
-  <AstryxThemeProvider theme={astryxBrandTheme} mode={isDarkMode ? 'dark' : 'light'}>
-    <ThemeShimProvider mode={isDarkMode ? 'dark' : 'light'} seeds={seedToken}>
-      <BAIConfigProvider locale={{ lang: locale }}>
-        <FormConfigProvider>
-          <BAIAppProvider>{children}</BAIAppProvider>
-        </FormConfigProvider>
-      </BAIConfigProvider>
-    </ThemeShimProvider>
+const GlobalConfigProvider = ({ locale, themeStyle, isDarkMode, children }) => (
+  <AstryxThemeProvider
+    theme={themePresets[themeStyle].theme}
+    mode={isDarkMode ? 'dark' : 'light'}
+  >
+    <BAIConfigProvider locale={localeModules[locale] ?? { lang: locale }}>
+      <FormConfigProvider>
+        <BAIAppProvider>{children}</BAIAppProvider>
+      </FormConfigProvider>
+    </BAIConfigProvider>
   </AstryxThemeProvider>
 );
 
@@ -622,7 +623,7 @@ const meta: Meta<typeof BAIText> = {
 };
 ```
 
-Note the framing. antd is not a dependency — `BAITextProps` extends `Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'children'>` and the component renders `@astryxdesign/core/Text`. The antd names in the description are **history**: the prop surface was deliberately kept antd-shaped so the several hundred existing call sites needed no edit. When a story description touches that vocabulary, describe it as a shape that was kept and point at `.claude/rules/component-props-extension.md` — never as a library the component is built on.
+Note the framing. antd is not a dependency — `BAITextProps` extends `Omit<React.HTMLAttributes<HTMLElement>, 'color' | 'children'>` and the component renders Astryx `Text` (`@lablup/ui-common/Text`). The antd names in the description are **history**: the prop surface was deliberately kept antd-shaped so the several hundred existing call sites needed no edit. When a story description touches that vocabulary, describe it as a shape that was kept and point at `.claude/rules/component-props-extension.md` — never as a library the component is built on.
 
 ### Best Practices
 

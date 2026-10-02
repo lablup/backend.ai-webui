@@ -7,15 +7,16 @@ import {
   DomainFairShareTableFragment$data,
   DomainFairShareTableFragment$key,
 } from '../../__generated__/DomainFairShareTableFragment.graphql';
-import { theme } from '../../theme-shim';
 import DomainResourceGroupWarningIcon from './DomainResourceGroupWarningIcon';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
+  BAIBadge,
   BAIColumnsType,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAIResourceNumberWithIcon,
   BAITable,
   BAITableProps,
@@ -37,6 +38,7 @@ export type DomainFairShare = NonNullable<
 
 const availableDomainFairShareSorterKeys = [
   'domainName',
+  'domainIsActive',
   'fairShareFactor',
   'createdAt',
 ] as const;
@@ -45,6 +47,7 @@ export const domainFairShareOrderFieldMap: Record<
   DomainFairShareOrderField
 > = {
   domainName: 'DOMAIN_NAME',
+  domainIsActive: 'DOMAIN_IS_ACTIVE',
   fairShareFactor: 'FAIR_SHARE_FACTOR',
   createdAt: 'CREATED_AT',
 };
@@ -78,7 +81,7 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [queryParams, setQueryParams] = useQueryStates(
     {
@@ -96,6 +99,9 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
         domain {
           basicInfo {
             name
+          }
+          lifecycle {
+            isActive
           }
         }
         id
@@ -175,7 +181,10 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
                 ? '-'
                 : toFixedFloorWithoutTrailingZeros(weight, 1)}
             </Text>
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {record.spec.usesDefault
                 ? `(${t('fairShare.UsingDefault')})`
                 : ''}
@@ -238,6 +247,22 @@ const DomainFairShareTable: React.FC<DomainFairShareTableProps> = ({
           </BAIFlex>
         );
       },
+    },
+    {
+      title: t('general.Status'),
+      key: 'domainIsActive',
+      dataIndex: ['domain', 'lifecycle', 'isActive'],
+      sortKey: 'domainIsActive',
+      sorter: isEnableSorter('domainIsActive'),
+      render: (isActive: boolean | null | undefined) =>
+        _.isNil(isActive) ? (
+          '-'
+        ) : (
+          <BAIBadge
+            color={isActive ? 'success' : 'default'}
+            text={isActive ? t('general.Active') : t('general.Inactive')}
+          />
+        ),
     },
     {
       title: t('general.ModifiedAt'),

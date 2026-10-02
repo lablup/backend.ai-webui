@@ -15,11 +15,14 @@ import { App } from '../app-shim';
 import BAIRadioGroup from '../components/BAIRadioGroup';
 import ProjectAdminSettingModal, {
   ProjectAdminSettingQuery,
+  buildProjectAdminRoleFilter,
+  selectProjectAdminRoles,
 } from '../components/ProjectAdminSettingModal';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
+import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIButton,
   BAICard,
@@ -71,13 +74,18 @@ type ProjectNode = NonNullable<
   >['node']
 >;
 
+const PROJECT_TYPES = ['GENERAL', 'MODEL_STORE', 'PERSONAL'] as const;
+// Every user owns a PERSONAL project from manager 26.9.0 (BA-7659); the page
+// starts with them hidden behind this chip and the user removes it to see them.
+const DEFAULT_PROJECT_FILTER = 'type != "PERSONAL"';
+
 const ProjectPage = () => {
   'use memo';
 
   const { t } = useTranslation();
   const { logger } = useBAILogger();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { getErrorMessage } = useErrorMessageResolver();
   const relayEnvironment = useRelayEnvironment();
   const baiClient = useSuspendedBackendaiClient();
@@ -86,6 +94,12 @@ const ProjectPage = () => {
   const supportsProjectAdminSetting = baiClient.supports(
     'role-mapped-scope-filter',
   );
+  // From 26.9.0 the project admin grant is a `scope_admin` permission rather
+  // than a name-suffixed SYSTEM role.
+  const matchesProjectAdminByScopeAdminPermission = baiClient.supports(
+    'rbac-single-scope-role',
+  );
+  const supportsTypeFilter = baiClient.supports('group-nodes-type-filter');
   const [openSettingModal, { toggle: toggleSettingModal }] = useToggle(false);
   const [openBulkEditModal, { toggle: toggleBulkEditModal }] = useToggle(false);
   const [selectedProjectList, setSelectedProjectList] = useState<ProjectNode[]>(
@@ -113,7 +127,9 @@ const ProjectPage = () => {
   const [queryParams, setQueryParams] = useQueryStates(
     {
       order: parseAsStringLiteral(availableProjectSorterValues),
-      filter: parseAsString.withDefault(''),
+      // No default: `null` (key absent) means the filter bar was never
+      // touched, while '' (`?filter=`) means every chip was removed.
+      filter: parseAsString,
       status: parseAsStringLiteral(['active', 'inactive']).withDefault(
         'active',
       ),
@@ -121,6 +137,9 @@ const ProjectPage = () => {
     {
       history: 'replace',
     },
+  );
+  const [columnOverrides, setColumnOverrides] = useBAISettingUserState(
+    'table_column_overrides.ProjectPage',
   );
   const [fetchKey, updateFetchKey] = useUpdatableState(INITIAL_FETCH_KEY);
   const deferredFetchKey = useDeferredValue(fetchKey);
@@ -131,12 +150,14 @@ const ProjectPage = () => {
     queryParams.status === 'active'
       ? 'is_active == true'
       : 'is_active == false';
+  const filterValue =
+    queryParams.filter ?? (supportsTypeFilter ? DEFAULT_PROJECT_FILTER : '');
 
   const queryVariables: ProjectPageQuery$variables = {
     offset: baiPaginationOption.offset,
     first: baiPaginationOption.limit,
     order: queryParams.order || '-created_at',
-    filter: mergeFilterValues([queryParams.filter, statusFilter]) || null,
+    filter: mergeFilterValues([filterValue, statusFilter]) || null,
   };
 
   const deferredValueQueryVariables = useDeferredValue(queryVariables);
@@ -221,14 +242,10 @@ const ProjectPage = () => {
       return;
     }
     const variables: ProjectAdminSettingModalQuery['variables'] = {
-      filter: {
-        source: { equals: 'SYSTEM' },
-        status: { equals: 'ACTIVE' },
-        mappedScope: {
-          scopeType: { equals: 'PROJECT' },
-          scopeId: { equals: project.row_id },
-        },
-      },
+      filter: buildProjectAdminRoleFilter(
+        project.row_id,
+        matchesProjectAdminByScopeAdminPermission,
+      ),
       limit: 100,
       offset: 0,
     };
@@ -246,14 +263,13 @@ const ProjectPage = () => {
       );
       return;
     }
-    // The project admin role is resolved here, before the modal opens; a
-    // project without one only gets an error message. The project scope
-    // carries a member/admin SYSTEM role pair — the admin one is identified
-    // by its name suffix.
-    const hasProjectAdminRole = _.some(roleData?.adminRoles?.edges, (edge) =>
-      _.endsWith(edge?.node?.name, 'admin'),
+    // The project's admin roles are resolved here, before the modal opens; a
+    // project without one only gets an error message.
+    const adminRoles = selectProjectAdminRoles(
+      roleData,
+      matchesProjectAdminByScopeAdminPermission,
     );
-    if (!hasProjectAdminRole) {
+    if (_.isEmpty(adminRoles)) {
       message.error(
         t('project.ProjectAdminRoleNotFound', {
           project: project.name ?? project.row_id,
@@ -424,6 +440,21 @@ const ProjectPage = () => {
                   propertyLabel: t('project.Domain'),
                   type: 'string',
                 },
+                ...(supportsTypeFilter
+                  ? [
+                      {
+                        key: 'type',
+                        propertyLabel: t('project.Type'),
+                        type: 'string' as const,
+                        strictSelection: true,
+                        defaultOperator: '==',
+                        options: PROJECT_TYPES.map((type) => ({
+                          label: type,
+                          value: type,
+                        })),
+                      },
+                    ]
+                  : []),
                 {
                   key: 'resource_policy',
                   propertyLabel: t('project.ResourcePolicy'),
@@ -432,15 +463,24 @@ const ProjectPage = () => {
                 {
                   key: 'id',
                   propertyLabel: t('project.ProjectID'),
-                  type: 'string',
-                  defaultOperator: '==',
+                  type: 'uuid',
                   rule: {
                     message: t('project.ProjectIDFilterRuleMessage'),
                     validate: (value) => isValidUUID(value),
                   },
                 },
+                {
+                  key: 'created_at',
+                  propertyLabel: t('general.CreatedAt'),
+                  type: 'datetime',
+                },
+                {
+                  key: 'modified_at',
+                  propertyLabel: t('general.ModifiedAt'),
+                  type: 'datetime',
+                },
               ]}
-              value={queryParams.filter}
+              value={filterValue}
               onChange={(filter) => {
                 setQueryParams({ filter: filter || '' });
                 setSelectedProjectList([]);
@@ -460,7 +500,9 @@ const ProjectPage = () => {
                     was a second, weaker channel for the same string. */}
                 <BAIButton
                   title={t('project.BulkEdit')}
-                  icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                  icon={
+                    <SquarePenIcon style={{ color: token('--color-info') }} />
+                  }
                   onClick={toggleBulkEditModal}
                 />
               </>
@@ -504,6 +546,10 @@ const ProjectPage = () => {
           order={queryParams.order}
           onChangeOrder={(order) => {
             setQueryParams({ order });
+          }}
+          tableSettings={{
+            columnOverrides,
+            onColumnOverridesChange: setColumnOverrides,
           }}
           customizeColumns={(columns) =>
             columns.map((col) =>

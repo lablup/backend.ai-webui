@@ -3,28 +3,24 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AssignRoleModalBulkAssignMutation } from '../__generated__/AssignRoleModalBulkAssignMutation.graphql';
-import { AssignRoleModalQuery } from '../__generated__/AssignRoleModalQuery.graphql';
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { reasonMessage } from '../helper/mutationError';
-import { theme } from '../theme-shim';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIAdminUserV2Select,
   BAIBulkErrorModal,
-  type BAIColumnsType,
-  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAISelect,
-  toLocalId,
   useBAILogger,
   useMutationWithPromise,
+  type BAIColumnsType,
 } from 'backend.ai-ui';
 import _ from 'lodash';
-import React, { useDeferredValue, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useLazyLoadQuery } from 'react-relay';
+import { graphql } from 'react-relay';
 
 interface AssignRoleModalProps extends BAIModalProps {
   roleId: string;
@@ -45,7 +41,9 @@ interface FailedAssignment {
  * failure the modal stays open: successfully assigned users are deselected,
  * only the failed users remain in the select (marked with an error border),
  * and the shared `BAIBulkErrorModal` lists each failure — pressing Assign
- * again retries just the remaining users.
+ * again retries just the remaining users. A manager >= 26.9.0a4 reports no
+ * partial failure (a refused user rejects the whole request), so there every
+ * selected user stays in the select for the retry.
  */
 const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   roleId,
@@ -55,16 +53,11 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const formRef = useRef<FormInstance<{ userIds: string[] }>>(null);
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-  const [search, setSearch] = useState('');
-  const deferredSearch = useDeferredValue(search);
-  // Starts false so a fresh mount (BAIUnmountAfterClose) fetches in a deferred
-  // render: the tab around the modal keeps its content instead of suspending.
-  const deferredOpen = useDeferredValue(baiModalProps.open, false);
   const [isAssigning, setIsAssigning] = useState(false);
   // One row per user the server rejected on the last save; the error modal
   // is open while non-empty.
@@ -82,31 +75,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
   // longer be in it when the failure arrives.
   const userLabelsRef = useRef(new Map<string, string>());
 
-  const data = useLazyLoadQuery<AssignRoleModalQuery>(
-    graphql`
-      query AssignRoleModalQuery($filter: UserV2Filter, $first: Int) {
-        adminUsersV2(filter: $filter, first: $first) {
-          edges {
-            node {
-              id
-              basicInfo {
-                email
-                fullName
-              }
-            }
-          }
-        }
-      }
-    `,
-    {
-      filter: deferredSearch ? { email: { contains: deferredSearch } } : null,
-      first: 50,
-    },
-    {
-      fetchPolicy: deferredOpen ? 'store-and-network' : 'store-only',
-    },
-  );
-
   const bulkAssignRole =
     useMutationWithPromise<AssignRoleModalBulkAssignMutation>(graphql`
       mutation AssignRoleModalBulkAssignMutation($input: BulkAssignRoleInput!) {
@@ -117,15 +85,15 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
             grantedBy
             grantedAt
           }
-          failed {
+          # A manager >= 26.9.0a4 answers no per-user failures: a refused user
+          # rejects the whole mutation, which the catch below handles.
+          failed @deprecatedSince(version: "26.9.0a4") {
             userId
             message
           }
         }
       }
     `);
-
-  const users = data.adminUsersV2?.edges?.map((edge) => edge?.node) ?? [];
 
   const userLabelOf = (userId: string) =>
     userLabelsRef.current.get(userId) ?? userId;
@@ -236,7 +204,6 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
       // After a partial failure some assignments did reach the backend, so
       // even a cancel must report success=true — the parent then refetches.
       onCancel={() => onRequestClose(hasAssignedAny)}
-      destroyOnHidden
       {...baiModalProps}
     >
       <Form ref={formRef} layout="vertical">
@@ -245,69 +212,21 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           label={t('credential.Users')}
           rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
-          <BAISelect
-            mode="multiple"
-            style={{ width: '100%' }}
+          <BAIAdminUserV2Select
+            multiple
+            valuePropName="id"
+            label={t('credential.Users')}
+            isLabelHidden
             placeholder={t('rbac.SelectUsers')}
-            onChange={(value: string[], options) => {
-              _.castArray(options ?? []).forEach((option: any) => {
-                if (option?.value !== undefined) {
-                  userLabelsRef.current.set(
-                    String(option.value),
-                    String(option.label ?? option.value),
-                  );
-                }
+            onChange={(value, option) => {
+              _.castArray(option ?? []).forEach((o) => {
+                userLabelsRef.current.set(
+                  String(o.value),
+                  String(o.label ?? o.value),
+                );
               });
-              setSelectedUserIds(value);
-              setSearch('');
+              setSelectedUserIds(_.castArray(value ?? []));
             }}
-            loading={
-              deferredSearch !== search || deferredOpen !== baiModalProps.open
-            }
-            maxTagCount="responsive"
-            allowClear
-            maxTagPlaceholder={(omittedValues) => (
-              <Tooltip
-                content={
-                  <BAIFlex direction="column" align="start" gap="xxs">
-                    {omittedValues.map((v) => (
-                      <Text key={v.value} color="inherit">
-                        {v.label}
-                      </Text>
-                    ))}
-                  </BAIFlex>
-                }
-              >
-                <span>+{omittedValues.length} ...</span>
-              </Tooltip>
-            )}
-            showSearch={{
-              searchValue: search,
-              onSearch: (v) => setSearch(v),
-              filterOption: false,
-            }}
-            options={users.map((user) => ({
-              value: user?.id ? toLocalId(user.id) : undefined,
-              label: user?.basicInfo?.email || user?.id,
-              description: user?.basicInfo?.fullName,
-            }))}
-            optionRender={(option) => (
-              <div>
-                <div>{option.label}</div>
-                {option.data?.description && (
-                  // Mode-blind hardcode fixed (sweep #4): `#999` was antd's
-                  // secondary/description text gray, identical in both modes.
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {option.data.description}
-                  </div>
-                )}
-              </div>
-            )}
           />
         </Form.Item>
       </Form>
@@ -319,7 +238,10 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
         alertDescription={
           <>
             {t('rbac.UserAssignmentsPartialFailureDescription')}{' '}
-            <Text color="secondary" style={{ fontSize: token.fontSizeSM }}>
+            <Text
+              color="secondary"
+              style={{ fontSize: token('--font-size-sm') }}
+            >
               {t('rbac.PermissionsPartialFailureCounts', {
                 succeeded: succeededRequestCount,
                 failed: failedAssignments.length,

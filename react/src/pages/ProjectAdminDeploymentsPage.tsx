@@ -22,13 +22,13 @@ import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginati
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAICard,
   BAIDeleteConfirmModal,
-  BAIDeploymentTagChips,
+  BAIDeploymentTagTokens,
   BAIFlex,
   BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
@@ -378,7 +378,7 @@ const ProjectAdminDeploymentsContent: React.FC<
                   next = {
                     ...col,
                     render: (_value, record) => (
-                      <BAIDeploymentTagChips
+                      <BAIDeploymentTagTokens
                         metadataFrgmt={record.metadata}
                         stopRowClick
                         onTagClick={(tag) => {

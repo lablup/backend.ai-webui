@@ -17,16 +17,19 @@ import {
   handleRowSelectionChange,
 } from '../helper';
 import { buildPath } from '../helper/pathBuilder';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useSetBAINotification } from '../hooks/useBAINotification';
-import { theme } from '../theme-shim';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminProjectSelect,
+  BAIAlert,
   BAIButton,
   BAIColumnType,
   BAIDeleteConfirmModal,
@@ -38,35 +41,43 @@ import {
   BAISelectionLabel,
   BAIStorageHostSelect,
   BAITable,
-  type BAITableSettings,
   BAIText,
-  BAITag,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
   toLocalId,
+  tokenColorForTagColor,
   useBAILogger,
-  BAIAlert,
+  type BAITableSettings,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, CircleAlert, PlusIcon, SquarePenIcon } from 'lucide-react';
+import { CircleAlert, PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  graphql,
   PreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+  graphql,
   useMutation,
   usePreloadedQuery,
-  UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
 type ModelCardNode = NonNullableNodeOnEdges<
   AdminModelCardQuery$data['adminModelCardsV2']
 >;
 
-const availableModelCardSorterKeys = ['name', 'created_at'] as const;
+const availableModelCardSorterKeys = [
+  'name',
+  'created_at',
+  // Opened by 26.9.0 (backend #14811); gated on `model-card-search-axes`.
+  'title',
+  'category',
+  'task',
+  'access_level',
+  'project_id',
+] as const;
 
 export const availableModelCardSorterValues = [
   ...availableModelCardSorterKeys,
@@ -79,6 +90,7 @@ export const AdminModelCardQuery = graphql`
     $orderBy: [ModelCardV2OrderBy!]
     $limit: Int
     $offset: Int
+    $domainName: String
   ) {
     adminModelCardsV2(
       filter: $filter
@@ -99,10 +111,16 @@ export const AdminModelCardQuery = graphql`
             }
             ...VFolderNodeIdenticonV2Fragment
           }
-          domainName
           projectId
+          project @since(version: "26.4.3") {
+            id
+            basicInfo {
+              name
+            }
+          }
           accessLevel
           createdAt
+          updatedAt
           metadata {
             title
             category
@@ -112,7 +130,7 @@ export const AdminModelCardQuery = graphql`
         }
       }
     }
-    groups(is_active: true, type: ["MODEL_STORE"]) {
+    groups(domain_name: $domainName, is_active: true, type: ["MODEL_STORE"]) {
       id
       name
     }
@@ -121,6 +139,8 @@ export const AdminModelCardQuery = graphql`
 
 export interface AdminModelCardProps {
   queryRef: PreloadedQuery<AdminModelCardQueryType>;
+  /** The user's conditions, without the page's domain scoping. */
+  filter?: ModelCardV2Filter;
   onReload: (
     variables: AdminModelCardQueryType['variables'],
     options?: UseQueryLoaderLoadQueryOptions,
@@ -130,6 +150,7 @@ export interface AdminModelCardProps {
 
 const AdminModelCard: React.FC<AdminModelCardProps> = ({
   queryRef,
+  filter,
   onReload,
   tableSettings,
 }) => {
@@ -137,10 +158,19 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
 
   const { t } = useTranslation();
   const { message } = App.useApp();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { logger } = useBAILogger();
   const { upsertNotification } = useSetBAINotification();
   const { generateFolderPath } = useFolderExplorerOpener();
+  const baiClient = useSuspendedBackendaiClient();
+  // 26.9.0 opened the metadata axes of the model card search (backend #14811).
+  const supportsSearchAxes = baiClient.supports('model-card-search-axes');
+  // BA-5918 (26.4.4rc3) turned `projectId` into a UUIDFilter; the control
+  // only emits the wrapper shape.
+  const supportsFilterWrapperInputs = baiClient.supports(
+    'v2-filter-wrapper-inputs',
+  );
+  const supportsSubFilter = baiClient.supports('model-card-v2-sub-filter');
 
   const [isSettingModalOpen, setIsSettingModalOpen] = useState(false);
   const [editingModelCardId, setEditingModelCardId] = useState<string | null>(
@@ -155,7 +185,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [alsoDeleteFoldersBulk, setAlsoDeleteFoldersBulk] = useState(false);
 
-  const filter = queryRef.variables.filter ?? undefined;
   const order = convertFirstOrderByToString(queryRef.variables.orderBy);
   const pageSize = queryRef.variables.limit ?? 10;
   const offset = queryRef.variables.offset ?? 0;
@@ -255,6 +284,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     {
       key: 'title',
       title: t('adminModelCard.Title'),
+      sorter: supportsSearchAxes,
       render: (_, record) =>
         record.metadata?.title ? (
           <Text maxLines={1} style={{ maxWidth: 200 }}>
@@ -267,44 +297,63 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     {
       key: 'category',
       title: t('modelStore.Category'),
+      sorter: supportsSearchAxes,
       render: (_, record) => record.metadata?.category || '-',
     },
     {
       key: 'task',
       title: t('modelStore.Task'),
+      sorter: supportsSearchAxes,
       render: (_, record) => record.metadata?.task || '-',
     },
     {
       key: 'accessLevel',
       title: t('adminModelCard.AccessLevel'),
       dataIndex: 'accessLevel',
+      sorter: supportsSearchAxes,
       render: (accessLevel) => (
-        <BAITag color={accessLevel === 'PUBLIC' ? 'green' : 'default'}>
-          {accessLevel === 'PUBLIC'
-            ? t('adminModelCard.Public')
-            : t('adminModelCard.Private')}
-        </BAITag>
+        <Token
+          color={tokenColorForTagColor(
+            accessLevel === 'PUBLIC' ? 'green' : 'default',
+          )}
+          label={
+            accessLevel === 'PUBLIC'
+              ? t('adminModelCard.Public')
+              : t('adminModelCard.Private')
+          }
+        />
       ),
     },
     // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field
     {
-      key: 'domainName',
-      title: t('adminModelCard.Domain'),
-      dataIndex: 'domainName',
-    },
-    {
       key: 'projectId',
       title: t('adminModelCard.Project'),
       dataIndex: 'projectId',
-      render: (projectId) => (
-        <BAIText
-          copyable
-          ellipsis={{ tooltip: true }}
-          style={{ maxWidth: 150 }}
-        >
-          {projectId}
-        </BAIText>
-      ),
+      sorter: supportsSearchAxes,
+      // `project` is @since(26.4.3); fall back to the raw UUID on older
+      // managers, which is all this column used to show.
+      render: (projectId, record) => {
+        const projectName = record.project?.basicInfo?.name;
+        if (!projectName) {
+          return (
+            <BAIText
+              copyable
+              ellipsis={{ tooltip: true }}
+              style={{ maxWidth: 150 }}
+            >
+              {projectId}
+            </BAIText>
+          );
+        }
+        return (
+          <BAIText
+            ellipsis={{ tooltip: projectName }}
+            style={{ maxWidth: 150 }}
+          >
+            {projectName}
+          </BAIText>
+        );
+      },
     },
     {
       key: 'createdAt',
@@ -314,6 +363,14 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       render: (createdAt) =>
         createdAt ? dayjs(createdAt).format('YYYY-MM-DD HH:mm') : '-',
     },
+    {
+      key: 'updatedAt',
+      title: t('general.ModifiedAt'),
+      dataIndex: 'updatedAt',
+      defaultHidden: true,
+      render: (updatedAt) =>
+        updatedAt ? dayjs(updatedAt).format('YYYY-MM-DD HH:mm') : '-',
+    },
   ]);
 
   return (
@@ -321,21 +378,32 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
       <BAIFlex justify="between" wrap="wrap" gap={'sm'}>
         <BAIFlex gap={'sm'} align="start" wrap="wrap" style={{ flexShrink: 1 }}>
           <BAIGraphQLPropertyFilter<ModelCardV2Filter>
-            filterProperties={[
+            maxConditions={supportsSubFilter ? undefined : 1}
+            filterProperties={filterOutEmpty([
               {
                 key: 'name',
                 propertyLabel: t('adminModelCard.Name'),
                 type: 'string',
               },
-              {
-                key: 'domainName',
-                propertyLabel: t('adminModelCard.Domain'),
+              supportsSearchAxes && {
+                key: 'title',
+                propertyLabel: t('adminModelCard.Title'),
                 type: 'string',
               },
-              {
+              supportsSearchAxes && {
+                key: 'category',
+                propertyLabel: t('modelStore.Category'),
+                type: 'string',
+              },
+              supportsSearchAxes && {
+                key: 'task',
+                propertyLabel: t('modelStore.Task'),
+                type: 'string',
+              },
+              supportsFilterWrapperInputs && {
                 key: 'projectId',
                 propertyLabel: t('adminModelCard.Project'),
-                type: 'uuid',
+                type: 'uuid' as const,
                 rule: {
                   message: t('project.ProjectIDFilterRuleMessage'),
                   validate: (value) => isValidUUID(value),
@@ -361,6 +429,9 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 ),
               },
               {
+                // Deprecated since 26.9.0 in favour of `usedBy.vfolder`, which
+                // a filter row cannot fill without an unbounded id fan-out.
+                // FR-4014 settles the replacement with CoreDev.
                 key: 'storageHost',
                 propertyLabel: t('import.StorageHost'),
                 type: 'string',
@@ -381,7 +452,25 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                   />
                 ),
               },
-            ]}
+              supportsSearchAxes && {
+                key: 'accessLevel',
+                propertyLabel: t('adminModelCard.AccessLevel'),
+                type: 'enum',
+                strictSelection: true,
+                // `accessLevel` is a StringFilter over the stored text, which is
+                // the lowercase enum value: 'public' / 'internal'.
+                options: [
+                  { label: t('adminModelCard.Public'), value: 'public' },
+                  { label: t('adminModelCard.Private'), value: 'internal' },
+                ],
+              },
+              supportsSearchAxes && {
+                key: 'createdAt',
+                propertyLabel: t('general.CreatedAt'),
+                type: 'datetime',
+                defaultOperator: 'after',
+              },
+            ])}
             value={filter}
             onChange={(value) => {
               onReload(
@@ -403,7 +492,12 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                 onClearSelection={() => setSelectedModelCards([])}
               />
               <BAIButton
-                icon={<Trash2 style={{ color: token.colorError }} size="1em" />}
+                icon={
+                  <Trash2
+                    style={{ color: token('--color-error') }}
+                    size="1em"
+                  />
+                }
                 onClick={handleBulkDelete}
                 loading={isBulkDeleteInFlight}
               />
@@ -521,7 +615,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                     vfolderNodeIdenticonFrgmt={deletingModelCard.vfolder}
                     style={{
                       verticalAlign: 'middle',
-                      marginInline: token.marginXXS,
+                      marginInline: token('--spacing-1'),
                     }}
                   />
                   <BAILink
@@ -700,12 +794,6 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
                             <div key={f.cardId}>
                               <Text weight="semibold">{cardName}</Text>
                               <Text color="secondary">{' — '}</Text>
-                              {/* PILOT-DECISION: antd `type="danger"` has no
-                                  Astryx TextColor equivalent — the red tint is
-                                  dropped; `type="supporting"` keeps the small
-                                  font (was token.fontSizeSM) and the failure
-                                  context is already carried by the warning
-                                  notification. */}
                               <Text type="supporting" color="primary">
                                 {f.message}
                               </Text>

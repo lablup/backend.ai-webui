@@ -44,60 +44,57 @@ test.describe(
       await expect(
         getFormItemControlByLabel(page, 'Model Storage Folder'),
       ).toBeVisible();
-      await expect(getFormItemControlByLabel(page, 'Domain')).toBeVisible({
-        timeout: 10000,
-      });
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Author' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Title' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Model Version' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Description' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Task' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Category' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Architecture' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'License' })
           .getByRole('textbox'),
       ).toBeVisible();
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'README.md' })
           .getByRole('textbox'),
       ).toBeVisible();
@@ -106,7 +103,7 @@ test.describe(
       // Access Level is a plain Astryx `Selector` rendered as a combobox.
       await expect(
         modal
-          .locator('[data-bai-form-item]')
+          .locator('.uic-form-item')
           .filter({ hasText: 'Access Level' })
           .getByRole('combobox'),
       ).toBeVisible();
@@ -156,7 +153,7 @@ test.describe(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' })
         .getByRole('combobox')
         .click();
@@ -251,47 +248,47 @@ test.describe(
       // Fill optional fields. In antd v6, tooltip icons alter the accessible name so
       // we locate textboxes via their parent form item label.
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Author' })
         .getByRole('textbox')
         .fill('Test Author');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill('Test Model Title');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Model Version' })
         .getByRole('textbox')
         .fill('1.0.0');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Description' })
         .getByRole('textbox')
         .fill('This is a test model description');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Task' })
         .getByRole('textbox')
         .fill('text-generation');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Category' })
         .getByRole('textbox')
         .fill('LLM');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Architecture' })
         .getByRole('textbox')
         .fill('Transformer');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'License' })
         .getByRole('textbox')
         .fill('Apache-2.0');
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'README.md' })
         .getByRole('textbox')
         .fill('# Test Model\nThis is a test model.');
@@ -300,7 +297,7 @@ test.describe(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' })
         .getByRole('combobox')
         .click();

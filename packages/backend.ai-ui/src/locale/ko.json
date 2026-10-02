@@ -6,6 +6,7 @@
     "DiskPerc": "디스크 %",
     "Endpoint": "엔드포인트",
     "FailedToLoadCellData": "데이터를 불러오는데 실패했습니다.",
+    "LostAt": "연결 유실 시각",
     "NoAvailableLiveStat": "표시할 사용량 없음",
     "Region": "지역",
     "ResourceGroup": "자원 그룹",
@@ -13,7 +14,8 @@
     "Schedulable": "스케줄링 가능",
     "Starts": "시작",
     "Status": "상태",
-    "Utilization": "사용량"
+    "Utilization": "사용량",
+    "Version": "버전"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "허용",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "액션 ID",
     "Actor": "수행자",
+    "ClientIp": "클라이언트 IP",
     "Description": "설명",
     "Duration": "소요 시간",
     "EntityId": "엔티티 ID",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도하거나 문제가 지속되면 지원팀에 문의하세요."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "지우기",
-    "KeepAsIs": "그대로 유지",
-    "UndoChanges": "변경 취소"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "실행 오류",
-    "ErrorOccurred": "문제가 발생했습니다."
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "지우기",
-    "HexValue": "16진수 값",
-    "NoColor": "색상 없음",
-    "SelectColor": "색상 선택"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "옵션 검색 지우기",
-    "NoResults": "결과 없음",
-    "SearchOptions": "옵션 검색"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "컨테이너 레지스트리를 선택해주세요"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "{{count}}개 버전을 제거했습니다.",
     "Version": "버전"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "정말 삭제하시겠습니까?",
-    "AreYouSureToPermanentlyDeleteTarget": "{{target}}을(를) 영구 삭제하시겠습니까?",
-    "CannotBeUndone": "이 작업은 되돌릴 수 없습니다.",
-    "DeleteItem": "삭제",
-    "DeleteNItems": "{{count}}개 항목 삭제",
-    "TypeToConfirm": "<code>{{confirmText}}</code>을(를) 입력해주세요."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "생성자"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "배포를 선택해주세요"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "저하됨",
     "Deploying": "배포 중",
     "Healthy": "정상",
@@ -245,6 +220,10 @@
       "Title": "Backend.AI 계정으로 로그인하지 못했습니다"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "커널 시작 진행률",
+    "KernelTerminationProgress": "커널 종료 진행률"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "클러스터 크기",
     "Concurrency": "동시실행 세션 수",
@@ -265,6 +244,7 @@
     "SelectKeypair": "키페어를 선택해주세요"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "클라이언트 IP",
     "Domain": "도메인",
     "FailReason": "실패 사유",
     "LoginTime": "로그인 시각",
@@ -355,18 +335,22 @@
     "UpdateProject": "프로젝트 수정"
   },
   "comp:BAIProjectTable": {
+    "Active": "활성",
     "ContainerRegistry": "컨테이너 레지스트리",
     "ContainerRegistryProject": "컨테이너 레지스트리 프로젝트",
     "CreatedAt": "생성 시각",
     "Description": "설명",
     "Domain": "도메인",
+    "Inactive": "비활성",
     "IntegrationID": "통합 ID",
+    "ModifiedAt": "수정 시각",
     "Name": "이름",
     "Project": "프로젝트",
     "ProjectID": "프로젝트 ID",
     "Registry": "레지스트리",
     "ResourcePolicy": "자원 정책",
     "ScalingGroups": "자원 그룹",
+    "Status": "상태",
     "StorageNodes": "저장소 노드",
     "TotalResourceSlots": "총 리소스 슬롯",
     "Type": "타입"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "할당 자원 / 요청 자원"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "그룹 색상 변경",
-    "ResourceGrid": "자원 그리드",
-    "UseColorN": "색상 {{n}} 사용"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "제한없음"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "다중",
     "SingleNodeShort": "단일"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "제한없음"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "스토리지 호스트를 선택해주세요"
   },
@@ -578,22 +554,10 @@
     "Time": "시간"
   },
   "comp:BAITable": {
-    "Apply": "적용",
-    "Cancel": "취소",
     "CollapseAll": "모두 닫기",
     "ExpandAll": "모두 열기",
     "ExpandErrorsOnly": "오류만 펼치기",
-    "ExpandOptions": "펼치기 옵션",
-    "ExpandRow": "행 펼치기",
-    "Export": "내보내기",
-    "ExportCSV": "CSV로 내보내기",
-    "GoToFirstPage": "첫 페이지로 이동하기",
-    "InvalidPageNumber": "유효하지 않은 페이지 번호입니다",
-    "NoDataToDisplay": "표시할 데이터가 없습니다",
-    "Pagination": "페이지 나누기",
-    "SearchTableColumn": "표시할 열 검색",
-    "SelectColumnToDisplay": "표시할 열 선택",
-    "SettingTable": "표 설정"
+    "ExpandOptions": "펼치기 옵션"
   },
   "comp:BAITestButton": {
     "Test": "테스트"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "경로 형식이 올바르지 않습니다.",
     "AliasOverlapping": "다른 폴더와 마운트 경로가 중복됩니다.",
+    "AliasOverlappingWithAutoMount": "마운트 경로가 자동 마운트 폴더와 겹칩니다.",
     "AliasPlaceholder": "마운트 경로",
     "AutoMountedFolders": "자동 마운트 폴더",
-    "Name": "이름",
-    "PathAndAlias": "경로 & 대체이름",
+    "CreateFolder": "새 폴더 추가",
+    "DestinationPath": "컨테이너 경로 (destination)",
+    "Folders": "폴더",
+    "OwnerProject": "프로젝트",
+    "OwnerUser": "사용자",
     "PathAndAliasTooltip": "폴더가 컨테이너 내부에 마운트될 경로입니다. 비워두면 기본 경로가 사용됩니다.",
+    "Refresh": "새로고침",
     "RemoveFolder": "제거",
+    "SelectFolder": "폴더를 선택해주세요",
+    "SourcePath": "폴더 안의 경로 (source)",
     "Subpath": "하위 경로",
     "SubpathInvalid": "하위 경로는 상대 경로여야 하며 '..'을 포함할 수 없습니다.",
-    "SubpathPlaceholder": "예: dataset/train (선택)",
-    "SubpathTooltip": "폴더 루트 대신 폴더 내부의 하위 경로를 마운트 소스로 사용합니다. 비워두면 루트가 마운트됩니다."
+    "SubpathTooltip": "폴더 루트 대신 폴더 내부의 하위 경로를 마운트 소스로 사용합니다. 입력란을 클릭해 폴더를 탐색하며 선택하세요. 비워 두면 폴더 루트를 마운트합니다.",
+    "UnmountableFoldersRemoved": "더 이상 마운트할 수 없는 폴더를 선택에서 제외했습니다."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "폴더를 선택해주세요"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "삭제된 파일 및 폴더는 복구할 수 없습니다. 계속하시겠습니까?",
     "DeleteSelectedItemsDialog": "삭제 확인",
     "Download": "다운로드",
+    "DownloadPopupBlocked": "브라우저가 다운로드 창을 차단했습니다. 이 사이트의 팝업을 허용한 후 다시 시도하세요.",
+    "DownloadRejected": "스토리지 프록시가 다운로드를 거부했습니다 (HTTP {{status}}). 다운로드가 시작되지 않았습니다.",
     "DownloadSelected": "다운로드",
     "DownloadStarted": "파일 \"{{fileName}}\" 다운로드가 시작되었습니다.",
+    "DownloadUnreachable": "{{origin}} 스토리지 프록시에 연결할 수 없습니다. 다운로드가 시작되지 않았습니다.",
     "DragAndDropDesc": "파일을 이곳에 드래그하여 업로드하세요.",
     "DuplicatedFiles": "덮어쓰기 확인",
     "DuplicatedFilesDesc": "업로드 하려는 파일 또는 폴더가 이미 존재합니다. 덮어쓰시겠습니까?",
     "EditFile": "파일 편집",
+    "ExistingItem": "기존 항목",
     "FileCreatedSuccessfully": "파일이 생성되었습니다.",
     "FileName": "파일 이름",
     "FileNamePlaceholder": "예: model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "수정일",
     "Name": "이름",
     "NoUploadPermissionForHost": "호스트에 대한 업로드 권한이 없습니다.",
+    "OtherItemsWillBeUploaded": "다른 항목 {{count}}개도 함께 업로드됩니다.",
     "Path": "경로",
     "PleaseEnterAFileName": "파일 이름을 입력해 주세요.",
     "PleaseEnterAFolderName": "폴더 이름을 입력해 주세요.",
     "RenameFile": "이름 변경",
     "RenameSuccess": "이름이 변경되었습니다.",
+    "SelectItemsToOverwrite": "다음 항목은 이미 존재합니다. 덮어쓸 항목을 선택하세요. 선택하지 않은 항목은 업로드하지 않습니다.",
     "SelectedItemsDeletedSuccessfully": "선택한 파일 및 폴더가 삭제되었습니다.",
     "Size": "크기",
     "TypeDeleteToConfirm": "확인을 위해 '삭제'를 입력하세요.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "이 파일 형식은 편집을 지원하지 않습니다.",
     "UploadFiles": "파일 업로드",
     "UploadFolder": "폴더 업로드",
+    "UploadingItem": "업로드할 항목",
     "error": {
       "DuplicatedName": "중복된 이름이 있습니다. 다른 이름을 입력해주세요.",
       "FileNameRequired": "파일 또는 폴더 이름을 입력해주세요."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "표시할 리소스 데이터가 없습니다"
@@ -717,6 +692,7 @@
     "ModifiedAt": "수정일",
     "NeedPasswordChange": "비밀번호 변경 필요",
     "Project": "프로젝트",
+    "Projects": "프로젝트",
     "ResourcePolicy": "자원 정책",
     "Role": "역할",
     "Status": "상태",
@@ -738,55 +714,12 @@
   "error": {
     "UnknownError": "알 수 없는 오류가 발생했습니다. 다시 시도해 주세요."
   },
-  "form": {
-    "Optional": "(선택사항)",
-    "validateMessages": {
-      "Default": "필드 유효성 검사 오류 ${label}",
-      "Required": "${label} 값을 입력해 주세요",
-      "Whitespace": "${label} 비워둘 수 없습니다",
-      "array": {
-        "Len": "${len}이어야 합니다 ${label}",
-        "Max": "최대 ${max}이어야 합니다 ${label}",
-        "Min": "최소 ${min}이어야 합니다 ${label}",
-        "Range": "${label} ${min}-${max} 사이어야 합니다"
-      },
-      "number": {
-        "Len": "${label} 값은 ${len}이어야 합니다",
-        "Max": "${label} 최댓값은 ${max}입니다",
-        "Min": "${label} 최솟값은 ${min}입니다",
-        "Range": "${label} 값은 ${min}-${max} 사이어야 합니다"
-      },
-      "pattern": {
-        "Mismatch": "${label} ${pattern} 패턴과 일치하지 않습니다"
-      },
-      "string": {
-        "Len": "${label} ${len}글자여야 합니다",
-        "Max": "${label} ${max}글자 이하여야 합니다",
-        "Min": "${label} 적어도 ${min}글자 이상이어야 합니다",
-        "Range": "${label} ${min}-${max}글자 사이어야 합니다"
-      },
-      "types": {
-        "Email": "${label} 유효하지 않은 ${type}",
-        "Number": "${label} 유효하지 않은 ${type}",
-        "Object": "${label} 유효하지 않은 ${type}",
-        "String": "${label} 유효하지 않은 ${type}",
-        "Url": "${label} 유효하지 않은 ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "감소",
-    "DeselectAll": "선택 취소",
     "File": "파일",
-    "Increase": "증가",
-    "Loading": "로딩 중...",
-    "NSelected": "{{count}}개 선택됨",
     "Optional": "선택",
     "Project": "프로젝트",
     "Search": "검색",
     "Select": "선택",
-    "SelectPlaceholder": "{{label}}을(를) 선택해주세요",
-    "TotalItems": "총 {{total}} 항목",
     "Unit": "단위",
     "button": {
       "Action": "동작",

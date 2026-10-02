@@ -6,6 +6,7 @@
     "DiskPerc": "Cakera %",
     "Endpoint": "Titik akhir",
     "FailedToLoadCellData": "Gagal memuatkan data.",
+    "LostAt": "Hilang Pada",
     "NoAvailableLiveStat": "Tiada statistik langsung tersedia",
     "Region": "Wilayah",
     "ResourceGroup": "Kumpulan Sumber",
@@ -13,7 +14,8 @@
     "Schedulable": "Boleh dijadualkan",
     "Starts": "Bermula",
     "Status": "Status",
-    "Utilization": "Penggunaan"
+    "Utilization": "Penggunaan",
+    "Version": "Versi"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Dibenarkan",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID Tindakan",
     "Actor": "Pelaku",
+    "ClientIp": "IP Klien",
     "Description": "Penerangan",
     "Duration": "Tempoh",
     "EntityId": "ID Entiti",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ralat tidak dijangka berlaku. Sila cuba lagi nanti atau hubungi sokongan jika masalah berterusan."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Kosongkan",
-    "KeepAsIs": "Kekalkan seperti semula",
-    "UndoChanges": "Batal perubahan"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Pelaksanaan gagal",
-    "ErrorOccurred": "Ralat berlaku"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Kosongkan",
-    "HexValue": "Nilai heks",
-    "NoColor": "Tiada warna",
-    "SelectColor": "Pilih warna"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Kosongkan Cari pilihan",
-    "NoResults": "Tiada keputusan",
-    "SearchOptions": "Cari pilihan"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Pilih Registri Kontena"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "Berjaya dikeluarkan {{count}} versi.",
     "Version": "Versi"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Adakah anda pasti mahu memadam?",
-    "AreYouSureToPermanentlyDeleteTarget": "Adakah anda pasti mahu memadam {{target}} secara kekal?",
-    "CannotBeUndone": "Tindakan ini tidak dapat dibatalkan.",
-    "DeleteItem": "Padam",
-    "DeleteNItems": "Padam {{count}} item",
-    "TypeToConfirm": "Taip <code>{{confirmText}}</code> untuk mengesahkan."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Dibuat oleh"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Pilih Penggunaan"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Merosot",
     "Deploying": "Sedang menggunakan",
     "Healthy": "Sihat",
@@ -245,6 +220,10 @@
       "Title": "Tidak dapat log masuk dengan Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Kemajuan permulaan kernel",
+    "KernelTerminationProgress": "Kemajuan penamatan kernel"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Saiz Kluster",
     "Concurrency": "Sesi Serentak",
@@ -265,6 +244,7 @@
     "SelectKeypair": "Pilih Pasangan Kunci"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP Klien",
     "Domain": "Domain",
     "FailReason": "Sebab Kegagalan",
     "LoginTime": "Masa Log Masuk",
@@ -355,18 +335,22 @@
     "UpdateProject": "Kemas kini Projek"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktif",
     "ContainerRegistry": "Registri Kontena",
     "ContainerRegistryProject": "Projek Registri Kontena",
     "CreatedAt": "Dicipta pada",
     "Description": "Keterangan",
     "Domain": "Domain",
+    "Inactive": "Tidak aktif",
     "IntegrationID": "ID Integrasi",
+    "ModifiedAt": "Diubahsuai Pada",
     "Name": "Nama",
     "Project": "Projek",
     "ProjectID": "ID Projek",
     "Registry": "Registri",
     "ResourcePolicy": "Dasar Sumber",
     "ScalingGroups": "Kumpulan Sumber",
+    "Status": "Status",
     "StorageNodes": "Nod Storan",
     "TotalResourceSlots": "Jumlah Slot Sumber",
     "Type": "Jenis"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Diperuntukkan / Diminta"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Tukar warna kumpulan",
-    "ResourceGrid": "Grid sumber",
-    "UseColorN": "Guna warna {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Tidak terhad"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "MULTI",
     "SingleNodeShort": "Bujang"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Tidak terhad"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Pilih Hos Storan"
   },
@@ -578,22 +554,10 @@
     "Time": "Masa"
   },
   "comp:BAITable": {
-    "Apply": "Guna",
-    "Cancel": "Batal",
     "CollapseAll": "Runtuhkan semua",
     "ExpandAll": "Kembangkan semua",
     "ExpandErrorsOnly": "Kembangkan ralat sahaja",
-    "ExpandOptions": "Pilihan pengembangan",
-    "ExpandRow": "Kembangkan baris",
-    "Export": "Eksport",
-    "ExportCSV": "Eksport CSV",
-    "GoToFirstPage": "Pergi ke halaman pertama",
-    "InvalidPageNumber": "Nombor halaman tidak sah",
-    "NoDataToDisplay": "Tiada data untuk dipaparkan",
-    "Pagination": "Penomboran halaman",
-    "SearchTableColumn": "Lajur jadual carian",
-    "SelectColumnToDisplay": "Pilih lajur untuk dipaparkan",
-    "SettingTable": "Tetapan Jadual"
+    "ExpandOptions": "Pilihan pengembangan"
   },
   "comp:BAITestButton": {
     "Test": "ujian"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Format laluan tidak sah.",
     "AliasOverlapping": "Laluan mount bertindih dengan folder lain.",
+    "AliasOverlappingWithAutoMount": "Laluan mount bertindih dengan folder mount automatik.",
     "AliasPlaceholder": "Laluan mount",
     "AutoMountedFolders": "Folder mount automatik",
-    "Name": "Nama",
-    "PathAndAlias": "Laluan & Alias",
+    "CreateFolder": "Buat folder storan baru",
+    "DestinationPath": "Laluan kontena (destination)",
+    "Folders": "Folder",
+    "OwnerProject": "Projek",
+    "OwnerUser": "Pengguna",
     "PathAndAliasTooltip": "Laluan di dalam container tempat folder akan di-mount. Biarkan kosong untuk menggunakan laluan lalai.",
+    "Refresh": "Segarkan",
     "RemoveFolder": "Buang",
+    "SelectFolder": "Pilih Folder",
+    "SourcePath": "Laluan dalam folder (source)",
     "Subpath": "Sublaluan",
     "SubpathInvalid": "Sublaluan mestilah laluan relatif dan tidak boleh mengandungi '..'.",
-    "SubpathPlaceholder": "cth. dataset/train (pilihan)",
-    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Biarkan kosong untuk mount root."
+    "SubpathTooltip": "Mount subfolder di dalam folder sebagai sumber dan bukannya root-nya. Klik medan ini untuk melayari folder dan memilih satu; biarkan kosong untuk mount root folder.",
+    "UnmountableFoldersRemoved": "Folder yang tidak lagi boleh anda lekapkan telah dibuang daripada pilihan."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Pilih Folder"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "Fail dan folder yang dipadam tidak boleh dipulihkan. \nAdakah anda mahu meneruskan?",
     "DeleteSelectedItemsDialog": "Padam pengesahan",
     "Download": "Muat turun",
+    "DownloadPopupBlocked": "Pelayar menyekat tetingkap muat turun. Benarkan pop timbul untuk tapak ini dan cuba lagi.",
+    "DownloadRejected": "Storage proxy menolak muat turun (HTTP {{status}}). Muat turun tidak bermula.",
     "DownloadSelected": "Muat turun",
     "DownloadStarted": "Fail \"{{fileName}}\" Muat turun telah bermula.",
+    "DownloadUnreachable": "Tidak dapat menghubungi storage proxy di {{origin}}. Muat turun tidak bermula.",
     "DragAndDropDesc": "Seret dan lepaskan fail ke kawasan ini untuk dimuat naik.",
     "DuplicatedFiles": "Pengesahan Pengesahan",
     "DuplicatedFilesDesc": "Fail atau folder dengan nama yang sama sudah ada. \nAdakah anda mahu menimpa?",
     "EditFile": "Edit Fail",
+    "ExistingItem": "Sedia Ada",
     "FileCreatedSuccessfully": "Fail berjaya dicipta.",
     "FileName": "Nama Fail",
     "FileNamePlaceholder": "cth. model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "Diubahsuai di",
     "Name": "Nama",
     "NoUploadPermissionForHost": "Anda tidak mempunyai kebenaran muat naik untuk hos ini.",
+    "OtherItemsWillBeUploaded": "{{count}} item lain juga akan dimuat naik.",
     "Path": "Laluan",
     "PleaseEnterAFileName": "Sila masukkan nama fail.",
     "PleaseEnterAFolderName": "Sila masukkan nama folder.",
     "RenameFile": "Namakan semula",
     "RenameSuccess": "Nama telah berjaya diubah.",
+    "SelectItemsToOverwrite": "Item ini sudah wujud di sini. Pilih item yang hendak ditimpa; item yang tidak dipilih akan dilangkau.",
     "SelectedItemsDeletedSuccessfully": "Fail dan folder terpilih telah dihapuskan dengan jayanya.",
     "Size": "Saiz",
     "TypeDeleteToConfirm": "Taipkan 'Padam' untuk mengesahkan.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "Format fail ini tidak menyokong penyuntingan.",
     "UploadFiles": "Memuat naik fail",
     "UploadFolder": "Muat naik folder",
+    "UploadingItem": "Akan Dimuat Naik",
     "error": {
       "DuplicatedName": "Nama ini sudah digunakan. \nSila masukkan nama yang berbeza.",
       "FileNameRequired": "Sila masukkan fail atau nama folder."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} dari {{total}} item"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Tiada data sumber tersedia"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "Kesalahan yang tidak diketahui berlaku. \nSila cuba lagi."
   },
-  "form": {
-    "Optional": "(Opsional)",
-    "validateMessages": {
-      "Default": "Ralat pengesahan untuk ${label}",
-      "Required": "Isi ${label}",
-      "Whitespace": "${label} tidak boleh kosong",
-      "array": {
-        "Len": "${len} ${label}",
-        "Max": "Max ${max} ${label}",
-        "Min": "Min ${min} ${label}",
-        "Range": "${label} antara ${min}-${max}"
-      },
-      "number": {
-        "Len": "${label} sama dengan ${len}",
-        "Max": "Max ${max}",
-        "Min": "Min ${min}",
-        "Range": "${label} antara ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "${label} tidak sesuai ${pattern}"
-      },
-      "string": {
-        "Len": "${label} mesti ${len} aksara",
-        "Max": "Max ${max} aksara",
-        "Min": "Min ${min} aksara",
-        "Range": "${label} antara ${min}-${max} aksara"
-      },
-      "types": {
-        "Email": "${label} bukan ${type} jenis yang sah",
-        "Number": "${label} bukan ${type} jenis yang sah",
-        "Object": "${label} bukan ${type} jenis yang sah",
-        "String": "${label} bukan ${type} jenis yang sah",
-        "Url": "${label} bukan ${type} jenis yang sah"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Kurangkan",
-    "DeselectAll": "Nyahpilih semua",
     "File": "Fail",
-    "Increase": "Tambah",
-    "Loading": "Memuatkan...",
-    "NSelected": "{{count}} dipilih",
     "Optional": "Pilihan",
     "Project": "Projek",
     "Search": "Cari",
     "Select": "Pilih",
-    "SelectPlaceholder": "Pilih {{label}}",
-    "TotalItems": "Jumlah {{total}} item",
     "Unit": "Unit",
     "button": {
       "Action": "Tindakan",

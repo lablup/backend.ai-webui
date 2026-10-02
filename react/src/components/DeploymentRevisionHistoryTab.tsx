@@ -11,47 +11,47 @@ import type { DeploymentRevisionHistoryTab_deployment$key } from '../__generated
 import { App } from '../app-shim';
 import { convertToOrderBy } from '../helper';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
-import { theme } from '../theme-shim';
 import DeploymentAddRevisionModal from './DeploymentAddRevisionModal';
 import DeploymentRevisionDetailDrawer from './DeploymentRevisionDetailDrawer';
 import FolderLink from './FolderLink';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
-import { BAIPopconfirm } from 'backend.ai-ui';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminImageSelect,
-  type BAIColumnType,
   BAIFetchKeyButton,
   BAIFlex,
-  type BAIGraphQLFilterProperty,
   BAIGraphQLPropertyFilter,
+  BAIId,
   BAINameActionCell,
+  BAIPopconfirm,
   BAIQuestionIconWithTooltip,
   BAITable,
-  BAITag,
+  BAIText,
   BAIUnmountAfterClose,
   BAIVFolderSelect,
-  BAIId,
   INITIAL_FETCH_KEY,
-  type GraphQLFilter,
   filterOutNullAndUndefined,
   isDeploymentInStoppedCategory,
   isValidUUID,
   toLocalId,
   useBAILogger,
   useFetchKey,
-  BAIText,
+  type BAIColumnType,
+  type BAIGraphQLFilterProperty,
+  type GraphQLFilter,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import {
-  LoaderCircle,
-  EllipsisVertical,
   CirclePlay,
   CopyPlusIcon,
+  EllipsisVertical,
+  LoaderCircle,
 } from 'lucide-react';
 import {
   parseAsInteger,
@@ -110,7 +110,7 @@ const DeploymentRevisionHistoryTab: React.FC<
 > = ({ deploymentFrgmt, deploymentId, fetchKey }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
   const [isPending, startTransition] = useTransition();
@@ -429,7 +429,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   {')'}
                 </BAIFlex>
                 {isCurrent ? (
-                  <BAITag color="success">{t('deployment.Current')}</BAITag>
+                  <Badge variant="success" label={t('deployment.Current')} />
                 ) : null}
                 {isDeploying && !isCurrent ? (
                   // Skip the "Deploying" tag when this revision is also
@@ -437,12 +437,11 @@ const DeploymentRevisionHistoryTab: React.FC<
                   // `deployingRevisionId` set after promotion until the
                   // reconciler clears it, and showing both tags side by
                   // side reads as a contradiction.
-                  <BAITag
-                    color="warning"
+                  <Badge
+                    variant="warning"
                     icon={<LoaderCircle className="bai-icon-spin" size="1em" />}
-                  >
-                    {t('deployment.Applying')}
-                  </BAITag>
+                    label={t('deployment.Applying')}
+                  />
                 ) : null}
               </BAIFlex>
             }
@@ -482,7 +481,7 @@ const DeploymentRevisionHistoryTab: React.FC<
               {
                 key: 'duplicate',
                 title: t('deployment.AddNewRevisionFromThis'),
-                icon: <CopyPlusIcon size={token.fontSize} />,
+                icon: <CopyPlusIcon size={token('--font-size-base')} />,
                 showInMenu: 'always',
                 disabled: isDeploymentInStoppedCategory(deploymentStatus),
                 onClick: () => {
@@ -732,7 +731,7 @@ const DeploymentRevisionHistoryTab: React.FC<
                   items={[
                     {
                       label: t('deployment.AddNewRevisionFromThis'),
-                      icon: <CopyPlusIcon size={token.fontSize} />,
+                      icon: <CopyPlusIcon size={token('--font-size-base')} />,
                       isDisabled:
                         isDeploymentInStoppedCategory(deploymentStatus),
                       onClick: () => {
@@ -754,7 +753,7 @@ const DeploymentRevisionHistoryTab: React.FC<
         justify="between"
         align="center"
         gap="xs"
-        style={{ marginBottom: token.marginSM }}
+        style={{ marginBottom: token('--spacing-3') }}
         wrap="wrap"
       >
         <BAIGraphQLPropertyFilter

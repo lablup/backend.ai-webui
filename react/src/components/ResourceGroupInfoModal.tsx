@@ -3,16 +3,16 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
-import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
-import { Badge } from '@astryxdesign/core/Badge';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Text } from '@astryxdesign/core/Text';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
+  BAIFlex,
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import { Check, X } from 'lucide-react';
@@ -31,7 +31,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
   ...modalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const resourceGroup = useFragment(
     graphql`
@@ -83,16 +83,22 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
           </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.Active')}>
             {resourceGroup?.is_active ? (
-              <Check style={{ color: token.colorSuccess }} size="1em" />
+              <Check style={{ color: token('--color-success') }} size="1em" />
             ) : (
-              <X style={{ color: token.colorTextSecondary }} size="1em" />
+              <X
+                style={{ color: token('--color-text-secondary') }}
+                size="1em"
+              />
             )}
           </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.Public')}>
             {resourceGroup?.is_public ? (
-              <Check style={{ color: token.colorSuccess }} size="1em" />
+              <Check style={{ color: token('--color-success') }} size="1em" />
             ) : (
-              <X style={{ color: token.colorTextSecondary }} size="1em" />
+              <X
+                style={{ color: token('--color-text-secondary') }}
+                size="1em"
+              />
             )}
           </MetadataListItem>
           <MetadataListItem label={t('resourceGroup.Driver')}>
@@ -119,13 +125,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
               }}
             >
               {_.map(schedulerOpts?.allowed_session_types, (value) => {
-                return (
-                  <Badge
-                    key={value}
-                    variant="neutral"
-                    label={_.startCase(value)}
-                  />
-                );
+                return <Token key={value} label={_.startCase(value)} />;
               })}
             </BAIFlex>
           </MetadataListItem>
@@ -165,9 +165,7 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
                   {_.isArray(value) ? (
                     <BAIFlex direction="column">
                       {_.map(value, (item) => {
-                        return (
-                          <Badge key={item} variant="neutral" label={item} />
-                        );
+                        return <Token key={item} label={item} />;
                       })}
                     </BAIFlex>
                   ) : (

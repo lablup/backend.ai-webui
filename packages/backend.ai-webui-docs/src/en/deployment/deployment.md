@@ -68,7 +68,7 @@ To change deployment-level settings (name, desired replicas, or tags) after crea
 
 A revision captures every setting needed to run the inference server — image, start command, resources, model mounts, and environment variables. From the Deployment Detail Page, click `Add Revision` to open the modal.
 
-![](../images/model_serving_add_revision_modal.png)
+![=800px](../images/model_serving_add_revision_modal.png)
 
 Use the **Preset Mode** / **Advanced Mode** switcher in the modal title to select how to configure the revision.
 
@@ -109,7 +109,7 @@ The subsections below describe revision-level fields in detail. They apply both 
 
 Every revision mounts one model storage folder into each replica. The fields directly below the folder selector control where that folder appears inside the container.
 
-![](../images/add_revision_model_folder_mount.png)
+![=780px](../images/add_revision_model_folder_mount.png)
 
 - **Model Folder**: The model storage folder to mount on each replica.
 - **Mount Destination For Model Folder**: The path inside the container where the model storage folder is mounted (default: `/models`).
@@ -125,7 +125,7 @@ Runtime variants that read their configuration from the model folder — the **C
    * **Shell**: The command runs through a shell (`bash -c "..."`), so shell operators work. Recommended for most cases.
    * **Exec**: The command runs directly as arguments, with no shell involved. Use this only when the command has to run without a shell — for example, on an image that has no shell binary.
 - **Shell**: The shell binary used to run the command (for example, `/bin/bash`). Shown only in **Shell** mode, where it is required. The binary must exist in the container image, or the service fails to start.
-- **Command**: The command that launches the inference server, for example `python -m http.server 8000`. In **Shell** mode this is a multi-line box; in **Exec** mode the field is relabeled **Command (argv)** and becomes a single-line input.
+- **Command**: The command that launches the inference server, for example `python -m http.server 8000`. In **Shell** mode this is a multi-line box; in **Exec** mode the field is relabeled **Command (argv)** and becomes a single-line input. To pass a JSON string as a single argument, wrap the whole JSON in single quotes and keep the double quotes inside as they are — for example, `--override-generation-config '{"temperature": 0.7}'`.
 - **Port**: The container port that the inference server listens on (2–65535).
 
 :::tip[Shell operators only work in Shell mode]
@@ -192,7 +192,7 @@ Key fields in the **Model Loading** tab:
 
 **SGLang Runtime Parameters**
 
-![](../images/service_launcher_runtime_params_sglang.png)
+![=648px](../images/service_launcher_runtime_params_sglang.png)
 
 SGLang provides the following tabs: **Model Loading**, **Resource Memory**, **Serving Performance**, **Tool Reasoning**, and others.
 
@@ -397,7 +397,7 @@ the virtual folder, select the `model` type instead of the default
 `general` type. Refer to the section on [creating a storage folder](#create-storage-folder) in the Data page for
 instructions on how to create a folder.
 
-![](../images/model_type_folder_creation.png)
+![=650px](../images/model_type_folder_creation.png)
 
 After creating the folder, select the `MODELS` tab in the Data
 page, click on the recently created model type folder icon to open the
@@ -520,7 +520,7 @@ The Service Info card displays the following details:
 
 The Service Info card's header exposes an **Edit** button alongside a **More** menu. The **Edit** button opens the **Edit Deployment** modal described in [Create deployment modal](#create-deployment). The More menu currently contains the **Delete Deployment** action.
 
-![](../images/endpoint_detail_more_menu.png)
+![=192px](../images/endpoint_detail_more_menu.png)
 
 <a id="scheduling-history"></a>
 
@@ -590,6 +590,8 @@ The **Revision History** tab lists all revisions added to the deployment, sorted
 
 ![](../images/revision_history_tab.png)
 
+Above the table sit a property filter bar and a refresh button. You can narrow the list by **Revision Number**, **Created At**, **Cluster Mode**, **Image**, and **Model Folder**. The **Image** and **Model Folder** values are picked from dropdowns instead of being typed as identifiers, and the resulting filter tag shows the name you selected. The **Model Folder** dropdown is scoped to the deployment's own project and lists only model-usage folders, excluding deleted ones — the same scope as the folder picker in the Add Revision modal.
+
 The table includes the following columns:
 
 - **Revision (ID)**: The revision number and its UUID. The revision number is an incrementing integer; lower numbers are older revisions. Click the revision number to open the revision detail drawer.
@@ -654,7 +656,7 @@ Next to the status tag in the **Lifecycle** column is a history icon button. Cli
 
 If a replica has encountered an error, clicking the error indicator on the row opens a JSON viewer modal that displays the raw error data. This is useful for diagnosing issues with individual replicas.
 
-![](../images/route_error_json_viewer.png)
+![=492px](../images/route_error_json_viewer.png)
 
 ### Auto scaling rules
 
@@ -682,7 +684,7 @@ To modify an existing rule, click the edit icon on its row; the **Edit Auto Scal
    - **Scale Out**: Increases replicas when the metric rises above a threshold. Sets `Metric > [threshold]`.
    - **Scale In & Out**: Automatically scales in or out depending on which side of the configured range the metric crosses. Sets `Metric < Min Threshold` or `Metric > Max Threshold`.
 
-![](../images/auto_scaling_condition_selector.png)
+![=472px](../images/auto_scaling_condition_selector.png)
 
 - **Step Size**: A positive integer specifying how many replicas to add or remove per scaling event. The `-`, `+`, or `±` sign is shown automatically based on the selected condition (Scale In / Scale Out / Scale In & Out).
 
@@ -693,7 +695,7 @@ To modify an existing rule, click the edit icon on its row; the **Edit Auto Scal
 - **Cooldown Sec.**: The time, in seconds, to wait after a scaling event before the next evaluation.
 - **Min Replicas** and **Max Replicas**: The lower and upper bounds that auto-scaling enforces on the replica count. Auto-scaling will not reduce the number of replicas below **Min Replicas** or increase it above **Max Replicas**.
 
-![](../images/auto_scaling_rules_modal_v2.png)
+![=520px](../images/auto_scaling_rules_modal_v2.png)
 
 <a id="generating-tokens"></a>
 
@@ -714,7 +716,7 @@ Access tokens are managed in the **Access Tokens** card at the bottom of the Dep
    * **No Expiration**: Sets the expiration to a far-future date (`December 31, 2099`), so the token effectively never expires. This date — not a literal *No Expiration* label — is what appears afterward in the token dialog, the access token list, and the Chat token selector.
 3. Click `Create Access Token` to issue it.
 
-![](../images/token_generation_dialog.png)
+![=460px](../images/token_generation_dialog.png)
 
    The `Create Access Token` button is disabled until the manager has issued a network endpoint for the deployment; while it is disabled, its tooltip reads *"The network endpoint has not been issued yet."* It is also disabled for a deployment you do not own (*"Only the deployment owner can manage access tokens."*) and for a deployment that is stopping or no longer active (*"The deployment is stopping or no longer active."*). Those last two conditions disable deleting a token as well.
 
@@ -749,7 +751,7 @@ Deleting an access token is **irreversible** and takes effect immediately. Any c
 
 When a deployment is no longer needed, it is recommended to terminate it to free up scheduler resources. To terminate the deployment, open the **More** menu on the Service Info card and select **Delete Deployment**. A typed-confirmation modal appears — type the deployment name to enable the **Permanently Delete** button. The terminated deployment then appears in the **Destroyed** filter view.
 
-![](../images/terminate_model_service_dialog.png)
+![=520px](../images/terminate_model_service_dialog.png)
 
 ## Accessing your deployment
 
@@ -855,7 +857,7 @@ Click a card to open the model card drawer on the right side of the page. The dr
 
 If the model card includes a README, it is rendered as a `README.md` card at the bottom of the drawer.
 
-![](../images/model_card_detail_drawer.png)
+![=800px](../images/model_card_detail_drawer.png)
 
 ### Deploying a model
 

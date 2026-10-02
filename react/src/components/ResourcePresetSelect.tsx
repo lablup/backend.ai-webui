@@ -9,12 +9,14 @@ import {
 import { localeCompare } from '../helper';
 import { ResourceSlotName, useResourceSlots } from '../hooks/backendai';
 import useControllableState_deprecated from '../hooks/useControllableState';
-import { theme } from '../theme-shim';
-import type {
-  SelectorOptionData,
-  SelectorOptionType,
-} from '@astryxdesign/core/Selector';
-import { Selector } from '@astryxdesign/core/Selector';
+import {
+  Selector,
+  type SelectorOptionData,
+  type SelectorOptionType,
+} from '@lablup/ui-common/Selector';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -23,9 +25,8 @@ import {
   useUpdatableState,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
-import { SquarePen, Info } from 'lucide-react';
-import React, { useEffect, useTransition } from 'react';
-import type { CSSProperties } from 'react';
+import { Info, SquarePen } from 'lucide-react';
+import React, { useEffect, useTransition, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
@@ -37,6 +38,8 @@ import { graphql, useLazyLoadQuery } from 'react-relay';
  */
 export interface PresetOptionType extends SelectorOptionData {
   preset?: ResourcePreset;
+  /** Set exactly when the option is disabled; shown on hover. */
+  disabledReason?: string;
 }
 
 export type ResourcePreset = NonNullable<
@@ -47,26 +50,29 @@ export type ResourcePreset = NonNullable<
  * PILOT-DECISION: the `extends Omit<SelectProps,'onChange'>` surface is
  * replaced by the props the single call site actually passes (P1 — grepped,
  * not guessed: `showCustom`, `showMinimumRequired`, `onChange`,
- * `allocatablePresetNames`, `resourceGroup`; the Form injects `value`), plus
+ * `allocatablePresetIds`, `resourceGroup`; the Form injects `value`), plus
  * the usual disabled/loading/style trio.
  */
 export interface ResourcePresetSelectProps {
   /** Injected by `Form.Item`. */
   value?: string;
   onChange?: (value: string, options: PresetOptionType) => void;
-  allocatablePresetNames?: string[];
+  allocatablePresetIds?: string[];
   showMinimumRequired?: boolean;
   showCustom?: boolean;
   resourceGroup?: string;
+  /** Presets scoped to a resource group outside this list are not listed. */
+  selectableResourceGroupNames?: string[];
   autoSelectDefault?: boolean;
   disabled?: boolean;
   style?: CSSProperties;
 }
 const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
-  allocatablePresetNames,
+  allocatablePresetIds,
   showCustom,
   showMinimumRequired,
   resourceGroup,
+  selectableResourceGroupNames,
   autoSelectDefault,
   disabled,
   style,
@@ -80,7 +86,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   });
   const [resourceSlots] = useResourceSlots();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const [isPendingUpdate, _startTransition] = useTransition();
   const [controllableValue, setControllableValue] =
     useControllableState_deprecated(selectProps);
@@ -90,51 +96,73 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
     });
   };
 
-  const { resource_presets } = useLazyLoadQuery<ResourcePresetSelectQuery>(
-    graphql`
-      query ResourcePresetSelectQuery {
-        resource_presets {
-          name
-          resource_slots
-          shared_memory
-          scaling_group_name @since(version: "25.4.0")
+  const { resource_presets: allResourcePresets } =
+    useLazyLoadQuery<ResourcePresetSelectQuery>(
+      graphql`
+        query ResourcePresetSelectQuery {
+          resource_presets {
+            id
+            name
+            resource_slots
+            shared_memory
+            scaling_group_name @since(version: "25.4.0")
+          }
         }
-      }
-    `,
-    {},
-    {
-      fetchKey: fetchKey,
-      fetchPolicy: fetchKey === 'first' ? 'store-and-network' : 'network-only',
-    },
+      `,
+      {},
+      {
+        fetchKey: fetchKey,
+        fetchPolicy:
+          fetchKey === 'first' ? 'store-and-network' : 'network-only',
+      },
+    );
+
+  const resource_presets = _.filter(
+    allResourcePresets,
+    (preset) =>
+      !preset?.scaling_group_name ||
+      !selectableResourceGroupNames ||
+      selectableResourceGroupNames.includes(preset.scaling_group_name),
   );
 
-  const resourcePresets = resourceGroup
-    ? _.filter(
-        resource_presets,
-        (preset) =>
-          preset?.scaling_group_name === resourceGroup ||
-          _.isEmpty(preset?.scaling_group_name),
-      )
-    : resource_presets;
+  const onlyInGroupText = (name: string) =>
+    t('resourcePreset.OnlyAvailableInResourceGroup', { name });
 
-  const firstAvailablePresetName = [...(resourcePresets ?? [])]
-    .filter(
-      (p): p is NonNullable<typeof p> =>
-        p != null &&
-        (!allocatablePresetNames ||
-          allocatablePresetNames.includes(p.name ?? '')),
+  // Why a preset cannot be picked right now; `undefined` means it can.
+  const disabledReasonOf = (
+    preset: ResourcePreset | null | undefined,
+  ): string | undefined => {
+    if (
+      resourceGroup &&
+      preset?.scaling_group_name &&
+      preset.scaling_group_name !== resourceGroup
+    ) {
+      return onlyInGroupText(preset.scaling_group_name);
+    }
+    if (
+      allocatablePresetIds &&
+      !allocatablePresetIds.includes(preset?.id ?? '')
     )
-    .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0]?.name;
+      return t('resourcePreset.ExceedsAllocatableResources');
+    return undefined;
+  };
+
+  const firstAvailablePreset = [...(resource_presets ?? [])]
+    .filter(
+      (p): p is NonNullable<typeof p> => p != null && !disabledReasonOf(p),
+    )
+    .sort((a, b) => localeCompare(a.name ?? '', b.name ?? ''))[0];
+  const firstAvailablePresetId = firstAvailablePreset?.id;
 
   useEffect(() => {
-    if (autoSelectDefault && !controllableValue && firstAvailablePresetName) {
-      setControllableValue(firstAvailablePresetName, {
-        value: firstAvailablePresetName,
-        label: firstAvailablePresetName,
+    if (autoSelectDefault && !controllableValue && firstAvailablePresetId) {
+      setControllableValue(firstAvailablePresetId, {
+        value: firstAvailablePresetId,
+        label: firstAvailablePreset?.name ?? '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoSelectDefault, firstAvailablePresetName]);
+  }, [autoSelectDefault, firstAvailablePresetId]);
 
   // PILOT-DECISION: antd `optionLabelProp="selectedLabel"` let an option carry
   // a rich `label` node for the popup and a plain string for the trigger.
@@ -142,18 +170,21 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
   // required), and the rich row moves into `renderOption` — so the parallel
   // `selectedLabel` field disappears rather than being emulated.
   const presetOptions: PresetOptionType[] = _.map(
-    resourcePresets,
-    (preset) => ({
-      value: preset?.name ?? '',
-      label: preset?.name ?? '',
-      disabled: allocatablePresetNames
-        ? !allocatablePresetNames.includes(preset?.name || '')
-        : undefined,
-      preset: preset ?? undefined,
-    }),
+    resource_presets,
+    (preset) => {
+      const disabledReason = disabledReasonOf(preset);
+      return {
+        // Names repeat across resource groups; the id is the option's key.
+        value: preset?.id ?? '',
+        label: preset?.name ?? '',
+        disabled: !!disabledReason,
+        disabledReason,
+        preset: preset ?? undefined,
+      };
+    },
   )
     .sort((a, b) => (a.disabled === b.disabled ? 0 : a.disabled ? 1 : -1))
-    .sort((a, b) => localeCompare(a.value, b.value));
+    .sort((a, b) => localeCompare(a.label, b.label));
 
   const renderResourceRow = (option: SelectorOptionData) => {
     if (option.value === 'minimum-required') {
@@ -164,20 +195,38 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
             content={t('session.launcher.MiniumAllocationTooltip')}
             focusable={false}
             icon={
-              <Info style={{ color: token.colorTextSecondary }} size="1em" />
+              <Info
+                style={{ color: token('--color-text-secondary') }}
+                size="1em"
+              />
             }
           />
         </BAIFlex>
       );
     }
-    const preset = presetOptions.find((o) => o.value === option.value)?.preset;
+    const presetOption = presetOptions.find((o) => o.value === option.value);
+    const preset = presetOption?.preset;
     if (!preset) return option.label;
     const slotsInfo: {
       [key in ResourceSlotName]: string;
     } = JSON.parse(preset.resource_slots || '{}');
-    return (
+    const row = (
       <BAIFlex direction="row" justify="between" gap={'xs'} style={{ flex: 1 }}>
-        {preset.name}
+        <BAIFlex direction="row" gap={'xs'} align="center">
+          {preset.name}
+          {preset.scaling_group_name ? (
+            // Global presets carry no mark; the token names the group this
+            // one belongs to, so same-named rows tell apart. A disabled row
+            // already explains itself, so the token stays quiet there.
+            presetOption?.disabledReason ? (
+              <Token label={preset.scaling_group_name} size="sm" />
+            ) : (
+              <Tooltip content={onlyInGroupText(preset.scaling_group_name)}>
+                <Token label={preset.scaling_group_name} size="sm" />
+              </Tooltip>
+            )
+          ) : null}
+        </BAIFlex>
         <BAIFlex direction="row" gap={'xxs'}>
           {_.map(
             _.omitBy(slotsInfo, (_slot, key) =>
@@ -202,6 +251,25 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
           )}
         </BAIFlex>
       </BAIFlex>
+    );
+    return presetOption?.disabledReason ? (
+      <Tooltip content={presetOption.disabledReason}>{row}</Tooltip>
+    ) : (
+      row
+    );
+  };
+
+  // The closed trigger keeps the group token, so two same-named presets read apart.
+  const renderSelectedValue = (option: SelectorOptionData) => {
+    const groupName = presetOptions.find((o) => o.value === option.value)
+      ?.preset?.scaling_group_name;
+    return groupName ? (
+      <BAIFlex direction="row" gap={'xs'} align="center">
+        {option.label}
+        <Token label={groupName} size="sm" />
+      </BAIFlex>
+    ) : (
+      option.label
     );
   };
 
@@ -264,6 +332,7 @@ const ResourcePresetSelect: React.FC<ResourcePresetSelectProps> = ({
         hasSearch
         options={options}
         renderOption={renderResourceRow}
+        renderValue={renderSelectedValue}
         value={controllableValue ?? ''}
         onChange={(next) =>
           setControllableValue(

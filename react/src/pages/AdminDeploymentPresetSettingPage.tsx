@@ -22,9 +22,9 @@ import {
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
-import { theme } from '../theme-shim';
-import { Heading } from '@astryxdesign/core/Heading';
+import type { RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   convertToUUID,
@@ -196,7 +196,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
   const mode: 'create' | 'edit' = presetId ? 'edit' : 'create';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const webuiNavigate = useWebUINavigate();
   const { message } = App.useApp();
   const { logger } = useBAILogger();
@@ -559,7 +559,7 @@ const AdminDeploymentPresetSettingPage: React.FC = () => {
       direction="column"
       align="stretch"
       gap="md"
-      style={{ paddingBottom: token.paddingContentVerticalLG }}
+      style={{ paddingBottom: token('--spacing-4') }}
     >
       <BAIFlex direction="row" justify="between" align="center">
         {/* PILOT-DECISION: antd `style={{margin: 0}}` dropped — Astryx Heading

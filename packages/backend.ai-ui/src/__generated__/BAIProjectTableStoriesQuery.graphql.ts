@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<9d4266abe175a800eee9571665bcf6fe>>
+ * @generated SignedSource<<ccdaff8f89625b67185359929715bc15>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -201,6 +201,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "modified_at",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "total_resource_slots",
                     "storageKey": null
                   },
@@ -260,12 +267,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "2a346b4252414aa9bc56e7932e91412a",
+    "cacheID": "116638502a8691710a666979fd083022",
     "id": null,
     "metadata": {},
     "name": "BAIProjectTableStoriesQuery",
     "operationKind": "query",
-    "text": "query BAIProjectTableStoriesQuery {\n  group_nodes(offset: 0, first: 100) {\n    edges {\n      node {\n        ...BAIProjectTableFragment\n        id\n      }\n    }\n    count\n  }\n  vfolder_host_permissions {\n    vfolder_host_permission_list\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {\n  allowed_vfolder_hosts\n}\n\nfragment BAIProjectTableFragment on GroupNode {\n  id\n  row_id\n  name\n  domain_name\n  description\n  is_active\n  created_at\n  total_resource_slots\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n  ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment\n}\n"
+    "text": "query BAIProjectTableStoriesQuery {\n  group_nodes(offset: 0, first: 100) {\n    edges {\n      node {\n        ...BAIProjectTableFragment\n        id\n      }\n    }\n    count\n  }\n  vfolder_host_permissions {\n    vfolder_host_permission_list\n  }\n}\n\nfragment BAIAllowedVfolderHostsWithPermissionFromGroupFragment on GroupNode {\n  allowed_vfolder_hosts\n}\n\nfragment BAIProjectTableFragment on GroupNode {\n  id\n  row_id\n  name\n  domain_name\n  description\n  is_active\n  created_at\n  modified_at\n  total_resource_slots\n  integration_id\n  resource_policy\n  type\n  container_registry\n  scaling_groups\n  ...BAIAllowedVfolderHostsWithPermissionFromGroupFragment\n}\n"
   }
 };
 })();

@@ -11,19 +11,20 @@ import {
 import { AdminUserManagementUpdateUserMutation } from '../__generated__/AdminUserManagementUpdateUserMutation.graphql';
 import { App } from '../app-shim';
 import { convertFirstOrderByToString, convertToOrderBy } from '../helper';
+import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { theme } from '../theme-shim';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
 import UpdateUsersModal from './UpdateUsersModal';
 import UserInfoModal from './UserInfoModal';
 import UserSettingModal from './UserSettingModal';
-import { Button } from '@astryxdesign/core/Button';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
+import { Button } from '@lablup/ui-common/Button';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminUserV2Table,
   BAIButton,
@@ -43,15 +44,15 @@ import {
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  Trash2,
+  BanIcon,
   Ellipsis,
   Info,
-  BanIcon,
   PlusIcon,
   SquarePenIcon,
+  Trash2,
   UndoIcon,
 } from 'lucide-react';
-import React, { useState, useDeferredValue } from 'react';
+import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   graphql,
@@ -82,7 +83,7 @@ export const AdminUserManagementQuery = graphql`
           basicInfo {
             email
           }
-          ...BAIAdminUserV2TableFragment
+          ...BAIAdminUserV2TableFragment @arguments(withProjects: true)
           ...PurgeUsersModalFragment
           ...UpdateUsersModalFragment
           ...UserInfoModalFragment
@@ -115,7 +116,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
 
   const { logger } = useBAILogger();
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const bailClient = useSuspendedBackendaiClient();
   const { message } = App.useApp();
@@ -378,6 +379,32 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
       type: 'string',
     },
     {
+      key: 'project.isActive',
+      propertyLabel: t('credential.ProjectIsActive'),
+      type: 'boolean',
+    },
+    {
+      key: 'domainName',
+      propertyLabel: t('credential.Domain'),
+      type: 'string',
+    },
+    {
+      key: 'domain.isActive',
+      propertyLabel: t('credential.DomainIsActive'),
+      type: 'boolean',
+    },
+    {
+      key: 'integrationName',
+      propertyLabel: t('credential.IntegrationName'),
+      type: 'string',
+    },
+    {
+      key: 'createdAt',
+      propertyLabel: t('general.CreatedAt'),
+      type: 'datetime',
+      defaultOperator: 'after',
+    },
+    {
       key: 'role',
       propertyLabel: t('credential.Role'),
       type: 'enum',
@@ -388,8 +415,16 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
           value: 'SUPERADMIN',
         },
         {
+          label: 'admin',
+          value: 'ADMIN',
+        },
+        {
           label: 'user',
           value: 'USER',
+        },
+        {
+          label: 'monitor',
+          value: 'MONITOR',
         },
       ],
     },
@@ -458,13 +493,18 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                 onClearSelection={() => setSelectedUserList([])}
               />
               <BAIButton
-                icon={<SquarePenIcon style={{ color: token.colorInfo }} />}
+                icon={
+                  <SquarePenIcon style={{ color: token('--color-info') }} />
+                }
                 onClick={toggleUpdateUsersModal}
               />
               {statusValue === 'INACTIVE' && (
                 <BAIButton
                   icon={
-                    <Trash2 style={{ color: token.colorError }} size="1em" />
+                    <Trash2
+                      style={{ color: token('--color-error') }}
+                      size="1em"
+                    />
                   }
                   onClick={togglePurgeUsersModal}
                 />
@@ -541,6 +581,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
         usersFrgmt={filterOutNullAndUndefined(
           _.map(adminUsersV2?.edges, 'node'),
         )}
+        withProjects
         customizeColumns={(baseColumns) => {
           // The TOTP columns are meaningless when the manager has no TOTP
           // plugin (their data is skipped via @skipOnClient), so hide them.
@@ -606,7 +647,15 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
             ? {
                 supportedFields,
                 onExport: async (selectedExportKeys) => {
+                  const { filter: exportFilter, unsupportedKeys } =
+                    buildUserCSVExportFilter(propertyFilterValue);
+                  if (unsupportedKeys.length > 0) {
+                    message.warning(
+                      t('credential.SomeFiltersAreNotAppliedToCSVExport'),
+                    );
+                  }
                   await exportCSV(selectedExportKeys, {
+                    ...exportFilter,
                     status: [_.toLower(statusValue)],
                   }).catch((err) => {
                     message.error(t('general.ErrorOccurred'));

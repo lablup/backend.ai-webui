@@ -4,10 +4,10 @@
  */
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
-import { theme } from '../theme-shim';
-import { Badge } from '@astryxdesign/core/Badge';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Spinner } from '@astryxdesign/core/Spinner';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,
@@ -33,7 +33,7 @@ const UserInfoModal: React.FC<Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { isTOTPSupported, isLoading: isLoadingManagerSupportingTOTP } =
     useTOTPSupported();
@@ -63,7 +63,7 @@ const UserInfoModal: React.FC<Props> = ({
           resourcePolicy
           mainAccessKey
         }
-        projects {
+        projects(limit: 1000) {
           edges {
             node {
               id
@@ -155,16 +155,18 @@ const UserInfoModal: React.FC<Props> = ({
             <BAIIconWithTooltip
               content={t('credential.FailedToLoadProjects')}
               icon={
-                <TriangleAlert style={{ color: token.colorError }} size="1em" />
+                <TriangleAlert
+                  style={{ color: token('--color-error') }}
+                  size="1em"
+                />
               }
             />
           ) : (
             <BAIFlex gap="xs" wrap="wrap">
               {_.map(user?.projects?.edges, (edge) => {
                 return (
-                  <Badge
+                  <Token
                     key={edge?.node?.id}
-                    variant="neutral"
                     label={edge?.node?.basicInfo.name}
                   />
                 );

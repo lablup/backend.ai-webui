@@ -8,7 +8,6 @@ import { ContainerRegistryEditorModalModifyRegistryMutation } from '../__generat
 import { App } from '../app-shim';
 import { Form, type FormInstance } from '../form-engine';
 import { useSuspendedBackendaiClient } from '../hooks';
-import { theme } from '../theme-shim';
 import BAICodeEditor from './BAICodeEditor';
 import BAIFormItem from './BAIFormItem';
 import HiddenFormItem from './HiddenFormItem';
@@ -18,6 +17,7 @@ import {
   AstryxFormSelector,
   AstryxFormTextInput,
 } from './astryxFormControls';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAIModal, BAIModalProps, BAISelect } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense, useRef } from 'react';
@@ -39,18 +39,57 @@ type RegistryFormInput = {
   allowed_group_ids?: string[];
 };
 
+export type ContainerRegistryEditorModalResult = {
+  id: string;
+  row_id?: string | null;
+  registry_name: string;
+  project?: string | null;
+  url?: string;
+  type?: string;
+};
+
+/** The mutation nodes carry form-only fields (`password`, …); hand `onOk` only the result shape. */
+const toResult = (
+  node?: {
+    id: string;
+    row_id?: string | null;
+    registry_name: string;
+    project?: string | null;
+    url?: string;
+    type?: string;
+  } | null,
+): ContainerRegistryEditorModalResult | undefined =>
+  node
+    ? {
+        id: node.id,
+        row_id: node.row_id,
+        registry_name: node.registry_name,
+        project: node.project,
+        url: node.url,
+        type: node.type,
+      }
+    : undefined;
+
 interface ContainerRegistryEditorModalProps extends Omit<
   BAIModalProps,
   'onOk'
 > {
-  onOk: (type: 'create' | 'modify') => void;
+  onOk: (
+    type: 'create' | 'modify',
+    registry?: ContainerRegistryEditorModalResult,
+  ) => void;
   containerRegistryFrgmt?: ContainerRegistryEditorModalFragment$key | null;
+  /** Create mode only; ignored when `containerRegistryFrgmt` is given. */
+  initialValues?: Partial<
+    Pick<RegistryFormInput, 'registry_name' | 'url' | 'project' | 'type'>
+  >;
 }
 const ContainerRegistryEditorModal: React.FC<
   ContainerRegistryEditorModalProps
-> = ({ containerRegistryFrgmt = null, onOk, ...modalProps }) => {
+> = ({ containerRegistryFrgmt = null, onOk, initialValues, ...modalProps }) => {
+  'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message, modal } = App.useApp();
 
   const baiClient = useSuspendedBackendaiClient();
@@ -72,7 +111,7 @@ const ContainerRegistryEditorModal: React.FC<
         ssl_verify
         extra @since(version: "24.09.3")
         is_global @since(version: "24.09.0")
-        allowed_groups @since(version: "25.3.0") {
+        allowed_groups(first: 100) @since(version: "25.3.0") {
           edges {
             node {
               id
@@ -94,6 +133,11 @@ const ContainerRegistryEditorModal: React.FC<
         create_container_registry_node_v2(props: $props) {
           container_registry {
             id
+            row_id
+            registry_name
+            project
+            url
+            type
           }
         }
       }
@@ -119,7 +163,7 @@ const ContainerRegistryEditorModal: React.FC<
             ssl_verify
             extra @since(version: "24.09.3")
             is_global @since(version: "24.09.0")
-            allowed_groups @since(version: "25.3.0") {
+            allowed_groups(first: 100) @since(version: "25.3.0") {
               edges {
                 node {
                   id
@@ -194,7 +238,13 @@ const ContainerRegistryEditorModal: React.FC<
                   message.error(error);
                 }
               } else {
-                onOk && onOk('modify');
+                onOk &&
+                  onOk(
+                    'modify',
+                    toResult(
+                      res.modify_container_registry_node_v2?.container_registry,
+                    ),
+                  );
               }
             },
             onError: () => {
@@ -224,7 +274,13 @@ const ContainerRegistryEditorModal: React.FC<
                   message.error(error);
                 }
               } else {
-                onOk && onOk('create');
+                onOk &&
+                  onOk(
+                    'create',
+                    toResult(
+                      res.create_container_registry_node_v2?.container_registry,
+                    ),
+                  );
               }
             },
             onError() {
@@ -269,7 +325,6 @@ const ContainerRegistryEditorModal: React.FC<
           .catch(() => {});
       }}
       {...modalProps}
-      destroyOnHidden
     >
       <Form
         ref={formRef}
@@ -292,7 +347,7 @@ const ContainerRegistryEditorModal: React.FC<
                     ?.map((edge) => edge?.node?.row_id)
                     .filter(Boolean) ?? [],
               }
-            : { is_global: true, ssl_verify: true }
+            : { is_global: true, ssl_verify: true, ...initialValues }
         }
         preserve={false}
       >
@@ -530,8 +585,8 @@ const ContainerRegistryEditorModal: React.FC<
           <BAIFormItem label={t('registry.ExtraInformation')}>
             <BAIFlex
               style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
+                border: `1px solid ${token('--color-border-emphasized')}`,
+                borderRadius: token('--radius-inner'),
                 overflow: 'hidden',
               }}
             >

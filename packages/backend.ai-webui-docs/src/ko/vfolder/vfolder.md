@@ -35,7 +35,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 새 폴더를 만들려면 데이터 페이지에서 `폴더 생성`을 클릭합니다. 생성 대화 상자의 필드를 다음과 같이 채웁니다.
 
-![](../images/vfolder_create_modal.png)
+![=650px](../images/vfolder_create_modal.png)
 
 생성 대화 상자의 각 필드 의미는 다음과 같습니다.
 
@@ -128,6 +128,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 오른쪽 패널의 **감사 로그** 탭에는 이 스토리지 폴더에서 수행된 모든 작업(생성, 수정, 삭제 이벤트 등)의 시간순 목록이 표시됩니다.
 
 ![](../images/vfolder_audit_log_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 감사 로그는 다음 항목을 순서대로 표시합니다.
 - **시간**: 작업이 수행된 시점입니다.
@@ -136,6 +137,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 - **설명**: 작업에 대한 추가 세부 정보입니다.
 - **소요 시간**: 작업에 걸린 시간입니다.
 - **실행자**: 작업을 수행한 사용자이며, "이메일 (id)" 형식으로 표시됩니다.
+- **클라이언트 IP**: 작업을 요청한 IP 주소이며, 서버가 보고한 그대로 표시됩니다. 관리자의 클라이언트 IP 마스킹 정책에 따라 일부가 가려질 수 있고, 기록되지 않은 경우 `-`로 표시됩니다.
 
 시간, 작업, 상태, 실행자 항목으로 로그를 필터링할 수 있습니다.
 
@@ -160,12 +162,16 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 휴지통 버튼이 나타납니다. 휴지통 버튼을 클릭하면 선택한 폴더 전체에 대한
 **휴지통으로 이동** 확인 창이 열립니다.
 
-![](../images/vfolder_bulk_move_to_trash.png)
+![=520px](../images/vfolder_bulk_move_to_trash.png)
 
 선택한 폴더 중에 삭제 권한이 없는 폴더가 있으면 모달에 *"삭제 권한이 없는 다음 폴더는
 제외됩니다."*라는 제목의 알림이 나타나고 해당 폴더 이름이 함께 표시됩니다. 삭제를
 진행하기 전에 이 목록을 꼭 확인하세요. 권한이 없는 폴더를 뺀 나머지만 휴지통 탭으로
 옮겨지고, 알림 아래의 확인 메시지도 실제로 이동하는 폴더 개수만 표시합니다.
+
+선택한 폴더 중 일부를 삭제하지 못한 경우, 삭제할 수 있는 폴더는 그대로 휴지통 탭으로
+옮겨지고 실패한 폴더는 **오류 메시지** 열에 사유와 함께 별도의 실패 안내 창에
+표시됩니다.
 
 ### 폴더 복원 및 영구 삭제
 
@@ -175,7 +181,7 @@ Backend.AI는 사용자의 파일을 안전하게 보관할 수 있도록 전용
 
 폴더 이름을 입력하라는 확인 모달이 나타납니다. 폴더 이름을 정확하게 입력하면 **영구 삭제** 버튼이 활성화되며, 이를 클릭하면 폴더가 완전히 삭제됩니다.
 
-![](../images/vfolder_delete_dialog.png)
+![=520px](../images/vfolder_delete_dialog.png)
 
 :::warning[모델 카드 연쇄 삭제]
 삭제하려는 폴더가 **모델 카드**와 연결되어 있는 경우, 확인 모달에는 *"연결된 모델
@@ -228,7 +234,7 @@ FileBrowser가 새 창에서 열립니다. 탐색기를 열었던 스토리지 �
 FileBrowser 창을 실수로 종료하여 다시 열고자 한다면, 세션 페이지로 가서 해당
 FileBrowser 연산 세션의 애플리케이션 버튼을 클릭하면 됩니다.
 
-![](../images/app_dialog_with_filebrowser.png)
+![=450px](../images/app_dialog_with_filebrowser.png)
 
 탐색기에서 `파일브라우저 실행` 버튼을 다시 클릭하면 새로운 연산 세션이 생성되어
 총 두 개의 FileBrowser 세션이 나타납니다.
@@ -270,7 +276,7 @@ foo
 
 `foo` 디렉토리를 선택하면 디렉토리가 정상적으로 업로드됩니다.
 
-![](../images/filebrowser_upload_finished.png)
+![=796px](../images/filebrowser_upload_finished.png)
 
 드래그 앤 드롭으로 로컬 파일과 디렉토리를 업로드할 수도 있습니다.
 
@@ -280,7 +286,7 @@ FileBrowser에서 스토리지 폴더 내의 파일이나 디렉토리도 이동
 
 1. FileBrowser에서 이동할 디렉토리 또는 파일을 선택합니다.
 
-![](../images/select_folders.png)
+![=694px](../images/select_folders.png)
 
 2. FileBrowser 우측 상단의 `화살표` 버튼을 클릭합니다.
 
@@ -288,13 +294,13 @@ FileBrowser에서 스토리지 폴더 내의 파일이나 디렉토리도 이동
 
 3. 이동할 대상 위치를 선택합니다.
 
-![](../images/select_the_destination.png)
+![=266px](../images/select_the_destination.png)
 
 4. `Move` 버튼을 클릭합니다.
 
 이동 작업이 정상적으로 완료됩니다.
 
-![](../images/moving_operation_in_filebrowser_finished.png)
+![=708px](../images/moving_operation_in_filebrowser_finished.png)
 
 
 :::note
@@ -323,7 +329,7 @@ Backend.AI는 데스크톱 앱과 웹 기반 WebUI 모두에서 SSH / SFTP 파�
 
 SSH / SFTP 연결 대화 상자가 나타납니다. 새로운 SFTP 세션이 자동으로 생성됩니다. (이 세션은 자원 점유에 영향을 주지 않습니다.)
 
-![](../images/SSH_SFTP_connection.png)
+![=800px](../images/SSH_SFTP_connection.png)
 
 연결을 위해 `SSH 키 다운로드` 버튼을 클릭하여 SSH 개인 키(`id_container`)를 다운로드합니다. 또한 호스트와 포트 번호를 기억해 두세요. 이후 대화 상자에 표시된 연결 예시 코드로 세션에 파일을 복사하거나, 다음 가이드를 참고할 수 있습니다: [SFTP 연결 가이드](#ssh-sftp-container). 파일을 보존하려면 스토리지 폴더로 파일을 전송해야 합니다. 또한 일정 시간 동안 전송이 없으면 세션이 자동으로 종료됩니다.
 

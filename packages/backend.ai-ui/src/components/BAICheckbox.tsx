@@ -39,7 +39,7 @@
 import { FormItemInputContext } from '../form-engine';
 import { nodeToAccessibleLabel } from '../helper/astryxLabel';
 import { useBAIi18n } from '../hooks/useBAIi18n';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
 import React, { use } from 'react';
 import type { ChangeEvent, ReactNode } from 'react';
 
@@ -56,6 +56,8 @@ export interface BAICheckboxProps {
   label?: string;
   /** Hide the inline label but keep it as the accessible name. */
   isLabelHidden?: boolean;
+  /** Box size; `sm` for dense grids. */
+  size?: 'sm' | 'md';
   onChange?: (checked: boolean, e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
   style?: React.CSSProperties;

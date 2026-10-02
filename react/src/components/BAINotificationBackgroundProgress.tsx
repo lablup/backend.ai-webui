@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { NotificationState } from '../hooks/useBAINotification';
-import { ProgressBar } from '@astryxdesign/core/ProgressBar';
+import { ProgressBar } from '@lablup/ui-common/ProgressBar';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 

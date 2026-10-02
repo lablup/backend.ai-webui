@@ -1,10 +1,18 @@
-import { theme } from '../theme-shim';
-import * as _ from 'lodash-es';
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ ui-common `TextHighlighter` under its BUI name (FR-4096); `style` styles each
+ mark. The mark colour is the theme's `--color-warning-border-hover`, which
+ ui-common reads itself.
+*/
+import { TextHighlighter } from '@lablup/ui-common/components/TextHighlighter';
 import React from 'react';
 
-interface BAITextHighlighterProps {
+export interface BAITextHighlighterProps {
   children?: string | null;
   keyword?: string;
+  /** Inline style of each marked part. */
   style?: React.CSSProperties;
 }
 
@@ -12,34 +20,10 @@ const BAITextHighlighter: React.FC<BAITextHighlighterProps> = ({
   children,
   keyword,
   style,
-}) => {
-  if (!children) return null;
+}) => (
+  <TextHighlighter keyword={keyword} highlightStyle={style}>
+    {children}
+  </TextHighlighter>
+);
 
-  if (_.isEmpty(keyword)) {
-    return <span>{children}</span>;
-  } else {
-    const { token } = theme.useToken() || '#F1A239';
-    const parts = children.split(
-      new RegExp(`(${_.escapeRegExp(keyword)})`, 'gi'),
-    );
-
-    return (
-      <span>
-        {parts.map((part, i) =>
-          part.toLowerCase() === keyword?.toLowerCase() ? (
-            <span
-              key={i}
-              style={{ backgroundColor: token.colorWarningHover, ...style }}
-            >
-              {part}
-            </span>
-          ) : (
-            part
-          ),
-        )}
-      </span>
-    );
-  }
-};
-
-export default React.memo(BAITextHighlighter);
+export default BAITextHighlighter;

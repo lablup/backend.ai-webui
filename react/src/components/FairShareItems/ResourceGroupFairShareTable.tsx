@@ -8,21 +8,23 @@ import {
   ResourceGroupFairShareTableFragment$key,
 } from '../../__generated__/ResourceGroupFairShareTableFragment.graphql';
 import { useResourceSlotsDetails } from '../../hooks/backendai';
-import { theme } from '../../theme-shim';
 import ResourceGroupFairShareSettingModal from './ResourceGroupFairShareSettingModal';
-import { Divider } from '@astryxdesign/core/Divider';
-import { Text } from '@astryxdesign/core/Text';
+import { Divider } from '@lablup/ui-common/Divider';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIQuestionIconWithTooltip,
+  BAIBadge,
   BAIFlex,
   BAINameActionCell,
+  BAIQuestionIconWithTooltip,
   BAITable,
   BAITableProps,
   BAIUnmountAfterClose,
-  convertToBinaryUnit,
   ResourceTypeIcon,
+  convertToBinaryUnit,
   type BAIColumnsType,
 } from 'backend.ai-ui';
+import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { Settings } from 'lucide-react';
 import { parseAsString, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -34,12 +36,18 @@ type ResourceGroup = NonNullable<
   ResourceGroupFairShareTableFragment$data[number]
 >;
 
-const availableResourceGroupSorterKeys = ['name'] as const;
+const availableResourceGroupSorterKeys = [
+  'name',
+  'isActive',
+  'createdAt',
+] as const;
 export const resourceGroupOrderFieldMap: Record<
   (typeof availableResourceGroupSorterKeys)[number],
   ResourceGroupOrderField
 > = {
   name: 'NAME',
+  isActive: 'IS_ACTIVE',
+  createdAt: 'CREATED_AT',
 };
 export const availableResourceGroupSorterValues = [
   ...availableResourceGroupSorterKeys,
@@ -60,7 +68,7 @@ const ResourceGroupFairShareTable: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const { mergedResourceSlots } = useResourceSlotsDetails();
 
@@ -83,6 +91,12 @@ const ResourceGroupFairShareTable: React.FC<
       @relay(plural: true) {
         id
         name
+        status {
+          isActive
+        }
+        metadata {
+          createdAt
+        }
         fairShareSpec {
           halfLifeDays
           lookbackDays
@@ -167,7 +181,7 @@ const ResourceGroupFairShareTable: React.FC<
                       </Text>
                       <Text
                         color="secondary"
-                        style={{ fontSize: token.sizeXS }}
+                        style={{ fontSize: token('--spacing-2') }}
                       >
                         {mergedResourceSlots?.[resourceType]?.display_unit}
                       </Text>
@@ -193,7 +207,6 @@ const ResourceGroupFairShareTable: React.FC<
         </BAIFlex>
       ),
       key: 'resourceWeights',
-      sorter: isEnableSorter('resourceWeights'),
       dataIndex: ['fairShareSpec', 'resourceWeights'],
       render: (entries) => {
         return _.isEmpty(entries) ? (
@@ -221,7 +234,7 @@ const ResourceGroupFairShareTable: React.FC<
                     {rw.weight}
                     <Text
                       color="secondary"
-                      style={{ fontSize: token.fontSizeSM }}
+                      style={{ fontSize: token('--font-size-sm') }}
                     >
                       {rw.usesDefault ? `(${t('fairShare.UsingDefault')})` : ''}
                     </Text>
@@ -246,7 +259,6 @@ const ResourceGroupFairShareTable: React.FC<
         </BAIFlex>
       ),
       key: 'defaultWeight',
-      sorter: isEnableSorter('defaultWeight'),
       dataIndex: ['fairShareSpec', 'defaultWeight'],
     },
     {
@@ -259,7 +271,6 @@ const ResourceGroupFairShareTable: React.FC<
         </BAIFlex>
       ),
       key: 'decayUnitDays',
-      sorter: isEnableSorter('decayUnitDays'),
       dataIndex: ['fairShareSpec', 'decayUnitDays'],
       render: (value) => <BAIFlex>{t('general.Days', { num: value })}</BAIFlex>,
     },
@@ -286,9 +297,29 @@ const ResourceGroupFairShareTable: React.FC<
         </BAIFlex>
       ),
       key: 'lookbackDays',
-      sorter: isEnableSorter('lookbackDays'),
       dataIndex: ['fairShareSpec', 'lookbackDays'],
       render: (value) => <BAIFlex>{t('general.Days', { num: value })}</BAIFlex>,
+    },
+    {
+      title: t('general.Status'),
+      key: 'isActive',
+      dataIndex: ['status', 'isActive'],
+      sortKey: 'isActive',
+      sorter: isEnableSorter('isActive'),
+      render: (isActive: boolean) => (
+        <BAIBadge
+          color={isActive ? 'success' : 'default'}
+          text={isActive ? t('general.Active') : t('general.Inactive')}
+        />
+      ),
+    },
+    {
+      title: t('general.CreatedAt'),
+      key: 'createdAt',
+      dataIndex: ['metadata', 'createdAt'],
+      sortKey: 'createdAt',
+      sorter: isEnableSorter('createdAt'),
+      render: (date) => (date ? dayjs(date).format('lll') : '-'),
     },
   ];
 

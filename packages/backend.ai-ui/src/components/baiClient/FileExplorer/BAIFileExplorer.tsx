@@ -4,7 +4,6 @@ import {
   localeCompare,
 } from '../../../helper';
 import { useBAIi18n } from '../../../hooks/useBAIi18n';
-import { theme } from '../../../theme-shim';
 import BAIFetchKeyButton from '../../BAIFetchKeyButton';
 import BAIFlex from '../../BAIFlex';
 import BAIUnmountAfterClose from '../../BAIUnmountAfterClose';
@@ -15,18 +14,24 @@ import DeleteSelectedItemsModal from './DeleteSelectedItemsModal';
 import DragAndDrop from './DragAndDrop';
 import ExplorerActionControls from './ExplorerActionControls';
 import FileNameCell from './FileNameCell';
-import { useDragOverlay, useSearchVFolderFiles } from './hooks';
-import type { RcFile } from './hooks';
-import { BreadcrumbItem, Breadcrumbs } from '@astryxdesign/core/Breadcrumbs';
-import type { DropdownMenuOption } from '@astryxdesign/core/DropdownMenu';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { Text } from '@astryxdesign/core/Text';
+import OverwriteConfirmModal from './OverwriteConfirmModal';
+import {
+  useDragOverlay,
+  useSearchVFolderFiles,
+  useUploadVFolderFiles,
+  type RcFile,
+} from './hooks';
+import { BreadcrumbItem, Breadcrumbs } from '@lablup/ui-common/Breadcrumbs';
+import type { DropdownMenuOption } from '@lablup/ui-common/DropdownMenu';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
 import { File, Folder, HouseIcon } from 'lucide-react';
 import {
-  createContext,
   Suspense,
+  createContext,
   useEffect,
   useEffectEvent,
   useImperativeHandle,
@@ -113,7 +118,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
   'use memo';
 
   const { t } = useBAIi18n();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   // The container ref is parent-owned; the hook captures its element when
   // dragging starts.
@@ -139,6 +144,14 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     refetch,
   } = useSearchVFolderFiles(targetVFolderId, fetchKey);
   const isDirectoryPicker = mode === 'directoryPicker';
+
+  // Owned here, not in the upload triggers: the drag overlay unmounts on drop,
+  // which would discard a pending overwrite decision with it.
+  const { requestUpload, overwriteConfirmModalProps } = useUploadVFolderFiles({
+    targetVFolderId,
+    currentPath,
+    onUpload: (files, uploadPath) => onUpload?.(files, uploadPath),
+  });
 
   useImperativeHandle(
     ref,
@@ -233,6 +246,10 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.Name'),
       dataIndex: 'name',
+      // The only flexing column, so it takes what the sized ones leave — it
+      // carries the row actions as well as the name (FR-3670), and an equal
+      // quarter of the explorer left the name nothing to render in (FR-3926).
+      minWidth: 180,
       sorter: (a, b) => localeCompare(a.name, b.name),
       render: (name, record) => {
         if (isDirectoryPicker && record.type !== 'DIRECTORY') {
@@ -240,7 +257,10 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           // interactive — only directories can be entered and chosen.
           return (
             <BAIFlex gap="xs" style={{ display: 'inline-flex' }}>
-              <File style={{ color: token.colorTextDisabled }} size="1em" />
+              <File
+                style={{ color: token('--color-text-disabled') }}
+                size="1em"
+              />
               <Text color="disabled" maxLines={1} style={{ maxWidth: 200 }}>
                 {name}
               </Text>
@@ -295,6 +315,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.Size'),
       dataIndex: 'size',
+      // Sized to their content so the name column keeps the rest; all three
+      // stay drag-resizable.
+      width: 90,
       sorter: (a, b) => localeCompare(a.type, b.type),
       render: (size, record) => {
         if (record.type === 'DIRECTORY' && !isDirectorySizeVisible) {
@@ -308,12 +331,14 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
     {
       title: t('comp:FileExplorer.CreatedAt'),
       dataIndex: 'created',
+      width: 160,
       sorter: (a, b) => localeCompare(a.created, b.created),
       render: (createdAt) => dayjs(createdAt).format('lll'),
     },
     {
       title: t('comp:FileExplorer.ModifiedAt'),
       dataIndex: 'modified',
+      width: 160,
       sorter: (a, b) => localeCompare(a.modified, b.modified),
       render: (modifiedAt) => dayjs(modifiedAt).format('lll'),
     },
@@ -331,7 +356,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
         <DragAndDrop
           portalContainer={dragPortalContainer || undefined}
           onDragEnd={closeDragOverlay}
-          onUpload={(files, currentPath) => onUpload?.(files, currentPath)}
+          onUpload={requestUpload}
         />
       )}
       <BAIFlex
@@ -347,7 +372,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
           <Breadcrumbs
             label={t('comp:FileExplorer.Path')}
             style={{
-              marginLeft: token.marginXXS,
+              marginLeft: token('--spacing-1'),
             }}
           >
             {breadCrumbItems.map((item, index) => (
@@ -368,16 +393,7 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             enableDelete={enableDelete}
             enableWrite={enableWrite}
             enableUpload={enableUpload}
-            onUpload={(files, currentPath) => onUpload?.(files, currentPath)}
-            onFolderCreated={
-              isDirectoryPicker
-                ? (folderName) => {
-                    // Jump straight into the created folder so "select this
-                    // location" picks it.
-                    navigateDown(folderName);
-                  }
-                : undefined
-            }
+            onUpload={requestUpload}
             onDeleteFilesInBackground={onDeleteFilesInBackground}
             onClearSelection={() => setSelectedItems([])}
             onRequestClose={(
@@ -486,6 +502,9 @@ const BAIFileExplorer: React.FC<BAIFileExplorerProps> = ({
             setSelectedSingleItem(null);
           }}
         />
+      </BAIUnmountAfterClose>
+      <BAIUnmountAfterClose>
+        <OverwriteConfirmModal {...overwriteConfirmModalProps} />
       </BAIUnmountAfterClose>
     </FolderInfoContext.Provider>
   );

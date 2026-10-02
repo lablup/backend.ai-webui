@@ -3,7 +3,11 @@
  value mapping, and the PER-COLUMN max-width release — a table-wide release
  would let auto layout push a resized column back to its content width.
 */
-import { dimLayerOf, renderScrollTable } from './BAITable.scrollTestFixtures';
+import {
+  dimLayerOf,
+  renderScrollTable,
+  rootOf,
+} from './BAITable.scrollTestFixtures';
 
 describe('BAITable scroll.x', () => {
   it.each([
@@ -13,20 +17,22 @@ describe('BAITable scroll.x', () => {
   ])('maps scroll.x=%s onto the CSS variable as %s', (x, expected) => {
     const { container } = renderScrollTable({ scroll: { x } });
     const layer = dimLayerOf(container);
-    expect(layer).toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe(expected);
+    expect(layer).toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer.style.getPropertyValue('--data-grid-scroll-width')).toBe(
+      expected,
+    );
   });
 
   it('stays off when scroll is absent or carries no x', () => {
     const { container: withoutScroll } = renderScrollTable();
     expect(dimLayerOf(withoutScroll)).not.toHaveClass(
-      'bai-table-astryx-scroll-x',
+      'uic-data-grid__body--scroll-x',
     );
 
     const { container: yOnly } = renderScrollTable({ scroll: { y: 500 } });
     const layer = dimLayerOf(yOnly);
-    expect(layer).not.toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe('');
+    expect(layer).not.toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer.style.getPropertyValue('--data-grid-scroll-width')).toBe('');
   });
 
   it('releases max-width on auto columns only', () => {
@@ -44,6 +50,33 @@ describe('BAITable scroll.x', () => {
     expect(noteHeader.style.maxWidth).toBe('none');
     // Cancels the percentage width `resolveColumnWidths` still emits.
     expect(noteHeader.style.width).toBe('auto');
+  });
+
+  // FR-4007: the root is the flex item a caller lays out, and its size reset
+  // lives on this class. jsdom has no layout, so pin the hook, not the effect.
+  it('names the outer wrapper so the flex size reset can reach it', () => {
+    const { container } = renderScrollTable({ scroll: { x: 'max-content' } });
+    const root = rootOf(container);
+    expect(root).toBeInTheDocument();
+    expect(root).toContainElement(dimLayerOf(container));
+    expect(rootOf(renderScrollTable().container)).toBeInTheDocument();
+  });
+
+  // FR-4007's reset (min-width: 0; max-width: 100%) is ui-common's
+  // `.uic-data-grid` rule; an inline copy here would outrank a caller's class.
+  it('leaves the root size to the DataGrid rule, caller style winning', () => {
+    const root = rootOf(renderScrollTable().container);
+    expect(root.style.minWidth).toBe('');
+    expect(root.style.maxWidth).toBe('');
+    const custom = rootOf(
+      renderScrollTable({ style: { maxWidth: '50%' } }).container,
+    );
+    expect(custom.style.maxWidth).toBe('50%');
+  });
+
+  it('keeps a caller className alongside the root class', () => {
+    const { container } = renderScrollTable({ className: 'my-table' });
+    expect(rootOf(container)).toHaveClass('my-table');
   });
 
   it('leaves every cell clipped when x mode is off', () => {

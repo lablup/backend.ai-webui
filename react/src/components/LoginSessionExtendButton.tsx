@@ -4,10 +4,14 @@
  */
 import { useBaiSignedRequestWithPromise } from '../helper';
 import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
-import { useBAIBreakpoint } from '../theme-shim';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useUpdatableState, BAIFlex, BAIIntervalView } from 'backend.ai-ui';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import {
+  BAIFlex,
+  BAIIntervalView,
+  useBAIBreakpoint,
+  useUpdatableState,
+} from 'backend.ai-ui';
 import { default as dayjs } from 'dayjs';
 import { atom, useAtom } from 'jotai';
 import { Clock, Repeat2Icon } from 'lucide-react';
@@ -26,7 +30,7 @@ const LoginSessionExtendButton: React.FC<
   const [isPending, startTransition] = useTransition();
   const [fetchKey, updateFetchKey] = useUpdatableState('first');
 
-  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → the theme-shim's
+  // RESPONSIVE-POLICY R3: antd `Grid.useBreakpoint()` → BUI's
   // `useBAIBreakpoint()` (MAPPING §3.9 — `useMediaQuery` is not equivalent).
   const gridBreakpoint = useBAIBreakpoint();
 

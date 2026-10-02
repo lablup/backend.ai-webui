@@ -8,11 +8,12 @@ import { DeploymentAccessTokensCardListQuery } from '../__generated__/Deployment
 import { DeploymentAccessTokensCard_deployment$key } from '../__generated__/DeploymentAccessTokensCard_deployment.graphql';
 import { App } from '../app-shim';
 import { Form } from '../form-engine';
+import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOptions';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormSelector } from './astryxFormControls';
-import { DateTimeInput } from '@astryxdesign/core/DateTimeInput';
-import type { ISODateTimeString } from '@astryxdesign/core/DateTimeInput';
-import { Text } from '@astryxdesign/core/Text';
+import { DateTimeInput } from '@lablup/ui-common/DateTimeInput';
+import type { ISODateTimeString } from '@lablup/ui-common/DateTimeInput';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAIButton,
@@ -21,6 +22,7 @@ import {
   BAIFetchKeyButton,
   BAIFlex,
   BAIModal,
+  type BAIModalProps,
   BAINameActionCell,
   type BAINameActionCellAction,
   disabledReason,
@@ -37,6 +39,7 @@ import {
   useMutationWithPromise,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
+import * as _ from 'lodash-es';
 import { Trash2, PlusIcon } from 'lucide-react';
 import React, {
   Suspense,
@@ -241,7 +244,6 @@ const DeploymentAccessTokensCard: React.FC<DeploymentAccessTokensCardProps> = ({
       <BAIUnmountAfterClose>
         <BAIModal
           open={createdToken !== null}
-          destroyOnHidden
           title={t('deployment.accessToken.Token')}
           onCancel={() => setCreatedToken(null)}
           footer={null}
@@ -311,12 +313,26 @@ const DeploymentAccessTokensTable: React.FC<
   // those go network-only. Mirrors DeploymentRevisionHistoryTab / Replicas.
   const isInitialFetch = fetchKey === INITIAL_FETCH_KEY;
 
+  const {
+    baiPaginationOption,
+    tablePaginationOption,
+    setTablePaginationOption,
+  } = useBAIPaginationOptionState({ current: 1, pageSize: 10 });
+
   const { deployment: listData } =
     useLazyLoadQuery<DeploymentAccessTokensCardListQuery>(
       graphql`
-        query DeploymentAccessTokensCardListQuery($deploymentId: ID!) {
+        query DeploymentAccessTokensCardListQuery(
+          $deploymentId: ID!
+          $limit: Int!
+          $offset: Int!
+        ) {
           deployment(id: $deploymentId) {
-            accessTokens(orderBy: [{ field: CREATED_AT, direction: DESC }]) {
+            accessTokens(
+              orderBy: [{ field: CREATED_AT, direction: DESC }]
+              limit: $limit
+              offset: $offset
+            ) {
               count
               edges {
                 node {
@@ -330,7 +346,11 @@ const DeploymentAccessTokensTable: React.FC<
           }
         }
       `,
-      { deploymentId },
+      {
+        deploymentId,
+        limit: baiPaginationOption.limit,
+        offset: baiPaginationOption.offset,
+      },
       {
         fetchKey,
         fetchPolicy: isInitialFetch ? 'store-and-network' : 'network-only',
@@ -365,7 +385,16 @@ const DeploymentAccessTokensTable: React.FC<
         rowKey="id"
         loading={isPendingRefetch || isDeletingToken}
         dataSource={accessTokens}
-        pagination={false}
+        pagination={{
+          pageSize: tablePaginationOption.pageSize,
+          current: tablePaginationOption.current,
+          total: listData?.accessTokens?.count ?? 0,
+          onChange(current, pageSize) {
+            if (_.isNumber(current) && _.isNumber(pageSize)) {
+              setTablePaginationOption({ pageSize, current });
+            }
+          },
+        }}
         resizable
         columns={[
           {
@@ -512,7 +541,10 @@ const DayjsDateTimeInput: React.FC<{
   );
 };
 
-interface CreateAccessTokenModalProps {
+interface CreateAccessTokenModalProps extends Pick<
+  BAIModalProps,
+  'afterOpenChange' | 'afterClose'
+> {
   open: boolean;
   confirmLoading?: boolean;
   onRequestClose: (result?: { expiresAt: string | null }) => void;
@@ -522,6 +554,8 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   open,
   confirmLoading,
   onRequestClose,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
   const { t } = useTranslation();
@@ -579,7 +613,6 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
   return (
     <BAIModal
       open={open}
-      destroyOnHidden
       centered
       width={420}
       title={t('deployment.accessToken.Create')}
@@ -587,6 +620,8 @@ const CreateAccessTokenModal: React.FC<CreateAccessTokenModalProps> = ({
       confirmLoading={confirmLoading}
       onOk={handleOk}
       onCancel={() => onRequestClose()}
+      afterOpenChange={afterOpenChange}
+      afterClose={afterClose}
     >
       <Form<CreateAccessTokenFormValues>
         form={form}

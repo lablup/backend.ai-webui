@@ -1,0 +1,31 @@
+{
+  // The SECOND host's compiler, not this app's (ADR 0008). The Chrome
+  // extension vendors `client/` byte for byte and builds it with these flags,
+  // which are strictly narrower than `react/tsconfig.json`: no `DOM.Iterable`,
+  // `exactOptionalPropertyTypes`, `moduleResolution: node`, no ambient
+  // `types`. None of those are observable in the react lane, so without this
+  // gate the next edit to any client module silently breaks the vendored
+  // build and phase B finds out in its own repository.
+  //
+  // Run it with the ROOT TypeScript (5.5.4), never react's (6.x): TypeScript 6
+  // moved the iterable DOM declarations into the base `DOM` lib, so on 6 the
+  // `DOM.Iterable` half of this gate cannot fail at all. `scripts/verify.sh`
+  // pins the binary for that reason.
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM"],
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "types": []
+  },
+  "include": ["client/**/*.ts", "host-conformance.ts"],
+  "exclude": ["client/**/*.test.ts"]
+}

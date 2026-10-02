@@ -16,22 +16,24 @@ describe('BAITable scroll.y', () => {
   ])('maps scroll.y=%s onto the CSS variable as %s', (y, expected) => {
     const { container } = renderScrollTable({ scroll: { y } });
     const layer = dimLayerOf(container);
-    expect(layer).toHaveClass('bai-table-astryx-scroll-y');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-y')).toBe(expected);
+    expect(layer).toHaveClass('uic-data-grid__body--scroll-y');
+    expect(layer.style.getPropertyValue('--data-grid-max-height')).toBe(
+      expected,
+    );
   });
 
   it('stays off when scroll is absent or carries no y', () => {
     const { container: withoutScroll } = renderScrollTable();
     expect(dimLayerOf(withoutScroll)).not.toHaveClass(
-      'bai-table-astryx-scroll-y',
+      'uic-data-grid__body--scroll-y',
     );
 
     const { container: xOnly } = renderScrollTable({
       scroll: { x: 'max-content' },
     });
     const layer = dimLayerOf(xOnly);
-    expect(layer).not.toHaveClass('bai-table-astryx-scroll-y');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-y')).toBe('');
+    expect(layer).not.toHaveClass('uic-data-grid__body--scroll-y');
+    expect(layer.style.getPropertyValue('--data-grid-max-height')).toBe('');
   });
 
   it('carries both axes at once', () => {
@@ -39,12 +41,14 @@ describe('BAITable scroll.y', () => {
       scroll: { x: 'max-content', y: 500 },
     });
     const layer = dimLayerOf(container);
-    expect(layer).toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer).toHaveClass('bai-table-astryx-scroll-y');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe(
+    expect(layer).toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer).toHaveClass('uic-data-grid__body--scroll-y');
+    expect(layer.style.getPropertyValue('--data-grid-scroll-width')).toBe(
       'max-content',
     );
-    expect(layer.style.getPropertyValue('--bai-table-scroll-y')).toBe('500px');
+    expect(layer.style.getPropertyValue('--data-grid-max-height')).toBe(
+      '500px',
+    );
   });
 
   it('restores the pinned header cell above the plain sticky ones', () => {

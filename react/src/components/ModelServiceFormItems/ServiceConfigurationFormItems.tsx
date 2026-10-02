@@ -2,11 +2,9 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { Form } from '../../form-engine';
-import type { FormInstance } from '../../form-engine';
+import { Form, type FormInstance } from '../../form-engine';
 import { COMMAND_SHELL_OPTIONS } from '../../helper/modelServiceCommand';
 import { useSuspendedBackendaiClient } from '../../hooks';
-import { theme } from '../../theme-shim';
 import {
   AstryxFormNumberInput,
   AstryxFormRadioList,
@@ -14,7 +12,8 @@ import {
   AstryxFormTextInput,
 } from '../astryxFormControls';
 import '../collapsible-section.css';
-import { Collapsible } from '@astryxdesign/core/Collapsible';
+import { Collapsible } from '@lablup/ui-common/Collapsible';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +56,7 @@ const ServiceConfigurationFormItems: React.FC<
 > = ({ namePrefix, placeholders, portTooltipExtra }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const baiClient = useSuspendedBackendaiClient();
   const supportsCommandShell = baiClient.supports(
     'model-service-command-string',
@@ -82,7 +81,11 @@ const ServiceConfigurationFormItems: React.FC<
       {supportsCommandShell && (
         // The Collapsible supplies no gap between its trigger and content;
         // give the first row one explicitly.
-        <BAIFlex gap="sm" align="start" style={{ marginTop: token.marginSM }}>
+        <BAIFlex
+          gap="sm"
+          align="start"
+          style={{ marginTop: token('--spacing-3') }}
+        >
           <Form.Item
             name={[...namePrefix, 'execution']}
             label={t('modelService.Execution')}
@@ -171,13 +174,19 @@ const ServiceConfigurationFormItems: React.FC<
               // The hint states how the command will be run.
               // Managers without the command/shell path still
               // receive a tokenized `startCommand`, so they keep the
-              // original shell-syntax hint (FR-3166).
+              // original shell-syntax hint (FR-3166). Single-quoted JSON
+              // survives all three paths (bash -c, shlex.split, tokenizer).
               extra={
-                !supportsCommandShell
-                  ? t('modelService.StartCommandHelperShell')
-                  : isExec
-                    ? t('modelService.CommandExecHelper')
-                    : t('modelService.CommandShellHelper')
+                <BAIFlex direction="column" align="start">
+                  <span>
+                    {!supportsCommandShell
+                      ? t('modelService.StartCommandHelperShell')
+                      : isExec
+                        ? t('modelService.CommandExecHelper')
+                        : t('modelService.CommandShellHelper')}
+                  </span>
+                  <span>{t('modelService.CommandJsonArgumentHelper')}</span>
+                </BAIFlex>
               }
               // The command is sent to the server as the raw string
               // the user typed; the WebUI does not pre-validate shell
@@ -230,7 +239,7 @@ const ServiceConfigurationFormItems: React.FC<
         // antd's Collapse panel used to supply the section's bottom padding;
         // the flat Astryx Collapsible doesn't, so the last field keeps an
         // explicit gap before whatever section follows.
-        style={{ marginBottom: token.marginMD }}
+        style={{ marginBottom: token('--spacing-5') }}
       >
         {/* Backend `PresetModelServiceConfigInput.port` is `gt=1` exclusive,
             hence min 2. */}

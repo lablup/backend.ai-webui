@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4535281cf97f84428b776aa5e1bc963d>>
+ * @generated SignedSource<<d8ce0fe11c3929bdf6473f23e5624f74>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ReaderFragment } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
@@ -34,6 +35,10 @@ export type UserSettingModalFragment$data = {
   readonly projects: {
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly basicInfo: {
+          readonly name: string;
+          readonly type: ProjectTypeV2;
+        };
         readonly id: string;
       };
     }>;
@@ -251,7 +256,13 @@ return {
     },
     {
       "alias": null,
-      "args": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 1000
+        }
+      ],
       "concreteType": "ProjectV2Connection",
       "kind": "LinkedField",
       "name": "projects",
@@ -273,7 +284,32 @@ return {
               "name": "node",
               "plural": false,
               "selections": [
-                (v0/*: any*/)
+                (v0/*: any*/),
+                {
+                  "alias": null,
+                  "args": null,
+                  "concreteType": "ProjectBasicInfo",
+                  "kind": "LinkedField",
+                  "name": "basicInfo",
+                  "plural": false,
+                  "selections": [
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "name",
+                      "storageKey": null
+                    },
+                    {
+                      "alias": null,
+                      "args": null,
+                      "kind": "ScalarField",
+                      "name": "type",
+                      "storageKey": null
+                    }
+                  ],
+                  "storageKey": null
+                }
               ],
               "storageKey": null
             }
@@ -281,7 +317,7 @@ return {
           "storageKey": null
         }
       ],
-      "storageKey": null
+      "storageKey": "projects(limit:1000)"
     },
     {
       "args": null,
@@ -294,6 +330,6 @@ return {
 };
 })();
 
-(node as any).hash = "fe5c9e96f7b5b915441f9784c6cb4b3e";
+(node as any).hash = "ced5ed4a17807fedee6435df29bac47f";
 
 export default node;

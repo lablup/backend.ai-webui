@@ -28,11 +28,16 @@
  through a ref that is refreshed on each render. The component identity is
  stable; the behaviour is current.
 */
+import './BAIPowerSearchAdapters.css';
+import { PowerSearchFilterEditor } from '@lablup/ui-common/PowerSearch';
 import type {
   CustomOperatorValue,
   EnumItem,
-} from '@astryxdesign/core/PowerSearch';
-import type { SearchSource } from '@astryxdesign/core/Typeahead';
+  OperatorValue,
+  PowerSearchComponentOverride,
+  PowerSearchEditorProps,
+} from '@lablup/ui-common/PowerSearch';
+import type { SearchSource } from '@lablup/ui-common/Typeahead';
 import * as _ from 'lodash-es';
 import React, { useRef } from 'react';
 import type { ComponentType, ReactNode } from 'react';
@@ -229,3 +234,46 @@ export interface BAIPowerSearchChromeProps {
   className?: string;
   'data-testid'?: string;
 }
+
+/**
+ * Astryx's default editor popover content, wrapped in the class hook
+ * `BAIPowerSearchAdapters.css` styles against.
+ */
+export const BAIPowerSearchEditor = (props: PowerSearchEditorProps) => {
+  'use memo';
+
+  return (
+    <div className="bai-power-search-editor">
+      <PowerSearchFilterEditor {...props} />
+    </div>
+  );
+};
+
+const BAI_EDITOR_OVERRIDE: PowerSearchComponentOverride = {
+  Editor: BAIPowerSearchEditor,
+};
+
+/**
+ * `components` for both filters' PowerSearch. PowerSearch picks the override
+ * by the operator value type the popover opens on, so every type maps to the
+ * same editor; the full `Record` makes a new Astryx type a compile error.
+ */
+export const baiPowerSearchComponents: Record<
+  OperatorValue['type'],
+  PowerSearchComponentOverride
+> = {
+  empty: BAI_EDITOR_OVERRIDE,
+  string: BAI_EDITOR_OVERRIDE,
+  string_list: BAI_EDITOR_OVERRIDE,
+  integer: BAI_EDITOR_OVERRIDE,
+  float: BAI_EDITOR_OVERRIDE,
+  time: BAI_EDITOR_OVERRIDE,
+  date_absolute: BAI_EDITOR_OVERRIDE,
+  date_relative: BAI_EDITOR_OVERRIDE,
+  date_range: BAI_EDITOR_OVERRIDE,
+  enum: BAI_EDITOR_OVERRIDE,
+  enum_list: BAI_EDITOR_OVERRIDE,
+  entity_list: BAI_EDITOR_OVERRIDE,
+  custom: BAI_EDITOR_OVERRIDE,
+  nested: BAI_EDITOR_OVERRIDE,
+};

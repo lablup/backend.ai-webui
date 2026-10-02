@@ -27,11 +27,11 @@ import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { ProjectContext, toProjectContext } from '../types/projectContext';
 import { isDeletedCategory } from './VFolderNodeListPage';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Badge } from '@lablup/ui-common/Badge';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIVFolderDeleteButtonV2,
   BAISkeleton,
@@ -83,6 +83,7 @@ const STATUS_FILTER_DELETED = {
   status: { in: VISIBLE_DELETED_STATUSES },
 } as const;
 
+const DEFAULT_ORDER = '-created_at';
 const statusCategoryValues = ['active', 'deleted'] as const;
 const modeValues = ['all', 'general', 'data', 'automount', 'model'] as const;
 
@@ -141,9 +142,7 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
 
   const [queryParams, setQuery] = useQueryStates(
     {
-      order: parseAsStringLiteral(availableVFolderSorterValues).withDefault(
-        '-created_at',
-      ),
+      order: parseAsStringLiteral(availableVFolderSorterValues),
       filter: parseAsJson<VFolderFilter>((value) => value as VFolderFilter),
       statusCategory:
         parseAsStringLiteral(statusCategoryValues).withDefault('active'),
@@ -192,7 +191,9 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
     offset: baiPaginationOption.offset,
     limit: baiPaginationOption.first,
     filter: combinedFilter,
-    orderBy: convertToOrderBy<VFolderOrderBy>(queryParams.order),
+    orderBy: convertToOrderBy<VFolderOrderBy>(
+      queryParams.order || DEFAULT_ORDER,
+    ),
     filterForActiveCount: STATUS_FILTER_ACTIVE,
     filterForDeletedCount: STATUS_FILTER_DELETED,
   };
@@ -421,62 +422,66 @@ const ProjectAdminDataContent: React.FC<ProjectAdminDataContentProps> = ({
             />
           </HStack>
         </HStack>
-        <VFolderNodesV2
-          order={queryParams.order}
-          loading={deferredQueryVariables !== queryVariables}
-          project={project}
-          vfoldersFrgmt={filterOutNullAndUndefined(
-            _.map(projectVfolders?.edges, 'node'),
-          )}
-          rowSelection={{
-            type: 'checkbox',
-            preserveSelectedRowKeys: true,
-            getCheckboxProps(record: VFolderNodeInList) {
-              return {
-                disabled:
-                  isDeletedCategory(record.vfolderStatus) &&
-                  record.vfolderStatus !== 'DELETE_PENDING',
-              };
-            },
-            onChange: (selectedRowKeys) => {
-              handleRowSelectionChange(
-                selectedRowKeys,
-                filterOutNullAndUndefined(
-                  _.map(projectVfolders?.edges, 'node'),
-                ),
-                setSelectedFolderList,
+        {/* FR-4009: a query suspending inside the table (useCurrentUserProjectRoles
+            refetches after a folder mutation) must not blank the whole page. */}
+        <Suspense fallback={<BAISkeleton rows={4} />}>
+          <VFolderNodesV2
+            order={queryParams.order}
+            loading={deferredQueryVariables !== queryVariables}
+            project={project}
+            vfoldersFrgmt={filterOutNullAndUndefined(
+              _.map(projectVfolders?.edges, 'node'),
+            )}
+            rowSelection={{
+              type: 'checkbox',
+              preserveSelectedRowKeys: true,
+              getCheckboxProps(record: VFolderNodeInList) {
+                return {
+                  disabled:
+                    isDeletedCategory(record.vfolderStatus) &&
+                    record.vfolderStatus !== 'DELETE_PENDING',
+                };
+              },
+              onChange: (selectedRowKeys) => {
+                handleRowSelectionChange(
+                  selectedRowKeys,
+                  filterOutNullAndUndefined(
+                    _.map(projectVfolders?.edges, 'node'),
+                  ),
+                  setSelectedFolderList,
+                );
+              },
+              selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
+            }}
+            pagination={{
+              pageSize: tablePaginationOption.pageSize,
+              current: tablePaginationOption.current,
+              total: projectVfolders?.count ?? 0,
+              onChange(current, pageSize) {
+                if (_.isNumber(current) && _.isNumber(pageSize)) {
+                  setTablePaginationOption({ current, pageSize });
+                }
+              },
+            }}
+            onChangeOrder={(order) => {
+              setQuery({
+                order:
+                  (order as (typeof availableVFolderSorterValues)[number]) ??
+                  null,
+              });
+            }}
+            onRemoveRow={(removedId) => {
+              setSelectedFolderList((prevSelected) =>
+                _.filter(prevSelected, (folder) => folder.id !== removedId),
               );
-            },
-            selectedRowKeys: _.map(selectedFolderList, (i) => i.id),
-          }}
-          pagination={{
-            pageSize: tablePaginationOption.pageSize,
-            current: tablePaginationOption.current,
-            total: projectVfolders?.count ?? 0,
-            onChange(current, pageSize) {
-              if (_.isNumber(current) && _.isNumber(pageSize)) {
-                setTablePaginationOption({ current, pageSize });
-              }
-            },
-          }}
-          onChangeOrder={(order) => {
-            setQuery({
-              order:
-                (order as (typeof availableVFolderSorterValues)[number]) ??
-                null,
-            });
-          }}
-          onRemoveRow={(removedId) => {
-            setSelectedFolderList((prevSelected) =>
-              _.filter(prevSelected, (folder) => folder.id !== removedId),
-            );
-            updateFetchKey();
-          }}
-          tableSettings={{
-            columnOverrides: columnOverrides,
-            onColumnOverridesChange: setColumnOverrides,
-          }}
-        />
+              updateFetchKey();
+            }}
+            tableSettings={{
+              columnOverrides: columnOverrides,
+              onColumnOverridesChange: setColumnOverrides,
+            }}
+          />
+        </Suspense>
       </VStack>
       <DeleteVFolderModalV2
         vfolderFrgmts={selectedFolderList}

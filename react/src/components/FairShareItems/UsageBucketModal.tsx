@@ -6,10 +6,10 @@ import { UsageBucketModal_DomainFragment$key } from '../../__generated__/UsageBu
 import { UsageBucketModal_ProjectFragment$key } from '../../__generated__/UsageBucketModal_ProjectFragment.graphql';
 import { UsageBucketModal_UserFragment$key } from '../../__generated__/UsageBucketModal_UserFragment.graphql';
 import UsageBucketChartContent from './UsageBucketChartContent';
-import type { ISODateString } from '@astryxdesign/core/Calendar';
-import { DateRangeInput } from '@astryxdesign/core/DateRangeInput';
-import type { DateRange } from '@astryxdesign/core/DateRangeInput';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import type { ISODateString } from '@lablup/ui-common/Calendar';
+import { DateRangeInput } from '@lablup/ui-common/DateRangeInput';
+import type { DateRange } from '@lablup/ui-common/DateRangeInput';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAISkeleton,
   BAIFetchKeyButton,
@@ -17,7 +17,7 @@ import {
   BAIMetadataList,
   BAIModal,
   BAIModalProps,
-  BAITagList,
+  BAITokenList,
   useFetchKey,
 } from 'backend.ai-ui';
 import dayjs, { Dayjs } from 'dayjs';
@@ -245,7 +245,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
           ) : null}
           {domainFairShares && domainFairShares.length > 0 ? (
             <MetadataListItem label={t('fairShare.Domain')}>
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   domainFairShares,
                   (d) => d.domain?.basicInfo?.name || '',
@@ -255,7 +255,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
           ) : null}
           {projectFairShares && projectFairShares.length > 0 ? (
             <MetadataListItem label={t('fairShare.Project')}>
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   projectFairShares,
                   (p) => p?.project?.basicInfo?.name || '',
@@ -265,7 +265,7 @@ const UsageBucketModal: React.FC<UsageBucketModalProps> = ({
           ) : null}
           {userFairShares && userFairShares.length > 0 ? (
             <MetadataListItem label={t('fairShare.User')}>
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   userFairShares,
                   (u) => u?.user?.basicInfo?.email || '',

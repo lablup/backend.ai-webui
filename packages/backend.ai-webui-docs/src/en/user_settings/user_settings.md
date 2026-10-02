@@ -6,28 +6,31 @@ navTitle: User Settings
 
 # User Settings
 
-The User Settings page allows you to customize your Backend.AI WebUI experience.
-You can access it by clicking the person icon at the top right and selecting
-the Preferences menu. From here, you can configure preferences such as theme mode,
+The User Settings dialog allows you to customize your Backend.AI WebUI
+experience. You can open it by clicking the person icon at the top right and
+selecting the Preferences menu; it opens over the page you are on, so closing
+it puts you back where you were. From here, you can configure preferences such as theme mode,
 language, desktop notifications, SSH keypair management, shell scripts, and
 experimental features. You can also review the client-side logs, the login
 sessions currently signed in to your account, and your login history.
 
-![](../images/preferences.png)
+![=175px](../images/preferences.png)
 
-The page is organized into four tabs: **General**, **Logs**, **Login Sessions**,
-and **Login History**.
+The dialog is organized into four categories, listed down its left side:
+**General**, **Logs**, **Login Sessions**, and **Login History**. On a narrow
+screen the list fills the dialog and selecting a category opens it, with a back
+button to return to the list.
 
 <a id="general-tab"></a>
 
-## General tab
+## General
 
 ![](../images/user_settings_page.png)
 
-The General tab contains all preference settings organized into groups:
-**Preferences**, **Shell Environments**, and **Experimental features**. The list
-on the left lets you jump to a single group, or select **All** to see every
-setting at once.
+The General category contains all preference settings organized into groups:
+**Preferences**, **Shell Environments**, and **Experimental features**. Every
+group is listed one after another; use the search bar to narrow the list down
+to the setting you are looking for.
 
 ### Searching and filtering settings
 
@@ -80,25 +83,6 @@ account. Click the setting's reset button to go back to **Default**.
 The **Theme** setting appears only when your administrator has enabled theme
 customization and more than one theme is available for your installation. The
 set of themes offered can therefore differ from the list above.
-:::
-
-### Primary color
-
-**Primary Color** overrides the main accent color of the selected theme. Two
-color pickers are provided — one for **Light mode** and one for **Dark mode** —
-so each display mode can use a different accent color.
-
-1. Click the color swatch of the mode you want to change
-2. Choose a color from the picker, or enter a hex value
-3. The new accent color is applied to the WebUI immediately
-
-Clear a picker to fall back to the color that the selected theme provides for
-that mode. Clicking the setting's reset button clears both modes and restores
-the theme's own colors.
-
-:::note
-Like the **Theme** setting, **Primary Color** appears only when your
-administrator has enabled theme customization.
 :::
 
 ### Enables desktop notifications
@@ -202,7 +186,7 @@ Click the **Issue New Keypair** button to create a new keypair. After the
 keypair is issued, the **Keypair Credential Information** dialog appears, showing
 the new credentials one time only.
 
-![](../images/keypair_credential_info.png)
+![=640px](../images/keypair_credential_info.png)
 
 The dialog reveals the following values, each with a copy button:
 
@@ -257,7 +241,7 @@ deleted. To prevent accidental deletion, you must type **Permanently Delete**
 into the confirmation field before the delete is allowed.
 :::
 
-![](../images/keypair_delete_confirm.png)
+![=548px](../images/keypair_delete_confirm.png)
 
 <a id="user-ssh-keypair-management"></a>
 
@@ -274,7 +258,7 @@ generated and stored as user information. Please note that the secret key
 cannot be checked again unless it is saved manually immediately after
 creation.
 
-![](../images/ssh_keypair_dialog.png)
+![=528px](../images/ssh_keypair_dialog.png)
 
 :::note
 Backend.AI uses SSH keypair based on OpenSSH. On Windows, you may need to convert
@@ -286,7 +270,7 @@ such as accessing a private repository. To add your own SSH keypair, click the
 `Enter Manually` button. You will then see two text areas labeled **Public Key**
 and **Private Key**.
 
-![](../images/add_ssh_keypair_manually_dialog.png)
+![=528px](../images/add_ssh_keypair_manually_dialog.png)
 
 Enter the keys and click the `Save` button. When the keypair is registered
 successfully, the message *"SSH Keypair has been successfully registered."* is
@@ -296,7 +280,7 @@ malformed or the public and private keys do not match -- the dialog stays open
 and shows the error message returned by the server, so you can correct the
 keys and save again.
 
-![](../images/ssh_keypair_dialog_after.png)
+![=528px](../images/ssh_keypair_dialog_after.png)
 
 ### Max concurrent file upload limit
 
@@ -366,18 +350,19 @@ future updates. Each feature is turned on with its **Enabled** checkbox.
   Hugging Face directly into a model folder. The tab appears only when model
   deployment is also available in your installation.
 - **Session resource grid view**: Adds a **View mode** toggle -- **Table** or
-  **Grid** -- above the session list on the Sessions page and on the Admin
-  Session page. **Grid** replaces the table with one cell per session, colored
-  by the session's live resource utilization. The toggle appears only while
-  this feature is enabled; for the grid's own controls, see
+  **Grid** -- above the session list on the Sessions page, on the Admin
+  Session page, and on the **Sessions** tab of the **Agent Info** drawer on
+  the Resources page. **Grid** replaces the table with one cell per session,
+  colored by the session's live resource utilization. The toggle appears only
+  while this feature is enabled; for the grid's own controls, see
   [Session List View](#session-list-view-and-refresh).
 
 <a id="logs-tab"></a>
 
-## Logs tab
+## Logs
 
-Displays detailed information of various logs recorded on the client side. You
-can visit this page to find out more about errors that occurred.
+Displays detailed information of various logs recorded on the client side. Open
+this category to find out more about errors that occurred.
 You can search and filter error logs, refresh the list, and clear all logs by
 clicking the **Clear Logs** button at the top right.
 
@@ -385,24 +370,23 @@ clicking the **Clear Logs** button at the top right.
 
 :::note
 If you only have one page logged in, clicking the **Refresh** button may not
-seem to work properly. The Logs page is a collection of requests to the server
-and responses from the server. If the current page is the Logs page, it will
-not send any requests to the server except when explicitly refreshing the page.
-To check that logs are being stacked properly, open another page and click
-the **Refresh** button.
+seem to work properly. The log is a collection of requests to the server and
+responses from the server, and the page behind this dialog sends none while
+you are reading them. To check that logs are being stacked properly, close the
+dialog, do something on another page, and open **Logs** again.
 :::
 
 If you want to hide or show certain columns, click the gear icon at the bottom
 right of the table. A dialog will appear where you can select the columns you
 want to see.
 
-![](../images/logs_table_setting.png)
+![=420px](../images/logs_table_setting.png)
 
 <a id="login-sessions-tab"></a>
 
-## Login Sessions tab
+## Login Sessions
 
-The Login Sessions tab lists the login sessions currently associated with your
+The Login Sessions category lists the login sessions currently associated with your
 account — one entry for every place where you are signed in to Backend.AI. Use
 it to review where your account is in use and to sign out a session you no
 longer need.
@@ -450,13 +434,14 @@ session you are currently using, you have to log in again.
 
 <a id="login-history-tab"></a>
 
-## Login History tab
+## Login History
 
-The Login History tab shows the login attempts recorded for your account —
+The Login History category shows the login attempts recorded for your account —
 successful sign-ins, failed attempts, and login session events such as logout or
-expiry. This tab is read-only; there are no actions on the rows.
+expiry. This category is read-only; there are no actions on the rows.
 
 ![](../images/login_history_tab.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 The table includes the following columns:
 
@@ -464,6 +449,9 @@ The table includes the following columns:
   can sort by this column.
 - **Domain**: The domain the login attempt was made against. You can sort by
   this column.
+- **Client IP**: The IP address the login attempt came from, shown exactly as
+  the server reports it. Depending on the administrator's client IP masking
+  policy the address may be partially masked, or `-` when it was not recorded.
 - **Login Time**: When the login attempt was recorded. You can sort by this
   column.
 - **Failure Reason**: Additional detail reported for a failed attempt. Shows `-`

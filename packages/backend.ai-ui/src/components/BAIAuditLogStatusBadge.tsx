@@ -1,0 +1,55 @@
+import { SemanticColor } from '../helper';
+import BAIBadge, { BAIBadgeProps } from './BAIBadge';
+import * as _ from 'lodash-es';
+
+/**
+ * Status values of an audit log entry, mirroring the backend `AuditLogStatus`
+ * enum (`SUCCESS | ERROR | UNKNOWN | RUNNING | DENIED`). Defined as a
+ * hand-written union so the badge stays a presentational component with no
+ * Relay dependency.
+ */
+export type AuditLogStatus =
+  'SUCCESS' | 'ERROR' | 'UNKNOWN' | 'RUNNING' | 'DENIED';
+
+export interface BAIAuditLogStatusBadgeProps extends Omit<
+  BAIBadgeProps,
+  'text' | 'color' | 'processing'
+> {
+  status: AuditLogStatus | null;
+}
+
+const statusSemanticMap: Record<AuditLogStatus, SemanticColor | undefined> = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  RUNNING: 'info',
+  // Denied by policy — deliberate rejection, not a system error.
+  DENIED: 'warning',
+  // Unknown / indeterminate — render an outline-only dot (color undefined).
+  UNKNOWN: undefined,
+} as const;
+
+/**
+ * Semantic color-coded status badge for audit log
+ * entries. Wraps {@link BAIBadge}, mapping each `AuditLogStatus` to a semantic
+ * color (`SUCCESS` → success, `ERROR` → error, `RUNNING` → info + processing
+ * ripple, `DENIED` → warning, `UNKNOWN` → outline dot). Presentational only, no Relay dependency.
+ */
+const BAIAuditLogStatusBadge = ({
+  status,
+  ...badgeProps
+}: BAIAuditLogStatusBadgeProps) => {
+  'use memo';
+  const semanticColor = status ? _.get(statusSemanticMap, status) : undefined;
+
+  return (
+    <BAIBadge
+      {...badgeProps}
+      color={semanticColor}
+      processing={status === 'RUNNING'}
+      text={status}
+      style={{ whiteSpace: 'nowrap', ...badgeProps.style }}
+    />
+  );
+};
+
+export default BAIAuditLogStatusBadge;

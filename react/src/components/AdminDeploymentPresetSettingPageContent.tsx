@@ -4,8 +4,7 @@
  */
 import type { AdminDeploymentPresetSettingPageContent_preset$key } from '../__generated__/AdminDeploymentPresetSettingPageContent_preset.graphql';
 import EnvVarFormList from '../components/EnvVarFormList';
-import { Form } from '../form-engine';
-import type { FormInstance } from '../form-engine';
+import { Form, type FormInstance } from '../form-engine';
 import {
   DEFAULT_MODEL_SERVICE_SHELL,
   deriveCommandModeState,
@@ -19,7 +18,6 @@ import {
   type RuntimeVariantPresetValueEntry,
 } from '../hooks/useRuntimeParameterSchema';
 import { useCommonEnvVarConfigs } from '../hooks/useVariantConfigs';
-import { theme, useBAIBreakpoint } from '../theme-shim';
 import {
   STEP_KEYS,
   type AdminDeploymentPresetFormValue,
@@ -51,24 +49,26 @@ import {
   AstryxFormTextInput,
 } from './astryxFormControls';
 import './collapsible-section.css';
-import { Button } from '@astryxdesign/core/Button';
-import { Selector } from '@astryxdesign/core/Selector';
-import { Step, Stepper } from '@astryxdesign/lab';
+import { Button } from '@lablup/ui-common/Button';
+import { Selector } from '@lablup/ui-common/Selector';
+import { Step, Stepper } from '@lablup/ui-common/Stepper';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAdminImageSelect,
   BAIButton,
   BAICard,
   BAIFlex,
+  BAISkeleton,
   toLocalId,
+  useBAIBreakpoint,
   useDebounceFn,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import {
-  ChevronsRight,
   ChevronLeft,
-  CircleMinus,
   ChevronRight,
+  ChevronsRight,
+  CircleMinus,
   PlusIcon,
 } from 'lucide-react';
 import { parseAsJson, parseAsStringLiteral, useQueryStates } from 'nuqs';
@@ -244,7 +244,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const screens = useBAIBreakpoint();
   const baiClient = useSuspendedBackendaiClient();
   // BA-7210 / FR-3481: managers this version+ resolve an omitted model
@@ -849,6 +849,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   required: true,
                   message: t('adminDeploymentPreset.NameRequired'),
                 },
+                {
+                  pattern: /^\S+$/,
+                  message: t(
+                    'adminDeploymentPreset.NameCannotContainWhitespace',
+                  ),
+                },
               ]}
             >
               <AstryxFormTextInput
@@ -916,7 +922,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
                   <div
                     style={{
                       // Bottom gap comes from the component itself.
-                      marginTop: -token.margin,
+                      marginTop: `calc(-1 * ${token('--spacing-4')})`,
                     }}
                   >
                     <Suspense fallback={<BAISkeleton />}>
@@ -954,8 +960,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             {readsVfolderConfigFiles && supportsNullableModelDefinition && (
               <div
                 style={{
-                  marginTop: -token.margin,
-                  marginBottom: token.marginLG,
+                  marginTop: `calc(-1 * ${token('--spacing-4')})`,
+                  marginBottom: token('--spacing-6'),
                 }}
               >
                 {renderServiceConfigurationFormItems()}
@@ -975,7 +981,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="imageId"
               label={t('adminDeploymentPreset.Image')}
               rules={[{ required: true }]}
-              style={{ marginTop: token.marginMD }}
+              style={{ marginTop: token('--spacing-5') }}
             >
               <ImageSelectField />
             </BAIFormItem>
@@ -989,7 +995,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.step.Resources')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
             }}
             showDivider
           >
@@ -1038,7 +1044,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             </BAIFormItem>
             <BAIFormItem
               label={t('adminDeploymentPreset.ResourceOpts')}
-              style={{ marginBottom: 0, marginTop: token.marginMD }}
+              style={{ marginBottom: 0, marginTop: token('--spacing-5') }}
             >
               <Form.List name="resourceOpts">
                 {(fields, { add, remove }) => (
@@ -1102,7 +1108,10 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             <BAIFlex
               gap="md"
               wrap="wrap"
-              style={{ alignItems: 'flex-start', marginTop: token.marginMD }}
+              style={{
+                alignItems: 'flex-start',
+                marginTop: token('--spacing-5'),
+              }}
             >
               <BAIFormItem
                 name="clusterMode"
@@ -1180,7 +1189,12 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               name="startupCommand"
               label={t('adminDeploymentPreset.StartupCommand')}
               tooltip={t('adminDeploymentPreset.StartupCommandTooltip')}
-              extra={t('modelService.StartCommandHelperShell')}
+              extra={
+                <BAIFlex direction="column" align="start">
+                  <span>{t('modelService.StartCommandHelperShell')}</span>
+                  <span>{t('modelService.CommandJsonArgumentHelper')}</span>
+                </BAIFlex>
+              }
             >
               <AstryxFormTextArea
                 label={t('adminDeploymentPreset.StartupCommand')}
@@ -1218,7 +1232,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.ModelDefinition')}
             style={{
               display: currentStepKey === 'model' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
               // `.ant-card` clips with overflow:hidden, which cuts the header
               // switch's focus glow. Allow it to render fully.
               overflow: 'visible',
@@ -1258,7 +1272,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             title={t('adminDeploymentPreset.step.Deployment')}
             style={{
               display: currentStepKey === 'basic' ? 'block' : 'none',
-              marginTop: token.marginMD,
+              marginTop: token('--spacing-5'),
             }}
             showDivider
           >
@@ -1329,7 +1343,7 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
             direction="row"
             justify="end"
             gap="sm"
-            style={{ marginTop: token.marginMD }}
+            style={{ marginTop: token('--spacing-5') }}
             data-test-id="deployment-preset-step-navigation"
           >
             {!isFirstStep && (
@@ -1378,13 +1392,9 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
       {/* Right-side vertical Steps panel — mirrors DeploymentLauncherPageContent.
           Hidden below lg so the form gets the full viewport width on small screens. */}
       {screens.lg && (
-        <BAIFlex style={{ position: 'sticky', top: 80 }}>
-          {/* PILOT-DECISION: antd Steps → lab Stepper. `current`→`activeStep`,
-              `onChange`→`onStepClick`, `size="small"`→`density="compact"`;
-              antd's explicit 'process'/'wait' statuses are derived
-              automatically from `activeStep` and were dropped. Note Astryx
-              only makes completed/current steps clickable — forward jumps go
-              through the Next / Skip-to-Review buttons instead of the rail. */}
+        <BAIFlex style={{ position: 'sticky', top: 20 }}>
+          {/* Only completed and current steps are clickable; forward jumps go
+              through the Next / Skip-to-Review buttons. */}
           <Stepper
             activeStep={currentStepIndex}
             orientation="vertical"
@@ -1398,6 +1408,8 @@ const AdminDeploymentPresetSettingPageContent: React.FC<
               <Step
                 key={title}
                 step={idx}
+                // Only `auto` draws the error glyph on a step not yet reached.
+                indicator={stepErrors[idx] ? 'auto' : 'number'}
                 label={title}
                 status={stepErrors[idx] ? 'error' : undefined}
               />

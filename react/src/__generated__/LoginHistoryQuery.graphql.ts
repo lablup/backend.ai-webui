@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<071a8e61632da75f29d4e2d5f4e626e6>>
+ * @generated SignedSource<<7836dcd3a5c5e97e54e442eff1b0e08f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -246,6 +246,13 @@ return {
                     "alias": null,
                     "args": null,
                     "kind": "ScalarField",
+                    "name": "clientIp",
+                    "storageKey": null
+                  },
+                  {
+                    "alias": null,
+                    "args": null,
+                    "kind": "ScalarField",
                     "name": "failReason",
                     "storageKey": null
                   },
@@ -268,12 +275,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d3adafeb86e63588f4380d9b4c4e9374",
+    "cacheID": "61f645ead172f3418c2ed273d1c7144c",
     "id": null,
     "metadata": {},
     "name": "LoginHistoryQuery",
     "operationKind": "query",
-    "text": "query LoginHistoryQuery(\n  $filter: LoginHistoryFilter\n  $orderBy: [LoginHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginHistoryV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  failReason\n  createdAt\n}\n"
+    "text": "query LoginHistoryQuery(\n  $filter: LoginHistoryFilter\n  $orderBy: [LoginHistoryOrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  myLoginHistoryV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        ...BAILoginHistoryTableFragment\n        id\n      }\n    }\n  }\n}\n\nfragment BAILoginHistoryTableFragment on LoginHistoryV2 {\n  id\n  result\n  domainName\n  clientIp @since(version: \"26.9.0\")\n  failReason\n  createdAt\n}\n"
   }
 };
 })();

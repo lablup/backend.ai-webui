@@ -31,11 +31,14 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 - **Reach for a `backend.ai-ui` component first** — `BAIFlex`, `BAIButton`, `BAIModal`,
   `BAICard`, `BAIText`, `BAITable`, … They own this project's defaults and wrap the
   Astryx internals.
-- When no BAI equivalent exists, use **Astryx** (`@astryxdesign/core`) directly. Discover
-  before writing: `astryx search "<thing>"`, `astryx component <Name>`. The CLI lives in
-  the `react` workspace, so run it as `pnpm exec astryx …` from `react/` or
-  `pnpm run astryx …` from the repository root — `pnpm exec` finds no binary at the root.
-  See the `ASTRYX` block in `AGENTS.md` / `react/AGENTS.md`.
+- When no BAI equivalent exists, use **Astryx** directly, imported through its
+  `@lablup/ui-common` mirror: `@lablup/ui-common/<Name>`, never `@astryxdesign/*`
+  (ESLint rejects it; ADR 0009). Discover
+  before writing: `ui-common search "<thing>"`, `ui-common component <Name>`. The CLI comes
+  with `@lablup/ui-common`, a dependency of `react/` and BUI only, so run it as
+  `pnpm exec ui-common …` from `react/` or `pnpm run ui-common …` from the repository
+  root — `pnpm exec` finds no binary at the root.
+  See the `UI-COMMON` block in `AGENTS.md` / `react/AGENTS.md`.
 - **antd is not a dependency.** `import … from 'antd'` does not resolve and fails `tsc`;
   the workspace is exact-pinned so it cannot re-enter transitively. Never add one.
 - `antd-style` (`createStyles` / `createGlobalStyle`) is also gone. Styling that props and
@@ -45,14 +48,13 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ### Shims — same call shape, different import
 
-Three antd surfaces were replaced by self-hosted shims that are drop-in compatible. Adjust
+Two antd surfaces were replaced by self-hosted shims that are drop-in compatible. Adjust
 the `../` depth to the file; the same specifiers exist on both sides of the workspace
 (`react/src/*` re-exports the implementation in `packages/backend.ai-ui/src/*`).
 
 | Was | Now (host `react/src/**` and BUI `packages/backend.ai-ui/src/**`) |
 |---|---|
 | `import { App } from 'antd'` | `import { App } from '../app-shim'` |
-| `import { theme } from 'antd'` | `import { theme } from '../theme-shim'` |
 | `import { Form } from 'antd'` | `import { Form } from '../form-engine'` |
 
 - `App.useApp()` gives `{ message, modal }` with antd's exact call shape — `modal.confirm()`
@@ -60,13 +62,15 @@ the `../` depth to the file; the same specifiers exist on both sides of the work
   shim; long-running notifications are the Jotai store in
   `react/src/hooks/useBAINotification.tsx`. `<BAIAppProvider>` is mounted once in
   `DefaultProviders`.
-- `theme.useToken()` returns the antd-shaped `{ token, hashId, theme }` (numbers for
-  dimensions, hex strings for colours) backed by Astryx tokens. Use tokens, never hard-coded
-  colours — every component must work in light and dark.
+- The antd `theme.useToken()` has no shim any more (FR-3605): read a token with
+  `useTheme().token('--color-text-secondary')` from `@lablup/ui-common/theme`, or better,
+  write `'var(--color-text-secondary)'` straight into the style. Use tokens, never
+  hard-coded colours — every component must work in light and dark. Responsive
+  breakpoints are `useBAIBreakpoint()` from `backend.ai-ui`.
 - `Form` / `Form.Item` / `Form.List` / `Form.useForm` / `Form.useWatch` resolve to the
   self-hosted engine; `Form.Item` **is** `BAIFormItem`.
 - Everything else that used to come from antd is a `BAI*` wrapper from `backend.ai-ui` or an
-  Astryx primitive from `@astryxdesign/core/<Name>`.
+  Astryx primitive from `@lablup/ui-common/<Name>`.
 
 ### The antd-v6-shaped prop vocabulary is frozen deliberately
 
@@ -179,13 +183,14 @@ interfaces, enum members.
 ## Verification
 
 `bash scripts/verify.sh` (Relay compile, ESLint, Prettier, TypeScript) must pass. Unit tests
-are Vitest; E2E is Playwright under `e2e/` (see the `playwright-test-*` agents in
-`.claude/agents/`).
+are Vitest — `VERIFY_TESTS=1 bash scripts/verify.sh` runs the suites CI runs; E2E is
+Playwright under `e2e/` (see the `playwright-test-*` agents in `.claude/agents/`).
 
-`verify.sh` does **not** run the Astryx token gate — run
-`node scripts/migration-gates/astryx-token-gate.mjs --strict` yourself after touching CSS,
-theme tokens, or any `var(--…)`. AGENTS.md § Verification Harness explains what it catches
-and why nothing else reports it.
+`verify.sh` prints the Astryx token gate **report-only** (it never fails the run). After
+touching CSS, theme tokens, or any `var(--…)`, make sure its findings list gained nothing
+and run `node scripts/migration-gates/astryx-token-gate.mjs --strict` yourself for the fix
+hints. AGENTS.md § Verification Harness explains what it catches and why nothing else
+reports it.
 
 ## On-demand skills
 

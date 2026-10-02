@@ -114,21 +114,21 @@ Click the Launch button to send a request to create a compute session, and wait
 for a while to get a cluster session. After the session is created, you can view
 the created containers on the session details page.
 
-![](../images/cluster_session_created.png)
+![=751px](../images/cluster_session_created.png)
 
 Let's open the terminal app in the compute session we just have created. If you
 look up the environment variables, you can see that the `BACKENDAI_CLUSTER_*`
 variables described in the above section are set. Compare the meaning and value
 of each environment variable with the description above.
 
-![](../images/terminal_on_main_container.png)
+![=404px](../images/terminal_on_main_container.png)
 
 You can also SSH into the `sub1` container. No separate SSH setting is
 required, just issue the command `ssh sub1` and you are done. You can see the
 hostname after `work@` has changed, which indicated the sub container's shell
 is displayed.
 
-![](../images/terminal_on_sub1_container.png)
+![=427px](../images/terminal_on_sub1_container.png)
 
 In this way, Backend.AI makes it easy to create cluster computing sessions. In
 order to execute distributed learning and calculation through a cluster

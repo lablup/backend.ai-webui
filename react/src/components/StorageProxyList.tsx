@@ -9,23 +9,24 @@ import {
   toFixedFloorWithoutTrailingZeros,
 } from '../helper';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
-import { theme } from '../theme-shim';
 import AutoUpdateFetchKeyButton from './AutoUpdateFetchKeyButton';
 import StorageHostDetailDrawer from './StorageHostDetailDrawer';
-import { Badge } from '@astryxdesign/core/Badge';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  filterOutNullAndUndefined,
   BAICephIcon,
   BAIColumnsType,
+  BAIDoubleToken,
   BAIFlex,
   BAILink,
+  BAIProgressWithLabel,
   BAIPureStorageIcon,
   BAITable,
-  BAIProgressWithLabel,
-  BAIDoubleTag,
   BAIUnmountAfterClose,
   INITIAL_FETCH_KEY,
+  filterOutNullAndUndefined,
+  tokenColorForStatus,
   useFetchKey,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -34,49 +35,16 @@ import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 
-// Feeds BAIDoubleTag only, which still renders an antd `<Tag color>`
-// internally (frontier, unconverted — 16 consumers across the app). Legacy
-// antd color-preset strings are kept for that reason; the repo-global
-// `storageBackend` domain lookup (astryxTagVariant.ts, ticket 13) was
-// pre-built for this exact data and becomes the source of truth once
-// BAIDoubleTag itself is rebuilt on Astryx Badge.
-const backendType = {
-  xfs: {
-    color: 'blue',
-    icon: <Server />,
-  },
-  ceph: {
-    color: 'geekblue',
-    icon: <BAICephIcon />,
-  },
-  cephfs: {
-    color: 'geekblue',
-    icon: <BAICephIcon />,
-  },
-  vfs: {
-    color: 'green',
-    icon: <Server />,
-  },
-  nfs: {
-    color: 'green',
-    icon: <Server />,
-  },
-  purestorage: {
-    color: 'red',
-    icon: <BAIPureStorageIcon />,
-  },
-  dgx: {
-    color: 'green',
-    icon: <Server />,
-  },
-  spectrumscale: {
-    color: 'green',
-    icon: <Server />,
-  },
-  weka: {
-    color: 'purple',
-    icon: <Server />,
-  },
+const backendTypeIcon: Record<string, React.ReactNode> = {
+  xfs: <Server />,
+  ceph: <BAICephIcon />,
+  cephfs: <BAICephIcon />,
+  vfs: <Server />,
+  nfs: <Server />,
+  purestorage: <BAIPureStorageIcon />,
+  dgx: <Server />,
+  spectrumscale: <Server />,
+  weka: <Server />,
 };
 
 type StorageVolume = NonNullable<
@@ -87,7 +55,7 @@ type StorageVolume = NonNullable<
 
 const StorageProxyList = () => {
   'use memo';
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
   const [drawerStorageHostId, setDrawerStorageHostId] = useState<string | null>(
     null,
@@ -163,22 +131,19 @@ const StorageProxyList = () => {
       key: 'backend',
       dataIndex: 'backend',
       render: (value) => {
-        const platform = backendType[value as keyof typeof backendType] ?? {
-          color: 'gold',
-          icon: <Server />,
-        };
+        const icon = backendTypeIcon[value];
 
         return (
           <BAIFlex gap="xxs">
-            {platform.icon}
-            <BAIDoubleTag
+            {icon ?? <Server />}
+            <BAIDoubleToken
               values={[
-                {
-                  label: 'Backend',
-                },
+                { label: 'Backend' },
                 {
                   label: value,
-                  color: platform.color,
+                  color: icon
+                    ? tokenColorForStatus('storageBackend', value)
+                    : 'yellow',
                 },
               ]}
             />
@@ -199,7 +164,8 @@ const StorageProxyList = () => {
         const percent = _.toFinite(
           toFixedFloorWithoutTrailingZeros(ratio * 100, 2),
         );
-        const color = percent > 80 ? token.colorError : token.colorSuccess;
+        const color =
+          percent > 80 ? token('--color-error') : token('--color-success');
         const baseUnit =
           convertUnitValue(_.toString(usage?.capacity_bytes), 'auto', {
             base: 1000,
@@ -235,7 +201,7 @@ const StorageProxyList = () => {
         return (
           <BAIFlex gap="xxs" align="start" wrap="wrap">
             {_.map(value, (item) => (
-              <Badge key={item} variant="blue" label={item} />
+              <Token key={item} color="blue" label={item} />
             ))}
           </BAIFlex>
         );

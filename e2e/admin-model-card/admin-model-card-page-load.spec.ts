@@ -59,17 +59,16 @@ test.describe(
 
       // Verify the table is rendered with the correct column headers.
       // A columnheader's accessible name is "<label> Resize column <raw
-      // column key>" (e.g. "Domain Resize column domainName") or, for
+      // column key>" (e.g. "Project Resize column projectId") or, for
       // sortable columns, "Sort by <raw key>" instead of the label — both
-      // forms can substring-match an unrelated label (e.g. 'Name' matches
-      // "domainName"). Match the header's visible TEXT instead (see
+      // forms can substring-match an unrelated label. Match the header's
+      // visible TEXT instead (see
       // getSortableColumnHeader).
       await expect(getSortableColumnHeader(page, 'Name')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Title')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Category')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Task')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Access Level')).toBeVisible();
-      await expect(getSortableColumnHeader(page, 'Domain')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Project')).toBeVisible();
       await expect(getSortableColumnHeader(page, 'Created At')).toBeVisible();
     });
@@ -194,11 +193,12 @@ test.describe(
       // Same prerequisite as the pagination-navigation test above.
       await skipUnlessPaginated(page);
 
-      // Change page size from 10 to 20. The selector is Astryx `Select`
-      // (role="combobox" trigger, role="listbox"/"option" popup), not
-      // antd's `.ant-select-dropdown`.
+      // Change page size from 10 to 20. The selector is Astryx `Pagination`'s
+      // size `Select` (role="combobox" named "Items per page" via
+      // `@astryx.pagination.itemsPerPage`; role="option" rows labelled with
+      // the bare size, `String(opt)`).
       const pageSizeSelector = page.getByRole('combobox', {
-        name: 'Page Size',
+        name: 'Items per page',
       });
       await pageSizeSelector.click();
       await page.getByRole('option', { name: '20', exact: true }).click();

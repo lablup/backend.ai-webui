@@ -5,32 +5,42 @@
 import { ChatPageQuery } from '../__generated__/ChatPageQuery.graphql';
 import ChatCard from '../components/Chat/ChatCard';
 import {
-  type ChatHistoryData,
   generateChatId,
   getChatById,
   useHistory,
+  type ChatHistoryData,
 } from '../components/Chat/ChatHistory';
-import { type ChatProviderData } from '../components/Chat/ChatModel';
+import {
+  normalizeCustomEndpointURL,
+  type ChatProviderData,
+} from '../components/Chat/ChatModel';
 import WebUINavigate from '../components/WebUINavigate';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useProjectPath } from '../hooks/useRouteScope';
-import { theme } from '../theme-shim';
-import { Banner } from '@astryxdesign/core/Banner';
-import { Card } from '@astryxdesign/core/Card';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Skeleton } from '@astryxdesign/core/Skeleton';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Heading, Text } from '@astryxdesign/core/Text';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { Drawer } from '@astryxdesign/lab';
+import './ChatPage.css';
+import { Banner } from '@lablup/ui-common/Banner';
+import { Card } from '@lablup/ui-common/Card';
+import { Divider } from '@lablup/ui-common/Divider';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Skeleton } from '@lablup/ui-common/Skeleton';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Heading, Text } from '@lablup/ui-common/Text';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex, BAITable, toLocalId } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { HistoryIcon, PencilIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import {
+  HistoryIcon,
+  PencilIcon,
+  PlusIcon,
+  TrashIcon,
+  XIcon,
+} from 'lucide-react';
 import { parseAsString, useQueryStates } from 'nuqs';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useLazyLoadQuery } from 'react-relay';
 import { useParams } from 'react-router-dom';
@@ -95,56 +105,94 @@ function useDefaultDeploymentId() {
 export function useChatProviderData(
   defaultDeploymentId?: string,
 ): ChatProviderData {
-  const [{ deploymentId, modelId, agentId, apiKey }] = useQueryStates({
+  const [{ deploymentId, modelId, agentId, apiKey, baseURL }] = useQueryStates({
     deploymentId: parseAsString,
     agentId: parseAsString,
     modelId: parseAsString,
     apiKey: parseAsString,
+    baseURL: parseAsString,
   });
+  // `?baseURL=` opens a custom endpoint; the key is never taken from the URL.
+  const customBaseURL = baseURL
+    ? normalizeCustomEndpointURL(baseURL)
+    : undefined;
 
   return {
     basePath: 'v1', // Use OpenAPI 'v1' for OpenAI compatibility basePath,
-    baseURL: '',
-    deploymentId: deploymentId ?? defaultDeploymentId ?? undefined,
+    baseURL: customBaseURL ?? '',
+    deploymentId: customBaseURL
+      ? ''
+      : (deploymentId ?? defaultDeploymentId ?? undefined),
     agentId: agentId ?? undefined,
     modelId: modelId ?? undefined,
     apiKey: apiKey ?? undefined,
   };
 }
 
-interface ChatHistoryDrawerProps {
+interface ChatHistoryPanelProps {
   selectedHistoryId?: string;
   history: ChatHistoryData[];
-  open?: boolean;
   onClickClose: () => void;
   onClickRemove: (id: string) => void;
   onClickHistory: (id: string) => void;
 }
 
-const ChatHistoryDrawer = ({
+// Contained by the page card (position: relative), so it overlays the whole
+// card, header included. Styling: ChatPage.css.
+const ChatHistoryPanel = ({
   selectedHistoryId,
   history,
-  open,
   onClickClose,
   onClickRemove,
   onClickHistory,
-}: ChatHistoryDrawerProps) => {
+}: ChatHistoryPanelProps) => {
   'use memo';
 
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { t } = useTranslation();
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus({ preventScroll: true });
+  }, []);
 
   return (
-    <Drawer
-      isOpen={!!open}
-      onClose={onClickClose}
-      hasScrim={false}
-      side="end"
-      size={300}
-      label={t('chatui.History')}
+    <VStack
+      className="chat-history-panel"
+      align="stretch"
+      role="complementary"
+      aria-label={t('chatui.History')}
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') {
+          e.stopPropagation();
+          onClickClose();
+        }
+      }}
     >
-      <VStack gap={4} align="stretch" style={{ padding: 'var(--spacing-6)' }}>
+      <HStack
+        justify="between"
+        align="center"
+        gap={2}
+        paddingInline={4}
+        paddingBlock={3}
+      >
         <Heading level={5}>{t('chatui.History')}</Heading>
+        <IconButton
+          ref={closeButtonRef}
+          variant="ghost"
+          icon={<XIcon size="1em" />}
+          label={t('button.Close')}
+          onClick={onClickClose}
+        />
+      </HStack>
+      <Divider />
+      <VStack
+        className="chat-history-panel__body"
+        align="stretch"
+        isScrollable
+        paddingInline={4}
+        paddingBlock={2}
+      >
         <BAITable
           showHeader={false}
           dataSource={history.map((item) => ({
@@ -178,7 +226,7 @@ const ChatHistoryDrawer = ({
                   </HStack>
                   <Text
                     color="secondary"
-                    style={{ fontSize: token.fontSizeSM }}
+                    style={{ fontSize: token('--font-size-sm') }}
                   >
                     {dayjs(record.updatedAt).format('YYYY-MM-DD HH:mm:ss')}
                   </Text>
@@ -187,11 +235,12 @@ const ChatHistoryDrawer = ({
             },
             {
               key: 'actions',
-              width: token.sizeXXL,
+              align: 'right',
+              width: token('--spacing-12'),
               render: (_, record) => (
                 <IconButton
                   variant="ghost"
-                  icon={<TrashIcon size={token.size} />}
+                  icon={<TrashIcon size={token('--spacing-4')} />}
                   label={t('chatui.DeleteChattingSession')}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -208,7 +257,7 @@ const ChatHistoryDrawer = ({
           pagination={false}
         />
       </VStack>
-    </Drawer>
+    </VStack>
   );
 };
 
@@ -264,6 +313,8 @@ const EditableChatTitle: React.FC<EditableChatTitleProps> = ({
         onEnter={commit}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
+            // Claims the press, so an open scrimless drawer stays open.
+            e.preventDefault();
             setDraft(label);
             setIsEditing(false);
           }
@@ -310,6 +361,12 @@ const PureChatPage = ({ id }: { id: string }) => {
   } = useHistory(id, provider);
   const navigate = useWebUINavigate();
   const buildProjectPath = useProjectPath();
+  const historyToggleRef = useRef<HTMLButtonElement>(null);
+
+  const closeHistory = () => {
+    setOpenHistory(false);
+    historyToggleRef.current?.focus();
+  };
 
   return (
     chat && (
@@ -341,6 +398,7 @@ const PureChatPage = ({ id }: { id: string }) => {
             display: 'flex',
             flexDirection: 'column',
             flex: 1,
+            position: 'relative',
           }}
         >
           <VStack
@@ -370,6 +428,7 @@ const PureChatPage = ({ id }: { id: string }) => {
                 </Tooltip>
                 <Tooltip content={t('chatui.History')}>
                   <IconButton
+                    ref={historyToggleRef}
                     variant="ghost"
                     icon={<HistoryIcon />}
                     label={t('chatui.History')}
@@ -380,14 +439,10 @@ const PureChatPage = ({ id }: { id: string }) => {
                 </Tooltip>
               </BAIFlex>
             </HStack>
-            {/* `flex: 1` + `minHeight: 0`, never `height: 100%`. This column is
-                a flex child of the `VStack` above, which also holds the title
-                row. `height: 100%` resolves against the VStack's *full* height
-                and so ignores that sibling — the column then overflows the
-                VStack by exactly the title row's height, and the VStack's
-                `overflow: hidden` eats that much off the bottom, which is
-                where the composer lives. Growing into the leftover space
-                instead keeps the whole height budget honest. */}
+            {/* `flex: 1` + `minHeight: 0`, never `height: 100%` — this column
+                shares the parent VStack's height with the title row, so
+                `height: 100%` overflows it by the title row and `overflow:
+                hidden` eats the composer off the bottom. */}
             <BAIFlex
               direction="column"
               align="stretch"
@@ -446,32 +501,31 @@ const PureChatPage = ({ id }: { id: string }) => {
               )}
             </BAIFlex>
           </VStack>
-          <ChatHistoryDrawer
-            selectedHistoryId={chat.id}
-            open={openHistory}
-            history={history}
-            onClickClose={() => {
-              setOpenHistory(false);
-            }}
-            onClickRemove={(historyId) => {
-              const remainHistories = removeHistory(historyId);
+          {openHistory && (
+            <ChatHistoryPanel
+              selectedHistoryId={chat.id}
+              history={history}
+              onClickClose={closeHistory}
+              onClickRemove={(historyId) => {
+                const remainHistories = removeHistory(historyId);
 
-              if (remainHistories === 0) {
-                setOpenHistory(false);
-                navigate(buildProjectPath('chat'), { replace: true });
-              } else if (historyId === chat.id) {
-                const chat = history.filter(({ id }) => id !== historyId)[0];
-                navigate(buildProjectPath(`chat/${chat?.id}`), {
+                if (remainHistories === 0) {
+                  closeHistory();
+                  navigate(buildProjectPath('chat'), { replace: true });
+                } else if (historyId === chat.id) {
+                  const chat = history.filter(({ id }) => id !== historyId)[0];
+                  navigate(buildProjectPath(`chat/${chat?.id}`), {
+                    replace: true,
+                  });
+                }
+              }}
+              onClickHistory={(historyId) => {
+                navigate(buildProjectPath(`chat/${historyId}`), {
                   replace: true,
                 });
-              }
-            }}
-            onClickHistory={(historyId) => {
-              navigate(buildProjectPath(`chat/${historyId}`), {
-                replace: true,
-              });
-            }}
-          />
+              }}
+            />
+          )}
         </Card>
       </BAIFlex>
     )

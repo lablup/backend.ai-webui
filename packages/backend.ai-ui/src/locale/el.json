@@ -6,6 +6,7 @@
     "DiskPerc": "Χρήση δίσκου %",
     "Endpoint": "Σημείο τερματισμού",
     "FailedToLoadCellData": "Αποτυχία φόρτωσης δεδομένων.",
+    "LostAt": "Χάθηκε στις",
     "NoAvailableLiveStat": "Καμία διαθέσιμη ζωντανή στατιστική",
     "Region": "Περιοχή",
     "ResourceGroup": "Ομάδα πόρων",
@@ -13,7 +14,8 @@
     "Schedulable": "Προγραμματιζόμενο",
     "Starts": "Εκκινήσεις",
     "Status": "Κατάσταση",
-    "Utilization": "Χρήση"
+    "Utilization": "Χρήση",
+    "Version": "Έκδοση"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Επιτρέπεται",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "ID ενέργειας",
     "Actor": "Εκτελεστής",
+    "ClientIp": "IP πελάτη",
     "Description": "Περιγραφή",
     "Duration": "Διάρκεια",
     "EntityId": "ID οντότητας",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Προέκυψε απρόσμενο σφάλμα. Δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη εάν το πρόβλημα επιμένει."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Καθαρισμός",
-    "KeepAsIs": "Διατήρηση ως έχει",
-    "UndoChanges": "Αναίρεση αλλαγών"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Η εκτέλεση απέτυχε",
-    "ErrorOccurred": "Παρουσιάστηκε σφάλμα"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Καθαρισμός",
-    "HexValue": "Δεκαεξαδική τιμή",
-    "NoColor": "Χωρίς χρώμα",
-    "SelectColor": "Επιλογή χρώματος"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Εκκαθάριση Αναζήτηση επιλογών",
-    "NoResults": "Δεν βρέθηκαν αποτελέσματα",
-    "SearchOptions": "Αναζήτηση επιλογών"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Επιλέξτε μητρώο εμπορευματοκιβωτίων"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "Κατάργηση επιτυχώς {{count}} εκδόσεις.",
     "Version": "Εκδοχή"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
-    "AreYouSureToPermanentlyDeleteTarget": "Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά {{target}};",
-    "CannotBeUndone": "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.",
-    "DeleteItem": "Διαγραφή",
-    "DeleteNItems": "Διαγραφή {{count}} στοιχείων",
-    "TypeToConfirm": "Πληκτρολογήστε <code>{{confirmText}}</code> για επιβεβαίωση."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Δημιουργήθηκε από"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Επιλέξτε ανάπτυξη"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Υποβαθμισμένο",
     "Deploying": "Αναπτύσσεται",
     "Healthy": "Υγιές",
@@ -245,6 +220,10 @@
       "Title": "Δεν ήταν δυνατή η σύνδεση με Backend.AI"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Πρόοδος εκκίνησης πυρήνων",
+    "KernelTerminationProgress": "Πρόοδος τερματισμού πυρήνων"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Μέγεθος συμπλέγματος",
     "Concurrency": "Ταυτόχρονες συνεδρίες",
@@ -265,6 +244,7 @@
     "SelectKeypair": "Επιλέξτε ζεύγος κλειδιών"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "IP πελάτη",
     "Domain": "Τομέας",
     "FailReason": "Αιτία αποτυχίας",
     "LoginTime": "Ώρα σύνδεσης",
@@ -355,18 +335,22 @@
     "UpdateProject": "Ενημέρωση έργου"
   },
   "comp:BAIProjectTable": {
+    "Active": "Ενεργός",
     "ContainerRegistry": "Αποθετήριο κοντέινερ",
     "ContainerRegistryProject": "Έργο αποθετηρίου κοντέινερ",
     "CreatedAt": "Δημιουργήθηκε στις",
     "Description": "Περιγραφή",
     "Domain": "Τομέας",
+    "Inactive": "Αδρανής",
     "IntegrationID": "ID ενσωμάτωσης",
+    "ModifiedAt": "Τροποποιήθηκε στις",
     "Name": "Όνομα",
     "Project": "Έργο",
     "ProjectID": "ID Έργου",
     "Registry": "Μητρώο",
     "ResourcePolicy": "Πολιτική πόρων",
     "ScalingGroups": "Ομάδες πόρων",
+    "Status": "Κατάσταση",
     "StorageNodes": "Κόμβοι Αποθήκευσης",
     "TotalResourceSlots": "Συνολικές θέσεις πόρων",
     "Type": "Τύπος"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Διατεθέντα / Ζητούμενα"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Αλλαγή χρώματος ομάδας",
-    "ResourceGrid": "Πλέγμα πόρων",
-    "UseColorN": "Χρήση χρώματος {{n}}"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Απεριόριστος"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "Πολλαπλών",
     "SingleNodeShort": "Μονόκλινο"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Απεριόριστος"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Επιλέξτε κεντρικό αποθηκευτικό χώρο"
   },
@@ -578,22 +554,10 @@
     "Time": "Ώρα"
   },
   "comp:BAITable": {
-    "Apply": "Εφαρμογή",
-    "Cancel": "Άκυρο",
     "CollapseAll": "Σύμπτυξη όλων",
     "ExpandAll": "Ανάπτυξη όλων",
     "ExpandErrorsOnly": "Ανάπτυξη μόνο σφαλμάτων",
-    "ExpandOptions": "Επιλογές ανάπτυξης",
-    "ExpandRow": "Ανάπτυξη γραμμής",
-    "Export": "Εξαγωγή",
-    "ExportCSV": "Εξαγωγή CSV",
-    "GoToFirstPage": "Μετάβαση στην πρώτη σελίδα",
-    "InvalidPageNumber": "Μη έγκυρος αριθμός σελίδας",
-    "NoDataToDisplay": "Δεν υπάρχουν δεδομένα για εμφάνιση",
-    "Pagination": "Σελιδοποίηση",
-    "SearchTableColumn": "Στήλες πίνακα αναζήτησης",
-    "SelectColumnToDisplay": "Επιλέξτε στήλες για εμφάνιση",
-    "SettingTable": "Ρυθμίσεις πίνακα"
+    "ExpandOptions": "Επιλογές ανάπτυξης"
   },
   "comp:BAITestButton": {
     "Test": "δοκιμή"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Μη έγκυρη μορφή διαδρομής.",
     "AliasOverlapping": "Η διαδρομή προσάρτησης επικαλύπτεται με άλλο φάκελο.",
+    "AliasOverlappingWithAutoMount": "Η διαδρομή προσάρτησης επικαλύπτεται με φάκελο αυτόματης προσάρτησης.",
     "AliasPlaceholder": "Διαδρομή προσάρτησης",
     "AutoMountedFolders": "Φάκελοι αυτόματης προσάρτησης",
-    "Name": "Όνομα",
-    "PathAndAlias": "Διαδρομή & Ψευδώνυμο",
+    "CreateFolder": "Δημιουργήστε έναν νέο φάκελο αποθήκευσης",
+    "DestinationPath": "Διαδρομή container (destination)",
+    "Folders": "Φάκελοι",
+    "OwnerProject": "Έργο",
+    "OwnerUser": "Χρήστης",
     "PathAndAliasTooltip": "Η διαδρομή εντός του container όπου θα προσαρτηθεί ο φάκελος. Αφήστε κενό για να χρησιμοποιηθεί η προεπιλεγμένη διαδρομή.",
+    "Refresh": "Φρεσκάρω",
     "RemoveFolder": "Αφαίρεση",
+    "SelectFolder": "Επιλογή φακέλου",
+    "SourcePath": "Διαδρομή στον φάκελο (source)",
     "Subpath": "Υποδιαδρομή",
     "SubpathInvalid": "Η υποδιαδρομή πρέπει να είναι σχετική και να μην περιέχει '..'.",
-    "SubpathPlaceholder": "π.χ. dataset/train (προαιρετικό)",
-    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Αφήστε κενό για προσάρτηση της ρίζας."
+    "SubpathTooltip": "Προσαρτά έναν υποφάκελο εντός του φακέλου ως πηγή αντί της ρίζας του. Κάντε κλικ στο πεδίο για να περιηγηθείτε στον φάκελο και να επιλέξετε έναν· αφήστε το κενό για να προσαρτηθεί η ρίζα του φακέλου.",
+    "UnmountableFoldersRemoved": "Οι φάκελοι που δεν μπορείτε πλέον να προσαρτήσετε αφαιρέθηκαν από την επιλογή."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Επιλογή φακέλου"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "Τα διαγραμμένα αρχεία και οι φάκελοι δεν μπορούν να αποκατασταθούν. \nΘέλετε να προχωρήσετε;",
     "DeleteSelectedItemsDialog": "Διαγραφή επιβεβαίωσης",
     "Download": "Λήψη",
+    "DownloadPopupBlocked": "Το πρόγραμμα περιήγησης απέκλεισε το παράθυρο λήψης. Επιτρέψτε τα αναδυόμενα παράθυρα για αυτόν τον ιστότοπο και δοκιμάστε ξανά.",
+    "DownloadRejected": "Ο storage proxy απέρριψε τη λήψη (HTTP {{status}}). Η λήψη δεν ξεκίνησε.",
     "DownloadSelected": "Λήψη",
     "DownloadStarted": "Αρχείο \"{{fileName}}\" Η λήψη έχει ξεκινήσει.",
+    "DownloadUnreachable": "Δεν ήταν δυνατή η σύνδεση με τον storage proxy στο {{origin}}. Η λήψη δεν ξεκίνησε.",
     "DragAndDropDesc": "Σύρετε και αποθέστε αρχεία σε αυτήν την περιοχή για μεταφόρτωση.",
     "DuplicatedFiles": "Αντιπροσώπηση επιβεβαίωσης",
     "DuplicatedFilesDesc": "Το αρχείο ή ο φάκελος με το ίδιο όνομα υπάρχει ήδη. \nΘέλετε να αντικαταστήσετε;",
     "EditFile": "Επεξεργασία αρχείου",
+    "ExistingItem": "Υπάρχον",
     "FileCreatedSuccessfully": "Το αρχείο δημιουργήθηκε επιτυχώς.",
     "FileName": "Όνομα αρχείου",
     "FileNamePlaceholder": "π.χ. model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "Τροποποιημένος",
     "Name": "Ονομα",
     "NoUploadPermissionForHost": "Δεν έχετε άδεια μεταφόρτωσης για αυτόν τον κεντρικό χώρο αποθήκευσης.",
+    "OtherItemsWillBeUploaded": "{{count}} ακόμη στοιχείο(-α) θα μεταφορτωθούν επίσης.",
     "Path": "Διαδρομή",
     "PleaseEnterAFileName": "Εισαγάγετε το όνομα του αρχείου.",
     "PleaseEnterAFolderName": "Εισαγάγετε το όνομα του φακέλου.",
     "RenameFile": "Μετονομασία",
     "RenameSuccess": "Το όνομα έχει αλλάξει με επιτυχία.",
+    "SelectItemsToOverwrite": "Αυτά τα στοιχεία υπάρχουν ήδη εδώ. Επιλέξτε αυτά που θα αντικατασταθούν· τα μη επιλεγμένα παραλείπονται.",
     "SelectedItemsDeletedSuccessfully": "Επιλεγμένα αρχεία και φακέλους έχουν διαγραφεί με επιτυχία.",
     "Size": "Μέγεθος",
     "TypeDeleteToConfirm": "Πληκτρολογήστε «Διαγράφω» για επιβεβαίωση.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "Αυτή η μορφή αρχείου δεν υποστηρίζει επεξεργασία.",
     "UploadFiles": "Μεταφόρτωση αρχείων",
     "UploadFolder": "Μεταφορτωμένος φάκελος",
+    "UploadingItem": "Προς μεταφόρτωση",
     "error": {
       "DuplicatedName": "Αυτό το όνομα χρησιμοποιείται ήδη. \nΕισαγάγετε ένα διαφορετικό όνομα.",
       "FileNameRequired": "Εισαγάγετε ένα αρχείο ή ένα όνομα φακέλου."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} των στοιχείων {{total}}"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Δεν υπάρχουν διαθέσιμα δεδομένα πόρων"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "Παρουσιάστηκε ένα άγνωστο σφάλμα. \nΔοκιμάστε ξανά."
   },
-  "form": {
-    "Optional": "(προαιρετικό)",
-    "validateMessages": {
-      "Default": "Σφάλμα επικύρωσης πεδίου για ${label}",
-      "Required": "Παρακαλώ εισάγετε ${label}",
-      "Whitespace": "Το ${label} δεν μπορεί να είναι κενός χαρακτήρας",
-      "array": {
-        "Len": "Πρέπει να είναι ${len} ${label}",
-        "Max": "Το πολύ ${max} ${label}",
-        "Min": "Τουλάχιστον ${min} ${label}",
-        "Range": "Το ποσό του ${label} πρέπει να είναι μεταξύ ${min}-${max}"
-      },
-      "number": {
-        "Len": "Το ${label} πρέπει να είναι ίσο με ${len}",
-        "Max": "Το ${label} πρέπει να είναι το πολύ ${max}",
-        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min}",
-        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max}"
-      },
-      "pattern": {
-        "Mismatch": "Το ${label} δεν ταιριάζει με το μοτίβο ${pattern}"
-      },
-      "string": {
-        "Len": "Το ${label} πρέπει να είναι ${len} χαρακτήρες",
-        "Max": "Το ${label} πρέπει να είναι το πολύ ${max} χαρακτήρες",
-        "Min": "Το ${label} πρέπει να είναι τουλάχιστον ${min} χαρακτήρες",
-        "Range": "Το ${label} πρέπει να είναι μεταξύ ${min}-${max} χαρακτήρων"
-      },
-      "types": {
-        "Email": "Το ${label} δεν είναι έγκυρο ${type}",
-        "Number": "Το ${label} δεν είναι έγκυρο ${type}",
-        "Object": "Το ${label} δεν είναι έγκυρο ${type}",
-        "String": "Το ${label} δεν είναι έγκυρο ${type}",
-        "Url": "Το ${label} δεν είναι έγκυρο ${type}"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Μείωση",
-    "DeselectAll": "Αποεπιλογή όλων",
     "File": "Αρχείο",
-    "Increase": "Αύξηση",
-    "Loading": "Φόρτωση...",
-    "NSelected": "{{count}} Επιλεγμένη",
     "Optional": "Προαιρετικό",
     "Project": "Έργο",
     "Search": "Αναζήτηση",
     "Select": "Επιλογή",
-    "SelectPlaceholder": "Επιλέξτε {{label}}",
-    "TotalItems": "Σύνολο {{total}} στοιχεία",
     "Unit": "Μονάδα",
     "button": {
       "Action": "Ενέργεια",

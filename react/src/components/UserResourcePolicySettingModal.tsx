@@ -15,15 +15,15 @@ import { App } from '../app-shim';
 import { Form, FormInstance } from '../form-engine';
 import { GBToBytes, bytesToGB } from '../helper';
 import { SIGNED_32BIT_MAX_INT } from '../helper/const-vars';
-import { theme } from '../theme-shim';
 import BAIFormItem from './BAIFormItem';
 import FormItemWithUnlimited from './FormItemWithUnlimited';
 import {
   AstryxFormNumberInput,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Banner } from '@astryxdesign/core/Banner';
-import { BAIModal, BAIModalProps, BAIFlex } from 'backend.ai-ui';
+import { Banner } from '@lablup/ui-common/Banner';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +42,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
   ...baiModalProps
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message } = App.useApp();
 
   const formRef = useRef<FormInstance>(null);
@@ -206,7 +206,6 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       }
       onOk={handleOk}
       onCancel={() => onRequestClose()}
-      destroyOnHidden
       confirmLoading={
         isInFlightCommitCreateUserResourcePolicy ||
         isInFlightCommitModifyUserResourcePolicy
@@ -216,7 +215,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       <Banner
         title={t('storageHost.BeCarefulToSetUserResourcePolicy')}
         status="warning"
-        style={{ marginBottom: token.marginMD }}
+        style={{ marginBottom: token('--spacing-5') }}
       />
       <Form
         ref={formRef}
@@ -260,7 +259,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           direction="column"
           align="stretch"
           gap={'md'}
-          style={{ marginBottom: token.marginMD }}
+          style={{ marginBottom: token('--spacing-5') }}
         >
           <FormItemWithUnlimited
             name={'max_vfolder_count'}

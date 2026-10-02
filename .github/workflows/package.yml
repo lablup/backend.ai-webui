@@ -203,6 +203,8 @@ jobs:
           wait
 
       - name: Package Windows & Linux Desktop Apps
+        env:
+          DEB_REQUIRED: 1
         run: |
           make win_x64
           make win_arm64

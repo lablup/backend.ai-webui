@@ -15,10 +15,10 @@ import BAILink from '../BAILink';
 import BAIText from '../BAIText';
 import { BAIColumnType, BAITable, BAITableProps } from '../Table';
 import BAIArtifactRevisionDownloadButton from './BAIArtifactRevisionDownloadButton';
-import BAIArtifactStatusTag from './BAIArtifactStatusTag';
-import BAIArtifactTypeTag from './BAIArtifactTypeTag';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import BAIArtifactStatusBadge from './BAIArtifactStatusBadge';
+import BAIArtifactTypeToken from './BAIArtifactTypeToken';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import * as _ from 'lodash-es';
@@ -81,14 +81,36 @@ export const getTypeIcon = (type: string, size: number = 16) => {
 export type Artifact =
   NonNullable<BAIArtifactTableArtifactFragment$data>[number];
 
+// Each key snake_cases + uppercases into an `ArtifactOrderField` value, so the
+// caller can hand the emitted order string straight to `convertToOrderBy`.
+export const availableArtifactSorterKeys = [
+  'name',
+  'type',
+  'size',
+  'scannedAt',
+  'updatedAt',
+] as const;
+export type ArtifactSorterKey = (typeof availableArtifactSorterKeys)[number];
+export const availableArtifactSorterValues = [
+  ...availableArtifactSorterKeys,
+  ...availableArtifactSorterKeys.map((key) => `-${key}` as const),
+] as const;
+const isEnableSorter = (key: string) => {
+  return _.includes(availableArtifactSorterKeys, key);
+};
+
 export interface BAIArtifactTableProps extends Omit<
   BAITableProps<Artifact>,
-  'dataSource' | 'columns' | 'rowKey'
+  'dataSource' | 'columns' | 'rowKey' | 'onChangeOrder'
 > {
   artifactFragment: BAIArtifactTableArtifactFragment$key;
   onClickPull: (artifactId: string, revisionId: string) => void;
   onClickDelete: (artifactId: string) => void;
   onClickRestore: (artifactId: string) => void;
+  disableSorter?: boolean;
+  onChangeOrder?: (
+    order: (typeof availableArtifactSorterValues)[number] | null,
+  ) => void;
 }
 
 const BAIArtifactTable = ({
@@ -96,8 +118,11 @@ const BAIArtifactTable = ({
   onClickPull,
   onClickDelete,
   onClickRestore,
+  disableSorter,
+  onChangeOrder,
   ...tableProps
 }: BAIArtifactTableProps) => {
+  'use memo';
   const { t } = useBAIi18n();
 
   const artifact = useFragment<BAIArtifactTableArtifactFragment$key>(
@@ -118,7 +143,7 @@ const BAIArtifactTable = ({
           name
           url
         }
-        ...BAIArtifactTypeTagFragment
+        ...BAIArtifactTypeTokenFragment
         latestVersion: revisions(
           limit: 1
           orderBy: [
@@ -132,7 +157,7 @@ const BAIArtifactTable = ({
               version
               size
               status
-              ...BAIArtifactStatusTagFragment
+              ...BAIArtifactStatusBadgeFragment
               ...BAIArtifactRevisionDownloadButtonFragment
             }
           }
@@ -147,6 +172,7 @@ const BAIArtifactTable = ({
       title: t('comp:BAIArtifactRevisionTable.Name'),
       dataIndex: 'name',
       key: 'name',
+      sorter: isEnableSorter('name'),
       render: (name: string, record: Artifact) => {
         return (
           <BAIFlex direction="column" align="start" wrap="wrap">
@@ -154,7 +180,7 @@ const BAIArtifactTable = ({
               <BAILink to={'/reservoir/' + toLocalId(record.id)} style={{}}>
                 {name}
               </BAILink>
-              <BAIArtifactTypeTag artifactTypeFrgmt={record} />
+              <BAIArtifactTypeToken artifactTypeFrgmt={record} />
             </BAIFlex>
             {record.description && (
               <Text color="secondary" size="sm" display="block">
@@ -219,7 +245,7 @@ const BAIArtifactTable = ({
         return (
           <BAIFlex gap={'xs'} wrap="wrap" align="center">
             <BAIText monospace>{latestVersion.version}</BAIText>
-            <BAIArtifactStatusTag artifactRevisionFrgmt={latestVersion} />
+            <BAIArtifactStatusBadge artifactRevisionFrgmt={latestVersion} />
             {latestVersion.status === 'SCANNED' ? (
               <BAIArtifactRevisionDownloadButton
                 title={t('comp:BAIArtifactTable.PullLatestVersion')}
@@ -236,6 +262,7 @@ const BAIArtifactTable = ({
     {
       title: t('comp:BAIArtifactRevisionTable.Size'),
       key: 'size',
+      sorter: isEnableSorter('size'),
       render: (_value, record: Artifact) => {
         const latestVersion = record.latestVersion?.edges[0]?.node;
         if (!latestVersion || _.isEmpty(latestVersion) || !latestVersion.size)
@@ -252,6 +279,7 @@ const BAIArtifactTable = ({
       title: t('comp:BAIArtifactTable.Scanned'),
       dataIndex: 'scannedAt',
       key: 'scanned_at',
+      sorter: isEnableSorter('scannedAt'),
       render: (value: string) => {
         if (!value || _.isEmpty(value))
           return <Text color="secondary">N/A</Text>;
@@ -263,12 +291,24 @@ const BAIArtifactTable = ({
       title: t('comp:BAIArtifactRevisionTable.Updated'),
       dataIndex: 'updatedAt',
       key: 'updated_at',
+      sorter: isEnableSorter('updatedAt'),
       render: (value: string) => {
         if (!value || _.isEmpty(value))
           return <Text color="secondary">N/A</Text>;
 
         return <Text color="secondary">{dayjs(value).fromNow()}</Text>;
       },
+    },
+    {
+      // The type tag also rides along in the name cell; this column exists so
+      // TYPE ordering has a header to sit on.
+      title: t('comp:BAIArtifactDescriptions.Type'),
+      key: 'type',
+      sorter: isEnableSorter('type'),
+      render: (_value, record: Artifact) => (
+        <BAIArtifactTypeToken artifactTypeFrgmt={record} />
+      ),
+      defaultHidden: true,
     },
     {
       title: t('comp:BAIArtifactTable.Registry'),
@@ -312,8 +352,15 @@ const BAIArtifactTable = ({
     <BAITable<Artifact>
       scroll={{ x: 'max-content' }}
       rowKey={(record) => record.id}
-      columns={filterOutEmpty(columns)}
+      columns={_.map(filterOutEmpty(columns), (column) =>
+        disableSorter ? _.omit(column, 'sorter') : column,
+      )}
       dataSource={filterOutNullAndUndefined(artifact)}
+      onChangeOrder={(order) => {
+        onChangeOrder?.(
+          (order as (typeof availableArtifactSorterValues)[number]) || null,
+        );
+      }}
       {...tableProps}
     ></BAITable>
   );

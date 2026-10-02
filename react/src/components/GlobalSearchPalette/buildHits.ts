@@ -110,14 +110,24 @@ export interface BuildHitsParams {
   fallbackGroup?: string;
 }
 
+const tabOf = (
+  entry: SearchIndexEntry,
+  tabKey: string | undefined,
+): SearchIndexTab | undefined =>
+  tabKey ? _.find(entry.tabs, (tab) => tab.key === tabKey) : undefined;
+
 const tabLabelKeyOf = (
   entry: SearchIndexEntry,
   tabKey: string | undefined,
-): string | undefined =>
-  tabKey
-    ? _.find(entry.tabs, (tab) => tab.param === 'tab' && tab.key === tabKey)
-        ?.labelKey
-    : undefined;
+): string | undefined => tabOf(entry, tabKey)?.labelKey;
+
+const tabTargetSearchOf = (
+  entry: SearchIndexEntry,
+  tabKey: string | undefined,
+): Record<string, string> => {
+  const tab = tabOf(entry, tabKey);
+  return tab ? { [tab.param]: tab.key } : {};
+};
 
 const makeTabHit = (
   entry: SearchIndexEntry,
@@ -164,7 +174,7 @@ const makeSettingHit = (
   target: {
     path,
     search: {
-      ...(setting.tab ? { tab: setting.tab } : {}),
+      ...tabTargetSearchOf(entry, setting.tab),
       setting: setting.key,
     },
   },

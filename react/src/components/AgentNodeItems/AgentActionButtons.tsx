@@ -3,15 +3,15 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { AgentActionButtonsFragment$key } from '../../__generated__/AgentActionButtonsFragment.graphql';
-import { theme } from '../../theme-shim';
 import AgentLifeCycleControlModal, {
   AgentLifeCycleType,
 } from '../AgentLifeCycleControlModal';
 import AgentSettingModal from '../AgentSettingModal';
-import { ButtonGroup } from '@astryxdesign/core/ButtonGroup';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { ButtonGroup } from '@lablup/ui-common/ButtonGroup';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAITerminateIcon } from 'backend.ai-ui';
-import { CirclePlay, Settings, RefreshCw } from 'lucide-react';
+import { CirclePlay, RefreshCw, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment } from 'react-relay';
@@ -28,7 +28,7 @@ const AgentActionButtons: React.FC<AgentActionButtonsProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
 
   const [openSettingModal, setOpenSettingModal] = useState(false);
   const [lifeCycleType, setLifeCycleType] = useState<AgentLifeCycleType | null>(
@@ -78,7 +78,10 @@ const AgentActionButtons: React.FC<AgentActionButtonsProps> = ({
           icon={
             <BAITerminateIcon
               style={{
-                color: agent?.status === 'ALIVE' ? token.colorError : undefined,
+                color:
+                  agent?.status === 'ALIVE'
+                    ? token('--color-error')
+                    : undefined,
               }}
             />
           }

@@ -22,7 +22,6 @@ import { useSetBAINotification } from '../hooks/useBAINotification';
 import { useEffectiveAdminRole } from '../hooks/useCurrentUserProjectRoles';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { isDeletedCategory } from '../pages/VFolderNodeListPage';
-import { theme } from '../theme-shim';
 import { ProjectContextOrNull } from '../types/projectContext';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import InviteFolderSettingModal from './InviteFolderSettingModal';
@@ -30,11 +29,12 @@ import SharedFolderPermissionInfoModal from './SharedFolderPermissionInfoModal';
 import VFolderDeployModal, { VFolderDeployQuery } from './VFolderDeployModal';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
 import VFolderPermissionCell from './VFolderPermissionCell';
-import { Badge } from '@astryxdesign/core/Badge';
-import type { BadgeVariant } from '@astryxdesign/core/Badge';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
+import { Badge } from '@lablup/ui-common/Badge';
+import type { BadgeVariant } from '@lablup/ui-common/Badge';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAITable,
   BAITableProps,
@@ -103,6 +103,8 @@ const availableVFolderSorterKeys = [
   'cloneable',
   'status',
   'cur_size',
+  'creator',
+  'permission',
 ] as const;
 
 const isEnableSorter = (key: string) => {
@@ -155,7 +157,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { generateFolderPath } = useFolderExplorerOpener();
   const navigate = useWebUINavigate();
   const effectiveAdminRole = useEffectiveAdminRole();
@@ -284,7 +286,7 @@ const VFolderNameCell: React.FC<VFolderNameCellProps> = ({
       icon={
         <VFolderNodeIdenticon
           vfolderNodeIdenticonFrgmt={vfolder}
-          style={{ fontSize: token.fontSizeHeading5 }}
+          style={{ fontSize: token('--font-size-lg') }}
         />
       }
       title={vfolder.name}
@@ -376,6 +378,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
     graphql`
       fragment VFolderNodesFragment on VirtualFolderNode @relay(plural: true) {
         id @required(action: NONE)
+        row_id
         status
         name
         host
@@ -385,6 +388,8 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
         user_email
         group
         group_name
+        creator
+        permission
         usage_mode
         max_files
         max_size
@@ -481,7 +486,7 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
                               ),
                               extraDescription: !_.isEmpty(occupiedSession) ? (
                                 <VStack align="stretch">
-                                  {/* `token.colorTextDescription` maps to the
+                                  {/* `token('--color-text-description')` maps to the
                                       semantic `color="secondary"` (P5). */}
                                   <Text color="secondary">
                                     {t('data.folders.MountedSessions')}
@@ -577,6 +582,17 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             },
           },
           {
+            // The scalar the `permission` queryfilter/order targets, unlike the
+            // Mount Permission column above which renders the RBAC verb list.
+            key: 'permission',
+            title: t('data.folders.Permission'),
+            dataIndex: 'permission',
+            defaultHidden: true,
+            sorter: isEnableSorter('permission'),
+            render: (value: string) =>
+              value ? <VFolderPermissionCell permission={value} /> : '-',
+          },
+          {
             key: 'ownership_type',
             title: t('data.folders.Type'),
             dataIndex: 'ownership_type',
@@ -603,6 +619,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
               vfolder.ownership_type === 'user'
                 ? vfolder?.user_email
                 : vfolder?.group_name,
+          },
+          {
+            key: 'creator',
+            title: t('data.folders.Creator'),
+            dataIndex: 'creator',
+            defaultHidden: true,
+            sorter: isEnableSorter('creator'),
+            render: (value: string) => value || '-',
           },
           {
             key: 'usage_mode',
@@ -696,6 +720,14 @@ const VFolderNodes: React.FC<VFolderNodesProps> = ({
             sorter: isEnableSorter('created_at'),
             render: (value: string) =>
               value ? dayjs(value).format('ll LT') : '-',
+          },
+          {
+            key: 'row_id',
+            title: t('general.ID'),
+            dataIndex: 'row_id',
+            defaultHidden: true,
+            render: (value: string) =>
+              value ? <BAIText copyable>{value}</BAIText> : '-',
           },
         ]}
         {...tableProps}

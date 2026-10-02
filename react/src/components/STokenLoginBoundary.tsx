@@ -14,6 +14,7 @@
 import { App } from '../app-shim';
 // Ticket 34: `Form` is the self-hosted engine (was the antd SHIM).
 import { Form } from '../form-engine';
+import { extractErrorType } from '../helper';
 import { getDefaultLoginConfig } from '../helper/loginConfig';
 import {
   connectViaGQL,
@@ -27,10 +28,10 @@ import {
 } from '../hooks/useWebUIConfig';
 import BAIFormItem from './BAIFormItem';
 import { AstryxFormTextInput } from './astryxFormControls';
-import { Button } from '@astryxdesign/core/Button';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Text } from '@lablup/ui-common/Text';
 import { BAICard, BAIFlex, useBAILogger } from 'backend.ai-ui';
 import { useAtomValue, useStore } from 'jotai';
 import {
@@ -72,20 +73,6 @@ export type STokenLoginError =
    */
   | { kind: 'concurrent-session'; cause: unknown }
   | { kind: 'unknown'; cause: unknown };
-
-/**
- * Extract the trailing segment of a Backend.AI problem type URL.
- * e.g. "https://api.backend.ai/probs/active-login-session-exists"
- *      → "active-login-session-exists"
- *
- * Mirrors `LoginView.extractErrorType` so both entry points normalize the
- * authenticated-probe type the same way before switching on it.
- */
-const extractErrorType = (typeUrl: string | null | undefined): string => {
-  if (!typeUrl) return '';
-  const parts = typeUrl.split('/');
-  return parts[parts.length - 1] || '';
-};
 
 /**
  * Classify a `tokenLogin` failure into the appropriate `STokenLoginError`

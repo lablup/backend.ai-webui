@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2e5533a6dcd9debff7260cb51038432e>>
+ * @generated SignedSource<<5b4437ed4ea90a59a08ccbaa4ee96f43>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -87,8 +87,29 @@ export type KeypairResourcePolicyV2Query$data = {
     readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly allowedVfolderHosts: ReadonlyArray<{
+          readonly host: string;
+        }>;
+        readonly createdAt: string | null | undefined;
+        readonly defaultForUnspecified: string;
         readonly id: string;
+        readonly idleTimeout: number;
+        readonly maxConcurrentSessions: number;
+        readonly maxConcurrentSftpSessions: number;
+        readonly maxContainersPerSession: number;
+        readonly maxPendingSessionCount: number | null | undefined;
+        readonly maxPendingSessionResourceSlots: ReadonlyArray<{
+          readonly quantity: any | null | undefined;
+          readonly resourceType: string;
+          readonly unlimited: boolean;
+        }> | null | undefined;
+        readonly maxSessionLifetime: number;
         readonly name: string;
+        readonly totalResourceSlots: ReadonlyArray<{
+          readonly quantity: any | null | undefined;
+          readonly resourceType: string;
+          readonly unlimited: boolean;
+        }>;
         readonly " $fragmentSpreads": FragmentRefs<"BAIKeypairResourcePolicyV2TableFragment" | "KeypairResourcePolicyV2SettingModalFragment">;
       };
     }>;
@@ -163,7 +184,14 @@ v7 = {
   "name": "name",
   "storageKey": null
 },
-v8 = [
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "defaultForUnspecified",
+  "storageKey": null
+},
+v9 = [
   {
     "alias": null,
     "args": null,
@@ -185,7 +213,83 @@ v8 = [
     "name": "unlimited",
     "storageKey": null
   }
-];
+],
+v10 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceLimitEntry",
+  "kind": "LinkedField",
+  "name": "totalResourceSlots",
+  "plural": true,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxConcurrentSessions",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxContainersPerSession",
+  "storageKey": null
+},
+v13 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "idleTimeout",
+  "storageKey": null
+},
+v14 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxSessionLifetime",
+  "storageKey": null
+},
+v15 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "host",
+  "storageKey": null
+},
+v16 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxPendingSessionCount",
+  "storageKey": null
+},
+v17 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "maxConcurrentSftpSessions",
+  "storageKey": null
+},
+v18 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "ResourceLimitEntry",
+  "kind": "LinkedField",
+  "name": "maxPendingSessionResourceSlots",
+  "plural": true,
+  "selections": (v9/*: any*/),
+  "storageKey": null
+},
+v19 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "createdAt",
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -225,6 +329,28 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v7/*: any*/),
+                  (v8/*: any*/),
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
+                  (v14/*: any*/),
+                  {
+                    "alias": null,
+                    "args": null,
+                    "concreteType": "VFolderHostPermissionEntry",
+                    "kind": "LinkedField",
+                    "name": "allowedVfolderHosts",
+                    "plural": true,
+                    "selections": [
+                      (v15/*: any*/)
+                    ],
+                    "storageKey": null
+                  },
+                  (v16/*: any*/),
+                  (v17/*: any*/),
+                  (v18/*: any*/),
+                  (v19/*: any*/),
                   {
                     "args": null,
                     "kind": "FragmentSpread",
@@ -286,82 +412,12 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v7/*: any*/),
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "createdAt",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "defaultForUnspecified",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ResourceLimitEntry",
-                    "kind": "LinkedField",
-                    "name": "totalResourceSlots",
-                    "plural": true,
-                    "selections": (v8/*: any*/),
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxSessionLifetime",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxConcurrentSessions",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxPendingSessionCount",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "concreteType": "ResourceLimitEntry",
-                    "kind": "LinkedField",
-                    "name": "maxPendingSessionResourceSlots",
-                    "plural": true,
-                    "selections": (v8/*: any*/),
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxConcurrentSftpSessions",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "maxContainersPerSession",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "idleTimeout",
-                    "storageKey": null
-                  },
+                  (v8/*: any*/),
+                  (v10/*: any*/),
+                  (v11/*: any*/),
+                  (v12/*: any*/),
+                  (v13/*: any*/),
+                  (v14/*: any*/),
                   {
                     "alias": null,
                     "args": null,
@@ -370,13 +426,7 @@ return {
                     "name": "allowedVfolderHosts",
                     "plural": true,
                     "selections": [
-                      {
-                        "alias": null,
-                        "args": null,
-                        "kind": "ScalarField",
-                        "name": "host",
-                        "storageKey": null
-                      },
+                      (v15/*: any*/),
                       {
                         "alias": null,
                         "args": null,
@@ -386,7 +436,11 @@ return {
                       }
                     ],
                     "storageKey": null
-                  }
+                  },
+                  (v16/*: any*/),
+                  (v17/*: any*/),
+                  (v18/*: any*/),
+                  (v19/*: any*/)
                 ],
                 "storageKey": null
               }
@@ -399,16 +453,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "d95b434b6daa4ce53779845b1950d5af",
+    "cacheID": "2c42f1b8ff1d5487952639d8414644de",
     "id": null,
     "metadata": {},
     "name": "KeypairResourcePolicyV2Query",
     "operationKind": "query",
-    "text": "query KeypairResourcePolicyV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $orderBy: [KeypairResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        ...BAIKeypairResourcePolicyV2TableFragment\n        ...KeypairResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  createdAt\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxPendingSessionCount\n  maxPendingSessionResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxConcurrentSftpSessions\n  maxContainersPerSession\n  idleTimeout\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n\nfragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxContainersPerSession\n  idleTimeout\n  maxPendingSessionCount\n  maxConcurrentSftpSessions\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n"
+    "text": "query KeypairResourcePolicyV2Query(\n  $filter: KeypairResourcePolicyV2Filter\n  $orderBy: [KeypairResourcePolicyV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  adminKeypairResourcePoliciesV2(filter: $filter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n    count\n    edges {\n      node {\n        id\n        name\n        defaultForUnspecified\n        totalResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        maxConcurrentSessions\n        maxContainersPerSession\n        idleTimeout\n        maxSessionLifetime\n        allowedVfolderHosts {\n          host\n        }\n        maxPendingSessionCount\n        maxConcurrentSftpSessions\n        maxPendingSessionResourceSlots {\n          resourceType\n          quantity\n          unlimited\n        }\n        createdAt\n        ...BAIKeypairResourcePolicyV2TableFragment\n        ...KeypairResourcePolicyV2SettingModalFragment\n      }\n    }\n  }\n}\n\nfragment BAIKeypairResourcePolicyV2TableFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  createdAt\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxPendingSessionCount\n  maxPendingSessionResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxConcurrentSftpSessions\n  maxContainersPerSession\n  idleTimeout\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n\nfragment KeypairResourcePolicyV2SettingModalFragment on KeypairResourcePolicyV2 {\n  id\n  name\n  defaultForUnspecified\n  totalResourceSlots {\n    resourceType\n    quantity\n    unlimited\n  }\n  maxSessionLifetime\n  maxConcurrentSessions\n  maxContainersPerSession\n  idleTimeout\n  maxPendingSessionCount\n  maxConcurrentSftpSessions\n  allowedVfolderHosts {\n    host\n    permissions\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3fb91a8d04f84d0b90bec4cfc017d569";
+(node as any).hash = "0293877194bf6aa216e9fc3d290857c9";
 
 export default node;

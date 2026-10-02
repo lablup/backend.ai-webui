@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<cdc5b1aa1e1976fbcc240c6138a4ce96>>
+ * @generated SignedSource<<f384e0a08a2336aa10a496cf95175fdb>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,17 +9,10 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
-export type OperationType = "CREATE" | "GRANT_ALL" | "GRANT_HARD_DELETE" | "GRANT_READ" | "GRANT_SOFT_DELETE" | "GRANT_UPDATE" | "HARD_DELETE" | "READ" | "SOFT_DELETE" | "UPDATE" | "%future added value";
-export type RBACElementType = "AGENT" | "APP_CONFIG" | "APP_CONFIG_ALLOW_LIST" | "APP_CONFIG_DEFINITION" | "APP_CONFIG_FRAGMENT" | "ARTIFACT" | "ARTIFACT_REGISTRY" | "ARTIFACT_REVISION" | "AUDIT_LOG" | "CONTAINER_REGISTRY" | "DEPLOYMENT_POLICY" | "DEPLOYMENT_REVISION" | "DEPLOYMENT_TOKEN" | "DOMAIN" | "DOMAIN_ADMIN_PAGE" | "EVENT_LOG" | "IDLE_CHECKER_ASSIGNMENT" | "IMAGE" | "IMAGE_ALIAS" | "KERNEL" | "KERNEL_HISTORY" | "KEYPAIR" | "KEYPAIR_RESOURCE_POLICY" | "MODEL_CARD" | "MODEL_DEPLOYMENT" | "NETWORK" | "NOTIFICATION_CHANNEL" | "NOTIFICATION_RULE" | "PROJECT" | "PROJECT_ADMIN_PAGE" | "PROJECT_RESOURCE_POLICY" | "RESOURCE_GROUP" | "RESOURCE_PRESET" | "ROLE" | "ROLE_ASSIGNMENT" | "ROUTING" | "SESSION" | "SESSION_APP_SERVICE" | "SESSION_TEMPLATE" | "STORAGE_HOST" | "USER" | "USER_EMAIL" | "USER_RESOURCE_POLICY" | "VFOLDER" | "VFOLDER_DATA" | "%future added value";
 export type RoleFormModalPermissionMatrixQuery$variables = Record<PropertyKey, never>;
 export type RoleFormModalPermissionMatrixQuery$data = {
   readonly rbacPermissionMatrix: ReadonlyArray<{
-    readonly entities: ReadonlyArray<{
-      readonly actions: ReadonlyArray<{
-        readonly requiredPermission: OperationType;
-      }>;
-    }>;
-    readonly scopeType: RBACElementType;
+    readonly scopeType: string;
   }> | null | undefined;
 };
 export type RoleFormModalPermissionMatrixQuery = {
@@ -42,35 +35,6 @@ var v0 = [
         "args": null,
         "kind": "ScalarField",
         "name": "scopeType",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "EntityActionInfo",
-        "kind": "LinkedField",
-        "name": "entities",
-        "plural": true,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "OperationInfo",
-            "kind": "LinkedField",
-            "name": "actions",
-            "plural": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "requiredPermission",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
         "storageKey": null
       }
     ],
@@ -95,16 +59,16 @@ return {
     "selections": (v0/*: any*/)
   },
   "params": {
-    "cacheID": "25fd6c8406d027782c61ef4326c8af19",
+    "cacheID": "3e49acf208c65d7a49ee93149e0d5f79",
     "id": null,
     "metadata": {},
     "name": "RoleFormModalPermissionMatrixQuery",
     "operationKind": "query",
-    "text": "query RoleFormModalPermissionMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n    entities {\n      actions {\n        requiredPermission\n      }\n    }\n  }\n}\n"
+    "text": "query RoleFormModalPermissionMatrixQuery {\n  rbacPermissionMatrix {\n    scopeType\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "ee9601df7953401560bef1064288f384";
+(node as any).hash = "b33c3c63cd1cb02e180b5ffe68024ae1";
 
 export default node;

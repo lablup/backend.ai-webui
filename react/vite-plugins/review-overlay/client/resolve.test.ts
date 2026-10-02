@@ -1,5 +1,14 @@
-import { findAnchorTarget, quickFindTarget } from './resolve.js';
+import {
+  findAnchorTarget,
+  findViaTarget,
+  isBehindModal,
+  nextViaControl,
+  PORTAL_MODAL,
+  viaStepDone,
+  quickFindTarget,
+} from './resolve.js';
 import type { AnchorV3 } from './types.js';
+import { MODAL_OPEN_ATTRIBUTE } from '@lablup/ui-common/Modal';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 /** react-grab 0.1.50's synchronous `getDisplayName`, stubbed per test. */
@@ -261,6 +270,25 @@ describe('the landmark’s rect projection', () => {
     expect(findAnchorTarget(withName)?.textContent).toBe('Login');
   });
 
+  it('looks through the overlay’s own chrome lying over the recorded spot', () => {
+    mount(
+      '<section data-testid="page-start"><button><svg></svg></button></section>',
+    );
+    const landmark = document.querySelector('[data-testid="page-start"]');
+    const iconOnly = document.querySelector('button') as Element;
+    const chrome = document.createElement('div');
+    chrome.setAttribute('data-bai-review-overlay', '');
+    document.body.append(chrome);
+    stubLayout(landmark as Element, chrome);
+    document.elementsFromPoint = () => [chrome, iconOnly, landmark as Element];
+    try {
+      const noText = projected({ tag: 'button', txt: undefined });
+      expect(findAnchorTarget(noText)).toBe(iconOnly);
+    } finally {
+      delete (document as Partial<Document>).elementsFromPoint;
+    }
+  });
+
   it('still projects for an anchor that recorded no text', () => {
     mount(
       '<section data-testid="page-start"><button><svg></svg></button></section>',
@@ -272,5 +300,542 @@ describe('the landmark’s rect projection', () => {
     const noText = projected({ tag: 'button', txt: undefined });
     expect(quickFindTarget(noText)).toBe(iconOnly);
     expect(findAnchorTarget(noText)).toBe(iconOnly);
+  });
+});
+
+// A stop is a pin the implementing session authored; a wrong element under
+// its mark is worse than a waiting one, so it resolves strictly.
+describe('walkthrough stops resolve strictly (FR-3949)', () => {
+  const stop = (over: Partial<AnchorV3> = {}): AnchorV3 =>
+    anchor({ ck: 'The Models choice is visible', ...over });
+
+  it('takes no text look-alike while its landmark is absent', () => {
+    // The modal is closed: only the page's own "Models" filter is on screen.
+    mount('<button data-testid="filter-models">Models</button>');
+    const modalRadio = {
+      s: '[data-testid="model-usage-mode"]',
+      tid: 'model-usage-mode',
+      txt: 'Models',
+    };
+    expect(findAnchorTarget(anchor(modalRadio))?.textContent).toBe('Models');
+    expect(findAnchorTarget(stop(modalRadio))).toBeNull();
+    expect(quickFindTarget(stop(modalRadio))).toBeNull();
+  });
+
+  it('is found once its landmark is on the page', () => {
+    mount(
+      '<button data-testid="filter-models">Models</button><div role="dialog"><label data-testid="model-usage-mode">Models</label></div>',
+    );
+    const found = findAnchorTarget(
+      stop({
+        s: '[data-testid="model-usage-mode"]',
+        tid: 'model-usage-mode',
+        txt: 'Models',
+        tag: 'label',
+      }),
+    );
+    expect(found?.tagName).toBe('LABEL');
+  });
+
+  it('takes no stale selector hit', () => {
+    mount('<button>Cancel</button>');
+    expect(findAnchorTarget(anchor())?.textContent).toBe('Cancel');
+    expect(findAnchorTarget(stop())).toBeNull();
+  });
+
+  it('scans the page only when it has no landmark to match', () => {
+    mount('<section><button>Login</button></section>');
+    expect(
+      findAnchorTarget(stop({ s: '#gone', tid: undefined }))?.textContent,
+    ).toBe('Login');
+  });
+
+  it('never settles for the frame its element lives in', () => {
+    mount('<div data-testid="panel"><button>Other</button></div>');
+    const framed = {
+      s: '#_r_gone_',
+      tid: 'panel',
+      rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+      txt: 'Save',
+    };
+    expect(quickFindTarget(anchor(framed))?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+    expect(quickFindTarget(stop(framed))).toBeNull();
+    expect(findAnchorTarget(stop(framed))).toBeNull();
+  });
+
+  it('with dlg, counts an element inside an alertdialog too', () => {
+    mount('<div role="alertdialog"><button data-testid="ok">OK</button></div>');
+    const found = findAnchorTarget(
+      stop({ s: '[data-testid="ok"]', tid: 'ok', txt: 'OK', dlg: 1 }),
+    );
+    expect(found?.textContent).toBe('OK');
+  });
+
+  // An icon-only pick has no text to tell the frame from the element, and
+  // the projection needs layout; the landmark is the honest best answer.
+  it('settles for the landmark when the stop carries no text', () => {
+    mount('<div data-testid="panel"><button aria-label="x"></button></div>');
+    const iconOnly = stop({
+      s: '#_r_gone_',
+      tid: 'panel',
+      rect: { x: 0, y: 0, w: 0.4, h: 0.4 },
+      txt: undefined,
+    });
+    expect(quickFindTarget(iconOnly)?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+    expect(findAnchorTarget(iconOnly)?.getAttribute('data-testid')).toBe(
+      'panel',
+    );
+  });
+
+  it('with dlg, counts only an element inside an open dialog', () => {
+    mount('<button data-testid="ok">OK</button>');
+    const dialogStop = stop({
+      s: '[data-testid="ok"]',
+      tid: 'ok',
+      txt: 'OK',
+      dlg: 1,
+    });
+    expect(findAnchorTarget(dialogStop)).toBeNull();
+    expect(quickFindTarget(dialogStop)).toBeNull();
+    mount('<div role="dialog"><button data-testid="ok">OK</button></div>');
+    expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
+    expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
+  });
+
+  // A closed native <dialog> keeps its subtree in the DOM, so "inside a
+  // dialog" is not enough: it has to be an OPEN one.
+  it('with dlg, ignores an element inside a closed native dialog', () => {
+    mount('<dialog><button data-testid="ok">OK</button></dialog>');
+    const dialogStop = stop({
+      s: '[data-testid="ok"]',
+      tid: 'ok',
+      txt: 'OK',
+      dlg: 1,
+    });
+    expect(findAnchorTarget(dialogStop)).toBeNull();
+    expect(quickFindTarget(dialogStop)).toBeNull();
+    document.querySelector('dialog')?.setAttribute('open', '');
+    expect(findAnchorTarget(dialogStop)?.textContent).toBe('OK');
+    expect(quickFindTarget(dialogStop)?.textContent).toBe('OK');
+  });
+
+  // A recycled selector can hit a same-text control outside the landmark; a
+  // stop takes the selector only where the text scan would take it.
+  it('takes a selector hit only inside its landmark', () => {
+    mount(
+      '<button class="primary">Save</button><div data-testid="panel"><button>Save</button></div>',
+    );
+    const outside = { s: 'button.primary', tid: 'panel', txt: 'Save' };
+    const panel = () => document.querySelector('[data-testid="panel"]');
+    expect(quickFindTarget(anchor(outside))?.className).toBe('primary');
+    const quick = quickFindTarget(stop(outside));
+    expect(quick?.className).not.toBe('primary');
+    expect(panel()?.contains(quick)).toBe(true);
+    const full = findAnchorTarget(stop(outside));
+    expect(full?.tagName).toBe('BUTTON');
+    expect(panel()?.contains(full)).toBe(true);
+    mount('<button class="primary">Save</button>');
+    expect(quickFindTarget(stop(outside))).toBeNull();
+    expect(findAnchorTarget(stop(outside))).toBeNull();
+  });
+
+  // Two tabs render the same row component, so the landmark testid is not
+  // unique; the selector hit still counts when it sits inside one of them.
+  it('resolves through a duplicated landmark by its selector hit', () => {
+    mount(
+      '<div data-testid="row"><button>Save</button></div><div data-testid="row"><button id="right">Save</button></div><button id="loose">Save</button>',
+    );
+    const inside = stop({ s: '#right', tid: 'row', txt: 'Save' });
+    expect(quickFindTarget(inside)?.id).toBe('right');
+    expect(findAnchorTarget(inside)?.id).toBe('right');
+    const loose = stop({ s: '#loose', tid: 'row', txt: 'Save' });
+    expect(quickFindTarget(loose)).toBeNull();
+    expect(findAnchorTarget(loose)).toBeNull();
+  });
+});
+
+/**
+ * Pages render the same thing twice. github.com emits every file-name link in
+ * a screen-reader cell first, `display: none`, and again in the cell a reader
+ * sees — and the scan, walking document order, took the first one. The pin
+ * then drew a zero-size box in the page's top-left corner, which is not even
+ * the "scrolled below" state the real element deserved.
+ */
+describe('a hidden look-alike never beats a rendered one', () => {
+  /** jsdom reports nothing for every element; give these ones a box. */
+  const render = (...elements: Element[]) => {
+    for (const element of elements) {
+      const rect = { left: 0, top: 0, width: 120, height: 20 } as DOMRect;
+      element.getClientRects = () => [rect] as unknown as DOMRectList;
+      element.getBoundingClientRect = () => rect;
+    }
+  };
+
+  /**
+   * …and jsdom lays nothing out at all, which the client reads as "no layout
+   * engine", not "everything is hidden". Refusing an element with no box is
+   * conditional on that: a test about hidden elements says the document lays
+   * out, and one about jsdom itself does not.
+   */
+  const laidOut = () => render(document.documentElement);
+
+  afterEach(() => {
+    delete (document.documentElement as Partial<HTMLElement>).getClientRects;
+    delete (document.documentElement as Partial<HTMLElement>)
+      .getBoundingClientRect;
+  });
+
+  const twice = `
+    <div class="sr"><a href="/f">.cspell.json</a></div>
+    <div class="wide"><a href="/f">.cspell.json</a></div>
+  `;
+  const copies = () => document.querySelectorAll('a');
+  const file = (over: Partial<AnchorV3> = {}) =>
+    anchor({ s: '.wide a', tag: 'a', txt: '.cspell.json', ...over });
+
+  it('is skipped by the text scan that would have taken it first', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    // The selector has gone stale, so the scan is the only rung left.
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[1]);
+  });
+
+  it('loses the selector rung too, in both ladders', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    const both = file({ s: 'a[href="/f"]' });
+    expect(quickFindTarget(both)).toBe(copies()[1]);
+    expect(findAnchorTarget(both)).toBe(copies()[1]);
+  });
+
+  it('does not disqualify a landmark it duplicates', () => {
+    laidOut();
+    mount(`
+      <div class="sr" data-testid="row"><a href="/f">.cspell.json</a></div>
+      <div class="wide" data-testid="row"><a href="/f">.cspell.json</a></div>
+    `);
+    const rows = document.querySelectorAll('[data-testid="row"]');
+    render(rows[1], copies()[1]);
+
+    const framed = file({ s: '#gone', tid: 'row' });
+    expect(findAnchorTarget(framed)).toBe(copies()[1]);
+    expect(quickFindTarget(framed)).toBe(rows[1]);
+  });
+
+  it('loses to a rendered one for a strict stop as well', () => {
+    mount(twice);
+    laidOut();
+    render(copies()[1]);
+
+    const stop = file({ s: '#gone', ck: 'The file row is visible' });
+    expect(findAnchorTarget(stop)).toBe(copies()[1]);
+  });
+
+  // Waiting is better than drawing somewhere wrong: the marker, the box and
+  // the card of a boxless element all land in the page's top-left corner, and
+  // the retry driver is already waiting for the real one to come back.
+  it('is refused outright when it is the only candidate left', () => {
+    mount(twice);
+    laidOut();
+
+    expect(findAnchorTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBeNull();
+  });
+
+  // The whole preference is conditional on the document laying anything out:
+  // in jsdom nothing has a box, and the old order stands.
+  it('changes nothing in a document with no layout at all', () => {
+    mount(twice);
+
+    expect(findAnchorTarget(file({ s: '#gone' }))).toBe(copies()[0]);
+    expect(quickFindTarget(file({ s: 'a[href="/f"]' }))).toBe(copies()[0]);
+  });
+});
+
+describe('isBehindModal', () => {
+  const byId = (id: string) => document.getElementById(id) as Element;
+
+  beforeEach(() => {
+    document.body.innerHTML = '<button id="page">page</button>';
+  });
+
+  it('is false with no modal open, and under a non-modal dialog', () => {
+    expect(isBehindModal(byId('page'))).toBe(false);
+    document.body.insertAdjacentHTML('beforeend', '<div role="dialog"></div>');
+    expect(isBehindModal(byId('page'))).toBe(false);
+  });
+
+  it('holds for the page under a modal, not for what the modal contains', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="dialog" aria-modal="true"><div role="alertdialog" aria-modal="true"><button id="in">in</button></div><p id="frame">frame</p></div>',
+    );
+    expect(isBehindModal(byId('page'))).toBe(true);
+    // A modal nested in another is the same layer, not one above it.
+    expect(isBehindModal(byId('in'))).toBe(false);
+    expect(isBehindModal(byId('frame'))).toBe(false);
+  });
+
+  it('counts the app dialog portal, which carries no aria-modal', () => {
+    // Retyped in the overlay, which cannot import the package it reviews.
+    expect(PORTAL_MODAL).toContain(`[${MODAL_OPEN_ATTRIBUTE}]`);
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      `<div ${MODAL_OPEN_ATTRIBUTE}><div role="dialog"><button id="in">in</button></div></div>`,
+    );
+    expect(isBehindModal(byId('page'))).toBe(true);
+    expect(isBehindModal(byId('in'))).toBe(false);
+  });
+
+  it('takes the modal that is not inert as the one on top', () => {
+    // The level stack inerts a covered root; a reopened one keeps its place.
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-uic-modal-open><button id="top">top</button></div>' +
+        '<div data-uic-modal-open inert><button id="under">under</button></div>',
+    );
+    expect(isBehindModal(byId('top'))).toBe(false);
+    expect(isBehindModal(byId('under'))).toBe(true);
+  });
+
+  it('does not count an open popover, which Astryx marks aria-modal', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div popover="auto"><div role="dialog" aria-modal="true"><button id="in">in</button></div></div>',
+    );
+    expect(isBehindModal(byId('page'))).toBe(false);
+  });
+
+  // A notification raised over a dialog sits outside the modal and on top.
+  describe('with layout', () => {
+    const rect = { left: 10, top: 10, width: 100, height: 40 } as DOMRect;
+    let painted: Element | null = null;
+    beforeEach(() => {
+      document.documentElement.getClientRects = () =>
+        [rect] as unknown as DOMRectList;
+      HTMLElement.prototype.getClientRects = () =>
+        [rect] as unknown as DOMRectList;
+      HTMLElement.prototype.getBoundingClientRect = () => rect;
+      document.elementsFromPoint = () => (painted ? [painted] : []);
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div role="dialog" aria-modal="true"><button id="in">in</button></div>' +
+          '<div id="toast"><span id="msg">saved</span></div>',
+      );
+    });
+    afterEach(() => {
+      painted = null;
+      delete (document.documentElement as Partial<HTMLElement>).getClientRects;
+      delete (HTMLElement.prototype as Partial<HTMLElement>).getClientRects;
+      delete (HTMLElement.prototype as Partial<HTMLElement>)
+        .getBoundingClientRect;
+      delete (document as Partial<Document>).elementsFromPoint;
+    });
+
+    it('does not hide what is painted above the modal', () => {
+      painted = byId('msg');
+      expect(isBehindModal(byId('toast'))).toBe(false);
+    });
+
+    it('still hides what the modal paints over', () => {
+      painted = byId('in');
+      expect(isBehindModal(byId('toast'))).toBe(true);
+    });
+
+    it('looks through the overlay’s own chrome', () => {
+      document.body.insertAdjacentHTML(
+        'beforeend',
+        '<div data-bai-review-overlay id="host"></div>',
+      );
+      const host = byId('host');
+      const msg = byId('msg');
+      document.elementsFromPoint = () => [host, msg];
+      expect(isBehindModal(byId('toast'))).toBe(false);
+    });
+  });
+
+  it('puts the first modal under the one opened after it', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="dialog" aria-modal="true"><button id="first">first</button></div>' +
+        '<div role="alertdialog" aria-modal="true"><button id="second">second</button></div>',
+    );
+    expect(isBehindModal(byId('first'))).toBe(true);
+    expect(isBehindModal(byId('second'))).toBe(false);
+  });
+});
+
+describe('findViaTarget', () => {
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div data-testid="toolbar"><button data-testid="create">Create Folder</button>' +
+      '<button><span>Upload</span></button></div>';
+  });
+  const byTid = (tid: string) =>
+    document.querySelector(`[data-testid="${tid}"]`);
+  const click = (text: string, tid?: string) => ({
+    click: tid ? { text, tid } : { text },
+  });
+
+  it('finds the control by its testid, whatever language it reads in', () => {
+    byTid('create')!.textContent = '폴더 생성';
+    expect(findViaTarget([click('Create Folder', 'create')])).toBe(
+      byTid('create'),
+    );
+  });
+
+  it('falls back to the label, the reader’s language first', () => {
+    const upload = document.querySelector('button:not([data-testid])');
+    expect(findViaTarget([click('업로드'), click('Upload')])).toBe(upload);
+    // The label names the control, never the span inside it or the toolbar.
+    expect(findViaTarget([click('Upload')])?.tagName).toBe('BUTTON');
+  });
+
+  it('points at nothing under an open modal, or when the label is gone', () => {
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div data-uic-modal-open><div role="dialog">form</div></div>',
+    );
+    expect(findViaTarget([click('Create Folder', 'create')])).toBeNull();
+    document.querySelector('[data-uic-modal-open]')!.remove();
+    expect(findViaTarget([click('Delete')])).toBeNull();
+  });
+
+  it('finds a control whose label sits beside other text, as a click would', () => {
+    document.body.innerHTML =
+      '<div role="tablist"><button role="tab" id="tab"><span>Sessions</span><span>3</span></button></div>';
+    expect(findViaTarget([click('Sessions')])?.id).toBe('tab');
+  });
+});
+
+describe('findViaTarget for fill and select', () => {
+  beforeEach(() => {
+    document.body.innerHTML =
+      '<div data-testid="filter"><input id="search" placeholder="Search by name"></div>' +
+      '<label for="mode">Usage Mode</label><select id="mode"><option>General</option><option>Models</option></select>' +
+      '<div role="combobox" id="project" aria-labelledby="project-label">Select Project</div>' +
+      '<span id="project-label">Target Project</span>';
+  });
+  const byId = (id: string) => document.getElementById(id);
+
+  it('types into the field a testid wraps, or the one its placeholder names', () => {
+    expect(findViaTarget([{ fill: { tid: 'filter', value: 'x' } }])).toBe(
+      byId('search'),
+    );
+    expect(
+      findViaTarget([{ fill: { label: 'Search by name', value: 'x' } }]),
+    ).toBe(byId('search'));
+  });
+
+  it('opens the select its label names, then points at the option once listed', () => {
+    const mode = { select: { label: 'Usage Mode', option: 'Models' } };
+    expect(findViaTarget([mode])).toBe(byId('mode'));
+    const project = { select: { label: 'Target Project', option: 'default' } };
+    expect(findViaTarget([project])).toBe(byId('project'));
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<div role="listbox"><div role="option" id="opt">default</div></div>',
+    );
+    expect(findViaTarget([project])).toBe(byId('opt'));
+  });
+
+  it('reads a step as done once the field holds the value or the select shows it', () => {
+    const fill = { fill: { label: 'Search by name', value: 'abc' } };
+    const search = byId('search') as HTMLInputElement;
+    expect(viaStepDone(fill, search)).toBe(false);
+    search.value = 'abc';
+    expect(viaStepDone(fill, search)).toBe(true);
+    // Enter is not something a field can show afterwards.
+    expect(viaStepDone({ fill: { ...fill.fill, enter: 1 } }, search)).toBe(
+      false,
+    );
+    const mode = byId('mode') as HTMLSelectElement;
+    const models = { select: { label: 'Usage Mode', option: 'Models' } };
+    expect(viaStepDone(models, mode)).toBe(false);
+    mode.selectedIndex = 1;
+    expect(viaStepDone(models, mode)).toBe(true);
+  });
+
+  it('reads a click as done once its tab or toggle is already on', () => {
+    const tab = document.createElement('button');
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-selected', 'false');
+    const click = { click: { text: 'Role Assignment' } };
+    expect(viaStepDone(click, tab)).toBe(false);
+    tab.setAttribute('aria-selected', 'true');
+    expect(viaStepDone(click, tab)).toBe(true);
+    const navTab = document.createElement('button');
+    expect(viaStepDone(click, navTab)).toBe(false);
+    navTab.setAttribute('aria-current', 'true');
+    expect(viaStepDone(click, navTab)).toBe(true);
+    // A plain button has no state to read back.
+    expect(viaStepDone(click, document.createElement('button'))).toBe(false);
+  });
+});
+
+describe('nextViaControl', () => {
+  const el = (id: string, tid?: string) => {
+    const button = document.createElement('button');
+    button.id = id;
+    if (tid) button.setAttribute('data-testid', tid);
+    return button;
+  };
+  const steps = [
+    { click: { text: 'Create' } },
+    { click: { text: 'Next', tid: 'wizard-next' } },
+  ];
+
+  it('stays on the first step while a later label only matches a look-alike', () => {
+    const create = el('create');
+    expect(
+      nextViaControl(
+        [steps[0], { click: { text: 'Next' } }],
+        [create, el('pager-next')],
+      )?.element,
+    ).toBe(create);
+  });
+
+  it('moves on once the earlier control is gone, or at once on a testid hit', () => {
+    const next = el('next', 'wizard-next');
+    expect(nextViaControl(steps, [null, next])?.index).toBe(1);
+    expect(nextViaControl(steps, [el('create'), next])?.element).toBe(next);
+    expect(nextViaControl(steps, [null, null])).toBeNull();
+  });
+
+  it('moves past a step the reader has already done', () => {
+    const input = document.createElement('input');
+    input.value = 'abc';
+    const apply = el('apply');
+    const fillThenApply = [
+      { fill: { label: 'Search', value: 'abc' } },
+      { click: { text: 'Apply' } },
+    ];
+    expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(apply);
+    input.value = 'ab';
+    expect(nextViaControl(fillThenApply, [input, apply])?.element).toBe(input);
+  });
+
+  it('never jumps a value still to type, even to a testid hit', () => {
+    const input = document.createElement('input');
+    const create = el('create', 'create-folder-button');
+    const fillThenCreate = [
+      { fill: { label: 'Folder name', value: 'demo' } },
+      { click: { text: 'Create', tid: 'create-folder-button' } },
+    ];
+    expect(nextViaControl(fillThenCreate, [input, create])?.element).toBe(
+      input,
+    );
+    input.value = 'demo';
+    expect(nextViaControl(fillThenCreate, [input, create])?.element).toBe(
+      create,
+    );
   });
 });

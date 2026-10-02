@@ -6,6 +6,7 @@
     "DiskPerc": "Festplattenauslastung %",
     "Endpoint": "Endpunkt",
     "FailedToLoadCellData": "Daten konnten nicht geladen werden.",
+    "LostAt": "Verloren am",
     "NoAvailableLiveStat": "Keine Live-Statistik verfügbar",
     "Region": "Region",
     "ResourceGroup": "Ressourcengruppe",
@@ -13,7 +14,8 @@
     "Schedulable": "Planbar",
     "Starts": "Startvorgänge",
     "Status": "Status",
-    "Utilization": "Auslastung"
+    "Utilization": "Auslastung",
+    "Version": "Version"
   },
   "comp:AllowedVfolderHostsWithPermission": {
     "Allowed": "Erlaubt",
@@ -70,6 +72,7 @@
   "comp:BAIAuditLogNodes": {
     "ActionId": "Aktions-ID",
     "Actor": "Akteur",
+    "ClientIp": "Client-IP",
     "Description": "Beschreibung",
     "Duration": "Dauer",
     "EntityId": "Entitäts-ID",
@@ -85,26 +88,6 @@
   },
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
-  },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Löschen",
-    "KeepAsIs": "Unverändert lassen",
-    "UndoChanges": "Änderungen rückgängig machen"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Ausführung fehlgeschlagen",
-    "ErrorOccurred": "Ein Fehler ist aufgetreten"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Löschen",
-    "HexValue": "Hex-Wert",
-    "NoColor": "Keine Farbe",
-    "SelectColor": "Farbe auswählen"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Optionen durchsuchen löschen",
-    "NoResults": "Keine Ergebnisse",
-    "SearchOptions": "Optionen durchsuchen"
   },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Container-Registry auswählen"
@@ -126,14 +109,6 @@
     "SuccessFullyRemoved": "Erfolgreich entfernt {{count}} Versionen.",
     "Version": "Version"
   },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Sind Sie sicher, dass Sie löschen möchten?",
-    "AreYouSureToPermanentlyDeleteTarget": "Möchten Sie {{target}} wirklich dauerhaft löschen?",
-    "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
-    "DeleteItem": "Löschen",
-    "DeleteNItems": "{{count}} Elemente löschen",
-    "TypeToConfirm": "Geben Sie <code>{{confirmText}}</code> ein, um zu bestätigen."
-  },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Erstellt von"
   },
@@ -152,7 +127,7 @@
   "comp:BAIDeploymentSelect": {
     "SelectDeployment": "Deployment auswählen"
   },
-  "comp:BAIDeploymentStatusTag": {
+  "comp:BAIDeploymentStatusBadge": {
     "Degraded": "Beeinträchtigt",
     "Deploying": "Wird bereitgestellt",
     "Healthy": "Fehlerfrei",
@@ -245,6 +220,10 @@
       "Title": "Anmeldung mit Backend.AI nicht möglich"
     }
   },
+  "comp:BAIKernelProgressBreakdown": {
+    "KernelStartupProgress": "Fortschritt des Kernel-Starts",
+    "KernelTerminationProgress": "Fortschritt der Kernel-Beendigung"
+  },
   "comp:BAIKeypairResourcePolicyV2Table": {
     "ClusterSize": "Clustergröße",
     "Concurrency": "Gleichzeitige Sitzungen",
@@ -265,6 +244,7 @@
     "SelectKeypair": "Schlüsselpaar auswählen"
   },
   "comp:BAILoginHistoryTable": {
+    "ClientIp": "Client-IP",
     "Domain": "Domain",
     "FailReason": "Fehlergrund",
     "LoginTime": "Anmeldezeit",
@@ -355,18 +335,22 @@
     "UpdateProject": "Projekt aktualisieren"
   },
   "comp:BAIProjectTable": {
+    "Active": "Aktiv",
     "ContainerRegistry": "Container-Registry",
     "ContainerRegistryProject": "Container-Registry-Projekt",
     "CreatedAt": "Erstellt am",
     "Description": "Beschreibung",
     "Domain": "Domäne",
+    "Inactive": "Inaktiv",
     "IntegrationID": "Integrations‑ID",
+    "ModifiedAt": "Geändert am",
     "Name": "Name",
     "Project": "Projekt",
     "ProjectID": "Projekt‑ID",
     "Registry": "Registry",
     "ResourcePolicy": "Ressourcenrichtlinie",
     "ScalingGroups": "Ressourcengruppen",
+    "Status": "Status",
     "StorageNodes": "Speicherknoten",
     "TotalResourceSlots": "Gesamtanzahl der Ressourcen-Slots",
     "Type": "Typ"
@@ -404,11 +388,6 @@
   },
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Zugewiesen / Angefordert"
-  },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Gruppenfarbe ändern",
-    "ResourceGrid": "Ressourcenraster",
-    "UseColorN": "Farbe {{n}} verwenden"
   },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unbegrenzt"
@@ -559,9 +538,6 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Einzel"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Unbegrenzt"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Speicher-Host auswählen"
   },
@@ -578,22 +554,10 @@
     "Time": "Zeit"
   },
   "comp:BAITable": {
-    "Apply": "Anwenden",
-    "Cancel": "Abbrechen",
     "CollapseAll": "Alle einklappen",
     "ExpandAll": "Alle ausklappen",
     "ExpandErrorsOnly": "Nur Fehler ausklappen",
-    "ExpandOptions": "Ausklappoptionen",
-    "ExpandRow": "Zeile ausklappen",
-    "Export": "Exportieren",
-    "ExportCSV": "Als CSV exportieren",
-    "GoToFirstPage": "Zur ersten Seite",
-    "InvalidPageNumber": "Ungültige Seitenzahl",
-    "NoDataToDisplay": "Keine Daten zum Anzeigen",
-    "Pagination": "Seitennummerierung",
-    "SearchTableColumn": "Suchtabellenspalten",
-    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
-    "SettingTable": "Tabelleneinstellungen"
+    "ExpandOptions": "Ausklappoptionen"
   },
   "comp:BAITestButton": {
     "Test": "test"
@@ -613,16 +577,23 @@
   "comp:BAIVFolderMountConfigInput": {
     "AliasInvalid": "Ungültiges Pfadformat.",
     "AliasOverlapping": "Der Einhängepfad überschneidet sich mit einem anderen Ordner.",
+    "AliasOverlappingWithAutoMount": "Der Einhängepfad überschneidet sich mit einem automatisch eingehängten Ordner.",
     "AliasPlaceholder": "Einhängepfad",
     "AutoMountedFolders": "Automatisch eingehängte Ordner",
-    "Name": "Name",
-    "PathAndAlias": "Pfad & Alias",
+    "CreateFolder": "Erstellen Sie einen neuen Speicherordner",
+    "DestinationPath": "Container-Pfad (destination)",
+    "Folders": "Ordner",
+    "OwnerProject": "Projekt",
+    "OwnerUser": "Benutzer",
     "PathAndAliasTooltip": "Der Pfad im Container, in den der Ordner eingehängt wird. Leer lassen, um den Standardpfad zu verwenden.",
+    "Refresh": "Aktualisierung",
     "RemoveFolder": "Entfernen",
+    "SelectFolder": "Ordner auswählen",
+    "SourcePath": "Pfad im Ordner (source)",
     "Subpath": "Unterpfad",
     "SubpathInvalid": "Der Unterpfad muss ein relativer Pfad sein und darf '..' nicht enthalten.",
-    "SubpathPlaceholder": "z. B. dataset/train (optional)",
-    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Leer lassen, um die Wurzel einzuhängen."
+    "SubpathTooltip": "Hängt einen Unterordner innerhalb des Ordners als Quelle ein, anstatt dessen Wurzel. Klicken Sie auf das Feld, um den Ordner zu durchsuchen und einen auszuwählen; leer lassen, um die Ordnerwurzel einzuhängen.",
+    "UnmountableFoldersRemoved": "Ordner, die Sie nicht mehr einbinden können, wurden aus der Auswahl entfernt."
   },
   "comp:BAIVFolderSelect": {
     "SelectFolder": "Ordner auswählen"
@@ -639,12 +610,16 @@
     "DeleteSelectedItemDesc": "Löschte Dateien und Ordner können nicht wiederhergestellt werden. \nMöchten Sie fortfahren?",
     "DeleteSelectedItemsDialog": "Bestätigung löschen",
     "Download": "Herunterladen",
+    "DownloadPopupBlocked": "Der Browser hat das Download-Fenster blockiert. Erlauben Sie Pop-ups für diese Website und versuchen Sie es erneut.",
+    "DownloadRejected": "Der Storage-Proxy hat den Download abgelehnt (HTTP {{status}}). Der Download wurde nicht gestartet.",
     "DownloadSelected": "Herunterladen",
     "DownloadStarted": "Die Datei \"{{fileName}}\" wurde gestartet.",
+    "DownloadUnreachable": "Der Storage-Proxy unter {{origin}} ist nicht erreichbar. Der Download wurde nicht gestartet.",
     "DragAndDropDesc": "Ziehen Sie Dateien in diesen Bereich zum Hochladen.",
     "DuplicatedFiles": "Überschreibung der Bestätigung",
     "DuplicatedFilesDesc": "Die Datei oder der Ordner mit demselben Namen existieren bereits. \nMöchten Sie überschreiben?",
     "EditFile": "Datei bearbeiten",
+    "ExistingItem": "Vorhanden",
     "FileCreatedSuccessfully": "Datei erfolgreich erstellt.",
     "FileName": "Dateiname",
     "FileNamePlaceholder": "z. B. model-definition.yaml",
@@ -657,11 +632,13 @@
     "ModifiedAt": "Modifiziert bei",
     "Name": "Name",
     "NoUploadPermissionForHost": "Sie haben keine Hochlade-Berechtigung für diesen Host.",
+    "OtherItemsWillBeUploaded": "{{count}} weitere(s) Element(e) werden ebenfalls hochgeladen.",
     "Path": "Pfad",
     "PleaseEnterAFileName": "Bitte geben Sie den Dateinamen ein.",
     "PleaseEnterAFolderName": "Bitte geben Sie den Ordneramen ein.",
     "RenameFile": "Umbenennen",
     "RenameSuccess": "Der Name wurde erfolgreich geändert.",
+    "SelectItemsToOverwrite": "Diese Elemente existieren hier bereits. Wählen Sie die zu überschreibenden Elemente aus; nicht ausgewählte Elemente werden übersprungen.",
     "SelectedItemsDeletedSuccessfully": "Ausgewählte Dateien und Ordner wurden erfolgreich gelöscht.",
     "Size": "Größe",
     "TypeDeleteToConfirm": "Geben Sie zur Bestätigung „Löschen“ ein.",
@@ -669,13 +646,11 @@
     "UnsupportedFileFormat": "Dieses Dateiformat unterstützt keine Bearbeitung.",
     "UploadFiles": "Dateien hochladen",
     "UploadFolder": "Ordner hochladen",
+    "UploadingItem": "Hochzuladen",
     "error": {
       "DuplicatedName": "Dieser Name ist bereits verwendet. \nBitte geben Sie einen anderen Namen ein.",
       "FileNameRequired": "Bitte geben Sie einen Datei- oder Ordnernamen ein."
     }
-  },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} von {{total}} Elementen"
   },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Keine Ressourcendaten verfügbar"
@@ -738,55 +713,12 @@
   "error": {
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
-  "form": {
-    "Optional": "(optional)",
-    "validateMessages": {
-      "Default": "Feld-Validierungsfehler: ${label}",
-      "Required": "Bitte geben Sie ${label} an",
-      "Whitespace": "${label} darf kein Leerzeichen sein",
-      "array": {
-        "Len": "Es müssen ${len} ${label} sein",
-        "Max": "Es dürfen maximal ${max} ${label} sein",
-        "Min": "Es müssen mindestens ${min} ${label} sein",
-        "Range": "Die Anzahl an ${label} muss zwischen ${min} und ${max} liegen"
-      },
-      "number": {
-        "Len": "${label} muss gleich ${len} sein",
-        "Max": "${label} darf maximal ${max} sein",
-        "Min": "${label} muss mindestens ${min} sein",
-        "Range": "${label} muss zwischen ${min} und ${max} liegen"
-      },
-      "pattern": {
-        "Mismatch": "${label} entspricht nicht dem ${pattern} Muster"
-      },
-      "string": {
-        "Len": "${label} muss genau ${len} Zeichen lang sein",
-        "Max": "${label} darf höchstens ${max} Zeichen lang sein",
-        "Min": "${label} muss mindestens ${min} Zeichen lang sein",
-        "Range": "${label} muss zwischen ${min} und ${max} Zeichen lang sein"
-      },
-      "types": {
-        "Email": "${label} ist nicht gültig. ${type} erwartet",
-        "Number": "${label} ist nicht gültig. ${type} erwartet",
-        "Object": "${label} ist nicht gültig. ${type} erwartet",
-        "String": "${label} ist nicht gültig. ${type} erwartet",
-        "Url": "${label} ist nicht gültig. ${type} erwartet"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Verringern",
-    "DeselectAll": "Alle abwählen",
     "File": "Datei",
-    "Increase": "Erhöhen",
-    "Loading": "Wird geladen...",
-    "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
     "Project": "Projekt",
     "Search": "Suchen",
     "Select": "Auswählen",
-    "SelectPlaceholder": "{{label}} auswählen",
-    "TotalItems": "Total {{total}} Elemente",
     "Unit": "Einheit",
     "button": {
       "Action": "Aktion",

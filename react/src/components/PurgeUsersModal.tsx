@@ -5,10 +5,14 @@
 import { PurgeUsersModalBulkMutation } from '../__generated__/PurgeUsersModalBulkMutation.graphql';
 import { PurgeUsersModalFragment$key } from '../__generated__/PurgeUsersModalFragment.graphql';
 import { App } from '../app-shim';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { VStack } from '@astryxdesign/core/Stack';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { VStack } from '@lablup/ui-common/Stack';
 import {
+  BAIBulkErrorModal,
+  type BAIColumnsType,
   BAIDeleteConfirmModal,
+  type BAIDeleteConfirmModalProps,
   filterOutNullAndUndefined,
   toLocalId,
   useBAILogger,
@@ -22,10 +26,19 @@ import { graphql, useFragment, useMutation } from 'react-relay';
 // full component swap to BUI `BAIDeleteConfirmModal` rather than a
 // piecemeal Form/Checkbox rename. Purge is the permanent-delete flow
 // (`.claude/rules/destructive-confirmation.md`), and BAIDeleteConfirmModal
-// (BUI/antd) has no Astryx equivalent to extend in place. The public prop
+// (BUI) has no Astryx equivalent to extend in place. The public prop
 // contract (`usersFrgmt`/`open`/`onOk`/`onCancel`) is kept unchanged so
 // AdminUserManagement.tsx's 2 call sites don't need to change.
-export interface PurgeUsersModalProps {
+interface PurgeFailure {
+  key: string;
+  email: string;
+  message: string;
+}
+
+export interface PurgeUsersModalProps extends Pick<
+  BAIDeleteConfirmModalProps,
+  'afterOpenChange' | 'afterClose'
+> {
   usersFrgmt: PurgeUsersModalFragment$key;
   open?: boolean;
   onOk?: () => void;
@@ -37,6 +50,8 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   open,
   onOk,
   onCancel,
+  afterOpenChange,
+  afterClose,
 }) => {
   'use memo';
 
@@ -64,12 +79,26 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
   // is the whole mechanism here too.
   const [purgeSharedVfolders, setPurgeSharedVfolders] = useState(false);
   const [deleteModelServices, setDeleteModelServices] = useState(false);
+  // Per-user failures of the last request; `total` is what the request
+  // carried, kept apart from the selection the parent clears on success.
+  const [failureReport, setFailureReport] = useState<{
+    failures: PurgeFailure[];
+    total: number;
+    purgedCount: number;
+  } | null>(null);
+
+  // `successes` only exists on 26.9.0+ managers; older ones reject the whole
+  // document, so it is gated and the deprecated count is selected instead.
+  const supportsPerIdResults = useSuspendedBackendaiClient().supports(
+    'bulk-mutation-per-id-results',
+  );
 
   const [commitBulkPurge, isInFlightBulkPurge] =
     useMutation<PurgeUsersModalBulkMutation>(graphql`
       mutation PurgeUsersModalBulkMutation($input: BulkPurgeUsersV2Input!) {
         adminBulkPurgeUsersV2(input: $input) {
-          purgedCount
+          successes @since(version: "26.9.0")
+          purgedCount @deprecatedSince(version: "26.9.0")
           failed {
             userId
             message
@@ -108,21 +137,39 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
             reject(new Error(t('error.UnknownError')));
             return;
           }
-          const { purgedCount, failed } = adminBulkPurgeUsersV2;
+          const { successes, failed } = adminBulkPurgeUsersV2;
+          // `successes`/`failed` answer for every requested user exactly
+          // once; derive from that instead of trusting the deprecated count.
+          const purgedCount = supportsPerIdResults
+            ? (successes?.length ?? 0)
+            : userList.length - failed.length;
 
           if (failed.length > 0) {
-            const failedMessages = failed.map((f) => f.message).join(', ');
-            message.error(failedMessages);
+            const emailByLocalId = _.fromPairs(
+              _.map(userList, (u) => [toLocalId(u.id), u.basicInfo.email]),
+            );
+            setFailureReport({
+              total: userList.length,
+              purgedCount,
+              failures: _.map(failed, (f) => ({
+                key: f.userId,
+                email: emailByLocalId[f.userId] ?? f.userId,
+                message: f.message,
+              })),
+            });
           }
 
-          if (purgedCount > 0) {
+          // An empty `failed` list is success even at a zero count. A partial
+          // success keeps the confirm open under the report; `onOk` (close +
+          // reload) then runs once the report is dismissed.
+          if (failed.length === 0 || purgedCount > 0) {
             message.success(
               t('credential.UsersPermanentlyDeleted', {
                 total: userList.length,
                 count: purgedCount,
               }),
             );
-            onOk?.();
+            if (failed.length === 0) onOk?.();
             resolve();
           } else {
             reject(new Error(t('error.UnknownError')));
@@ -138,44 +185,63 @@ const PurgeUsersModal: React.FC<PurgeUsersModalProps> = ({
     });
   };
 
+  const failureColumns: BAIColumnsType<PurgeFailure> = [
+    { key: 'email', title: t('general.E-Mail'), dataIndex: 'email' },
+    { key: 'message', title: t('dialog.error.Error'), dataIndex: 'message' },
+  ];
+
   return (
-    <BAIDeleteConfirmModal
-      isOpen={!!open}
-      onOpenChange={(next) => {
-        if (!next) onCancel?.();
-      }}
-      title={t('credential.PermanentlyDeleteUsers')}
-      maskClosable={false}
-      confirmLoading={isPending || isInFlightBulkPurge}
-      items={_.map(userList, (user) => ({
-        key: user.id,
-        label: user.basicInfo.email,
-      }))}
-      requireConfirmInput
-      confirmText={t('credential.PermanentlyDelete')}
-      inputLabel={t('credential.TypePermanentlyDelete', {
-        text: t('credential.PermanentlyDelete'),
-      })}
-      inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
-      cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
-      okText={t('credential.PermanentlyDelete')}
-      cancelText={t('button.Cancel')}
-      extraContent={
-        <VStack gap={1} align="stretch">
-          <CheckboxInput
-            label={t('credential.DeleteSharedVirtualFolders')}
-            value={purgeSharedVfolders}
-            onChange={setPurgeSharedVfolders}
-          />
-          <CheckboxInput
-            label={t('credential.DeleteDeploymentsAsWell')}
-            value={deleteModelServices}
-            onChange={setDeleteModelServices}
-          />
-        </VStack>
-      }
-      onOk={handleAction}
-    />
+    <>
+      <BAIDeleteConfirmModal
+        isOpen={!!open}
+        onOpenChange={(next) => {
+          if (!next) onCancel?.();
+        }}
+        afterOpenChange={afterOpenChange}
+        afterClose={afterClose}
+        title={t('credential.PermanentlyDeleteUsers')}
+        maskClosable={false}
+        confirmLoading={isPending || isInFlightBulkPurge}
+        items={_.map(userList, (user) => ({
+          key: user.id,
+          label: user.basicInfo.email,
+        }))}
+        requireConfirmInput
+        confirmText={t('credential.PermanentlyDelete')}
+        inputProps={{ placeholder: t('credential.PermanentlyDelete') }}
+        cannotBeUndoneText={t('dialog.warning.CannotBeUndone')}
+        okText={t('credential.PermanentlyDelete')}
+        cancelText={t('button.Cancel')}
+        extraContent={
+          <VStack gap={1} align="stretch">
+            <CheckboxInput
+              label={t('credential.DeleteSharedVirtualFolders')}
+              value={purgeSharedVfolders}
+              onChange={setPurgeSharedVfolders}
+            />
+            <CheckboxInput
+              label={t('credential.DeleteDeploymentsAsWell')}
+              value={deleteModelServices}
+              onChange={setDeleteModelServices}
+            />
+          </VStack>
+        }
+        onOk={handleAction}
+      />
+      <BAIBulkErrorModal<PurgeFailure>
+        open={!!failureReport}
+        alertDescription={t('credential.PurgeUsersPartialFailureDescription', {
+          failed: failureReport?.failures.length ?? 0,
+          total: failureReport?.total ?? 0,
+        })}
+        columns={failureColumns}
+        dataSource={failureReport?.failures ?? []}
+        onRequestClose={() => {
+          setFailureReport(null);
+          if (failureReport && failureReport.purgedCount > 0) onOk?.();
+        }}
+      />
+    </>
   );
 };
 

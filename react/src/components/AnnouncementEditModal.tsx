@@ -6,34 +6,34 @@ import { App } from '../app-shim';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation, useTanQuery } from '../hooks/reactQueryAlias';
 import { announcementQueryOptions } from '../hooks/useSuspenseGetAnnouncement';
-import { theme } from '../theme-shim';
 import './AnnouncementEditModal.css';
 import BAICodeEditor from './BAICodeEditor';
-import { Button } from '@astryxdesign/core/Button';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Markdown } from '@astryxdesign/core/Markdown';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Markdown } from '@lablup/ui-common/Markdown';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { OnMount } from '@monaco-editor/react';
 import { useQueryClient } from '@tanstack/react-query';
 import {
-  BAISkeleton,
+  BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAIFlex,
-  useErrorMessageResolver,
+  BAISkeleton,
   useBAILogger,
+  useErrorMessageResolver,
 } from 'backend.ai-ui';
 import {
+  ALargeSmall,
   Bold,
   Code,
-  ALargeSmall,
+  Image,
   Italic,
   Link,
-  ListOrdered,
-  Image,
-  Strikethrough,
   List,
+  ListOrdered,
+  Strikethrough,
 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -66,7 +66,7 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const { token } = theme.useToken();
+  const { token } = useTheme();
   const { message: appMessage, modal } = App.useApp();
   const { logger } = useBAILogger();
   const { getErrorMessage } = useErrorMessageResolver();
@@ -232,55 +232,55 @@ const AnnouncementEditModal: React.FC<AnnouncementEditModalProps> = ({
         // two panes stack instead of sitting side by side.
         style={{ display: isBodyReady ? 'flex' : 'none' }}
       >
-          <BAIFlex
-            direction="column"
-            align="stretch"
-            gap="xxs"
-            style={{ flex: 1, minWidth: 0 }}
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="xxs"
+          style={{ flex: 1, minWidth: 0 }}
+        >
+          <Text weight="semibold">{t('summary.AnnouncementMessage')}</Text>
+          <MarkdownEditorField
+            height={EDITOR_HEIGHT}
+            value={message}
+            onChange={setMessageDraft}
+            onReady={() => setIsEditorReady(true)}
+          />
+          {isMessageMissing && (
+            // PILOT-DECISION: antd `Typography.Text type="danger"` has no
+            // Astryx TextColor equivalent (MAPPING §3.4) — same drop as
+            // AdminModelCard.tsx: red tint dropped, `type="supporting"`
+            // keeps the small caption size.
+            <Text type="supporting" color="primary">
+              {t('summary.AnnouncementMessageRequired')}
+            </Text>
+          )}
+        </BAIFlex>
+        <BAIFlex
+          direction="column"
+          align="stretch"
+          gap="xxs"
+          style={{ flex: 1, minWidth: 0 }}
+        >
+          <Text weight="semibold">{t('summary.AnnouncementPreview')}</Text>
+          <div
+            style={{
+              border: `1px solid ${token('--color-border-emphasized')}`,
+              borderRadius: token('--radius-inner'),
+              padding: token('--spacing-6'),
+              // Match the editor's outer height (its inner height + the
+              // toolbar bar and the editor wrapper's borders).
+              height: `calc(${EDITOR_HEIGHT} + ${token('--size-element-sm')} + 2px)`,
+              boxSizing: 'border-box',
+              overflow: 'auto',
+            }}
           >
-            <Text weight="semibold">{t('summary.AnnouncementMessage')}</Text>
-            <MarkdownEditorField
-              height={EDITOR_HEIGHT}
-              value={message}
-              onChange={setMessageDraft}
-              onReady={() => setIsEditorReady(true)}
-            />
-            {isMessageMissing && (
-              // PILOT-DECISION: antd `Typography.Text type="danger"` has no
-              // Astryx TextColor equivalent (MAPPING §3.4) — same drop as
-              // AdminModelCard.tsx: red tint dropped, `type="supporting"`
-              // keeps the small caption size.
-              <Text type="supporting" color="primary">
-                {t('summary.AnnouncementMessageRequired')}
-              </Text>
-            )}
-          </BAIFlex>
-          <BAIFlex
-            direction="column"
-            align="stretch"
-            gap="xxs"
-            style={{ flex: 1, minWidth: 0 }}
-          >
-            <Text weight="semibold">{t('summary.AnnouncementPreview')}</Text>
-            <div
-              style={{
-                border: `1px solid ${token.colorBorder}`,
-                borderRadius: token.borderRadius,
-                padding: token.paddingLG,
-                // Match the editor's outer height (its inner height + the
-                // toolbar bar and the editor wrapper's borders).
-                height: `calc(${EDITOR_HEIGHT} + ${token.controlHeightSM + 2}px)`,
-                boxSizing: 'border-box',
-                overflow: 'auto',
-              }}
-            >
-              {/* Must stay byte-identical to AnnouncementBanner's expanded
+            {/* Must stay byte-identical to AnnouncementBanner's expanded
                   markdown props — a preview that renders differently from the
                   published banner is the whole of FR-3402. */}
-              <Markdown density="compact" headingLevelStart={3} autolink="gfm">
-                {message}
-              </Markdown>
-            </div>
+            <Markdown density="compact" headingLevelStart={3} autolink="gfm">
+              {message}
+            </Markdown>
+          </div>
         </BAIFlex>
       </BAIFlex>
     </BAIModal>

@@ -78,7 +78,7 @@ Enter the email of the user you want to assign the session to,
 click the `search` button, and the user's access key will be automatically registered.
 You can also select a project and resource group.
 
-![](../images/admin_launch_session_owner_project.png)
+![=740px](../images/admin_launch_session_owner_project.png)
 
 <a id="environments-and-resource-allocation"></a>
 
@@ -90,7 +90,7 @@ to proceed to the next page. If you want to create a session without any further
 settings, press the `Skip to review` button. In this case, settings on the
 other pages will all use the default values.
 
-  ![](../images/launch_session_environments_and_resource.png)
+  ![=708px](../images/launch_session_environments_and_resource.png)
 
 ### Environments
 
@@ -109,7 +109,7 @@ refer to the following:
   in session launching. In this feature, users can add any envs such as `PATH` by filling out
   variable name and value in environment configuration dialog.
 
-  ![](../images/launch_session_environments.png)
+  ![=700px](../images/launch_session_environments.png)
 
 ### Resource Allocation
 
@@ -127,7 +127,7 @@ refer to the following:
   define frequently used resource settings in advance. By adjusting the numerical
   input or sliding the slider, users can allocate the desired amount of resources.
 
-  ![](../images/launch_session_resource.png)
+  ![=700px](../images/launch_session_resource.png)
 
   The meaning of each item is as follows.
   Clicking the `Help (?)` button will also give more information.
@@ -147,7 +147,7 @@ refer to the following:
     matrix/vector computations involved in machine learning. AI accelerators speed
     up training / inference algorithms by orders of magnitude, reducing running
     times from weeks to days.
-  ![](../images/launch_session_resource_2.png)
+  ![=700px](../images/launch_session_resource_2.png)
 
 :::note
 Some AI accelerators use **unified memory** — they do not have their own dedicated
@@ -181,7 +181,7 @@ dropdown menu on the **Confirm and Launch** step. See
     information, refer to the
     [Overview of Backend.AI cluster compute session](#backendai-cluster-compute-session).
 
-    ![](../images/cluster_mode.png)
+    ![=652px](../images/cluster_mode.png)
 
 :::note
 The Agent Select feature may not be available depending on the server environment.
@@ -197,7 +197,7 @@ The Agent Select feature may not be available depending on the server environmen
   resulting in an abnormally large number of threads and significant performance degradation.
   To resolve this issue, setting the number of threads to 1 or 2 would work.
 
-![](../images/session_hpc_optimization.png)
+![=700px](../images/session_hpc_optimization.png)
 
 <a id="data-and-storage"></a>
 <a id="session-mounts"></a>
@@ -211,19 +211,37 @@ When a compute session is destroyed, data deletion is set to default.
 However, data stored in the mounted folders will survive.
 Data in those folders can also be reused by mounting it when creating another compute session.
 
-![](../images/launch_session_data.png)
+![=700px](../images/launch_session_data.png)
 
-users can specify the storage folders to mount in the compute session.
-Folder explorer can be used by clicking folder name. For further information,
-please refer [Explore Folder](#explore-folder) section.
+Users can specify the storage folders to mount in the compute session with the
+folder selector.
+
+Each selected folder is listed as a row with two path fields:
+
+- **Path in folder (source)**: The subfolder inside the storage folder to mount.
+   Click the field to browse the folder and pick a directory; leave it empty to
+   mount the folder root.
+- **Container path (destination)**: The path inside the container where the folder
+   is mounted. Leave it empty to mount the folder on `/home/work/<folder name>`,
+   enter an absolute path to mount it on that path, or enter a relative path to
+   mount it under `/home/work/`. A path that overlaps another mounted folder or an
+   automount folder is reported as an error, and the session cannot be launched
+   until the overlap is resolved.
+
+Click the remove (`X`) button at the end of a row to drop that folder from the
+mount list. Folder explorer can be used by clicking folder name. For further
+information, please refer [Explore Folder](#explore-folder) section.
 
 ![](../images/folder_explorer.png)
 
-New folder can be created by clicking the `+` button next to the search box.
-When new folder is created, it will automatically be selected as the folder to mount.
-For further information, please refer [Create Storage Folder](#create-storage-folder) section.
+Folders that are mounted automatically are listed as `Automount Folders` below
+the rows. They do not need to be selected.
 
-![](../images/folder_create_modal.png)
+:::note
+If a folder in the selection can no longer be mounted, for example when its
+sharing has been revoked, it is removed from the selection and a notification
+is shown.
+:::
 
 <a id="network"></a>
 
@@ -236,7 +254,7 @@ On this page, Network configuration can be done such as Preopen Ports.
   compute session. Refer to the [How to add preopen ports before session creation](#set-preopen-ports) for further information.
 
 
-![](../images/launch_session_network.png)
+![=700px](../images/launch_session_network.png)
 
 <a id="confirm-and-launch"></a>
 
@@ -252,7 +270,7 @@ environment variables set on the previous pages, preopen ports, etc.,
 Review the settings, then click the `Launch` button to launch the session.
 Click the `Edit` button located at the top right of each card to redirect to relevant page.
 
-![](../images/launch_session_confirm.png)
+![=708px](../images/launch_session_confirm.png)
 
 To launch more than one session at once with the same configuration, click the
 more (`...`) icon next to the `Launch` button to open its dropdown menu and
@@ -263,7 +281,7 @@ one session by default.
 
 ![](../images/session_start_multiple_dropdown.png)
 
-![](../images/session_start_dropdown.png)
+![=750px](../images/session_start_dropdown.png)
 
 :::note
 Concurrent session launch is capped by the system; if the requested total
@@ -274,12 +292,12 @@ be queued until resources become available.
 If there is an issue with the settings, an error message will be displayed as follows.
 Users can edit their settings when this happens.
 
-![](../images/launch_session_error_card.png)
+![=700px](../images/launch_session_error_card.png)
 
 When you click the `Launch` button, a warning dialog appears stating that there are no mounted folders.
 If folder mounting is not required, you can ignore the warning and click the `Start` button in the dialog to proceed.
 
-![](../images/no_folder_notification_dialog.png)
+![=400px](../images/no_folder_notification_dialog.png)
 
 When a new compute session is added in the **Running** tab, a notification appears at the bottom-right corner of the screen.
 The bottom-left area of the notification displays the session status, while the bottom-right area includes buttons for opening the app dialog,
@@ -289,11 +307,11 @@ You can also view this session creation notification by clicking **Notifications
 ![](../images/session_created.png)
 
 
-![](../images/session_notification.png)
+![=384px](../images/session_notification.png)
 
 By clicking the app dialog button on the far left, you can view the available app services.
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 
 ### Recent History
@@ -396,7 +414,7 @@ elapsed time, agent, cluster mode, resource usage including network I/O, and ker
 
 Click the `Log` button next to the `Hostname` in `Kernels` to view the logs of that kernel directly.
 
-![](../images/session_detail.png)
+![=799px](../images/session_detail.png)
 
 Backend.AI provides additional information for sessions in `PENDING`, `TERMINATED`, or `CANCELLED` states.
 Click the `Info` button to check the details when available.
@@ -407,6 +425,36 @@ a detailed log of all scheduling decisions the system made for the session. For 
 the [Session Scheduling History](#session-scheduling-history) section.
 
 ![](../images/session_scheduling_history_button.png)
+
+<a id="preemption-statuses"></a>
+
+### Preemption statuses
+
+A session can also appear in the `RESERVED`, `PREEMPTED`, and `RESCHEDULING`
+statuses. The scheduler uses them when it has to free resources for a
+higher-priority job:
+
+- `RESERVED`: The session holds a resource reservation and is waiting for the
+  resources it needs to be freed.
+- `PREEMPTED`: The session was selected for preemption so that a higher-priority
+  job can use its resources.
+- `RESCHEDULING`: The session was preempted and returned to the queue, and will be
+  scheduled again automatically.
+
+A session in any of these three statuses still occupies resources, so it is listed
+under **Running**, not **Finished**.
+
+When the scheduler records one of its preemption reasons on a session, hovering
+the session status tag shows that reason in plain language instead of the raw
+internal value:
+
+| Reason | Description |
+|--------|-------------|
+| `PREEMPTED_BY_SCHEDULER` | This session was terminated by the scheduler to free resources for a higher-priority job. |
+| `preempted-by-reservation` | This session was selected for preemption to free resources for a higher-priority job. |
+| `preemption-reservation` | This session holds a resource reservation and is waiting for the resources to be freed. |
+| `RESCHEDULED` | This session was preempted and returned to the queue; it will be scheduled again automatically. |
+
 
 <a id="session-scheduling-history"></a>
 
@@ -497,7 +545,8 @@ tab. It provides a chronological record of every action taken on the session —
 changes, resource modifications, and administrative operations — along with who triggered each
 action and when.
 
-![](../images/session_audit_log.png)
+![=799px](../images/session_audit_log.png)
+<!-- TODO: Capture screenshot showing the Client IP column (FR-3661) -->
 
 :::note
 The Audit Log is enforced by the backend and may be visible only to superadmins. Regular users
@@ -509,9 +558,14 @@ may see an empty result even when the tab is accessible.
 The Audit Log table includes the following columns:
 
 - **Triggered By**: The email address and account ID of the actor who initiated the action
+- **Client IP**: The IP address the action was requested from, shown exactly as the server
+  reports it. It may be partially masked by the administrator's client IP masking policy,
+  or `-` when it was not recorded
 - **Operation**: The type of action performed (for example, session creation, termination, or
   resource change)
-- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, or `UNKNOWN`)
+- **Status**: The outcome of the action (`SUCCESS`, `ERROR`, `RUNNING`, `DENIED`, or
+  `UNKNOWN`). `DENIED` means the action was deliberately rejected by policy rather than
+  having failed with an error
 - **Time**: When the action occurred
 
 #### Audit log filters
@@ -534,7 +588,7 @@ Let's look at how to use and manage an already running compute session.
 Click the first icon in the upper-right corner of the session detail panel to open the app launcher, which shows
 the app services available for that session.
 
-![](../images/app_dialog.png)
+![=450px](../images/app_dialog.png)
 
 
 :::note
@@ -578,7 +632,7 @@ the container.
 Click the `NEW` button at the top right and select the Notebook for Backend.AI,
 then the ipynb window appears where users can enter their own code.
 
-![](../images/backendai_notebook_menu.png)
+![=404px](../images/backendai_notebook_menu.png)
 
 In this window, users can enter and execute any code that they want by using the
 environment that session provides. The code is executed on one of the
@@ -650,7 +704,7 @@ session is deleted as soon as the compute session ends, it is recommended to
 move the data to the mounted folder or upload it to the mounted folder from the
 beginning.
 
-![](../images/session_destroy_dialog.png)
+![=520px](../images/session_destroy_dialog.png)
 
 <a id="idleness-checks"></a>
 
@@ -666,7 +720,7 @@ would terminate the session. The row appears while the session is running and at
 least one of its idle checks has a countdown, whether that countdown still has
 days to go or only minutes.
 
-![](../images/idle_checks_column.png)
+![=718px](../images/idle_checks_column.png)
 
 The meaning of idle checkers are as follows. Click the question-mark (`?`) icon
 next to the **Reclamation Status** label to open a dialog with the full
@@ -757,7 +811,7 @@ stays plain even if the badge already shows a risk level.
 
 ![](../images/session_reclamation_status_column.png)
 
-![](../images/session_reclamation_status_popover.png)
+![=649px](../images/session_reclamation_status_popover.png)
 
 <a id="how-to-add-environment-variable-before-creating-a-session"></a>
 
@@ -770,7 +824,7 @@ variable name and value in environment configuration dialog.
 To add environment variable, simply click `+ Add environment variables` button of the Variable.
 Also, you can remove the variable by clicking `-` button of the row that you want to get rid of.
 
-![](../images/launch_session_env.png)
+![=700px](../images/launch_session_env.png)
 
 You can write down variable name and value in the same line of the input fields.
 
@@ -784,7 +838,7 @@ separate images when you want to expose the serving port.
 
 To add preopen ports, simply enter multiple values separated by either a comma (,) or a space.
 
-![](../images/preopen-ports-config.png)
+![=700px](../images/preopen-ports-config.png)
 
 On the fourth page of the session creation page, users can add, update and delete written preopen ports. To see more detailed
 information, please click the `Help (?)` button.
@@ -839,11 +893,11 @@ Converting an ongoing session into an image allows users to select this image fr
 when creating a new session. This image is not exposed to other users and is useful for continuing to use the current session
 state as is. The converted image is tagged with `Customized<session name>`.
 
-![](../images/select_customized_image.png)
+![=674px](../images/select_customized_image.png)
 
 To manually enter the environment name for future session creation, please click the copy icon.
 
-![](../images/copy_customized_image.png)
+![=512px](../images/copy_customized_image.png)
 
 
 ## Advanced web terminal usage

@@ -26,7 +26,6 @@ flowchart LR
   en["resources/i18n/en.json"]
   extractor["build-search-index.mjs<br/>pnpm run search-index"]
   artifact["react/src/generated/searchIndex.json<br/>git에 커밋"]
-  dev["scripts/dev.mjs"]
   verify["scripts/verify.sh"]
   ci[".github/workflows/typecheck.yml"]
   build["build:only<br/>vite build"]
@@ -35,7 +34,6 @@ flowchart LR
   modules -- "i18n key" --> extractor
   en -- "key가 없으면 exit 1" --> extractor
   extractor -- "JSON 쓰기 (side effect)" --> artifact
-  dev -- "시작 때 한 번 실행" --> extractor
   verify -- "다시 만든 뒤 git status" --> extractor
   ci -- "다시 만든 뒤 git status" --> extractor
   build -- "커밋본을 그대로 번들" --> artifact
@@ -74,11 +72,7 @@ flowchart LR
 - **Fatal check**: 추출기는 인덱스에 든 key 중 `resources/i18n/en.json`에 없는 것이 있으면 파일을 쓰기 전에 exit 1로 끝난다. 오타 난 key가 palette에 raw key로 보이는 일을 막는다.
 - **Allowlist**: 일부러 비워 둔 key는 추출기의 `KNOWN_MISSING_KEYS`에 이유와 함께 적는다. 지금은 비어 있다.
 
-### 5. dev 서버는 시작 때 한 번 다시 만든다
-
-- **Dev startup**: `scripts/dev.mjs`가 시작 때 추출기를 한 번 실행한다. 실패하면 경고만 내고 커밋본을 쓴다. 개발 중의 drift는 검색 결과가 오래된 것일 뿐이라 dev 서버를 막지 않는다.
-
-### 6. conflict는 다시 만들어서 푼다
+### 5. conflict는 다시 만들어서 푼다
 
 - **Conflict resolution**: `.claude/rules/search-index-conflicts.md`가 절차를 정한다. 개발자는 어느 한쪽을 취하고 `pnpm run search-index`를 실행한 뒤 stage한다.
 
@@ -87,17 +81,20 @@ flowchart LR
 - **Ignore the artifact and generate before every consumer**: 파일을 `.gitignore`에 넣고 `tsc`, vitest, build, dev 앞에 생성 단계를 둔다. conflict가 사라지는 것이 장점이다. 기각한 이유는 `searchIndex.types.ts`의 정적 import 때문에 fresh checkout에서 `tsc`와 vitest가 생성 전에는 실패하고, 이 저장소의 Relay 산출물이 이미 "커밋 + drift 게이트" 관례를 쓰고 있어서 두 산출물이 다른 규칙을 따르게 되기 때문이다.
 - **Regenerate inside the build**: `build:only`가 매번 인덱스를 다시 만드는 이 결정 전의 상태로, 번들이 항상 최신이라는 것이 장점이다. 기각한 이유는 drift 상태의 커밋본이 머지되어도 아무것도 실패하지 않기 때문이다.
 - **Fail the build on drift**: 추출기에 `--check`를 두고 `build:only`가 커밋본과 새 빌드가 다르면 실패하게 한다. 조용히 다른 인덱스를 출하하는 일이 없어지는 것이 장점이다. 기각한 이유는 CI의 drift step이 같은 경우를 PR 단계에서 먼저 잡고, build 단계의 검사는 그것과 중복되기 때문이다.
+- **Rebuild once at dev boot**: `scripts/dev.mjs`가 시작 때 추출기를 한 번 실행하던 2026-09-09의 원래 결정으로, 개발자가 재생성을 잊은 채 dev 서버를 다시 띄워도 palette가 새 route를 보여 준다는 것이 장점이다. FR-3925에서 뺀 이유는 그 실행이 boot당 한 번뿐이라 session 중의 편집을 따라가지 못하고, boot 경로에 약 3초를 더했고, 추출기가 esbuild나 import 스캔 경고를 낸 실행에서는 커밋본에 있는 entry가 빠진 인덱스를 만들 수 있었기 때문이다.
 
 ## Consequences
 
 - **Skipped verify is caught**: `verify.sh`를 돌리지 않은 PR도 `typecheck.yml`이 drift와 `en.json`에 없는 key를 잡는다.
 - **Advisory in CI**: `typecheck.yml`은 path filter가 event 수준에 있어 required check로 올릴 수 없다. filter에 걸리지 않은 PR은 check-run 자체가 만들어지지 않기 때문이다. 다만 그 filter의 `react/**`와 `resources/i18n/en.json`이 인덱스의 입력을 모두 덮으므로 인덱스를 바꿀 수 있는 PR은 전부 이 workflow를 띄운다. 남는 것은 개발자가 실패한 check를 그대로 두고 머지할 수 있다는 점뿐이고, Relay drift check도 같은 처지다.
+- **Dev server does not rebuild**: `pnpm run dev`는 커밋본을 그대로 서빙한다. 개발자가 `routes.tsx`나 `t()` key를 바꾼 뒤 그 변화를 palette에서 보려면 `pnpm run search-index`를 직접 실행하고, 잊은 실행은 위의 drift 게이트 두 곳이 잡는다.
 - **BUI is not indexed**: 추출기의 `EXTERNAL_PREFIXES`가 `packages/backend.ai-ui/`를 걸러 그 안으로 들어가지 않는데, BUI가 자기 i18next instance와 `packages/backend.ai-ui/src/locale/`의 locale 파일을 따로 쓰기 때문이다. 그래서 page의 UI를 BUI component가 그리는 route는 host 쪽 key만 색인되어 검색 결과가 얇다.
 
 ## 출처
 
 - Jira: FR-3558 (global search palette). GitHub: #8811의 리뷰(2026-09-09), `react/package.json:99`와 review body의 (1)번 질문.
 - 결정일: 2026-09-09.
+- 수정: 2026-09-15, FR-3925 (#9645) — dev 서버 시작 시 재생성 항목을 뺐다.
 - 관련: `.claude/rules/search-index-conflicts.md`, `.claude/rules/review-ignored-paths.md`. 이웃한 ADR은 없다.
 
 ## 용어

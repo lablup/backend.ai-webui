@@ -7,13 +7,13 @@ import { EditSessionPriorityModalMutation } from '../../__generated__/EditSessio
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { AstryxFormNumberInput } from '../astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkEditFormItem,
   BAIFlex,
   BAIModal,
   BAIModalProps,
-  BAITagList,
+  BAITokenList,
   filterOutNullAndUndefined,
 } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
@@ -158,7 +158,7 @@ const EditSessionPriorityModal: React.FC<EditSessionPriorityModalProps> = ({
               requiredMark's "(Optional)" label on non-required items. */}
           <Form.Item label={t('session.SessionName')} required>
             {isBulkEdit ? (
-              <BAITagList
+              <BAITokenList
                 items={_.map(
                   filteredSessions,
                   (session) => session.name || session.id,

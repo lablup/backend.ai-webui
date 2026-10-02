@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<384831cf2b109d5d39aee6b08fa7178c>>
+ * @generated SignedSource<<0546b075c2330ee9ee881b99d684202f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ProjectTypeV2 = "GENERAL" | "MODEL_STORE" | "PERSONAL" | "%future added value";
 export type UserRoleV2 = "ADMIN" | "MONITOR" | "SUPERADMIN" | "USER" | "%future added value";
 export type UserStatusV2 = "ACTIVE" | "BEFORE_VERIFICATION" | "DELETED" | "INACTIVE" | "%future added value";
 export type BulkUpdateUserV2Input = {
@@ -71,6 +72,7 @@ export type UpdateUsersModalBulkUpdateMutation$data = {
           readonly node: {
             readonly basicInfo: {
               readonly name: string;
+              readonly type: ProjectTypeV2;
             };
             readonly id: string;
           };
@@ -358,7 +360,13 @@ v2 = [
           },
           {
             "alias": null,
-            "args": null,
+            "args": [
+              {
+                "kind": "Literal",
+                "name": "limit",
+                "value": 1000
+              }
+            ],
             "concreteType": "ProjectV2Connection",
             "kind": "LinkedField",
             "name": "projects",
@@ -395,6 +403,13 @@ v2 = [
                             "kind": "ScalarField",
                             "name": "name",
                             "storageKey": null
+                          },
+                          {
+                            "alias": null,
+                            "args": null,
+                            "kind": "ScalarField",
+                            "name": "type",
+                            "storageKey": null
                           }
                         ],
                         "storageKey": null
@@ -406,7 +421,7 @@ v2 = [
                 "storageKey": null
               }
             ],
-            "storageKey": null
+            "storageKey": "projects(limit:1000)"
           }
         ],
         "storageKey": null
@@ -458,16 +473,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "11d061cbbc5e951df4d0d031eb47059c",
+    "cacheID": "fe20f51246df032d922c376f948fea06",
     "id": null,
     "metadata": {},
     "name": "UpdateUsersModalBulkUpdateMutation",
     "operationKind": "mutation",
-    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n      projects {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n            }\n          }\n        }\n      }\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
+    "text": "mutation UpdateUsersModalBulkUpdateMutation(\n  $input: BulkUpdateUserV2Input!\n  $isNotSupportTotp: Boolean!\n) {\n  adminBulkUpdateUsersV2(input: $input) {\n    updatedUsers {\n      id\n      basicInfo {\n        email\n        fullName\n        username\n        description\n        integrationName\n      }\n      organization {\n        domainName\n        role\n        resourcePolicy\n        mainAccessKey\n      }\n      security {\n        totpActivated @skipOnClient(if: $isNotSupportTotp)\n        totpActivatedAt @skipOnClient(if: $isNotSupportTotp)\n        sudoSessionEnabled\n        allowedClientIp\n      }\n      status {\n        status\n        statusInfo\n        needPasswordChange\n      }\n      container {\n        containerUid\n        containerMainGid\n        containerGids\n      }\n      timestamps {\n        createdAt\n        modifiedAt\n      }\n      projects(limit: 1000) {\n        edges {\n          node {\n            id\n            basicInfo {\n              name\n              type\n            }\n          }\n        }\n      }\n    }\n    failed {\n      userId\n      message\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "0613fdef4073ea9555d27f0806b10dea";
+(node as any).hash = "9ee118073ee75d76ad27429fed60786e";
 
 export default node;
