@@ -38,6 +38,7 @@ import {
   BAIGraphQLPropertyFilter,
   BAILink,
   BAINameActionCell,
+  BAIResourceNumberWithIcon,
   BAISelectionLabel,
   BAIStorageHostSelect,
   BAITable,
@@ -125,6 +126,10 @@ export const AdminModelCardQuery = graphql`
             title
             category
             task
+          }
+          minResource {
+            resourceType
+            quantity
           }
           ...AdminModelCardSettingModalFragment
         }
@@ -324,7 +329,25 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
         />
       ),
     },
-    // TODO(needs-backend): FR-2417 - Add minResource column when ModelCardV2Metadata includes minResource field
+    {
+      key: 'minResource',
+      title: t('modelStore.MinResource'),
+      dataIndex: 'minResource',
+      render: (minResource: ModelCardNode['minResource']) =>
+        minResource && minResource.length > 0 ? (
+          <BAIFlex gap="sm" wrap="wrap">
+            {_.map(minResource, (entry) => (
+              <BAIResourceNumberWithIcon
+                key={entry.resourceType}
+                type={entry.resourceType}
+                value={entry.quantity}
+              />
+            ))}
+          </BAIFlex>
+        ) : (
+          '-'
+        ),
+    },
     {
       key: 'projectId',
       title: t('adminModelCard.Project'),

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<c40885de6c8a82711ba62ecff76b2872>>
+ * @generated SignedSource<<b3c10683e8123da8d7a1ae5389524935>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,22 +9,59 @@
 // @ts-nocheck
 
 import { ConcreteRequest } from 'relay-runtime';
+export type ContainerRegistryType = "DOCKER" | "ECR" | "ECR_PUB" | "GITHUB" | "GITLAB" | "HARBOR" | "HARBOR2" | "LOCAL" | "OCP" | "%future added value";
+export type ContainerRegistryV2Filter = {
+  AND?: ReadonlyArray<ContainerRegistryV2Filter> | null | undefined;
+  NOT?: ReadonlyArray<ContainerRegistryV2Filter> | null | undefined;
+  OR?: ReadonlyArray<ContainerRegistryV2Filter> | null | undefined;
+  isGlobal?: boolean | null | undefined;
+  registryName?: StringFilter | null | undefined;
+  type?: ContainerRegistryTypeFilter | null | undefined;
+};
+export type StringFilter = {
+  contains?: string | null | undefined;
+  endsWith?: string | null | undefined;
+  equals?: string | null | undefined;
+  iContains?: string | null | undefined;
+  iEndsWith?: string | null | undefined;
+  iEquals?: string | null | undefined;
+  iIn?: ReadonlyArray<string> | null | undefined;
+  iNotContains?: string | null | undefined;
+  iNotEndsWith?: string | null | undefined;
+  iNotEquals?: string | null | undefined;
+  iNotIn?: ReadonlyArray<string> | null | undefined;
+  iNotStartsWith?: string | null | undefined;
+  iStartsWith?: string | null | undefined;
+  in?: ReadonlyArray<string> | null | undefined;
+  notContains?: string | null | undefined;
+  notEndsWith?: string | null | undefined;
+  notEquals?: string | null | undefined;
+  notIn?: ReadonlyArray<string> | null | undefined;
+  notStartsWith?: string | null | undefined;
+  startsWith?: string | null | undefined;
+};
+export type ContainerRegistryTypeFilter = {
+  equals?: ContainerRegistryType | null | undefined;
+  in_?: ReadonlyArray<ContainerRegistryType> | null | undefined;
+  notEquals?: ContainerRegistryType | null | undefined;
+  notIn?: ReadonlyArray<ContainerRegistryType> | null | undefined;
+};
 export type BAIAdminContainerRegistrySelectPaginatedQuery$variables = {
-  filter?: string | null | undefined;
+  filter?: ContainerRegistryV2Filter | null | undefined;
   limit: number;
   offset: number;
 };
 export type BAIAdminContainerRegistrySelectPaginatedQuery$data = {
-  readonly container_registry_nodes: {
-    readonly count: number | null | undefined;
+  readonly adminContainerRegistriesV2: {
+    readonly count: number;
     readonly edges: ReadonlyArray<{
       readonly node: {
+        readonly entityId: string;
         readonly id: string;
         readonly project: string | null | undefined;
-        readonly registry_name: string;
-        readonly row_id: string | null | undefined;
-      } | null | undefined;
-    } | null | undefined>;
+        readonly registryName: string;
+      };
+    }>;
   } | null | undefined;
 };
 export type BAIAdminContainerRegistrySelectPaginatedQuery = {
@@ -59,7 +96,7 @@ v3 = [
       },
       {
         "kind": "Variable",
-        "name": "first",
+        "name": "limit",
         "variableName": "limit"
       },
       {
@@ -69,13 +106,18 @@ v3 = [
       },
       {
         "kind": "Literal",
-        "name": "order",
-        "value": "registry_name"
+        "name": "orderBy",
+        "value": [
+          {
+            "direction": "ASC",
+            "field": "REGISTRY_NAME"
+          }
+        ]
       }
     ],
-    "concreteType": "ContainerRegistryConnection",
+    "concreteType": "ContainerRegistryV2Connection",
     "kind": "LinkedField",
-    "name": "container_registry_nodes",
+    "name": "adminContainerRegistriesV2",
     "plural": false,
     "selections": [
       {
@@ -88,7 +130,7 @@ v3 = [
       {
         "alias": null,
         "args": null,
-        "concreteType": "ContainerRegistryEdge",
+        "concreteType": "ContainerRegistryV2Edge",
         "kind": "LinkedField",
         "name": "edges",
         "plural": true,
@@ -96,7 +138,7 @@ v3 = [
           {
             "alias": null,
             "args": null,
-            "concreteType": "ContainerRegistryNode",
+            "concreteType": "ContainerRegistryV2",
             "kind": "LinkedField",
             "name": "node",
             "plural": false,
@@ -112,14 +154,14 @@ v3 = [
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "row_id",
+                "name": "entityId",
                 "storageKey": null
               },
               {
                 "alias": null,
                 "args": null,
                 "kind": "ScalarField",
-                "name": "registry_name",
+                "name": "registryName",
                 "storageKey": null
               },
               {
@@ -165,16 +207,16 @@ return {
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "d2f106f3e133116250e2b02cf3d00136",
+    "cacheID": "1617ae6e9a603f2339924b8b96537009",
     "id": null,
     "metadata": {},
     "name": "BAIAdminContainerRegistrySelectPaginatedQuery",
     "operationKind": "query",
-    "text": "query BAIAdminContainerRegistrySelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: String\n) {\n  container_registry_nodes(offset: $offset, first: $limit, filter: $filter, order: \"registry_name\") {\n    count\n    edges {\n      node {\n        id\n        row_id\n        registry_name\n        project\n      }\n    }\n  }\n}\n"
+    "text": "query BAIAdminContainerRegistrySelectPaginatedQuery(\n  $offset: Int!\n  $limit: Int!\n  $filter: ContainerRegistryV2Filter\n) {\n  adminContainerRegistriesV2(offset: $offset, limit: $limit, filter: $filter, orderBy: [{field: REGISTRY_NAME, direction: ASC}]) {\n    count\n    edges {\n      node {\n        id\n        entityId\n        registryName\n        project\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "75cb6520b4495f201c0a49d4996d4c6e";
+(node as any).hash = "409b53ba0e4ca053604fe3f9ef3f3c0d";
 
 export default node;
