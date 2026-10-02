@@ -1,3 +1,4 @@
+import { ModalProps } from '@lablup/ui-common/Modal';
 import { default as React } from '../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 export type WindowState = 'default' | 'minimized' | 'maximized' | 'fullscreen';
 export type WindowAction = 'minimize' | 'maximize' | 'fullscreen';
@@ -66,7 +67,13 @@ export type BAIModalSemanticClassNames = Partial<Record<keyof BAIModalSemanticSt
 type SemanticOrFn<T> = T | ((...args: any[]) => any);
 /** antd's responsive width form: `{ xs: 320, md: 520 }`. */
 export type BAIModalResponsiveWidth = Partial<Record<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl', string | number>>;
-export interface BAIModalProps {
+/**
+ * `ModalProps` whose job the adapter does under an antd name, or whose type it
+ * widens. Modal's generated header/footer props are left out so each concept
+ * has one name here (`onOk`, `okText`, `closable`, `loading`, …).
+ */
+type BAIModalOwnedModalProps = 'isOpen' | 'onOpenChange' | 'onCancel' | 'width' | 'footer' | 'purpose' | 'isInline' | 'headerStartContent' | 'headerEndContent' | 'hasCloseButton' | 'onAction' | 'actionLabel' | 'actionVariant' | 'isActionLoading' | 'isActionDisabled' | 'actionButtonProps' | 'cancelLabel' | 'hasCancelButton' | 'isLoading';
+export interface BAIModalProps extends Omit<ModalProps, BAIModalOwnedModalProps> {
     /** Whether the modal is visible. */
     open?: boolean;
     /** Astryx-style alias for `open`, so a call site can use either name. */
@@ -81,14 +88,9 @@ export interface BAIModalProps {
     onOpenChange?: (isOpen: boolean) => void;
     /** Called after the modal has closed. Drives `BAIUnmountAfterClose`. */
     afterClose?: () => void;
-    /** Called with the new visibility right after it changes. */
-    afterOpenChange?: (open: boolean) => void;
-    title?: React.ReactNode;
-    /** Secondary line under the title. */
-    subtitle?: string;
     /**
-     * Replaces the whole header row (ticket 16, FolderExplorer). A close button
-     * is appended so dismissal stays reachable.
+     * Replaces the whole header row (FolderExplorer). A close button is
+     * appended so dismissal stays reachable.
      */
     headerContent?: React.ReactNode;
     /** Accessible name for the close button rendered next to `headerContent`. */
@@ -101,7 +103,6 @@ export interface BAIModalProps {
     closeIcon?: React.ReactNode | false;
     /** Visual variant that changes the header title colour. */
     type?: 'normal' | 'warning' | 'error';
-    children?: React.ReactNode;
     /** Ref to the body wrapper — used as a file drag-and-drop container. */
     bodyRef?: React.Ref<HTMLDivElement>;
     /** Extra props spread onto the body wrapper element. */
@@ -129,20 +130,18 @@ export interface BAIModalProps {
     keyboard?: boolean;
     /**
      * antd's mask config. Only `closable` is honoured (as `maskClosable`); the
-     * backdrop itself is owned by `BAIDialog` and is never removable.
+     * backdrop itself is Modal's and is never removable.
      */
     mask?: boolean | {
         closable?: boolean;
         blur?: boolean;
     };
-    width?: number | string | BAIModalResponsiveWidth;
-    maxHeight?: number | string;
     /**
-     * `'fullscreen'` fills the viewport and makes `width` / `maxHeight` inert.
-     * It is the only way to reach edge-to-edge: Astryx caps the standard dialog
-     * at `maxWidth: 90vw`, so `width="90%"` and `width="100%"` render alike.
+     * A per-breakpoint record collapses to its largest entry; `'auto'` becomes
+     * `fit-content`. `variant="fullscreen"` is the only way to edge-to-edge:
+     * Astryx caps the standard dialog at 90vw.
      */
-    variant?: 'standard' | 'fullscreen';
+    width?: number | string | BAIModalResponsiveWidth;
     /** When non-empty, window controls are rendered in the header. */
     windowActions?: Array<WindowAction>;
     onWindowStateChange?: (state: WindowState) => void;
@@ -154,14 +153,8 @@ export interface BAIModalProps {
      */
     confirmBeforeClose?: boolean;
     onConfirmClose?: () => void | boolean | Promise<boolean>;
-    className?: string;
-    style?: React.CSSProperties;
     styles?: SemanticOrFn<BAIModalSemanticStyles>;
     classNames?: SemanticOrFn<BAIModalSemanticClassNames>;
-    'aria-label'?: string;
-    'data-testid'?: string;
-    /** Forwarded to `BAIDialog`'s `zIndex` — see there for what it resolves to. */
-    zIndex?: number;
     centered?: boolean;
     draggable?: boolean;
     stickyTitle?: boolean;

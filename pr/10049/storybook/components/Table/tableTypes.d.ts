@@ -1,3 +1,4 @@
+import { DataGridColumnOverride, DataGridColumnOverrides } from '@lablup/ui-common/components/DataGrid';
 import { Key, ReactNode, TdHTMLAttributes } from '../../../../../../../../setup-pnpm/node_modules/.bin/store/v11/links/@/react/19.2.8/01dc110d7f872a8caacc052aa0e86f46609c662315b6d5b76a7913331f487dd1/node_modules/react';
 /** Loose record constraint, mirroring antd's `AnyObject`. */
 export type BAIAnyObject = Record<PropertyKey, any>;
@@ -8,40 +9,21 @@ export type BAIColumnAlign = 'left' | 'right' | 'center';
 export type BAIColumnFixed = 'left' | 'right' | boolean;
 export type BAICompareFn<RecordType> = (a: RecordType, b: RecordType, sortOrder?: 'ascend' | 'descend') => number;
 /**
- * antd's sorter shape. Only its TRUTHINESS reaches the Astryx engine (a column
- * with a `sorter` gets a sort control whose key is its `dataIndex`); the
- * comparator itself is dead weight for the server-sorted tables but is kept in
- * the type because a handful of client-sorted tables still pass one.
+ * antd's sorter shape. A truthy sorter makes the column sortable; a comparator
+ * sorts the rows locally unless the table is server-sorted (`order` /
+ * `onChangeOrder`).
  */
 export type BAIColumnSorter<RecordType> = boolean | BAICompareFn<RecordType> | {
     compare?: BAICompareFn<RecordType>;
     multiple?: number;
 };
 /**
- * Column override properties that can be customized.
- * Used to override default column behavior like visibility.
+ * A column's user overrides: `hidden`, `order` (set only after a reorder) and
+ * the resized `width` in pixels, all persisted in one record.
  */
-export interface BAITableColumnOverrideItem {
-    /** Override the default visibility of a column */
-    hidden?: boolean;
-    /**
-     * Override the column display order. Lower values come first. Persisted in
-     * the same overrides record as `hidden`, so reordering needs no extra
-     * persistence plumbing. Only set when the user has reordered columns away
-     * from their natural (declaration) order; see `disableColumnReorder`.
-     */
-    order?: number;
-    /**
-     * Persisted column width in pixels. Written by `BAITable` when the
-     * user drags a column border, so a resize survives a reload exactly like a
-     * visibility toggle (ticket 25).
-     */
-    width?: number;
-}
-/**
- * Record type mapping column keys to their override configurations
- */
-export type BAITableColumnOverrideRecord = Record<string, BAITableColumnOverrideItem>;
+export type BAITableColumnOverrideItem = DataGridColumnOverride;
+/** Column overrides keyed by column key. */
+export type BAITableColumnOverrideRecord = DataGridColumnOverrides;
 /**
  * Configuration for table settings including column overrides
  * Supports controllable column visibility and customization
