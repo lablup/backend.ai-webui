@@ -15,6 +15,7 @@ import { buildUserCSVExportFilter } from '../helper/userCSVExportFilter';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
+import { useUnblockUserLogin } from '../hooks/useUnblockUserLogin';
 import BAIRadioGroup from './BAIRadioGroup';
 import BulkCreateUserFromCSVModal from './BulkCreateUserFromCSVModal';
 import PurgeUsersModal from './PurgeUsersModal';
@@ -48,6 +49,7 @@ import {
   Ellipsis,
   Info,
   BanIcon,
+  LockOpen,
   PlusIcon,
   SquarePenIcon,
   UndoIcon,
@@ -158,6 +160,7 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
   );
 
   const { supportedFields, exportCSV } = useCSVExport('users');
+  const unblockUserLogin = useUnblockUserLogin();
 
   const { adminUsersV2 } = usePreloadedQuery<AdminUserManagementQueryType>(
     AdminUserManagementQuery,
@@ -268,6 +271,23 @@ const AdminUserManagement: React.FC<AdminUserManagementProps> = ({
                   });
                 }
               },
+            },
+          },
+          bailClient.supports('admin-unblock-user') && {
+            key: 'unblock-login',
+            title: t('credential.UnblockLogin'),
+            icon: <LockOpen />,
+            showInMenu: 'always' as const,
+            popConfirm: {
+              title: t('credential.UnblockLoginConfirm'),
+              description: email,
+              okText: t('credential.UnblockLogin'),
+              cancelText: t('button.Cancel'),
+              onConfirm: () =>
+                unblockUserLogin({
+                  email,
+                  username: record.basicInfo?.username,
+                }),
             },
           },
           !isActive && {

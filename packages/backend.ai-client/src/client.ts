@@ -902,6 +902,8 @@ export class Client {
     if (this.isManagerVersionCompatibleWith('26.4.2')) {
       this._features['prometheus-query-preset'] = true;
       this._features['deployment-preset'] = true;
+      // `adminUnblockUser` clears a failed-login block (FR-4150).
+      this._features['admin-unblock-user'] = true;
     }
     if (this.isManagerVersionCompatibleWith('26.4.3')) {
       this._features['model-deployment-extended-filter'] = true;
