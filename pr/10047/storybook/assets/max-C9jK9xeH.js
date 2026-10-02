@@ -1,0 +1,1 @@
+import{i as d}from"./isSymbol-BuyOVbCZ.js";import{i as h}from"./identity-DKeuBCMA.js";function x(i,e){return i>e}function b(i,e,o){for(var t=-1,l=i.length;++t<l;){var f=i[t],n=e(f);if(n!=null&&(m===void 0?n===n&&!d(n):o(n,m)))var m=n,s=f}return s}function a(i){return i&&i.length?b(i,h,x):void 0}export{a as m};
