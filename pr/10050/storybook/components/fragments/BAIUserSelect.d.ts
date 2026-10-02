@@ -9,7 +9,7 @@ export interface BAIUserSelectUser {
 export interface BAIUserSelectRef {
     refetch: () => void;
 }
-export interface BAIUserSelectBaseProps extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'> {
+export interface BAIUserSelectProps extends Omit<BAIComplexSelectProps, 'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'> {
     /** Plain key(s) — the email, or the local user id under `valuePropName="id"`. */
     value?: string | Array<string> | null;
     /**
@@ -23,15 +23,10 @@ export interface BAIUserSelectBaseProps extends Omit<BAIComplexSelectProps, 'opt
     open?: boolean;
     defaultOpen?: boolean;
     ref?: React.Ref<BAIUserSelectRef>;
-}
-type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
-/** The picker over `scopedUsersV2`; the scope is the only thing callers vary. */
-export declare const ScopedUserOptions: React.FC<BAIUserSelectBaseProps & {
-    userScope: UserScope;
-}>;
-export interface BAIUserSelectProps extends BAIUserSelectBaseProps {
-    /** The project whose members are listed. */
-    projectId: string;
+    /** Lists this project's members. Takes precedence over `domainId`. */
+    projectId?: string;
+    /** Lists this domain's users (domain UUID). Defaults to the current domain. */
+    domainId?: string;
 }
 declare const BAIUserSelect: React.FC<BAIUserSelectProps>;
 export default BAIUserSelect;
