@@ -1,0 +1,127 @@
+{
+  "$comment": "Reviewed exceptions for scripts/audit-gate.mjs. Each entry: id (GHSA), package, reason, optional expires (YYYY-MM-DD, gate fails after it), optional importers (exemption applies only to paths rooted in these workspace packages). Prefer upgrading over adding entries. shippedDevDependencies: root devDependencies that end up in a shipped artifact, which `pnpm audit --prod` does not see.",
+  "shippedDevDependencies": [
+    {
+      "package": "electron",
+      "reason": "Root devDependency, but @electron/packager bundles it as the Backend.AI Desktop runtime."
+    }
+  ],
+  "entries": [
+    {
+      "id": "GHSA-3jxr-9vmj-r5cp",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-mh99-v99m-4gvg",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-rgw5-rvv9-x895",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-qhr7-859c-m2p7",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-6j4f-fj2g-mc7p",
+      "package": "brace-expansion",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint / typescript-eslint plugin tree under eslint-config-bai, a devDependency of every consumer); it is never bundled into the web or desktop build, and globs come from our own config, not user input."
+    },
+    {
+      "id": "GHSA-2883-xcg3-v3hh",
+      "package": "js-yaml",
+      "importers": ["packages/eslint-config-bai"],
+      "reason": "Lint tooling only (eslint -> @eslint/eslintrc under eslint-config-bai); parses our own config files at lint time and is never bundled into the web or desktop build."
+    },
+    {
+      "id": "GHSA-5jgf-p345-68v8",
+      "package": "fast-uri",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react; upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-f65p-4m7j-42xc",
+      "package": "fast-uri",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react; upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-fph4-wmhf-6fwf",
+      "package": "fast-uri",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react; upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-jqff-g426-hqxp",
+      "package": "fast-uri",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react; upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-qw65-cvwx-89v3",
+      "package": "fast-uri",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react; upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-vrm6-8vpv-qv8q",
+      "package": "undici",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react (@ai-sdk/provider-utils); upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-v9p9-hfj2-hcw8",
+      "package": "undici",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react (@ai-sdk/provider-utils); upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-vxpw-j846-p89q",
+      "package": "undici",
+      "importers": ["react"],
+      "expires": "2026-10-31",
+      "reason": "Shipped via react (@ai-sdk/provider-utils); upgrade tracked in FR-4149. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-hq2x-r82h-9wj4",
+      "package": "electron",
+      "expires": "2026-10-31",
+      "reason": "Backend.AI Desktop runtime; upgrade tracked in FR-4148. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-gr2m-v5gq-v685",
+      "package": "electron",
+      "expires": "2026-10-31",
+      "reason": "Backend.AI Desktop runtime; upgrade tracked in FR-4148. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-j84w-jfhq-vhvj",
+      "package": "electron",
+      "expires": "2026-10-31",
+      "reason": "Backend.AI Desktop runtime; upgrade tracked in FR-4148. Temporary exception so the gate can land first."
+    },
+    {
+      "id": "GHSA-9qh4-3jw8-366w",
+      "package": "electron",
+      "expires": "2026-10-31",
+      "reason": "Backend.AI Desktop runtime; upgrade tracked in FR-4148. Temporary exception so the gate can land first."
+    }
+  ]
+}

@@ -351,6 +351,12 @@ After installing the extension, add the following configuration to your `./vscod
 }
 ```
 
+### Dependency vulnerability gate
+
+`node scripts/audit-gate.mjs` fails on any high/critical `pnpm audit` advisory in shipped dependencies (production dependencies plus Electron) that is not listed in `scripts/audit-allowlist.json`. CI runs it on PRs that change dependencies, weekly, and before every release build (`.github/workflows/dependency-audit.yml`).
+
+When it fails, upgrade the dependency. If that is not possible yet, add a reviewed allowlist entry: the GHSA id, the package, a reason, and either an `expires` date with the tracking issue (the gate fails once it passes) or `importers` that limit it to tooling which is never bundled.
+
 ## Serving Guide
 
 ### Preparing bundled source

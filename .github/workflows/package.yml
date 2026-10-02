@@ -32,10 +32,18 @@ env:
   NODE_OPTIONS: --max-old-space-size=4096
 
 jobs:
+  # Release gate: no web/desktop build while an unreviewed high/critical
+  # advisory is open (scripts/audit-allowlist.json, FR-4146).
+  audit:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/dependency-audit.yml
+
   # ──────────────────────────────────────────────────────────────────────
   # Job 1: Build web assets and create the web bundle (ubuntu, ~8 min)
   # ──────────────────────────────────────────────────────────────────────
   build_web:
+    needs: audit
     permissions:
       contents: write
     runs-on: ubuntu-latest
