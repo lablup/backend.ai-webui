@@ -35,18 +35,17 @@ export interface ModalShimFuncProps {
      * - `centered` — Astryx dialogs are always centered.
      * - `icon` — the dialog has no icon slot; severity reads from the action
      *   button variant instead.
-     * - `maskClosable`/`keyboard` — dismissal is governed by Dialog `purpose`;
-     *   the shim always uses antd's confirm-family defaults (Escape yes,
-     *   backdrop no).
-     * - `closable` — the alert-dialog branch never has a header X; the other
-     *   branch always has one (DialogHeader). Either way Escape already
-     *   cancels (see `maskClosable`/`keyboard` above), so a header-X toggle
-     *   cannot enforce anything Escape does not already allow.
      */
     centered?: boolean;
     icon?: ReactNode;
+    /** Whether a backdrop click cancels. Default `false` (antd's confirm). */
     maskClosable?: boolean;
+    /** Whether Escape cancels. Default `true`. */
     keyboard?: boolean;
+    /**
+     * `false` removes the header close button; `true` asks for one, which only
+     * the `Modal` branch has. Default: shown on that branch.
+     */
     closable?: boolean;
 }
 /** antd's confirm return: an imperative handle that is also thenable. */
