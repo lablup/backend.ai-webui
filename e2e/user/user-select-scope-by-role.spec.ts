@@ -56,14 +56,15 @@ async function skipUnlessManager269(page: Page) {
   await page.waitForFunction(
     () => (globalThis as any).backendaiclient?.ready === true,
   );
+  // scopedUsersV2 and DomainV2.entityId already ship in the 26.9.0 release candidates.
   const supported = await page.evaluate(() =>
     (globalThis as any).backendaiclient.isManagerVersionCompatibleWith(
-      '26.9.0',
+      '26.9.0rc1',
     ),
   );
   test.skip(
     !supported,
-    'scopedUsersV2 needs a Backend.AI manager >= 26.9.0 (@requires-manager-v26.9)',
+    'scopedUsersV2 needs a Backend.AI manager >= 26.9.0rc1 (@requires-manager-v26.9)',
   );
 }
 
