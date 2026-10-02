@@ -60,19 +60,22 @@ const QuotaScopeContent: React.FC<QuotaScopeContentProps> = ({
   const baiClient = useSuspendedBackendaiClient();
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
-  // The quota scope id needs the raw user UUID, which is `entityId`.
-  const { myUserV2 } =
+  // The quota scope id needs the raw user UUID: `entityId` on 26.9.0+, the legacy `user.id` before.
+  const { myUserV2, user } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardUserQuery>(
       graphql`
         query QuotaPerStorageVolumePanelCardUserQuery {
           myUserV2 {
-            entityId
+            entityId @since(version: "26.9.0")
+          }
+          user @deprecatedSince(version: "26.9.0") {
+            id
           }
         }
       `,
       {},
     );
-  const userId = myUserV2?.entityId;
+  const userId = myUserV2?.entityId ?? user?.id ?? undefined;
   const { project_quota_scope, user_quota_scope } =
     useLazyLoadQuery<QuotaPerStorageVolumePanelCardQuery>(
       graphql`

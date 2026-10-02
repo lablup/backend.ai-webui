@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a60ea1eddbf3d2a580ab94b2a238f6ef>>
+ * @generated SignedSource<<bf508145cfe3f8db11ef92a3c2a1ce7b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -14,6 +14,9 @@ export type QuotaPerStorageVolumePanelCardUserQuery$data = {
   readonly myUserV2: {
     readonly entityId: string;
   } | null | undefined;
+  readonly user: {
+    readonly id: string | null | undefined;
+  } | null | undefined;
 };
 export type QuotaPerStorageVolumePanelCardUserQuery = {
   response: QuotaPerStorageVolumePanelCardUserQuery$data;
@@ -26,6 +29,25 @@ var v0 = {
   "args": null,
   "kind": "ScalarField",
   "name": "entityId",
+  "storageKey": null
+},
+v1 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v2 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "User",
+  "kind": "LinkedField",
+  "name": "user",
+  "plural": false,
+  "selections": [
+    (v1/*: any*/)
+  ],
   "storageKey": null
 };
 return {
@@ -46,7 +68,8 @@ return {
           (v0/*: any*/)
         ],
         "storageKey": null
-      }
+      },
+      (v2/*: any*/)
     ],
     "type": "Query",
     "abstractKey": null
@@ -66,29 +89,24 @@ return {
         "plural": false,
         "selections": [
           (v0/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
+          (v1/*: any*/)
         ],
         "storageKey": null
-      }
+      },
+      (v2/*: any*/)
     ]
   },
   "params": {
-    "cacheID": "f5f947356fe539ea4ce1b606616220a6",
+    "cacheID": "8e75201146ca467082cf53e764c1eaae",
     "id": null,
     "metadata": {},
     "name": "QuotaPerStorageVolumePanelCardUserQuery",
     "operationKind": "query",
-    "text": "query QuotaPerStorageVolumePanelCardUserQuery {\n  myUserV2 {\n    entityId\n    id\n  }\n}\n"
+    "text": "query QuotaPerStorageVolumePanelCardUserQuery {\n  myUserV2 {\n    entityId @since(version: \"26.9.0\")\n    id\n  }\n  user @deprecatedSince(version: \"26.9.0\") {\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d501cb3ed1a87925830e95fb2c052478";
+(node as any).hash = "3a6365baa8c1bc1b6c219238241b791e";
 
 export default node;

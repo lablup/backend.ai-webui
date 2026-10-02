@@ -225,7 +225,6 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
               accessKey
               isActive
               isAdmin
-              isDefault
               createdAt
               modifiedAt
               lastUsed
@@ -239,13 +238,17 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
         }
         # The banner shows the main key even when the table page or filter
         # leaves it out, so it is read on its own.
-        defaultKeypair: myKeypairs(filter: { isDefault: true }, limit: 1) {
+        defaultKeypair: myKeypairs(filter: { isDefault: true }, limit: 1)
+          @since(version: "26.9.0") {
           edges {
             node {
               id
               accessKey
             }
           }
+        }
+        user @deprecatedSince(version: "26.9.0") {
+          main_access_key
         }
       }
     `,
@@ -259,7 +262,9 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
     },
   );
 
-  const mainAccessKey = data.defaultKeypair?.edges?.[0]?.node?.accessKey;
+  const mainAccessKey =
+    data.defaultKeypair?.edges?.[0]?.node?.accessKey ??
+    data.user?.main_access_key;
   const keypairNodes = filterOutNullAndUndefined(
     data.myKeypairs?.edges?.map((edge) => edge?.node),
   );
@@ -480,12 +485,12 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 title: t('credential.AccessKey'),
                 dataIndex: 'accessKey',
                 sorter: true,
-                render: (value: string, record: KeypairNode) => (
+                render: (value: string) => (
                   <BAIFlex gap="xs" align="center">
                     <BAIText monospace copyable>
                       {value}
                     </BAIText>
-                    {record.isDefault && (
+                    {value === mainAccessKey && (
                       <BAIIconWithTooltip
                         content={t('credential.MainAccessKey')}
                         icon={
@@ -506,7 +511,7 @@ const MyKeypairManagementModal: React.FC<MyKeypairManagementModalProps> = ({
                 fixed: 'right' as const,
                 render: (_: unknown, record: KeypairNode) => {
                   if (deferredActiveFilter === 'active') {
-                    const isMain = record.isDefault;
+                    const isMain = record.accessKey === mainAccessKey;
                     return (
                       <BAIFlex gap="xxs">
                         {!isMain && (

@@ -3,6 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
+import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { HStack, VStack } from '@lablup/ui-common/Stack';
 import { Text } from '@lablup/ui-common/Text';
@@ -17,7 +19,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface KeypairInfoModalProps extends BAIModalProps {
   keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;
@@ -29,6 +31,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
   onRequestClose,
   ...modalProps
 }) => {
+  const baiClient = useSuspendedBackendaiClient();
   const keypair = useFragment(
     graphql`
       fragment KeypairInfoModalFragment on KeyPair {
@@ -42,12 +45,32 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         num_queries
         rate_limit
         concurrency_used
-        is_default
+        is_default @since(version: "26.9.0")
       }
     `,
     keypairInfoModalFrgmt,
   );
-  const isMainAccessKey = keypair?.is_default === true;
+  // `is_default` is 26.9.0+; older managers only expose the owner's `main_access_key`.
+  const supportsIsDefault = baiClient.supports('keypair-is-default');
+  const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
+    graphql`
+      query KeypairInfoModalQuery($email: String) {
+        user(email: $email) {
+          main_access_key
+        }
+      }
+    `,
+    { email: keypair?.user_id },
+    {
+      fetchPolicy:
+        !supportsIsDefault && modalProps.open && keypair?.user_id
+          ? 'network-only'
+          : 'store-only',
+    },
+  );
+  const isMainAccessKey = supportsIsDefault
+    ? keypair?.is_default === true
+    : !!keypair?.access_key && user?.main_access_key === keypair.access_key;
 
   return (
     <BAIModal
