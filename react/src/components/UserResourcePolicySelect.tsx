@@ -4,7 +4,6 @@
  */
 import { UserResourcePolicySelectQuery } from '../__generated__/UserResourcePolicySelectQuery.graphql';
 import { localeCompare } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { AstryxFormSelector } from './astryxFormControls';
 import * as _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
@@ -49,21 +48,14 @@ const UserResourcePolicySelect: React.FC<Props> = ({
 }) => {
   'use memo';
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  // `adminUserResourcePoliciesV2` is superadmin-only; a domain admin still
-  // reads the legacy list.
-  const isSuperAdmin = !!baiClient.is_superadmin;
-  const { adminUserResourcePoliciesV2, user_resource_policies } =
+  const { adminUserResourcePoliciesV2 } =
     useLazyLoadQuery<UserResourcePolicySelectQuery>(
       graphql`
-        query UserResourcePolicySelectQuery(
-          $limit: Int!
-          $isSuperAdmin: Boolean!
-        ) {
+        query UserResourcePolicySelectQuery($limit: Int!) {
           adminUserResourcePoliciesV2(
             limit: $limit
             orderBy: [{ field: NAME, direction: ASC }]
-          ) @include(if: $isSuperAdmin) {
+          ) {
             edges {
               node {
                 id
@@ -71,20 +63,17 @@ const UserResourcePolicySelect: React.FC<Props> = ({
               }
             }
           }
-          user_resource_policies @skip(if: $isSuperAdmin) {
-            id
-            name
-          }
         }
       `,
-      { limit: POLICY_PAGE_LIMIT, isSuperAdmin },
+      { limit: POLICY_PAGE_LIMIT },
       {
         fetchPolicy: 'store-and-network',
       },
     );
-  const policyNames = isSuperAdmin
-    ? _.map(adminUserResourcePoliciesV2?.edges, (edge) => edge.node.name)
-    : _.map(user_resource_policies, (policy) => policy?.name ?? '');
+  const policyNames = _.map(
+    adminUserResourcePoliciesV2?.edges,
+    (edge) => edge.node.name,
+  );
 
   return (
     <AstryxFormSelector

@@ -329,7 +329,6 @@ export type BackendAIClient = {
     ) => Promise<any>;
   };
   supports: (feature: string) => boolean;
-  is_superadmin: boolean;
   [key: string]: any;
   _config: BackendAIConfig;
   isManagerVersionCompatibleWith: (version: string) => boolean;
