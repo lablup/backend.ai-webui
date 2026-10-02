@@ -18,7 +18,7 @@
  | `onOk`, `okText`, `cancelText`            | `onAction`, `actionLabel`, `cancelLabel` |
  | `confirmLoading` / `okButtonProps.loading` | `isActionLoading`                  |
  | `okButtonProps.disabled`                  | `isActionDisabled` (cannot open the gate) |
- | `maskClosable` / `mask.closable` / `keyboard` | `purpose`                       |
+ | `maskClosable` / `mask.closable` / `keyboard` | `purpose` (+ Escape block, as `BAIModal`) |
  | `width` (incl. responsive record, `auto`) | `width`, default 520 as `BAIModal`  |
  | `closable={false}` / `closeIcon={false}`  | `hasCloseButton={false}`            |
  | `reversible`, `requireConfirmInput`, `plainItems`, `cannotBeUndoneText` | `isReversible`, `isConfirmInputRequired`, `hasPlainItems`, `warningText` |
@@ -29,6 +29,10 @@
  `bodyRef`, `bodyProps`, window actions, `styles`, `classNames` and the antd
  mechanisms `BAIModal` also ignores. None of the call sites passes them.
 */
+import {
+  toModalPurpose,
+  useBlockModalEscape,
+} from '../hooks/internal/useModalDismissal';
 import type {
   BAIModalActionButtonProps,
   BAIModalProps,
@@ -194,11 +198,12 @@ const BAIDeleteConfirmModal: React.FC<BAIDeleteConfirmModalProps> = ({
     (typeof mask === 'object' ? mask.closable : undefined) ??
     maskClosable ??
     true;
-  const purpose = isMaskClosable
-    ? 'info'
-    : keyboard !== false
-      ? 'form'
-      : 'required';
+  const allowEscape = keyboard !== false;
+  const purpose = toModalPurpose(isMaskClosable, allowEscape);
+  // `info` closes on Escape as well as the backdrop.
+  useBlockModalEscape(
+    (open ?? isOpen ?? false) && purpose === 'info' && !allowEscape,
+  );
 
   const actionButtonProps: BAIModalActionButtonProps = okButtonProps ?? {};
 

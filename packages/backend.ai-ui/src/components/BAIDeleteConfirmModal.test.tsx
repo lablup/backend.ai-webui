@@ -88,6 +88,26 @@ describe('BAIDeleteConfirmModal', () => {
     expect(onCancel).not.toHaveBeenCalled();
   });
 
+  it('ignores Escape with keyboard={false} but keeps the backdrop', async () => {
+    const onCancel = vi.fn();
+    render(
+      <BAIDeleteConfirmModal
+        open
+        items={items}
+        keyboard={false}
+        onOk={vi.fn()}
+        onCancel={onCancel}
+      />,
+    );
+
+    await userEvent.keyboard('{Escape}');
+    expect(onCancel).not.toHaveBeenCalled();
+    await userEvent.click(
+      document.querySelector('.uic-modal__mask') as HTMLElement,
+    );
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
   it('shows ui-common’s Korean strings under BAIConfigProvider', async () => {
     const { default: ko } = await import('../locale/ko_KR');
     render(
