@@ -224,7 +224,7 @@ const ResourceGroupDefaultSessionOptionsModal: React.FC<
           title={t('resourceGroup.DefaultOptionsReplaceNotice')}
         />
         <Form ref={formRef} initialValues={initialValues} layout="vertical">
-          <Grid columns={2}>
+          <Grid columns={2} columnGap={3}>
             <BAIFormItem
               label={t('session.Priority')}
               name="priority"
