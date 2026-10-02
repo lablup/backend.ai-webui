@@ -169,6 +169,67 @@ describe('app-shim modal', () => {
     await expect(handle).resolves.toBe(false);
   });
 
+  it('honours keyboard/maskClosable/closable=false: only onOk closes it', async () => {
+    const user = userEvent.setup();
+    const onOk = vi.fn();
+    const onCancel = vi.fn();
+    const handle = modal.info({
+      title: 'Re-login required',
+      content: <p>Main key changed</p>,
+      okText: 'Confirm',
+      closable: false,
+      maskClosable: false,
+      keyboard: false,
+      onOk,
+      onCancel,
+    });
+    render(<AppShimModalHost />);
+
+    await user.keyboard('{Escape}');
+    await user.click(
+      document.querySelector<HTMLElement>('.uic-modal__mask') as HTMLElement,
+    );
+    expect(onCancel).not.toHaveBeenCalled();
+    expect(screen.getByText('Main key changed')).toBeInTheDocument();
+    expect(screen.getAllByRole('button').map((b) => b.textContent)).toEqual([
+      'Confirm',
+    ]);
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }));
+    expect(onOk).toHaveBeenCalledTimes(1);
+    await expect(handle).resolves.toBe(true);
+  });
+
+  it('closes on the backdrop when maskClosable is true', async () => {
+    const user = userEvent.setup();
+    const onCancel = vi.fn();
+    const handle = modal.info({ title: 'T', maskClosable: true, onCancel });
+    render(<AppShimModalHost />);
+
+    await user.click(
+      document.querySelector<HTMLElement>('.uic-modal__mask') as HTMLElement,
+    );
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    await expect(handle).resolves.toBe(false);
+  });
+
+  it('keyboard=false blocks Escape on a plain-text confirm too', async () => {
+    const user = userEvent.setup();
+    const onCancel = vi.fn();
+    const handle = modal.confirm({
+      title: 'T',
+      content: 'C',
+      keyboard: false,
+      onCancel,
+    });
+    render(<AppShimModalHost />);
+
+    expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(onCancel).not.toHaveBeenCalled();
+    handle.destroy();
+  });
+
   // The escape hatch for a surface the ladder does not cover; values below the
   // band base are floored instead (see ui-common's modalStack tests).
   it('forwards zIndex to the portal root', () => {

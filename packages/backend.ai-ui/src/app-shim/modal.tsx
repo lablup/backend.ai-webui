@@ -20,19 +20,25 @@
  `useImperativeAlertDialog` swallows (its internal `onOpenChange` only closes,
  with no callback), plus per-task ok-button loading state.
 
- Branching (answers/07 §4): `confirm` with plain-text title/content renders the
- WAI-ARIA alert-dialog shape, which is `BAIAlertDialog`. Everything else gets
- the `ModalHeader` + `Layout` shape on `Modal`. Both keep antd's
- confirm-family dismissal: Escape yes, backdrop no.
+ Branching (answers/07 §4): `confirm` with plain-text title/content and no
+ `maskClosable`/`closable` renders the WAI-ARIA alert-dialog shape, which is
+ `BAIAlertDialog`. Everything else gets the `ModalHeader` + `Layout` shape on
+ `Modal`. Dismissal follows antd's confirm-family defaults (Escape yes,
+ backdrop no) unless `keyboard` / `maskClosable` / `closable` say otherwise.
 
  Promise/close semantics (all antd-matching):
  - `onOk` returning a promise puts the ok button into loading and closes only
    on resolve; a REJECTED promise keeps the dialog open.
- - Escape / cancel button / header close -> `onCancel()` + resolve(false).
+ - Escape / backdrop / cancel button / header close -> `onCancel()` +
+   resolve(false).
  - `.destroy()` closes without firing onOk/onCancel.
  - `.update()` throws — 0 real usages repo-wide (answers/07 §1.1), kept loud.
 */
 import BAIAlertDialog from '../components/BAIAlertDialog';
+import {
+  toModalPurpose,
+  useBlockModalEscape,
+} from '../hooks/internal/useModalDismissal';
 import { useBAIi18n } from '../hooks/useBAIi18n';
 import { Button } from '@lablup/ui-common/Button';
 import { Layout, LayoutContent, LayoutFooter } from '@lablup/ui-common/Layout';
@@ -74,18 +80,17 @@ export interface ModalShimFuncProps {
    * - `centered` — Astryx dialogs are always centered.
    * - `icon` — the dialog has no icon slot; severity reads from the action
    *   button variant instead.
-   * - `maskClosable`/`keyboard` — dismissal is governed by Dialog `purpose`;
-   *   the shim always uses antd's confirm-family defaults (Escape yes,
-   *   backdrop no).
-   * - `closable` — the alert-dialog branch never has a header X; the other
-   *   branch always has one (DialogHeader). Either way Escape already
-   *   cancels (see `maskClosable`/`keyboard` above), so a header-X toggle
-   *   cannot enforce anything Escape does not already allow.
    */
   centered?: boolean;
   icon?: ReactNode;
+  /** Whether a backdrop click cancels. Default `false` (antd's confirm). */
   maskClosable?: boolean;
+  /** Whether Escape cancels. Default `true`. */
   keyboard?: boolean;
+  /**
+   * `false` removes the header close button; `true` asks for one, which only
+   * the `Modal` branch has. Default: shown on that branch.
+   */
   closable?: boolean;
 }
 
@@ -254,11 +259,19 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
     }
   };
 
-  if (
+  const maskClosable = options.maskClosable === true;
+  const keyboard = options.keyboard !== false;
+  // AlertModal fixes `purpose="form"` and has no header close button.
+  const isAlert =
     kind === 'confirm' &&
+    !maskClosable &&
+    options.closable !== true &&
     isPlainText(options.title) &&
-    isPlainText(options.content)
-  ) {
+    isPlainText(options.content);
+  const purpose = toModalPurpose(maskClosable, keyboard);
+  useBlockModalEscape(!keyboard && (isAlert || purpose === 'info'));
+
+  if (isAlert) {
     return (
       <BAIAlertDialog
         isOpen
@@ -284,13 +297,15 @@ const AppShimModalTask: React.FC<{ task: ModalTask }> = ({ task }) => {
       onOpenChange={handleOpenChange}
       width={options.width}
       zIndex={options.zIndex}
-      purpose="form"
+      purpose={purpose}
     >
       <Layout
         header={
           <ModalHeader
             title={toText(options.title)}
-            onOpenChange={handleOpenChange}
+            onOpenChange={
+              options.closable === false ? undefined : handleOpenChange
+            }
           />
         }
         content={
