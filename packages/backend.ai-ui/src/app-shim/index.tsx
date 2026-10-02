@@ -23,6 +23,7 @@
  Astryx's `LayerProvider` (toast viewport + layer stacking), the toast bridge
  registration, and the imperative-modal host.
 */
+import './appShim.css';
 import {
   registerBridge,
   setMessageConfig,
@@ -109,10 +110,12 @@ export const BAIAppProvider: React.FC<BAIAppProviderProps> = ({
 }) => {
   'use memo';
   return (
-    <LayerProvider toast={toast}>
-      <BAIAppBridgeMount messageConfig={messageConfig} />
-      <AppShimModalHost />
-      {children}
-    </LayerProvider>
+    <div className="bai-app-provider">
+      <LayerProvider toast={toast}>
+        <BAIAppBridgeMount messageConfig={messageConfig} />
+        <AppShimModalHost />
+        {children}
+      </LayerProvider>
+    </div>
   );
 };

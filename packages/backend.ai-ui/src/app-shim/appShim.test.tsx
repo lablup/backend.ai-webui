@@ -13,6 +13,7 @@ import {
   registerBridge,
   setMessageConfig,
 } from './bridge';
+import { BAIAppProvider } from './index';
 import { message } from './message';
 import { AppShimModalHost, modal } from './modal';
 import type { ShowToastFn, ToastOptions } from '@astryxdesign/core/Toast';
@@ -180,5 +181,15 @@ describe('app-shim modal', () => {
         ?.style.getPropertyValue('--bai-dialog-z'),
     ).toBe('10001');
     handle.destroy();
+  });
+});
+
+describe('BAIAppProvider', () => {
+  // appShim.css zeroes the UA popover border through this selector.
+  it('renders the toast viewport as the last popover child of its wrapper', () => {
+    const { container } = render(<BAIAppProvider>app</BAIAppProvider>);
+    expect(
+      container.querySelectorAll('.bai-app-provider > [popover]:last-child'),
+    ).toHaveLength(1);
   });
 });

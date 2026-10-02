@@ -1,0 +1,15 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+*/
+@layer components {
+  .bai-app-provider {
+    display: contents;
+  }
+
+  /* The toast viewport is a `popover="manual"` element, so Chrome's UA sheet
+     gives it a 3px border; Astryx's compiled styles reset everything but that. */
+  .bai-app-provider > [popover]:last-child {
+    border-width: 0;
+  }
+}
