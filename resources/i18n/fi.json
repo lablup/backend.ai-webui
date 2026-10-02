@@ -2221,9 +2221,6 @@
     "SuccessfullyUpdated": "Päivitetty onnistuneesti",
     "Visit": "Käy osoitteessa"
   },
-  "pagination": {
-    "Total": "{{start}}–{{end}} yhteensä {{total}} kohteesta"
-  },
   "project": {
     "Activate": "Ota käyttöön",
     "ActivateProject": "Ota projekti käyttöön",

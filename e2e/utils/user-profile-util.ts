@@ -115,11 +115,11 @@ export async function getCurrentClientIp(page: Page): Promise<string> {
 /**
  * Gets the Allowed Client IP form item container within a modal or page.
  * `UserSettingModal.tsx` renders this field via `BAIFormItem`
- * (`[data-bai-form-item]`).
+ * (`.uic-form-item`).
  */
 export function getAllowedClientIpFormItem(container: Locator) {
   return container
-    .locator('[data-bai-form-item]')
+    .locator('.uic-form-item')
     .filter({ hasText: 'Allowed client IP' });
 }
 

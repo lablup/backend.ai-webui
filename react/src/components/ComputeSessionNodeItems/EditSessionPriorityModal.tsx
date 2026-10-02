@@ -7,7 +7,7 @@ import { EditSessionPriorityModalMutation } from '../../__generated__/EditSessio
 import { App } from '../../app-shim';
 import { Form, FormInstance } from '../../form-engine';
 import { AstryxFormNumberInput } from '../astryxFormControls';
-import { Text } from '@astryxdesign/core/Text';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAIBulkEditFormItem,
   BAIFlex,

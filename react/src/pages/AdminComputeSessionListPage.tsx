@@ -25,13 +25,13 @@ import { useCurrentUserRole } from '../hooks/backendai';
 import { useBAIPaginationOptionStateOnSearchParam } from '../hooks/reactPaginationQueryOptions';
 import { useBAISettingUserState } from '../hooks/useBAISetting';
 import { useCSVExport } from '../hooks/useCSVExport';
-import { Banner } from '@astryxdesign/core/Banner';
-import { IconButton } from '@astryxdesign/core/IconButton';
+import { Banner } from '@lablup/ui-common/Banner';
+import { IconButton } from '@lablup/ui-common/IconButton';
 import {
   SegmentedControl,
   SegmentedControlItem,
-} from '@astryxdesign/core/SegmentedControl';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+} from '@lablup/ui-common/SegmentedControl';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIAdminProjectSelect,
   BAIFlex,

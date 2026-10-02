@@ -4,10 +4,10 @@
  */
 import { UserInfoModalFragment$key } from '../__generated__/UserInfoModalFragment.graphql';
 import { useTOTPSupported } from '../hooks/backendai';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { Spinner } from '@astryxdesign/core/Spinner';
-import { Token } from '@astryxdesign/core/Token';
-import { useTheme } from '@astryxdesign/core/theme';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { Spinner } from '@lablup/ui-common/Spinner';
+import { Token } from '@lablup/ui-common/Token';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   BAIIconWithTooltip,

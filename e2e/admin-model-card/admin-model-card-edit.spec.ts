@@ -71,7 +71,7 @@ test.describe.fixme(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' })
         .getByRole('combobox')
         .click();
@@ -80,7 +80,7 @@ test.describe.fixme(
       // In antd v6, Form.Item tooltip icons contribute to the accessible name.
       // Use the form item container to locate the textbox by label text.
       await modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox')
         .fill('Original Title');
@@ -220,7 +220,7 @@ test.describe.fixme(
       // Clear the Title field and type a new value.
       // In antd v6, tooltip icons alter the accessible name — use form item container.
       const titleInput = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox');
       await titleInput.clear();
@@ -231,7 +231,7 @@ test.describe.fixme(
       // Access Level is a plain Astryx `Selector` (role="combobox" trigger,
       // role="listbox"/"option" popup).
       const accessLevelFormItem = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Access Level' });
       await accessLevelFormItem.scrollIntoViewIfNeeded();
       await accessLevelFormItem.getByRole('combobox').click();
@@ -332,7 +332,7 @@ test.describe.fixme(
       // Change the Title to a value that should not be saved.
       // In antd v6, tooltip icons alter the accessible name — use form item container.
       const titleInput = modal
-        .locator('[data-bai-form-item]')
+        .locator('.uic-form-item')
         .filter({ hasText: 'Title' })
         .getByRole('textbox');
       await titleInput.clear();

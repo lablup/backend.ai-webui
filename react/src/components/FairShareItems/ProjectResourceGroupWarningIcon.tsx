@@ -1,6 +1,6 @@
 import type { ProjectResourceGroupWarningIconFragment$key } from '../../__generated__/ProjectResourceGroupWarningIconFragment.graphql';
 import type { ProjectResourceGroupWarningIconQuery } from '../../__generated__/ProjectResourceGroupWarningIconQuery.graphql';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIIconWithTooltip } from 'backend.ai-ui';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

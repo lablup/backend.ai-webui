@@ -2208,9 +2208,6 @@
     "SuccessfullyUpdated": "Successfully Updated",
     "Visit": "Visit"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} of {{total}} items"
-  },
   "project": {
     "Activate": "Activate",
     "ActivateProject": "Activate Project",

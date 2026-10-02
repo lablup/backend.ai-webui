@@ -2221,9 +2221,6 @@
     "SuccessfullyUpdated": "Ενημερώθηκε με επιτυχία",
     "Visit": "Επίσκεψη"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} των στοιχείων {{Total}}"
-  },
   "project": {
     "Activate": "Ενεργοποίηση",
     "ActivateProject": "Ενεργοποίηση έργου",

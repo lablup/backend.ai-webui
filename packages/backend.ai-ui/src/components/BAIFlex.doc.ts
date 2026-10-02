@@ -17,12 +17,12 @@ export const docs = {
   ],
   usage: {
     description:
-      'The layout primitive of the Backend.AI UI: a flex container that renders one element with a normalized reset (zero margin and padding, min-width and min-height 0, border-box sizing) and resolves named gap rungs against the theme size tokens. It carries the layout vocabulary of this repository — rows, columns, alignment and spacing are expressed through BAIFlex rather than through raw layout elements with hand-written flex CSS. Remaining props pass through to the underlying element (it accepts React.HTMLAttributes<HTMLDivElement> except dir), and the ref is forwarded there.',
+      'The layout primitive of the Backend.AI UI: a flex container that renders one element with a normalized reset (zero margin and padding, min-width and min-height 0, border-box sizing) and resolves named gap rungs to the Astryx spacing tokens --spacing-1 through --spacing-12. It carries the layout vocabulary of this repository — rows, columns, alignment and spacing are expressed through BAIFlex rather than through raw layout elements with hand-written flex CSS. Remaining props pass through to the underlying element (it accepts React.HTMLAttributes<HTMLDivElement> except dir), and the ref is forwarded there.',
     bestPractices: [
       {
         guidance: true,
         description:
-          'Use the named gap rungs (xxs through xxl) so spacing resolves against the theme size tokens instead of a hardcoded pixel value.',
+          'Use the named gap rungs (xxs through xxl) so spacing resolves to the Astryx spacing tokens instead of a hardcoded pixel value.',
       },
       {
         guidance: true,
@@ -78,7 +78,7 @@ export const docs = {
       name: 'gap',
       type: "number | 'xxs' | 'xs' | 'sm' | 'ms' | 'md' | 'lg' | 'xl' | 'xxl' | [GapSize, GapSize]",
       description:
-        'Spacing between children. A named rung resolves to the matching theme size token, a number is used as pixels, and a two-element tuple sets row gap and column gap separately.',
+        'Spacing between children. A named rung resolves to an Astryx spacing token (xxs 4px, xs 8px, sm 12px, ms 16px, md 20px, lg 24px, xl 32px, xxl 48px), a number is used as pixels, and a two-element tuple sets row gap and column gap separately.',
       default: '0',
     },
     {

@@ -16,7 +16,7 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import LegacyCreatePermissionModal, {
   PermissionMatrixQuery,
 } from './LegacyCreatePermissionModal';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIButton,
   BAIDeleteConfirmModal,

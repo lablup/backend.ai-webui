@@ -83,7 +83,7 @@ const colorMap = { ACTIVE: 'green', INACTIVE: 'orange' };
 ### ✅ Correct — live status as a Badge, colour from the helper
 
 ```tsx
-import { Badge } from '@astryxdesign/core/Badge';
+import { Badge } from '@lablup/ui-common/Badge';
 import { badgeVariantForStatus } from 'backend.ai-ui';
 
 <Badge variant={badgeVariantForStatus('route', route.status)} label={route.status} />
@@ -92,7 +92,7 @@ import { badgeVariantForStatus } from 'backend.ai-ui';
 ### ✅ Correct — settled value as a Token, colour from the helper
 
 ```tsx
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import { tokenColorForStatus } from 'backend.ai-ui';
 
 <Token color={tokenColorForStatus('role', role.status)} label={role.status} />

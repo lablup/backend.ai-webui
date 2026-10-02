@@ -22,11 +22,11 @@ import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Link } from '@astryxdesign/core/Link';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Button } from '@lablup/ui-common/Button';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Link } from '@lablup/ui-common/Link';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAIVFolderDeleteButton,
   BAICard,

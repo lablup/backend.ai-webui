@@ -13,8 +13,8 @@
  *
  * The engine is a DROP-IN: `Form.Item`, `Form.List`, `Form.ErrorList`,
  * `Form.Provider`, `Form.useForm`, `Form.useWatch`, `Form.useFormInstance` and
- * `Form.Item.useStatus` all exist with the same semantics (pinned by the 29
- * acceptance tests in react/src/form-engine/formEngineAcceptance.test.tsx), so
+ * `Form.Item.useStatus` all exist with the same semantics (pinned by the
+ * acceptance suite in @lablup/ui-common, `Form.acceptance.test.tsx`), so
  * NOTHING but the import line changes. If this codemod ever produces a diff
  * outside an import statement, that is a bug in the codemod.
  *

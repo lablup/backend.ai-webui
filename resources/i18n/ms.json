@@ -2221,9 +2221,6 @@
     "SuccessfullyUpdated": "Berjaya Dikemas kini",
     "Visit": "Lawati"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} {{total}} item"
-  },
   "project": {
     "Activate": "Aktifkan",
     "ActivateProject": "Aktifkan Projek",

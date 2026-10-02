@@ -1,5 +1,5 @@
 import BAITabList from './BAITabList';
-import { Tab } from '@astryxdesign/core/TabList';
+import { Tab } from '@lablup/ui-common/TabList';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 

@@ -4,8 +4,8 @@
  */
 import { GeneratedKeypairListModalFragment$key } from '../__generated__/GeneratedKeypairListModalFragment.graphql';
 import {
-  UserSettingModalBulkCreateMutation,
   UserRoleV2,
+  UserSettingModalBulkCreateMutation,
   UserStatusV2,
 } from '../__generated__/UserSettingModalBulkCreateMutation.graphql';
 import { UserSettingModalCreateMutation } from '../__generated__/UserSettingModalCreateMutation.graphql';
@@ -22,8 +22,8 @@ import AccessKeySelect from './AccessKeySelect';
 import BAIFormItem from './BAIFormItem';
 import {
   BulkCreateUserErrorModal,
-  type FailedUserCreation,
   toFailedUserCreations,
+  type FailedUserCreation,
 } from './BulkCreateUserFailure';
 import GeneratedKeypairListModal from './GeneratedKeypairListModal';
 import ProjectSelect from './ProjectSelect';
@@ -37,22 +37,19 @@ import {
   AstryxFormTextArea,
   AstryxFormTextInput,
 } from './astryxFormControls';
-import { Switch } from '@astryxdesign/core/Switch';
-import { Text } from '@astryxdesign/core/Text';
-import { Tokenizer } from '@astryxdesign/core/Tokenizer';
-import type {
-  SearchableItem,
-  SearchSource,
-} from '@astryxdesign/core/Typeahead';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Switch } from '@lablup/ui-common/Switch';
+import { Text } from '@lablup/ui-common/Text';
+import { Tokenizer } from '@lablup/ui-common/Tokenizer';
+import type { SearchSource, SearchableItem } from '@lablup/ui-common/Typeahead';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAISkeleton,
   BAIAlert,
   BAICompactGroup,
   BAIDomainSelect,
   BAIModal,
   BAIModalProps,
   BAISelect,
+  BAISkeleton,
   BAIUnmountAfterClose,
   filterOutNullAndUndefined,
   toLocalId,
@@ -64,7 +61,7 @@ import * as _ from 'lodash-es';
 import { CircleAlert } from 'lucide-react';
 import React, { Suspense, useDeferredValue, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useMutation, useFragment } from 'react-relay';
+import { graphql, useFragment, useMutation } from 'react-relay';
 
 type UserRole = {
   [key: string]: string[];

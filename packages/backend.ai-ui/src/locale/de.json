@@ -89,26 +89,6 @@
   "comp:BAIBoardItemErrorBoundary": {
     "UnexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support, wenn das Problem weiterhin besteht."
   },
-  "comp:BAIBulkEditFormItem": {
-    "Clear": "Löschen",
-    "KeepAsIs": "Unverändert lassen",
-    "UndoChanges": "Änderungen rückgängig machen"
-  },
-  "comp:BAIBulkErrorModal": {
-    "ActionExecutionFailed": "Ausführung fehlgeschlagen",
-    "ErrorOccurred": "Ein Fehler ist aufgetreten"
-  },
-  "comp:BAIColorPicker": {
-    "Clear": "Löschen",
-    "HexValue": "Hex-Wert",
-    "NoColor": "Keine Farbe",
-    "SelectColor": "Farbe auswählen"
-  },
-  "comp:BAIComplexSelect": {
-    "ClearSearch": "Optionen durchsuchen löschen",
-    "NoResults": "Keine Ergebnisse",
-    "SearchOptions": "Optionen durchsuchen"
-  },
   "comp:BAIContainerRegistrySelect": {
     "SelectContainerRegistry": "Container-Registry auswählen"
   },
@@ -128,14 +108,6 @@
     "Size": "Größe",
     "SuccessFullyRemoved": "Erfolgreich entfernt {{count}} Versionen.",
     "Version": "Version"
-  },
-  "comp:BAIDeleteConfirmModal": {
-    "AreYouSureToDelete": "Sind Sie sicher, dass Sie löschen möchten?",
-    "AreYouSureToPermanentlyDeleteTarget": "Möchten Sie {{target}} wirklich dauerhaft löschen?",
-    "CannotBeUndone": "Diese Aktion kann nicht rückgängig gemacht werden.",
-    "DeleteItem": "Löschen",
-    "DeleteNItems": "{{count}} Elemente löschen",
-    "TypeToConfirm": "Geben Sie <token>{{confirmText}}</token> ein, um zu bestätigen."
   },
   "comp:BAIDeploymentOwnerInfo": {
     "CreatedBy": "Erstellt von"
@@ -417,11 +389,6 @@
   "comp:BAIResourceNumberWithIcon": {
     "AllocatedVsRequested": "Zugewiesen / Angefordert"
   },
-  "comp:BAIResourceUnitGrid": {
-    "ChangeGroupColor": "Gruppenfarbe ändern",
-    "ResourceGrid": "Ressourcenraster",
-    "UseColorN": "Farbe {{n}} verwenden"
-  },
   "comp:BAIResourceWithSteppedProgress": {
     "Unlimited": "Unbegrenzt"
   },
@@ -571,9 +538,6 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Einzel"
   },
-  "comp:BAIStatistic": {
-    "Unlimited": "Unbegrenzt"
-  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Speicher-Host auswählen"
   },
@@ -590,28 +554,13 @@
     "Time": "Zeit"
   },
   "comp:BAITable": {
-    "Apply": "Anwenden",
-    "Cancel": "Abbrechen",
     "CollapseAll": "Alle einklappen",
     "ExpandAll": "Alle ausklappen",
     "ExpandErrorsOnly": "Nur Fehler ausklappen",
-    "ExpandOptions": "Ausklappoptionen",
-    "ExpandRow": "Zeile ausklappen",
-    "Export": "Exportieren",
-    "ExportCSV": "Als CSV exportieren",
-    "GoToFirstPage": "Zur ersten Seite",
-    "InvalidPageNumber": "Ungültige Seitenzahl",
-    "NoDataToDisplay": "Keine Daten zum Anzeigen",
-    "Pagination": "Seitennummerierung",
-    "SearchTableColumn": "Suchtabellenspalten",
-    "SelectColumnToDisplay": "Wählen Sie Spalten aus, um angezeigt zu werden",
-    "SettingTable": "Tabelleneinstellungen"
+    "ExpandOptions": "Ausklappoptionen"
   },
   "comp:BAITestButton": {
     "Test": "test"
-  },
-  "comp:BAITokenRow": {
-    "AndMore": "und {{rest}} weitere"
   },
   "comp:BAIUserResourcePolicyV2Table": {
     "CreatedAt": "Hergestellt in",
@@ -703,9 +652,6 @@
       "FileNameRequired": "Bitte geben Sie einen Datei- oder Ordnernamen ein."
     }
   },
-  "comp:PaginationInfoText": {
-    "Total": "{{start}} - {{end}} von {{total}} Elementen"
-  },
   "comp:ResourceStatistics": {
     "NoResourcesData": "Keine Ressourcendaten verfügbar"
   },
@@ -767,55 +713,12 @@
   "error": {
     "UnknownError": "Ein unbekannter Fehler ist aufgetreten. \nBitte versuchen Sie es erneut."
   },
-  "form": {
-    "Optional": "(optional)",
-    "validateMessages": {
-      "Default": "Feld-Validierungsfehler: ${label}",
-      "Required": "Bitte geben Sie ${label} an",
-      "Whitespace": "${label} darf kein Leerzeichen sein",
-      "array": {
-        "Len": "Es müssen ${len} ${label} sein",
-        "Max": "Es dürfen maximal ${max} ${label} sein",
-        "Min": "Es müssen mindestens ${min} ${label} sein",
-        "Range": "Die Anzahl an ${label} muss zwischen ${min} und ${max} liegen"
-      },
-      "number": {
-        "Len": "${label} muss gleich ${len} sein",
-        "Max": "${label} darf maximal ${max} sein",
-        "Min": "${label} muss mindestens ${min} sein",
-        "Range": "${label} muss zwischen ${min} und ${max} liegen"
-      },
-      "pattern": {
-        "Mismatch": "${label} entspricht nicht dem ${pattern} Muster"
-      },
-      "string": {
-        "Len": "${label} muss genau ${len} Zeichen lang sein",
-        "Max": "${label} darf höchstens ${max} Zeichen lang sein",
-        "Min": "${label} muss mindestens ${min} Zeichen lang sein",
-        "Range": "${label} muss zwischen ${min} und ${max} Zeichen lang sein"
-      },
-      "types": {
-        "Email": "${label} ist nicht gültig. ${type} erwartet",
-        "Number": "${label} ist nicht gültig. ${type} erwartet",
-        "Object": "${label} ist nicht gültig. ${type} erwartet",
-        "String": "${label} ist nicht gültig. ${type} erwartet",
-        "Url": "${label} ist nicht gültig. ${type} erwartet"
-      }
-    }
-  },
   "general": {
-    "Decrease": "Verringern",
-    "DeselectAll": "Alle abwählen",
     "File": "Datei",
-    "Increase": "Erhöhen",
-    "Loading": "Wird geladen...",
-    "NSelected": "{{count}} ausgewählt",
     "Optional": "Optional",
     "Project": "Projekt",
     "Search": "Suchen",
     "Select": "Auswählen",
-    "SelectPlaceholder": "{{label}} auswählen",
-    "TotalItems": "Total {{total}} Elemente",
     "Unit": "Einheit",
     "button": {
       "Action": "Aktion",

@@ -1,6 +1,6 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';

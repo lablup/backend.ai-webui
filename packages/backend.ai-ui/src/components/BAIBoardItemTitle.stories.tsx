@@ -1,8 +1,8 @@
 import BAIBoardItemTitle from './BAIBoardItemTitle';
 import BAIButton from './BAIButton';
 import BAIFlex from './BAIFlex';
-import { Heading } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { Heading } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Settings, RotateCw } from 'lucide-react';
 

@@ -8,7 +8,7 @@ import ErrorBoundaryWithNullFallback from './ErrorBoundaryWithNullFallback';
 import FileBrowserButton from './FileBrowserButton';
 import SFTPServerButton from './SFTPServerButton';
 import VFolderNodeIdenticon from './VFolderNodeIdenticon';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAISkeleton, BAIFlex, useBAIBreakpoint } from 'backend.ai-ui';
 import * as _ from 'lodash-es';
 import React, { Suspense } from 'react';

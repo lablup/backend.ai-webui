@@ -158,7 +158,7 @@ async function installLegacyPresetFlagOverride(page: Page): Promise<void> {
  * trigger is a plain `<button>` whose accessible name is the field label
  * (`aria-haspopup="dialog"`, NOT a combobox); its popup is a `role="dialog"`
  * (aria-labelled with the same field label) hosting a search `TextInput` with
- * `role="combobox"` named "Search options" (`comp:BAIComplexSelect.SearchOptions`,
+ * `role="combobox"` named "Search options" (ui-common `uic.PagedSelector.searchOptions`,
  * FR-3603 / #8914) and a `role="listbox"` of plain, clickable `role="option"`
  * rows — so the option is clicked directly.
  *

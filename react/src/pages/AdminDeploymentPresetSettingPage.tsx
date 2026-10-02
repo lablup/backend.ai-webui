@@ -22,9 +22,9 @@ import {
 import { tokenizeShellCommand } from '../helper/parseCliCommand';
 import { buildPath } from '../helper/pathBuilder';
 import { useSuspendedBackendaiClient, useWebUINavigate } from '../hooks';
-import { type RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
+import type { RuntimeVariantPresetValueEntry } from '../hooks/useRuntimeParameterSchema';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIFlex,
   convertToUUID,

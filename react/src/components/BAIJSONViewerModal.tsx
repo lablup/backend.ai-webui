@@ -3,7 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import BAICodeEditor from './BAICodeEditor';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner } from '@lablup/ui-common/Banner';
 import { BAIFlex, BAIModal, BAIModalProps } from 'backend.ai-ui';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -2223,9 +2223,6 @@
     "SuccessfullyUpdated": "수정되었습니다.",
     "Visit": "방문"
   },
-  "pagination": {
-    "Total": "전체 {{total}}개 중 {{start}} - {{end}}"
-  },
   "project": {
     "Activate": "활성화",
     "ActivateProject": "프로젝트 활성화",

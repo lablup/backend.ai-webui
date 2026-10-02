@@ -3,9 +3,9 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { useThemeMode } from '../hooks/useThemeMode';
-import { Heading } from '@astryxdesign/core/Heading';
-import { Text } from '@astryxdesign/core/Text';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Heading } from '@lablup/ui-common/Heading';
+import { Text } from '@lablup/ui-common/Text';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIFlex } from 'backend.ai-ui';
 import React from 'react';
 

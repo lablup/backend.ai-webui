@@ -2223,9 +2223,6 @@
     "SuccessfullyUpdated": "Mise à jour réussie",
     "Visit": "Visite"
   },
-  "pagination": {
-    "Total": "{{start}} - {{end}} des éléments {{total}}"
-  },
   "project": {
     "Activate": "Activer",
     "ActivateProject": "Activer le projet",

@@ -1,8 +1,8 @@
 import BAIFlex from '../components/BAIFlex';
 import BAIText from '../components/BAIText';
 import * as Icons from './index';
-import { TextInput } from '@astryxdesign/core/TextInput';
-import { useTheme } from '@astryxdesign/core/theme';
+import { TextInput } from '@lablup/ui-common/TextInput';
+import { useTheme } from '@lablup/ui-common/theme';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import React, { useState } from 'react';
 

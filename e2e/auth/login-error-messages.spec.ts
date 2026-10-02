@@ -8,6 +8,8 @@
  *   - GET  /func/              -> mock server version
  *   - POST /server/login-check -> mock not-authenticated (show login form)
  *   - POST /server/login       -> per-test mock response (envelope cases)
+ *   - POST /admin/gql          -> gateway-wrapped 401 for the keypair query
+ *                                 (FR-3998)
  *   - `BackendAIClient.prototype.login` is stubbed to throw an `isError`
  *     payload directly for server-error cases (429, 400). This is needed
  *     because `_wrapWithPromise` normalizes `err.type` to
@@ -345,7 +347,7 @@ test.describe(
       await page.getByRole('button', { name: 'Login', exact: true }).click();
 
       await expect(
-        page.getByRole('dialog', { name: 'Logged in elsewhere' }),
+        page.getByRole('alertdialog', { name: 'Logged in elsewhere' }),
       ).toBeVisible({ timeout: 10_000 });
     });
   },
@@ -403,6 +405,104 @@ test.describe(
       await expect(
         page.getByText('Monitor role users are not allowed to log in.'),
       ).toBeVisible({ timeout: 10_000 });
+    });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Phase 4: Gateway-wrapped GraphQL errors after login (FR-3998)
+// ---------------------------------------------------------------------------
+
+// A GraphQL gateway reports the manager's 401 as an HTTP 200 with `errors`
+// and null data; `client.query()` must throw it instead of returning null.
+const DISALLOWED_IP_MSG = "'10.42.22.120' is not allowed IP address";
+const GATEWAY_IP_REJECTION = {
+  errors: [
+    {
+      message:
+        'Unexpected empty "data" and "errors" fields in result: {"type": "https://api.backend.ai/probs/auth-failed"}',
+      path: ['keypair'],
+      extensions: {
+        response: {
+          status: 401,
+          statusText: 'Unauthorized',
+          body: {
+            type: 'https://api.backend.ai/probs/auth-failed',
+            title: 'Credential/signature mismatch.',
+            error_code: 'user_auth_unauthorized',
+            msg: DISALLOWED_IP_MSG,
+          },
+        },
+        code: 'RESPONSE_VALIDATION_FAILED',
+        serviceName: 'graphene',
+      },
+    },
+  ],
+  data: { keypair: null },
+};
+
+test.describe(
+  'Login error messages — gateway-wrapped GraphQL errors (FR-3998)',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test.beforeEach(async ({ page, request }) => {
+      await gotoLoginPage(page, request);
+    });
+
+    test('User cannot log in from a disallowed client IP and sees the server reason', async ({
+      page,
+    }) => {
+      await page.route('**/server/login', async (route) => {
+        if (route.request().method() === 'POST') {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+              authenticated: true,
+              data: { role: 'user' },
+            }),
+          });
+        } else {
+          await route.continue();
+        }
+      });
+
+      let logoutCalled = false;
+      await page.route('**/server/logout', async (route) => {
+        logoutCalled = true;
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify({}),
+        });
+      });
+
+      await page.route('**/admin/gql', async (route) => {
+        if (route.request().postData()?.includes('keypair')) {
+          await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify(GATEWAY_IP_REJECTION),
+          });
+        } else {
+          await route.continue();
+        }
+      });
+
+      await fillLoginForm(page);
+      await page.getByRole('button', { name: 'Login', exact: true }).click();
+
+      await expect(
+        page.getByText('Credential/signature mismatch.'),
+      ).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByText(DISALLOWED_IP_MSG)).toBeVisible();
+      await expect(
+        page.getByText('Keypair information is missing.'),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole('button', { name: 'Login', exact: true }),
+      ).toBeVisible();
+      expect(logoutCalled).toBe(true);
     });
   },
 );

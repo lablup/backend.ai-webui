@@ -1,6 +1,6 @@
 import type { DomainResourceGroupWarningIconFragment$key } from '../../__generated__/DomainResourceGroupWarningIconFragment.graphql';
 import type { DomainResourceGroupWarningIconQuery } from '../../__generated__/DomainResourceGroupWarningIconQuery.graphql';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import { BAIIconWithTooltip } from 'backend.ai-ui';
 import { TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

@@ -23,13 +23,14 @@ import { useModelStoreProject } from '../hooks/useModelStoreProject';
 import AdminModelCardSettingModal from './AdminModelCardSettingModal';
 import { useFolderExplorerOpener } from './FolderExplorerOpener';
 import VFolderNodeIdenticonV2 from './VFolderNodeIdenticonV2';
-import { CheckboxInput } from '@astryxdesign/core/CheckboxInput';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { CheckboxInput } from '@lablup/ui-common/CheckboxInput';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIAdminProjectSelect,
+  BAIAlert,
   BAIButton,
   BAIColumnType,
   BAIDeleteConfirmModal,
@@ -41,28 +42,27 @@ import {
   BAISelectionLabel,
   BAIStorageHostSelect,
   BAITable,
-  type BAITableSettings,
   BAIText,
-  tokenColorForTagColor,
   BAIUnmountAfterClose,
   filterOutEmpty,
   filterOutNullAndUndefined,
   isValidUUID,
   toLocalId,
+  tokenColorForTagColor,
   useBAILogger,
-  BAIAlert,
+  type BAITableSettings,
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import * as _ from 'lodash-es';
-import { Trash2, CircleAlert, PlusIcon, SquarePenIcon } from 'lucide-react';
+import { CircleAlert, PlusIcon, SquarePenIcon, Trash2 } from 'lucide-react';
 import React, { useDeferredValue, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  graphql,
   PreloadedQuery,
+  UseQueryLoaderLoadQueryOptions,
+  graphql,
   useMutation,
   usePreloadedQuery,
-  UseQueryLoaderLoadQueryOptions,
 } from 'react-relay';
 
 type ModelCardNode = NonNullableNodeOnEdges<

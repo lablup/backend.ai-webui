@@ -8,9 +8,9 @@ import { useSuspenseTanQuery } from '../hooks/reactQueryAlias';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useVFolderInvitations } from '../hooks/useVFolderInvitations';
 import BAIPanelItem from './BAIPanelItem';
-import { Text } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
-import { useTheme } from '@astryxdesign/core/theme';
+import { Text } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAIBadgeCount,
   BAIBoardItemTitle,

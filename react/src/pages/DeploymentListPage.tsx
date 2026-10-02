@@ -23,9 +23,9 @@ import { useCreateActionArrival } from '../hooks/useCreateActionArrival';
 import { useCurrentProjectValue } from '../hooks/useCurrentProject';
 import { useProjectPath } from '../hooks/useRouteScope';
 import { toProjectContext } from '../types/projectContext';
-import { Button } from '@astryxdesign/core/Button';
-import { Link } from '@astryxdesign/core/Link';
-import { Text } from '@astryxdesign/core/Text';
+import { Button } from '@lablup/ui-common/Button';
+import { Link } from '@lablup/ui-common/Link';
+import { Text } from '@lablup/ui-common/Text';
 import {
   BAISkeleton,
   BAICard,
