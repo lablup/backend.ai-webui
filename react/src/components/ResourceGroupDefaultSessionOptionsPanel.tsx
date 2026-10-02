@@ -3,9 +3,11 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupDefaultSessionOptionsPanelFragment$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelFragment.graphql';
+import { ResourceGroupDefaultSessionOptionsPanelQuery } from '../__generated__/ResourceGroupDefaultSessionOptionsPanelQuery.graphql';
 import { ResourceGroupDefaultSessionOptionsPanel_options$key } from '../__generated__/ResourceGroupDefaultSessionOptionsPanel_options.graphql';
 import ResourceGroupDefaultSessionOptionsModal from './ResourceGroupDefaultSessionOptionsModal';
 import { HandlerOptionsDescription } from './ResourceGroupHandlerOptionsFields';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
@@ -21,14 +23,14 @@ import * as _ from 'lodash-es';
 import { SquarePenIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { graphql, useFragment } from 'react-relay';
+import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
 
-interface ResourceGroupDefaultSessionOptionsPanelProps {
+interface ResourceGroupDefaultSessionOptionsPanelContentProps {
   resourceGroupFrgmt: ResourceGroupDefaultSessionOptionsPanelFragment$key;
 }
 
-const ResourceGroupDefaultSessionOptionsPanel: React.FC<
-  ResourceGroupDefaultSessionOptionsPanelProps
+const ResourceGroupDefaultSessionOptionsPanelContent: React.FC<
+  ResourceGroupDefaultSessionOptionsPanelContentProps
 > = ({ resourceGroupFrgmt }) => {
   'use memo';
   const { t } = useTranslation();
@@ -206,6 +208,44 @@ const ResourceGroupDefaultSessionOptionsPanel: React.FC<
         />
       </BAIUnmountAfterClose>
     </BAICard>
+  );
+};
+
+const ResourceGroupDefaultSessionOptionsPanel: React.FC<{
+  resourceGroupName: string;
+  fetchKey: string;
+}> = ({ resourceGroupName, fetchKey }) => {
+  'use memo';
+  const { t } = useTranslation();
+  // Its own query and its own pagination args (so its own store record): a
+  // manager error inside the options nulls this node, not the drawer's.
+  const { adminResourceGroups } =
+    useLazyLoadQuery<ResourceGroupDefaultSessionOptionsPanelQuery>(
+      graphql`
+        query ResourceGroupDefaultSessionOptionsPanelQuery(
+          $filter: ResourceGroupFilter
+        ) {
+          adminResourceGroups(filter: $filter, first: 1) {
+            edges {
+              node {
+                ...ResourceGroupDefaultSessionOptionsPanelFragment
+              }
+            }
+          }
+        }
+      `,
+      { filter: { name: { equals: resourceGroupName } } },
+      { fetchPolicy: 'store-and-network', fetchKey },
+    );
+  const node = adminResourceGroups?.edges[0]?.node;
+
+  return node ? (
+    <ResourceGroupDefaultSessionOptionsPanelContent resourceGroupFrgmt={node} />
+  ) : (
+    <EmptyState
+      title={t('resourceGroup.FailedToLoadDefaultOptions')}
+      isCompact
+    />
   );
 };
 
