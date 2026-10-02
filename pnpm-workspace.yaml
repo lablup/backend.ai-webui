@@ -175,6 +175,7 @@ overrides:
   # requires it from Node via createRequire, never in the browser bundle. Same
   # Agent/fetch usage as provider-utils@4, which ranges undici ^6.28.0.
   "undici@^5": ^6.28.1 # GHSA-vxpw-j846-p89q et al. (high, <6.27.0)
+  "path-to-regexp@~0.1": ^0.1.13 # ReDoS GHSA-37ch-88jc-xwx2 (FR-4146); ships in the pkg local proxy via express
   # Dev-only transitive security overrides — FR-3014. These ship only in
   # dev/build tooling (not the production bundle), but Dependabot still
   # surfaces them. Remove an entry when every upstream consumer ranges to
