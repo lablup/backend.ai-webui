@@ -1,5 +1,6 @@
 import { BAISessionTypeTokenV2Fragment$key } from '../../__generated__/BAISessionTypeTokenV2Fragment.graphql';
 import { tokenColorForStatus } from '../../helper';
+import { useSessionTypeLabel } from './BAISessionTypeToken';
 import { Token } from '@lablup/ui-common/Token';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -18,6 +19,7 @@ const BAISessionTypeTokenV2: React.FC<BAISessionTypeTokenV2Props> = ({
   metadataFrgmt,
 }) => {
   'use memo';
+  const getLabel = useSessionTypeLabel();
   const metadata = useFragment(
     graphql`
       fragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {
@@ -37,7 +39,7 @@ const BAISessionTypeTokenV2: React.FC<BAISessionTypeTokenV2Props> = ({
   return (
     <Token
       color={tokenColorForStatus('sessionType', upperType)}
-      label={upperType}
+      label={getLabel(upperType)}
     />
   );
 };

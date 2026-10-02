@@ -3095,6 +3095,7 @@
       "ImageDoesNotProvideModelPath": "Η εικόνα του εμπορευματοκιβωτίου δεν παρέχει τη διαδρομή του μοντέλου. Θα πρέπει να τροποποιηθεί.",
       "ImageFilter": "Φίλτρο εικόνων",
       "InferenceMode": "Συμπεράσματα",
+      "InferenceModeConfig": "Διαμόρφωση λειτουργίας συμπερασμού",
       "InfiniteTime": "Άπειρο",
       "InsufficientAllocationOfResourcesWarning": "Οι κατανεμητέοι πόροι πέφτουν κάτω από τον ελάχιστο απαιτούμενο πόρο στην επιλεγμένη εικόνα.",
       "InteractiveMode": "Διαδραστικό",

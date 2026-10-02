@@ -8,6 +8,7 @@ import { App } from '../app-shim';
 // keep reading the antd form engine (locked SHIM decision).
 import { Form } from '../form-engine';
 import { getImageFullName } from '../helper';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import { ownerEmailFromOwner } from '../helper/vfolderMounts';
 import {
   useBackendAIImageMetaData,
@@ -197,7 +198,7 @@ const SessionLauncherPreview: React.FC<{
       >
         <BAIMetadataList columns="single">
           <MetadataListItem label={t('session.SessionType')}>
-            {form.getFieldValue('sessionType')}
+            {getSessionTypeLabel(t, form.getFieldValue('sessionType'))}
           </MetadataListItem>
           {!_.isEmpty(form.getFieldValue('sessionName')) && (
             <MetadataListItem label={t('session.launcher.SessionName')}>
@@ -484,7 +485,7 @@ const SessionLauncherPreview: React.FC<{
         </BAIFlex>
       </BAICard>
       <BAICard
-        title="Network"
+        title={t('session.launcher.Network')}
         showDivider
         size="small"
         status={form.getFieldError('ports').length > 0 ? 'error' : undefined}

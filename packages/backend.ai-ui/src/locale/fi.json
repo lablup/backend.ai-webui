@@ -538,6 +538,12 @@
     "MultiNodeShort": "Moni-",
     "SingleNodeShort": "Yksittäinen"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Erä",
+    "Inference": "Päättely",
+    "Interactive": "Interaktiivinen",
+    "System": "Lataus"
+  },
   "comp:BAIStorageHostSelect": {
     "SelectStorageHost": "Valitse tallennuspalvelin"
   },
