@@ -2012,6 +2012,8 @@
     "LoginWithE-mailOrUsername": "이메일 또는 사용자 이름으로 로그인",
     "LoginWithIAM": "IAM으로 로그인",
     "MonitorRoleLoginForbidden": "모니터 역할 사용자는 로그인할 수 없습니다.",
+    "NewPasswordMayNotBeApplied": "새 비밀번호가 적용되지 않았을 수 있습니다",
+    "NewPasswordMayNotBeAppliedDesc": "새 비밀번호로 로그인하지 못했습니다. 서버에 비밀번호 변경이 저장되지 않았을 수 있습니다. 이전 비밀번호로 로그인해 보시거나 관리자에게 문의하세요. 로그인에 반복해서 실패하면 계정이 일시적으로 잠길 수 있습니다.",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
     "NotAUser": "아직 가입 전이면",
     "Password": "비밀번호",

@@ -2010,6 +2010,8 @@
     "LoginWithE-mailOrUsername": "Kirjaudu sisään sähköpostilla tai käyttäjätunnuksella",
     "LoginWithIAM": "Kirjaudu sisään IAM:n avulla",
     "MonitorRoleLoginForbidden": "Tarkkailijan roolissa olevat käyttäjät eivät saa kirjautua sisään.",
+    "NewPasswordMayNotBeApplied": "Uutta salasanaasi ei ehkä otettu käyttöön",
+    "NewPasswordMayNotBeAppliedDesc": "Kirjautuminen uudella salasanalla epäonnistui, joten salasanan vaihtoa ei ehkä tallennettu palvelimelle. Yritä kirjautua edellisellä salasanallasi tai ota yhteyttä järjestelmänvalvojaan. Toistuvat epäonnistuneet yritykset voivat lukita tilisi tilapäisesti.",
     "NoEndpointSaved": "Päätepistettä ei ole tallennettu.",
     "NotAUser": "Etkö ole käyttäjä?",
     "Password": "Salasana",

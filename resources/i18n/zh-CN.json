@@ -2012,6 +2012,8 @@
     "LoginWithE-mailOrUsername": "使用电子邮件或用户名登录",
     "LoginWithIAM": "使用 IAM 登录",
     "MonitorRoleLoginForbidden": "监控角色用户不允许登录。",
+    "NewPasswordMayNotBeApplied": "新密码可能未生效",
+    "NewPasswordMayNotBeAppliedDesc": "使用新密码登录失败，密码修改可能未保存到服务器。请尝试使用之前的密码登录，或联系管理员。多次登录失败可能会导致账户被暂时锁定。",
     "NoEndpointSaved": "没有保存端点。",
     "NotAUser": "不是用户？",
     "Password": "密码",

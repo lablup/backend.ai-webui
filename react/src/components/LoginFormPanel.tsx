@@ -137,6 +137,8 @@ interface LoginFormPanelProps {
   onDeleteEndpoint: (ep: string) => void;
   onKeyDown: (e: React.KeyboardEvent) => void;
   onLogin: () => void;
+  /** The single automatic login right after a forced password change. */
+  onReloginAfterPasswordChange: () => void;
   onConnectionModeChange: (mode: ConnectionMode) => void;
   onShowSignupDialog: (token?: string) => void;
   onSAMLLogin: () => void;
@@ -171,6 +173,7 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
   onDeleteEndpoint,
   onKeyDown,
   onLogin,
+  onReloginAfterPasswordChange,
   onConnectionModeChange,
   onShowSignupDialog,
   onSAMLLogin,
@@ -767,11 +770,8 @@ const LoginFormPanel: React.FC<LoginFormPanelProps> = ({
         onOk={(newPassword) => {
           onSetNeedToResetPassword(false);
           form.setFieldValue('password', newPassword);
-          // Defer onLogin to the next microtask so that Ant Design's
-          // setFieldValue has settled before the login handler reads the
-          // form. Without this, React 19 batching could cause onLogin()
-          // to read the stale (expired) password.
-          setTimeout(() => onLogin(), 0);
+          // Deferred so the login handler reads the new password, not the expired one.
+          setTimeout(() => onReloginAfterPasswordChange(), 0);
         }}
       />
 

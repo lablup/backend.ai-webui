@@ -1997,6 +1997,8 @@
     "LoginWithE-mailOrUsername": "Login With email or Username",
     "LoginWithIAM": "Login With IAM",
     "MonitorRoleLoginForbidden": "Monitor role users are not allowed to log in.",
+    "NewPasswordMayNotBeApplied": "Your new password may not have been applied",
+    "NewPasswordMayNotBeAppliedDesc": "Signing in with the new password failed, so the password change may not have been saved on the server. Try signing in with your previous password, or contact your administrator. Repeated failed attempts can temporarily lock your account.",
     "NoEndpointSaved": "No endpoint saved.",
     "NotAUser": "Not a user?",
     "Password": "Password",

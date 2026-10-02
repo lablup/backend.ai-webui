@@ -2012,6 +2012,8 @@
     "LoginWithE-mailOrUsername": "Melden Sie sich mit E-Mail oder Benutzernamen an",
     "LoginWithIAM": "Mit IAM anmelden",
     "MonitorRoleLoginForbidden": "Benutzer mit der Monitor-Rolle dürfen sich nicht anmelden.",
+    "NewPasswordMayNotBeApplied": "Ihr neues Passwort wurde möglicherweise nicht übernommen",
+    "NewPasswordMayNotBeAppliedDesc": "Die Anmeldung mit dem neuen Passwort ist fehlgeschlagen. Die Passwortänderung wurde möglicherweise nicht auf dem Server gespeichert. Versuchen Sie, sich mit Ihrem bisherigen Passwort anzumelden, oder wenden Sie sich an Ihren Administrator. Wiederholte Fehlversuche können Ihr Konto vorübergehend sperren.",
     "NoEndpointSaved": "Kein Endpunkt gespeichert.",
     "NotAUser": "Kein Benutzer?",
     "Password": "Passwort",
