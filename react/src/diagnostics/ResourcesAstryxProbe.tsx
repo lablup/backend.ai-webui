@@ -9,9 +9,7 @@
  relay-test-utils mock environment; they render nothing in the app itself.
 */
 import type { ResourcesAstryxProbeAgentQuery } from '../__generated__/ResourcesAstryxProbeAgentQuery.graphql';
-import type { ResourcesAstryxProbeResourceGroupQuery } from '../__generated__/ResourcesAstryxProbeResourceGroupQuery.graphql';
 import AgentDetailDrawer from '../components/AgentDetailDrawer';
-import ResourceGroupInfoModal from '../components/ResourceGroupInfoModal';
 import { filterOutEmpty } from 'backend.ai-ui';
 import React from 'react';
 import { graphql, useLazyLoadQuery } from 'react-relay';
@@ -56,29 +54,5 @@ export const ResourcesProbeAgent: React.FC = () => {
   )[0];
   return (
     <AgentDetailDrawer open agentNodeFrgmt={node} onRequestClose={() => {}} />
-  );
-};
-
-/** Fetches one mock `ScalingGroup` and renders the real `ResourceGroupInfoModal`, open. */
-export const ResourcesProbeResourceGroup: React.FC = () => {
-  'use memo';
-  const data = useLazyLoadQuery<ResourcesAstryxProbeResourceGroupQuery>(
-    graphql`
-      query ResourcesAstryxProbeResourceGroupQuery($is_active: Boolean) {
-        scaling_groups(is_active: $is_active) {
-          name
-          ...ResourceGroupInfoModalFragment
-        }
-      }
-    `,
-    { is_active: true },
-  );
-  const group = filterOutEmpty([...(data.scaling_groups ?? [])])[0];
-  return (
-    <ResourceGroupInfoModal
-      open
-      resourceGroupFrgmt={group}
-      onRequestClose={() => {}}
-    />
   );
 };

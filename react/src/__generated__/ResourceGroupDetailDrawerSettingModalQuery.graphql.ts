@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<18c58d318fe48744750a3ac5e7dbff0e>>
+ * @generated SignedSource<<19f634e8ab104b8e1f5d05babd23af6e>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,17 +10,17 @@
 
 import { ConcreteRequest } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type ResourceGroupListSettingModalQuery$variables = {
+export type ResourceGroupDetailDrawerSettingModalQuery$variables = {
   name: string;
 };
-export type ResourceGroupListSettingModalQuery$data = {
+export type ResourceGroupDetailDrawerSettingModalQuery$data = {
   readonly scaling_group: {
     readonly " $fragmentSpreads": FragmentRefs<"ResourceGroupSettingModalFragment">;
   } | null | undefined;
 };
-export type ResourceGroupListSettingModalQuery = {
-  response: ResourceGroupListSettingModalQuery$data;
-  variables: ResourceGroupListSettingModalQuery$variables;
+export type ResourceGroupDetailDrawerSettingModalQuery = {
+  response: ResourceGroupDetailDrawerSettingModalQuery$data;
+  variables: ResourceGroupDetailDrawerSettingModalQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -43,7 +43,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "ResourceGroupListSettingModalQuery",
+    "name": "ResourceGroupDetailDrawerSettingModalQuery",
     "selections": [
       {
         "alias": null,
@@ -69,7 +69,7 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "ResourceGroupListSettingModalQuery",
+    "name": "ResourceGroupDetailDrawerSettingModalQuery",
     "selections": [
       {
         "alias": null,
@@ -141,16 +141,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "9d86bd6fbf44a13961ec8e015c8db3d7",
+    "cacheID": "6ef792eb1ab04073786cf1ec19b81509",
     "id": null,
     "metadata": {},
-    "name": "ResourceGroupListSettingModalQuery",
+    "name": "ResourceGroupDetailDrawerSettingModalQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupListSettingModalQuery(\n  $name: String!\n) {\n  scaling_group(name: $name) {\n    ...ResourceGroupSettingModalFragment\n  }\n}\n\nfragment ResourceGroupSettingModalFragment on ScalingGroup {\n  name\n  description\n  is_active\n  is_public\n  wsproxy_addr\n  wsproxy_api_token\n  scheduler\n  scheduler_opts\n}\n"
+    "text": "query ResourceGroupDetailDrawerSettingModalQuery(\n  $name: String!\n) {\n  scaling_group(name: $name) {\n    ...ResourceGroupSettingModalFragment\n  }\n}\n\nfragment ResourceGroupSettingModalFragment on ScalingGroup {\n  name\n  description\n  is_active\n  is_public\n  wsproxy_addr\n  wsproxy_api_token\n  scheduler\n  scheduler_opts\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c394da4a4b0d865472329be6283b6895";
+(node as any).hash = "1a4c1f869aac97ef3467015e5bf00372";
 
 export default node;
