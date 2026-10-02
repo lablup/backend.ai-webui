@@ -2010,6 +2010,8 @@
     "LoginWithE-mailOrUsername": "Zaloguj się za pomocą adresu e-mail lub nazwy użytkownika",
     "LoginWithIAM": "Zaloguj się przez IAM",
     "MonitorRoleLoginForbidden": "Użytkownicy z rolą monitora nie mogą się zalogować.",
+    "NewPasswordMayNotBeApplied": "Nowe hasło mogło nie zostać zastosowane",
+    "NewPasswordMayNotBeAppliedDesc": "Logowanie nowym hasłem nie powiodło się, więc zmiana hasła mogła nie zostać zapisana na serwerze. Spróbuj zalogować się poprzednim hasłem lub skontaktuj się z administratorem. Powtarzające się nieudane próby mogą tymczasowo zablokować konto.",
     "NoEndpointSaved": "Nie zapisano żadnego punktu końcowego.",
     "NotAUser": "Nie jesteś użytkownikiem?",
     "Password": "Hasło",

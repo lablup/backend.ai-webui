@@ -36,6 +36,7 @@ import {
   getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
+import { isCredentialMismatchLoginError } from '../helper/loginErrorType';
 import {
   createBackendAIClient,
   connectViaGQL,
@@ -179,6 +180,8 @@ const LoginView: React.FC<{
   // Reset when credentials or endpoint change to prevent unintended force-login
   // against a different user/endpoint.
   const forceLoginApprovedRef = useRef(false);
+  // One-shot: marks the automatic login fired right after a forced password change.
+  const reloginAfterPasswordChangeRef = useRef(false);
 
   // Reset force-login approval when credentials or endpoint change
   const watchedUserId = Form.useWatch('user_id', form);
@@ -694,7 +697,11 @@ const LoginView: React.FC<{
   );
 
   const connectUsingSession = useCallback(
-    async (showError = true, endpointOverride?: string) => {
+    async (
+      showError = true,
+      endpointOverride?: string,
+      isReloginAfterPasswordChange = false,
+    ) => {
       const ep = (endpointOverride ?? apiEndpoint).trim();
       if (ep === '') {
         setIsBlockPanelOpen(false);
@@ -760,12 +767,25 @@ const LoginView: React.FC<{
       } catch (err: unknown) {
         setIsBlockPanelOpen(false);
 
-        const handled = handleLoginError(err, showError, userId, password);
-        if (handled === 'keep-open') {
-          // A dedicated modal (password reset, TOTP registration) was opened.
-          // Keep the login panel open to preserve form values for child modals.
-          setIsLoading(false);
-          return;
+        // The server can report a password change as applied when it was not
+        // (BA-8218); retrying the unapplied password only burns the lockout budget.
+        if (
+          isReloginAfterPasswordChange &&
+          isCredentialMismatchLoginError(err)
+        ) {
+          form.setFieldValue('password', '');
+          notification(
+            t('login.NewPasswordMayNotBeApplied'),
+            t('login.NewPasswordMayNotBeAppliedDesc'),
+          );
+        } else {
+          const handled = handleLoginError(err, showError, userId, password);
+          if (handled === 'keep-open') {
+            // A dedicated modal (password reset, TOTP registration) was opened.
+            // Keep the login panel open to preserve form values for child modals.
+            setIsLoading(false);
+            return;
+          }
         }
       }
 
@@ -807,6 +827,8 @@ const LoginView: React.FC<{
 
   const handleLogin = useCallback(async () => {
     setLoginError(null);
+    const isReloginAfterPasswordChange = reloginAfterPasswordChangeRef.current;
+    reloginAfterPasswordChangeRef.current = false;
 
     const loginAttempt = (globalThis as any).backendaioptions.get(
       'login_attempt',
@@ -882,7 +904,7 @@ const LoginView: React.FC<{
         setIsLoading(false);
         return;
       }
-      await connectUsingSession(true, ep);
+      await connectUsingSession(true, ep, isReloginAfterPasswordChange);
     } else {
       const apiKey = form.getFieldValue('api_key') || '';
       const secretKey = form.getFieldValue('secret_key') || '';
@@ -1138,6 +1160,10 @@ const LoginView: React.FC<{
         endpointMenuItems={endpointMenuItems}
         onKeyDown={handleKeyDown}
         onLogin={handleLogin}
+        onReloginAfterPasswordChange={() => {
+          reloginAfterPasswordChangeRef.current = true;
+          handleLogin();
+        }}
         onConnectionModeChange={handleConnectionModeChange}
         onShowSignupDialog={showSignupDialog}
         onSAMLLogin={handleSAMLLogin}

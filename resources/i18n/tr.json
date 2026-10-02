@@ -2009,6 +2009,8 @@
     "LoginWithE-mailOrUsername": "E-posta veya Kullanıcı Adıyla Giriş Yapın",
     "LoginWithIAM": "IAM ile Giriş Yap",
     "MonitorRoleLoginForbidden": "İzleyici rolündeki kullanıcıların oturum açmasına izin verilmiyor.",
+    "NewPasswordMayNotBeApplied": "Yeni parolanız uygulanmamış olabilir",
+    "NewPasswordMayNotBeAppliedDesc": "Yeni parolayla oturum açılamadı; parola değişikliği sunucuya kaydedilmemiş olabilir. Önceki parolanızla oturum açmayı deneyin veya yöneticinize başvurun. Tekrarlanan başarısız denemeler hesabınızı geçici olarak kilitleyebilir.",
     "NoEndpointSaved": "Kaydedilmiş uç nokta yok.",
     "NotAUser": "Kullanıcı değil misiniz?",
     "Password": "Parola",

@@ -2010,6 +2010,8 @@
     "LoginWithE-mailOrUsername": "Connectez-vous avec e-mail ou nom d'utilisateur",
     "LoginWithIAM": "Connectez-vous avec IAM",
     "MonitorRoleLoginForbidden": "Les utilisateurs avec le rôle moniteur ne sont pas autorisés à se connecter.",
+    "NewPasswordMayNotBeApplied": "Votre nouveau mot de passe n'a peut-être pas été appliqué",
+    "NewPasswordMayNotBeAppliedDesc": "La connexion avec le nouveau mot de passe a échoué : le changement n'a peut-être pas été enregistré sur le serveur. Essayez de vous connecter avec votre ancien mot de passe ou contactez votre administrateur. Des échecs répétés peuvent verrouiller temporairement votre compte.",
     "NoEndpointSaved": "Aucun point de terminaison enregistré.",
     "NotAUser": "Vous n'êtes pas utilisateur ?",
     "Password": "Mot de passe",

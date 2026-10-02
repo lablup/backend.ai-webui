@@ -2009,6 +2009,8 @@
     "LoginWithE-mailOrUsername": "Login com e-mail ou nome de usuário",
     "LoginWithIAM": "Login com IAM",
     "MonitorRoleLoginForbidden": "Usuários com função de monitor não têm permissão para fazer login.",
+    "NewPasswordMayNotBeApplied": "Sua nova senha pode não ter sido aplicada",
+    "NewPasswordMayNotBeAppliedDesc": "Não foi possível entrar com a nova senha, então a alteração pode não ter sido salva no servidor. Tente entrar com sua senha anterior ou entre em contato com o administrador. Tentativas repetidas sem sucesso podem bloquear sua conta temporariamente.",
     "NoEndpointSaved": "Nenhum endpoint salvo.",
     "NotAUser": "Não é um usuário?",
     "Password": "Senha",
