@@ -22,7 +22,7 @@ type UserSelectOperation = {
   response: Record<string, any> | null;
 };
 
-/** Records every `BAIUserSelect*` / `BAIAdminUserSelect*` operation the page sends. */
+/** Records every `BAIUserSelect*` GraphQL operation the page sends. */
 function recordUserSelectOperations(page: Page): Array<UserSelectOperation> {
   const operations: Array<UserSelectOperation> = [];
   page.on('response', async (response) => {
@@ -34,9 +34,7 @@ function recordUserSelectOperations(page: Page): Array<UserSelectOperation> {
     } catch {
       return;
     }
-    const name = body?.query?.match(
-      /query\s+(BAI(?:Admin)?UserSelect\w+)/,
-    )?.[1];
+    const name = body?.query?.match(/query\s+(BAIUserSelect\w+)/)?.[1];
     if (!name) return;
     operations.push({
       name,
@@ -157,7 +155,7 @@ test.describe(
 
         // Both admin roles resolve the domain UUID, then read that domain only.
         expect(operationNames(operations)).toContain(
-          'BAIAdminUserSelectDomainIdQuery',
+          'BAIUserSelectCurrentDomainQuery',
         );
         const scoped = operations.filter(
           (op) => op.name === 'BAIUserSelectScopedPaginatedQuery',
@@ -330,7 +328,7 @@ test.describe(
         ).toContainText(userInfo.user2.email);
 
         const names = operationNames(operations);
-        expect(names).not.toContain('BAIAdminUserSelectDomainIdQuery');
+        expect(names).not.toContain('BAIUserSelectCurrentDomainQuery');
         const scoped = operations.filter(
           (op) => op.name === 'BAIUserSelectScopedPaginatedQuery',
         );

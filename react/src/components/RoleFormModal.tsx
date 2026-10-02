@@ -31,7 +31,7 @@ import {
   BAIModalProps,
   BAISelect,
   BAIStorageHostSelect,
-  BAIAdminUserSelect,
+  BAIUserSelect,
   BAIVFolderSelect,
   toLocalId,
   useBAILogger,
@@ -170,7 +170,7 @@ export const ScopeIdSelect: React.FC<ScopeIdSelectProps> = ({
   if (scopeType === 'USER') {
     return (
       <Suspense fallback={fallback}>
-        <BAIAdminUserSelect valuePropName="id" {...branchProps} />
+        <BAIUserSelect valuePropName="id" {...branchProps} />
       </Suspense>
     );
   }

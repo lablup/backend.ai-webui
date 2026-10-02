@@ -30,7 +30,7 @@ import {
   BAINameActionCell,
   type BAITableSettings,
   BAIUnmountAfterClose,
-  BAIAdminUserSelect,
+  BAIUserSelect,
   availableDeploymentSorterKeys,
   DeploymentOrderValue,
   type DeploymentSorterKey,
@@ -308,7 +308,7 @@ const AdminDeployment = ({
       fixedOperator: 'equals' as const,
       rule: uuidRule,
       renderInput: ({ onAddCondition, value, isDisabled }) => (
-        <BAIAdminUserSelect
+        <BAIUserSelect
           valuePropName="id"
           label={t('deployment.Owner')}
           isLabelHidden

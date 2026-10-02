@@ -1,4 +1,10 @@
 import RelayResolver from '../../tests/RelayResolver';
+import {
+  locales,
+  mockAnonymousClientFactory,
+} from '../../tests/storybook-mock-utils';
+import type { BAIClient } from '../provider/BAIClientProvider';
+import { BAIConfigProvider } from '../provider/BAIConfigProvider';
 import BAIUserSelect from './BAIUserSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ComponentProps, useState } from 'react';
@@ -12,6 +18,10 @@ import type { MockResolvers } from 'relay-test-utils';
  * Storybook can't reproduce real scroll-driven pagination against a live
  * backend, so this mocks a single page's worth of users via `RelayResolver`.
  */
+const clientPromise = Promise.resolve({
+  _config: { domainName: 'default' },
+} as unknown as BAIClient);
+
 const meta: Meta<typeof BAIUserSelect> = {
   title: 'Fragments/BAIUserSelect',
   component: BAIUserSelect,
@@ -21,9 +31,9 @@ const meta: Meta<typeof BAIUserSelect> = {
     docs: {
       description: {
         component: `
-**BAIUserSelect** — the user picker for screens outside the admin menu: the members of one project. Built on \`BAIComplexSelect\`. Admin pages use \`BAIAdminUserSelect\`.
+**BAIUserSelect** — the user picker for admin and project-admin forms. Built on \`BAIComplexSelect\`, paged through \`scopedUsersV2\`.
 
-- \`projectId\` (required): the project whose members are listed, through \`scopedUsersV2\` with a project scope.
+- \`projectId\`: the members of that project. \`domainId\`: the users of that domain. Neither: the current domain, whose UUID is first resolved through \`domainV2\`.
 - \`valuePropName\`: \`'email'\` (default) or \`'id'\` — which field is the plain-key value. Only \`'id'\` runs the \`uuid in\` label-resolution query; with emails the key already is the label.
 - \`filter\` / \`excludeInactive\`: composed into a \`UserV2Filter\` through the schema's \`AND\` combinator, together with the debounced \`email: { iContains }\` search.
 - Needs a manager >= 26.9.0, where \`scopedUsersV2\` exists.
@@ -33,11 +43,23 @@ See \`BAIComplexSelect.stories.tsx\` for the underlying popup-body component wit
       },
     },
   },
+  decorators: [
+    (Story, context) => (
+      <BAIConfigProvider
+        locale={locales[context.globals.locale] || locales.en}
+        clientPromise={clientPromise}
+        anonymousClientFactory={mockAnonymousClientFactory}
+      >
+        <Story />
+      </BAIConfigProvider>
+    ),
+  ],
   argTypes: {
     value: { control: false },
     onChange: { control: false },
     filter: { control: false },
     projectId: { control: false },
+    domainId: { control: false },
     multiple: { control: { type: 'boolean' } },
     excludeInactive: { control: { type: 'boolean' } },
     valuePropName: {
@@ -81,6 +103,7 @@ const connection = (users: typeof mockUsers) => ({
 const mockResolvers: MockResolvers = {
   Query: () => ({
     scopedUsersV2: connection(mockUsers),
+    domainV2: { entityId: '5c3b5a9e-0000-4000-8000-0000000000d0' },
   }),
 };
 
@@ -89,10 +112,7 @@ const emptyResolvers: MockResolvers = {
 };
 
 const Sandbox: React.FC<
-  Omit<
-    ComponentProps<typeof BAIUserSelect>,
-    'value' | 'onChange' | 'projectId'
-  > & {
+  Omit<ComponentProps<typeof BAIUserSelect>, 'value' | 'onChange'> & {
     initialValue?: string | Array<string> | null;
     resolvers?: MockResolvers;
   }
@@ -104,7 +124,6 @@ const Sandbox: React.FC<
     <RelayResolver mockResolvers={resolvers}>
       <BAIUserSelect
         {...args}
-        projectId="5c3b5a9e-0000-4000-8000-000000000001"
         value={value}
         onChange={(next) => setValue(next ?? null)}
       />
@@ -112,16 +131,35 @@ const Sandbox: React.FC<
   );
 };
 
+export const CurrentDomain: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'No scope props: resolves the current domain through `domainV2`, then lists its users.',
+      },
+    },
+  },
+  render: (args) => <Sandbox {...args} label="User" defaultOpen />,
+};
+
 export const ProjectMembers: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'Reads `scopedUsersV2` with a project scope: the members of the project `projectId` names.',
+          '`projectId` set: reads `scopedUsersV2` with a project scope, the members of that project.',
       },
     },
   },
-  render: (args) => <Sandbox {...args} label="Owner" defaultOpen />,
+  render: (args) => (
+    <Sandbox
+      {...args}
+      label="Owner"
+      projectId="5c3b5a9e-0000-4000-8000-000000000001"
+      defaultOpen
+    />
+  ),
 };
 
 export const Multiple: Story = {

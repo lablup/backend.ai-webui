@@ -26,7 +26,7 @@ import {
   type BAIKeypairResourcePolicyV2TableProps,
   BAINameActionCell,
   BAISkeleton,
-  BAIAdminUserSelect,
+  BAIUserSelect,
   filterOutNullAndUndefined,
   useFetchKey,
 } from 'backend.ai-ui';
@@ -317,7 +317,7 @@ const KeypairResourcePolicyV2 = ({
                 <Suspense
                   fallback={<BAISkeleton variant="input" width={200} />}
                 >
-                  <BAIAdminUserSelect
+                  <BAIUserSelect
                     valuePropName="id"
                     value={value}
                     isDisabled={isDisabled}

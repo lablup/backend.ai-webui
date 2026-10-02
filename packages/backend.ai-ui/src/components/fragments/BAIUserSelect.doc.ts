@@ -19,22 +19,17 @@ export const docs = {
   ],
   usage: {
     description:
-      'The user picker for screens outside the admin menu, and the reference consumer of BAIComplexSelect: it lists the members of the project named by the required projectId through scopedUsersV2 with a project UserScope, which any member of that project may read. Admin pages use BAIAdminUserSelect instead, which shares the option list, search and value handling and differs only in listing the signed-in admin\'s whole domain. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName="id", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it; only the value query can suspend on mount, and only when valuePropName="id" starts with a value already set. scopedUsersV2 exists on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is "id" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.',
+      "The user picker behind the keypair, credential, RBAC, deployment, project-admin and storage-permission forms, and the reference consumer of BAIComplexSelect. It pages scopedUsersV2, whose result follows the requester's permissions, so one component serves every page: with projectId it lists that project's members, with domainId that domain's users, and with neither the users of the current domain (the WebUI assumes a single domain). UserScope takes the domain UUID while the client only knows the current domain's name, so that last case first resolves it through domainV2 (BAIUserSelectCurrentDomainQuery). The lookup and the value query suspend inside the component's own Suspense boundary, which shows a disabled loading picker, so a filter popover hosting it is not unmounted by a page-level fallback. The paginated document pages the scoped connection ten rows at a time with limit/offset, ordered by EMAIL ascending, and compiles the debounced search text into an email iContains predicate; the value document re-resolves the selected id(s) into emails through a uuid in filter. That second query is load-bearing rather than cosmetic — the trigger reads its text from the value, and a user chosen on page one is no longer in options once loadNext has paged past it — but it only runs under valuePropName=\"id\", because with emails the key already is the label. The option list is fetched when the popup opens, and the trigger shows a loading state while that fetch is in flight, so nothing suspends on mount for it. scopedUsersV2 and DomainV2.entityId exist on managers 26.9.0 and later; there is no fallback for older managers. The outer value stays a plain key — the email by default, or the local user UUID when valuePropName is \"id\" — and label-in-value stays inside the wrapper, except that onChange also hands back the matching label pair. The rest of BAIComplexSelectProps passes through, including the required label, isLabelHidden, width, isDisabled and status; options, value, onChange, searchValue, onSearch and total are owned here.",
     bestPractices: [
       {
         guidance: true,
         description:
-          "Use it on screens outside the admin menu, passing the current project id; the list is that project's members.",
-      },
-      {
-        guidance: false,
-        description:
-          'Use it on an admin page to list the users of the domain — that is BAIAdminUserSelect.',
+          "Pass projectId on a project-admin screen to list that project's members; leave both scope props out on an admin page to list the current domain's users.",
       },
       {
         guidance: true,
         description:
-          'Wrap it, or the form item holding it, in a Suspense boundary — the value query suspends when valuePropName="id" starts with a value.',
+          'Render it directly in a filter popover or form item; it carries its own Suspense boundary, so no wrapper is needed.',
       },
       {
         guidance: true,
@@ -84,9 +79,14 @@ export const docs = {
     {
       name: 'projectId',
       type: 'string',
-      required: true,
       description:
-        'The project whose members are listed — the project UUID, sent as the project UserScope of scopedUsersV2.',
+        'Lists the members of this project (project UUID) through a project UserScope. Takes precedence over domainId.',
+    },
+    {
+      name: 'domainId',
+      type: 'string',
+      description:
+        'Lists the users of this domain (domain UUID). When neither projectId nor domainId is given, the current domain is used.',
     },
     {
       name: 'valuePropName',
@@ -147,6 +147,18 @@ export const docs = {
     },
   ],
   examples: [
+    {
+      label: 'Multi-user field in an assign-role modal (current domain)',
+      code: `<Form.Item name="userIds" label={t('credential.Users')}>
+  <BAIUserSelect
+    multiple
+    valuePropName="id"
+    label={t('credential.Users')}
+    isLabelHidden
+    placeholder={t('rbac.SelectUsers')}
+  />
+</Form.Item>`,
+    },
     {
       label: 'Owner filter on a project-admin page',
       code: `<BAIUserSelect

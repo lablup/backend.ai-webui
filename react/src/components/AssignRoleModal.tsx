@@ -9,7 +9,7 @@ import { reasonMessage } from '../helper/mutationError';
 import { Text } from '@lablup/ui-common/Text';
 import { useTheme } from '@lablup/ui-common/theme';
 import {
-  BAIAdminUserSelect,
+  BAIUserSelect,
   BAIBulkErrorModal,
   BAIModal,
   BAIModalProps,
@@ -212,7 +212,7 @@ const AssignRoleModal: React.FC<AssignRoleModalProps> = ({
           label={t('credential.Users')}
           rules={[{ required: true, message: t('rbac.PleaseSelectUsers') }]}
         >
-          <BAIAdminUserSelect
+          <BAIUserSelect
             multiple
             valuePropName="id"
             label={t('credential.Users')}

@@ -5,11 +5,11 @@
  The user picker the admin and project-admin forms share, built on
  `BAIComplexSelect`: offset pagination with scroll-driven `loadNext`,
  server-side search, and a plain-key (`string` / `string[]`) value with
- label-in-value kept inside the wrapper. Lists the members of one project
- through `scopedUsersV2` (manager >= 26.9.0), which any member may read.
- Admin pages use `BAIAdminUserSelect`, which shares everything below but the
- scope.
+ label-in-value kept inside the wrapper. Pages `scopedUsersV2` (manager
+ >= 26.9.0): the members of `projectId`, else the users of `domainId`, else
+ the users of the current domain (the WebUI assumes a single domain).
 */
+import { BAIUserSelectCurrentDomainQuery } from '../../__generated__/BAIUserSelectCurrentDomainQuery.graphql';
 import { BAIUserSelectScopedPaginatedQuery } from '../../__generated__/BAIUserSelectScopedPaginatedQuery.graphql';
 import { BAIUserSelectScopedValueQuery } from '../../__generated__/BAIUserSelectScopedValueQuery.graphql';
 import { combineFilters, toLocalId } from '../../helper';
@@ -22,8 +22,10 @@ import BAIComplexSelect, {
   type BAIComplexSelectValue,
   type BAILabeledValue,
 } from '../BAIComplexSelect';
+import useConnectedBAIClient from '../provider/BAIClientProvider/hooks/useConnectedBAIClient';
 import * as _ from 'lodash-es';
 import {
+  Suspense,
   useDeferredValue,
   useImperativeHandle,
   useState,
@@ -45,7 +47,7 @@ export interface BAIUserSelectRef {
   refetch: () => void;
 }
 
-export interface BAIUserSelectBaseProps extends Omit<
+export interface BAIUserSelectProps extends Omit<
   BAIComplexSelectProps,
   'options' | 'value' | 'onChange' | 'searchValue' | 'onSearch' | 'total'
 > {
@@ -65,7 +67,13 @@ export interface BAIUserSelectBaseProps extends Omit<
   open?: boolean;
   defaultOpen?: boolean;
   ref?: React.Ref<BAIUserSelectRef>;
+  /** Lists this project's members. Takes precedence over `domainId`. */
+  projectId?: string;
+  /** Lists this domain's users (domain UUID). Defaults to the current domain. */
+  domainId?: string;
 }
+
+type ScopedProps = Omit<BAIUserSelectProps, 'projectId' | 'domainId'>;
 
 type UserV2Edge =
   | {
@@ -106,7 +114,7 @@ const useUserSelectState = ({
   isLoading,
   ref,
   ...selectProps
-}: BAIUserSelectBaseProps) => {
+}: ScopedProps) => {
   'use memo';
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
@@ -319,10 +327,10 @@ const UserSelectView: React.FC<UserSelectViewProps> = ({
 
 type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
 
-/** The picker over `scopedUsersV2`; the scope is the only thing callers vary. */
-export const ScopedUserOptions: React.FC<
-  BAIUserSelectBaseProps & { userScope: UserScope }
-> = ({ userScope, ...props }) => {
+const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
+  userScope,
+  ...props
+}) => {
   'use memo';
   const state = useUserSelectState(props);
   const selected = useLazyLoadQuery<BAIUserSelectScopedValueQuery>(
@@ -401,21 +409,61 @@ export const ScopedUserOptions: React.FC<
   );
 };
 
-export interface BAIUserSelectProps extends BAIUserSelectBaseProps {
-  /** The project whose members are listed. */
-  projectId: string;
-}
-
-const BAIUserSelect: React.FC<BAIUserSelectProps> = ({
+/** `UserScope.domain` takes a UUID; without `domainId` the current domain's is looked up. */
+const UserOptions: React.FC<BAIUserSelectProps> = ({
   projectId,
+  domainId,
   ...props
 }) => {
   'use memo';
+  const baiClient = useConnectedBAIClient();
+  const { domainV2 } = useLazyLoadQuery<BAIUserSelectCurrentDomainQuery>(
+    graphql`
+      query BAIUserSelectCurrentDomainQuery(
+        $domainName: String!
+        $skip: Boolean!
+      ) {
+        domainV2(domainName: $domainName) @skip(if: $skip) {
+          entityId
+        }
+      }
+    `,
+    {
+      domainName: baiClient._config.domainName,
+      skip: !!projectId || !!domainId,
+    },
+  );
+  const resolvedDomainId = domainId ?? domainV2?.entityId;
+  if (!projectId && !resolvedDomainId) {
+    throw new Error(`Domain not found: ${baiClient._config.domainName}`);
+  }
+  const userScope: UserScope = projectId
+    ? { project: [{ value: projectId }] }
+    : { domain: [{ value: resolvedDomainId as string }] };
+  return <ScopedUserOptions userScope={userScope} {...props} />;
+};
+
+// Suspends here, not at the caller: inside a filter popover a page-level
+// fallback would unmount the popover before the picker shows.
+const BAIUserSelect: React.FC<BAIUserSelectProps> = (props) => {
+  'use memo';
+  const { t } = useBAIi18n();
   return (
-    <ScopedUserOptions
-      userScope={{ project: [{ value: projectId }] }}
-      {...props}
-    />
+    <Suspense
+      fallback={
+        <BAIComplexSelect
+          label={props.label}
+          isLabelHidden={props.isLabelHidden}
+          width={props.width}
+          placeholder={props.placeholder ?? t('comp:BAIUserSelect.SelectUser')}
+          options={[]}
+          isLoading
+          isDisabled
+        />
+      }
+    >
+      <UserOptions {...props} />
+    </Suspense>
   );
 };
 

@@ -37,7 +37,7 @@ import {
   type BAISelectProps,
   BAISkeleton,
   BAIUnmountAfterClose,
-  BAIAdminUserSelect,
+  BAIUserSelect,
   filterOutEmpty,
   INITIAL_FETCH_KEY,
   toLocalId,
@@ -309,7 +309,7 @@ const RoleListTab: React.FC = () => {
                   type: 'uuid',
                   fixedOperator: 'equals',
                   renderInput: ({ onAddCondition, value, isDisabled }) => (
-                    <BAIAdminUserSelect
+                    <BAIUserSelect
                       valuePropName="id"
                       value={value}
                       isDisabled={isDisabled}
