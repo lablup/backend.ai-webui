@@ -322,7 +322,7 @@ describe('insertOffset', () => {
       '',
     ].join('\n');
     const { content, anchor } = applyBlock(source, 'BLOCK');
-    expect(anchor).toBe('after-design-block');
+    expect(anchor).toBe('after-ui-common');
     expect(content.indexOf('BLOCK')).toBeGreaterThan(
       content.indexOf('PROJECT LINES'),
     );
@@ -340,7 +340,7 @@ describe('insertOffset', () => {
       '',
     ].join('\n');
     const { content, anchor } = applyBlock(source, 'BLOCK');
-    expect(anchor).toBe('after-design-block');
+    expect(anchor).toBe('after-astryx');
     expect(content.indexOf('BLOCK')).toBeGreaterThan(content.indexOf('Notes.'));
     expect(content.indexOf('BLOCK')).toBeLessThan(
       content.indexOf('## Next heading'),
@@ -370,7 +370,7 @@ describe('insertOffset', () => {
       '',
     ].join('\n');
     const { content, anchor } = applyBlock(source, 'BLOCK');
-    expect(anchor).toBe('after-design-block');
+    expect(anchor).toBe('after-ui-common');
     expect(content.indexOf('BLOCK')).toBeGreaterThan(
       content.indexOf('# comment, not a heading'),
     );
@@ -400,7 +400,7 @@ describe('insertOffset', () => {
       '',
     ].join('\n');
     const { content, anchor } = applyBlock(source, 'BLOCK');
-    expect(anchor).toBe('after-design-block');
+    expect(anchor).toBe('after-ui-common');
     expect(content.indexOf('BLOCK')).toBeGreaterThan(
       content.indexOf('# still not a heading'),
     );
