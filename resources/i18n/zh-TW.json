@@ -2018,6 +2018,8 @@
     "LoginWithE-mailOrUsername": "使用電子郵件或使用者名稱登入",
     "LoginWithIAM": "使用 IAM 登錄",
     "MonitorRoleLoginForbidden": "監控角色使用者不允許登入。",
+    "NewPasswordMayNotBeApplied": "新密碼可能未生效",
+    "NewPasswordMayNotBeAppliedDesc": "使用新密碼登入失敗，密碼變更可能未儲存到伺服器。請嘗試使用先前的密碼登入，或聯絡管理員。多次登入失敗可能會導致帳戶被暫時鎖定。",
     "NoEndpointSaved": "沒有保存端點。",
     "NotAUser": "不是用戶？",
     "Password": "密碼",

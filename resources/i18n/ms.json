@@ -2015,6 +2015,8 @@
     "LoginWithE-mailOrUsername": "Log masuk Dengan E-mel atau Nama Pengguna",
     "LoginWithIAM": "Log Masuk Dengan IAM",
     "MonitorRoleLoginForbidden": "Pengguna dengan peranan pemantau tidak dibenarkan log masuk.",
+    "NewPasswordMayNotBeApplied": "Kata laluan baharu anda mungkin belum digunakan",
+    "NewPasswordMayNotBeAppliedDesc": "Log masuk dengan kata laluan baharu gagal, jadi perubahan kata laluan mungkin tidak disimpan di pelayan. Cuba log masuk dengan kata laluan terdahulu anda, atau hubungi pentadbir anda. Percubaan gagal yang berulang boleh mengunci akaun anda buat sementara.",
     "NoEndpointSaved": "Tiada titik akhir disimpan.",
     "NotAUser": "Bukan pengguna?",
     "Password": "Kata Laluan",

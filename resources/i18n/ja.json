@@ -2017,6 +2017,8 @@
     "LoginWithE-mailOrUsername": "電子メールまたはユーザー名でログイン",
     "LoginWithIAM": "IAMでログイン",
     "MonitorRoleLoginForbidden": "モニターロールのユーザーはログインできません。",
+    "NewPasswordMayNotBeApplied": "新しいパスワードが適用されていない可能性があります",
+    "NewPasswordMayNotBeAppliedDesc": "新しいパスワードでログインできませんでした。パスワードの変更がサーバーに保存されていない可能性があります。以前のパスワードでログインするか、管理者にお問い合わせください。ログインの失敗を繰り返すと、アカウントが一時的にロックされることがあります。",
     "NoEndpointSaved": "エンドポイントは保存されません。",
     "NotAUser": "ユーザーではありませんか？",
     "Password": "パスワード",

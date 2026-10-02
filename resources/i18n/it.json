@@ -2015,6 +2015,8 @@
     "LoginWithE-mailOrUsername": "Accedi con e-mail o nome utente",
     "LoginWithIAM": "Accedi con IAM",
     "MonitorRoleLoginForbidden": "Gli utenti con ruolo monitor non sono autorizzati ad accedere.",
+    "NewPasswordMayNotBeApplied": "La nuova password potrebbe non essere stata applicata",
+    "NewPasswordMayNotBeAppliedDesc": "L'accesso con la nuova password non è riuscito, quindi la modifica potrebbe non essere stata salvata sul server. Prova ad accedere con la password precedente oppure contatta l'amministratore. Tentativi falliti ripetuti possono bloccare temporaneamente l'account.",
     "NoEndpointSaved": "Nessun endpoint salvato.",
     "NotAUser": "Non sei un utente?",
     "Password": "Parola d'ordine",
