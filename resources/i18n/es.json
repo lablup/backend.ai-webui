@@ -2009,6 +2009,8 @@
     "LoginWithE-mailOrUsername": "Iniciar sesión con correo electrónico o nombre de usuario",
     "LoginWithIAM": "Iniciar sesión con IAM",
     "MonitorRoleLoginForbidden": "Los usuarios con rol de monitor no pueden iniciar sesión.",
+    "NewPasswordMayNotBeApplied": "Es posible que tu nueva contraseña no se haya aplicado",
+    "NewPasswordMayNotBeAppliedDesc": "No se pudo iniciar sesión con la nueva contraseña, por lo que es posible que el cambio no se haya guardado en el servidor. Intenta iniciar sesión con tu contraseña anterior o contacta con el administrador. Los intentos fallidos repetidos pueden bloquear tu cuenta temporalmente.",
     "NoEndpointSaved": "No se ha guardado ningún punto final.",
     "NotAUser": "¿No es usuario?",
     "Password": "Contraseña",

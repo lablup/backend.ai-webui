@@ -2011,6 +2011,8 @@
     "LoginWithE-mailOrUsername": "Đăng nhập bằng E-mail hoặc tên người dùng",
     "LoginWithIAM": "Đăng nhập bằng IAM",
     "MonitorRoleLoginForbidden": "Người dùng có vai trò giám sát không được phép đăng nhập.",
+    "NewPasswordMayNotBeApplied": "Mật khẩu mới của bạn có thể chưa được áp dụng",
+    "NewPasswordMayNotBeAppliedDesc": "Đăng nhập bằng mật khẩu mới không thành công, nên thay đổi mật khẩu có thể chưa được lưu trên máy chủ. Hãy thử đăng nhập bằng mật khẩu trước đây hoặc liên hệ quản trị viên. Đăng nhập thất bại nhiều lần có thể khiến tài khoản của bạn bị khóa tạm thời.",
     "NoEndpointSaved": "Không có điểm cuối nào được lưu.",
     "NotAUser": "Không phải là người dùng?",
     "Password": "Mật khẩu",

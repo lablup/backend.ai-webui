@@ -2011,6 +2011,8 @@
     "LoginWithE-mailOrUsername": "Login com e-mail ou nome de usuário",
     "LoginWithIAM": "Login com IAM",
     "MonitorRoleLoginForbidden": "Utilizadores com função de monitor não têm permissão para iniciar sessão.",
+    "NewPasswordMayNotBeApplied": "A sua nova palavra-passe pode não ter sido aplicada",
+    "NewPasswordMayNotBeAppliedDesc": "Não foi possível iniciar sessão com a nova palavra-passe, pelo que a alteração pode não ter sido guardada no servidor. Tente iniciar sessão com a palavra-passe anterior ou contacte o administrador. Tentativas falhadas repetidas podem bloquear temporariamente a sua conta.",
     "NoEndpointSaved": "Nenhum endpoint salvo.",
     "NotAUser": "Não é um usuário?",
     "Password": "Senha",

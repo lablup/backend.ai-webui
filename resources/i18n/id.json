@@ -2012,6 +2012,8 @@
     "LoginWithE-mailOrUsername": "Masuk Dengan Email atau Nama Pengguna",
     "LoginWithIAM": "Masuk dengan IAM",
     "MonitorRoleLoginForbidden": "Pengguna dengan peran monitor tidak diizinkan untuk masuk.",
+    "NewPasswordMayNotBeApplied": "Kata sandi baru Anda mungkin belum diterapkan",
+    "NewPasswordMayNotBeAppliedDesc": "Gagal masuk dengan kata sandi baru, sehingga perubahan kata sandi mungkin tidak tersimpan di server. Coba masuk dengan kata sandi sebelumnya, atau hubungi administrator Anda. Percobaan gagal berulang kali dapat mengunci akun Anda sementara.",
     "NoEndpointSaved": "Tidak ada titik akhir yang disimpan.",
     "NotAUser": "Bukan pengguna?",
     "Password": "Kata sandi",
