@@ -17,17 +17,13 @@ export const docs = {
         },
         {
           type: 'prose',
-          text: 'BUI is registered as an Astryx CLI integration, so `astryx component <Name>`, `astryx search`, and `astryx component --list` answer with BAI* components alongside Astryx core. When both could serve, the BAI* one wins — it carries the project defaults that a bare Astryx primitive does not.',
-        },
-        {
-          type: 'prose',
-          text: 'One caveat while reading those answers: the **Import** line `astryx component <Name>` prints for a BUI component says `@astryxdesign/core`. That is an upstream CLI 0.5.0 bug — the human renderer recomputes the specifier against core instead of using the resolved one — and it is cosmetic. Every BAI* component imports from `backend.ai-ui`, which is what `astryx search` and `--json` correctly report.',
+          text: 'BUI is registered as an Astryx CLI integration, so `ui-common component <Name>`, `ui-common search`, and `ui-common component --list` answer with BAI* components alongside ui-common and Astryx core. When both could serve, the BAI* one wins — it carries the project defaults that a bare Astryx primitive does not.',
         },
         {
           type: 'list',
           style: 'do',
           items: [
-            'Search before writing UI: `astryx search "<thing>"` lists core and BUI together.',
+            'Search before writing UI: `ui-common search "<thing>"` lists core, ui-common and BUI together.',
             'Read the BAI* doc first — it names the Astryx component it wraps and what it adds.',
             'Add reusable components to BUI, not to react/src (see "Where a component lives").',
           ],

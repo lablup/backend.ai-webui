@@ -16,7 +16,7 @@
      (a) a custom variant key (`'variant:card'`) only renders if the component
      REFLECTS that prop, and `TabList` reflects `size` only
      (`themeProps('tab-list', {size})` — see the theming table in
-     `astryx component TabList`); (b) the look needs `tab` styled CONDITIONALLY
+     `ui-common component TabList`); (b) the look needs `tab` styled CONDITIONALLY
      on its ancestor strip, and component overrides are flat per-component, so
      `tab.base` would repaint every tab in the app. A theme override is also
      global by construction, and the brief requires the two styles side by side

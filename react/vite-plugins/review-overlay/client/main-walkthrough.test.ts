@@ -733,7 +733,7 @@ describe('a stop under an open modal', () => {
       'Behind the open dialog',
     );
 
-    // BAIDialog closes in place, dropping the attribute; no childList record.
+    // ui-common Modal closes in place, dropping the attribute; no childList record.
     document.getElementById('modal')?.removeAttribute('data-uic-modal-open');
     await ticks(30);
 

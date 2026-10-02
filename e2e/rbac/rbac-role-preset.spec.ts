@@ -42,26 +42,54 @@ async function openFilterField(page: Page, fieldLabel: string) {
   await field.click();
 }
 
-// While a filter/sort change is in flight, `BAITable` keeps the previous rows
-// on screen and marks its dim layer `aria-busy` (see environment.spec.ts).
-async function waitForTableSettled(page: Page) {
+// The list query each tab refetches on a filter/sort change.
+type TableQuery = 'RolePresetListTabQuery' | 'RBACManagementPageQuery';
+
+// Runs `action` and waits for the refetch it triggers. While the new
+// variables are in flight `BAITable` keeps the previous rows on screen and
+// ui-common `DataGrid` marks its rows wrapper `aria-busy`; that flag only
+// rises some 200 ms after the click, so it is checked after the response,
+// which is armed before the action.
+async function settleTableAfter(
+  page: Page,
+  query: TableQuery,
+  action: () => Promise<void>,
+) {
+  const refetch = page.waitForResponse(
+    (response) => (response.request().postData() ?? '').includes(query),
+    { timeout: 20000 },
+  );
+  await action();
+  await refetch;
   await expect(
-    page.locator('.bai-table-astryx-dim-layer[aria-busy="true"]'),
+    page.locator('.uic-data-grid__body[aria-busy="true"]'),
   ).toHaveCount(0, { timeout: 20000 });
 }
 
-async function applyTextFilter(page: Page, fieldLabel: string, value: string) {
+async function applyTextFilter(
+  page: Page,
+  query: TableQuery,
+  fieldLabel: string,
+  value: string,
+) {
   await openFilterField(page, fieldLabel);
   await page.getByRole('textbox', { name: 'Value' }).fill(value);
-  await page.getByRole('button', { name: 'Apply', exact: true }).click();
-  await waitForTableSettled(page);
+  await settleTableAfter(page, query, () =>
+    page.getByRole('button', { name: 'Apply', exact: true }).click(),
+  );
 }
 
-async function applyEnumFilter(page: Page, fieldLabel: string, value: string) {
+async function applyEnumFilter(
+  page: Page,
+  query: TableQuery,
+  fieldLabel: string,
+  value: string,
+) {
   await openFilterField(page, fieldLabel);
   await page.getByRole('combobox', { name: 'Value' }).click();
-  await page.getByRole('option', { name: value, exact: true }).click();
-  await waitForTableSettled(page);
+  await settleTableAfter(page, query, () =>
+    page.getByRole('option', { name: value, exact: true }).click(),
+  );
 }
 
 async function expectEveryRowCell(
@@ -69,7 +97,6 @@ async function expectEveryRowCell(
   columnIndex: number,
   predicate: (text: string) => boolean,
 ) {
-  await waitForTableSettled(page);
   await expect(async () => {
     const rows = await dataRows(page).all();
     expect(rows.length).toBeGreaterThan(0);
@@ -167,7 +194,12 @@ test.describe(
           .innerText()
       ).trim();
 
-      await applyTextFilter(page, 'Preset Name', presetName);
+      await applyTextFilter(
+        page,
+        'RolePresetListTabQuery',
+        'Preset Name',
+        presetName,
+      );
       await expectEveryRowCell(page, PRESET_NAME_COLUMN, (name) =>
         name.includes(presetName),
       );
@@ -186,7 +218,12 @@ test.describe(
     }) => {
       await openPresetsTab(page);
 
-      await applyEnumFilter(page, 'Scope Type', 'Project');
+      await applyEnumFilter(
+        page,
+        'RolePresetListTabQuery',
+        'Scope Type',
+        'Project',
+      );
       await expect(
         page.getByRole('button', {
           name: 'Remove Scope Type: equals',
@@ -199,16 +236,15 @@ test.describe(
         (scopeType) => scopeType === 'Project',
       );
 
-      await page
-        .getByRole('button', { name: 'Clear all', exact: true })
-        .click();
+      await settleTableAfter(page, 'RolePresetListTabQuery', () =>
+        page.getByRole('button', { name: 'Clear all', exact: true }).click(),
+      );
       await expect(
         page.getByRole('button', {
           name: 'Remove Scope Type: equals',
           exact: true,
         }),
       ).toBeHidden();
-      await waitForTableSettled(page);
       // Unfiltered, the list holds presets of more than one scope type (the
       // manager seeds global/domain/project/user presets).
       await expect
@@ -261,7 +297,12 @@ test.describe(
 
       // The oldest project-scoped system role: sorting by Created At keeps the
       // seed roles on top while parallel tests churn newer ones.
-      await applyEnumFilter(page, 'Source', 'System');
+      await applyEnumFilter(
+        page,
+        'RBACManagementPageQuery',
+        'Source',
+        'System',
+      );
       // The role list's Scope Type value is a custom select (a `Scope Type`
       // button), which commits only on Apply — unlike `applyEnumFilter`.
       await openFilterField(page, 'Scope Type');
@@ -269,14 +310,16 @@ test.describe(
         .getByRole('button', { name: 'Scope Type', exact: true })
         .click();
       await page.getByRole('option', { name: 'Project', exact: true }).click();
-      await page.getByRole('button', { name: 'Apply', exact: true }).click();
-      await waitForTableSettled(page);
+      await settleTableAfter(page, 'RBACManagementPageQuery', () =>
+        page.getByRole('button', { name: 'Apply', exact: true }).click(),
+      );
       const createdAtHeader = columnHeader(page, 'Created At');
-      await createdAtHeader.getByRole('button').click();
+      await settleTableAfter(page, 'RBACManagementPageQuery', () =>
+        createdAtHeader.getByRole('button').click(),
+      );
       await expect(createdAtHeader).toHaveAttribute('aria-sort', 'ascending', {
         timeout: 10000,
       });
-      await waitForTableSettled(page);
 
       const roleRow = dataRows(page).first();
       await expect(roleRow).toBeVisible({ timeout: 10000 });
@@ -315,7 +358,9 @@ test.describe(
       ).toBeVisible();
       await expect(drawer.getByRole('checkbox')).toHaveCount(0);
 
-      await readOnlyAlert.getByRole('link', { name: 'View Presets' }).click();
+      await settleTableAfter(page, 'RolePresetListTabQuery', () =>
+        readOnlyAlert.getByRole('link', { name: 'View Presets' }).click(),
+      );
 
       await expect(drawer).toBeHidden({ timeout: 10000 });
       await expect(page).toHaveURL(/[?&]tab=presets/);

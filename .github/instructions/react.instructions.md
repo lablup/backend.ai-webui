@@ -35,9 +35,10 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
   `@lablup/ui-common` mirror: `@lablup/ui-common/<Name>`, never `@astryxdesign/*`
   (ESLint rejects it; ADR 0009). Discover
   before writing: `ui-common search "<thing>"`, `ui-common component <Name>`. The CLI comes
-  with `@lablup/ui-common`, a dependency of `react/` and BUI only, so run it as
-  `pnpm exec ui-common …` from `react/` or `pnpm run ui-common …` from the repository
-  root — `pnpm exec` finds no binary at the root.
+  from `@lablup/ui-common-cli`, a devDependency of `react/` only, so run it as
+  `pnpm exec ui-common …` from `react/`, `pnpm run ui-common …` from the repository root,
+  and `pnpm -w run ui-common …` from anywhere else (BUI included) — `pnpm exec` finds no
+  binary outside `react/`.
   See the `UI-COMMON` block in `AGENTS.md` / `react/AGENTS.md`.
 - **antd is not a dependency.** `import … from 'antd'` does not resolve and fails `tsc`;
   the workspace is exact-pinned so it cannot re-enter transitively. Never add one.
@@ -48,7 +49,8 @@ canonical reference, and each BAI wrapper's file header documents its deliberate
 
 ### Shims — same call shape, different import
 
-Two antd surfaces were replaced by self-hosted shims that are drop-in compatible. Adjust
+Two antd surfaces were replaced by drop-in compatible stand-ins: the `app-shim` and the
+form engine (`@lablup/ui-common/Form` via the `form-engine` alias). Adjust
 the `../` depth to the file; the same specifiers exist on both sides of the workspace
 (`react/src/*` re-exports the implementation in `packages/backend.ai-ui/src/*`).
 
@@ -67,8 +69,8 @@ the `../` depth to the file; the same specifiers exist on both sides of the work
   write `'var(--color-text-secondary)'` straight into the style. Use tokens, never
   hard-coded colours — every component must work in light and dark. Responsive
   breakpoints are `useBAIBreakpoint()` from `backend.ai-ui`.
-- `Form` / `Form.Item` / `Form.List` / `Form.useForm` / `Form.useWatch` resolve to the
-  self-hosted engine; `Form.Item` **is** `BAIFormItem`.
+- `Form` / `Form.Item` / `Form.List` / `Form.useForm` / `Form.useWatch` resolve to
+  `@lablup/ui-common/Form` via the `form-engine` alias; `Form.Item` **is** `BAIFormItem`.
 - Everything else that used to come from antd is a `BAI*` wrapper from `backend.ai-ui` or an
   Astryx primitive from `@lablup/ui-common/<Name>`.
 
@@ -203,7 +205,7 @@ templates — copy the nearest one and adapt.
 - [ ] `'use memo'` first line of every new component / hook body; no speculative
       `useMemo` / `useCallback`; no `exhaustive-deps` disables.
 - [ ] No `antd` import, no `antd-style`; BAI component used where one exists, Astryx
-      otherwise; `App` / `theme` / `Form` imported from the shims.
+      otherwise; `App` / `Form` imported from `../app-shim` / `../form-engine`.
 - [ ] BAI wrapper props keep their antd-v6-shaped names; props interface extends the wrapped
       component's props via `Omit<>` with `...rest` forwarded.
 - [ ] Relay: orchestrator/fragment split, `queryRef` / `{typeName}Frgmt` naming, `$key`
