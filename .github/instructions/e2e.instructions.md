@@ -222,6 +222,12 @@ point for generated flows; do not turn it into a real test.
    `tbody tr`. Never against a
    framework-internal class, and never position-based (`div:nth-child(4) > …`).
 
+   The busy flag rises a few hundred milliseconds after the click that triggers the
+   refetch, so `toHaveCount(0)` on it right after the click passes before the refetch
+   starts. Arm `page.waitForResponse` for the list query before the action, await it, and
+   only then wait for `aria-busy` to clear (`settleTableAfter` in
+   `e2e/rbac/rbac-role-preset.spec.ts`).
+
 ### What replaced what
 
 | Dead locator | Use instead |
