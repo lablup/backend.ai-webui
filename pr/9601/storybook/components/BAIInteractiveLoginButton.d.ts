@@ -1,5 +1,5 @@
 import { BAIInteractiveLoginFailureReason } from '../hooks/useBAIInteractiveLogin';
-import { ButtonProps } from '@astryxdesign/core/Button';
+import { ButtonProps } from '@lablup/ui-common/Button';
 export interface BAIInteractiveLoginButtonProps extends Omit<ButtonProps, 'label' | 'onClick' | 'clickAction' | 'isLoading'> {
     /** Absolute URL of the Backend.AI webserver, e.g. `https://webserver.example.com`. */
     webserverUrl: string;
