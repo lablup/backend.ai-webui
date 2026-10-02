@@ -115,6 +115,28 @@ describe("single-astryx-core-gate", () => {
     ]);
   });
 
+  it("fails a version with no snapshots entry", () => {
+    const { failures } = runSingleCoreGate({
+      lockfileText: lockfile({ coreSnapshots: [] }),
+      workspaceText: workspace,
+    });
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toMatch(/0 `snapshots:` entries/);
+  });
+
+  it("fails when the catalog has no pin for the package", () => {
+    const { failures } = runSingleCoreGate({
+      lockfileText: lockfile(),
+      workspaceText: workspace.replace(
+        '  "@astryxdesign/core": 0.6.2\n',
+        "",
+      ),
+    });
+    expect(failures).toEqual([
+      "@astryxdesign/core: no `catalog:` pin in pnpm-workspace.yaml.",
+    ]);
+  });
+
   it("passes on the committed lockfile", () => {
     const { failures } = runSingleCoreGate({
       lockfileText: readFileSync(resolve(REPO_ROOT, "pnpm-lock.yaml"), "utf8"),

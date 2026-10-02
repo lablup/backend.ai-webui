@@ -9,10 +9,11 @@
  * tripped the install on a second core; with the Astryx patches gone (their
  * fixes ship as ui-common forks) this gate reads `pnpm-lock.yaml` instead.
  *
- * Fails when a package below has more than one `packages:` entry (a second
- * version) or more than one `snapshots:` entry (the same version resolved
- * against different peers, which pnpm installs as a separate directory), or
- * when the one version differs from the `pnpm-workspace.yaml` catalog pin.
+ * Fails unless a package below has exactly one `packages:` entry (more is a
+ * second version) and exactly one `snapshots:` entry (more is the same
+ * version resolved against different peers, which pnpm installs as a separate
+ * directory), and the one version equals its `pnpm-workspace.yaml` catalog pin
+ * (a missing pin fails too).
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -91,14 +92,21 @@ export const runSingleCoreGate = ({
           "Move the catalog pin and @lablup/ui-common together (ADR 0009).",
       );
     }
-    if (resolutions.length > 1) {
+    if (resolutions.length === 0) {
+      failures.push(
+        `${name}: 0 \`snapshots:\` entries in pnpm-lock.yaml; ` +
+          "expected exactly one.",
+      );
+    } else if (resolutions.length > 1) {
       failures.push(
         `${name}: ${resolutions.length} copies installed, resolved against ` +
           `different peers:\n    ${resolutions.join("\n    ")}`,
       );
     }
     const pin = readCatalogPin(workspaceText, name);
-    if (pin !== null && versions.length === 1 && versions[0] !== pin) {
+    if (pin === null) {
+      failures.push(`${name}: no \`catalog:\` pin in pnpm-workspace.yaml.`);
+    } else if (versions.length === 1 && versions[0] !== pin) {
       failures.push(
         `${name}: lockfile has ${versions[0]} but the catalog pins ${pin}.`,
       );
