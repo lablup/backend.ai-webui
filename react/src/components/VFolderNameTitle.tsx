@@ -3,8 +3,8 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { VFolderNameTitleNodeFragment$key } from '../__generated__/VFolderNameTitleNodeFragment.graphql';
-import { Heading } from '@astryxdesign/core/Text';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { Heading } from '@lablup/ui-common/Text';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import { graphql, useFragment } from 'react-relay';
 
 const VFolderNameTitle: React.FC<{

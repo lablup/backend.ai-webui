@@ -12,7 +12,7 @@ import RBACPermissionGrid, {
   type RBACPermissionChanges,
   type RBACPermissionSaveFailure,
 } from './RBACPermissionGrid';
-import { Token } from '@astryxdesign/core/Token';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIFlex,
   BAIId,

@@ -10,10 +10,10 @@ import StorageProxyDiagnosticsSection from '../components/StorageProxyDiagnostic
 import WebServerConfigDiagnosticsSection from '../components/WebServerConfigDiagnosticsSection';
 import { downloadCSV, escapeCsvValue } from '../helper/csv-util';
 import { DiagnosticResult } from '../types/diagnostics';
-import { Collapsible, CollapsibleGroup } from '@astryxdesign/core/Collapsible';
-import { DropdownMenu } from '@astryxdesign/core/DropdownMenu';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
-import { Switch } from '@astryxdesign/core/Switch';
+import { Collapsible, CollapsibleGroup } from '@lablup/ui-common/Collapsible';
+import { DropdownMenu } from '@lablup/ui-common/DropdownMenu';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
+import { Switch } from '@lablup/ui-common/Switch';
 import {
   BAISkeleton,
   BAIButton,

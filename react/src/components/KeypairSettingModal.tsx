@@ -10,7 +10,7 @@ import { Form, FormInstance } from '../form-engine';
 import BAIFormItem from './BAIFormItem';
 import KeypairResourcePolicySelect from './KeypairResourcePolicySelect';
 import { AstryxFormNumberInput } from './astryxFormControls';
-import { Grid, GridSpan } from '@astryxdesign/core/Grid';
+import { Grid, GridSpan } from '@lablup/ui-common/Grid';
 import {
   BAIModal,
   type BAIModalProps,

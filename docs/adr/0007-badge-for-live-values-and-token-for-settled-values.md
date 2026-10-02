@@ -100,7 +100,7 @@ flowchart TB
 
 - **Two components**: key와 value를 붙여 그리는 chip 쌍은 settled value용 `BAIDoubleToken`과 live value용 `BAIDoubleBadge`로 나뉜다. `kind` 같은 전환 prop은 없다.
 - **Value types**: `BAIDoubleToken`의 `values`는 `string[]` 또는 `{ label: string; color?: AstryxTokenColor }[]`이고 문자열이면 `blue`다. `highlightKeyword`는 `BAIDoubleToken`에만 있다. `BAIDoubleBadge`의 `values`는 `string[]` 또는 `{ label: string; variant?: AstryxBadgeVariant }[]`이고 문자열이면 `neutral`이다.
-- **Shared CSS**: 두 component는 `BAIDoubleToken.css`의 `.bai-double` class 하나로 outline을 겹치고 안쪽 모서리를 편다.
+- **Same weld**: 두 component 모두 이웃 chip의 outline을 겹치고 안쪽 모서리를 편다. `BAIDoubleToken`은 `BAIDoubleToken.css`의 `.bai-double` class로, `BAIDoubleBadge`는 그 구현이 옮겨 간 ui-common `DoubleBadge`의 stylesheet로 그린다.
 
 ## 대안과 기각 사유
 

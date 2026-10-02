@@ -6,10 +6,10 @@ import { AgentResourcesFragment$key } from '../../__generated__/AgentResourcesFr
 import { useResourceSlotsDetails } from '../../hooks/backendai';
 import AgentDetailModal from '../AgentDetailModal';
 import SimpleProgressWithLabel from '../SimpleProgressWithLabel';
-import { HStack } from '@astryxdesign/core';
-import { Grid } from '@astryxdesign/core/Grid';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
+import { HStack } from '@lablup/ui-common';
+import { Grid } from '@lablup/ui-common/Grid';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
 import {
   BAICard,
   BAIFlex,

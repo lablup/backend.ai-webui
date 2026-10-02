@@ -10,7 +10,7 @@ import {
   useSFTPResourceGroups,
 } from '../hooks/useSFTPResourceGroups';
 import BAIFormItem from './BAIFormItem';
-import { Code } from '@astryxdesign/core/Code';
+import { Code } from '@lablup/ui-common/Code';
 import {
   BAISkeleton,
   BAIFlex,

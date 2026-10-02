@@ -17,7 +17,7 @@ import { useUserSettingsModal } from './UserSettingsModalOpener';
 import {
   DropdownMenu,
   type DropdownMenuOption,
-} from '@astryxdesign/core/DropdownMenu';
+} from '@lablup/ui-common/DropdownMenu';
 import {
   BAIUnmountAfterClose,
   filterOutEmpty,

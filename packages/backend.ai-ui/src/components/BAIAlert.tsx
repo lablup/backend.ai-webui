@@ -44,7 +44,7 @@
  See the file for the measurement and the reasoning.
 */
 import './BAIAlert.css';
-import { Banner } from '@astryxdesign/core/Banner';
+import { Banner, type BannerProps } from '@lablup/ui-common/Banner';
 import classNames from 'classnames';
 import React from 'react';
 import type { ReactNode } from 'react';
@@ -72,7 +72,8 @@ export interface BAIAlertProps {
   'data-testid'?: string;
 }
 
-const BAIAlert: React.FC<BAIAlertProps> = ({
+/** BAIAlert's props as `Banner` props; `BAIListAlert` shares the mapping. */
+export const toBannerProps = ({
   type = 'info',
   title,
   message,
@@ -85,30 +86,29 @@ const BAIAlert: React.FC<BAIAlertProps> = ({
   action,
   ghostInfoBg: _ghostInfoBg,
   className,
-  children,
+  children: _children,
   ...restProps
-}) => {
+}: BAIAlertProps): Omit<BannerProps, 'children'> => {
   const resolvedTitle = title ?? message;
   const hasTitle = resolvedTitle !== undefined && resolvedTitle !== null;
-
-  return (
-    <Banner
-      {...restProps}
-      // The hook `BAIAlert.css` needs; every call site's own className still
-      // rides along.
-      className={classNames('bai-alert', className)}
-      status={type}
-      title={hasTitle ? resolvedTitle : description}
-      description={hasTitle ? description : undefined}
-      icon={icon}
-      isDismissable={closable}
-      onDismiss={onClose}
-      container={banner ? 'section' : 'card'}
-      endContent={action}
-    >
-      {children}
-    </Banner>
-  );
+  return {
+    ...restProps,
+    // The hook `BAIAlert.css` needs; every call site's own className still
+    // rides along.
+    className: classNames('bai-alert', className),
+    status: type,
+    title: hasTitle ? resolvedTitle : description,
+    description: hasTitle ? description : undefined,
+    icon,
+    isDismissable: closable,
+    onDismiss: onClose,
+    container: banner ? 'section' : 'card',
+    endContent: action,
+  };
 };
+
+const BAIAlert: React.FC<BAIAlertProps> = ({ children, ...alertProps }) => (
+  <Banner {...toBannerProps(alertProps)}>{children}</Banner>
+);
 
 export default BAIAlert;

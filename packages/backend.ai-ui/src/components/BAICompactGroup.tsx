@@ -51,7 +51,7 @@
  actually needs it.
 */
 import './BAICompactGroup.css';
-import { HStack, type HStackProps } from '@astryxdesign/core/HStack';
+import { HStack, type HStackProps } from '@lablup/ui-common/HStack';
 import React from 'react';
 
 export interface BAICompactGroupProps extends Omit<

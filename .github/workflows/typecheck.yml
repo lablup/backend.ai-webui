@@ -129,3 +129,7 @@ jobs:
       - name: Check for drift in the search index
         if: ${{ !cancelled() }}
         run: bash scripts/check-generated-drift.sh "Search index" "pnpm run search-index" react/src/generated/searchIndex.json
+      # Mirrors the "Single Astryx core" lane in scripts/verify.sh (ADR 0009).
+      - name: Check for a second @astryxdesign/core
+        if: ${{ !cancelled() }}
+        run: node scripts/migration-gates/single-astryx-core-gate.mjs

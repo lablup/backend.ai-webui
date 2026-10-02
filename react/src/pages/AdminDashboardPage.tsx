@@ -19,7 +19,7 @@ import {
   useCurrentResourceGroupValue,
 } from '../hooks/useCurrentProject';
 import { toProjectContext } from '../types/projectContext';
-import { useTheme } from '@astryxdesign/core/theme';
+import { useTheme } from '@lablup/ui-common/theme';
 import {
   BAISkeleton,
   filterOutEmpty,

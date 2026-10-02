@@ -18,9 +18,9 @@ import { useBAIPaginationOptionState } from '../hooks/reactPaginationQueryOption
 import RoleScopePermissionEditModal, {
   resolveScopeName,
 } from './RoleScopePermissionEditModal';
-import { IconButton } from '@astryxdesign/core/IconButton';
-import { Token } from '@astryxdesign/core/Token';
-import { Tooltip } from '@astryxdesign/core/Tooltip';
+import { IconButton } from '@lablup/ui-common/IconButton';
+import { Token } from '@lablup/ui-common/Token';
+import { Tooltip } from '@lablup/ui-common/Tooltip';
 import {
   BAICard,
   type BAIColumnsType,

@@ -152,7 +152,7 @@ test.describe(
         // (rendered as the Runtime select's warning-only validation message,
         // in the form item's warning explain slot).
         await expect(
-          modal.locator('[data-bai-form-item-explain-warning]').filter({
+          modal.locator('.uic-form-item__explain-warning').filter({
             hasText:
               'The default start command for the selected inference runtime will be applied automatically.',
           }),

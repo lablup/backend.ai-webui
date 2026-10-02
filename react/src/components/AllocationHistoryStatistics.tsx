@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
-import { convertToBinaryUnit, convertToDecimalUnit, SizeUnit } from '../helper';
+import { SizeUnit, convertToBinaryUnit, convertToDecimalUnit } from '../helper';
 import {
   UserStatsData,
   UserStatsDataKey,
@@ -12,9 +12,9 @@ import { useThemeMode } from '../hooks/useThemeMode';
 import useUserUsageStats from '../hooks/useUserUsageStats';
 import { Period } from './AllocationHistory';
 import './AllocationHistoryStatistics.css';
-import { Heading } from '@astryxdesign/core/Heading';
-import { useTheme } from '@astryxdesign/core/theme';
-import { BAICard, BAIQuestionIconWithTooltip, BAIFlex } from 'backend.ai-ui';
+import { Heading } from '@lablup/ui-common/Heading';
+import { useTheme } from '@lablup/ui-common/theme';
+import { BAICard, BAIFlex, BAIQuestionIconWithTooltip } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {

@@ -16,13 +16,8 @@ export const docs = {
   ],
   usage: {
     description:
-      "The column-settings dialog behind BAITable's settings button. It renders a BAIDialog holding a search field and one row per column: a drag handle, a CheckboxInput for visibility, and the column label. Required columns get a locked, always-checked box, and drag-to-reorder runs on dnd-kit inside a DndContext that is skipped while a search term is active, so a filtered subset can never be reordered against the full list. The working set is ordinary component state seeded once per mount, so nothing is committed until Apply: cancel and the close affordance call onRequestClose with undefined, Apply calls it with the new selectedColumnKeys and columnOrder. BAITable renders it internally when tableSettings is set — mount it directly only where the same picker is needed outside BAITable.",
+      "The column-settings dialog behind BAITable's settings button: ui-common DataGridSettingsModal under its BUI name. It holds a search field and one row per column: a drag handle, a CheckboxInput for visibility, and the column label. Required columns get a locked, always-checked box, and drag-to-reorder (dnd-kit; pointer, or Space, arrow keys and Space on a named handle) is off while a search term is active, so a filtered subset can never be reordered against the full list. The working set is fresh on every open and nothing is committed until Apply: cancel and the close affordance call onRequestClose with undefined, Apply calls it with the new selectedColumnKeys and columnOrder. BAITable renders it internally when tableSettings is set — mount it directly only where the same picker is needed outside BAITable.",
     bestPractices: [
-      {
-        guidance: true,
-        description:
-          "Wrap it in BAIUnmountAfterClose — the working set is seeded from props on mount, so without a fresh mount per open the dialog reopens carrying the previous session's edits.",
-      },
       {
         guidance: true,
         description:
@@ -50,7 +45,7 @@ export const docs = {
       name: 'open',
       type: 'boolean',
       description:
-        'Whether the dialog is shown. While false the component renders nothing, so its drag context and state never mount.',
+        'Whether the dialog is shown. Its content mounts on open and unmounts on close, so every open starts from the props.',
       required: true,
     },
     {
@@ -84,23 +79,21 @@ export const docs = {
   examples: [
     {
       label: 'Column picker for a table',
-      code: `<BAIUnmountAfterClose>
-  <BAITableSettingModal
-    open={isSettingModalOpen}
-    columns={columns.map((column) => ({
-      key: column.key,
-      label: column.title,
-      required: !!column.required,
-    }))}
-    visibleColumnKeys={visibleColumnKeys}
-    onRequestClose={(result) => {
-      setIsSettingModalOpen(false);
-      if (!result) return;
-      setVisibleColumnKeys(result.selectedColumnKeys);
-      setColumnOrder(result.columnOrder);
-    }}
-  />
-</BAIUnmountAfterClose>`,
+      code: `<BAITableSettingModal
+  open={isSettingModalOpen}
+  columns={columns.map((column) => ({
+    key: column.key,
+    label: column.title,
+    required: !!column.required,
+  }))}
+  visibleColumnKeys={visibleColumnKeys}
+  onRequestClose={(result) => {
+    setIsSettingModalOpen(false);
+    if (!result) return;
+    setVisibleColumnKeys(result.selectedColumnKeys);
+    setColumnOrder(result.columnOrder);
+  }}
+/>`,
     },
   ],
 } satisfies ComponentDoc;

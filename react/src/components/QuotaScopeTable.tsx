@@ -7,7 +7,7 @@ import { QuotaScopeTableUnsetMutation } from '../__generated__/QuotaScopeTableUn
 import { App } from '../app-shim';
 import { bytesToGB } from '../helper/index';
 import QuotaSettingModal from './QuotaSettingModal';
-import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { EmptyState } from '@lablup/ui-common/EmptyState';
 import {
   BAINameActionCell,
   BAITable,

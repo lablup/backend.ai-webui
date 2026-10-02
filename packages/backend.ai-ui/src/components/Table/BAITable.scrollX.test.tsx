@@ -17,20 +17,22 @@ describe('BAITable scroll.x', () => {
   ])('maps scroll.x=%s onto the CSS variable as %s', (x, expected) => {
     const { container } = renderScrollTable({ scroll: { x } });
     const layer = dimLayerOf(container);
-    expect(layer).toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe(expected);
+    expect(layer).toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer.style.getPropertyValue('--data-grid-scroll-width')).toBe(
+      expected,
+    );
   });
 
   it('stays off when scroll is absent or carries no x', () => {
     const { container: withoutScroll } = renderScrollTable();
     expect(dimLayerOf(withoutScroll)).not.toHaveClass(
-      'bai-table-astryx-scroll-x',
+      'uic-data-grid__body--scroll-x',
     );
 
     const { container: yOnly } = renderScrollTable({ scroll: { y: 500 } });
     const layer = dimLayerOf(yOnly);
-    expect(layer).not.toHaveClass('bai-table-astryx-scroll-x');
-    expect(layer.style.getPropertyValue('--bai-table-scroll-x')).toBe('');
+    expect(layer).not.toHaveClass('uic-data-grid__body--scroll-x');
+    expect(layer.style.getPropertyValue('--data-grid-scroll-width')).toBe('');
   });
 
   it('releases max-width on auto columns only', () => {
@@ -58,6 +60,18 @@ describe('BAITable scroll.x', () => {
     expect(root).toBeInTheDocument();
     expect(root).toContainElement(dimLayerOf(container));
     expect(rootOf(renderScrollTable().container)).toBeInTheDocument();
+  });
+
+  // FR-4007's reset (min-width: 0; max-width: 100%) is ui-common's
+  // `.uic-data-grid` rule; an inline copy here would outrank a caller's class.
+  it('leaves the root size to the DataGrid rule, caller style winning', () => {
+    const root = rootOf(renderScrollTable().container);
+    expect(root.style.minWidth).toBe('');
+    expect(root.style.maxWidth).toBe('');
+    const custom = rootOf(
+      renderScrollTable({ style: { maxWidth: '50%' } }).container,
+    );
+    expect(custom.style.maxWidth).toBe('50%');
   });
 
   it('keeps a caller className alongside the root class', () => {

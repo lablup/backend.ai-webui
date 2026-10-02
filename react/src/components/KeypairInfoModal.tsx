@@ -3,11 +3,10 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { KeypairInfoModalFragment$key } from '../__generated__/KeypairInfoModalFragment.graphql';
-import { KeypairInfoModalQuery } from '../__generated__/KeypairInfoModalQuery.graphql';
-import { MetadataListItem } from '@astryxdesign/core/MetadataList';
-import { HStack, VStack } from '@astryxdesign/core/Stack';
-import { Text } from '@astryxdesign/core/Text';
-import { Token } from '@astryxdesign/core/Token';
+import { MetadataListItem } from '@lablup/ui-common/MetadataList';
+import { HStack, VStack } from '@lablup/ui-common/Stack';
+import { Text } from '@lablup/ui-common/Text';
+import { Token } from '@lablup/ui-common/Token';
 import {
   BAIMetadataList,
   BAIModal,
@@ -18,7 +17,7 @@ import {
 } from 'backend.ai-ui';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
+import { graphql, useFragment } from 'react-relay';
 
 interface KeypairInfoModalProps extends BAIModalProps {
   keypairInfoModalFrgmt: KeypairInfoModalFragment$key | null;
@@ -42,29 +41,13 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
         resource_policy
         num_queries
         rate_limit
-        concurrency_used @since(version: "24.09.0")
+        concurrency_used
+        is_default
       }
     `,
     keypairInfoModalFrgmt,
   );
-
-  // FIXME: Keypair query does not support main_access_key info.
-  const { user } = useLazyLoadQuery<KeypairInfoModalQuery>(
-    graphql`
-      query KeypairInfoModalQuery($domain_name: String, $email: String) {
-        user(domain_name: $domain_name, email: $email) {
-          main_access_key @since(version: "24.03.0")
-        }
-      }
-    `,
-    {
-      email: keypair?.user_id,
-    },
-    {
-      fetchPolicy:
-        modalProps.open && keypair?.user_id ? 'network-only' : 'store-only',
-    },
-  );
+  const isMainAccessKey = keypair?.is_default === true;
 
   return (
     <BAIModal
@@ -76,7 +59,7 @@ const KeypairInfoModal: React.FC<KeypairInfoModalProps> = ({
               inline `style`/fontSize override (P5) — dropped, BAIModal's own
               title styling is accepted as-is (defaults-first). */}
           <Text>{t('credential.KeypairDetail')}</Text>
-          {user?.main_access_key === keypair?.access_key && (
+          {isMainAccessKey && (
             <Token
               color={PRIMARY_TOKEN_COLOR}
               label={t('credential.MainAccessKey')}
