@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<6406e9fcf7f5a4d959c0ba96dbbfbf3f>>
+ * @generated SignedSource<<e386d11de626429a9910aff3b64eb0fe>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,22 +11,19 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type ProjectResourceGroupWarningIconQuery$variables = {
   domainName: string;
-  isSuperAdmin: boolean;
   projectId: string;
   resourceGroupName: string;
 };
 export type ProjectResourceGroupWarningIconQuery$data = {
-  readonly adminAllowedProjectsForResourceGroupV2?: {
-    readonly items: ReadonlyArray<string>;
+  readonly domainV2: {
+    readonly resourceGroups: {
+      readonly count: number;
+    } | null | undefined;
   } | null | undefined;
-  readonly adminAllowedResourceGroupsForDomainV2?: {
-    readonly items: ReadonlyArray<string>;
-  } | null | undefined;
-  readonly domain?: {
-    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
-  } | null | undefined;
-  readonly group?: {
-    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
+  readonly projectV2: {
+    readonly resourceGroups: {
+      readonly count: number;
+    } | null | undefined;
   } | null | undefined;
 };
 export type ProjectResourceGroupWarningIconQuery = {
@@ -43,119 +40,74 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isSuperAdmin"
+  "name": "projectId"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectId"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "resourceGroupName"
 },
-v4 = [
+v3 = [
   {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "items",
-    "storageKey": null
+    "kind": "Variable",
+    "name": "projectId",
+    "variableName": "projectId"
   }
 ],
+v4 = {
+  "alias": null,
+  "args": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "equals",
+              "variableName": "resourceGroupName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "name"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "filter"
+    }
+  ],
+  "concreteType": "ResourceGroupConnection",
+  "kind": "LinkedField",
+  "name": "resourceGroups",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+},
 v5 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "scaling_groups",
-    "storageKey": null
-  }
+  (v4/*: any*/)
 ],
 v6 = [
   {
-    "condition": "isSuperAdmin",
-    "kind": "Condition",
-    "passingValue": true,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "resourceGroupName",
-            "variableName": "resourceGroupName"
-          }
-        ],
-        "concreteType": "AllowedProjectsPayload",
-        "kind": "LinkedField",
-        "name": "adminAllowedProjectsForResourceGroupV2",
-        "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "domainName",
-            "variableName": "domainName"
-          }
-        ],
-        "concreteType": "AllowedResourceGroupsPayload",
-        "kind": "LinkedField",
-        "name": "adminAllowedResourceGroupsForDomainV2",
-        "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": null
-      }
-    ]
-  },
+    "kind": "Variable",
+    "name": "domainName",
+    "variableName": "domainName"
+  }
+],
+v7 = [
+  (v4/*: any*/),
   {
-    "condition": "isSuperAdmin",
-    "kind": "Condition",
-    "passingValue": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "domain_name",
-            "variableName": "domainName"
-          },
-          {
-            "kind": "Variable",
-            "name": "id",
-            "variableName": "projectId"
-          }
-        ],
-        "concreteType": "Group",
-        "kind": "LinkedField",
-        "name": "group",
-        "plural": false,
-        "selections": (v5/*: any*/),
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": [
-          {
-            "kind": "Variable",
-            "name": "name",
-            "variableName": "domainName"
-          }
-        ],
-        "concreteType": "Domain",
-        "kind": "LinkedField",
-        "name": "domain",
-        "plural": false,
-        "selections": (v5/*: any*/),
-        "storageKey": null
-      }
-    ]
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "id",
+    "storageKey": null
   }
 ];
 return {
@@ -163,39 +115,79 @@ return {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectResourceGroupWarningIconQuery",
-    "selections": (v6/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v3/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
+        "selections": (v5/*: any*/),
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v6/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": (v5/*: any*/),
+        "storageKey": null
+      }
+    ],
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
+      (v1/*: any*/),
       (v0/*: any*/),
-      (v3/*: any*/),
-      (v1/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "ProjectResourceGroupWarningIconQuery",
-    "selections": (v6/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v3/*: any*/),
+        "concreteType": "ProjectV2",
+        "kind": "LinkedField",
+        "name": "projectV2",
+        "plural": false,
+        "selections": (v7/*: any*/),
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v6/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": (v7/*: any*/),
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "78656bb05f907ef4e5cbf3b803ab8ff5",
+    "cacheID": "0a2495a9d17cf757e48661905eec236a",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedProjectsForResourceGroupV2(resourceGroupName: $resourceGroupName) @include(if: $isSuperAdmin) {\n    items\n  }\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n}\n"
+    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  projectV2(projectId: $projectId) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d034dd8e163d1f7e11b077665e91ac1a";
+(node as any).hash = "448beb690f826783f3c95c885252e2ef";
 
 export default node;

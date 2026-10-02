@@ -1,8 +1,6 @@
 import type { DomainResourceGroupAlertFragment$key } from '../../__generated__/DomainResourceGroupAlertFragment.graphql';
 import type { DomainResourceGroupAlertQuery } from '../../__generated__/DomainResourceGroupAlertQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
-import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -26,10 +24,6 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  // `adminAllowedResourceGroups*V2` is superadmin-only; a domain admin reads
-  // the legacy field (FR-4117 role probe).
-  const isSuperAdmin = !!baiClient.is_superadmin;
 
   const { domainName, resourceGroupName } = useFragment(
     graphql`
@@ -41,37 +35,26 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
     domainFairShareFrgmt,
   );
 
-  const { adminAllowedResourceGroupsForDomainV2, domain } =
-    useLazyLoadQuery<DomainResourceGroupAlertQuery>(
-      graphql`
-        query DomainResourceGroupAlertQuery(
-          $domainName: String!
-          $isSuperAdmin: Boolean!
-        ) {
-          adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
-            @include(if: $isSuperAdmin) {
-            items
-          }
-          domain(name: $domainName) @skip(if: $isSuperAdmin) {
-            scaling_groups
+  const { domainV2 } = useLazyLoadQuery<DomainResourceGroupAlertQuery>(
+    graphql`
+      query DomainResourceGroupAlertQuery(
+        $domainName: String!
+        $resourceGroupName: String!
+      ) {
+        domainV2(domainName: $domainName) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+            count
           }
         }
-      `,
-      { domainName, isSuperAdmin },
-      {
-        fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
-      },
-    );
+      }
+    `,
+    { domainName, resourceGroupName },
+    {
+      fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
+    },
+  );
 
-  const allowedResourceGroups =
-    adminAllowedResourceGroupsForDomainV2?.items ??
-    domain?.scaling_groups ??
-    [];
-
-  if (
-    !resourceGroupName ||
-    _.includes(allowedResourceGroups, resourceGroupName)
-  ) {
+  if (!resourceGroupName || (domainV2?.resourceGroups?.count ?? 0) > 0) {
     return null;
   }
 

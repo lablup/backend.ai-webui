@@ -1,8 +1,6 @@
 import type { ProjectResourceGroupAlertFragment$key } from '../../__generated__/ProjectResourceGroupAlertFragment.graphql';
 import type { ProjectResourceGroupAlertQuery } from '../../__generated__/ProjectResourceGroupAlertQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
-import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { graphql, useFragment, useLazyLoadQuery } from 'react-relay';
@@ -23,54 +21,36 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  // The V2 project list is superadmin-only; a domain admin reads the legacy
-  // field (FR-4117 role probe).
-  const isSuperAdmin = !!baiClient.is_superadmin;
-
-  const { projectId, domainName, resourceGroupName } = useFragment(
+  const { projectId, resourceGroupName } = useFragment(
     graphql`
       fragment ProjectResourceGroupAlertFragment on ProjectFairShare {
         projectId
-        domainName
         resourceGroupName
       }
     `,
     projectFairShareFrgmt,
   );
 
-  // `adminAllowedResourceGroupsForProjectV2` answers the caller's reachable
-  // set, not the project's association (BA-7921); the association is only
-  // exposed from the resource group's side.
-  const { adminAllowedProjectsForResourceGroupV2, group } =
-    useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
-      graphql`
-        query ProjectResourceGroupAlertQuery(
-          $projectId: UUID!
-          $domainName: String!
-          $resourceGroupName: String!
-          $isSuperAdmin: Boolean!
-        ) {
-          adminAllowedProjectsForResourceGroupV2(
-            resourceGroupName: $resourceGroupName
-          ) @include(if: $isSuperAdmin) {
-            items
-          }
-          group(id: $projectId, domain_name: $domainName)
-            @skip(if: $isSuperAdmin) {
-            scaling_groups
+  const { projectV2 } = useLazyLoadQuery<ProjectResourceGroupAlertQuery>(
+    graphql`
+      query ProjectResourceGroupAlertQuery(
+        $projectId: UUID!
+        $resourceGroupName: String!
+      ) {
+        projectV2(projectId: $projectId) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+            count
           }
         }
-      `,
-      { projectId, domainName, resourceGroupName, isSuperAdmin },
-      {
-        fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
-      },
-    );
+      }
+    `,
+    { projectId, resourceGroupName },
+    {
+      fetchPolicy: isModalOpen ? 'network-only' : 'store-only',
+    },
+  );
 
-  const isAllowed = isSuperAdmin
-    ? _.includes(adminAllowedProjectsForResourceGroupV2?.items, projectId)
-    : _.includes(group?.scaling_groups, resourceGroupName);
+  const isAllowed = (projectV2?.resourceGroups?.count ?? 0) > 0;
 
   if (!resourceGroupName || isAllowed) {
     return null;

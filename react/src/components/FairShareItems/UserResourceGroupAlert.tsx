@@ -1,5 +1,4 @@
 import type { UserResourceGroupAlertQuery } from '../../__generated__/UserResourceGroupAlertQuery.graphql';
-import { useSuspendedBackendaiClient } from '../../hooks';
 import { Banner } from '@astryxdesign/core/Banner';
 import * as _ from 'lodash-es';
 import type { CSSProperties } from 'react';
@@ -26,52 +25,29 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
   'use memo';
 
   const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-  // The V2 lists are superadmin-only; a domain admin reads the legacy fields
-  // (FR-4117 role probe). `projectV2` answers both roles.
-  const isSuperAdmin = !!baiClient.is_superadmin;
-
-  // `adminAllowedResourceGroupsForProjectV2` answers the caller's reachable
-  // set, not the project's association (BA-7921); the association is only
-  // exposed from the resource group's side.
-  const {
-    adminAllowedResourceGroupsForDomainV2,
-    adminAllowedProjectsForResourceGroupV2,
-    domain,
-    group,
-    projectV2,
-  } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
+  const { domainV2, projectV2 } = useLazyLoadQuery<UserResourceGroupAlertQuery>(
     graphql`
       query UserResourceGroupAlertQuery(
         $projectId: UUID!
         $domainName: String!
         $resourceGroupName: String!
-        $isSuperAdmin: Boolean!
       ) {
-        adminAllowedResourceGroupsForDomainV2(domainName: $domainName)
-          @include(if: $isSuperAdmin) {
-          items
-        }
-        adminAllowedProjectsForResourceGroupV2(
-          resourceGroupName: $resourceGroupName
-        ) @include(if: $isSuperAdmin) {
-          items
-        }
-        domain(name: $domainName) @skip(if: $isSuperAdmin) {
-          scaling_groups
-        }
-        group(id: $projectId, domain_name: $domainName)
-          @skip(if: $isSuperAdmin) {
-          scaling_groups
+        domainV2(domainName: $domainName) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+            count
+          }
         }
         projectV2(projectId: $projectId) {
           basicInfo {
             name
           }
+          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+            count
+          }
         }
       }
     `,
-    { projectId, domainName, resourceGroupName, isSuperAdmin },
+    { projectId, domainName, resourceGroupName },
     {
       fetchPolicy: _.isUndefined(isModalOpen)
         ? 'network-only'
@@ -81,13 +57,8 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
-  const isDomainAllowed = _.includes(
-    adminAllowedResourceGroupsForDomainV2?.items ?? domain?.scaling_groups,
-    resourceGroupName,
-  );
-  const isProjectAllowed = isSuperAdmin
-    ? _.includes(adminAllowedProjectsForResourceGroupV2?.items, projectId)
-    : _.includes(group?.scaling_groups, resourceGroupName);
+  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 0) > 0;
+  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 0) > 0;
 
   if (!resourceGroupName || isDomainAllowed || isProjectAllowed) {
     return null;

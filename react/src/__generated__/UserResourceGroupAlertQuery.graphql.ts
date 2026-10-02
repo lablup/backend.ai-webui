@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<11cf209ab191d3f926e3c75c585d2796>>
+ * @generated SignedSource<<fbc12927e1783a5c049cbc1bff62a291>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,27 +11,22 @@
 import { ConcreteRequest } from 'relay-runtime';
 export type UserResourceGroupAlertQuery$variables = {
   domainName: string;
-  isSuperAdmin: boolean;
   projectId: string;
   resourceGroupName: string;
 };
 export type UserResourceGroupAlertQuery$data = {
-  readonly adminAllowedProjectsForResourceGroupV2?: {
-    readonly items: ReadonlyArray<string>;
-  } | null | undefined;
-  readonly adminAllowedResourceGroupsForDomainV2?: {
-    readonly items: ReadonlyArray<string>;
-  } | null | undefined;
-  readonly domain?: {
-    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
-  } | null | undefined;
-  readonly group?: {
-    readonly scaling_groups: ReadonlyArray<string | null | undefined> | null | undefined;
+  readonly domainV2: {
+    readonly resourceGroups: {
+      readonly count: number;
+    } | null | undefined;
   } | null | undefined;
   readonly projectV2: {
     readonly basicInfo: {
       readonly name: string;
     };
+    readonly resourceGroups: {
+      readonly count: number;
+    } | null | undefined;
   } | null | undefined;
 };
 export type UserResourceGroupAlertQuery = {
@@ -48,127 +43,64 @@ var v0 = {
 v1 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "isSuperAdmin"
+  "name": "projectId"
 },
 v2 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "projectId"
-},
-v3 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
   "name": "resourceGroupName"
 },
-v4 = [
+v3 = [
   {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "items",
-    "storageKey": null
+    "kind": "Variable",
+    "name": "domainName",
+    "variableName": "domainName"
   }
 ],
-v5 = {
-  "condition": "isSuperAdmin",
-  "kind": "Condition",
-  "passingValue": true,
+v4 = {
+  "alias": null,
+  "args": [
+    {
+      "fields": [
+        {
+          "fields": [
+            {
+              "kind": "Variable",
+              "name": "equals",
+              "variableName": "resourceGroupName"
+            }
+          ],
+          "kind": "ObjectValue",
+          "name": "name"
+        }
+      ],
+      "kind": "ObjectValue",
+      "name": "filter"
+    }
+  ],
+  "concreteType": "ResourceGroupConnection",
+  "kind": "LinkedField",
+  "name": "resourceGroups",
+  "plural": false,
   "selections": [
     {
       "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "domainName",
-          "variableName": "domainName"
-        }
-      ],
-      "concreteType": "AllowedResourceGroupsPayload",
-      "kind": "LinkedField",
-      "name": "adminAllowedResourceGroupsForDomainV2",
-      "plural": false,
-      "selections": (v4/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "resourceGroupName",
-          "variableName": "resourceGroupName"
-        }
-      ],
-      "concreteType": "AllowedProjectsPayload",
-      "kind": "LinkedField",
-      "name": "adminAllowedProjectsForResourceGroupV2",
-      "plural": false,
-      "selections": (v4/*: any*/),
+      "args": null,
+      "kind": "ScalarField",
+      "name": "count",
       "storageKey": null
     }
-  ]
+  ],
+  "storageKey": null
 },
-v6 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "scaling_groups",
-    "storageKey": null
-  }
-],
-v7 = {
-  "condition": "isSuperAdmin",
-  "kind": "Condition",
-  "passingValue": false,
-  "selections": [
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "name",
-          "variableName": "domainName"
-        }
-      ],
-      "concreteType": "Domain",
-      "kind": "LinkedField",
-      "name": "domain",
-      "plural": false,
-      "selections": (v6/*: any*/),
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": [
-        {
-          "kind": "Variable",
-          "name": "domain_name",
-          "variableName": "domainName"
-        },
-        {
-          "kind": "Variable",
-          "name": "id",
-          "variableName": "projectId"
-        }
-      ],
-      "concreteType": "Group",
-      "kind": "LinkedField",
-      "name": "group",
-      "plural": false,
-      "selections": (v6/*: any*/),
-      "storageKey": null
-    }
-  ]
-},
-v8 = [
+v5 = [
   {
     "kind": "Variable",
     "name": "projectId",
     "variableName": "projectId"
   }
 ],
-v9 = {
+v6 = {
   "alias": null,
   "args": null,
   "concreteType": "ProjectBasicInfo",
@@ -185,30 +117,47 @@ v9 = {
     }
   ],
   "storageKey": null
+},
+v7 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
 };
 return {
   "fragment": {
     "argumentDefinitions": [
       (v0/*: any*/),
       (v1/*: any*/),
-      (v2/*: any*/),
-      (v3/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Fragment",
     "metadata": null,
     "name": "UserResourceGroupAlertQuery",
     "selections": [
-      (v5/*: any*/),
-      (v7/*: any*/),
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v3/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": [
+          (v4/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
         "concreteType": "ProjectV2",
         "kind": "LinkedField",
         "name": "projectV2",
         "plural": false,
         "selections": [
-          (v9/*: any*/)
+          (v6/*: any*/),
+          (v4/*: any*/)
         ],
         "storageKey": null
       }
@@ -219,48 +168,53 @@ return {
   "kind": "Request",
   "operation": {
     "argumentDefinitions": [
-      (v2/*: any*/),
+      (v1/*: any*/),
       (v0/*: any*/),
-      (v3/*: any*/),
-      (v1/*: any*/)
+      (v2/*: any*/)
     ],
     "kind": "Operation",
     "name": "UserResourceGroupAlertQuery",
     "selections": [
-      (v5/*: any*/),
-      (v7/*: any*/),
       {
         "alias": null,
-        "args": (v8/*: any*/),
+        "args": (v3/*: any*/),
+        "concreteType": "DomainV2",
+        "kind": "LinkedField",
+        "name": "domainV2",
+        "plural": false,
+        "selections": [
+          (v4/*: any*/),
+          (v7/*: any*/)
+        ],
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": (v5/*: any*/),
         "concreteType": "ProjectV2",
         "kind": "LinkedField",
         "name": "projectV2",
         "plural": false,
         "selections": [
-          (v9/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "id",
-            "storageKey": null
-          }
+          (v6/*: any*/),
+          (v4/*: any*/),
+          (v7/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "0124f35eb1e61217a353aa04f7e7d16e",
+    "cacheID": "30e3d0b24604ba3788899d24c7b5a9c9",
     "id": null,
     "metadata": {},
     "name": "UserResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query UserResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n  $isSuperAdmin: Boolean!\n) {\n  adminAllowedResourceGroupsForDomainV2(domainName: $domainName) @include(if: $isSuperAdmin) {\n    items\n  }\n  adminAllowedProjectsForResourceGroupV2(resourceGroupName: $resourceGroupName) @include(if: $isSuperAdmin) {\n    items\n  }\n  domain(name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  group(id: $projectId, domain_name: $domainName) @skip(if: $isSuperAdmin) {\n    scaling_groups\n  }\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    id\n  }\n}\n"
+    "text": "query UserResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "45fd1b9ccfab09b6b7a7ae1024222b88";
+(node as any).hash = "a39b8d60c4f09091706ddbc28f0c81ef";
 
 export default node;
