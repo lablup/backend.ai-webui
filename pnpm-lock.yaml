@@ -1159,8 +1159,8 @@ importers:
         specifier: 'catalog:'
         version: 13.0.2
       web-vitals:
-        specifier: ^3.5.2
-        version: 3.5.2
+        specifier: ^6.2.2
+        version: 6.2.2
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
@@ -10870,8 +10870,8 @@ packages:
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
 
-  web-vitals@3.5.2:
-    resolution: {integrity: sha512-c0rhqNcHXRkY/ogGDJQxZ9Im9D19hDihbzSQJrsioex+KnFgmMzBiy57Z1EjkhX/+OjyBpclDCzz2ITtjokFmg==}
+  web-vitals@6.2.2:
+    resolution: {integrity: sha512-oto5x6dLEgrRqfcWed+pZEUb2q6ikbFmqF54CRDhI/QGbn+qxC49b4C4OkbH+kb9C3a8shpFD3SgR9kRcs80ZQ==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -22771,7 +22771,7 @@ snapshots:
 
   web-namespaces@2.0.1: {}
 
-  web-vitals@3.5.2: {}
+  web-vitals@6.2.2: {}
 
   webidl-conversions@3.0.1: {}
 
@@ -23374,7 +23374,7 @@ time:
   vite-plugin-svgr@4.5.0: '2025-08-24T13:02:58.824Z'
   vite@6.4.3: '2026-06-01T10:37:49.281Z'
   vitest@4.1.10: '2026-07-06T06:44:42.684Z'
-  web-vitals@3.5.2: '2024-01-25T20:42:01.857Z'
+  web-vitals@6.2.2: '2026-09-14T22:58:51.675Z'
   webpack-cli@6.0.1: '2024-12-20T14:12:09.258Z'
   webpack@5.106.2: '2026-04-15T11:44:11.053Z'
   winston@3.19.0: '2025-12-07T07:37:16.009Z'
