@@ -858,6 +858,7 @@
     "NewFolderName": "新しいフォルダ名",
     "NoStorageDescriptionFound": "説明はありません。",
     "NotInProject": "このフォルダは '{{ projectName }}' プロジェクトに属しています。",
+    "NotMountable": "マウント不可",
     "NumberOfFolders": "フォルダ数",
     "Permission": "アクセス権限",
     "Pipeline": "パイプラインフォルダ",

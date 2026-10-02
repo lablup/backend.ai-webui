@@ -9,27 +9,18 @@ import {
   type LegacyVFolderMountScope,
 } from 'backend.ai-ui';
 
-interface AutoMountedFoldersOptions extends LegacyVFolderMountScope {
-  /**
-   * The user the session is launched for. Their folders are what the session
-   * auto-mounts, so an admin launching on someone else's behalf must pass it;
-   * the caller's own folders are listed when it is unset.
-   */
-  ownerEmail?: string;
-}
+type AutoMountedFoldersOptions = LegacyVFolderMountScope;
 
 /**
  * The ready dotfile folders a session mounts on its own, read off the same
- * owner-scoped `GET /folders` list the mount select uses. Suspends.
+ * `vfolder_nodes` list the mount select uses. Suspends.
  */
 export const useSuspendedAutoMountedFolders = ({
-  ownerEmail,
   currentProjectId,
   mountableHosts,
 }: AutoMountedFoldersOptions): Array<AutoMountedFolder> => {
   'use memo';
   const { folders } = useSuspendedLegacyVFolders({
-    ownerEmail,
     groupId: currentProjectId,
   });
 
