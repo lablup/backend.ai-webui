@@ -26,7 +26,6 @@ export type CanonicalUserColumn =
   | 'full_name'
   | 'role'
   | 'status'
-  | 'domain_name'
   | 'description'
   | 'need_password_change'
   | 'resource_policy'
@@ -37,7 +36,6 @@ export const CSV_COLUMNS: CanonicalUserColumn[] = [
   'username',
   'password',
   'full_name',
-  'domain_name',
   'resource_policy',
   'description',
   'role',
@@ -48,8 +46,8 @@ export const CSV_COLUMNS: CanonicalUserColumn[] = [
 
 export const TEMPLATE_CSV = [
   CSV_COLUMNS.join(','),
-  // email,username,password,full_name,domain_name,resource_policy,description,role,status,need_password_change,project
-  'alice@example.com,alice,Password!23,Alice Kim,,default,,user,active,false,',
+  // email,username,password,full_name,resource_policy,description,role,status,need_password_change,project
+  'alice@example.com,alice,Password!23,Alice Kim,default,,user,active,false,',
 ].join('\n');
 
 // Static header aliases. Keys are already lower-cased; lookups must lower-case
@@ -67,8 +65,6 @@ export const COLUMN_ALIASES: Record<string, CanonicalUserColumn> = {
   status: 'status',
   // Export CSV uses 'status_info' as the column key
   status_info: 'status',
-  domain_name: 'domain_name',
-  domain: 'domain_name',
   description: 'description',
   need_password_change: 'need_password_change',
   needpasswordchange: 'need_password_change',
@@ -99,7 +95,6 @@ export interface RawUserRow {
   full_name: string;
   role: string;
   status: string;
-  domain_name: string;
   description: string;
   need_password_change: string;
   resource_policy: string;
@@ -210,7 +205,6 @@ export const extractRawUserRows = (
     full_name: valueOf(rec, 'full_name'),
     role: valueOf(rec, 'role'),
     status: valueOf(rec, 'status'),
-    domain_name: valueOf(rec, 'domain_name'),
     description: valueOf(rec, 'description'),
     need_password_change: valueOf(rec, 'need_password_change'),
     resource_policy: valueOf(rec, 'resource_policy'),

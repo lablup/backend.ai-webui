@@ -169,17 +169,18 @@ A file that is missing one of these two columns is rejected, and the dialog expl
 - **full_name**: The user's display name.
 - **role**: The user's role (`user`, `admin`, or `superadmin`). Defaults to `user` if omitted.
 - **status**: The user's initial status (`active` or `inactive`). Defaults to `active` if omitted.
-- **domain_name**: The domain to assign the user to. Defaults to the current domain if omitted.
 - **description**: An optional description for the user.
 - **need_password_change**: Whether the user must change their password on first login (`true` or `false`). Defaults to `true` if omitted.
 - **resource_policy**: The name of the resource policy to assign.
 - **project**: The name of the project to add the user to.
 
+Users are always created in the domain you are signed in to. A domain column in the file is ignored.
+
 #### Uploading and reviewing
 
 The left side of the dialog holds a **Defaults** panel. Any value you set there fills in the matching
 field for every row that leaves it blank, so you do not have to repeat it in each CSV cell. The panel
-covers **Domain**, **Project**, **Resource Policy**, **Password**, **Password change required**, and
+covers **Project**, **Resource Policy**, **Password**, **Password change required**, and
 **Description**. Fields you leave alone read `No default`.
 
 After selecting your CSV file, the dialog shows a preview table listing all rows with the following indicators:
