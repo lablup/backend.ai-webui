@@ -34,6 +34,10 @@ import {
   devPasswordOverride,
 } from '../helper/devLoginOverrides';
 import {
+  probeLoginSession,
+  type LoginBootstrap,
+} from '../helper/loginBootstrap';
+import {
   getDefaultLoginConfig,
   type LoginConfigState,
 } from '../helper/loginConfig';
@@ -176,6 +180,13 @@ const LoginView: React.FC<{
   // Reset when credentials or endpoint change to prevent unintended force-login
   // against a different user/endpoint.
   const forceLoginApprovedRef = useRef(false);
+  // A session the orchestrator's check already bootstrapped; the silent
+  // login that follows connects with it instead of probing again.
+  const probedSessionRef = useRef<{
+    endpoint: string;
+    client: ReturnType<typeof createBackendAIClient>['client'];
+    bootstrap: LoginBootstrap;
+  } | null>(null);
 
   // Reset force-login approval when credentials or endpoint change
   const watchedUserId = Form.useWatch('user_id', form);
@@ -437,14 +448,22 @@ const LoginView: React.FC<{
   );
 
   const doGQLConnect = useCallback(
-    async (client: ReturnType<typeof createBackendAIClient>['client']) => {
+    async (
+      client: ReturnType<typeof createBackendAIClient>['client'],
+      bootstrap?: LoginBootstrap | null,
+    ) => {
       // Read directly from Jotai store to get the latest config synchronously,
       // including any merged webserver config from loadConfigFromWebServer().
       // Using configRef.current here would return stale config because React
       // hasn't re-rendered yet after the Jotai atom update.
       const cfg = jotaiStore.get(loginConfigState) ?? configRef.current;
 
-      const updatedEndpoints = await connectViaGQL(client, cfg, endpoints);
+      const updatedEndpoints = await connectViaGQL(
+        client,
+        cfg,
+        endpoints,
+        bootstrap,
+      );
       setEndpoints(updatedEndpoints);
 
       postConnectSetup(client);
@@ -699,6 +718,18 @@ const LoginView: React.FC<{
         return;
       }
 
+      const probed = probedSessionRef.current;
+      probedSessionRef.current = null;
+      if (!showError && probed?.endpoint === ep) {
+        clientRef.current = probed.client;
+        try {
+          await doGQLConnect(probed.client, probed.bootstrap);
+        } catch (err: unknown) {
+          handleGQLError(err, showError);
+        }
+        return;
+      }
+
       const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
       const otp = form.getFieldValue('otp') || '';
@@ -706,6 +737,9 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient(userId, password, ep, 'SESSION');
       clientRef.current = client;
 
+      // The session probe runs alongside the reachability check, which is
+      // awaited first so Esc can still abort it.
+      const sessionProbe = probeLoginSession(client).catch(() => null);
       try {
         await probeManager(client);
       } catch (err: unknown) {
@@ -718,17 +752,10 @@ const LoginView: React.FC<{
         return;
       }
 
-      // Check if already logged in
-      let isLogon = false;
-      try {
-        isLogon = !!(await client.check_login());
-      } catch {
-        isLogon = false;
-      }
-
-      if (isLogon) {
+      const bootstrap = await sessionProbe;
+      if (bootstrap) {
         try {
-          await doGQLConnect(client);
+          await doGQLConnect(client, bootstrap);
         } catch (err: unknown) {
           handleGQLError(err, showError);
         }
@@ -959,9 +986,14 @@ const LoginView: React.FC<{
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
       try {
-        await probeManager(client);
-        const isLogon = await client.check_login();
-        return !!isLogon;
+        const [, bootstrap] = await Promise.all([
+          probeManager(client),
+          probeLoginSession(client),
+        ]);
+        probedSessionRef.current = bootstrap
+          ? { endpoint: ep, client, bootstrap }
+          : null;
+        return bootstrap !== null;
       } catch {
         return false;
       }
@@ -972,6 +1004,7 @@ const LoginView: React.FC<{
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
   const logoutSession = useCallback(async (): Promise<void> => {
+    probedSessionRef.current = null;
     if (clientRef.current) {
       await clientRef.current.logout();
     }
