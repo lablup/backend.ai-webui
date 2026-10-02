@@ -43,7 +43,6 @@ const WebUIHeader: React.FC<WebUIHeaderProps> = () => {
     ANTD_REVERSED_BAND_OVERLAYS[isDarkMode ? 'dark' : 'light'];
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
-  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
   const gridBreakpoint = useBAIBreakpoint();
   // FR-3414 (ADR-0001): the project-agnostic pages operate above project
   // scope, so the header's current-project selector (and the selector-bound

@@ -63,7 +63,6 @@ const UserDropdownMenu: React.FC<{
   'use memo';
   const { t } = useTranslation();
   const [userInfo] = useCurrentUserInfo();
-  // RESPONSIVE-POLICY R3: `Grid.useBreakpoint()` → theme-shim hook.
   const screens = useBAIBreakpoint();
   const { isDarkMode } = useThemeMode();
   const baiClient = useSuspendedBackendaiClient();

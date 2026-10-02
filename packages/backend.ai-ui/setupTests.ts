@@ -35,9 +35,9 @@ import { vi } from 'vitest';
 // Astryx `Dialog` renders a real <dialog> and calls `showModal()` / `close()`
 // in an effect; jsdom implements the element but none of its methods, so such a
 // test throws "dialog.showModal is not a function" during the passive-effect
-// commit. Since FR-3578 the modal family goes through `BAIDialogPortal`
-// instead, so this now covers only surfaces still on the native element — the
-// lab `Drawer` and a direct `Dialog` render.
+// commit. The modal family renders ui-common `Modal`, a portal rather than a
+// native <dialog>, so this covers only surfaces still on the native element —
+// the lab `Drawer` and a direct `Dialog` render.
 //
 // The polyfill reproduces the observable contract the component depends on:
 // `open` flips, `close` is dispatched, and `returnValue` is recorded. The
