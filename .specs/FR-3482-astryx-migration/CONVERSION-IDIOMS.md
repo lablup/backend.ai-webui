@@ -1,5 +1,11 @@
 # Conversion idioms (antd → Astryx)
 
+> **Superseded where it conflicts with ADR 0009.** Astryx is reached only through
+> `@lablup/ui-common` (`@lablup/ui-common/<X>`, never `@astryxdesign/*`), the CLI is
+> `ui-common` (`pnpm exec ui-common …` in `react/`, `pnpm run ui-common …` from the root),
+> and the theme-shim is retired. Commands and import paths below are updated to that;
+> the rest is the migration-era record.
+
 Standing recipes for antd patterns whose Astryx equivalent is **not** a
 one-to-one component swap. Read this before recording a new PILOT-DECISION that
 drops a layout capability — the gap is often in the component you reached for,
@@ -20,19 +26,19 @@ capture script `.scratch/astryx-migration/settings-sidebar-shots.mjs`.
 
 ### The trap
 
-`astryx component TabList` correctly reports that `TabList` has no
+`ui-common component TabList` correctly reports that `TabList` has no
 vertical/side orientation. Reading that as "Astryx cannot do left-hand tabs" and
 collapsing the surface to horizontal top tabs is wrong: a left tab rail is not a
 tab-bar variant in Astryx's vocabulary, it is a **page shell** — and Astryx ships
 one, as the `settings-sidebar` page template ("Settings Panels").
 
-**Discover before you drop.** `astryx template --list` /
-`astryx search "settings sidebar"` finds the template that the component-level
+**Discover before you drop.** `ui-common template --list` /
+`ui-common search "settings sidebar"` finds the template that the component-level
 lookup cannot.
 
 ### The composition
 
-`pnpm exec astryx template settings-sidebar` (reference code — follow it):
+`pnpm exec ui-common template settings-sidebar` (reference code — follow it):
 
 ```tsx
 <Layout
@@ -86,7 +92,7 @@ Mapping from the antd original:
    `ChevronRight` affordance, and give the detail pane a `Toolbar` with a ghost
    back button plus the section title. Suppress the in-pane section heading in
    that mode so it is not stated twice.
-4. **Breakpoint source** is `useBAIBreakpoint()` from the theme-shim, *not*
+4. **Breakpoint source** is `useBAIBreakpoint()` from `backend.ai-ui`, *not*
    Astryx `useMediaQuery` — see RESPONSIVE-POLICY §2 (`useMediaQuery` returns
    `false` on first render and flashes).
 5. **Do not move tab state into the URL as part of this conversion.** The
@@ -171,7 +177,7 @@ field value first, as it always did. Nothing to change.
 
 ### The trap
 
-`astryx component <Name>` prints `label | string`, so a composition that needs a
+`ui-common component <Name>` prints `label | string`, so a composition that needs a
 node there — a copy button beside a metadata label, a help tooltip after a
 segment label — looks impossible, and gets written up as "Astryx forces this".
 It twice produced a PR body claiming a structural constraint that does not exist.
