@@ -919,6 +919,11 @@ export class Client {
       // gated on `prometheus-query-preset` (26.4.2).
       this._features['prometheus-query-preset-extended-filter'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('26.4.4rc1')) {
+      // ResourceGroup.defaultSessionOptions / defaultDeploymentOptions and
+      // their replace mutations. FR-4153.
+      this._features['resource-group-default-options'] = true;
+    }
     if (this.isManagerVersionCompatibleWith('26.4.4rc3')) {
       // Backend 1f88d36 (BA-5918) wrapped the remaining scalar V2 filter
       // fields in their *Filter inputs: ModelCardV2Filter.domainName
