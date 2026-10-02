@@ -1125,19 +1125,12 @@ const SessionLauncherPage = () => {
                         },
                       ]}
                     >
-                      {/* An OPTIONLESS antd `<Select />` — a placeholder left
-                          behind when the `VFolderSelect` below was commented
-                          out. It converts to an equally optionless
-                          `AstryxFormSelector`; there is nothing to preserve
-                          but the empty control. */}
+                      {/* Optionless placeholder left behind when the model
+                          folder select was removed from this step. */}
                       <AstryxFormSelector
                         label={t('session.launcher.ModelStorageToMount')}
                         options={[]}
                       />
-                      {/* <VFolderSelect
-                          filter={(vf) => vf.usage_mode === 'model'}
-                          autoSelectDefault
-                          /> */}
                     </Form.Item>
                   </StepCard>
                 )}

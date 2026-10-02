@@ -151,8 +151,8 @@ const meta: Meta<typeof BAIVFolderMountConfigInput> = {
 **BAIVFolderMountConfigInput** is a reusable, schema-agnostic controlled input
 for configuring vfolder mounts.
 
-- Picks folders from the REST \`GET /folders\` list rather than the \`vfolder_nodes\`
-  connection, because the session launcher's mount gates cannot be expressed as a
+- Picks folders from the whole folder list (\`myVfolders\`) and gates it client
+  side, because the session launcher's mount gates cannot be expressed as a
   GraphQL filter: the host must be in \`mountableHosts\` (those granting
   \`mount-in-session\`), the folder must be reachable from \`currentProjectId\`, and
   folders in \`autoMountedFolders\` are dropped — the session mounts them anyway.
@@ -177,7 +177,7 @@ for configuring vfolder mounts.
   form, wrap the component in one named \`Form.Item\` whose \`rules\` carry
   \`useVFolderMountConfigFormRule\` (see the **WithFormValidation** story).
 
-The stories below mock the REST folder list behind the providers' \`suspenseFallback\`,
+The stories below mock the folder list behind the providers' \`suspenseFallback\`,
 so of the six fixture folders \`cold-archive\` is dropped (its host is not in
 \`mountableHosts\`), \`other-team-data\` belongs to another project, and \`.config\` is
 dropped in the **WithAutoMountedFolders** story.
@@ -492,7 +492,7 @@ export const WithCreateFolderButton: Story = {
     docs: {
       description: {
         story:
-          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs `GET /folders` on its own.',
+          'Passing `onClickCreateFolder` adds a **+** button to the group beside the select; clicking it logs to the Actions panel, standing in for the host opening its folder-creation modal. In the app the host then calls `ref.refetch()` (the **Refetch via ref** button below does the same) and appends the created folder to the value. The **⟳** button next to it is always rendered and re-runs the folder list on its own.',
       },
     },
   },
