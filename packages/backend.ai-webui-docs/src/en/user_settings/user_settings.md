@@ -447,8 +447,7 @@ The table includes the following columns:
 
 - **Result**: The outcome of the login attempt, shown as a color-coded tag. You
   can sort by this column.
-- **Domain**: The domain the login attempt was made against. You can sort by
-  this column.
+- **Domain**: The domain the login attempt was made against.
 - **Client IP**: The IP address the login attempt came from, shown exactly as
   the server reports it. Depending on the administrator's client IP masking
   policy the address may be partially masked, or `-` when it was not recorded.
@@ -485,7 +484,6 @@ Use the filter above the table to narrow down the list:
 
 - **Result**: Shows only the entries with the result you select from the list of
   values above.
-- **Domain**: Shows only the entries whose domain contains the text you enter.
 - **Login Time**: Shows only the entries recorded after (or before) the date and
   time you select.
 
