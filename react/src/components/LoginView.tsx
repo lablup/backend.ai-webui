@@ -254,6 +254,15 @@ const LoginView: React.FC<{
     configRef.current = loginConfig;
   }, [loginConfig]);
 
+  // FR-3562: a configured `apiEndpoint` is a webserver (it renders its own
+  // origin into `config.toml`), and a webserver cannot serve API-mode sign-in.
+  // Derived, never stored: a config refresh re-applies the configured mode at
+  // any time, so a value pinned once here would be silently reverted.
+  const isApiSigninBlocked = !!loginConfig.api_endpoint;
+  const effectiveConnectionMode: ConnectionMode = isApiSigninBlocked
+    ? 'SESSION'
+    : connectionMode;
+
   // Sync apiEndpoint state changes to the form field.
   // Ant Design's initialValues only applies on first render, so subsequent
   // state updates (from config loading, localStorage restoration, etc.)
@@ -867,7 +876,7 @@ const LoginView: React.FC<{
       await loadConfigFromWebServer(ep);
     }
 
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       const userId = (form.getFieldValue('user_id') || '').trim();
       const password = form.getFieldValue('password') || '';
 
@@ -902,7 +911,7 @@ const LoginView: React.FC<{
     loginConfig,
     form,
     apiEndpoint,
-    connectionMode,
+    effectiveConnectionMode,
     connectUsingSession,
     connectUsingAPI,
     notification,
@@ -930,9 +939,9 @@ const LoginView: React.FC<{
       if ((globalThis as Record<string, unknown>).isElectron) {
         await loadConfigFromWebServer(ep);
       }
-      if (connectionMode === 'SESSION') {
+      if (effectiveConnectionMode === 'SESSION') {
         await connectUsingSession(showError, ep);
-      } else if (connectionMode === 'API') {
+      } else if (effectiveConnectionMode === 'API') {
         await connectUsingAPI(showError, ep);
       } else {
         open();
@@ -940,7 +949,7 @@ const LoginView: React.FC<{
     },
     [
       resolveEndpoint,
-      connectionMode,
+      effectiveConnectionMode,
       connectUsingSession,
       connectUsingAPI,
       open,
@@ -954,7 +963,7 @@ const LoginView: React.FC<{
     if ((globalThis as Record<string, unknown>).isElectron) {
       await loadConfigFromWebServer(ep);
     }
-    if (connectionMode === 'SESSION') {
+    if (effectiveConnectionMode === 'SESSION') {
       if (ep === '') return false;
       const { client } = createBackendAIClient('', '', ep, 'SESSION');
       clientRef.current = client;
@@ -967,7 +976,7 @@ const LoginView: React.FC<{
       }
     }
     return false;
-  }, [resolveEndpoint, connectionMode]);
+  }, [resolveEndpoint, effectiveConnectionMode]);
 
   // Log out the current session on the server.
   // Used by the orchestration hook as `onLogoutSession`.
@@ -986,17 +995,20 @@ const LoginView: React.FC<{
     onCheckLogin: checkLogin,
     onLogoutSession: logoutSession,
     apiEndpoint,
-    connectionMode,
+    connectionMode: effectiveConnectionMode,
   });
+
+  const canChangeSigninMode =
+    loginConfig.change_signin_support && !isApiSigninBlocked;
 
   const handleConnectionModeChange = useCallback(
     (mode: ConnectionMode) => {
-      if (!loginConfig.change_signin_support) return;
+      if (!canChangeSigninMode) return;
       setConnectionMode(mode);
       setLoginError(null);
       localStorage.setItem('backendaiwebui.connection_mode', mode);
     },
-    [loginConfig.change_signin_support],
+    [canChangeSigninMode],
   );
 
   const showSignupDialog = useCallback(
@@ -1112,7 +1124,12 @@ const LoginView: React.FC<{
         isLoading={isLoading}
         loginError={loginError}
         onClearLoginError={() => setLoginError(null)}
-        connectionMode={connectionMode}
+        connectionMode={effectiveConnectionMode}
+        signinModeDisabled={
+          isApiSigninBlocked
+            ? { reason: t('login.APISigninNeedsManagerEndpoint') }
+            : false
+        }
         loginConfig={loginConfig}
         apiEndpoint={apiEndpoint}
         otpRequired={otpRequired}

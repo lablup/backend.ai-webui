@@ -1980,6 +1980,7 @@
     "APIEndpointEmpty": "API Uç Noktası boş. Lütfen oturum açmak için API uç noktasını belirtin.",
     "APIKey": "API Anahtarı",
     "APIMode": "API",
+    "APISigninNeedsManagerEndpoint": "API girişi için bir Manager endpoint gereklidir. Bu WebUI, bir Backend.AI Webserver üzerinden bağlanacak şekilde yapılandırılmıştır.",
     "ActiveSessionExists": "Zaten aktif bir oturum açma oturumu mevcut.",
     "ActiveSessionExistsDescription": "Başka bir tarayıcı veya sekmeden zaten giriş yapmış durumdasınız. Lütfen önce diğer oturumdan çıkış yapın veya tekrar deneyin.",
     "AdvancedSettings": "Gelişmiş",
