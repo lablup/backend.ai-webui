@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fbc12927e1783a5c049cbc1bff62a291>>
+ * @generated SignedSource<<4b9bd17f69f37e249c8e580e9c2c380a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -205,16 +205,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "30e3d0b24604ba3788899d24c7b5a9c9",
+    "cacheID": "aaeacb32b30dd53f72a2ec42d5591102",
     "id": null,
     "metadata": {},
     "name": "UserResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query UserResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n}\n"
+    "text": "query UserResourceGroupAlertQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n  projectV2(projectId: $projectId) {\n    basicInfo {\n      name\n    }\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "a39b8d60c4f09091706ddbc28f0c81ef";
+(node as any).hash = "462c4f3dc0679fdd9c82659fd40571ac";
 
 export default node;

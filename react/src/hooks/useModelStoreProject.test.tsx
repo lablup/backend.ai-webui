@@ -23,7 +23,10 @@ const modelStoreNode = {
   basicInfo: { name: 'model-store' },
 };
 
-const renderWithPayload = async (payload: GraphQLResponse) => {
+const renderWithPayload = async (
+  payload: GraphQLResponse,
+  scope?: 'user' | 'admin',
+) => {
   const environment = createMockEnvironment();
   let operation: OperationDescriptor | undefined;
   environment.mock.queueOperationResolver((resolved) => {
@@ -35,7 +38,9 @@ const renderWithPayload = async (payload: GraphQLResponse) => {
       <Suspense fallback={null}>{children}</Suspense>
     </RelayEnvironmentProvider>
   );
-  const rendered = renderHook(() => useModelStoreProject(), { wrapper });
+  const rendered = renderHook(() => useModelStoreProject(scope), {
+    wrapper,
+  });
   await waitFor(() => expect(rendered.result.current).not.toBeNull());
   return { ...rendered, operation };
 };
@@ -57,6 +62,7 @@ describe('useModelStoreProject (FR-4058)', () => {
     expect(operation?.request.variables).toEqual({
       userId: 'dfa9da54-4b28-432f-be29-c0d680c7a412',
       domainName: 'default',
+      isAdminScope: false,
     });
   });
 
@@ -94,5 +100,20 @@ describe('useModelStoreProject (FR-4058)', () => {
       },
     });
     expect(result.current).toEqual({ id: null, name: null });
+  });
+
+  it('reads the model store project from the current domain in admin scope', async () => {
+    const { result, operation } = await renderWithPayload(
+      { data: { domainProjectsV2: { edges: [{ node: modelStoreNode }] } } },
+      'admin',
+    );
+    expect(operation?.request.variables).toMatchObject({
+      domainName: 'default',
+      isAdminScope: true,
+    });
+    expect(result.current).toEqual({
+      id: MODEL_STORE_UUID,
+      name: 'model-store',
+    });
   });
 });

@@ -33,7 +33,8 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
         $resourceGroupName: String!
       ) {
         domainV2(domainName: $domainName) {
-          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
             count
           }
         }
@@ -41,7 +42,8 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
           basicInfo {
             name
           }
-          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
             count
           }
         }
@@ -57,8 +59,9 @@ const UserResourceGroupAlert: React.FC<UserResourceGroupAlertProps> = ({
     },
   );
 
-  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 0) > 0;
-  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 0) > 0;
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 1) > 0;
+  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 1) > 0;
 
   if (!resourceGroupName || isDomainAllowed || isProjectAllowed) {
     return null;

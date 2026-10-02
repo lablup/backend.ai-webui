@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0bbc37eece1699a6d232e9d26d1b03bc>>
+ * @generated SignedSource<<4f00d4adb4c0a5969db221a56de8b2af>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -132,16 +132,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "be97d5d36773068ec4c657f6ba9af69d",
+    "cacheID": "daaa02ebd42a205f7af2dbb18869cab9",
     "id": null,
     "metadata": {},
     "name": "DomainResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query DomainResourceGroupWarningIconQuery(\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n}\n"
+    "text": "query DomainResourceGroupWarningIconQuery(\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "78925c47faa47b5a0f3d9bc18ae41d7c";
+(node as any).hash = "dc85f461b38ceb52eab07ef43fb4fb62";
 
 export default node;

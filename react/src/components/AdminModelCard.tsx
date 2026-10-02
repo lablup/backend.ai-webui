@@ -187,7 +187,7 @@ const AdminModelCard: React.FC<AdminModelCardProps> = ({
     AdminModelCardQuery,
     deferredQueryRef,
   );
-  const modelStoreProject = useModelStoreProject();
+  const modelStoreProject = useModelStoreProject('admin');
 
   const [commitDeleteModelCard] = useMutation<AdminModelCardDeleteMutation>(
     graphql`

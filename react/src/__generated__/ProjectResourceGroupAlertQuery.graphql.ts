@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2326ee76a2899c66c97c2df333e38308>>
+ * @generated SignedSource<<e3afd2a9309db39bb8b7d8cc85841118>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -132,16 +132,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "47ca0f850a4a1695306ef959aee1ad90",
+    "cacheID": "20c889dc5982450b39014c631e809a60",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupAlertQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupAlertQuery(\n  $projectId: UUID!\n  $resourceGroupName: String!\n) {\n  projectV2(projectId: $projectId) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n}\n"
+    "text": "query ProjectResourceGroupAlertQuery(\n  $projectId: UUID!\n  $resourceGroupName: String!\n) {\n  projectV2(projectId: $projectId) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c60c6e66d484be426a23f38e7f1bf71f";
+(node as any).hash = "33f57e7e2d8c2f923f0de5e17198e86c";
 
 export default node;

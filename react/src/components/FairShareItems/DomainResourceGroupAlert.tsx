@@ -42,7 +42,8 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
         $resourceGroupName: String!
       ) {
         domainV2(domainName: $domainName) {
-          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
             count
           }
         }
@@ -54,7 +55,8 @@ const DomainResourceGroupAlert: React.FC<DomainResourceGroupAlertProps> = ({
     },
   );
 
-  if (!resourceGroupName || (domainV2?.resourceGroups?.count ?? 0) > 0) {
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  if (!resourceGroupName || (domainV2?.resourceGroups?.count ?? 1) > 0) {
     return null;
   }
 

@@ -37,12 +37,14 @@ const ProjectResourceGroupWarningIcon: React.FC<
           $resourceGroupName: String!
         ) {
           projectV2(projectId: $projectId) {
-            resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+            resourceGroups(filter: { name: { equals: $resourceGroupName } })
+              @since(version: "26.9.0a1") {
               count
             }
           }
           domainV2(domainName: $domainName) {
-            resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+            resourceGroups(filter: { name: { equals: $resourceGroupName } })
+              @since(version: "26.9.0a1") {
               count
             }
           }
@@ -51,8 +53,9 @@ const ProjectResourceGroupWarningIcon: React.FC<
       { projectId, domainName, resourceGroupName },
     );
 
-  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 0) > 0;
-  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 0) > 0;
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  const isProjectAllowed = (projectV2?.resourceGroups?.count ?? 1) > 0;
+  const isDomainAllowed = (domainV2?.resourceGroups?.count ?? 1) > 0;
 
   if (!resourceGroupName || isProjectAllowed || isDomainAllowed) {
     return null;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e386d11de626429a9910aff3b64eb0fe>>
+ * @generated SignedSource<<adc42c960554ca01427fbf987c028a9d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -178,16 +178,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0a2495a9d17cf757e48661905eec236a",
+    "cacheID": "a149a35b0cbea4deecdb97cdcdf687fc",
     "id": null,
     "metadata": {},
     "name": "ProjectResourceGroupWarningIconQuery",
     "operationKind": "query",
-    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  projectV2(projectId: $projectId) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) {\n      count\n    }\n    id\n  }\n}\n"
+    "text": "query ProjectResourceGroupWarningIconQuery(\n  $projectId: UUID!\n  $domainName: String!\n  $resourceGroupName: String!\n) {\n  projectV2(projectId: $projectId) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n  domainV2(domainName: $domainName) {\n    resourceGroups(filter: {name: {equals: $resourceGroupName}}) @since(version: \"26.9.0a1\") {\n      count\n    }\n    id\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "448beb690f826783f3c95c885252e2ef";
+(node as any).hash = "b57062a200f9db23b2c804ca71a76126";
 
 export default node;

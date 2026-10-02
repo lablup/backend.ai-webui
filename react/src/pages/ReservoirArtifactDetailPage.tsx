@@ -121,7 +121,7 @@ const ReservoirArtifactDetailPage = () => {
   const deferredQueryVariables = useDeferredValue(queryVariables);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const modelStoreProject = useModelStoreProject();
+  const modelStoreProject = useModelStoreProject('admin');
   const { artifact } = useLazyLoadQuery<ReservoirArtifactDetailPageQuery>(
     graphql`
       query ReservoirArtifactDetailPageQuery(

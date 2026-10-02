@@ -38,7 +38,8 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
         $resourceGroupName: String!
       ) {
         projectV2(projectId: $projectId) {
-          resourceGroups(filter: { name: { equals: $resourceGroupName } }) {
+          resourceGroups(filter: { name: { equals: $resourceGroupName } })
+            @since(version: "26.9.0a1") {
             count
           }
         }
@@ -50,7 +51,8 @@ const ProjectResourceGroupAlert: React.FC<ProjectResourceGroupAlertProps> = ({
     },
   );
 
-  const isAllowed = (projectV2?.resourceGroups?.count ?? 0) > 0;
+  // `resourceGroups` is stripped before 26.9.0a1; an unknown answer raises no warning.
+  const isAllowed = (projectV2?.resourceGroups?.count ?? 1) > 0;
 
   if (!resourceGroupName || isAllowed) {
     return null;
