@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Pilih Layanan Model"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Pilih Kebijakan Sumber Daya Proyek"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Pilih grup sumber daya"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Pilih sesi"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Pilih Kebijakan Sumber Daya Pengguna"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Keterangan",

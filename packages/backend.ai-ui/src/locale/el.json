@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Επιλέξτε Υπηρεσία Μοντέλου"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Επιλέξτε πολιτική πόρων έργου"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Επιλέξτε ομάδα πόρων"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Επιλέξτε συνεδρία"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Επιλέξτε πολιτική πόρων χρήστη"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Περιγραφή",

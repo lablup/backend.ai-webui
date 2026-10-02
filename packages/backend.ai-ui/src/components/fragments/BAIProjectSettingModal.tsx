@@ -1,4 +1,7 @@
-import { BAIProjectResourcePolicySelect, BAIResourceGroupSelect } from '.';
+import {
+  BAIAdminProjectResourcePolicySelect,
+  BAIResourceGroupSelect,
+} from '.';
 import {
   BAIAllowedHostNamesSelect,
   BAIDynamicUnitInputNumber,
@@ -453,7 +456,10 @@ const BAIProjectSettingModal = ({
           label={t('comp:BAIProjectSettingModal.ProjectResourcePolicy')}
           name="resource_policy"
         >
-          <BAIProjectResourcePolicySelect />
+          <BAIAdminProjectResourcePolicySelect
+            label={t('comp:BAIProjectSettingModal.ProjectResourcePolicy')}
+            isLabelHidden
+          />
         </Form.Item>
         <Form.Item
           label={t('comp:BAIProjectSettingModal.AllowedResourceGroups')}

@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Моделийн үйлчилгээ сонгох"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Төслийн нөөцийн бодлого сонгох"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Ресурсын бүлэг сонгох"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Сесс сонгох"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Хэрэглэгчийн нөөцийн бодлого сонгох"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Тодорхойлолт / төрөл анги",

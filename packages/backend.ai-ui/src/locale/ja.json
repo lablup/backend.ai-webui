@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "モデルサービスを選択"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "プロジェクトリソースポリシーを選択"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "リソースグループを選択"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "セッションを選択"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "ユーザーリソースポリシーを選択"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "説明",

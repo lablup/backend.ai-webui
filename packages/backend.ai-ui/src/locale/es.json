@@ -35,11 +35,17 @@
   "comp:BAIAdminModelServiceSelect": {
     "SelectModelService": "Seleccionar servicio de modelo"
   },
+  "comp:BAIAdminProjectResourcePolicySelect": {
+    "SelectProjectResourcePolicy": "Seleccionar política de recursos de proyecto"
+  },
   "comp:BAIAdminResourceGroupSelect": {
     "PlaceHolder": "Seleccionar grupo de recursos"
   },
   "comp:BAIAdminSessionSelect": {
     "SelectSession": "Seleccionar sesión"
+  },
+  "comp:BAIAdminUserResourcePolicySelect": {
+    "SelectUserResourcePolicy": "Seleccionar política de recursos de usuario"
   },
   "comp:BAIArtifactDescriptions": {
     "Description": "Descripción",
