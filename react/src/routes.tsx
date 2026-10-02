@@ -242,6 +242,11 @@ export const mainLayoutChildRoutes: RouteObject[] = [
     path: '/app/index.html',
     Component: DefaultMenuRedirect,
   },
+  {
+    // Electron document `es6://app/index.html` (ADR 0010)
+    path: '/index.html',
+    Component: DefaultMenuRedirect,
+  },
   // --- New scope-aware subtrees ---
   // Project scope subtree: `/project/:projectName/*` (general user menu) plus
   // the nested `admin` segment for project-admin pages. Relative child paths +

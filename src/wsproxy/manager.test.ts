@@ -184,6 +184,21 @@ describe('wsproxy Manager security (FR-3227)', () => {
         'https://fr-3227.localhost:1355',
       );
     });
+
+    it('reflects the Electron renderer origin (ADR 0010)', async () => {
+      const res = await fetch(`${baseURL}/status`, {
+        headers: { Origin: 'es6://app' },
+      });
+      expect(res.headers.get('access-control-allow-origin')).toBe('es6://app');
+    });
+
+    it('does not reflect the opaque `null` origin of a local file page', async () => {
+      const res = await fetch(`${baseURL}/status`, {
+        headers: { Origin: 'null' },
+      });
+      expect(res.headers.get('access-control-allow-origin')).not.toBe('null');
+      expect(res.headers.get('access-control-allow-origin')).not.toBe('*');
+    });
   });
 
   /**

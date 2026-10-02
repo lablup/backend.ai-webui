@@ -25,7 +25,6 @@ if (isDev()) {
   process.env.serveMode = 'prod'; // Prod OR debug
   debugMode = false;
 }
-const url = require('url');
 const path = require('path');
 const { parse: toml } = require('smol-toml');
 const nfs = require('fs');
@@ -37,20 +36,22 @@ let ProxyManager;
 let versions;
 let es6Path;
 let electronPath;
-let mainIndex;
 if (process.env.serveMode == 'dev') {
   ProxyManager = require(path.join(__dirname, 'app/wsproxy/wsproxy.js'));
   versions = require(path.join(__dirname, 'app/version'));
   es6Path = npjoin(__dirname, 'app'); // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'app/index.html';
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
   es6Path = npjoin(__dirname, 'app'); // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname);
-  mainIndex = 'app/index.html';
 }
+
+// The renderer's origin (ADR 0010). A file:// document has an opaque origin,
+// for which Chromium keeps no V8 code cache.
+const APP_ORIGIN = 'es6://app';
+const mainIndexURL = `${APP_ORIGIN}/index.html`;
 
 const windowWidth = 1280;
 const windowHeight = 970;
@@ -64,6 +65,8 @@ protocol.registerSchemesAsPrivileged([
       bypassCSP: true,
       supportFetchAPI: true,
       corsEnabled: true,
+      // Requires `standard`; only takes effect for an es6:// document (ADR 0010).
+      codeCache: true,
     },
   },
 ]);
@@ -109,14 +112,7 @@ app.once('ready', function () {
             click: function () {
               // mainContent.reloadIgnoringCache();
               const proxyUrl = `http://localhost:${manager.port}/`;
-              mainWindow.loadURL(
-                url.format({
-                  // Load HTML into new Window
-                  pathname: path.join(mainIndex),
-                  protocol: 'file',
-                  slashes: true,
-                }),
-              );
+              mainWindow.loadURL(mainIndexURL);
               mainContent.executeJavaScript(
                 `window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`,
               );
@@ -277,14 +273,7 @@ app.once('ready', function () {
             accelerator: 'CmdOrCtrl+R',
             click: function () {
               const proxyUrl = `http://localhost:${manager.port}/`;
-              mainWindow.loadURL(
-                url.format({
-                  // Load HTML into new Window
-                  pathname: path.join(mainIndex),
-                  protocol: 'file',
-                  slashes: true,
-                }),
-              );
+              mainWindow.loadURL(mainIndexURL);
               mainContent.executeJavaScript(
                 `window.__local_proxy = {}; window.__local_proxy.url = '${proxyUrl}';`,
               );
@@ -386,13 +375,9 @@ function createWindow() {
     console.log(`Running on live debug(${endpoint}) mode...`);
     mainWindow.loadURL(endpoint);
   } else {
-    // Load HTML into new Window (file-based serving)
-    const loadFallbackIndex = () => {
-      mainURL = url.format({
-        pathname: path.join(mainIndex),
-        protocol: 'file',
-        slashes: true,
-      });
+    const loadFallbackIndex = async () => {
+      await migrateFileOriginStorage();
+      mainURL = mainIndexURL;
       mainWindow.loadURL(mainURL);
     };
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
@@ -550,51 +535,89 @@ function setSameSitePolicy() {
   );
 }
 
+// Maps an app-relative path to a packaged file: resources/ and manifest/ sit
+// beside app/, everything else lives in app/. Returns null outside BASE_DIR.
+function resolveAppFile(relPath) {
+  let rel = relPath.replace(/^\/+/, '');
+  if (!/^(app|resources|manifest)\//.test(rel)) {
+    rel = path.join('app', rel);
+  }
+  const fullPath = path.normalize(path.join(BASE_DIR, rel));
+  return fullPath.startsWith(BASE_DIR + path.sep) ? fullPath : null;
+}
+
+async function serveAppFile(encodedPath, extraHeaders = {}) {
+  let relPath;
+  try {
+    relPath = decodeURIComponent(encodedPath);
+  } catch {
+    return new Response(null, { status: 400 });
+  }
+  const fullPath = resolveAppFile(relPath);
+  if (!fullPath) {
+    return new Response(null, { status: 403 });
+  }
+  try {
+    const data = await fs.readFile(fullPath);
+    const mimeType = mime.lookup(fullPath) || 'application/octet-stream';
+    return new Response(data, {
+      headers: { 'content-type': mimeType, ...extraHeaders },
+    });
+  } catch (err) {
+    console.error('Error reading file:', err);
+    return new Response(null, { status: 404 });
+  }
+}
+
+// One-time copy of localStorage from the file:// origin used before ADR 0010
+// into es6://app. Keys already present in es6://app win. Gives up after
+// MIGRATION_MAX_ATTEMPTS failures so a broken install does not pay every launch.
+const MIGRATION_MAX_ATTEMPTS = 3;
+async function migrateFileOriginStorage() {
+  const marker = path.join(app.getPath('userData'), 'es6-origin-migrated');
+  let state = { done: false, attempts: 0 };
+  try {
+    state = { ...state, ...JSON.parse(nfs.readFileSync(marker, 'utf-8')) };
+  } catch {}
+  if (state.done || state.attempts >= MIGRATION_MAX_ATTEMPTS) return;
+  const writeState = (next) =>
+    fs.writeFile(marker, JSON.stringify({ ...next, at: new Date().toISOString() }));
+  const win = new BrowserWindow({ show: false });
+  try {
+    // Same file://app/… form the pre-ADR-0010 main window loaded from.
+    await win.loadURL('file://app/version.json');
+    const entries = await win.webContents.executeJavaScript(
+      'JSON.stringify(Object.entries(localStorage))',
+    );
+    await win.loadURL(`${APP_ORIGIN}/version.json`);
+    const copied = await win.webContents.executeJavaScript(
+      `(() => { let n = 0; for (const [k, v] of ${entries}) { if (localStorage.getItem(k) === null) { localStorage.setItem(k, v); n++; } } return n; })()`,
+    );
+    await win.webContents.session.flushStorageData();
+    await writeState({ done: true, attempts: state.attempts + 1, copied });
+    console.log(`Migrated ${copied} localStorage entries to ${APP_ORIGIN}.`);
+  } catch (err) {
+    console.error('localStorage migration to es6://app failed:', err);
+    await writeState({ done: false, attempts: state.attempts + 1 }).catch(() => {});
+  } finally {
+    win.destroy();
+  }
+}
+
 app.on('ready', () => {
-  // Registering the 'file' protocol
-  protocol.handle('file', async (request) => {
-    let url = request.url.substr(7); // strip 'file://' from the URL
-
-    // file:/// URLs have a leading slash - remove it for path resolution
-    if (url.startsWith('/')) {
-      url = url.substring(1);
-    }
-
-    // Files in app/ directory: HTML, JS bundles, config.toml, manifest.json, etc.
-    // Files at root level: resources/, manifest/
-    if (!url.startsWith('app/') && !url.startsWith('resources/') && !url.startsWith('manifest/')) {
-      url = path.join('app', url);
-    }
-
-    const normalizedPath = path.normalize(`${BASE_DIR}/${url}`);
-    try {
-      const data = await fs.readFile(normalizedPath);
-      const mimeType = mime.lookup(normalizedPath);
-      return new Response(data, { headers: { 'content-type': mimeType } });
-    } catch (err) {
-      console.error('Error reading file:', err);
-      return { error: -2 }; // -2 corresponds to net::ERR_FAILED in Chromium
-    }
+  protocol.handle('file', (request) => {
+    const { host, pathname } = new URL(request.url);
+    return serveAppFile(`${host}${pathname}`);
   });
-  // Registering the 'es6' protocol
-  protocol.handle('es6', async (request) => {
-    // Remove trailing slash that browsers may add
-    const filePath = request.url.replace('es6://', '').replace(/\/$/, '');
-    const fullPath = npjoin(es6Path, filePath);
-    try {
-      const data = await fs.readFile(fullPath);
-      const mimeType = mime.lookup(filePath) || 'application/octet-stream';
-
-      return new Response(data, {
-        headers: {
-          'content-type': mimeType,
-          'access-control-allow-origin': '*',
-        },
-      });
-    } catch (err) {
-      console.error('Error reading file:', err);
-      return { error: -2 };
-    }
+  protocol.handle('es6', (request) => {
+    const { host, pathname } = new URL(request.url);
+    // es6://app/<path> is the app origin; es6://<path> is the older asset form
+    // (es6://assets/…, es6://config.toml) that builds and the renderer still use.
+    const relPath = (host === 'app' ? pathname : `${host}${pathname}`).replace(
+      /\/$/,
+      '',
+    );
+    return serveAppFile(relPath, { 'access-control-allow-origin': '*' });
   });
   createWindow();
 });
