@@ -39,8 +39,9 @@ The source of truth is the team's Bitwarden collection, read through `pnpm run d
 
 ### Choosing a server and an account
 
-1. `pnpm run dev-env list --json` — servers and accounts with `tags`, `notes`, `verifiedAt` and `stale`. It carries no passwords, so it is safe to quote.
-2. Match the task against it: filter by `tags` first (`multi-project`, `plugin:<name>`, `no-destructive`, …), then read `notes` to decide between what is left. Prefer the least-privileged role that can do the task, and never run a destructive flow on an account or server tagged `no-destructive`.
+1. `pnpm run dev-env list --json` — servers and accounts with `tags`, `notes`, `verifiedAt`, `stale`, `share` (`public` or `team`) and `passwordAvailable`. It carries no passwords, so it is safe to quote.
+2. Match the task against it: filter by `tags` first (`multi-project`, `plugin:<name>`, `no-destructive`, …), then read `notes` to decide between what is left. Prefer the least-privileged role that can do the task, prefer a `share: public` account when it does the job equally well, and never run a destructive flow on an account or server tagged `no-destructive`.
+   When the account you need has `passwordAvailable: false`, this box got only the public view: say so and tell the user to run `dev-gw enroll` (do not run it yourself — it registers a key on their GitHub account).
 3. Say which server and account you picked and why, in one line, before using them.
 4. `pnpm run dev-env get <server> <role> --json` for that account's endpoint, email and password — or `pnpm run dev-env use <server> [role]` to write the pick into `.env.development.local` and `e2e/envs/.env.playwright` when a dev server or the E2E suite should use it.
 

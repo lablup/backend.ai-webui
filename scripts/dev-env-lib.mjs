@@ -20,6 +20,11 @@ export const E2E_ROLE_VARS = {
 
 const BW_TYPE_LOGIN = 1;
 
+/** Only an exact `share: public` opens an account's password to the public view; anything else is team. */
+function shareTier(item) {
+  return fieldValue(item, "share") === "public" ? "public" : "team";
+}
+
 function fieldValue(item, name) {
   const field = (item.fields ?? []).find(
     (f) => (f.name ?? "").trim().toLowerCase() === name,
@@ -112,10 +117,17 @@ export function parseCatalog(items, now = new Date()) {
       warnings.push(`"${name}": duplicate role, keeping the first`);
       continue;
     }
+    // The gateway's public view nulls a team-tier password and marks the item `password_in`.
+    const passwordAvailable =
+      !item.password_in &&
+      typeof item.login.password === "string" &&
+      item.login.password !== "";
     server.accounts.push({
       role,
       email: item.login.username,
-      password: item.login.password ?? "",
+      password: passwordAvailable ? item.login.password : null,
+      share: shareTier(item),
+      passwordAvailable,
       ...describe(item, now),
     });
     server.endpoint ??= normalizeEndpoint(item.login.uris?.[0]?.uri);
@@ -164,26 +176,33 @@ export function findAccount(server, role) {
   return account;
 }
 
-/** `.env.development.local` values that pre-fill the login screen. `password: false` drops the password line. */
+/**
+ * `.env.development.local` values that pre-fill the login screen. The password
+ * line is dropped on `password: false` and when the catalog has no password —
+ * never written empty.
+ */
 export function loginPrefillVars(server, account, { password = true } = {}) {
   return {
     VITE_DEFAULT_API_ENDPOINT: server.endpoint,
     VITE_DEFAULT_EMAIL: account.email,
-    VITE_DEFAULT_PASSWORD: password ? account.password : null,
+    VITE_DEFAULT_PASSWORD:
+      password && account.passwordAvailable ? account.password : null,
   };
 }
 
 /**
  * `e2e/envs/.env.playwright` values: the endpoint plus every role the suite
  * reads. A role this server lacks is removed, so another server's account
- * never lingers next to the new endpoint.
+ * never lingers next to the new endpoint; so is a password the catalog lacks.
  */
 export function playwrightVars(server) {
   const vars = { E2E_WEBSERVER_ENDPOINT: server.endpoint };
   for (const [role, stem] of Object.entries(E2E_ROLE_VARS)) {
     const account = server.accounts.find((a) => a.role === role);
     vars[`${stem}_EMAIL`] = account?.email ?? null;
-    vars[`${stem}_PASSWORD`] = account?.password ?? null;
+    vars[`${stem}_PASSWORD`] = account?.passwordAvailable
+      ? account.password
+      : null;
   }
   return vars;
 }
@@ -265,8 +284,13 @@ export function formatCatalog(catalog) {
     lines.push(`  ${meta(server)}`);
     if (server.notes) lines.push(...notes(server, "  "));
     for (const account of server.accounts) {
-      lines.push(`  - ${account.role}  ${account.email}`);
+      lines.push(`  - ${account.role} [${account.share}]  ${account.email}`);
       lines.push(`      ${meta(account)}`);
+      if (!account.passwordAvailable) {
+        lines.push(
+          "      password: in Bitwarden (enroll for the full catalog)",
+        );
+      }
       if (account.notes) lines.push(...notes(account, "      "));
     }
     lines.push("");

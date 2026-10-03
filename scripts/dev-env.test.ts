@@ -76,7 +76,7 @@ describe("dev-env CLI", () => {
     const result = run(["list"]);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("main  https://main.example.test:8090");
-    expect(result.stdout).toContain("- user  user@example.test");
+    expect(result.stdout).toContain("- user [team]  user@example.test");
     expect(result.stdout).not.toContain("pw-");
   });
 
@@ -93,7 +93,8 @@ describe("dev-env CLI", () => {
       "admin",
       "user",
     ]);
-    expect(result.stdout).not.toContain("password");
+    expect(result.stdout).not.toContain("pw-");
+    expect(result.stdout).not.toContain(`"password":`);
     expect(catalog.warnings).toEqual([]);
   });
 
@@ -164,6 +165,99 @@ describe("dev-env CLI", () => {
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Run `dev-gw enroll`");
     expect(result.stderr).toContain("not enrolled: run dev-gw enroll");
+  });
+
+  describe("through a stub dev-gw", () => {
+    const PUBLIC_ITEMS = [
+      ITEMS[0],
+      {
+        ...ITEMS[1],
+        login: { username: "user@example.test", password: null },
+        password_in: "bitwarden",
+      },
+      {
+        ...ITEMS[2],
+        login: { username: "admin@example.test", password: null },
+        password_in: "bitwarden",
+      },
+    ];
+    // Records its arguments, then plays `dev-gw catalog --fallback-public`.
+    const stub = (items, { fellBack }) => {
+      const bin = path.join(root, "bin");
+      fs.mkdirSync(bin, { recursive: true });
+      fs.writeFileSync(path.join(root, "items.json"), JSON.stringify(items));
+      fs.writeFileSync(
+        path.join(bin, "dev-gw"),
+        [
+          "#!/bin/sh",
+          "# usage: dev-gw catalog [--public] [--fallback-public]",
+          `echo "$@" > '${path.join(root, "args")}'`,
+          fellBack
+            ? "echo 'no catalog key at ~/.ssh/dev-gw-catalog — run: dev-gw enroll' >&2\n" +
+              "echo 'falling back to the redacted copy (http://dev-gw.example.test/api/catalog)' >&2"
+            : "",
+          `cat '${path.join(root, "items.json")}'`,
+          "",
+        ].join("\n"),
+        { mode: 0o755 },
+      );
+      return {
+        WEBUI_DEV_ENV_CATALOG: undefined,
+        PATH: `${bin}${path.delimiter}${process.env.PATH}`,
+      };
+    };
+
+    it("reports the public view and writes no password for a team account", () => {
+      const env = stub(PUBLIC_ITEMS, { fellBack: true });
+
+      const status = run(["status"], env);
+      expect(status.status).toBe(0);
+      expect(fs.readFileSync(path.join(root, "args"), "utf8").trim()).toBe(
+        "catalog --fallback-public",
+      );
+      expect(status.stdout).toContain(
+        "view: public view — run dev-gw enroll for team passwords",
+      );
+      expect(status.stdout).toContain("2 without a password");
+
+      const use = run(["use", "main", "user"], env);
+      expect(use.status).toBe(0);
+      expect(use.stdout).toContain("main/user is a team-tier account");
+      expect(use.stdout).toContain("dev-gw enroll");
+      const dev = read(".env.development.local");
+      expect(dev).toContain("VITE_DEFAULT_EMAIL=user@example.test");
+      expect(dev).not.toContain("VITE_DEFAULT_PASSWORD");
+      const playwright = read("e2e/envs/.env.playwright");
+      expect(playwright).toContain("E2E_ADMIN_EMAIL=admin@example.test");
+      expect(playwright).not.toContain("PASSWORD");
+
+      const get = run(["get", "main", "admin", "--json"], env);
+      expect(get.status).toBe(0);
+      expect(JSON.parse(get.stdout)).toMatchObject({
+        email: "admin@example.test",
+        password: null,
+        passwordAvailable: false,
+      });
+      expect(get.stderr).toContain("main/admin is a team-tier account");
+    });
+
+    it("reports the full view and writes the password", () => {
+      const env = stub(ITEMS, { fellBack: false });
+
+      const status = run(["status"], env);
+      expect(status.status).toBe(0);
+      expect(status.stdout).toContain("view: full (team) view");
+
+      const use = run(["use", "main", "user"], env);
+      expect(use.status).toBe(0);
+      expect(use.stdout).not.toContain("team-tier");
+      expect(read(".env.development.local")).toContain(
+        "VITE_DEFAULT_PASSWORD=pw-user",
+      );
+      expect(read("e2e/envs/.env.playwright")).toContain(
+        "E2E_ADMIN_PASSWORD=pw-admin",
+      );
+    });
   });
 
   it("refuses a dev-gw too old to know `catalog` instead of running it", () => {

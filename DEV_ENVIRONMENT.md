@@ -120,7 +120,7 @@ Every command asks the gateway, so there is no local copy to go stale. `use` onl
 dev-gw enroll
 ```
 
-`enroll` generates `~/.ssh/dev-gw-catalog` and registers it as an SSH signing key on your GitHub account through `gh`. If `gh` lacks the scope for that, it says so; grant it with `gh auth refresh -h github.com -s admin:ssh_signing_key` and run `enroll` again. The gateway picks up a new key on its next sync, so allow up to five minutes before `pnpm run dev-env status` reports the catalog. Until then `dev-env` exits with the hint `dev-gw` printed. A `dev-gw` older than the `catalog` subcommand is refused rather than run (an old client reads an unknown subcommand as `join <box>` and renames the box); re-download it from the gateway as the error shows.
+`enroll` generates `~/.ssh/dev-gw-catalog` and registers it as an SSH signing key on your GitHub account through `gh`. If `gh` lacks the scope for that, it says so; grant it with `gh auth refresh -h github.com -s admin:ssh_signing_key` and run `enroll` again. The gateway picks up a new key on its next sync, so allow up to five minutes before `pnpm run dev-env status` reports the full view. Until then `dev-env` works from the public view (see the conventions below) and `status` shows why `dev-gw` refused the full one. A `dev-gw` older than the `catalog` subcommand is refused rather than run (an old client reads an unknown subcommand as `join <box>` and renames the box); re-download it from the gateway as the error shows.
 
 Access ends when you leave the `lablup/frontend-dev` team or delete that signing key from your GitHub account. The gateway side — the read-only account, the collection and the sync — is documented in the [devbox-gateway](https://github.com/lablup/devbox-gateway) README.
 
@@ -128,12 +128,14 @@ Access ends when you leave the `lablup/frontend-dev` team or delete that signing
 
 ### Conventions in the collection
 
-| Item                                   | Name                        | Carries                                         |
-| -------------------------------------- | --------------------------- | ----------------------------------------------- |
-| A server (Secure Note)                 | `webui-dev/<server>`        | custom field `endpoint`; notes about the server |
-| An account on that server (Login item) | `webui-dev/<server>/<role>` | username, password; notes about the account     |
+| Item                                   | Name                        | Carries                                                                                                 |
+| -------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------- |
+| A server (Secure Note)                 | `webui-dev/<server>`        | custom field `endpoint`; notes about the server                                                         |
+| An account on that server (Login item) | `webui-dev/<server>/<role>` | username, password; custom field `share` (`public` or `team`, absent = `team`); notes about the account |
 
 Both kinds take two optional custom fields: `tags` (space- or comma-separated, e.g. `multi-project plugin:fair-share no-destructive`) and `verified_at` (`YYYY-MM-DD`, the last time someone checked the notes against the server). Notes older than 90 days, or never verified, are listed as stale.
+
+An enrolled box gets the full view, every password included, so an agent on it can use team-tier accounts; a box that is not enrolled (or whose key the gateway has not synced yet) falls back to the public view, where only `share: public` accounts carry a password and `list` marks the rest `password: in Bitwarden`. A dev server shared through dev-gw will get the public view too, so a reviewer opening its URL never receives a team-tier password. Team-tier passwords are filled in the browser by the Bitwarden extension of whoever is logging in. `dev-env status` says which view this box got, and `use` writes no password line for an account whose password it did not receive.
 
 The roles `admin`, `user`, `user2`, `monitor` and `domain-admin` fill the matching `E2E_*` variables; `use` removes the pair of a role the server does not have. Any other role (`project-admin`, …) is available to `use` and `get` only. An item whose name does not start with `webui-dev/` is ignored.
 

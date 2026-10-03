@@ -25,6 +25,8 @@ const REPO_ROOT =
 // A JSON file in `bw list items` shape that replaces the gateway — for tests and for a box without one.
 const CATALOG_OVERRIDE = process.env.WEBUI_DEV_ENV_CATALOG;
 const EXIT_NOT_ENROLLED = 3;
+// What `dev-gw catalog --fallback-public` prints on stderr when SSH refused it and it served the public copy.
+const FALLBACK_NOTICE = /falling back to the redacted copy[^\n]*/;
 
 const USAGE = `Usage: pnpm run dev-env <command>
 
@@ -84,18 +86,24 @@ function resolveDevGw() {
   return found;
 }
 
-/** Raw catalog items, from the override file or `dev-gw catalog`. */
+/**
+ * Raw catalog items and which view they are: `file` (the override), `full`
+ * (the team view over SSH) or `public` (the redacted copy dev-gw fell back to).
+ */
 function fetchItems() {
   if (CATALOG_OVERRIDE) {
     try {
-      return JSON.parse(fs.readFileSync(CATALOG_OVERRIDE, "utf8"));
+      return {
+        items: JSON.parse(fs.readFileSync(CATALOG_OVERRIDE, "utf8")),
+        view: "file",
+      };
     } catch (error) {
       throw new UserError(
         `WEBUI_DEV_ENV_CATALOG=${CATALOG_OVERRIDE}: ${error.message}`,
       );
     }
   }
-  const result = spawnSync(resolveDevGw(), ["catalog"], {
+  const result = spawnSync(resolveDevGw(), ["catalog", "--fallback-public"], {
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
   });
@@ -114,15 +122,41 @@ function fetchItems() {
     );
   }
   const lines = result.stdout.trim().split("\n");
+  let items;
   try {
-    return JSON.parse(lines[lines.length - 1]);
+    items = JSON.parse(lines[lines.length - 1]);
   } catch {
     throw new UserError("`dev-gw catalog` did not print a JSON catalog.");
   }
+  return {
+    items,
+    view: FALLBACK_NOTICE.test(hint) ? "public" : "full",
+    refusal: FALLBACK_NOTICE.test(hint)
+      ? hint.split(FALLBACK_NOTICE)[0].trim()
+      : null,
+  };
 }
 
+let catalogView = null;
+let catalogRefusal = null;
+
 function loadCatalog() {
-  return parseCatalog(fetchItems());
+  const { items, view, refusal } = fetchItems();
+  catalogView = view;
+  catalogRefusal = refusal ?? null;
+  return parseCatalog(items);
+}
+
+/** One line on why `<server>/<role>` came without a password. */
+function passwordHint(server, account) {
+  const who = `${server.name}/${account.role}`;
+  if (catalogView === "public") {
+    return (
+      `note: ${who} is a team-tier account and this box got the public view, so its password ` +
+      "was left out. Run `dev-gw enroll` (once per box), or wait up to five minutes for the gateway to sync."
+    );
+  }
+  return `note: the catalog carries no password for ${who}, so it was left out.`;
 }
 
 function status() {
@@ -132,12 +166,21 @@ function status() {
     console.log(`dev-gw: ${resolveDevGw()}`);
   }
   const catalog = loadCatalog();
-  const accounts = catalog.servers.reduce(
-    (sum, s) => sum + s.accounts.length,
-    0,
-  );
+  const accounts = catalog.servers.flatMap((s) => s.accounts);
+  const missing = accounts.filter((a) => !a.passwordAvailable).length;
+  if (catalogView === "full") {
+    console.log("view: full (team) view");
+  } else if (catalogView === "public") {
+    console.log("view: public view — run dev-gw enroll for team passwords");
+    if (catalogRefusal) {
+      for (const line of catalogRefusal.split("\n")) {
+        console.log(`  ${line}`);
+      }
+    }
+  }
   console.log(
-    `catalog: ${catalog.servers.length} server(s), ${accounts} account(s)`,
+    `catalog: ${catalog.servers.length} server(s), ${accounts.length} account(s)` +
+      (missing > 0 ? `, ${missing} without a password` : ""),
   );
   for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
 }
@@ -185,8 +228,13 @@ function use(serverName, role, { password }) {
   });
   console.log(
     `${server.name} (${server.endpoint}) as ${account.role} <${account.email}>` +
-      (password ? "" : ", password not pre-filled"),
+      (prefill.VITE_DEFAULT_PASSWORD !== null
+        ? ""
+        : ", password not pre-filled"),
   );
+  if (password && !account.passwordAvailable) {
+    console.log(passwordHint(server, account));
+  }
   if (server.stale || account.stale) {
     console.log(
       "note: the catalog notes for this pick have not been verified recently.",
@@ -225,7 +273,13 @@ async function main() {
       } else {
         console.log(`endpoint: ${result.endpoint}`);
         console.log(`email: ${result.email}`);
-        console.log(`password: ${result.password}`);
+        if (account.passwordAvailable) {
+          console.log(`password: ${result.password}`);
+        }
+      }
+      // stderr, so `--json` stays parseable.
+      if (!account.passwordAvailable) {
+        console.error(passwordHint(server, account));
       }
       return;
     }

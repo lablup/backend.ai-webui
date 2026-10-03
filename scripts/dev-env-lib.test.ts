@@ -104,7 +104,7 @@ describe("dev-env catalog", () => {
     expect(JSON.stringify(redacted)).not.toContain("pw-");
     const text = formatCatalog(redacted);
     expect(text).toContain("main  https://main.example.test:8090");
-    expect(text).toContain("- user  user@example.test");
+    expect(text).toContain("- user [team]  user@example.test");
     expect(text).toContain("verified: 2026-01-01 (stale)");
     expect(text).toContain("verified: never");
     expect(formatCatalog(catalog)).not.toContain("pw-");
@@ -133,6 +133,98 @@ describe("dev-env catalog", () => {
     expect(
       loginPrefillVars(main, user, { password: false }).VITE_DEFAULT_PASSWORD,
     ).toBeNull();
+  });
+});
+
+describe("dev-env share tiers", () => {
+  // The gateway's public view: team-tier passwords nulled and marked.
+  const PUBLIC_ITEMS = [
+    login("webui-dev/main/user", "user@example.test", "pw-user", {
+      fields: [{ name: "share", value: "public" }],
+    }),
+    login("webui-dev/main/admin", "admin@example.test", null, {
+      password_in: "bitwarden",
+    }),
+    login("webui-dev/main/monitor", "monitor@example.test", null, {
+      fields: [{ name: "share", value: "team" }],
+      password_in: "bitwarden",
+    }),
+    login("webui-dev/main/user2", "user2@example.test", "pw-user2", {
+      fields: [{ name: "Share", value: "Public" }],
+    }),
+  ];
+  const main = findServer(parseCatalog(PUBLIC_ITEMS, NOW), "main");
+
+  it("reads the tier from an exact `share: public`, team otherwise", () => {
+    expect(
+      Object.fromEntries(main.accounts.map((a) => [a.role, a.share])),
+    ).toEqual({
+      admin: "team",
+      monitor: "team",
+      user: "public",
+      user2: "team",
+    });
+    const full = findServer(parseCatalog(ITEMS, NOW), "main");
+    expect(full.accounts.every((a) => a.share === "team")).toBe(true);
+    expect(full.accounts.every((a) => a.passwordAvailable)).toBe(true);
+  });
+
+  it("treats a nulled password or the `password_in` marker as unavailable", () => {
+    expect(findAccount(main, "user")).toMatchObject({
+      passwordAvailable: true,
+      password: "pw-user",
+    });
+    expect(findAccount(main, "admin")).toMatchObject({
+      passwordAvailable: false,
+      password: null,
+    });
+    const marked = parseCatalog(
+      [
+        login("webui-dev/x/user", "u@example.test", "leaked", {
+          password_in: "bitwarden",
+        }),
+        login("webui-dev/x/admin", "a@example.test", ""),
+      ],
+      NOW,
+    ).servers[0];
+    expect(findAccount(marked, "user")).toMatchObject({
+      passwordAvailable: false,
+      password: null,
+    });
+    expect(findAccount(marked, "admin").passwordAvailable).toBe(false);
+  });
+
+  it("keeps the tier in the redacted catalog and shows it in the text form", () => {
+    const redacted = redactCatalog({ servers: [main], warnings: [] });
+    expect(redacted.servers[0].accounts[0]).toMatchObject({
+      role: "admin",
+      share: "team",
+      passwordAvailable: false,
+    });
+    expect(redacted.servers[0].accounts[0]).not.toHaveProperty("password");
+    const text = formatCatalog(redacted);
+    expect(text).toContain("- user [public]  user@example.test");
+    expect(text).toContain("- admin [team]  admin@example.test");
+    expect(text).toContain(
+      "password: in Bitwarden (enroll for the full catalog)",
+    );
+    expect(text.match(/password: in Bitwarden/g)).toHaveLength(2);
+  });
+
+  it("never writes an empty password key", () => {
+    const admin = findAccount(main, "admin");
+    expect(loginPrefillVars(main, admin).VITE_DEFAULT_PASSWORD).toBeNull();
+    const vars = playwrightVars(main);
+    expect(vars).toMatchObject({
+      E2E_ADMIN_EMAIL: "admin@example.test",
+      E2E_ADMIN_PASSWORD: null,
+      E2E_MONITOR_PASSWORD: null,
+      E2E_USER_PASSWORD: "pw-user",
+    });
+    const written = upsertEnv("E2E_ADMIN_PASSWORD=old\n", vars);
+    expect(written).not.toMatch(/PASSWORD=\s*$/m);
+    expect(written).not.toContain("E2E_ADMIN_PASSWORD");
+    expect(written).toContain("E2E_ADMIN_EMAIL=admin@example.test");
   });
 });
 
