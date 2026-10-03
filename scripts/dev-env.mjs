@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // `pnpm run dev-env` — pick a dev API server and test account from the team's
-// Bitwarden collection, and write the pick into the git-ignored env files.
+// catalog (served by the dev box gateway through `dev-gw catalog`), and write
+// the pick into the git-ignored env files.
 // Conventions and one-time setup: DEV_ENVIRONMENT.md ("Dev servers and test accounts").
 import {
   findAccount,
@@ -16,23 +17,18 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import readline from "node:readline";
 import { fileURLToPath } from "node:url";
 
-const REPO_ROOT = path.resolve(
-  path.dirname(fileURLToPath(import.meta.url)),
-  "..",
-);
-const CONFIG_PATH =
-  process.env.WEBUI_DEV_ENV_CONFIG ??
-  path.join(os.homedir(), ".config", "fw", "webui-dev-env.json");
-// A data dir of its own, so the read-only account never collides with a personal `bw` login.
-const BW_DATA_DIR = path.join(path.dirname(CONFIG_PATH), "webui-dev-env-bw");
+const REPO_ROOT =
+  process.env.WEBUI_DEV_ENV_ROOT ??
+  path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+// A JSON file in `bw list items` shape that replaces the gateway — for tests and for a box without one.
+const CATALOG_OVERRIDE = process.env.WEBUI_DEV_ENV_CATALOG;
+const EXIT_NOT_ENROLLED = 3;
 
 const USAGE = `Usage: pnpm run dev-env <command>
 
-  setup                      Store the read-only Bitwarden account on this machine (once)
-  status                     Check the bw binary, the stored config and the login
+  status                     Check dev-gw and the catalog it serves
   list [--json]              Servers, accounts and their notes (no passwords)
   get <server> <role> [--json]
                              One account, password included
@@ -42,186 +38,106 @@ const USAGE = `Usage: pnpm run dev-env <command>
 
 class UserError extends Error {}
 
-function readConfig() {
-  let raw;
+function downloadCommand() {
+  let domain = "<domain>";
   try {
-    raw = fs.readFileSync(CONFIG_PATH, "utf8");
+    const config = JSON.parse(
+      fs.readFileSync(
+        path.join(os.homedir(), ".config", "fw", "dev-gw.json"),
+        "utf8",
+      ),
+    );
+    if (config.domain) domain = config.domain;
   } catch {
+    // Not joined to a gateway yet; keep the placeholder.
+  }
+  return `mkdir -p ~/.local/bin && curl -fsSL http://dev-gw.${domain}/dev-gw -o ~/.local/bin/dev-gw && chmod +x ~/.local/bin/dev-gw`;
+}
+
+/**
+ * The `dev-gw` on PATH, refusing a client older than `dev-gw catalog`: an old
+ * client reads an unknown subcommand as `join <box>` and renames the box.
+ */
+function resolveDevGw() {
+  const found = (process.env.PATH ?? "")
+    .split(path.delimiter)
+    .filter(Boolean)
+    .map((dir) => path.join(dir, "dev-gw"))
+    .find((candidate) => {
+      try {
+        fs.accessSync(candidate, fs.constants.X_OK);
+        return fs.statSync(candidate).isFile();
+      } catch {
+        return false;
+      }
+    });
+  if (!found) {
     throw new UserError(
-      `No config at ${CONFIG_PATH}. Run \`pnpm run dev-env setup\` first.`,
+      `\`dev-gw\` is not on PATH. Install it from the gateway:\n  ${downloadCommand()}`,
     );
   }
-  const config = JSON.parse(raw);
-  for (const key of ["server", "clientId", "clientSecret", "password"]) {
-    if (!config[key]) {
+  if (!/\bcatalog\b/.test(fs.readFileSync(found, "utf8"))) {
+    throw new UserError(
+      `${found} predates \`dev-gw catalog\`. Update it from the gateway:\n  ${downloadCommand()}`,
+    );
+  }
+  return found;
+}
+
+/** Raw catalog items, from the override file or `dev-gw catalog`. */
+function fetchItems() {
+  if (CATALOG_OVERRIDE) {
+    try {
+      return JSON.parse(fs.readFileSync(CATALOG_OVERRIDE, "utf8"));
+    } catch (error) {
       throw new UserError(
-        `${CONFIG_PATH} is missing "${key}". Re-run \`pnpm run dev-env setup\`.`,
+        `WEBUI_DEV_ENV_CATALOG=${CATALOG_OVERRIDE}: ${error.message}`,
       );
     }
   }
-  return config;
-}
-
-function bw(args, env = {}) {
-  const result = spawnSync("bw", [...args, "--nointeraction"], {
+  const result = spawnSync(resolveDevGw(), ["catalog"], {
     encoding: "utf8",
     maxBuffer: 64 * 1024 * 1024,
-    env: { ...process.env, BITWARDENCLI_APPDATA_DIR: BW_DATA_DIR, ...env },
   });
-  if (result.error?.code === "ENOENT") {
+  if (result.error) throw result.error;
+  const hint = (result.stderr ?? "").trim();
+  if (result.status === EXIT_NOT_ENROLLED) {
     throw new UserError(
-      "The Bitwarden CLI (`bw`) is not installed. Install it with `npm install -g @bitwarden/cli`.",
+      "This box cannot read the catalog yet. Run `dev-gw enroll` (once per box), " +
+        "then wait up to five minutes for the gateway to sync." +
+        (hint ? `\ndev-gw said:\n${hint}` : ""),
     );
   }
-  if (result.error) throw result.error;
-  return result;
-}
-
-function bwOrThrow(args, env) {
-  const result = bw(args, env);
   if (result.status !== 0) {
-    const detail = (result.stderr || result.stdout).trim();
-    throw new UserError(`\`bw ${args[0]}\` failed: ${detail}`);
+    throw new UserError(
+      `\`dev-gw catalog\` failed (exit ${result.status})${hint ? `: ${hint}` : ""}`,
+    );
   }
-  return result.stdout;
-}
-
-// bw prints one-off notices before its JSON on a fresh data dir; the payload is the last line.
-function lastJsonLine(stdout) {
-  return JSON.parse(stdout.trim().split("\n").pop());
-}
-
-function bwStatus() {
-  return lastJsonLine(bwOrThrow(["status"]));
-}
-
-/** Log in if needed, unlock, sync, and return a session key. */
-function openSession(config) {
-  const wanted = config.server.replace(/\/+$/, "");
-  let status = bwStatus();
-  if (
-    status.status !== "unauthenticated" &&
-    (status.serverUrl ?? "").replace(/\/+$/, "") !== wanted
-  ) {
-    bwOrThrow(["logout"]);
-    status = bwStatus();
+  const lines = result.stdout.trim().split("\n");
+  try {
+    return JSON.parse(lines[lines.length - 1]);
+  } catch {
+    throw new UserError("`dev-gw catalog` did not print a JSON catalog.");
   }
-  if (status.status === "unauthenticated") {
-    bwOrThrow(["config", "server", wanted]);
-    bwOrThrow(["login", "--apikey"], {
-      BW_CLIENTID: config.clientId,
-      BW_CLIENTSECRET: config.clientSecret,
-    });
-  }
-  const session = bwOrThrow(
-    ["unlock", "--passwordenv", "BW_PASSWORD", "--raw"],
-    {
-      BW_PASSWORD: config.password,
-    },
-  )
-    .trim()
-    .split("\n")
-    .pop();
-  bwOrThrow(["sync"], { BW_SESSION: session });
-  return session;
 }
 
 function loadCatalog() {
-  const config = readConfig();
-  const session = openSession(config);
-  const args = ["list", "items"];
-  if (config.collectionId) args.push("--collectionid", config.collectionId);
-  const items = lastJsonLine(bwOrThrow(args, { BW_SESSION: session }));
-  return parseCatalog(items);
-}
-
-function ask(question, { secret = false } = {}) {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: true,
-  });
-  if (secret) {
-    // Echo nothing after the prompt itself has been written.
-    const write = rl._writeToOutput.bind(rl);
-    rl._writeToOutput = (text) => {
-      if (text.includes(question)) write(text);
-    };
-  }
-  return new Promise((resolve) => {
-    rl.question(question, (answer) => {
-      rl.close();
-      if (secret) process.stdout.write("\n");
-      resolve(answer.trim());
-    });
-  });
-}
-
-async function setup() {
-  if (!process.stdin.isTTY) {
-    throw new UserError(
-      "`setup` asks for secrets interactively; run it in a terminal.",
-    );
-  }
-  let previous = {};
-  try {
-    previous = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
-  } catch {
-    // First run.
-  }
-  console.log(
-    "Enter the read-only Bitwarden account for WebUI dev servers.\n" +
-      "Its API key and master password are in the team collection of your own vault.\n",
-  );
-  const keep = (value) => (value ? " [keep current]" : "");
-  const config = {
-    server:
-      (await ask(
-        `Bitwarden server URL${previous.server ? ` [${previous.server}]` : ""}: `,
-      )) || previous.server,
-    clientId:
-      (await ask(`API key client_id${keep(previous.clientId)}: `)) ||
-      previous.clientId,
-    clientSecret:
-      (await ask(`API key client_secret${keep(previous.clientSecret)}: `, {
-        secret: true,
-      })) || previous.clientSecret,
-    password:
-      (await ask(`Master password${keep(previous.password)}: `, {
-        secret: true,
-      })) || previous.password,
-    collectionId:
-      (await ask(
-        `Collection id (optional)${previous.collectionId ? ` [${previous.collectionId}]` : ""}: `,
-      )) ||
-      previous.collectionId ||
-      undefined,
-  };
-  fs.mkdirSync(path.dirname(CONFIG_PATH), { recursive: true });
-  fs.writeFileSync(CONFIG_PATH, `${JSON.stringify(config, null, 2)}\n`, {
-    mode: 0o600,
-  });
-  fs.chmodSync(CONFIG_PATH, 0o600);
-  console.log(`\nSaved ${CONFIG_PATH}`);
-
-  // A changed API key must not keep riding the previous login.
-  if (bwStatus().status !== "unauthenticated") bwOrThrow(["logout"]);
-  const catalog = loadCatalog();
-  console.log(`Login works: ${catalog.servers.length} server(s) visible.`);
+  return parseCatalog(fetchItems());
 }
 
 function status() {
-  const version = bwOrThrow(["--version"]).trim().split("\n").pop();
-  console.log(`bw: ${version}`);
-  const config = readConfig();
-  console.log(`config: ${CONFIG_PATH} (server ${config.server})`);
+  if (CATALOG_OVERRIDE) {
+    console.log(`catalog: ${CATALOG_OVERRIDE} (WEBUI_DEV_ENV_CATALOG)`);
+  } else {
+    console.log(`dev-gw: ${resolveDevGw()}`);
+  }
   const catalog = loadCatalog();
   const accounts = catalog.servers.reduce(
     (sum, s) => sum + s.accounts.length,
     0,
   );
   console.log(
-    `vault: ${catalog.servers.length} server(s), ${accounts} account(s)`,
+    `catalog: ${catalog.servers.length} server(s), ${accounts} account(s)`,
   );
   for (const warning of catalog.warnings) console.log(`warning: ${warning}`);
 }
@@ -246,7 +162,7 @@ function use(serverName, role, { password }) {
   const server = findServer(catalog, serverName);
   if (!server.endpoint) {
     throw new UserError(
-      `Server "${server.name}" has no endpoint in Bitwarden.`,
+      `Server "${server.name}" has no endpoint in the catalog.`,
     );
   }
   const account = findAccount(server, role);
@@ -273,7 +189,7 @@ function use(serverName, role, { password }) {
   );
   if (server.stale || account.stale) {
     console.log(
-      "note: the Bitwarden notes for this pick have not been verified recently.",
+      "note: the catalog notes for this pick have not been verified recently.",
     );
   }
   console.log("Restart `pnpm run dev` to pick up the login pre-fill.");
@@ -286,8 +202,6 @@ async function main() {
   const json = flags.has("--json");
 
   switch (command) {
-    case "setup":
-      return setup();
     case "status":
       return status();
     case "list": {

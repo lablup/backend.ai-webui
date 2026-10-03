@@ -1,7 +1,7 @@
 // Pure logic behind `pnpm run dev-env`: turning Bitwarden items into a catalog
 // of dev servers and test accounts, and writing a pick into the env files.
 //
-// It lives outside dev-env.mjs so it can be unit tested without a `bw` binary.
+// It lives outside dev-env.mjs so it can be unit tested without the gateway.
 
 /** Items are named `webui-dev/<server>` (the server) or `webui-dev/<server>/<role>` (an account). */
 export const ITEM_PREFIX = "webui-dev/";

@@ -27,7 +27,7 @@ To find the actual URL for a running instance, check these sources in order:
    written by the `dev-server` skill. Each carries `url` (the gateway URL a teammate can
    open), `localUrl`, `branch`, `pid`, `startedAt`/`stoppedAt` and the PRs it serves. A
    record with `stoppedAt` set is a server that is gone. This is the only source that says
-   *which branch and PRs* a server is for, so start here.
+   _which branch and PRs_ a server is for, so start here.
 2. `portless list` — live routes on this box.
 3. The `pnpm run dev` terminal output — Portless prints the full URL on startup.
 
@@ -46,13 +46,14 @@ The source of truth is the team's Bitwarden collection, read through `pnpm run d
 
 Treat an entry with `stale: true` as a hint, not a fact: confirm what the note claims against the live server (the `bai-agent` skill) before relying on it. When a note turns out wrong or missing, tell the user what should change — the account is read-only, so a human edits Bitwarden.
 
-If `dev-env` reports that `bw` or its config is missing, the machine is not set up: tell the user to run `pnpm run dev-env setup` (it asks for secrets interactively, so you cannot run it), and fall back to the file below.
+If `dev-env` reports that `dev-gw` is missing or tells you to run `dev-gw enroll`, the machine is not set up: tell the user to run `dev-gw enroll` (it registers a key on their GitHub account and may need a `gh auth refresh`, so you cannot run it), and fall back to the file below.
 
 ### The file fallback
 
 Read `e2e/envs/.env.playwright` to get the server endpoint and login credentials the last `dev-env use` (or a human) wrote.
 
 Key variables:
+
 - `E2E_WEBSERVER_ENDPOINT` — Backend.AI API server URL
 - `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` — admin account
 - `E2E_USER_EMAIL` / `E2E_USER_PASSWORD` — regular user account
@@ -63,6 +64,7 @@ Key variables:
 ## Login Flow
 
 The WebUI login page requires:
+
 1. Email/Username
 2. Password
 3. Endpoint (may be hidden under "Advanced" toggle)

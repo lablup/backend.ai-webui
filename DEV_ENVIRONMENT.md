@@ -95,7 +95,7 @@ Notes:
 
 ## Dev servers and test accounts (`pnpm run dev-env`)
 
-Which API server a dev session talks to, and which test account it logs in with, live in the team's Bitwarden collection — not in this repository and not in anyone's notes. `pnpm run dev-env` reads that collection and writes the pick into the two git-ignored files that already consume it:
+Which API server a dev session talks to, and which test account it logs in with, live in the team's Bitwarden collection — not in this repository and not in anyone's notes. `pnpm run dev-env` reads that collection through the dev box gateway and writes the pick into the two git-ignored files that already consume it:
 
 - `.env.development.local` — `VITE_DEFAULT_API_ENDPOINT` / `VITE_DEFAULT_EMAIL` / `VITE_DEFAULT_PASSWORD`, the login-screen pre-fill.
 - `e2e/envs/.env.playwright` — `E2E_WEBSERVER_ENDPOINT` and the `E2E_*_EMAIL` / `E2E_*_PASSWORD` pairs.
@@ -105,25 +105,26 @@ pnpm run dev-env list              # servers, accounts, tags and notes — no pa
 pnpm run dev-env use main          # pre-fill as main's "user" account, point E2E at main
 pnpm run dev-env use main admin --no-password
 pnpm run dev-env get main project-admin   # one account, password included
-pnpm run dev-env status            # bw binary, stored config, login
+pnpm run dev-env status            # dev-gw found, catalog reachable, counts
 ```
 
-Every command syncs the vault first, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
+Every command asks the gateway, so there is no local copy to go stale. `use` only replaces the keys it owns; every other line of both files is left alone. Restart `pnpm run dev` afterwards — Vite reads env at server start. A `VITE_DEFAULT_*` variable exported in the shell wins over the file; `use` warns when one is in the way.
 
 `--no-password` leaves the password out of the pre-fill. Use it on a dev server you share through dev-gw: the bundle carries every `VITE_*` value to whoever opens the share URL (see the notes above).
 
 ### One-time setup per machine
 
-The box logs in as a **dedicated read-only Bitwarden account** whose only access is that collection, so nothing else in anyone's vault is reachable from a dev box. The Bitwarden CLI cannot scope a personal login to one collection; a separate account is how the scope is enforced.
+`dev-env` reads the catalog through `dev-gw catalog`, the client of the team's dev box gateway (`~/.local/bin/dev-gw` on every box set up by `fw:setup-remote-env`). The gateway syncs the catalog from the team's Bitwarden collection with a read-only account that lives only on the gateway. It serves a box because the SSH key the box presents is published as a signing key on a GitHub account in the `lablup/frontend-dev` team, so no Bitwarden credential ever reaches a dev box.
 
 ```bash
-npm install -g @bitwarden/cli
-pnpm run dev-env setup
+dev-gw enroll
 ```
 
-`setup` asks for the Bitwarden server URL, the account's API key (`client_id` / `client_secret`) and its master password — the team keeps them in the same collection, so read them from your own vault. It writes `~/.config/fw/webui-dev-env.json` (mode 600) and keeps the CLI's state in `~/.config/fw/webui-dev-env-bw`, apart from any personal `bw` login. An API-key login goes through neither SSO nor two-step login, so it does not expire into a browser prompt.
+`enroll` generates `~/.ssh/dev-gw-catalog` and registers it as an SSH signing key on your GitHub account through `gh`. If `gh` lacks the scope for that, it says so; grant it with `gh auth refresh -h github.com -s admin:ssh_signing_key` and run `enroll` again. The gateway picks up a new key on its next sync, so allow up to five minutes before `pnpm run dev-env status` reports the catalog. Until then `dev-env` exits with the hint `dev-gw` printed. A `dev-gw` older than the `catalog` subcommand is refused rather than run (an old client reads an unknown subcommand as `join <box>` and renames the box); re-download it from the gateway as the error shows.
 
-When someone leaves the team, rotate that account's master password and API key, and re-run `setup` on each box.
+Access ends when you leave the `lablup/frontend-dev` team or delete that signing key from your GitHub account. The gateway side — the read-only account, the collection and the sync — is documented in the [devbox-gateway](https://github.com/lablup/devbox-gateway) README.
+
+`WEBUI_DEV_ENV_CATALOG=<file>` makes `dev-env` read a JSON file in `bw list items` shape instead of calling `dev-gw`, for tests and for a box without a gateway.
 
 ### Conventions in the collection
 
