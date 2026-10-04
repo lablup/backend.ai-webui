@@ -591,8 +591,10 @@ async function retryWithTableRefresh(
 }
 
 export function getVFolderRow(page: Page, folderName: string) {
+  // The identicon is decorative (alt=""), so match the row by its name text.
   return page
-    .getByRole('row', { name: `VFolder Identicon ${folderName}` })
+    .getByRole('row')
+    .filter({ has: page.getByText(folderName, { exact: true }) })
     .first();
 }
 
