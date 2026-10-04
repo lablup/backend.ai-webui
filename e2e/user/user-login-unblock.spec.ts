@@ -65,23 +65,38 @@ async function submitLoginForm(
     name: 'Endpoint',
     exact: true,
   });
-  if (!(await endpointInput.isVisible())) {
+  if (!(await endpointInput.isVisible({ timeout: 500 }).catch(() => false))) {
     await page.getByText('Advanced').click();
   }
   await endpointInput.fill(webServerEndpoint);
   await page.getByRole('button', { name: 'Login', exact: true }).click();
 }
 
+// The list shows 10 rows per page, so narrow it to the target email first.
+async function filterUsersByEmail(page: Page, email: string): Promise<void> {
+  const searchBar = page.getByRole('combobox', { name: 'Search filters' });
+  await searchBar.click();
+  await page.getByRole('option', { name: 'Email', exact: true }).click();
+  await page.getByRole('textbox', { name: 'Value' }).fill(email);
+  await page.getByRole('button', { name: 'Apply', exact: true }).click();
+  const typeahead = page.getByRole('listbox', { name: 'Search results' });
+  if (await typeahead.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await searchBar.press('Escape');
+    await expect(typeahead).toBeHidden({ timeout: 5000 });
+  }
+}
+
 async function unblockLoginFromUserList(
   page: Page,
   email: string,
 ): Promise<void> {
-  await navigateToUsersPage(page);
   await skipUnlessClientFeature(
     page,
     'admin-unblock-user',
     "Unblock login requires the 'admin-unblock-user' capability (manager >= 26.4.2, FR-4131)",
   );
+  await navigateToUsersPage(page);
+  await filterUsersByEmail(page, email);
   const userRow = page.getByRole('row').filter({ hasText: email });
   await expect(userRow).toBeVisible({ timeout: 15000 });
 
@@ -158,11 +173,12 @@ test.describe(
       page,
       request,
     }) => {
+      await blockLoginWithWrongPasswords(email);
       await loginAsAdmin(page, request);
       await unblockLoginFromUserList(page, email);
     });
 
-    test('Locked-out user can log in again after admin unblocks', async ({
+    test('User can log in again after admin unblocks their failed-login lock', async ({
       page,
       request,
     }) => {

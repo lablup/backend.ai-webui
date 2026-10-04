@@ -749,7 +749,7 @@
 | Purge user → PurgeUsersModal                             | ✅     | `Admin can deactivate and permanently delete`                                                                               |
 | Deleted user login blocked                               | ✅     | `Deleted user cannot log in`                                                                                                |
 | Unblock login (More actions) → confirm → success toast   | ✅     | `Admin can unblock a user's failed-login lock from the user list`                                                           |
-| Locked-out user signs in again after unblock             | ✅     | `Locked-out user can log in again after admin unblocks`                                                                     |
+| Locked-out user signs in again after unblock             | ✅     | `User can log in again after admin unblocks their failed-login lock`                                                        |
 | Allowed IP restriction enforcement (active session)      | ✅     | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
 | User name click → UserInfoModal                          | ❌     | -                                                                                                                           |
 | Bulk edit → UpdateUsersModal                             | ❌     | -                                                                                                                           |
