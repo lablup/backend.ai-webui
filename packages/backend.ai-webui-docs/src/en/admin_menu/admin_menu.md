@@ -262,6 +262,10 @@ account can have multiple keypairs, which brings it hard to decide which credent
 should be reactivated.
 :::
 
+Repeated failed sign-in attempts can block a user from signing in even though
+the account is still active. To let the user sign in again, select **Unblock
+login** from the more (`...`) menu in the user's row and confirm.
+
 While day-to-day account management relies on deactivation, superadmins can
 permanently remove accounts that are already inactive, using the Purge feature
 described below.
