@@ -479,7 +479,7 @@ You can filter entries by **Status**, **Operation**, **Triggered By**, and a **T
 
 ### Admin Model Store management
 
-Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page. The list shows the model cards of your current domain, and new model cards are created in that domain's Model Store project.
+Superadmins can manage model cards through the **Model Store Management** tab on the Admin Deployments page. New model cards are added to the Model Store project automatically.
 
 ![](../images/admin_model_card_list_v2.png)
 
@@ -522,7 +522,7 @@ Click the `Create Model Card` button to open the creation modal. Fill in the fol
 - **Model Storage Folder** (required): The storage folder containing the model files.
 - **Access Level**: Controls who can see the model card in the user-facing Model Store.
 
-   * `Internal`: Visible only to administrators of the owning domain and project. Regular users cannot see internal cards in their Model Store.
+   * `Internal`: Visible only to administrators of the owning project. Regular users cannot see internal cards in their Model Store.
    * `Public`: Visible to all users who have access to the owning project.
 
 ![=520px](../images/model_card_create_modal.png)
