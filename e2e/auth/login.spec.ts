@@ -167,3 +167,75 @@ test.describe(
     });
   },
 );
+
+/**
+ * FR-3562: a configured `apiEndpoint` is a webserver, which cannot serve
+ * API-mode sign-in, so the Session/API switch is locked to Session.
+ */
+test.describe(
+  'Sign-in mode switch (FR-3562)',
+  { tag: ['@regression', '@auth', '@functional'] },
+  () => {
+    test('User cannot switch to API sign-in when apiEndpoint is configured', async ({
+      page,
+      request,
+    }) => {
+      await modifyConfigToml(page, request, {
+        general: {
+          connectionMode: 'SESSION',
+          allowChangeSigninMode: true,
+          apiEndpoint: webServerEndpoint,
+        },
+      });
+      await page.goto(webuiEndpoint);
+
+      const modeSwitch = page.getByRole('radiogroup', { name: 'Login' });
+      await expect(modeSwitch).toBeVisible();
+      await expect(modeSwitch).toHaveAttribute('aria-disabled', 'true');
+      await expect(
+        modeSwitch.getByRole('radio', { name: 'Session' }),
+      ).toHaveAttribute('aria-checked', 'true');
+      const apiRadio = modeSwitch.getByRole('radio', { name: 'API' });
+      await expect(apiRadio).toHaveAttribute('aria-disabled', 'true');
+
+      await modeSwitch.hover();
+      await expect(
+        page.getByText(
+          'API sign-in needs a Manager endpoint. This WebUI is set to connect through a Backend.AI Webserver.',
+        ),
+      ).toBeVisible();
+
+      await apiRadio.click({ force: true });
+      await expect(
+        modeSwitch.getByRole('radio', { name: 'Session' }),
+      ).toHaveAttribute('aria-checked', 'true');
+      await expect(page.getByLabel('Email or Username')).toBeVisible();
+      await expect(page.getByLabel('API Key')).toHaveCount(0);
+    });
+
+    test('User can switch to API sign-in when apiEndpoint is empty', async ({
+      page,
+      request,
+    }) => {
+      await modifyConfigToml(page, request, {
+        general: {
+          connectionMode: 'SESSION',
+          allowChangeSigninMode: true,
+          apiEndpoint: '',
+        },
+      });
+      await page.goto(webuiEndpoint);
+
+      const modeSwitch = page.getByRole('radiogroup', { name: 'Login' });
+      await expect(modeSwitch).toBeVisible();
+      await expect(modeSwitch).not.toHaveAttribute('aria-disabled', 'true');
+
+      await modeSwitch.getByRole('radio', { name: 'API' }).click();
+      await expect(
+        modeSwitch.getByRole('radio', { name: 'API' }),
+      ).toHaveAttribute('aria-checked', 'true');
+      await expect(page.getByLabel('API Key')).toBeVisible();
+      await expect(page.getByLabel('Email or Username')).toHaveCount(0);
+    });
+  },
+);
