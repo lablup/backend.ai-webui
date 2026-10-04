@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-02
+> **Last Updated:** 2026-10-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -12,7 +12,7 @@
 
 **Scope:** Coverage metrics apply only to the routes listed below and do **not** include all entries from `react/src/routes.tsx`. Routes such as `/admin-dashboard` (not yet exposed in menu) and `/ai-agent` (experimental) are currently out of scope.
 
-**Overall (in-scope routes): 351 / 508 features covered (69%)**
+**Overall (in-scope routes): 357 / 508 features covered (70%)**
 
 | Page                     | Route                                            | Features | Covered | Status  |
 | ------------------------ | ------------------------------------------------ | :------: | :-----: | :-----: |
@@ -27,7 +27,7 @@
 | Service Launcher         | `/service/start`                                 |    5     |    1    | 🔶 20%  |
 | VFolder / Data           | `/data`                                          |    49    |   36    | 🔶 73%  |
 | Model Store              | `/model-store`                                   |    6     |    6    | ✅ 100% |
-| Admin Model Store        | `/admin-model-store`                             |    28    |   22    | 🔶 79%  |
+| Admin Model Store        | `/admin-model-store`                             |    28    |   28    | ✅ 100% |
 | Storage Host             | `/storage-settings/:hostname`                    |    3     |    0    |  ❌ 0%  |
 | My Environment           | `/my-environment`                                |    2     |    2    | ✅ 100% |
 | Environment              | `/environment`                                   |    27    |   21    | 🔶 78%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **508**  | **351** | **69%** |
+| **Total**                |                                                  | **508**  | **357** | **70%** |
 
 ---
 
@@ -479,38 +479,38 @@
 **Row actions:** Edit (setting icon), Delete (trash icon)
 **Bulk actions:** Bulk delete via header checkbox selection
 
-| Feature                                                   | Status | Test                                                                                                   |
-| --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------ |
-| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
-| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`                                                                   |
-| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
-| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`                                                                      |
-| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Create with required fields only                          | 🚧     | Skipped: `Superadmin can create a model card with only required fields` (backend `min_resource` kwarg) |
-| Create with all fields                                    | 🚧     | Skipped: `Superadmin can create a model card with all fields populated` (backend `min_resource` kwarg) |
-| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`                                                                      |
-| Open edit modal                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Update model card fields                                  | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Edit validation                                           | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Cancel edit modal                                         | 🚧     | Skipped: `admin-model-card-edit.spec.ts` (backend `min_resource` kwarg blocks the seed)                |
-| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`                                                                      |
-| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts`                                                              |
-| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`                                                                   |
+| Feature                                                   | Status | Test                                                             |
+| --------------------------------------------------------- | ------ | ---------------------------------------------------------------- |
+| Page load and table rendering                             | ✅     | `admin-model-card-page-load.spec.ts`                             |
+| Column visibility and pagination                          | ✅     | `admin-model-card-page-load.spec.ts`                             |
+| Name filter search                                        | ✅     | `admin-model-card-filter.spec.ts`                                |
+| Filter clear and empty state                              | ✅     | `admin-model-card-filter.spec.ts`                                |
+| Open create modal                                         | ✅     | `admin-model-card-create.spec.ts`                                |
+| Create with required fields only                          | ✅     | `Superadmin can create a model card with only required fields`   |
+| Create with all fields                                    | ✅     | `Superadmin can create a model card with all fields populated`   |
+| Create validation (name required)                         | ✅     | `admin-model-card-create.spec.ts`                                |
+| Create validation (VFolder required)                      | ✅     | `admin-model-card-create.spec.ts`                                |
+| Cancel create modal                                       | ✅     | `admin-model-card-create.spec.ts`                                |
+| Open edit modal                                           | ✅     | `Superadmin can open the Edit Model Card modal from a table row` |
+| Update model card fields                                  | ✅     | `Superadmin can update a model card's metadata fields`           |
+| Edit validation                                           | ✅     | `Superadmin cannot save an edit when the Name field is cleared`  |
+| Cancel edit modal                                         | ✅     | `Superadmin can cancel the Edit modal without saving changes`    |
+| Single delete with confirmation                           | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Cancel single delete                                      | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Delete card + folder together (checkbox)                  | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Notification + Go to Trash with folder filter             | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Delete card only, folder kept notification                | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Go to Trash without folder filter                         | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Bulk select and delete                                    | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Cancel bulk delete                                        | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Clear selection                                           | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Select all via header checkbox                            | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Bulk delete + move folders to trash (checkbox)            | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Bulk delete notification → Go to Trash (no folder filter) | ✅     | `admin-model-card-delete.spec.ts`                                |
+| Non-admin access blocked                                  | ✅     | `admin-model-card-access-control.spec.ts`                        |
+| URL state persistence (filter/sort/pagination)            | ✅     | `admin-model-card-url-state.spec.ts`                             |
 
-**Coverage: 🔶 22/28 features (6 skipped — `adminCreateModelCardV2` fails server-side with an unexpected `min_resource` kwarg)**
+**Coverage: ✅ 28/28 features**
 
 ---
 
