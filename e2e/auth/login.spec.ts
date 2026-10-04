@@ -189,7 +189,10 @@ test.describe(
       });
       await page.goto(webuiEndpoint);
 
-      const modeSwitch = page.getByRole('radiogroup', { name: 'Login' });
+      const modeSwitch = page.getByRole('radiogroup', {
+        name: 'Login',
+        exact: true,
+      });
       await expect(modeSwitch).toBeVisible();
       await expect(modeSwitch).toHaveAttribute('aria-disabled', 'true');
       await expect(
@@ -199,12 +202,11 @@ test.describe(
       await expect(apiRadio).toHaveAttribute('aria-disabled', 'true');
 
       await modeSwitch.hover();
-      await expect(
-        page.getByText(
-          'API sign-in needs a Manager endpoint. This WebUI is set to connect through a Backend.AI Webserver.',
-        ),
-      ).toBeVisible();
+      await expect(page.getByRole('tooltip')).toHaveText(
+        'API sign-in needs a Manager endpoint. This WebUI is set to connect through a Backend.AI Webserver.',
+      );
 
+      // force: the radio is aria-disabled; the click must be a no-op.
       await apiRadio.click({ force: true });
       await expect(
         modeSwitch.getByRole('radio', { name: 'Session' }),
@@ -226,7 +228,10 @@ test.describe(
       });
       await page.goto(webuiEndpoint);
 
-      const modeSwitch = page.getByRole('radiogroup', { name: 'Login' });
+      const modeSwitch = page.getByRole('radiogroup', {
+        name: 'Login',
+        exact: true,
+      });
       await expect(modeSwitch).toBeVisible();
       await expect(modeSwitch).not.toHaveAttribute('aria-disabled', 'true');
 
