@@ -1,6 +1,6 @@
 # E2E Test Coverage Report
 
-> **Last Updated:** 2026-10-02
+> **Last Updated:** 2026-10-04
 > **Router Source:** [`react/src/routes.tsx`](../react/src/routes.tsx)
 > **E2E Root:** [`e2e/`](.)
 >
@@ -34,7 +34,7 @@
 | Configurations           | `/settings`                                      |    11    |    9    | 🔶 82%  |
 | Resources                | `/agent-summary`, `/agent`                       |    10    |    3    | 🔶 30%  |
 | Resource Policy          | `/resource-policy`                               |    13    |   10    | 🔶 77%  |
-| User Credentials         | `/credential`                                    |    23    |   16    | 🔶 70%  |
+| User Credentials         | `/credential`                                    |    25    |   18    | 🔶 72%  |
 | Maintenance              | `/maintenance`                                   |    3     |    2    | 🔶 67%  |
 | User Settings            | `/usersettings`                                  |    10    |    1    | 🔶 10%  |
 | Project                  | `/project`                                       |    6     |    5    | 🔶 83%  |
@@ -54,7 +54,7 @@
 | Runtime Parameters       | `/admin/deployments?tab=runtime-variant-presets` |    5     |    5    | ✅ 100% |
 | Project-Agnostic Scope   | `/admin/*` (except `admin-dashboard`)            |    5     |    5    | ✅ 100% |
 | Global Search Palette    | (header, every route)                            |    8     |    8    | ✅ 100% |
-| **Total**                |                                                  | **508**  | **351** | **69%** |
+| **Total**                |                                                  | **510**  | **353** | **69%** |
 
 ---
 
@@ -722,7 +722,7 @@
 
 ### 17. User Credentials (`/credential`)
 
-**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts), [`e2e/user/user-project-membership.spec.ts`](user/user-project-membership.spec.ts)
+**Test files:** [`e2e/user/user-crud.spec.ts`](user/user-crud.spec.ts), [`e2e/user/bulk-user-creation.spec.ts`](user/bulk-user-creation.spec.ts), [`e2e/credential/credential-keypair.spec.ts`](credential/credential-keypair.spec.ts), [`e2e/user-profile/user-ip-restriction-enforcement.spec.ts`](user-profile/user-ip-restriction-enforcement.spec.ts), [`e2e/credential/bulk-create-from-csv.spec.ts`](credential/bulk-create-from-csv.spec.ts), [`e2e/credential/bulk-create-from-csv-submit.spec.ts`](credential/bulk-create-from-csv-submit.spec.ts), [`e2e/user/user-project-membership.spec.ts`](user/user-project-membership.spec.ts), [`e2e/user/user-login-unblock.spec.ts`](user/user-login-unblock.spec.ts)
 
 **Tabs:** Users | Credentials
 
@@ -731,7 +731,7 @@
 **Primary action:** "+" → `UserSettingModal`
 **Dropdown action:** "Bulk Create Users" → `UserSettingModal` (bulk mode)
 **Table link:** User name → `UserInfoModal`
-**Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm
+**Row actions:** Edit → `UserSettingModal`, Delete → Popconfirm, Unblock login (More actions) → confirm dialog
 **Bulk actions:** Bulk edit → `UpdateUsersModal`, Bulk delete → `PurgeUsersModal`
 
 | Feature                                                  | Status | Test                                                                                                                        |
@@ -748,6 +748,8 @@
 | Reactivate user                                          | ✅     | `Admin can reactivate an inactive user`                                                                                     |
 | Purge user → PurgeUsersModal                             | ✅     | `Admin can deactivate and permanently delete`                                                                               |
 | Deleted user login blocked                               | ✅     | `Deleted user cannot log in`                                                                                                |
+| Unblock login (More actions) → confirm → success toast   | ✅     | `Admin can unblock a user's failed-login lock from the user list`                                                           |
+| Locked-out user signs in again after unblock             | ✅     | `Locked-out user can log in again after admin unblocks`                                                                     |
 | Allowed IP restriction enforcement (active session)      | ✅     | `User can access pages when their current IP is in the allowed list` / `User is denied access after admin revokes their IP` |
 | User name click → UserInfoModal                          | ❌     | -                                                                                                                           |
 | Bulk edit → UpdateUsersModal                             | ❌     | -                                                                                                                           |
@@ -769,7 +771,7 @@
 | Edit keypair → KeypairSettingModal             | ❌     | -                                                     |
 | SSH key management → SSHKeypairManagementModal | ❌     | -                                                     |
 
-**Coverage: 🔶 16/23 features**
+**Coverage: 🔶 18/25 features**
 
 ---
 
