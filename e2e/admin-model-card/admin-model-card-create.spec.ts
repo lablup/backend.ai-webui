@@ -118,12 +118,7 @@ test.describe(
     });
 
     // 3.2 Superadmin can create a model card with only required fields
-    // BLOCKED BY BACKEND: `adminCreateModelCardV2` currently fails server-side
-    // with "ModelCardGQL.__init__() got an unexpected keyword argument
-    // 'min_resource'" (backendai_generic_internal-error). The locators in this
-    // test are correct; the mutation itself cannot succeed until the manager
-    // is fixed.
-    test.fixme('Superadmin can create a model card with only required fields', async ({
+    test('Superadmin can create a model card with only required fields', async ({
       page,
     }) => {
       test.setTimeout(90000);
@@ -185,7 +180,11 @@ test.describe(
       }
 
       // Verify success message
-      await expect(page.getByText('Model card has been created.')).toBeVisible({
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText('Model card has been created.'),
+      ).toBeVisible({
         timeout: 15000,
       });
 
@@ -214,12 +213,7 @@ test.describe(
     });
 
     // 3.3 Superadmin can create a model card with all fields populated
-    // BLOCKED BY BACKEND: `adminCreateModelCardV2` currently fails server-side
-    // with "ModelCardGQL.__init__() got an unexpected keyword argument
-    // 'min_resource'" (backendai_generic_internal-error). The locators in this
-    // test are correct; the mutation itself cannot succeed until the manager
-    // is fixed.
-    test.fixme('Superadmin can create a model card with all fields populated', async ({
+    test('Superadmin can create a model card with all fields populated', async ({
       page,
     }) => {
       test.setTimeout(90000);
@@ -329,7 +323,11 @@ test.describe(
       }
 
       // Verify success message
-      await expect(page.getByText('Model card has been created.')).toBeVisible({
+      await expect(
+        adminModelCardPage
+          .getToastRegion()
+          .getByText('Model card has been created.'),
+      ).toBeVisible({
         timeout: 15000,
       });
 
