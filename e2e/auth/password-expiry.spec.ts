@@ -210,11 +210,16 @@ test.describe('real account password change flow', () => {
 
   test.afterEach(async () => {
     if (!userCreated) return;
-    const api = await createAdminApiContext();
     try {
-      await purgeUserViaApi(api, USER_EMAIL);
-    } finally {
-      await api.dispose();
+      const api = await createAdminApiContext();
+      try {
+        await purgeUserViaApi(api, USER_EMAIL);
+      } finally {
+        await api.dispose();
+      }
+    } catch (error) {
+      // Best-effort: the global sweep reclaims leaked e2e-* users.
+      console.warn(`Cleanup of ${USER_EMAIL} failed: ${String(error)}`);
     }
   });
 
