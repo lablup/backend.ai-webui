@@ -119,6 +119,20 @@ describe('devWebUiOrigin', () => {
     );
   });
 
+  it('derives gh-N from the branch of a GitHub-native issue', () => {
+    const cwd = repoOnBranch('fix/gh-10144-drawer-header');
+    expect(devWebUiOrigin(cwd, env(portlessState([])))).toBe(
+      'https://gh-10144.localhost:1357',
+    );
+    const state = portlessState([
+      { hostname: 'fr-10144.localhost' },
+      { hostname: 'gh-10144-pr10150-drawer.localhost' },
+    ]);
+    expect(devWebUiOrigin(cwd, env(state))).toBe(
+      'https://gh-10144-pr10150-drawer.localhost:1357',
+    );
+  });
+
   it('does not match a different issue that merely shares a prefix', () => {
     const cwd = repoOnBranch('FR-366');
     const state = portlessState([

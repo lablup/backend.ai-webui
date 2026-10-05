@@ -7,6 +7,8 @@
 //   \_____/   \____/   \_______/
 //   issue     PR       what it is
 //
+// The issue part is `fr-N` for a Jira key and `gh-N` for a GitHub-native issue.
+//
 // Identifiers come first because they are what you scan for and what stays the
 // same length; the descriptive part goes last so truncation eats the least
 // important characters. The descriptive part prefers a human-supplied name
@@ -23,13 +25,13 @@
 const MAX_LEN = 50;
 const MAX_TITLE_WORDS = 3;
 
-/** `fr` immediately followed by digits, at a slug boundary, is an issue key. */
-const ISSUE_TOKEN = /(^|-)fr(\d+)(?=-|$)/g;
+/** `fr` / `gh` immediately followed by digits, at a slug boundary, is an issue key. */
+const ISSUE_TOKEN = /(^|-)(fr|gh)(\d+)(?=-|$)/g;
 
-/** The FR-#### anywhere in a branch name (`fix/FR-1234-thing`, `fr1234`, …). */
-const BRANCH_ISSUE = /(?:^|[-_/])(fr-?\d+)/i;
+/** The issue key anywhere in a branch name (`fix/FR-1234-thing`, `fr1234`, `fix/gh-1234-thing`, …). */
+const BRANCH_ISSUE = /(?:^|[-_/])((?:fr|gh)-?\d+)/i;
 
-/** `fix(FR-1234):` / `docs:` — the conventional-commit prefix, which says nothing. */
+/** `fix(FR-1234):` / `fix(#1234):` / `docs:` — the conventional-commit prefix, which says nothing. */
 const COMMIT_PREFIX = /^\s*\w+\s*(\([^)]*\))?\s*:\s*/;
 
 /** Words that survive slugification but carry no meaning in a hostname. */
@@ -52,19 +54,20 @@ export function sanitizeAppName(raw) {
     .replace(/[^a-z0-9-]+/g, '-')
     .replace(/-{2,}/g, '-')
     .replace(/^-+|-+$/g, '')
-    // `fr1234` and `fr-1234` name the same issue, so they must produce the same
-    // hostname whichever source supplied the name. Anchoring on a slug boundary
-    // keeps words that merely start with "fr" (frame123) intact.
+    // `fr1234` and `fr-1234` name the same issue (as do `gh1234` and `gh-1234`),
+    // so they must produce the same hostname whichever source supplied the name.
+    // Anchoring on a slug boundary keeps words that merely start with "fr"
+    // (frame123) intact.
     //
     // Normalize BEFORE the cap: this inserts a dash, so capping first would let a
     // 50-char input ending in `-fr123` come back out at 51.
-    .replace(ISSUE_TOKEN, '$1fr-$2')
+    .replace(ISSUE_TOKEN, '$1$2-$3')
     .slice(0, MAX_LEN)
     .replace(/-+$/, ''); // the slice can land mid-word and leave a trailing dash
   return slug || null;
 }
 
-/** The FR-#### issue key in a branch name, as an app name, or null if it has none. */
+/** The issue key (`FR-####` or `gh-####`) in a branch name, as an app name, or null if it has none. */
 export function branchAppName(branch) {
   const match = (branch || '').match(BRANCH_ISSUE);
   return match ? sanitizeAppName(match[1]) : null;

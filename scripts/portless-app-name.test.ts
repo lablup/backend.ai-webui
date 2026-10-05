@@ -53,6 +53,12 @@ describe('portless app name', () => {
       expect(sanitizeAppName('frame123')).toBe('frame123');
       expect(sanitizeAppName('french75')).toBe('french75');
     });
+
+    it('normalizes a GitHub-native issue key the same way', () => {
+      expect(sanitizeAppName('GH10144')).toBe('gh-10144');
+      expect(sanitizeAppName('gh-10144')).toBe('gh-10144');
+      expect(sanitizeAppName('high5')).toBe('high5');
+    });
   });
 
   describe('branchAppName', () => {
@@ -62,6 +68,12 @@ describe('portless app name', () => {
       ['fix/FR-1234-statusline', 'fr-1234'],
       ['jongeun/FR-1234-x', 'fr-1234'],
       ['topic/fr1234-x', 'fr-1234'],
+      ['fix/gh-10144-drawer-header', 'gh-10144'],
+      ['gh-10144', 'gh-10144'],
+      ['jongeun/GH-10144-x', 'gh-10144'],
+      ['topic/gh10144-x', 'gh-10144'],
+      // The Jira key wins when a branch somehow names both.
+      ['fix/FR-1234-gh-10144-x', 'fr-1234'],
     ])('derives %s -> %s', (branch, expected) => {
       expect(branchAppName(branch)).toBe(expected);
     });
@@ -69,6 +81,8 @@ describe('portless app name', () => {
     it('returns null for a branch with no issue key', () => {
       expect(branchAppName('main')).toBeNull();
       expect(branchAppName('')).toBeNull();
+      // `gh-` inside a word is not an issue key.
+      expect(branchAppName('fix/through-123')).toBeNull();
     });
   });
 
@@ -79,6 +93,7 @@ describe('portless app name', () => {
       expect(titleWord('docs: update statistics docs (2026-08-24)')).toBe('update-statistics-docs');
       expect(titleWord('feat(FR-3668): redesign scheduling-history sub-steps as a compact inline row'))
         .toBe('redesign-scheduling-history');
+      expect(titleWord('fix(#10144): keep the drawer header visible')).toBe('keep-drawer-header');
     });
 
     it('normalizes an issue key that survives into the words', () => {
@@ -157,6 +172,23 @@ describe('portless app name', () => {
     it('returns the name verbatim when the caller owns the hostname', () => {
       expect(resolveAppName({ envName: 'v26-4-8-rc-3', branch: 'fix/FR-3665-x', pr, exact: true }))
         .toBe('v26-4-8-rc-3');
+    });
+
+    describe('on the branch of a GitHub-native issue', () => {
+      const ghPr = { number: 10150, title: 'fix(#10144): keep the drawer header visible' };
+
+      it('puts gh-N where an FR branch puts fr-N', () => {
+        expect(resolveAppName({ envName: 'word', branch: 'fix/gh-10144-drawer-header', pr: ghPr }))
+          .toBe('gh-10144-pr10150-word');
+        expect(resolveAppName({ branch: 'fix/gh-10144-drawer-header', pr: ghPr }))
+          .toBe('gh-10144-pr10150-keep-drawer-header');
+        expect(resolveAppName({ branch: 'fix/gh-10144-drawer-header' })).toBe('gh-10144');
+      });
+
+      it('does not duplicate the issue key a caller passed in', () => {
+        expect(resolveAppName({ envName: 'gh-10144', branch: 'fix/gh-10144-x', pr: ghPr }))
+          .toBe('gh-10144-pr10150');
+      });
     });
 
     it('returns null so the caller can let portless auto-derive', () => {
