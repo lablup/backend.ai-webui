@@ -1,0 +1,11 @@
+/**
+ @license
+ Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
+
+ Co-located styles for <BAIAppShell> (FR-3612).
+
+ `@layer components` per the order statement in `styles/backend.ai-ui.css`:
+ Astryx ships its component CSS in `@layer astryx-base`, which `components`
+ outranks — so every override below beats the AppShell / MobileNav defaults it
+ targets regardless of specificity.
+*/@layer components{.astryx-app-shell-sidenav.astryx-layout-panel{overflow:visible}.bai-app-shell-drawer>div>div:first-child{background-color:var(--color-accent);height:60px}.bai-app-shell-drawer--on-dark>div>div:first-child{color:var(--color-on-dark);--color-text-primary: var(--color-on-dark);--color-icon-primary: var(--color-on-dark)}.bai-app-shell-drawer--on-light>div>div:first-child{color:var(--color-on-light);--color-text-primary: var(--color-on-light);--color-icon-primary: var(--color-on-light)}.bai-app-shell-drawer-brand{display:flex;align-items:center;flex-shrink:0;padding-inline-start:var(--spacing-6)}}

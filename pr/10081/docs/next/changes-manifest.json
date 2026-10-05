@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-02T07:34:47.799Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 2,
+        "changes": 12,
+        "added": 0,
+        "modified": 8,
+        "removed": 4,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "Admin Features",
+          "status": "modified",
+          "url": "next/en/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 3,
+            "images": 0,
+            "total": 10
+          },
+          "fingerprints": [
+            "90544a584f88",
+            "ed1e65186191",
+            "e3cecd5b2537",
+            "d665609d61a6",
+            "a3f1c11f6429",
+            "7ea8e817ddeb",
+            "149d013f42df",
+            "a8019da5346d",
+            "0ba68a7568bf",
+            "436b5df0c056"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "User Settings",
+          "status": "modified",
+          "url": "next/en/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "e90baa3f3250",
+            "84dcac1f3696"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 2,
+        "changes": 12,
+        "added": 0,
+        "modified": 8,
+        "removed": 4,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "管理者機能",
+          "status": "modified",
+          "url": "next/ja/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 3,
+            "images": 0,
+            "total": 10
+          },
+          "fingerprints": [
+            "3ec9b2cd22c6",
+            "528627d9e9b1",
+            "21a4f8b246a8",
+            "0259a28190df",
+            "a2d4657a29b4",
+            "e4a80cfa8797",
+            "8ec38c20d65f",
+            "f57e71ab5390",
+            "d36ce0c2763a",
+            "64cd67b820e5"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ユーザー設定",
+          "status": "modified",
+          "url": "next/ja/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "c19aa74fe4ba",
+            "5de58ff54d49"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 2,
+        "changes": 12,
+        "added": 0,
+        "modified": 8,
+        "removed": 4,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "관리자 기능",
+          "status": "modified",
+          "url": "next/ko/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 3,
+            "images": 0,
+            "total": 10
+          },
+          "fingerprints": [
+            "625960d6e122",
+            "21528130168e",
+            "ed2157795272",
+            "e155c1eabffa",
+            "1f5946bb7e86",
+            "4fbfe970a3d0",
+            "da1e5f1ae4e2",
+            "bd3474943b63",
+            "5e9900d37766",
+            "367cd77d517b"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "사용자 설정",
+          "status": "modified",
+          "url": "next/ko/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "9c29ef0b512f",
+            "eadb34861064"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 2,
+        "changes": 12,
+        "added": 0,
+        "modified": 8,
+        "removed": 4,
+        "images": 0,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "admin_menu",
+          "title": "ฟีเจอร์ผู้ดูแลระบบ",
+          "status": "modified",
+          "url": "next/th/admin_menu.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/admin_menu/admin_menu.md",
+          "counts": {
+            "added": 0,
+            "modified": 7,
+            "removed": 3,
+            "images": 0,
+            "total": 10
+          },
+          "fingerprints": [
+            "eafc9d5fd7dd",
+            "e680ea8ba5bd",
+            "d60c351ff4a9",
+            "ea5aa9c937c5",
+            "d6ee50d3592d",
+            "eb22748245bf",
+            "1e9bab3f05b6",
+            "9bd0e603f281",
+            "87427c949c8b",
+            "1e0d82e708b7"
+          ]
+        },
+        {
+          "slug": "user_settings",
+          "title": "ตั้งค่าผู้ใช้",
+          "status": "modified",
+          "url": "next/th/user_settings.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/user_settings/user_settings.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 1,
+            "images": 0,
+            "total": 2
+          },
+          "fingerprints": [
+            "f534574e4191",
+            "ed524749b5c6"
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "channel": "next",
+  "label": "PR preview",
+  "generatedAt": "2026-10-04T15:32:18.954Z",
+  "languages": [
+    "en",
+    "ja",
+    "ko",
+    "th"
+  ],
+  "langs": {
+    "en": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "my_environments",
+          "title": "My Environments",
+          "status": "modified",
+          "url": "next/en/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/en/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "6f3be675a88d"
+          ]
+        }
+      ]
+    },
+    "ja": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "my_environments",
+          "title": "マイ環境",
+          "status": "modified",
+          "url": "next/ja/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ja/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "1f67cd25d448"
+          ]
+        }
+      ]
+    },
+    "ko": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "my_environments",
+          "title": "내 환경",
+          "status": "modified",
+          "url": "next/ko/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/ko/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "440d9ec33cc9"
+          ]
+        }
+      ]
+    },
+    "th": {
+      "totals": {
+        "pages": 1,
+        "changes": 1,
+        "added": 0,
+        "modified": 1,
+        "removed": 0,
+        "images": 1,
+        "newPages": 0,
+        "deletedPages": 0
+      },
+      "pages": [
+        {
+          "slug": "my_environments",
+          "title": "สภาพแวดล้อมของฉัน",
+          "status": "modified",
+          "url": "next/th/my_environments.html",
+          "sourcePath": "packages/backend.ai-webui-docs/src/th/my_environments/my_environments.md",
+          "counts": {
+            "added": 0,
+            "modified": 1,
+            "removed": 0,
+            "images": 1,
+            "total": 1
+          },
+          "fingerprints": [
+            "7dda9225d0cf"
+          ]
+        }
+      ]
+    }
+  }
+}
