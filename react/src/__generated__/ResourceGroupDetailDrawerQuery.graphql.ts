@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<31398d03523fbe92c985457ad12d9157>>
+ * @generated SignedSource<<f22dc3dfa83db2b9a4e0064d8904ef03>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -86,7 +86,6 @@ export type ResourceGroupDetailDrawerQuery$data = {
         };
         readonly status: {
           readonly isActive: boolean;
-          readonly isDefault: boolean;
           readonly isPublic: boolean;
         };
       };
@@ -182,13 +181,6 @@ v2 = [
                     "args": null,
                     "kind": "ScalarField",
                     "name": "isPublic",
-                    "storageKey": null
-                  },
-                  {
-                    "alias": null,
-                    "args": null,
-                    "kind": "ScalarField",
-                    "name": "isDefault",
                     "storageKey": null
                   }
                 ],
@@ -313,16 +305,16 @@ return {
     "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "8de50b80ec6514f777dcee6a057a8ffb",
+    "cacheID": "b1313a5f8cdf4476ea02293b14fc2d19",
     "id": null,
     "metadata": {},
     "name": "ResourceGroupDetailDrawerQuery",
     "operationKind": "query",
-    "text": "query ResourceGroupDetailDrawerQuery(\n  $name: String!\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n        name\n        status {\n          isActive\n          isPublic\n          isDefault\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n  scaling_group(name: $name) {\n    scheduler_opts\n  }\n}\n"
+    "text": "query ResourceGroupDetailDrawerQuery(\n  $name: String!\n  $filter: ResourceGroupFilter\n) {\n  adminResourceGroups(filter: $filter, limit: 1) {\n    edges {\n      node {\n        id\n        name\n        status {\n          isActive\n          isPublic\n        }\n        metadata {\n          description\n          createdAt\n        }\n        network {\n          wsproxyAddr\n        }\n        scheduler {\n          type\n        }\n      }\n    }\n  }\n  scaling_group(name: $name) {\n    scheduler_opts\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "dcea7b94f6e2022eb26c492f41092b50";
+(node as any).hash = "f9375657e9034bddf63cd067341cd624";
 
 export default node;
