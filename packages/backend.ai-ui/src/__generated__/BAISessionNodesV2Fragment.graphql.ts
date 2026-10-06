@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<19aef1a7819b71d35f432aa53d812759>>
+ * @generated SignedSource<<cb3ccc916531fbbb9d8f14beda0e3d99>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,6 +12,9 @@ import { ReaderFragment } from 'relay-runtime';
 export type SessionV2Status = "CANCELLED" | "CREATING" | "DEPRIORITIZING" | "PENDING" | "PREEMPTED" | "PREPARED" | "PREPARING" | "RESCHEDULING" | "RESERVED" | "RUNNING" | "SCHEDULED" | "TERMINATED" | "TERMINATING" | "%future added value";
 import { FragmentRefs } from "relay-runtime";
 export type BAISessionNodesV2Fragment$data = ReadonlyArray<{
+  readonly entityLabels: {
+    readonly " $fragmentSpreads": FragmentRefs<"BAIEntityLabelSettingModalFragment" | "BAIEntityLabelTokensFragment">;
+  } | null | undefined;
   readonly id: string;
   readonly images: {
     readonly edges: ReadonlyArray<{
@@ -316,6 +319,33 @@ return {
         }
       ],
       "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": [
+        {
+          "kind": "Literal",
+          "name": "limit",
+          "value": 100
+        }
+      ],
+      "concreteType": "EntityLabelConnection",
+      "kind": "LinkedField",
+      "name": "entityLabels",
+      "plural": false,
+      "selections": [
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelTokensFragment"
+        },
+        {
+          "args": null,
+          "kind": "FragmentSpread",
+          "name": "BAIEntityLabelSettingModalFragment"
+        }
+      ],
+      "storageKey": "entityLabels(limit:100)"
     }
   ],
   "type": "SessionV2",
@@ -323,6 +353,6 @@ return {
 };
 })();
 
-(node as any).hash = "01dc6fe81a8e934f2a322fb7442bea58";
+(node as any).hash = "6fc02cb83f112977d83879260a129bd0";
 
 export default node;

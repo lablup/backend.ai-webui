@@ -4,6 +4,7 @@
  */
 import {
   BAIColumnType,
+  BAIEntityLabelTokens,
   BAIFlex,
   BAIId,
   BAIImageNodeSimpleTagV2,
@@ -15,6 +16,7 @@ import {
   badgeVariantForStatus,
   filterOutEmpty,
   filterOutNullAndUndefined,
+  useIsLabelableEntityType,
 } from '..';
 import type {
   BAISessionNodesV2Fragment$data,
@@ -139,6 +141,7 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
 }) => {
   'use memo';
   const { t } = useBAIi18n();
+  const isLabelable = useIsLabelableEntityType('session');
 
   const sessions = useFragment(
     graphql`
@@ -191,6 +194,10 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
             email
           }
         }
+        entityLabels(limit: 100) {
+          ...BAIEntityLabelTokensFragment
+          ...BAIEntityLabelSettingModalFragment
+        }
       }
     `,
     sessionsFrgmt,
@@ -239,6 +246,13 @@ const BAISessionNodesV2: React.FC<BAISessionNodesV2Props> = ({
             />
           );
         },
+      },
+      isLabelable && {
+        key: 'labels',
+        title: t('comp:BAIEntityLabelTokens.Labels'),
+        render: (__, session) => (
+          <BAIEntityLabelTokens entityLabelsFrgmt={session.entityLabels} />
+        ),
       },
       // TODO: SessionV2 does not yet expose live utilization (no `live_stat`),
       // so the AI accelerator / CPU / memory columns show only the occupied

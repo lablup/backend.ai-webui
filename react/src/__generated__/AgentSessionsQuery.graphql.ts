@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<1203f78990532b29d47173558e4e4d9f>>
+ * @generated SignedSource<<1c8472cff3ac30a0c8a8a7f6e43e2c62>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -284,21 +284,23 @@ v10 = [
     "storageKey": null
   }
 ],
-v11 = [
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "key",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "value",
-    "storageKey": null
-  }
+v11 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "key",
+  "storageKey": null
+},
+v12 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "value",
+  "storageKey": null
+},
+v13 = [
+  (v11/*: any*/),
+  (v12/*: any*/)
 ];
 return {
   "fragment": {
@@ -657,7 +659,7 @@ return {
                                                 "kind": "LinkedField",
                                                 "name": "tags",
                                                 "plural": true,
-                                                "selections": (v11/*: any*/),
+                                                "selections": (v13/*: any*/),
                                                 "storageKey": null
                                               },
                                               {
@@ -667,7 +669,7 @@ return {
                                                 "kind": "LinkedField",
                                                 "name": "labels",
                                                 "plural": true,
-                                                "selections": (v11/*: any*/),
+                                                "selections": (v13/*: any*/),
                                                 "storageKey": null
                                               }
                                             ],
@@ -711,6 +713,55 @@ return {
                                   }
                                 ],
                                 "storageKey": null
+                              },
+                              {
+                                "alias": null,
+                                "args": [
+                                  {
+                                    "kind": "Literal",
+                                    "name": "limit",
+                                    "value": 100
+                                  }
+                                ],
+                                "concreteType": "EntityLabelConnection",
+                                "kind": "LinkedField",
+                                "name": "entityLabels",
+                                "plural": false,
+                                "selections": [
+                                  {
+                                    "alias": null,
+                                    "args": null,
+                                    "concreteType": "EntityLabelEdge",
+                                    "kind": "LinkedField",
+                                    "name": "edges",
+                                    "plural": true,
+                                    "selections": [
+                                      {
+                                        "alias": null,
+                                        "args": null,
+                                        "concreteType": "EntityLabel",
+                                        "kind": "LinkedField",
+                                        "name": "node",
+                                        "plural": false,
+                                        "selections": [
+                                          (v11/*: any*/),
+                                          (v12/*: any*/),
+                                          (v6/*: any*/),
+                                          {
+                                            "alias": null,
+                                            "args": null,
+                                            "kind": "ScalarField",
+                                            "name": "fieldId",
+                                            "storageKey": null
+                                          }
+                                        ],
+                                        "storageKey": null
+                                      }
+                                    ],
+                                    "storageKey": null
+                                  }
+                                ],
+                                "storageKey": "entityLabels(limit:100)"
                               }
                             ],
                             "storageKey": null
@@ -733,12 +784,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "b86c63d112d9f8d9a385ad841de2c877",
+    "cacheID": "23a1a2035e380dd4ded681da2cce210c",
     "id": null,
     "metadata": {},
     "name": "AgentSessionsQuery",
     "operationKind": "query",
-    "text": "query AgentSessionsQuery(\n  $agentFilter: AgentFilter\n  $sessionFilter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  agentsV2(filter: $agentFilter, limit: 1) {\n    edges {\n      node {\n        id\n        sessions(filter: $sessionFilter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              ...BAISessionNodesV2Fragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
+    "text": "query AgentSessionsQuery(\n  $agentFilter: AgentFilter\n  $sessionFilter: SessionV2Filter\n  $orderBy: [SessionV2OrderBy!]\n  $limit: Int\n  $offset: Int\n) {\n  agentsV2(filter: $agentFilter, limit: 1) {\n    edges {\n      node {\n        id\n        sessions(filter: $sessionFilter, orderBy: $orderBy, limit: $limit, offset: $offset) {\n          count\n          edges {\n            node {\n              id\n              ...BAISessionNodesV2Fragment\n            }\n          }\n        }\n      }\n    }\n  }\n}\n\nfragment BAIEntityLabelSettingModalFragment on EntityLabelConnection {\n  edges {\n    node {\n      fieldId\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIEntityLabelTokensFragment on EntityLabelConnection {\n  edges {\n    node {\n      key\n      value\n      id\n    }\n  }\n}\n\nfragment BAIImageNodeSimpleTagV2Fragment on ImageV2 {\n  identity {\n    canonicalName\n    architecture\n  }\n  metadata {\n    tags {\n      key\n      value\n    }\n    labels {\n      key\n      value\n    }\n  }\n}\n\nfragment BAISessionClusterModeV2Fragment on SessionV2MetadataInfo {\n  clusterMode\n  clusterSize\n}\n\nfragment BAISessionNodesV2Fragment on SessionV2 {\n  id\n  project {\n    id\n    basicInfo {\n      name\n    }\n  }\n  metadata {\n    name\n    ...BAISessionTypeTokenV2Fragment\n    ...BAISessionClusterModeV2Fragment\n  }\n  lifecycle {\n    status\n    createdAt\n    terminatedAt\n  }\n  resource {\n    resourceGroupName\n    allocation {\n      requested {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n      used {\n        entries {\n          resourceType\n          quantity\n        }\n      }\n    }\n  }\n  images {\n    edges {\n      node {\n        id\n        ...BAIImageNodeSimpleTagV2Fragment\n      }\n    }\n  }\n  user {\n    id\n    basicInfo {\n      email\n    }\n  }\n  entityLabels(limit: 100) {\n    ...BAIEntityLabelTokensFragment\n    ...BAIEntityLabelSettingModalFragment\n  }\n}\n\nfragment BAISessionTypeTokenV2Fragment on SessionV2MetadataInfo {\n  sessionType\n}\n"
   }
 };
 })();
