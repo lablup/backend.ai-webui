@@ -27,12 +27,12 @@ import { Button } from '@lablup/ui-common/Button';
 import { IconButton } from '@lablup/ui-common/IconButton';
 import { Text } from '@lablup/ui-common/Text';
 import { Token } from '@lablup/ui-common/Token';
-import { BAISkeleton } from 'backend.ai-ui';
 import {
   BAIFlex,
   BAIPropertyFilter,
   BAISelectionLabel,
   BAIResourceNumberWithIcon,
+  BAISelect,
   BAITable,
   BAIText,
   BAIBooleanToken,
@@ -172,7 +172,16 @@ const ImageList: React.FC<ImageListProps> = ({
   const projectSelect = (
     <BAIFlex gap="xs" align="center" wrap="wrap">
       <Text color="secondary">{t('general.Project')}</Text>
-      <Suspense fallback={<BAISkeleton variant="input" size="small" />}>
+      <Suspense
+        fallback={
+          <BAISelect
+            loading
+            disabled
+            placeholder={t('environment.AllProjects')}
+            style={{ minWidth: 180 }}
+          />
+        }
+      >
         <ProjectSelectForAdminPage
           data-testid="environment-project-select"
           domain={baiClient._config.domainName}
