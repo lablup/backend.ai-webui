@@ -73,8 +73,6 @@ export interface BAIUserSelectProps extends Omit<
   domainId?: string;
 }
 
-type ScopedProps = Omit<BAIUserSelectProps, 'projectId' | 'domainId'>;
-
 type UserV2Edge =
   | {
       readonly node?: {
@@ -105,8 +103,11 @@ const readUsers = (
 
 const PAGE_SIZE = 10;
 
-/** Everything a scope variant feeds its two queries from, and the view reads. */
-const useUserSelectState = ({
+type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
+
+const UserOptions: React.FC<BAIUserSelectProps> = ({
+  projectId,
+  domainId,
   filter: filterFromProps,
   excludeInactive = false,
   valuePropName = 'email',
@@ -114,8 +115,10 @@ const useUserSelectState = ({
   isLoading,
   ref,
   ...selectProps
-}: ScopedProps) => {
+}) => {
   'use memo';
+  const { t } = useBAIi18n();
+  const baiClient = useConnectedBAIClient();
   const [controllableValue, setControllableValue] = useControllableValue<
     string | Array<string> | null | undefined
   >(selectProps as Record<string, unknown>, {
@@ -150,6 +153,31 @@ const useUserSelectState = ({
     [updateFetchKey, startRefetchTransition],
   );
 
+  // `UserScope.domain` takes a UUID; the client only knows the current domain's name.
+  const { domainV2 } = useLazyLoadQuery<BAIUserSelectCurrentDomainQuery>(
+    graphql`
+      query BAIUserSelectCurrentDomainQuery(
+        $domainName: String!
+        $skip: Boolean!
+      ) {
+        domainV2(domainName: $domainName) @skip(if: $skip) {
+          entityId
+        }
+      }
+    `,
+    {
+      domainName: baiClient._config.domainName,
+      skip: !!projectId || !!domainId,
+    },
+  );
+  const resolvedDomainId = domainId ?? domainV2?.entityId;
+  if (!projectId && !resolvedDomainId) {
+    throw new Error(`Domain not found: ${baiClient._config.domainName}`);
+  }
+  const scope: UserScope = projectId
+    ? { project: [{ value: projectId }] }
+    : { domain: [{ value: resolvedDomainId as string }] };
+
   const baseFilter = combineFilters<BAIUserSelectFilter>([
     excludeInactive ? { status: { equals: 'ACTIVE' } } : null,
     filterFromProps,
@@ -164,175 +192,6 @@ const useUserSelectState = ({
   const shouldResolveSelected =
     valuePropName === 'id' && selectedKeys.length > 0;
 
-  return {
-    multiple,
-    isLoading,
-    valuePropName,
-    selectProps,
-    selectedKeys,
-    controllableValue,
-    setControllableValue,
-    controllableOpen,
-    setControllableOpen,
-    deferredOpen,
-    deferredControllableValue,
-    searchStr,
-    setSearchStr,
-    debouncedDeferredValue,
-    isPendingRefetch,
-    listVariables: {
-      filter: combineFilters<BAIUserSelectFilter>([
-        baseFilter,
-        debouncedDeferredValue
-          ? { email: { iContains: debouncedDeferredValue } }
-          : null,
-      ]),
-      orderBy: [{ field: 'EMAIL', direction: 'ASC' }] as const,
-    },
-    listOptions: {
-      // The open state comes back out of the Astryx popup.
-      fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
-      fetchKey: deferredFetchKey,
-    } as const,
-    valueVariables: {
-      selectedFilter: shouldResolveSelected
-        ? combineFilters<BAIUserSelectFilter>([
-            { uuid: { in: selectedKeys } },
-            baseFilter,
-          ])
-        : null,
-      limit: Math.max(selectedKeys.length, 1),
-      skipSelected: !shouldResolveSelected,
-    },
-    valueOptions: {
-      fetchPolicy: shouldResolveSelected ? 'store-or-network' : 'store-only',
-      fetchKey: deferredFetchKey,
-    } as const,
-  };
-};
-
-type UserSelectState = ReturnType<typeof useUserSelectState>;
-
-interface UserSelectViewProps {
-  state: UserSelectState;
-  users: Array<BAIUserSelectUser> | undefined;
-  selectedUsers: Array<BAIUserSelectUser>;
-  total: number | null | undefined;
-  loadNext: () => void;
-  isLoadingNext: boolean;
-}
-
-const UserSelectView: React.FC<UserSelectViewProps> = ({
-  state,
-  users,
-  selectedUsers,
-  total,
-  loadNext,
-  isLoadingNext,
-}) => {
-  'use memo';
-  const { t } = useBAIi18n();
-  const {
-    multiple,
-    isLoading,
-    valuePropName,
-    selectProps,
-    selectedKeys,
-    controllableValue,
-    setControllableValue,
-    controllableOpen,
-    setControllableOpen,
-    deferredOpen,
-    deferredControllableValue,
-    searchStr,
-    setSearchStr,
-    debouncedDeferredValue,
-    isPendingRefetch,
-  } = state;
-
-  const keyOfUser = (
-    user: BAIUserSelectUser | null | undefined,
-  ): string | undefined => {
-    if (!user) return undefined;
-    return valuePropName === 'id'
-      ? toLocalId(user.id)
-      : (user.email ?? undefined);
-  };
-
-  const options = _.compact(
-    _.map(users, (item) => {
-      const key = keyOfUser(item);
-      return key
-        ? {
-            value: key,
-            label: item?.email ?? key,
-            description: item?.fullName ?? undefined,
-          }
-        : null;
-    }),
-  );
-
-  /** Plain keys -> labelInValue, resolving each label where we can. */
-  const labeledValue: BAIComplexSelectValue = (() => {
-    const emailByKey = new Map(
-      _.compact(
-        _.map(selectedUsers, (user) => {
-          const key = keyOfUser(user);
-          return key ? ([key, user.email] as const) : null;
-        }),
-      ),
-    );
-    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => ({
-      // Echoing the key as its own label is the antd fallback, made explicit.
-      label: emailByKey.get(key) ?? key,
-      value: key,
-    }));
-    if (multiple) return labeled;
-    return labeled[0] ?? null;
-  })();
-
-  return (
-    <BAIComplexSelect
-      placeholder={t('comp:BAIUserSelect.SelectUser')}
-      {...selectProps}
-      multiple={multiple}
-      isLoading={
-        isLoading ||
-        // The open-driven `network-only` refetch is a deferred update and
-        // raises no pending flag of its own (FR-3724); only opening counts.
-        (!!controllableOpen && !deferredOpen) ||
-        controllableValue !== deferredControllableValue ||
-        searchStr !== debouncedDeferredValue ||
-        isPendingRefetch
-      }
-      isLoadingNext={isLoadingNext}
-      total={total ?? undefined}
-      options={options}
-      value={labeledValue}
-      onChange={(next) => {
-        const labeled = _.compact(_.castArray(next ?? []));
-        const keys = _.map(labeled, (v) => v.value);
-        setControllableValue(
-          multiple ? keys : keys[0],
-          multiple ? labeled : labeled[0],
-        );
-      }}
-      searchValue={searchStr}
-      onSearch={setSearchStr}
-      onOpenChange={setControllableOpen}
-      endReached={loadNext}
-    />
-  );
-};
-
-type UserScope = BAIUserSelectScopedPaginatedQuery['variables']['scope'];
-
-const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
-  userScope,
-  ...props
-}) => {
-  'use memo';
-  const state = useUserSelectState(props);
   const selected = useLazyLoadQuery<BAIUserSelectScopedValueQuery>(
     graphql`
       query BAIUserSelectScopedValueQuery(
@@ -355,9 +214,23 @@ const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
         }
       }
     `,
-    { ...state.valueVariables, scope: userScope },
-    state.valueOptions,
+    {
+      scope,
+      selectedFilter: shouldResolveSelected
+        ? combineFilters<BAIUserSelectFilter>([
+            { uuid: { in: selectedKeys } },
+            baseFilter,
+          ])
+        : null,
+      limit: Math.max(selectedKeys.length, 1),
+      skipSelected: !shouldResolveSelected,
+    },
+    {
+      fetchPolicy: shouldResolveSelected ? 'store-or-network' : 'store-only',
+      fetchKey: deferredFetchKey,
+    },
   );
+
   const { paginationData, result, loadNext, isLoadingNext } =
     useLazyPaginatedQuery<BAIUserSelectScopedPaginatedQuery, BAIUserSelectUser>(
       graphql`
@@ -389,58 +262,101 @@ const ScopedUserOptions: React.FC<ScopedProps & { userScope: UserScope }> = ({
         }
       `,
       { limit: PAGE_SIZE },
-      { ...state.listVariables, scope: userScope },
-      state.listOptions,
+      {
+        scope,
+        filter: combineFilters<BAIUserSelectFilter>([
+          baseFilter,
+          debouncedDeferredValue
+            ? { email: { iContains: debouncedDeferredValue } }
+            : null,
+        ]),
+        orderBy: [{ field: 'EMAIL', direction: 'ASC' }],
+      },
+      {
+        // The open state comes back out of the Astryx popup.
+        fetchPolicy: deferredOpen ? 'network-only' : 'store-only',
+        fetchKey: deferredFetchKey,
+      },
       {
         getTotal: (r) => r.scopedUsersV2?.count ?? undefined,
         getItem: (r) => readUsers(r.scopedUsersV2?.edges),
         getId: (item) => item?.id,
       },
     );
+
+  const keyOfUser = (
+    user: BAIUserSelectUser | null | undefined,
+  ): string | undefined => {
+    if (!user) return undefined;
+    return valuePropName === 'id'
+      ? toLocalId(user.id)
+      : (user.email ?? undefined);
+  };
+
+  const options = _.compact(
+    _.map(paginationData, (item) => {
+      const key = keyOfUser(item);
+      return key
+        ? {
+            value: key,
+            label: item?.email ?? key,
+            description: item?.fullName ?? undefined,
+          }
+        : null;
+    }),
+  );
+
+  /** Plain keys -> labelInValue, resolving each label where we can. */
+  const labeledValue: BAIComplexSelectValue = (() => {
+    const emailByKey = new Map(
+      _.compact(
+        _.map(readUsers(selected.scopedUsersV2?.edges), (user) => {
+          const key = keyOfUser(user);
+          return key ? ([key, user.email] as const) : null;
+        }),
+      ),
+    );
+    const labeled: Array<BAILabeledValue> = _.map(selectedKeys, (key) => ({
+      // Echoing the key as its own label is the antd fallback, made explicit.
+      label: emailByKey.get(key) ?? key,
+      value: key,
+    }));
+    if (multiple) return labeled;
+    return labeled[0] ?? null;
+  })();
+
   return (
-    <UserSelectView
-      state={state}
-      users={paginationData}
-      selectedUsers={readUsers(selected.scopedUsersV2?.edges)}
-      total={result.scopedUsersV2?.count}
-      loadNext={loadNext}
+    <BAIComplexSelect
+      placeholder={t('comp:BAIUserSelect.SelectUser')}
+      {...selectProps}
+      multiple={multiple}
+      isLoading={
+        isLoading ||
+        // The open-driven `network-only` refetch is a deferred update and
+        // raises no pending flag of its own (FR-3724); only opening counts.
+        (!!controllableOpen && !deferredOpen) ||
+        controllableValue !== deferredControllableValue ||
+        searchStr !== debouncedDeferredValue ||
+        isPendingRefetch
+      }
       isLoadingNext={isLoadingNext}
+      total={result.scopedUsersV2?.count ?? undefined}
+      options={options}
+      value={labeledValue}
+      onChange={(next) => {
+        const labeled = _.compact(_.castArray(next ?? []));
+        const keys = _.map(labeled, (v) => v.value);
+        setControllableValue(
+          multiple ? keys : keys[0],
+          multiple ? labeled : labeled[0],
+        );
+      }}
+      searchValue={searchStr}
+      onSearch={setSearchStr}
+      onOpenChange={setControllableOpen}
+      endReached={loadNext}
     />
   );
-};
-
-/** `UserScope.domain` takes a UUID; without `domainId` the current domain's is looked up. */
-const UserOptions: React.FC<BAIUserSelectProps> = ({
-  projectId,
-  domainId,
-  ...props
-}) => {
-  'use memo';
-  const baiClient = useConnectedBAIClient();
-  const { domainV2 } = useLazyLoadQuery<BAIUserSelectCurrentDomainQuery>(
-    graphql`
-      query BAIUserSelectCurrentDomainQuery(
-        $domainName: String!
-        $skip: Boolean!
-      ) {
-        domainV2(domainName: $domainName) @skip(if: $skip) {
-          entityId
-        }
-      }
-    `,
-    {
-      domainName: baiClient._config.domainName,
-      skip: !!projectId || !!domainId,
-    },
-  );
-  const resolvedDomainId = domainId ?? domainV2?.entityId;
-  if (!projectId && !resolvedDomainId) {
-    throw new Error(`Domain not found: ${baiClient._config.domainName}`);
-  }
-  const userScope: UserScope = projectId
-    ? { project: [{ value: projectId }] }
-    : { domain: [{ value: resolvedDomainId as string }] };
-  return <ScopedUserOptions userScope={userScope} {...props} />;
 };
 
 // Suspends here, not at the caller: inside a filter popover a page-level
