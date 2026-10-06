@@ -1,0 +1,85 @@
+<svg id="d1e" viewBox="0 0 960 500" xmlns="http://www.w3.org/2000/svg" font-size="14" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <marker id="a1e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#64748b"/>
+    </marker>
+    <marker id="a1ge" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#16a34a"/>
+    </marker>
+    <marker id="a1re" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#dc2626"/>
+    </marker>
+    <marker id="a1be" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#60a5fa"/>
+    </marker>
+    <filter id="s1e" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="2.5" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Manager -->
+  <g filter="url(#s1e)">
+    <rect x="245" y="30" width="280" height="84" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="385" y="64" text-anchor="middle" font-size="16" font-weight="600" fill="#0f172a">Manager</text>
+    <text x="385" y="86" text-anchor="middle" font-size="12" fill="#64748b">Syncs only Active · HEALTHY routes</text>
+    <text x="385" y="104" text-anchor="middle" font-size="12" fill="#64748b">to AppProxy</text>
+  </g>
+
+  <!-- Manager → AppProxy sync arrow -->
+  <line x1="385" y1="114" x2="385" y2="178" stroke="#2563eb" stroke-width="1.6" stroke-dasharray="5 3" marker-end="url(#a1be)"/>
+  <text x="400" y="150" font-size="12" fill="#1e40af" font-weight="500">sync</text>
+
+  <!-- User -->
+  <g filter="url(#s1e)">
+    <circle cx="80" cy="290" r="42" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="80" y="286" text-anchor="middle" font-size="14" font-weight="600" fill="#0f172a">User</text>
+    <text x="80" y="304" text-anchor="middle" font-size="11" fill="#64748b">traffic</text>
+  </g>
+
+  <!-- User → AppProxy arrow -->
+  <line x1="124" y1="290" x2="173" y2="290" stroke="#334155" stroke-width="2" marker-end="url(#a1e)"/>
+  <text x="148" y="280" text-anchor="middle" font-size="12" fill="#0f172a" font-weight="500">request</text>
+
+  <!-- AppProxy box -->
+  <g filter="url(#s1e)">
+    <rect x="175" y="180" width="420" height="280" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text x="385" y="212" text-anchor="middle" font-size="18" font-weight="700" fill="#1e3a8a">AppProxy</text>
+    <line x1="205" y1="226" x2="565" y2="226" stroke="#bfdbfe" stroke-width="1"/>
+
+    <!-- Health Checker -->
+    <rect x="200" y="252" width="170" height="80" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <text x="285" y="284" text-anchor="middle" font-size="14" font-weight="600" fill="#1e40af">Health Checker</text>
+    <text x="285" y="304" text-anchor="middle" font-size="11" fill="#3b82f6">replica probe</text>
+
+    <!-- Active Pool -->
+    <rect x="395" y="252" width="170" height="80" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.2"/>
+    <text x="480" y="284" text-anchor="middle" font-size="14" font-weight="600" fill="#1e40af">Active Pool</text>
+    <text x="480" y="304" text-anchor="middle" font-size="11" fill="#3b82f6">healthy only</text>
+
+    <line x1="372" y1="292" x2="393" y2="292" stroke="#60a5fa" stroke-width="1.3" marker-end="url(#a1be)"/>
+
+    <text x="385" y="430" text-anchor="middle" font-size="12" fill="#1e40af" font-weight="500">→ routes to healthy replicas only</text>
+  </g>
+
+  <!-- Replicas -->
+  <g filter="url(#s1e)">
+    <rect x="680" y="204" width="220" height="72" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="790" y="234" text-anchor="middle" font-size="15" font-weight="600" fill="#14532d">replica A</text>
+    <text x="790" y="256" text-anchor="middle" font-size="12" fill="#16a34a">✓ in pool</text>
+  </g>
+  <g filter="url(#s1e)">
+    <rect x="680" y="296" width="220" height="72" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="790" y="326" text-anchor="middle" font-size="15" font-weight="600" fill="#14532d">replica B</text>
+    <text x="790" y="348" text-anchor="middle" font-size="12" fill="#16a34a">✓ in pool</text>
+  </g>
+  <g filter="url(#s1e)">
+    <rect x="680" y="388" width="220" height="72" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="790" y="418" text-anchor="middle" font-size="15" font-weight="600" fill="#7f1d1d">replica C</text>
+    <text x="790" y="440" text-anchor="middle" font-size="12" fill="#dc2626">✗ excluded from pool</text>
+  </g>
+
+  <!-- AppProxy → Replicas -->
+  <line x1="597" y1="240" x2="678" y2="240" stroke="#16a34a" stroke-width="1.8" marker-end="url(#a1ge)"/>
+  <line x1="597" y1="332" x2="678" y2="332" stroke="#16a34a" stroke-width="1.8" marker-end="url(#a1ge)"/>
+  <line x1="597" y1="424" x2="678" y2="424" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#a1re)"/>
+</svg>
