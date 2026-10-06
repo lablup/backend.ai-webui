@@ -1,5 +1,7 @@
 import { BAISessionTypeTokenFragment$key } from '../../__generated__/BAISessionTypeTokenFragment.graphql';
 import { tokenColorForStatus } from '../../helper';
+import { getSessionTypeLabel } from '../../helper/sessionTypeLabel';
+import { useBAIi18n } from '../../hooks/useBAIi18n';
 import { Token } from '@astryxdesign/core/Token';
 import * as _ from 'lodash-es';
 import React from 'react';
@@ -12,6 +14,8 @@ export interface BAISessionTypeTokenProps {
 const BAISessionTypeToken: React.FC<BAISessionTypeTokenProps> = ({
   sessionFrgmt,
 }) => {
+  'use memo';
+  const { t } = useBAIi18n();
   const session = useFragment(
     graphql`
       fragment BAISessionTypeTokenFragment on ComputeSessionNode {
@@ -27,7 +31,10 @@ const BAISessionTypeToken: React.FC<BAISessionTypeTokenProps> = ({
 
   const type = _.toUpper(session.type || '');
   return (
-    <Token color={tokenColorForStatus('sessionType', type)} label={type} />
+    <Token
+      color={tokenColorForStatus('sessionType', type)}
+      label={getSessionTypeLabel(t, type)}
+    />
   );
 };
 

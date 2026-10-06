@@ -3101,6 +3101,7 @@
       "ImageDoesNotProvideModelPath": "Obraz kontenera nie zawiera ścieżki modelu. Należy ją zmodyfikować.",
       "ImageFilter": "Filtr obrazów",
       "InferenceMode": "Wnioskowanie",
+      "InferenceModeConfig": "Konfiguracja trybu wnioskowania",
       "InfiniteTime": "Nieskończony",
       "InsufficientAllocationOfResourcesWarning": "Zasoby, które można przydzielić, są mniejsze niż minimalne zasoby wymagane w wybranym obrazie.",
       "InteractiveMode": "Interaktywny",

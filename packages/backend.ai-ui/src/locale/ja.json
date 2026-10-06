@@ -571,6 +571,12 @@
     "MultiNodeShort": "マルチ",
     "SingleNodeShort": "シングル"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "バッチ",
+    "Inference": "推論",
+    "Interactive": "インタラクティブ",
+    "System": "アップロード"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "無制限"
   },

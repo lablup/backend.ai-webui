@@ -577,6 +577,12 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Solteiro"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Lote",
+    "Inference": "Inferência",
+    "Interactive": "Interativo",
+    "System": "Upload"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Ilimitado"
   },

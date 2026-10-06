@@ -3100,6 +3100,7 @@
       "ImageDoesNotProvideModelPath": "容器映像未提供模型路径。应进行修改。",
       "ImageFilter": "镜像筛选",
       "InferenceMode": "推论",
+      "InferenceModeConfig": "推理模式配置",
       "InfiniteTime": "无限",
       "InsufficientAllocationOfResourcesWarning": "可分配资源低于所选映像所需的最低资源。",
       "InteractiveMode": "交互式",

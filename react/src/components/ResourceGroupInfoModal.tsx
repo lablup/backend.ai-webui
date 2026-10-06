@@ -3,6 +3,7 @@
  Copyright (c) 2015-2026 Lablup Inc. All rights reserved.
  */
 import { ResourceGroupInfoModalFragment$key } from '../__generated__/ResourceGroupInfoModalFragment.graphql';
+import { getSessionTypeLabel } from '../helper/sessionTypeLabel';
 import { theme } from '../theme-shim';
 import { ScalingGroupOpts } from './ResourceGroupList';
 import { MetadataListItem } from '@astryxdesign/core/MetadataList';
@@ -119,7 +120,9 @@ const ResourceGroupInfoModal: React.FC<ResourceGroupInfoModalProps> = ({
               }}
             >
               {_.map(schedulerOpts?.allowed_session_types, (value) => {
-                return <Token key={value} label={_.startCase(value)} />;
+                return (
+                  <Token key={value} label={getSessionTypeLabel(t, value)} />
+                );
               })}
             </BAIFlex>
           </MetadataListItem>

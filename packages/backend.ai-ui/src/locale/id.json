@@ -571,6 +571,12 @@
     "MultiNodeShort": "Multi",
     "SingleNodeShort": "Lajang"
   },
+  "comp:BAISessionTypeToken": {
+    "Batch": "Batch",
+    "Inference": "Inferensi",
+    "Interactive": "Interaktif",
+    "System": "Unggah"
+  },
   "comp:BAIStatistic": {
     "Unlimited": "Tak terbatas"
   },
