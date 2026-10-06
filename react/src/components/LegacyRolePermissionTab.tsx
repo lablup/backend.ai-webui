@@ -63,7 +63,6 @@ interface PermissionScopeRecord {
     vfolderName?: string | null;
     metadata?: {
       sessionName?: string | null;
-      vfolderName?: string | null;
       deploymentName?: string | null;
     } | null;
     resourceGroupName?: string | null;
@@ -91,7 +90,7 @@ const resolveScopeName = (
     case 'USER':
       return scope.basicInfo?.email;
     case 'VFOLDER':
-      return scope.vfolderName ?? scope.metadata?.vfolderName;
+      return scope.vfolderName;
     case 'SESSION':
       return scope.metadata?.sessionName;
     case 'MODEL_DEPLOYMENT':
@@ -215,14 +214,6 @@ const LegacyRolePermissionTab: React.FC<LegacyRolePermissionTabProps> = ({
                 }
                 ... on VirtualFolderNode {
                   vfolderName: name
-                }
-                # Nested in Node: 26.4 managers do not list VFolder in EntityNode.
-                ... on Node {
-                  ... on VFolder {
-                    metadata {
-                      vfolderName: name
-                    }
-                  }
                 }
                 ... on SessionV2 {
                   metadata {

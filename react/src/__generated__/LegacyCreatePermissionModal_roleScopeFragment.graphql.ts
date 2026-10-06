@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<7a6f16dbb519996e2df978bac18fa8c3>>
+ * @generated SignedSource<<fbfaa8e3d3981eb7bae1fdca8df242b1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -22,8 +22,7 @@ export type LegacyCreatePermissionModal_roleScopeFragment$data = {
           };
           readonly metadata?: {
             readonly deploymentName?: string;
-            readonly sessionName?: string;
-            readonly vfolderName: string;
+            readonly sessionName: string;
           };
           readonly project?: string | null | undefined;
           readonly registryName?: string;
@@ -42,17 +41,7 @@ export type LegacyCreatePermissionModal_roleScopeFragment$key = {
   readonly " $fragmentSpreads": FragmentRefs<"LegacyCreatePermissionModal_roleScopeFragment">;
 };
 
-const node: ReaderFragment = (function(){
-var v0 = [
-  {
-    "alias": "vfolderName",
-    "args": null,
-    "kind": "ScalarField",
-    "name": "name",
-    "storageKey": null
-  }
-];
-return {
+const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
@@ -187,33 +176,17 @@ return {
                     },
                     {
                       "kind": "InlineFragment",
-                      "selections": (v0/*: any*/),
-                      "type": "VirtualFolderNode",
-                      "abstractKey": null
-                    },
-                    {
-                      "kind": "InlineFragment",
                       "selections": [
                         {
-                          "kind": "InlineFragment",
-                          "selections": [
-                            {
-                              "alias": null,
-                              "args": null,
-                              "concreteType": "VFolderMetadataInfo",
-                              "kind": "LinkedField",
-                              "name": "metadata",
-                              "plural": false,
-                              "selections": (v0/*: any*/),
-                              "storageKey": null
-                            }
-                          ],
-                          "type": "VFolder",
-                          "abstractKey": null
+                          "alias": "vfolderName",
+                          "args": null,
+                          "kind": "ScalarField",
+                          "name": "name",
+                          "storageKey": null
                         }
                       ],
-                      "type": "Node",
-                      "abstractKey": "__isNode"
+                      "type": "VirtualFolderNode",
+                      "abstractKey": null
                     },
                     {
                       "kind": "InlineFragment",
@@ -316,8 +289,7 @@ return {
   "type": "Role",
   "abstractKey": null
 };
-})();
 
-(node as any).hash = "ce193adc0f9624ecf71ae4aaa686ca25";
+(node as any).hash = "d86d3d2570d629c9928eda74269443f7";
 
 export default node;
