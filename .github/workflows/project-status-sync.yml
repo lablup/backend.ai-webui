@@ -5,14 +5,13 @@ name: "Sync PR Project Status"
 # attached to the project, so we walk PR -> linked issues -> each issue's
 # project item.
 #
-# Event matrix:
-#   pull_request_target.opened (draft)     -> "In progress"
-#   pull_request_target.opened (non-draft) -> "In review"
-#   pull_request_target.ready_for_review   -> "In review"
-#   pull_request_target.review_requested   -> "In review"      (re-review included)
-#   pull_request_target.converted_to_draft -> "In progress"
-#   pull_request_review.submitted (state=changes_requested) -> "Requested changes"
-#   pull_request_review.submitted (approved / commented)    -> no-op
+# Triggers: pull_request_target opened / ready_for_review / review_requested /
+# converted_to_draft, and pull_request_review submitted (changes_requested only).
+# The target Status is derived from the PR's current state, not from the event:
+#   draft                                                      -> "In progress"
+#   a reviewer's latest opinionated review is CHANGES_REQUESTED
+#     and that reviewer is not currently re-requested          -> "Requested changes"
+#   otherwise                                                  -> "In review"
 #
 # Iteration: when the target is "In progress" or "In review" and the item's
 # Iteration field is empty, it is set to the current iteration (start date <=
@@ -73,9 +72,8 @@ concurrency:
 
 jobs:
   sync-project-status:
-    # Approved/commented reviews are a no-op (see the event matrix above) —
-    # skip them before a runner is allocated. The in-step `case` fallback
-    # stays as defensive depth.
+    # Approved/commented reviews cannot move the Status — skip them before a
+    # runner is allocated.
     if: >-
       github.event_name != 'pull_request_review' ||
       github.event.review.state == 'changes_requested'
@@ -89,42 +87,58 @@ jobs:
       IN_PROGRESS_STATUS_NAME: "In progress"
       CHANGES_REQUESTED_STATUS_NAME: "Requested changes"
     steps:
-      - name: Resolve target status from event
+      - name: Resolve target status from PR state
         id: target
         env:
-          EVENT_ACTION: ${{ github.event.action }}
-          REVIEW_STATE: ${{ github.event.review.state }}
-          PR_DRAFT: ${{ github.event.pull_request.draft }}
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          REPO_FULL_NAME: ${{ github.event.pull_request.base.repo.full_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          case "${GITHUB_EVENT_NAME}|${EVENT_ACTION}" in
-            "pull_request_target|opened")
-              if [ "${PR_DRAFT}" = "true" ]; then
-                target="${IN_PROGRESS_STATUS_NAME}"
-              else
-                target="${IN_REVIEW_STATUS_NAME}"
-              fi
-              ;;
-            "pull_request_target|ready_for_review" | "pull_request_target|review_requested")
-              target="${IN_REVIEW_STATUS_NAME}"
-              ;;
-            "pull_request_target|converted_to_draft")
-              target="${IN_PROGRESS_STATUS_NAME}"
-              ;;
-            "pull_request_review|submitted")
-              if [ "${REVIEW_STATE}" = "changes_requested" ]; then
-                target="${CHANGES_REQUESTED_STATUS_NAME}"
-              else
-                echo "::notice::Review submitted with state='${REVIEW_STATE}'. No status change."
-                echo "skip=true" >> "$GITHUB_OUTPUT"
-                exit 0
-              fi
-              ;;
-            *)
-              echo "::notice::Unsupported event '${GITHUB_EVENT_NAME}' action='${EVENT_ACTION}'. Skipping."
-              echo "skip=true" >> "$GITHUB_OUTPUT"
-              exit 0
-              ;;
-          esac
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::secrets.PROJECT_TOKEN is not configured. Skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          gh api graphql \
+            -f query='
+              query($owner: String!, $name: String!, $number: Int!) {
+                repository(owner: $owner, name: $name) {
+                  pullRequest(number: $number) {
+                    isDraft
+                    latestOpinionatedReviews(first: 50) { nodes { state author { login } } }
+                    reviewRequests(first: 50) {
+                      nodes { requestedReviewer { ... on User { login } ... on Team { name } ... on Bot { login } } }
+                    }
+                  }
+                }
+              }' \
+            -f owner="${REPO_FULL_NAME%/*}" \
+            -f name="${REPO_FULL_NAME#*/}" \
+            -F number="$PR_NUMBER" \
+            > pr_state.json
+
+          is_draft=$(jq -r '.data.repository.pullRequest.isDraft | select(. != null)' pr_state.json)
+          if [ -z "$is_draft" ]; then
+            echo "::error::Could not read the state of PR #${PR_NUMBER}."
+            exit 1
+          fi
+          # Reviewers whose latest opinionated review requests changes and who are not re-requested.
+          blocking=$(jq -r '
+            .data.repository.pullRequest as $pr
+            | [$pr.reviewRequests.nodes[]?.requestedReviewer | (.login // .name) | select(. != null)] as $requested
+            | [$pr.latestOpinionatedReviews.nodes[]? | select(.state == "CHANGES_REQUESTED")
+                | .author.login | select(. != null and (IN($requested[]) | not))]
+            | join(",")' pr_state.json)
+
+          if [ "$is_draft" = "true" ]; then
+            target="${IN_PROGRESS_STATUS_NAME}"
+          elif [ -n "$blocking" ]; then
+            target="${CHANGES_REQUESTED_STATUS_NAME}"
+            echo "::notice::Changes requested by: ${blocking}."
+          else
+            target="${IN_REVIEW_STATUS_NAME}"
+          fi
           case "${target}" in
             "${IN_PROGRESS_STATUS_NAME}" | "${IN_REVIEW_STATUS_NAME}") set_iteration=true ;;
             *) set_iteration=false ;;
