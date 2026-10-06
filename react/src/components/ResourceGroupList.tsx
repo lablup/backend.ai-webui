@@ -189,6 +189,7 @@ const ResourceGroupList: React.FC = () => {
               scheduler {
                 type
               }
+              ...ResourceGroupDetailDrawerFragment
             }
           }
         }
@@ -204,6 +205,9 @@ const ResourceGroupList: React.FC = () => {
   const resourceGroups = filterOutNullAndUndefined(
     _.map(adminResourceGroups?.edges, 'node'),
   );
+  const drawerResourceGroup = drawerResourceGroupName
+    ? _.find(resourceGroups, { name: drawerResourceGroupName })
+    : null;
 
   const [commitUpdateResourceGroup] =
     useMutation<ResourceGroupListUpdateMutation>(graphql`
@@ -650,10 +654,10 @@ const ResourceGroupList: React.FC = () => {
       />
       <BAIUnmountAfterClose>
         <ResourceGroupDetailDrawer
-          open={!!drawerResourceGroupName}
-          resourceGroupName={drawerResourceGroupName}
+          open={!!drawerResourceGroup}
+          resourceGroupFrgmt={drawerResourceGroup}
           onRequestClose={() => setDrawerResourceGroupName(null)}
-          onResourceGroupUpdated={() => {
+          onRequestRefetch={() => {
             startRefetchTransition(() => {
               updateFetchKey();
             });
