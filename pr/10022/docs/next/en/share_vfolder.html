@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="Share Storage Folders" />
   <meta name="twitter:description" content="You may need to share the contents of storage folders with other users or project members to collaborate." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Share Storage Folders","inLanguage":"en","description":"You may need to share the contents of storage folders with other users or project members to collaborate.","dateModified":"2026-09-22T04:18:59.000Z","url":"https://webui.docs.backend.ai/next/en/share_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Share Storage Folders","inLanguage":"en","description":"You may need to share the contents of storage folders with other users or project members to collaborate.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/en/share_vfolder.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/share_vfolder.html" />
   <link rel="alternate" hreflang="en" href="../en/share_vfolder.html" />
   <link rel="alternate" hreflang="ja" href="../ja/share_vfolder.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">Manual</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f860570)">v26.9.0-alpha.0 (f860570)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b41f1da)">v26.9.0-alpha.0 (b41f1da)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="Search docs...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -245,7 +245,7 @@ email address and select the desired permission level from the <strong>Permissio
 dropdown. If you choose <code>Read only</code>, User B will be able to only view the
 folder but not modify it. If you select <code>Read &amp; Write</code>, User B will be able to
 both view and modify the folder. Click the <code>Add</code> button to send the invitation.</p>
-<p><figure data-bai-block="14" class="doc-figure"><img src="./images/send_vfolder_invitation.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1100" height="664" /><figcaption>Figure 17.5</figcaption></figure>
+<p><figure data-bai-block="14" class="doc-figure"><img src="./images/send_vfolder_invitation.png" alt="" class="doc-image" style="width:550px" loading="lazy" decoding="async" width="1100" height="664" /><figcaption>Figure 17.5</figcaption></figure>
 </p>
 <p data-bai-block="15">Switch back to User B&#39;s account and go to the Data page. When invitations are
 waiting for a response, a <strong>Pending invitations</strong> link appears at the top right
@@ -254,7 +254,7 @@ of the folder list, showing the number of pending invitations.</p>
 </p>
 <p data-bai-block="17">Clicking the link opens the <strong>Invited Folders</strong> modal, where pending folder
 invitations can be accepted or declined.</p>
-<p><figure data-bai-block="18" class="doc-figure"><img src="./images/invitation_accept.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1040" height="350" /><figcaption>Figure 17.7</figcaption></figure>
+<p><figure data-bai-block="18" class="doc-figure"><img src="./images/invitation_accept.png" alt="" class="doc-image" style="width:520px" loading="lazy" decoding="async" width="1040" height="350" /><figcaption>Figure 17.7</figcaption></figure>
 </p>
 <p data-bai-block="19">Go to the Data page and check that the <code>tests</code> folder is displayed in
 the list. If you don&#39;t see it on the list, try refreshing your browser page.
@@ -274,14 +274,14 @@ can only browse the folder and download its contents.</p>
 </p>
 <p data-bai-block="23">Let&#39;s create a compute session
 by mounting this storage folder with the User B&#39;s account.</p>
-<p><figure data-bai-block="24" class="doc-figure"><img src="./images/launch_session_with_test_mounted_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2400" height="972" /><figcaption>Figure 17.10</figcaption></figure>
+<p><figure data-bai-block="24" class="doc-figure"><img src="./images/launch_session_with_test_mounted_B.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="986" /><figcaption>Figure 17.10</figcaption></figure>
 </p>
 <p data-bai-block="25">After creating a session, open the web terminal and check that the <code>tests</code>
 folder is mounted in the home folder. The contents of the <code>tests</code> folder are
 displayed, but attempts to create or delete files are not allowed. This is
 because User A shared it as read-only. User B can create a file in the <code>tests</code>
 folder if it has been shared including write access.</p>
-<p><figure data-bai-block="26" class="doc-figure"><img src="./images/file_operations_on_shared_test_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="960" height="188" /><figcaption>Figure 17.11</figcaption></figure>
+<p><figure data-bai-block="26" class="doc-figure"><img src="./images/file_operations_on_shared_test_folder.png" alt="" class="doc-image" style="width:480px" loading="lazy" decoding="async" width="960" height="188" /><figcaption>Figure 17.11</figcaption></figure>
 </p>
 <p data-bai-block="27">This way, you can share your personal storage folders with other users based on
 your Backend.AI email account.</p>
@@ -305,7 +305,7 @@ level:</p>
 <li data-bai-block="32"><strong>Read only</strong>: The invited user has read-only access to the folder.</li>
 <li data-bai-block="33"><strong>Read &amp; Write</strong>: The invited user has read and write access to the folder, including creating, modifying, and deleting files and folders within it.</li>
 </ul>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/modify_perm.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1132" height="652" /><figcaption>Figure 17.12</figcaption></figure>
+<p><figure data-bai-block="34" class="doc-figure"><img src="./images/modify_perm.png" alt="" class="doc-image" style="width:566px" loading="lazy" decoding="async" width="1132" height="652" /><figcaption>Figure 17.12</figcaption></figure>
 </p>
 <div class="admonition admonition-note">
 <div data-bai-block="35" class="admonition-heading"><span class="admonition-icon"><svg viewBox="0 0 14 16"><path d="M6.3 5.69a.942.942 0 0 1-.28-.7c0-.28.09-.52.28-.7.19-.18.42-.28.7-.28.28 0 .52.09.7.28.18.19.28.42.28.7 0 .28-.09.52-.28.7a1 1 0 0 1-.7.3c-.28 0-.52-.11-.7-.3zM8 7.99c-.02-.25-.11-.48-.31-.69-.2-.19-.42-.3-.69-.31H6c-.27.02-.48.13-.69.31-.2.2-.3.44-.31.69h1v3c.02.27.11.5.31.69.2.2.42.31.69.31h1c.27 0 .48-.11.69-.31.2-.19.3-.42.31-.69H8V7.98v.01zM7 2.3c-3.14 0-5.7 2.54-5.7 5.68 0 3.14 2.56 5.7 5.7 5.7s5.7-2.55 5.7-5.7c0-3.15-2.56-5.69-5.7-5.69v.01zM7 .98c3.86 0 7 3.14 7 7s-3.14 7-7 7-7-3.12-7-7 3.14-7 7-7z"/></svg></span>NOTE</div>
@@ -325,21 +325,21 @@ clicking the share button next to the folder&#39;s name in the folder list. In t
 the permission dropdown in the row of the user you want to remove. A
 confirmation dialog will appear asking you to confirm. Click <code>Confirm</code> to
 revoke the user&#39;s access.</p>
-<p><figure data-bai-block="39" class="doc-figure"><img src="./images/modify_permission_and_stop_sharing.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1304" height="792" /><figcaption>Figure 17.13</figcaption></figure>
+<p><figure data-bai-block="39" class="doc-figure"><img src="./images/modify_permission_and_stop_sharing.png" alt="" class="doc-image" style="width:652px" loading="lazy" decoding="async" width="1304" height="792" /><figcaption>Figure 17.13</figcaption></figure>
 </p>
 <p data-bai-block="40">If access to a shared folder is no longer needed as an invitee, click the share
 button next to the folder in the folder list to open the Shared Folder
 Permission modal. In the permission table, click the leave icon in the
 <strong>Control</strong> column to leave the shared folder. A confirmation dialog will appear
 before the action is completed.</p>
-<p><figure data-bai-block="41" class="doc-figure"><img src="./images/leave_shared_folder.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1300" height="1054" /><figcaption>Figure 17.14</figcaption></figure>
+<p><figure data-bai-block="41" class="doc-figure"><img src="./images/leave_shared_folder.png" alt="" class="doc-image" style="width:650px" loading="lazy" decoding="async" width="1300" height="1054" /><figcaption>Figure 17.14</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/en/share_vfolder/share_vfolder.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> Edit this page</a>
-  <span class="last-updated">Last updated on Sep 22, 2026</span>
+  <span class="last-updated">Last updated on Oct 1, 2026</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./mount_vfolder.html">

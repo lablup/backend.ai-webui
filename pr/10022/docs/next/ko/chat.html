@@ -22,7 +22,7 @@
   <meta name="twitter:title" content="채팅" />
   <meta name="twitter:description" content="채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다." />
   <meta name="twitter:image" content="https://webui.docs.backend.ai/assets/og-default.png" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"채팅","inLanguage":"ko","description":"채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.","dateModified":"2026-09-22T04:18:59.000Z","url":"https://webui.docs.backend.ai/next/ko/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"채팅","inLanguage":"ko","description":"채팅 페이지에서는 다양한 LLM 모델을 한 곳에서 편리하게 비교하고 상호작용할 수 있습니다. 이를 통해 사용자는 Backend.AI가 제공하는 서비스와 다양한 대규모 언어 모델(LLM)을 경험할 수 있습니다.","dateModified":"2026-10-01T08:25:04.000Z","url":"https://webui.docs.backend.ai/next/ko/chat.html","image":"https://webui.docs.backend.ai/assets/og-default.png","author":{"@type":"Organization","name":"Lablup Inc."},"publisher":{"@type":"Organization","name":"Lablup Inc."}}</script>
   <link rel="alternate" hreflang="ko" href="../ko/chat.html" />
   <link rel="alternate" hreflang="en" href="../en/chat.html" />
   <link rel="alternate" hreflang="ja" href="../ja/chat.html" />
@@ -39,7 +39,7 @@
       <img class="bai-brand-logo bai-brand-logo--light" src="../../assets/brand-logo-light.3822d863.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" /><img class="bai-brand-logo bai-brand-logo--dark" src="../../assets/brand-logo-dark.d0b91eb5.svg" alt="Backend.AI WebUI User Guide" loading="lazy" decoding="async" />
       <span class="bai-brand-divider" aria-hidden="true"></span><span class="bai-brand-sub">매뉴얼</span>
     </a>
-    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (f860570)">v26.9.0-alpha.0 (f860570)</a>
+    <a class="bai-brand-version" href="https://github.com/lablup/backend.ai-webui" target="_blank" rel="noopener noreferrer" aria-label="Source repository for v26.9.0-alpha.0 (b41f1da)">v26.9.0-alpha.0 (b41f1da)</a>
   </div>
   <button class="bai-topbar__search" type="button" data-search-trigger aria-label="문서 검색...">
     <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m21 21-5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -229,85 +229,90 @@
 <p data-bai-block="6">채팅 페이지의 각 채팅 카드 왼쪽 상단에서 배포(Deployment)와 모델을 선택할 수 있습니다.
 <strong>배포</strong> 선택란을 클릭하면 사용 가능한 배포 목록이 전체 배포 개수와 함께 표시됩니다.
 배포를 선택하면 모델 드롭다운 헤더가 &quot;{배포 이름}의 모델&quot;로 업데이트되어 해당 배포와 연결된 모델 목록이 표시됩니다.</p>
-<p><figure data-bai-block="7" class="doc-figure"><img src="./images/chat_deployment_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="390" height="570" /><figcaption>그림 13.2</figcaption></figure>
+<p><figure data-bai-block="7" class="doc-figure"><img src="./images/chat_deployment_select.png" alt="" class="doc-image" style="width:195px" loading="lazy" decoding="async" width="390" height="570" /><figcaption>그림 13.2</figcaption></figure>
 </p>
 <p data-bai-block="8"><strong>배포</strong> 선택란 옆의 정보 아이콘 버튼(<strong>배포 자세히 보기</strong>)을 클릭하면 선택한 배포의 상세 페이지가 열립니다. 배포가 선택되어 있지 않은 동안에는 이 버튼이 비활성화됩니다.
-선택한 배포가 현재 활성화된 프로젝트가 아닌 다른 프로젝트에 속해 있는 경우에는 상세 페이지를 열기 전에 **다른 프로젝트로 전환할까요?**라는 확인 대화상자가 먼저 표시됩니다.</p>
+선택한 배포가 현재 활성화된 프로젝트가 아닌 다른 프로젝트에 속해 있는 경우에는 상세 페이지를 열기 전에 <strong>다른 프로젝트로 전환할까요?</strong> 라는 확인 대화상자가 먼저 표시됩니다.</p>
 <p><a id="deployments-listed-in-chat"></a></p>
 <h3 data-bai-block="9" id="chat-목록에-표시되는-배포">목록에 표시되는 배포<a class="hash-link" href="#chat-목록에-표시되는-배포" aria-label="Direct link to 목록에 표시되는 배포">#</a></h3>
 <p data-bai-block="10"><strong>배포</strong> 드롭다운에는 프로젝트의 모든 배포가 표시되지 않고, 지금 바로 응답할 수 있는 배포만 표시됩니다. 배포는 복제본 중 하나 이상이 실제로 트래픽을 처리하고 있을 때, 즉 복제본의 <strong>라이프사이클 상태</strong>가 <em>실행 중</em>이고 <strong>트래픽 상태</strong>가 <em>활성</em>일 때 목록에 표시됩니다. 두 상태는 서로 독립적인 축이므로 두 조건이 모두 충족되어야 합니다. <em>실행 중</em>인 복제본이라도 트래픽 대상에서 제외되어 있을 수 있고, <em>활성</em>으로 표시된 복제본이라도 더 이상 실행 중이 아닐 수 있기 때문입니다. 복제본의 상태 축에 대한 자세한 내용은 <a href="./deployment.html#model-serving">배포</a> 장을 참고하세요.</p>
 <p data-bai-block="11">목록 여부를 배포 단위가 아니라 복제본 단위로 판단하기 때문에, 새 리비전이 적용되는 중에도 배포는 계속 선택할 수 있습니다. 새 리비전을 적용하면 해당 추론 세션이 자원을 기다리는 등의 이유로 한동안 대기 상태에 머무를 수 있지만, 그동안 이전 리비전의 복제본이 계속 트래픽을 처리합니다. 따라서 해당 배포는 드롭다운에 그대로 남아 있으며, 아직 살아 있는 복제본과 계속 대화할 수 있습니다.</p>
 <p data-bai-block="12">아무것도 처리하지 않는 배포는 목록에 표시되지 않습니다. 예를 들어 중지된 배포나 목표 복제본 수가 0인 배포가 이에 해당합니다. 채팅 카드에 이미 선택되어 있는 배포는 목록에서 사라지더라도 선택된 상태와 이름이 그대로 유지되므로, 해당 카드가 어떤 배포를 가리키고 있는지 항상 확인할 수 있고 아래에 설명된 경고도 읽을 수 있습니다.</p>
+<p><a id="connect-custom-endpoint"></a></p>
+<h3 data-bai-block="13" id="chat-커스텀-엔드포인트-연결하기">커스텀 엔드포인트 연결하기<a class="hash-link" href="#chat-커스텀-엔드포인트-연결하기" aria-label="Direct link to 커스텀 엔드포인트 연결하기">#</a></h3>
+<p data-bai-block="14">Backend.AI에 배포되어 있지 않은 OpenAI 호환 서비스와도 대화할 수 있습니다. <strong>배포</strong> 드롭다운에서 <strong>커스텀 엔드포인트 연결…</strong> 을 선택한 뒤, 해당 서비스의 <strong>Base URL</strong>과 서비스가 요구하는 경우 <strong>API 키</strong>를 입력하고 <strong>연결</strong>을 클릭합니다. 그러면 채팅 카드에 해당 서비스가 제공하는 모델이 표시되며, <strong>커스텀 엔드포인트 수정</strong>을 클릭하면 폼이 다시 열려 주소나 키를 변경할 수 있습니다.</p>
+<!-- TODO(screenshot): /chat — the custom endpoint form (Base URL + API key) opened from the Deployment dropdown; capture backend manager was unavailable -->
+
 <p><a id="model-connection-settings"></a></p>
-<h3 data-bai-block="13" id="chat-모델-연결-설정">모델 연결 설정<a class="hash-link" href="#chat-모델-연결-설정" aria-label="Direct link to 모델 연결 설정">#</a></h3>
-<p data-bai-block="14">채팅 카드에 모델 목록이 아직 없는 경우, 메시지 영역 위에 설정 패널이 표시됩니다. 이는 배포에서 모델 목록을 가져오는 중일 때와 가져오기에 실패한 후 모두 해당됩니다.</p>
-<p><figure data-bai-block="15" class="doc-figure"><img src="./images/custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>그림 13.3</figcaption></figure>
+<h3 data-bai-block="15" id="chat-모델-연결-설정">모델 연결 설정<a class="hash-link" href="#chat-모델-연결-설정" aria-label="Direct link to 모델 연결 설정">#</a></h3>
+<p data-bai-block="16">채팅 카드에 모델 목록이 아직 없는 경우, 메시지 영역 위에 설정 패널이 표시됩니다. 이는 배포에서 모델 목록을 가져오는 중일 때와 가져오기에 실패한 후 모두 해당됩니다.</p>
+<p><figure data-bai-block="17" class="doc-figure"><img src="./images/custom_model.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>그림 13.3</figcaption></figure>
 </p>
-<p data-bai-block="16">배포, 모델, 동기화 컨트롤이 있는 채팅 카드 헤더는 모델 목록을 기다리지 않고 곧바로 표시되므로, 가져오기가 진행 중인 동안에도 이 패널을 사용할 수 있습니다. 가져오는 동안에는 <strong>모델 정보 새로고침</strong> 버튼에 로딩 표시가 나타나고, <strong>기본 경로</strong>와 <strong>토큰</strong> 입력란 및 카드 하단의 메시지 입력란이 비활성화됩니다. 가져오기가 끝나면 모두 다시 사용할 수 있습니다. 응답하지 않는 배포는 일정 시간이 지나면 시간 초과되어 가져오기 실패로 처리되므로, 무한정 기다리지 않고 설정을 수정한 뒤 다시 시도할 수 있습니다.</p>
-<p><figure data-bai-block="17" class="doc-figure"><img src="./images/chat_model_loading.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>그림 13.4</figcaption></figure>
+<p data-bai-block="18">배포, 모델, 동기화 컨트롤이 있는 채팅 카드 헤더는 모델 목록을 기다리지 않고 곧바로 표시되므로, 가져오기가 진행 중인 동안에도 이 패널을 사용할 수 있습니다. 가져오는 동안에는 <strong>모델 정보 새로고침</strong> 버튼에 로딩 표시가 나타나고, <strong>기본 경로</strong>와 <strong>토큰</strong> 입력란 및 카드 하단의 메시지 입력란이 비활성화됩니다. 가져오기가 끝나면 모두 다시 사용할 수 있습니다. 응답하지 않는 배포는 일정 시간이 지나면 시간 초과되어 가져오기 실패로 처리되므로, 무한정 기다리지 않고 설정을 수정한 뒤 다시 시도할 수 있습니다.</p>
+<p><figure data-bai-block="19" class="doc-figure"><img src="./images/chat_model_loading.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2304" height="1318" /><figcaption>그림 13.4</figcaption></figure>
 </p>
-<p data-bai-block="18">이 패널에는 다음 경고가 표시될 수 있습니다.</p>
+<p data-bai-block="20">이 패널에는 다음 경고가 표시될 수 있습니다.</p>
 <ul>
-<li data-bai-block="19"><strong>LLM 모델을 찾을 수 없음</strong> (경고): 배포의 엔드포인트에서 모델 목록을 가져오지 못했습니다. 패널에서 기본 경로나 토큰을 확인한 후 <strong>모델 정보 새로고침</strong> 버튼을 클릭하여 다시 시도하세요. 이 경고는 패널의 일부이므로 최초 가져오기가 진행되는 동안에도 함께 표시됩니다. <strong>모델 정보 새로고침</strong> 버튼의 로딩이 끝난 뒤에 조치하세요.</li>
-<li data-bai-block="20"><strong>목표 복제본 수가 0</strong> (경고): 선택한 배포의 목표 복제본 수가 0으로 설정되어 있어 응답할 수 없습니다. 배포 설정에서 목표 복제본 수를 1 이상으로 설정하세요.</li>
+<li data-bai-block="21"><strong>LLM 모델을 찾을 수 없음</strong> (경고): 배포의 엔드포인트에서 모델 목록을 가져오지 못했습니다. 패널에서 기본 경로나 토큰을 확인한 후 <strong>모델 정보 새로고침</strong> 버튼을 클릭하여 다시 시도하세요. 이 경고는 패널의 일부이므로 최초 가져오기가 진행되는 동안에도 함께 표시됩니다. <strong>모델 정보 새로고침</strong> 버튼의 로딩이 끝난 뒤에 조치하세요.</li>
+<li data-bai-block="22"><strong>목표 복제본 수가 0</strong> (경고): 선택한 배포의 목표 복제본 수가 0으로 설정되어 있어 응답할 수 없습니다. 배포 설정에서 목표 복제본 수를 1 이상으로 설정하세요.</li>
 </ul>
-<p data-bai-block="21">다음 알림이 채팅 카드에 표시될 수도 있습니다.</p>
+<p data-bai-block="23">다음 알림이 채팅 카드에 표시될 수도 있습니다.</p>
 <ul>
-<li data-bai-block="22"><strong>엔드포인트 URL이 유효하지 않음</strong> (오류): 선택한 배포의 엔드포인트 URL을 확인할 수 없습니다. 배포가 올바르게 구성되어 있는지 확인하세요.</li>
-<li data-bai-block="23"><strong>스트리밍 오류</strong> (오류): 모델과의 통신 중 오류가 발생했습니다. 메시지에서 원인을 확인하고, 알림을 닫은 후 다시 시도하세요.</li>
+<li data-bai-block="24"><strong>엔드포인트 URL이 유효하지 않음</strong> (오류): 선택한 배포의 엔드포인트 URL을 확인할 수 없습니다. 배포가 올바르게 구성되어 있는지 확인하세요.</li>
+<li data-bai-block="25"><strong>스트리밍 오류</strong> (오류): 모델과의 통신 중 오류가 발생했습니다. 메시지에서 원인을 확인하고, 알림을 닫은 후 다시 시도하세요.</li>
 </ul>
-<p data-bai-block="24">사용자 정의 모델 설정에 필요한 입력 사항은 다음 설명을 참조하세요.</p>
+<p data-bai-block="26">사용자 정의 모델 설정에 필요한 입력 사항은 다음 설명을 참조하세요.</p>
 <ul>
-<li data-bai-block="25"><strong>기본 경로</strong> (선택 사항): 요청을 보낼 때 배포 엔드포인트 URL에 추가되는 경로입니다.
+<li data-bai-block="27"><strong>기본 경로</strong> (선택 사항): 요청을 보낼 때 배포 엔드포인트 URL에 추가되는 경로입니다.
 버전 정보를 반드시 포함해야 합니다.
 예를 들어, OpenAI API를 사용하는 경우 <code>v1</code>을 입력합니다.</li>
-<li data-bai-block="26"><strong>토큰</strong> (선택 사항): 모델 서비스에 접근하기 위한 인증 키입니다. 배포를 선택한 경우 이 항목은 해당 배포의 액세스 토큰 목록을 보여주는 <strong>토큰 선택</strong> 드롭다운이 됩니다. 배포를 선택하지 않은 경우에는 토큰을 직접 붙여 넣을 수 있는 입력란으로 표시됩니다. 토큰은 Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있으며 형식과 생성 과정이 서비스에 따라 다르므로, 해당 서비스의 가이드를 참조하세요.<ul>
-<li data-bai-block="27">각 항목에는 토큰의 마지막 여섯 글자와 만료 날짜가 함께 표시됩니다. 모든 토큰은 앞부분이 동일하고 입력란 너비에 맞춰 잘려 표시되기 때문에, 이 뒷부분이 서로 구분하기 어려운 항목들을 구별하는 기준이 됩니다. 만료되지 않는 토큰에는 날짜 대신 <strong>만료 없음</strong>이 표시됩니다.</li>
-<li data-bai-block="28">항목 위에 마우스를 올리면 전체 발급 시각과 만료 시각을 확인할 수 있습니다.</li>
-<li data-bai-block="29">이미 만료된 토큰은 목록에 표시되지 않습니다. 값이 비어 있는 경우 가장 최근에 생성된 유효한 토큰이 자동으로 선택됩니다.</li>
-<li data-bai-block="30">입력란 옆의 톱니바퀴 아이콘(<strong>액세스 토큰 설정</strong>)을 클릭하면 배포 상세 페이지의 액세스 토큰 섹션이 열리며, 여기에서 새 토큰을 발급할 수 있습니다. 돌아오면 목록을 다시 읽어오므로 방금 만든 토큰을 바로 선택할 수 있습니다. 자세한 방법은 <a href="./deployment.html#generating-tokens">토큰 생성</a> 섹션을 참조하세요.</li>
+<li data-bai-block="28"><strong>토큰</strong> (선택 사항): 모델 서비스에 접근하기 위한 인증 키입니다. 배포를 선택한 경우 이 항목은 해당 배포의 액세스 토큰 목록을 보여주는 <strong>토큰 선택</strong> 드롭다운이 됩니다. 배포를 선택하지 않은 경우에는 토큰을 직접 붙여 넣을 수 있는 입력란으로 표시됩니다. 토큰은 Backend.AI뿐만 아니라 다양한 서비스에서 생성할 수 있으며 형식과 생성 과정이 서비스에 따라 다르므로, 해당 서비스의 가이드를 참조하세요.<ul>
+<li data-bai-block="29">각 항목에는 토큰의 마지막 여섯 글자와 만료 날짜가 함께 표시됩니다. 모든 토큰은 앞부분이 동일하고 입력란 너비에 맞춰 잘려 표시되기 때문에, 이 뒷부분이 서로 구분하기 어려운 항목들을 구별하는 기준이 됩니다. 만료되지 않는 토큰에는 날짜 대신 <strong>만료 없음</strong>이 표시됩니다.</li>
+<li data-bai-block="30">항목 위에 마우스를 올리면 전체 발급 시각과 만료 시각을 확인할 수 있습니다.</li>
+<li data-bai-block="31">이미 만료된 토큰은 목록에 표시되지 않습니다. 값이 비어 있는 경우 가장 최근에 생성된 유효한 토큰이 자동으로 선택됩니다.</li>
+<li data-bai-block="32">입력란 옆의 톱니바퀴 아이콘(<strong>액세스 토큰 설정</strong>)을 클릭하면 배포 상세 페이지의 액세스 토큰 섹션이 열리며, 여기에서 새 토큰을 발급할 수 있습니다. 돌아오면 목록을 다시 읽어오므로 방금 만든 토큰을 바로 선택할 수 있습니다. 자세한 방법은 <a href="./deployment.html#generating-tokens">토큰 생성</a> 섹션을 참조하세요.</li>
 </ul>
 </li>
 </ul>
-<p><figure data-bai-block="31" class="doc-figure"><img src="./images/chat_token_select.png" alt="" class="doc-image" loading="lazy" decoding="async" width="680" height="302" /><figcaption>그림 13.5</figcaption></figure>
+<p><figure data-bai-block="33" class="doc-figure"><img src="./images/chat_token_select.png" alt="" class="doc-image" style="width:340px" loading="lazy" decoding="async" width="680" height="302" /><figcaption>그림 13.5</figcaption></figure>
 </p>
 <p><a id="add-or-remove-comparison-chat-cards"></a></p>
-<h2 data-bai-block="32" id="chat-비교-채팅-카드-추가-및-삭제">비교 채팅 카드 추가 및 삭제<a class="hash-link" href="#chat-비교-채팅-카드-추가-및-삭제" aria-label="Direct link to 비교 채팅 카드 추가 및 삭제">#</a></h2>
-<p data-bai-block="33">우측 상단의 <code>비교</code> 아이콘 버튼을 클릭하여 새로운 비교 채팅 카드를 추가할 수 있습니다.</p>
-<p><figure data-bai-block="34" class="doc-figure"><img src="./images/add_cards.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>그림 13.6</figcaption></figure>
+<h2 data-bai-block="34" id="chat-비교-채팅-카드-추가-및-삭제">비교 채팅 카드 추가 및 삭제<a class="hash-link" href="#chat-비교-채팅-카드-추가-및-삭제" aria-label="Direct link to 비교 채팅 카드 추가 및 삭제">#</a></h2>
+<p data-bai-block="35">우측 상단의 <code>비교</code> 아이콘 버튼을 클릭하여 새로운 비교 채팅 카드를 추가할 수 있습니다.</p>
+<p><figure data-bai-block="36" class="doc-figure"><img src="./images/add_cards.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>그림 13.6</figcaption></figure>
 </p>
-<p data-bai-block="35">각 채팅 세션을 삭제하려면 카드 우측 상단에 있는 <code>더보기</code> 버튼을 클릭하세요. 버튼을 클릭하면 드롭다운 메뉴가 표시되며, <code>채팅 삭제</code> 버튼을 통해 해당 채팅 세션을 삭제할 수 있습니다. 입력한 내용이 존재하는 경우에는 모두 삭제되므로 주의해 주세요.</p>
-<p><figure data-bai-block="36" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="538" height="272" /><figcaption>그림 13.7</figcaption></figure>
+<p data-bai-block="37">각 채팅 세션을 삭제하려면 카드 우측 상단에 있는 <code>더보기</code> 버튼을 클릭하세요. 버튼을 클릭하면 드롭다운 메뉴가 표시되며, <code>채팅 삭제</code> 버튼을 통해 해당 채팅 세션을 삭제할 수 있습니다. 입력한 내용이 존재하는 경우에는 모두 삭제되므로 주의해 주세요.</p>
+<p><figure data-bai-block="38" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" style="width:168px" loading="lazy" decoding="async" width="336" height="314" /><figcaption>그림 13.7</figcaption></figure>
 </p>
 <p><a id="clear-chat-history"></a></p>
-<h2 data-bai-block="37" id="chat-채팅-기록-삭제">채팅 기록 삭제<a class="hash-link" href="#chat-채팅-기록-삭제" aria-label="Direct link to 채팅 기록 삭제">#</a></h2>
-<p data-bai-block="38"><code>더보기</code> 버튼을 클릭하면 <code>채팅 지우기</code> 옵션이 나타납니다. 이 옵션을 선택하면 카드에 있는 모든 채팅 기록이 삭제됩니다. 단, 카드의 세션은 종료되지 않습니다.</p>
-<p><figure data-bai-block="39" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" loading="lazy" decoding="async" width="538" height="272" /><figcaption>그림 13.8</figcaption></figure>
+<h2 data-bai-block="39" id="chat-채팅-기록-삭제">채팅 기록 삭제<a class="hash-link" href="#chat-채팅-기록-삭제" aria-label="Direct link to 채팅 기록 삭제">#</a></h2>
+<p data-bai-block="40"><code>더보기</code> 버튼을 클릭하면 <code>채팅 지우기</code> 옵션이 나타납니다. 이 옵션을 선택하면 카드에 있는 모든 채팅 기록이 삭제됩니다. 단, 카드의 세션은 종료되지 않습니다.</p>
+<p><figure data-bai-block="41" class="doc-figure"><img src="./images/delete_chatting_session.png" alt="" class="doc-image" style="width:168px" loading="lazy" decoding="async" width="336" height="314" /><figcaption>그림 13.8</figcaption></figure>
 </p>
 <p><a id="synchronize-input"></a></p>
-<h2 data-bai-block="40" id="chat-입력-연동">입력 연동<a class="hash-link" href="#chat-입력-연동" aria-label="Direct link to 입력 연동">#</a></h2>
-<p data-bai-block="41">채팅 카드의 우측 상단에 있는 <code>채팅 입력 동기화</code> 버튼을 사용하면 &#39;채팅 입력 동기화&#39;가 활성화된 모든 채팅 카드의 입력을 동기화할 수 있습니다. &#39;채팅 입력 동기화&#39;가 활성화된 상태에서 <code>Enter</code>를 누르거나 어떤 카드의 <code>전송</code> 버튼을 클릭하면 현재 입력 중인 카드의 입력이 일괄 적용됩니다. 이 기능은 하나의 입력값을 통해 다양한 모델의 응답 결과를 비교하고 싶을 때 유용하게 사용할 수 있습니다.</p>
-<p><figure data-bai-block="42" class="doc-figure"><img src="./images/synchronized_input.png" alt="" class="doc-image" loading="lazy" decoding="async" width="1550" height="958" /><figcaption>그림 13.9</figcaption></figure>
+<h2 data-bai-block="42" id="chat-입력-연동">입력 연동<a class="hash-link" href="#chat-입력-연동" aria-label="Direct link to 입력 연동">#</a></h2>
+<p data-bai-block="43">채팅 카드의 우측 상단에 있는 <code>채팅 입력 동기화</code> 버튼을 사용하면 &#39;채팅 입력 동기화&#39;가 활성화된 모든 채팅 카드의 입력을 동기화할 수 있습니다. &#39;채팅 입력 동기화&#39;가 활성화된 상태에서 <code>Enter</code>를 누르거나 어떤 카드의 <code>전송</code> 버튼을 클릭하면 현재 입력 중인 카드의 입력이 일괄 적용됩니다. 이 기능은 하나의 입력값을 통해 다양한 모델의 응답 결과를 비교하고 싶을 때 유용하게 사용할 수 있습니다.</p>
+<p><figure data-bai-block="44" class="doc-figure"><img src="./images/synchronized_input.png" alt="" class="doc-image" style="width:775px" loading="lazy" decoding="async" width="1550" height="958" /><figcaption>그림 13.9</figcaption></figure>
 </p>
 <p><a id="parameter-adjustment"></a></p>
-<h2 data-bai-block="43" id="chat-파라미터-조정">파라미터 조정<a class="hash-link" href="#chat-파라미터-조정" aria-label="Direct link to 파라미터 조정">#</a></h2>
-<p data-bai-block="44">우측 상단의 파라미터 버튼을 클릭하여 각 모델에 대한 파라미터를 조정할 수 있습니다. 사용자는 Max Tokens, Temperature, Top P, Top K와 같은 다양한 값을 설정할 수 있습니다. 동기화 기능을 사용하여 같은 모델에 대해 다른 파라미터를 적용한 후 결과를 비교할 수 있습니다.</p>
-<p><figure data-bai-block="45" class="doc-figure"><img src="./images/parameter_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="264" height="447" /><figcaption>그림 13.10</figcaption></figure>
+<h2 data-bai-block="45" id="chat-파라미터-조정">파라미터 조정<a class="hash-link" href="#chat-파라미터-조정" aria-label="Direct link to 파라미터 조정">#</a></h2>
+<p data-bai-block="46">우측 상단의 파라미터 버튼을 클릭하여 각 모델에 대한 파라미터를 조정할 수 있습니다. 사용자는 Max Tokens, Temperature, Top P, Top K와 같은 다양한 값을 설정할 수 있습니다. 동기화 기능을 사용하여 같은 모델에 대해 다른 파라미터를 적용한 후 결과를 비교할 수 있습니다.</p>
+<p><figure data-bai-block="47" class="doc-figure"><img src="./images/parameter_settings.png" alt="" class="doc-image" loading="lazy" decoding="async" width="256" height="478" /><figcaption>그림 13.10</figcaption></figure>
 </p>
 <p><a id="chat-history"></a></p>
-<h2 data-bai-block="46" id="chat-채팅-기록">채팅 기록<a class="hash-link" href="#chat-채팅-기록" aria-label="Direct link to 채팅 기록">#</a></h2>
-<p data-bai-block="47">우측 상단의 <code>+</code> 버튼을 클릭하여 새로운 채팅을 시작할 수 있습니다.</p>
-<p><figure data-bai-block="48" class="doc-figure"><img src="./images/new_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>그림 13.11</figcaption></figure>
+<h2 data-bai-block="48" id="chat-채팅-기록">채팅 기록<a class="hash-link" href="#chat-채팅-기록" aria-label="Direct link to 채팅 기록">#</a></h2>
+<p data-bai-block="49">우측 상단의 <code>+</code> 버튼을 클릭하여 새로운 채팅을 시작할 수 있습니다.</p>
+<p><figure data-bai-block="50" class="doc-figure"><img src="./images/new_chat.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1680" /><figcaption>그림 13.11</figcaption></figure>
 </p>
-<p data-bai-block="49">모든 채팅 기록은 로컬 스토리지에 저장됩니다. 우측 상단의 <code>히스토리</code> 버튼을 클릭하여 이전 채팅 기록에 접근할 수 있습니다.</p>
-<p><figure data-bai-block="50" class="doc-figure"><img src="./images/history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1800" /><figcaption>그림 13.12</figcaption></figure>
+<p data-bai-block="51">모든 채팅 기록은 로컬 스토리지에 저장됩니다. 우측 상단의 <code>히스토리</code> 버튼을 클릭하여 이전 채팅 기록에 접근할 수 있습니다.</p>
+<p><figure data-bai-block="52" class="doc-figure"><img src="./images/history_button.png" alt="" class="doc-image" loading="lazy" decoding="async" width="2440" height="1800" /><figcaption>그림 13.12</figcaption></figure>
 </p>
 
 </section>
     <div class="page-footer">
       <div class="page-metadata">
   <a class="edit-link" href="https://github.com/lablup/backend.ai-webui/edit/main/packages/backend.ai-webui-docs/src/ko/chat/chat.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 0 0 0-1.42l-2.34-2.34a1.003 1.003 0 0 0-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z"/></svg> 이 페이지 편집</a>
-  <span class="last-updated">마지막 업데이트 2026년 9월 22일</span>
+  <span class="last-updated">마지막 업데이트 2026년 10월 1일</span>
 </div>
       <nav class="pagination-nav" aria-label="Docs pages">
   <a class="pagination-nav__link pagination-nav__link--prev" href="./deployment.html">
@@ -329,6 +334,7 @@
   <ul class="doc-toc__list">
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EB%AA%A8%EB%8D%B8-%EC%84%A0%ED%83%9D%ED%95%98%EA%B8%B0" data-toc-target="chat-모델-선택하기">모델 선택하기</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-%EB%AA%A9%EB%A1%9D%EC%97%90-%ED%91%9C%EC%8B%9C%EB%90%98%EB%8A%94-%EB%B0%B0%ED%8F%AC" data-toc-target="chat-목록에-표시되는-배포">목록에 표시되는 배포</a></li>
+      <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-%EC%BB%A4%EC%8A%A4%ED%85%80-%EC%97%94%EB%93%9C%ED%8F%AC%EC%9D%B8%ED%8A%B8-%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0" data-toc-target="chat-커스텀-엔드포인트-연결하기">커스텀 엔드포인트 연결하기</a></li>
       <li class="doc-toc__item doc-toc__item--h3"><a class="doc-toc__link" href="#chat-%EB%AA%A8%EB%8D%B8-%EC%97%B0%EA%B2%B0-%EC%84%A4%EC%A0%95" data-toc-target="chat-모델-연결-설정">모델 연결 설정</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EB%B9%84%EA%B5%90-%EC%B1%84%ED%8C%85-%EC%B9%B4%EB%93%9C-%EC%B6%94%EA%B0%80-%EB%B0%8F-%EC%82%AD%EC%A0%9C" data-toc-target="chat-비교-채팅-카드-추가-및-삭제">비교 채팅 카드 추가 및 삭제</a></li>
       <li class="doc-toc__item doc-toc__item--h2"><a class="doc-toc__link" href="#chat-%EC%B1%84%ED%8C%85-%EA%B8%B0%EB%A1%9D-%EC%82%AD%EC%A0%9C" data-toc-target="chat-채팅-기록-삭제">채팅 기록 삭제</a></li>
