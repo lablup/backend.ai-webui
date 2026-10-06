@@ -29,11 +29,11 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
 ### Development Workflow
 
 1. **Dev Server**: Run `pnpm run dev` (TypeScript watch + Relay watch + React dev server under [Portless](https://github.com/vercel-labs/portless)). Portless is a `devDependency`, no global install needed; `dev.mjs` auto-starts the daemon on port 1355 (HTTPS by default).
-2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355`; otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
+2. **URL**: For branches matching `FR-XXXX` the dev URL is `https://fr-XXXX.localhost:1355` (`gh-N` → `https://gh-N.localhost:1355` for a GitHub-native issue, see below); otherwise Portless derives a branch-based subdomain (printed on startup). See `DEV_ENVIRONMENT.md` for theme color and troubleshooting.
 
 # Additional Workflow Description
 
-- All work items are created in Jira and serve as the starting point for understanding and resolving tasks.
+- All work items are created in Jira and serve as the starting point for understanding and resolving tasks. (The GitHub-native pilot below is the one exception.)
 - Work items are cloned as GitHub issues in the corresponding repository.
 - GitHub PR titles follow this format:
   - prefix
@@ -44,6 +44,12 @@ read `package.json` / `pnpm-workspace.yaml` / `ls` rather than expecting a list 
     - chore: Other small tasks
   - Format: `prefix(JIRA-ISSUE-NUMBER): title`
   - GitHub PR content starts with `Resolves #1234 (FR-1234)` where #1234 is the cloned issue number and FR-1234 is the Jira issue number. The space between `#1234` and `(FR-1234)` is required — without it GitHub does not auto-link the issue reference and downstream tooling (the `.github/workflows/project-status-sync.yml` workflow) fails to detect the link.
+- **Pilot — GitHub-native issues (from the 26.10 release train).** A work item may instead be created directly as a GitHub issue (GitHub Project 41) and have no Jira key. The Jira path above is unchanged and stays the default for every issue that has an `FR-` key; an issue has exactly one of the two forms. For a GitHub-native issue number `N`:
+  - PR title: `prefix(#N): title` — for example `fix(#10144): keep the drawer header visible`. Write `#N`, never `GH-N`: an automation reads any `ABC-123`-shaped token in a PR title as a Jira key.
+  - PR content starts with `Resolves #N` — no parenthesized key after it.
+  - Branch: `type/gh-N-slug` — for example `fix/gh-10144-drawer-header` — where a Jira issue's branch is `type/FR-1234-slug`.
+  - Dev server: `gh-N` takes the place of `fr-XXXX` in the app name (`gh-10144-pr10150-drawer`).
+  - Teams thread: read from the issue's `Teams thread` field — an organization-level Issue field visible to organization members only — instead of the Jira custom field. The repository is public, so the thread URL is never written into an issue or PR comment.
 
 - **Tool Requirements**:
   - **Jira**: Use `jira-workflow` skill (fw plugin). Project config in `.jira.config`.
